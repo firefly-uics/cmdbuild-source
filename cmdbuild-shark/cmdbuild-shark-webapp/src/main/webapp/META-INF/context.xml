@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+  <Resource
+    auth="Container"
+    name="UserTransaction"
+    type="javax.transaction.UserTransaction"
+    jotm.timeout="180"
+    factory="org.objectweb.jotm.UserTransactionFactory"/> 
+   <Resource 
+   name="sharkdb" 
+   auth="Container" 
+   type="javax.sql.DataSource" 
+   factory="org.objectweb.jndi.DataSourceFactory" 
+   maxActive="300" 
+   maxIdle="2" 
+   maxWait="5000" 
+   driverClassName="org.postgresql.Driver" 
+   username="shark" 
+   password="shark" 
+   url="jdbc:postgresql://localhost/${cmdbuild}" 
+   defaultAutoCommit="true" 
+   removeAbandoned="true" 
+   removeAbandonedTimeout="60" 
+   logAbandoned="true" />
+</Context>
