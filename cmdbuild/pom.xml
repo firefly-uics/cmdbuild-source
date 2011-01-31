@@ -16,6 +16,7 @@
 		<hamcrest.version>1.2</hamcrest.version>
 		<jasperreports.version>3.7.1</jasperreports.version>
 		<jetty.version>6.1.22</jetty.version>
+		<json-java.version>20110113</json-java.version>
 		<junit.version>4.8.1</junit.version>
 		<netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
 		<netbeans.hint.jdkPlatform>JDK_1.6</netbeans.hint.jdkPlatform>
@@ -109,9 +110,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.github</groupId>
+			<groupId>com.github.json-java</groupId>
 			<artifactId>json-java</artifactId>
-			<version>20110113</version>
+			<version>${json-java.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.classpath-explorer</groupId>
