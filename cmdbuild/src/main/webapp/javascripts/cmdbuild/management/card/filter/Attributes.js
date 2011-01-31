@@ -50,8 +50,7 @@ CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
         CMDBuild.Management.Attributes.superclass.initComponent.apply(this, arguments);
     },
     
-    addAttributeToFilter: function(index) {
-		var attribute  = this.attributeList[index];
+    addAttributeToFilter: function(attribute) {	
 		var field = CMDBuild.Management.FieldManager.getFieldSetForFilter(attribute);
 		var attributeField = field.getAttributeField();
 		
@@ -65,19 +64,38 @@ CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
     //private
     fillMenu: function() {
 		this.menu.removeAll();
-        for (var i=0; i < this.attributeList.length; i++) {
-			var attributeName = this.attributeList[i].description;
-			if (this.attributeList[i].name != "Notes") {
-				var _this = this;
-				this.menu.add({ 
-					text: attributeName,
-					index: i,
-					handler: function() {
-						_this.addAttributeToFilter(this.index);
-					}
-				});
+		var groupedAttr = CMDBuild.Utils.groupAttributes(this.attributeList
+				,allowNoteFiled = false);
+		
+		var submenues = buildSubMenues.call(this);
+		if (submenues.length == 1) {
+			this.menu.add(submenues[0].menu);
+		} else {
+			this.menu.add(submenues);
+		}
+		
+		function buildSubMenues() {
+			var submenues = [];
+			var _this = this;
+			for (var group in groupedAttr) {
+				var items = [];
+				var attrs = groupedAttr[group];
+				
+				for (var i=0, l=attrs.length; i<l; ++i) {
+					items.push({ 
+						text: attrs[i].description,
+						attribute: attrs[i],
+						handler: function() {
+							_this.addAttributeToFilter(this.attribute);
+						}
+					});
+				}
+				
+				submenues.push({text: group, menu: items});
 			}
-		};		
+			return submenues;
+		}
+		
     },
     
     addField: function(field, attribute){

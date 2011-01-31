@@ -81,6 +81,33 @@ CMDBuild.Utils = (function() {
 					fn.call(element,params);
 				}
 			}
+		},
+		
+		groupAttributes: function(attributes, allowNoteFiled) {
+			var groups = {};
+			var fieldsWithoutGroup = [];
+			for ( var i = 0; i < attributes.length; i++) {
+				var attribute = attributes[i];
+				if (!allowNoteFiled && attribute.name == "Notes") {
+					continue;
+				} else {
+					var attrGroup = attribute.group;
+					if (attrGroup) {
+						if (!groups[attrGroup]) {
+							groups[attrGroup] = [];
+						}
+						groups[attrGroup].push(attribute);
+					} else {
+						fieldsWithoutGroup.push(attribute);
+					}
+				}
+			}
+
+			if (fieldsWithoutGroup.length > 0) {
+				groups[CMDBuild.Translation.management.modcard.other_fields] = fieldsWithoutGroup;
+			}
+
+			return groups;
 		}
 	};
 })();
