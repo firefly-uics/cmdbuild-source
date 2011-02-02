@@ -3,15 +3,10 @@ package org.cmdbuild.services.auth;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.handler.MessageContext;
 
 import org.apache.ws.security.WSPasswordCallback;
-import org.apache.ws.security.WSSecurityEngineResult;
-import org.apache.ws.security.handler.WSHandlerConstants;
-import org.apache.ws.security.handler.WSHandlerResult;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
@@ -24,25 +19,25 @@ public class AuthenticationService implements Authenticator {
 	static private List<Authenticator> authMethods = new ArrayList<Authenticator>();
 
 	public void loadAuthMethods() {
-		for (String name : AuthProperties.getInstance().getAuthMethodNames()) {
+		for (final String name : AuthProperties.getInstance().getAuthMethodNames()) {
 			try {
 				Log.AUTH.info("Adding authentication method " + name);
-				Class<?> cls = Class.forName(AUTH_METHODS_PACKAGE+"."+name);
-				Constructor<?> ct = cls.getConstructor();
-				Authenticator authenticator = (Authenticator) ct.newInstance();
+				final Class<?> cls = Class.forName(AUTH_METHODS_PACKAGE + "." + name);
+				final Constructor<?> ct = cls.getConstructor();
+				final Authenticator authenticator = (Authenticator) ct.newInstance();
 				authMethods.add(authenticator);
-			} catch (AuthException e) {
+			} catch (final AuthException e) {
 				Log.AUTH.error(name + " not configured: skipping");
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				Log.AUTH.warn("Could not import authentication method " + name);
 				Log.AUTH.debug(e);
 			}
 		}
 	}
 
-	public UserContext headerAuth(HttpServletRequest request) {
+	public UserContext headerAuth(final HttpServletRequest request) {
 		UserContext userCtx = null;
-		for (Authenticator method : authMethods) {
+		for (final Authenticator method : authMethods) {
 			userCtx = method.headerAuth(request);
 			if (userCtx != null) {
 				break;
@@ -51,9 +46,9 @@ public class AuthenticationService implements Authenticator {
 		return userCtx;
 	}
 
-	public UserContext jsonRpcAuth(String username, String unencryptedPassword) {
+	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		UserContext userCtx = null;
-		for (Authenticator method : authMethods) {
+		for (final Authenticator method : authMethods) {
 			userCtx = method.jsonRpcAuth(username, unencryptedPassword);
 			if (userCtx != null) {
 				userCtx.setAuthenticator(method);
@@ -63,8 +58,8 @@ public class AuthenticationService implements Authenticator {
 		return userCtx;
 	}
 
-	public boolean wsAuth(WSPasswordCallback pwcb) {
-		for (Authenticator method : authMethods) {
+	public boolean wsAuth(final WSPasswordCallback pwcb) {
+		for (final Authenticator method : authMethods) {
 			if (method.wsAuth(pwcb)) {
 				return true;
 			}
@@ -72,34 +67,33 @@ public class AuthenticationService implements Authenticator {
 		return false;
 	}
 
-	public UserContext getWSUserContext(String authData) {
+	public UserContext getWSUserContext(final String authData) {
 		UserContext userCtx = null;
 		if (authData != null) {
+			final AuthInfo authInfo = new AuthInfo(authData);
 			User user;
-			String username = AuthenticationUtils.getUsername(authData);
-			
 			try {
-				user = UserCard.findByUserName(username);
+				user = UserCard.findByUserName(authInfo.getUsername());
 				userCtx = new UserContext(user);
-			} catch (NotFoundException e) {
-				String authusername = AuthenticationUtils.getUsernameForAuthentication(authData);
+			} catch (final NotFoundException e) {
+				final String authusername = authInfo.getUsernameForAuthentication();
 				user = UserCard.findByUserName(authusername);
-				userCtx = new UserContext(user, username);
+				userCtx = new UserContext(user, authInfo.getUsername());
 			}
-			AuthenticationUtils.checkOrSetDefaultGroup(authData, userCtx);
+			authInfo.checkOrSetDefaultGroup(userCtx);
 		}
 		return userCtx;
 	}
 
-	public void changePassword(String username, String oldPassword, String newPassword) {
-		for (Authenticator method : authMethods) {
+	public void changePassword(final String username, final String oldPassword, final String newPassword) {
+		for (final Authenticator method : authMethods) {
 			method.changePassword(username, oldPassword, newPassword);
 		}
 	}
 
 	public boolean canChangePassword() {
-		for (Authenticator method : authMethods) {
-			if (method.canChangePassword()){
+		for (final Authenticator method : authMethods) {
+			if (method.canChangePassword()) {
 				return true;
 			}
 		}
