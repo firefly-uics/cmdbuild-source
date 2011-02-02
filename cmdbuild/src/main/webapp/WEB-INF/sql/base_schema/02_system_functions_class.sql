@@ -119,14 +119,12 @@ END
 $$ LANGUAGE PLPGSQL;
 
 
-CREATE OR REPLACE FUNCTION _cm_delete_local_attributes_or_triggers(TableId oid) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION _cm_delete_local_attributes(TableId oid) RETURNS void AS $$
 DECLARE
 	AttributeName text;
 BEGIN
 	FOR AttributeName IN SELECT _cm_attribute_list(TableId) LOOP
-		IF _cm_attribute_is_inherited(TableId, AttributeName) THEN
-			PERFORM _cm_remove_attribute_triggers(TableId, AttributeName);
-		ELSE
+		IF NOT _cm_attribute_is_inherited(TableId, AttributeName) THEN
 			PERFORM cm_delete_attribute(TableId, AttributeName);
 		END IF;
 	END LOOP;
@@ -243,7 +241,7 @@ BEGIN
 		RAISE EXCEPTION 'Cannot delete class %: contains data', TableId::regclass;
 	END IF;
 
-	PERFORM _cm_delete_local_attributes_or_triggers(TableId);
+	PERFORM _cm_delete_local_attributes(TableId);
 
 	-- Cascade for the history table
 	EXECUTE 'DROP TABLE '|| TableId::regclass ||' CASCADE';

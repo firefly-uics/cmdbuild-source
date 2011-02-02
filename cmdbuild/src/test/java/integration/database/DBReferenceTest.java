@@ -156,4 +156,18 @@ public class DBReferenceTest extends DBDataFixture {
 	public void referenceOperationsUpdateRelations() throws SQLException {
 		// TODO
 	}
+
+	@Test
+	public void classesCanBeDeletedWhenReferenceAttributesAreInherited() throws SQLException {
+		createDBClass(C12, S1);
+		createDBReference(S1, Reference, D);
+
+		deleteDBClass(C11);
+
+		assertThat(S1, hasTrigger(referenceTriggerName(S1, Reference)));
+		assertThat(C12, hasTrigger(referenceTriggerName(S1, Reference)));
+		assertThat(S2, hasTrigger(restrictTriggerName(S1, Reference)));
+		assertThat(C21, hasTrigger(restrictTriggerName(S1, Reference)));
+	}
+
 }
