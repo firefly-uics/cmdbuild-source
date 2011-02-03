@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.interfaces.CardFactory;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
@@ -18,6 +20,10 @@ public class UserCard extends LazyCard implements User {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String ATTRIBUTE_USERNAME = "Username";
+	private static final String ATTRIBUTE_PASSWORD = "Password";
+	private static final String ATTRIBUTE_EMAIL = "Email";
+
 	public static final String USER_CLASS_NAME = "User";
 	private static final ITable userClass = UserContext.systemContext().tables().get(USER_CLASS_NAME);
 
@@ -26,7 +32,7 @@ public class UserCard extends LazyCard implements User {
 	}
 
 	// Should not be public but this class moved where it is used
-	public UserCard(ICard card) throws NotFoundException {
+	public UserCard(final ICard card) throws NotFoundException {
 		super(card);
 	}
 
@@ -34,47 +40,53 @@ public class UserCard extends LazyCard implements User {
 		return new UserImpl(this.getId(), this.getName(), this.getDescription(), this.getEncryptedPassword());
 	}
 
-	public String getName(){
-		return getAttributeValue("Username").getString();
-	}
-	
-	public void setUsername(String userName){
-		getAttributeValue("Username").setValue(userName);
+	public String getName() {
+		return getAttributeValue(ATTRIBUTE_USERNAME).getString();
 	}
 
-	public String getEmail(){
-		return getAttributeValue("Email").getString();
-	}
-	
-	public void setEmail(String email){
-		getAttributeValue("Email").setValue(email);
+	public void setUsername(final String username) {
+		getAttributeValue(ATTRIBUTE_USERNAME).setValue(username);
 	}
 
-	public String getEncryptedPassword(){
-		return getAttributeValue("Password").getString();
+	public String getEmail() {
+		return getAttributeValue(ATTRIBUTE_EMAIL).getString();
 	}
 
-	public void setUnencryptedPassword(String password){
-		SecurityEncrypter sd = new SecurityEncrypter();
-		getAttributeValue("Password").setValue(sd.encrypt(password));
+	public void setEmail(final String email) {
+		getAttributeValue(ATTRIBUTE_EMAIL).setValue(email);
 	}
 
-	public static User findByUserName(String userName) {
-		if (UserImpl.SYSTEM_USERNAME.equals(userName)) {
+	public String getEncryptedPassword() {
+		return getAttributeValue(ATTRIBUTE_PASSWORD).getString();
+	}
+
+	public void setUnencryptedPassword(final String password) {
+		final SecurityEncrypter sd = new SecurityEncrypter();
+		getAttributeValue(ATTRIBUTE_PASSWORD).setValue(sd.encrypt(password));
+	}
+
+	public static User getUser(final String login) {
+		if (UserImpl.SYSTEM_USERNAME.equals(login)) {
 			return UserImpl.getSystemUser();
 		}
-		return getUserCardByName(userName).toUser();
+		return getUserCard(login).toUser();
 	}
 
-	public static UserCard getUserCardByName(String userName) {
-		ICard card = userClass.cards().list().filter("Username", AttributeFilterType.EQUALS, userName).get(false);
+	public static UserCard getUserCard(final String login) {
+		final CardFactory cardFactory = userClass.cards();
+		final CardQuery cardQuery = cardFactory.list();
+		final String attributeName = login.contains("@") ? ATTRIBUTE_EMAIL : ATTRIBUTE_USERNAME;
+		final CardQuery filteredCardQuery = cardQuery.filter(attributeName, AttributeFilterType.EQUALS, login);
+		final ICard card = filteredCardQuery.get(false);
 		return new UserCard(card);
 	}
 
 	public static Iterable<UserCard> all() throws NotFoundException, ORMException {
-		List<UserCard> list = new LinkedList<UserCard>();
-		for(ICard card : userClass.cards().list())
+		final List<UserCard> list = new LinkedList<UserCard>();
+		for (final ICard card : userClass.cards().list()) {
 			list.add(new UserCard(card));
+		}
 		return list;
 	}
+
 }

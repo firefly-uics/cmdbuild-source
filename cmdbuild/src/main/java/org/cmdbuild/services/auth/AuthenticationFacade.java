@@ -28,7 +28,7 @@ public abstract class AuthenticationFacade {
 	public static final String USER_GROUP_DOMAIN_NAME = "UserRole";
 	public static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
 
-	public User addUser(String username, String password, String description) throws AuthException {
+	public User addUser(final String username, final String password, final String description) throws AuthException {
 		UserCard user = null;
 		user = new UserCard();
 		user.setUsername(username);
@@ -38,64 +38,68 @@ public abstract class AuthenticationFacade {
 		return user;
 	}
 
-	public static UserContext login(String username, String unencryptedPassword) throws AuthException {
-		AuthenticationService as  = new AuthenticationService();
+	public static UserContext login(final String username, final String unencryptedPassword) throws AuthException {
+		final AuthenticationService as = new AuthenticationService();
 		return as.jsonRpcAuth(username, unencryptedPassword);
 	}
 
-	static public List<UserCard> getUserList(AbstractFilter filterCriteria) throws AuthException, ORMException {
+	static public List<UserCard> getUserList(final AbstractFilter filterCriteria) throws AuthException, ORMException {
 		return getUserList(null, filterCriteria);
 	}
 
-	static public List<UserCard> getUserList(AbstractFilter userFilterCriteria, AbstractFilter roleFilterCriteria) throws AuthException, ORMException {
+	static public List<UserCard> getUserList(final AbstractFilter userFilterCriteria,
+			final AbstractFilter roleFilterCriteria) throws AuthException, ORMException {
 		List<IRelation> groupsRel = null;
-		List<UserCard> list = new LinkedList<UserCard>();
-		try{
+		final List<UserCard> list = new LinkedList<UserCard>();
+		try {
 			groupsRel = RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userFilterCriteria, roleFilterCriteria);
-			for(IRelation groupRel : groupsRel) {
+			for (final IRelation groupRel : groupsRel) {
 				list.add(new UserCard(groupRel.getCard1()));
 			}
-		} catch(NotFoundException e){
+		} catch (final NotFoundException e) {
 			Log.OTHER.fatal("user_role domain does not exist", e);
 			throw AuthExceptionType.AUTH_UNKNOWN_GROUP.createException();
 		}
 		return list;
 	}
 
-	static public Iterable<Group> getGroupListForUser(int userId) throws AuthException, ORMException {
-		List<Group> list = new LinkedList<Group>();
+	static public Iterable<Group> getGroupListForUser(final int userId) throws AuthException, ORMException {
+		final List<Group> list = new LinkedList<Group>();
 		try {
-			ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(userId);
+			final ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(
+					userId);
 			final AbstractFilter userIdFilter = AttributeFilter.getEquals(user, "Id", String.valueOf(userId));
-			for(IRelation groupRel : RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null)) {
-				GroupCard r = new GroupCard(groupRel.getCard2());
-				boolean isDefaultGroup = (Boolean.TRUE.equals(groupRel.getValue(DEFAULT_GROUP_ATTRIBUTE)));
+			for (final IRelation groupRel : RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null)) {
+				final GroupCard r = new GroupCard(groupRel.getCard2());
+				final boolean isDefaultGroup = (Boolean.TRUE.equals(groupRel.getValue(DEFAULT_GROUP_ATTRIBUTE)));
 				list.add(r.toGroup(isDefaultGroup));
 			}
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			Log.OTHER.fatal("user_role domain does not exist", e);
 			throw AuthExceptionType.AUTH_UNKNOWN_GROUP.createException();
 		}
 		return list;
 	}
 
-	static public void setDefaultGroupForUser(int userId, int defaultGroupId) {
-		ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(userId);
+	static public void setDefaultGroupForUser(final int userId, final int defaultGroupId) {
+		final ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(userId);
 		final AbstractFilter userIdFilter = AttributeFilter.getEquals(user, "Id", String.valueOf(userId));
-		for (IRelation groupRel : RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null)) {
-			boolean wasDefaultGroup = (groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).getBoolean() == Boolean.TRUE); // Handles null values
-			boolean willBeDefaulGroup = (groupRel.getCard2().getId() == defaultGroupId);
+		for (final IRelation groupRel : RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null)) {
+			final boolean wasDefaultGroup = (groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).getBoolean() == Boolean.TRUE); // Handles
+			// null
+			// values
+			final boolean willBeDefaulGroup = (groupRel.getCard2().getId() == defaultGroupId);
 			if (wasDefaultGroup != willBeDefaulGroup) {
-				groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).setValue((Boolean)willBeDefaulGroup);
+				groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).setValue(willBeDefaulGroup);
 				groupRel.save();
 			}
 		}
 	}
 
-	static public boolean isLoggedIn(HttpServletRequest request) {
+	static public boolean isLoggedIn(final HttpServletRequest request) {
 		UserContext userCtx = new SessionVars().getCurrentUserContext();
 		if (userCtx == null) {
-			AuthenticationService as = new AuthenticationService();
+			final AuthenticationService as = new AuthenticationService();
 			userCtx = as.headerAuth(request);
 			if (userCtx != null) {
 				new SessionVars().setCurrentUserContext(userCtx);
@@ -104,12 +108,12 @@ public abstract class AuthenticationFacade {
 		return (userCtx != null || doAutoLogin());
 	}
 
-	static public void assureAdmin(HttpServletRequest request, AdminAccess adminAccess) {
-		UserContext userCtx = new SessionVars().getCurrentUserContext();
+	static public void assureAdmin(final HttpServletRequest request, final AdminAccess adminAccess) {
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
 		if (userCtx == null || !userCtx.privileges().isAdmin())
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		if (adminAccess == AdminAccess.DEMOSAFE) {
-			String demoModeAdmin = CmdbuildProperties.getInstance().getDemoModeAdmin().trim();
+			final String demoModeAdmin = CmdbuildProperties.getInstance().getDemoModeAdmin().trim();
 			if (!demoModeAdmin.equals("") && !demoModeAdmin.equals(userCtx.getUsername()))
 				throw AuthExceptionType.AUTH_DEMO_MODE.createException();
 		}
@@ -117,14 +121,14 @@ public abstract class AuthenticationFacade {
 
 	static private boolean doAutoLogin() {
 		try {
-			String username = AuthProperties.getInstance().getAutologin();
+			final String username = AuthProperties.getInstance().getAutologin();
 			if (username != null && username.length() > 0) {
-				UserContext userCtx = AuthenticationUtils.systemAuth(username);
+				final UserContext userCtx = new AuthInfo(username).systemAuth();
 				new SessionVars().setCurrentUserContext(userCtx);
 				Log.OTHER.info("Autologin with user " + username);
 				return true;
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Log.OTHER.warn("Autologin failed");
 		}
 		return false;

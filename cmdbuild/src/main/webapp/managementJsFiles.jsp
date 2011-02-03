@@ -42,7 +42,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailWindow.js"></script>	
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/AddDetailWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/EditDetailWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailActionMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListWindow.js"></script>
