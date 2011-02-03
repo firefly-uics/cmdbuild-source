@@ -86,7 +86,7 @@ public class CMDBuildSync {
 		}
 	}
 
-	private Card buildCard(final ConnectorCard connectorCard, final boolean isNew) {
+	private Card buildCard(final ConnectorCard connectorCard, final boolean isNew) throws SyncException {
 		final Card card = buildNewCard(connectorCard);
 		if (!isNew) {
 			final int id = getId(connectorCard);
@@ -95,7 +95,7 @@ public class CMDBuildSync {
 		return card;
 	}
 
-	private Card buildNewCard(final ConnectorCard connectorCard) {
+	private Card buildNewCard(final ConnectorCard connectorCard) throws SyncException {
 		final Card card = new Card();
 		final ConnectorClass connectorClass = connectorCard.getConnectorClass();
 		card.setClassName(connectorClass.getName());
@@ -107,7 +107,7 @@ public class CMDBuildSync {
 	}
 
 	private Attribute buildAttribute(final ConnectorClass connectorClass,
-			final ConnectorCardAttribute connectorCardAttribute) {
+			final ConnectorCardAttribute connectorCardAttribute) throws SyncException {
 		final String name = connectorCardAttribute.getName();
 		String value = "";
 		if (connectorCardAttribute.isReference()) {
@@ -132,7 +132,7 @@ public class CMDBuildSync {
 		return attribute;
 	}
 
-	private int getId(final ConnectorCard connectorCard) {
+	private int getId(final ConnectorCard connectorCard) throws SyncException {
 		final Map<Integer, Key> ids = idsDataCollection.getClassKeys(connectorCard.getConnectorClass());
 		if (ids.containsValue(connectorCard.getKey())) {
 			for (final Integer id : ids.keySet()) {
@@ -141,13 +141,11 @@ public class CMDBuildSync {
 					return id;
 				}
 			}
-		} else {
-			logger.warn("id not found!");
 		}
-		return 0;
+		throw new SyncException("id not found!");
 	}
 
-	private int getId(final Key cardKey, final ConnectorClass connectorClass) {
+	private int getId(final Key cardKey, final ConnectorClass connectorClass) throws SyncException {
 		final Map<Integer, Key> ids = idsDataCollection.getClassKeys(connectorClass);
 		if (ids.containsValue(cardKey)) {
 			for (final Integer id : ids.keySet()) {
@@ -156,13 +154,11 @@ public class CMDBuildSync {
 					return id;
 				}
 			}
-		} else {
-			logger.warn("id not found!");
 		}
-		return 0;
+		throw new SyncException("id not found!");
 	}
 
-	private Relation buildRelation(final ConnectorRelation connectorRelation) {
+	private Relation buildRelation(final ConnectorRelation connectorRelation) throws SyncException {
 		final Relation relation = new Relation();
 		final ConnectorDomain connectorDomain = connectorRelation.getConnectorDomain();
 		relation.setDomainName(connectorDomain.getName());

@@ -11,6 +11,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -39,7 +40,7 @@ public class LdapAuthenticator implements Authenticator {
 			final DirContext ctx = initialize();
 			final String ldapUser = getUser(ctx, username);
 			if (bind(ctx, ldapUser, unencryptedPassword)) {
-				return AuthenticationUtils.systemAuth(username);
+				return new AuthInfo(username).systemAuth();
 			}
 		} catch (final NamingException e) {
 			Log.AUTH.warn(String.format("Cannot authenticate user %s with LDAP", username));
@@ -48,7 +49,9 @@ public class LdapAuthenticator implements Authenticator {
 	}
 
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
-		final String username = AuthenticationUtils.getUsernameForAuthentication(pwcb.getIdentifer());
+		final String identifier = pwcb.getIdentifer();
+		final AuthInfo authInfo = new AuthInfo(identifier);
+		final String username = authInfo.getUsernameForAuthentication();
 		final String unencryptedPassword = pwcb.getPassword();
 		return (unencryptedPassword != null && authenticateInLdap(username, unencryptedPassword) != null);
 	}
@@ -73,7 +76,7 @@ public class LdapAuthenticator implements Authenticator {
 
 		final SearchControls sc = new SearchControls();
 		sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-		String usertobind = "";
+		String usertobind = StringUtils.EMPTY;
 		final AuthProperties props = AuthProperties.getInstance();
 		final String searchFilter = generateSearchFilter(userToFind);
 		try {
@@ -121,7 +124,7 @@ public class LdapAuthenticator implements Authenticator {
 			ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, username);
 			Log.AUTH.trace("Binding with password " + password);
 			ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, password);
-			ctx.getAttributes("", null);
+			ctx.getAttributes(StringUtils.EMPTY, null);
 			validate = true;
 		} catch (final NamingException e) {
 			Log.AUTH.info(String.format("Cannot execute LDAP authentication for user %s", username));
@@ -139,10 +142,11 @@ public class LdapAuthenticator implements Authenticator {
 	private void setOriginalAuthentication(final DirContext ctx) throws NamingException {
 		final AuthProperties props = AuthProperties.getInstance();
 		ctx.addToEnvironment(Context.SECURITY_AUTHENTICATION, props.getLdapAuthenticationMethod());
-		if (!"".equals(props.getLdapPrincipal()) && props.getLdapPrincipal() != null) {
+		if (!StringUtils.EMPTY.equals(props.getLdapPrincipal()) && props.getLdapPrincipal() != null) {
 			ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, props.getLdapPrincipal());
 		}
-		if (!"".equals(props.getLdapPrincipalCredentials()) && props.getLdapPrincipalCredentials() != null) {
+		if (!StringUtils.EMPTY.equals(props.getLdapPrincipalCredentials())
+				&& props.getLdapPrincipalCredentials() != null) {
 			ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, props.getLdapPrincipalCredentials());
 		}
 	}
