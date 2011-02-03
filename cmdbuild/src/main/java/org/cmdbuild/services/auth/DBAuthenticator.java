@@ -56,7 +56,7 @@ public class DBAuthenticator implements Authenticator {
 
 	private User getUser(final AuthInfo authInfo) {
 		try {
-			return UserCard.findByUserName(authInfo.getUsername());
+			return UserCard.getUser(authInfo.getUsernameForAuthentication());
 		} catch (final CMDBException e) {
 			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 		}
@@ -73,7 +73,7 @@ public class DBAuthenticator implements Authenticator {
 
 	public void changePassword(final String username, final String oldPassword, final String newPassword) {
 		if (jsonRpcAuth(username, oldPassword) != null) {
-			final UserCard user = UserCard.getUserCardByName(username);
+			final UserCard user = UserCard.getUserCard(username);
 			user.setUnencryptedPassword(newPassword);
 			user.save();
 		} else {

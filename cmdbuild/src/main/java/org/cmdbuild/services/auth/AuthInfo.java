@@ -1,88 +1,80 @@
 package org.cmdbuild.services.auth;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.WorkflowService;
 
 public class AuthInfo {
 
-	public static final String USERS_SEPARATOR = "#";
-	public static final String GROUP_SEPARATOR = "@";
+	private static final Logger logger = Log.AUTH;
 
-	private final String authData;
-	private String usernameForAuthentication;
+	// private static final String PATTERN =
+	// "([^#@]+)(#([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
+	private static final String PATTERN = "([^@#]+(@[^\\.]+\\.[^@#]+)?)(#([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
+
+	private final String user;
+	private final String userNotService;
+	private final String role;
+
+	private final String usernameForAuthentication;
 
 	public AuthInfo(final String authData) {
 		Validate.notEmpty(authData);
-		this.authData = authData;
-		initUsernameForAuthentication();
+
+		final Pattern pattern = Pattern.compile(PATTERN);
+		final Matcher matcher = pattern.matcher(authData);
+		if (!matcher.find()) {
+			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
+		}
+		// user = matcher.group(1);
+		// userNotService = matcher.group(3);
+		// role = matcher.group(6);
+		user = matcher.group(1);
+		userNotService = matcher.group(4);
+		role = matcher.group(7);
+
+		usernameForAuthentication = hasServiceUser() ? user : getUsername();
+
+		logger.debug(this);
 	}
 
-	private void initUsernameForAuthentication() {
-		if (authData.contains(USERS_SEPARATOR)) {
-			usernameForAuthentication = authData.split(USERS_SEPARATOR)[0];
-		} else {
-			usernameForAuthentication = getUsernameNotService(authData);
-		}
+	public boolean hasServiceUser() {
+		return StringUtils.isNotEmpty(userNotService);
 	}
 
 	public String getUsernameForAuthentication() {
-		if (authData.contains(USERS_SEPARATOR)) {
-			checkIfServiceUser();
-			return usernameForAuthentication;
-		} else {
-			return usernameForAuthentication;
+		if (hasServiceUser() && !isValidServiceUser()) {
+			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 		}
+		return usernameForAuthentication;
 	}
 
 	public String getUsername() {
-		String notServicePart;
-		if (authData.contains(USERS_SEPARATOR)) {
-			notServicePart = authData.split(USERS_SEPARATOR)[1];
-		} else {
-			notServicePart = authData;
-		}
-		return getUsernameNotService(notServicePart);
+		return StringUtils.defaultIfBlank(userNotService, user);
 	}
 
 	public String getRole() {
-		if (authData.contains(GROUP_SEPARATOR)) {
-			return authData.split(GROUP_SEPARATOR)[1];
-		} else {
-			return StringUtils.EMPTY;
-		}
+		return StringUtils.defaultIfBlank(role, StringUtils.EMPTY);
 	}
 
-	private String getUsernameNotService(final String notServicePart) {
-		if (notServicePart.contains(GROUP_SEPARATOR)) {
-			return notServicePart.split(GROUP_SEPARATOR)[0];
-		} else {
-			return notServicePart;
-		}
-	}
-
-	private void checkIfServiceUser() {
-		if (!isServiceUser())
-			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
-	}
-
-	private void checkIfNotServiceUser() {
-		if (isServiceUser())
-			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
-	}
-
-	private boolean isServiceUser() {
+	private boolean isValidServiceUser() {
 		if (isSharkUser()) {
 			return true;
 		}
-		final String[] serviceUsers = getServiceUsers();
-		for (int i = 0, n = serviceUsers.length; i < n; ++i) {
-			if (usernameForAuthentication.equals(serviceUsers[i]))
+		for (final String serviceUser : getServiceUsers()) {
+			if (usernameForAuthentication.equals(serviceUser)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -119,9 +111,17 @@ public class AuthInfo {
 	}
 
 	public UserContext systemAuth() {
-		checkIfNotServiceUser();
-		final User user = UserCard.findByUserName(getUsername());
+		if (isValidServiceUser()) {
+			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
+		}
+		final User user = UserCard.getUser(getUsername());
 		return new UserContext(user);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("user", user).append("userNotService", userNotService).append("role",
+				role).toString();
 	}
 
 }

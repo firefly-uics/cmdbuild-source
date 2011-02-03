@@ -73,11 +73,11 @@ public class AuthenticationService implements Authenticator {
 			final AuthInfo authInfo = new AuthInfo(authData);
 			User user;
 			try {
-				user = UserCard.findByUserName(authInfo.getUsername());
+				user = UserCard.getUser(authInfo.getUsername());
 				userCtx = new UserContext(user);
 			} catch (final NotFoundException e) {
 				final String authusername = authInfo.getUsernameForAuthentication();
-				user = UserCard.findByUserName(authusername);
+				user = UserCard.getUser(authusername);
 				userCtx = new UserContext(user, authInfo.getUsername());
 			}
 			authInfo.checkOrSetDefaultGroup(userCtx);
@@ -99,4 +99,5 @@ public class AuthenticationService implements Authenticator {
 		}
 		return false;
 	}
+
 }

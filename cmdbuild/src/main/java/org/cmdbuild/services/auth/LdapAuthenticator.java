@@ -49,7 +49,9 @@ public class LdapAuthenticator implements Authenticator {
 	}
 
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
-		final String username = new AuthInfo(pwcb.getIdentifer()).getUsernameForAuthentication();
+		final String identifier = pwcb.getIdentifer();
+		final AuthInfo authInfo = new AuthInfo(identifier);
+		final String username = authInfo.getUsernameForAuthentication();
 		final String unencryptedPassword = pwcb.getPassword();
 		return (unencryptedPassword != null && authenticateInLdap(username, unencryptedPassword) != null);
 	}
