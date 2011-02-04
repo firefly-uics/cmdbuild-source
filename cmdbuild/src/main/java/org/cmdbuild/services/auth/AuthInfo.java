@@ -18,8 +18,6 @@ public class AuthInfo {
 
 	private static final Logger logger = Log.AUTH;
 
-	// private static final String PATTERN =
-	// "([^#@]+)(#([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
 	private static final String PATTERN = "([^@#]+(@[^\\.]+\\.[^@#]+)?)(#([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
 
 	private final String user;
@@ -36,9 +34,6 @@ public class AuthInfo {
 		if (!matcher.find()) {
 			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 		}
-		// user = matcher.group(1);
-		// userNotService = matcher.group(3);
-		// role = matcher.group(6);
 		user = matcher.group(1);
 		userNotService = matcher.group(4);
 		role = matcher.group(7);
