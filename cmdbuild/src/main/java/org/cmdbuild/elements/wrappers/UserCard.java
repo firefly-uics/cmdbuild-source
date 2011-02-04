@@ -9,8 +9,10 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
+import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
@@ -73,12 +75,16 @@ public class UserCard extends LazyCard implements User {
 	}
 
 	public static UserCard getUserCard(final String login) {
-		final CardFactory cardFactory = userClass.cards();
-		final CardQuery cardQuery = cardFactory.list();
-		final String attributeName = login.contains("@") ? ATTRIBUTE_EMAIL : ATTRIBUTE_USERNAME;
-		final CardQuery filteredCardQuery = cardQuery.filter(attributeName, AttributeFilterType.EQUALS, login);
-		final ICard card = filteredCardQuery.get(false);
-		return new UserCard(card);
+		try {
+			final CardFactory cardFactory = userClass.cards();
+			final CardQuery cardQuery = cardFactory.list();
+			final String attributeName = login.contains("@") ? ATTRIBUTE_EMAIL : ATTRIBUTE_USERNAME;
+			final CardQuery filteredCardQuery = cardQuery.filter(attributeName, AttributeFilterType.EQUALS, login);
+			final ICard card = filteredCardQuery.get(false);
+			return new UserCard(card);
+		} catch (final CMDBException e) {
+			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
+		}
 	}
 
 	public static Iterable<UserCard> all() throws NotFoundException, ORMException {
