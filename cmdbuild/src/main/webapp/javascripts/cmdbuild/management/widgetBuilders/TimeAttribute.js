@@ -17,6 +17,7 @@ CMDBuild.WidgetBuilders.TimeAttribute.prototype.buildAttributeField = function(a
 		allowBlank: !attribute.isnotnull,
 		width:100,
 		format: this.format,
-		vtype: "time"
+		vtype: "time",
+		CMAttribute: attribute
 	});	
 };

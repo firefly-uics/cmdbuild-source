@@ -255,6 +255,7 @@ CMDBuild.Management.CardListGrid = Ext.extend(CMDBuild.Grid, {
 				} else {
 					CMDBuild.log.info('cmdb-empty-' + this.eventtype);
 					this.publish('cmdb-empty-' + this.eventtype);
+					this.fireEvent('empty_grid');
 				}
 			},
 			scope: this

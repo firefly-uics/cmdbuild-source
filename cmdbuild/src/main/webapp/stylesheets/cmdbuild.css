@@ -713,6 +713,11 @@ em {
 	color: #555555 ! important;
 }
 
+.cmdb-error-msg {
+	font-weight: bold;
+	padding-bottom: 1em;
+}
+
 /*override*/
 .x-panel-header {
 	padding: 2px 2px 2px 4px ! important;

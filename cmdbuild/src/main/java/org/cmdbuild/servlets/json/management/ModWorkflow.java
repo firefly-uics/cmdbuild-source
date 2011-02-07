@@ -247,27 +247,12 @@ public class ModWorkflow extends JSONBase {
 			JSONObject serializer,
 			SharkFacade mngt,
 			ActivityIdentifier ai,
+			@Parameter("advance") boolean advance,
 			Map<String, String> params) throws JSONException {
-		serializer.put("success", mngt.updateActivity(ai.processInstanceId,ai.workItemId,params,false));
+		serializer.put("success", mngt.updateActivity(ai.processInstanceId,ai.workItemId,params,advance));
 		return serializer;
 	}
 
-	/**
-	 * Open an activity (if not opened), put the new attribute values and terminate (close.completed)
-	 * @param params
-	 * @return
-	 * @throws JSONException
-	 */
-	@JSONExported
-	public JSONObject advanceProcess(
-			JSONObject serializer,
-			ActivityIdentifier ai,
-			SharkFacade mngt,
-			Map<String, String> params) throws JSONException {
-		serializer.put("success", mngt.updateActivity(ai.processInstanceId,ai.workItemId,params,true));
-		return serializer;
-	}
-	
 	/**
 	 * Abort the process which holds the activity
 	 * @param params

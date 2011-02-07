@@ -18,7 +18,8 @@ CMDBuild.Management.ReferenceField = (function() {
 				allowBlank: !attribute.isnotnull,
 				grow: true, // XComboBox autogrow
 				minChars: 1,
-				filtered: false
+				filtered: false,
+				CMAttribute: attribute
 			});
 		
 			store.on('loadexception', function() {
