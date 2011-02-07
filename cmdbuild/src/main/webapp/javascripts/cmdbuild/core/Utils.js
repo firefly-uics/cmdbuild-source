@@ -70,22 +70,9 @@ CMDBuild.Utils = (function() {
 			}
 		},
 		
-		/**
-		 * for each element call the passed fn,
-		 * with scope the element 
-		 **/
-		foreach: function(array, fn, params) {
-			if (array) {
-				for (var i=0, l=array.length; i<l; ++i) {
-					var element = array[i];
-					fn.call(element,params);
-				}
-			}
-		},
-		
 		groupAttributes: function(attributes, allowNoteFiled) {
 			var groups = {};
-			var fieldsWithoutGroup = [];
+			var fieldsWithoutGroup = []; 
 			for ( var i = 0; i < attributes.length; i++) {
 				var attribute = attributes[i];
 				if (!allowNoteFiled && attribute.name == "Notes") {
@@ -102,12 +89,25 @@ CMDBuild.Utils = (function() {
 					}
 				}
 			}
-
+			
 			if (fieldsWithoutGroup.length > 0) {
 				groups[CMDBuild.Translation.management.modcard.other_fields] = fieldsWithoutGroup;
 			}
-
+			 
 			return groups;
+		},
+		
+		/**
+		 * for each element call the passed fn,
+		 * with scope the element 
+		 **/
+		foreach: function(array, fn, params) {
+			if (array) {
+				for (var i=0, l=array.length; i<l; ++i) {
+					var element = array[i];
+					fn.call(element,params);
+				}
+			}
 		}
 	};
 })();

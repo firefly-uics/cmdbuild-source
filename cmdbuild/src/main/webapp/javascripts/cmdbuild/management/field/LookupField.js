@@ -88,6 +88,7 @@ CMDBuild.Management.LookupCombo.build = function(attribute) {
 			grow: true,
 			style: { margin: '0', padding: '0'},
 			labelWidth: 160,
+			CMAttribute: attribute,
 			
 			growSizeFix: function() {
 				for (var i = 0; i < fieldSetItems.length; i++) {
@@ -219,7 +220,8 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		triggerAction: 'all',
 		allowBlank: canBeBlank(attribute),
 		grow: true, // XComboBox autogrow
-		minChars: 1
+		minChars: 1,
+		CMAttribute: attribute
 	});
 	
 	field.filterByParentId = function(parentId) {

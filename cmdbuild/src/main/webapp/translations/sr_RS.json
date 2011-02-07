@@ -602,9 +602,12 @@
       "title": "Подешавања"
    },
    "errors": {
+   	  "busy_wf_widgets": "<em>The visual controls are busy, check the status of the server before trying again.</em>",
       "detail": "Детаљи",
       "error_message": "Грешка",
       "error_moving_row": "Дошло је до грешке приликом обраде реда",
+      "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
+      "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
       "no_driver": "Недостаје одговарајући JDBC управљачки програм (драјвер).<br />Одговарајући драјвер можете пронаћи у CMDBuild инсталационом фолдеру и копирати у <b>lib<\/b> фолдер Tomcat сервера.",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Датотека (file) {0} не постоји у архиви",
@@ -736,7 +739,8 @@
       "server_error_code": "Дошло је до грешке приликом обраде података на серверу: ",
       "show_detail": "Прикажи детаље",
       "template_error": "Грешка у шаблону (темплејту)",
-      "unknown_error": "Дошло је до грешке"
+      "unknown_error": "Дошло је до грешке",
+      "wrong_wf_widgets": "<em>There was an error saving the following visual controls: </em>"
    },
    "info": {"card_not_found": "Картица не одговара тренутним условима филтрирања"},
    "login": {

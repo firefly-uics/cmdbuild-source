@@ -1,23 +1,21 @@
+(function() {
+
+var FILTER = "xa:Filter";
+var CLASS_ID = "xa:ClassId";
+var DEFAULT_SELECTION = "xa:DefaultSelection";
+
 CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttribute, {
+	singleSelect: false,
+    isFirstLoad: true, // flag to identify the first loading to clear the grid filter
+    currentSelection: [],
 
-	singleSelect : false,
-	isFirstLoad : true, // flag to identify the first loading to clear the grid filter
-	currentSelection : [],
-
-	/**
-	 * parameters: int classId [boolean singleSelect] String
-	 * outputName
-	 * 
-	 * @param {}
-	 *            extAttrDef
-	 * @return {}
-	 */
-	initialize : function(extAttrDef) {
+    initialize : function(extAttrDef) {
 		this.outputName = extAttrDef.outputName;
 		this.singleSelect = extAttrDef.SingleSelect ? true : false;
 		this.noSelect = extAttrDef.NoSelect ? true : false;
 		this.currentSelection = [];
 		this.buildCardListGrid(extAttrDef);
+		
 		return {
 			layout : 'fit',
 			items : [ this.cardGrid ]
@@ -25,15 +23,16 @@ CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttri
 	},
 
 	onExtAttrShow : function(extAttr) {
-		var classId = this.getVariable("xa:ClassId");
-		var cqlQuery = this.getVariable("xa:Filter");
+		var classId = this.getVariable(CLASS_ID);
+		var cqlQuery = this.getVariable(FILTER);
+		
 		if (cqlQuery) {
 			_debug('filter with cql: ' + cqlQuery);
 			this.cardGrid.openFilterBtn.disable();
 			this.resolveTemplates( {
 				attributes : [ 'Filter' ],
 				callback : function(out, ctx) {
-					var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
+					var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);					
 					this.initGrid(classId, cardReqParams);
 				},
 				scope : this
@@ -43,7 +42,7 @@ CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttri
 			this.initGrid(classId);
 		}
 	},
-
+	
 	initGrid : function(classId, cardReqParams) {
 		var grid = this.cardGrid;
 		CMDBuild.Management.FieldManager.loadAttributes(
@@ -56,14 +55,14 @@ CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttri
 				});
 	},
 
-	onSave : function(evtParams, fn) {
+	onSave : function() {
 		if (undefined == this.outputName) {
 			fn(this.identifier, true);
 			return;
 		}
 		var out = {};
 		out[this.outputName] = this.getData();
-		this.react(out, fn);
+		this.react(out);
 	},
 
 	getData : function() {
@@ -166,6 +165,72 @@ CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttri
 			},
 			onRowDoubleClick: Ext.emptyFn
 		});
+	},
+	
+	onActivityStartEdit: function() {
+		resolveTemplate.call(this);
+	},
+	
+	/**
+	 * @override
+	 */
+	isBusy: function() {
+		return this.templateResolverIsBusy || CMDBuild.Management.LinkCards.superclass.isBusy.call(this);
 	}
 });
+
 Ext.reg("linkCards", CMDBuild.Management.LinkCards);
+	
+	function resolveTemplate() {
+		this.templateResolver = this.getTemplateResolver();
+		resolve.call(this);
+		
+		function resolve() {
+			this.templateResolverIsBusy = true;
+			this.currentSelection = [];
+			this.templateResolver.resolveTemplates( {
+				attributes: [ 'DefaultSelection' ],
+				callback: onTemplateResolved,
+				scope: this
+			});
+		}
+		
+		function onTemplateResolved(out, ctx) {
+			function callback(request, options, response) {
+			    var resp = Ext.util.JSON.decode(response.responseText);
+			    
+			    if (resp.rows) {
+				    for ( var i = 0, l = resp.rows.length; i < l; i++) {
+					    var r = resp.rows[i];
+					    this.currentSelection.push(r.Id);
+				    }
+			    }
+			    this.templateResolverIsBusy = false;
+		    }
+			
+			// do the request only if there are a default selection
+			var defaultSelection = this.templateResolver.buildCQLQueryParameters(out.DefaultSelection, ctx);
+			if (defaultSelection) {
+				CMDBuild.ServiceProxy.getCardList({
+					params: defaultSelection,
+					callback: callback.createDelegate(this)
+				});
+				
+				addListenerToDeps.call(this);
+			} else {
+				this.templateResolverIsBusy = false;
+			}
+		}
+		
+		function addListenerToDeps() {
+			var ld = this.templateResolver.getLocalDepsAsField();
+			for (var i in ld) {
+				//before the blur if the value is changed
+				if (ld[i]) {
+					ld[i].on('change', resolveTemplate, this, {single: true});
+				}
+			}
+		}		
+	}
+	
+})();

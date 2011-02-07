@@ -129,7 +129,10 @@ Ext.extend(CMDBuild.Management.CardTabController, Ext.util.Observable, {
 		var form = this.view.form.getForm();
 		var view = this.view;
 		var ex = this.cardExtensionsProvider;
-		if (form.isValid()) {
+		
+		var invalidAttributes = this.view.form.getInvalidAttributeAsHTML();
+		
+		if (invalidAttributes == null) {
 			CMDBuild.LoadMask.get().show();
 			form.submit({
 				method : 'POST',
@@ -156,6 +159,9 @@ Ext.extend(CMDBuild.Management.CardTabController, Ext.util.Observable, {
 					CMDBuild.LoadMask.get().hide();
 		      	}
 			});
+		} else {
+			var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
 		}
     }
 });

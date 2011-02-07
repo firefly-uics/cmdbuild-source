@@ -60,12 +60,8 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
         });
 
 		CMDBuild.Management.CardNotesTab.superclass.initComponent.apply(this, arguments);
-
-		this.subscribe('cmdb-init-' + this.eventmastertype, this.initForClass, this);
-		this.subscribe('cmdb-new-' + this.eventtype, this.onNewCard, this);
-		this.subscribe('cmdb-load-' + this.eventtype, this.onLoadCard, this);
 		
-		this.on('show', this.actualLoad,this);
+		this.on('show', this.actualLoad, this);
 		this.on('hide', this.disablePanelIfNotCompleted, this);
 	},
 
@@ -79,9 +75,9 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 		}
 	},
 
-	onLoadCard: function(eventParams) {
-		// this.wfmodule is inserted by ModWorkflow in the object params
-		this.activityStatusCode = this.wfmodule.getFlowStatusCodeById(eventParams.record.data.FlowStatus);
+	loadActivity: function(activity) {
+		// this.wfmodule is inserted by ActivityTabPanel in the object params
+		this.activityStatusCode = this.wfmodule.getFlowStatusCodeById(activity.record.data.FlowStatus);
 		if (this.activityStatusCode != 'closed.completed') {
 			this.disable();
 		} else {
@@ -90,12 +86,12 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 		}
 		this.loaded = false;
 		this.currentCardPrivileges = {
-			write: eventParams.record.data.editableByCurrentUser
+			write: activity.record.data.editableByCurrentUser
 		};
-		this.record = eventParams.record;
+		this.record = activity.record;
 		
-		this.currentCardId = eventParams.record.data.Id;
-		this.currentProcessId = eventParams.record.data.ProcessInstanceId;
+		this.currentCardId = activity.record.data.Id;
+		this.currentProcessId = activity.record.data.ProcessInstanceId;
 		if(this.isVisible()) {
 			this.actualLoad();
 		}
@@ -130,11 +126,7 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 	reloadCard: function(eventParams) {
 		this.enable();
 	},
-
-	onNewCard: function(eventParams) {
-		this.disable();
-	},
-
+	
 	onAbort: function() {
 		this.loaded = false;
 		this.actualLoad();

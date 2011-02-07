@@ -1,5 +1,5 @@
 CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
-	translation : CMDBuild.Translation.management.modworkflow,
+	translation: CMDBuild.Translation.management.modworkflow,
 	extAttrIds: [],	
 	currentState: {state: "open.running"},
 	autoEditMode: false,	//flag to set the form in modify-mode after advance process
@@ -7,13 +7,17 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 	editable: false,
 	hideMode: 'offsets',
 	
-	initComponent : function() {
-		
+	constructor: function() {
 		this.terminateProcessAction = new Ext.Action({
-      		iconCls : 'delete',
-      		text : this.translation.delete_card,
-      		handler : this.onTerminateProcess,
-      		scope : this
+      		iconCls: 'delete',
+      		text: this.translation.delete_card,
+      		handler: function() {
+				this.fireEvent("terminate_process", {
+		                WorkItemId: this.currentWorkItemId,
+		                ProcessInstanceId: this.currentProcessInstanceId
+				});
+			},
+      		scope: this
     	});
 		
     	this.modifyCardAction = new Ext.Action({
@@ -24,17 +28,22 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	});
 
 		this.saveButton = new Ext.Button({
-			text : CMDBuild.Translation.common.buttons.workflow.save,
-			name: 'saveButton',
-			handler : this.saveCard,
-			scope : this
-		});
-		
-		this.advanceButton = new Ext.Button({
-		  text: CMDBuild.Translation.common.buttons.workflow.advance,
-		  handler: this.advanceCard,
-		  scope: this
-		});
+            text: CMDBuild.Translation.common.buttons.workflow.save,
+            name: 'saveButton',
+            handler: function() {
+                this.onSave(isAdvance = false);
+            },
+            scope: this
+        });
+
+        this.advanceButton = new Ext.Button({
+            text: CMDBuild.Translation.common.buttons.workflow.advance,
+            handler: function() {
+        		this.autoEditMode = true;
+                this.onSave(isAdvance = true);
+            },
+            scope: this
+        });
 
 		this.cancelButton = new Ext.Button({
 			text : CMDBuild.Translation.common.buttons.abort,
@@ -43,13 +52,12 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 			scope : this
 		});
 		
-		this.actualForm = new Ext.form.FormPanel({
+		this.actualForm = new CMDBuild.Management.CardForm({
 			plugins: new CMDBuild.FieldSetAddPlugin(),
 			hideMode: 'offsets',
 			autoHeight: true,
 			autoWidth: false,
 			region: 'center',
-			monitorValid: true,
             labelAlign: "right", 
             labelWidth: 200,
 			defaults: { 
@@ -70,8 +78,8 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 				xtype: 'hidden',
 				name: 'WorkItemId'
 			}],
-// FIXME copied from EditablePanel: use that instead
-/* BEGIN */
+			// FIXME copied from EditablePanel: use that instead
+			/* BEGIN */
 			switchFieldsToEdit: function() {
 				var fields = this.items.items;
 		    	for (var i=0;  i<fields.length; ++i) {
@@ -81,7 +89,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		    		}
 		    	}
 		    }
-/* END */
+			/* END */
 		});
 		
 		this.displayPanel = new Ext.form.FormPanel({
@@ -128,6 +136,12 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		
 		this.processStepName = new Ext.form.DisplayField();
 		this.processStepCode = new Ext.form.DisplayField();
+		CMDBuild.Management.ActivityTab.superclass.constructor.apply(this, arguments);
+	},
+	
+	initComponent : function() {
+		this.formFields = [];
+		this.formDisplayFields = [];
 		
 		Ext.apply(this, {
 			frame: false,
@@ -150,71 +164,43 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 				this.cancelButton
 			]
         });
-		this.formFields = [];
-		this.formDisplayFields = [];
-		
-		CMDBuild.Management.ActivityTab.superclass.initComponent.apply(this, arguments);
 
-		this.subscribe('cmdb-init-processclass', this.initForClass, this);
-		this.subscribe('cmdb-load-activity', this.onLoadActivity, this);
-		this.subscribe('cmdb-new-process', this.newCard, this);
-		this.subscribe('cmdb-enablemodify-activity', this.onEnableModifyCard, this);
-		this.subscribe('cmdb-select-stateprocess', this.onSelectStateProcess, this);
+		CMDBuild.Management.ActivityTab.superclass.initComponent.apply(this, arguments);
 		this.subscribe('cmdb-disable-modify', this.disableModify(), this);
-		this.subscribe('cmdb-empty-activity', this.onEmptyActivity, this),
-		
-		this.actualForm.on('clientvalidation', this.onClientValidation, this);
-		
-		this.on('activate', function(p){
-			Ext.ComponentMgr.get('activityopts_tab').disable();
-		}, this);
-		
 		this.actualForm.on('show', this.syncSizeCombos, this);
 	},
-
-	onClientValidation: function(panel, valid) {
-		var validActivity = valid && this.checkExtAttrValidation();
-		this.advanceButton.setDisabled(!validActivity);
-	},
 	
-	checkExtAttrValidation: function() {
-		for (var i = 0, l=this.extAttrIds.length; i<l; i++) {
-			var extAttr = Ext.getCmp(this.extAttrIds[i]);
-			if (extAttr && !extAttr.isValid()) {
-				return false;
-			}
-		};
-		return true;
-	},
+	getForm: function() {
+		return this.actualForm.getForm();
+	},	
 	
 	initForClass: function(eventParams) {
 		if (!eventParams) {
 			return;
 		}
+		
 		this.currentClassId = eventParams.classId;
 		this.currentCardId = -1;
 		this.currentProcessInstanceId = '';
 
-		this.customButtons.hide();
-		
+		this.customButtons.hide();		
         this.removeExtendedAttributeButtons();
 		this.disableAll();
-		
 		this.doLayout();
-	},	
+	},
 	
-	onLoadActivity: function(eventParams) {
-		var callback = this.loadActivity.createDelegate(this, [eventParams], true);		
-		var eventIdClass = eventParams.record.data.IdClass;	
+	loadActivity: function(eventParams) {		
+		var callback = this._loadActivity.createDelegate(this, [eventParams], true);
+		var eventIdClass = eventParams.record.data.IdClass;
 		if (this.idClassOfCurrentRecord != eventIdClass) {
 			this.idClassOfCurrentRecord = eventIdClass;
 			CMDBuild.Management.FieldManager.loadAttributes(this.idClassOfCurrentRecord, callback, true);
 		} else {
-			this.loadActivity(undefined, eventParams);
+			this._loadActivity(undefined, eventParams);
 		}
 	},
 	
-	loadActivity: function(attributeList, eventParams) {
+	_loadActivity: function(attributeList, eventParams) {
     	this.displayPanel.show();
     	this.actualForm.hide();
 
@@ -230,16 +216,14 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 			this.onSelectStateProcess({state:activityStatus});
 		}		
 
-		if( activityStatus == 'open.running' ) {
+		if (activityStatus == 'open.running' ) {
 			this.loadOpenActivity(eventParams);
 		} else {
 			this.loadClosedActivity(eventParams);
 		}
 		
-		this.updateTabBarInfo(eventParams);
-		this.autoEditMode = false;
+		this.updateTabBarInfo(eventParams);		
 		this.hideTerminateProcessActionIfNotStoppable();
-		this.publish('cmdb-wf-layouthack');
 		this.doLayout();
 	},
 	
@@ -256,7 +240,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		this.formFields = [];
 		this.formDisplayFields = [];
 		
-		for(var i in this.attributeList) {
+		for (var i in this.attributeList) {
 			var attribute = this.attributeList[i];
 			var index = eventParams.record.data[attribute.name + "_index"];
 			if(index != undefined) {
@@ -274,7 +258,8 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 				}
 			}
 		}
-		for(var i=0;i<this.formFields.length;i++) {
+		
+		for (var i=0;i<this.formFields.length;i++) {
 			if(this.formFields[i]) {
                 this.actualForm.add(this.formFields[i]);
                 this.displayPanel.add(this.formDisplayFields[i]);
@@ -282,13 +267,12 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		}
 		
 		this.displayPanel.getForm().loadRecord(eventParams.record);
-		this.manageEditability(eventParams);		
 	},	
 	
 	manageEditability: function(eventParams) {
 		if (eventParams.record.data.editableByCurrentUser) {			
 			this.editable = true;
-            this.registerExtAttributes( eventParams.record.data.CmdbuildExtendedAttributes );
+            this.buildExtAttributeButtons( eventParams.record.data.CmdbuildExtendedAttributes );
             if (eventParams.edit || this.autoEditMode) {            	
                 this.enableModify();
             } else {
@@ -297,15 +281,15 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		} else {
 			this.editable = false;
 			this.disableAll();
-		}		
+		}
+		this.autoEditMode = false;
 	},
 	
 	loadClosedActivity: function(eventParams) {
 		this.editable = false;
-		if(this.isOldModeClose == false) {
+		if (this.isOldModeClose == false) {
 			this.loadOldMode();
-		}
-		//load the fields in eventParams
+		}		
 		this.currentRecord = eventParams.record;
 		this.currentCardId = eventParams.record.data.Id;
         this.currentProcessInstanceId = '';
@@ -318,10 +302,8 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 	},
 
 	loadOldMode: function() {
-		// Remove ext attrs
 		this.customButtons.hide();
-        this.removeExtendedAttributeButtons();
-        this.findParentByType('activitytabpanel').getComponent('activityopts_tab').disable();
+        this.removeExtendedAttributeButtons();        
 		this.deletePreviousFields();
 		this.createNewFieldsAndAddToActualForm();
 		this.isOldModeClose = true;
@@ -346,25 +328,6 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
                 }
             }
         }
-	},
-
-	newCard: function(eventParams) {
-		this.currentCardId = -1;
-		Ext.Ajax.request({
-			url: 'services/json/management/modworkflow/getstartactivitytemplate',
-			method : 'POST',
-			params : {
-				idClass : eventParams.classId,
-				id : -1
-			},
-			scope : this,
-			success : function(response) {
-				this.publish('cmdb-load-activity',{edit:true,isnew:true,record: Ext.util.JSON.decode(response.responseText)});
-			},
-			failure : function(response, options) {
-				CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.generic_error, true);
-			}
-		});
 	},
 
 	deletePreviousFields: function() {
@@ -406,22 +369,15 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		if (this.currentCardId != -1) {
             this.modifyCardAction.enable();
 		}
+		this.autoEditMode = false;
     	this.actualForm.hide();
     	this.displayPanel.show();
     },
 
     updateTabBarInfo : function(eventParams) {
-    	var process = eventParams.record.data;    	
-		var tbar = this.getTopToolbar();
-		var name = "";
-		var code = "";
-		if (this.flowStatusIsOpen()) {
-			if(process.activityPerformerName)           
-	            name = eventParams.record.data.activityPerformerName;
-	        if(process.Code)
-	        	code = eventParams.record.data.Code;
-		}
-		this.processStepName.setValue(name);
+    	var name = eventParams.record.data.activityPerformerName || "";
+	    var code = eventParams.record.data.Code || "";
+	    this.processStepName.setValue(name);
 		this.processStepCode.setValue(code);
 	},
 	
@@ -437,226 +393,77 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 	
     enableModify: function() {
 		this.displayPanel.hide();
-		this.actualForm.show();
-    	this.enableAll();
+		this.actualForm.show();    	
     	this.disableActions();
     	this.actualForm.getForm().loadRecord(this.currentRecord);
     	this.actualForm.switchFieldsToEdit();
+    	this.enableAll();
     },
     
     hideTerminateProcessActionIfNotStoppable: function() {
-    	if (this.isStoppable)
+    	if (this.isStoppable) {
     		this.terminateProcessAction.show();
-    	else 
+    	} else { 
     		this.terminateProcessAction.hide();
+    	}
     },
     
-    onTerminateProcess: function() {
-    	var title = this.translation.abort_card;
-		var msg = this.translation.abort_card_confirm;
-		var url = 'services/json/management/modworkflow/abortprocess';
-		var params = {
-                WorkItemId: this.currentWorkItemId,
-                ProcessInstanceId: this.currentProcessInstanceId
-		};
-		this.sendRequest(title, msg, url, params);
-    },
-
-    sendRequest: function(title, msg, url, params) {
-		var tthis = this;		
-		Ext.Msg.confirm(
-            title,
-            msg,
-            function(btn) {
-                if (btn != 'yes')
-                    return;
-                CMDBuild.LoadMask.get().show();
-        		Ext.Ajax.request({
-        			url : url,
-        			params : params,
-        			method : 'POST',
-        			scope : this,
-        			success : function(response) {
-        				CMDBuild.LoadMask.get().hide();
-        				var ret = Ext.util.JSON.decode(response.responseText);
-        				if(ret.success){
-        					tthis.publish('cmdb-reload-activity');
-                            tthis.actualForm.getForm().reset();
-                            tthis.displayPanel.getForm().reset();
-        				}
-        			},
-        			failure : function(response, options) {
-        				CMDBuild.LoadMask.get().hide();
-        				CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.generic_error, true);
-        			}
-          	 	});
-            }
-	   );
-	},
-
-	advanceCard: function() {		
-        this.disableButtons();
-        if(this.currentProcessInstanceId == 'tostart') {
-			this.startSaveAdvance(true);
-		} else {
-            this.saveAdvanceCard(true);
-		}
-    },
-    
-    saveCard: function() {    	
-    	this.disableButtons();
-    	if(this.currentProcessInstanceId == 'tostart') {
-            this.startSaveAdvance(false);
-        } else {
-            this.saveAdvanceCard(false);
-        }
-    },
-       
-    //called when the process is new and needs to be created first
-    startSaveAdvance: function(isAdvance) {
-    	//start the process
-    	this.currentCardId = -1;
-    	CMDBuild.LoadMask.get().show();
-        Ext.Ajax.request({
-            url : 'services/json/management/modworkflow/startprocess',
-            method : 'POST',
-            params : {
-                idClass : this.idClassOfCurrentRecord,
-                id : -1
-            },
-            scope : this,
-            success : function(response) {
-            	CMDBuild.LoadMask.get().hide();
-            	var record = Ext.util.JSON.decode(response.responseText);
-            	this.currentCardId = record.data.Id;
-                this.currentProcessInstanceId = record.data.ProcessInstanceId;
-                this.currentWorkItemId = record.data.WorkItemId;
-                
-                var theForm = this.actualForm.getForm();
-                theForm.findField("Id").setValue(this.currentCardId);
-                theForm.findField("ProcessInstanceId").setValue(this.currentProcessInstanceId);
-                theForm.findField("WorkItemId").setValue(this.currentWorkItemId);
-                this.saveAdvanceCard(isAdvance);
-            },
-            failure : function(response, options) {
-            	CMDBuild.LoadMask.get().hide();
-            	CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.generic_error, true);
-            }
-        });
-    },
-
-	// save variables in activity or save them and advance the process to the
-	// next activity
-	saveAdvanceCard : function(isAdvance) {
-		var theUrl = isAdvance
-				? 'services/json/management/modworkflow/advanceprocess'
-				: 'services/json/management/modworkflow/updateactivity';
-		var form = this.actualForm.getForm();
-			// build a boolean array with extattr ids
-			var waitMap = this.buildExtAttrsWaitMap();
-			// call this function with the id of an extattr
-			var onExtAttrsSaved = function(id, success) {
-			if (id) { // called withoud an id if there are no extended attributes
-				this.updateWaitMap(waitMap, id, success);
-			}
-			if (this.extAttrDone(waitMap)) {
-				if (this.extAttrSucceded(waitMap)) {
-					CMDBuild.LoadMask.get().show();
-					form.submit( {
-						method : 'POST',
-						url : theUrl,
-						timeout: 90,
-						scope : this,
-						clientValidation: isAdvance, //to force the save request
-						success : function() {
-							CMDBuild.LoadMask.get().hide();
-							this.autoEditMode = true; //used by loadActivity, that sets it back to false
-							this.actualForm.getForm().reset();
-							this.publish('cmdb-reload-activity', {
-								"Id" : this.currentCardId,
-								"notChangeStatusAfterSave": true
-							});
-						},
-						failure : function(response, options) {
-							CMDBuild.LoadMask.get().hide();
-							this.enableButtons();
-						}
-					});
-				} else {
-					this.enableButtons();
-					CMDBuild.Msg.error(null, CMDBuild.Translation.errors.reasons.WF_CANNOT_COMPLETE_WORKITEM, true);
-				}
-			}
-		};
-		this.saveAllExtAttrs(onExtAttrsSaved.createDelegate(this), isAdvance);
-	},
-
-	// build a boolean array with extattr ids
-	// values: true = waiting, false = failed, undefined = succeded
-	buildExtAttrsWaitMap: function() {
-		var waitMap = {};
-		Ext.each(this.extAttrIds, function(id) {
-			waitMap[id] = true;
+    onSave: function(isAdvance) {
+		this.fireEvent("save", {
+			isAdvance: isAdvance,
+			idClass: this.idClassOfCurrentRecord,
+			toStart: this.currentProcessInstanceId == 'tostart',
+			ProcessInstanceId: this.currentProcessInstanceId,
+    		WorkItemId: this.currentWorkItemId
 		});
-		return waitMap;
-	},
+    },
+    
+    processStarted: function(params) {
+    	this.currentCardId = params.process.Id;
+        this.currentProcessInstanceId = params.process.ProcessInstanceId;
+        this.currentWorkItemId = params.process.WorkItemId;
+        
+        var form = this.actualForm.getForm();
+        form.findField("Id").setValue(this.currentCardId);
+        form.findField("ProcessInstanceId").setValue(this.currentProcessInstanceId);
+        form.findField("WorkItemId").setValue(this.currentWorkItemId);        
+    },
 
-	updateWaitMap: function(waitMap, id, success) {
-		if (success) {
-			CMDBuild.log.info("Extended attribute " + id + " succeded");
-			waitMap[id] = undefined;
-		} else {
-			CMDBuild.log.info("Extended attribute " + id + " failed");
-			waitMap[id] = false;
-		}
-	},
-
-	// returns if every extattr has been processed
-	extAttrDone: function(waitMap) {
-		for (var i in waitMap) {
-			if (waitMap[i]) {
-				CMDBuild.log.debug("** Still waiting for some extended attributes");
-				return false;
+    getInvalidAttributeAsHTML: function() {
+    	return this.actualForm.getInvalidAttributeAsHTML();
+    },
+    
+	// save variables in activity or save them and advance the process to the next activity
+    updateActivity : function(isAdvance) {
+		CMDBuild.LoadMask.get().show();
+		this.actualForm.getForm().submit({
+			method : 'POST',
+			url : "services/json/management/modworkflow/updateactivity",
+			timeout: 90,
+			params: {
+				advance: isAdvance
+			},
+			scope : this,
+			clientValidation: isAdvance, //to force the save request
+			success : function() {
+				CMDBuild.LoadMask.get().hide();
+				this.actualForm.getForm().reset();
+				
+				this.publish('cmdb-reload-activity', {
+					"Id" : this.currentCardId,
+					"notChangeStatusAfterSave": true
+				});
+			},
+			failure : function(response, options) {
+				CMDBuild.LoadMask.get().hide();
+				this.enableButtons();
 			}
-		}
-		CMDBuild.log.debug("** All extended attributes saved");
-		return true;
-	},
-
-	extAttrSucceded: function(waitMap) {
-		for (var i in waitMap) {
-			if (waitMap[i] === false) {
-				CMDBuild.log.debug("** Some extended attributes failed");
-				return false;
-			}
-		}
-		CMDBuild.log.debug("** All extended attributes succeded");
-		return true;
-	},
-
-	saveAllExtAttrs : function(fn, isAdvance) {
-		// if no extattr is defined, simply call the fn function
-		if (this.extAttrIds.length == 0) {
-			fn();
-		} else {
-			Ext.each(this.extAttrIds, function(id) {
-				this.saveExtAttr(id, this.actualForm, fn, isAdvance);
-			}, this);
-		}
-	},
+		});
+    },
 	
-	saveExtAttr : function(identifier, frm, fn, isAdvance) {
-		var extAttr = Ext.getCmp(identifier);
-		if (extAttr) {
-			extAttr.setup(this.currentProcessInstanceId, this.currentWorkItemId);
-			extAttr.save(frm, fn, isAdvance);
-		}
-	},
-
-    registerExtAttributes: function(extAttrDefs) {
+    buildExtAttributeButtons: function(extAttrDefs) {
     	this.customButtons.hide();
-    	this.formContainer.doLayout();
-    	Ext.getCmp('activityopts_tab').disable();
+    	this.formContainer.doLayout();    	
     	this.removeExtendedAttributeButtons();
     	
     	if(!extAttrDefs || extAttrDefs.length == 0){ return; }
@@ -668,40 +475,44 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	       disabled: true,
     	       handler: function() {
     		   		var extAttr = Ext.getCmp(item.identifier);
-    		   		extAttr.fireEvent('activate-extattr'); //BaseExtendedAttribute activates the options tab
+    		   		extAttr.onActivation(); //BaseExtendedAttribute activates the options tab
     	       }
     	   }));
     	   this.extAttrIds.push(item.identifier);
     	}, this);
-        
-        this.customButtons.show();
-        this.customButtons.doLayout();
-        this.manageExtAttrButtonsWidth(this.customButtons);
+
+        manageExtAttrButtonsWidth.call(this);
         this.doLayout();
+        
+        function manageExtAttrButtonsWidth() {
+            this.customButtons.show();
+            this.customButtons.doLayout();
+            
+        	var maxW = 0;
+        	this.customButtons.items.each(function(item){
+        		var w = item.getEl().getComputedWidth() + item.getEl().getFrameWidth('lr');
+        		if(w > maxW) {
+        			maxW = w;
+        		}
+        	});
+        	
+        	this.customButtons.items.each(function(item){ 
+        	   item.getEl().setWidth(maxW);
+            });
+        	//to fix the width of the panel, auto width does not work with IE7
+        	this.customButtons.setWidth(maxW);
+        }
     },
 
     removeExtendedAttributeButtons: function() { 
     	this.customButtons.removeAll(true);
     	this.extAttrIds = [];
     },
-
-    manageExtAttrButtonsWidth: function(btns) {
-    	var maxW = 0;
-    	btns.items.each(function(item){
-    		var w = item.getEl().getComputedWidth() + item.getEl().getFrameWidth('lr');
-    	   if(w > maxW) {
-    	   	   maxW = w;
-    	   }
-    	});
-    	btns.items.each(function(item){ 
-    	   item.getEl().setWidth(maxW);
-        });
-    	this.customButtons.setWidth(maxW); //to fix the width of the panel, auto width does not work with IE7
-    },
     
     onEnableModifyCard: function() {
-    	if(this.editable)
+    	if (this.editable) {
            this.enableModify();
+    	}
     },
     
     onSelectStateProcess: function(stateProcess) {
@@ -710,12 +521,11 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	this.enableActionsByCurrentState();
     },
     
-    onEmptyActivity: function() {
-    	this.deletePreviousFields();
-    	this.disableActions();
+    onEmptyActivityGrid: function() {
+    	this.deletePreviousFields();    	
     	this.clearTabBarInfo();
     	this.removeExtendedAttributeButtons();
-    	this.autoEditMode = false;
+    	this.disableAll();
     },
     
     onCancelButton: function() {    	
@@ -740,7 +550,8 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	this.disableActions();
         this.disableButtons();
         this.actualForm.setFieldsDisabled();
-        this.setOptionsDisabled(true);
+        this.setOptionsDisabled(true);        
+        this.fireEvent("stop_edit");
     },
     
     enableAll: function() {
@@ -748,6 +559,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	this.enableButtons();
         this.actualForm.setFieldsEnabled();
         this.setOptionsDisabled(false);
+        this.fireEvent("start_edit");
     },
     
     enableActions: function() {
@@ -763,16 +575,12 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     },
     
     enableButtons: function() {
-    	this.actualForm.monitorValid = true;
-    	this.actualForm.on('clientvalidation', this.onClientValidation, this);
         this.saveButton.enable();
         this.advanceButton.enable();
         this.cancelButton.enable();        
     },
     
     disableButtons: function() {
-    	this.actualForm.monitorValid = false;
-    	this.actualForm.un('clientvalidation', this.onClientValidation, this);
     	this.saveButton.disable();
         this.advanceButton.disable();
         this.cancelButton.disable();

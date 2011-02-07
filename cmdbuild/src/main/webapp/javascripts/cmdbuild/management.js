@@ -88,6 +88,9 @@ Ext.onReady(function() {
 	});
 	
 	function displayViewport() {
+		var wfView = new CMDBuild.Management.ModWorkflow();
+		var wfController = new CMDBuild.Management.WFController(wfView);
+		
 		var viewport = new CMDBuild.MainViewport({
 			id: "management_main_viewport",
 			trees: (function() {
@@ -108,7 +111,7 @@ Ext.onReady(function() {
 				    }
 			    }),
 				new CMDBuild.Management.ModCard(),
-				new CMDBuild.Management.ModWorkflow(),
+				wfView,
 				new CMDBuild.Management.ModReport(),
 				new CMDBuild.Management.ModBulkCardUpdate(),
 				new CMDBuild.Management.ModChangePassword(),

@@ -602,9 +602,12 @@
       "title": "Configuración"
    },
    "errors": {
+   	  "busy_wf_widgets": "<em>I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.</em>",
       "detail": "Detalles",
       "error_message": "Error",
       "error_moving_row": "Se verificó un error en el traslado de la fila",
+      "invalid_attributes": "<em>I seguenti campi non sono stati compilati correttamente:</em>",
+      "invalid_extended_attributes": "<em>I seguenti controlli visuali non sono stati compilati correttamente:</em>",
       "no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Archivo {0} no encontrado en el repositorio",
@@ -736,7 +739,8 @@
       "server_error_code": "Se verificó un error en el envío de los datos al servidor:",
       "show_detail": "Mostrar detalles",
       "template_error": "Error en una plantilla",
-      "unknown_error": "Se verificó un error"
+      "unknown_error": "Se verificó un error",
+      "wrong_wf_widgets": "</em>C'è stato un errore nel salvataggio dei seguenti controlli visuali: </em>"
    },
    "info": {"card_not_found": "La tarjeta no respeta más el filtro establecido"},
    "login": {

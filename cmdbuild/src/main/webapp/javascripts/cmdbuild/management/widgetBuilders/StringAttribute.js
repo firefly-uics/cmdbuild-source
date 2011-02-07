@@ -71,7 +71,8 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 		});
 	};
 	if (this.customVType) {
-		field.vtype = this.customVType
+		field.vtype = this.customVType;
 	};
+	field.CMAttribute = attribute;
 	return field;
 };

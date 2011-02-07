@@ -24,6 +24,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/EditAttachmentWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/AddCardWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardTabPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardWindow.js"></script>
@@ -85,6 +86,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModExportCSV.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/importcsv/ModImportCSV.js"></script>	
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ActivityTabPanel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ActivityTabPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/BaseExtendedAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/CreateModifyCard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/LinkCards.js"></script>
@@ -96,6 +98,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/OpenNote.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/OpenAttachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/CreateReport.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/WFController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ModWorkflow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/WorkflowCardListGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/tabs/ActivityOptionTab.js"></script>

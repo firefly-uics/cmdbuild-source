@@ -602,9 +602,12 @@
       "title": "Configure"
    },
    "errors": {
+   	  "busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
       "detail": "Details",
       "error_message": "Error",
       "error_moving_row": "An error occourred while moving the row",
+      "invalid_attributes": "The following fields have not been filled correctly:",
+      "invalid_extended_attributes": "The following visual controls have not been filled correctly:",
       "no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "File {0} not found in the repository",
@@ -736,7 +739,8 @@
       "server_error_code": "An error has occurred while sending data to the server: ",
       "show_detail": "Show details",
       "template_error": "Template error",
-      "unknown_error": "An error has occurred"
+      "unknown_error": "An error has occurred",
+      "wrong_wf_widgets": "There was an error saving the following visual controls: "
    },
    "info": {"card_not_found": "The card doesn't match the current filter"},
    "login": {

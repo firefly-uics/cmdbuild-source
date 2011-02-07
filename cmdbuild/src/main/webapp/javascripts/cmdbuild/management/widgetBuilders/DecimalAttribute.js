@@ -38,6 +38,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = functio
 		width: this.MAXWIDTH,
 		scale: attribute.scale,
 		precision: attribute.precision,
-		vtype: this.customVType
+		vtype: this.customVType,
+		CMAttribute: attribute
 	});
 };

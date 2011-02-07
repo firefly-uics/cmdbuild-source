@@ -178,7 +178,9 @@ Ext.reg("createModifyCard", CMDBuild.Management.CreateModifyCard);
 function onControllerSaveCard() {
 	CMDBuild.log.info('custom saveCard on CreateCard extattr called!');
 	var form = this.cardTab.getForm();
-    if (form.isValid()) {
+	var invalidAttributes = this.cardTab.getInvalidAttributeAsHTML();
+	
+	if (invalidAttributes == null) {
         form.submit({
             method : 'POST',
             url : 'services/json/management/modcard/updatecard',
@@ -203,6 +205,9 @@ function onControllerSaveCard() {
             	this.backToActivityTab();
             }
         });
+    } else {
+    	var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+		CMDBuild.Msg.error(null, msg + invalidAttributes, false);
     }
 }
 
