@@ -2,108 +2,117 @@ package org.cmdbuild.portlet.layout.widget;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.cmdbuild.portlet.layout.FormSerializer;
 import org.cmdbuild.portlet.operation.ReportOperation;
 import org.cmdbuild.portlet.operation.RequestParams;
 import org.cmdbuild.portlet.operation.ServletOperation;
 import org.cmdbuild.portlet.ws.SOAPClient;
-import org.cmdbuild.services.soap.WorkflowWidgetDefinition;
-import org.cmdbuild.services.soap.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.services.soap.AttributeSchema;
 import org.cmdbuild.services.soap.ReportParams;
+import org.cmdbuild.services.soap.WorkflowWidgetDefinition;
+import org.cmdbuild.services.soap.WorkflowWidgetDefinitionParameter;
 
 public class CreateReportWidget extends WorkflowWidget {
 
-    private enum Params {
+	private enum Params {
 
-        ReportType {
+		ReportType {
 
-            public void handleParam(CreateReportWidget w, String value) {
-                w.reportType = value;
-            }
-        },
-        ReportCode {
+			@Override
+			public void handleParam(final CreateReportWidget w, final String value) {
+				w.reportType = value;
+			}
+		},
+		ReportCode {
 
-            public void handleParam(CreateReportWidget w, String value) {
-                w.reportCode = value;
-            }
-        },
-        Id {
+			@Override
+			public void handleParam(final CreateReportWidget w, final String value) {
+				w.reportCode = value;
+			}
+		},
+		Id {
 
-            public void handleParam(CreateReportWidget w, String value) {
-                w.id = Integer.valueOf(value);
-            }
-        },
-        StoreInProcess {
+			@Override
+			public void handleParam(final CreateReportWidget w, final String value) {
+				w.id = Integer.valueOf(value);
+			}
+		},
+		StoreInProcess {
 
-            public void handleParam(CreateReportWidget w, String value) {
-                w.storeInProcess = Boolean.valueOf(value);
-            }
-        },
-        forceextension {
+			@Override
+			public void handleParam(final CreateReportWidget w, final String value) {
+				w.storeInProcess = Boolean.valueOf(value);
+			}
+		},
+		forceextension {
 
-            public void handleParam(CreateReportWidget w, String value) {
-                w.extension = value;
-            }
-        },;
+			@Override
+			public void handleParam(final CreateReportWidget w, final String value) {
+				w.extension = value;
+			}
+		},
+		;
 
-        abstract public void handleParam(CreateReportWidget w, String value);
-    }
-    private String reportType;
-    private boolean storeInProcess;
-    private String reportCode;
-    private String extension;
-    private int id;
-    private List<ReportParams> reportParameters = new ArrayList<ReportParams>();
+		abstract public void handleParam(CreateReportWidget w, String value);
+	}
 
-    public CreateReportWidget(WorkflowWidgetDefinition definition) {
-        super(definition);
-        for (WorkflowWidgetDefinitionParameter parameter : definition.getParameters()) {
-            try {
-                Params currentParam = Params.valueOf(parameter.getKey());
-                currentParam.handleParam(this, parameter.getValue());
-            } catch (Exception e) {
-                reportParameters.add(convertToReportParams(parameter));
-            }
-        }
-    }
+	private String reportType;
+	private boolean storeInProcess;
+	private String reportCode;
+	private String extension;
+	private int id;
+	private final List<ReportParams> reportParameters = new ArrayList<ReportParams>();
 
-    private ReportParams convertToReportParams(WorkflowWidgetDefinitionParameter parameter) {
-        ReportParams param = new ReportParams();
-        param.setKey(parameter.getKey());
-        param.setValue(parameter.getValue());
-        return param;
-    }
+	public CreateReportWidget(final WorkflowWidgetDefinition definition) {
+		super(definition);
+		for (final WorkflowWidgetDefinitionParameter parameter : definition.getParameters()) {
+			try {
+				final Params currentParam = Params.valueOf(parameter.getKey());
+				currentParam.handleParam(this, parameter.getValue());
+			} catch (final Exception e) {
+				reportParameters.add(convertToReportParams(parameter));
+			}
+		}
+	}
 
-    @Override
-    public String generateHtml(HttpServletRequest request) {
-        ServletOperation operations = new ServletOperation();
-        operations.emptySession(request);
-        SOAPClient client = operations.getClient(request.getSession());
-        ReportOperation operation = new ReportOperation(client);
-        List<AttributeSchema> parameters = operation.getReportParameters(id, extension);
-        StringBuffer layout = new StringBuffer();
-        layout.append("<div id=\"CMDBuildReportFormPanel\" class=\"CMDBuildProcessContainer\" >");
-        layout.append("<form enctype=\"multipart/form-data\" class=\"CMDBuildReportWidgetForm\">");
-        FormSerializer formLayout = new FormSerializer(request.getContextPath());
-        layout.append(formLayout.generateReportLayout(request, parameters, reportParameters).toString());
-        layout.append(generateHiddenFields());
-        appendHiddenIdentifier(layout);
-        layout.append("</form>");
-        layout.append("</div>");
-        return layout.toString();
-    }
+	private ReportParams convertToReportParams(final WorkflowWidgetDefinitionParameter parameter) {
+		final ReportParams param = new ReportParams();
+		param.setKey(parameter.getKey());
+		param.setValue(parameter.getValue());
+		return param;
+	}
 
-    private String generateHiddenFields() {
-        StringBuilder layout = new StringBuilder();
-        layout.append(String.format("<input type=\"hidden\" name=\"id\" value=\"%s\" />", id));
-        layout.append(String.format("<input type=\"hidden\" name=\"extension\" value=\"%s\" />", extension));
-        layout.append(String.format("<input type=\"hidden\" name=\"reportname\" value=\"%s\" />", reportCode));
-        return layout.toString();
-    }
+	@Override
+	public String generateHtml(final HttpServletRequest request) {
+		final ServletOperation operations = new ServletOperation();
+		operations.emptySession(request);
+		final SOAPClient client = operations.getClient(request.getSession());
+		final ReportOperation operation = new ReportOperation(client);
+		final List<AttributeSchema> parameters = operation.getReportParameters(id, extension);
+		final StringBuffer layout = new StringBuffer();
+		layout.append("<div id=\"CMDBuildReportFormPanel\" class=\"CMDBuildProcessContainer\" >");
+		layout.append("<form enctype=\"multipart/form-data\" class=\"CMDBuildReportWidgetForm\">");
+		final FormSerializer formLayout = new FormSerializer(request.getContextPath());
+		layout.append(formLayout.generateReportLayout(request, parameters, reportParameters).toString());
+		layout.append(generateHiddenFields());
+		appendHiddenIdentifier(layout);
+		layout.append("</form>");
+		layout.append("</div>");
+		return layout.toString();
+	}
 
-    @Override
-    public void manageWidgetSubmission(HttpServletRequest request, RequestParams params) {
-    }
+	private String generateHiddenFields() {
+		final StringBuilder layout = new StringBuilder();
+		layout.append(String.format("<input type=\"hidden\" name=\"id\" value=\"%s\" />", id));
+		layout.append(String.format("<input type=\"hidden\" name=\"extension\" value=\"%s\" />", extension));
+		layout.append(String.format("<input type=\"hidden\" name=\"reportname\" value=\"%s\" />", reportCode));
+		return layout.toString();
+	}
+
+	@Override
+	public void manageWidgetSubmission(final HttpServletRequest request, final RequestParams params) {
+	}
 }

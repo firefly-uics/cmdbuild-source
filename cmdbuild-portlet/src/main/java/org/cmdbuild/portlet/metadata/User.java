@@ -2,43 +2,41 @@ package org.cmdbuild.portlet.metadata;
 
 public class User {
 
-    private int id;
-    private String name;
-    private String email;
-    private String group;
+	private int id;
+	private String name;
+	private String login;
+	private String group;
 
-    public User(){}
+	public int getId() {
+		return id;
+	}
 
-    public int getId(){
-        return id;
-    }
+	public void setId(final int id) {
+		this.id = id;
+	}
 
-    public void setId(int id){
-        this.id = id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName(){
-        return name;
-    }
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-    public void setName(String name){
-        this.name = name;
-    }
+	public String getLogin() {
+		return login;
+	}
 
-    public String getEmail(){
-        return email;
-    }
+	public void setLogin(final String login) {
+		this.login = login;
+	}
 
-    public void setEmail(String email){
-        this.email = email;
-    }
+	public String getGroup() {
+		return group;
+	}
 
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
+	public void setGroup(final String group) {
+		this.group = group;
+	}
 
 }

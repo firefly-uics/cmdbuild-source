@@ -1,11 +1,17 @@
 <%@page import="org.cmdbuild.portlet.utils.FieldUtils"%>
 <%@page import="org.cmdbuild.portlet.operation.WSOperation"%>
 <%@page import="org.cmdbuild.portlet.ws.*"%>
+<%@page import="org.cmdbuild.portlet.operation.ServletOperation"%>
+<%@page import="org.cmdbuild.portlet.metadata.User"%>
+<%@page import="org.apache.geronimo.mail.util.SessionUtil"%>
+<%@page import="org.cmdbuild.servlet.util.SessionUtils"%>
+<%@page import="org.cmdbuild.servlet.util.SessionAttributes"%>
 <%
-    SOAPClient client = new SOAPClient(url, user, password);
-    WSOperation operation = new WSOperation(client);
-    User cmdbuildUser = operation.getUser(userEmail);
-    request.getSession().setAttribute("cmdbuildUser", cmdbuildUser);
+	ServletOperation servletOperation = new ServletOperation();
+	SOAPClient client = servletOperation.getClient(session);
+	WSOperation operation = new WSOperation(client);
+	User cmdbuildUser = operation.getUser(userEmail);
+	request.getSession().setAttribute("cmdbuildUser", cmdbuildUser);
 %>
 <script type="text/javascript">
 
@@ -15,7 +21,7 @@
         FieldUtils fieldUtils = new FieldUtils();
         String customCSS = fieldUtils.getCustomCSS(contextPath);
     %>
-        jQuery("body").parent().append('<%= customCSS%>');
+        jQuery("body").parent().append('<%=customCSS%>');
     });
 
     var CMDBuildCallbacks = {
@@ -24,24 +30,20 @@
 
     var CMDBuild = {
         Runtime: {
-            ConfigurationUser: "<%= user %>",
-            ConfigurationPassword: "<%= password %>",
+            ConfigurationUser: "<%=user%>",
+            ConfigurationPassword: "<%=password%>",
             <%--ConfigurationGroup: "<%= group %>",--%>
-            ConfigurationURL: "<%= url %>",
-            ConfigurationSupportEmail: "<%= supportEmail %>",
-            ConfigurationUserTable: "<%= cmdbusertable %>",
-            ConfigurationShowStartProcesse: "<%= displayStartProcess %>",
-            ConfigurationShowOpenedProcesses: "<%= displayOpenedProcesses %>",
-            CMDBuildUserId: "<%= cmdbuildUser.getId()%>",
-            CMDBuildUserName: "<%= cmdbuildUser.getName()%>",
-            CMDBuildUserEmail: "<%= cmdbuildUser.getEmail()%>",
-            CMDBuildUserGroup: "<%= cmdbuildUser.getGroup()%>",
-            firstname: "<%= userFirstName %>",
-            lastname: "<%= userLastname %>",
-            username: "<%= connectedUser %>",
-            email: "<%= userEmail %>",
-            BaseURL: "<%= contextPath%>",
-            displayStartProcess: <%= displayStartProcess %>,
+            ConfigurationURL: "<%=url%>",
+            ConfigurationSupportEmail: "<%=supportEmail%>",
+            ConfigurationUserTable: "<%=cmdbusertable%>",
+            ConfigurationShowStartProcesse: "<%=displayStartProcess%>",
+            ConfigurationShowOpenedProcesses: "<%=displayOpenedProcesses%>",
+            firstname: "<%=userFirstName%>",
+            lastname: "<%=userLastname%>",
+            username: "<%=connectedUser%>",
+            email: "<%=userEmail%>",
+            BaseURL: "<%=contextPath%>",
+            displayStartProcess: <%=displayStartProcess%>,
             AttachmentCounter: 0
         }
     };
@@ -72,7 +74,6 @@
 <script src="<%= contextPath %>/js/external/jquery.validate.js" type="text/javascript"></script>
 <script src="<%= contextPath %>/js/external/ListAdapter.js" type="text/javascript" ></script>
 <%
-    
-    String customJS = fieldUtils.getCustomJS(contextPath);
+	String customJS = fieldUtils.getCustomJS(contextPath);
 %>
-<%= customJS%>
+<%=customJS%>

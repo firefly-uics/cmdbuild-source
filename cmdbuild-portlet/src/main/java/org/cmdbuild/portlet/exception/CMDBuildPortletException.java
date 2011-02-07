@@ -2,11 +2,13 @@ package org.cmdbuild.portlet.exception;
 
 public abstract class CMDBuildPortletException extends RuntimeException {
 
-    protected String[] parameters;
+	private static final long serialVersionUID = 1L;
 
-    public abstract String getExceptionTypeText();
+	protected String[] parameters;
 
-    public String[] getExceptionParameters() {
-        return parameters;
-    }
+	public abstract String getExceptionTypeText();
+
+	public String[] getExceptionParameters() {
+		return parameters;
+	}
 }

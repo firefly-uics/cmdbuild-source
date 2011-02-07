@@ -10,7 +10,6 @@ import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 
 public class AuthenticationService implements Authenticator {
@@ -75,7 +74,7 @@ public class AuthenticationService implements Authenticator {
 			try {
 				user = UserCard.getUser(authInfo.getUsername());
 				userCtx = new UserContext(user);
-			} catch (final NotFoundException e) {
+			} catch (final AuthException e) {
 				final String authusername = authInfo.getUsernameForAuthentication();
 				user = UserCard.getUser(authusername);
 				userCtx = new UserContext(user, authInfo.getUsername());

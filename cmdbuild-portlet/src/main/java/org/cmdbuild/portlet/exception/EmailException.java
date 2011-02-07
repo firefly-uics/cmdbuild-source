@@ -1,32 +1,31 @@
 package org.cmdbuild.portlet.exception;
 
-public class EmailException extends CMDBuildPortletException{
+public class EmailException extends CMDBuildPortletException {
 
-    private EmailExceptionType type;
+	private static final long serialVersionUID = 1L;
 
-    public enum EmailExceptionType {
-        ADDRESS_EXCEPTION,
-        EMAIL_DESTINATION,
-        MESSAGE_EXCEPTION,
-        USER_EMAIL_NOT_FOUND;
+	private final EmailExceptionType type;
 
-        public EmailException createException(String... parameters) {
-            return new EmailException(this, parameters);
-        }
-    }
+	public enum EmailExceptionType {
+		ADDRESS_EXCEPTION, EMAIL_DESTINATION, MESSAGE_EXCEPTION, USER_EMAIL_NOT_FOUND;
 
-    private EmailException(EmailExceptionType type, String... parameters) {
-        this.type = type;
-        this.parameters = parameters;
-    }
+		public EmailException createException(final String... parameters) {
+			return new EmailException(this, parameters);
+		}
+	}
 
-    public EmailExceptionType getExceptionType() {
-        return this.type;
-    }
+	private EmailException(final EmailExceptionType type, final String... parameters) {
+		this.type = type;
+		this.parameters = parameters;
+	}
 
-    @Override
-    public String getExceptionTypeText() {
-        return this.type.toString();
-    }
+	public EmailExceptionType getExceptionType() {
+		return this.type;
+	}
+
+	@Override
+	public String getExceptionTypeText() {
+		return this.type.toString();
+	}
 
 }

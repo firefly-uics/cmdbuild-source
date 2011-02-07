@@ -1,56 +1,60 @@
 package org.cmdbuild.servlet;
 
-import org.cmdbuild.portlet.operation.ServletOperation;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.cmdbuild.portlet.operation.ProcessOperation;
+import org.cmdbuild.portlet.operation.ServletOperation;
 import org.cmdbuild.portlet.ws.SOAPClient;
 
 public class ProcessHelpServlet extends HttpServlet {
 
-    private static final String CLASSNAME = "classname";
+	private static final long serialVersionUID = 1L;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	private static final String CLASSNAME = "classname";
 
-        ServletOperation operations = new ServletOperation();
-        HttpSession session = request.getSession(true);
-        SOAPClient client = operations.getClient(session);
-        ProcessOperation operation = new ProcessOperation(client);
-        String classname = request.getParameter(CLASSNAME);
+	protected void processRequest(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            String helpstring = "<p>";
-            String helpText = operation.getProcessHelp(classname);
-            if (helpText != null && helpText.length() > 0){
-                helpstring = helpstring + helpText + "</p>";
+		final ServletOperation operations = new ServletOperation();
+		final HttpSession session = request.getSession(true);
+		final SOAPClient client = operations.getClient(session);
+		final ProcessOperation operation = new ProcessOperation(client);
+		final String classname = request.getParameter(CLASSNAME);
 
-            } else {
-                helpstring = helpstring + "Nessun aiuto disponibile</p>";
-            }
-            out.write(helpstring);
-            out.flush();
-        } finally {
-            out.close();
-        }
-    }
+		response.setContentType("text/html;charset=UTF-8");
+		final PrintWriter out = response.getWriter();
+		try {
+			String helpstring = "<p>";
+			final String helpText = operation.getProcessHelp(classname);
+			if (helpText != null && helpText.length() > 0) {
+				helpstring = helpstring + helpText + "</p>";
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
+			} else {
+				helpstring = helpstring + "Nessun aiuto disponibile</p>";
+			}
+			out.write(helpstring);
+			out.flush();
+		} finally {
+			out.close();
+		}
+	}
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
+	@Override
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
+			IOException {
+		processRequest(request, response);
+	}
+
+	@Override
+	protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
+		processRequest(request, response);
+	}
 }

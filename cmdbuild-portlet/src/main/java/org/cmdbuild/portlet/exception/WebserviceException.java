@@ -2,28 +2,29 @@ package org.cmdbuild.portlet.exception;
 
 public class WebserviceException extends CMDBuildPortletException {
 
-    private WebserviceExceptionType type;
+	private static final long serialVersionUID = 1L;
 
-    public enum WebserviceExceptionType {
-        WEBSERVICE_CONFIGURATION,
-        WEBSERVICE_RESPONSE;
+	private final WebserviceExceptionType type;
 
-        public WebserviceException createException(String... parameters) {
-            return new WebserviceException(this, parameters);
-        }
-    }
+	public enum WebserviceExceptionType {
+		WEBSERVICE_CONFIGURATION, WEBSERVICE_RESPONSE;
 
-    private WebserviceException(WebserviceExceptionType type, String... parameters) {
-        this.type = type;
-        this.parameters = parameters;
-    }
+		public WebserviceException createException(final String... parameters) {
+			return new WebserviceException(this, parameters);
+		}
+	}
 
-    public WebserviceExceptionType getExceptionType() {
-        return this.type;
-    }
+	private WebserviceException(final WebserviceExceptionType type, final String... parameters) {
+		this.type = type;
+		this.parameters = parameters;
+	}
 
-    @Override
-    public String getExceptionTypeText() {
-        return this.type.toString();
-    }
+	public WebserviceExceptionType getExceptionType() {
+		return this.type;
+	}
+
+	@Override
+	public String getExceptionTypeText() {
+		return this.type.toString();
+	}
 }

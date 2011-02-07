@@ -2,28 +2,30 @@ package org.cmdbuild.portlet.exception;
 
 public class ConfigurationExcepion extends CMDBuildPortletException {
 
-    private ConfigurationExcepionType type;
+	private static final long serialVersionUID = 1L;
 
-    public enum ConfigurationExcepionType {
+	private final ConfigurationExcepionType type;
 
-        PARAMETER_NOT_FOUND;
+	public enum ConfigurationExcepionType {
 
-        public ConfigurationExcepion createException(String... parameters) {
-            return new ConfigurationExcepion(this, parameters);
-        }
-    }
+		PARAMETER_NOT_FOUND;
 
-    private ConfigurationExcepion(ConfigurationExcepionType type, String... parameters) {
-        this.type = type;
-        this.parameters = parameters;
-    }
+		public ConfigurationExcepion createException(final String... parameters) {
+			return new ConfigurationExcepion(this, parameters);
+		}
+	}
 
-    public ConfigurationExcepionType getExceptionType() {
-        return this.type;
-    }
+	private ConfigurationExcepion(final ConfigurationExcepionType type, final String... parameters) {
+		this.type = type;
+		this.parameters = parameters;
+	}
 
-    @Override
-    public String getExceptionTypeText() {
-        return this.type.toString();
-    }
+	public ConfigurationExcepionType getExceptionType() {
+		return this.type;
+	}
+
+	@Override
+	public String getExceptionTypeText() {
+		return this.type.toString();
+	}
 }
