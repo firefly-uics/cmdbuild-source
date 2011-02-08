@@ -1032,6 +1032,7 @@
       "wrong_time": "{0} is not a valid value. It must be in the format {1}"
    },
    "warnings": {
+ 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated",
       "popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
       "warning_message": "Warning"
    }

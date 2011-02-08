@@ -1032,6 +1032,7 @@
       "wrong_time": "{0} je nedozvoljena vrednost. Vrednost mora biti u formatu {1}"
    },
    "warnings": {
+ 	  "link_cards_changed_values": "<em>The selection of \"{0}\" has been updated</em>",
       "popup_block": "Detektovan je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
       "warning_message": "Pažnja"
    }

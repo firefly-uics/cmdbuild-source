@@ -1032,7 +1032,8 @@
       "wrong_time": "{0} est une valeur invalide. Le bon format est {1}"
    },
    "warnings": {
-      "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver.",
+ 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated</em>",
+      "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
       "warning_message": "Attention"
    }
 }

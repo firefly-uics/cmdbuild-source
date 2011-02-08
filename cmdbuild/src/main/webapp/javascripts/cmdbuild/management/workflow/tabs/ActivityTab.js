@@ -189,7 +189,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		this.doLayout();
 	},
 	
-	loadActivity: function(eventParams) {		
+	loadActivity: function(eventParams) {
 		var callback = this._loadActivity.createDelegate(this, [eventParams], true);
 		var eventIdClass = eventParams.record.data.IdClass;
 		if (this.idClassOfCurrentRecord != eventIdClass) {
@@ -228,6 +228,12 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 	},
 	
 	loadOpenActivity: function(eventParams) {
+		if (this.currentCardId != eventParams.record.data.Id) {
+			// deny the auto edit if the card is selected after the termination
+			// of a process
+			this.autoEditMode = false;
+		}
+		
 		this.isOldModeClose = false;
 		this.currentRecord = eventParams.record;
 		this.currentCardId = eventParams.record.data.Id;
@@ -273,7 +279,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		if (eventParams.record.data.editableByCurrentUser) {			
 			this.editable = true;
             this.buildExtAttributeButtons( eventParams.record.data.CmdbuildExtendedAttributes );
-            if (eventParams.edit || this.autoEditMode) {            	
+            if (eventParams.edit || this.autoEditMode) {          	
                 this.enableModify();
             } else {
                 this.onCancelButton(this.currentState);
@@ -289,7 +295,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		this.editable = false;
 		if (this.isOldModeClose == false) {
 			this.loadOldMode();
-		}		
+		}
 		this.currentRecord = eventParams.record;
 		this.currentCardId = eventParams.record.data.Id;
         this.currentProcessInstanceId = '';
