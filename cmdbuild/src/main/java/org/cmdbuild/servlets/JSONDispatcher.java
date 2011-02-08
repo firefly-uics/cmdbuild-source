@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -30,11 +30,11 @@ import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
 import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin;
+import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBase.Configuration;
 import org.cmdbuild.servlets.json.JSONBase.SkipExtSuccess;
 import org.cmdbuild.servlets.json.JSONBase.Transacted;
 import org.cmdbuild.servlets.json.JSONBase.Unauthorized;
-import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
 import org.dom4j.Document;
 import org.dom4j.io.XMLWriter;
@@ -56,7 +56,6 @@ public class JSONDispatcher extends HttpServlet {
 		dispatch(request, response);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void dispatch(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
 			throws IOException, ServletException {
 		httpResponse.setCharacterEncoding("UTF-8");
@@ -69,8 +68,9 @@ public class JSONDispatcher extends HttpServlet {
 		}
 		try {
 			try {
-				if (methodInfo.getMethod().getAnnotation(Unauthorized.class) == null)
+				if (methodInfo.getMethod().getAnnotation(Unauthorized.class) == null) {
 					checkAuthentication(httpRequest);
+				}
 				Admin adminAnnotation = methodInfo.getMethod().getAnnotation(Admin.class);
 				if (adminAnnotation != null) {
 					checkAdmin(httpRequest, adminAnnotation.value());
@@ -82,7 +82,7 @@ public class JSONDispatcher extends HttpServlet {
 				JSONBase targetClass = (JSONBase) methodInfo.getMethod().getDeclaringClass().newInstance();
 				targetClass.init(httpRequest, httpResponse);
 
-				Class[] types = methodInfo.getParamClasses();
+				@SuppressWarnings("rawtypes") Class[] types = methodInfo.getParamClasses();
 				Annotation[][] paramsAnnots = methodInfo.getParamsAnnotations();
 
 				Object[] params = MethodParameterResolver.getInstance().resolve(types, paramsAnnots, httpRequest, httpResponse);
@@ -152,9 +152,17 @@ public class JSONDispatcher extends HttpServlet {
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 	}
 
-	private void checkAuthentication(HttpServletRequest httpRequest) {
-		if (!AuthenticationFacade.isLoggedIn(httpRequest))
-			throw AuthExceptionType.AUTH_NOT_LOGGED_IN.createException();
+	/*
+	 * This method does not allow redirection
+	 */
+	private void checkAuthentication(final HttpServletRequest httpRequest) {
+		try {
+			if (AuthenticationFacade.isLoggedIn(httpRequest)) {
+				return;
+			}
+		} catch (Exception e) {
+		}
+		throw AuthExceptionType.AUTH_NOT_LOGGED_IN.createException();
 	}
 
 	private void checkAdmin(HttpServletRequest httpRequest, AdminAccess adminAccess) {
@@ -277,10 +285,10 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	private void writeErrorMessage(MethodInfo methodInfo, Throwable exception, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-		Class<?> returnType = methodInfo.getMethod().getReturnType();
 		if (methodInfo == null) {
 			httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
+		Class<?> returnType = methodInfo.getMethod().getReturnType();
 		if (DataHandler.class == returnType || 
 				methodInfo.getMethod().getAnnotation(SkipExtSuccess.class) != null) {
 			if (exception instanceof NotFoundException) {

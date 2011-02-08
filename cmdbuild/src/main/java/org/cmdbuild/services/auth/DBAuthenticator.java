@@ -4,17 +4,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.elements.wrappers.UserCard;
-import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.utils.SecurityEncrypter;
 
 public class DBAuthenticator implements Authenticator {
 
+	@Override
 	public UserContext headerAuth(final HttpServletRequest request) {
 		return null;
 	}
 
+	@Override
 	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		final UserContext userCtx = new AuthInfo(username).systemAuth();
 		checkPassword(userCtx.getUser(), unencryptedPassword);
@@ -28,15 +30,15 @@ public class DBAuthenticator implements Authenticator {
 			throw AuthExceptionType.AUTH_WRONG_PASSWORD.createException();
 	}
 
+	@Override
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
 		final AuthInfo authInfo = new AuthInfo(pwcb.getIdentifer());
 		final String unencryptedPassword = getUnencryptedPassword(authInfo);
 		if (isDigested(pwcb)) {
 			pwcb.setPassword(unencryptedPassword);
 			// it should stop the authentication chain because it does not make
-			// sense
-			// to have the password set multiple times (it is done here only,
-			// indeed)
+			// sense to have the password set multiple times (it is done here
+			// only, indeed)
 			return true;
 		} else {
 			return checkPassword(pwcb, unencryptedPassword);
@@ -71,6 +73,7 @@ public class DBAuthenticator implements Authenticator {
 		return (pwcb.getPassword() == null);
 	}
 
+	@Override
 	public void changePassword(final String username, final String oldPassword, final String newPassword) {
 		if (jsonRpcAuth(username, oldPassword) != null) {
 			final UserCard user = UserCard.getUserCard(username);
@@ -81,8 +84,13 @@ public class DBAuthenticator implements Authenticator {
 		}
 	}
 
+	@Override
 	public boolean canChangePassword() {
 		return true;
 	}
 
+	@Override
+	public boolean allowsPasswordLogin() {
+		return true;
+	}
 }

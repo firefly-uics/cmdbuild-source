@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.services.auth.UserContext;
@@ -27,40 +28,41 @@ public class AuthFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain filterChain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = ((HttpServletRequest)request);
-		String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
-		if (isRootPage(uri)) {
-			redirectToLogin(response);
-			return;
-		} else if (isLoginPage(uri)) {
-			if (AuthenticationFacade.isLoggedIn(httpRequest)) {
-				UserContext userCtx = new SessionVars().getCurrentUserContext();
-				if (userCtx.hasDefaultGroup()) {
-					redirectToManagement(response);
-					return;
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		try {
+			String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+			if (isRootPage(uri)) {
+				redirectToLogin(httpResponse);
+			} else if (isLoginPage(uri)) {
+				if (AuthenticationFacade.isLoggedIn(httpRequest)) {
+					UserContext userCtx = new SessionVars().getCurrentUserContext();
+					if (userCtx.hasDefaultGroup()) {
+						redirectToManagement(httpResponse);
+					}
+				}
+			} else if (isApplicable(uri)) {
+				if (AuthenticationFacade.isLoggedIn(httpRequest)) {
+					UserContext userCtx = new SessionVars().getCurrentUserContext();
+					if (!userCtx.hasDefaultGroup() && !isLogout(uri)) {
+						redirectToLogin(httpResponse);
+					}
+				} else {
+					redirectToLogin(httpResponse);
 				}
 			}
-		} else if (isApplicable(uri)) {
-			if (AuthenticationFacade.isLoggedIn(httpRequest)) {
-				UserContext userCtx = new SessionVars().getCurrentUserContext();
-				if (!userCtx.hasDefaultGroup() && !isLogout(uri)) {
-					redirectToLogin(response);
-					return;
-				}
-			} else {
-				redirectToLogin(response);
-				return;
-			}
+			filterChain.doFilter(request, response);
+		} catch (RedirectException re) {
+			re.sendRedirect(httpResponse);
 		}
-		filterChain.doFilter(request, response);
 	}
 
-	private void redirectToManagement(ServletResponse response) throws IOException {
-		((HttpServletResponse) response).sendRedirect("management.jsp");
+	private void redirectToManagement(HttpServletResponse response) throws IOException, RedirectException {
+		throw new RedirectException("management.jsp");
 	}
 
-	private void redirectToLogin(ServletResponse response) throws IOException {
-		((HttpServletResponse) response).sendRedirect(LOGIN_URL);
+	private void redirectToLogin(HttpServletResponse response) throws IOException, RedirectException {
+		throw new RedirectException(LOGIN_URL);
 	}
 
 	private boolean isLogout(String uri) {

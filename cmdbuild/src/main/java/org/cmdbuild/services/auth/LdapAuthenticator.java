@@ -27,10 +27,12 @@ public class LdapAuthenticator implements Authenticator {
 		}
 	}
 
+	@Override
 	public UserContext headerAuth(final HttpServletRequest request) {
 		return null;
 	}
 
+	@Override
 	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		return authenticateInLdap(username, unencryptedPassword);
 	}
@@ -48,6 +50,7 @@ public class LdapAuthenticator implements Authenticator {
 		return null;
 	}
 
+	@Override
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
 		final String identifier = pwcb.getIdentifer();
 		final AuthInfo authInfo = new AuthInfo(identifier);
@@ -85,8 +88,7 @@ public class LdapAuthenticator implements Authenticator {
 			while (results.hasMore()) {
 				counter++;
 				if (counter > 1) {
-					Log.AUTH.error(String
-							.format("Too many users for %s = %s", props.getLdapBindAttribute(), userToFind));
+					Log.AUTH.error(String.format("Too many users for %s = %s", props.getLdapBindAttribute(), userToFind));
 					throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 				} else {
 					final SearchResult sr = results.next();
@@ -151,12 +153,18 @@ public class LdapAuthenticator implements Authenticator {
 		}
 	}
 
+	@Override
 	public boolean canChangePassword() {
 		return false;
 	}
 
+	@Override
 	public void changePassword(final String username, final String oldPassword, final String newPassword) {
 		throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 	}
 
+	@Override
+	public boolean allowsPasswordLogin() {
+		return true;
+	}
 }
