@@ -14,6 +14,7 @@ public class HeaderAuthenticator implements Authenticator {
 		}
 	}
 
+	@Override
 	public UserContext headerAuth(final HttpServletRequest request) {
 		final String headerAttribute = AuthProperties.getInstance().getHeaderAttributeName();
 		final String username = request.getHeader(headerAttribute);
@@ -26,20 +27,28 @@ public class HeaderAuthenticator implements Authenticator {
 		return null;
 	}
 
+	@Override
 	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		return null;
 	}
 
+	@Override
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
 		return false;
 	}
 
+	@Override
 	public boolean canChangePassword() {
 		return false;
 	}
 
+	@Override
 	public void changePassword(final String username, final String oldPassword, final String newPassword) {
 		throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 	}
 
+	@Override
+	public boolean allowsPasswordLogin() {
+		return false;
+	}
 }

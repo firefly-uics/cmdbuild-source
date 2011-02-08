@@ -201,4 +201,8 @@ public class UserContext {
 	public boolean canChangePassword() {
 		return (authenticator != null) && (authenticator.canChangePassword());
 	}
+
+	public boolean allowsPasswordLogin() {
+		return (authenticator != null) && (authenticator.allowsPasswordLogin());
+	}
 }

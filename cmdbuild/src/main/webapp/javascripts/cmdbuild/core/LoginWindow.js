@@ -66,7 +66,8 @@ CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
 					name: 'password',
 					inputType : 'password',
 					fieldLabel : tr.password,
-					allowBlank : false
+					allowBlank : false,
+					hidden: !CMDBuild.Runtime.AllowsPasswordLogin
 				}),
 				{
 					name: 'role',
@@ -78,12 +79,20 @@ CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
 					text : tr.login,
 					formBind : true,
 					handler: doLogin,
-					scope: this
+					scope: this,
+					hidden: !CMDBuild.Runtime.AllowsPasswordLogin
 				},{
 					text : tr.change_user,
 					handler : function() {
 						window.location = '.';
-					}
+					},
+					hidden: !CMDBuild.Runtime.AllowsPasswordLogin
+				},{
+					text : Ext.MessageBox.buttonText.ok,
+					handler : function() {
+						window.location = '.';
+					},
+					hidden: CMDBuild.Runtime.AllowsPasswordLogin
 				}]
 			})]
 		});

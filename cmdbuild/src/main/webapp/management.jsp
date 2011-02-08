@@ -41,6 +41,7 @@
 			CMDBuild.Runtime.Username = '<%= user.getName() %>';
 			CMDBuild.Runtime.UserId = <%= user.getId() %>;
 			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
+			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
 			CMDBuild.Runtime.RoleId = <%= defaultGroup.getId() %>;
 <%
 	String[] disabledModules = defaultGroup.getDisabledModules();

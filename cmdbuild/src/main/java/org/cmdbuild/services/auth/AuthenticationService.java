@@ -10,6 +10,7 @@ import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
 
 public class AuthenticationService implements Authenticator {
@@ -34,7 +35,8 @@ public class AuthenticationService implements Authenticator {
 		}
 	}
 
-	public UserContext headerAuth(final HttpServletRequest request) {
+	@Override
+	public UserContext headerAuth(final HttpServletRequest request) throws RedirectException {
 		UserContext userCtx = null;
 		for (final Authenticator method : authMethods) {
 			userCtx = method.headerAuth(request);
@@ -45,6 +47,7 @@ public class AuthenticationService implements Authenticator {
 		return userCtx;
 	}
 
+	@Override
 	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		UserContext userCtx = null;
 		for (final Authenticator method : authMethods) {
@@ -57,6 +60,7 @@ public class AuthenticationService implements Authenticator {
 		return userCtx;
 	}
 
+	@Override
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
 		for (final Authenticator method : authMethods) {
 			if (method.wsAuth(pwcb)) {
@@ -84,15 +88,27 @@ public class AuthenticationService implements Authenticator {
 		return userCtx;
 	}
 
+	@Override
 	public void changePassword(final String username, final String oldPassword, final String newPassword) {
 		for (final Authenticator method : authMethods) {
 			method.changePassword(username, oldPassword, newPassword);
 		}
 	}
 
+	@Override
 	public boolean canChangePassword() {
 		for (final Authenticator method : authMethods) {
 			if (method.canChangePassword()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean allowsPasswordLogin() {
+		for (final Authenticator method : authMethods) {
+			if (method.allowsPasswordLogin()) {
 				return true;
 			}
 		}

@@ -11,14 +11,15 @@ import org.cmdbuild.elements.RelationImpl;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
@@ -96,7 +97,7 @@ public abstract class AuthenticationFacade {
 		}
 	}
 
-	static public boolean isLoggedIn(final HttpServletRequest request) {
+	static public boolean isLoggedIn(final HttpServletRequest request) throws RedirectException {
 		UserContext userCtx = new SessionVars().getCurrentUserContext();
 		if (userCtx == null) {
 			final AuthenticationService as = new AuthenticationService();
