@@ -1,8 +1,7 @@
 CMDBuild.Management.WorkflowCardListGrid = Ext.extend(CMDBuild.Management.CardListGrid,{
 	initComponent: function() {
 		CMDBuild.Management.WorkflowCardListGrid.superclass.initComponent.apply(this, arguments);
-		this.subscribe('cmdb-new-process', this.deselect , this);
-	},	
+	},
 	
 	deselect: function() {
 		this.getSelectionModel().clearSelections();
@@ -48,7 +47,6 @@ CMDBuild.Management.WorkflowCardListGrid = Ext.extend(CMDBuild.Management.CardLi
 	},
 
 	loadPageForCardId : function(cardId, dontChangeStatusAfterSave) {
-		CMDBuild.log.info('loading processcard', cardId);
 		if (cardId) {
 			var params = this.defineParamsToLoadPageForCardId(cardId);
 			params['withflowstatus'] = !this.displayingAllStatuses();
@@ -88,8 +86,8 @@ CMDBuild.Management.WorkflowCardListGrid = Ext.extend(CMDBuild.Management.CardLi
 	},
 
 	publishLoadEvent: function(record) {
-		record = this.addActivityDescription(record);
-		this.publish('cmdb-load-' + this.eventtype, {record: new Ext.data.Record(record)});
+		var activity = this.addActivityDescription(record);
+		this.fireEvent("load_activity", {record: new Ext.data.Record(activity)});
 	},
 	
 	addActivityDescription: function(record) {

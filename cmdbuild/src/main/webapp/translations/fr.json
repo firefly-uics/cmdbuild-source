@@ -602,9 +602,12 @@
       "title": "Configuration"
    },
    "errors": {
+      "busy_wf_widgets": "<em>The visual controls are busy, check the status of the server before trying again.</em>",
       "detail": "Détails",
       "error_message": "Erreur",
       "error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
+      "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
+      "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Fichier {0} non trouvé",
@@ -736,7 +739,8 @@
       "server_error_code": "Une erreur a été rencontrée durant la trasnmission des données au serveur:",
       "show_detail": "Voir details",
       "template_error": "Erreur de modèle",
-      "unknown_error": "Une erreur est survenue"
+      "unknown_error": "Une erreur est survenue",
+      "wrong_wf_widgets": "<em>There was an error saving the following visual controls: </em>"
    },
    "info": {"card_not_found": "Aucune fiche avec le filtre sélectionné"},
    "login": {
@@ -1028,7 +1032,8 @@
       "wrong_time": "{0} est une valeur invalide. Le bon format est {1}"
    },
    "warnings": {
-      "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver.",
+ 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated</em>",
+      "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
       "warning_message": "Attention"
    }
 }

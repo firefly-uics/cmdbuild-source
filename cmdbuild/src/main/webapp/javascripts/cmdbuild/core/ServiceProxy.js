@@ -1,5 +1,15 @@
 CMDBuild.ServiceProxy = (function() {
 	return {
+		getCardList: function(p) {
+			CMDBuild.Ajax.request( {
+			    url: "services/json/management/modcard/getcardlist",
+			    method: "GET",
+			    params: p.params,
+			    success: p.success,
+		        failure: p.failure,
+		        callback: p.callback
+			});
+		},
 		getCard: function(classId, cardId, success, failure, callback) {
 			CMDBuild.Ajax.request({
 				url: 'services/json/management/modcard/getcard',
@@ -173,6 +183,50 @@ CMDBuild.ServiceProxy = (function() {
 				failure: p.failure || Ext.emptyFn,
 				callback: p.callback || Ext.emptyFn
 			});
+		},
+		
+		// Workflow
+		
+		workflow: {
+			getstartactivitytemplate: function(p) {
+				Ext.Ajax.request({
+					url: 'services/json/management/modworkflow/getstartactivitytemplate',
+					method: 'GET',
+					params : {
+						idClass : p.classId,
+						id : -1
+					},
+					success: p.success || Ext.emptyFn,
+					failure: p.failure || Ext.emptyFn,
+					callback: p.callback || Ext.emptyFn
+				});
+			},
+			terminateActivity: function(p) {
+				Ext.Ajax.request({
+        			url: 'services/json/management/modworkflow/abortprocess',
+                    params: {
+						ProcessInstanceId: p.ProcessInstanceId,
+						WorkItemId: p.WorkItemId
+					},
+                    method: 'POST',                  
+                    success: p.success || Ext.emptyFn,
+					failure: p.failure || Ext.emptyFn,
+					callback: p.callback || Ext.emptyFn
+          	 	});
+			},
+			startProcess: function(p) {
+				Ext.Ajax.request({
+					url: 'services/json/management/modworkflow/startprocess',
+		            params: {
+						idClass : p.idClass,
+		                id : -1
+					},
+		            method: 'POST',                  
+		            success: p.success || Ext.emptyFn,
+					failure: p.failure || Ext.emptyFn,
+					callback: p.callback || Ext.emptyFn
+		  	 	});
+			}
 		},
 		
 		// store builders
