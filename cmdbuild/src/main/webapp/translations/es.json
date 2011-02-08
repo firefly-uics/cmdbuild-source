@@ -1032,6 +1032,7 @@
       "wrong_time": "{0} no es un valor válido. Este debe estar en el formato {1}"
    },
    "warnings": {
+      "link_cards_changed_values": "<em>La selezione di \"{0}\" è stata aggiornata</em>",
       "popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
       "warning_message": "Atención"
    }

@@ -8,7 +8,8 @@ CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttri
 	singleSelect: false,
     isFirstLoad: true, // flag to identify the first loading to clear the grid filter
     currentSelection: [],
-
+    alertIfChangeDefaultSelection: false,
+    
     initialize : function(extAttrDef) {
 		this.outputName = extAttrDef.outputName;
 		this.singleSelect = extAttrDef.SingleSelect ? true : false;
@@ -25,6 +26,7 @@ CMDBuild.Management.LinkCards = Ext.extend(CMDBuild.Management.BaseExtendedAttri
 	onExtAttrShow : function(extAttr) {
 		var classId = this.getVariable(CLASS_ID);
 		var cqlQuery = this.getVariable(FILTER);
+		this.alertIfChangeDefaultSelection = true;
 		
 		if (cqlQuery) {
 			_debug('filter with cql: ' + cqlQuery);
@@ -188,6 +190,12 @@ Ext.reg("linkCards", CMDBuild.Management.LinkCards);
 		function resolve() {
 			this.templateResolverIsBusy = true;
 			this.currentSelection = [];
+			if (this.alertIfChangeDefaultSelection) {
+				CMDBuild.Msg.warn(null, String.format(CMDBuild.Translation.warnings.link_cards_changed_values
+						, this.extAttrDef.ButtonLabel || this.id)
+						, popup=false);
+				this.alertIfChangeDefaultSelection = false;
+			}
 			this.templateResolver.resolveTemplates( {
 				attributes: [ 'DefaultSelection' ],
 				callback: onTemplateResolved,
