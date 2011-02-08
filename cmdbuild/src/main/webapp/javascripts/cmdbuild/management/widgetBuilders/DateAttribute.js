@@ -34,6 +34,7 @@ CMDBuild.WidgetBuilders.DateAttribute.prototype.buildAttributeField = function(a
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		format: this.format,//TODO read the format in the config
-		width: this.fieldWidth
+		width: this.fieldWidth,
+		CMAttribute: attribute
 	});
 };

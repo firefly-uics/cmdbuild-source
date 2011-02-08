@@ -58,6 +58,7 @@ CMDBuild.Management.CardRelationsTab = Ext.extend(Ext.grid.GridPanel, {
 			loadMask: true,
 			collapsible: false,
 	        border: false,
+	        hideMode: "offsets",
 			store: new CMDBuild.data.XGroupingStore({
 				reader: reader,
 				proxy: proxy,
@@ -104,7 +105,7 @@ CMDBuild.Management.CardRelationsTab = Ext.extend(Ext.grid.GridPanel, {
 		this.on('rowdblclick', doubleclickHandler);
 		this.on('cellclick', cellclickHandler);
 		
-		if(this.subscribeToEvents === true) {
+		if (this.subscribeToEvents === true) {
             this.subscribe('cmdb-init-' + this.eventmastertype, this.initForClass, this);
             this.subscribe('cmdb-new-' + this.eventtype, this.newCard, this);
             this.subscribe('cmdb-load-' + this.eventtype, this.loadCard, this);

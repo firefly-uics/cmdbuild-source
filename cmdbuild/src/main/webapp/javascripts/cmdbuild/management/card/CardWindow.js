@@ -9,9 +9,13 @@ CMDBuild.Management.CardWindow = Ext.extend(CMDBuild.PopupWindow, {
     initComponent:function() {
 		var _this = this;
 		this.saveButtonHandler = function() {
-			var form = _this.cardForm.form.getForm();
-			if (form.isValid()) {
+			var invalidAttributes = _this.cardForm.getInvalidAttributeAsHTML();
+			if (invalidAttributes == null) {
+				var form = _this.cardForm.form.getForm();
 				_this.createCard(form);
+			} else {
+				var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+				CMDBuild.Msg.error(null, msg + invalidAttributes, false);
 			}
 		},
 		this.cancelButtonHandler = function() {

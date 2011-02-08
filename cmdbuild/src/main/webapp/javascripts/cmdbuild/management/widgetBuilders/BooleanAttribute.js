@@ -38,6 +38,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.ux.form.XCheckbox({
 		fieldLabel: attribute.description,
-		name: attribute.name
+		name: attribute.name,
+		CMAttribute: attribute
 	});
 };

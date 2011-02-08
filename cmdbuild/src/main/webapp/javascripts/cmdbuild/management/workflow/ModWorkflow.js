@@ -1,6 +1,5 @@
+(function() {
 /**
- * This management module handles the activity list and the activity attributes
- * 
  * @class CMDBuild.Management.ModWorkflowClass
  * @extends Ext.Component
  */
@@ -9,17 +8,15 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 	translation : CMDBuild.Translation.management.modworkflow,
 	hideMode:  'offsets',
 	split_status: 'restore',
-	selectedState : 'open.running',	
+	selectedState : 'open.running',
 		
 	initComponent: function() {
-		CMDBuild.log.info("init workflow module");
-		
 		var params = {
           panel : this.id + '_panel',
           itemid : 0,
           itemtext : ''
         };
-        var theMod = this;     
+        var theMod = this;
         
         var storeOfState = new Ext.data.JsonStore({
     		autoLoad : true,
@@ -70,17 +67,8 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 			baseText: this.translation.add_card,
 			textPrefix: this.translation.add_card,
 			cacheTreeName: CMDBuild.Constants.cachedTableType.processclass,
-			eventName: "startprocess"
+			eventName: "new_activity"
 		});
-		
-		this.startProcessMenu.on('startprocess', function(params){
-			this.stateList.setValue('open.running');
-			var eventParams = {
-				classId: params.classId				
-			};
-			this.activityTabPanel.TabPanel.activateTabByAttr('cmdbName', CMDBuild.Constants.tabNames.card);
-			this.publish('cmdb-new-process', eventParams, this);
-		}, this);
 		
 		this.grid_card_ratio = (100 - CMDBuild.Config.cmdbuild.grid_card_ratio)+'%';
 		
@@ -94,89 +82,18 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 			baseUrl: 'services/json/management/modworkflow/getactivitylist',
 			split: true
 		});
-
+		
 		this.activityTabPanel = new CMDBuild.Management.ActivityTabPanel({
-    		border : false,
-			activeTab : 0,
-			layoutOnTabChange : true,
-			region: 'center',
+    		border: false,
+    		region: 'center',
+    		id: 'activity_tab_panel',
+    		layoutOnTabChange: true,		
 			deferredRender: false,
-			id: 'activity_tab_panel',
-			defaults: {
-				hideMode: 'offsets'
-			},
-			tabitems: [
-				{
-				title: this.translation.tabs.card,
-				id: 'activity_tab',
-				xtype: 'activitytab',
-				layout: 'fit',
-				cmdbName: CMDBuild.Constants.tabNames.card,
-				wfmodule: theMod
-			},{
-				title: this.translation.tabs.detail,
-				xtype: 'panel',
-				disabled: true,
-				cmdbName: CMDBuild.Constants.tabNames.detail
-			},{
-			   title: this.translation.tabs.options,
-			   id: 'activityopts_tab',
-			   xtype: 'activityoptiontab',
-			   layout: 'fit',
-			   disabled: true,
-			   cmdbName: CMDBuild.Constants.tabNames.options
-			},{
-                eventtype: 'activity',
-                eventmastertype: 'processclass',
-				title: this.translation.tabs.notes,
-				id: 'activitynotes_tab',
-				xtype: 'activitynotestab',
-				layout: 'fit',
-				disabled: true,
-				cmdbName: CMDBuild.Constants.tabNames.notes,
-				wfmodule: theMod
-			},{
-                eventtype: 'activity',
-                eventmastertype: 'processclass',
-				title: this.translation.tabs.relations,
-				id: 'activityrelations_tab',
-				xtype: 'cardrelationstab',
-				layout: 'fit',
-				readOnly: true,
-				cmdbName: CMDBuild.Constants.tabNames.relations
-			},{
-                eventtype: 'activity',
-                eventmastertype: 'processclass',
-				title: this.translation.tabs.history,
-				id: 'activityhistory_tab',
-				xtype: 'cardhistoytab',
-				layout: 'fit',
-				cmdbName: CMDBuild.Constants.tabNames.history
-			},{
-                eventtype: 'activity',
-                eventmastertype: 'processclass',
-				title: this.translation.tabs.attachments,
-				id: 'activityattachments_tab',
-				xtype: 'cardattachmentstab',
-				layout: 'fit',
-				cmdbName: CMDBuild.Constants.tabNames.attachments,
-				wfmodule: theMod
-			},{
-				eventtype: 'activity',
-                eventmastertype: 'processclass',
-				title: this.translation.tabs.sketch,
-				id: 'activitysketch_tab',
-				xtype: 'panel',
-				layout: 'fit',				
-				cmdbName: CMDBuild.Constants.tabNames.sketch,
-				listeners: {
-					show: function(component) {
-						component.doLayout();
-					}
-				}
-			}]
+			wfmodule: theMod
     	});
-
+		
+		new CMDBuild.Management.ActivityTabPanelController(this.activityTabPanel);
+		
 		Ext.apply(this,{
 	        id: this.id + '_panel',
 	        modtype: 'processclass',
@@ -185,15 +102,15 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 			tools: [{
 	            id: 'up',
                 scope: this,
-                handler: function(event, tool, panel) { this.manageSplitter('up', panel); }
+                handler: function(event, tool, panel) { manageSplitter.call(this, 'up', panel); }
 	        }, {
                 id: 'down',
                 scope: this,
-                handler: function(event, tool, panel) { this.manageSplitter('down', panel); }
+                handler: function(event, tool, panel) { manageSplitter.call(this, 'down', panel); }
             }, {
                 id: 'restore',
                 scope: this,
-                handler: function(event, tool, panel) { this.manageSplitter('restore', panel); }
+                handler: function(event, tool, panel) { manageSplitter.call(this, 'restore', panel); }
             }],
             tbar: [this.startProcessMenu, '-' ,this.stateList],
 	        layout: 'border',
@@ -207,28 +124,35 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 					center: this.activityTabPanel.getBox().height
 				};
 			}
-		}, this);	
+		}, this);
 		
 		this.subscribe('cmdb-select-processclass', this.selectClass, this);
-		this.subscribe('cmdb-cardsloaded-activity', this.enableAddProcessAction, this);
-		this.subscribe('cmdb-empty-activity', this.onEmptyActivityGrid, this);
-		this.subscribe('cmdb-load-activity', this.onLoadActivity, this);
+		this.subscribe('cmdb-cardsloaded-activity', this.enableAddProcessAction, this);		
+		
 		CMDBuild.Management.ModWorkflow.superclass.initComponent.apply(this, arguments);
 	},
 	
-	onLoadActivity: function(p) {
-		var classId = p.record.data.IdClass
+	newActivity: function(activity) {
+		this.stateList.setValue('open.running');
+		this.cardListGrid.deselect();
+		this.activityTabPanel.loadActivity(activity);
+	},
+	
+	loadActivity: function(activity) {
+		var data = activity.record.data;
+		var classId = data.IdClass;
 		if (this.currentClassId != classId) {
 			var table = CMDBuild.Cache.getTableById(classId);
 			if (table) {
-				this.updateSketch(table);
+				updateSketch.call(this, table);
 			}
 		}
+		this.activityTabPanel.loadActivity(activity);
 	},
 	
 	onEmptyActivityGrid: function() {
-		this.publish('cmdb-init-processclass');
 		this.enableAddProcessAction();
+		this.activityTabPanel.onEmptyActivityGrid();
 	},
 
 	enableAddProcessAction: function() {
@@ -247,7 +171,7 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 		this.stateList.setValue(newState);
 		if(!reloadcard || (reloadcard == true)){
 			this.cardListGrid.reloadCard();
-			this.publish('cmdb-select-stateprocess', {state: newState});
+			this.activityTabPanel.onSelectStateProcess({state: newState});
 		}
 	},
 	
@@ -270,102 +194,98 @@ CMDBuild.Management.ModWorkflow = Ext.extend(CMDBuild.ModPanel, {
 		if (!table) {
             return;
 		}
-        var classId = table.id;
-        var className = table.text;
-        var cardId = table.cardId;
-        this.superClass = table.superclass;
-        this.startProcessMenu.setClassId(table);
-        this.privileges = {
+		this.startProcessMenu.setClassId(table);
+		this.privileges = {
             create: table.priv_create,
             write: table.priv_write
         };
-        if ((this.currentClassId != table.id) || cardId) {
-        	CMDBuild.log.info('select-class, currentClassId != classId e cardId', cardId);
-            if (!cardId) {
-                cardId = 0;
+        this.superClass = table.superclass;
+        
+        if ((this.currentClassId != table.id) || table.cardId) {
+            if (!table.cardId) {
+            	table.cardId = 0;
             }
-            this.currentClassId = classId;
-            this.updateSketch(table);
-            var callback = this.publishInitClass.createDelegate(this, [classId, className, cardId, table.tabToOpen], true);
-            CMDBuild.Management.FieldManager.loadAttributes(classId, callback, true);
+            this.currentClassId = table.id;
+            updateSketch.call(this, table);
+            var callback = initForClass.createDelegate(this, [table], true);
+            CMDBuild.Management.FieldManager.loadAttributes(table.id, callback, true);
         };
-    },    
-    
-    //private
-    updateSketch: function(table) {
-    	var sketchUrl = table.sketch_url;
-    	var sketchPanel = Ext.getCmp("activitysketch_tab");
-    	sketchPanel.removeAll();
-    	if (sketchUrl) {
-    		sketchPanel.add(new Ext.Panel({
-    			html: "<img src=\"" + sketchUrl + "\" >",
-    			layout: "fit",
-    			autoScroll: true,
-    			border: false
-    		}));
-    		sketchPanel.enable();    		
-    	} else {
-    		sketchPanel.disable();
-    	}
-    	sketchPanel.doLayout();
-    },
-    
-    publishInitClass: function(attributeList, classId, className, cardId, tabToOpen) {
-        var eventParams = {
-            classId: classId,
-            classAttributes: attributeList,
-            className: className,
-            cardId: cardId,
-            privileges: this.privileges,
-            superClass: this.superClass,
-            tabToOpen: tabToOpen
-        };
-        //this.addCardAction.disable();//to not conflict with the selection of first row after load
-        //on select state the status must be open.running
-        this.stateList.setValue("open.running");
-        this.selectedState = "open.running";
-        this.publish('cmdb-init-processclass', eventParams);
-    },	
-  
-  	//private
-    onUp: function() {
-    	this.cardListGrid.setHeight(0).hide();
-    	this.activityTabPanel.setHeight(this.restoreHeight.north + this.restoreHeight.center).show();
-    	this.doLayout();
-    },
-    
-    //private   
-    onDown: function() {
-    	this.activityTabPanel.setHeight(0).hide();
-    	this.cardListGrid.setHeight(this.restoreHeight.north + this.restoreHeight.center).show();
-    },
-    
-    //private   
-    onRestore: function() {
-    	this.cardListGrid.setHeight(this.restoreHeight.north).show();
-    	this.activityTabPanel.setHeight(this.restoreHeight.center).show();
-    	this.doLayout();
-    },
-    
-    //private    
-    manageSplitter: function(status, panel) {
+    }
+	
+});
+	
+	function initForClass(attributeList, table) {
+	    var eventParams = {
+	        classId: table.id,
+	        classAttributes: attributeList,
+	        className: table.text,
+	        cardId: table.cardId,
+	        privileges: this.privileges,
+	        superClass: table.superclass,
+	        tabToOpen: table.tabToOpen
+	    };
+	    
+	    //on select state the status must be open.running
+	    this.stateList.setValue("open.running");
+	    this.selectedState = "open.running";
+	    
+	    this.cardListGrid.initForClass(eventParams);
+	    this.activityTabPanel.initForClass(eventParams);
+	}	
+
+	function updateSketch(table) {
+		var sketchUrl = table.sketch_url;
+		var sketchPanel = Ext.getCmp("activitysketch_tab");
+		sketchPanel.removeAll();
+		if (sketchUrl) {
+			sketchPanel.add(new Ext.Panel({
+				html: "<img src=\"" + sketchUrl + "\" >",
+				layout: "fit",
+				autoScroll: true,
+				border: false
+			}));
+			sketchPanel.enable();    		
+		} else {
+			sketchPanel.disable();
+		}
+		sketchPanel.doLayout();
+	}
+	
+    function manageSplitter(status, panel) {
     	if (this.split_status == 'restore') {
     		this.restoreHeight = {
 				north: this.cardListGrid.getBox().height,
 				center: this.activityTabPanel.getBox().height
-			}
+			};
     	}
 		switch(status) {
 			case 'up':
-				this.onUp();
+				onUp.call(this);
 				break;
 			case 'down':
-				this.onDown();
+				onDown.call(this);
 				break;
 			case 'restore':
-				this.onRestore();
+				onRestore.call(this);
 				break;
 		}
 		this.split_status = status;
     }
-});
+
+    function onUp() {
+    	this.cardListGrid.setHeight(0).hide();
+    	this.activityTabPanel.setHeight(this.restoreHeight.north + this.restoreHeight.center).show();
+    	this.doLayout();
+    }
+    
+    function onDown() {
+    	this.activityTabPanel.setHeight(0).hide();
+    	this.cardListGrid.setHeight(this.restoreHeight.north + this.restoreHeight.center).show();
+    }
+    
+    function onRestore() {
+    	this.cardListGrid.setHeight(this.restoreHeight.north).show();
+    	this.activityTabPanel.setHeight(this.restoreHeight.center).show();
+    	this.doLayout();
+    }
+})();

@@ -1,11 +1,12 @@
 CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
-
+	clientForm: undefined, // passed to extattr definition in OptionPanel
 	identifier: '',
 	bottomButtons: [],
 	required: false,
 	activity: undefined,
 	tabpanel_id: 'activityopts_tab',
-
+	busy: false, 
+	
 	initComponent: function() {
 		this.identifier = this.extAttrDef.identifier;
 		this.required = (this.extAttrDef.required || this.extAttrDef.Required) ? true : false;
@@ -33,7 +34,6 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 		
 		this.publish('cmdb-extattr-instanced', {identifier:this.identifier,bottomButtons:exts.btmButtons});
 		this.on('hide', this.onDeactivation, this);
-		this.on('activate-extattr', this.onActivation, this);
 	},
 
 	buildButtonsArray: function() {
@@ -68,7 +68,7 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 	// private
 	getTemplateResolver: function() {
 		return this.templateResolver || new CMDBuild.Management.TemplateResolver({
-			clientForm: Ext.getCmp('activity_tab').actualForm.getForm(),
+			clientForm: this.clientForm,
 			xaVars: this.extAttrDef,
 			serverVars: this.activity
 		});
@@ -116,46 +116,58 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 		this.workItemId = workItemId;
 	},
 	
-	react: function(data, reactedFn) {
+	react: function(data) {
+		this.busy = true;
+		this.savingWentWrong = false;
+		
 		data = Ext.apply(data,{
 		  identifier: this.identifier,
 		  ProcessInstanceId: this.processInstanceId,
 		  WorkItemId: this.workItemId
 		});
+		
 		Ext.Ajax.request({
-		  url: 'services/json/management/modworkflow/reactextendedattribute',
-		  method: 'POST',
-		  params: data,
-		  scope: this,
-		  success: function(){
-		      reactedFn(this.identifier, true);
-		  },
-		  failure: function(){
-		  	  reactedFn(this.identifier, false);
-		  }
+			url : 'services/json/management/modworkflow/reactextendedattribute',
+			method : 'POST',
+			params : data,
+			scope : this,
+			failure : function() {
+				this.savingWentWrong = true;
+			},
+			callback : function() {
+				this.busy = false;
+			}
 		});
 	},
 
-	save: function(form, reactedFn, isAdvance) {
+	save: function() {
 		if (this.onSave && this.isValid()) {
-			this.onSave(form, reactedFn, isAdvance);
-		} else {
-			reactedFn(this.identifier, true);
+			this.onSave(this.afterSave);
 		}
 	},
 
+	afterSave: function() {
+		this.busy = false;
+	},
+
+	isBusy: function() {
+		return this.busy;	
+	},
+	
 	isValid: function() {
 		var data = this.getData();
 		if (this.required === true &&
 				(Ext.isEmpty(data) || (Ext.isArray(data) && data.length == 0))) {
+			_debug(this.extAttrDef.btnLabel + " is valid: ", false);
 			return false;
 		} else {
+			_debug(this.extAttrDef.btnLabel + " is valid: ", true);
 			return true;
 		}
 	},
 	
+	onActivityStartEdit: Ext.emptyFn,
 	getData: Ext.emptyFn,
-
 	initialize: Ext.emptyFn,
 	onExtAttrHide: Ext.emptyFn,
 	onExtAttrShow: Ext.emptyFn

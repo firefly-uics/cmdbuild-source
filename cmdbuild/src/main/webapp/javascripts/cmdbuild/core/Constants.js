@@ -41,5 +41,10 @@ CMDBuild.Constants = {
 		point: "POINT",
 		line: "LINESTRING",
 		polygon: "POLYGON"
+	},
+	css: {
+		error_msg: "cmdb-error-msg",
+		bg_blue: "cmdbuild_background_blue",
+		bottom_border_blue: "cmdbuild_border_bottom_blue"
 	}
 };
