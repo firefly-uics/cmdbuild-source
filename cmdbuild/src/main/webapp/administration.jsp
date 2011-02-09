@@ -38,9 +38,9 @@
 			CMDBuild.Runtime.Username = '<%= user.getName() %>';
 			CMDBuild.Runtime.UserId = <%= user.getId() %>;
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
-	<% if (userCtx.getGroups().size() == 1) { %>
+<%	if (userCtx.getGroups().size() == 1) { %>
 			CMDBuild.Runtime.RoleId = <%= defaultGroup.getId() %>;
-	<% } %>
+<%	} %>
 		</script>
 			
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
