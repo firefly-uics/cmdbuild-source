@@ -42,7 +42,9 @@
 			CMDBuild.Runtime.UserId = <%= user.getId() %>;
 			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
+<%	if (userCtx.getGroups().size() == 1) { %>
 			CMDBuild.Runtime.RoleId = <%= defaultGroup.getId() %>;
+<%	} %>
 <%
 	String[] disabledModules = defaultGroup.getDisabledModules();
 	for (String module : disabledModules) {
