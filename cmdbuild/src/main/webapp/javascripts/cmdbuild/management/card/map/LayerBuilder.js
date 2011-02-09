@@ -145,10 +145,11 @@
 	
 	CMDBuild.Management.CMDBuildMap.LayerBuilder = {
 		buildLayer: function(params, geoAttribute) {
-			if (!geoAttribute || !geoAttribute.isvisible) {
+			if (!geoAttribute || !geoAttribute.isvisible
+					|| !CMDBuild.Cache.getTableById(geoAttribute.masterTableId)) {
 				return null;
 			}
-		
+
 			var editLayer = null;
 			var layer = null;
 			

@@ -21,7 +21,7 @@ public class PrivilegeManager {
 	PrivilegeManager() {
 	}
 
-	PrivilegeManager (Group g) {
+	PrivilegeManager(Group g) {
 		if (g.isAdmin()) {
 			isAdmin = true;
 		} else {
@@ -96,7 +96,7 @@ public class PrivilegeManager {
 	}
 
 	public boolean hasWritePrivilege(ITable table) {
-		return isAdmin() || getPrivilege(table) == PrivilegeType.WRITE; 
+		return isAdmin() || getPrivilege(table) == PrivilegeType.WRITE;
 	}
 
 	public void assureCreatePrivilege(ITable table) {
@@ -113,8 +113,7 @@ public class PrivilegeManager {
 	 */
 
 	public PrivilegeType getPrivilege(IDomain domain) throws NotFoundException {
-		return PrivilegeType.intersection(getPrivilege(domain.getClass1()),
-                              getPrivilege(domain.getClass2()));
+		return PrivilegeType.intersection(getPrivilege(domain.getClass1()), getPrivilege(domain.getClass2()));
 	}
 
 	public void assureReadPrivilege(IDomain domain) {
@@ -123,7 +122,7 @@ public class PrivilegeManager {
 	}
 
 	public boolean hasReadPrivilege(IDomain domain) {
-		return isAdmin() ||	(getPrivilege(domain) != PrivilegeType.NONE); 
+		return isAdmin() || (getPrivilege(domain) != PrivilegeType.NONE);
 	}
 
 	public void assureWritePrivilege(IDomain domain) {
@@ -132,7 +131,7 @@ public class PrivilegeManager {
 	}
 
 	public boolean hasWritePrivilege(IDomain domain) {
-		return isAdmin() || (getPrivilege(domain) == PrivilegeType.WRITE); 
+		return isAdmin() || (getPrivilege(domain) == PrivilegeType.WRITE);
 	}
 
 	public void assureCreatePrivilege(IDomain domain) {
@@ -155,9 +154,16 @@ public class PrivilegeManager {
 		if (schema instanceof ITable) {
 			return getPrivilege((ITable) schema);
 		} else if (schema instanceof IDomain) {
-				return getPrivilege((IDomain) schema);
+			return getPrivilege((IDomain) schema);
 		} else if (schema instanceof IAttribute) {
-			return getPrivilege(((IAttribute)schema).getSchema());
+			IAttribute attribute = (IAttribute) schema;
+			BaseSchema attributeSchema = attribute.getSchema();
+			ITable fkTargetClass = attribute.getFKTargetClass();
+			if (attributeSchema.getMode().isCustom() || fkTargetClass == null) {
+				return getPrivilege(attributeSchema);
+			} else {
+				return getPrivilege(fkTargetClass);
+			}
 		} else {
 			throw NotFoundExceptionType.PRIVILEGE_NOTFOUND.createException();
 		}
