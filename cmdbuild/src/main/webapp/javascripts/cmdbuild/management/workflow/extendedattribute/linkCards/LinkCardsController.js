@@ -9,6 +9,7 @@
 	CMDBuild.Management.LinkCardsController = function(view) {
 		this.view = view;
 		this.model = new CMDBuild.Management.LinkCardsModel();
+		this.extAttrDef = view.extAttrDef;
 		
 		this.singleSelect = view.singleSelect;
 		this.currentView = STARTING_VIEW;

@@ -1,112 +1,4 @@
 (function() {
-	// build the controls to manage the selection
-	// of the card via map
-	var buildSelectionControl = function() {
-		var selectControl = new OpenLayers.Control.SelectFeature([], {
-			hover: false,
-		    renderIntent: "default",
-		    eventListeners: {
-		        featurehighlighted: (function(e) {
-					this.onFeatureSelect(e.feature);
-				}).createDelegate(this)
-		    }
-		});
-		
-		this.map.addControl(selectControl);
-		selectControl.activate();
-		
-		// called by the map, after the add of new layers
-		this.setSelectableLayers = function(layers) {
-			var selectableLayers = [];
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer.editLayer) {
-					selectableLayers.push(layer);
-					selectableLayers.push(layer.editLayer);
-				}
-			}
-			selectControl.setLayer(selectableLayers);
-		};
-		
-		this.deactivateSelectControl = function() {
-			selectControl.deactivate();
-		};
-		
-		this.activateSelectControl = function() {
-			selectControl.activate();
-		};
-		
-		this.selectFeature = function(feauture) {
-			selectControl.select(feauture);
-		};
-	};
-	
-	// delete the controls and 
-	// removes them from the map
-	var removeEditControls = function() {
-		for (var layer in this.editingControls) {
-			for (var control in this.editingControls[layer]) {
-				this.map.removeControl(this.editingControls[layer][control]);
-				delete this.editingControls[layer][control];
-			}
-			delete this.editingControls[layer];
-		}
-	};
-	
-	var activateControl = function(layerId, controlName) {
-		var l = this.editingControls[layerId];
-		if (l[controlName]) {
-			l[controlName].activate();
-		}
-	};
-	
-	var setTransformControlFeature = function(layerId, feature) {
-		if (feature) {
-			var l = this.editingControls[layerId];
-			if (l["transform"]) {
-				l["transform"].selectFeature(feature);
-			}
-		}
-	};
-	
-	var deactivateControl = function(layerId, controlName) {
-		var l = this.editingControls[layerId];
-		if (l[controlName]) {
-			l[controlName].deactivate();
-		}
-	};
-	
-	var deactivateEditControls = function() {
-		for (var layer in this.editingControls) {
-			for (var control in this.editingControls[layer]) {
-				this.editingControls[layer][control].deactivate();
-			}
-		}
-	};
-	
-	var buildTransformControl = function(layer) { 
-		var c = new OpenLayers.Control.ModifyFeature(layer);
-		c.mode = OpenLayers.Control.ModifyFeature.DRAG
-		|= OpenLayers.Control.ModifyFeature.ROTATE
-		|= OpenLayers.Control.ModifyFeature.RESIZE;
-		return c;		
-	};
-	
-	var buildCreationControl = function(type, layer) {
-		var controlBuilders = {
-			POINT: function(layer) {
-				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Point);
-			},
-			POLYGON: function(layer) {
-				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon);
-			},
-			LINESTRING: function(layer) {
-				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path);
-			}
-		};
-		return controlBuilders[type](layer);
-	};
-	
 	CMDBuild.Management.MapController = function(o) {
 		if (o.map) {
 			this.map = o.map;
@@ -114,10 +6,12 @@
 		} else {
 			throw new Error("The map controller was instantiated without a map");
 		}
+		
 		this.classNotLoadedParams = undefined; //used to load a layer only when the map is shown
 		this.editMode = false; //used to know if the panel is in editing mode or not
 		this.container = o.container;
 		this.silent = true; // the map is hidden at the begin
+		
 		buildSelectionControl.call(this);
 		
 		// the keys of the map are the
@@ -316,5 +210,113 @@
 		getExtensionName: function() {
 			return this.extensionName;
 		}
-	});	
+	});
+	
+	// build the controls to manage the selection
+	// of the card via map
+	function buildSelectionControl() {
+		var selectControl = new OpenLayers.Control.SelectFeature([], {
+			hover: false,
+		    renderIntent: "default",
+		    eventListeners: {
+		        featurehighlighted: (function(e) {
+					this.onFeatureSelect(e.feature);
+				}).createDelegate(this)
+		    }
+		});
+		
+		this.map.addControl(selectControl);
+		selectControl.activate();
+		
+		// called by the map, after the add of new layers
+		this.setSelectableLayers = function(layers) {
+			var selectableLayers = [];
+			for (var i=0, l=layers.length; i<l; ++i) {
+				var layer = layers[i];
+				if (layer.editLayer) {
+					selectableLayers.push(layer);
+					selectableLayers.push(layer.editLayer);
+				}
+			}
+			selectControl.setLayer(selectableLayers);
+		};
+		
+		this.deactivateSelectControl = function() {
+			selectControl.deactivate();
+		};
+		
+		this.activateSelectControl = function() {
+			selectControl.activate();
+		};
+		
+		this.selectFeature = function(feauture) {
+			selectControl.select(feauture);
+		};
+	};
+	
+	// delete the controls and 
+	// removes them from the map
+	function removeEditControls() {
+		for (var layer in this.editingControls) {
+			for (var control in this.editingControls[layer]) {
+				this.map.removeControl(this.editingControls[layer][control]);
+				delete this.editingControls[layer][control];
+			}
+			delete this.editingControls[layer];
+		}
+	};
+	
+	function activateControl(layerId, controlName) {
+		var l = this.editingControls[layerId];
+		if (l[controlName]) {
+			l[controlName].activate();
+		}
+	};
+	
+	function setTransformControlFeature(layerId, feature) {
+		if (feature) {
+			var l = this.editingControls[layerId];
+			if (l["transform"]) {
+				l["transform"].selectFeature(feature);
+			}
+		}
+	};
+	
+	function deactivateControl(layerId, controlName) {
+		var l = this.editingControls[layerId];
+		if (l[controlName]) {
+			l[controlName].deactivate();
+		}
+	};
+	
+	function deactivateEditControls() {
+		for (var layer in this.editingControls) {
+			for (var control in this.editingControls[layer]) {
+				this.editingControls[layer][control].deactivate();
+			}
+		}
+	};
+	
+	function buildTransformControl(layer) { 
+		var c = new OpenLayers.Control.ModifyFeature(layer);
+		c.mode = OpenLayers.Control.ModifyFeature.DRAG
+		|= OpenLayers.Control.ModifyFeature.ROTATE
+		|= OpenLayers.Control.ModifyFeature.RESIZE;
+		return c;		
+	};
+	
+	function buildCreationControl(type, layer) {
+		var controlBuilders = {
+			POINT: function(layer) {
+				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Point);
+			},
+			POLYGON: function(layer) {
+				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon);
+			},
+			LINESTRING: function(layer) {
+				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path);
+			}
+		};
+		return controlBuilders[type](layer);
+	};
 })();
