@@ -31,7 +31,6 @@
 		},
 		
 		centerOnGeometry: function(geometry) {
-			_debug("Center on geometry");
 			try {
 				var geom = CMDBuild.GeoUtils.readGeoJSON(geometry.geometry);
 				var center = geom.getCentroid();
