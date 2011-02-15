@@ -7,7 +7,7 @@
 		map.controller = this;
 		
 		this.layers = [];		
-		this.selectControl = addSelectControl(map, multiple=!ownerController.singleSelect);
+		this.selectControl = addSelectControl(map, multiple=true);
 		
 		map.events.on({
 		    "addlayer": function(params) {
