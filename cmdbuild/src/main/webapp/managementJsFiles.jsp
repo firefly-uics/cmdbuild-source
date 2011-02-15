@@ -89,7 +89,12 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ActivityTabPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/BaseExtendedAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/CreateModifyCard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/LinkCards.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCards.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsCardGrid.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsCardGridController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsMapController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/manageRelation/ManageRelation.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/manageRelation/ManageRelationTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/EmailWindow.js"></script>

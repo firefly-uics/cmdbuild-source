@@ -58,14 +58,15 @@ CMDBuild.Management.MapPanel =  Ext.extend(Ext.Panel, {
 	            applyLoader: false
 	        }),
 	        root: {
-	            nodeType: "async",
 	            expanded: true,
 	            children: [{
 	    	        nodeType: "gx_baselayercontainer",
-	    	        expanded: true
+	    	        expanded: true,
+	    	        layerStore: mapPanel.layers
 	    	    },{
 	    	        nodeType: "gx_overlaylayercontainer",
-	    	        expanded: true	    	       
+	    	        expanded: true,
+	    	        layerStore: mapPanel.layers
 	    	    }]
 	        },
 	        rootVisible: false,
@@ -133,7 +134,7 @@ CMDBuild.Management.MapPanel =  Ext.extend(Ext.Panel, {
 	
 	updateMap: function(params) {
 		this.currentClassName = params.className;
-		this.getMap().update(params);
+		this.getMap().update(params, withEditLayer=true);
 		this.editingWindow.update();
 	}
 });

@@ -1,34 +1,4 @@
 (function() {
-	function buildGraphIconColumn(headers) {
-		var cachedTable = CMDBuild.Cache.getTableById(this.currentClassId);
-		if (cachedTable && 
-				cachedTable.tableType != "simpletable") {
-			var graphHeader = {	
-				header: '&nbsp', 
-				width: 30, 
-				fixed: true, 
-				sortable: false, 
-				renderer: this.renderGraphIcon, 
-				align: 'center', 
-				dataIndex: 'Id',
-				menuDisabled: true,
-				id: 'imagecolumn',
-				hideable: false
-			};
-			headers.push(graphHeader);
-		}
-	};
-	
-	function buildClassColumn(headers) {
-		var classColumn = {
-			header: CMDBuild.Translation.management.modcard.subclass,
-			width: 40,
-			fixed: false,
-			sortable: true,
-			dataIndex: 'IdClass_value'
-		};
-		headers.push(classColumn);	
-	}
 /**
  * This is the Grid Panel that contains the card list of the selected class
  * 
@@ -396,5 +366,36 @@ CMDBuild.Management.openCard = function(jsonRow, tabToOpen) {
 		tabToOpen: tabToOpen
 	});	
 };
+
+function buildGraphIconColumn(headers) {
+	var cachedTable = CMDBuild.Cache.getTableById(this.currentClassId);
+	if (cachedTable && 
+			cachedTable.tableType != "simpletable") {
+		var graphHeader = {	
+			header: '&nbsp', 
+			width: 30, 
+			fixed: true, 
+			sortable: false, 
+			renderer: this.renderGraphIcon, 
+			align: 'center', 
+			dataIndex: 'Id',
+			menuDisabled: true,
+			id: 'imagecolumn',
+			hideable: false
+		};
+		headers.push(graphHeader);
+	}
+};
+
+function buildClassColumn(headers) {
+	var classColumn = {
+		header: CMDBuild.Translation.management.modcard.subclass,
+		width: 40,
+		fixed: false,
+		sortable: true,
+		dataIndex: 'IdClass_value'
+	};
+	headers.push(classColumn);	
+}
 
 })();

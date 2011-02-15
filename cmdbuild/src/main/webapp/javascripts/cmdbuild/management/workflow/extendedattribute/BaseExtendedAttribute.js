@@ -10,29 +10,35 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 	initComponent: function() {
 		this.identifier = this.extAttrDef.identifier;
 		this.required = (this.extAttrDef.required || this.extAttrDef.Required) ? true : false;
-		var exts = this.initialize( this.extAttrDef );
-		exts = exts || {};
+		var widgetConfiguration = this.initialize( this.extAttrDef ) || {};
+		var defaultConfiguration = {
+			xtype: "panel",
+			hideMode: "offsets",
+			title: this.extAttrDef.btnLabel,
+			frame: false,
+			bodyBorder: false,
+			border: false,
+			layout: "fit",
+			style: {
+				background: CMDBuild.Constants.colors.blue.background
+			},
+			buttonAlign: "center",
+			buttons: this.buildButtonsArray()
+		};
+		
+		if (widgetConfiguration.skipTitle) {
+			defaultConfiguration.title = undefined;
+		}
 		
 		Ext.apply(
 		  this,
-		  exts,
-		  {
-		  	title: this.extAttrDef.btnLabel,
-		  	frame: false,
-		  	bodyBorder: false,
-		  	border: false,
-		  	layout: 'fit',
-		  	style: {background: CMDBuild.Constants.colors.blue.background},
-		  	xtype: 'panel',
-		  	hideMode: 'offsets',
-		  	buttonAlign: 'center',
-		    buttons: this.buildButtonsArray()
-		  }
+		  widgetConfiguration,
+		  defaultConfiguration
 		);
 		
 		CMDBuild.Management.BaseExtendedAttribute.superclass.initComponent.apply(this, arguments);
 		
-		this.publish('cmdb-extattr-instanced', {identifier:this.identifier,bottomButtons:exts.btmButtons});
+		this.publish('cmdb-extattr-instanced', {identifier:this.identifier,bottomButtons: widgetConfiguration.btmButtons});
 		this.on('hide', this.onDeactivation, this);
 	},
 
@@ -155,7 +161,13 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 	},
 	
 	isValid: function() {
-		var data = this.getData();
+		var controller = this.getController();
+		var data;
+		if (controller != null) {
+			data = controller.getData();
+		} else {
+			data = this.getData();
+		}
 		if (this.required === true &&
 				(Ext.isEmpty(data) || (Ext.isArray(data) && data.length == 0))) {
 			_debug(this.extAttrDef.btnLabel + " is valid: ", false);
@@ -166,7 +178,9 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 		}
 	},
 	
-	onActivityStartEdit: Ext.emptyFn,
+	getController: function() {
+		return null;
+	},
 	getData: Ext.emptyFn,
 	initialize: Ext.emptyFn,
 	onExtAttrHide: Ext.emptyFn,
