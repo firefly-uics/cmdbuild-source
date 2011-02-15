@@ -1,14 +1,4 @@
 (function() {
-	//take the node of the class from the cache and look at the meta to find
-	//geographical attributes
-	var getGeoAttributes = function(classId) {
-		var classTable = CMDBuild.Cache.getTableById(classId);
-	  	if (classTable && classTable.meta) {
-	  		return classTable.meta.geoAttributes || [];
-	 	}
-	  	return [];
-	};
-	
 	// build the controls to manage the selection
 	// of the card via map
 	var buildSelectionControl = function() {
@@ -193,11 +183,11 @@
 			 */
 			} else {			
 				var p = Ext.apply({}, params);
-				p.geoAttributes = getGeoAttributes(p.classId);
+				p.geoAttributes = CMDBuild.GeoUtils.getGeoAttributes(p.classId);
 				this.currentClassId = p.classId;
 				this.updateMap(p);
 			}
-		},				
+		},
 		
 		onLoadCard: function(params) {
 			if (params.publisher.id == this.id) {

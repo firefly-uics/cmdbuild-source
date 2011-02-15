@@ -1,8 +1,25 @@
+(function() {
+	var DEFAULT_MIN_ZOOM = 0;
+	var DEFAULT_MAX_ZOOM = 25;
+
 /**
  * @class CMDBuild.Management.CMDBuildMap.MapLayer
  */
-CMDBuild.Management.CMDBuildMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {    
+CMDBuild.Management.CMDBuildMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
     initialize: function(name, options) {
+		this.styleMap = new OpenLayers.StyleMap({
+			"default": Ext.decode(options.geoAttribute.style)
+		});
+		
+		this.protocol = new OpenLayers.Protocol.HTTP({
+	        url: 'services/json/gis/getgeocardlist',
+	        params: {
+	    		idClass: options.targetClassId,
+	    		attribute: options.geoAttribute.name
+	    	},
+	        format: new OpenLayers.Format.GeoJSON()
+	    });
+		
 		this.strategies = [
 		    new OpenLayers.Strategy.BBOX({
 		    	autoActivate: true
@@ -20,8 +37,11 @@ CMDBuild.Management.CMDBuildMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vec
 			bboxStrategie.triggerRead();
 	    };
 	    
+		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
+		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
+		
         OpenLayers.Layer.Vector.prototype.initialize.apply(this, arguments);
-    },    
+    },
     projection: new OpenLayers.Projection("EPSG:900913"),
 	
     // CMDBuild stuff
@@ -98,3 +118,5 @@ CMDBuild.Management.CMDBuildMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vec
     	}
     }
 });
+
+})();

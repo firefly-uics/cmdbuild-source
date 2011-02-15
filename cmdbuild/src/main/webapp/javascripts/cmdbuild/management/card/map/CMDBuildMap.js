@@ -1,67 +1,12 @@
 (function() {
-    // subroutine of the update method
-    var removeCmdbLayers = function() {
-		if (this.cmdbLayers) {
-			var layer = this.cmdbLayers.pop();
-			while (layer) {
-				this.removeLayer(layer);
-				if (layer.editLayer) {
-					this.removeLayer(layer.editLayer);
-				}
-				layer = this.cmdbLayers.pop();
-			}
-		}
-		this.cmdbLayers = [];		
-	};
-	
-	var orderAttributesByIndex = function(geoAttributes) {
-		var out = [];
-		for (var i=0, l=geoAttributes.length; i<l; ++i) {
-			var attr = geoAttributes[i];
-			out[attr.index] = attr;
-		}
-		return out;
-	};
-	
-	var addLayerToMap = function(layer) {
-		if (layer) {
-			this.cmdbLayers.push(layer);
-			layer.setVisibilityByZoom(this.getZoom());
-			this.addLayers([layer]);
-			this.controller.buildEditControls(layer);
-		}
-	};
-	
-	// subroutine of the update method
-	var addCmdbLayers = function(params) {
-		var geoAttributes = params.geoAttributes || [];
-		var orderedAttrs = orderAttributesByIndex(geoAttributes);
-		
-		for (var i = orderedAttrs.length; i>=0; i--) {
-			// add the related layer to the map
-			var attr = orderedAttrs[i];
-			var newLayer = CMDBuild.Management.CMDBuildMap.LayerBuilder.buildLayer(params, attr);
-			addLayerToMap.call(this, newLayer);
-		}
-		
-		// add the editable layers to the map after
-		// the cmdb layers to see them over all
-		for (var i=0, l=this.cmdbLayers.length; i<l; ++i) {
-			var layer = this.cmdbLayers[i];		
-			if (layer.editLayer) {
-				this.addLayers([layer.editLayer]);				
-			}
-		}
-	};
-	
 	/**
 	 * @class CMDBuild.Management.CMDBuildMap
 	 */
-	CMDBuild.Management.CMDBuildMap = Ext.extend(OpenLayers.Map, {
+	CMDBuild.Management.CMDBuildMap = OpenLayers.Class(OpenLayers.Map, {
 		cmdbLayers: [], //array with the layers added		
-		update: function(params) {
+		update: function(params, withEditLayer) {
 			removeCmdbLayers.call(this);
-			addCmdbLayers.call(this, params);
+			addCmdbLayers.call(this, params, withEditLayer);
 			this.controller.setSelectableLayers(this.cmdbLayers);
 		},
 		
@@ -86,6 +31,7 @@
 		},
 		
 		centerOnGeometry: function(geometry) {
+			_debug("Center on geometry");
 			try {
 				var geom = CMDBuild.GeoUtils.readGeoJSON(geometry.geometry);
 				var center = geom.getCentroid();
@@ -169,8 +115,68 @@
 		reselectLastSelection: function() {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].reselectLastSelection();			
+				layers[i].reselectLastSelection();
 			}
 		}
 	});
+	
+    // subroutine of the update method
+    function removeCmdbLayers() {
+		if (this.cmdbLayers) {
+			var layer = this.cmdbLayers.pop();
+			while (layer) {
+				this.removeLayer(layer);
+				if (layer.editLayer) {
+					this.removeLayer(layer.editLayer);
+				}
+				layer = this.cmdbLayers.pop();
+			}
+		}
+		this.cmdbLayers = [];		
+	};
+	
+	function orderAttributesByIndex(geoAttributes) {
+		var out = [];
+		for (var i=0, l=geoAttributes.length; i<l; ++i) {
+			var attr = geoAttributes[i];
+			out[attr.index] = attr;
+		}
+		return out;
+	};
+	
+	function addLayerToMap(layer) {
+		if (layer) {
+			this.cmdbLayers.push(layer);
+			layer.setVisibilityByZoom(this.getZoom());
+			this.addLayers([layer]);
+			this.controller.buildEditControls(layer);
+		}
+	};
+	
+	// subroutine of the update method
+	function addCmdbLayers(params, withEditLayer) {
+		var geoAttributes = params.geoAttributes || [];
+		var orderedAttrs = orderAttributesByIndex(geoAttributes);
+		
+		for (var i = orderedAttrs.length; i>=0; i--) {
+			// add the related layer to the map
+			var attr = orderedAttrs[i];
+			var newLayer = CMDBuild.Management.CMDBuildMap.LayerBuilder.buildLayer({
+				classId: params.classId,
+		    	geoAttribute: attr,
+		    	withEditLayer: withEditLayer
+			});
+			addLayerToMap.call(this, newLayer);
+		}
+		
+		// add the editable layers to the map after
+		// the cmdb layers to see them over all
+		for (var i=0, l=this.cmdbLayers.length; i<l; ++i) {
+			var layer = this.cmdbLayers[i];		
+			if (layer.editLayer) {
+				this.addLayers([layer.editLayer]);
+			}
+		}
+	};
+	
 })();

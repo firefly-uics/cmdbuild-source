@@ -51,8 +51,11 @@
     },
     
     onActivityStartEdit: function() {
-    	this.items.each(function(i) {
-    		i.onActivityStartEdit();
+    	this.items.each(function(item) {
+    		var controller = item.getController();
+    		if (controller) {
+    			controller.onActivityStartEdit();
+    		}
     	});
     },
     
