@@ -40,7 +40,7 @@ public class CMDBInitListener implements ServletContextListener {
 		
 		// Next we set the properties for all the servlets and JSP
 		// pages in this web application
-		PropertyConfigurator.configure(properties);
+		PropertyConfigurator.configureAndWatch(properties);
 		
 		Log.OTHER.info("Loading common configurations for CMDBuild");
 
