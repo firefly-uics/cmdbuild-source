@@ -3,6 +3,7 @@ package org.cmdbuild.connector;
 import java.util.Properties;
 import java.util.SortedSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 import org.cmdbuild.connector.collections.ConnectorDataCollection;
@@ -191,10 +192,10 @@ public class Connector {
 	}
 
 	public static void main(final String[] args) {
+		final ConnectorConfiguration configuration = ConnectorConfiguration.getInstance();
 		int status = 0;
 
 		try {
-			logger.info("Starting");
 			final Properties systemProperties = System.getProperties();
 			if (!systemProperties.containsKey(ConnectorConfiguration.CONFIGURATION_PATH_PROPERTY)) {
 				throw new ConfigurationException("missing property "
@@ -204,8 +205,10 @@ public class Connector {
 			final String configurationPath = systemProperties
 					.getProperty(ConnectorConfiguration.CONFIGURATION_PATH_PROPERTY);
 
-			final ConnectorConfiguration configuration = ConnectorConfiguration.getInstance();
 			configuration.load(configurationPath);
+
+			final String message = StringUtils.defaultIfEmpty(configuration.getStartMessage(), "Program started");
+			logger.info(message);
 
 			final Connector connector = new Connector();
 			connector.setConfiguration(configuration);
@@ -220,8 +223,9 @@ public class Connector {
 			logger.fatal(e.getMessage());
 			status = 1;
 		} finally {
+			final String message = StringUtils.defaultIfEmpty(configuration.getEndMessage(), "Program finished");
+			logger.info(message);
 			System.exit(status);
-			logger.info("Finishing");
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -21,6 +22,9 @@ public class ConnectorConfiguration {
 	private static final String CMDBUILD_PASSWORD = "cmdbuild.password";
 	private static final String EXTERNAL_MODULE = "connector.external_module";
 
+	private static final String START_MESSAGE = "connector.message.start";
+	private static final String END_MESSAGE = "connector.message.end";
+
 	private final Properties properties;
 
 	private ConnectorConfiguration() {
@@ -28,13 +32,14 @@ public class ConnectorConfiguration {
 	}
 
 	public static ConnectorConfiguration getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new ConnectorConfiguration();
+		}
 		return instance;
 	}
 
 	public void load(final String path) throws ConfigurationException {
-		final String configurationPath = path + (path.endsWith(File.separator) ? "" : File.separator);
+		final String configurationPath = path + (path.endsWith(File.separator) ? StringUtils.EMPTY : File.separator);
 
 		PropertyConfigurator.configure(configurationPath + LOG4J_FILENAME);
 
@@ -48,7 +53,7 @@ public class ConnectorConfiguration {
 	private String getProperty(final String key) {
 		Validate.notNull(key, "null key");
 		final String value = properties.getProperty(key);
-		return (value == null ? "" : value);
+		return StringUtils.defaultString(value, StringUtils.EMPTY);
 	}
 
 	private void setProperty(final String key, final String value) {
@@ -86,6 +91,22 @@ public class ConnectorConfiguration {
 
 	public void setExternalModule(final String value) {
 		setProperty(EXTERNAL_MODULE, value);
+	}
+
+	public String getStartMessage() {
+		return getProperty(START_MESSAGE);
+	}
+
+	public void setStartMessage(final String value) {
+		setProperty(START_MESSAGE, value);
+	}
+
+	public String getEndMessage() {
+		return getProperty(END_MESSAGE);
+	}
+
+	public void setEndMessage(final String value) {
+		setProperty(END_MESSAGE, value);
 	}
 
 }
