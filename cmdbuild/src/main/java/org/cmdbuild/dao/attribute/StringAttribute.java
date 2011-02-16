@@ -20,6 +20,6 @@ public class StringAttribute extends TextAttribute {
 
 	private int getStringSizeLimit() {
 		// TODO check for the correct length when metadata are implemented
-		return 255;
+		return Integer.MAX_VALUE;
 	}
 }
