@@ -8,6 +8,7 @@
 		
 		this.layers = [];		
 		this.selectControl = addSelectControl(map, multiple=true);
+		this.lastSelection = null;
 		
 		map.events.on({
 		    "addlayer": function(params) {
@@ -90,8 +91,8 @@
 			}
 		},
 		
-		centerMapOnSelection: function(selection) {
-					
+		getLastSelection: function() {
+			return this.lastSelection;
 		}
 	};
 	
@@ -113,17 +114,22 @@
 	function onFeatureSelected(params) {
 		var cardId = params.feature.attributes.master_card;
 		this.model.select(String(cardId));
+		this.lastSelection = cardId;
 	}
 	
 	function onFeatureUnselected(params) {
 		var cardId = params.feature.attributes.master_card;
 		this.model.deselect(String(cardId));
+		if (this.lastSelection == cardId) {
+			this.lastSelection = null;
+		}
 	}
 	
 	function onFeatureAdded(p) {
 		var master_card = p.feature.attributes.master_card;
 		if (master_card && this.model.isSelected(master_card)) {
 			this.selectControl.select(p.feature);
+			centerMapOnLoadedFeature.call(this, p.feature);
 		}		
 	}
 	

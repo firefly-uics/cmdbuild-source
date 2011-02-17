@@ -190,16 +190,13 @@ CMDBuild.Management.CardListGrid = Ext.extend(CMDBuild.Grid, {
 	},
 	
 	defineParamsToLoadPageForCardId: function(cardId) {
-		var params = {
-				IdClass: this.currentClassId,
-	   			Id: cardId
-		};
-		if (this.store.lastOptions && this.store.lastOptions.params.dir) {
-			var sortDirection = this.store.lastOptions.params.dir;
-			var sortValue = this.store.lastOptions.params.sort;
-			params['dir'] = sortDirection;
-			params['sort'] = sortValue;
-		} 
+		var params = {};
+		if (this.store.lastOptions) {
+			params = this.store.lastOptions.params || {};
+		}
+		params.IdClass = this.currentClassId;
+   		params.Id = cardId;
+		
 		return params;
 	},
 

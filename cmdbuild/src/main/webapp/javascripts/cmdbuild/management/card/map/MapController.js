@@ -3,6 +3,44 @@
 		if (o.map) {
 			this.map = o.map;
 			this.map.controller = this;
+			
+			this.map.events.on({
+			    "addlayer": function(params) {
+					var layer = params.layer;
+					if (layer == null || !layer.CM_Layer) {
+						return;
+					}
+					
+					if (layer.CM_EditLayer) {
+						layer.events.on({
+							"beforefeatureadded": onEditableLayerBeforeAdd
+						});
+					} else {
+						layer.events.on({
+							"beforefeatureadded": onCmdbLayerBeforeAdd
+						});
+					}					
+				},
+			    "removelayer": function(params) {
+					var layer = params.layer;
+					if (layer == null || !layer.CM_Layer) {
+						return;
+					}
+					if (layer.CM_EditLayer) {
+						layer.events.un({
+							"beforefeatureadded": onEditableLayerBeforeAdd
+						});
+					} else {
+						layer.events.un({
+							"beforefeatureadded": onCmdbLayerBeforeAdd
+						});
+					}		
+				},
+			    scope: this
+			});
+			
+			
+			
 		} else {
 			throw new Error("The map controller was instantiated without a map");
 		}
@@ -211,6 +249,40 @@
 			return this.extensionName;
 		}
 	});
+	
+	function onEditableLayerBeforeAdd(o) {
+		var layer = o.object;
+		
+		if (layer.features.length > 0) {
+			var currentFeature = layer.features[0];
+			if (o.feature.attributes.master_card) {
+				// we are added a feature in edit layer
+				// because was selected by the user
+				if (currentFeature.attributes.master_card == o.feature.attributes.master_card) {
+					return false; // forbid the add
+				} else {
+					layer.removeFeatures([currentFeature]);
+				}
+			} else {
+				// is added in editing mode
+				// and want only one feature
+				layer.removeAllFeatures();
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	function onCmdbLayerBeforeAdd(o) {
+		var layer = o.object;
+		if (layer.editLayer 
+				&& o.feature.attributes.master_card == CMDBuild.State.getLastCardSelectedId()) {
+			layer.editLayer.addFeatures([o.feature]);
+			layer.lastSelection = o.feature.clone();
+			return false;
+		}
+		return true;
+	}
 	
 	// build the controls to manage the selection
 	// of the card via map

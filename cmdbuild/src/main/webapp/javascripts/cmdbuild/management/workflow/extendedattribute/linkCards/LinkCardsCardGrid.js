@@ -1,6 +1,9 @@
 (function() {
 	CMDBuild.Management.LinkCards.LinkCardsCardGrid = Ext.extend(CMDBuild.Management.CardListGrid, {
 	    isFirstLoad: true, // flag to identify the first loading to clear the filter
+	    onRowSelect: Ext.emptyFn,
+		applySelection: Ext.emptyFn,
+		
 	    constructor: function(config) {
 			var outName = this.outputName;
 			if (!config.noSelect) {
@@ -12,6 +15,7 @@
 			}
 			CMDBuild.Management.LinkCards.LinkCardsCardGrid.superclass.constructor.call(this, config);
 		},
+		
 		setColumnsForClass : function(classAttributes) {
 			var headers = [];
 			for (var i = 0; i < classAttributes.length; i++) {
@@ -42,11 +46,13 @@
 		},
 		
 		loadCards : function(position) {
+			this.isFirstLoad = false;
 			var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-			var page = position ? parseInt(position / pageSize) : 0;
+			var page = position ? parseInt((position -1) / pageSize) : 0;
+			
 			this.getStore().load({
 				params: {
-					start: page * pageSize,
+					start: page*pageSize,
 					limit: pageSize,
 					ForceResetFilter: this.isFirstLoad
 				},
@@ -55,11 +61,14 @@
 				},
 				scope: this
 			});
-			this.isFirstLoad = false;
 		},
-		onRowSelect: Ext.emptyFn,
-		applySelection: Ext.emptyFn,		
+				
 		syncSelections: function() {
+			var sm = this.getSelectionModel();
+			sm.suspendEvents();
+			sm.clearSelections();
+			sm.resumeEvents();
+			
 			if (!this.noSelect) {
 				var store = this.getStore();
 				var selections = this.model.getSelections();

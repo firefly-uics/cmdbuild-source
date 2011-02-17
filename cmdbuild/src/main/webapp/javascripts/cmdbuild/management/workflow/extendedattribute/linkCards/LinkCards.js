@@ -85,7 +85,8 @@ function buildMapPanel(extAttrDef) {
 			layout: "border",
 			frame: false,
 			border: false,
-			items: [this.map, this.layersTree]
+			items: [this.map, this.layersTree],
+			baseCls: CMDBuild.Constants.css.bottom_border_blue
 	    });
 		
 		

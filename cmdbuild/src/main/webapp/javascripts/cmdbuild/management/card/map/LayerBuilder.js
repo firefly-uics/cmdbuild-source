@@ -7,6 +7,7 @@
     var AbstractLayer = function () {};
     AbstractLayer.prototype = {
     	CMDBuildLayer: true,
+    	CM_Layer: true,
     	activateStrategies: Ext.emptyFn,
 	    selectFeatureByMasterCard: Ext.emptyFn,
 	    selectFeature: Ext.emptyFn,
@@ -66,43 +67,20 @@
 		// the edit layer is used to manage the single insert.
 		// maybe it's possible to do the same using the cmdblayer only, 
 		// and a "edit mode" in which consider the single insert
-		_debug("Edit Layer", geoAttribute);
 		var editLayer = new OpenLayers.Layer.Vector(geoAttribute.description+'-Edit', {
 	    	projection: new OpenLayers.Projection("EPSG:900913"),
 	    	displayInLayerSwitcher: false,
-	    	eventListeners: {
-				beforefeatureadded: onEditableLayerBeforeAdd
-			},
+	    	
 			// cmdb stuff
-            geoAttribute: geoAttribute
+            geoAttribute: geoAttribute,
+            CM_EditLayer: true,
+            CM_Layer: true
 	    });
-		
-		function onEditableLayerBeforeAdd(o) {
-			if (editLayer.features.length > 0) {
-				var currentFeature = editLayer.features[0];
-				if (o.feature.attributes.master_card) {
-					// we are added a feature in edit layer
-					// because was selected by the user
-					if (currentFeature.attributes.master_card == o.feature.attributes.master_card) {
-						return false; // forbid the add
-					} else {
-						editLayer.removeFeatures([currentFeature]);
-					}
-				} else {
-					// is added in editing mode
-					// and want only one feature
-					editLayer.removeAllFeatures();
-					return true;
-				}
-			}
-			return true;
-		};
-		
+				
 		return editLayer;
 	};
 	
-	function buildCmdbLayer(geoAttribute, classId, editLayer) {
-		_debug("CMDB Layer", geoAttribute);
+	function buildCmdbLayer(geoAttribute, classId, editLayer) {		
 		var layerDescription = geoAttribute.description;
 		
 		if (!editLayer) {
@@ -112,16 +90,6 @@
 		}
 		
 		var cmdbLayer = new CMDBuild.Management.CMDBuildMap.MapLayer(layerDescription, {
-			eventListeners: {
-				beforefeatureadded: function onCmdbLayerBeforeAdd(o) {
-					if (cmdbLayer.editLayer 
-							&& o.feature.attributes.master_card == CMDBuild.State.getLastCardSelectedId()) {
-						cmdbLayer.editLayer.addFeatures([o.feature]);
-						cmdbLayer.lastSelection = o.feature.clone();			
-						return false;
-					}
-				}
-			},
 			targetClassId: getIdClassForRequest(geoAttribute, classId),
 			geoAttribute: geoAttribute,
 			editLayer: editLayer

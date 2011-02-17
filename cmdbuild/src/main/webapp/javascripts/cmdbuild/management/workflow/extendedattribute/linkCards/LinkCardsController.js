@@ -7,16 +7,18 @@
 	var STARTING_VIEW = TABLE_VIEW_NAME;
 	
 	CMDBuild.Management.LinkCardsController = function(view) {
-		this.view = view;
-		this.model = new CMDBuild.Management.LinkCardsModel();
-		this.extAttrDef = view.extAttrDef;
-		
 		this.singleSelect = view.singleSelect;
 		this.currentView = STARTING_VIEW;
 		this.alertIfChangeDefaultSelection = false,
+		this.view = view;
+		this.extAttrDef = view.extAttrDef;
+		
+		this.model = new CMDBuild.Management.LinkCardsModel({
+			singleSelect: this.singleSelect
+		});
 		
 		this.mapController = {};
-		this.gridController = CMDBuild.Management.LinkCards.LinkCardsCardGridController(this.view.cardGrid, this.model);
+		this.gridController = new CMDBuild.Management.LinkCards.LinkCardsCardGridController(this.view.cardGrid, this.model);
 		
 		this.templateResolver = new CMDBuild.Management.TemplateResolver({
 			clientForm: view.clientForm,
@@ -56,14 +58,14 @@
 	
 	function addViewEventListeners(view) {
 		view.on("CM_show", function(extAttr) {
+			this.alertIfChangeDefaultSelection = true;
 			var classId = this.templateResolver.getVariable(CLASS_ID);
 			var cqlQuery = this.templateResolver.getVariable(FILTER);
-			this.alertIfChangeDefaultSelection = true;
 			
 			if (cqlQuery) {
 				this.view.cardGrid.openFilterBtn.disable();
 				this.templateResolver.resolveTemplates({
-					attributes: [ 'Filter' ],
+					attributes: [ FILTER ],
 					callback: function(out, ctx) {
 						var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);					
 						this.initGrid(classId, cardReqParams);
@@ -92,7 +94,8 @@
 			} else {
 				v.getLayout().setActiveItem(v.cardGrid.id);
 				v.mapButton.setIconClass("map");
-				v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);				
+				v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
+				this.gridController.loadPageForLastSelection(this.mapController.getLastSelection());		
 			}
 		}, this);		
 	};

@@ -143,15 +143,6 @@
 		return out;
 	};
 	
-	function addLayerToMap(layer) {
-		if (layer) {
-			this.cmdbLayers.push(layer);
-			layer.setVisibilityByZoom(this.getZoom());
-			this.addLayers([layer]);
-			this.controller.buildEditControls(layer);
-		}
-	};
-	
 	// subroutine of the update method
 	function addCmdbLayers(params, withEditLayer) {
 		var geoAttributes = params.geoAttributes || [];
@@ -175,6 +166,15 @@
 			if (layer.editLayer) {
 				this.addLayers([layer.editLayer]);
 			}
+		}
+	};
+	
+	function addLayerToMap(layer) {
+		if (layer) {
+			this.cmdbLayers.push(layer);
+			layer.setVisibilityByZoom(this.getZoom());
+			this.addLayers([layer]);
+			this.controller.buildEditControls(layer);
 		}
 	};
 	

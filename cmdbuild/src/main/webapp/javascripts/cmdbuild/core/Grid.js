@@ -20,7 +20,7 @@ CMDBuild.Grid = Ext.extend(Ext.grid.GridPanel, {
 	        fields: arrColumns,
 	        remoteSort: this.remoteSort
 		});
-
+		
 		this.pagingBar =  new Ext.PagingToolbar({
             pageSize: parseInt(CMDBuild.Config.cmdbuild.rowlimit),
             store: this.store,
@@ -77,6 +77,7 @@ CMDBuild.Grid = Ext.extend(Ext.grid.GridPanel, {
 					this.applySelection(0);
 				}
 			}
+			this.fireEvent("CM_load", arguments);
 		}, this);
 		this.store = store;
 		this.reconfigure(store, new Ext.grid.ColumnModel(headers));

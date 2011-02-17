@@ -25,3 +25,11 @@ CMDBuild.Management.LinkCards.LinkCardsCardGridController = function(grid, model
 		this.grid.deselectByCardId(selection);
 	}, this);
 };
+
+CMDBuild.Management.LinkCards.LinkCardsCardGridController.prototype.loadPageForLastSelection = function(selection) {
+	if (selection != null) {
+		this.grid.loadPageForCardId(selection);
+	} else {
+		this.grid.getStore().reload();
+	}
+};

@@ -1,5 +1,5 @@
 CMDBuild.Management.LinkCardsModel = Ext.extend(Ext.util.Observable, {
-    constructor: function(config) {
+	constructor: function(config) {
 		config = config || {};
         this.selections = {};
         this.singleSelect = config.singleSelect;
@@ -18,7 +18,7 @@ CMDBuild.Management.LinkCardsModel = Ext.extend(Ext.util.Observable, {
     		return;
     	} else {
 	    	if (this.singleSelect) {
-				this.selections = {};
+				this.reset();
 	    	}
 	    	this.selections[selection] = true;
 	    	this.fireEvent("select", selection);
@@ -49,5 +49,13 @@ CMDBuild.Management.LinkCardsModel = Ext.extend(Ext.util.Observable, {
 		for (var selection in this.selections) {
 			this.deselect(selection);
 		}
+	},
+	
+	hasSelection: function() {
+		return this.getSelections().length > 0;
+	},
+	
+	length: function() {
+		return this.getSelections().length;
 	}
 });
