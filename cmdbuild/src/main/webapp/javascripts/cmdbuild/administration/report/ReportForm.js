@@ -65,12 +65,10 @@ CMDBuild.Administration.ReportForm = Ext.extend(Ext.Panel, {
 	
 	newReport: function() {
 		this.status = "add";
-		this.step1.resetForm();
-		this.step1.setReportId(-1);
+		this.step1.onNewReport();
 		this.step1.on('clientvalidation', this.onClientValidation, this);
 		this.invokeForButtons('enable');
 		this.invokeForTbar('disable');
-		this.step1.enableAllField();
 	},
 	
 	//private

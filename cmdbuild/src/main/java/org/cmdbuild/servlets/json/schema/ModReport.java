@@ -91,29 +91,96 @@ public class ModReport extends JSONBase {
 			@Parameter("description") String description,
 			@Parameter("groups") String groups, 
 			@Parameter("reportId") int reportId,
-			@Parameter("jrxml") FileItem file) throws JSONException, NotFoundException {
+			@Parameter(value="jrxml", required=false) FileItem file) throws JSONException, NotFoundException {
+		
+		resetSession();
+		ReportCard newReport = new ReportCard();
+		setReportSimpleAttributes(name, description, groups, reportId, newReport);
+		if (file.getSize() > 0) {
+			setReportImagesAndSubReports(serializer, file, newReport);
+		} else {
+			// to say at the interface to not display the second step
+			serializer.put("skipSecondStep", true);
+		}
+		new SessionVars().setNewReport(newReport);
+		return serializer;
+	}
 
+	private void setReportImagesAndSubReports(JSONObject serializer,
+			FileItem file, ReportCard newReport) throws JSONException {
+		String[] imagesNames = null;
+		int subreportsNumber=0;
+		
+		JasperDesign jd = loadJasperDesign(file);
+		checkJasperDesignParameters(jd);
+		List<JRDesignImage> designImages = ReportFactory.getImages(jd);
+		
+		if(ReportFactory.checkDuplicateImages(designImages)) { // check duplicates
+			serializer.put("duplicateimages", true);
+			serializer.put("images", "");
+			serializer.put("subreports", "");
+		} else {
+			imagesNames = manageImages(serializer, designImages);
+			subreportsNumber = manageSubReports(serializer, jd);
+		}
+		
+		newReport.setImagesName(imagesNames);
+		newReport.setSubreportsNumber(subreportsNumber);
+		newReport.setJd(jd);
+	}
+
+	private void setReportSimpleAttributes(String name, String description,
+			String groups, int reportId, ReportCard newReport) {
+		int[] selectedGroups = parseSelectedGroup(groups);
+		newReport.setOriginalId(reportId);
+		newReport.setCode(name);
+		newReport.setDescription(description);
+		newReport.setSelectedGroups(selectedGroups);
+	}
+
+	private int manageSubReports(JSONObject serializer, JasperDesign jd)
+			throws JSONException {
 		JSONArray jsonArray;
 		JSONObject jsonObject;
-		
-		// LOAD JD
-		JasperDesign jd = null;
-		try {
-			jd = JRXmlLoader.load(file.getInputStream());
-		} catch (Exception e) {
-			Log.REPORT.error("Error loading report", e);
-			throw ReportExceptionType.REPORT_INVALID_FILE.createException();
+		int subreportsNumber=0;
+		List<JRSubreport> subreports = ReportFactory.getSubreports(jd);
+		jsonArray = new JSONArray();
+		for(JRSubreport subreport : subreports) {
+			String subreportName = ReportFactory.getSubreportName(subreport);
+			subreportsNumber++;
+			
+			// client
+			jsonObject = new JSONObject();
+			jsonObject.put("name", subreportName);
+			jsonArray.put(jsonObject);
 		}
-		
-		
-		// PARAMETERS - check parameter format
-		JRParameter[] parameters = jd.getParameters();
-		for(JRParameter parameter : parameters) {
-			ReportParameter.parseJrParameter(parameter);
+		serializer.put("subreports", jsonArray);
+		ReportFactory.prepareDesignSubreportsForUpload(subreports); // update expressions in design
+		return subreportsNumber;
+	}
+
+	private String[] manageImages(JSONObject serializer,
+			List<JRDesignImage> designImages) throws JSONException {
+		JSONArray jsonArray;
+		JSONObject jsonObject;
+		String[] imagesNames;
+		jsonArray = new JSONArray();
+		imagesNames = new String[designImages.size()];
+		for(int i=0; i<designImages.size(); i++) {			
+			String imageFilename = ReportFactory.getImageFileName(designImages.get(i));
+			imagesNames[i]=imageFilename;
+			
+			// client
+			jsonObject = new JSONObject();
+			jsonObject.put("name", imageFilename);
+			jsonArray.put(jsonObject);			
 		}
-		
-		
-		// GROUPS
+		serializer.put("images", jsonArray);
+		ReportFactory.prepareDesignImagesForUpload(designImages); // update expressions in design
+		return imagesNames;
+	}
+
+	private int[] parseSelectedGroup(String groups) {
 		int[] selectedGroups = {};
 		if(groups!=null && !groups.equals("")) {
 			int numGroups = groups.split(",").length;
@@ -122,71 +189,70 @@ public class ModReport extends JSONBase {
 				selectedGroups[i] = Integer.parseInt(groups.split(",")[i]);
 			}
 		}
-		
-		
-		// IMAGES & SUBREPORT
-		String[] imagesNames = null;
-		int subreportsNumber=0;
-		List<JRDesignImage> designImages = ReportFactory.getImages(jd);
-		if(ReportFactory.checkDuplicateImages(designImages)) { // check duplicates
-			serializer.put("duplicateimages", true);
-			serializer.put("images", "");
-			serializer.put("subreports", "");
-		} else {
-			
-			// IMAGES
-			jsonArray = new JSONArray();
-			imagesNames = new String[designImages.size()];
-			for(int i=0; i<designImages.size(); i++) {			
-				String imageFilename = ReportFactory.getImageFileName(designImages.get(i));
-				imagesNames[i]=imageFilename;
-				
-				// client
-				jsonObject = new JSONObject();
-				jsonObject.put("name", imageFilename);
-				jsonArray.put(jsonObject);			
-			}
-			serializer.put("images", jsonArray);
-			ReportFactory.prepareDesignImagesForUpload(designImages); // update expressions in design
-			
-			
-			// SUBREPORTS
-			List<JRSubreport> subreports = ReportFactory.getSubreports(jd);
-			jsonArray = new JSONArray();
-			for(JRSubreport subreport : subreports) {
-				String subreportName = ReportFactory.getSubreportName(subreport);
-				subreportsNumber++;
-				
-				// client
-				jsonObject = new JSONObject();
-				jsonObject.put("name", subreportName);
-				jsonArray.put(jsonObject);
-			}
-			serializer.put("subreports", jsonArray);
-			ReportFactory.prepareDesignSubreportsForUpload(subreports); // update expressions in design
+		return selectedGroups;
+	}
+
+	private void checkJasperDesignParameters(JasperDesign jd) {
+		JRParameter[] parameters = jd.getParameters();
+		for(JRParameter parameter : parameters) {
+			ReportParameter.parseJrParameter(parameter);
 		}
-				
-				
-		// create report obj
-		ReportCard newReport = new ReportCard();
-		newReport.setOriginalId(reportId);
-		newReport.setCode(name);
-		newReport.setDescription(description);
-		newReport.setSelectedGroups(selectedGroups);
-		newReport.setImagesName(imagesNames);
-		newReport.setSubreportsNumber(subreportsNumber);
-		newReport.setJd(jd);
-		new SessionVars().setNewReport(newReport);
-		return serializer;		
+	}
+
+	private JasperDesign loadJasperDesign(FileItem file) {
+		JasperDesign jd = null;
+		try {
+			jd = JRXmlLoader.load(file.getInputStream());
+		} catch (Exception e) {
+			Log.REPORT.error("Error loading report", e);
+			throw ReportExceptionType.REPORT_INVALID_FILE.createException();
+		}
+		return jd;
 	}		
 
 	@Admin
 	@JSONExported
 	public JSONObject importJasperReport(
 			JSONObject serializer,
-			@Request(MethodParameterResolver.MultipartRequest) List<FileItem> files
-			) throws JSONException, AuthException {
+			@Request(MethodParameterResolver.MultipartRequest) List<FileItem> files)
+			throws JSONException, AuthException {
 		ReportCard newReport = new SessionVars().getNewReport();
+
+		if (newReport.getJd() != null) {
+			importSubreportsAndImages(files, newReport);
+		}
+		saveReport(newReport);
+		resetSession();
+		return serializer;
+	}
+	
+	
+	@Admin
+	@JSONExported
+	public JSONObject saveJasperReport(JSONObject serializer) {
+		ReportCard newReport = new SessionVars().getNewReport();
+		saveReport(newReport);
+		
+		return serializer;
+	}
+	
+	private void saveReport(ReportCard newReport) {
+		try {
+			if (newReport.getOriginalId() < 0) {
+				reportFacade.insertReport(newReport);
+			} else {
+				reportFacade.updateReport(newReport);
+			}
+		} catch (SQLException e) {
+			Log.REPORT.error("Error saving report");
+		} catch (IOException e) {
+			Log.REPORT.error("Error saving report");
+			e.printStackTrace();
+		}
+	}
+
+	private void importSubreportsAndImages(List<FileItem> files,
+			ReportCard newReport) {
 		try {
 			
 			/*
@@ -198,7 +264,7 @@ public class ModReport extends JSONBase {
 			
 			// get IMAGES
 			int nImages = newReport.getImagesName().length;
-	
+
 			// imageByte contains the stream of imagesFiles[]
 			byte[][] imageByte = new byte[nImages][];
 			// lengthImageByte contains the lengths of all imageByte[]
@@ -208,23 +274,23 @@ public class ModReport extends JSONBase {
 				//loading the image file and putting it in imageByte			
 				imageByte[i] = files.get(i).get();				
 			}
-	
+
 			// get REPORTS
 			int nReports= newReport.getSubreportsNumber()+1; // subreports + 1 master report
-	
+
 			// imageByte contains the stream of imagesFiles[]
 			byte[][] reportByte = new byte[nReports][];
 			// lengthImageByte contains the lengths of all imageByte[]
 			int lengthReportByte[] = new int[nReports];
-	
+
 			for(int i=0; i<nReports-1; i++){
 				// load the subreport .jasper file and put it in reportByte
 				reportByte[i+1] = files.get(i+nImages).get(); //i+1 because of the master report with index 0
 			}
-	
+
 			//check if all files have been uploaded
 			boolean fileNotUploaded=false;
-	
+
 			for(int i=0; i<nImages; i++){
 				if(imageByte[i]==null)
 					fileNotUploaded = true;
@@ -234,24 +300,24 @@ public class ModReport extends JSONBase {
 				if(reportByte[i]==null)
 					fileNotUploaded = true;
 			}
-	
+
 			if(!fileNotUploaded) {
 								
 				// IMAGES
 				for (int i = 0; i < nImages; i++) {
 					lengthImagesByte[i] = imageByte[i].length;
 				}
-	
+
 				int totByte = 0; // total n. of bytes needed to store all images 
 				for (int i = 0; i < nImages; i++) {
 					totByte += lengthImagesByte[i];
 				}
-	
+
 				// array of bytes to store into db all reports
 				byte[] imagesByte = new byte[totByte];
-	
+
 				int startAt = 0; // determinate position in which starts a new image
-	
+
 				// puts in imageByte all the reports
 				for (int i = 0; i < nImages; i++) {
 					for (int j = 0; j < lengthImagesByte[i]; j++) {
@@ -259,27 +325,27 @@ public class ModReport extends JSONBase {
 					}
 					startAt += lengthImagesByte[i];
 				}
-	
-	
+
+
 				// REPORTS
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				JasperCompileManager.compileReportToStream(newReport.getJd(), os);
 				reportByte[0]=os.toByteArray(); // master report in bytes
-	
+
 				for (int i=0; i < nReports; i++) {
 					lengthReportByte[i] = reportByte[i].length;
 				}
-	
+
 				totByte = 0; // total n. of bytes needed to store all reports (master and subreports)
 				for (int i = 0; i < nReports; i++) {
 					totByte += lengthReportByte[i];
 				}
-	
+
 				// array of bytes to store into db
 				byte[] reportsByte = new byte[totByte];
-	
+
 				startAt = 0; // determinate position in which starts a new report
-	
+
 				// puts in reportByte all the reports
 				for (int i = 0; i < nReports; i++) {
 					for (int j = 0; j < lengthReportByte[i]; j++) {
@@ -309,14 +375,6 @@ public class ModReport extends JSONBase {
 					newReport.setImages(imagesByte);
 					newReport.setImagesLength(lengthImagesByte);
 				}
-				
-				// insert or update db
-				if(newReport.getOriginalId()<0) {
-					reportFacade.insertReport(newReport);
-				} else {
-					reportFacade.updateReport(newReport);
-				}
-				
 			}
 			else {
 				throw ReportExceptionType.REPORT_UPLOAD_ERROR.createException();
@@ -327,14 +385,7 @@ public class ModReport extends JSONBase {
 		} catch (NoClassDefFoundError e) {
 			Log.REPORT.error("Class not found error", e);
 			throw ReportExceptionType.REPORT_NOCLASS_ERROR.createException(e.getMessage());
-		} catch (SQLException e) {
-			Log.REPORT.error("Error importing report", e);
-			throw ReportExceptionType.REPORT_IMPORT_ERROR.createException();
-		} catch (IOException e) {
-			Log.REPORT.error("Error uploading report", e);
-			throw ReportExceptionType.REPORT_UPLOAD_ERROR.createException();
 		}
-		return serializer;
 	}
 	
 	/**
@@ -345,7 +396,7 @@ public class ModReport extends JSONBase {
 	 * @throws JSONException
 	 */
 	@JSONExported
-	public void resetSession(JSONObject serializer) throws JSONException {
+	public void resetSession() throws JSONException {
 		new SessionVars().removeNewReport();
 	}
 }

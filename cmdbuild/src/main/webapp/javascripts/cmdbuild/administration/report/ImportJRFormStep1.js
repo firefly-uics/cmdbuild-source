@@ -9,6 +9,15 @@ CMDBuild.Administration.ImportJRFormStep1 = Ext.extend(Ext.FormPanel, {
   	plugins: [new CMDBuild.CallbackPlugin()],
   	
   	initComponent:function() {
+		
+		this.fileField = new Ext.form.TextField({
+	      	inputType : "file",	      	
+	        fieldLabel: this.translation.master_report_jrxml,
+	        allowBlank: false,
+	        name: 'jrxml',
+	        disabled: true
+		});
+		
 		this.fields = [{
 			xtype: 'hidden',
 			name: 'reportId',
@@ -49,13 +58,7 @@ CMDBuild.Administration.ImportJRFormStep1 = Ext.extend(Ext.FormPanel, {
 			style: {
 				marginBottom: '10px'
 			}
-		},{
-	      	inputType : "file",	      	
-	        fieldLabel: this.translation.master_report_jrxml,
-	        allowBlank: false,
-	        name: 'jrxml',
-	        disabled: true
-		}]
+		}, this.fileField]
 		
 		Ext.apply(this, {
 			autoHeight: true,
@@ -77,7 +80,7 @@ CMDBuild.Administration.ImportJRFormStep1 = Ext.extend(Ext.FormPanel, {
 			scope: this,
 			success : function(form, action) {				
 				var ret = action.result;
-				this.fireEvent('cmdb-importjasper-step2', ret); 	         	   
+				this.fireEvent('cmdb-importjasper-step2', ret);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -107,8 +110,16 @@ CMDBuild.Administration.ImportJRFormStep1 = Ext.extend(Ext.FormPanel, {
 	},
 	
 	enableFieldsForModify: function() {
+		this.fileField.allowBlank = true;
 		this.enableAllField();
 		Ext.getCmp('step1_name').disable();
+	},
+	
+	onNewReport: function() {
+		this.resetForm();
+		this.setReportId(-1);
+		this.fileField.allowBlank = false;
+		this.enableAllField();
 	},
 	
 	//private

@@ -713,8 +713,7 @@ public class CMBackend {
 			stm.setBytes(10, bin);
 
 			stm.execute();
-			Log.REPORT
-					.debug("sizes: SimpleReport=" + sr + " RichReport=" + rr + " WizardReport=" + wr + "Images:" + im);
+			Log.REPORT.debug("sizes: SimpleReport=" + sr + " RichReport=" + rr + " WizardReport=" + wr + "Images:" + im);
 			return true;
 		} finally {
 			DBService.close(null, stm);
@@ -723,46 +722,72 @@ public class CMBackend {
 
 	public boolean updateReport(ReportCard bean) throws SQLException, IOException {
 		PreparedStatement stm = null;
-		String query = "UPDATE \"Report\" SET " + "\"Description\" = ?, " + "\"Status\" = ?, " + "\"User\" = ?, "
-				+ "\"Type\" = ?, " + "\"Query\" = ?, " + "\"SimpleReport\" = ?, " + "\"RichReport\" = ?, "
-				+ "\"Wizard\" = ?, " + "\"ReportLength\" = cast(string_to_array('" + arrayToCsv(bean.getReportLength())
-				+ "',',') as int[]), " + "\"Images\" = ?, " + "\"ImagesLength\" = cast(string_to_array('"
-				+ arrayToCsv(bean.getImagesLength()) + "',',') as int[]), " + "\"IdClass\" = '\""
-				+ ReportCard.REPORT_CLASS_NAME + "\"', " + "\"Groups\" = cast(string_to_array('"
-				+ arrayToCsv(bean.getSelectedGroups()) + "',',') as int[]), "
-				+ "\"ImagesName\" = cast(string_to_array('" + arrayToCsv(bean.getImagesName())
-				+ "',',') as varchar[]) " + "WHERE \"Id\" = ? ;";
-
 		Connection connection = null;
+		
+		String query = buildUpdateReportQuery(bean);
+		
 		try {
-			byte[] bin = null;
+			int i=1;
 			connection = DBService.getConnection();
 			stm = connection.prepareCall(query);
-			stm.setString(1, bean.getDescription());
-			stm.setString(2, ElementStatus.ACTIVE.value());
-			stm.setString(3, bean.getUser());
-			stm.setString(4, bean.getType().toString().toLowerCase());
-			stm.setString(5, bean.getQuery());
-
-			bin = toByte(bean.getSimpleReport());
-			stm.setBytes(6, bin);
-
-			bin = toByte(bean.getRichReportBA());
-			stm.setBytes(7, bin);
-
-			bin = toByte(bean.getWizard());
-			stm.setBytes(8, bin);
-
-			bin = toByte(bean.getImagesBA());
-			stm.setBytes(9, bin);
-
-			stm.setInt(10, bean.getOriginalId());
-
+			
+			stm.setString(i++, bean.getDescription());
+			if (bean.getJd() != null) {
+				i = setFileDependentAttrsInStm(bean, stm, i);
+			}
+			
+			stm.setInt(i++, bean.getOriginalId());
+			Log.SQL.debug(stm.toString());
 			stm.executeUpdate();
 			return true;
 		} finally {
 			DBService.close(null, stm);
 		}
+	}
+
+	private int setFileDependentAttrsInStm(ReportCard bean,
+			PreparedStatement stm, int i) throws SQLException, IOException {
+		byte[] bin = null;
+		stm.setString(i++, ElementStatus.ACTIVE.value());
+		stm.setString(i++, bean.getUser());
+		stm.setString(i++, bean.getType().toString().toLowerCase());
+		stm.setString(i++, bean.getQuery());
+		
+		bin = toByte(bean.getSimpleReport());
+		stm.setBytes(i++, bin);
+		
+		bin = toByte(bean.getRichReportBA());
+		stm.setBytes(i++, bin);
+		
+		bin = toByte(bean.getWizard());
+		stm.setBytes(i++, bin);
+
+		bin = toByte(bean.getImagesBA());
+		stm.setBytes(i++, bin);
+		return i;
+	}
+
+	private String buildUpdateReportQuery(ReportCard bean) {
+		final String queryBaseAttrsTM = "UPDATE \"Report\" SET \"Description\" = ?,\"Groups\" = cast(string_to_array('%s',',') as int[]) ";
+		final String queryBaseAttrs = String.format(queryBaseAttrsTM,  arrayToCsv(bean.getSelectedGroups()));
+				
+		final String queryFileDependentAttrsTM = ", \"Status\" = ?, \"User\" = ?, \"Type\" = ?, \"Query\" = ?," +
+				"\"SimpleReport\" = ?, \"RichReport\" = ?, \"Wizard\" = ?, \"ReportLength\" = cast(string_to_array('%s',',') as int[])," +
+				"\"Images\" = ?, \"ImagesLength\" = cast(string_to_array('%s',',') as int[]), \"IdClass\" = '\"%s\"', " +
+				"\"ImagesName\" = cast(string_to_array('%s',',') as varchar[]) ";
+		
+		final String queryEnd = "WHERE \"Id\" = ? ;";
+		
+		final String queryFileDependentAttrs = String.format(queryFileDependentAttrsTM, arrayToCsv(bean.getReportLength())
+				, arrayToCsv(bean.getImagesLength()), ReportCard.REPORT_CLASS_NAME, arrayToCsv(bean.getImagesName()));
+		
+		
+		String query = queryBaseAttrs;
+		if (bean.getJd() != null) {
+			query += queryFileDependentAttrs;
+		}
+		query += queryEnd;
+		return query;
 	}
 
 	/*

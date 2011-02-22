@@ -21,7 +21,8 @@ CMDBuild.Administration.ImportJRFormStep2 = Ext.extend(Ext.FormPanel, {
 	},
 	
 	setFormDetails: function(fd) {
-		this.duplicateimages = false;//because it was overridden only if is true
+		this.duplicateimages = false; //because it was overridden by the apply only if is true
+		this.skipSecondStep = false;
 		Ext.apply(this, fd);
 	},
 		
@@ -29,7 +30,26 @@ CMDBuild.Administration.ImportJRFormStep2 = Ext.extend(Ext.FormPanel, {
 		CMDBuild.LoadMask.get().show();
 		this.getForm().submit({
 			method : 'POST',
-			url : 'services/json/schema/modreport/importjasperreport',			
+			url : 'services/json/schema/modreport/importjasperreport',
+			scope: this,
+			success : function(form, action) {
+				this.resetSession();
+				this.fireEvent('cmdb-importjasper-importsuccess');
+			},
+			failure: function() {
+				this.fireEvent('cmdb-importjasper-importfailure');
+			},
+			callback: function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
+	},
+	
+	saveJasperReport: function() {
+		CMDBuild.LoadMask.get().show();
+		 CMDBuild.Ajax.request({
+			method : 'POST',
+			url : 'services/json/schema/modreport/savejasperreport',
 			scope: this,
 			success : function(form, action) {
 				this.resetSession();
@@ -69,8 +89,11 @@ CMDBuild.Administration.ImportJRFormStep2 = Ext.extend(Ext.FormPanel, {
 		  	this.addToFildsetsIfNotEmpty(imagesFields);
 		  	this.addToFildsetsIfNotEmpty(subreportFields);
 		  	
-		  	// if no field(image or subreport), skip step2 and insert the report
-		  	if(this.fieldsets.length==0) {
+		  	// if no fields(images or subreports), skip step2 and insert the report
+		  	if (this.skipSecondStep) {
+		  		// modify without load the jrxml
+		  		this.saveJasperReport();
+		  	} else if (this.fieldsets.length==0) {
 		  		this.insertJasperReport();
 		  	}
 		}
