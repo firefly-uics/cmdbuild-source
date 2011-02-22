@@ -51,16 +51,15 @@ public class LookupAttribute extends AttributeImpl {
 	}
 
 	private Lookup getLookupFromStringId(String stringValue) {
-		Lookup lookup;
 		try {
-			lookup = SchemaCache.getInstance().getLookup(Integer.valueOf(stringValue));
-			if (!lookup.getType().equals(getLookupType().getType())) {
+			Lookup lookup = SchemaCache.getInstance().getLookup(Integer.valueOf(stringValue));
+			if ((lookup == null) || (!lookup.getType().equals(getLookupType().getType()))) {
 				lookup = null;
 			}
+			return lookup;
 		} catch (NumberFormatException e) {
-			lookup = null;
+			return null;
 		}
-		return lookup;
 	}
 
 	private Lookup getLookupFromStringDescription(String stringValue) {
