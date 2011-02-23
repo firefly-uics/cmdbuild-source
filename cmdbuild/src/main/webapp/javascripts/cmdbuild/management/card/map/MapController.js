@@ -17,7 +17,7 @@
 						});
 					} else {
 						layer.events.on({
-							"beforefeatureadded": onCmdbLayerBeforeAdd
+							"beforefeatureadded": onCmdbLayerBeforeAdd							
 						});
 					}					
 				},
@@ -86,19 +86,31 @@
 		
 		onFeatureSelect: function(feature) {
 			var layer = feature.layer;
+			layer.map.removeAllPopups();
+			
 			if (!layer.editLayer) {
 				// the feature selected is not
 				// in a cmdbLayer with an associated editLayer
 				return;
 			}
-			var success = (function(response, options, decoded) {
+			
+			if (feature.CM_card) {
 				this.publish("cmdb-load-card", {
-					record: new Ext.data.Record(decoded.card),
+					record: new Ext.data.Record(feature.CM_card),
 					publisher: this
-				});				
-			}).createDelegate(this);
-			var prop = feature.attributes;
-			CMDBuild.ServiceProxy.getCard(prop.master_class, prop.master_card, success);			
+				});		
+			} else {
+				var success = (function(response, options, decoded) {
+					feature.CM_card = decoded.card;
+					this.publish("cmdb-load-card", {
+						record: new Ext.data.Record(feature.CM_card),
+						publisher: this
+					});				
+				}).createDelegate(this);
+				var prop = feature.attributes;
+				
+				CMDBuild.ServiceProxy.getCard(prop.master_class, prop.master_card, success);
+			}
 		},
 		
 		onSelectClass: function(params) {
@@ -296,29 +308,36 @@
 				}).createDelegate(this)
 		    }
 		});
-		
 		this.map.addControl(selectControl);
 		selectControl.activate();
 		
+		var popupControl = new CMDBuild.Management.CMDBuildMap.PopupController();
+		this.map.addControl(popupControl);
+		popupControl.activate();
+		
 		// called by the map, after the add of new layers
 		this.setSelectableLayers = function(layers) {
-			var selectableLayers = [];
+			var layerForPopupController = [];
+			var layerForSelectController = [];
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
 				if (layer.editLayer) {
-					selectableLayers.push(layer);
-					selectableLayers.push(layer.editLayer);
+					layerForPopupController.push(layer);
+					layerForSelectController.push(layer.editLayer);
 				}
 			}
-			selectControl.setLayer(selectableLayers);
+			popupControl.setLayer(layerForPopupController);
+			selectControl.setLayer(layerForPopupController.concat(layerForSelectController));
 		};
 		
 		this.deactivateSelectControl = function() {
 			selectControl.deactivate();
+			popupControl.deactivate();
 		};
 		
 		this.activateSelectControl = function() {
 			selectControl.activate();
+			popupControl.activate();
 		};
 		
 		this.selectFeature = function(feauture) {

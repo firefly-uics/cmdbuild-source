@@ -116,6 +116,13 @@
 			for (var i=0, l=layers.length; i<l; ++i) {
 				layers[i].reselectLastSelection();
 			}
+		},
+		
+		removeAllPopups: function() {
+			var popups = this.popups;
+			for (var i=0, l=popups.length; i<l; i++) {
+				this.removePopup(popups[i]);
+			}
 		}
 	});
 	

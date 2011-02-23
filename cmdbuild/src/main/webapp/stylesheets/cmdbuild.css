@@ -673,6 +673,17 @@ em {
 	background-image: url(../images/icons/map/polygon.png) !important;
 }
 
+.map_cloud_item {
+	font-size: 0.8em;
+}
+
+.map_cloud_item strong{
+	font-weight: bold;
+}
+
+.map_cloud_item span{
+	padding-left: 0.4em;
+}
 
 .importcsv-empty-cell {
 	background-color: #DDD;
