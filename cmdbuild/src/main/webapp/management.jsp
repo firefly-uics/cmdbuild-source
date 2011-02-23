@@ -93,7 +93,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapEditingWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapBuilder.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapPanel.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapController.js"></script> 
+		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/PopupController.js"></script> 
 		<%}%>
 			
 		

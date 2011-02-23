@@ -18,9 +18,9 @@ CMDBuild.ServiceProxy = (function() {
 		            "Id": cardId
 		        },
 		        method: 'GET',
-		        success: success,
-		        failure: failure,
-		        callback: callback
+		        success: success || Ext.emptyFn,
+		        failure: failure || Ext.emptyFn,
+		        callback: callback || Ext.eptyFn
 			});
 		},
 		getFeature: function(classId, cardId, success, failure, callback) {
