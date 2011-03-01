@@ -6,7 +6,7 @@ BEGIN
 	PERFORM _cm_create_index(DomainId, 'IdObj1');
 	PERFORM _cm_create_index(DomainId, 'IdObj2');
 
-	EXECUTE 'CREATE INDEX ' || quote_ident(_cm_domainidx_name(DomainId, 'ActiveRows')) ||
+	EXECUTE 'CREATE UNIQUE INDEX ' || quote_ident(_cm_domainidx_name(DomainId, 'ActiveRows')) ||
 		' ON ' || DomainId::regclass ||
 		' USING btree ('||
 			'(CASE WHEN "Status" = ''N'' THEN NULL ELSE "IdDomain" END),'||
@@ -107,7 +107,7 @@ BEGIN
 		RAISE EXCEPTION 'Cannot delete domain %, contains data', DomainId::regclass;
 	END IF;
 
-	PERFORM _cm_delete_local_attributes_or_triggers(DomainId);
+	PERFORM _cm_delete_local_attributes(DomainId);
 
 	EXECUTE 'DROP TABLE '|| DomainId::regclass ||' CASCADE';
 END
