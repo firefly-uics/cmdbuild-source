@@ -15,48 +15,46 @@ CMDBuild.Administration.LookupGrid = Ext.extend(Ext.grid.GridPanel, {
 	      	},
 	      	scope : this
 	    });
-	
+
+		var LOOKUP_FIELDS = CMDBuild.ServiceProxy.LOOKUP_FIELDS;
 		var store = new Ext.data.JsonStore({
 	        root:'rows',
 	        url: 'services/json/schema/modlookup/getlookuplist',
 	        fields:[
-	           {name:'Number'},
-	           {name:'Code'},
-	           {name:'Description'},
-	           {name:'ParentDescription'},
-	           {name:'Active'},
-	           {name:'Id'}
+	           {name: LOOKUP_FIELDS.Index },
+	           {name: LOOKUP_FIELDS.Code },
+	           {name: LOOKUP_FIELDS.Description },
+	           {name: LOOKUP_FIELDS.ParentDescription },
+	           {name: LOOKUP_FIELDS.Active },
+	           {name: LOOKUP_FIELDS.Id }
 	        ],
 	        remoteSort: true
 	    });
   	
 	  	var columns = [{
-	  		id : 'Number',
 	  		hideable: false,
 			hidden: true,
-	        dataIndex : 'Number'
+	        dataIndex : LOOKUP_FIELDS.Index
 	      },{
-			id : 'Code',
 	        header : this.translation.code,
-	        dataIndex : 'Code',
+	        dataIndex : LOOKUP_FIELDS.Code,
 	        width: 150,
 	        fixed: true
 	      },{
-	  		id : 'Description',
 	        header : this.translation.description,
-	        dataIndex : 'Description'
+	        dataIndex : LOOKUP_FIELDS.Description
 	      }, {
 	        header : this.translation.parentdescription,
-	        dataIndex : 'ParentDescription'
+	        dataIndex : LOOKUP_FIELDS.ParentDescription
 	      }, new Ext.grid.CheckColumn({
 	        header : this.translation.active,
-	        dataIndex : 'Active',
+	        dataIndex : LOOKUP_FIELDS.Active,
 	        width: 50,
 	        fixed: true
 	      },{
 	        header : this.translation.description,
 	        hidden: true,
-	        dataIndex : 'Id'
+	        dataIndex : LOOKUP_FIELDS.Id
 	      })
 	    ];
 

@@ -1,4 +1,17 @@
 CMDBuild.ServiceProxy = (function() {
+	var lookupFields = {
+		Id: 'Id',
+		Code: 'Code',
+		Description: 'Description',
+		ParentId: 'ParentId',
+		Index: 'Number',
+		Type: 'Type',
+		ParentId: 'ParentId',
+        ParentDescription: 'ParentDescription',
+        Active: 'Active',
+        Notes: 'Notes'
+	};
+
 	return {
 		getCardList: function(p) {
 			CMDBuild.Ajax.request( {
@@ -257,6 +270,26 @@ CMDBuild.ServiceProxy = (function() {
 			layerStore.subscribe("cmdb-geoservices-config-changed", reload, layerStore);
 			layerStore.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
 			return layerStore;
-		}
+		},
+		
+		getLookupFieldStore: function(type) {
+			return new Ext.data.JsonStore({
+				url: 'services/json/schema/modlookup/getlookuplist',
+				baseParams: {
+		        	type: type,
+					active: true,
+					short: true
+		        },
+		        root: "rows",
+		        fields : [
+		            lookupFields.Id,
+		            lookupFields.Description,
+		            lookupFields.ParentId
+		        ],
+		        autoLoad: true
+			});
+		},
+		
+		LOOKUP_FIELDS: lookupFields
 	};
 })();

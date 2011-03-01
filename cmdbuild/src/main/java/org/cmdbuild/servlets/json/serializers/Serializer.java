@@ -190,23 +190,33 @@ public class Serializer {
 	}
 
 	public static JSONObject serializeLookup(Lookup lookup) throws JSONException {
+		return serializeLookup(lookup, false);
+	}
+
+	public static JSONObject serializeLookup(Lookup lookup, boolean shortForm) throws JSONException {
 		JSONObject serializer = null;
 		if(lookup!=null) {
 			serializer = new JSONObject();
 			serializer.put("Id", lookup.getId());
-			serializer.put("Type", lookup.getType());
-			serializer.put("Code", lookup.getCode() != null ? lookup.getCode() : "");
 			serializer.put("Description", lookup.getDescription());
-			Lookup parent = lookup.getParent();
-			if(parent!=null){
-				serializer.put("ParentId", parent.getId());
-				serializer.put("ParentDescription", parent.getDescription());
-				serializer.put("ParentType", parent.getType());
+
+			if (!shortForm) {
+				serializer.put("Type", lookup.getType());
+				serializer.put("Code", lookup.getCode() != null ? lookup.getCode() : "");
+				serializer.put("Number", lookup.getNumber());
+				serializer.put("Notes", lookup.getNotes());
+				serializer.put("Default", lookup.getIsDefault());
+				serializer.put("Active", lookup.getStatus().isActive());
 			}
-			serializer.put("Notes", lookup.getNotes());
-			serializer.put("Default", lookup.getIsDefault());
-			serializer.put("Number", lookup.getNumber());
-			serializer.put("Active", lookup.getStatus().isActive()); 
+
+			Lookup parent = lookup.getParent();
+			if(parent!=null) {
+				serializer.put("ParentId", parent.getId());
+				if (!shortForm) {
+					serializer.put("ParentDescription", parent.getDescription());
+					serializer.put("ParentType", parent.getType());
+				}
+			}
 		}
 		return serializer;
 	}

@@ -206,7 +206,7 @@ var bindHiddenFieldToLastCombo = function(hiddenField, lastCombo) {
 
 //private
 var buildSingleLookupField = function(attribute, hideLabel) {
-	var store = CMDBuild.Cache.getLookupStore(attribute);
+	var store = CMDBuild.Cache.getLookupStore(attribute.lookup);
 	var field = new CMDBuild.Management.LookupCombo({
 		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
 		labelSeparator: hideLabel ? '' : undefined,

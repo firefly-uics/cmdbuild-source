@@ -13,25 +13,16 @@ CMDBuild.Management.AddAttachmentWindow = Ext.extend(CMDBuild.PopupWindow, {
 			scope: this,			
 			handler: function(){ this.close();}
     	});
-		
-		this.store = new Ext.data.JsonStore({
-			url: 'services/json/schema/modlookup/getlookuplist',
-			baseParams: {
-	        	type: CMDBuild.Config.dms['category.lookup']
-	        },
-	        root: "rows",
-	        fields : ['Id', 'Description', 'Number'],
-	        autoLoad: false,
-	        mode: 'remote'
-		});
-		
+
+		this.store = CMDBuild.Cache.getLookupStore(CMDBuild.Config.dms['category.lookup']);
+
 		this.combo = new Ext.form.ComboBox({
 			fieldLabel: this.translation.category,
 			name: 'CategoryDescription',
 			hiddenName: 'Category',
 			store: this.store,
-			valueField: 'Description',
-			displayField: 'Description',
+			valueField: CMDBuild.ServiceProxy.LOOKUP_FIELDS.Description,
+			displayField: CMDBuild.ServiceProxy.LOOKUP_FIELDS.Description,
 			triggerAction: 'all',
 			allowBlank: false,
 			forceSelection: true,
@@ -80,7 +71,7 @@ CMDBuild.Management.AddAttachmentWindow = Ext.extend(CMDBuild.PopupWindow, {
     	
     	this.form.on('clientvalidation', function(form, valid){
     		this.confirmBtn.setDisabled(!valid);
-    	}, this)
+    	}, this);
     	    	
     	Ext.apply(this, {
     		autoHeight: true,
