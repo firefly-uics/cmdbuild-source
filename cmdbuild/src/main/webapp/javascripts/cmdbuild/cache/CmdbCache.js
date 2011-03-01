@@ -382,23 +382,9 @@
 			});
 		},
 		
-		getLookupStore: function(lookup) {
-			var type = lookup.lookup;
+		getLookupStore: function(type) {
 			if (!this.mapOfLookupStore[type]) {
-				this.mapOfLookupStore[type] = new Ext.data.JsonStore({
-					url: 'services/json/schema/modlookup/getlookuplist',
-					baseParams: {
-			        	type: type,
-						active: true
-			        },
-			        root: "rows",
-			        fields : ['Id', 'Description', 'ParentId', 'Number'],
-			        autoLoad: true,
-			        sortInfo: {
-			        	field: 'Number',
-			        	direction: 'ASC'
-			        }
-				});
+				this.mapOfLookupStore[type] = CMDBuild.ServiceProxy.getLookupFieldStore(type);
 			}
 			return this.mapOfLookupStore[type];
 		},
