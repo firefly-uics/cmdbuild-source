@@ -53,8 +53,9 @@ public interface CardQuery extends Iterable<ICard>, Cloneable {
 	public String getFullTextQuery();
 	public Integer getTotalRows();
 	public int position(int cardId);
-
+	
 	public CardQuery cards(Iterable<ICard> cards);
+	public CardQuery excludeCards(Iterable<ICard> cards);
 	public ICard get() throws NotFoundException;
 	public ICard get(boolean ignoreStatus);
 

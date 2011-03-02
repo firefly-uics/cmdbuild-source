@@ -141,7 +141,11 @@ public class CardQueryImpl implements CardQuery {
 	 */
 
 	public CardQuery fullText(String fullTextQuery) {
-	    this.fullTextQuery = fullTextQuery;
+		if (fullTextQuery != null && fullTextQuery.trim().isEmpty()) {
+			this.fullTextQuery = null;
+		} else {
+			this.fullTextQuery = fullTextQuery;
+		}
 	    return this;
 	}
 
@@ -273,6 +277,14 @@ public class CardQueryImpl implements CardQuery {
     		return this;
     	}
     };
+    
+    public CardQuery excludeCards(Iterable<ICard> cards) {
+    	try {
+    		return this.filter(new CardFilter(this.table, cards, AttributeFilterType.DIFFERENT));
+    	} catch (NotFoundException e) {
+    		return this;
+    	}
+    };
 
     public CardQuery order(String attributeName, OrderFilterType type) throws NotFoundException {
     	this.ordering.add(new OrderFilter(table.getAttribute(attributeName), type));
@@ -294,6 +306,8 @@ public class CardQueryImpl implements CardQuery {
     public CardQuery subset(int offset, int limit) {
     	if (offset >= 0 && limit > 0)
     		this.limit = new LimitFilter(offset, limit);
+    	else
+    		this.limit = null;
     	return this;
     };
 

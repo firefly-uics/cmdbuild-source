@@ -609,6 +609,7 @@
       "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
       "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
       "no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
+	  "no_selections": "<em>You have not selected any card to update</em>",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Datoteka (file) {0} ne postoji u arhivi",
          "ATTACHMENT_NOTFOUND": "Prilog {0} za objekat {2} u {1} ne postoji",
@@ -1034,6 +1035,7 @@
    "warnings": {
  	  "link_cards_changed_values": "<em>The selection of \"{0}\" has been updated</em>",
       "popup_block": "Detektovan je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
-      "warning_message": "Pažnja"
+      "warning_message": "Pažnja",
+      "only_filtered": "<em>The changes will be applied only to the cards that meet the current filter</em>"
    }
 }
