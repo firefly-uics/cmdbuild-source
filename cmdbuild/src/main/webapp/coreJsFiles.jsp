@@ -53,5 +53,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/form/CronFieldValidator/CronFieldValidator.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/grid/XCheckboxSelectionModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/grid/CMCheckboxSelectionModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/grid/XGroupingView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CmdbCache.js"></script>

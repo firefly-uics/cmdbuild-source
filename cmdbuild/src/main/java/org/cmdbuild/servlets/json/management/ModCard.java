@@ -430,24 +430,43 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject updateBulkCards(
-			JSONObject serializer,
-			@Parameter("IdClass") int classId,
+	public void updateBulkCards(
 			Map<String,String> attributes,
 			@Parameter(value="selections", required=false) String[] cardsToUpdate,
+			@Parameter(value="fullTextQuery", required=false) String fullTextQuery,
+			@Parameter("isInverted") boolean isInverted,
+			CardQuery cardQuery,
 			ITableFactory tf
 	) throws JSONException, CMDBException {
-		ICard card = tf.get(classId).cards().create(); // Unprivileged card as a template
-    	CardQuery cardQuery = tf.get(classId).cards().list();
-    	List<ICard> cardsList = new LinkedList<ICard>();
-    	for (String cardIdAndClass: cardsToUpdate) {
-    	    ICard cardToUpdate = stringToCard(tf, cardIdAndClass);
-    	    cardsList.add(cardToUpdate);
-    	}
-    	cardQuery.cards(cardsList);
+
+		if (fullTextQuery != null) {
+		    cardQuery.fullText(fullTextQuery.trim());
+		}
+		
+		List<ICard> cardsList = buildCardListToBulkUpdate(cardsToUpdate, tf);
+		if (isInverted) {
+			if (!cardsList.isEmpty()) {
+				cardQuery.excludeCards(cardsList);
+			}
+		} else {
+	    	cardQuery.cards(cardsList);
+		}
+		
+		ICard card = cardQuery.getTable().cards().create(); // Unprivileged card as a template
     	setCardAttributes(card, attributes, true);
-		cardQuery.update(card);
-		return serializer;
+		cardQuery.clearOrder().subset(0, 0).update(card);
+	}
+
+	private List<ICard> buildCardListToBulkUpdate(String[] cardsToUpdate,
+			ITableFactory tf) {
+		List<ICard> cardsList = new LinkedList<ICard>();
+		if (cardsToUpdate[0] != "") { //if the first element is an empty string the array is empty
+	    	for (String cardIdAndClass: cardsToUpdate) {
+	    	    ICard cardToUpdate = stringToCard(tf, cardIdAndClass);
+	    	    cardsList.add(cardToUpdate);
+	    	}
+		}
+		return cardsList;
 	}
 	
 	static public void setCardAttributes(ICard card, Map<String, String> attributes, Boolean forceChange){

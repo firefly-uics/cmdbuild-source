@@ -609,6 +609,7 @@
       "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
       "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
+	  "no_selections": "<em>You have not selected any card to update</em>",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Fichier {0} non trouvé",
          "ATTACHMENT_NOTFOUND": "Pièce jointe {0} pour la fiche {2} de {1} non trouvée",
@@ -1034,6 +1035,7 @@
    "warnings": {
  	  "link_cards_changed_values": "The selection of \"{0}\" has been updated</em>",
       "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
-      "warning_message": "Attention"
+      "warning_message": "Attention",
+      "only_filtered": "<em>The changes will be applied only to the cards that meet the current filter</em>"
    }
 }

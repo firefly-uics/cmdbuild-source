@@ -1,3 +1,5 @@
+(function() {
+
 CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
 	modtype: 'bulkcardupdate',
 	title : CMDBuild.Translation.management.modutilities.bulkupdate.title,
@@ -7,12 +9,12 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
 	border: true,
 	disableEventBus: true,
 	filterType: 'modutilities',
-	
+
     initComponent: function() {	
     	this.saveBtn = new Ext.Button({
     		text: CMDBuild.Translation.common.buttons.save,
     		scope: this,
-    		disabled: true,
+    		disabled: false,
     		handler: this.saveCardsChanges
     	});
     	
@@ -26,8 +28,8 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
     	this.cardSelected = [];
     	
     	var root = CMDBuild.Cache.getTree(CMDBuild.Constants.cachedTableType["class"]);
-    	this.classTree = new Ext.tree.TreePanel({    		
-    		layout: 'fit',    		
+    	this.classTree = new Ext.tree.TreePanel({
+    		layout: 'fit',
     	 	autoScroll: true,
 	        containerScroll: true,
 	        enableDD: false,
@@ -45,24 +47,22 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
     	
     	new Ext.tree.TreeSorter(this.classTree);
     	
-    	this.classTree.getSelectionModel().on('selectionchange', function(sm, node){
+    	this.classTree.getSelectionModel().on('selectionchange', function(sm, node) {
         	this.onSelectNode(node);
         }, this);
     	
 		this.cardList = new CMDBuild.Management.DomainCardList({
-			filterType: this.filterType, 
+			filterType: this.filterType,
 			withFilter: true,
 			region: 'center',
 			split: true,
 			subfiltered: false,
-			disabled: true
+			disabled: true,
+			sm: new CMDBuild.grid.CMCheckboxSelectionModel({singleSelect:false, grid: this})
 		});
 		
 		this.cardList.pagingBar.style = {'border-bottom': '1px #99BBE8 solid'};
 		this.cardList.getStore().baseParams.writeonly = true;
-		this.cardList.getSelectionModel().on('rowselect', this.cardSelect, this);
-		this.cardList.getSelectionModel().on('rowdeselect', this.deselectCard, this);
-		this.cardList.pagingBar.on('change', this.onPageChange, this);
 		
 		this.attributesPanel = new CMDBuild.Management.BulkCardAttributesPanel({
 			region: 'south',
@@ -93,6 +93,22 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
     	this.subscribe('cmdb-select-'+this.modtype, this.layoutFixForIE, this);
    	},
    	
+   	afterBringToFront: function() {
+   		if (!this.firstShow) {
+   			var tree = this.classTree;
+   			var node = CMDBuild.TreeUtility.findFirsSelectableNode(this.classTree.root);
+   			
+   			if (node) {
+	   			(function() {
+	   				tree.selectPath(node.getPath());
+	   			}).defer(1, tree);
+   			}
+   			
+   			this.firstShow = true;
+   		}
+   		return true;
+   	},
+   	
 	layoutFixForIE: function() {
 		this.doLayout();
 	},
@@ -103,8 +119,9 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
 				classId: node.attributes.id,
 				className: node.attributes.text
 			};
-			if (node.attributes.subtype)
+			if (node.attributes.subtype) {
 				eventParams.itemType = node.attributes.subtype;
+			}
 			this.selectDomain(eventParams);
 			this.abortButton.enable();
 			this.cardList.enable();
@@ -133,65 +150,21 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
 		this.attributesPanel.initForClass(params);
 	},
 	
-	cardSelect: function(sm, row, rec){
-		var card = rec.json.IdClass + "_" + rec.json.Id;
-		this.cardSelected.push(card);
-		if (this.saveBtn.disabled){
-			this.saveBtn.enable();
+	saveCardsChanges: function() {
+		if (this.cardList.isFiltered()) {
+			
+			Ext.Msg.show({
+			   title: CMDBuild.Translation.warnings.warning_message,
+			   msg: CMDBuild.Translation.warnings.only_filtered,
+			   buttons: Ext.Msg.OKCANCEL,
+			   fn: doSaveRequest,
+			   icon: Ext.MessageBox.WARNING,
+			   scope: this
+			});
+			
+		} else {
+			doSaveRequest.call(this, confirm="ok");
 		}
-	},
-	
-	deselectCard: function(sm, row, rec){
-		var card = rec.json.IdClass + "_" + rec.json.Id;
-		var i = 0;
-		while ( i < this.cardSelected.length ){
-			if(this.cardSelected[i] == card){
-				this.cardSelected.splice(i,1);
-			} else {
-				i++;
-			}
-		}
-		this.disableSaveBtnIfSelectionIsEmpty();
-	},
-	
-	onPageChange: function(p,e){
-		var cards = this.cardSelected;
-		if (cards.length > 0){
-			var records = [];
-			var recordsToSelect = [];
-			//for all the store elements
-			for(var i = 0; i < p.store.data.length; i++){
-				var record = p.store.getAt(i);
-				var id = record.json.Id;
-				//for all the checkedRecords elements
-				for(var j = 0 ; j < cards.length; j++){
-					if(cards[j] == id){
-						recordsToSelect.push(record);
-					}
-				}
-			}
-			this.cardList.getSelectionModel().suspendEvents(); 
-			this.cardList.getSelectionModel().selectRecords(recordsToSelect);
-			this.cardList.getSelectionModel().resumeEvents();
-		}
-	},
-	
-	saveCardsChanges: function(){
-		var params = this.attributesPanel.getCheckedValues();
-		params['IdClass'] = this.classId;
-		params['selections'] = this.cardSelected;
-		CMDBuild.log.info(params);
-		
-		CMDBuild.Ajax.request({
-			url: 'services/json/management/modcard/updatebulkcards',
-			params:params, 
-			scope: this,
-			success: function(response) {
-				this.cardList.getStore().reload();
-				this.clearAll();
-			}
-		});
-		
 	},
 	
 	abortCardsChanges: function() {
@@ -201,6 +174,7 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
 	clearAll: function() {
 		this.cardList.clearFilter();
 		this.cardList.getSelectionModel().clearSelections();
+		this.cardList.getSelectionModel().clearPersistentSelections();
 		this.cardSelected = [];
 		this.clearForm();
 	},
@@ -215,3 +189,48 @@ CMDBuild.Management.ModBulkCardUpdate = Ext.extend(CMDBuild.ModPanel, {
 		}
 	}
 });
+
+function builSaveParams() {
+	var params = this.attributesPanel.getCheckedValues();
+	params["FilterCategory"] = this.filterType;
+	params['IdClass'] = this.classId;
+	params["isInverted"] = this.cardList.getSelectionModel().isInverted();
+	var fullTextQuery = this.cardList.getSearchFilterValue();
+	if (fullTextQuery != "") {
+		params["fullTextQuery"] = this.cardList.getSearchFilterValue();
+	}
+	params['selections'] = (function formatSelections() {
+		var selections = this.cardList.getSelectionModel().getPersistentSelections();
+		var out = [];
+		for (var key in selections) {
+			out.push(selections[key].json.IdClass + "_" + key);
+		}
+		return out;
+	}).call(this);
+	
+	return params;
+}
+
+function doSaveRequest(confirm) {
+	if (confirm != "ok") {
+		return;
+	}
+	
+	var params = builSaveParams.call(this);
+	if (!params["isInverted"] && params["selections"].length == 0) {
+		var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg,
+				CMDBuild.Translation.errors.no_selections);
+		CMDBuild.Msg.error(null, msg, false);
+	} else {
+		CMDBuild.Ajax.request({
+			url: 'services/json/management/modcard/updatebulkcards',
+			params:params, 
+			scope: this,
+			success: function(response) {
+				this.cardList.getStore().reload();
+				this.clearAll();
+			}
+		});
+	}	
+}
+})();
