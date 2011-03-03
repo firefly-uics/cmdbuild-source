@@ -3,11 +3,14 @@
 		this.map = map;
 		this.ownerController = ownerController;
 		this.model = model;
-				
+
 		map.controller = this;
 		
 		this.layers = [];		
+		
 		this.selectControl = addSelectControl(map, multiple=true);
+		this.popupControl = addPopupControl(map);
+		
 		this.lastSelection = null;
 		
 		map.events.on({
@@ -17,7 +20,8 @@
 					return;
 				}
 				this.layers.push(layer);
-				this.selectControl.setLayer(this.layers);
+				this.popupControl.setLayer(this.layers.concat([])); // to use a different handler,  setLayer of the control set to null the current layers
+				this.selectControl.setLayer(this.layers.concat([]));
 				
 				layer.events.on({
 					"featureselected": onFeatureSelected,
@@ -32,7 +36,8 @@
 					return;
 				}
 				this.layers.remove(layer);
-				this.selectControl.setLayer(this.layers);
+				this.selectControl.setLayer(this.layers.concat([]));
+				this.popupControl.setLayer(this.layers.concat([]));
 				
 				layer.events.un({
 					"featureselected": onFeatureSelected,
@@ -95,6 +100,14 @@
 			return this.lastSelection;
 		}
 	};
+	
+	function addPopupControl(map) {
+		var popupControl = new CMDBuild.Management.CMDBuildMap.PopupController();
+		map.addControl(popupControl);
+		popupControl.activate();
+		
+		return popupControl;
+	}
 	
 	function addSelectControl(map, multiple) {
 		var selectControl = new OpenLayers.Control.SelectFeature([], {

@@ -7,12 +7,12 @@ import java.sql.SQLException;
 
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.elements.database.DatabaseConfigurator;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IAttribute.FieldMode;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.Settings;
 import org.junit.After;
@@ -201,7 +201,7 @@ public abstract class DBFixture {
 		stm.setString(1, className);
 		stm.setString(2, attributeName);
 		stm.setString(3, attributeType.toDBString());
-		stm.setString(4, "NULL");            // attributedefault
+		stm.setString(4, "NULL"); // attributedefault
 		stm.setBoolean(5, Mandatory.NULLABLE.toBoolean());
 		stm.setBoolean(6, Uniqueness.NOTUNIQUE.toBoolean());
 		stm.setString(7, attributeComment);
@@ -212,6 +212,13 @@ public abstract class DBFixture {
 		Connection conn = DBService.getConnection();
 		CallableStatement stm = conn.prepareCall("SELECT cm_delete_class(?)");
 		stm.setString(1, className);
+		stm.execute();
+	}
+
+	protected void deleteDBDomain(DomainInfo d) throws SQLException {
+		Connection conn = DBService.getConnection();
+		CallableStatement stm = conn.prepareCall("SELECT cm_delete_domain(?)");
+		stm.setString(1, d.getName());
 		stm.execute();
 	}
 

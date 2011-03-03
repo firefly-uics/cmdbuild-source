@@ -30,6 +30,7 @@ public class CardQueryForwarder implements CardQuery {
 	public CardQuery cardNotInRelation(DirectedDomain domain,
 			ITable classDestination) { cardQuery.cardNotInRelation(domain, classDestination); return this; }
 	public CardQuery cards(Iterable<ICard> cards) { cardQuery.cards(cards); return this; }
+	public CardQuery excludeCards(Iterable<ICard> cards) { cardQuery.excludeCards(cards); return this; }
 	public CardQuery clearOrder() { cardQuery.clearOrder(); return this; }
 	public CardQuery count() { cardQuery.count(); return this; }
 	public CardQuery filter(AbstractFilter filterCriteria) { cardQuery.filter(filterCriteria); return this; }

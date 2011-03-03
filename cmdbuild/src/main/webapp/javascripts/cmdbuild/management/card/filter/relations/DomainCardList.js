@@ -33,6 +33,7 @@ CMDBuild.Management.DomainCardList = Ext.extend(CMDBuild.EditorGrid, {
 				text: CMDBuild.Translation.management.findfilter.set_filter,
 				handler: this.openFilter
 			});
+			
 			this.clearFilterBtn = new Ext.Button({
 				scope: this,
 				id: 'clear_card_filter',
@@ -42,6 +43,7 @@ CMDBuild.Management.DomainCardList = Ext.extend(CMDBuild.EditorGrid, {
 				text: CMDBuild.Translation.management.findfilter.clear_filter,
 				handler: this.clearFilter
 			});			
+			
 			this.pagingTools =  [
 				openFilterBtn,
 				this.clearFilterBtn,
@@ -72,8 +74,10 @@ CMDBuild.Management.DomainCardList = Ext.extend(CMDBuild.EditorGrid, {
 		this.store.baseParams.CQL = eventParams.classFilter;
 		this.reconfigureStore();
 		this.getStore().baseParams.IdClass = this.currentClassId;
+		
+		this.getStore().baseParams.FilterCategory = this.filterType;
+		
 		if(this.subfiltered){
-			this.getStore().baseParams.FilterCategory = this.filterType;
 			this.getStore().baseParams.FilterSubcategory = this.ownerWindow.getId();
 		}
 		this.clearFilter();
@@ -134,12 +138,16 @@ CMDBuild.Management.DomainCardList = Ext.extend(CMDBuild.EditorGrid, {
 			attributeList:this.classAttributes,
 			className: this.className,
 			IdClass: this.currentClassId,
-			grid: this
+			grid: this,
+			filterCategory: this.filterType
 		});
 		searchWin.show();
 	},
 
-	clearFilter: function(){
+	clearFilter: function() {
+		this.gridsearchfield.setValue("");
+		this.store.baseParams.query = "";
+		
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/resetcardfilter',
 			scope: this,
@@ -155,5 +163,14 @@ CMDBuild.Management.DomainCardList = Ext.extend(CMDBuild.EditorGrid, {
 				}
 			}
 		});
+	},
+	
+	isFiltered: function() {
+		var advancedFilter = this.withFilter && !this.clearFilterBtn.disabled;
+		return this.store.baseParams.query != "" || advancedFilter;
+	},
+	
+	getSearchFilterValue: function() {
+		return this.gridsearchfield.getValue();
 	}
 });

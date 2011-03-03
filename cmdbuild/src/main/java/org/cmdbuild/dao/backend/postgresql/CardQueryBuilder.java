@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
 import org.cmdbuild.elements.AttributeValue;
@@ -79,6 +80,27 @@ public class CardQueryBuilder {
 
 	private QueryComponents queryComponents = new QueryComponents();
 
+	private boolean skipCount = false;
+	
+	public CardQueryBuilder skipCount() {
+		skipCount = true;
+		return this;
+	}
+
+	public String buildSelectQueryAddingAttributes(CardQuery cardQuery) {
+		Set<String> attributes = cardQuery.getAttributes();
+		// Automatically add all table attributes to the query if not specified
+		// otherwise
+		if (attributes.isEmpty()) {
+			attributes.addAll(cardQuery.getTable().getAttributes().keySet());
+		}
+		// Add ClassId because it is needed to create the card
+		if (!attributes.contains(ICard.CardAttributes.ClassId.toString())) {
+			attributes.add(ICard.CardAttributes.ClassId.toString());
+		}
+		return buildSelectQuery(cardQuery);
+	}
+
 	public String buildSelectQuery(CardQuery cardQuery) {
 		ITable table = cardQuery.getTable();
 		String tableName = table.getName();
@@ -90,7 +112,7 @@ public class CardQueryBuilder {
 		String distinctPart = getDistinctPart();
 
 		String whereCondition = buildWhereCondition(cardQuery, "WHERE", queryComponents.getQueryMapping());
-		if (cardQuery.needsCount()) {
+		if (cardQuery.needsCount() && !skipCount) {
 			String countQuery = String.format(COUNT_ATTRIBUTE_QUERY,
 					tableDBName,
 					tableName,
@@ -151,26 +173,43 @@ public class CardQueryBuilder {
 	};
 
 	public String buildUpdateQuery(ICard card) throws ORMException {
-		List<String> attrVector = buildUpdateAttrVector(card);
-		String query = String.format(UPDATE, card.getSchema().getDBName(), StringUtils.join(attrVector, ","), card.getPrimaryKeyCondition());
+		String query = String.format(UPDATE, card.getSchema().getDBName(), buildUpdateAttrString(card), card.getPrimaryKeyCondition());
 		Log.SQL.debug(query);
 		return query;
 	}
 
 	public String buildUpdateQuery(CardQuery cardQuery, ICard cardTemplate) {
-		List<String> attrVector = buildUpdateAttrVector(cardTemplate);
-		String keyAttributes[] = {ICard.CardAttributes.ClassId.toString(),ICard.CardAttributes.Id.toString()};
-		cardQuery.attributes(keyAttributes);
-		String whereCondition = String.format("(\"%s\",\"%s\") IN (%s)",
-				ICard.CardAttributes.ClassId.toString(),
-				ICard.CardAttributes.Id.toString(),
-				buildSelectQuery(cardQuery));
-		String query = String.format(UPDATE, cardTemplate.getSchema().getDBName(), StringUtils.join(attrVector, ","), whereCondition);
+		String query = String.format(UPDATE,
+				cardTemplate.getSchema().getDBName(),
+				buildUpdateAttrString(cardTemplate),
+				buildWhereConditionForUpdate(cardQuery)
+			);
 		Log.SQL.debug(query);
 		return query;
 	}
 
-	private List<String> buildUpdateAttrVector(ICard card) {
+	private String buildWhereConditionForUpdate(CardQuery cardQuery) {
+		String whereCondition = String.format("(\"%s\",\"%s\") IN (%s)",
+				ICard.CardAttributes.ClassId.toString(), ICard.CardAttributes.Id.toString(), buildUpdateSubSelect(cardQuery)
+			);
+		return whereCondition;
+	}
+
+	private String buildUpdateSubSelect(CardQuery cardQuery) {
+		if (cardQuery.getFullTextQuery() == null) {
+			cardQuery.attributes(ICard.CardAttributes.ClassId.toString(), ICard.CardAttributes.Id.toString());
+			return skipCount().buildSelectQuery(cardQuery);
+		} else {
+			CardQueryBuilder subQueryBuilder = new CardQueryBuilder();
+			final String subQuery = subQueryBuilder.skipCount().buildSelectQueryAddingAttributes(cardQuery);
+			final Map<String, QueryAttributeDescriptor> qm = subQueryBuilder.getQueryComponents().getQueryMapping();
+			final String idAlias = qm.get(ICard.CardAttributes.Id.toString()).getValueAlias();
+			final String classIdAlias = qm.get(ICard.CardAttributes.ClassId.toString()).getValueAlias();
+			return String.format("SELECT sq.\"%s\", sq.\"%s\" FROM (%s) AS sq", classIdAlias, idAlias, subQuery);
+		}
+	}
+
+	private String buildUpdateAttrString(ICard card) {
 		Map<String, AttributeValue> values = card.getAttributeValueMap();
 		List<String> attrVector = new ArrayList<String>();
 		for(AttributeValue value : values.values()){
@@ -195,7 +234,7 @@ public class CardQueryBuilder {
 				}
 			}
 		}
-		return attrVector;
+		return StringUtils.join(attrVector, ",");
 	}
 
 	public String buildInsertQuery(ICard card) {

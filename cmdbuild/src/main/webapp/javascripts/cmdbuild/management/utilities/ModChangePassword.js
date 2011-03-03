@@ -4,7 +4,7 @@ CMDBuild.Management.ModChangePassword = Ext.extend(CMDBuild.ModPanel, {
 	title : CMDBuild.Translation.management.modutilities.changepassword.title,
 	layout: 'fit',
 	frame: false,
-	border: true,	
+	border: true,
 	initComponent: function() {
 		//vtyepe for passwords validation
 		Ext.apply(Ext.form.VTypes, {
@@ -80,8 +80,7 @@ CMDBuild.Management.ModChangePassword = Ext.extend(CMDBuild.ModPanel, {
     		border: true,		
     		items:[this.form],
     		buttonAlign: 'center',
-			buttons: [this.saveBtn, this.abortBtn],
-			disabled: !CMDBuild.Runtime.CanChangePassword
+			buttons: [this.saveBtn, this.abortBtn]
     	});
     	CMDBuild.Management.ModChangePassword.superclass.initComponent.apply(this, arguments);
     	

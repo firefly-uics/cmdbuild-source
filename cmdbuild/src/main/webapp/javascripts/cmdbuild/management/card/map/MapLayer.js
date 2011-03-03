@@ -9,7 +9,8 @@ CMDBuild.Management.CMDBuildMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vec
     initialize: function(name, options) {
 		this.styleMap = new OpenLayers.StyleMap({
 			"default": Ext.decode(options.geoAttribute.style),
-			"select": new OpenLayers.Style(OpenLayers.Feature.Vector.style["default"])
+			"select": new OpenLayers.Style(OpenLayers.Feature.Vector.style["default"]),
+			"temporary": Ext.decode(options.geoAttribute.style)
 		});
 		
 		this.protocol = new OpenLayers.Protocol.HTTP({

@@ -91,9 +91,10 @@ public class ModLookup extends JSONBase {
 			@Parameter("type") String lookupType,
 			@Parameter(value="start", required=false) int start,
 			@Parameter(value="limit", required=false) int limit,
-			@Parameter("active") boolean active) throws JSONException, AuthException {
+			@Parameter("active") boolean active,
+			@Parameter(value="short", required=false) boolean shortForm) throws JSONException {
     	List<Lookup> list = lo.getLookupList(lookupType);
-    	
+
     	//order by number
     	Collections.sort(list, new Comparator<Lookup>() {			
 			public int compare(Lookup l1, Lookup l2) {
@@ -114,7 +115,7 @@ public class ModLookup extends JSONBase {
 		for (Lookup lookup: list) {
 			if (!active || lookup.getStatus().isActive()) {
 				if (i >= start && i < end) {
-					serializer.append("rows", Serializer.serializeLookup(lookup));
+					serializer.append("rows", Serializer.serializeLookup(lookup, shortForm));
 				}
 				++i;
 			}

@@ -21,7 +21,7 @@
 		<netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
 		<netbeans.hint.jdkPlatform>JDK_1.6</netbeans.hint.jdkPlatform>
 		<postgis.version>1.5.1</postgis.version>
-		<postgresql.version>9.0-801.jdbc3</postgresql.version>
+		<postgresql.version>9.0-801.jdbc4</postgresql.version>
 		<quartz.version>1.8.3</quartz.version>
 		<restlet.version>2.0.1</restlet.version>
 		<selenium.version>0.9.7376</selenium.version>

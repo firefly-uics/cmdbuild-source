@@ -609,6 +609,7 @@
       "invalid_attributes": "<em>I seguenti campi non sono stati compilati correttamente:</em>",
       "invalid_extended_attributes": "<em>I seguenti controlli visuali non sono stati compilati correttamente:</em>",
       "no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
+	  "no_selections": "<em>Non hai selezionato nessuna scheda</em>",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Archivo {0} no encontrado en el repositorio",
          "ATTACHMENT_NOTFOUND": "Adjunto {0} para la tarjeta {2} en {1} no encontrado",
@@ -1034,6 +1035,7 @@
    "warnings": {
       "link_cards_changed_values": "<em>La selezione di \"{0}\" è stata aggiornata</em>",
       "popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
-      "warning_message": "Atención"
+      "warning_message": "Atención",
+      "only_filtered": "<em>Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente</em>"
    }
 }
