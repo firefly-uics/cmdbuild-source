@@ -608,6 +608,7 @@
       "error_moving_row": "An error occourred while moving the row",
       "invalid_attributes": "The following fields have not been filled correctly:",
       "invalid_extended_attributes": "The following visual controls have not been filled correctly:",
+      "no_selections": "You have not selected any card to update",
       "no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "File {0} not found in the repository",
@@ -1034,6 +1035,7 @@
    "warnings": {
  	  "link_cards_changed_values": "The selection of \"{0}\" has been updated",
       "popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
-      "warning_message": "Warning"
+      "warning_message": "Warning",
+      "only_filtered": "The changes will be applied only to the cards that meet the current filter"
    }
 }

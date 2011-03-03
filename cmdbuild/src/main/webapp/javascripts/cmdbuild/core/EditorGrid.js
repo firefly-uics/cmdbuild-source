@@ -20,7 +20,7 @@ CMDBuild.EditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		};
 		
 		
-		if(this.withCheckColumn){
+		if (this.withCheckColumn) {
 			//the checkBox
 		    this.checkColumn = new Ext.grid.CheckColumn({
 		       header: this.checkColumnHeader,
@@ -31,13 +31,14 @@ CMDBuild.EditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		}
 		
 		if(this.checksmodel){
-			this.smodel = new CMDBuild.grid.XCheckboxSelectionModel({singleSelect:false, grid: this});
+			this.smodel = this.sm || new CMDBuild.grid.XCheckboxSelectionModel({singleSelect:false, grid: this});
 		} else {
 			this.smodel = new Ext.grid.RowSelectionModel();
 		}
 		
-		for(i = 0; i < this.columns.length; i++)
+		for(i = 0; i < this.columns.length; i++) {
 			arrColumns[i] = this.columns[i].dataIndex;
+		}
 		
 		if (this.withStore) {
 			this.store = new Ext.data.JsonStore({
@@ -47,10 +48,9 @@ CMDBuild.EditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
 		        fields: arrColumns,
 		        remoteSort: this.remoteSort
 			});
-			//this.store.setDefaultSort('Code', 'asc');
 		}
 		
-		if(this.withPagingBar){
+		if (this.withPagingBar) {
 		    this.pagingBar = new Ext.PagingToolbar({
 		        pageSize: parseInt(CMDBuild.Config.cmdbuild.rowlimit),
 		        store: this.store,

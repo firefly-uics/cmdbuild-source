@@ -182,4 +182,19 @@ public class DBDataFixture extends DBFixture {
 	protected void deleteRelation(DomainInfo domain, int relId) throws SQLException {
 		deleteCardRow(domain.getDBName(), relId);
 	}
+
+	protected void truncateDomain(DomainInfo domain) throws SQLException {
+		truncateTable(domain.getDBName());
+	}
+
+	protected void truncateClass(String className) throws SQLException {
+		truncateTable(className);
+	}
+
+	private void truncateTable(String tableName) throws SQLException {
+		Connection conn = DBService.getConnection();
+		CallableStatement stm = conn.prepareCall(String.format("TRUNCATE \"%s\", \"%s%s\"",
+				tableName, tableName, TableHistory.HistoryTableSuffix));
+		stm.execute();
+	}
 }

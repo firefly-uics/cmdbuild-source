@@ -2,20 +2,20 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CMDBuild schema" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="89"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="class" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select system_classcatalog.classname as classname, system_read_comment(system_classcatalog.classcomment, 'DESCR') as classdescription,
-	case when system_class_isprocess(system_classcatalog.classcomment::character varying) then 'true' else null end as classisprocess,
+		<![CDATA[select system_classcatalog.classname as classname, _cm_read_comment(system_classcatalog.classcomment, 'DESCR') as classdescription,
+	case when _cm_is_process(system_classcatalog.classname) then 'true' else null end as classisprocess,
 	case when system_classcatalog1.classname = 'Class' then '' else system_classcatalog1.classname end as classsuperclass,
-	case when system_class_issuperclass(system_classcatalog.classcomment) then 'true' else null end as classissuperclass
+	case when _cm_is_superclass(system_classcatalog.classname) then 'true' else null end as classissuperclass
 from system_classcatalog
 left outer join system_inheritcatalog on system_inheritcatalog.childid = system_classcatalog.classid
 left outer join system_classcatalog as system_classcatalog1 on system_classcatalog1.classid = system_inheritcatalog.parentid
 where system_classcatalog.classname = case when $P{class} = '' then system_classcatalog.classname else $P{class} end
-        and system_read_comment(system_classcatalog.classcomment, 'MODE') in ('read', 'write')
+        and _cm_read_comment(system_classcatalog.classcomment, 'MODE') in ('read', 'write')
 order by system_classcatalog.classname;]]>
 	</queryString>
 	<field name="classname" class="java.lang.String">

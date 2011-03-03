@@ -1,3 +1,7 @@
+(function() {
+
+var LOOKUP_FIELDS = CMDBuild.ServiceProxy.LOOKUP_FIELDS;
+
 CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
   translation: CMDBuild.Translation.administration.modLookup.lookupForm,
   layout: 'border',
@@ -17,16 +21,16 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
     	handler: this.onDisableEnableAction, 
     	scope : this
     });
-		
+
     this.parentStore = new Ext.data.JsonStore({
     	autoLoad:true,
     	url : 'services/json/schema/modlookup/getparentlist',
     	root : "rows",
     	sortInfo : {
-    		field : 'ParentDescription',
+    		field : LOOKUP_FIELDS.ParentDescription,
  			direction : "ASC"
   		},
-		fields : ['ParentDescription', 'ParentId']
+		fields : [ LOOKUP_FIELDS.ParentDescription, LOOKUP_FIELDS.ParentId ]
 	 });
     
     this.formPanel = new CMDBuild.ExtendedFormPanel({
@@ -39,45 +43,44 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
     	labelWidth: 150,
     	fields: [{
 			xtype: 'hidden',
-			name: 'Type'
+			name: LOOKUP_FIELDS.Type
       	  },{
 			xtype: 'hidden',
-			name: 'Id'
+			name: LOOKUP_FIELDS.Id
       	  },{
               xtype:'textfield',
               fieldLabel : this.translation.code,
-              name : 'Code',
+              name : LOOKUP_FIELDS.Code,
               width : 200,
               disabled : true 
           },{
       		xtype:'textfield',
             fieldLabel : this.translation.description,
-            name : 'Description',
+            name : LOOKUP_FIELDS.Description,
             width : 300,
             allowBlank : false,
             disabled : true 
           },{
             xtype : 'combo',
             fieldLabel : this.translation.parentdescription,
-            name : 'ParentDescription',
-            hiddenName : 'ParentId',
+            name : LOOKUP_FIELDS.ParentDescription,
+            hiddenName : LOOKUP_FIELDS.ParentId,
             width : 300,
-            valueField : 'ParentId',
-            displayField : 'ParentDescription',
+            valueField : LOOKUP_FIELDS.ParentId,
+            displayField : LOOKUP_FIELDS.ParentDescription,
             minChars : 0,
             disabled : true,
             store : this.parentStore
           },{
           	xtype : 'textarea',
             fieldLabel : this.translation.notes,
-            name : 'Notes',
+            name : LOOKUP_FIELDS.Notes,
             width : 300,
             disabled : true 
           },{
             xtype : 'xcheckbox',
             fieldLabel : this.translation.active,
-            name : 'Active',
-            id: 'Active',
+            name : LOOKUP_FIELDS.Active,
             checked : true,
             disabled : true 
           }]
@@ -141,7 +144,7 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
 	// scope: formPanel
 	onAbort: function() {
 		this.abortModification();
-		if (!this.getForm().findField('Id').value) {
+		if (!this.getForm().findField(LOOKUP_FIELDS.Id).value) {
 			this.disableAllActions();
 		}
 		this.getForm().reset();
@@ -150,13 +153,13 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
 	//private  
 	onDisableEnableAction: function(){
 		var url = 'services/json/schema/modlookup/enablelookup';
-		if (this.formPanel.getForm().findField('Active').getValue()) {
+		if (this.formPanel.getForm().findField(LOOKUP_FIELDS.Active).getValue()) {
 			url = 'services/json/schema/modlookup/disablelookup';	  
 		}
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.Ajax.request({
 			url : url,
-			params: {Id: this.formPanel.getForm().findField('Id').value},		
+			params: {Id: this.formPanel.getForm().findField(LOOKUP_FIELDS.Id).value},		
 			method : 'POST',
 			scope : this,
 			success : function(response) {
@@ -173,11 +176,11 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
 		this.formPanel.newForm(true);
 		this.formPanel.clearForm();
 		if (this.type) {
-			this.formPanel.getForm().findField('Type').setValue(this.type);
+			this.formPanel.getForm().findField(LOOKUP_FIELDS.Type).setValue(this.type);
 		} else {
-			throw new Error('Is setted an undefined time in Lookup form')
+			throw new Error('Is setted an undefined time in Lookup form');
 		}
-		this.formPanel.getForm().findField('Active').setValue(true);
+		this.formPanel.getForm().findField(LOOKUP_FIELDS.Active).setValue(true);
 	},
   	
   	//private
@@ -201,18 +204,17 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
   	
   	//private
   	reloadParentStore: function() {
-  		CMDBuild.log.info('*****type',this.type)
   		if (this.type) {
   			this.parentStore.baseParams.type = this.type;
   			this.parentStore.load();
   		} else {
-  			throw new Error('Reload Parent store with no type in LookupForm')
+  			throw new Error('Reload Parent store with no type in LookupForm');
   		}
   	},
   	
   	//private
 	updateDisableEnableLookup: function() {
-		if (this.record.data['Active']) {
+		if (this.record.data[LOOKUP_FIELDS.Active]) {
 			this.disabelAction.setText(this.translation.disable_lookup);
 			this.disabelAction.setIconClass('delete');
 		} else {
@@ -231,3 +233,5 @@ CMDBuild.Administration.LookupForm = Ext.extend(Ext.Panel, {
 	}
 });
 Ext.reg('lookupform', CMDBuild.Administration.LookupForm);
+
+})();
