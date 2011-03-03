@@ -159,7 +159,13 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> T getParameterValue(final AppParameter[] params, final String name) {
+	protected <T> T get(final AppParameter[] params, final String name) {
 		return (T) getParameter(params, name).the_value;
+	}
+	
+	protected int getInt(final AppParameter[] params, final String name) {
+		final AppParameter parameter = getParameter(params,name);
+		final Long l =(Long)parameter.the_value; 
+		return l.intValue();
 	}
 }

@@ -25,18 +25,18 @@ public class SelectLookupToolAgent extends AbstractCmdbuildWSToolAgent {
 
 		switch (ap) {
 		case selectLookup:
-			final LookupType lookup = selectLookupById(stub, (Long) getParameterValue(params, "LookupId"));
+			final LookupType lookup = selectLookupById(stub, (Long) get(params, "LookupId"));
 			out = lookup.getDescription();
 			break;
 		case selectLookupById:
-			out = selectLookupById(stub, (Long) getParameterValue(params, "LookupId"));
+			out = selectLookupById(stub, (Long) get(params, "LookupId"));
 			break;
 		case selectLookupByTypeDesc:
-			out = selectLookupByTypeDescription(stub, (String) getParameterValue(params, "Type"),
-					(String) getParameterValue(params, "Description"));
+			out = selectLookupByTypeDescription(stub, (String) get(params, "Type"),
+					(String) get(params, "Description"));
 			break;
 		case selectLookupByTypeCode:
-			out = selectLookupByTypeCode(stub, (String) getParameterValue(params, "Type"), (String) getParameterValue(
+			out = selectLookupByTypeCode(stub, (String) get(params, "Type"), (String) get(
 					params, "Code"));
 			break;
 

@@ -40,70 +40,70 @@ public class ManageRelationToolAgent extends AbstractCmdbuildWSToolAgent {
 		switch (toolApplication) {
 
 		case selectRelations: {
-			final Long cardId = getParameterValue(params, PARAM_CARD_ID);
-			final String className = getParameterValue(params, PARAM_CLASS_NAME);
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
+			final Long cardId = get(params, PARAM_CARD_ID);
+			final String className = get(params, PARAM_CLASS_NAME);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
 			out = selectRelation(stub, cardId, className, domainName);
 		}
 			break;
 
 		case selectRelationsByReference: {
-			final ReferenceType referenceType = getParameterValue(params, PARAM_REF);
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
+			final ReferenceType referenceType = get(params, PARAM_REF);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
 			out = selectRelationByRef(stub, referenceType, domainName);
 		}
 			break;
 
 		case createRelation: {
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
-			final String className1 = getParameterValue(params, PARAM_CLASS_NAME_1);
-			final String className2 = getParameterValue(params, PARAM_CLASS_NAME_2);
-			final Integer objId1 = getParameterValue(params, PARAM_OBJ_ID_1);
-			final Integer objId2 = getParameterValue(params, PARAM_OBJ_ID_2);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
+			final String className1 = get(params, PARAM_CLASS_NAME_1);
+			final String className2 = get(params, PARAM_CLASS_NAME_2);
+			final Integer objId1 = getInt(params, PARAM_OBJ_ID_1);
+			final Integer objId2 = getInt(params, PARAM_OBJ_ID_2);
 			out = createRelation(stub, domainName, className1, className2, objId1, objId2);
 		}
 			break;
 
 		case createRelationRefs: {
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
-			final ReferenceType referenceType1 = getParameterValue(params, PARAM_OBJ_REFERENCE_1);
-			final ReferenceType referenceType2 = getParameterValue(params, PARAM_OBJ_REFERENCE_2);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
+			final ReferenceType referenceType1 = get(params, PARAM_OBJ_REFERENCE_1);
+			final ReferenceType referenceType2 = get(params, PARAM_OBJ_REFERENCE_2);
 			out = createRelationRefs(stub, domainName, referenceType1, referenceType2);
 		}
 			break;
 
 		case createRelation1Ref: {
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
-			final ReferenceType referenceType1 = getParameterValue(params, PARAM_OBJ_REFERENCE_1);
-			final String className2 = getParameterValue(params, PARAM_CLASS_NAME_2);
-			final Integer objId2 = getParameterValue(params, PARAM_OBJ_ID_2);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
+			final ReferenceType referenceType1 = get(params, PARAM_OBJ_REFERENCE_1);
+			final String className2 = get(params, PARAM_CLASS_NAME_2);
+			final Integer objId2 = getInt(params, PARAM_OBJ_ID_2);
 			out = createRelation1Ref(stub, domainName, referenceType1, className2, objId2);
 		}
 			break;
 
 		case createRelation2Ref: {
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
-			final String className1 = getParameterValue(params, PARAM_CLASS_NAME_1);
-			final Integer objId1 = getParameterValue(params, PARAM_OBJ_ID_1);
-			final ReferenceType referenceType2 = getParameterValue(params, PARAM_OBJ_REFERENCE_2);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
+			final String className1 = get(params, PARAM_CLASS_NAME_1);
+			final Integer objId1 = getInt(params, PARAM_OBJ_ID_1);
+			final ReferenceType referenceType2 = get(params, PARAM_OBJ_REFERENCE_2);
 			out = createRelation2Ref(stub, domainName, className1, objId1, referenceType2);
 		}
 			break;
 
 		case deleteRelation: {
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
-			final String className1 = getParameterValue(params, PARAM_CLASS_NAME_1);
-			final String className2 = getParameterValue(params, PARAM_CLASS_NAME_2);
-			final Integer objId1 = getParameterValue(params, PARAM_OBJ_ID_1);
-			final Integer objId2 = getParameterValue(params, PARAM_OBJ_ID_2);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
+			final String className1 = get(params, PARAM_CLASS_NAME_1);
+			final String className2 = get(params, PARAM_CLASS_NAME_2);
+			final Integer objId1 = getInt(params, PARAM_OBJ_ID_1);
+			final Integer objId2 = getInt(params, PARAM_OBJ_ID_2);
 			out = deleteRelation(stub, domainName, className1, className2, objId1, objId2);
 		}
 			break;
 
 		case deleteRelationByReference: {
-			final String domainName = getParameterValue(params, PARAM_DOMAIN_NAME);
-			final ReferenceType referenceType1 = getParameterValue(params, PARAM_OBJ_REFERENCE_1);
-			final ReferenceType referenceType2 = getParameterValue(params, PARAM_OBJ_REFERENCE_2);
+			final String domainName = get(params, PARAM_DOMAIN_NAME);
+			final ReferenceType referenceType1 = get(params, PARAM_OBJ_REFERENCE_1);
+			final ReferenceType referenceType2 = get(params, PARAM_OBJ_REFERENCE_2);
 			out = deleteRelationByReferences(stub, domainName, referenceType1, referenceType2);
 		}
 			break;
