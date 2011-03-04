@@ -14,6 +14,7 @@
 		<cuke4duke.version>0.3.2</cuke4duke.version>
 		<cxf.version>2.2.10</cxf.version>
 		<hamcrest.version>1.2</hamcrest.version>
+		<itext.version>2.1.0</itext.version> <!-- jasperreports dependency -->
 		<jasperreports.version>3.7.1</jasperreports.version>
 		<jetty.version>6.1.22</jetty.version>
 		<json-java.version>20110113</json-java.version>
@@ -110,7 +111,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.github.json-java</groupId>
+			<groupId>com.github.douglascrockford</groupId>
 			<artifactId>json-java</artifactId>
 			<version>${json-java.version}</version>
 		</dependency>
@@ -175,6 +176,25 @@
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>${jasperreports.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bctsp-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>${itext.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>bcprov-jdk14</artifactId>
