@@ -51,7 +51,8 @@ CMDBuild.Administration.TemplateModSetup = Ext.extend(CMDBuild.ModPanel, {
 			defaultType : 'textfield',
 			items: [this.formItems],
 			buttonAlign: 'center',
-			buttons: [this.saveBtn, this.abortBtn]
+			buttons: [this.saveBtn, this.abortBtn],
+			autoScroll: true
 		});
 		
 		this.getForm = function() {
@@ -62,7 +63,7 @@ CMDBuild.Administration.TemplateModSetup = Ext.extend(CMDBuild.ModPanel, {
 			border: true,
 			frame: true,
 			layout: 'border',
-			items:[this.form]			
+			items:[this.form]
     	});
     	
     	CMDBuild.Administration.TemplateModSetup.superclass.initComponent.apply(this, arguments);

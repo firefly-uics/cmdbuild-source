@@ -5,13 +5,19 @@ CMDBuild.Administration.ModSetupGenericOption = Ext.extend(CMDBuild.Administrati
 	translation: CMDBuild.Translation.administration.setup.cmdbuild,
 	
 	initComponent: function() {
+		this.instanceNameField = new Ext.form.TextField({
+			fieldLabel: this.translation.instancename,
+			name: 'instance_name',
+			allowBlank: true
+		});
+	
 		Ext.apply(this, {
 			title: this.translation.title,
 			formItems: [{
 				xtype: 'fieldset',
 				title: this.translation.fieldsetgeneraltitle,
 				autoHeight: true,
-				items: [{
+				items: [this.instanceNameField,{
 				    fieldLabel: this.translation.startingClass,
 				    xtype: 'xcombo',
 				    name: 'startingclass_value',
@@ -99,5 +105,9 @@ CMDBuild.Administration.ModSetupGenericOption = Ext.extend(CMDBuild.Administrati
 			}]
 		});
 		CMDBuild.Administration.ModSetupGenericOption.superclass.initComponent.apply(this, arguments);
-    }
+    },
+    afterSubmit: function() {
+    	var hdInstanceName = Ext.get('instance_name');
+    	hdInstanceName.dom.innerHTML = this.instanceNameField.getValue();
+	}
 });
