@@ -201,36 +201,36 @@ public class AuthInfoTest {
 	public void testHasServiceUser() {
 		Assert.assertEquals(context.toString(), context.hasServiceUser, authInfo.hasServiceUser());
 	}
+	
+	private static class Context {
 
-}
+		public final String authData;
+		public final String username;
+		public final String usernameForAutentication;
+		public final boolean isSharkUser;
+		public final String role;
+		public final boolean isValidServiceUser;
+		public final boolean hasServiceUser;
 
-class Context {
+		public Context(final String authData, final String username, final String usernameForAutentication,
+				final boolean isSharkUser, final String role, final boolean isValidServiceUser, final boolean hasServiceUser) {
+			this.authData = authData;
+			this.username = username;
+			this.usernameForAutentication = usernameForAutentication;
+			this.isSharkUser = isSharkUser;
+			this.role = role;
+			this.isValidServiceUser = isValidServiceUser;
+			this.hasServiceUser = hasServiceUser;
+		}
 
-	public final String authData;
-	public final String username;
-	public final String usernameForAutentication;
-	public final boolean isSharkUser;
-	public final String role;
-	public final boolean isValidServiceUser;
-	public final boolean hasServiceUser;
+		@Override
+		public String toString() {
+			return new ToStringBuilder(this).append("authData", authData).append("username", username).append(
+					"usernameForAutentication", usernameForAutentication).append("isSharkUser", isSharkUser).append("role",
+					role).append("isValidServiceUser", isValidServiceUser).append("hasServiceUser", hasServiceUser)
+					.toString();
+		}
 
-	public Context(final String authData, final String username, final String usernameForAutentication,
-			final boolean isSharkUser, final String role, final boolean isValidServiceUser, final boolean hasServiceUser) {
-		this.authData = authData;
-		this.username = username;
-		this.usernameForAutentication = usernameForAutentication;
-		this.isSharkUser = isSharkUser;
-		this.role = role;
-		this.isValidServiceUser = isValidServiceUser;
-		this.hasServiceUser = hasServiceUser;
-	}
-
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("authData", authData).append("username", username).append(
-				"usernameForAutentication", usernameForAutentication).append("isSharkUser", isSharkUser).append("role",
-				role).append("isValidServiceUser", isValidServiceUser).append("hasServiceUser", hasServiceUser)
-				.toString();
 	}
 
 }

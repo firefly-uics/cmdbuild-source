@@ -28,7 +28,7 @@ public class TempDataSource implements DataSource {
 	private TempDataSource(String name, String contentType) throws IOException {
 		this.name = name;
 		this.contentType = contentType;
-		this.file = File.createTempFile("tempdatasource", "");
+		this.file = File.createTempFile("tempdatasource", name);
 		file.deleteOnExit();
 	}
 
