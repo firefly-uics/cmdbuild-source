@@ -389,6 +389,7 @@
             "fieldsetgeneraltitle": "General",
             "fieldsetlanguageltitle": "Langage",
             "fieldsetpopupwindowtitle": "Popup windows",
+            "instancename": "<em>Instance name</em>",
             "language": "Default Langage",
             "languagePrompt": "Choix du langage",
             "menuTitle": "Options Generales",

@@ -389,6 +389,7 @@
             "fieldsetgeneraltitle": "Опште",
             "fieldsetlanguageltitle": "Језик",
             "fieldsetpopupwindowtitle": "popup прозор",
+            "instancename": "<em>Instance name</em>",
             "language": "Подразумевани језик",
             "languagePrompt": "Прикажи избор језика",
             "menuTitle": "Општа подешавања",

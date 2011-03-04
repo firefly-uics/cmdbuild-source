@@ -18,6 +18,7 @@ public class CmdbuildProperties extends DefaultProperties {
 	private static final String ROW_LIMIT = "rowlimit";
 	private static final String LANGUAGE_PROMPT = "languageprompt";
 	private static final String SESSION_TIMEOUT = "session.timeout";
+	private static final String INSTANCE_NAME = "instance_name";
 
 	private static final String DEMO_MODE_ADMIN = "demomode";
  	
@@ -33,6 +34,7 @@ public class CmdbuildProperties extends DefaultProperties {
 		setProperty(ROW_LIMIT, "20");
 		setProperty(LANGUAGE_PROMPT, String.valueOf(true));
 		setProperty(SESSION_TIMEOUT, "");
+		setProperty(INSTANCE_NAME, "");
 	}
 	
 	public static CmdbuildProperties getInstance() {
@@ -66,7 +68,15 @@ public class CmdbuildProperties extends DefaultProperties {
 	public String getDemoModeAdmin(){
 		return getProperty(DEMO_MODE_ADMIN, "");
 	}
+	
+	public void setInstanceName(String instanceName){
+		setProperty(INSTANCE_NAME, instanceName);
+	}
 
+	public String getInstanceName(){
+		return getProperty(INSTANCE_NAME, "");
+	}	
+	
 	public int getSessionTimoutOrZero() {
 		try {
 			return Integer.parseInt(getProperty(SESSION_TIMEOUT));

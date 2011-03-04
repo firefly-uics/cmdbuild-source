@@ -104,6 +104,7 @@
 	<body>
 		<div id="header" style="display: none;">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
+			<div id="instance_name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
 			<!-- required to display the map-->
 			<div id="map"> </div>

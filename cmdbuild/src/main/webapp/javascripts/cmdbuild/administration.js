@@ -138,6 +138,9 @@ Ext.onReady(function() {
 		var creditsLink = Ext.get('cmdbuild_credits_link');
 		creditsLink.on('click', function(e) {
 			splash.showAsPopUp();
-		}, this);		
+		}, this);
+		
+		var instanceName = Ext.get('instance_name');
+		instanceName.dom.innerHTML = CMDBuild.Config.cmdbuild.instance_name || "";
 	}
 });
