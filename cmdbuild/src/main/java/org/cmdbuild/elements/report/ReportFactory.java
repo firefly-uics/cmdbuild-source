@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -21,6 +22,7 @@ import net.sf.jasperreports.engine.JRElementGroup;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRImage;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRSubreport;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -40,6 +42,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
 import org.apache.log4j.Level;
+import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
 
@@ -65,8 +68,9 @@ public abstract class ReportFactory {
 	
 	/** get report extension */
 	public abstract ReportExtension getReportExtension();
-		
-	protected JasperPrint fillReport(JasperReport report, Map<String, Object> jasperFillManagerParameters) throws Exception {
+
+	protected JasperPrint fillReport(JasperReport report, Map<String, Object> jasperFillManagerParameters) throws Exception { 
+		jasperFillManagerParameters.put(JRParameter.REPORT_LOCALE, getSystemLocale());
 		jasperReport = report;
 		long start = System.currentTimeMillis();
 		try {
@@ -81,6 +85,10 @@ public abstract class ReportFactory {
 		return jasperPrint;
 	}
 	
+	private Locale getSystemLocale() {
+		return CmdbuildProperties.getInstance().getLocale();
+	}
+
 	public void sendReportToStream(OutputStream outStream) throws Exception {
 		if(isReportFilled()) {
 			JRExporter exporter = null;
@@ -185,6 +193,7 @@ public abstract class ReportFactory {
 		// Search parameter indicating IReport subreport's directory
 		String subreportDir = new String();
 		JRDesignParameter subreportDirPar;
+		@SuppressWarnings("rawtypes")
 		Map jdMapParameters = jd.getParametersMap();
 		if (jdMapParameters.containsKey("SUBREPORT_DIR")) {
 			subreportDirPar = (JRDesignParameter) jdMapParameters.get("SUBREPORT_DIR");
