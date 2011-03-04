@@ -353,30 +353,28 @@ public class ModReport extends JSONBase {
 					}
 					startAt += lengthReportByte[i];
 				}
-							
-				// update query
-				JRQuery jrQuery = newReport.getJd().getQuery();
-				String query=jrQuery.getText();
-				query=query.replaceAll("select", "SELECT");
-				query=query.replaceAll("from", "FROM");
-				query=query.replaceAll("where", "WHERE");
-				query=query.replaceAll("\"", "\\\"");
-				
+
 				// update report data
 				newReport.setType(ReportType.CUSTOM);
 				newReport.setStatus(ElementStatus.ACTIVE);
-				newReport.setQuery(query);
-				newReport.setBeginDate(new Date());
 				newReport.setRichReport(reportsByte);
 				newReport.setSimpleReport(reportsByte);
 				newReport.setReportLength(lengthReportByte);
-				
-				if(imageByte!=null){
+				newReport.setBeginDate(new Date());
+
+				// update query
+				JRQuery jrQuery = newReport.getJd().getQuery();
+				if (jrQuery != null) {
+					final String query = jrQuery.getText();
+					query.replaceAll("\"", "\\\"");
+					newReport.setQuery(query);
+				}
+
+				if (imageByte!=null) {
 					newReport.setImages(imagesByte);
 					newReport.setImagesLength(lengthImagesByte);
 				}
-			}
-			else {
+			} else {
 				throw ReportExceptionType.REPORT_UPLOAD_ERROR.createException();
 			}
 		} catch (JRException e) {
