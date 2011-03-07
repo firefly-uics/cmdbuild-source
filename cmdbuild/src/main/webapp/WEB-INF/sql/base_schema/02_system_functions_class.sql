@@ -234,11 +234,11 @@ $$ LANGUAGE plpgsql VOLATILE;
 CREATE OR REPLACE FUNCTION cm_delete_class(TableId oid) RETURNS void AS $$
 BEGIN
 	IF _cm_class_has_domains(TableId) THEN
-		RAISE EXCEPTION 'Cannot delete class %: has domains', TableId::regclass;
+		RAISE EXCEPTION 'CM_HAS_DOMAINS';
 	ELSEIF _cm_class_has_children(TableId) THEN
-		RAISE EXCEPTION 'Cannot delete class %: has childs', TableId::regclass;
+		RAISE EXCEPTION 'CM_HAS_CHILDREN';
 	ELSEIF NOT _cm_table_is_empty(TableId) THEN
-		RAISE EXCEPTION 'Cannot delete class %: contains data', TableId::regclass;
+		RAISE EXCEPTION 'CM_CONTAINS_DATA';
 	END IF;
 
 	PERFORM _cm_delete_local_attributes(TableId);

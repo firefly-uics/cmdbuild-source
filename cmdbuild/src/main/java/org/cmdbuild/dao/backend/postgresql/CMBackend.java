@@ -20,9 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,15 +33,15 @@ import org.cmdbuild.dao.backend.postgresql.SchemaQueries.DomainQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.LookupQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.TableQueries;
 import org.cmdbuild.elements.AttributeImpl;
+import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
 import org.cmdbuild.elements.CardImpl;
 import org.cmdbuild.elements.CardQueryImpl;
 import org.cmdbuild.elements.DomainImpl;
+import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.RelationImpl;
 import org.cmdbuild.elements.TableImpl;
-import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
-import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
 import org.cmdbuild.elements.TableImpl.TableDataDefinitionMeta;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
@@ -50,18 +50,18 @@ import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainQuery;
 import org.cmdbuild.elements.interfaces.IAbstractElement;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -75,21 +75,108 @@ public class CMBackend {
 
 	public enum CMSqlException {
 		CM_FORBIDDEN_OPERATION,
-		CM_RESTRICT_VIOLATION
+		CM_RESTRICT_VIOLATION {
+			public void throwException(final SQLException se) throws CMDBException {
+				throw ORMExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
+			}
+		},
+		CM_CONTAINS_DATA {
+			public void throwException(final SQLException se) throws CMDBException {
+				throw ORMExceptionType.ORM_CONTAINS_DATA.createException();
+			}
+		},
+		CM_HAS_DOMAINS {
+			public void throwException(final SQLException se) throws CMDBException {
+				// TODO
+				throw ORMExceptionType.ORM_GENERIC_ERROR.createException("Cannot delete class with domains");
+			}
+		},
+		CM_HAS_CHILDREN {
+			public void throwException(final SQLException se) throws CMDBException {
+				// TODO
+				throw ORMExceptionType.ORM_GENERIC_ERROR.createException("Cannot delete class with children");
+			}
+		};
+		
+		public void throwException(final SQLException se) throws CMDBException {
+			throwGenericException(se);
+		}
+		
+		public static void throwCustomExceptionFrom(final SQLException se) throws CMDBException {
+			try {
+				fromSqlException(se).throwException(se);
+			} catch (IllegalArgumentException e) {
+				throwGenericException(se);
+			}
+		}
+
+		private static CMSqlException fromSqlException(final SQLException se) {
+			return valueOf(extractSqlExceptionMessage(se));
+		}
+		
+		private static String extractSqlExceptionMessage(SQLException se) {
+			final String message = se.getMessage();
+			final String[] split = message.split("\\s", 3);
+			return (split.length > 1) ? split[1] : message;
+		}
+
+		private static void throwGenericException(final SQLException se) throws CMDBException {
+			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(se.getMessage());
+		}
 	}
 
 	public enum SqlState {
-		not_null_violation(23502),
-		foreign_key_violation(23503);
+		not_null_violation("23502"),
+		foreign_key_violation("23503"),
+		duplicate_table("42P07") {
+			public void throwException(SQLException se) throws CMDBException {
+				throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
+			}
+		},
+		duplicate_column("42701") {
+			public void throwException(SQLException se) throws CMDBException {
+				// Cannot be thrown, because adding a new attribute
+				// by the same name changes the existing attribute
+				// (attributes have just a name, not an id!)
+				throw ORMExceptionType.ORM_DUPLICATE_ATTRIBUTE.createException();
+			}
+		},
+		raise_exception("P0001") {
+			public void throwException(SQLException se) throws CMDBException {
+				CMSqlException.throwCustomExceptionFrom(se);
+			}
+		};
 
-		private int errorCode;
+		private final String errorCode;
 
-		SqlState(int errorCode) {
+		SqlState(final String errorCode) {
 			this.errorCode = errorCode;
 		}
 
 		public String getErrorCode() {
-			return String.valueOf(errorCode);
+			return errorCode;
+		}
+
+		public void throwException(final SQLException se) throws CMDBException {
+			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(se.getMessage());
+		}
+
+		public static void throwCustomExceptionFrom(final SQLException se) throws CMDBException {
+			try {
+				fromSqlException(se).throwException(se);
+			} catch (IllegalArgumentException e) {
+				CMSqlException.throwCustomExceptionFrom(se);
+			}
+		}
+
+		private static SqlState fromSqlException(final SQLException se) {
+			final String sqlState = se.getSQLState();
+			for (SqlState state : values()) {
+				if (state.getErrorCode().equals(sqlState)) {
+					return state;
+				}
+			}
+			throw new IllegalArgumentException("Invalid state");
 		}
 	}
 
@@ -194,13 +281,8 @@ public class CMBackend {
 			stm.setInt(1, table.getId());
 			stm.execute();
 			SchemaCache.getInstance().refreshTables();
-		} catch (SQLException ex) {
-			String errorCode = ex.getSQLState();
-			if (errorCode.equals("P0001")) {
-				throw ORMExceptionType.ORM_CONTAINS_DATA.createException();
-			} else {
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
-			}
+		} catch (SQLException se) {
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -224,14 +306,10 @@ public class CMBackend {
 			stm.execute();
 			SchemaCache.getInstance().refreshTables();
 			return stm.getInt(1);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors creating new table", ex);
-			String errorCode = ex.getSQLState();
-			if (errorCode.equals("42P07")) {
-				throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
-			} else {
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
-			}
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating new table", se);
+			SqlState.throwCustomExceptionFrom(se);
+			return -1; // Never going to happen
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -247,16 +325,9 @@ public class CMBackend {
 			Log.SQL.debug(stm.toString());
 			stm.execute();
 			SchemaCache.getInstance().refreshTables();
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.info("Errors modifying table: " + table.getId(), ex);
-			String errorCode = ex.getSQLState();
-			if (errorCode.equals("42P07")) {
-				throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
-			} else if (errorCode.equals("P0001")) {
-				throw ORMExceptionType.ORM_CAST_ERROR.createException();
-			} else {
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
-			}
+		} catch (SQLException se) {
+			Log.PERSISTENCE.info("Errors modifying table: " + table.getId(), se);
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -355,13 +426,8 @@ public class CMBackend {
 			if (attribute.getType() == AttributeType.REFERENCE) {
 				SchemaCache.getInstance().refreshDomains();
 			}
-		} catch (SQLException ex) {
-			String errorCode = ex.getSQLState();
-			if (errorCode.equals("P0001")) {
-				throw ORMExceptionType.ORM_CONTAINS_DATA.createException();
-			} else {
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
-			}
+		} catch (SQLException se) {
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -381,13 +447,9 @@ public class CMBackend {
 			stm.setString(7, createComment(attribute));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-		} catch (SQLException ex) {
-			if (ex.getSQLState().equals("42701")) {
-				throw ORMExceptionType.ORM_DUPLICATE_ATTRIBUTE.createException();
-			} else {
-				Log.PERSISTENCE.error("Errors creating new attribute", ex);
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
-			}
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating new attribute", se);
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -407,10 +469,10 @@ public class CMBackend {
 			stm.setString(7, createComment(attribute));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors creating new attribute", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating new attribute", se);
 			SchemaCache.getInstance().refreshTables();
-			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -813,10 +875,10 @@ public class CMBackend {
 			stm.setString(2, parentType);
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors creating new lookup type", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating new lookup type", se);
 			// TODO handle existing lookups
-			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -839,9 +901,9 @@ public class CMBackend {
 			stm.setString(4, savedType);
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors updating lookup type", ex);
-			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors updating lookup type", se);
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -855,9 +917,9 @@ public class CMBackend {
 			stm.setString(1, lookupType.getSavedType());
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors deleting lookup type", ex);
-			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors deleting lookup type", se);
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -925,8 +987,8 @@ public class CMBackend {
 				Log.SQL.debug(query);
 				stm.executeUpdate(query);
 			}
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors modifying lookup", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors modifying lookup", se);
 			throw ORMExceptionType.ORM_ERROR_LOOKUP_MODIFY.createException();
 		} finally {
 			DBService.close(null, stm);
@@ -949,8 +1011,8 @@ public class CMBackend {
 				throw ORMExceptionType.ORM_ERROR_GETTING_PK.createException();
 			}
 			return rs.getInt(1);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors creating lookup", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating lookup", se);
 			throw ORMExceptionType.ORM_ERROR_LOOKUP_CREATE.createException();
 		} finally {
 			DBService.close(null, stm);
@@ -979,8 +1041,8 @@ public class CMBackend {
 				lookup.resetAttributes();
 				list.add(lookup);
 			}
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors finding cards", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors finding cards", se);
 		} catch (NotFoundException e) {
 			return null;
 		} finally {
@@ -1009,8 +1071,8 @@ public class CMBackend {
 				Log.PERSISTENCE.error("Error retrieving generated primary key");
 				throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 			}
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors creating relation", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating relation", se);
 			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
 		} finally {
 			DBService.close(null, stm);
@@ -1026,8 +1088,8 @@ public class CMBackend {
 			String query = qb.buildUpdateQuery(relation);
 			stm = con.createStatement();
 			stm.executeUpdate(query);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors modifying relation", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors modifying relation", se);
 			throw ORMExceptionType.ORM_ERROR_RELATION_MODIFY.createException();
 		} finally {
 			DBService.close(null, stm);
@@ -1078,8 +1140,8 @@ public class CMBackend {
 					Log.PERSISTENCE.debug("card in relation not found", e);
 				}
 			}
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors finding relations", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors finding relations", se);
 		} finally {
 			DBService.close(rs, stm);
 		}
@@ -1120,9 +1182,10 @@ public class CMBackend {
 				Log.PERSISTENCE.error("Error retrieving generated primary key");
 				throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 			}
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors creating card", ex);
-			throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors creating card", se);
+			SqlState.throwCustomExceptionFrom(se);
+			return -1; // Never going to happen
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -1137,14 +1200,9 @@ public class CMBackend {
 			String query = qb.buildUpdateQuery(card);
 			stm = con.createStatement();
 			stm.executeUpdate(query);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors modifying card", ex);
-			if ("P0001".equals(ex.getSQLState()) && ex.getMessage().contains("has relations on domain")) {
-				// TODO: Use custom error codes always?
-				throw ORMExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
-			} else {
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(ex.getMessage());
-			}
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors modifying card", se);
+			SqlState.throwCustomExceptionFrom(se);
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -1192,8 +1250,8 @@ public class CMBackend {
 				list.add(card);
 			}
 			cardQuery.setTotalRows(totalRows);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors finding cards", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors finding cards", se);
 			throw ORMExceptionType.ORM_ERROR_CARD_SELECT.createException();
 		} finally {
 			DBService.close(rs, stm);
@@ -1234,8 +1292,8 @@ public class CMBackend {
 				throw NotFoundExceptionType.CARD_NOTFOUND.createException(query.getTable().toString());
 			}
 			position = rs.getInt(1);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors getting card position", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors getting card position", se);
 			throw NotFoundExceptionType.CARD_NOTFOUND.createException(query.getTable().toString());
 		} finally {
 			DBService.close(rs, stm);
@@ -1252,8 +1310,8 @@ public class CMBackend {
 			String query = qb.buildUpdateQuery(cardQuery, cardTemplate);
 			stm = con.createStatement();
 			stm.executeUpdate(query);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors updating cards from template", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors updating cards from template", se);
 			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
 		} finally {
 			DBService.close(rs, stm);
@@ -1270,8 +1328,8 @@ public class CMBackend {
 			Log.SQL.debug(query);
 			stm = con.createStatement();
 			stm.executeUpdate(query);
-		} catch (SQLException ex) {
-			Log.PERSISTENCE.error("Errors deleting card", ex);
+		} catch (SQLException se) {
+			Log.PERSISTENCE.error("Errors deleting card", se);
 			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
 		} finally {
 			DBService.close(rs, stm);

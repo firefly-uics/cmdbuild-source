@@ -640,7 +640,6 @@
          "ORM_CANT_CREATE_DATABASE": "Креирање базе података није успело.",
          "ORM_CANT_CREATE_USER": "Креирање корисника није успело",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Није могуће обрисати картице са активним релацијама",
-         "ORM_CAST_ERROR": "Грешка при конверзији типа",
          "ORM_CHANGE_LOOKUPTYPE_ERROR": "Промена типа везе ка шифарнику није успела",
          "ORM_CONTAINS_DATA": "Немогуће је обрисати класу или атрибут из табеле или домена који садржи податке",
          "ORM_CQL_COMPILATION_FAILED": "CQL упит није валидан",
