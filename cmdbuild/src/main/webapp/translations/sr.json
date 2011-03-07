@@ -678,6 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Tabela je dostupna samo za čitanje",
          "ORM_SQL_PATCH": "SQL greška u patch datoteci",
          "ORM_TYPE_ERROR": "Neodgovarajući tip",
+         "ORM_TABLE_HAS_CIHLDREN": "<em>Cannot delete a class with subclasses</em>",
+         "ORM_TABLE_HAS_DOMAIN": "<em>Cannot delete a class that has a domain</em>",
          "ORM_UNIQUE_VIOLATION": "Narušeno ograničenje: jedinstvenost vrednosti",
          "PARAMETER_CLASS_UNAVAILABLE": "Instanciranje objekta Java klase {0} nije moguće",
          "PRIVILEGE_GROUP_NOTFOUND": "Ne postoje privilegije za grupu {0}",

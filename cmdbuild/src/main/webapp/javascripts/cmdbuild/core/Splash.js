@@ -9,8 +9,8 @@ CMDBuild.Splash = function(id, cls) {
 		+ '</ul>';
 	
 	var splashText = '<div class="spalshMotto">Open Source Configuration and Management Database</div>'
-		+ '<span class="splashSubTitle">Tecnoteca srl - ' + tr.municipality + ' - Cogitek srl'+ '</span>'
-		+ '<span class="splashSubTitle copyright">Copyright Tecnoteca srl</span>';
+//		+ '<span class="splashSubTitle">Tecnoteca srl - ' + tr.municipality + ' - Cogitek srl'+ '</span>'
+		+ '<span class="splashSubTitle copyright">Copyright &copy; Tecnoteca srl</span>';
 		
 	Ext.DomHelper.append(body, [{
 		tag: 'div',

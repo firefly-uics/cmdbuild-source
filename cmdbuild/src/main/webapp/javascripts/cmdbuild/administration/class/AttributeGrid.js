@@ -1,3 +1,6 @@
+(function() {
+	var ATTR_TO_SKIP = "Notes";
+
 CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
   translation: CMDBuild.Translation.administration.modClass.attributeProperties,
   remoteSort: false,
@@ -108,9 +111,15 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
     
     this.getStore().on('load', function(store, records, opt) {
       this.filterInherited(this.filtering);
+      for (var i=0, l=records.length; i<l; ++i) {
+    	  var r = records[i];
+    	  if (r.data.name == ATTR_TO_SKIP) {
+    		  store.removeAt(i);
+    	  }
+      }
     }, this);
     
-    this.getSelectionModel().on('rowselect', this.attributeSelected , this);
+   this.getSelectionModel().on('rowselect', this.attributeSelected , this);
     
     this.subscribe('cmdb-init-'+this.eventtype, this.loadData, this);
     this.subscribe('cmdb-modified-'+this.eventtype+'attribute', this.loadData, this);
@@ -195,10 +204,11 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
   
   filterInherited: function(filter) {
     this.filtering = filter;
-    if (filter)
+    if (filter) {
       this.getStore().filterBy(function(record){return ! record.json.inherited});     
-    else
+    } else {
       this.getStore().filterBy(function(record){return true});
+    }
   },
   
   attributeSelected:function(sm, row, rec) {
@@ -228,3 +238,5 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
 
 });
 Ext.reg('attributegrid', CMDBuild.Administration.AttributeGrid );
+
+})();

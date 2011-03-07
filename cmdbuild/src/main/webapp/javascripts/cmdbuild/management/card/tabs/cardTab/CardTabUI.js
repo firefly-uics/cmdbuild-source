@@ -21,16 +21,18 @@
 		
 		initForClass: function(eventParams) {
 			var classId = eventParams.classId;
+			this.removeFields();
+			
 			if (this.currentClassId != classId) {
 				this.currentClassId = classId;
 				var table = CMDBuild.Cache.getTableById(classId);
 				this.currentClassPrivileges = {
-						priv_create: table.priv_create,
-						priv_write: table.priv_write
+					priv_create: table.priv_create,
+					priv_write: table.priv_write
 				};
 				this.isSuperclass = table.superclass;
 				this.isSimpleTable = table.tableType == "simpletable";
-				resetTab.call(this);				
+				resetTab.call(this);
 				this.doLayout();
 			}
 		},
