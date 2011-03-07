@@ -640,7 +640,6 @@
          "ORM_CANT_CREATE_DATABASE": "Ne peut créer la base de données",
          "ORM_CANT_CREATE_USER": "Ne peut pas créer un utilisateur",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Ne peut supprimer des fiches avec des relations",
-         "ORM_CAST_ERROR": "Type erreur",
          "ORM_CHANGE_LOOKUPTYPE_ERROR": "Ne peut changer le type de Catalogue",
          "ORM_CONTAINS_DATA": "Ne peut supprimer des classes ou attributs de tables ou domaines contenant des données",
          "ORM_CQL_COMPILATION_FAILED": "Invalide CQL query",

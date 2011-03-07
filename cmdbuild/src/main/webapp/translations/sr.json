@@ -640,7 +640,6 @@
          "ORM_CANT_CREATE_DATABASE": "Kreiranje baze podataka nije uspelo.",
          "ORM_CANT_CREATE_USER": "Kreiranje korisnika nije uspelo",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Nije moguće obrisati kartice sa aktivnim relacijama",
-         "ORM_CAST_ERROR": "Greška pri konverziji tipa",
          "ORM_CHANGE_LOOKUPTYPE_ERROR": "Promena tipa veze ka šifarniku nije uspela",
          "ORM_CONTAINS_DATA": "Nemoguće je obrisati klasu ili atribut iz tabele ili domena koji sadrži podatke",
          "ORM_CQL_COMPILATION_FAILED": "CQL upit nije validan",

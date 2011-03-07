@@ -428,15 +428,6 @@ CREATE OR REPLACE FUNCTION _cm_is_any_class(ClassId oid) RETURNS boolean AS $$
 $$ LANGUAGE SQL STABLE;
 
 
-CREATE OR REPLACE FUNCTION _cm_is_process(ClassId oid) RETURNS boolean AS $$
-	SELECT $1 IN (SELECT _cm_subtables_and_itself(_cm_table_id('Activity')));
-$$ LANGUAGE SQL STABLE;
-
-CREATE OR REPLACE FUNCTION _cm_is_process(CMClass text) RETURNS boolean AS $$
-	SELECT _cm_is_process(_cm_table_id($1));
-$$ LANGUAGE SQL STABLE;
-
-
 CREATE OR REPLACE FUNCTION _cm_get_geometry_type(TableId oid, Attribute text) RETURNS text AS $$
 DECLARE
 	GeoType text;
@@ -474,6 +465,15 @@ $$ LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION _cm_parent_id(TableId oid) RETURNS SETOF oid AS $$
 	SELECT inhparent FROM pg_inherits WHERE inhrelid = $1 AND _cm_is_cmobject(inhparent);
 $$ LANGUAGE SQL;
+
+
+CREATE OR REPLACE FUNCTION _cm_is_process(ClassId oid) RETURNS boolean AS $$
+	SELECT $1 IN (SELECT _cm_subtables_and_itself(_cm_table_id('Activity')));
+$$ LANGUAGE SQL STABLE;
+
+CREATE OR REPLACE FUNCTION _cm_is_process(CMClass text) RETURNS boolean AS $$
+	SELECT _cm_is_process(_cm_table_id($1));
+$$ LANGUAGE SQL STABLE;
 
 /*
  * @return All cmdbuild domain ids

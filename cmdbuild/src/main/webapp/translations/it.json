@@ -640,7 +640,6 @@
          "ORM_CANT_CREATE_DATABASE": "Impossibile creare il database",
          "ORM_CANT_CREATE_USER": "Impossibile creare l'utente",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Impossibile cancellare schede aventi relazioni",
-         "ORM_CAST_ERROR": "Errore nella conversione di tipo",
          "ORM_CHANGE_LOOKUPTYPE_ERROR": "Impossibile cambiare il tipo della lookup",
          "ORM_CONTAINS_DATA": "Non è possibile cancellare classi o attributi di tabelle o domini contenenti dati",
          "ORM_CQL_COMPILATION_FAILED": "Query CQL non valida",

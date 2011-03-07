@@ -104,7 +104,7 @@ $$ LANGUAGE PLPGSQL;
 CREATE OR REPLACE FUNCTION cm_delete_domain(DomainId oid) RETURNS void AS $$
 BEGIN
 	IF NOT _cm_table_is_empty(DomainId) THEN
-		RAISE EXCEPTION 'Cannot delete domain %, contains data', DomainId::regclass;
+		RAISE EXCEPTION 'CM_CONTAINS_DATA';
 	END IF;
 
 	PERFORM _cm_delete_local_attributes(DomainId);

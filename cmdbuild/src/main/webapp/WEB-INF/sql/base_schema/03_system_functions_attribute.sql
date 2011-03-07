@@ -83,7 +83,8 @@ CREATE OR REPLACE FUNCTION _cm_attribute_set_uniqueness(TableId oid, AttributeNa
 BEGIN
 	IF _cm_attribute_is_unique(TableId, AttributeName) <> AttributeUnique THEN
 		IF AttributeUnique AND (_cm_is_simpleclass(TableId) OR _cm_is_superclass(TableId)) THEN
-			RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: %', 'Superclass or simple class attributes cannot be unique';
+			RAISE NOTICE 'Superclass or simple class attributes cannot be unique';
+			RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 		END IF;
 
 		PERFORM _cm_attribute_set_uniqueness_unsafe(TableId, AttributeName, AttributeUnique);
@@ -463,7 +464,8 @@ BEGIN
 
     IF WillBeNotNull AND _cm_is_superclass(TableId) AND _cm_check_comment(AttributeComment, 'MODE', 'write')
     THEN
-    	RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: %', 'Non-system superclass attributes cannot be not null';
+    	RAISE NOTICE 'Non-system superclass attributes cannot be not null';
+		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
     END IF;
 
 	PERFORM _cm_attribute_set_notnull_unsafe(TableId, AttributeName, WillBeNotNull);
@@ -488,11 +490,13 @@ BEGIN
 	END IF;
 
 	IF (SpecialTypeCount > 1) THEN
-		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: Too many CMDBuild types specified';
+		RAISE NOTICE 'Too many CMDBuild types specified';
+		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
 
 	IF SpecialTypeCount = 1 AND SQLType NOT IN ('int4','integer') THEN
-		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: The SQL type does not match the CMDBuild type';
+		RAISE NOTICE 'The SQL type does not match the CMDBuild type';
+		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
 END;
 $$ LANGUAGE PLPGSQL;
@@ -606,7 +610,7 @@ BEGIN
 	END IF;
 
     IF NOT _cm_attribute_is_empty(TableId, AttributeName) THEN
-		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: %', 'Contains data';
+		RAISE EXCEPTION 'CM_CONTAINS_DATA';
 	END IF;
 
 	PERFORM _cm_remove_attribute_triggers(TableId, AttributeName);
