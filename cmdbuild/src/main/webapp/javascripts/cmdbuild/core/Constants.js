@@ -45,6 +45,10 @@ CMDBuild.Constants = {
 	css: {
 		error_msg: "cmdb-error-msg",
 		bg_blue: "cmdbuild_background_blue",
-		bottom_border_blue: "cmdbuild_border_bottom_blue"
+		bg_gray: "cmdbuild_background_gray",
+		bottom_border_blue: "cmdbuild_border_bottom_blue",
+		top_border_gray: "cmdbuild_border_top_gray",
+		bottom_border_gray: "cmdbuild_border_bottom_gray",
+		padding5: "cmdbuild_body_padding"
 	}
 };

@@ -678,6 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Tabla de sólo lectura",
          "ORM_SQL_PATCH": "Error SQL en el parche",
          "ORM_TYPE_ERROR": "Tipo no correspondiente",
+         "ORM_TABLE_HAS_CIHLDREN": "<em>Impossibile eliminare Classi che hanno delle Sottoclassi</em>",
+         "ORM_TABLE_HAS_DOMAIN": "<em>Impossibile eliminare Classi associate ad un Dominio</em>",
          "ORM_UNIQUE_VIOLATION": "Vínculo de unicidad violado",
          "PARAMETER_CLASS_UNAVAILABLE": "Imposible instanciar la clase Java {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilegios no encontrados para el grupo {0}",

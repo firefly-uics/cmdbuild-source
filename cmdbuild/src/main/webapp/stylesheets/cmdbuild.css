@@ -234,12 +234,6 @@ em {
 	float: left;
 }
 
-.copyright {
-	text-align: right;
-	float: right;
-	padding-right: 24px;
-}
-
 /* FOOTER */
 #footer {
 	color: #727262;
@@ -298,6 +292,10 @@ em {
 
 .cmdbuild_border_bottom_gray {
 	border-bottom: 1px solid #D0D0D0 !important;
+}
+
+.cmdbuild_border_top_gray {
+	border-top: 1px solid #D0D0D0 !important;
 }
 
 .cmdbuild_border_bottom_blue {

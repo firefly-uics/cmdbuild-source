@@ -24,6 +24,8 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 			frame: false,
 		    border: false,
 			store: store,
+			tbar: [this.addButton],
+			bodyCssClass: CMDBuild.Constants.css.bottom_border_gray,
 		    colModel: new Ext.grid.ColumnModel({
 		        defaults: {
 		            width: 120,
@@ -48,10 +50,7 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 		    }),
 		    viewConfig: {
 		        forceFit: true
-		    },
-		    style: {
-				'border-bottom': '1px '+ CMDBuild.Constants.colors.gray.border +' solid'
-			},
+		    },		    
 		    sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 		});
 		this.iconsGrid.getSelectionModel().on("rowselect", this.onRowSelect , this);
@@ -61,25 +60,17 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 			fileUpload: true,
 			plugins: [new CMDBuild.CallbackPlugin()],
 			region: 'south',
-			height: 90,
 			split: true,
 			frame: false,
 			border: false,
-			style: {
-				'border-top': '1px '+ CMDBuild.Constants.colors.gray.border +' solid'
-			},
-			bodyStyle: {				
-				background: CMDBuild.Constants.colors.gray.background
-			},
-			tbar: [this.addButton, this.modifyButton, this.removeButton],
+			cls: CMDBuild.Constants.css.top_border_gray,
+			tbar: [this.modifyButton, this.removeButton],
 			items: [{
 				xtype: 'panel',
 				layout: 'form',
 				frame: true,
 				border: true,
-				style: {
-					margin: '5px'
-				},
+				cls: CMDBuild.Constants.css.padding5 +" "+ CMDBuild.Constants.css.bg_gray,
 				items: [{
 					xtype:'hidden',
 					name: 'name'
@@ -92,7 +83,8 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 					xtype: 'textfield',
 					fieldLabel: this.translation.description,
 					name: 'description',
-					allowBlank: false 
+					allowBlank: false,
+					width: 160
 				}]
 			}],
 			buttonAlign: 'center',

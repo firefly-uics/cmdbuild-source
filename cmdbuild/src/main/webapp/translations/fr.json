@@ -678,6 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Class en lecture seule",
          "ORM_SQL_PATCH": "Erreur dans le patch SQL",
          "ORM_TYPE_ERROR": "Type inconnu",
+         "ORM_TABLE_HAS_CIHLDREN": "<em>Cannot delete a class with subclasses</em>",
+         "ORM_TABLE_HAS_DOMAIN": "<em>Cannot delete a class that has a domain</em>",
          "ORM_UNIQUE_VIOLATION": "Violation de la contrainte unique",
          "PARAMETER_CLASS_UNAVAILABLE": "Ne peut pas instantier Java class {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilege non trouvé pour le groupe {0}",

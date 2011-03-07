@@ -87,14 +87,12 @@ public class CMBackend {
 		},
 		CM_HAS_DOMAINS {
 			public void throwException(final SQLException se) throws CMDBException {
-				// TODO
-				throw ORMExceptionType.ORM_GENERIC_ERROR.createException("Cannot delete class with domains");
+				throw ORMExceptionType.ORM_TABLE_HAS_DOMAIN.createException();
 			}
 		},
 		CM_HAS_CHILDREN {
 			public void throwException(final SQLException se) throws CMDBException {
-				// TODO
-				throw ORMExceptionType.ORM_GENERIC_ERROR.createException("Cannot delete class with children");
+				throw ORMExceptionType.ORM_TABLE_HAS_CIHLDREN.createException();
 			}
 		};
 		
