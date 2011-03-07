@@ -35,7 +35,7 @@ CMDBuild.Management.ModImportCSV = Ext.extend(CMDBuild.ModPanel, {
     	this.classList = new Ext.form.ComboBox({
     		store: CMDBuild.Cache.getClassesAsStoreWithoutSuperclasses(addEmptyOption=false),
     		fieldLabel : this.translation.selectaclass,
-    		width: 230,
+    		width: 260,
 			name : 'classid',
 			hiddenName : 'idClass',
 			valueField : 'id',
@@ -59,14 +59,13 @@ CMDBuild.Management.ModImportCSV = Ext.extend(CMDBuild.ModPanel, {
     		split: true,
 			items: [this.classList, {
 					xtype: 'textfield',
-					inputType : "file",					
-					width: 230,
+					inputType : "file",
 		    		fieldLabel: this.translation.csvfile,
 		    		allowBlank: false,
-		    		name: 'filecsv'    	
+		    		name: 'filecsv'
 				}, new Ext.form.ComboBox({ 
 					name: 'separator',
-					width: 230,
+					width: 260,
 					fieldLabel: this.translation.separator,
 					valueField: 'value',
 					displayField: 'value',
@@ -89,10 +88,9 @@ CMDBuild.Management.ModImportCSV = Ext.extend(CMDBuild.ModPanel, {
     	}, this);
     	
     	this.csv = new CMDBuild.Management.CSVGrid({
-    		disabled: true,
+    		disabled: false,
     		region: 'center',
-    		frame: false,
-    		style: {border: '1px '+CMDBuild.Constants.colors.blue.border+' solid'}
+    		frame: true
     	});
     	
     	this.csv.on('afteredit', function(){
@@ -162,25 +160,18 @@ CMDBuild.Management.ModImportCSV = Ext.extend(CMDBuild.ModPanel, {
 			success: function(a,b,c) {    			
 	    		var callback = this.csv.updateGrid.createDelegate(this.csv, [c], true);
 	    		CMDBuild.Management.FieldManager.loadAttributes(this.classList.getValue(), callback);
-	    		this.disableConfirmIfIncalid(c);
+	    		this.confirmBtn.setDisabled(this.haveInvalidAttribute(c));
     		}
 		});
     },
     
-    disableConfirmIfIncalid: function(c) {
-		var invalid = this.haveInvalidAttribute(c);
-		if (invalid)
-			this.confirmBtn.disable();
-		else 
-			this.confirmBtn.enable();
-    },
-    
     haveInvalidAttribute: function(c) {
     	var records = c.rows;
-    	for (var i = 0, len = records.length; i<len; i++){
+    	for (var i = 0, len = records.length; i<len; i++) {
     		var invalids = records[i]["invalid_fields"];
-			for (var i in invalids)
+			for (var i in invalids) {
 				return true;
+			}
     	}
     	return false;
     },
