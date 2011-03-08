@@ -28,6 +28,7 @@ public abstract class AuthenticationFacade {
 
 	public static final String USER_GROUP_DOMAIN_NAME = "UserRole";
 	public static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
+	private static final int INVALID_GROUP_ID = -1;
 
 	public User addUser(final String username, final String password, final String description) throws AuthException {
 		UserCard user = null;
@@ -85,10 +86,23 @@ public abstract class AuthenticationFacade {
 	static public void setDefaultGroupForUser(final int userId, final int defaultGroupId) {
 		final ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(userId);
 		final AbstractFilter userIdFilter = AttributeFilter.getEquals(user, "Id", String.valueOf(userId));
-		for (final IRelation groupRel : RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null)) {
-			final boolean wasDefaultGroup = (groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).getBoolean() == Boolean.TRUE); // Handles
-			// null
-			// values
+		final List<IRelation> groupRelations = RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null);
+		clearDefaultGroup(groupRelations);
+		setDefaultGroup(groupRelations, defaultGroupId);
+	}
+
+	private static void clearDefaultGroup(List<IRelation> groupRelations) {
+		changeDefaultGroup(groupRelations, INVALID_GROUP_ID);
+	}
+
+	private static void setDefaultGroup(final List<IRelation> groupRelations, final int defaultGroupId) {
+		changeDefaultGroup(groupRelations, defaultGroupId);
+	}
+
+	private static void changeDefaultGroup(final List<IRelation> groupRelations, final int defaultGroupId) {
+		for (final IRelation groupRel : groupRelations) {
+			final boolean wasDefaultGroup = (groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).getBoolean() == Boolean.TRUE);
+			// Handles null values
 			final boolean willBeDefaulGroup = (groupRel.getCard2().getId() == defaultGroupId);
 			if (wasDefaultGroup != willBeDefaulGroup) {
 				groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).setValue(willBeDefaulGroup);
