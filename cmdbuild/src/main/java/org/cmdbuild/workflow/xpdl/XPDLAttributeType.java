@@ -31,18 +31,28 @@ public enum XPDLAttributeType {
 	}
 	
 	public static XPDLAttributeType fromCmdbuildType( AttributeType type ) {
-		if(type == AttributeType.BOOLEAN){ return BOOLEAN; }
-		else if(type == AttributeType.CHAR
+		if (type == AttributeType.BOOLEAN) {
+			return BOOLEAN;
+		} else if (type == AttributeType.CHAR
 				|| type == AttributeType.STRING
-				|| type == AttributeType.TEXT){ return STRING; }
-		else if(type == AttributeType.DATE
-				|| type == AttributeType.TIMESTAMP){ return DATETIME; }
-		else if(type == AttributeType.DECIMAL
-				|| type == AttributeType.DOUBLE){ return DOUBLE; }
-		else if(type == AttributeType.INTEGER
-				|| type == AttributeType.REGCLASS){ return INT; }
-		else if(type == AttributeType.LOOKUP){ return LOOKUP; }
-		else if(type == AttributeType.REFERENCE){ return REFERENCE; }
+				|| type == AttributeType.TEXT
+				|| type == AttributeType.INET) {
+			return STRING;
+		} else if (type == AttributeType.DATE
+				|| type == AttributeType.TIMESTAMP
+				|| type == AttributeType.TIME) {
+			return DATETIME;
+		} else if (type == AttributeType.DECIMAL
+				|| type == AttributeType.DOUBLE) {
+			return DOUBLE;
+		} else if (type == AttributeType.INTEGER
+				|| type == AttributeType.REGCLASS) {
+			return INT;
+		} else if (type == AttributeType.LOOKUP) {
+			return LOOKUP;
+		} else if (type == AttributeType.REFERENCE) {
+			return REFERENCE;
+		}
 		return null;
 	}
 	

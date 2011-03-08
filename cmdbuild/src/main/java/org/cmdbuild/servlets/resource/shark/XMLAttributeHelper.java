@@ -6,15 +6,14 @@ import java.util.Date;
 
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.workflow.utils.SimpleXMLNode;
 import org.cmdbuild.workflow.WorkflowAttributeType;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
+import org.cmdbuild.workflow.utils.SimpleXMLNode;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.w3c.dom.Node;
 
-@SuppressWarnings("unchecked")
 public enum XMLAttributeHelper {
 
 	BOOLEAN(WorkflowAttributeType.BOOLEAN,Boolean.class) {
@@ -166,37 +165,22 @@ public enum XMLAttributeHelper {
 	DATE(WorkflowAttributeType.DATE,Date.class){
 		@Override
 		public void serialize(Object arg0, SimpleXMLNode arg1) {
-			Date dt = null;
-			if(arg0 instanceof Date) {
-				dt = (Date)arg0;
-			} else if(arg0 instanceof Calendar) {
-				dt = ((Calendar)arg0).getTime();
-			}
-			if(dt != null) {
-				arg1.set(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dt));
-			}
+			TIMESTAMP.serialize(arg0, arg1);
 		}
 		@Override
 		public void serialize(Object arg0, Element arg1) {
-			Date dt = null;
-			if(arg0 instanceof Date) {
-				dt = (Date)arg0;
-			} else if(arg0 instanceof Calendar) {
-				dt = ((Calendar)arg0).getTime();
-			}
-			if(dt != null) {
-				arg1.setText(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dt));
-			}
+			TIMESTAMP.serialize(arg0, arg1);
 		}
 		@Override
 		public Object parse(Node arg0) throws Exception {
-			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(arg0.getTextContent());
+			return TIMESTAMP.parse(arg0);
 		}
 	};
 	
 	WorkflowAttributeType wat;
+	@SuppressWarnings("rawtypes")
 	Class parsed;
-	private XMLAttributeHelper(WorkflowAttributeType wat,Class parsed){
+	private XMLAttributeHelper(WorkflowAttributeType wat,@SuppressWarnings("rawtypes") Class parsed){
 		this.wat = wat;
 		this.parsed = parsed;
 	}
