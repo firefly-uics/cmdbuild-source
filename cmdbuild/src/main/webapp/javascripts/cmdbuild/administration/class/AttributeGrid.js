@@ -151,13 +151,12 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
 	                    
 	          var rowList = [];
 	          var gStore = g.getStore();
-          
-         
-	          for(var i=0; i<gStore.getTotalCount(); i++){
+
+	          for (var i=0; i<gStore.getCount(); i++) {
 	            var rec = gStore.getAt(i);
-	            rowList.push({name: rec.json.name, idx: i+1});
+	            rowList.push({ name: rec.json.name, idx: i+1 });
 	          }
-	        
+
 	          CMDBuild.Ajax.request({
 	            url: 'services/json/schema/modclass',
 	            method: 'POST',
