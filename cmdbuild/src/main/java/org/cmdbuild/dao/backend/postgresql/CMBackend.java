@@ -126,6 +126,11 @@ public class CMBackend {
 	public enum SqlState {
 		not_null_violation("23502"),
 		foreign_key_violation("23503"),
+		unique_violation("23505") {
+			public void throwException(SQLException se) throws CMDBException {
+				throw ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
+			}
+		},
 		duplicate_table("42P07") {
 			public void throwException(SQLException se) throws CMDBException {
 				throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();

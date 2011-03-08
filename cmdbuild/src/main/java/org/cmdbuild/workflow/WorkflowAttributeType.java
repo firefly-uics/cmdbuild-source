@@ -30,7 +30,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 public enum WorkflowAttributeType {
 
 	BOOLEAN(XPDLAttributeType.BOOLEAN, BOOLEAN_TYPE, AttributeType.BOOLEAN),
-	STRING(XPDLAttributeType.STRING, STRING_TYPE, AttributeType.STRING, AttributeType.TEXT, AttributeType.CHAR),
+	STRING(XPDLAttributeType.STRING, STRING_TYPE, AttributeType.STRING, AttributeType.TEXT, AttributeType.CHAR, AttributeType.INET),
 	DOUBLE(XPDLAttributeType.DOUBLE, FLOAT_TYPE, AttributeType.DECIMAL, AttributeType.DOUBLE) {
 		@Override
 		public Object get(Object value) {
@@ -111,7 +111,7 @@ public enum WorkflowAttributeType {
 			}
 		}
 	},
-	TIMESTAMP(XPDLAttributeType.DATETIME, DATETIME_TYPE, AttributeType.TIMESTAMP) {
+	TIMESTAMP(XPDLAttributeType.DATETIME, DATETIME_TYPE, AttributeType.TIME, AttributeType.TIMESTAMP) {
 		@Override
 		protected void set(AttributeValue arg0, WMAttribute arg1) {
 			Calendar sharkCal = (Calendar) arg1.getValue();
@@ -137,12 +137,7 @@ public enum WorkflowAttributeType {
 	DATE(XPDLAttributeType.DATETIME, DATETIME_TYPE, AttributeType.DATE) {
 		@Override
 		protected void set(AttributeValue arg0, WMAttribute arg1) {
-			Calendar sharkCal = (Calendar) arg1.getValue();
-			if (sharkCal != null) {
-				arg0.setValue(sharkCal.getTime());
-			} else {
-				arg0.setValue(null);
-			}
+			TIMESTAMP.set(arg0, arg1);
 		}
 		@Override
 		public Object get(Object value) {
@@ -150,7 +145,7 @@ public enum WorkflowAttributeType {
 			if (dateValue != null) {
 				Calendar cmdbuildCal = Calendar.getInstance();
 				long timeinmillis = dateValue.getTime();
-				// TODO HACK FOR DATE TYPE BUG #562
+				// TODO HACK FOR DATE TYPE BUG
 				// There's something wrong on the shark side,
 				// so we fake that the time zone is GMT
 				// HACK HACK HACK HACK HACK HACK HACK
