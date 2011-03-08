@@ -5,11 +5,9 @@
     activityTab: undefined, // passed in instantiation
     
     initComponent: function() {
+
     	Ext.apply(this,{
-    		hideMode: 'offsets',
-    		layout: 'card',    	   
-    		frame: false,
-    		border: false
+    		layout: 'card'
     	});
     	
     	CMDBuild.Management.ActivityOptionTab.superclass.initComponent.apply(this, arguments);
