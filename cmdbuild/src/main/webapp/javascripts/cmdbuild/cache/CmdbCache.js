@@ -81,7 +81,7 @@
 					description: table.text,
 					name: table.name
 				});
-				store.add([r]);
+				store.addSorted(r);
 			};	
 		};
 
