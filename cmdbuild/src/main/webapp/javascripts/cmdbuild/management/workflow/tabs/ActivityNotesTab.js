@@ -47,14 +47,33 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
             }]
         });
 		
+		this.displayNote = new Ext.form.DisplayField({
+			name : 'Notes',
+			xtype : 'displayfield'
+		});
+		
+		this.displayPanel = new Ext.form.FormPanel({
+			layout: 'fit',
+			hideMode: 'offsets',
+			autoScroll: true,
+			border: false,			
+			frame: false,
+			bodyCssClass: "cmdbuild_background_blue " +
+					"cmdbuild_body_padding " +
+					"cmdbuild_border_bottom_blue " +
+					"x-form-item",
+			items: [this.displayNote]
+		});
+		
 		Ext.apply(this, {
 			frame: false,
 			style: {background: CMDBuild.Constants.colors.blue.background},
-			layout: 'fit',
+			layout: 'card',
+			activeItem: 0,
 			tbar: [
 				new CMDBuild.Management.GraphActionHandler().getAction()
 			],
-			items: [this.form],
+			items: [this.form, this.displayPanel],
 			buttonAlign: 'center',
 			buttons: [this.saveButton, this.cancelButton]
         });
@@ -63,6 +82,8 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 		
 		this.on('show', this.actualLoad, this);
 		this.on('hide', this.disablePanelIfNotCompleted, this);
+		
+		this.on("afterlayout", this.manageEditability, this);
 	},
 
 	initForClass: function(eventParams) {
@@ -92,7 +113,7 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 		
 		this.currentCardId = activity.record.data.Id;
 		this.currentProcessId = activity.record.data.ProcessInstanceId;
-		if(this.isVisible()) {
+		if (this.isVisible()) {
 			this.actualLoad();
 		}
 	},
@@ -105,24 +126,32 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 
 	actualLoad: function() {
 		if(this.loaded == true) {
-			CMDBuild.log.info('info already loaded');
 			return;
 		}
-		CMDBuild.log.info('actual load the process notes info');
         var form = this.form.getForm();
+        var displayForm = this.displayPanel.getForm();
         
-        if(form.items.getCount() == 0) {
-        	CMDBuild.log.info('form does not have fields! postponing!');
+        if (form.items.getCount() == 0) {
         	var t = this;
         	window.setTimeout(function(){t.actualLoad();},200);
         } else {
-        	CMDBuild.log.info('loading notes...');
             form.reset();
+            displayForm.reset();
+            
             form.loadRecord(this.record);
+            displayForm.loadRecord(this.record);
             this.loaded = true;
-        }
+        }        
     },
-
+    
+    manageEditability: function() {
+    	if (this.toEdit) {
+    		this.activatePanel(this.form.id);
+    	} else {
+    		this.activatePanel(this.displayPanel.id);
+    	}
+    },
+    
 	reloadCard: function(eventParams) {
 		this.enable();
 	},
@@ -133,17 +162,26 @@ CMDBuild.Management.ActivityNotesTab = Ext.extend(Ext.Panel, {
 	},
 	
 	disableModify: function() {
+		this.toEdit = false;
 		this.saveButton.disable();
-		this.cancelButton.disable();		
-		this.form.disable();
+		this.cancelButton.disable();
+		this.activatePanel(this.displayPanel.id);
 	},
 
 	enableModify: function() {
+		this.toEdit = true;
 		this.saveButton.enable();
-		this.cancelButton.enable(); 
-		this.form.enable();
+		this.cancelButton.enable();
+		this.activatePanel(this.form.id);
 	},
-
+	
+	activatePanel: function(panelId) {
+		var layout = this.getLayout();
+		if (layout.setActiveItem) {
+			layout.setActiveItem(panelId);
+		}
+	},
+	
 	saveNote: function() {
 		var form = this.form.getForm();
 		var t = this;
