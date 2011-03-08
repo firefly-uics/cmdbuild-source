@@ -188,18 +188,23 @@ public class ModSecurity extends JSONBase {
 			card= tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
 		}
 		UserCard user = new UserCard(card);
-		if (username != null)
+		if (username != null) {
 			user.setUsername(username);
-		if (description != null)
+		}
+		if (description != null) {
 			user.setDescription(description);
-		if (email != null)
+		}
+		if (email != null) {
 			user.setEmail(email);
-		if(password !=null && !password.equals(""))
+		}
+		if (password !=null && !password.equals("")) {
 			user.setUnencryptedPassword(password);
-		if(isActive)
+		}
+		if (isActive) {
 			user.setStatus(ElementStatus.ACTIVE);
-		else
+		} else {
 			user.setStatus(ElementStatus.INACTIVE_USER);
+		}
 		user.save();
 
 		AuthenticationFacade.setDefaultGroupForUser(user.getId(), defaultGroupId);
