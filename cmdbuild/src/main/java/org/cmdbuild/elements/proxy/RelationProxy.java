@@ -41,6 +41,7 @@ public class RelationProxy extends RelationForwarder {
 	@Override
 	public void delete() {
 		userCtx.privileges().assureWritePrivilege(r.getSchema());
+		r.setValue("User", userCtx.getUsername());
 		super.delete();
 	}
 
