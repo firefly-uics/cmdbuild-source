@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.management;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +12,9 @@ import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logger.Log;
@@ -58,45 +57,27 @@ public class ModWorkflow extends JSONBase {
 			@Parameter(value="dir",required=false) String sortDirection,
 			@Parameter(value="query",required=false) String fullTextQuery,
 			ProcessQuery processFilter) throws  JSONException {
-		String className = classTable.getName();
 
-		List<ICard> cards;
-		List<ActivityDO> acts = new LinkedList<ActivityDO>();
-		
 		setFullTextQuery(fullTextQuery, processFilter);		
 		setSorting(sortField, sortDirection, processFilter);
 		setFilterByFlowStatus(processFilter, flowStatus);
-
 		processFilter.setNextExecutorFilter(userCtx);
-		cards = getWFCards(limit, offset, processFilter);
 
-		if (flowStatus.startsWith(WorkflowConstants.StateOpen) || WorkflowConstants.AllState.equals(flowStatus)) {
-			acts = mngt.getActivityList(className, cards, false);
-		} else {
-			Log.WORKFLOW.debug("found " + cards.size() + " closed processes");
-		}
+		final List<ICard> cards = getWFCards(limit, offset, processFilter);
+		final Map<Integer, ActivityDO> activityMap = mngt.getActivityMap(classTable, cards, flowStatus);
 
-		JSONArray rows = new JSONArray();
-		serializeCards(mngt, userCtx, classTable, className, rows, cards, acts);		
+		final JSONArray rows = serializeCards(mngt, userCtx, classTable, cards, activityMap);		
 		serializer.put("results", processFilter.getTotalRows());
 		serializer.put("rows", rows);
 		return serializer;
 	}
 
-	private void serializeCards(SharkFacade mngt, UserContext userCtx,
-			ITable classTable, String className, JSONArray rows,
-			List<ICard> cards, List<ActivityDO> acts) throws JSONException {
+	private JSONArray serializeCards(SharkFacade mngt, UserContext userCtx,
+			ITable classTable, List<ICard> cards, Map<Integer, ActivityDO> activityMap) throws JSONException {
 
-		Map<Integer, ActivityDO> activityMap = new HashMap<Integer, ActivityDO>();		
-		for (ActivityDO activity : acts) {
-			if (activity == null) {
-				Log.WORKFLOW.warn("a process was not found!");
-			} else {
-				activityMap.put(activity.getCmdbuildCardId(), activity);
-			}
-		}
+		final Lookup openedStatus = WorkflowService.getInstance().getStatusLookupFor(WorkflowConstants.StateOpenRunning);
 
-		Lookup openedStatus = WorkflowService.getInstance().getStatusLookupFor(WorkflowConstants.StateOpenRunning);
+		final JSONArray rows = new JSONArray();
 		for (ICard card : cards) {
 			JSONObject jsonCard = Serializer.serializeCard(card, false);
 			if (card.getAttributeValue(ProcessAttributes.FlowStatus.toString()).toString().equals(openedStatus.getDescription())
@@ -106,6 +87,7 @@ public class ModWorkflow extends JSONBase {
 			}
 			rows.put(jsonCard);
 		}
+		return rows;
 	}
 	
 	private void addActivityInfo(JSONObject jsonCard, ActivityDO activity, UserContext userCtx) throws JSONException {
@@ -202,7 +184,7 @@ public class ModWorkflow extends JSONBase {
 	}
 
 	private List<ICard> getWFCards(int limit, int offset, ProcessQuery cardFilter) {
-		List<ICard> cards = new LinkedList<ICard>();
+		List<ICard> cards = new ArrayList<ICard>();
 		for(ICard card : cardFilter.subset(offset, limit).count()) {
 			cards.add(card);
 		}
