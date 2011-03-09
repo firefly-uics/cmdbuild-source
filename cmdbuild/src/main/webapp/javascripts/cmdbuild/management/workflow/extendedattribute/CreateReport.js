@@ -56,8 +56,6 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
             style: {'padding': '5px', background: CMDBuild.Constants.colors.blue.background},
             items: [this.formatCombo]
 		});
-        
-		this.requestReport(this.repType,this.repCode);
 		
 		return {
 			region: 'border',
@@ -80,26 +78,32 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
 	
 	//add the required attributes
 	configureForm: function() {
-		var conf = this.extAttrDef;
-		// add fields to form panel
-        for (var i=0; i<this.attributeList.length; i++) {
-            var attribute = this.attributeList[i];
-            var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
-            if (field) {
-            	if(conf.parameters[attribute.name] && typeof (conf.parameters[attribute.name] != 'object')) {
-            		field.setValue( conf.parameters[attribute.name] );
-            	} else if(attribute.defaultvalue) {
-                    field.setValue(attribute.defaultvalue);
-                }
-                this.formFields[i] = field;
-                this.formPanel.add(field);
-            }
-        }
-        this.formPanel.doLayout();
+		if (!this.formPanelCreated) {
+			this.formPanelCreated = true;
+			var conf = this.extAttrDef;
+			// add fields to form panel
+	        for (var i=0; i<this.attributeList.length; i++) {
+	            var attribute = this.attributeList[i];
+	            var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
+	            if (field) {
+	            	if(conf.parameters[attribute.name] && typeof (conf.parameters[attribute.name] != 'object')) {
+	            		field.setValue( conf.parameters[attribute.name] );
+	            	} else if(attribute.defaultvalue) {
+	                    field.setValue(attribute.defaultvalue);
+	                }
+	                this.formFields[i] = field;
+	                this.formPanel.add(field);
+	            }
+	        }
+	        this.formPanel.doLayout();
+		}
 	},
-	
-	//here set the values of eventually client attributes
+
 	onExtAttrShow: function(extAttr) {
+		this.setupReport();
+	},
+
+	fillFormValues: function() {
 		var conf = this.extAttrDef;
 		for(var i=0;i<this.formFields.length;i++) {
 			var field = this.formFields[i];
@@ -107,7 +111,7 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
 				var value = this.getActivityFormVariable(conf.parameters[field.name]);
 				field.setValue(value);
 			}
-		}		
+		}
     },
     
     onSave: function(form,reactedFn) {
@@ -120,10 +124,13 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
     	}
     },
 	
-	requestReport: function(type,code) {
+	setupReport: function(callback) {
 		Ext.Ajax.request({
             url: 'services/json/management/modreport/createreportfactorybytypecode',
-            params: {type: type, code: code},
+            params: {
+            	type: this.repType,
+            	code: this.repCode
+            },
             success: function(response) {
                 var ret = Ext.util.JSON.decode(response.responseText);
                 if(ret.filled) { // report with no parameters
@@ -132,6 +139,7 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
                 	this.attributeList = ret.attribute;
                 }
                 this.configureForm();
+                this.fillFormValues();
             },
             scope: this
         });
