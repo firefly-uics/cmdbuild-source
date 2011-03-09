@@ -74,6 +74,14 @@ CMDBuild.Management.MapBuilder = (function() {
 			yahooLayer.cmdbuildMaxZoom = gisConfig.yahoo_maxzoom || DEFAULT_MAX_ZOOM;
 			map.addLayers([yahooLayer]);
 		}
+		
+		if (map.layers.length == 0) {
+            var fakeBaseLayer = new OpenLayers.Layer.Vector("", {
+            	displayInLayerSwitcher: false,
+            	isBaseLayer: true
+            });
+            map.addLayers([fakeBaseLayer]);
+		}
 	};
 	
 	return {

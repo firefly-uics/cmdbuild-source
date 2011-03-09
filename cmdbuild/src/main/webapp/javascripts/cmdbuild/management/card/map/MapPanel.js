@@ -62,11 +62,13 @@ CMDBuild.Management.MapPanel =  Ext.extend(Ext.Panel, {
 	            children: [{
 	    	        nodeType: "gx_baselayercontainer",
 	    	        expanded: true,
-	    	        layerStore: mapPanel.layers
+	    	        layerStore: mapPanel.layers,
+	    	        iconCls: "cmdbuild-tree-folder-icon"
 	    	    },{
 	    	        nodeType: "gx_overlaylayercontainer",
 	    	        expanded: true,
-	    	        layerStore: mapPanel.layers
+	    	        layerStore: mapPanel.layers,
+	    	        iconCls: "cmdbuild-tree-folder-icon"
 	    	    }]
 	        },
 	        rootVisible: false,
