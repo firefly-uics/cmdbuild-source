@@ -5,7 +5,8 @@ public interface Process extends ICard {
 
 	public enum ProcessAttributes {
 		NextExecutor("NextExecutor"),
-		FlowStatus("FlowStatus");
+		FlowStatus("FlowStatus"),
+		ActivityDescription("ActivityDescription");
 
 		private final String columnName;
 

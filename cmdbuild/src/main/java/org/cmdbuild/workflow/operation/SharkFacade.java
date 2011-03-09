@@ -3,6 +3,7 @@ package org.cmdbuild.workflow.operation;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -211,14 +212,43 @@ public class SharkFacade {
 		}
 	}
 
+	public Map<Integer, ActivityDO> getActivityMap(final ITable table, final List<ICard> cards) {
+		// The web service does not know what flow status was requested
+		return getActivityMap(table, cards, null);
+	}
+
+	public Map<Integer, ActivityDO> getActivityMap(final ITable table, final List<ICard> cards, final String flowStatus) {
+		final Map<Integer, ActivityDO> activityMap = new HashMap<Integer, ActivityDO>();
+
+		if (table.isActivity()) {
+			List<ActivityDO> acts;
+			if (flowStatus == null || flowStatus.startsWith(WorkflowConstants.StateOpen) || WorkflowConstants.AllState.equals(flowStatus)) {
+				acts = getActivityList(table.getName(), cards, false);
+			} else {
+				acts = new ArrayList<ActivityDO>();
+			}
+			
+			
+			for (ActivityDO activity : acts) {
+				if (activity == null) {
+					Log.WORKFLOW.warn("a process was not found!");
+				} else {
+					activityMap.put(activity.getCmdbuildCardId(), activity);
+				}
+			}
+		}
+
+		return activityMap;
+	}
+
 	public List<ActivityDO> getActivityList(final String className, final List<ICard> cmdbuildCards, final boolean onlyExecutables) {
 		WorkflowOperation<List<ActivityDO>> operation = new WorkflowOperation<List<ActivityDO>>() {
-			@SuppressWarnings("unchecked")
+
 			public List<ActivityDO> execute(WMSessionHandle handle,
 					SharkWSFactory factory, UserContext userCtx)
 					throws Exception {
 
-				List<ActivityDO> out = new ArrayList(cmdbuildCards.size());
+				List<ActivityDO> out = new ArrayList<ActivityDO>(cmdbuildCards.size());
 				for (int i=0;i<cmdbuildCards.size();i++) {
 					out.add(null);
 				}
@@ -298,7 +328,7 @@ public class SharkFacade {
 	
 	public List<ActivityDO> getWorkItems( final WorkItemQuery query, final boolean onlyBaseDisplay ) {
 		WorkflowOperation<List<ActivityDO>> operation = new WorkflowOperation<List<ActivityDO>>(){
-			@SuppressWarnings("unchecked")
+
 			public List<ActivityDO> execute(WMSessionHandle handle,
 					SharkWSFactory factory, UserContext userCtx)
 					throws Exception {
@@ -306,7 +336,7 @@ public class SharkFacade {
 
 				if(userCtx.privileges().isAdmin()) {
 					//one workitem per activityinstanceid
-					List<WMWorkItem> tmp = new ArrayList();
+					List<WMWorkItem> tmp = new ArrayList<WMWorkItem>();
 					for(WMWorkItem item : items){
 						boolean found = false;
 						for(WMWorkItem itemTmp : tmp){
@@ -322,7 +352,7 @@ public class SharkFacade {
 					items = tmp.toArray(new WMWorkItem[]{});
 				}
 				
-				List<ActivityDO> out = new ArrayList();
+				List<ActivityDO> out = new ArrayList<ActivityDO>();
 				
 				for(WMWorkItem item : items){
 					Entry<WMEntity,CmdbuildProcessInfo> procInfo = facade.getProcessInfo(handle, factory, item);

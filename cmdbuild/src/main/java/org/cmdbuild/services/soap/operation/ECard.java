@@ -1,5 +1,6 @@
 package org.cmdbuild.services.soap.operation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,11 +9,12 @@ import java.util.TreeMap;
 
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
@@ -45,8 +47,6 @@ public class ECard {
 
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, Integer offset, final String fullText, final CQLQuery cqlQuery) {
-
-		final List<Card> list = new LinkedList<Card>();
 
 		CardQuery cardQuery;
 		ITable table;
@@ -83,19 +83,44 @@ public class ECard {
 			Log.SOAP.debug("Requested class derives from Activity");
 			cardQuery = applyFilters(userCtx, cardQuery);
 		}
+		
+		final List<ICard> cards = new ArrayList<ICard>();
+		for(ICard card : cardQuery.count()) {
+			cards.add(card);
+		}
 
-		for (final ICard result : cardQuery.count()) {
-			final Card card = prepareCard(attributeList, result);
-			card.setMetadata(addMetadata(userCtx, card, result, table));
-			list.add(card);
+		final Map<Integer, ActivityDO> activityMap = getActivityMapIfNeeded(table, cards, attributeList);
+
+		final List<Card> wfCards = new LinkedList<Card>();
+		for (final ICard card : cards) {
+			final Card wfCard = prepareCard(attributeList, card, activityMap);
+			wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+			wfCards.add(wfCard);
 		}
 		final int count = cardQuery.getTotalRows();
 
 		final CardList clist = new CardList();
 		clist.setTotalRows(count);
-		clist.setCards(list);
+		clist.setCards(wfCards);
 
 		return clist;
+	}
+
+	private Map<Integer, ActivityDO> getActivityMapIfNeeded(final ITable table, final List<ICard> cards, final Attribute[] attributeList) {
+		if (attributeList == null) { // Every attribute!
+			return getActivityMap(table, cards);
+		}
+		for (Attribute a : attributeList) {
+			if (ProcessAttributes.ActivityDescription.toString().equals(a.getName())) {
+				return getActivityMap(table, cards);
+			}
+		}
+		return new HashMap<Integer, ActivityDO>();
+	}
+
+	private Map<Integer, ActivityDO> getActivityMap(final ITable table, final List<ICard> cards) {
+		final SharkFacade sharkFacade = new SharkFacade(userCtx);
+		return sharkFacade.getActivityMap(table, cards);
 	}
 
 	private HashMap<String, Object> serializeCQLParameters(final List<CQLParameter> parameters) {
@@ -108,14 +133,23 @@ public class ECard {
 		return cqlParameters;
 	}
 
-	private Card prepareCard(final Attribute[] attributeList, final ICard result) {
-		Card card;
+	private Card prepareCard(final Attribute[] attributeList, ICard card, Map<Integer, ActivityDO> activityMap) {
+		Card wfCard;
+		addActivityDecription(card, activityMap);
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
-			card = new Card(result, attributeList);
+			wfCard = new Card(card, attributeList);
 		} else {
-			card = new Card(result);
+			wfCard = new Card(card);
 		}
-		return card;
+		return wfCard;
+	}
+
+	private void addActivityDecription(ICard card, Map<Integer, ActivityDO> activityMap) {
+		final ActivityDO activityDo = activityMap.get(card.getId());
+		if (activityDo != null) {
+			final String activityDescription = activityDo.getActivityInfo().getActivityDescription();
+			card.setValue(ProcessAttributes.ActivityDescription.toString(), activityDescription);
+		}
 	}
 
 	private CardQuery addOrder(final Order[] orderType, final CardQuery cardQuery) {
