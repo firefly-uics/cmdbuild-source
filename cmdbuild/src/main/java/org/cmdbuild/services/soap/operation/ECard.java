@@ -135,7 +135,7 @@ public class ECard {
 
 	private Card prepareCard(final Attribute[] attributeList, ICard card, Map<Integer, ActivityDO> activityMap) {
 		Card wfCard;
-		addActivityDecription(card, activityMap);
+		addActivityDecription(card, activityMap.get(card.getId()));
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
 			wfCard = new Card(card, attributeList);
 		} else {
@@ -144,8 +144,13 @@ public class ECard {
 		return wfCard;
 	}
 
-	private void addActivityDecription(ICard card, Map<Integer, ActivityDO> activityMap) {
-		final ActivityDO activityDo = activityMap.get(card.getId());
+	private void addActivityDecription(ICard card) {
+		final SharkFacade sharkFacade = new SharkFacade(userCtx);
+		final ActivityDO activityDo = sharkFacade.getActivityList(card);
+		addActivityDecription(card, activityDo);
+	}
+
+	private void addActivityDecription(ICard card, final ActivityDO activityDo) {
 		if (activityDo != null) {
 			final String activityDescription = activityDo.getActivityInfo().getActivityDescription();
 			card.setValue(ProcessAttributes.ActivityDescription.toString(), activityDescription);
@@ -205,21 +210,20 @@ public class ECard {
 	}
 
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-
-		Card cardType = null;
+		Card wfCard;
 		final ITable table = userCtx.tables().get(className);
 		final ICard card = table.cards().get(cardId);
+		addActivityDecription(card);
 
 		Log.SOAP.debug("Getting card " + cardId + " from " + className);
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
-			cardType = new Card(card, attributeList);
+			wfCard = new Card(card, attributeList);
 		} else {
-			cardType = new Card(card);
-			// add metadata only if the whole card is requested, to fix loops in
-			// shark tools
+			wfCard = new Card(card);
 		}
-		cardType.setMetadata(addMetadata(userCtx, cardType, card, table));
-		return cardType;
+
+		wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+		return wfCard;
 	}
 
 	private List<Metadata> addMetadata(final UserContext userCtx, final Card cardType, final ICard card,
