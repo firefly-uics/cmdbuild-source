@@ -148,6 +148,8 @@ CMDBuild.Management.ActivityTabPanel = Ext.extend(Ext.Panel, {
 	},
 	
 	loadActivity: function(activity) {
+		listenCMActivityLoaded.call(this, activity);
+
 		this.updateActivityDoc(activity);
 		this.acutalPanel.items.each(function(tab) {
     		if (tab.loadActivity) {
@@ -165,7 +167,6 @@ CMDBuild.Management.ActivityTabPanel = Ext.extend(Ext.Panel, {
 				this.acutalPanel.activate(this.activityTab);
 			}
 		}
-		this.activityTab.manageEditability(activity);
 	},
 	
 	onSelectStateProcess: function(params) {
@@ -215,6 +216,24 @@ CMDBuild.Management.ActivityTabPanel = Ext.extend(Ext.Panel, {
 		this.activityTab.processStarted(params);
 		updateActivity
 	}
-});	
-Ext.reg('activitytabpanel', CMDBuild.Management.ActivityTabPanel);
+});
+	function listenCMActivityLoaded(activity) {
+		/* 
+		 * the first time that an activity is loaded, the optionsTab finishes his loadActivity
+		 * before the activityTab. In this case the manageEditability does not work.
+		 * Is necessary to wait because some WF Widgets might depend on some fields of
+		 * the activityTab. So before starting the edit mode of the activityTab
+		 * it is important that the optionsTab has been loaded.
+		 */
+		var tabToWait = 2;
+		function onActivityLoaded() {
+			if (--tabToWait == 0) {
+				this.activityTab.manageEditability(activity);
+			}
+		}
+		this.activityTab.on("CMActivityLoaded", onActivityLoaded, this, { single: true });
+		this.optionsTab.on("CMActivityLoaded", onActivityLoaded, this, { single: true });
+	}
+
+	Ext.reg('activitytabpanel', CMDBuild.Management.ActivityTabPanel);
 })();

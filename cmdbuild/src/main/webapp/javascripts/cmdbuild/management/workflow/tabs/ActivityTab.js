@@ -273,6 +273,9 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		}
 		
 		this.displayPanel.getForm().loadRecord(eventParams.record);
+		
+		// listened by the ActivityTabPanel to now when to call manageEditability
+		this.fireEvent("CMActivityLoaded");
 	},	
 	
 	manageEditability: function(eventParams) {

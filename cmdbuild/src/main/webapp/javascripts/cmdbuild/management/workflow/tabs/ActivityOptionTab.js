@@ -46,6 +46,7 @@
     	   });
     	}, this);
     	this.doLayout(true);
+    	this.fireEvent("CMActivityLoaded");
     },
     
     onActivityStartEdit: function() {
