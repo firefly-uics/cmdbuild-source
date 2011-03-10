@@ -389,7 +389,7 @@
             "fieldsetgeneraltitle": "Generales",
             "fieldsetlanguageltitle": "Idiomas",
             "fieldsetpopupwindowtitle": "Ventana popup",
-            "instancename": "<em>Nome istanza</em>",
+            "instancename": "Nombre instancia",
             "language": "Idioma por defecto",
             "languagePrompt": "Muestra elección del idioma",
             "menuTitle": "Opciones generales",
@@ -603,14 +603,14 @@
       "title": "Configuración"
    },
    "errors": {
-   	  "busy_wf_widgets": "<em>I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.</em>",
+   	  "busy_wf_widgets": "Los controles visuales están ocupados, controle el estado del servidor antes de intentar de nuevo. ",
       "detail": "Detalles",
       "error_message": "Error",
       "error_moving_row": "Se verificó un error en el traslado de la fila",
-      "invalid_attributes": "<em>I seguenti campi non sono stati compilati correttamente:</em>",
-      "invalid_extended_attributes": "<em>I seguenti controlli visuali non sono stati compilati correttamente:</em>",
+      "invalid_attributes": "Los siguientes campos no han sido compilados correctamente: ",
+      "invalid_extended_attributes": "Los siguientes controles visuales no fueron compilados correctamente: ",
       "no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
-	  "no_selections": "<em>Non hai selezionato nessuna scheda</em>",
+	  "no_selections": "No ha seleccionado ningua tarjeta",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Archivo {0} no encontrado en el repositorio",
          "ATTACHMENT_NOTFOUND": "Adjunto {0} para la tarjeta {2} en {1} no encontrado",
@@ -678,8 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Tabla de sólo lectura",
          "ORM_SQL_PATCH": "Error SQL en el parche",
          "ORM_TYPE_ERROR": "Tipo no correspondiente",
-         "ORM_TABLE_HAS_CIHLDREN": "<em>Impossibile eliminare Classi che hanno delle Sottoclassi</em>",
-         "ORM_TABLE_HAS_DOMAIN": "<em>Impossibile eliminare Classi associate ad un Dominio</em>",
+         "ORM_TABLE_HAS_CIHLDREN": "Imposible eliminar Clases que tienen Subclases",
+         "ORM_TABLE_HAS_DOMAIN": "Imposible eliminar Clases asociadas a un Dominio",
          "ORM_UNIQUE_VIOLATION": "Vínculo de unicidad violado",
          "PARAMETER_CLASS_UNAVAILABLE": "Imposible instanciar la clase Java {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilegios no encontrados para el grupo {0}",
@@ -743,7 +743,7 @@
       "show_detail": "Mostrar detalles",
       "template_error": "Error en una plantilla",
       "unknown_error": "Se verificó un error",
-      "wrong_wf_widgets": "</em>C'è stato un errore nel salvataggio dei seguenti controlli visuali: </em>"
+      "wrong_wf_widgets": "Ha habido un error al guardar los siguientes controles visuales: "
    },
    "info": {"card_not_found": "La tarjeta no respeta más el filtro establecido"},
    "login": {
@@ -902,10 +902,10 @@
          "deletedetail": "Eliminar Detalle",
          "detail": "Detalles",
          "editdetail": "Modificar Detalle",
-         "showattach": "<em>Visualizza allegati</em>",
-         "showdetail": "<em>Visulaizza dettaglio</em>",
+         "showattach": "Visualizar adjuntos",
+         "showdetail": "Visualizar detalle",
          "showgraph": "Visualizar el gráfico",
-         "shownotes": "<em>Visualizza note</em>"
+         "shownotes": "Visualizar notas"
       },      
       "modmenu": {"menu": "Navegación"},
       "modreport": {
@@ -1035,9 +1035,9 @@
       "wrong_time": "{0} no es un valor válido. Este debe estar en el formato {1}"
    },
    "warnings": {
-      "link_cards_changed_values": "<em>La selezione di \"{0}\" è stata aggiornata</em>",
+      "link_cards_changed_values": "La selección de \"{0}\" ha sido actualizada",
       "popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
       "warning_message": "Atención",
-      "only_filtered": "<em>Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente</em>"
+      "only_filtered": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual "
    }
 }
