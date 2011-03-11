@@ -145,9 +145,11 @@ public class ECard {
 	}
 
 	private void addActivityDecription(ICard card) {
-		final SharkFacade sharkFacade = new SharkFacade(userCtx);
-		final ActivityDO activityDo = sharkFacade.getActivityList(card);
-		addActivityDecription(card, activityDo);
+		if (card.getSchema().isActivity()) {
+			final SharkFacade sharkFacade = new SharkFacade(userCtx);
+			final ActivityDO activityDo = sharkFacade.getActivityList(card);
+			addActivityDecription(card, activityDo);
+		}
 	}
 
 	private void addActivityDecription(ICard card, final ActivityDO activityDo) {
