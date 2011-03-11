@@ -489,23 +489,35 @@ public class ConnectorJob implements Runnable {
 
 	private void setLookupAttribute(IAttribute attribute, ICard card,
 			String attributeName, String attributeValue) {
+		
+		if(attributeValue==null || attributeValue.length()<=0){
+			Log.SOAP.error("ExternalSync - Setting a null lookup value in: "+attributeName);
+			card.getAttributeValue(attributeName).setValue(null);
+			return;
+		}
+			
+		
 		String lookupType = attribute.getLookupType().getType();
 		LookupOperation lo = new LookupOperation(userCtx);
 		Iterable<Lookup> lookupList = lo.getLookupList(lookupType);
 
+		Lookup lookup = null;
+		
 		for (Lookup l : lookupList) {
 			if (attributeValue.equals(l.getDescription())) {
-				card.getAttributeValue(attributeName).setValue(l);
+				lookup=l;
 				break;
 			}
 		}
-		Lookup lookup = card.getAttributeValue(attributeName).getLookup();
-		if (lookup == null || lookup.equals("")) {
+		
+		if (lookup == null) {
 			lookup = new Lookup();
 			lookup.setType(lookupType);
 			lookup.setDescription(attributeValue);
 			lookup.save();
 		}
+		
+		card.getAttributeValue(attributeName).setValue(lookup);
 	}
 	
 	@SuppressWarnings(value = { "unchecked" })
