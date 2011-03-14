@@ -17,7 +17,6 @@
 	</properties>
 	<modules>
 		<module>cmdbuild</module>
-		<module>cmdbuild-connector</module>
 		<module>cmdbuild-docs</module>
 		<module>cmdbuild-graph</module>
 		<module>cmdbuild-portlet</module>
