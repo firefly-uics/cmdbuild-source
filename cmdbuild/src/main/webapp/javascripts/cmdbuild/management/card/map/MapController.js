@@ -321,8 +321,10 @@
 			var layerForSelectController = [];
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
-				if (layer.editLayer) {
+				if (layer.CM_Layer) {
 					layerForPopupController.push(layer);
+				}
+				if (layer.editLayer) {
 					layerForSelectController.push(layer.editLayer);
 				}
 			}

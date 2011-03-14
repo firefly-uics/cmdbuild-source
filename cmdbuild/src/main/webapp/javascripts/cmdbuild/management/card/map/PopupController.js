@@ -61,7 +61,9 @@
 		var card = f.CM_card;
 		var attributes = f.CM_card_attributes;
 		
-		var htmlTemplate ="<div class=\"map_cloud_content\">{0}</div>";
+		var htmlTemplate = "<div class=\"map_cloud_content\">" +
+				"<p class=\"map_cloud_title\">{0}</p>" +
+				"{1}</div>";
 		var itemTemplate = "<p class=\"map_cloud_item\"><strong>{0}:</strong>"
 			+ "<span>{1}</span></p>";
 		
@@ -75,6 +77,6 @@
 			}
 		}
 		
-		return String.format(htmlTemplate, items);
+		return String.format(htmlTemplate, card.IdClass_value, items);
 	}
 })();

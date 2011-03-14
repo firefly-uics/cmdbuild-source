@@ -675,6 +675,12 @@ em {
 	background-image: url(../images/icons/map/polygon.png) !important;
 }
 
+.map_cloud_title {
+	font-size: 1.2em;
+	text-decoration: underline;
+	padding-bottom: 0.5em
+}
+
 .map_cloud_item {
 	font-size: 0.8em;
 }
