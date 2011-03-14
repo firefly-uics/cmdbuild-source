@@ -9,11 +9,12 @@
 	<artifactId>cmdbuild-shark-extensions</artifactId>
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Extensions</name>
-	<properties>
-		<cxf.version>2.2.6</cxf.version>
-		<netbeans.hint.jdkPlatform>JDK_1.5</netbeans.hint.jdkPlatform>
-	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-ws-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-types</artifactId>
@@ -139,7 +140,7 @@
 			<version>1.0.1B</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- Dipendenze Groovy -->
+		<!-- Groovy Dependencies -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
@@ -230,50 +231,5 @@
 			<version>2.1</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Dipendenze client CXF -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-ws-security</artifactId>
-			<version>${cxf.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<!-- Generate Java classes from WSDL during build -->
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
-				<executions>
-					<execution>
-						<id>generate-sources</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
-							<wsdlOptions>
-								<wsdlOption>
-									<wsdl>${basedir}/src/main/wsdl/Private.wsdl</wsdl>
-								</wsdlOption>
-							</wsdlOptions>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

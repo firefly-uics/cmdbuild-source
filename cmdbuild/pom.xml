@@ -12,7 +12,6 @@
 	<properties>
 		<antlr.version>3.2</antlr.version>
 		<cuke4duke.version>0.3.2</cuke4duke.version>
-		<cxf.version>2.2.10</cxf.version>
 		<hamcrest.version>1.2</hamcrest.version>
 		<itext.version>2.1.0</itext.version> <!-- jasperreports dependency -->
 		<jasperreports.version>3.7.1</jasperreports.version>

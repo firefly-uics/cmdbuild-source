@@ -12,12 +12,16 @@
 	<name>CMDBuild Portlet</name>
 
 	<properties>
-		<cxf.version>2.2.6</cxf.version>
 		<service.api.folder>src/main/java-service-api</service.api.folder>
 	</properties>
 
 	<dependencies>
-		<!-- Portlet Base -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-ws-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- Base Portlet -->
 		<dependency>
 			<groupId>com.commsen.liferay</groupId>
 			<artifactId>liferay-lib</artifactId>
@@ -83,52 +87,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- Dipendenze client CXF -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-ws-security</artifactId>
-			<version>${cxf.version}</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>cmdbuild-portlet-${project.version}</finalName>
 		<plugins>
-			<!-- Generate Java classes from WSDL during build -->
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>${cxf.version}</version>
-				<executions>
-					<execution>
-						<id>generate-sources</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
-							<wsdlOptions>
-								<wsdlOption>
-									<wsdl>${basedir}/src/main/wsdl/Private.wsdl</wsdl>
-								</wsdlOption>
-							</wsdlOptions>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!--Needed for Liferay-->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -143,11 +105,8 @@
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
-
 		</plugins>
-
 	</build>
-
 
 	<profiles>
 		<profile>
