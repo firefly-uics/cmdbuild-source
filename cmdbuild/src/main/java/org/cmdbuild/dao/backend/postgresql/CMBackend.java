@@ -328,6 +328,7 @@ public class CMBackend {
 			Log.SQL.debug(stm.toString());
 			stm.execute();
 			SchemaCache.getInstance().refreshTables();
+			SchemaCache.getInstance().refreshDomains();
 		} catch (SQLException se) {
 			Log.PERSISTENCE.info("Errors modifying table: " + table.getId(), se);
 			SqlState.throwCustomExceptionFrom(se);
@@ -424,11 +425,9 @@ public class CMBackend {
 			stm.setString(2, attribute.getName());
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-			// remove the attribute from the table if actually removed
+			// TODO: remove the attribute from the table if actually removed
 			SchemaCache.getInstance().refreshTables();
-			if (attribute.getType() == AttributeType.REFERENCE) {
-				SchemaCache.getInstance().refreshDomains();
-			}
+			SchemaCache.getInstance().refreshDomains();
 		} catch (SQLException se) {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
