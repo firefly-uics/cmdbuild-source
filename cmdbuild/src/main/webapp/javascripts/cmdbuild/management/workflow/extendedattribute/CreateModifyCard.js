@@ -162,12 +162,12 @@ CMDBuild.Management.CreateModifyCard = Ext.extend(CMDBuild.Management.BaseExtend
 		});
 	},
 
-	onSave: function(frm,fn) {
+	onSave: function() {
 		// save card and react with the outputname=id
 		if (this.currentCardId >= 0) {
             var reactObj = {};
             reactObj[this.outputName] = this.currentCardId;
-            this.react(reactObj,fn);
+            this.react(reactObj);
 		} else {
 			fn(this.identifier, true);
 		}

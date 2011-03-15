@@ -40,20 +40,18 @@ CMDBuild.Management.ManageEmail = Ext.extend(CMDBuild.Management.BaseExtendedAtt
 		}
 	},
 
-	onSave: function(form, reactedFn, isAdvance) {
+	onSave: function(isAdvance) {
 		if (this.readWrite) {
 			if (isAdvance) {
-				var realReactFn = this.realReact.createDelegate(this, [reactedFn, isAdvance]);
+				var realReactFn = this.realReact.createDelegate(this, [isAdvance]);
 				this.emailGrid.addTemplatesIfNeededOnLoad(realReactFn);
 			} else {
-				this.realReact(reactedFn, isAdvance);
+				this.realReact(isAdvance);
 			}
-		} else {
-	        reactedFn(this.identifier, true);
 		}
     },
 
-    realReact: function(reactedFn, isAdvance) {
+    realReact: function(isAdvance) {
         var outgoingEmails = this.getOutgoing(true);
         var outgoingEmailsEnc = Ext.util.JSON.encode(outgoingEmails);
         var deletedEnc = Ext.util.JSON.encode(this.emailGrid.deletedEmails);
@@ -61,7 +59,7 @@ CMDBuild.Management.ManageEmail = Ext.extend(CMDBuild.Management.BaseExtendedAtt
         		Outgoing: outgoingEmailsEnc,
 	    		Deleted: deletedEnc,
 	    		ImmediateSend: isAdvance
-	    }, reactedFn);
+	    });
     },
 
     getOutgoing: function(modifiedOnly) {

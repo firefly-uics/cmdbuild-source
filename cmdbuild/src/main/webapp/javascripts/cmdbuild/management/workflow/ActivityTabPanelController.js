@@ -48,11 +48,13 @@
 			function fireStartProcessEvent() {
 				view.fireEvent("start_process", {
 					activityInfo: params,
-					callback: function(p) {						
-						view.activityTab.processStarted(p);
-						view.optionsTab.saveWFWidgets(p.process, function() {
+					callback: function(p) {
+						var process = p.process;
+						process.isAdvance = isAdvance;
+						view.activityTab.processStarted(process);
+						view.optionsTab.saveWFWidgets(process, function() {
 							view.activityTab.updateActivity(isAdvance);
-						}, view);				
+						}, view);
 					},
 					scope: view
 				});

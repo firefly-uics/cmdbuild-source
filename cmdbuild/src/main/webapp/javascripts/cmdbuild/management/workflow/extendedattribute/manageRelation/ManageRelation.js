@@ -66,11 +66,11 @@ CMDBuild.Management.ManageRelation = Ext.extend(CMDBuild.Management.BaseExtended
 		this.relationsTab.loadCardRelations();
 	},
 	
-	onSave: function(evtParams,fn) {
+	onSave: function() {
 		if (this.outputName) {
 			var out = {};
 			out[this.outputName] = this.getData();
-			this.react(out,fn);
+			this.react(out);
 		}
 	},
 

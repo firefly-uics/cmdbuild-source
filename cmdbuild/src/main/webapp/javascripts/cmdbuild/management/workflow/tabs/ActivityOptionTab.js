@@ -142,7 +142,7 @@
 		} else {
 			this.items.each(function(extAttr) {
 				extAttr.setup(process.ProcessInstanceId, process.WorkItemId);
-				extAttr.save();
+				extAttr.save(process.isAdvance);
 			});
 			
 			this.waitForBusyWidgets(function() {
