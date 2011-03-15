@@ -146,14 +146,10 @@ CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
 		});
 	},
 
-	save: function() {
+	save: function(isAdvance) {
 		if (this.onSave && this.isValid()) {
-			this.onSave(this.afterSave);
+			this.onSave(isAdvance);
 		}
-	},
-
-	afterSave: function() {
-		this.busy = false;
 	},
 
 	isBusy: function() {

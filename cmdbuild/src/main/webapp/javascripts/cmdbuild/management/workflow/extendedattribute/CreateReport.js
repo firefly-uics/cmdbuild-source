@@ -73,7 +73,7 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
                 this.submitParameters();
             }
         });		
-		return [this.saveButton]
+		return [this.saveButton];
 	},
 	
 	//add the required attributes
@@ -114,13 +114,9 @@ CMDBuild.Management.CreateReport = Ext.extend(CMDBuild.Management.BaseExtendedAt
 		}
     },
     
-    onSave: function(form,reactedFn) {
-    	CMDBuild.log.info('CreateReport custom onSave called.');
+    onSave: function() {
     	if (this.submittedFormValues) {
-            this.react(this.submittedFormValues, reactedFn);
-    	} else {
-    		CMDBuild.log.info('Report not requested');
-    		reactedFn(this.identifier, true);
+            this.react(this.submittedFormValues);
     	}
     },
 	

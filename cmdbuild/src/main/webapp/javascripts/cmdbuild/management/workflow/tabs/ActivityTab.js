@@ -427,10 +427,10 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		});
     },
     
-    processStarted: function(params) {
-    	this.currentCardId = params.process.Id;
-        this.currentProcessInstanceId = params.process.ProcessInstanceId;
-        this.currentWorkItemId = params.process.WorkItemId;
+    processStarted: function(process) {
+    	this.currentCardId = process.Id;
+        this.currentProcessInstanceId = process.ProcessInstanceId;
+        this.currentWorkItemId = process.WorkItemId;
         
         var form = this.actualForm.getForm();
         form.findField("Id").setValue(this.currentCardId);
