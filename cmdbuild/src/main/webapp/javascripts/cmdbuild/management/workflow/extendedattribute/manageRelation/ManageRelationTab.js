@@ -4,7 +4,7 @@ CMDBuild.Management.ManageRelationTab = Ext.extend(CMDBuild.Management.CardRelat
 	domainId: undefined,
 	extAttrInst: undefined,
 	currentCardId: undefined,
-	
+
 	subscribeToEvents: false,
 	updateEventName: 'cmdb-wf-extattr-reloadrelations',
 
@@ -14,11 +14,20 @@ CMDBuild.Management.ManageRelationTab = Ext.extend(CMDBuild.Management.CardRelat
 		Ext.apply(this, {
 			 style: {'border-bottom': '1px ' +  CMDBuild.Constants.colors.blue.border +' solid'}
 		});
+
+		this.subscribe('cmdb-reload-card', this.onReloadCard, this); // for add relation button
 		this.subscribe(this.updateEventName, this.loadCardRelations, this);
 		// my goodness! the events that are unsubscribed are only those in this.events!
 		this.on('destroy', function() {
+			this.unsubscribe('cmdb-reload-card', this.onReloadCard, this);
 			this.unsubscribe(this.updateEventName, this.loadCardRelations, this);
 		}, this);
+	},
+	
+	onReloadCard: function(params) {
+		if (params.cardId == this.currentCardId) {
+			this.loadCardRelations();
+		}
 	},
 	
 	loadCardRelations: function() {
@@ -167,31 +176,8 @@ CMDBuild.Management.ManageRelationTab = Ext.extend(CMDBuild.Management.CardRelat
 	  	var addRelationsWin = new CMDBuild.Management.AddRelationWindow({
 	  		classId: this.classId,
 	  		cardId: this.extAttrInst.getCardId(),
-	  		domainId: this.domainId,
-	  		addRelations: function() {
-	            var relations = {};
-	            relations[this.currentDomain] = this.selections;
-	            CMDBuild.LoadMask.get().show();
-	            CMDBuild.Ajax.request({
-	                url : 'services/json/management/modcard/createrelations',
-	                params : {
-	                    "IdClass": this.classId,
-	                    "Id": this.cardId,
-	                    "Relations": Ext.util.JSON.encode(relations)
-	                },                       
-	                method : 'POST',
-	                scope : this,
-	                success : function() {
-	                    this.close();
-	                    _this.loadCardRelations();
-	                },
-	                callback: function() {
-	                	CMDBuild.LoadMask.get().hide();
-	                }
-	            });
-	        }
+	  		domainId: this.domainId
 	  	});
-	  	addRelationsWin.findById('comboDomain').disable();
 	  	addRelationsWin.show();
     }
 });

@@ -141,8 +141,9 @@ CMDBuild.Management.AddRelationWindow = Ext.extend(CMDBuild.Management.DomainCar
 						}
 					});
 				}
-				this.domainComboBox.onSelect(record,index);
+				domainComboBox.onSelect(record,index);
 			},this);
+			domainComboBox.disable();
 		}
 		CMDBuild.Management.AddRelationWindow.superclass.initComponent.apply(this);
 	},
