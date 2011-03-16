@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cmdbuild.portlet.Log;
 import org.cmdbuild.portlet.ws.SOAPClient;
 import org.cmdbuild.services.soap.ActivitySchema;
 import org.cmdbuild.services.soap.AttributeSchema;
@@ -27,23 +26,19 @@ public class ProcessOperation extends WSOperation {
 		return orderedList;
 	}
 
-	public ActivitySchema getStartActivityTemplate(final String classname) {
-		Log.PORTLET.debug("Getting attribute schema for process " + classname);
-		return getService().getActivityObjects(classname, null);
-	}
+	public ActivitySchema getActivity(final String classname) {
+		return getActivity(classname, null);
+	}	
 
-	public ActivitySchema getActivity(final String classname, final int id) {
-		Log.PORTLET.debug("Getting attribute schema for process " + classname + " with id " + id);
+	public ActivitySchema getActivity(final String classname, final Integer id) {
 		return getService().getActivityObjects(classname, id);
 	}
 
 	public int updateWorkflow(final Card card, final List<WorkflowWidgetSubmission> submissions) throws RemoteException {
-		Log.PORTLET.debug("Updating process " + card.getClassName());
 		return getService().updateWorkflow(card, true, submissions).getProcessid();
 	}
 
 	public String getProcessHelp(final String classname) {
-		Log.PORTLET.debug("Getting help for process " + classname);
 		return getService().getProcessHelp(classname, null);
 	}
 }

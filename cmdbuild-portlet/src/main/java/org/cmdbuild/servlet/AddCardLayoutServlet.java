@@ -51,11 +51,11 @@ public class AddCardLayoutServlet extends HttpServlet {
 			layout = form.generateEmptyCardLayout(client, cardConfig, cardConfig.getClassname(), false);
 		} else if (TYPE_PROCESS.equals(cardConfig.getType())) {
 			final ProcessOperation operation = new ProcessOperation(client);
-			final ActivitySchema activity = operation.getActivity(cardConfig.getClassname(), -1);
 			final FormSerializer form = new FormSerializer(request.getContextPath());
-			if (activity != null) {
+			try {
+				final ActivitySchema activity = operation.getActivity(cardConfig.getClassname());
 				layout = form.generateProcessLayout(activity, request, false);
-			} else {
+			} catch (Exception e) {
 				layout = form.generateCannotStartForm();
 			}
 		}
