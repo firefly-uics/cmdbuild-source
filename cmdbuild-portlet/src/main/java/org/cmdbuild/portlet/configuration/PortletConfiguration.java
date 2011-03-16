@@ -1,6 +1,7 @@
 package org.cmdbuild.portlet.configuration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +21,8 @@ public class PortletConfiguration {
 		final ClassLoader classLoader = this.getClass().getClassLoader();
 		final Properties defaultProperties = new Properties();
 		try {
-			defaultProperties.load(classLoader.getResourceAsStream(PORTLET_PROPERTIES));
+			final InputStream inputStream =classLoader.getResourceAsStream(PORTLET_PROPERTIES);  
+			defaultProperties.load(inputStream);
 		} catch (final IOException ex) {
 			Log.PORTLET.error("Error getting portlet properties", ex);
 			ex.printStackTrace();
@@ -29,7 +31,13 @@ public class PortletConfiguration {
 		}
 
 		try {
-			properties.load(classLoader.getResourceAsStream(PORTLET_EXT_PROPERTIES));
+			final InputStream inputStream =classLoader.getResourceAsStream(PORTLET_EXT_PROPERTIES);
+			if (inputStream != null) {
+				properties.load(inputStream);
+			}
+			else {
+				Log.PORTLET.warn("Missing file " + PORTLET_EXT_PROPERTIES);
+			}
 		} catch (final IOException ex) {
 			Log.PORTLET.warn("Error getting extended portlet properties from configuration file", ex);
 			ex.printStackTrace();
