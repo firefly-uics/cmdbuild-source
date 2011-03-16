@@ -445,7 +445,8 @@ BEGIN
 
     IF WillBeNotNull AND _cm_is_superclass(TableId) AND _cm_check_comment(AttributeComment, 'MODE', 'write')
     THEN
-    	RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: %', 'Non-system superclass attributes cannot be not null';
+    	RAISE NOTICE 'Non-system superclass attributes cannot be not null';
+		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
     END IF;
 
 	PERFORM _cm_attribute_set_notnull_unsafe(TableId, AttributeName, WillBeNotNull);
@@ -487,7 +488,8 @@ CREATE FUNCTION _cm_attribute_set_uniqueness(tableid oid, attributename text, at
 BEGIN
 	IF _cm_attribute_is_unique(TableId, AttributeName) <> AttributeUnique THEN
 		IF AttributeUnique AND (_cm_is_simpleclass(TableId) OR _cm_is_superclass(TableId)) THEN
-			RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: %', 'Superclass or simple class attributes cannot be unique';
+			RAISE NOTICE 'Superclass or simple class attributes cannot be unique';
+			RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 		END IF;
 
 		PERFORM _cm_attribute_set_uniqueness_unsafe(TableId, AttributeName, AttributeUnique);
@@ -545,11 +547,13 @@ BEGIN
 	END IF;
 
 	IF (SpecialTypeCount > 1) THEN
-		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: Too many CMDBuild types specified';
+		RAISE NOTICE 'Too many CMDBuild types specified';
+		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
 
 	IF SpecialTypeCount = 1 AND SQLType NOT IN ('int4','integer') THEN
-		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: The SQL type does not match the CMDBuild type';
+		RAISE NOTICE 'The SQL type does not match the CMDBuild type';
+		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
 END;
 $$
@@ -878,7 +882,7 @@ BEGIN
 	PERFORM _cm_create_index(DomainId, 'IdObj1');
 	PERFORM _cm_create_index(DomainId, 'IdObj2');
 
-	EXECUTE 'CREATE INDEX ' || quote_ident(_cm_domainidx_name(DomainId, 'ActiveRows')) ||
+	EXECUTE 'CREATE UNIQUE INDEX ' || quote_ident(_cm_domainidx_name(DomainId, 'ActiveRows')) ||
 		' ON ' || DomainId::regclass ||
 		' USING btree ('||
 			'(CASE WHEN "Status" = ''N'' THEN NULL ELSE "IdDomain" END),'||
@@ -955,15 +959,13 @@ $$
 
 
 
-CREATE FUNCTION _cm_delete_local_attributes_or_triggers(tableid oid) RETURNS void
+CREATE FUNCTION _cm_delete_local_attributes(tableid oid) RETURNS void
     AS $$
 DECLARE
 	AttributeName text;
 BEGIN
 	FOR AttributeName IN SELECT _cm_attribute_list(TableId) LOOP
-		IF _cm_attribute_is_inherited(TableId, AttributeName) THEN
-			PERFORM _cm_remove_attribute_triggers(TableId, AttributeName);
-		ELSE
+		IF NOT _cm_attribute_is_inherited(TableId, AttributeName) THEN
 			PERFORM cm_delete_attribute(TableId, AttributeName);
 		END IF;
 	END LOOP;
@@ -1416,6 +1418,22 @@ $_$
 
 
 
+CREATE FUNCTION _cm_is_process(classid oid) RETURNS boolean
+    AS $_$
+	SELECT $1 IN (SELECT _cm_subtables_and_itself(_cm_table_id('Activity')));
+$_$
+    LANGUAGE sql STABLE;
+
+
+
+CREATE FUNCTION _cm_is_process(cmclass text) RETURNS boolean
+    AS $_$
+	SELECT _cm_is_process(_cm_table_id($1));
+$_$
+    LANGUAGE sql STABLE;
+
+
+
 CREATE FUNCTION _cm_is_reference_comment(attributecomment text) RETURNS boolean
     AS $_$
 	SELECT COALESCE(_cm_read_reference_domain_comment($1),'') != '';
@@ -1850,7 +1868,7 @@ $$
 
 
 CREATE FUNCTION _cm_trigger_create_card_history_row() RETURNS trigger
-    AS $_$
+    AS $$
 BEGIN
 	-- Does not create the row on logic deletion
 	IF (TG_OP='UPDATE') THEN
@@ -1866,13 +1884,13 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$_$
+$$
     LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_create_relation_history_row() RETURNS trigger
-    AS $_$
+    AS $$
 BEGIN
 	-- Does not create the row on logic deletion
 	IF (TG_OP='UPDATE') THEN
@@ -1888,13 +1906,13 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$_$
+$$
     LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_fk() RETURNS trigger
-    AS $_$
+    AS $$
 DECLARE
 	SourceAttribute text := TG_ARGV[0];
 	TargetClassId oid := TG_ARGV[1]::regclass::oid;
@@ -1917,7 +1935,7 @@ BEGIN
 
 	RETURN NEW;
 END;
-$_$
+$$
     LANGUAGE plpgsql;
 
 
@@ -2002,7 +2020,7 @@ $$
 
 
 CREATE FUNCTION _cm_trigger_update_reference() RETURNS trigger
-    AS $_$
+    AS $$
 DECLARE
 	AttributeName text := TG_ARGV[0];
 	TableId oid := TG_ARGV[1]::regclass::oid;
@@ -2040,13 +2058,13 @@ BEGIN
 
 	RETURN NEW;
 END;
-$_$
+$$
     LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_update_relation() RETURNS trigger
-    AS $_$
+    AS $$
 DECLARE
 	AttributeName text := TG_ARGV[0];
 	DomainId oid := TG_ARGV[1]::regclass::oid;
@@ -2077,7 +2095,7 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$_$
+$$
     LANGUAGE plpgsql;
 
 
@@ -2358,7 +2376,7 @@ BEGIN
 	END IF;
 
     IF NOT _cm_attribute_is_empty(TableId, AttributeName) THEN
-		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION: %', 'Contains data';
+		RAISE EXCEPTION 'CM_CONTAINS_DATA';
 	END IF;
 
 	PERFORM _cm_remove_attribute_triggers(TableId, AttributeName);
@@ -2378,14 +2396,14 @@ CREATE FUNCTION cm_delete_class(tableid oid) RETURNS void
     AS $$
 BEGIN
 	IF _cm_class_has_domains(TableId) THEN
-		RAISE EXCEPTION 'Cannot delete class %: has domains', TableId::regclass;
+		RAISE EXCEPTION 'CM_HAS_DOMAINS';
 	ELSEIF _cm_class_has_children(TableId) THEN
-		RAISE EXCEPTION 'Cannot delete class %: has childs', TableId::regclass;
+		RAISE EXCEPTION 'CM_HAS_CHILDREN';
 	ELSEIF NOT _cm_table_is_empty(TableId) THEN
-		RAISE EXCEPTION 'Cannot delete class %: contains data', TableId::regclass;
+		RAISE EXCEPTION 'CM_CONTAINS_DATA';
 	END IF;
 
-	PERFORM _cm_delete_local_attributes_or_triggers(TableId);
+	PERFORM _cm_delete_local_attributes(TableId);
 
 	-- Cascade for the history table
 	EXECUTE 'DROP TABLE '|| TableId::regclass ||' CASCADE';
@@ -2415,10 +2433,10 @@ CREATE FUNCTION cm_delete_domain(domainid oid) RETURNS void
     AS $$
 BEGIN
 	IF NOT _cm_table_is_empty(DomainId) THEN
-		RAISE EXCEPTION 'Cannot delete domain %, contains data', DomainId::regclass;
+		RAISE EXCEPTION 'CM_CONTAINS_DATA';
 	END IF;
 
-	PERFORM _cm_delete_local_attributes_or_triggers(DomainId);
+	PERFORM _cm_delete_local_attributes(DomainId);
 
 	EXECUTE 'DROP TABLE '|| DomainId::regclass ||' CASCADE';
 END
@@ -5059,7 +5077,7 @@ COMMENT ON SEQUENCE class_seq IS 'Sequence for autoincrement class';
 
 
 
-SELECT pg_catalog.setval('class_seq', 407, true);
+SELECT pg_catalog.setval('class_seq', 415, true);
 
 
 
@@ -5380,9 +5398,9 @@ INSERT INTO "Map_StanzaPDL" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdOb
 
 
 
-INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "DefaultGroup", "Id") VALUES ('"Map_UserRole"', '"User"', 1, '"Role"', 2, 'A', NULL, '2009-06-30 09:30:48.193496', NULL, NULL, 401);
-INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "DefaultGroup", "Id") VALUES ('"Map_UserRole"', '"User"', 1, '"Role"', 127, 'A', 'admin', '2009-06-30 17:05:17.003169', NULL, NULL, 402);
-INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "DefaultGroup", "Id") VALUES ('"Map_UserRole"', '"User"', 1, '"Role"', 128, 'A', 'admin', '2009-06-30 17:05:22.483479', NULL, NULL, 403);
+INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "DefaultGroup") VALUES ('"Map_UserRole"', '"User"', 1, '"Role"', 2, 'A', NULL, '2009-06-30 09:30:48.193496', NULL, 401, NULL);
+INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "DefaultGroup") VALUES ('"Map_UserRole"', '"User"', 1, '"Role"', 127, 'A', 'admin', '2009-06-30 17:05:17.003169', NULL, 402, NULL);
+INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "DefaultGroup") VALUES ('"Map_UserRole"', '"User"', 1, '"Role"', 128, 'A', 'admin', '2009-06-30 17:05:22.483479', NULL, 403, NULL);
 
 
 
@@ -5523,7 +5541,7 @@ INSERT INTO "Palazzo_history" ("Id", "IdClass", "Code", "Description", "Status",
 
 
 
-INSERT INTO "Patch" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (407, '"Patch"', '1.3.0-01', 'Demo 1.3.0', 'A', 'system', '2011-01-13 15:51:08.761272', NULL);
+INSERT INTO "Patch" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (415, '"Patch"', '1.3.0-05', 'Demo 1.3.1', 'A', 'system', '2011-03-16 11:17:25.039942', NULL);
 
 
 
@@ -6051,7 +6069,7 @@ CREATE INDEX idx_item_idclass ON "Item" USING btree ("IdClass");
 
 
 
-CREATE UNIQUE INDEX idx_map_activityemail_activerows ON "Map_ActivityEmail" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_activityemail_activerows ON "Map_ActivityEmail" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6071,7 +6089,7 @@ CREATE UNIQUE INDEX idx_map_activityemail_uniqueright ON "Map_ActivityEmail" USI
 
 
 
-CREATE UNIQUE INDEX idx_map_appartenenti_activerows ON "Map_Appartenenti" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_appartenenti_activerows ON "Map_Appartenenti" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6091,7 +6109,7 @@ CREATE UNIQUE INDEX idx_map_appartenenti_uniqueright ON "Map_Appartenenti" USING
 
 
 
-CREATE UNIQUE INDEX idx_map_assegnazione_activerows ON "Map_Assegnazione" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_assegnazione_activerows ON "Map_Assegnazione" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6107,7 +6125,7 @@ CREATE INDEX idx_map_assegnazione_idobj2 ON "Map_Assegnazione" USING btree ("IdO
 
 
 
-CREATE UNIQUE INDEX idx_map_composizionepdl_activerows ON "Map_ComposizionePDL" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_composizionepdl_activerows ON "Map_ComposizionePDL" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6127,7 +6145,7 @@ CREATE UNIQUE INDEX idx_map_composizionepdl_uniqueright ON "Map_ComposizionePDL"
 
 
 
-CREATE UNIQUE INDEX idx_map_computermonitor_activerows ON "Map_ComputerMonitor" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_computermonitor_activerows ON "Map_ComputerMonitor" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6159,7 +6177,7 @@ CREATE INDEX idx_map_idobj2 ON "Map" USING btree ("IdObj2");
 
 
 
-CREATE UNIQUE INDEX idx_map_itemsoftware_activerows ON "Map_ItemSoftware" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_itemsoftware_activerows ON "Map_ItemSoftware" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6175,7 +6193,7 @@ CREATE INDEX idx_map_itemsoftware_idobj2 ON "Map_ItemSoftware" USING btree ("IdO
 
 
 
-CREATE UNIQUE INDEX idx_map_pianopalazzo_activerows ON "Map_PianoPalazzo" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_pianopalazzo_activerows ON "Map_PianoPalazzo" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6195,7 +6213,7 @@ CREATE UNIQUE INDEX idx_map_pianopalazzo_uniqueleft ON "Map_PianoPalazzo" USING 
 
 
 
-CREATE UNIQUE INDEX idx_map_pianostanza_activerows ON "Map_PianoStanza" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_pianostanza_activerows ON "Map_PianoStanza" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6215,7 +6233,7 @@ CREATE UNIQUE INDEX idx_map_pianostanza_uniqueright ON "Map_PianoStanza" USING b
 
 
 
-CREATE UNIQUE INDEX idx_map_responsabile_activerows ON "Map_Responsabile" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_responsabile_activerows ON "Map_Responsabile" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6235,7 +6253,7 @@ CREATE UNIQUE INDEX idx_map_responsabile_uniqueright ON "Map_Responsabile" USING
 
 
 
-CREATE UNIQUE INDEX idx_map_stanzaitem_activerows ON "Map_StanzaItem" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_stanzaitem_activerows ON "Map_StanzaItem" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6255,7 +6273,7 @@ CREATE UNIQUE INDEX idx_map_stanzaitem_uniqueright ON "Map_StanzaItem" USING btr
 
 
 
-CREATE UNIQUE INDEX idx_map_stanzapdl_activerows ON "Map_StanzaPDL" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_stanzapdl_activerows ON "Map_StanzaPDL" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
@@ -6275,7 +6293,7 @@ CREATE UNIQUE INDEX idx_map_stanzapdl_uniqueright ON "Map_StanzaPDL" USING btree
 
 
 
-CREATE UNIQUE INDEX idx_map_userrole_activerows ON "Map_UserRole" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN NULL::integer ELSE "IdObj2" END), (CASE WHEN (("Status")::text = 'N'::text) THEN (NULL::text)::bpchar ELSE "Status" END));
+CREATE UNIQUE INDEX idx_map_userrole_activerows ON "Map_UserRole" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
