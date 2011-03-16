@@ -389,7 +389,7 @@
             "fieldsetgeneraltitle": "Opšte",
             "fieldsetlanguageltitle": "Jezik",
             "fieldsetpopupwindowtitle": "popup prozor",
-            "instancename": "<em>Instance name</em>",
+            "instancename": "Naziv instance",
             "language": "Podrazumevani jezik",
             "languagePrompt": "Prikaži izbor jezika",
             "menuTitle": "Opšta podešavanja",
@@ -603,14 +603,14 @@
       "title": "Podešavanja"
    },
    "errors": {
-      "busy_wf_widgets": "<em>The visual controls are busy, check the status of the server before trying again.</em>",
+      "busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
       "detail": "Detalji",
       "error_message": "Greška",
       "error_moving_row": "Došlo je do greške prilikom obrade reda",
-      "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
-      "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
+      "invalid_attributes": "Sledeća polja nisu korektno popunjena:",
+      "invalid_extended_attributes": "Sledeće vizuelne kontrole nisu korektno popunjene:",
       "no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
-	  "no_selections": "<em>You have not selected any card to update</em>",
+	  "no_selections": "Niste izabrali karticu podataka koja će biti ažurirana",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Datoteka (file) {0} ne postoji u arhivi",
          "ATTACHMENT_NOTFOUND": "Prilog {0} za objekat {2} u {1} ne postoji",
@@ -678,8 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Tabela je dostupna samo za čitanje",
          "ORM_SQL_PATCH": "SQL greška u patch datoteci",
          "ORM_TYPE_ERROR": "Neodgovarajući tip",
-         "ORM_TABLE_HAS_CIHLDREN": "<em>Cannot delete a class with subclasses</em>",
-         "ORM_TABLE_HAS_DOMAIN": "<em>Cannot delete a class that has a domain</em>",
+         "ORM_TABLE_HAS_CHILDREN": "Klasa koja sadrži izvedene klase ne može biti uklonjena",
+         "ORM_TABLE_HAS_DOMAIN": "Klasa za koju je definisan i domen ne može biti uklonjena",
          "ORM_UNIQUE_VIOLATION": "Narušeno ograničenje: jedinstvenost vrednosti",
          "PARAMETER_CLASS_UNAVAILABLE": "Instanciranje objekta Java klase {0} nije moguće",
          "PRIVILEGE_GROUP_NOTFOUND": "Ne postoje privilegije za grupu {0}",
@@ -743,7 +743,7 @@
       "show_detail": "Prikaži detalje",
       "template_error": "Greška u šablonu (templejtu)",
       "unknown_error": "Došlo je do greške",
-      "wrong_wf_widgets": "<em>There was an error saving the following visual controls: </em>"
+      "wrong_wf_widgets": "Došlo je do greške prilikom snimanja sledeće vizuelne kotrole: "
    },
    "info": {"card_not_found": "Kartica ne odgovara trenutnim uslovima filtriranja"},
    "login": {
@@ -902,10 +902,10 @@
          "deletedetail": "Ukloni detalj",
          "detail": "Detalji",
          "editdetail": "Izmeni detalje",
-         "showattach": "<em>Show attachments</em>",
-         "showdetail": "<em>Show detail</em>",
+         "showattach": "Prikaži priloge",
+         "showdetail": "Prikaži detalje",
          "showgraph": "Prikaži u grafu",
-         "shownotes": "<em>Show notes</em>"
+         "shownotes": "Prikaži napomene"
       },
       "modmenu": {"menu": "Navigacija"},
       "modreport": {
@@ -1035,9 +1035,9 @@
       "wrong_time": "{0} je nedozvoljena vrednost. Vrednost mora biti u formatu {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "<em>The selection of \"{0}\" has been updated</em>",
+ 	  "link_cards_changed_values": "Izabrani(a) \"{0}\" je ažuriran(a)",
       "popup_block": "Detektovan je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
       "warning_message": "Pažnja",
-      "only_filtered": "<em>The changes will be applied only to the cards that meet the current filter</em>"
+      "only_filtered": "Izmene će biti primenjene samo na kartice podataka koje zadovoljavaju postavljeni filter."
    }
 }

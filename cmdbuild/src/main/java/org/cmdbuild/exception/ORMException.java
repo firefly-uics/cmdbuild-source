@@ -53,7 +53,7 @@ public class ORMException extends CMDBException {
 		ORM_ICONS_UNSUPPORTED_TYPE,
 		ORM_POSTGIS_NOT_FOUND,
 		ORM_TABLE_HAS_DOMAIN,
-		ORM_TABLE_HAS_CIHLDREN;
+		ORM_TABLE_HAS_CHILDREN;
 		
 		public ORMException createException(String ... parameters){
 			return new ORMException(this, parameters);

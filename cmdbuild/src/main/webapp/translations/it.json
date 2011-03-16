@@ -677,7 +677,7 @@
          "ORM_READ_ONLY_RELATION": "Relazione in sola lettura",
          "ORM_READ_ONLY_TABLE": "Tabella in sola lettura",
          "ORM_SQL_PATCH": "Errore SQL nella patch",
-         "ORM_TABLE_HAS_CIHLDREN": "Impossibile eliminare classi che hanno delle sottoclassi",
+         "ORM_TABLE_HAS_CHILDREN": "Impossibile eliminare classi che hanno delle sottoclassi",
          "ORM_TABLE_HAS_DOMAIN": "Impossibile eliminare classi che hanno un dominio",
          "ORM_TYPE_ERROR": "Tipo non corrispondente",
          "ORM_UNIQUE_VIOLATION": "Vincolo di unicità violato",
