@@ -92,7 +92,7 @@ public class CMBackend {
 		},
 		CM_HAS_CHILDREN {
 			public void throwException(final SQLException se) throws CMDBException {
-				throw ORMExceptionType.ORM_TABLE_HAS_CIHLDREN.createException();
+				throw ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 			}
 		};
 		

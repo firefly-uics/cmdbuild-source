@@ -678,7 +678,7 @@
          "ORM_READ_ONLY_TABLE": "Tabla de sólo lectura",
          "ORM_SQL_PATCH": "Error SQL en el parche",
          "ORM_TYPE_ERROR": "Tipo no correspondiente",
-         "ORM_TABLE_HAS_CIHLDREN": "Imposible eliminar Clases que tienen Subclases",
+         "ORM_TABLE_HAS_CHILDREN": "Imposible eliminar Clases que tienen Subclases",
          "ORM_TABLE_HAS_DOMAIN": "Imposible eliminar Clases asociadas a un Dominio",
          "ORM_UNIQUE_VIOLATION": "Vínculo de unicidad violado",
          "PARAMETER_CLASS_UNAVAILABLE": "Imposible instanciar la clase Java {0}",

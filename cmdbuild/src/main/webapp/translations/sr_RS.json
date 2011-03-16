@@ -389,7 +389,7 @@
             "fieldsetgeneraltitle": "Опште",
             "fieldsetlanguageltitle": "Језик",
             "fieldsetpopupwindowtitle": "popup прозор",
-            "instancename": "<em>Instance name</em>",
+            "instancename": "Назив инстанце",
             "language": "Подразумевани језик",
             "languagePrompt": "Прикажи избор језика",
             "menuTitle": "Општа подешавања",
@@ -603,14 +603,14 @@
       "title": "Подешавања"
    },
    "errors": {
-   	  "busy_wf_widgets": "<em>The visual controls are busy, check the status of the server before trying again.</em>",
+   	  "busy_wf_widgets": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
       "detail": "Детаљи",
       "error_message": "Грешка",
       "error_moving_row": "Дошло је до грешке приликом обраде реда",
-      "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
-      "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
+      "invalid_attributes": "Следећа поља нису коректно попуњена:",
+      "invalid_extended_attributes": "Следеће визуелне контроле нису коректно попуњене:",
       "no_driver": "Недостаје одговарајући JDBC управљачки програм (драјвер).<br />Одговарајући драјвер можете пронаћи у CMDBuild инсталационом фолдеру и копирати у <b>lib<\/b> фолдер Tomcat сервера.",
-	  "no_selections": "<em>You have not selected any card to update</em>",
+	  "no_selections": "Нисте изабрали картицу података која ће бити ажурирана",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Датотека (file) {0} не постоји у архиви",
          "ATTACHMENT_NOTFOUND": "Прилог {0} за објекат {2} у {1} не постоји",
@@ -678,8 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Табела је доступна само за читање",
          "ORM_SQL_PATCH": "SQL грешка у patch датотеци",
          "ORM_TYPE_ERROR": "Неодговарајући тип",
-         "ORM_TABLE_HAS_CIHLDREN": "<em>Cannot delete a class with subclasses</em>",
-         "ORM_TABLE_HAS_DOMAIN": "<em>Cannot delete a class that has a domain</em>",
+         "ORM_TABLE_HAS_CHILDREN": "Класа која садржи изведене класе не може бити уклоњена",
+         "ORM_TABLE_HAS_DOMAIN": "Класа за коју је дефинисан и домен не може бити уклоњена",
          "ORM_UNIQUE_VIOLATION": "Нарушено ограничење: јединственост вредности",
          "PARAMETER_CLASS_UNAVAILABLE": "Инстанцирање објекта Java класе {0} није могуће",
          "PRIVILEGE_GROUP_NOTFOUND": "Не постоје привилегије за групу {0}",
@@ -743,7 +743,7 @@
       "show_detail": "Прикажи детаље",
       "template_error": "Грешка у шаблону (темплејту)",
       "unknown_error": "Дошло је до грешке",
-      "wrong_wf_widgets": "<em>There was an error saving the following visual controls: </em>"
+      "wrong_wf_widgets": "Дошло је до грешке приликом снимања следеће визуелне котроле: "
    },
    "info": {"card_not_found": "Картица не одговара тренутним условима филтрирања"},
    "login": {
@@ -902,10 +902,10 @@
          "deletedetail": "Уклони детаљ",
          "detail": "Детаљи",
          "editdetail": "Измени детаље",
-         "showattach": "<em>Show attachments</em>",
-         "showdetail": "<em>Show detail</em>",
+         "showattach": "Прикажи прилоге",
+         "showdetail": "Прикажи детаље",
          "showgraph": "Прикажи у графу",
-         "shownotes": "<em>Show notes</em>"
+         "shownotes": "Прикажи напомене"
       },
       "modmenu": {"menu": "Навигација"},
       "modreport": {
@@ -1035,9 +1035,9 @@
       "wrong_time": "{0} је недозвољена вредност. Вредност мора бити у формату {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "<em>The selection of \"{0}\" has been updated</em>",
+ 	  "link_cards_changed_values": "Изабрани(а) \"{0}\" је ажуриран(а)",
       "popup_block": "Детектован је програм за блокирање popup прозора, искључите га како бисте могли наставити операцију",
       "warning_message": "Пажња",
-      "only_filtered": "<em>The changes will be applied only to the cards that meet the current filter</em>"
+      "only_filtered": "Измене ће бити примењене само на картице података које задовољавају постављени филтер."
    }
 }

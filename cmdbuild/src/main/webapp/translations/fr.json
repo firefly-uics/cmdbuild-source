@@ -101,7 +101,7 @@
             "graphicHeight": "Hauteur icône",
             "graphicOpacity": "Opacité",
             "graphicWidth": "Largeur icône",
-            "master": "Reference class<em>",
+            "master": "Reference class",
             "max_zoom": "Maximum zoom",
             "min_zoom": "Minimum zoom",
             "pointRadius": "Point radius",
@@ -389,7 +389,7 @@
             "fieldsetgeneraltitle": "General",
             "fieldsetlanguageltitle": "Langage",
             "fieldsetpopupwindowtitle": "Popup windows",
-            "instancename": "<em>Instance name</em>",
+            "instancename": "Nom de l'instance",
             "language": "Default Langage",
             "languagePrompt": "Choix du langage",
             "menuTitle": "Options Generales",
@@ -603,14 +603,14 @@
       "title": "Configuration"
    },
    "errors": {
-      "busy_wf_widgets": "<em>The visual controls are busy, check the status of the server before trying again.</em>",
+      "busy_wf_widgets": "Les contrôles visuels sont occupés, regardez le status du serveur avant de recommencer l'opération.",
       "detail": "Détails",
       "error_message": "Erreur",
       "error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
-      "invalid_attributes": "<em>The following fields have not been filled correctly:</em>",
-      "invalid_extended_attributes": "<em>The following visual controls have not been filled correctly:</em>",
+      "invalid_attributes": "Les différents champs n'ont pas été rempli correctement:",
+      "invalid_extended_attributes": "Les contrôles visuels suivants n'ont pas été remplis correctement:",
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
-	  "no_selections": "<em>You have not selected any card to update</em>",
+	  "no_selections": "Vous n'avez pas séléctionné quelle fiche à mettre à jour",
       "reasons": {
          "ATTACHMENT_FILE_NOTFOUND": "Fichier {0} non trouvé",
          "ATTACHMENT_NOTFOUND": "Pièce jointe {0} pour la fiche {2} de {1} non trouvée",
@@ -678,8 +678,8 @@
          "ORM_READ_ONLY_TABLE": "Class en lecture seule",
          "ORM_SQL_PATCH": "Erreur dans le patch SQL",
          "ORM_TYPE_ERROR": "Type inconnu",
-         "ORM_TABLE_HAS_CIHLDREN": "<em>Cannot delete a class with subclasses</em>",
-         "ORM_TABLE_HAS_DOMAIN": "<em>Cannot delete a class that has a domain</em>",
+         "ORM_TABLE_HAS_CHILDREN": "Supression impossible d'une class possédant une sous-classe",
+         "ORM_TABLE_HAS_DOMAIN": "Supression impossible d'une class ratachée à un domaine",
          "ORM_UNIQUE_VIOLATION": "Violation de la contrainte unique",
          "PARAMETER_CLASS_UNAVAILABLE": "Ne peut pas instantier Java class {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilege non trouvé pour le groupe {0}",
@@ -743,7 +743,7 @@
       "show_detail": "Voir details",
       "template_error": "Erreur de modèle",
       "unknown_error": "Une erreur est survenue",
-      "wrong_wf_widgets": "<em>There was an error saving the following visual controls: </em>"
+      "wrong_wf_widgets": "Il y a eu une erreur d'enregistrement des contrôles visuels suivants: "
    },
    "info": {"card_not_found": "Aucune fiche avec le filtre sélectionné"},
    "login": {
@@ -902,10 +902,10 @@
          "deletedetail": "Supprimer détail",
          "detail": "Détail",
          "editdetail": "Editer détail",
-		 "showattach": "<em>Show attachments</em>",
-         "showdetail": "<em>Show detail</em>",
+		 "showattach": "Voir pièces jointes",
+         "showdetail": "Voir détail",
          "showgraph": "Voir graph",
-         "shownotes": "<em>Show notes</em>"
+         "shownotes": "Voir notes"
       },
       "modmenu": {"menu": "Navigation"},
       "modreport": {
@@ -1038,6 +1038,6 @@
  	  "link_cards_changed_values": "The selection of \"{0}\" has been updated</em>",
       "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
       "warning_message": "Attention",
-      "only_filtered": "<em>The changes will be applied only to the cards that meet the current filter</em>"
+      "only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours."
    }
 }
