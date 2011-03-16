@@ -103,7 +103,7 @@ public class FormSerializer {
 
 	public StringBuilder generateCannotStartForm() {
 		final StringBuilder result = new StringBuilder();
-		result.append("Non è possibile avviare il processo.");
+		result.append("Impossibile avviare il processo.");
 		return result;
 	}
 
