@@ -19,7 +19,6 @@
 		<module>cmdbuild</module>
 		<module>cmdbuild-docs</module>
 		<module>cmdbuild-graph</module>
-		<module>cmdbuild-portlet</module>
 		<module>cmdbuild-shark</module>
 		<module>cmdbuild-ws-client</module>
 	</modules>
