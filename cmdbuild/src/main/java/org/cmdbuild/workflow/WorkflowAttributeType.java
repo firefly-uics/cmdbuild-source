@@ -20,7 +20,6 @@ import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.services.SchemaCache;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.xpdl.XPDLAttributeType;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 
@@ -100,11 +99,6 @@ public enum WorkflowAttributeType {
 		public Object get(Object value) {
 			Reference ref = (Reference) value;
 			if (ref != null) {
-				String descr = ref.getDescription();
-				if (descr == null) {
-					descr = UserContext.systemContext().tables().get(ref.getClassId()).cards().get(ref.getId())
-							.getDescription();
-				}
 				return new org.cmdbuild.workflow.type.ReferenceType(ref.getId(), ref.getClassId(), ref.getDescription());
 			} else {
 				return new org.cmdbuild.workflow.type.ReferenceType();
