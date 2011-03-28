@@ -4,7 +4,7 @@
 	CMDBuild.Administration.ModGeoServer = Ext.extend(CMDBuild.ModPanel, {
 		modtype: "gis-geoserver",
 		title: tr.title,
-		
+		firstShow: true,
 		initComponent : function() {
 			var layersGrid = new CMDBuild.Administration.GeoServerLayerGrid({
 				region: "center",				
@@ -46,7 +46,8 @@
 			
 			CMDBuild.Administration.ModGeoServer.superclass.initComponent.call(this, arguments);
 			this.on("show", function() {
-				layersGrid.onModShow();
+				layersGrid.onModShow(this.firstShow);
+				this.firstShow = false;
 		    }, this);
 		}
 	});

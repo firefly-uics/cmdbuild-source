@@ -131,7 +131,7 @@ CMDBuild.ServiceProxy = (function() {
 					url: "services/json/gis/getgeoserverlayers",
 					root: "layers",
 					fields: ["maxZoom", "minZoom", "style", "description", "index", "name", "type"],
-					autoLoad: true,
+					autoLoad: false,
 					sortInfo: {
 					    field: 'index',
 					    direction: 'ASC'

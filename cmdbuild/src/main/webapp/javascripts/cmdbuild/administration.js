@@ -6,7 +6,7 @@ Ext.onReady(function() {
 	splash.setText(CMDBuild.Translation.common.loading_mask.configuration);
 	splash.show();
 	
-	CMDBuild.ChainedAjax.execute({
+	CMDBuild.ConcurrentAjax.execute({
 		loadMask: false,
 		requests: [{
 			url: 'services/json/schema/setup/getconfiguration',
