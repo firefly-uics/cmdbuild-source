@@ -37,8 +37,7 @@
     		var geoAttribute = config.geoAttribute;
     		var withEditLayer = config.withEditLayer; 
     		
-			if (!geoAttribute || !geoAttribute.isvisible
-					|| !CMDBuild.Cache.getTableById(geoAttribute.masterTableId)) {
+			if (!geoAttribute || !geoAttribute.isvisible) {
 				return null;
 			}
 		
@@ -55,11 +54,10 @@
 			if (geoAttribute.masterTableId) {
 				layer = buildCmdbLayer(geoAttribute, classId, editLayer);
 			} else {
-				layer = buildGeoserverLayer(geoAttribute, editLayer);
+				layer = buildGeoserverLayer(geoAttribute);
 			}
 			
-			// complete the object with the not defined methods
-			return Ext.applyIf(layer, new AbstractLayer());
+			return layer;
 		}
 	};
 	
@@ -89,16 +87,16 @@
 			layerDescription = masterClass.text + " - " + layerDescription;
 		}
 		
-		var cmdbLayer = new CMDBuild.Management.CMDBuildMap.MapLayer(layerDescription, {
+		var layer = new CMDBuild.Management.CMDBuildMap.MapLayer(layerDescription, {
 			targetClassId: getIdClassForRequest(geoAttribute, classId),
 			geoAttribute: geoAttribute,
 			editLayer: editLayer
 		});
 		
-		return cmdbLayer;
+		return Ext.applyIf(layer, new AbstractLayer());
 	};
 	
-	function buildGeoserverLayer(geoAttribute, editLayer) {
+	function buildGeoserverLayer(geoAttribute) {
 		var geoserver_ws = CMDBuild.Config.gis.geoserver_workspace;
 		var geoserver_url = CMDBuild.Config.gis.geoserver_url;
 		var map = this;
@@ -119,11 +117,13 @@
 		layer.cmdb_minZoom = geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
 		layer.cmdb_maxZoom = geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
 		layer.geoAttribute = geoAttribute;
-		layer.editLayer = editLayer;
+		layer.editLayer = undefined;
 		
+		layer = Ext.applyIf(layer, new AbstractLayer());
+		layer.CMDBuildLayer = false;
+    	layer.CM_Layer = false;
 		return layer;
 	};
-	
 	
 	// say if an attribute belong to the passed table
 	// or to an ancestor of him
