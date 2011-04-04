@@ -633,5 +633,27 @@
 		extattrs: [{
 			ToolAgentClass: 'org.cmdbuild.shark.toolagent.SelectReferenceByReferenceToolAgent'
 		}]
+	},
+		deleteRelation: {
+		description: 'delete a relation',
+		params: [
+		         {type:'STRING',mode:'IN',id:'DomainName'},
+		         {type:'STRING',mode:'IN',id:'ClassName1'},
+		         {type:'STRING',mode:'IN',id:'ClassName2'},
+		         {type:'INT',mode:'IN',id:'ObjId1'},
+		         {type:'INT',mode:'IN',id:'ObjId2'},
+		         {type:'BOOLEAN',mode:'OUT',id:'Done'}
+		],
+		extattrs: [{ToolAgentClass:'org.cmdbuild.shark.toolagent.ManageRelationToolAgent'}]
+	},
+		deleteRelationByReference: {
+		description: 'delete a relation using a reference',
+		params: [
+		         {type:'STRING',mode:'IN',id:'DomainName'},
+		         {type:'REFERENCE',mode:'IN',id:'ObjReference1'},
+		         {type:'REFERENCE',mode:'IN',id:'ObjReference2'},
+		         {type:'BOOLEAN',mode:'OUT',id:'Done'}
+		         ],
+		extattrs: [{ToolAgentClass:'org.cmdbuild.shark.toolagent.ManageRelationToolAgent'}]
 	}
 }

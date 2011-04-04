@@ -168,8 +168,6 @@ CMDBuild.Management.CreateModifyCard = Ext.extend(CMDBuild.Management.BaseExtend
             var reactObj = {};
             reactObj[this.outputName] = this.currentCardId;
             this.react(reactObj);
-		} else {
-			fn(this.identifier, true);
 		}
 	}
 });
