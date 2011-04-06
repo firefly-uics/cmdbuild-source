@@ -33,7 +33,7 @@ import org.cmdbuild.services.Settings;
 public abstract class ReportFactoryTemplate extends ReportFactory {
 	
 	private static final String REPORT_DIR_NAME = "WEB-INF/reports";		
-	private Map<String, Object> jasperFillManagerParameters;
+	private Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 	
 	public abstract JasperDesign getJasperDesign();
 	
@@ -172,9 +172,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 	
 	protected void addFillParameter(String key, Object value) throws JRException {
-		if(jasperFillManagerParameters==null) {
-			jasperFillManagerParameters = new LinkedHashMap<String, Object>();
-		}
 		jasperFillManagerParameters.put(key,value);
 	}
 	
