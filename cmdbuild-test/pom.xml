@@ -1,0 +1,222 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.cmdbuild</groupId>
+		<artifactId>cmdbuild-main</artifactId>
+		<version>1.4.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>cmdbuild-test</artifactId>
+	<packaging>war</packaging>
+	<name>CMDBuild End-To-End Tests</name>
+	<properties>
+		<webdriver.version>2.0b3</webdriver.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild</artifactId>
+			<version>${project.version}</version>
+			<classifier>classes</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>cuke4duke</groupId>
+			<artifactId>cuke4duke</artifactId>
+			<version>${cuke4duke.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium</artifactId>
+			<version>${webdriver.version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>${tomcat-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>cuke-ci</id>
+			<activation>
+				<property>
+					<name>ci</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+<!--
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty-maven-plugin</artifactId>
+						<version>${jetty.version}</version>
+-->
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>${tomcat-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>start-server</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+<!-- Jetty
+									<goal>run</goal>
+-->
+									<goal>run-war</goal>
+								</goals>
+								<configuration>
+<!-- Jetty
+									<scanIntervalSeconds>5</scanIntervalSeconds>
+									<daemon>true</daemon>
+-->
+									<fork>true</fork>
+								</configuration>
+							</execution>
+							<execution>
+								<id>stop-server</id>
+								<phase>post-integration-test</phase>
+								<goals>
+<!-- Jetty
+									<goal>stop</goal>
+-->
+									<goal>shutdown</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Every scenario should be defined and pass -->
+					<plugin>
+						<groupId>cuke4duke</groupId>
+						<artifactId>cuke4duke-maven-plugin</artifactId>
+						<version>${cuke4duke.version}</version>
+						<configuration>
+							<jvmArgs>
+								<jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
+							</jvmArgs>
+							<cucumberArgs>
+								<cucumberArg>--color</cucumberArg>
+								<cucumberArg>--quiet</cucumberArg>
+								<cucumberArg>--strict</cucumberArg>
+								<cucumberArg>${project.basedir}/target/test-classes</cucumberArg>
+							</cucumberArgs>
+							<gems>
+								<gem>install cuke4duke --version ${cuke4duke.version}</gem>
+							</gems>
+						</configuration>
+						<executions>
+							<execution>
+								<id>run-features</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>cucumber</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>cuke-debug</id>
+			<activation>
+				<property>
+					<name>debug</name>
+				</property>
+			</activation>
+			<properties>
+				<jvm.debug.opts>-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9000 -Xdebug</jvm.debug.opts>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>cuke-dev</id>
+			<activation>
+				<property>
+					<name>dev</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Run @wip scenarios and don't expect them to pass -->
+					<plugin>
+						<groupId>cuke4duke</groupId>
+						<artifactId>cuke4duke-maven-plugin</artifactId>
+						<version>${cuke4duke.version}</version>
+						<configuration>
+							<jvmArgs>
+								<jvmArg>-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.SpringFactory</jvmArg>
+								<jvmArg>${jvm.debug.opts}</jvmArg>
+							</jvmArgs>
+							<cucumberArgs>
+								<cucumberArg>--color</cucumberArg>
+								<cucumberArg>--tags @wip</cucumberArg>
+								<cucumberArg>${project.basedir}/target/test-classes</cucumberArg>
+							</cucumberArgs>
+							<gems>
+								<gem>install cuke4duke --version ${cuke4duke.version}</gem>
+							</gems>
+						</configuration>
+						<executions>
+							<execution>
+								<id>run-features</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>cucumber</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

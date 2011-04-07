@@ -9,7 +9,7 @@ Ext.onReady(function() {
 			}
 		}],
 		fn: function() {
-			var window = new CMDBuild.LoginPanel();
+			var window = new CMDBuild.LoginPanel({ id : "login"});
 		}
 	});
 });

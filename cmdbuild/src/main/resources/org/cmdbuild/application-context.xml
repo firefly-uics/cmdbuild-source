@@ -15,8 +15,9 @@
 	">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-*.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /> <!-- CXF 2.3.3 issue, remove when 2.3.4 is available -->
+	<import resource="classpath:META-INF/cxf/cxf-extension-*.xml" />
 
 	<!-- Spring manage ServiceBean -->
 	<bean id="publicWS" class="org.cmdbuild.services.soap.WebservicesImpl" />
