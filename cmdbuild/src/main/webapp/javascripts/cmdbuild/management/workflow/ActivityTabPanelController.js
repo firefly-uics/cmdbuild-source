@@ -34,14 +34,15 @@
 			this.optionsTab.waitForBusyWidgets(callback=save, scope=view);
 			
 			function save() {
-				if (activityFormAndWFWidgetsAreBothValid.call(view)) {
-					if (params.toStart) {
-						fireStartProcessEvent();
-					} else {
-						view.optionsTab.saveWFWidgets(params, function() {
-							view.activityTab.updateActivity(isAdvance);
-						}, view);
-					}			
+				if (!(params.skipValidation || activityFormAndWFWidgetsAreBothValid.call(view))) {
+					return;
+				}
+				if (params.toStart) {
+					fireStartProcessEvent();
+				} else {
+					view.optionsTab.saveWFWidgets(params, function() {
+						view.activityTab.updateActivity(isAdvance);
+					}, view);
 				}
 			}
 			
