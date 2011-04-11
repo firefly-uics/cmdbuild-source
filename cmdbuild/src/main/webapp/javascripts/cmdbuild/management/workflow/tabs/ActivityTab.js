@@ -31,7 +31,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
             text: CMDBuild.Translation.common.buttons.workflow.save,
             name: 'saveButton',
             handler: function() {
-                this.onSave(isAdvance = false, skipValidation=true);
+                this.onSave(isAdvance = false);
             },
             scope: this
         });
@@ -417,14 +417,13 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	}
     },
     
-    onSave: function(isAdvance, skipValidation) {
+    onSave: function(isAdvance) {
 		this.fireEvent("save", {
 			isAdvance: isAdvance,
 			idClass: this.idClassOfCurrentRecord,
 			toStart: this.currentProcessInstanceId == 'tostart',
 			ProcessInstanceId: this.currentProcessInstanceId,
-    		WorkItemId: this.currentWorkItemId,
-    		skipValidation: skipValidation
+    		WorkItemId: this.currentWorkItemId
 		});
     },
     
