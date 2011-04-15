@@ -2,11 +2,15 @@ package endtoend.pageobjects;
 
 import org.springframework.stereotype.Component;
 
+import endtoend.pageobjects.AdministrationPage;
+import endtoend.steps.WebSiteSteps.User;
+
 @Component
 public class WebSite extends PageObject {
 
-	static String BASE_URL = "http://localhost:8080/cmdbuild-test/";
-
+	public static final String BASE_URL = "http://localhost:8080/cmdbuild-test/";
+	private static final String LOGIN_REQUEST_TEMPLATE = BASE_URL + "services/json/test/login?username=%s";
+	
 	public void openHomePage() {
 		open(BASE_URL);
 	}
@@ -17,5 +21,13 @@ public class WebSite extends PageObject {
 
 	public String currentUrl() {
 		return webDriver.getCurrentUrl();
+	}
+
+	public AdministrationPage openAdministrationPage() {
+		return openAs(AdministrationPage.URL, AdministrationPage.class);
+	}
+	
+	public void doLogin(User user) {
+		open(String.format(LOGIN_REQUEST_TEMPLATE, user.getUserName(), user.getPassword()));
 	}
 }

@@ -13,6 +13,18 @@ CMDBuild.ServiceProxy = (function() {
 	};
 
 	return {
+		doLogin : function(p) {
+			CMDBuild.Ajax.request( {
+				important: true,
+				url: "services/json/login/login",
+				method: "POST",
+				params: p.params,
+				success: p.success || Ext.emptyFn,
+				failure: p.failure || Ext.emptyFn,
+				callback: p.callback || Ext.emptyFn,
+				scope: p.scope || this
+			});
+		},
 		getCardList: function(p) {
 			CMDBuild.Ajax.request( {
 			    url: "services/json/management/modcard/getcardlist",

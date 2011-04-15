@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.cmdbuild.elements.AttributeImpl;
+import org.cmdbuild.elements.DomainFactoryImpl;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.DomainFactory;
@@ -118,7 +119,8 @@ public class ModClass extends JSONBase {
 	public JSONObject getAllClasses(
 			JSONObject serializer,
 			@Parameter(value="active", required=false) boolean active,
-			ITableFactory tf) throws JSONException, AuthException {
+			ITableFactory tf,
+			UserContext userCtx) throws JSONException, AuthException {
 		Iterable<ITable> allTables = tf.list();
 		
 		for (ITable table: allTables) {
@@ -129,6 +131,16 @@ public class ModClass extends JSONBase {
 				continue;
 			}
 			JSONObject jsonTable = Serializer.serializeTable(table);
+			
+			//TODO Paolo has to do something better
+			DomainFactory df = new DomainFactoryImpl(userCtx);
+			JSONArray jsonDomain = new JSONArray();
+			for(IDomain domain : df.list(table).inherited()) {
+				jsonDomain.put(Serializer.serializeDomain(domain, table));
+			}
+			jsonTable.put("domains", jsonDomain);
+			// end
+			
 			serializer.append("classes", jsonTable);
 		}
 		return serializer;

@@ -138,8 +138,7 @@ public abstract class AuthenticationFacade {
 		try {
 			final String username = AuthProperties.getInstance().getAutologin();
 			if (username != null && username.length() > 0) {
-				final UserContext userCtx = new AuthInfo(username).systemAuth();
-				new SessionVars().setCurrentUserContext(userCtx);
+				loginAs(username);
 				Log.OTHER.info("Autologin with user " + username);
 				return true;
 			}
@@ -147,5 +146,13 @@ public abstract class AuthenticationFacade {
 			Log.OTHER.warn("Autologin failed");
 		}
 		return false;
+	}
+
+	/*
+	 * Used for ent-to-end tests
+	 */
+	public static void loginAs(final String username) {
+		final UserContext userCtx = new AuthInfo(username).systemAuth();
+		new SessionVars().setCurrentUserContext(userCtx);
 	}
 }

@@ -71,7 +71,6 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 			labelWidth : 100,
 			title : this.tr.title,
 			frame : true,
-			url : 'services/json/login/login',
 			defaultType : 'textfield',
 			monitorValid : true,	
 			items : fields,
@@ -176,14 +175,13 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 	//private
 	doLogin: function(field, event) {
 		var form = this.form.getForm();		
-		if (!form.isValid())
+		if (!form.isValid()) {
 			return;
+		}
+		
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request({
-			important: true,
-			url: form.url,
+		CMDBuild.ServiceProxy.doLogin({
 			params: form.getValues(),
-			method : 'POST',
 			scope : this,
 			success : function() {
 				if (/administration.jsp$/.test(window.location)) {

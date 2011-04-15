@@ -1,7 +1,9 @@
 Ext.onReady(function() {
 	Ext.QuickTips.init();
 	CMDBuild.InitHeader();
-
+	
+	CMDBuild.identifiers = {};
+	
 	var splash = new CMDBuild.Splash('splashScreen','splashScreen');
 	splash.setText(CMDBuild.Translation.common.loading_mask.configuration);
 	splash.show();
@@ -67,6 +69,15 @@ Ext.onReady(function() {
 	});
 	
 	function displayViewport() {
+		var domainTree = new CMDBuild.administration.domain.CMDomainAccordion({
+			eventType: "domain",
+			controllerType: "CMDomainAccordionController"
+		});
+		
+		CMDBuild.identifiers.accordion = {
+			domain: domainTree.id
+		};
+		
 		var viewport = new CMDBuild.MainViewport({
 			colorsConst: CMDBuild.Constants.colors.gray,
 			controllerType: "AdminViewportController",
@@ -77,7 +88,8 @@ Ext.onReady(function() {
 				new CMDBuild.Administration.WorkflowTree({
 					eventType: "processclass",
 					controllerType: "WorkflowTreePanelController"
-				}),		
+				}),
+				domainTree,
 				new CMDBuild.TreePanel({
 					border: false,
 					rootVisible: false,
@@ -109,6 +121,7 @@ Ext.onReady(function() {
 				new CMDBuild.Administration.SetupTree()
 			],
 			modules: [
+				new CMDBuild.administration.domain.ModDomain(),
 				new CMDBuild.Administration.ModClass(),
 				new CMDBuild.Administration.ModWorkflow(),
 				new CMDBuild.Administration.ModLookup(),
