@@ -11,6 +11,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClass.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/SetOrderWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script><!-- inherit from FeatureTypeGrid -->
 <script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>

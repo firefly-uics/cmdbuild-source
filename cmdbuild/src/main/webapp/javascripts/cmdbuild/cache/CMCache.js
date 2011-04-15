@@ -1,5 +1,6 @@
 (function() {
-
+	Ext.ns("CMDBuild.cache");
+	
 	var CLASS_GROUP = "class";
 	var PROCESS_GROUP = "processclass";
 
@@ -142,7 +143,7 @@
 					var table = classes[i];
 					if (table.selectable && !(excludeSuperclasses && table.superclass)) {
 						data.push([table.id, table.text, table.name]);
-					}
+						new CMDBuild.cache.CMCache()			}
 				}
 				return data;
 			})()
@@ -156,9 +157,14 @@
 	
 	var lookupTypeStore = null;
 	
-	CMDBuild.CacheClass = Ext.extend(Ext.Component, {
+	CMDBuild.cache.CMCache = Ext.extend(Ext.Component, {
 		initComponent : function() {
-			CMDBuild.CacheClass.superclass.initComponent.apply(this, arguments);
+			this.toString = function() {
+				return "CMCache";
+			};
+			
+			CMDBuild.cache.CMCache.superclass.initComponent.apply(this, arguments);
+			
 			this.tableMaps = {}; // a type grouped map of all the tables
 			this.mapOfTree = {};
 			this.mapOfAttributes = {};
@@ -195,7 +201,7 @@
 		setTables: function(tables) {
 			for (var i=0, len=tables.length; i<len; ++i) {
 				var table = tables[i];
-				this.setTable(table);			
+				this.setTable(table);
 			}
 		},
 		
@@ -207,6 +213,19 @@
 				this.tableMaps[group] = {};
 			}
 			this.tableMaps[group][table.id] = table;
+			
+			if (table.domains) {
+				for (var i=0, l=table.domains.length; i<l; ++i) {
+					var rawDomain = table.domains[i];
+					try {
+						var detail = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
+						CMDomainModelLibrary.add(detail);
+					} catch (e) {
+						_debug(e, "I can not add this domain", rawDomain);
+					}
+				}
+			}
+			
 			return group;
 		},
 		
@@ -537,7 +556,7 @@
 			}
 		},
 		getTableGroup: getTableGroup
-	
 	});
-	CMDBuild.Cache = new CMDBuild.CacheClass();
+
+	CMDBuild.Cache = new CMDBuild.cache.CMCache();
 })();

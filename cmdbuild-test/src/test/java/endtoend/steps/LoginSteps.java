@@ -1,4 +1,4 @@
-package endtoend;
+package endtoend.steps;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -20,13 +20,13 @@ public class LoginSteps {
 	@Autowired
 	private WebSite webSite;
 	private LoginPage loginPage;
-
+	
 	@Given("^I am on the login page")
 	@When("^I access the login page$")
 	public void iAccessTheLoginPage() {
 		loginPage = webSite.openLoginPage();
 	}
-
+	
 	@Then("^I should be redirected to the login page$")
 	public void iShouldBeRedirectedToTheLoginPage() {
 		assertThat(webSite.currentUrl(), is(equalTo(LoginPage.URL)));
