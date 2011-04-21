@@ -143,7 +143,7 @@
 					var table = classes[i];
 					if (table.selectable && !(excludeSuperclasses && table.superclass)) {
 						data.push([table.id, table.text, table.name]);
-						new CMDBuild.cache.CMCache()			}
+					}
 				}
 				return data;
 			})()
