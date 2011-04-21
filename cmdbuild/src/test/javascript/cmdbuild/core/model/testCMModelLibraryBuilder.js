@@ -168,14 +168,48 @@
 			assertEquals(3, fooLibrary.count());
 			fooLibrary.clear();
 			assertEquals(0, fooLibrary.count());
+		},
+		"test hasModel": function() {
+			var FooLibrary = this.ml.build({modelName:"Foo", keyAttribute: "id"});
+			var fooLibrary = new FooLibrary();
+			assertFalse(fooLibrary.hasModel("Agamennone"));
+			var m1 = getModelStub(name="Foo", id=001);
+			fooLibrary.add(m1);
+			assertTrue(fooLibrary.hasModel(001));
+		},
+		"test remove model on model destroy": function() {
+			var FooLibrary = this.ml.build({modelName:"Foo", keyAttribute: "attr1"});
+			var fooLibrary = new FooLibrary();
+			var Foo = getModel();
+			var f = new Foo({
+				attr1: 001
+			});
+			fooLibrary.add(f);
+			assertTrue(fooLibrary.hasModel(001));
+			f.destroy();
+			assertFalse(fooLibrary.hasModel(001));
 		}
 	});
 	
 	function getModelStub(name, id) {
 		var model = {
 			NAME: name,
+			CMEVENTS: {
+				DESTROY: "destroy"
+			},
+			on: function() {},
 			getid: sinon.stub().returns(id)
 		};
 		return model;
+	}
+	
+	function getModel(name) {
+		return CMDBuild.core.model.CMModelBuilder.build({
+			name: name || "Foo",
+			structure: {
+				attr1: {},
+				attr2: {}
+			}
+		});
 	}
 })();

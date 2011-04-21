@@ -54,6 +54,7 @@
 						record.set(name, value);
 						record.commit();
 						this.fireEvent(this.CMEVENTS.CHANGED, {
+							attribute: name,
 							oldValue: old,
 							newValue: value
 						});
@@ -62,15 +63,37 @@
 					}
 				};
 				
-				for (var attr in this.STRUCTURE) {
-					buildSetter.call(this, attr);
-					buildGetter.call(this, attr);
-				}
-				
+				this.update = function(newModel) {
+					if (newModel && typeof newModel == "object") {
+						if (this.NAME == newModel.NAME) {
+							for (var attr in this.STRUCTURE) {
+								var myVal = this.get(attr);
+								var newVal = newModel["get"+attr]();
+								if (myVal != newVal) {
+									this.set(attr, newVal);
+								}
+							}
+						} else {
+							throw CMDBuild.core.error.model.WRONG_MODEL_TYPE
+						}
+					} else {
+						throw CMDBuild.core.error.model.WRONG_UPDATE_PARAMETER
+					}
+				};
+
+				this.destroy = function() {
+					this.fireEvent(this.CMEVENTS.DESTROY);
+				};
+
 				this.toString = function() {
 					return Model.NAME;
 				};
 				
+				for (var attr in this.STRUCTURE) {
+					buildSetter.call(this, attr);
+					buildGetter.call(this, attr);
+				}
+
 				Model.superclass.constructor.call(this, arguments);
 			}
 		});
@@ -78,7 +101,8 @@
 		Model.NAME = conf.name;
 		Model.STRUCTURE = conf.structure;
 		Model.CMEVENTS = {
-			CHANGED: "changed"
+			CHANGED: "changed",
+			DESTROY: "destroy"
 		};
 		return Model;
 	};
@@ -101,6 +125,9 @@
 	function buildRecordTemplate(structure) {
 		var attributes = [];
 		for (var attr in structure) {
+			// add the name of the attribute in the structure, to refer to it in the
+			// external object
+			structure[attr]["name"] = attr;  
 			attributes.push(attr);
 		}
 		return  Ext.data.Record.create(attributes);

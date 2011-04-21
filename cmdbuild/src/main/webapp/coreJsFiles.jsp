@@ -22,7 +22,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/PanelOverride.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/ServiceProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/AdministrationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/TabPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/error/CMError.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/model/CMModelBuilder.js"></script>

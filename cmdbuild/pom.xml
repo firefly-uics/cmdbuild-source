@@ -387,8 +387,10 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<!-- We should use version 4 but before that the workflow service must 
-				be rewritten -->
+			<!--
+				We should use version 4 but before that the workflow service must be
+				rewritten
+			-->
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
@@ -489,9 +491,43 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>${tomcat-plugin.version}</version>
 			</plugin>
-			<!-- Allows to run the application on an optional Jetty server <plugin> 
-				<groupId>org.mortbay.jetty</groupId> <artifactId>jetty-maven-plugin</artifactId> 
-				<version>${jetty.version}</version> </plugin> -->
+			<!--
+				Allows to run the application on an optional Jetty server <plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version> </plugin>
+			-->
+			<plugin>
+				<groupId>croche.maven</groupId>
+				<artifactId>maven-merge-file-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-translation-file</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>merge</goal>
+						</goals>
+						<configuration>
+							<merges>
+								<merge>
+<!-- The plugin doesn't create unexisting directories
+									<targetFile>${project.build.directory}/generated-test-sources/translations/en.js</targetFile>
+ -->
+									<targetFile>${project.build.directory}/en.js</targetFile>
+									<sourceDirs>
+										<sourceDir>src/main/webapp/translations</sourceDir>
+									</sourceDirs>
+									<includes>
+										<include>en.json</include>
+									</includes>
+									<separator>CMDBuild.Translation = </separator>
+									<encoding>UTF-8</encoding>
+								</merge>
+							</merges>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

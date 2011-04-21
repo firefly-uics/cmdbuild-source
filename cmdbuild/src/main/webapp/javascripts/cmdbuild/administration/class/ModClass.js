@@ -87,21 +87,7 @@
 	        		title : this.translation.tabs.domains,
 	        		disabled: true,
 	        		id : 'dom_panel',
-	        		layout : 'border',
-	        		items : [{
-			        	id: 'domaingrid',
-			        	xtype: 'domaingrid',
-			        	region: 'center',
-			        	style: {'border-bottom': '1px #D0D0D0 solid'}
-			    	},{
-			    		id: 'domainform',
-						xtype: 'domainform',
-						height: '50%',
-			    		border : false,
-						region: 'south',
-						autoScroll:true,
-						split:true
-	      		    }]
+	        		xtype: 'domaingrid'
 	      		}]
 	    	});
 
