@@ -2,7 +2,7 @@ package integration.database.matcher;
 
 import java.sql.SQLException;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend.CMSqlException;
+import org.cmdbuild.dao.backend.postgresql.PGCMBackend.CMSqlException;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;

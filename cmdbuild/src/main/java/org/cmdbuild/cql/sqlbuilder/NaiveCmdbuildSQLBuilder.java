@@ -24,25 +24,23 @@ import org.cmdbuild.cql.compiler.impl.WhereImpl;
 import org.cmdbuild.cql.compiler.select.SelectElement;
 import org.cmdbuild.cql.compiler.select.SelectItem;
 import org.cmdbuild.cql.compiler.where.DomainObjectsReference;
-import org.cmdbuild.cql.compiler.where.WhereElement;
 import org.cmdbuild.cql.compiler.where.Field.FieldValue;
+import org.cmdbuild.cql.compiler.where.WhereElement;
 import org.cmdbuild.cql.compiler.where.fieldid.LookupFieldId;
-import org.cmdbuild.cql.compiler.where.fieldid.SimpleFieldId;
 import org.cmdbuild.cql.compiler.where.fieldid.LookupFieldId.LookupOperatorTree;
+import org.cmdbuild.cql.compiler.where.fieldid.SimpleFieldId;
 import org.cmdbuild.dao.type.SQLQuery;
 import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.interfaces.CardQuery;
+import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
 
 public class NaiveCmdbuildSQLBuilder {
@@ -80,7 +78,7 @@ public class NaiveCmdbuildSQLBuilder {
 			UserContext userCtx) {
 		return build(q, vars, null, userCtx);
 	}
-	@SuppressWarnings("unchecked")
+
 	public CardQuery build(QueryImpl q, Map<String,Object> vars,
 			CardQuery root, UserContext userCtx) {
 		CardQuery out = null;
@@ -105,7 +103,7 @@ public class NaiveCmdbuildSQLBuilder {
 		}
 		SelectImpl sel = q.getSelect();
 		if(!sel.isDefault()) {
-			for(SelectElement elm : sel.getElements()) {
+			for(@SuppressWarnings("rawtypes") SelectElement elm : sel.getElements()) {
 				if(elm instanceof ClassSelectImpl) {
 					ClassSelectImpl classSel = (ClassSelectImpl)elm;
 					for(SelectItem item : classSel.getElements()) {
@@ -257,10 +255,9 @@ public class NaiveCmdbuildSQLBuilder {
 					try {
 						Integer.getInteger(firstStringValue);
 					} catch(NumberFormatException nfe) {
-						LookupType lkpType = attr.getLookupType();
-						Lookup lkp = SchemaCache.getInstance().getLookup(lkpType.getType(), firstStringValue);
+						Lookup lkp = attr.getLookupType().getLookup(firstStringValue);
 						if (lkp == null) {
-							throw new RuntimeException("Invalid lookup value '" + values.get(0) + "' for type: " + lkpType.getType());
+							throw new RuntimeException("Invalid lookup value: " + values.get(0));
 						}
 						values.clear();
 						values.add(lkp.getId());

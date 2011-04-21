@@ -2,18 +2,18 @@ package org.cmdbuild.servlets.resource.shark;
 
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.resource.OutSimpleXML;
 import org.cmdbuild.servlets.resource.RESTExported;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.workflow.utils.SimpleXMLDoc;
-import org.cmdbuild.workflow.utils.SimpleXMLNode;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
+import org.cmdbuild.workflow.utils.SimpleXMLDoc;
+import org.cmdbuild.workflow.utils.SimpleXMLNode;
 
 public class CmdbuildStruct extends AbstractSharkResource {
 
@@ -98,8 +98,8 @@ public class CmdbuildStruct extends AbstractSharkResource {
 	public SimpleXMLDoc loadLookup(
 			@OutSimpleXML("Lookup") SimpleXMLDoc out,
 			@Parameter("lookupid") int lookupId) throws Exception {
-		
-		Lookup lookup = SchemaCache.getInstance().getLookup(lookupId);
+		LookupOperation lop = new LookupOperation(UserContext.systemContext());
+		Lookup lookup = lop.getLookupById(lookupId);
 		LookupType lkpType = new LookupType(lookup.getId(),lookup.getType(),lookup.getDescription(), lookup.getCode());
 		XMLAttributeHelper.serializeObject(lkpType, out.getRoot());
 		

@@ -16,29 +16,28 @@ import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
+import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
-import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.MenuCard;
-import org.cmdbuild.elements.wrappers.PrivilegeCard;
-import org.cmdbuild.elements.wrappers.ReportCard;
-import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
+import org.cmdbuild.elements.wrappers.PrivilegeCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
+import org.cmdbuild.elements.wrappers.ReportCard;
+import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.legacy.dms.AttachmentBean;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
@@ -224,7 +223,7 @@ public class Serializer {
 	public static JSONObject serializeLookupType(LookupType lookupType) throws JSONException {
 		JSONObject row = new JSONObject();
 		row.put("description", lookupType.getType());
-		row.put("parent", lookupType.getParentType());
+		row.put("parent", lookupType.getParentTypeName());
 		row.put("orig_type", lookupType.getType()); //used if someone want to modify the type name
 		return row;
 	}
@@ -246,8 +245,8 @@ public class Serializer {
 		serializer.put("type", "lookuptype");
 		serializer.put("selectable", true);
 		
-		if (lookupType.getParentType() != null) {
-			serializer.put("parent", lookupType.getParentType());
+		if (lookupType.getParentTypeName() != null) {
+			serializer.put("parent", lookupType.getParentTypeName());
 		}
 		return serializer;
 	}
@@ -304,7 +303,7 @@ public class Serializer {
 					jattr.put("lookup", lt.getType());
 				}
 				lookupChain.put(lt.getType());
-				lt = SchemaCache.getInstance().getLookupType(lt.getParentType());
+				lt = lt.getParentType();
 			}
 			jattr.put("lookupchain", lookupChain);
 			break;

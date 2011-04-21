@@ -26,6 +26,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.dao.backend.SchemaCache;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
 import org.cmdbuild.dao.backend.postgresql.ReportQueryBuilder.ReportQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.AttributeQueries;
@@ -43,7 +45,7 @@ import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.RelationImpl;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.TableImpl.TableDataDefinitionMeta;
-import org.cmdbuild.elements.filters.AbstractFilter;
+import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -65,17 +67,17 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.utils.StringUtils;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
 
-public class CMBackend {
+public class PGCMBackend extends CMBackend {
+
+	protected final SchemaCache cache;
 
 	public enum CMSqlException {
-		CM_FORBIDDEN_OPERATION,
-		CM_RESTRICT_VIOLATION {
+		CM_FORBIDDEN_OPERATION, CM_RESTRICT_VIOLATION {
 			public void throwException(final SQLException se) throws CMDBException {
 				throw ORMExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
 			}
@@ -95,11 +97,11 @@ public class CMBackend {
 				throw ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 			}
 		};
-		
+
 		public void throwException(final SQLException se) throws CMDBException {
 			throwGenericException(se);
 		}
-		
+
 		public static void throwCustomExceptionFrom(final SQLException se) throws CMDBException {
 			try {
 				fromSqlException(se).throwException(se);
@@ -111,7 +113,7 @@ public class CMBackend {
 		private static CMSqlException fromSqlException(final SQLException se) {
 			return valueOf(extractSqlExceptionMessage(se));
 		}
-		
+
 		private static String extractSqlExceptionMessage(SQLException se) {
 			final String message = se.getMessage();
 			final String[] split = message.split("\\s", 3);
@@ -124,9 +126,7 @@ public class CMBackend {
 	}
 
 	public enum SqlState {
-		not_null_violation("23502"),
-		foreign_key_violation("23503"),
-		unique_violation("23505") {
+		not_null_violation("23502"), foreign_key_violation("23503"), unique_violation("23505") {
 			public void throwException(SQLException se) throws CMDBException {
 				throw ORMExceptionType.ORM_UNIQUE_VIOLATION.createException();
 			}
@@ -189,8 +189,7 @@ public class CMBackend {
 	private static String[] ATTRIBUTE_META_IN_COMMENTS = { AttributeDataDefinitionMeta.MODE.toString(),
 			AttributeDataDefinitionMeta.DESCR.toString(), AttributeDataDefinitionMeta.BASEDSP.toString(),
 			AttributeDataDefinitionMeta.STATUS.toString(), AttributeDataDefinitionMeta.REFERENCEDOM.toString(),
-			AttributeDataDefinitionMeta.GROUP.toString(),
-			AttributeDataDefinitionMeta.REFERENCEDIRECT.toString(),
+			AttributeDataDefinitionMeta.GROUP.toString(), AttributeDataDefinitionMeta.REFERENCEDIRECT.toString(),
 			AttributeDataDefinitionMeta.REFERENCETYPE.toString(), AttributeDataDefinitionMeta.LOOKUP.toString(),
 			AttributeDataDefinitionMeta.FIELDMODE.toString(), AttributeDataDefinitionMeta.CLASSORDER.toString(),
 			AttributeDataDefinitionMeta.FILTER.toString(), AttributeDataDefinitionMeta.INDEX.toString(),
@@ -226,6 +225,10 @@ public class CMBackend {
 		}
 	}
 
+	public PGCMBackend() {
+		cache = new SchemaCache(this);
+	}
+
 	private String createComment(BaseSchema schema) {
 		Map<String, String> dataDefinitionMeta = schema.genDataDefinitionMeta();
 		Set<String> metaInComments = getMetaInComments(schema);
@@ -253,6 +256,14 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#parseComment(java.lang.
+	 * String)
+	 */
+	@Override
 	public Map<String, String> parseComment(String comment) {
 		Map<String, String> dataDefinitionMeta = new TreeMap<String, String>();
 		if (comment != null && !comment.trim().isEmpty()) {
@@ -276,6 +287,14 @@ public class CMBackend {
 	/*
 	 * Classes
 	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteTable(org.cmdbuild
+	 * .elements.interfaces.ITable)
+	 */
+	@Override
 	public void deleteTable(ITable table) throws ORMException {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -283,7 +302,7 @@ public class CMBackend {
 			stm = con.prepareCall(TableQueries.DELETE.toString());
 			stm.setInt(1, table.getId());
 			stm.execute();
-			SchemaCache.getInstance().refreshTables();
+			cache.refreshTables();
 		} catch (SQLException se) {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
@@ -291,6 +310,14 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createTable(org.cmdbuild
+	 * .elements.interfaces.ITable)
+	 */
+	@Override
 	public int createTable(ITable table) throws ORMException {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -307,17 +334,26 @@ public class CMBackend {
 			stm.setString(4, createComment(table));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-			SchemaCache.getInstance().refreshTables();
+			cache.refreshTables();
 			return stm.getInt(1);
 		} catch (SQLException se) {
 			Log.PERSISTENCE.error("Errors creating new table", se);
 			SqlState.throwCustomExceptionFrom(se);
 			return -1; // Never going to happen
 		} finally {
+			cache.refreshTables();
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyTable(org.cmdbuild
+	 * .elements.interfaces.ITable)
+	 */
+	@Override
 	public void modifyTable(ITable table) throws ORMException {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -327,8 +363,8 @@ public class CMBackend {
 			stm.setString(2, createComment(table));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-			SchemaCache.getInstance().refreshTables();
-			SchemaCache.getInstance().refreshDomains();
+			cache.refreshTables();
+			cache.refreshDomains();
 		} catch (SQLException se) {
 			Log.PERSISTENCE.info("Errors modifying table: " + table.getId(), se);
 			SqlState.throwCustomExceptionFrom(se);
@@ -337,9 +373,12 @@ public class CMBackend {
 		}
 	}
 
-	/**
-	 * @return A hash map of class IDs and table nodes (with no parent set)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#loadTableMap()
 	 */
+	@Override
 	public Map<Integer, CNode<ITable>> loadTableMap() {
 		Map<Integer, CNode<ITable>> map = new HashMap<Integer, CNode<ITable>>();
 		Statement stm = null;
@@ -354,8 +393,8 @@ public class CMBackend {
 				Integer classId = rs.getInt("classid");
 				String className = rs.getString("classname");
 				ITable table = new TableImpl(className, rs.getString("classcomment"), classId);
-				Log.PERSISTENCE.debug(String.format("Table %s (%d) inserted into table map", table.getName(), table
-						.getId()));
+				Log.PERSISTENCE.debug(String.format("Table %s (%d) inserted into table map", table.getName(),
+						table.getId()));
 				map.put(classId, new CNode<ITable>(table));
 			}
 		} catch (SQLException ex) {
@@ -366,13 +405,14 @@ public class CMBackend {
 		return map;
 	}
 
-	/**
-	 * Generates the table tree and sets the parent to the table nodes
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param map
-	 *            Hash map of class IDs and table nodes (with no parent set)
-	 * @return Table tree nodes
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#buildTableTree(java.util
+	 * .Map)
 	 */
+	@Override
 	public CTree<ITable> buildTableTree(Map<Integer, CNode<ITable>> map) {
 		CTree<ITable> tree = new CTree<ITable>();
 		CNode<ITable> rootNode = null;
@@ -416,6 +456,14 @@ public class CMBackend {
 	 * Attributes
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteAttribute(org.cmdbuild
+	 * .elements.interfaces.IAttribute)
+	 */
+	@Override
 	public void deleteAttribute(IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -426,8 +474,8 @@ public class CMBackend {
 			Log.SQL.debug(stm.toString());
 			stm.execute();
 			// TODO: remove the attribute from the table if actually removed
-			SchemaCache.getInstance().refreshTables();
-			SchemaCache.getInstance().refreshDomains();
+			cache.refreshTables();
+			cache.refreshDomains();
 		} catch (SQLException se) {
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
@@ -435,6 +483,14 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createAttribute(org.cmdbuild
+	 * .elements.interfaces.IAttribute)
+	 */
+	@Override
 	public void createAttribute(IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -449,14 +505,35 @@ public class CMBackend {
 			stm.setString(7, createComment(attribute));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
+
+			// FIXME - if the attribute is a superclass, the children must be
+			// reloaded too
+			// at this moment we will be reload all tables
+			final BaseSchema schema = attribute.getSchema();
+			if (schema instanceof ITable && ((ITable) schema).isSuperClass()) {
+				cache.refreshTables();
+			} else {
+				schema.addAttribute(attribute);
+			}
 		} catch (SQLException se) {
 			Log.PERSISTENCE.error("Errors creating new attribute", se);
 			SqlState.throwCustomExceptionFrom(se);
+		} catch (RuntimeException e) {
+			cache.refreshTables();
+			throw e;
 		} finally {
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyAttribute(org.cmdbuild
+	 * .elements.interfaces.IAttribute)
+	 */
+	@Override
 	public void modifyAttribute(IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -471,10 +548,18 @@ public class CMBackend {
 			stm.setString(7, createComment(attribute));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
+
+			final BaseSchema schema = attribute.getSchema();
+			if (schema instanceof ITable && ((ITable) schema).isSuperClass()) {
+				cache.refreshTables();
+			}
 		} catch (SQLException se) {
 			Log.PERSISTENCE.error("Errors creating new attribute", se);
-			SchemaCache.getInstance().refreshTables();
+			cache.refreshTables();
 			SqlState.throwCustomExceptionFrom(se);
+		} catch (RuntimeException e) {
+			cache.refreshTables();
+			throw e;
 		} finally {
 			DBService.close(null, stm);
 		}
@@ -497,6 +582,14 @@ public class CMBackend {
 		return typeString;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#findAttributes(org.cmdbuild
+	 * .elements.interfaces.BaseSchema)
+	 */
+	@Override
 	public Map<String, IAttribute> findAttributes(BaseSchema schema) {
 		Map<String, IAttribute> list = new LinkedHashMap<String, IAttribute>();
 		PreparedStatement stm = null;
@@ -581,6 +674,14 @@ public class CMBackend {
 	 * Domains
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyDomain(org.cmdbuild
+	 * .elements.interfaces.IDomain)
+	 */
+	@Override
 	public void modifyDomain(IDomain domain) {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -590,15 +691,27 @@ public class CMBackend {
 			stm.setString(2, createComment(domain));
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-			SchemaCache.getInstance().refreshDomains();
+			cache.refreshDomains();
 		} catch (SQLException ex) {
 			Log.PERSISTENCE.error("Errors modifying domain: " + domain.getId(), ex);
+			cache.refreshDomains();
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_MODIFY.createException();
+		} catch (RuntimeException re) {
+			cache.refreshDomains();
+			throw re;
 		} finally {
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createDomain(org.cmdbuild
+	 * .elements.interfaces.IDomain)
+	 */
+	@Override
 	public int createDomain(IDomain domain) {
 		int id;
 		CallableStatement stm = null;
@@ -611,16 +724,28 @@ public class CMBackend {
 			Log.SQL.debug(stm.toString());
 			stm.execute();
 			id = stm.getInt(1);
-			SchemaCache.getInstance().refreshDomains();
+			cache.refreshDomains();
 		} catch (SQLException ex) {
 			Log.PERSISTENCE.error("Errors creating new domain", ex);
+			cache.refreshDomains();
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
+		} catch (RuntimeException re) {
+			cache.refreshDomains();
+			throw re;
 		} finally {
 			DBService.close(null, stm);
 		}
 		return id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteDomain(org.cmdbuild
+	 * .elements.interfaces.IDomain)
+	 */
+	@Override
 	public void deleteDomain(IDomain domain) {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -629,7 +754,7 @@ public class CMBackend {
 			stm.setInt(1, domain.getId());
 			Log.SQL.debug(stm.toString());
 			stm.execute();
-			SchemaCache.getInstance().refreshDomains();
+			cache.refreshDomains();
 		} catch (SQLException ex) {
 			Log.PERSISTENCE.error("Errors deleting domain", ex);
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_DELETE.createException();
@@ -638,6 +763,14 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getDomainList(org.cmdbuild
+	 * .elements.interfaces.DomainQuery)
+	 */
+	@Override
 	public Iterator<IDomain> getDomainList(DomainQuery query) {
 		List<IDomain> list = new LinkedList<IDomain>();
 		PreparedStatement stm = null;
@@ -659,7 +792,7 @@ public class CMBackend {
 			rs = stm.executeQuery();
 			while (rs.next()) {
 				try {
-					IDomain domain = SchemaCache.getInstance().getDomain(rs.getInt("domainid"));
+					IDomain domain = cache.getDomain(rs.getInt("domainid"));
 					list.add(domain);
 				} catch (NotFoundException e) {
 					Log.PERSISTENCE.debug("Domain table not found", e);
@@ -675,6 +808,12 @@ public class CMBackend {
 		return list.iterator();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#loadDomainMap()
+	 */
+	@Override
 	public Map<Integer, IDomain> loadDomainMap() {
 		Map<Integer, IDomain> map = new HashMap<Integer, IDomain>();
 		Statement stm = null;
@@ -708,6 +847,12 @@ public class CMBackend {
 	 * IMPLEMENTED IN THE DAO LAYER)
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#getReportTypes()
+	 */
+	@Override
 	public List<String> getReportTypes() {
 		Statement stm = null;
 		Connection connection = null;
@@ -730,6 +875,14 @@ public class CMBackend {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#insertReport(org.cmdbuild
+	 * .elements.wrappers.ReportCard)
+	 */
+	@Override
 	public boolean insertReport(ReportCard bean) throws SQLException, IOException {
 		PreparedStatement stm = null;
 		String query = "INSERT INTO \"Report\" (\"Code\",\"Description\",\"Status\",\"User\",\"Type\",\"Query\",\"SimpleReport\",\"RichReport\",\"Wizard\",\"ReportLength\"                                                           ,\"Images\", \"ImagesLength\"                                                          , \"IdClass\" , \"Groups\"																		,\"ImagesName\")"
@@ -777,29 +930,38 @@ public class CMBackend {
 			stm.setBytes(10, bin);
 
 			stm.execute();
-			Log.REPORT.debug("sizes: SimpleReport=" + sr + " RichReport=" + rr + " WizardReport=" + wr + "Images:" + im);
+			Log.REPORT
+					.debug("sizes: SimpleReport=" + sr + " RichReport=" + rr + " WizardReport=" + wr + "Images:" + im);
 			return true;
 		} finally {
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#updateReport(org.cmdbuild
+	 * .elements.wrappers.ReportCard)
+	 */
+	@Override
 	public boolean updateReport(ReportCard bean) throws SQLException, IOException {
 		PreparedStatement stm = null;
 		Connection connection = null;
-		
+
 		String query = buildUpdateReportQuery(bean);
-		
+
 		try {
-			int i=1;
+			int i = 1;
 			connection = DBService.getConnection();
 			stm = connection.prepareCall(query);
-			
+
 			stm.setString(i++, bean.getDescription());
 			if (bean.getJd() != null) {
 				i = setFileDependentAttrsInStm(bean, stm, i);
 			}
-			
+
 			stm.setInt(i++, bean.getOriginalId());
 			Log.SQL.debug(stm.toString());
 			stm.executeUpdate();
@@ -809,20 +971,20 @@ public class CMBackend {
 		}
 	}
 
-	private int setFileDependentAttrsInStm(ReportCard bean,
-			PreparedStatement stm, int i) throws SQLException, IOException {
+	private int setFileDependentAttrsInStm(ReportCard bean, PreparedStatement stm, int i) throws SQLException,
+			IOException {
 		byte[] bin = null;
 		stm.setString(i++, ElementStatus.ACTIVE.value());
 		stm.setString(i++, bean.getUser());
 		stm.setString(i++, bean.getType().toString().toLowerCase());
 		stm.setString(i++, bean.getQuery());
-		
+
 		bin = toByte(bean.getSimpleReport());
 		stm.setBytes(i++, bin);
-		
+
 		bin = toByte(bean.getRichReportBA());
 		stm.setBytes(i++, bin);
-		
+
 		bin = toByte(bean.getWizard());
 		stm.setBytes(i++, bin);
 
@@ -833,19 +995,19 @@ public class CMBackend {
 
 	private String buildUpdateReportQuery(ReportCard bean) {
 		final String queryBaseAttrsTM = "UPDATE \"Report\" SET \"Description\" = ?,\"Groups\" = cast(string_to_array('%s',',') as int[]) ";
-		final String queryBaseAttrs = String.format(queryBaseAttrsTM,  arrayToCsv(bean.getSelectedGroups()));
-				
-		final String queryFileDependentAttrsTM = ", \"Status\" = ?, \"User\" = ?, \"Type\" = ?, \"Query\" = ?," +
-				"\"SimpleReport\" = ?, \"RichReport\" = ?, \"Wizard\" = ?, \"ReportLength\" = cast(string_to_array('%s',',') as int[])," +
-				"\"Images\" = ?, \"ImagesLength\" = cast(string_to_array('%s',',') as int[]), \"IdClass\" = '\"%s\"', " +
-				"\"ImagesName\" = cast(string_to_array('%s',',') as varchar[]) ";
-		
+		final String queryBaseAttrs = String.format(queryBaseAttrsTM, arrayToCsv(bean.getSelectedGroups()));
+
+		final String queryFileDependentAttrsTM = ", \"Status\" = ?, \"User\" = ?, \"Type\" = ?, \"Query\" = ?,"
+				+ "\"SimpleReport\" = ?, \"RichReport\" = ?, \"Wizard\" = ?, \"ReportLength\" = cast(string_to_array('%s',',') as int[]),"
+				+ "\"Images\" = ?, \"ImagesLength\" = cast(string_to_array('%s',',') as int[]), \"IdClass\" = '\"%s\"', "
+				+ "\"ImagesName\" = cast(string_to_array('%s',',') as varchar[]) ";
+
 		final String queryEnd = "WHERE \"Id\" = ? ;";
-		
-		final String queryFileDependentAttrs = String.format(queryFileDependentAttrsTM, arrayToCsv(bean.getReportLength())
-				, arrayToCsv(bean.getImagesLength()), ReportCard.REPORT_CLASS_NAME, arrayToCsv(bean.getImagesName()));
-		
-		
+
+		final String queryFileDependentAttrs = String.format(queryFileDependentAttrsTM,
+				arrayToCsv(bean.getReportLength()), arrayToCsv(bean.getImagesLength()), ReportCard.REPORT_CLASS_NAME,
+				arrayToCsv(bean.getImagesName()));
+
 		String query = queryBaseAttrs;
 		if (bean.getJd() != null) {
 			query += queryFileDependentAttrs;
@@ -858,9 +1020,17 @@ public class CMBackend {
 	 * Lookup Types
 	 */
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createLookupType(org.cmdbuild
+	 * .elements.LookupType)
+	 */
+	@Override
 	public void createLookupType(LookupType lookupType) {
 		String type = lookupType.getType();
-		String parentType = lookupType.getParentType();
+		String parentType = lookupType.getParentTypeName();
 
 		// can't create a lookup type with empty name
 		if ((null == type) || "".equals(type)) {
@@ -882,10 +1052,19 @@ public class CMBackend {
 			// TODO handle existing lookups
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
+			cache.refreshLookups();
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyLookupType(org.cmdbuild
+	 * .elements.LookupType)
+	 */
+	@Override
 	public void modifyLookupType(LookupType lookupType) {
 		String type = lookupType.getType();
 		String savedType = lookupType.getSavedType();
@@ -907,10 +1086,19 @@ public class CMBackend {
 			Log.PERSISTENCE.error("Errors updating lookup type", se);
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
+			cache.refreshLookups();
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteLookupType(org.cmdbuild
+	 * .elements.LookupType)
+	 */
+	@Override
 	public void deleteLookupType(LookupType lookupType) {
 		CallableStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -923,10 +1111,17 @@ public class CMBackend {
 			Log.PERSISTENCE.error("Errors deleting lookup type", se);
 			SqlState.throwCustomExceptionFrom(se);
 		} finally {
+			cache.refreshLookups();
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#loadLookupTypeTree()
+	 */
+	@Override
 	public CTree<LookupType> loadLookupTypeTree() {
 		Statement stm = null;
 		Connection connection = null;
@@ -966,7 +1161,7 @@ public class CMBackend {
 		tree.setRootElement(rootNode);
 
 		for (CNode<LookupType> childNode : tempHash.values()) {
-			CNode<LookupType> parentNode = tempHash.get(childNode.getData().getParentType());
+			CNode<LookupType> parentNode = tempHash.get(childNode.getData().getParentTypeName());
 			if (parentNode == null)
 				rootNode.addChild(childNode);
 			else
@@ -978,6 +1173,14 @@ public class CMBackend {
 	/*
 	 * Lookup
 	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyLookup(org.cmdbuild
+	 * .elements.Lookup)
+	 */
+	@Override
 	public void modifyLookup(Lookup lookup) {
 		Statement stm = null;
 		Connection con = DBService.getConnection();
@@ -997,6 +1200,14 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createLookup(org.cmdbuild
+	 * .elements.Lookup)
+	 */
+	@Override
 	public int createLookup(Lookup lookup) {
 		PreparedStatement stm = null;
 		Connection con = DBService.getConnection();
@@ -1017,10 +1228,17 @@ public class CMBackend {
 			Log.PERSISTENCE.error("Errors creating lookup", se);
 			throw ORMExceptionType.ORM_ERROR_LOOKUP_CREATE.createException();
 		} finally {
+			cache.refreshLookups();
 			DBService.close(null, stm);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#findLookups()
+	 */
+	@Override
 	public List<Lookup> findLookups() {
 		List<Lookup> list = new LinkedList<Lookup>();
 		Statement stm = null;
@@ -1056,6 +1274,14 @@ public class CMBackend {
 	/*
 	 * Relation
 	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createRelation(org.cmdbuild
+	 * .elements.interfaces.IRelation)
+	 */
+	@Override
 	public int createRelation(IRelation relation) {
 		int id;
 		PreparedStatement stm = null;
@@ -1082,6 +1308,14 @@ public class CMBackend {
 		return id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyRelation(org.cmdbuild
+	 * .elements.interfaces.IRelation)
+	 */
+	@Override
 	public void modifyRelation(IRelation relation) {
 		Statement stm = null;
 		Connection con = DBService.getConnection();
@@ -1096,12 +1330,6 @@ public class CMBackend {
 		} finally {
 			DBService.close(null, stm);
 		}
-	}
-
-	public List<IRelation> findAll(IDomain domain, AbstractFilter filter1, AbstractFilter filter2, int limit, int offset) {
-		RelationQueryBuilder qb = new RelationQueryBuilder();
-		final String query = qb.buildSelectQuery(domain, filter1, filter2, limit, offset);
-		return perfomRelationQuery(domain, query, qb.getQueryComponents());
 	}
 
 	private static List<IRelation> perfomRelationQuery(IDomain domain, String query, QueryComponents queryComponents) {
@@ -1120,12 +1348,12 @@ public class CMBackend {
 				try {
 					CardImpl card1 = new CardImpl(rs.getInt(attrMapping1.get(ICard.CardAttributes.ClassId.toString())
 							.getValueAlias()));
-					card1.setValue(ICard.CardAttributes.Id.toString(), rs, attrMapping1.get(ICard.CardAttributes.Id
-							.toString()));
+					card1.setValue(ICard.CardAttributes.Id.toString(), rs,
+							attrMapping1.get(ICard.CardAttributes.Id.toString()));
 					CardImpl card2 = new CardImpl(rs.getInt(attrMapping2.get(ICard.CardAttributes.ClassId.toString())
 							.getValueAlias()));
-					card2.setValue(ICard.CardAttributes.Id.toString(), rs, attrMapping2.get(ICard.CardAttributes.Id
-							.toString()));
+					card2.setValue(ICard.CardAttributes.Id.toString(), rs,
+							attrMapping2.get(ICard.CardAttributes.Id.toString()));
 					for (String attrName : attrMapping1.keySet()) {
 						card1.setValue(attrName, rs, attrMapping1.get(attrName));
 					}
@@ -1150,12 +1378,21 @@ public class CMBackend {
 		return list;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getRelation(org.cmdbuild
+	 * .elements.interfaces.IDomain, org.cmdbuild.elements.interfaces.ICard,
+	 * org.cmdbuild.elements.interfaces.ICard)
+	 */
+	@Override
 	public IRelation getRelation(IDomain domain, ICard card1, ICard card2) {
 		RelationQueryBuilder qb = new RelationQueryBuilder();
-		AttributeFilter filter1 = new AttributeFilter(domain.getAttribute("IdObj1"),
-				AttributeFilterType.EQUALS, String.valueOf(card1.getId()));
-		AttributeFilter filter2 = new AttributeFilter(domain.getAttribute("IdObj2"),
-				AttributeFilterType.EQUALS, String.valueOf(card2.getId()));
+		AttributeFilter filter1 = new AttributeFilter(domain.getAttribute("IdObj1"), AttributeFilterType.EQUALS,
+				String.valueOf(card1.getId()));
+		AttributeFilter filter2 = new AttributeFilter(domain.getAttribute("IdObj2"), AttributeFilterType.EQUALS,
+				String.valueOf(card2.getId()));
 		String query = qb.buildSelectQuery(domain, filter1, filter2, 1, 0);
 		Iterator<IRelation> relationIterator = perfomRelationQuery(domain, query, qb.getQueryComponents()).iterator();
 		if (!relationIterator.hasNext()) {
@@ -1167,6 +1404,14 @@ public class CMBackend {
 	/*
 	 * Card
 	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createCard(org.cmdbuild
+	 * .elements.interfaces.ICard)
+	 */
+	@Override
 	public int createCard(ICard card) {
 		int id;
 		PreparedStatement stm = null;
@@ -1194,6 +1439,14 @@ public class CMBackend {
 		return id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyCard(org.cmdbuild
+	 * .elements.interfaces.ICard)
+	 */
+	@Override
 	public void modifyCard(ICard card) {
 		Statement stm = null;
 		Connection con = DBService.getConnection();
@@ -1210,6 +1463,14 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getCardList(org.cmdbuild
+	 * .elements.CardQueryImpl)
+	 */
+	@Override
 	public List<ICard> getCardList(CardQueryImpl cardQuery) {
 		List<ICard> list = new LinkedList<ICard>();
 		Statement stm = null;
@@ -1244,8 +1505,8 @@ public class CMBackend {
 					try {
 						card.setValue(attributeName, rs, queryMapping.get(attributeName));
 					} catch (NotFoundException e) {
-						Log.SQL.error(String.format("Inexistent attribute \"%s\" for table \"%s\"",
-								attributeName, table.getName()));
+						Log.SQL.error(String.format("Inexistent attribute \"%s\" for table \"%s\"", attributeName,
+								table.getName()));
 					}
 				}
 				card.resetAttributes();
@@ -1261,6 +1522,15 @@ public class CMBackend {
 		return list;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#cardQueryToSQL(org.cmdbuild
+	 * .elements.interfaces.CardQuery,
+	 * org.cmdbuild.dao.backend.postgresql.CardQueryBuilder)
+	 */
+	@Override
 	public String cardQueryToSQL(CardQuery cardQuery, CardQueryBuilder qb) {
 		Set<String> attributes = cardQuery.getAttributes();
 		// Automatically add all table attributes to the query if not specified
@@ -1275,6 +1545,14 @@ public class CMBackend {
 		return qb.buildSelectQuery(cardQuery);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getCardPosition(org.cmdbuild
+	 * .elements.interfaces.CardQuery, int)
+	 */
+	@Override
 	public int getCardPosition(CardQuery query, int cardId) {
 		int position;
 		// Automatically add all table attributes to the query if not specified
@@ -1303,6 +1581,15 @@ public class CMBackend {
 		return position;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#updateCardsFromTemplate
+	 * (org.cmdbuild.elements.interfaces.CardQuery,
+	 * org.cmdbuild.elements.interfaces.ICard)
+	 */
+	@Override
 	public void updateCardsFromTemplate(CardQuery cardQuery, ICard cardTemplate) {
 		Statement stm = null;
 		Connection con = DBService.getConnection();
@@ -1320,13 +1607,21 @@ public class CMBackend {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteElement(org.cmdbuild
+	 * .elements.interfaces.IAbstractElement)
+	 */
+	@Override
 	public void deleteElement(IAbstractElement element) {
 		Statement stm = null;
 		Connection con = DBService.getConnection();
 		ResultSet rs = null;
 		try {
-			String query = String.format("DELETE FROM \"%s\" WHERE \"Id\"=%d",
-					element.getSchema().getDBName(), element.getId());
+			String query = String.format("DELETE FROM \"%s\" WHERE \"Id\"=%d", element.getSchema().getDBName(),
+					element.getId());
 			Log.SQL.debug(query);
 			stm = con.createStatement();
 			stm.executeUpdate(query);
@@ -1336,5 +1631,75 @@ public class CMBackend {
 		} finally {
 			DBService.close(rs, stm);
 		}
+	}
+
+	/*
+	 * Wrapper for Schema Cache
+	 */
+
+	public ITable getTable(String tableName) {
+		return cache.getTable(tableName);
+	}
+
+	public ITable getTable(Integer classId) {
+		return cache.getTable(classId);
+	}
+
+	public IDomain getDomain(String domainName) {
+		return cache.getDomain(domainName);
+	}
+
+	public IDomain getDomain(Integer domainId) {
+		return cache.getDomain(domainId);
+	}
+
+	public Lookup getLookup(Integer lookupId) {
+		return cache.getLookup(lookupId);
+	}
+
+	public Lookup getLookup(String type, String description) {
+		return cache.getLookup(type, description);
+	}
+
+	public List<Lookup> getLookupList(String type, String description) {
+		return cache.getLookupList(type, description);
+	}
+
+	public Iterable<LookupType> getLookupTypeList() {
+		return cache.getLookupTypeList();
+	}
+
+	public CTree<LookupType> getLookupTypeTree() {
+		return cache.getLookupTypeTree();
+	}
+
+	public LookupType getLookupType(final String type) {
+		return cache.getLookupType(type);
+	}
+
+	public LookupType getLookupTypeOrDie(final String type) {
+		final LookupType lt = getLookupType(type);
+		if (lt == null) {
+			throw NotFoundExceptionType.LOOKUP_NOTFOUND.createException(type);
+		}
+		return lt;
+	}
+
+	public Iterable<ITable> getTableList() {
+		return cache.getTableList();
+	}
+
+	public TableTree getTableTree() {
+		return cache.getTableTree();
+	}
+
+	/*
+	 * FIXME
+	 */
+
+	public void clearCache() {
+		cache.refreshTables();
+		cache.refreshDomains();
+		cache.refreshLookups();
 	}
 }

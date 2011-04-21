@@ -24,7 +24,7 @@ import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.listeners.RequestListener;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.email.EmailService;
 
@@ -71,7 +71,9 @@ public class EmailCard extends LazyCard {
         	return received;
         }
 		public Lookup getLookup() {
-			return SchemaCache.getInstance().getLookup(EmailStatusLookupType, this.lookupName);
+			// FIXME don't use the business layer, but refactor the lookups
+			LookupOperation lo = new LookupOperation(UserContext.systemContext());
+			return lo.getLookup(EmailStatusLookupType, this.lookupName);
 		}
     }
 

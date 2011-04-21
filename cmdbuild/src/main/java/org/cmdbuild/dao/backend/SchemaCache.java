@@ -1,4 +1,4 @@
-package org.cmdbuild.services;
+package org.cmdbuild.dao.backend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableTree;
@@ -21,9 +20,7 @@ import org.cmdbuild.utils.tree.CTree;
 
 public class SchemaCache {
 
-	protected static final CMBackend backend = new CMBackend();
-
-	private static SchemaCache instance;
+	private final CMBackend backend;
 
 	private Map<Integer, IDomain> domainMap;
 	private Map<Integer, CTree<MenuCard>> menuMap;
@@ -37,17 +34,12 @@ public class SchemaCache {
 	private final Object lookupSyncObject = new Object();
 	private final Object domainSyncObject = new Object();
 	
-	private SchemaCache() {
+	public SchemaCache(CMBackend backend) {
 		clearDomains();
 		clearLookups();
 		clearTables();
-		menuMap = new Hashtable<Integer, CTree<MenuCard>>();
-	}
-	
-	public static SchemaCache getInstance(){
-		if (instance == null)
-			instance = new SchemaCache();
-		return instance;
+		this.menuMap = new Hashtable<Integer, CTree<MenuCard>>();
+		this.backend = backend;
 	}
 
 	public ITable getTable(String tableName) throws NotFoundException {
@@ -65,13 +57,6 @@ public class SchemaCache {
 			return tableMap.get(classId).getData();
 		else
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(String.valueOf(classId));
-	}
-	
-	// usata solo da Table.delete()
-	public void deleteTable(int idClass) {
-		if(tableMap!=null && tableMap.containsKey(idClass)){
-			tableMap.remove(idClass);
-		}
 	}
 
 	public IDomain getDomain(String domainName) throws NotFoundException {
@@ -105,7 +90,7 @@ public class SchemaCache {
 		}
 	}
 
-	public Lookup getLookup(String type, String description){
+	public Lookup getLookup(String type, String description) {
 		for(Lookup lookup : getLookups().values()) {
 			String ldescription = lookup.getDescription();
 			String ltype = lookup.getType();
@@ -224,10 +209,14 @@ public class SchemaCache {
 		}
 	}
 
-	public void loadTables() {
+	private void loadTables() {
 		Log.PERSISTENCE.info("Building table cache");
 		tableMap = backend.loadTableMap();
 		tableTree = backend.buildTableTree(tableMap);
+	}
+
+	public Iterable<IDomain> getDomainList() {
+		return getDomainMap().values();
 	}
 
 	private Map<Integer, IDomain> getDomainMap() {
@@ -238,7 +227,7 @@ public class SchemaCache {
 		}
 	}
 
-	public void loadDomains() {
+	private void loadDomains() {
 		Log.PERSISTENCE.info("Building domain cache");
 		domainMap = backend.loadDomainMap();
 	}
@@ -268,5 +257,16 @@ public class SchemaCache {
 
 	public void clearDomains() {
 		domainMap = null;
+	}
+
+	public void addTable(int oid, ITable table) {
+		CNode<ITable> childNode = new CNode<ITable>(table);
+		CNode<ITable> parentNode = getTableMap().get(table.getParent().getId());
+		tableMap.put(oid, childNode);
+		parentNode.addChild(childNode);
+	}
+
+	public void addDomain(int oid, IDomain domain) {
+		getDomainMap().put(oid, domain);
 	}
 }

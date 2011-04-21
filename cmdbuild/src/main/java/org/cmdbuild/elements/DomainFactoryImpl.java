@@ -1,17 +1,21 @@
 package org.cmdbuild.elements;
 
-import org.cmdbuild.elements.interfaces.IDomain;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.DomainQuery;
+import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.proxy.DomainQueryProxy;
 import org.cmdbuild.elements.proxy.DomainProxy;
+import org.cmdbuild.elements.proxy.DomainQueryProxy;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DomainFactoryImpl implements DomainFactory {
-	UserContext userCtx;
+	private UserContext userCtx;
+
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	public DomainFactoryImpl(UserContext userCtx) {
 		this.userCtx = userCtx;
@@ -30,7 +34,7 @@ public class DomainFactoryImpl implements DomainFactory {
 	 * Returns an existing proxed domain, with auth checks
 	 */
 	public IDomain get(int domainId) throws NotFoundException {
-		IDomain realDomain = SchemaCache.getInstance().getDomain(domainId);
+		IDomain realDomain = backend.getDomain(domainId);
 		return new DomainProxy(realDomain, userCtx);
 	}
 
@@ -38,7 +42,7 @@ public class DomainFactoryImpl implements DomainFactory {
 	 * Returns an existing proxed domain, with auth checks
 	 */
 	public IDomain get(String domainName) throws NotFoundException {
-		IDomain realDomain = SchemaCache.getInstance().getDomain(domainName);
+		IDomain realDomain = backend.getDomain(domainName);
 		userCtx.privileges().assureReadPrivilege(realDomain);
 		return new DomainProxy(realDomain, userCtx);
 	}

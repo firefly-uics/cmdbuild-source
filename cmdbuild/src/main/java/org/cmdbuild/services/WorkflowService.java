@@ -13,9 +13,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.xml.security.utils.Base64;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CachedSharkWSFactory;
 import org.cmdbuild.workflow.SharkWSFacade;
@@ -27,6 +27,8 @@ import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.client.utilities.SharkWSFactory;
 
 public class WorkflowService {
+
+	private static final String FLOW_STATUS_LOOKUP = "FlowStatus";
 
 	/**
 	 * Marker interface
@@ -221,7 +223,9 @@ public class WorkflowService {
 	public List<Lookup> getStatusesLookup() {
 		if (statuses == null) {
 			statuses = new ArrayList<Lookup>();
-			for (Lookup lkp : SchemaCache.getInstance().getLookupList(ProcessAttributes.FlowStatus.toString(), null)) {
+			// FIXME don't use the business layer, but refactor the lookups
+			LookupOperation lo = new LookupOperation(UserContext.systemContext());
+			for (Lookup lkp : lo.getLookupListActive(FLOW_STATUS_LOOKUP, null)) {
 				statuses.add(lkp);
 			}
 		}

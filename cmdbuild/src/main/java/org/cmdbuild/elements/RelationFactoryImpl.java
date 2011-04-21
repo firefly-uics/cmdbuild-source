@@ -1,5 +1,6 @@
 package org.cmdbuild.elements;
 
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
@@ -8,9 +9,13 @@ import org.cmdbuild.elements.interfaces.RelationQuery;
 import org.cmdbuild.elements.proxy.RelationProxy;
 import org.cmdbuild.elements.proxy.RelationQueryProxy;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class RelationFactoryImpl implements RelationFactory {
-	UserContext userCtx;
+	private final UserContext userCtx;
+
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	public RelationFactoryImpl(UserContext userCtx) {
 		this.userCtx = userCtx;
@@ -25,7 +30,7 @@ public class RelationFactoryImpl implements RelationFactory {
 	}
 
 	public IRelation get(IDomain domain, ICard card1, ICard card2) {
-		IRelation realRelation = RelationImpl.get(domain, card1, card2);
+		IRelation realRelation = backend.getRelation(domain, card1, card2);
 		return new RelationProxy(realRelation, userCtx);
 	}
 
