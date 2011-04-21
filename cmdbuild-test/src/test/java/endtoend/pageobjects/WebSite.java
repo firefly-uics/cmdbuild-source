@@ -9,7 +9,7 @@ import endtoend.steps.WebSiteSteps.User;
 public class WebSite extends PageObject {
 
 	public static final String BASE_URL = "http://localhost:8080/cmdbuild-test/";
-	private static final String LOGIN_REQUEST_TEMPLATE = BASE_URL + "services/json/test/login?username=%s";
+	private static final String TEST_JSONRPC_BASE_URL = BASE_URL + "services/json/test/";
 	
 	public void openHomePage() {
 		open(BASE_URL);
@@ -28,6 +28,14 @@ public class WebSite extends PageObject {
 	}
 	
 	public void doLogin(User user) {
-		open(String.format(LOGIN_REQUEST_TEMPLATE, user.getUserName(), user.getPassword()));
+		open(String.format(TEST_JSONRPC_BASE_URL + "login?username=%s", user.getUserName(), user.getPassword()));
+	}
+	
+	public void createBasicClassStructure() {
+		open(TEST_JSONRPC_BASE_URL + "createbasicstructure");
+	}
+
+	public void resetDatabase() {
+		open(TEST_JSONRPC_BASE_URL + "resetdatabase");
 	}
 }

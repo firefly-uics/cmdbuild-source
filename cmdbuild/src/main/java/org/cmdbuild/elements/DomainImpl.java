@@ -2,19 +2,19 @@ package org.cmdbuild.elements;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.services.auth.UserContext;
 
 public class DomainImpl extends BaseSchemaImpl implements IDomain {
 
@@ -122,7 +122,7 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		CLASS1 {
 			@Override
 			public void setValue(IDomain domain, String value) {
-				domain.setClass1(TableImpl.get(value));
+				domain.setClass1(UserContext.systemContext().tables().get(value));
 			}
 			@Override
 			public String getValue(IDomain domain) {
@@ -132,7 +132,7 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		CLASS2 {
 			@Override
 			public void setValue(IDomain domain, String value) {
-				domain.setClass2(TableImpl.get(value));
+				domain.setClass2(UserContext.systemContext().tables().get(value));
 			}
 			@Override
 			public String getValue(IDomain domain) {
@@ -171,15 +171,6 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	private String descriptionDirect;
 	private String descriptionInverse;
 
-	public static IDomain getBase(){
-		try {
-			return SchemaCache.getInstance().getDomain("");
-		} catch (NotFoundException e) {
-			Log.PERSISTENCE.debug("Unable to find Map domain !!!", e);
-			return null;
-		}
-	}
-
 	DomainImpl() {
 		this.setTableType(CMTableType.DOMAIN);
 		this.mode = Mode.RESERVED;
@@ -197,11 +188,11 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	}
 
     IDomain get(String domainName) throws NotFoundException {
-    	return SchemaCache.getInstance().getDomain(domainName);
+    	return backend.getDomain(domainName);
     }
 
     IDomain get(int idClass) throws NotFoundException {
-    	return SchemaCache.getInstance().getDomain(idClass);
+    	return backend.getDomain(idClass);
     }
 
 	public boolean isNew() {
@@ -265,15 +256,10 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	}
 
 	public void save(){
-		try {
-			if(isNew())
-				oid = backend.createDomain(this);
-			else
-				backend.modifyDomain(this);
-		} catch (RuntimeException re) {
-			// On errors, the cache must be refreshed
-			SchemaCache.getInstance().refreshDomains();
-			throw re;
+		if (isNew()) {
+			oid = backend.createDomain(this);
+		} else {
+			backend.modifyDomain(this);
 		}
 	}
 
@@ -393,10 +379,5 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		if (directed && inverse)
 			throw ORMExceptionType.ORM_AMBIGUOUS_DIRECTION.createException();
 		return directed;
-	}
-
-	@Override
-	public void reloadCache() {
-		SchemaCache.getInstance().refreshDomains();
 	}
 }

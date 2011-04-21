@@ -13,11 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
+import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -28,8 +28,9 @@ import org.cmdbuild.utils.PatternFilenameFilter;
 
 public class PatchManager {
 	private static PatchManager instance;
+
 	private LinkedList<Patch> availablePatch;
-		
+
 	private static final String PATCHES_TABLE = "Patch";
 	private static final String PATCHES_FOLDER = "WEB-INF/patches";
 	private static final String PATCH_PATTERN = "[\\d\\.]+-[\\d]+\\.sql";
@@ -136,9 +137,7 @@ public class PatchManager {
 				applyPatch(patch);
 			}
 		} finally {
-			SchemaCache.getInstance().refreshTables();
-			SchemaCache.getInstance().refreshDomains();
-			SchemaCache.getInstance().refreshLookups();
+			new CacheManager().clearDatabaseCache();
 		}
 	}
 
@@ -158,7 +157,7 @@ public class PatchManager {
 		} finally {
 			stm.close();
 		}
-	} 
+	}
 	
 	private void createPatchCard(Patch patch) {
 		ICard cardPatch = getPatchTable().cards().create();

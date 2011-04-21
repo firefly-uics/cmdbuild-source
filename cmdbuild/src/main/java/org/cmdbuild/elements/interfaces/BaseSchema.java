@@ -179,8 +179,6 @@ public interface BaseSchema {
 	public Map<String, IAttribute> getAttributes();
 	public IAttribute getAttribute(String name);
 
-	public void reloadCache();
-
 	/*
 	 * For classes is the class name, but for domains it contains the domain prefix
 	 */

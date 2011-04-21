@@ -9,6 +9,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.services.auth.UserContext;
 
 public class CardImpl extends AbstractElementImpl implements ICard {
 
@@ -16,12 +17,12 @@ public class CardImpl extends AbstractElementImpl implements ICard {
 
 	// Used by CMBackend... waiting refactoring
 	public CardImpl(int idClass) throws NotFoundException {
-		this.schema = TableImpl.get(idClass);
+		this.schema = UserContext.systemContext().tables().get(idClass);
 		this.setIdClass(idClass);
 	}
 
 	CardImpl(String tableName) throws NotFoundException {
-		this.schema = TableImpl.get(tableName);
+		this.schema = UserContext.systemContext().tables().get(tableName);
 		this.setIdClass(schema.getId());
 	}
 

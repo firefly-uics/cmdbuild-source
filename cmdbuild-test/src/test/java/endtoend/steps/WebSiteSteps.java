@@ -2,6 +2,7 @@ package endtoend.steps;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cuke4duke.annotation.After;
 import cuke4duke.annotation.I18n.EN.Given;
 import cuke4duke.annotation.I18n.EN.When;
 import cuke4duke.spring.StepDefinitions;
@@ -33,24 +34,33 @@ public class WebSiteSteps {
 		public String getRole() {
 			return role;
 		}
+		
+		public static User fromUserString(final String user) {
+			final String userEnumItem = clearForEnum(user);
+			return User.valueOf(userEnumItem);
+		}
+		
+		private static String clearForEnum(final String user) {
+			return user.replace(" ", "_").toUpperCase();
+		}
 	}
 	
 	@Autowired
 	private WebSite webSite;
 
-	@Given("^I am logged in as (.+)$")
-	public void doLogin(final String user) {
-		String userEnumItem = clearForEnum(user);
-		webSite.doLogin(User.valueOf(userEnumItem));
+	@After
+	public void resetDatabase() {
+		webSite.resetDatabase();
 	}
 
-	private String clearForEnum(final String user) {
-		return user.replace(" ", "_").toUpperCase();
+	@Given("^I am logged in as (.+)$")
+	public void doLogin(final String user) {
+		webSite.doLogin(User.fromUserString(user));
 	}
 
 	@Given("^the system is configured with a basic class structure$")
 	public void theSistemIsConfiguredWithABasicClassStructure() {
-		// TODO
+		webSite.createBasicClassStructure();
 	}
 
 	@Given("^the system is configured$")
@@ -67,5 +77,4 @@ public class WebSiteSteps {
 	public void iAccessTheHomePage() {
 		webSite.openHomePage();
 	}
-
 }

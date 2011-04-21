@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend.CMSqlException;
+import org.cmdbuild.dao.backend.postgresql.PGCMBackend.CMSqlException;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.junit.Before;
 import org.junit.Ignore;

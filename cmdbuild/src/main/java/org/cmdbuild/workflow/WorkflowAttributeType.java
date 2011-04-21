@@ -19,7 +19,6 @@ import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.workflow.xpdl.XPDLAttributeType;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 
@@ -66,8 +65,7 @@ public enum WorkflowAttributeType {
 		protected void set(AttributeValue arg0, WMAttribute arg1) {
 			org.cmdbuild.workflow.type.LookupType lookupType = (org.cmdbuild.workflow.type.LookupType) arg1.getValue();
 			if (lookupType != null && lookupType.checkValidity()) {
-				Lookup lookup = SchemaCache.getInstance().getLookup(lookupType.getId());
-				arg0.setValue(lookup);
+				arg0.setValue(lookupType.getId());
 			} else {
 				arg0.setValue(null);
 			}

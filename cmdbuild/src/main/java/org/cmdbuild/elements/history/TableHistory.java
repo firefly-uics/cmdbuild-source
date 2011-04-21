@@ -2,19 +2,21 @@ package org.cmdbuild.elements.history;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.TableForwarder;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TableHistory extends TableForwarder {
 
-	private static final CMBackend backend = new CMBackend();
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	public static final String EndDateAttribute = "EndDate"; 
 	public static final String HistoryTableSuffix = "_history";

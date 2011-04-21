@@ -40,7 +40,6 @@ public class TableForwarder implements ITable {
 	public void setSuperClass(boolean isSuperClass) { t.setSuperClass(isSuperClass); }
 	public void addAttribute(IAttribute attribute) { t.addAttribute(attribute); }
 	public IAttribute getAttribute(String name) { return t.getAttribute(name); }
-	public void reloadCache() { t.reloadCache(); }
 	public Map<String, IAttribute> getAttributes() { return t.getAttributes(); }
 	public String getDBName() { return t.getDBName(); }
 	public Mode getMode() { return t.getMode(); }

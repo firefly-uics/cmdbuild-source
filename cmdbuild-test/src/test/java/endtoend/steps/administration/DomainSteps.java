@@ -28,6 +28,6 @@ public class DomainSteps {
 
 	@Then("^I should see the list of the existing domains$")
 	public void iShouldSeeTheListOfExistingDomains() {
-		assertThat(administrationPage.countDomainsInAccordion(), is(equalTo(10)));
+		assertThat(administrationPage.countDomainsInAccordion(), is(equalTo(2)));
 	}
 }

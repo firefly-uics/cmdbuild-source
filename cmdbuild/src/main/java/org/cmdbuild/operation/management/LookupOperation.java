@@ -4,24 +4,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class LookupOperation {
 
 	private UserContext userCtx;
+
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	public LookupOperation(UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
 
 	public Lookup getLookupById(int lookupId){
-		return SchemaCache.getInstance().getLookup(lookupId);
+		return backend.getLookup(lookupId);
 	}
 
 	public Lookup createLookup(String type, String code, String description, String notes,  
@@ -55,14 +59,14 @@ public class LookupOperation {
 	
 	public void disableLookup(int id) {
 		userCtx.privileges().assureAdminPrivilege();
-		Lookup lookup = SchemaCache.getInstance().getLookup(id);
+		Lookup lookup = backend.getLookup(id);
 		lookup.setStatus(ElementStatus.INACTIVE);
 		lookup.save();
 	}
 	
 	public void enableLookup(int id) {
 		userCtx.privileges().assureAdminPrivilege();
-		Lookup lookup = SchemaCache.getInstance().getLookup(id);
+		Lookup lookup = backend.getLookup(id);
 		lookup.setStatus(ElementStatus.ACTIVE);
 		lookup.save();
 	}
@@ -76,7 +80,7 @@ public class LookupOperation {
 	public Lookup updateLookup(int id, String type, String code, String description, String notes,
 			int parentId, int position, boolean isDefault, boolean isActive) {
 		userCtx.privileges().assureAdminPrivilege();
-		Lookup lookup = SchemaCache.getInstance().getLookup(id);
+		Lookup lookup = backend.getLookup(id);
 		if (type != null) 
 			lookup.setType(type);
 		if (code != null)
@@ -101,11 +105,11 @@ public class LookupOperation {
 
 	public List<Lookup> getLookupList(String lookupType)
 		throws NotFoundException, ORMException {
-		return SchemaCache.getInstance().getLookupList(lookupType, null);
+		return backend.getLookupList(lookupType, null);
 	}
 	
-	public Iterable<Lookup> getLookupListActive(String lookupType, String lookupValue) throws NotFoundException, ORMException{
-		Iterable<Lookup> lookups = SchemaCache.getInstance().getLookupList(lookupType, lookupValue);
+	public Iterable<Lookup> getLookupListActive(String lookupType, String lookupValue) throws NotFoundException, ORMException {
+		Iterable<Lookup> lookups = backend.getLookupList(lookupType, lookupValue);
 		List<Lookup> result = new LinkedList<Lookup>();
 		for (Lookup l : lookups){
 			if (l.getStatus().isActive()){
@@ -125,6 +129,10 @@ public class LookupOperation {
 				lookup.save();
 			}
 		}
+	}
+
+	public Lookup getLookup(String type, String description) {
+		return backend.getLookup(type, description);
 	}
 	
 }

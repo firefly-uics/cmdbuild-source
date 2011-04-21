@@ -3,7 +3,6 @@ package org.cmdbuild.services.soap.operation;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cmdbuild.elements.RelationImpl;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
@@ -66,25 +65,23 @@ public class ERelation {
 	}
 
 	public List<Relation> getRelationList(String domainName, String className, int cardId) {
+		final IDomain domain = userCtx.domains().get(domainName);
 
-		List<Relation> list = new LinkedList<Relation>();
 		Iterable<IRelation> query;
 		if (className != null && !className.isEmpty() && cardId > 0) {
 			Log.SOAP.debug("Getting " + className + " relations for domain "
 					+ domainName);
-
-			ICard card = userCtx.tables().get(className).cards().get(cardId);
-			IDomain domain = userCtx.domains().get(domainName);
+			final ICard card = userCtx.tables().get(className).cards().get(cardId);
 			query = userCtx.relations().list(card).domain(domain);
 		} else {
 			Log.SOAP.debug("Getting all relation for domain " + domainName);
-			query = RelationImpl.findAll(userCtx, domainName);
+			query = userCtx.relations().list().domain(domain);
 		}
 
+		final List<Relation> list = new LinkedList<Relation>();
 		for (IRelation r : query) {
 			list.add(new Relation(r));
 		}
-
 		return list;
 
 	}
