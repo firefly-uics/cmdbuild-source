@@ -2,7 +2,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeSortingGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/ClassForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainForm.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributeForm.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributePanel.js"></script>
@@ -11,8 +10,13 @@
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClass.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/SetOrderWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/form/CMFormTemplate.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAccordion.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainForm.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainFormController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAttributes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomainController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script><!-- inherit from FeatureTypeGrid -->
 <script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>

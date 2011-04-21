@@ -8,6 +8,10 @@
 	CMDBuild.core.tree.CMDomainTree = function(domainLibrary) {
 		checkParams(domainLibrary);
 		var root = new Ext.tree.TreeNode("domain");
+		new Ext.tree.TreeSorter(root, {
+			folderSort: true,
+			dir: "asc"
+		});
 		for (var key in domainLibrary.map) {
 			var domain = domainLibrary.map[key];
 			var domainNode = CMDBuild.core.tree.CMDomainTreeNode(domain);

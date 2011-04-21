@@ -136,7 +136,7 @@ public class ModClass extends JSONBase {
 			DomainFactory df = new DomainFactoryImpl(userCtx);
 			JSONArray jsonDomain = new JSONArray();
 			for(IDomain domain : df.list(table).inherited()) {
-				jsonDomain.put(Serializer.serializeDomain(domain, table));
+				jsonDomain.put(Serializer.serializeDomain(domain));
 			}
 			jsonTable.put("domains", jsonDomain);
 			// end
@@ -440,16 +440,17 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public void saveDomain(
+	public JSONObject saveDomain(
 			IDomain domain,
+			JSONObject serializer,
 			@Parameter(value="name", required=false) String domainName,
-			@Parameter(value="class1", required=false) int classId1,
-			@Parameter(value="class2", required=false) int classId2,
+			@Parameter(value="idClass1", required=false) int classId1,
+			@Parameter(value="idClass2", required=false) int classId2,
 			@Parameter("description") String description,
 			@Parameter(value="cardinality", required=false) String cardinality,
-			@Parameter("descrdir") String descriptionDirect,
-			@Parameter("descrinv") String descriptionInverse,
-			@Parameter("md") boolean isMasterDetail,
+			@Parameter("directDescription") String descriptionDirect,
+			@Parameter("reverseDescription") String descriptionInverse,
+			@Parameter("isMasterDetail") boolean isMasterDetail,
 			@Parameter("active") boolean isActive
 	) throws JSONException, AuthException, NotFoundException {
 		if (domain.isNew()) {
@@ -466,6 +467,9 @@ public class ModClass extends JSONBase {
 		domain.setMasterDetail(isMasterDetail);		
 		domain.setStatus(SchemaStatus.fromBoolean(isActive));
 		domain.save();
+		
+		serializer.put("domain", Serializer.serializeDomain(domain));
+		return serializer;
 	}
 
 	@JSONExported
@@ -511,7 +515,7 @@ public class ModClass extends JSONBase {
 			) throws JSONException {
 		JSONArray rows = new JSONArray();
 		for(IDomain domain : df.list(table).inherited()) {
-			rows.put(Serializer.serializeDomain(domain, table));
+			rows.put(Serializer.serializeDomain(domain));
 		}
 		serializer.put("rows", rows);
 		if (withSuperclasses) {
@@ -549,7 +553,7 @@ public class ModClass extends JSONBase {
 				if(//cardinality.equals(IDomain.CARDINALITY_11) ||
 						(cardinality.equals(IDomain.CARDINALITY_1N) && classWithAncestor.contains(class2)) ||
 						(cardinality.equals(IDomain.CARDINALITY_N1) && classWithAncestor.contains(class1))) {
-					rows.put(Serializer.serializeDomain(domain, table));
+					rows.put(Serializer.serializeDomain(domain));
 				}
 			}
 			serializer.put("rows", rows);

@@ -21,7 +21,13 @@ public class DomainParameter extends AbstractParameterBuilder<IDomain> {
 		if (domainId > 0) {
 			return df.get(domainId);
 		} else {
-			return df.create();
+			//TODO remove the double check. Find where is used idDomain and remove it
+			domainId = parameter(Integer.TYPE, "id", r);
+			if (domainId > 0) {
+				return df.get(domainId);
+			} else {
+				return df.create();
+			}
 		}
 	}
 }

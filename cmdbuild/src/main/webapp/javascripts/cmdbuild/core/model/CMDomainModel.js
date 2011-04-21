@@ -11,16 +11,27 @@
 		structure: {
 			active: {required: true},
 			id: {required: true},
-			cardinality: {required: true},
+			cardinality: {
+				required: true,
+				immutable: true
+			},
 			nameClass1: {required: true},
 			nameClass2: {required: true},
-			idClass1: {required: true},
-			idClass2: {required: true},
+			idClass1: {
+				required: true,
+				immutable: true
+			},
+			idClass2: {
+				required: true,
+				immutable: true
+			},
 			classType: {required: true},
-			name: {required: true},
+			name: {
+				required: true,
+				immutable: true
+			},
 			createPrivileges: {required: true},
 			writePrivileges: {required: true},
-			isInherited: {required: true},
 			isMasterDetail: {required: true},
 			description: {required: true},
 			directDescription: {required: true},
@@ -41,7 +52,6 @@
 			name: json.name,
 			createPrivileges: json.priv_create,
 			writePrivileges: json.priv_write,
-			isInherited: json.inherited,
 			isMasterDetail: json.md,
 			description: json.description,
 			directDescription: json.descrdir,

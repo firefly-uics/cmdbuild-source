@@ -23,8 +23,20 @@
 		A_MODEL_IS_REQUIRED: "You have call the add method of a library without a model to add",
 		GET_WITHOUT_ID: "The get method must have a id as parameter",
 		REMOVE_WITHOUT_ID: "The remove method is called without id",
+		WRONG_MODEL_TYPE: "To update must pass a model of the same type",
+		WRONG_UPDATE_PARAMETER: "To update the model must pass an object",
 		REQUIRED_ATTRIBUTE: function(attrName) {
 			return "The attribute "+ attrName +" is required";
 		}
 	};
+	
+	CMDBuild.core.error.form = {
+		WRONG_MODEL: function(requiredModel) {
+			return "The model name must be " + requiredModel;
+		}
+	};
+	
+	CMDBuild.core.error.serviceProxy = {
+		NO_FORM: "A form is required"
+	}
 })();

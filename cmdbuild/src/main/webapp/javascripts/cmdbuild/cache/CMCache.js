@@ -218,8 +218,8 @@
 				for (var i=0, l=table.domains.length; i<l; ++i) {
 					var rawDomain = table.domains[i];
 					try {
-						var detail = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
-						CMDomainModelLibrary.add(detail);
+						var domain = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
+						CMDomainModelLibrary.add(domain);
 					} catch (e) {
 						_debug(e, "I can not add this domain", rawDomain);
 					}

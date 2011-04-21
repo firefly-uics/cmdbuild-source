@@ -16,7 +16,17 @@
 		node.getCMModel = function() {
 			return domainModel;
 		};
-		
+
+		domainModel.on(domainModel.CMEVENTS.CHANGED, function(o){
+			if (o.attribute == domainModel.STRUCTURE.description.name) {
+				this.setText(o.newValue);
+			}
+		}, node);
+
+		domainModel.on(domainModel.CMEVENTS.DESTROY, function(o){
+			this.remove();
+		}, node);
+
 		return node;
 	};
 	

@@ -39,6 +39,11 @@
 						throw CMDBuild.core.error.model.A_MODEL_IS_REQUIRED;
 					} else if (model.NAME == ALLOWED_MODEL) {
 						this.map[getKey(model)] = model;
+						
+						model.on(model.CMEVENTS.DESTROY, function() {
+							this.remove(getKey(model));
+						}, this);
+						
 						this.fireEvent(this.CMEVENTS.ADD, model);
 					} else {
 						throw CMDBuild.core.error.model.ADD_WRONG_MODEL_TO_LIBRARY;
@@ -71,7 +76,9 @@
 						this.remove(k);
 					}
 				};
-				
+				this.hasModel = function(id) {
+					return (typeof this.map[id] === "object");
+				};
 				this.toString = function() {
 					return NS+".CMModelLibraryBuilder<" +ALLOWED_MODEL+ ">";
 				};

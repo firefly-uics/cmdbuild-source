@@ -324,7 +324,7 @@ public class Serializer {
 		return jattr;
 	}
 
-	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
+	public static JSONObject serializeDomain(IDomain domain) throws JSONException {
 		JSONObject jsonobj = new JSONObject();
 		jsonobj.put("idDomain", domain.getId());
 		jsonobj.put("name", domain.getName());
@@ -340,50 +340,8 @@ public class Serializer {
 		jsonobj.put("classType", getClassType(domain.getTables()[0].getName()));
 		jsonobj.put("active", domain.getStatus().isActive());
 		jsonobj.put("cardinality", domain.getCardinality());
-		if (table != null)
-		    jsonobj.put("inherited", !domain.isLocal(table));
-		addDetailClassesOnMasterDetail(jsonobj, domain, table);
 		addMetadataAndAccessPrivileges(jsonobj, domain);
 		return jsonobj;
-	}
-	
-	private static void addDetailClassesOnMasterDetail(JSONObject jattr, IDomain domain,
-		ITable table) throws JSONException {
-	    if (domain.isMasterDetail()) {
-		if (domain.getCardinality().equals("1:N")) {
-		    addDetailClassesIfMaster(jattr, table, domain.getClass1(), domain.getClass2());		    
-		} else if (domain.getCardinality().equals("N:1")) {
-		    addDetailClassesIfMaster(jattr, table, domain.getClass2(), domain.getClass1());
-		}
-	    }
-	}
-
-	private static void addDetailClassesIfMaster(JSONObject jattr, ITable sourceClass, ITable masterClass, ITable detailSuperClass) throws JSONException {
-	    if (masterClass.treeBranch().contains(sourceClass.getName())) {
-	    	addDetailClasses(jattr, detailSuperClass);
-	    }
-	}
-
-	private static void addDetailClasses(JSONObject jattr,
-		ITable detailSuperClass) throws JSONException {
-	    JSONArray detailClassesObject = new JSONArray();
-	    for (ITable detailClass : detailSuperClass.treeBranch()) {
-			if ( !detailClass.isSuperClass() ) {
-			    JSONObject detailClassObject = buildDetailClassObject(detailClass);
-			    detailClassesObject.put(detailClassObject);
-			}
-	    }
-	    jattr.put("detailclass", detailSuperClass.getId());
-	    jattr.put("detailSubclasses", detailClassesObject);
-	}
-
-	private static JSONObject buildDetailClassObject(ITable detailClass) throws JSONException {
-	    JSONObject element = new JSONObject();
-	    element.put("classId", detailClass.getId());
-	    element.put("className", detailClass.getDescription());
-	    element.put("classType", getClassType(detailClass.getName()));
-	    addMetadataAndAccessPrivileges(element, detailClass);
-	    return element;
 	}
 	
 	public static JSONObject serializeTableTree(CNode<ITable> node) throws JSONException {

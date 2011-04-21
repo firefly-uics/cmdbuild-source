@@ -177,12 +177,52 @@
 			assertEquals("foo", m.getattr1());
 			m.setattr1("newValue");
 			assertEquals("newValue", m.getattr1());
+		},
+		"test updete must have an obj as parameter": function() {
+			var M1 = getModel("M1");
+			var m1 = new M1();
+			try {
+				m1.update();
+				fail ("Update has not throw exception not object parameter")
+			} catch (e) {
+				assertEquals(CMDBuild.core.error.model.WRONG_UPDATE_PARAMETER, e)
+			}
+		},
+		"test updete fail for not same model": function() {
+			var M1 = getModel("M1");
+			var M2 = getModel("M2");
+			var m1 = new M1();
+			var m2 = new M2();
+			
+			try {
+				m1.update(m2);
+				fail ("Update has not throw exception for wrong model type")
+			} catch (e) {
+				assertEquals(CMDBuild.core.error.model.WRONG_MODEL_TYPE, e)
+			}
+		},
+		"test updete model": function() {
+			var M = getModel("M");
+			var ma = new M();
+			var mb = new M();
+			mb.setattr1("Agamennone");
+			mb.setattr2("Ettore");
+			ma.update(mb);
+			assertEquals(mb.getattr1(), ma.getattr1());
+			assertEquals(mb.getattr2(), ma.getattr2());
+		},
+		"test destroy fire event": function() {
+			var m = getInstance();
+			var spy = sinon.spy();
+			m.on(m.CMEVENTS.DESTROY, spy);
+			m.destroy();
+			assertTrue(spy.called);
 		}
 	});
 	
-	function getModel() {
+	function getModel(name) {
 		return CMDBuild.core.model.CMModelBuilder.build({
-			name: "Foo",
+			name: name || "Foo",
 			structure: {
 				attr1: {},
 				attr2: {}

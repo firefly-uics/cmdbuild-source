@@ -1,3 +1,4 @@
+(function() {
 /* Add to form the methods for hiding a form field with its label */
 Ext.override(Ext.form.Field, {
 	
@@ -44,29 +45,48 @@ Ext.override(Ext.form.Field, {
 });  
 
 Ext.override(Ext.form.FormPanel, {
-    isReadOnly: function(field) {
-    	if (field) {
-    		return field.initialConfig.CMDBuildReadonly;
-    	} else {
-    		return false;
-    	}
-    },
-
-    setFieldsEnabled: function(enableAll){ 	
-   		this.startMonitoring();
-   		this.cascade(function(item) {
-    		if (item && (item instanceof Ext.form.Field)
-    				&& item.isVisible() 
-    				&& (enableAll || !(item.initialConfig.CMDBuildReadonly)))
-				item.enable();
-		});
-		if (this.buttons) {
-			for(var i=0; i<this.buttons.length; i++ ){
-				if (this.buttons[i]) {
-						this.buttons[i].enable();
+	getInvalidFieldsAsHTML: function() {
+		var BEGIN_LIST = "<ul>";
+		var END_LIST = "</ul>";
+		var out = "";
+		this.cascade(function(item) {
+			if (item && (item instanceof Ext.form.Field)) {
+				if (!item.isValid()) {
+					out += "<li>" + item.fieldLabel + "</li>";
 				}
 			}
+		});
+		if (out == "") {
+			return null;
+		} else { 
+			return BEGIN_LIST + out + END_LIST;
 		}
+	},	
+	
+	isReadOnly: function(field) {
+		if (field) {
+			return field.initialConfig.CMDBuildReadonly;
+		} else {
+			return false;
+		}
+	},
+
+	setFieldsEnabled: function(enableAll) {
+		if (!this.MODEL_STRUCTURE) {
+			return setFieldsEnabledForLegacyCode.call(this, enableAll);
+		}
+
+		var s = this.MODEL_STRUCTURE;
+		this.cascade(function(item) {
+			if (item && (item instanceof Ext.form.Field)) {
+				var name = item.name;
+				var toBeEnabled = enableAll || !s[name].immutable;
+				if (toBeEnabled) {
+					item.enable();
+				}
+			}
+		});
+
     },
     
     setFieldsDisabled: function(){
@@ -174,3 +194,22 @@ Ext.override( Ext.form.FieldSet, {
 		}
 	}
 });
+
+function setFieldsEnabledForLegacyCode(enableAll) {
+	this.startMonitoring();
+	this.cascade(function(item) {
+	if (item && (item instanceof Ext.form.Field)
+			&& item.isVisible() 
+			&& (enableAll || !(item.initialConfig.CMDBuildReadonly)))
+		item.enable();
+	});
+	if (this.buttons) {
+		for(var i=0; i<this.buttons.length; i++ ){
+			if (this.buttons[i]) {
+					this.buttons[i].enable();
+			}
+		}
+	}
+}
+
+})();

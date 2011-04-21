@@ -28,8 +28,20 @@
 	 */
 	CMDBuild.CMDomainAccordionController = Ext.extend(CMDBuild.TreePanelController, {
 		silentListener : true,
+		constructor: function(p) {
+			CMDBuild.CMDomainAccordionController.superclass.constructor.apply(this, arguments);
+			this.treePanel.getController = function() {
+				return this;
+			}
+		},
 		initComponent : function() {
 			CMDBuild.CMDomainAccordionController.superclass.initComponent.apply(this, arguments);
+			CMDomainModelLibrary.on(CMDomainModelLibrary.CMEVENTS.ADD, function(domain) {
+				var domainNode = CMDBuild.core.tree.CMDomainTreeNode(domain);
+				this.treePanel.root.appendChild(domainNode);
+				this.treePanel.selectNodeById(domainNode.id);
+			}, this);
+
 		},
 		onSelectNode : function(node) {
 			if (node) {

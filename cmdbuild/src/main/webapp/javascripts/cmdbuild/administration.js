@@ -74,10 +74,13 @@ Ext.onReady(function() {
 			controllerType: "CMDomainAccordionController"
 		});
 		
+		var modDomain = new CMDBuild.administration.domain.ModDomain();
+		new CMDBuild.administration.domain.ModDomainController(modDomain, domainTree);
+
 		CMDBuild.identifiers.accordion = {
 			domain: domainTree.id
 		};
-		
+
 		var viewport = new CMDBuild.MainViewport({
 			colorsConst: CMDBuild.Constants.colors.gray,
 			controllerType: "AdminViewportController",
@@ -121,7 +124,7 @@ Ext.onReady(function() {
 				new CMDBuild.Administration.SetupTree()
 			],
 			modules: [
-				new CMDBuild.administration.domain.ModDomain(),
+				modDomain,
 				new CMDBuild.Administration.ModClass(),
 				new CMDBuild.Administration.ModWorkflow(),
 				new CMDBuild.Administration.ModLookup(),
