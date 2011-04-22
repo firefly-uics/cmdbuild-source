@@ -92,11 +92,6 @@
 			<build>
 				<plugins>
 					<plugin>
-<!--
-						<groupId>org.mortbay.jetty</groupId>
-						<artifactId>jetty-maven-plugin</artifactId>
-						<version>${jetty.version}</version>
--->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>${tomcat-plugin.version}</version>
@@ -105,16 +100,9 @@
 								<id>start-server</id>
 								<phase>pre-integration-test</phase>
 								<goals>
-<!-- Jetty
-									<goal>run</goal>
--->
 									<goal>run-war</goal>
 								</goals>
 								<configuration>
-<!-- Jetty
-									<scanIntervalSeconds>5</scanIntervalSeconds>
-									<daemon>true</daemon>
--->
 									<fork>true</fork>
 								</configuration>
 							</execution>
@@ -122,9 +110,6 @@
 								<id>stop-server</id>
 								<phase>post-integration-test</phase>
 								<goals>
-<!-- Jetty
-									<goal>stop</goal>
--->
 									<goal>shutdown</goal>
 								</goals>
 							</execution>
@@ -144,6 +129,7 @@
 								<cucumberArg>--color</cucumberArg>
 								<cucumberArg>--quiet</cucumberArg>
 								<cucumberArg>--strict</cucumberArg>
+								<cucumberArg>--tags ~@pending</cucumberArg>
 								<cucumberArg>${project.basedir}/target/test-classes</cucumberArg>
 							</cucumberArgs>
 							<gems>

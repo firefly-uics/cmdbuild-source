@@ -10,11 +10,13 @@ Feature: Domain administration
 	Scenario: Existing domains are listed
 		Then I should see the list of the existing domains
 
+	@pending
 	Scenario: Fill the form with the selected domain properties
 		When I select a domain from the list
 		Then I should see the properties of the domain in the form
 		And the modify and delete buttons should be disabled
 
+	@pending
 	Scenario: Add a domain
 		When I click the add button
 		And I fill the form
@@ -22,6 +24,7 @@ Feature: Domain administration
 		Then I should see the new domain in the tree
 		And the form should be disabled
 
+	@pending
 	Scenario: Delete a domain
 		When I click the remove button
 		And confirm my intention to delete the domain
@@ -29,3 +32,4 @@ Feature: Domain administration
 		And the list is unselected
 		And the form is disabled
 		And all the buttons are disabled
+
