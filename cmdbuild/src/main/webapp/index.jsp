@@ -40,7 +40,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>	
-		<script type="text/javascript" src="javascripts/cmdbuild/core/ServiceProxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 		
 		<!-- 2. Translations -->
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
