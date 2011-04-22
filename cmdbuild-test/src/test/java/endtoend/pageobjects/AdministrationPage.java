@@ -34,8 +34,7 @@ public class AdministrationPage extends PageObject {
 	 */
 
 	public int countDomainsInAccordion() {
-		long l = callJsFunction("countDomainsInAccordion");
-		return (int) l;
+		return ((Long) callJsFunction("countDomainsInAccordion")).intValue();
 	}
 	
 }
