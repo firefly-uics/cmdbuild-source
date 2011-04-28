@@ -13,6 +13,7 @@ public class AuthProperties extends DefaultProperties {
 	private static final String FORCE_WS_PASSWORD_DIGEST = "force.ws.password.digest";
 	private static final String HEADER_ATTRIBUTE_NAME = "header.attribute.name";
 	private static final String CAS_SERVER_URL = "cas.server.url";
+	private static final String CAS_LOGIN_PAGE = "cas.login.page";
 	private static final String CAS_SERVICE_PARAM = "cas.service.param";
 	private static final String CAS_TICKET_PARAM = "cas.ticket.param";
 	private static final String LDAP_SERVER_ADDRESS = "ldap.server.address";
@@ -34,6 +35,7 @@ public class AuthProperties extends DefaultProperties {
 		setProperty(AUTH_METHODS, "DBAuthenticator");
 		setProperty(HEADER_ATTRIBUTE_NAME, "username");
 		setProperty(CAS_SERVER_URL, "");
+		setProperty(CAS_LOGIN_PAGE, "/login");
 		setProperty(LDAP_BASEDN, "");
 		setProperty(LDAP_SERVER_ADDRESS, "");
 		setProperty(LDAP_SERVER_PORT, "389");
@@ -78,6 +80,10 @@ public class AuthProperties extends DefaultProperties {
 
 	public String getCasServerUrl() {
 		return getProperty(CAS_SERVER_URL);
+	}
+
+	public String getCasLoginPage() {
+		return getProperty(CAS_LOGIN_PAGE);
 	}
 
 	public String getCasTicketParam() {
