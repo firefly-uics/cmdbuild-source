@@ -80,11 +80,15 @@ public class CasAuthenticator implements Authenticator {
 	}
 
 	private String getCasLoginUrl() {
-		return String.format("%s/login", getCasServerUrl());
+		return String.format("%s%s", getCasServerUrl(), getCasLoginPage());
 	}
 
 	private String getCasServerUrl() {
 		return AuthProperties.getInstance().getCasServerUrl();
+	}
+
+	private Object getCasLoginPage() {
+		return AuthProperties.getInstance().getCasLoginPage();
 	}
 
 	private String getCasTicketParam() {
