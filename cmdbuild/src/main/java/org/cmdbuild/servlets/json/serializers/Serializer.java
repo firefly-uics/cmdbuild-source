@@ -675,31 +675,31 @@ public class Serializer {
 	}
 	
 	public static JSONObject serializePrivilege(PrivilegeCard privilege, ITableFactory tf) throws JSONException {
-		JSONObject row = new JSONObject();
-		try {
-			row.put("groupId", privilege.getGroupId());
-			if (privilege.getMode().equals(PrivilegeType.WRITE)) {
-				row.put("privilege_mode",  "write_privilege");
-				row.put("write_privilege",  true);
-			} else if (privilege.getMode().equals(PrivilegeType.READ)) {
-				row.put("privilege_mode", "read_privilege");
-				row.put("read_privilege",  true);
-			} else {
-				row.put("privilege_mode", "none_privilege");
-				row.put("none_privilege",  true);
-			}
-			row.put("classname", tf.get(privilege.getGrantedClassId()).getDescription());
-			row.put("classid", tf.get(privilege.getGrantedClassId()).getId());
-		} catch (NotFoundException e) {
-			Log.PERSISTENCE.error("Class OID not found ("+privilege.getGrantedClassId()+") while searching for grant for group "+privilege.getGroupId());
+		final JSONObject row = new JSONObject();
+		row.put("groupId", privilege.getGroupId());
+		if (privilege.getMode().equals(PrivilegeType.WRITE)) {
+			row.put("privilege_mode",  "write_privilege");
+			row.put("write_privilege",  true);
+		} else if (privilege.getMode().equals(PrivilegeType.READ)) {
+			row.put("privilege_mode", "read_privilege");
+			row.put("read_privilege",  true);
+		} else {
+			row.put("privilege_mode", "none_privilege");
+			row.put("none_privilege",  true);
 		}
+		row.put("classname", tf.get(privilege.getGrantedClassId()).getDescription());
+		row.put("classid", tf.get(privilege.getGrantedClassId()).getId());
 		return row;
 	}
 	
 	public static JSONArray serializePrivilegeList(Iterable<PrivilegeCard> privileges, ITableFactory tf) throws JSONException {
 		JSONArray privilegeList = new JSONArray();
 		for(PrivilegeCard privilege : privileges){
-			privilegeList.put(Serializer.serializePrivilege(privilege, tf));
+			try {
+				privilegeList.put(Serializer.serializePrivilege(privilege, tf));
+			} catch (NotFoundException e) {
+				Log.PERSISTENCE.warn("Class OID not found ("+privilege.getGrantedClassId()+") while searching for grant for group "+privilege.getGroupId());
+			}
 		}
 		return privilegeList;
 	}
