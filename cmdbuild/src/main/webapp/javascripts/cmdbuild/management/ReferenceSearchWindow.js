@@ -9,7 +9,7 @@ CMDBuild.Management.ReferenceSearchWindow = Ext.extend(CMDBuild.Management.CardL
 	idClass: undefined,
 	className: undefined,
 	attributes: [],
-	
+
 	initComponent: function() {
 		this.baseParams = this.combo.store.baseParams;
 		
@@ -39,10 +39,11 @@ CMDBuild.Management.ReferenceSearchWindow = Ext.extend(CMDBuild.Management.CardL
 			eventName: "cmdbuild-new-referencecard"
 		});
 		this.tabPanel = this.buildTabPanel();
-		
+
+		var destClassDescription = CMDBuild.Cache.getTableById(this.idClass).text;
 		Ext.apply(this, {
 			border: false,
-			title: CMDBuild.Translation.management.modcard.search_reference_window.window_title + this.className,
+			title: CMDBuild.Translation.management.modcard.search_reference_window.window_title + destClassDescription,
 			items: this.tabPanel
 		});
 		CMDBuild.Management.ReferenceSearchWindow.superclass.initComponent.apply(this);
