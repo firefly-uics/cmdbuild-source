@@ -118,11 +118,15 @@ CMDBuild.Management.SearchableCombo = Ext.extend(CMDBuild.CMDBuildCombo, {
 			var data = {};
 			data[_store.root] = [{ 
 					Id : record.Id, 
-					Description: record.Description 
+					Description: this.recordDescriptionFixedForCarriageReturnBugOnComboBoxes(record)
 				}];
 			data[_store.totalProperty] = _store.getTotalCount();
 			_store.loadData(data, true);
 		}
+	},
+	
+	recordDescriptionFixedForCarriageReturnBugOnComboBoxes: function(record) {
+		return record.Description.replace(/\n/g," ");
 	},
 	
 	hideTrigger1 :false,
