@@ -1,21 +1,11 @@
 package org.cmdbuild.elements;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.elements.filters.AbstractFilter;
-import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.services.auth.UserContext;
 
 public class RelationImpl extends AbstractElementImpl implements IRelation {
 
@@ -78,35 +68,6 @@ public class RelationImpl extends AbstractElementImpl implements IRelation {
 		return super.getAttributeValueMap();
 	}
 
-	public static List<IRelation> findAll(UserContext userCtx, String domainName) {
-		final IDomain domain = userCtx.domains().get(domainName);
-		final AbstractFilter filter1 = abstractFilterForTablePrivileges(userCtx, domain.getClass1());
-		final AbstractFilter filter2 = abstractFilterForTablePrivileges(userCtx, domain.getClass2());
-		return backend.findAll(domain, filter1, filter2, -1, -1);
-	}
-
-	public static List<IRelation> findAll(String domainName, AbstractFilter filter1, AbstractFilter filter2) {
-		final IDomain domain = UserContext.systemContext().domains().get(domainName);
-		return backend.findAll(domain, filter1, filter2, -1, -1);
-	}
-
-	private static AbstractFilter abstractFilterForTablePrivileges(UserContext userCtx, ITable table) {
-		final List<String> noPrivTables = new LinkedList<String>();
-		TableTree wholeTree = TableImpl.tree().branch(table.getName());
-		for (ITable subTable : wholeTree) {
-			if (!userCtx.privileges().hasReadPrivilege(subTable)) {
-				noPrivTables.add(String.valueOf(subTable.getId()));
-			}
-		}
-		if (!noPrivTables.isEmpty()) {
-			String[] noPrivTablesArray = noPrivTables.toArray(new String[0]);
-			final IAttribute classIdAttribute = table.getAttribute(ICard.CardAttributes.ClassId.toString());
-			return new AttributeFilter(classIdAttribute, AttributeFilterType.DIFFERENT, (Object[])noPrivTablesArray);
-		} else {
-			return null;
-		}
-	}
-
 	public ICard getCard1() {
 		return card1;
 	}
@@ -157,10 +118,6 @@ public class RelationImpl extends AbstractElementImpl implements IRelation {
 
 	protected int create() {
 		return backend.createRelation(this);
-	}
-
-	public static IRelation get(IDomain domain, ICard card1, ICard card2) throws NotFoundException, ORMException {
-		return backend.getRelation(domain, card1, card2);
 	}
 
 	public boolean isReversed() {

@@ -25,7 +25,7 @@ public class JSONDispatcherService {
 	
 	public class MethodInfo {
 		Method method;
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		Class[] paramClasses;
 		Annotation[][] paramsAnnotations;
 		
@@ -41,7 +41,7 @@ public class JSONDispatcherService {
 		public Method getMethod() {
 			return method;
 		}
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Class[] getParamClasses() {
 			return paramClasses;
 		}

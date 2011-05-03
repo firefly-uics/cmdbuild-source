@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="CMDBuild" version="2.5">
 	<display-name>CMDBuild</display-name>
-  
+
+	<context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application-context.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
 	<context-param>
 		<param-name>modules</param-name>
 		<param-value>database,cmdbuild,legacydms,workflow,email,graph,transformers,builders,gis,auth</param-value>
 	</context-param>
-  
 	<context-param>
 		<param-name>moduleLoaders</param-name>
 		<param-value>ParameterTransformerInit</param-value>
 	</context-param>
-	
-	<context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:org/cmdbuild/*-context.xml</param-value>
-    </context-param>
-	
-  
 	<listener id="cmdbuildInit">
 		<listener-class>org.cmdbuild.plugins.CMDBInitListener</listener-class>
 	</listener>
-	
-	
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
 
 	<filter>
 		<filter-name>TranslationFilter</filter-name>

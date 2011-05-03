@@ -49,7 +49,11 @@ CMDBuild.Administration.JobGrid = Ext.extend(Ext.grid.GridPanel, {
 				idClass: processType
 			},
 			callback: function(r, option, success) {
-				this.getSelectionModel().clearSelections();
+				try {
+					this.getSelectionModel().clearSelections();
+				} catch (e) {
+					_debug("JobGrid: I can't clear selections");
+				}
 				if (r.length == 0) {
 					this.fireEvent('cmdb-empty-jobgrid');
 				}

@@ -12,8 +12,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend.CMSqlException;
-import org.cmdbuild.dao.backend.postgresql.CMBackend.SqlState;
+import org.cmdbuild.dao.backend.postgresql.PGCMBackend.CMSqlException;
+import org.cmdbuild.dao.backend.postgresql.PGCMBackend.SqlState;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;

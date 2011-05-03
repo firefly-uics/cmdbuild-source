@@ -49,6 +49,7 @@ CMDBuild.Constants = {
 		bottom_border_blue: "cmdbuild_border_bottom_blue",
 		top_border_gray: "cmdbuild_border_top_gray",
 		bottom_border_gray: "cmdbuild_border_bottom_gray",
-		padding5: "cmdbuild_body_padding"
+		padding5: "cmdbuild_body_padding",
+		tree_folder: "cmdbuild-tree-folder-icon"
 	}
 };

@@ -7,7 +7,6 @@ import java.util.List;
 import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.gis.GeoFeatureType.GeoType;
 import org.cmdbuild.services.gis.geoserver.GeoServerService;
 import org.cmdbuild.utils.OrderingUtils;
@@ -77,21 +76,16 @@ public class CompositeLayerService implements LayerService {
 
 	public void reorderLayers(int oldIndex, int newIndex) {
 		synchronized (layersLock) {
-			try {
-				OrderingUtils.alterPosition(getLayers(), oldIndex, newIndex, new PositionHandler<GeoLayer>() {
-					@Override
-					public int getPosition(GeoLayer l) {
-						return l.getIndex();
-					}
-					@Override
-					public void setPosition(GeoLayer l, int p) {
-						setLayerPosition(l, p);
-					}
-				});
-			} catch (RuntimeException e) { // we should handle object transactions
-				SchemaCache.getInstance().clearTables();
-				throw e;
-			}
+			OrderingUtils.alterPosition(getLayers(), oldIndex, newIndex, new PositionHandler<GeoLayer>() {
+				@Override
+				public int getPosition(GeoLayer l) {
+					return l.getIndex();
+				}
+				@Override
+				public void setPosition(GeoLayer l, int p) {
+					setLayerPosition(l, p);
+				}
+			});
 		}
 	}
 

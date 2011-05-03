@@ -100,6 +100,11 @@ CMDBuild.TreePanel = Ext.extend(Ext.tree.TreePanel, {
 		}, this);
 	},
 	
+	silentExpand: function() {
+		_suspendNextExpandEvent = true;
+		CMDBuild.TreePanel.superclass.expand.call(this);
+	},
+	
 	subscribeListener: function(component) {
 		this.listener = component;
 	},

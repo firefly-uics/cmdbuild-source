@@ -1,5 +1,6 @@
 (function() {
 	CMDBuild.Administration.ClassTree = Ext.extend(CMDBuild.TreePanel, {
+		NAME: "CMClassAccordion",
 		title: CMDBuild.Translation.administration.modClass.tree_title, 
 		initComponent: function() {
 			var tr = CMDBuild.Translation.common.tree_names;
@@ -15,6 +16,7 @@
 	});
 
 	CMDBuild.Administration.ModClass = Ext.extend(CMDBuild.ModPanel, {
+		NAME: "CMModClass",
 		modtype:'class',	
 		translation: CMDBuild.Translation.administration.modClass,
 		initComponent : function() {
@@ -37,7 +39,13 @@
 				formatList: ['pdf', 'odt'],			
 				scope: this
 	    	});
-	   
+			
+			this.domainGrid = new CMDBuild.Administration.DomainGrid({
+				title : this.translation.tabs.domains,
+				disabled: true,
+				id: 'dom_panel'
+      		});
+			
 			this.tabPanel = new Ext.TabPanel({
 	      		border : false,
 	      		activeTab : 0,
@@ -83,26 +91,7 @@
 	      			withCheckToHideLayer: true,
 	      			disabled: true
 		      	 }),
-		      	 {
-	        		title : this.translation.tabs.domains,
-	        		disabled: true,
-	        		id : 'dom_panel',
-	        		layout : 'border',
-	        		items : [{
-			        	id: 'domaingrid',
-			        	xtype: 'domaingrid',
-			        	region: 'center',
-			        	style: {'border-bottom': '1px #D0D0D0 solid'}
-			    	},{
-			    		id: 'domainform',
-						xtype: 'domainform',
-						height: '50%',
-			    		border : false,
-						region: 'south',
-						autoScroll:true,
-						split:true
-	      		    }]
-	      		}]
+		      	 this.domainGrid]
 	    	});
 
 	    	Ext.apply(this,{

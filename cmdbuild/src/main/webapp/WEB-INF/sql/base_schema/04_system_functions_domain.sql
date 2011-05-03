@@ -68,6 +68,8 @@ BEGIN
 	DomainId := _cm_domain_id(CMDomain);
 
 	EXECUTE 'COMMENT ON TABLE '|| DomainId::regclass ||' IS '|| quote_literal(DomainComment);
+	PERFORM _cm_copy_superclass_attribute_comments(DomainId, '"Map"'::regclass);
+
 	EXECUTE 'CREATE TABLE '|| HistoryDBName ||
 		' ( CONSTRAINT '|| quote_ident(_cm_historypk_name(_cm_domain_cmname(CMDomain))) ||
 		' PRIMARY KEY ("IdDomain","IdClass1", "IdObj1", "IdClass2", "IdObj2","EndDate"))'||

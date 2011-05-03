@@ -1,3 +1,4 @@
+(function() {
 /* Add to form the methods for hiding a form field with its label */
 Ext.override(Ext.form.Field, {
 	
@@ -25,7 +26,9 @@ Ext.override(Ext.form.Field, {
     hideContainer: function() {
         this.disable(); // for validation
         this.hide();
-        this.getEl().up('.x-form-item').setDisplayed(false); // hide container and children (including label if applicable)
+        if (this.getEl()) {
+        	this.getEl().up('.x-form-item').setDisplayed(false); // hide container and children (including label if applicable)
+    	}
     },
 
     isContainerVisible: function() {
@@ -44,51 +47,65 @@ Ext.override(Ext.form.Field, {
 });  
 
 Ext.override(Ext.form.FormPanel, {
-    isReadOnly: function(field) {
-    	if (field) {
-    		return field.initialConfig.CMDBuildReadonly;
-    	} else {
-    		return false;
-    	}
-    },
+	getInvalidFieldsAsHTML: function() {
+		var BEGIN_LIST = "<ul>";
+		var END_LIST = "</ul>";
+		var out = "";
+		this.cascade(function(item) {
+			if (item && (item instanceof Ext.form.Field)) {
+				if (!item.isValid()) {
+					out += "<li>" + item.fieldLabel + "</li>";
+				}
+			}
+		});
+		if (out == "") {
+			return null;
+		} else { 
+			return BEGIN_LIST + out + END_LIST;
+		}
+	},	
+	
+	isReadOnly: function(field) {
+		if (field) {
+			return field.initialConfig.CMDBuildReadonly;
+		} else {
+			return false;
+		}
+	},
 
-    setFieldsEnabled: function(enableAll){ 	
-   		this.startMonitoring();
-   		this.cascade(function(item) {
-    		if (item && (item instanceof Ext.form.Field)
-    				&& item.isVisible() 
-    				&& (enableAll || !(item.initialConfig.CMDBuildReadonly)))
-				item.enable();
-		});
-		if (this.buttons) {
-			for(var i=0; i<this.buttons.length; i++ ){
-				if (this.buttons[i]) {
-						this.buttons[i].enable();
-				}
-			}
+	setFieldsEnabled: function(enableAll) {
+		if (!this.MODEL_STRUCTURE) {
+			return setFieldsEnabledForLegacyCode.call(this, enableAll);
 		}
-    },
-    
-    setFieldsDisabled: function(){
-    	this.stopMonitoring();
-    	this.cascade(function(i) {
-			if (i && (i instanceof Ext.form.Field) && !(i instanceof Ext.form.DisplayField)){
-				var xtype = i.getXType();
-				if (xtype!='hidden') {
-					i.disable();
+
+		var s = this.MODEL_STRUCTURE;
+		this.cascade(function(item) {
+			if (item && (item instanceof Ext.form.Field)) {
+				var name = item._name || item.name; // for compatibility I can not change the name of old attrs
+				var toBeEnabled = enableAll || !s[name].immutable;
+				if (toBeEnabled) {
+					item.enable();
 				}
 			}
 		});
-		if (this.buttons) {
-			for(var i=0; i<this.buttons.length; i++ ){
-				if (this.buttons[i]) {
-					this.buttons[i].disable();
+
+	},
+
+	setFieldsDisabled: function(){
+		this.stopMonitoring();
+		if (!this.MODEL_STRUCTURE) {
+			setFieldsDisabledForLegacyCode.call(this);
+		} else {
+			var s = this.MODEL_STRUCTURE;
+			this.cascade(function(item) {
+				if (item && (item instanceof Ext.form.Field) && item.disable) {
+					item.disable();
 				}
-			}
+			});
 		}
-    },
-    
-    enableAllField: function() {
+	},
+
+	enableAllField: function() {
 		var fields = this.getForm().items.items;
 		this.formIsDisable = false;
 		for (var i = 0 ; i < fields.length ; i++) {
@@ -174,3 +191,40 @@ Ext.override( Ext.form.FieldSet, {
 		}
 	}
 });
+
+function setFieldsEnabledForLegacyCode(enableAll) {
+	this.startMonitoring();
+	this.cascade(function(item) {
+	if (item && (item instanceof Ext.form.Field)
+			&& item.isVisible() 
+			&& (enableAll || !(item.initialConfig.CMDBuildReadonly)))
+		item.enable();
+	});
+	if (this.buttons) {
+		for(var i=0; i<this.buttons.length; i++ ){
+			if (this.buttons[i]) {
+					this.buttons[i].enable();
+			}
+		}
+	}
+}
+
+function setFieldsDisabledForLegacyCode() {
+	this.cascade(function(i) {
+		if (i && (i instanceof Ext.form.Field) && !(i instanceof Ext.form.DisplayField)){
+			var xtype = i.getXType();
+			if (xtype!='hidden') {
+				i.disable();
+			}
+		}
+	});
+	if (this.buttons) {
+		for(var i=0; i<this.buttons.length; i++ ){
+			if (this.buttons[i]) {
+				this.buttons[i].disable();
+			}
+		}
+	}
+}
+
+})();

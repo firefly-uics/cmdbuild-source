@@ -38,8 +38,6 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.legacy.dms.AttachmentBean;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
-import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeatureType;
@@ -224,7 +222,7 @@ public class Serializer {
 	public static JSONObject serializeLookupType(LookupType lookupType) throws JSONException {
 		JSONObject row = new JSONObject();
 		row.put("description", lookupType.getType());
-		row.put("parent", lookupType.getParentType());
+		row.put("parent", lookupType.getParentTypeName());
 		row.put("orig_type", lookupType.getType()); //used if someone want to modify the type name
 		return row;
 	}
@@ -246,8 +244,8 @@ public class Serializer {
 		serializer.put("type", "lookuptype");
 		serializer.put("selectable", true);
 		
-		if (lookupType.getParentType() != null) {
-			serializer.put("parent", lookupType.getParentType());
+		if (lookupType.getParentTypeName() != null) {
+			serializer.put("parent", lookupType.getParentTypeName());
 		}
 		return serializer;
 	}
@@ -287,13 +285,10 @@ public class Serializer {
 		jattr.put("len", attribute.getLength());
 		jattr.put("precision", attribute.getPrecision());
 		jattr.put("scale", attribute.getScale());
-		jattr.put("fieldmode", attribute.getFieldMode().getMode());
 		jattr.put("defaultvalue", attribute.getDefaultValue());
 		jattr.put("isactive", attribute.getStatus().isActive());
-		jattr.put("fieldmode_value", TranslationService.getInstance().getTranslation(
-				"administration.modClass.attributeProperties.field_" 
-				+ attribute.getFieldMode().toString().toLowerCase() 
-			));
+		jattr.put("isactive", attribute.getStatus().isActive());
+		jattr.put("fieldmode", attribute.getFieldMode().getMode());
 		switch (attribute.getType()) {
 		case LOOKUP:
 			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
@@ -304,7 +299,7 @@ public class Serializer {
 					jattr.put("lookup", lt.getType());
 				}
 				lookupChain.put(lt.getType());
-				lt = SchemaCache.getInstance().getLookupType(lt.getParentType());
+				lt = lt.getParentType();
 			}
 			jattr.put("lookupchain", lookupChain);
 			break;
@@ -325,7 +320,7 @@ public class Serializer {
 		return jattr;
 	}
 
-	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
+	public static JSONObject serializeDomain(IDomain domain) throws JSONException {
 		JSONObject jsonobj = new JSONObject();
 		jsonobj.put("idDomain", domain.getId());
 		jsonobj.put("name", domain.getName());
@@ -341,50 +336,17 @@ public class Serializer {
 		jsonobj.put("classType", getClassType(domain.getTables()[0].getName()));
 		jsonobj.put("active", domain.getStatus().isActive());
 		jsonobj.put("cardinality", domain.getCardinality());
-		if (table != null)
-		    jsonobj.put("inherited", !domain.isLocal(table));
-		addDetailClassesOnMasterDetail(jsonobj, domain, table);
+		jsonobj.put("attributes", serializeAttributeList(domain, false));
 		addMetadataAndAccessPrivileges(jsonobj, domain);
 		return jsonobj;
 	}
 	
-	private static void addDetailClassesOnMasterDetail(JSONObject jattr, IDomain domain,
-		ITable table) throws JSONException {
-	    if (domain.isMasterDetail()) {
-		if (domain.getCardinality().equals("1:N")) {
-		    addDetailClassesIfMaster(jattr, table, domain.getClass1(), domain.getClass2());		    
-		} else if (domain.getCardinality().equals("N:1")) {
-		    addDetailClassesIfMaster(jattr, table, domain.getClass2(), domain.getClass1());
+	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
+		JSONObject jsonDomain = serializeDomain(domain);
+		if (table != null) {
+			jsonDomain.put("inherited", !domain.isLocal(table));
 		}
-	    }
-	}
-
-	private static void addDetailClassesIfMaster(JSONObject jattr, ITable sourceClass, ITable masterClass, ITable detailSuperClass) throws JSONException {
-	    if (masterClass.treeBranch().contains(sourceClass.getName())) {
-	    	addDetailClasses(jattr, detailSuperClass);
-	    }
-	}
-
-	private static void addDetailClasses(JSONObject jattr,
-		ITable detailSuperClass) throws JSONException {
-	    JSONArray detailClassesObject = new JSONArray();
-	    for (ITable detailClass : detailSuperClass.treeBranch()) {
-			if ( !detailClass.isSuperClass() ) {
-			    JSONObject detailClassObject = buildDetailClassObject(detailClass);
-			    detailClassesObject.put(detailClassObject);
-			}
-	    }
-	    jattr.put("detailclass", detailSuperClass.getId());
-	    jattr.put("detailSubclasses", detailClassesObject);
-	}
-
-	private static JSONObject buildDetailClassObject(ITable detailClass) throws JSONException {
-	    JSONObject element = new JSONObject();
-	    element.put("classId", detailClass.getId());
-	    element.put("className", detailClass.getDescription());
-	    element.put("classType", getClassType(detailClass.getName()));
-	    addMetadataAndAccessPrivileges(element, detailClass);
-	    return element;
+		return jsonDomain;
 	}
 	
 	public static JSONObject serializeTableTree(CNode<ITable> node) throws JSONException {
@@ -595,7 +557,7 @@ public class Serializer {
 	}
 	
 	public static JSONArray serializeAttributeList(
-			ITable table, boolean active) throws JSONException {
+			BaseSchema table, boolean active) throws JSONException {
 		List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
 		JSONArray attributeList = new JSONArray();
 		for(IAttribute attribute : sortedAttributes){
@@ -607,7 +569,7 @@ public class Serializer {
 		}
 		return attributeList;
 	}
-
+	
 	/*
 	 * we sort attributes on the class order and index number
 	 * because Ext.JS DOES NOT ALLOW IT. Thanks Jack!
@@ -784,4 +746,5 @@ public class Serializer {
 		
 		return jsonMenuList;
 	}
+
 }

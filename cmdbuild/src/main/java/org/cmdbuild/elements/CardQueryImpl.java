@@ -9,18 +9,18 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
+import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.CardFilter;
 import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.FilterOperator;
+import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.LimitFilter;
 import org.cmdbuild.elements.filters.OrderFilter;
-import org.cmdbuild.elements.filters.SubQueryFilter;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
-import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.filters.SubQueryFilter;
 import org.cmdbuild.elements.history.TableHistory;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -30,9 +30,12 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CardQueryImpl implements CardQuery {
-	private static final CMBackend backend = new CMBackend();
+
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
     private ITable table;
     private boolean history; // if not null, was sought the history research

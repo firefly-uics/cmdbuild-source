@@ -36,7 +36,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	private Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 	
 	public abstract JasperDesign getJasperDesign();
-	
+
 	/**
 	 * Fill report 
 	 */
@@ -51,12 +51,9 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		return settings.getRootPath() + REPORT_DIR_NAME + File.separator;
 	}
 
-	/**
-	 * Set report query
-	 */
-	protected void setQuery(String query) {
-		JRDesignQuery designQuery = new JRDesignQuery();
-		designQuery.setText(query);
+	protected void setQuery(final String reportQuery) {
+		final JRDesignQuery designQuery = new JRDesignQuery();
+		designQuery.setText(reportQuery);
 		getJasperDesign().setQuery(designQuery);		
 	}
 	

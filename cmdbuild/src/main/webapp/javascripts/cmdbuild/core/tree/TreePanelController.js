@@ -1,55 +1,4 @@
 (function() {
-	function onDeletedNode(parameters) {
-		var node = this.treePanel.searchNodeById(parameters.id);
-		if (node) {
-			try {
-				node.remove();
-			} catch (e) {
-				renderNodePathToAllowTheRemove(node, this.treePanel);
-				node.remove();
-			}
-		}
-	};
-	
-	function onModifyNode(parameters) {
-		var oldNodeId = parameters.oldId || parameters.id;
-		var oldNode = this.treePanel.searchNodeById(oldNodeId);
-		
-		if (oldNode && oldNode.parentNode) { 
-			var newLType = CMDBuild.Cache.getTableById(parameters.id);
-			var newNode = CMDBuild.TreeUtility.buildNodeFromTable(newLType);
-			while (oldNode.firstChild) {
-				var c = oldNode.removeChild(oldNode.firstChild, false);
-				newNode.appendChild(c);
-			}
-			oldNode.parentNode.replaceChild(newNode, oldNode);
-			
-			if (this.silentListener) {
-				this.treePanel.silentSelectNodeById(this.silentListener);
-			} else {
-				this.treePanel.selectNodeById(newNode.id, true);
-			}
-		}
-	};
-	
-	function onNewNode(parameters) {
-		if (parameters) {
-			var node = CMDBuild.TreeUtility.buildNodeFromTable(parameters);
-			var parent = this.treePanel.appendNewNode(node, parameters.parent);
-			if (!this.silentListener) {
-				this.treePanel.selectNodeById(node.id);
-			}
-		}
-	};
-	
-	function renderNodePathToAllowTheRemove(node, tree) {
-		tree.expandPath(node.getPath());
-	};
-
-	function deselect() {
-		this.treePanel.deselect();
-	};
-	
 	CMDBuild.TreePanelController = Ext.extend(Ext.Component, {
 		eventType: undefined,
 		treePanel: undefined,
@@ -57,7 +6,7 @@
 		initComponent : function() {
 			CMDBuild.TreePanelController.superclass.initComponent.apply(this, arguments);
 			if (this.treePanel) {
-				this.treePanel.subscribeListener(this);				
+				this.treePanel.subscribeListener(this);
 			} else {
 				throw new Error("CMDBuild.TreePanelController must be istantiated with a Ext.tree.TreePanel");
 			}
@@ -112,4 +61,54 @@
 		onModifyNode: onModifyNode,
 		onDeletedNode: onDeletedNode
 	});
+	function onDeletedNode(parameters) {
+		var node = this.treePanel.searchNodeById(parameters.id);
+		if (node) {
+			try {
+				node.remove();
+			} catch (e) {
+				renderNodePathToAllowTheRemove(node, this.treePanel);
+				node.remove();
+			}
+		}
+	};
+	
+	function onModifyNode(parameters) {
+		var oldNodeId = parameters.oldId || parameters.id;
+		var oldNode = this.treePanel.searchNodeById(oldNodeId);
+		
+		if (oldNode && oldNode.parentNode) { 
+			var newLType = CMDBuild.Cache.getTableById(parameters.id);
+			var newNode = CMDBuild.TreeUtility.buildNodeFromTable(newLType);
+			while (oldNode.firstChild) {
+				var c = oldNode.removeChild(oldNode.firstChild, false);
+				newNode.appendChild(c);
+			}
+			oldNode.parentNode.replaceChild(newNode, oldNode);
+			
+			if (this.silentListener) {
+				this.treePanel.silentSelectNodeById(this.silentListener);
+			} else {
+				this.treePanel.selectNodeById(newNode.id, true);
+			}
+		}
+	};
+	
+	function onNewNode(parameters) {
+		if (parameters) {
+			var node = CMDBuild.TreeUtility.buildNodeFromTable(parameters);
+			var parent = this.treePanel.appendNewNode(node, parameters.parent);
+			if (!this.silentListener) {
+				this.treePanel.selectNodeById(node.id);
+			}
+		}
+	};
+	
+	function renderNodePathToAllowTheRemove(node, tree) {
+		tree.expandPath(node.getPath());
+	};
+
+	function deselect() {
+		this.treePanel.deselect();
+	};
 })();

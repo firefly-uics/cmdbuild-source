@@ -40,6 +40,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>	
+		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 		
 		<!-- 2. Translations -->
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
@@ -64,7 +65,7 @@
 			<div id="header_po">Open Source Configuration and Management Database</div>
 		</div>
 		<div id="login_box_wrap">
-			<div id="login_box" />
+			<div id="login_box"></div>
 		</div>
 		<div id="release_box" class="x-panel-header" style="background: none; border: none; text-align: center;"><span class="x-panel-header-text">CMDBuild <tr:translation key="release"/></span></div>
 	</body>

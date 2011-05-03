@@ -1,27 +1,24 @@
 package org.cmdbuild.servlets.json.schema;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.cmdbuild.elements.AttributeValue;
-import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
-import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard;
-import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
+import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -102,36 +99,37 @@ public class ModSecurity extends JSONBase {
 		return serializer;
 	}
 
+	@Admin
 	@JSONExported
 	public JSONObject getGroupUserList(
 			@Parameter("groupId") int groupId,
 			@Parameter("alreadyAssociated") boolean associated,
 			JSONObject serializer,
-			ITableFactory tf
-			) throws JSONException, AuthException {
-			Iterable<UserCard> userList;
-			AttributeFilter filterId = new AttributeFilter(UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).getAttribute(ICard.CardAttributes.Id.name()), AttributeFilterType.EQUALS, String.valueOf(groupId));
-			ITable user = tf.get(UserCard.USER_CLASS_NAME);
-			IAttribute attrStatus = user.getAttribute(CardAttributes.Status.name());
-			AttributeFilter filterStatus = new AttributeFilter(attrStatus, AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value());
-			userList= AuthenticationFacade.getUserList(filterStatus,filterId);
-			//FIXME - userList contains duplicate users! But distinct on on ("User"."Id") is not supported yet
-			// To eliminate duplicate users, I will use an awful HashMap.
-			if(!associated){
-				CardQuery list=tf.get(UserCard.USER_CLASS_NAME).cards().list().filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,ElementStatus.UPDATED.value()).order("Username",OrderFilterType.ASC).ignoreStatus();	
-				HashMap<Integer, UserCard> map = new HashMap<Integer, UserCard>();
-				LinkedList<Integer> idUserList = new LinkedList<Integer>();
-				for(UserCard u: userList){idUserList.add(u.getId());}
-				for(ICard card :list){
-					if(idUserList.contains(card.getId()))
-						continue;
-					UserCard u = new UserCard(card);
-					map.put(u.getId(), u);
-				}
-				userList=map.values();			
+			ITableFactory tf) throws JSONException {
+		Iterable<UserCard> userList;
+
+		final Iterable<UserCard> associatedUserList = AuthenticationFacade.getUserList(groupId);
+		if (associated) {
+			userList = associatedUserList;
+		} else {
+			// FIXME
+			// userList contains duplicate users! But distinct on ("User"."Id") is not
+			// supported yet. To eliminate duplicate users, we use an awful HashMap.
+			Set<Integer> associatedUserIds = new HashSet<Integer>();
+			for (UserCard associatedUserCard : associatedUserList) {
+				associatedUserIds.add(associatedUserCard.getId());
 			}
-			//end fixme
-			serializer.put("users", Serializer.serializeUserList(userList));
+
+			final HashMap<Integer, UserCard> unassociatedUserMap = new HashMap<Integer, UserCard>();
+			for (UserCard userCard : UserCard.allByUsername()) {
+				if (!associatedUserIds.contains(userCard.getId())) {
+					unassociatedUserMap.put(userCard.getId(), userCard);
+				}
+			}
+			userList = unassociatedUserMap.values();			
+		}
+
+		serializer.put("users", Serializer.serializeUserList(userList));
 		return serializer;
 	}
 	
@@ -252,7 +250,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(value="disabledModules", required=false) String[] disabledModules,
 			UserContext userCtx
 		) throws JSONException, AuthException {
-		GroupCard group = getGroupById(groupId, userCtx);
+		GroupCard group = GroupCard.get(groupId, userCtx);
 		if (name != null) {
 			group.setName(name);
 		}
@@ -273,36 +271,17 @@ public class ModSecurity extends JSONBase {
 		return serializer;
 	}
 
-	private GroupCard getGroupById(int groupId, UserContext userCtx) {
-		ICard card;
-		if (groupId > 0) {
-			card = userCtx.tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
-		} else {
-			card = userCtx.tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
-		}
-		GroupCard group = new GroupCard(card);
-		return group;
-	}
-
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUserList(
 			@Parameter(value="users", required=false) String users,
 			@Parameter("groupId") int groupId,
 			UserContext userCtx) {
-		GroupCard group = getGroupById(groupId, userCtx);
-		//get old users
-		AttributeValue attrValueId = group.getAttributeValue(CardAttributes.Id.name());
-		AttributeFilter filterId = new AttributeFilter(attrValueId.getSchema(), AttributeFilterType.EQUALS, attrValueId.toString());
-		
-		ITable userClass = userCtx.tables().get(UserCard.USER_CLASS_NAME);
-		IAttribute attrStatus = userClass.getAttribute(CardAttributes.Status.name());
-		AttributeFilter filterStatus = new AttributeFilter(attrStatus, AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value());
-		
-		IDomain userGroupDomain = userCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
-		List<UserCard> oldUserList = AuthenticationFacade.getUserList(filterStatus,filterId);
+		final GroupCard group = GroupCard.get(groupId, userCtx);
+		final IDomain userGroupDomain = userCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
 
-		LinkedList<String> newUserIdList = new LinkedList<String>();
+		final List<UserCard> oldUserList = AuthenticationFacade.getUserList(groupId);
+		final List<String> newUserIdList = new ArrayList<String>();
 		if (users != null && !users.equals("")) {
 			StringTokenizer tokenizer = new StringTokenizer(users, ",");
 			while (tokenizer.hasMoreTokens()) {

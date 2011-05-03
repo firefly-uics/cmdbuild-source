@@ -216,4 +216,28 @@ CMDBuild.ChainedAjax = {
     }
 };
 
-
+CMDBuild.ConcurrentAjax = {
+	execute: function(o) {
+		var counter = o.requests.length;
+		for (var i=0, l=o.requests.length; i<l; ++i) {
+			var requestConfig = Ext.apply(o.requests[i]);
+			this.showMask(o, i);
+			requestConfig.callback = function() {
+				if (--counter == 0) {
+					CMDBuild.LoadMask.get().hide();
+					o.fn.call(o.scope || this);
+				}
+			}
+			CMDBuild.Ajax.request(requestConfig);
+		}
+	},
+	//private
+	showMask: function(o, index) {
+		if (o.loadMask) {
+			if (o.requests[index].maskMsg) {
+				var m = CMDBuild.LoadMask.get(o.requests[index].maskMsg);
+				m.show();
+			}
+		}
+	}
+};

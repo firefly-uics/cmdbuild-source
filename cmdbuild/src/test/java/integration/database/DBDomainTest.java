@@ -8,7 +8,7 @@ import integration.database.fixtures.DomainInfo;
 
 import java.sql.SQLException;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend.CMSqlException;
+import org.cmdbuild.dao.backend.postgresql.PGCMBackend.CMSqlException;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.junit.Ignore;
 import org.junit.Test;

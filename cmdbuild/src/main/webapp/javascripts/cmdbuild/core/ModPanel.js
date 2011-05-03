@@ -17,6 +17,7 @@ CMDBuild.ModPanel = Ext.extend(Ext.Panel, {
 		if (activateThePanel) {
 			this.ownerCt.layout.setActiveItem(this.id);
 		}
+		this.fireEvent("select", eventParams);
 	},
 
 	initComponent: function() {

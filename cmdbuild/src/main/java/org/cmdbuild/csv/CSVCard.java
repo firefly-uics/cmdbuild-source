@@ -5,18 +5,15 @@ import java.util.Map;
 
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.CardFactoryImpl;
-import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.CardForwarder;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
 
 public class CSVCard extends CardForwarder implements Comparable<CSVCard> {
@@ -84,14 +81,10 @@ public class CSVCard extends CardForwarder implements Comparable<CSVCard> {
 		Object value;
 		switch (attribute.getType()) {
 		case LOOKUP:
-			Integer lookupId = Integer.valueOf(stringValue);
-			value = SchemaCache.getInstance().getLookup(lookupId);
-			if (value == null) {
-				throw NotFoundExceptionType.LOOKUP_NOTFOUND.createException(stringValue);
-			}
+			value = Integer.valueOf(stringValue);
 			break;
 		case REFERENCE:
-			Integer referenceId = Integer.valueOf(stringValue);
+			final Integer referenceId = Integer.valueOf(stringValue);
 			value = new Reference(av.getSchema().getReferenceDirectedDomain(), referenceId, valueDescription);
 			break;
 		default:
@@ -108,12 +101,8 @@ public class CSVCard extends CardForwarder implements Comparable<CSVCard> {
 		}
 		switch (attribute.getType()) {
 		case LOOKUP:
-			Lookup lookup = SchemaCache.getInstance().getLookup(
-					attribute.getLookupType().getType(), csvValue );
-			if (lookup == null)
-				throw NotFoundExceptionType.LOOKUP_NOTFOUND.createException(csvValue);
-			else
-				av.setValue(lookup);
+			final String lookupDescription = csvValue;
+			av.setValue(lookupDescription);
 			break;
 		case REFERENCE:
 			ITable referenceTable = attribute.getReferenceTarget();
