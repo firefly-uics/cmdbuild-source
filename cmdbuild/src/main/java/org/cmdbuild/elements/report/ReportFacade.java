@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.wrappers.ReportCard;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportFacade {
 
@@ -13,7 +14,8 @@ public class ReportFacade {
 	 * THE DAO LAYER SHOULD BE USED INSTEAD OF THE DATABASE BACKEND AFTER THE ARRAY AND BINARY ATTRIBUTE TYPES ARE SUPPORTED
 	 */
 
-	private static final CMBackend backend = new CMBackend();
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	public List<String> getReportTypes() {
 		return backend.getReportTypes();

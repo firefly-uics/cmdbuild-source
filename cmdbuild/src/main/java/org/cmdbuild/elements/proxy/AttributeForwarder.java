@@ -80,8 +80,6 @@ public class AttributeForwarder implements IAttribute {
 	public int getClassOrder() { return a.getClassOrder(); }
 	public void setClassOrder(int classOrder) { a.setClassOrder(classOrder); }
 
-	public void reloadCache() { a.reloadCache(); }
-
 	public DirectedDomain getReferenceDirectedDomain() {return a.getReferenceDirectedDomain(); }
 
 	public Map<String, String> genDataDefinitionMeta() { return a.genDataDefinitionMeta(); }

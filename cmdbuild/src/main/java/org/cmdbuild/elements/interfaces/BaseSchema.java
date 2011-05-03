@@ -42,8 +42,6 @@ public interface BaseSchema {
 		 			add(AttributeType.POINT);
 		 			add(AttributeType.LINESTRING);
 		 			add(AttributeType.POLYGON);
-		 		} else {
-		 			add(AttributeType.FOREIGNKEY);
 		 		}
 	 		}};
 	 	}
@@ -178,8 +176,6 @@ public interface BaseSchema {
 	public void addAttribute(IAttribute attribute);
 	public Map<String, IAttribute> getAttributes();
 	public IAttribute getAttribute(String name);
-
-	public void reloadCache();
 
 	/*
 	 * For classes is the class name, but for domains it contains the domain prefix

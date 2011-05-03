@@ -5,30 +5,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
-import org.cmdbuild.elements.interfaces.ObjectWithId;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.ObjectWithId;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.utils.StringUtils;
 
 public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	private static final long serialVersionUID = 1L;
-
-	private static CMBackend backend = new CMBackend();
+	private static final String LOOKUP_TABLE_NAME = "LookUp";
 
 	static protected List<String> IGNOREDATTRS = Arrays.asList("User", "BeginDate", "ParentType");
 
 	public Lookup() throws NotFoundException {
-		this.schema = TableImpl.get("LookUp");
+		this.schema = getLookupTable();
 	}
 
 	public Lookup(Lookup lookup) throws NotFoundException {
-		this.schema = TableImpl.get("LookUp");
+		this.schema = getLookupTable();
 		setAttributeValueMap(lookup.getAttributeValueMap());
+	}
+
+	private ITable getLookupTable() {
+		return UserContext.systemContext().tables().get(LOOKUP_TABLE_NAME);
 	}
 
 	public Integer getParentId() {
@@ -36,12 +39,11 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 	}
 
 	public void setParentId(Integer id) throws ORMException {
-		SchemaCache sc = SchemaCache.getInstance();
-		String parentType = this.getParentType();
-		Lookup parent = sc.getLookup(id);
+		String parentType = this.getParentTypeName();
+		Lookup parent = backend.getLookup(id);
 		if ((parent != null)
 				&& (parentType != null)
-				&& parentType.equals(sc.getLookupType(this.getParentType())
+				&& parentType.equals(backend.getLookupType(this.getParentTypeName())
 						.getType())) {
 			setValue("ParentId", id);
 		} else {
@@ -50,12 +52,12 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 	}
 
 	public Lookup getParent() {
-		return SchemaCache.getInstance().getLookup(this.getParentId());
+		return backend.getLookup(this.getParentId());
 	}
 
-	public String getParentType() {
+	public String getParentTypeName() {
 		try {
-			return SchemaCache.getInstance().getLookupType(this.getType()).getParentType();
+			return backend.getLookupType(this.getType()).getParentTypeName();
 		} catch (Exception e) {
 			return null;
 		}
@@ -93,7 +95,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
 		// the type must exist
-		if (null == SchemaCache.getInstance().getLookupType(type))
+		if (null == backend.getLookupType(type))
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		setValue("Type", type);
 	}
@@ -150,8 +152,8 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		try {
 			if (values.containsKey("ParentId")) {
 				AttributeValue parentType = new AttributeValue(schema.getAttribute("ParentType"));
-				if (!("".equals(getParentType()))) {
-					parentType.setValue(getParentType());
+				if (!("".equals(getParentTypeName()))) {
+					parentType.setValue(getParentTypeName());
 					parentType.setChanged(values.get("ParentId").isChanged());
 					values.put("ParentType", parentType);
 				}
@@ -167,7 +169,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		setDefaultValueIfPresent(CardAttributes.ClassId.toString(), (Integer)schema.getId());
 		setDefaultValueIfPresent("IsDefault", Boolean.FALSE);
 		setDefaultValueIfPresent("Number", Integer.valueOf(0));
-		if (values.containsKey("ParentType") && "".equals(getParentType())) {
+		if (values.containsKey("ParentType") && "".equals(getParentTypeName())) {
 			values.remove("ParentType");
 		}
 		super.save();
@@ -182,8 +184,6 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 	@Override
 	protected int create() throws ORMException {
 		int id = backend.createLookup(this);
-		/* UPDATE THE LOOKUP! DON'T RELOAD THE ENTIRE TREE! */
-		SchemaCache.getInstance().refreshLookups();
 		return id;
 	}
 

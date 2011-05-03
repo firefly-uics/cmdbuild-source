@@ -4,15 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
@@ -95,4 +96,14 @@ public class UserCard extends LazyCard implements User {
 		return list;
 	}
 
+	public static Iterable<UserCard> allByUsername() throws NotFoundException, ORMException {
+		final List<UserCard> list = new LinkedList<UserCard>();
+		final Iterable<ICard> query = userClass.cards().list()
+			.filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value())
+			.order("Username",OrderFilterType.ASC).ignoreStatus();
+		for (final ICard card : query) {
+			list.add(new UserCard(card));
+		}
+		return list;
+	}
 }

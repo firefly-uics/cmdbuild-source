@@ -1,16 +1,17 @@
 package org.cmdbuild.elements;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.services.SchemaCache;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class LookupType {
 
 	private static final long serialVersionUID = 1L;
 
-	private static CMBackend backend = new CMBackend();
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	private String type;
 	private String parentType;
@@ -43,7 +44,11 @@ public class LookupType {
 		return savedType;
 	}
 
-	public String getParentType() {
+	public LookupType getParentType() {
+		return backend.getLookupType(parentType);
+	}
+
+	public String getParentTypeName() {
 		return parentType;
 	}
 
@@ -75,18 +80,15 @@ public class LookupType {
 	protected void create() throws ORMException {
 		backend.createLookupType(this);
 		savedType = type;
-		SchemaCache.getInstance().refreshLookups();
 	}
 
 	protected void modify() throws ORMException {
 		backend.modifyLookupType(this);
-		SchemaCache.getInstance().refreshLookups();
 	}
 
 	@Deprecated
 	protected void delete() throws ORMException {
 		backend.deleteLookupType(this);
-		SchemaCache.getInstance().refreshLookups();
 	}
 
 	@Override
@@ -108,7 +110,7 @@ public class LookupType {
 		return this.getType();
 	}
 
-	public void reloadCache() {
-		SchemaCache.getInstance().refreshLookups();
+	public Lookup getLookup(final String description) {
+		return backend.getLookup(type, description);
 	}
 }

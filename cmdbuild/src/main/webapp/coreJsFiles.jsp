@@ -22,8 +22,20 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/PanelOverride.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/ServiceProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/AdministrationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/TabPanel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/CMBaseController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/error/CMError.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMModelBuilder.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMModelLibraryBuilder.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMAttributeModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMAttributeModelLibrary.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMDomainModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMDomainModelLibrary.js"></script>
+
+<script type="text/javascript" src="javascripts/cmdbuild/core/tree/CMDomainTreeNode.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/tree/CMDomainTree.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreePanelController.js"></script>
@@ -55,4 +67,4 @@
 <script type="text/javascript" src="javascripts/cmdbuild/grid/XCheckboxSelectionModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/grid/CMCheckboxSelectionModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/grid/XGroupingView.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CmdbCache.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>

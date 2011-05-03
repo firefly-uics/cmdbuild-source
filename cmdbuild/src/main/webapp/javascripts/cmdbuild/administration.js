@@ -1,12 +1,14 @@
 Ext.onReady(function() {
 	Ext.QuickTips.init();
 	CMDBuild.InitHeader();
-
+	
+	CMDBuild.identifiers = {};
+	
 	var splash = new CMDBuild.Splash('splashScreen','splashScreen');
 	splash.setText(CMDBuild.Translation.common.loading_mask.configuration);
 	splash.show();
 	
-	CMDBuild.ChainedAjax.execute({
+	CMDBuild.ConcurrentAjax.execute({
 		loadMask: false,
 		requests: [{
 			url: 'services/json/schema/setup/getconfiguration',
@@ -41,6 +43,13 @@ Ext.onReady(function() {
 				CMDBuild.Cache.setTables(decoded.classes);
 			}
 		},{
+			url: "services/json/schema/modclass/getalldomains",
+			maskMsg: CMDBuild.Translation.common.loading_mask.domain,
+			success: function(response, options, decoded) {
+				splash.setText(CMDBuild.Translation.common.loading_mask.domain);
+				CMDBuild.Cache.setDomains(decoded.domains);
+			}
+		},{
         	url: 'services/json/schema/modlookup/tree',
         	maskMsg: CMDBuild.Translation.common.loading_mask.lookup,
             success: function(response, options, decoded) {
@@ -67,6 +76,15 @@ Ext.onReady(function() {
 	});
 	
 	function displayViewport() {
+		var domainTree = new CMDBuild.administration.domain.CMDomainAccordion({
+			eventType: "domain",
+			controllerType: "CMDomainAccordionController"
+		});
+		
+		CMDBuild.identifiers.accordion = {
+			domain: domainTree.id
+		};
+
 		var viewport = new CMDBuild.MainViewport({
 			colorsConst: CMDBuild.Constants.colors.gray,
 			controllerType: "AdminViewportController",
@@ -77,7 +95,8 @@ Ext.onReady(function() {
 				new CMDBuild.Administration.WorkflowTree({
 					eventType: "processclass",
 					controllerType: "WorkflowTreePanelController"
-				}),		
+				}),
+				domainTree,
 				new CMDBuild.TreePanel({
 					border: false,
 					rootVisible: false,
@@ -109,6 +128,7 @@ Ext.onReady(function() {
 				new CMDBuild.Administration.SetupTree()
 			],
 			modules: [
+				new CMDBuild.administration.domain.ModDomain(),
 				new CMDBuild.Administration.ModClass(),
 				new CMDBuild.Administration.ModWorkflow(),
 				new CMDBuild.Administration.ModLookup(),
@@ -130,6 +150,8 @@ Ext.onReady(function() {
 				new CMDBuild.UnconfiguredModPanel()
 			]
 		});
+		
+		new CMDBuild.administration.CMMainController(viewport);
 		
 		(function() {
 		splash.hide();

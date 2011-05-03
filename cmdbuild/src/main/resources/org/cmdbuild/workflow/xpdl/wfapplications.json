@@ -655,5 +655,15 @@
 		         {type:'BOOLEAN',mode:'OUT',id:'Done'}
 		         ],
 		extattrs: [{ToolAgentClass:'org.cmdbuild.shark.toolagent.ManageRelationToolAgent'}]
+	},
+	addDays: {
+		description: 'add a given number of days to the specified date ',
+		params: [{type:'DATETIME',mode:'IN',id:'InputDate'},
+		{type:'INT',mode:'IN',id:'Days'},
+		{type:'DATETIME',mode:'OUT',id:'OutputDate'}],
+		extattrs: [{
+			ToolAgentClass: 'org.enhydra.shark.toolagent.BshToolAgent',
+			Script: 'days= Days.intValue(); calendar = Calendar.getInstance(); calendar.setTime(InputDate); calendar.add(Calendar.DATE,days); OutputDate=calendar.getTime();'
+		}]
 	}
 }

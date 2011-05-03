@@ -2,19 +2,21 @@ package org.cmdbuild.elements;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.services.meta.MetadataMap;
 import org.cmdbuild.services.meta.MetadataService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseSchemaImpl implements BaseSchema {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static final CMBackend backend = new CMBackend();
+	@Autowired
+	protected CMBackend backend = CMBackend.INSTANCE;
 
 	protected int oid;
 
@@ -123,8 +125,6 @@ public abstract class BaseSchemaImpl implements BaseSchema {
 	public final MetadataMap getMetadata() {
 		return MetadataService.getMetadata(this);
 	}
-
-	public abstract void reloadCache();
 
 	abstract public void readDataDefinitionMeta(Map<String, String> dataDefinitionMeta);
 

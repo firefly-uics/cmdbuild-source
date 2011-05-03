@@ -8,21 +8,19 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
-import org.cmdbuild.dao.backend.postgresql.CardQueryBuilder;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.report.ReportFacade;
 import org.cmdbuild.elements.report.ReportFactory;
+import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
+import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.elements.report.ReportFactoryDB;
 import org.cmdbuild.elements.report.ReportFactoryTemplate;
 import org.cmdbuild.elements.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.elements.report.ReportFactoryTemplateList;
 import org.cmdbuild.elements.report.ReportParameter;
-import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
-import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
@@ -38,7 +36,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@SuppressWarnings("restriction")
 public class ModReport extends JSONBase {
 	
 	private static final long serialVersionUID = 1L;
@@ -270,24 +267,15 @@ public class ModReport extends JSONBase {
 	 * Print cards on screen
 	 */
     @JSONExported
-    public JSONObject printCurrentView(
-                    JSONObject serializer,
+    public void printCurrentView(
                     @Parameter("columns") JSONArray columns,
                     @Parameter("type") String type,
                     CardQuery cardQuery) throws Exception {
-    	CMBackend backend = new CMBackend();
-    	// get data
-    	CardQuery workQuery = (CardQuery) cardQuery.clone();
-        List<String> attributeOrder = jsonArrayToStringList(columns);
-        workQuery.limit(0);
-		CardQueryBuilder qb = new CardQueryBuilder();
-		String query = backend.cardQueryToSQL(workQuery, qb); // TODO Move it to a report facade
-
-		// print report
-		ReportFactoryTemplateList rft = new ReportFactoryTemplateList(ReportExtension.valueOf(type.toUpperCase()), query, attributeOrder, cardQuery.getTable());
+    	final List<String> attributeOrder = jsonArrayToStringList(columns);
+    	final CardQuery reportQuery = ((CardQuery) cardQuery.clone()).limit(0);
+		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList(ReportExtension.valueOf(type.toUpperCase()), reportQuery, attributeOrder, cardQuery.getTable());
 		rft.fillReport();
 		new SessionVars().setReportFactory(rft);
-		return serializer;
     }
 
     private List<String> jsonArrayToStringList(JSONArray columns) throws JSONException {

@@ -57,8 +57,6 @@ public class DomainForwarder implements IDomain {
 
 	public MetadataMap getMetadata() { return d.getMetadata(); }
 
-	public void reloadCache() { d.reloadCache(); }
-
 	public Map<String, String> genDataDefinitionMeta() { return d.genDataDefinitionMeta(); }
 	public void readDataDefinitionMeta(Map<String, String> dataDefinitionMeta) { d.readDataDefinitionMeta(dataDefinitionMeta); }
 

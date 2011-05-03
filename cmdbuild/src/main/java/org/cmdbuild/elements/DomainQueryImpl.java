@@ -2,15 +2,18 @@ package org.cmdbuild.elements;
 
 import java.util.Iterator;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.interfaces.DomainQuery;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class DomainQueryImpl implements DomainQuery {
 
-	private static final CMBackend backend = new CMBackend();
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
+
 	private ITable table;
 	private boolean inherited;
 

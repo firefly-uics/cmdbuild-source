@@ -19,20 +19,22 @@ import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.backend.postgresql.CardQueryBuilder;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.report.ReportFactoryTemplateDetailSubreport.SubreportType;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
-	private static final CMBackend backend = new CMBackend();
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	private ICard card;
 	private UserContext userCtx;
