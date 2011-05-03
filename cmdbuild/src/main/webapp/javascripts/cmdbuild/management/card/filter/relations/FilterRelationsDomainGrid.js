@@ -176,7 +176,7 @@ CMDBuild.Management.FilterRelationsDomainGrid = Ext.extend(CMDBuild.EditorGrid, 
         	
         	var params = {
         		checked: all,
-        		domain: domain,
+        		domain: directedDomain,
         		record: record
         	};
         	grid.fireEvent('cmdb-allChecked', params);
