@@ -9,14 +9,22 @@
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerLayersGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClass.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClassController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/SetOrderWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/form/CMFormTemplate.js"></script>
+
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeForm.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeFormController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGrid.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGridController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributesController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainForm.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainFormController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainFormController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomainController.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script><!-- inherit from FeatureTypeGrid -->
 <script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>
@@ -60,4 +68,5 @@
 <script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupWorkflow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupGis.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration/setup/SetupTree.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/administration/CMMainController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script>

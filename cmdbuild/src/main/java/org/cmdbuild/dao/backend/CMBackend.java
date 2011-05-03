@@ -85,6 +85,7 @@ public abstract class CMBackend {
 
 	public abstract void deleteDomain(IDomain domain);
 
+	public abstract Iterable<IDomain> getDomainList();
 	public abstract Iterator<IDomain> getDomainList(DomainQuery query);
 
 	public abstract Map<Integer, IDomain> loadDomainMap();

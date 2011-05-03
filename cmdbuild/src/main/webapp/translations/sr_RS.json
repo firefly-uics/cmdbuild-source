@@ -521,6 +521,7 @@
       "loading": "Учитавање у току...",
       "loading_mask": {
          "classes": "Учитавање класа",
+         "domain": "<em>Loading domains</em>",
          "configuration": "Учитавање конфигурације",
          "group": "Учитавање листе група и корисника",
          "lookup": "Учитавање листи шифарника",

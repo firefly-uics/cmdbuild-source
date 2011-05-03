@@ -5,7 +5,7 @@
 	CMDBuild.administration.domain.CMDomainForm = Ext.extend(CMDBuild.administration.form.CMFormTemplate, {
 		translation : CMDBuild.Translation.administration.modClass.domainProperties,
 		model: null,
-		MODEL_STRUCTURE: CMDBuild.core.model.CMDomainModel.STRUCTURE,
+		MODEL_TYPE: CMDBuild.core.model.CMDomainModel,
 		
 		initComponent : function() {
 			this.modifyButtonLabel = this.translation.modify_domain;
@@ -17,14 +17,14 @@
 				xtype: 'xcheckbox',
 				fieldLabel: this.translation.master_detail,
 				width: 220,
-				name: this.MODEL_STRUCTURE.isMasterDetail.name,
+				name: this.MODEL_TYPE.STRUCTURE.isMasterDetail.name,
 				disabled: true
 			});
 
 			this.active = new Ext.ux.form.XCheckbox({
 				fieldLabel: this.translation.is_active,
 				width: 220,
-				name: this.MODEL_STRUCTURE.active.name,
+				name: this.MODEL_TYPE.STRUCTURE.active.name,
 				checked: true,
 				disabled: true
 			});
@@ -33,7 +33,7 @@
 				xtype: 'combo',
 				fieldLabel: this.translation.cardinality,
 				width: 220,
-				name: this.MODEL_STRUCTURE.cardinality.name,
+				name: this.MODEL_TYPE.STRUCTURE.cardinality.name,
 				valueField: 'name',
 				displayField: 'value',
 				triggerAction: 'all',
@@ -55,7 +55,7 @@
 			
 			this.domainName = new Ext.form.TextField({
 				fieldLabel : this.translation.name,
-				name : this.MODEL_STRUCTURE.name.name,
+				name : this.MODEL_TYPE.STRUCTURE.name.name,
 				width : 220,
 				allowBlank : false,
 				disabled : true,
@@ -66,14 +66,14 @@
 			this.domainDescription = new Ext.form.TextField({
 				fieldLabel : this.translation.description,
 				width : 220,
-				name : this.MODEL_STRUCTURE.description.name,
+				name : this.MODEL_TYPE.STRUCTURE.description.name,
 				disabled : true,
 				allowBlank : false,
 				vtype : 'cmdbcomment'
 			});
 			
 			this.formFields = [{
-				name: this.MODEL_STRUCTURE.id.name,
+				name: this.MODEL_TYPE.STRUCTURE.id.name,
 				xtype: 'hidden',
 				value: -1
 			},
@@ -82,8 +82,8 @@
 			{
 				xtype: 'combo',
 				fieldLabel: this.translation.class_target,
-				name: this.MODEL_STRUCTURE.idClass1.name,
-				hiddenName: this.MODEL_STRUCTURE.idClass1.name,
+				name: this.MODEL_TYPE.STRUCTURE.idClass1.name,
+				hiddenName: this.MODEL_TYPE.STRUCTURE.idClass1.name,
 				width: 220,
 				triggerAction: 'all',
 				valueField: 'id',
@@ -96,8 +96,8 @@
 			}, {
 				xtype: 'combo',
 				fieldLabel: this.translation.class_destination,
-				name: this.MODEL_STRUCTURE.idClass2.name,
-				hiddenName: this.MODEL_STRUCTURE.idClass2.name,
+				name: this.MODEL_TYPE.STRUCTURE.idClass2.name,
+				hiddenName: this.MODEL_TYPE.STRUCTURE.idClass2.name,
 				width: 220,
 				triggerAction: 'all',
 				valueField: 'id',
@@ -112,7 +112,7 @@
 				fieldLabel: this.translation.description_direct,
 				width: 220,
 				allowBlank: false,
-				name: this.MODEL_STRUCTURE.directDescription.name,
+				name: this.MODEL_TYPE.STRUCTURE.directDescription.name,
 				disabled: true,
 				vtype: 'cmdbcomment'
 			}, {
@@ -120,7 +120,7 @@
 				fieldLabel: this.translation.description_inverse,
 				width: 220,
 				allowBlank: false,
-				name: this.MODEL_STRUCTURE.reverseDescription.name,
+				name: this.MODEL_TYPE.STRUCTURE.reverseDescription.name,
 				disabled: true,
 				vtype: 'cmdbcomment'
 			},

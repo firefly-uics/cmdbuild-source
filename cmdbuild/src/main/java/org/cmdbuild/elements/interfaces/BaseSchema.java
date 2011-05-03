@@ -42,8 +42,6 @@ public interface BaseSchema {
 		 			add(AttributeType.POINT);
 		 			add(AttributeType.LINESTRING);
 		 			add(AttributeType.POLYGON);
-		 		} else {
-		 			add(AttributeType.FOREIGNKEY);
 		 		}
 	 		}};
 	 	}

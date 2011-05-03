@@ -43,6 +43,13 @@ Ext.onReady(function() {
 				CMDBuild.Cache.setTables(decoded.classes);
 			}
 		},{
+			url: "services/json/schema/modclass/getalldomains",
+			maskMsg: CMDBuild.Translation.common.loading_mask.domain,
+			success: function(response, options, decoded) {
+				splash.setText(CMDBuild.Translation.common.loading_mask.domain);
+				CMDBuild.Cache.setDomains(decoded.domains);
+			}
+		},{
         	url: 'services/json/schema/modlookup/tree',
         	maskMsg: CMDBuild.Translation.common.loading_mask.lookup,
             success: function(response, options, decoded) {
@@ -74,9 +81,6 @@ Ext.onReady(function() {
 			controllerType: "CMDomainAccordionController"
 		});
 		
-		var modDomain = new CMDBuild.administration.domain.ModDomain();
-		new CMDBuild.administration.domain.ModDomainController(modDomain, domainTree);
-
 		CMDBuild.identifiers.accordion = {
 			domain: domainTree.id
 		};
@@ -124,7 +128,7 @@ Ext.onReady(function() {
 				new CMDBuild.Administration.SetupTree()
 			],
 			modules: [
-				modDomain,
+				new CMDBuild.administration.domain.ModDomain(),
 				new CMDBuild.Administration.ModClass(),
 				new CMDBuild.Administration.ModWorkflow(),
 				new CMDBuild.Administration.ModLookup(),
@@ -146,6 +150,8 @@ Ext.onReady(function() {
 				new CMDBuild.UnconfiguredModPanel()
 			]
 		});
+		
+		new CMDBuild.administration.CMMainController(viewport);
 		
 		(function() {
 		splash.hide();

@@ -27,6 +27,9 @@
 		WRONG_UPDATE_PARAMETER: "To update the model must pass an object",
 		REQUIRED_ATTRIBUTE: function(attrName) {
 			return "The attribute "+ attrName +" is required";
+		},
+		EXISTING_KEY: function(key) {
+			return "There is already a model with id " + key + " in the libraly";
 		}
 	};
 	
@@ -38,5 +41,11 @@
 	
 	CMDBuild.core.error.serviceProxy = {
 		NO_FORM: "A form is required"
+	};
+	
+	CMDBuild.core.error.controller = {
+		NO_VIEW: function(controllerName) {
+			return "You are trying to instantiate a " + controllerName + " without a view";
+		}
 	}
 })();

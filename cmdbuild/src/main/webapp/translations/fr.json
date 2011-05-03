@@ -521,6 +521,7 @@
       "loading": "Chargement...",
       "loading_mask": {
          "classes": "Chargement classes",
+         "domain": "<em>Loading domains</em>",
          "configuration": "Chargement configuration",
          "group": "Chargement utilisateurs et groupes",
          "lookup": "Chargement des types de Catalogues",

@@ -30,25 +30,44 @@
 		};
 		
 		var ALLOWED_MODEL = conf.modelName;
+		var KEY_ATTRIBUTE = conf.keyAttribute;
+		
 		var Library = Ext.extend(Ext.util.Observable, {
 			constructor: function() {
 				this.CMEVENTS = Library.CMEVENTS;
+				this.KEY_ATTRIBUTE = Library.KEY_ATTRIBUTE;
+				
 				this.map = {},
 				this.add = function(model) {
 					if (!model) {
 						throw CMDBuild.core.error.model.A_MODEL_IS_REQUIRED;
 					} else if (model.NAME == ALLOWED_MODEL) {
+						if (typeof this.map[getKey(model)] != "undefined") {
+							throw CMDBuild.core.error.model.EXISTING_KEY(getKey(model));
+						}
 						this.map[getKey(model)] = model;
 						
 						model.on(model.CMEVENTS.DESTROY, function() {
 							this.remove(getKey(model));
 						}, this);
 						
+						this.onAdd(model);
 						this.fireEvent(this.CMEVENTS.ADD, model);
 					} else {
 						throw CMDBuild.core.error.model.ADD_WRONG_MODEL_TO_LIBRARY;
 					}
 				};
+
+				this.remove = function(id) {
+					if (id) {
+						delete this.map[id];
+						this.onRemove(id);
+						this.fireEvent(this.CMEVENTS.REMOVE, id);
+					} else {
+						throw CMDBuild.core.error.model.REMOVE_WITHOUT_ID;
+					}
+				};
+
 				this.get = function(id) {
 					if (id) {
 						return this.map[id];
@@ -56,14 +75,7 @@
 						throw CMDBuild.core.error.model.GET_WITHOUT_ID;
 					}
 				};
-				this.remove = function(id) {
-					if (id) {
-						delete this.map[id];
-						this.fireEvent(this.CMEVENTS.REMOVE, id);
-					} else {
-						throw CMDBuild.core.error.model.REMOVE_WITHOUT_ID;
-					}
-				};
+
 				this.count = function() {
 					var i = 0;
 					for (var k in this.map) {
@@ -71,22 +83,29 @@
 					}
 					return i;
 				};
+
 				this.clear = function() {
 					for (var k in this.map) {
 						this.remove(k);
 					}
 				};
+
 				this.hasModel = function(id) {
 					return (typeof this.map[id] === "object");
 				};
+
 				this.toString = function() {
 					return NS+".CMModelLibraryBuilder<" +ALLOWED_MODEL+ ">";
 				};
 				
+				// templates to extend behavior
+				this.onAdd = Ext.emptyFn;
+				this.onRemove = Ext.emptyFn;
 				Library.superclass.constructor.call(this, arguments);
 			}
 		});
 		Library.ALLOWED_MODEL = ALLOWED_MODEL;
+		Library.KEY_ATTRIBUTE = KEY_ATTRIBUTE;
 		Library.CMEVENTS = {
 			ADD: "add",
 			REMOVE: "remove"

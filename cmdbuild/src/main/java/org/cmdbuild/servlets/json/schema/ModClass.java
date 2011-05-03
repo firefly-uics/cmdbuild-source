@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.cmdbuild.elements.AttributeImpl;
-import org.cmdbuild.elements.DomainFactoryImpl;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.DomainFactory;
@@ -119,9 +118,8 @@ public class ModClass extends JSONBase {
 	public JSONObject getAllClasses(
 			JSONObject serializer,
 			@Parameter(value="active", required=false) boolean active,
-			ITableFactory tf,
 			UserContext userCtx) throws JSONException, AuthException {
-		Iterable<ITable> allTables = tf.list();
+		final Iterable<ITable> allTables = userCtx.tables().list();
 		
 		for (ITable table: allTables) {
 			if (!table.getMode().isDisplayable()) {
@@ -130,19 +128,25 @@ public class ModClass extends JSONBase {
 			if (active && !isActive(table)) {
 				continue;
 			}
-			JSONObject jsonTable = Serializer.serializeTable(table);
-			
-			//TODO Paolo has to do something better
-			DomainFactory df = new DomainFactoryImpl(userCtx);
-			JSONArray jsonDomain = new JSONArray();
-			for(IDomain domain : df.list(table).inherited()) {
-				jsonDomain.put(Serializer.serializeDomain(domain));
-			}
-			jsonTable.put("domains", jsonDomain);
-			// end
-			
+			final JSONObject jsonTable = Serializer.serializeTable(table);
 			serializer.append("classes", jsonTable);
 		}
+		return serializer;
+	}
+
+	@Admin
+	@JSONExported
+	public JSONObject getAllDomains(
+			JSONObject serializer,
+			UserContext userCtx) throws JSONException, AuthException {
+		final Iterable<IDomain> allDomains = userCtx.domains().list();
+		JSONArray jsonDomains = new JSONArray();
+		for (IDomain domain: allDomains) {
+			if (domain.getMode().isCustom()) {
+				jsonDomains.put(Serializer.serializeDomain(domain));
+			}
+		}
+		serializer.put("domains", jsonDomains);
 		return serializer;
 	}
 
@@ -202,9 +206,10 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public JSONObject getAttributeTypes(
 			ITable table,
+			@Parameter("tableType") String tableTypeStirng,
 			JSONObject serializer ) throws JSONException, AuthException {
 		
-		CMTableType tableType = table.getTableType();
+		CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
 		
 		for(AttributeType type : tableType.getAvaiableAttributeList()) {
 			if (type.isReserved()) {
@@ -309,7 +314,7 @@ public class ModClass extends JSONBase {
 			@Parameter(value="fkDestination", required=false) int fkDestinationId,
 			@Parameter(value="group", required=false) String group,
 			@Parameter(value="meta", required=false) JSONObject meta,
-			ITable table,
+			BaseSchema table,
 			UserContext userCtx) throws JSONException, CMDBException {
 		IAttribute attribute;
 		try {
@@ -378,8 +383,8 @@ public class ModClass extends JSONBase {
 		NOT_MODIFIED // notmodified?
 	}
 
-	private void manageMetaData(JSONObject metaInRequest, 
-			BaseSchema attribute, ITable table) throws JSONException {
+	private void manageMetaData(JSONObject metaInRequest,
+			IAttribute attribute, BaseSchema table) throws JSONException {
 		Iterator<?> keyRequest = metaInRequest.keys();
 		while (keyRequest.hasNext()) {
 			String metaName = (String) keyRequest.next();
@@ -403,7 +408,7 @@ public class ModClass extends JSONBase {
 	public JSONObject deleteAttribute(
 			JSONObject serializer,
 			@Parameter("name") String attributeName,
-			ITable table) throws JSONException {
+			BaseSchema table) throws JSONException {
 		IAttribute attribute = table.getAttribute(attributeName);
 		try {
 			attribute.delete();
@@ -515,7 +520,7 @@ public class ModClass extends JSONBase {
 			) throws JSONException {
 		JSONArray rows = new JSONArray();
 		for(IDomain domain : df.list(table).inherited()) {
-			rows.put(Serializer.serializeDomain(domain));
+			rows.put(Serializer.serializeDomain(domain, table));
 		}
 		serializer.put("rows", rows);
 		if (withSuperclasses) {

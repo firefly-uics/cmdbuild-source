@@ -1,5 +1,8 @@
 package org.cmdbuild.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.DomainQuery;
@@ -53,5 +56,17 @@ public class DomainFactoryImpl implements DomainFactory {
 	public DomainQuery list(ITable table) {
 		DomainQuery domainQuery = new DomainQueryImpl(table);
 		return new DomainQueryProxy(domainQuery, userCtx);
+	}
+
+	@Override
+	public Iterable<IDomain> list() {
+		final List<IDomain> domainList = new ArrayList<IDomain>();
+		for (IDomain realDomain : backend.getDomainList()) {
+			if (userCtx.privileges().hasReadPrivilege(realDomain)) {
+				final IDomain domain = new DomainProxy(realDomain, userCtx);
+				domainList.add(domain);
+			}
+		}
+		return domainList;
 	}
 }

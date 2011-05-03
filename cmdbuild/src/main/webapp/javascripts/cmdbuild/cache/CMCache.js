@@ -213,20 +213,22 @@
 				this.tableMaps[group] = {};
 			}
 			this.tableMaps[group][table.id] = table;
-			
-			if (table.domains) {
-				for (var i=0, l=table.domains.length; i<l; ++i) {
-					var rawDomain = table.domains[i];
-					try {
-						var domain = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
-						CMDomainModelLibrary.add(domain);
-					} catch (e) {
-						_debug(e, "I can not add this domain", rawDomain);
-					}
+			return group;
+		},
+		
+		setDomains: function(domains) {
+			domains = domains || [];
+			for (var i=0, l=domains.length; i<l; ++i) {
+				var rawDomain = domains[i];
+				try {
+					var domain = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
+					CMDomainModelLibrary.add(domain);
+					var attributeLibary = domain.getAttributeLibrary();
+					addAttributesToDomain(rawDomain, domain);
+				} catch (e) {
+					_debug(e, "I can not add this domain", rawDomain);
 				}
 			}
-			
-			return group;
 		},
 		
 		getTablesByGroup: function(groupName) {
@@ -557,6 +559,21 @@
 		},
 		getTableGroup: getTableGroup
 	});
-
+	
+	function addAttributesToDomain(rawDomain, domain) {
+		var rawAttributes = rawDomain.attributes;
+		var attributeLibrary = domain.getAttributeLibrary();
+		for (var i=0, l=rawAttributes.length; i<l; ++i) {
+			
+			var rawAttribute = rawAttributes[i];
+			try {
+				var attr = CMDBuild.core.model.CMAttributeModel.buildFromJson(rawAttribute);
+				attributeLibrary.add(attr);
+			} catch (e) {
+				_debug(e);
+			}
+		}
+	}
+	
 	CMDBuild.Cache = new CMDBuild.cache.CMCache();
 })();

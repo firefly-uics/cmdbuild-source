@@ -25,9 +25,12 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/AdministrationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/TabPanel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/CMBaseController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/error/CMError.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/model/CMModelBuilder.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/model/CMModelLibraryBuilder.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMAttributeModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/model/CMAttributeModelLibrary.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/model/CMDomainModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/model/CMDomainModelLibrary.js"></script>
 

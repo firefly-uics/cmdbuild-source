@@ -1,27 +1,21 @@
 (function() {
 	
-Ext.ns("CMDBuild.administration.form");
-
-CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
+Ext.ns("CMDBuild.administration.domain");
+var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
+	
+CMDBuild.administration.domain.CMDomainAttributeForm = Ext.extend(
+		CMDBuild.administration.form.CMFormTemplate, {
 	translation: CMDBuild.Translation.administration.modClass.attributeProperties,
-	constructor: function() {
-		this.modifyButton = new Ext.Button({	
-			iconCls: "modify",
-			text: this.translation.modify_attribute,
-			handler: this.onModifyAction,
-			scope: this
-		});
-
-		this.deleteButton = new Ext.Button({
-			iconCls: "delete",
-			text: this.translation.delete_attribute,
-			handler: this.onDeleteAction,
-			scope: this
-		});
+	MODEL_TYPE: CMDBuild.core.model.CMAttributeModel,
+	
+	initComponent:function() {
+		this.modifyButtonLabel = this.translation.modify_attribute;
+		this.deleteButtonLabel = this.translation.delete_attribute;
 
 		this.attributeName = new Ext.form.TextField({
 			fieldLabel : this.translation.name,
-			name : "name",
+			_name : this.MODEL_TYPE.STRUCTURE.name.name,
+			name: "name",
 			width : 220,
 			disabled : true,
 			allowBlank : false,
@@ -32,7 +26,8 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		this.attributeDescription = new Ext.form.TextField({
 			fieldLabel : this.translation.description,
 			width : 220,
-			name : "description",
+			_name : this.MODEL_TYPE.STRUCTURE.description.name,
+			name: "description",
 			disabled : true,
 			allowBlank : false,
 			vtype: "cmdbcomment"
@@ -40,29 +35,34 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 
 		this.attributeIsBaseDsp = new Ext.ux.form.XCheckbox({
 			fieldLabel: this.translation.isbasedsp,
+			_name: this.MODEL_TYPE.STRUCTURE.shownAsGridColumn.name,
 			name: "isbasedsp",
 			disabled: true
 		});
 
 		this.attributeNotNull = new Ext.ux.form.XCheckbox({
 			fieldLabel: this.translation.isnotnull,
+			_name: this.MODEL_TYPE.STRUCTURE.notnull.name,
 			name: "isnotnull",
 			disabled: true
 		});
 
 		this.attributeUnique = new Ext.ux.form.XCheckbox({
 			fieldLabel: this.translation.isunique,
+			_name: this.MODEL_TYPE.STRUCTURE.unique.name,
 			name: "isunique",
 			disabled: true
 		});
 
 		this.attributeActive = new Ext.ux.form.XCheckbox({
 			fieldLabel: this.translation.isactive,
+			_name: this.MODEL_TYPE.STRUCTURE.active.name,
 			name: "isactive",
 			disabled: true
 		});
 
-		this.attributeMode = new Ext.form.ComboBox({ 
+		this.attributeMode = new Ext.form.ComboBox({
+			_name: this.MODEL_TYPE.STRUCTURE.editingMode.name,
 			name: "fieldmode",
 			fieldLabel: this.translation.field_visibility,
 			valueField: "value",
@@ -85,6 +85,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 
 		this.attributeType = new Ext.form.ComboBox({
 			fieldLabel: this.translation.type,
+			_name: this.MODEL_TYPE.STRUCTURE.type.name,
 			name: "type_value",
 			hiddenName: "type",
 			width: 220,
@@ -96,8 +97,11 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 			editable: false,
 			CMDBuildReadonly: true,
 			store: new Ext.data.JsonStore({
-				autoLoad: false,
+				autoLoad: true,
 				url: "services/json/schema/modclass/getattributetypes",
+				baseParams: {
+					tableType: "DOMAIN"
+				},
 				root: "types",
 				sortInfo: {
 					field: "value",
@@ -106,11 +110,13 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 				fields: ["name", "value"]
 			})
 		});
+		this.attributeType.setValue = this.attributeType.setValue.createSequence(onSelectComboType, this);
 
 		this.stringLength = new  Ext.form.NumberField({
 			fieldLabel : this.translation.length,
 			minValue: 1,
 			maxValue: Math.pow(2,31)-1,
+			_name: this.MODEL_TYPE.STRUCTURE.stringLength.name,
 			name : "len",
 			allowBlank : false,
 			disabled : true
@@ -120,6 +126,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 			fieldLabel : this.translation.precision,
 			minValue: 1,
 			maxValue: 20,
+			_name: this.MODEL_TYPE.STRUCTURE.decimalPrecision.name,
 			name : "precision",
 			allowBlank : false,
 			disabled : true
@@ -129,6 +136,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 			fieldLabel : this.translation.scale,
 			minValue: 1,
 			maxValue: 20,
+			_name: this.MODEL_TYPE.STRUCTURE.decimalScale.name,
 			name : "scale",
 			allowBlank : false,
 			disabled : true
@@ -137,6 +145,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		this.lookupTypes = new Ext.form.ComboBox( {
 			plugins: new CMDBuild.SetValueOnLoadPlugin(),
 			fieldLabel: this.translation.lookup,
+			_name: this.MODEL_TYPE.STRUCTURE.lookupType.name,
 			name: "lookup",
 			triggerAction: "all",
 			valueField: "type",
@@ -155,6 +164,9 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		};
 
 		this.commonFields = new Ext.form.FieldSet({
+			title: translation.baseProperties,
+			autoHeight: true,
+			region: "center",
 			items: [
 				this.attributeName,
 				this.attributeDescription,
@@ -167,6 +179,11 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		});
 		
 		this.typeSpecificFields = new Ext.form.FieldSet({
+			title: translation.typeProperties,
+			autoHeight: true,
+			margins: "0 0 0 5",
+			region: "east",
+			width: "50%",
 			items: [
 				this.attributeType,
 				this.decimalPrecision,
@@ -176,30 +193,11 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 			]
 		});
 		
-		this.formPanel = new Ext.form.FormPanel({
-			plugins: [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
-			layout:'hbox',
-			layoutConfig: {
-				padding:'5',
-				align:'middle'
-			},
-			items: [this.commonFields, this.typeSpecificFields]
-		});
-		
-		CMDBuild.administration.form.AttributeFormTemplate.superclass.constructor.apply(this, arguments);
+		this.formPanelLayout = "border";
+		this.formFields = [this.commonFields, this.typeSpecificFields];
 
-		
-	},
-	
-	initComponent:function() {
-		this.tbar = [this.modifyButton, this.deleteButton];
-		this.items = [this.formPanel];
-//		this.buttonAlign = "center";
-//		this.buttons = [this.saveButton, this.abortButton];
-		
-		CMDBuild.administration.form.AttributeFormTemplate.superclass.initComponent.apply(this, arguments);
-		
-		this.attributeType.on("select", onSelectComboType, this);
+		CMDBuild.administration.domain.CMDomainAttributeForm.superclass.initComponent.apply(this, arguments);
+
 		this.typeSpecificFields.on({
 			afterlayout:{
 				scope: this,
@@ -207,13 +205,53 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 				fn: hideContextualFields
 			}
 		});
+
+		this.attributeName.on("change", function(fieldname, newValue, oldValue) {
+			this.formPanel.autoComplete(this.attributeDescription, newValue, oldValue);
+		}, this);
+	},
+
+	// override
+	setDefaultValues: function() {
+		this.attributeActive.setValue(true);
+		this.attributeMode.setValue("write");
+	},
+
+	// override
+	loadRecord: function(rec) {
+		// this override can be removed when the remove the _name attribute
+		// from the fields of the form
+		var values = rec.data;
+		this.cascade(function(item) {
+			if (item && (item instanceof Ext.form.Field)) {
+				var val = values[item._name] || "";
+				item.setValue(val);
+			}
+		});
+	},
+	
+	// override
+	disableModify: function() {
+		CMDBuild.administration.domain.CMDomainAttributeForm.superclass.disableModify.call(this);
+		hideContextualFields.call(this);
+	},
+	
+	// override
+	enableModify: function(all) {
+		CMDBuild.administration.domain.CMDomainAttributeForm.superclass.enableModify.call(this, all);
+		disableContextualFieldsIfHidden.call(this);
+	},
+
+	// override
+	prepareToAdd: function() {
+		CMDBuild.administration.domain.CMDomainAttributeForm.superclass.prepareToAdd.call(this);
+		hideContextualFields.call(this);
 	}
 });
 
-	function onSelectComboType(combo, record, index) {
-		var type = record.data.value;
-		hideContextualFields.call(this);
-		showAndEnableContextualFieldsByType.call(this, type);
+	function onSelectComboType(type) {
+		hideContextualFields.call(this, disable=true);
+		showContextualFieldsByType.call(this, type);
 	}
 	
 	function iterateOverContextualFields(type, fn) {
@@ -225,7 +263,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		}
 	}
 	
-	function hideContextualFields() {
+	function hideContextualFields(disable) {
 		for (var type in this.contextualFields) {
 			iterateOverContextualFields.call(this, type, function(field) {
 				if (field.hideContainer) {
@@ -233,12 +271,23 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 				} else {
 					field.hide();
 				}
-				field.disable();
+				if (disable) {
+					field.disable();
+				}
 			});
 		}
 	}
 	
-	function showAndEnableContextualFieldsByType (type) {
+	function disableContextualFieldsIfHidden() {
+		for (var type in this.contextualFields) {
+			iterateOverContextualFields.call(this, type, function(field) {
+				field.setDisabled(!field.isVisible());
+			});
+		}
+	}
+	
+	function showContextualFieldsByType (type) {
+		var t = this;
 		iterateOverContextualFields.call(this,type, function(field) {
 			if (field.showContainer) {
 				field.showContainer();
@@ -246,7 +295,8 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 				// is not a field and has not the showContainer method
 				field.show();
 			}
-			field.enable();
+			var toDisable = t.editingStatus == t.EDITING_STATUS.DISABLED;
+			field.setDisabled(toDisable);
 		});
 	}
 })();

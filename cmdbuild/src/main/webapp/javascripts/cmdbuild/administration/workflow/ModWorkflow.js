@@ -12,6 +12,7 @@
 	});
 
 	CMDBuild.Administration.WorkflowTree = Ext.extend(CMDBuild.TreePanel, {
+		NAME: "CMWorkflowAccordion",
 		title:  CMDBuild.Translation.administration.modWorkflow.tree_title, 
 		initComponent: function() {
 			var tree = CMDBuild.TreeUtility.getTree(CMDBuild.Constants.cachedTableType.processclass, 
@@ -27,6 +28,7 @@
 	
 	
 	CMDBuild.Administration.ModWorkflow =  Ext.extend(CMDBuild.ModPanel, {
+		NAME: "CMModWorkflow",
 	    id: 'modWorkflow',
 	    newMod: true,
 	    modtype:'processclass',
@@ -52,7 +54,12 @@
 	            position: 'left',
 	            scope : this
 	        });
-	        
+
+			this.domainGrid = new CMDBuild.Administration.DomainGrid({
+				region: 'center',
+				eventtype: this.modtype
+			});
+
 	        this.tabPanel = new Ext.TabPanel({
 	            border : false,
 	            activeTab : 0,
@@ -98,23 +105,7 @@
 	                title : this.translation.tabs.domains,
 	                id : 'process_dom_panel',
 	                layout : 'border',
-	                items : [{
-	                    id: 'processdomaingrid',
-	                    xtype: 'domaingrid',
-	                    region: 'center',
-	                    eventtype: this.modtype
-	
-	                },{
-	                    id: 'processdomainform',
-	                    xtype: 'domainform',
-	                    height: '50%',
-	                    border : false,
-	                    region: 'south',
-	                    autoScroll:true,
-	                    split:true,
-	                    eventtype: this.modtype
-	                    
-	                }]
+	                items : [this.domainGrid]
 	            }, {
 	            	disabled: true,
 	                title : this.translation.tabs.xpdl,

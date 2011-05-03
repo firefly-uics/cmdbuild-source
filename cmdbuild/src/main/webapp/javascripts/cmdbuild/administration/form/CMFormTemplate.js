@@ -1,15 +1,21 @@
 (function() {
 	
 Ext.ns("CMDBuild.administration.form");
-
+var EDITING_STATUS = {
+	DISABLED: 0,
+	ENABLED: 1
+}
 CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 	plugins : [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
 	// define the following in the subclasses
 	model: null,
-	MODEL_STRUCTURE: null,
+	MODEL_TYPE: null,
 	formFields: [],
 	modifyButtonLabel: "",
 	deleteButtonLabel: "",
+	formPanelLayout: "form",
+	
+	editingStatus: EDITING_STATUS.DISABLED, // setted to enable/disable modify
 	
 	initComponent: function() {
 		
@@ -54,7 +60,8 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		});
 
 		this.formPanel = new Ext.form.FormPanel({
-			MODEL_STRUCTURE: this.MODEL_STRUCTURE,
+			plugins: [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
+			MODEL_STRUCTURE: this.MODEL_TYPE.STRUCTURE,
 			defaultType: 'textfield',
 			autoScroll: true,
 			labelWidth: 150,
@@ -62,9 +69,10 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 			border: false,
 			cls: CMDBuild.Constants.css.padding5,
 			region: "center",
-			items: this.formFields
+			items: this.formFields,
+			layout: this.formPanelLayout
 		});
-		
+
 		this.layout = "border";
 		this.frame = false;
 		this.border = false;
@@ -74,6 +82,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		this.buttonAlign = "center";
 		this.buttons = [this.saveButton, this.abortButton];
 		this.bodyCssClass = CMDBuild.Constants.css.bg_gray;
+		this.EDITING_STATUS = EDITING_STATUS;
 		
 		CMDBuild.administration.form.CMFormTemplate.superclass.initComponent.apply(this, arguments);
 	},
@@ -81,7 +90,17 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 	getForm: function() {
 		return this.formPanel.getForm();
 	},
-
+	
+	getValues: function() {
+		var values = {};
+		this.cascade(function(item) {
+			if (item && (item instanceof Ext.form.Field)) {
+				values[item.hiddenName || item.name] = item.getValue();
+			}
+		});
+		return values;
+	},
+	
 	getInvalidFieldsAsHTML: function() {
 		return this.formPanel.getInvalidFieldsAsHTML();
 	},
@@ -97,16 +116,17 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 	},
 
 	prepareToAdd: function() {
-		this.enableModify(all=true);
 		this.clearForm();
 		this.model = null;
 		this.setDefaultValues();
+		this.enableModify(all=true);
 	},
-	
+
 	// template for subclasses
 	setDefaultValues: Ext.emptyFn,
 
 	enableModify: function(all) {
+		this.editingStatus = EDITING_STATUS.ENABLED;
 		if (all) {
 			this.formPanel.enableAllField();
 		} else {
@@ -119,7 +139,8 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 	},
 
 	disableModify: function() {
-		this.formPanel.disableAllField();
+		this.editingStatus = EDITING_STATUS.DISABLED;
+		this.formPanel.setFieldsDisabled();
 		this.saveButton.disable();
 		this.abortButton.disable();
 		
@@ -127,16 +148,20 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		this.getForm().clearInvalid();
 	},
 
-	fillWithModel: function(cmdomain) {
-		if (cmdomain.NAME != CMDBuild.core.model.CMDomainModel.NAME) {
-			throw CMDBuild.core.error.form.WRONG_MODEL(CMDBuild.core.model.CMDomainModel.NAME);
+	fillWithModel: function(model) {
+		if (model.NAME != this.MODEL_TYPE.NAME) {
+			throw CMDBuild.core.error.form.WRONG_MODEL(this.MODEL_TYPE.NAME);
 		} else {
-			this.model = cmdomain;
-			var rec = cmdomain.getRecord();
-			this.getForm().loadRecord(rec);
+			this.model = model;
+			var rec = model.getRecord();
+			this.loadRecord(rec);
 		}
 	},
-
+	
+	loadRecord: function(rec) {
+		this.getForm().loadRecord(rec);
+	},
+	
 	enableToolBar: function() {
 		setDisabledToolbarItems.call(this, disabled=false);
 	},
