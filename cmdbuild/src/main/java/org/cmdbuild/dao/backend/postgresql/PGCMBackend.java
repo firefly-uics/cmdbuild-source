@@ -20,9 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,35 +35,35 @@ import org.cmdbuild.dao.backend.postgresql.SchemaQueries.DomainQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.LookupQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.TableQueries;
 import org.cmdbuild.elements.AttributeImpl;
-import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
 import org.cmdbuild.elements.CardImpl;
 import org.cmdbuild.elements.CardQueryImpl;
 import org.cmdbuild.elements.DomainImpl;
-import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.RelationImpl;
 import org.cmdbuild.elements.TableImpl;
-import org.cmdbuild.elements.TableImpl.TableDataDefinitionMeta;
 import org.cmdbuild.elements.TableTree;
+import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
+import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
+import org.cmdbuild.elements.TableImpl.TableDataDefinitionMeta;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainQuery;
 import org.cmdbuild.elements.interfaces.IAbstractElement;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -806,6 +806,11 @@ public class PGCMBackend extends CMBackend {
 			DBService.close(rs, stm);
 		}
 		return list.iterator();
+	}
+
+	@Override
+	public Iterable<IDomain> getDomainList() {
+		return cache.getDomainList();
 	}
 
 	/*

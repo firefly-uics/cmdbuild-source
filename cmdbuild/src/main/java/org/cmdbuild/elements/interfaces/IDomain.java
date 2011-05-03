@@ -5,6 +5,7 @@ import org.cmdbuild.exception.ORMException;
 
 public interface IDomain extends BaseSchema {
 
+	public static final String BaseTable = "";
 	public static final String DomainTablePrefix = "Map_";
 
 	public static String CARDINALITY_11 = "1:1";

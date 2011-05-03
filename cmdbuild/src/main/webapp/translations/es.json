@@ -520,7 +520,8 @@
       "group": "Grupo",
       "loading": "Cargando...",
       "loading_mask": {
-         "classes": "Estoy cagando las clases",
+         "classes": "Estoy cargando las clases",
+         "domain": "<em>Caricamento domini</em>",
          "configuration": "Estoy cargando la configuración",
          "group": "Estoy cargando la lista usuarios y grupos",
          "lookup": "Estoy cargando la lista lookup",

@@ -3,7 +3,7 @@ CMDBuild.Administration.DomainGrid = Ext.extend(CMDBuild.Grid, {
   eventtype : 'class', 
   initComponent:function() {
     
-    this.addAction = new Ext.Action({	
+    this.addAction = new Ext.Button({	
       	iconCls : 'add',
       	text : this.translation.add_domain,
       	handler : function() {

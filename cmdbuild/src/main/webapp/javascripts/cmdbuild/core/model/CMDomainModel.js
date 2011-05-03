@@ -36,7 +36,8 @@
 			description: {required: true},
 			directDescription: {required: true},
 			reverseDescription: {required: true}
-		}
+		},
+		buildAttributeLibrary: true
 	});
 	
 	CMDBuild.core.model.CMDomainModel.buildFromJSON = function(json) {

@@ -1,8 +1,8 @@
 (function() {
 	var ATTR_TO_SKIP = "Notes";
-
+	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
+	
 CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
-  translation: CMDBuild.Translation.administration.modClass.attributeProperties,
   remoteSort: false,
   filtering: false,
   eventtype : 'class', 
@@ -13,7 +13,7 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
 
     this.addAction = new Ext.Action({	
       	iconCls : 'add',
-      	text : this.translation.add_attribute,
+      	text : translation.add_attribute,
       	handler : function() {
    		    this.publish('cmdb-new-'+this.eventtype+'attribute');
    		    this.getSelectionModel().clearSelections();
@@ -23,7 +23,7 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
   	
     this.orderAction = new Ext.Action({	
       	iconCls : 'order',
-      	text : this.translation.set_sorting_criteria,
+      	text : translation.set_sorting_criteria,
       	handler : this.onOrder,
       	scope : this
     });
@@ -35,44 +35,45 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
 		dataIndex : 'index'
 	  },{
         id : 'name',
-        header : this.translation.name,
+        header : translation.name,
         dataIndex : 'name'
       }, {
       	id : 'description',
-        header : this.translation.description,
+        header : translation.description,
         dataIndex : 'description'
       }, {
-        header : this.translation.type,
+        header : translation.type,
         dataIndex : 'type'
       }, new Ext.grid.CheckColumn({
-        header : this.translation.isbasedsp,
+        header : translation.isbasedsp,
         dataIndex : 'isbasedsp'
       }), new Ext.grid.CheckColumn({
-        header : this.translation.isunique,
+        header : translation.isunique,
         dataIndex : 'isunique'
       })];
       if (!this.hideNotNull) {
     	  columns = columns.concat([
     			new Ext.grid.CheckColumn({
-    				header : this.translation.isnotnull,
+    				header : translation.isnotnull,
 			        dataIndex : 'isnotnull'
     			}
     		)]);
       }
       columns = columns.concat([
 	      new Ext.grid.CheckColumn({
-				header : this.translation.inherited,
+				header : translation.inherited,
 				hidden: true,
 				dataIndex : 'inherited'
 	      }), new Ext.grid.CheckColumn({
-		        header : this.translation.isactive,
+		        header : translation.isactive,
 		        dataIndex : 'isactive'
 	      }),{
-		        header : this.translation.field_visibility,
-		        dataIndex : 'fieldmode_value'
+		        header : translation.field_visibility,
+		        dataIndex : 'fieldmode',
+		        renderer: renderEditingMode
 	      }, {
 	        	id: 'group',
-	            header : this.translation.group,
+	            header : translation.group,
 	            dataIndex : 'group',
 	            hidden: true
           }]);
@@ -236,6 +237,11 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
   }
 
 });
+
+function renderEditingMode(val) {
+	return translation["field_" + val];
+}
+
 Ext.reg('attributegrid', CMDBuild.Administration.AttributeGrid );
 
 })();

@@ -80,6 +80,26 @@ CMDBuild.MainViewport = Ext.extend(Ext.Viewport, {
 
 	getTreePanels: function() {
 		return this.trees;
+	},
+	
+	getModByName: function(name) {
+		for (var i=0, l=this.modules.length; i<l; ++i) {
+			var m = this.modules[i];
+			if (typeof m != "undefined" && m.NAME == name) {
+				return m;
+			}
+		}
+		return null;
+	},
+	
+	getTreeByName: function(name) {
+		for (var i=0, l=this.trees.length; i<l; ++i) {
+			var t = this.trees[i];
+			if (typeof t != "undefined" && t.NAME == name) {
+				return t;
+			}
+		}
+		return null;
 	}
 });
 Ext.reg('mainviewport', CMDBuild.MainViewport);

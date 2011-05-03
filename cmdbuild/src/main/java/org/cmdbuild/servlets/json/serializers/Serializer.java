@@ -16,29 +16,28 @@ import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.MenuCard;
-import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
-import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
 import org.cmdbuild.elements.wrappers.PrivilegeCard;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.elements.wrappers.UserCard;
+import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
+import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
+import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.legacy.dms.AttachmentBean;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeatureType;
@@ -286,13 +285,10 @@ public class Serializer {
 		jattr.put("len", attribute.getLength());
 		jattr.put("precision", attribute.getPrecision());
 		jattr.put("scale", attribute.getScale());
-		jattr.put("fieldmode", attribute.getFieldMode().getMode());
 		jattr.put("defaultvalue", attribute.getDefaultValue());
 		jattr.put("isactive", attribute.getStatus().isActive());
-		jattr.put("fieldmode_value", TranslationService.getInstance().getTranslation(
-				"administration.modClass.attributeProperties.field_" 
-				+ attribute.getFieldMode().toString().toLowerCase() 
-			));
+		jattr.put("isactive", attribute.getStatus().isActive());
+		jattr.put("fieldmode", attribute.getFieldMode().getMode());
 		switch (attribute.getType()) {
 		case LOOKUP:
 			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
@@ -340,8 +336,17 @@ public class Serializer {
 		jsonobj.put("classType", getClassType(domain.getTables()[0].getName()));
 		jsonobj.put("active", domain.getStatus().isActive());
 		jsonobj.put("cardinality", domain.getCardinality());
+		jsonobj.put("attributes", serializeAttributeList(domain, false));
 		addMetadataAndAccessPrivileges(jsonobj, domain);
 		return jsonobj;
+	}
+	
+	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
+		JSONObject jsonDomain = serializeDomain(domain);
+		if (table != null) {
+			jsonDomain.put("inherited", !domain.isLocal(table));
+		}
+		return jsonDomain;
 	}
 	
 	public static JSONObject serializeTableTree(CNode<ITable> node) throws JSONException {
@@ -552,7 +557,7 @@ public class Serializer {
 	}
 	
 	public static JSONArray serializeAttributeList(
-			ITable table, boolean active) throws JSONException {
+			BaseSchema table, boolean active) throws JSONException {
 		List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
 		JSONArray attributeList = new JSONArray();
 		for(IAttribute attribute : sortedAttributes){
@@ -564,7 +569,7 @@ public class Serializer {
 		}
 		return attributeList;
 	}
-
+	
 	/*
 	 * we sort attributes on the class order and index number
 	 * because Ext.JS DOES NOT ALLOW IT. Thanks Jack!
@@ -741,4 +746,5 @@ public class Serializer {
 		
 		return jsonMenuList;
 	}
+
 }

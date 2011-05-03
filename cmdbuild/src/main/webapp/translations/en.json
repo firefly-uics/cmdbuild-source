@@ -521,6 +521,7 @@
       "loading": "Loading...",
       "loading_mask": {
          "classes": "Loading classes",
+         "domain": "Loading domains",
          "configuration": "Loading configuration",
          "group": "Loading users and groups",
          "lookup": "Loading lookup types",

@@ -108,6 +108,18 @@
 			fooLibrary.add(m);
 			assertTrue(spy.called);
 		},
+		"test add fail if use an existing key": function() {
+			var FooLibrary = this.ml.build({modelName:"Foo", keyAttribute: "id"});
+			var fooLibrary = new FooLibrary();
+			var m = getModelStub(name="Foo", id=001);
+			fooLibrary.add(m);
+			try {
+				fooLibrary.add(m);
+				fail("Add does not fail for an existing key");
+			} catch (e) {
+				assertEquals(CMDBuild.core.error.model.EXISTING_KEY(m.getid()), e);
+			}
+		},
 		"test remove fails without id": function() {
 			var FooLibrary = this.ml.build({modelName:"Foo", keyAttribute: "id"});
 			var fooLibrary = new FooLibrary();
@@ -129,7 +141,7 @@
 			fooLibrary.remove(id);
 			assertUndefined(fooLibrary.get(id));
 		},
-		"test remover fire events": function() {
+		"test remove fire events": function() {
 			var FooLibrary = this.ml.build({modelName:"Foo", keyAttribute: "id"});
 			var fooLibrary = new FooLibrary();
 			var m = getModelStub(name="Foo", id=001);

@@ -521,6 +521,7 @@
       "loading": "Caricamento in corso...",
       "loading_mask": {
          "classes": "Caricamento classi",
+         "domain": "Caricamento domini",
          "configuration": "Caricamento configurazione",
          "group": "Caricamento lista utenti e gruppi",
          "lookup": "Caricamento lista lookup",

@@ -8,7 +8,8 @@
 	 * Define the accordion that contains the tree of the CMDomain
 	 */
 	CMDBuild.administration.domain.CMDomainAccordion = Ext.extend(CMDBuild.TreePanel, {
-		title : "@@Domain",
+		title : CMDBuild.Translation.administration.modClass.tabs.domains,
+		NAME: "CMDomainAccordion",
 		initComponent : function() {
 			var tr = CMDBuild.Translation.common.tree_names;
 			this.rootVisible = false;
@@ -45,9 +46,14 @@
 		},
 		onSelectNode : function(node) {
 			if (node) {
-				var cmDomain = node.getCMModel();
-				if (cmDomain.NAME == CMDBuild.core.model.CMDomainModel.NAME) {
-					this.publish("cmdb-select-domain", cmDomain);
+				try {
+					var cmDomain = node.getCMModel();
+					if (cmDomain.NAME == CMDBuild.core.model.CMDomainModel.NAME) {
+						this.publish("cmdb-select-domain", cmDomain);
+					}
+				} catch (e) {
+					_debug("selected a node without cmmodel", node);
+					this.publish("cmdb-select-domain");
 				}
 			}
 		}

@@ -173,7 +173,7 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 
 	DomainImpl() {
 		this.setTableType(CMTableType.DOMAIN);
-		this.mode = Mode.RESERVED;
+		this.mode = Mode.WRITE;
 		this.tables = new ITable[2];
 	}
 
@@ -216,14 +216,16 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 
 	private Map<String,String> notNullMeta() {
 		Map<String,String> notNullMeta = new HashMap<String,String>();
+		notNullMeta.put(AttributeDataDefinitionMeta.MODE.toString(), Mode.RESERVED.getModeString());
 		notNullMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.TRUE.toString());
 		return notNullMeta;
 	}
 
 	private Map<String,String> nillableMeta() {
-		Map<String,String> notNullMeta = new HashMap<String,String>();
-		notNullMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.FALSE.toString());
-		return notNullMeta;
+		Map<String,String> nillableMeta = new HashMap<String,String>();
+		nillableMeta.put(AttributeDataDefinitionMeta.MODE.toString(), Mode.RESERVED.getModeString());
+		nillableMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.FALSE.toString());
+		return nillableMeta;
 	}
 
 	@Override

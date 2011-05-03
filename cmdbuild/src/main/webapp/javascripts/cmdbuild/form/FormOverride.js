@@ -26,7 +26,9 @@ Ext.override(Ext.form.Field, {
     hideContainer: function() {
         this.disable(); // for validation
         this.hide();
-        this.getEl().up('.x-form-item').setDisplayed(false); // hide container and children (including label if applicable)
+        if (this.getEl()) {
+        	this.getEl().up('.x-form-item').setDisplayed(false); // hide container and children (including label if applicable)
+    	}
     },
 
     isContainerVisible: function() {
@@ -79,7 +81,7 @@ Ext.override(Ext.form.FormPanel, {
 		var s = this.MODEL_STRUCTURE;
 		this.cascade(function(item) {
 			if (item && (item instanceof Ext.form.Field)) {
-				var name = item.name;
+				var name = item._name || item.name; // for compatibility I can not change the name of old attrs
 				var toBeEnabled = enableAll || !s[name].immutable;
 				if (toBeEnabled) {
 					item.enable();
@@ -87,28 +89,23 @@ Ext.override(Ext.form.FormPanel, {
 			}
 		});
 
-    },
-    
-    setFieldsDisabled: function(){
-    	this.stopMonitoring();
-    	this.cascade(function(i) {
-			if (i && (i instanceof Ext.form.Field) && !(i instanceof Ext.form.DisplayField)){
-				var xtype = i.getXType();
-				if (xtype!='hidden') {
-					i.disable();
+	},
+
+	setFieldsDisabled: function(){
+		this.stopMonitoring();
+		if (!this.MODEL_STRUCTURE) {
+			setFieldsDisabledForLegacyCode.call(this);
+		} else {
+			var s = this.MODEL_STRUCTURE;
+			this.cascade(function(item) {
+				if (item && (item instanceof Ext.form.Field) && item.disable) {
+					item.disable();
 				}
-			}
-		});
-		if (this.buttons) {
-			for(var i=0; i<this.buttons.length; i++ ){
-				if (this.buttons[i]) {
-					this.buttons[i].disable();
-				}
-			}
+			});
 		}
-    },
-    
-    enableAllField: function() {
+	},
+
+	enableAllField: function() {
 		var fields = this.getForm().items.items;
 		this.formIsDisable = false;
 		for (var i = 0 ; i < fields.length ; i++) {
@@ -207,6 +204,24 @@ function setFieldsEnabledForLegacyCode(enableAll) {
 		for(var i=0; i<this.buttons.length; i++ ){
 			if (this.buttons[i]) {
 					this.buttons[i].enable();
+			}
+		}
+	}
+}
+
+function setFieldsDisabledForLegacyCode() {
+	this.cascade(function(i) {
+		if (i && (i instanceof Ext.form.Field) && !(i instanceof Ext.form.DisplayField)){
+			var xtype = i.getXType();
+			if (xtype!='hidden') {
+				i.disable();
+			}
+		}
+	});
+	if (this.buttons) {
+		for(var i=0; i<this.buttons.length; i++ ){
+			if (this.buttons[i]) {
+				this.buttons[i].disable();
 			}
 		}
 	}

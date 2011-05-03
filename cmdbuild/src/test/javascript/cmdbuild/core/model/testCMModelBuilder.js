@@ -217,7 +217,38 @@
 			m.on(m.CMEVENTS.DESTROY, spy);
 			m.destroy();
 			assertTrue(spy.called);
-		}
+		},
+		"test getAttributeLibrary return null for buildAttributeLibrary = false": function() {
+			var M = CMDBuild.core.model.CMModelBuilder.build({
+				name: "Foo",
+				structure: {
+					attr1: {}
+				},
+				buildAttributeLibrary: false
+			});
+			var m = new M();
+			
+			assertNull(m.getAttributeLibrary());
+		},
+		"test getAttributeLibrary return an attributeLibrary for buildAttributeLibrary = true": function() {
+			var M = CMDBuild.core.model.CMModelBuilder.build({
+				name: "Foo",
+				structure: {
+					attr1: {}
+				},
+				buildAttributeLibrary: true
+			});
+			var m = new M();
+			var attributeLibrary = m.getAttributeLibrary();
+			assertEquals(CMDBuild.core.model.CMAttributeModelLibrary.NAME,
+					attributeLibrary.NAME);
+		},
+		"test record has reference to model": function() {
+			var m = getInstance();
+			var r = m.getRecord();
+			
+			assertSame(m, r.ownerModel);
+		},
 	});
 	
 	function getModel(name) {

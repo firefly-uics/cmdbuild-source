@@ -1,22 +1,26 @@
 (function() {
 
 	Ext.ns("CMDBuild.administration.domain");
+	var ns = CMDBuild.administration.domain;
+	
 	var STRUCTURE = CMDBuild.core.model.CMDomainModel.STRUCTURE;
 	
-	CMDBuild.administration.domain.CMDomainFormController = function(domainForm) {
-		this.domainForm = domainForm;
-		this.domainForm.saveButton.on("click", onSaveButtonClick, this.domainForm);
-		this.domainForm.deleteButton.on("click", onDeleteButtonClick, this.domainForm);
+	ns.CMDomainFormController = function(conf) {
+		ns.CMDomainFormController.superclass.constructor.call(this, conf);
+
+		this.view.saveButton.on("click", onSaveButtonClick, this.view);
+		this.view.deleteButton.on("click", onDeleteButtonClick, this);
 	}
 	
-	CMDBuild.administration.domain.CMDomainFormController.prototype = {
+	Ext.extend(ns.CMDomainFormController, CMDBuild.core.CMBaseController, {
 		onDomainSelected: function(cmDomain) {
-			this.domainForm.onDomainSelected(cmDomain);
+			this.view.onDomainSelected(cmDomain);
 		},
 		onAddButtonClick: function() {
-			this.domainForm.prepareToAdd();
-		}
-	}
+			this.view.prepareToAdd();
+		},
+		onDomainDeleted: Ext.emptyFn
+	});
 	
 	function onSaveButtonClick() {
 		var invalidFields = this.getInvalidFieldsAsHTML();
@@ -47,7 +51,7 @@
 	
 	function onDeleteButtonClick() {
 		Ext.Msg.show({
-			title: this.translation.delete_domain,
+			title: this.view.translation.delete_domain,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 			scope: this,
 			buttons: {
@@ -66,11 +70,12 @@
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.administration.domain.remove({
 			params: {
-				id: this.model.getid()
+				id: this.view.model.getid()
 			},
 			scope : this,
 			success : function(form, action) {
-				this.destroyModel();
+				this.view.destroyModel();
+				this.onDomainDeleted();
 			},
 			callback : function() {
 				CMDBuild.LoadMask.get().hide();

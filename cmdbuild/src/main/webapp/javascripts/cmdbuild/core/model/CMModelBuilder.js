@@ -33,15 +33,17 @@
 			constructor: function(instanceData) {
 				checkInstanceData(instanceData, conf.structure);
 
-				this.REC_TEMPLATE = buildRecordTemplate(conf.structure);
-				this.NAME = Model.NAME;
-				this.STRUCTURE = Model.STRUCTURE;
-				this.CMEVENTS = Model.CMEVENTS;
-				
 				var record = new this.REC_TEMPLATE(instanceData);
+				record.ownerModel = this;
 
+				var attributesLibrary = buildAttributeLibrary(conf.buildAttributeLibrary);
+				
 				this.getRecord = function() {
 					return record;
+				};
+
+				this.getAttributeLibrary = function() {
+					return attributesLibrary; 
 				};
 
 				this.get = function(name) {
@@ -62,7 +64,7 @@
 						throw CMDBuild.core.error.model.SET_UNDEFINED_ATTR;
 					}
 				};
-				
+
 				this.update = function(newModel) {
 					if (newModel && typeof newModel == "object") {
 						if (this.NAME == newModel.NAME) {
@@ -81,19 +83,6 @@
 					}
 				};
 
-				this.destroy = function() {
-					this.fireEvent(this.CMEVENTS.DESTROY);
-				};
-
-				this.toString = function() {
-					return Model.NAME;
-				};
-				
-				for (var attr in this.STRUCTURE) {
-					buildSetter.call(this, attr);
-					buildGetter.call(this, attr);
-				}
-
 				Model.superclass.constructor.call(this, arguments);
 			}
 		});
@@ -104,6 +93,25 @@
 			CHANGED: "changed",
 			DESTROY: "destroy"
 		};
+		
+		Model.prototype.REC_TEMPLATE = buildRecordTemplate(conf.structure);
+		Model.prototype.NAME = Model.NAME;
+		Model.prototype.STRUCTURE = Model.STRUCTURE;
+		Model.prototype.CMEVENTS = Model.CMEVENTS;
+		
+		Model.prototype.destroy = function() {
+			this.fireEvent(Model.CMEVENTS.DESTROY);
+		};
+
+		Model.toString = function() {
+			return Model.NAME;
+		};
+
+		for (var attr in Model.STRUCTURE) {
+			buildSetter(Model, attr);
+			buildGetter(Model, attr);
+		}
+
 		return Model;
 	};
 
@@ -121,7 +129,15 @@
 			throw CMDBuild.core.error.model.CONFIGURATION_STRUCTURE_IS_NOT_OBJECT;
 		}
 	}
-	
+
+	function buildAttributeLibrary(buildAttributeLibrary) {
+		var attributesLibrary = null;
+		if (buildAttributeLibrary) {
+			attributesLibrary = new CMDBuild.core.model.CMAttributeModelLibrary();
+		}
+		return attributesLibrary;
+	}
+
 	function buildRecordTemplate(structure) {
 		var attributes = [];
 		for (var attr in structure) {
@@ -132,7 +148,7 @@
 		}
 		return  Ext.data.Record.create(attributes);
 	};
-	
+
 	function checkInstanceData(instanceData, structure) {
 		for (var attributeName in structure) {
 			var attr = structure[attributeName];
@@ -141,17 +157,17 @@
 			}
 		}
 	}
-	
-	function buildSetter(name) {
+
+	function buildSetter(Model, name) {
 		var fnName = "set" + name;
-		this[fnName] = function(value) {
+		Model.prototype[fnName] = function(value) {
 			this.set(name, value);
 		};
 	}
-	
-	function buildGetter(name) {
+
+	function buildGetter(Model, name) {
 		var fnName = "get" + name;
-		this[fnName] = function() {
+		Model.prototype[fnName] = function() {
 			return this.get(name);
 		};
 	}

@@ -1,3 +1,9 @@
+(function() {
+	var tableTypeMap = {
+		simpletable: "SIMPLECLASS",
+		standard: "CLASS"
+	};
+	
 CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
   translation: CMDBuild.Translation.administration.modClass.attributeProperties,
   id: "attrbuteform",
@@ -380,7 +386,7 @@ CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
 		  this.referenceDomains.store.load();
 	  }
 	  
-	  this.comboType.store.baseParams = {idClass: this.idClass};
+	  this.comboType.store.baseParams = {tableType: tableTypeMap[this.cachedTable.tableType]};
 	  this.comboType.store.load();
 	  
 	  var isSuperClass = this.isSuperclass();
@@ -451,7 +457,7 @@ CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
 			method : "POST",
 			url : "services/json/schema/modclass/saveattribute",
 			params : {
-				idClass: this.ownerPanel.idClass,
+				tableId: this.ownerPanel.idClass,
 				name: name
 			},			
 			scope: this,
@@ -506,7 +512,7 @@ CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
 		  url : "services/json/schema/modclass/deleteattribute",
 		  method: "POST",
 		  params: {
-			  idClass: this.idClass,
+			  tableId: this.idClass,
 			  name: name
 		  },		  
 		  scope: this,
@@ -576,3 +582,4 @@ CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
 });
 
 Ext.reg("attributeform", CMDBuild.Administration.AttributeForm);
+})();
