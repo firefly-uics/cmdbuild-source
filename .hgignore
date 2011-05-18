@@ -1,0 +1,10 @@
+syntax: glob
+
+.project
+.classpath
+.settings
+target
+
+
+syntax: glob
+**/META-INF/MANIFEST.MF
