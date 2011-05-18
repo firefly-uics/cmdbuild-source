@@ -55,7 +55,7 @@
 			{type: 'INT', mode: 'IN', id: 'CardId'},
 			{type: 'REFERENCES', mode: 'OUT', id: 'Refs'}
 		],
-		extattrs: [{ToolAgentClass: 'org.cmdbuild.shark.toolagent.SelectReferenceToolAgent'}]
+		extattrs: [{ToolAgentClass: 'org.cmdbuild.shark.toolagent.SelectRelationToolAgent'}]
 	},
 	selectRelationsByReference: {
 		description: 'select the card in relations with a specific card on a specific domain by reference card and domainame',
