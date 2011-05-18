@@ -14,11 +14,15 @@
 		<itext.version>2.1.0</itext.version> <!-- jasperreports dependency -->
 		<jasperreports.version>3.7.1</jasperreports.version>
 		<json-java.version>20110113</json-java.version>
-		<postgis.version>1.5.1</postgis.version>
 		<quartz.version>1.8.3</quartz.version>
 		<restlet.version>2.0.1</restlet.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-dao-postgresql</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-types</artifactId>
@@ -35,17 +39,6 @@
 			<artifactId>jsp-api</artifactId>
 			<version>2.0</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>${postgresql.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgis</groupId>
-			<artifactId>postgis-jdbc</artifactId>
-			<version>${postgis.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -405,7 +398,7 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+			<version>${commons-lang.version}</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>

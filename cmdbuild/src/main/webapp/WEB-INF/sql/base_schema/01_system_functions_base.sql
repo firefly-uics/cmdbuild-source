@@ -463,7 +463,7 @@ CREATE OR REPLACE FUNCTION _cm_subtables_and_itself(TableId oid) RETURNS SETOF o
 $$ LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION _cm_parent_id(TableId oid) RETURNS SETOF oid AS $$
-	SELECT inhparent FROM pg_inherits WHERE inhrelid = $1 AND _cm_is_cmobject(inhparent);
+	SELECT COALESCE((SELECT inhparent FROM pg_inherits WHERE inhrelid = $1 AND _cm_is_cmobject(inhparent) LIMIT 1), NULL);
 $$ LANGUAGE SQL;
 
 
@@ -679,6 +679,12 @@ BEGIN
 			RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 		END IF;
 		NEW."Id" = _cm_new_card_id();
+		-- Class ID is needed because of the history tables
+		BEGIN
+			NEW."IdClass" = TG_RELID;
+		EXCEPTION WHEN undefined_column THEN
+			NEW."IdDomain" = TG_RELID;
+		END;
 	ELSE -- TG_OP='DELETE'
 		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
