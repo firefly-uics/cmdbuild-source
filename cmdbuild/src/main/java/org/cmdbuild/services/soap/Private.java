@@ -139,7 +139,8 @@ public interface Private {
 			@WebParam(name = "orderType") Order[] orderType, 
 			@WebParam(name = "limit") Integer limit, 
 			@WebParam(name = "offset") Integer offset, 
-			@WebParam(name = "fullTextQuery") String fullTextQuery);
+			@WebParam(name = "fullTextQuery") String fullTextQuery,
+			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
 	
 	public MenuSchema getCardMenuSchema();
 	

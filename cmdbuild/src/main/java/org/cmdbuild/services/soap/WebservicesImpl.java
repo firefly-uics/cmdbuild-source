@@ -183,7 +183,7 @@ public class WebservicesImpl implements Webservices{
 
 	public Reference[] getReference(String className, Query query, Order[] orderType, Integer limit, Integer offset, String fullTextQuery){
 		ECard op = new ECard(getUserCtx());
-		return op.getReference(className, query, orderType, limit, offset, fullTextQuery);
+		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, null);
 	}
 
 	public MenuSchema getCardMenuSchema(){
