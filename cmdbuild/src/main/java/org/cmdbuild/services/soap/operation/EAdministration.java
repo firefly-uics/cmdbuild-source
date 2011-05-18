@@ -1,10 +1,14 @@
 package org.cmdbuild.services.soap.operation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.elements.TableTree;
+import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
@@ -60,7 +64,7 @@ public class EAdministration {
 		schema.setDescription(table.getDescription());
 		schema.setClassname(table.getName());
 		setMenuTypeFromTypeAndChildren(schema, isProcess, table.isSuperClass());
-		schema.setMetadata(serializeMetadata(table.getMetadata(), null));
+		schema.setMetadata(serializeMetadata(table, null));
 		addAccessPrivileges(schema, userCtx);
 		Boolean isDefault = checkIsDefault(table, userCtx);
 		schema.setDefaultToDisplay(isDefault);
@@ -119,7 +123,7 @@ public class EAdministration {
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
 		
-		schema.setMetadata(serializeMetadata(attribute.getMetadata(), activity));
+		schema.setMetadata(serializeMetadata(attribute, activity));
 		
 		AttributeType atype = attribute.getType();
 		switch (atype) {
@@ -141,7 +145,16 @@ public class EAdministration {
 		return schema;
 	}
 
-	public Metadata[] serializeMetadata(TreeMap<String, Object> metadata, ActivityDO activity) {
+	private Metadata[] serializeMetadata(IAttribute attribute, ActivityDO activity) {
+		final Metadata[] commonMetadata = serializeMetadata(BaseSchema.class.cast(attribute), activity);		
+		final List<Metadata> metadata = new ArrayList<Metadata>(Arrays.asList(commonMetadata));
+		checkAttributeFilter(attribute, metadata);
+		final Metadata[] array = new Metadata[metadata.size()];
+		return metadata.toArray(array);
+	}
+
+	public Metadata[] serializeMetadata(BaseSchema baseSchema, ActivityDO activity) {
+		final TreeMap<String, Object> metadata = baseSchema.getMetadata();
 		List<Metadata> tmpList = serializeMetadata(metadata);
 		if (activity != null){
 			checkProcessIsStopable(activity, tmpList);
@@ -154,7 +167,7 @@ public class EAdministration {
 		return metadataList;
 	}
 
-	public List<Metadata> serializeMetadata(TreeMap<String, Object> metadata) {
+	private List<Metadata> serializeMetadata(TreeMap<String, Object> metadata) {
 		List<Metadata> tmpList = new LinkedList<Metadata>();
 		for (String key : metadata.keySet()) {
 			Metadata m = new Metadata();
@@ -186,6 +199,16 @@ public class EAdministration {
 		tmpList.add(m);
 	}
 
+	private void checkAttributeFilter(IAttribute attribute, List<Metadata> tmpList) {
+		final String filter = attribute.getFilter();
+		if (StringUtils.isNotBlank(filter)) {			
+			Metadata m = new Metadata();
+			m.setKey(MetadataService.SYSTEM_TEMPLATE_PREFIX);
+			m.setValue(filter);
+			tmpList.add(m);
+		}		
+	}
+
 	private MenuSchema serializeTree(CNode<MenuCard> node, UserContext userCtx) {
 		MenuSchema schema = new MenuSchema();
 		MenuCard menu = node.getData();		
@@ -203,7 +226,7 @@ public class EAdministration {
 					Boolean isDefault = checkIsDefault(menuEntryClass, userCtx);
 					schema.setDefaultToDisplay(isDefault);
 					schema.setClassname(menuEntryClass.getName());
-					schema.setMetadata(serializeMetadata(menuEntryClass.getMetadata(), null));
+					schema.setMetadata(serializeMetadata(menuEntryClass, null));
 					PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
 					if (PrivilegeType.NONE.equals(privileges))
 						return null;
