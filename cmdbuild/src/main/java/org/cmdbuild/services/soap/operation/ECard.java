@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.ORMException;
@@ -45,47 +47,23 @@ public class ECard {
 		this.userCtx = userCtx;
 	}
 
-	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
-			final Order[] orderType, final Integer limit, Integer offset, final String fullText, final CQLQuery cqlQuery) {
+	public CardList getCardList(final String className, final Attribute[] attributeList, final Query query,
+			final Order[] order, final Integer limit, final Integer offset, final String fullText,
+			final CQLQuery cqlQuery) {
 
-		CardQuery cardQuery;
-		ITable table;
-		if (cqlQuery != null) {
-			final HashMap<String, Object> cqlParameters = serializeCQLParameters(cqlQuery.getParameters());
-			cardQuery = CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery.getCqlQuery(), cqlParameters);
-			table = cardQuery.getTable();
-		} else {
-			table = userCtx.tables().get(className);
-			cardQuery = table.cards().list();
-			if (queryType != null) {
-				cardQuery.filter(queryType.toAbstractFilter(table));
-			}
-		}
-		final String fullTextQuery = fullText;
 		Log.SOAP.debug("Getting list of " + className + " cards");
 
-		if (offset == null) {
-			offset = 0;
-		}
-		if (limit != null && offset != null && limit.intValue() > 0) {
-			cardQuery.subset(offset, limit);
-		}
+		final CardQueryBuilder cardQueryBuilder = createCardQueryBuilder(className, query, cqlQuery);
+		cardQueryBuilder.setPage(limit, offset);
+		cardQueryBuilder.setFullText(fullText);
+		cardQueryBuilder.setOrder(order);
+		cardQueryBuilder.applyActivityFilters(userCtx);
 
-		if (fullTextQuery != null && !"".equals(fullTextQuery)) {
-			cardQuery.fullText(fullTextQuery);
-		}
+		final CardQuery cardQuery = cardQueryBuilder.getCardQuery();
+		final ITable table = cardQueryBuilder.getTable();
 
-		if (orderType != null && orderType.length > 0) {
-			cardQuery = addOrder(orderType, cardQuery);
-		}
-
-		if (table.isActivity()) {
-			Log.SOAP.debug("Requested class derives from Activity");
-			cardQuery = applyFilters(userCtx, cardQuery);
-		}
-		
 		final List<ICard> cards = new ArrayList<ICard>();
-		for(ICard card : cardQuery.count()) {
+		for (final ICard card : cardQuery.count()) {
 			cards.add(card);
 		}
 
@@ -99,18 +77,23 @@ public class ECard {
 		}
 		final int count = cardQuery.getTotalRows();
 
-		final CardList clist = new CardList();
-		clist.setTotalRows(count);
-		clist.setCards(wfCards);
+		final CardList cardList = new CardList();
+		cardList.setTotalRows(count);
+		cardList.setCards(wfCards);
 
-		return clist;
+		return cardList;
 	}
 
-	private Map<Integer, ActivityDO> getActivityMapIfNeeded(final ITable table, final List<ICard> cards, final Attribute[] attributeList) {
+	private CardQueryBuilder createCardQueryBuilder(final String className, final Query query, final CQLQuery cqlQuery) {
+		return new CardQueryBuilder(userCtx, className, query, cqlQuery);
+	}
+
+	private Map<Integer, ActivityDO> getActivityMapIfNeeded(final ITable table, final List<ICard> cards,
+			final Attribute[] attributeList) {
 		if (attributeList == null) { // Every attribute!
 			return getActivityMap(table, cards);
 		}
-		for (Attribute a : attributeList) {
+		for (final Attribute a : attributeList) {
 			if (ProcessAttributes.ActivityDescription.toString().equals(a.getName())) {
 				return getActivityMap(table, cards);
 			}
@@ -123,17 +106,8 @@ public class ECard {
 		return sharkFacade.getActivityMap(table, cards);
 	}
 
-	private HashMap<String, Object> serializeCQLParameters(final List<CQLParameter> parameters) {
-		final HashMap<String, Object> cqlParameters = new HashMap<String, Object>();
-		if (parameters != null) {
-			for (final CQLParameter parameter : parameters) {
-				cqlParameters.put(parameter.getKey(), parameter.getValue());
-			}
-		}
-		return cqlParameters;
-	}
-
-	private Card prepareCard(final Attribute[] attributeList, ICard card, Map<Integer, ActivityDO> activityMap) {
+	private Card prepareCard(final Attribute[] attributeList, final ICard card,
+			final Map<Integer, ActivityDO> activityMap) {
 		Card wfCard;
 		addActivityDecription(card, activityMap.get(card.getId()));
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
@@ -144,7 +118,7 @@ public class ECard {
 		return wfCard;
 	}
 
-	private void addActivityDecription(ICard card) {
+	private void addActivityDecription(final ICard card) {
 		if (card.getSchema().isActivity()) {
 			final SharkFacade sharkFacade = new SharkFacade(userCtx);
 			final ActivityDO activityDo = sharkFacade.getActivityList(card);
@@ -152,63 +126,11 @@ public class ECard {
 		}
 	}
 
-	private void addActivityDecription(ICard card, final ActivityDO activityDo) {
+	private void addActivityDecription(final ICard card, final ActivityDO activityDo) {
 		if (activityDo != null) {
 			final String activityDescription = activityDo.getActivityInfo().getActivityDescription();
 			card.setValue(ProcessAttributes.ActivityDescription.toString(), activityDescription);
 		}
-	}
-
-	private CardQuery addOrder(final Order[] orderType, final CardQuery cardQuery) {
-		final CardQuery orderedCardQuery = (CardQuery) cardQuery.clone();
-		if (orderType[0].getColumnName() != null) {
-			Log.SOAP.debug("Ordering result with following condition(s)");
-			for (int i = 0; i < orderType.length; i++) {
-				orderedCardQuery.order(orderType[i].getColumnName(), Enum.valueOf(OrderFilterType.class, orderType[i]
-						.getType()));
-			}
-		}
-		return orderedCardQuery;
-	}
-
-	private CardQuery applyFilters(final UserContext userCtx, final CardQuery cardQuery) {
-		CardQuery filteredCardQuery = guestFilter(cardQuery, userCtx);
-		if (filteredCardQuery == null) {
-			cardQuery.setNextExecutorFilter(userCtx);
-			filteredCardQuery = cardQuery;
-		}
-		return filteredCardQuery;
-	}
-
-	private CardQuery guestFilter(final CardQuery cardQuery, final UserContext userCtx) {
-		if (userCtx.isGuest()) {
-			for (final IAttribute attribute : cardQuery.getTable().getAttributes().values()) {
-				final TreeMap<String, Object> metadata = attribute.getMetadata();
-				String targetAttributeName = null;
-				if (metadata.get("org.cmdbuild.portlet.user.id") != null) {
-					final String metadataValue = metadata.get("org.cmdbuild.portlet.user.id").toString();
-					targetAttributeName = checkMetadataValue(targetAttributeName, metadataValue);
-				}
-				if (targetAttributeName != null) {
-					final CardQuery filteredCardQuery = (CardQuery) cardQuery.clone();
-					final ITable userTable = attribute.getReferenceTarget();
-					final CardQuery userQuery = userTable.cards().list().filter(targetAttributeName,
-							AttributeFilterType.EQUALS, userCtx.getRequestedUsername());
-					filteredCardQuery.cardInRelation(attribute.getReferenceDirectedDomain(), userQuery);
-					return filteredCardQuery;
-				}
-			}
-		}
-		return null;
-	}
-
-	private String checkMetadataValue(String targetAttributeName, final String metadataValue) {
-		if (metadataValue != null && !metadataValue.equals("") && metadataValue.contains(".")) {
-			targetAttributeName = metadataValue.split("\\.")[1];
-		} else {
-			targetAttributeName = null;
-		}
-		return targetAttributeName;
 	}
 
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
@@ -235,7 +157,7 @@ public class ECard {
 			final EAdministration operation = new EAdministration(userCtx);
 			final SharkFacade sharkFacade = new SharkFacade(userCtx);
 			final ActivityDO activity = sharkFacade.getActivityList(card);
-			operation.serializeMetadata(table.getMetadata(), activity);
+			operation.serializeMetadata(table, activity);
 			final Metadata processIsEditableMetadata = addIsEditableProcessMetadata(userCtx, card);
 			if (processIsEditableMetadata != null) {
 				metadataList.add(processIsEditableMetadata);
@@ -353,43 +275,24 @@ public class ECard {
 	}
 
 	public Reference[] getReference(final String classname, final Query query, final Order[] order,
-			final Integer limit, Integer offset, final String fullText) {
+			final Integer limit, final Integer offset, final String fullText, final CQLQuery cqlQuery) {
 
-		final List<Reference> list = new LinkedList<Reference>();
+		final CardQueryBuilder cardQueryBuilder = createCardQueryBuilder(classname, query, cqlQuery);
+		cardQueryBuilder.setQuery(query);
+		cardQueryBuilder.setPage(limit, offset);
+		cardQueryBuilder.setFullText(fullText);
+		cardQueryBuilder.setOrder(order);
 
-		final ITable table = userCtx.tables().get(classname);
-		CardQuery cardList = table.cards().list();
-
-		if (query != null) {
-			cardList.filter(query.toAbstractFilter(table));
-		}
-
-		if (offset == null)
-			offset = 0;
-
-		if (limit != null && offset != null && limit.intValue() > 0) {
-			cardList.subset(offset, limit);
-		}
-
-		if (fullText != null && !"".equals(fullText)) {
-			cardList.fullText(fullText);
-		}
-
-		if (order != null && order.length > 0) {
-			cardList = addOrder(order, cardList);
-		}
-
-		final CardQuery cardQuery = cardList.count();
-		for (final ICard result : cardQuery) {
+		final List<Reference> referenceList = new LinkedList<Reference>();
+		final CardQuery cardQuery = cardQueryBuilder.getCardQuery().count();
+		for (final ICard card : cardQuery) {
 			final int count = cardQuery.getTotalRows();
-			final Reference reference = prepareReference(classname, result, count);
-			list.add(reference);
+			final Reference reference = prepareReference(classname, card, count);
+			referenceList.add(reference);
 		}
 
-		Reference[] cardarray = new Reference[list.size()];
-		cardarray = list.toArray(cardarray);
-
-		return cardarray;
+		final Reference[] array = referenceList.toArray(new Reference[referenceList.size()]);
+		return array;
 	}
 
 	private Reference prepareReference(final String classname, final ICard result, final int count) {
@@ -418,4 +321,127 @@ public class ECard {
 			}
 		}
 	}
+
+	private static class CardQueryBuilder {
+
+		private final ITable table;
+		private CardQuery cardQuery;
+
+		public CardQueryBuilder(final UserContext userCtx, final String className, final Query query,
+				final CQLQuery cqlQuery) {
+			if (cqlQuery != null) {
+				final HashMap<String, Object> cqlParameters = serializeCQLParameters(cqlQuery.getParameters());
+				cardQuery = CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery.getCqlQuery(), cqlParameters);
+				table = cardQuery.getTable();
+			} else {
+				table = userCtx.tables().get(className);
+				cardQuery = table.cards().list();
+				if (query != null) {
+					cardQuery.filter(query.toAbstractFilter(table));
+				}
+			}
+		}
+
+		public ITable getTable() {
+			return table;
+		}
+
+		public CardQuery getCardQuery() {
+			return cardQuery;
+		}
+
+		public void applyActivityFilters(final UserContext userContext) {
+			if (table.isActivity()) {
+				cardQuery = applyFilters(userContext, cardQuery);
+			}
+		}
+
+		public void setOrder(final Order[] order) {
+			if (ArrayUtils.isNotEmpty(order)) {
+				cardQuery = addOrder(order, cardQuery);
+			}
+		}
+
+		public void setQuery(final Query query) {
+			if (query != null) {
+				cardQuery.filter(query.toAbstractFilter(table));
+			}
+		}
+
+		public void setFullText(final String fullText) {
+			if (StringUtils.isNotBlank(fullText)) {
+				cardQuery.fullText(fullText);
+			}
+		}
+
+		public void setPage(final Integer limit, final Integer offset) {
+			if (limit != null && limit.intValue() > 0) {
+				cardQuery.subset((offset == null) ? 0 : offset, limit);
+			}
+		}
+
+		private static HashMap<String, Object> serializeCQLParameters(final List<CQLParameter> parameters) {
+			final HashMap<String, Object> cqlParameters = new HashMap<String, Object>();
+			if (parameters != null) {
+				for (final CQLParameter parameter : parameters) {
+					cqlParameters.put(parameter.getKey(), parameter.getValue());
+				}
+			}
+			return cqlParameters;
+		}
+
+		private CardQuery addOrder(final Order[] orderType, final CardQuery cardQuery) {
+			final CardQuery orderedCardQuery = (CardQuery) cardQuery.clone();
+			if (orderType[0].getColumnName() != null) {
+				Log.SOAP.debug("Ordering result with following condition(s)");
+				for (int i = 0; i < orderType.length; i++) {
+					orderedCardQuery.order(orderType[i].getColumnName(), Enum.valueOf(OrderFilterType.class,
+							orderType[i].getType()));
+				}
+			}
+			return orderedCardQuery;
+		}
+
+		private CardQuery applyFilters(final UserContext userCtx, final CardQuery cardQuery) {
+			CardQuery filteredCardQuery = guestFilter(cardQuery, userCtx);
+			if (filteredCardQuery == null) {
+				cardQuery.setNextExecutorFilter(userCtx);
+				filteredCardQuery = cardQuery;
+			}
+			return filteredCardQuery;
+		}
+
+		private CardQuery guestFilter(final CardQuery cardQuery, final UserContext userCtx) {
+			if (userCtx.isGuest()) {
+				for (final IAttribute attribute : cardQuery.getTable().getAttributes().values()) {
+					final TreeMap<String, Object> metadata = attribute.getMetadata();
+					String targetAttributeName = null;
+					if (metadata.get("org.cmdbuild.portlet.user.id") != null) {
+						final String metadataValue = metadata.get("org.cmdbuild.portlet.user.id").toString();
+						targetAttributeName = checkMetadataValue(targetAttributeName, metadataValue);
+					}
+					if (targetAttributeName != null) {
+						final CardQuery filteredCardQuery = (CardQuery) cardQuery.clone();
+						final ITable userTable = attribute.getReferenceTarget();
+						final CardQuery userQuery = userTable.cards().list().filter(targetAttributeName,
+								AttributeFilterType.EQUALS, userCtx.getRequestedUsername());
+						filteredCardQuery.cardInRelation(attribute.getReferenceDirectedDomain(), userQuery);
+						return filteredCardQuery;
+					}
+				}
+			}
+			return null;
+		}
+
+		private String checkMetadataValue(String targetAttributeName, final String metadataValue) {
+			if (metadataValue != null && !metadataValue.equals("") && metadataValue.contains(".")) {
+				targetAttributeName = metadataValue.split("\\.")[1];
+			} else {
+				targetAttributeName = null;
+			}
+			return targetAttributeName;
+		}
+
+	}
+
 }

@@ -189,9 +189,9 @@ public class PrivateImpl implements Private {
 		return op.getProcessMenuSchema();
 	}
 
-	public Reference[] getReference(String className, Query query, Order[] orderType, Integer limit, Integer offset, String fullTextQuery) {
+	public Reference[] getReference(String className, Query query, Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
 		ECard op = new ECard(getUserCtx());
-		return op.getReference(className, query, orderType, limit, offset, fullTextQuery);
+		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
 	}
 
 	public MenuSchema getCardMenuSchema() {
