@@ -24,7 +24,11 @@ public class TextAttribute extends AttributeImpl {
 		if (stringLimitExceeded(stringValue)) {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
-		return stringValue;
+		if (stringValue.isEmpty()) {
+			return null;
+		} else {
+			return stringValue;
+		}
 	}
 
 	protected boolean stringLimitExceeded(String stringValue) {
