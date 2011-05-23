@@ -45,6 +45,8 @@ CMDBuild.Management.GraphActionHandler = function() {
 	});
 	this.subscribe('cmdb-init-class', this.initForClass, this);
 	this.subscribe('cmdb-load-card', this.loadCard, this);
+	
+	this.subscribe('cmdb-load-activity', this.loadActivity, this);
  };
  
  Ext.extend(CMDBuild.Management.GraphActionHandler, Ext.util.Observable, {
@@ -62,7 +64,6 @@ CMDBuild.Management.GraphActionHandler = function() {
 		} else {
 			return false;
 		}
-		
 	},
 	
 	loadCard: function(eventParams) {
@@ -73,7 +74,20 @@ CMDBuild.Management.GraphActionHandler = function() {
 		this.action.setDisabled(this.isASimpleTable());
 	},
 
+	loadActivity: function(eventParams) {
+		this.currentActivityId = eventParams.record.data.Id;
+		this.currentProcessId = eventParams.record.data.IdClass;
+		this.currentActivityTable = CMDBuild.Cache.getTableById(this.currentClassId);
+		// the simple table has not relation graph
+		this.action.setDisabled(this.isASimpleTable());
+	},
+	
 	onShowGraph: function() {
-		CMDBuild.Management.showGraphWindow(this.currentClassId, this.currentCardId);
+		var expandedAccordion = _MainViewportController.getExpandedAccordion();
+		if (_MainViewportController.getExpandedAccordion().cmType == "card") {
+			CMDBuild.Management.showGraphWindow(this.currentClassId, this.currentCardId);
+		} else {
+			CMDBuild.Management.showGraphWindow(this.currentProcessId, this.currentActivityId);
+		}
 	}
 });

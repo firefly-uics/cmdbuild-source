@@ -32,7 +32,8 @@ CMDBuild.Structure = {
 		            title: CMDBuild.Structure["class"].title,
 		            border: false,
 		            rootVisible: false,
-		            root: [ classes, simpleTables ]
+		            root: [ classes, simpleTables ],
+		            cmType: "card"
 		        });
 	        }
         }
