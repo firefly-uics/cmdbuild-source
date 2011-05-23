@@ -100,6 +100,16 @@ CMDBuild.MainViewportController = Ext.extend(Ext.Component, {
                 }).defer(1, this);
             }, panel);
         }	
+	},
+	
+	getExpandedAccordion: function() {
+		for (var i=0, l=this.treePanels.length; i<l; ++i) {
+			if (this.treePanels[i].collapsed) {
+				continue;
+			} else {
+				return this.treePanels[i];
+			}
+		}
 	}
 });
 })();

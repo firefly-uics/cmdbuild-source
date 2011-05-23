@@ -30,7 +30,7 @@ CMDBuild.MainViewport = Ext.extend(Ext.Viewport, {
 				listeners: {
 					render: function() {
 						var controllerType = this.controllerType;						
-						new CMDBuild[controllerType]({viewport:this});
+						_MainViewportController = new CMDBuild[controllerType]({viewport:this});
 					}
 				},
 				items:[{

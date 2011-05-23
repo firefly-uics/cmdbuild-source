@@ -88,6 +88,8 @@ CMDBuild.Management.WorkflowCardListGrid = Ext.extend(CMDBuild.Management.CardLi
 	publishLoadEvent: function(record) {
 		var activity = this.addActivityDescription(record);
 		this.fireEvent("load_activity", {record: new Ext.data.Record(activity)});
+		
+		CMDBuild.Management.WorkflowCardListGrid.superclass.publishLoadEvent.call(this, record);
 	},
 	
 	addActivityDescription: function(record) {

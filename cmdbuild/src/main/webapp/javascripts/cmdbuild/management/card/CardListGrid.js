@@ -93,10 +93,11 @@ CMDBuild.Management.CardListGrid = Ext.extend(CMDBuild.Grid, {
 			this.clearFilterBtn.disable();
 			this.gridsearchfield.setValue("");
 		}
+
 		if (baseParamsOverride) {
 			Ext.apply(this.getStore().baseParams, baseParamsOverride);
 		}		
-		this.loadPageForCardId(eventParams.cardId);		
+		this.loadPageForCardId(eventParams.cardId);
 	},
 
 	reloadCard : function(eventParams) {
