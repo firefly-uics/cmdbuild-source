@@ -98,8 +98,14 @@ CMDBuild.Management.SearchableCombo = Ext.extend(CMDBuild.CMDBuildCombo, {
 			
 			this.searchWin.on('cmdbuild-referencewindow-selected', function(record){
 				this.addToStoreIfNotInIt(record);
+				// IE set the value before the focus, this avoid the change event.
+				// set a one-time listener to set the value after the focus
+				this.on("focus", function(){
+					this.setValue(record.Id);
+				}, this, {single: true});
+				
 				this.focus(); // to allow the "change" event that occurs on blur
-				this.setValue(record.Id);
+
 				this.fireEvent('cmdbuild-reference-selected', record, this);
 			}, this);
 			
