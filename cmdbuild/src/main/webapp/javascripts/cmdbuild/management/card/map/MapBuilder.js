@@ -45,7 +45,9 @@ CMDBuild.Management.MapBuilder = (function() {
 		var gisConfig = CMDBuild.Config.gis;
 		
 		if (gisConfig.osm && gisConfig.osm == "on") {
-			var osm = new OpenLayers.Layer.OSM("Open Street Map");
+            var osm = new OpenLayers.Layer.OSM("Open Street Map", null, {
+                numZoomLevels: 25
+            });
 			osm.cmdbuildMinZoom = gisConfig.osm_minzoom || DEFAULT_MIN_ZOOM;
 			osm.cmdbuildMaxZoom = gisConfig.osm_maxzoom || DEFAULT_MAX_ZOOM;
 			map.addLayers([osm]);
