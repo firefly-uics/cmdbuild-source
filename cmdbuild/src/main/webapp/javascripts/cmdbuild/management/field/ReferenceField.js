@@ -168,6 +168,7 @@ CMDBuild.Management.ReferenceField = (function() {
 				field.validate();
 			});
 			
+			// manage keyboard event
 			field.expand = field.expand.createInterceptor(function() {
 				if (this.store.isLoading) {
 					return false;
