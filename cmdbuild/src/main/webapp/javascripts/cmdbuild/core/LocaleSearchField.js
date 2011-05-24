@@ -1,5 +1,6 @@
-CMDBuild.LocaleSearchField = Ext.extend(Ext.form.TwinTriggerField, {
-	
+ Ext.define("CMDBuild.LocaleSearchField", {
+	extend: "Ext.form.TwinTriggerField",
+	alias: "localesearchfield",
     initComponent : function(){
 		CMDBuild.LocaleSearchField.superclass.initComponent.call(this);
         this.triggerConfig = {
@@ -50,4 +51,3 @@ CMDBuild.LocaleSearchField = Ext.extend(Ext.form.TwinTriggerField, {
 			this.onTrigger1Click();
 	}
 });
-Ext.reg('localesearchfield', CMDBuild.LocaleSearchField);

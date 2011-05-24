@@ -26,7 +26,10 @@
 		return false;
 	};
 	
-	CMDBuild.Administration.GeoAttributePanel = Ext.extend(Ext.Panel, {
+	
+	Ext.define("CMDBuild.Administration.GeoAttributePanel", {
+		extend: "Ext.Panel",
+		alias: "geoattributepanel",
 	    eventtype: "class",
 	    initComponent: function() {
 		    var onAdd = function() {
@@ -92,5 +95,4 @@
 		    this.subscribe('cmdb-select-class', selectClass, this);
 	    }	    	 
 	});
-	Ext.reg("geoattributepanel", CMDBuild.Administration.GeoAttributePanel);
 })();

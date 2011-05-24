@@ -92,7 +92,6 @@ Ext.override(Ext.form.FormPanel, {
 	},
 
 	setFieldsDisabled: function(){
-		this.stopMonitoring();
 		if (!this.MODEL_STRUCTURE) {
 			setFieldsDisabledForLegacyCode.call(this);
 		} else {
@@ -130,33 +129,35 @@ Ext.override(Ext.form.FormPanel, {
 	}
 }); 
 
+// TODO extjs 3 to 4 migration @@
+
 // http://extjs.com/forum/showthread.php?t=43356
-Ext.override(Ext.form.Checkbox, {
-	getValue : function(){
-		if(this.rendered){
-			return this.el.dom.checked;
-		}
-		return this.checked;
-	},
-
-	setValue : function(v) {
-		var checked = this.checked;
-		this.checked = (v === true || v === 'true' || v == '1' || String(v).toLowerCase() == 'on');
-
-		if(this.rendered){
-			this.el.dom.checked = this.checked;
-			this.el.dom.defaultChecked = this.checked;
-			this.wrap[this.checked? 'addClass' : 'removeClass'](this.checkedCls);
-		}
-
-		if(checked != this.checked){
-			this.fireEvent("check", this, this.checked);
-			if(this.handler){
-				this.handler.call(this.scope || this, this, this.checked);
-			}
-		}
-	}
-});
+//Ext.override(Ext.form.Checkbox, {
+//	getValue : function(){
+//		if(this.rendered){
+//			return this.el.dom.checked;
+//		}
+//		return this.checked;
+//	},
+//
+//	setValue : function(v) {
+//		var checked = this.checked;
+//		this.checked = (v === true || v === 'true' || v == '1' || String(v).toLowerCase() == 'on');
+//
+//		if(this.rendered){
+//			this.el.dom.checked = this.checked;
+//			this.el.dom.defaultChecked = this.checked;
+//			this.wrap[this.checked? 'addClass' : 'removeClass'](this.checkedCls);
+//		}
+//
+//		if(checked != this.checked){
+//			this.fireEvent("check", this, this.checked);
+//			if(this.handler){
+//				this.handler.call(this.scope || this, this, this.checked);
+//			}
+//		}
+//	}
+//});
 
 Ext.override(Ext.form.Hidden, {
 	validateValue: function(value) {
@@ -193,7 +194,6 @@ Ext.override( Ext.form.FieldSet, {
 });
 
 function setFieldsEnabledForLegacyCode(enableAll) {
-	this.startMonitoring();
 	this.cascade(function(item) {
 	if (item && (item instanceof Ext.form.Field)
 			&& item.isVisible() 

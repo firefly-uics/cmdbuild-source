@@ -1,4 +1,5 @@
-CMDBuild.Administration.JobGrid = Ext.extend(Ext.grid.GridPanel, {
+Ext.define("CMDBuild.Administration.JobGrid", {
+	extend: "Ext.grid.Panel",
 	translation: CMDBuild.Translation.administration.modWorkflow.scheduler,
 	initComponent: function() {
 		this.store = new Ext.data.JsonStore({

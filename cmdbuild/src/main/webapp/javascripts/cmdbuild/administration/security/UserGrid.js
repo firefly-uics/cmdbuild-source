@@ -1,5 +1,6 @@
-CMDBuild.Administration.UserGrid = Ext.extend(CMDBuild.Grid, {
-
+Ext.define("CMDBuild.Administration.UserGrid", {
+  extend: "CMDBuild.Grid",
+  alias: "usergrid",
   translation: CMDBuild.Translation.administration.modsecurity.user,
   
   
@@ -74,7 +75,4 @@ CMDBuild.Administration.UserGrid = Ext.extend(CMDBuild.Grid, {
 
 	this.publish('cmdb-load-user', eventParams);
   }
-
-
 });
-Ext.reg('usergrid', CMDBuild.Administration.UserGrid);

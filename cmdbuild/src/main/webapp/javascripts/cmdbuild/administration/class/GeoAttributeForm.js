@@ -310,7 +310,10 @@
 	/**
 	 * GeoAttributeForm	
 	 */
-	CMDBuild.Administration.GeoAttributeForm = Ext.extend(Ext.form.FormPanel, {
+    
+	Ext.define("CMDBuild.Administration.GeoAttributeForm", {
+		extend: "Ext.form.FormPanel",
+		alias: "geoattributeform",
 	    eventtype: "class",
 	    plugins: [new CMDBuild.FormPlugin()],
 	    initComponent: function() {
@@ -460,5 +463,4 @@
 	    	this.modifyMode = false; // exit to modify mode
 	    }
 	});
-	Ext.reg("geoattributeform", CMDBuild.Administration.GeoAttributeForm);
 })();

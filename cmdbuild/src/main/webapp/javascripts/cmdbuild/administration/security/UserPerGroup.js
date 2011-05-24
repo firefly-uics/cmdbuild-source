@@ -1,4 +1,7 @@
-CMDBuild.Administration.UserPerGroup = Ext.extend(Ext.Panel, {
+Ext.define("CMDBuild.Administration.UserPerGroup", {
+	extend: "Ext.Panel",
+	alias: "userpergroup",
+	
 	translation: CMDBuild.Translation.administration.modsecurity,
 	initComponent: function() {
 		this.availableUsersStore = new Ext.data.JsonStore({
@@ -166,4 +169,3 @@ CMDBuild.Administration.UserPerGroup = Ext.extend(Ext.Panel, {
 		  }
 	  }
 });
-Ext.reg('userpergroup', CMDBuild.Administration.UserPerGroup );

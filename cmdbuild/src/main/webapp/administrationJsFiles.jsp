@@ -1,72 +1,119 @@
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeSortingGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ClassForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributeForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributePanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerLayersGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClass.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClassController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/SetOrderWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/form/CMFormTemplate.js"></script>
+<!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeFormController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGridController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributesController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainFormController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomainController.js"></script>
+<!-- VIEWS-->
+	<!-- COMMON -->
+	
+	<!-- GIS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/CMModGeoServer.js"></script>
+	
+	<!-- LOOKUP -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMLookupAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMLookupForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMLookupTypeForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMLookupGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMModLookup.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script><!-- inherit from FeatureTypeGrid -->
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModExternalServices.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModGeoServer.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModGis.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModIcons.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModLayerOrder.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/lookup/LookupForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/lookup/LookupGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/lookup/LookupTypeForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/lookup/ModLookup.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/menu/MenuPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/menu/ModMenu.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ImportJRFormStep1.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ImportJRFormStep2.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ReportForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ModReport.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/GroupForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/UserPerGroup.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/ModSecurity.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/ModUser.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/PrivilegeGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/UserForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/security/UserGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/SchedulerUI.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobParameterGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/CronEditWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/ModWorkflow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/XPDLDownloadForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/XPDLUploadForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/TemplateModSetup.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupGenericOption.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupGraph.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupLegacydms.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupEmail.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupServer.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupWorkflow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/ModSetupGis.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/setup/SetupTree.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/CMMainController.js"></script>
+	<!-- CONFIGURATION -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMConfigurationAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMBaseModConfiguration.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGenericOption.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationEmail.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGis.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGraph.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
+	
+
+<!-- CONTROLLERS -->
+	<!-- GIS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
+	
+	<!-- CONFIGURATION -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationServerController.js"></script>
+
+	<!-- LOOKUP -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMLookupAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/lookup/CMLookupTypeFormController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/lookup/CMLookupGridController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/lookup/CMLookupFormController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/lookup/CMModLookupController.js"></script>
+	
+	
+<!-- THE OTHERS -->
+	<!-- GIS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModExternalServices.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModIcons.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModLayerOrder.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerLayersGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerForm.js"></script>
+
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeSortingGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ClassForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributeForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributePanel.js"></script>-->
+
+
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClass.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClassController.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/SetOrderWindow.js"></script>-->
+
+<!---->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeFormController.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGridController.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributes.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributesController.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainFormController.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAccordion.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomainController.js"></script>-->
+<!---->
+
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script>-->
+<!---->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>-->
+
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModGis.js"></script>-->
+
+
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/menu/MenuPanel.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/menu/ModMenu.js"></script>-->
+<!---->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ImportJRFormStep1.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ImportJRFormStep2.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ReportForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ModReport.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/GroupForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/UserPerGroup.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/ModSecurity.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/ModUser.js"></script>-->
+<!---->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/PrivilegeGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/UserForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/security/UserGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/SchedulerUI.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobPanel.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobParameterGrid.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/CronEditWindow.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/ModWorkflow.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/XPDLDownloadForm.js"></script>-->
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/XPDLUploadForm.js"></script>-->
+
+<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/CMMainController.js"></script>-->
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script>
+ 

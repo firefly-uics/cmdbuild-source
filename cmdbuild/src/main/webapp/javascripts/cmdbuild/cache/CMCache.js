@@ -24,7 +24,7 @@
 	
 	var onNewNode = function(parameters) {
 		var group = this.setTable(parameters);
-		this.publish("cmdb-new-"+group, parameters);
+		_CMEventBus.publish("cmdb-new-"+group, parameters);
 	};
 	
 	var onModifyNode = function(parameters) {
@@ -47,14 +47,14 @@
 		}
 		
 		var group = getTableGroup(table);		
-		this.publish("cmdb-modify-"+group, parameters);
+		_CMEventBus.publish("cmdb-modify-"+group, parameters);
 	};
 	
 	var onDeletedNode = function(parameters) {
 		var table = this.getTableById(parameters.id);
 		if (table) {
 			var group = getTableGroup(table);
-			this.publish("cmdb-deleted-"+group, table);
+			_CMEventBus.publish("cmdb-deleted-"+group, table);
 			delete this.tableMaps[group][parameters.id];
 		} else {
 			throw new Error("CMDBCache: onDeletedNode - The deleted node was not cached");
@@ -135,10 +135,18 @@
 			Ext.apply(classes,cache.tableMaps[tableMapKey]);
 		}
 		var store = new Ext.data.SimpleStore({
-			fields: ["id", "description", "name"],
-			sortInfo: { field: "description", dir: 'ASC' },
+			model: "TableForComboModel",
+			sorters: [ {
+				property : "description",
+				direction : 'ASC'
+			} ],
 			data: (function() {
 				var data = [];
+				
+				if (addEmptyOption) {
+					data.push({ id: 0, description: "-", name:"" });
+				}
+				
 				for (var i in classes) {
 					var table = classes[i];
 					if (table.selectable && !(excludeSuperclasses && table.superclass)) {
@@ -148,22 +156,29 @@
 				return data;
 			})()
 		});
-		
-		if (addEmptyOption) {
-			store.insert(0, new store.recordType({ id: 0, description: "-", name:"" }));
-		}
+
 		return store;
 	};
-	
-	var lookupTypeStore = null;
-	
-	CMDBuild.cache.CMCache = Ext.extend(Ext.Component, {
-		initComponent : function() {
+
+	var lookupTypeStore = {
+		cmFill: function() {},
+		cmFake: true
+	};
+	var lookupTypeStoreOnlyLeves = {
+		cmFill: function() {},
+		cmFake: true
+	};
+
+	Ext.define("CMDBuild.cache.CMCache", {
+		extend: "Ext.util.Observable",
+		
+		constructor: function() {
+
 			this.toString = function() {
 				return "CMCache";
 			};
-			
-			CMDBuild.cache.CMCache.superclass.initComponent.apply(this, arguments);
+
+			this.callParent(arguments);
 			
 			this.tableMaps = {}; // a type grouped map of all the tables
 			this.mapOfTree = {};
@@ -175,27 +190,27 @@
 			this.classesAndProcessStore = undefined;
 			
 			
-			this.subscribe("cmdb-delete-card", this.reloadReferenceStore, this);
-			this.subscribe("cmdb-reload-card", this.reloadReferenceStore, this);
+			_CMEventBus.subscribe("cmdb-delete-card", this.reloadReferenceStore, this);
+			_CMEventBus.subscribe("cmdb-reload-card", this.reloadReferenceStore, this);
 			
-			this.subscribe("cmdb-new-class", onNewTable, this);
-			this.subscribe("cmdb-modify-class", onModifyTable, this);
-			this.subscribe("cmdb-deleted-class", onDeletedTable, this);
+			_CMEventBus.subscribe("cmdb-new-class", onNewTable, this);
+			_CMEventBus.subscribe("cmdb-modify-class", onModifyTable, this);
+			_CMEventBus.subscribe("cmdb-deleted-class", onDeletedTable, this);
 			
-			this.subscribe("cmdb-new-processclass", onNewTable, this);
-			this.subscribe("cmdb-modify-processclass", onModifyTable, this);
-			this.subscribe("cmdb-deleted-processclass", onDeletedTable, this);
+			_CMEventBus.subscribe("cmdb-new-processclass", onNewTable, this);
+			_CMEventBus.subscribe("cmdb-modify-processclass", onModifyTable, this);
+			_CMEventBus.subscribe("cmdb-deleted-processclass", onDeletedTable, this);
 			
-			this.subscribe("cmdb-modified-classattribute", function(p) {
+			_CMEventBus.subscribe("cmdb-modified-classattribute", function(p) {
 				this.loadAttributes(p.idClass);
 			}, this);
-			this.subscribe("cmdb-modified-processclassattribute",  function(p) {
+			_CMEventBus.subscribe("cmdb-modified-processclassattribute",  function(p) {
 				this.loadAttributes(p.idClass);
 			}, this);
 			
-			this.subscribe("cmdb-new-node", onNewNode, this);
-			this.subscribe("cmdb-modify-node", onModifyNode, this);
-			this.subscribe("cmdb-deleted-node", onDeletedNode, this);
+			_CMEventBus.subscribe("cmdb-new-node", onNewNode, this);
+			_CMEventBus.subscribe("cmdb-modify-node", onModifyNode, this);
+			_CMEventBus.subscribe("cmdb-deleted-node", onDeletedNode, this);
 		},
 		
 		setTables: function(tables) {
@@ -520,32 +535,23 @@
 				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.processTree), superclassId, subclassId);
 		},
 		
-		getLookupTypeLeavesAsStore: function() {
-			if (lookupTypeStore == null) {
-				var lookupTypes = this.tableMaps[constants.cachedTableType.lookuptype];
-				lookupTypeStore = new Ext.data.SimpleStore({
-					fields : ["type"],
-					sortInfo: { field: "type", dir: 'ASC' },
-					data: [],
-					fill: function() {
-						var type = Ext.data.Record.create([
-						    {name: 'type', mapping: 'type'}
-						]);
-						this.removeAll();
-						for (var i in lookupTypes) {
-							var table = lookupTypes[i];
-							if (!table.children) {
-								this.addSorted(new type({type: table.id}));
-							}
-						}
-					}
-				});
-				lookupTypeStore.fill();
-				this.subscribe("cmdb-new-lookuptype", lookupTypeStore.fill, lookupTypeStore);
-				this.subscribe("cmdb-deleted-lookuptype", lookupTypeStore.fill, lookupTypeStore);
-				this.subscribe("cmdb-modified-lookuptype", lookupTypeStore.fill, lookupTypeStore);
+		getLookupTypeAsStore: function() {
+			if (lookupTypeStore.cmFake) {
+				lookupTypeStore = buildLookupTypeStore(onlyLeaves = false);
+				lookupTypeStore.cmFill();
 			}
+			
 			return lookupTypeStore;
+		},
+		
+		getLookupTypeLeavesAsStore: function() {
+
+			if (lookupTypeStoreOnlyLeves.cmFake) {
+				lookupTypeStoreOnlyLeves = buildLookupTypeStore(onlyLeaves = true);
+				lookupTypeStoreOnlyLeves.cmFill();
+			}
+
+			return lookupTypeStoreOnlyLeves;
 		},
 		
 		syncLookupTypesParent: function(lType) {
@@ -554,11 +560,55 @@
 				var table = lookupTypes[i];
 				if (table.parent == lType.oldId) {
 					table.parent = lType.id;
+					return;
 				}
 			}
 		},
-		getTableGroup: getTableGroup
+
+		getTableGroup: getTableGroup,
+
+		// To save after refactor
+		onNewLookupType: function(lType) {
+			this.setTable(lType);
+			lookupTypeStore.cmFill()
+			lookupTypeStoreOnlyLeves.cmFill();
+			this.fireEvent("cm_new_lookuptype", lType);
+		},
+
+		onModifyLookupType: function(lType) {
+			onModifyNode.call(this, lType);
+			this.syncLookupTypesParent(lType);
+			lookupTypeStore.cmFill()
+			lookupTypeStoreOnlyLeves.cmFill();
+			this.fireEvent("cm_modified_lookuptype", lType);
+		}
 	});
+	
+	function buildLookupTypeStore(onlyLeaves) {
+		var store = new Ext.data.Store({
+			model: "CMLookupTypeForCombo",
+			cmOnlyLeaves: onlyLeaves,
+			cmFill: function() {
+				var lookupTypes = _CMCache.tableMaps[constants.cachedTableType.lookuptype];
+				this.removeAll();
+				var data = [];
+				for (var i in lookupTypes) {
+					var table = lookupTypes[i];
+					if (!this.cmOnlyLeaves || (this.cmOnlyLeaves && !table.children)) {
+						data.push([table.id]);
+					}
+				}
+				this.add(data);
+				this.sort("type", "ASC");
+			},
+			sorters: [{
+				property : 'type',
+				direction : 'ASC'
+			}]
+		});
+		
+		return store;
+	}
 	
 	function addAttributesToDomain(rawDomain, domain) {
 		var rawAttributes = rawDomain.attributes;
@@ -576,4 +626,5 @@
 	}
 	
 	CMDBuild.Cache = new CMDBuild.cache.CMCache();
+	_CMCache = CMDBuild.Cache; //to uniform the variable names, maybe a day I'll can delete CMDBuild.Cache
 })();

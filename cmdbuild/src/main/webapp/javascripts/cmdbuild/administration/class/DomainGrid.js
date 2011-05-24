@@ -1,4 +1,6 @@
-CMDBuild.Administration.DomainGrid = Ext.extend(CMDBuild.Grid, {
+Ext.define("CMDBuild.Administration.DomainGrid", {
+  extend: "CMDBuild.Grid",
+  alias: "domaingrid",
   translation: CMDBuild.Translation.administration.modClass.domainProperties,
   eventtype : 'class', 
   initComponent:function() {
@@ -101,4 +103,3 @@ CMDBuild.Administration.DomainGrid = Ext.extend(CMDBuild.Grid, {
 
 
 });
-Ext.reg('domaingrid', CMDBuild.Administration.DomainGrid);

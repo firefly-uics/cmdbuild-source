@@ -1,8 +1,9 @@
 (function() {
 
 	Ext.ns("CMDBuild.administration.domain");
-	
-	CMDBuild.administration.domain.CMDomainForm = Ext.extend(CMDBuild.administration.form.CMFormTemplate, {
+	Ext.define("CMDBuild.administration.domain.CMDomainForm", {
+		extend: "CMDBuild.administration.form.CMFormTemplate",
+		alias: "domainform",
 		translation : CMDBuild.Translation.administration.modClass.domainProperties,
 		model: null,
 		MODEL_TYPE: CMDBuild.core.model.CMDomainModel,
@@ -30,7 +31,7 @@
 			});
 
 			this.cardinality_combo = new Ext.form.ComboBox({
-				xtype: 'combo',
+				xdomainformtype: 'combo',
 				fieldLabel: this.translation.cardinality,
 				width: 220,
 				name: this.MODEL_TYPE.STRUCTURE.cardinality.name,
@@ -158,5 +159,4 @@
 			this.masterdetail.enable();
 		}
 	}
-	Ext.reg('domainform', CMDBuild.administration.domain.CMDomainForm);
 })();

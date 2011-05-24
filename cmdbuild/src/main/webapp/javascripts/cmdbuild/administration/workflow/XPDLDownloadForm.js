@@ -1,4 +1,6 @@
-CMDBuild.Administration.XPDLDownloadForm = Ext.extend(Ext.form.FormPanel, {
+Ext.define("CMDBuild.Administration.XPDLDownloadForm", {
+	extend: "Ext.form.FormPanel",
+	alias: "xpdldownloadform",
     translation : CMDBuild.Translation.administration.modWorkflow.xpdlDownload,
 
     initComponent : function() {
@@ -97,5 +99,3 @@ CMDBuild.Administration.XPDLDownloadForm = Ext.extend(Ext.form.FormPanel, {
     	this.versionCombo.setValue('template');
     }
 });
-
-Ext.reg('xpdldownloadform', CMDBuild.Administration.XPDLDownloadForm);

@@ -1,4 +1,7 @@
-CMDBuild.Administration.SchedulerUI = Ext.extend(Ext.Panel, {
+Ext.define("CMDBuild.Administration.SchedulerUI", {
+	extend: "Ext.Panel",
+	alias: "schedulerpanel",
+	
 	translation: CMDBuild.Translation.administration.modWorkflow.scheduler,
 	initComponent: function() {
 		this.jobPanel = new CMDBuild.Administration.JobPanel({title: this.translation.job});
@@ -162,4 +165,3 @@ CMDBuild.Administration.SchedulerUI = Ext.extend(Ext.Panel, {
 		this.abortButton.disable();
 	}
 });
-Ext.reg('schedulerpanel', CMDBuild.Administration.SchedulerUI);

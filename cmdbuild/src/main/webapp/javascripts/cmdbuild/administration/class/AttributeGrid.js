@@ -2,7 +2,10 @@
 	var ATTR_TO_SKIP = "Notes";
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 	
-CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
+Ext.define("CMDBuild.Administration.AttributeGrid", {
+	extend: "CMDBuild.Grid",
+	alias: "attributegrid",
+	
   remoteSort: false,
   filtering: false,
   eventtype : 'class', 
@@ -241,7 +244,5 @@ CMDBuild.Administration.AttributeGrid = Ext.extend(CMDBuild.Grid, {
 function renderEditingMode(val) {
 	return translation["field_" + val];
 }
-
-Ext.reg('attributegrid', CMDBuild.Administration.AttributeGrid );
 
 })();

@@ -1,4 +1,7 @@
-CMDBuild.Administration.GroupForm = Ext.extend(Ext.form.FormPanel, {
+Ext.define("CMDBuild.Administration.GroupForm", {
+  extend: "Ext.form.FormPanel",
+  alias: "groupform",
+  
   translation: CMDBuild.Translation.administration.modsecurity.group,
   plugins: [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
   id: 'groupform',
@@ -363,5 +366,3 @@ CMDBuild.Administration.GroupForm = Ext.extend(Ext.form.FormPanel, {
 		}
 	}
 });
-
-Ext.reg('groupform', CMDBuild.Administration.GroupForm );

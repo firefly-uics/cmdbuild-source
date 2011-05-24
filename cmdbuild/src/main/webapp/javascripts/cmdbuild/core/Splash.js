@@ -12,7 +12,7 @@ CMDBuild.Splash = function(id, cls) {
 //		+ '<span class="splashSubTitle">Tecnoteca srl - ' + tr.municipality + ' - Cogitek srl'+ '</span>'
 		+ '<span class="splashSubTitle copyright">Copyright &copy; Tecnoteca srl</span>';
 		
-	Ext.DomHelper.append(body, [{
+	Ext.core.DomHelper.append(body, [{
 		tag: 'div',
 		id: id,
 		cls: cls
