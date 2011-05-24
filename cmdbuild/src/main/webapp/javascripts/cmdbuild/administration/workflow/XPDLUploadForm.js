@@ -1,4 +1,6 @@
-CMDBuild.Administration.XPDLUpForm = Ext.extend(Ext.form.FormPanel, {
+Ext.define("CMDBuild.Administration.XPDLUpForm", {
+	extend: "Ext.form.FormPanel",
+	alias: "xpdluploadform",
 	translation: CMDBuild.Translation.administration.modWorkflow.xpdlUpload,
 
 	initComponent: function() {
@@ -108,5 +110,3 @@ CMDBuild.Administration.XPDLUpForm = Ext.extend(Ext.form.FormPanel, {
         }
     }
 });
-
-Ext.reg('xpdluploadform', CMDBuild.Administration.XPDLUpForm);

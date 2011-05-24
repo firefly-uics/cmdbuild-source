@@ -1,4 +1,6 @@
-CMDBuild.Administration.MenuPanel = Ext.extend(Ext.Panel, {
+Ext.define("CMDBuild.Administration.MenuPanel", {
+	extend: "Ext.Panel",
+	alias: "menupanel",
 	treePanelUrl: 'services/json/schema/modmenu/getmenu',
 	avaiableMenuUrl: 'services/json/schema/modmenu/getavailableitemsmenu',
 	translation : CMDBuild.Translation.administration.modmenu,
@@ -401,4 +403,3 @@ CMDBuild.Administration.MenuPanel = Ext.extend(Ext.Panel, {
 		return nodesToSend;
     }
 });
-Ext.reg('menupanel', CMDBuild.Administration.MenuPanel);

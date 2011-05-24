@@ -126,21 +126,21 @@
 				failure: function() {
 					_debug("Failed to add or modify a Geoserver Layer", arguments);	
 				},
-				callback: callback.createDelegate(this)
+				callback: callback
 			});
 		};
 		
 		this.saveButton = new Ext.Button({
 		    text: CMDBuild.Translation.common.buttons.save,
 		    scope: this,
-		    disabled: true,
+//		    disabled: true,
 		    handler: onSave		    
 		});
 
 		this.abortButton = new Ext.Button({
 		    text: CMDBuild.Translation.common.buttons.abort,
 		    scope: this,
-		    disabled: true,
+//		    disabled: true,
 		    handler: function() {
 				this.disableModify();
 				this.disableToolbarButtons();
@@ -208,12 +208,13 @@
 	/**
 	 * GeoServerForm
 	 */
-	CMDBuild.Administration.GeoServerForm = Ext.extend(Ext.form.FormPanel, {
+	Ext.define("CMDBuild.Administration.GeoServerForm", {
+		extend: "Ext.form.Panel",
+		
 	    hideMode: "offsets",
 	    fileUpload: true,
 	    plugins: [new CMDBuild.FormPlugin(), new CMDBuild.CallbackPlugin()],
-	    frame: false,
-        bodyCssClass: "cmdbuild_background_gray cmdbuild_body_padding",
+	    frame: true,
         defaults: {
 			disabled: true
 		},
@@ -223,10 +224,10 @@
         	this.items = items.call(this);
         	this.buttonAlign = "center";
 		    this.buttons = buildButtons.call(this);
-		    CMDBuild.Administration.GeoServerForm.superclass.initComponent.apply(this, arguments);    
+		    this.callParent(arguments);
 		    this.setFieldsDisabled();
 		    
-		    this.on("clientvalidation", function(formPanel, valid ) {		    	
+		    this.on("clientvalidation", function(formPanel, valid ) {
 		    	this.saveButton.setDisabled(!valid);
 		    }, this);
 		    
@@ -261,5 +262,4 @@
 	    	this.getForm().loadRecord(rec);
 	    }
 	});
-	Ext.reg("geoattributeform", CMDBuild.Administration.GeoAttributeForm);
 })();

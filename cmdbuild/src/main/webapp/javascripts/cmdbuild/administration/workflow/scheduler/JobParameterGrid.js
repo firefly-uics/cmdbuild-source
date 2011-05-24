@@ -1,4 +1,5 @@
-CMDBuild.Administration.JobParameterGrid = Ext.extend(Ext.grid.EditorGridPanel, {
+Ext.define("CMDBuild.Administration.JobParameterGrid", {
+	extend: "Ext.grid.GridPanel", //TODO Extjs 3 to 4 migration @@ editorgrid
 	translation: CMDBuild.Translation.administration.modWorkflow.scheduler,
 	initComponent: function() {
 		this.recordTemplate = Ext.data.Record.create ([

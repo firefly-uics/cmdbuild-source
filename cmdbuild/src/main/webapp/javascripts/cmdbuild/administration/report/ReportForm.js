@@ -1,4 +1,7 @@
-CMDBuild.Administration.ReportForm = Ext.extend(Ext.Panel, {
+Ext.define("CMDBuild.Administration.ReportForm", {
+	extend: "Ext.Panel",
+	alias: "adminreportform",
+	
 	translation: CMDBuild.Translation.administration.modreport.importJRFormStep1,
 	colorsConst: CMDBuild.Constants.colors.gray,
 	initComponent:function() {
@@ -182,5 +185,3 @@ CMDBuild.Administration.ReportForm = Ext.extend(Ext.Panel, {
 		};
 	}
 });
-
-Ext.reg('adminreportform', CMDBuild.Administration.ReportForm );

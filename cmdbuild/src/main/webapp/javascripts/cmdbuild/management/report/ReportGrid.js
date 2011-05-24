@@ -16,7 +16,10 @@
  * @class CMDBuild.Management.ReportListGrid
  * @extends CMDBuild.Grid
  */
-CMDBuild.Management.ReportListGrid = Ext.extend(CMDBuild.Grid, {
+Ext.define("CMDBuild.Management.ReportListGrid", {
+	extend: "CMDBuild.Grid",
+	alias: "reportlistgrid",
+
 	translation : CMDBuild.Translation.management.modreport.reportForm,
 	baseUrl : 'services/json/management/modreport/getreportsbytype',
 	filtering : false,
@@ -200,6 +203,4 @@ CMDBuild.Management.ReportListGrid = Ext.extend(CMDBuild.Grid, {
 		this.getSelectionModel().clearSelections();
 	}
 });
-Ext.reg('reportlistgrid', CMDBuild.Management.ReportListGrid);
-	
 })();

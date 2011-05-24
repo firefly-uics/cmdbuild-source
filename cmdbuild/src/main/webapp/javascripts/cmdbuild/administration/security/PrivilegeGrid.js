@@ -1,4 +1,6 @@
-CMDBuild.Administration.PrivilegeGrid = Ext.extend(Ext.grid.EditorGridPanel, {
+Ext.define("CMDBuild.Administration.PrivilegeGrid", {
+  extend: "Ext.grid.Panel", // TODO extjs 3 to 4 migration @@ editorgrid
+  alias: "privilegegrid",
   translation: CMDBuild.Translation.administration.modsecurity.privilege,
   recordToChange: undefined,
   enableDragDrop : false,
@@ -22,7 +24,7 @@ CMDBuild.Administration.PrivilegeGrid = Ext.extend(Ext.grid.EditorGridPanel, {
            {name:'classname'},
            {name:'none_privilege'},
            {name:'read_privilege'},
-           {name:'write_privilege'}           
+           {name:'write_privilege'}
         ],
         sortInfo: {
             field: 'classname',
@@ -142,4 +144,3 @@ CMDBuild.Administration.PrivilegeGrid = Ext.extend(Ext.grid.EditorGridPanel, {
   	
   }
 });
-Ext.reg('privilegegrid', CMDBuild.Administration.PrivilegeGrid);

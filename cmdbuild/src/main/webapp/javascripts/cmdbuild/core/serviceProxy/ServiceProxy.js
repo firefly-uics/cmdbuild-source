@@ -140,47 +140,6 @@ CMDBuild.ServiceProxy = {
 		}, option);
 		CMDBuild.Ajax.request(conf);
 	},
-
-	geoServer: {
-		addUrl: "services/json/gis/addgeoserverlayer",
-		modifyUrl: "services/json/gis/modifygeoserverlayer",
-		getGeoServerLayerStore: function() {
-			var layerStore =  new Ext.data.JsonStore({
-				url: "services/json/gis/getgeoserverlayers",
-				root: "layers",
-				fields: ["maxZoom", "minZoom", "style", "description", "index", "name", "type"],
-				autoLoad: false,
-				sortInfo: {
-				    field: 'index',
-				    direction: 'ASC'
-				}
-			});
-			
-			var reload = function(o) {
-				if (o) {
-					this.nameToSelect = o.nameToSelect;
-				}
-				this.reload();
-			};
-			
-			layerStore.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
-			
-			return layerStore;
-		},
-		
-		deleteLayer: function(params, success, failure, callback) {
-			CMDBuild.Ajax.request({
-				scope : this,
-				important: true,
-				url : "services/json/gis/deletegeoserverlayer",
-				params : params,
-				method: 'POST',
-				success: success || Ext.emptyFn,
-				failure: failure || Ext.emptyFn,
-				callback: callback || Ext.emptyFn
-			});
-		}
-	},
 	
 	saveLayerVisibility: function(p) {
 		CMDBuild.Ajax.request({
@@ -265,46 +224,36 @@ CMDBuild.ServiceProxy = {
 	 * @param classId (optional) adds visibility on the specified class
 	 */ 
 	getAllLayerStore: function() {
-		var layerStore =  new Ext.data.JsonStore({
-			url: "services/json/gis/getalllayers",
-			root: "layers",
-			fields: ["maxZoom", "minZoom", "style", "description", "index",
-			         "name", "masterTableId", "type", "masterTableName", "isvisible"],
-			autoLoad: true,
-			sortInfo: {
-			    field: 'index',
-			    direction: 'ASC'
+		var layerStore =  new Ext.data.Store({
+			model: "GISLayerModel",
+			proxy: {
+				type: "ajax",
+				url: "services/json/gis/getalllayers",
+				reader: {
+					type: "json",
+					root: "layers"
+				}
+			},
+			// @@ TODO check the layers grid
+//			fields: ["maxZoom", "minZoom", "style", "description", "index",
+//			         "name", "masterTableId", "type", "masterTableName", "isvisible"],
+			autoLoad: false,
+			sorters: {
+				property: 'index',
+				direction: 'ASC'
 			}
 		});
 		
 		var reload = function() {
-			this.reload();
+			this.load();
 		};
 		
-		layerStore.subscribe("cmdb-new-geoattr", reload, layerStore);
-		layerStore.subscribe("cmdb-modify-geoattr", reload, layerStore);
-		layerStore.subscribe("cmdb-delete-geoattr", reload, layerStore);
-		layerStore.subscribe("cmdb-geoservices-config-changed", reload, layerStore);
-		layerStore.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
+		_CMEventBus.subscribe("cmdb-new-geoattr", reload, layerStore);
+		_CMEventBus.subscribe("cmdb-modify-geoattr", reload, layerStore);
+		_CMEventBus.subscribe("cmdb-delete-geoattr", reload, layerStore);
+		_CMEventBus.subscribe("cmdb-geoservices-config-changed", reload, layerStore);
+		_CMEventBus.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
 		return layerStore;
-	},
-	
-	getLookupFieldStore: function(type) {
-		return new Ext.data.JsonStore({
-			url: 'services/json/schema/modlookup/getlookuplist',
-			baseParams: {
-	        	type: type,
-				active: true,
-				short: true
-	        },
-	        root: "rows",
-	        fields : [
-	            lookupFields.Id,
-	            lookupFields.Description,
-	            lookupFields.ParentId
-	        ],
-	        autoLoad: true
-		});
 	},
 	
 	LOOKUP_FIELDS: lookupFields
@@ -337,4 +286,148 @@ CMDBuild.ServiceProxy.core = {
 		});
 	}
 };
+
+CMDBuild.ServiceProxy.geoServer = {
+	addUrl: "services/json/gis/addgeoserverlayer",
+	modifyUrl: "services/json/gis/modifygeoserverlayer",
+	
+	getGeoServerLayerStore: function() {
+		var layerStore =  new Ext.data.Store({
+			model: "GISLayerModel",
+			proxy: {
+				type: 'ajax',
+				url: 'services/json/gis/getgeoserverlayers',
+				reader: {
+					type: 'json',
+					root: 'layers'
+				}
+			},
+			sorters: [{
+				property: 'index',
+				direction: 'ASC'
+			}]
+		});
+		
+		var reload = function(o) {
+			if (o) {
+				this.nameToSelect = o.nameToSelect;
+			}
+			this.reload();
+		};
+		
+		_CMEventBus.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
+		
+		return layerStore;
+	},
+	
+	deleteLayer: function(params, success, failure, callback) {
+		CMDBuild.Ajax.request({
+			scope : this,
+			important: true,
+			url : "services/json/gis/deletegeoserverlayer",
+			params : params,
+			method: 'POST',
+			success: success || Ext.emptyFn,
+			failure: failure || Ext.emptyFn,
+			callback: callback || Ext.emptyFn
+		});
+	}
+}
+
+CMDBuild.ServiceProxy.classes = {
+	read: function(p) {
+		p.method = "GET";
+		p.url = "services/json/schema/modclass/getallclasses",
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+}
+
+CMDBuild.ServiceProxy.lookup = {
+	readAllTypes: function(p) {
+		p.method = "GET";
+		p.url = "services/json/schema/modlookup/tree",
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	getLookupFieldStore: function(type) {
+		return new Ext.data.Store({
+			model: "CMLookupForCombo",
+			proxy: {
+				type: 'ajax',
+				url : 'services/json/schema/modlookup/getlookuplist',
+				reader: {
+					type: 'json',
+					root: 'rows'
+				},
+				params : {
+					type : type,
+					active : true,
+					short : true
+				}
+			},
+			autoLoad : true
+		});
+	},
+
+	getLookupGridStore: function(pageSize) {
+		return new Ext.data.Store({
+			model : "CMLookupForGrid",
+			pageSize: pageSize || 20,
+			autoLoad : false,
+			proxy : {
+				type : 'ajax',
+				url : 'services/json/schema/modlookup/getlookuplist',
+				reader : {
+					type : 'json',
+					root : 'rows'
+				}
+			},
+			sorters : [ {
+				property : 'Description',
+				direction : "ASC"
+			}]
+		});
+	},
+	
+	setLookupDisabled: function(p, disable) {
+		var url = 'services/json/schema/modlookup/enablelookup';
+		if (disable) {
+			url = 'services/json/schema/modlookup/disablelookup';
+		}
+		
+		p.method = "POST";
+		p.url = url;
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	saveLookup: function(p) {
+		p.method = "POST";
+		p.url = "services/json/schema/modlookup/savelookup";
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	saveLookupType: function(p) {
+		p.method = "POST";
+		p.url = "services/json/schema/modlookup/savelookuptype";
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+}
+
+CMDBuild.ServiceProxy.group = {
+	read: function(p) {
+		p.method = "GET";
+		p.url = "services/json/schema/modsecurity/getgrouplist";
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+}
+
+CMDBuild.ServiceProxy.menu = {
+	read: function(p) {
+		p.method = "GET";
+		p.url = "services/json/schema/modreport/menutree",
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+}
 })();

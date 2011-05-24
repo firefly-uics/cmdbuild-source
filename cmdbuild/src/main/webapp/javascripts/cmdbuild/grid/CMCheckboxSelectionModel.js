@@ -1,6 +1,6 @@
 (function() {
 	Ext.namespace('CMDBuild.grid');
-	CMDBuild.grid.CMCheckboxSelectionModel = Ext.extend(Ext.grid.CheckboxSelectionModel, {
+	CMDBuild.grid.CMCheckboxSelectionModel = Ext.extend(Ext.selection.CheckboxModel, {
 		constructor: function(){
 			CMDBuild.grid.CMCheckboxSelectionModel.superclass.constructor.apply(this, arguments);
 			

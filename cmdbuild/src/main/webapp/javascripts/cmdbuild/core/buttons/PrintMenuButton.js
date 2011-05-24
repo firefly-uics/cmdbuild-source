@@ -1,4 +1,5 @@
-CMDBuild.PrintMenuButton = Ext.extend(Ext.Toolbar.SplitButton, {
+Ext.define("CMDBuild.PrintMenuButton",  {
+	extend: "Ext.button.Split",
 	text: CMDBuild.Translation.common.buttons.print,
 	iconCls: 'print',
 	

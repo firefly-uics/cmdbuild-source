@@ -1,5 +1,7 @@
-CMDBuild.Administration.UserForm = Ext.extend(Ext.form.FormPanel, {
-
+Ext.define("CMDBuild.Administration.UserForm", {
+  extend: "Ext.form.FormPanel",
+  alias: "userform",
+  
   translation: CMDBuild.Translation.administration.modsecurity.user,   
   plugins: [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
 
@@ -354,5 +356,3 @@ CMDBuild.Administration.UserForm = Ext.extend(Ext.form.FormPanel, {
 	    }
 	}
 });
-
-Ext.reg('userform', CMDBuild.Administration.UserForm );

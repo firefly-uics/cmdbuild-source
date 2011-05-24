@@ -1,4 +1,7 @@
-CMDBuild.Administration.ClassForm = Ext.extend(Ext.Panel, {
+
+Ext.define("CMDBuild.Administration.ClassForm", {
+	extend: "Ext.Panel",
+	alias: "classform",
 	translation: CMDBuild.Translation.administration.modClass.classProperties,
 	superclassurl: 'services/json/schema/modclass/getsuperclasses',
 	eventtype: 'class',
@@ -227,7 +230,7 @@ CMDBuild.Administration.ClassForm = Ext.extend(Ext.Panel, {
 				{name: "inherits", mapping: "inherits"},
 				{name: "active", mapping: "active"}
 			]);
-	        var attr = params.cachedNode
+	        var attr = params.cachedNode;
 	        var rec = new recordTemplate({
 	        	idClass: attr.id,
 	        	tableType: attr.tableType,
@@ -410,4 +413,3 @@ CMDBuild.Administration.ClassForm = Ext.extend(Ext.Panel, {
 	  });
   }
 });
-Ext.reg('classform', CMDBuild.Administration.ClassForm );

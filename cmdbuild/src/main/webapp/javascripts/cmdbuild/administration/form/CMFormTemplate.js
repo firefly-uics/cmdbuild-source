@@ -5,8 +5,11 @@ var EDITING_STATUS = {
 	DISABLED: 0,
 	ENABLED: 1
 }
-CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
-	plugins : [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
+
+Ext.define("CMDBuild.administration.form.CMFormTemplate", {
+	extend: "Ext.panel.Panel",
+	//TODO 3 to 4
+//	plugins : [new CMDBuild.CallbackPlugin(), new CMDBuild.FormPlugin()],
 	// define the following in the subclasses
 	model: null,
 	MODEL_TYPE: null,
@@ -84,7 +87,7 @@ CMDBuild.administration.form.CMFormTemplate = Ext.extend(Ext.Panel, {
 		this.bodyCssClass = CMDBuild.Constants.css.bg_gray;
 		this.EDITING_STATUS = EDITING_STATUS;
 		
-		CMDBuild.administration.form.CMFormTemplate.superclass.initComponent.apply(this, arguments);
+		this.callParent(arguments);
 	},
 
 	getForm: function() {

@@ -1,4 +1,5 @@
-CMDBuild.AddCardMenuButton = Ext.extend(Ext.Toolbar.SplitButton, {
+Ext.define("CMDBuild.AddCardMenuButton", {
+	extend: "Ext.button.Split",
 	translation : CMDBuild.Translation.management.moddetail,
 	iconCls: 'add',
 	//custom fields

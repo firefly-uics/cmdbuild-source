@@ -4,7 +4,10 @@
 		standard: "CLASS"
 	};
 	
-CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
+Ext.define("CMDBuild.Administration.AttributeForm", {
+	extend: "Ext.Panel",
+	alias: "attributeform",
+		
   translation: CMDBuild.Translation.administration.modClass.attributeProperties,
   id: "attrbuteform",
   layout: "border",
@@ -580,6 +583,4 @@ CMDBuild.Administration.AttributeForm = Ext.extend(Ext.Panel, {
 	  this.showAndEnableContextualFieldsByType(type);
   }
 });
-
-Ext.reg("attributeform", CMDBuild.Administration.AttributeForm);
 })();

@@ -5,8 +5,9 @@
  * @extends Ext.Window
  */
 
-CMDBuild.PopupWindow = Ext.extend(Ext.Window, {
-    modal: true,
+Ext.define("CMDBuild.PopupWindow", {
+	extend: "Ext.window.Window",
+	modal: true,
 	layout: 'fit',
 	resizable: false,
 	defaultSize: 0.80,
@@ -20,7 +21,7 @@ CMDBuild.PopupWindow = Ext.extend(Ext.Window, {
 			} else {
 				percentualHeight = this.defaultSize;
 			}
-	        this.height = Ext.getBody().getHeight() * percentualHeight;
+			this.height = Ext.getBody().getHeight() * percentualHeight;
 		}
 
 		if (!this.autoWidth) {

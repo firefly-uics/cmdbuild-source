@@ -31,7 +31,8 @@
 		}, this);
 	};
 	
-	CMDBuild.Administration.LayerVisibilityGrid = Ext.extend(CMDBuild.Administration.LayerGrid, {
+	Ext.define("CMDBuild.Administration.LayerVisibilityGrid", {
+		extend: "CMDBuild.Administration.LayerGrid",
 		currentClass: undefined,
 		initComponent: function() {
 			CMDBuild.Administration.LayerVisibilityGrid.superclass.initComponent.call(this, arguments);

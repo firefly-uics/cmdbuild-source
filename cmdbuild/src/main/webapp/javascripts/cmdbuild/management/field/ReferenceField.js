@@ -158,7 +158,7 @@ CMDBuild.Management.ReferenceField = (function() {
 						if (r) {
 							field.setRawValue(r.data.Description);
 						}
-					}			
+					}
 				}
 				
 				if (this.storeIsLargerThenLimit()) {

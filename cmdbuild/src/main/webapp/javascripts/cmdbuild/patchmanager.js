@@ -6,26 +6,31 @@
 Ext.onReady(function() {
 	var tr = CMDBuild.Translation.administration.modClass.classProperties;
 	this.store = new Ext.data.JsonStore({
-		url: 'services/json/configure/getpatches',
+		model: "CMPatchModel",
+		proxy: {
+			type: "ajax",
+			url: 'services/json/configure/getpatches',
+			reader: {
+				type: "json",
+				root: "patches"
+			}
+		},
 		autoLoad: true,
-        root: "patches",
-        fields: ['name', 'description'],
-        remoteSort: false,
-        sortInfo : {
-	      field : 'name',
-	      direction : "ASC"
-	  	}
+		remoteSort: false,
+		sorters: {
+			property: 'name',
+			direction: "ASC"
+		}
 	});
 	
-	this.patchesGrid = new Ext.grid.GridPanel ({
+	this.patchesGrid = new Ext.grid.Panel ({
 		store: this.store,
 		frame: true,
 		layout: 'fit',
 		stripeRows: true,
-		viewConfig: { forceFit:true },
 		columns: [
 		     {header: tr.name, dataIndex: 'name', width: 100, fixed: true},
-		     {header: tr.description, dataIndex: 'description'}
+		     {header: tr.description, dataIndex: 'description', flex: 1}
 		]
 	});
 	
