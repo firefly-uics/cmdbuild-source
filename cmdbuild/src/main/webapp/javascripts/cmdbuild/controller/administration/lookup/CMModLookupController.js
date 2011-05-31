@@ -16,7 +16,7 @@
 				this.lookupTypeFormController.onAddLookupTypeClick();
 				this.lookupGridController.onAddLookupTypeClick();
 				this.lookupFormController.onAddLookupTypeClick();
-				
+				_CMMainViewportController.deselectAccordionByName("lookuptype");
 				this.view.activateLookupTypeForm();
 				this.view.disableLookupTab();
 			}, this);

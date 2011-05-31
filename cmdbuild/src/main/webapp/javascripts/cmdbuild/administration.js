@@ -2,18 +2,47 @@
 	var lookupAccordion = new CMDBuild.view.administraton.accordion.CMLookupAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
 	});
+
+	var classesAccordion = new CMDBuild.view.administraton.accordion.CMClassAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
+	});
+
+	var groupsAccordion = new CMDBuild.view.administraton.accordion.CMGroupsAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMGroupAccordionController
+	});
 	
-	
+	var menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
+	});
+
 Ext.define("CMDBuild.app.Administration", {
 	statics: {
 		init: function() {
 			CMDBuild.ServiceProxy.lookup.readAllTypes({
 				success: function(response, options, decoded) {
-					CMDBuild.Cache.setTables(decoded);
+					_CMCache.addLookupTypes(decoded);
 					lookupAccordion.updateStore();
 				}
 			});
-	
+
+			CMDBuild.ServiceProxy.classes.read({
+				params: {
+					active: false
+				},
+				success: function(response, options, decoded) {
+					_CMCache.addClasses(decoded.classes);
+					classesAccordion.updateStore();
+				}
+			});
+
+			CMDBuild.ServiceProxy.group.read({
+				success: function(response, options, decoded) {
+					_CMCache.addGroups(decoded.groups);
+					groupsAccordion.updateStore();
+					menuAccordion.updateStore()
+				}
+			});
+
 			CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 				success: function(response, options, decoded) {
 					CMDBuild.Config.cmdbuild = decoded.data;
@@ -27,28 +56,14 @@ Ext.define("CMDBuild.app.Administration", {
 								success: function(response, options, decoded) {
 									CMDBuild.Config.gis = decoded.data;
 									CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-									
-									CMDBuild.ServiceProxy.classes.read({
-										params: {
-											active: false
-										},
+										
+									CMDBuild.ServiceProxy.menu.read({
 										success: function(response, options, decoded) {
-											CMDBuild.Cache.setTables(decoded.classes);
-												
-											CMDBuild.ServiceProxy.group.read({
-												success: function(response, options, decoded) {
-													CMDBuild.Cache.setTables(decoded.groups);
-													
-													CMDBuild.ServiceProxy.menu.read({
-														success: function(response, options, decoded) {
-															CMDBuild.Cache.setTables(decoded);
-															renderThemAll();
-														}
-													});
-												}
-											});
+											CMDBuild.Cache.setTables(decoded);
+											renderThemAll();
 										}
 									});
+
 								}
 							});
 						}
@@ -67,6 +82,9 @@ function renderThemAll() {
 		new CMDBuild.controller.CMMainViewportController(
 			new CMDBuild.view.CMMainViewport({
 				cmAccordions: [
+					menuAccordion,
+					groupsAccordion,
+					classesAccordion,
 					lookupAccordion,
 					new CMDBuild.view.administraton.accordion.CMGISAccordion(),
 					new CMDBuild.view.administraton.accordion.CMConfigurationAccordion()
@@ -76,6 +94,23 @@ function renderThemAll() {
 					new Ext.Panel({
 						cls: 'empty_panel x-panel-body'
 					}),
+
+					new CMDBuild.view.administration.group.CMModGroup({
+						cmControllerType: controllerNS.administration.group.CMModGroupsController
+					}),
+
+					new CMDBuild.Administration.ModMenu({
+						cmControllerType: controllerNS.administration.menu.CMModMenuController
+					}),
+
+					new CMDBuild.view.administration.user.CMModUser({
+						cmControllerType: controllerNS.administration.user.CMModUserController
+					}),
+
+					new CMDBuild.view.administration.classes.CMModClass({
+						cmControllerType: controllerNS.administration.classes.CMModClassController
+					}),
+
 					new CMDBuild.Administration.ModLookup({
 						cmControllerType: controllerNS.administration.lookup.CMModLookupController
 					}),

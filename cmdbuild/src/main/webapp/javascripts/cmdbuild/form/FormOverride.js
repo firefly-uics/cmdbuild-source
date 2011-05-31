@@ -170,14 +170,14 @@ Ext.override(Ext.form.Hidden, {
 
 Ext.override(Ext.form.BasicForm, {
 	//to fire an event with the record loaded
-	loadRecord: function(record) {
-		this.setValues(record.data);
-		this.fireEvent('loadrecord', {
-			record: record,
-			form: this
-		});
-		return this;
-	}
+//	loadRecord: function(record) {
+//		this.setValues(record.data);
+//		this.fireEvent('loadrecord', {
+//			record: record,
+//			form: this
+//		});
+//		return this;
+//	}
 });
 
 Ext.override( Ext.form.FieldSet, {

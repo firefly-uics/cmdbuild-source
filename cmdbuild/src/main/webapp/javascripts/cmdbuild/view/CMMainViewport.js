@@ -14,15 +14,13 @@
 				split: true,
 				layout: "accordion",
 				items: this.cmAccordions,
-				width: 200,
-				hideMode: "offsets"
+				width: 200
 			});
 
 			this.cmPanels = new Ext.panel.Panel({
 				region: 'center',
 				layout: "card",
-				items: this.cmPanels,
-				hideMode: "offsets"
+				items: this.cmPanels
 			});
 
 			this.items = [this.cmAccordions,this.cmPanels]

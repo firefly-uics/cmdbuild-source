@@ -19,7 +19,19 @@
 				}
 			});
 		},
-
+		
+		focusOnFirstEnabled: function() {
+			var cathced = false;
+			this.cascade(function(item) {
+				if (item && (item instanceof Ext.form.Field)) {
+					if (!item.disabled && !cathced) {
+						item.focus();
+						cathced = true;
+					}
+				}
+			});
+		},
+		
 		enableCMButtons: function() {
 			this.iterateOverCMButtons(function(b) {
 				if (b && b.enable) {
@@ -56,6 +68,7 @@
 			this.enableFields(all);
 			this.disableCMTbar();
 			this.enableCMButtons();
+			this.focusOnFirstEnabled();
 		},
 
 		disableModify: function(enableCMTBar) {
@@ -68,8 +81,37 @@
 			}
 		},
 		
-		getData: function() {
-			return this.getForm().getValues();
+		getData: function(withDisabled) {
+			if (withDisabled) {
+				var data = {};
+				this.cascade(function(item) {
+					if (item && (item instanceof Ext.form.Field)) {
+						data[item.name] = item.getValue();
+					}
+				});
+				
+				return data;
+			} else {
+				return this.getForm().getValues();
+			}
+		},
+		
+		getNonValidFields: function() {
+			var data = []
+			
+			this.cascade(function(item) {
+				if (item 
+					&& (item instanceof Ext.form.Field)
+					&& !item.disabled
+					) {
+					
+					if (!item.isValid()) { 
+						data.push(item);
+					}
+				}
+			});
+			
+			return data;
 		},
 		
 		reset: function() {

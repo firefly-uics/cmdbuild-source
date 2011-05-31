@@ -34,11 +34,32 @@
 	});
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMGISAccordion", {
-		extend: 'Ext.tree.Panel',
-		title: tr.title,
-		store: store,
-		rootVisible: false,
-		hideMode: "offsets"
+		extend: 'Ext.panel.Panel',
+		constructor: function() {
+			this.tree = Ext.create("Ext.tree.Panel", {
+				store: store,
+				border: false,
+				region: "center",
+				rootVisible: false
+			});
+			
+			Ext.apply(this, {
+				title: tr.title,
+				items: [this.tree],
+				layout: "border",
+				border: false
+			});
+			
+			this.callParent(arguments);
+		},
+
+		getSelectionModel: function() {
+			return this.tree.getSelectionModel();
+		},
+
+		getRootNode: function() {
+			return this.tree.getRootNode();
+		}
 	});
 
 })();

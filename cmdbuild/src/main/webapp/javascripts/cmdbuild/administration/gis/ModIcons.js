@@ -4,8 +4,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	cmName:"gis-icons",	
 	translation: CMDBuild.Translation.administration.modcartography.icons,
 	buttonsTr: CMDBuild.Translation.common.buttons,
+
 	urls: {
-		list: "services/json/gis/geticonslist",
 		modify: "services/json/gis/updateiconcard",
 		add: "services/json/gis/createiconcard",
 		remove: "services/json/gis/deleteiconcard"
@@ -18,20 +18,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			region: 'center',
 			frame: true,
 			border: 0,
-			store: new Ext.data.Store({
-				model : 'IconsModel',
-				proxy : {
-					type : 'ajax',
-					url : this.urls.list,
-					reader : {
-						type : 'json',
-						root : 'rows'
-					}
-				},
-				autoLoad : true
-			}),
+			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 			tbar: [this.addButton],
-			bodyCssClass: CMDBuild.Constants.css.bottom_border_gray,
 			sm: new Ext.selection.RowModel(),
 			columns: [{	
 				header: '&nbsp', 

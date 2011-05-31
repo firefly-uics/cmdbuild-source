@@ -191,7 +191,7 @@ CMDBuild.ChainedAjax = {
 	    	var requestObject = Ext.apply(o.requests[index]);
 	    	var execNext = Ext.bind(this.executeNextAndWait,this, [o, index+1]);
 			if (requestObject.success)
-		    	requestObject.success = requestObject.success.createSequence(execNext);
+		    	requestObject.success = Ext.Function.createSequence(requestObject.success, execNext);
 		    else
 		    	requestObject.success = execNext;
 			requestObject.loadMask = requestObject.loadMask && !o.loadMask;
