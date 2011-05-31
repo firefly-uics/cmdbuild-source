@@ -72,11 +72,14 @@
 				disabled : true
 			});
 			
+			this.layout = "border",
+			
 			this.items = [{
 				xtype: "panel",
 				frame: true,
 				border: false,
 				padding: "5 5 5 5",
+				region: "center",
 				items: [ {
 					xtype : 'hidden',
 					name : LOOKUP_FIELDS.Id
@@ -141,20 +144,6 @@
 		onAddLookupClick: function() {
 			this.getForm().reset();
 			this.enableModify();
-		},
-
-		// private
-		onNewLookup : function() {
-			this.formPanel.newForm(true);
-			this.formPanel.clearForm();
-			if (this.type) {
-				this.formPanel.getForm().findField(LOOKUP_FIELDS.Type)
-						.setValue(this.type);
-			} else {
-				throw new Error('Is setted an undefined time in Lookup form');
-			}
-			this.formPanel.getForm().findField(LOOKUP_FIELDS.Active).setValue(
-					true);
 		},
 
 		_reloadParentStore : function() {

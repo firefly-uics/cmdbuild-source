@@ -7,7 +7,7 @@
 		]
 	});
 	
-	Ext.define("TableForComboModel", {
+	Ext.define("CMTableForComboModel", {
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: "name", type: 'string'},

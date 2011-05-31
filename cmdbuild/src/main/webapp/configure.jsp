@@ -10,7 +10,7 @@
 <% 
 	String lang = new SessionVars().getLanguage();
 	String jdbcDriverVersion = DBService.getDriverVersion();
-	String extVersion = "3.3";
+	String extVersion = "4.0.0";
 %>
 
 <html>
@@ -23,7 +23,6 @@
 	<link rel="icon" href="images/favicon.ico" />
 
 	<!-- 0. ExtJS -->
-	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/adapter/ext/ext-base.js"></script>
 	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/IconCombo.js"></script>
@@ -32,9 +31,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
 
 	<!-- 1. Main script -->
-	<script type="text/javascript">
-		Ext.BLANK_IMAGE_URL = 'javascripts/ext-<%= extVersion %>/resources/images/default/s.gif';
-	</script>
 	<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
@@ -50,15 +46,22 @@
 		Ext.ns('CMDBuild.Config.cmdbuild');
 		CMDBuild.Config.cmdbuild.language = '<%= lang %>';
 		CMDBuild.Config.cmdbuild.jdbcDriverVersion = '<%= jdbcDriverVersion %>';
+
+		Ext.onReady(function() {
+			CMDBuild.app.Setup.init();
+		});
 	</script>
 
-	<!-- 4. Modules -->	
-	<script type="text/javascript" src="javascripts/cmdbuild/configure/Step1.js"></script>	
-	<script type="text/javascript" src="javascripts/cmdbuild/configure/Step2.js"></script>	
-	<script type="text/javascript" src="javascripts/cmdbuild/configure/Step3.js"></script>	
-
-	<!-- 5. Layout -->
-	<script type="text/javascript" src="javascripts/cmdbuild/configure.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step1.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step2.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step3.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/setup.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/setup/CMSetupController.js"></script>
+	
 </head>
 <body>
 <div id="header">

@@ -7,7 +7,7 @@
 			{name: 'path', type: 'string'}
 		]
 	});
-	
+
 	Ext.define('GISLayerModel', {
 		extend: 'Ext.data.Model',
 		fields: [

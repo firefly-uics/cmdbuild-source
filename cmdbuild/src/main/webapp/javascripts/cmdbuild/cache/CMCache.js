@@ -135,7 +135,7 @@
 			Ext.apply(classes,cache.tableMaps[tableMapKey]);
 		}
 		var store = new Ext.data.SimpleStore({
-			model: "TableForComboModel",
+			model: "CMTableForComboModel",
 			sorters: [ {
 				property : "description",
 				direction : 'ASC'
@@ -160,19 +160,17 @@
 		return store;
 	};
 
-	var lookupTypeStore = {
-		cmFill: function() {},
-		cmFake: true
-	};
-	var lookupTypeStoreOnlyLeves = {
-		cmFill: function() {},
-		cmFake: true
-	};
+	var superclassesStore = getFakeStore();
 
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
-		
+		mixins: {
+			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
+			entryType: "CMDBUild.cache.CMCacheClassFunctions",
+			groups: "CMDBUild.cache.CMCacheGroupsFunctions"
+		},
 		constructor: function() {
+			this._lookupTypes={};
 
 			this.toString = function() {
 				return "CMCache";
@@ -190,6 +188,7 @@
 			this.classesAndProcessStore = undefined;
 			
 			
+
 			_CMEventBus.subscribe("cmdb-delete-card", this.reloadReferenceStore, this);
 			_CMEventBus.subscribe("cmdb-reload-card", this.reloadReferenceStore, this);
 			
@@ -212,14 +211,14 @@
 			_CMEventBus.subscribe("cmdb-modify-node", onModifyNode, this);
 			_CMEventBus.subscribe("cmdb-deleted-node", onDeletedNode, this);
 		},
-		
+
 		setTables: function(tables) {
 			for (var i=0, len=tables.length; i<len; ++i) {
 				var table = tables[i];
 				this.setTable(table);
 			}
 		},
-		
+
 		setTable: function(table) {
 			var group = getTableGroup(table);
 			table.group = group;
@@ -230,7 +229,7 @@
 			this.tableMaps[group][table.id] = table;
 			return group;
 		},
-		
+
 		setDomains: function(domains) {
 			domains = domains || [];
 			for (var i=0, l=domains.length; i<l; ++i) {
@@ -245,19 +244,20 @@
 				}
 			}
 		},
-		
+
 		getTablesByGroup: function(groupName) {
 			return this.tableMaps[groupName];
 		},
 
-		getClassById: function(tableId) {
-			var classes = this.getTablesByGroup(CLASS_GROUP);
-			if (classes) {
-				return classes[tableId];
-			} else {
-				return undefined;
-			}
-		},
+		// TODO remove
+//		getClassById: function(tableId) {
+//			var classes = this.getTablesByGroup(CLASS_GROUP);
+//			if (classes) {
+//				return classes[tableId];
+//			} else {
+//				return undefined;
+//			}
+//		},
 
 		getTableById: function(tableId) {
 			for (var group in this.tableMaps) {
@@ -534,81 +534,8 @@
 				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.classTree), superclassId, subclassId)
 				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.processTree), superclassId, subclassId);
 		},
-		
-		getLookupTypeAsStore: function() {
-			if (lookupTypeStore.cmFake) {
-				lookupTypeStore = buildLookupTypeStore(onlyLeaves = false);
-				lookupTypeStore.cmFill();
-			}
-			
-			return lookupTypeStore;
-		},
-		
-		getLookupTypeLeavesAsStore: function() {
-
-			if (lookupTypeStoreOnlyLeves.cmFake) {
-				lookupTypeStoreOnlyLeves = buildLookupTypeStore(onlyLeaves = true);
-				lookupTypeStoreOnlyLeves.cmFill();
-			}
-
-			return lookupTypeStoreOnlyLeves;
-		},
-		
-		syncLookupTypesParent: function(lType) {
-			var lookupTypes = this.tableMaps[constants.cachedTableType.lookuptype];
-			for (var i in lookupTypes) {
-				var table = lookupTypes[i];
-				if (table.parent == lType.oldId) {
-					table.parent = lType.id;
-					return;
-				}
-			}
-		},
-
-		getTableGroup: getTableGroup,
-
-		// To save after refactor
-		onNewLookupType: function(lType) {
-			this.setTable(lType);
-			lookupTypeStore.cmFill()
-			lookupTypeStoreOnlyLeves.cmFill();
-			this.fireEvent("cm_new_lookuptype", lType);
-		},
-
-		onModifyLookupType: function(lType) {
-			onModifyNode.call(this, lType);
-			this.syncLookupTypesParent(lType);
-			lookupTypeStore.cmFill()
-			lookupTypeStoreOnlyLeves.cmFill();
-			this.fireEvent("cm_modified_lookuptype", lType);
-		}
+		getTableGroup: getTableGroup
 	});
-	
-	function buildLookupTypeStore(onlyLeaves) {
-		var store = new Ext.data.Store({
-			model: "CMLookupTypeForCombo",
-			cmOnlyLeaves: onlyLeaves,
-			cmFill: function() {
-				var lookupTypes = _CMCache.tableMaps[constants.cachedTableType.lookuptype];
-				this.removeAll();
-				var data = [];
-				for (var i in lookupTypes) {
-					var table = lookupTypes[i];
-					if (!this.cmOnlyLeaves || (this.cmOnlyLeaves && !table.children)) {
-						data.push([table.id]);
-					}
-				}
-				this.add(data);
-				this.sort("type", "ASC");
-			},
-			sorters: [{
-				property : 'type',
-				direction : 'ASC'
-			}]
-		});
-		
-		return store;
-	}
 	
 	function addAttributesToDomain(rawDomain, domain) {
 		var rawAttributes = rawDomain.attributes;
@@ -624,7 +551,14 @@
 			}
 		}
 	}
-	
+
+	function getFakeStore() {
+		return {
+			cmFill: function() {},
+			cmFake: true
+		};
+	}
+
 	CMDBuild.Cache = new CMDBuild.cache.CMCache();
 	_CMCache = CMDBuild.Cache; //to uniform the variable names, maybe a day I'll can delete CMDBuild.Cache
 })();

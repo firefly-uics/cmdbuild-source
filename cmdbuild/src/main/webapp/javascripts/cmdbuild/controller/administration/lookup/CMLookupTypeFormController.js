@@ -46,7 +46,6 @@
 		onAddLookupTypeClick: function() {
 			this.currentLookupType = null;
 			this.view.onNewLookupType();
-			_CMMainViewportController.deselectAccordionByName("lookuptype");
 		}
 	});
 

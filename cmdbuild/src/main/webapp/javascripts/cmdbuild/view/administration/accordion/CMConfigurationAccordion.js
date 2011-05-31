@@ -42,12 +42,33 @@
 	});
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMConfigurationAccordion", {
-		extend: 'Ext.tree.Panel',
-		title: tr.setupTitle,
-		store: store,
-		rootVisible: false,
+		extend: 'Ext.panel.Panel',
+		
 		cmName: "setup",
-		hideMode: "offsets"
+		hideMode: "offsets",
+		constructor: function() {
+			this.tree = Ext.create("Ext.tree.Panel", {
+				store: store,
+				border: false,
+				region: "center",
+				rootVisible: false
+			});
+			
+			Ext.apply(this, {
+				title: tr.setupTitle,
+				items: [this.tree],
+				layout: "border",
+				border: false
+			});
+			this.callParent(arguments);
+		},
+		getSelectionModel: function() {
+			return this.tree.getSelectionModel();
+		},
+
+		getRootNode: function() {
+			return this.tree.getRootNode();
+		}
 	});
 
 })();

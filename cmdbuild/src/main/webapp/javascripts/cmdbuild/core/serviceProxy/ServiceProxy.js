@@ -337,7 +337,21 @@ CMDBuild.ServiceProxy.geoServer = {
 CMDBuild.ServiceProxy.classes = {
 	read: function(p) {
 		p.method = "GET";
-		p.url = "services/json/schema/modclass/getallclasses",
+		p.url = "services/json/schema/modclass/getallclasses";
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	save: function(p) {
+		p.method = 'POST';
+		p.url = 'services/json/schema/modclass/savetable';
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	remove: function(p) {
+		p.method = 'POST';
+		p.url = "services/json/schema/modclass/deletetable";
+		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }
@@ -345,7 +359,7 @@ CMDBuild.ServiceProxy.classes = {
 CMDBuild.ServiceProxy.lookup = {
 	readAllTypes: function(p) {
 		p.method = "GET";
-		p.url = "services/json/schema/modlookup/tree",
+		p.url = "services/json/schema/modlookup/tree";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 	
@@ -420,7 +434,70 @@ CMDBuild.ServiceProxy.group = {
 		p.method = "GET";
 		p.url = "services/json/schema/modsecurity/getgrouplist";
 		CMDBuild.ServiceProxy.core.doRequest(p);
-	}
+	},
+	
+	save: function(p) {
+		p.method = "POST";
+		p.url = "services/json/schema/modsecurity/savegroup";
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	getPrivilegesGridStore: function(pageSize) {
+		return new Ext.data.Store({
+			model : "CMDBuild.cache.CMPrivilegeModel",
+			autoLoad : false,
+			proxy : {
+				type : 'ajax',
+				url : 'services/json/schema/modsecurity/getprivilegelist',
+				reader : {
+					type : 'json',
+					root : 'rows'
+				}
+			},
+			sorters : [ {
+				property : 'classname',
+				direction : "ASC"
+			}]
+		});
+	},
+	
+	getUserPerGroupStoreForGrid: function() {
+		return new Ext.data.Store({
+			model : "CMDBuild.cache.CMUserForGridModel",
+			autoLoad : false,
+			proxy : {
+				type : 'ajax',
+				url : 'services/json/schema/modsecurity/getgroupuserlist',
+				reader : {
+					type : 'json',
+					root : 'users'
+				}
+			},
+			sorters : [ {
+				property : 'username',
+				direction : "ASC"
+			}]
+		});
+	},
+	
+	getUserStoreForGrid: function() {
+		return new Ext.data.Store({
+			model : "CMDBuild.cache.CMUserForGridModel",
+			autoLoad : true,
+			proxy : {
+				type : 'ajax',
+				url : "services/json/schema/modsecurity/getuserlist",
+				reader : {
+					type : 'json',
+					root : 'rows'
+				}
+			},
+			sorters : [ {
+				property : 'username',
+				direction : "ASC"
+			}]
+		});
+	},
 }
 
 CMDBuild.ServiceProxy.menu = {
@@ -430,4 +507,5 @@ CMDBuild.ServiceProxy.menu = {
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }
+
 })();
