@@ -15,9 +15,16 @@
 		cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
 	});
 
+	var domainAccordion = new CMDBuild.view.administraton.accordion.CMDomainAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMDomainAccordionController
+	});
+
+	var reportAccordion = new CMDBuild.view.administraton.accordion.CMReportAccordion();
+
 Ext.define("CMDBuild.app.Administration", {
 	statics: {
 		init: function() {
+
 			CMDBuild.ServiceProxy.lookup.readAllTypes({
 				success: function(response, options, decoded) {
 					_CMCache.addLookupTypes(decoded);
@@ -43,6 +50,20 @@ Ext.define("CMDBuild.app.Administration", {
 				}
 			});
 
+			CMDBuild.ServiceProxy.report.read({
+				success: function(response, options, reports) {
+					_CMCache.addReports(reports);
+					reportAccordion.updateStore();
+				}
+			});
+
+			CMDBuild.ServiceProxy.administration.domain.list({
+				success: function(response, options, decoded) {
+					_CMCache.addDomains(decoded.domains);
+					domainAccordion.updateStore();
+				}
+			});
+
 			CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 				success: function(response, options, decoded) {
 					CMDBuild.Config.cmdbuild = decoded.data;
@@ -56,14 +77,8 @@ Ext.define("CMDBuild.app.Administration", {
 								success: function(response, options, decoded) {
 									CMDBuild.Config.gis = decoded.data;
 									CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-										
-									CMDBuild.ServiceProxy.menu.read({
-										success: function(response, options, decoded) {
-											CMDBuild.Cache.setTables(decoded);
-											renderThemAll();
-										}
-									});
-
+									
+									renderThemAll();
 								}
 							});
 						}
@@ -82,15 +97,21 @@ function renderThemAll() {
 		new CMDBuild.controller.CMMainViewportController(
 			new CMDBuild.view.CMMainViewport({
 				cmAccordions: [
+					reportAccordion,
+					classesAccordion,
+					domainAccordion,
 					menuAccordion,
 					groupsAccordion,
-					classesAccordion,
 					lookupAccordion,
 					new CMDBuild.view.administraton.accordion.CMGISAccordion(),
 					new CMDBuild.view.administraton.accordion.CMConfigurationAccordion()
 				],
 
 				cmPanels: [
+					new CMDBuild.view.administration.report.CMModReport({
+						cmControllerType: controllerNS.administration.report.CMModReportController
+					}),
+
 					new Ext.Panel({
 						cls: 'empty_panel x-panel-body'
 					}),
@@ -98,7 +119,11 @@ function renderThemAll() {
 					new CMDBuild.view.administration.group.CMModGroup({
 						cmControllerType: controllerNS.administration.group.CMModGroupsController
 					}),
-
+					
+					new CMDBuild.view.administration.domain.CMModDomain({
+						cmControllerType: controllerNS.administration.domain.CMModDomainController
+					}),
+					
 					new CMDBuild.Administration.ModMenu({
 						cmControllerType: controllerNS.administration.menu.CMModMenuController
 					}),

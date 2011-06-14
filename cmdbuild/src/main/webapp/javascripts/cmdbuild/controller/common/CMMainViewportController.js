@@ -40,6 +40,22 @@
 			_debug("Cannot unselect the accordion " + cmName, e);
 		}
 	};
+	
+	ns.CMMainViewportController.prototype.disableAccordionByName = function(cmName) {
+		try {
+			this.viewport.disableAccordionByName(cmName);
+		} catch (e) {
+			_debug("Cannot disable the accordion " + cmName, e);
+		}
+	};
+	
+	ns.CMMainViewportController.prototype.enableAccordionByName = function(cmName) {
+		try {
+			this.viewport.enableAccordionByName(cmName);
+		} catch (e) {
+			_debug("Cannot enable the accordion " + cmName, e);
+		}
+	};
 })();
 
 //(function() {	

@@ -9,7 +9,15 @@
 	
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeSortingGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMGeoAttributesPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMGeoAttributesGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMGeoAttributesForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMModClass.js"></script>
 	
 	<!-- GIS -->
@@ -48,10 +56,24 @@
 	
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/menu/MenuPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/menu/ModMenu.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMMenuPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMModMenu.js"></script>
 	
-	
+	<!-- DOMAINS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDomainAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributeForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributeGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributes.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMModDomain.js"></script>
+
+	<!-- REPORTS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMReportAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMModReport.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep1.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep2.js"></script>
+
 <!-- CONTROLLERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
@@ -79,12 +101,22 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMClassAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMDomainTabController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMGeoAttributePanelController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassAttributeController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassFormController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMModClassController.js"></script>
 	
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMMenuAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/menu/CMModMenuController.js"></script>
+	
+	<!-- DOMAINS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDomainAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/domain/CMDomainAttributesController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/domain/CMDomainFormController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/domain/CMModDomainController.js"></script>
+	
+	<!-- REPORTS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/report/CMModReportController.js"></script>
 	
 <!-- THE OTHERS -->
 	<!-- GIS -->
@@ -96,34 +128,23 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerForm.js"></script>
 
 	<!--  CLASS -->
+
 	
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainGrid.js"></script>
+
+	<!-- DOMAINS -->
 	
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeForm.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeSortingGrid.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/AttributeGrid.js"></script>-->
-
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributeForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoAttributePanel.js"></script>
-
-
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>-->
 
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClassController.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/SetOrderWindow.js"></script>-->
 
 <!---->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeForm.js"></script>-->
+
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeFormController.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGrid.js"></script>-->
+
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGridController.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributes.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributesController.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainForm.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/form/CMDomainFormController.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/CMDomainAccordion.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomain.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/ModDomainController.js"></script>-->
+
 <!---->
 
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script>-->
@@ -135,10 +156,7 @@
 
 
 <!---->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ImportJRFormStep1.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ImportJRFormStep2.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ReportForm.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/report/ModReport.js"></script>-->
+
 <!--<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportGrid.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/SchedulerUI.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobGrid.js"></script>-->

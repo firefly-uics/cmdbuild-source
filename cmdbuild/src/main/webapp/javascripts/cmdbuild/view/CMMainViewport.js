@@ -10,20 +10,39 @@
 
 		initComponent : function() {
 			this.cmAccordions = Ext.create("Ext.panel.Panel", {
+				padding: "3 0 3 0",
 				region: 'west',
 				split: true,
 				layout: "accordion",
 				items: this.cmAccordions,
+				frame: false,
+				border: false,
 				width: 200
 			});
 
 			this.cmPanels = new Ext.panel.Panel({
+				padding: "3 0 3 0",
 				region: 'center',
 				layout: "card",
-				items: this.cmPanels
+				items: this.cmPanels,
+				frame: false,
+				border: false
 			});
 
-			this.items = [this.cmAccordions,this.cmPanels]
+			this.header = new Ext.panel.Panel({
+				region: "north",
+				height: 45,
+				contentEl: "header"
+			});
+
+			this.footer= new Ext.panel.Panel({
+				region: "south",
+				height: 18,
+				contentEl: "footer"
+			});
+
+			this.items = [this.cmAccordions,this.cmPanels, this.header, this.footer];
+			this.padding = "3 3 3 3";
 			CMDBuild.view.CMMainViewport.superclass.initComponent.call(this, arguments);
 		},
 		/*
@@ -66,12 +85,26 @@
 		},
 
 		deselectAccordionByName: function(cmName) {
-			var a = this.cmAccordions.items.findBy(function(accordion) {
-				return accordion.cmName == cmName;
-			});
+			var a = this.findAccordionByCMName(cmName);
 
 			var sm = a.getSelectionModel();
 			sm.deselect(sm.getSelection());
+		},
+		
+		findAccordionByCMName: function(cmName) {
+			return this.cmAccordions.items.findBy(function(accordion) {
+				return accordion.cmName == cmName;
+			});
+		},
+		
+		disableAccordionByName: function(cmName) {
+			var a = this.findAccordionByCMName(cmName);
+			a.disable();
+		},
+		
+		enableAccordionByName: function(cmName) {
+			var a = this.findAccordionByCMName(cmName);
+			a.enable();
 		}
 	});
 })();

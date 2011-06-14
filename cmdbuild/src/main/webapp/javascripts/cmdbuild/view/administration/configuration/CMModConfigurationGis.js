@@ -30,6 +30,17 @@
 			}]
 
 			this.callParent(arguments);
+		},
+		
+		afterSubmit: function(conf) {
+			CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, conf);
+			CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+			
+			if (CMDBuild.Config.gis.enabled) {
+				_CMMainViewportController.enableAccordionByName("gis");
+			} else {
+				_CMMainViewportController.disableAccordionByName("gis");
+			}
 		}
 	});
 })();

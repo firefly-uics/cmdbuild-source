@@ -12,10 +12,9 @@
 			this.view.printClassButton.on("click", onPrintClass, this);
 		},
 
-		onSelectClass: function(classId) {
+		onClassSelected: function(classId) {
 			this.selection = _CMCache.getClassById(classId);
-
-			this.view.onSelectClass(this.selection);
+			this.view.onClassSelected(this.selection);
 		},
 		
 		onAddClassButtonClick: function() {
@@ -72,7 +71,7 @@
 				if (button == "yes") {
 					deleteCurrentClass.call(this);
 				}
-			}	
+			}
 		});
 	}
 	
@@ -107,7 +106,7 @@
 		this.view.disableModify();
 		this.view.reset();
 		if (this.selection != null) {
-			this.view.onSelectClass(this.selection);
+			this.view.onClassSelected(this.selection);
 		}
 	}
 

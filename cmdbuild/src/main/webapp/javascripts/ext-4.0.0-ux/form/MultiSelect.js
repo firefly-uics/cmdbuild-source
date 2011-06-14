@@ -1,14 +1,65 @@
-/*!
- * Ext JS Library 3.3.0
- * Copyright(c) 2006-2010 Ext JS, Inc.
- * licensing@extjs.com
- * http://www.extjs.com/license
- */
-Ext.ns('Ext.ux.form');
+/*
 
+This file is part of Ext JS 4
+
+Copyright (c) 2011 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+Commercial Usage
+Licensees holding valid commercial licenses may use this file in accordance with the Commercial Software License Agreement provided with the Software or, alternatively, in accordance with the terms contained in a written agreement between you and Sencha.
+
+If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
+
+*/
+/**
+ * @private
+ * @class Ext.ux.layout.component.form.MultiSelect
+ * @extends Ext.layout.component.field.Field
+ * Layout class for {@link Ext.ux.form.MultiSelect} fields.
+ * @private
+ */
+Ext.define('Ext.ux.layout.component.form.MultiSelect', {
+    extend: 'Ext.layout.component.field.Field',
+    alias: ['layout.multiselectfield'],
+
+    type: 'multiselectfield',
+
+    /**
+     * @cfg {Number} height The height of the field. Defaults to 200.
+     */
+    defaultHeight: 200,
+
+    sizeBodyContents: function(width, height) {
+        var me = this;
+
+        if (!Ext.isNumber(height)) {
+            height = me.defaultHeight;
+        }
+
+        me.owner.panel.setSize(width, height);
+    }
+});
+
+
+
+/*
+
+This file is part of Ext JS 4
+
+Copyright (c) 2011 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+Commercial Usage
+Licensees holding valid commercial licenses may use this file in accordance with the Commercial Software License Agreement provided with the Software or, alternatively, in accordance with the terms contained in a written agreement between you and Sencha.
+
+If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
+
+*/
 /**
  * @class Ext.ux.form.MultiSelect
- * @extends Ext.form.Field
+ * @extends Ext.form.field.Base
  * A control that allows selection and form submission of multiple list items.
  *
  *  @history
@@ -20,84 +71,97 @@ Ext.ns('Ext.ux.form');
  * @param {Object} config Configuration options
  * @xtype multiselect
  */
+Ext.define('Ext.ux.form.MultiSelect', {
+    extend: 'Ext.form.field.Base',
+    alternateClassName: 'Ext.ux.Multiselect',
+    alias: ['widget.multiselect', 'widget.multiselectfield'],
+    uses: [
+        'Ext.view.BoundList',
+        'Ext.form.FieldSet',
+        'Ext.ux.layout.component.form.MultiSelect',
+        'Ext.view.DragZone',
+        'Ext.view.DropZone'
+    ],
 
-Ext.define("Ext.ux.form.MultiSelect", {
-    extend: "Ext.form.Field",
-    alias: "multiselect",
     /**
-     * @cfg {String} legend Wraps the object with a fieldset and specified legend.
+     * @cfg {String} listTitle An optional title to be displayed at the top of the selection list.
      */
-    /**
-     * @cfg {Ext.ListView} view The {@link Ext.ListView} used to render the multiselect list.
-     */
+
     /**
      * @cfg {String/Array} dragGroup The ddgroup name(s) for the MultiSelect DragZone (defaults to undefined).
      */
+
     /**
      * @cfg {String/Array} dropGroup The ddgroup name(s) for the MultiSelect DropZone (defaults to undefined).
      */
+
     /**
      * @cfg {Boolean} ddReorder Whether the items in the MultiSelect list are drag/drop reorderable (defaults to false).
      */
-    ddReorder:false,
+    ddReorder: false,
+
     /**
-     * @cfg {Object/Array} tbar The top toolbar of the control. This can be a {@link Ext.Toolbar} object, a
-     * toolbar config, or an array of buttons/button configs to be added to the toolbar.
+     * @cfg {Object/Array} tbar An optional toolbar to be inserted at the top of the control's selection list.
+     * This can be a {@link Ext.toolbar.Toolbar} object, a toolbar config, or an array of buttons/button configs
+     * to be added to the toolbar. See {@link Ext.panel.Panel#tbar}.
      */
+
     /**
      * @cfg {String} appendOnly True if the list should only allow append drops when drag/drop is enabled
      * (use for lists which are sorted, defaults to false).
      */
-    appendOnly:false,
+    appendOnly: false,
+
     /**
-     * @cfg {Number} width Width in pixels of the control (defaults to 100).
+     * @cfg {String} displayField Name of the desired display field in the dataset (defaults to 'text').
      */
-    width:100,
+    displayField: 'text',
+
     /**
-     * @cfg {Number} height Height in pixels of the control (defaults to 100).
+     * @cfg {String} valueField Name of the desired value field in the dataset (defaults to the
+     * value of {@link #displayField}).
      */
-    height:100,
-    /**
-     * @cfg {String/Number} displayField Name/Index of the desired display field in the dataset (defaults to 0).
-     */
-    displayField:0,
-    /**
-     * @cfg {String/Number} valueField Name/Index of the desired value field in the dataset (defaults to 1).
-     */
-    valueField:1,
+
     /**
      * @cfg {Boolean} allowBlank False to require at least one item in the list to be selected, true to allow no
      * selection (defaults to true).
      */
-    allowBlank:true,
+    allowBlank: true,
+
     /**
      * @cfg {Number} minSelections Minimum number of selections allowed (defaults to 0).
      */
-    minSelections:0,
+    minSelections: 0,
+
     /**
      * @cfg {Number} maxSelections Maximum number of selections allowed (defaults to Number.MAX_VALUE).
      */
-    maxSelections:Number.MAX_VALUE,
+    maxSelections: Number.MAX_VALUE,
+
     /**
-     * @cfg {String} blankText Default text displayed when the control contains no items (defaults to the same value as
-     * {@link Ext.form.TextField#blankText}.
+     * @cfg {String} blankText Default text displayed when the control contains no items (defaults to 'This field is required')
      */
-    blankText:Ext.form.TextField.prototype.blankText,
+    blankText: 'This field is required',
+
     /**
      * @cfg {String} minSelectionsText Validation message displayed when {@link #minSelections} is not met (defaults to 'Minimum {0}
      * item(s) required').  The {0} token will be replaced by the value of {@link #minSelections}.
      */
-    minSelectionsText:'Minimum {0} item(s) required',
+    minSelectionsText: 'Minimum {0} item(s) required',
+
     /**
      * @cfg {String} maxSelectionsText Validation message displayed when {@link #maxSelections} is not met (defaults to 'Maximum {0}
      * item(s) allowed').  The {0} token will be replaced by the value of {@link #maxSelections}.
      */
-    maxSelectionsText:'Maximum {0} item(s) allowed',
+    maxSelectionsText: 'Maximum {0} item(s) allowed',
+
     /**
-     * @cfg {String} delimiter The string used to delimit between items when set or returned as a string of values
-     * (defaults to ',').
+     * @cfg {String} delimiter The string used to delimit the selected values when {@link #getSubmitValue submitting}
+     * the field as part of a form. Defaults to ','. If you wish to have the selected values submitted as separate
+     * parameters rather than a single delimited parameter, set this to <tt>null</tt>.
      */
-    delimiter:',',
+    delimiter: ',',
+
     /**
      * @cfg {Ext.data.Store/Array} store The data source to which this MultiSelect is bound (defaults to <tt>undefined</tt>).
      * Acceptable values for this property are:
@@ -114,490 +178,265 @@ Ext.define("Ext.ux.form.MultiSelect", {
      * </div></li></ul></div></li></ul></div>
      */
 
-    // private
-    defaultAutoCreate : {tag: "div"},
+    componentLayout: 'multiselectfield',
+
+    fieldBodyCls: Ext.baseCSSPrefix + 'form-multiselect-body',
+
 
     // private
     initComponent: function(){
-        Ext.ux.form.MultiSelect.superclass.initComponent.call(this);
+        var me = this;
 
-        if(Ext.isArray(this.store)){
-            if (Ext.isArray(this.store[0])){
-                this.store = new Ext.data.ArrayStore({
-                    fields: ['value','text'],
-                    data: this.store
-                });
-                this.valueField = 'value';
-            }else{
-                this.store = new Ext.data.ArrayStore({
-                    fields: ['text'],
-                    data: this.store,
-                    expandData: true
-                });
-                this.valueField = 'text';
+        me.bindStore(me.store, true);
+        if (me.store.autoCreated) {
+            me.valueField = me.displayField = 'field1';
+            if (!me.store.expanded) {
+                me.displayField = 'field2';
             }
-            this.displayField = 'text';
-        } else {
-            this.store = Ext.StoreMgr.lookup(this.store);
         }
 
-        this.addEvents({
-            'dblclick' : true,
-            'click' : true,
-            'change' : true,
-            'drop' : true
-        });
+        if (!Ext.isDefined(me.valueField)) {
+            me.valueField = me.displayField;
+        }
+
+        me.callParent();
     },
 
+    bindStore: function(store, initial) {
+        var me = this,
+            oldStore = me.store,
+            boundList = me.boundList;
+
+        if (oldStore && !initial && oldStore !== store && oldStore.autoDestroy) {
+            oldStore.destroy();
+        }
+
+        me.store = store ? Ext.data.StoreManager.lookup(store) : null;
+        if (boundList) {
+            boundList.bindStore(store || null);
+        }
+    },
+
+
     // private
-    onRender: function(ct, position){
-        Ext.ux.form.MultiSelect.superclass.onRender.call(this, ct, position);
+    onRender: function(ct, position) {
+        var me = this,
+            panel, boundList, selModel;
 
-        var fs = this.fs = new Ext.form.FieldSet({
-            renderTo: this.el,
-            title: this.legend,
-            height: this.height,
-            width: this.width,
-            style: "padding:0;",
-            tbar: this.tbar
-        });
-        fs.body.addClass('ux-mselect');
+        me.callParent(arguments);
 
-        this.view = new Ext.ListView({
+        boundList = me.boundList = Ext.create('Ext.view.BoundList', {
             multiSelect: true,
-            store: this.store,
-            columns: [{ header: 'Value', width: 1, dataIndex: this.displayField }],
-            hideHeaders: true
+            store: me.store,
+            displayField: me.displayField,
+            border: false
         });
 
-        fs.add(this.view);
+        selModel = boundList.getSelectionModel();
+        me.mon(selModel, {
+            selectionChange: me.onSelectionChange,
+            scope: me
+        });
 
-        this.view.on('click', this.onViewClick, this);
-        this.view.on('beforeclick', this.onViewBeforeClick, this);
-        this.view.on('dblclick', this.onViewDblClick, this);
+        panel = me.panel = Ext.create('Ext.panel.Panel', {
+            title: me.listTitle,
+            tbar: me.tbar,
+            items: [boundList],
+            renderTo: me.bodyEl,
+            layout: 'fit'
+        });
 
-        this.hiddenName = this.name || Ext.id();
-        var hiddenTag = { tag: "input", type: "hidden", value: "", name: this.hiddenName };
-        this.hiddenField = this.el.createChild(hiddenTag);
-        this.hiddenField.dom.disabled = this.hiddenName != this.name;
-        fs.doLayout();
+        // Must set upward link after first render
+        panel.ownerCt = me;
+
+        // Set selection to current value
+        me.setRawValue(me.rawValue);
+    },
+
+    // No content generated via template, it's all added components
+    getSubTplMarkup: function() {
+        return '';
     },
 
     // private
-    afterRender: function(){
-        Ext.ux.form.MultiSelect.superclass.afterRender.call(this);
+    afterRender: function() {
+        var me = this;
+        me.callParent();
 
-        if (this.ddReorder && !this.dragGroup && !this.dropGroup){
-            this.dragGroup = this.dropGroup = 'MultiselectDD-' + Ext.id();
+        if (me.ddReorder && !me.dragGroup && !me.dropGroup){
+            me.dragGroup = me.dropGroup = 'MultiselectDD-' + Ext.id();
         }
 
-        if (this.draggable || this.dragGroup){
-            this.dragZone = new Ext.ux.form.MultiSelect.DragZone(this, {
-                ddGroup: this.dragGroup
+        if (me.draggable || me.dragGroup){
+            me.dragZone = Ext.create('Ext.view.DragZone', {
+                view: me.boundList,
+                ddGroup: me.dragGroup,
+                dragText: '{0} Item{1}'
             });
         }
-        if (this.droppable || this.dropGroup){
-            this.dropZone = new Ext.ux.form.MultiSelect.DropZone(this, {
-                ddGroup: this.dropGroup
+        if (me.droppable || me.dropGroup){
+            me.dropZone = Ext.create('Ext.view.DropZone', {
+                view: me.boundList,
+                ddGroup: me.dropGroup,
+                handleNodeDrop: function(data, dropRecord, position) {
+                    var view = this.view,
+                        store = view.getStore(),
+                        records = data.records,
+                        index;
+
+                    // remove the Models from the source Store
+                    data.view.store.remove(records);
+
+                    index = store.indexOf(dropRecord);
+                    if (position === 'after') {
+                        index++;
+                    }
+                    store.insert(index, records);
+                    view.getSelectionModel().select(records);
+                }
             });
         }
     },
 
-    // private
-    onViewClick: function(vw, index, node, e) {
-        this.fireEvent('change', this, this.getValue(), this.hiddenField.dom.value);
-        this.hiddenField.dom.value = this.getValue();
-        this.fireEvent('click', this, e);
-        this.validate();
-    },
-
-    // private
-    onViewBeforeClick: function(vw, index, node, e) {
-        if (this.disabled || this.readOnly) {
-            return false;
-        }
-    },
-
-    // private
-    onViewDblClick : function(vw, index, node, e) {
-        return this.fireEvent('dblclick', vw, index, node, e);
+    onSelectionChange: function() {
+        this.checkChange();
     },
 
     /**
-     * Returns an array of data values for the selected items in the list. The values will be separated
-     * by {@link #delimiter}.
-     * @return {Array} value An array of string data values
+     * Clears any values currently selected.
      */
-    getValue: function(valueField){
-        var returnArray = [];
-        var selectionsArray = this.view.getSelectedIndexes();
-        if (selectionsArray.length == 0) {return '';}
-        for (var i=0; i<selectionsArray.length; i++) {
-            returnArray.push(this.store.getAt(selectionsArray[i]).get((valueField != null) ? valueField : this.valueField));
-        }
-        return returnArray.join(this.delimiter);
+    clearValue: function() {
+        this.setValue([]);
     },
 
     /**
-     * Sets a delimited string (using {@link #delimiter}) or array of data values into the list.
-     * @param {String/Array} values The values to set
+     * Return the value(s) to be submitted for this field. The returned value depends on the {@link #delimiter}
+     * config: If it is set to a String value (like the default ',') then this will return the selected values
+     * joined by the delimiter. If it is set to <tt>null</tt> then the values will be returned as an Array.
      */
-    setValue: function(values) {
-        var index;
-        var selections = [];
-        this.view.clearSelections();
-        this.hiddenField.dom.value = '';
-
-        if (!values || (values == '')) { return; }
-
-        if (!Ext.isArray(values)) { values = values.split(this.delimiter); }
-        for (var i=0; i<values.length; i++) {
-            index = this.view.store.indexOf(this.view.store.query(this.valueField,
-                new RegExp('^' + values[i] + '$', "i")).itemAt(0));
-            selections.push(index);
-        }
-        this.view.select(selections);
-        this.hiddenField.dom.value = this.getValue();
-        this.validate();
+    getSubmitValue: function() {
+        var me = this,
+            delimiter = me.delimiter,
+            val = me.getValue();
+        return Ext.isString(delimiter) ? val.join(delimiter) : val;
     },
 
     // inherit docs
-    reset : function() {
-        this.setValue('');
+    getRawValue: function() {
+        var me = this,
+            boundList = me.boundList;
+        if (boundList) {
+            me.rawValue = Ext.Array.map(boundList.getSelectionModel().getSelection(), function(model) {
+                return model.get(me.valueField);
+            });
+        }
+        return me.rawValue;
     },
 
     // inherit docs
-    getRawValue: function(valueField) {
-        var tmp = this.getValue(valueField);
-        if (tmp.length) {
-            tmp = tmp.split(this.delimiter);
-        }
-        else {
-            tmp = [];
-        }
-        return tmp;
-    },
+    setRawValue: function(value) {
+        var me = this,
+            boundList = me.boundList,
+            models;
 
-    // inherit docs
-    setRawValue: function(values){
-        setValue(values);
-    },
+        value = Ext.Array.from(value);
+        me.rawValue = value;
 
-    // inherit docs
-    validateValue : function(value){
-        if (value.length < 1) { // if it has no value
-             if (this.allowBlank) {
-                 this.clearInvalid();
-                 return true;
-             } else {
-                 this.markInvalid(this.blankText);
-                 return false;
-             }
-        }
-        if (value.length < this.minSelections) {
-            this.markInvalid(String.format(this.minSelectionsText, this.minSelections));
-            return false;
-        }
-        if (value.length > this.maxSelections) {
-            this.markInvalid(String.format(this.maxSelectionsText, this.maxSelections));
-            return false;
-        }
-        return true;
-    },
-
-    // inherit docs
-    disable: function(){
-        this.disabled = true;
-        this.hiddenField.dom.disabled = true;
-        this.fs.disable();
-    },
-
-    // inherit docs
-    enable: function(){
-        this.disabled = false;
-        this.hiddenField.dom.disabled = false;
-        this.fs.enable();
-    },
-
-    // inherit docs
-    destroy: function(){
-        Ext.destroy(this.fs, this.dragZone, this.dropZone);
-        Ext.ux.form.MultiSelect.superclass.destroy.call(this);
-    }
-});
-
-//backwards compat
-Ext.ux.Multiselect = Ext.ux.form.MultiSelect;
-
-
-Ext.ux.form.MultiSelect.DragZone = function(ms, config){
-    this.ms = ms;
-    this.view = ms.view;
-    var ddGroup = config.ddGroup || 'MultiselectDD';
-    var dd;
-    if (Ext.isArray(ddGroup)){
-        dd = ddGroup.shift();
-    } else {
-        dd = ddGroup;
-        ddGroup = null;
-    }
-    Ext.ux.form.MultiSelect.DragZone.superclass.constructor.call(this, this.ms.fs.body, { containerScroll: true, ddGroup: dd });
-    this.setDraggable(ddGroup);
-};
-
-Ext.extend(Ext.ux.form.MultiSelect.DragZone, Ext.dd.DragZone, {
-    onInitDrag : function(x, y){
-        var el = Ext.get(this.dragData.ddel.cloneNode(true));
-        this.proxy.update(el.dom);
-        el.setWidth(el.child('em').getWidth());
-        this.onStartDrag(x, y);
-        return true;
-    },
-
-    // private
-    collectSelection: function(data) {
-        data.repairXY = Ext.fly(this.view.getSelectedNodes()[0]).getXY();
-        var i = 0;
-        this.view.store.each(function(rec){
-            if (this.view.isSelected(i)) {
-                var n = this.view.getNode(i);
-                var dragNode = n.cloneNode(true);
-                dragNode.id = Ext.id();
-                data.ddel.appendChild(dragNode);
-                data.records.push(this.view.store.getAt(i));
-                data.viewNodes.push(n);
-            }
-            i++;
-        }, this);
-    },
-
-    // override
-    onEndDrag: function(data, e) {
-        var d = Ext.get(this.dragData.ddel);
-        if (d && d.hasClass("multi-proxy")) {
-            d.remove();
-        }
-    },
-
-    // override
-    getDragData: function(e){
-        var target = this.view.findItemFromChild(e.getTarget());
-        if(target) {
-            if (!this.view.isSelected(target) && !e.ctrlKey && !e.shiftKey) {
-                this.view.select(target);
-                this.ms.setValue(this.ms.getValue());
-            }
-            if (this.view.getSelectionCount() == 0 || e.ctrlKey || e.shiftKey) return false;
-            var dragData = {
-                sourceView: this.view,
-                viewNodes: [],
-                records: []
-            };
-            if (this.view.getSelectionCount() == 1) {
-                var i = this.view.getSelectedIndexes()[0];
-                var n = this.view.getNode(i);
-                dragData.viewNodes.push(dragData.ddel = n);
-                dragData.records.push(this.view.store.getAt(i));
-                dragData.repairXY = Ext.fly(n).getXY();
-            } else {
-                dragData.ddel = document.createElement('div');
-                dragData.ddel.className = 'multi-proxy';
-                this.collectSelection(dragData);
-            }
-            return dragData;
-        }
-        return false;
-    },
-
-    // override the default repairXY.
-    getRepairXY : function(e){
-        return this.dragData.repairXY;
-    },
-
-    // private
-    setDraggable: function(ddGroup){
-        if (!ddGroup) return;
-        if (Ext.isArray(ddGroup)) {
-            Ext.each(ddGroup, this.setDraggable, this);
-            return;
-        }
-        this.addToGroup(ddGroup);
-    }
-});
-
-Ext.ux.form.MultiSelect.DropZone = function(ms, config){
-    this.ms = ms;
-    this.view = ms.view;
-    var ddGroup = config.ddGroup || 'MultiselectDD';
-    var dd;
-    if (Ext.isArray(ddGroup)){
-        dd = ddGroup.shift();
-    } else {
-        dd = ddGroup;
-        ddGroup = null;
-    }
-    Ext.ux.form.MultiSelect.DropZone.superclass.constructor.call(this, this.ms.fs.body, { containerScroll: true, ddGroup: dd });
-    this.setDroppable(ddGroup);
-};
-
-Ext.extend(Ext.ux.form.MultiSelect.DropZone, Ext.dd.DropZone, {
-    /**
-     * Part of the Ext.dd.DropZone interface. If no target node is found, the
-     * whole Element becomes the target, and this causes the drop gesture to append.
-     */
-    getTargetFromEvent : function(e) {
-        var target = e.getTarget();
-        return target;
-    },
-
-    // private
-    getDropPoint : function(e, n, dd){
-        if (n == this.ms.fs.body.dom) { return "below"; }
-        var t = Ext.lib.Dom.getY(n), b = t + n.offsetHeight;
-        var c = t + (b - t) / 2;
-        var y = Ext.lib.Event.getPageY(e);
-        if(y <= c) {
-            return "above";
-        }else{
-            return "below";
-        }
-    },
-
-    // private
-    isValidDropPoint: function(pt, n, data) {
-        if (!data.viewNodes || (data.viewNodes.length != 1)) {
-            return true;
-        }
-        var d = data.viewNodes[0];
-        if (d == n) {
-            return false;
-        }
-        if ((pt == "below") && (n.nextSibling == d)) {
-            return false;
-        }
-        if ((pt == "above") && (n.previousSibling == d)) {
-            return false;
-        }
-        return true;
-    },
-
-    // override
-    onNodeEnter : function(n, dd, e, data){
-        return false;
-    },
-
-    // override
-    onNodeOver : function(n, dd, e, data){
-        var dragElClass = this.dropNotAllowed;
-        var pt = this.getDropPoint(e, n, dd);
-        if (this.isValidDropPoint(pt, n, data)) {
-            if (this.ms.appendOnly) {
-                return "x-tree-drop-ok-below";
-            }
-
-            // set the insert point style on the target node
-            if (pt) {
-                var targetElClass;
-                if (pt == "above"){
-                    dragElClass = n.previousSibling ? "x-tree-drop-ok-between" : "x-tree-drop-ok-above";
-                    targetElClass = "x-view-drag-insert-above";
-                } else {
-                    dragElClass = n.nextSibling ? "x-tree-drop-ok-between" : "x-tree-drop-ok-below";
-                    targetElClass = "x-view-drag-insert-below";
+        if (boundList) {
+            models = [];
+            Ext.Array.forEach(value, function(val) {
+                var undef,
+                    model = me.store.findRecord(me.valueField, val, undef, undef, true, true);
+                if (model) {
+                    models.push(model);
                 }
-                if (this.lastInsertClass != targetElClass){
-                    Ext.fly(n).replaceClass(this.lastInsertClass, targetElClass);
-                    this.lastInsertClass = targetElClass;
-                }
-            }
+            });
+            boundList.getSelectionModel().select(models, false, true);
         }
-        return dragElClass;
+
+        return value;
     },
 
-    // private
-    onNodeOut : function(n, dd, e, data){
-        this.removeDropIndicators(n);
+    // no conversion
+    valueToRaw: function(value) {
+        return value;
     },
 
-    // private
-    onNodeDrop : function(n, dd, e, data){
-        if (this.ms.fireEvent("drop", this, n, dd, e, data) === false) {
+    // compare array values
+    isEqual: function(v1, v2) {
+        var fromArray = Ext.Array.from,
+            i, len;
+
+        v1 = fromArray(v1);
+        v2 = fromArray(v2);
+        len = v1.length;
+
+        if (len !== v2.length) {
             return false;
         }
-        var pt = this.getDropPoint(e, n, dd);
-        if (n != this.ms.fs.body.dom)
-            n = this.view.findItemFromChild(n);
 
-        if(this.ms.appendOnly) {
-            insertAt = this.view.store.getCount();
-        } else {
-            insertAt = n == this.ms.fs.body.dom ? this.view.store.getCount() - 1 : this.view.indexOf(n);
-            if (pt == "below") {
-                insertAt++;
-            }
-        }
-
-        var dir = false;
-
-        // Validate if dragging within the same MultiSelect
-        if (data.sourceView == this.view) {
-            // If the first element to be inserted below is the target node, remove it
-            if (pt == "below") {
-                if (data.viewNodes[0] == n) {
-                    data.viewNodes.shift();
-                }
-            } else {  // If the last element to be inserted above is the target node, remove it
-                if (data.viewNodes[data.viewNodes.length - 1] == n) {
-                    data.viewNodes.pop();
-                }
-            }
-
-            // Nothing to drop...
-            if (!data.viewNodes.length) {
+        for(i = 0; i < len; i++) {
+            if (v2[i] !== v1[i]) {
                 return false;
             }
-
-            // If we are moving DOWN, then because a store.remove() takes place first,
-            // the insertAt must be decremented.
-            if (insertAt > this.view.store.indexOf(data.records[0])) {
-                dir = 'down';
-                insertAt--;
-            }
         }
 
-        for (var i = 0; i < data.records.length; i++) {
-            var r = data.records[i];
-            if (data.sourceView) {
-                data.sourceView.store.remove(r);
-            }
-            this.view.store.insert(dir == 'down' ? insertAt : insertAt++, r);
-            var si = this.view.store.sortInfo;
-            if(si){
-                this.view.store.sort(si.field, si.direction);
-            }
-        }
         return true;
     },
 
-    // private
-    removeDropIndicators : function(n){
-        if(n){
-            Ext.fly(n).removeClass([
-                "x-view-drag-insert-above",
-                "x-view-drag-insert-left",
-                "x-view-drag-insert-right",
-                "x-view-drag-insert-below"]);
-            this.lastInsertClass = "_noclass";
+    getErrors : function(value) {
+        var me = this,
+            format = Ext.String.format,
+            errors = me.callParent(arguments),
+            numSelected;
+
+        value = Ext.Array.from(value || me.getValue());
+        numSelected = value.length;
+
+        if (!me.allowBlank && numSelected < 1) {
+            errors.push(me.blankText);
+        }
+        if (numSelected < this.minSelections) {
+            errors.push(format(me.minSelectionsText, me.minSelections));
+        }
+        if (numSelected > this.maxSelections) {
+            errors.push(format(me.maxSelectionsText, me.maxSelections));
+        }
+
+        return errors;
+    },
+
+    onDisable: function() {
+        this.callParent();
+        this.disabled = true;
+        this.updateReadOnly();
+    },
+
+    onEnable: function() {
+        this.callParent();
+        this.disabled = false;
+        this.updateReadOnly();
+    },
+
+    setReadOnly: function(readOnly) {
+        this.readOnly = readOnly;
+        this.updateReadOnly();
+    },
+
+    /**
+     * @private Lock or unlock the BoundList's selection model to match the current disabled/readonly state
+     */
+    updateReadOnly: function() {
+        var me = this,
+            boundList = me.boundList,
+            readOnly = me.readOnly || me.disabled;
+        if (boundList) {
+            boundList.getSelectionModel().setLocked(readOnly);
         }
     },
 
-    // private
-    setDroppable: function(ddGroup){
-        if (!ddGroup) return;
-        if (Ext.isArray(ddGroup)) {
-            Ext.each(ddGroup, this.setDroppable, this);
-            return;
-        }
-        this.addToGroup(ddGroup);
+    onDestroy: function(){
+        Ext.destroyMembers(this, 'panel', 'boundList', 'dragZone', 'dropZone');
+        this.callParent();
     }
 });

@@ -30,18 +30,15 @@
 
 			this.tree = Ext.create("Ext.tree.Panel", {
 				store: this.store,
-				border: false,
 				region: "center",
 				rootVisible: false
 			});
 
 			Ext.apply(this, {
 				items: [this.tree],
-				layout: "border",
-				border: false
+				layout: "border"
 			});
 
-			
 			this.callParent(arguments);
 		},
 
@@ -63,6 +60,15 @@
 				node.bubble(function() {
 					this.expand();
 				});
+			} else {
+				_debug("I have not find a node with id " + nodeId);
+			}
+		},
+
+		removeNodeById: function(nodeId) {
+			var node = this.store.getNodeById(nodeId);
+			if (node) {
+				node.remove();
 			} else {
 				_debug("I have not find a node with id " + nodeId);
 			}
