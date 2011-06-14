@@ -4,7 +4,7 @@
 			this.cascade(function(item) {
 				if (item && (item instanceof Ext.form.Field)) {
 					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
-					var toBeEnabled = enableAll || !item.cmImmutable;
+					var toBeEnabled = (enableAll || !item.cmImmutable) && item.isVisible();
 					if (toBeEnabled) {
 						item.enable();
 					}
@@ -12,7 +12,7 @@
 			});
 		},
 
-		disableFields: function(enableAll) {
+		disableFields: function() {
 			this.cascade(function(item) {
 				if (item && (item instanceof Ext.form.Field)) {
 					item.disable();

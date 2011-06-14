@@ -5,11 +5,17 @@ var domainGridStore = null;
 CMDBuild.ServiceProxy.administration = {
 	printSchema: 'services/json/schema/modreport/printclassschema',
 	domain: {
+		list: function(p) {
+			p.method = "GET",
+			p.url = "services/json/schema/modclass/getalldomains";
+			
+			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
 		save: function(p) {
 			p.method = "POST";
 			p.url = "services/json/schema/modclass/savedomain";
 
-			CMDBuild.ServiceProxy.core.submitForm(p);
+			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 		remove: function(p) {
 			p.method = "POST";

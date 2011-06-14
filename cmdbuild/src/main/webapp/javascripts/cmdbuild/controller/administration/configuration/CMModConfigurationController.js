@@ -15,7 +15,6 @@
 						//needed to mantein the consistenece beetween the information displayed and the 
 						//information in the config file
 						this.readConfiguration();
-						this.view.afterSubmit(arguments);
 					}
 				}, name = this.view.configFileName);
 			}, this);
@@ -36,6 +35,7 @@
 				scope: this,
 				success: function(response){
 					this.view.populateForm(Ext.JSON.decode(response.responseText));
+					this.view.afterSubmit(Ext.JSON.decode(response.responseText).data);
 				}
 			}, name = this.view.configFileName);
 		}

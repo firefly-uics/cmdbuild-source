@@ -21,24 +21,28 @@
 
 			this.classForm = new CMDBuild.view.administration.classes.CMClassForm();
 
+			this.attributesPanel = new CMDBuild.view.administration.classes.CMClassAttributesPanel({
+				title: tr.tabs.attributes,
+				border: false
+			})
+
 			this.domainGrid = new CMDBuild.Administration.DomainGrid({
-				title : tr.tabs.domains
+				title : tr.tabs.domains,
+				border: false
 			});
 
-			this.geoAttributesPanel = new CMDBuild.Administration.GeoAttributePanel({
+			this.geoAttributesPanel = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
 				title: tr.tabs.geo_attributes
 			});
 
 			this.tabPanel = new Ext.tab.Panel({
-				margin: "1 0 0 0",
-				border: "0 0 0 0",
 				frame: false,
+				border: false,
 				activeTab: 0,
 
 				items: [{
 					padding: "1 0 0 0",
 					title: tr.tabs.properties,
-					id: 'class_panel',
 					layout: 'fit',
 					items: [this.classForm]
 				}
@@ -60,7 +64,9 @@
 //						region: 'south',
 //						split:true
 //	      		    }]
-//	      		 }, 
+//	      		 },
+
+				,this.attributesPanel
 				,this.geoAttributesPanel
 //				,
 //				new CMDBuild.Administration.LayerVisibilityGrid({
@@ -80,27 +86,22 @@
 				id : this.id + '_panel',
 				items: [this.tabPanel],
 				frame: false,
-				border: false
+				border: true
 			});
 
 			this.callParent(arguments);
-	  	},
-
-		enableTabs: function(enable, idClass) {
-//			var isStandard = true;
-//			if (idClass && idClass > 0) {
-//				var table = CMDBuild.Cache.getTableById(idClass);
-//				isStandard	= table.tableType == "standard";
-//			}
-//			this.tabPanel.getItem('attr_panel').setDisabled(!enable);
-//			this.tabPanel.getItem('dom_panel').setDisabled(!enable || !isStandard);
-//			this.tabPanel.getItem('geo_layers').setDisabled((!enable || !isStandard) || !CMDBuild.Config.gis.enabled);	  		
-//			this.tabPanel.getItem('geo_attr_panel').setDisabled((!enable || !isStandard) || !CMDBuild.Config.gis.enabled);
+		},
+	
+		onAddClassButtonClick: function() {
+			this.tabPanel.setActiveTab(0);
 		},
 
-		onSelectClass: function(table) {
-			this.enableTabs(true, table.id);
-		}
+		onClassDeleted: function() {
+			this.attributesPanel.disable();
+			this.geoAttributesPanel.disable();
+			this.domainGrid.disable();
+		},
 
+		onClassSelected: Ext.emptyFn
 	});
 })();

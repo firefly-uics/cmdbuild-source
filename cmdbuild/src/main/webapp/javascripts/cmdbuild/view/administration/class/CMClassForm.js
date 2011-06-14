@@ -144,7 +144,7 @@
 			return this.form.getForm();
 		},
 
-		onSelectClass : function(selection) {
+		onClassSelected : function(selection) {
 			this.getForm().loadRecord(selection);
 			this.disableModify(enableCMTbar = true);
 		},

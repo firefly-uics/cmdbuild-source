@@ -1,6 +1,7 @@
 (function() {
 
 	var classes = {};
+	var geoAttributesSotores = {};
 	var superclassesStore = getFakeStore();
 	var classStore = getFakeStore();
 
@@ -47,7 +48,24 @@
 
 			return classStore;
 		},
+		
+		getClassRootId: function() {
+			for (var c in classes) {
+				c = classes[c];
+				if (c.get("name") == "Class") {
+					return c.get("id");
+				}
+			}
+		},
+		
+		getGeoAttributesStoreOfClass: function(classId) {
+			if (!geoAttributesSotores[classId]) {
+				geoAttributesSotores[classId] = buildGeoAttributesStoreForClass(classId);
+			}
 
+			return geoAttributesSotores[classId];
+		},
+		
 		onClassSaved: function(class) {
 			var c = this.addClass(class);
 			superclassesStore.cmFill();
@@ -63,14 +81,19 @@
 			this.fireEvent("cm_class_deleted", idClass);
 		},
 		
-		getClassRootId: function() {
-			for (var c in classes) {
-				c = classes[c];
-				if (c.get("name") == "Class") {
-					return c.get("id");
+		onGeoAttributeSaved: function(idClass, geoAttribute) {
+			var s = this.getGeoAttributesStoreOfClass(idClass);
+			if (s) {
+				var r = s.findRecord("name", geoAttribute.name);
+				if (r) {
+					s.remove(r)
 				}
+				
+				s.add(geoAttribute);
+				s.sort('index', 'ASC');
 			}
 		}
+
 	});
 
 	function buildSuperclassesStore() {
@@ -127,5 +150,29 @@
 			cmFill: function() {},
 			cmFake: true
 		};
+	}
+	
+	function buildGeoAttributesStoreForClass(classId) {
+		try {
+			var geoAttributes = classes[classId].data.meta.geoAttributes;
+			
+			var s = new Ext.data.Store({
+				fields: [
+					"index", "name", "description", "type",
+					"isvisible", "masterTableId", "masterTableName",
+					"minZoom", "maxZoom", "style"
+				],
+				autoLoad : false,
+				data: geoAttributes || [],
+				sorters : [ {
+					property : 'index',
+					direction : "ASC"
+				}]
+			});
+	
+			return s;
+		} catch (e) {
+			_debug("I can not build a geoAttribute store for classId with id " + classId);
+		}
 	}
 })();

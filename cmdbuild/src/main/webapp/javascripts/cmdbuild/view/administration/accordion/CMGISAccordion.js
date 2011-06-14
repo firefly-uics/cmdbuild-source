@@ -35,6 +35,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMGISAccordion", {
 		extend: 'Ext.panel.Panel',
+		cmName: "gis",
 		constructor: function() {
 			this.tree = Ext.create("Ext.tree.Panel", {
 				store: store,
@@ -51,6 +52,10 @@
 			});
 			
 			this.callParent(arguments);
+			
+			if (!CMDBuild.Config.gis.enabled) {
+				this.disable();
+			}
 		},
 
 		getSelectionModel: function() {

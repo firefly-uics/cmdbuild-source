@@ -17,7 +17,6 @@
 		onViewOnFront: function(menu) {
 			if (menu) {
 				this.currentMenuId = menu.get("id");
-				this.view.onMenuSelected();
 				this.loadMenuTree(this.currentMenuId);
 				this.loadAvailableItemsTree(this.currentMenuId);
 			}
@@ -137,20 +136,6 @@
 		parentNode.leaf = false;
 	}
 
-	function buildFakeRoot(standard, simpletables) {
-		return {
-			leaf: false,
-			children:[
-				standard[0],
-				{
-					text: "@@Simples",
-					leaf: false,
-					children: simpletables
-				}
-			]
-		}
-	}
-
 	function deleteMenu () {
 		CMDBuild.Ajax.request({
 			method : 'POST',
@@ -162,7 +147,8 @@
 			waitMsg : CMDBuild.Translation.common.wait_msg,
 			scope : this,
 			callback: function() {
-				this.onViewOnFront();
+				this.loadMenuTree(this.currentMenuId);
+				this.loadAvailableItemsTree(this.currentMenuId);
 			}
 		});
 	}
@@ -201,12 +187,14 @@
 			method : 'POST',
 			url : 'services/json/schema/modmenu/savemenu',
 			params : {
-				group : this.groupId,
+				group : this.currentMenuId,
 				menuItems : Ext.JSON.encode(nodesToSend)
 			},			
 			scope : this,
 			callback: function() {
-				this.onViewOnFront();
+				CMDBuild.LoadMask.get().hide();
+				this.loadMenuTree(this.currentMenuId);
+				this.loadAvailableItemsTree(this.currentMenuId);
 			}
 		});
 	}

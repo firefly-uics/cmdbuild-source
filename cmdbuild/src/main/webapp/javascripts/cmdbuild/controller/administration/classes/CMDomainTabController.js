@@ -5,17 +5,19 @@
 			this.selection = null;
 		},
 
-		onSelectClass: function(classId) {
+		onClassSelected: function(classId) {
 			this.selection = classId;
 			this.view.store.load({
 				params : {
 					idClass : classId || -1
 				}
 			});
+			this.view.enable();
 		},
 
 		onAddClassButtonClick: function() {
 			this.selection = null;
+			this.view.disable();
 		}
 
 	});

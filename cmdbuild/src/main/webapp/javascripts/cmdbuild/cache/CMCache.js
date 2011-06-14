@@ -167,7 +167,9 @@
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
-			groups: "CMDBUild.cache.CMCacheGroupsFunctions"
+			groups: "CMDBUild.cache.CMCacheGroupsFunctions",
+			domains: "CMDBUild.cache.CMCacheDomainFunctions",
+			reports: "CMDBUild.cache.CMCacheReportFunctions"
 		},
 		constructor: function() {
 			this._lookupTypes={};
@@ -230,20 +232,21 @@
 			return group;
 		},
 
-		setDomains: function(domains) {
-			domains = domains || [];
-			for (var i=0, l=domains.length; i<l; ++i) {
-				var rawDomain = domains[i];
-				try {
-					var domain = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
-					CMDomainModelLibrary.add(domain);
-					var attributeLibary = domain.getAttributeLibrary();
-					addAttributesToDomain(rawDomain, domain);
-				} catch (e) {
-					_debug(e, "I can not add this domain", rawDomain);
-				}
-			}
-		},
+//TODO 3 to 4 remove
+//		setDomains: function(domains) {
+//			domains = domains || [];
+//			for (var i=0, l=domains.length; i<l; ++i) {
+//				var rawDomain = domains[i];
+//				try {
+//					var domain = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
+//					CMDomainModelLibrary.add(domain);
+//					var attributeLibary = domain.getAttributeLibrary();
+//					addAttributesToDomain(rawDomain, domain);
+//				} catch (e) {
+//					_debug(e, "I can not add this domain", rawDomain);
+//				}
+//			}
+//		},
 
 		getTablesByGroup: function(groupName) {
 			return this.tableMaps[groupName];

@@ -10,12 +10,13 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreePanel.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDBuildStructure.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/administration/form/CMFormTemplate.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
@@ -28,6 +29,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 
 <!--  VIEWS -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
@@ -96,7 +98,7 @@
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/ReadOnlyField.js"></script>-->
 <script type="text/javascript" src="javascripts/cmdbuild/form/RangeSlidersFieldSet.js"></script>
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/IconsCombo.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>-->
+<script type="text/javascript" src="javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/SliderFieldPlugin.js"></script>
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/CronFieldValidator/CronFieldValidationPlugin.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/CronFieldValidator/CronFieldValidator.js"></script>-->

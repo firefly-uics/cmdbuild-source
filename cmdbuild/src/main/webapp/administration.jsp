@@ -26,7 +26,7 @@
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="icon" href="images/favicon.ico" />
 		
-		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
+		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all-gray.css" />
 		
 <!--		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/headerbuttons.css" />-->
 <!--		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" /> -->
@@ -58,7 +58,7 @@
 		<title>CMDBuild</title>
 	</head>
 	<body>
-		<div id="header" style="display: none;">
+		<div id="header">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
 			<div id="instance_name"></div>			
 			<div id="header_po">Open Source Configuration and Management Database</div>
@@ -75,7 +75,7 @@
 			</div>
 		</div>
 		
-		<div id="footer" style="display: none;">
+		<div id="footer">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
 			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
 			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>

@@ -83,48 +83,6 @@ CMDBuild.ServiceProxy = {
 		});
 	},
 	
-	saveGeoAttribute: function(params, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url : 'services/json/gis/addgeoattribute',
-			params : params,
-			method: 'POST',
-			success: success,
-			failure: failure,
-			callback: callback
-		});
-	},
-	
-	deleteGeoAttribute: function(classId, name, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url : 'services/json/gis/deletegeoattribute',
-			params : {
-				"idClass": classId,
-				"name": name
-			},
-			method: 'POST',
-			success: success,
-			failure: failure,
-			callback: callback
-		});
-	},
-	
-	modifyGeoAttribute: function(params, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url : 'services/json/gis/modifygeoattribute',
-			params : params,
-			method: 'POST',
-			success: success,
-			failure: failure,
-			callback: callback
-		});
-	},
-	
 	getFKTargetingClass: function(option) {
 		var conf = Ext.apply({
 			url: 'services/json/schema/modclass/getfktargetingclass',
@@ -286,6 +244,30 @@ CMDBuild.ServiceProxy.core = {
 		});
 	}
 };
+
+CMDBuild.ServiceProxy.geoAttribute = {
+	remove: function(p) {
+		p.method = "POST";
+		p.url = 'services/json/gis/deletegeoattribute';
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	save: function(p) {
+		p.method = "POST";
+		p.url = 'services/json/gis/addgeoattribute';
+		p.important = true;
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	modify: function(p) {
+		p.method = "POST";
+		p.url = 'services/json/gis/modifygeoattribute';
+		p.important = true;
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+}
 
 CMDBuild.ServiceProxy.geoServer = {
 	addUrl: "services/json/gis/addgeoserverlayer",
@@ -497,13 +479,14 @@ CMDBuild.ServiceProxy.group = {
 				direction : "ASC"
 			}]
 		});
-	},
+	}
 }
 
-CMDBuild.ServiceProxy.menu = {
+CMDBuild.ServiceProxy.report = {
 	read: function(p) {
 		p.method = "GET";
 		p.url = "services/json/schema/modreport/menutree",
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }

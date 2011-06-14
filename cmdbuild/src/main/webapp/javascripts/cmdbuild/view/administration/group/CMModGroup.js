@@ -42,7 +42,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			basetitle : tr.group.title+ ' - ',
 			items: [this.tabPanel],
 			layout: "border",
-			border: false
+			border: true
 		});
 
 		this.callParent(arguments);

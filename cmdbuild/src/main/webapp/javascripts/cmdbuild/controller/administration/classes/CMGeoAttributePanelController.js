@@ -1,64 +1,122 @@
 (function() {
-	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeControllerController", {
+	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeController", {
 		constructor: function(view) {
 			this.view = view;
 			this.form = view.form;
 			this.grid = view.grid;
-			
-			this.selection = null;
-			
+
+			this.gridSM = this.grid.getSelectionModel();
+			this.gridSM.on('selectionchange', onSelectionChanged , this);
+
+			this.currentClassId = null;
+			this.currentAttribute = null;
+
 			this.form.saveButton.on("click", onSaveButtonFormClick, this);
 			this.form.abortButton.on("click", onAbortButtonFormClick, this);
 			this.form.cancelButton.on("click", onCancelButtonFormClick, this);
 			this.form.modifyButton.on("click", onModifyButtonFormClick, this);
+			this.grid.addAttributeButton.on("click", onAddAttributeClick, this);
 		},
 
-		onSelectClass: function(classId) {
-			var classObject = _CMCache.getClassById(classId);
-			
-			if (classObject.data.meta) {
-				var geoAttributes = classObject.data.meta.geoAttributes || [];
-				
-				this.grid.store.removeAll();
-				for (var i=0,l=geoAttributes.length; i<l; ++i) {
-					var attr = geoAttributes[i];
-					var r = Ext.create("GISLayerModel", attr);
-					if (isItMineOrOfMyParents(attr, classObject)) {
-						this.grid.store.insert(0, r);
-					}
-				}
-			}
-
-//			this.form.setClass(classId);
+		onClassSelected: function(classId) {
+			this.currentClassId = classId;
+			this.currentAttribute = null;
+			this.view.onClassSelected(classId);
 		},
 
 		onAddClassButtonClick: function() {
-
+			this.view.disable();
 		}
 
 	});
 	
-	function onSaveButtonFormClick() {
-		alert("save");
+	function onSelectionChanged(selection) {
+		if (selection.selected.length > 0) {
+			this.currentAttribute = selection.selected.items[0];
+			this.form.onAttributeSelected(this.currentAttribute);
+		}
 	}
 	
+	function onSaveButtonFormClick() {
+		var style = this.form.getStyle();
+		var p = {
+			params: this.form.getData()
+		};
+
+		p.params.style = Ext.encode(style);
+		p.params.idClass = this.currentClassId;
+		p.name  = this.form.name.getValue();
+
+		p.success = Ext.bind(function(a, b, decoded) {
+			_CMCache.onGeoAttributeSaved(this.currentClassId, decoded.geoAttribute);
+			this.grid.selectAttribute(decoded.geoAttribute);
+		}, this);
+		
+		if (this.currentAttribute != null) {
+			CMDBuild.ServiceProxy.geoAttribute.modify(p);
+		} else {
+			CMDBuild.ServiceProxy.geoAttribute.save(p);
+		}
+	}
+
 	function onAbortButtonFormClick() {
-		alert("abort");
+		this.form.disableModify();
+		if (this.currentAttribute != null) {
+			this.form.onAttributeSelected(this.currentAttribute);
+		} else {
+			this.form.reset();
+		}
 	}
 	
 	function onCancelButtonFormClick() {
-		alert("cancel");
+		Ext.Msg.show({
+			title: "@@ Delete attribute",
+			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+			scope: this,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {
+					deleteAttribute.call(this);
+				}
+			}
+		});
+	}
+	
+	function deleteAttribute() {
+		function onSuccess(response, request, decoded) {
+			alert("@@ Deleted");
+		};
+		CMDBuild.LoadMask.get().show();
+		CMDBuild.ServiceProxy.geoAttribute.remove({
+			params : {
+				"idClass": this.currentClassId,
+				"name": this.currentAttribute.get("name")
+			},
+			success: Ext.Function.bind(onSuccess, this),
+			callback: Function.bind(callback, this)
+		})
 	}
 	
 	function onModifyButtonFormClick() {
-		alert("modify");
+		this.form.enableModify();
+	}
+	
+	function onAddAttributeClick() {
+		this.currentAttribute = null;
+
+		this.form.reset();
+		this.form.enableModify();
+		this.form.hideStyleFields();
+		this.gridSM.deselectAll();
+	}
+	
+	function callback() {
+		CMDBuild.LoadMask.get().hide();
 	}
 	
 	// FORM
 	
-//	var callback = function() {
-//		CMDBuild.LoadMask.get().hide();
-//	};
+
 //	
 //    var onSave = function() {
 //    	var params = this.getForm().getValues();

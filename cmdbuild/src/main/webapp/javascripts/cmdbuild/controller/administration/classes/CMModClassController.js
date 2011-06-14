@@ -7,23 +7,31 @@
 
 			this.classFormController = new CMDBuild.controller.administration.classes.CMClassFormController(this.view.classForm);
 			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
-			this.geoAttributesController = new CMDBuild.controller.administration.classes.CMGeoAttributeControllerController(this.view.geoAttributesPanel);
+			this.geoAttributesController = new CMDBuild.controller.administration.classes.CMGeoAttributeController(this.view.geoAttributesPanel);
+			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
 
 			this.view.addClassButton.on("click", onAddClassButtonClick, this);
 			this.view.printSchema.on("click", onPrintSchema, this);
+			
+			_CMCache.on("cm_class_deleted", this.view.onClassDeleted, this.view);
 		},
 
 		onViewOnFront: function(selection) {
-			this.view.onSelectClass(selection.data);
-			this.classFormController.onSelectClass(selection.data.id);
-			this.domainTabController.onSelectClass(selection.data.id);
-			this.geoAttributesController.onSelectClass(selection.data.id);
+			this.view.onClassSelected(selection.data);
+			this.classFormController.onClassSelected(selection.data.id);
+			this.domainTabController.onClassSelected(selection.data.id);
+			this.geoAttributesController.onClassSelected(selection.data.id);
+			this.attributePanelController.onClassSelected(selection.data.id);
 		}
 	});
 
 	function onAddClassButtonClick() {
 		this.classFormController.onAddClassButtonClick();
-		
+		this.domainTabController.onAddClassButtonClick();
+		this.geoAttributesController.onAddClassButtonClick();
+		this.attributePanelController.onAddClassButtonClick();
+
+		this.view.onAddClassButtonClick();
 		_CMMainViewportController.deselectAccordionByName("class");
 	}
 
