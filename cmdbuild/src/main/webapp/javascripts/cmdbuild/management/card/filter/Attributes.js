@@ -5,32 +5,33 @@
  * @class CMDBuild.Management.Attributes
  * @extends Ext.form.FormPanel
  */
-CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
+ 
+Ext.define("CMDBuild.Management.Attributes", {
+	extend: "Ext.form.Panel",
 	url: 'services/json/management/modcard/setcardfilter',
 	title: CMDBuild.Translation.management.findfilter.attributes,
+
     //custom attributes
 	translation: CMDBuild.Translation.management.findfilter,
 	attributeList: {},
 	IdClass: 0,
     autoScroll: false,
-    
+
 	initComponent:function() {
 	    this.fieldsetCategory = {};
 	    this.menu = new Ext.menu.Menu();
 	    this.fillMenu();
 	    
 	    var tbar = [{text: this.translation.title, iconCls: 'add', menu: this.menu}];
+
 		if (this.filterButton) {
         	tbar.push('->');
         	tbar.push(this.filterButton);
     	}
 		
 		this.fieldsPanel = new Ext.Panel({
-			tbar: tbar,
-			frame: false,
-			bodyStyle: {background: CMDBuild.Constants.colors.blue.background, border: '1px '+CMDBuild.Constants.colors.blue.border+' solid'},
+			frame: true,
 			border: true,
-       		layout: 'form',
        		autoScroll: true,
        		region: 'center'
        	});
@@ -43,13 +44,13 @@ CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
 		
 		Ext.apply(this, {
 			layout: 'border',
-			frame: true,
+			tbar: tbar,
 			items: [this.fieldsPanel]
         });
         
-        CMDBuild.Management.Attributes.superclass.initComponent.apply(this, arguments);
+        this.callParent(arguments);
     },
-    
+
     addAttributeToFilter: function(attribute) {	
 		var field = CMDBuild.Management.FieldManager.getFieldSetForFilter(attribute);
 		var attributeField = field.getAttributeField();
@@ -101,13 +102,12 @@ CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
     addField: function(field, attribute){
     	//hide the or of the current field
 		field.getOrPanel().hide();
-    	if (typeof this.fieldsetCategory[attribute.description] == "undefined" ){					
+    	if (typeof this.fieldsetCategory[attribute.description] == "undefined" ) {
     		this.fieldsetCategory[attribute.description] = new Ext.form.FieldSet({
 				title: attribute.description,
-	       		border: true,
-	       		style: {padding: '5px', margin: '5px'},
-	       		bodyStyle: {padding: '0', margin: '0'}
+	       		border: false
 	       	});
+
 	       	this.fieldsPanel.add(this.fieldsetCategory[attribute.description]);	       	
 		} else {
 			//show the or of the last field

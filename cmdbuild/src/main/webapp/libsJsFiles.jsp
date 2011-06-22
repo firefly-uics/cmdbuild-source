@@ -6,10 +6,12 @@
 
 <script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
+
 <!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/clone.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/dd/DDView.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/dd/GridReorderDropTarget.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/RowExpander.js"></script>-->
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/CheckColumn.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/event/Broadcast.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/ColorField.js"></script>

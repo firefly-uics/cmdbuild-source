@@ -6,6 +6,8 @@
 
 	
 	var lookupTypes = {};
+	
+	var lookupAttributeStoreMap = {};
 
 	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
 		getLookupTypes: function() {
@@ -71,7 +73,14 @@
 					lt.set("parent", lType.id);
 				}
 			}
-		}
+		},
+		
+		getLookupStore: function(type) {
+			if (!lookupAttributeStoreMap[type]) {
+				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupAttributeStore(type);
+			}
+			return lookupAttributeStoreMap[type];
+		},
 		
 	});
 

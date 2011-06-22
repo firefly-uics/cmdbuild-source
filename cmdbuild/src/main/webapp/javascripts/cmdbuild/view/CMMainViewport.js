@@ -16,7 +16,7 @@
 				layout: "accordion",
 				items: this.cmAccordions,
 				frame: false,
-				border: false,
+				border: true,
 				width: 200
 			});
 
@@ -43,7 +43,8 @@
 
 			this.items = [this.cmAccordions,this.cmPanels, this.header, this.footer];
 			this.padding = "3 3 3 3";
-			CMDBuild.view.CMMainViewport.superclass.initComponent.call(this, arguments);
+			
+			this.callParent(arguments);
 		},
 		/*
 		 * Take a function as parameter
@@ -72,12 +73,10 @@
 		 * and bring it to front
 		 */
 		bringTofrontPanelByCmName: function(cmName, params) {
-			var p = this.cmPanels.items.findBy(function(panel) {
-				return panel.cmName == cmName;
-			});
+			var p = this.findModuleByCMName(cmName);
 
-			if ((typeof p.afterBringToFront == "function" && p.afterBringToFront()) 
-					|| typeof p.afterBringToFront == "undefined") {
+			if (p && ((typeof p.afterBringToFront == "function" && p.afterBringToFront()) 
+					|| typeof p.afterBringToFront == "undefined")) {
 
 				this.cmPanels.layout.setActiveItem(p.id);
 				p.fireEvent("CM_iamtofront", params);
@@ -94,6 +93,12 @@
 		findAccordionByCMName: function(cmName) {
 			return this.cmAccordions.items.findBy(function(accordion) {
 				return accordion.cmName == cmName;
+			});
+		},
+		
+		findModuleByCMName: function(cmName) {
+			return this.cmPanels.items.findBy(function(panel) {
+				return panel.cmName == cmName;
 			});
 		},
 		

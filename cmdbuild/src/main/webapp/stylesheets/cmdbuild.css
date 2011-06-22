@@ -298,33 +298,7 @@ em {
 	cursor: pointer;
 }
 
-/*custo rulse*/
-
-/*
-.cmdbuild_border_bottom_gray {
-	border-bottom: 1px solid #D0D0D0 !important;
-}
-
-.cmdbuild_border_top_gray {
-	border-top: 1px solid #D0D0D0 !important;
-}
-
-.cmdbuild_border_bottom_blue {
-	border-bottom: 1px solid #99BBE8 !important;
-}
-
-.cmdbuild_background_gray {
-	background-color: #F0F0F0 !important;
-}
-
-.cmdbuild_background_blue {
-	background-color: #DFE8F6 !important;
-}
-
-.cmdbuild_body_padding {
-	padding: 5px;
-}
-*/
+/*custom rulse*/
 
 .cmdbuild_unconfigured_modpanel {
 	text-align: center;
@@ -436,7 +410,6 @@ em {
 
 
 /* GRID ELEMENT*/
-/*
 
 .x-grid3-dirty-cell {
 	background-image: none ! important;
@@ -464,7 +437,7 @@ em {
 .x-tab-panel-header .x-tool {
 	display: none;
 }
-*/
+
 /**
  MENU TREE
 **/

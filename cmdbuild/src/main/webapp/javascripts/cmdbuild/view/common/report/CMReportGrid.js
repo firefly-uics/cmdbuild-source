@@ -36,7 +36,6 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 			fixed: true,
 			renderer: Ext.Function.bind(loadReportIcons, this),
 			menuDisabled: true,
-			id: 'imagecolumn',
 			hideable: false
 		}];
 
@@ -48,6 +47,9 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 				reader: {
 					type: "json",
 					root: "rows"
+				},
+				extraParams: {
+					type: "custom"
 				}
 			},
 			autoLoad: false
@@ -56,46 +58,17 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 		this.callParent(arguments);
 		
 		this.on('beforeitemclick', cellclickHandler);
-
-//		this.subscribe('cmdb-init-report', this.initForClass, this);
-//		this.subscribe('cmdb-reload-report', this.loadReports, this);
-//		
-//		this.subscribe('cmdb-select-reportpdf', this.reportDirectRequestPdf, this);
-//		this.subscribe('cmdb-select-reportcsv', this.reportDirectRequestCsv, this);
-//		this.subscribe('cmdb-select-reportodt', this.reportDirectRequestOdt, this);
-//		this.subscribe('cmdb-select-reportrtf', this.reportDirectRequestRtf, this);
-//		this.subscribe('cmdb-select-reportzip', this.reportDirectRequestZip, this);
 	},
 
 	onReportTypeSelected : function(report) {
-		var p = this.getStore().proxy;
-		p.extraParams.type = report.get("id") == "Jasper" ? "custom" : report.get("id");
-		
 		this.load();
 	},
 
 	load: function() {
 		this.getStore().load();
 	},
-
-	reportDirectRequestPdf: function(report) {
-		directRequest(this, report, "pdf");
-	},
-
-	reportDirectRequestCsv: function(report) {
-		directRequest(this, report, "csv");		
-	},
 	
-	reportDirectRequestOdt: function(report) {
-		directRequest(this, report, "odt");
-	},
-	
-	reportDirectRequestZip: function(report) {
-		directRequest(this, report, "zip");
-	},
-
-	requestReport: function(reportParams, maskedElement) {
-		this.getEl().mask(CMDBuild.Translation.common.wait_title,'x-mask-loading');
+	requestReport: function(reportParams) {
 		Ext.Ajax.request({
 			url: 'services/json/management/modreport/createreportfactory',
 			params: reportParams,
@@ -113,9 +86,6 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 					});
 					paramWin.show();
 				}
-			},
-			callback : function() {
-				this.getEl().unmask();
 			},
 			scope: this
 		});
@@ -177,13 +147,4 @@ function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		}).show();
 	}
 }
-
-var directRequest = function(grid, report, extension) {
-	grid.bringReportPanelToFront(report);
-	grid.requestReport({
-		id: report.objid,
-		type: report.subtype.toUpperCase(),
-		extension: extension
-	});
-};
 })();

@@ -31,9 +31,9 @@
 				border: false
 			});
 
-			this.geoAttributesPanel = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
-				title: tr.tabs.geo_attributes
-			});
+//			this.geoAttributesPanel = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
+//				title: tr.tabs.geo_attributes
+//			});
 
 			this.tabPanel = new Ext.tab.Panel({
 				frame: false,
@@ -67,7 +67,7 @@
 //	      		 },
 
 				,this.attributesPanel
-				,this.geoAttributesPanel
+//				,this.geoAttributesPanel
 //				,
 //				new CMDBuild.Administration.LayerVisibilityGrid({
 //					title: tr.layers,
@@ -83,7 +83,6 @@
 				title : tr.title,
 				basetitle : tr.title+ ' - ',
 				layout: 'fit',
-				id : this.id + '_panel',
 				items: [this.tabPanel],
 				frame: false,
 				border: true
@@ -98,8 +97,8 @@
 
 		onClassDeleted: function() {
 			this.attributesPanel.disable();
-			this.geoAttributesPanel.disable();
-			this.domainGrid.disable();
+//			this.geoAttributesPanel.disable();
+//			this.domainGrid.disable();
 		},
 
 		onClassSelected: Ext.emptyFn

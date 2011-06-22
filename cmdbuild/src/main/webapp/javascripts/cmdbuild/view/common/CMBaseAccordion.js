@@ -30,21 +30,25 @@
 
 			this.tree = Ext.create("Ext.tree.Panel", {
 				store: this.store,
+				border: false,
+				frame: false,
 				region: "center",
+				bodyStyle: { "border-top": "none" },
 				rootVisible: false
 			});
 
 			Ext.apply(this, {
 				items: [this.tree],
-				layout: "border"
+				layout: "border",
+				border: false
 			});
 
 			this.callParent(arguments);
 		},
 
-		updateStore: function() {
+		updateStore: function(items) {
 			var root = this.store.getRootNode();
-			var treeStructure = this.buildTreeStructure();
+			var treeStructure = this.buildTreeStructure(items);
 			root.removeAll();
 			root.appendChild(treeStructure);
 			this.store.sort("text", "ASC");
@@ -77,7 +81,11 @@
 		getSelectionModel: function() {
 			return this.tree.getSelectionModel();
 		},
-
+		
+		getNodeById: function(id) {
+			return this.store.getNodeById(id);
+		},
+		
 		getRootNode: function() {
 			return this.tree.getRootNode();
 		},

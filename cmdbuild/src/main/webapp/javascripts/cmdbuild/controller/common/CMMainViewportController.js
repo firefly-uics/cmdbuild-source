@@ -56,6 +56,14 @@
 			_debug("Cannot enable the accordion " + cmName, e);
 		}
 	};
+	
+	ns.CMMainViewportController.prototype.findAccordionByCMName = function(cmName) {
+		return this.viewport.findAccordionByCMName(cmName);
+	};
+	
+	ns.CMMainViewportController.prototype.findModuleByCMName = function(cmName) {
+		return this.viewport.findModuleByCMName(cmName);
+	};
 })();
 
 //(function() {	

@@ -16,7 +16,8 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildGridHeader = function(attr
 		dataIndex : attribute.name+"_value",
 		hidden: !attribute.isbasedsp,
 		fixed: false,
-		width: 60
+		width: 60,
+		flex: 1
 	};
 };
 /**

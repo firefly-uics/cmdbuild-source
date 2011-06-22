@@ -19,7 +19,11 @@
 		cmControllerType: CMDBuild.controller.accordion.CMDomainAccordionController
 	});
 
-	var reportAccordion = new CMDBuild.view.administraton.accordion.CMReportAccordion();
+	var reportAccordion = new CMDBuild.view.common.report.CMReportAccordion();
+
+	var processAccordion = new CMDBuild.view.administraton.accordion.CMProcessAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController
+	});
 
 Ext.define("CMDBuild.app.Administration", {
 	statics: {
@@ -39,6 +43,7 @@ Ext.define("CMDBuild.app.Administration", {
 				success: function(response, options, decoded) {
 					_CMCache.addClasses(decoded.classes);
 					classesAccordion.updateStore();
+					processAccordion.updateStore();
 				}
 			});
 
@@ -73,6 +78,8 @@ Ext.define("CMDBuild.app.Administration", {
 							CMDBuild.Config.workflow = decoded.data;
 							CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
 							
+							processAccordion.setDisabled(!CMDBuild.Config.workflow.enabled);
+							
 							CMDBuild.ServiceProxy.configuration.readGisConfiguration({
 								success: function(response, options, decoded) {
 									CMDBuild.Config.gis = decoded.data;
@@ -97,23 +104,28 @@ function renderThemAll() {
 		new CMDBuild.controller.CMMainViewportController(
 			new CMDBuild.view.CMMainViewport({
 				cmAccordions: [
-					reportAccordion,
 					classesAccordion,
+					processAccordion,
 					domainAccordion,
+					lookupAccordion,
+					reportAccordion,
 					menuAccordion,
 					groupsAccordion,
-					lookupAccordion,
 					new CMDBuild.view.administraton.accordion.CMGISAccordion(),
 					new CMDBuild.view.administraton.accordion.CMConfigurationAccordion()
 				],
 
 				cmPanels: [
-					new CMDBuild.view.administration.report.CMModReport({
-						cmControllerType: controllerNS.administration.report.CMModReportController
+					new CMDBuild.view.administration.workflow.CMModProcess({
+						cmControllerType: controllerNS.administration.workflow.CMModProcessController
 					}),
 
 					new Ext.Panel({
 						cls: 'empty_panel x-panel-body'
+					}),
+
+					new CMDBuild.view.administration.report.CMModReport({
+						cmControllerType: controllerNS.administration.report.CMModReportController
 					}),
 
 					new CMDBuild.view.administration.group.CMModGroup({

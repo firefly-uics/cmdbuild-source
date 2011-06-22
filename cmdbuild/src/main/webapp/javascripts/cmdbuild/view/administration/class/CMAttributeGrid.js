@@ -45,6 +45,7 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 	initComponent: function() {
 		Ext.apply(this, {
 			viewConfig: {
+				loadMask: false,
 				plugins : {
 					ptype : 'gridviewdragdrop',
 					dragGroup : 'dd',
@@ -171,15 +172,10 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 			scope: this,
 			callback: function(records, opt, success) {
 				this.filterInherited(this.filtering);
-				if (indexAttributeToSelectAfter) {
-					var r = this.store.findRecord("index", indexAttributeToSelectAfter);
-					if (r) {
-						sm.select(r);
-					}
-				} else if (this.store.count() != 0) {
-					sm.select(0);
-				}
-			}
+                if (this.rendered) {
+                    this.selectRecordAtIndexOrTheFirst(indexAttributeToSelectAfter);
+                }
+            }
 		});
 	},
 
@@ -204,6 +200,23 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 		}, 200);
 	},
 	
+    selectRecordAtIndexOrTheFirst: function (indexAttributeToSelectAfter) {
+        if (indexAttributeToSelectAfter) {
+            var r = this.store.findRecord("index", indexAttributeToSelectAfter);
+            if (r) {
+                this.getSelectionModel().select(r);
+            }
+        } else {
+            try {
+                if (this.store.count() != 0) {
+                    this.getSelectionModel().select(0);
+                }
+            } catch (e) {
+                // fail if the grid is not rendered	
+            }
+        }
+    },
+
 	onAddAttributeClick: function() {
 		this.getSelectionModel().deselectAll();
 	}

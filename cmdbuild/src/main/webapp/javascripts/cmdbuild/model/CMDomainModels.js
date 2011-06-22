@@ -7,7 +7,7 @@
 			{name : 'description',type : "string"},
 			{name : 'descrdir',type : "string"},
 			{name : 'descrinv',type : "string"},
-			{name : 'class', type : "string"},
+			{name : 'class1', type : "string"},
 			{name : 'class2',type : "string"},
 			{name : 'cardinality', type : "string"},
 			{name : 'md',type : "string"}

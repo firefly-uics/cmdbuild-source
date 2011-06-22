@@ -232,35 +232,9 @@
 			return group;
 		},
 
-//TODO 3 to 4 remove
-//		setDomains: function(domains) {
-//			domains = domains || [];
-//			for (var i=0, l=domains.length; i<l; ++i) {
-//				var rawDomain = domains[i];
-//				try {
-//					var domain = CMDBuild.core.model.CMDomainModel.buildFromJSON(rawDomain);
-//					CMDomainModelLibrary.add(domain);
-//					var attributeLibary = domain.getAttributeLibrary();
-//					addAttributesToDomain(rawDomain, domain);
-//				} catch (e) {
-//					_debug(e, "I can not add this domain", rawDomain);
-//				}
-//			}
-//		},
-
 		getTablesByGroup: function(groupName) {
 			return this.tableMaps[groupName];
 		},
-
-		// TODO remove
-//		getClassById: function(tableId) {
-//			var classes = this.getTablesByGroup(CLASS_GROUP);
-//			if (classes) {
-//				return classes[tableId];
-//			} else {
-//				return undefined;
-//			}
-//		},
 
 		getTableById: function(tableId) {
 			for (var group in this.tableMaps) {
@@ -421,13 +395,6 @@
 			});
 		},
 		
-		getLookupStore: function(type) {
-			if (!this.mapOfLookupStore[type]) {
-				this.mapOfLookupStore[type] = CMDBuild.ServiceProxy.getLookupFieldStore(type);
-			}
-			return this.mapOfLookupStore[type];
-		},
-		
 		getReferenceStore: function(reference) {
 			var referencedIdClass = reference.referencedIdClass;
 			var fieldFilter = false;
@@ -459,20 +426,28 @@
 			var baseParams = this.buildParamsForReferenceRequest(reference);
 			var isOneTime = baseParams.CQL ? true : false;
 			var store =  new Ext.data.JsonStore({
-				url: 'services/json/management/modcard/getcardlistshort',
-				baseParams: baseParams,
-		        root: "rows",
-	            totalProperty: 'results',
-		        fields : ['Id', 'Description'],
+				model : "CMDBuild.cache.CMReferenceStoreModel",
 		        isOneTime: isOneTime,
-		        autoLoad: true,
+		        baseParams: baseParams, //retro-compatibility
+				proxy: {
+					type: 'ajax',
+					url: 'services/json/management/modcard/getcardlistshort',
+					reader: {
+						type: 'json',
+						root: 'rows'
+					}
+				},
 				sortInfo: {
 		        	field: 'Description',
 		        	direction: 'ASC' 
-		        }
+		        },
+				autoLoad : {
+					params: baseParams
+				}
 			});
 			
 	
+	/* TODO 3 to 4
 	        store.on('beforeload', function() {
 	        	store.isLoading = true;
 	        });
@@ -480,7 +455,7 @@
 	        store.on('load', function() {
 	        	store.isLoading = false;
 	        });
-			
+	*/		
 			return store;
 		},
 		

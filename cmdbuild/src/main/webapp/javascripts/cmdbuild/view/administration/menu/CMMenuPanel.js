@@ -8,7 +8,9 @@
 			{name: "subType", type: "string"},
 			{name: "text", type: "string"},
 			{name: "id", type: "string"},
-			{name: "parent", type: "string"}
+			{name: "parent", type: "string"},
+			{name: "objid", type: "string"},
+			{name: "subtype", type: "string"}
 		],
 		root : {
 			text: "",

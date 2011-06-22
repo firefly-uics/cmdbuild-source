@@ -1,11 +1,5 @@
-/**
- * This is the Filter window that contains the card filter
- * 
- * @class CMDBuild.Management.SearchFilterWindow
- * @extends Ext.Window
- */
-
-CMDBuild.Management.SearchFilterWindow = Ext.extend(CMDBuild.PopupWindow, {
+Ext.define("CMDBuild.Management.SearchFilterWindow", {
+	extend: "CMDBuild.PopupWindow",
     attributeList: {},
     IdClass: 0,
     className:'',
@@ -16,23 +10,18 @@ CMDBuild.Management.SearchFilterWindow = Ext.extend(CMDBuild.PopupWindow, {
         	IdClass: this.IdClass, 
         	windowSize: this.windowSize
         });
-        this.relations = new CMDBuild.Management.Relations({attributeList: this.attributeList, idClass: this.IdClass});
+        
+        this.url = this.attributes.url;
+        
+        //this.relations = new CMDBuild.Management.Relations({attributeList: this.attributeList, idClass: this.IdClass});
 
         Ext.apply(this, {
         	title: CMDBuild.Translation.management.findfilter.window_title + " - " + this.className,
-            items : [{
-            	xtype: 'panel',
-            	layout: 'accordion',
-            	border: false,
-            	items: [
-            	    this.attributes,
-            	    this.relations
-            	    /*
-            	    ,new CMDBuild.Management.Attachments(),
-            	    new CMDBuild.Management.SaveFilter()
-            	    */
-            	]
-            }],
+        	layout: "accordion",
+            items: [
+				this.attributes
+//            	    ,this.relations
+			],
             buttonAlign : 'center',
             buttons: [{
                 text: CMDBuild.Translation.common.btns.confirm,
@@ -43,14 +32,15 @@ CMDBuild.Management.SearchFilterWindow = Ext.extend(CMDBuild.PopupWindow, {
                 scope: this,
                 handler: this.destroy
             }]
-        });       
-        CMDBuild.Management.SearchFilterWindow.superclass.initComponent.apply(this);
+        });
+
+    	this.callParent(arguments);
 	},
-	
+
 	sendForm: function() {
 		var params = this.setParams();
 		CMDBuild.Ajax.request({
-			  url : this.attributes.url,
+			  url : this.url,
 			  method: 'POST',
 			  params: params,
 			  waitTitle : CMDBuild.Translation.common.wait_title,
@@ -58,10 +48,11 @@ CMDBuild.Management.SearchFilterWindow = Ext.extend(CMDBuild.PopupWindow, {
 			  scope: this,			  
 			  success: function(response) {
 				this.destroy();
-				this.grid.clearFilterBtn.setDisabled(false);
-				this.grid.reload();
+				this.grid.clearFilterButton.enable();
 				if (this.grid.pagingBar) {
-					this.grid.pagingBar.changePage(1) ;
+					this.grid.store.loadPage(1) ;
+				} else {
+					this.grid.reload();
 				}
 			}
 		});
@@ -70,8 +61,9 @@ CMDBuild.Management.SearchFilterWindow = Ext.extend(CMDBuild.PopupWindow, {
     setParams: function() {
     	var params = {};
     	var formParams = this.attributes.getForm().getValues();
+    	//TODO 3 to 4
     	//relations.updateNotInRelation();
-    	formParams["checkedRecords"] = Ext.util.JSON.encode(this.relations.getCardStatesToSend());
+    	//formParams["checkedRecords"] = Ext.util.JSON.encode(this.relations.getCardStatesToSend());
     	for (key in formParams) {
     		params[key] = formParams[key];
     	}

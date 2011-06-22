@@ -3,6 +3,7 @@
 
 	Ext.define("CMDBuild.view.administration.classes.CMClassForm", {
 		extend : "Ext.panel.Panel",
+		title : tr.title_add,
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
@@ -48,7 +49,7 @@
 				cmImmutable : true,
 				defaultParent : this.defaultParent,
 				queryMode : "local",
-				store : _CMCache.getSuperclassesAsStore()
+				store : this.buildInheriteComboStore()
 			});
 
 			this.className = new Ext.form.field.Text( {
@@ -97,15 +98,8 @@
 				store: types
 			});
 
-			this.typeCombo.setValue = Ext.Function.createInterceptor(this.typeCombo.setValue, function(value) {
-				if (value == "simpletable") {
-					this.isSuperClass.hide();
-					this.inheriteCombo.hide();
-				} else {
-					this.isSuperClass.show();
-					this.inheriteCombo.show();
-				}
-			}, this);
+			this.typeCombo.setValue = Ext.Function.createInterceptor(this.typeCombo.setValue,
+			onTypeComboSetValue, this);
 
 			this.form = new Ext.form.FormPanel( {
 				region : "center",
@@ -128,7 +122,7 @@
 			this.cmTBar = [ this.modifyButton, this.deleteButton, this.printClassButton ];
 
 			Ext.apply(this, {
-				title : tr.title_add,
+			 	plugins : [new CMDBuild.FormPlugin()],
 				border : false,
 				frame : true,
 				tbar : this.cmTBar,
@@ -138,6 +132,15 @@
 			});
 
 			this.callParent(arguments);
+			
+			this.typeCombo.on("select", onSelectType, this);
+			
+			this.className.on("change", function(fieldname, newValue, oldValue) {
+				this.autoComplete(this.classDescription, newValue, oldValue);
+			}, this);
+			
+			this.disableModify();
+			
 		},
 
 		getForm : function() {
@@ -151,6 +154,7 @@
 
 		onAddClassButtonClick: function() {
 			this.reset();
+			this.inheriteCombo.store.cmFill();
 			this.enableModify(all=true);
 			this.setDefaults();
 		},
@@ -159,8 +163,29 @@
 			this.isActive.setValue(true);
 			this.typeCombo.setValue("standard");
 			this.inheriteCombo.setValue(_CMCache.getClassRootId())
+		},
+		
+		buildInheriteComboStore: function() {
+			return _CMCache.getSuperclassesAsStore();
 		}
 
 	});
 
+	function onSelectType(field, selections) {
+		var s = selections[0];
+		if (s) {
+			onTypeComboSetValue.call(this, s.get("value"));
+		}
+	}
+			
+	function onTypeComboSetValue(value) {
+		if (value == "simpletable") {
+			this.isSuperClass.hide();
+			this.inheriteCombo.hide();
+		} else {
+			this.isSuperClass.show();
+			this.inheriteCombo.show();
+		}
+	}
+			
 })();

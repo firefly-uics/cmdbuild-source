@@ -344,7 +344,7 @@ CMDBuild.ServiceProxy.lookup = {
 		p.url = "services/json/schema/modlookup/tree";
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
+
 	getLookupFieldStore: function(type) {
 		return new Ext.data.Store({
 			model: "CMLookupForCombo",
@@ -363,6 +363,33 @@ CMDBuild.ServiceProxy.lookup = {
 			},
 			autoLoad : true
 		});
+	},
+	
+	getLookupAttributeStore: function(type) {
+		var s = Ext.create("Ext.data.Store", {
+			fields: ["Id", "Description"],
+			proxy: {
+				type: 'ajax',
+				url : 'services/json/schema/modlookup/getlookuplist',
+				reader: {
+					type: 'json',
+					root: 'rows'
+				}
+			},
+			sorters : [ {
+				property : 'Description',
+				direction : "ASC"
+			}],
+			autoLoad : {
+				params : {
+					type : type,
+					active : true,
+					short : true
+				}
+			}
+		});
+		
+		return s;
 	},
 
 	getLookupGridStore: function(pageSize) {
@@ -490,5 +517,15 @@ CMDBuild.ServiceProxy.report = {
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }
+
+CMDBuild.ServiceProxy.menu = {
+		read: function(p) {
+			p.method = "GET";
+			p.url = 'services/json/schema/modmenu/getgroupmenu';
+
+			CMDBuild.ServiceProxy.core.doRequest(p);
+		}
+	}
+
 
 })();

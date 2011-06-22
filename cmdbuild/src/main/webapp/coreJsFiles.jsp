@@ -8,6 +8,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreePanel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
@@ -17,6 +18,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDBuildStructure.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
@@ -29,11 +32,13 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 
 <!--  VIEWS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportAccordion.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script> <!-- TODO move to management -->
 
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>
@@ -41,7 +46,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMMainViewportController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/Splash.js"></script>-->
 
 
@@ -62,8 +66,6 @@
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/ModPanel.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/PanelOverride.js"></script>-->
 
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script>-->
-
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/TabPanel.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/CMBaseController.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/error/CMError.js"></script>-->
@@ -82,8 +84,7 @@
 <!---->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/XRowExpander.js"></script>-->
 
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>-->
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
+
 <!---->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/data/StoreOverride.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/data/XGroupingStore.js"></script> @@ MANAGEMENT-->

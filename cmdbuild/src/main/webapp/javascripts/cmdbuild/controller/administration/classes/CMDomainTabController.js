@@ -3,6 +3,9 @@
 		constructor: function(view) {
 			this.view = view;
 			this.selection = null;
+			
+			this.view.on("itemdblclick", onItemDoubleClick, this);
+			this.view.addDomainButton.on("click", onAddDomainButton, this);
 		},
 
 		onClassSelected: function(classId) {
@@ -22,4 +25,15 @@
 
 	});
 
+	function onItemDoubleClick(grid, record) {
+		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
+		domainAccordion.expand();
+		domainAccordion.selectNodeById(record.get("idDomain"));
+	}
+
+	function onAddDomainButton() {
+		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
+		domainAccordion.expand();
+		_CMMainViewportController.panelControllers["domain"].onAddDomainButtonClick();
+	}
 })();
