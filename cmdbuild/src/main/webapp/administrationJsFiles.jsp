@@ -6,7 +6,8 @@
 
 <!-- VIEWS-->
 	<!-- COMMON -->
-	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script>
+
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeForm.js"></script>
@@ -68,11 +69,23 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMModDomain.js"></script>
 
 	<!-- REPORTS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMReportAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMModReport.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep1.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep2.js"></script>
+	
+	<!-- PROCESS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMProcessAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributeForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributesPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMXpdlPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobParameterGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CronEditWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMCronPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMModProcess.js"></script>
 
 <!-- CONTROLLERS -->
 	<!-- GIS -->
@@ -118,6 +131,14 @@
 	<!-- REPORTS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/report/CMModReportController.js"></script>
 	
+	<!-- PROCESS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMProcessAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessFormController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMCronPanelController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMXpdlPanelController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMModProcessController.js"></script>
+
+
 <!-- THE OTHERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModExternalServices.js"></script>
@@ -129,44 +150,13 @@
 
 	<!--  CLASS -->
 
-	
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/DomainGrid.js"></script>
-
 	<!-- DOMAINS -->
 	
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>-->
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/ModClassController.js"></script>-->
-
-<!---->
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/form/CMDomainAttributeFormController.js"></script>-->
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/grid/CMDomainAttributeGridController.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/domain/attributes/CMDomainAttributesController.js"></script>-->
-
-<!---->
 
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script>-->
 <!---->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>-->
 
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModGis.js"></script>-->
-
-
-
-<!---->
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportGrid.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/SchedulerUI.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobGrid.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobPanel.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/JobParameterGrid.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/scheduler/CronEditWindow.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/ModWorkflow.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/XPDLDownloadForm.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/workflow/XPDLUploadForm.js"></script>-->
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/CMMainController.js"></script>-->
-<script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script>
- 
+<script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script> 

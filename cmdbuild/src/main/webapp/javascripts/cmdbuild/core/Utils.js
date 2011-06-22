@@ -108,9 +108,16 @@ CMDBuild.Utils = (function() {
 					fn.call(element,params);
 				}
 			}
-		}
+		},
+        
+        isSuperclass: function(idClass) {
+           var c =  _CMCache.getClassById(idClass);
+           return c.get("superclass");
+        }
 	};
 })();
+
+_CMUtils = CMDBuild.Utils;
 
 CMDBuild.extend = function(subClass, superClass) {
 	var ob = function() {};

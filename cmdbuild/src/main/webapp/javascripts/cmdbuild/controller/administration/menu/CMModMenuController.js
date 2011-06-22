@@ -125,7 +125,9 @@
 			subType: node.subType,
 			type: node.type,
 			leaf: node.leaf,
-			parent: node.parent
+			parent: node.parent,
+			objid: node.objid,
+			subtype: node.subtype
 		};
 	}
 
@@ -167,7 +169,10 @@
 				parent: node.parentNode.get("id") != "" ? node.parentNode.get("id") : node.parentNode.id,
 				leaf: node.get("leaf"),
 				iconCls: node.get("iconCls"),
-				text: node.get("text")
+				text: node.get("text"),
+				// report only
+				objid: node.get("objid"),
+				subtype: node.get("subtype")
 			});
 			
 		}

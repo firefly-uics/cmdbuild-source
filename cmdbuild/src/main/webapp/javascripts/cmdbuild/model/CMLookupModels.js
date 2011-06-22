@@ -37,4 +37,12 @@
 			{name: LOOKUP_FIELDS.ParentId, type: "string"}
 		]
 	});
+    
+    Ext.define("CMLookupFieldStoreModel", {
+        extend: "Ext.data.Model",
+        fields: [
+			{name: "Id", type: 'string'},
+			{name: "Description", type: "string"}            
+        ]
+    });
 })();

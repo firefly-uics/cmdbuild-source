@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.DecimalAttribute
  * @extends CMDBuild.WidgetBuilders.RangeQueryAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.DecimalAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.DecimalAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = 80;
@@ -22,6 +23,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
 		hidden: !attribute.isbasedsp,
 		fixed: false,
 		width: this.MAXWIDTH,
+		flex: 1,
 		renderer: this.gridRenderer
 	};
 };

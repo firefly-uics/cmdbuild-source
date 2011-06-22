@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.BooleanAttribute
  * @extends CMDBuild.WidgetBuilders.SimpleQueryAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.BooleanAttribute = function(){};
 CMDBuild.extend(CMDBuild.WidgetBuilders.BooleanAttribute, CMDBuild.WidgetBuilders.SimpleQueryAttribute);
 /**
@@ -16,7 +17,8 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
 		 dataIndex : attribute.name,
 		 hidden: !attribute.isbasedsp,
 		 fixed: true,
-		 width: headerWidth
+		 width: headerWidth,
+		 flex: 1
 	 });
 	 return h;
 };

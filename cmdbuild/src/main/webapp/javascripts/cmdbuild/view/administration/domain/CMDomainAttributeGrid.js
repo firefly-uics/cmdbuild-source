@@ -43,18 +43,7 @@
 		},
 
 		buildStore: function() {
-			this.store = new Ext.data.Store({
-				fields: [
-					"index", "name", "description", "type", "isunique",
-					"isbasedsp", "isnotnull","inherited", 'fieldmode',
-					'isactive', "group"
-				],
-				autoLoad : false,
-				sorters : [ {
-					property : 'index',
-					direction : "ASC"
-				}]
-			});
+			this.store = _CMCache.getDomainAttributesStore();
 		},
 
 		buildTBar: function() {
@@ -67,18 +56,10 @@
 
 		refreshStore: function(domain, indexAttributeToSelectAfter) {
 			var sm = this.getSelectionModel();
-			var store = _CMCache.getDomainAttributesStoreForDomainId(domain.get("id"));
-			
-			this.reconfigure(store);
-			
+			this.store.loadForDomainId(domain.get("id"));
 			this.filterInherited(this.filtering);
-			if (indexAttributeToSelectAfter) {
-				var r = this.store.findRecord("index", indexAttributeToSelectAfter);
-				if (r) {
-					sm.select(r);
-				}
-			} else if (this.store.count() != 0) {
-				sm.select(0);
+			if (this.rendered) {
+				this.selectRecordAtIndexOrTheFirst(indexAttributeToSelectAfter);
 			}
 		},
 		
@@ -97,4 +78,5 @@
 	function renderEditingMode(val) {
 		return translation["field_" + val];
 	}
+
 })();

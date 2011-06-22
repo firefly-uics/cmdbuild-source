@@ -20,7 +20,7 @@
 			return reports;
 		},
 
-		getReportsById: function(id) {
+		getReportById: function(id) {
 			return reports[id] || null;
 		}
 	});

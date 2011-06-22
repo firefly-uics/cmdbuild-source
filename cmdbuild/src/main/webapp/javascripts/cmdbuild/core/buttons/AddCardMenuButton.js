@@ -1,14 +1,14 @@
+(function() {
+
 Ext.define("CMDBuild.AddCardMenuButton", {
 	extend: "Ext.button.Split",
 	translation : CMDBuild.Translation.management.moddetail,
 	iconCls: 'add',
+
 	//custom fields
-	
+	cmName: undefined,
 	baseText: CMDBuild.Translation.management.modcard.add_card,
 	textPrefix: CMDBuild.Translation.management.modcard.add_card,
-	classId: undefined, //passed when instantiated
-	cacheTreeName: CMDBuild.Constants.cachedTableType["class"], //default search in the class_tree
-	eventName: "",
 	
 	//private
 	initComponent: function() {
@@ -16,22 +16,19 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		Ext.apply(this, {
 			text: this.baseText,
 			menu : {items :[]},
-			handler: this.onClick
+			handler: onClick,
+			scope: this
 		});
-		CMDBuild.AddCardMenuButton.superclass.initComponent.apply(this, arguments);
-		if (this.classId) {
-			var table = CMDBuild.Cache.getTableById(this.classId);
-			this.fillMenu(table);
-		}
+		
+		this.callParent(arguments);
 	},
 	
-	// FIXME: it's not a class id, but a class object! (naming)
-	setClassId: function(table) {
-		if (!table) {
+	updateForEntry: function(entry) {
+		if (!entry) {
 			return;
 		}
-		this.classId = table.id;
-		this.fillMenu(table);
+		this.classId = entry.get("id");
+		fillMenu.call(this, entry);
 	},
 
 	showDropDownArrow: function() {
@@ -44,24 +41,6 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		if (this.el) {
 			this.el.child(this.arrowSelector).removeClass('x-btn-split');
 		}
-	},
-	
-	//private
-	fillMenu: function(table) {
-		if (!table) {
-			return;
-		}
-		this.menu.removeAll();
-		var classNode = this.takeClassNodeFromCache(table);
-		if (classNode) {
-			this.setTextSuffix(classNode.text);
-			var children = classNode.childNodes;
-			if (children && children.length>0) {
-				//is a superClass
-				this.addSubclassesToMenu(children);
-			}
-		}
-		this.manageDropDownArrowVisibility(table);
 	},
 	
 	//private
@@ -79,49 +58,6 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		} else {
 			this.showDropDownArrow();
 			this.enable();
-		}
-	},
-	
-	//private
-	takeClassNodeFromCache: function(table) {
-		var tableGroup = CMDBuild.Cache.getTableGroup(table);
-		var classTree = CMDBuild.Cache.getTree(tableGroup);
-		return CMDBuild.TreeUtility.searchNodeByAttribute({
-			attribute: "id",
-			value: this.classId,
-			root: classTree
-		});
-	},
-	
-	//private
-	addSubclassesToMenu: function(children) {		
-		for (var i = 0, len = children.length; i < len; i++) {
-			var childNode = children[i];			
-			this.addSubclass(childNode);
-		}
-	},
-	
-	//private
-	addSubclass: function(subclassNode) {
-		var subclass = CMDBuild.Cache.getTableById(subclassNode.id);
-		if (subclass.priv_create) {
-			this.menu.addMenuItem({
-				text: subclass.text,
-				subclassId: subclass.id,
-				subclassName: subclass.text,
-				scope: this,
-				handler: function(item, e){
-					this.fireGivenEvent({
-						classId: item.subclassId, 
-						className: item.subclassName
-					});
-				}
-			});			
-		};
-		var children = subclassNode.childNodes;
-		if (children && children.length>0) {
-			//is a superClass
-			this.addSubclassesToMenu(children);
 		}
 	},
 	
@@ -143,28 +79,67 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	},
 	
 	//private
-	fireGivenEvent: function(p) {
-		this.fireEvent(this.eventName, p);
-		CMDBuild.log.info('fired event', this.eventName, p);
-	},
-	
-	//private
 	resetText: function() {
 		this.setText(this.baseText);
-	},
+	}
 	
-	//private
-	onClick: function() {
+});
+
+	function fillMenu(entry) {
+		this.menu.removeAll();
+
+		if (entry) {
+			this.setTextSuffix(entry.data.text);
+			var children = entry.childNodes;
+			if (children && children.length>0) {
+				//is a superClass
+				addSubclassesToMenu.call(this, children);
+			}
+		}
+//		this.manageDropDownArrowVisibility(table);
+	}
+	
+	function addSubclassesToMenu(children) {		
+		for (var i = 0, len = children.length; i < len; i++) {
+			addSubclass.call(this, children[i]);
+		}
+	}
+	
+	function addSubclass(node) {
+		if (node.raw.cmData.priv_create) {	
+			this.menu.add({
+				text: node.raw.text,
+				subclassId: node.raw.id,
+				subclassName: node.raw.text,
+				scope: this,
+				handler: function(item, e){
+					this.fireEvent("cmClick", {
+						classId: item.subclassId, 
+						className: item.subclassName
+					});
+				}
+			});			
+		};
+
+		var children = node.childNodes;
+		if (children && children.length>0) {
+			//is a superClass
+			this.addSubclassesToMenu(children);
+		}
+	}
+	
+	function onClick() {
 		//Extjs calls the handler even when disabled
 		if (!this.disabled) {			
 			if (this.isEmpty()) {
-				this.fireGivenEvent({
+				this.fireEvent("cmClick", {
 					classId: this.classId,
 					className: this.text
-				});	
+				});
 			} else {
 				this.showMenu();
 			}
 		}
 	}
-});
+
+})();

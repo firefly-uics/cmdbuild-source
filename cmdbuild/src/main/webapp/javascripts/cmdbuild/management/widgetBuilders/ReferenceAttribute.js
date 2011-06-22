@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.ReferenceAttribute
  * @extends CMDBuild.WidgetBuilders.ComboAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.ReferenceAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.ReferenceAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
 

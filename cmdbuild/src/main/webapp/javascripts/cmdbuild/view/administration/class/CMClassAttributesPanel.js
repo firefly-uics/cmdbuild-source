@@ -3,9 +3,8 @@
 		extend: "Ext.panel.Panel",
 		
 		constructor: function() {
-			this.formPanel = new CMDBuild.view.administration.classes.CMAttributeForm({
-				region: "center"
-			});
+		
+			this.formPanel = this.buildFormPanel();
 
 			this.gridPanel = new CMDBuild.view.administration.classes.CMAttributeGrid({
 				region: "north",
@@ -14,8 +13,10 @@
 			});
 
 			this.callParent(arguments);
+			
+			this.formPanel.disableModify();
 		},
-		
+
 		initComponent: function() {
 			
 			Ext.apply(this, {
@@ -25,10 +26,16 @@
 			
 			this.callParent(arguments);
 		},
-		
+
 		onClassSelected: function(idClass) {
 			this.formPanel.onClassSelected(idClass);
 			this.gridPanel.onClassSelected(idClass);
+		},
+
+		buildFormPanel: function() {
+			return new CMDBuild.view.administration.classes.CMAttributeForm({
+				region: "center"
+			});
 		}
 	})
 })();

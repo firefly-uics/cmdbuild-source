@@ -70,4 +70,12 @@
 		]
 	});
 
+   	Ext.define("CMDBuild.cache.CMReferenceStoreModel", {
+		extend: 'Ext.data.Model',
+		fields: [
+			{name: "Id", type: 'int'},
+			{name: "Description",type: 'string'}
+		]
+	});
+
 })();

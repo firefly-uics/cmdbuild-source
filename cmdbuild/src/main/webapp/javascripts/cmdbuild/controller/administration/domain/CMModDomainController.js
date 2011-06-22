@@ -11,7 +11,7 @@
 			this.formController = new CMDBuild.controller.administration.domain.CMDomainFormController(this.view.domainForm);
 			this.attributesController = new CMDBuild.controller.administration.domain.CMDomainAttributesController(this.view.domainAttributes);
 			
-			this.view.addButton.on("click", onAddDomainButtonClick, this);
+			this.view.addButton.on("click", this.onAddDomainButtonClick, this);
 			_CMCache.on("cm_domain_deleted", this.view.onDomainDeleted, this.view);
 		},
 
@@ -22,6 +22,13 @@
 				this.attributesController.onDomainSelected(this.domain);
 				this.view.setTitleSuffix(this.domain.get("description"));
 			}
+		},
+		
+		onAddDomainButtonClick: function() {
+			_CMMainViewportController.deselectAccordionByName("domain");
+			this.view.selectPropertiesTab();
+			this.formController.onAddButtonClick();
+//			this.attributesController.onAddDomainButtonClick();
 		}
 	});
 	
@@ -43,11 +50,5 @@
 			}
 		}
 	};
-	
-	function onAddDomainButtonClick() {
-		_CMMainViewportController.deselectAccordionByName("domain");
-		this.view.selectPropertiesTab();
-		this.formController.onAddButtonClick();
-//		this.attributesController.onAddDomainButtonClick();
-	}
+
 })();

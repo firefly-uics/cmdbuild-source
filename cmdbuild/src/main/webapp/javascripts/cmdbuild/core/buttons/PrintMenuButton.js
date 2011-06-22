@@ -11,6 +11,11 @@
 	
 		initComponent: function(){
 			this.menu = new Ext.menu.Menu();
+			this.handler = function() {
+				if (!this.disabled) {			
+					this.showMenu();
+				}
+			}
 			this.callParent(arguments);
 			this.fillMenu();
 		},

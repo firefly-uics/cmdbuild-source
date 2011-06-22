@@ -1,31 +1,23 @@
 (function() {
+	
+Ext.define("CMDBuild.field.LookupCombo", {
+	extend: "Ext.form.field.ComboBox",
+	trigger1cls: Ext.form.field.ComboBox.triggerCls,
+    trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+   	hideTrigger1 :false,
+	hideTrigger2 :false,
 
-CMDBuild.Management.LookupCombo = Ext.extend(CMDBuild.CMDBuildCombo, {
 	plugins: new CMDBuild.SetValueOnLoadPlugin(),
 	parentId: '',
-	initComponent : function(){
-		CMDBuild.Management.LookupCombo.superclass.initComponent.call(this);
-        this.triggerConfig = {
-            tag:'span', cls:'x-form-twin-triggers', cn:[
-            {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger1Class},
-            {tag: "img", src: Ext.BLANK_IMAGE_URL, cls: "x-form-trigger " + this.trigger2Class}
-        ]};
-    },
-    
-	getTrigger: Ext.form.TwinTriggerField.prototype.getTrigger,
-	initTrigger: Ext.form.TwinTriggerField.prototype.initTrigger,
-	trigger1Class: Ext.ux.form.XComboBox.prototype.triggerClass,
-	trigger2Class: 'x-form-clear-trigger',
-	onTrigger1Click: Ext.ux.form.XComboBox.prototype.onTriggerClick,
+	
+	onTrigger1Click: Ext.form.field.ComboBox.prototype.onTriggerClick,
 	onTrigger2Click: function() {
     	if (!this.disabled) {
     		this.focus(); // to fire the change event in the single lookup fields
     		this.chainedClear();
     	}
     },
-	hideTrigger1 :false,
-	hideTrigger2 :false,
-	
+
 	chainedClear: function() {
     	this.clearValue();
 		if (this.childField) {
@@ -71,6 +63,7 @@ CMDBuild.Management.LookupCombo = Ext.extend(CMDBuild.CMDBuildCombo, {
 	}
 });
 
+CMDBuild.Management.LookupCombo = {}
 CMDBuild.Management.LookupCombo.build = function(attribute) {	
 	if (attribute.lookupchain.length == 1) {
 		return buildSingleLookupField(attribute);
@@ -207,17 +200,16 @@ var bindHiddenFieldToLastCombo = function(hiddenField, lastCombo) {
 //private
 var buildSingleLookupField = function(attribute, hideLabel) {
 	var store = CMDBuild.Cache.getLookupStore(attribute.lookup);
-	var field = new CMDBuild.Management.LookupCombo({
+	var field = new CMDBuild.field.LookupCombo({
 		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
 		labelSeparator: hideLabel ? '' : undefined,
-		name: attribute.name+"_value",
+		name: attribute.name,
 		hiddenName: attribute.name,
 		store: store,
-		mode: 'local',
+		queryMode: 'local',
 		lazyInit: false,
 		valueField: 'Id',
 		displayField: 'Description',
-		triggerAction: 'all',
 		allowBlank: canBeBlank(attribute),
 		grow: true, // XComboBox autogrow
 		minChars: 1,

@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.ForeignKeyAttribute
  * @extends CMDBuild.WidgetBuilders.ComboAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.ForeignKeyAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.ForeignKeyAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
 

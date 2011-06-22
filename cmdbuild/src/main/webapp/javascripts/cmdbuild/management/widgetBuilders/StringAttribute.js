@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.StringAttribute
  * @extends CMDBuild.WidgetBuilders.TextualQueryAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.StringAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.StringAttribute, CMDBuild.WidgetBuilders.TextualQueryAttribute);
 
@@ -20,6 +21,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,
 		fixed: false,
+		flex: 1,
 		renderer: CMDBuild.Utils.Format.htmlEntityEncode
 	};
 	if (innerTextWidth > this.MAXWIDTH) {

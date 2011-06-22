@@ -52,10 +52,15 @@
 		},
 		
 		afterSubmit: function() {
-			// TODO extjs 3 to 4 @@ enable wf panel
-//			var f = this.getForm();
-//			var en = f.findField("enabled");
-//			CMDBuild.Config.workflow.enabled = en.getValue();
+			var f = this.getForm();
+			var en = f.findField("enabled");
+			CMDBuild.Config.workflow.enabled = en.getValue();
+			
+			if (CMDBuild.Config.workflow.enabled) {
+				_CMMainViewportController.enableAccordionByName("process");
+			} else {
+				_CMMainViewportController.disableAccordionByName("process");
+			}
 		}
 	});
 })();

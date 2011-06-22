@@ -44,10 +44,3 @@
 		}
 	});
 })();
-
-// TODO Extjs 3 to 4 @@ enable gis panel
-
-//		this.subscribe('cmdb-config-update-'+this.configFileName, function(config) {
-//			CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, config);
-//            CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-//		}, this);

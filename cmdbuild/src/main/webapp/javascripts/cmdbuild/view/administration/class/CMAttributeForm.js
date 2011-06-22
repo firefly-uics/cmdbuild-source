@@ -232,8 +232,7 @@
 				allowBlank : false,
 				cmImmutable : true,
 				queryMode : "local",
-				//TODO 3 to 4 add the Process
-				store : _CMCache.getClassesStore()
+				store : _CMCache.getClassesAndProcessesStore()
 			});
 
 			this.contextualFields = {
@@ -300,7 +299,7 @@
 		onClassSelected: function(idClass) {
 			this.idClass = idClass;
 
-			var classObj = _CMCache.getClassById(idClass);
+			var classObj = this.takeDataFromCache(idClass);
 			if (classObj) {
 
 				this.domainStore.load({
@@ -323,7 +322,12 @@
 //	  this.attributeNotNull.initialConfig.cmImmutable = isSuperClass;
 //	  this.formPanel.initForm();
 		},
-
+		
+		// private and overridden in subclasses
+		takeDataFromCache: function(idClass) {
+			return _CMCache.getClassById(idClass);
+		},
+		
 		onAttributeSelected : function(attribute) {
 			this.reset();
 			

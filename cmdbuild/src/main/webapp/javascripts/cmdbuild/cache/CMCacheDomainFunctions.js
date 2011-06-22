@@ -1,7 +1,7 @@
 (function() {
 
 	var domains = {};
-	var attributeStores = {};
+	var attributeStore;
 
 	Ext.define("CMDBUild.cache.CMCacheDomainFunctions", {
 
@@ -44,12 +44,38 @@
 			return domains[id];
 		},
 		
-		getDomainAttributesStoreForDomainId: function(domainId) {
-			if (!attributeStores[domainId]) {
-				attributeStores[domainId] = buildAttributeStoreForDomainId(domainId);
-			}
+		getDomainAttributesStore: function() {
+			if (!attributeStore) {
 			
-			return attributeStores[domainId];
+				attributeStore = new Ext.data.Store({
+					fields: [
+						"index", "name", "description", "type", "isunique",
+						"isbasedsp", "isnotnull","inherited", 'fieldmode',
+						'isactive', "group"
+					],
+					autoLoad : false,
+					data: [],
+					sorters : [ {
+						property : 'index',
+						direction : "ASC"
+					}],
+					loadForDomainId: function(domainId) {
+						this.lastDomainLoaded = domainId;
+						this.removeAll();
+						if (domains[domainId]) {
+							var rr = domains[domainId].get("attributes") || [];
+							if (rr.length > 0) {
+								this.loadData(rr);
+							}
+						}
+					},
+					reloadForLastDomainId: function() {
+						this.loadForDomainId(this.lastDomainLoaded);
+					}
+				});
+			}
+
+			return attributeStore;
 		},
 		
 		onDomainSaved: function(domain) {
@@ -67,50 +93,34 @@
 		},
 
 		onDomainAttributeSaved: function(domainId, attribute) {
-			var s = this.getDomainAttributesStoreForDomainId(domainId);
-			if (s) {
-				var r = s.findRecord("name", attribute.name);
-				if (r) {
-					s.remove(r)
-				}
-				
-				s.add(attribute);
-				s.sort('index', 'ASC');
+			var domainAttributes = domains[domainId].get("attributes") || [];
+			eraseAttribute(domainAttributes, attribute); // to manage the modify of an existing attribute
+
+			domainAttributes.push(attribute);
+
+			if (attributeStore) {
+				attributeStore.reloadForLastDomainId();
 			}
+			
 		},
 		
 		onDomainAttributeDelete: function(domainId, attribute) {
-			var s = this.getDomainAttributesStoreForDomainId(domainId);
-			if (s) {
-				var r = s.findRecord("name", attribute.name);
-				if (r) {
-					s.remove(r)
-				}
+			var domainAttributes = domains[domainId].get("attributes") || [];
+			eraseAttribute(domainAttributes, attribute);
+
+			if (attributeStore) {
+				attributeStore.reloadForLastDomainId();
 			}
 		}
 	});
 	
-	function buildAttributeStoreForDomainId(domainId) {
-		if (! domains[domainId] ) {
-			_debug("I can not build an attribute store for domain with id " + domainId);
-			return;
+	function eraseAttribute(domainAttributes, attribute) {
+		for (var i=0, l=domainAttributes.length; i<l; ++i) {
+			if (domainAttributes[i].data.name == attribute.name) {
+				Ext.Array.erase(domainAttributes, i, 1);
+				break;
+			}
 		}
-
-		var s = new Ext.data.Store({
-			fields: [
-				"index", "name", "description", "type", "isunique",
-				"isbasedsp", "isnotnull","inherited", 'fieldmode',
-				'isactive', "group"
-			],
-			autoLoad : false,
-			data: domains[domainId].get("attributes") || [],
-			sorters : [ {
-				property : 'index',
-				direction : "ASC"
-			}]
-		});
-
-		return s;
 	}
 	
 })();

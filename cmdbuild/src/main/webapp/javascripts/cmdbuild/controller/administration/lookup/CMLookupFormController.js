@@ -77,14 +77,15 @@
 	function onDisableButtonClick() {
 		CMDBuild.LoadMask.get().show();
 		var disable = this.view.activeCheck.getValue();
+		var id = this.view.getForm().findField(LOOKUP_FIELDS.Id).value
 		CMDBuild.ServiceProxy.lookup.setLookupDisabled({
 			params : {
-				Id : this.view.getForm().findField(LOOKUP_FIELDS.Id).value
+				Id : id
 			},
 			scope : this,
 			success : function(a, b, decoded) {
 				this.view.updateDisableEnableLookup(disable);
-				notifySubController.call(this, "onLookupDisabled", decoded.lookup.Id);
+				notifySubController.call(this, "onLookupDisabled", id);
 			},
 			callback : function() {
 				CMDBuild.LoadMask.get().hide();

@@ -34,7 +34,7 @@
 			this.cmTBar = [this.modifyButton, this.deleteButton];
 			this.cmButtons = [this.saveButton, this.abortButton];
 
-			this.class_store = _CMCache.getClassesStore(); 
+			this.class_store = _CMCache.getClassesAndProcessesStore();
 
 			this.masterdetail = new Ext.ux.form.XCheckbox({
 				xtype: 'xcheckbox',
@@ -154,7 +154,8 @@
 			this.domainName.on('change', function(domainNameField, newValue, oldValue) {
 				this.autoComplete(this.domainDescription, newValue, oldValue);
 			}, this);
-
+			
+			this.disableModify();
 		},
 
 		onDomainSelected: function(cmDomain) {

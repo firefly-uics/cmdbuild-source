@@ -1,11 +1,103 @@
-Ext.onReady(function() {
-	Ext.QuickTips.init();
-	CMDBuild.InitHeader();
+(function() {
 	
-	var splash = new CMDBuild.Splash('splashScreen','splashScreen');
-	splash.setText(CMDBuild.Translation.common.loading_mask.configuration);
-	splash.show();
+	Ext.define("CMDBuild.app.Management", {
+		statics: {
+			init: function() {
+				this.buildComponents();
+				this.loadResources();
+			},
+			
+			loadResources: function() {
+
+				CMDBuild.ServiceProxy.report.read({
+					scope: this,
+					success: function(response, options, reports) {
+						_CMCache.addReports(reports);
+						this.reportAccordion.updateStore();
+					}
+				});
+
+				CMDBuild.ServiceProxy.classes.read({
+					params: {
+						active: true
+					},
+					scope: this,
+					success: function(response, options, decoded) {
+						_CMCache.addClasses(decoded.classes);
+						this.classesAccordion.updateStore();
+					}
+				});
+
+				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+					scope: this,
+					success: function(response, options, decoded) {
+						CMDBuild.Config.cmdbuild = decoded.data;
+					}
+				});
+				
+				CMDBuild.ServiceProxy.menu.read({
+					scope: this,
+					success: function(response, options, decoded) {
+						if (decoded.length > 0) {
+							this.menuAccordion.updateStore(decoded);
+						}
+					}
+				});
+			},
+
+			buildComponents: function() {
+
+				this.cmAccordions = [
+					this.menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion(),
+ 					this.classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
+						title: "@@ Class"
+					}),
+					this.reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),
+					this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
+						title: "@@ Utilities"
+					})
+				];
+
+				this.cmPanels = [
+					new Ext.panel.Panel({}),
+					
+					new CMDBuild.view.common.report.CMReportGrid({
+						cmName: "report",
+						cmControllerType: CMDBuild.controller.management.report.CMModReportController
+					}),
+					
+					this.changePasswordPanel = new CMDBuild.view.management.utilities.CMModChangePassword(),
+
+					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
+						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
+					}),
 	
+					this.bulkCardUpdates = new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+					}),
+
+					this.exportCSV = new CMDBuild.view.management.utilities.CMModExportCSV(),
+
+					this.importCSV = new CMDBuild.view.management.utilities.CMModImportCSV({
+						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+					})
+				];
+				
+				this.buildViewport();
+			},
+			
+			buildViewport: function() {
+				_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+					new CMDBuild.view.CMMainViewport({
+						cmAccordions: this.cmAccordions,
+						cmPanels: this.cmPanels
+					})
+				);
+			}
+		}
+	});
+
+	/*
 	CMDBuild.ConcurrentAjax.execute({
 		loadMask: false,
 		requests: [{
@@ -133,4 +225,9 @@ Ext.onReady(function() {
 		instanceName.dom.innerHTML = CMDBuild.Config.cmdbuild.instance_name || "";
 		
 	}
+	
+
 });
+	*/
+
+})();
