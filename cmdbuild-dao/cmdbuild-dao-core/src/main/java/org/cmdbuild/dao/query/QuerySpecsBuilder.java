@@ -1,63 +1,223 @@
 package org.cmdbuild.dao.query;
 
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.AnyClass;
+import org.cmdbuild.dao.query.clause.AnyDomain;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
-import org.cmdbuild.dao.query.clause.NamedClass;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.ClassAlias;
+import org.cmdbuild.dao.query.clause.join.AnyDomainAnyClassJoinClause;
+import org.cmdbuild.dao.query.clause.join.JoinClause;
+import org.cmdbuild.dao.query.clause.join.Over;
+import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 
+/*
+ * Note: Not thread safe
+ */
 public class QuerySpecsBuilder {
 
-	private List<CMAttribute> attributes;
-	private CMClass fromClass;
+	private class AliasLibrary {
 
-//	private final DataView dataView;
+		private Map<Alias, CMEntryType> aliasMap;
+		private Alias fromAlias;
 
-	public QuerySpecsBuilder(CMDataView dataView) {
-//		this.dataView = dataView;
-		select(anyAttribute());
-		from(anyClass());
-	}
-
-	public QuerySpecsBuilder select(final List<CMAttribute> attributes) {
-		this.attributes = attributes;
-		return this;
-	}
-
-	public QuerySpecsBuilder select(final CMAttribute a) {
-		final List<CMAttribute> attributes = new ArrayList<CMAttribute>(1);
-		attributes.add(a);
-		return select(attributes);
-	}
-
-	public QuerySpecsBuilder select(final String... attributeNames) {
-		final List<CMAttribute> attributes = new ArrayList<CMAttribute>(attributeNames.length);
-		for (String name : attributeNames) {
-			attributes.add(new NamedAttribute(name));
+		AliasLibrary() {
+			aliasMap = new HashMap<Alias, CMEntryType>();
 		}
-		return select(attributes);
+
+		public void addEntryType(final CMEntryType entryType, final Alias alias) {
+			if (aliasMap.containsKey(alias)) {
+				throw new IllegalArgumentException("Duplicate alias");
+			}
+			aliasMap.put(alias, entryType);
+		}
+
+		@Deprecated
+		public void setFrom(final CMClass fromClass, final Alias fromAlias) {
+			this.aliasMap.remove(this.fromAlias);
+			addEntryType(fromClass, fromAlias);
+			this.fromAlias = fromAlias;
+		}
+
+		@Deprecated
+		public CMClass getFromClass() {
+			return (CMClass) aliasMap.get(fromAlias);
+		}
+
+		@Deprecated
+		public ClassAlias getFromClassAlias() {
+			return new ClassAlias(getFromClass(), fromAlias);
+		}
+
+		public void checkAlias(final Alias alias) {
+			 if (!aliasMap.containsKey(alias)) {
+				 throw new NoSuchElementException("Alias "+ alias + " was not found");
+			 }
+		}
+
+		public Alias getDefaultAlias() {
+			if (aliasMap.size() == 1) {
+				return aliasMap.keySet().iterator().next();
+			} else {
+				throw new IllegalStateException("Unable to determine the default alias");
+			}
+		}
 	}
 
+	private List<QueryAttribute> attributes;
+	private List<JoinClause> joinClauses;
+	private WhereClause whereClause;
+	private Integer offset;
+	private Integer limit;
 
-	public QuerySpecsBuilder from(CMClass fromClass) {
-		this.fromClass = fromClass;
+	private AliasLibrary aliases;
+
+	private final DBDriver driver;
+	private final CMDataView view;
+
+	public QuerySpecsBuilder(final DBDriver driver, final CMDataView view) {
+		this.driver = driver;
+		this.view = view;
+		aliases = new AliasLibrary();
+		select();
+		from(anyClass());
+		joinClauses = new ArrayList<JoinClause>();
+		whereClause = new EmptyWhereClause();
+	}
+
+	public QuerySpecsBuilder select(final Object... attrDef) {
+		this.attributes = new ArrayList<QueryAttribute>(attrDef.length);
+		for (Object a : attrDef) {
+			if (a instanceof QueryAttribute) {
+				attributes.add((QueryAttribute)a);
+			} else if (a instanceof String) {
+				attributes.add(new NamedAttribute((String)a));
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
 		return this;
 	}
 
-	public QuerySpecsBuilder from(String className) {
-		return from(new NamedClass(className));
+	public QuerySpecsBuilder from(final CMClass fromClass, final Alias fromAlias) {
+		aliases.setFrom(fromClass, fromAlias);
+		return this;
 	}
 
+	public QuerySpecsBuilder from(final CMClass fromClass) {
+		return from(fromClass, as(fromClass.getName()));
+	}
 
+	/*
+	 * TODO: Consider more join levels (join with join tables)
+	 */
+	public QuerySpecsBuilder join(final CMClass joinClass, final Over overClause) {
+		return join(joinClass, as(joinClass.getName()), overClause);
+	}
+
+	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
+		if (overClause.getDomain() instanceof AnyDomain) {
+			if (joinClass instanceof AnyClass) {
+				// TODO: ADD THE VIEW!!!!!!!!
+				joinClauses.add(new AnyDomainAnyClassJoinClause(view, aliases.getFromClass(), joinClassAlias, overClause.getAlias()));
+			} else {
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		} else {
+			joinClauses.add(new JoinClause(aliases.getFromClass(), joinClass, overClause.getDomain(), joinClassAlias, overClause.getAlias()));
+		}
+		aliases.addEntryType(joinClass, joinClassAlias); // What for?
+		aliases.addEntryType(overClause.getDomain(), overClause.getAlias()); // What for?
+		return this;
+	}
+
+	/*
+	 * TODO: This should handle the more generic cases of "expression operator expression"
+	 */
+	public QuerySpecsBuilder where(final QueryAliasAttribute attribute, final Operator operator, final Object value) {
+		if (whereClause instanceof EmptyWhereClause) {
+			aliases.checkAlias(attribute.getEntryTypeAlias());
+			whereClause = new SimpleWhereClause(attribute, operator, value);
+		} else {
+			throw new UnsupportedOperationException("Only one single where expression is supported at this time");
+		}
+		return this;
+	}
+
+	public QuerySpecsBuilder offset(final Integer offset) {
+		this.offset = offset;
+		return this;
+	}
+
+	public QuerySpecsBuilder limit(final Integer limit) {
+		this.limit = limit;
+		return this;
+	}
+
+	private QuerySpecs build() {
+		final QuerySpecs qs = new QuerySpecs();
+		qs.setFrom(aliases.getFromClassAlias());
+		for (JoinClause jc : joinClauses) {
+			qs.addJoin(jc);
+		}
+		for (QueryAttribute qa : attributes) {
+			QueryAliasAttribute attribute;
+			// FIXME: Implement it with a QueryAttribute visitor
+			if (qa instanceof NamedAttribute) {
+				final Alias alias = aliasForNamedAttribute((NamedAttribute) qa);
+				attribute = attribute(alias, qa.getName());
+			} else if (qa instanceof QueryAliasAttribute) {
+				attribute = (QueryAliasAttribute) qa;
+			} else {
+				throw new UnsupportedOperationException("Unsupported attribute class");
+			}
+			aliases.checkAlias(attribute.getEntryTypeAlias());
+			qs.addSelectAttribute(attribute);
+		}
+		qs.setWhereClause(whereClause);
+		qs.setOffset(offset);
+		qs.setLimit(limit);
+		return qs;
+	}
+
+	private Alias aliasForNamedAttribute(NamedAttribute na) {
+		final String aliasName = na.getEntryTypeAliasName();
+		if (aliasName == null) {
+			return aliases.getDefaultAlias();
+		} else {
+			return as(aliasName);
+		}
+	}
+
+	public CMQueryResult run() {
+		return driver.query(build());
+	}
+
+	/*
+	 * String representation... totally incomplete!
+	 */
+	
 	public String toCQL2() {
 		String[] queryParts = { toCql2Select(), toCql2From() };
 		return StringUtils.join(queryParts, " ");
@@ -65,29 +225,31 @@ public class QuerySpecsBuilder {
 
 	private String toCql2Select() {
 		final List<String> attributeNames = new ArrayList<String>(attributes.size());
-		for (CMAttribute a : attributes) {
-			attributeNames.add(a.getName());
+		for (QueryAttribute qa : attributes) {
+			attributeNames.add(qa.getName());
 		}
 		return "SELECT " + StringUtils.join(attributeNames, ", ");
 	}
 
 	private String toCql2From() {
-		return "FROM " + fromClass.getName();
+		return "FROM " + aliases.getFromClass().getName();
 	}
 
 	public String toString() {
 		return toCQL2();
 	}
 
+	/*
+	 * Object
+	 */
+
+	@Override
 	public boolean equals(Object obj) {
 		return EqualsBuilder.reflectionEquals(this, obj);
 	}
 
+	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
-
-//	private QuerySpecs prepare() {
-//		return new QuerySpecs();
-//	}
 }

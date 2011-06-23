@@ -8,6 +8,7 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
@@ -57,6 +58,31 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 	}
 	
+	private class CreateDomain extends Command<DBDomain> {
+		private final String name;
+		private final DBClass class1;
+		private final DBClass class2;
+		
+		private DBDomain newDomain;
+
+		private CreateDomain(final String name, final DBClass class1, final DBClass class2) {
+			this.name = name;
+			this.class1 = class1;
+			this.class2 = class2;
+		}
+
+		@Override
+		protected DBDomain execCommand() {
+			newDomain = innerDriver.createDomain(name, class1, class2);
+			return newDomain;
+		}
+
+		@Override
+		public void undoCommand() {
+			innerDriver.deleteDomain(newDomain);
+		}
+	}
+
 	private class CreateEntry extends Command<Object> {
 
 		private final DBEntry entry;
@@ -111,6 +137,26 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 	}
 
+	private class DeleteDomain extends Command<Void> {
+
+		private final DBDomain domainToDelete;
+
+		public DeleteDomain(DBDomain d) {
+			this.domainToDelete = d;
+		}
+
+		@Override
+		protected Void execCommand() {
+			innerDriver.deleteDomain(domainToDelete);
+			return null;
+		}
+
+		@Override
+		protected void undoCommand() {
+			throw new UnsupportedOperationException("Not implemented");
+		}
+	}
+
 	/*
 	 * Driver interface
 	 */
@@ -155,13 +201,38 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public void update(DBEntry entry) {
-		throw new UnsupportedOperationException();
+	public Collection<DBDomain> findAllDomains() {
+		return innerDriver.findAllDomains();
+	}
+
+	@Override
+	public DBDomain createDomain(String name, DBClass class1, DBClass class2) {
+		return new CreateDomain(name, class1, class2).exec();
+	}
+
+	@Override
+	public void deleteDomain(DBDomain dbDomain) {
+		new DeleteDomain(dbDomain).exec();
+	}
+
+	@Override
+	public DBDomain findDomainById(final Object id) {
+		return innerDriver.findDomainById(id);
+	}
+
+	@Override
+	public DBDomain findDomainByName(final String name) {
+		return innerDriver.findDomainByName(name);
 	}
 
 	@Override
 	public Object create(DBEntry entry) {
 		return new CreateEntry(entry).exec();
+	}
+
+	@Override
+	public void update(DBEntry entry) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

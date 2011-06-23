@@ -41,4 +41,18 @@ public class DBClass extends DBEntryType implements CMClass {
 	public Iterable<DBClass> getChildren() {
 		return children;
 	}
+
+	public boolean isAncestorOf(final CMClass cmClass) {
+		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
+			if (parent.equals(this)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isSuperclass() {
+		return children.isEmpty(); // FIXME IMPORTANT! It should be a flag marking is as a superclass, but this will suffice FOR NOW! 
+	}
 }

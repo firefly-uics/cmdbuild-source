@@ -1,27 +1,32 @@
 package org.cmdbuild.dao.query.clause;
 
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 
-/**
- * This represents an attribute that is not bound
- * to any class, but only identified by its name
- */
-public class NamedAttribute implements CMAttribute {
+public class NamedAttribute implements QueryAttribute {
 
-	final String name;
+	private final String entryTypeAliasName;
+	private final String name;
 
-	public NamedAttribute(final String name) {
-		this.name = name;
+	public NamedAttribute(final String fullname) {
+		String[] split = fullname.split("\\.");
+		switch (split.length) {
+		case 1:
+			entryTypeAliasName = null;
+			name = split[0];
+			break;
+		case 2:
+			entryTypeAliasName = split[0];
+			name = split[1];
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
 	}
 
-	@Override
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
-	@Override
-	public CMEntryType getOwner() {
-		return null;
+	public final String getEntryTypeAliasName() {
+		return entryTypeAliasName;
 	}
 }

@@ -16,4 +16,9 @@ public class UndefinedClass extends PlaceholderClass {
 	public String getName() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean isAncestorOf(CMClass cmClass) {
+		throw new UnsupportedOperationException();
+	}
 }

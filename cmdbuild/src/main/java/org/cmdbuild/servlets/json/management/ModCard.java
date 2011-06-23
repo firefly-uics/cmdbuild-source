@@ -529,8 +529,7 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
-	@JSONExported
-	public JSONObject getProcessHistory(
+	private JSONObject getProcessHistory(
 			JSONObject serializer,
 			ICard card,
 			ITableFactory tf) throws JSONException, CMDBException {
@@ -570,10 +569,11 @@ public class ModCard extends JSONBase {
 		JSONArray rows = new JSONArray();
 		RelationQuery relationQuery;
 		Integer totalRows = null;
-		if (card.isNew())
+		if (card.isNew()) { // never called from the ui!
 			relationQuery = rf.list();
-		else
+		} else {
 			relationQuery = rf.list(card);
+		}
 		relationQuery.orderByDomain().straightened();
 		if (domainlimit > 0)
 			relationQuery.domainLimit(domainlimit);
@@ -628,10 +628,11 @@ public class ModCard extends JSONBase {
 			IRelation relation,
 			@Parameter("DomainDirection") boolean direction,
 			ICard newCard ) throws JSONException, CMDBException {
-		if (direction)
+		if (direction) {
 			relation.setCard2(newCard);
-		else
+		} else {
 			relation.setCard1(newCard);
+		}
 		relation.save();
 	}
 

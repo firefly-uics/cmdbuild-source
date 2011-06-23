@@ -21,7 +21,7 @@ public abstract class DBEntry {
 		this.values = new HashMap<String, Object>();
 	}
 
-	public final DBEntryType getType() {
+	public DBEntryType getType() {
 		return type;
 	}
 
@@ -55,7 +55,7 @@ public abstract class DBEntry {
 		return values.entrySet();
 	}
 
-	protected final void setOnly(final String key, final Object value) {
+	public final void setOnly(final String key, final Object value) {
 		if (type.getAttribute(key) == null) {
 			throw new IllegalArgumentException();
 		}
