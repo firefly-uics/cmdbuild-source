@@ -4,47 +4,74 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMEntry;
-import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.query.clause.Alias;
-import org.cmdbuild.dao.query.clause.ClassAlias;
-import org.cmdbuild.dao.query.clause.DomainAlias;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.query.clause.QueryRelation;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 
 /*
  * Mutable classes used by the driver implementations
  */
 public class DBQueryRow implements CMQueryRow {
 
-	Map<CMClass, CMCard> items;
+	Map<Alias, DBCard> cards;
+	Map<Alias, QueryRelation> relations;
 
 	// Should we have a reference to the QuerySpecs?
 	public DBQueryRow() {
-		items = new HashMap<CMClass, CMCard>();
-	}
-	
-	public void setCard(final CMClass type, final CMCard card) {
-		items.put(type, card);
+		cards = new HashMap<Alias, DBCard>();
+		relations = new HashMap<Alias, QueryRelation>();
 	}
 
-	@Override
-	public CMEntry getEntry(final Alias alias) {
-		throw new UnsupportedOperationException("Not implemented");
+	public void setCard(final Alias alias, final DBCard card) {
+		cards.put(alias, card);
 	}
 
-	@Override
-	public CMCard getCard(final ClassAlias alias) {
-		throw new UnsupportedOperationException("Not implemented");
+	public void setRelation(final Alias alias, final QueryRelation relation) {
+		relations.put(alias, relation);
+	}
+
+	public void setValue(final Alias alias, final String key, final Object value) {
+		getEntry(alias).setOnly(key, value);
+	}
+
+	private DBEntry getEntry(final Alias alias) {
+		if (cards.containsKey(alias)) {
+			return cards.get(alias);
+		} else if (relations.containsKey(alias)) {
+			return relations.get(alias).getRelation();
+		} else {
+			throw new IllegalArgumentException("No alias " + alias);
+		}
 	}
 
 	@Override
 	public CMCard getCard(final CMClass type) {
-		return items.get(type);
+		return getCard(Alias.canonicalAlias(type));
 	}
 
 	@Override
-	public CMRelation getRelation(final DomainAlias alias) {
-		throw new UnsupportedOperationException("Not implemented");
+	public CMCard getCard(final Alias alias) {
+		if (cards.containsKey(alias)) {
+			return cards.get(alias);
+		} else {
+			throw new IllegalArgumentException("No alias " + alias);
+		}
 	}
 
+	@Override
+	public QueryRelation getRelation(final Alias alias) {
+		if (relations.containsKey(alias)) {
+			return relations.get(alias);
+		} else {
+			throw new IllegalArgumentException("No alias " + alias);
+		}
+	}
+
+	@Override
+	public QueryRelation getRelation(CMDomain type) {
+		return getRelation(Alias.canonicalAlias(type));
+	}
 }

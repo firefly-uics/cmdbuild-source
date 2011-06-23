@@ -1,24 +1,15 @@
 package org.cmdbuild.dao.query.clause;
 
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 
-public class AnyAttribute implements CMAttribute {
 
-	private AnyAttribute() {
+public class AnyAttribute extends QueryAliasAttribute {
+
+	private AnyAttribute(final Alias entryType) {
+		super(entryType, "*");
 	}
 
-	@Override
-	public String getName() {
-		return "*";
-	}
-
-	public static AnyAttribute anyAttribute() {
-		return new AnyAttribute();
-	}
-
-	@Override
-	public CMEntryType getOwner() {
-		return null;
+	public static AnyAttribute anyAttribute(final Alias entryType) {
+		return new AnyAttribute(entryType);
 	}
 }

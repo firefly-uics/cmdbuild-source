@@ -1,12 +1,7 @@
 package org.cmdbuild.dao.entrytype;
 
 
-public abstract class PlaceholderClass implements CMClass {
-
-	@Override
-	public Object getId() {
-		throw new UnsupportedOperationException();
-	}
+public abstract class PlaceholderClass extends PlaceholderEntryType implements CMClass {
 
 	@Override
 	public CMClass getParent() {
@@ -19,12 +14,7 @@ public abstract class PlaceholderClass implements CMClass {
 	}
 
 	@Override
-	public Iterable<? extends CMAttribute> getAttributes() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public DBAttribute getAttribute(String name) {
+	public boolean isSuperclass() {
 		throw new UnsupportedOperationException();
 	}
 }

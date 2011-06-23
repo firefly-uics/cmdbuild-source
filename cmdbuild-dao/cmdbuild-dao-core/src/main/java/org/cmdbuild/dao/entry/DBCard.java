@@ -27,4 +27,8 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 		saveOnly();
 		return  this;
 	}
+
+	public DBClass getType() {
+		return (DBClass) super.getType();
+	}
 }

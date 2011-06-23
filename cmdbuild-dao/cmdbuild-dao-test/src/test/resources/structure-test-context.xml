@@ -20,9 +20,4 @@
 
 	<bean id="mem_driver" class="org.cmdbuild.dao.driver.InMemoryDriver" />
 
-	<bean id="pg_cached_driver" class="org.cmdbuild.dao.driver.CachingDriver">
-		<constructor-arg>
-			<ref bean="pg_driver"/>
-		</constructor-arg>
-	</bean>
 </beans>

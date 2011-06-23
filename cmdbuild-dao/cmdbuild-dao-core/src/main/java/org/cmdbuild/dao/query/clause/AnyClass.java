@@ -16,4 +16,9 @@ public class AnyClass extends PlaceholderClass {
 	public String getName() {
 		return "*";
 	}
+
+	@Override
+	public boolean isAncestorOf(CMClass cmClass) {
+		throw new UnsupportedOperationException();
+	}
 }

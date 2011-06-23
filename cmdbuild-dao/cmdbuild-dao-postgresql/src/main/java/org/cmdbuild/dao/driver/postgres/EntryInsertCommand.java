@@ -40,6 +40,6 @@ public class EntryInsertCommand {
 
 	public Object executeAndReturnKey() {
 		// TODO LOG insertActor.getInsertString();
-		return insertActor.executeAndReturnKey(valueMap);
+		return insertActor.executeAndReturnKey(valueMap).longValue();
 	}
 }
