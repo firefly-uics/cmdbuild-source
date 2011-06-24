@@ -30,19 +30,16 @@ function getCurrentLanguage() {
 		return CMDBuild.Config.cmdbuild.language;
 }
 
-(function(){
-
-var DEFAULT_TIMEOUT_S = 90;
+_CMDefault_timeout_s = 90;
 
 Ext.override(Ext.data.Connection, {
-	timeout : DEFAULT_TIMEOUT_S * 1000
+	timeout : (_CMDefault_timeout_s * 1000)
 });
 
 Ext.override(Ext.form.BasicForm, {
-	timeout : DEFAULT_TIMEOUT_S
+	timeout : _CMDefault_timeout_s
 });
 
-})();
 
 // Component masks are shown at 20000 z-index. This oddly fixes
 // the problem of masks appearing on top of new windows.

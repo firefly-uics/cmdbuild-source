@@ -30,6 +30,7 @@ CMDBuild.Management.ReportParamWin = Ext.extend(Ext.Window, {
 			defaults: { 
 				labelWidth: 150
 			},
+			timeout: _CMDefault_timeout_s * 1000,
 			labelAlign: "right",
 			margins: '0 10 0 10',
 			frame: true,
