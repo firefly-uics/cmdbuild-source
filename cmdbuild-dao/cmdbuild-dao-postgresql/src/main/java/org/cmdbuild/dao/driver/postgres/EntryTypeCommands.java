@@ -11,11 +11,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.cmdbuild.dao.driver.postgres.Utils.DomainCommentMeta;
+import org.cmdbuild.dao.driver.postgres.Utils.CommentMapper;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
+import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -36,7 +39,9 @@ public class EntryTypeCommands {
 
 	public List<DBClass> findAllClasses() {
 		final ClassTreeBuilder rch = new ClassTreeBuilder();
-		jdbcTemplate.query("SELECT table_id, _cm_cmtable(table_id) AS table_name, _cm_parent_id(table_id) AS parent_id FROM _cm_class_list() AS table_id", rch);
+		jdbcTemplate.query(
+				"SELECT table_id, _cm_cmtable(table_id) AS table_name, _cm_parent_id(table_id) AS parent_id," +
+				" _cm_comment_for_table_id(table_id) AS table_comment FROM _cm_class_list() AS table_id", rch);
 		return rch.getResult();
 	}
 
@@ -60,8 +65,16 @@ public class EntryTypeCommands {
             final String name = rs.getString("table_name");
             final Long parentId = (Long) rs.getObject("parent_id");
             final List<DBAttribute> attributes = findEntryTypeAttributes(id);
-            final DBClass dbClass = new DBClass(name, id, attributes);
+            final String comment = rs.getString("table_comment");
+            final ClassMetadata meta = classCommentToMetadata(comment);
+            final DBClass dbClass = new DBClass(name, id, meta, attributes);
             classMap.put(id, new ClassAndParent(dbClass, parentId));
+		}
+
+		private ClassMetadata classCommentToMetadata(final String comment) {
+			ClassMetadata meta = new ClassMetadata();
+			extractCommentToMetadata(comment, meta, Utils.CLASS_COMMENT_MAPPER);
+			return meta;
 		}
 
 		public List<DBClass> getResult() {
@@ -115,23 +128,32 @@ public class EntryTypeCommands {
 		final List<DBDomain> domainList = jdbcTemplate.query(
 				// Exclude Map since we don't need it anymore!
 				"SELECT domain_id, _cm_cmtable(domain_id) AS domain_name," +
-				" _cm_read_comment(_cm_comment_for_table_id(domain_id),'" + DomainCommentMeta.CLASS1 +"') AS domain_class_1," +
-				" _cm_read_comment(_cm_comment_for_table_id(domain_id),'" + DomainCommentMeta.CLASS2 +"') AS domain_class_2" +
+				" _cm_comment_for_table_id(domain_id) AS domain_comment" +
 				" FROM _cm_domain_list() AS domain_id WHERE domain_id <> '\"Map\"'::regclass",
 		        new RowMapper<DBDomain>() {
 		            public DBDomain mapRow(ResultSet rs, int rowNum) throws SQLException {
 		            	final Long id = (Long) rs.getLong("domain_id");
 		                final String name = tableNameToDomainName(rs.getString("domain_name"));
 		                final List<DBAttribute> attributes = findEntryTypeAttributes(id);
-		                final DBClass class1 = driver.findClassByName(rs.getString("domain_class_1"));
-		                final DBClass class2 = driver.findClassByName(rs.getString("domain_class_2"));
-		                final DBDomain domain = new DBDomain(name, id, attributes);
+		                final String comment = rs.getString("domain_comment");
+		                final DomainMetadata meta = domainCommentToMetadata(comment);
+		                final DBDomain domain = new DBDomain(name, id, meta, attributes);
+
+		                // FIXME we should handle this in another way
+		                final DBClass class1 = driver.findClassByName(meta.get(DomainMetadata.CLASS_1));
 		                domain.setClass1(class1);
+		                final DBClass class2 = driver.findClassByName(meta.get(DomainMetadata.CLASS_2));
 		                domain.setClass2(class2);
 		                return domain;
 		            }
 		        });
 		return domainList;
+	}
+
+	private DomainMetadata domainCommentToMetadata(final String comment) {
+		DomainMetadata meta = new DomainMetadata();
+		extractCommentToMetadata(comment, meta, Utils.DOMAIN_COMMENT_MAPPER);
+		return meta;
 	}
 
 	public DBDomain createDomain(final String name, final DBClass class1, final DBClass class2) {
@@ -140,7 +162,7 @@ public class EntryTypeCommands {
 				new Object[] { name, createDomainComment(name, class1, class2) }
 			);
 		final List<DBAttribute> attributes = findEntryTypeAttributes(id);
-		final DBDomain newDomain = new DBDomain(name, id, attributes);
+		final DBDomain newDomain = new DBDomain(name, id, attributes); // FIXME DomainMetadata is not set!
 		newDomain.setClass1(class1);
 		newDomain.setClass2(class2);
 		return newDomain;
@@ -179,14 +201,26 @@ public class EntryTypeCommands {
 
 	private AttributeMetadata attributeCommentToMetadata(final String comment) {
 		AttributeMetadata meta = new AttributeMetadata();
+		extractCommentToMetadata(comment, meta, Utils.DOMAIN_COMMENT_MAPPER);
+		return meta;
+	}
+
+	/*
+	 * Utils
+	 */
+
+	private void extractCommentToMetadata(final String comment, final EntryTypeMetadata meta, final CommentMapper mapper) {
 		if (comment != null && !comment.trim().isEmpty()) {
-			Matcher commentMatcher = COMMENT_PATTERN.matcher(comment);
+			final Matcher commentMatcher = COMMENT_PATTERN.matcher(comment);
 			while (commentMatcher.find()) {
-				//String key = commentMatcher.group(2);
-				//String value = commentMatcher.group(3);
-				// TODO Convert meta from comment string to a decent string and insert it!
+				final String commentKey = commentMatcher.group(2);
+				final String metaKey = mapper.getMetaNameFromComment(commentKey);
+				if (metaKey != null) {
+					final String commentValue = commentMatcher.group(3);
+					final String metaValue = mapper.getMetaValueFromComment(commentKey, commentValue);
+					meta.put(metaKey, metaValue);
+				}
 			}
 		}
-		return meta;
 	}
 }

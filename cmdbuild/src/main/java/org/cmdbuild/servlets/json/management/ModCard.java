@@ -13,18 +13,19 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.elements.DirectedDomain;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
-import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter;
-import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
+import org.cmdbuild.elements.filters.FilterOperator;
 import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
+import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -33,20 +34,20 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.RelationFactory;
-import org.cmdbuild.elements.interfaces.RelationQuery;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
-import org.cmdbuild.elements.utils.CountedValue;
+import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.legacy.dms.AlfrescoFacade;
 import org.cmdbuild.legacy.dms.AttachmentBean;
+import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -557,45 +558,13 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public JSONObject getRelationList(
-			JSONObject serializer,
 			ICard card,
-			RelationFactory rf,
-			DomainFactory df,
-			@Parameter(value="domainlimit", required=false) int domainlimit,
-			@Parameter(value="start", required=false) int start,
-			@Parameter(value="limit", required=false) int limit,
-			@Parameter(value="fullcards", required=false) boolean fullCards,
-			@Parameter(value="DirectedDomain", required=false) String directedDomainParameter) throws JSONException, CMDBException {
-		JSONArray rows = new JSONArray();
-		RelationQuery relationQuery;
-		Integer totalRows = null;
-		if (card.isNew()) { // never called from the ui!
-			relationQuery = rf.list();
-		} else {
-			relationQuery = rf.list(card);
-		}
-		relationQuery.orderByDomain().straightened();
-		if (domainlimit > 0)
-			relationQuery.domainLimit(domainlimit);
-		if (directedDomainParameter != null) {
-			DirectedDomain directedDomain = stringToDirectedDomain(df, directedDomainParameter);
-			relationQuery.domain(directedDomain, fullCards);
-		}
-		for(CountedValue<IRelation> countedRelation : relationQuery.subset(start, limit).getCountedIterable()){
-			if (fullCards) {
-				if (totalRows == null)
-					totalRows = countedRelation.getCount();
-				ICard destCard = countedRelation.getValue().getCard2();
-				rows.put(Serializer.serializeCard(destCard, false));
-			} else {
-				rows.put(Serializer.serializeRelation(countedRelation));
-			}
-		}
-		serializer.put("rows", rows);
-		if (totalRows != null) {
-			serializer.put("results", totalRows);
-		}
-		return serializer;
+			UserContext userCtx,
+			@Parameter(value = "domainlimit", required = false) int domainlimit,
+			@Parameter(value = "DirectedDomain", required = false) String directedDomain) throws JSONException {
+		final DataAccessLogic dataAccessBL = new DataAccessLogic();
+		final GetRelationListResponse out = dataAccessBL.getRelationList(card.getIdClass(), card.getId());
+		return new JsonGetRelationListResponse(out, domainlimit).toJson();
 	}
 
 	@JSONExported

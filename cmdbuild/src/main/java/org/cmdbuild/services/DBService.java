@@ -149,4 +149,11 @@ public class DBService {
 		}
 		return false;
 	}
+
+	/*
+	 * This is used in the transition between the old and the new DAO
+	 */
+	public DataSource getDataSource() {
+		return this.datasource;
+	}
 }

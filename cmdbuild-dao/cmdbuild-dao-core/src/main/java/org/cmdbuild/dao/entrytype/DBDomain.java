@@ -11,16 +11,38 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		public static final String CLASS_2 = BASE_NS + "class2";
 		public static final String DESCRIPTION_1 = BASE_NS + "description1";
 		public static final String DESCRIPTION_2 = BASE_NS + "description2";
+
+		final String getDescription1() {
+			return get(DESCRIPTION_1);
+		}
+
+		final void setDescription1(final String description1) {
+			put(DESCRIPTION_1, description1);
+		}
+
+		final String getDescription2() {
+			return get(DESCRIPTION_2);
+		}
+
+		final void setDescription2(final String description2) {
+			put(DESCRIPTION_2, description2);
+		}
 	}
 
-	// FIXME
-	private DBClass class1;
-	private DBClass class2;
-	private String description1;
-	private String description2;
+	@Deprecated private DBClass class1;
+	@Deprecated private DBClass class2;
 
+	public DBDomain(final String name, final Object id, final DomainMetadata meta, final Collection<DBAttribute> attributes) {
+		super(name, id, meta, attributes);
+	}
+
+	@Deprecated
 	public DBDomain(final String name, final Object id, final Collection<DBAttribute> attributes) {
-		super(name, id, attributes);
+		this(name, id, new DomainMetadata(), attributes);
+	}
+
+	protected DomainMetadata getMeta() {
+		return (DomainMetadata) super.getMeta();
 	}
 
 	public String toString() {
@@ -53,19 +75,19 @@ public class DBDomain extends DBEntryType implements CMDomain {
 
 	@Override
 	public String getDescription1() {
-		return description1;
+		return getMeta().getDescription1();
 	}
 
 	public void setDescription1(String description1) {
-		this.description1 = description1;
+		getMeta().setDescription1(description1);
 	}
 
 	@Override
 	public String getDescription2() {
-		return description2;
+		return getMeta().getDescription2();
 	}
 
 	public void setDescription2(String description2) {
-		this.description2 = description2;
-	}	
+		getMeta().setDescription2(description2);
+	}
 }

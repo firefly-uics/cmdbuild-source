@@ -4,6 +4,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
 public interface CMDataView {
 
@@ -17,5 +18,5 @@ public interface CMDataView {
 
 	public CMCardDefinition newCard(final CMClass type);
 	public CMCardDefinition modifyCard(final CMCard type);
-//	public QuerySpecsBuilder select(String... attributeNames);
+	public QuerySpecsBuilder select(Object... attrDef);
 }

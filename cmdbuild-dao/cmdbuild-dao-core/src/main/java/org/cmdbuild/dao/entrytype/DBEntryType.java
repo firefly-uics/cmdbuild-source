@@ -12,17 +12,33 @@ public abstract class DBEntryType implements CMEntryType {
 	public static class EntryTypeMetadata extends Metadata {
 		protected static final String BASE_NS = "system.entrytype.";
 
-		public static final String DESCRIPTION_1 = BASE_NS + "description";
+		public static final String DESCRIPTION = BASE_NS + "description";
+		public static final String ACTIVE = BASE_NS + "active";
+
+		final String getDescription() {
+			return get(DESCRIPTION);
+		}
+
+		final void setDescription(final String description) {
+			put(DESCRIPTION, description);
+		}
+
+		final boolean isActive() {
+			return Boolean.parseBoolean(get(ACTIVE));
+		}
 	}
 
 	private final Object id;
 	private final String name;
+	private final EntryTypeMetadata meta;
+
 	private final Map<String, DBAttribute> attributes;
 
-	protected DBEntryType(final String name, final Object id, final Collection<DBAttribute> attributes) {
+	protected DBEntryType(final String name, final Object id, final EntryTypeMetadata meta, final Collection<DBAttribute> attributes) {
 		Validate.notEmpty(name);
 		this.id = id;
 		this.name = name;
+		this.meta = meta;
 		this.attributes = initAttributes(attributes);
 	}
 
@@ -33,6 +49,10 @@ public abstract class DBEntryType implements CMEntryType {
 			am.put(a.getName(), a);
 		}
 		return am;
+	}
+
+	protected EntryTypeMetadata getMeta() {
+		return meta;
 	}
 
 	/*
@@ -51,8 +71,12 @@ public abstract class DBEntryType implements CMEntryType {
 
 	@Override
 	public String getDescription() {
-		throw new UnsupportedOperationException("Not implemented yet");
-		//return description;
+		return meta.getDescription();
+	}
+
+	@Override
+	public boolean isActive() {
+		return meta.isActive();
 	}
 
 	@Override

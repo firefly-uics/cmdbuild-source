@@ -2,10 +2,11 @@ package org.cmdbuild.dao.entrytype;
 
 public interface CMEntryType {
 
-	public Object getId();
-	public String getName();
-	public String getDescription();
+	Object getId();
+	String getName();
+	String getDescription();
+	boolean isActive();
 
-	public Iterable<? extends CMAttribute> getAttributes();
-	public DBAttribute getAttribute(final String name);
+	Iterable<? extends CMAttribute> getAttributes();
+	DBAttribute getAttribute(String name);
 }

@@ -22,4 +22,9 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	public DBAttribute getAttribute(String name) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean isActive() {
+		throw new UnsupportedOperationException();
+	}
 }
