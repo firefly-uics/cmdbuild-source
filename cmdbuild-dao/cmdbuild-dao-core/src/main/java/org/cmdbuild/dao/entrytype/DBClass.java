@@ -8,12 +8,33 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class DBClass extends DBEntryType implements CMClass {
 
+	public static class ClassMetadata extends EntryTypeMetadata {
+		public static final String SUPERCLASS = BASE_NS + "superclass";
+
+		final boolean isSuperclass() {
+			return Boolean.parseBoolean(get(SUPERCLASS));
+		}
+
+		final void setSuperclass(final boolean superclass) {
+			put(SUPERCLASS, Boolean.toString(superclass));
+		}
+	}
+
 	private DBClass parent;
 	private Set<DBClass> children;
 
-	public DBClass(final String name, final Object id, final Collection<DBAttribute> attributes) {
-		super(name, id, attributes);
+	public DBClass(final String name, final Object id, final ClassMetadata meta, final Collection<DBAttribute> attributes) {
+		super(name, id, meta, attributes);
 		children = new HashSet<DBClass>();
+	}
+
+	@Deprecated
+	public DBClass(final String name, final Object id, final Collection<DBAttribute> attributes) {
+		this(name, id, new ClassMetadata(), attributes);
+	}
+
+	protected ClassMetadata getMeta() {
+		return (ClassMetadata) super.getMeta();
 	}
 
 	public String toString() {
@@ -53,6 +74,6 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public boolean isSuperclass() {
-		return children.isEmpty(); // FIXME IMPORTANT! It should be a flag marking is as a superclass, but this will suffice FOR NOW! 
+		return getMeta().isSuperclass(); 
 	}
 }

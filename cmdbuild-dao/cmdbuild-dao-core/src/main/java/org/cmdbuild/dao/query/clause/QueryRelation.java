@@ -18,6 +18,10 @@ public class QueryRelation {
 		return relation;
 	}
 
+	public QueryDomain getQueryDomain() {
+		return new QueryDomain(relation.getType(), direction);
+	}
+
 	public static QueryRelation create(DBDriver driver, DBDomain domain, boolean direction) {
 		final DBRelation relation = DBRelation.create(driver, domain);
 		return new QueryRelation(relation, direction);

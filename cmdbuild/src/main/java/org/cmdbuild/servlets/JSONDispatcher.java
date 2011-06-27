@@ -41,6 +41,8 @@ import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class JSONDispatcher extends HttpServlet {
 
@@ -81,6 +83,7 @@ public class JSONDispatcher extends HttpServlet {
 				
 				JSONBase targetClass = (JSONBase) methodInfo.getMethod().getDeclaringClass().newInstance();
 				targetClass.init(httpRequest, httpResponse);
+				setSpringApplicationContext(targetClass);
 
 				@SuppressWarnings("rawtypes") Class[] types = methodInfo.getParamClasses();
 				Annotation[][] paramsAnnots = methodInfo.getParamsAnnotations();
@@ -98,6 +101,11 @@ public class JSONDispatcher extends HttpServlet {
 			logError(methodInfo, t);
 			writeErrorMessage(methodInfo, t, httpRequest, httpResponse);
 		}
+	}
+
+	private void setSpringApplicationContext(JSONBase targetClass) {
+		final ApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		targetClass.setSpringApplicationContext(applicationContext);
 	}
 
 	private void logError(MethodInfo methodInfo, Throwable t) {

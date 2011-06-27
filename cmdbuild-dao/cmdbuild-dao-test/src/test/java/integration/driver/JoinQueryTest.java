@@ -118,8 +118,8 @@ public class JoinQueryTest extends QueryTestFixture {
 		final DBDomain DOM2 = driver.createDomain("DOM2", DST2, SRC);
 		insertRelation(DOM2, dst2, src1);
 
-		Alias DOM_ALIAS = Alias.as("DOM");
-		Alias DST_ALIAS = Alias.as("DST");
+		final Alias DOM_ALIAS = Alias.as("DOM");
+		final Alias DST_ALIAS = Alias.as("DST");
 
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(driver, view)

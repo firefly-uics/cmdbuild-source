@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
+import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
 	/**
@@ -63,12 +64,19 @@ public class JSONBase {
 	public @interface SkipExtSuccess {
 	}
 
+	protected ApplicationContext applicationContext;
+
 	public JSONBase() {	};
+
 	public void init(HttpServletRequest request, HttpServletResponse response) {
 	}
 
 	protected String getTraslation(String key) {
 		String lang = new SessionVars().getLanguage();
 		return TranslationService.getInstance().getTranslation(lang, key);
+	}
+
+	public void setSpringApplicationContext(final ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 }
