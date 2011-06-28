@@ -7,6 +7,7 @@ import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -127,6 +128,34 @@ public class GetRelationList {
 
 		public String getTargetDescription() {
 			return dst.get("Description").toString();
+		}
+
+		public String getTargetCode() {
+			return dst.get("Code").toString();
+		}
+
+		public Object getTargetId() {
+			return dst.getId();
+		}
+
+		public CMClass getTargetType() {
+			return dst.getType();
+		}
+
+		// TODO
+		public Object getRelationId() {
+			return 42;
+			//return rel.getRelation().getId();
+		}
+
+		// TODO
+		public Object getRelationLastModified() {
+			return new Date();
+		}
+
+		// TODO
+		public String getRelationAttributes() {
+			return "...";
 		}
 	}
 }
