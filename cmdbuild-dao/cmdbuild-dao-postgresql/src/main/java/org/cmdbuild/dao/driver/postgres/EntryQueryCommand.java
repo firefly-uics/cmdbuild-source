@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static org.cmdbuild.dao.driver.postgres.Utils.BEGIN_DATE_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Utils.CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Utils.CODE_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Utils.DESCRIPTION_ATTRIBUTE;
@@ -19,6 +20,7 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,40 +301,40 @@ public class EntryQueryCommand {
 			sb.append(" AS ").append(quoteAlias(j.getDomainAlias())).append(" ON ")
 					.append(quoteAttribute(fromAlias, ID_ATTRIBUTE)).append(OPERATOR_EQ)
 					.append(quoteAttribute(j.getDomainAlias(), DOMAIN_ID1_ATTRIBUTE));
+			// FIXME
+			sb.append(" AND ").append(quoteAttribute(j.getDomainAlias(), STATUS_ATTRIBUTE)).append(OPERATOR_EQ).append("?");
+			addParam(STATUS_ACTIVE_VALUE);
 		}
 
 		// TODO This is a copy/paste of appendClassUnion
 		private void appendDomainUnion(final Set<QueryDomain> queryDomains) {
-// TODO: Removed because if there is just one domain we have to handle it some other way
-//			if (queryDomains.size() > 1) {
-				sb.append("(");
-				boolean first = true;
-				for (QueryDomain queryDomain : queryDomains) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(" UNION ALL ");
-					}
-					sb.append("SELECT ");
-
-					sb.append(quoteIdent(ID_ATTRIBUTE)).append(",");
-					sb.append(quoteIdent(DOMAIN_ID_ATTRIBUTE)).append(",");
-					appendColumnAndAliasIfFirst(queryDomain.getDirection(), quoteIdent(DOMAIN_DIRECTION_ATTRIBUTE), first).append(",");
-					if (queryDomain.getDirection()) {
-						sb.append(quoteIdent(DOMAIN_ID1_ATTRIBUTE)).append(",");
-						sb.append(quoteIdent(DOMAIN_ID2_ATTRIBUTE));
-					} else {
-						appendColumnAndAliasIfFirst(quoteIdent(DOMAIN_ID2_ATTRIBUTE), quoteIdent(DOMAIN_ID1_ATTRIBUTE), first).append(",");
-						appendColumnAndAliasIfFirst(quoteIdent(DOMAIN_ID1_ATTRIBUTE), quoteIdent(DOMAIN_ID2_ATTRIBUTE), first);
-					}
-					// TODO Consider other attributes
-
-					sb.append(" FROM ").append(quoteType(queryDomain.getDomain()));
+			sb.append("(");
+			boolean first = true;
+			for (QueryDomain queryDomain : queryDomains) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(" UNION ALL ");
 				}
-				sb.append(")");
-//			} else {
-//				sb.append(quoteType(entryTypes.iterator().next()));
-//			}
+				sb.append("SELECT ");
+
+				sb.append(quoteIdent(ID_ATTRIBUTE)).append(",");
+				sb.append(quoteIdent(DOMAIN_ID_ATTRIBUTE)).append(",");
+				appendColumnAndAliasIfFirst(queryDomain.getDirection(), quoteIdent(DOMAIN_DIRECTION_ATTRIBUTE), first).append(",");
+				if (queryDomain.getDirection()) {
+					sb.append(quoteIdent(DOMAIN_ID1_ATTRIBUTE)).append(",");
+					sb.append(quoteIdent(DOMAIN_ID2_ATTRIBUTE));
+				} else {
+					appendColumnAndAliasIfFirst(quoteIdent(DOMAIN_ID2_ATTRIBUTE), quoteIdent(DOMAIN_ID1_ATTRIBUTE), first).append(",");
+					appendColumnAndAliasIfFirst(quoteIdent(DOMAIN_ID1_ATTRIBUTE), quoteIdent(DOMAIN_ID2_ATTRIBUTE), first);
+				}
+				// TODO Consider other attributes
+				// FIXME
+				sb.append(",").append(quoteIdent(STATUS_ATTRIBUTE))
+					.append(",").append(quoteIdent(BEGIN_DATE_ATTRIBUTE));
+				sb.append(" FROM ").append(quoteType(queryDomain.getDomain()));
+			}
+			sb.append(")");
 		}
 
 		private StringBuilder appendColumnAndAliasIfFirst(final Object attribute, final String alias, final boolean isFirst) {
@@ -343,10 +345,13 @@ public class EntryQueryCommand {
 		private void appendTargetJoin(final JoinClause j) {
 			sb.append(" JOIN ");
 			appendClassUnion(j.getTargets());
-			sb.append(" AS ").append(quoteAlias(j.getTargetAlias())).append(" ON ")
+			sb.append(" AS ").append(quoteAlias(j.getTargetAlias()))
+				.append(" ON ")
 					.append(quoteAttribute(j.getDomainAlias(), DOMAIN_ID2_ATTRIBUTE)).append(OPERATOR_EQ)
 					.append(quoteAttribute(j.getTargetAlias(), ID_ATTRIBUTE));
-			// FIXME Append status!
+			// FIXME
+			sb.append(" AND ").append(quoteAttribute(j.getTargetAlias(), STATUS_ATTRIBUTE)).append(OPERATOR_EQ).append("?");
+			addParam(STATUS_ACTIVE_VALUE);
 		}
 
 		private void appendClassUnion(final Set<CMClass> entryTypes) {
@@ -360,16 +365,13 @@ public class EntryQueryCommand {
 						sb.append(" UNION ALL ");
 					}
 					sb.append("SELECT ");
-					// FIXME At least it should be fixed when adding domain attributes!
-//					if (type instanceof CMDomain) {
-//						sb.append("*");
-//					} else {
-						sb.append(quoteIdent(ID_ATTRIBUTE)).append(",")
-							.append(quoteIdent(CLASS_ID_ATTRIBUTE)).append(",")
-							.append(quoteIdent(CODE_ATTRIBUTE)).append(",")
-							.append(quoteIdent(DESCRIPTION_ATTRIBUTE));
+					sb.append(quoteIdent(ID_ATTRIBUTE)).append(",")
+						.append(quoteIdent(CLASS_ID_ATTRIBUTE)).append(",")
+						// TODO!!!!!!!!!!!!!!
+						.append(quoteIdent(CODE_ATTRIBUTE)).append(",")
+						.append(quoteIdent(DESCRIPTION_ATTRIBUTE)).append(",")
+						.append(quoteIdent(STATUS_ATTRIBUTE)); // FIXME Change with EndDate?! No, because of deleted cards
 						// TODO Consider other attributes
-//					}
 					sb.append(" FROM ").append(quoteType(type));
 				}
 				sb.append(")");
@@ -405,14 +407,12 @@ public class EntryQueryCommand {
 
 		@Override
 		public void visit(final SimpleWhereClause whereClause) {
-			append(attributeFilter(whereClause.getAttribute(), OPERATOR_EQ, whereClause.getValue())); // FIXME
-																										// OPERATOR
+			append(attributeFilter(whereClause.getAttribute(), OPERATOR_EQ, whereClause.getValue())); // FIXME OPERATOR
 		}
 
 		private String attributeFilter(final QueryAliasAttribute attribute, final String operator, final Object value) {
 			final String lhs = quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-			addParam(value); // TODO Handle CMDBuild and Geographic types
-								// conversion
+			addParam(value); // TODO Handle CMDBuild and Geographic types conversion
 			return String.format("%s%s?", lhs, operator);
 		}
 

@@ -30,6 +30,7 @@ public abstract class Utils {
 	public static final String DOMAIN_ID1_ATTRIBUTE = "IdObj1";
 	public static final String DOMAIN_ID2_ATTRIBUTE = "IdObj2";
 
+	public static final String BEGIN_DATE_ATTRIBUTE = "BeginDate";
 	public static final String STATUS_ATTRIBUTE = "Status";
 	public static final String STATUS_ACTIVE_VALUE = "A";
 

@@ -18,24 +18,8 @@ public class JsonGetRelationListResponse implements JsonSerializable {
 
 	@Override
 	public JSONObject toJson() throws JSONException {
-		final JSONArray domainArray = new JSONArray();
-		for (DomainInfo di : response) {
-			final JSONArray relationArray = new JSONArray();
-			for (RelationInfo ri : di) {
-				JSONObject relation = new JSONObject();
-				relation.put("_description", ri.getTargetDescription());
-				relationArray.put(relation);
-			}
-			final JSONObject domain = new JSONObject();
-			domain.put("_description", di.getDescription());
-			if (relationArray.length() <= domainLimit) {
-				domain.put("relations", relationArray);
-			}
-			domain.put("relations_size", relationArray.length());
-			domainArray.put(domain);
-		}
-
 		final JSONObject jsonResponse;
+		final JSONArray domainArray = domainListToJson();
 		if (domainArray.length() > 1) {
 			jsonResponse = new JSONObject();
 			jsonResponse.put("domains", domainArray);
@@ -43,5 +27,44 @@ public class JsonGetRelationListResponse implements JsonSerializable {
 			jsonResponse = domainArray.getJSONObject(0);
 		}
 		return jsonResponse;
+	}
+
+	private JSONArray domainListToJson() throws JSONException {
+		final JSONArray domainArray = new JSONArray();
+		for (DomainInfo di : response) {
+			domainArray.put(domainToJson(di));
+		}
+		return domainArray;
+	}
+
+	private JSONObject domainToJson(DomainInfo di) throws JSONException {
+		final JSONObject domain = new JSONObject();
+		final JSONArray relationArray = relationListToJson(di);
+		domain.put("id", di.getQueryDomain().getDomain().getId());
+		if (relationArray.length() <= domainLimit) {
+			domain.put("relations", relationArray);
+		}
+		domain.put("relations_size", relationArray.length());
+		return domain;
+	}
+
+	private JSONArray relationListToJson(DomainInfo di) throws JSONException {
+		final JSONArray relationArray = new JSONArray();
+		for (RelationInfo ri : di) {
+			relationArray.put(relationToJson(ri));
+		}
+		return relationArray;
+	}
+
+	private JSONObject relationToJson(RelationInfo ri) throws JSONException {
+		JSONObject relation = new JSONObject();
+		relation.put("dst_id", ri.getTargetId());
+		relation.put("dst_cid", ri.getTargetType().getId());
+		relation.put("dst_code", ri.getTargetCode());
+		relation.put("dst_desc", ri.getTargetDescription());
+		relation.put("rel_id", ri.getRelationId());
+		relation.put("rel_date", ri.getRelationLastModified());
+		relation.put("rel_attr", ri.getRelationAttributes());
+		return relation;
 	}
 }
