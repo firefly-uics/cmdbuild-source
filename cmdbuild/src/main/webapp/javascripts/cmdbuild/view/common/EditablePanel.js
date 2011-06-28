@@ -9,7 +9,7 @@
 		autoScroll: true,
 
 		initComponent : function() {
-			var editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({			
+			var editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
 				attributes: this.attributes
 			});
 			
@@ -31,7 +31,11 @@
 			this.displayMode = function() {
 				var layout = this.getLayout();
 				if (layout.setActiveItem) {
-					layout.setActiveItem(displaySubpanel.id);
+					try {
+						layout.setActiveItem(displaySubpanel.id);
+					} catch (e) {
+
+					}
 				}
 			};
 
@@ -97,7 +101,9 @@
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, this.readOnlyForm);
 				} else {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, true); //true to have a displayField
-					field.width = 500 // TODO calculate panel width to use a percentage measure
+					if (field) {
+						field.width = 500 // TODO calculate panel width to use a percentage measure
+					}
 				}
 				if (field) {
 					fields.push(field);

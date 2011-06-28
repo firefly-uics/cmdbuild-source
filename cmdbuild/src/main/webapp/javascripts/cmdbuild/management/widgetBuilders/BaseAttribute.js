@@ -71,6 +71,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	 */
 	buildReadOnlyField: function(attribute) {
 		var field = new Ext.form.DisplayField ({
+			labelAlign: "right",
  			fieldLabel: attribute.description,
  			submitValue: false,
  			name: attribute.name,

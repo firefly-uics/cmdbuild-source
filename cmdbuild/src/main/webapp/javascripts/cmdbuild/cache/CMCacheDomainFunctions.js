@@ -78,6 +78,20 @@
 			return attributeStore;
 		},
 		
+		getMasterDetailsForClassId: function(id) {
+			var out = []
+			for (var domain in domains) {
+				domain = domains[domain];
+				if (domain.get("isMasterDetail")) {
+					if (givenClassIdIsTheMasterForDomain(domain, id)) { 
+						out.push(Ext.create("CMDBuild.cache.CMDomainModel", domain.data));
+					}
+				}
+			}
+			
+			return out;
+		},
+		
 		onDomainSaved: function(domain) {
 			var d = this.addDomain(domain);
 			this.fireEvent("cm_domain_saved", d);
@@ -113,7 +127,30 @@
 			}
 		}
 	});
-	
+
+	function givenClassIdIsTheMasterForDomain(domain, id) {
+		var classtree = _CMMainViewportController.findAccordionByCMName("class"),
+			cardinality = domain.get("cardinality"),
+			idClass1 = domain.get("idClass1"),
+			idClass2 = domain.get("idClass2"),
+			ancestors = classtree.getAncestorsAsArray(id);
+
+		if (cardinality == "1:N") {
+			return isInTheAncestors(idClass1);
+		} else if (cardinality == "N:1") {
+			return isInTheAncestors(idClass2);
+		}
+
+		function isInTheAncestors(id) {
+			for (var i = 0, l=ancestors.length; i<l; ++i) {
+				if (ancestors[i].get("id") == id) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
 	function eraseAttribute(domainAttributes, attribute) {
 		for (var i=0, l=domainAttributes.length; i<l; ++i) {
 			if (domainAttributes[i].data.name == attribute.name) {

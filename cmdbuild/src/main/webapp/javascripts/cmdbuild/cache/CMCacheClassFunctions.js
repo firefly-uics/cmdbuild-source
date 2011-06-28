@@ -44,13 +44,17 @@
 			
 			return newEt;
 		},
-		
+
 		getClassById: function(id) {
 			return classes[id];
 		},
-		
+
 		getProcessById: function(id) {
 			return processes[id];
+		},
+
+		getEntryTypeById: function(id) {
+			return this.getClassById(id) || this.getProcessById(id);
 		},
 
 		getSuperclassesAsStore: function() {

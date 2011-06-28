@@ -61,7 +61,7 @@
 			
 			this.disableCMButtons();
 		},
-		
+
 		onClassSelected: function(id) {
 			_CMCache.getAttributeList(id, Ext.bind(fillForm, this));
 			this.displayMode(enableCMTbar = false);

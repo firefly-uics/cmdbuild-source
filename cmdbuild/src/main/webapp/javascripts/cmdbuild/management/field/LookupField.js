@@ -1,10 +1,10 @@
 (function() {
-	
+
 Ext.define("CMDBuild.field.LookupCombo", {
 	extend: "Ext.form.field.ComboBox",
 	trigger1cls: Ext.form.field.ComboBox.triggerCls,
-    trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
-   	hideTrigger1 :false,
+	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+	hideTrigger1 :false,
 	hideTrigger2 :false,
 
 	plugins: new CMDBuild.SetValueOnLoadPlugin(),
@@ -12,20 +12,20 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	
 	onTrigger1Click: Ext.form.field.ComboBox.prototype.onTriggerClick,
 	onTrigger2Click: function() {
-    	if (!this.disabled) {
-    		this.focus(); // to fire the change event in the single lookup fields
-    		this.chainedClear();
-    	}
-    },
+		if (!this.disabled) {
+		this.focus(); // to fire the change event in the single lookup fields
+			this.chainedClear();
+		}
+	},
 
 	chainedClear: function() {
-    	this.clearValue();
+		this.clearValue();
 		if (this.childField) {
 			this.childField.setParentIdAndFilterStore(undefined);
 			this.childField.chainedClear();
 		}
 	},
-	
+
 	setValueAndUpdateParents: function(value) {
 		if (value == '' || typeof value == 'undefined') {
 			this.clearValue();
@@ -36,12 +36,12 @@ Ext.define("CMDBuild.field.LookupCombo", {
 			var index = this.store.find("Id", value);
 			var rec = this.store.getAt(index);
 			if (rec) {
-				this.setParentIdAndFilterStore(rec.data.ParentId);
+				this.setParentIdAndFilterStore(rec.get("ParentId"));
 			} else {
 				this.setParentIdAndFilterStore(undefined);
 			}
 		}
-		
+
 		if (this.parentField) {
 			this.parentField.setValueAndUpdateParents(this.parentId);
 		}
@@ -57,54 +57,58 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	filterStoreByParentId: function() {
 		var parentId = this.parentId || '';
 		this.store.filterBy(function(record, id) {
-			return record.data.ParentId == parentId;
+			return record.get("ParentId") == parentId;
 		});
-		this.growSizeFix();
+//		this.growSizeFix(); TODO 3 to 4
 	}
 });
 
-CMDBuild.Management.LookupCombo = {}
-CMDBuild.Management.LookupCombo.build = function(attribute) {	
-	if (attribute.lookupchain.length == 1) {
-		return buildSingleLookupField(attribute);
-	} else {
-		var hiddenField = buildHiddenField(attribute);
-		var fieldSetItems = buildFieldSetItems(attribute, hiddenField);
-		fieldSetItems.push(hiddenField);
-		var fieldSet = new Ext.form.FieldSet({
-			name: attribute.name, // adds only this field to the basic form
-			border: false,
-			autoWidth: true,
-			items: fieldSetItems,
-			autoHeight: true,
-			hideMode: 'offsets',
-			grow: true,
-			style: { margin: '0', padding: '0'},
-			labelWidth: 160,
-			CMAttribute: attribute,
-			
-			growSizeFix: function() {
-				for (var i = 0; i < fieldSetItems.length; i++) {
-					var field = fieldSetItems[i];
-					if (field.growSizeFix) {
-						if (field.rendered) {
-							field.growSizeFix();
-						} else {
-							field.on("render", field.growSizeFix, field, {single: true});
-						}						
-		    		}
-				}
-			},
-			
-			setValue: function(v) {
-				hiddenField.setValue(v);
+Ext.define("CMDBuild.Management.LookupCombo", {
+	statics: {
+		build: function(attribute) {
+			if (attribute.lookupchain.length == 1) {
+				return buildSingleLookupField(attribute);
+			} else {
+				var hiddenField = buildHiddenField(attribute);
+				var fieldSetItems = buildFieldSetItems(attribute, hiddenField);
+				fieldSetItems.push(hiddenField);
+
+				var fieldSet = new Ext.panel.Panel({
+					name: attribute.name, // adds only this field to the basic form
+					border: false,
+					frame: false,
+					items: fieldSetItems,
+					autoHeight: true,
+					hideMode: 'offsets',
+					grow: true,
+					labelWidth: 160,
+					bodyCls: "x-panel-default-framed",
+					CMAttribute: attribute,
+					
+					growSizeFix: function() {
+						for (var i = 0; i < fieldSetItems.length; i++) {
+							var field = fieldSetItems[i];
+							if (field.growSizeFix) {
+								if (field.rendered) {
+									field.growSizeFix();
+								} else {
+									field.on("render", field.growSizeFix, field, {single: true});
+								}
+							}
+						}
+					},
+					
+					setValue: function(v) {
+						hiddenField.setValue(v);
+					}
+					
+				});
+				
+				return fieldSet;
 			}
-			
-		});
-		
-		return fieldSet;
+		}
 	}
-};
+});
 
 
 //private
@@ -148,11 +152,13 @@ function buildHiddenField(attribute) {
 		setParentIdAndFilterStore: Ext.emptyFn
 	});
 
-	hiddenField.setValue = hiddenField.setValue.createSequence(function(value, dontUpdateParents) {
-		if (!dontUpdateParents) {
-			hiddenField.updateParentsIfLoaded();
-		}
-	});
+	hiddenField.setValue = Ext.Function.createSequence(hiddenField.setValue, 
+			function(value, dontUpdateParents) {
+				if (!dontUpdateParents) {
+					hiddenField.updateParentsIfLoaded();
+				}
+			}
+	);
 	
 	return hiddenField;
 };
@@ -199,14 +205,17 @@ var bindHiddenFieldToLastCombo = function(hiddenField, lastCombo) {
 
 //private
 var buildSingleLookupField = function(attribute, hideLabel) {
-	var store = CMDBuild.Cache.getLookupStore(attribute.lookup);
+	var store = _CMCache.getLookupStore(attribute.lookup);
+
 	var field = new CMDBuild.field.LookupCombo({
+		labelAlign: "right",
 		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
 		labelSeparator: hideLabel ? '' : undefined,
 		name: attribute.name,
 		hiddenName: attribute.name,
 		store: store,
 		queryMode: 'local',
+		triggerAction: "all",
 		lazyInit: false,
 		valueField: 'Id',
 		displayField: 'Description',
@@ -216,12 +225,16 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		CMAttribute: attribute
 	});
 	
+	if (hideLabel) {
+		field.padding = "0 0 0 110"
+	}
+	
 	field.filterByParentId = function(parentId) {
 		var autoselectedId;
 		this.setParentIdAndFilterStore(parentId);
 		if (this.store.getCount() == 1) {
 			var rec = this.store.getAt(0);
-			autoselectedId = rec.data.Id;
+			autoselectedId = rec.get("Id");
 			this.setValue(autoselectedId);
 		} else {
 			this.clearValue();
@@ -234,7 +247,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 	
 	field.on('select', function(combo, record, index) {
 		if (this.childField) {
-			this.childField.filterByParentId(record.data.Id);
+			this.childField.filterByParentId(record[0].get("Id"));
 		}
 	}, field);
 	
@@ -259,18 +272,10 @@ var forgeAttributeForMultilevelLookup = function(attribute, lookupName) {
 //private
 var addEventsToMultilevelLookupCombo = function(currentField, parentField) {
 	if (parentField) {
-		// ComboBox.doQuery calls store.clearFilter()
-		// TODO override this behavior 
-		currentField.on('expand', function(combo) {
-			this.filterStoreByParentId();
-			var filteredCount = this.store.getCount();
-			if (filteredCount > 0) {
-				return true;
-			} else {
-				this.collapse();
-				return false;
-			}
-		}, currentField);
+		//HACK ComboBox.doQuery calls store.clearFilter()
+		currentField.on('beforequery', function(qe) {
+			qe.combo.lastQuery = qe.query; // to deny clearing the filter
+		});
 	}
 };
 

@@ -13,10 +13,10 @@ CMDBuild.WidgetBuilders.TimeAttribute.prototype.format = "H:i:s";
  */
 CMDBuild.WidgetBuilders.TimeAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.TextField({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
-		width:100,
 		format: this.format,
 		vtype: "time",
 		CMAttribute: attribute

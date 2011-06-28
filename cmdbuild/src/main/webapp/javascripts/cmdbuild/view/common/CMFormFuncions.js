@@ -127,6 +127,7 @@
 		},
 		
 		iterateOverArray: function(array, fn) {
+			array = array || [];
 			for (var i=0, l=array.length; i<l; ++i) {
 				var x = array[i];
 				fn(x);

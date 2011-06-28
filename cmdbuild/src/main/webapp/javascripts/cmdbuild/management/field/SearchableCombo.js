@@ -7,6 +7,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 
 
 	initComponent : function(){
+		this.labelAlign = "right",
 		this.callParent(arguments);
 /*        
         this.on("beforequery", function(e) {
@@ -81,51 +82,52 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	},
 	
 	buildSearchWindow: function(attributeList, baseParams) {
-		//TODO 3 to 4
-		alert("@@ Reference search window");return;
+		this.searchWin = new CMDBuild.Management.ReferenceSearchWindow({
+			idClass: this.store.baseParams.IdClass,
+			filterType: 'reference'
+		}).show().on('cmdbuild-referencewindow-selected', function(record){
+			this.addToStoreIfNotInIt(record);
+			this.focus(); // to allow the "change" event that occurs on blur
+			this.setValue(record.get("Id"));
+			this.fireEvent('cmdbuild-reference-selected', record, this);
+		}, this);
 
-		if ( !this.filtered || (this.filtered && this.callParams) ) {
+//		if ( !this.filtered || (this.filtered && this.callParams) ) {
 			//if the CQL params are all resolved
-			this.searchWin = new CMDBuild.Management.ReferenceSearchWindow({
-				filterType: 'reference',
-				combo: this,
-				params: this.callParams,
-				className: this.hiddenName,
-				idClass: this.store.baseParams.IdClass,
-				attributes: attributeList
-			});
-			
-			this.searchWin.on('cmdbuild-referencewindow-selected', function(record){
-				this.addToStoreIfNotInIt(record);
-				this.focus(); // to allow the "change" event that occurs on blur
-				this.setValue(record.Id);
-				this.fireEvent('cmdbuild-reference-selected', record, this);
-			}, this);
-			
-			//to destroy the handler to
-			this.searchWin.on('destroy',function() {
-				delete(this.searchWin);
-			}, this);
-			
-	    	this.searchWin.show();
-		}
+//			this.searchWin = new CMDBuild.Management.ReferenceSearchWindow({
+//				filterType: 'reference',
+//				combo: this,
+//				params: this.callParams,
+//				className: this.hiddenName,
+//				idClass: this.store.baseParams.IdClass,
+//				attributes: attributeList
+//			});
+//			
+
+//			
+//			//to destroy the handler to
+//			this.searchWin.on('destroy',function() {
+//				delete(this.searchWin);
+//			}, this);
+//			
+//	    	this.searchWin.show();
+//		}
+		
+		
 	},
 	
 	addToStoreIfNotInIt: function(record) {
 		var _store = this.store;
-		if (_store.find('Id', record.Id) == -1 ) {	
-			var data = {};
-			data[_store.root] = [{ 
-					Id : record.Id, 
-					Description: this.recordDescriptionFixedForCarriageReturnBugOnComboBoxes(record)
-				}];
-			data[_store.totalProperty] = _store.getTotalCount();
-			_store.loadData(data, true);
+		if (_store.find('Id', record.Id) == -1 ) {
+			_store.add({
+				Id : record.Id, 
+				Description: this.recordDescriptionFixedForCarriageReturnBugOnComboBoxes(record)
+			});
 		}
 	},
 	
 	recordDescriptionFixedForCarriageReturnBugOnComboBoxes: function(record) {
-		return record.Description.replace(/\n/g," ");
+		return record.get("Description").replace(/\n/g," ");
 	},
 	
 	hideTrigger1 :false,

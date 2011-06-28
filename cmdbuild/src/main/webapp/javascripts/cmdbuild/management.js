@@ -43,6 +43,13 @@
 						}
 					}
 				});
+
+				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change "administration"
+					success: function(response, options, decoded) {
+						_CMCache.addDomains(decoded.domains);
+					}
+				});
+
 			},
 
 			buildComponents: function() {

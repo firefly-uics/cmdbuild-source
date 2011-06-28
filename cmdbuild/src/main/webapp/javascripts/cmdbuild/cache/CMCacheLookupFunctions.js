@@ -80,7 +80,7 @@
 				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupAttributeStore(type);
 			}
 			return lookupAttributeStoreMap[type];
-		},
+		}
 		
 	});
 
