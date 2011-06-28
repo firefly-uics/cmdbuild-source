@@ -1,4 +1,4 @@
-Ext.override(Ext.layout.Accordion, {
+Ext.override(Ext.layout.container.Accordion, {
 	setActiveItem: function(c) {
 		c = this.container.getComponent(c);
 		if(this.activeItem != c){

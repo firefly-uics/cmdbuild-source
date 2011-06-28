@@ -1,4 +1,5 @@
-CMDBuild.form.HexColorField = Ext.extend(Ext.form.ColorField, {
+Ext.define("CMDBuild.form.HexColorField", {
+	extend: "Ext.form.ColorField",
 	setValue: function(value) {
 		if (value[0] == "#") {
 			value = value.slice(1);

@@ -18,7 +18,7 @@
 	User user = userCtx.getUser();
 	Group defaultGroup = userCtx.getDefaultGroup();
 	FilterService.clearFilters(null, null);
-	String extVersion = "3.3";
+	String extVersion = "4.0.0";
 %>
 
 <html>
@@ -26,14 +26,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />	
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
-		<!-- default ext theme -->
-	    <link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/headerbuttons.css" />
 	    <link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" /> 
-	    <link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/Spinner.css" />
 		<link rel="icon" href="images/favicon.ico" />
 		
 		<%@ include file="libsJsFiles.jsp"%>
-		
 		
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
@@ -82,6 +78,7 @@
 				<%
 			}
 		%>
+		<!--
 		<script type="text/javascript" src="javascripts/OpenLayers/OpenLayers.js"></script>
 		<script type="text/javascript" src="javascripts/GeoExt/lib/GeoExt.js"></script>
 		
@@ -95,14 +92,21 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapPanel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/PopupController.js"></script> 
+		-->
 		<%}%>
 			
+			
+		<script type="text/javascript">
+			Ext.onReady(function() {
+				CMDBuild.app.Management.init();
+			});
+		</script>
 		
 	 
 	 	<title>CMDBuild</title>
 	</head>
 	<body>
-		<div id="header" style="display: none;">
+		<div id="header">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
 			<div id="instance_name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
@@ -123,7 +127,7 @@
 			</div>
 		</div>
 		
-		<div id="footer" style="display: none;">
+		<div id="footer">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
 			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
 			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>

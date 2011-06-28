@@ -5,52 +5,69 @@
  * @class CMDBuild.Management.Attributes
  * @extends Ext.form.FormPanel
  */
-CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
+ 
+Ext.define("CMDBuild.Management.Attributes", {
+	extend: "Ext.form.Panel",
 	url: 'services/json/management/modcard/setcardfilter',
 	title: CMDBuild.Translation.management.findfilter.attributes,
-    //custom attributes
+
+	//custom attributes
 	translation: CMDBuild.Translation.management.findfilter,
 	attributeList: {},
 	IdClass: 0,
-    autoScroll: false,
-    
+	autoScroll: false,
+
 	initComponent:function() {
-	    this.fieldsetCategory = {};
-	    this.menu = new Ext.menu.Menu();
-	    this.fillMenu();
-	    
-	    var tbar = [{text: this.translation.title, iconCls: 'add', menu: this.menu}];
+		this.fieldsetCategory = {};
+		this.menu = new Ext.menu.Menu();
+		this.fillMenu();
+
+		var tbar = [{text: this.translation.title, iconCls: 'add', menu: this.menu}];
+
 		if (this.filterButton) {
-        	tbar.push('->');
-        	tbar.push(this.filterButton);
-    	}
-		
-		this.fieldsPanel = new Ext.Panel({
-			tbar: tbar,
-			frame: false,
-			bodyStyle: {background: CMDBuild.Constants.colors.blue.background, border: '1px '+CMDBuild.Constants.colors.blue.border+' solid'},
-			border: true,
-       		layout: 'form',
-       		autoScroll: true,
-       		region: 'center'
-       	});
-		
-		this.fieldsPanel.add({
-        	xtype: 'hidden',
-        	name: 'IdClass',
-        	value: this.IdClass
-    	});
-		
+			tbar.push('->');
+			tbar.push(this.filterButton)
+			this.resetFilterButton = new Ext.button.Button({
+				text: "@@Pulisci filtro",
+				iconCls: "delete"
+			});
+			tbar.push(this.resetFilterButton);
+		}
+
+		// TODO this panel is not needed, remove id
+		this.fieldsPanel = new Ext.Panel( {
+			frame : false,
+			border : false,
+			bodyCls: "x-panel-default-framed",
+			autoScroll : true,
+			region : 'center'
+		});
+
+		this.fieldsPanel.add( {
+			xtype : 'hidden',
+			name : 'IdClass',
+			value : this.IdClass
+		});
+
 		Ext.apply(this, {
 			layout: 'border',
-			frame: true,
+			tbar: tbar,
 			items: [this.fieldsPanel]
-        });
-        
-        CMDBuild.Management.Attributes.superclass.initComponent.apply(this, arguments);
-    },
-    
-    addAttributeToFilter: function(attribute) {	
+		});
+
+		this.callParent(arguments);
+	},
+
+	updateMenuForClassId: function(classId) {
+		this.currentClassId = classId;
+		_CMCache.getAttributeList(classId, Ext.bind(function(attributes) {
+			this.attributeList = attributes
+			this.fillMenu();
+		}, this));
+	},
+
+	// private
+	addAttributeToFilter: function(attribute) {	
 		var field = CMDBuild.Management.FieldManager.getFieldSetForFilter(attribute);
 		var attributeField = field.getAttributeField();
 		
@@ -58,11 +75,74 @@ CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
 			this.addField(field, attribute);
 		} else {
 			this.addFieldSet(field, attribute);
-		}			
+		}
 	},
-    
-    //private
-    fillMenu: function() {
+
+	// private
+	addField: function(field, attribute){
+		//hide the "or" of the current field
+		field.getOrPanel().hide();
+		var category = attribute.name;
+
+		if (typeof this.fieldsetCategory[category] == "undefined" ) {
+			this.fieldsetCategory[category] = new Ext.form.FieldSet({
+				title: attribute.description
+			});
+
+			this.fieldsPanel.add(this.fieldsetCategory[category]);
+		} else {
+			//show the or of the last field
+			this.fieldsetCategory[category].items.last().getOrPanel().show();
+		}
+
+		field.removeButton.on('click', function(){
+			this.removeFieldset(category, field);
+		}, this);
+
+		this.fieldsetCategory[category].add(field);
+		this.fieldsPanel.doLayout();
+	},
+
+	addFieldSet : function(field, attribute) {
+		var lookUp = field.getAttributeField();
+		for ( var i = 0, items = lookUp.items.items, len = items.length; i < len; i++) {
+			var item = items[i];
+			item.hideLabel = true;
+			item.growMax = 180;
+		}
+
+		this.addField(field, attribute);
+	},
+
+	removeFieldset : function(category, fieldset) {
+
+		(function notifyBasicFormOfNestedFieldRemoved() {
+			var me = this;
+			fieldset.cascade(function(item) {
+				if (item && (item instanceof Ext.form.Field)) {
+					me.fireEvent("remove", me, item);
+				}
+			});
+		}).call(this);
+
+		this.fieldsetCategory[category].remove(fieldset);
+
+		if (this.fieldsetCategory[category].items.length == 0) {
+			// the removed field was the last, so the fieldset is now empty
+			this.fieldsPanel.remove(this.fieldsetCategory[category]);
+			delete this.fieldsetCategory[category];
+		} else {
+			this.fieldsetCategory[category].items.getLast().getOrPanel().hide();
+		}
+	},
+
+	removeAllFieldsets: function() {
+		this.fieldsPanel.removeAll();
+		this.fieldsetCategory = {};
+	},
+
+	// private
+	fillMenu: function() {
 		this.menu.removeAll();
 		var groupedAttr = CMDBuild.Utils.groupAttributes(this.attributeList
 				,allowNoteFiled = false);
@@ -96,58 +176,10 @@ CMDBuild.Management.Attributes = Ext.extend(Ext.form.FormPanel, {
 			return submenues;
 		}
 		
-    },
-    
-    addField: function(field, attribute){
-    	//hide the or of the current field
-		field.getOrPanel().hide();
-    	if (typeof this.fieldsetCategory[attribute.description] == "undefined" ){					
-    		this.fieldsetCategory[attribute.description] = new Ext.form.FieldSet({
-				title: attribute.description,
-	       		border: true,
-	       		style: {padding: '5px', margin: '5px'},
-	       		bodyStyle: {padding: '0', margin: '0'}
-	       	});
-	       	this.fieldsPanel.add(this.fieldsetCategory[attribute.description]);	       	
-		} else {
-			//show the or of the last field
-			var indexLastField = (this.fieldsetCategory[attribute.description].items.items.length) - 1;
-			var lastField = this.fieldsetCategory[attribute.description].items.items[indexLastField];
-			lastField.getOrPanel().show();
-		}
-		
-		field.removeButton.on('click', function(){
-			this.removeFieldset(field.fieldsetCategory, field);
-		}, this),
-		
-		this.fieldsetCategory[attribute.description].add(field);
-		this.fieldsPanel.doLayout();
 	},
-    
-    addFieldSet: function(field, attribute){
-    	var lookUp = field.getAttributeField();
-    	for (var i = 0, items = lookUp.items.items, len = items.length; i<len; i++){
-    		var item = items[i];
-    		item.hideLabel = true;
-    		item.growMax = 180;
-    	}
-    	this.addField(field, attribute);
-    },
-    
-    removeFieldset: function(category, fieldset){
-   		this.fieldsetCategory[category].remove(fieldset);
-   		if (this.fieldsetCategory[category].items.length == 0){
-   			this.fieldsPanel.remove(this.fieldsetCategory[category]);
-   			this.fieldsetCategory[category] = undefined;
-   			this.fieldsPanel.doLayout;
-   		} else {
-   			var indexLastField = (this.fieldsetCategory[category].items.items.length) - 1;
-			var lastField = this.fieldsetCategory[category].items.items[indexLastField];
-			lastField.getOrPanel().hide();
-   		}
-    },
-    
-    cleanFildsetCategory: function() {
-    	this.fieldsetCategory = {};
-    }
+
+	cleanFildsetCategory : function() {
+		this.fieldsetCategory = {};
+	}
+
 });

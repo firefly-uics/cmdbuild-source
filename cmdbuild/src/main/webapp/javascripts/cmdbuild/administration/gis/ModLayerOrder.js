@@ -1,12 +1,16 @@
 (function() {
-	CMDBuild.Administration.ModLayerOrder = Ext.extend(CMDBuild.ModPanel, {
-		modtype: "gis-layers-order",
+	
+	Ext.define("CMDBuild.Administration.ModLayerOrder", {
+		extend: "Ext.panel.Panel",
+
+		cmName: "gis-layers-order",
 		title: CMDBuild.Translation.administration.modcartography.layermanager.title,
 		
 		initComponent : function() {
 			var layersGrid = new CMDBuild.Administration.LayerGrid({
 				region: "center",
 				enableDragDrop: true,
+
 				beforeRowMove: function(objThis, oldIndex, newIndex, records) {
 					var data = records[0].data;
 					CMDBuild.LoadMask.get().show();
@@ -23,9 +27,10 @@
 					return true;
 				}
 			});
+
 			this.items = [layersGrid];
 			this.layout = "border";
-			CMDBuild.Administration.ModLayerOrder.superclass.initComponent.call(this, arguments);
+			this.callParent(arguments);
 		}
 	});
 })();

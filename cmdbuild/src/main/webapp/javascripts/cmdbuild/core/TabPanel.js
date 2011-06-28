@@ -1,4 +1,7 @@
-CMDBuild.TabPanel = Ext.extend(Ext.TabPanel, {
+Ext.define("CMDBuild.TabPanel", {
+	extend: "Ext.TabPanel",
+	alias: "cmdbtabpanel",
+
 	findItemByAttr: function(attr, val) {
 		var items = this.items.items;
 		for (var i = 0, l = items.length; i<l; i++) {
@@ -17,4 +20,3 @@ CMDBuild.TabPanel = Ext.extend(Ext.TabPanel, {
 		}
 	}
 });
-Ext.reg('cmdbtabpanel', CMDBuild.TabPanel);

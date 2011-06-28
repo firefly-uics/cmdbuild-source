@@ -53,7 +53,8 @@ CMDBuild.Administration.MetadataWindow = Ext.extend(CMDBuild.PopupWindow, {
 		});
 		
 		this.addMetaToStore();
-		this.grid = new Ext.grid.EditorGridPanel({
+		// TODO extjs 3 to 4 migration @@ editor
+		this.grid = new Ext.grid.Panel({
 	    	layout: 'fit',
 	    	stripeRows: true,
 	        frame:true,

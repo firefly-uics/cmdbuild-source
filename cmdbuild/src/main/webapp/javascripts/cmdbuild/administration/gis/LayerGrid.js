@@ -39,7 +39,8 @@
 	    Ext.dd.ScrollManager.register(g.getView().getEditorParent());
     };
     
-	CMDBuild.Administration.LayerGrid = Ext.extend(Ext.grid.GridPanel, {
+	Ext.define("CMDBuild.Administration.LayerGrid", {
+		extend: "Ext.grid.Panel",
 		region: 'center',
 		frame: false,
 	    border: false,
@@ -47,60 +48,55 @@
 		ddGroup : 'layersGridDDGroup',
 		// custom stuff
 		withCheckToHideLayer: false,
-		viewConfig: {
-	        forceFit: true
-	    },
-	    sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+		
+		sm: new Ext.selection.RowModel(),
 		initComponent: function() {
-	    	var columns = [{
+	    	this.columns = [{
 	            header: tr.description,
 	            hideable: true,
 	            hidden: false,
 	            sortable: false,
-	            dataIndex: "description"
+	            dataIndex: "description",
+	            flex: 1
 	        },{
 	        	header: tr_geo.master,
 	            hideable: true,
 	            hidden: false,
 	            sortable: false,
-	            dataIndex: "masterTableName"
+	            dataIndex: "masterTableName",
+	            flex: 1
 	        },{
 	            header: tr.type,
 	            hideable: true,
 	            hidden: false,
 	            sortable: false,
-	            dataIndex: "type"
+	            dataIndex: "type",
+	            flex: 1
 	        },{
 	            header: tr_geo.min_zoom,
 	            hideable: true,
 	            hidden: false,
 	            sortable: false,
-	            dataIndex: "minZoom"
+	            dataIndex: "minZoom",
+	            flex: 1
 	        },{
 	            header: tr_geo.max_zoom,
 	            hideable: true,
 	            hidden: false,
 	            sortable: false,
-	            dataIndex: "maxZoom"
+	            dataIndex: "maxZoom",
+	            flex: 1
 	        }];
 	    	
 	    	if (this.withCheckToHideLayer) {    		
 	    		columns.push(buildCheckColumn.call(this));
 	    	}
 	    	
-	    	this.colModel = new Ext.grid.ColumnModel( {
-		        defaults: {
-		            width: 120,
-		            sortable: true
-		        },	                
-		        columns: columns
-		    });
-	    	
-			CMDBuild.Administration.LayerGrid.superclass.initComponent.call(this, arguments);
+			this.callParent(arguments);
 			
-			this.on({
-				render: ddRender
-			});
+//			this.on({
+//				render: ddRender
+//			});
 		},
 		
 		/**

@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.CharAttribute
  * @extends CMDBuild.WidgetBuilders.StringAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.CharAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.CharAttribute, CMDBuild.WidgetBuilders.StringAttribute);
 /**

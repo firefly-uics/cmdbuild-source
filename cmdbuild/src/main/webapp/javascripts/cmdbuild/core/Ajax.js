@@ -36,13 +36,13 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 
 	trapCallbacks: function(object, options) {
 		var callbackScope = options.scope || this;
-		options.success = this.unmaskAndCheckSuccess.createDelegate(callbackScope, [options.success], true);
+		options.success = Ext.bind(this.unmaskAndCheckSuccess, callbackScope, [options.success], true);
 		// the error message is not shown if options.failure is present and returns false
 		if (options.failure) 
-			var failurefn = this.defaultFailure.createInterceptor(options.failure, callbackScope);
+			var failurefn = Ext.Function.createInterceptor(this.defaultFailure, options.failure, callbackScope);
 		else
-			var failurefn = this.defaultFailure.createDelegate(this);
-		options.failure = this.decodeFailure.createDelegate(this, [failurefn], true);
+			var failurefn = Ext.bind(this.defaultFailure,this);
+		options.failure = Ext.bind(this.decodeFailure, this, [failurefn], true);
 	},
 
 	unmaskAndCheckSuccess: function(response, options, successfn) {
@@ -63,7 +63,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		if (jsonResponse) {
 			fixedResponseForMultipartExtBug = jsonResponse.replace(/<\/\w+>$/,"");
 		}
-		return Ext.util.JSON.decode(fixedResponseForMultipartExtBug);
+		return Ext.JSON.decode(fixedResponseForMultipartExtBug);
 	},
 
 	displayWarnings: function(decoded) {
@@ -132,11 +132,10 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 
 	formatError: function(reasonName, reasonParameters) {
 		var tr = CMDBuild.Translation.errors.reasons;
+		var functionParameters = [];
+		
 		if (tr && tr[reasonName]) {
-			var functionParameters = [tr[reasonName]];
-			for (var i=0; i<reasonParameters.length; ++i)
-				functionParameters.push(reasonParameters[i]);
-			return String.format.apply(String, functionParameters);
+			return Ext.String.format(tr[reasonName], reasonParameters);
 		} else {
 			return "";
 		}
@@ -190,9 +189,9 @@ CMDBuild.ChainedAjax = {
     	if (index < o.requests.length) {
     		this.showMask(o, index);
 	    	var requestObject = Ext.apply(o.requests[index]);
-	    	var execNext = this.executeNextAndWait.createDelegate(this, [o, index+1]);
+	    	var execNext = Ext.bind(this.executeNextAndWait,this, [o, index+1]);
 			if (requestObject.success)
-		    	requestObject.success = requestObject.success.createSequence(execNext);
+		    	requestObject.success = Ext.Function.createSequence(requestObject.success, execNext);
 		    else
 		    	requestObject.success = execNext;
 			requestObject.loadMask = requestObject.loadMask && !o.loadMask;

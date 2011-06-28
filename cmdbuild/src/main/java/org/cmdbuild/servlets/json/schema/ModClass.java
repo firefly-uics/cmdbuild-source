@@ -520,7 +520,9 @@ public class ModClass extends JSONBase {
 			) throws JSONException {
 		JSONArray rows = new JSONArray();
 		for(IDomain domain : df.list(table).inherited()) {
-			rows.put(Serializer.serializeDomain(domain, table));
+			if (domain.getMode().isDisplayable()) {
+				rows.put(Serializer.serializeDomain(domain, table));
+			}
 		}
 		serializer.put("rows", rows);
 		if (withSuperclasses) {

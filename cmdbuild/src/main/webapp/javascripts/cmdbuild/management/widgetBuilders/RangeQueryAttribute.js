@@ -3,7 +3,7 @@
  * @extends CMDBuild.WidgetBuilders.BaseAttribute
  * */
 var translation = CMDBuild.Translation.management.findfilter;
-
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.RangeQueryAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.RangeQueryAttribute, CMDBuild.WidgetBuilders.BaseAttribute);
 

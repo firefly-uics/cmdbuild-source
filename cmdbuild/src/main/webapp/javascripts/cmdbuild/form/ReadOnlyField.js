@@ -1,7 +1,7 @@
-
-CMDBuild.ReadOnlyField = Ext.extend(Ext.form.TextField,  {
-
-    // private
+Ext.define("CMDBuild.ReadOnlyField", {
+	extend: "Ext.form.TextField",
+	alias: "readonlyfield",
+	// private
     onRender : function(ct, position){
         if (!this.el) {
             this.defaultAutoCreate = {
@@ -22,4 +22,3 @@ CMDBuild.ReadOnlyField = Ext.extend(Ext.form.TextField,  {
         }
     }
 });
-Ext.reg('readonlyfield', CMDBuild.ReadOnlyField);

@@ -2,6 +2,7 @@
  * @Class CMDBuild.WidgetBuilders.BaseAttribute
  * Abstract class to define the interface of the CMDBuild attributes
  **/
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.BaseAttribute = function () {};
 
 CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
@@ -21,8 +22,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 			fieldLabel: attribute.description,
 			labelSeparator: "",
 			hideLabel: true,
-			name: attribute.name,
-			hiddenName: attribute.name + "_ftype",
+			name: attribute.name + "_ftype",
 			mode: 'local',
 			store: store,
 			valueField: 'id',
@@ -71,10 +71,11 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	 */
 	buildReadOnlyField: function(attribute) {
 		var field = new Ext.form.DisplayField ({
+			labelAlign: "right",
  			fieldLabel: attribute.description,
  			submitValue: false,
  			name: attribute.name,
-    		disabled: false
+ 			disabled: false
 		});
 		return field;
 	},
@@ -120,29 +121,31 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	 */
 	buildFieldsetForFilter: function(fieldId,field,query,originalFieldName) {
 		var columnSeparetor = 20;
-		var removeFieldButton = new Ext.Button({
-			iconCls: 'delete'
+        
+		var removeFieldButton = new Ext.button.Button({
+			iconCls: 'delete',
+            border: false
 		});
 		
 		var orPanel = new Ext.Panel({
         	width: 30,
-        	style: {padding : '0', margin:'0 0 0 20px '},
-        	items: [{html: 'or'}]
+            html: 'or',
+            border: false,
+            bodyCls: "x-panel-body-default-framed"
         });
 		
-		query.on('select',function(query, type, id){	
-			if (type.data.id === 'null') {
+		query.on('select',function(query, selection, id){	
+			if (selection[0].data.id === 'null') {
 				field.disable();
 			} else {
 				field.enable();
 			}
 		});
 
-		var fieldset = new Ext.form.FieldSet({
+		var fieldset = new Ext.panel.Panel({
             frame: false,
             border: false,
-            style: {padding: '0', margin: '0'},
-       		bodyStyle: {padding: '1px 0 1px 0', margin: '0'},
+            bodyCls: "x-panel-body-default-framed",
             removeButton: removeFieldButton,
             fieldsetCategory: originalFieldName,
             queryCombo: query,
@@ -155,11 +158,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
             defaults: {
         		margins:'0 5 0 0'
         	},
-        	items: [{
-            	xtype: 'panel',
-            	margins: '0 30 0 0',
-            	items: [removeFieldButton]
-            },query,field,orPanel],
+        	items: [removeFieldButton,query,field,orPanel],
             getAttributeField: function(){
             	return field;
             },
