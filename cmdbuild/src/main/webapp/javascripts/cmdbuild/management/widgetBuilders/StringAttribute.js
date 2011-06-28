@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.StringAttribute
  * @extends CMDBuild.WidgetBuilders.TextualQueryAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.StringAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.StringAttribute, CMDBuild.WidgetBuilders.TextualQueryAttribute);
 
@@ -20,6 +21,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,
 		fixed: false,
+		flex: 1,
 		renderer: CMDBuild.Utils.Format.htmlEntityEncode
 	};
 	if (innerTextWidth > this.MAXWIDTH) {
@@ -34,9 +36,10 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
  */
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new CMDBuild.Management.EntityRemoverDisplayField ({
-			fieldLabel: attribute.description,
-			submitValue: false,
-			name: attribute.name,
+		labelAlign: "right",
+		fieldLabel: attribute.description,
+		submitValue: false,
+		name: attribute.name,
 		disabled: false
 	});
 	return field;
@@ -50,6 +53,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 	var field;
 	if (attribute.len > this.MAXWIDTH) {
 		field = new Ext.form.TextArea({
+			labelAlign: "right",
  			fieldLabel: attribute.description,
     		name: attribute.name,
     		allowBlank: !attribute.isnotnull,
@@ -57,6 +61,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 		});
 	} else {
 		field = new Ext.form.TextField({
+			labelAlign: "right",
  			fieldLabel: attribute.description,
  			name: attribute.name,
     		maxLength: attribute.len,

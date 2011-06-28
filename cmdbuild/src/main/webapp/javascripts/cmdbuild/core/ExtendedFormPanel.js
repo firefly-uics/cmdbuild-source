@@ -9,7 +9,6 @@ CMDBuild.ExtendedFormPanel = Ext.extend(Ext.Panel, {
 	onSave: function(){},
 	onAbort: function(){},
 	layout: 'border',
-	panelLayout: 'form',
 	
 	initComponent:function() {
 		
@@ -34,7 +33,7 @@ CMDBuild.ExtendedFormPanel = Ext.extend(Ext.Panel, {
 			tbar: this.createTopBar()
 		});
 		
-		CMDBuild.ExtendedFormPanel.superclass.initComponent.apply(this, arguments);		
+		this.callParent(arguments);
 	},
 	
 	disableActions: function(actions) {
@@ -101,7 +100,7 @@ CMDBuild.ExtendedFormPanel = Ext.extend(Ext.Panel, {
 	},
 	
 	createPanel: function() {
-		var panel = new Ext.form.FormPanel({
+		var panel = new Ext.form.Panel({
 			url: this.url,
 	    	monitorValid: true,
 			frame: true,
@@ -111,7 +110,6 @@ CMDBuild.ExtendedFormPanel = Ext.extend(Ext.Panel, {
 			region: 'center',
 			trackResetOnLoad: true,
 	    	items: this.fields,
-	    	layout: this.panelLayout,
 	    	labelWidth: this.labelWidth || 100
 		});
 		if (this.reader) {

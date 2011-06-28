@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.IPAddressAttribute
  * @extends CMDBuild.WidgetBuilders.DecimalAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.IPAddressAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.IPAddressAttribute, CMDBuild.WidgetBuilders.DecimalAttribute);
 CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.MAXWIDTH = 105;

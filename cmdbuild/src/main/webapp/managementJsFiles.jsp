@@ -1,3 +1,13 @@
+<!-- THE OTHERS -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/SearchFilterWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attributes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/ReferenceSearchWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/AddCardWindow.js"></script>
+
+
+<!-- WIDGETS BUILDER-->
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/BaseAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/SimpleQueryAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/RangeQueryAttribute.js"></script>
@@ -17,19 +27,80 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/StringAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/CharAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/TextAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/FieldManager.js"></script>
+
+<!-- CUSTOM FIELDS -->
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/BooleanDisplayField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/EntityRemoverDisplayField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/LookupField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/GridSearchField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/LocaleSearchField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/SearchableCombo.js"></script>	
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/ReferenceField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/field/ForeignKeyField.js"></script>
+
+<!-- MODELS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
+
+<!-- VIEWS -->
+	<!-- COMMON -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
+	
+	<!-- CLASSES -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardRelationsPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardNotesPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
+	
+		<!-- MD -->
+		<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
+
+	
+	<!-- UTILITIES -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMBulkCardForm.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModBulkCardUpdate.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModExportCSV.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
+
+	<!-- REPORT -->
+	<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportParamWin.js"></script>
+
+	<!-- MENU -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
+
+
+<!-- CONTROLLER -->
+	<!-- UTILITIES -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModBulkCardUpdateController.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModImportCSVController.js"></script>	
+
+	<!-- CARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>
+
+	<!-- REPORT-->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
+<!--
+
 	
 <script type="text/javascript" src="javascripts/cmdbuild/management/FixedCardGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/AddAttachmentWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/EditAttachmentWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/AddCardWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardTabPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attachments.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attributes.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/DomainCardListFilter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/DomainCardList.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/FilterRelationsDomainGrid.js"></script>
@@ -43,41 +114,28 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailWindow.js"></script>	
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/AddDetailWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/EditDetailWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/DomainCardListWindow.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/ModCard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/AddRelationWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/DomainStore.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/EditRelationWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/SearchFilterWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardAttachmentsTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardHistoryTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMapTab.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardNotesTab.js"></script>
+
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardRelationsTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabUI.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/BooleanDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/EntityRemoverDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/FieldManager.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/LookupField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/GridSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/SearchableCombo.js"></script>	
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/ReferenceField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/ForeignKeyField.js"></script>
-
 <script type="text/javascript" src="javascripts/cmdbuild/management/menu/MenuTree.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/ReferenceSearchWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/report/ModReport.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportParamWin.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/BulkCardAttributesPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModBulkCardUpdate.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModChangePassword.js"></script>
@@ -110,4 +168,5 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/tabs/ActivityTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/tabs/ActivityNotesTab.js"></script>
 
+-->
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>

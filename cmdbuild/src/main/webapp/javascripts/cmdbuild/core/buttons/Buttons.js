@@ -1,6 +1,6 @@
 Ext.ns('CMDBuild.buttons');
 
-CMDBuild.buttons.BaseButton = Ext.extend(Ext.Button, {
+CMDBuild.buttons.BaseButton = Ext.extend(Ext.button.Button, {
 	withIcon: false,
 	classIcon: undefined,
 	initComponent: function() {
@@ -9,7 +9,7 @@ CMDBuild.buttons.BaseButton = Ext.extend(Ext.Button, {
 				cls: this.classIcon
 			});
 		}
-		CMDBuild.buttons.BaseButton.superclass.initComponent.apply(this, arguments);
+		this.callParent(arguments);
 	}
 });
 

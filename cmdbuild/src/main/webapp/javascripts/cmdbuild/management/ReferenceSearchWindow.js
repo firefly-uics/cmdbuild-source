@@ -1,3 +1,106 @@
+Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
+	extend: "CMDBuild.Management.CardListWindow",
+	
+	initComponent: function() {
+		this.selection = null;
+
+		this.saveButton = new Ext.Button({
+			text : CMDBuild.Translation.common.buttons.save,
+			name: 'saveButton',
+			disabled: true,
+			handler : this.onSave,
+			scope : this
+		});
+
+		this.addCardButton = this.buildAddButton();
+
+		Ext.apply(this, {
+			tbar: [this.addCardButton],
+			buttonAlign: "center",
+			buttons: [this.saveButton]
+		});
+		
+		this.callParent(arguments);
+	},
+
+	// override
+	onSelectionChange: function(sm, selection) {
+		if (selection.length > 0) {
+			this.saveButton.enable();
+			this.selection = selection[0];
+		} else {
+			this.saveButton.disable();
+			this.selection = null;
+		}
+	},
+	
+	// override
+	onFilterButtonClick: function() {
+		var params = this.filter.getForm().getValues();
+
+		params['IdClass'] =  this.idClass;
+		params['FilterCategory'] = this.filterType;
+		params['FilterSubcategory'] = this.id;
+
+		CMDBuild.Ajax.request({
+			url: 'services/json/management/modcard/setcardfilter',
+			params: params,
+			method: 'POST',
+			scope: this,
+			success: function(response) {
+				this.tabPanel.setActiveTab(this.grid);
+				this.grid.reload();
+			}
+		});
+	},
+	
+	// override
+	onResetFilterButtonClick: function() {
+		this.filter.removeAllFieldsets();
+		this.grid.clearFilter();
+		this.tabPanel.setActiveTab(this.grid);
+	},
+
+	// override
+	onGridDoubleClick: function() {
+		this.onSave()
+	},
+
+	// private
+	onSave: function() {
+		if (this.selection != null) {
+			this.fireEvent('cmdbuild-referencewindow-selected', this.selection);
+		}
+		var me = this;
+		this.grid.clearFilter(function() {
+			me.destroy();
+		});
+	},
+
+	// override
+	buildAddButton: function() {
+		var addCardButton = new CMDBuild.AddCardMenuButton();
+		var entry = _CMCache.getClassById(this.idClass) || _CMCache.getProcessById(this.idClass);
+		addCardButton.updateForEntry(entry);
+		
+		addCardButton.on("cmClick", function buildTheAddWindow(p) {
+			var w = new CMDBuild.Management.AddCardWindow({
+				classId: this.idClass
+			}).show();
+
+			w.on("close", function() {
+				this.grid.reload();
+			}, this);
+
+			new CMDBuild.Management.AddCardWindowController(w);
+
+		}, this);
+
+		return addCardButton;
+	}
+});
+
+/*
 CMDBuild.Management.ReferenceSearchWindow = Ext.extend(CMDBuild.Management.CardListWindow, {
 	layout: 'border',
 	//custom attributes
@@ -172,3 +275,5 @@ CMDBuild.Management.ReferenceSearchWindow = Ext.extend(CMDBuild.Management.CardL
 		this.cardList.reload();
 	}
 });
+
+*/

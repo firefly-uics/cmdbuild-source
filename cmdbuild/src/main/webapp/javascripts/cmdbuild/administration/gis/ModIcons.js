@@ -1,59 +1,45 @@
-CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
-	modtype:"gis-icons",	
+Ext.define("CMDBuild.Administration.ModIcons", {
+	extend: "Ext.panel.Panel",
+
+	cmName:"gis-icons",	
 	translation: CMDBuild.Translation.administration.modcartography.icons,
 	buttonsTr: CMDBuild.Translation.common.buttons,
+
 	urls: {
-		list: "services/json/gis/geticonslist",
 		modify: "services/json/gis/updateiconcard",
 		add: "services/json/gis/createiconcard",
 		remove: "services/json/gis/deleteiconcard"
 	},
-	
-	initComponent : function() {		
-		var store =  new Ext.data.JsonStore({
-			url : this.urls.list,
-			root : "rows",
-			fields : ['name', 'description', 'path'],
-			autoLoad: true
-		});
-		
+
+	initComponent : function() {
 		this.buildUIButtons();
 		
 		this.iconsGrid = new Ext.grid.GridPanel({
 			region: 'center',
-			frame: false,
-		    border: false,
-			store: store,
+			frame: true,
+			border: 0,
+			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 			tbar: [this.addButton],
-			bodyCssClass: CMDBuild.Constants.css.bottom_border_gray,
-		    colModel: new Ext.grid.ColumnModel({
-		        defaults: {
-		            width: 120,
-		            sortable: true
-		        },
-		        columns: [{	
-	    			header: '&nbsp', 
-	    			width: 50, 
-	    			fixed: true, 
-	    			sortable: false,
-	    			renderer: this.renderIcon, 
-	    			align: 'center', 
-	    			dataIndex: 'path',
-	    			menuDisabled: true,
-	    			hideable: false
-	    		},{
-	    			header : this.translation.description,
-	    			hideable: true,
-	    			hidden: false,
-	    			dataIndex : 'description'    			
-	    		}]
-		    }),
-		    viewConfig: {
-		        forceFit: true
-		    },		    
-		    sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+			sm: new Ext.selection.RowModel(),
+			columns: [{	
+				header: '&nbsp', 
+				width: 50, 
+				rowsfixed: true, 
+				sortable: false,
+				renderer: this.renderIcon, 
+				align: 'center', 
+				dataIndex: 'path',
+				menuDisabled: true,
+				hideable: false
+			},{
+				header : this.translation.description,
+				hideable: true,
+				hidden: false,
+				dataIndex : 'description',
+				flex: 1
+			}]
 		});
-		this.iconsGrid.getSelectionModel().on("rowselect", this.onRowSelect , this);
+		this.iconsGrid.getSelectionModel().on("select", this.onRowSelect , this);
 		
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,
@@ -61,16 +47,12 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 			plugins: [new CMDBuild.CallbackPlugin()],
 			region: 'south',
 			split: true,
-			frame: false,
+			frame: true,
 			border: false,
-			cls: CMDBuild.Constants.css.top_border_gray,
 			tbar: [this.modifyButton, this.removeButton],
 			items: [{
-				xtype: 'panel',
-				layout: 'form',
+				xtype: "panel",
 				frame: true,
-				border: true,
-				cls: CMDBuild.Constants.css.padding5 +" "+ CMDBuild.Constants.css.bg_gray,
 				items: [{
 					xtype:'hidden',
 					name: 'name'
@@ -78,7 +60,7 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 					xtype: 'textfield',
 					inputType : 'file',
 					fieldLabel: this.translation.file,
-					name: 'file'					
+					name: 'file'
 				}, {
 					xtype: 'textfield',
 					fieldLabel: this.translation.description,
@@ -93,14 +75,17 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 		
 		Ext.apply(this, {
 			title: this.translation.title,
+			frame: true,
       		layout: 'border',
       		items: [this.iconsGrid, this.uploadForm]
     	});
-		CMDBuild.Administration.ModIcons.superclass.initComponent.apply(this, arguments);
+		
+		this.callParent(arguments);
 		
 		this.on('show', function() {
+			CMDBuild.log.info("on show icons grid");
 			if (!this.iconsGrid.getSelectionModel().hasSelection()) {
-				this.iconsGrid.getSelectionModel().selectFirstRow();
+				this.iconsGrid.getSelectionModel().select(0);
 			}
 			this.uploadForm.setFieldsDisabled();
 		}, this);
@@ -162,7 +147,7 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
   	},
   	
   	//private
-  	onRowSelect: function(sm, index, record) {  		
+  	onRowSelect: function(sm, record, index) {
   		this.disableModify();
   		this.modifyButton.enable();
   		this.removeButton.enable();
@@ -188,7 +173,7 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
   	//private  	
   	onModify: function() {
   		this.enableModify();
-  		var descriptionField = this.uploadForm.find("name","description");
+  		var descriptionField = this.uploadForm.getForm().findField("description");
   		if (descriptionField && descriptionField[0]) {
   			descriptionField[0].disable();
   		}
@@ -226,20 +211,20 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
 			CMDBuild.LoadMask.get().show();
 			form.submit({
 				method: 'POST',
-				url: url,				
+				url: url,
 				scope: this,
 				success: function(form, action) {
-					this.publish("cmdg-icons-reload", {
+				_CMEventBus.publish("cmdg-icons-reload", {
 						publisher: this
 					});
-					this.iconsGrid.store.load();					
+					this.iconsGrid.store.load();
 				},
 				failure: this.requestFailure,
 				callback: this.requestCallback
 			});
 		}
   	},
-  	
+
   	//private  	
   	onRemove: function() {
   		var title = this.translation.alert.title;
@@ -248,23 +233,23 @@ CMDBuild.Administration.ModIcons = Ext.extend(CMDBuild.ModPanel, {
   			if (btn != "yes") {
   				return
   			}
-	  		var selectedRow = this.iconsGrid.getSelectionModel().getSelected();
-	  		if (selectedRow) {
-	  			var selectedData = selectedRow.json;
+	  		var selectedRow = this.iconsGrid.getSelectionModel().getSelection();
+	  		if (selectedRow && selectedRow.length > 0) {
+	  			var selectedData = selectedRow[0];
 	  			CMDBuild.LoadMask.get().show();
 				CMDBuild.Ajax.request({
 					scope : this,
 					important: true,
 					url: this.urls.remove,
 					params : {
-						"name": selectedData.name
+						"name": selectedData.get("name")
 					},
 					method : 'POST',
 					success: function(form, action) {
-						this.publish("cmdg-icons-reload", {
+						_CMEventBus.publish("cmdg-icons-reload", {
 							publisher: this
 						});
-						this.iconsGrid.store.load();					
+						this.iconsGrid.store.load();
 					},
 					failure: this.requestFailure,
 					callback: this.requestCallback

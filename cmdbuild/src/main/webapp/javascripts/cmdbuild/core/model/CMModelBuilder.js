@@ -3,6 +3,7 @@
 	 * @namespace CMDBuild.core.model
 	 */
 	Ext.ns("CMDBuild.core.model");
+	Ext.ns("CMDBuild.core.model.data");
 	/**
 	 * @class CMModelBuilder build a
 	 * data model using the passed structure
@@ -27,13 +28,20 @@
 	 * @return The definition of a new model
 	 * @link CMDBuild.core.model.CMDomainModel
 	 */
+	
 	CMDBuild.core.model.CMModelBuilder.build = function(conf) {
 		checkConfiguration(conf);
+		
+		Ext.define("CMDBuild.core.model.data." + conf.name, {
+			extend: 'Ext.data.Model',
+			fields: getAttributes(conf.structure)
+		});
+		
 		var Model = Ext.extend(Ext.util.Observable, {
 			constructor: function(instanceData) {
 				checkInstanceData(instanceData, conf.structure);
 
-				var record = new this.REC_TEMPLATE(instanceData);
+				var record = new CMDBuild.core.model.data[conf.name](instanceData);
 				record.ownerModel = this;
 
 				var attributesLibrary = buildAttributeLibrary(conf.buildAttributeLibrary);
@@ -49,7 +57,7 @@
 				this.get = function(name) {
 					return record.get(name);
 				};
-				
+
 				this.set = function(name, value) {
 					if (this.STRUCTURE[name]) {
 						var old = record.get(name);
@@ -94,7 +102,6 @@
 			DESTROY: "destroy"
 		};
 		
-		Model.prototype.REC_TEMPLATE = buildRecordTemplate(conf.structure);
 		Model.prototype.NAME = Model.NAME;
 		Model.prototype.STRUCTURE = Model.STRUCTURE;
 		Model.prototype.CMEVENTS = Model.CMEVENTS;
@@ -138,7 +145,7 @@
 		return attributesLibrary;
 	}
 
-	function buildRecordTemplate(structure) {
+	function getAttributes(structure) {
 		var attributes = [];
 		for (var attr in structure) {
 			// add the name of the attribute in the structure, to refer to it in the
@@ -146,7 +153,7 @@
 			structure[attr]["name"] = attr;  
 			attributes.push(attr);
 		}
-		return  Ext.data.Record.create(attributes);
+		return attributes;
 	};
 
 	function checkInstanceData(instanceData, structure) {

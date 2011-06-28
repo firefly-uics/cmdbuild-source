@@ -1,3 +1,4 @@
+ 
 html {
 	height: 100%;
 	width: 100%;
@@ -48,7 +49,10 @@ em {
   width: 16px;
 }
 
+*/
+
 /* LOGIN */
+
 #login_box_wrap {
 	text-align: center;
 	width: 100%;
@@ -61,6 +65,7 @@ em {
 }
 
 /* HEADER */
+
 #header {
 	height: 45px;
 	color: #666;
@@ -139,6 +144,8 @@ em {
 }
 
 /* splash */
+
+/*
 .splashScreen {
 	background: #EEE;
 	width: 100%;
@@ -234,7 +241,10 @@ em {
 	float: left;
 }
 
+
 /* FOOTER */
+
+
 #footer {
 	color: #727262;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -288,31 +298,7 @@ em {
 	cursor: pointer;
 }
 
-/*custo rulse*/
-
-.cmdbuild_border_bottom_gray {
-	border-bottom: 1px solid #D0D0D0 !important;
-}
-
-.cmdbuild_border_top_gray {
-	border-top: 1px solid #D0D0D0 !important;
-}
-
-.cmdbuild_border_bottom_blue {
-	border-bottom: 1px solid #99BBE8 !important;
-}
-
-.cmdbuild_background_gray {
-	background-color: #F0F0F0 !important;
-}
-
-.cmdbuild_background_blue {
-	background-color: #DFE8F6 !important;
-}
-
-.cmdbuild_body_padding {
-	padding: 5px;
-}
+/*custom rulse*/
 
 .cmdbuild_unconfigured_modpanel {
 	text-align: center;
@@ -422,7 +408,9 @@ em {
 	background-image: url(../images/form/trigger-add.png) !important;
 }
 
+
 /* GRID ELEMENT*/
+
 .x-grid3-dirty-cell {
 	background-image: none ! important;
 }
@@ -453,6 +441,8 @@ em {
 /**
  MENU TREE
 **/
+
+/*
 #menu_panel .x-panel-header {
 	text-align: center;
 }
@@ -468,7 +458,7 @@ em {
 }
 
 .cmdbuild-tree-panel {
-	border-color: #D0D0D0; /* #99BBE8 light blue */
+	border-color: #D0D0D0;
 	border-style: solid;
 	border-width: 1px;
 	margin: 20px 30px !important;
@@ -496,6 +486,7 @@ em {
 	background-color: #DDDDDD;
 }
 
+*/
 .x-tree-node-expanded .cmdbuild-tree-superclass-icon {
 	background-image: url(../images/icons/tree/superclass_expanded.png)
 		!important;
@@ -515,6 +506,24 @@ em {
 	background-image: url(../images/icons/tree/class.png) !important;
 }
 
+/* Ext.ux.CheckColumn*/
+.x-grid-checkheader {
+    height: 14px;
+    background-image: url('../images/checkcolumn/unchecked.gif');
+    background-position: 50% -2px;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+.x-grid-checkheader-checked {
+    background-image: url('../images/checkcolumn/checked.gif');
+}
+
+.x-grid-checkheader-editor .x-form-cb-wrap {
+    text-align: center;
+}
+/******************************************/
+/*
 .x-tree-node-expanded .cmdbuild-tree-superprocessclass-icon {
 	background-image:
 		url(../images/icons/tree/superclassprocess_expanded.png) !important;
@@ -581,9 +590,13 @@ em {
 		!important;
 }
 
+*/
+
 /*
  * Login flags
  */
+ 
+
 .ux-flag-en {
 	background-image: url(../images/icons/flags/en.png) ! important;
 }
@@ -727,17 +740,20 @@ em {
 	display: block
 }
 
+/*
 .x-form-item-label {
 	font-weight: bold ! important;
 	color: #555555 ! important;
 }
-
+*/
 .cmdb-error-msg {
 	font-weight: bold;
 	padding-bottom: 1em;
 }
 
 /*override*/
+
+/*
 .x-panel-header {
 	padding: 2px 2px 2px 4px ! important;
 }
@@ -749,7 +765,7 @@ em {
 	opacity: 1 ! important;
 	max-width: 400px ! important;
 }
-
+*/
 .empty_panel {
 	background: url("../images/emptyPageBg.png");
 	background-position: bottom right;
@@ -757,6 +773,8 @@ em {
 }
 
 /* custom icons */
+
+/*
 .icon-grid-image {
 	max-height: 20px;
 	max-width: 20px;
@@ -785,3 +803,4 @@ em {
 	display: table-cell;
 	vertical-align: middle;
 }
+*/

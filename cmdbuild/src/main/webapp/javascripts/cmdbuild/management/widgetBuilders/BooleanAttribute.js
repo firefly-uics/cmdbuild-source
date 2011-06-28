@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.BooleanAttribute
  * @extends CMDBuild.WidgetBuilders.SimpleQueryAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.BooleanAttribute = function(){};
 CMDBuild.extend(CMDBuild.WidgetBuilders.BooleanAttribute, CMDBuild.WidgetBuilders.SimpleQueryAttribute);
 /**
@@ -16,7 +17,8 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
 		 dataIndex : attribute.name,
 		 hidden: !attribute.isbasedsp,
 		 fixed: true,
-		 width: headerWidth
+		 width: headerWidth,
+		 flex: 1
 	 });
 	 return h;
 };
@@ -26,6 +28,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function(attribute) {
 	return new Ext.form.BooleanDisplayField ({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		disabled: false
@@ -37,6 +40,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.ux.form.XCheckbox({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		CMAttribute: attribute
