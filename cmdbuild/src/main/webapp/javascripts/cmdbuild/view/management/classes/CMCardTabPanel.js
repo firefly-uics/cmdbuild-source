@@ -24,6 +24,10 @@
 				title: tr.tabs.detail
 			});
 
+			this.attachmentPanel = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
+				title: tr.tabs.attachments
+			});
+
 			this.callParent(arguments);
 		},
 		
@@ -33,7 +37,8 @@
 				this.cardPanel,
 				this.mdPanel,
 				this.cardNotesPanel,
-				this.cardHistoryPanel
+				this.cardHistoryPanel,
+				this.attachmentPanel
 			];
 
 			this.callParent(arguments);

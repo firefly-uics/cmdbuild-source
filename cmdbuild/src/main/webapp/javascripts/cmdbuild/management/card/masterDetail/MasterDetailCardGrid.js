@@ -33,6 +33,7 @@
 // this.getStore().baseParams['DirectedDomain'] = this.directedDomain;
 // this.getStore().baseParams['Id'] = this.cardId;
 // this.getStore().baseParams['IdClass'] = this.classId;
+
 		},
 		
 		updateStoreForClassId: function(classId, cb) {
