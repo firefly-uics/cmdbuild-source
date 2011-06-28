@@ -367,7 +367,7 @@ CMDBuild.ServiceProxy.lookup = {
 	
 	getLookupAttributeStore: function(type) {
 		var s = Ext.create("Ext.data.Store", {
-			fields: ["Id", "Description"],
+			fields: ["Id", "Description", "ParentId"],
 			proxy: {
 				type: 'ajax',
 				url : 'services/json/schema/modlookup/getlookuplist',

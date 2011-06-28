@@ -28,6 +28,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function(attribute) {
 	return new Ext.form.BooleanDisplayField ({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		disabled: false
@@ -39,6 +40,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.ux.form.XCheckbox({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		CMAttribute: attribute

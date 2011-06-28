@@ -2,6 +2,10 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/SearchFilterWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attributes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/ReferenceSearchWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/AddCardWindow.js"></script>
+
 
 <!-- WIDGETS BUILDER-->
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/BaseAttribute.js"></script>
@@ -52,6 +56,10 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
 	
+		<!-- MD -->
+		<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
+
 	
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
@@ -85,7 +93,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/AddAttachmentWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/EditAttachmentWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/AddCardWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListGrid.js"></script>
@@ -106,9 +114,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailWindow.js"></script>	
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/AddDetailWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/EditDetailWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/DomainCardListWindow.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/ModCard.js"></script>
@@ -119,7 +126,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardAttachmentsTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardHistoryTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMapTab.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
+
 
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardRelationsTab.js"></script>
@@ -128,7 +135,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabUI.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/menu/MenuTree.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/ReferenceSearchWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/BulkCardAttributesPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModBulkCardUpdate.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModChangePassword.js"></script>

@@ -5,16 +5,17 @@
 		
 		constructor: function() {
 			this.callParent(arguments);
-			
+
 			this.currentEntryId = null;
 			this.currentCard = null;
 			this.cardPanel = this.view.cardTabPanel.cardPanel;
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
 			this.cardGrid = this.view.cardGrid;
+			this.mdPanel = this.view.mdPanel;
+
 			this.gridSM = this.cardGrid.getSelectionModel();
-			
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
-			
+
 			this.cardGrid.on("itemdblclick", onModifyCardClick, this);
 			this.gridSM.on("selectionchange", onCardSelected, this);
 
@@ -24,7 +25,7 @@
 			this.cardPanel.printCardMenu.on("click", onPrintCardMenuClick, this);
 			this.cardPanel.cancelButton.on("click", onAbortCardClick, this);
 			this.cardPanel.saveButton.on("click", onSaveCardClick, this);
-			
+
 			this.notePanel.saveButton.on("click", onSaveNoteClick, this);
 		},
 		

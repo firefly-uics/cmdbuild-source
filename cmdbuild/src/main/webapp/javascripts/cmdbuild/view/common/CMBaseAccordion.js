@@ -90,6 +90,21 @@
 			return this.tree.getRootNode();
 		},
 
+		getAncestorsAsArray: function(nodeId) {
+			var out = [],
+				node = this.getNodeById(nodeId);
+
+			if (node) {
+				out.push(node);
+				while (node.parentNode != null) {
+					out.push(node.parentNode);
+					node = node.parentNode;
+				}
+			}
+			
+			return out;
+		},
+
 		buildTreeStructure: function() {
 			_debug("CMBaseAccordion.buildTreeStructure Unimplemented method");
 		},

@@ -117,21 +117,21 @@
 		}
 		
 
-	})
-
-
+	});
 
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 		filterCategory: undefined,
 		filterSubcategory: undefined,
-		
+
 		cmPaginate: true, // to say if build or not a paging bar, default true
+		cmBasicFilter: true, // to add a basic search-field to the paging bar 
+		cmAdvancedFilter: true, // to add a button to set an advanced filter
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
 
 		constructor: function(c) {
 			Ext.apply(this, c);
-
+			this.loadMask = false;
 			this.store = this.getStoreForFields.call(this, []);
 
 			if (this.cmPaginate) {
@@ -140,17 +140,24 @@
 
 			this.callParent(arguments);
 		},
-		
+
 		initComponent: function() {
 			this.callParent(arguments);
 			this.on('beforeitemclick', cellclickHandler, this);
 		},
-		
+
 		updateStoreForClassId: function(classId) {
 			this.currentClassId = classId;
-			_CMCache.getAttributeList(classId, Ext.bind(this.setColumnsForClass, this));
+			_CMCache.getAttributeList(classId, 
+				Ext.bind(function(attributes) {
+					this.setColumnsForClass(attributes);
+					this.store.loadPage(1);
+				}, this)
+			);
 		},
-		
+
+		clearFilter: clearFilter,
+
 		// TODO 3 to 4 pagination
 		reload: function(reselect) {
 			var cb = Ext.emptyFn;
@@ -180,7 +187,7 @@
 			this.classAttributes = classAttributes;
 			var headers = [];
 			var fields = [];
-			
+
 			if (_CMUtils.isSuperclass(this.currentClassId)) {
 				headers.push(buildClassColumn());
 			}
@@ -196,24 +203,24 @@
 				}
 			}
 
+//			headers = headers.concat(this.buildExtraColumns());
+
 			if (this.cmAddGraphColumn) {
 				buildGraphIconColumn.call(this, headers);
 			}
 
-			var s = this.getStoreForFields.call(this, fields);
+			var s = this.getStoreForFields(fields);
 			this.reconfigure(s, headers);
 
 			if (this.pagingBar) {
 				this.pagingBar.bindStore(s);
 			}
-
-			this.store.loadPage(1);
 		},
 		
-		// private, can be overridden
+		// private, could be overridden
 		getStoreForFields: function(fields) {
-			fields.push("Id");
-			fields.push("IdClass");
+			fields.push({name: "Id", type: "int"});
+			fields.push({name: "IdClass", type: "int"});
 			fields.push("IdClass_value");
 			var pageSize;
 			try {
@@ -235,37 +242,52 @@
 					},
 					extraParams: {
 						IdClass : this.currentClassId || -1,
-						FilterCategory: this.filterCategory || ""
+						FilterCategory: this.filterCategory || "",
+						FilterSubcategory: this.filterSubcategory || ""
 					}
 				},
 				autoLoad: false
 			});
+		},
+		
+		//private, could be overridden
+		buildExtraColumns: function() {
+			return [];
 		}
 	});
 
 	function buildPagingBar() {
-		this.gridSearchField = new CMDBuild.field.GridSearchField({grid: this});
-		
-		this.openFilterButton = new Ext.button.Button({
-			scope: this,			
-			iconCls: 'find',
-			text: CMDBuild.Translation.management.findfilter.set_filter,
-			handler: onOpenFilterButtonClick
-		});
-		
-		this.clearFilterButton = new Ext.button.Button({
-			scope: this,			
-			iconCls: 'clear_find',
-			text: CMDBuild.Translation.management.findfilter.clear_filter,
-			handler: clearFilter
-		});
-		
+		var items = [];
+
+		if (this.cmBasicFilter) {
+			this.gridSearchField = new CMDBuild.field.GridSearchField({grid: this});
+			items.push(this.gridSearchField);
+		}
+
+		if (this.cmAdvancedFilter) {
+			this.openFilterButton = new Ext.button.Button({
+				scope: this,			
+				iconCls: 'find',
+				text: CMDBuild.Translation.management.findfilter.set_filter,
+				handler: onOpenFilterButtonClick
+			});
+
+			this.clearFilterButton = new Ext.button.Button({
+				scope: this,			
+				iconCls: 'clear_find',
+				text: CMDBuild.Translation.management.findfilter.clear_filter,
+				handler: clearFilter
+			});
+
+			items.push(this.openFilterButton, this.clearFilterButton);
+		}
+
 		this.pagingBar = new Ext.toolbar.Paging({
 			store: this.store,
 			displayInfo: true,
 			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
 			emptyMsg: CMDBuild.Translation.common.display_topic_none,
-			items: [this.gridSearchField, this.openFilterButton, this.clearFilterButton]
+			items: items
 		});
 		
 		this.bbar = this.pagingBar;
@@ -303,9 +325,9 @@
 		return '<img style="cursor:pointer" title="'
 			+ CMDBuild.Translation.management.graph.icon_tooltip
 			+'" class="action-open-graph" src="images/icons/chart_organisation.png"/>';
-    }
-    
-    function onOpenFilterButtonClick() {
+	}
+
+	function onOpenFilterButtonClick() {
 		var searchWin = new CMDBuild.Management.SearchFilterWindow({
 			attributeList: this.classAttributes,
 			IdClass: this.currentClassId,
@@ -317,7 +339,7 @@
 
 	}
 	
-	function clearFilter() {
+	function clearFilter(cb) {
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/resetcardfilter',
 			params: {
@@ -325,11 +347,18 @@
 			},
 			scope: this,
 			success: function(response) {
-				this.clearFilterButton.disable();
+				if (this.clearFilterButton) {
+					this.clearFilterButton.disable();
+				}
+
 				if (this.pagingBar) {
 					this.store.loadPage(1);
 				} else {
 					this.reload();
+				}
+
+				if (typeof cb == "function") {
+					cb();
 				}
 			}
 		});

@@ -34,6 +34,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
  */
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.TextField({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,

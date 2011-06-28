@@ -1,4 +1,5 @@
 (function() {
+
 	var lookupAccordion = new CMDBuild.view.administraton.accordion.CMLookupAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
 	});
@@ -116,12 +117,13 @@ function renderThemAll() {
 				],
 
 				cmPanels: [
-					new CMDBuild.view.administration.workflow.CMModProcess({
-						cmControllerType: controllerNS.administration.workflow.CMModProcessController
-					}),
 
 					new Ext.Panel({
 						cls: 'empty_panel x-panel-body'
+					}),
+
+					new CMDBuild.view.administration.workflow.CMModProcess({
+						cmControllerType: controllerNS.administration.workflow.CMModProcessController
 					}),
 
 					new CMDBuild.view.administration.report.CMModReport({
