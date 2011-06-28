@@ -83,21 +83,18 @@
 		},
 
 		onCardSelected: function(card) {
-/* TODO 3 to 4
-			if (CMDBuild.Utils.isSimpleTable(idClass)) {
+			var et = _CMCache.getEntryTypeById(card.get("IdClass"));
+			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
 				this.disable();
-				return;
+			} else {
+				this.currentCardId = card.raw.Id;
+				this.currentClassId = card.raw.IdClass;
+				this.currentCardPrivileges = {
+					create: card.raw.priv_create,
+					write: card.raw.priv_write
+				};
+				this.reloadCard();
 			}
-*/			
-			this.currentCardId = card.raw.Id;
-			this.currentClassId = card.raw.IdClass;
-
-			this.currentCardPrivileges = {
-				create: card.raw.priv_create,
-				write: card.raw.priv_write
-			};
-
-			this.reloadCard();
 		},
 
 		reloadCard: function() {

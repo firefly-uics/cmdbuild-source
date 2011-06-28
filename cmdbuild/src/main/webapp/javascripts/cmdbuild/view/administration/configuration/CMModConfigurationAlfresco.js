@@ -110,7 +110,7 @@
 					grow : true,
 					triggerAction : 'all',
 					store : CMDBuild.Cache.getLookupTypeLeavesAsStore(),
-					mode : "local"
+					queryMode : "local"
 				}]
 			}];
 

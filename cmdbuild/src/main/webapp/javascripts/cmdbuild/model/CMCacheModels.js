@@ -21,8 +21,8 @@
 			{name: "tableType",type: 'string'},
 			{name: "type",type: 'string'},
 			{name: "name",type: 'string'},
-			{name: "priv_create",type: 'string'},
-			{name: "priv_write",type: 'string'},
+			{name: "priv_create",type: 'boolean'},
+			{name: "priv_write",type: 'boolean'},
 		]
 	});
 	
@@ -38,8 +38,8 @@
 			{name: "idClass2", type: "string"},
 			{name: "classType", type: "string"},
 			{name: "name", type: "string"},
-			{name: "createPrivileges", type: "string"},
-			{name: "writePrivileges", type: "string"},
+			{name: "createPrivileges", type: "boolean"},
+			{name: "writePrivileges", type: "boolean"},
 			{name: "isMasterDetail", type: "boolean"},
 			{name: "description", type: "stirng"},
 			{name: "directDescription", type: "stirng"},

@@ -45,7 +45,7 @@
 <!-- VIEWS -->
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
-	
+
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
@@ -59,8 +59,12 @@
 		<!-- MD -->
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
-
-	
+		
+		<!-- ATTACHMENTS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/EditAttachmentWindow.js"></script>
+		
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
@@ -83,6 +87,7 @@
 
 	<!-- CARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMAttachmentController.js"></script>
 
 	<!-- REPORT-->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
@@ -91,8 +96,6 @@
 	
 <script type="text/javascript" src="javascripts/cmdbuild/management/FixedCardGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/AddAttachmentWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/attachment/EditAttachmentWindow.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>

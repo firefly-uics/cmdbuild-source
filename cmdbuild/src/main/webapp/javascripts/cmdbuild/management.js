@@ -8,6 +8,18 @@
 			},
 			
 			loadResources: function() {
+				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+					scope: this,
+					success: function(response, options, decoded) {
+						CMDBuild.Config.cmdbuild = decoded.data;
+					}
+				});
+
+				CMDBuild.ServiceProxy.configuration.read({
+					success: function(response, options,decoded) {
+						CMDBuild.Config.dms = decoded.data;
+					}
+				},"legacydms");
 
 				CMDBuild.ServiceProxy.report.read({
 					scope: this,
@@ -28,13 +40,6 @@
 					}
 				});
 
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
-					scope: this,
-					success: function(response, options, decoded) {
-						CMDBuild.Config.cmdbuild = decoded.data;
-					}
-				});
-				
 				CMDBuild.ServiceProxy.menu.read({
 					scope: this,
 					success: function(response, options, decoded) {

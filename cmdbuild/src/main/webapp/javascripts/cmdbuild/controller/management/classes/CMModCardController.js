@@ -11,7 +11,9 @@
 			this.cardPanel = this.view.cardTabPanel.cardPanel;
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
 			this.cardGrid = this.view.cardGrid;
-			this.mdPanel = this.view.mdPanel;
+			this.mdPanel = this.view.cardTabPanel.mdPanel;
+			this.attachmentsPanel = this.view.cardTabPanel.attachmentPanel;
+			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsPanel(this.attachmentsPanel);
 
 			this.gridSM = this.cardGrid.getSelectionModel();
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
@@ -28,11 +30,13 @@
 
 			this.notePanel.saveButton.on("click", onSaveNoteClick, this);
 		},
-		
+
 		onViewOnFront: function(selection) {
 			if (selection) {
 				this.currentEntryId = selection.get("id");
 				this.view.onEntrySelected(selection);
+				// sub-controllers
+				this.attachmentsController.onEntrySelect(selection);
 			}
 		}
 	});
@@ -42,6 +46,9 @@
 			this.currentCard = selection[0];
 			var reloadFields = this.currentEntryId != this.currentCard.get("IdClass");
 			this.view.cardTabPanel.onCardSelected(this.currentCard, reloadFields);
+
+			// sub-controllers
+			this.attachmentsController.onCardSelected(this.currentCard);
 		}
 	}
 	

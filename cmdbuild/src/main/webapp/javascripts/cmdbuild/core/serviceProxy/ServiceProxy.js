@@ -374,21 +374,20 @@ CMDBuild.ServiceProxy.lookup = {
 				reader: {
 					type: 'json',
 					root: 'rows'
+				},
+				extraParams : {
+					type : type,
+					active : true,
+					short : true
 				}
 			},
 			sorters : [ {
 				property : 'Description',
 				direction : "ASC"
 			}],
-			autoLoad : {
-				params : {
-					type : type,
-					active : true,
-					short : true
-				}
-			}
+			autoLoad : true
 		});
-		
+
 		return s;
 	},
 
