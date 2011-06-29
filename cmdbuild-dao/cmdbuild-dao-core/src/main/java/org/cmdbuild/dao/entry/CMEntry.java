@@ -3,6 +3,7 @@ package org.cmdbuild.dao.entry;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.joda.time.DateTime;
 
 public interface CMEntry {
 
@@ -16,4 +17,8 @@ public interface CMEntry {
 	public Object getId();
 	public Object get(final String key);
 	public Iterable<Map.Entry<String, Object>> getValues();
+
+	public String getUser();
+	public DateTime getBeginDate();
+	public DateTime getEndDate();
 }

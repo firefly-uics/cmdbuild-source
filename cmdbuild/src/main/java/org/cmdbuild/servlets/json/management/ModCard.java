@@ -562,8 +562,8 @@ public class ModCard extends JSONBase {
 			UserContext userCtx,
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
 			@Parameter(value = "DirectedDomain", required = false) String directedDomain) throws JSONException {
-		final DataAccessLogic dataAccessBL = new DataAccessLogic();
-		final GetRelationListResponse out = dataAccessBL.getRelationList(card.getIdClass(), card.getId());
+		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
+		final GetRelationListResponse out = dataAccesslogic.getRelationList(card.getIdClass(), card.getId());
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
 	}
 

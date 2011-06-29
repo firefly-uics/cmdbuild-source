@@ -1,8 +1,6 @@
 package org.cmdbuild.dao.query.clause;
 
-import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.DBRelation;
-import org.cmdbuild.dao.entrytype.DBDomain;
 
 public class QueryRelation {
 
@@ -22,8 +20,7 @@ public class QueryRelation {
 		return new QueryDomain(relation.getType(), direction);
 	}
 
-	public static QueryRelation create(DBDriver driver, DBDomain domain, boolean direction) {
-		final DBRelation relation = DBRelation.create(driver, domain);
+	public static QueryRelation create(DBRelation relation, boolean direction) {
 		return new QueryRelation(relation, direction);
 	}
 

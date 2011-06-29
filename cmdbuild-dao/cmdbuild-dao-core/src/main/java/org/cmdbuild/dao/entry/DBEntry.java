@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.joda.time.DateTime;
 
 public abstract class DBEntry {
 
@@ -13,6 +14,10 @@ public abstract class DBEntry {
 	private final DBEntryType type;
 	private Object id;
 	private final Map<String, Object> values;
+
+	protected String user;
+	protected DateTime beginDate;
+	protected DateTime endDate;
 
 	protected DBEntry(final DBDriver driver, final DBEntryType type, final Object id) {
 		this.driver = driver;
@@ -27,6 +32,26 @@ public abstract class DBEntry {
 
 	public final Object getId() {
 		return id;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setBeginDate(final DateTime beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	public DateTime getBeginDate() {
+		return beginDate;
+	}
+
+	public void setEndDate(final DateTime endDate) {
+		this.endDate = endDate;
+	}
+
+	public DateTime getEndDate() {
+		return endDate;
 	}
 
 	/*
