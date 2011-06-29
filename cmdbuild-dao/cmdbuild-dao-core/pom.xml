@@ -21,6 +21,11 @@
 			<version>1.8.5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time.version}</version>
+		</dependency>
 	</dependencies>
 </project>
 

@@ -20,7 +20,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -47,6 +47,7 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
+import org.joda.time.DateTime;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -99,16 +100,19 @@ public class EntryQueryCommand {
 					final Long classId = rs.getLong(getClassIdAliasFor(a));
 					final DBClass realClass = driver.findClassById(classId);
 					final DBCard card = DBCard.create(driver, realClass, id);
+					card.setBeginDate(new DateTime()); // TODO
 					row.setCard(a, card);
 				}
 
 				for (Alias a : qc.getDomainAliases()) {
-					//final Object id = rs.getLong(getIdAliasFor(a)); // TODO
-					// TODO Add card1 and card2 from the cards already extracted!
+					final Object id = rs.getLong(getIdAliasFor(a));
 					final Long domainId = rs.getLong(getDomainIdAliasFor(a));
 					final boolean direction = rs.getBoolean(getDomainDirectionAliasFor(a));
 					final DBDomain realDomain = driver.findDomainById(domainId);
-					final QueryRelation queryRelation = QueryRelation.create(driver, realDomain, direction);
+					final DBRelation relation = DBRelation.create(driver, realDomain, id);
+					relation.setBeginDate(new DateTime()); // TODO
+					// TODO Add card1 and card2 from the cards already extracted!
+					final QueryRelation queryRelation = QueryRelation.create(relation, direction);
 					row.setRelation(a, queryRelation);
 				}
 

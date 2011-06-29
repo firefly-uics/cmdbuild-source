@@ -7,7 +7,6 @@ import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
+import org.joda.time.DateTime;
 
 public class GetRelationList {
 
@@ -142,20 +142,17 @@ public class GetRelationList {
 			return dst.getType();
 		}
 
-		// TODO
 		public Object getRelationId() {
-			return 42;
-			//return rel.getRelation().getId();
+			return rel.getRelation().getId();
 		}
 
-		// TODO
-		public Object getRelationLastModified() {
-			return new Date();
+		public DateTime getRelationBeginDate() {
+			return rel.getRelation().getBeginDate();
 		}
 
 		// TODO
 		public String getRelationAttributes() {
-			return "...";
+			return "TODO";
 		}
 	}
 }
