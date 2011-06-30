@@ -43,6 +43,7 @@ public class JsonGetRelationListResponse implements JsonSerializable {
 		final JSONObject domain = new JSONObject();
 		final JSONArray relationArray = relationListToJson(di);
 		domain.put("id", di.getQueryDomain().getDomain().getId());
+		domain.put("src", di.getQueryDomain().getQuerySource());
 		if (relationArray.length() <= domainLimit) {
 			domain.put("relations", relationArray);
 		}

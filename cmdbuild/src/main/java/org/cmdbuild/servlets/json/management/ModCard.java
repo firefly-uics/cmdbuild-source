@@ -40,6 +40,8 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.legacy.dms.AlfrescoFacade;
 import org.cmdbuild.legacy.dms.AttachmentBean;
+import org.cmdbuild.logic.LogicDTO.Card;
+import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
@@ -561,10 +563,25 @@ public class ModCard extends JSONBase {
 			ICard card,
 			UserContext userCtx,
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
-			@Parameter(value = "DirectedDomain", required = false) String directedDomain) throws JSONException {
+			@Parameter(value = "DirectedDomain", required = false) String directedDomainString) throws JSONException {
 		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
-		final GetRelationListResponse out = dataAccesslogic.getRelationList(card.getIdClass(), card.getId());
+		final Card src = new Card(card.getSchema().getId(), card.getId());
+		final DomainWithSource dom = domainWithSourceFromDirectedDomain(directedDomainString);
+		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
+	}
+
+	private DomainWithSource domainWithSourceFromDirectedDomain(String directedDomainString) {
+		final DomainWithSource dom;
+		if (directedDomainString != null) {
+			final StringTokenizer st = new StringTokenizer(directedDomainString, "_");
+			final int domainId = Integer.parseInt(st.nextToken());
+			final String querySource = st.nextToken();
+			dom = new DomainWithSource(domainId, querySource);
+		} else {
+			dom = null;
+		}
+		return dom;
 	}
 
 	@JSONExported

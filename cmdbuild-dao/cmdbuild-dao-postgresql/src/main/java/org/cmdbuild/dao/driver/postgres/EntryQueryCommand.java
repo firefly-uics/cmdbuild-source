@@ -53,7 +53,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 
 public class EntryQueryCommand {
 
-	private static final String DOMAIN_DIRECTION_ATTRIBUTE = "_Dir";
+	private static final String DOMAIN_QUERY_SOURCE_ATTRIBUTE = "_Src";
 
 	private final PostgresDriver driver;
 	private final JdbcTemplate jdbcTemplate;
@@ -107,12 +107,12 @@ public class EntryQueryCommand {
 				for (Alias a : qc.getDomainAliases()) {
 					final Object id = rs.getLong(getIdAliasFor(a));
 					final Long domainId = rs.getLong(getDomainIdAliasFor(a));
-					final boolean direction = rs.getBoolean(getDomainDirectionAliasFor(a));
+					final String querySource = rs.getString(getDomainQuerySourceAliasFor(a));
 					final DBDomain realDomain = driver.findDomainById(domainId);
 					final DBRelation relation = DBRelation.create(driver, realDomain, id);
 					relation.setBeginDate(new DateTime()); // TODO
 					// TODO Add card1 and card2 from the cards already extracted!
-					final QueryRelation queryRelation = QueryRelation.create(relation, direction);
+					final QueryRelation queryRelation = QueryRelation.create(relation, querySource);
 					row.setRelation(a, queryRelation);
 				}
 
@@ -186,7 +186,7 @@ public class EntryQueryCommand {
 			for (Alias a : query.getDomainAliases()) {
 				columnIndex += 3;
 				idSelectAttributes.add(getDomainIdSelectAttribute(a));
-				idSelectAttributes.add(getDomainDirectionSelectAttribute(a));
+				idSelectAttributes.add(getDomainQuerySourceSelectAttribute(a));
 				idSelectAttributes.add(getIdSelectAttribute(a));
 			}
 
@@ -208,9 +208,9 @@ public class EntryQueryCommand {
 					getDomainIdAliasFor(entityTypeAlias));
 		}
 
-		private String getDomainDirectionSelectAttribute(final Alias entityTypeAlias) {
-			return String.format("%s AS %s", quoteAttribute(entityTypeAlias, DOMAIN_DIRECTION_ATTRIBUTE),
-					getDomainDirectionAliasFor(entityTypeAlias));
+		private String getDomainQuerySourceSelectAttribute(final Alias entityTypeAlias) {
+			return String.format("%s AS %s", quoteAttribute(entityTypeAlias, DOMAIN_QUERY_SOURCE_ATTRIBUTE),
+					getDomainQuerySourceAliasFor(entityTypeAlias));
 		}
 
 		private void appendFrom() {
@@ -324,7 +324,8 @@ public class EntryQueryCommand {
 
 				sb.append(quoteIdent(ID_ATTRIBUTE)).append(",");
 				sb.append(quoteIdent(DOMAIN_ID_ATTRIBUTE)).append(",");
-				appendColumnAndAliasIfFirst(queryDomain.getDirection(), quoteIdent(DOMAIN_DIRECTION_ATTRIBUTE), first).append(",");
+				appendColumnAndAliasIfFirst("?", quoteIdent(DOMAIN_QUERY_SOURCE_ATTRIBUTE), first).append(",");
+				addParam(queryDomain.getQuerySource());
 				if (queryDomain.getDirection()) {
 					sb.append(quoteIdent(DOMAIN_ID1_ATTRIBUTE)).append(",");
 					sb.append(quoteIdent(DOMAIN_ID2_ATTRIBUTE));
@@ -440,7 +441,7 @@ public class EntryQueryCommand {
 		return "_" + entityTypeAlias.getName() + "_Id";
 	}
 
-	private String getDomainDirectionAliasFor(final Alias domainAlias) {
-		return "_" + domainAlias.getName() + DOMAIN_DIRECTION_ATTRIBUTE;
+	private String getDomainQuerySourceAliasFor(final Alias domainAlias) {
+		return "_" + domainAlias.getName() + DOMAIN_QUERY_SOURCE_ATTRIBUTE;
 	}
 }

@@ -7,28 +7,66 @@ import org.cmdbuild.dao.entrytype.CMDomain;
  */
 public class QueryDomain {
 
-	final CMDomain domain;
-	final boolean direction;
+	/**
+	 * Domains are between two classes only, but we want to design it for domains between more than two classes
+	 */
+	public enum Source {
+		_1 {
+			@Override
+			public boolean getDirection() {
+				return true;
+			}
 
-	public QueryDomain(final CMDomain domain, final boolean direction) {
+			@Override
+			public String getDomainDescription(final CMDomain domain) {
+				return domain.getDescription1();
+			}
+		},
+		_2 {
+			@Override
+			public boolean getDirection() {
+				return false;
+			}
+
+			@Override
+			public String getDomainDescription(final CMDomain domain) {
+				return domain.getDescription2();
+			}
+		};
+
+		public abstract boolean getDirection();
+		public abstract String getDomainDescription(CMDomain domain);
+	}
+
+	final CMDomain domain;
+	final Source querySource;
+
+	public QueryDomain(final CMDomain domain, final String querySource) {
+		this(domain, Source.valueOf(querySource));
+	}
+
+	public QueryDomain(final CMDomain domain, final Source querySource) {
 		this.domain = domain;
-		this.direction = direction;
+		this.querySource = querySource;
 	}
 
 	public CMDomain getDomain() {
 		return domain;
 	}
 
+	public String getQuerySource() {
+		return querySource.name();
+	}
+
+	/**
+	 * @deprecated Use {@link getQuerySource()} instead
+	 */
 	public boolean getDirection() {
-		return direction;
+		return querySource.getDirection();
 	}
 
 	public String getDescription() {
-		if (direction) {
-			return domain.getDescription1();
-		} else {
-			return domain.getDescription2();
-		}
+		return querySource.getDomainDescription(domain);
 	}
 
 	/*
@@ -39,8 +77,8 @@ public class QueryDomain {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (direction ? 1231 : 1237);
 		result = prime * result + ((domain == null) ? 0 : domain.hashCode());
+		result = prime * result + ((querySource == null) ? 0 : querySource.hashCode());
 		return result;
 	}
 
@@ -53,13 +91,13 @@ public class QueryDomain {
 		if (getClass() != obj.getClass())
 			return false;
 		QueryDomain other = (QueryDomain) obj;
-		if (direction != other.direction)
-			return false;
 		if (domain == null) {
 			if (other.domain != null)
 				return false;
 		} else if (!domain.equals(other.domain))
 			return false;
+		if (querySource != other.querySource)
+			return false;
 		return true;
-	}	
+	}
 }
