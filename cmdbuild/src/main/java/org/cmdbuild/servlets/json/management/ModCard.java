@@ -563,25 +563,14 @@ public class ModCard extends JSONBase {
 			ICard card,
 			UserContext userCtx,
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
-			@Parameter(value = "DirectedDomain", required = false) String directedDomainString) throws JSONException {
+			@Parameter(value = "domainId", required = false) Long domainId,
+			@Parameter(value = "src", required = false) String querySource) throws JSONException {
+
 		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
 		final Card src = new Card(card.getSchema().getId(), card.getId());
-		final DomainWithSource dom = domainWithSourceFromDirectedDomain(directedDomainString);
+		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
-	}
-
-	private DomainWithSource domainWithSourceFromDirectedDomain(String directedDomainString) {
-		final DomainWithSource dom;
-		if (directedDomainString != null) {
-			final StringTokenizer st = new StringTokenizer(directedDomainString, "_");
-			final int domainId = Integer.parseInt(st.nextToken());
-			final String querySource = st.nextToken();
-			dom = new DomainWithSource(domainId, querySource);
-		} else {
-			dom = null;
-		}
-		return dom;
 	}
 
 	@JSONExported

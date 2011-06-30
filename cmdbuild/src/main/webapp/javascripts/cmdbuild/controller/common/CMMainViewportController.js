@@ -64,6 +64,10 @@
 	ns.CMMainViewportController.prototype.findModuleByCMName = function(cmName) {
 		return this.viewport.findModuleByCMName(cmName);
 	};
+	
+	ns.CMMainViewportController.prototype.getFirstAccordionWithANodeWithGivenId = function(id) {
+		return this.viewport.getFirstAccordionWithANodeWithGivenId(id);
+	};
 })();
 
 //(function() {	

@@ -146,14 +146,53 @@
 			this.on('beforeitemclick', cellclickHandler, this);
 		},
 
-		updateStoreForClassId: function(classId) {
+		updateStoreForClassId: function(classId, o) {
 			this.currentClassId = classId;
 			_CMCache.getAttributeList(classId, 
 				Ext.bind(function(attributes) {
 					this.setColumnsForClass(attributes);
-					this.store.loadPage(1);
+					if (o.cb) {
+						o.cb.call(o.scope || this);
+					} else {
+						this.store.loadPage(1);
+					}
 				}, this)
 			);
+		},
+
+		openCard: function(p) {
+			p['FilterCategory'] = this.filterCategory;
+			CMDBuild.ServiceProxy.card.getPosition({
+				params: p,
+				scope: this,
+				failure: onGetPositionFailure,
+				success: function onGetPositionSuccess(response, options, resText) {
+					var position = resText.position,
+					pageNumber = getPageNumber(position),
+					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+					relativeIndex = (position -1) % pageSize;
+
+					this.updateStoreForClassId(p.IdClass, {
+						scope: this,
+						cb: function cbOfUpdateStoreForClassId() {
+							this.loadPage(pageNumber, {
+								cb: function callBackOfLoadPage(records, operation, success) {
+									this.getSelectionModel().select(relativeIndex);
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+
+		loadPage: function(pageNumber, o) {
+			scope = o.scope || this;
+			cb = o.cb || Ext.emptyFn;
+
+			// store.loadPage does not allow the definition of a callBack
+			this.store.on("load", cb, scope, {single: true});
+			this.store.loadPage(pageNumber);
 		},
 
 		clearFilter: clearFilter,
@@ -255,6 +294,14 @@
 			return [];
 		}
 	});
+
+	function onGetPositionFailure(response, options, decoded) {
+		this.store.loadPage(1);
+		if (decoded && decoded.reason == 'CARD_NOTFOUND') {
+			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+		}
+		return false;
+	}
 
 	function buildPagingBar() {
 		var items = [];
@@ -370,5 +417,16 @@
 
 			alert("@@ The graph");
 		}
+	}
+	
+	function getPageNumber(cardPosition) {
+		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+			pageNumber = 0;
+		
+		if (cardPosition) {
+			pageNumber = parseInt((cardPosition) / pageSize) + 1;
+		}
+		
+		return pageNumber;
 	}
 })();

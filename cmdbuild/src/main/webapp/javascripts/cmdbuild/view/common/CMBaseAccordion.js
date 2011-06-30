@@ -24,7 +24,8 @@
 	Ext.define("CMDBuild.view.common.CMBaseAccordion", {
 		extend: 'Ext.panel.Panel',
 		rootVisible: false,
-		
+		animCollapse: false,
+
 		constructor: function() {
 			this.store = Ext.create('CMDBuild.view.common.CMBaseAccordion.Store');
 
@@ -57,8 +58,9 @@
 		},
 
 		selectNodeById: function(nodeId) {
-			var sm = this.getSelectionModel();
-			var node = this.store.getNodeById(nodeId);
+			var sm = this.getSelectionModel(),
+				node = this.store.getNodeById(nodeId);
+
 			if (node) {
 				sm.select(node);
 				node.bubble(function() {
@@ -67,6 +69,12 @@
 			} else {
 				_debug("I have not find a node with id " + nodeId);
 			}
+		},
+
+		selectNodeByIdSilentry: function(nodeId) {
+			this.suspendEvents();
+			this.selectNodeById(nodeId);
+			this.resumeEvents();
 		},
 
 		removeNodeById: function(nodeId) {

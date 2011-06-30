@@ -26,8 +26,8 @@
 				writePrivileges: d.priv_write,
 				isMasterDetail: d.md,
 				description: d.description,
-				directDescription: d.descrdir,
-				reverseDescription: d.descrinv,
+				descr_1: d.descrdir,
+				descr_2: d.descrinv,
 				meta: d.meta,
 				attributes: d.attributes
 			});

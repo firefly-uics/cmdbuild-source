@@ -28,7 +28,8 @@ CMDBuild.ServiceProxy = {
 			scope: p.scope || this
 		});
 	},
-
+	
+	// TODO duplicate in card section, remove this
 	getCardList: function(p) {
 		CMDBuild.Ajax.request( {
 		    url: "services/json/management/modcard/getcardlist",
@@ -337,6 +338,16 @@ CMDBuild.ServiceProxy.classes = {
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }
+
+CMDBuild.ServiceProxy.card = {
+	getPosition: function(p) {
+		p.method = 'GET';
+		p.url = 'services/json/management/modcard/getcardposition';
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+}
+
 
 CMDBuild.ServiceProxy.lookup = {
 	readAllTypes: function(p) {

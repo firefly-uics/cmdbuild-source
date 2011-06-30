@@ -42,8 +42,8 @@
 			{name: "writePrivileges", type: "boolean"},
 			{name: "isMasterDetail", type: "boolean"},
 			{name: "description", type: "stirng"},
-			{name: "directDescription", type: "stirng"},
-			{name: "reverseDescription", type: "stirng"}
+			{name: "descr_1", type: "stirng"},
+			{name: "descr_2", type: "stirng"}
 		]
 	});
 	

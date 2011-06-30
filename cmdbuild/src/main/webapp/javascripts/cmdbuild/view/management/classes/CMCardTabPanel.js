@@ -20,6 +20,10 @@
 				title: tr.tabs.notes
 			});
 
+			this.relationsPanel = new CMDBuild.view.management.classes.CMCardRelationsPanel({
+				title: tr.tabs.relations
+			});
+
 			this.mdPanel = new CMDBuild.Management.CardMasterDetailTab({
 				title: tr.tabs.detail
 			});
@@ -35,6 +39,7 @@
 			this.frame = false;
 			this.items = [
 				this.cardPanel,
+				this.relationsPanel,
 				this.mdPanel,
 				this.cardNotesPanel,
 				this.cardHistoryPanel,

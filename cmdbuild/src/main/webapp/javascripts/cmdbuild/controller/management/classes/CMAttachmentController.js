@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
-	Ext.define("CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsPanel", {
+	Ext.define("CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController", {
 		constructor: function(v) {
 			this.view = v;
 

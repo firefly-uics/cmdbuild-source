@@ -12,8 +12,12 @@
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
 			this.cardGrid = this.view.cardGrid;
 			this.mdPanel = this.view.cardTabPanel.mdPanel;
+
 			this.attachmentsPanel = this.view.cardTabPanel.attachmentPanel;
-			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsPanel(this.attachmentsPanel);
+			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController(this.attachmentsPanel);
+
+			this.relationsPanel = this.view.cardTabPanel.relationsPanel;
+			this.relationsController = new CMDBuild.controller.management.classes.attacchments.CMCardRelationsController(this.relationsPanel, this);
 
 			this.gridSM = this.cardGrid.getSelectionModel();
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
@@ -21,6 +25,7 @@
 			this.cardGrid.on("itemdblclick", onModifyCardClick, this);
 			this.gridSM.on("selectionchange", onCardSelected, this);
 
+			// TODO build a separate controller for the cardtab
 			this.cardPanel.deleteCardButton.on("click", onDeleteCardClick, this);
 			this.cardPanel.cloneCardButton.on("click", onCloneCardClick, this);
 			this.cardPanel.modifyCardButton.on("click", onModifyCardClick, this);
@@ -35,9 +40,27 @@
 			if (selection) {
 				this.currentEntryId = selection.get("id");
 				this.view.onEntrySelected(selection);
+
 				// sub-controllers
 				this.attachmentsController.onEntrySelect(selection);
+				this.relationsController.onEntrySelect(selection);
 			}
+		},
+		
+		/*
+		 * p = {
+				Id: the id of the card
+				IdClass: the id of the class which the card belongs
+			}
+		 */
+		openCard: function(p) {
+			var entryType = _CMCache.getEntryTypeById(p.IdClass),
+				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
+				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
+			
+			modPanel.openCard(p);
+			accordion.expand();
+			accordion.selectNodeByIdSilentry(p.IdClass);
 		}
 	});
 
@@ -49,6 +72,7 @@
 
 			// sub-controllers
 			this.attachmentsController.onCardSelected(this.currentCard);
+			this.relationsController.onCardSelected(this.currentCard);
 		}
 	}
 	
