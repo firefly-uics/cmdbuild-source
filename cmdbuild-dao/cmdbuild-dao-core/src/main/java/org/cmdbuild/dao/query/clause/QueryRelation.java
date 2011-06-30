@@ -5,11 +5,11 @@ import org.cmdbuild.dao.entry.DBRelation;
 public class QueryRelation {
 
 	final DBRelation relation;
-	final boolean direction;
+	final String querySource;
 
-	private QueryRelation(final DBRelation relation, final boolean direction) {
+	private QueryRelation(final DBRelation relation, final String querySource) {
 		this.relation = relation;
-		this.direction = direction;
+		this.querySource = querySource;
 	}
 
 	public DBRelation getRelation() {
@@ -17,12 +17,10 @@ public class QueryRelation {
 	}
 
 	public QueryDomain getQueryDomain() {
-		return new QueryDomain(relation.getType(), direction);
+		return new QueryDomain(relation.getType(), querySource);
 	}
 
-	public static QueryRelation create(DBRelation relation, boolean direction) {
-		return new QueryRelation(relation, direction);
+	public static QueryRelation create(DBRelation relation, String querySource) {
+		return new QueryRelation(relation, querySource);
 	}
-
-	// TODO
 }

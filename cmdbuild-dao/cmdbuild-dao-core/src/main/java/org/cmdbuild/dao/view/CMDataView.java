@@ -15,6 +15,7 @@ public interface CMDataView {
 
 	public Iterable<? extends CMDomain> findAllDomains();
 	public Iterable<? extends CMDomain> findDomains(CMClass type);
+	public CMDomain findDomainById(final Object id);
 
 	public CMCardDefinition newCard(final CMClass type);
 	public CMCardDefinition modifyCard(final CMCard type);

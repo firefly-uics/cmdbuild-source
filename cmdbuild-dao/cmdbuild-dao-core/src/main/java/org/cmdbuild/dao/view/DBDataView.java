@@ -51,6 +51,11 @@ public class DBDataView implements CMDataView {
 	}
 
 	@Override
+	public DBDomain findDomainById(Object id) {
+		return driver.findDomainById(id);
+	}
+
+	@Override
 	public DBCard newCard(CMClass type) {
 		final DBClass dbType = findClassById(type.getId());
 		return DBCard.create(driver, dbType);

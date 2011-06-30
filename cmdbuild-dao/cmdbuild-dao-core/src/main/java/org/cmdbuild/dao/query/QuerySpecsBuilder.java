@@ -16,14 +16,13 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.query.clause.AnyClass;
 import org.cmdbuild.dao.query.clause.AnyDomain;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.ClassAlias;
-import org.cmdbuild.dao.query.clause.join.AnyDomainAnyClassJoinClause;
+import org.cmdbuild.dao.query.clause.join.AnyDomainJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
@@ -138,12 +137,7 @@ public class QuerySpecsBuilder {
 
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {
 		if (overClause.getDomain() instanceof AnyDomain) {
-			if (joinClass instanceof AnyClass) {
-				// TODO: ADD THE VIEW!!!!!!!!
-				joinClauses.add(new AnyDomainAnyClassJoinClause(view, aliases.getFromClass(), joinClassAlias, overClause.getAlias()));
-			} else {
-				throw new UnsupportedOperationException("Not implemented yet");
-			}
+			joinClauses.add(new AnyDomainJoinClause(view, aliases.getFromClass(), joinClass, joinClassAlias, overClause.getAlias()));
 		} else {
 			joinClauses.add(new JoinClause(aliases.getFromClass(), joinClass, overClause.getDomain(), joinClassAlias, overClause.getAlias()));
 		}

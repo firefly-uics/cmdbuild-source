@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryDomain;
@@ -19,6 +21,8 @@ import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.LogicDTO.Card;
+import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.joda.time.DateTime;
 
 public class GetRelationList {
@@ -34,9 +38,9 @@ public class GetRelationList {
 		this.view = view;
 	}
 
-	public GetRelationListResponse exec(int classId, int cardId) {
-		final CMClass srcCardType = view.findClassById(Long.valueOf(classId));
-		final Object srcCardId = Long.valueOf(cardId);
+	public GetRelationListResponse exec(final Card src, final DomainWithSource dom) {
+		final CMClass srcCardType = getCardType(src);
+		final CMDomain domain = getQueryDomain(dom); // TODO
 		final Alias domAlias = Alias.as("DOM");
 		final Alias dstAlias = Alias.as("DST");
 		final CMQueryResult relationList = view
@@ -44,8 +48,8 @@ public class GetRelationList {
 				//anyAttribute(domAlias),
 				attribute(dstAlias, CODE), attribute(dstAlias, DESCRIPTION))
 			.from(srcCardType)
-			.join(anyClass(), as(dstAlias), over(anyDomain(), as(domAlias)))
-			.where(attribute(srcCardType, ID), Operator.EQUALS, srcCardId)
+			.join(anyClass(), as(dstAlias), over(domain, as(domAlias)))
+			.where(attribute(srcCardType, ID), Operator.EQUALS, src.cardId)
 			.run();
 		final GetRelationListResponse out = new GetRelationListResponse();
 		for (CMQueryRow row : relationList) {
@@ -54,6 +58,23 @@ public class GetRelationList {
 			out.addRelation(rel, dst);
 		}
 		return out;
+	}
+
+	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
+		final CMDomain dom;
+		if (domainWithSource != null) {
+			dom = view.findDomainById(domainWithSource.domainId);
+		} else {
+			dom = anyDomain();
+		}
+		Validate.notNull(dom);
+		return dom;
+	}
+
+	private CMClass getCardType(final Card src) {
+		final CMClass type = view.findClassById(src.classId);
+		Validate.notNull(type);
+		return type;
 	}
 
 	public static class GetRelationListResponse implements Iterable<DomainInfo> {
