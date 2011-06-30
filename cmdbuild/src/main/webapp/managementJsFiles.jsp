@@ -1,3 +1,6 @@
+<!-- PROXIES -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMRelationsProxy.js"></script>
+
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/SearchFilterWindow.js"></script>
@@ -50,12 +53,14 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardRelationsPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardNotesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
-	
+
+		<!-- RELATIONS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardRelationsPanel.js"> </script>
+
 		<!-- MD -->
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
@@ -65,6 +70,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/EditAttachmentWindow.js"></script>
 		
+
+
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
@@ -88,6 +95,7 @@
 	<!-- CARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMAttachmentController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMRelationsController.js"></script>
 
 	<!-- REPORT-->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
@@ -131,8 +139,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMapTab.js"></script>
 
 
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardRelationsTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabUI.js"></script>

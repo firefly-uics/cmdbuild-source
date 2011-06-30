@@ -89,27 +89,33 @@
 			var sm = a.getSelectionModel();
 			sm.deselect(sm.getSelection());
 		},
-		
+
 		findAccordionByCMName: function(cmName) {
 			return this.cmAccordions.items.findBy(function(accordion) {
 				return accordion.cmName == cmName;
 			});
 		},
-		
+
 		findModuleByCMName: function(cmName) {
 			return this.cmPanels.items.findBy(function(panel) {
 				return panel.cmName == cmName;
 			});
 		},
-		
+
 		disableAccordionByName: function(cmName) {
 			var a = this.findAccordionByCMName(cmName);
 			a.disable();
 		},
-		
+
 		enableAccordionByName: function(cmName) {
 			var a = this.findAccordionByCMName(cmName);
 			a.enable();
+		},
+
+		getFirstAccordionWithANodeWithGivenId: function(id) {
+			return this.cmAccordions.items.findBy(function(accordion) {
+				return (typeof accordion.getNodeById(id) != "undefined");
+			});
 		}
 	});
 })();

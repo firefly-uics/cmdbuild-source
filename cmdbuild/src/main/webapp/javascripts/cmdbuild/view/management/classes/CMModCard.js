@@ -7,7 +7,7 @@
 			this.addCardButton = new CMDBuild.AddCardMenuButton({
 				classId: undefined
 			});
-			
+
 			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
 				region: "north",
 				hideMode: "offsets",
@@ -38,9 +38,26 @@
 		
 		onEntrySelected: function(entry) {
 			var id = entry.get("id");
-			this.cardGrid.updateStoreForClassId(id);
+
+			this.cardGrid.updateStoreForClassId(id, {
+				cb: function cbUpdateStoreForClassId() {
+					this.loadPage(1, {
+						cb: function cbLoadPage() {
+							try {
+								this.getSelectionModel().select(0);
+							} catch (e) {/* if empty*/}
+						}
+					});
+				}
+			});
+
 			this.cardTabPanel.onClassSelected(id);
 			this.addCardButton.updateForEntry(entry);
+		},
+		
+		openCard: function(p) {
+			this.cardGrid.openCard(p);
+			this.addCardButton.updateForEntry(_CMCache.getEntryTypeById(p.IdClass));
 		}
 	});
 

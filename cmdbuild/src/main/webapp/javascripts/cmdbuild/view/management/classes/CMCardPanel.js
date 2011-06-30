@@ -43,7 +43,7 @@
 			if (this.sideTabPanel) {
 				this.sideTabPanel.editMode();
 			}
-			
+
 			this.disableCMTbar();
 			this.enableCMButtons();
 		},
