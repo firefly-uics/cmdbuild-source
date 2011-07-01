@@ -3,13 +3,12 @@ package org.cmdbuild.logic;
 public interface LogicDTO {
 
 	class Card {
-		// TODO: They should be Objects for maximum compatibility
-		public final Long classId;
-		public final Long cardId;
+		public final Object classId;
+		public final Long cardId; // TODO It should be an Object
 
-		public Card(final int classId, final int cardId) {
-			this.classId = Long.valueOf(classId);
-			this.cardId = Long.valueOf(cardId);
+		public Card(final Object classId, final Number cardId) {
+			this.classId = classId;
+			this.cardId = cardId.longValue();
 		}
 
 		@Override
@@ -19,10 +18,10 @@ public interface LogicDTO {
 	}
 
 	class DomainWithSource {
-		public final Long domainId;
+		public final Object domainId;
 		public final String querySource;
 
-		public DomainWithSource(final Long domainId, final String querySource) {
+		public DomainWithSource(final Object domainId, final String querySource) {
 			this.domainId = domainId;
 			this.querySource = querySource;
 		}
@@ -32,7 +31,7 @@ public interface LogicDTO {
 			return String.format("%s.%s", domainId, querySource);
 		}
 
-		public static DomainWithSource create(final Long domainId, final String querySource) {
+		public static DomainWithSource create(final Object domainId, final String querySource) {
 			final DomainWithSource dom;
 			if (domainId != null && querySource != null) {
 				dom = new DomainWithSource(domainId, querySource);

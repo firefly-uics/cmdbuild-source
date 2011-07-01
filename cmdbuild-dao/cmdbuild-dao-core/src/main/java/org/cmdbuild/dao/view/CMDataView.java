@@ -4,20 +4,24 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
 public interface CMDataView {
 
-//	public CMClassDefinition newClass(final String name);
-	public CMClass findClassById(final Object id);
-	public CMClass findClassByName(final String name);
-	public Iterable<? extends CMClass> findAllClasses();
+//	CMClassDefinition newClass(String name);
+	CMClass findClass(Object idOrName);
+	CMClass findClassById(Object id);
+	CMClass findClassByName(String name);
+	Iterable<? extends CMClass> findAllClasses();
 
-	public Iterable<? extends CMDomain> findAllDomains();
-	public Iterable<? extends CMDomain> findDomains(CMClass type);
-	public CMDomain findDomainById(final Object id);
+	Iterable<? extends CMDomain> findAllDomains();
+	Iterable<? extends CMDomain> findDomains(CMClass type);
+	CMDomain findDomain(Object idOrName);
+	CMDomain findDomainById(Object id);
+	DBDomain findDomainByName(String name);
 
-	public CMCardDefinition newCard(final CMClass type);
-	public CMCardDefinition modifyCard(final CMCard type);
-	public QuerySpecsBuilder select(Object... attrDef);
+	CMCardDefinition newCard(CMClass type);
+	CMCardDefinition modifyCard(CMCard type);
+	QuerySpecsBuilder select(Object... attrDef);
 }

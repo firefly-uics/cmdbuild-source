@@ -63,7 +63,7 @@ public class GetRelationList {
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
 		final CMDomain dom;
 		if (domainWithSource != null) {
-			dom = view.findDomainById(domainWithSource.domainId);
+			dom = view.findDomain(domainWithSource.domainId);
 		} else {
 			dom = anyDomain();
 		}
@@ -72,7 +72,7 @@ public class GetRelationList {
 	}
 
 	private CMClass getCardType(final Card src) {
-		final CMClass type = view.findClassById(src.classId);
+		final CMClass type = view.findClass(src.classId);
 		Validate.notNull(type);
 		return type;
 	}
