@@ -6,23 +6,28 @@
  *
  * @class Ext.ux.Notification
  * @extends Ext.Window
+ * 
+ * modified by us
  */
+(function() {
+	var BORDER_X_OFFSET = 20,
+		BORDER_Y_OFFSET = 40;
 
 Ext.namespace("Ext.ux");
 
-
 Ext.ux.NotificationMgr = {
 	positions: [],
-	
+
 	push: function(item) {
 		this.positions.push(item);
 	},
-	
+
 	remove: function(item) {
 		this.positions = Ext.Array.remove(this.positions, item);
 	},
-	indexOf: function(item) {
-		return this.positions.indexOf(item);
+
+	length: function() {
+		return this.positions.length;
 	}
 };
 
@@ -38,61 +43,51 @@ Ext.define("Ext.ux.Notification", {
 			draggable: false,
 			bodyStyle: 'text-align:center'
 		});
+
 		if(this.autoDestroy) {
 			this.task = new Ext.util.DelayedTask(this.hide, this);
 		} else {
 			this.closable = true;
 		}
-		Ext.ux.Notification.superclass.initComponent.call(this);
+
+		this.callParent(arguments);
 	},
+
 	setMessage: function(msg){
 		this.body.update(msg);
 	},
+
 	setTitle: function(title, iconCls){
-		Ext.ux.Notification.superclass.setTitle.call(this, title, iconCls||this.iconCls);
+		this.callParent([title, iconCls||this.iconCls]);
 	},
-	onRender:function(ct, position) {
-		Ext.ux.Notification.superclass.onRender.call(this, ct, position);
-	},
-	onDestroy: function(){
-		Ext.ux.NotificationMgr.remove(this.pos);
-		Ext.ux.Notification.superclass.onDestroy.call(this);
-	},
+
 	cancelHiding: function(){
 		this.addClass('fixed');
 		if(this.autoDestroy) {
 			this.task.cancel();
 		}
 	},
+
 	afterShow: function(){
-		Ext.ux.Notification.superclass.afterShow.call(this);
-		Ext.fly(this.body.dom).on('click', this.cancelHiding, this);
-		if(this.autoDestroy) {
-			this.task.delay(this.hideDelay || 5000);
-	   }
-	},
-	animShow: function(){
-		this.pos = 0;
-		while(Ext.ux.NotificationMgr.indexOf(this.pos)>-1) {
-			this.pos++;
-		}
+		this.pos = Ext.ux.NotificationMgr.length();
 		Ext.ux.NotificationMgr.push(this.pos);
 		this.setSize(200,100);
-		this.el.alignTo(document, "br-br", [ -20, -20-((this.getSize().height+10)*this.pos) ]);
-		this.el.slideIn('b', {
-			duration: 1,
-			callback: this.afterShow,
-			scope: this
-		});
+		this.el.alignTo(document, "br-br", [ -BORDER_X_OFFSET, -BORDER_Y_OFFSET-((this.getSize().height+10)*this.pos) ]);
+
+		Ext.fly(this.body.dom).on('click', this.cancelHiding, this);
+		if (this.autoDestroy) {
+			this.task.delay(this.hideDelay || 5000);
+		}
+		
+		this.toFront();
 	},
-	animHide: function(){
-		   Ext.ux.NotificationMgr.remove(this.pos);
-		this.el.ghost("b", {
-			duration: 1,
-			remove: true
-		});
+
+	afterHide: function() {
+		Ext.ux.NotificationMgr.remove(this.pos);
+		this.callParent(arguments);
 	},
 
 	focus: Ext.emptyFn 
 
 }); 
+})();

@@ -57,7 +57,11 @@
 				return;
 			}
 
-			CMDBuild.LoadMask.get().show();
+			var el = this.view.getEl();
+			if (el) {
+				el.mask();
+			}
+
 			CMDBuild.ServiceProxy.relations.getList({
 				params: {
 					Id: this.currentCard.get("Id"),
@@ -66,7 +70,7 @@
 				},
 				scope: this,
 				success: function(a,b, response) {
-					CMDBuild.LoadMask.get().hide();
+					el.unmask();
 					this.view.fillWithData(response.domains);
 				}
 			});
@@ -122,6 +126,11 @@
 		if (node.get("relations_size") > CMDBuild.Config.cmdbuild.relationlimit) {
 			node.removeAll();
 
+			var el = this.view.getEl();
+			if (el) {
+				el.mask();
+			}
+
 			CMDBuild.ServiceProxy.relations.getList({
 				params: {
 					Id: this.currentCard.get("Id"),
@@ -133,6 +142,7 @@
 				success: function(a,b, response) {
 					var cc = this.view.convertRelationInNodes(response.domains[0].relations);
 					node.appendChild(cc);
+					el.unmask();
 				}
 			});
 		}

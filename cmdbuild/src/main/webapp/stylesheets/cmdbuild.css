@@ -732,10 +732,6 @@ em {
 	width: auto ! important;
 }
 
-.x-notification .x-tool-close {
-	display: none
-}
-
 .x-notification.fixed .x-tool-close {
 	display: block
 }
