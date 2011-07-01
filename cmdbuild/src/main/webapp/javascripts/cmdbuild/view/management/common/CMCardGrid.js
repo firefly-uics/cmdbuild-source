@@ -151,7 +151,7 @@
 			_CMCache.getAttributeList(classId, 
 				Ext.bind(function(attributes) {
 					this.setColumnsForClass(attributes);
-					if (o.cb) {
+					if (o && o.cb) {
 						o.cb.call(o.scope || this);
 					} else {
 						this.store.loadPage(1);
@@ -415,7 +415,7 @@
 		if (event.target.className == 'action-open-graph') {
 //			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
 
-			alert("@@ The graph");
+//			alert("@@ The graph");
 		}
 	}
 	

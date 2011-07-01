@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMMenuAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Menu",
+		title: CMDBuild.Translation.management.modmenu.menu,
 		cmName: "menu",
 		buildTreeStructure: function(items) {
 			var nodesMap = {};

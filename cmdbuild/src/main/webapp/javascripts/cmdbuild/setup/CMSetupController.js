@@ -90,7 +90,7 @@
 		var nonValidFields = this.getNonValidFields();
 		if (nonValidFields.length > 0) {
 			Ext.Msg.show({
-				title: "@@ Error", 
+				title: CMDBuild.Translation.common.failure, 
 				msg: "@@ Ci sono campi non valid", 
 				buttons: Ext.MessageBox.OK 
 			});

@@ -30,12 +30,12 @@
 			});
 
 			this.saveButton = new Ext.button.Button({
-				text: "@@Save",
+				text: CMDBuild.Translation.common.btns.save,
 				disabled: true
 			})
 
 	 		this.abortButton = new Ext.button.Button({
-				text: "@@Abort",
+				text: CMDBuild.Translation.common.btns.abort,
 				disabled: true,
 				scope: this,
 				handler: function() {

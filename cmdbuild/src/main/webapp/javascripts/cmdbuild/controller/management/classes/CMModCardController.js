@@ -124,7 +124,7 @@
 	  	 	});
 		};
 
-		Ext.Msg.confirm("@@ Title", "@@ msg" , makeRequest, this);
+		Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);
 	}
 	
 	function onAbortCardClick() {

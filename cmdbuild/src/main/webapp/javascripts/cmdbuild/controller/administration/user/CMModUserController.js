@@ -30,7 +30,7 @@
 	function onSaveButtonClick() {
 		var nonvalid = this.form.getNonValidFields();
 		if (nonvalid.length > 0) {
-			CMDBuild.Msg.error("@@Error", "@@Ci sono campi non validi", false);
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, "@@Ci sono campi non validi", false);
 			return;
 		}
 		

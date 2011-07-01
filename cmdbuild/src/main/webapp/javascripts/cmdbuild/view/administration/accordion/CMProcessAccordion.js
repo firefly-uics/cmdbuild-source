@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMProcessAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Process",
+		title: CMDBuild.Translation.administration.modWorkflow.tree_title,
 		cmName: "process",
 
 		buildTreeStructure: function() {
@@ -53,17 +53,4 @@
 		parentNode.leaf = false;
 	}
 
-	function buildFakeRoot(standard, simpletables) {
-		return {
-			leaf: false,
-			children:[
-				standard[0],
-				{
-					text: "@@Simples",
-					leaf: false,
-					children: simpletables
-				}
-			]
-		}
-	}
 })();

@@ -10,16 +10,16 @@ Ext.define("CMDBuild.app.Setup", {
 			this.step3 = new CMDBuild.setup.Step3();
 
 			this.nextButton = new Ext.button.Button({
-				text: "@@ Next"
+				text: CMDBuild.Translation.configure.next
 			});
 			
 			this.prevButton = new Ext.button.Button({
-				text: "@@ Prew",
+				text: CMDBuild.Translation.configure.previous,
 				disabled: true
 			});
 
 			this.finishButton = new Ext.button.Button({
-				text: "@@ finish",
+				text: CMDBuild.Translation.configure.finish,
 				hidden: true
 			});
 

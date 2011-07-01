@@ -70,7 +70,7 @@
 	
 	function onCancelButtonFormClick() {
 		Ext.Msg.show({
-			title: "@@ Delete attribute",
+			title: CMDBuild.Translation.management.findfilter.msg.attention,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 			scope: this,
 			buttons: Ext.Msg.YESNO,

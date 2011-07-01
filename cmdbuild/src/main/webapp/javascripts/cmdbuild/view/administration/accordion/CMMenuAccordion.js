@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMMenuAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Menu",
+		title: CMDBuild.Translation.administration.modmenu.menu_root,
 		cmName: "menu",
 		buildTreeStructure: function() {
 			var groups = _CMCache.getGroups();

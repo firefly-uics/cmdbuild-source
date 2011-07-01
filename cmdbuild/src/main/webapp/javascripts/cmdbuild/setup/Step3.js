@@ -7,8 +7,8 @@
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
 		constructor: function() {
-			this.title = "@@Step 3";
-			
+			this.title = CMDBuild.Translation.configure.title;
+
 			this.adminUser = new Ext.form.TextField({
 				name: 'admin_user',
 				fieldLabel: tr.admin_user,

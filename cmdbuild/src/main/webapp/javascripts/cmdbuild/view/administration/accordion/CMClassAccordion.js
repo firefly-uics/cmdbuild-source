@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMClassAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Class",
+		title: CMDBuild.Translation.administration.modClass.tree_title,
 		cmName: "class",
 		buildTreeStructure: function() {
 			var classes = _CMCache.getClasses();
@@ -44,9 +44,11 @@
 	});
 
 	function buildNodeConf(node) {
+		var standard = CMDBuild.Translation.administration.modClass.classProperties.standard;
+
 		return {
 			id: node.get("id"),
-			text: node.get("text") != "Class" ? node.get("text") : "@@Standard",
+			text: node.get("text") != "Class" ? node.get("text") : standard,
 			tableType: node.get("tableType"),
 			leaf: true,
 			cmName: node.get("text") != "Class" ? "class" : "",
@@ -62,12 +64,14 @@
 	}
 
 	function buildFakeRoot(standard, simpletables) {
+		var simple = CMDBuild.Translation.administration.modClass.classProperties.simple;
+
 		return {
 			leaf: false,
 			children:[
 				standard[0],
 				{
-					text: "@@Simples",
+					text: simple,
 					leaf: false,
 					children: simpletables
 				}

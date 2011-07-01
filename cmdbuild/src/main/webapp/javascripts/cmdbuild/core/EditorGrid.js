@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.EditorGrid", {
-//    extend: "Ext.grid.EditorGridPanel", // TODO extjs 4 migration @@
+//    extend: "Ext.grid.EditorGridPanel", // TODO extjs 4 migration
 	extend: "Ext.grid.Panel",
     alias: "cmdbuildEditorGrid",
 	columns: [],
