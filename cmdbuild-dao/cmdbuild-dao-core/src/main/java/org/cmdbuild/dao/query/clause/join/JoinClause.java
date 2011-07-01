@@ -3,12 +3,15 @@ package org.cmdbuild.dao.query.clause.join;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.AnyClass;
+import org.cmdbuild.dao.query.clause.AnyDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.view.CMDataView;
 
 public class JoinClause {
 
@@ -18,45 +21,11 @@ public class JoinClause {
 	protected final Set<CMClass> targets;
 	protected final Set<QueryDomain> queryDomains;
 
-	protected JoinClause(final Alias targetAlias, final Alias domainAlias) {
-		this.targetAlias = targetAlias;
-		this.domainAlias = domainAlias;
-		this.targets = new HashSet<CMClass>();
-		this.queryDomains = new HashSet<QueryDomain>();
-	}
-
-	public JoinClause(final CMClass source, final CMClass target, final CMDomain domain, final Alias targetAlias, final Alias domainAlias) {
-		this(targetAlias, domainAlias);
-		addQueryDomain(source, domain, target);
-	}
-
-	protected final void addQueryDomain(final CMClass source, final CMDomain d, final CMClass target) {
-		if (d.getClass1().isAncestorOf(source)) {
-			queryDomains.add(new QueryDomain(d, Source._1));
-			if (target instanceof AnyClass) {
-				addTargetLeaves(d.getClass2());
-			} else {
-				this.targets.add(target);
-			}
-		}
-		if (d.getClass2().isAncestorOf(source)) {
-			queryDomains.add(new QueryDomain(d, Source._2));
-			if (target instanceof AnyClass) {
-				addTargetLeaves(d.getClass1());
-			} else {
-				this.targets.add(target);
-			}
-		}
-	}
-
-	protected void addTargetLeaves(final CMClass targetDomainClass) {
-		if (targetDomainClass.isSuperclass()) {
-			for (CMClass subclass : targetDomainClass.getChildren()) {
-				addTargetLeaves(subclass);
-			}
-		} else {
-			targets.add(targetDomainClass);
-		}
+	private JoinClause(final Builder builder) {
+		this.targetAlias = builder.targetAlias;
+		this.domainAlias = builder.domainAlias;
+		this.targets = builder.targets;
+		this.queryDomains = builder.queryDomains;
 	}
 
 	public Alias getTargetAlias() {
@@ -73,5 +42,106 @@ public class JoinClause {
 
 	public Set<QueryDomain> getQueryDomains() {
 		return queryDomains;
+	}
+
+	/*
+	 * Builder
+	 */
+
+	public static class Builder {
+
+		private final CMDataView view;
+		private final CMClass source;
+
+		private Alias targetAlias;
+		private Alias domainAlias;
+		private Set<CMClass> targets;
+		private Set<QueryDomain> queryDomains;
+
+		public Builder(final CMDataView view, final CMClass source) {
+			Validate.notNull(source);
+			this.view = view;
+			this.source = source;
+			this.queryDomains = new HashSet<QueryDomain>();
+			this.targets = new HashSet<CMClass>();
+		}
+
+		public Builder domain(final CMDomain domain, final Alias domainAlias) {
+			Validate.notNull(domain);
+			Validate.notNull(domainAlias);
+			if (domain instanceof AnyDomain) {
+				addAllDomains();
+			} else {
+				addDomain(domain);
+			}
+			this.domainAlias = domainAlias;
+			return this;
+		}
+
+		public Builder domain(final QueryDomain queryDomain, final Alias domainAlias) {
+			Validate.notNull(queryDomain);
+			Validate.notNull(domainAlias);
+			addQueryDomain(queryDomain);
+			this.domainAlias = domainAlias;
+			return this;
+		}
+
+		public Builder target(final CMClass target, final Alias targetAlias) {
+			Validate.notNull(target);
+			Validate.notNull(targetAlias);
+			if (target instanceof AnyClass) {
+				addAnyTarget();
+			} else {
+				addTarget(target);
+			}
+			this.targetAlias = targetAlias;
+			return this;
+		}
+
+		public JoinClause build() {
+			Validate.notEmpty(targets);
+			return new JoinClause(this);
+		}
+
+		private void addAllDomains() {
+			for (CMDomain domain : view.findDomains(source)) {
+				addDomain(domain);
+			}
+		}
+
+		private final void addDomain(final CMDomain domain) {
+			addQueryDomain(new QueryDomain(domain, Source._1));
+			addQueryDomain(new QueryDomain(domain, Source._2));
+		}
+
+		private final void addQueryDomain(final QueryDomain qd) {
+			if (qd.getSourceClass().isAncestorOf(source)) {
+				queryDomains.add(qd);
+			}
+		}
+
+		private void addAnyTarget() {
+			for (QueryDomain qd : queryDomains) {
+				addTargetLeaves(qd.getTargetClass());
+			}
+		}
+
+		private void addTarget(CMClass target) {
+			for (QueryDomain qd : queryDomains) {
+				if (qd.getTargetClass().isAncestorOf(target)) {
+					addTargetLeaves(target);
+				}
+			}
+		}
+
+		private void addTargetLeaves(final CMClass targetDomainClass) {
+			if (targetDomainClass.isSuperclass()) {
+				for (CMClass subclass : targetDomainClass.getChildren()) {
+					addTargetLeaves(subclass);
+				}
+			} else {
+				targets.add(targetDomainClass);
+			}
+		}
 	}
 }

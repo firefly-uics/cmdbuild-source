@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.query.clause;
 
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 
 /**
@@ -21,6 +22,16 @@ public class QueryDomain {
 			public String getDomainDescription(final CMDomain domain) {
 				return domain.getDescription1();
 			}
+
+			@Override
+			public CMClass getSourceClass(final CMDomain domain) {
+				return domain.getClass1();
+			}
+
+			@Override
+			public CMClass getTargetClass(final CMDomain domain) {
+				return domain.getClass2();
+			}
 		},
 		_2 {
 			@Override
@@ -32,10 +43,22 @@ public class QueryDomain {
 			public String getDomainDescription(final CMDomain domain) {
 				return domain.getDescription2();
 			}
+
+			@Override
+			public CMClass getSourceClass(final CMDomain domain) {
+				return domain.getClass2();
+			}
+
+			@Override
+			public CMClass getTargetClass(final CMDomain domain) {
+				return domain.getClass1();
+			}
 		};
 
 		public abstract boolean getDirection();
 		public abstract String getDomainDescription(CMDomain domain);
+		public abstract CMClass getSourceClass(final CMDomain domain);
+		public abstract CMClass getTargetClass(final CMDomain domain);
 	}
 
 	final CMDomain domain;
@@ -56,6 +79,14 @@ public class QueryDomain {
 
 	public String getQuerySource() {
 		return querySource.name();
+	}
+
+	public CMClass getSourceClass() {
+		return querySource.getSourceClass(domain);
+	}
+
+	public CMClass getTargetClass() {
+		return querySource.getTargetClass(domain);
 	}
 
 	/**
