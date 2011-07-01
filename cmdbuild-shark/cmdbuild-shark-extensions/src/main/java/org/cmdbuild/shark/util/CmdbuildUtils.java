@@ -309,10 +309,11 @@ public class CmdbuildUtils {
 			throws Exception, ToolAgentGeneralException {
 		WMFilter filter = Shark.getInstance().getAssignmentFilterBuilder().addProcessIdEquals(shandle, processInstanceId);
 		WMWorkItem[] workItemArray = wapi.listWorkItems(shandle, filter, false).getArray();
-		if (workItemArray.length < 1) {
+		if (workItemArray.length < 1) { 
 			throw new ToolAgentGeneralException("No workitems for process " + processInstanceId);
 		} else {
-			System.out.println("More than one workitem. Picking the first one.");
+			if (workItemArray.length > 1)
+				System.out.println("More than one workitem for process" + processInstanceId+". Picking the first one."); 
 			return workItemArray[0];
 		}
 	}
