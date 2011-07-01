@@ -53,7 +53,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		}); 
 		
 		this.propertiesFieldset = new Ext.form.FieldSet({
-			title: "@@ Gropu properties",
+			title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
 			items: [
 				this.groupName,
 				this.groupDescription,

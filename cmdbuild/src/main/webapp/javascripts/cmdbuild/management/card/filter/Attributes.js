@@ -28,7 +28,7 @@ Ext.define("CMDBuild.Management.Attributes", {
 			tbar.push('->');
 			tbar.push(this.filterButton)
 			this.resetFilterButton = new Ext.button.Button({
-				text: "@@Pulisci filtro",
+				text: CMDBuild.Translation.management.findfilter.clear_filter,
 				iconCls: "delete"
 			});
 			tbar.push(this.resetFilterButton);

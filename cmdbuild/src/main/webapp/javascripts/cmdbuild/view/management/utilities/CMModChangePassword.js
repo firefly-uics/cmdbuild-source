@@ -87,7 +87,7 @@
 				}
 			});
 		} else {
-			CMDBuild.Msg.info("@@Error", "@@ Il form non è valido");
+			CMDBuild.Msg.info(CMDBuild.Translation.common.failure, "@@ Il form non è valido");
 		}
 	}
 

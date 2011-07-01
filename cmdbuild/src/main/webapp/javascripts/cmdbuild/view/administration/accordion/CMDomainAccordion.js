@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMDomainAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Domain",
+		title: CMDBuild.Translation.administration.modClass.tabs.domains,
 		cmName: "domain",
 
 		buildTreeStructure: function() {

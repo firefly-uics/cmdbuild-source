@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMGroupsAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Groups",
+		title: CMDBuild.Translation.administration.modsecurity.title,
 		cmName: "group",
 		buildTreeStructure: function() {
 			var groups = _CMCache.getGroups();
@@ -13,13 +13,12 @@
 			}
 
 			return [{
-				id: "@@ groups",
-				text: "@@ groups",
+				text: CMDBuild.Translation.administration.modsecurity.groups,
 				leaf: false,
 				cmName: "group",
 				children: nodes
 			}, {
-				text: "@@ users",
+				text: CMDBuild.Translation.administration.modsecurity.users,
 				cmName: "users",
 				leaf: true
 			}];

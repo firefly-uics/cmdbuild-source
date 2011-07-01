@@ -42,7 +42,7 @@
 					{header: col_tr.begin_date, flex: 1, sortable: false, dataIndex: 'rel_date'},
 					{header: col_tr.code, flex: 1, sortable: false, dataIndex: 'dst_code'},
 					{header: col_tr.description, flex: 2, sortable: false, dataIndex: 'dst_desc'},
-					{header: "@@ Attributes", flex: 4, sortable: false, dataIndex: 'rel_attr'},
+					{header: CMDBuild.Translation.administration.modClass.tabs.attributes, flex: 4, sortable: false, dataIndex: 'rel_attr'},
 					{
 						header: '&nbsp', 
 						width: 90,

@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administraton.accordion.CMLookupAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Lookup",
+		title: CMDBuild.Translation.administration.modLookup.lookupTypes,
 		cmName: "lookuptype",
 		buildTreeStructure: function() {
 			var lookupTypes = _CMCache.getLookupTypes();

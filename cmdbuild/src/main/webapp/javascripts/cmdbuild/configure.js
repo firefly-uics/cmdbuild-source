@@ -10,16 +10,16 @@ Ext.define("CMDBuild.app.Configure", {
 			this.step3 = new CMDBuild.configure.Step3();
 
 			this.nextButton = new Ext.button.Button({
-				text: "@@ Next"
+				text: CMDBuild.Translation.configure.next
 			});
 			
 			this.prevButton = new Ext.button.Button({
-				text: "@@ Prew",
+				text: CMDBuild.Translation.configure.previous,
 				disabled: true
 			});
 
 			this.finishButton = new Ext.button.Button({
-				text: "@@ finish",
+				text: CMDBuild.Translation.configure.finish,
 				hidden: true
 			});
 
@@ -69,63 +69,3 @@ Ext.define("CMDBuild.app.Configure", {
 });
 
 })();
-// 	var tr = CMDBuild.Translation.configure;
-// 
-// 	var redirectToApp = function(){
-// 		window.location = 'management.jsp';
-// 	};
-// 	
-// 	if (CMDBuild.Config.cmdbuild.jdbcDriverVersion == "undefined") {
-// 		CMDBuild.Msg.warn(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.no_driver, true);
-// 	} else {
-// 		this.sptep1 = new CMDBuild.Configure.Step1({id: 'card-1'});
-// 		
-// 		function displayViewport() {
-// 		    var viewport = new Ext.Viewport({
-// 		        id: 'configure-viewport',
-// 		        layout:'border',
-// 				frame: false,
-// 				border: false,
-// 		       	items:[{
-// 			          	region: 'center',
-// 		           	    layout: 'fit',
-// 					    border: false,
-// 					    frame: false,
-// 					    cls: 'configure_wizard',
-// 						items: [{
-// 							frame: true, 
-// 							title: tr.title,
-// 						    layout:'card',
-// 							activeItem: 0,
-// 						    id: 'configure_wizard_panel',
-// 							items: [
-// 								this.step1
-// 							,{
-// 								id: 'card-2',
-// 								xtype: 'configureStep2'
-// 						    },{
-// 								id: 'card-3',
-// 								xtype: 'configureStep3'
-// 						    }]
-// 						}]
-// 		            },{
-// 						frame: false,
-// 						border: false,
-// 			        	region:'north',
-// 			        	id: 'header_panel',
-// 			            contentEl: 'header',
-// 			            height: 45
-// 			        },{
-// 			        	frame: false,
-// 						border: false,
-// 				        region : "south",
-// 				        id: 'footer_panel',
-// 				        contentEl: "footer",
-// 				        border: false,
-// 						height: 20
-// 			        }]
-// 		    });
-// 		}
-// 		displayViewport();
-// 	}
-// });

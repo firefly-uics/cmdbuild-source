@@ -193,7 +193,7 @@ CMDBuild.ServiceProxy = {
 					root: "layers"
 				}
 			},
-			// @@ TODO check the layers grid
+			//TODO 3 to 4 check the layers grid
 //			fields: ["maxZoom", "minZoom", "style", "description", "index",
 //			         "name", "masterTableId", "type", "masterTableName", "isvisible"],
 			autoLoad: false,

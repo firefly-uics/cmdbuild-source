@@ -62,11 +62,11 @@
 				this.cmAccordions = [
 					this.menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion(),
  					this.classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
-						title: "@@ Class"
+						title: CMDBuild.Translation.administration.modClass.tree_title
 					}),
 					this.reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),
 					this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
-						title: "@@ Utilities"
+						title: CMDBuild.Translation.management.modutilities.title
 					})
 				];
 

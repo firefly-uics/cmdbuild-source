@@ -4,7 +4,7 @@
 	Ext.define("CMDBuild.setup.Step1", {
 		extend: "Ext.form.Panel",
 		constructor: function() {
-			this.title = "@@ Step1";
+			this.title = CMDBuild.Translation.configure.title;
 
  			this.languageStore = CMDBuild.ServiceProxy.setup.getLanguageStore();
 

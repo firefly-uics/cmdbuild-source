@@ -4,7 +4,7 @@
 	Ext.define("CMDBuild.setup.Step2",{
 		extend: "Ext.panel.Panel",
 		constructor: function() {
-			this.title = "@@Step 2";
+			this.title = CMDBuild.Translation.configure.title;
 			this.dbType = new Ext.form.ComboBox( { 
 				name: 'db_type',
 				fieldLabel: tr.db_create_type,

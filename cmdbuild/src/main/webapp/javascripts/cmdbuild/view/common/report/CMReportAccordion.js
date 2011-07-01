@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.common.report.CMReportAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ Report",
+		title: CMDBuild.Translation.administration.modreport.title,
 		cmName: "report",
 		buildTreeStructure: function() {
 			var reports = _CMCache.getReports();
