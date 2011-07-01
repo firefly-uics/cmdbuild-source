@@ -86,7 +86,25 @@ public abstract class CachingDriver implements DBDriver {
 
 	@Override
 	public final DBClass findClassById(Object id) {
-		return getAllClassesStore().getById(id);
+		try {
+			return getAllClassesStore().getById(normalizeId(id));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	// TODO It should be implemented by every driver
+	//public abstract Object normalizeId(Object id);
+	public Object normalizeId(final Object id) {
+		if (id instanceof Long) {
+			return id;
+		} else if (id instanceof Number) {
+			return ((Number) id).longValue();
+		} else if (id instanceof String) {
+			return Long.valueOf((String) id);
+		} else {
+			throw new IllegalArgumentException("Invalid Id");
+		}
 	}
 
 	@Override

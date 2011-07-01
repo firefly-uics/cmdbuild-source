@@ -565,7 +565,6 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
 			@Parameter(value = "domainId", required = false) Long domainId,
 			@Parameter(value = "src", required = false) String querySource) throws JSONException {
-
 		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
