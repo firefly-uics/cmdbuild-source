@@ -79,7 +79,10 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 			buttonAlign: 'center',
 			buttons: [this.confirmBtn, this.abortBtn]
 		});
-
+		
+		if (Ext.isGecko) { // auto width does not work for upload field
+			this.width = 400;
+		}
 		this.callParent(arguments);
 	},
 
