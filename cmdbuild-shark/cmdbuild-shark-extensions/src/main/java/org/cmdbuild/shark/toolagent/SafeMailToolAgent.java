@@ -41,7 +41,7 @@ import org.enhydra.shark.utilities.MiscUtilities;
 @SuppressWarnings({"unchecked"})
 public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -60,6 +60,8 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	public static final String VAR_ATTACHMENTS_NAME = "VarAttachments";
 	public static final String VAR_ATTACHMENTS_MIME_TYPES_NAME = "VarAttachmentsMimeTypes";
 
+	private static final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+
 	protected CallbackUtilities cus;
 
 	protected AppParameter[] sharkParams;
@@ -72,7 +74,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 
 	protected String assId;
 
-	protected static String useAuthentication = "false";
+	protected static boolean useAuthentication = false;
 
 	protected static String SMTPMailServer;
 
@@ -84,6 +86,8 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 
 	protected static int POP3port;
 
+	protected static boolean SMTP_UseSSL;
+
 	protected static String sourceAddress;
 
 	protected static String login;
@@ -93,21 +97,21 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	protected static String incomingMailProtocol;
 
 	protected static String storeFolderName;
-	
+
 	long cmdbuildCardId;
 
-	public void configure(CallbackUtilities cus,
-			WMSessionHandle shandle,
-			String procId,
-			String assId,
-			AppParameter[] aps) throws Exception {
+	public void configure(final CallbackUtilities cus,
+			final WMSessionHandle shandle,
+			final String procId,
+			final String assId,
+			final AppParameter[] aps) throws Exception {
 
 		this.cus = cus;
 		this.sharkParams = aps;
 		this.procId = procId;
 		this.assId = assId;
-		
-		WAPI wapi = Shark.getInstance().getWAPIConnection();
+
+		final WAPI wapi = Shark.getInstance().getWAPIConnection();
 		this.cmdbuildCardId = (Long)wapi.getProcessInstanceAttributeValue(shandle, procId, "ProcessId").getValue();
 
 		if (SafeMailToolAgent.SMTPMailServer == null) {
@@ -117,7 +121,8 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 				SafeMailToolAgent.SMTPport = Integer.parseInt(cus.getProperty("DefaultMailMessageHandler.SMTPPortNo"));
 				SafeMailToolAgent.IMAPport = Integer.parseInt(cus.getProperty("DefaultMailMessageHandler.IMAPPortNo"));
 				SafeMailToolAgent.POP3port = Integer.parseInt(cus.getProperty("DefaultMailMessageHandler.POP3PortNo"));
-			} catch (Exception ex) {
+				SafeMailToolAgent.SMTP_UseSSL = Boolean.valueOf(cus.getProperty("DefaultMailMessageHandler.SMTP_UseSSL"));
+			} catch (final Exception ex) {
 			}
 			SafeMailToolAgent.sourceAddress = cus.getProperty("DefaultMailMessageHandler.SourceAddress");
 			SafeMailToolAgent.login = cus.getProperty("DefaultMailMessageHandler.Login");
@@ -125,56 +130,55 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 			SafeMailToolAgent.incomingMailProtocol = cus.getProperty("DefaultMailMessageHandler.IncomingMailProtocol");
 			SafeMailToolAgent.storeFolderName = cus.getProperty("DefaultMailMessageHandler.StoreFolderName");
 
-			SafeMailToolAgent.useAuthentication = this.cus.getProperty("DefaultMailMessageHandler.useAuthentication",
-			"false");
+			SafeMailToolAgent.useAuthentication = Boolean.valueOf(cus.getProperty("DefaultMailMessageHandler.useAuthentication"));
 		}
 
-		String[] varAttachments = getVarAttachments();
-		String[] varAttachmentsMimeTypes=getVarAttachmentsMimeTypes();
+		final String[] varAttachments = getVarAttachments();
+		final String[] varAttachmentsMimeTypes=getVarAttachmentsMimeTypes();
 		if (varAttachments != null && varAttachments.length > 0) {
-			SharkConnection sc = Shark.getInstance().getSharkConnection();
+			final SharkConnection sc = Shark.getInstance().getSharkConnection();
 			sc.attachToHandle(shandle);
-			Map cntxt = sc.getActivity(procId,
+			final Map cntxt = sc.getActivity(procId,
 					Shark.getInstance()
 					.getAdminMisc()
 					.getAssignmentActivityId(shandle, procId, assId))
 					.process_context();
 			for (int i = 0; i < varAttachments.length; i++) {
-				Object var = cntxt.get(varAttachments[i]);
+				final Object var = cntxt.get(varAttachments[i]);
 				varAttachmentsVariablesMap.put(varAttachments[i], var);
 				if (varAttachmentsMimeTypes!=null && varAttachmentsMimeTypes.length>i) {
 					varAttachmentsMimeTypesMap.put(varAttachments[i], varAttachmentsMimeTypes[i]);
 				} else {
-					varAttachmentsMimeTypesMap.put(varAttachments[i], "text/plain");               
+					varAttachmentsMimeTypesMap.put(varAttachments[i], "text/plain");
 				}
 			}
 		}
 	}
 
-	private InternetAddress validate(String addr){
+	private InternetAddress validate(final String addr){
 		return validate(addr,null);
 	}
-	private InternetAddress validate(String addr,String name){
+	private InternetAddress validate(final String addr,final String name){
 		if(addr == null) return null;
 		InternetAddress out = null;
 		if(name != null){
 			try{
 				out = new InternetAddress(addr,name);
 				out.validate();
-			}catch(Exception e){
+			}catch(final Exception e){
 				System.err.println("Mail address validation failed for: " + addr + " (" + name + ")");
 			}
 		}else{
 			try{
 				out = new InternetAddress(addr);
 				out.validate();
-			}catch(Exception e){
+			}catch(final Exception e){
 				System.err.println("Mail address validation failed for: " + addr);
 			}
 		}
 		return out;
 	}
-	
+
 	public void sendMail() {
 		if( SafeMailToolAgent.SMTPMailServer==null||SafeMailToolAgent.SMTPMailServer.equals("") ){
 			System.out.println("SMTPMailServer null, mail not sent.");
@@ -185,38 +189,45 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 				System.out.println("Asynchronous mail sending...");
 				try{
 					// Get system properties
-					Properties props = new Properties();
+					final Properties props = new Properties();
 
 					// Setup mail server
+					props.put("mail.transport.protocol", "smtp");
+					props.put("mail.host", SafeMailToolAgent.SMTPMailServer);
 					props.put("mail.smtp.host", SafeMailToolAgent.SMTPMailServer);
-					props.put("mail.smtp.port", "" + SafeMailToolAgent.SMTPport);
 
-					// User name
+
+					if (SafeMailToolAgent.SMTPport>0) {
+						props.put("mail.smtp.port", "" + SafeMailToolAgent.SMTPport);
+						props.put("mail.smtp.socketFactory.port", SafeMailToolAgent.SMTPport);
+					}
 					props.put("mail.smtp.user", SafeMailToolAgent.login);
+					props.put("mail.smtp.user", SafeMailToolAgent.password);
+					props.put("mail.smtp.auth", SafeMailToolAgent.useAuthentication+"");
 
-					// there is a problem when using different
-					// Mail API implementations, so if strange
-					// AuthenticationFailedException occures,
-					// set authentication to false as a workaround
-					props.put("mail.smtp.auth", SafeMailToolAgent.useAuthentication);
-					
+					if (SMTP_UseSSL) {
+						props.put("mail.smtp.socketFactory.class", SSL_FACTORY);
+						props.put("mail.smtp.socketFactory.fallback", "false");
+						props.setProperty("mail.smtp.quitwait", "false");
+					}
+
 					props.put("mail.smtp.starttls.enable",cus.getProperty("DefaultMailMessageHandler.StartTLS","false"));
 
+
 					// Get session
-					javax.mail.Session session = Session.getInstance(props,
-							new SmtpAuthenticator(SafeMailToolAgent.login,
-									SafeMailToolAgent.password));
+					final javax.mail.Session session = Session.getInstance(props,
+							new SmtpAuthenticator(SafeMailToolAgent.login,SafeMailToolAgent.password));
 
 					// Define message
 					final Message message = new MimeMessage(session);
-					
+
 					//add cmdbuild card id header
 					message.addHeader("X-CMDBUILD-PROCESSID", cmdbuildCardId+"");
 
-					String[] fromAddresses = getFromAddresses();
-					String[] fromNames = getFromNames();
+					final String[] fromAddresses = getFromAddresses();
+					final String[] fromNames = getFromNames();
 					if (fromAddresses.length > 1) {
-						List<Address> addresses = new ArrayList();
+						final List<Address> addresses = new ArrayList();
 						Address tmp = null;
 						for (int i = 0; i < fromAddresses.length; i++) {
 							String fromName = null;
@@ -231,9 +242,9 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 								if(tmp != null) addresses.add(tmp);
 							}
 						}
-						Address[] ar = new Address[addresses.size()];
+						final Address[] ar = new Address[addresses.size()];
 						int idx = 0;
-						for(Address a : addresses){
+						for(final Address a : addresses){
 							ar[idx] = a;
 							idx++;
 						}
@@ -243,7 +254,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 						if (fromNames != null && fromNames.length > 0) {
 							fromName = fromNames[0];
 						}
-						Address from = validate(fromAddresses[0],fromName);
+						final Address from = validate(fromAddresses[0],fromName);
 						if(from != null)
 							message.setFrom(from);
 						else{
@@ -252,9 +263,9 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 						}
 					}
 
-					String[] tos = getToAddresses();
-					String[] ccs = getCCAddresses();
-					String[] bccs = getBCCAddresses();
+					final String[] tos = getToAddresses();
+					final String[] ccs = getCCAddresses();
+					final String[] bccs = getBCCAddresses();
 					if ((tos == null || tos.length == 0)
 							&& (ccs == null || ccs.length == 0) && (bccs == null || bccs.length == 0)) {
 						System.out.println("DefaultMailMessageHandler: at least one To, CC or BCC address must be specified! Mail not sent.");
@@ -265,7 +276,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 						for (int i = 0; i < tos.length; i++) {
 							tmp = validate(tos[i]);
 							if(tmp != null){
-								message.addRecipient(Message.RecipientType.TO, tmp);	        		 
+								message.addRecipient(Message.RecipientType.TO, tmp);
 							}
 						}
 					}
@@ -286,17 +297,17 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 						}
 					}
 
-					String subject = getSubject();
+					final String subject = getSubject();
 					if (subject != null) {
 						message.setSubject(subject);
 					}
 
-					String content = getContent();
-					String mimeType = getMimeType();
+					final String content = getContent();
+					final String mimeType = getMimeType();
 
-					String[] fileAttachments = getFileAttachments();
-					String[] urlAttachments = getURLAttachments();
-					String[] varAttachments = getVarAttachments();
+					final String[] fileAttachments = getFileAttachments();
+					final String[] urlAttachments = getURLAttachments();
+					final String[] varAttachments = getVarAttachments();
 
 					if ((fileAttachments == null || fileAttachments.length == 0)
 							&& (urlAttachments == null || urlAttachments.length == 0)
@@ -308,7 +319,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 							message.setContent(content, mimeType);
 						}
 					} else {
-						BodyPart messageBodypart = new MimeBodyPart();
+						final BodyPart messageBodypart = new MimeBodyPart();
 						if (mimeType == null
 								|| mimeType.trim().equals("") || mimeType.equals("text/plain")) {
 							messageBodypart.setText(content);
@@ -316,12 +327,12 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 							messageBodypart.setContent(content, mimeType);
 						}
 
-						Multipart multipart = new MimeMultipart();
+						final Multipart multipart = new MimeMultipart();
 						multipart.addBodyPart(messageBodypart);
 
-						BodyPart[] fileBPs = getFileAttachments(fileAttachments);
-						BodyPart[] urlBPs = getURLAttachments(urlAttachments);
-						BodyPart[] varBPs = getVarAttachments(varAttachments);
+						final BodyPart[] fileBPs = getFileAttachments(fileAttachments);
+						final BodyPart[] urlBPs = getURLAttachments(urlAttachments);
+						final BodyPart[] varBPs = getVarAttachments(varAttachments);
 
 						if (fileBPs != null && fileBPs.length > 0) {
 							for (int i = 0; i < fileBPs.length; i++) {
@@ -346,7 +357,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 					// Send message
 					Transport.send(message);
 					System.out.println("...mail sent");
-				}catch(Exception e){
+				}catch(final Exception e){
 					// Email not sent: continue
 					e.printStackTrace();
 					System.out.println("Exception while sending mail, mail not sent.");
@@ -360,17 +371,17 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	 */
 	public String receiveMail() throws Exception {
 		// Get system properties
-		Properties props = new Properties();
+		final Properties props = new Properties();
 
 		// Get session
-		javax.mail.Session session = Session.getInstance(props, null);
+		final javax.mail.Session session = Session.getInstance(props, null);
 
 		// Get the store
 		int imPort = SafeMailToolAgent.POP3port;
 		if (!SafeMailToolAgent.incomingMailProtocol.equals("pop3")) {
 			imPort = SafeMailToolAgent.IMAPport;
 		}
-		Store store = session.getStore(SafeMailToolAgent.incomingMailProtocol);
+		final Store store = session.getStore(SafeMailToolAgent.incomingMailProtocol);
 		store.connect(SafeMailToolAgent.incomingMailServer,
 				imPort,
 				SafeMailToolAgent.login,
@@ -388,8 +399,8 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 
 			if (messages != null && messages.length > 0) {
 				for (int i = 0; i < messages.length; i++) {
-					Flags flags = messages[i].getFlags();
-					Flags.Flag[] flagarr = flags.getSystemFlags();
+					final Flags flags = messages[i].getFlags();
+					final Flags.Flag[] flagarr = flags.getSystemFlags();
 					boolean valid = true;
 					System.out.println("Checking flags for mail message "
 							+ messages[i].getSubject());
@@ -426,17 +437,17 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 		return subject;
 	}
 
-	protected BodyPart[] getFileAttachments(String[] locations) throws Exception {
+	protected BodyPart[] getFileAttachments(final String[] locations) throws Exception {
 		if (locations == null || locations.length == 0) {
 			return null;
 		}
 
 		BodyPart attachmentMessageBodyPart = null;
-		BodyPart[] parts = new BodyPart[locations.length];
+		final BodyPart[] parts = new BodyPart[locations.length];
 		DataSource source = null;
 		for (int i = 0; i < locations.length; i++) {
 			attachmentMessageBodyPart = new MimeBodyPart();
-			String oneAttachment = locations[i];
+			final String oneAttachment = locations[i];
 			source = new FileDataSource(oneAttachment);
 			try {
 				attachmentMessageBodyPart.setDataHandler(new DataHandler(source));
@@ -449,7 +460,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 					fname = oneAttachment.substring(indOfFS + 1);
 				}
 				attachmentMessageBodyPart.setFileName(fname);
-			} catch (MessagingException me) {
+			} catch (final MessagingException me) {
 				this.cus.warn(null, "Unable to send file attachment [" + oneAttachment + "].");
 				// if messaging exception occures
 				// skip this attachment
@@ -459,17 +470,17 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 		return parts;
 	}
 
-	protected BodyPart[] getURLAttachments(String[] locations) throws Exception {
+	protected BodyPart[] getURLAttachments(final String[] locations) throws Exception {
 		if (locations == null || locations.length == 0) {
 			return null;
 		}
 
 		BodyPart attachmentMessageBodyPart = null;
-		BodyPart[] parts = new BodyPart[locations.length];
+		final BodyPart[] parts = new BodyPart[locations.length];
 		DataSource source = null;
 		for (int i = 0; i < locations.length; i++) {
 			attachmentMessageBodyPart = new MimeBodyPart();
-			String oneAttachment = locations[i];
+			final String oneAttachment = locations[i];
 			System.out.println("Try attachment at location: " + locations[i]);
 			source = new URLDataSource(new URL(oneAttachment));
 			try {
@@ -483,7 +494,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 					fname = oneAttachment.substring(indOfFS + 1);
 				}
 				attachmentMessageBodyPart.setFileName(fname);
-			} catch (MessagingException me) {
+			} catch (final MessagingException me) {
 				this.cus.warn(null, "Unable to send URL attachment [" + oneAttachment + "].");
 				// if messaging exception occures
 				// skip this attachment
@@ -493,12 +504,12 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 		return parts;
 	}
 
-	protected BodyPart[] getVarAttachments(String[] locations) throws Exception {
+	protected BodyPart[] getVarAttachments(final String[] locations) throws Exception {
 		if (locations == null || locations.length == 0) {
 			return null;
 		}
-		List parts=new ArrayList();
-		BodyPart[] bparts = new BodyPart[parts.size()];
+		final List parts=new ArrayList();
+		final BodyPart[] bparts = new BodyPart[parts.size()];
 		parts.toArray(bparts);
 		return bparts;
 	}
@@ -510,7 +521,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 		}
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ",");
 		} else {
 			ret = new String[] {
@@ -527,44 +538,44 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 		}
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ",");
 		}
 		return ret;
 	}
 
 	public String[] getToAddresses() throws Exception {
-		AppParameter param = getParameterByName(TO_ADDRESSES_NAME);
+		final AppParameter param = getParameterByName(TO_ADDRESSES_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ",");
 		}
 		return ret;
 	}
 
 	public String[] getCCAddresses() throws Exception {
-		AppParameter param = getParameterByName(CC_ADDRESSES_NAME);
+		final AppParameter param = getParameterByName(CC_ADDRESSES_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ",");
 		}
 		return ret;
 	}
 
 	public String[] getBCCAddresses() throws Exception {
-		AppParameter param = getParameterByName(BCC_ADDRESSES_NAME);
+		final AppParameter param = getParameterByName(BCC_ADDRESSES_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ",");
 		}
 		return ret;
 	}
 
 	public String getSubject() throws Exception {
-		AppParameter param = getParameterByName(SUBJECT_NAME);
+		final AppParameter param = getParameterByName(SUBJECT_NAME);
 		if (param != null && param.the_value != null) {
 			return param.the_value.toString();
 		}
@@ -572,7 +583,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	}
 
 	public String getContent() throws Exception {
-		AppParameter param = getParameterByName(CONTENT_NAME);
+		final AppParameter param = getParameterByName(CONTENT_NAME);
 		if (param != null && param.the_value != null) {
 			return param.the_value.toString();
 		}
@@ -580,7 +591,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	}
 
 	public String getMimeType() throws Exception {
-		AppParameter param = getParameterByName(MIME_TYPE_NAME);
+		final AppParameter param = getParameterByName(MIME_TYPE_NAME);
 		if (param != null && param.the_value != null) {
 			return param.the_value.toString();
 		}
@@ -588,53 +599,53 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 	}
 
 	public String[] getFileAttachments() throws Exception {
-		AppParameter param = getParameterByName(FILE_ATTACHMENTS_NAME);
+		final AppParameter param = getParameterByName(FILE_ATTACHMENTS_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ";");
 		}
 		return ret;
 	}
 
 	public String[] getURLAttachments() throws Exception {
-		AppParameter param = getParameterByName(URL_ATTACHMENTS_NAME);
+		final AppParameter param = getParameterByName(URL_ATTACHMENTS_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ";");
 		}
 		return ret;
 	}
 
 	public String[] getVarAttachments() throws Exception {
-		AppParameter param = getParameterByName(VAR_ATTACHMENTS_NAME);
+		final AppParameter param = getParameterByName(VAR_ATTACHMENTS_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ";");
 		}
 		return ret;
 	}
 
 	public String[] getVarAttachmentsMimeTypes() throws Exception {
-		AppParameter param = getParameterByName(VAR_ATTACHMENTS_MIME_TYPES_NAME);
+		final AppParameter param = getParameterByName(VAR_ATTACHMENTS_MIME_TYPES_NAME);
 		String[] ret = null;
 		if (param != null && param.the_value != null) {
-			String pval = param.the_value.toString();
+			final String pval = param.the_value.toString();
 			ret = MiscUtilities.tokenize(pval, ";");
 		}
 		return ret;
 	}
 
-	public void setParamsBasedOnMailMessage(Message mmessage) throws Exception {
+	public void setParamsBasedOnMailMessage(final Message mmessage) throws Exception {
 		if (mmessage != null) {
 			AppParameter param = getParameterByName(FROM_ADDRESS_NAME);
 			if (param == null) {
 				param = getParameterByName(LEGACY_FROM_ADDRESS_NAME);
 			}
 			if (param != null) {
-				Address[] addresses = mmessage.getFrom();
+				final Address[] addresses = mmessage.getFrom();
 				if (addresses != null) {
 					String v = "";
 					for (int i = 0; i < addresses.length; i++) {
@@ -646,7 +657,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 					param.the_value = v;
 				}
 			}
-			Address[] addresses = mmessage.getAllRecipients();
+			final Address[] addresses = mmessage.getAllRecipients();
 			if (addresses != null) {
 				String tos = "";
 				String ccs = "";
@@ -688,13 +699,13 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 			}
 			param = getParameterByName(CONTENT_NAME);
 			if (param != null) {
-				Object content = mmessage.getContent();
+				final Object content = mmessage.getContent();
 				if (content instanceof String) {
 					param.the_value = content;
 				} else if (content instanceof Multipart) {
-					Multipart mp = (Multipart) content;
+					final Multipart mp = (Multipart) content;
 					for (int i = 0; i < mp.getCount(); i++) {
-						BodyPart bp = mp.getBodyPart(i);
+						final BodyPart bp = mp.getBodyPart(i);
 						if (bp.getContent() instanceof String) {
 							param.the_value = bp.getContent();
 							break;
@@ -709,7 +720,7 @@ public class SafeMailToolAgent implements MailMessageHandler, Serializable{
 		}
 	}
 
-	protected AppParameter getParameterByName(String name) throws Exception {
+	protected AppParameter getParameterByName(final String name) throws Exception {
 		if (sharkParams != null) {
 			for (int i = 0; i < sharkParams.length; i++) {
 				if (name.equals(sharkParams[i].the_formal_name)) {
