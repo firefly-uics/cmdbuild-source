@@ -101,8 +101,8 @@
 			return geoAttributesSotores[classId];
 		},
 		
-		onClassSaved: function(class) {
-			var c = this.addClass(class);
+		onClassSaved: function(_class) {
+			var c = this.addClass(_class);
 			callCmFillForStores();
 			this.fireEvent("cm_class_saved", c);
 

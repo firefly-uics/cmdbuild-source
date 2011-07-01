@@ -11,7 +11,7 @@
 			this.cardPanel = this.view.cardTabPanel.cardPanel;
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
 			this.cardGrid = this.view.cardGrid;
-			this.mdPanel = this.view.cardTabPanel.mdPanel;
+//			this.mdPanel = this.view.cardTabPanel.mdPanel;
 
 			this.attachmentsPanel = this.view.cardTabPanel.attachmentPanel;
 			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController(this.attachmentsPanel);

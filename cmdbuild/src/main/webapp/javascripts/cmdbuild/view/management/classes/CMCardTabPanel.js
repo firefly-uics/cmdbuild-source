@@ -12,9 +12,9 @@
 				withButtons: true
 			});
 
-			this.cardHistoryPanel = new CMDBuild.view.management.classes.CMCardHistoryTab({
-				title: tr.tabs.history
-			});
+//			this.cardHistoryPanel = new CMDBuild.view.management.classes.CMCardHistoryTab({
+//				title: tr.tabs.history
+//			});
 
 			this.cardNotesPanel = new CMDBuild.view.management.classes.CMCardNotesPanel({
 				title: tr.tabs.notes
@@ -24,9 +24,9 @@
 				title: tr.tabs.relations
 			});
 
-			this.mdPanel = new CMDBuild.Management.CardMasterDetailTab({
-				title: tr.tabs.detail
-			});
+//			this.mdPanel = new CMDBuild.Management.CardMasterDetailTab({
+//				title: tr.tabs.detail
+//			});
 
 			this.attachmentPanel = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
 				title: tr.tabs.attachments
@@ -40,9 +40,9 @@
 			this.items = [
 				this.cardPanel,
 				this.relationsPanel,
-				this.mdPanel,
+//				this.mdPanel,
 				this.cardNotesPanel,
-				this.cardHistoryPanel,
+//				this.cardHistoryPanel,
 				this.attachmentPanel
 			];
 
@@ -55,6 +55,8 @@
 					item.onClassSelected(id);
 				}
 			});
+			
+			this.setActiveTab(this.cardPanel);
 		},
 		
 		onCardSelected: function(card, reloadFields) {
