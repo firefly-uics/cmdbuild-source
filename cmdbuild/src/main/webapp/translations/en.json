@@ -613,7 +613,6 @@
       "no_selections": "You have not selected any card to update",
       "no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
       "reasons": {
-         "ATTACHMENT_FILE_NOTFOUND": "File {0} not found in the repository",
          "ATTACHMENT_NOTFOUND": "Attachment {0} for card {2} of {1} not found",
          "ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} non found",
          "AUTH_CLASS_NOT_AUTHORIZED": "Not enough privileges to access class {0}",
@@ -638,6 +637,7 @@
          "NOTFOUND": "Item not found",
          "ORM_AMBIGUOUS_DIRECTION": "Can't automatically determine the direction for the relation",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Attachment upload failed",
+         "ORM_ATTACHMENT_DELETE_FAILED": "Attachment delete failed",
          "ORM_CANT_CREATE_DATABASE": "Can't create the database",
          "ORM_CANT_CREATE_USER": "Can't create the user",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Can't delete cards having relations",

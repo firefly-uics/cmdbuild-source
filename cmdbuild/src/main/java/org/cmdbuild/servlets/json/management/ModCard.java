@@ -12,20 +12,20 @@ import java.util.StringTokenizer;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
-import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.CompositeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
 import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter;
+import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
+import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -34,15 +34,15 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.RelationFactory;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.legacy.dms.AlfrescoFacade;
-import org.cmdbuild.legacy.dms.AttachmentBean;
+import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
@@ -625,9 +625,11 @@ public class ModCard extends JSONBase {
 			JSONObject serializer,
 			UserContext userCtx,
 			ICard card ) throws JSONException, CMDBException {
-		AlfrescoFacade alfrescoOperation = new AlfrescoFacade(userCtx, card.getSchema().getName(), card.getId());
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		final List<StoredDocument> attachments = dmsLogic.search(card.getSchema().getName(),card.getId());
 		JSONArray rows = new JSONArray();
-		for(AttachmentBean attachment : alfrescoOperation.search()) {
+		for (StoredDocument attachment : attachments) {
 			rows.put(Serializer.serializeAttachment(attachment));
 		}
 		serializer.put("rows", rows);
@@ -639,8 +641,9 @@ public class ModCard extends JSONBase {
 			UserContext userCtx,
 			@Parameter("Filename") String filename,
 			ICard card ) throws JSONException, CMDBException {
-		AlfrescoFacade alfrescoOperation = new AlfrescoFacade(userCtx, card.getSchema().getName(), card.getId());
-		return alfrescoOperation.download(filename);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		return dmsLogic.download(card.getSchema().getName(), card.getId(), filename);
 	}
 
 	@JSONExported
@@ -650,8 +653,10 @@ public class ModCard extends JSONBase {
 			@Parameter("Category") String category,
 			@Parameter("Description") String description,
 			ICard card ) throws JSONException, CMDBException, IOException {
-		AlfrescoFacade alfrescoOperation = new AlfrescoFacade(userCtx, card.getSchema().getName(), card.getId());
-		alfrescoOperation.upload(file.getInputStream(), removeFilePath(file.getName()), category, description);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		dmsLogic.upload(userCtx.getUsername(), card.getSchema().getName(), card.getId(), file.getInputStream(),
+				removeFilePath(file.getName()), category, description);
 	}
 
 	// Needed by Internet Explorer that uploads the file with full path
@@ -668,8 +673,9 @@ public class ModCard extends JSONBase {
 			UserContext userCtx,
 			@Parameter("Filename") String filename,
 			ICard card ) throws JSONException, CMDBException, IOException {
-		AlfrescoFacade alfrescoOperation = new AlfrescoFacade(userCtx, card.getSchema().getName(), card.getId());
-		alfrescoOperation.delete(filename);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		dmsLogic.delete(card.getSchema().getName(), card.getId(), filename);
 		return serializer;
 	}
 
@@ -680,8 +686,9 @@ public class ModCard extends JSONBase {
 			@Parameter("Filename") String filename,
 			@Parameter("Description") String description,
 			ICard card ) throws JSONException, CMDBException, IOException {
-		AlfrescoFacade alfrescoOperation = new AlfrescoFacade(userCtx, card.getSchema().getName(), card.getId());
-		alfrescoOperation.updateDescription(filename, description);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		dmsLogic.updateDescription(card.getSchema().getName(), card.getId(), filename, description);
 		return serializer;
 	}
 

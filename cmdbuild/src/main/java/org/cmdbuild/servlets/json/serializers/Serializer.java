@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
@@ -36,7 +37,6 @@ import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.legacy.dms.AttachmentBean;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
@@ -171,7 +171,7 @@ public class Serializer {
 			return "class";
 	}
 
-	public static JSONObject serializeAttachment(AttachmentBean attachment) {
+	public static JSONObject serializeAttachment(StoredDocument attachment) {
 		JSONObject serializer = new JSONObject();
 		try {
 			serializer.put("Category", attachment.getCategory());

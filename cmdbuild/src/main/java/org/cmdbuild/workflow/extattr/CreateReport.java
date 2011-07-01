@@ -12,7 +12,6 @@ import org.cmdbuild.elements.report.ReportParameter;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
-import org.cmdbuild.legacy.dms.AlfrescoFacade;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
@@ -76,7 +75,8 @@ public class CreateReport extends AbstractCmdbuildExtendedAttribute {
 				String category = getCategoryForAlfresco(prm);
 				String description = getDescriptionForAlfresco(prm);
 
-				saveToAlfresco(reportFactory, userCtx, activityDO, fname, category, description);
+				// FIXME make it work later
+//				saveToAlfresco(reportFactory, userCtx, activityDO, fname, category, description);
 			}
 			if (storeProcess) {
 				Log.WORKFLOW.debug("report to be stored in process");
@@ -144,12 +144,13 @@ public class CreateReport extends AbstractCmdbuildExtendedAttribute {
 		return factory;
 	}
 	
-	private void saveToAlfresco(ReportFactoryDB factory, UserContext userCtx, ActivityDO activity,
-			String fileName, String category, String description) throws Exception{
-		String className = activity.getProcessInfo().getCmdbuildBindedClass();
-		AlfrescoFacade op = new AlfrescoFacade(userCtx,className,activity.getCmdbuildCardId());
-		op.upload(getInputStream(factory), fileName, category, description);
-	}
+	// FIXME make it work later
+//	private void saveToAlfresco(ReportFactoryDB factory, UserContext userCtx, ActivityDO activity,
+//			String fileName, String category, String description) throws Exception{
+//		String className = activity.getProcessInfo().getCmdbuildBindedClass();
+//		AlfrescoFacade op = new AlfrescoFacade(userCtx,className,activity.getCmdbuildCardId());
+//		op.upload(getInputStream(factory), fileName, category, description);
+//	}
 
 	private String generateFileName(ReportFactoryDB factory, boolean addRandom) {
 		return getNormalizedCode(factory) + "." + factory.getReportExtension();

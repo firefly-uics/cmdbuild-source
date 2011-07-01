@@ -3,7 +3,7 @@ package org.cmdbuild.services.soap.types;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.cmdbuild.legacy.dms.AttachmentBean;
+import org.cmdbuild.dms.StoredDocument;
 
 public class Attachment {
 	
@@ -17,7 +17,7 @@ public class Attachment {
 	
 	public Attachment(){ }
 	
-	public Attachment (AttachmentBean bean){
+	public Attachment (StoredDocument bean){
 		this.setFilename(bean.getName());
 		this.setDescription(bean.getDescription());
 		this.setVersion(bean.getVersion());

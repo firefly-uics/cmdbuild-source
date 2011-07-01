@@ -1,5 +1,6 @@
 package org.cmdbuild.services.soap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -8,11 +9,12 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.AuthenticationService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.operation.EAdministration;
-import org.cmdbuild.services.soap.operation.EAttachment;
 import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.ELegacySync;
 import org.cmdbuild.services.soap.operation.ELookup;
@@ -38,13 +40,18 @@ import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 @WebService(
 		endpointInterface = "org.cmdbuild.services.soap.Private",
 		targetNamespace="http://soap.services.cmdbuild.org"
 )
-public class PrivateImpl implements Private {
+public class PrivateImpl implements Private, ApplicationContextAware {
 	
+	private ApplicationContext applicationContext;
+		
 	@Resource
 	WebServiceContext wsc;
 
@@ -53,6 +60,11 @@ public class PrivateImpl implements Private {
 		AuthenticationService as = new AuthenticationService();
 		WebserviceUtils utils = new WebserviceUtils();
 		return as.getWSUserContext(utils.getAuthData(msgCtx));
+	}
+	
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
@@ -135,31 +147,49 @@ public class PrivateImpl implements Private {
 		return erelation.getRelationHistory(relation);
 	}
 
-	public Attachment[] getAttachmentList(String className, int cardId)
-			 {
-		EAttachment eattachment = new EAttachment(getUserCtx());
-		return eattachment.getAttachmentList(className, cardId);
+	public Attachment[] getAttachmentList(String className, int cardId) {
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(getUserCtx());
+		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
+		final List<Attachment> attachments = new ArrayList<Attachment>();
+		for (StoredDocument storedDocument : storedDocuments) {
+			final Attachment attachment = new Attachment(storedDocument);
+			attachments.add(attachment);
+		}
+		return attachments.toArray(new Attachment[attachments.size()]);
 	}
 	
-	public boolean uploadAttachment(String className, int objectid, DataHandler file, String filename, String category, String description) {
-		EAttachment attachment = new EAttachment(getUserCtx());
-		return attachment.upload(className, objectid, file, filename, category, description);
+	public boolean uploadAttachment(String className, int objectid, DataHandler file, String filename, String category,
+			String description) {
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(getUserCtx());
+		try {
+			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
+					description);
+		} catch (Exception e) {
+			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
+			Log.SOAP.error(message, e);
+		}
+		return false;
 	}
 
 	public DataHandler downloadAttachment(String className, int objectid, String filename) {
-		EAttachment attachment = new EAttachment(getUserCtx());
-		return attachment.download(className, objectid, filename);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(getUserCtx());
+		return dmsLogic.download(className, objectid, filename);
 	}
 
 	public boolean deleteAttachment(String className, int cardId, String filename) {
-		EAttachment attachment = new EAttachment(getUserCtx());
-		return attachment.deleteAttachment(className, cardId, filename);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(getUserCtx());
+		dmsLogic.delete(className, cardId, filename);
+		return true;
 	}
 
 	public boolean updateAttachmentDescription(String className, int cardId, String filename, String description) {
-		EAttachment attachment = new EAttachment(getUserCtx());
-		return attachment.updateAttachmentDescription(className, cardId,
-				filename, description);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(getUserCtx());
+		return dmsLogic.updateDescription(className, cardId, filename, description);
 	}
 
 	public Workflow updateWorkflow(Card card, boolean completeTask, WorkflowWidgetSubmission[] widgets) {
