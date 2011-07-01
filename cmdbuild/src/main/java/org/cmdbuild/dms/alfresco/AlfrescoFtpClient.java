@@ -1,4 +1,4 @@
-package org.cmdbuild.legacy.dms.fileserver;
+package org.cmdbuild.dms.alfresco;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,56 +10,43 @@ import javax.activation.DataSource;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.cmdbuild.config.LegacydmsProperties;
+import org.cmdbuild.dms.FtpClient;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
-import org.cmdbuild.legacy.dms.AbstractAlfrescoFileServer;
-import org.cmdbuild.legacy.dms.AlfrescoCredential;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.utils.TempDataSource;
 
-@SuppressWarnings("restriction")
-public class AlfrescoFTP extends AbstractAlfrescoFileServer {
+public class AlfrescoFtpClient implements FtpClient {
 
-	AlfrescoCredential credential;
-	String url;
-	String basePath;
-	int port;
+	private final LegacydmsProperties properties;
 	boolean error = false;
 
-	public AlfrescoFTP() {
-		super();
+	public AlfrescoFtpClient(final LegacydmsProperties properties) {
+		this.properties = properties;
 	}
 
-	@Override
-	protected synchronized boolean init(LegacydmsProperties properties, AlfrescoCredential credential) {
-		url = properties.getFtpHost();
-		basePath = properties.getRepositoryFSPath();
-		port = Integer.parseInt(properties.getFtpPort());
-		this.credential = credential;
-		return true;
-	}
-
-	@Override
-	protected synchronized boolean delete(String filename, String[] path) {
+	public synchronized boolean delete(final String filename, final String[] path) {
 		boolean ok = false;
-		FTPClient ftp = new FTPClient();
+		final FTPClient ftp = new FTPClient();
 		try {
 			int reply;
-			ftp.connect(url, port);
+			ftp.connect(properties.getFtpHost(), Integer.parseInt(properties.getFtpPort()));
 			reply = ftp.getReplyCode();
 			if (!FTPReply.isPositiveCompletion(reply)) {
 				ftp.disconnect();
 				return false;
 			}
-			if (!ftp.login(credential.getUser(), credential.getPassword())) {
+			final String username = properties.getAlfrescoUser();
+			final String password = properties.getAlfrescoPassword();
+			if (!ftp.login(username, password)) {
 				throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 			}
 
-			if (!ftp.changeWorkingDirectory(basePath)) {
+			if (!ftp.changeWorkingDirectory(properties.getRepositoryFSPath())) {
 				Log.DMS.info("FTP server refused to chg dir.1", new Exception());
 				throw new Exception();
 			}
 
-			for (String dir : path) {
+			for (final String dir : path) {
 				if (!ftp.changeWorkingDirectory(dir)) {
 					Log.DMS.info("Cannot go into dir : " + dir + ", create");
 					if (!ftp.makeDirectory(dir)) {
@@ -73,14 +60,14 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 			}
 
 			ok = ftp.deleteFile(filename);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ok = true;
 			e.printStackTrace();
 		} finally {
 			if (ftp.isConnected()) {
 				try {
 					ftp.disconnect();
-				} catch (IOException ioe) {
+				} catch (final IOException ioe) {
 					// do nothing
 				}
 			}
@@ -88,13 +75,12 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 		return ok;
 	}
 
-	@Override
-	protected DataHandler download(String filename, String[] path) {
+	public DataHandler download(final String filename, final String[] path) {
 
-		FTPClient ftp = new FTPClient();
+		final FTPClient ftp = new FTPClient();
 		try {
 			int reply;
-			ftp.connect(url, port);
+			ftp.connect(properties.getFtpHost(), Integer.parseInt(properties.getFtpPort()));
 			reply = ftp.getReplyCode();
 
 			if (!FTPReply.isPositiveCompletion(reply)) {
@@ -103,16 +89,18 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 				return null;
 			}
 
-			if (!ftp.login(credential.getUser(), credential.getPassword())) {
+			final String username = properties.getAlfrescoUser();
+			final String password = properties.getAlfrescoPassword();
+			if (!ftp.login(username, password)) {
 				Log.DMS.info("FTP server refused login.", AuthExceptionType.AUTH_LOGIN_WRONG.createException());
 			}
 
-			if (!ftp.changeWorkingDirectory(basePath)) {
+			if (!ftp.changeWorkingDirectory(properties.getRepositoryFSPath())) {
 				Log.DMS.info("FTP server refused to change dir.1");
 				throw new Exception("FTP server refused to chg dir.1");
 			}
 
-			for (String dir : path) {
+			for (final String dir : path) {
 				if (!ftp.changeWorkingDirectory(dir)) {
 					Log.DMS.info("Cannot go into dir : " + dir + ", create");
 					if (!ftp.makeDirectory(dir)) {
@@ -140,25 +128,25 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 			 * return the inputstream from THAT file.
 			 */
 
-			DataSource dataSource = TempDataSource.create(filename);
-			OutputStream os = dataSource.getOutputStream();
+			final DataSource dataSource = TempDataSource.create(filename);
+			final OutputStream os = dataSource.getOutputStream();
 			if (ftp.retrieveFile(filename, os)) {
 				os.flush();
 				os.close();
-				DataHandler attachment = new DataHandler(dataSource);
+				final DataHandler attachment = new DataHandler(dataSource);
 				return attachment;
 			}
 
 			return null;
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			error = true;
 			e.printStackTrace();
 		} finally {
 			if (ftp.isConnected()) {
 				try {
 					ftp.disconnect();
-				} catch (IOException ioe) {
+				} catch (final IOException ioe) {
 					// do nothing
 				}
 			}
@@ -166,13 +154,12 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 		return null;
 	}
 
-	@Override
-	protected boolean upload(String filename, InputStream is, String[] path) {
+	public boolean upload(final String filename, final InputStream is, final String[] path) {
 		boolean error = false;
-		FTPClient ftp = new FTPClient();
+		final FTPClient ftp = new FTPClient();
 		try {
 			int reply;
-			ftp.connect(url, port);
+			ftp.connect(properties.getFtpHost(), Integer.parseInt(properties.getFtpPort()));
 
 			// After connection attempt, you should check the reply code to
 			// verify success.
@@ -184,16 +171,18 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 				return false;
 			}
 
-			if (!ftp.login(credential.getUser(), credential.getPassword())) {
+			final String username = properties.getAlfrescoUser();
+			final String password = properties.getAlfrescoPassword();
+			if (!ftp.login(username, password)) {
 				Log.DMS.info("FTP Server refused login.", AuthExceptionType.AUTH_LOGIN_WRONG.createException());
 			}
 
-			if (!ftp.changeWorkingDirectory(basePath)) {
+			if (!ftp.changeWorkingDirectory(properties.getRepositoryFSPath())) {
 				Log.DMS.info("FTP server refused to chg dir.1");
 				throw new Exception("FTP server refused to chg dir.1");
 			}
 
-			for (String dir : path) {
+			for (final String dir : path) {
 				if (!ftp.changeWorkingDirectory(dir)) {
 					Log.DMS.info("Cannot go into dir : " + dir + ", create");
 					if (!ftp.makeDirectory(dir)) {
@@ -212,14 +201,14 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 				if (is != null)
 					try {
 						is.close();
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						e.printStackTrace();
 					}
 				throw new Exception("FTP failed to upload.");
 			}
 			// transfer files
 			ftp.logout();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			error = true;
 			e.printStackTrace();
 			Log.DMS.info("Exception while uploading a file", e);
@@ -227,13 +216,13 @@ public class AlfrescoFTP extends AbstractAlfrescoFileServer {
 			if (is != null) {
 				try {
 					is.close();
-				} catch (Exception e) {
+				} catch (final Exception e) {
 				}
 			}
 			if (ftp.isConnected()) {
 				try {
 					ftp.disconnect();
-				} catch (IOException ioe) {
+				} catch (final IOException ioe) {
 					// do nothing
 				}
 			}

@@ -613,7 +613,6 @@
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
 	  "no_selections": "Vous n'avez pas séléctionné quelle fiche à mettre à jour",
       "reasons": {
-         "ATTACHMENT_FILE_NOTFOUND": "Fichier {0} non trouvé",
          "ATTACHMENT_NOTFOUND": "Pièce jointe {0} pour la fiche {2} de {1} non trouvée",
          "ATTRIBUTE_NOTFOUND": "Attribut {1} de {0} non trouvé",
          "AUTH_CLASS_NOT_AUTHORIZED": "Pas assez de privilèges pour accéder à la class {0}",
@@ -638,6 +637,7 @@
          "NOTFOUND": "Non trouvé",
          "ORM_AMBIGUOUS_DIRECTION": "Ne peut déterminer automatiquement la direction de la relation",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Chargement du fichier joint en erreur",
+         "ORM_ATTACHMENT_DELETE_FAILED": "<em>Attachment delete failed</em>",
          "ORM_CANT_CREATE_DATABASE": "Ne peut créer la base de données",
          "ORM_CANT_CREATE_USER": "Ne peut pas créer un utilisateur",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Ne peut supprimer des fiches avec des relations",

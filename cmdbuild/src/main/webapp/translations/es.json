@@ -613,7 +613,6 @@
       "no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
 	  "no_selections": "No ha seleccionado ningua tarjeta",
       "reasons": {
-         "ATTACHMENT_FILE_NOTFOUND": "Archivo {0} no encontrado en el repositorio",
          "ATTACHMENT_NOTFOUND": "Adjunto {0} para la tarjeta {2} en {1} no encontrado",
          "ATTRIBUTE_NOTFOUND": "Atributo {1} de {0} no encontrado",
          "AUTH_CLASS_NOT_AUTHORIZED": "Privilegios insuficientes sobre la clase {0}",
@@ -638,6 +637,7 @@
          "NOTFOUND_ERROR": "Elemento no encontrado",
          "ORM_AMBIGUOUS_DIRECTION": "Imposible determinar automáticamente la dirección de la relación",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Imposible cargar el adjunto",
+         "ORM_ATTACHMENT_DELETE_FAILED": "<em>Impossibile cancellare l'allegato</em>",
          "ORM_CANT_CREATE_DATABASE": "Imposible crear la base de datos",
          "ORM_CANT_CREATE_USER": "Imposible crear el usuario",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Imposible eliminar tarjetas habiendo relaciones",
