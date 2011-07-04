@@ -32,7 +32,7 @@
 				border: false,
 				items: [this.cardGrid, this.cardTabPanel]
 			})
-			
+
 			this.callParent(arguments);
 		},
 		
@@ -53,8 +53,9 @@
 
 			this.cardTabPanel.onClassSelected(id);
 			this.addCardButton.updateForEntry(entry);
+			this.cardGrid.clearFilterButton.disable();
 		},
-		
+
 		openCard: function(p) {
 			this.cardGrid.openCard(p);
 			this.addCardButton.updateForEntry(_CMCache.getEntryTypeById(p.IdClass));

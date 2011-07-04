@@ -29,7 +29,8 @@ var grid = Ext.create('Ext.grid.Panel', {
 Ext.define('Ext.ux.CheckColumn', {
     extend: 'Ext.grid.column.Column',
     alias: 'widget.checkcolumn',
-    
+
+    cmReadOnly: false, // if true it is not possible check it, but is used only to show data
     constructor: function() {
         this.addEvents(
             /**
@@ -49,6 +50,10 @@ Ext.define('Ext.ux.CheckColumn', {
      * Process and refire events routed from the GridView's processEvent method.
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
+    	if (this.cmReadOnly === true) {
+    		return;
+    	}
+
         if (type == 'mousedown' || (type == 'keydown' && (e.getKey() == e.ENTER || e.getKey() == e.SPACE))) {
             var record = view.panel.store.getAt(recordIndex),
                 dataIndex = this.dataIndex,
@@ -65,11 +70,11 @@ Ext.define('Ext.ux.CheckColumn', {
 
     // Note: class names are not placed on the prototype bc renderer scope
     // is not in the header.
-    renderer : function(value){
+    renderer : function(value) {
         var cssPrefix = Ext.baseCSSPrefix,
             cls = [cssPrefix + 'grid-checkheader'];
 
-        if (value) {
+        if (CMDBuild.Utils.evalBoolean(value)) {
             cls.push(cssPrefix + 'grid-checkheader-checked');
         }
         return '<div class="' + cls.join(' ') + '">&#160;</div>';

@@ -72,9 +72,15 @@
 		},
 
 		selectNodeByIdSilentry: function(nodeId) {
-			this.suspendEvents();
+			this.getSelectionModel().suspendEvents();
 			this.selectNodeById(nodeId);
-			this.resumeEvents();
+			this.getSelectionModel().resumeEvents();
+		},
+
+		expandSilently: function() {
+			this.cmSilent = true;
+			this.expand();
+			this.cmSilent = false;
 		},
 
 		removeNodeById: function(nodeId) {
