@@ -46,7 +46,7 @@
 				this.relationsController.onEntrySelect(selection);
 			}
 		},
-		
+
 		/*
 		 * p = {
 				Id: the id of the card
@@ -57,10 +57,13 @@
 			var entryType = _CMCache.getEntryTypeById(p.IdClass),
 				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
 				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
-			
+
+			accordion.expandSilently();
+			Ext.Function.createDelayed(function() {
+				accordion.selectNodeByIdSilentry(p.IdClass);
+			}, 100)();
+
 			modPanel.openCard(p);
-			accordion.expand();
-			accordion.selectNodeByIdSilentry(p.IdClass);
 		}
 	});
 

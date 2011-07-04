@@ -30,19 +30,21 @@
 			});
 
 			this.header = new Ext.panel.Panel({
+				border: true,
 				region: "north",
 				height: 45,
 				contentEl: "header"
 			});
 
 			this.footer= new Ext.panel.Panel({
+				border: true,
 				region: "south",
 				height: 18,
 				contentEl: "footer"
 			});
 
 			this.items = [this.cmAccordions,this.cmPanels, this.header, this.footer];
-			this.padding = "3 3 3 3";
+			this.border = false;
 			
 			this.callParent(arguments);
 		},
@@ -72,14 +74,16 @@
 		 * Search in the cmPanels the given name
 		 * and bring it to front
 		 */
-		bringTofrontPanelByCmName: function(cmName, params) {
+		bringTofrontPanelByCmName: function(cmName, params, silent) {
 			var p = this.findModuleByCMName(cmName);
 
 			if (p && ((typeof p.afterBringToFront == "function" && p.afterBringToFront()) 
 					|| typeof p.afterBringToFront == "undefined")) {
 
 				this.cmPanels.layout.setActiveItem(p.id);
-				p.fireEvent("CM_iamtofront", params);
+				if (silent !== true) {
+					p.fireEvent("CM_iamtofront", params);
+				}
 			}
 		},
 

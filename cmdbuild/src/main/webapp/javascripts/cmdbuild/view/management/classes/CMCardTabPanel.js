@@ -48,7 +48,7 @@
 
 			this.callParent(arguments);
 		},
-		
+
 		onClassSelected: function(id) {
 			this.items.each(function(item) {
 				if (item.onClassSelected) {
@@ -56,9 +56,13 @@
 				}
 			});
 			
-			this.setActiveTab(this.cardPanel);
+//			try {
+//				this.setActiveTab(this.cardPanel);
+//			} catch (e) {
+//				// TODO understand why this could fail (rendering problems)
+//			}
 		},
-		
+
 		onCardSelected: function(card, reloadFields) {
 			this.items.each(function(item) {
 				if (item.onCardSelected) {

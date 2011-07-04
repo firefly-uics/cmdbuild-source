@@ -4,7 +4,9 @@
 			this.accordion = accordion;
 
 			this.accordion.on("expand", function() {
-				this.onAccordionExpanded();
+				if (this.accordion.cmSilent === true) {
+					this.onAccordionExpanded();
+				}
 			}, this);
 			
 			if (this.accordion.getSelectionModel) {

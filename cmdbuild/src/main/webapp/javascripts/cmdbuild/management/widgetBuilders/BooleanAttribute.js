@@ -11,16 +11,17 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.BooleanAttribute, CMDBuild.WidgetBuilder
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(attribute) {
 	var headerWidth =  attribute.name.length * 9;
-	var h = new Ext.grid.CheckColumn({
-		 header : attribute.description,
-		 sortable : true,
-		 dataIndex : attribute.name,
-		 hidden: !attribute.isbasedsp,
-		 fixed: true,
-		 width: headerWidth,
-		 flex: 1
-	 });
-	 return h;
+
+	var h = new Ext.ux.CheckColumn({
+		header : attribute.description,
+		sortable : true,
+		dataIndex : attribute.name,
+		hidden : !attribute.isbasedsp,
+		fixed : true,
+		width : headerWidth,
+		cmReadOnly: true
+	});
+	return h;
 };
 /**
  * @override

@@ -162,22 +162,29 @@
 
 		openCard: function(p) {
 			p['FilterCategory'] = this.filterCategory;
+
 			CMDBuild.ServiceProxy.card.getPosition({
 				params: p,
 				scope: this,
 				failure: onGetPositionFailure,
 				success: function onGetPositionSuccess(response, options, resText) {
 					var position = resText.position,
-					pageNumber = getPageNumber(position),
-					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-					relativeIndex = (position -1) % pageSize;
+						pageNumber = getPageNumber(position),
+						pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+						relativeIndex = (position - 1) % pageSize;
 
 					this.updateStoreForClassId(p.IdClass, {
 						scope: this,
 						cb: function cbOfUpdateStoreForClassId() {
 							this.loadPage(pageNumber, {
 								cb: function callBackOfLoadPage(records, operation, success) {
-									this.getSelectionModel().select(relativeIndex);
+									try {
+										this.getSelectionModel().select(relativeIndex);
+									} catch (e) {
+										_debug("I was not able to select the record at " + relativeIndex, p);
+										_trace();
+										
+									}
 								}
 							});
 						}
@@ -187,12 +194,13 @@
 		},
 
 		loadPage: function(pageNumber, o) {
+			o = o || {};
 			scope = o.scope || this;
 			cb = o.cb || Ext.emptyFn;
 
 			// store.loadPage does not allow the definition of a callBack
 			this.store.on("load", cb, scope, {single: true});
-			this.store.loadPage(pageNumber);
+			this.store.loadPage(Math.floor(pageNumber));
 		},
 
 		clearFilter: clearFilter,
@@ -424,7 +432,7 @@
 			pageNumber = 0;
 		
 		if (cardPosition) {
-			pageNumber = parseInt((cardPosition) / pageSize) + 1;
+			pageNumber = (parseInt(cardPosition) + 1) / pageSize;
 		}
 		
 		return pageNumber;
