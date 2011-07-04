@@ -17,21 +17,53 @@ import com.google.common.collect.HashBiMap;
 public abstract class Utils {
 
 	/*
+	 * FIXME We should use generic identifiers as _Code instead of Code directly
+	 */
+
+	public static final String CODE_ATTRIBUTE = SystemAttributes.Code.getDBName();
+	public static final String DESCRIPTION_ATTRIBUTE = SystemAttributes.Description.getDBName();
+	public static final String ID_ATTRIBUTE = SystemAttributes.Id.getDBName();
+
+	/*
 	 * Constants
 	 */
 
-	public static final String ID_ATTRIBUTE = "Id";
-	public static final String CLASS_ID_ATTRIBUTE = "IdClass";
-	public static final String DOMAIN_ID_ATTRIBUTE = "IdDomain";
+	enum SystemAttributes {
+		Id("Id"),
+		ClassId("IdClass", "oid"),
+		DomainId("IdDomain", "oid"),
+		DomainId1("IdObj1"),
+		DomainId2("IdObj2"),
+		Code("Code"),
+		Description("Description"),
+		BeginDate("BeginDate"),
+		Status("Status"),
+		// Fake attributes
+		DomainQuerySource("_Src"),
+		DomainQueryTargetId("_DstId"),
+		;
 
-	public static final String CODE_ATTRIBUTE = "Code";
-	public static final String DESCRIPTION_ATTRIBUTE = "Description";
+		final String dbName;
+		final String castSuffix;
 
-	public static final String DOMAIN_ID1_ATTRIBUTE = "IdObj1";
-	public static final String DOMAIN_ID2_ATTRIBUTE = "IdObj2";
+		SystemAttributes(final String dbName, final String typeCast) {
+			this.dbName = dbName;
+			this.castSuffix = (typeCast != null) ? "::" + typeCast : "";
+		}
 
-	public static final String BEGIN_DATE_ATTRIBUTE = "BeginDate";
-	public static final String STATUS_ATTRIBUTE = "Status";
+		SystemAttributes(final String dbName) {
+			this(dbName, null);
+		}
+
+		public String getDBName() {
+			return dbName;
+		}
+
+		public String getCastSuffix() {
+			return castSuffix;
+		}
+	}
+
 	public static final String STATUS_ACTIVE_VALUE = "A";
 
 	static final String OPERATOR_EQ = "=";
@@ -128,6 +160,10 @@ public abstract class Utils {
 		return String.format("\"%s\"", name.replace("\"", "\"\""));
 	}
 
+	static String quoteIdent(final SystemAttributes sa) {
+		return quoteIdent(sa.getDBName());
+	}
+
 	static String quoteType(final CMEntryType type) {
 		return quoteIdent(getTypeName(type));
 	}
@@ -155,12 +191,12 @@ public abstract class Utils {
 		return quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
 	}
 
-	static String quoteAttribute(final Alias tableAlias, final String name) {
-		return String.format("%s.%s", quoteAlias(tableAlias), quoteIdent(name));
+	static String quoteAttribute(final Alias tableAlias, final SystemAttributes sa) {
+		return quoteAttribute(tableAlias, sa.getDBName());
 	}
 
-	static String quoteAttribute(final Alias tableAlias, final String name, final String typeCast) {
-		return String.format("%s::%s", quoteAttribute(tableAlias, name), typeCast);
+	static String quoteAttribute(final Alias tableAlias, final String name) {
+		return String.format("%s.%s", quoteAlias(tableAlias), quoteIdent(name));
 	}
 
 	static String quoteAlias(final Alias alias) {

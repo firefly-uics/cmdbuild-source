@@ -1,16 +1,7 @@
 package org.cmdbuild.dao.driver.postgres;
 
-import static org.cmdbuild.dao.driver.postgres.Utils.BEGIN_DATE_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.CLASS_ID_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.CODE_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.DOMAIN_ID1_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.DOMAIN_ID2_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.DOMAIN_ID_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Utils.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Utils.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Utils.STATUS_ACTIVE_VALUE;
-import static org.cmdbuild.dao.driver.postgres.Utils.STATUS_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
@@ -26,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.dao.driver.postgres.Utils.SystemAttributes;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -52,8 +44,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 public class EntryQueryCommand {
-
-	private static final String DOMAIN_QUERY_SOURCE_ATTRIBUTE = "_Src";
 
 	private final PostgresDriver driver;
 	private final JdbcTemplate jdbcTemplate;
@@ -96,22 +86,28 @@ public class EntryQueryCommand {
 
 				for (Alias a : qc.getClassAliases()) {
 					// Always extract a Long for the Id even if it's integer
-					final Object id = rs.getLong(getIdAliasFor(a));
-					final Long classId = rs.getLong(getClassIdAliasFor(a));
+					final Object id = rs.getLong(getAlias(a, SystemAttributes.Id));
+					final Long classId = rs.getLong(getAlias(a, SystemAttributes.ClassId));
 					final DBClass realClass = driver.findClassById(classId);
 					final DBCard card = DBCard.create(driver, realClass, id);
-					card.setBeginDate(new DateTime()); // TODO
+
+					final DateTime beginDate = new DateTime(rs.getTimestamp(getAlias(a, SystemAttributes.BeginDate)).getTime());
+					card.setBeginDate(beginDate); // TODO
+
 					row.setCard(a, card);
 				}
 
 				for (Alias a : qc.getDomainAliases()) {
-					final Object id = rs.getLong(getIdAliasFor(a));
-					final Long domainId = rs.getLong(getDomainIdAliasFor(a));
-					final String querySource = rs.getString(getDomainQuerySourceAliasFor(a));
+					final Object id = rs.getLong(getAlias(a, SystemAttributes.Id));
+					final Long domainId = rs.getLong(getAlias(a, SystemAttributes.DomainId));
+					final String querySource = rs.getString(getAlias(a, SystemAttributes.DomainQuerySource));
 					final DBDomain realDomain = driver.findDomainById(domainId);
 					final DBRelation relation = DBRelation.create(driver, realDomain, id);
-					relation.setBeginDate(new DateTime()); // TODO
+
+					final DateTime beginDate = new DateTime(rs.getTimestamp(getAlias(a, SystemAttributes.BeginDate)).getTime());
+					relation.setBeginDate(beginDate);
 					// TODO Add card1 and card2 from the cards already extracted!
+
 					final QueryRelation queryRelation = QueryRelation.create(relation, querySource);
 					row.setRelation(a, queryRelation);
 				}
@@ -140,6 +136,7 @@ public class EntryQueryCommand {
 		private final List<Object> params;
 
 		private Integer columnIndex;
+		private final List<String> selectAttributes;
 		private final Map<QueryAliasAttribute, Integer> columns;
 
 		QueryCreator(final QuerySpecs query) {
@@ -148,6 +145,7 @@ public class EntryQueryCommand {
 			this.params = new ArrayList<Object>();
 
 			this.columnIndex = 0;
+			this.selectAttributes = new ArrayList<String>();
 			this.columns = new HashMap<QueryAliasAttribute, Integer>();
 
 			buildQuery();
@@ -165,52 +163,44 @@ public class EntryQueryCommand {
 		}
 
 		private String quoteAttributes(final Iterable<QueryAliasAttribute> attributes) {
-			final List<String> quoted = getSystemSelectAttributes(attributes);
+			
+			addSystemSelectAttributes(attributes);
 			for (QueryAliasAttribute a : attributes) {
-				columns.put(a, ++columnIndex);
-				quoted.add(quoteAttribute(a));
+				addUserSelectAttribute(a);
 			}
-			return StringUtils.join(quoted, ",");
+			return StringUtils.join(selectAttributes, ",");
 		}
 
-		private List<String> getSystemSelectAttributes(final Iterable<QueryAliasAttribute> attributes) {
+		private void addSystemSelectAttributes(final Iterable<QueryAliasAttribute> attributes) {
 			// FIXME! Anyway tableoid can't be used because of the history table
-			final List<String> idSelectAttributes = new ArrayList<String>();
 
 			for (Alias a : query.getClassAliases()) {
-				columnIndex += 2;
-				idSelectAttributes.add(getClassIdSelectAttribute(a));
-				idSelectAttributes.add(getIdSelectAttribute(a));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.ClassId));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.Id));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.BeginDate));
 			}
 
 			for (Alias a : query.getDomainAliases()) {
-				columnIndex += 3;
-				idSelectAttributes.add(getDomainIdSelectAttribute(a));
-				idSelectAttributes.add(getDomainQuerySourceSelectAttribute(a));
-				idSelectAttributes.add(getIdSelectAttribute(a));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.DomainId));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.DomainQuerySource));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.Id));
+				addSystemSelectAttribute(getSelectString(a, SystemAttributes.BeginDate));
 			}
-
-			return idSelectAttributes;
 		}
 
-		private String getClassIdSelectAttribute(final Alias entityTypeAlias) {
-			return String.format("%s AS %s", quoteAttribute(entityTypeAlias, CLASS_ID_ATTRIBUTE, "oid"),
-					getClassIdAliasFor(entityTypeAlias));
+		private void addSystemSelectAttribute(final String selectAttributeString) {
+			++columnIndex;
+			selectAttributes.add(selectAttributeString);
 		}
 
-		private String getIdSelectAttribute(final Alias entityTypeAlias) {
-			return String.format("%s AS %s", quoteAttribute(entityTypeAlias, ID_ATTRIBUTE),
-					getIdAliasFor(entityTypeAlias));
+		private void addUserSelectAttribute(final QueryAliasAttribute a) {
+			columns.put(a, ++columnIndex);
+			selectAttributes.add(quoteAttribute(a));
 		}
 
-		private String getDomainIdSelectAttribute(final Alias entityTypeAlias) {
-			return String.format("%s AS %s", quoteAttribute(entityTypeAlias, DOMAIN_ID_ATTRIBUTE, "oid"),
-					getDomainIdAliasFor(entityTypeAlias));
-		}
-
-		private String getDomainQuerySourceSelectAttribute(final Alias entityTypeAlias) {
-			return String.format("%s AS %s", quoteAttribute(entityTypeAlias, DOMAIN_QUERY_SOURCE_ATTRIBUTE),
-					getDomainQuerySourceAliasFor(entityTypeAlias));
+		private String getSelectString(final Alias entityTypeAlias, final SystemAttributes sa) {
+			return String.format("%s%s AS %s", quoteAttribute(entityTypeAlias, sa.getDBName()),
+					sa.getCastSuffix(), getAlias(entityTypeAlias, sa));
 		}
 
 		private void appendFrom() {
@@ -303,10 +293,10 @@ public class EntryQueryCommand {
 			sb.append("JOIN ");
 			appendDomainUnion(j.getQueryDomains());
 			sb.append(" AS ").append(quoteAlias(j.getDomainAlias())).append(" ON ")
-					.append(quoteAttribute(fromAlias, ID_ATTRIBUTE)).append(OPERATOR_EQ)
-					.append(quoteAttribute(j.getDomainAlias(), DOMAIN_ID1_ATTRIBUTE));
+					.append(quoteAttribute(fromAlias, SystemAttributes.Id)).append(OPERATOR_EQ)
+					.append(quoteAttribute(j.getDomainAlias(), SystemAttributes.DomainId1));
 			// FIXME
-			sb.append(" AND ").append(quoteAttribute(j.getDomainAlias(), STATUS_ATTRIBUTE)).append(OPERATOR_EQ).append("?");
+			sb.append(" AND ").append(quoteAttribute(j.getDomainAlias(), SystemAttributes.Status)).append(OPERATOR_EQ).append("?");
 			addParam(STATUS_ACTIVE_VALUE);
 		}
 
@@ -322,21 +312,21 @@ public class EntryQueryCommand {
 				}
 				sb.append("SELECT ");
 
-				sb.append(quoteIdent(ID_ATTRIBUTE)).append(",");
-				sb.append(quoteIdent(DOMAIN_ID_ATTRIBUTE)).append(",");
-				appendColumnAndAliasIfFirst("?", quoteIdent(DOMAIN_QUERY_SOURCE_ATTRIBUTE), first).append(",");
+				sb.append(quoteIdent(SystemAttributes.Id)).append(",");
+				sb.append(quoteIdent(SystemAttributes.DomainId)).append(",");
+				appendColumnAndAliasIfFirst("?", quoteIdent(SystemAttributes.DomainQuerySource), first).append(",");
 				addParam(queryDomain.getQuerySource());
 				if (queryDomain.getDirection()) {
-					sb.append(quoteIdent(DOMAIN_ID1_ATTRIBUTE)).append(",");
-					sb.append(quoteIdent(DOMAIN_ID2_ATTRIBUTE));
+					sb.append(quoteIdent(SystemAttributes.DomainId1)).append(",");
+					sb.append(quoteIdent(SystemAttributes.DomainId2));
 				} else {
-					appendColumnAndAliasIfFirst(quoteIdent(DOMAIN_ID2_ATTRIBUTE), quoteIdent(DOMAIN_ID1_ATTRIBUTE), first).append(",");
-					appendColumnAndAliasIfFirst(quoteIdent(DOMAIN_ID1_ATTRIBUTE), quoteIdent(DOMAIN_ID2_ATTRIBUTE), first);
+					appendColumnAndAliasIfFirst(quoteIdent(SystemAttributes.DomainId2), quoteIdent(SystemAttributes.DomainId1), first).append(",");
+					appendColumnAndAliasIfFirst(quoteIdent(SystemAttributes.DomainId1), quoteIdent(SystemAttributes.DomainId2), first);
 				}
 				// TODO Consider other attributes
 				// FIXME
-				sb.append(",").append(quoteIdent(STATUS_ATTRIBUTE))
-					.append(",").append(quoteIdent(BEGIN_DATE_ATTRIBUTE));
+				sb.append(",").append(quoteIdent(SystemAttributes.BeginDate))
+					.append(",").append(quoteIdent(SystemAttributes.Status));
 				sb.append(" FROM ").append(quoteType(queryDomain.getDomain()));
 			}
 			sb.append(")");
@@ -352,10 +342,10 @@ public class EntryQueryCommand {
 			appendClassUnion(j.getTargets());
 			sb.append(" AS ").append(quoteAlias(j.getTargetAlias()))
 				.append(" ON ")
-					.append(quoteAttribute(j.getDomainAlias(), DOMAIN_ID2_ATTRIBUTE)).append(OPERATOR_EQ)
-					.append(quoteAttribute(j.getTargetAlias(), ID_ATTRIBUTE));
+					.append(quoteAttribute(j.getDomainAlias(), SystemAttributes.DomainId2)).append(OPERATOR_EQ)
+					.append(quoteAttribute(j.getTargetAlias(), SystemAttributes.Id));
 			// FIXME
-			sb.append(" AND ").append(quoteAttribute(j.getTargetAlias(), STATUS_ATTRIBUTE)).append(OPERATOR_EQ).append("?");
+			sb.append(" AND ").append(quoteAttribute(j.getTargetAlias(), SystemAttributes.Status)).append(OPERATOR_EQ).append("?");
 			addParam(STATUS_ACTIVE_VALUE);
 		}
 
@@ -370,12 +360,13 @@ public class EntryQueryCommand {
 						sb.append(" UNION ALL ");
 					}
 					sb.append("SELECT ");
-					sb.append(quoteIdent(ID_ATTRIBUTE)).append(",")
-						.append(quoteIdent(CLASS_ID_ATTRIBUTE)).append(",")
+					sb.append(quoteIdent(SystemAttributes.Id)).append(",")
+						.append(quoteIdent(SystemAttributes.ClassId)).append(",")
 						// TODO!!!!!!!!!!!!!!
-						.append(quoteIdent(CODE_ATTRIBUTE)).append(",")
-						.append(quoteIdent(DESCRIPTION_ATTRIBUTE)).append(",")
-						.append(quoteIdent(STATUS_ATTRIBUTE)); // FIXME Change with EndDate?! No, because of deleted cards
+						.append(quoteIdent(SystemAttributes.Code)).append(",")
+						.append(quoteIdent(SystemAttributes.Description)).append(",")
+						.append(quoteIdent(SystemAttributes.BeginDate)).append(",")
+						.append(quoteIdent(SystemAttributes.Status)); // FIXME Change with EndDate?! No, because of deleted cards
 						// TODO Consider other attributes
 					sb.append(" FROM ").append(quoteType(type));
 				}
@@ -392,7 +383,7 @@ public class EntryQueryCommand {
 			super();
 			whereClause.accept(this);
 			// FIXME: append the status IF NOT a history query
-			and(attributeFilter(attribute(fromAlias, STATUS_ATTRIBUTE), OPERATOR_EQ, STATUS_ACTIVE_VALUE));
+			and(attributeFilter(attribute(fromAlias, SystemAttributes.Status.getDBName()), OPERATOR_EQ, STATUS_ACTIVE_VALUE));
 		}
 
 		private WherePartCreator append(final String string) {
@@ -429,19 +420,7 @@ public class EntryQueryCommand {
 		}
 	}
 
-	private String getClassIdAliasFor(final Alias entityTypeAlias) {
-		return "_" + entityTypeAlias.getName() + "_ClassId";
-	}
-
-	private String getDomainIdAliasFor(final Alias entityTypeAlias) {
-		return "_" + entityTypeAlias.getName() + "_DomainId";
-	}
-
-	private String getIdAliasFor(final Alias entityTypeAlias) {
-		return "_" + entityTypeAlias.getName() + "_Id";
-	}
-
-	private String getDomainQuerySourceAliasFor(final Alias domainAlias) {
-		return "_" + domainAlias.getName() + DOMAIN_QUERY_SOURCE_ATTRIBUTE;
+	private String getAlias(final Alias entityTypeAlias, final SystemAttributes sa) {
+		return "_" + entityTypeAlias.getName() + sa.name();
 	}
 }
