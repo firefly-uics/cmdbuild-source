@@ -1,12 +1,12 @@
 package org.cmdbuild.dao.driver.postgres;
 
-import static org.cmdbuild.dao.driver.postgres.Utils.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteType;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.dao.driver.postgres.Utils.SystemAttributes;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -25,7 +25,7 @@ public class EntryInsertCommand {
 		final String quotedTableName = quoteType(entry.getType());
 		final String columns[] = valueMap.keySet().toArray(new String[valueMap.size()]);
 		return new SimpleJdbcInsert(jdbcTemplate).withTableName(quotedTableName).usingColumns(columns)
-				.usingGeneratedKeyColumns(ID_ATTRIBUTE);
+				.usingGeneratedKeyColumns(SystemAttributes.Id.getDBName());
 	}
 
 	private Map<String, Object> valueMapFor(final DBEntry entry) {
