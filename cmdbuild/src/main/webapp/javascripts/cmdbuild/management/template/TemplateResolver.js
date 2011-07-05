@@ -16,6 +16,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				client: this.getActivityFormVariable,
 				server: this.getActivityServerVariable,
 				user: this.getCurrentUserInfo,
+				group: this.getCurrentGroupInfo,
 				xa: this.getExtendedAttributeVariable,
 				js: this.getJSVariable,
 				cql: this.getCQLVariable
@@ -124,6 +125,15 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		var infoMap = {
 			name: CMDBuild.Runtime.Username,
 			id: CMDBuild.Runtime.UserId
+		};
+		return infoMap[varName];
+	},
+
+	// private
+	getCurrentGroupInfo: function(varName) {
+		var infoMap = {
+			name: CMDBuild.Runtime.DefaultGroupName,
+			id: CMDBuild.Runtime.DefaultGroupId
 		};
 		return infoMap[varName];
 	},
