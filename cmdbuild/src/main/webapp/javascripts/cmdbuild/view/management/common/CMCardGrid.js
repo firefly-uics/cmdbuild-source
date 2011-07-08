@@ -279,6 +279,7 @@
 			return new Ext.data.Store({
 				fields: fields,
 				pageSize: pageSize,
+				remoteSort: true,
 				proxy: {
 					type: "ajax",
 					url: 'services/json/management/modcard/getcardlist',
@@ -435,6 +436,6 @@
 			pageNumber = (parseInt(cardPosition) + 1) / pageSize;
 		}
 		
-		return pageNumber;
+		return pageNumber + 1;
 	}
 })();

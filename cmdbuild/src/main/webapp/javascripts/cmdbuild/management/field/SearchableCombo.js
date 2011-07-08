@@ -85,7 +85,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		this.searchWin = new CMDBuild.Management.ReferenceSearchWindow({
 			idClass: this.store.baseParams.IdClass,
 			filterType: 'reference'
-		}).show().on('cmdbuild-referencewindow-selected', function(record){
+		}).show().on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);
 			this.focus(); // to allow the "change" event that occurs on blur
 			this.setValue(record.get("Id"));

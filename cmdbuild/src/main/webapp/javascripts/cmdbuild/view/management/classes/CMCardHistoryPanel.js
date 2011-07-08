@@ -6,10 +6,12 @@
 	Ext.define("CMDBuild.view.management.classes.CMCardHistoryTab", {
 		extend: "Ext.grid.Panel",
 
-	    eventtype: 'card',
-    	eventmastertype: 'class',
+		eventtype: 'card',
+		eventmastertype: 'class',
 
 		constructor: function() {
+			this.currentTemplate = null;
+			this.autoScroll = true;
 			/*
 			this.expander = new CMDBuild.XRowExpander({
 				genBodyContent : function(record, index){
@@ -37,7 +39,18 @@
 			Ext.apply(this, {
 				plugins: [{
 					ptype: 'rowexpander',
-					rowBodyTpl : ["@@ TODO"]
+					rowBodyTpl: " ",
+					getRowBodyFeatureData: function(data, idx, record, orig) {
+						if (this.view.currentTemplate) {
+							var o = this.callParent(arguments);
+
+							o.rowBody = this.view.currentTemplate.applyTemplate(data);
+							o.rowCls = this.rowCollapsedCls;
+							o.rowBodyCls = this.rowBodyHiddenCls;
+	
+							return o;
+						}
+					}
 				}],
 				columns: [
 					{header: col_tr.begin_date,  width: 180, fixed: true, sortable: true, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
@@ -65,19 +78,16 @@
 					baseParams: { IsProcess: (this.eventmastertype == 'processclass')}
 				})
 			});
-			
+
 			this.callParent(arguments);
+			this.view.on("expandbody", function() {
+				this.doLayout() // to refresh the scrollbar status
+			}, this);
 		},
 	
 		onClassSelected: function(classId) {
-//				this.currentClassPrivileges = Ext.apply({
-//						create: false,
-//						write: false
-//					}, eventParams.privileges);
-	
 			if (this.currentClassId != classId) {
 				this.currentClassId = classId;
-//				this.expander.currentAttributes = eventParams.classAttributes;
 			}
 
 		},
@@ -89,11 +99,40 @@
 			} else {
 				this.currentCardId = card.raw.Id;
 				this.currentClassId = card.raw.IdClass;
+
+				_CMCache.getAttributeList(this.currentClassId, 
+						Ext.Function.bind(function buildTemplate(attributes) {
+							var body = '';
+							
+							if (card.raw['_RelHist']) {
+								body += '<p class="historyItem"><b>'+col_tr.domain+'</b>: '+ card.raw['DomainDesc']+'</p>'
+								body += '<p class="historyItem"><b>'+col_tr.destclass+'</b>: '+ card.raw['Class']+'</p>'
+								body += '<p class="historyItem"><b>'+col_tr.code+'</b>: ' + card.raw['CardCode']+'</p>'
+								body += '<p class="historyItem"><b>'+col_tr.description+'</b>: ' + card.raw['CardDescription']+'</p>'
+							} else {
+								for (var i=0; i<attributes.length; i++) {
+									var attribute = attributes[i],
+										displayField = CMDBuild.Management.FieldManager.getDisplayNameForAttr(attribute),
+										displayValue = card.raw[displayField];
+	
+									displayValue = displayValue || "";
+									body += '<p class="historyItem"><b>' + attribute.description + ': </b>' + displayValue +'</p>';
+								}
+							}
+							this.view.currentTemplate = Ext.create('Ext.XTemplate', body);
+						}, this)
+				);
+
 				this.currentCardPrivileges = {
 					create: card.raw.priv_create,
 					write: card.raw.priv_write
 				};
-				this.reloadCard();
+
+				if (tabIsActive(this)) {
+					this.reloadCard();
+				} else {
+					this.on("activate", this.reloadCard, this);
+				}
 			}
 		},
 
@@ -107,15 +146,21 @@
 			if (this.loaded) {
 				return;
 			}
+
 			this.getStore().load({
 				params : {
 					IdClass: this.currentClassId,
 					Id: this.currentCardId
 				}
 			});
+
 			this.loaded = true;
 		}
 	});
+
+	function tabIsActive(t) {
+		return t.ownerCt.layout.getActiveItem().id == t.id;
+	}
 
 	function tickRenderer(value) {
 		if (value) {

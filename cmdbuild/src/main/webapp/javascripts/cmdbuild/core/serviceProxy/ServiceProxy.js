@@ -41,20 +41,6 @@ CMDBuild.ServiceProxy = {
 		});
 	},
 
-	getCard: function(classId, cardId, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			url: 'services/json/management/modcard/getcard',
-	        params: {
-	            "IdClass": classId,
-	            "Id": cardId
-	        },
-	        method: 'GET',
-	        success: success || Ext.emptyFn,
-	        failure: failure || Ext.emptyFn,
-	        callback: callback || Ext.eptyFn
-		});
-	},
-
 	getFeature: function(classId, cardId, success, failure, callback) {
 		CMDBuild.Ajax.request({
 			url: 'services/json/gis/getfeature',
@@ -344,6 +330,13 @@ CMDBuild.ServiceProxy.card = {
 		p.method = 'GET';
 		p.url = 'services/json/management/modcard/getcardposition';
 		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	get: function(p) {
+		p.method = 'GET';
+		p.url = 'services/json/management/modcard/getcard',
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }

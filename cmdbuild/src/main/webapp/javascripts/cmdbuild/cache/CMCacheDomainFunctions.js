@@ -77,7 +77,7 @@
 
 			return attributeStore;
 		},
-		
+
 		getMasterDetailsForClassId: function(id) {
 			var out = []
 			for (var domain in domains) {
@@ -91,7 +91,7 @@
 			
 			return out;
 		},
-		
+
 		onDomainSaved: function(domain) {
 			var d = this.addDomain(domain);
 			this.fireEvent("cm_domain_saved", d);

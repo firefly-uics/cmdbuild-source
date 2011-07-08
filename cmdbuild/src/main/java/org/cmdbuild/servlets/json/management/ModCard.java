@@ -67,8 +67,7 @@ public class ModCard extends JSONBase {
 			JSONObject serializer,
 			@Parameter("limit") int limit,
 			@Parameter("start") int offset,
-			@Parameter(value="sort",required=false) String sortField,
-			@Parameter(value="dir",required=false) String sortDirection,
+			@Parameter(value="sort",required=false) JSONArray sorters,
 			@Parameter(value="query",required=false) String fullTextQuery,
 			@Parameter(value="writeonly",required=false) boolean writeonly,
 			CardQuery cardQuery,
@@ -78,19 +77,36 @@ public class ModCard extends JSONBase {
 		if (writeonly) {
 			removeReadOnlySubclasses(cardQuery, userContext);
 		}
-		if (fullTextQuery != null)
-		    cardQuery.fullText(fullTextQuery.trim());
-		if (sortField != null || sortDirection != null) {
-			if (sortField.endsWith("_value"))
-				sortField = sortField.substring(0, sortField.length()-6);
-			cardQuery.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
+
+		if (fullTextQuery != null) {
+			cardQuery.fullText(fullTextQuery.trim());
 		}
+
+		applySortToCardQuery(sorters, cardQuery);
+
 		for(ICard card : cardQuery.subset(offset, limit).count()) {
 			rows.put(Serializer.serializeCardWithPrivileges(card, false));
 		}
 		serializer.put("rows", rows);
 		serializer.put("results", cardQuery.getTotalRows());
 		return serializer;
+	}
+
+	private void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery)
+		throws JSONException {
+		if (sorters != null && sorters.length() > 0) {
+			JSONObject s = sorters.getJSONObject(0);
+			String sortField = s.getString("property");
+			String sortDirection = s.getString("direction");
+			
+			if (sortField != null || sortDirection != null) {
+				if (sortField.endsWith("_value")) {
+					sortField = sortField.substring(0, sortField.length()-6);
+				}
+
+				cardQuery.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
+			}
+		}
 	}
 
 	private void temporaryPatchToFakePrivilegeCheckOnCQL(CardQuery cardQuery, UserContext userContext) {
@@ -107,8 +123,7 @@ public class ModCard extends JSONBase {
 			@Parameter("Id") int masterIdCard,
 			@Parameter("limit") int limit,
 			@Parameter("start") int offset,
-			@Parameter(value="sort",required=false) String sortField,
-			@Parameter(value="dir",required=false) String sortDirection,
+			@Parameter(value="sort",required=false) JSONArray sorters,
 			@Parameter(value="query",required=false) String fullTextQuery,
 			@Parameter(value="DirectedDomain", required=false) String directedDomainParameter,
 			ITableFactory tf,
@@ -124,16 +139,16 @@ public class ModCard extends JSONBase {
 
 		CardQuery detailQuery = directedDomain.getDestTable().cards().list().cardInRelation(invertedDomain, masterQuery);
 		
-		if (fullTextQuery != null)
+		if (fullTextQuery != null) {
 			detailQuery.fullText(fullTextQuery.trim());
-		if (sortField != null || sortDirection != null) {
-			if (sortField.endsWith("_value"))
-				sortField = sortField.substring(0, sortField.length()-6);
-			detailQuery.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
 		}
+
+		applySortToCardQuery(sorters, detailQuery);
+
 		for(ICard card : detailQuery.subset(offset, limit).count()) {
 			rows.put(Serializer.serializeCardWithPrivileges(card, false));
 		}
+
 		serializer.put("rows", rows);
 		serializer.put("results", detailQuery.getTotalRows());
 		return serializer;
@@ -332,8 +347,7 @@ public class ModCard extends JSONBase {
 			ICard card,
 			UserContext userCtx,
 			@Parameter("withflowstatus") boolean withFlowStatus,
-			@Parameter(value="sort",required=false) String sortField,
-			@Parameter(value="dir",required=false) String sortDirection,
+			@Parameter(value="sort",required=false) JSONArray sorters,
 			CardQuery currentCardFilter ) throws JSONException, CMDBException {
 		CardQuery cardFilter = (CardQuery) currentCardFilter.clone();
 
@@ -348,12 +362,9 @@ public class ModCard extends JSONBase {
 				cardFilter.setNextExecutorFilter(userCtx);
 			}
 		}
-		if (sortField != null || sortDirection != null) {
-			if (sortField.endsWith("_value"))
-				sortField = sortField.substring(0, sortField.length()-6);
-			cardFilter.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
-		}
-	
+
+		applySortToCardQuery(sorters, cardFilter);
+
 		serializer.put("position", cardFilter.position(card.getId()));
 		
 		return serializer;

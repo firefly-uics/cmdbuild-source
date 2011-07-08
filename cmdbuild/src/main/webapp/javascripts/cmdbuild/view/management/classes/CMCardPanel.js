@@ -21,6 +21,7 @@
 			Ext.apply(this, {
 				frame: false,
 				border: false,
+				hideMode: "offsets",
 				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
 					padding: "5px 5px 0 5px"
@@ -38,7 +39,7 @@
 
 			this.callParent(arguments);
 		},
-		
+
 		editMode: function() {
 			if (this.sideTabPanel) {
 				this.sideTabPanel.editMode();
@@ -66,7 +67,7 @@
 			_CMCache.getAttributeList(id, Ext.bind(fillForm, this));
 			this.displayMode(enableCMTbar = false);
 		},
-		
+
 		onCardSelected: function(card, reloadField) {
 			this.displayMode(enableCMTbar = true);
 
@@ -77,7 +78,7 @@
 				this.loadCard(card);
 			}
 		},
-		
+
 		onAddCardButtonClick: function(idClass, reloadField) {
 			this.reset();
 			if (reloadField) {
@@ -86,14 +87,17 @@
 			} else {
 				this.editMode();
 			}
-		}
+		},
+
+		fillForm: fillForm
 	});
-	
+
 	function fillForm(attributes, editable) {
-		this.removeAll();
-		var panels = [];
-		var groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
-		
+		var panels = [],
+			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
+
+		this.removeAll(autoDestroy = true);
+
 		for (var group in groupedAttr) {
 			var attributes = groupedAttr[group];
 			var p = CMDBuild.Management.EditablePanel.build({
@@ -130,9 +134,12 @@
 			this.loadCard(this.danglingCard);
 			this.danglingCard = null;
 		}
-
+		
+		if (editable) {
+			this.editMode();
+		}
 	};
-	
+
 	function buildTBar() {
 		if (this.withToolBar) {
 			this.deleteCardButton = new Ext.button.Button({

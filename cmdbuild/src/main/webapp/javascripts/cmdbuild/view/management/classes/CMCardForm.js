@@ -5,18 +5,34 @@
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
-
-		loadCard: function(card) { // a card is a Ext.data.Record
+		
+		// a card is a Ext.data.Record or a id to laod it
+		loadCard: function(card, idClass) {
 			this.reset();
 			if (!card) { return; }
 
-			var data = card.raw;
-			var fields = this.getForm().getFields();
-			
-			if (fields) {
-				fields.each(function(f) {
-					f.setValue(data[f.name]);
+			if (typeof card == "object") {
+				_fillWithData.call(this, card.raw);
+			} else {
+				CMDBuild.ServiceProxy.card.get({
+					params: {
+						Id: card,
+						IdClass: idClass
+					},
+					scope: this,
+					success: function(a,b, response) {
+						_fillWithData.call(this, response.card);
+					}
 				});
+			}
+
+			function _fillWithData(data) {
+				var fields = this.getForm().getFields();
+				if (fields) {
+					fields.each(function(f) {
+						f.setValue(data[f.name]);
+					});
+				}
 			}
 		},
 		

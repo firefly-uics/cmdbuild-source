@@ -19,7 +19,7 @@
 			});
 
 			this.items = [displaySubpanel,editSubpanel];
-			
+
 			// privileged functions
 			this.editMode = function() {
 				var layout = this.getLayout();
@@ -41,8 +41,13 @@
 
 			this.isEmpty = function() {
 				return (displaySubpanel.fields().length == 0);
-			}
-			CMDBuild.Management.EditablePanel.superclass.initComponent.apply(this, arguments);
+			};
+
+			this.getFields = function() {
+				return editSubpanel.fields();
+			};
+
+			this.callParent(arguments);
 		}
 	});
 	
@@ -73,12 +78,12 @@
 		},
 		switchFieldsToEdit: function() {
 			var fields = this.fields();
-	    	for (var i=0;  i<fields.length; ++i) {
-	    		var field = fields[i];
-	    		resolveFieldTemplates(field);
-	    		syncSizeASAP(field);
-	    	}
-	    }
+			for (var i=0;  i<fields.length; ++i) {
+				var field = fields[i];
+				resolveFieldTemplates(field);
+				syncSizeASAP(field);
+			}
+		}
 	});
 
 	CMDBuild.Management.EditablePanel.build = function(conf) {

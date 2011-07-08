@@ -5,9 +5,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/SearchFilterWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attributes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/ReferenceSearchWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/AddCardWindow.js"></script>
 
 
 <!-- WIDGETS BUILDER-->
@@ -48,7 +45,10 @@
 <!-- VIEWS -->
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
-
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
+	
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
@@ -57,13 +57,14 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
-
+	
 		<!-- RELATIONS -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardRelationsPanel.js"> </script>
-
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/relations/CMCardRelationsPanel.js"> </script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/relations/CMEditRelationWindow.js"> </script>
+		
 		<!-- MD -->
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/MasterDetailCardGrid.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMasterDetailTab.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMMasterDetailGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMCardMasterDetail.js"></script>
 		
 		<!-- ATTACHMENTS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
@@ -88,6 +89,9 @@
 
 
 <!-- CONTROLLER -->
+	<!-- COMMON -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
+
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModBulkCardUpdateController.js"></script>	
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModImportCSVController.js"></script>	
@@ -96,6 +100,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMAttachmentController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMRelationsController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMMasterDetailsController.js"></script>
 
 	<!-- REPORT-->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
@@ -109,7 +114,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardTabPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardWindow.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attachments.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/DomainCardListFilter.js"></script>

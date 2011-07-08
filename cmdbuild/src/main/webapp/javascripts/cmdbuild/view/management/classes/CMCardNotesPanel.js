@@ -95,12 +95,18 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		});
 		this.callParent(arguments);
 	},
+	onClassSelected: function() {
+		this.disableModify();
+		this.disable();
+	},
 
 	onCardSelected: function(card) {
 		var idClass = card.raw.IdClass;
 		if (CMDBuild.Utils.isSimpleTable(idClass)) {
 			this.disable();
 			return;
+		} else {
+			this.enable();
 		}
 		this.disableModify();
 		this.currentCardId = card.get("Id");
@@ -133,6 +139,10 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		this.cancelButton.disable();
 		if (this.rendered) {
 			this.getLayout().setActiveItem(this.displayPanel.id);
+		} else {
+			this.on("render", function() {
+				this.getLayout().setActiveItem(this.displayPanel.id);
+			}, this, {single: true});
 		}
 	},
 

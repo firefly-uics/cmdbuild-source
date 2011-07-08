@@ -18,6 +18,10 @@
 			return processes;
 		},
 
+		getEntryTypes: function() {
+			return Ext.apply(classes, processes);
+		},
+
 		addClasses: function(etypes) {
 			for (var i=0, l=etypes.length; i<l; ++i) {
 				var et = etypes[i];

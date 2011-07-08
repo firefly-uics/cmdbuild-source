@@ -365,7 +365,7 @@
 				}
 			}
 		},
-	
+
 		getAttributeList: function(idClass, callback) {
 			if (this.mapOfAttributes[idClass]) {
 				var attributes = this.mapOfAttributes[idClass];
@@ -374,7 +374,7 @@
 				this.loadAttributes(idClass, callback);
 			}
 		},
-		
+
 		loadAttributes: function(classId, callback) {
 			CMDBuild.Ajax.request({
 				url : 'services/json/schema/modclass/getattributelist',

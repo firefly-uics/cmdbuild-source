@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
-	Ext.define("CMDBuild.controller.management.classes.attacchments.CMCardRelationsController", {
+	Ext.define("CMDBuild.controller.management.classes.CMCardRelationsController", {
 		constructor: function(v, sc) {
 			this.view = v;
 			this.superController = sc;
@@ -34,22 +34,33 @@
 		},
 
 		onEntrySelect: function(selection) {
+			var cachedEntryType = _CMCache.getEntryTypeById(selection.get("id"));
+
+			this.currentCard = null;
+
+			if(!cachedEntryType || cachedEntryType.get("tableType") == "simpletable") {
+				this.currentClass = null;
+			} else {
+				this.currentClass = selection;
+			}
+
 			this.view.disable();
 			this.view.clearStore();
-			this.currentClass = selection;
-			this.currentCard = null;
 		},
 
 		onCardSelected: function(card) {
-			this.view.enable();
 			this.currentCard = card;
-
 			this.currentCardPrivileges = {
 				create: card.get("data.priv_create"),
 				write: card.get("data.priv_write")
 			};
 
-			this.loadData();
+			if (this.currentClass != null) {
+				this.loadData();
+				this.view.enable();
+			}
+
+			// else is a simple table that has no relations
 		},
 
 		loadData: function() {
@@ -76,10 +87,6 @@
 			});
 		},
 
-		onAddRelationButtonClick: function() {
-			alert("@@ add a relation");
-		},
-
 		onFollowRelationClick: function(model) {
 			if (model.get("depth") > 1) {
 				this.superController.openCard({
@@ -90,21 +97,43 @@
 		},
 
 		onEditRelationClick: function(model) {
-			alert("@@ edit the relation");
+			var a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+				idClass: model.get("dst_cid"),
+				idDomain: model.get("dom_id"),
+				relId: model.get("rel_id"),
+				relation: model,
+				filterType: this.view.id
+			}).show();
 		},
 
 		onDeleteRelationClick: function(model) {
 			alert("@@ delete the relation");
 		},
 
+		onAddRelationButtonClick: function() {
+			alert("@@ add a relation");
+		},
+
 		onEditCardClick: function(model) {
-			alert("@@ edit the card");
+			openCardWindow(model, true);
 		},
 
 		onViewCardClick: function(model) {
-			alert("@@ view the card");
+			openCardWindow(model, false);
 		}
 	});
+
+	function openCardWindow(model, editable) {
+		new CMDBuild.controller.management.common.CMCardWindowController(
+			new CMDBuild.view.management.common.CMCardWindow({
+				cmEditMode: editable,
+				withButtons: editable,
+				classId: model.get("dst_cid"), // classid of the destination
+				cardId: model.get("dst_id"), // id of the card destination
+				title: model.get("label") + " - " + model.get("dst_desc")
+			}).show()
+		);
+	}
 
 	function tabIsActive(t) {
 		return t.ownerCt.layout.getActiveItem().id == t.id;
