@@ -89,7 +89,7 @@ public abstract class AbstractElementImpl implements IAbstractElement {
 		}
 	}
 
-	private boolean hasChanged() {
+	protected final boolean hasChanged() {
 		for (AttributeValue av : values.values()) {
 			if (av.isChanged()) {
 				return true;

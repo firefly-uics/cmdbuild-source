@@ -122,6 +122,8 @@ public abstract class CMBackend {
 
 	public abstract IRelation getRelation(IDomain domain, ICard card1, ICard card2);
 
+	public abstract IRelation getRelation(IDomain domain, int id);
+
 	/*
 	 * Card
 	 */
