@@ -29,8 +29,19 @@ public class RelationFactoryImpl implements RelationFactory {
 		return new RelationProxy(realRelation, userCtx);
 	}
 
+	public IRelation create(IDomain domain) {
+		IRelation realRelation = new RelationImpl();
+		realRelation.setSchema(domain);
+		return new RelationProxy(realRelation, userCtx);
+	}
+
 	public IRelation get(IDomain domain, ICard card1, ICard card2) {
 		IRelation realRelation = backend.getRelation(domain, card1, card2);
+		return new RelationProxy(realRelation, userCtx);
+	}
+
+	public IRelation get(IDomain domain, int id) {
+		IRelation realRelation = backend.getRelation(domain, id);
 		return new RelationProxy(realRelation, userCtx);
 	}
 

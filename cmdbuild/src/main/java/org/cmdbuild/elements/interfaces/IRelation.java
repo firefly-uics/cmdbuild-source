@@ -5,7 +5,11 @@ import org.cmdbuild.elements.DirectedDomain;
 public interface IRelation extends IAbstractElement {
 
 	public enum RelationAttributes {
-		BeginDate("BeginDate");
+		BeginDate("BeginDate"),
+		IdObj1("IdObj1"),
+		IdClass1("IdClass1"),
+		IdObj2("IdObj2"),
+		IdClass2("IdClass2");
 
 		private final String descr;
 

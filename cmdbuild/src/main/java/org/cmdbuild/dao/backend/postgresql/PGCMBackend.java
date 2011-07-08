@@ -20,9 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,35 +35,33 @@ import org.cmdbuild.dao.backend.postgresql.SchemaQueries.DomainQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.LookupQueries;
 import org.cmdbuild.dao.backend.postgresql.SchemaQueries.TableQueries;
 import org.cmdbuild.elements.AttributeImpl;
+import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
 import org.cmdbuild.elements.CardImpl;
 import org.cmdbuild.elements.CardQueryImpl;
 import org.cmdbuild.elements.DomainImpl;
+import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.RelationImpl;
 import org.cmdbuild.elements.TableImpl;
-import org.cmdbuild.elements.TableTree;
-import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
-import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
 import org.cmdbuild.elements.TableImpl.TableDataDefinitionMeta;
-import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainQuery;
 import org.cmdbuild.elements.interfaces.IAbstractElement;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -1351,14 +1349,14 @@ public class PGCMBackend extends CMBackend {
 			Map<String, QueryAttributeDescriptor> attrMappingM = queryComponents.getQueryMapping("Map");
 			while (rs.next()) {
 				try {
-					CardImpl card1 = new CardImpl(rs.getInt(attrMapping1.get(ICard.CardAttributes.ClassId.toString())
-							.getValueAlias()));
+					CardImpl card1 = new CardImpl(
+							rs.getInt(attrMappingM.get(IRelation.RelationAttributes.IdClass1.toString()).getValueAlias()));
 					card1.setValue(ICard.CardAttributes.Id.toString(), rs,
-							attrMapping1.get(ICard.CardAttributes.Id.toString()));
-					CardImpl card2 = new CardImpl(rs.getInt(attrMapping2.get(ICard.CardAttributes.ClassId.toString())
+							attrMappingM.get(IRelation.RelationAttributes.IdObj1.toString()));
+					CardImpl card2 = new CardImpl(rs.getInt(attrMappingM.get(IRelation.RelationAttributes.IdClass2.toString())
 							.getValueAlias()));
 					card2.setValue(ICard.CardAttributes.Id.toString(), rs,
-							attrMapping2.get(ICard.CardAttributes.Id.toString()));
+							attrMappingM.get(IRelation.RelationAttributes.IdObj2.toString()));
 					for (String attrName : attrMapping1.keySet()) {
 						card1.setValue(attrName, rs, attrMapping1.get(attrName));
 					}
@@ -1394,11 +1392,18 @@ public class PGCMBackend extends CMBackend {
 	@Override
 	public IRelation getRelation(IDomain domain, ICard card1, ICard card2) {
 		RelationQueryBuilder qb = new RelationQueryBuilder();
-		AttributeFilter filter1 = new AttributeFilter(domain.getAttribute("IdObj1"), AttributeFilterType.EQUALS,
-				String.valueOf(card1.getId()));
-		AttributeFilter filter2 = new AttributeFilter(domain.getAttribute("IdObj2"), AttributeFilterType.EQUALS,
-				String.valueOf(card2.getId()));
-		String query = qb.buildSelectQuery(domain, filter1, filter2, 1, 0);
+		String query = qb.buildSelectQuery(domain, card1.getId(), card2.getId());
+		Iterator<IRelation> relationIterator = perfomRelationQuery(domain, query, qb.getQueryComponents()).iterator();
+		if (!relationIterator.hasNext()) {
+			throw NotFoundExceptionType.NOTFOUND.createException();
+		}
+		return relationIterator.next();
+	}
+
+	@Override
+	public IRelation getRelation(IDomain domain, int id) {
+		RelationQueryBuilder qb = new RelationQueryBuilder();
+		String query = qb.buildSelectQuery(domain, id);
 		Iterator<IRelation> relationIterator = perfomRelationQuery(domain, query, qb.getQueryComponents()).iterator();
 		if (!relationIterator.hasNext()) {
 			throw NotFoundExceptionType.NOTFOUND.createException();

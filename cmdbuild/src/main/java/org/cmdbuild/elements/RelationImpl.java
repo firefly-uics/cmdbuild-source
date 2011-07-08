@@ -99,12 +99,9 @@ public class RelationImpl extends AbstractElementImpl implements IRelation {
 
 		setDefaultValueIfPresent("IdDomain", (Integer)schema.getId());
 		checkClassesCorrectness();
+		updateValues();
 
-		if (isNew()) {
-			create();
-		} else {
-			modify();
-		}
+		super.save();
 	}
 
 	private void checkClassesCorrectness() {

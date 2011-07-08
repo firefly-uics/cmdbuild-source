@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.management;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,18 +15,19 @@ import javax.activation.DataHandler;
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
-import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter;
-import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
+import org.cmdbuild.elements.filters.FilterOperator;
 import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
+import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -34,9 +36,8 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.RelationFactory;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
+import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.DataAccessLogic;
@@ -586,45 +587,71 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	@Transacted
 	public void createRelations(
-			ICard card,
-			@Parameter("Relations") JSONObject relations,
-			ITableFactory tf,
-			RelationFactory rf,
-			DomainFactory df ) throws JSONException, CMDBException {
-		String domainDirectionString = relations.names().getString(0);
-		DirectedDomain directedDomain = stringToDirectedDomain(df, domainDirectionString);
-		JSONArray cardArray = relations.getJSONArray(domainDirectionString);
-		for (int i=0; i<cardArray.length(); ++i) {
-			String cardString = cardArray.getString(i);
-			ICard destCard = stringToCard(tf, cardString);
-			IRelation relation;
-			IDomain domain = directedDomain.getDomain();
-			if (directedDomain.getDirectionValue()) {
-				relation = rf.create(domain, card, destCard);
-			} else {
-				relation = rf.create(domain, destCard, card);
-			}
-			relation.save();
-		}
+			@Parameter("JSON") JSONObject JSON,
+			UserContext userCtx) throws JSONException {
+		saveRelation(JSON, userCtx);
 	}
 
 	@JSONExported
 	public void modifyRelation(
-			IRelation relation,
-			@Parameter("DomainDirection") boolean direction,
-			ICard newCard ) throws JSONException, CMDBException {
-		if (direction) {
-			relation.setCard2(newCard);
+			@Parameter(required=false, value="JSON") JSONObject JSON,
+			UserContext userCtx) throws JSONException {
+		saveRelation(JSON, userCtx);
+	}
+
+	private void saveRelation(JSONObject JSON, UserContext userCtx) throws JSONException {
+		final int relId = JSON.optInt("id");
+		final int domainId = JSON.getInt("did");
+		final JSONObject attributes = JSON.getJSONObject("attrs");
+
+		final IDomain domain = userCtx.domains().get(domainId);
+		final IRelation relation;
+		if (relId > 0) {
+			relation = userCtx.relations().get(domain, relId);
 		} else {
-			relation.setCard1(newCard);
+			relation = userCtx.relations().create(domain);
+		}
+
+		@SuppressWarnings("unchecked") final Iterator<String> keys = attributes.keys();
+		while (keys.hasNext()) {
+			String name = keys.next();
+			Object value;
+			if (attributes.isNull(name)) {
+				value = null;
+			} else {
+				value = attributes.get(name);
+			}
+			if ("_1".equals(name)) {
+				if (value instanceof JSONObject) {
+					JSONObject jsonCard = (JSONObject) value;
+					int cardId = jsonCard.getInt("id");
+					int classId = jsonCard.getInt("cid");
+					ICard card1 = userCtx.tables().get(classId).cards().get(cardId);
+					relation.setCard1(card1);
+				}
+			} else if ("_2".equals(name)) {
+				if (value instanceof JSONObject) {
+					JSONObject jsonCard = (JSONObject) value;
+					int cardId = jsonCard.getInt("id");
+					int classId = jsonCard.getInt("cid");
+					ICard card2 = userCtx.tables().get(classId).cards().get(cardId);
+					relation.setCard2(card2);
+				}
+			} else {
+				relation.setValue(name, value);
+			}
 		}
 		relation.save();
 	}
 
 	@JSONExported
 	public void deleteRelation(
-			IRelation relation ) throws JSONException, CMDBException {
-		relation.delete();
+			@Parameter(required=false, value="JSON") JSONObject JSON,
+			UserContext userCtx) throws JSONException {
+		final int relId = JSON.optInt("id");
+		final int domainId = JSON.getInt("did");
+		final IDomain domain = userCtx.domains().get(domainId);
+		userCtx.relations().get(domain, relId).delete();
 	}
 
 	/*
