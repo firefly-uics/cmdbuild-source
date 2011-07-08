@@ -14,6 +14,9 @@
 				region: 'west',
 				split: true,
 				layout: "accordion",
+				layoutConfig: {
+					animate: false
+				},
 				items: this.cmAccordions,
 				frame: false,
 				border: true,

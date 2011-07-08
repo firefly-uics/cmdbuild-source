@@ -36,6 +36,8 @@
 	// Component masks are shown at 20000 z-index. This oddly fixes
 	// the problem of masks appearing on top of new windows.
 	Ext.WindowMgr.zseed = 30000;
+	
+	Ext.enableFx = false;
 })();
 
 function getCurrentLanguage() {

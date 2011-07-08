@@ -1,5 +1,5 @@
 (function() {
-	var TARGET_CLASS_ID = "ClassId";
+	var TARGET_CLASS_ID = "dst_cid";
 	var tr = CMDBuild.Translation.management.modcard;
 	var col_tr = CMDBuild.Translation.management.modcard.relation_columns;
 
@@ -9,7 +9,7 @@
 			'dom_id', 'dom_desc', 'label',
 			'dst_code', 'dst_id', 'dst_desc', 'dst_cid',
 			'rel_attr', 'rel_date', 'rel_id',
-			'relations_size', 'src' // used only for the folder nodes
+			'relations_size', 'src'
 		]
 	});
 
@@ -90,24 +90,27 @@
 			attributes = domainCachedData.data.attributes,
 			attributesToString = "",
 			oversize = domainRensonseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
-			node = {
-				dom_id: domainCachedData.get("id"),
-				label: buildDescriptionForDomainNode(domainRensonseObj, domainCachedData),
+			src = domainRensonseObj.src,
+			domId = domainCachedData.get("id");
 
-				src: domainRensonseObj.src,
-				relations_size: domainRensonseObj.relations_size,
+		node = {
+			dom_id: domId,
+			label: buildDescriptionForDomainNode(domainRensonseObj, domainCachedData),
 
-				expanded: !oversize,
-				leaf: false,
-				children: []
-			};
+			src: src,
+			relations_size: domainRensonseObj.relations_size,
 
-			if (oversize) {
-				// it is asynchronous, add an empty obj to get the possibility to expand the tree widget
-				node.children.push({});
-			} else {
-				node.children = convertRelationInNodes(domainRensonseObj.relations);
-			}
+			expanded: !oversize,
+			leaf: false,
+			children: []
+		};
+
+		if (oversize) {
+			// it is asynchronous, add an empty obj to get the possibility to expand the tree widget
+			node.children.push({});
+		} else {
+			node.children = convertRelationInNodes(domainRensonseObj.relations, domId, src);
+		}
 
 		if (attributes.length > 0) {
 			for (var i=0, l=attributes.length; i<l; i++) {
@@ -120,7 +123,7 @@
 		return node;
 	}
 
-	function convertRelationInNodes(relations) {
+	function convertRelationInNodes(relations, dom_id, src) {
 		relations = relations || [];
 		var r,c,i=0,
 			l=relations.length,
@@ -129,9 +132,10 @@
 		for (; i<l; ++i) {
 			r = relations[i];
 			c = _CMCache.getEntryTypeById(r.dst_cid);
-
 			r.leaf = true;
 			r.label = c.get("text");
+			r.dom_id = dom_id;
+			r.src = src;
 
 			nodes.push(r);
 		}
@@ -140,20 +144,22 @@
 	}
 
 	function renderRelationActions(value, metadata, record) {
-		if (record.get("depth") == 1) {
+		if (record.get("depth") == 1) { // the domains node has no icons to render
 			return "";
 		}
+
 		var tr = CMDBuild.Translation.management.modcard,
 			actionsHtml = '<img style="cursor:pointer" title="'+tr.open_relation+'" class="action-relation-go" src="images/icons/bullet_go.png"/>&nbsp;',
 			tableId = record.get(TARGET_CLASS_ID),
+			domainObj = _CMCache.getDomainById(record.get("dom_id")),
 			table = _CMCache.getClassById(tableId);
 
-		if (!this.readOnly) {
+		if (domainObj.get("writePrivileges")) {
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>&nbsp;'
 			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>&nbsp;';
 		}
 
-		if (table && table.priv_write) {
+		if (table && table.get("priv_write")) {
 			actionsHtml += '<img style="cursor:pointer" class="action-relation-editcard" src="images/icons/modify.png"/>';
 		} else {
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.view_relation+'" class="action-relation-viewcard" src="images/icons/zoom.png"/>';

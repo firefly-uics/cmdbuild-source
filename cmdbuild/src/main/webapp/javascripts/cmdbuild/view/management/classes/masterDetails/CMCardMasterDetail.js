@@ -3,7 +3,7 @@
 	var MD = "detail";
 	var FK = "foreignkey";
 
-	Ext.define("CMDBuild.Management.CardMasterDetailTab", {
+	Ext.define("CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail", {
 		extend: "Ext.panel.Panel",
 
 		editable: true,
@@ -19,6 +19,7 @@
 
 			this.detailGrid = new CMDBuild.Management.MasterDetailCardGrid({
 				editable: this.editable,
+				border: "0 1 0 0",
 				region: "center",
 				columns: [],
 				loadMask: false,
@@ -42,50 +43,54 @@
 			});
 
 			this.callParent(arguments);
-			this.tabs.on("click", onTabClick, this);
 
 //            this.subscribe('cmdb-load-' + this.eventType, this.updateDetailForLoadedCard, this);
 //            this.subscribe('cmdb-reload-' + this.eventType, this.onReloadCard, this);
-
-            // given the tab is not active but enabled
-            // and we change card
-            // when the tab is activated
-            //then the grid should be updated
-			this.on('activate', function() {
-				if (!this.isLoaded) {
-					this.updateDetailGrid(this.actualMasterData);
-				}
-			}, this);
 		},
 
-		onClassSelected: function(id) {
-			if (!id) {
-				return
+		loadDetailsAndFKThenBuildSideTabs: function(classId) {
+			var domainList = _CMCache.getMasterDetailsForClassId(classId),
+				me = this;
+			
+			this.details = {};
+			this.details[MD] = {};
+			this.details[FK] = {};
+
+			for (var i = 0, len = domainList.length; i < len; i++) {
+				var domain = domainList[i];
+				domain['directedDomain'] = setDirectedDomain(domain);
+				this.details[MD][domain.get("id")] = domain;
 			}
 
-			this.currentForeignKey = null;
-			this.currentDetail = null;
-			this.actualMasterData = null;
-			this.currentTab = null;
+			CMDBuild.ServiceProxy.getFKTargetingClass( {
+				params: {
+					idClass: classId
+				},
+				scope: me,
+				success: takeFkAttributesAndBuildTabs
+			});
 
-			this.lastClassSelected = id;
-			loadDetailsAndFKThenBuildSideTabs.call(this);
+			function takeFkAttributesAndBuildTabs(response, options, attributes) {
+				this.details[FK] = {};
+				for (var i=0, l = attributes.length; i < l; ++i) {
+					var attr = attributes[i];
+					this.details[FK][attr.name] = attr;
+				}
 
-			this.disable();
-		},
-
-		onCardSelected: function(card) {
-			this.actualMasterData = card;
-			this.updateDetailGridIfDisplayed();
-
-			this.enable();
+				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
+						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
+					this.disable();
+					this.tabs.removeAll();
+					this.fireEvent("empty");
+				} else {
+					this.enable();
+					buildTabs.call(this);
+				}
+			}
 		},
 
 		selectDetail: function(detail) {
-			this.currentForeignKey = undefined;
-			this.currentDetail = detail;
-
-			var et = _CMCache.getEntryTypeById(getDetailClass(this.currentDetail));
+			var et = _CMCache.getEntryTypeById(getDetailClass(detail));
 
 			if (et) {
 				this.addDetailButton.updateForEntry(et);
@@ -102,30 +107,18 @@
 			this.addDetailButton.setClassId(this.currentForeignKey);
 		},
 
-		updateDetailGridIfDisplayed: function() {
-			this.isLoaded = false;
-			this.updateDetailGrid(this.actualMasterData); //TODO 3 to 4 only if visible
+		resetDetailGrid: function() {
+			this.detailGrid.reset();
 		},
 
-		updateDetailGrid: function() {
+		activateFirstTab: function() {
+			this.tabs.activateFirst();
+		},
 
-			if (this.currentDetail && this.actualMasterData) {
+		updateDetailGrid: function(p) {
+			this.detailGrid.loadDetails(p);
 
-				this.detailGrid.loadDetails({
-					domain: this.currentDetail,
-					masterCard: this.actualMasterData
-				});
-
-			} else {
-
-				this.detailGrid.reset();
-				_debug("no actualMasterData");
-
-			}
-
-			this.isLoaded = true;
-
-//				var isSuperClass = (this.currentDetail.detailSubclasses.length > 1);
+//			var isSuperClass = (this.currentDetail.detailSubclasses.length > 1);
 //				detailClassId = getDetailClass(this.currentDetail);
 //                callback = this.loadDetailCardList.createDelegate( this, [
 //                    this.actualMasterData.Id,
@@ -175,69 +168,7 @@
 		}
 	}
 	
-	function onTabClick(tab) {
-		if (this.currentTab === tab) {
-			return;
-		}
-
-		this.currentTab = tab;
-		var targetPanel = tab.targetPanel,
-			type = targetPanel.detailType,
-			detail = this.details[type][targetPanel.detailId];
-
-		if (type == MD) {
-			this.selectDetail(detail);
-		} else {
-			this.selectForeignKey(detail);
-		}
-
-		this.addDetailButton.enable();
-		this.updateDetailGrid();
-	}
 	
-	function loadDetailsAndFKThenBuildSideTabs(params) {
-		var domainList = _CMCache.getMasterDetailsForClassId(this.lastClassSelected);
-
-		this.details = {};
-		this.details[MD] = {};
-
-		for (var i = 0, len = domainList.length; i < len; i++) {
-			var domain = domainList[i];
-			domain['directedDomain'] = setDirectedDomain(domain);
-			this.details[MD][domain.get("id")] = domain;
-		}
-
-		buildTabs.call(this);
-
-		// TODO 3 to 4 add the FK
-
-//			CMDBuild.ServiceProxy.getFKTargetingClass( {
-//				params: {
-//					idClass: idClass
-//				},
-//				scope: _this,
-//				success: takeFkAttributesAndBuildTabs
-//			});
-
-//		function takeFkAttributesAndBuildTabs(response, options, attributes) {
-//			this.details[FK] = {};
-//			for (var i=0, l = attributes.length; i < l; ++i) {
-//				var attr = attributes[i];
-//				this.details[FK][attr.name] = attr;
-//			}
-//
-//			if (CMDBuild.Utils.isEmpty(this.details[FK]) 
-//					&& CMDBuild.Utils.isEmpty(this.details[MD])) {
-//				this.disable();
-//				this.tabs.removeAll();
-//				this.fireEvent("empty");
-//			} else {
-//				this.enable();
-//				
-//			}
-//		}
-
-	}
 
 	function setDirectedDomain(domain) {
 		var cardinality = domain.get("cardinality"),
@@ -253,30 +184,37 @@
 	}
 	
 	function buildTabs() {
+		var details = this.details;
 		function build() {
-			this.tabs.removeAll();
-			
-			function _buildTabs(type) {
-				for (var key in this.details[type]) {
-					var detailLabel = this.details[type][key].get("description");
+			this.tabs.removeAll(true);
+
+			function _buildTabs(tabs, type) {
+				tabs = tabs || [];
+				for (var key in tabs) {
+					var d = tabs[key],
+						detailLabel = d.get("description"),
+						detailId = d.get("id")
 
 					this.tabs.addTabFor({
 						title: detailLabel,
 						tabLabel: detailLabel,
 						detailType: type,
-						detailId: this.details[type][key].get("id"),
+						detailId: detailId,
 						on: function() {}
 					}, type);
 				}
 			}
-			
-			_buildTabs.call(this, MD);
-			_buildTabs.call(this, FK);
+
+			_buildTabs.call(this, details[MD], MD);
+			_buildTabs.call(this, details[FK], FK);
 
 			this.doLayout();
-			this.tabs.activateFirst();
+
+			Ext.Function.createDelayed(function() {
+				this.tabs.activateFirst();
+			}, 100, this)();
 		}
-		
+
 		if (this.isVisible()) {
 			build.call(this);
 		} else {

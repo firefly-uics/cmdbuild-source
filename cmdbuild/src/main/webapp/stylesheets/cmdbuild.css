@@ -768,6 +768,13 @@ em {
 	background-repeat: no-repeat;
 }
 
+/* history items*/
+.historyItem {
+	white-space: nowrap;
+	padding: 0 0 0 35px;
+	margin: 0 !important;
+}
+
 /* custom icons */
 
 /*

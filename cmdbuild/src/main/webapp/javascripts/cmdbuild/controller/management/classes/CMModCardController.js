@@ -11,13 +11,15 @@
 			this.cardPanel = this.view.cardTabPanel.cardPanel;
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
 			this.cardGrid = this.view.cardGrid;
-//			this.mdPanel = this.view.cardTabPanel.mdPanel;
+
+			this.mdPanel = this.view.cardTabPanel.mdPanel;
+			this.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(this.mdPanel);
 
 			this.attachmentsPanel = this.view.cardTabPanel.attachmentPanel;
 			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController(this.attachmentsPanel);
 
 			this.relationsPanel = this.view.cardTabPanel.relationsPanel;
-			this.relationsController = new CMDBuild.controller.management.classes.attacchments.CMCardRelationsController(this.relationsPanel, this);
+			this.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(this.relationsPanel, this);
 
 			this.gridSM = this.cardGrid.getSelectionModel();
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
@@ -44,6 +46,7 @@
 				// sub-controllers
 				this.attachmentsController.onEntrySelect(selection);
 				this.relationsController.onEntrySelect(selection);
+				this.mdController.onEntrySelect(selection);
 			}
 		},
 
@@ -76,6 +79,7 @@
 			// sub-controllers
 			this.attachmentsController.onCardSelected(this.currentCard);
 			this.relationsController.onCardSelected(this.currentCard);
+			this.mdController.onCardSelected(this.currentCard);
 		}
 	}
 	
@@ -100,8 +104,6 @@
 	}
 	
 	function onDeleteCardClick() {
-//		var title = this.translation.delete_card;
-//		var msg = this.translation.delete_card_confirm;
 		function makeRequest(btn) {
 			if (btn != 'yes') {
 				return;
@@ -137,11 +139,10 @@
 	}
 	
 	function onSaveCardClick() {
-		var params = {};
-		var form = this.cardPanel.getForm();
-		var view = this.cardPanel;
-		
-		var ex = [] //var ex = this.cardExtensionsProvider;
+		var params = {},
+			form = this.cardPanel.getForm(),
+			view = this.cardPanel,
+			ex = [] //var ex = this.cardExtensionsProvider;
 		
 		//var invalidAttributes = this.view.form.getInvalidAttributeAsHTML();
 		
