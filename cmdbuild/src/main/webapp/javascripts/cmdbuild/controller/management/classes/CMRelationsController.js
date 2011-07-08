@@ -125,7 +125,37 @@
 		},
 
 		onDeleteRelationClick: function(model) {
-			alert("@@ delete the relation");
+			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention,
+				CMDBuild.Translation.management.modcard.delete_relation_confirm,
+				makeRequest, this);
+
+			function makeRequest(btn) {
+				if (btn != 'yes') {
+					return;
+				}
+
+				var o = {
+						did: model.get("dom_id"),
+						id: model.get("rel_id")
+					};
+
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.ServiceProxy.relations.remove({
+					params: {
+						JSON: Ext.JSON.encode(o)
+					},
+					scope: this,
+					success: function() {
+						alert("@@ delete relation success");
+					},
+					failure: function() {
+						alert("@@ delete relation failure");
+					},
+					callback: function() {
+						CMDBuild.LoadMask.get().hide();
+					}
+				})
+			};
 		},
 
 		onEditCardClick: function(model) {

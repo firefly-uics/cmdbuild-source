@@ -92,21 +92,27 @@
 					cid2 = domain.get("idClass2");
 
 				if (Ext.Array.contains(anchestorsId, cid1)) {
-					out.push({
-						dom_id: domain.get("id"),
-						description: domain.get("descr_1") + " (" +_CMCache.getEntryTypeById(cid2).get("text") + ")",
-						dst_cid: domain.get("idClass2"),
-						src: "_1"
-					});
+					var et2 = _CMCache.getEntryTypeById(cid2);
+					if (et2) {
+						out.push({
+							dom_id: domain.get("id"),
+							description: domain.get("descr_1") + " (" + et2.get("text") + ")",
+							dst_cid: domain.get("idClass2"),
+							src: "_1"
+						});
+					}
 				}
 
 				if (Ext.Array.contains(anchestorsId, cid2)) {
-					out.push({
-						dom_id: domain.get("id"),
-						description: domain.get("descr_2") + " (" +_CMCache.getEntryTypeById(cid1).get("text") + ")",
-						dst_cid: domain.get("idClass1"),
-						src: "_2"
-					});
+					var et1 = _CMCache.getEntryTypeById(cid1)
+					if (et1) {
+						out.push({
+							dom_id: domain.get("id"),
+							description: domain.get("descr_2") + " (" + et1.get("text") + ")",
+							dst_cid: domain.get("idClass1"),
+							src: "_2"
+						});
+					}
 				}
 			}
 
