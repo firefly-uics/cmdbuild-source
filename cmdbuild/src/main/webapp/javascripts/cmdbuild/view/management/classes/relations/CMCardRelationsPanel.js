@@ -17,8 +17,7 @@
 		extend: "Ext.tree.Panel",
 		initComponent: function() {
 
-			this.addRelationButton = new Ext.button.Button({
-				iconCls : 'add',
+			this.addRelationButton = new CMDBuild.AddRelationMenuButton({
 				text : tr.add_relations
 			});
 

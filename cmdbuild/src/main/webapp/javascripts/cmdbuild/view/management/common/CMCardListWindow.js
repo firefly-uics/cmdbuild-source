@@ -3,6 +3,8 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 	idClass: undefined, // passed at instantiation
 	filterType: undefined, // passed at instantiation
+	selType: 'rowmodel', // to allow the opportunity to pass a selection model to the grid
+	multiSelect: false,
 
 	initComponent: function() {
 		if (typeof this.idClass == "undefined") {
@@ -16,15 +18,17 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			scope: this
 		});
 
-		this.grid = new CMDBuild.view.management.common.CMCardGrid({
-			filterCategory: this.filterType || this.id,
+ 		this.grid = new CMDBuild.view.management.common.CMCardGrid({
+ 			filterCategory: this.filterType || this.id,
 			filterSubcategory: this.id,
 			cmAdvancedFilter: false,
 			columns: [],
 			title: CMDBuild.Translation.management.findfilter.list,
 			frame: false,
-			border: "0 0 1 0"
-		});
+			border: "0 0 1 0",
+			selType: this.selType,
+			multiSelect: this.multiSelect
+ 		});
 
 		this.filter = new CMDBuild.Management.Attributes({
 			attributeList: {}, 

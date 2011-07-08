@@ -77,6 +77,41 @@
 
 			return attributeStore;
 		},
+		
+		getDirectedDomainsByEntryType: function(et) {
+			if (typeof et == "object") {
+				et = et.get("id");
+			}
+
+			var out = [],
+				anchestorsId = _CMUtils.getAncestorsId(et);
+
+			for (var domain in domains) {
+				domain = domains[domain];
+				var cid1 = domain.get("idClass1"),
+					cid2 = domain.get("idClass2");
+
+				if (Ext.Array.contains(anchestorsId, cid1)) {
+					out.push({
+						dom_id: domain.get("id"),
+						description: domain.get("descr_1") + " (" +_CMCache.getEntryTypeById(cid2).get("text") + ")",
+						dst_cid: domain.get("idClass2"),
+						src: "_1"
+					});
+				}
+
+				if (Ext.Array.contains(anchestorsId, cid2)) {
+					out.push({
+						dom_id: domain.get("id"),
+						description: domain.get("descr_2") + " (" +_CMCache.getEntryTypeById(cid1).get("text") + ")",
+						dst_cid: domain.get("idClass1"),
+						src: "_2"
+					});
+				}
+			}
+
+			return out;
+		},
 
 		getMasterDetailsForClassId: function(id) {
 			var out = []
@@ -133,21 +168,12 @@
 			cardinality = domain.get("cardinality"),
 			idClass1 = domain.get("idClass1"),
 			idClass2 = domain.get("idClass2"),
-			ancestors = classtree.getAncestorsAsArray(id);
+			ancestors = _CMUtils.getAncestorsId(id);
 
 		if (cardinality == "1:N") {
-			return isInTheAncestors(idClass1);
+			return Ext.Array.contains(ancestors, idClass1);
 		} else if (cardinality == "N:1") {
-			return isInTheAncestors(idClass2);
-		}
-
-		function isInTheAncestors(id) {
-			for (var i = 0, l=ancestors.length; i<l; ++i) {
-				if (ancestors[i].get("id") == id) {
-					return true;
-				}
-			}
-			return false;
+			return Ext.Array.contains(ancestors, idClass2);
 		}
 	}
 

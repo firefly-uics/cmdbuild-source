@@ -109,11 +109,23 @@ CMDBuild.Utils = (function() {
 				}
 			}
 		},
-        
-        isSuperclass: function(idClass) {
-           var c =  _CMCache.getClassById(idClass);
-           return c.get("superclass");
-        }
+
+		isSuperclass: function(idClass) {
+			var c =  _CMCache.getClassById(idClass);
+			return c.get("superclass");
+		},
+
+		getAncestorsId: function(entryTypeId) {
+			var et = _CMCache.getEntryTypeById(entryTypeId),
+				out = [];
+
+			while (et.get("parent") != "") {
+				out.push(et.get("id"));
+				et = _CMCache.getEntryTypeById(et.get("parent"));
+			}
+
+			return out;
+		}
 	};
 })();
 
