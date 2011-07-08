@@ -27,7 +27,7 @@
 				}
 			}, this);
 
-			this.view.addRelationButton.on("click", this.onAddRelationButtonClick, this);
+			this.view.addRelationButton.on("cmClick", this.onAddRelationButtonClick, this);
 			this.view.on('beforeitemclick', cellclickHandler, this);
 			this.view.on("itemdblclick", onItemDoubleclick, this);
 			this.view.on("activate", this.loadData, this);
@@ -38,7 +38,7 @@
 
 			this.currentCard = null;
 
-			if(!cachedEntryType || cachedEntryType.get("tableType") == "simpletable") {
+			if (!cachedEntryType || cachedEntryType.get("tableType") == "simpletable") {
 				this.currentClass = null;
 			} else {
 				this.currentClass = selection;
@@ -46,6 +46,7 @@
 
 			this.view.disable();
 			this.view.clearStore();
+			this.view.addRelationButton.setDomainsForEntryType(selection);
 		},
 
 		onCardSelected: function(card) {
@@ -96,22 +97,35 @@
 			}
 		},
 
+		onAddRelationButtonClick: function(d) {
+			var a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+				currentCard: this.currentCard,
+				relation: {
+					dst_cid: d.dst_cid,
+					dom_id: d.dom_id,
+					rel_id: -1,
+					src: d.src
+				},
+				selType: "checkboxmodel",
+				multiSelect: true,
+				filterType: this.view.id
+			}).show();
+		},
+
 		onEditRelationClick: function(model) {
 			var a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
-				idClass: model.get("dst_cid"),
-				idDomain: model.get("dom_id"),
-				relId: model.get("rel_id"),
-				relation: model,
+				relation: {
+					dst_cid: model.get("dst_cid"),
+					dom_id: model.get("dom_id"),
+					rel_id: model.get("rel_id"),
+					src: model.get("src")
+				},
 				filterType: this.view.id
 			}).show();
 		},
 
 		onDeleteRelationClick: function(model) {
 			alert("@@ delete the relation");
-		},
-
-		onAddRelationButtonClick: function() {
-			alert("@@ add a relation");
 		},
 
 		onEditCardClick: function(model) {

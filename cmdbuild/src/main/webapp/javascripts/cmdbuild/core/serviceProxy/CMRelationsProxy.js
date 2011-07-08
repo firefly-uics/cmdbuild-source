@@ -13,6 +13,13 @@
 			p.url = 'services/json/management/modcard/modifyrelation';
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
+
+		add: function(p) {
+			p.method = "POST";
+			p.url = 'services/json/management/modcard/createrelations';
+
+			CMDBuild.ServiceProxy.core.doRequest(p);
 		}
 	};
 
