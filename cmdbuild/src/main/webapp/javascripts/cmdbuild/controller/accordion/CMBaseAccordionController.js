@@ -4,7 +4,7 @@
 			this.accordion = accordion;
 
 			this.accordion.on("expand", function() {
-				if (this.accordion.cmSilent === true) {
+				if (this.accordion.cmSilent !== true) {
 					this.onAccordionExpanded();
 				}
 			}, this);

@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.view.administraton.accordion.CMProcessAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modWorkflow.tree_title,
-		cmName: "process",
+		cmName: 'process',
 
 		buildTreeStructure: function() {
 			var processes = _CMCache.getProcesses();

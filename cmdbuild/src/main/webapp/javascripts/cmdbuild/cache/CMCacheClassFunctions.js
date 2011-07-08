@@ -58,7 +58,16 @@
 		},
 
 		getEntryTypeById: function(id) {
-			return this.getClassById(id) || this.getProcessById(id);
+			var c = this.getClassById(id),
+				p = this.getProcessById(id);
+			
+			if (c) {
+				return c
+			} else if (p) {
+				return p
+			} else {
+				CMDBuild.Msg.error("@@Error", "@@ Non ho la tabella con id " + id);
+			}
 		},
 
 		getSuperclassesAsStore: function() {

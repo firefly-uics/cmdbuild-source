@@ -147,7 +147,10 @@
 			}
 
 		} else {
-			throw NO_SELECTION;
+			if (me.relation.rel_id == -1) {
+				// we are add a new relation, the selection is mandatory
+				throw NO_SELECTION;
+			}
 		}
 	}
 

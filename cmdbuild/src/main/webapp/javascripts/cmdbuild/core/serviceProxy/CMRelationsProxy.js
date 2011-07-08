@@ -20,6 +20,13 @@
 			p.url = 'services/json/management/modcard/createrelations';
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
+		
+		remove: function(p) {
+			p.method = "POST";
+			p.url = 'services/json/management/modcard/deleterelation';
+
+			CMDBuild.ServiceProxy.core.doRequest(p);
 		}
 	};
 
