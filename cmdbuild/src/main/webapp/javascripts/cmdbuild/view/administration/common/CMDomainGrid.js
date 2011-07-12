@@ -10,7 +10,17 @@
 				iconCls : 'add',
 				text : tr.add_domain
 			});
-	
+
+			this.modifyButton = new Ext.button.Button({
+				iconCls : 'modify',
+				text: CMDBuild.Translation.administration.modClass.domainProperties.modify_domain
+			});
+
+			this.deleteButton = new Ext.button.Button({
+				iconCls : 'delete',
+				text: CMDBuild.Translation.administration.modClass.domainProperties.delete_domain
+			});
+
 			var columns = [{
 				header : tr.name,
 				dataIndex : 'name',
@@ -48,6 +58,8 @@
 			Ext.apply(this, {
 				tbar: [
 					this.addDomainButton,
+					this.modifyButton,
+					this.deleteButton,
 					'->',
 					{
 						xtype: 'checkbox',

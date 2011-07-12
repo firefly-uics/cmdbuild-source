@@ -54,6 +54,7 @@
 			this.cardTabPanel.onClassSelected(id);
 			this.addCardButton.updateForEntry(entry);
 			this.cardGrid.clearFilterButton.disable();
+			this.cardGrid.gridSearchField.reset();
 		},
 
 		openCard: function(p) {

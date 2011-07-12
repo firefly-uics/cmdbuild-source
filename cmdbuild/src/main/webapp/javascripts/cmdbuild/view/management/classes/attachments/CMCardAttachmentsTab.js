@@ -102,6 +102,10 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 		}
 	},
 
+	onAddCardButtonClick: function() {
+		this.disable();
+	},
+
 	loadCardAttachments: function() {
 		if (this.loaded) {
 			return;
@@ -117,7 +121,6 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 	clearStore: function() {
 		this.store.removeAll();
 	}
-
 });
 
 function buildStore() {

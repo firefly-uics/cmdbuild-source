@@ -1,6 +1,6 @@
 (function() {
 	Ext.define("CMDBuild.RangeSlidersFieldSet", {
-		extend: "Ext.form.FieldSet",
+		extend: "Ext.panel.Panel",
 		
 		maxSliderField: undefined,
 		minSliderField: undefined,
@@ -17,7 +17,12 @@
 				throw new Error("You must assign a minSliderField to the RangeSliderFieldset");
 			}
 			
-			this.items = [this.minSliderField,this.maxSliderField];
+			Ext.apply(this, {
+				items : [this.minSliderField,this.maxSliderField],
+				border : false,
+				frame : false
+			});
+			
 			this.callParent(arguments);
 			handleDisableEvent(this);
 			handleMaxSliderEvents(this);

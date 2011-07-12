@@ -24,17 +24,14 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			items: [
 				this.instanceNameField,
 			{
+				xtype : 'combo',
 				fieldLabel : tr.startingClass,
-				xtype : 'xcombo',
-				name : 'startingclass_value',
-				hiddenName : 'startingclass',
-				valueField : 'name',
+				name : 'startingclass',
+				valueField : 'id',
 				displayField : 'description',
-				minChars : 0,
-				grow : true,
-				triggerAction : 'all',
-				store : CMDBuild.Cache.getClassesAndProcessAsStoreWithEmptyOption(),
-				mode : "local"
+				editable : false,
+				store : _CMCache.getClassesAndProcessesStore(),
+				queryMode : 'local'
 			},{
 				fieldLabel: tr.rowlimit,
 				xtype: 'numberfield',
@@ -87,7 +84,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			items : [ {
 				fieldLabel : tr.language,
 				xtype : 'xcombo',
-				name : 'language_value',
+				name : 'language',
 				hiddenName : 'language',
 				valueField : 'name',
 				displayField : 'value',

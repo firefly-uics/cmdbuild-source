@@ -137,10 +137,11 @@
 				} ]
 			});
 
-			this.form = new Ext.form.Panel( {
+			this.form = new Ext.form.Panel({
+				autoScroll: true,
 				region : "center",
 				layout : 'hbox',
-				frame : true,
+				frame : false,
 				items : [ this.userInfo, this.userPassword ]
 			});
 
@@ -150,6 +151,7 @@
 				layout : "border",
 				tbar : this.cmTBar,
 				items : [ this.form ],
+				buttonAlign: true,
 				buttons : this.cmButtons
 			});
 

@@ -141,6 +141,7 @@
 
 			Ext.apply(this, {
 				tbar: this.cmTBar,
+				buttonAlign: "center",
 				buttons: this.cmButtons,
 				frame: true,
 				border: false,
@@ -160,7 +161,9 @@
 
 		onDomainSelected: function(cmDomain) {
 			this.disableModify(enableCMTBar = true);
-			this.getForm().loadRecord(cmDomain);
+			if (cmDomain) {
+				this.getForm().loadRecord(cmDomain);
+			}
 		},
 
 		setDefaultValues: function() {

@@ -121,7 +121,7 @@
 	function buildNodeConf(node) {
 		return {
 			id: node.id,
-			text: node.text,
+			text: CMDBuild.Translation.administration.modmenu.availabletree[node.text] || node.text,
 			subType: node.subType,
 			type: node.type,
 			leaf: node.leaf,

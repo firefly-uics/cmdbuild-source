@@ -61,6 +61,7 @@
 		labelWidth: 160,
 		attributes: undefined, //configuration
 		editable: true,
+		hideMode: "offsets",
 		fields: function() {
 			return this.items.items;
 		},

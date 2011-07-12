@@ -12,29 +12,6 @@
 		constructor: function() {
 			this.currentTemplate = null;
 			this.autoScroll = true;
-			/*
-			this.expander = new CMDBuild.XRowExpander({
-				genBodyContent : function(record, index){
-					var body = '';
-					if (record.json['_RelHist']) {
-						body += '<p><b>'+col_tr.domain+'</b>: '+record.json['DomainDesc']+'</p>'
-						body += '<p><b>'+col_tr.destclass+'</b>: '+record.json['Class']+'</p>'
-						body += '<p><b>'+col_tr.code+'</b>: '+record.json['CardCode']+'</p>'
-						body += '<p><b>'+col_tr.description+'</b>: '+record.json['CardDescription']+'</p>'
-					} else {
-						for (var i=0; i<this.currentAttributes.length; i++) {
-							var attribute = this.currentAttributes[i]
-							var displayField = CMDBuild.Management.FieldManager.getDisplayNameForAttr(attribute);
-							var displayValue = record.json[displayField];
-							if (!displayValue)
-								displayValue = "";
-							body += '<p><b>'+attribute.description+'</b>: '+displayValue+'</p>'
-						}
-					}
-					return body
-				}
-			});
-			*/
 
 			Ext.apply(this, {
 				plugins: [{
@@ -88,6 +65,7 @@
 		onClassSelected: function(classId) {
 			if (this.currentClassId != classId) {
 				this.currentClassId = classId;
+				this.disable();
 			}
 
 		},
@@ -97,6 +75,7 @@
 			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
 				this.disable();
 			} else {
+				this.enable();
 				this.currentCardId = card.raw.Id;
 				this.currentClassId = card.raw.IdClass;
 
@@ -155,6 +134,10 @@
 			});
 
 			this.loaded = true;
+		},
+
+		onAddCardButtonClick: function() {
+			this.disable();
 		}
 	});
 

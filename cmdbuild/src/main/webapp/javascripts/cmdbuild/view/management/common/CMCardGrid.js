@@ -431,11 +431,11 @@
 	function getPageNumber(cardPosition) {
 		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
 			pageNumber = 0;
-		
+
 		if (cardPosition) {
-			pageNumber = (parseInt(cardPosition) + 1) / pageSize;
+			pageNumber = (parseInt(cardPosition)) / pageSize;
 		}
-		
+
 		return pageNumber + 1;
 	}
 })();

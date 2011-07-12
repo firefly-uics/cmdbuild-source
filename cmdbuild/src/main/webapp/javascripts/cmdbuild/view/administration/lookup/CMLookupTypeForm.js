@@ -70,6 +70,7 @@
 				]
 	 		}];
 	 		this.layout = "border",
+	 		this.buttonAlign = "center";
 	 		this.buttons = this.cmButtons;
 	 		this.tbar = this.cmTBar;
 	 		

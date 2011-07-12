@@ -33,13 +33,13 @@ Ext.define("CMDBuild.Administration.ModLookup", {
 				title : this.translation.tabs.lookuplist,
 				layout : 'border',
 				border : false,
-				frame : true,
+				frame : false,
 				items : [ this.lookupGrid, this.lookupForm ]
 			}]
 		});
 
 		this.hideMode = 'offsets',// fix a render bug of combobox
-		this.title = this.translation.title,      		
+		this.title = this.translation.title,
 		this.basetitle = this.translation.title+ ' - ',
 		this.layout= 'fit',
 		this.id = this.id + '_panel',
@@ -49,7 +49,6 @@ Ext.define("CMDBuild.Administration.ModLookup", {
 		this.border = false;
 
 		this.callParent(arguments);
-
 	},
 
 	onSelectLookupType: function(eventParams) {

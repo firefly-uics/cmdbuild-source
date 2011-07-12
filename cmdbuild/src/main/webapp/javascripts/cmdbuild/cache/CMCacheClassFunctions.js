@@ -106,7 +106,7 @@
 			return classesAndProcessesStore;
 		},
 
-		getGeoAttributesStoreOfClass: function(classId) {
+		getGeoAttributesStoreForClass: function(classId) {
 			if (!geoAttributesSotores[classId]) {
 				geoAttributesSotores[classId] = buildGeoAttributesStoreForClass(classId);
 			}
@@ -231,6 +231,7 @@
 					if (t.data.name != "Class" && t.data.name != "Activity") {
 						data.push({
 							id: t.data.id,
+							name: t.data.name,
 							description: t.data.text
 						});
 					}
@@ -291,11 +292,7 @@
 			var geoAttributes = classes[classId].data.meta.geoAttributes;
 			
 			var s = new Ext.data.Store({
-				fields: [
-					"index", "name", "description", "type",
-					"isvisible", "masterTableId", "masterTableName",
-					"minZoom", "maxZoom", "style"
-				],
+				model: "GISLayerModel",
 				autoLoad : false,
 				data: geoAttributes || [],
 				sorters : [ {

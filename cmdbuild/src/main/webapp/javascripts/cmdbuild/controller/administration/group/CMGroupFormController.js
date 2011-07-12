@@ -31,15 +31,20 @@
 	});
 	
 	function onSaveButtonClick() {
-		CMDBuild.ServiceProxy.group.save({
-			scope : this,
-			params : buildParamsForSave.call(this),
-			success : function(r) {
-				var g = Ext.JSON.decode(r.responseText).group;
-				_CMCache.onGroupSaved(g);
-			},
-			failure : onAbortButtonClick
-		});
+		var nonValid = this.view.getNonValidFields();
+		if (nonValid.length == 0) {
+			CMDBuild.ServiceProxy.group.save({
+				scope : this,
+				params : buildParamsForSave.call(this),
+				success : function(r) {
+					var g = Ext.JSON.decode(r.responseText).group;
+					_CMCache.onGroupSaved(g);
+				},
+				failure : onAbortButtonClick
+			});
+		} else {
+			CMDBuild.Msg.error(null, "@@ ci sono campi non validi", false);
+		}
 	}
 
 	function onAbortButtonClick() {
@@ -52,27 +57,31 @@
 	}
 
 	function onEnableGroupButtonClick() {
-		CMDBuild.Ajax.request({
-			url : 'services/json/schema/modsecurity/enabledisablegroup',
-			params : {
-				groupId : this.currentGroup.get("id"),
-				isActive : !this.currentGroup.get("isActive")
-			},
-			waitMsg : CMDBuild.Translation.common.wait_title,
-			method : 'POST',
-			scope : this,
-			success : function(response, options, decoded) {
-				var g = decoded.group;
-				_CMCache.onGroupSaved(g);
-			}
-		});
+		var nonValid = this.view.getNonValidFields();
+		if (nonValid.length == 0) {
+			CMDBuild.Ajax.request({
+				url : 'services/json/schema/modsecurity/enabledisablegroup',
+				params : {
+					groupId : this.currentGroup.get("id"),
+					isActive : !this.currentGroup.get("isActive")
+				},
+				waitMsg : CMDBuild.Translation.common.wait_title,
+				method : 'POST',
+				scope : this,
+				success : function(response, options, decoded) {
+					var g = decoded.group;
+					_CMCache.onGroupSaved(g);
+				}
+			});
+		} else {
+			CMDBuild.Msg.error(null, "@@ ci sono campi non validi", false);
+		}
 	}
-	
+
 	function onModifyButtonClick() {
 		this.view.enableModify();
 	}
-	
-	
+
 	function buildParamsForSave() {
 		var modules = this.view.modulesCheckInput.toArray;
 		var disabledModules = (function() {

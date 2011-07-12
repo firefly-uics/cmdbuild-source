@@ -81,6 +81,10 @@
 			r.appendChild(nodes);
 		},
 
+		onAddCardButtonClick: function() {
+			this.disable();
+		},
+
 		convertRelationInNodes: convertRelationInNodes
 	});
 	

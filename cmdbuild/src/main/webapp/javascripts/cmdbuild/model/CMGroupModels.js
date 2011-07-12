@@ -8,7 +8,7 @@
 			{name: "isAdministrator", type: "boolean"},
 			{name: "name", type: "string"},
 			{name: "text", type: "string"},
-			{name: "startingClass", type: "boolean"}
+			{name: "startingClass", type: "string"}
 		]
 	});
 	

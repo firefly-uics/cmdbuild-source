@@ -43,15 +43,13 @@
 			});
 
 			this.callParent(arguments);
-
-//            this.subscribe('cmdb-load-' + this.eventType, this.updateDetailForLoadedCard, this);
-//            this.subscribe('cmdb-reload-' + this.eventType, this.onReloadCard, this);
 		},
 
 		loadDetailsAndFKThenBuildSideTabs: function(classId) {
 			var domainList = _CMCache.getMasterDetailsForClassId(classId),
 				me = this;
-			
+
+			this.empty = true;
 			this.details = {};
 			this.details[MD] = {};
 			this.details[FK] = {};
@@ -83,6 +81,7 @@
 					this.tabs.removeAll();
 					this.fireEvent("empty");
 				} else {
+					this.empty = false;
 					this.enable();
 					buildTabs.call(this);
 				}
@@ -135,27 +134,30 @@
 //	                this.actualMasterData.Id 
 //	            ], true);
 //            }
-        },
+		},
 
-        loadDetailCardList: function(attributeList, cardId, classId, idDomain, superclass, classType) {
-            this.actualAttributeList = attributeList;
-            this.idDomain = idDomain;
-            this.detailGrid.loadDetailCardList( {
-                directedDomain: idDomain,
-                cardId: cardId,
-                classId: classId,
-                classAttributes: attributeList,
-                className: this.currentDetail.name,
-                superclass: superclass,
-                classType: classType
-            });
-            
-        },
+		loadDetailCardList: function(attributeList, cardId, classId, idDomain, superclass, classType) {
+			this.actualAttributeList = attributeList;
+			this.idDomain = idDomain;
+			this.detailGrid.loadDetailCardList( {
+				directedDomain: idDomain,
+				cardId: cardId,
+				classId: classId,
+				classAttributes: attributeList,
+				className: this.currentDetail.name,
+				superclass: superclass,
+				classType: classType
+			});
+		},
 
-        loadFKCardList: function(attributes, fkClass, fkAttribute, idCard) {
-            this.detailGrid.loadFKCardList(attributes, fkClass, fkAttribute, idCard);
-            this.isLoaded = true;
-        }
+		loadFKCardList: function(attributes, fkClass, fkAttribute, idCard) {
+			this.detailGrid.loadFKCardList(attributes, fkClass, fkAttribute, idCard);
+			this.isLoaded = true;
+		},
+
+		onAddCardButtonClick: function() {
+			this.disable();
+		}
 
 	});
 

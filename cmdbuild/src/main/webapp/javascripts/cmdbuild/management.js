@@ -1,32 +1,45 @@
 (function() {
-	
+	var menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion(),
+		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),	
+		classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
+			title: CMDBuild.Translation.administration.modClass.tree_title
+		}),
+		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
+			title: CMDBuild.Translation.management.modutilities.title
+		});
+
 	Ext.define("CMDBuild.app.Management", {
 		statics: {
 			init: function() {
-				this.buildComponents();
 				this.loadResources();
 			},
-			
+
 			loadResources: function() {
+				var dangling = 6,
+					me = this;
+				
 				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 					scope: this,
 					success: function(response, options, decoded) {
 						CMDBuild.Config.cmdbuild = decoded.data;
-					}
+					},
+					callback: callback
 				});
 
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
 						CMDBuild.Config.dms = decoded.data;
-					}
+					},
+					callback: callback
 				},"legacydms");
 
 				CMDBuild.ServiceProxy.report.read({
 					scope: this,
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
-						this.reportAccordion.updateStore();
-					}
+						reportAccordion.updateStore();
+					},
+					callback: callback
 				});
 
 				CMDBuild.ServiceProxy.classes.read({
@@ -36,38 +49,43 @@
 					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);
-						this.classesAccordion.updateStore();
-					}
+						classesAccordion.updateStore();
+					},
+					callback: callback
 				});
 
 				CMDBuild.ServiceProxy.menu.read({
 					scope: this,
 					success: function(response, options, decoded) {
 						if (decoded.length > 0) {
-							this.menuAccordion.updateStore(decoded);
+							menuAccordion.updateStore(decoded);
 						}
-					}
+					},
+					callback: callback
 				});
 
 				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change "administration"
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
-					}
+					},
+					callback: callback
 				});
+
+				function callback() {
+					if (--dangling == 0) {
+						me.buildComponents();
+					}
+				}
 
 			},
 
 			buildComponents: function() {
 
 				this.cmAccordions = [
-					this.menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion(),
- 					this.classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
-						title: CMDBuild.Translation.administration.modClass.tree_title
-					}),
-					this.reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),
-					this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
-						title: CMDBuild.Translation.management.modutilities.title
-					})
+					this.menuAccordion = menuAccordion,
+ 					this.classesAccordion = classesAccordion,
+					this.reportAccordion = reportAccordion,
+					this.utilitiesTree = utilitiesTree
 				];
 
 				this.cmPanels = [
@@ -94,7 +112,7 @@
 						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
 					})
 				];
-				
+
 				this.buildViewport();
 			},
 			
@@ -105,141 +123,16 @@
 						cmPanels: this.cmPanels
 					})
 				);
+
+				_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 			}
 		}
 	});
-
-	/*
-	CMDBuild.ConcurrentAjax.execute({
-		loadMask: false,
-		requests: [{
-                url: 'services/json/schema/setup/getconfiguration',
-                params: {
-                    name: 'cmdbuild'
-                },
-                maskMsg: CMDBuild.Translation.common.loading_mask.configuration,
-                success: function(response, options,
-                        decoded) {
-                    CMDBuild.Config.cmdbuild = decoded.data;
-                }
-            },{
-                url: 'services/json/schema/setup/getconfiguration',
-                params: {
-                    name: 'legacydms'
-                },
-                maskMsg: CMDBuild.Translation.common.loading_mask.configuration,
-                success: function(response, options,
-                        decoded) {
-                    CMDBuild.Config.dms = decoded.data;
-                }
-            },{
-                url: 'services/json/schema/setup/getconfiguration',
-                params: {
-                    name: 'graph'
-                },
-                maskMsg: CMDBuild.Translation.common.loading_mask.configuration,
-                success: function(response, options,
-                        decoded) {
-                    CMDBuild.Config.graph = decoded.data;
-                }
-            },{
-                url: 'services/json/schema/setup/getconfiguration',
-                params: {
-                    name: 'gis'
-                },
-                success: function(response, options,
-                        decoded) {
-                    CMDBuild.Config.gis = decoded.data;
-                    CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-                }
-            },{
-                url: 'services/json/schema/setup/getconfiguration',
-                params: {
-                    name: 'workflow'
-                },
-                maskMsg: CMDBuild.Translation.common.loading_mask.configuration,
-                success: function(response, options,
-                        decoded) {
-                    CMDBuild.Config.workflow = decoded.data;
-                }
-            },{
-                url: "services/json/schema/modclass/getallclasses",
-                params: {
-                    active: true
-                },
-                maskMsg: CMDBuild.Translation.common.loading_mask.classes,
-                success: function(response, options, decoded) {
-                    splash.setText(CMDBuild.Translation.common.loading_mask.classes);
-                    CMDBuild.Cache.setTables(decoded.classes);
-                }
-            },{
-                url: 'services/json/schema/modmenu/getgroupmenu',
-                success: function(response, options, decoded) {
-                    if (decoded.length > 0) {
-                        var itemsMap = CMDBuild.TreeUtility.arrayToMap(decoded);
-                        CMDBuild.Cache.menuTree = CMDBuild.TreeUtility.buildTree(itemsMap, "menu", addAttributes = true);
-                    }
-                }
-            },{
-                url: 'services/json/management/modreport/getreporttypestree',
-                success: function(response, options, decoded) {
-                    CMDBuild.Cache.setTables(decoded);
-                }
-            }],
-        fn: function() {
-            displayViewport();
-        }
-	});
-	
-	function displayViewport() {
-		var wfView = new CMDBuild.Management.ModWorkflow();
-		var wfController = new CMDBuild.Management.WFController(wfView);
-		
-		var viewport = new CMDBuild.MainViewport({
-			id: "management_main_viewport",
-			trees: (function() {
-				var trees = [];
-				var structure = CMDBuild.Structure;				
-				for (var tree in structure) {
-					var t = structure[tree].createTree();
-					if (t) {
-						trees.push(t);
-					}
-				}
-				return trees;
-			})(),
-			modules: [
-			    new Ext.Panel({
-			    	bodyCfg: {
-				        cls: 'empty_panel x-panel-body'
-				    }
-			    }),
-				new CMDBuild.Management.ModCard(),
-				wfView,
-				new CMDBuild.Management.ModReport(),
-				new CMDBuild.Management.ModBulkCardUpdate(),
-				new CMDBuild.Management.ModChangePassword(),
-				new CMDBuild.Management.ModImportCSV(),
-				new CMDBuild.Management.ModExportCSV()
-			]
-		});
-		
-		(function() {
-			splash.hide();
-		}).defer(500);
-		
-		var creditsLink = Ext.get('cmdbuild_credits_link');
-		creditsLink.on('click', function(e) {
-			splash.showAsPopUp();
-		}, this);
-		
-		var instanceName = Ext.get('instance_name');
-		instanceName.dom.innerHTML = CMDBuild.Config.cmdbuild.instance_name || "";
-		
-	}
-	
-
-});
-	*/
+/*
+	var creditsLink = Ext.get('cmdbuild_credits_link');
+	creditsLink.on('click', function(e) {
+		splash.showAsPopUp();
+	}, this);
+*/
 
 })();

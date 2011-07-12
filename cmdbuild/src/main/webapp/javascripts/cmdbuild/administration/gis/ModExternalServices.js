@@ -54,12 +54,13 @@
 			});
 			
 			this.layout = "border";
-			
+
 			this.frame = true;
+			this.buttonAlign = "center";
 			this.buttons = [ this.saveButton ];
 			this.services = services;
 			this.title = tr.title;
-			
+
 			this.cmWrapper = new Ext.panel.Panel({
 				region: "center",
 				autoScroll: true,

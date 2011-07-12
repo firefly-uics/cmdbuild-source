@@ -97,8 +97,8 @@
 		},
 		
 		getNonValidFields: function() {
-			var data = []
-			
+			var data = [];
+
 			this.cascade(function(item) {
 				if (item 
 					&& (item instanceof Ext.form.Field)

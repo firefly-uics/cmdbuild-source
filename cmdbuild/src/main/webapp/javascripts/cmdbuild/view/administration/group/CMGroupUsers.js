@@ -113,6 +113,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 				align:'stretch'
 			},
 			items: [availableUsersGrid,assignedUsersGrid],
+			buttonAlign: "center",
 			buttons: [{
 				text: CMDBuild.Translation.common.btns.confirm,
 				scope: this,
