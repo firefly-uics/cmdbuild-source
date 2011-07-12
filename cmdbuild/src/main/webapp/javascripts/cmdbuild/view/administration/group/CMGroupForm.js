@@ -59,32 +59,32 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 				this.groupDescription,
 				this.groupEmail,
 			{
-	            xtype : 'xcheckbox',
-	            fieldLabel : tr.is_administrator,
-	            name : 'isAdministrator'
-	        }, {
-	            xtype : 'combo',
-	            fieldLabel : tr.starting_class,
-	            name : 'startingClass_value',
-	            valueField : 'id',
-	            displayField : 'description',
-	            editable: false,
-	            store : _CMCache.getClassesStore(),
-	            queryMode: 'local'
-	        },
-	        this.activeCheck
-	        ],
+				xtype : 'xcheckbox',
+				fieldLabel : tr.is_administrator,
+				name : 'isAdministrator'
+			}, {
+				xtype : 'combo',
+				fieldLabel : tr.starting_class,
+				name : 'startingClass',
+				valueField : 'id',
+				displayField : 'description',
+				editable: false,
+				store : _CMCache.getClassesStore(),
+				queryMode: 'local'
+			},
+			this.activeCheck
+			],
 			flex: 1,
 			margins:'0 5 0 0'
 		})
-		
+
 		this.modulesCheckInput = readModulesFromStructure();
-				
+
 		this.modulsFieldset = new Ext.form.FieldSet({
 			title: tr.disabled_modules,
 			items: this.modulesCheckInput.toArray,
 			flex: 1
-		})
+		});
 
 		this.cmTBar = [this.modifyButton, this.enableGroupButton ];
 		this.cmButtons = [this.saveButton, this.abortButton];

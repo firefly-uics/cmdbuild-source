@@ -35,6 +35,7 @@
 
 		onCardSelected: function(card) {
 			this.actualMasterData = card;
+			this.view.setDisabled(this.view.empty);
 			// given the tab is not active but enabled
 			// and we change card
 			// when the tab is activated

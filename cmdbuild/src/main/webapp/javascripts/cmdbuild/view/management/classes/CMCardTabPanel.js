@@ -50,18 +50,12 @@
 		},
 
 		onClassSelected: function(id) {
+			this.setActiveTab(this.cardPanel);
 			this.items.each(function(item) {
 				if (item.onClassSelected) {
 					item.onClassSelected(id);
 				}
 			});
-			
-			// TODO remove comment when fix this problem 
-//			try {
-//				this.setActiveTab(this.cardPanel);
-//			} catch (e) {
-//				// TODO understand why this could fail (rendering problems)
-//			}
 		},
 
 		onCardSelected: function(card, reloadFields) {
@@ -71,8 +65,9 @@
 				}
 			});
 		},
-		
+
 		onAddCardButtonClick: function(idClass, reloadFields) {
+			this.setActiveTab(this.cardPanel);
 			this.items.each(function(item) {
 				if (item.onAddCardButtonClick) {
 					item.onAddCardButtonClick(idClass, reloadFields);

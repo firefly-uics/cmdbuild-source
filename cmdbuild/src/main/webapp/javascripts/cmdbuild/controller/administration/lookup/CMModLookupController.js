@@ -23,11 +23,13 @@
 		},
 
 		onViewOnFront: function(lookupType) {
-			this.view.onSelectLookupType(lookupType.data);
-			
-			this.lookupTypeFormController.onSelectLookupType(lookupType.data);
-			this.lookupGridController.onSelectLookupType(lookupType.data);
-			this.lookupFormController.onSelectLookupType(lookupType.data.id);
+			if (lookupType) {
+				this.view.onSelectLookupType(lookupType.data);
+				
+				this.lookupTypeFormController.onSelectLookupType(lookupType.data);
+				this.lookupGridController.onSelectLookupType(lookupType.data);
+				this.lookupFormController.onSelectLookupType(lookupType.data.id);
+			}
 		}
 	});
 

@@ -21,19 +21,23 @@
 			},
 			new Ext.ux.CheckColumn( {
 				header: translation.isbasedsp,
-				dataIndex: 'isbasedsp'
+				dataIndex: 'isbasedsp',
+				cmReadOnly: true
 			}),
 			new Ext.ux.CheckColumn( {
 				header: translation.isunique,
-				dataIndex: 'isunique'
+				dataIndex: 'isunique',
+				cmReadOnly: true
 			}),
 			new Ext.ux.CheckColumn( {
 				header: translation.isnotnull,
-				dataIndex: 'isnotnull'
+				dataIndex: 'isnotnull',
+				cmReadOnly: true
 			}),
 			new Ext.ux.CheckColumn( {
 				header: translation.isactive,
-				dataIndex: 'isactive'
+				dataIndex: 'isactive',
+				cmReadOnly: true
 			}), 
 			{
 				header: translation.field_visibility,
@@ -55,6 +59,9 @@
 		},
 
 		refreshStore: function(domain, indexAttributeToSelectAfter) {
+			if (!domain) {
+				return;
+			}
 			var sm = this.getSelectionModel();
 			this.store.loadForDomainId(domain.get("id"));
 			this.filterInherited(this.filtering);

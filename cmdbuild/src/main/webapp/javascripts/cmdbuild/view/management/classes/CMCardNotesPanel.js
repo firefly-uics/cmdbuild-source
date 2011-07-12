@@ -122,14 +122,13 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		displayform.loadRecord(card);
 		this.modifyNoteButton.setDisabled(!this.currentCardPrivileges.write);
 		this.enable();
-
 	},
 
 	reloadCard: function(eventParams) {
 		this.enable();
 	},
 
-	newCard: function(eventParams) {
+	onAddCardButtonClick: function() {
 		this.disable();
 	},
 

@@ -100,24 +100,29 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 		},
 		new Ext.ux.CheckColumn( {
 			header : translation.isbasedsp,
-			dataIndex : 'isbasedsp'
+			dataIndex : 'isbasedsp',
+			cmReadOnly: true
 		}),
 		new Ext.ux.CheckColumn( {
 			header : translation.isunique,
-			dataIndex : 'isunique'
+			dataIndex : 'isunique',
+			cmReadOnly: true
 		}),
 		new Ext.ux.CheckColumn( {
 			header : translation.isnotnull,
-			dataIndex : 'isnotnull'
+			dataIndex : 'isnotnull',
+			cmReadOnly: true
 		}),
 		new Ext.ux.CheckColumn( {
 			header : translation.inherited,
 			hidden : true,
-			dataIndex : 'inherited'
+			dataIndex : 'inherited',
+			cmReadOnly: true
 		}), 
 		new Ext.ux.CheckColumn( {
 			header : translation.isactive,
-			dataIndex : 'isactive'
+			dataIndex : 'isactive',
+			cmReadOnly: true
 		}), {
 			header : translation.field_visibility,
 			dataIndex : 'fieldmode',

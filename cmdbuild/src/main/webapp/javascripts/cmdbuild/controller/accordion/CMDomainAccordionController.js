@@ -18,5 +18,6 @@
 	
 	function onDomainDeleted(id) {
 		this.accordion.removeNodeById(id);
+		this.accordionSM.deselectAll();
 	}
 })();

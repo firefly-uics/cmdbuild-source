@@ -46,7 +46,7 @@
 
 			this.view.disable();
 			this.view.clearStore();
-			this.view.addRelationButton.setDomainsForEntryType(selection);
+			this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(selection);
 		},
 
 		onCardSelected: function(card) {
@@ -56,7 +56,7 @@
 				write: card.get("data.priv_write")
 			};
 
-			if (this.currentClass != null) {
+			if (this.currentClass != null && this.hasDomains) {
 				this.loadData();
 				this.view.enable();
 			}

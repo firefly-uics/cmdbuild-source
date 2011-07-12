@@ -321,13 +321,6 @@
 			return this.classesAndProcessStore;
 		},
 		
-		getClassesAndProcessAsStoreWithEmptyOption: function() {
-			if (!this.classesAndProcessStoreWithEmptyOption) {
-				this.classesAndProcessStoreWithEmptyOption = buildTableStore(this, [CLASS_GROUP,PROCESS_GROUP], emptyOption=true);
-			} 
-			return this.classesAndProcessStoreWithEmptyOption;
-		},
-		
 		getNode: function(treeName, nodeId) {
 			var tree = this.getTree(treeName);
 			var node = CMDBuild.TreeUtility.searchNodeByAttribute({
@@ -446,16 +439,6 @@
 				}
 			});
 			
-	
-	/* TODO 3 to 4
-	        store.on('beforeload', function() {
-	        	store.isLoading = true;
-	        });
-	        
-	        store.on('load', function() {
-	        	store.isLoading = false;
-	        });
-	*/		
 			return store;
 		},
 		
@@ -475,25 +458,31 @@
 		},
 	
 		getForeignKeyStore: function(foreignKye) {
-			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
-			var baseParams = { 
+			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
+				baseParams = { 
 					limit: maxCards,
 					IdClass: foreignKye.fkDestination
-			};
-			var store =  new Ext.data.JsonStore({
-				url: 'services/json/management/modcard/getcardlistshort',
-				baseParams: baseParams,
-		        root: "rows",
-	            totalProperty: 'results',
-		        fields : ['Id', 'Description'],
-		        autoLoad: true,
+				};
+
+			return new Ext.data.JsonStore({
+				model : "CMDBuild.cache.CMReferenceStoreModel",
+				baseParams: baseParams, //retro-compatibility
+				proxy: {
+					type: 'ajax',
+					url: 'services/json/management/modcard/getcardlistshort',
+					reader: {
+						type: 'json',
+						root: 'rows'
+					}
+				},
 				sortInfo: {
-		        	field: 'Description',
-		        	direction: 'ASC' 
-		        }
+					field: 'Description',
+					direction: 'ASC' 
+				},
+				autoLoad : {
+					params: baseParams
+				}
 			});
-			
-			return store;
 		},
 		
 		

@@ -5,31 +5,37 @@
 		extend: "Ext.panel.Panel",
 		
 		cmName: "gis-geoserver",
-		title: tr.title,
 		firstShow: true,
 		initComponent : function() {
-			
-			this.form = new CMDBuild.Administration.GeoServerForm({
-				region: "south",
-				split: true
-			});
-			
 			this.addLayerButton = new Ext.button.Button({
 				iconCls: 'add',
 				text: tr.add_layer
-	    	});
-			
+			});
+
 			this.layersGrid = new CMDBuild.Administration.GeoServerLayerGrid({
+				title: tr.title,
 				region: "center",
 				enableDragDrop: true,
-				frame: true,
+				frame: false,
+				border: true,
 				tbar: [this.addLayerButton]
 			});
-			
-			this.layout = "border";
-			this.items = [this.layersGrid, this.form];
-			this.frame = true;
-			
+
+			this.form = new CMDBuild.Administration.GeoServerForm({
+				height: "50%",
+				autoScroll: true,
+				frame: true,
+				border: true,
+				region: "south",
+				split: true
+			});
+
+			Ext.apply(this, {
+				layout: "border",
+				items: [this.layersGrid, this.form],
+				border: false
+			});
+
 			this.callParent(arguments);
 		}
 	});

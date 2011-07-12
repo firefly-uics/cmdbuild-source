@@ -53,6 +53,7 @@ Ext.define("CMDBuild.view.administration.report.CMReportForm", {
 			activeItem:0,
 			items : [ this.step1, this.step2],
 			autoScroll : true,
+			buttonAlign: "center",
 			buttons : this.cmButtons
 		});
 

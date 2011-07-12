@@ -41,6 +41,8 @@ Ext.define("CMDBuild.AddRelationMenuButton", {
 				}
 			});
 		}
+		
+		return domains.length > 0;
 	},
 
 	

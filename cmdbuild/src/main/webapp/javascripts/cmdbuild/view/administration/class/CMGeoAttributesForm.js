@@ -1,12 +1,11 @@
 (function() {
-	var FIELDSWIDTH = 400;
-	var LABELSWIDTH = 150;
-	
-	var point = CMDBuild.Constants.geoTypes.point;
-	var line = CMDBuild.Constants.geoTypes.line;
-	var polygon = CMDBuild.Constants.geoTypes.polygon;
-	var tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties;
-	var tr = CMDBuild.Translation.administration.modClass.geo_attributes;
+	var FIELDSWIDTH = 400,
+		LABELSWIDTH = 150,
+		point = CMDBuild.Constants.geoTypes.point,
+		line = CMDBuild.Constants.geoTypes.line,
+		polygon = CMDBuild.Constants.geoTypes.polygon,
+		tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties,
+		tr = CMDBuild.Translation.administration.modClass.geo_attributes;
 
 	Ext.define("CMDBuild.view.administration.classes.CMGeoAttributeForm", {
 		extend: "Ext.form.Panel",

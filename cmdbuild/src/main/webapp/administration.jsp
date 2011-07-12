@@ -60,7 +60,7 @@
 	<body>
 		<div id="header">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
-			<div id="instance_name"></div>			
+			<div id="instance_name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
 			<div id="msg-ct">
 				<div id="msg">

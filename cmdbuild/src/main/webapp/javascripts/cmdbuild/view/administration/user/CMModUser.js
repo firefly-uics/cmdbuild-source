@@ -19,9 +19,9 @@
 
 			this.userForm = new CMDBuild.view.administration.user.CMUserForm( {
 				region : "south",
-				height : "60%",
+				height : "65%",
 				split : true
-			})
+			});
 
 			Ext.apply(this, {
 				modtype : 'user',

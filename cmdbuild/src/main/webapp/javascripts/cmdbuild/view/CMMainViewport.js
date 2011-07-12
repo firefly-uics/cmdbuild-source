@@ -118,11 +118,22 @@
 			var a = this.findAccordionByCMName(cmName);
 			a.enable();
 		},
+		
+		getExpansedAccordion: function() {
+			return this.cmAccordions.items.findBy(function(accordion) {
+				return (!accordion.collapsed);
+			});
+		},
 
 		getFirstAccordionWithANodeWithGivenId: function(id) {
-			return this.cmAccordions.items.findBy(function(accordion) {
-				return (typeof accordion.getNodeById(id) != "undefined");
-			});
+			var currentAccordion = this.getExpansedAccordion();
+			if (currentAccordion && typeof currentAccordion.getNodeById(id) != "undefined") {
+				return currentAccordion;
+			} else {
+				return this.cmAccordions.items.findBy(function(accordion) {
+					return (typeof accordion.getNodeById(id) != "undefined");
+				});
+			}
 		}
 	});
 })();

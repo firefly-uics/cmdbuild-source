@@ -115,13 +115,17 @@
 					disabled : true
 				}, this.activeCheck] 
 			}];
+			
+			Ext.apply(this, {
+				tbar : this.cmTBar,
+				labelWidth : 150,
+				defaultType : 'textfield',
+				frame : true,
+				autoScroll : true,
+				buttonAlign : "center",
+				buttons : this.cmButtons
+			});
 
-			this.tbar = this.cmTBar;
-			this.buttons = this.cmButtons;
-			this.labelWidth = 150;
-			this.defaultType = 'textfield';
-			this.frame = true;
-			this.autoScroll = true;
 			this.callParent(arguments);
 		},
 		

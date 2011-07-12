@@ -16,7 +16,7 @@
 		buildSubcontrollers: function() {
 			this.classFormController = new CMDBuild.controller.administration.classes.CMClassFormController(this.view.classForm);
 			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
-//			this.geoAttributesController = new CMDBuild.controller.administration.classes.CMGeoAttributeController(this.view.geoAttributesPanel);
+			this.geoAttributesController = new CMDBuild.controller.administration.classes.CMGeoAttributeController(this.view.geoAttributesPanel);
 			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
 		},
 
@@ -31,7 +31,7 @@
 				this.view.onClassSelected(selection.data);
 				this.classFormController.onClassSelected(selection.data.id);
 				this.domainTabController.onClassSelected(selection.data.id);
-//				this.geoAttributesController.onClassSelected(selection.data.id);
+				this.geoAttributesController.onClassSelected(selection.data.id);
 				this.attributePanelController.onClassSelected(selection.data.id);
 			}
 		},
@@ -64,7 +64,7 @@
 		onAddClassButtonClick: function () {
 			this.classFormController.onAddClassButtonClick();
 			this.domainTabController.onAddClassButtonClick();
-//			this.geoAttributesController.onAddClassButtonClick();
+			this.geoAttributesController.onAddClassButtonClick();
 			this.attributePanelController.onAddClassButtonClick();
 
 			this.view.onAddClassButtonClick();

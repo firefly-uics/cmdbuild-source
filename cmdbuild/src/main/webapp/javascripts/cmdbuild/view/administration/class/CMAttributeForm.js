@@ -247,7 +247,7 @@
 
 			this.specificProperties = new Ext.form.FieldSet({
 				margin: "0 0 5 5",
-				title : tr.typeProperties,
+//				title : tr.typeProperties,
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,
@@ -271,19 +271,14 @@
 			Ext.apply(this, {
 				frame: true,
 				border: false,
+				buttonAlign: "center",
 				buttons: this.cmButtons,
-				layout: "border",
 				tbar: this.cmTBar,
-				items: [{
-					xtype: "panel",
-					region: "center",
-					layout: {
-						type: 'hbox',
-						align: 'stretch'
-					},
-					frame: true,
-					items: [this.baseProperties, this.specificProperties]
-				}]
+				layout: {
+					type: 'hbox',
+					align:'stretch'
+				},
+				items: [this.baseProperties, this.specificProperties]
 			});
 
 			this.callParent(arguments);
@@ -396,7 +391,7 @@
 
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-				title : tr.baseProperties,
+//				title : tr.baseProperties,
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,

@@ -34,7 +34,7 @@
 
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-				title : tr.baseProperties,
+//				title : tr.baseProperties,
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,

@@ -13,14 +13,17 @@
 				text: buttonTr.abort
 			});
 			
-			this.buttons = [this.saveButton, this.abortButton];
-			this.frame = true;
-			this.autoScroll = true;
-			this.fieldDefaults = {
-				labelAlign: 'left',
-				labelWidth: 200
-			};
-			
+			Ext.apply(this, {
+				buttonAlign: "center",
+				buttons: [this.saveButton, this.abortButton],
+				frame: true,
+				autoScroll: true,
+				fieldDefaults: {
+					labelAlign: 'left',
+					labelWidth: 200
+				}
+			});
+
 			this.callParent(arguments);
 		},
 		

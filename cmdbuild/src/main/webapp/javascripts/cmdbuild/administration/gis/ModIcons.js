@@ -15,9 +15,10 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.buildUIButtons();
 		
 		this.iconsGrid = new Ext.grid.GridPanel({
+			title: this.translation.title,
 			region: 'center',
-			frame: true,
-			border: 0,
+			frame: false,
+			border: true,
 			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 			tbar: [this.addButton],
 			sm: new Ext.selection.RowModel(),
@@ -46,6 +47,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			fileUpload: true,
 			plugins: [new CMDBuild.CallbackPlugin()],
 			region: 'south',
+			height: "40%",
 			split: true,
 			frame: true,
 			border: false,
@@ -60,13 +62,14 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 					xtype: 'textfield',
 					inputType : 'file',
 					fieldLabel: this.translation.file,
-					name: 'file'
+					name: 'file',
+					widgh: 200
 				}, {
 					xtype: 'textfield',
 					fieldLabel: this.translation.description,
 					name: 'description',
 					allowBlank: false,
-					width: 160
+					widgh: 200
 				}]
 			}],
 			buttonAlign: 'center',
@@ -74,8 +77,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		});
 		
 		Ext.apply(this, {
-			title: this.translation.title,
-			frame: true,
+			frame: false,
+			border: false,
       		layout: 'border',
       		items: [this.iconsGrid, this.uploadForm]
     	});

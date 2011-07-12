@@ -90,6 +90,7 @@
 <!-- CONTROLLERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
 	
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMGroupAccordionController.js"></script>
@@ -147,6 +148,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModLayerOrder.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerLayersGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script>
 
 	<!--  CLASS -->
 
@@ -154,7 +156,6 @@
 	
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>-->
 
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script>-->
 <!---->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>-->
 

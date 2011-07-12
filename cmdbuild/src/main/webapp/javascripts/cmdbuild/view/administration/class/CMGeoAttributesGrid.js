@@ -5,6 +5,18 @@
 	Ext.define("CMDBuild.view.administration.classes.CMGeoAttributesGrid", {
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
 		
+		initComponent: function() {
+			this.callParent(arguments);
+
+			this.on("render", 
+				Ext.Function.createDelayed(function() {
+					if (this.danglingStore) {
+						this.reconfigure(this.danglingStore, this.columns);
+					}
+				}, 500),this, {single: true}
+			);
+		},
+		
 		buildColumnConf: function() {
 			this.columns = [{
 				header: tr_attributes.type,
@@ -35,8 +47,12 @@
 		},
 
 		refreshStore: function(idClass, indexAttributeToSelectAfter) {
-			var store = _CMCache.getGeoAttributesStoreOfClass(idClass);
-			this.reconfigure(store);
+			var store = _CMCache.getGeoAttributesStoreForClass(idClass);
+			if (this.rendered) {
+				this.reconfigure(store, this.columns);
+			} else {
+				this.danglingStore = store;
+			}
 		},
 
 		selectAttribute: function(geoAttribute) {

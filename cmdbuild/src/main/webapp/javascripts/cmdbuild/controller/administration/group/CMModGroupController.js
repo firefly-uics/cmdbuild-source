@@ -9,11 +9,13 @@
 		},
 
 		onViewOnFront: function(selection) {
-			this.groupFormController.onGroupSelected(selection);
-			
-			this.view.onGroupSelected();
-			this.view.privilegeGrid.onGroupSelected(selection);
-			this.view.userPerGroup.onGroupSelected(selection);
+			if (selection) {
+				this.groupFormController.onGroupSelected(selection);
+				
+				this.view.onGroupSelected();
+				this.view.privilegeGrid.onGroupSelected(selection);
+				this.view.userPerGroup.onGroupSelected(selection);
+			}
 		}
 	});
 	

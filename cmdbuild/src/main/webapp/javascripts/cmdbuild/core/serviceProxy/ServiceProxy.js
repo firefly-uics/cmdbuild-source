@@ -289,17 +289,12 @@ CMDBuild.ServiceProxy.geoServer = {
 		return layerStore;
 	},
 	
-	deleteLayer: function(params, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url : "services/json/gis/deletegeoserverlayer",
-			params : params,
-			method: 'POST',
-			success: success || Ext.emptyFn,
-			failure: failure || Ext.emptyFn,
-			callback: callback || Ext.emptyFn
-		});
+	deleteLayer: function(p) {
+		p.method = "POST";
+		p.url = "services/json/gis/deletegeoserverlayer";
+		p.important = true;
+		
+		CMDBuild.Ajax.request(p);
 	}
 }
 

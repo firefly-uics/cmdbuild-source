@@ -96,6 +96,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			border : false,
 			frame : true,
 			tbar : [this.addFolderField, this.deleteButton],
+			buttonAlign: "center",
 			buttons: [this.saveButton, this.abortButton],
 			layout: {
 				type: 'hbox',

@@ -11,6 +11,7 @@
 		loadMask: true,
 		store: CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore(),
 		sm: new Ext.selection.RowModel(),
+
 		initComponent: function() {
 			this.columns = [{
 				header: tr.name,
@@ -50,48 +51,29 @@
 			}];
 			
 			this.callParent(arguments);
-			// select the first row or the modified
-			this.store.on("load", function(store) {
-				var recIndex = 0;
-				if (store.nameToSelect) {
-					recIndex = store.findExact("name", store.nameToSelect);
-				}
-				selectFirst.call(this);
-			}, this);
 		},
 
 		clearSelection: function() {
-			this.getSelectionModel().clearSelections();
+			this.getSelectionModel().deselectAll();
 		},
 
 		onModShow: function(firstLoad) {
-			if (firstLoad) {
-				this.store.load({
-					callback: onModShow,
-					scope: this
-				});
-			} else {
-				onModShow.call(this);
-			}
+			this.store.load();
+		},
+
+		loadStoreAndSelectLayerWithName: function(name) {
+			this.store.load({
+				scope : this,
+				callback: function(records, operation, success) {
+					var toSelect = this.store.find("name", name);
+					if (toSelect >= 0) {
+						this.getSelectionModel().select(toSelect);
+					} else if (records.length > 0) {
+						this.getSelectionModel().select(0);
+					}
+				}
+			});
 		}
 	});
-
-	function selectFirst() {
-		try {
-			var sm = this.getSelectionModel();
-			sm.select(recIndex);
-		} catch (e) {
-			_debug("GEOServerLayerGrid, Cannot select the row", e);
-		}
-	}
-	
-	function onModShow() {
-		var sm = this.getSelectionModel();
-		if (sm.hasSelection()) {
-			return;
-		} else {
-			selectFirst.call(this);
-		}
-	}
 
 })();
