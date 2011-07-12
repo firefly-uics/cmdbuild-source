@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json.management;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -605,16 +604,38 @@ public class ModCard extends JSONBase {
 		final JSONObject attributes = JSON.getJSONObject("attrs");
 
 		final IDomain domain = userCtx.domains().get(domainId);
-		final IRelation relation;
-		if (relId > 0) {
-			relation = userCtx.relations().get(domain, relId);
-		} else {
-			relation = userCtx.relations().create(domain);
+		int side1element = countArrayOrZero(attributes, "_1");
+		int side2element = countArrayOrZero(attributes, "_2");
+		if (relId > 0 && side1element > 0 && side2element > 0) {
+			throw new IllegalArgumentException();
 		}
 
-		@SuppressWarnings("unchecked") final Iterator<String> keys = attributes.keys();
-		while (keys.hasNext()) {
-			String name = keys.next();
+		do {
+			do {
+				final IRelation relation;
+				if (relId <= 0) {
+					relation = userCtx.relations().create(domain);
+				} else {
+					relation = userCtx.relations().get(domain, relId);
+				}
+				fillAttributes(relation, attributes, userCtx, side1element, side2element);
+				relation.save();
+			} while (side2element-- > 0);
+		} while (side1element-- > 0);
+	}
+
+	private int countArrayOrZero(final JSONObject attributes, String key) {
+		try {
+			return attributes.getJSONArray(key).length() - 1;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private void fillAttributes(final IRelation relation, final JSONObject attributes,
+			UserContext userCtx, int side1element, int side2element)
+			throws JSONException {
+		for (String name : JSONObject.getNames(attributes)) {
 			Object value;
 			if (attributes.isNull(name)) {
 				value = null;
@@ -622,6 +643,9 @@ public class ModCard extends JSONBase {
 				value = attributes.get(name);
 			}
 			if ("_1".equals(name)) {
+				if (value instanceof JSONArray) {
+					value = ((JSONArray)value).get(side1element);
+				}
 				if (value instanceof JSONObject) {
 					JSONObject jsonCard = (JSONObject) value;
 					int cardId = jsonCard.getInt("id");
@@ -630,6 +654,9 @@ public class ModCard extends JSONBase {
 					relation.setCard1(card1);
 				}
 			} else if ("_2".equals(name)) {
+				if (value instanceof JSONArray) {
+					value = ((JSONArray)value).get(side2element);
+				}
 				if (value instanceof JSONObject) {
 					JSONObject jsonCard = (JSONObject) value;
 					int cardId = jsonCard.getInt("id");
@@ -641,7 +668,6 @@ public class ModCard extends JSONBase {
 				relation.setValue(name, value);
 			}
 		}
-		relation.save();
 	}
 
 	@JSONExported
