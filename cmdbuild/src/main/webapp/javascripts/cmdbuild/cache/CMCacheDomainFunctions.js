@@ -32,6 +32,16 @@
 				attributes: d.attributes
 			});
 
+			domainModel.isMany = function(side) {
+				var c = this.get("cardinality");
+				c = c.split(":");
+				if (side == "_1") {
+					return c[0] == "N";
+				} else {
+					return c[1] == "N";
+				}
+			}
+
 			domains[d.idDomain] = domainModel;
 			return domainModel;
 		},

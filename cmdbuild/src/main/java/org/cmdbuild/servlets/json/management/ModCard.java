@@ -672,12 +672,17 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public void deleteRelation(
-			@Parameter(required=false, value="JSON") JSONObject JSON,
+			IRelation oldWayOfIdentifyingARelation,
+			@Parameter(required = false, value = "JSON") JSONObject JSON,
 			UserContext userCtx) throws JSONException {
-		final int relId = JSON.optInt("id");
-		final int domainId = JSON.getInt("did");
-		final IDomain domain = userCtx.domains().get(domainId);
-		userCtx.relations().get(domain, relId).delete();
+		if (oldWayOfIdentifyingARelation == null) {
+			final int relId = JSON.optInt("id");
+			final int domainId = JSON.getInt("did");
+			final IDomain domain = userCtx.domains().get(domainId);
+			userCtx.relations().get(domain, relId).delete();
+		} else {
+			oldWayOfIdentifyingARelation.delete();
+		}
 	}
 
 	/*

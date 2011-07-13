@@ -161,17 +161,6 @@
 
 	});
 
-	function initAddDetailButton() {
-		this.addDetailButton.disable();
-		if (this.editable) {
-			this.addDetailButton.show();
-		} else {
-			this.addDetailButton.hide();
-		}
-	}
-	
-	
-
 	function setDirectedDomain(domain) {
 		var cardinality = domain.get("cardinality"),
 			idDomain = domain.get("id");
@@ -184,7 +173,7 @@
 			CMDBuild.log.error('Wrong cardinality');
 		}
 	}
-	
+
 	function buildTabs() {
 		var details = this.details;
 		function build() {

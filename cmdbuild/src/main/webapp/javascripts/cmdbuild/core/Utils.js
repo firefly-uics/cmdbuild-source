@@ -125,6 +125,20 @@ CMDBuild.Utils = (function() {
 			}
 
 			return out;
+		},
+		
+		getChildrenById: function(entryTypeId) {
+			var ett = _CMCache.getEntryTypes(),
+				out = [];
+	
+			for (var et in ett) {
+				et = ett[et];
+				if (et.get("parent") == entryTypeId) {
+					out.push(et);
+				}
+			}
+	
+			return out;
 		}
 	};
 })();

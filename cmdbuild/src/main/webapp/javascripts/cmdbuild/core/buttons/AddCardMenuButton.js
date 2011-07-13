@@ -90,7 +90,8 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 
 		if (entry) {
 			this.setTextSuffix(entry.data.text);
-			var children = entry.childNodes;
+			var children = _CMUtils.getChildrenById(entry.get("id"));
+
 			if (children && children.length>0) {
 				//is a superClass
 				addSubclassesToMenu.call(this, children);
@@ -105,12 +106,12 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		}
 	}
 	
-	function addSubclass(node) {
-		if (node.raw.cmData.priv_create) {	
+	function addSubclass(entry) {
+		if (entry.get("priv_create")) {	
 			this.menu.add({
-				text: node.raw.text,
-				subclassId: node.raw.id,
-				subclassName: node.raw.text,
+				text: entry.get("text"),
+				subclassId: entry.get("id"),
+				subclassName: entry.get("text"),
 				scope: this,
 				handler: function(item, e){
 					this.fireEvent("cmClick", {
@@ -121,10 +122,10 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 			});			
 		};
 
-		var children = node.childNodes;
+		var children = _CMUtils.getChildrenById(entry.get("id"));
 		if (children && children.length>0) {
 			//is a superClass
-			this.addSubclassesToMenu(children);
+			addSubclassesToMenu.call(this, children);
 		}
 	}
 	

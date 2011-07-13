@@ -5,7 +5,7 @@
 Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.DecimalAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.DecimalAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
-CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = 80;
+CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = 200;
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.customVType = "numeric";
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.gridRenderer = function(v) {
 	return "<div class=\"numeric_column\">" + v + "<div>";

@@ -98,30 +98,49 @@
 		},
 
 		onAddRelationButtonClick: function(d) {
-			var a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
-				currentCard: this.currentCard,
-				relation: {
-					dst_cid: d.dst_cid,
-					dom_id: d.dom_id,
-					rel_id: -1,
-					src: d.src
-				},
-				selType: "checkboxmodel",
-				multiSelect: true,
-				filterType: this.view.id
-			}).show();
+			var domain = _CMCache.getDomainById(d.dom_id),
+				isMany = false,
+				dest = d.src == "_1" ? "_2" : "_1";
+
+			if (domain) {
+				isMany = domain.isMany(dest);
+			};
+
+			var me = this,
+				a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+					currentCard: this.currentCard,
+					relation: {
+						dst_cid: d.dst_cid,
+						dom_id: d.dom_id,
+						rel_id: -1,
+						src: d.src
+					},
+					selType: isMany ? "checkboxmodel" : "rowmodel",
+					multiSelect: isMany,
+					filterType: this.view.id,
+
+					successCb: function() {
+						me.loadData();
+					}
+				}).show();
 		},
 
 		onEditRelationClick: function(model) {
-			var a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
-				relation: {
-					dst_cid: model.get("dst_cid"),
-					dom_id: model.get("dom_id"),
-					rel_id: model.get("rel_id"),
-					src: model.get("src")
-				},
-				filterType: this.view.id
-			}).show();
+			var me = this,
+				data = model.raw || model.data,
+				a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
+					relation: {
+						rel_attr: data.attr_as_obj,
+						dst_cid: model.get("dst_cid"),
+						dom_id: model.get("dom_id"),
+						rel_id: model.get("rel_id"),
+						src: model.get("src")
+					},
+					filterType: this.view.id,
+					successCb: function() {
+						me.loadData();
+					}
+				}).show();
 		},
 
 		onDeleteRelationClick: function(model) {
@@ -135,9 +154,9 @@
 				}
 
 				var o = {
-						did: model.get("dom_id"),
-						id: model.get("rel_id")
-					};
+					did: model.get("dom_id"),
+					id: model.get("rel_id")
+				};
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.relations.remove({
@@ -146,15 +165,12 @@
 					},
 					scope: this,
 					success: function() {
-						alert("@@ delete relation success");
-					},
-					failure: function() {
-						alert("@@ delete relation failure");
+						this.loadData();
 					},
 					callback: function() {
 						CMDBuild.LoadMask.get().hide();
 					}
-				})
+				});
 			};
 		},
 
@@ -213,7 +229,11 @@
 				},
 				scope: this,
 				success: function(a,b, response) {
-					var cc = this.view.convertRelationInNodes(response.domains[0].relations);
+					var cc = this.view.convertRelationInNodes(response.domains[0].relations, 
+							node.data.dom_id, 
+							node.data.src,
+							node.data);
+
 					node.appendChild(cc);
 					el.unmask();
 				}

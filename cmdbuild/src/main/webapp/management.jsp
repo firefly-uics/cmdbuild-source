@@ -108,7 +108,7 @@
 	 	<title>CMDBuild</title>
 	</head>
 	<body>
-		<div id="header">
+		<div id="header" class="cm_no_display">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
 			<div id="instance_name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
@@ -129,7 +129,7 @@
 			</div>
 		</div>
 		
-		<div id="footer">
+		<div id="footer" class="cm_no_display">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
 			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
 			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>

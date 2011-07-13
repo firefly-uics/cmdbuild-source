@@ -5,7 +5,7 @@
 Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.DateAttribute = function() {
 	this.format = 'd/m/y';
-	this.fieldWidth = 80;
+	this.fieldWidth = 200;
 	this.headerWidth = 60;
 };
 CMDBuild.extend(CMDBuild.WidgetBuilders.DateAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);

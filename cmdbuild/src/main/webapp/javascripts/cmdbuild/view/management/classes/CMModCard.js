@@ -51,7 +51,7 @@
 				}
 			});
 
-			this.cardTabPanel.onClassSelected(id);
+			this.cardTabPanel.onClassSelected(id, activateFirst = true);
 			this.addCardButton.updateForEntry(entry);
 			this.cardGrid.clearFilterButton.disable();
 			this.cardGrid.gridSearchField.reset();
@@ -59,8 +59,12 @@
 
 		openCard: function(p) {
 			this.cardGrid.openCard(p);
+			this.cardTabPanel.onClassSelected(p.IdClass, activateFirst = false);
 			this.addCardButton.updateForEntry(_CMCache.getEntryTypeById(p.IdClass));
+			this.cardGrid.clearFilterButton.disable();
+			this.cardGrid.gridSearchField.reset();
 		}
+
 	});
 
 

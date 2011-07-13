@@ -250,7 +250,7 @@
 				}
 			}
 
-//			headers = headers.concat(this.buildExtraColumns());
+			headers = headers.concat(this.buildExtraColumns());
 
 			if (this.cmAddGraphColumn) {
 				buildGraphIconColumn.call(this, headers);

@@ -67,12 +67,13 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
     		maxLength: attribute.len,
     		allowBlank: !attribute.isnotnull,
     		width: (function(length) {
-		    			if (length < 33) { //my chose
-		    				return (length * 11)+6;
-		    			} else {
-		    				return 420;
-		    			}
-		    		})(attribute.len)
+				length = length + 8;
+    			if (length < 33) { //my chose
+    				return (length* 13)+6;
+    			} else {
+    				return 420;
+    			}
+    		})(attribute.len)
 		});
 	};
 	if (this.customVType) {

@@ -1,14 +1,13 @@
 (function() {
 	var detailURL = {
-		get: "services/json/management/modcard/getdetaillist",
-		remove: "services/json/management/modcard/deleterelation"
-	};
-	
-	var bigTablesURL = {
-		get: "services/json/management/modcard/getcardlist",
-		remove: "services/json/management/modcard/deletecard"
-	};
-	
+			get: "services/json/management/modcard/getdetaillist",
+			remove: "services/json/management/modcard/deleterelation"
+		},
+		bigTablesURL = {
+			get: "services/json/management/modcard/getcardlist",
+			remove: "services/json/management/modcard/deletecard"
+		};
+
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
@@ -29,13 +28,8 @@
 			} else {
 				setExtraParamsAndLoad.call(this);
 			}
-
-// this.getStore().baseParams['DirectedDomain'] = this.directedDomain;
-// this.getStore().baseParams['Id'] = this.cardId;
-// this.getStore().baseParams['IdClass'] = this.classId;
-
 		},
-		
+
 		updateStoreForClassId: function(classId, cb) {
 			this.currentClassId = classId;
 			_CMCache.getAttributeList(classId, 
@@ -67,6 +61,25 @@
 			}
 
 			return icons;
+		},
+
+		// override
+		buildExtraColumns: function() {
+			var iconToRender = this.getIconsToRender();
+			return [{
+				header : '&nbsp',
+				width : iconToRender.length * 20,
+				fixed : true,
+				sortable : false,
+				renderer : function() {
+					return imageTagBuilderForIcon(iconToRender);
+				},
+				align : 'center',
+				cellCls : 'grid-button',
+				dataIndex : 'Fake',
+				menuDisabled : true,
+				hideable : false
+			}];
 		}
 	});
 
@@ -232,15 +245,8 @@
 	 * deleteDetail: function(jsonRow) { var domain =
 	 * this.removeDirectionToDomain(); this.deleteRelation(jsonRow, domain); },
 	 * 
-	 * deleteRelation: function(jsonRow, domain) { var url =
-	 * this.detailURL.remove; CMDBuild.Ajax.request({ url: url, params : {
-	 * "DomainId" : domain, "Class1Id" : this.classId, "Card1Id" : this.cardId,
-	 * "Class2Id" : jsonRow.IdClass, "Card2Id" : jsonRow.Id }, waitTitle :
-	 * CMDBuild.Translation.common.wait_title, waitMsg :
-	 * CMDBuild.Translation.common.wait_msg, method : 'POST', scope : this,
-	 * success : function() { this.deleteCardDetail(jsonRow.IdClass,
-	 * jsonRow.Id); } }); },
-	 * 
+	
+	 
 	 * deleteCardDetail: function(IdClass, Id) { var _this = this; var url =
 	 * this.bigTablesURL.remove; CMDBuild.Ajax.request({ url: url, params : {
 	 * "IdClass": IdClass, "Id": Id }, waitTitle :
@@ -272,56 +278,55 @@
 	 * if (this.fkAttribute && attribute.name == this.fkAttribute.name) { return
 	 * false; } return true; } });
 	 */
+
 function imageTagBuilderForIcon(iconName) {
-	var ICONS_FOLDER = "images/icons/";
-	var ICONS_EXTENSION = "png";
-	var EVENT_CLASS_PREFIX = "action-masterdetail-";
-	
-	var TAG_TEMPLATE = '<img style="cursor:pointer" title="{0}" class="{1}{2}" src="{3}{4}.{5}"/>&nbsp;';
-	
-	var icons = {
-		showDetail: {
-			title: CMDBuild.Translation.management.moddetail.showdetail,
-			event: "show",
-			icon: "zoom"
-		},
-		editDetail: {
-			title: CMDBuild.Translation.management.moddetail.editdetail,
-			event: "edit",
-			icon: "modify"
-		},
-		deleteDetail: {
-			title: CMDBuild.Translation.management.moddetail.deletedetail,
-			event: "delete",
-			icon: "cross"
-		},
-		showGraph: {
-			title: CMDBuild.Translation.management.moddetail.showgraph,
-			event: "graph",
-			icon: "chart_organisation"
-		},		
-		note: {
-			title: CMDBuild.Translation.management.moddetail.shownotes,
-			event: "note",
-			icon: "note"
-		},
-		attach: {
-			title: CMDBuild.Translation.management.moddetail.showattach,
-			event: "attach",
-			icon: "attach"
-		}
-	};
+	var ICONS_FOLDER = "images/icons/",
+		ICONS_EXTENSION = "png",
+		EVENT_CLASS_PREFIX = "action-masterdetail-",
+		TAG_TEMPLATE = '<img style="cursor:pointer" title="{0}" class="{1}{2}" src="{3}{4}.{5}"/>&nbsp;',
+		tag = "",
+		icons = {
+			showDetail: {
+				title: CMDBuild.Translation.management.moddetail.showdetail,
+				event: "show",
+				icon: "zoom"
+			},
+			editDetail: {
+				title: CMDBuild.Translation.management.moddetail.editdetail,
+				event: "edit",
+				icon: "modify"
+			},
+			deleteDetail: {
+				title: CMDBuild.Translation.management.moddetail.deletedetail,
+				event: "delete",
+				icon: "cross"
+			},
+			showGraph: {
+				title: CMDBuild.Translation.management.moddetail.showgraph,
+				event: "graph",
+				icon: "chart_organisation"
+			},		
+			note: {
+				title: CMDBuild.Translation.management.moddetail.shownotes,
+				event: "note",
+				icon: "note"
+			},
+			attach: {
+				title: CMDBuild.Translation.management.moddetail.showattach,
+				event: "attach",
+				icon: "attach"
+			}
+		};
 	
 	function buildTag(iconName) {
 		var icon = icons[iconName];
 		if (icon) {
-			return String.format(TAG_TEMPLATE, icon.title, EVENT_CLASS_PREFIX, icon.event, ICONS_FOLDER, icon.icon, ICONS_EXTENSION);
+			return Ext.String.format(TAG_TEMPLATE, icon.title, EVENT_CLASS_PREFIX, icon.event, ICONS_FOLDER, icon.icon, ICONS_EXTENSION);
 		} else {
-			return String.format("<span>{0}</span>", iconName);
+			return Ext.String.format("<span>{0}</span>", iconName);
 		}
 	}
-	
-	var tag = "";
+
 	if (Ext.isArray(iconName)) {
 		for (var i=0, len=iconName.length; i<len; ++i) {
 			tag += buildTag(iconName[i]);

@@ -41,7 +41,13 @@
 		onViewOnFront: function(selection) {
 			if (selection) {
 				this.currentEntryId = selection.get("id");
-				this.view.onEntrySelected(selection);
+
+				if (this.danglingCardToOpen) {
+					this.view.openCard(this.danglingCardToOpen);
+					this.danglingCardToOpen = null;
+				} else {
+					this.view.onEntrySelected(selection);
+				}
 
 				// sub-controllers
 				this.attachmentsController.onEntrySelect(selection);
@@ -61,12 +67,12 @@
 				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
 				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
 
-			accordion.expandSilently();
-			Ext.Function.createDelayed(function() {
-				accordion.selectNodeByIdSilentry(p.IdClass);
-			}, 100)();
+			this.danglingCardToOpen = p;
 
-			modPanel.openCard(p);
+			accordion.expand();
+			Ext.Function.createDelayed(function() {
+				accordion.selectNodeById(p.IdClass);
+			}, 100)();
 		}
 	});
 
@@ -109,15 +115,13 @@
 				return;
 			}
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request({
+			CMDBuild.ServiceProxy.card.remove({
 				scope : this,
 				important: true,
-				url : 'services/json/management/modcard/deletecard',
 				params : {
 					"IdClass": this.currentEntryId,
 					"Id": this.currentCard.get("Id")
 				},
-				method : 'POST',
 				success : function() {
 					this.cardGrid.reload();
 					this.cardPanel.reset();
@@ -125,8 +129,8 @@
 				},
 				callback : function() {
 					CMDBuild.LoadMask.get().hide();
-		      	}
-	  	 	});
+				}
+			});
 		};
 
 		Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);

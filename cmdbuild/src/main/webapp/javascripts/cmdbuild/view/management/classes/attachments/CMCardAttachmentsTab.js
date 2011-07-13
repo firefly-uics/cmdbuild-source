@@ -97,7 +97,12 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 
 	reloadCard: function() {
 		this.loaded = false;
-		if (this.ownerCt.layout.getActiveItem().id == this.id) {
+		if (this.ownerCt.layout.getActiveItem) { 
+			if (this.ownerCt.layout.getActiveItem().id == this.id) {
+				this.loadCardAttachments();
+			}
+		} else {
+			// it is not in a tabPanel
 			this.loadCardAttachments();
 		}
 	},

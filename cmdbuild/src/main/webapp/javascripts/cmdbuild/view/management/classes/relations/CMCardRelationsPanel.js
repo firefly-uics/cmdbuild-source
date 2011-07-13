@@ -1,7 +1,7 @@
 (function() {
-	var TARGET_CLASS_ID = "dst_cid";
-	var tr = CMDBuild.Translation.management.modcard;
-	var col_tr = CMDBuild.Translation.management.modcard.relation_columns;
+	var TARGET_CLASS_ID = "dst_cid",
+		tr = CMDBuild.Translation.management.modcard,
+		col_tr = CMDBuild.Translation.management.modcard.relation_columns;
 
 	Ext.define("CMRelationPanelModel", {
 		extend: "Ext.data.Model",
@@ -41,7 +41,7 @@
 					{header: col_tr.begin_date, flex: 1, sortable: false, dataIndex: 'rel_date'},
 					{header: col_tr.code, flex: 1, sortable: false, dataIndex: 'dst_code'},
 					{header: col_tr.description, flex: 2, sortable: false, dataIndex: 'dst_desc'},
-					{header: CMDBuild.Translation.administration.modClass.tabs.attributes, flex: 4, sortable: false, dataIndex: 'rel_attr'},
+					{header: CMDBuild.Translation.administration.modClass.tabs.attributes, flex: 3, sortable: false, dataIndex: 'rel_attr'},
 					{
 						header: '&nbsp', 
 						width: 90,
@@ -66,19 +66,28 @@
 		},
 
 		fillWithData: function(domains) {
+			this.showAttributesColumn = false;
+
 			domains = domains || [];
 			var nodes = [],
 				r = this.store.getRootNode();
 
 			for (var i=0, l=domains.length; i<l; ++i) {
-				var domainRensonseObj = domains[i],
-					domainCachedData = _CMCache.getDomainById(domainRensonseObj.id);
+				var domainResponseObj = domains[i],
+					domainCachedData = _CMCache.getDomainById(domainResponseObj.id);
 
-				nodes.push( buildNodeFor(domainRensonseObj, domainCachedData));
+				nodes.push(buildNodeForDomain.call(this, domainResponseObj, domainCachedData));
 			}
 
 			r.removeAll();
 			r.appendChild(nodes);
+
+			var attrsColumn = this.columns[5];
+			if (this.showAttributesColumn) {
+				attrsColumn.show();
+			} else {
+				attrsColumn.hide();
+			}
 		},
 
 		onAddCardButtonClick: function() {
@@ -88,49 +97,58 @@
 		convertRelationInNodes: convertRelationInNodes
 	});
 	
-	function buildNodeFor(domainRensonseObj, domainCachedData) {
+	function buildNodeForDomain(domainResponseObj, domainCachedData) {
 		var children = [],
 			attributes = domainCachedData.data.attributes,
 			attributesToString = "",
-			oversize = domainRensonseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
-			src = domainRensonseObj.src,
-			domId = domainCachedData.get("id");
+			oversize = domainResponseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
+			src = domainResponseObj.src,
+			domId = domainCachedData.get("id"),
+			node;
 
 		node = {
 			dom_id: domId,
-			label: buildDescriptionForDomainNode(domainRensonseObj, domainCachedData),
+			label: buildDescriptionForDomainNode(domainResponseObj, domainCachedData),
 
 			src: src,
-			relations_size: domainRensonseObj.relations_size,
+			relations_size: domainResponseObj.relations_size,
 
 			expanded: !oversize,
 			leaf: false,
-			children: []
+			children: [],
+			rel_attr_keys: []
 		};
+
+		if (attributes.length > 0) {
+			this.showAttributesColumn = true;
+			var key = "";
+			for (var i=0, l=attributes.length; i<l; i++) {
+				key = attributes[i].description
+				attributesToString += i==0 ? "" : " | ";
+				attributesToString += key;
+				node.rel_attr_keys.push(key);
+			}
+
+			node.rel_attr = attributesToString;
+		}
 
 		if (oversize) {
 			// it is asynchronous, add an empty obj to get the possibility to expand the tree widget
 			node.children.push({});
 		} else {
-			node.children = convertRelationInNodes(domainRensonseObj.relations, domId, src);
+			node.children = convertRelationInNodes(domainResponseObj.relations, domId, src, node);
 		}
 
-		if (attributes.length > 0) {
-			for (var i=0, l=attributes.length; i<l; i++) {
-				attributesToString += i==0 ? "" : " - ";
-				attributesToString += attributes[i].description;
-			}
-
-			node.rel_attr = attributesToString;
-		}
 		return node;
 	}
 
-	function convertRelationInNodes(relations, dom_id, src) {
+	function convertRelationInNodes(relations, dom_id, src, node) {
 		relations = relations || [];
 		var r,c,i=0,
 			l=relations.length,
-			nodes = [];
+			nodes = [],
+			attributesToString = "",
+			key;
 
 		for (; i<l; ++i) {
 			r = relations[i];
@@ -140,6 +158,15 @@
 			r.dom_id = dom_id;
 			r.src = src;
 
+			attributesToString = "";
+			for (var j=0; j<node.rel_attr_keys.length; ++j) {
+				key = node.rel_attr_keys[j];
+
+				attributesToString += j==0 ? "" : " | ";
+				attributesToString += r.rel_attr[key] || " - ";
+			}
+			r.attr_as_obj = r.rel_attr; // used in modify window
+			r.rel_attr = attributesToString;
 			nodes.push(r);
 		}
 
@@ -171,9 +198,9 @@
 		return actionsHtml;
 	}
 
-	function buildDescriptionForDomainNode(domainRensonseObj, domainCachedData) {
-		var prefix = domainCachedData.get("descr"+domainRensonseObj.src),
-			s = domainRensonseObj.relations_size,
+	function buildDescriptionForDomainNode(domainResponseObj, domainCachedData) {
+		var prefix = domainCachedData.get("descr"+domainResponseObj.src),
+			s = domainResponseObj.relations_size,
 			postfix = s  > 1 ? CMDBuild.Translation.management.modcard.relation_columns.items : CMDBuild.Translation.management.modcard.relation_columns.item;
 		
 		return prefix + " ("+ s + " " + postfix + ")" ;

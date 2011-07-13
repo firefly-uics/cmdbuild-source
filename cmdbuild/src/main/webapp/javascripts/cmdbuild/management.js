@@ -11,9 +11,53 @@
 	Ext.define("CMDBuild.app.Management", {
 		statics: {
 			init: function() {
-				this.loadResources();
+				this.buildComponents();
 			},
 
+			buildComponents: function() {
+
+				this.cmAccordions = [
+					this.menuAccordion = menuAccordion,
+ 					this.classesAccordion = classesAccordion,
+					this.reportAccordion = reportAccordion,
+					this.utilitiesTree = utilitiesTree
+				];
+
+				this.cmPanels = [
+					new Ext.panel.Panel({}),
+					
+					new CMDBuild.view.common.report.CMReportGrid({
+						cmName: "report",
+						cmControllerType: CMDBuild.controller.management.report.CMModReportController
+					}),
+					
+					this.changePasswordPanel = new CMDBuild.view.management.utilities.CMModChangePassword(),
+
+					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
+						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
+					}),
+	
+					this.bulkCardUpdates = new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+					}),
+
+					this.exportCSV = new CMDBuild.view.management.utilities.CMModExportCSV(),
+
+					this.importCSV = new CMDBuild.view.management.utilities.CMModImportCSV({
+						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+					})
+				];
+
+				_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+					new CMDBuild.view.CMMainViewport({
+						cmAccordions: this.cmAccordions,
+						cmPanels: this.cmPanels
+					}).showSplash()
+				);
+
+				this.loadResources();
+			},
+			
 			loadResources: function() {
 				var dangling = 6,
 					me = this;
@@ -22,6 +66,7 @@
 					scope: this,
 					success: function(response, options, decoded) {
 						CMDBuild.Config.cmdbuild = decoded.data;
+						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 					},
 					callback: callback
 				});
@@ -73,58 +118,10 @@
 
 				function callback() {
 					if (--dangling == 0) {
-						me.buildComponents();
+						_CMMainViewportController.viewport.hideSplash();
 					}
 				}
 
-			},
-
-			buildComponents: function() {
-
-				this.cmAccordions = [
-					this.menuAccordion = menuAccordion,
- 					this.classesAccordion = classesAccordion,
-					this.reportAccordion = reportAccordion,
-					this.utilitiesTree = utilitiesTree
-				];
-
-				this.cmPanels = [
-					new Ext.panel.Panel({}),
-					
-					new CMDBuild.view.common.report.CMReportGrid({
-						cmName: "report",
-						cmControllerType: CMDBuild.controller.management.report.CMModReportController
-					}),
-					
-					this.changePasswordPanel = new CMDBuild.view.management.utilities.CMModChangePassword(),
-
-					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
-					}),
-	
-					this.bulkCardUpdates = new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
-					}),
-
-					this.exportCSV = new CMDBuild.view.management.utilities.CMModExportCSV(),
-
-					this.importCSV = new CMDBuild.view.management.utilities.CMModImportCSV({
-						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
-					})
-				];
-
-				this.buildViewport();
-			},
-			
-			buildViewport: function() {
-				_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-					new CMDBuild.view.CMMainViewport({
-						cmAccordions: this.cmAccordions,
-						cmPanels: this.cmPanels
-					})
-				);
-
-				_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 			}
 		}
 	});
