@@ -123,7 +123,7 @@
 				cardId: this.currentCardId
 			}).show();
 
-			addAttachmentWin.on("saved", this.view.reloadCard, this.view);
+			this.view.mon(addAttachmentWin, "saved", this.view.reloadCard, this.view);
 		}
 	});
 

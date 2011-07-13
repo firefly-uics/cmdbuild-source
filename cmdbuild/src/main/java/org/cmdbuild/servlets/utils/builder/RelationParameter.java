@@ -23,10 +23,14 @@ public class RelationParameter extends AbstractParameterBuilder<IRelation> {
 		int class2Id = parameter(Integer.TYPE, "Class2Id", r);
 		int card2Id = parameter(Integer.TYPE, "Card2Id", r);
 		int domainId = parameter(Integer.TYPE, "DomainId", r);
-		UserContext userCtx = new SessionVars().getCurrentUserContext();
-		ICard card1 = userCtx.tables().get(class1Id).cards().get(card1Id);
-		ICard card2 = userCtx.tables().get(class2Id).cards().get(card2Id);
-		IDomain domain = userCtx.domains().get(domainId);
-		return userCtx.relations().get(domain, card1, card2);
+		if (domainId == 0 || card1Id == 0 || class1Id == 0 || card2Id == 0 || class2Id == 0 ) {
+			return null;
+		} else {
+			UserContext userCtx = new SessionVars().getCurrentUserContext();
+			ICard card1 = userCtx.tables().get(class1Id).cards().get(card1Id);
+			ICard card2 = userCtx.tables().get(class2Id).cards().get(card2Id);
+			IDomain domain = userCtx.domains().get(domainId);
+			return userCtx.relations().get(domain, card1, card2);
+		}
 	}
 }

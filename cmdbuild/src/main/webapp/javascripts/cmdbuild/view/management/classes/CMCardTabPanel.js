@@ -49,8 +49,11 @@
 			this.callParent(arguments);
 		},
 
-		onClassSelected: function(id) {
-			this.setActiveTab(this.cardPanel);
+		onClassSelected: function(id, activateFirst) {
+			if (activateFirst) {
+				this.setActiveTab(this.cardPanel);
+			}
+
 			this.items.each(function(item) {
 				if (item.onClassSelected) {
 					item.onClassSelected(id);

@@ -48,7 +48,9 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
-	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMNoteWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMAttachmentsWindow.js"></script>
+
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
@@ -65,7 +67,8 @@
 		<!-- MD -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMMasterDetailGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMCardMasterDetail.js"></script>
-		
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMDetailWindow.js"></script>
+
 		<!-- ATTACHMENTS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
@@ -91,6 +94,7 @@
 <!-- CONTROLLER -->
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
 
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModBulkCardUpdateController.js"></script>	

@@ -2,10 +2,12 @@
 	var NO_SELECTION = "No selection";
 
 	Ext.define("CMDBuild.view.management.classes.relations.CMEditRelationWindow", {
+		successCb: Ext.emptyFn,
+
 		extend: "CMDBuild.Management.CardListWindow",
 
 		// passed in instantiation
-		relation: undefined, //{dst_cid: "", dom_id: "", rel_id: "", src: ""}
+		relation: undefined, //{dst_cid: "", dom_id: "", rel_id: "", src: "", rel_attr: []}
 		currentCard: undefined, // the source of the relation
 
 		// override
@@ -69,6 +71,18 @@
 		show: function() {
 			this.callParent(arguments);
 			this.attributesPanel.editMode();
+			
+			var fields = this.attributesPanel.getFields(),
+				rel_attrs = this.relation.rel_attr || {};
+				
+				for (var i = 0, l=fields.length; i<l; ++i) {
+					var f = fields[i],
+						name = f.CMAttribute.name;
+					
+					if (rel_attrs[name]) {
+						f.setValue(rel_attrs[name]);
+					}
+				}
 		}
 	});
 
@@ -79,21 +93,19 @@
 				delete p.id;
 				CMDBuild.ServiceProxy.relations.add({
 					params: { JSON: Ext.JSON.encode(p) },
+					scope: this,
 					success: function() {
-						alert("@@ add success");
-					},
-					failure: function() {
-						alert("@@ add failure");
+						this.successCb();
+						this.close();
 					}
 				});
 			} else { // modify
 				CMDBuild.ServiceProxy.relations.modify({
 					params: { JSON: Ext.JSON.encode(p) },
+					scope: this,
 					success: function() {
-						alert("@@ modify success");
-					},
-					failure: function() {
-						alert("@@ modify failure");
+						this.successCb();
+						this.close();
 					}
 				});
 			}

@@ -333,6 +333,13 @@ CMDBuild.ServiceProxy.card = {
 		p.url = 'services/json/management/modcard/getcard',
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+	
+	remove: function(p) {
+		p.method = 'POST';
+		p.url = 'services/json/management/modcard/deletecard',
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 }
 

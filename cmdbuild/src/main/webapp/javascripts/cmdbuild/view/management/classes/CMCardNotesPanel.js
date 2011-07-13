@@ -27,6 +27,16 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			handler : this.disableModify,
 			scope : this
 		});
+		
+		var htmlField = new Ext.form.field.HtmlEditor({
+			name : 'Notes',
+			border: false,
+			frame: false,
+			hideLabel: true,
+			enableLinks: false,
+			enableSourceEdit: false,
+			enableFont: false
+		});
 
 		this.actualForm = new Ext.form.Panel({
 			hideMode: "offsets",
@@ -35,16 +45,17 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			frame: false,
 			bodyCls: "x-panel-body-default-framed",
 			hideMode: 'offsets',
-			items: [{
-				name : 'Notes',
-				xtype : 'htmleditor',
-				border: false,
-				frame: false,
-				hideLabel: true,
-				enableLinks: false,
-				enableSourceEdit: false,
-				enableFont: false
-			}]
+			items: [htmlField],
+			getValue: function() {
+				return htmlField.getValue();
+			}
+		});
+
+		var displayField = new Ext.form.field.Display({
+			padding: "0 0 5px 5px",
+			name : 'Notes',
+			xtype : 'displayfield',
+			anchor: '95%'
 		});
 
 		this.displayPanel = new Ext.form.Panel({
@@ -53,12 +64,10 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			hideMode: "offsets",
 			frame: false,
 			bodyCls: "x-panel-body-default-framed",
-			items: [{
-				padding: "0 0 5px 5px",
-				name : 'Notes',
-				xtype : 'displayfield',
-				anchor: '95%'
-			}]
+			items: [displayField],
+			setValue: function(v) {
+				displayField.setValue(v);
+			}
 		});
 
 		if (this.withButtons) {
@@ -95,6 +104,7 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		});
 		this.callParent(arguments);
 	},
+
 	onClassSelected: function() {
 		this.disableModify();
 		this.disable();

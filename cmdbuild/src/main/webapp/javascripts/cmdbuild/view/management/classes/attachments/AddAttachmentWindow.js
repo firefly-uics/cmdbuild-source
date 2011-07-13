@@ -14,7 +14,7 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 
 		this.abortBtn = new CMDBuild.buttons.AbortButton({
 			scope: this,
-			handler: function(){ this.close();}
+			handler: function(){ this.destroy();}
 		});
 
 		this.store = _CMCache.getLookupStore(CMDBuild.Config.dms['category.lookup']);
@@ -99,11 +99,12 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 				function deferredCall() {
 					CMDBuild.LoadMask.get().hide();
 					this.fireEvent('saved');
-					this.close();
+					this.destroy();
 				};
 				Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, this)();
 			},
 			failure: function () {
+				CMDBuild.LoadMask.get().hide();
 				this.enable();
 			}
 		});

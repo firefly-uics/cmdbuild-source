@@ -49,6 +49,9 @@ em {
   width: 16px;
 }
 
+.cm_no_display {
+	display: none;
+}
 */
 
 /* LOGIN */
@@ -144,33 +147,17 @@ em {
 }
 
 /* splash */
-
-/*
-.splashScreen {
-	background: #EEE;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	font-family: sans-serif;
-	color: #666;
-	font-size: 11px;
-	line-height: 1.4em;
-	z-index: 50000;
-}
-
-#splashScreen_padding {
-	height: 147px;
-	width: 400px;
+.cmMask {
+	background: #EEEEEE!important;
 }
 
 .splashScreen_image {
-	height: 262px;
-	width: 423px;
+	height: 217px;
+	width: 381px;
 	display: block;
 	background-image: url(../images/splash.png);
 	background-position: top left;
 	background-repeat: no-repeat;
-	z-index: 50001;
 }
 
 .splashScreen_central {
@@ -182,8 +169,8 @@ em {
 	margin: 0;
 	width: 395px;
 	height: 63px;
-	padding-left: 25px;
-	padding-top: 10px;
+	padding-left: 20px;
+	padding-top: 135px;
 }
 
 .splashScreen_central a {
@@ -212,8 +199,11 @@ em {
 	font-family: sans-serif;
 	font-size: 11px;
 	line-height: 1.4em;
-	margin-right: 28px;
+	margin-right: 21px;
+	margin-top: 38px;
 	z-index: 50002;
+	font-size: 10px;
+	color: #1C4196;
 }
 
 .splash_loading {
@@ -240,7 +230,6 @@ em {
 	font-size: 9px;
 	float: left;
 }
-
 
 /* FOOTER */
 
