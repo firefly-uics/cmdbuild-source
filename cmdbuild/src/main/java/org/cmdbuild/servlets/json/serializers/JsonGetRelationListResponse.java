@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import java.util.Map;
+
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.commands.GetRelationList.RelationInfo;
@@ -67,9 +69,15 @@ public class JsonGetRelationListResponse implements JsonSerializable {
 		relation.put("dst_desc", ri.getTargetDescription());
 		relation.put("rel_id", ri.getRelationId());
 		relation.put("rel_date", DATE_TIME_FORMATTER.print(ri.getRelationBeginDate()));
-		relation.put("rel_attr", ri.getRelationAttributes());
+		relation.put("rel_attr", relationAttributesToJson(ri));
 		return relation;
 	}
 
-	
+	private JSONObject relationAttributesToJson(RelationInfo ri) throws JSONException {
+		final JSONObject jsonAttr = new JSONObject();
+		for (Map.Entry<String, Object> attr : ri.getRelationAttributes()) {
+			jsonAttr.put(attr.getKey(), attr.getValue());
+		}
+		return jsonAttr;
+	}
 }

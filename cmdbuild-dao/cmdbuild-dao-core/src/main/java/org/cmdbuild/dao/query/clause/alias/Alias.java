@@ -39,19 +39,18 @@ public class Alias {
 	 */
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		return name.equals(((Alias)obj).name);
+	public int hashCode() {
+		return name.hashCode();
 	}
 
 	@Override
-	public int hashCode() {
-		return name.hashCode();
+	public boolean equals(Object obj) {
+		if (obj instanceof Alias == false)
+			return false;
+		if (this == obj)
+			return true;
+		Alias other = (Alias) obj;
+		return this.name.equals(other.name);
 	}
 
 	@Override

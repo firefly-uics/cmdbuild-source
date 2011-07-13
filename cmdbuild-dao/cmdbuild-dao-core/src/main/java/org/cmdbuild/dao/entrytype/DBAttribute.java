@@ -9,7 +9,10 @@ public class DBAttribute implements CMAttribute {
 	}
 
 	CMEntryType owner;
+
+	// TODO Make name and meta inherited by both DBAttribute and DBEntryType
 	private final String name;
+	private final AttributeMetadata meta;
 
 	public DBAttribute(final String name) {
 		this(name, new AttributeMetadata());
@@ -19,6 +22,7 @@ public class DBAttribute implements CMAttribute {
 		Validate.notEmpty(name);
 		this.owner = null;
 		this.name = name;
+		this.meta = meta;
 	}
 
 	@Override
@@ -29,5 +33,10 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean isSystem() {
+		return meta.isSystem();
 	}
 }

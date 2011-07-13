@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.query.clause;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
@@ -35,32 +37,16 @@ public class QueryAliasAttribute implements QueryAttribute {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((entryType == null) ? 0 : entryType.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
+		return new HashCodeBuilder().append(this.entryType).append(this.name).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj instanceof QueryAliasAttribute == false)
+			return false;
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		QueryAliasAttribute other = (QueryAliasAttribute) obj;
-		if (entryType == null) {
-			if (other.entryType != null)
-				return false;
-		} else if (!entryType.equals(other.entryType))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
+		return new EqualsBuilder().append(this.entryType, other.entryType).append(this.name, other.name).isEquals();
 	}
 }

@@ -21,6 +21,9 @@ public class DataTest extends QueryTestFixture {
 
 	private static final String A_CLASS_NAME = "A";
 
+	// FIXME CREATE NEW ATTRIBUTES!
+	protected static final String ATTRIBUTE_1 = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
+
 	@Ignore
 	@Test
 	public void cardsCanBeAdded() {
@@ -28,7 +31,7 @@ public class DataTest extends QueryTestFixture {
 		final DBClass newClass = driver.createClass(A_CLASS_NAME, null);
 		// when
 		final CMCard newCard = DBCard.create(driver, newClass)
-			.set(org.cmdbuild.dao.driver.postgres.Utils.CODE_ATTRIBUTE, "Pizza").save(); // FIXME
+			.set(ATTRIBUTE_1, "Pizza").save(); // FIXME
 		//then
 		assertThat(newCard.getId(), is(notNullValue()));
 	}

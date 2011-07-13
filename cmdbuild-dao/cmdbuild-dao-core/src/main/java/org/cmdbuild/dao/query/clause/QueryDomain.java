@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.query.clause;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 
@@ -106,29 +108,16 @@ public class QueryDomain {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-		result = prime * result + ((querySource == null) ? 0 : querySource.hashCode());
-		return result;
+		return new HashCodeBuilder().append(this.domain).append(this.querySource).hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj instanceof QueryDomain == false)
+			return false;
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		QueryDomain other = (QueryDomain) obj;
-		if (domain == null) {
-			if (other.domain != null)
-				return false;
-		} else if (!domain.equals(other.domain))
-			return false;
-		if (querySource != other.querySource)
-			return false;
-		return true;
+		return new EqualsBuilder().append(this.domain, other.domain).append(this.querySource, other.querySource).isEquals();
 	}
 }
