@@ -12,7 +12,11 @@ import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
 /*
- * Mutable classes used by the driver implementations
+ * Note: Mutable classes because it is supposed to be used by driver
+ *       implementations.
+ * 
+ * TODO Consider named attributes not bounded to a class or a domain to
+ *      allow functions or aliases for other attributes
  */
 public class DBQueryRow implements CMQueryRow {
 

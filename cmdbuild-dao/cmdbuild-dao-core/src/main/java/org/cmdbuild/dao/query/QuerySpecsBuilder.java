@@ -85,8 +85,8 @@ public class QuerySpecsBuilder {
 	private List<QueryAttribute> attributes;
 	private List<JoinClause> joinClauses;
 	private WhereClause whereClause;
-	private Integer offset;
-	private Integer limit;
+	private Long offset;
+	private Long limit;
 
 	private AliasLibrary aliases;
 
@@ -157,13 +157,13 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	public QuerySpecsBuilder offset(final Integer offset) {
-		this.offset = offset;
+	public QuerySpecsBuilder offset(final Number offset) {
+		this.offset = offset.longValue();
 		return this;
 	}
 
-	public QuerySpecsBuilder limit(final Integer limit) {
-		this.limit = limit;
+	public QuerySpecsBuilder limit(final Number limit) {
+		this.limit = limit.longValue();
 		return this;
 	}
 

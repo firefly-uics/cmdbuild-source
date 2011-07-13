@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.commands;
 
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -9,7 +10,9 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -28,9 +31,12 @@ import org.joda.time.DateTime;
 public class GetRelationList {
 
 	// TODO Change Code, Description, Id with something meaningful
-	private static final String ID = "Id";
-	private static final String CODE = "Code";
-	private static final String DESCRIPTION = "Description";
+	private static final String ID = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
+	private static final String CODE = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
+	private static final String DESCRIPTION = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
+
+	private static final Alias DOM_ALIAS = Alias.as("DOM");
+	private static final Alias DST_ALIAS = Alias.as("DST");
 
 	final CMDataView view;
 
@@ -41,20 +47,20 @@ public class GetRelationList {
 	public GetRelationListResponse exec(final Card src, final DomainWithSource dom) {
 		final CMClass srcCardType = getCardType(src);
 		final CMDomain domain = getQueryDomain(dom); // TODO
-		final Alias domAlias = Alias.as("DOM");
-		final Alias dstAlias = Alias.as("DST");
+
 		final CMQueryResult relationList = view
 			.select(
-				//anyAttribute(domAlias),
-				attribute(dstAlias, CODE), attribute(dstAlias, DESCRIPTION))
+				anyAttribute(DOM_ALIAS),
+				attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
 			.from(srcCardType)
-			.join(anyClass(), as(dstAlias), over(domain, as(domAlias)))
+			.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
 			.where(attribute(srcCardType, ID), Operator.EQUALS, src.cardId)
 			.run();
+
 		final GetRelationListResponse out = new GetRelationListResponse();
 		for (CMQueryRow row : relationList) {
-			final CMCard dst = row.getCard(dstAlias);
-			final QueryRelation rel = row.getRelation(domAlias);
+			final CMCard dst = row.getCard(DST_ALIAS);
+			final QueryRelation rel = row.getRelation(DOM_ALIAS);
 			out.addRelation(rel, dst);
 		}
 		return out;
@@ -148,11 +154,11 @@ public class GetRelationList {
 		}
 
 		public String getTargetDescription() {
-			return dst.get("Description").toString();
+			return ObjectUtils.toString(dst.get("Description"));
 		}
 
 		public String getTargetCode() {
-			return dst.get("Code").toString();
+			return ObjectUtils.toString(dst.get("Code"));
 		}
 
 		public Object getTargetId() {
@@ -171,9 +177,8 @@ public class GetRelationList {
 			return rel.getRelation().getBeginDate();
 		}
 
-		// TODO
-		public String getRelationAttributes() {
-			return "TODO";
+		public Iterable<Map.Entry<String, Object>> getRelationAttributes() {
+			return rel.getRelation().getValues();
 		}
 	}
 }

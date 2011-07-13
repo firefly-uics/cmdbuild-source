@@ -14,6 +14,7 @@ public abstract class DBEntryType implements CMEntryType {
 
 		public static final String DESCRIPTION = BASE_NS + "description";
 		public static final String ACTIVE = BASE_NS + "active";
+		public static final String MODE = BASE_NS + "mode";
 
 		final String getDescription() {
 			return get(DESCRIPTION);
@@ -25,6 +26,10 @@ public abstract class DBEntryType implements CMEntryType {
 
 		final boolean isActive() {
 			return Boolean.parseBoolean(get(ACTIVE));
+		}
+
+		final boolean isSystem() {
+			return "reserved".equals(get(MODE)); // FIXME Use an enum and limit the valid values
 		}
 	}
 
@@ -80,6 +85,11 @@ public abstract class DBEntryType implements CMEntryType {
 	}
 
 	@Override
+	public boolean isSystem() {
+		return meta.isSystem();
+	}
+
+	@Override
 	public Iterable<DBAttribute> getAttributes() {
 		return attributes.values();
 	}
@@ -95,26 +105,16 @@ public abstract class DBEntryType implements CMEntryType {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		return id.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj instanceof CMEntryType == false)
+			return false;
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DBEntryType other = (DBEntryType) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+		CMEntryType other = (CMEntryType) obj;
+		return this.id.equals(other.getId());
 	}
 }

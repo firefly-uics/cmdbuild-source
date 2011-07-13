@@ -63,6 +63,23 @@ public class DBClass extends DBEntryType implements CMClass {
 		return children;
 	}
 
+	@Override
+	public Set<? extends CMClass> getLeaves() {
+		Set<CMClass> leaves = new HashSet<CMClass>();
+		addLeaves(leaves, this);
+		return leaves;
+	}
+
+	private void addLeaves(final Set<CMClass> leaves, final CMClass currentClass) {
+		if (currentClass.isSuperclass()) {
+			for (CMClass subclass : currentClass.getChildren()) {
+				addLeaves(leaves, subclass);
+			}
+		} else {
+			leaves.add(currentClass);
+		}
+	}
+
 	public boolean isAncestorOf(final CMClass cmClass) {
 		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
 			if (parent.equals(this)) {

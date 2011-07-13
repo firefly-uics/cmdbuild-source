@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.entrytype;
 
-
-
 /**
  * This represents a class that has to be checked at runtime
  */

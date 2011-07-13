@@ -135,12 +135,8 @@ public class JoinClause {
 		}
 
 		private void addTargetLeaves(final CMClass targetDomainClass) {
-			if (targetDomainClass.isSuperclass()) {
-				for (CMClass subclass : targetDomainClass.getChildren()) {
-					addTargetLeaves(subclass);
-				}
-			} else {
-				targets.add(targetDomainClass);
+			for (CMClass leaf : targetDomainClass.getLeaves()) {
+				targets.add(leaf);
 			}
 		}
 	}

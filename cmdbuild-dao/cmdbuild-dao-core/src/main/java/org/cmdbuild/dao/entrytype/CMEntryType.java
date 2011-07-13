@@ -6,6 +6,7 @@ public interface CMEntryType {
 	String getName();
 	String getDescription();
 	boolean isActive();
+	boolean isSystem();
 
 	Iterable<? extends CMAttribute> getAttributes();
 	DBAttribute getAttribute(String name);

@@ -23,10 +23,10 @@ public class QueryTestFixture {
 	protected static ApplicationContext context;
 
 	// FIXME CREATE NEW ATTRIBUTES!
-	protected static final String ATTRIBUTE_1 = org.cmdbuild.dao.driver.postgres.Utils.CODE_ATTRIBUTE;
-	protected static final String ATTRIBUTE_2 = org.cmdbuild.dao.driver.postgres.Utils.DESCRIPTION_ATTRIBUTE;
+	protected static final String ATTRIBUTE_1 = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
+	protected static final String ATTRIBUTE_2 = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 	// FIXME SHOULD BE DYNAMIC
-	protected static final String ID_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Utils.ID_ATTRIBUTE;
+	protected static final String ID_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 
 	static {
 		context = new ClassPathXmlApplicationContext("structure-test-context.xml");

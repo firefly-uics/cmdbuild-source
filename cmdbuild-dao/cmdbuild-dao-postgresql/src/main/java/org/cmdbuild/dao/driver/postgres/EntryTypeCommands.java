@@ -196,13 +196,23 @@ public class EntryTypeCommands {
 		                return new DBAttribute(name, attributeCommentToMetadata(comment));
 		            }
 		        });
-		return entityTypeAttributes;
+		return removeSystemAttributes(entityTypeAttributes);
 	}
 
 	private AttributeMetadata attributeCommentToMetadata(final String comment) {
 		AttributeMetadata meta = new AttributeMetadata();
-		extractCommentToMetadata(comment, meta, Utils.DOMAIN_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, Utils.ATTRIBUTE_COMMENT_MAPPER);
 		return meta;
+	}
+
+	private List<DBAttribute> removeSystemAttributes(List<DBAttribute> entityTypeAttributes) {
+		List<DBAttribute> userAttributes = new ArrayList<DBAttribute>();
+		for (DBAttribute attr : entityTypeAttributes) {
+			if (!attr.isSystem()) {
+				userAttributes.add(attr);
+			}
+		}
+		return userAttributes;
 	}
 
 	/*
