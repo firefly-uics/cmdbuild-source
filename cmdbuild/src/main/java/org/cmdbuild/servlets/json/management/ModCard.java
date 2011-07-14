@@ -43,12 +43,14 @@ import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.OverrideKeys;
@@ -519,14 +521,21 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public JSONObject getCardHistory(
-			JSONObject serializer,
 			ICard card,
 			ITableFactory tf,
 			RelationFactory rf,
 			@Parameter("IsProcess") boolean isProcess) throws JSONException, CMDBException {
-		if (isProcess)
-			return getProcessHistory(serializer, card, tf);
-		JSONArray rows = new JSONArray();
+		if (isProcess) {
+			return getProcessHistory(new JSONObject(), card, tf);
+		}
+
+		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
+		final Card src = new Card(card.getSchema().getId(), card.getId());
+		final GetRelationHistoryResponse out = dataAccesslogic.getRelationHistory(src);
+		final JSONObject jsonOutput = new JsonGetRelationHistoryResponse(out).toJson();
+
+		// Old query for card attribute history
+		final JSONArray rows = jsonOutput.getJSONArray("rows");
 		CardQuery cardQuery = tf.get(card.getIdClass()).cards().list().history(card.getId());
 		rows.put(Serializer.serializeCard(card, true));
 		for (ICard cardHistory: cardQuery) {
@@ -534,13 +543,8 @@ public class ModCard extends JSONBase {
 			sc.put("_AttrHist", true);
 			rows.put(sc);
 		}
-		for(IRelation relationHistory: rf.list(card).straightened().history()){
-			JSONObject sr = Serializer.serializeRelation(relationHistory);
-			sr.put("_RelHist", true);
-			rows.put(sr);
-		}
-		serializer.put("rows", rows);
-		return serializer;
+
+		return jsonOutput;
 	}
 
 	private JSONObject getProcessHistory(

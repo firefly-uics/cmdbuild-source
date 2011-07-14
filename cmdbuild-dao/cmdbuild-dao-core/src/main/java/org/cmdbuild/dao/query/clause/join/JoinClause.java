@@ -8,6 +8,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.AnyClass;
 import org.cmdbuild.dao.query.clause.AnyDomain;
+import org.cmdbuild.dao.query.clause.DomainHistory;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -17,15 +18,17 @@ public class JoinClause {
 
 	private final Alias targetAlias;
 	private final Alias domainAlias;
+	private final boolean domainHistory;
 
-	protected final Set<CMClass> targets;
-	protected final Set<QueryDomain> queryDomains;
+	private final Set<CMClass> targets;
+	private final Set<QueryDomain> queryDomains;
 
 	private JoinClause(final Builder builder) {
 		this.targetAlias = builder.targetAlias;
 		this.domainAlias = builder.domainAlias;
 		this.targets = builder.targets;
 		this.queryDomains = builder.queryDomains;
+		this.domainHistory = builder.domainHistory;
 	}
 
 	public Alias getTargetAlias() {
@@ -44,6 +47,10 @@ public class JoinClause {
 		return queryDomains;
 	}
 
+	public boolean isDomainHistory() {
+		return domainHistory;
+	}
+
 	/*
 	 * Builder
 	 */
@@ -57,6 +64,7 @@ public class JoinClause {
 		private Alias domainAlias;
 		private Set<CMClass> targets;
 		private Set<QueryDomain> queryDomains;
+		private boolean domainHistory;
 
 		public Builder(final CMDataView view, final CMClass source) {
 			Validate.notNull(source);
@@ -66,9 +74,13 @@ public class JoinClause {
 			this.targets = new HashSet<CMClass>();
 		}
 
-		public Builder domain(final CMDomain domain, final Alias domainAlias) {
+		public Builder domain(CMDomain domain, final Alias domainAlias) {
 			Validate.notNull(domain);
 			Validate.notNull(domainAlias);
+			if (domain instanceof DomainHistory) {
+				domain = ((DomainHistory) domain).getDomain();
+				domainHistory = true;
+			}
 			if (domain instanceof AnyDomain) {
 				addAllDomains();
 			} else {

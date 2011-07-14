@@ -2,19 +2,16 @@ package org.cmdbuild.servlets.json.serializers;
 
 import java.util.Map;
 
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.logic.commands.GetRelationList.RelationInfo;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JsonGetRelationListResponse implements JsonSerializable {
-
-	@Deprecated
-	private DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("dd/MM/yy HH:mm:ss"); // FIXME should be defined in the user session
+public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer implements JsonSerializable {
 
 	private final GetRelationListResponse response;
 	private final int domainLimit;
@@ -68,7 +65,7 @@ public class JsonGetRelationListResponse implements JsonSerializable {
 		relation.put("dst_code", ri.getTargetCode());
 		relation.put("dst_desc", ri.getTargetDescription());
 		relation.put("rel_id", ri.getRelationId());
-		relation.put("rel_date", DATE_TIME_FORMATTER.print(ri.getRelationBeginDate()));
+		relation.put("rel_date", formatDate(ri.getRelationBeginDate()));
 		relation.put("rel_attr", relationAttributesToJson(ri));
 		return relation;
 	}

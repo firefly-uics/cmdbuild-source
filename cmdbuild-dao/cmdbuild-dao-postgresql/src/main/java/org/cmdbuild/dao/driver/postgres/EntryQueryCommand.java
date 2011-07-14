@@ -76,6 +76,7 @@ public class EntryQueryCommand {
 				final DBClass realClass = driver.findClassById(classId);
 				final DBCard card = DBCard.create(driver, realClass, id);
 
+				card.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
 				card.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
 				// TODO It's not supported yet because the FROM class has no such column
 				//card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a, SystemAttributes.EndDate)));
@@ -94,6 +95,7 @@ public class EntryQueryCommand {
 				final DBDomain realDomain = driver.findDomainById(domainId);
 				final DBRelation relation = DBRelation.create(driver, realDomain, id);
 
+				relation.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
 				relation.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
 				relation.setEndDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.EndDate)));
 				// TODO Add card1 and card2 from the cards already extracted!

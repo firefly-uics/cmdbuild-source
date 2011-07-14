@@ -131,6 +131,10 @@ public abstract class Utils {
 		return quoteIdent(getTypeName(type));
 	}
 
+	public static String quoteTypeHistory(final CMEntryType type) {
+		return quoteIdent(getTypeName(type) + Const.HISTORY_SUFFIX);
+	}
+
 	public static String getTypeName(CMEntryType type) {
 		if (type instanceof CMDomain) {
 			return domainNameToTableName(type.getName());
