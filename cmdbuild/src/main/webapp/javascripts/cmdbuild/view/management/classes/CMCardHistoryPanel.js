@@ -18,10 +18,10 @@
 					ptype: 'rowexpander',
 					rowBodyTpl: " ",
 					getRowBodyFeatureData: function(data, idx, record, orig) {
-						if (this.view.currentTemplate) {
+						if (this.view.getRowBody) {
 							var o = this.callParent(arguments);
 
-							o.rowBody = this.view.currentTemplate.applyTemplate(data);
+							o.rowBody = this.view.getRowBody(record);
 							o.rowCls = this.rowCollapsedCls;
 							o.rowBodyCls = this.rowBodyHiddenCls;
 	
@@ -51,14 +51,14 @@
 						property : 'BeginDate',
 						direction : "DESC"
 					}],			
-					fields: [{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'}, {name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'}, 'User', '_AttrHist', '_RelHist', 'DomainDesc', 'CardDescription', 'Code'],
+					fields: [{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'}, {name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'}, 'User', '_AttrHist', '_RelHist', 'DomainDesc', 'Class', 'CardCode', 'CardDescription', 'Code'],
 					baseParams: { IsProcess: (this.eventmastertype == 'processclass')}
 				})
 			});
 
 			this.callParent(arguments);
 			this.view.on("expandbody", function() {
-				this.doLayout() // to refresh the scrollbar status
+				this.doLayout(); // to refresh the scrollbar status
 			}, this);
 		},
 	
@@ -81,24 +81,23 @@
 
 				_CMCache.getAttributeList(this.currentClassId, 
 						Ext.Function.bind(function buildTemplate(attributes) {
-							var body = '';
-							
-							if (card.raw['_RelHist']) {
-								body += '<p class="historyItem"><b>'+col_tr.domain+'</b>: '+ card.raw['DomainDesc']+'</p>'
-								body += '<p class="historyItem"><b>'+col_tr.destclass+'</b>: '+ card.raw['Class']+'</p>'
-								body += '<p class="historyItem"><b>'+col_tr.code+'</b>: ' + card.raw['CardCode']+'</p>'
-								body += '<p class="historyItem"><b>'+col_tr.description+'</b>: ' + card.raw['CardDescription']+'</p>'
-							} else {
-								for (var i=0; i<attributes.length; i++) {
-									var attribute = attributes[i],
-										displayField = CMDBuild.Management.FieldManager.getDisplayNameForAttr(attribute),
-										displayValue = card.raw[displayField];
-	
-									displayValue = displayValue || "";
-									body += '<p class="historyItem"><b>' + attribute.description + ': </b>' + displayValue +'</p>';
+							this.view.getRowBody = function(record) {
+								var body;
+								if (record.raw['_RelHist']) {
+									body = '<p class="historyItem"><b>'+col_tr.domain+'</b>: '+record.raw['DomainDesc']+'</p>'
+										+'<p class="historyItem"><b>'+col_tr.destclass+'</b>: '+record.raw['Class']+'</p>'
+										+'<p class="historyItem"><b>'+col_tr.code+'</b>: '+record.raw['CardCode']+'</p>'
+										+'<p class="historyItem"><b>'+col_tr.description+'</b>: '+record.raw['CardDescription']+'</p>';
+								} else {
+									body = '';
+									for (var i=0; i<attributes.length; i++) {
+										var attribute = attributes[i],
+											displayValue = record.raw[attribute.name] || "";
+										body += '<p class="historyItem"><b>'+attribute.description+'</b>: '+ displayValue +'</p>';
+									}
 								}
-							}
-							this.view.currentTemplate = Ext.create('Ext.XTemplate', body);
+								return body;
+							};
 						}, this)
 				);
 

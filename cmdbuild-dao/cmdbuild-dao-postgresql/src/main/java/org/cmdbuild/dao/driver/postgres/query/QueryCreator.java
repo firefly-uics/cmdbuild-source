@@ -56,6 +56,7 @@ public class QueryCreator {
 		for (Alias a : columnMapper.getClassAliases()) {
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.ClassId);
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.Id);
+			columnMapper.addSystemSelectAttribute(a, SystemAttributes.User);
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.BeginDate);
 			// The from clause does not have an EndDate value
 			//columnMapper.addSystemSelectAttribute(getSelectString(a, SystemAttributes.EndDate));
@@ -65,6 +66,7 @@ public class QueryCreator {
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.DomainId);
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.DomainQuerySource);
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.Id);
+			columnMapper.addSystemSelectAttribute(a, SystemAttributes.User);
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.BeginDate);
 			columnMapper.addSystemSelectAttribute(a, SystemAttributes.EndDate);
 		}

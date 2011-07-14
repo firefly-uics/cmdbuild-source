@@ -23,6 +23,7 @@ public interface Const {
 		Description("Description"),
 		BeginDate("BeginDate"),
 		EndDate("EndDate"),
+		User("User"),
 		Status("Status"),
 		// Fake attributes
 		DomainQuerySource("_Src"),

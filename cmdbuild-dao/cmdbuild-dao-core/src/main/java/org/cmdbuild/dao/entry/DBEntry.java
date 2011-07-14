@@ -15,9 +15,9 @@ public abstract class DBEntry {
 	private Object id;
 	private final Map<String, Object> values;
 
-	protected String user;
-	protected DateTime beginDate;
-	protected DateTime endDate;
+	private String user;
+	private DateTime beginDate;
+	private DateTime endDate;
 
 	protected DBEntry(final DBDriver driver, final DBEntryType type, final Object id) {
 		this.driver = driver;
@@ -32,6 +32,10 @@ public abstract class DBEntry {
 
 	public final Object getId() {
 		return id;
+	}
+
+	public void setUser(final String user) {
+		this.user = user;
 	}
 
 	public String getUser() {

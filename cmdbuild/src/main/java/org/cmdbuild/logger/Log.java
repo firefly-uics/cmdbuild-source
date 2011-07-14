@@ -16,4 +16,9 @@ public final class Log {
      public static final Logger EMAIL = Logger.getLogger("email");
      public static final Logger AUTH = Logger.getLogger("auth");
      public static final Logger OTHER = Logger.getLogger("cmdbuild");
+
+     static {
+    	 // Note: this is not reloading automatically!
+    	 Logger.getLogger("org.springframework.jdbc.core").setLevel(SQL.getEffectiveLevel());
+     }
 }
