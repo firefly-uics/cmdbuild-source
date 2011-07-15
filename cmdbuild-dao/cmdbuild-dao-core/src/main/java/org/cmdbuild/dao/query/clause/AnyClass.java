@@ -1,26 +1,25 @@
 package org.cmdbuild.dao.query.clause;
 
-import java.util.Set;
-
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.PlaceholderClass;
 
 public class AnyClass extends PlaceholderClass {
 
+	private static final AnyClass ANY_CLASS = new AnyClass();
+
 	private AnyClass() {
 	}
 
 	public static CMClass anyClass() {
-		return new AnyClass();
+		return ANY_CLASS;
 	}
 
+	/*
+	 * Object overrides
+	 */
+
 	@Override
-	public String getName() {
+	public String toString() {
 		return "*";
-	}
-
-	@Override
-	public boolean isAncestorOf(CMClass cmClass) {
-		throw new UnsupportedOperationException();
 	}
 }

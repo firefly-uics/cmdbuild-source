@@ -10,13 +10,12 @@ public class UndefinedClass extends PlaceholderClass {
 	private UndefinedClass() {
 	}
 
-	@Override
-	public String getName() {
-		throw new UnsupportedOperationException();
-	}
+	/*
+	 * Object overrides
+	 */
 
 	@Override
-	public boolean isAncestorOf(CMClass cmClass) {
-		throw new UnsupportedOperationException();
+	public String toString() {
+		return "?";
 	}
 }
