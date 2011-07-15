@@ -48,10 +48,4 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 		jsonRelation.put("CardDescription", ri.getTargetDescription());
 		return jsonRelation;
 	}
-
-//	for(IRelation relationHistory: rf.list(card).straightened().history()){
-//		JSONObject sr = Serializer.serializeRelation(relationHistory);
-//		sr.put("_RelHist", true);
-//		rows.put(sr);
-//	}
 }

@@ -1,10 +1,14 @@
 package org.cmdbuild.dao.entrytype;
 
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+
 
 public interface CMAttribute {
 
-	public CMEntryType getOwner();
-	public String getName();
+	CMEntryType getOwner();
+	CMAttributeType getType();
+
+	String getName();
 
 	boolean isSystem(); // TODO Remove it! We should list only user-defined attributes!
 }

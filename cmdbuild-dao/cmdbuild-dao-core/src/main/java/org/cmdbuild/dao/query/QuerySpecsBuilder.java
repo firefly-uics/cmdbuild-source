@@ -82,6 +82,8 @@ public class QuerySpecsBuilder {
 		}
 	}
 
+	private static final Alias DEFAULT_ANYCLASS_ALIAS = Alias.as("_*");
+
 	private List<QueryAttribute> attributes;
 	private List<JoinClause> joinClauses;
 	private WhereClause whereClause;
@@ -98,7 +100,7 @@ public class QuerySpecsBuilder {
 		this.view = view;
 		aliases = new AliasLibrary();
 		select();
-		from(anyClass());
+		from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
 		joinClauses = new ArrayList<JoinClause>();
 		whereClause = new EmptyWhereClause();
 	}

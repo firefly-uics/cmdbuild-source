@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class CardManagementTest {
 		// given
 		final String attrName = "A";
 		final Object attrValue = "Some text";
-		final DBAttribute classAttributes[] = { new DBAttribute(attrName) };
+		final DBAttribute classAttributes[] = { new DBAttribute(attrName, new TextAttributeType()) };
 		final Object classKey = Long.valueOf(777L);
 		final Object cardKey = Long.valueOf(42L);
 		given(driver.findClassById(classKey)).willReturn(new DBClass("C", classKey, Arrays.asList(classAttributes)));

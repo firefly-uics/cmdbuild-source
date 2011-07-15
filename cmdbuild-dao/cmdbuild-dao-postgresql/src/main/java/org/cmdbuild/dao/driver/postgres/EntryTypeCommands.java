@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -187,32 +188,29 @@ public class EntryTypeCommands {
 
 	private List<DBAttribute> findEntryTypeAttributes(final long entryTypeId) {
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query(
-				"SELECT attribute_name, _cm_comment_for_attribute(?, attribute_name) AS attribute_comment FROM _cm_attribute_list(?) AS attribute_name",
-				new Object[] { entryTypeId, entryTypeId },
+				// Note: Sort the attributes in the query
+				"SELECT A.name, _cm_comment_for_attribute(A.cid, A.name) AS comment,"
+				+" _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type"
+				+" FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A"
+				+" WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'"
+				+" ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int",
+				new Object[] { entryTypeId },
 		        new RowMapper<DBAttribute>() {
 		            public DBAttribute mapRow(ResultSet rs, int rowNum) throws SQLException {
-		                final String name = rs.getString("attribute_name");
-		                final String comment = rs.getString("attribute_comment");
-		                return new DBAttribute(name, attributeCommentToMetadata(comment));
+		                final String name = rs.getString("name");
+		                final String comment = rs.getString("comment");
+		                final AttributeMetadata meta = attributeCommentToMetadata(comment);
+		                final CMAttributeType type = SqlType.createAttributeType(rs.getString("sql_type"), meta);
+		                return new DBAttribute(name, type, meta);
 		            }
 		        });
-		return removeSystemAttributes(entityTypeAttributes);
+		return entityTypeAttributes;
 	}
 
 	private AttributeMetadata attributeCommentToMetadata(final String comment) {
 		AttributeMetadata meta = new AttributeMetadata();
 		extractCommentToMetadata(comment, meta, Utils.ATTRIBUTE_COMMENT_MAPPER);
 		return meta;
-	}
-
-	private List<DBAttribute> removeSystemAttributes(List<DBAttribute> entityTypeAttributes) {
-		List<DBAttribute> userAttributes = new ArrayList<DBAttribute>();
-		for (DBAttribute attr : entityTypeAttributes) {
-			if (!attr.isSystem()) {
-				userAttributes.add(attr);
-			}
-		}
-		return userAttributes;
 	}
 
 	/*

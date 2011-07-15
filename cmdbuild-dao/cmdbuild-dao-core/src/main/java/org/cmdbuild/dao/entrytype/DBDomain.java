@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.entrytype;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -32,12 +32,12 @@ public class DBDomain extends DBEntryType implements CMDomain {
 	@Deprecated private DBClass class1;
 	@Deprecated private DBClass class2;
 
-	public DBDomain(final String name, final Object id, final DomainMetadata meta, final Collection<DBAttribute> attributes) {
+	public DBDomain(final String name, final Object id, final DomainMetadata meta, final List<DBAttribute> attributes) {
 		super(name, id, meta, attributes);
 	}
 
 	@Deprecated
-	public DBDomain(final String name, final Object id, final Collection<DBAttribute> attributes) {
+	public DBDomain(final String name, final Object id, final List<DBAttribute> attributes) {
 		this(name, id, new DomainMetadata(), attributes);
 	}
 
