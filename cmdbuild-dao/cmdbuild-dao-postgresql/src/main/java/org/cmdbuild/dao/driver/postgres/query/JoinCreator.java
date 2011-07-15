@@ -72,15 +72,22 @@ public class JoinCreator extends PartCreator {
 		abstract void appendSystemAttributes(T type, boolean isHistoryAppend, boolean first);
 
 		void appendUserAttributes(T type, final boolean first) {
-			for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(typeAlias, getEntryType(type))) {
+			final CMEntryType entryType = getEntryType(type);
+			for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(typeAlias, entryType)) {
+				final boolean nullValue = (eta.name == null);
 				sb.append(",");
-				if (eta.name != null) {
-					sb.append(quoteIdent(eta.name));
-				} else {
+				if (nullValue) {
 					sb.append(Const.NULL);
+				} else {
+					sb.append(quoteIdent(eta.name));
 				}
-				if (first && eta.alias != null) {
-					sb.append(" AS ").append(quoteIdent(eta.alias.getName()));
+				if (first) {
+					if (nullValue) {
+						sb.append("::").append(eta.sqlTypeString);
+					}
+					if (eta.alias != null) {
+						sb.append(" AS ").append(quoteIdent(eta.alias.getName()));
+					}					
 				}
 			}
 		}

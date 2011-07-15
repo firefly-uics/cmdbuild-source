@@ -8,7 +8,7 @@ public class DecimalAttributeType implements CMAttributeType {
 	public final int precision;
 	public final int scale;
 
-	public DecimalAttributeType(final int precision, final int scale) {
+	public DecimalAttributeType(final Integer precision, final Integer scale) {
 		Validate.isTrue(precision > 0);
 		Validate.isTrue(scale >= 0 && precision >= scale);
 		this.precision = precision;

@@ -7,7 +7,7 @@ public class StringAttributeType implements CMAttributeType {
 
 	public final int length;
 
-	public StringAttributeType(final int length) {
+	public StringAttributeType(final Integer length) {
 		Validate.isTrue(length > 0);
 		this.length = length;
 	}

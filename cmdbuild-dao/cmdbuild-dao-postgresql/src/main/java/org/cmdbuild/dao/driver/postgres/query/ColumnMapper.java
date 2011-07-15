@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.dao.driver.postgres.Const;
+import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
@@ -31,11 +33,13 @@ public class ColumnMapper {
 		public final String name;
 		public final Alias alias;
 		public final Integer index;
+		public final String sqlTypeString;
 
-		private EntryTypeAttribute(final String name, final Alias alias, final Integer index) {
+		private EntryTypeAttribute(final String name, final Alias alias, final Integer index, final String sqlTypeString) {
 			this.name = name;
 			this.alias = alias;
 			this.index = index;
+			this.sqlTypeString = sqlTypeString;
 		}
 	}
 
@@ -49,20 +53,31 @@ public class ColumnMapper {
 			}
 		}
 
+		/*
+		 * Adds the attribute to every type 
+		 */
 		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index) {
 			addAttribute(attributeName, attributeAlias, index, null);
 		}
 
+		/*
+		 * Adds the attribute to the specified type only 
+		 */
 		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index, final CMEntryType type) {
+			final String sqlTypeString = getSqlTypeString(type, attributeName);
 			for (CMEntryType currentType : map.keySet()) {
-				final String currentName;
-				if (type == null || currentType.equals(type)) {
-					currentName = attributeName;
-				} else {
-					currentName = null;
-				}
-				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index);
+				final String currentName = (type == null || currentType.equals(type)) ? attributeName : null;
+				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlTypeString);
 				map.get(currentType).add(eta);
+			}
+		}
+
+		private String getSqlTypeString(CMEntryType type, String attributeName) {
+			if (type != null) {
+				final CMAttributeType attributeType = type.getAttribute(attributeName).getType();
+				return SqlType.getSqlTypeString(attributeType);
+			} else {
+				return SqlType.unknown.name();
 			}
 		}
 

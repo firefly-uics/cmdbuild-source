@@ -1,8 +1,10 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -23,67 +25,78 @@ public enum SqlType {
 	// Missing: POINT, LINESTRING, POLYGON
 	// Not used: regclass, bytea, _int4, _varchar
 
-	bool {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new BooleanAttributeType();
+	bool(BooleanAttributeType.class),
+	bpchar(CharAttributeType.class),
+	date(DateAttributeType.class),
+	float8(DoubleAttributeType.class),
+	inet(IPAddressAttributeType.class),
+	int4(IntegerAttributeType.class),
+	numeric(DecimalAttributeType.class) { // precision and scale
+
+		protected Object[] getConstructorParams(String[] stringParams) {
+			final Object[] params = new Object[2];
+			params[0] = Integer.valueOf(stringParams[0]);
+			params[1] = Integer.valueOf(stringParams[1]);
+			return params;
 		}
-	}, bpchar {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new CharAttributeType();
+
+		protected Object[] getSqlParams(final CMAttributeType type) {
+			final DecimalAttributeType decimalType = (DecimalAttributeType) type;
+			final Object[] sqlParams = new Object[2];
+			sqlParams[0] = decimalType.precision;
+			sqlParams[1] = decimalType.scale;
+			return sqlParams;
 		}
-	}, date {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new DateAttributeType();
+	},
+	text(TextAttributeType.class),
+	time(TimeAttributeType.class),
+	timestamp(DateTimeAttributeType.class),
+	unknown(UndefinedAttributeType.class),
+	varchar(StringAttributeType.class) { // length
+
+		protected Object[] getConstructorParams(String[] stringParams) {
+			final Object[] params = new Object[1];
+			params[0] = Integer.valueOf(stringParams[0]);
+			return params;
 		}
-	}, float8 {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new DoubleAttributeType();
-		}
-	}, inet {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new IPAddressAttributeType();
-		}
-	}, int4 {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new IntegerAttributeType();
-		}
-	}, numeric {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			final int precision = params[0];
-			final int scale = params[1];
-			return new DecimalAttributeType(precision, scale);
-		}
-	}, text {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new TextAttributeType();
-		}
-	}, time {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new TimeAttributeType();
-		}
-	}, timestamp {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			return new DateTimeAttributeType();
-		}
-	}, varchar {
-		@Override
-		CMAttributeType createAttributeType(int[] params, AttributeMetadata meta) {
-			final int length = params[0];
-			return new StringAttributeType(length);
+
+		protected Object[] getSqlParams(final CMAttributeType type) {
+			final StringAttributeType stringType = (StringAttributeType) type;
+			final Object[] sqlParams = new Object[1];
+			sqlParams[0] = stringType.length;
+			return sqlParams;
 		}
 	};
 
-	abstract CMAttributeType createAttributeType(int[] params, AttributeMetadata meta);
+	// TODO Lookup, Reference, etc. need a different handling
+	protected final Class<? extends CMAttributeType> javaType;
+
+	private SqlType(final Class<? extends CMAttributeType> javaType) {
+		this.javaType = javaType;
+	}
+
+	final CMAttributeType createAttributeType(String[] stringParams, AttributeMetadata meta) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		final Object[] constructorParams = getConstructorParams(stringParams);
+		final Class<?>[] paramTypes = getParamTypes(constructorParams);
+		return javaType.getConstructor(paramTypes).newInstance(constructorParams);
+	}
+
+	protected Object[] getConstructorParams(String[] stringParams) {
+		return (Object[]) stringParams;
+	}
+
+	private final Class<?>[] getParamTypes(Object[] constructorParams) {
+		final Class<?>[] paramTypes = new Class<?>[constructorParams.length];
+		for (int i=0; i<constructorParams.length; ++i) {
+			paramTypes[i] = constructorParams[i].getClass();
+		}
+		return paramTypes;
+	}
+
+	protected Object[] getSqlParams(final CMAttributeType type) {
+		return null;
+	}
+
 
 	private static final Pattern TYPE_PATTERN = Pattern.compile("(\\w+)(\\((\\d+(,\\d+)*)\\))?");
 
@@ -94,22 +107,40 @@ public enum SqlType {
 				throw new IllegalArgumentException();
 			}
 			final SqlType type = SqlType.valueOf(typeMatcher.group(1));
-			final int[] params = typeArray(typeMatcher.group(3));
+			final String[] params = splitParams(typeMatcher.group(3));
 			return type.createAttributeType(params, meta);
 		} catch (Throwable t) {
 			return new UndefinedAttributeType();
 		}
 	}
 
-	private static int[] typeArray(final String paramsMatch) {
+	public static String getSqlTypeString(final CMAttributeType type) {
+		final SqlType sqlType = getSqlType(type);
+		final Object[] sqlTypeParams = sqlType.getSqlParams(type);
+		return buildSqlTypeString(sqlType, sqlTypeParams);
+	}
+
+	private static String buildSqlTypeString(SqlType sqlType, Object[] sqlTypeParams) {
+		StringBuilder sb = new StringBuilder(sqlType.name());
+		if (sqlTypeParams != null) {
+			sb.append("(").append(StringUtils.join(sqlTypeParams, ",")).append(")");
+		}
+		return sb.toString();
+	}
+
+	private static SqlType getSqlType(CMAttributeType type) {
+		for (SqlType t : SqlType.values()) {
+			if (t.javaType == type.getClass()) {
+				return t;
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
+	private static String[] splitParams(final String paramsMatch) {
 		if (paramsMatch == null) {
-			return new int[0];
+			return new String[0];
 		}
-		final String[] stringParams = paramsMatch.split(",");
-		final int[] intParams = new int[stringParams.length];
-		for (int i=0; i<stringParams.length; ++i) {
-			intParams[i] = Integer.parseInt(stringParams[i]);
-		}
-		return intParams;
+		return paramsMatch.split(",");
 	}
 }
