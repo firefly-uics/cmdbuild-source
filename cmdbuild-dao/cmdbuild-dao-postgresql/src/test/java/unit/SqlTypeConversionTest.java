@@ -1,6 +1,7 @@
 package unit;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -19,21 +20,29 @@ public class SqlTypeConversionTest {
 
 	@Test
 	public void testConversionFromSql() {
+		String sqlType;
 		CMAttributeType type;
 
-		type = SqlType.createAttributeType("bool", NO_META);
+		sqlType = "bool";
+		type = SqlType.createAttributeType(sqlType, NO_META);
 		assertThat(type, instanceOf(BooleanAttributeType.class));
+		assertThat(SqlType.getSqlTypeString(type), is(equalTo(sqlType)));
 
-		type = SqlType.createAttributeType("varchar(20)", NO_META);
+		sqlType = "varchar(20)";
+		type = SqlType.createAttributeType(sqlType, NO_META);
 		assertThat(type, instanceOf(StringAttributeType.class));
 		assertThat(((StringAttributeType) type).length, is(20));
+		assertThat(SqlType.getSqlTypeString(type), is(equalTo(sqlType)));
 
-		type = SqlType.createAttributeType("numeric(43,21)", NO_META);
+		sqlType = "numeric(43,21)";
+		type = SqlType.createAttributeType(sqlType, NO_META);
 		assertThat(type, instanceOf(DecimalAttributeType.class));
 		assertThat(((DecimalAttributeType) type).precision, is(43));
 		assertThat(((DecimalAttributeType) type).scale, is(21));
+		assertThat(SqlType.getSqlTypeString(type), is(equalTo(sqlType)));
 
-		type = SqlType.createAttributeType("regclass", NO_META);
+		sqlType = "regclass";
+		type = SqlType.createAttributeType(sqlType, NO_META);
 		assertThat(type, instanceOf(UndefinedAttributeType.class));
 	}
 }
