@@ -44,6 +44,11 @@ public class DBAttribute implements CMAttribute {
 	}
 
 	@Override
+	public String getDescription() {
+		return meta.getDescription();
+	}
+
+	@Override
 	public boolean isSystem() {
 		return meta.isSystem();
 	}

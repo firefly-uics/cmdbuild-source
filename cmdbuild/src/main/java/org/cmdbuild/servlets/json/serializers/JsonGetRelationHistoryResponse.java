@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.json.JSONArray;
@@ -42,10 +43,27 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 		jsonRelation.put("User", relation.getUser());
 		jsonRelation.put("BeginDate", formatDate(relation.getBeginDate()));
 		jsonRelation.put("EndDate", formatDate(relation.getEndDate()));
-
+		jsonRelation.put("Attr", historyRelationAttributesToJson(ri));
 		jsonRelation.put("Class", ri.getTargetType().getName());
 		jsonRelation.put("CardCode", ri.getTargetCode());
 		jsonRelation.put("CardDescription", ri.getTargetDescription());
 		return jsonRelation;
+	}
+
+	/*
+	 * Note: it is different from the relation query since this gives the
+	 *       attribute description and it preserves the correct order
+	 */
+	private JSONArray historyRelationAttributesToJson(RelationInfo ri) throws JSONException {
+		final JSONArray jsonAttr = new JSONArray();
+		final CMRelation relation = ri.getRelation();
+		for (CMAttribute attr : relation.getType().getAttributes()) {
+			final JSONObject jsonAttrValue = new JSONObject();
+			jsonAttrValue.put("d", attr.getDescription());
+			jsonAttrValue.put("v", relation.get(attr.getName()));
+			//jsonAttrValue.put("c", TODO: CHANGED);
+			jsonAttr.put(jsonAttrValue);
+		}
+		return jsonAttr;
 	}
 }
