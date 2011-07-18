@@ -88,6 +88,9 @@
 										+'<p class="historyItem"><b>'+col_tr.destclass+'</b>: '+record.raw['Class']+'</p>'
 										+'<p class="historyItem"><b>'+col_tr.code+'</b>: '+record.raw['CardCode']+'</p>'
 										+'<p class="historyItem"><b>'+col_tr.description+'</b>: '+record.raw['CardDescription']+'</p>';
+									for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
+										body += '<p class="historyItem"><b>'+a[i].d+'</b>: '+(a[i].v || '')+'</p>';
+									}
 								} else {
 									body = '';
 									for (var i=0; i<attributes.length; i++) {

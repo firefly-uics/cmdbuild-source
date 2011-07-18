@@ -9,6 +9,7 @@ public interface CMAttribute {
 	CMAttributeType getType();
 
 	String getName();
+	String getDescription();
 
 	boolean isSystem(); // TODO Remove it! We should list only user-defined attributes!
 }

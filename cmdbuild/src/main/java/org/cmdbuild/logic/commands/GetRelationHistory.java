@@ -32,8 +32,12 @@ public class GetRelationHistory extends AbstractGetRelation {
 	private GetRelationHistoryResponse serializeResponse(CMQueryResult relationList) {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();
 		for (CMQueryRow row : relationList) {
-			final CMCard dst = row.getCard(DST_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
+			if (rel.getRelation().getEndDate() == null) { // Skip active relations
+				// TODO Use "HISTORY ONLY" to exclude them in the query
+				continue;
+			}
+			final CMCard dst = row.getCard(DST_ALIAS);
 			out.addRelation(rel, dst);
 		}
 		return out;
