@@ -1,7 +1,5 @@
 (function() {
-	var FIELDSWIDTH = 250,
-		LABELSWIDTH = 150,
-		tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties,
+	var tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties,
 		tr_geoserver = CMDBuild.Translation.administration.modcartography.geoserver,
 		tr = CMDBuild.Translation.administration.modClass.geo_attributes,
 		TYPES = {
@@ -55,14 +53,13 @@
 	function items() {
 		var name = new Ext.form.TextField({
 			fieldLabel : tr_attribute.name,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name : "name",
 			allowBlank : false,
-			width : FIELDSWIDTH,
 			cmImmutable: true
 		});
 
 		var types = new Ext.form.ComboBox({
-			width: FIELDSWIDTH,
 			store : new Ext.data.SimpleStore( {
 				fields : [ "value", "name" ],
 				data : [ [ TYPES.geotiff, "GeoTiff" ],
@@ -73,6 +70,7 @@
 			autoScroll : true,
 			name : "type",
 			fieldLabel : tr_attribute.type,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			valueField : "value",
 			displayField : "name",
 			hiddenName : "type",
@@ -83,8 +81,8 @@
 
 		var minZoom = new Ext.form.SliderField({
 			fieldLabel : tr.min_zoom,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			plugins : [ new CMDBuild.SliderFieldPlugin() ],
-			width : FIELDSWIDTH,
 			minValue : 0,
 			maxValue : 25,
 			name : "minZoom"
@@ -92,8 +90,8 @@
 
 		var maxZoom = new Ext.form.SliderField({
 			fieldLabel : tr.max_zoom,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			plugins : [ new CMDBuild.SliderFieldPlugin() ],
-			width : FIELDSWIDTH,
 			minValue : 0,
 			maxValue : 25,
 			value : 25,
@@ -108,16 +106,16 @@
 		var description = new Ext.form.TextField({
 			xtype : "textfield",
 			fieldLabel : tr_attribute.description,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name : "description",
-			allowBlank : false,
-			width : FIELDSWIDTH
+			allowBlank : false
 		});
 
 		var file = new Ext.form.TextField({
 			inputType : "file",
 			fieldLabel: tr_geoserver.file,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name: "file",
-			width: FIELDSWIDTH,
 			form: this
 		});
 
@@ -142,7 +140,7 @@
 			this.saveButton = new CMDBuild.buttons.SaveButton(),
 			this.abortButton = new CMDBuild.buttons.AbortButton()
 		];
-		
+
 		return this.cmButtons;
 	};
 

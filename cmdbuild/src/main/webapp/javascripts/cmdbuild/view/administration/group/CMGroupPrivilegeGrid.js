@@ -83,7 +83,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
     this.recordToChange = this.store.getAt(recordIndex);
 	
 	var params = {
-		privilege_mode: this.recordToChange.get('privilege_mode'),
+		privilege_mode: cell.dataIndex,
 		groupId: this.recordToChange.get('groupId'),
 		classid: this.recordToChange.get('classid')
 	};
@@ -94,7 +94,6 @@ Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
 		params: params,
 		scope: this,		
 		success: function(response) {
-			_CMEventBus.publish('cmdb-load-group-privilege', {record: this.record});
 			this.loadStore();
 		},
 		failure: function(response) {

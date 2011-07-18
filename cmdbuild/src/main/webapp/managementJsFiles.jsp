@@ -90,6 +90,12 @@
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
 
+	<!-- WORKFLOW -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMModWorkflow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
+
 
 <!-- CONTROLLER -->
 	<!-- COMMON -->
@@ -108,6 +114,10 @@
 
 	<!-- REPORT-->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
+
+	<!-- WORKFLOW -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityPanelController.js"></script>
 <!--
 
 	

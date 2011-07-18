@@ -11,7 +11,8 @@
 			this.grid = new CMDBuild.view.administration.domain.CMDomainAttributeGrid({
 				region: "north",
 				height: "40%",
-				split: true
+				split: true,
+                border: false
 			});
 
 			Ext.apply(this, {

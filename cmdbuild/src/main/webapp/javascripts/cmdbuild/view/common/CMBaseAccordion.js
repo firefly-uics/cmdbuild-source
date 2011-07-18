@@ -26,7 +26,8 @@
 		rootVisible: false,
 		animCollapse: false,
 
-		constructor: function() {
+		constructor: function(c) {
+			Ext.apply(this, c);
 			this.store = Ext.create('CMDBuild.view.common.CMBaseAccordion.Store');
 
 			this.tree = Ext.create("Ext.tree.Panel", {
@@ -35,7 +36,7 @@
 				frame: false,
 				region: "center",
 				bodyStyle: { "border-top": "none" },
-				rootVisible: false
+				rootVisible: this.rootVisible
 			});
 
 			Ext.apply(this, {
@@ -57,9 +58,9 @@
 			this.afterUpdateStore();
 		},
 
-		selectNodeById: function(nodeId) {
+		selectNodeById: function(node) {
 			var sm = this.getSelectionModel(),
-				node = this.store.getNodeById(nodeId);
+				node = typeof node == "object" ? node : this.store.getNodeById(node);
 
 			if (node) {
 				sm.select(node);
@@ -117,6 +118,25 @@
 			}
 			
 			return out;
+		},
+
+		isEmpty: function() {
+			return !(this.store.getRootNode().hasChildNodes())
+		},
+
+		selectFirstLeaf: function() {
+			var l = this.getRootNode();
+			while (typeof l != "undefined" && !l.isLeaf()) {
+				l = l.firstChild;
+			}
+
+			if (typeof l != "undefined") {
+				// Defer the call because Ext.selection.RowModel
+				// for me.views.lenght says "can not refer to length of undefined"
+				Ext.Function.createDelayed(function() {
+					this.selectNodeById(l);
+				}, 100, this)();
+			}
 		},
 
 		buildTreeStructure: function() {

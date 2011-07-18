@@ -26,6 +26,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		
 		this.groupName = new Ext.form.field.Text({
 			fieldLabel : tr.group_name,
+            labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name : 'name',
 			allowBlank : false,
 			vtype: 'alphanum',
@@ -34,13 +35,15 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		
 		this.groupDescription = new Ext.form.field.Text({
 			fieldLabel : tr.group_description,
+            labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name : 'description',
 			allowBlank : false
 		});
 		
 		this.groupEmail = new Ext.form.field.Text({
 			vtype : 'emailOrBlank',
-			fieldLabel : tr.email,  
+			fieldLabel : tr.email,
+            labelWidth: CMDBuild.CM_LABEL_WIDTH, 
 			name : 'email',
 			allowBlank : true
 		});
@@ -48,12 +51,18 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.activeCheck = new Ext.ux.form.XCheckbox({
 			xtype : 'xcheckbox',
 			fieldLabel : tr.is_active,
+            labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name : 'isActive',
 			checked : true 
 		}); 
 		
 		this.propertiesFieldset = new Ext.form.FieldSet({
 			title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
+            padding: "5 5 20 5",
+            autoScroll: true,
+            defaults: {
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+            },
 			items: [
 				this.groupName,
 				this.groupDescription,
@@ -82,6 +91,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 
 		this.modulsFieldset = new Ext.form.FieldSet({
 			title: tr.disabled_modules,
+            autoScroll: true,
+            padding: "5 5 20 5",
 			items: this.modulesCheckInput.toArray,
 			flex: 1
 		});

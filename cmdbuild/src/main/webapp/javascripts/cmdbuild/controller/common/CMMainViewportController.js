@@ -75,6 +75,25 @@
 			hdInstanceName.dom.innerHTML = name;
 		}
 	};
+    
+    ns.CMMainViewportController.prototype.selectStartingClass = function() {
+		var startingClass = CMDBuild.Config.cmdbuild.startingclass, // TODO check also the group starting class
+            a = startingClass ? this.getFirstAccordionWithANodeWithGivenId(startingClass) : undefined;
+            
+        if (a) {
+            a.expandSilently();
+            a.selectNodeById(startingClass);
+        } else {
+            this.selectFirstSelectableLeaf();
+        }
+	}
+    
+    ns.CMMainViewportController.prototype.selectFirstSelectableLeaf = function() {
+        var a = this.viewport.getExpansedAccordion();
+        if (a) {
+            a.selectFirstLeaf();
+        }
+    }
 })();
 
 //(function() {	

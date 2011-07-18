@@ -45,6 +45,7 @@
 			
 			this.parentCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: tr.parent,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				queryMode : 'local',
 				displayField : 'type',
 				valueField : 'type',
@@ -62,6 +63,7 @@
 	 			items: [{
 					xtype: 'textfield',
 					fieldLabel: tr.description,
+                    labelWidth: CMDBuild.CM_LABEL_WIDTH,
 					name: 'description',
 					allowBlank: false,
 					disabled: true

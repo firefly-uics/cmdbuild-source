@@ -55,6 +55,9 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			items: [{
 				xtype: "panel",
 				frame: true,
+				defaults: {
+					labelWidth: CMDBuild.CM_LABEL_WIDTH
+				},
 				items: [{
 					xtype:'hidden',
 					name: 'name'

@@ -7,7 +7,11 @@
 		configFileName: 'graph',
 		
 		constructor: function() {
-			this.items = [ {
+			this.items = [{
+				xtype: 'xcheckbox',
+				name: 'enabled',
+				fieldLabel: CMDBuild.Translation.administration.setup.gis.enable
+			}, {
 				xtype : 'numberfield',
 				fieldLabel : tr.baseLevel,
 				allowBlank : false,

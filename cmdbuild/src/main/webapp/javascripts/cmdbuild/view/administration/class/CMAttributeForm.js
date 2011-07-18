@@ -37,6 +37,7 @@
 			this.fieldMode = new Ext.form.ComboBox({ 
 				name: "fieldmode",
 				fieldLabel: tr.field_visibility,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				valueField: "value",
 				displayField: "name",
 				hiddenName: "fieldmode",
@@ -56,6 +57,7 @@
 			this.attributeGroup = new Ext.form.ComboBox({
 				name: "group",
 				fieldLabel: tr.group,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				valueField: "value",
 				displayField: "value",
 				hiddenName: "group",
@@ -70,6 +72,7 @@
 
 			this.attributeName = new Ext.form.TextField( {
 				fieldLabel : tr.name,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "name",
 				allowBlank : false,
 				vtype : "alphanum",
@@ -78,6 +81,7 @@
 
 			this.attributeDescription = new Ext.form.TextField({
 				fieldLabel : tr.description,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "description",
 				allowBlank : false,
 				vtype : "cmdbcomment"
@@ -85,21 +89,25 @@
 
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isnotnull,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "isnotnull"
 			});
 
 			this.attributeUnique = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isunique,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "isunique"
 			});
 
 			this.isBasedsp = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isbasedsp,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "isbasedsp"
 			});
 
 			this.isActive = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isactive,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "isactive"
 			});
 
@@ -123,6 +131,7 @@
 			this.comboType = new Ext.form.ComboBox({
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.type,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "type",
 				triggerAction : "all",
 				valueField : "name",
@@ -136,6 +145,7 @@
 
 			this.stringLength = new Ext.form.NumberField({
 				fieldLabel : tr.length,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				minValue : 1,
 				maxValue : Math.pow(2, 31) - 1,
 				name : "len",
@@ -144,6 +154,7 @@
 
 			this.decimalPrecision = new Ext.form.NumberField({
 				fieldLabel : tr.precision,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				minValue : 1,
 				maxValue : 20,
 				name : "precision",
@@ -152,6 +163,7 @@
 
 			this.fieldFilter = new Ext.form.TextArea( {
 				fieldLabel : tr.referencequery,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "fieldFilter",
 				allowBlank : true,
 				vtype : "cmdbcommentrelaxed",
@@ -174,6 +186,7 @@
 
 			this.decimalScale = new Ext.form.NumberField( {
 				fieldLabel : tr.scale,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				minValue : 1,
 				maxValue : 20,
 				name : "scale",
@@ -183,6 +196,7 @@
 			this.lookupTypes = new Ext.form.ComboBox({
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.lookup,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "lookup",
 				valueField : "type",
 				displayField : "type",
@@ -191,10 +205,10 @@
 				store : _CMCache.getLookupTypeLeavesAsStore(),
 				queryMode : "local"
 			});
-
+            
 			this.domainStore = new Ext.data.Store({
 				autoLoad: false,
-				model : "CMDomainModelForGrid",
+				model : "CMDomainModelForCombo",
 				proxy: {
 					type: 'ajax',
 					url : "services/json/schema/modclass/getreferenceabledomainlist",
@@ -212,6 +226,7 @@
 			this.referenceDomains = new Ext.form.ComboBox({
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.domain,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "idDomain",
 				valueField : "idDomain",
 				displayField : "description",
@@ -224,6 +239,7 @@
 			this.foreignKeyDest = new Ext.form.ComboBox( {
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.destination,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "fkDestination",
 				hiddenName : "fkDestination",
 				valueField : "id",
@@ -247,7 +263,8 @@
 
 			this.specificProperties = new Ext.form.FieldSet({
 				margin: "0 0 5 5",
-//				title : tr.typeProperties,
+                padding: "5 5 20 5",
+				title : tr.typeProperties,
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,
@@ -284,7 +301,6 @@
 			this.callParent(arguments);
 
 			this.comboType.on("select", onSelectComboType, this);
-			this.attributeGroup.on("enable", fillAttributeGroupsStore, this);
 
 			this.attributeName.on("change", function(fieldname, newValue, oldValue) {
 				this.autoComplete(this.attributeDescription, newValue, oldValue);
@@ -293,10 +309,9 @@
 
 		onClassSelected: function(idClass) {
 			this.idClass = idClass;
+			this.classObj = this.takeDataFromCache(idClass);
 
-			var classObj = this.takeDataFromCache(idClass);
-			if (classObj) {
-
+			if (this.classObj) {
 				this.domainStore.load({
 					params : {
 						idClass : idClass
@@ -305,19 +320,16 @@
 
 				this.attributeTypeStore.load({
 					params : {
-						tableType : tableTypeMap[classObj.get("tableType")]
+						tableType : tableTypeMap[this.classObj.get("tableType")]
 					}
 				});
 
 				this.hideContextualFields();
-		}
-
-//	  var isSuperClass = this.isSuperclass();
-//	  this.attributeUnique.initialConfig.cmImmutable = isSuperClass;
-//	  this.attributeNotNull.initialConfig.cmImmutable = isSuperClass;
-//	  this.formPanel.initForm();
+                this.attributeUnique.cmImmutable = this.classObj.get("superclass");
+                this.attributeNotNull.cmImmutable = this.classObj.get("superclass");
+            }
 		},
-		
+
 		// private and overridden in subclasses
 		takeDataFromCache: function(idClass) {
 			return _CMCache.getClassById(idClass);
@@ -372,15 +384,13 @@
 
 		onAddAttributeClick : function(params) {
 			this.reset();
-			
-//			if (this.isSuperclass()) {
-//				this.attributeUnique.disable();
-//				this.attributeNotNull.disable();
-//			}
-			
 			this.setDefaultValues();
 			this.hideContextualFields();
 			this.enableModify(all = true);
+			if (this.classObj.get("superclass")) {
+				this.attributeUnique.disable();
+				this.attributeNotNull.disable();
+			}
 		},
 
 		setDefaultValues: function() {
@@ -391,7 +401,8 @@
 
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-//				title : tr.baseProperties,
+				title : tr.baseProperties,
+                padding: "5 5 20 5",
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,
@@ -411,15 +422,29 @@
 				]
 			});
 		},
+        
+        fillAttributeGroupsStore: function(attributes) {
+            var store = this.attributeGroup.store,
+                addtributesGroup = {},
+                groups = [],
+                attribute;
 
-		isSuperclass : function() {
-			if (this.cachedTable) {
-				return this.cachedTable.superclass;
-			} else {
-				return false;
-			}
-		}
-
+            store.removeAll();
+            
+            // build a map before to deny duplications
+            for (var i=0, len=attributes.length; i<len; ++i) {
+                attribute = attributes[i];
+                if (attribute.data.group) {
+                    addtributesGroup[attribute.data.group] = true;
+                };
+            }
+            
+            for (var g in addtributesGroup) {
+                groups.push([g]);
+            }
+				
+            store.loadData(groups);
+        }
 	});
 	
 	function onSelectComboType (combo, record, index) {
@@ -427,27 +452,5 @@
 		this.hideContextualFields();
 		this.showAndEnableContextualFieldsByType(type);
 	}
-	
-	function fillAttributeGroupsStore(combo) {
-			var idClass = this.idClass;
-			var store = combo.store;
 
-			var cb = function(attributes) {
-				store.removeAll();
-				var addtributesGroup = {};
-				for (var i=0, len=attributes.length; i<len; ++i) {
-					var  attribute = attributes[i];
-					if (attribute.group) {
-						addtributesGroup[attribute.group] = true;
-					};
-				}
-				var groups = [];
-				for (var g in addtributesGroup) {
-					groups.push([g]);
-				}
-				store.loadData(groups);
-			};
-
-			_CMCache.getAttributeList(idClass, cb);
-		}
 })();

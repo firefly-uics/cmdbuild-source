@@ -13,6 +13,9 @@ Ext.define("CMDBuild.view.administration.report.CMModReport", {
 		});
 
 		this.grid = new CMDBuild.view.common.report.CMReportGrid({
+            title : 'Report',
+			tbar : [ this.addReportButton ],
+            border: true,
 			exportMode: true,
 			split: true,
 			region: 'north',
@@ -26,8 +29,6 @@ Ext.define("CMDBuild.view.administration.report.CMModReport", {
 		Ext.apply(this, {
 			frame: false,
 			border: false,
-			title : 'Report',
-			tbar : [ this.addReportButton ],
 			layout : 'border',
 			items : [ this.form, this.grid ]
 		});

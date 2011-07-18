@@ -20,7 +20,8 @@
 			}, {
 				text: CMDBuild.Translation.administration.modsecurity.users,
 				cmName: "users",
-				leaf: true
+				leaf: true,
+                iconCls: "cmdbuild-tree-user-icon"
 			}];
 
 		}
@@ -31,7 +32,8 @@
 			id: g.get("id"),
 			text: g.get("text"),
 			leaf: true,
-			cmName: "group"
+			cmName: "group",
+            iconCls: "cmdbuild-tree-group-icon"
 		};
 	}
 

@@ -111,7 +111,7 @@ CMDBuild.Utils = (function() {
 		},
 
 		isSuperclass: function(idClass) {
-			var c =  _CMCache.getClassById(idClass);
+			var c =  _CMCache.getEntryTypeById(idClass);
 			return c.get("superclass");
 		},
 

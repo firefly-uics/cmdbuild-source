@@ -10,18 +10,26 @@
 			this.gridSM = this.view.gridPanel.getSelectionModel();
 			this.gridSM.on('selectionchange', onSelectionChanged , this);
 
+            this.view.on("activate", onViewActivate, this);
+
 			this.view.formPanel.abortButton.on("click", onAbortClick, this);
 			this.view.formPanel.saveButton.on("click", onSaveClick, this);
 			this.view.formPanel.deleteButton.on("click", onDeleteClick, this);
 			this.view.gridPanel.addAttributeButton.on("click", onAddAttributeClick, this);
 			this.view.gridPanel.orderButton.on("click", buildOrderingWindow, this);
 			this.view.gridPanel.on("cm_attribute_moved", onAttributeMoved, this);
+            this.view.gridPanel.store.on("load", onAttributesAreLoaded, this);
 		},
 
 		onClassSelected: function(classId) {
 			this.currentClassId = classId;
 			this.view.enable();
-			this.view.onClassSelected(this.currentClassId);
+            if (tabIsActive(this.view)) {
+                this.toLoad = false;
+                this.view.onClassSelected(this.currentClassId);
+            } else {
+                this.toLoad = true;
+            }
 		},
 
 		onAddClassButtonClick: function() {
@@ -29,6 +37,16 @@
 		}
 
 	});
+    
+    function onAttributesAreLoaded(store, records) {
+        this.view.formPanel.fillAttributeGroupsStore(records);
+    }
+    
+    function onViewActivate() {
+        if (this.toLoad) {
+            this.view.onClassSelected(this.currentClassId);
+        }
+    }
 
 	function onSaveClick() {
 		var nonValid = this.view.formPanel.getNonValidFields();
@@ -141,5 +159,8 @@
 			}).show(); 
 		}
 	}
-
+    
+    function tabIsActive(t) {
+		return t.ownerCt.layout.getActiveItem().id == t.id;
+	}
 })();

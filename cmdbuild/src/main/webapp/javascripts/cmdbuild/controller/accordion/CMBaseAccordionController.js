@@ -42,14 +42,7 @@
 				var toSelect = [selections[0]];
 				this.onAccordionNodeSelect(this.accordionSM, toSelect);
 			} else {
-				var r = this.accordion.getRootNode();
-				if (typeof r.firstChild != "undefined") {
-					// Defer the call because Ext.selection.RowModel
-					// for me.views.lenght says "can not refer to length of undefined"
-					Ext.Function.createDelayed(function() {
-						this.accordionSM.select([r.firstChild]);
-					}, 100, this)();
-				}
+				this.accordion.selectFirstLeaf();
 			}
 		}
 	}

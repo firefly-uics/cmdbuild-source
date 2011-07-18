@@ -16,6 +16,7 @@
 
 		onViewOnFront: function(menu) {
 			if (menu) {
+                this.currentMenu = menu;
 				this.currentMenuId = menu.get("id");
 				this.loadMenuTree(this.currentMenuId);
 				this.loadAvailableItemsTree(this.currentMenuId);
@@ -64,7 +65,7 @@
 	}
 	
 	function onAbortButtonClick() {
-		this.onViewOnFront();
+		this.onViewOnFront(this.currentMenu);
 	}
 	
 	function onDeleteButtonClick() {

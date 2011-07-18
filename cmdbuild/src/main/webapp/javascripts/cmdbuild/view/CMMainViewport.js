@@ -1,20 +1,93 @@
 (function() {
+	var tr = CMDBuild.Translation.common.splash,
 	
-	var splashText = '<div class="splashScreen_central">' + 
+		credits = '<ul class="splashScreen_central">'
+		+ '<li> <span class="splashBold"> <a href="http://www.tecnoteca.com" target="_blank"> Tecnoteca srl </a></span> '
+		+ tr.design + ', '+tr.implementation+', '+ tr.maintainer +'</li>'
+		+ '<li> <span class="splashBold"> <a href="http://www.comune.udine.it" target="_blank"> ' + tr.municipality + ' </a> </span> '+ tr.principal+'</li> '
+		+ '<li> <span class="splashBold"> <a href="http://www.cogitek.it" target="_blank"> Cogitek srl</a> </span> '+ tr.consultant +' </li>'		
+		+ '</ul>',
+
+		splashText = '<div class="splashScreen_central">' + 
 			'<div class="spalshMotto">Open Source Configuration and Manage	nt Database</div>' +
 			'<span class="splashSubTitle copyright">Copyright &copy; Tecnoteca srl</span>' +
 		'</div>',
 
-	release = '<div id="splashScreen_version">' + CMDBuild.Translation.release + '</div>';
+		release = '<div id="splashScreen_version">' + CMDBuild.Translation.release + '</div>';
 
 	Ext.define("CMDBuild.view.CMMainViewport", {
 		extend: "Ext.Viewport",
 		layout: 'border',
 		renderTo: Ext.getBody(),
+		cmFirstRender: true,
 		cmPanels: [],
 		cmAccordions: [],
 		controllerType: "MainViewportController",
+		statics: {
+			showSplash: function(target) {
+				var txt = "";
 
+				if (target) {
+					if (!this.creditWin) {
+						this.creditWin = new Ext.window.Window({
+							closable: false,
+							draggable: false
+						});
+					}
+
+					this.theMask = target.getEl().mask();
+					this.theMask.fadeIn({
+						duration: 400,
+						opacity: 0.8
+					});
+
+					this.theMask.on("click", function() {
+						CMDBuild.view.CMMainViewport.hideSplash();
+					});
+
+					txt = credits;
+					this.theWin = this.creditWin;
+
+				} else {
+					if (!this.splash) {
+						this.splash = new Ext.window.Window({
+							modal: true,
+							closable: false,
+							draggable: false
+						});
+					}
+
+					txt = splashText;
+					this.theWin = this.splash;
+				}
+
+				this.theWin.update('<div class="splashScreen_image">' + txt + release + '</div>');
+
+				this.theWin.show();
+				return this;
+			},
+
+			hideSplash: function() {
+
+				if (this.theMask) {
+					this.theMask.fadeOut({
+						remove: true
+					});
+				}
+
+				if (this.theWin) {
+					this.theWin.hide();
+				}
+
+				// show the header and the footer, that are initially hidden
+				var divs = Ext.DomQuery.select("div[class=cm_no_display]");
+				for (var i=0, l=divs.length; i<l; ++i) {
+					divs[i].setAttribute("class", "");
+				}
+
+				return this;
+			}
+		},
 		initComponent : function() {
 			this.splash = null;
 			this.cmAccordions = Ext.create("Ext.panel.Panel", {
@@ -58,46 +131,13 @@
 			this.border = false;
 			
 			this.callParent(arguments);
+            
+            var creditsLink = Ext.get('cmdbuild_credits_link');
+            creditsLink.on('click', function(e) {
+                CMDBuild.view.CMMainViewport.showSplash(this);
+            }, this);
 		},
 
-		showSplash: function() {
-			this.theMask = this.getEl().mask();
-			this.theMask.addCls("cmMask");
-			this.theMask.fadeIn({
-				duration: 1
-			});
-
-			if (this.splash == null) {
-				this.splash = new Ext.window.Window({
-					closable: false,
-					draggable: false,
-					html: '<div class="splashScreen_image">' + splashText + release + '</div>'
-				});
-			}
-
-			this.splash.show();
-			return this;
-		},
-		
-		hideSplash: function() {
-			if (this.theMask) {
-				this.theMask.fadeOut({
-					remove: true
-				});
-			}
-
-			if (this.splash) {
-				this.splash.hide();
-			}
-			
-			// show the header and the footer, that are initially hidden
-			var divs = Ext.DomQuery.select("div[class=cm_no_display]");
-			for (var i=0, l=divs.length; i<l; ++i) {
-				divs[i].setAttribute("class", "");
-			}
-
-			return this;
-		},
 		/*
 		 * Take a function as parameter
 		 * iterate over the cmAccordions and call the given

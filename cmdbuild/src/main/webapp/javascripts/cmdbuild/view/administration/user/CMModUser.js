@@ -14,6 +14,8 @@
 			});
 
 			this.userGrid = new CMDBuild.view.administration.user.CMUserGrid( {
+   				tbar : [ this.addUserButton ],
+				title : tr.user.title,
 				region : "center"
 			});
 
@@ -25,8 +27,6 @@
 
 			Ext.apply(this, {
 				modtype : 'user',
-				tbar : [ this.addUserButton ],
-				title : tr.user.title,
 				basetitle : tr.user.title + ' - ',
 				layout : 'border',
 				frame : false,

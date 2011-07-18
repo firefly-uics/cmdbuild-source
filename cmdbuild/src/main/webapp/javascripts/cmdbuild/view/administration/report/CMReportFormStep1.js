@@ -20,12 +20,14 @@
 			this.fileField = new Ext.form.TextField({
 				inputType : "file",
 				fieldLabel : tr.master_report_jrxml,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank : false,
 				name : 'jrxml'
 			});
 
 			this.name = new Ext.form.field.Text({
 				fieldLabel : tr.name,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank : false,
 				name : 'name',
 				cmImmutable: true
@@ -33,19 +35,21 @@
 
 			this.description = new Ext.form.field.TextArea({
 				fieldLabel : tr.description,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank : false,
-				name : 'description',
+				name : 'description',             
 				maxLength : 100
 			});
 
 			this.groups = new Ext.ux.form.MultiSelect({
 				fieldLabel : tr.enabled_groups,
+                width: 305,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "groups",
 				dataFields : [ 'id', 'description' ],
 				valueField : 'id',
 				displayField : 'description',
 				allowBlank : true,
-				width : 220,
 				store : new Ext.data.Store( {
 					fields : [ 'id', 'description' ],
 					proxy : {

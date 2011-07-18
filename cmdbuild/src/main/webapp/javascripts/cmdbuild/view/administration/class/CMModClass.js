@@ -52,9 +52,9 @@
 					items: [this.classForm]
 				}
 				,this.attributesPanel
+				,this.domainGrid
 				,this.layerVisibilityGrid
 				,this.geoAttributesPanel
-				,this.domainGrid
 				]
 			});
 
@@ -77,12 +77,19 @@
 
 		onClassDeleted: function() {
 			this.attributesPanel.disable();
-//			this.geoAttributesPanel.disable();
-//			this.domainGrid.disable();
+			this.geoAttributesPanel.disable();
+			this.domainGrid.disable();
+            this.layerVisibilityGrid.disable();
 		},
 
 		onClassSelected: function(selection) {
-			this.layerVisibilityGrid.onClassSelected(selection);
+            if (CMDBuild.Config.gis.enabled) {
+				this.layerVisibilityGrid.enable();
+                this.layerVisibilityGrid.onClassSelected(selection);
+			} else {
+				this.layerVisibilityGrid.disable();
+			}
+
 		}
 	});
 })();

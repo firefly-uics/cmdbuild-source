@@ -6,12 +6,21 @@
 		}),
 		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
 			title: CMDBuild.Translation.management.modutilities.title
+		}),
+		processAccordion = new CMDBuild.view.administraton.accordion.CMProcessAccordion({
+			rootVisible: true
 		});
 
 	Ext.define("CMDBuild.app.Management", {
 		statics: {
 			init: function() {
-				this.buildComponents();
+				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+					scope: this,
+					success: function(response, options, decoded) {
+						CMDBuild.Config.cmdbuild = decoded.data;
+						this.buildComponents();
+					}
+				});
 			},
 
 			buildComponents: function() {
@@ -19,6 +28,7 @@
 				this.cmAccordions = [
 					this.menuAccordion = menuAccordion,
  					this.classesAccordion = classesAccordion,
+ 					this.processAccordion = processAccordion,
 					this.reportAccordion = reportAccordion,
 					this.utilitiesTree = utilitiesTree
 				];
@@ -36,7 +46,11 @@
 					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
 						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
 					}),
-	
+
+//					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
+//						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
+//					}),
+
 					this.bulkCardUpdates = new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
 						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
 					}),
@@ -48,28 +62,32 @@
 					})
 				];
 
-				_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-					new CMDBuild.view.CMMainViewport({
-						cmAccordions: this.cmAccordions,
-						cmPanels: this.cmPanels
-					}).showSplash()
-				);
-
+				CMDBuild.view.CMMainViewport.showSplash();
 				this.loadResources();
 			},
 			
 			loadResources: function() {
-				var dangling = 6,
+				var dangling = 5,
 					me = this;
-				
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
-					scope: this,
-					success: function(response, options, decoded) {
-						CMDBuild.Config.cmdbuild = decoded.data;
+
+				function callback() {
+					if (--dangling == 0) {
+						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+							new CMDBuild.view.CMMainViewport({
+								cmAccordions: me.cmAccordions,
+								cmPanels: me.cmPanels
+							})
+						);
+						_CMMainViewportController.selectStartingClass();
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-					},
-					callback: callback
-				});
+
+						if (processAccordion.isEmpty()) {
+							processAccordion.hide();
+						}
+
+						CMDBuild.view.CMMainViewport.hideSplash();
+					}
+				}
 
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
@@ -95,6 +113,7 @@
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);
 						classesAccordion.updateStore();
+						processAccordion.updateStore();
 					},
 					callback: callback
 				});
@@ -115,21 +134,7 @@
 					},
 					callback: callback
 				});
-
-				function callback() {
-					if (--dangling == 0) {
-						_CMMainViewportController.viewport.hideSplash();
-					}
-				}
-
 			}
 		}
 	});
-/*
-	var creditsLink = Ext.get('cmdbuild_credits_link');
-	creditsLink.on('click', function(e) {
-		splash.showAsPopUp();
-	}, this);
-*/
-
 })();
