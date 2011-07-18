@@ -122,19 +122,19 @@ CMDBuild.ServiceProxy = {
 	
 	// Workflow
 	workflow: {
-		getstartactivitytemplate: function(p) {
-			Ext.Ajax.request({
+		getstartactivitytemplate: function(idClass, cbConfig) {
+			var conf = {
 				url: 'services/json/management/modworkflow/getstartactivitytemplate',
 				method: 'GET',
 				params : {
-					idClass : p.classId,
+					idClass : idClass,
 					id : -1
-				},
-				success: p.success || Ext.emptyFn,
-				failure: p.failure || Ext.emptyFn,
-				callback: p.callback || Ext.emptyFn
-			});
+				}
+			};
+
+			Ext.Ajax.request(Ext.apply(conf, cbConfig));
 		},
+
 		terminateActivity: function(p) {
 			Ext.Ajax.request({
     			url: 'services/json/management/modworkflow/abortprocess',

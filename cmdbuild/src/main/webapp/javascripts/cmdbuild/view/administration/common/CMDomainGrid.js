@@ -105,7 +105,7 @@
 			this.filtering = filter;
 			if (filter) {
 				this.getStore().filterBy(function(record) {
-					return !record.json.inherited
+					return !record.raw.inherited
 				});
 			} else {
 				this.getStore().filterBy(function(record) {

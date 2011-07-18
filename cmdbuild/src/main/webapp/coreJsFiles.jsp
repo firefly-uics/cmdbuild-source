@@ -38,6 +38,9 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
+
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
+
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script> <!-- TODO move to management -->
 

@@ -1,3 +1,117 @@
+(function() {
+	var tr =  CMDBuild.Translation.management.modworkflow,
+		modeConvertionMatrix = {
+			VIEW: "read",
+			UPDATE: "write",
+			REQUIRED: "required"
+		};
+
+	Ext.define("CMDBuild.view.management.workflow.CMActivityPanel", {
+		extend: "Ext.panel.Panel",
+
+		initComponent: function() {
+
+			this.activityForm = new CMDBuild.view.management.workflow.CMActivityPanel.Form({
+				region: "center"
+			});
+
+			this.extendedAttributesButtons = new Ext.Panel({
+				region: 'east',
+				hideMode: 'offsets',
+				autoScroll: true,
+				frame: true,
+				items: []
+			});
+
+			this.layout = "border";
+			this.items = [this.activityForm, this.extendedAttributesButtons];
+			this.callParent(arguments);
+		},
+
+		loadActivity: function(activity, reloadFields) {
+			this.activityForm.activityToLoad = activity;
+			this.activityForm.updateInfo(activity);
+			
+			if (reloadFields) {
+				_CMCache.getAttributeList(activity.data.IdClass, 
+					Ext.bind(function cb(a) {
+						this.activityForm.buildActivityFields(a);
+					}, this));
+			}
+		},
+		
+		getForm: function() {
+			return this.activityForm.getForm();
+		}
+	});
+
+	Ext.define("CMDBuild.view.management.workflow.CMActivityPanel.Form", {
+		extend: "CMDBuild.view.management.classes.CMCardPanel",
+
+		buildTBar: function() {
+			this.cmTBar = [
+				this.modifyCardButton = new Ext.button.Button({
+					iconCls : "modify",
+					text : tr.modify_card
+				}),
+				this.deleteCardButton = new Ext.button.Button({
+					iconCls : "delete",
+					text : tr.delete_card
+				}),
+				'->','-',
+				this.processStepName = new Ext.button.Button({
+					overCls: Ext.button.Button.baseCls,
+					pressedCls: Ext.button.Button.baseCls
+				}),
+				'-',
+				this.processStepCode = new Ext.button.Button({
+					overCls: Ext.button.Button.baseCls,
+					pressedCls: Ext.button.Button.baseCls
+				}),
+				' '
+			];
+		},
+
+		buildButtons: function() {
+			this.saveButton = new Ext.button.Button({
+				text: CMDBuild.Translation.common.buttons.save
+			});
+
+			this.cancelButton = new Ext.button.Button( {
+				text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort
+			});
+
+			this.advanceButton = new Ext.button.Button({
+				text: CMDBuild.Translation.common.buttons.workflow.advance
+			});
+
+			this.cmButtons = [this.saveButton, this.advanceButton, this.cancelButton];
+		},
+
+		updateInfo : function(activiy) {
+			this.processStepName.setText(activiy.data.activityPerformerName || "");
+			this.processStepCode.setText(activiy.data.Code || "");
+		},
+
+		buildActivityFields: function(attributes) {
+			var cleanedAttrs = [];
+			for (var a in attributes) {
+				a = attributes[a];
+				var index = this.activityToLoad.raw[a.name + "_index"];
+				if(index != undefined && index > -1) {
+					var mode = this.activityToLoad.raw[a.name + "_type"];
+					a.fieldmode = modeConvertionMatrix[mode];
+					cleanedAttrs.push(a);
+				}
+			}
+
+			this.fillForm(cleanedAttrs, editMode = true);
+		} 
+	});
+
+})();
+
+/*
 CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 	translation: CMDBuild.Translation.management.modworkflow,
 	extAttrIds: [],	
@@ -79,7 +193,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 				name: 'WorkItemId'
 			}],
 			// FIXME copied from EditablePanel: use that instead
-			/* BEGIN */
+			//BEGIN
 			switchFieldsToEdit: function() {
 				var fields = this.items.items;
 		    	for (var i=0;  i<fields.length; ++i) {
@@ -89,7 +203,7 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		    		}
 		    	}
 		    }
-			/* END */
+			// END
 		});
 		
 		this.displayPanel = new Ext.form.FormPanel({
@@ -382,13 +496,6 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     	this.actualForm.hide();
     	this.displayPanel.show();
     },
-
-    updateTabBarInfo : function(eventParams) {
-    	var name = eventParams.record.data.activityPerformerName || "";
-	    var code = eventParams.record.data.Code || "";
-	    this.processStepName.setValue(name);
-		this.processStepCode.setValue(code);
-	},
 	
 	clearTabBarInfo: function() {
 		this.processStepName.setValue("");
@@ -400,15 +507,6 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
 		return firstPart == "open";
 	}, 
 	
-    enableModify: function() {
-		this.displayPanel.hide();
-		this.actualForm.show();    	
-    	this.disableActions();
-    	this.actualForm.getForm().loadRecord(this.currentRecord);
-    	this.actualForm.switchFieldsToEdit();
-    	this.enableAll();
-    },
-    
     hideTerminateProcessActionIfNotStoppable: function() {
     	if (this.isStoppable) {
     		this.terminateProcessAction.show();
@@ -555,59 +653,6 @@ CMDBuild.Management.ActivityTab = Ext.extend(Ext.Panel, {
     		this.terminateProcessAction.enable();
     	}
     },
-    
-    disableAll :function() {
-    	this.disableActions();
-        this.disableButtons();
-        this.actualForm.setFieldsDisabled();
-        this.setOptionsDisabled(true);        
-        this.fireEvent("stop_edit");
-    },
-    
-    enableAll: function() {
-    	this.enableActions();
-    	this.enableButtons();
-        this.actualForm.setFieldsEnabled();
-        this.setOptionsDisabled(false);
-        this.fireEvent("start_edit");
-    },
-    
-    enableActions: function() {
-        this.modifyCardAction.enable();
-        if (this.isStoppable) {
-    		this.terminateProcessAction.enable();
-        }
-    },
-    
-    disableActions: function() {
-    	this.modifyCardAction.disable();
-    	this.terminateProcessAction.disable();
-    },
-    
-    enableButtons: function() {
-        this.saveButton.enable();
-        this.advanceButton.enable();
-        this.cancelButton.enable();        
-    },
-    
-    disableButtons: function() {
-    	this.saveButton.disable();
-        this.advanceButton.disable();
-        this.cancelButton.disable();
-    },
-    
-    syncSizeCombos: function() {
-    	for (var i = this.formFields.length; i-- > 0;) {
-    		var field = this.formFields[i];
-    		if (field && field.grow) {
-    			if (field.syncSize) {
-    				field.syncSize();
-	    		} 
-	     		if(field.growSizeFix){
-	     			field.growSizeFix();
-	    		}
-    		}
-    	}
-    }
+
 });
-Ext.reg('activitytab', CMDBuild.Management.ActivityTab);
+*/

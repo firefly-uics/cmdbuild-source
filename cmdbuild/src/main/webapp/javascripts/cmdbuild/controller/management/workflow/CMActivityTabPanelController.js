@@ -60,7 +60,6 @@
 					scope: view
 				});
 			}
-			
 		}, view);
 	};
 	

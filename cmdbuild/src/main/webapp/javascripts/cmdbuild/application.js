@@ -1,6 +1,9 @@
 (function() {
 	Ext.ns("CMDBuild");
 	
+    // global constants
+    CMDBuild.CM_LABEL_WIDTH = 150;
+    
 	// global object with runtime configuration
 	CMDBuild.Config = {}
 	
@@ -42,7 +45,7 @@
 
 function getCurrentLanguage() {
 	var languageParam = Ext.urlDecode(window.location.search.substring(1))['language'];
-	if (languageParam)
+	if (languageParam) 
 		return languageParam;
 	else
 		return CMDBuild.Config.cmdbuild.language;

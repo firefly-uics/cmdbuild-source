@@ -1,15 +1,22 @@
 (function() {
 
 	var tr = CMDBuild.Translation.administration.setup;
-	
-	var store = Ext.create('Ext.data.TreeStore', {
-		fields: [
-			{name: 'cmName', type: 'string'},
-			{name: 'text', type: 'string'}
-		],
-		root : {
-			expanded : true,
-			children : [{
+
+	Ext.define("CMDBuild.view.administraton.accordion.CMConfigurationAccordion", {
+		extend: "CMDBuild.view.common.CMBaseAccordion",
+		title: tr.setupTitle,
+		cmName: "setup",
+		hideMode: "offsets",
+
+		constructor: function(){
+			this.callParent(arguments);
+			this.updateStore();
+		},
+
+		updateStore: function() {
+			var root = this.store.getRootNode();
+			root.removeAll();
+			root.appendChild([{
 				text: tr.cmdbuild.menuTitle,
 				leaf : true,
 				cmName: "modsetupcmdbuild"
@@ -37,38 +44,9 @@
 				text: tr.server.menuTitle, 
 				leaf: true,
 				cmName: 'modsetupserver'
-			}]
+			}]);
 		}
-	});
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMConfigurationAccordion", {
-		extend: 'Ext.panel.Panel',
-		
-		cmName: "setup",
-		hideMode: "offsets",
-		constructor: function() {
-			this.tree = Ext.create("Ext.tree.Panel", {
-				store: store,
-				border: false,
-				region: "center",
-				rootVisible: false
-			});
-			
-			Ext.apply(this, {
-				title: tr.setupTitle,
-				items: [this.tree],
-				layout: "border",
-				border: false
-			});
-			this.callParent(arguments);
-		},
-		getSelectionModel: function() {
-			return this.tree.getSelectionModel();
-		},
-
-		getRootNode: function() {
-			return this.tree.getRootNode();
-		}
 	});
 
 })();

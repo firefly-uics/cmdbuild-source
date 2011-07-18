@@ -37,16 +37,19 @@ Ext.define("CMDBuild.Administration.ModLookup", {
 				items : [ this.lookupGrid, this.lookupForm ]
 			}]
 		});
+    
+        Ext.apply(this, {
+            hideMode: 'offsets', // fix a render bug of combobox
+            title: this.translation.title,
+            basetitle: this.translation.title+ ' - ',
+            layout: 'fit',
+            id: this.id + '_panel',
+            tbar: [this.addLookupTypeButton],
+            items: [this.tabPanel],
+            frame: false,
+            border: false
+        });
 
-		this.hideMode = 'offsets',// fix a render bug of combobox
-		this.title = this.translation.title,
-		this.basetitle = this.translation.title+ ' - ',
-		this.layout= 'fit',
-		this.id = this.id + '_panel',
-		this.tbar = [this.addLookupTypeButton],
-		this.items = [this.tabPanel];
-		this.frame = false;
-		this.border = false;
 
 		this.callParent(arguments);
 	},

@@ -75,7 +75,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep2.js"></script>
 	
 	<!-- PROCESS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMProcessAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributeForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessForm.js"></script>

@@ -72,7 +72,12 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 			for (var i=0, l=records.length; i<l; ++i) {
 				var r = records[i];
 				if (r.data.name == ATTR_TO_SKIP) {
-					store.removeAt(i);
+                    try {
+                        store.removeAt(i);
+                    } catch (e) {
+                        // sometimes there is a problem with afterRemove and I don't know why
+                        _debug("fail removing a record to attributes grid", r);
+                    }
 				}
 			}
 		}, this);

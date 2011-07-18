@@ -11,8 +11,8 @@
 
 		constructor: function(conf) {
 			Ext.apply(this, conf);
-			buildTBar.call(this);
-			buildButtons.call(this);
+			this.buildTBar();
+			this.buildButtons();
 
 			this.callParent(arguments);
 		},
@@ -89,10 +89,13 @@
 			}
 		},
 
-		fillForm: fillForm
+		fillForm: fillForm,
+		// private, could be overridden
+		buildTBar: buildTBar,
+		buildButtons: buildButtons
 	});
 
-	function fillForm(attributes, editable) {
+	function fillForm(attributes, editMode) {
 		var panels = [],
 			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
 
@@ -135,7 +138,7 @@
 			this.danglingCard = null;
 		}
 		
-		if (editable) {
+		if (editMode) {
 			this.editMode();
 		}
 	};

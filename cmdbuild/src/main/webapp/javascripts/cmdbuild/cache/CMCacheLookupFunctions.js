@@ -22,6 +22,8 @@
 
 		addLookupType: function(lt) {
 			lookupTypes[lt.id] = Ext.create("CMDBuild.cache.CMLookupTypeModel", lt);
+            lookupTypeStore.cmFill()
+			lookupTypeStoreOnlyLeves.cmFill();
 		},
 
 		getLookupTypeAsStore: function() {

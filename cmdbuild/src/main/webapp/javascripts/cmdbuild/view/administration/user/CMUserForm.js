@@ -38,10 +38,9 @@
 			this.cmButtons = [ this.saveButton, this.abortButton ];
 
 			var userName = new Ext.form.TextField( {
-				xtype : 'textfield',
 				id : 'username',
 				fieldLabel : tr.username,
-				width : 220,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank : false,
 				name : 'username',
 				cmImmutable : true
@@ -50,16 +49,15 @@
 			var userDescription = new Ext.form.TextField( {
 				xtype : 'textfield',
 				fieldLabel : tr.description,
-				width : 220,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank : false,
 				name : 'description'
 			});
 
 			var userEmail = new Ext.form.TextField( {
-				xtype : 'textfield',
 				vtype : 'emailOrBlank',
 				fieldLabel : tr.email,
-				width : 220,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank : true,
 				name : 'email'
 			});
@@ -85,6 +83,7 @@
 			this.defaultGroup = new Ext.form.ComboBox( {
 				name : 'defaultgroup',
 				fieldLabel : tr.defaultgroup,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				triggerAction : 'all',
 				valueField : 'id',
 				displayField : 'description',
@@ -98,13 +97,15 @@
 				title : tr.user_info,
 				region : 'west',
 				margins : '5 0 5 5',
+                padding: "5 5 20 5",
+                autoScroll: true,
 				split : true,
-				autoHeight : true,
 				flex : 1,
 				items : [ userName, userDescription, userEmail,
 					this.defaultGroup, {
 						xtype : 'xcheckbox',
 						fieldLabel : tr.isactive,
+                        labelWidth: CMDBuild.CM_LABEL_WIDTH,
 						name : 'isactive',
 						checked : true
 					} ]
@@ -113,23 +114,23 @@
 			this.userPassword = new Ext.form.FieldSet( {
 				title : tr.password,
 				region : 'center',
-				autoHeight : true,
 				autoScroll : true,
 				margins : '5 5 5 5',
+                padding: "5 5 20 5",
 				flex : 1,
 				items : [ {
 					xtype : 'textfield',
 					inputType : 'password',
 					id : 'user_password',
 					name : 'password',
+                    labelWidth: CMDBuild.CM_LABEL_WIDTH,
 					fieldLabel : tr.password,
-					width : 220,
 					allowBlank : false
 				}, {
 					xtype : 'textfield',
 					inputType : 'password',
 					fieldLabel : tr.confirmation,
-					width : 220,
+                    labelWidth: CMDBuild.CM_LABEL_WIDTH,
 					allowBlank : false,
 					name : 'confirmation',
 					vtype : 'password',
@@ -138,10 +139,12 @@
 			});
 
 			this.form = new Ext.form.Panel({
-				autoScroll: true,
 				region : "center",
-				layout : 'hbox',
-				frame : false,
+				layout: {
+					type: 'hbox',
+					align:'stretch'
+				},
+				frame : true,
 				items : [ this.userInfo, this.userPassword ]
 			});
 
@@ -151,7 +154,7 @@
 				layout : "border",
 				tbar : this.cmTBar,
 				items : [ this.form ],
-				buttonAlign: true,
+				buttonAlign: "center",
 				buttons : this.cmButtons
 			});
 
@@ -164,14 +167,19 @@
 		},
 
 		onUserSelected : function(user) {
+            var me = this;
 			this.reset();
-			this.getForm().loadRecord(user);
 			this.disableModify(enableCMTBar = true);
 			this.updateDisableActionTextAndIconClass(user.get("isactive"));
 			this.defaultGroupStore.load( {
 				params : {
 					userid : user.get("userid")
-				}
+				},
+                callback: function() {
+                    me.getForm().loadRecord(user);
+                    // TODO the user serialization has not the defaultGroup id
+                    // so the defaultGroup combo couldn't be populate
+                }
 			});
 		},
 

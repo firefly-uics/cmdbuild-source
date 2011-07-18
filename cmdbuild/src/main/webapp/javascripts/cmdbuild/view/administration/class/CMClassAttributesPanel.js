@@ -9,7 +9,8 @@
 			this.gridPanel = new CMDBuild.view.administration.classes.CMAttributeGrid({
 				region: "north",
 				split: true,
-				height: "40%"
+				height: "40%",
+                border: false
 			});
 
 			this.callParent(arguments);

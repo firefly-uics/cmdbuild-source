@@ -9,6 +9,8 @@
 		translation : CMDBuild.Translation.administration.modClass.domainProperties,
 
 		initComponent : function() {
+            var me = this;
+
 			this.modifyButton = new Ext.button.Button({
 				iconCls : 'modify',
 				text: this.translation.modify_domain,
@@ -37,14 +39,21 @@
 			this.class_store = _CMCache.getClassesAndProcessesStore();
 
 			this.masterdetail = new Ext.ux.form.XCheckbox({
-				xtype: 'xcheckbox',
 				fieldLabel: this.translation.master_detail,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name: "isMasterDetail",
 				cmImmutable: true
 			});
 
+            this.masterDetailLabel = new Ext.form.field.Text({
+                fieldLabel: "@@MD label",
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+                name: "mdlabel"
+            });
+            
 			this.active = new Ext.ux.form.XCheckbox({
 				fieldLabel: this.translation.is_active,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name: "active",
 				checked: true
 			});
@@ -52,6 +61,7 @@
 			this.cardinality_combo = new Ext.form.ComboBox({
 				xdomainformtype: 'combo',
 				fieldLabel: this.translation.cardinality,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name: "cardinality",
 				valueField: 'name',
 				displayField: 'value',
@@ -74,6 +84,7 @@
 
 			this.domainName = new Ext.form.TextField({
 				fieldLabel : this.translation.name,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "name",
 				allowBlank : false,
 				vtype : 'alphanum',
@@ -83,6 +94,7 @@
 
 			this.domainDescription = new Ext.form.TextField({
 				fieldLabel : this.translation.description,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : "description",
 				allowBlank : false,
 				vtype : 'cmdbcomment'
@@ -93,6 +105,9 @@
 				frame : true,
 				border : true,
 				autoScroll : true,
+                defaults: {
+                    labelWidth: CMDBuild.CM_LABEL_WIDTH
+                },
 				items : [
 					this.domainName,
 					this.domainDescription,
@@ -124,17 +139,18 @@
 					xtype: 'textfield',
 					fieldLabel: this.translation.description_direct,
 					allowBlank: false,
-					name: "directDescription",
+					name: "descr_1", //TODO, change the server side
 					vtype: 'cmdbcomment'
 				}, {
 					xtype: 'textfield',
 					fieldLabel: this.translation.description_inverse,
 					allowBlank: false,
-					name: "reverseDescription",
+					name: "descr_2", //TODO, change the server side
 					vtype: 'cmdbcomment'
 				},
 					this.cardinality_combo,
 					this.masterdetail,
+                    this.masterDetailLabel,
 					this.active
 				]
 			});
@@ -156,12 +172,26 @@
 				this.autoComplete(this.domainDescription, newValue, oldValue);
 			}, this);
 			
+            // show the masterDetailLabel field only when the domain is setted as a masterDetail
+            this.masterdetail.setValue = Ext.Function.createInterceptor(this.masterdetail.setValue, 
+                function(v) {
+                    if (v) {
+                        me.masterDetailLabel.show();
+                        me.masterDetailLabel.setDisabled(me.masterdetail.isDisabled());
+                    } else {
+                        me.masterDetailLabel.hide();
+                        me.masterDetailLabel.disable();
+                    }
+                }
+            );
+            
 			this.disableModify();
 		},
 
 		onDomainSelected: function(cmDomain) {
 			this.disableModify(enableCMTBar = true);
 			if (cmDomain) {
+                this.reset();
 				this.getForm().loadRecord(cmDomain);
 			}
 		},

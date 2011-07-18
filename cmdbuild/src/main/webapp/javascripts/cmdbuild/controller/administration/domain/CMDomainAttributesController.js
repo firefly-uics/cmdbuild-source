@@ -55,7 +55,7 @@
 		}
 		var data = this.view.form.getData(withDisabled = true);
 		data.tableId = this.currentDomain.get("id");
-
+		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.administration.domain.attribute.save({
 			params: data,
 			scope: this,

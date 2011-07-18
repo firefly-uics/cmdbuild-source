@@ -124,6 +124,7 @@
 		filterCategory: undefined,
 		filterSubcategory: undefined,
 
+		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar 
 		cmAdvancedFilter: true, // to add a button to set an advanced filter
@@ -205,7 +206,6 @@
 
 		clearFilter: clearFilter,
 
-		// TODO 3 to 4 pagination
 		reload: function(reselect) {
 			var cb = Ext.emptyFn;
 			
@@ -282,22 +282,27 @@
 				remoteSort: true,
 				proxy: {
 					type: "ajax",
-					url: 'services/json/management/modcard/getcardlist',
+					url: this.cmStoreUrl,
 					reader: {
 						root: 'rows',
 						type: "json",
 						totalProperty: 'results'
 					},
-					extraParams: {
-						IdClass : this.currentClassId || -1,
-						FilterCategory: this.filterCategory || "",
-						FilterSubcategory: this.filterSubcategory || ""
-					}
+					extraParams: this.getStoreExtraParams()
 				},
 				autoLoad: false
 			});
 		},
-		
+
+		//private, could be overridden
+		getStoreExtraParams: function() {
+			return {
+				IdClass : this.currentClassId || -1,
+				FilterCategory: this.filterCategory || "",
+				FilterSubcategory: this.filterSubcategory || ""
+			}
+		},
+
 		//private, could be overridden
 		buildExtraColumns: function() {
 			return [];

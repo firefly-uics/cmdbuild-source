@@ -105,7 +105,10 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 		};
 		
 		Ext.apply(this, {
-			frame: true,
+			frame: false,
+            border: false,
+            bodyCls: "x-panel-body-default-framed",
+            cls: "x-panel-body-default-framed",            
 			padding: "0 0 0 0",
 			layout: {
 				type: 'hbox',

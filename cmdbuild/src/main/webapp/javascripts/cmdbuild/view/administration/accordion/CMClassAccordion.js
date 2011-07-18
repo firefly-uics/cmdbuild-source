@@ -52,7 +52,8 @@
 			tableType: node.get("tableType"),
 			leaf: true,
 			cmName: node.get("text") != "Class" ? "class" : "",
-			parent: node.get("parent")
+			parent: node.get("parent"),
+            iconCls: node.get("superclass") ? "cmdbuild-tree-superclass-icon" : "cmdbuild-tree-class-icon"
 		};
 	}
 

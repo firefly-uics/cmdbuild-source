@@ -111,6 +111,7 @@
 		return new Ext.form.field.Text({
 			name: serviceName+"_"+fieldName,
 			fieldLabel: tr[fieldName],
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			inputType: fieldInputType,
 			width: 300,
 			allowBlank: false
@@ -128,6 +129,7 @@
 		    width: 300,
 		    name: serviceName+"_"+fieldName,
 		    fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes[translationName],
+		    labelWidth: CMDBuild.CM_LABEL_WIDTH,
 		    clickToChange: false,
 		    animate: false
 		});

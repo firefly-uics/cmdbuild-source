@@ -67,6 +67,7 @@
 
 			this.activeCheck = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.active,
+                labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : LOOKUP_FIELDS.Active,
 				checked : true,
 				disabled : true
@@ -80,6 +81,10 @@
 				border: false,
 				padding: "5 5 5 5",
 				region: "center",
+                autoScroll: true,
+                defaults: {
+                    labelWidth: CMDBuild.CM_LABEL_WIDTH
+                },
 				items: [ {
 					xtype : 'hidden',
 					name : LOOKUP_FIELDS.Id
@@ -87,13 +92,11 @@
 					xtype : 'textfield',
 					fieldLabel : tr.code,
 					name : LOOKUP_FIELDS.Code,
-					width : 200,
 					disabled : true
 				}, {
 					xtype : 'textfield',
 					fieldLabel : tr.description,
 					name : LOOKUP_FIELDS.Description,
-					width : 300,
 					allowBlank : false,
 					disabled : true
 				}, {
@@ -101,7 +104,6 @@
 					fieldLabel : tr.parentdescription,
 					name : LOOKUP_FIELDS.ParentId,
 					hiddenName : LOOKUP_FIELDS.ParentId,
-					width : 300,
 					valueField : LOOKUP_FIELDS.ParentId,
 					displayField : LOOKUP_FIELDS.ParentDescription,
 					minChars : 0,
@@ -111,17 +113,14 @@
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
 					name : LOOKUP_FIELDS.Notes,
-					width : 300,
 					disabled : true
 				}, this.activeCheck] 
 			}];
 			
 			Ext.apply(this, {
 				tbar : this.cmTBar,
-				labelWidth : 150,
 				defaultType : 'textfield',
 				frame : true,
-				autoScroll : true,
 				buttonAlign : "center",
 				buttons : this.cmButtons
 			});

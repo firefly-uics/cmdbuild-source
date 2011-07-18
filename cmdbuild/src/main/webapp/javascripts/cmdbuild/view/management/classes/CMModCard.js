@@ -4,25 +4,7 @@
 		extend: "Ext.panel.Panel",
 		cmName: "class",
 		constructor: function() {
-			this.addCardButton = new CMDBuild.AddCardMenuButton({
-				classId: undefined
-			});
-
-			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
-				region: "north",
-				hideMode: "offsets",
-				filterCategory: this.cmName,
-				border: true,
-				tbar: [this.addCardButton],
-				columns: [],
-				height: "50%",
-				split: true
-			});
-
-			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
-				region: "center"
-			});
-
+			this.buildComponents();
 			this.callParent(arguments);
 		},
 		
@@ -63,8 +45,29 @@
 			this.addCardButton.updateForEntry(_CMCache.getEntryTypeById(p.IdClass));
 			this.cardGrid.clearFilterButton.disable();
 			this.cardGrid.gridSearchField.reset();
-		}
+		},
 
+		// private, overridden in subclasses
+		buildComponents: function() {
+			this.addCardButton = new CMDBuild.AddCardMenuButton({
+				classId: undefined
+			});
+
+			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
+				region: "north",
+				hideMode: "offsets",
+				filterCategory: this.cmName,
+				border: true,
+				tbar: [this.addCardButton],
+				columns: [],
+				height: "50%",
+				split: true
+			});
+
+			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
+				region: "center"
+			});
+		}
 	});
 
 

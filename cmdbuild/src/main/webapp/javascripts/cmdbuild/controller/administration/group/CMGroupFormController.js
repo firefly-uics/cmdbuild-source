@@ -11,8 +11,7 @@
 			this.view.modifyButton.on("click", onModifyButtonClick, this);
 		},
 
-		onGroupSelected: function(selection) {
-			var g = _CMCache.getGroupById(selection.get("id"));
+		onGroupSelected: function(g) {
 			this.currentGroup = g;
 			if (g == null) {
 				this.view.disableModify(enableTBar = false);
