@@ -10,7 +10,8 @@
 				id: 0,
 				text: "*Default*",
 				leaf: true,
-				cmName: "menu"
+				cmName: "menu",
+				iconCls: "cmdbuild-tree-group-icon"
 			}];
 
 			for (var key in groups) {
@@ -54,7 +55,8 @@
 			id: g.get("id"),
 			text: g.get("text"),
 			leaf: true,
-			cmName: "menu"
+			cmName: "menu",
+			iconCls: "cmdbuild-tree-group-icon"
 		};
 	}
 

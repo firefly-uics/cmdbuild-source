@@ -22,7 +22,8 @@
 			id: d.get("id"),
 			text: d.get("description"),
 			leaf: true,
-			cmName: "domain"
+			cmName: "domain",
+			iconCls: "domain"
 		};
 	}
 

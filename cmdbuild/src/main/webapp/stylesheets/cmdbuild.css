@@ -367,7 +367,7 @@ em {
 	background-image: url(../images/icons/table.png) !important;
 }
 
-.detail {
+.detail, .domain {
 	background-image: url(../images/icons/table_link.png) !important;
 }
 
