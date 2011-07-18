@@ -21,9 +21,9 @@
 		
 		initForClass: function(eventParams) {
 			var classId = eventParams.classId;
-			this.removeFields();
 			
 			if (this.currentClassId != classId) {
+				this.removeFields();
 				this.currentClassId = classId;
 				var table = CMDBuild.Cache.getTableById(classId);
 				this.currentClassPrivileges = {
