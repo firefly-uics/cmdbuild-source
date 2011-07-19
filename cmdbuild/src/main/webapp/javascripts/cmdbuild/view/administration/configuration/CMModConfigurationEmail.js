@@ -19,17 +19,20 @@
 				items : [
 					{
 						fieldLabel : tr.email.address,
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						vtype : 'emailaddrspec',
 						allowBlank : true,
 						name : 'email.address'
 					},
 					{
 						fieldLabel : tr.email.username,
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						allowBlank : true,
 						name : 'email.username'
 					},
 					{
 						fieldLabel : tr.email.password,
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						allowBlank : true,
 						name : 'email.password',
 						inputType : 'password'
@@ -44,12 +47,14 @@
 				items : [
 					{
 						fieldLabel : tr.email.smtpserver,
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						allowBlank : true,
 						name : 'email.smtp.server'
 					},
 					{
 						xtype : 'numberfield',
 						fieldLabel : tr.email.port,
+						width: CMDBuild.CM_SMALL_FIELD_WIDTH + 60,
 						allowBlank : true,
 						minValue : 1,
 						maxValue : 65535,
@@ -70,12 +75,14 @@
 				items : [
 					{
 						fieldLabel : tr.email.imapserver,
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						allowBlank : true,
 						name : 'email.imap.server'
 					},
 					{
 						xtype : 'numberfield',
 						fieldLabel : tr.email.port,
+						width: CMDBuild.CM_SMALL_FIELD_WIDTH + 60,
 						allowBlank : true,
 						minValue : 1,
 						maxValue : 65535,

@@ -453,8 +453,8 @@ public class ModClass extends JSONBase {
 			@Parameter(value="idClass2", required=false) int classId2,
 			@Parameter("description") String description,
 			@Parameter(value="cardinality", required=false) String cardinality,
-			@Parameter("directDescription") String descriptionDirect,
-			@Parameter("reverseDescription") String descriptionInverse,
+			@Parameter("descr_1") String descriptionDirect,
+			@Parameter("descr_2") String descriptionInverse,
 			@Parameter("isMasterDetail") boolean isMasterDetail,
 			@Parameter("active") boolean isActive
 	) throws JSONException, AuthException, NotFoundException {

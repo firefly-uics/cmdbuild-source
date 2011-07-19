@@ -94,7 +94,9 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 
 		Ext.apply(this, {
 			border : false,
-			frame : true,
+			frame : false,
+			cls: "x-panel-body-default-framed",
+			bodyCls: 'cmgraypanel',
 			tbar : [this.addFolderField, this.deleteButton],
 			buttonAlign: "center",
 			buttons: [this.saveButton, this.abortButton],

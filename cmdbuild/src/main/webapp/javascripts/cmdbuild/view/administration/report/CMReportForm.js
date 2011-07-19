@@ -46,8 +46,10 @@ Ext.define("CMDBuild.view.administration.report.CMReportForm", {
 		});
 
 		Ext.apply(this, {
-			frame: true,
+			frame: false,
 			border: false,
+ 			cls: "x-panel-body-default-framed",
+			bodyCls: 'cmgraypanel',
 			tbar : this.cmTBar,
 			layout: "card",
 			activeItem:0,

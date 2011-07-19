@@ -8,7 +8,8 @@
 		// override
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-//				title : tr.baseProperties,
+				title : tr.baseProperties,
+				padding: "5 5 20 5",
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,

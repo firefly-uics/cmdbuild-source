@@ -13,11 +13,10 @@
 			});
 
 			this.layersGrid = new CMDBuild.Administration.GeoServerLayerGrid({
-				title: tr.title,
 				region: "center",
 				enableDragDrop: true,
 				frame: false,
-				border: true,
+				border: false,
 				tbar: [this.addLayerButton]
 			});
 
@@ -31,9 +30,10 @@
 			});
 
 			Ext.apply(this, {
+				title: tr.title,
 				layout: "border",
 				items: [this.layersGrid, this.form],
-				border: false
+				border: true
 			});
 
 			this.callParent(arguments);

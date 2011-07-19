@@ -1,19 +1,12 @@
 (function() {
-
 Ext.define("CMDBuild.field.LookupCombo", {
-	extend: "Ext.form.field.ComboBox",
-	trigger1cls: Ext.form.field.ComboBox.triggerCls,
-	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
-	hideTrigger1 :false,
-	hideTrigger2 :false,
-
+	extend: "CMDBuild.field.ErasableCombo",
 	plugins: new CMDBuild.SetValueOnLoadPlugin(),
 	parentId: '',
-	
-	onTrigger1Click: Ext.form.field.ComboBox.prototype.onTriggerClick,
+
 	onTrigger2Click: function() {
 		if (!this.disabled) {
-		this.focus(); // to fire the change event in the single lookup fields
+			this.focus(); // to fire the change event in the single lookup fields
 			this.chainedClear();
 		}
 	},

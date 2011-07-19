@@ -42,7 +42,8 @@
 			tableType: node.get("tableType"),
 			leaf: true,
 			cmName: "process",
-			parent: node.get("parent")
+			parent: node.get("parent"),
+			iconCls: node.get("superclass") ? "cmdbuild-tree-superprocessclass-icon" : "cmdbuild-tree-processclass-icon"
 		};
 	}
 

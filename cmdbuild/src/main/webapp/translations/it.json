@@ -82,6 +82,7 @@
             "domain": "Dominio",
             "is_active": "Attivo",
             "m_d": "M/D",
+            "md_label": "Master/Detail Label",
             "master_detail": "Master/Detail",
             "modify_domain": "Modifica Dominio",
             "name": "Nome",

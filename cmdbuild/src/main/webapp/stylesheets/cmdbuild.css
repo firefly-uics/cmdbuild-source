@@ -711,6 +711,13 @@ em {
 	display: block
 }
 
+/* Toolbar*/
+.cmtoolbaritem {
+	font-size: 11px ! important;
+	padding: 0 0.6em 0 0.6em ! important;
+	color: #333 ! important;
+}
+
 /*
 .x-form-item-label {
 	font-weight: bold ! important;
@@ -722,13 +729,23 @@ em {
 	padding-bottom: 1em;
 }
 
+
 /*override*/
 
-/*
 .x-panel-header {
 	padding: 2px 2px 2px 4px ! important;
 }
 
+#cmbodyAdministration {
+	background-color: #EEE ! important; /* to change the color of the border of the mainvieport*/
+}
+
+.cmgraypanel {
+	background: #F1F1F1 ! important;
+	padding: 5px 5px 0 5px;
+}
+
+/*
 .x-form-display-field {
 	padding: 2px 0 0 0 ! important;
 	line-height: 1.3em ! important;

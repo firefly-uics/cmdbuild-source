@@ -83,6 +83,7 @@
             "is_active": "Aktivan",
             "m_d": "M/D",
             "master_detail": "Nadređeni/podređeni (Master/Detail)",
+            "md_label": "<em>Master/Detail Label<em>",
             "modify_domain": "Izmeni domen",
             "name": "Naziv",
             "title_add": "Dodaj domen",

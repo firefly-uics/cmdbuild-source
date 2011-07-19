@@ -53,7 +53,8 @@ Ext.define("CMDBuild.view.administration.report.CMReportFormStep2", {
 						allowBlank: false,
 						inputType : "file",
 						fieldLabel: image.name,
-                        labelWidth: CMDBuild.CM_LABEL_WIDTH,
+						labelWidth: CMDBuild.CM_LABEL_WIDTH + 100,
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						name: namePrefix+i
 					});
 				} else {

@@ -49,6 +49,22 @@
 			} else {
 				updateActivity.call(this);
 			}
+		},
+
+		onDeleteButtonClick: function() {
+			var me = this;
+			Ext.Msg.confirm(
+				CMDBuild.Translation.management.modworkflow.abort_card, // title
+				CMDBuild.Translation.management.modworkflow.abort_card_confirm, // message
+				confirmCB);
+	
+			function confirmCB(btn) {
+				if (btn != 'yes') {
+					return;
+				} else {
+					delteActivity.call(me);
+				}
+			}
 		}
 	});
 
@@ -82,12 +98,13 @@
 
 		function success(response) {
 			this.currentActivity = Ext.JSON.decode(response.responseText);
-
-			this.cardTabPanel.onAddCardButtonClick({
+			var p = {
 				edit:true,
 				isnew:true,
 				activity: this.currentActivity
-			});
+			}
+			this.cardTabPanel.onAddCardButtonClick(p);
+			this.activityPanelController.onAddButtonClick(p);
 		}
 
 		function failure() {
@@ -103,45 +120,33 @@
 //		});
 //	}
 
-//
-//	function setTerminateProcessListener(view) {
-//		view.activityTabPanel.on("terminate_process", function(params) {
-//			Ext.Msg.confirm(
-//					CMDBuild.Translation.management.modworkflow.abort_card, // title
-//					CMDBuild.Translation.management.modworkflow.abort_card_confirm, // message
-//					confirmCB);
-//
-//			function confirmCB(btn) {
-//				if (btn != 'yes') {
-//					return;
-//				} else {
-//					CMDBuild.LoadMask.get().show();
-//					CMDBuild.ServiceProxy.workflow.terminateActivity({
-//						WorkItemId: params.WorkItemId,
-//						ProcessInstanceId: params.ProcessInstanceId,
-//						success: success,
-//						failure: failure
-//					});
-//				}
-//			}
-//
-//			function success(response) {
-//				CMDBuild.LoadMask.get().hide();
-//				var ret = Ext.util.JSON.decode(response.responseText);
-//				if (ret.success) {
-//					view.cardListGrid.reloadCard();
-//				}
-//			}
-//
-//			function failure() {
-//				CMDBuild.LoadMask.get().hide();
-//				CMDBuild.Msg.error(
-//					CMDBuild.Translation.errors.error_message,
-//					CMDBuild.Translation.errors.generic_error,
-//					true);
-//			}	
-//		});
-//	}
+	function delteActivity() {
+		CMDBuild.LoadMask.get().show();
+		CMDBuild.ServiceProxy.workflow.terminateActivity({
+			WorkItemId: this.currentActivity.raw["WorkItemId"],
+			ProcessInstanceId: this.currentActivity.raw["ProcessInstanceId"],
+			success: success,
+			failure: failure
+		});
+		
+		function success(response) {
+			CMDBuild.LoadMask.get().hide();
+			var ret = Ext.JSON.decode(response.responseText);
+			if (ret.success) {
+//				view.cardListGrid.reloadCard();
+				alert("@@ deleted");
+			}
+		}
+
+		function failure() {
+			CMDBuild.LoadMask.get().hide();
+			CMDBuild.Msg.error(
+				CMDBuild.Translation.errors.error_message,
+				CMDBuild.Translation.errors.generic_error,
+				true);
+		}
+	}
+
 	function updateActivity() {
 		CMDBuild.LoadMask.get().show();
 		this.activityPanelController.view.getForm().submit({

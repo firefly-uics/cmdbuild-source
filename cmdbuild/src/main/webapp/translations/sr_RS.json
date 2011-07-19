@@ -82,6 +82,7 @@
             "domain": "Домен",
             "is_active": "Активан",
             "m_d": "M/D",
+            "md_label": "<em>Master/Detail Label<em>",
             "master_detail": "Надређени/подређени (Master/Detail)",
             "modify_domain": "Измени домен",
             "name": "Назив",

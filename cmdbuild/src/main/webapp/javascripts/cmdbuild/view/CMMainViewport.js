@@ -91,9 +91,12 @@
 		initComponent : function() {
 			this.splash = null;
 			this.cmAccordions = Ext.create("Ext.panel.Panel", {
-				padding: "3 0 3 0",
+				padding: "5 0 5 5",
 				region: 'west',
 				split: true,
+				collapsible: true, 
+				collapseMode: 'mini',
+				preventHeader: true,
 				layout: "accordion",
 				layoutConfig: {
 					animate: false
@@ -105,7 +108,7 @@
 			});
 
 			this.cmPanels = new Ext.panel.Panel({
-				padding: "3 0 3 0",
+				padding: "5 5 5 0",
 				region: 'center',
 				layout: "card",
 				items: this.cmPanels,

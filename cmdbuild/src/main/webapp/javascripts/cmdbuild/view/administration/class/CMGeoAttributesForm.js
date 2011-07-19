@@ -19,8 +19,10 @@
 			buildButtons.call(this);
 
 			Ext.apply(this, {
-				frame: true,
+				frame: false,
 				border: false,
+				cls: "x-panel-body-default-framed",
+				bodyCls: 'cmgraypanel',
 				layout: "border",
 				tbar: this.cmTBar,
 				items: [{

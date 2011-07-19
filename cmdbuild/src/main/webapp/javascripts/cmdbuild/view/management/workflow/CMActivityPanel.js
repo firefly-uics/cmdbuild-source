@@ -28,14 +28,14 @@
 			this.callParent(arguments);
 		},
 
-		loadActivity: function(activity, reloadFields) {
+		loadActivity: function(activity, reloadFields, editMode) {
 			this.activityForm.activityToLoad = activity;
 			this.activityForm.updateInfo(activity);
 			
 			if (reloadFields) {
 				_CMCache.getAttributeList(activity.data.IdClass, 
 					Ext.bind(function cb(a) {
-						this.activityForm.buildActivityFields(a);
+						this.activityForm.buildActivityFields(a, editMode);
 					}, this));
 			}
 		},
@@ -73,19 +73,19 @@
 		},
 
 		buildButtons: function() {
-			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save
-			});
-
-			this.cancelButton = new Ext.button.Button( {
-				text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort
-			});
-
-			this.advanceButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.advance
-			});
-
-			this.cmButtons = [this.saveButton, this.advanceButton, this.cancelButton];
+			this.cmButtons = [
+				this.saveButton = new Ext.button.Button({
+					text: CMDBuild.Translation.common.buttons.save
+				}),
+	
+				this.cancelButton = new Ext.button.Button( {
+					text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort
+				}),
+	
+				this.advanceButton = new Ext.button.Button({
+					text: CMDBuild.Translation.common.buttons.workflow.advance
+				})
+			];
 		},
 
 		updateInfo : function(activiy) {
@@ -93,7 +93,7 @@
 			this.processStepCode.setText(activiy.data.Code || "");
 		},
 
-		buildActivityFields: function(attributes) {
+		buildActivityFields: function(attributes, editMode) {
 			var cleanedAttrs = [];
 			for (var a in attributes) {
 				a = attributes[a];
@@ -105,7 +105,7 @@
 				}
 			}
 
-			this.fillForm(cleanedAttrs, editMode = true);
+			this.fillForm(cleanedAttrs, editMode);
 		} 
 	});
 

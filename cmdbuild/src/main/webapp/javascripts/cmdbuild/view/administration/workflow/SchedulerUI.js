@@ -28,7 +28,7 @@ Ext.define("CMDBuild.Administration.SchedulerUI", {
 				xtype: 'tabpanel',
 				activeTab: 0,
 		    	region: 'center',
-		    	frame: true,
+		    	frame: false,
 		    	border: false,
 		    	items: [this.jobPanel, this.jobParameter],
 		    	buttonAlign: 'center',

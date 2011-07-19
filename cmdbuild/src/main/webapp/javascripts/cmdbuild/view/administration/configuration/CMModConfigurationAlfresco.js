@@ -23,12 +23,13 @@
 					fieldLabel : tr.serverUrl,
 					allowBlank : false,
 					name : 'server.url',
-					width : 450
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				},
 				{
 					fieldLabel : tr.delay,
 					allowBlank : false,
 					xtype : 'numberfield',
+					width: CMDBuild.CM_SMALL_FIELD_WIDTH + 60,
 					name : 'delay'
 				}]
 			},
@@ -42,19 +43,21 @@
 						fieldLabel : tr.fileserverType,
 						allowBlank : false,
 						name : 'fileserver.type',
+						width: CMDBuild.CM_BIG_FIELD_WIDTH,
 						disabled : true
 					},
 					{
 						fieldLabel : tr.fileserverUrl,
 						allowBlank : false,
 						name : 'fileserver.url',
-						width : 450
+						width: CMDBuild.CM_BIG_FIELD_WIDTH
 					},
 					{
 						fieldLabel : tr.fileserverPort,
 						allowBlank : false,
 						xtype : 'numberfield',
-						name : 'fileserver.port'
+						name : 'fileserver.port',
+						width: CMDBuild.CM_SMALL_FIELD_WIDTH + 60
 					}
 				]
 			},
@@ -68,18 +71,19 @@
 					fieldLabel : tr.repositoryFSPath,
 					allowBlank : false,
 					name : 'repository.fspath',
-					width : 450
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				}, 
 				{
 					fieldLabel : tr.repositoryWSPath,
 					allowBlank : false,
 					name : 'repository.wspath',
-					width : 450
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				}, 
 				{
 					fieldLabel : tr.repositoryApp,
 					allowBlank : false,
-					name : 'repository.app'
+					name : 'repository.app',
+					width: CMDBuild.CM_MIDDLE_FIELD_WIDTH
 				}]
 			},
 			{
@@ -91,13 +95,15 @@
 				{
 					fieldLabel : tr.credentialUser,
 					allowBlank : false,
-					name : 'credential.user'
+					name : 'credential.user',
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				},
 				{
 					fieldLabel : tr.credentialPassword,
 					allowBlank : false,
 					inputType : 'password',
-					name : 'credential.password'
+					name : 'credential.password',
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				},
 				{
 					fieldLabel : tr.categoryLookup,
@@ -110,7 +116,8 @@
 					grow : true,
 					triggerAction : 'all',
 					store : CMDBuild.Cache.getLookupTypeLeavesAsStore(),
-					queryMode : "local"
+					queryMode : "local",
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				}]
 			}];
 

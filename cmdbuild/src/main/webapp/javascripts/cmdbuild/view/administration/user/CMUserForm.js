@@ -40,7 +40,8 @@
 			var userName = new Ext.form.TextField( {
 				id : 'username',
 				fieldLabel : tr.username,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				width: CMDBuild.CM_BIG_FIELD_WIDTH,
 				allowBlank : false,
 				name : 'username',
 				cmImmutable : true
@@ -49,7 +50,8 @@
 			var userDescription = new Ext.form.TextField( {
 				xtype : 'textfield',
 				fieldLabel : tr.description,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				width: CMDBuild.CM_BIG_FIELD_WIDTH,
 				allowBlank : false,
 				name : 'description'
 			});
@@ -57,7 +59,8 @@
 			var userEmail = new Ext.form.TextField( {
 				vtype : 'emailOrBlank',
 				fieldLabel : tr.email,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				width: CMDBuild.CM_BIG_FIELD_WIDTH,
 				allowBlank : true,
 				name : 'email'
 			});
@@ -78,12 +81,12 @@
 					direction : "ASC"
 				} ]
 			});
-			
-			//TODO 3 to 4 something went wrong with the group reload
+
 			this.defaultGroup = new Ext.form.ComboBox( {
 				name : 'defaultgroup',
 				fieldLabel : tr.defaultgroup,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				width: CMDBuild.CM_BIG_FIELD_WIDTH,
 				triggerAction : 'all',
 				valueField : 'id',
 				displayField : 'description',
@@ -97,18 +100,20 @@
 				title : tr.user_info,
 				region : 'west',
 				margins : '5 0 5 5',
-                padding: "5 5 20 5",
-                autoScroll: true,
+				padding: "5 5 20 5",
+				autoScroll: true,
 				split : true,
 				flex : 1,
 				items : [ userName, userDescription, userEmail,
-					this.defaultGroup, {
+					this.defaultGroup,
+					{
 						xtype : 'xcheckbox',
 						fieldLabel : tr.isactive,
-                        labelWidth: CMDBuild.CM_LABEL_WIDTH,
+						labelWidth: CMDBuild.CM_LABEL_WIDTH,
 						name : 'isactive',
 						checked : true
-					} ]
+					}
+				]
 			});
 
 			this.userPassword = new Ext.form.FieldSet( {
@@ -116,21 +121,23 @@
 				region : 'center',
 				autoScroll : true,
 				margins : '5 5 5 5',
-                padding: "5 5 20 5",
+				padding: "5 5 20 5",
 				flex : 1,
 				items : [ {
 					xtype : 'textfield',
 					inputType : 'password',
 					id : 'user_password',
 					name : 'password',
-                    labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					fieldLabel : tr.password,
 					allowBlank : false
 				}, {
 					xtype : 'textfield',
 					inputType : 'password',
 					fieldLabel : tr.confirmation,
-                    labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					allowBlank : false,
 					name : 'confirmation',
 					vtype : 'password',
@@ -149,8 +156,10 @@
 			});
 
 			Ext.apply(this, {
-				frame : true,
+				frame : false,
 				border : false,
+				cls: "x-panel-body-default-framed",
+				bodyCls: 'cmgraypanel',
 				layout : "border",
 				tbar : this.cmTBar,
 				items : [ this.form ],

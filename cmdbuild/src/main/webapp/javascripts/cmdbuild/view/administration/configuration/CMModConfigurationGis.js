@@ -1,5 +1,6 @@
 (function() {
-	var tr = CMDBuild.Translation.administration.setup.gis;
+	var tr = CMDBuild.Translation.administration.setup.gis,
+		width =  CMDBuild.CM_SMALL_FIELD_WIDTH + 60;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGis", {
 		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
@@ -13,20 +14,22 @@
 				name: 'enabled',
 				fieldLabel: tr.enable
 			},{
-				xtype: 'field',
+				xtype: 'numberfield',
 				name:'center.lat',
 				fieldLabel: tr.center_lat,
-				width: 300
+				width: width
 			},{
-				xtype: 'field',
+				xtype: 'numberfield',
 				name:'center.lon',
 				fieldLabel: tr.center_lon,
-				width: 300
+				width: width
 			},{
-				xtype: 'field',
+				xtype: 'numberfield',
 				name:'initialZoomLevel',
 				fieldLabel: tr.initial_zoom,
-				width: 300
+				width: width,
+				minValue : 0,
+				maxValue : 25
 			}]
 
 			this.callParent(arguments);
