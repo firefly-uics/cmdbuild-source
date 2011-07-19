@@ -200,7 +200,7 @@ public class EntryTypeCommands {
 		                final String name = rs.getString("name");
 		                final String comment = rs.getString("comment");
 		                final AttributeMetadata meta = attributeCommentToMetadata(comment);
-		                final CMAttributeType type = SqlType.createAttributeType(rs.getString("sql_type"), meta);
+		                final CMAttributeType<?> type = SqlType.createAttributeType(rs.getString("sql_type"), meta);
 		                return new DBAttribute(name, type, meta);
 		            }
 		        });

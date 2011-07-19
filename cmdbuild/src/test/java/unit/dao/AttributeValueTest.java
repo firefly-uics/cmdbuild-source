@@ -1,15 +1,30 @@
 package unit.dao;
 
-import static org.junit.Assert.*;
-import static org.cmdbuild.dao.attribute.DateAttribute.*;
-import static org.cmdbuild.dao.attribute.DateTimeAttribute.*;
+import static org.cmdbuild.dao.attribute.DateAttribute.JSON_DATE_FORMAT;
+import static org.cmdbuild.dao.attribute.DateAttribute.POSTGRES_DATE_FORMAT;
+import static org.cmdbuild.dao.attribute.DateAttribute.REST_DATE_FORMAT;
+import static org.cmdbuild.dao.attribute.DateAttribute.SOAP_DATE_FORMAT;
+import static org.cmdbuild.dao.attribute.DateTimeAttribute.JSON_DATETIME_FORMAT;
+import static org.cmdbuild.dao.attribute.DateTimeAttribute.POSTGRES_DATETIME_FORMAT;
+import static org.cmdbuild.dao.attribute.DateTimeAttribute.REST_DATETIME_FORMAT;
+import static org.cmdbuild.dao.attribute.DateTimeAttribute.SOAP_DATETIME_FORMAT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.cmdbuild.dao.attribute.*;
+import org.cmdbuild.dao.attribute.BooleanAttribute;
+import org.cmdbuild.dao.attribute.DateAttribute;
+import org.cmdbuild.dao.attribute.DateTimeAttribute;
+import org.cmdbuild.dao.attribute.DecimalAttribute;
+import org.cmdbuild.dao.attribute.DoubleAttribute;
+import org.cmdbuild.dao.attribute.StringAttribute;
+import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
 import org.cmdbuild.elements.TableFactoryImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -38,24 +53,41 @@ public class AttributeValueTest {
 	//private static IAttribute textAttribute;
 	//private static IAttribute timeAttribute;
 
+	private static Map<String, String> NO_META = new HashMap<String, String>();
+
 	@BeforeClass
 	public static void createAttributes() {
 		ITableFactory tf = new TableFactoryImpl(UserContext.systemContext());
 		BaseSchema cmClass = tf.create();
-		booleanAttribute = new BooleanAttribute(cmClass, "Boolean");
+		booleanAttribute = new BooleanAttribute(cmClass, "Boolean", NO_META);
 		//charAttribute = new CharAttribute(cmClass, "Char");
-		dateAttribute = new DateAttribute(cmClass, "Date");
-		dateTimeAttribute = new DateTimeAttribute(cmClass, "DateTime");
-		decimalAttribute = new DecimalAttribute(cmClass, "Decimal");
-		doubleAttribute = new DoubleAttribute(cmClass, "Double");
+		dateAttribute = new DateAttribute(cmClass, "Date", NO_META);
+		dateTimeAttribute = new DateTimeAttribute(cmClass, "DateTime", NO_META);
+		decimalAttribute = new DecimalAttribute(cmClass, "Decimal", doubleMeta(10, 5));
+		doubleAttribute = new DoubleAttribute(cmClass, "Double", NO_META);
 		//foreignKeyAttribute = new ForeignKeyAttribute(cmClass, "ForeignKey");
 		//geometryAttribute = new GeometryAttribute(cmClass, "Geometry");
 		//ipAddressAttribute = new IPAddressAttribute(cmClass, "IPAddress");
 		//lookupAttribute = new LookupAttribute(cmClass, "Lookup");
 		//referenceAttribute = new ReferenceAttribute(cmClass, "Reference");
-		stringAttribute = new StringAttribute(cmClass, "String");
+		stringAttribute = new StringAttribute(cmClass, "String", stringMeta(200));
 		//textAttribute = new TextAttribute(cmClass, "Text");
 		//timeAttribute = new TimeAttribute(cmClass, "Time");
+	}
+
+	@SuppressWarnings("serial")
+	private static Map<String, String> doubleMeta(final int precision, final int scale) {
+		return new HashMap<String, String>() {{
+			put(AttributeDataDefinitionMeta.PRECISION.name(), Integer.toString(precision));
+			put(AttributeDataDefinitionMeta.SCALE.name(), Integer.toString(scale));
+		}};
+	}
+
+	@SuppressWarnings("serial")
+	private static Map<String, String> stringMeta(final int length) {
+		return new HashMap<String, String>() {{
+			put(AttributeDataDefinitionMeta.LENGTH.name(), Integer.toString(length));
+		}};
 	}
 
 	private void assertTypeErrorOnRead(Object value, IAttribute attribute) {

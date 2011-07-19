@@ -5,8 +5,6 @@ import java.util.Map;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +71,7 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 	private JSONObject relationAttributesToJson(RelationInfo ri) throws JSONException {
 		final JSONObject jsonAttr = new JSONObject();
 		for (Map.Entry<String, Object> attr : ri.getRelationAttributes()) {
-			jsonAttr.put(attr.getKey(), attr.getValue());
+			jsonAttr.put(attr.getKey(), javaToJsonValue(attr.getValue()));
 		}
 		return jsonAttr;
 	}

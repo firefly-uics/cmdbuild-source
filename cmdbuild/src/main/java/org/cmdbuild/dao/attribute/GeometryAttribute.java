@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.attribute;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -12,8 +13,8 @@ public class GeometryAttribute extends AttributeImpl {
 
 	private AttributeType subType;
 
-	public GeometryAttribute(BaseSchema schema, String name, AttributeType subType) {
-		super(schema, name);
+	public GeometryAttribute(BaseSchema schema, String name, Map<String, String> meta, AttributeType subType) {
+		super(schema, name, meta);
 		this.subType = subType;
 	}
 

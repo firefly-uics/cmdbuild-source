@@ -311,10 +311,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	private FieldMode fieldMode;
 
 	public static IAttribute create(BaseSchema schema, String name, AttributeType type, Map<String,String> meta) {
-		AttributeImpl attribute = type.createAttribute(schema, name);
-		if (meta != null) {
-			attribute.readDataDefinitionMeta(meta);
-		}
+		AttributeImpl attribute = type.createAttribute(schema, name, meta);
 		return attribute;
 	}
 
@@ -322,7 +319,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		return create(schema, name, type, null);
 	}
 
-	protected AttributeImpl(BaseSchema schema, String name) {
+	protected AttributeImpl(BaseSchema schema, String name, Map<String,String> meta) {
 		this.schema = schema;
 		this.name = name;
 		mode = Mode.WRITE;
@@ -332,6 +329,9 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		isReferenceDirect = false;
 		index = NEWINDEX;
 		isLocal = true;
+		if (meta != null) {
+			readDataDefinitionMeta(meta);
+		}
 	}
 
 	public void setName(String name) {
@@ -624,10 +624,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		}
 	}
 
-	/*
-	 * Override in subclasses if needed
-	 */
-	abstract protected Object convertValue(Object maybeValue);
+	protected abstract Object convertValue(Object value);
 
 	public final String valueToString(Object value) {
 		if (value == null) {

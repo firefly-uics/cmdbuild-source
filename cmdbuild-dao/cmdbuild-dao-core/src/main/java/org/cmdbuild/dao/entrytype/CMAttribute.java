@@ -6,7 +6,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 public interface CMAttribute {
 
 	CMEntryType getOwner();
-	CMAttributeType getType();
+	CMAttributeType<?> getType();
 
 	String getName();
 	String getDescription();

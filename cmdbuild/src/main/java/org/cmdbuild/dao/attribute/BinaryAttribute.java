@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.attribute;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.type.ByteArray;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -7,8 +9,8 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public class BinaryAttribute extends AttributeImpl {
 
-	public BinaryAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	public BinaryAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
 	}
 
 	@Override

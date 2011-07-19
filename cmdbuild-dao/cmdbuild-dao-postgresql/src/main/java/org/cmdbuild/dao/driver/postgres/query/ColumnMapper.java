@@ -33,12 +33,14 @@ public class ColumnMapper {
 		public final String name;
 		public final Alias alias;
 		public final Integer index;
+		public final SqlType sqlType;
 		public final String sqlTypeString;
 
-		private EntryTypeAttribute(final String name, final Alias alias, final Integer index, final String sqlTypeString) {
+		private EntryTypeAttribute(final String name, final Alias alias, final Integer index, final SqlType sqlType, final String sqlTypeString) {
 			this.name = name;
 			this.alias = alias;
 			this.index = index;
+			this.sqlType = sqlType;
 			this.sqlTypeString = sqlTypeString;
 		}
 	}
@@ -65,16 +67,26 @@ public class ColumnMapper {
 		 */
 		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index, final CMEntryType type) {
 			final String sqlTypeString = getSqlTypeString(type, attributeName);
+			final SqlType sqlType = getSqlType(type, attributeName);
 			for (CMEntryType currentType : map.keySet()) {
 				final String currentName = (type == null || currentType.equals(type)) ? attributeName : null;
-				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlTypeString);
+				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlType, sqlTypeString);
 				map.get(currentType).add(eta);
+			}
+		}
+
+		private SqlType getSqlType(CMEntryType type, String attributeName) {
+			if (type != null) {
+				final CMAttributeType<?> attributeType = type.getAttribute(attributeName).getType();
+				return SqlType.getSqlType(attributeType);
+			} else {
+				return SqlType.unknown;
 			}
 		}
 
 		private String getSqlTypeString(CMEntryType type, String attributeName) {
 			if (type != null) {
-				final CMAttributeType attributeType = type.getAttribute(attributeName).getType();
+				final CMAttributeType<?> attributeType = type.getAttribute(attributeName).getType();
 				return SqlType.getSqlTypeString(attributeType);
 			} else {
 				return SqlType.unknown.name();

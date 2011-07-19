@@ -10,17 +10,17 @@ public class DBAttribute implements CMAttribute {
 	}
 
 	CMEntryType owner; // Set by the entry type when attached
-	private final CMAttributeType type;
+	private final CMAttributeType<?> type;
 
 	// TODO Make name and meta inherited by both DBAttribute and DBEntryType
 	private final String name;
 	private final AttributeMetadata meta;
 
-	public DBAttribute(final String name, final CMAttributeType type) {
+	public DBAttribute(final String name, final CMAttributeType<?> type) {
 		this(name, type, new AttributeMetadata());
 	}
 
-	public DBAttribute(final String name, final CMAttributeType type, final AttributeMetadata meta) {
+	public DBAttribute(final String name, final CMAttributeType<?> type, final AttributeMetadata meta) {
 		Validate.notEmpty(name);
 		this.owner = UndefinedClass.UNDEFINED_CLASS;
 		this.name = name;
@@ -34,7 +34,7 @@ public class DBAttribute implements CMAttribute {
 	}
 
 	@Override
-	public CMAttributeType getType() {
+	public CMAttributeType<?> getType() {
 		return type;
 	}
 
