@@ -2,6 +2,8 @@ package org.cmdbuild.servlets.json.serializers;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -63,15 +65,17 @@ public class JsonGetRelationListResponse extends AbstractJsonResponseSerializer 
 		relation.put("dst_code", ri.getTargetCode());
 		relation.put("dst_desc", ri.getTargetDescription());
 		relation.put("rel_id", ri.getRelationId());
-		relation.put("rel_date", formatDate(ri.getRelationBeginDate()));
+		relation.put("rel_date", formatDateTime(ri.getRelationBeginDate()));
 		relation.put("rel_attr", relationAttributesToJson(ri));
 		return relation;
 	}
 
 	private JSONObject relationAttributesToJson(RelationInfo ri) throws JSONException {
 		final JSONObject jsonAttr = new JSONObject();
+		final CMDomain domain = ri.getRelation().getType();
 		for (Map.Entry<String, Object> attr : ri.getRelationAttributes()) {
-			jsonAttr.put(attr.getKey(), javaToJsonValue(attr.getValue()));
+			CMAttributeType<?> type = domain.getAttribute(attr.getKey()).getType();
+			jsonAttr.put(attr.getKey(), javaToJsonValue(type, attr.getValue()));
 		}
 		return jsonAttr;
 	}

@@ -77,10 +77,11 @@
 				
 				for (var i = 0, l=fields.length; i<l; ++i) {
 					var f = fields[i],
-						name = f.CMAttribute.name;
+						name = f.CMAttribute.name,
+						val = rel_attrs[name];
 					
-					if (rel_attrs[name]) {
-						f.setValue(rel_attrs[name]);
+					if (val) {
+						f.setValue(val.id || val);
 					}
 				}
 		}
