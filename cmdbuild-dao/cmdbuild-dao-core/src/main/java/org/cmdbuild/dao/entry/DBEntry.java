@@ -88,8 +88,15 @@ public abstract class DBEntry {
 		if (type.getAttribute(key) == null) {
 			throw new IllegalArgumentException();
 		}
-		// TODO convert value
-		values.put(key, value);
+		values.put(key, toNative(key, value));
+	}
+
+	private Object toNative(final String key, final Object value) {
+		if (value == null) {
+			return null;
+		} else {
+			return type.getAttribute(key).getType().convertNotNullValue(value);
+		}
 	}
 
 	protected void saveOnly() {

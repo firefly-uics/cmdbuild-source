@@ -148,7 +148,8 @@
 			l=relations.length,
 			nodes = [],
 			attributesToString = "",
-			key;
+			key,
+			val;
 
 		for (; i<l; ++i) {
 			r = relations[i];
@@ -161,9 +162,10 @@
 			attributesToString = "";
 			for (var j=0; j<node.rel_attr_keys.length; ++j) {
 				key = node.rel_attr_keys[j];
+				val = r.rel_attr[key] || " - "; // val never undefined
 
 				attributesToString += j==0 ? "" : " | ";
-				attributesToString += r.rel_attr[key] || " - ";
+				attributesToString += val.dsc || val;
 			}
 			r.attr_as_obj = r.rel_attr; // used in modify window
 			r.rel_attr = attributesToString;

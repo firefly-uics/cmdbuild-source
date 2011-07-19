@@ -8,6 +8,7 @@ import java.util.Map;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
@@ -112,6 +113,7 @@ public abstract class Utils {
 	static final CommentMapper ATTRIBUTE_COMMENT_MAPPER = new EntryTypeCommentMapper() {
 		{
 			define("DESCR", EntryTypeMetadata.DESCRIPTION);
+			define("LOOKUP", AttributeMetadata.LOOKUP_TYPE);
 		}
 	};
 
