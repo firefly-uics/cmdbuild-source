@@ -1,13 +1,9 @@
 package org.cmdbuild.elements;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
@@ -197,35 +193,6 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 
 	public boolean isNew() {
 		return (oid <= 0);
-	}
-
-	protected Map<String, IAttribute> loadAttributes() {
-		Map<String, IAttribute> a = super.loadAttributes();
-		a.put("Id", AttributeImpl.create(this, "Id", AttributeType.INTEGER, notNullMeta()));
-		a.put("IdDomain", AttributeImpl.create(this, "IdDomain", AttributeType.REGCLASS, notNullMeta()));
-		a.put("IdClass1", AttributeImpl.create(this, "IdClass1", AttributeType.REGCLASS, notNullMeta()));
-		a.put("IdObj1", AttributeImpl.create(this, "IdObj1", AttributeType.INTEGER, notNullMeta()));
-		a.put("IdClass2", AttributeImpl.create(this, "IdClass2", AttributeType.REGCLASS, notNullMeta()));
-		a.put("IdObj2", AttributeImpl.create(this, "IdObj2", AttributeType.INTEGER, notNullMeta()));
-		a.put("Status", AttributeImpl.create(this, "Status", AttributeType.CHAR, notNullMeta()));
-		a.put("User", AttributeImpl.create(this, "User", AttributeType.STRING, notNullMeta()));
-		a.put("BeginDate", AttributeImpl.create(this, "BeginDate", AttributeType.TIMESTAMP, nillableMeta()));
-		a.put("EndDate", AttributeImpl.create(this, "EndDate", AttributeType.TIMESTAMP, nillableMeta()));
-		return a;
-	}
-
-	private Map<String,String> notNullMeta() {
-		Map<String,String> notNullMeta = new HashMap<String,String>();
-		notNullMeta.put(AttributeDataDefinitionMeta.MODE.toString(), Mode.RESERVED.getModeString());
-		notNullMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.TRUE.toString());
-		return notNullMeta;
-	}
-
-	private Map<String,String> nillableMeta() {
-		Map<String,String> nillableMeta = new HashMap<String,String>();
-		nillableMeta.put(AttributeDataDefinitionMeta.MODE.toString(), Mode.RESERVED.getModeString());
-		nillableMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.FALSE.toString());
-		return nillableMeta;
 	}
 
 	@Override

@@ -16,4 +16,11 @@ public abstract class AbstractJsonResponseSerializer {
 			return DATE_TIME_FORMATTER.print(dateTime);
 		}
 	}
+
+	protected final Object javaToJsonValue(final Object value) {
+		if (value  instanceof DateTime) {
+			return formatDate((DateTime) value);
+		}
+		return value;
+	}
 }

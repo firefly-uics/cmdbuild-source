@@ -60,7 +60,7 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 		for (CMAttribute attr : relation.getType().getAttributes()) {
 			final JSONObject jsonAttrValue = new JSONObject();
 			jsonAttrValue.put("d", attr.getDescription());
-			jsonAttrValue.put("v", relation.get(attr.getName()));
+			jsonAttrValue.put("v", javaToJsonValue(relation.get(attr.getName())));
 			//jsonAttrValue.put("c", TODO: CHANGED);
 			jsonAttr.put(jsonAttrValue);
 		}

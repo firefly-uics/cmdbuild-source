@@ -118,8 +118,9 @@ public class EntryQueryCommand {
 
 		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs) throws SQLException {
 			for (EntryTypeAttribute a : columnMapper.getEntryTypeAttributes(typeAlias, entry.getType())) {
-				if (a.name != null) { // Not part of this entry type
-					entry.setOnly(a.name, rs.getObject(a.index));
+				if (a.name != null) { // Not belonging to this entry type
+					final Object sqlValue = rs.getObject(a.index);
+					entry.setOnly(a.name, a.sqlType.sqlToJavaValue(sqlValue));
 				}
 			}
 		}

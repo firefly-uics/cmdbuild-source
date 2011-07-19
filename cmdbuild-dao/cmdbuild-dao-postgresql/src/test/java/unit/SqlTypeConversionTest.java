@@ -21,7 +21,7 @@ public class SqlTypeConversionTest {
 	@Test
 	public void testConversionFromSql() {
 		String sqlType;
-		CMAttributeType type;
+		CMAttributeType<?> type;
 
 		sqlType = "bool";
 		type = SqlType.createAttributeType(sqlType, NO_META);

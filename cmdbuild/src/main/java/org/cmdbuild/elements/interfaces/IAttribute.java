@@ -1,5 +1,7 @@
 package org.cmdbuild.elements.interfaces;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.attribute.*;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.DirectedDomain;
@@ -12,108 +14,108 @@ public interface IAttribute extends BaseSchema {
 	public enum AttributeType {
 		BOOLEAN("bool") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new BooleanAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new BooleanAttribute(schema, name, meta);
 			}
 		}, INTEGER("int4") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new IntegerAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new IntegerAttribute(schema, name, meta);
 			}
 		}, DECIMAL("numeric") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new DecimalAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new DecimalAttribute(schema, name, meta);
 			}
 		}, DOUBLE("float8") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new DoubleAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new DoubleAttribute(schema, name, meta);
 			}
 		}, DATE("date") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new DateAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new DateAttribute(schema, name, meta);
 			}
 		}, TIMESTAMP("timestamp") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new DateTimeAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new DateTimeAttribute(schema, name, meta);
 			}
 		}, CHAR("bpchar") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new CharAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new CharAttribute(schema, name, meta);
 			}
 		}, STRING("varchar") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new StringAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new StringAttribute(schema, name, meta);
 			}
 		}, TEXT("text") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new TextAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new TextAttribute(schema, name, meta);
 			}
 		}, REFERENCE("int4") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new ReferenceAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new ReferenceAttribute(schema, name, meta);
 			}
 		}, FOREIGNKEY("int4") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new ForeignKeyAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new ForeignKeyAttribute(schema, name, meta);
 			}
 		}, LOOKUP("int4") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new LookupAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new LookupAttribute(schema, name, meta);
 			}
 		}, INET("inet") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new IPAddressAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new IPAddressAttribute(schema, name, meta);
 			}
 		}, TIME("time") {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new TimeAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new TimeAttribute(schema, name, meta);
 			}
 		}, REGCLASS("regclass", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new RegclassAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new RegclassAttribute(schema, name, meta);
 			}
 		}, POINT("POINT", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new GeometryAttribute(schema, name, this);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new GeometryAttribute(schema, name, meta, this);
 			}
 		}, LINESTRING("LINESTRING", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new GeometryAttribute(schema, name, this);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new GeometryAttribute(schema, name, meta, this);
 			}
 		}, POLYGON("POLYGON", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new GeometryAttribute(schema, name, this);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new GeometryAttribute(schema, name, meta, this);
 			}
 		}, BINARY("bytea", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new BinaryAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new BinaryAttribute(schema, name, meta);
 			}
 		}, INTARRAY("_int4", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new IntArrayAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new IntArrayAttribute(schema, name, meta);
 			}
 		}, STRINGARRAY("_varchar", true) {
 			@Override
-			public AttributeImpl createAttribute(BaseSchema schema, String name) {
-				return new StringArrayAttribute(schema, name);
+			public AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta) {
+				return new StringArrayAttribute(schema, name, meta);
 			}
 		};
 
@@ -129,7 +131,7 @@ public interface IAttribute extends BaseSchema {
 		}
 		public String toDBString() { return dbStr; }
 		public boolean isReserved() { return reserved; }
-		public abstract AttributeImpl createAttribute(BaseSchema schema, String name);
+		public abstract AttributeImpl createAttribute(BaseSchema schema, String name, Map<String,String> meta);
 		public static AttributeType fromDBString(String typeName) {
 			for (AttributeType type : AttributeType.values()){
 				if(typeName.equals(type.toDBString())) {

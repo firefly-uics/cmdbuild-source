@@ -1,14 +1,15 @@
 package org.cmdbuild.dao.attribute;
 
-import org.cmdbuild.elements.AttributeImpl;
+import java.util.Map;
+
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
-public class LookupAttribute extends AttributeImpl {
+public class LookupAttribute extends DaoWrapperAttribute {
 
-	public LookupAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	public LookupAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
 	}
 
 	@Override
