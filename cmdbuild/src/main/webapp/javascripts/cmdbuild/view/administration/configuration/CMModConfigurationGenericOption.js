@@ -1,6 +1,7 @@
 (function() {
 	
-var tr = CMDBuild.Translation.administration.setup.cmdbuild;
+var tr = CMDBuild.Translation.administration.setup.cmdbuild,
+	smallWidth = 	CMDBuild.CM_SMALL_FIELD_WIDTH + 60;
 
 Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGenericOption", {
 	extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
@@ -13,8 +14,20 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 		this.title = tr.title;
 		this.instanceNameField = new Ext.form.field.Text({
 			fieldLabel: tr.instancename,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			name: 'instance_name',
 			allowBlank: true
+		});
+		
+		var startingClass = new CMDBuild.field.ErasableCombo({
+			fieldLabel : tr.startingClass,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			name : 'startingclass',
+			valueField : 'id',
+			displayField : 'description',
+			editable : false,
+			store : _CMCache.getClassesAndProcessesStore(),
+			queryMode : 'local'
 		});
 		
 		this.items = [
@@ -22,33 +35,29 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			xtype: 'fieldset',
 			title: tr.fieldsetgeneraltitle,
 			items: [
-				this.instanceNameField,
-			{
-				xtype : 'combo',
-				fieldLabel : tr.startingClass,
-				name : 'startingclass',
-				valueField : 'id',
-				displayField : 'description',
-				editable : false,
-				store : _CMCache.getClassesAndProcessesStore(),
-				queryMode : 'local'
-			},{
+				this.instanceNameField
+				,startingClass
+			,{
 				fieldLabel: tr.rowlimit,
 				xtype: 'numberfield',
+				width: smallWidth,
 				name: 'rowlimit',
 				allowBlank: false
 			},{
 				fieldLabel: tr.referencecombolimit,
+				width: smallWidth,
 				xtype: 'numberfield',
 				name: 'referencecombolimit',
 				allowBlank: false
 			},{
 				fieldLabel: tr.relationlimit,
+				width: smallWidth,
 				xtype: 'numberfield',
 				name: 'relationlimit',
 				allowBlank: false
 			},{
 				fieldLabel: tr.cardpanelheight,
+				width: smallWidth,
 				xtype: 'numberfield',
 				name: 'grid_card_ratio',
 				allowBlank: false,
@@ -56,6 +65,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 				minValue: 0
 			},{
 				fieldLabel: tr.sessiontimeout,
+				width: smallWidth,
 				xtype: 'numberfield',
 				name: 'session.timeout',
 				allowBlank: true,
@@ -66,12 +76,14 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			title: tr.fieldsetpopupwindowtitle,
 			items: [{
 				fieldLabel: tr.popupheightlabel,
+				width: smallWidth,
 			    xtype: 'numberfield',
 			    name: 'popuppercentageheight',
 			    maxValue: 100,
 			    allowBlank: false
 			},{
 			  	fieldLabel: tr.popupwidthlabel,
+			  	width: smallWidth,
 			    xtype: 'numberfield',
 			    name: 'popuppercentagewidth',
 			    maxValue:100,

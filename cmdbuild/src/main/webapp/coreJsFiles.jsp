@@ -7,7 +7,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
@@ -43,6 +42,7 @@
 
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script> <!-- TODO move to management -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
 
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>
@@ -54,11 +54,8 @@
 
 
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/State.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/AccordionOverride.js"></script>-->
 
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/EditorGrid.js"></script>-->
 <script type="text/javascript" src="javascripts/cmdbuild/core/ExtendedFormPanel.js"></script>
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/Grid.js"></script>-->
 <!---->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/InitHeader.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/LocaleSearchField.js"></script>-->

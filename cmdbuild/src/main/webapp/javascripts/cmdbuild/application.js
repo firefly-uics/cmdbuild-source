@@ -1,9 +1,12 @@
 (function() {
 	Ext.ns("CMDBuild");
 	
-    // global constants
-    CMDBuild.CM_LABEL_WIDTH = 150;
-    
+	// global constants
+	CMDBuild.CM_LABEL_WIDTH = 150;
+	CMDBuild.CM_BIG_FIELD_WIDTH = 420;
+	CMDBuild.CM_MIDDLE_FIELD_WIDTH = 280;
+	CMDBuild.CM_SMALL_FIELD_WIDTH = 210;
+
 	// global object with runtime configuration
 	CMDBuild.Config = {}
 	

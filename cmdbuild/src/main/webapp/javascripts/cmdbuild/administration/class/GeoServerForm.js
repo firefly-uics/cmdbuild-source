@@ -21,8 +21,14 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				frame: false,
+				border: false,
+				cls: "x-panel-body-default-framed",
+				bodyCls: 'cmgraypanel',
+				autoScroll: true,
 				tbar : buildTBarTools.call(this),
 				items : items.call(this),
+				layout: "border",
 				buttonAlign : "center",
 				buttons : buildButtons.call(this)
 			});
@@ -54,6 +60,7 @@
 		var name = new Ext.form.TextField({
 			fieldLabel : tr_attribute.name,
 			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			name : "name",
 			allowBlank : false,
 			cmImmutable: true
@@ -82,6 +89,7 @@
 		var minZoom = new Ext.form.SliderField({
 			fieldLabel : tr.min_zoom,
 			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			plugins : [ new CMDBuild.SliderFieldPlugin() ],
 			minValue : 0,
 			maxValue : 25,
@@ -91,6 +99,7 @@
 		var maxZoom = new Ext.form.SliderField({
 			fieldLabel : tr.max_zoom,
 			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			plugins : [ new CMDBuild.SliderFieldPlugin() ],
 			minValue : 0,
 			maxValue : 25,
@@ -107,6 +116,7 @@
 			xtype : "textfield",
 			fieldLabel : tr_attribute.description,
 			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			name : "description",
 			allowBlank : false
 		});
@@ -131,6 +141,8 @@
 			xtype: "panel",
 			frame: true,
 			border: true,
+			region: "center",
+			autoScroll: true,
 			items: [name, description, file, types, range]
 		};
 	};

@@ -26,7 +26,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		
 		this.groupName = new Ext.form.field.Text({
 			fieldLabel : tr.group_name,
-            labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			name : 'name',
 			allowBlank : false,
 			vtype: 'alphanum',
@@ -35,7 +36,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		
 		this.groupDescription = new Ext.form.field.Text({
 			fieldLabel : tr.group_description,
-            labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			name : 'description',
 			allowBlank : false
 		});
@@ -43,7 +45,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.groupEmail = new Ext.form.field.Text({
 			vtype : 'emailOrBlank',
 			fieldLabel : tr.email,
-            labelWidth: CMDBuild.CM_LABEL_WIDTH, 
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			name : 'email',
 			allowBlank : true
 		});
@@ -51,18 +54,31 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.activeCheck = new Ext.ux.form.XCheckbox({
 			xtype : 'xcheckbox',
 			fieldLabel : tr.is_active,
-            labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			name : 'isActive',
 			checked : true 
 		}); 
 		
+		this.startingClass = new CMDBuild.field.ErasableCombo({
+			xtype : 'combo',
+			fieldLabel : tr.starting_class,
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			name : 'startingClass',
+			valueField : 'id',
+			displayField : 'description',
+			editable: false,
+			store : _CMCache.getClassesStore(),
+			queryMode: 'local'
+		});
+		
 		this.propertiesFieldset = new Ext.form.FieldSet({
 			title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
-            padding: "5 5 20 5",
-            autoScroll: true,
-            defaults: {
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
-            },
+			padding: "5 5 20 5",
+			autoScroll: true,
+			defaults: {
+				labelWidth: CMDBuild.CM_LABEL_WIDTH
+			},
 			items: [
 				this.groupName,
 				this.groupDescription,
@@ -71,17 +87,9 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 				xtype : 'xcheckbox',
 				fieldLabel : tr.is_administrator,
 				name : 'isAdministrator'
-			}, {
-				xtype : 'combo',
-				fieldLabel : tr.starting_class,
-				name : 'startingClass',
-				valueField : 'id',
-				displayField : 'description',
-				editable: false,
-				store : _CMCache.getClassesStore(),
-				queryMode: 'local'
-			},
-			this.activeCheck
+			}
+				,this.startingClass
+				,this.activeCheck
 			],
 			flex: 1,
 			margins:'0 5 0 0'
@@ -91,8 +99,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 
 		this.modulsFieldset = new Ext.form.FieldSet({
 			title: tr.disabled_modules,
-            autoScroll: true,
-            padding: "5 5 20 5",
+			autoScroll: true,
+			padding: "5 5 20 5",
 			items: this.modulesCheckInput.toArray,
 			flex: 1
 		});
@@ -115,7 +123,10 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			}],
 			buttonAlign: 'center',
 			buttons : this.cmButtons,
-			frame: true,
+			frame: false,
+			border: false,
+			cls: "x-panel-body-default-framed",
+			bodyCls: 'cmgraypanel',
 			layout: "border"
 		});
 	 

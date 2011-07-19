@@ -28,6 +28,7 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 
 		this.inheriteFlag = new Ext.form.Checkbox({
 			boxLabel : CMDBuild.Translation.administration.modClass.include_inherited,
+			boxLabelCls: "cmtoolbaritem",
 			checked : true,
 			scope : this,
 			handler : function(obj, checked) {

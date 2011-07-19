@@ -20,7 +20,7 @@
 					fieldLabel : tr.endpoint,
 					allowBlank : false,
 					name : 'endpoint',
-					width : 450
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				} ]
 			}, {
 				xtype : 'fieldset',
@@ -30,21 +30,25 @@
 				items : [ {
 					fieldLabel : tr.user,
 					allowBlank : false,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					name : 'user'
 				}, {
 					fieldLabel : tr.password,
 					allowBlank : false,
 					name : 'password',
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					inputType : 'password'
 				}, {
 					fieldLabel : tr.engine,
 					allowBlank : false,
 					name : 'engine',
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					disabled : true
 				}, {
 					fieldLabel : tr.scope,
 					allowBlank : true,
 					name : 'scope',
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					disabled : true
 				} ]
 			} ]

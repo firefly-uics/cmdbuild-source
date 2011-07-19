@@ -47,9 +47,9 @@
 						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
 					}),
 
-//					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
-//						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
-//					}),
+					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
+						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
+					}),
 
 					this.bulkCardUpdates = new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
 						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController

@@ -115,9 +115,12 @@ Ext.define("CMDBuild.view.administration.workflow.cron.CMJobPanel", {
 		});
 
 		Ext.apply(this, {
-			frame : true,
+			frame : false,
 			border : false,
+			cls: "x-panel-body-default-framed",
+			bodyCls: 'cmgraypanel',
 			tbar: this.cmTBar,
+			autoScroll: true,
 			buttonAlign: "center",
 			buttons: this.cmButtons,
 			items : [ {

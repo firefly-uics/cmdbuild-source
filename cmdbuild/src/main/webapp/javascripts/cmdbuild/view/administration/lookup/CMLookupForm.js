@@ -67,7 +67,7 @@
 
 			this.activeCheck = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.active,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name : LOOKUP_FIELDS.Active,
 				checked : true,
 				disabled : true
@@ -81,10 +81,10 @@
 				border: false,
 				padding: "5 5 5 5",
 				region: "center",
-                autoScroll: true,
-                defaults: {
-                    labelWidth: CMDBuild.CM_LABEL_WIDTH
-                },
+				autoScroll: true,
+				defaults: {
+					labelWidth: CMDBuild.CM_LABEL_WIDTH
+				},
 				items: [ {
 					xtype : 'hidden',
 					name : LOOKUP_FIELDS.Id
@@ -92,16 +92,19 @@
 					xtype : 'textfield',
 					fieldLabel : tr.code,
 					name : LOOKUP_FIELDS.Code,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					disabled : true
 				}, {
 					xtype : 'textfield',
 					fieldLabel : tr.description,
 					name : LOOKUP_FIELDS.Description,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					allowBlank : false,
 					disabled : true
 				}, {
 					xtype : 'combo',
 					fieldLabel : tr.parentdescription,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					name : LOOKUP_FIELDS.ParentId,
 					hiddenName : LOOKUP_FIELDS.ParentId,
 					valueField : LOOKUP_FIELDS.ParentId,
@@ -112,6 +115,7 @@
 				}, {
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					name : LOOKUP_FIELDS.Notes,
 					disabled : true
 				}, this.activeCheck] 
@@ -120,7 +124,10 @@
 			Ext.apply(this, {
 				tbar : this.cmTBar,
 				defaultType : 'textfield',
-				frame : true,
+				frame : false,
+				border : false,
+	 			cls: "x-panel-body-default-framed",
+				bodyCls: 'cmgraypanel',
 				buttonAlign : "center",
 				buttons : this.cmButtons
 			});

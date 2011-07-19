@@ -33,16 +33,13 @@
 
 			this.callParent(arguments);
 		},
-		
+		// p = {activity: the activity, edit: boolean, isNew: boolean}
 		onAddCardButtonClick: function(p) {
 			this.loadActivity(p.activity);
 		},
 
 		loadActivity: function(activity) {
 //			listenCMActivityLoaded.call(this, activity);
-
-			this.docPanel.updateBody(activity);
-
 			this.acutalPanel.items.each(function(tab) {
 				if (tab.loadActivity) {
 					tab.loadActivity(activity);

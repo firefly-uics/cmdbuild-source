@@ -49,14 +49,19 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			region: 'south',
 			height: "40%",
 			split: true,
-			frame: true,
+			frame: false,
 			border: false,
+			cls: "x-panel-body-default-framed",
+			bodyCls: 'cmgraypanel',
+			layout: "border",
 			tbar: [this.modifyButton, this.removeButton],
 			items: [{
 				xtype: "panel",
+				region: "center",
 				frame: true,
 				defaults: {
-					labelWidth: CMDBuild.CM_LABEL_WIDTH
+					labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH
 				},
 				items: [{
 					xtype:'hidden',
@@ -81,10 +86,10 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		
 		Ext.apply(this, {
 			frame: false,
-			border: false,
-      		layout: 'border',
-      		items: [this.iconsGrid, this.uploadForm]
-    	});
+			border: true,
+			layout: 'border',
+			items: [this.iconsGrid, this.uploadForm]
+		});
 		
 		this.callParent(arguments);
 		

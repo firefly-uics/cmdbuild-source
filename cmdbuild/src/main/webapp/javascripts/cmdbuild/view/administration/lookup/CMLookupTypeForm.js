@@ -45,7 +45,8 @@
 			
 			this.parentCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: tr.parent,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				width: CMDBuild.CM_BIG_FIELD_WIDTH,
 				queryMode : 'local',
 				displayField : 'type',
 				valueField : 'type',
@@ -63,7 +64,8 @@
 	 			items: [{
 					xtype: 'textfield',
 					fieldLabel: tr.description,
-                    labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					width: CMDBuild.CM_BIG_FIELD_WIDTH,
 					name: 'description',
 					allowBlank: false,
 					disabled: true
@@ -71,11 +73,18 @@
 				this.parentCombo
 				]
 	 		}];
-	 		this.layout = "border",
-	 		this.buttonAlign = "center";
-	 		this.buttons = this.cmButtons;
-	 		this.tbar = this.cmTBar;
 	 		
+	 		Ext.apply(this, {
+	 			frame: false,
+	 			border: false,
+	 			buttonAlign: "center",
+		 		buttons: this.cmButtons,
+		 		tbar: this.cmTBar,
+	 			layout: "border",
+	 			cls: "x-panel-body-default-framed",
+				bodyCls: 'cmgraypanel'
+	 		});
+
 	 		this.callParent(arguments);
 		},
 		

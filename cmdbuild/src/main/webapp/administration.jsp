@@ -57,7 +57,7 @@
 	</script>
 		<title>CMDBuild</title>
 	</head>
-	<body>
+	<body id="cmbodyAdministration">
 		<div id="header" class="cm_no_display">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
 			<div id="instance_name"></div>

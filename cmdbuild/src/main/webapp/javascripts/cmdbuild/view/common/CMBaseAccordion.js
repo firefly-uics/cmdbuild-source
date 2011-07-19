@@ -36,13 +36,15 @@
 				frame: false,
 				region: "center",
 				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible
+				rootVisible: this.rootVisible,
+				autoScroll: true
 			});
 
 			Ext.apply(this, {
 				items: [this.tree],
 				layout: "border",
-				border: false
+				border: true,
+				autoScroll: true
 			});
 
 			this.callParent(arguments);

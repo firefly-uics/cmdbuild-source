@@ -1,5 +1,6 @@
 (function() {
-	var tr = CMDBuild.Translation.administration.setup.graph;
+	var tr = CMDBuild.Translation.administration.setup.graph,
+		width =  CMDBuild.CM_SMALL_FIELD_WIDTH + 60;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGraph", {
 		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
@@ -14,6 +15,7 @@
 			}, {
 				xtype : 'numberfield',
 				fieldLabel : tr.baseLevel,
+				width: width,
 				allowBlank : false,
 				minValue : 1,
 				maxValue : 5,
@@ -21,6 +23,7 @@
 			}, {
 				xtype : 'numberfield',
 				fieldLabel : tr.extensionMaximumLevel,
+				width: width,
 				allowBlank : false,
 				minValue : 1,
 				maxValue : 5,
@@ -28,6 +31,7 @@
 			}, {
 				xtype : 'numberfield',
 				fieldLabel : tr.clusteringThreshold,
+				width: width,
 				allowBlank : false,
 				minValue : 2,
 				maxValue : 20,

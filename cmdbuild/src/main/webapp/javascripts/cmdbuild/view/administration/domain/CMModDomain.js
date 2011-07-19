@@ -43,7 +43,7 @@
 			this.tbar = [this.addButton];
 			this.items = [this.tabPanel];
 			this.frame = false;
-			this.border = false;
+			this.border = true;
 			this.callParent(arguments);
 		},
 

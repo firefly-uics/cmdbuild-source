@@ -19,7 +19,10 @@
 				formatList: ['pdf', 'odt']
 			});
 
-			this.classForm = new CMDBuild.view.administration.classes.CMClassForm();
+			this.classForm = new CMDBuild.view.administration.classes.CMClassForm({
+				title: tr.tabs.properties,
+				border: false
+			});
 
 			this.attributesPanel = new CMDBuild.view.administration.classes.CMClassAttributesPanel({
 				title: tr.tabs.attributes,
@@ -45,12 +48,8 @@
 				border: false,
 				activeTab: 0,
 
-				items: [{
-					padding: "1 0 0 0",
-					title: tr.tabs.properties,
-					layout: 'fit',
-					items: [this.classForm]
-				}
+				items: [
+				 this.classForm
 				,this.attributesPanel
 				,this.domainGrid
 				,this.layerVisibilityGrid

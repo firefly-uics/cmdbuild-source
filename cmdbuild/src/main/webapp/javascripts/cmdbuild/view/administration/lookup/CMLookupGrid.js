@@ -52,8 +52,8 @@
 		this.bbar = Ext.create('Ext.PagingToolbar', {
 			store: this.store,
 			displayInfo: true,
-			displayMsg: 'Displaying topics {0} - {1} of {2}',
-			emptyMsg: "No topics to display"
+			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
+			emptyMsg: CMDBuild.Translation.common.display_topic_none
 		});
 
 		this.callParent(arguments);

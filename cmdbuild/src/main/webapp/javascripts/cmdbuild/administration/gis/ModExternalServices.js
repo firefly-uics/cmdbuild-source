@@ -112,8 +112,8 @@
 			name: serviceName+"_"+fieldName,
 			fieldLabel: tr[fieldName],
 			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			width: CMDBuild.CM_BIG_FIELD_WIDTH,
 			inputType: fieldInputType,
-			width: 300,
 			allowBlank: false
 		});
 	};
@@ -130,6 +130,7 @@
 		    name: serviceName+"_"+fieldName,
 		    fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes[translationName],
 		    labelWidth: CMDBuild.CM_LABEL_WIDTH,
+		    width: CMDBuild.CM_BIG_FIELD_WIDTH,
 		    clickToChange: false,
 		    animate: false
 		});
