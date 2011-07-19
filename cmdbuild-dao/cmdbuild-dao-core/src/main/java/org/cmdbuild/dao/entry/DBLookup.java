@@ -4,15 +4,17 @@ import org.cmdbuild.dao.entrytype.CMLookupType;
 
 public class DBLookup implements CMLookup {
 
-	private Object id;
+	private final CMLookupType type;
+	private final Object id;
 
-	public DBLookup(final Object id) {
+	public DBLookup(final CMLookupType type, final Object id) {
+		this.type = type;
 		this.id = id;
 	}
 
 	@Override
 	public CMLookupType getType() {
-		return null;
+		return type;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -15,6 +16,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -29,20 +31,42 @@ public enum SqlType {
 	bool(BooleanAttributeType.class),
 	bpchar(CharAttributeType.class),
 	date(DateAttributeType.class) {
+		@Override
 		public Object javaToSqlValue(Object value) {
 			return dateJavaToSqlValue(value);
 		}
 	},
 	float8(DoubleAttributeType.class),
 	inet(IPAddressAttributeType.class),
-	int4(IntegerAttributeType.class),
+	int4(IntegerAttributeType.class, LookupAttributeType.class) {
+		@Override
+		protected Class<? extends CMAttributeType<?>> getJavaType(AttributeMetadata meta) {
+			if (meta.isLookup()) {
+				return LookupAttributeType.class;
+			} else {
+				return IntegerAttributeType.class;
+			}
+		}
+		@Override
+		protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
+			if (meta.isLookup()) {
+				final Object[] params = new Object[1];
+				params[0] = meta.getLookupType();
+				return params;
+			} else {
+				return super.getConstructorParams(stringParams, meta);
+			}
+		}
+	},
 	numeric(DecimalAttributeType.class) { // precision and scale
-		protected Object[] getConstructorParams(String[] stringParams) {
+		@Override
+		protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
 			final Object[] params = new Object[2];
 			params[0] = Integer.valueOf(stringParams[0]);
 			params[1] = Integer.valueOf(stringParams[1]);
 			return params;
 		}
+		@Override
 		protected Object[] getSqlParams(final CMAttributeType<?> type) {
 			final DecimalAttributeType decimalType = (DecimalAttributeType) type;
 			final Object[] sqlParams = new Object[2];
@@ -53,22 +77,26 @@ public enum SqlType {
 	},
 	text(TextAttributeType.class),
 	time(TimeAttributeType.class) {
+		@Override
 		public Object javaToSqlValue(Object value) {
 			return dateJavaToSqlValue(value);
 		}
 	},
 	timestamp(DateTimeAttributeType.class) {
+		@Override
 		public Object javaToSqlValue(Object value) {
 			return dateJavaToSqlValue(value);
 		}
 	},
 	unknown(UndefinedAttributeType.class),
 	varchar(StringAttributeType.class) { // length
-		protected Object[] getConstructorParams(String[] stringParams) {
+		@Override
+		protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
 			final Object[] params = new Object[1];
 			params[0] = Integer.valueOf(stringParams[0]);
 			return params;
 		}
+		@Override
 		protected Object[] getSqlParams(final CMAttributeType<?> type) {
 			final StringAttributeType stringType = (StringAttributeType) type;
 			final Object[] sqlParams = new Object[1];
@@ -78,10 +106,11 @@ public enum SqlType {
 	};
 
 	// TODO Lookup, Reference, etc. need a different handling
-	protected final Class<? extends CMAttributeType<?>> javaType;
+	protected final Class<? extends CMAttributeType<?>> javaTypes[];
 
-	private SqlType(final Class<? extends CMAttributeType<?>> javaType) {
-		this.javaType = javaType;
+	private SqlType(final Class<? extends CMAttributeType<?>>... javaTypes) {
+		Validate.notEmpty(javaTypes);
+		this.javaTypes = javaTypes;
 	}
 
 	public Object javaToSqlValue(Object value) {
@@ -93,13 +122,17 @@ public enum SqlType {
 	}
 
 	final CMAttributeType<?> createAttributeType(String[] stringParams, AttributeMetadata meta) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		final Object[] constructorParams = getConstructorParams(stringParams);
+		final Object[] constructorParams = getConstructorParams(stringParams, meta);
 		final Class<?>[] paramTypes = getParamTypes(constructorParams);
-		return javaType.getConstructor(paramTypes).newInstance(constructorParams);
+		return getJavaType(meta).getConstructor(paramTypes).newInstance(constructorParams);
 	}
 
-	protected Object[] getConstructorParams(String[] stringParams) {
-		return (Object[]) stringParams;
+	protected Class<? extends CMAttributeType<?>> getJavaType(AttributeMetadata meta) {
+		return javaTypes[0];
+	}
+	
+	protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
+		return new Object[0];
 	}
 
 	private final Class<?>[] getParamTypes(Object[] constructorParams) {
@@ -147,8 +180,10 @@ public enum SqlType {
 
 	public static SqlType getSqlType(CMAttributeType<?> type) {
 		for (SqlType t : SqlType.values()) {
-			if (t.javaType == type.getClass()) {
-				return t;
+			for (Class<? extends CMAttributeType<?>> javaType : t.javaTypes) {
+				if (javaType == type.getClass()) {
+					return t;
+				}
 			}
 		}
 		throw new IllegalArgumentException();
