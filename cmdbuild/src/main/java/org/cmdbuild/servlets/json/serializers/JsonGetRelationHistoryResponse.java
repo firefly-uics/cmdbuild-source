@@ -41,8 +41,8 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 		jsonRelation.put("_RelHist", true);
 		jsonRelation.put("DomainDesc", relation.getType().getDescription());
 		jsonRelation.put("User", relation.getUser());
-		jsonRelation.put("BeginDate", formatDate(relation.getBeginDate()));
-		jsonRelation.put("EndDate", formatDate(relation.getEndDate()));
+		jsonRelation.put("BeginDate", formatDateTime(relation.getBeginDate()));
+		jsonRelation.put("EndDate", formatDateTime(relation.getEndDate()));
 		jsonRelation.put("Attr", historyRelationAttributesToJson(ri));
 		jsonRelation.put("Class", ri.getTargetType().getName());
 		jsonRelation.put("CardCode", ri.getTargetCode());
@@ -60,7 +60,7 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 		for (CMAttribute attr : relation.getType().getAttributes()) {
 			final JSONObject jsonAttrValue = new JSONObject();
 			jsonAttrValue.put("d", attr.getDescription());
-			jsonAttrValue.put("v", javaToJsonValue(relation.get(attr.getName())));
+			jsonAttrValue.put("v", javaToJsonValue(attr.getType(), relation.get(attr.getName())));
 			//jsonAttrValue.put("c", TODO: CHANGED);
 			jsonAttr.put(jsonAttrValue);
 		}

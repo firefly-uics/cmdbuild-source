@@ -12,14 +12,13 @@ public class IPAddressAttributeType implements CMAttributeType<String> {
 
 	@Override
 	public String convertNotNullValue(Object value) {
-		if (value instanceof String) {
-			final String stringValue = ((String)value).trim();
-			if (stringValue.isEmpty()) {
-				return null;
-			} else if (IPV4REGEX.matcher(stringValue).find()) {
-				return stringValue;
-			}
+		final String stringValue = value.toString().trim();
+		if (stringValue.isEmpty()) {
+			return null;
+		} else if (IPV4REGEX.matcher(stringValue).find()) {
+			return stringValue;
+		} else {
+			throw new IllegalArgumentException();
 		}
-		throw new IllegalArgumentException();
 	}
 }
