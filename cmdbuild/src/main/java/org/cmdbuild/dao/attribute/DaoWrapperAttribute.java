@@ -10,7 +10,7 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public abstract class DaoWrapperAttribute extends AttributeImpl {
 
-	private static CMAttributeType<?> UNDEFINED_TYPE = new UndefinedAttributeType();
+	protected static CMAttributeType<?> UNDEFINED_TYPE = new UndefinedAttributeType();
 
 	protected CMAttributeType<?> daoType;
 

@@ -9,7 +9,19 @@ public class StringAttribute extends TextAttribute {
 
 	public StringAttribute(BaseSchema schema, String name, Map<String, String> meta) {
 		super(schema, name, meta);
-		daoType = new StringAttributeType(this.getLength());
+		updateTypeIfUndefined();
+	}
+
+	@Override
+	public void setLength(int length) {
+		super.setLength(length);
+		updateTypeIfUndefined();
+	}
+
+	private void updateTypeIfUndefined() {
+		if (daoType == DaoWrapperAttribute.UNDEFINED_TYPE && getLength() > 0) {
+			daoType = new StringAttributeType(this.getLength());
+		}
 	}
 
 	@Override
