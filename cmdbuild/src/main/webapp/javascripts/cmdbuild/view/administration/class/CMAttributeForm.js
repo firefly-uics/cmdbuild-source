@@ -34,7 +34,7 @@
 			this.cmTBar = [this.modifyButton, this.deleteButton];
 			this.cmButtons = [this.saveButton, this.abortButton];
 
-			this.fieldMode = new Ext.form.ComboBox({ 
+			this.fieldMode = new Ext.form.ComboBox({
 				name: "fieldmode",
 				fieldLabel: tr.field_visibility,
 				labelWidth: CMDBuild.CM_LABEL_WIDTH,
@@ -299,7 +299,7 @@
 			Ext.apply(this, {
 				frame: false,
 				border: false,
-				cls: "x-panel-body-default-framed",
+				cls: "x-panel-body-default-framed cmbordertop",
 				bodyCls: 'cmgraypanel',
 				buttonAlign: "center",
 				buttons: this.cmButtons,

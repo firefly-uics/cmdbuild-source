@@ -126,7 +126,7 @@
 				defaultType : 'textfield',
 				frame : false,
 				border : false,
-	 			cls: "x-panel-body-default-framed",
+	 			cls: "x-panel-body-default-framed cmbordertop",
 				bodyCls: 'cmgraypanel',
 				buttonAlign : "center",
 				buttons : this.cmButtons

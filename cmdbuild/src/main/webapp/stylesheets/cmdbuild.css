@@ -718,17 +718,16 @@ em {
 	color: #333 ! important;
 }
 
-/*
+
 .x-form-item-label {
 	font-weight: bold ! important;
 	color: #555555 ! important;
 }
-*/
+
 .cmdb-error-msg {
 	font-weight: bold;
 	padding-bottom: 1em;
 }
-
 
 /*override*/
 
@@ -743,6 +742,12 @@ em {
 .cmgraypanel {
 	background: #F1F1F1 ! important;
 	padding: 5px 5px 0 5px;
+}
+
+.cmbordertop {
+	border-top-style: solid ! important;
+	border-top-width: 1px ! important;
+	
 }
 
 /*

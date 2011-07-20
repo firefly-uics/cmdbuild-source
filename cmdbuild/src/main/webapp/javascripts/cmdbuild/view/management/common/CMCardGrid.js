@@ -160,7 +160,14 @@
 				}, this)
 			);
 		},
+		
 
+		/*
+		 * p = {
+				Id: the id of the card
+				IdClass: the id of the class which the card belongs
+			}
+		 */
 		openCard: function(p) {
 			p['FilterCategory'] = this.filterCategory;
 
@@ -433,12 +440,13 @@
 		}
 	}
 	
+	// TODO 3 to 4 qualcosa non va
 	function getPageNumber(cardPosition) {
 		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-			pageNumber = 0;
+			pageNumber = 1;
 
 		if (cardPosition) {
-			pageNumber = (parseInt(cardPosition)) / pageSize;
+			pageNumber = (parseInt(cardPosition) - 1) / pageSize;
 		}
 
 		return pageNumber + 1;

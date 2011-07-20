@@ -6,16 +6,16 @@
 			this.callParent(arguments);
 			this.grid = this.view.cardGrid;
 			this.gridSM = this.grid.getSelectionModel();
-			this.cardTabPanel = this.view.cardTabPanel;
+			this.tabPanel = this.view.cardTabPanel;
 
 			// initialize state variables
 			this.idClassOfLastAttributesLoaded = null;
-			this.currentEntryId = null;
+			this.currentEntry = null;
 			this.currentActivity = null;
 
 			// instantiate sub-controllers
 			this.activityPanelController = new CMDBuild.controller.management.workflow.CMActivityPanelController(
-				this.cardTabPanel.activityTab, this);
+				this.tabPanel.activityTab, this);
 
 			// grid events
 			this.grid.statusCombo.on("select", onStatusComboSelect, this);
@@ -25,19 +25,11 @@
 
 		onViewOnFront: function(selection) {
 			if (selection) {
-				this.currentEntryId = selection.get("id");
+				this.currentEntry = selection;
+				this.view.cardGrid.onEntrySelected(selection);
 
-//				if (this.danglingCardToOpen) {
-//					this.view.openCard(this.danglingCardToOpen);
-//					this.danglingCardToOpen = null;
-//				} else {
-					this.view.onEntrySelected(selection);
-//				}
-
-				// sub-controllers
-//				this.attachmentsController.onEntrySelect(selection);
-//				this.relationsController.onEntrySelect(selection);
-//				this.mdController.onEntrySelect(selection);
+				// notify sub-controllers
+				this.activityPanelController.onEntrySelected(selection);
 			}
 		},
 
@@ -48,6 +40,14 @@
 				startProcess.call(this);
 			} else {
 				updateActivity.call(this);
+			}
+		},
+
+		onAbortButtonClick: function() {
+			if (this.currentActivity) {
+				onActivitySelect.call(this, null, [this.currentActivity]);
+			} else {
+				this.activityPanelController.onEntrySelected(this.currentEntry);
 			}
 		},
 
@@ -70,14 +70,16 @@
 
 	function onActivitySelect(sm, selection) {
 		if (selection.length > 0) {
-			var reloadFields = false;
+			var reloadFields = false,
+				editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
+
 			this.currentActivity = selection[0];
 			if (this.idClassOfLastAttributesLoaded != this.currentActivity.data.IdClass) {
 				this.idClassOfLastAttributesLoaded = this.currentActivity.data.IdClass;
 				reloadFields = true;
 			}
 
-			this.activityPanelController.onActivitySelect(this.currentActivity, reloadFields);
+			this.activityPanelController.onActivitySelect(this.currentActivity, reloadFields, editMode);
 		}
 	}
 
@@ -103,15 +105,14 @@
 				isnew:true,
 				activity: this.currentActivity
 			}
-			this.cardTabPanel.onAddCardButtonClick(p);
+			this.tabPanel.onAddCardButtonClick(p);
+
 			this.activityPanelController.onAddButtonClick(p);
 		}
 
 		function failure() {
 			CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.generic_error, true);
 		}
-
-//		this.cardTabPanel.onAddCardButtonClick(p);
 	}
 
 //	function setLoadActivityListener(view) {
@@ -121,6 +122,8 @@
 //	}
 
 	function delteActivity() {
+		var me = this;
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.workflow.terminateActivity({
 			WorkItemId: this.currentActivity.raw["WorkItemId"],
@@ -128,14 +131,10 @@
 			success: success,
 			failure: failure
 		});
-		
+
 		function success(response) {
 			CMDBuild.LoadMask.get().hide();
-			var ret = Ext.JSON.decode(response.responseText);
-			if (ret.success) {
-//				view.cardListGrid.reloadCard();
-				alert("@@ deleted");
-			}
+			me.grid.reload();
 		}
 
 		function failure() {
@@ -148,32 +147,43 @@
 	}
 
 	function updateActivity() {
+		// if the record is new it has not raw data, so use the normal data
+		var data = this.currentActivity.raw || this.currentActivity.data,
+			requestParams = {
+				Id: data.Id,
+				IdClass: data.IdClass,
+				ProcessInstanceId: data.ProcessInstanceId,
+				WorkItemId: data.WorkItemId,
+				advance: this.activityPanelController.isAdvance
+			};
+
 		CMDBuild.LoadMask.get().show();
 		this.activityPanelController.view.getForm().submit({
 			method : 'POST',
 			url : "services/json/management/modworkflow/updateactivity",
 			timeout: 90,
-			params: {
-				Id: this.currentActivity.raw.Id,
-				IdClass: this.currentActivity.raw.IdClass,
-				ProcessInstanceId: this.currentActivity.raw.ProcessInstanceId,
-				WorkItemId: this.currentActivity.raw.WorkItemId,
-				advance: this.activityPanelController.isAdvance
-			},
+			params: requestParams,
 			scope : this,
 			clientValidation: this.activityPanelController.isAdvance, //to force the save request
 			success : function() {
 				CMDBuild.LoadMask.get().hide();
-				alert("@@ well done")
+				this.activityPanelController.view.reset();
+				this.activityPanelController.view.displayMode();
+
+				this.grid.openCard({
+					Id: data.Id,
+					IdClass: data.IdClass
+				});
 			},
 			failure : function(response, options) {
 				CMDBuild.LoadMask.get().hide();
-				alert("@@ something goes wrong")
 			}
 		});
 	}
 
 	function startProcess() {
+		var me = this;
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.workflow.startProcess({
 			idClass: this.currentActivity.data.IdClass,
@@ -183,8 +193,8 @@
 
 		function success(response) {
 			CMDBuild.LoadMask.get().hide();
-			var process = Ext.JSON.decode(response.responseText);
-			updateActivity.call(this);
+			me.currentActivity = Ext.JSON.decode(response.responseText);
+			updateActivity.call(me);
 		}
 
 		function failure(response, options) {
