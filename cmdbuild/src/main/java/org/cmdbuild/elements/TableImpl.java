@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.cmdbuild.dao.attribute.ForeignKeyAttribute;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -352,8 +351,9 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	private boolean isTargetOfFK(IAttribute attribute) {
-		if (attribute instanceof ForeignKeyAttribute) {
-			return ((ForeignKeyAttribute) attribute).getFKTargetClass().treeBranch().contains(this.getId());
+		final ITable targetClass = attribute.getFKTargetClass();
+		if (targetClass != null) {
+			return targetClass.treeBranch().contains(this.getId());
 		} else {
 			return false;
 		}
