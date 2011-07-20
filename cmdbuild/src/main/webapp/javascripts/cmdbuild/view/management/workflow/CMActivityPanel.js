@@ -31,17 +31,41 @@
 		loadActivity: function(activity, reloadFields, editMode) {
 			this.activityForm.activityToLoad = activity;
 			this.activityForm.updateInfo(activity);
-			
+
+			var loadCard = Ext.bind(function() {
+				this.activityForm.loadCard(activity);
+				if (editMode) {
+					this.editMode();
+				} else {
+					this.displayMode(enableCMTbar = true);
+				}
+			}, this);
+
 			if (reloadFields) {
 				_CMCache.getAttributeList(activity.data.IdClass, 
 					Ext.bind(function cb(a) {
-						this.activityForm.buildActivityFields(a, editMode);
+						this.activityForm.buildActivityFields(a);
+						loadCard();
 					}, this));
+			} else {
+				loadCard()
 			}
 		},
-		
+
 		getForm: function() {
 			return this.activityForm.getForm();
+		},
+
+		displayMode: function(enableCMTbar) {
+			this.activityForm.displayMode(enableCMTbar);
+		},
+
+		editMode: function() {
+			this.activityForm.editMode();
+		},
+
+		reset: function() {
+			this.activityForm.reset();
 		}
 	});
 
@@ -88,18 +112,22 @@
 			];
 		},
 
-		updateInfo : function(activiy) {
-			this.processStepName.setText(activiy.data.activityPerformerName || "");
-			this.processStepCode.setText(activiy.data.Code || "");
+		updateInfo : function(activity) {
+			var data = activity.raw || activity.data;
+
+			this.processStepName.setText(data.activityPerformerName || "");
+			this.processStepCode.setText(data.Code || "");
 		},
 
 		buildActivityFields: function(attributes, editMode) {
-			var cleanedAttrs = [];
+			var cleanedAttrs = [],
+				data = this.activityToLoad.raw || this.activityToLoad.data; // if is a template giwen from the server, has not the raw data, so use the data
+
 			for (var a in attributes) {
 				a = attributes[a];
-				var index = this.activityToLoad.raw[a.name + "_index"];
+				var index = data[a.name + "_index"];
 				if(index != undefined && index > -1) {
-					var mode = this.activityToLoad.raw[a.name + "_type"];
+					var mode = data[a.name + "_type"];
 					a.fieldmode = modeConvertionMatrix[mode];
 					cleanedAttrs.push(a);
 				}
