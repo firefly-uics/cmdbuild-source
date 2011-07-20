@@ -39,6 +39,8 @@ public class DomainForwarder implements IDomain {
 	public void setDescriptionDirect(String descriptionDirect) { d.setDescriptionDirect(descriptionDirect); }
 	public void setDescriptionInverse(String descriptionInverse) { d.setDescriptionInverse(descriptionInverse); }
 	public void setMasterDetail(boolean isMasterDetail) { d.setMasterDetail(isMasterDetail); }
+	public String getMDLabel() { return d.getMDLabel(); }
+	public void setMDLabel(String mdLabel) { d.setMDLabel(mdLabel); }
 	public void setOpenedRows(int openedRows) { d.setOpenedRows(openedRows); }
 	public void setClass1(ITable table) { d.setClass1(table); }
 	public void setClass2(ITable table) { d.setClass2(table); }

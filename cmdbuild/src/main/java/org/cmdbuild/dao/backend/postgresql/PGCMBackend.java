@@ -202,7 +202,8 @@ public class PGCMBackend extends CMBackend {
 			DomainDataDefinitionMeta.STATUS.toString(), DomainDataDefinitionMeta.MASTERDETAIL.toString(),
 			DomainDataDefinitionMeta.DESCRDIR.toString(), DomainDataDefinitionMeta.DESCRINV.toString(),
 			DomainDataDefinitionMeta.CARDIN.toString(), DomainDataDefinitionMeta.OPENEDROWS.toString(),
-			DomainDataDefinitionMeta.CLASS1.toString(), DomainDataDefinitionMeta.CLASS2.toString() };
+			DomainDataDefinitionMeta.CLASS1.toString(), DomainDataDefinitionMeta.CLASS2.toString(),
+			DomainDataDefinitionMeta.MDLABEL.toString() };
 
 	private static Set<String> attributeMetaInComments;
 	private static Set<String> tableMetaInComments;
