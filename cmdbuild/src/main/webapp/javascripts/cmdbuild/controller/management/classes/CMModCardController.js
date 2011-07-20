@@ -180,16 +180,15 @@
 */
 				success : function(form, action) {
 					CMDBuild.LoadMask.get().hide();
-
 					this.cardPanel.displayMode();
-					this.cardGrid.reload();
+					params.Id = action.result.id || params.Id; // if is a new card, the id is given by the request
 
-					//if (action.result.id) {}	
+					this.cardGrid.openCard(params);
 				},
 
 				failure : function() {
 					CMDBuild.LoadMask.get().hide();
-		      	}
+				}
 			});
 	//	} else {
 	//		var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);

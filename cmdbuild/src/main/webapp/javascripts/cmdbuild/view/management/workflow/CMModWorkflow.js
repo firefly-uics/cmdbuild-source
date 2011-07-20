@@ -7,6 +7,7 @@
 		buildComponents: function() {
 
 			this.cardGrid = new CMDBuild.view.management.workflow.CMActivityGrid({
+				title: "@@ the activities",
 				region: "north",
 				hideMode: "offsets",
 				filterCategory: this.cmName,
@@ -17,12 +18,9 @@
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel({
-				region: "center"
+				region: "center",
+				border: false
 			});
-		},
-
-		onEntrySelected: function(entry) {
-			this.cardGrid.onEntrySelected(entry);
 		}
 	});
 

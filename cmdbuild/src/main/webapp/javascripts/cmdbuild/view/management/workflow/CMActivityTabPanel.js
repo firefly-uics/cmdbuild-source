@@ -1,7 +1,7 @@
 (function() {
 	
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel", {
-		extend: "Ext.Panel",
+		extend: "Ext.panel.Panel",
 
 		constructor: function(config) {
 
@@ -27,12 +27,15 @@
 
 		initComponent : function() {
 			Ext.apply(this,{
+				frame: false,
+				border: false,
 				layout: 'border',
 				items : [this.acutalPanel, this.docPanel]
 			});
 
 			this.callParent(arguments);
 		},
+
 		// p = {activity: the activity, edit: boolean, isNew: boolean}
 		onAddCardButtonClick: function(p) {
 			this.loadActivity(p.activity);

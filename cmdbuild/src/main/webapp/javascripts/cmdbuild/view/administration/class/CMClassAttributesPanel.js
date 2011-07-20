@@ -10,7 +10,7 @@
 				region: "north",
 				split: true,
 				height: "40%",
-                border: false
+				border: false
 			});
 
 			this.callParent(arguments);

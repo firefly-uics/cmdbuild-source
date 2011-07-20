@@ -15,17 +15,19 @@
 			this.view.activityForm.modifyCardButton.on("click", onModifyButtonClick, this);
 		},
 
-		onEntrySelect: function(selection) {
-			
+		onEntrySelected: function(selection) {
+			this.view.displayMode();
+			this.view.reset();
 		},
 
-		onActivitySelect: function(activity, reloadFields) {
-			this.view.loadActivity(activity, reloadFields);
+		onActivitySelect: function(activity, reloadFields, editMode) {
+			this.view.loadActivity(activity, reloadFields, editMode);
+			this.isAdvance = false;
 		},
-		
+
 		// p = {activity: the activity, edit: boolean, isNew: boolean}
 		onAddButtonClick: function(p) {
-			this.view.loadActivity(p.activity, reloadFields = true);
+			this.view.loadActivity(p.activity, reloadFields = true, editMode = true);
 		}
 	});
 
@@ -36,18 +38,21 @@
 
 	function onAdvanceButtonClick() {
 		this.isAdvance = true;
-		alert("@@ on advance button click");
+		this.ownerController.onSaveButtonClick();
 	}
 
 	function onAbortButtonClick() {
-		alert("@@ on delete button click");
+		this.isAdvance = false;
+		this.ownerController.onAbortButtonClick();
 	}
-	
+
 	function onDeleteButtonClick() {
+		this.isAdvance = false;
 		this.ownerController.onDeleteButtonClick();
 	}
-	
+
 	function onModifyButtonClick() {
-		alert("@@ on modify button click");
+		this.isAdvance = false;
+		this.view.editMode();
 	}
 })();

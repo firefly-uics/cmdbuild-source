@@ -21,7 +21,7 @@
 			Ext.apply(this, {
 				frame: false,
 				border: false,
-				cls: "x-panel-body-default-framed",
+				cls: "x-panel-body-default-framed cmbordertop",
 				bodyCls: 'cmgraypanel',
 				layout: "border",
 				tbar: this.cmTBar,

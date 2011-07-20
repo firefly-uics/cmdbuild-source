@@ -55,6 +55,8 @@
 			var id = entry.get("id");
 			this.setStatusToOpen();
 			this.addCardButton.updateForEntry(entry);
+			this.clearFilterButton.disable();
+
 			this.updateStoreForClassId(id, {
 				cb: function cbUpdateStoreForClassId() {
 					this.loadPage(1, {

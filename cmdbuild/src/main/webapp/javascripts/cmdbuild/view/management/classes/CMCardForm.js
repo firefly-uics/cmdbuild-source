@@ -30,7 +30,11 @@
 				var fields = this.getForm().getFields();
 				if (fields) {
 					fields.each(function(f) {
-						f.setValue(data[f.name]);
+						try {
+							f.setValue(data[f.name]);
+						} catch (e){
+							_debug("I can not set the value for " + f.name);
+						}
 					});
 				}
 			}
