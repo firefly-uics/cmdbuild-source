@@ -54,6 +54,7 @@
 			});
 
 			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
+				title: "@@ The cards",
 				region: "north",
 				hideMode: "offsets",
 				filterCategory: this.cmName,

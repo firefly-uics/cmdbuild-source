@@ -5,6 +5,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 
 <!-- VIEWS-->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script>
 
