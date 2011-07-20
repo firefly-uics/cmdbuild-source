@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<Context displayName="CMDBuild">
+
+	<Resource name="jdbc/cmdbuild" auth="Container"
+		type="javax.sql.DataSource"
+		factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"
+		maxActive="100" maxIdle="30" maxWait="10000"
+		defaultAutoCommit="true" removeAbandoned="true"
+		removeAbandonedTimeout="60" logAbandoned="true" />
+
+</Context>
