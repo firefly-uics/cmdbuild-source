@@ -554,7 +554,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	}
 
 	public ITable getFKTargetClass() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	public void setFKTargetClass(String value) {
