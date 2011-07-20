@@ -37,6 +37,16 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 				return domain.getDescription();
 			}
 		},
+		MDLABEL {
+			@Override
+			public void setValue(IDomain domain, String value) {
+				domain.setMDLabel(value);
+			}
+			@Override
+			public String getValue(IDomain domain) {
+				return domain.getMDLabel();
+			}
+		},
 		STATUS {
 			@Override
 			public void setValue(IDomain domain, String value) {
@@ -162,6 +172,7 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	private String cardinality;
 	private int openedRows;
 	private boolean isMasterDetail;
+	private String mdLabel;
 
 	private String description;
 	private String descriptionDirect;
@@ -317,12 +328,32 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		this.description = description;
 	}
 
-	public boolean isMasterDetail() {
+	public final boolean isMasterDetail() {
 		return isMasterDetail;
 	}
 
 	public void setMasterDetail(boolean isMasterDetail) {
 		this.isMasterDetail = isMasterDetail;
+	}
+
+	public String getMDLabel() {
+		if (mdLabel != null) {
+			return mdLabel;
+		} else if (isMasterDetail()) { // For backwards compatibility
+			if (CARDINALITY_N1.contains(cardinality)) {
+				return getClass1().getDescription();
+			} else if (CARDINALITY_1N.contains(cardinality)) {
+				return getClass2().getDescription();
+			}
+		}
+		return null;
+	}
+
+	public void setMDLabel(String mdLabel) {
+		if (mdLabel != null && mdLabel.trim().isEmpty()) {
+			mdLabel = null;
+		}
+		this.mdLabel = mdLabel;
 	}
 
 	public void setOpenedRows(int openedRows) {

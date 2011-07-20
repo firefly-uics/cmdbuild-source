@@ -333,6 +333,7 @@ public class Serializer {
 		jsonobj.put("class2", domain.getTables()[1].toString());
 		jsonobj.put("class2id", domain.getTables()[1].getId());
 		jsonobj.put("md", domain.isMasterDetail());
+		jsonobj.put("md_label", domain.getMDLabel());
 		jsonobj.put("classType", getClassType(domain.getTables()[0].getName()));
 		jsonobj.put("active", domain.getStatus().isActive());
 		jsonobj.put("cardinality", domain.getCardinality());

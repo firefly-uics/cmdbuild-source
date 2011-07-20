@@ -456,6 +456,7 @@ public class ModClass extends JSONBase {
 			@Parameter("descr_1") String descriptionDirect,
 			@Parameter("descr_2") String descriptionInverse,
 			@Parameter("isMasterDetail") boolean isMasterDetail,
+			@Parameter(value="md_label", required=false) String mdLabel,
 			@Parameter("active") boolean isActive
 	) throws JSONException, AuthException, NotFoundException {
 		if (domain.isNew()) {
@@ -469,7 +470,8 @@ public class ModClass extends JSONBase {
 		domain.setDescription(description);
 		domain.setDescriptionDirect(descriptionDirect);
 		domain.setDescriptionInverse(descriptionInverse);
-		domain.setMasterDetail(isMasterDetail);		
+		domain.setMasterDetail(isMasterDetail);
+		domain.setMDLabel(mdLabel);
 		domain.setStatus(SchemaStatus.fromBoolean(isActive));
 		domain.save();
 		
