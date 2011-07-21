@@ -90,10 +90,8 @@ public class ModSecurity extends JSONBase {
 		) throws JSONException {
 		Iterable<Group> groupList = AuthenticationFacade.getGroupListForUser(userId);
 		JSONArray jsonGroupList = new JSONArray();
-		boolean foundDefault = false;
 		for (Group g : groupList) {
 			jsonGroupList.put(Serializer.serializeGroup(g));
-			foundDefault |= g.isDefault();
 		}
 		serializer.put("result", jsonGroupList);
 		return serializer;

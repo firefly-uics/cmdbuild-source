@@ -93,8 +93,14 @@ public class RelationQueryBuilder {
 	}
 
 	public String buildSelectQuery(IDomain domain, int card1Id, int card2Id) {
-		final AttributeFilter filter1 = new AttributeFilter(domain.getAttribute("IdObj1"), AttributeFilterType.EQUALS, String.valueOf(card1Id));
-		final AttributeFilter filter2 = new AttributeFilter(domain.getAttribute("IdObj2"), AttributeFilterType.EQUALS, String.valueOf(card2Id));
+		AttributeFilter filter1 = null;
+		AttributeFilter filter2 = null;
+		if (card1Id > 0) {
+			filter1 = new AttributeFilter(domain.getAttribute("IdObj1"), AttributeFilterType.EQUALS, String.valueOf(card1Id));
+		}
+		if (card2Id > 0) {
+			filter2 = new AttributeFilter(domain.getAttribute("IdObj2"), AttributeFilterType.EQUALS, String.valueOf(card2Id));
+		}
 		return buildSelectQuery(domain, null, filter1, filter2);
 	}
 
@@ -113,22 +119,26 @@ public class RelationQueryBuilder {
 
 		StringBuilder whereCondition = new StringBuilder(String.format(SELECT_WHERE_TEMPLATE, domain.getDBName()));
 		List<AbstractFilter> list = new LinkedList<AbstractFilter>();
+		String latestMappingAdded = null;
+		buildAttributesQuery(table1, "Table1");
 		if (filter1 != null) {
-			buildAttributesQuery(table1, "Table1");
 			filter1.setQueryMapping(queryComponents.getQueryMapping("Table1"));
+			latestMappingAdded = "Table1";
 			list.add(filter1);
 		}
+		buildAttributesQuery(table2, "Table2");
 		if (filter2 != null) {
-			buildAttributesQuery(table2, "Table2");
 			filter2.setQueryMapping(queryComponents.getQueryMapping("Table2"));
+			latestMappingAdded = "Table2";
 			list.add(filter2);
 		}
 		if(domainFilter != null) {
 			domainFilter.setQueryMapping(queryComponents.getQueryMapping(domain.getDBName()));
+			latestMappingAdded = domain.getDBName();
 			list.add(domainFilter);
 		}
 		if (list.size() == 1) {
-			whereCondition.append(" AND ").append(list.get(0).toString(queryComponents.getQueryMapping("Table2")));
+			whereCondition.append(" AND ").append(list.get(0).toString(queryComponents.getQueryMapping(latestMappingAdded)));
 		} else if (list.size() > 1) {
 			whereCondition.append(" AND ").append(new FilterOperator(OperatorType.AND, list).toString());
 		}
