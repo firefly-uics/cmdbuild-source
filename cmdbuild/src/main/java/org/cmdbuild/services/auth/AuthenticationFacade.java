@@ -62,41 +62,6 @@ public abstract class AuthenticationFacade {
 		return list;
 	}
 
-/*
-	public static List<UserCard> getUserList(final int groupId) {
-		final ITable groupTable = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME);
-		final IAttribute groupIdAttribute = groupTable.getAttribute(CardAttributes.Id.name());
-		final AttributeFilter filterOnGroupId = new AttributeFilter(groupIdAttribute, AttributeFilterType.EQUALS, String.valueOf(groupId));
-
-		final ITable userTable = UserContext.systemContext().tables().get(UserCard.USER_CLASS_NAME);
-		final IAttribute userStatusAttribute = userTable.getAttribute(CardAttributes.Status.name());
-		final AttributeFilter filterOnUserStatus = new AttributeFilter(userStatusAttribute, AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value());
-
-		return getUserList(filterOnUserStatus, filterOnGroupId);
-	}
-
-	private static List<UserCard> getUserList(final AbstractFilter userFilterCriteria,
-			final AbstractFilter roleFilterCriteria) {
-		List<IRelation> groupsRel = null;
-		final List<UserCard> list = new LinkedList<UserCard>();
-		try {
-			groupsRel = findAllRelationsFixmePlease(USER_GROUP_DOMAIN_NAME, userFilterCriteria, roleFilterCriteria);
-			for (final IRelation groupRel : groupsRel) {
-				list.add(new UserCard(groupRel.getCard1()));
-			}
-		} catch (final NotFoundException e) {
-			Log.OTHER.fatal("user_role domain does not exist", e);
-			throw AuthExceptionType.AUTH_UNKNOWN_GROUP.createException();
-		}
-		return list;
-	}
-
-	private static List<IRelation> findAllRelationsFixmePlease(String domainName, AbstractFilter filter1, AbstractFilter filter2) { 
-		final IDomain domain = UserContext.systemContext().domains().get(domainName);
-		return backend.findAll(domain, filter1, filter2, -1, -1);
-	}
-*/
-
 	static public Iterable<Group> getGroupListForUser(final int userId) throws AuthException, ORMException {
 		final List<Group> list = new LinkedList<Group>();
 		try {
@@ -116,8 +81,8 @@ public abstract class AuthenticationFacade {
 		final UserContext systemCtx = UserContext.systemContext();
 		final ICard userCard = systemCtx.tables().get(UserCard.USER_CLASS_NAME).cards().get(userId);
 		final IDomain userRoleDomain = systemCtx.domains().get(USER_GROUP_DOMAIN_NAME);
-		final Iterable<IRelation> userRoleRelations = systemCtx.relations().list(userCard).card(userCard)
-			.domain(DirectedDomain.create(userRoleDomain, DomainDirection.D), true);
+		final Iterable<IRelation> userRoleRelations = systemCtx.relations()
+			.list(DirectedDomain.create(userRoleDomain, DomainDirection.D), userCard);
 		return userRoleRelations;
 	}
 

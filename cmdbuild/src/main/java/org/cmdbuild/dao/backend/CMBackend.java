@@ -9,6 +9,7 @@ import java.util.Map;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.backend.postgresql.CardQueryBuilder;
 import org.cmdbuild.elements.CardQueryImpl;
+import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableTree;
@@ -164,4 +165,6 @@ public abstract class CMBackend {
 	 */
 
 	public abstract void clearCache();
+
+	public abstract Iterable<IRelation> getRelationList(DirectedDomain domain, int sourceId);
 }

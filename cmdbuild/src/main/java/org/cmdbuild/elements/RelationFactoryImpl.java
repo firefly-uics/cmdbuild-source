@@ -8,6 +8,7 @@ import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.interfaces.RelationQuery;
 import org.cmdbuild.elements.proxy.RelationProxy;
 import org.cmdbuild.elements.proxy.RelationQueryProxy;
+import org.cmdbuild.elements.proxy.RelationQueryProxy.ProxedIterableRelation;
 import org.cmdbuild.services.auth.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,6 +44,11 @@ public class RelationFactoryImpl implements RelationFactory {
 	public IRelation get(IDomain domain, int id) {
 		IRelation realRelation = backend.getRelation(domain, id);
 		return new RelationProxy(realRelation, userCtx);
+	}
+
+	public Iterable<IRelation> list(DirectedDomain directedDomain, ICard sourceCard) {
+		Iterable<IRelation> realIterableRelation = backend.getRelationList(directedDomain, sourceCard.getId());
+		return new ProxedIterableRelation(realIterableRelation, userCtx);
 	}
 
 	public RelationQuery list(ICard card) {

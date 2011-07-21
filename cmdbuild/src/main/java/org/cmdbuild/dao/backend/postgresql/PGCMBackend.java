@@ -38,6 +38,7 @@ import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
 import org.cmdbuild.elements.CardImpl;
 import org.cmdbuild.elements.CardQueryImpl;
+import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.DomainImpl;
 import org.cmdbuild.elements.DomainImpl.DomainDataDefinitionMeta;
 import org.cmdbuild.elements.Lookup;
@@ -255,13 +256,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#parseComment(java.lang.
-	 * String)
-	 */
 	@Override
 	public Map<String, String> parseComment(String comment) {
 		Map<String, String> dataDefinitionMeta = new TreeMap<String, String>();
@@ -286,13 +280,7 @@ public class PGCMBackend extends CMBackend {
 	/*
 	 * Classes
 	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteTable(org.cmdbuild
-	 * .elements.interfaces.ITable)
-	 */
+
 	@Override
 	public void deleteTable(ITable table) throws ORMException {
 		CallableStatement stm = null;
@@ -309,13 +297,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createTable(org.cmdbuild
-	 * .elements.interfaces.ITable)
-	 */
 	@Override
 	public int createTable(ITable table) throws ORMException {
 		CallableStatement stm = null;
@@ -345,13 +326,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyTable(org.cmdbuild
-	 * .elements.interfaces.ITable)
-	 */
 	@Override
 	public void modifyTable(ITable table) throws ORMException {
 		CallableStatement stm = null;
@@ -372,11 +346,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#loadTableMap()
-	 */
 	@Override
 	public Map<Integer, CNode<ITable>> loadTableMap() {
 		Map<Integer, CNode<ITable>> map = new HashMap<Integer, CNode<ITable>>();
@@ -404,13 +373,6 @@ public class PGCMBackend extends CMBackend {
 		return map;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#buildTableTree(java.util
-	 * .Map)
-	 */
 	@Override
 	public CTree<ITable> buildTableTree(Map<Integer, CNode<ITable>> map) {
 		CTree<ITable> tree = new CTree<ITable>();
@@ -455,13 +417,6 @@ public class PGCMBackend extends CMBackend {
 	 * Attributes
 	 */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteAttribute(org.cmdbuild
-	 * .elements.interfaces.IAttribute)
-	 */
 	@Override
 	public void deleteAttribute(IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
@@ -482,13 +437,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createAttribute(org.cmdbuild
-	 * .elements.interfaces.IAttribute)
-	 */
 	@Override
 	public void createAttribute(IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
@@ -525,13 +473,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyAttribute(org.cmdbuild
-	 * .elements.interfaces.IAttribute)
-	 */
 	@Override
 	public void modifyAttribute(IAttribute attribute) throws ORMException {
 		CallableStatement stm = null;
@@ -581,13 +522,6 @@ public class PGCMBackend extends CMBackend {
 		return typeString;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#findAttributes(org.cmdbuild
-	 * .elements.interfaces.BaseSchema)
-	 */
 	@Override
 	public Map<String, IAttribute> findAttributes(BaseSchema schema) {
 		Map<String, IAttribute> list = new LinkedHashMap<String, IAttribute>();
@@ -673,13 +607,6 @@ public class PGCMBackend extends CMBackend {
 	 * Domains
 	 */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyDomain(org.cmdbuild
-	 * .elements.interfaces.IDomain)
-	 */
 	@Override
 	public void modifyDomain(IDomain domain) {
 		CallableStatement stm = null;
@@ -703,13 +630,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createDomain(org.cmdbuild
-	 * .elements.interfaces.IDomain)
-	 */
 	@Override
 	public int createDomain(IDomain domain) {
 		int id;
@@ -737,13 +657,6 @@ public class PGCMBackend extends CMBackend {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteDomain(org.cmdbuild
-	 * .elements.interfaces.IDomain)
-	 */
 	@Override
 	public void deleteDomain(IDomain domain) {
 		CallableStatement stm = null;
@@ -762,13 +675,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getDomainList(org.cmdbuild
-	 * .elements.interfaces.DomainQuery)
-	 */
 	@Override
 	public Iterator<IDomain> getDomainList(DomainQuery query) {
 		List<IDomain> list = new LinkedList<IDomain>();
@@ -812,11 +718,6 @@ public class PGCMBackend extends CMBackend {
 		return cache.getDomainList();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#loadDomainMap()
-	 */
 	@Override
 	public Map<Integer, IDomain> loadDomainMap() {
 		Map<Integer, IDomain> map = new HashMap<Integer, IDomain>();
@@ -851,11 +752,6 @@ public class PGCMBackend extends CMBackend {
 	 * IMPLEMENTED IN THE DAO LAYER)
 	 */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#getReportTypes()
-	 */
 	@Override
 	public List<String> getReportTypes() {
 		Statement stm = null;
@@ -879,13 +775,6 @@ public class PGCMBackend extends CMBackend {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#insertReport(org.cmdbuild
-	 * .elements.wrappers.ReportCard)
-	 */
 	@Override
 	public boolean insertReport(ReportCard bean) throws SQLException, IOException {
 		PreparedStatement stm = null;
@@ -942,13 +831,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#updateReport(org.cmdbuild
-	 * .elements.wrappers.ReportCard)
-	 */
 	@Override
 	public boolean updateReport(ReportCard bean) throws SQLException, IOException {
 		PreparedStatement stm = null;
@@ -1024,13 +906,6 @@ public class PGCMBackend extends CMBackend {
 	 * Lookup Types
 	 */
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createLookupType(org.cmdbuild
-	 * .elements.LookupType)
-	 */
 	@Override
 	public void createLookupType(LookupType lookupType) {
 		String type = lookupType.getType();
@@ -1061,13 +936,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyLookupType(org.cmdbuild
-	 * .elements.LookupType)
-	 */
 	@Override
 	public void modifyLookupType(LookupType lookupType) {
 		String type = lookupType.getType();
@@ -1095,13 +963,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteLookupType(org.cmdbuild
-	 * .elements.LookupType)
-	 */
 	@Override
 	public void deleteLookupType(LookupType lookupType) {
 		CallableStatement stm = null;
@@ -1120,11 +981,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#loadLookupTypeTree()
-	 */
 	@Override
 	public CTree<LookupType> loadLookupTypeTree() {
 		Statement stm = null;
@@ -1177,13 +1033,7 @@ public class PGCMBackend extends CMBackend {
 	/*
 	 * Lookup
 	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyLookup(org.cmdbuild
-	 * .elements.Lookup)
-	 */
+
 	@Override
 	public void modifyLookup(Lookup lookup) {
 		Statement stm = null;
@@ -1204,13 +1054,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createLookup(org.cmdbuild
-	 * .elements.Lookup)
-	 */
 	@Override
 	public int createLookup(Lookup lookup) {
 		PreparedStatement stm = null;
@@ -1237,11 +1080,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.cmdbuild.dao.backend.postgresql.CMBackend#findLookups()
-	 */
 	@Override
 	public List<Lookup> findLookups() {
 		List<Lookup> list = new LinkedList<Lookup>();
@@ -1278,13 +1116,7 @@ public class PGCMBackend extends CMBackend {
 	/*
 	 * Relation
 	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createRelation(org.cmdbuild
-	 * .elements.interfaces.IRelation)
-	 */
+
 	@Override
 	public int createRelation(IRelation relation) {
 		int id;
@@ -1312,13 +1144,6 @@ public class PGCMBackend extends CMBackend {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyRelation(org.cmdbuild
-	 * .elements.interfaces.IRelation)
-	 */
 	@Override
 	public void modifyRelation(IRelation relation) {
 		Statement stm = null;
@@ -1382,14 +1207,6 @@ public class PGCMBackend extends CMBackend {
 		return list;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getRelation(org.cmdbuild
-	 * .elements.interfaces.IDomain, org.cmdbuild.elements.interfaces.ICard,
-	 * org.cmdbuild.elements.interfaces.ICard)
-	 */
 	@Override
 	public IRelation getRelation(IDomain domain, ICard card1, ICard card2) {
 		RelationQueryBuilder qb = new RelationQueryBuilder();
@@ -1412,16 +1229,23 @@ public class PGCMBackend extends CMBackend {
 		return relationIterator.next();
 	}
 
+	@Override
+	public Iterable<IRelation> getRelationList(DirectedDomain directedDomain, int sourceId) {
+		final IDomain domain = directedDomain.getDomain();
+		final RelationQueryBuilder qb = new RelationQueryBuilder();
+		final String query;
+		if (directedDomain.getDirectionValue()) {
+			query = qb.buildSelectQuery(domain, sourceId, 0);
+		} else {
+			query = qb.buildSelectQuery(domain, 0, sourceId);
+		}
+		return perfomRelationQuery(domain, query, qb.getQueryComponents());
+	}
+
 	/*
 	 * Card
 	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#createCard(org.cmdbuild
-	 * .elements.interfaces.ICard)
-	 */
+
 	@Override
 	public int createCard(ICard card) {
 		int id;
@@ -1450,13 +1274,6 @@ public class PGCMBackend extends CMBackend {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#modifyCard(org.cmdbuild
-	 * .elements.interfaces.ICard)
-	 */
 	@Override
 	public void modifyCard(ICard card) {
 		Statement stm = null;
@@ -1474,13 +1291,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getCardList(org.cmdbuild
-	 * .elements.CardQueryImpl)
-	 */
 	@Override
 	public List<ICard> getCardList(CardQueryImpl cardQuery) {
 		List<ICard> list = new LinkedList<ICard>();
@@ -1533,14 +1343,6 @@ public class PGCMBackend extends CMBackend {
 		return list;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#cardQueryToSQL(org.cmdbuild
-	 * .elements.interfaces.CardQuery,
-	 * org.cmdbuild.dao.backend.postgresql.CardQueryBuilder)
-	 */
 	@Override
 	public String cardQueryToSQL(CardQuery cardQuery, CardQueryBuilder qb) {
 		Set<String> attributes = cardQuery.getAttributes();
@@ -1556,13 +1358,6 @@ public class PGCMBackend extends CMBackend {
 		return qb.buildSelectQuery(cardQuery);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#getCardPosition(org.cmdbuild
-	 * .elements.interfaces.CardQuery, int)
-	 */
 	@Override
 	public int getCardPosition(CardQuery query, int cardId) {
 		int position;
@@ -1592,14 +1387,6 @@ public class PGCMBackend extends CMBackend {
 		return position;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#updateCardsFromTemplate
-	 * (org.cmdbuild.elements.interfaces.CardQuery,
-	 * org.cmdbuild.elements.interfaces.ICard)
-	 */
 	@Override
 	public void updateCardsFromTemplate(CardQuery cardQuery, ICard cardTemplate) {
 		Statement stm = null;
@@ -1618,13 +1405,6 @@ public class PGCMBackend extends CMBackend {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.dao.backend.postgresql.CMBackend#deleteElement(org.cmdbuild
-	 * .elements.interfaces.IAbstractElement)
-	 */
 	@Override
 	public void deleteElement(IAbstractElement element) {
 		Statement stm = null;
