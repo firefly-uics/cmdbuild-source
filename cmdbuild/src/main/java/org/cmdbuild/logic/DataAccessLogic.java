@@ -1,34 +1,26 @@
 package org.cmdbuild.logic;
 
-import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.services.DBService;
+import org.cmdbuild.services.auth.UserContext;
 
 /**
  * Business Logic Layer for Data Access
  */
 public class DataAccessLogic {
 
-	final static DBDriver driver;
+
 	final CMDataView view;
 
-	static {
-		driver = new PostgresDriver(DBService.getInstance().getDataSource());
+	// FIXME Temporary constructor before switching to Spring DI
+	public DataAccessLogic(final UserContext userCtx) {
+		view = TemporaryObjectsBeforeSpringDI.getUserContextView(userCtx);
 	}
-
-	public DataAccessLogic() {
-		view = new DBDataView(driver); // TODO UserContextView()
-	}
-
-//	final CMDataView view;
 
 //	public DataAccessBL(final CMDataView view) {
 //		this.view = view;

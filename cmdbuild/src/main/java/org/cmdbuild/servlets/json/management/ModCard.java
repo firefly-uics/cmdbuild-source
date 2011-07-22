@@ -524,25 +524,20 @@ public class ModCard extends JSONBase {
 			ICard card,
 			ITableFactory tf,
 			RelationFactory rf,
-			@Parameter("IsProcess") boolean isProcess) throws JSONException, CMDBException {
+			@Parameter("IsProcess") boolean isProcess,
+			UserContext userCtx) throws JSONException, CMDBException {
 		if (isProcess) {
 			return getProcessHistory(new JSONObject(), card, tf);
 		}
 
-		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
+		final DataAccessLogic dataAccesslogic = new DataAccessLogic(userCtx);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final GetRelationHistoryResponse out = dataAccesslogic.getRelationHistory(src);
 		final JSONObject jsonOutput = new JsonGetRelationHistoryResponse(out).toJson();
 
 		// Old query for card attribute history
-		final JSONArray rows = jsonOutput.getJSONArray("rows");
 		CardQuery cardQuery = tf.get(card.getIdClass()).cards().list().history(card.getId());
-		rows.put(Serializer.serializeCard(card, true));
-		for (ICard cardHistory: cardQuery) {
-			JSONObject sc = Serializer.serializeCard(cardHistory, true);
-			sc.put("_AttrHist", true);
-			rows.put(sc);
-		}
+		Serializer.serializeCardAttributeHistory(card, cardQuery, jsonOutput);
 
 		return jsonOutput;
 	}
@@ -551,22 +546,12 @@ public class ModCard extends JSONBase {
 			JSONObject serializer,
 			ICard card,
 			ITableFactory tf) throws JSONException, CMDBException {
-		JSONArray rows = new JSONArray();
 		CardQuery cardQuery = tf.get(card.getIdClass()).cards().list().history(card.getId())
 			.filter("User", AttributeFilterType.DONTCONTAINS, "RemoteApi")
 			.filter("User", AttributeFilterType.DONTCONTAINS, "System")
 			.order(ICard.CardAttributes.Code.toString(), OrderFilterType.ASC)
 			.order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.ASC);
-		for(ICard process: cardQuery) {
-			String processCode = process.getCode();
-			if (processCode != null && processCode.length() != 0) {
-				JSONObject sc = Serializer.serializeCard(process, true);
-				sc.put("_AttrHist", true);
-				rows.put(sc);
-			}
-		}
-		serializer.put("rows", rows);
-		return serializer;
+		return Serializer.serializeProcessAttributeHistory(card, cardQuery);
 	}
 
 	/*
@@ -580,7 +565,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
 			@Parameter(value = "domainId", required = false) Long domainId,
 			@Parameter(value = "src", required = false) String querySource) throws JSONException {
-		final DataAccessLogic dataAccesslogic = new DataAccessLogic();
+		final DataAccessLogic dataAccesslogic = new DataAccessLogic(userCtx);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);

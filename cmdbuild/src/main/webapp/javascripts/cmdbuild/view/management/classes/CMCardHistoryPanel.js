@@ -1,8 +1,7 @@
 (function() {
 
-	var tr = CMDBuild.Translation.management.modcard;
 	var col_tr = CMDBuild.Translation.management.modcard.history_columns;
-	    
+
 	Ext.define("CMDBuild.view.management.classes.CMCardHistoryTab", {
 		extend: "Ext.grid.Panel",
 
@@ -18,13 +17,11 @@
 					ptype: 'rowexpander',
 					rowBodyTpl: " ",
 					getRowBodyFeatureData: function(data, idx, record, orig) {
+						var o = this.callParent(arguments);
 						if (this.view.getRowBody) {
-							var o = this.callParent(arguments);
-
 							o.rowBody = this.view.getRowBody(record);
 							o.rowCls = this.rowCollapsedCls;
 							o.rowBodyCls = this.rowBodyHiddenCls;
-	
 							return o;
 						}
 					}
@@ -50,7 +47,7 @@
 					sorters : [ {
 						property : 'BeginDate',
 						direction : "DESC"
-					}],			
+					}],
 					fields: [{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'}, {name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'}, 'User', '_AttrHist', '_RelHist', 'DomainDesc', 'Class', 'CardCode', 'CardDescription', 'Code'],
 					baseParams: { IsProcess: (this.eventmastertype == 'processclass')}
 				})
@@ -82,22 +79,15 @@
 				_CMCache.getAttributeList(this.currentClassId, 
 						Ext.Function.bind(function buildTemplate(attributes) {
 							this.view.getRowBody = function(record) {
-								var body;
+								var body = '';
 								if (record.raw['_RelHist']) {
 									body = '<p class="historyItem"><b>'+col_tr.domain+'</b>: '+record.raw['DomainDesc']+'</p>'
 										+'<p class="historyItem"><b>'+col_tr.destclass+'</b>: '+record.raw['Class']+'</p>'
 										+'<p class="historyItem"><b>'+col_tr.code+'</b>: '+record.raw['CardCode']+'</p>'
 										+'<p class="historyItem"><b>'+col_tr.description+'</b>: '+record.raw['CardDescription']+'</p>';
-									for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
-										body += '<p class="historyItem"><b>'+a[i].d+'</b>: '+(a[i].v || '')+'</p>';
-									}
-								} else {
-									body = '';
-									for (var i=0; i<attributes.length; i++) {
-										var attribute = attributes[i],
-											displayValue = record.raw[attribute.name] || "";
-										body += '<p class="historyItem"><b>'+attribute.description+'</b>: '+ displayValue +'</p>';
-									}
+								}
+								for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
+									body += '<p class="historyItem"><b>'+a[i].d+'</b>: '+(a[i].v || '')+'</p>';
 								}
 								return body;
 							};

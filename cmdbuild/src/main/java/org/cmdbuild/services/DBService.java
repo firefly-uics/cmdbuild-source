@@ -21,13 +21,13 @@ public class DBService {
 
 	private static final String DATASOURCE_NAME = "jdbc/cmdbuild";
 
-	protected DataSource datasource;
+	protected final DataSource datasource;
 	private ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
 
 	private static DBService instance;
 
 	private DBService() {
-		configureDatasource();
+		datasource = configureDatasource();
 	}
 
 	/*
@@ -39,7 +39,7 @@ public class DBService {
 		return instance;
 	}
 
-	private void configureDatasource() {
+	private DataSource configureDatasource() {
 		DatabaseProperties dp = DatabaseProperties.getInstance();
 		if (!dp.isConfigured()) {
 			throw ORMExceptionType.ORM_DBNOTCONFIGURED.createException();
@@ -56,7 +56,7 @@ public class DBService {
 		ds.setUrl(dp.getDatabaseUrl());
 		ds.setUsername(dp.getDatabaseUser());
 		ds.setPassword(dp.getDatabasePassword());
-		this.datasource = ds;
+		return ds;
 	}
 
 	public static Connection getConnection() {
@@ -116,15 +116,14 @@ public class DBService {
 		ds.setPassword(password);
 		return ds.getConnection();
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public static String getDriverVersion() {
 		try {
-			Class driver = Class.forName("org.postgresql.Driver");
+			Class<?> driver = Class.forName("org.postgresql.Driver");
 			int major = driver.getField("MAJORVERSION").getInt(null);
 			int minor = driver.getField("MINORVERSION").getInt(null);
 
-			Class driverVersion = Class.forName("org.postgresql.util.PSQLDriverVersion");
+			Class<?> driverVersion = Class.forName("org.postgresql.util.PSQLDriverVersion");
 			int build = driverVersion.getField("buildNumber").getInt(null);
 			
 			return String.format("%d.%d-%d", major, minor, build);
