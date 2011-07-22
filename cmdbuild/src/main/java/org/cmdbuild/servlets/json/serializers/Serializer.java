@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,25 +18,26 @@ import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.LookupType;
 import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
+import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
-import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.MenuCard;
-import org.cmdbuild.elements.wrappers.PrivilegeCard;
-import org.cmdbuild.elements.wrappers.ReportCard;
-import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
+import org.cmdbuild.elements.wrappers.PrivilegeCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
+import org.cmdbuild.elements.wrappers.ReportCard;
+import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.Group;
@@ -47,6 +49,7 @@ import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.schema.ModWorkflow;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.workflow.WorkflowCache;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -748,4 +751,85 @@ public class Serializer {
 		return jsonMenuList;
 	}
 
+	public static JSONObject serializeProcessAttributeHistory(ICard card, CardQuery cardQuery) throws JSONException {
+		JsonAttributeHistoryFormatter formatter = new JsonAttributeHistoryFormatter();
+		formatter.addCard(card);
+		for (ICard historyCard: cardQuery) {
+			final String processCode = historyCard.getCode();
+			if (processCode != null && processCode.length() != 0) {
+				formatter.addCard(historyCard);
+			}
+		}
+		final JSONObject jsonResponse = new JSONObject();
+		jsonResponse.put("rows", formatter.toJson());
+		return jsonResponse;
+	}
+
+	public static void serializeCardAttributeHistory(ICard card, CardQuery cardQuery, final JSONObject jsonOutput)
+			throws JSONException {
+		JsonAttributeHistoryFormatter formatter = new JsonAttributeHistoryFormatter();
+		formatter.addCard(card);
+		for (ICard historyCard: cardQuery) {
+			formatter.addCard(historyCard);
+		}
+		final JSONArray rows = jsonOutput.getJSONArray("rows");
+		formatter.addJsonHistoryItems(rows);
+	}
+
+	private static class JsonAttributeHistoryFormatter extends JsonHistory {
+
+		public void addCard(final ICard card) {
+			final List<IAttribute> attributes = new LinkedList<IAttribute>();
+			for (IAttribute a : card.getSchema().getAttributes().values()) {
+				if (a.isDisplayable()) {
+					attributes.add(a);
+				}
+			}
+			addHistoryItem(new HistoryItem() {
+
+				@Override
+				public Object getId() {
+					return card.getId();
+				}
+
+
+				@Override
+				public DateTime getBeginDate() {
+					return new DateTime(card.getBeginDate().getTime());
+				}
+
+				@Override
+				public Map<String, ValueAndDescription> getAttributes() {
+					final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
+					for (IAttribute attr : attributes) {
+						final String name = attr.getName();
+						final String description = attr.getDescription();
+						final Object value = attr.valueToString(card.getValue(name));
+						map.put(name, new ValueAndDescription(value, description));
+					}
+					return map;
+				}
+
+				@Override
+				public Map<String, Object> getExtraAttributes() {
+					final Map<String, Object> map = new HashMap<String, Object>();
+					map.put("_AttrHist", true);
+					map.put("User", card.getUser());
+					map.put("BeginDate", card.getAttributeValue("BeginDate").toString()); //
+					try {
+						map.put("EndDate", card.getAttributeValue("EndDate").toString()); //
+					} catch (Exception e) {
+						// Skip EndDate if not in history
+					}
+					return map;
+				}
+
+				@Override
+				public boolean isInOutput() {
+					return true;
+				}
+				
+			});
+		}
+	}
 }
