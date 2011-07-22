@@ -39,6 +39,7 @@ public class TableHistory extends TableForwarder {
 				a.setSchema(this);
 			}
 			IAttribute endDateAttr = AttributeImpl.create(this, EndDateAttribute, AttributeType.TIMESTAMP);
+			endDateAttr.setMode(Mode.RESERVED.getModeString());
 			fakeAttributes.put(EndDateAttribute, endDateAttr);
 		}
 		return fakeAttributes;

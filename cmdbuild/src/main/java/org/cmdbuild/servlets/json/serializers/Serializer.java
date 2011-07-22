@@ -49,7 +49,6 @@ import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.schema.ModWorkflow;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.workflow.WorkflowCache;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -794,8 +793,8 @@ public class Serializer {
 
 
 				@Override
-				public DateTime getBeginDate() {
-					return new DateTime(card.getBeginDate().getTime());
+				public long getInstant() {
+					return card.getBeginDate().getTime();
 				}
 
 				@Override

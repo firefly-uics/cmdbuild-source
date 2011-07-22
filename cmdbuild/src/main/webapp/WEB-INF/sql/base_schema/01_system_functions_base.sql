@@ -628,7 +628,6 @@ CREATE OR REPLACE FUNCTION _cm_trigger_create_relation_history_row() RETURNS tri
 BEGIN
 	-- Does not create the row on logic deletion
 	IF (TG_OP='UPDATE') THEN
-		OLD."Id" = _cm_new_card_id();
 		OLD."Status" = 'U';
 		OLD."EndDate" = now();
 -- PostgreSQL 8.4
