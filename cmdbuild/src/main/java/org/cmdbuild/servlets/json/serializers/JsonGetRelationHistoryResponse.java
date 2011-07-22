@@ -7,7 +7,6 @@ import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,8 +51,8 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 
 
 				@Override
-				public DateTime getBeginDate() {
-					return relation.getBeginDate();
+				public long getInstant() {
+					return relation.getBeginDate().getMillis();
 				}
 
 				@Override

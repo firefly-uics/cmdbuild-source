@@ -2,11 +2,33 @@
 
 	var col_tr = CMDBuild.Translation.management.modcard.history_columns;
 
+	function genHistoryBody(record) {
+		var body = '';
+		if (record.raw['_RelHist']) {
+			body += historyAttribute(col_tr.domain, record.raw['DomainDesc'])
+				+ historyAttribute(col_tr.destclass, record.raw['Class'])
+				+ historyAttribute(col_tr.code, record.raw['CardCode'])
+				+ historyAttribute(col_tr.description, record.raw['CardDescription']);
+		}
+		for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
+			var ai = a[i];
+			body += historyAttribute(ai.d, ai.v || "", ai.c);
+		}
+		return body;
+	}
+
+	function historyAttribute(label, value, changed) {
+		var cls = changed ? " class=\"changed\"" : "";
+		return "<p"+cls+"><b>"+label+"</b>: "+(value.dsc || value)+"</p>";
+	};
+
 	Ext.define("CMDBuild.view.management.classes.CMCardHistoryTab", {
 		extend: "Ext.grid.Panel",
 
 		eventtype: 'card',
 		eventmastertype: 'class',
+
+		cls: "history_panel",
 
 		constructor: function() {
 			this.currentTemplate = null;
@@ -14,16 +36,12 @@
 
 			Ext.apply(this, {
 				plugins: [{
-					ptype: 'rowexpander',
-					rowBodyTpl: " ",
+					ptype: "rowexpander",
+					rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
 					getRowBodyFeatureData: function(data, idx, record, orig) {
 						var o = this.callParent(arguments);
-						if (this.view.getRowBody) {
-							o.rowBody = this.view.getRowBody(record);
-							o.rowCls = this.rowCollapsedCls;
-							o.rowBodyCls = this.rowBodyHiddenCls;
-							return o;
-						}
+						o.rowBody = genHistoryBody(record);
+						return o;
 					}
 				}],
 				columns: [
@@ -75,24 +93,6 @@
 				this.enable();
 				this.currentCardId = card.raw.Id;
 				this.currentClassId = card.raw.IdClass;
-
-				_CMCache.getAttributeList(this.currentClassId, 
-						Ext.Function.bind(function buildTemplate(attributes) {
-							this.view.getRowBody = function(record) {
-								var body = '';
-								if (record.raw['_RelHist']) {
-									body = '<p class="historyItem"><b>'+col_tr.domain+'</b>: '+record.raw['DomainDesc']+'</p>'
-										+'<p class="historyItem"><b>'+col_tr.destclass+'</b>: '+record.raw['Class']+'</p>'
-										+'<p class="historyItem"><b>'+col_tr.code+'</b>: '+record.raw['CardCode']+'</p>'
-										+'<p class="historyItem"><b>'+col_tr.description+'</b>: '+record.raw['CardDescription']+'</p>';
-								}
-								for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
-									body += '<p class="historyItem"><b>'+a[i].d+'</b>: '+(a[i].v || '')+'</p>';
-								}
-								return body;
-							};
-						}, this)
-				);
 
 				this.currentCardPrivileges = {
 					create: card.raw.priv_create,

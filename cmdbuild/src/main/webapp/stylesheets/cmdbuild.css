@@ -766,10 +766,14 @@ em {
 }
 
 /* history items*/
-.historyItem {
+.history_panel .x-grid-rowbody p {
 	white-space: nowrap;
 	padding: 0 0 0 35px;
 	margin: 0 !important;
+}
+
+.history_panel .x-grid-rowbody p.changed {
+	color: red;
 }
 
 /* custom icons */
