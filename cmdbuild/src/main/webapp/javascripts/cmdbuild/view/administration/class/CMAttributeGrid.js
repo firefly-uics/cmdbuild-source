@@ -1,13 +1,32 @@
 (function() {
+	var ATTR = {
+		INDEX: "index",
+		NAME: "name",
+		DESCRIPTION: "description",
+		TYPE: "type",
+		IS_BASEDSP: "isbasedsp",
+		IS_UNIQUE: "isunique",
+		IS_NOT_NULL: "isnotnull",
+		IS_INHERITED: "inherited",
+		IS_ACTIVE: "isactive",
+		FIELD_MODE: "fieldmode",
+		GROUP: "group"
+	};
+
+	var REQUEST = {
+		ROOT: "rows"
+	};
+
 	var ATTR_TO_SKIP = "Notes";
+
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
-	
+
 Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 	extend: "Ext.grid.Panel",
 	alias: "attributegrid",
 
 	remoteSort: false,
-	filtering: false,
+	includeInherited: true,
 	eventtype : 'class', 
 
 	hideNotNull: false, // for processes
@@ -32,7 +51,7 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 			checked : true,
 			scope : this,
 			handler : function(obj, checked) {
-				this.filterInherited(!checked);
+				this.setIncludeInheritedAndFilter(includeInherited = checked);
 			}
 		});
 
@@ -69,85 +88,74 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 		this.callParent(arguments);
 		
 		this.getStore().on('load', function(store, records, opt) {
-			this.filterInherited(this.filtering);
-			for (var i=0, l=records.length; i<l; ++i) {
-				var r = records[i];
-				if (r.data.name == ATTR_TO_SKIP) {
-                    try {
-                        store.removeAt(i);
-                    } catch (e) {
-                        // sometimes there is a problem with afterRemove and I don't know why
-                        _debug("fail removing a record to attributes grid", r);
-                    }
-				}
-			}
+			this.filterInheritedAndNotes();
 		}, this);
 	},
-	
+
 	// private
 	buildColumnConf: function() {
 		this.columns = [ {
 			hideable : false,
 			hidden : true,
-			dataIndex : 'index',
+			dataIndex : ATTR.INDEX,
 			flex: 1
 		}, {
 			header : translation.name,
-			dataIndex : 'name',
+			dataIndex : ATTR.NAME,
 			flex: 1
 		}, {
 			header : translation.description,
-			dataIndex : 'description',
+			dataIndex : ATTR.DESCRIPTION,
 			flex: 1
 		}, {
 			header : translation.type,
-			dataIndex : 'type',
+			dataIndex : ATTR.TYPE,
 			flex: 1
 		},
 		new Ext.ux.CheckColumn( {
 			header : translation.isbasedsp,
-			dataIndex : 'isbasedsp',
+			dataIndex : ATTR.IS_BASEDSP,
 			cmReadOnly: true
 		}),
 		new Ext.ux.CheckColumn( {
 			header : translation.isunique,
-			dataIndex : 'isunique',
+			dataIndex : ATTR.IS_UNIQUE,
 			cmReadOnly: true
 		}),
 		new Ext.ux.CheckColumn( {
 			header : translation.isnotnull,
-			dataIndex : 'isnotnull',
+			dataIndex : ATTR.IS_NOT_NULL,
 			cmReadOnly: true
 		}),
 		new Ext.ux.CheckColumn( {
 			header : translation.inherited,
 			hidden : true,
-			dataIndex : 'inherited',
+			dataIndex : ATTR.IS_INHERITED,
 			cmReadOnly: true
 		}), 
 		new Ext.ux.CheckColumn( {
 			header : translation.isactive,
-			dataIndex : 'isactive',
+			dataIndex : ATTR.IS_ACTIVE,
 			cmReadOnly: true
 		}), {
 			header : translation.field_visibility,
-			dataIndex : 'fieldmode',
+			dataIndex : ATTR.FIELD_MODE,
 			renderer : renderEditingMode,
 			flex: 1
 		}, {
 			header : translation.group,
-			dataIndex : 'group',
+			dataIndex : ATTR.GROUP,
 			hidden : true,
 			flex: 1
 		}];
 	},
-	
+
 	buildStore: function() {
 		this.store = new Ext.data.Store({
 			fields: [
-				"index", "name", "description", "type", "isunique",
-				"isbasedsp", "isnotnull","inherited", 'fieldmode',
-				'isactive', "group"
+				ATTR.INDEX, ATTR.NAME, ATTR.DESCRIPTION, ATTR.TYPE, ATTR.IS_UNIQUE,
+				ATTR.IS_BASEDSP, ATTR.IS_NOT_NULL, ATTR.IS_INHERITED, ATTR.FIELD_MODE,
+				ATTR.IS_ACTIVE, ATTR.GROUP
 			],
 			autoLoad : false,
 			proxy : {
@@ -155,11 +163,11 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 				url : 'services/json/schema/modclass/getattributelist',
 				reader : {
 					type : 'json',
-					root : 'rows'
+					root : REQUEST.ROOT
 				}
 			},
 			sorters : [ {
-				property : 'index',
+				property : ATTR.INDEX,
 				direction : "ASC"
 			}]
 		});
@@ -170,19 +178,17 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 	},
 	
 	onClassSelected: function(idClass) {
-		this.refreshStore(idClass, idAttributeToSelectAfter = null)
+		this.refreshStore(idClass, idAttributeToSelectAfter = null);
 	},
 
 	refreshStore: function(idClass, indexAttributeToSelectAfter) {
-		var sm = this.getSelectionModel();
-
 		this.store.load({
 			params: {
 				idClass : idClass || -1
 			},
 			scope: this,
 			callback: function(records, opt, success) {
-				this.filterInherited(this.filtering);
+				this.filterInheritedAndNotes();
                 if (this.rendered) {
                     this.selectRecordAtIndexOrTheFirst(indexAttributeToSelectAfter);
                 }
@@ -190,13 +196,16 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 		});
 	},
 
-	filterInherited: function(filter) {
-		this.filtering = filter;
-		if (filter) {
-			this.getStore().filterBy(function(record){return ! record.get("inherited")});
-		} else {
-			this.getStore().filterBy(function(record){return true});
-		}
+	setIncludeInheritedAndFilter: function(includeInherited) {
+		this.includeInherited = includeInherited;
+		this.filterInheritedAndNotes();
+	},
+
+	filterInheritedAndNotes: function() {
+		var inh = this.includeInherited;
+		this.getStore().filterBy(function(record) {
+			return (record.get(ATTR.NAME) != ATTR_TO_SKIP) && (inh || !record.get(ATTR.IS_INHERITED));
+		});
 	},
 
 	selectFirstRow: function() {
@@ -213,7 +222,7 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 	
     selectRecordAtIndexOrTheFirst: function (indexAttributeToSelectAfter) {
         if (indexAttributeToSelectAfter) {
-            var r = this.store.findRecord("index", indexAttributeToSelectAfter);
+            var r = this.store.findRecord(ATTR.INDEX, indexAttributeToSelectAfter);
             if (r) {
                 this.getSelectionModel().select(r);
             }
