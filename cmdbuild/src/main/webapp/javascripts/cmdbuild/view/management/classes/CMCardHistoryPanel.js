@@ -39,7 +39,7 @@
 					ptype: "rowexpander",
 					rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
 					getRowBodyFeatureData: function(data, idx, record, orig) {
-						var o = this.callParent(arguments);
+						var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
 						o.rowBody = genHistoryBody(record);
 						return o;
 					}
