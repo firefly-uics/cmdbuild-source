@@ -795,7 +795,8 @@
             "question_sure": "Sei sicuro?"
          },
          "notinrel": "N D",
-         "nullo": "E' nullo",
+         "notnull": "Non è nullo",
+         "nullo": "È nullo",
          "relations": "Relazioni",
          "remove": "Rimuovi",
          "save_filter": "Salva filtro",

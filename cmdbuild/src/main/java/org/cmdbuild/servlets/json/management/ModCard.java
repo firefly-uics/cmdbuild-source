@@ -261,6 +261,8 @@ public class ModCard extends JSONBase {
 		String ftype = requestParams.get(fullAttributeName+"_ftype");
 		if (ftype.equals("null"))
 			return new AttributeFilter(attribute, AttributeFilterType.NULL);
+		if (ftype.equals("notnull"))
+			return new AttributeFilter(attribute, AttributeFilterType.NOTNULL);
 		if (ftype.equals("between")) {
 			List<AbstractFilter> subFilters = new LinkedList<AbstractFilter>();
 			subFilters.add(new AttributeFilter(attribute, AttributeFilterType.MAJOR, requestParams.get(fullAttributeName)));

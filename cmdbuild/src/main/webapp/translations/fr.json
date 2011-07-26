@@ -795,6 +795,7 @@
             "question_sure": "Etes vous certain?"
          },
          "notinrel": "N D",
+         "notnull": "<em>Is not null</em>",
          "nullo": "Est null",
          "relations": "Relations",
          "remove": "Supprimer",

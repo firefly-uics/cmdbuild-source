@@ -133,9 +133,13 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
             border: false,
             bodyCls: "x-panel-body-default-framed"
         });
-		
-		query.on('select',function(query, selection, id){	
-			if (selection[0].data.id === 'null') {
+
+		function selectionNeedsNoValue(selection) {
+			return ['null','notnull'].indexOf(selection[0].data.id) >= 0;
+		}
+
+		query.on('select',function(query, selection, id) {
+			if (selectionNeedsNoValue(selection)) {
 				field.disable();
 			} else {
 				field.enable();

@@ -795,6 +795,7 @@
             "question_sure": "Está seguro?"
          },
          "notinrel": "N D",
+         "notnull": "<em>Non è nullo</em>",
          "nullo": "Es nulo",
          "relations": "Relaciones",
          "remove": "Remover",
