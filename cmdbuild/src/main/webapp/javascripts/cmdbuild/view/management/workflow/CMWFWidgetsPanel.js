@@ -12,14 +12,23 @@
 			});
 
 			this.callParent(arguments);
+
+			this.on("activate", function() {
+				this.enable();
+			}, this);
+
+			this.on("deactivate", function() {
+				this.disable();
+			}, this);
 		},
 
 		cmActivate: function() {
+			this.enable();
 			try {
 				this.ownerCt.setActiveTab(this);
 			} catch (e) {
 				Ext.Function.createDelayed(function(){
-					this.cmActivate()
+					this.cmActivate();
 				}, 100, this)();
 			}
 			return this;

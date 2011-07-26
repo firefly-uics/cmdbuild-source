@@ -224,11 +224,12 @@ public class ModWorkflow extends JSONBase {
 	}
 
 	private ICard startProcessIfNotStarted(final SharkFacade sharkFacade, ActivityIdentifier ai, ICard processCard) {
-		if (ai.processInstanceId == null) {
-			final ActivityDO ado = sharkFacade.startProcess(processCard.getSchema().getName());
+		if (ai.processInstanceId == null || ai.processInstanceId.isEmpty()) {
+			final ITable processTable = processCard.getSchema();
+			final ActivityDO ado = sharkFacade.startProcess(processTable.getName());
 			ai.processInstanceId = ado.getProcessInstanceId();
 			ai.workItemId = ado.getWorkItemId();
-			processCard = new LazyCard(ado.getCmdbuildClassId(), ado.getCmdbuildCardId());
+			processCard = new LazyCard(processTable.getId(), ado.getCmdbuildCardId());
 		}
 		return processCard;
 	}

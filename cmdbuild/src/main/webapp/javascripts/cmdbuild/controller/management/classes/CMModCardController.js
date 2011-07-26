@@ -166,7 +166,7 @@
 			CMDBuild.LoadMask.get().show();
 			form.submit({
 				method : 'POST',
-				url : 'services/json/management/modcard/updatecard',				
+				url : 'services/json/management/modcard/updatecard',
 				scope: this,
 				params: params,
 /*				
