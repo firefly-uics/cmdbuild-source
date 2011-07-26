@@ -396,7 +396,7 @@
 	}
 
 	function onOpenFilterButtonClick() {
-		var searchWin = new CMDBuild.Management.SearchFilterWindow({
+		new CMDBuild.Management.SearchFilterWindow({
 			attributeList: this.classAttributes,
 			IdClass: this.currentClassId,
 			grid: this,
@@ -404,7 +404,6 @@
 			filterCategory: this.filterCategory,
 			filterSubcategory: this.filterSubcategory
 		}).show();
-
 	}
 	
 	function clearFilter(cb) {

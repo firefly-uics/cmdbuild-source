@@ -37,3 +37,14 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildReadOnlyField = function(a
 CMDBuild.WidgetBuilders.ComboAttribute.prototype.getDisplayNameForAttr = function(attribute) {
 	return attribute.name+"_value";
 };
+/**
+ * @override
+ */
+CMDBuild.WidgetBuilders.ComboAttribute.prototype.getQueryOptions = function() {
+	return [
+		['equals',translation.equals],
+		['null',translation.nullo],
+		['notnull',translation.notnull],
+		['different',translation.different]
+	];
+};

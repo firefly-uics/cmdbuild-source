@@ -795,6 +795,7 @@
             "question_sure": "Да ли сте сигурни?"
          },
          "notinrel": "Н Д",
+         "notnull": "<em>Is not null</em>",
          "nullo": "Са null вредношћу",
          "relations": "Релације",
          "remove": "Уклони",

@@ -26,6 +26,7 @@ public class AttributeFilter extends AbstractFilter {
 		END("ILIKE", "%", ""),
 		DONTEND("NOT ILIKE", "%", ""),
 		NULL("IS NULL"),
+		NOTNULL("IS NOT NULL"),
 		BETWEEN(null,"BETWEEN"),
 		NOTBETWEEN(null,"NOT BETWEEN");
 
@@ -105,15 +106,38 @@ public class AttributeFilter extends AbstractFilter {
 	}
 
 	private String toString(String fullName) {
-		if (filterType == AttributeFilterType.NULL) {
-			return "(" + fullName + " " + filterType + ")";
+		if (isNullFilter() || equalsANullValue()) {
+			return "(" + fullName + " " + AttributeFilterType.NULL + ")";
+		}
+		if (isNotNullFilter() || differentThanANullValue()) {
+			return "(" + fullName + " " + AttributeFilterType.NOTNULL + ")";
 		}
 		if (values.length == 1 || !filterType.allowsMultiple()) {
 			return "(" + fullName + " " + filterType.operatorSingle() + " " + valueToString(values[0]) + ")";
 		}
 		return "(" + fullName + " " + filterType.operatorMultiple() + " " + valuesToString() + ")";
 	}
-	
+
+	private boolean isNullFilter() {
+		return filterType == AttributeFilterType.NULL;
+	}
+
+	private boolean equalsANullValue() {
+		return filterType == AttributeFilterType.EQUALS && isASingleNullValue();
+	}
+
+	private boolean isNotNullFilter() {
+		return filterType == AttributeFilterType.NOTNULL;
+	}
+
+	private boolean differentThanANullValue() {
+		return filterType == AttributeFilterType.DIFFERENT && isASingleNullValue();
+	}
+
+	private boolean isASingleNullValue() {
+		return values == null || (values.length == 1 && values[0] == null);
+	}
+
 	public String getAttributeName() {
 		return this.attribute.getName();
 	}
