@@ -8,7 +8,7 @@
 
  			this.languageStore = CMDBuild.ServiceProxy.setup.getLanguageStore();
 
-			this.languageCombo = new Ext.form.ComboBox({
+			this.languageCombo = new CMDBuild.field.CMIconCombo({
 				name: 'language',
 				iconClsField: 'name',
 				iconClsPrefix: 'ux-flag-',

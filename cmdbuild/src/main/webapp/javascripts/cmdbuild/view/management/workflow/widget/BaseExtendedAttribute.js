@@ -1,4 +1,7 @@
-CMDBuild.Management.BaseExtendedAttribute = Ext.extend(Ext.Panel, {
+
+Ext.define("CMDBuild.Management.BaseExtendedAttribute", {
+	extend: "Ext.Panel",
+
 	clientForm: undefined, // passed to extattr definition in OptionPanel
 	identifier: '',
 	bottomButtons: [],

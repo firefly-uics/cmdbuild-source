@@ -47,6 +47,8 @@
 
 			this.disableCMTbar();
 			this.enableCMButtons();
+
+			this.fireEvent("cmeditmode");
 		},
 
 		displayMode: function(enableCmBar) {
@@ -61,6 +63,7 @@
 			}
 			
 			this.disableCMButtons();
+			this.fireEvent("cmdisplaymode");
 		},
 
 		onClassSelected: function(id) {

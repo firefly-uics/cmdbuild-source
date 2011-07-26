@@ -119,50 +119,6 @@ CMDBuild.ServiceProxy = {
 			callback: p.callback || Ext.emptyFn
 		});
 	},
-	
-	// Workflow
-	workflow: {
-		getstartactivitytemplate: function(idClass, cbConfig) {
-			var conf = {
-				url: 'services/json/management/modworkflow/getstartactivitytemplate',
-				method: 'GET',
-				params : {
-					idClass : idClass,
-					id : -1
-				}
-			};
-
-			Ext.Ajax.request(Ext.apply(conf, cbConfig));
-		},
-
-		terminateActivity: function(p) {
-			Ext.Ajax.request({
-    			url: 'services/json/management/modworkflow/abortprocess',
-                params: {
-					ProcessInstanceId: p.ProcessInstanceId,
-					WorkItemId: p.WorkItemId
-				},
-                method: 'POST',                  
-                success: p.success || Ext.emptyFn,
-				failure: p.failure || Ext.emptyFn,
-				callback: p.callback || Ext.emptyFn
-      	 	});
-		},
-		startProcess: function(p) {
-			Ext.Ajax.request({
-				url: 'services/json/management/modworkflow/startprocess',
-	            params: {
-					idClass : p.idClass,
-	                id : -1
-				},
-	            method: 'POST',                  
-	            success: p.success || Ext.emptyFn,
-				failure: p.failure || Ext.emptyFn,
-				callback: p.callback || Ext.emptyFn
-	  	 	});
-		}
-	},
-	
 	// store builders
 
 	/**
@@ -254,7 +210,7 @@ CMDBuild.ServiceProxy.geoAttribute = {
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
-}
+};
 
 CMDBuild.ServiceProxy.geoServer = {
 	addUrl: "services/json/gis/addgeoserverlayer",
@@ -296,7 +252,7 @@ CMDBuild.ServiceProxy.geoServer = {
 		
 		CMDBuild.Ajax.request(p);
 	}
-}
+};
 
 CMDBuild.ServiceProxy.classes = {
 	read: function(p) {
@@ -318,7 +274,7 @@ CMDBuild.ServiceProxy.classes = {
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
-}
+};
 
 CMDBuild.ServiceProxy.card = {
 	getPosition: function(p) {
@@ -341,7 +297,34 @@ CMDBuild.ServiceProxy.card = {
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
-}
+};
+
+CMDBuild.ServiceProxy.workflow = {
+	getstartactivitytemplate: function(idClass, p) {
+		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
+			url: 'services/json/management/modworkflow/getstartactivitytemplate',
+			method: 'GET',
+			params : {
+				idClass : idClass,
+				id : -1
+			}
+		}, p));
+	},
+
+	terminateActivity: function(p) {
+		p.url = 'services/json/management/modworkflow/abortprocess';
+		p.method = "POST";
+		
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	},
+
+	saveActivity: function(p) {
+		p.url = 'services/json/management/modworkflow/saveactivity';
+		p.method = 'POST';
+
+		CMDBuild.ServiceProxy.core.doRequest(p);
+	}
+},
 
 
 CMDBuild.ServiceProxy.lookup = {
@@ -441,7 +424,7 @@ CMDBuild.ServiceProxy.lookup = {
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
-}
+};
 
 CMDBuild.ServiceProxy.group = {
 	read: function(p) {
@@ -512,7 +495,7 @@ CMDBuild.ServiceProxy.group = {
 			}]
 		});
 	}
-}
+};
 
 CMDBuild.ServiceProxy.report = {
 	read: function(p) {
@@ -521,16 +504,16 @@ CMDBuild.ServiceProxy.report = {
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
-}
+};
 
 CMDBuild.ServiceProxy.menu = {
-		read: function(p) {
-			p.method = "GET";
-			p.url = 'services/json/schema/modmenu/getgroupmenu';
+	read: function(p) {
+		p.method = "GET";
+		p.url = 'services/json/schema/modmenu/getgroupmenu';
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		}
+		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
+};
 
 
 })();

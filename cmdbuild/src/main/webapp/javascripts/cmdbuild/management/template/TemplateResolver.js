@@ -27,7 +27,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		}
 		var nsFunction = nsFunctionArray[varQName.namespace];
 		if (nsFunction) {
-			return nsFunction.createDelegate(this)(varQName.localname, ctx);
+			return nsFunction.call(this, varQName.localname, ctx);
 		} else {
 			CMDBuild.log.error("No resolver for namespace " + varQName.namespace);
 			return "";
@@ -190,7 +190,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	resolveTemplates: function(conf) {
 		var callbackFn = conf.callback || Ext.emptyFn;
 		if (conf.scope) {
-			callbackFn = callbackFn.createDelegate(conf.scope);
+			callbackFn = Ext.bind(callbackFn,conf.scope);
 		}
 		var templates = conf.attributes;
 		var deps = this.getTemplateSetDeps(templates, this.xaVars);

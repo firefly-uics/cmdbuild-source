@@ -62,36 +62,7 @@
 				scope: this
 			});
 		},
-				
-		syncSelections: function() {
-			var sm = this.getSelectionModel();
-			sm.suspendEvents();
-			sm.clearSelections();
-			sm.resumeEvents();
-			
-			if (!this.noSelect) {
-				var store = this.getStore();
-				var selections = this.model.getSelections();
-				for (var i = 0, l = selections.length; i<l; ++i) {
-					var cardId = selections[i];
-					this.selectByCardId(cardId);
-				}
-			}
-		},
-		
-		selectByCardId: function(cardId) {
-			var recIndex = this.getStore().find("Id", cardId);
-			if (recIndex >= 0) {
-				this.getSelectionModel().selectRow(recIndex, true);
-			}
-		},
-		
-		deselectByCardId: function(cardId) {
-			var recIndex = this.getStore().find("Id", cardId);
-			if (recIndex >= 0) {
-				this.getSelectionModel().deselectRow(recIndex, true);
-			}
-		},
+
 		onRowDoubleClick: Ext.emptyFn
 	});	
 })();

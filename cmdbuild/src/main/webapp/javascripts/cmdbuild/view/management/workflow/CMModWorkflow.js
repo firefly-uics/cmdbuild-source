@@ -7,7 +7,6 @@
 		buildComponents: function() {
 
 			this.cardGrid = new CMDBuild.view.management.workflow.CMActivityGrid({
-				title: "@@ the activities",
 				region: "north",
 				hideMode: "offsets",
 				filterCategory: this.cmName,
@@ -21,6 +20,29 @@
 				region: "center",
 				border: false
 			});
+		},
+
+		/*
+		o = {
+				reloadFields: reloadFields,
+				editMode: editMode,
+				cb: cb,
+				scope: this
+			}
+		*/
+		updateForActivity: function(activity, o) {
+			var data = activity.raw || activity.data,
+				widgets = data.CmdbuildExtendedAttributes;
+			
+			this.cardTabPanel.updateForActivity(activity, o);
+		},
+
+		getWFWidgets: function() {
+			return this.cardTabPanel.getWFWidgets();
+		},
+
+		onAddButtonClick: function() {
+//			this.cardTabPanel.onAddButtonClick();
 		}
 	});
 
