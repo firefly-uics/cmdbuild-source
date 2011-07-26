@@ -67,7 +67,7 @@
 			Ext.Array.forEach(widgets, function(w, i) {
 				this.widgetsMap[w.identifier] = buildWidget.call(this, w, activity);
 			}, this);
-
+			this.widgetsTab.disable();
 			this.activityTab.updateForActivity(activity, o);
 		},
 

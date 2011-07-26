@@ -71,10 +71,23 @@ CMDBuild.Management.TemplateResolver.prototype = {
 
 	// private
 	findFormField: function(varName) {
-		var field = this.getBasicForm().findField(varName);
-		if (!field) {
-			field = this.getBasicForm().findField(varName+"_value");
+
+		function findCriteria(f) {
+			if (!f.CMAttribute) {
+				return false;
+			} else {
+				return f.CMAttribute.name == varName;
+			}
 		}
+
+		var field = this.getBasicForm().getFields().findBy(findCriteria);
+		
+		// TODO I think that it's not necessary because now we looking for the name in
+		// the attribute configuration
+
+//		if (!field) {
+//			field = this.getBasicForm().findField(varName+"_value");
+//		}
 		return field;
 	},
 

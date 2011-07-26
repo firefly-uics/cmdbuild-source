@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -30,13 +30,13 @@ import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
 import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin;
-import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBase.Configuration;
 import org.cmdbuild.servlets.json.JSONBase.MultipleException;
 import org.cmdbuild.servlets.json.JSONBase.PartialFailureException;
 import org.cmdbuild.servlets.json.JSONBase.SkipExtSuccess;
 import org.cmdbuild.servlets.json.JSONBase.Transacted;
 import org.cmdbuild.servlets.json.JSONBase.Unauthorized;
+import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
 import org.dom4j.Document;
 import org.dom4j.io.XMLWriter;
@@ -337,6 +337,9 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	private void addErrors(JSONObject jsonOutput, Throwable exception) throws JSONException {
+		if (exception instanceof PartialFailureException) {
+			exception = ((PartialFailureException) exception).getOriginalException();
+		}
 		if (exception instanceof MultipleException) {
 			final MultipleException me = (MultipleException) exception;
 			jsonOutput.put("errors", serializeExceptionArray(me.getExceptions()));

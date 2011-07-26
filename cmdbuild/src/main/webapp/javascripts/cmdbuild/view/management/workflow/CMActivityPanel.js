@@ -84,10 +84,12 @@
 
 		displayMode: function(enableCMTbar) {
 			this.activityForm.displayMode(enableCMTbar);
+			this.wfWidgetsPanel.displayMode();
 		},
 
 		editMode: function() {
 			this.activityForm.editMode();
+			this.wfWidgetsPanel.editMode();
 		},
 
 		reset: function() {
@@ -129,7 +131,18 @@
 			} else {
 				this.hide();
 			}
+		},
 
+		displayMode: function() {
+			this.items.each(function(i) {
+				i.disable();
+			});
+		},
+
+		editMode: function() {
+			this.items.each(function(i) {
+				i.enable();
+			});
 		}
 	});
 	
@@ -149,12 +162,14 @@
 				'->','-',
 				this.processStepName = new Ext.button.Button({
 					overCls: Ext.button.Button.baseCls,
-					pressedCls: Ext.button.Button.baseCls
+					pressedCls: Ext.button.Button.baseCls,
+					disable: Ext.emptyFn
 				}),
 				'-',
 				this.processStepCode = new Ext.button.Button({
 					overCls: Ext.button.Button.baseCls,
-					pressedCls: Ext.button.Button.baseCls
+					pressedCls: Ext.button.Button.baseCls,
+					disable: Ext.emptyFn
 				}),
 				' '
 			];

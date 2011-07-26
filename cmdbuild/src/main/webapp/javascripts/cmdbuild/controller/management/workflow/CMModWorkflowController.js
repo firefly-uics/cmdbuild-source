@@ -193,9 +193,12 @@
 		});
 
 		function success(response) {
-			var template =  Ext.JSON.decode(response.responseText); 
+			var template =  Ext.JSON.decode(response.responseText);
+
 			template.data.ProcessInstanceId = undefined;
 			template.data.WorkItemId = undefined;
+
+			template.raw = template.data; // to unify the Ext.models with the server response;
 
 			updateForActivity.call(this, template, editMode = true);
 		}
@@ -234,7 +237,7 @@
 
 	function saveActivity() {
 		// if the record is new it has not raw data, so use the normal data
-		var data = this.currentActivity.raw || this.currentActivity.data,
+		var data = this.currentActivity.raw,
 			requestParams = {
 				Id: data.Id,
 				IdClass: data.IdClass,
@@ -265,19 +268,37 @@
 			params: requestParams,
 			scope : this,
 			clientValidation: this.activityPanelController.isAdvance, //to force the save request
-			success : function() {
+			callback: function(operation, success, response) {
 				CMDBuild.LoadMask.get().hide();
+			},
+
+			success: function(response) {
+				updateActivityData.call(this, response);
+
 				this.activityPanelController.view.reset();
 				this.activityPanelController.view.displayMode();
 
 				this.grid.openCard({
-					Id: data.Id,
-					IdClass: data.IdClass
+					Id: this.currentActivity.raw.Id,
+					IdClass: this.currentActivity.raw.IdClass
 				});
 			},
-			failure : function(response, options) {
-				CMDBuild.LoadMask.get().hide();
+
+			failure : function(response) {
+				updateActivityData.call(this, response);
 			}
 		});
+
+		function updateActivityData(response) {
+			if (this.currentActivity) {
+				var activity = Ext.decode(response.responseText);
+
+				this.currentActivity.raw = Ext.apply(this.currentActivity.raw, {
+					Id: activity.Id,
+					ProcessInstanceId: activity.ProcessInstanceId,
+					WorkItemId: activity.WorkItemId
+				});
+			}
+		}
 	}
 })();

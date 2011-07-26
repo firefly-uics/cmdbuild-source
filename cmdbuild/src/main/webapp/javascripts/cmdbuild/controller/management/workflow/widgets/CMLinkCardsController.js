@@ -17,9 +17,8 @@
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
 		cmName: "Link cards",
 
-		activeView: function() {
-			this.beforeActiveView();
-			this.view.cmActivate();
+		mixins: {
+			observable: "Ext.util.Observable"
 		},
 
 		constructor: function() {
@@ -45,25 +44,42 @@
 			this.view.on("deselect", onDeselect, this);
 		},
 
-		beforeActiveView: function() {
-			this.alertIfChangeDefaultSelection = true;
-			var classId = this.templateResolver.getVariable(CLASS_ID),
-				cqlQuery = this.templateResolver.getVariable(FILTER);
-			
-			if (cqlQuery) {
-				this.view.grid.openFilterButton.disable();
-				this.templateResolver.resolveTemplates({
-					attributes: [ FILTER ],
-					scope: this.view,
-					callback: function(out, ctx) {
-						var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
-						this.updateGrid(classId, cardReqParams);
-					}
-				});
-			} else {
-				this.view.updateGrid(classId);
-			}
+		activeView: function() {
+			this.beforeActiveView();
+			this.view.cmActivate();
+		},
 
+		beforeActiveView: function() {
+			new _CMUtils.PollingFunction({
+				success: function() {
+					this.alertIfChangeDefaultSelection = true;
+					var classId = this.templateResolver.getVariable(CLASS_ID),
+						cqlQuery = this.templateResolver.getVariable(FILTER);
+	
+					if (cqlQuery) {
+						this.view.grid.openFilterButton.disable();
+						this.templateResolver.resolveTemplates({
+							attributes: [ FILTER ],
+							scope: this.view,
+							callback: function(out, ctx) {
+								var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
+								this.updateGrid(classId, cardReqParams);
+							}
+						});
+					} else {
+						this.view.updateGrid(classId);
+					}
+				},
+				failure: function failure() {
+					CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
+				},
+				checkFn: function() {
+					// I want exit if I'm not busy
+					return !this.isBusy()
+				},
+				cbScope: this,
+				checkFnScope: this
+			}).run();
 		},
 
 		onEditMode: function() {
@@ -172,8 +188,19 @@
 		var ld = this.templateResolver.getLocalDepsAsField();
 		for (var i in ld) {
 			//before the blur if the value is changed
-			if (ld[i]) {
-				ld[i].on('change', resolveTemplate, this, {single: true});
+			var field = ld[i];
+
+			if (field) {
+				field.mon(field, "change", function(f) {
+					f.changed = true;
+				}, this);
+
+				field.mon(field, "blur", function(f) {
+					if (f.changed) {
+						resolveTemplate.call(this);
+						f.changed = false;
+					}
+				}, this);
 			}
 		}
 	}
