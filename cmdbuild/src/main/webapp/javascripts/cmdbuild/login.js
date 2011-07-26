@@ -1,6 +1,6 @@
 Ext.onReady(function() {
 	Ext.QuickTips.init();
-	CMDBuild.ChainedAjax.execute({		
+	CMDBuild.ChainedAjax.execute({
 		requests: [{
 			url: 'services/json/schema/setup/getconfiguration',
 			params: { name: 'cmdbuild' },
@@ -130,7 +130,7 @@ Ext.define("CMDBuild.LoginPanel", {
 	buildLanguagesCombo: function() {
 		if (CMDBuild.Config.cmdbuild.languageprompt == "true") {
 
-			this.language = new Ext.form.ComboBox({
+			this.language = new CMDBuild.field.CMIconCombo({
 				fieldLabel: this.tr.language,
 				store: new Ext.data.Store( {
 					model : 'TranslationModel',
@@ -146,11 +146,9 @@ Ext.define("CMDBuild.LoginPanel", {
 				}),
 				valueField: 'name',
 				displayField: 'value',
-				queryMode: 'local',
-				iconClsField: 'name',
-				iconClsPrefix: 'ux-flag-'
+				queryMode: 'local'
 			});
-			
+
 			this.language.on('select', function(combo, record) {
 				window.location = Ext.String.format('?language={0}', record[0].get("name"));
 			}, this);

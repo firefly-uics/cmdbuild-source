@@ -9,7 +9,7 @@
 		+ '</ul>',
 
 		splashText = '<div class="splashScreen_central">' + 
-			'<div class="spalshMotto">Open Source Configuration and Manage	nt Database</div>' +
+			'<div class="spalshMotto">Open Source Configuration and Management Database</div>' +
 			'<span class="splashSubTitle copyright">Copyright &copy; Tecnoteca srl</span>' +
 		'</div>',
 

@@ -1,10 +1,10 @@
 (function() {
-	var FILTER = "xa:Filter";
-	var CLASS_ID = "xa:ClassId";
-	var DEFAULT_SELECTION = "xa:DefaultSelection";
-	var TABLE_VIEW_NAME = "table";
-	var MAP_VIEW_NAME = "map";
-	var STARTING_VIEW = TABLE_VIEW_NAME;
+	var FILTER = "xa:Filter",
+		CLASS_ID = "xa:ClassId",
+		DEFAULT_SELECTION = "xa:DefaultSelection",
+		TABLE_VIEW_NAME = "table",
+		MAP_VIEW_NAME = "map",
+		STARTING_VIEW = TABLE_VIEW_NAME;
 	
 	CMDBuild.Management.LinkCardsController = function(view) {
 		this.singleSelect = view.singleSelect;

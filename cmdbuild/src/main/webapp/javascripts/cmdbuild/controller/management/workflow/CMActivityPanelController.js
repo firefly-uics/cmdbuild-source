@@ -4,6 +4,11 @@
 		constructor: function(v, owner) {
 			this.view = v;
 			this.ownerController = owner;
+			// this flag is used to define if the user has click on the
+			// save or advance button. The difference is that on save 
+			// the widgets do nothing and the saved activity goes in display mode.
+			// On advance, otherwise, the widgets do the react (save their state) and
+			// the saved activity lies in edit mode, to continue the data entry.
 			this.isAdvance = false;
 
 			// listeners
@@ -13,6 +18,8 @@
 
 			this.view.activityForm.deleteCardButton.on("click", onDeleteButtonClick, this);
 			this.view.activityForm.modifyCardButton.on("click", onModifyButtonClick, this);
+			
+			this.view.wfWidgetsPanel.on("cm-wfwidgetbutton-click", onWFWidgetButtonClick, this);
 		},
 
 		onEntrySelected: function(selection) {
@@ -21,13 +28,7 @@
 		},
 
 		onActivitySelect: function(activity, reloadFields, editMode) {
-			this.view.loadActivity(activity, reloadFields, editMode);
 			this.isAdvance = false;
-		},
-
-		// p = {activity: the activity, edit: boolean, isNew: boolean}
-		onAddButtonClick: function(p) {
-			this.view.loadActivity(p.activity, reloadFields = true, editMode = true);
 		}
 	});
 
@@ -54,5 +55,9 @@
 	function onModifyButtonClick() {
 		this.isAdvance = false;
 		this.view.editMode();
+	}
+	
+	function onWFWidgetButtonClick(wfWidgetData) {
+		this.ownerController.onWFWidgetButtonClick(wfWidgetData);
 	}
 })();

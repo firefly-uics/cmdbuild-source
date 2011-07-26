@@ -24,7 +24,6 @@
 		<link rel="icon" href="images/favicon.ico" />
 
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/IconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 	
 		<!-- 1. Main script -->
@@ -35,6 +34,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>	
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 		
 		<!-- 2. Translations -->

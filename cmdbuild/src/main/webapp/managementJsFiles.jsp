@@ -3,9 +3,8 @@
 
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/SearchFilterWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attributes.js"></script>
-
+<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
+<script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
 
 <!-- WIDGETS BUILDER-->
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/BaseAttribute.js"></script>
@@ -41,6 +40,9 @@
 
 <!-- MODELS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
+	<!-- it is not a ext model, but a day maybe it will be -->
+	<script type="text/javascript" src="javascripts/cmdbuild/model/wfwidget/CMLinkCardsModel.js"></script>
 
 <!-- VIEWS -->
 	<!-- COMMON -->
@@ -50,6 +52,12 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMNoteWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMAttachmentsWindow.js"></script>
+	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/SearchFilterWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/Attributes.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanelWithCardGridAndFilter.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMRelations.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
@@ -93,8 +101,12 @@
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMModWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMWFWidgetsPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
+	
+		<!-- WIDGETS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/linkCards/CMLinkCards.js"></script>
 
 
 <!-- CONTROLLER -->
@@ -118,11 +130,13 @@
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityPanelController.js"></script>
+		<!-- WIDGETS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMBaseWFWidgetController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
 <!--
 
 	
 <script type="text/javascript" src="javascripts/cmdbuild/management/FixedCardGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>

@@ -139,6 +139,39 @@ CMDBuild.Utils = (function() {
 			}
 	
 			return out;
+		},
+
+		PollingFunction: function(conf) {
+			var DEFAULT_DELAY = 500,
+				DEFAULT_MAX_TIMES = 60;
+
+			this.success =  conf.success || Ext.emptyFn;
+			this.failure = conf.failure || Ext.emptyFn;
+			this.checkFn = conf.checkFn || function() { return true;};
+			this.cbScope = conf.cbScope || this;
+			this.delay = conf.delay || DEFAULT_DELAY;
+			this.maxTimes = conf.maxTimes || DEFAULT_MAX_TIMES;
+			this.checkFnScope = conf.checkFnScope || this.cbScope;
+
+			this.run = function() {
+				if (this.maxTimes == DEFAULT_MAX_TIMES) {
+					CMDBuild.LoadMask.get().show();
+				}
+				if (this.maxTimes > 0) {
+					if (this.checkFn.call(this.checkFnScope)) {
+						_debug("End polling with success");
+						CMDBuild.LoadMask.get().hide();
+						this.success.call(this.cbScope);
+					} else {
+						this.maxTimes--;
+						Ext.Function.defer(this.run, this.delay, this);
+					}
+				} else {
+					_debug("End polling with failure");
+					CMDBuild.LoadMask.get().hide();
+					this.failure.call();
+				}
+			};
 		}
 	};
 })();

@@ -15,7 +15,7 @@
 				region: "center"
 			});
 
-			this.extendedAttributesButtons = new Ext.Panel({
+			this.wfWidgetsPanel = new CMDBuild.view.management.workflow.CMActivityPanel.WFWidgetsPanel({
 				region: 'east',
 				hideMode: 'offsets',
 				autoScroll: true,
@@ -24,24 +24,46 @@
 			});
 
 			this.layout = "border";
-			this.items = [this.activityForm, this.extendedAttributesButtons];
+			this.items = [this.activityForm, this.wfWidgetsPanel];
 			this.callParent(arguments);
+
+			this.activityForm.on("cmeditmode", function() {
+				this.fireEvent("cmeditmode");
+			}, this);
+
+			this.activityForm.on("cmdisplaymode", function() {
+				this.fireEvent("cmdisplaymode");
+			}, this);
+
 		},
 
-		loadActivity: function(activity, reloadFields, editMode) {
+		/*
+		 o = {
+				reloadFields: reloadFields,
+				editMode: editMode,
+				cb: cb,
+				scope: this
+			}
+		 */
+		updateForActivity: function(activity, o) {
 			this.activityForm.activityToLoad = activity;
 			this.activityForm.updateInfo(activity);
+			this.wfWidgetsPanel.updateWidgets(activity);
 
 			var loadCard = Ext.bind(function() {
 				this.activityForm.loadCard(activity);
-				if (editMode) {
+				if (o.editMode) {
 					this.editMode();
 				} else {
 					this.displayMode(enableCMTbar = true);
 				}
+				if (o.cb) {
+					var scope = o.scope || this;
+					o.cb.call(this);
+				}
 			}, this);
 
-			if (reloadFields) {
+			if (o.reloadFields) {
 				_CMCache.getAttributeList(activity.data.IdClass, 
 					Ext.bind(function cb(a) {
 						this.activityForm.buildActivityFields(a);
@@ -54,6 +76,10 @@
 
 		getForm: function() {
 			return this.activityForm.getForm();
+		},
+
+		getValues: function() {
+			return this.activityForm.getValues();
 		},
 
 		displayMode: function(enableCMTbar) {
@@ -69,6 +95,44 @@
 		}
 	});
 
+	Ext.define("CMDBuild.view.management.workflow.CMActivityPanel.WFWidgetsPanel", {
+		extend: "Ext.panel.Panel",
+		initComponent: function() {
+			Ext.apply(this, {
+				frame: false,
+				border: false,
+				bodyCls: "x-panel-body-default-framed",
+				bodyStyle: {
+					padding: "35px 5px 0 5px"
+				}
+			});
+			this.callParent(arguments);
+		},
+		updateWidgets: function(activity) {
+			var data = activity.raw || activity.data,
+				widgetsDefinition = data.CmdbuildExtendedAttributes || [],
+				me = this;
+
+			this.removeAll();
+
+			if (widgetsDefinition.length > 0) {
+				this.show();
+				Ext.each(widgetsDefinition, function(item) {
+					me.add(new Ext.Button({
+						text: item.btnLabel || CMDBuild.Translation.management.modworkflow[item.labelId],
+						widgetDefinition: item,
+						handler: function() {
+							me.fireEvent("cm-wfwidgetbutton-click", item);
+						}
+					}));
+				});
+			} else {
+				this.hide();
+			}
+
+		}
+	});
+	
 	Ext.define("CMDBuild.view.management.workflow.CMActivityPanel.Form", {
 		extend: "CMDBuild.view.management.classes.CMCardPanel",
 

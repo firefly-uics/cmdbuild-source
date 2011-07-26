@@ -169,7 +169,7 @@ em {
 	margin: 0;
 	width: 395px;
 	height: 63px;
-	padding-left: 20px;
+	padding-left: 10px;
 	padding-top: 135px;
 }
 
@@ -748,6 +748,11 @@ em {
 	border-top-style: solid ! important;
 	border-top-width: 1px ! important;
 	
+}
+
+.cmborderbottom {
+	border-bottom-style: solid ! important;
+	border-bottom-width: 1px ! important;
 }
 
 /*

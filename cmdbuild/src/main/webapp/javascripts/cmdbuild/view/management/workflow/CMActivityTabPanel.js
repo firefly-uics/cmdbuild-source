@@ -1,5 +1,5 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel", {
 		extend: "Ext.panel.Panel",
 
@@ -11,18 +11,31 @@
 				withButtons: true
 			});
 
+			this.widgetsTab = new CMDBuild.view.management.workflow.CMWFWidgetsPanel({
+				title: CMDBuild.Translation.management.modworkflow.tabs.options,
+				autoScroll: true
+			});
+
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
 				activeTab: 0,
 				border: false,
 				frame: false,
 				split: true,
-				items: [this.activityTab]
+				items: [this.activityTab, this.widgetsTab]
 			});
 
 			this.docPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel.DocPanel();
 
 			this.callParent(arguments);
+
+			this.activityTab.on("cmeditmode", function() {
+				this.fireEvent("cmeditmode");
+			}, this);
+
+			this.activityTab.on("cmdisplaymode", function() {
+				this.fireEvent("cmdisplaymode");
+			}, this);
 		},
 
 		initComponent : function() {
@@ -35,24 +48,52 @@
 
 			this.callParent(arguments);
 		},
+		
+		/*
+		 o = {
+				reloadFields: reloadFields,
+				editMode: editMode,
+				cb: cb,
+				scope: this
+			}
+		 */
+		updateForActivity: function(activity, o) {
+			var data = activity.raw || activity.data,
+				widgets = data.CmdbuildExtendedAttributes;
 
-		// p = {activity: the activity, edit: boolean, isNew: boolean}
-		onAddCardButtonClick: function(p) {
-			this.loadActivity(p.activity);
+			this.widgetsTab.removeAll(autoDestroy = true);
+			this.widgetsMap = {};
+
+			Ext.Array.forEach(widgets, function(w, i) {
+				this.widgetsMap[w.identifier] = buildWidget.call(this, w, activity);
+			}, this);
+
+			this.activityTab.updateForActivity(activity, o);
 		},
 
-		loadActivity: function(activity) {
-//			listenCMActivityLoaded.call(this, activity);
-			this.acutalPanel.items.each(function(tab) {
-				if (tab.loadActivity) {
-					tab.loadActivity(activity);
-				} else if(tab.loadCard) {
-					tab.loadCard(activity);
-				}
-			});
+		getWFWidgets: function() {
+			return this.widgetsMap;
 		}
 	});
 
+	function buildWidget(widget, activity) {
+		var me = this,
+			builders = {
+				linkCards: function(widget) {
+					var w = new CMDBuild.view.management.workflow.widgets.CMLinkCards({
+						widget: widget,
+						activity: activity,
+						clientForm: me.activityTab.getForm()
+					});
+
+					me.widgetsTab.add(w);
+					return w;
+				}
+			}
+
+		return builders[widget.extattrtype](widget);
+	}
+	
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel.DocPanel", {
 		extend: "Ext.panel.Panel",
 		initComponent: function() {

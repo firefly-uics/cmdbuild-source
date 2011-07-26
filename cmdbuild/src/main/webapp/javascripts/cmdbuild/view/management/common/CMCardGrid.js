@@ -121,9 +121,10 @@
 
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
+		columns: [],
+
 		filterCategory: undefined,
 		filterSubcategory: undefined,
-
 		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar 
@@ -282,8 +283,8 @@
 			} catch (e) {
 				pageSize = 20;
 			}
-			
-			return new Ext.data.Store({
+
+			var s = new Ext.data.Store({
 				fields: fields,
 				pageSize: pageSize,
 				remoteSort: true,
@@ -299,15 +300,31 @@
 				},
 				autoLoad: false
 			});
+
+			this.mon(s, "beforeload", function() {
+				this.fireEvent("beforeload", arguments);
+			}, this);
+
+			this.mon(s, "load", function() {
+				this.fireEvent("load", arguments);
+			}, this);
+
+			return s;
 		},
 
 		//private, could be overridden
 		getStoreExtraParams: function() {
-			return {
+			var p = {
 				IdClass : this.currentClassId || -1,
 				FilterCategory: this.filterCategory || "",
 				FilterSubcategory: this.filterSubcategory || ""
+			};
+
+			if (this.CQL) {
+				p = Ext.apply(p, this.CQL);
 			}
+
+			return p;
 		},
 
 		//private, could be overridden
@@ -344,7 +361,8 @@
 				scope: this,			
 				iconCls: 'clear_find',
 				text: CMDBuild.Translation.management.findfilter.clear_filter,
-				handler: clearFilter
+				handler: clearFilter,
+				disabled: true
 			});
 
 			items.push(this.openFilterButton, this.clearFilterButton);
