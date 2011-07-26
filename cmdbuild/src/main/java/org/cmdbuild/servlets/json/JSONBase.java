@@ -4,15 +4,64 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
+import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 
 public class JSONBase {
+
+	public static class MultipleException extends Exception {
+		
+		private static final long serialVersionUID = 6540036977691254944L;
+
+		private final List<Exception> exceptions;
+
+		public MultipleException() {
+			this.exceptions = new ArrayList<Exception>();
+		}
+
+		public MultipleException(Exception e) {
+			this();
+			this.exceptions.add(e);
+		}
+
+		public Iterable<Exception> getExceptions() {
+			return exceptions;
+		}
+
+		public void addException(Exception e) {
+			exceptions.add(e);
+		}
+	}
+
+	public static class PartialFailureException extends Exception {
+
+		private static final long serialVersionUID = 4651384443077293725L;
+
+		private final JSONObject out;
+		private Exception e;
+
+		public PartialFailureException(final JSONObject out, final Exception e) {
+			this.out = out;
+			this.e = e;
+		}
+
+		public JSONObject getPartialOutput() {
+			return out;
+		}
+
+		public Exception getOriginalException() {
+			return e;
+		}
+	}
+
 	/**
 	 * Marker interface for exported JSON service methods
 	 */

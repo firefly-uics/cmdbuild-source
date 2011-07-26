@@ -46,6 +46,7 @@ import org.cmdbuild.services.gis.GeoFeatureType;
 import org.cmdbuild.services.gis.GeoLayer;
 import org.cmdbuild.services.gis.GeoTable;
 import org.cmdbuild.services.meta.MetadataService;
+import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.schema.ModWorkflow;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.workflow.WorkflowCache;
@@ -830,5 +831,14 @@ public class Serializer {
 				
 			});
 		}
+	}
+
+	public static JSONObject serializeActivityIds(ActivityIdentifier ai, ICard processCard) throws JSONException {
+		JSONObject out = new JSONObject();
+		out.put("Id", processCard.getId());
+		out.put("IdClass", processCard.getIdClass());
+		out.put("ProcessInstanceId", ai.getProcessInstanceId());
+		out.put("WorkItemId", ai.getWorkItemId());
+		return out;
 	}
 }
