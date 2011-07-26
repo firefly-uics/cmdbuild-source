@@ -29,6 +29,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.WorkflowService.WorkflowOperation;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.workflow.ActivityVariable;
 import org.cmdbuild.workflow.CmdbuildActivityInfo;
 import org.cmdbuild.workflow.CmdbuildProcessInfo;
@@ -375,6 +376,11 @@ public class SharkFacade {
 		return execute(operation);
 	}
 
+	public boolean updateActivity(final ActivityIdentifier ai,
+			final Map<String,String> params, final boolean complete) {
+		return updateActivity(ai.getProcessInstanceId(), ai.getWorkItemId(), params, complete);
+	}
+
 	public boolean updateActivity(final String processInstanceId, final String workItemId,
 			final Map<String,String> params, final boolean complete) {
 		WorkflowOperation<Boolean> operation = new AbstractUpdateActivityOperation(processInstanceId, workItemId, params, complete){
@@ -400,7 +406,12 @@ public class SharkFacade {
 		return execute(operation);
 	}
 
-	public boolean reactToExtendedAttributeSubmission( final String processInstanceId, final String workItemId,
+	public boolean saveWorkflowWidget(final ActivityIdentifier ai, final String identifier,
+			final Map<String, String[]> values) {
+		return reactToExtendedAttributeSubmission(ai.getProcessInstanceId(), ai.getWorkItemId(), values, identifier);
+	}
+
+	public boolean reactToExtendedAttributeSubmission(final String processInstanceId, final String workItemId,
 			final Map<String, String[]> submissionParameters, final String extAttrIdentifier) {
 		WorkflowOperation<Boolean> operation = new WorkflowOperation<Boolean>() {
 			public Boolean execute(WMSessionHandle handle,
