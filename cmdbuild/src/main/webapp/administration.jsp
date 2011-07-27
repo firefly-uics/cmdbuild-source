@@ -25,14 +25,8 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="icon" href="images/favicon.ico" />
-		
+
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all-gray.css" />
-		
-<!--		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/headerbuttons.css" />-->
-<!--		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" /> -->
-<!--		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/Spinner.css" />-->
-		
-		<link rel="stylesheet" type="text/css" href="javascripts/ext-3-to-4-compatibility/ext3-compat.css" />
 
 		<%@ include file="libsJsFiles.jsp"%>
 		<script type="text/javascript">
