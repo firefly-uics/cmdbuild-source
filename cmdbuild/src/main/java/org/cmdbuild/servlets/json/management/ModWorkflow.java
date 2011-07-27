@@ -1,10 +1,9 @@
 package org.cmdbuild.servlets.json.management;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -15,6 +14,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logger.Log;
@@ -204,36 +204,93 @@ public class ModWorkflow extends JSONBase {
 		return serializer;
 	}
 
-	@JSONExported
-	public JSONObject startProcess(
-			JSONObject serializer,
-			SharkFacade mngt,
-			UserContext userCtx,
-			ITable classTable) throws JSONException, CMDBException {
-		String className = classTable.getName();
-		
-		ActivityDO activity = mngt.startProcess(className);
-		activity.setCmdbuildClassId(classTable.getId());
-		serializer.put("data", serializeActivity(activity,userCtx,classTable));
-		return serializer;
+	@JSONExported 
+	public JSONObject saveActivity(
+			ActivityIdentifier ai,
+			ICard processCard,
+			@Parameter("attributes") JSONObject attributes,
+			@Parameter("ww") JSONObject ww,
+			@Parameter("advance") boolean advance,
+			UserContext userCtx, SharkFacade sharkFacade) throws JSONException, PartialFailureException {
+		processCard = startProcessIfNotStarted(sharkFacade, ai, processCard);
+		final JSONObject out = Serializer.serializeActivityIds(ai, processCard);
+		try {
+			saveWorkflowWidgets(sharkFacade, ai, ww);
+			updateActivityAttributes(sharkFacade, ai, attributes, advance);
+		} catch (Exception e) {
+			throw new PartialFailureException(out, e);
+		}
+		return out;
 	}
 
-	/**
-	 * Open an activity (if not already opened) and put the new attribute values (new state will be open.running)
-	 * @param params
-	 * @return
-	 * @throws JSONException
-	 */
-	@JSONExported 
-	public JSONObject updateActivity(
-			JSONObject serializer,
-			SharkFacade mngt,
-			ActivityIdentifier ai,
-			@Parameter("advance") boolean advance,
-			Map<String, String> params) throws JSONException {
-		serializer.put("success", mngt.updateActivity(ai.processInstanceId,ai.workItemId,params,advance));
-		return serializer;
+	private ICard startProcessIfNotStarted(final SharkFacade sharkFacade, ActivityIdentifier ai, ICard processCard) {
+		if (ai.processInstanceId == null || ai.processInstanceId.isEmpty()) {
+			final ITable processTable = processCard.getSchema();
+			final ActivityDO ado = sharkFacade.startProcess(processTable.getName());
+			ai.processInstanceId = ado.getProcessInstanceId();
+			ai.workItemId = ado.getWorkItemId();
+			processCard = new LazyCard(processTable.getId(), ado.getCmdbuildCardId());
+		}
+		return processCard;
 	}
+
+	private void saveWorkflowWidgets(SharkFacade sharkFacade, ActivityIdentifier ai, JSONObject ww) throws JSONException, MultipleException {
+		MultipleException me = null;
+		for (String identifier : JSONObject.getNames(ww)) {
+			final Map<String, String[]> values = jsonObjectToStringArrayMap(ww.getJSONObject(identifier));
+			try {
+				sharkFacade.saveWorkflowWidget(ai, identifier, values);
+			} catch (Exception e) {
+				if (me == null) {
+					me = new MultipleException(e);
+				} else {
+					me.addException(e);
+				}
+			}
+		}
+		if (me != null) {
+			throw me;
+		}
+	}
+
+	private Map<String, String[]> jsonObjectToStringArrayMap(JSONObject jsonObject) throws JSONException {
+		final Map<String, String[]> valueMap = new HashMap<String, String[]>();
+		for (String key : JSONObject.getNames(jsonObject)) {
+			JSONArray a = jsonObject.optJSONArray(key);
+			if (a == null) {
+				final String s = jsonObject.optString(key);
+				if (s != null) {
+					a = new JSONArray();
+					a.put(s);
+				}
+			}
+			if (a != null && a.length() > 0) {
+				final String[] value = new String[a.length()];
+				for (int i = 0; i < a.length(); ++i) {
+					value[i] = a.getString(i);
+				}
+				valueMap.put(key, value);
+			}
+		}
+		return valueMap;
+	}
+
+	private boolean updateActivityAttributes(SharkFacade sharkFacade, ActivityIdentifier ai, JSONObject attributes, boolean advance) throws MultipleException {
+		final Map<String, String> values = jsonObjectToStringMap(attributes);
+		return sharkFacade.updateActivity(ai, values, advance);
+	}
+
+	private Map<String, String> jsonObjectToStringMap(JSONObject jsonObject) {
+		final Map<String, String> valueMap = new HashMap<String, String>();
+		for (String key : JSONObject.getNames(jsonObject)) {
+			String value = jsonObject.optString(key);
+			if (value != null) {
+				valueMap.put(key, value);
+			}
+		}
+		return valueMap;
+	}
+
 
 	/**
 	 * Abort the process which holds the activity
@@ -250,31 +307,7 @@ public class ModWorkflow extends JSONBase {
 		serializer.put("success", mngt.abortProcess(ai.processInstanceId,ai.workItemId));		
 		return serializer;
 	}
-	
-	/**
-	 * react to the submission of a custom cmdbuild extended attribute
-	 * @param serializer
-	 * @param identifier
-	 * @param ai
-	 * @param mngt
-	 * @param params
-	 * @return
-	 * @throws JSONException
-	 */
-	@SuppressWarnings("unchecked")
-	@JSONExported
-	public JSONObject reactExtendedAttribute(
-			JSONObject serializer,
-			@Parameter("identifier") String identifier,
-			ActivityIdentifier ai,
-			SharkFacade mngt,
-			HttpServletRequest request
-			) throws JSONException {
-		Log.WORKFLOW.debug("reacting: " + identifier + ", " + ai.workItemId);
-		serializer.put("success", mngt.reactToExtendedAttributeSubmission(ai.processInstanceId, ai.workItemId, request.getParameterMap(), identifier));
-		return serializer;
-	}
-	
+
 	private void addAccessPrivileges(JSONObject serializer, BaseSchema schema) throws JSONException {
 		Object privileges = schema.getMetadata().get(MetadataService.RUNTIME_PRIVILEGES_KEY);
 		if (privileges != null) {

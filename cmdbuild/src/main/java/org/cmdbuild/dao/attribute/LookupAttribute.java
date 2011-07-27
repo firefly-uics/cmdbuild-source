@@ -1,15 +1,16 @@
 package org.cmdbuild.dao.attribute;
 
+import java.util.Map;
+
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.services.SchemaCache;
 
 public class LookupAttribute extends AttributeImpl {
 
-	public LookupAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	public LookupAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
 	}
 
 	@Override
@@ -21,7 +22,7 @@ public class LookupAttribute extends AttributeImpl {
 	protected Object convertValue(Object value) {
 		Lookup lookup;
 		if (value instanceof Integer) {
-			lookup = SchemaCache.getInstance().getLookup((Integer) value);
+			lookup = backend.getLookup((Integer) value);
 		} else if (value instanceof String) {
 			lookup = getLookupFromString((String) value);
 		} else if (value instanceof Lookup) {
@@ -52,7 +53,7 @@ public class LookupAttribute extends AttributeImpl {
 
 	private Lookup getLookupFromStringId(String stringValue) {
 		try {
-			Lookup lookup = SchemaCache.getInstance().getLookup(Integer.valueOf(stringValue));
+			Lookup lookup = backend.getLookup(Integer.valueOf(stringValue));
 			if ((lookup == null) || (!lookup.getType().equals(getLookupType().getType()))) {
 				lookup = null;
 			}
@@ -63,7 +64,7 @@ public class LookupAttribute extends AttributeImpl {
 	}
 
 	private Lookup getLookupFromStringDescription(String stringValue) {
-		return SchemaCache.getInstance().getLookup(getLookupType().getType(), stringValue);
+		return backend.getLookup(getLookupType().getType(), stringValue);
 	}
 
 	@Override

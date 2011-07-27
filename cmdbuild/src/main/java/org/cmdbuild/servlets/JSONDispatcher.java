@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -30,17 +30,21 @@ import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
 import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin;
-import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBase.Configuration;
+import org.cmdbuild.servlets.json.JSONBase.MultipleException;
+import org.cmdbuild.servlets.json.JSONBase.PartialFailureException;
 import org.cmdbuild.servlets.json.JSONBase.SkipExtSuccess;
 import org.cmdbuild.servlets.json.JSONBase.Transacted;
 import org.cmdbuild.servlets.json.JSONBase.Unauthorized;
+import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
 import org.dom4j.Document;
 import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class JSONDispatcher extends HttpServlet {
 
@@ -81,6 +85,7 @@ public class JSONDispatcher extends HttpServlet {
 				
 				JSONBase targetClass = (JSONBase) methodInfo.getMethod().getDeclaringClass().newInstance();
 				targetClass.init(httpRequest, httpResponse);
+				setSpringApplicationContext(targetClass);
 
 				@SuppressWarnings("rawtypes") Class[] types = methodInfo.getParamClasses();
 				Annotation[][] paramsAnnots = methodInfo.getParamsAnnotations();
@@ -98,6 +103,11 @@ public class JSONDispatcher extends HttpServlet {
 			logError(methodInfo, t);
 			writeErrorMessage(methodInfo, t, httpRequest, httpResponse);
 		}
+	}
+
+	private void setSpringApplicationContext(JSONBase targetClass) {
+		final ApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		targetClass.setSpringApplicationContext(applicationContext);
 	}
 
 	private void logError(MethodInfo methodInfo, Throwable t) {
@@ -306,7 +316,8 @@ public class JSONDispatcher extends HttpServlet {
 				httpResponse.setContentType("application/json");
 			}
 			try {
-				JSONObject jsonOutput = serializeException(exception);
+				final JSONObject jsonOutput = getOutput(exception);
+				addErrors(jsonOutput, exception);
 				jsonOutput.put("success", false);
 				httpResponse.getWriter().write(jsonOutput.toString());
 			} catch (JSONException e) {
@@ -315,40 +326,51 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private void addRequestWarnings(JSONObject jsonOutput) throws JSONException {
-		List<CMDBException> warnings = RequestListener.getCurrentRequest().getWarnings();
-		if (!warnings.isEmpty()) {
-			JSONArray warningArray = new JSONArray();
-			for (CMDBException w : warnings) {
-				warningArray.put(serializeCMDBException(w));
-			}
-			jsonOutput.put("warnings", warningArray);			
-		}
-	}
-
-	static private JSONObject serializeException(Throwable t) throws JSONException {
-		JSONObject exceptionJson;
-		if (t instanceof CMDBException) {
-			exceptionJson = serializeCMDBException((CMDBException) t);
+	public JSONObject getOutput(Throwable exception) {
+		final JSONObject jsonOutput;
+		if (exception instanceof PartialFailureException) {
+			jsonOutput = ((PartialFailureException) exception).getPartialOutput();
 		} else {
-			exceptionJson = new JSONObject();
+			jsonOutput = new JSONObject();
 		}
-		addStackTrace(exceptionJson, t);
-		return exceptionJson;
+		return jsonOutput;
 	}
 
-	private static void addStackTrace(JSONObject exceptionJson, Throwable t) throws JSONException {
-		StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw, true);
-		t.printStackTrace(pw);
-		sw.flush();
-		exceptionJson.put("stacktrace", sw.toString());
+	private void addErrors(JSONObject jsonOutput, Throwable exception) throws JSONException {
+		if (exception instanceof PartialFailureException) {
+			exception = ((PartialFailureException) exception).getOriginalException();
+		}
+		if (exception instanceof MultipleException) {
+			final MultipleException me = (MultipleException) exception;
+			jsonOutput.put("errors", serializeExceptionArray(me.getExceptions()));
+		} else {
+			jsonOutput.append("errors", serializeException(exception));
+		}
 	}
 
-	static private JSONObject serializeCMDBException(CMDBException e) throws JSONException {
+	private void addRequestWarnings(JSONObject jsonOutput) throws JSONException {
+		List<? extends Throwable> warnings = RequestListener.getCurrentRequest().getWarnings();
+		if (!warnings.isEmpty()) {
+			jsonOutput.put("warnings", serializeExceptionArray(warnings));
+		}
+	}
+
+	public JSONArray serializeExceptionArray(Iterable<? extends Throwable> exceptions) throws JSONException {
+		JSONArray exceptionArray = new JSONArray();
+		for (Throwable t : exceptions) {
+			exceptionArray.put(serializeException(t));
+		}
+		return exceptionArray;
+	}
+
+	static private JSONObject serializeException(Throwable e) throws JSONException {
 		JSONObject exceptionJson = new JSONObject();
-		exceptionJson.put("reason", e.getExceptionTypeText());
-		exceptionJson.put("reason_parameters", JSONDispatcher.serializeExceptionParameters(e.getExceptionParameters()));
+		if (e instanceof CMDBException) {
+			CMDBException ce = (CMDBException) e;
+			exceptionJson.put("reason", ce.getExceptionTypeText());
+			exceptionJson.put("reason_parameters", JSONDispatcher.serializeExceptionParameters(ce.getExceptionParameters()));
+		}
+		addStackTrace(exceptionJson, e);
 		return exceptionJson;
 	}
 
@@ -360,5 +382,13 @@ public class JSONDispatcher extends HttpServlet {
 			}
 		}
 		return jsonParameters;
+	}
+
+	private static void addStackTrace(JSONObject exceptionJson, Throwable t) throws JSONException {
+		StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw, true);
+		t.printStackTrace(pw);
+		sw.flush();
+		exceptionJson.put("stacktrace", sw.toString());
 	}
 }

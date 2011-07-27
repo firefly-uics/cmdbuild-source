@@ -1,6 +1,6 @@
 Ext.ns('CMDBuild.grid');
 
-CMDBuild.grid.XCheckboxSelectionModel = Ext.extend(Ext.grid.RowSelectionModel, {
+CMDBuild.grid.XCheckboxSelectionModel = Ext.extend(Ext.selection.RowModel, {
 	header: '<div class="x-grid3-hd-checker">&#160;</div>',
 	/**
 	 * @cfg {Number} width The default width in pixels of the checkbox column (defaults to 22).

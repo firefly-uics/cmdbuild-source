@@ -1,6 +1,6 @@
 Ext.onReady(function() {
 	Ext.QuickTips.init();
-	CMDBuild.ChainedAjax.execute({		
+	CMDBuild.ChainedAjax.execute({
 		requests: [{
 			url: 'services/json/schema/setup/getconfiguration',
 			params: { name: 'cmdbuild' },
@@ -9,18 +9,20 @@ Ext.onReady(function() {
 			}
 		}],
 		fn: function() {
-			var window = new CMDBuild.LoginPanel();
+			var window = new CMDBuild.LoginPanel({ id : "login"});
 		}
 	});
 });
 
-CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
+Ext.define("CMDBuild.LoginPanel", {
+	extend: "Ext.panel.Panel",
 	tr: CMDBuild.Translation.login,
 	initComponent: function() {
 		this.buildLanguagesCombo();
 		var scope = this;
+
 		var enterKeyListener = {
-				'specialkey': function(field, event) {
+			'specialkey': function(field, event) {
 				if(event.getKey() == event.ENTER) {
 					scope.doLogin(field, event);
 				}
@@ -29,7 +31,6 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 		
 		this.user = new Ext.form.TextField({
 			fieldLabel : this.tr.username,
-			width : 180,
 			name : 'username',
 			allowBlank : false,
 			listeners: enterKeyListener,
@@ -39,7 +40,6 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 		this.password = new Ext.form.TextField({
 			fieldLabel : this.tr.password,
 			name : 'password',
-			width : 180,
 			inputType : 'password',
 			allowBlank : false,
 			listeners: enterKeyListener,
@@ -47,18 +47,16 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 		});	
 
 		this.role = new Ext.form.ComboBox({
-			id : 'rolefield',
+			id: 'rolefield',
 			fieldLabel : this.tr.multi_group,
-			width : 180,
+			hideMode: "offsets",
 			name : 'role',
 			hiddenName: 'role',
-			triggerAction : 'all',
 			valueField : 'name',
 			displayField : 'value',
-			mode : 'local',
-			store: new Ext.data.JsonStore({
-				fields : ['name', 'value'],
-				data : []
+			queryMode : 'local',
+			store: new Ext.data.Store({
+				fields : ['name', 'value']
 			}),
 			listeners: enterKeyListener,
 			scope: this
@@ -71,14 +69,11 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 			labelWidth : 100,
 			title : this.tr.title,
 			frame : true,
-			url : 'services/json/login/login',
 			defaultType : 'textfield',
-			monitorValid : true,	
 			items : fields,
 			buttonAlign: 'center',
 			buttons : [{
 				text : this.tr.login,
-				formBind : true,
 				handler: this.doLogin,
 				scope: this
 			}]
@@ -86,6 +81,9 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 
 		Ext.apply(this, {
 			renderTo : 'login_box',
+			frame: false,
+			border: false,
+			hideMode: "offsets",
 			border: false,
 			items: [this.form,{
 				xtype: 'panel',
@@ -93,8 +91,9 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 				contentEl: 'release_box'
 			}]
 		});
+
 		this.user.on('change', this.disableRoles, this);
-		CMDBuild.LoginPanel.superclass.initComponent.apply(this, arguments);
+		this.callParent(arguments);
 
 		this.on('afterrender', this.setupFields, this);
 		this.role.on('render', this.setupFields, this); //backward compatibility wit Ext2.2
@@ -105,12 +104,14 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 		if (CMDBuild.Runtime && CMDBuild.Runtime.Username) {
 			this.user.setValue(CMDBuild.Runtime.Username);
 			this.user.disable();
-			this.password.hideContainer();
+			this.password.hide();
+			this.password.disable();
 		} else {
 			this.user.focus();
 		}
+
 		if (CMDBuild.Runtime && CMDBuild.Runtime.Groups) {
-			this.role.store.loadData(CMDBuild.Runtime.Groups);
+			this.enableRoles(CMDBuild.Runtime.Groups)
 		} else {
 			this.disableRoles();
 		}
@@ -128,32 +129,31 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 	//private
 	buildLanguagesCombo: function() {
 		if (CMDBuild.Config.cmdbuild.languageprompt == "true") {
-			var languageStore = new Ext.data.JsonStore({
-		        url: 'services/json/utils/listavailabletranslations',
-		        root: "translations",
-		        fields: ['name', 'value'],
-		        autoLoad: true,
-		        sortInfo: { field: 'value', direction: 'ASC' }
-			});
-			
-			this.language = new Ext.form.ComboBox({
+
+			this.language = new CMDBuild.field.CMIconCombo({
 				fieldLabel: this.tr.language,
-				width : 180,
-				triggerAction: 'all',
-				store: languageStore,
+				store: new Ext.data.Store( {
+					model : 'TranslationModel',
+					proxy : {
+						type : 'ajax',
+						url : 'services/json/utils/listavailabletranslations',
+						reader : {
+							type : 'json',
+							root : 'translations'
+						}
+					},
+					autoLoad : true
+				}),
 				valueField: 'name',
 				displayField: 'value',
-				mode: 'local',
-				plugins: new Ext.ux.plugins.IconCombo(),
-				iconClsField: 'name',
-				iconClsPrefix: 'ux-flag-'
+				queryMode: 'local'
 			});
-			
+
 			this.language.on('select', function(combo, record) {
-	            window.location = String.format('?language={0}', record.data.name);
+				window.location = Ext.String.format('?language={0}', record[0].get("name"));
 			}, this);
-			
-			languageStore.on('load', function() {
+
+			this.language.store.on('load', function() {
 				this.setValue(getCurrentLanguage());
 			}, this.language);
 		}
@@ -163,27 +163,26 @@ CMDBuild.LoginPanel = Ext.extend(Ext.Panel, {
 	enableRoles: function(roles) {
 		this.role.store.loadData(roles);
 		this.role.enable();
-		this.role.showContainer();
+		this.role.show();
 		this.role.focus();
 	},
 	
 	//private
 	disableRoles: function() {
 		this.role.disable();
-		this.role.hideContainer();
+		this.role.hide();
 	},
 	
 	//private
 	doLogin: function(field, event) {
-		var form = this.form.getForm();		
-		if (!form.isValid())
+		var form = this.form.getForm();
+		if (!form.isValid()) {
 			return;
+		}
+		
 		CMDBuild.LoadMask.get().show();
-		CMDBuild.Ajax.request({
-			important: true,
-			url: form.url,
+		CMDBuild.ServiceProxy.doLogin({
 			params: form.getValues(),
-			method : 'POST',
 			scope : this,
 			success : function() {
 				if (/administration.jsp$/.test(window.location)) {

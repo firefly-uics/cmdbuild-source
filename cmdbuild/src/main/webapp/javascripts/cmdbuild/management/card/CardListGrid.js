@@ -17,18 +17,18 @@ CMDBuild.Management.CardListGrid = Ext.extend(CMDBuild.Grid, {
 	initComponent : function() {
 		var listAttributes = {};
 		var className = '';
-		
+
 		this.openFilterBtn = new Ext.Button({
 			scope: this,			
 			iconCls: 'find',
-			text: CMDBuild.Translation.management.findfilter.set_filter,			
+			text: CMDBuild.Translation.management.findfilter.set_filter,
 			handler: this.openFilter
 		});
-		
+
 		this.clearFilterBtn = new Ext.Button({
 			scope: this,			
 			iconCls: 'clear_find',
-			text: CMDBuild.Translation.management.findfilter.clear_filter,			
+			text: CMDBuild.Translation.management.findfilter.clear_filter,
 			handler: this.clearFilter
 		});
 		

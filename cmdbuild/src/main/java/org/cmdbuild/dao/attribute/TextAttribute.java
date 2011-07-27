@@ -1,38 +1,23 @@
 package org.cmdbuild.dao.attribute;
 
-import org.cmdbuild.elements.AttributeImpl;
+import java.util.Map;
+
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
-public class TextAttribute extends AttributeImpl {
+public class TextAttribute extends DaoWrapperAttribute {
 
-	public TextAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	private static CMAttributeType<?> TEXT_TYPE = new TextAttributeType();
+
+	public TextAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
+		daoType = TEXT_TYPE;
 	}
 
 	@Override
 	public AttributeType getType() {
 		return AttributeType.TEXT;
-	}
-
-	@Override
-	protected Object convertValue(Object value) {
-		if (!(value instanceof String)) {
-			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-		}
-		String stringValue = (String) value;
-		if (stringLimitExceeded(stringValue)) {
-			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-		}
-		if (stringValue.isEmpty()) {
-			return null;
-		} else {
-			return stringValue;
-		}
-	}
-
-	protected boolean stringLimitExceeded(String stringValue) {
-		return false;
 	}
 
 	@Override

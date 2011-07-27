@@ -1,43 +1,37 @@
 package org.cmdbuild.dao.attribute;
 
-import java.math.BigDecimal;
+import java.util.Map;
 
-import org.cmdbuild.elements.AttributeImpl;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
-public class DecimalAttribute extends AttributeImpl {
+public class DecimalAttribute extends DaoWrapperAttribute {
 
-	public DecimalAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	public DecimalAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
+		updateTypeIfUndefined();
+	}
+
+	@Override
+	public void setPrecision(int precision) {
+		super.setPrecision(precision);
+		updateTypeIfUndefined();
+	}
+
+	@Override
+	public void setScale(int scale) {
+		super.setScale(scale);
+		updateTypeIfUndefined();
+	}
+
+	private void updateTypeIfUndefined() {
+		if (daoType == DaoWrapperAttribute.UNDEFINED_TYPE && getPrecision() > 0 && getScale() > 0) {
+			daoType = new DecimalAttributeType(getPrecision(), getScale());
+		}
 	}
 
 	@Override
 	public AttributeType getType() {
 		return AttributeType.DECIMAL;
-	}
-
-	@Override
-	protected Object convertValue(Object value) {
-		BigDecimal decimalValue;
-		if (value instanceof BigDecimal) {
-			decimalValue = (BigDecimal) value;
-		} else if (value instanceof String) {
-			String stringValue = (String) value;
-			if (stringValue.isEmpty()) {
-				decimalValue = null;
-			} else {
-				try {
-					decimalValue = new BigDecimal(stringValue);
-				} catch (NumberFormatException e) {
-					throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-				}
-			}
-		} else if (value instanceof Double) {
-			decimalValue = new BigDecimal((Double) value);
-		} else {
-			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-		}
-		return decimalValue;
 	}
 }

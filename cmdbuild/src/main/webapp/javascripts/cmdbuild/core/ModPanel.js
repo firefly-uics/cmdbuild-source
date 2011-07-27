@@ -17,10 +17,11 @@ CMDBuild.ModPanel = Ext.extend(Ext.Panel, {
 		if (activateThePanel) {
 			this.ownerCt.layout.setActiveItem(this.id);
 		}
+		this.fireEvent("select", eventParams);
 	},
 
 	initComponent: function() {
 		CMDBuild.ModPanel.superclass.initComponent.apply(this, arguments);
-		this.subscribe('cmdb-select-'+this.modtype, this.selectPanel, this);
+//		this.subscribe('cmdb-select-'+this.modtype, this.selectPanel, this);
 	}
 });

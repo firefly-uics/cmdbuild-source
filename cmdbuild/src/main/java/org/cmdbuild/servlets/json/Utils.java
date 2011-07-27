@@ -4,12 +4,10 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.services.JSONDispatcherService;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.services.CacheManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.workflow.WorkflowCache;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,13 +83,6 @@ public class Utils extends JSONBase {
 	@JSONExported
 	@Admin
 	public void clearCache() {
-		SchemaCache.getInstance().refreshTables();
-		SchemaCache.getInstance().refreshDomains();
-		SchemaCache.getInstance().refreshLookups();
-		TranslationService.getInstance().reload();
-		JSONDispatcherService.getInstance().reload();
-		try {
-			WorkflowCache.reload();
-		} catch (Exception e) {};
+		new CacheManager().clearAllCaches();
 	}
 }

@@ -1,24 +1,32 @@
 (function() {
 	
-	CMDBuild.SideTabPanel = Ext.extend(Ext.Panel, {
+	Ext.define("CMDBuild.SideTabPanel", {
+		extend: "Ext.panel.Panel",
 		pressedTabCls: "cmdb-pressed-tab",
 		tabCls: "cmdb-tab",
+
 		initComponent: function() {
 			var tabCls = this.tabCls;
 			var pressedTabCls = this.pressedTabCls;
-			
+
 			var tabs = new CMDBuild.Tabs({
 				tabCls: tabCls,
-				pressedTabCls: pressedTabCls
+				pressedTabCls: pressedTabCls,
+				region: "east"
 			});
+
 			var centralPanel = new CMDBuild.TabbedPanel({
 				tabCls: tabCls,
-				pressedTabCls: pressedTabCls
+				pressedTabCls: pressedTabCls,
+				region: "center"
+			});
+
+			Ext.apply(this, {
+				layout: "border",
+				items: [centralPanel, tabs]
 			});
 			
-			this.layout = "border";
-			this.items = [centralPanel, tabs];
-			CMDBuild.SideTabPanel.superclass.initComponent.apply(this, arguments);
+			this.callParent(arguments);
 			
 			this.addPanel = function(panel) {
 				centralPanel.add(panel);
@@ -44,42 +52,46 @@
 			this.getCentralPanel = function() {
 				return centralPanel;
 			};
+		},
+		
+		editMode: function() {
+			this.getCentralPanel().items.each(function(i) {
+				i.editMode();
+			});
+		},
+		
+		displayMode: function() {
+			this.getCentralPanel().items.each(function(i) {
+				i.displayMode();
+			});
 		}
 	});
 	
-	CMDBuild.Tabs = Ext.extend(Ext.Panel, {
-		region: "east",
+	Ext.define("CMDBuild.Tabs", {
+		extend: "Ext.panel.Panel",
 		frame: false,
 		border: false,
-		margins: "0 0 0 2",
 		pressedTabCls: "cmdb-pressed-tab",
 		tabCls: "cmdb-tab",
+		bodyCls: "x-panel-body-default-framed",
 		layout: {
-            type:'vbox',
-            align:'stretchmax'
-        },
-        defaults:{margins:'2 4 0 0'},
-        bodyStyle: { 
-        	background: CMDBuild.Constants.colors.blue.background,
-        	padding: "2px 0 0 0",
-        	"border-left": "1px " + CMDBuild.Constants.colors.blue.border+" solid"
-        },
+			type:'vbox',
+			align:'stretchmax'
+		},
+		defaults:{margins:'2 4 0 0'},
 		initComponent: function() {
 			if (fixRendereingIssueForIE7()) {
 				this.maxTabWidth = 0;
 			} else {
 				this.autoWidth = true;
 			}
-        	CMDBuild.Tabs.superclass.initComponent.apply(this, arguments);
-        },
+			this.callParent(arguments);
+		},
 		addTabFor: function(panel, additionalCls) {
-        	var tabCls = this.tabCls;
+			var tabCls = this.tabCls;
 			var pressedTabCls = this.pressedTabCls;
-        	var t = new Ext.Panel({
+			var t = new Ext.Panel({
 				text: panel.title,
-				bodyStyle: { 
-		        	background: CMDBuild.Constants.colors.blue.background
-        		},
 				frame: false,
 				border: false,
 				cls: tabCls,
@@ -87,23 +99,23 @@
 					var tmpl;
 					if (additionalCls) {
 						var tmpl = "<div class=\"cmdb-tab-icon {1}\"></div><p>{0}</p>";
-						return String.format(tmpl, panel.tabLabel, additionalCls);
+						return Ext.String.format(tmpl, panel.tabLabel, additionalCls);
 					} else {
 						tmpl = "<p>{0}</p>";
-						return String.format(tmpl, panel.tabLabel);
+						return Ext.String.format(tmpl, panel.tabLabel);
 					}
 				})(panel, additionalCls),
 				targetPanel: panel,
 				listeners: {
-			        render: function(p) {
-						p.getEl().on('click', p.fireEvent.createDelegate(p, ["click", p]));
-			        }
-			    }
+					render: function(p) {
+						p.getEl().on('click', Ext.Function.bind(p.fireEvent,p, ["click", p]));
+					}
+				}
 			});
-        	
-        	t.on("click", onTabClick, this);
-        	
-        	if (fixRendereingIssueForIE7()) {
+
+			t.on("click", onTabClick, this);
+
+			if (fixRendereingIssueForIE7()) {
 	        	t.on("afterlayout", function(p) {
 	        		var tabWidth = p.getWidth();
 	        		if (this.maxTabWidth < tabWidth) {
@@ -111,7 +123,7 @@
 	        		}
 	        	}, this, {single: true});
         	}
-        	
+
 			panel.on("activate", function() {
 				manageToggleTab.call(this, t); // to manage the first activation without a real click
 				if (fixRendereingIssueForIE7()) {
@@ -119,23 +131,22 @@
 				}
 			}, this);
 			this.add(t);
-        },
-        activateFirst: function() {
-        	var f = this.items.first();
-        	if (f) {
-        		onTabClick.call(this, f);
-        	}
-        }
+		},
+
+		activateFirst: function() {
+			var f = this.items.first();
+			if (f) {
+				onTabClick.call(this, f);
+			}
+		}
 	});
-	
-	
+
 	CMDBuild.TabbedPanel = Ext.extend(Ext.Panel, {
-		layout: "card",			
-		region: "center",
+		layout: "card",
 		activeItem: 0,
-		border: false,
-		setActiveItem: function(panel) {
-			this.getLayout().setActiveItem(panel.id);
+		border: true,
+		setActiveItem: function(p) {
+			this.layout.setActiveItem(p.id);
 		},
 		onAdd: function(p) {
 			this.fireEvent("addedpanel", p);
@@ -147,7 +158,7 @@
 	
 	function manageToggleTab(tab) {
 		if (this.pressedTab) {
-			this.pressedTab.removeClass(this.pressedTabCls);
+			this.pressedTab.removeCls(this.pressedTabCls);
 		}
 		tab.addClass(this.pressedTabCls);
 		this.pressedTab = tab;

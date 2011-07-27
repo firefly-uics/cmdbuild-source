@@ -1,3 +1,4 @@
+ 
 html {
 	height: 100%;
 	width: 100%;
@@ -48,7 +49,13 @@ em {
   width: 16px;
 }
 
+.cm_no_display {
+	display: none;
+}
+*/
+
 /* LOGIN */
+
 #login_box_wrap {
 	text-align: center;
 	width: 100%;
@@ -61,6 +68,7 @@ em {
 }
 
 /* HEADER */
+
 #header {
 	height: 45px;
 	color: #666;
@@ -139,31 +147,17 @@ em {
 }
 
 /* splash */
-.splashScreen {
-	background: #EEE;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	font-family: sans-serif;
-	color: #666;
-	font-size: 11px;
-	line-height: 1.4em;
-	z-index: 50000;
-}
-
-#splashScreen_padding {
-	height: 147px;
-	width: 400px;
+.cmMask {
+	background: #EEEEEE!important;
 }
 
 .splashScreen_image {
-	height: 262px;
-	width: 423px;
+	height: 217px;
+	width: 381px;
 	display: block;
 	background-image: url(../images/splash.png);
 	background-position: top left;
 	background-repeat: no-repeat;
-	z-index: 50001;
 }
 
 .splashScreen_central {
@@ -175,8 +169,8 @@ em {
 	margin: 0;
 	width: 395px;
 	height: 63px;
-	padding-left: 25px;
-	padding-top: 10px;
+	padding-left: 10px;
+	padding-top: 135px;
 }
 
 .splashScreen_central a {
@@ -205,12 +199,10 @@ em {
 	font-family: sans-serif;
 	font-size: 11px;
 	line-height: 1.4em;
-	margin-right: 28px;
+	margin-right: 21px;
+	margin-top: 38px;
 	z-index: 50002;
-}
-
-.splash_loading {
-	font-size: 9px;
+	font-size: 10px;
 	color: #1C4196;
 }
 
@@ -235,6 +227,8 @@ em {
 }
 
 /* FOOTER */
+
+
 #footer {
 	color: #727262;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -288,31 +282,7 @@ em {
 	cursor: pointer;
 }
 
-/*custo rulse*/
-
-.cmdbuild_border_bottom_gray {
-	border-bottom: 1px solid #D0D0D0 !important;
-}
-
-.cmdbuild_border_top_gray {
-	border-top: 1px solid #D0D0D0 !important;
-}
-
-.cmdbuild_border_bottom_blue {
-	border-bottom: 1px solid #99BBE8 !important;
-}
-
-.cmdbuild_background_gray {
-	background-color: #F0F0F0 !important;
-}
-
-.cmdbuild_background_blue {
-	background-color: #DFE8F6 !important;
-}
-
-.cmdbuild_body_padding {
-	padding: 5px;
-}
+/*custom rulse*/
 
 .cmdbuild_unconfigured_modpanel {
 	text-align: center;
@@ -397,7 +367,7 @@ em {
 	background-image: url(../images/icons/table.png) !important;
 }
 
-.detail {
+.detail, .domain {
 	background-image: url(../images/icons/table_link.png) !important;
 }
 
@@ -422,7 +392,9 @@ em {
 	background-image: url(../images/form/trigger-add.png) !important;
 }
 
+
 /* GRID ELEMENT*/
+
 .x-grid3-dirty-cell {
 	background-image: none ! important;
 }
@@ -453,6 +425,8 @@ em {
 /**
  MENU TREE
 **/
+
+/*
 #menu_panel .x-panel-header {
 	text-align: center;
 }
@@ -468,7 +442,7 @@ em {
 }
 
 .cmdbuild-tree-panel {
-	border-color: #D0D0D0; /* #99BBE8 light blue */
+	border-color: #D0D0D0;
 	border-style: solid;
 	border-width: 1px;
 	margin: 20px 30px !important;
@@ -496,38 +470,18 @@ em {
 	background-color: #DDDDDD;
 }
 
-.x-tree-node-expanded .cmdbuild-tree-superclass-icon {
-	background-image: url(../images/icons/tree/superclass_expanded.png)
-		!important;
-}
+*/
 
-.x-tree-node-collapsed .cmdbuild-tree-superclass-icon {
-	background-image: url(../images/icons/tree/superclass_collapsed.png)
-		!important;
-}
-
-.x-tree-node-leaf .cmdbuild-tree-superclass-icon {
-	background-image: url(../images/icons/tree/superclass_collapsed.png)
-		!important;
+.cmdbuild-tree-superclass-icon {
+	background-image: url(../images/icons/tree/superclass_collapsed.png) !important;
 }
 
 .cmdbuild-tree-class-icon {
 	background-image: url(../images/icons/tree/class.png) !important;
 }
 
-.x-tree-node-expanded .cmdbuild-tree-superprocessclass-icon {
-	background-image:
-		url(../images/icons/tree/superclassprocess_expanded.png) !important;
-}
-
-.x-tree-node-collapsed .cmdbuild-tree-superprocessclass-icon {
-	background-image:
-		url(../images/icons/tree/superclassprocess_collapsed.png) !important;
-}
-
-.x-tree-node-leaf .cmdbuild-tree-superprocessclass-icon {
-	background-image:
-		url(../images/icons/tree/superclassprocess_collapsed.png) !important;
+.cmdbuild-tree-superprocessclass-icon {
+	background-image: url(../images/icons/tree/superclassprocess_collapsed.png) !important;
 }
 
 .cmdbuild-tree-processclass-icon {
@@ -550,16 +504,46 @@ em {
 	background-image: url(../images/icons/ico_xml.png) !important;
 }
 
-.cmdbuild-tree-view-icon {
-	background-image: url(../images/icons/tree/view.png) !important;
+.cmdbuild-tree-user-icon {
+	background-image: url(../images/icons/tree/user.png) !important;
 }
 
-.cmdbuild-tree-group-icon,.cmdbuild-tree-menu-icon {
+.cmdbuild-tree-group-icon {
 	background-image: url(../images/icons/tree/group.png) !important;
 }
 
-.cmdbuild-tree-user-icon {
-	background-image: url(../images/icons/tree/user.png) !important;
+/* Ext.ux.CheckColumn*/
+.x-grid-checkheader {
+    height: 14px;
+    background-image: url('../images/checkcolumn/unchecked.gif');
+    background-position: 50% -2px;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+.x-grid-checkheader-checked {
+    background-image: url('../images/checkcolumn/checked.gif');
+}
+
+.x-grid-checkheader-editor .x-form-cb-wrap {
+    text-align: center;
+}
+
+
+/******************************************/
+/*
+.x-tree-node-expanded .cmdbuild-tree-superprocessclass-icon {
+	background-image:
+		url(../images/icons/tree/superclassprocess_expanded.png) !important;
+}
+
+.x-tree-node-collapsed .cmdbuild-tree-superprocessclass-icon {
+	background-image:
+		url(../images/icons/tree/superclassprocess_collapsed.png) !important;
+}
+
+.cmdbuild-tree-view-icon {
+	background-image: url(../images/icons/tree/view.png) !important;
 }
 
 .x-tree-node-leaf .cmdbuild-tree-folder-icon {
@@ -581,9 +565,13 @@ em {
 		!important;
 }
 
+*/
+
 /*
  * Login flags
  */
+ 
+
 .ux-flag-en {
 	background-image: url(../images/icons/flags/en.png) ! important;
 }
@@ -719,13 +707,17 @@ em {
 	width: auto ! important;
 }
 
-.x-notification .x-tool-close {
-	display: none
-}
-
 .x-notification.fixed .x-tool-close {
 	display: block
 }
+
+/* Toolbar*/
+.cmtoolbaritem {
+	font-size: 11px ! important;
+	padding: 0 0.6em 0 0.6em ! important;
+	color: #333 ! important;
+}
+
 
 .x-form-item-label {
 	font-weight: bold ! important;
@@ -738,10 +730,32 @@ em {
 }
 
 /*override*/
+
 .x-panel-header {
 	padding: 2px 2px 2px 4px ! important;
 }
 
+#cmbodyAdministration {
+	background-color: #EEE ! important; /* to change the color of the border of the mainvieport*/
+}
+
+.cmgraypanel {
+	background: #F1F1F1 ! important;
+	padding: 5px 5px 0 5px;
+}
+
+.cmbordertop {
+	border-top-style: solid ! important;
+	border-top-width: 1px ! important;
+	
+}
+
+.cmborderbottom {
+	border-bottom-style: solid ! important;
+	border-bottom-width: 1px ! important;
+}
+
+/*
 .x-form-display-field {
 	padding: 2px 0 0 0 ! important;
 	line-height: 1.3em ! important;
@@ -749,14 +763,27 @@ em {
 	opacity: 1 ! important;
 	max-width: 400px ! important;
 }
-
+*/
 .empty_panel {
 	background: url("../images/emptyPageBg.png");
 	background-position: bottom right;
 	background-repeat: no-repeat;
 }
 
+/* history items*/
+.history_panel .x-grid-rowbody p {
+	white-space: nowrap;
+	padding: 0 0 0 35px;
+	margin: 0 !important;
+}
+
+.history_panel .x-grid-rowbody p.changed {
+	color: red;
+}
+
 /* custom icons */
+
+/*
 .icon-grid-image {
 	max-height: 20px;
 	max-width: 20px;
@@ -785,3 +812,4 @@ em {
 	display: table-cell;
 	vertical-align: middle;
 }
+*/

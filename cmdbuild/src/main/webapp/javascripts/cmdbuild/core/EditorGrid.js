@@ -1,4 +1,7 @@
-CMDBuild.EditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
+Ext.define("CMDBuild.EditorGrid", {
+//    extend: "Ext.grid.EditorGridPanel", // TODO extjs 4 migration
+	extend: "Ext.grid.Panel",
+    alias: "cmdbuildEditorGrid",
 	columns: [],
 	baseUrl: '',
 	stripeRows: true,
@@ -118,5 +121,3 @@ CMDBuild.EditorGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         this.pagingBar.bind(this.store);
 	}
 });
-
-Ext.reg('cmdbuildEditorGrid', CMDBuild.EditorGrid);

@@ -7,11 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.config.CmdbuildProperties;
-import org.cmdbuild.elements.RelationImpl;
-import org.cmdbuild.elements.filters.AbstractFilter;
-import org.cmdbuild.elements.filters.AttributeFilter;
+import org.cmdbuild.elements.DirectedDomain;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
@@ -45,17 +44,15 @@ public abstract class AuthenticationFacade {
 		return as.jsonRpcAuth(username, unencryptedPassword);
 	}
 
-	static public List<UserCard> getUserList(final AbstractFilter filterCriteria) throws AuthException, ORMException {
-		return getUserList(null, filterCriteria);
-	}
-
-	static public List<UserCard> getUserList(final AbstractFilter userFilterCriteria,
-			final AbstractFilter roleFilterCriteria) throws AuthException, ORMException {
-		List<IRelation> groupsRel = null;
+	public static List<UserCard> getUserList(final int groupId) {
 		final List<UserCard> list = new LinkedList<UserCard>();
 		try {
-			groupsRel = RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userFilterCriteria, roleFilterCriteria);
-			for (final IRelation groupRel : groupsRel) {
+			final UserContext systemCtx = UserContext.systemContext();
+			final IDomain userRoleDomain = systemCtx.domains().get(USER_GROUP_DOMAIN_NAME);
+			final GroupCard groupCard = GroupCard.get(groupId, systemCtx);
+			final Iterable<IRelation> userGroupRelations = systemCtx.relations().list(groupCard)
+				.domain(DirectedDomain.create(userRoleDomain, DomainDirection.I), true);
+			for (final IRelation groupRel : userGroupRelations) {
 				list.add(new UserCard(groupRel.getCard1()));
 			}
 		} catch (final NotFoundException e) {
@@ -68,38 +65,42 @@ public abstract class AuthenticationFacade {
 	static public Iterable<Group> getGroupListForUser(final int userId) throws AuthException, ORMException {
 		final List<Group> list = new LinkedList<Group>();
 		try {
-			final ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(
-					userId);
-			final AbstractFilter userIdFilter = AttributeFilter.getEquals(user, "Id", String.valueOf(userId));
-			for (final IRelation groupRel : RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null)) {
-				final GroupCard r = new GroupCard(groupRel.getCard2());
+			for (final IRelation groupRel : getGroupRelationsForUser(userId)) {
+				final GroupCard groupCard = new GroupCard(groupRel.getCard2());
 				final boolean isDefaultGroup = (Boolean.TRUE.equals(groupRel.getValue(DEFAULT_GROUP_ATTRIBUTE)));
-				list.add(r.toGroup(isDefaultGroup));
+				list.add(groupCard.toGroup(isDefaultGroup));
 			}
 		} catch (final NotFoundException e) {
-			Log.OTHER.fatal("user_role domain does not exist", e);
+			Log.PERSISTENCE.fatal("Cannot query groups for user", e);
 			throw AuthExceptionType.AUTH_UNKNOWN_GROUP.createException();
 		}
 		return list;
 	}
 
+	private static Iterable<IRelation> getGroupRelationsForUser(final int userId) {
+		final UserContext systemCtx = UserContext.systemContext();
+		final ICard userCard = systemCtx.tables().get(UserCard.USER_CLASS_NAME).cards().get(userId);
+		final IDomain userRoleDomain = systemCtx.domains().get(USER_GROUP_DOMAIN_NAME);
+		final Iterable<IRelation> userRoleRelations = systemCtx.relations()
+			.list(DirectedDomain.create(userRoleDomain, DomainDirection.D), userCard);
+		return userRoleRelations;
+	}
+
 	static public void setDefaultGroupForUser(final int userId, final int defaultGroupId) {
-		final ICard user = UserContext.systemContext().tables().get(CardAttributes.User.toString()).cards().get(userId);
-		final AbstractFilter userIdFilter = AttributeFilter.getEquals(user, "Id", String.valueOf(userId));
-		final List<IRelation> groupRelations = RelationImpl.findAll(USER_GROUP_DOMAIN_NAME, userIdFilter, null);
+		final Iterable<IRelation> groupRelations = getGroupRelationsForUser(userId);
 		clearDefaultGroup(groupRelations);
 		setDefaultGroup(groupRelations, defaultGroupId);
 	}
 
-	private static void clearDefaultGroup(List<IRelation> groupRelations) {
+	private static void clearDefaultGroup(Iterable<IRelation> groupRelations) {
 		changeDefaultGroup(groupRelations, INVALID_GROUP_ID);
 	}
 
-	private static void setDefaultGroup(final List<IRelation> groupRelations, final int defaultGroupId) {
+	private static void setDefaultGroup(final Iterable<IRelation> groupRelations, final int defaultGroupId) {
 		changeDefaultGroup(groupRelations, defaultGroupId);
 	}
 
-	private static void changeDefaultGroup(final List<IRelation> groupRelations, final int defaultGroupId) {
+	private static void changeDefaultGroup(final Iterable<IRelation> groupRelations, final int defaultGroupId) {
 		for (final IRelation groupRel : groupRelations) {
 			final boolean wasDefaultGroup = (groupRel.getAttributeValue(DEFAULT_GROUP_ATTRIBUTE).getBoolean() == Boolean.TRUE);
 			// Handles null values
@@ -138,8 +139,7 @@ public abstract class AuthenticationFacade {
 		try {
 			final String username = AuthProperties.getInstance().getAutologin();
 			if (username != null && username.length() > 0) {
-				final UserContext userCtx = new AuthInfo(username).systemAuth();
-				new SessionVars().setCurrentUserContext(userCtx);
+				loginAs(username);
 				Log.OTHER.info("Autologin with user " + username);
 				return true;
 			}
@@ -147,5 +147,13 @@ public abstract class AuthenticationFacade {
 			Log.OTHER.warn("Autologin failed");
 		}
 		return false;
+	}
+
+	/*
+	 * Used for ent-to-end tests
+	 */
+	public static void loginAs(final String username) {
+		final UserContext userCtx = new AuthInfo(username).systemAuth();
+		new SessionVars().setCurrentUserContext(userCtx);
 	}
 }

@@ -5,19 +5,22 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.dao.backend.postgresql.PGCMBackend;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAbstractElement;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractElementImpl implements IAbstractElement {
 
-	protected static final CMBackend backend = new CMBackend();
+	@Autowired
+	protected CMBackend backend = CMBackend.INSTANCE;
 
 	private static final long serialVersionUID = 1L;
 
@@ -86,7 +89,7 @@ public abstract class AbstractElementImpl implements IAbstractElement {
 		}
 	}
 
-	private boolean hasChanged() {
+	protected final boolean hasChanged() {
 		for (AttributeValue av : values.values()) {
 			if (av.isChanged()) {
 				return true;

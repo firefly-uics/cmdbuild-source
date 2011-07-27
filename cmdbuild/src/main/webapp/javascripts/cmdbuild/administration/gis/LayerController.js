@@ -94,9 +94,10 @@
 		}
 	};
 	
-	CMDBuild.Administration.LayerController = Ext.extend(Ext.Component, {
-		initComponent: function() {
-			CMDBuild.Administration.LayerController.superclass.initComponent.call(this, arguments);
+	Ext.define("CMDBuild.Administration.LayerController", {
+		extend: "Ext.util.Observable",
+		constructor: function() {
+			CMDBuild.Administration.LayerController.superclass.constructor.call(this, arguments);
 			this.subscribe("cmdb-new-geoattr", onNewGeoattr, this);
 			this.subscribe("cmdb-modify-geoattr", onModifyGeoattr, this);
 			this.subscribe("cmdb-delete-geoattr", onDeleteGeoattr, this);

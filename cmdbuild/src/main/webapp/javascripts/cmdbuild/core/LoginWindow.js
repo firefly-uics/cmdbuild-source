@@ -72,7 +72,7 @@ CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
 				{
 					name: 'role',
 					xtype: 'hidden',
-					value: CMDBuild.Runtime.RoleId
+					value: CMDBuild.Runtime.LoginGroupId
 				}],
 				buttonAlign: 'center',
 				buttons: [{

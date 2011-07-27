@@ -9,7 +9,7 @@
 
 <% 
 	String lang = new SessionVars().getLanguage();
-	String extVersion = "3.3";
+	String extVersion = "4.0.0";
 %>
 
 <html>
@@ -22,9 +22,7 @@
 	<link rel="icon" href="images/favicon.ico" />
 
 	<!-- 0. ExtJS -->
-	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/adapter/ext/ext-base.js"></script>
 	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
-	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/IconCombo.js"></script>
 	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/XCheckbox.js"></script>
 	<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
@@ -38,6 +36,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>	
 
 	<!-- 2. Translations -->
@@ -51,6 +50,7 @@
 
 	<!-- 4. Modules -->
 	<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/model/CMPatchModel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/patchmanager.js"></script>
 			
 </head>

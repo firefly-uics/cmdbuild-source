@@ -16,6 +16,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				client: this.getActivityFormVariable,
 				server: this.getActivityServerVariable,
 				user: this.getCurrentUserInfo,
+				group: this.getCurrentGroupInfo,
 				xa: this.getExtendedAttributeVariable,
 				js: this.getJSVariable,
 				cql: this.getCQLVariable
@@ -26,7 +27,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		}
 		var nsFunction = nsFunctionArray[varQName.namespace];
 		if (nsFunction) {
-			return nsFunction.createDelegate(this)(varQName.localname, ctx);
+			return nsFunction.call(this, varQName.localname, ctx);
 		} else {
 			CMDBuild.log.error("No resolver for namespace " + varQName.namespace);
 			return "";
@@ -70,10 +71,23 @@ CMDBuild.Management.TemplateResolver.prototype = {
 
 	// private
 	findFormField: function(varName) {
-		var field = this.getBasicForm().findField(varName);
-		if (!field) {
-			field = this.getBasicForm().findField(varName+"_value");
+
+		function findCriteria(f) {
+			if (!f.CMAttribute) {
+				return false;
+			} else {
+				return f.CMAttribute.name == varName;
+			}
 		}
+
+		var field = this.getBasicForm().getFields().findBy(findCriteria);
+		
+		// TODO I think that it's not necessary because now we looking for the name in
+		// the attribute configuration
+
+//		if (!field) {
+//			field = this.getBasicForm().findField(varName+"_value");
+//		}
 		return field;
 	},
 
@@ -124,6 +138,15 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		var infoMap = {
 			name: CMDBuild.Runtime.Username,
 			id: CMDBuild.Runtime.UserId
+		};
+		return infoMap[varName];
+	},
+
+	// private
+	getCurrentGroupInfo: function(varName) {
+		var infoMap = {
+			name: CMDBuild.Runtime.DefaultGroupName,
+			id: CMDBuild.Runtime.DefaultGroupId
 		};
 		return infoMap[varName];
 	},
@@ -180,7 +203,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	resolveTemplates: function(conf) {
 		var callbackFn = conf.callback || Ext.emptyFn;
 		if (conf.scope) {
-			callbackFn = callbackFn.createDelegate(conf.scope);
+			callbackFn = Ext.bind(callbackFn,conf.scope);
 		}
 		var templates = conf.attributes;
 		var deps = this.getTemplateSetDeps(templates, this.xaVars);

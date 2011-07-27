@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.LookupAttribute
  * @extends CMDBuild.WidgetBuilders.ComboAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.LookupAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.LookupAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
 

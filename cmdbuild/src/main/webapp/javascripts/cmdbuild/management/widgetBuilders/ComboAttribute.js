@@ -16,7 +16,8 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildGridHeader = function(attr
 		dataIndex : attribute.name+"_value",
 		hidden: !attribute.isbasedsp,
 		fixed: false,
-		width: 60
+		width: 60,
+		flex: 1
 	};
 };
 /**
@@ -35,4 +36,15 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildReadOnlyField = function(a
  */
 CMDBuild.WidgetBuilders.ComboAttribute.prototype.getDisplayNameForAttr = function(attribute) {
 	return attribute.name+"_value";
+};
+/**
+ * @override
+ */
+CMDBuild.WidgetBuilders.ComboAttribute.prototype.getQueryOptions = function() {
+	return [
+		['equals',translation.equals],
+		['null',translation.nullo],
+		['notnull',translation.notnull],
+		['different',translation.different]
+	];
 };

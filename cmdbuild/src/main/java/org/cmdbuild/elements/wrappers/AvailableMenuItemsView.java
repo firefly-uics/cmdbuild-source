@@ -3,7 +3,7 @@ package org.cmdbuild.elements.wrappers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.dao.backend.postgresql.CMBackend;
+import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.CardFactoryImpl;
 import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -11,10 +11,12 @@ import org.cmdbuild.elements.proxy.TableForwarder;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AvailableMenuItemsView extends TableForwarder {
 
-	private static final CMBackend backend = new CMBackend();
+	@Autowired
+	private CMBackend backend = CMBackend.INSTANCE;
 
 	static final String AvailableMenuView = "system_availablemenuitems";
 	Map<String, IAttribute> attributes;

@@ -7,10 +7,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import org.cmdbuild.dao.attribute.ForeignKeyAttribute;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -20,7 +19,6 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 
@@ -167,19 +165,10 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	public void save() throws ORMException {
-		try {
-			if (isNew()) {
-				oid = backend.createTable(this);
-			} else {
-				backend.modifyTable(this);
-			}
-			// TODO Change with something better AFTER there is a real table
-			// tree
-			SchemaCache.getInstance().refreshTables();
-		} catch (RuntimeException re) {
-			// On errors, the cache must be refreshed
-			SchemaCache.getInstance().refreshTables();
-			throw re;
+		if (isNew()) {
+			oid = backend.createTable(this);
+		} else {
+			backend.modifyTable(this);
 		}
 	}
 
@@ -222,11 +211,11 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	public void setParent(String parent) throws NotFoundException {
-		this.parent = TableImpl.get(parent);
+		this.parent = UserContext.systemContext().tables().get(parent);
 	}
 
 	public void setParent(Integer parent) throws NotFoundException {
-		this.parent = TableImpl.get(parent);
+		this.parent = UserContext.systemContext().tables().get(parent);
 	}
 
 	public void setParent(ITable parent) {
@@ -239,28 +228,6 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 
 	public CardFactory cards() {
 		return new CardFactoryImpl(this, UserContext.systemContext());
-	}
-
-	static ITable get(String className) throws NotFoundException {
-		return SchemaCache.getInstance().getTable(className);
-	}
-
-	static ITable get(int idClass) throws NotFoundException {
-		return SchemaCache.getInstance().getTable(idClass);
-	}
-
-	public static Iterable<ITable> list() {
-		return SchemaCache.getInstance().getTableList();
-	}
-
-	public static Iterable<ITable> list(CMTableType type) {
-		List<ITable> list = new ArrayList<ITable>();
-		for (ITable table : list()) {
-			if (type == null || type.equals(table.getTableType())) {
-				list.add(table);
-			}
-		}
-		return list;
 	}
 
 	public TableTree treeBranch() {
@@ -280,9 +247,11 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		return treeBranch().getLeaves().isEmpty();
 	}
 
-	@SuppressWarnings("deprecation")
+	/*
+	 * TODO Implement a real table tree
+	 */
 	public static TableTree tree() {
-		return SchemaCache.getInstance().getTableTree();
+		return UserContext.systemContext().tables().tree();
 	}
 
 	public class OrderEntry {
@@ -352,11 +321,6 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		}
 	}
 
-	@Override
-	public void reloadCache() {
-		SchemaCache.getInstance().refreshTables();
-	}
-
 	public boolean isActivity() {
 		return UserContext.systemContext().tables().fullTree().branch(ProcessType.BaseTable).contains(this.getName());
 	}
@@ -376,7 +340,7 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	@Override
 	public Iterable<IAttribute> fkDetails() {
 		List<IAttribute> fkDetails = new ArrayList<IAttribute>();
-		for (ITable simpleClass : list(CMTableType.SIMPLECLASS)) {
+		for (ITable simpleClass : UserContext.systemContext().tables().list(CMTableType.SIMPLECLASS)) {
 			for (IAttribute attribute : simpleClass.getAttributes().values()) {
 				if (isTargetOfFK(attribute)) {
 					fkDetails.add(attribute);
@@ -387,8 +351,9 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	private boolean isTargetOfFK(IAttribute attribute) {
-		if (attribute instanceof ForeignKeyAttribute) {
-			return ((ForeignKeyAttribute) attribute).getFKTargetClass().treeBranch().contains(this.getId());
+		final ITable targetClass = attribute.getFKTargetClass();
+		if (targetClass != null) {
+			return targetClass.treeBranch().contains(this.getId());
 		} else {
 			return false;
 		}
