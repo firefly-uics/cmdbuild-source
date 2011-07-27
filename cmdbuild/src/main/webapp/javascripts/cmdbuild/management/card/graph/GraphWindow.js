@@ -84,6 +84,7 @@ CMDBuild.Management.GraphActionHandler = function() {
 	
 	onShowGraph: function() {
 		var expandedAccordion = _MainViewportController.getExpandedAccordion();
+		// TODO: cmType is not included in the structure anymore
 		if (_MainViewportController.getExpandedAccordion().cmType == "card") {
 			CMDBuild.Management.showGraphWindow(this.currentClassId, this.currentCardId);
 		} else {

@@ -1,11 +1,11 @@
 package integration.geoserver;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 
 import org.cmdbuild.config.GisProperties;
@@ -13,8 +13,6 @@ import org.cmdbuild.services.gis.geoserver.GeoServerLayer;
 import org.cmdbuild.services.gis.geoserver.GeoServerService;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore.StoreDataType;
-import org.hamcrest.Matcher;
-import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -53,8 +51,8 @@ public class GeoServerTest {
 
 	@Test
 	public void aLayerIsAddedWithEveryDataStore() throws FileNotFoundException {
-		assertThat(service.getStores(), is(emptyDataStoreCollection()));
-		assertThat(service.getLayers(), is(emptyLayerCollection()));
+		assertTrue(service.getStores().isEmpty());
+		assertTrue(service.getLayers().isEmpty());
 
 		service.createStore(LAYER_1, StoreDataType.SHAPE.toString(), shapeInputStream(),
 				LAYER_1_MINZOOM, LAYER_1_MAXZOOM, LAYER_1_POSITION, LAYER_1_DESCRIPTION);
@@ -94,13 +92,5 @@ public class GeoServerTest {
 	private InputStream worldImageInputStream() {
 		return Thread.currentThread().getContextClassLoader()
 			.getResourceAsStream(RESOURCE_PATH+"worldimage.zip");
-	}
-
-	private Matcher<Collection<GeoServerLayer>> emptyLayerCollection() {
-		return IsEmptyCollection.<GeoServerLayer>empty();
-	}
-
-	private Matcher<Collection<GeoServerStore>> emptyDataStoreCollection() {
-		return IsEmptyCollection.<GeoServerStore>empty();
 	}
 }

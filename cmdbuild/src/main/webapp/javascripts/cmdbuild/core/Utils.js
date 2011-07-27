@@ -108,9 +108,75 @@ CMDBuild.Utils = (function() {
 					fn.call(element,params);
 				}
 			}
+		},
+
+		isSuperclass: function(idClass) {
+			var c =  _CMCache.getEntryTypeById(idClass);
+			return c.get("superclass");
+		},
+
+		getAncestorsId: function(entryTypeId) {
+			var et = _CMCache.getEntryTypeById(entryTypeId),
+				out = [];
+
+			while (et.get("parent") != "") {
+				out.push(et.get("id"));
+				et = _CMCache.getEntryTypeById(et.get("parent"));
+			}
+
+			return out;
+		},
+		
+		getChildrenById: function(entryTypeId) {
+			var ett = _CMCache.getEntryTypes(),
+				out = [];
+	
+			for (var et in ett) {
+				et = ett[et];
+				if (et.get("parent") == entryTypeId) {
+					out.push(et);
+				}
+			}
+	
+			return out;
+		},
+
+		PollingFunction: function(conf) {
+			var DEFAULT_DELAY = 500,
+				DEFAULT_MAX_TIMES = 60;
+
+			this.success =  conf.success || Ext.emptyFn;
+			this.failure = conf.failure || Ext.emptyFn;
+			this.checkFn = conf.checkFn || function() { return true;};
+			this.cbScope = conf.cbScope || this;
+			this.delay = conf.delay || DEFAULT_DELAY;
+			this.maxTimes = conf.maxTimes || DEFAULT_MAX_TIMES;
+			this.checkFnScope = conf.checkFnScope || this.cbScope;
+
+			this.run = function() {
+				if (this.maxTimes == DEFAULT_MAX_TIMES) {
+					CMDBuild.LoadMask.get().show();
+				}
+				if (this.maxTimes > 0) {
+					if (this.checkFn.call(this.checkFnScope)) {
+						_debug("End polling with success");
+						CMDBuild.LoadMask.get().hide();
+						this.success.call(this.cbScope);
+					} else {
+						this.maxTimes--;
+						Ext.Function.defer(this.run, this.delay, this);
+					}
+				} else {
+					_debug("End polling with failure");
+					CMDBuild.LoadMask.get().hide();
+					this.failure.call();
+				}
+			};
 		}
 	};
 })();
+
+_CMUtils = CMDBuild.Utils;
 
 CMDBuild.extend = function(subClass, superClass) {
 	var ob = function() {};

@@ -1,5 +1,7 @@
-CMDBuild.Grid = Ext.extend(Ext.grid.GridPanel, {
-	columns: [],
+Ext.define("CMDBuild.Grid", {
+    extend: "Ext.grid.GridPanel",
+    alias: "cmdbuildGrid",
+    columns: [],
 	baseUrl: '',
 	stripeRows: true,
 	remoteSort: false,
@@ -90,8 +92,6 @@ CMDBuild.Grid = Ext.extend(Ext.grid.GridPanel, {
 	}
 });
 
-Ext.reg('cmdbuildGrid', CMDBuild.Grid);
-
 // CUSTOM RENDERERS
 
 Ext.grid.CheckColumn = function(config){
@@ -101,7 +101,7 @@ Ext.grid.CheckColumn = function(config){
     }
     this.renderer = this.renderer.createDelegate(this);
 };
-Ext.reg('checkcolumn', Ext.grid.CheckColumn);
+//Ext.reg('checkcolumn', Ext.grid.CheckColumn);
 
 Ext.grid.CheckColumn.prototype ={
     init : function(grid){

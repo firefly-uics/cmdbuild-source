@@ -5,8 +5,9 @@
  * @extends Ext.Window
  */
 
-CMDBuild.PopupWindow = Ext.extend(Ext.Window, {
-    modal: true,
+Ext.define("CMDBuild.PopupWindow", {
+	extend: "Ext.window.Window",
+	modal: true,
 	layout: 'fit',
 	resizable: false,
 	defaultSize: 0.80,
@@ -14,24 +15,24 @@ CMDBuild.PopupWindow = Ext.extend(Ext.Window, {
 	initComponent: function() {
 		if (!this.autoHeight) {
 			var percentualHeight;
-			var configHeight = CMDBuild.Config.cmdbuild.popuppercentageheight;	
+			var configHeight = CMDBuild.Config.cmdbuild.popuppercentageheight;
 			if (configHeight) {
 				percentualHeight = configHeight/100;
 			} else {
 				percentualHeight = this.defaultSize;
 			}
-	        this.height = Ext.getBody().getHeight() * percentualHeight;
+			this.height = Ext.getBody().getHeight() * percentualHeight;
 		}
 
 		if (!this.autoWidth) {
 			var percentualWidth;
-			var configWidth = CMDBuild.Config.cmdbuild.popuppercentagewidth;	
+			var configWidth = CMDBuild.Config.cmdbuild.popuppercentagewidth;
 			if (configWidth) {
 				percentualWidth = configHeight/100;
 			} else {
 				percentualWidth = this.defaultSize;
 			}
-	        this.width = Ext.getBody().getWidth() * percentualWidth;
+			this.width = Ext.getBody().getWidth() * percentualWidth;
 		} else {
 			this.autoWidth = false;
 			this.y = 10000;
@@ -44,10 +45,14 @@ CMDBuild.PopupWindow = Ext.extend(Ext.Window, {
 	    		that.setWidth(newWidth);
 	    		that.setPosition(newXPos, newYPos);
 	    	};
+
 			this.on('render', function() {
-				redraw.defer(1);
+				Ext.Function.createDelayed(function() {
+					redraw.call(this);
+				}, 1, this);
 			});
 		}
-		CMDBuild.PopupWindow.superclass.initComponent.apply(this);
+
+		this.callParent(arguments);
 	}
 });

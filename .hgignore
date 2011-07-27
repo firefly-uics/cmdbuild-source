@@ -5,3 +5,6 @@ syntax: glob
 .settings
 target
 
+
+syntax: glob
+**/META-INF/MANIFEST.MF

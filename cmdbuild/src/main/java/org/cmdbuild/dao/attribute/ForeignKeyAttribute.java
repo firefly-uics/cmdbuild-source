@@ -1,17 +1,21 @@
 package org.cmdbuild.dao.attribute;
 
+import java.util.Map;
+
+import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
+import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.UserContext;
 
-public class ForeignKeyAttribute extends IntegerAttribute {
+public class ForeignKeyAttribute extends AttributeImpl {
 
 	ITable targetClass;
 
-	public ForeignKeyAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	public ForeignKeyAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
 	}
 
 	@Override
@@ -21,12 +25,16 @@ public class ForeignKeyAttribute extends IntegerAttribute {
 
 	@Override
 	protected Object convertValue(Object maybeValue) {
-		final Integer intValue = convertValueToInteger(maybeValue);
-		ICard destCard = null;
-		if (intValue != null) {
-			destCard = new LazyCard(getFKTargetClass(), intValue);
+		try {
+			final Integer intValue = IntegerAttribute.INTEGER_TYPE.convertNotNullValue(maybeValue);
+			ICard destCard = null;
+			if (intValue != null) {
+				destCard = new LazyCard(getFKTargetClass(), intValue);
+			}
+			return destCard;
+		} catch (Throwable t) {
+			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
-		return destCard;
 	}
 
 	@Override

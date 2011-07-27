@@ -23,7 +23,7 @@ var numericValidation = function (value, scale, precision) {
 		if (integerPart && new String(integerPart).length > integerPartMaxlength) {
 			out = {
 				valid: false,
-				message: String.format(CMDBuild.Translation.vtype_text.wrong_integer_part ,integerPartMaxlength)
+				message: Ext.String.format(CMDBuild.Translation.vtype_text.wrong_integer_part ,integerPartMaxlength)
 			};
 		}
 	};
@@ -32,7 +32,7 @@ var numericValidation = function (value, scale, precision) {
 		if (decimalPart && decimalPart.length > scale) {
 			out = {
 				valid: false,
-				message: String.format(CMDBuild.Translation.vtype_text.wrong_decimal_part, scale)
+				message: Ext.String.format(CMDBuild.Translation.vtype_text.wrong_decimal_part, scale)
 			};
 		}
 	}
@@ -95,7 +95,15 @@ Ext.apply(Ext.form.VTypes, {
     ipv4Text: CMDBuild.Translation.vtype_text.wrong_ip_address,
     
     time: function(value, field) {
-    	field.vtypeText = String.format(CMDBuild.Translation.vtype_text.wrong_time, value, field.format);
-    	return Date.parseDate(value, field.format);
-    }
+    	field.vtypeText = Ext.String.format(CMDBuild.Translation.vtype_text.wrong_time, value, field.format);
+    	return Ext.Date.parse(value, field.format);
+    },
+    password : function(val, field) {
+		if (field.initialPassField) {
+			var pwd = Ext.getCmp(field.initialPassField);
+			return (val == pwd.getValue());
+		}
+		return true;
+	},
+	passwordText : CMDBuild.Translation.configure.step2.msg.pswnomatch
 });

@@ -35,14 +35,16 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 	},
 
 	trapCallbacks: function(object, options) {
+		var failurefn;
 		var callbackScope = options.scope || this;
-		options.success = this.unmaskAndCheckSuccess.createDelegate(callbackScope, [options.success], true);
+		options.success = Ext.bind(this.unmaskAndCheckSuccess, callbackScope, [options.success], true);
 		// the error message is not shown if options.failure is present and returns false
-		if (options.failure) 
-			var failurefn = this.defaultFailure.createInterceptor(options.failure, callbackScope);
-		else
-			var failurefn = this.defaultFailure.createDelegate(this);
-		options.failure = this.decodeFailure.createDelegate(this, [failurefn], true);
+		if (options.failure) {
+			failurefn = Ext.Function.createInterceptor(this.defaultFailure, options.failure, callbackScope);
+		} else {
+			failurefn = Ext.bind(this.defaultFailure, this);
+		}
+		options.failure = Ext.bind(this.decodeFailure, this, [failurefn], true);
 	},
 
 	unmaskAndCheckSuccess: function(response, options, successfn) {
@@ -63,7 +65,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		if (jsonResponse) {
 			fixedResponseForMultipartExtBug = jsonResponse.replace(/<\/\w+>$/,"");
 		}
-		return Ext.util.JSON.decode(fixedResponseForMultipartExtBug);
+		return Ext.JSON.decode(fixedResponseForMultipartExtBug);
 	},
 
 	displayWarnings: function(decoded) {
@@ -86,17 +88,14 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 	},
 
 	defaultFailure: function(response, options, decoded) {
-		if (decoded && (decoded.reason == 'AUTH_NOT_LOGGED_IN' || decoded.reason == 'AUTH_MULTIPLE_GROUPS')) {
-			CMDBuild.LoginWindow.addAjaxOptions(options);
-			CMDBuild.LoginWindow.setAuthFieldsEnabled(decoded.reason == 'AUTH_NOT_LOGGED_IN');
-			CMDBuild.LoginWindow.show();
-			return false;
+		if (decoded && decoded.errors && decoded.errors.length) {
+			for (var i=0; i<decoded.errors.length; ++i) {
+				this.showError(response, decoded.errors[i], options);
+			}
 		}
-		this.showError(response, decoded, options);
 	},
 
-	showError: function(response, decoded, options) {
-		var popup = options.form || options.important;
+	showError: function(response, error, options) {
 		var tr = CMDBuild.Translation.errors || {
 			error_message : "Error",
 			unknown_error : "Unknown error",
@@ -108,11 +107,18 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 				text: tr.unknown_error,
 				detail: undefined
 		};
-		
-		if (decoded) {
-			errorBody.detail = decoded.stacktrace;
-			if (decoded.reason) {
-				var translatedErrorString = CMDBuild.Ajax.formatError(decoded.reason, decoded.reason_parameters);
+
+		if (error) {
+			errorBody.detail = error.stacktrace;
+			if (error.reason) {
+				if (error.reason == 'AUTH_NOT_LOGGED_IN' || error.reason == 'AUTH_MULTIPLE_GROUPS') {
+//					CMDBuild.LoginWindow.addAjaxOptions(options);
+//					CMDBuild.LoginWindow.setAuthFieldsEnabled(decoded.reason == 'AUTH_NOT_LOGGED_IN');
+//					CMDBuild.LoginWindow.show();
+					alert("@@Relogin");
+					return;
+				}
+				var translatedErrorString = CMDBuild.Ajax.formatError(error.reason, error.reason_parameters);
 				if (translatedErrorString) {
 					errorBody.text = translatedErrorString;
 				}
@@ -126,17 +132,18 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 				errorBody.text = tr.server_error_code+response.status;
 			}
 		}
-		
+
+		var popup = options.form || options.important;
+
 		CMDBuild.Msg.error(errorTitle, errorBody, popup);
 	},
 
 	formatError: function(reasonName, reasonParameters) {
 		var tr = CMDBuild.Translation.errors.reasons;
+		var functionParameters = [];
+		
 		if (tr && tr[reasonName]) {
-			var functionParameters = [tr[reasonName]];
-			for (var i=0; i<reasonParameters.length; ++i)
-				functionParameters.push(reasonParameters[i]);
-			return String.format.apply(String, functionParameters);
+			return Ext.String.format(tr[reasonName], reasonParameters);
 		} else {
 			return "";
 		}
@@ -190,9 +197,9 @@ CMDBuild.ChainedAjax = {
     	if (index < o.requests.length) {
     		this.showMask(o, index);
 	    	var requestObject = Ext.apply(o.requests[index]);
-	    	var execNext = this.executeNextAndWait.createDelegate(this, [o, index+1]);
+	    	var execNext = Ext.bind(this.executeNextAndWait,this, [o, index+1]);
 			if (requestObject.success)
-		    	requestObject.success = requestObject.success.createSequence(execNext);
+		    	requestObject.success = Ext.Function.createSequence(requestObject.success, execNext);
 		    else
 		    	requestObject.success = execNext;
 			requestObject.loadMask = requestObject.loadMask && !o.loadMask;
@@ -216,4 +223,28 @@ CMDBuild.ChainedAjax = {
     }
 };
 
-
+CMDBuild.ConcurrentAjax = {
+	execute: function(o) {
+		var counter = o.requests.length;
+		for (var i=0, l=o.requests.length; i<l; ++i) {
+			var requestConfig = Ext.apply(o.requests[i]);
+			this.showMask(o, i);
+			requestConfig.callback = function() {
+				if (--counter == 0) {
+					CMDBuild.LoadMask.get().hide();
+					o.fn.call(o.scope || this);
+				}
+			}
+			CMDBuild.Ajax.request(requestConfig);
+		}
+	},
+	//private
+	showMask: function(o, index) {
+		if (o.loadMask) {
+			if (o.requests[index].maskMsg) {
+				var m = CMDBuild.LoadMask.get(o.requests[index].maskMsg);
+				m.show();
+			}
+		}
+	}
+};

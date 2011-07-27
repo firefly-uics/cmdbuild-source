@@ -1,38 +1,21 @@
 package org.cmdbuild.dao.attribute;
 
-import org.cmdbuild.elements.AttributeImpl;
+import java.util.Map;
+
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
-public class IntegerAttribute extends AttributeImpl {
+public class IntegerAttribute extends DaoWrapperAttribute {
 
-	public IntegerAttribute(BaseSchema schema, String name) {
-		super(schema, name);
+	static CMAttributeType<Integer> INTEGER_TYPE = new IntegerAttributeType();
+
+	public IntegerAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+		super(schema, name, meta);
+		daoType = INTEGER_TYPE;
 	}
 
 	public AttributeType getType() {
 		return AttributeType.INTEGER;
-	}
-
-	@Override
-	protected Object convertValue(Object value) {
-		return convertValueToInteger(value);
-	}
-
-	protected final Integer convertValueToInteger(Object value) {
-		Integer intValue;
-		if (value instanceof Integer) {
-			intValue = (Integer) value;
-		} else if (value instanceof String) {
-			String stringValue = (String) value;
-			if (stringValue.isEmpty()) {
-				intValue = null;
-			} else {
-				intValue = Integer.valueOf(stringValue);
-			}
-		} else {
-			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-		}
-		return intValue;
 	}
 }

@@ -42,7 +42,7 @@ CMDBuild.Management.CSVGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             layout: 'fit',            
             bbar: this.toolBar
         });
-		CMDBuild.Management.CSVGrid.superclass.initComponent.apply(this, arguments);		
+		CMDBuild.Management.CSVGrid.superclass.initComponent.apply(this, arguments);
 		
 		this.searchField.onTrigger1Click = function() {
 			this.grid.filterStore();

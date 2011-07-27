@@ -1,8 +1,8 @@
 package org.cmdbuild.elements;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.dao.type.SQLQuery;
@@ -14,7 +14,6 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.utils.CQLFacadeCompiler;
 
@@ -312,10 +311,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	private FieldMode fieldMode;
 
 	public static IAttribute create(BaseSchema schema, String name, AttributeType type, Map<String,String> meta) {
-		AttributeImpl attribute = type.createAttribute(schema, name);
-		if (meta != null) {
-			attribute.readDataDefinitionMeta(meta);
-		}
+		AttributeImpl attribute = type.createAttribute(schema, name, meta);
 		return attribute;
 	}
 
@@ -323,7 +319,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		return create(schema, name, type, null);
 	}
 
-	protected AttributeImpl(BaseSchema schema, String name) {
+	protected AttributeImpl(BaseSchema schema, String name, Map<String,String> meta) {
 		this.schema = schema;
 		this.name = name;
 		mode = Mode.WRITE;
@@ -333,6 +329,9 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		isReferenceDirect = false;
 		index = NEWINDEX;
 		isLocal = true;
+		if (meta != null) {
+			readDataDefinitionMeta(meta);
+		}
 	}
 
 	public void setName(String name) {
@@ -379,27 +378,11 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	}
 
 	public void save() {
-		try {
-			if (isNew()) {
-				setIndexToOnePastLast();
-				backend.createAttribute(this);
-				//FIXME - if the attribute is a superclass, the children must be reloaded too
-				//at this moment we will be reload all tables 
-				if (((ITable)schema).isSuperClass()) {
-					SchemaCache.getInstance().refreshTables();
-				} else {
-					schema.addAttribute(this);
-				}
-			} else {
-				backend.modifyAttribute(this);
-				if (((ITable)schema).isSuperClass()) {
-					SchemaCache.getInstance().refreshTables();
-				}
-			}
-		} catch (RuntimeException re) {
-			// On errors, the cache must be refreshed
-			SchemaCache.getInstance().refreshTables();
-			throw re;
+		if (isNew()) {
+			setIndexToOnePastLast();
+			backend.createAttribute(this);
+		} else {
+			backend.modifyAttribute(this);
 		}
 	}
 
@@ -518,11 +501,11 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 
 	public void setReferenceDomain(String domainName) throws NotFoundException {
 		if (domainName != null && domainName.length() > 0)
-			this.referenceDomain = SchemaCache.getInstance().getDomain(domainName);
+			this.referenceDomain = backend.getDomain(domainName);
 	}
 
 	public void setReferenceDomain(int idDomain) throws NotFoundException {
-		this.referenceDomain = SchemaCache.getInstance().getDomain(idDomain);
+		this.referenceDomain = backend.getDomain(idDomain);
 	}
 
 	public String getReferenceType() {
@@ -571,7 +554,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	}
 
 	public ITable getFKTargetClass() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	public void setFKTargetClass(String value) {
@@ -591,7 +574,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 
 	public void setLookupType(String lookupName) {
 		if (lookupName != null && lookupName.length() > 0) {
-			this.lookupType = SchemaCache.getInstance().getLookupType(lookupName);
+			this.lookupType = backend.getLookupTypeOrDie(lookupName);
 		}
 	}
 
@@ -630,11 +613,6 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 				&& (this.getFieldMode() != FieldMode.HIDDEN);
 	}
 
-	@Override
-	public void reloadCache() {
-		this.getSchema().reloadCache();
-	}
-
 	public final Object readValue(Object maybeValue) {
 		if (maybeValue == null) {
 			return null;
@@ -646,10 +624,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		}
 	}
 
-	/*
-	 * Override in subclasses if needed
-	 */
-	abstract protected Object convertValue(Object maybeValue);
+	protected abstract Object convertValue(Object value);
 
 	public final String valueToString(Object value) {
 		if (value == null) {

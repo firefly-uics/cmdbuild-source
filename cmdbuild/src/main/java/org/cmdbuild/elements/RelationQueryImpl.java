@@ -12,22 +12,22 @@ import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.dao.backend.postgresql.QueryComponents;
-import org.cmdbuild.dao.backend.postgresql.RelationQueryBuilder;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
+import org.cmdbuild.dao.backend.postgresql.RelationQueryBuilder;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.LimitFilter;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
-import org.cmdbuild.elements.interfaces.RelationQuery;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.RelationQuery;
 import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.services.auth.UserContext;
 
 public class RelationQueryImpl implements RelationQuery {
 
@@ -77,8 +77,9 @@ public class RelationQueryImpl implements RelationQuery {
 
 	public RelationQuery domain(DirectedDomain directedDomain, boolean fullCards) {
 		if (fullCards) {
-			if (!this.domains.isEmpty())
+			if (!this.domains.isEmpty()) {
 				throw ORMExceptionType.ORM_FULLCARDS_MULTIPLEDOMAINS.createException();
+			}
 			this.fullCards = fullCards;
 		}
 		this.domains.add(directedDomain);
@@ -116,7 +117,7 @@ public class RelationQueryImpl implements RelationQuery {
 		return domains;
 	}
 	
-	public DirectedDomain getFullCardsDomain(){
+	public DirectedDomain getFullCardsDomain() {
 		if (isFullCards())
 			return domains.iterator().next();
 		else
@@ -184,6 +185,7 @@ public class RelationQueryImpl implements RelationQuery {
 		Map<String, QueryAttributeDescriptor> queryMapping = queryComponents.getQueryMapping();
 		for (String attributeName: destinationClass.getAttributes().keySet()) {
 			QueryAttributeDescriptor qad = queryMapping.get(attributeName);
+			Log.SQL.debug("Setting value for attribute " + attributeName);
 			destCard.setValue(attributeName, rs, qad);
 		}
 	}
@@ -232,7 +234,7 @@ public class RelationQueryImpl implements RelationQuery {
 
 		protected IRelation createRelation(ResultSet rs, RelationQueryBuilder qb) throws SQLException {
 			IRelation relation;
-			IDomain domain = SchemaCache.getInstance().getDomain(rs.getInt("iddomain"));
+			IDomain domain = UserContext.systemContext().domains().get(rs.getInt("iddomain"));
 			ICard srcCard = new LazyCard(rs.getInt("idclass1"), rs.getInt("idobj1"));
 			ICard destCard;
 			try {

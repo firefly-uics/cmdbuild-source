@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>1.3.1-SNAPSHOT</version>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild</artifactId>
@@ -11,33 +11,22 @@
 	<name>CMDBuild Webapp</name>
 	<properties>
 		<antlr.version>3.2</antlr.version>
-		<cuke4duke.version>0.3.2</cuke4duke.version>
-		<hamcrest.version>1.2</hamcrest.version>
 		<itext.version>2.1.0</itext.version> <!-- jasperreports dependency -->
 		<jasperreports.version>3.7.1</jasperreports.version>
-		<jetty.version>6.1.22</jetty.version>
 		<json-java.version>20110113</json-java.version>
-		<junit.version>4.8.1</junit.version>
-		<netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
-		<netbeans.hint.jdkPlatform>JDK_1.6</netbeans.hint.jdkPlatform>
-		<postgis.version>1.5.1</postgis.version>
-		<postgresql.version>9.0-801.jdbc4</postgresql.version>
 		<quartz.version>1.8.3</quartz.version>
 		<restlet.version>2.0.1</restlet.version>
-		<selenium.version>0.9.7376</selenium.version>
-		<spring-version>3.0.4.RELEASE</spring-version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-shark-types</artifactId>
+			<artifactId>cmdbuild-dao-postgresql</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-graph</artifactId>
+			<artifactId>cmdbuild-shark-types</artifactId>
 			<version>${project.version}</version>
-			<type>swf</type>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -50,17 +39,6 @@
 			<artifactId>jsp-api</artifactId>
 			<version>2.0</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>${postgresql.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.postgis</groupId>
-			<artifactId>postgis-jdbc</artifactId>
-			<version>${postgis.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -84,7 +62,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>dbcp</artifactId>
-			<version>6.0.18</version>
+			<version>${tomcat.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -135,7 +113,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--  REST Client API for GeoServer -->
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+			<type>jar</type>
+		</dependency>
+
+		<!-- REST Client API for GeoServer -->
 		<dependency>
 			<groupId>org.restlet.jse</groupId>
 			<artifactId>org.restlet</artifactId>
@@ -150,29 +135,29 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
+			<artifactId>cxf-rt-ws-security</artifactId>
 			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-ws-security</artifactId>
+			<artifactId>cxf-rt-transports-http</artifactId>
 			<version>${cxf.version}</version>
-			<type>jar</type>
+			<scope>runtime</scope>
 		</dependency>
 		<!-- Spring Dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring-version}</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring-version}</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<!-- Report -->
 		<dependency>
-			<groupId>jasperreports</groupId>
+			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>${jasperreports.version}</version>
 			<exclusions>
@@ -264,7 +249,7 @@
 		<!-- CAS Authentication -->
 		<dependency>
 			<groupId>org.jasig.cas.client</groupId>
-    		<artifactId>cas-client-core</artifactId>
+			<artifactId>cas-client-core</artifactId>
 			<version>3.2.0</version>
 		</dependency>
 		<!-- Workflow -->
@@ -297,7 +282,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>catalina</artifactId>
-			<version>6.0.18</version>
+			<version>${tomcat.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Workflow and DMS -->
@@ -375,33 +360,6 @@
 			<type>jar</type>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- Test -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-			<version>${hamcrest.version}</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>${hamcrest.version}</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-			<type>jar</type>
-		</dependency>
 		<dependency> <!-- To use XPath to parse GeoServer XML REST messages -->
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
@@ -422,10 +380,10 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			 <!--
-			 	We should use version 4 but before that the
-			 	workflow service must be rewritten
-		 	-->
+			<!--
+				We should use version 4 but before that the workflow service must be
+				rewritten
+			-->
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
@@ -440,7 +398,7 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
+			<version>${commons-lang.version}</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>
@@ -451,6 +409,11 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.1.1</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
 					<attachClasses>true</attachClasses>
 				</configuration>
 			</plugin>
@@ -465,7 +428,8 @@
 						</goals>
 						<configuration>
 							<includeTypes>mar</includeTypes>
-							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/modules</outputDirectory>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/modules
+							</outputDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -481,11 +445,13 @@
 									<artifactId>cmdbuild-graph</artifactId>
 									<version>${project.version}</version>
 									<type>swf</type>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/flash</outputDirectory>
+									<outputDirectory>${project.build.directory}/${project.build.finalName}/flash
+									</outputDirectory>
 									<destFileName>graph.swf</destFileName>
 								</artifactItem>
 							</artifactItems>
-							<outputDirectory>${project.build.directory}/wars</outputDirectory>
+							<outputDirectory>${project.build.directory}/wars
+							</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
@@ -504,30 +470,98 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<!-- Test Webapp -->
 			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>maven-jetty-plugin</artifactId>
-				<version>${jetty.version}</version>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.8</version>
 				<configuration>
-					<webXml>${basedir}/src/test/webapp/WEB-INF/web.xml</webXml>
-					<webAppSourceDirectory>${basedir}/src/test/webapp</webAppSourceDirectory>
-					<webAppConfig>
-						<contextPath>/test</contextPath>
-						<baseResource implementation="org.mortbay.resource.ResourceCollection">
-							<resourcesAsCSV>src/test/webapp,src/main/webapp</resourcesAsCSV>
-						</baseResource>
-					</webAppConfig>
-					<scanIntervalSeconds>5</scanIntervalSeconds>
-					<connectors>
-						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-							<port>9080</port>
-							<maxIdleTime>60000</maxIdleTime>
-						</connector>
-					</connectors>
+					<includes>
+						<include>unit/**</include>
+					</includes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>${tomcat-plugin.version}</version>
+			</plugin>
+			<!--
+				Allows to run the application on an optional Jetty server <plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version> </plugin>
+			-->
+			<plugin>
+				<groupId>croche.maven</groupId>
+				<artifactId>maven-merge-file-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-translation-file</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>merge</goal>
+						</goals>
+						<configuration>
+							<merges>
+								<merge>
+<!-- The plugin doesn't create unexisting directories
+									<targetFile>${project.build.directory}/generated-test-sources/translations/en.js</targetFile>
+ -->
+									<targetFile>${project.build.directory}/en.js</targetFile>
+									<sourceDirs>
+										<sourceDir>src/main/webapp/translations</sourceDir>
+									</sourceDirs>
+									<includes>
+										<include>en.json</include>
+									</includes>
+									<separator>CMDBuild.Translation = </separator>
+									<encoding>UTF-8</encoding>
+								</merge>
+							</merges>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>integration-ci</id>
+			<activation>
+				<property>
+					<name>ci</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Run pure Java integration test -->
+					<plugin>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.8</version>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<includes>
+								<include>integration/*.java</include>
+								<include>integration/**/*.java</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
+

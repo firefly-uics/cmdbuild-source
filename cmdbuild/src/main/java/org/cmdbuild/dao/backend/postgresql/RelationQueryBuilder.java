@@ -11,8 +11,10 @@ import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.CardImpl;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.filters.AbstractFilter;
+import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.FilterOperator;
 import org.cmdbuild.elements.filters.LimitFilter;
+import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -85,8 +87,25 @@ public class RelationQueryBuilder {
 		return queryComponents;
 	}
 
-	public String buildSelectQuery(IDomain domain, AbstractFilter filter1,
-			AbstractFilter filter2, int limit, int offset) {
+	public String buildSelectQuery(IDomain domain, int id) {
+		final AttributeFilter domainFilter = new AttributeFilter(domain.getAttribute("Id"), AttributeFilterType.EQUALS, String.valueOf(id));
+		return buildSelectQuery(domain, domainFilter, null, null);
+	}
+
+	public String buildSelectQuery(IDomain domain, int card1Id, int card2Id) {
+		AttributeFilter filter1 = null;
+		AttributeFilter filter2 = null;
+		if (card1Id > 0) {
+			filter1 = new AttributeFilter(domain.getAttribute("IdObj1"), AttributeFilterType.EQUALS, String.valueOf(card1Id));
+		}
+		if (card2Id > 0) {
+			filter2 = new AttributeFilter(domain.getAttribute("IdObj2"), AttributeFilterType.EQUALS, String.valueOf(card2Id));
+		}
+		return buildSelectQuery(domain, null, filter1, filter2);
+	}
+
+	public String buildSelectQuery(IDomain domain, AbstractFilter domainFilter, AbstractFilter filter1,
+			AbstractFilter filter2) {
 		final ITable table1 = domain.getClass1();
 		final ITable table2 = domain.getClass2();
 
@@ -98,22 +117,32 @@ public class RelationQueryBuilder {
 			queryComponents.addAttribute(attrFullName, attrAlias, attribute, "Map");
 		}
 
-		buildAttributesQuery(table1, "Table1");
-		buildAttributesQuery(table2, "Table2");
-
 		StringBuilder whereCondition = new StringBuilder(String.format(SELECT_WHERE_TEMPLATE, domain.getDBName()));
-		if (filter1 != null && filter2 != null) {
-			List<AbstractFilter> list = new LinkedList<AbstractFilter>();
+		List<AbstractFilter> list = new LinkedList<AbstractFilter>();
+		String latestMappingAdded = null;
+		buildAttributesQuery(table1, "Table1");
+		if (filter1 != null) {
 			filter1.setQueryMapping(queryComponents.getQueryMapping("Table1"));
-			filter2.setQueryMapping(queryComponents.getQueryMapping("Table2"));
+			latestMappingAdded = "Table1";
 			list.add(filter1);
-			list.add(filter2);
-			whereCondition.append(" AND ").append(new FilterOperator(OperatorType.AND, list).toString());
-		} else if(filter1 != null) {
-			whereCondition.append(" AND ").append(filter1.toString(queryComponents.getQueryMapping("Table1")));
-		} else if(filter2 != null) {
-			whereCondition.append(" AND ").append(filter2.toString(queryComponents.getQueryMapping("Table2")));
 		}
+		buildAttributesQuery(table2, "Table2");
+		if (filter2 != null) {
+			filter2.setQueryMapping(queryComponents.getQueryMapping("Table2"));
+			latestMappingAdded = "Table2";
+			list.add(filter2);
+		}
+		if(domainFilter != null) {
+			domainFilter.setQueryMapping(queryComponents.getQueryMapping(domain.getDBName()));
+			latestMappingAdded = domain.getDBName();
+			list.add(domainFilter);
+		}
+		if (list.size() == 1) {
+			whereCondition.append(" AND ").append(list.get(0).toString(queryComponents.getQueryMapping(latestMappingAdded)));
+		} else if (list.size() > 1) {
+			whereCondition.append(" AND ").append(new FilterOperator(OperatorType.AND, list).toString());
+		}
+
 		return String.format(SELECT,
 				StringUtils.join(queryComponents.getAttributeList(), ", "),
 				domain.getDBName(),

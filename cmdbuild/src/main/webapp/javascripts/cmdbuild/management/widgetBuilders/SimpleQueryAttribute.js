@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.SimpleQueryAttribute
  * @extends CMDBuild.WidgetBuilders.BaseAttribute
  **/
+Ext.ns("CMDBuild.WidgetBuilders"); 
 var translation = CMDBuild.Translation.management.findfilter;
 
 CMDBuild.WidgetBuilders.SimpleQueryAttribute = function(){};

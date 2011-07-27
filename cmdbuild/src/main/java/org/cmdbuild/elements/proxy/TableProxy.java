@@ -82,12 +82,6 @@ public class TableProxy extends TableForwarder {
 	}
 
 	@Override
-	public void reloadCache() {
-		userCtx.privileges().assureAdminPrivilege();
-		super.reloadCache();
-	}
-
-	@Override
 	public void setMode(String mode) {
 		userCtx.privileges().assureAdminPrivilege();
 		super.setMode(mode);

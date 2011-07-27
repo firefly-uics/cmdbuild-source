@@ -33,6 +33,9 @@ public class DirectedDomain {
 	}
 
 	public static DirectedDomain create(IDomain domain, boolean directionValue) {
+		if (domain == null) {
+			return null;
+		}
 		if (directionValue) {
 			return create(domain, DomainDirection.D);
 		} else {

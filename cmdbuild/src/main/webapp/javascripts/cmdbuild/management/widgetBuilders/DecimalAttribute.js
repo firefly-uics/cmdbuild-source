@@ -2,9 +2,10 @@
  * @class CMDBuild.WidgetBuilders.DecimalAttribute
  * @extends CMDBuild.WidgetBuilders.RangeQueryAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.DecimalAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.DecimalAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
-CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = 80;
+CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = 200;
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.customVType = "numeric";
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.gridRenderer = function(v) {
 	return "<div class=\"numeric_column\">" + v + "<div>";
@@ -22,6 +23,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
 		hidden: !attribute.isbasedsp,
 		fixed: false,
 		width: this.MAXWIDTH,
+		flex: 1,
 		renderer: this.gridRenderer
 	};
 };
@@ -32,6 +34,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
  */
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.TextField({
+		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,

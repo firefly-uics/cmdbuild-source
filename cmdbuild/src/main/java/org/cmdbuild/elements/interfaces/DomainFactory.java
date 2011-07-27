@@ -9,4 +9,5 @@ public interface DomainFactory {
 	IDomain get(String domainName) throws NotFoundException;
 
 	DomainQuery list(ITable table);
+	Iterable<IDomain> list();
 }

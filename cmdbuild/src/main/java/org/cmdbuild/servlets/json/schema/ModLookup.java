@@ -12,7 +12,6 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.operation.schema.LookupTypeOperation;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -22,14 +21,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Servlet implementation class Lookup
- */
 public class ModLookup extends JSONBase {
+
+	LookupTypeOperation lookupTypeOperation = new LookupTypeOperation();
 
 	@JSONExported
 	public JSONArray tree() throws JSONException {
-		Iterable<LookupType> lookupTypes = SchemaCache.getInstance().getLookupTypeList();
+		Iterable<LookupType> lookupTypes = lookupTypeOperation.getLookupTypeList();
 		JSONArray jsonLookupTypes = new JSONArray();
 		
 		for (LookupType lookupType: lookupTypes) {
@@ -42,7 +40,7 @@ public class ModLookup extends JSONBase {
 	
 	@JSONExported
 	public JSONObject getLookupTypeList(JSONObject serializer) throws JSONException {
-		CTree<LookupType> tree = SchemaCache.getInstance().getLookupTypeTree();
+		CTree<LookupType> tree = lookupTypeOperation.getLookupTypeTree();
 		for(LookupType lt : tree.getLeaves()) {
 			if (lt == tree.getRootElement().getData())
 				continue;
@@ -130,10 +128,10 @@ public class ModLookup extends JSONBase {
 			LookupOperation lo,
 			@Parameter(value="type", required=false) String type) throws JSONException, AuthException {
        	if(type!=null && !type.equals("")){
-       		LookupType lookupType = SchemaCache.getInstance().getLookupType(type);
+       		LookupType lookupType = lookupTypeOperation.getLookupType(type);
        		String parentType = "";
        		if(lookupType!=null)
-       			parentType = lookupType.getParentType();
+       			parentType = lookupType.getParentTypeName();
        		if(parentType!=null && !(parentType.trim().equals(""))){
        			Iterable<Lookup> list = lo.getLookupList(parentType);
        			if (list == null)

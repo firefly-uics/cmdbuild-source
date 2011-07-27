@@ -1,5 +1,5 @@
-CMDBuild.Management.ReportParamWin = Ext.extend(Ext.Window, {
-	
+Ext.define("CMDBuild.Management.ReportParamWin", {
+	extend: "Ext.window.Window",
 	translation : CMDBuild.Translation.management.modreport,
 
 	initComponent: function() {
@@ -10,8 +10,8 @@ CMDBuild.Management.ReportParamWin = Ext.extend(Ext.Window, {
 			formBind : true,
 			scope : this,
 			handler : function() {
-	            this.submitParameters();
-	        },
+				this.submitParameters();
+			},
 			disabled : true
 		});
 
@@ -25,19 +25,17 @@ CMDBuild.Management.ReportParamWin = Ext.extend(Ext.Window, {
 		
 		// formPanel
 		this.formFields = {};
+
 		this.formPanel = new Ext.FormPanel({
-			labelWidth: 150,			
+			labelWidth: 150,
 			defaults: { 
 				labelWidth: 150
 			},
-			timeout: _CMDefault_timeout_s * 1000,
+			timeout: CMDBuild.Constants.defaultTimeout * 1000,
 			labelAlign: "right",
-			margins: '0 10 0 10',
 			frame: true,
-			border: true,
+			border: false,
 			monitorValid: true,
-			items: [{}],
-			buttonAlign: 'center',
 			autoScroll: true,
 			autoHeight: true,
 			monitorResize: true,
@@ -58,26 +56,25 @@ CMDBuild.Management.ReportParamWin = Ext.extend(Ext.Window, {
 					this.formFields[i] = field;
 					field.ownerCt = this.formPanel;
 					field.labelWidth = 150; //for the multilevel lookup
-					this.formPanel.items.add(field);
+					this.formPanel.add(field);
 				}
 			}
 		}
 		
 		
 		// window
-		Ext.apply(this, {						
-			id: 'reportParamWin',
+		Ext.apply(this, {
 			title: this.translation.report_parameters,
-			width: '50%',			
 			autoScroll: true,
 			autoHeight: true,
 			modal: true,
 			layout:'fit',
-			border:false,
-			items: this.formPanel
-		});				
+			items: [this.formPanel],
+			frame: false,
+			border: false
+		});
 		
-		CMDBuild.Management.ReportParamWin.superclass.initComponent.apply(this);
+		this.callParent(arguments);
 		this.on("render", addFieldsToFormPanel, this)
 	},	
 	

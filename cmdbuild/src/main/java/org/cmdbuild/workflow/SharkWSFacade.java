@@ -14,7 +14,6 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
 import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.UserContext;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
@@ -234,9 +233,8 @@ public class SharkWSFacade {
 				String nextExecutor = this.getActivityParticipant(handle, userCtx, factory, out);
 				int cardId = this.getCmdbuildCardId(handle, userCtx, factory, out);
 				String table = this.getProcessInfo(handle, factory, out).getValue().getCmdbuildBindedClass();
-				ICard crd = SchemaCache.getInstance().getTable(table).cards().get(cardId);
+				ICard crd = UserContext.systemContext().tables().get(table).cards().get(cardId);
 				crd.setValue(ProcessAttributes.NextExecutor.toString(), nextExecutor);
-				crd.setValue("User", "system");
 				crd.save();
 			}
 			Log.WORKFLOW.debug("..end");

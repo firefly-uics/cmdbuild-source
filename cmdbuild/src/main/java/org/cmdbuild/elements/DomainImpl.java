@@ -1,20 +1,16 @@
 package org.cmdbuild.elements;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
-import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.SchemaCache;
+import org.cmdbuild.services.auth.UserContext;
 
 public class DomainImpl extends BaseSchemaImpl implements IDomain {
 
@@ -39,6 +35,16 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 			@Override
 			public String getValue(IDomain domain) {
 				return domain.getDescription();
+			}
+		},
+		MDLABEL {
+			@Override
+			public void setValue(IDomain domain, String value) {
+				domain.setMDLabel(value);
+			}
+			@Override
+			public String getValue(IDomain domain) {
+				return domain.getMDLabel();
 			}
 		},
 		STATUS {
@@ -122,7 +128,7 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		CLASS1 {
 			@Override
 			public void setValue(IDomain domain, String value) {
-				domain.setClass1(TableImpl.get(value));
+				domain.setClass1(UserContext.systemContext().tables().get(value));
 			}
 			@Override
 			public String getValue(IDomain domain) {
@@ -132,7 +138,7 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		CLASS2 {
 			@Override
 			public void setValue(IDomain domain, String value) {
-				domain.setClass2(TableImpl.get(value));
+				domain.setClass2(UserContext.systemContext().tables().get(value));
 			}
 			@Override
 			public String getValue(IDomain domain) {
@@ -166,23 +172,15 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	private String cardinality;
 	private int openedRows;
 	private boolean isMasterDetail;
+	private String mdLabel;
 
 	private String description;
 	private String descriptionDirect;
 	private String descriptionInverse;
 
-	public static IDomain getBase(){
-		try {
-			return SchemaCache.getInstance().getDomain("");
-		} catch (NotFoundException e) {
-			Log.PERSISTENCE.debug("Unable to find Map domain !!!", e);
-			return null;
-		}
-	}
-
 	DomainImpl() {
 		this.setTableType(CMTableType.DOMAIN);
-		this.mode = Mode.RESERVED;
+		this.mode = Mode.WRITE;
 		this.tables = new ITable[2];
 	}
 
@@ -197,42 +195,15 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	}
 
     IDomain get(String domainName) throws NotFoundException {
-    	return SchemaCache.getInstance().getDomain(domainName);
+    	return backend.getDomain(domainName);
     }
 
     IDomain get(int idClass) throws NotFoundException {
-    	return SchemaCache.getInstance().getDomain(idClass);
+    	return backend.getDomain(idClass);
     }
 
 	public boolean isNew() {
 		return (oid <= 0);
-	}
-
-	protected Map<String, IAttribute> loadAttributes() {
-		Map<String, IAttribute> a = super.loadAttributes();
-		a.put("Id", AttributeImpl.create(this, "Id", AttributeType.INTEGER, notNullMeta()));
-		a.put("IdDomain", AttributeImpl.create(this, "IdDomain", AttributeType.REGCLASS, notNullMeta()));
-		a.put("IdClass1", AttributeImpl.create(this, "IdClass1", AttributeType.REGCLASS, notNullMeta()));
-		a.put("IdObj1", AttributeImpl.create(this, "IdObj1", AttributeType.INTEGER, notNullMeta()));
-		a.put("IdClass2", AttributeImpl.create(this, "IdClass2", AttributeType.REGCLASS, notNullMeta()));
-		a.put("IdObj2", AttributeImpl.create(this, "IdObj2", AttributeType.INTEGER, notNullMeta()));
-		a.put("Status", AttributeImpl.create(this, "Status", AttributeType.CHAR, notNullMeta()));
-		a.put("User", AttributeImpl.create(this, "User", AttributeType.STRING, notNullMeta()));
-		a.put("BeginDate", AttributeImpl.create(this, "BeginDate", AttributeType.TIMESTAMP, nillableMeta()));
-		a.put("EndDate", AttributeImpl.create(this, "EndDate", AttributeType.TIMESTAMP, nillableMeta()));
-		return a;
-	}
-
-	private Map<String,String> notNullMeta() {
-		Map<String,String> notNullMeta = new HashMap<String,String>();
-		notNullMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.TRUE.toString());
-		return notNullMeta;
-	}
-
-	private Map<String,String> nillableMeta() {
-		Map<String,String> notNullMeta = new HashMap<String,String>();
-		notNullMeta.put(AttributeDataDefinitionMeta.NOTNULL.toString(), Boolean.FALSE.toString());
-		return notNullMeta;
 	}
 
 	@Override
@@ -265,15 +236,10 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 	}
 
 	public void save(){
-		try {
-			if(isNew())
-				oid = backend.createDomain(this);
-			else
-				backend.modifyDomain(this);
-		} catch (RuntimeException re) {
-			// On errors, the cache must be refreshed
-			SchemaCache.getInstance().refreshDomains();
-			throw re;
+		if (isNew()) {
+			oid = backend.createDomain(this);
+		} else {
+			backend.modifyDomain(this);
 		}
 	}
 
@@ -362,12 +328,32 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		this.description = description;
 	}
 
-	public boolean isMasterDetail() {
+	public final boolean isMasterDetail() {
 		return isMasterDetail;
 	}
 
 	public void setMasterDetail(boolean isMasterDetail) {
 		this.isMasterDetail = isMasterDetail;
+	}
+
+	public String getMDLabel() {
+		if (mdLabel != null) {
+			return mdLabel;
+		} else if (isMasterDetail()) { // For backwards compatibility
+			if (CARDINALITY_N1.contains(cardinality)) {
+				return getClass1().getDescription();
+			} else if (CARDINALITY_1N.contains(cardinality)) {
+				return getClass2().getDescription();
+			}
+		}
+		return null;
+	}
+
+	public void setMDLabel(String mdLabel) {
+		if (mdLabel != null && mdLabel.trim().isEmpty()) {
+			mdLabel = null;
+		}
+		this.mdLabel = mdLabel;
 	}
 
 	public void setOpenedRows(int openedRows) {
@@ -393,10 +379,5 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 		if (directed && inverse)
 			throw ORMExceptionType.ORM_AMBIGUOUS_DIRECTION.createException();
 		return directed;
-	}
-
-	@Override
-	public void reloadCache() {
-		SchemaCache.getInstance().refreshDomains();
 	}
 }

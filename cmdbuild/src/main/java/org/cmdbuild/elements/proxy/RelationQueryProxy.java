@@ -7,6 +7,22 @@ import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.services.auth.UserContext;
 
 public class RelationQueryProxy extends RelationQueryForwarder {
+
+	public static class ProxedIterableRelation extends ProxyIterable<IRelation> {
+		private UserContext uc;
+
+		public ProxedIterableRelation(Iterable<IRelation> i, UserContext uc) {
+			super(i);
+			this.uc = uc;
+		}
+		protected boolean isValid(IRelation r) {
+			return uc.privileges().hasReadPrivilege(r.getSchema());
+		}
+		protected IRelation createProxy(IRelation r) {
+			return new RelationProxy(r, uc);
+		}
+	}
+
 	private UserContext userCtx;
 
 	public RelationQueryProxy(RelationQuery relationQuery, UserContext userCtx) {
@@ -31,13 +47,6 @@ public class RelationQueryProxy extends RelationQueryForwarder {
 	// FIXME Add priviege filters for subclasses
 	@Override
 	public Iterable<IRelation> getIterable() {
-		return new ProxyIterable<IRelation>(super.getIterable()) {
-			protected boolean isValid(IRelation r) {
-				return userCtx.privileges().hasReadPrivilege(r.getSchema());
-			}
-			protected IRelation createProxy(IRelation r) {
-				return new RelationProxy(r, userCtx);
-			}
-		};
+		return new ProxedIterableRelation(super.getIterable(), userCtx);
 	}
 }

@@ -257,7 +257,7 @@ public class MethodParameterResolver {
 	
 	@SuppressWarnings("unchecked")
 	private void setupMultipart(HttpServletRequest request) throws FileUploadException {
-		// parse file items if multipart
+		final List<FileItem> items;
 		if(isMultipart(request)){
 			FileItemFactory factory = new DiskFileItemFactory();
 
@@ -265,9 +265,11 @@ public class MethodParameterResolver {
 			ServletFileUpload upload = new ServletFileUpload(factory);
 
 			// Parse the request
-			List<FileItem> items = upload.parseRequest(request);
-			request.setAttribute(MultipartRequest, items);
+			items = upload.parseRequest(request);
+		} else {
+			items = new ArrayList<FileItem>();
 		}
+		request.setAttribute(MultipartRequest, items);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -2,89 +2,78 @@
 	var tr = CMDBuild.Translation.administration.modClass.attributeProperties;
 	var tr_geo = CMDBuild.Translation.administration.modClass.geo_attributes;
 	
-	CMDBuild.Administration.GeoServerLayerGrid = Ext.extend(Ext.grid.GridPanel, {
+	Ext.define("CMDBuild.Administration.GeoServerLayerGrid", {
+		extend: "Ext.grid.Panel",
+		
 		region: 'center',
 		frame: false,
-	    border: false,
-	    loadMask: true,
+		border: false,
+		loadMask: true,
 		store: CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore(),
-		viewConfig: {
-	        forceFit: true
-	    },
-	    sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+		sm: new Ext.selection.RowModel(),
+
 		initComponent: function() {
-	    	var columns = [{
-	            header: tr.name,
-	            hideable: true,
-	            hidden: false,
-	            sortable: false,
-	            dataIndex: "name"
-	        },{
-	            header: tr.description,
-	            hideable: true,
-	            hidden: false,
-	            sortable: false,
-	            dataIndex: "description"
-	        },{
-	            header: tr.type,
-	            hideable: true,
-	            hidden: false,
-	            sortable: false,
-	            dataIndex: "type"
-	        },{
-	            header: tr_geo.min_zoom,
-	            hideable: true,
-	            hidden: false,
-	            sortable: false,
-	            dataIndex: "minZoom"
-	        },{
-	            header: tr_geo.max_zoom,
-	            hideable: true,
-	            hidden: false,
-	            sortable: false,
-	            dataIndex: "maxZoom"
-	        }];
-	    		    		    
-	    	this.colModel = new Ext.grid.ColumnModel( {
-		        defaults: {
-		            width: 120,
-		            sortable: true
-		        },	                
-		        columns: columns
-		    });
-	    	
-			CMDBuild.Administration.GeoServerLayerGrid.superclass.initComponent.call(this, arguments);
-			// select the first row or the modified
-		    this.store.on("load", function(store) {
-		    	var recIndex = 0;
-		    	if (store.nameToSelect) {
-		    		recIndex = store.findExact("name", store.nameToSelect);
-		    	}
-		    	var sm = this.getSelectionModel();
-		    	sm.selectRow(recIndex);
-			}, this);
-		    
-		    this.on("show", function(grid) {
-		    	var sm = this.getSelectionModel();
-		    	if (sm.hasSelection()) {
-		    		return;
-		    	} else {
-		    		sm.selectRow(0);
-		    	}
-		    }, this);
+			this.columns = [{
+				header: tr.name,
+				hideable: true,
+				hidden: false,
+				sortable: false,
+				dataIndex: "name",
+				flex: 1
+			},{
+				header: tr.description,
+				hideable: true,
+				hidden: false,
+				sortable: false,
+				dataIndex: "description",
+				flex: 1
+			},{
+				header: tr.type,
+				hideable: true,
+				hidden: false,
+				sortable: false,
+				dataIndex: "type",
+				flex: 1
+			},{
+				header: tr_geo.min_zoom,
+				hideable: true,
+				hidden: false,
+				sortable: false,
+				dataIndex: "minZoom",
+				flex: 1
+			},{
+				header: tr_geo.max_zoom,
+				hideable: true,
+				hidden: false,
+				sortable: false,
+				dataIndex: "maxZoom",
+				flex: 1
+			}];
+			
+			this.callParent(arguments);
 		},
-		
+
 		clearSelection: function() {
-			this.getSelectionModel().clearSelections();
+			this.getSelectionModel().deselectAll();
 		},
-		
-		onModShow: function() {
-			var sm = this.getSelectionModel();
-	    	if (sm.hasSelection()) {
-	    		return;
-	    	} else {
-	    		sm.selectRow(0);
-	    	}
+
+		onModShow: function(firstLoad) {
+			this.store.load();
+		},
+
+		loadStoreAndSelectLayerWithName: function(name) {
+			this.store.load({
+				scope : this,
+				callback: function(records, operation, success) {
+					var toSelect = this.store.find("name", name);
+					if (toSelect >= 0) {
+						this.getSelectionModel().select(toSelect);
+					} else if (records.length > 0) {
+						this.getSelectionModel().select(0);
+					}
+				}
+			});
 		}
 	});
+
 })();

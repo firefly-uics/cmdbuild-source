@@ -121,10 +121,4 @@ public class DomainProxy extends DomainForwarder {
 		userCtx.privileges().assureAdminPrivilege();
 		super.addAttribute(attribute);
 	}
-
-	@Override
-	public void reloadCache() {
-		userCtx.privileges().assureAdminPrivilege();
-		super.reloadCache();
-	}
 }

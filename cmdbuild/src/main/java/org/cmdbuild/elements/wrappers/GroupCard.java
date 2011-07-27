@@ -129,4 +129,15 @@ public class GroupCard extends LazyCard {
 			list.add(new GroupCard(card));
 		return list;
 	}
+
+	public static GroupCard get(int groupId, UserContext userCtx) {
+		ICard card;
+		if (groupId > 0) {
+			card = userCtx.tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+		} else {
+			card = userCtx.tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
+		}
+		GroupCard group = new GroupCard(card);
+		return group;
+	}
 }

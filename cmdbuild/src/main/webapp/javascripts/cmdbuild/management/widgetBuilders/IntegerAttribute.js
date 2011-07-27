@@ -2,6 +2,7 @@
  * @class CMDBuild.WidgetBuilders.IntegerAttribute
  * @extends CMDBuild.WidgetBuilders.DecimalAttribute
  */
+Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.IntegerAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.IntegerAttribute, CMDBuild.WidgetBuilders.DecimalAttribute);
 /**
