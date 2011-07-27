@@ -31,7 +31,7 @@ Ext.define("CMDBuild.Management.ReportParamWin", {
 			defaults: { 
 				labelWidth: 150
 			},
-			timeout: CMDBuild.Constants.defaultTimeout * 1000,
+			timeout: CMDBuild.Config.defaultTimeout * 1000,
 			labelAlign: "right",
 			frame: true,
 			border: false,

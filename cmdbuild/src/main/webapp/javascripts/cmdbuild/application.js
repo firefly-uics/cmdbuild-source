@@ -29,15 +29,15 @@
 		}
 	}
 
-	// TODO: Move to configuration
-	CMDBuild.Constants.defaultTimeout = 90;
+	// TODO: Read from real configuration
+	CMDBuild.Config.defaultTimeout = 90;
 
 	Ext.override(Ext.data.Connection, {
-		timeout : CMDBuild.Constants.defaultTimeout * 1000
+		timeout : CMDBuild.Config.defaultTimeout * 1000
 	});
 	
 	Ext.override(Ext.form.BasicForm, {
-		timeout : CMDBuild.Constants.defaultTimeout
+		timeout : CMDBuild.Config.defaultTimeout
 	});
 	
 	// Component masks are shown at 20000 z-index. This oddly fixes
