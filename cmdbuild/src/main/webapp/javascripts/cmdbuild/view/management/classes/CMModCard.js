@@ -7,17 +7,41 @@
 			this.buildComponents();
 			this.callParent(arguments);
 		},
-		
+
 		initComponent: function() {
+			this.centralPanel = new Ext.panel.Panel({
+				region: "center",
+				layout: "card",
+				activeItem: 0,
+				hideMode: "offsets",
+				border: true,
+				frame: false,
+				items: [this.cardGrid],
+				title: "@@ the grid",
+				tools:[{
+					type:'minimize',
+					scope: this,
+					handler: onToolClick
+				},{
+					type:'maximize',
+					scope: this,
+					handler: onToolClick
+				},{
+					type: "restore",
+					scope: this,
+					handler: onToolClick
+				}]
+			});
+
 			Ext.apply(this, {
 				layout: "border",
 				border: false,
-				items: [this.cardGrid, this.cardTabPanel]
+				items: [this.centralPanel, this.cardTabPanel]
 			})
 
 			this.callParent(arguments);
 		},
-		
+
 		onEntrySelected: function(entry) {
 			var id = entry.get("id");
 
@@ -49,28 +73,94 @@
 
 		// private, overridden in subclasses
 		buildComponents: function() {
+			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
+
 			this.addCardButton = new CMDBuild.AddCardMenuButton({
 				classId: undefined
 			});
 
 			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
-				title: "@@ The cards",
-				region: "north",
 				hideMode: "offsets",
 				filterCategory: this.cmName,
-				border: true,
+				border: false,
 				tbar: [this.addCardButton],
-				columns: [],
-				height: "50%",
-				split: true
+				columns: []
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
-				region: "center"
+				region: "south",
+				hideMode: "offsets",
+				split: true,
+				height: (100 - gridratio) + "%"
 			});
 		}
 	});
 
+	var toolClickCallBack = {
+		// in these functions wait for the layout after a collapse/expand
+		// operation to have the real size of the elements. To do this use
+		// the single listener over the "afterlayout" event
+
+		"minimize": function() {
+			function _minimize() {
+				this.centralPanel.collapse();
+				this.mon(this, "afterlayout", function() {
+					this.cardTabPanel.show();
+					this.cardTabPanel.setHeight(this.startingModuleHeight);
+					this.doLayout();
+				}, this, {single: true});
+	
+				this.doLayout();
+			}
+
+			toolClickCallBack["restore"].call(this, _minimize);
+		},
+
+		"maximize": function() {
+			function _maximize() {
+				this.cardTabPanel.hide();
+	
+				this.mon(this, "afterlayout", function() {
+					this.centralPanel.expand();
+					this.doLayout();
+				}, this, {single: true});
+		
+				this.doLayout();
+			}
+
+			toolClickCallBack["restore"].call(this, _maximize);
+		},
+
+		"restore": function(cb) {
+			this.centralPanel.expand();
+			this.centralPanel.setHeight(this.startingGridHeight);
+			
+			this.mon(this, "afterlayout", function() {
+				this.cardTabPanel.show();
+				this.cardTabPanel.setHeight(this.startingCardTabPanelHeight);
+
+				this.doLayout();
+			}, this, {single: true});
+
+			if (cb) {
+				this.mon(this, "afterlayout", cb, this, {single: true});
+			}
+
+			this.doLayout();
+		}
+	};
+
+	function onToolClick(event, toolEl, panel, tool) {
+		var type = tool.type;
+		if (typeof this.toolsArePressed == "undefined") {
+			this.toolsArePressed = true;
+			this.startingCentralPanelHeight = this.centralPanel.getHeight();
+			this.startingCardTabPanelHeight = this.cardTabPanel.getHeight();
+			this.startingModuleHeight = this.getHeight();
+		}
+
+		toolClickCallBack[type].call(this);
+	} 
 
 /*
 CMDBuild.Management.ModCard = Ext.extend(CMDBuild.ModPanel, {

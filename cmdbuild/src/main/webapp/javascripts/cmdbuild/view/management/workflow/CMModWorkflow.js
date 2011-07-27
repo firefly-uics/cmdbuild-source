@@ -5,20 +5,21 @@
 		cmName: "process",
 		
 		buildComponents: function() {
+			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
 
 			this.cardGrid = new CMDBuild.view.management.workflow.CMActivityGrid({
-				region: "north",
 				hideMode: "offsets",
 				filterCategory: this.cmName,
-				border: true,
-				columns: [],
-				height: "50%",
-				split: true
+				border: false,
+				columns: []
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel({
-				region: "center",
-				border: false
+				region: "south",
+				hideMode: "offsets",
+				split: true,
+				border: false,
+				height: (100 - gridratio) + "%"
 			});
 		},
 
