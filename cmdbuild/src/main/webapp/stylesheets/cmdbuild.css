@@ -778,7 +778,8 @@ em {
 }
 
 .history_panel .x-grid-rowbody p.changed {
-	color: red;
+	background-color: #e9f4e7;
+	color: #0d5f07;
 }
 
 /* custom icons */
