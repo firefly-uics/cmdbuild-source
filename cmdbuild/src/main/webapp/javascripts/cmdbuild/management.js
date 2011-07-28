@@ -129,6 +129,9 @@
 				});
 
 				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change "administration"
+					params: {
+						active: true
+					},
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
 					},

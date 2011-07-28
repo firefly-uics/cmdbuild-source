@@ -134,16 +134,17 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-	@Admin
 	@JSONExported
 	public JSONObject getAllDomains(
 			JSONObject serializer,
+			@Parameter(value="active", required=false) boolean activeOnly,
 			UserContext userCtx) throws JSONException, AuthException {
 		final Iterable<IDomain> allDomains = userCtx.domains().list();
 		JSONArray jsonDomains = new JSONArray();
 		for (IDomain domain: allDomains) {
-			if (domain.getMode().isCustom()) {
-				jsonDomains.put(Serializer.serializeDomain(domain));
+			if (domain.getMode().isCustom() &&
+					(!activeOnly || domain.getStatus().isActive())) {
+				jsonDomains.put(Serializer.serializeDomain(domain, activeOnly));
 			}
 		}
 		serializer.put("domains", jsonDomains);
@@ -444,6 +445,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@Admin
 	@JSONExported
 	public JSONObject saveDomain(
 			IDomain domain,
@@ -475,7 +477,7 @@ public class ModClass extends JSONBase {
 		domain.setStatus(SchemaStatus.fromBoolean(isActive));
 		domain.save();
 		
-		serializer.put("domain", Serializer.serializeDomain(domain));
+		serializer.put("domain", Serializer.serializeDomain(domain, false));
 		return serializer;
 	}
 
@@ -511,7 +513,8 @@ public class ModClass extends JSONBase {
 		}
 		return false;
 	}
-	
+
+	@Admin
 	@JSONExported
 	public JSONObject getDomainList(
 				@Parameter("WithSuperclasses") boolean withSuperclasses,
@@ -546,6 +549,7 @@ public class ModClass extends JSONBase {
 		return fk;
 	}
 
+	@Admin
 	@JSONExported
 	public JSONObject getReferenceableDomainList(
 			JSONObject serializer,
@@ -559,10 +563,9 @@ public class ModClass extends JSONBase {
 				String class1 = domain.getTables()[0].getName();
 				String class2 = domain.getTables()[1].getName();
 				Collection<String> classWithAncestor = tf.fullTree().path(table.getName());
-				if(//cardinality.equals(IDomain.CARDINALITY_11) ||
-						(cardinality.equals(IDomain.CARDINALITY_1N) && classWithAncestor.contains(class2)) ||
+				if ((cardinality.equals(IDomain.CARDINALITY_1N) && classWithAncestor.contains(class2)) ||
 						(cardinality.equals(IDomain.CARDINALITY_N1) && classWithAncestor.contains(class1))) {
-					rows.put(Serializer.serializeDomain(domain));
+					rows.put(Serializer.serializeDomain(domain, false));
 				}
 			}
 			serializer.put("rows", rows);

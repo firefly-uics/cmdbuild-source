@@ -77,15 +77,7 @@ CMDBuild.ServiceProxy = {
 		}, option);
 		CMDBuild.Ajax.request(conf);
 	},
-	
-	getDomainList: function(option) {
-		var conf = Ext.apply({
-			url: 'services/json/schema/modclass/getdomainlist',
-			method : 'GET'
-		}, option);
-		CMDBuild.Ajax.request(conf);
-	},
-	
+
 	saveLayerVisibility: function(p) {
 		CMDBuild.Ajax.request({
 			scope : this,

@@ -323,7 +323,7 @@ public class Serializer {
 		return jattr;
 	}
 
-	public static JSONObject serializeDomain(IDomain domain) throws JSONException {
+	public static JSONObject serializeDomain(IDomain domain, boolean activeOnly) throws JSONException {
 		JSONObject jsonobj = new JSONObject();
 		jsonobj.put("idDomain", domain.getId());
 		jsonobj.put("name", domain.getName());
@@ -340,13 +340,13 @@ public class Serializer {
 		jsonobj.put("classType", getClassType(domain.getTables()[0].getName()));
 		jsonobj.put("active", domain.getStatus().isActive());
 		jsonobj.put("cardinality", domain.getCardinality());
-		jsonobj.put("attributes", serializeAttributeList(domain, false));
+		jsonobj.put("attributes", serializeAttributeList(domain, activeOnly));
 		addMetadataAndAccessPrivileges(jsonobj, domain);
 		return jsonobj;
 	}
 	
 	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
-		JSONObject jsonDomain = serializeDomain(domain);
+		JSONObject jsonDomain = serializeDomain(domain, false);
 		if (table != null) {
 			jsonDomain.put("inherited", !domain.isLocal(table));
 		}
