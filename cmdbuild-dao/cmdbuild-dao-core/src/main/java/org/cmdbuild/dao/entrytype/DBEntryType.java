@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entrytype;
 
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +95,11 @@ public abstract class DBEntryType implements CMEntryType {
 
 	@Override
 	public Iterable<DBAttribute> getAttributes() {
+		return filterActive(getAllAttributes());
+	}
+
+	@Override
+	public Iterable<DBAttribute> getAllAttributes() {
 		return attributes;
 	}
 

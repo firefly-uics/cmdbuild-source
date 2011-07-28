@@ -116,7 +116,7 @@ public class JoinClause {
 		}
 
 		private void addAllDomains() {
-			for (CMDomain domain : view.findDomains(source)) {
+			for (CMDomain domain : view.findDomainsFor(source)) {
 				addDomain(domain);
 			}
 		}

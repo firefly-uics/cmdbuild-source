@@ -12,7 +12,6 @@
 	<properties>
 		<postgresql.version>9.0-801.jdbc4</postgresql.version>
 		<postgis.version>1.5.1</postgis.version>
-		<guava.version>r09</guava.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,11 +33,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 	</dependencies>
 </project>

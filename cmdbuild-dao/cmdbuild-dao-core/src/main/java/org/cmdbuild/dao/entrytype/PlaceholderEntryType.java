@@ -19,6 +19,11 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
+	public Iterable<? extends CMAttribute> getAllAttributes() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public DBAttribute getAttribute(String name) {
 		throw new UnsupportedOperationException();
 	}

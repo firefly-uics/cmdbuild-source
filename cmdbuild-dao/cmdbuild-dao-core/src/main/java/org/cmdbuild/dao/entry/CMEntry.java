@@ -5,6 +5,9 @@ import java.util.Map;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.joda.time.DateTime;
 
+/**
+ * Immutable data store entry
+ */
 public interface CMEntry {
 
 	public interface CMEntryDefinition {
