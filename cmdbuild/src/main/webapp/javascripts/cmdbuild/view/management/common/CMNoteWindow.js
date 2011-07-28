@@ -3,6 +3,7 @@
 Ext.define("CMDBuild.view.management.common.CMNoteWindow", {
 	extend: "CMDBuild.PopupWindow",
 	masterCard: null,
+
 	initComponent: function() {
 		this.title = Ext.String.format("{0} - {1}"
 				, CMDBuild.Translation.management.modcard.tabs.notes 
@@ -83,8 +84,7 @@ Ext.define("CMDBuild.view.management.common.CMNoteWindow", {
 				scope: this,
 				params: params,
 				success : function() {
-					this.note.displayPanel.setValue(this.note.actualForm.getValue());
-					this.note.disableModify();
+					this.destroy();
 				}
 			});
 		}

@@ -79,7 +79,7 @@
 		
 		onDeleteDetailClick: function(model) {
 			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention,
-				CMDBuild.Translation.management.modcard.delete_relation_confirm,
+				CMDBuild.Translation.management.modcard.delete_card_confirm,
 				makeRequest, this);
 
 			function makeRequest(btn) {
@@ -112,9 +112,13 @@
 		},
 		
 		onOpenNoteClick: function(model) {
-			new CMDBuild.view.management.common.CMNoteWindow({
+			var w = new CMDBuild.view.management.common.CMNoteWindow({
 				masterCard: model
 			}).show();
+			
+			w.mon(w, "destroy", function() {
+				this.view.reload();
+			}, this, {single: true});
 		},
 		
 		onOpenAttachmentClick: function(model) {
@@ -144,11 +148,16 @@
 	
 	function updateDetailGrid() {
 		if (this.currentMasterData != null) {
+			var p = {
+				masterCard: this.currentMasterData
+			};
+
 			if (this.currentDetail != null) {
-				this.view.updateDetailGrid({
-					domain: this.currentDetail,
-					masterCard: this.currentMasterData
-				});
+				p["detail"] = this.currentDetail
+				this.view.updateGrid(MD, p);
+			} else if (this.currentForeignKey != null) {
+				p["detail"] = this.currentForeignKey;
+				this.view.updateGrid(FK, p);
 			} else {
 				this.view.activateFirstTab();
 			}
@@ -170,7 +179,7 @@
 		if (type == MD) {
 			selectDetail.call(this, detail);
 		} else {
-			this.view.selectForeignKey(detail);
+			selectFK.call(this, detail);
 		}
 
 		updateDetailGrid.call(this);
@@ -180,6 +189,12 @@
 		this.currentForeignKey = undefined;
 		this.currentDetail = detail;
 		this.view.selectDetail(detail);
+	}
+
+	function selectFK(fk) {
+		this.currentDetail = undefined;
+		this.currentForeignKey = fk;
+		this.view.selectForeignKey(fk);
 	}
 
 	function tabIsActive(t) {

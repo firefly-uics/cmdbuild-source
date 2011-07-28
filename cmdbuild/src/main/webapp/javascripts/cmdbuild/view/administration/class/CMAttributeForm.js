@@ -5,6 +5,17 @@
 	};
 
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
+	
+	// FIXME this take a store given from the cache. The model set the valueField as a
+	// string and it works for the other combo. For this the data have the valueField as
+	// integer, so the set value does not work (the values are taken from the attributes grid)
+	Ext.define("CMDBuild.FkCombo", {
+		extend: "Ext.form.ComboBox",
+		setValue: function(v) {
+			v = ""+v;
+			this.callParent([v]);
+		}
+	});
 
 	Ext.define("CMDBuild.view.administration.classes.CMAttributeForm", {
 		extend: "Ext.form.Panel",
@@ -246,7 +257,7 @@
 				queryMode : "local"
 			});
 
-			this.foreignKeyDest = new Ext.form.ComboBox( {
+			this.foreignKeyDest = new CMDBuild.FkCombo( {
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.destination,
 				labelWidth: CMDBuild.CM_LABEL_WIDTH,

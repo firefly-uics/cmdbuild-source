@@ -755,6 +755,11 @@ em {
 	border-bottom-width: 1px ! important;
 }
 
+.cmborderright{
+	border-right-style: solid ! important;
+	border-right-width: 1px ! important;
+}
+
 /*
 .x-form-display-field {
 	padding: 2px 0 0 0 ! important;

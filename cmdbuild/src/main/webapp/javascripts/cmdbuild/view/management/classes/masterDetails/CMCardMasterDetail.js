@@ -19,7 +19,8 @@
 
 			this.detailGrid = new CMDBuild.Management.MasterDetailCardGrid({
 				editable: this.editable,
-				border: "0 1 0 0",
+				cls: "cmborderright",
+				border: false,
 				region: "center",
 				columns: [],
 				loadMask: false,
@@ -31,6 +32,10 @@
 				region: "east"
 			});
 
+			Ext.apply(this, {
+				border: false,
+				frame: false
+			});
 			this.callParent(arguments);
 		},
 
@@ -57,7 +62,7 @@
 			for (var i = 0, len = domainList.length; i < len; i++) {
 				var domain = domainList[i];
 				domain['directedDomain'] = setDirectedDomain(domain);
-				this.details[MD][domain.get("id")] = domain;
+				this.details[MD][getId(domain)] = domain;
 			}
 
 			CMDBuild.ServiceProxy.getFKTargetingClass( {
@@ -70,9 +75,10 @@
 
 			function takeFkAttributesAndBuildTabs(response, options, attributes) {
 				this.details[FK] = {};
+
 				for (var i=0, l = attributes.length; i < l; ++i) {
 					var attr = attributes[i];
-					this.details[FK][attr.name] = attr;
+					this.details[FK][getId(attr)] = attr;
 				}
 
 				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
@@ -97,13 +103,12 @@
 
 		},
 
-		selectForeignKey: function(params) {
-			this.currentDetail = undefined;
-			var foreignKeyAttribute = params;
-			this.currentForeignKey = CMDBuild.Cache.getTableById(foreignKeyAttribute.idClass);
-			this.currentforeignKeyAttribute = foreignKeyAttribute;
-			this.detailGrid.fkAttribute = this.currentforeignKeyAttribute;
-			this.addDetailButton.setClassId(this.currentForeignKey);
+		selectForeignKey: function(fkAttribute) {
+			var et = _CMCache.getEntryTypeById(fkAttribute.idClass);
+
+			if (et) {
+				this.addDetailButton.updateForEntry(et);
+			}
 		},
 
 		resetDetailGrid: function() {
@@ -114,26 +119,12 @@
 			this.tabs.activateFirst();
 		},
 
-		updateDetailGrid: function(p) {
-			this.detailGrid.loadDetails(p);
-
-//			var isSuperClass = (this.currentDetail.detailSubclasses.length > 1);
-//				detailClassId = getDetailClass(this.currentDetail);
-//                callback = this.loadDetailCardList.createDelegate( this, [
-//                    this.actualMasterData.Id,
-//                    this.actualMasterData.IdClass,
-//                    this.currentDetail.directedDomain,
-//                    isSuperClass,
-//                    this.currentDetail.classType
-//                ],true);
-//            } else if (this.currentForeignKey && this.actualMasterData) {
-//            	detailClassId = this.currentForeignKey.id;
-//                callback = this.loadFKCardList.createDelegate(this, [
-//	                this.currentForeignKey,
-//	                this.currentforeignKeyAttribute,
-//	                this.actualMasterData.Id 
-//	            ], true);
-//            }
+		updateGrid: function(type, p) {
+			if (type == MD) {
+				this.detailGrid.loadDetails(p);
+			} else {
+				this.detailGrid.loadFk(p);
+			}
 		},
 
 		loadDetailCardList: function(attributeList, cardId, classId, idDomain, superclass, classType) {
@@ -154,12 +145,26 @@
 			this.detailGrid.loadFKCardList(attributes, fkClass, fkAttribute, idCard);
 			this.isLoaded = true;
 		},
+		
+		reload: function() {
+			this.detailGrid.reload();
+		},
 
 		onAddCardButtonClick: function() {
 			this.disable();
 		}
 
 	});
+
+	function getId(tab) {
+		if (typeof tab.get == "undefined") {
+			// is a fk
+			return tab.idClass + "_" + tab.name;
+		} else {
+			// is a md
+			return tab.get("name");
+		}
+	}
 
 	function setDirectedDomain(domain) {
 		var cardinality = domain.get("cardinality"),
@@ -178,32 +183,39 @@
 		var details = this.details;
 		function build() {
 			this.tabs.removeAll(true);
+			var tabs = Ext.apply(details[MD], details[FK]),
+				detailLabel="",
+				detailId="",
+				type="",
+				t;
 
-			function _buildTabs(tabs, type) {
-				tabs = tabs || [];
-				for (var key in tabs) {
-					var d = tabs[key],
-						detailLabel = d.get("description"),
-						detailId = d.get("id")
+			for (var detailId in tabs) {
+				t = tabs[detailId];
 
-					this.tabs.addTabFor({
-						title: detailLabel,
-						tabLabel: detailLabel,
-						detailType: type,
-						detailId: detailId,
-						on: function() {}
-					}, type);
+				if (typeof t.get == "undefined") {
+					// there is a FK and t is the server serializatino of the fk attirute
+					type = FK;
+					detailLabel = t.description;
+				} else {
+					// there is a MD and t is the Ext model of the domain
+					type = MD;
+					detailLabel = t.get("md_label") || t.get("description");
 				}
+
+				this.tabs.addTabFor({
+					title: detailLabel,
+					tabLabel: detailLabel,
+					detailType: type,
+					detailId: detailId,
+					on: function() {}
+				}, type);
 			}
 
-			_buildTabs.call(this, details[MD], MD);
-			_buildTabs.call(this, details[FK], FK);
+			this.mon(this.tabs, "afterlayout", function() {
+				this.tabs.activateFirst();
+			}, this, {single: true});
 
 			this.doLayout();
-
-			Ext.Function.createDelayed(function() {
-				this.tabs.activateFirst();
-			}, 100, this)();
 		}
 
 		if (this.isVisible()) {

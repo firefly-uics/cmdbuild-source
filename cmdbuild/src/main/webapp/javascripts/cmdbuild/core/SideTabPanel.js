@@ -95,6 +95,7 @@
 				frame: false,
 				border: false,
 				cls: tabCls,
+				bodyCls: "x-panel-body-default-framed",
 				html: (function(panel, additionalCls) {
 					var tmpl;
 					if (additionalCls) {

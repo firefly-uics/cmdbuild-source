@@ -43,7 +43,8 @@
 			{name: "isMasterDetail", type: "boolean"},
 			{name: "description", type: "stirng"},
 			{name: "descr_1", type: "stirng"},
-			{name: "descr_2", type: "stirng"}
+			{name: "descr_2", type: "stirng"},
+			{name: "md_label", type: "string"}
 		]
 	});
 	
