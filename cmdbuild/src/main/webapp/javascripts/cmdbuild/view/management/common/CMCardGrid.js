@@ -237,6 +237,25 @@
 			});
 		},
 		
+		getVisibleColumns: function() {
+			var columns = this.columns;
+			var visibleColumns = [];
+			
+			for (var i = 0, len = columns.length ; i<len ; i++) {
+				var col = columns[i];
+				if (!col.hidden && col.dataIndex != "Id") { // The graph column has dataIndex Id
+					var columnName = col.dataIndex;
+					var index = columnName.lastIndexOf("_value");
+					if (index >= 0) {
+						columnName = columnName.slice(0,index);
+					}
+					visibleColumns.push(columnName);
+				}
+			};
+
+			return visibleColumns;
+		},
+		
 		//private, can be overridden
 		setColumnsForClass: function(classAttributes) {
 			this.classAttributes = classAttributes;
@@ -368,6 +387,13 @@
 			items.push(this.openFilterButton, this.clearFilterButton);
 		}
 
+		this.printGridMenu = new CMDBuild.PrintMenuButton({
+			callback : function() { this.fireEvent("click"); },
+			formatList: ["pdf", "odt"]
+		});
+
+		items.push(this.printGridMenu);
+
 		this.pagingBar = new Ext.toolbar.Paging({
 			store: this.store,
 			displayInfo: true,
@@ -375,7 +401,7 @@
 			emptyMsg: CMDBuild.Translation.common.display_topic_none,
 			items: items
 		});
-		
+
 		this.bbar = this.pagingBar;
 	}
 

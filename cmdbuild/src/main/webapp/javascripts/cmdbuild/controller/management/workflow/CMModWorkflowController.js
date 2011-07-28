@@ -21,6 +21,7 @@
 			// grid events
 			this.grid.statusCombo.on("select", onStatusComboSelect, this);
 			this.grid.addCardButton.on("cmClick", onAddCardButtonClick, this);
+			this.grid.printGridMenu.on("click", onPrintGridMenuClick, this);
 			this.gridSM.on("selectionchange", onActivitySelect, this);
 
 			this.tabPanel.on("cmeditmode", onEditMode, this);
@@ -178,6 +179,35 @@
 	function onStatusComboSelect() {
 		this.grid.updateStatusParamInStoreProxyConfiguration();
 		this.grid.loadPage(1);
+	}
+
+	function onPrintGridMenuClick(format) {
+		if (typeof format != "string") {
+			return
+		}
+
+		var columns = this.grid.getVisibleColumns();
+		CMDBuild.LoadMask.get().show();
+
+		CMDBuild.Ajax.request({
+			url: 'services/json/management/modreport/printcurrentview',
+			scope: this,
+			params: {
+				FilterCategory: this.grid.filterCategory,
+				IdClass: this.currentEntry.get("id"),
+				type: format,
+				columns: Ext.JSON.encode(columns)
+			},
+			success: function(response) {
+				var popup = window.open("services/json/management/modreport/printreportfactory", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
+				if (!popup) {
+					CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
+				}
+			},
+			callback : function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
 	}
 
 	function onAddCardButtonClick(p) {

@@ -25,6 +25,7 @@
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
 
 			this.cardGrid.on("itemdblclick", onModifyCardClick, this);
+			this.cardGrid.printGridMenu.on("click", onPrintGridMenuClick, this);
 			this.gridSM.on("selectionchange", onCardSelected, this);
 
 			// TODO build a separate controller for the cardtab
@@ -223,7 +224,36 @@
 	      	}
 		});
 	}
-	
+
+	function onPrintGridMenuClick(format) {
+		if (typeof format != "string") {
+			return
+		}
+
+		var columns = this.cardGrid.getVisibleColumns();
+		CMDBuild.LoadMask.get().show();
+
+		CMDBuild.Ajax.request({
+			url: 'services/json/management/modreport/printcurrentview',
+			scope: this,
+			params: {
+				FilterCategory: this.cardGrid.filterCategory,
+				IdClass: this.currentEntryId,
+				type: format,
+				columns: Ext.JSON.encode(columns)
+			},
+			success: function(response) {
+				var popup = window.open("services/json/management/modreport/printreportfactory", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
+				if (!popup) {
+					CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
+				}
+			},
+			callback : function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
+	}
+
 	function onSaveNoteClick() {
 		var form = this.notePanel.actualForm.getForm();
 		var params = {
