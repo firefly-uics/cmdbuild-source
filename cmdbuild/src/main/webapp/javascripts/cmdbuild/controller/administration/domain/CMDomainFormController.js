@@ -33,9 +33,8 @@
 			}
 
 			CMDBuild.ServiceProxy.administration.domain.save({
-				form: this.view.getForm(),
-				scope: this,
 				params: data,
+				scope: this,
 				success: function(req, res, decoded) {
 					this.view.disableModify();
 					_CMCache.onDomainSaved(decoded.domain);

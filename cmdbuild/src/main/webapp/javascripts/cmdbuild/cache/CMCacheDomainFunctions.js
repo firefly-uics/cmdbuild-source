@@ -29,7 +29,8 @@
 				descr_1: d.descrdir,
 				descr_2: d.descrinv,
 				meta: d.meta,
-				attributes: d.attributes
+				attributes: d.attributes,
+				md_label: d.md_label
 			});
 
 			domainModel.isMany = function(side) {

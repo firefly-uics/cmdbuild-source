@@ -41,20 +41,19 @@
 			this.masterdetail = new Ext.ux.form.XCheckbox({
 				fieldLabel: this.translation.master_detail,
 				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				name: "isMasterDetail",
-				cmImmutable: true
+				name: "isMasterDetail"
 			});
 
 			this.masterDetailLabel = new Ext.form.field.Text({
 				fieldLabel: this.translation.md_label,
 				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				width: CMDBuild.CM_BIG_FIELD_WIDTH,
-				name: "mdlabel"
+				name: "md_label"
 			});
 
 			this.active = new Ext.ux.form.XCheckbox({
 				fieldLabel: this.translation.is_active,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name: "active",
 				checked: true
 			});
@@ -214,8 +213,12 @@
 			this.reset();
 			this.enableModify(all = true);
 			this.setDefaultValues();
-		}
+		},
 
+		enableModify: function(all) {
+			this.mixins.cmFormFunctions.enableModify.call(this, all);
+			enableMDCheckBox.call(this);
+		}
 	});
 
 	// a domain must set MD only if the cardinality is "1:N" or "N:1" 
