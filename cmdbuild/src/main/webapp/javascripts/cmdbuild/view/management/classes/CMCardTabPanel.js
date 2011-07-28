@@ -39,9 +39,9 @@
 			this.frame = false;
 			this.items = [
 				this.cardPanel,
-				this.relationsPanel,
 				this.mdPanel,
 				this.cardNotesPanel,
+				this.relationsPanel,
 				this.cardHistoryPanel,
 				this.attachmentPanel
 			];
