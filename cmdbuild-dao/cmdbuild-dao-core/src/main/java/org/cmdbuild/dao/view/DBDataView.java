@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.view;
 
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +44,18 @@ public class DBDataView implements CMDataView {
 	}
 
 	@Override
+	public Iterable<DBClass> findClasses() {
+		return filterActive(findAllClasses());
+	}
+
+	@Override
 	public Iterable<DBClass> findAllClasses() {
 		return driver.findAllClasses();
+	}
+
+	@Override
+	public Iterable<DBDomain> findDomains() {
+		return filterActive(findAllDomains());
 	}
 
 	@Override
@@ -52,9 +64,9 @@ public class DBDataView implements CMDataView {
 	}
 
 	@Override
-	public Iterable<DBDomain> findDomains(final CMClass cmClass) {
+	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
 		List<DBDomain> domainsForClass = new ArrayList<DBDomain>();
-		for (DBDomain d : findAllDomains()) {
+		for (DBDomain d : findDomains()) {
 			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
 				domainsForClass.add(d);
 			}

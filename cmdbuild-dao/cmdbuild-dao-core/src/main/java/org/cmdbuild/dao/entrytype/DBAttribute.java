@@ -59,8 +59,8 @@ public class DBAttribute implements CMAttribute {
 	}
 
 	@Override
-	public boolean isSystem() {
-		return meta.isSystem();
+	public boolean isActive() {
+		return meta.isActive();
 	}
 
 	/*
