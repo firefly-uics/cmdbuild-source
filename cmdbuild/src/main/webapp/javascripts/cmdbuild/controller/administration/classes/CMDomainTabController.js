@@ -13,6 +13,12 @@
 
 		onClassSelected: function(classId) {
 			this.selection = classId;
+			var entryTypeData = _CMCache.getEntryTypeById(classId).data;
+			if (entryTypeData.tableType == "simpletable") {
+				this.view.disable();
+				return;
+			}
+
 			this.view.store.load({
 				params : {
 					idClass : classId || -1

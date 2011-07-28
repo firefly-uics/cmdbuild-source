@@ -228,7 +228,10 @@
 				var data = [];
 				
 				function addToData(t) {
-					if (t.data.name != "Class" && t.data.name != "Activity") {
+					if (t.data.tableType != "simpletable"
+						&& t.data.name != "Class" 
+						&& t.data.name != "Activity") {
+
 						data.push({
 							id: t.data.id,
 							name: t.data.name,
