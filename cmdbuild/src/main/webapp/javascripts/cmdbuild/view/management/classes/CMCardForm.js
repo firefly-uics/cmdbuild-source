@@ -6,7 +6,7 @@
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
 		
-		// a card is a Ext.data.Record or a id to laod it
+		// a card is a Ext.data.Record or a id to laod
 		loadCard: function(card, idClass) {
 			this.reset();
 			if (!card) { return; }
@@ -21,22 +21,9 @@
 					},
 					scope: this,
 					success: function(a,b, response) {
-						_fillWithData.call(this, response.card);
+						_fillWithData.call(this, response.card, response.referenceAttributes);
 					}
 				});
-			}
-
-			function _fillWithData(data) {
-				var fields = this.getForm().getFields();
-				if (fields) {
-					fields.each(function(f) {
-						try {
-							f.setValue(data[f.name]);
-						} catch (e){
-							_debug("I can not set the value for " + f.name);
-						}
-					});
-				}
 			}
 		},
 		
@@ -51,7 +38,19 @@
 			
 			return invalid;
 		},
-		
+
+		hasDomainAttributes: function() {
+			var fields = this.getForm().getFields().items;
+
+			for (var i=0, l=fields.length; i<l; ++i) {
+				if (fields[i].cmDomainAttribute) {
+					return true;
+				}
+			};
+
+			return false;
+		},
+
 		getInvalidAttributeAsHTML: function() {
 			var fields = this.getInvalidField();
 			if (fields.length == 0) {
@@ -76,4 +75,31 @@
 		}
 	});
 
+	function _fillWithData(data, referenceAttributes) {
+		var fields = this.getForm().getFields();
+		addReferenceAttrsToData(data, referenceAttributes);
+
+		if (fields) {
+			fields.each(function(f) {
+				try {
+					f.setValue(data[f.name]);
+				} catch (e){
+					_debug("I can not set the value for " + f.name);
+				}
+			});
+		}
+	}
+
+	function addReferenceAttrsToData(data, referenceAttributes) {
+		for (var referenceName in referenceAttributes || {}) {
+			var attributes = referenceAttributes[referenceName];
+			
+			for (var attributeName in attributes) {
+				var fullName = "_" + referenceName + "_" + attributeName,
+					value = attributes[attributeName];
+
+				data[fullName] = value;
+			}
+		}
+	}
 })();

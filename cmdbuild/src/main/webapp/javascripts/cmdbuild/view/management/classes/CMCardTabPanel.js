@@ -61,10 +61,10 @@
 			});
 		},
 
-		onCardSelected: function(card, reloadFields) {
+		onCardSelected: function(card, reloadFields, loadRemoteData) {
 			this.items.each(function(item) {
 				if (item.onCardSelected) {
-					item.onCardSelected(card, reloadFields);
+					item.onCardSelected(card, reloadFields, loadRemoteData);
 				}
 			});
 		},

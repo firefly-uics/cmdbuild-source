@@ -202,6 +202,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 
 	var field = new CMDBuild.field.LookupCombo({
 		labelAlign: "right",
+		labelWidth: CMDBuild.CM_LABEL_WIDTH,
 		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
 		labelSeparator: hideLabel ? '' : undefined,
 		name: attribute.name,
