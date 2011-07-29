@@ -71,14 +71,15 @@
 			this.displayMode(enableCMTbar = false);
 		},
 
-		onCardSelected: function(card, reloadField) {
+		onCardSelected: function(card, reloadField, loadRemoteData) {
 			this.displayMode(enableCMTbar = true);
+			this.loadRemoteData = loadRemoteData; // used and reset in loadCard;
 
 			if (reloadField) {
 				this.danglingCard = card;
 				_CMCache.getAttributeList(card.get("IdClass"), Ext.bind(fillForm, this));
 			} else {
-				this.loadCard(card);
+				loadCard.call(this, card);
 			}
 		},
 
@@ -97,6 +98,16 @@
 		buildTBar: buildTBar,
 		buildButtons: buildButtons
 	});
+
+	function loadCard(card) {
+		if (this.loadRemoteData || this.hasDomainAttributes()) {
+			this.loadCard(card.get("Id"), card.get("IdClass"));
+		} else {
+			this.loadCard(card);
+		}
+
+		this.loadRemoteData = false;
+	}
 
 	function fillForm(attributes, editMode) {
 		var panels = [],
@@ -137,10 +148,10 @@
 		this.add(this.sideTabPanel);
 
 		if (this.danglingCard) {
-			this.loadCard(this.danglingCard);
+			loadCard.call(this, this.danglingCard);
 			this.danglingCard = null;
 		}
-		
+
 		if (editMode) {
 			this.editMode();
 		}
