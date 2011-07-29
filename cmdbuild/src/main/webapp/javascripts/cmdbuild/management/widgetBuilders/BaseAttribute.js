@@ -19,6 +19,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 		});
 	
 		return new Ext.form.ComboBox({
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
 			fieldLabel: attribute.description,
 			labelSeparator: "",
 			hideLabel: true,
@@ -72,6 +73,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	buildReadOnlyField: function(attribute) {
 		var field = new Ext.form.DisplayField ({
 			labelAlign: "right",
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
  			fieldLabel: attribute.description,
  			submitValue: false,
  			name: attribute.name,

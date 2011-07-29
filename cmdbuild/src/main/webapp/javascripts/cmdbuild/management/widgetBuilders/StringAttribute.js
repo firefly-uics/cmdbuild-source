@@ -37,6 +37,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new CMDBuild.Management.EntityRemoverDisplayField ({
 		labelAlign: "right",
+		labelWidth: CMDBuild.CM_LABEL_WIDTH,
 		fieldLabel: attribute.description,
 		submitValue: false,
 		name: attribute.name,
@@ -54,6 +55,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 	if (attribute.len > this.MAXWIDTH) {
 		field = new Ext.form.TextArea({
 			labelAlign: "right",
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
  			fieldLabel: attribute.description,
     		name: attribute.name,
     		allowBlank: !attribute.isnotnull,
@@ -62,6 +64,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 	} else {
 		field = new Ext.form.TextField({
 			labelAlign: "right",
+			labelWidth: CMDBuild.CM_LABEL_WIDTH,
  			fieldLabel: attribute.description,
  			name: attribute.name,
     		maxLength: attribute.len,

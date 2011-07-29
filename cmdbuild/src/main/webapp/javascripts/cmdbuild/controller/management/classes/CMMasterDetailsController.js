@@ -23,8 +23,8 @@
 			this.currentMasterData = null;
 
 			this.view.tabs.on("click", onTabClick, this);
-			this.view.detailGrid.on('beforeitemclick', cellclickHandler, this);
-
+			this.view.detailGrid.mon(this.view.detailGrid, 'beforeitemclick', cellclickHandler, this);
+			this.view.detailGrid.mon(this.view.detailGrid, "itemdblclick", onDetailDoubleClick, this);
 			this.callBacks = {
 				'action-masterdetail-edit': this.onEditDetailClick,
 				'action-masterdetail-show': this.onShowDetailClick,
@@ -129,7 +129,14 @@
 			);
 		}
 	});
-	
+
+	function onDetailDoubleClick(grid, model, html, index, e, options) {
+		this.superController.openCard({
+			Id: model.get("Id"),
+			IdClass: model.get("IdClass")
+		});
+	}
+
 	function removeCard(model) {
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.card.remove({

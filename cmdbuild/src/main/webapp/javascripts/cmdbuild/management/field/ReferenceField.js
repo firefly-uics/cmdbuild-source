@@ -2,11 +2,11 @@
 
 	Ext.define("CMDBuild.Management.ReferenceField", {
 		statics: {
-			build: function(attribute) {
+			build: function(attribute, subFields) {
 				var field = Ext.create("CMDBuild.Management.ReferenceField.Field", {
 					attribute: attribute
 				});
-				
+
 				if (attribute.fieldFilter) {
 					//is using a template
 					
@@ -95,10 +95,51 @@
 					field.validate();
 				});
 
-				return field;
+				if (subFields && subFields.length > 0) {
+					var subFieldsPanel = new Ext.panel.Panel({
+						bodyCls: "x-panel-body-default-framed",
+						hideMode: "offsets",
+						hidden: true,
+						frame: false,
+						items: [subFields]
+					}),
+
+					button = new Ext.button.Button({
+						enableToggle: true,
+						iconCls: "detail",
+						margin: "0 0 0 5",
+						listeners: {
+							toggle: function(button, pressed) {
+								if (pressed) {
+									subFieldsPanel.show();
+								} else {
+									subFieldsPanel.hide();
+								}
+							}
+						}
+					});
+
+					return new Ext.panel.Panel({
+						frame: false,
+						border: false,
+						bodyCls: "x-panel-body-default-framed",
+						items: [{
+							xtype:'panel',
+							bodyCls: "x-panel-body-default-framed",
+							frame: false,
+							layout: "hbox",
+							items: [field, button]
+						},
+							subFieldsPanel
+						]
+					});
+
+				} else {
+					return field;
+				}
 			}
 		}
-	})
+	});
 
 	Ext.define("CMDBuild.Management.ReferenceField.Field", {
 		extend: "CMDBuild.Management.SearchableCombo",
@@ -117,6 +158,7 @@
 			Ext.apply(this, {
 				plugins: new CMDBuild.SetValueOnLoadPlugin(),
 				fieldLabel: attribute.description,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				name: attribute.name,
 				store: store,
 				permanentStore: permanentStore,
