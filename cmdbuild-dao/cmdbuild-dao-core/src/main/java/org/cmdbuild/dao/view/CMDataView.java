@@ -24,8 +24,7 @@ public interface CMDataView {
 	Iterable<? extends CMClass> findClasses();
 
 	/**
-	 * Returns all (active and inactive) classes. It should be used by the
-	 * Database Designer only.
+	 * Returns all (active and inactive) classes.
 	 * 
 	 * @return all classes (active and inactive)
 	 */

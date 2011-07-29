@@ -2,9 +2,12 @@ package org.cmdbuild.logic;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
+import org.cmdbuild.dao.view.CMAccessControlManager;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.UserDataView;
 import org.cmdbuild.services.DBService;
+import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.UserContext;
 
 public class TemporaryObjectsBeforeSpringDI {
@@ -21,10 +24,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMDataView getUserContextView(UserContext userCtx) {
-		return getSystemView(); // TODO UserContextView()
-	}
-
-	public static CMDataView getSystemView() {
-		return new DBDataView(driver);
+		final CMAccessControlManager acm = new AccessControlManagerWrapper(userCtx.privileges());
+		return new UserDataView(new DBDataView(driver), acm);
 	}
 }
