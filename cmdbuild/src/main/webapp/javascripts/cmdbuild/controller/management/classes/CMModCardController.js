@@ -7,13 +7,14 @@
 			this.callParent(arguments);
 
 			this.currentEntryId = null;
+			this.currentEntry = null;
 			this.currentCard = null;
 			this.cardPanel = this.view.cardTabPanel.cardPanel;
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
 			this.cardGrid = this.view.cardGrid;
 
 			this.mdPanel = this.view.cardTabPanel.mdPanel;
-			this.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(this.mdPanel);
+			this.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(this.mdPanel, this);
 
 			this.attachmentsPanel = this.view.cardTabPanel.attachmentPanel;
 			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController(this.attachmentsPanel);
@@ -42,6 +43,7 @@
 		onViewOnFront: function(selection) {
 			if (selection) {
 				this.currentEntryId = selection.get("id");
+				this.currentEntry = _CMCache.getEntryTypeById(this.currentEntryId);
 
 				if (this.danglingCardToOpen) {
 					this.view.openCard(this.danglingCardToOpen);
@@ -80,8 +82,13 @@
 	function onCardSelected(sm, selection) {
 		if (selection.length > 0) {
 			this.currentCard = selection[0];
-			var reloadFields = this.currentEntryId != this.currentCard.get("IdClass");
-			this.view.cardTabPanel.onCardSelected(this.currentCard, reloadFields);
+
+			// If the current entryType is a superclass the record has only the value defined
+			// in the super class. So, we say to the form to load the remote data.
+			var loadRemoteData = this.currentEntry.get("superclass"),
+				reloadFields = this.currentEntryId != this.currentCard.get("IdClass");
+
+			this.view.cardTabPanel.onCardSelected(this.currentCard, reloadFields, loadRemoteData);
 
 			// sub-controllers
 			this.attachmentsController.onCardSelected(this.currentCard);

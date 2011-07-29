@@ -33,6 +33,7 @@ CMDBuild.WidgetBuilders.DateAttribute.prototype.buildGridHeader = function(attri
 CMDBuild.WidgetBuilders.DateAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.DateField({
 		labelAlign: "right",
+		labelWidth: CMDBuild.CM_LABEL_WIDTH,
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
