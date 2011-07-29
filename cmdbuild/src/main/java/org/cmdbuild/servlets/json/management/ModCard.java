@@ -467,15 +467,19 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject updateCard(JSONObject serializer, Map<String, String> attributes, ICard card)
-			throws JSONException, CMDBException {
+	public JSONObject updateCard(
+			ICard card,
+			Map<String, String> attributes,
+			UserContext userCtx,
+			JSONObject serializer) throws JSONException {
 		setCardAttributes(card, attributes, false);
 		boolean created = card.isNew();
 		card.save();
+		fillReferenceAttributes(card, attributes, userCtx.relations());
+		setCardGeoFeatures(card, attributes);
 		if (created) {
 			serializer.put("id", card.getId());
 		}
-		setCardGeoFeatures(card, attributes);
 		return serializer;
 	}
 
@@ -544,6 +548,46 @@ public class ModCard extends JSONBase {
 				} else {
 					card.getAttributeValue(attrName).setValue(attrNewValue);
 				}
+			}
+		}
+	}
+
+	public static void fillReferenceAttributes(ICard card, Map<String, String> attributes, RelationFactory relationFactory) {
+		for (IAttribute attribute : card.getSchema().getAttributes().values()) {
+			final DirectedDomain dd = attribute.getReferenceDirectedDomain();
+			if (dd == null || !attribute.isDisplayable()) {
+				continue;
+			}
+			final String referenceName = attribute.getName();
+			final String attrNewValue = attributes.get(referenceName);
+			if (attrNewValue == null || attrNewValue.isEmpty()) {
+				continue;
+			}
+
+			final int refDstId = Integer.parseInt(attrNewValue);
+			final ICard refDstCard = attribute.getReferenceTarget().cards().get(refDstId);
+			final IRelation referenceRelation;
+			if (dd.getDirectionValue()) {
+				referenceRelation = relationFactory.get(dd.getDomain(), card, refDstCard);
+			} else {
+				referenceRelation = relationFactory.get(dd.getDomain(), refDstCard, card);
+			}
+			fillSingleReferenceAttributes(referenceName, referenceRelation, attributes);
+			referenceRelation.save();
+		}
+	}
+
+	public static void fillSingleReferenceAttributes(final String referenceName, final IRelation referenceRelation,
+			Map<String, String> attributes) {
+		for (IAttribute domAttr : referenceRelation.getSchema().getAttributes().values()) {
+			if (!domAttr.isDisplayable()) {
+				continue;
+			}
+			final String domAttrName = domAttr.getName();
+			final String reqAttrName = String.format("_%s_%s", referenceName, domAttrName);
+			final String reqAttrValue = attributes.get(reqAttrName);
+			if (reqAttrValue != null) {
+				referenceRelation.setValue(domAttrName, reqAttrValue);
 			}
 		}
 	}
