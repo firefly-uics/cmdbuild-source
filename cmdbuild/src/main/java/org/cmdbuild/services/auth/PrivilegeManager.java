@@ -68,6 +68,8 @@ public class PrivilegeManager {
 		PrivilegeType privilege;
 		if (isAdmin()) {
 			privilege = PrivilegeType.WRITE;
+		} else if (table == null) { // Guess what? Map!
+			privilege = PrivilegeType.NONE;
 		} else {
 			privilege = classPrivileges.get(table.getId());
 			if (privilege == null) {
@@ -146,6 +148,7 @@ public class PrivilegeManager {
 	/*
 	 * Base Schema privilege check
 	 */
+
 	public boolean hasReadPrivilege(BaseSchema schema) {
 		return isAdmin() || getPrivilege(schema) != PrivilegeType.NONE;
 	}
