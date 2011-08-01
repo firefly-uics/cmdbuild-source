@@ -140,7 +140,7 @@ Ext.define("CMDBuild.app.Administration", {
                 new CMDBuild.view.administraton.accordion.CMConfigurationAccordion()
             ]
             
-            CMDBuild.view.CMMainViewport.showSplash();
+            CMDBuild.view.CMMainViewport.showSplash(target = undefined, administration = true);
 			this.loadResources();
         },
 

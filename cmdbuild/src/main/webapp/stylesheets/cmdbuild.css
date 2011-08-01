@@ -151,13 +151,18 @@ em {
 	background: #EEEEEE!important;
 }
 
-.splashScreen_image {
+.splashScreen_image,
+.splashScreen_image_administration {
 	height: 217px;
 	width: 381px;
 	display: block;
 	background-image: url(../images/splash.png);
 	background-position: top left;
 	background-repeat: no-repeat;
+}
+
+.splashScreen_image_administration {
+	background-image: url(../images/splash-gray.png);
 }
 
 .splashScreen_central {

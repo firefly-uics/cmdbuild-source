@@ -141,6 +141,8 @@
 						me.loadData();
 					}
 				}).show();
+				
+				
 		},
 
 		onDeleteRelationClick: function(model) {
@@ -175,24 +177,31 @@
 		},
 
 		onEditCardClick: function(model) {
-			openCardWindow(model, true);
+			openCardWindow.call(this, model, true);
 		},
 
 		onViewCardClick: function(model) {
-			openCardWindow(model, false);
+			openCardWindow.call(this, model, false);
 		}
 	});
 
 	function openCardWindow(model, editable) {
-		new CMDBuild.controller.management.common.CMCardWindowController(
-			new CMDBuild.view.management.common.CMCardWindow({
-				cmEditMode: editable,
-				withButtons: editable,
-				classId: model.get("dst_cid"), // classid of the destination
-				cardId: model.get("dst_id"), // id of the card destination
-				title: model.get("label") + " - " + model.get("dst_desc")
-			}).show()
-		);
+		var w = new CMDBuild.view.management.common.CMCardWindow({
+			cmEditMode: editable,
+			withButtons: editable,
+			classId: model.get("dst_cid"), // classid of the destination
+			cardId: model.get("dst_id"), // id of the card destination
+			title: model.get("label") + " - " + model.get("dst_desc")
+		});
+
+		if (editable) {
+			w.on("destroy", function() {
+				this.loadData();
+			}, this, {single: true});
+		}
+		
+		new CMDBuild.controller.management.common.CMCardWindowController(w);
+		w.show();
 	}
 
 	function tabIsActive(t) {

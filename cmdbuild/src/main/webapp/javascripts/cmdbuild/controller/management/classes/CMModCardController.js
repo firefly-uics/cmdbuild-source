@@ -73,7 +73,10 @@
 			this.danglingCardToOpen = p;
 
 			accordion.expand();
+
 			Ext.Function.createDelayed(function() {
+			// TODO try to sobstityte this with the listener "afterlayout"
+				accordion.deselect();
 				accordion.selectNodeById(p.IdClass);
 			}, 100)();
 		}

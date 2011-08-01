@@ -95,6 +95,10 @@
 			}
 		},
 
+		deselect: function() {
+			this.getSelectionModel().deselectAll();
+		},
+
 		getSelectionModel: function() {
 			return this.tree.getSelectionModel();
 		},

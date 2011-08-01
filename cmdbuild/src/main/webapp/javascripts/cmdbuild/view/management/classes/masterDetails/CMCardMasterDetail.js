@@ -75,6 +75,7 @@
 
 			function takeFkAttributesAndBuildTabs(response, options, attributes) {
 				this.details[FK] = {};
+				this.tabs.removeAll();
 
 				for (var i=0, l = attributes.length; i < l; ++i) {
 					var attr = attributes[i];
@@ -84,7 +85,6 @@
 				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
 						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
 					this.disable();
-					this.tabs.removeAll();
 					this.fireEvent("empty");
 				} else {
 					this.empty = false;

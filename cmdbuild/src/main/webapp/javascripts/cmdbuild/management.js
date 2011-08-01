@@ -67,7 +67,7 @@
 			},
 			
 			loadResources: function() {
-				var dangling = 5,
+				var dangling = 6,
 					me = this;
 
 				function callback() {
@@ -95,6 +95,13 @@
 					},
 					callback: callback
 				},"legacydms");
+				
+				CMDBuild.ServiceProxy.configuration.read({
+					success: function(response, options,decoded) {
+						CMDBuild.Config.graph = decoded.data;
+					},
+					callback: callback
+				},"graph");
 
 				CMDBuild.ServiceProxy.report.read({
 					scope: this,
