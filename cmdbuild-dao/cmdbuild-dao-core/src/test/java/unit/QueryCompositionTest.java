@@ -28,7 +28,7 @@ public class QueryCompositionTest {
 		mockContext = new JUnit4Mockery();
 		dataView = mockContext.mock(CMDataView.class);
 		driver = mockContext.mock(DBDriver.class);
-		query = new QuerySpecsBuilder(driver, new DBDataView(driver));
+		query = new QuerySpecsBuilder(new DBDataView(driver));
 	}
 
 	@Test

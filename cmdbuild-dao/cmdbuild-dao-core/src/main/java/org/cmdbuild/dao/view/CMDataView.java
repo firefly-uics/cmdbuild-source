@@ -4,6 +4,8 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
 /**
@@ -82,6 +84,24 @@ public interface CMDataView {
 	 */
 	CMCardDefinition modifyCard(CMCard card);
 
-
+	/**
+	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
+	 * 
+	 * @param attrDef select parameters
+	 * @return the builder for a new query
+	 */
 	QuerySpecsBuilder select(Object... attrDef);
+
+	/**
+	 * Executes a query returning its result
+	 * 
+	 * Note: the {@link QuerySpecs} object can be created only by the
+	 * {@link QuerySpecsBuilder}, so it is safe to assume that it will not
+	 * be invoked on a view different from the one it was created for.
+	 * 
+	 * @param querySpecs
+	 * @return the query result
+	 */
+	CMQueryResult query(QuerySpecs querySpecs);
+	
 }

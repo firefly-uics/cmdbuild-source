@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
@@ -92,11 +91,9 @@ public class QuerySpecsBuilder {
 
 	private AliasLibrary aliases;
 
-	private final DBDriver driver;
 	private final CMDataView view;
 
-	public QuerySpecsBuilder(final DBDriver driver, final CMDataView view) {
-		this.driver = driver;
+	public QuerySpecsBuilder(final CMDataView view) {
 		this.view = view;
 		aliases = new AliasLibrary();
 		select();
@@ -205,7 +202,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public CMQueryResult run() {
-		return driver.query(build());
+		return view.query(build());
 	}
 
 	/*

@@ -60,7 +60,7 @@ public class JoinQueryTest extends QueryTestFixture {
 		insertRelation(DOM, src1, dst2);
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 				.select(
 					attribute(SRC, ATTRIBUTE_2),
 					"DST."+ATTRIBUTE_1)
@@ -94,7 +94,7 @@ public class JoinQueryTest extends QueryTestFixture {
 		deleteCard(dst2);
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(
 				attribute(SRC, ATTRIBUTE_2),
 				"DST."+ATTRIBUTE_1)
@@ -122,7 +122,7 @@ public class JoinQueryTest extends QueryTestFixture {
 		final Alias DST_ALIAS = Alias.as("DST");
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(
 				attribute(SRC, ATTRIBUTE_1),
 				anyAttribute(DOM_ALIAS),

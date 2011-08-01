@@ -1,42 +1,47 @@
 package org.cmdbuild.dao.view;
 
-import static com.google.common.collect.Iterables.filter;
+import static org.cmdbuild.common.collect.Iterables.filterNotNull;
+import static org.cmdbuild.common.collect.Iterables.map;
 
+import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.DBAttribute;
+import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
-
-import com.google.common.base.Predicate;
 
 public class UserDataView implements CMDataView {
 
-	final DBDataView view;
-	final CMAccessControlManager acm;
+	private final DBDataView view;
+	private final CMAccessControlManager acm;
 
 	public UserDataView(final DBDataView view, final CMAccessControlManager acm) {
 		this.view = view;
 		this.acm = acm;
 	}
 
-	@Override
-	public CMClass findClass(Object idOrName) {
-		// TODO
-		return view.findClass(idOrName);
+	public CMAccessControlManager getAccessControlManager() {
+		return acm;
 	}
 
 	@Override
-	public CMClass findClassById(Object id) {
-		// TODO
-		return view.findClassById(id);
+	public UserClass findClass(Object idOrName) {
+		return UserClass.create(this, view.findClass(idOrName));
 	}
 
 	@Override
-	public CMClass findClassByName(String name) {
-		// TODO
-		return view.findClassByName(name);
+	public UserClass findClassById(Object id) {
+		return UserClass.create(this, view.findClassById(id));
+	}
+
+	@Override
+	public UserClass findClassByName(String name) {
+		return UserClass.create(this, view.findClassByName(name));
 	}
 
 	/**
@@ -45,8 +50,8 @@ public class UserDataView implements CMDataView {
 	 * @return active classes
 	 */
 	@Override
-	public Iterable<? extends CMClass> findClasses() {
-		return filterReadAccess(view.findClasses());
+	public Iterable<UserClass> findClasses() {
+		return proxyClasses(view.findClasses());
 	}
 
 	/**
@@ -56,30 +61,23 @@ public class UserDataView implements CMDataView {
 	 * @return all classes (active and inactive)
 	 */
 	@Override
-	public Iterable<? extends CMClass> findAllClasses() {
-		if (acm.hasDatabaseDesignerPrivileges()) {
-			return view.findAllClasses();
-		} else {
-			return findClasses();
-		}
+	public Iterable<UserClass> findAllClasses() {
+		return proxyClasses(view.findAllClasses());
 	}
 
 	@Override
-	public CMDomain findDomain(Object idOrName) {
-		// TODO
-		return view.findDomain(idOrName);
+	public UserDomain findDomain(Object idOrName) {
+		return UserDomain.create(this, view.findDomain(idOrName));
 	}
 
 	@Override
-	public CMDomain findDomainById(Object id) {
-		// TODO
-		return view.findDomainById(id);
+	public UserDomain findDomainById(Object id) {
+		return UserDomain.create(this, view.findDomainById(id));
 	}
 
 	@Override
-	public CMDomain findDomainByName(String name) {
-		// TODO
-		return view.findDomainByName(name);
+	public UserDomain findDomainByName(String name) {
+		return UserDomain.create(this, view.findDomainByName(name));
 	}
 
 	/**
@@ -88,21 +86,22 @@ public class UserDataView implements CMDataView {
 	 * @return active domains
 	 */
 	@Override
-	public Iterable<? extends CMDomain> findDomains() {
-		return filterReadAccess(view.findDomains());
+	public Iterable<UserDomain> findDomains() {
+		return proxyDomains(view.findDomains());
 	}
 
 	/**
 	 * Returns the active domains for a class for which the user has read
 	 * access.
 	 * 
-	 * @param type the class i'm requesting the domains for
+	 * @param type
+	 *            the class i'm requesting the domains for
 	 * 
 	 * @return active domains for that class
 	 */
 	@Override
-	public Iterable<? extends CMDomain> findDomainsFor(CMClass type) {
-		return filterReadAccess(view.findDomainsFor(type));
+	public Iterable<UserDomain> findDomainsFor(CMClass type) {
+		return proxyDomains(view.findDomainsFor(type));
 	}
 
 	/**
@@ -112,12 +111,8 @@ public class UserDataView implements CMDataView {
 	 * @return all domains (active and inactive)
 	 */
 	@Override
-	public Iterable<? extends CMDomain> findAllDomains() {
-		if (acm.hasDatabaseDesignerPrivileges()) {
-			return view.findAllDomains();
-		} else {
-			return findDomains();
-		}
+	public Iterable<UserDomain> findAllDomains() {
+		return proxyDomains(view.findAllDomains());
 	}
 
 	@Override
@@ -134,16 +129,50 @@ public class UserDataView implements CMDataView {
 
 	@Override
 	public QuerySpecsBuilder select(Object... attrDef) {
-		return view.select(attrDef);
+		return new QuerySpecsBuilder(this).select(attrDef);
 	}
 
+	@Override
+	public CMQueryResult query(QuerySpecs querySpecs) {
+		return view.query(querySpecs);
+	}
 
-	private <T extends CMEntryType> Iterable<T> filterReadAccess(Iterable<T> unfiltered) {
-		return filter(unfiltered, new Predicate<CMEntryType>() {
+	/*
+	 * Proxy helpers
+	 */
+
+	Iterable<UserClass> proxyClasses(Iterable<DBClass> source) {
+		return filterNotNull(map(source, new Mapper<DBClass, UserClass>() {
 			@Override
-			public boolean apply(CMEntryType type) {
-				return acm.hasReadAccess(type);
+			public UserClass map(DBClass o) {
+				return UserClass.create(UserDataView.this, o);
 			}
-		});
+		}));
+	}
+
+	Iterable<UserDomain> proxyDomains(Iterable<DBDomain> source) {
+		return filterNotNull(map(source, new Mapper<DBDomain, UserDomain>() {
+			@Override
+			public UserDomain map(DBDomain o) {
+				return UserDomain.create(UserDataView.this, o);
+			}
+		}));
+	}
+
+	Iterable<UserAttribute> proxyAttributes(Iterable<DBAttribute> source) {
+		return filterNotNull(map(source, new Mapper<DBAttribute, UserAttribute>() {
+			@Override
+			public UserAttribute map(DBAttribute o) {
+				return UserAttribute.create(UserDataView.this, o);
+			}
+		}));
+	}
+
+	UserEntryType proxy(DBEntryType type) {
+		if (type instanceof DBClass) {
+			return UserClass.create(this, (DBClass) type);
+		} else {
+			return UserDomain.create(this, (DBDomain) type);
+		}
 	}
 }

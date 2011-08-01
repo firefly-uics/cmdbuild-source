@@ -29,11 +29,13 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		}
 	}
 
+	private final DomainMetadata meta;
 	@Deprecated private DBClass class1;
 	@Deprecated private DBClass class2;
 
 	public DBDomain(final String name, final Object id, final DomainMetadata meta, final List<DBAttribute> attributes) {
-		super(name, id, meta, attributes);
+		super(name, id, attributes);
+		this.meta = meta;
 	}
 
 	@Deprecated
@@ -41,8 +43,8 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		this(name, id, new DomainMetadata(), attributes);
 	}
 
-	protected DomainMetadata getMeta() {
-		return (DomainMetadata) super.getMeta();
+	protected final DomainMetadata meta() {
+		return meta;
 	}
 
 	public String toString() {
@@ -75,19 +77,19 @@ public class DBDomain extends DBEntryType implements CMDomain {
 
 	@Override
 	public String getDescription1() {
-		return getMeta().getDescription1();
+		return meta().getDescription1();
 	}
 
 	public void setDescription1(String description1) {
-		getMeta().setDescription1(description1);
+		meta().setDescription1(description1);
 	}
 
 	@Override
 	public String getDescription2() {
-		return getMeta().getDescription2();
+		return meta().getDescription2();
 	}
 
 	public void setDescription2(String description2) {
-		getMeta().setDescription2(description2);
+		meta().setDescription2(description2);
 	}
 }

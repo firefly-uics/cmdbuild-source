@@ -20,11 +20,13 @@ public class DBClass extends DBEntryType implements CMClass {
 		}
 	}
 
+	private final ClassMetadata meta;
 	private DBClass parent;
 	private Set<DBClass> children;
 
 	public DBClass(final String name, final Object id, final ClassMetadata meta, final List<DBAttribute> attributes) {
-		super(name, id, meta, attributes);
+		super(name, id, attributes);
+		this.meta = meta;
 		children = new HashSet<DBClass>();
 	}
 
@@ -33,8 +35,8 @@ public class DBClass extends DBEntryType implements CMClass {
 		this(name, id, new ClassMetadata(), attributes);
 	}
 
-	protected ClassMetadata getMeta() {
-		return (ClassMetadata) super.getMeta();
+	protected final ClassMetadata meta() {
+		return meta;
 	}
 
 	public String toString() {
@@ -64,15 +66,15 @@ public class DBClass extends DBEntryType implements CMClass {
 	}
 
 	@Override
-	public Set<? extends CMClass> getLeaves() {
-		Set<CMClass> leaves = new HashSet<CMClass>();
+	public Iterable<DBClass> getLeaves() {
+		Set<DBClass> leaves = new HashSet<DBClass>();
 		addLeaves(leaves, this);
 		return leaves;
 	}
 
-	private void addLeaves(final Set<CMClass> leaves, final CMClass currentClass) {
+	private void addLeaves(final Set<DBClass> leaves, final DBClass currentClass) {
 		if (currentClass.isSuperclass()) {
-			for (CMClass subclass : currentClass.getChildren()) {
+			for (DBClass subclass : currentClass.getChildren()) {
 				addLeaves(leaves, subclass);
 			}
 		} else {
@@ -91,6 +93,6 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public boolean isSuperclass() {
-		return getMeta().isSuperclass(); 
+		return meta().isSuperclass(); 
 	}
 }
