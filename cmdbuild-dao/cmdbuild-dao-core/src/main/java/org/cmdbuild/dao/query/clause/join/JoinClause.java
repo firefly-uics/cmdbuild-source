@@ -111,7 +111,6 @@ public class JoinClause {
 		}
 
 		public JoinClause build() {
-			Validate.notEmpty(targets);
 			return new JoinClause(this);
 		}
 

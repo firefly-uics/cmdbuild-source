@@ -13,9 +13,8 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
-public class UserDataView implements CMDataView {
+public class UserDataView extends QueryExecutorDataView {
 
 	private final DBDataView view;
 	private final CMAccessControlManager acm;
@@ -128,13 +127,8 @@ public class UserDataView implements CMDataView {
 	}
 
 	@Override
-	public QuerySpecsBuilder select(Object... attrDef) {
-		return new QuerySpecsBuilder(this).select(attrDef);
-	}
-
-	@Override
-	public CMQueryResult query(QuerySpecs querySpecs) {
-		return view.query(querySpecs);
+	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
+		return view.executeNonEmptyQuery(querySpecs);
 	}
 
 	/*
