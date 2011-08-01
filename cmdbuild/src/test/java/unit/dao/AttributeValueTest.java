@@ -331,7 +331,7 @@ public class AttributeValueTest {
 	@Test
 	public void readStringValue() {
 		assertEquals("a string", stringAttribute.readValue("a string"));
-		assertEquals("", stringAttribute.readValue(""));
+		assertEquals(null, stringAttribute.readValue(""));
 		assertEquals(null, stringAttribute.readValue(null));
 		assertTypeErrorOnRead(Integer.valueOf(0), stringAttribute);
 	}

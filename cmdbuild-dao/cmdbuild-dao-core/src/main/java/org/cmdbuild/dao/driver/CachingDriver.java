@@ -46,8 +46,8 @@ public abstract class CachingDriver implements DBDriver {
 		}
 	}
 
-	private EntryTypeStore<DBClass> allClassesStore;
-	private EntryTypeStore<DBDomain> allDomainsStore;
+	private volatile EntryTypeStore<DBClass> allClassesStore;
+	private volatile EntryTypeStore<DBDomain> allDomainsStore;
 
 	@Override
 	public final Collection<DBClass> findAllClasses() {
@@ -55,10 +55,16 @@ public abstract class CachingDriver implements DBDriver {
 	}
 
 	private EntryTypeStore<DBClass> getAllClassesStore() {
+		EntryTypeStore<DBClass> refForSafeClearCache = allClassesStore;
 		if (allClassesStore == null) {
-			this.allClassesStore = new EntryTypeStore<DBClass>(findAllClassesNoCache());
+			synchronized (this) {
+				refForSafeClearCache = allClassesStore;
+				if (allClassesStore == null) {
+					this.allClassesStore = refForSafeClearCache = new EntryTypeStore<DBClass>(findAllClassesNoCache());
+				}
+			}
 		}
-		return allClassesStore;
+		return refForSafeClearCache;
 	}
 
 	protected abstract Collection<DBClass> findAllClassesNoCache();
@@ -94,7 +100,7 @@ public abstract class CachingDriver implements DBDriver {
 	}
 
 	// TODO It should be implemented by every driver
-	//public abstract Object normalizeId(Object id);
+	// public abstract Object normalizeId(Object id);
 	public Object normalizeId(final Object id) {
 		if (id instanceof Long) {
 			return id;
@@ -118,10 +124,16 @@ public abstract class CachingDriver implements DBDriver {
 	}
 
 	private EntryTypeStore<DBDomain> getAllDomainsStore() {
+		EntryTypeStore<DBDomain> refForSafeClearCache = allDomainsStore;
 		if (allDomainsStore == null) {
-			this.allDomainsStore = new EntryTypeStore<DBDomain>(findAllDomainsNoCache());
+			synchronized (this) {
+				refForSafeClearCache = allDomainsStore;
+				if (allDomainsStore == null) {
+					this.allDomainsStore = refForSafeClearCache = new EntryTypeStore<DBDomain>(findAllDomainsNoCache());
+				}
+			}
 		}
-		return allDomainsStore;
+		return refForSafeClearCache;
 	}
 
 	protected abstract Collection<DBDomain> findAllDomainsNoCache();
@@ -155,5 +167,28 @@ public abstract class CachingDriver implements DBDriver {
 	@Override
 	public DBDomain findDomainByName(final String name) {
 		return getAllDomainsStore().getByName(name);
+	}
+
+	/*
+	 * Cache management
+	 */
+
+	public void clearCache() {
+		synchronized (this) {
+			allClassesStore = null;
+			allDomainsStore = null;
+		}
+	}
+
+	public void clearClassesCache() {
+		synchronized (this) {
+			allClassesStore = null;
+		}
+	}
+
+	public void clearDomainsCache() {
+		synchronized (this) {
+			allDomainsStore = null;
+		}
 	}
 }
