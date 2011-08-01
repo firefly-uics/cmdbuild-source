@@ -20,13 +20,13 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 				params: params,
 				scope: this,
 				success : function(form, action) {
-					this.view.close();
+					this.view.destroy();
 				}
 			});
 		}
 	},
 
 	onCancelButtonClick: function() {
-		this.view.close();
+		this.view.destroy();
 	}
 });

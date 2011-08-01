@@ -1,16 +1,18 @@
-CMDBuild.Management.GraphWindow = Ext.extend(CMDBuild.PopupWindow, {
+Ext.define("CMDBuild.Management.GraphWindow", {
+	extend: "CMDBuild.PopupWindow",
 	resizable: true,
 
 	initComponent: function() {
 		var graphParams = {};
 		Ext.apply(graphParams, CMDBuild.Config.graph, {
-				classid: this.classId,
-				objid: this.cardId
-			});
+			classid: this.classId,
+			objid: this.cardId
+		});
+
 		Ext.apply(this, {
 			title: CMDBuild.Translation.management.graph.title,
 			items: {
-				xtype: 'flashpanel',
+				xtype: 'flash',
 				mediaCfg : {
 					mediaType: 'SWF',
 					url: 'flash/graph.swf',
@@ -23,18 +25,19 @@ CMDBuild.Management.GraphWindow = Ext.extend(CMDBuild.PopupWindow, {
 				}
 			}
 		});
-		CMDBuild.Management.GraphWindow.superclass.initComponent.apply(this);
+
+		this.callParent(arguments);
 	}
 });
 
 CMDBuild.Management.showGraphWindow = function(classId, cardId) {
-	var graphWindow = new CMDBuild.Management.GraphWindow({
-			classId: classId,
-			cardId: cardId
-		});
-	graphWindow.show();
+	new CMDBuild.Management.GraphWindow({
+		classId: classId,
+		cardId: cardId
+	}).show();
 };
 
+/*
 CMDBuild.Management.GraphActionHandler = function() {
     this.action = new Ext.Action({
   		iconCls : 'graph',
@@ -48,7 +51,7 @@ CMDBuild.Management.GraphActionHandler = function() {
 	
 	this.subscribe('cmdb-load-activity', this.loadActivity, this);
  };
- 
+
  Ext.extend(CMDBuild.Management.GraphActionHandler, Ext.util.Observable, {
 	getAction: function() {
 		return this.action;
@@ -92,3 +95,4 @@ CMDBuild.Management.GraphActionHandler = function() {
 		}
 	}
 });
+*/

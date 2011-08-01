@@ -24,9 +24,9 @@
 		cmAccordions: [],
 		controllerType: "MainViewportController",
 		statics: {
-			showSplash: function(target) {
+			showSplash: function(target, administration) {
 				var txt = "";
-
+				
 				if (target) {
 					if (!this.creditWin) {
 						this.creditWin = new Ext.window.Window({
@@ -60,8 +60,12 @@
 					txt = splashText;
 					this.theWin = this.splash;
 				}
+				
+				if (!this.imageCls) {
+					this.imageCls = "splashScreen_image" + (administration ? "_administration" : "");
+				}
 
-				this.theWin.update('<div class="splashScreen_image">' + txt + release + '</div>');
+				this.theWin.update('<div class="' + this.imageCls + '">' + txt + release + '</div>');
 
 				this.theWin.show();
 				return this;
@@ -88,6 +92,7 @@
 				return this;
 			}
 		},
+
 		initComponent : function() {
 			this.splash = null;
 			this.cmAccordions = Ext.create("Ext.panel.Panel", {

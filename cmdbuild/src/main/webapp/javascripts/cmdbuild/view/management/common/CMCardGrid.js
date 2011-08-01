@@ -279,7 +279,7 @@
 
 			headers = headers.concat(this.buildExtraColumns());
 
-			if (this.cmAddGraphColumn) {
+			if (this.cmAddGraphColumn && CMDBuild.Config.graph.enabled=="true") {
 				buildGraphIconColumn.call(this, headers);
 			}
 
@@ -477,9 +477,7 @@
 	
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		if (event.target.className == 'action-open-graph') {
-//			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
-
-//			alert("@@ The graph");
+			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
 		}
 	}
 	

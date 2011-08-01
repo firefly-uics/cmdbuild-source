@@ -5,6 +5,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
 <script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/management/card/graph/GraphWindow.js"></script>
 
 <!-- WIDGETS BUILDER-->
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/BaseAttribute.js"></script>
@@ -150,7 +151,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/FilterRelationsDomainGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Relations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/SaveFilter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/graph/GraphWindow.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/AddDetailActionMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailAttachmentsWindow.js"></script>
