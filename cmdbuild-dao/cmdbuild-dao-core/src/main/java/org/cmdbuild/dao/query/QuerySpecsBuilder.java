@@ -26,7 +26,7 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.QueryExecutorDataView;
 
 /*
  * Note: Not thread safe
@@ -91,9 +91,9 @@ public class QuerySpecsBuilder {
 
 	private AliasLibrary aliases;
 
-	private final CMDataView view;
+	private final QueryExecutorDataView view;
 
-	public QuerySpecsBuilder(final CMDataView view) {
+	public QuerySpecsBuilder(final QueryExecutorDataView view) {
 		this.view = view;
 		aliases = new AliasLibrary();
 		select();
@@ -167,9 +167,12 @@ public class QuerySpecsBuilder {
 	}
 
 	private QuerySpecs build() {
-		final QuerySpecs qs = new QuerySpecs();
+		final QuerySpecsImpl qs = new QuerySpecsImpl();
 		qs.setFrom(aliases.getFromClassAlias());
 		for (JoinClause jc : joinClauses) {
+			if (jc.getTargets().isEmpty()) {
+				return new EmptyQuerySpecs();
+			}
 			qs.addJoin(jc);
 		}
 		for (QueryAttribute qa : attributes) {
@@ -202,7 +205,7 @@ public class QuerySpecsBuilder {
 	}
 
 	public CMQueryResult run() {
-		return view.query(build());
+		return view.executeQuery(build());
 	}
 
 	/*
