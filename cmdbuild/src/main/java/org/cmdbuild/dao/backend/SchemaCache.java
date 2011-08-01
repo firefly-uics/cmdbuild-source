@@ -15,6 +15,7 @@ import org.cmdbuild.elements.wrappers.MenuCard;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
 
@@ -239,6 +240,7 @@ public class SchemaCache {
 	public void clearTables() {
 		tableMap = null;
 		tableTree = null;
+		TemporaryObjectsBeforeSpringDI.getDriver().clearClassesCache();
 	}
 
 	public void refreshLookups() {
@@ -257,6 +259,7 @@ public class SchemaCache {
 
 	public void clearDomains() {
 		domainMap = null;
+		TemporaryObjectsBeforeSpringDI.getDriver().clearDomainsCache();
 	}
 
 	public void addTable(int oid, ITable table) {

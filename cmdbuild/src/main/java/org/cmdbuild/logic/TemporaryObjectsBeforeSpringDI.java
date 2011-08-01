@@ -1,6 +1,6 @@
 package org.cmdbuild.logic;
 
-import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.driver.CachingDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMAccessControlManager;
 import org.cmdbuild.dao.view.CMDataView;
@@ -12,14 +12,14 @@ import org.cmdbuild.services.auth.UserContext;
 
 public class TemporaryObjectsBeforeSpringDI {
 
-	final static DBDriver driver;
+	final static CachingDriver driver;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource);
 	}
 
-	public static DBDriver getDriver() {
+	public static CachingDriver getDriver() {
 		return driver;
 	}
 

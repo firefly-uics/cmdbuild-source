@@ -65,6 +65,7 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.utils.StringUtils;
@@ -462,6 +463,7 @@ public class PGCMBackend extends CMBackend {
 			} else {
 				schema.addAttribute(attribute);
 			}
+			TemporaryObjectsBeforeSpringDI.getDriver().clearCache();
 		} catch (SQLException se) {
 			Log.PERSISTENCE.error("Errors creating new attribute", se);
 			SqlState.throwCustomExceptionFrom(se);
