@@ -37,16 +37,14 @@ public abstract class DBEntryType implements CMEntryType {
 
 	private final Object id;
 	private final String name;
-	private final EntryTypeMetadata meta;
 
 	private final Map<String, DBAttribute> attributesByName;
 	private final List<DBAttribute> attributes;
 
-	protected DBEntryType(final String name, final Object id, final EntryTypeMetadata meta, final List<DBAttribute> attributes) {
+	protected DBEntryType(final String name, final Object id, final List<DBAttribute> attributes) {
 		Validate.notEmpty(name);
 		this.id = id;
 		this.name = name;
-		this.meta = meta;
 		this.attributes = attributes;
 		this.attributesByName = initAttributesByName(attributes);
 	}
@@ -60,9 +58,7 @@ public abstract class DBEntryType implements CMEntryType {
 		return am;
 	}
 
-	protected EntryTypeMetadata getMeta() {
-		return meta;
-	}
+	protected abstract EntryTypeMetadata meta();
 
 	/*
 	 * CMEntryType overrides
@@ -80,17 +76,17 @@ public abstract class DBEntryType implements CMEntryType {
 
 	@Override
 	public String getDescription() {
-		return meta.getDescription();
+		return meta().getDescription();
 	}
 
 	@Override
 	public boolean isActive() {
-		return meta.isActive();
+		return meta().isActive();
 	}
 
 	@Override
 	public boolean isSystem() {
-		return meta.isSystem();
+		return meta().isSystem();
 	}
 
 	@Override

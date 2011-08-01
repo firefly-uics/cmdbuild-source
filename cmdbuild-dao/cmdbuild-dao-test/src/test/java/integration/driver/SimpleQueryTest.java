@@ -36,7 +36,7 @@ public class SimpleQueryTest extends QueryTestFixture {
 
 		DBCard.create(driver, newClass).set(ATTRIBUTE_1, attr1Value).set(ATTRIBUTE_2, attr2Value).save();
 
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(ATTRIBUTE_1).from(newClass).run();
 
 		// TEST ATTRIBUTE_1 is extracted but not ATTRIBUTE_2
@@ -64,7 +64,7 @@ public class SimpleQueryTest extends QueryTestFixture {
 		insertCard(C, ATTRIBUTE_1, "C");
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(ATTRIBUTE_1).from(S1).run();
 
 		// then
@@ -88,7 +88,7 @@ public class SimpleQueryTest extends QueryTestFixture {
 		final DBClass newClass = driver.findClassByName("Huge");
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(ATTRIBUTE_1).from(newClass).offset(OFFSET).limit(LIMIT).run();
 
 		// then
@@ -104,7 +104,7 @@ public class SimpleQueryTest extends QueryTestFixture {
 		final Object cardAttributeToFind = "3";
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(driver, view)
+		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(ATTRIBUTE_1)
 			.from(newClass)
 			.where(

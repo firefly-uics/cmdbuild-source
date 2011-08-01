@@ -48,7 +48,7 @@ public class ColumnMapper {
 	private static class AliasAttributes {
 		private final Map<CMEntryType, List<EntryTypeAttribute>> map;
 
-		private AliasAttributes(final Set<? extends CMEntryType> types) {
+		private AliasAttributes(final Iterable<? extends CMEntryType> types) {
 			map = new HashMap<CMEntryType, List<EntryTypeAttribute>>();
 			for (CMEntryType t : types) {
 				map.put(t, new ArrayList<EntryTypeAttribute>());
@@ -109,7 +109,7 @@ public class ColumnMapper {
 			map = new HashMap<Alias, AliasAttributes>();
 		}
 
-		void addAlias(final Alias alias, final Set<? extends CMEntryType> aliasClasses) {
+		void addAlias(final Alias alias, final Iterable<? extends CMEntryType> aliasClasses) {
 			map.put(alias, new AliasAttributes(aliasClasses));
 		}
 
@@ -134,7 +134,7 @@ public class ColumnMapper {
 		fillAliases(query);
 	}
 
-	void addClassAlias(final Alias alias, final Set<? extends CMClass> aliasClasses) {
+	void addClassAlias(final Alias alias, final Iterable<? extends CMClass> aliasClasses) {
 		classAliases.addAlias(alias, aliasClasses);
 	}
 
