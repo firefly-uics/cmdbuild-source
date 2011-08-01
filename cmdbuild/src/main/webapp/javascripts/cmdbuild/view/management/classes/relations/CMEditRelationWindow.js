@@ -15,7 +15,7 @@
 			if (this.relation == undefined) {
 				throw "You must pass a relation to the CMEditRelationWindow";
 			} else {
-				this.idClass = this.relation.dst_cid
+				this.idClass = this.relation.dst_cid;
 			}
 
 			this.callParent(arguments);
@@ -59,12 +59,12 @@
 				handler: function() {
 					this.close();
 				}
-			})
+			});
 			
 			Ext.apply(this, {
 				buttonAlign: "center",
 				buttons: [this.saveButton, this.abortButton]
-			})
+			});
 		},
 		
 		// override
@@ -140,7 +140,7 @@
 			return;
 		}
 
-		return p
+		return p;
 	}
 
 	function getSelections(me) {
@@ -154,7 +154,7 @@
 			}
 
 			if (id_sel.length == 1) {
-				return id_sel[0]
+				return id_sel[0];
 			} else {
 				return id_sel;
 			}
@@ -178,7 +178,7 @@
 			if (f.validate()) {
 				data[f.name] = f.getValue();
 			} else {
-				nonValid += "<p><b>" + f.fieldLabel + "</b></p>"
+				nonValid += "<p><b>" + f.fieldLabel + "</b></p>";
 			}
 		}
 
@@ -195,7 +195,7 @@
 			getFields: function() {
 				return {};
 			}
-		}
+		};
 	}
 
 })();

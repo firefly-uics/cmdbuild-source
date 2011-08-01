@@ -8,10 +8,7 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 
 	onSaveButtonClick: function() {
 		var form = this.view.cardPanel.getForm(),
-			params = {
-				IdClass: this.view.classId,
-				Id: this.view.cardId || -1
-			};
+			params = this.buildSaveParams();
 
 		if (form.isValid()) {
 			form.submit({
@@ -19,14 +16,25 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 				url : 'services/json/management/modcard/updatecard',
 				params: params,
 				scope: this,
-				success : function(form, action) {
-					this.view.destroy();
-				}
+				success : this.onSaveSuccess
 			});
 		}
 	},
 
 	onCancelButtonClick: function() {
+		this.view.destroy();
+	},
+	
+	// private, overridden in subclasses
+	buildSaveParams: function() {
+		return {
+			IdClass: this.view.classId,
+			Id: this.view.cardId || -1
+		};
+	},
+
+	// private, overridden in subclasses
+	onSaveSuccess: function(form, action) {
 		this.view.destroy();
 	}
 });

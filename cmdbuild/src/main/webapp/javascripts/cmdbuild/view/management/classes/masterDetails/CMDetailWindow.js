@@ -2,8 +2,11 @@
 	Ext.define("CMDBuild.view.management.classes.masterDetail.DetailWindow", {
 		extend: "CMDBuild.view.management.common.CMCardWindow",
 
-		classId: undefined, // setted in instantiation
+		classId: undefined, // set on instantiation
 		cardId: undefined,
+		fkAttribute: undefined, // set on instantiation if needed
+		referencedIdClass: undefined, // set on instantiation if needed
+
 		cmEditMode: false, // if true, after the attributes load go in edit mode
 		withButtons: false, // true to use the buttons build by the CMCardPanel
 
@@ -34,7 +37,7 @@
 					if (this.masterData) {
 						this.referenceToMaster = {
 							name: attribute.name,
-							value: this.masterData.Id
+							value: this.masterData.get("Id")
 						};
 					}
 				} else {
@@ -52,13 +55,11 @@
 		}
 		return false;
 	};
-	
+
 	function isMasterReference(attribute) {
-		if (attribute && attribute.idDomain) {
-			var invertedDirection = attribute.domainDirection ? "_I" : "_D";
-			var directedDomain = attribute.idDomain + invertedDirection;
-			return (directedDomain == this.idDomain);
-		}
-		return false;
+		return this.referencedIdClass
+				&& attribute
+				&& attribute.referencedIdClass == this.referencedIdClass;
+
 	};
 })();

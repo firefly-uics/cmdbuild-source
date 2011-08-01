@@ -51,7 +51,7 @@
 
 		onClassSelected: function(id, activateFirst) {
 			if (activateFirst) {
-				this.setActiveTab(this.cardPanel);
+				this.activeFirstTab();
 			}
 
 			this.items.each(function(item) {
@@ -76,6 +76,10 @@
 					item.onAddCardButtonClick(idClass, reloadFields);
 				}
 			});
+		},
+
+		activeFirstTab: function() {
+			this.setActiveTab(this.cardPanel);
 		}
 	});
 	
