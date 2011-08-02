@@ -181,14 +181,14 @@
 		}
 
 		var tr = CMDBuild.Translation.management.modcard,
-			actionsHtml = '<img style="cursor:pointer" title="'+tr.open_relation+'" class="action-relation-go" src="images/icons/bullet_go.png"/>&nbsp;',
+			actionsHtml = '<img style="cursor:pointer" title="'+tr.open_relation+'" class="action-relation-go" src="images/icons/bullet_go.png"/>',
 			tableId = record.get(TARGET_CLASS_ID),
 			domainObj = _CMCache.getDomainById(record.get("dom_id")),
 			table = _CMCache.getClassById(tableId);
 
 		if (domainObj.get("writePrivileges")) {
-			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>&nbsp;'
-			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>&nbsp;';
+			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>'
+			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>';
 		}
 
 		if (table && table.get("priv_write")) {
