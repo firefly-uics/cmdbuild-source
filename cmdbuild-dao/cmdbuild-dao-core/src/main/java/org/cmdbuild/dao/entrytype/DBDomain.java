@@ -43,6 +43,14 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		this(name, id, new DomainMetadata(), attributes);
 	}
 
+    public void accept(CMEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void accept(DBEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
 	protected final DomainMetadata meta() {
 		return meta;
 	}

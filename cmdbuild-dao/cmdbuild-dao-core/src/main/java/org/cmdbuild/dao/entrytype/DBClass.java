@@ -35,6 +35,14 @@ public class DBClass extends DBEntryType implements CMClass {
 		this(name, id, new ClassMetadata(), attributes);
 	}
 
+    public void accept(CMEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void accept(DBEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
 	protected final ClassMetadata meta() {
 		return meta;
 	}

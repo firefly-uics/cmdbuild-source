@@ -13,6 +13,11 @@ public class StringAttributeType extends TextAttributeType {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	protected boolean stringLimitExceeded(String stringValue) {
 		return (stringValue.length() > length);
 	}

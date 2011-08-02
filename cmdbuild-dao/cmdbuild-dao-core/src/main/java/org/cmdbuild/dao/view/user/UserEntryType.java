@@ -1,6 +1,7 @@
-package org.cmdbuild.dao.view;
+package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 
 public abstract class UserEntryType implements CMEntryType {
@@ -13,6 +14,10 @@ public abstract class UserEntryType implements CMEntryType {
 	protected UserEntryType(final UserDataView view) {
 		this.view = view;
 	}
+
+    public final void accept(CMEntryTypeVisitor visitor) {
+    	inner().accept(visitor);
+    }
 
 	protected abstract DBEntryType inner();
 

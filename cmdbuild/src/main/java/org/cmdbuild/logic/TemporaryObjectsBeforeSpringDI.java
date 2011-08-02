@@ -5,7 +5,7 @@ import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMAccessControlManager;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.UserDataView;
+import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.UserContext;

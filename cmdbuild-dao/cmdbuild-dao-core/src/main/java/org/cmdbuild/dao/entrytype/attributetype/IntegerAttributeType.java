@@ -8,6 +8,11 @@ public class IntegerAttributeType implements CMAttributeType<Integer> {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public Integer convertNotNullValue(Object value) {
 		Integer intValue;
 		if (value instanceof Integer) {

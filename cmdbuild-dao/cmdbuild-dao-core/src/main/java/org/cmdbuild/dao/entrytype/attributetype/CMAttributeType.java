@@ -3,5 +3,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 public interface CMAttributeType<T> {
 
-	public T convertNotNullValue(Object value);
+	T convertNotNullValue(Object value);
+	void accept(CMAttributeTypeVisitor visitor);
 }

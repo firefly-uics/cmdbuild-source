@@ -18,6 +18,11 @@ public class DecimalAttributeType implements CMAttributeType<BigDecimal> {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public BigDecimal convertNotNullValue(Object value) {
 		BigDecimal decimalValue;
 		if (value instanceof BigDecimal) {

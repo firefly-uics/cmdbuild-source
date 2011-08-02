@@ -7,6 +7,11 @@ public class UndefinedAttributeType implements CMAttributeType<Object> {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Object convertNotNullValue(Object value) {
 		return value;
 	}

@@ -7,6 +7,11 @@ public class BooleanAttributeType implements CMAttributeType<Boolean> {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public Boolean convertNotNullValue(Object value) {
 		final Boolean booleanValue;
 		if (value instanceof Boolean) {
