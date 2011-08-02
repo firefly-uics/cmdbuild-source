@@ -8,6 +8,11 @@ public class DoubleAttributeType implements CMAttributeType<Double> {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public Double convertNotNullValue(Object value) {
 		Double doubleValue;
 		if (value instanceof Double) {

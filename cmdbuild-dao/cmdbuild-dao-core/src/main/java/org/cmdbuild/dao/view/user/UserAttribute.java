@@ -1,4 +1,4 @@
-package org.cmdbuild.dao.view;
+package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute;

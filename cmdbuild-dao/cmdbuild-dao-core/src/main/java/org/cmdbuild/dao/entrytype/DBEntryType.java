@@ -49,6 +49,8 @@ public abstract class DBEntryType implements CMEntryType {
 		this.attributesByName = initAttributesByName(attributes);
 	}
 
+	public abstract void accept(DBEntryTypeVisitor visitor);
+
 	private Map<String, DBAttribute> initAttributesByName(final List<DBAttribute> ac) {
 		final Map<String, DBAttribute> am = new HashMap<String, DBAttribute>();
 		for (DBAttribute a : ac) {

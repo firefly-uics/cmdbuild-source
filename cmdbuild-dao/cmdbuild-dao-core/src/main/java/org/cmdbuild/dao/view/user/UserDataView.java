@@ -1,4 +1,4 @@
-package org.cmdbuild.dao.view;
+package org.cmdbuild.dao.view.user;
 
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
@@ -11,8 +11,12 @@ import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.view.CMAccessControlManager;
+import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.QueryExecutorDataView;
 
 public class UserDataView extends QueryExecutorDataView {
 
@@ -162,11 +166,24 @@ public class UserDataView extends QueryExecutorDataView {
 		}));
 	}
 
-	UserEntryType proxy(DBEntryType type) {
-		if (type instanceof DBClass) {
-			return UserClass.create(this, (DBClass) type);
-		} else {
-			return UserDomain.create(this, (DBDomain) type);
-		}
+	UserEntryType proxy(final DBEntryType unproxed) {
+		return new DBEntryTypeVisitor() {
+			UserEntryType proxy;
+
+			@Override
+			public void visit(DBClass type) {
+				proxy = UserClass.create(UserDataView.this, type);
+			}
+
+			@Override
+			public void visit(DBDomain type) {
+				proxy = UserDomain.create(UserDataView.this, type);
+			}
+
+			UserEntryType proxy() {
+				unproxed.accept(this);
+				return proxy;
+			}
+		}.proxy();
 	}
 }

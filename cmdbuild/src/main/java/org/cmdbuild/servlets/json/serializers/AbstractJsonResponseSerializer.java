@@ -1,9 +1,21 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import org.cmdbuild.dao.entry.CMLookup;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.operation.management.LookupOperation;
@@ -16,7 +28,8 @@ import org.json.JSONObject;
 
 public abstract class AbstractJsonResponseSerializer {
 
-	@Deprecated // Needed because the new DAO does not fully support the lookups yet
+	@Deprecated
+	// Needed because the new DAO does not fully support the lookups yet
 	private LookupOperation systemLookupOperation = new LookupOperation(UserContext.systemContext());
 
 	// TODO should be defined in the user session
@@ -32,22 +45,94 @@ public abstract class AbstractJsonResponseSerializer {
 		}
 	}
 
-	// FIXME Horrible
 	protected final Object javaToJsonValue(final CMAttributeType<?> type, final Object value) throws JSONException {
-		if (value instanceof DateTime) {
-			if (type instanceof DateTimeAttributeType) {
-				return DATE_TIME_FORMATTER.print((DateTime) value);
-			} else if (type instanceof TimeAttributeType) {
-				return TIME_FORMATTER.print((DateTime) value);
-			} else if (type instanceof DateAttributeType) {
-				return DATE_FORMATTER.print((DateTime) value);
+		return new CMAttributeTypeVisitor() {
+			Object valueForJson;
+
+			@Override
+			public void visit(BooleanAttributeType attributeType) {
 			}
-		} else if (value instanceof CMLookup) {
-			final CMLookup lookup = (CMLookup) value;
-			final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) lookup.getId());
-			return idAndDescription(oldLookup.getId(), oldLookup.getDescription());
-		}
-		return value;
+
+			@Override
+			public void visit(DateTimeAttributeType attributeType) {
+				valueForJson = DATE_TIME_FORMATTER.print((DateTime) value);
+			}
+
+			@Override
+			public void visit(DateAttributeType attributeType) {
+				valueForJson = DATE_FORMATTER.print((DateTime) value);
+			}
+
+			@Override
+			public void visit(DecimalAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(DoubleAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(ForeignKeyAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(GeometryAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(IntegerAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(IPAddressAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(LookupAttributeType attributeType) {
+				if (value instanceof CMLookup) {
+					final CMLookup lookup = (CMLookup) value;
+					final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) lookup.getId());
+					try {
+						valueForJson = idAndDescription(oldLookup.getId(), oldLookup.getDescription());
+					} catch (JSONException e) {
+						valueForJson = null;
+					}
+				} else {
+					valueForJson = value;
+				}
+			}
+
+			@Override
+			public void visit(ReferenceAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(StringAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(TextAttributeType attributeType) {
+				valueForJson = value;
+			}
+
+			@Override
+			public void visit(TimeAttributeType attributeType) {
+				valueForJson = TIME_FORMATTER.print((DateTime) value);
+			}
+
+			Object valueForJson() {
+				type.accept(this);
+				return valueForJson;
+			}
+		}.valueForJson();
 	}
 
 	private JSONObject idAndDescription(final Object id, final String description) throws JSONException {

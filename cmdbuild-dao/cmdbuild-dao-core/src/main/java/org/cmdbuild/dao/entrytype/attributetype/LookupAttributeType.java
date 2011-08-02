@@ -15,6 +15,11 @@ public class LookupAttributeType implements CMAttributeType<CMLookup> {
 	}
 
 	@Override
+	public void accept(CMAttributeTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	public CMLookup convertNotNullValue(Object value) {
 		// TODO Get the lookup
 		return new DBLookup(lookupType, value);

@@ -1,10 +1,13 @@
 package org.cmdbuild.dao.entrytype;
 
-
 public interface CMEntryType extends Deactivable {
 
+	void accept(CMEntryTypeVisitor visitor);
+
 	Object getId();
+
 	String getName();
+
 	String getDescription();
 
 	boolean isSystem();
@@ -17,8 +20,8 @@ public interface CMEntryType extends Deactivable {
 	Iterable<? extends CMAttribute> getAttributes();
 
 	/**
-	 * Returns a sorted list of all (active and inactive) attributes for
-	 * this entry type.
+	 * Returns a sorted list of all (active and inactive) attributes for this
+	 * entry type.
 	 * 
 	 * @return attributes in the correct display order
 	 */

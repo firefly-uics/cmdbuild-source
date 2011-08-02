@@ -5,6 +5,10 @@ import java.util.Set;
 
 public abstract class PlaceholderClass extends PlaceholderEntryType implements CMClass {
 
+    public final void accept(CMEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
 	@Override
 	public String getName() {
 		throw new UnsupportedOperationException();

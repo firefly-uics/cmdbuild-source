@@ -3,6 +3,10 @@ package org.cmdbuild.dao.entrytype;
 
 public abstract class PlaceholderDomain extends PlaceholderEntryType implements CMDomain {
 
+    public final void accept(CMEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
 	@Override
 	public CMClass getClass1() {
 		throw new UnsupportedOperationException();
