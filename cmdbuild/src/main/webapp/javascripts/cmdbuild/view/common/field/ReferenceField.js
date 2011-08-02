@@ -119,6 +119,15 @@
 						}
 					});
 
+					// if the field has not values the attributes
+					// must be disabled
+					field.mon(field, "change", function(combo, val) {
+						var disabled = val == "";
+						Ext.Array.forEach(subFields, function (f) {
+							f.setDisabled(disabled);
+						});
+					});
+
 					return new Ext.panel.Panel({
 						frame: false,
 						border: false,

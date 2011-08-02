@@ -8,7 +8,7 @@ Ext.define("CMDBuild.field.ErasableCombo", {
 	onTrigger1Click: Ext.form.field.ComboBox.prototype.onTriggerClick,
 	onTrigger2Click: function() {
 		if (!this.disabled) {
-			this.clearValue();
+			this.setValue([""]); // if use clearValue the form does not send the value, so it is not possible delete the value on server side
 		}
 	}
 });

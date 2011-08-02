@@ -27,17 +27,17 @@
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/StringAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/CharAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/TextAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/FieldManager.js"></script>
 
 <!-- CUSTOM FIELDS -->
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/BooleanDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/EntityRemoverDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/LookupField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/GridSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/LocaleSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/SearchableCombo.js"></script>	
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/ReferenceField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/field/ForeignKeyField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/EntityRemoverDisplayField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/SearchableCombo.js"></script>	
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
 
 <!-- MODELS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>

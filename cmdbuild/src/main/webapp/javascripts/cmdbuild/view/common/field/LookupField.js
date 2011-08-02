@@ -12,7 +12,7 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	},
 
 	chainedClear: function() {
-		this.clearValue();
+		this.setValue([""]); // if use clearValue the form does not send the value, so it is not possible delete the value on server side
 		if (this.childField) {
 			this.childField.setParentIdAndFilterStore(undefined);
 			this.childField.chainedClear();
@@ -74,7 +74,7 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					autoHeight: true,
 					hideMode: 'offsets',
 					grow: true,
-					labelWidth: 160,
+					labelWidth: CMDBuild.CM_LABEL_WIDTH,
 					bodyCls: "x-panel-default-framed",
 					CMAttribute: attribute,
 					
@@ -204,7 +204,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		labelAlign: "right",
 		labelWidth: CMDBuild.CM_LABEL_WIDTH,
 		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
-		labelSeparator: hideLabel ? '' : undefined,
+		labelSeparator: hideLabel ? '' : ":",
 		name: attribute.name,
 		hiddenName: attribute.name,
 		store: store,

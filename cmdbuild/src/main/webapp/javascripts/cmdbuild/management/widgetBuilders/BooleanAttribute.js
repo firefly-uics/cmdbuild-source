@@ -44,6 +44,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildAttributeField = functio
 	return new Ext.ux.form.XCheckbox({
 		labelAlign: "right",
 		fieldLabel: attribute.description,
+		labelWidth: CMDBuild.CM_LABEL_WIDTH,
 		name: attribute.name,
 		CMAttribute: attribute
 	});
