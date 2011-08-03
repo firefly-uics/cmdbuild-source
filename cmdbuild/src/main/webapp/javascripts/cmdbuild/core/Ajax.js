@@ -110,15 +110,15 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 
 		if (error) {
 			errorBody.detail = error.stacktrace;
-			if (error.reason) {
-				if (error.reason == 'AUTH_NOT_LOGGED_IN' || error.reason == 'AUTH_MULTIPLE_GROUPS') {
-//					CMDBuild.LoginWindow.addAjaxOptions(options);
-//					CMDBuild.LoginWindow.setAuthFieldsEnabled(decoded.reason == 'AUTH_NOT_LOGGED_IN');
-//					CMDBuild.LoginWindow.show();
-					alert("@@Relogin");
+			var reason = error.reason;
+			if (reason) {
+				if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
+					CMDBuild.LoginWindow.addAjaxOptions(options);
+					CMDBuild.LoginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
+					CMDBuild.LoginWindow.show();
 					return;
 				}
-				var translatedErrorString = CMDBuild.Ajax.formatError(error.reason, error.reason_parameters);
+				var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reason_parameters);
 				if (translatedErrorString) {
 					errorBody.text = translatedErrorString;
 				}

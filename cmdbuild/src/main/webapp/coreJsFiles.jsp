@@ -4,6 +4,7 @@
 <!--  THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
@@ -59,7 +60,6 @@
 <!---->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/InitHeader.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/LocaleSearchField.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/MainViewportController.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/core/AdminViewController.js"></script>-->
 
