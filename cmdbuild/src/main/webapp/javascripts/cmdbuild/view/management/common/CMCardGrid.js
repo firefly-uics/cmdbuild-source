@@ -130,6 +130,7 @@
 		cmBasicFilter: true, // to add a basic search-field to the paging bar 
 		cmAdvancedFilter: true, // to add a button to set an advanced filter
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
+		cmAddPrintButton: true, // to add a button to set an chose the print format
 
 		constructor: function(c) {
 			Ext.apply(this, c);
@@ -387,12 +388,13 @@
 			items.push(this.openFilterButton, this.clearFilterButton);
 		}
 
-		this.printGridMenu = new CMDBuild.PrintMenuButton({
-			callback : function() { this.fireEvent("click"); },
-			formatList: ["pdf", "odt"]
-		});
-
-		items.push(this.printGridMenu);
+		if (this.cmAddPrintButton) {
+			this.printGridMenu = new CMDBuild.PrintMenuButton({
+				callback : function() { this.fireEvent("click"); },
+				formatList: ["pdf", "odt"]
+			});
+			items.push(this.printGridMenu);
+		}
 
 		this.pagingBar = new Ext.toolbar.Paging({
 			store: this.store,
