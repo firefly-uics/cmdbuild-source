@@ -98,25 +98,18 @@
 				if (subFields && subFields.length > 0) {
 					var subFieldsPanel = new Ext.panel.Panel({
 						bodyCls: "x-panel-body-default-framed",
+						bodyStyle: {
+							padding: "0 0 10px 15px"
+						},
 						hideMode: "offsets",
 						hidden: true,
 						frame: false,
 						items: [subFields]
 					}),
 
-					button = new Ext.button.Button({
-						enableToggle: true,
-						iconCls: "detail",
-						margin: "0 0 0 5",
-						listeners: {
-							toggle: function(button, pressed) {
-								if (pressed) {
-									subFieldsPanel.show();
-								} else {
-									subFieldsPanel.hide();
-								}
-							}
-						}
+					button = new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
+						subfieldsPanel: subFieldsPanel,
+						margin: "1"
 					});
 
 					// if the field has not values the attributes
