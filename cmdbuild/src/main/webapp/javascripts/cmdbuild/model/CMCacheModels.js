@@ -45,7 +45,27 @@
 			{name: "descr_1", type: "stirng"},
 			{name: "descr_2", type: "stirng"},
 			{name: "md_label", type: "string"}
-		]
+		],
+
+		getAttributes: function() {
+			var a;
+			if (this.raw) {
+				a = this.raw.attributes;
+			}
+
+			return a || this.data.attributes || [];
+		},
+
+		getDetailSide: function() {
+			var c = this.get("cardinality");
+			if (c == "1:N") {
+				return "_2";
+			} else if (c == "N:1") {
+				return "_1";
+			} else {
+				return undefined;
+			}
+		}
 	});
 	
 	Ext.define("CMDBuild.cache.CMReportModel", {
