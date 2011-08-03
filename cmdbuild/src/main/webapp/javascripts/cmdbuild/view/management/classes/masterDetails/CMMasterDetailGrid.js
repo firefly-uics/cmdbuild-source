@@ -4,7 +4,7 @@
 
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
-
+		cmAddPrintButton: false,
 		loadDetails: function(p) {
 			var detailIdClass = getDetailClass(p.detail);
 
