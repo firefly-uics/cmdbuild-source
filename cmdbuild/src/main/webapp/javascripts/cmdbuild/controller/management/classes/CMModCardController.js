@@ -198,9 +198,13 @@
 				success : function(form, action) {
 					CMDBuild.LoadMask.get().hide();
 					this.cardPanel.displayMode();
-					params.Id = action.result.id || params.Id; // if is a new card, the id is given by the request
 
-					this.cardGrid.openCard(params);
+					var c = {
+						Id: action.result.id || params.Id,// if is a new card, the id is given by the request
+						IdClass: this.currentEntryId
+					};
+
+					this.cardGrid.openCard(c);
 				},
 
 				failure : function() {
