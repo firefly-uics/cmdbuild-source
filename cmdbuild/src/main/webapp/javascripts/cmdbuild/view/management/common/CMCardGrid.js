@@ -474,17 +474,20 @@
 			}
 		});
 	}
-	
+
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		if (event.target.className == 'action-open-graph') {
 			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
 		}
 	}
-	
-	// TODO 3 to 4 qualcosa non va
+
 	function getPageNumber(cardPosition) {
 		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
 			pageNumber = 1;
+
+		if (cardPosition == 0) {
+			return pageNumber;
+		}
 
 		if (cardPosition) {
 			pageNumber = (parseInt(cardPosition) - 1) / pageSize;

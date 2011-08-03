@@ -89,7 +89,7 @@
 			},
 			checkFn: function() {
 				// I want exit if there are no busy wc
-				return !areThereBusyWidget()
+				return !areThereBusyWidget();
 			},
 			cbScope: cbScope,
 			checkFnScope: this
@@ -171,7 +171,7 @@
 				linkCards: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMLinkCardsController(w);
 				}
-			}
+			};
 
 		return builders[w.extattrtype](w);
 	}
@@ -266,6 +266,8 @@
 	}
 
 	function saveActivity() {
+		CMDBuild.LoadMask.get().show();
+
 		// if the record is new it has not raw data, so use the normal data
 		var data = this.currentActivity.raw,
 			requestParams = {
@@ -277,12 +279,11 @@
 				attributes: Ext.JSON.encode(this.activityPanelController.view.getValues())
 			};
 
-		var ww = undefined;
+		var ww = {};
 		for (var wc in this.widgetsController) {
 			wc = this.widgetsController[wc];
 			var wcData = wc.getData();
 			if (wcData != {} && wcData != null) {
-				ww = ww || {};
 				ww[wc.wiewIdenrifier] = wcData;
 			}
 		}
@@ -291,8 +292,6 @@
 			requestParams["ww"] = Ext.JSON.encode(ww);
 		}
 
-//		CMDBuild.LoadMask.get().show();
-		
 		CMDBuild.ServiceProxy.workflow.saveActivity({
 			timeout: 90,
 			params: requestParams,
