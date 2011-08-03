@@ -1,6 +1,6 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.common.CMAddDetailWindowController", {
-		extend: "CMDBuild.controller.management.common.CMCardWindowController",
+		extend: "CMDBuild.controller.management.common.CMDetailWindowController",
 
 		//override
 		buildSaveParams: function() {
@@ -19,7 +19,13 @@
 		//override
 		onSaveSuccess: function(form, res) {
 			if (this.addRelationAfterSave) {
-				var p = buildParamsToCreateRelation.call(this, res);
+				this.addRelationAfterSave = false;
+				var detailData = {
+					id: res.result.id,
+					cid: res.params.IdClass
+				};
+
+				var p = this.buildParamsToSaveRelation(detailData);
 
 				CMDBuild.ServiceProxy.relations.add({
 					params: { JSON: Ext.JSON.encode(p) },
@@ -31,32 +37,29 @@
 			} else {
 				this.view.destroy();
 			}
+		},
+		
+		// override
+		fillRelationAttributesParams: function(detailData, attributes) {
+			var out = this.callParent(arguments),
+				master = this.view.masterData,
+				masterPosition = getMasterPosition(master, detail),
+				detailPosition = getDetailPosition(masterPosition);
+
+			out[masterPosition] = {
+				id: master.get("Id"),
+				cid: master.get("IdClass")
+			};
+
+			out[detailPosition] = {
+				id: detailData.id,
+				cid: detailData.cid
+			};
+
+			return out;
 		}
 	});
-
-	function buildParamsToCreateRelation(response) {
-		var newDetailId = response.result.id,
-			detail = this.view.detail,
-			master = this.view.masterData,
-			masterPosition = getMasterPosition(master, detail),
-			detailPosition = getDetailPosition(masterPosition),
-			attrs = {};
-
-		attrs[masterPosition] = {
-			id: master.get("Id"),
-			cid: master.get("IdClass")
-		};
-		attrs[detailPosition] = {
-			id: response.result.id,
-			cid: response.params.IdClass
-		};
-
-		return {
-			did: detail.get("id"),
-			attrs: attrs
-		};
-	}
-
+	
 	function getMasterPosition(m, detail) {
 		var cardinality = detail.get("cardinality"),
 			masterClassId = m.get("IdClass");

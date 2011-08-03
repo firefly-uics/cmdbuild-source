@@ -88,6 +88,8 @@
 				}
 			});
 		}
+		
+		this.fireEvent("cmFormFilled");
 	}
 
 	function addReferenceAttrsToData(data, referenceAttributes) {

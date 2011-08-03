@@ -74,7 +74,7 @@
 				this.view.reload();
 			}, this, {single: true});
 	
-			new CMDBuild.controller.management.common.CMCardWindowController(w);
+			new CMDBuild.controller.management.common.CMDetailWindowController(w);
 			w.show();
 		},
 

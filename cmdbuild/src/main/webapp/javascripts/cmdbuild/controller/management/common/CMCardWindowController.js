@@ -6,9 +6,15 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		this.view.cardPanel.cancelButton.on("click", this.onCancelButtonClick, this);
 	},
 
+	getForm: function() {
+		return this.view.cardPanel.getForm()
+	},
+
 	onSaveButtonClick: function() {
-		var form = this.view.cardPanel.getForm(),
+		var form = this.getForm(),
 			params = this.buildSaveParams();
+
+		this.beforeRequest(form);
 
 		if (form.isValid()) {
 			form.submit({
@@ -36,5 +42,8 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 	// private, overridden in subclasses
 	onSaveSuccess: function(form, action) {
 		this.view.destroy();
-	}
+	},
+
+	// template to override in subclass
+	beforeRequest: Ext.emptyFn
 });
