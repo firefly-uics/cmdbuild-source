@@ -27,7 +27,8 @@ public class GetRelationList extends AbstractGetRelation {
 		Validate.notNull(src);
 		final CMDomain domain = getQueryDomain(domainWithSource);
 		final CMQueryResult relationList = getRelationQuery(src, domain).run();
-		return serializeResponse(relationList);
+		final String domainSource = (domainWithSource != null) ? domainWithSource.querySource : null;
+		return serializeResponse(relationList, domainSource);
 	}
 
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
@@ -41,11 +42,15 @@ public class GetRelationList extends AbstractGetRelation {
 		return dom;
 	}
 
-	private GetRelationListResponse serializeResponse(final CMQueryResult relationList) {
+	// FIXME Implement domain direction in queries and remove the domainSource hack!
+	private GetRelationListResponse serializeResponse(final CMQueryResult relationList, final String domainSource) {
 		final GetRelationListResponse out = new GetRelationListResponse();
 		for (CMQueryRow row : relationList) {
 			final CMCard dst = row.getCard(DST_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
+			if (domainSource != null && !domainSource.equals(rel.getQueryDomain().getQuerySource())) {
+				continue;
+			}
 			out.addRelation(rel, dst);
 		}
 		return out;
