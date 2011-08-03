@@ -1,62 +1,42 @@
-CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
+Ext.define("CMDBuild.LoginWindowClass", {
+	extend: "Ext.window.Window",
 	ajaxOptions: [],
 
 	initComponent: function() {
-		var tr = CMDBuild.Translation.login;
-		
-		var doLogin = function () {
-			CMDBuild.LoadMask.get().show();
-			this.form.getForm().submit({
-				success: function() {
-					this.passwordField.reset();
-					this.hide();
-					if (this.refreshOnLogin) {
-						window.location.reload();
-					} else {
-						CMDBuild.LoadMask.get().hide();
-						for (var requestOption; requestOption=this.ajaxOptions.pop();) {
-							CMDBuild.Ajax.request(requestOption);
-						}
+
+		var me = this;
+
+		var enterKeyListener = {
+				'specialkey': function(field, event) {
+					if(event.getKey() == event.ENTER) {
+						me.doLogin(field, event);
 					}
-				},
-				failure: function(form, action) {					
-					var tr = CMDBuild.Translation.errors.reasons;
-					if (this.messageCmp.items) {
-						this.messageCmp.remove(0);
-					}
-					if (tr && action.result && action.result.reason) {
-						var errorTranslation = tr[action.result.reason];
-						if (errorTranslation) {
-							this.messageCmp.add({html: errorTranslation});
-						} else {
-							this.messageCmp.add({html: CMDBuild.Translation.errors.unknown_error});
-						}
-					}
-					this.messageCmp.doLayout();
-					return false;
-				},
-				scope: this
-			});
-		};
-		
+				}
+			};
+
 		Ext.apply(this, {
-			title: tr.relogin_title,
+			title: CMDBuild.Translation.login.relogin_title,
 			width: 300,
 			height: 155,
 			layout: 'fit',
-			border: true,
-			frame: true,			
+			bodyStyle: {
+				padding: "5px 5px 10px 5px"
+			},
 			items: [this.form = new Ext.form.FormPanel({
 				url: 'services/json/login/login',
-				frame: true,
-				border: false,			
+				frame: false,
+				bodyCls: "x-panel-body-default-framed",
+				cls: "x-panel-body-default-framed",
+				border: false,
+				bodyStyle: {
+					padding: "5px"
+				},
 				trackResetOnLoad: true,
-				items: [this.messageCmp = new Ext.Panel({
-					xtype: 'panel',
-					frame: false,
-					border: false,
-					style: {padding: '5px 5px 15px 0'},
-					html: tr.relogin_message
+				items: [this.messageCmp = new Ext.form.field.Display({
+					value: CMDBuild.Translation.login.relogin_message,
+					style: {
+						padding: "0px 0px 5px 0px"
+					}
 				}),
 				this.usernameField = new Ext.form.Hidden({
 					name: 'username',
@@ -65,9 +45,10 @@ CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
 				this.passwordField = new Ext.form.Field({
 					name: 'password',
 					inputType : 'password',
-					fieldLabel : tr.password,
+					fieldLabel : CMDBuild.Translation.login.password,
 					allowBlank : false,
-					hidden: !CMDBuild.Runtime.AllowsPasswordLogin
+					hidden: !CMDBuild.Runtime.AllowsPasswordLogin,
+					listeners: enterKeyListener
 				}),
 				{
 					name: 'role',
@@ -76,27 +57,23 @@ CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
 				}],
 				buttonAlign: 'center',
 				buttons: [{
-					text : tr.login,
+					text : CMDBuild.Translation.login.login,
 					formBind : true,
-					handler: doLogin,
+					handler: this.doLogin,
 					scope: this,
 					hidden: !CMDBuild.Runtime.AllowsPasswordLogin
 				},{
-					text : tr.change_user,
-					handler : function() {
-						window.location = '.';
-					},
+					text : CMDBuild.Translation.login.change_user,
+					handler : this.reloadPage,
 					hidden: !CMDBuild.Runtime.AllowsPasswordLogin
 				},{
 					text : Ext.MessageBox.buttonText.ok,
-					handler : function() {
-						window.location = '.';
-					},
+					handler : this.reloadPage,
 					hidden: CMDBuild.Runtime.AllowsPasswordLogin
 				}]
 			})]
 		});
-		CMDBuild.LoginWindowClass.superclass.initComponent.apply(this);
+		this.callParent(arguments);
 	},
 
 	addAjaxOptions: function(requestOption) {
@@ -109,6 +86,43 @@ CMDBuild.LoginWindowClass = Ext.extend(Ext.Window, {
 		if (!enabled) {
 			this.passwordField.setValue("******");
 		}
+	},
+
+	doLogin: function() {
+		CMDBuild.LoadMask.get().show();
+		this.form.getForm().submit({
+			success: function() {
+				this.passwordField.reset();
+				this.hide();
+				if (this.refreshOnLogin) {
+					window.location.reload();
+				} else {
+					CMDBuild.LoadMask.get().hide();
+					for (var requestOption; requestOption=this.ajaxOptions.pop();) {
+						CMDBuild.Ajax.request(requestOption);
+					}
+				}
+			},
+			failure: function(form, action) {
+				var errorTranslation;
+				try {
+					var tr = CMDBuild.Translation.errors.reasons,
+						result = Ext.JSON.decode(action.response.responseText);
+						reason = result.errors[0].reason;
+					errorTranslation = CMDBuild.Translation.errors.reasons[reason];
+				} catch (err) {
+				}
+				this.messageCmp.setValue(errorTranslation
+						|| CMDBuild.Translation.errors.unknown_error);
+				CMDBuild.LoadMask.get().hide();
+				return false;
+			},
+			scope: this
+		});
+	},
+
+	reloadPage: function() {
+		window.location = ".";
 	}
 });
 
