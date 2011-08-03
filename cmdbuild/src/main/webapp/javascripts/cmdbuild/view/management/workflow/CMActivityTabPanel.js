@@ -65,7 +65,10 @@
 			this.widgetsMap = {};
 
 			Ext.Array.forEach(widgets, function(w, i) {
-				this.widgetsMap[w.identifier] = buildWidget.call(this, w, activity);
+				var ui = buildWidget.call(this, w, activity);
+				if (ui) {
+					this.widgetsMap[w.identifier] = ui;
+				}
 			}, this);
 			this.widgetsTab.disable();
 			this.activityTab.updateForActivity(activity, o);
@@ -89,11 +92,15 @@
 					me.widgetsTab.add(w);
 					return w;
 				}
-			}
+			};
 
-		return builders[widget.extattrtype](widget);
+		if (builders[widget.extattrtype]) {
+			return builders[widget.extattrtype](widget);
+		} else {
+			return null;
+		}
 	}
-	
+
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel.DocPanel", {
 		extend: "Ext.panel.Panel",
 		initComponent: function() {

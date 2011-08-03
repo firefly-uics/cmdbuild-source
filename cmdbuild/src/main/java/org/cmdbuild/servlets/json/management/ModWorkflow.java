@@ -236,6 +236,10 @@ public class ModWorkflow extends JSONBase {
 
 	private void saveWorkflowWidgets(SharkFacade sharkFacade, ActivityIdentifier ai, JSONObject ww) throws JSONException, MultipleException {
 		MultipleException me = null;
+		if (ww.length() == 0) {
+			// JSONObject.getNames(ww) returns null if the object is empty
+			return;
+		}
 		for (String identifier : JSONObject.getNames(ww)) {
 			final Map<String, String[]> values = jsonObjectToStringArrayMap(ww.getJSONObject(identifier));
 			try {
