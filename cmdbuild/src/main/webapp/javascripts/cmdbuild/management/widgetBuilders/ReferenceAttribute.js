@@ -26,18 +26,61 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		name: attribute.name + "_value",
 		disabled: false
 	});
-
+	
 	var subFields = getSubFields(attribute, display = true);
 
 	if (subFields.length > 0) {
-		var items = [field].concat(subFields);
+		var subFieldsPanel = new Ext.panel.Panel({
+			bodyCls: "x-panel-body-default-framed",
+			bodyStyle: {
+				padding: "0 0 10px 15px"
+			},
+			hideMode: "offsets",
+			hidden: true,
+			frame: false,
+			items: [subFields]
+		}),
+
+		button = new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
+			subfieldsPanel: subFieldsPanel,
+			margin: "1 0 0 5"
+		});
+
+		field.setValue = Ext.Function.createSequence(field.setValue, function(v) {
+			var tm = new Ext.util.TextMetrics()
+			if (v) {
+				try {
+					var length = tm.getWidth(v) + "px";
+					field.bodyEl.dom.firstChild.style.width = length;
+					field.bodyEl.dom.style.width = length;
+					var fieldLength = field.labelEl.dom.clientWidth + field.bodyEl.dom.clientWidth;
+					field.setWidth(fieldLength);
+
+					tm.destroy();
+				} catch (e) {
+					
+				}
+				button.show();
+			} else {
+				button.hide();
+			}
+		});
 
 		return new Ext.panel.Panel({
 			frame: false,
 			border: false,
 			bodyCls: "x-panel-body-default-framed",
-			items: items
-		})
+			items: [{
+				xtype:'panel',
+				bodyCls: "x-panel-body-default-framed",
+				frame: false,
+				layout: "hbox",
+				items: [field, button]
+			},
+				subFieldsPanel
+			]
+		});
+
 	} else {
 		return field;
 	}

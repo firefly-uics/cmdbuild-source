@@ -388,6 +388,36 @@ em {
 	background-image: url(../images/icons/attach.png) !important;
 }
 
+.up {
+	background-image: url(../images/icons/up.gif) !important;
+}
+
+.down {
+	background-image: url(../images/icons/down.gif) !important;
+}
+
+.up-hover {
+	background-image: url(../images/icons/up-hover.gif) !important;
+}
+
+.down-hover {
+	background-image: url(../images/icons/down-hover.gif) !important;
+}
+/* Buttons */
+.clearButtonBGandBorder {
+	-moz-border-radius: 0 !important;
+	-webkit-border-radius: 0 !important;
+	-o-border-radius: 0 !important;
+	-ms-border-radius: 0 !important;
+	-khtml-border-radius: 0 !important;
+	border-radius: 0 !important;
+	padding: 0;
+	border-width: none !important;
+	border-style : none !important;
+	background-image: none !important;
+	background-color: #DFE9F6 !important
+}
+
 /*trigger fields*/
 .trigger-edit {
 	background-image: url(../images/form/trigger-edit.png) !important;
