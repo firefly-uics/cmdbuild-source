@@ -235,12 +235,12 @@ public class SchemaCache {
 
 	public void refreshTables() {
 		clearTables();
+		TemporaryObjectsBeforeSpringDI.getDriver().clearClassesCache();
 	}
 
 	public void clearTables() {
 		tableMap = null;
 		tableTree = null;
-		TemporaryObjectsBeforeSpringDI.getDriver().clearClassesCache();
 	}
 
 	public void refreshLookups() {
@@ -255,11 +255,11 @@ public class SchemaCache {
 
 	public void refreshDomains() {
 		clearDomains();
+		TemporaryObjectsBeforeSpringDI.getDriver().clearDomainsCache();
 	}
 
 	public void clearDomains() {
 		domainMap = null;
-		TemporaryObjectsBeforeSpringDI.getDriver().clearDomainsCache();
 	}
 
 	public void addTable(int oid, ITable table) {
