@@ -7,7 +7,10 @@
  * @class Ext.ux.Notification
  * @extends Ext.Window
  * 
- * modified by us
+ * Modified by Tecnoteca
+ * 
+ *  - Use close instead of hide
+ *  - Something else not documented
  */
 (function() {
 	var BORDER_X_OFFSET = 20,
@@ -45,7 +48,7 @@ Ext.define("Ext.ux.Notification", {
 		});
 
 		if(this.autoDestroy) {
-			this.task = new Ext.util.DelayedTask(this.hide, this);
+			this.task = new Ext.util.DelayedTask(this.close, this);
 		} else {
 			this.closable = true;
 		}

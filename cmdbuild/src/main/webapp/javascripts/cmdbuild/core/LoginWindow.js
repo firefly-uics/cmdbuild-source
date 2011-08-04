@@ -90,10 +90,11 @@ Ext.define("CMDBuild.LoginWindowClass", {
 
 	doLogin: function() {
 		CMDBuild.LoadMask.get().show();
+		this.hide();
 		this.form.getForm().submit({
+			important: true,
 			success: function() {
 				this.passwordField.reset();
-				this.hide();
 				if (this.refreshOnLogin) {
 					window.location.reload();
 				} else {
@@ -104,18 +105,8 @@ Ext.define("CMDBuild.LoginWindowClass", {
 				}
 			},
 			failure: function(form, action) {
-				var errorTranslation;
-				try {
-					var tr = CMDBuild.Translation.errors.reasons,
-						result = Ext.JSON.decode(action.response.responseText);
-						reason = result.errors[0].reason;
-					errorTranslation = CMDBuild.Translation.errors.reasons[reason];
-				} catch (err) {
-				}
-				this.messageCmp.setValue(errorTranslation
-						|| CMDBuild.Translation.errors.unknown_error);
+				this.showWithoutBringingToFront();
 				CMDBuild.LoadMask.get().hide();
-				return false;
 			},
 			scope: this
 		});
@@ -123,6 +114,19 @@ Ext.define("CMDBuild.LoginWindowClass", {
 
 	reloadPage: function() {
 		window.location = ".";
+	},
+
+	/*
+	 * Hack to let the error messages appear on top of it.
+	 * Ext.Component.toFrontOnShow does not work because
+	 * Ext.Component.afterShow does not check it and calls
+	 * toFront anyway!
+	 */
+	showWithoutBringingToFront: function() {
+		var oldToFront = this.toFront;
+		this.toFront = Ext.emptyFn;
+		this.show();
+		this.toFront = oldToFront;
 	}
 });
 
