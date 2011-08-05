@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.Management.SearchableCombo", {
-	extend: "Ext.form.field.ComboBox",
+	extend: "CMDBuild.field.CMBaseCombo",
 
 	trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
     trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',    

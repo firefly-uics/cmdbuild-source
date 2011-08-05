@@ -18,6 +18,7 @@
 			this.wfWidgetsPanel = new CMDBuild.view.management.workflow.CMActivityPanel.WFWidgetsPanel({
 				region: 'east',
 				hideMode: 'offsets',
+				cls: "cmborderleft",
 				autoScroll: true,
 				frame: true,
 				items: []
@@ -63,15 +64,14 @@
 				}
 			}, this);
 
-			if (o.reloadFields) {
-				_CMCache.getAttributeList(activity.data.IdClass, 
-					Ext.bind(function cb(a) {
-						this.activityForm.buildActivityFields(a);
-						loadCard();
-					}, this));
-			} else {
-				loadCard()
-			}
+			//we need to reload always the fields
+			_CMCache.getAttributeList(
+				activity.data.IdClass,
+				Ext.bind(function cb(a) {
+					this.activityForm.buildActivityFields(a);
+					loadCard();
+				}, this)
+			);
 		},
 
 		getForm: function() {
@@ -200,20 +200,20 @@
 
 		buildActivityFields: function(attributes, editMode) {
 			var cleanedAttrs = [],
-				data = this.activityToLoad.raw || this.activityToLoad.data; // if is a template giwen from the server, has not the raw data, so use the data
+				data = this.activityToLoad.raw || this.activityToLoad.data; // if is a template given from the server, has not the raw data, so use the data
 
 			for (var a in attributes) {
 				a = attributes[a];
 				var index = data[a.name + "_index"];
-				if(index != undefined && index > -1) {
+				if (index != undefined && index > -1) {
 					var mode = data[a.name + "_type"];
 					a.fieldmode = modeConvertionMatrix[mode];
-					cleanedAttrs.push(a);
+					cleanedAttrs[index] = a;
 				}
 			}
 
 			this.fillForm(cleanedAttrs, editMode);
-		} 
+		}
 	});
 
 })();

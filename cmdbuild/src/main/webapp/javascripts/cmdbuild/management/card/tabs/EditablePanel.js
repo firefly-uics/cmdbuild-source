@@ -5,6 +5,9 @@
 		if (attributes) {
 			for (var i=0; i<attributes.length; ++i) {
 				var attribute = attributes[i];
+				if (!attribute) {
+					continue;
+				}
 				var field;
 				if (editable) {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, this.readOnlyForm);
@@ -12,7 +15,7 @@
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, true); //true to have a displayField
 				}
 				if (field) {
-					fields.push(field);			
+					fields.push(field);
 				}
 			}
 		}

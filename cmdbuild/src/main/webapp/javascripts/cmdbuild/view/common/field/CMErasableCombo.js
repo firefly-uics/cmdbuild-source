@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.field.ErasableCombo", {
-	extend: "Ext.form.field.ComboBox",
+	extend: "CMDBuild.field.CMBaseCombo",
 	alias: "cmerasablecombo",
 	trigger1cls: Ext.form.field.ComboBox.triggerCls,
 	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',

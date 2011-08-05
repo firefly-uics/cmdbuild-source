@@ -59,7 +59,7 @@
 		 */
 		updateForActivity: function(activity, o) {
 			var data = activity.raw || activity.data,
-				widgets = data.CmdbuildExtendedAttributes;
+				widgets = data.CmdbuildExtendedAttributes || [];
 
 			this.widgetsTab.removeAll(autoDestroy = true);
 			this.widgetsMap = {};
@@ -76,18 +76,29 @@
 
 		getWFWidgets: function() {
 			return this.widgetsMap;
+		},
+
+		showActivityPanel: function() {
+			this.acutalPanel.setActiveTab(this.activityTab);
 		}
 	});
 
 	function buildWidget(widget, activity) {
 		var me = this,
+			conf = {
+				widget: widget,
+				activity: activity,
+				clientForm: me.activityTab.getForm()
+			},
 			builders = {
-				linkCards: function(widget) {
-					var w = new CMDBuild.view.management.workflow.widgets.CMLinkCards({
-						widget: widget,
-						activity: activity,
-						clientForm: me.activityTab.getForm()
-					});
+				linkCards: function() {
+					var w = new CMDBuild.view.management.workflow.widgets.CMLinkCards(conf);
+
+					me.widgetsTab.add(w);
+					return w;
+				},
+				createModifyCard: function() {
+					var w = new CMDBuild.view.management.workflow.widgets.CMCreateModifyCard(conf);
 
 					me.widgetsTab.add(w);
 					return w;

@@ -28,8 +28,9 @@
 		},
 		
 		getInvalidField: function() {
-			var fields = this.getForm().items;
-			var invalid = [];
+			var fields = this.getForm().getFields(),
+				invalid = [];
+
 			fields.each(function(field) {
 				if (!field.isValid()) {
 					invalid.push(field);

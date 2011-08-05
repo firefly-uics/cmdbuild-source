@@ -43,6 +43,9 @@
 
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/SideTabPanel.js"></script> <!-- TODO move to management -->
+
+<!-- FIELDS  -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMBaseCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
 
 <!--  CONTROLLERS -->
