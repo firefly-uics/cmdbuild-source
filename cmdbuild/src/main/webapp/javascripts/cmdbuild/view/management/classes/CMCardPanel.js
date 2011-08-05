@@ -68,7 +68,6 @@
 
 		onClassSelected: function(id) {
 			_CMCache.getAttributeList(id, Ext.bind(fillForm, this));
-			this.displayMode(enableCMTbar = false);
 		},
 
 		onCardSelected: function(card, reloadField, loadRemoteData) {
@@ -152,8 +151,11 @@
 			this.danglingCard = null;
 		}
 
-		if (editMode) {
+		if (editMode || this.forceEditMode) {
 			this.editMode();
+			this.forceEditMode = false;
+		} else {
+			this.displayMode();
 		}
 	};
 

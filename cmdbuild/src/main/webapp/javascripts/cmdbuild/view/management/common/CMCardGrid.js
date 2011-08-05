@@ -145,6 +145,10 @@
 		},
 
 		initComponent: function() {
+			this.viewConfig = {
+				stripeRows: true
+			};
+
 			this.callParent(arguments);
 			this.on('beforeitemclick', cellclickHandler, this);
 		},

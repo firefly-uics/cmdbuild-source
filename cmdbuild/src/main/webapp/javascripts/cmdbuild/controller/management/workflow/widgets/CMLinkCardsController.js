@@ -44,11 +44,7 @@
 			this.view.on("deselect", onDeselect, this);
 		},
 
-		activeView: function() {
-			this.beforeActiveView();
-			this.view.cmActivate();
-		},
-
+		// override
 		beforeActiveView: function() {
 			new _CMUtils.PollingFunction({
 				success: function() {
@@ -82,18 +78,22 @@
 			}).run();
 		},
 
+		// override
 		onEditMode: function() {
 			// for the auto-select
 			resolveTemplate.call(this);
 		},
 
+		// override
 		isBusy: function() {
 			return this.templateResolverIsBusy;
 		},
 
+		// override
 		getData: function() {
-			var out = {};
+			var out = null;
 			if (undefined != this.outputName) {
+				out = {};
 				out[this.outputName] = this.model.getSelections();
 			}
 			return out;
@@ -108,15 +108,6 @@
 		this.model.deselect(cardId);
 	}
 
-	function addViewEventListeners(view) {
-//		view.on("CM_save", function() {
-//			if (undefined != view.outputName) {
-//				var out = {};
-//				out[view.outputName] = this.getData.call(this);
-//				view.react(out);
-//			}
-//		}, this);
-//
 //		view.on("CM_toggle_map", function() {
 //			var v = this.view;
 //			if (v.cardGrid.isVisible()) {
@@ -130,7 +121,7 @@
 //				this.gridController.loadPageForLastSelection(this.mapController.getLastSelection());		
 //			}
 //		}, this);
-	};
+
 
 	function resolveTemplate() {
 		resolve.call(this);

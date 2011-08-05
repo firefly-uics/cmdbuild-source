@@ -35,6 +35,8 @@
 
 				// notify sub-controllers
 				this.activityPanelController.onEntrySelected(selection);
+
+				this.showActivityPanel();
 			}
 		},
 
@@ -78,6 +80,10 @@
 			if (wc) {
 				wc.activeView();
 			}
+		},
+
+		showActivityPanel: function() {
+			this.tabPanel.showActivityPanel();
 		}
 	});
 
@@ -126,6 +132,8 @@
 
 	function onActivitySelect(sm, selection) {
 		if (selection.length > 0) {
+			this.showActivityPanel();
+
 			var editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
 			updateForActivity.call(this, selection[0], editMode);
 		}
@@ -148,7 +156,7 @@
 			var wwWidgets = me.view.getWFWidgets();
 
 			for (var identifier in wwWidgets) {
-				var wc = buildWidgetController(wwWidgets[identifier]);
+				var wc = buildWidgetController.call(me, wwWidgets[identifier]);
 				me.widgetsController[identifier] = wc;
 
 				// on add, the widget controllers are build after that
@@ -167,9 +175,13 @@
 	}
 
 	function buildWidgetController(w) {
-		var builders = {
+		var me = this,
+			builders = {
 				linkCards: function(w) {
-					return new CMDBuild.controller.management.workflow.widgets.CMLinkCardsController(w);
+					return new CMDBuild.controller.management.workflow.widgets.CMLinkCardsController(w, me);
+				},
+				createModifyCard: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMCreateModifyCard(w, me);
 				}
 			};
 
@@ -283,7 +295,7 @@
 		for (var wc in this.widgetsController) {
 			wc = this.widgetsController[wc];
 			var wcData = wc.getData();
-			if (wcData != {} && wcData != null) {
+			if (wcData != null) {
 				ww[wc.wiewIdenrifier] = wcData;
 			}
 		}

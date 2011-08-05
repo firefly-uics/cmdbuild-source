@@ -26,6 +26,7 @@
 			this.enable();
 			try {
 				this.ownerCt.setActiveTab(this);
+				this.fireEvent("cmactive");
 			} catch (e) {
 				Ext.Function.createDelayed(function(){
 					this.cmActivate();

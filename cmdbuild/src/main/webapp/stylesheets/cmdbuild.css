@@ -452,6 +452,12 @@ em {
 	padding-right: 5px;
 }
 
+/* to have a different background for the even rows*/
+.x-grid-row-alt .x-grid-cell,
+.x-grid-row-alt .x-grid-rowwrap-div {
+	background-color: #EEEEEE !important;
+}
+
 /* Custom rule to fix collapsible tab panel tool */
 .x-tab-panel-header .x-tool {
 	display: none;
@@ -790,9 +796,14 @@ em {
 	border-bottom-width: 1px ! important;
 }
 
-.cmborderright{
+.cmborderright {
 	border-right-style: solid ! important;
 	border-right-width: 1px ! important;
+}
+
+.cmborderleft {
+	border-left-style: solid ! important;
+	border-left-width: 1px ! important;
 }
 
 /*
