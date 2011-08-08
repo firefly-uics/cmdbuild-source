@@ -93,14 +93,20 @@
 			builders = {
 				linkCards: function() {
 					var w = new CMDBuild.view.management.workflow.widgets.CMLinkCards(conf);
-
 					me.widgetsTab.add(w);
+
 					return w;
 				},
 				createModifyCard: function() {
 					var w = new CMDBuild.view.management.workflow.widgets.CMCreateModifyCard(conf);
-
 					me.widgetsTab.add(w);
+
+					return w;
+				},
+				manageRelation: function() {
+					var w = new CMDBuild.view.management.workflow.widgets.CMManageRelation(conf);
+					me.widgetsTab.add(w);
+
 					return w;
 				}
 			};

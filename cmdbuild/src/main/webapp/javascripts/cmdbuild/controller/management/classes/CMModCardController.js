@@ -71,7 +71,7 @@
 			var entryType = _CMCache.getEntryTypeById(p.IdClass),
 				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
 				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
-			
+
 			if (p.activeFirstTab) {
 				this.view.cardTabPanel.activeFirstTab();
 			}

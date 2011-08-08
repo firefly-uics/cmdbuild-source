@@ -15,19 +15,18 @@
 				'action-relation-edit': this.onEditRelationClick,
 				'action-relation-delete': this.onDeleteRelationClick,
 				'action-relation-editcard': this.onEditCardClick,
-				'action-relation-viewcard': this.onViewCardClick,
-				// TODO: refactor this, as the next 2 things are useful only for the workflow (or port modify/card also here)
-				'action-card-modify': this.modifyCard,
-				'action-card-delete': this.deleteCard
+				'action-relation-viewcard': this.onViewCardClick
 			};
 
 			this.view.store.getRootNode().on("append", function(root, newNode) {
+				// the nodes with depth == 1 are the folders
 				if (newNode.get("depth") == 1) {
 					newNode.on("expand", onDomainNodeExpand, this, {single: true});
 				}
 			}, this);
 
 			this.view.addRelationButton.on("cmClick", this.onAddRelationButtonClick, this);
+
 			this.view.on('beforeitemclick', cellclickHandler, this);
 			this.view.on("itemdblclick", onItemDoubleclick, this);
 			this.view.on("activate", this.loadData, this);
@@ -46,6 +45,8 @@
 
 			this.view.disable();
 			this.view.clearStore();
+
+			this.hasDomains = false;
 			this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(selection);
 		},
 

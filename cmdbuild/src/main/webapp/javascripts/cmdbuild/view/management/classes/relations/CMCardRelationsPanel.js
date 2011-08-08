@@ -15,11 +15,10 @@
 
 	Ext.define("CMDBuild.view.management.classes.CMCardRelationsPanel", {
 		extend: "Ext.tree.Panel",
-		initComponent: function() {
+		cmWithAddButton: true,
 
-			this.addRelationButton = new CMDBuild.AddRelationMenuButton({
-				text : tr.add_relations
-			});
+		initComponent: function() {
+			this.buildTBar();
 
 			var me = this;
 
@@ -43,22 +42,38 @@
 					{header: col_tr.description, flex: 2, sortable: false, dataIndex: 'dst_desc'},
 					{header: CMDBuild.Translation.administration.modClass.tabs.attributes, flex: 3, sortable: false, dataIndex: 'rel_attr'},
 					{
-						header: '&nbsp', 
-						width: 90,
+						header: '&nbsp',
 						fixed: true, 
 						sortable: false, 
-						renderer: renderRelationActions, 
+						renderer: this.renderRelationActions, 
 						align: 'center', 
 						cellCls: 'grid-button', 
 						dataIndex: 'Fake',
 						menuDisabled: true,
 						hideable: false
 					}
-				],
-				tbar: [this.addRelationButton]
+				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		buildTBar: function() {
+			if (this.cmWithAddButton) {
+				this.addRelationButton = new CMDBuild.AddRelationMenuButton({
+					text : tr.add_relations
+				});
+
+				this.tbar = [this.addRelationButton]
+			} else {
+				// build a null-object to skip some check
+				this.addRelationButton = {
+					enable: function(){},
+					disable: function(){},
+					setDomainsForEntryType: function(){},
+					on: function(){}
+				}
+			}
 		},
 
 		clearStore: function() {
@@ -94,7 +109,8 @@
 			this.disable();
 		},
 
-		convertRelationInNodes: convertRelationInNodes
+		convertRelationInNodes: convertRelationInNodes,
+		renderRelationActions: renderRelationActions
 	});
 	
 	function buildNodeForDomain(domainResponseObj, domainCachedData) {

@@ -70,7 +70,7 @@
 				if (btn != 'yes') {
 					return;
 				} else {
-					delteActivity.call(me);
+					deleteActivity.call(me);
 				}
 			}
 		},
@@ -84,6 +84,26 @@
 
 		showActivityPanel: function() {
 			this.tabPanel.showActivityPanel();
+		},
+
+		openCard: function(p) {
+			var entryType = _CMCache.getEntryTypeById(p.IdClass),
+				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
+				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
+
+			if (p.activeFirstTab) {
+				this.view.cardTabPanel.activeFirstTab();
+			}
+
+			this.danglingCardToOpen = p;
+
+			accordion.expand();
+
+			Ext.Function.createDelayed(function() {
+			// TODO try to substitute this with the listener "afterlayout"
+				accordion.deselect();
+				accordion.selectNodeById(p.IdClass);
+			}, 100)();
 		}
 	});
 
@@ -182,6 +202,9 @@
 				},
 				createModifyCard: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMCreateModifyCard(w, me);
+				},
+				manageRelation: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMManageRelationController(w, me);
 				}
 			};
 
@@ -250,7 +273,7 @@
 		}
 	}
 
-	function delteActivity() {
+	function deleteActivity() {
 		var me = this;
 
 		CMDBuild.LoadMask.get().show();

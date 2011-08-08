@@ -137,6 +137,21 @@
 			delete this.sideTabPanel;
 		}
 
+		if (panels.length == 0) {
+			// hack to have a framed panel
+			// if there are no attributes
+			panels = [new CMDBuild.Management.EditablePanel({
+				attributes: [],
+				frame: false,
+				border: false,
+				tabLabel: "",
+				bodyCls: "x-panel-body-default-framed",
+				bodyStyle: {
+					padding: "5px"
+				}
+			})];
+		}
+
 		this.sideTabPanel = new CMDBuild.SideTabPanel({
 			tabs: panels,
 			frame: false,

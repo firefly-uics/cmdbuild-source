@@ -42,6 +42,7 @@
 		// override
 		fillRelationAttributesParams: function(detailData, attributes) {
 			var out = this.callParent(arguments),
+				detail = this.view.detail,
 				master = this.view.masterData,
 				masterPosition = getMasterPosition(master, detail),
 				detailPosition = getDetailPosition(masterPosition);

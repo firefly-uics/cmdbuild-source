@@ -115,7 +115,9 @@
 		},
 		
 		reset: function() {
-			this.getForm().reset();
+			try {
+				this.getForm().reset();
+			} catch (e) {}
 		},
 		
 		iterateOverCMButtons: function(fn) {
