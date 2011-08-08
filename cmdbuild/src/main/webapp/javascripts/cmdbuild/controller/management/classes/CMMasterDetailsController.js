@@ -97,24 +97,32 @@
 				if (btn != 'yes') {
 					return;
 				}
-
-				CMDBuild.LoadMask.get().show()
-				CMDBuild.ServiceProxy.relations.remove({
-					params : {
-						"DomainId" : this.currentDetail.get("id"),
-						"Class1Id" : this.currentMasterData.get("IdClass"),
-						"Card1Id" : this.currentMasterData.get("Id"),
-						"Class2Id" : model.get("IdClass"),
-						"Card2Id" : model.get("Id")
-					},
-					scope: this,
-					success: function() {
-						removeCard.call(this, model);
-					},
-					callback: function() {
-						CMDBuild.LoadMask.get().hide()
-					}
-				});
+				
+				// if I'm deleting a detail is needed to remove the
+				// relation at first
+				
+				if (this.currentDetail) {
+					CMDBuild.LoadMask.get().show()
+					CMDBuild.ServiceProxy.relations.remove({
+						params : {
+							"DomainId" : this.currentDetail.get("id"),
+							"Class1Id" : this.currentMasterData.get("IdClass"),
+							"Card1Id" : this.currentMasterData.get("Id"),
+							"Class2Id" : model.get("IdClass"),
+							"Card2Id" : model.get("Id")
+						},
+						scope: this,
+						success: function() {
+							removeCard.call(this, model);
+						},
+						callback: function() {
+							CMDBuild.LoadMask.get().hide()
+						}
+					});
+				} else if(this.currentForeignKey) {
+					// so, remove directly the card
+					removeCard.call(this, model);
+				}
 			};
 		},
 		
