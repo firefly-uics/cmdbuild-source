@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://cxf.apache.org/jaxws
+		http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/bindings/soap
+		http://cxf.apache.org/schemas/configuration/soap.xsd
+	">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /> <!-- CXF 2.3.3 issue, remove when 2.3.4 is available -->
+	<import resource="classpath:META-INF/cxf/cxf-extension-*.xml" />
+
+	<!-- Spring manage ServiceBean -->
+	<bean id="publicWS" class="org.cmdbuild.services.soap.WebservicesImpl" />
+	<bean id="privateWS" class="org.cmdbuild.services.soap.PrivateImpl" />
+
+	<bean id="cmdbuildPasswordCallback" class="org.cmdbuild.services.soap.security.PasswordHandler" />
+	<bean id="addDefaultNamespaceInterceptor" class="org.cmdbuild.services.soap.AddDefaultNamespaceInterceptor" />
+
+	<bean id="cmdbuildPasswordCallbackInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+		<constructor-arg>
+			<map>
+				<entry key="action" value="UsernameToken" />
+				<entry key="passwordCallbackRef">
+					<ref bean="cmdbuildPasswordCallback" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+<!-- Fix for non-standard webservice clients
+    <cxf:bus>
+        <cxf:inInterceptors>
+            <ref bean="addDefaultNamespaceInterceptor"/>
+        </cxf:inInterceptors>
+    </cxf:bus>
+-->
+
+	<jaxws:endpoint id="privateService" implementor="#privateWS" address="/Private">
+		<jaxws:binding>
+			<soap:soapBinding mtomEnabled="true" version="1.2" />
+		</jaxws:binding>
+		<jaxws:inInterceptors>
+			<ref bean="cmdbuildPasswordCallbackInterceptor" />
+		</jaxws:inInterceptors>
+	</jaxws:endpoint>
+
+	<jaxws:endpoint id="publicService" implementor="#publicWS" address="/Webservices">
+		<jaxws:binding>
+			<soap:soapBinding mtomEnabled="true" version="1.2" />
+		</jaxws:binding>
+		<jaxws:inInterceptors>
+			<ref bean="cmdbuildPasswordCallbackInterceptor" />
+		</jaxws:inInterceptors>
+	</jaxws:endpoint>
+</beans>
