@@ -167,9 +167,7 @@
 						JSON: Ext.JSON.encode(o)
 					},
 					scope: this,
-					success: function() {
-						this.loadData();
-					},
+					success: this.onDeleteRelationSuccess,
 					callback: function() {
 						CMDBuild.LoadMask.get().hide();
 					}
@@ -177,6 +175,11 @@
 			};
 		},
 
+		// to be override in CMManageRelationController
+		onDeleteRelationSuccess: function() {
+			this.loadData();
+		},
+		
 		onEditCardClick: function(model) {
 			openCardWindow.call(this, model, true);
 		},

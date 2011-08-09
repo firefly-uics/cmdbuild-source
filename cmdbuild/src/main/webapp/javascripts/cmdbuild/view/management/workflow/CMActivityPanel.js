@@ -21,8 +21,11 @@
 				cls: "cmborderleft",
 				autoScroll: true,
 				frame: true,
+				border: false,
 				items: []
 			});
+
+			this.wfWidgetsPanel.hide();
 
 			this.layout = "border";
 			this.items = [this.activityForm, this.wfWidgetsPanel];
@@ -40,7 +43,6 @@
 
 		/*
 		 o = {
-				reloadFields: reloadFields,
 				editMode: editMode,
 				cb: cb,
 				scope: this
@@ -72,6 +74,28 @@
 					loadCard();
 				}, this)
 			);
+		},
+
+		updateForClosedActivity: function(activity) {
+			this.activityForm.activityToLoad = activity;
+			this.activityForm.updateInfo(activity);
+			this.wfWidgetsPanel.updateWidgets(activity);
+			
+			_CMCache.getAttributeList(
+				activity.data.IdClass,
+				Ext.bind(function cb(a) {
+					this.activityForm.fillForm(a, editMode = false);
+					this.activityForm.loadCard(activity);
+				}, this)
+			);
+		},
+
+		clearForNoActivity: function() {
+			this.activityForm.removeAll(destroy = true);
+			this.activityForm.updateInfo();
+			this.wfWidgetsPanel.removeAll(destroy = true);
+			this.wfWidgetsPanel.hide();
+			this.displayMode();
 		},
 
 		getForm: function() {
@@ -180,19 +204,20 @@
 				this.saveButton = new Ext.button.Button({
 					text: CMDBuild.Translation.common.buttons.save
 				}),
-	
-				this.cancelButton = new Ext.button.Button( {
-					text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort
-				}),
-	
+
 				this.advanceButton = new Ext.button.Button({
 					text: CMDBuild.Translation.common.buttons.workflow.advance
+				}),
+
+				this.cancelButton = new Ext.button.Button( {
+					text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort
 				})
 			];
 		},
 
 		updateInfo : function(activity) {
-			var data = activity.raw || activity.data;
+			activity = activity || {};
+			var data = activity.raw || activity.data || {};
 
 			this.processStepName.setText(data.activityPerformerName || "");
 			this.processStepCode.setText(data.Code || "");

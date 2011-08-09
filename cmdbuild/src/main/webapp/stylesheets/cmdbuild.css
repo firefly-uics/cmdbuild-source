@@ -785,10 +785,14 @@ em {
 	padding: 5px 5px 0 5px;
 }
 
+.cmborder {
+	border-style: solid ! important;
+	border-width: 1px ! important;
+}
+
 .cmbordertop {
 	border-top-style: solid ! important;
 	border-top-width: 1px ! important;
-	
 }
 
 .cmborderbottom {

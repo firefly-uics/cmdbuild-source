@@ -22,7 +22,10 @@
 				triggerAction: 'all',
 				allowBlank : false,
 				editable: false,
-				grow: true
+				grow: true,
+				isStateOpen: function() {
+					return this.getValue() == STATE_VALUE_OPEN;
+				}
 			});
 
 			this.addCardButton = new CMDBuild.AddCardMenuButton({

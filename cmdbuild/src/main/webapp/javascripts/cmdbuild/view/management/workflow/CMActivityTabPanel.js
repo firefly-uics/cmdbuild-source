@@ -16,13 +16,36 @@
 				autoScroll: true
 			});
 
+			this.cardHistoryPanel = new CMDBuild.view.management.classes.CMCardHistoryTab({
+				title: CMDBuild.Translation.management.modworkflow.tabs.history
+			});
+
+			this.cardNotesPanel = new CMDBuild.view.management.classes.CMCardNotesPanel({
+				title: CMDBuild.Translation.management.modworkflow.tabs.notes
+			});
+
+			this.relationsPanel = new CMDBuild.view.management.classes.CMCardRelationsPanel({
+				title: CMDBuild.Translation.management.modworkflow.tabs.relations
+			});
+
+			this.attachmentPanel = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
+				title: CMDBuild.Translation.management.modworkflow.tabs.attachments
+			});
+
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
 				activeTab: 0,
-				border: false,
+				border: true,
 				frame: false,
 				split: true,
-				items: [this.activityTab, this.widgetsTab]
+				items: [
+					this.activityTab,
+					this.widgetsTab,
+					this.cardNotesPanel,
+					this.relationsPanel,
+					this.cardHistoryPanel,
+					this.attachmentPanel
+				]
 			});
 
 			this.docPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel.DocPanel();
@@ -72,6 +95,13 @@
 			}, this);
 			this.widgetsTab.disable();
 			this.activityTab.updateForActivity(activity, o);
+		},
+
+		updateForClosedActivity: function(activity) {
+			this.widgetsTab.removeAll(autoDestroy = true);
+			this.widgetsMap = {};
+			this.widgetsTab.disable();
+			this.activityTab.updateForClosedActivity(activity);
 		},
 
 		getWFWidgets: function() {

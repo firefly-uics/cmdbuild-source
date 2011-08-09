@@ -31,17 +31,22 @@
 			this.templateResolverIsBusy = false;
 			
 			this.callBacks = Ext.apply(this.callBacks, {
-				'action-card-modify': this.onModifyCard,
-				'action-card-delete': this.onDeleteCard
+				'action-relation-deletecard': this.onDeleteCard
 			})
 		},
 
-		onModifyCard: function() {
-			alert("On modify card");
+		onDeleteCard: function(model) {
+			this.cardToDelete = model;
+			this.onDeleteRelationClick(model);
 		},
 
-		onDeleteCard: function() {
-			alert("On delete card");
+		// override
+		onDeleteRelationSuccess: function() {
+			if (this.cardToDelete) {
+				removeCard.call(this);
+			} else {
+				this.loadData();
+			}
 		},
 
 		// baseWFWidget Functions
@@ -67,7 +72,7 @@
 				return undefined;
 			}
 		},
-		// baseWFWidget Functions
+		// end baseWFWidget Functions
 
 		getCardId: function() {
 			// remember that -1 is the id for a new card
@@ -147,6 +152,25 @@
 			});
 		}
 	});
+
+	function removeCard() {
+		if (this.cardToDelete) {
+			var me = this;
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.ServiceProxy.card.remove({
+				important: true,
+				params : {
+					"IdClass": me.cardToDelete.get("dst_cid"),
+					"Id": me.cardToDelete.get("dst_id")
+				},
+				callback : function() {
+					CMDBuild.LoadMask.get().hide();
+					delete me.cardToDelete;
+					me.loadData();
+				}
+			});
+		}
+	}
 
 	function buildAdapterForExpandNode() {
 		var data = {

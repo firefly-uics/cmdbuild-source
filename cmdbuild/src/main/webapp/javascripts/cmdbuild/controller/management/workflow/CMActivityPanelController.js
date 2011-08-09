@@ -18,13 +18,17 @@
 
 			this.view.activityForm.deleteCardButton.on("click", onDeleteButtonClick, this);
 			this.view.activityForm.modifyCardButton.on("click", onModifyButtonClick, this);
-			
+
 			this.view.wfWidgetsPanel.on("cm-wfwidgetbutton-click", onWFWidgetButtonClick, this);
 		},
 
 		onEntrySelected: function(selection) {
 			this.view.displayMode();
 			this.view.reset();
+		},
+
+		clearViewForNoActivity: function() {
+			this.view.clearForNoActivity();
 		},
 
 		onActivitySelect: function(activity, reloadFields, editMode) {

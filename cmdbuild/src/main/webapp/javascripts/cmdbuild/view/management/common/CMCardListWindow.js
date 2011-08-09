@@ -104,13 +104,13 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 		
 		addCardButton.on("cmClick", function buildTheAddWindow(p) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({
-				classId: this.idClass,
+				classId: p.classId,
 				cmEditMode: true,
 				withButtons: true,
 				title: p.className
 			}).show();
 
-			w.on("close", function() {
+			w.on("destroy", function() {
 				this.grid.reload();
 			}, this);
 

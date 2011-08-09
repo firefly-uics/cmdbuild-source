@@ -59,21 +59,26 @@
 			}
 
 			if (enabledFunctions['allowModify']) {
-				actionsHtml += '<img style="cursor:pointer" class="action-relation-edit" src="images/icons/link_edit.png"/>&nbsp;';
+				actionsHtml += getImgTag("edit", "link_edit.png");
 			}
 			if (enabledFunctions['allowUnlink']) {
-				actionsHtml += '<img style="cursor:pointer" class="action-relation-delete" src="images/icons/link_delete.png"/>&nbsp;';
+				actionsHtml += getImgTag("delete", "link_delete.png");
 			}
 			if (enabledFunctions['allowModifyCard']) {
-				actionsHtml += '<img style="cursor:pointer" class="action-card-modify" src="images/icons/modify.png"/>&nbsp;';
+				actionsHtml += getImgTag("editcard", "modify.png");
 			}
 			if (enabledFunctions['allowDelete']) {
-				actionsHtml += '<img style="cursor:pointer" class="action-card-delete" src="images/icons/delete.png"/>&nbsp;';
+				actionsHtml += getImgTag("deletecard", "delete.png");
 			}
 
 			return actionsHtml;
 		}
 	});
+
+	function getImgTag(action, icon) {
+		return '<img style="cursor:pointer" class="action-relation-'+ action +'" src="images/icons/' + icon + '"/>';
+	}
+
 })();
 
 ///**

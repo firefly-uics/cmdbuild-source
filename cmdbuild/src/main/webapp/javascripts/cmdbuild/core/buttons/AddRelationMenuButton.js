@@ -2,12 +2,11 @@
 
 Ext.define("CMDBuild.AddRelationMenuButton", {
 	extend: "Ext.button.Split",
-	translation: "@@ Add relation",
 	iconCls: 'add',
 
 	//custom fields
-	baseText: "@@ Add relation",
-	textPrefix: "@@ Add relation",
+	baseText: CMDBuild.Translation.management.modcard.add_relations,
+	textPrefix: CMDBuild.Translation.management.modcard.add_relations,
 	
 	//private
 	initComponent: function() {

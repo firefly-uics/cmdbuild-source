@@ -19,9 +19,11 @@
 				this.tabPanel.activityTab, this);
 
 			// grid events
-			this.grid.statusCombo.on("select", onStatusComboSelect, this);
-			this.grid.addCardButton.on("cmClick", onAddCardButtonClick, this);
-			this.grid.printGridMenu.on("click", onPrintGridMenuClick, this);
+			this.grid.mon(this.grid.statusCombo, "select", onStatusComboSelect, this);
+			this.grid.mon(this.grid.addCardButton, "cmClick", onAddCardButtonClick, this);
+			this.grid.mon(this.grid.printGridMenu, "click", onPrintGridMenuClick, this);
+			this.grid.mon(this.grid, "load", onGridLoad, this);
+
 			this.gridSM.on("selectionchange", onActivitySelect, this);
 
 			this.tabPanel.on("cmeditmode", onEditMode, this);
@@ -52,10 +54,13 @@
 		},
 
 		onAbortButtonClick: function() {
-			if (this.currentActivity) {
+			// if the currentActivity is a Ext model.
+			// the card is loaded from the grid, so we can reload it
+			// to abort the modifications. Else clear the panel
+			if (typeof this.currentActivity.get == "function") {
 				onActivitySelect.call(this, null, [this.currentActivity]);
 			} else {
-				this.activityPanelController.onEntrySelected(this.currentEntry);
+				this.activityPanelController.clearViewForNoActivity();
 			}
 		},
 
@@ -154,8 +159,12 @@
 		if (selection.length > 0) {
 			this.showActivityPanel();
 
-			var editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
-			updateForActivity.call(this, selection[0], editMode);
+			if (this.grid.statusCombo.isStateOpen()) {
+				var editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
+				updateForActivity.call(this, selection[0], editMode);
+			} else {
+				loadClosedActivity.call(this, selection[0]);
+			}
 		}
 	}
 
@@ -211,9 +220,17 @@
 		return builders[w.extattrtype](w);
 	}
 
+	function loadClosedActivity(a) {
+		this.currentActivity = a;
+		this.widgetsController = {};
+		this.view.updateForClosedActivity(a);
+	}
+
 	function onStatusComboSelect() {
 		this.grid.updateStatusParamInStoreProxyConfiguration();
 		this.grid.loadPage(1);
+		// We want that a user could be able to start a process only if is watching the opened
+		this.grid.addCardButton.setDisabled(!this.grid.statusCombo.isStateOpen());
 	}
 
 	function onPrintGridMenuClick(format) {
@@ -275,6 +292,8 @@
 
 	function deleteActivity() {
 		var me = this;
+
+		me.activityPanelController.clearViewForNoActivity();
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.workflow.terminateActivity({
@@ -363,6 +382,14 @@
 					WorkItemId: activity.WorkItemId
 				});
 			}
+		}
+	}
+	
+	function onGridLoad(args) {
+		// args[1] is the array with the loaded records
+		// so, if there are no records clear the view
+		if (args[1].length == 0) {
+			this.activityPanelController.clearViewForNoActivity();
 		}
 	}
 })();

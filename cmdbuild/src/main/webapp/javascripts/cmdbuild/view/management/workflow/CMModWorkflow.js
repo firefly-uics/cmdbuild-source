@@ -32,10 +32,11 @@
 			}
 		*/
 		updateForActivity: function(activity, o) {
-			var data = activity.raw || activity.data,
-				widgets = data.CmdbuildExtendedAttributes;
-			
 			this.cardTabPanel.updateForActivity(activity, o);
+		},
+
+		updateForClosedActivity: function(activity) {
+			this.cardTabPanel.updateForClosedActivity(activity);
 		},
 
 		getWFWidgets: function() {

@@ -90,8 +90,12 @@
 			for (var i=0, l=domains.length; i<l; ++i) {
 				var domainResponseObj = domains[i],
 					domainCachedData = _CMCache.getDomainById(domainResponseObj.id);
-
-				nodes.push(buildNodeForDomain.call(this, domainResponseObj, domainCachedData));
+				
+				if (domainCachedData) {
+					nodes.push(buildNodeForDomain.call(this, domainResponseObj, domainCachedData));
+				} else {
+					CMDBuild.log.error("I have not cached data for domain", domainResponseObj.id);
+				}
 			}
 
 			r.removeAll();
