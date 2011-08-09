@@ -15,19 +15,6 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			scope : this
 		});
 
-		this.saveButton = new Ext.button.Button({
-			text : CMDBuild.Translation.common.buttons.save,
-			name: 'saveButton',
-			formBind : true
-		});
-
-		this.cancelButton = new Ext.button.Button({
-			text : CMDBuild.Translation.common.buttons.abort,
-			name: 'cancelButton',
-			handler : this.disableModify,
-			scope : this
-		});
-		
 		var htmlField = new Ext.form.field.HtmlEditor({
 			name : 'Notes',
 			border: false,
@@ -46,6 +33,9 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			bodyCls: "x-panel-body-default-framed",
 			hideMode: 'offsets',
 			items: [htmlField],
+			setValue: function(v) {
+				htmlField.setValue(v);
+			},
 			getValue: function() {
 				return htmlField.getValue();
 			}
@@ -70,24 +60,7 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			}
 		});
 
-		if (this.withButtons) {
-			this.buttons = [this.saveButton,this.cancelButton];
-			//TODO subclassing. Is used if the event type is activity
-			if (this.eventtype == 'activity') {
-				this.backToActivityButton = new Ext.Button({
-					text : CMDBuild.Translation.common.buttons.workflow.back,
-					handler : function() {
-						this.findParentByType('activitytabpanel').setActiveTab('activity_tab');
-						this.backToActivityButton.disable();
-						this.backToActivityButton.hide();
-					},
-					scope : this,
-					disabled : true
-				});
-
-				this.buttons.push(this.backToActivityButton);
-			}
-		}
+		this.buildButtons();
 
 		Ext.apply(this, {
 			hideMode: "offsets",
@@ -103,6 +76,25 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			buttonAlign: 'center'
 		});
 		this.callParent(arguments);
+	},
+
+	buildButtons: function() {
+		if (this.withButtons) {
+			this.buttons = [
+				this.saveButton = new Ext.button.Button({
+					text : CMDBuild.Translation.common.buttons.save,
+					name: 'saveButton',
+					formBind : true
+				}),
+		
+				this.cancelButton = new Ext.button.Button({
+					text : CMDBuild.Translation.common.buttons.abort,
+					name: 'cancelButton',
+					handler : this.disableModify,
+					scope : this
+				})
+			];
+		}
 	},
 
 	onClassSelected: function() {

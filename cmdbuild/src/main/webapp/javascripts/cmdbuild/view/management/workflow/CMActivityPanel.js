@@ -127,13 +127,15 @@
 			Ext.apply(this, {
 				frame: false,
 				border: false,
+				layout : 'vbox',
 				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
-					padding: "35px 5px 0 5px"
+					padding: "30px 5px 0 5px"
 				}
 			});
 			this.callParent(arguments);
 		},
+
 		updateWidgets: function(activity) {
 			var data = activity.raw || activity.data,
 				widgetsDefinition = data.CmdbuildExtendedAttributes || [],
@@ -149,12 +151,31 @@
 						widgetDefinition: item,
 						handler: function() {
 							me.fireEvent("cm-wfwidgetbutton-click", item);
-						}
+						},
+						margins:'0 0 5 0'
 					}));
 				});
+				me.updateButtonsWidth();
 			} else {
 				this.hide();
 			}
+		},
+
+		updateButtonsWidth: function () {
+			var maxW = 0;
+			this.items.each(function(item) {
+				var w = item.getWidth();
+				if (w > maxW) {
+					maxW = w;
+				}
+			});
+
+			this.items.each(function(item) {
+				item.setWidth(maxW);
+			});
+			// to fix the width of the panel, auto width does
+			// not work with IE7
+			this.setWidth(maxW + 10); // 10 is the pudding
 		},
 
 		displayMode: function() {

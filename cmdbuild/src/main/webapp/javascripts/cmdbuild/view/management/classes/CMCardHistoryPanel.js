@@ -114,7 +114,9 @@
 		},
 	
 		loadCardHistory: function() {
-			if (this.loaded) {
+			if (this.loaded
+					|| !this.currentClassId
+					|| !this.currentCardId) {
 				return;
 			}
 
@@ -130,6 +132,12 @@
 
 		onAddCardButtonClick: function() {
 			this.disable();
+		},
+
+		reset: function() {
+			this.getStore().removeAll();
+			this.currentClassId = undefined;
+			this.currentClassId = undefined;
 		}
 	});
 

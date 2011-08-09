@@ -214,6 +214,9 @@
 				},
 				manageRelation: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMManageRelationController(w, me);
+				},
+				openNote: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMOpenNoteController(w, me);
 				}
 			};
 
@@ -265,7 +268,7 @@
 	function onAddCardButtonClick(p) {
 		this.view.onAddButtonClick();
 		this.currentActivity = null;
-		
+
 		this.gridSM.deselectAll();
 
 		CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {

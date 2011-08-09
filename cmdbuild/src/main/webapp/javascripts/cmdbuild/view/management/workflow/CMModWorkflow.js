@@ -44,7 +44,7 @@
 		},
 
 		onAddButtonClick: function() {
-//			this.cardTabPanel.onAddButtonClick();
+			this.cardTabPanel.showActivityPanel();
 		}
 	});
 
