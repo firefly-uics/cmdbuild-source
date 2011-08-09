@@ -28,7 +28,7 @@
 				title: CMDBuild.Translation.management.modworkflow.tabs.relations
 			});
 
-			this.attachmentPanel = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
+			this.openAttachmentPanel = new CMDBuild.view.management.workflow.widgets.CMOpenAttachment({
 				title: CMDBuild.Translation.management.modworkflow.tabs.attachments
 			});
 
@@ -44,7 +44,7 @@
 					this.openNotePanel,
 					this.relationsPanel,
 					this.cardHistoryPanel,
-					this.attachmentPanel
+					this.openAttachmentPanel
 				]
 			});
 
@@ -129,7 +129,7 @@
 			this.openNotePanel.disable();
 			this.relationsPanel.disable();
 			this.cardHistoryPanel.disable();
-			this.attachmentPanel.disable();
+			this.openAttachmentPanel.disable();
 		}
 	});
 
@@ -163,6 +163,11 @@
 					me.openNotePanel.configure(conf);
 
 					return me.openNotePanel;
+				},
+				openAttachment: function() {
+					me.openAttachmentPanel.configure(conf);
+
+					return me.openAttachmentPanel;
 				}
 			};
 

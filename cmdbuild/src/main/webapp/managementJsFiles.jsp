@@ -109,6 +109,7 @@
 	
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateModifyCard.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenNote.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/manageRelation/CMManageRelation.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/linkCards/CMLinkCards.js"></script>
@@ -142,6 +143,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateModifyCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageRelationController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenAttachmentController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenNoteController.js"></script>	
 <!--
 

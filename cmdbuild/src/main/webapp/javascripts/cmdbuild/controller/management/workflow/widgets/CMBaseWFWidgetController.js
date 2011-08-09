@@ -1,5 +1,9 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController", {
+		mixins: {
+			observable: 'Ext.util.Observable'
+		},
+
 		cmName: "base",
 		constructor: function(view, ownerController) {
 			if (typeof view != "object") {
@@ -47,6 +51,7 @@
 		},
 		
 		// template for subclasses
-		beforeActiveView: Ext.emptyFn
+		beforeActiveView: Ext.emptyFn,
+		destroy: Ext.emptyFn
 	});
 })();

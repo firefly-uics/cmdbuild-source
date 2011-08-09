@@ -25,6 +25,10 @@
 				grow: true,
 				isStateOpen: function() {
 					return this.getValue() == STATE_VALUE_OPEN;
+				},
+
+				isStateClosed: function() {
+					return this.getValue() == STATE_VALUE_TERMINATED;
 				}
 			});
 

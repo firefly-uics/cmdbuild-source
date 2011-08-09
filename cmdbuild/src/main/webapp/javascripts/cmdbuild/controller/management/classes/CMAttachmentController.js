@@ -3,8 +3,12 @@
 	var tr = CMDBuild.Translation.management.modcard;
 
 	Ext.define("CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController", {
-		constructor: function(v) {
+		mixins: {
+			observable: 'Ext.util.Observable'
+		},
+		constructor: function(v, ownerCt) {
 			this.view = v;
+			this.ownerController = ownerCt;
 
 			this.callBacks = {
 				'action-attachment-delete': this.onDeleteAttachmentClick,
@@ -12,7 +16,7 @@
 				'action-attachment-download': this.onDownloadAttachmentClick
 			};
 
-			this.view.addAttachmentButton.on("click", this.onAddAttachmentButtonClick, this);
+			this.mon(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
 			this.view.on('beforeitemclick', cellclickHandler, this);
 			this.view.on("itemdblclick", onItemDoubleclick, this);
 			this.view.on('activate', this.view.loadCardAttachments, this.view);

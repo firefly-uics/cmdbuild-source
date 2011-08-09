@@ -29,20 +29,6 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 
 		this.store = buildStore();
 
-		// TODO subclass this
-		if( this.eventtype == 'activity' ) {
-			this.backToActivityButton = new Ext.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back,
-				hideMode: "offsets",
-				handler: function(){
-					this.findParentByType('activitytabpanel').setActiveTab('activity_tab');
-				},
-				scope: this
-			});
-			this.buttonAlign = "center";
-			this.buttons = [this.backToActivityButton];
-		}
-
 		Ext.apply(this, {
 			loadMask: false,
 			tbar:[this.addAttachmentButton],
@@ -63,37 +49,9 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 		});
 
 		this.callParent(arguments);
-
-// TODO 3 to 4 move on the wf controller of the attachments
-//		this.on('hide', function() {
-//			if (this.eventtype == 'activity' && this.activityStatusCode != ACTIVITY_CLOSE_COMPLETED) {
-//				this.disable();
-//			}
-//		}, this);
-
 	},
 
-	onCardSelected: function(card) {
-
-		/*
-		if (this.wfmodule) { // TODO aubclass workflow stuff
-			this.activityStatusCode = this.wfmodule.getFlowStatusCodeById(eventParams.record.data.FlowStatus);
-			if (this.activityStatusCode == ACTIVITY_CLOSE_COMPLETED) {
-				this.enable();
-				this.disableModify();
-				this.getFooterToolbar().hide();
-				this.doLayout();
-				// FIXME remove modify and delete icons
-			} else {
-				this.disable();
-				this.enableModify();
-				this.getFooterToolbar().show();
-			}
-		} else {
-			this.enable();
-		}
-		*/
-	},
+	onCardSelected: function(card) {},
 
 	reloadCard: function() {
 		this.loaded = false;

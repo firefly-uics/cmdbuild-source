@@ -1,11 +1,16 @@
+
 (function() {
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMOpenNoteController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
-		
+
 		constructor: function() {
 			this.callParent(arguments);
 
-			this.view.mon(this.view.saveButton, "click", this.onSaveNoteClick, this);
+			this.mon(this.view.saveButton, "click", this.onSaveNoteClick, this);
+		},
+
+		destroy: function() {
+			this.mun(this.view.saveButton, "click", this.onSaveNoteClick, this);
 		},
 
 		onSaveNoteClick: function() {
@@ -34,8 +39,8 @@
 					});
 				}
 			} else {
-				// TODO alert that is not possible to 
-				// save notes at first step 
+				new CMDBuild.Msg.error("@@ Errore", "@@ Non puoi salvare le note" +
+						"senza aver salvato prima l'attività ", popup = false);
 			}
 		}
 	});
