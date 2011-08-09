@@ -455,7 +455,7 @@ em {
 /* to have a different background for the even rows*/
 .x-grid-row-alt .x-grid-cell,
 .x-grid-row-alt .x-grid-rowwrap-div {
-	background-color: #EEEEEE !important;
+	background-color: #F5F5F5 !important;
 }
 
 /* Custom rule to fix collapsible tab panel tool */

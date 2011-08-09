@@ -20,7 +20,7 @@
 				title: CMDBuild.Translation.management.modworkflow.tabs.history
 			});
 
-			this.cardNotesPanel = new CMDBuild.view.management.classes.CMCardNotesPanel({
+			this.openNotePanel = new CMDBuild.view.management.workflow.widgets.CMOpenNotes({
 				title: CMDBuild.Translation.management.modworkflow.tabs.notes
 			});
 
@@ -41,7 +41,7 @@
 				items: [
 					this.activityTab,
 					this.widgetsTab,
-					this.cardNotesPanel,
+					this.openNotePanel,
 					this.relationsPanel,
 					this.cardHistoryPanel,
 					this.attachmentPanel
@@ -59,6 +59,8 @@
 			this.activityTab.on("cmdisplaymode", function() {
 				this.fireEvent("cmdisplaymode");
 			}, this);
+
+			this.disableTabs();
 		},
 
 		initComponent : function() {
@@ -84,6 +86,7 @@
 			var data = activity.raw || activity.data,
 				widgets = data.CmdbuildExtendedAttributes || [];
 
+			this.disableTabs();
 			this.widgetsTab.removeAll(autoDestroy = true);
 			this.widgetsMap = {};
 
@@ -95,6 +98,14 @@
 			}, this);
 			this.widgetsTab.disable();
 			this.activityTab.updateForActivity(activity, o);
+
+			if (typeof activity.get == "function") {
+				// the new activity has no the get function,
+				// so not refresh history for this activity
+				this.cardHistoryPanel.onCardSelected(activity);
+			} else {
+				this.cardHistoryPanel.reset();
+			}
 		},
 
 		updateForClosedActivity: function(activity) {
@@ -102,6 +113,7 @@
 			this.widgetsMap = {};
 			this.widgetsTab.disable();
 			this.activityTab.updateForClosedActivity(activity);
+			this.cardHistoryPanel.onCardSelected(activity);
 		},
 
 		getWFWidgets: function() {
@@ -110,6 +122,14 @@
 
 		showActivityPanel: function() {
 			this.acutalPanel.setActiveTab(this.activityTab);
+		},
+
+		disableTabs: function() {
+			this.widgetsTab.disable();
+			this.openNotePanel.disable();
+			this.relationsPanel.disable();
+			this.cardHistoryPanel.disable();
+			this.attachmentPanel.disable();
 		}
 	});
 
@@ -138,6 +158,11 @@
 					me.widgetsTab.add(w);
 
 					return w;
+				},
+				openNote: function() {
+					me.openNotePanel.configure(conf);
+
+					return me.openNotePanel;
 				}
 			};
 
