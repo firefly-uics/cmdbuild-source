@@ -16,15 +16,21 @@
 		INET: new CMDBuild.WidgetBuilders.IPAddressAttribute()
 	}
 	
-Ext.define("CMDBuild.Management.FieldManager", {
+	function attributeTypeIsNotHandled(attribute) {
+		return !attributesMap[attribute.type];
+	}
+
+	Ext.define("CMDBuild.Management.FieldManager", {
 	statics: {
+	
 		loadAttributes: function(classId, callback) {
 			CMDBuild.Cache.getAttributeList(classId, callback);		
 		},
 		
 		getFieldForAttr: function(attribute, readonly) {
-			if (attribute.fieldmode == "hidden")
-				return null;
+			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) { 
+				return undefined;
+			}
 			
 			if (readonly || attribute.fieldmode == "read") {
 				return attributesMap[attribute.type].buildReadOnlyField(attribute);
@@ -34,7 +40,7 @@ Ext.define("CMDBuild.Management.FieldManager", {
 		},
 	
 		getHeaderForAttr: function(attribute) {
-			if (attribute.fieldmode == "hidden") {
+			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) {
 				return undefined;
 			} else {
 				return attributesMap[attribute.type].buildGridHeader(attribute);
@@ -42,10 +48,16 @@ Ext.define("CMDBuild.Management.FieldManager", {
 		},
 		
 		getDisplayNameForAttr: function(attribute) {
+			if (attributeTypeIsNotHandled(attribute)) {
+				return undefined;
+			}
 			return attributesMap[attribute.type].getDisplayNameForAttr(attribute);
 		}, 
 	
 		getFieldSetForFilter: function(attribute) {
+			if (attributeTypeIsNotHandled(attribute)) {
+				return undefined;
+			}
 			return attributesMap[attribute.type].getFieldSetForFilter(attribute);
 		}
 	}
