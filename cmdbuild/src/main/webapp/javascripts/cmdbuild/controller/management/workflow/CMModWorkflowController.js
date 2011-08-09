@@ -109,6 +109,14 @@
 				accordion.deselect();
 				accordion.selectNodeById(p.IdClass);
 			}, 100)();
+		},
+
+		isStateOpen: function() {
+			return this.grid.statusCombo.isStateOpen();
+		},
+
+		isStateClosed: function() {
+			return this.grid.statusCombo.isStateOpen();
 		}
 	});
 
@@ -143,7 +151,6 @@
 	function onEditMode() {
 		this.editMode = true;
 		if (this.widgetsController) {
-			_debug(this.widgetsController);
 			for (var wc in this.widgetsController) {
 				wc = this.widgetsController[wc];
 				wc.onEditMode();
@@ -159,7 +166,7 @@
 		if (selection.length > 0) {
 			this.showActivityPanel();
 
-			if (this.grid.statusCombo.isStateOpen()) {
+			if (this.isStateOpen()) {
 				var editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
 				updateForActivity.call(this, selection[0], editMode);
 			} else {
@@ -178,7 +185,7 @@
 		}
 
 		// load the right fields and build the WFwidgets
-		this.widgetsController = {};
+		this.widgetsController = clearWidgetControllers(this.widgetsController);
 		var me = this;
 
 		function buildTheWidgetsControllers() {
@@ -217,6 +224,9 @@
 				},
 				openNote: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMOpenNoteController(w, me);
+				},
+				openAttachment: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMAttachmentController(w, me);
 				}
 			};
 
@@ -225,7 +235,7 @@
 
 	function loadClosedActivity(a) {
 		this.currentActivity = a;
-		this.widgetsController = {};
+		this.widgetsController = clearWidgetControllers(this.widgetsController);
 		this.view.updateForClosedActivity(a);
 	}
 
@@ -233,7 +243,7 @@
 		this.grid.updateStatusParamInStoreProxyConfiguration();
 		this.grid.loadPage(1);
 		// We want that a user could be able to start a process only if is watching the opened
-		this.grid.addCardButton.setDisabled(!this.grid.statusCombo.isStateOpen());
+		this.grid.addCardButton.setDisabled(!this.isStateOpen());
 	}
 
 	function onPrintGridMenuClick(format) {
@@ -394,5 +404,16 @@
 		if (args[1].length == 0) {
 			this.activityPanelController.clearViewForNoActivity();
 		}
+	}
+
+	function clearWidgetControllers(wcs) {
+		if (wcs) {
+			for (var wc in wcs) {
+				wc = wcs[wc];
+				wc.destroy();
+				delete wc;
+			}
+		}
+		return {};
 	}
 })();
