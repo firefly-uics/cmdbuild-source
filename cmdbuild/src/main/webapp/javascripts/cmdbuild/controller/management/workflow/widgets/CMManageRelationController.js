@@ -1,11 +1,12 @@
 (function() {
 	// TODO 1) find a lot of time
 	// TODO 2) when I have found it, do mixing to apply the baseWFController methods
-	// code reuse != copy and paste
+	// I know that code reuse != copy and paste
 
 	var OUTPUT_NAME = "xa:outputName",
 		ID_CLASS = "xa:idClass",
-		ID_CARD = "xa:id";
+		ID_CARD = "xa:id",
+		TRUE = "1";
 
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMManageRelationController", {
 		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
@@ -16,7 +17,7 @@
 
 			this.widgetConf = this.view.widgetConf;
 			this.outputName = this.widgetConf.outputName;
-			this.singleSelect = this.widgetConf.SingleSelect;
+			this.noSelect = !(this.widgetConf.enabledFunctions['single'] || this.widgetConf.enabledFunctions['multi']);
 			this.wiewIdenrifier = this.widgetConf.identifier;
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
@@ -127,7 +128,22 @@
 
 			return out;
 		},
-		
+
+		isValid: function() {
+			if (!this.noSelect && this.widgetConf.Required == TRUE) {
+				try {
+					return this.getData()[this.outputName].length > 0;
+				} catch (e) {
+					// if here data is null or data has not this.outputName,
+					// so the ww is not valid
+					return false;
+				}
+
+			} else {
+				return true;
+			}
+		},
+
 		// override
 		loadData: function() {
 			var el = this.view.getEl();

@@ -1,5 +1,7 @@
 (function () {
 
+	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
+
 	Ext.define("CMDBuild.controller.management.workflow.CMModWorkflowController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -17,6 +19,8 @@
 			// instantiate sub-controllers
 			this.activityPanelController = new CMDBuild.controller.management.workflow.CMActivityPanelController(
 				this.tabPanel.activityTab, this);
+			this.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(
+				this.tabPanel.relationsPanel, this);
 
 			// grid events
 			this.grid.mon(this.grid.statusCombo, "select", onStatusComboSelect, this);
@@ -37,7 +41,7 @@
 
 				// notify sub-controllers
 				this.activityPanelController.onEntrySelected(selection);
-
+				this.relationsController.onEntrySelect(selection);// FIXME naming
 				this.showActivityPanel();
 			}
 		},
@@ -164,7 +168,6 @@
 
 	function onActivitySelect(sm, selection) {
 		if (selection.length > 0) {
-			this.showActivityPanel();
 
 			if (this.isStateOpen()) {
 				var editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
@@ -172,6 +175,8 @@
 			} else {
 				loadClosedActivity.call(this, selection[0]);
 			}
+
+			this.relationsController.onCardSelected(selection[0]);
 		}
 	}
 
@@ -333,9 +338,6 @@
 	}
 
 	function saveActivity() {
-		CMDBuild.LoadMask.get().show();
-
-		// if the record is new it has not raw data, so use the normal data
 		var data = this.currentActivity.raw,
 			requestParams = {
 				Id: data.Id,
@@ -344,60 +346,109 @@
 				WorkItemId: data.WorkItemId,
 				advance: this.activityPanelController.isAdvance,
 				attributes: Ext.JSON.encode(this.activityPanelController.view.getValues())
-			};
-
-		var ww = {};
-		for (var wc in this.widgetsController) {
-			wc = this.widgetsController[wc];
-			var wcData = wc.getData();
-			if (wcData != null) {
-				ww[wc.wiewIdenrifier] = wcData;
-			}
+			},
+			valid = false;
+		
+		if (requestParams.advance) {
+			valid = validate.call(this);
+		} else {
+			// Business rule: Someone want the validation
+			// only if advance and not if want only save the activity
+			valid = true;
 		}
 
-		if (ww) {
-			requestParams["ww"] = Ext.JSON.encode(ww);
-		}
+		if (valid) {
+			CMDBuild.LoadMask.get().show();
 
-		CMDBuild.ServiceProxy.workflow.saveActivity({
-			timeout: 90,
-			params: requestParams,
-			scope : this,
-			clientValidation: this.activityPanelController.isAdvance, //to force the save request
-			callback: function(operation, success, response) {
-				CMDBuild.LoadMask.get().hide();
-			},
-
-			success: function(response) {
-				updateActivityData.call(this, response);
-
-				this.activityPanelController.view.reset();
-				this.activityPanelController.view.displayMode();
-
-				this.grid.openCard({
-					Id: this.currentActivity.raw.Id,
-					IdClass: this.currentActivity.raw.IdClass
-				});
-			},
-
-			failure : function(response) {
-				updateActivityData.call(this, response);
+			var ww = {};
+			for (var wc in this.widgetsController) {
+				wc = this.widgetsController[wc];
+				var wcData = wc.getData();
+				if (wcData != null) {
+					ww[wc.wiewIdenrifier] = wcData;
+				}
 			}
-		});
-
-		function updateActivityData(response) {
-			if (this.currentActivity) {
-				var activity = Ext.decode(response.responseText);
-
-				this.currentActivity.raw = Ext.apply(this.currentActivity.raw, {
-					Id: activity.Id,
-					ProcessInstanceId: activity.ProcessInstanceId,
-					WorkItemId: activity.WorkItemId
-				});
+	
+			if (ww) {
+				requestParams["ww"] = Ext.JSON.encode(ww);
 			}
+	
+			CMDBuild.ServiceProxy.workflow.saveActivity({
+				timeout: 90,
+				params: requestParams,
+				scope : this,
+				clientValidation: this.activityPanelController.isAdvance, //to force the save request
+				callback: function(operation, success, response) {
+					CMDBuild.LoadMask.get().hide();
+				},
+	
+				success: function(response) {
+					updateActivityData.call(this, response);
+	
+					this.activityPanelController.view.reset();
+					this.activityPanelController.view.displayMode();
+	
+					this.grid.openCard({
+						Id: this.currentActivity.raw.Id,
+						IdClass: this.currentActivity.raw.IdClass
+					});
+				},
+	
+				failure : function(response) {
+					updateActivityData.call(this, response);
+				}
+			});
 		}
 	}
 	
+	function validate() {
+		var valid = this.activityPanelController.isValid(),
+			wrongWidgets = getWrongWFAsHTML.call(this);
+
+		if (wrongWidgets != null) {
+			valid = false;
+			var msg = Ext.String.format(ERROR_TEMPLATE
+					, CMDBuild.Constants.css.error_msg
+					, CMDBuild.Translation.errors.invalid_extended_attributes);
+			CMDBuild.Msg.error(null, msg + wrongWidgets, popup = false);
+		}
+
+
+		return valid;
+	}
+
+	function getWrongWFAsHTML() {
+		var out = "<ul>",
+			valid = true;
+
+		for (var wc in this.widgetsController) {
+			wc = this.widgetsController[wc];
+			if (!wc.isValid()) {
+				valid = false;
+				out += "<li>" + wc.widgetConf.ButtonLabel + "</li>";
+			}
+		}
+		out + "</ul>";
+
+		if (valid) {
+			return null
+		} else {
+			return out;
+		}
+	}
+	
+	function updateActivityData(response) {
+		if (this.currentActivity) {
+			var activity = Ext.decode(response.responseText);
+
+			this.currentActivity.raw = Ext.apply(this.currentActivity.raw, {
+				Id: activity.Id,
+				ProcessInstanceId: activity.ProcessInstanceId,
+				WorkItemId: activity.WorkItemId
+			});
+		}
+	}
+
 	function onGridLoad(args) {
 		// args[1] is the array with the loaded records
 		// so, if there are no records clear the view

@@ -53,8 +53,8 @@
 		onCardSelected: function(card) {
 			this.currentCard = card;
 			this.currentCardPrivileges = {
-				create: card.get("data.priv_create"),
-				write: card.get("data.priv_write")
+				create: card.get("priv_create"),
+				write: card.get("priv_write")
 			};
 
 			if (this.currentClass != null && this.hasDomains) {

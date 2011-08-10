@@ -100,12 +100,14 @@
 			this.activityTab.updateForActivity(activity, o);
 
 			if (typeof activity.get == "function") {
-				// the new activity has no the get function,
-				// so not refresh history for this activity
 				this.cardHistoryPanel.onCardSelected(activity);
 			} else {
+				// the new activity has no the get function,
+				// so not notify to history the selection
 				this.cardHistoryPanel.reset();
 			}
+
+			this.showActivityPanelIfNeeded();
 		},
 
 		updateForClosedActivity: function(activity) {
@@ -114,6 +116,8 @@
 			this.widgetsTab.disable();
 			this.activityTab.updateForClosedActivity(activity);
 			this.cardHistoryPanel.onCardSelected(activity);
+
+			this.showActivityPanelIfNeeded();
 		},
 
 		getWFWidgets: function() {
@@ -130,6 +134,16 @@
 			this.relationsPanel.disable();
 			this.cardHistoryPanel.disable();
 			this.openAttachmentPanel.disable();
+		},
+
+		showActivityPanelIfNeeded: function() {
+			var active = this.acutalPanel.getActiveTab().id;
+			if (active == this.widgetsTab.id
+				|| active == this.openNotePanel.id
+				|| active == this.openAttachmentPanel.id) {
+
+				this.showActivityPanel();
+			}
 		}
 	});
 

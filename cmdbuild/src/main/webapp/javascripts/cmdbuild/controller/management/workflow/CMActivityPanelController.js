@@ -33,6 +33,19 @@
 
 		onActivitySelect: function(activity, reloadFields, editMode) {
 			this.isAdvance = false;
+		},
+
+		isValid: function() {
+			var invalidAttributes = this.view.getInvalidAttributeAsHTML();
+
+			if (invalidAttributes != null) {
+				var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+				CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+
+				return false;
+			} else {
+				return true;
+			}
 		}
 	});
 
