@@ -14,14 +14,13 @@
 			this.ownerController = ownerController;
 			this.widgetConf = this.view.widgetConf;
 			this.outputName = this.widgetConf.outputName;
-			this.singleSelect = this.widgetConf.SingleSelect;
 			this.wiewIdenrifier = this.widgetConf.identifier;
 
 		},
 
 		activeView: function() {
-			this.beforeActiveView();
 			this.view.cmActivate();
+			this.beforeActiveView();
 		},
 
 		toString: function() {
@@ -52,6 +51,9 @@
 		
 		// template for subclasses
 		beforeActiveView: Ext.emptyFn,
-		destroy: Ext.emptyFn
+		destroy: Ext.emptyFn,
+		isValid: function() {
+			return true;
+		}
 	});
 })();

@@ -11,7 +11,8 @@
 		DEFAULT_SELECTION = "xa:DefaultSelection",
 		TABLE_VIEW_NAME = "table",
 		MAP_VIEW_NAME = "map",
-		STARTING_VIEW = TABLE_VIEW_NAME;
+		STARTING_VIEW = TABLE_VIEW_NAME,
+		TRUE = "1";
 
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMLinkCardsController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
@@ -27,6 +28,9 @@
 			this.currentView = STARTING_VIEW;
 			this.templateResolverIsBusy = false;
 			this.alertIfChangeDefaultSelection = false;
+
+			this.singleSelect = this.widgetConf.SingleSelect;
+			this.noSelect = this.widgetConf.NoSelect;
 
 			this.model = new CMDBuild.Management.LinkCardsModel({
 				singleSelect: this.singleSelect
@@ -92,11 +96,20 @@
 		// override
 		getData: function() {
 			var out = null;
-			if (undefined != this.outputName) {
+			if (!this.noSelect && this.outputName) {
 				out = {};
 				out[this.outputName] = this.model.getSelections();
 			}
 			return out;
+		},
+
+		// override
+		isValid: function() {
+			if (!this.noSelect && this.widgetConf.Required == TRUE) {
+				return this.model.hasSelection();
+			} else {
+				return true;
+			}
 		}
 	});
 

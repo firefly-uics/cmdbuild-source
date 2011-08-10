@@ -55,7 +55,7 @@
 						}
 					};
 
-					this.forceEditMode = true; // see fillForm of CMCardPanel
+					this.forceEditMode = !this.widgetConf.ReadOnly; // see fillForm of CMCardPanel
 					this.onCardSelected(card, reloadField = true, loadRemoteData = true);
 				}
 			}

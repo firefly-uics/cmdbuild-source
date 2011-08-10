@@ -165,7 +165,7 @@
 			view = this.cardPanel,
 			ex = [] //var ex = this.cardExtensionsProvider;
 		
-		//var invalidAttributes = this.view.form.getInvalidAttributeAsHTML();
+		var invalidAttributes = this.cardPanel.getInvalidAttributeAsHTML();
 		
 		if (this.currentCard) {
 			params = {
@@ -179,7 +179,7 @@
 			}
 		}
 		
-		//if (invalidAttributes == null) {
+		if (invalidAttributes == null) {
 			CMDBuild.LoadMask.get().show();
 			form.submit({
 				method : 'POST',
@@ -211,10 +211,10 @@
 					CMDBuild.LoadMask.get().hide();
 				}
 			});
-	//	} else {
-	//		var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
-	//		CMDBuild.Msg.error(null, msg + invalidAttributes, false);
-	//	}
+		} else {
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+		}
 
 	}
 	

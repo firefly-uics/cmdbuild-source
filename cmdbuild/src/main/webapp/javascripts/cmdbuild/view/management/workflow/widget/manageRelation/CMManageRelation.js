@@ -1,4 +1,6 @@
 (function() {
+	// TODO remove old code
+
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMManageRelation", {
 		extend: "CMDBuild.view.management.classes.CMCardRelationsPanel",
 

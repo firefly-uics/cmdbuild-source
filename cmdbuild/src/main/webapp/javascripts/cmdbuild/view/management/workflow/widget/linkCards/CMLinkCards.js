@@ -1,4 +1,5 @@
 (function() {
+	var TRUE = "1";
 
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
@@ -39,7 +40,6 @@
 			this.widgetConf = c.widget;
 			this.activity = c.activity.raw || c.activity.data;
 			this.clientForm = c.clientForm;
-			this.noSelect = c.noSelect;
 
 			this.callParent([this.widgetConf]); // to apply the conf to the panel
 		},
@@ -50,14 +50,15 @@
 
 		initComponent: function() {
 			var c = this.widgetConf,
-				selType = this.noSelect ? "rowmodel" : "checkboxmodel";
+				selType = this.NoSelect==TRUE ? "rowmodel" : "checkboxmodel",
+				multipleSelect = this.NoSelect!=TRUE && !this.SingleSelect;
 
 			this.grid = new CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid({
 				autoScroll : true,
 				filterSubcategory : c.identifier,
 				selType: selType,
-				multiSelect: !c.SingleSelect,
-				noSelect: this.noSelect,
+				multiSelect: multipleSelect,
+				noSelect: this.NoSelect,
 				hideMode: "offsets",
 				region: "center",
 				border: false
@@ -85,8 +86,11 @@
 		},
 
 		cmActivate: function() {
+			this.mon(this.ownerCt, "cmactive", function() {
+				this.ownerCt.bringToFront(this);
+			}, this, {single: true});
+
 			this.ownerCt.cmActivate();
-//			this.ownerCt.bringToFront(this);
 		},
 
 		updateGrid: function(classId, cqlParams) {

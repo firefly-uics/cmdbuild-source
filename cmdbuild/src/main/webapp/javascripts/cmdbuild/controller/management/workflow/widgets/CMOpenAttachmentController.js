@@ -58,6 +58,9 @@
 		activeView: function() {
 			this.beforeActiveView();
 			this.view.cmActivate();
+		},
+		isValid: function() {
+			return true;
 		}
 	});
 	

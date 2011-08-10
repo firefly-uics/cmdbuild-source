@@ -41,7 +41,6 @@ Ext.define("Ext.ux.Notification", {
 			iconCls: this.iconCls || 'x-icon-information',
 			cls: 'x-notification',
 			width: 200,
-			autoHeight: true,
 			plain: false,
 			draggable: false,
 			bodyStyle: 'text-align:center'
@@ -74,7 +73,6 @@ Ext.define("Ext.ux.Notification", {
 	afterShow: function(){
 		this.pos = Ext.ux.NotificationMgr.length();
 		Ext.ux.NotificationMgr.push(this.pos);
-		this.setSize(200,100);
 		this.el.alignTo(document, "br-br", [ -BORDER_X_OFFSET, -BORDER_Y_OFFSET-((this.getSize().height+10)*this.pos) ]);
 
 		Ext.fly(this.body.dom).on('click', this.cancelHiding, this);

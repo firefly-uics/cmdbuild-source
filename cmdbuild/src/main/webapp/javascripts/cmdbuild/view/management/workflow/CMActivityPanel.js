@@ -118,6 +118,10 @@
 
 		reset: function() {
 			this.activityForm.reset();
+		},
+
+		getInvalidAttributeAsHTML: function() {
+			return this.activityForm.getInvalidAttributeAsHTML();
 		}
 	});
 
