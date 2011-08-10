@@ -46,14 +46,12 @@ public class EAdministration {
 		return serializeDefaultTree(tree.getRootElement(), true, userCtx);
 	}
 	
-	public MenuSchema getMenuSchema()  {
+	public MenuSchema getMenuSchema() {
 		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getId());
-		if (tree.getRootElement().getNumberOfChildren() > 0)
-			return serializeTree(tree.getRootElement(), userCtx);
-		else {
-			CTree<MenuCard> defaulttree = MenuCard.loadTreeForGroup(0);
-			return serializeTree(defaulttree.getRootElement(), userCtx);
+		if (tree.getRootElement().getNumberOfChildren() == 0) {
+			tree = MenuCard.loadTreeForGroup(0);
 		}
+		return serializeTree(tree.getRootElement(), userCtx);
 	}
 
 	private MenuSchema serializeDefaultTree(CNode<ITable> rootElement, boolean isProcess, UserContext userCtx) {

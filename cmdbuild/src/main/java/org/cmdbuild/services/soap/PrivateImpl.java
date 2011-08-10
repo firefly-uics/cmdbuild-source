@@ -14,6 +14,8 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.AuthenticationService;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserContextToUserInfo;
+import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.ELegacySync;
@@ -44,14 +46,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-@WebService(
-		endpointInterface = "org.cmdbuild.services.soap.Private",
-		targetNamespace="http://soap.services.cmdbuild.org"
-)
+@WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl implements Private, ApplicationContextAware {
-	
+
 	private ApplicationContext applicationContext;
-		
+
 	@Resource
 	WebServiceContext wsc;
 
@@ -61,15 +60,17 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		WebserviceUtils utils = new WebserviceUtils();
 		return as.getWSUserContext(utils.getAuthData(msgCtx));
 	}
-	
+
 	@Override
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
-	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
+	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
+			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
 		ECard ecard = new ECard(getUserCtx());
-		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery);
+		return ecard
+				.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery);
 	}
 
 	public Card getCard(String className, Integer cardId, Attribute[] attributeList) {
@@ -158,7 +159,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		}
 		return attachments.toArray(new Attachment[attachments.size()]);
 	}
-	
+
 	public boolean uploadAttachment(String className, int objectid, DataHandler file, String filename, String category,
 			String description) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
@@ -193,25 +194,23 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	}
 
 	public Workflow updateWorkflow(Card card, boolean completeTask, WorkflowWidgetSubmission[] widgets) {
-			PrivateWorkflow ws = new PrivateWorkflow(getUserCtx());
-			return ws.updateWorkflow(card, completeTask, widgets);
+		PrivateWorkflow ws = new PrivateWorkflow(getUserCtx());
+		return ws.updateWorkflow(card, completeTask, widgets);
 	}
 
-	public String getProcessHelp(String classname, Integer cardid)
-			 {
+	public String getProcessHelp(String classname, Integer cardid) {
 		EWorkflow workflow = new EWorkflow(getUserCtx());
 		return workflow.getProcessHelp(classname, cardid);
 	}
 
-	public AttributeSchema[] getAttributeList(String className)
-			 {
+	public AttributeSchema[] getAttributeList(String className) {
 		ECard op = new ECard(getUserCtx());
 		return op.getAttributeList(className);
 	}
 
 	public ActivitySchema getActivityObjects(String className, Integer cardid) {
-			PrivateWorkflow wf = new PrivateWorkflow(getUserCtx());
-			return wf.getActivityObjects(className, cardid);
+		PrivateWorkflow wf = new PrivateWorkflow(getUserCtx());
+		return wf.getActivityObjects(className, cardid);
 	}
 
 	public MenuSchema getActivityMenuSchema() {
@@ -219,7 +218,8 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return op.getProcessMenuSchema();
 	}
 
-	public Reference[] getReference(String className, Query query, Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
+	public Reference[] getReference(String className, Query query, Order[] orderType, Integer limit, Integer offset,
+			String fullTextQuery, CQLQuery cqlQuery) {
 		ECard op = new ECard(getUserCtx());
 		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
 	}
@@ -234,8 +234,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return op.getMenuSchema();
 	}
 
-	public Report[] getReportList(String type, int limit, int offset)
-			 {
+	public Report[] getReportList(String type, int limit, int offset) {
 		EReport op = new EReport(getUserCtx());
 		return op.getReportList(type, limit, offset);
 	}
@@ -249,12 +248,16 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		EReport op = new EReport(getUserCtx());
 		return op.getReport(id, extension, params);
 	}
-	
+
 	public String sync(String xml) {
 		Log.SOAP.info("Calling webservice ExternalSync.sync");
-		Log.SOAP.debug("xml message:"+xml);
+		Log.SOAP.debug("xml message:" + xml);
 		ELegacySync op = new ELegacySync(getUserCtx());
 		return op.sync(xml);
+	}
+
+	public UserInfo getUserInfo() {
+		return UserContextToUserInfo.newInstance(getUserCtx()).build();
 	}
 
 }
