@@ -7,6 +7,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlMimeType;
 
+import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
@@ -162,5 +163,7 @@ public interface Private {
 			@WebParam(name = "params") ReportParams[] params);
 	
 	public String sync(@WebParam(name = "xml") String xml);
+	
+	public UserInfo getUserInfo();
 	
 }

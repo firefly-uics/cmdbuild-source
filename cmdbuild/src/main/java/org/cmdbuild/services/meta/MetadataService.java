@@ -1,10 +1,14 @@
 package org.cmdbuild.services.meta;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
@@ -32,16 +36,22 @@ public class MetadataService {
 
 	private static final Map<String, MetadataMap> metaMapCache = new HashMap<String, MetadataMap>();
 
-	public static MetadataMap getMetadata(BaseSchema schema) {
-		String schemaFullName = getSchemaFullName(schema);
-		return getMetadata(schemaFullName);
+	public static MetadataMap getMetadata() {
+		return getMetadata(EMPTY, false);
 	}
 
-	private static MetadataMap getMetadata(String schemaFullName) {
+	public static MetadataMap getMetadata(BaseSchema schema) {
+		String schemaFullName = getSchemaFullName(schema);
+		return getMetadata(schemaFullName, true);
+	}
+
+	private static MetadataMap getMetadata(String schemaFullName, boolean cacheResults) {
 		MetadataMap metaMap = metaMapCache.get(schemaFullName);
 		if (metaMap == null) {
 			metaMap = loadMetaMap(schemaFullName);
-			metaMapCache.put(schemaFullName, metaMap);
+			if (cacheResults) {
+				metaMapCache.put(schemaFullName, metaMap);
+			}
 		}
 		return metaMap;
 	}
@@ -49,9 +59,12 @@ public class MetadataService {
 	private static MetadataMap loadMetaMap(String schemaFullName) {
 		MetadataMap metaMap = new MetadataMap();
 		if (!METADATA_FULL_NAME.equals(schemaFullName)) { // skip metadata class
-			for (ICard metadataCard : metadataClass.cards().list().attributes(METADATA_KEY_ATTRIBUTE,
-					METADATA_VALUE_ATTRIBUTE).filter(METADATA_SCHEMA_ATTRIBUTE, AttributeFilterType.EQUALS,
-					schemaFullName)) {
+			CardQuery cardQuery = metadataClass.cards().list().attributes(METADATA_KEY_ATTRIBUTE,
+					METADATA_VALUE_ATTRIBUTE);
+			if (isNotBlank(schemaFullName)) {
+				cardQuery = cardQuery.filter(METADATA_SCHEMA_ATTRIBUTE, AttributeFilterType.EQUALS, schemaFullName);
+			}
+			for (ICard metadataCard : cardQuery) {
 				String key = (String) metadataCard.getValue(METADATA_KEY_ATTRIBUTE);
 				String value = (String) metadataCard.getValue(METADATA_VALUE_ATTRIBUTE);
 				metaMap.put(key, value);
@@ -71,7 +84,7 @@ public class MetadataService {
 
 	public static synchronized void updateMetadata(BaseSchema schema, String name, String newValue) {
 		String schemaFullName = getSchemaFullName(schema);
-		MetadataMap metaMap = getMetadata(schemaFullName);
+		MetadataMap metaMap = getMetadata(schemaFullName, true);
 		String oldValue = (String) metaMap.get(name);
 
 		if (newValue != null) {
@@ -109,7 +122,7 @@ public class MetadataService {
 
 	public static void deleteMetadata(BaseSchema schema, String name) {
 		String schemaFullName = getSchemaFullName(schema);
-		MetadataMap metaMap = getMetadata(schemaFullName);
+		MetadataMap metaMap = getMetadata(schemaFullName, true);
 		getMetaCard(schemaFullName, name).delete();
 		metaMap.remove(name);
 	}

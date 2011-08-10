@@ -9,7 +9,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
-import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.WorkflowService;
@@ -87,20 +86,12 @@ public class AuthInfo {
 	}
 
 	public void checkOrSetDefaultGroup(final UserContext userCtx) {
-		Group defaultGroup = null;
-		try {
-			defaultGroup = userCtx.getDefaultGroup();
-		} catch (final AuthException e) {
-			final String usergroup = getRole();
-			for (final Group group : userCtx.getGroups()) {
-				if (group.getName().equals(usergroup)) {
-					defaultGroup = group;
-					userCtx.setDefaultGroup(group.getId());
-					break;
-				}
-			}
-			if (defaultGroup == null) {
-				throw e;
+		final String usergroup = getRole();
+		for (final Group group : userCtx.getGroups()) {
+			if (group.getName().equals(usergroup)) {
+				logger.debug(String.format("selected group '%s'", group.getName()));
+				userCtx.setDefaultGroup(group.getId());
+				break;
 			}
 		}
 	}
