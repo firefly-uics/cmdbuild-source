@@ -17,7 +17,10 @@
 			{name: 'description', type: 'string'},
 			{name: 'index', type: 'string'},
 			{name: 'name', type: 'string'},
-			{name: 'type', type: 'string'}
+			{name: 'type', type: 'string'},
+			{name: "masterTableId", type: "string"},
+			{name: "masterTableName", type: "string"},
+			{name: "isvisible", type: "boolean"}
 		]
 	});
 })()

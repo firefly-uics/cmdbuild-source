@@ -7,6 +7,7 @@
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 	<!-- COMMON -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script>
 
 	<!-- CLASSES -->
@@ -17,14 +18,23 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMGeoAttributesPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMGeoAttributesGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMGeoAttributesForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMModClass.js"></script>
+
+		<!-- GIS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/LayerVisibilityGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesForm.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesPanel.js"></script>
+
 	
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerLayersGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/CMModGeoServer.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
 	
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGroupsAccordion.js"></script>
@@ -139,25 +149,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMXpdlPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMModProcessController.js"></script>
 
-
-<!-- THE OTHERS -->
-	<!-- GIS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModExternalServices.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModIcons.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModLayerOrder.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerLayersGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/GeoServerForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/administration/class/LayerVisibilityGrid.js"></script>
-
-	<!--  CLASS -->
-
-	<!-- DOMAINS -->
-	
 <!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>-->
 
-<!---->
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/LayerController.js"></script>-->
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/gis/ModGis.js"></script>-->
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script> 

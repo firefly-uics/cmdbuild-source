@@ -78,13 +78,13 @@
 			this.attributesPanel.disable();
 			this.geoAttributesPanel.disable();
 			this.domainGrid.disable();
-            this.layerVisibilityGrid.disable();
+			this.layerVisibilityGrid.disable();
 		},
 
 		onClassSelected: function(selection) {
-            if (CMDBuild.Config.gis.enabled) {
+			if (CMDBuild.Config.gis.enabled && !_CMUtils.isSimpleTable(selection.id)) {
 				this.layerVisibilityGrid.enable();
-                this.layerVisibilityGrid.onClassSelected(selection);
+				this.layerVisibilityGrid.onClassSelected(selection);
 			} else {
 				this.layerVisibilityGrid.disable();
 			}

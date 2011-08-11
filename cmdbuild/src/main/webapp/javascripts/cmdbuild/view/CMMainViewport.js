@@ -31,7 +31,8 @@
 					if (!this.creditWin) {
 						this.creditWin = new Ext.window.Window({
 							closable: false,
-							draggable: false
+							draggable: false,
+							resizable: false
 						});
 					}
 

@@ -65,6 +65,7 @@
 		},
 
 		enableModify: function(all) {
+			this._cmEditMode = true;
 			this.enableFields(all);
 			this.disableCMTbar();
 			this.enableCMButtons();
@@ -72,6 +73,7 @@
 		},
 
 		disableModify: function(enableCMTBar) {
+			this._cmEditMode = false;
 			this.disableFields();
 			this.disableCMButtons();
 			if (enableCMTBar) {

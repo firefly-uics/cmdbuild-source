@@ -7,11 +7,13 @@
 		region: 'center',
 		frame: false,
 		border: false,
+
 		store: CMDBuild.ServiceProxy.getAllLayerStore(),
 
 		// custom stuff
 		withCheckToHideLayer: false,
-		
+		cmCheckColumnReadOnly: true,
+
 		sm: new Ext.selection.RowModel(),
 		initComponent: function() {
 			this.columns = [{
@@ -81,28 +83,17 @@
 		/**
 		 * template method for the subclasses
 		 */
-		onVisibilityChecked: function(event, element, column, record) {}
+		onVisibilityChecked: function(cell, recordIndex, checked) {}
 	});
 	
 	function buildCheckColumn() {
 		var column = new Ext.ux.CheckColumn( {
 			header: tr_geo.visibility,
 			dataIndex: "isvisible",
-			cmReadOnly: true
+			cmReadOnly: this.cmCheckColumnReadOnly
 		});
 
-		var grid = this;
-		column.onMouseDown = function(e,t) {
-		    if (t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
-		        e.stopEvent();
-		        var index = grid.getView().findRowIndex(t);
-		        var recordToChange = grid.store.getAt(index);
-		        //this set the checked box to true
-		        recordToChange.set(this.dataIndex, !recordToChange.data[this.dataIndex]);
-		        
-		        grid.onVisibilityChecked(e, t, column, recordToChange);
-		    }
-		};
+		this.mon(column, "checkchange", this.onVisibilityChecked, this);
 
 		this.getVisibilityColDataIndex = function() {
 			return column.dataIndex;

@@ -20,6 +20,8 @@
 			
 			Ext.apply(this, {
 				layout: "border",
+				frame: false,
+				border: false,
 				items: [this.grid,this.form]
 			});
 			
@@ -27,12 +29,13 @@
 		},
 		
 		onClassSelected: function(idClass) {
-			if (CMDBuild.Config.gis.enabled) {
-				this.enable();
-				this.form.onClassSelected(idClass);
-				this.grid.onClassSelected(idClass);
-			} else {
-				this.disable();
+			this.form.onClassSelected(idClass);
+			this.grid.onClassSelected(idClass);
+		},
+
+		isActive: function() {
+			if (this.ownerCt.getActiveTab) {
+				return this.ownerCt.getActiveTab().id == this.id
 			}
 		}
 	})

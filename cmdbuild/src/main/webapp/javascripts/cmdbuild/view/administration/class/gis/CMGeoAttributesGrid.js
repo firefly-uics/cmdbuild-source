@@ -1,6 +1,22 @@
 (function() {
 	
-	var tr_attributes = CMDBuild.Translation.administration.modClass.attributeProperties;
+	var tr_attributes = CMDBuild.Translation.administration.modClass.attributeProperties,
+		columns = [{
+			header: tr_attributes.type,
+			sortable: true,
+			dataIndex: 'type',
+			flex: 1
+		},{
+			header: tr_attributes.name,
+			sortable: true,
+			dataIndex: 'name',
+			flex: 1
+		},{
+			header: tr_attributes.description,
+			sortable: true,
+			dataIndex: 'description',
+			flex: 1
+		}];
 	
 	Ext.define("CMDBuild.view.administration.classes.CMGeoAttributesGrid", {
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
@@ -16,40 +32,29 @@
 				}, 500),this, {single: true}
 			);
 		},
-		
+
+		// override
 		buildColumnConf: function() {
-			this.columns = [{
-				header: tr_attributes.type,
-				sortable: true,
-				dataIndex: 'type',
-				flex: 1
-			},{
-				header: tr_attributes.name,
-				sortable: true,
-				dataIndex: 'name',
-				flex: 1
-			},{
-				header: tr_attributes.description,
-				sortable: true,
-				dataIndex: 'description',
-				flex: 1
-			}]
+			this.columns = columns;
 		},
 
+		// override
 		buildStore: function() {
 			this.store = new Ext.data.SimpleStore( {
 				model: "GISLayerModel"
 			});
 		},
 
+		//override
 		buildTBar: function() {
 			this.tbar = [this.addAttributeButton]
 		},
 
+		// override
 		refreshStore: function(idClass, indexAttributeToSelectAfter) {
 			var store = _CMCache.getGeoAttributesStoreForClass(idClass);
 			if (this.rendered) {
-				this.reconfigure(store, this.columns);
+				this.reconfigure(store, columns);
 			} else {
 				this.danglingStore = store;
 			}

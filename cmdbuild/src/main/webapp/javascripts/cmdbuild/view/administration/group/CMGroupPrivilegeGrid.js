@@ -88,7 +88,6 @@ Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
 		classid: this.recordToChange.get('classid')
 	};
 
-	// TODO ext 3 to 4 : credo non salvi
 	CMDBuild.Ajax.request({
 		url: 'services/json/schema/modsecurity/saveprivilege',
 		params: params,

@@ -15,6 +15,9 @@ var cf = new Ext.form.ColorField({
 });
 </code></pre>
  * @param {Object} config
+ * 
+ * Modified by Tecnoteca at 11 August 2011: minimal change to work with ExtJs 4
+ * 
  */
 Ext.form.ColorField = function(config){
     Ext.form.ColorField.superclass.constructor.call(this, config);
@@ -133,20 +136,24 @@ Ext.extend(Ext.form.ColorField, Ext.form.TriggerField,  {
 	setColor : function(hex) {
 		this.curColor = hex;
 		
-		this.el.setStyle( {
+		try {
+		this.inputEl.setStyle( {
 			'background-color': '#' + hex,
 			'background-image': 'none'
-		});
-		if(!this.showHexValue) {
-			this.el.setStyle({
-				'text-indent': '-100px'
 			});
-			if(Ext.isIE) {
-				this.el.setStyle({
-					'margin-left': '100px'
-				});
-			}
+		} catch (e) {
+			// the element is not rendered
 		}
+//		if(!this.showHexValue) {
+//			this.el.setStyle({
+//				'text-indent': '-100px'
+//			});
+//			if(Ext.isIE) {
+//				this.el.setStyle({
+//					'margin-left': '100px'
+//				});
+//			}
+//		}
 	},
 	
 	handleRender: function() {
@@ -175,7 +182,7 @@ Ext.extend(Ext.form.ColorField, Ext.form.TriggerField,  {
     },
 	
 	//private
-	handleSelect : function(palette, selColor) {
+	handleSelect : function(menu, selColor) {
 		this.setValue(selColor);
 	},
 
@@ -186,8 +193,10 @@ Ext.extend(Ext.form.ColorField, Ext.form.TriggerField,  {
             return;
         }
         if(this.menu == null){
-            this.menu = new Ext.menu.ColorMenu();
-			this.menu.palette.on('select', this.handleSelect, this );
+            this.menu = new Ext.menu.ColorPicker({
+            	ownerCt: this.ownerCt
+            });
+			this.mon(this.menu, 'select', this.handleSelect, this );
         }
         this.menu.on(Ext.apply({}, this.menuListeners, {
             scope:this

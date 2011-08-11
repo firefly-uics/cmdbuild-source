@@ -19,9 +19,21 @@
 		},
 
 		onClassSelected: function(classId) {
+			if (CMDBuild.Config.gis.enabled && !_CMUtils.isSimpleTable(classId)) {
+				this.view.enable();
+			} else {
+				this.view.disable();
+			}
+
 			this.currentClassId = classId;
 			this.currentAttribute = null;
-			this.view.onClassSelected(classId);
+			if (this.view.isActive()) {
+				this.view.onClassSelected(this.currentClassId);
+			} else {
+				this.view.mon(this.view, "activate", function() {
+					this.view.onClassSelected(this.currentClassId);
+				}, this, {single: true});
+			}
 		},
 
 		onAddClassButtonClick: function() {
@@ -38,20 +50,27 @@
 	}
 	
 	function onSaveButtonFormClick() {
-		var style = this.form.getStyle();
+		var nonValid = this.form.getNonValidFields();
+		if (nonValid.length > 0) {
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, "@@Ci sono campi non validi", false);
+			return;
+		}
+		this.form.enableModify(all = true);
+		CMDBuild.LoadMask.get().show();
 		var p = {
-			params: this.form.getData()
+			name: this.form.name.getValue(),
+			callback: callback,
+			params: Ext.apply(this.form.getData(), {
+				style: Ext.encode(this.form.getStyle()),
+				idClass: this.currentClassId
+			})
 		};
-
-		p.params.style = Ext.encode(style);
-		p.params.idClass = this.currentClassId;
-		p.name  = this.form.name.getValue();
 
 		p.success = Ext.bind(function(a, b, decoded) {
 			_CMCache.onGeoAttributeSaved(this.currentClassId, decoded.geoAttribute);
 			this.grid.selectAttribute(decoded.geoAttribute);
 		}, this);
-		
+
 		if (this.currentAttribute != null) {
 			CMDBuild.ServiceProxy.geoAttribute.modify(p);
 		} else {
@@ -83,108 +102,39 @@
 	}
 	
 	function deleteAttribute() {
-		function onSuccess(response, request, decoded) {
-			alert("@@ Deleted");
-		};
+		var me = this;
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.geoAttribute.remove({
 			params : {
-				"idClass": this.currentClassId,
-				"name": this.currentAttribute.get("name")
+				"idClass": me.currentClassId,
+				"name": me.currentAttribute.get("name")
 			},
-			success: Ext.Function.bind(onSuccess, this),
-			callback: Function.bind(callback, this)
+			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {
+				_CMCache.onGeoAttributeDeleted(me.currentClassId, me.currentAttribute.data);
+			},
+			callback: callback
 		})
 	}
-	
+
 	function onModifyButtonFormClick() {
 		this.form.enableModify();
 	}
-	
+
 	function onAddAttributeClick() {
 		this.currentAttribute = null;
 
 		this.form.reset();
-		this.form.enableModify();
+		this.form.enableModify(enableAllFields = true);
+		this.form.setDefaults();
 		this.form.hideStyleFields();
 		this.gridSM.deselectAll();
 	}
-	
+
 	function callback() {
 		CMDBuild.LoadMask.get().hide();
 	}
-	
-	// FORM
-	
 
-//	
-//    var onSave = function() {
-//    	var params = this.getForm().getValues();
-//    	var out = {};
-//    	var style = this.getStyle();
-//    	
-//    	for (var key in params) {
-//    		if (!this.styleFieldsMap[key]) {
-//    			out[key] = params[key];
-//    		}
-//    	}
-//    	
-//    	out.style = Ext.encode(style);
-//    	out.idClass = this.classId;    	
-//    	out.name = this.name.getValue();
-//    	
-//    	CMDBuild.LoadMask.get().show();
-//    	if (this.modifyMode) {
-//    		var onSuccess = function(response, request, decoded) {
-//    			this.publish("cmdb-modify-geoattr", decoded);
-//    		};
-//    		CMDBuild.ServiceProxy.modifyGeoAttribute(out, 
-//    				onSuccess.createDelegate(this),
-//    				Ext.emptyFn,
-//    				callback.createDelegate(this));
-//    	} else {
-//    		var onSuccess = function(response, request, decoded) {
-//    			this.publish("cmdb-new-geoattr", decoded);
-//    		};
-//    		CMDBuild.ServiceProxy.saveGeoAttribute(out,
-//    				onSuccess.createDelegate(this),
-//    				Ext.emptyFn,
-//    				callback.createDelegate(this));
-//    	}    	
-//    };
-//    
-//    var onAbort = function() {
-//    	this.resetForm();
-//    	this.disableAllField();
-//    	this.saveButton.disable();
-//    	this.abortButton.disable();
-//    	this.stopMonitoring();
-//    };
-//    
-//    var onModify = function() {
-//    	this.modifyMode = true;
-//    	this.enableAllField();
-//    	this.types.disable();
-//    	this.name.disable();
-//    	this.saveButton.enable();
-//    	this.abortButton.enable();
-//    	this.startMonitoring();
-//    };
-//    
-//    var onDelete = function() {
-//    	var onSuccess = function(response, request, decoded) {
-//    		var table = {id: this.classId};
-//    		var geoAttribute = {name: this.currentName};
-//			this.publish("cmdb-delete-geoattr", {table: table, geoAttribute: geoAttribute});
-//		};
-//		CMDBuild.LoadMask.get().show();
-//    	CMDBuild.ServiceProxy.deleteGeoAttribute(this.classId,
-//    			this.currentName, 
-//    			onSuccess.createDelegate(this),
-//    			Ext.emptyFn,
-//    			callback.createDelegate(this));
-//    };
-	
 	function isItMineOrOfMyParents(attr, classId) {
 		var table = CMDBuild.Cache.getTableById(classId);
 		while (table) {

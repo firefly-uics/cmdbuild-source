@@ -3,58 +3,59 @@
 	Ext.define("CMDBuild.Administration.LayerVisibilityGrid", {
 		extend: "CMDBuild.Administration.LayerGrid",
 		currentClass: undefined,
+
+		cmCheckColumnReadOnly: false,
+
 		initComponent: function() {
 			this.callParent(arguments);
-			this.store.load();
+
+			this.mon(this, "activate", function() {
+				this.store.load();
+			}, this);
 		},
-		
+
 		onClassSelected: function(s) {
-			if (s) {
-				selectVisibleLayers.call(this, s.id);
-			}
+			this.currentClassId = s.id || 0;
+			selectVisibleLayers.call(this, this.currentClassId);
 		},
 
 		/**
 		 * @override
 		 */
-		onVisibilityChecked: function(event, element, column, record) {
-		    var checked = record.data[column.dataIndex];
-		    var classId = this.currentClass;
-		    var loadMask = CMDBuild.LoadMask.get();
-		    
-		    var onSuccess = (function() {
-		    	this.publish("cmdb-changevisibility-geoattr", {
-		    		checked: checked,
-		    		classId: classId,
-		    		record: record
-		    	});
-		    }).createDelegate(this);
-		    
-		    loadMask.show();
-		    CMDBuild.ServiceProxy.saveLayerVisibility({
-		    	classId: classId,
+		onVisibilityChecked: function(cell, recordIndex, checked) {
+			var record = this.store.getAt(recordIndex),
+				classId = this.currentClassId,
+				me = this;
+
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.ServiceProxy.saveLayerVisibility({
+				classId: classId,
 				master: record.data.masterTableId,
 				featureTypeName: record.data.name,
 				checked: checked,
-				success: onSuccess,
+				success: function() {
+					_CMCache.onGeoAttributeVisibilityChanged(classId, record.data, checked);
+					selectVisibleLayers.call(me, classId);
+				},
 				failure: function() {
-		    		record.set(column.dataIndex, !checked);
-		    	},
+					record.set(column.dataIndex, !checked);
+				},
 				callback: function() {
-		    		loadMask.hide();
-		    	}
-		    });
+					CMDBuild.LoadMask.get().hide();
+					record.commit();
+				}
+			});
 		}
 	});
-	
+
 	function selectVisibleLayers(tableId) {
 		var et = _CMCache.getEntryTypeById(tableId),
-			geoAttrs = [],
+			visibleGeoAttrs = [],
 			s = this.store,
 			di = this.getVisibilityColDataIndex();
 
 		if (et) {
-			geoAttrs = et.data.meta.geoAttributes;
+			geoAttrs = et.getVisibleGeoAttrs();
 		}
 
 		function geoAttrEquals(a1, a2) {
@@ -76,6 +77,7 @@
 				}
 			}
 			record.set(di, visible);
+			record.commit();
 		}, this);
 	};
 })();

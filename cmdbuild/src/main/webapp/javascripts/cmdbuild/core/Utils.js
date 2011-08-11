@@ -59,17 +59,16 @@ CMDBuild.Utils = (function() {
 			}
 			return true;
 		},
-		
+
 		isSimpleTable: function(id) {
-			var table = CMDBuild.Cache.getTableById(id);
+			var table = _CMCache.getEntryTypeById(id);
 			if (table) {
-				var tGroup = CMDBuild.Cache.getTableGroup(table);
-				return tGroup == CMDBuild.Constants.cachedTableType.simpletable;
+				return table.data.tableType == CMDBuild.Constants.cachedTableType.simpletable
 			} else {
 				return false;
 			}
 		},
-		
+
 		groupAttributes: function(attributes, allowNoteFiled) {
 			var groups = {};
 			var fieldsWithoutGroup = []; 

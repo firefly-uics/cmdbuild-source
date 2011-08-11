@@ -127,20 +127,17 @@ CMDBuild.ServiceProxy = {
 					root: "layers"
 				}
 			},
-			//TODO 3 to 4 check the layers grid
-//			fields: ["maxZoom", "minZoom", "style", "description", "index",
-//			         "name", "masterTableId", "type", "masterTableName", "isvisible"],
 			autoLoad: false,
 			sorters: {
 				property: 'index',
 				direction: 'ASC'
 			}
 		});
-		
+
 		var reload = function() {
 			this.load();
 		};
-		
+
 		_CMEventBus.subscribe("cmdb-new-geoattr", reload, layerStore);
 		_CMEventBus.subscribe("cmdb-modify-geoattr", reload, layerStore);
 		_CMEventBus.subscribe("cmdb-delete-geoattr", reload, layerStore);

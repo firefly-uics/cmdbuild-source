@@ -18,7 +18,6 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/MultiSelect.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/XCheckbox.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/XCombo.js"></script>
-<!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/SpinnerField.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/media/uxmedia.js"></script>-->
 
 <!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/media/uxflash.js"></script> -->

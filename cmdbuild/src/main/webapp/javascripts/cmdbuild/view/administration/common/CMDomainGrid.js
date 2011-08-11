@@ -85,7 +85,7 @@
 		
 		loadData: function(params) {
 			if (params.idClass) {
-				var table = CMDBuild.Cache.getTableById(params.idClass);
+				var table = _CMCache.getEntryTypeById(params.idClass);
 				if (table.tableType == CMDBuild.Constants.cachedTableType.simpletable) {
 					return;
 				}

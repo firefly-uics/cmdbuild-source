@@ -12,7 +12,7 @@
 			this.registerToCacheEvents();
 		},
 		
-		//private and overridden is subclasses
+		//private and overridden in subclasses
 		buildSubcontrollers: function() {
 			this.classFormController = new CMDBuild.controller.administration.classes.CMClassFormController(this.view.classForm);
 			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
@@ -20,12 +20,12 @@
 			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
 		},
 
-		//private and overridden is subclasses		
+		//private and overridden in subclasses		
 		registerToCacheEvents: function() {
 			_CMCache.on("cm_class_deleted", this.view.onClassDeleted, this.view);
 		},
 
-		//private and overridden is subclasses
+		//private and overridden in subclasses
 		onViewOnFront: function(selection) {
 			if (selection) {
 				this.view.onClassSelected(selection.data);
@@ -71,7 +71,4 @@
 			_CMMainViewportController.deselectAccordionByName("class");
 		}
 	});
-
-	
-
 })();

@@ -113,7 +113,15 @@
 
 			return geoAttributesSotores[classId];
 		},
-		
+
+		getClassRootId: function() {
+			return getTableIdFromSetByName(classes, "Class");
+		},
+
+		getActivityRootId: function() {
+			return getTableIdFromSetByName(processes, "Activity");
+		},
+
 		onClassSaved: function(_class) {
 			var c = this.addClass(_class);
 			callCmFillForStores();
@@ -146,25 +154,39 @@
 			this.fireEvent("cm_process_deleted", idClass);
 		},
 
-		getClassRootId: function() {
-			return getTableIdFromSetByName(classes, "Class");
-		},
-		
-		getActivityRootId: function() {
-			return getTableIdFromSetByName(processes, "Activity");
+		onGeoAttributeSaved: function(idClass, geoAttribute) {
+			var owner = _CMCache.getEntryTypeById(idClass);
+			owner.createOrUpdateGeoAttr(geoAttribute);
+			_CMCache.getGeoAttributesStoreForClass(idClass).cmFill();
+
+			function iterateOverEntryTypes(entryTypes) {
+				for (var et in entryTypes) {
+					et = entryTypes[et];
+					if (et.updateGeoAttr(geoAttribute)) {
+						_CMCache.getGeoAttributesStoreForClass(et.data.id).cmFill();
+					}
+				}
+			}
+			iterateOverEntryTypes(classes);
+//			iterateOverEntryTypes(processes); // remove comment when the process can have geo-attributes (never! hahah)
 		},
 
-		onGeoAttributeSaved: function(idClass, geoAttribute) {
-			var s = this.getGeoAttributesStoreOfClass(idClass);
-			if (s) {
-				var r = s.findRecord("name", geoAttribute.name);
-				if (r) {
-					s.remove(r)
+		onGeoAttributeDeleted: function(idClass, geoAttribute) {
+			function iterateOverEntryTypes(entryTypes) {
+				for (var et in entryTypes) {
+					et = entryTypes[et];
+					if (et.deleteGeoAttr(geoAttribute)) {
+						_CMCache.getGeoAttributesStoreForClass(et.data.id).cmFill();
+					}
 				}
-				
-				s.add(geoAttribute);
-				s.sort('index', 'ASC');
 			}
+			iterateOverEntryTypes(classes);
+//			iterateOverEntryTypes(processes); // remove comment when the process can have geo-attributes (never! hahah)
+		},
+
+		onGeoAttributeVisibilityChanged: function(idClass, geoAttribute, isVisible) {
+			var owner = _CMCache.getEntryTypeById(idClass);
+			owner.createOrUpdateGeoAttr(geoAttribute);
 		}
 
 	});
@@ -292,19 +314,23 @@
 	
 	function buildGeoAttributesStoreForClass(classId) {
 		try {
-			var geoAttributes = classes[classId].data.meta.geoAttributes;
-			
-			var s = new Ext.data.Store({
+			var et = _CMCache.getEntryTypeById(classId);
+
+			return new Ext.data.Store({
 				model: "GISLayerModel",
 				autoLoad : false,
-				data: geoAttributes || [],
+				data: et.getMyGeoAttrs(),
 				sorters : [ {
 					property : 'index',
 					direction : "ASC"
-				}]
+				}],
+				cmFill: function() {
+					this.removeAll();
+					this.add(et.getMyGeoAttrs());
+					this.sort('description', 'ASC');
+				}
 			});
-	
-			return s;
+
 		} catch (e) {
 			_debug("I can not build a geoAttribute store for classId with id " + classId);
 		}

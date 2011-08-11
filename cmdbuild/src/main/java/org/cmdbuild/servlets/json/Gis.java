@@ -121,7 +121,7 @@ public class Gis extends JSONBase {
 			JSONObject serializer) throws JSONException {
 		GeoFeatureType gft = layerService.createGeoFeatureType(table, name, description, GeoType.valueOf(type),
 				minZoom, maxZoom, jsonStyle.toString());
-		serializer.put("geoAttribute", Serializer.serializeGeoLayer(gft));
+		serializer.put("geoAttribute", Serializer.serializeGeoLayer(gft, table));
 		return serializer;
 	}
 
