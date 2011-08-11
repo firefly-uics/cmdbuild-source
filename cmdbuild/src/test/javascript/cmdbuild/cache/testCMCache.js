@@ -1,0 +1,89 @@
+(function() {
+	TestCase("testCMCache", {
+		setUp: function() {
+			this._cmCache = new CMDBuild.cache.CMCache();
+		},
+		tearDown: function() {
+			delete this._cmCache;
+			CMDomainModelLibrary.clear();
+		},
+		"test thet setDomains fill the CMDomainLibrary with the relative domains": function() {
+			assertEquals(0, CMDomainModelLibrary.count());
+			this._cmCache.setDomains(getAllDomains());
+			assertEquals(3, CMDomainModelLibrary.count());
+		}
+	});
+	
+	function getAllDomains() {
+		return [ {
+			class1id : 1585805,
+			priv_write : true,
+			inherited : false,
+			classType : "class",
+			priv_create : true,
+			class2id : 1586051,
+			meta : {
+				"runtime.username" : "admin",
+				"runtime.groupname" : "SuperUser",
+				"runtime.privileges" : "WRITE"
+			},
+			idDomain : 1585882,
+			class1 : "Dipendente",
+			md : false,
+			description : "Assegnazione",
+			class2 : "Posto di lavoro",
+			name : "Assegnazione",
+			descrdir : "utilizza",
+			descrinv : "utilizzato da",
+			active : true,
+			origName : "Assegnazione",
+			cardinality : "N:N"
+		}, {
+			class1id : 1586051,
+			priv_write : true,
+			inherited : false,
+			classType : "class",
+			priv_create : true,
+			class2id : 1585780,
+			meta : {
+				"runtime.username" : "admin",
+				"runtime.groupname" : "SuperUser",
+				"runtime.privileges" : "WRITE"
+			},
+			idDomain : 1585893,
+			class1 : "Posto di lavoro",
+			md : false,
+			description : "ComposizionePDL",
+			class2 : "Item",
+			name : "ComposizionePDL",
+			descrdir : "comprende",
+			descrinv : "fa parte di",
+			active : true,
+			origName : "ComposizionePDL",
+			cardinality : "1:N"
+		}, {
+			class1id : 1586203,
+			priv_write : true,
+			inherited : false,
+			classType : "class",
+			priv_create : true,
+			class2id : 1586051,
+			meta : {
+				"runtime.username" : "admin",
+				"runtime.groupname" : "SuperUser",
+				"runtime.privileges" : "WRITE"
+			},
+			idDomain : 1585970,
+			class1 : "Stanza",
+			md : false,
+			description : "Stanza PDL",
+			class2 : "Posto di lavoro",
+			name : "StanzaPDL",
+			descrdir : "contiene",
+			descrinv : "si trova in",
+			active : true,
+			origName : "StanzaPDL",
+			cardinality : "1:N"
+		} ]
+	};
+})();
