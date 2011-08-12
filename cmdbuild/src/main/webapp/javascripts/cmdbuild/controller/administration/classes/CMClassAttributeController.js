@@ -54,9 +54,14 @@
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, "@@Ci sono campi non validi", false);
 			return;
 		}
+
 		var data = this.view.formPanel.getData(withDisabled = true);
 		data.tableId = this.currentClassId;
-		
+
+		if (this.view.formPanel.referenceFilterMetadataDirty) {
+			data.meta = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
+		}
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.Ajax.request( {
 			method : "POST",
