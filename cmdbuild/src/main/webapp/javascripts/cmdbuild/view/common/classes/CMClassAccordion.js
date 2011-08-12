@@ -18,8 +18,8 @@
 			for (var id in nodesMap) {
 				var node = nodesMap[id];
 				if (node.tableType == "standard") {
-					if (node.parent) {
-						linkToParent(node, nodesMap)
+					if (node.parent && nodesMap[node.parent]) {
+						linkToParent(node, nodesMap);
 					} else {
 						standard.push(node);
 					}

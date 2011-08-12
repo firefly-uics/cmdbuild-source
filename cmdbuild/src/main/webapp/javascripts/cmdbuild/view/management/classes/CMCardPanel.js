@@ -41,6 +41,10 @@
 		},
 
 		editMode: function() {
+			if (!this.writePrivilege) {
+				return;
+			}
+
 			if (this.sideTabPanel) {
 				this.sideTabPanel.editMode();
 			}
@@ -55,8 +59,8 @@
 			if (this.sideTabPanel) {
 				this.sideTabPanel.displayMode();
 			}
-			
-			if (enableCmBar) {
+
+			if (enableCmBar && this.writePrivilege) {
 				this.enableCMTbar();
 			} else {
 				this.disableCMTbar();
@@ -71,13 +75,16 @@
 		},
 
 		onCardSelected: function(card, reloadField, loadRemoteData) {
-			this.displayMode(enableCMTbar = true);
+			var privileges = _CMUtils.getClassPrivileges(card.get("IdClass"));
+			this.writePrivilege = privileges.write;
+
 			this.loadRemoteData = loadRemoteData; // used and reset in loadCard;
 
 			if (reloadField) {
 				this.danglingCard = card;
 				_CMCache.getAttributeList(card.get("IdClass"), Ext.bind(fillForm, this));
 			} else {
+				this.displayMode(enableCMTbar = true);
 				loadCard.call(this, card);
 			}
 		},
@@ -170,7 +177,7 @@
 			this.editMode();
 			this.forceEditMode = false;
 		} else {
-			this.displayMode();
+			this.displayMode(enableCmBar = true);
 		}
 	};
 
@@ -198,7 +205,7 @@
 	    	});
 
 //			this.openGraphAction = new CMDBuild.Management.GraphActionHandler().getAction(),
-			
+
 			this.cmTBar = [
 				this.modifyCardButton,
 				this.deleteCardButton,

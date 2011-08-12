@@ -18,9 +18,9 @@ CMDBuild.Utils = (function() {
 		},
 
 		Format: {
-	        htmlEntityEncode : function(value) {
-	            return !value ? value : String(value).replace(/&/g, "&amp;");
-	        }
+			htmlEntityEncode : function(value) {
+				return !value ? value : String(value).replace(/&/g, "&amp;");
+			}
 		},
 
 		evalBoolean: function(v) {
@@ -30,16 +30,14 @@ CMDBuild.Utils = (function() {
 				return !!v; //return the boolean value of the object
 			}
 		},
-		
+
 		getClassPrivileges: function(classId) {
-			var privileges;
-			var classTree = CMDBuild.Cache.getTree();
-			var table = CMDBuild.Cache.getTableById(classId);
-			
-			if (table) {
+			var entryType = _CMCache.getEntryTypeById(classId)
+
+			if (entryType) {
 				privileges = {
-					write: table.priv_write,
-					create: table.priv_create
+					write: entryType.get("priv_write"),
+					create: entryType.get("priv_create")
 				};
 			} else {
 				privileges = {
@@ -47,7 +45,7 @@ CMDBuild.Utils = (function() {
 					create: false
 				};
 			}
-			
+
 			return privileges;
 		},
 		
