@@ -18,6 +18,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMMetadataWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMModClass.js"></script>
 
 		<!-- GIS -->
@@ -148,7 +149,5 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMCronPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMXpdlPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMModProcessController.js"></script>
-
-<!--<script type="text/javascript" src="javascripts/cmdbuild/administration/class/MetadataWindow.js"></script>-->
 
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script> 

@@ -189,16 +189,29 @@
 				editableOnInherited : true
 			});
 
+			this.referenceFilterMetadata = {};
+			this.referenceFilterMetadataDirty = false;
+
 			this.addMetadataBtn = new Ext.Button( {
 				text : tr.meta.title,
 				scope : this,
 				iconCls : "modify",
+				margin: "0 0 0 5",
 				handler : function() {
-					new CMDBuild.Administration.MetadataWindow({
-						meta : this.record.data.meta,
-						ns : "system.template.",
-						owner : this
-					}).show();
+					var w = new CMDBuild.view.administration.classes.CMMetadataWindow({
+						data : this.referenceFilterMetadata,
+						dirtyFlag: this.referenceFilterMetadataDirty,
+						ns : "system.template."
+					});
+
+					this.mon(w.saveBtn, "click", function() {
+						this.referenceFilterMetadata = w.getMetaAsMap();
+						this.referenceFilterMetadataDirty = true;
+
+						w.destroy();
+					}, this);
+
+					w.show();
 				}
 			});
 
@@ -298,10 +311,17 @@
 					this.referenceDomains,
 					this.foreignKeyDest,
 					this.lookupTypes,
-					this.fieldFilter,
-					this.addMetadataBtn
+					{
+						xtype: "panel",
+						layout: "hbox",
+						border: false,
+						frame: false,
+						cls: "x-panel-body-default-framed",
+						items: [this.fieldFilter, this.addMetadataBtn]
+					}
 				]
 			});
+
 			this.plugins = [new CMDBuild.FormPlugin()];
 			this.callParent(arguments);
 		},
@@ -358,7 +378,7 @@
 		takeDataFromCache: function(idClass) {
 			return _CMCache.getClassById(idClass);
 		},
-		
+
 		onAttributeSelected : function(attribute) {
 			this.reset();
 			
@@ -369,10 +389,16 @@
 				this.hideContextualFields();
 				this.showContextualFieldsByType(attribute.get("type"));
 	
-				// I want send these value only after a modify
-				// in the meta data window
-				this.getForm().findField("meta").setValue("");
+				this.referenceFilterMetadata = attribute.raw.meta || {};
+				this.referenceFilterMetadataDirty = false;
 			}
+		},
+
+		// override
+		reset: function() {
+			this.mixins.cmFormFunctions.reset.call(this);
+			this.referenceFilterMetadata = {};
+			this.referenceFilterMetadataDirty = false;
 		},
 
 		iterateOverContextualFields: function(type, fn) {
@@ -426,7 +452,7 @@
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
 				title : tr.baseProperties,
-                padding: "5 5 20 5",
+				padding: "5 5 20 5",
 				autoScroll : true,
 				defaultType : "textfield",
 				flex: 1,
@@ -438,39 +464,47 @@
 					this.attributeUnique,
 					this.attributeNotNull,
 					this.isActive,
-					{
-						xtype: "hidden",
-						name: "meta"
-					},
 					this.fieldMode
 				]
 			});
 		},
-        
-        fillAttributeGroupsStore: function(attributes) {
-            var store = this.attributeGroup.store,
-                addtributesGroup = {},
-                groups = [],
-                attribute;
 
-            store.removeAll();
-            
-            // build a map before to deny duplications
-            for (var i=0, len=attributes.length; i<len; ++i) {
-                attribute = attributes[i];
-                if (attribute.data.group) {
-                    addtributesGroup[attribute.data.group] = true;
-                };
-            }
-            
-            for (var g in addtributesGroup) {
-                groups.push([g]);
-            }
-				
-            store.loadData(groups);
-        }
+		fillAttributeGroupsStore: function(attributes) {
+			var store = this.attributeGroup.store,
+				addtributesGroup = {},
+				groups = [],
+				attribute;
+
+			store.removeAll();
+
+			// build a map before to deny duplications
+			for (var i=0, len=attributes.length; i<len; ++i) {
+				attribute = attributes[i];
+				if (attribute.data.group) {
+					addtributesGroup[attribute.data.group] = true;
+				};
+			}
+
+			for (var g in addtributesGroup) {
+				groups.push([g]);
+			}
+
+			store.loadData(groups);
+		},
+
+		// override
+		enableModify: function(all) {
+			this.mixins.cmFormFunctions.enableModify.call(this, all);
+			this.addMetadataBtn.enable();
+		},
+
+		// override
+		disableModify: function(enableCMTBar) {
+			this.mixins.cmFormFunctions.disableModify.call(this, enableCMTBar);
+			this.addMetadataBtn.disable();
+		}
 	});
-	
+
 	function onSelectComboType (combo, record, index) {
 		var type = record[0].data.value;
 		this.hideContextualFields();
