@@ -51,6 +51,7 @@
 		},
 
 		loadDetailsAndFKThenBuildSideTabs: function(classId) {
+			this.addDetailButton.disable();
 			var domainList = _CMCache.getMasterDetailsForClassId(classId),
 				me = this;
 

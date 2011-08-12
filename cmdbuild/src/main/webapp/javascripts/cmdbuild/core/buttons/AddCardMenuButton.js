@@ -12,14 +12,14 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	
 	//private
 	initComponent: function() {
-		this.subClasses = {};		
+		this.subClasses = {};
 		Ext.apply(this, {
 			text: this.baseText,
 			menu : {items :[]},
 			handler: onClick,
 			scope: this
 		});
-		
+
 		this.callParent(arguments);
 	},
 	
@@ -27,8 +27,16 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		if (!entry) {
 			return;
 		}
+
 		this.classId = entry.get("id");
 		fillMenu.call(this, entry);
+
+		if (_CMUtils.isSuperclass(this.classId)) {
+			this.setDisabled(this.isEmpty());
+		} else {
+			var privileges = _CMUtils.getClassPrivileges(this.classId);
+			this.setDisabled(!privileges.create);
+		}
 	},
 
 	showDropDownArrow: function() {
@@ -36,13 +44,13 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 			this.el.child(this.arrowSelector).addClass('x-btn-split');
 		}
 	},
-	
+
 	hideDropDownArrow: function() {
 		if (this.el) {
 			this.el.child(this.arrowSelector).removeClass('x-btn-split');
 		}
 	},
-	
+
 	//private
 	manageDropDownArrowVisibility: function(table) {
 		if (!table) {
@@ -74,8 +82,8 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	},
 	
 	//private
-	isEmpty: function(){
-		return (this.menu.items.items.length == 0 );
+	isEmpty: function() {
+		return (this.menu && this.menu.items.length == 0 );
 	},
 	
 	//private
@@ -105,9 +113,11 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 			addSubclass.call(this, children[i]);
 		}
 	}
-	
+
 	function addSubclass(entry) {
-		if (entry.get("priv_create")) {	
+		var privileges = _CMUtils.getClassPrivileges(entry.get("id"));
+
+		if (privileges.create) {	
 			this.menu.add({
 				text: entry.get("text"),
 				subclassId: entry.get("id"),
@@ -119,7 +129,7 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 						className: item.subclassName
 					});
 				}
-			});			
+			});
 		};
 
 		var children = _CMUtils.getChildrenById(entry.get("id"));
@@ -128,7 +138,7 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 			addSubclassesToMenu.call(this, children);
 		}
 	}
-	
+
 	function onClick() {
 		//Extjs calls the handler even when disabled
 		if (!this.disabled) {			
