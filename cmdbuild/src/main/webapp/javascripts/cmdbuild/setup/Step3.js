@@ -12,25 +12,26 @@
 			this.adminUser = new Ext.form.TextField({
 				name: 'admin_user',
 				fieldLabel: tr.admin_user,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank: false,
 				disabled: true
 			});
 
 			this.adminPassword = new Ext.form.TextField({
 				name: 'admin_password',
-				id: 'admin_password',
-				inputType:'password', 
-				allowBlank: false,
+				inputType: 'password', 
 				fieldLabel: tr.admin_password,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				allowBlank: false,
 				disabled: true
 			});
 
 			this.confirmAdminPassword = new Ext.form.TextField({
-				name : '',
 				inputType : 'password',
-				vtype : 'password',
-				initialPassField : 'admin_password',
 				fieldLabel : tr.confirm_password,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				vtype : 'password',
+				initialPassField : this.adminPassword.getId(),
 				allowBlank : false,
 				disabled : true
 			});
@@ -40,7 +41,6 @@
 		
 		initComponent: function() {
 			Ext.apply(this, {
-				labelWidth: 150,
 				frame: true,
 				items: [
 					this.adminUser,

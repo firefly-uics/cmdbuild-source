@@ -52,6 +52,8 @@
 		});
 	</script>
 
+	<script type="text/javascript" src="javascripts/cmdbuild/form/CustomVTypes.js"></script>
+
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>

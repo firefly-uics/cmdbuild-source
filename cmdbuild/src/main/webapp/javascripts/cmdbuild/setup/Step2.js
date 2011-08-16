@@ -8,6 +8,7 @@
 			this.dbType = new Ext.form.ComboBox( { 
 				name: 'db_type',
 				fieldLabel: tr.db_create_type,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				valueField: 'name',
 				displayField: 'value',
 				store: new Ext.data.SimpleStore({
@@ -25,7 +26,8 @@
 			
 			this.sharkSchema = new Ext.ux.form.XCheckbox({
 				name: 'shark_schema',
-				fieldLabel: tr.create_shark
+				fieldLabel: tr.create_shark,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH
 			});
 
 			this.dbTypeAndNameFieldSet = new Ext.form.FieldSet({
@@ -36,6 +38,7 @@
 						xtype: "textfield",
 						name: 'db_name',
 						fieldLabel: tr.db_create_name,
+						labelWidth: CMDBuild.CM_LABEL_WIDTH,
 						allowBlank: false
 					},
 					this.sharkSchema
@@ -46,6 +49,7 @@
 				name: 'host',
 				allowBlank: false,
 				fieldLabel: tr.db_host,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				listeners: this.validationFieldListeners
 			});
 			
@@ -53,6 +57,7 @@
 				name: 'port',
 				allowBlank: false,
 				fieldLabel: tr.db_port,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				listeners: this.validationFieldListeners
 			});
 			
@@ -60,6 +65,7 @@
 				name: 'user',
 				allowBlank: false,
 				fieldLabel: tr.db_superUser,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				listeners: this.validationFieldListeners
 			});
 
@@ -69,6 +75,7 @@
 				allowBlank: false,
 				inputType:'password', 
 				fieldLabel: tr.db_password,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				listeners: this.validationFieldListeners
 			});
 
@@ -92,6 +99,7 @@
 			this.userType = new Ext.form.ComboBox( { 
 				name: 'user_type',
 				fieldLabel: tr.user_type,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				valueField: 'name',
 				displayField: 'value',
 				store: new Ext.data.SimpleStore({
@@ -110,6 +118,7 @@
 			this.limUser = new Ext.form.TextField({
 				name: 'lim_user',
 				fieldLabel: tr.db_user,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank: false,
 				disabled: true
 			});
@@ -118,12 +127,14 @@
 				name: 'lim_password',
 				inputType:'password', 
 				fieldLabel: tr.db_password,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				allowBlank: false,
 				disabled: true
 			});
 
 			this.confirmLimPassword = new Ext.form.TextField({
 				fieldLabel: tr.db_confirm_password,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				inputType:'password',
 				vtype: 'password',
 				initialPassField: 'lim_password',
