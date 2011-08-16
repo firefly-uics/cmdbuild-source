@@ -91,8 +91,8 @@
 		if (nonValidFields.length > 0) {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.failure, 
-				msg: "@@ Ci sono campi non valid", 
-				buttons: Ext.MessageBox.OK 
+				msg: "@@ Invalid values", 
+				buttons: Ext.MessageBox.OK
 			});
 		} else {
 			CMDBuild.LoadMask.get().show();

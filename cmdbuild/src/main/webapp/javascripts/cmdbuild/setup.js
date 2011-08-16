@@ -1,5 +1,7 @@
 (function() {
 
+CMDBuild.CM_LABEL_WIDTH = 250;
+
 Ext.define("CMDBuild.app.Setup", {
 	statics: {
 		init: function() {
@@ -45,7 +47,7 @@ Ext.define("CMDBuild.app.Setup", {
 			new Ext.Viewport({
 				layout:'border',
 				frame: false,
-				border: false	,
+				border: false,
 				items:[this.cardPanel, {
 					frame: false,
 					border: false,

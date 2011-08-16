@@ -13,6 +13,7 @@
 				iconClsField: 'name',
 				iconClsPrefix: 'ux-flag-',
 				fieldLabel: tr.choose,
+				labelWidth: CMDBuild.CM_LABEL_WIDTH,
 				store: this.languageStore,
 				valueField: 'name',
 				displayField: 'value',
@@ -28,7 +29,8 @@
 
 			this.check = new Ext.ux.form.XCheckbox({
  				name: 'language_prompt',
- 				fieldLabel: tr.showLangChoose
+ 				fieldLabel: tr.showLangChoose,
+ 				labelWidth: CMDBuild.CM_LABEL_WIDTH
  			});
 
 			this.callParent(arguments);
