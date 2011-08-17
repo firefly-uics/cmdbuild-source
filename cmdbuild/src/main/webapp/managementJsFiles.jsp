@@ -109,6 +109,7 @@
 	
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateModifyCard.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateReport.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenNote.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/manageRelation/CMManageRelation.js"></script>
@@ -141,85 +142,19 @@
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMBaseWFWidgetController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateModifyCardController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateReportController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenAttachmentController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenNoteController.js"></script>	
 <!--
-
-	
-<script type="text/javascript" src="javascripts/cmdbuild/management/FixedCardGrid.js"></script>
-
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardForm.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardListGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardTabPanel.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Attachments.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/DomainCardListFilter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/DomainCardList.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/relations/FilterRelationsDomainGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/Relations.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/filter/SaveFilter.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/AddDetailActionMenu.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailAttachmentsWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailNoteWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/DetailWindow.js"></script>	
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/AddDetailWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/masterDetail/EditDetailWindow.js"></script>
-
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/DomainCardListWindow.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/ModCard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/AddRelationWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/DomainStore.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/relation/EditRelationWindow.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardAttachmentsTab.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardHistoryTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMapTab.js"></script>
 
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/EditablePanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/cardTab/CardTabUI.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/menu/MenuTree.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/BulkCardAttributesPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModBulkCardUpdate.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModChangePassword.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/UtilitiesTree.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/importcsv/CSVGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/ModExportCSV.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/utilities/importcsv/ModImportCSV.js"></script>	
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ActivityTabPanel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ActivityTabPanelController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/BaseExtendedAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/CreateModifyCard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCards.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsCardGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsCardGridController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsMapController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/linkCards/LinkCardsModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/manageRelation/ManageRelation.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/manageRelation/ManageRelationTab.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/EmailWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/EmailGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/ManageEmail.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/OpenNote.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/OpenAttachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/CreateReport.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/WFController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/ModWorkflow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/WorkflowCardListGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/tabs/ActivityOptionTab.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/tabs/ActivityTab.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/tabs/ActivityNotesTab.js"></script>
 
 -->
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>

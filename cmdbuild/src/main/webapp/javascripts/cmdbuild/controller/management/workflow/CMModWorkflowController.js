@@ -218,11 +218,14 @@
 	function buildWidgetController(w) {
 		var me = this,
 			builders = {
-				linkCards: function(w) {
-					return new CMDBuild.controller.management.workflow.widgets.CMLinkCardsController(w, me);
-				},
 				createModifyCard: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMCreateModifyCard(w, me);
+				},
+				createReport: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMCreateReportController(w, me);
+				},
+				linkCards: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMLinkCardsController(w, me);
 				},
 				manageRelation: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMManageRelationController(w, me);
