@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
@@ -15,8 +16,10 @@ import org.cmdbuild.logger.Log;
 
 public class AuthenticationService implements Authenticator {
 
-	static private String AUTH_METHODS_PACKAGE = "org.cmdbuild.services.auth";
-	static private List<Authenticator> authMethods = new ArrayList<Authenticator>();
+	private static final Logger logger = Log.AUTH;
+
+	private static final String AUTH_METHODS_PACKAGE = "org.cmdbuild.services.auth";
+	private static final List<Authenticator> authMethods = new ArrayList<Authenticator>();
 
 	public void loadAuthMethods() {
 		for (final String name : AuthProperties.getInstance().getAuthMethodNames()) {
@@ -71,17 +74,23 @@ public class AuthenticationService implements Authenticator {
 	}
 
 	public UserContext getWSUserContext(final String authData) {
+		logger.debug(String.format("getting user context for '%s'", authData));
 		UserContext userCtx = null;
 		if (authData != null) {
 			final AuthInfo authInfo = new AuthInfo(authData);
-			User user;
-			try {
-				user = UserCard.getUser(authInfo.getUsername());
-				userCtx = new UserContext(user);
-			} catch (final AuthException e) {
-				final String authusername = authInfo.getUsernameForAuthentication();
-				user = UserCard.getUser(authusername);
-				userCtx = new UserContext(user, authInfo.getUsername());
+			final String username = authInfo.getUsername();
+			User user = null;
+			if (!authInfo.isSharkUser()) {
+				try {
+					user = UserCard.getUser(username);
+					userCtx = new UserContext(user);
+				} catch (final AuthException e) {
+					logger.warn("could not get user", e);
+				}
+			}
+			if (user == null) {
+				user = UserCard.getUser(authInfo);
+				userCtx = new UserContext(user, username);
 			}
 			authInfo.checkOrSetDefaultGroup(userCtx);
 		}
