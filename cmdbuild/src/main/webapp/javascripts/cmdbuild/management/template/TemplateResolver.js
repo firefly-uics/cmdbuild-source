@@ -274,6 +274,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				var fnMap = {
 					cql: addRecursionVar,
 					js: addRecursionVar,
+                                        xa: addRecursionVar,
 					client: addLocalVar
 				};
 				if (ns in fnMap) {

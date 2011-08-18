@@ -5,6 +5,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 	filterType: undefined, // passed at instantiation
 	selType: 'rowmodel', // to allow the opportunity to pass a selection model to the grid
 	multiSelect: false,
+        extraParams: undefined,
 
 	initComponent: function() {
 		if (typeof this.idClass == "undefined") {
@@ -27,7 +28,8 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			frame: false,
 			border: "0 0 1 0",
 			selType: this.selType,
-			multiSelect: this.multiSelect
+			multiSelect: this.multiSelect,
+                        CQL: this.extraParams || {}
  		});
 
 		this.filter = new CMDBuild.Management.Attributes({

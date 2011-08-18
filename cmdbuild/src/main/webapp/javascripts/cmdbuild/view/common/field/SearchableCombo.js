@@ -9,18 +9,6 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	initComponent : function(){
 		this.labelAlign = "right",
 		this.callParent(arguments);
-/*        
-        this.on("beforequery", function(e) {
-        	if (this.storeIsLargerThenLimit()) {
-        		// cancel button on the ReferenceSearchWindow triggers the field onBlur so
-        		// assertValue, not finding a matching record, calls setValue with the rawValue
-        		this.setRawValue("");
-        		this.onTrigger1Click();
-        		return false;
-        	}
-        	return true;
-    }, this);
-*/
     },
     
     onTrigger1Click: function() {
@@ -75,46 +63,24 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     },
     	
 	createSearchWindow: function() {
-		if (!this.disabled && !this.searchWin) {
+		if (!this.disabled) {
 			var callback = Ext.Function.bind(this.buildSearchWindow,this, [this.store.baseParams], true);
 
 			CMDBuild.Management.FieldManager.loadAttributes(this.store.baseParams.IdClass, callback);	
 		}
 	},
 	
-	buildSearchWindow: function(attributeList, baseParams) {
-		this.searchWin = new CMDBuild.Management.ReferenceSearchWindow({
+	buildSearchWindow: function(attributeList, extraParams) {
+		new CMDBuild.Management.ReferenceSearchWindow({
 			idClass: this.store.baseParams.IdClass,
-			filterType: 'reference'
+			filterType: 'reference',
+                        extraParams: extraParams
 		}).show().on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);
 			this.focus(); // to allow the "change" event that occurs on blur
 			this.setValue(record.get("Id"));
 			this.fireEvent('cmdbuild-reference-selected', record, this);
 		}, this);
-
-//		if ( !this.filtered || (this.filtered && this.callParams) ) {
-			//if the CQL params are all resolved
-//			this.searchWin = new CMDBuild.Management.ReferenceSearchWindow({
-//				filterType: 'reference',
-//				combo: this,
-//				params: this.callParams,
-//				className: this.hiddenName,
-//				idClass: this.store.baseParams.IdClass,
-//				attributes: attributeList
-//			});
-//			
-
-//			
-//			//to destroy the handler to
-//			this.searchWin.on('destroy',function() {
-//				delete(this.searchWin);
-//			}, this);
-//			
-//	    	this.searchWin.show();
-//		}
-		
-		
 	},
 	
 	addToStoreIfNotInIt: function(record) {
