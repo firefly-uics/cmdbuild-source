@@ -138,7 +138,8 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
         });
 
 		function selectionNeedsNoValue(selection) {
-			return ['null','notnull'].indexOf(selection[0].data.id) >= 0;
+			selection = CMDBuild.Utils.getFirstSelection(selection);
+			return ['null','notnull'].indexOf(selection.data.id) >= 0;
 		}
 
 		query.on('select',function(query, selection, id) {

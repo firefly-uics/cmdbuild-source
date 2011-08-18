@@ -132,9 +132,7 @@
          * Adds the record when the store is not completely loaded (too many records)
          */
         preSetValue: function(value) {
-        	if (Ext.isArray(value)) {
-        		value = value[0];
-        	};
+			value = CMDBuild.Utils.getFirstSelection(value);
 
         	if (!value || this.store.isLoading()) {
         		return true;

@@ -36,11 +36,12 @@ CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = f
     	items: [{html: 'or'}]
     });
 	
-	query.on('select',function(query, type, id){	
-		if (type.data.id === "between") {
+	query.on('select',function(query, selection, id) {
+		selection = CMDBuild.Utils.getFirstSelection(selection);
+		if (selection.data.id === "between") {
 			field.enable();
 			field2.enable();
-		} else if (type.data.id === 'null') {
+		} else if (selection.data.id === 'null' || selection.data.id === 'notnull') {
 			field.disable();
 			field2.disable();
 		} else {

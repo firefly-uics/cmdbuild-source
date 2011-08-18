@@ -784,8 +784,8 @@
          "go_filter": "Filter",
          "like": "Contains",
          "list": "List",
-         "major": "Major",
-         "minor": "Minor",
+         "major": "Greater than",
+         "minor": "Less than",
          "msg": {
             "attention": "Attention",
             "error": "Error",
