@@ -163,7 +163,7 @@
 
         postSetValue: function(v) {
             if (!this.store.isOneTime
-                && v != "" && typeof v != "undefined"
+                && v
                 && this.store.find(this.valueField, v) == -1) {
 
                 var recordIndex = this.permanentStore.find(this.valueField, v);

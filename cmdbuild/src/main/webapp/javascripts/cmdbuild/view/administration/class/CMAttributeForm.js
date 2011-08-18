@@ -196,7 +196,7 @@
 				text : tr.meta.title,
 				scope : this,
 				iconCls : "modify",
-				margin: "0 0 0 5",
+				margin: "0 0 0 155",
 				handler : function() {
 					var w = new CMDBuild.view.administration.classes.CMMetadataWindow({
 						data : this.referenceFilterMetadata,
@@ -311,14 +311,8 @@
 					this.referenceDomains,
 					this.foreignKeyDest,
 					this.lookupTypes,
-					{
-						xtype: "panel",
-						layout: "hbox",
-						border: false,
-						frame: false,
-						cls: "x-panel-body-default-framed",
-						items: [this.fieldFilter, this.addMetadataBtn]
-					}
+                                        this.fieldFilter,
+                                        this.addMetadataBtn
 				]
 			});
 
