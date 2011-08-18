@@ -10,10 +10,12 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.services.WorkflowService;
+import org.cmdbuild.services.auth.AuthInfo;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
@@ -69,10 +71,34 @@ public class UserCard extends LazyCard implements User {
 	}
 
 	public static User getUser(final String login) {
-		if (UserImpl.SYSTEM_USERNAME.equals(login)) {
-			return UserImpl.getSystemUser();
+		return getUser(login, false);
+	}
+
+	public static User getUser(final AuthInfo authInfo) {
+		final String authusername;
+		final boolean elevatePrivileges;
+		if (authInfo.isSharkUser() && authInfo.hasServiceUser()) {
+			authusername = authInfo.getUsername();
+			elevatePrivileges = true;
+		} else {
+			authusername = authInfo.getUsernameForAuthentication();
+			elevatePrivileges = false;
 		}
-		return getUserCard(login).toUser();
+		return getUser(authusername, elevatePrivileges);
+	}
+
+	public static User getUser(final String login, final boolean elevatePrivileges) {
+		final User user;
+		if (elevatePrivileges) {
+			user = UserImpl.getElevatedPrivilegesUser(login);
+		} else if (UserImpl.SYSTEM_USER_USERNAME.equals(login)) {
+			user = UserImpl.getSystemUser();
+		} else if (WorkflowService.getInstance().getSharkWSUser().equals(login)) {
+			user = UserImpl.getSystemUser();
+		} else {
+			user = getUserCard(login).toUser();
+		}
+		return user;
 	}
 
 	public static UserCard getUserCard(final String login) {
@@ -98,9 +124,9 @@ public class UserCard extends LazyCard implements User {
 
 	public static Iterable<UserCard> allByUsername() throws NotFoundException, ORMException {
 		final List<UserCard> list = new LinkedList<UserCard>();
-		final Iterable<ICard> query = userClass.cards().list()
-			.filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value())
-			.order("Username",OrderFilterType.ASC).ignoreStatus();
+		final Iterable<ICard> query = userClass.cards().list().filter(ICard.CardAttributes.Status.name(),
+				AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value()).order("Username", OrderFilterType.ASC)
+				.ignoreStatus();
 		for (final ICard card : query) {
 			list.add(new UserCard(card));
 		}
