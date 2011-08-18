@@ -77,11 +77,7 @@ Ext.apply(Ext.form.VTypes, {
     },
     
     emailOrBlankText : Ext.form.VTypes.emailText,
-    
-    valueInStore: function(val, field) {
-		return field.store.find(field.valueField, field.getValue()) != -1;
-    },
-    
+
     numeric: function(val, field) {
     	var valid = numericValidation(val, field.scale, field.precision);
     	field.vtypeText = valid.message;
