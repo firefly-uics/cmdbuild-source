@@ -57,7 +57,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     
     storeIsLargerThenLimit: function() {
     	if (this.store !== null) {
-    		return this.store.getTotalCount() > CMDBuild.Config.cmdbuild.referencecombolimit;
+    		return this.store.getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
     	}
     	return false;
     },
@@ -74,7 +74,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		new CMDBuild.Management.ReferenceSearchWindow({
 			idClass: this.store.baseParams.IdClass,
 			filterType: 'reference',
-                        extraParams: extraParams
+			extraParams: extraParams
 		}).show().on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);
 			this.focus(); // to allow the "change" event that occurs on blur
@@ -84,15 +84,17 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	},
 	
 	addToStoreIfNotInIt: function(record) {
-		var _store = this.store;
-		if (_store.find('Id', record.Id) == -1 ) {
+		var _store = this.store,
+			id = record.get("Id");
+
+		if (_store.find('Id', id) == -1 ) {
 			_store.add({
-				Id : record.Id, 
+				Id : id,
 				Description: this.recordDescriptionFixedForCarriageReturnBugOnComboBoxes(record)
 			});
 		}
 	},
-	
+
 	recordDescriptionFixedForCarriageReturnBugOnComboBoxes: function(record) {
 		return record.get("Description").replace(/\n/g," ");
 	},

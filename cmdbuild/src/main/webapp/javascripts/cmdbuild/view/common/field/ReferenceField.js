@@ -87,11 +87,9 @@
 
         initComponent: function() {
             var attribute = this.attribute;
-            var permanentStore = CMDBuild.Cache.getReferenceStoreById(attribute.referencedIdClass);
             var store = CMDBuild.Cache.getReferenceStore(attribute);
 
             store.on("loadexception", function() {
-                field.valueNotFoundText = '';
                 field.setValue('');
             });
 
@@ -101,7 +99,6 @@
                 labelWidth: CMDBuild.CM_LABEL_WIDTH,
                 name: attribute.name,
                 store: store,
-                permanentStore: permanentStore,
                 queryMode: "local",
                 valueField: "Id",
                 displayField: 'Description',
@@ -126,66 +123,49 @@
         },
 
         setValue: function(v) {
-            this.preSetValue(v);
-            this.callParent(arguments);
-            this.postSetValue(v);
+            if (this.preSetValue(v) !== false) {
+            	this.callParent(arguments);
+            }
         },
 
         /*
          * Adds the record when the store is not completely loaded (too many records)
          */
         preSetValue: function(value) {
-            if (typeof value == "undefined" || value == "") {
-                return;
+        	if (Ext.isArray(value)) {
+        		value = value[0];
+        	};
+
+        	if (!value || this.store.isLoading()) {
+        		return true;
+        	}
+
+        	var theValue = value; // but value is a string or an array
+            if (typeof value == "object") {
+            	theValue = value.get(this.valueField);
             }
 
-            var storeNotEmpty = this.store.getCount() != 0;		
-            var valueNotInStore = this.store.find(this.valueField, value) == -1;		
-            var storeNotOneTime = !this.store.isOneTime;
+	        var valueNotInStore = this.store.find(this.valueField, theValue) == -1;
+            if (valueNotInStore) {
+            	// ask to the server the record to add, return false to
+            	// not set the value, and set it on success
 
-            if (storeNotEmpty && this.storeIsLargerThenLimit() && storeNotOneTime && valueNotInStore) {
-                this.valueNotFoundText = CMDBuild.Translation.common.loading;
-                var _store = this.store;
-                var params = Ext.apply({}, _store.baseParams); // WRONG!
-                params["Id"] = value;
+                var params = Ext.apply({Id: theValue}, this.store.baseParams);
 
                 CMDBuild.Ajax.request({
-                    url : _store.proxy.url,
+                    url : this.store.proxy.url,
                     params: params,
                     method : "POST",
+                    scope : this,
                     success : function(response, options, decoded) {
-                        decoded[_store.totalProperty] = _store.getTotalCount();
-                        _store.loadData(decoded, true);
+                		this.addToStoreIfNotInIt(adaptResult(decoded));
+                		this.setValue(theValue);
                     }
                 });
-            }
-        },
 
-        postSetValue: function(v) {
-            if (!this.store.isOneTime
-                && v
-                && this.store.find(this.valueField, v) == -1) {
-
-                var recordIndex = this.permanentStore.find(this.valueField, v);
-                if (recordIndex == -1) {
-                    var me = this;
-                    this.permanentStore.load({
-                        params: {
-                            Id: v
-                        },
-                        add: true,
-                        callback: function(r,o,s) { 
-                            me.setRawValue(r[0].data.Description);
-                        }
-                    });
-                } else {
-                    var r = this.permanentStore.getAt(recordIndex);
-                    if (r) {
-                        this.setRawValue(r.data.Description);
-                    }
-                }
+                return false;
             }
-            this.validate();
+            return true;
         },
 
         resolveTemplate: function() {
@@ -236,4 +216,13 @@
         }
     });
 
+    // see SearchableCombo.addToStoreIfNotInIt
+    function adaptResult(result) {
+    	var data = result.rows[0];
+    	return {
+    		get: function(key) {
+    			return data[key];
+    		}
+    	};
+    }
 })();

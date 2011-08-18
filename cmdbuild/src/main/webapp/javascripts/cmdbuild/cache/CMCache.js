@@ -416,38 +416,37 @@
 		
 		//private
 		buildReferenceStore: function(reference) {
-			var baseParams = this.buildParamsForReferenceRequest(reference);
-			var isOneTime = baseParams.CQL ? true : false;
-			var store =  new Ext.data.JsonStore({
+			var baseParams = this.buildParamsForReferenceRequest(reference),
+				isOneTime = baseParams.CQL ? true : false,
+				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+			
+			return new Ext.data.JsonStore({
 				model : "CMDBuild.cache.CMReferenceStoreModel",
-		        isOneTime: isOneTime,
-		        baseParams: baseParams, //retro-compatibility
+				isOneTime: isOneTime,
+				baseParams: baseParams, //retro-compatibility,
+				pageSize: maxCards,
 				proxy: {
 					type: 'ajax',
 					url: 'services/json/management/modcard/getcardlistshort',
 					reader: {
 						type: 'json',
-						root: 'rows'
-					}
+						root: 'rows',
+						totalProperty: 'results'
+					},
+					extraParams: baseParams
 				},
 				sortInfo: {
-		        	field: 'Description',
-		        	direction: 'ASC' 
-		        },
-				autoLoad : {
-					params: baseParams
-				}
+					field: 'Description',
+					direction: 'ASC' 
+				},
+				autoLoad : true
 			});
-			
-			return store;
 		},
 		
 		//private
 		buildParamsForReferenceRequest: function(reference) {
-			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
-			var baseParams = { 
-					limit: maxCards,
-					IdClass: reference.referencedIdClass
+			var baseParams = {
+				IdClass: reference.referencedIdClass
 			};
 			if (reference.fieldFilter) {
 				baseParams.CQL = reference.fieldFilter;
