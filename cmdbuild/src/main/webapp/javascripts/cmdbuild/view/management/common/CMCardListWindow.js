@@ -5,22 +5,22 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 	filterType: undefined, // passed at instantiation
 	selType: 'rowmodel', // to allow the opportunity to pass a selection model to the grid
 	multiSelect: false,
-        extraParams: undefined,
+	extraParams: undefined,
 
 	initComponent: function() {
 		if (typeof this.idClass == "undefined") {
 			return;
 		}
 
- 		this.filterButton = new Ext.Button({
+		this.filterButton = new Ext.Button({
 			text: CMDBuild.Translation.management.findfilter.go_filter,
 			iconCls: 'ok',
 			handler: this.onFilterButtonClick,
 			scope: this
 		});
 
- 		this.grid = new CMDBuild.view.management.common.CMCardGrid({
- 			filterCategory: this.filterType || this.id,
+		this.grid = new CMDBuild.view.management.common.CMCardGrid({
+			filterCategory: this.filterType || this.id,
 			filterSubcategory: this.id,
 			cmAdvancedFilter: false,
 			columns: [],
@@ -29,8 +29,8 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			border: "0 0 1 0",
 			selType: this.selType,
 			multiSelect: this.multiSelect,
-                        CQL: this.extraParams || {}
- 		});
+			CQL: this.extraParams || {}
+		});
 
 		this.filter = new CMDBuild.Management.Attributes({
 			attributeList: {}, 
@@ -39,7 +39,8 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			filterButton: this.filterButton,
 			title: CMDBuild.Translation.management.findfilter.filter,
 			frame: false,
-			border: false
+			border: false,
+			disabled: this.extraParams.CQL
 		});
 
 		this.filter.resetFilterButton.on("click", this.onResetFilterButtonClick, this);

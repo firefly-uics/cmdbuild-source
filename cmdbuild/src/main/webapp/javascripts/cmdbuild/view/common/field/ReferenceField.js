@@ -123,7 +123,7 @@
         },
 
         setValue: function(v) {
-            if (this.preSetValue(v) !== false) {
+            if (this.store.isOneTime || this.preSetValue(v) !== false) {
             	this.callParent(arguments);
             }
         },
