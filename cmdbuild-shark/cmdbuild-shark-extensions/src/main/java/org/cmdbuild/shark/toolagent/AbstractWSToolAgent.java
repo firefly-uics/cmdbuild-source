@@ -21,6 +21,7 @@ import org.cmdbuild.services.soap.Lookup;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.shark.util.ClientPasswordCallback;
+import org.cmdbuild.shark.util.CmdbuildUtils;
 import org.cmdbuild.shark.util.CmdbuildUtils.CmdbuildAttributeStruct;
 import org.cmdbuild.shark.util.CmdbuildUtils.CmdbuildTableStruct;
 import org.cmdbuild.workflow.type.LookupType;
@@ -40,7 +41,6 @@ public abstract class AbstractWSToolAgent extends AbstractConditionalToolAgent {
 	public static final String USER_ATTRIBUTE = "CMDBuild.EndPoint.User";
 	public static final String CMDBUILD_ENDPOINT = "CMDBuild.WS.EndPoint";
 
-	@Override
 	protected void innerInvoke(final WMSessionHandle shandle, final long handle, final WMEntity appInfo,
 			final WMEntity toolInfo, final String applicationName, final String procInstId, final String assId,
 			final AppParameter[] parameters, final Integer appMode) throws ApplicationNotStarted,
@@ -75,7 +75,7 @@ public abstract class AbstractWSToolAgent extends AbstractConditionalToolAgent {
 			final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
 			cxfEndpoint.getOutInterceptors().add(wssOut);
 
-			addWSUserPassword(stub, outProps);
+			addPerformerWSUserPassword(stub, outProps);
 
 			invokeWebService(stub, parameters, toolInfoID);
 		} catch (final Exception e) {
@@ -92,16 +92,11 @@ public abstract class AbstractWSToolAgent extends AbstractConditionalToolAgent {
 		return cus.getProperty(CMDBUILD_ENDPOINT);
 	}
 
-	/*
-	 * Used to easily override addWSUserPassword calling
-	 * addPerformerWSUserPassword(options) as done in ProcessStartToolAgent
-	 */
-	protected void addWSUserPassword(final Private stub, final Map<String, Object> options) throws Exception {
-		addSystemWSUserPassword(stub, options);
+	protected void addWSUserPassword(final Map<String, Object> options) throws Exception {
+		addSystemWSUserPassword(options);
 	}
 
-	protected final void addSystemWSUserPassword(final Private stub, final Map<String, Object> options)
-			throws Exception {
+	protected void addSystemWSUserPassword(final Map<String, Object> options) throws Exception {
 		addWSAuthForUser(options, AbstractWSToolAgent.SYSTEM_USER);
 	}
 
@@ -120,6 +115,14 @@ public abstract class AbstractWSToolAgent extends AbstractConditionalToolAgent {
 		outProps.put(WSHandlerConstants.USER, wsUsername.toString());
 		final ClientPasswordCallback pwdCallback = new ClientPasswordCallback(wsUsername.toString(), wsPassword);
 		outProps.put(WSHandlerConstants.PW_CALLBACK_REF, pwdCallback);
+	}
+
+	protected void addPerformerWSUserPassword(final Private stub, final Map<String, Object> outProps) throws Exception {
+		addWSUserPassword(outProps);
+		final String currentUsername = CmdbuildUtils.getCurrentUserNameForProcessInstance(stub, cmdbuildProcessClass,
+				cmdbuildProcessId);
+		final String groupname = CmdbuildUtils.getCurrentGroupName(shandle);
+		addWSAuthForUser(outProps, currentUsername, groupname);
 	}
 
 	protected boolean returnOnException(final Exception exception, final String toolInfoID,
@@ -202,4 +205,5 @@ public abstract class AbstractWSToolAgent extends AbstractConditionalToolAgent {
 			return false;
 		}
 	}
+
 }
