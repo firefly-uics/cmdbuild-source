@@ -1,9 +1,20 @@
 CMDBuild.Utils = (function() {
 	var idCounter = 0;
 	return {
+		/*
+		 * Used to trace a change in the type of the selection parameter between two minor ExtJS releases
+		 */
+		getFirstSelection: function(selection) {
+			if (Ext.isArray(selection)) {
+        		return selection[0];
+        	} else {
+				return selection;
+			}
+		},
+
 		nextId: function() {
 			return ++idCounter;
-		}, 
+		},
 		Metadata: {
 			extractMetaByNS: function(meta, ns) {
 				var xaVars = {};
