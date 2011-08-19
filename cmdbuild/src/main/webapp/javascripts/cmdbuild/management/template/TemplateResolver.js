@@ -406,7 +406,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 					escapedVal = "undefined";
 				} else {
 					var stringVal = value + '';
-					escapedVal = "'" + String.escape(stringVal) + "'";
+					escapedVal = "'" + Ext.String.escape(stringVal) + "'";
 				}
 				jsExpr += escapedVal;
 			}

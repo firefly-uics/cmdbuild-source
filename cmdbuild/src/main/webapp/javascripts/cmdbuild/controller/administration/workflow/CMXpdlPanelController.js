@@ -68,7 +68,8 @@
 			},
 			failure: function() {
 				CMDBuild.LoadMask.get().hide();
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, this.translation.error, true);
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+					CMDBuild.Translation.administration.modWorkflow.xpdlUpload.error, true);
 			}
 		});
 	}

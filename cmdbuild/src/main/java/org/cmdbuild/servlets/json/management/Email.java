@@ -22,7 +22,7 @@ public class Email extends JSONBase {
 
 	@JSONExported
 	public JSONObject getEmailList(
-			@Parameter("ProcessInstanceId") int processId,
+			@Parameter("ProcessId") int processId,
 			ITableFactory tf,
 	        JSONObject output) throws MessagingException, IOException, JSONException {
 		ICard processCard = tf.get(ProcessType.BaseTable).cards().get(processId);

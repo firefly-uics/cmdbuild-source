@@ -1,4 +1,6 @@
-CMDBuild.Management.EmailWindow = Ext.extend(CMDBuild.PopupWindow, {
+Ext.define("CMDBuild.Management.EmailWindow", {
+	extend: "CMDBuild.PopupWindow",
+
 	emailGrid: undefined,
 	readOnly: false,
 	record: undefined,
@@ -7,10 +9,12 @@ CMDBuild.Management.EmailWindow = Ext.extend(CMDBuild.PopupWindow, {
 		var body;
 		if (this.readOnly) {
 			body = {
+				xtype: "panel",
+				frame: true,
+				border: true,
 				html: this.record.get("Content"),
-				width: 500,
-				height: 300,
-				autoScroll: true
+				autoScroll: true,
+				flex: 1
 			};
 		} else {
 			body = {
@@ -21,91 +25,87 @@ CMDBuild.Management.EmailWindow = Ext.extend(CMDBuild.PopupWindow, {
 				enableLinks: false,
 				enableSourceEdit: false,
 				enableFont: false,
-				value: this.record.get("Content")
+				value: this.record.get("Content"),
+				flex: 1
 			};
 		}
 
 		var formPanel = new Ext.form.FormPanel({
-			autoWidth: true,
-			autoHeight: true,
-			frame: true,
+			frame: false,
+			border: false,
+			padding: '5',
+			bodyCls: "x-panel-body-default-framed",
+			layout: {
+				type: 'vbox',
+				align: 'stretch' // Child items are stretched to full width
+			},
+			defaults: {
+				labelAlign: "right"
+			},
 			items : [{
-					xtype: this.readOnly ? 'textfield' : 'hidden',
+					xtype: this.readOnly ? 'displayfield' : 'hidden',
 					name : 'FromAddress',
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
-					value: this.record.get("FromAddress"),
-					width: 400,
-					disabled: true
+					value: this.record.get("FromAddress")
 				},{
-					xtype: 'textfield',
+					xtype: this.readOnly ? 'displayfield' : 'textfield',
 					vtype: this.readOnly ? undefined : 'emailaddrspec',
 					name : 'ToAddresses',
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
-					value: this.record.get("ToAddresses"),
-					width: 400,
-					disabled: this.readOnly
+					value: this.record.get("ToAddresses")
 				},{
-					xtype: 'textfield',
+					xtype: this.readOnly ? 'displayfield' : 'textfield',
 					vtype: this.readOnly ? undefined : 'emailaddrspeclist',
 					name : 'CcAddresses',
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
-					value: this.record.get("CcAddresses"),
-					width: 400,
-					disabled: this.readOnly
+					value: this.record.get("CcAddresses")
 				},{
-					xtype: 'textfield',
+					xtype: this.readOnly ? 'displayfield' : 'textfield',
 					name : 'Subject',
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
-					value: this.record.get("Subject"),
-					width: 400,
-					disabled: this.readOnly
+					value: this.record.get("Subject")
 				},body]
 		});
-    	this.form = formPanel.getForm();
+		this.form = formPanel.getForm();
 
-    	var buttons;
-    	if (this.readOnly) {
-	    	buttons = [new CMDBuild.buttons.CloseButton({
+		var buttons;
+		if (this.readOnly) {
+			buttons = [new CMDBuild.buttons.CloseButton({
 				scope: this,
 				handler: this.close
 			})];
-    	} else {
-	    	buttons = [new CMDBuild.buttons.ConfirmButton({
+		} else {
+			buttons = [new CMDBuild.buttons.ConfirmButton({
 				scope: this,
 				handler: this.onConfirm
 			}),new CMDBuild.buttons.AbortButton({
 				scope: this,
 				handler: this.close
 			})];
-    	}
+		}
 
 		Ext.apply(this, {
-			autoWidth: true,
-			autoHeight: true,
 			title: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
 			items : [formPanel],
 			buttonAlign: 'center',
 			buttons: buttons
 		});
 
-		CMDBuild.Management.EmailWindow.superclass.initComponent.apply(this, arguments);
+		this.callParent(arguments);
 	},
 
 	onConfirm: function() {
 		this.updateRecord();
-		this.addOrUpdateGridRecord(this.record);
-		this.close();
+		this.emailGrid.addToStoreIfNotInIt(this.record);
+		this.destroy();
 	},
 
 	updateRecord: function() {
 		var formValues = this.form.getValues();
-		for (key in formValues) {
+		for (var key in formValues) {
 			this.record.set(key, formValues[key]);
 		}
 		this.record.set("Description", formValues["ToAddresses"]);
-	},
-
-	addOrUpdateGridRecord: function(updatedRecord) {
-		this.emailGrid.addOrUpdateRecord(updatedRecord);
+		this.record.commit();
 	}
 });

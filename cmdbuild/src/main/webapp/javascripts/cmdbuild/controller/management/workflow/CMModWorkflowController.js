@@ -170,7 +170,9 @@
 		if (selection.length > 0) {
 
 			if (this.isStateOpen()) {
-				var editMode = this.activityPanelController.isAdvance && this.currentActivity.data.Id == selection[0].data.Id;
+				var editMode = this.activityPanelController.isAdvance 
+					&& this.currentActivity.data.Id == selection[0].data.Id;
+
 				updateForActivity.call(this, selection[0], editMode);
 			} else {
 				loadClosedActivity.call(this, selection[0]);
@@ -226,6 +228,9 @@
 				},
 				linkCards: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMLinkCardsController(w, me);
+				},
+				manageEmail: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMManageEmailController(w, me);
 				},
 				manageRelation: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMManageRelationController(w, me);
@@ -301,7 +306,11 @@
 			template.data.ProcessInstanceId = undefined;
 			template.data.WorkItemId = undefined;
 
-			template.raw = template.data; // to unify the Ext.models with the server response;
+			// to unify the Ext.models with the server response;
+			template.raw = template.data; 
+			template.get = function(key) {
+				return template.raw[key];
+			}
 
 			updateForActivity.call(this, template, editMode = true);
 		}
@@ -366,7 +375,7 @@
 			var ww = {};
 			for (var wc in this.widgetsController) {
 				wc = this.widgetsController[wc];
-				var wcData = wc.getData();
+				var wcData = wc.getData(advance = this.activityPanelController.isAdvance);
 				if (wcData != null) {
 					ww[wc.wiewIdenrifier] = wcData;
 				}
