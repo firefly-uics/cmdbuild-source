@@ -29,20 +29,14 @@
 			{name: LOOKUP_FIELDS.Notes, type: 'string'}
 		]
 	});
-	
-	Ext.define("CMLookupForCombo", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: LOOKUP_FIELDS.Description, type: 'string'},
-			{name: LOOKUP_FIELDS.ParentId, type: "string"}
-		]
-	});
-    
+
     Ext.define("CMLookupFieldStoreModel", {
         extend: "Ext.data.Model",
         fields: [
-			{name: "Id", type: 'string'},
-			{name: "Description", type: "string"}            
+			{name: LOOKUP_FIELDS.Id, type: 'string'},
+			{name: LOOKUP_FIELDS.Description, type: "string"},
+			{name: LOOKUP_FIELDS.ParentId, type: "string"},
+			{name: LOOKUP_FIELDS.Index, type: "string"}
         ]
     });
 })();

@@ -1,6 +1,9 @@
 <!-- PROXIES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMRelationsProxy.js"></script>
 
+<!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
+
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
