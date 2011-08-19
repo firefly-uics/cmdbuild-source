@@ -79,7 +79,7 @@
 		
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupAttributeStore(type);
+				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupFieldStore(type);
 			}
 			return lookupAttributeStoreMap[type];
 		}

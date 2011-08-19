@@ -2,14 +2,13 @@
 
 Ext.ns("CMDBuild.ServiceProxy");
 
-var lookupFields = {
+var LOOKUP_FIELDS = {
 	Id: 'Id',
 	Code: 'Code',
 	Description: 'Description',
 	ParentId: 'ParentId',
 	Index: 'Number',
 	Type: 'Type',
-	ParentId: 'ParentId',
 	ParentDescription: 'ParentDescription',
 	Active: 'Active',
 	Notes: 'Notes'
@@ -146,7 +145,7 @@ CMDBuild.ServiceProxy = {
 		return layerStore;
 	},
 	
-	LOOKUP_FIELDS: lookupFields
+	LOOKUP_FIELDS: LOOKUP_FIELDS
 };
 
 CMDBuild.ServiceProxy.core = {
@@ -324,28 +323,8 @@ CMDBuild.ServiceProxy.lookup = {
 	},
 
 	getLookupFieldStore: function(type) {
-		return new Ext.data.Store({
-			model: "CMLookupForCombo",
-			proxy: {
-				type: 'ajax',
-				url : 'services/json/schema/modlookup/getlookuplist',
-				reader: {
-					type: 'json',
-					root: 'rows'
-				},
-				params : {
-					type : type,
-					active : true,
-					short : true
-				}
-			},
-			autoLoad : true
-		});
-	},
-	
-	getLookupAttributeStore: function(type) {
 		var s = Ext.create("Ext.data.Store", {
-			fields: ["Id", "Description", "ParentId"],
+			model: "CMLookupFieldStoreModel",
 			proxy: {
 				type: 'ajax',
 				url : 'services/json/schema/modlookup/getlookuplist',
@@ -360,7 +339,7 @@ CMDBuild.ServiceProxy.lookup = {
 				}
 			},
 			sorters : [ {
-				property : 'Description',
+				property : LOOKUP_FIELDS.Index,
 				direction : "ASC"
 			}],
 			autoLoad : true
