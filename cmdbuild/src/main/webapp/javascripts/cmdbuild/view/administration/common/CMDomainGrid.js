@@ -49,11 +49,14 @@
 				header : tr.cardinality,
 				dataIndex : 'cardinality',
 				flex : 1
-			}, {
+			}, 
+			
+			new Ext.ux.CheckColumn( {
 				header : tr.m_d,
 				dataIndex : 'md',
-				flex : 1
-			}];
+				cmReadOnly: true,
+				width: 30
+			})];
 	
 			Ext.apply(this, {
 				tbar: [
