@@ -348,10 +348,10 @@ CMDBuild.ServiceProxy.lookup = {
 		return s;
 	},
 
-	getLookupGridStore: function(pageSize) {
+	getLookupGridStore: function() {
 		return new Ext.data.Store({
 			model : "CMLookupForGrid",
-			pageSize: pageSize || 20,
+			pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit) || 20,
 			autoLoad : false,
 			proxy : {
 				type : 'ajax',
@@ -362,7 +362,7 @@ CMDBuild.ServiceProxy.lookup = {
 				}
 			},
 			sorters : [ {
-				property : 'Description',
+				property : 'Number',
 				direction : "ASC"
 			}]
 		});

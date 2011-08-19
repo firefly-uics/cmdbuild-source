@@ -6,19 +6,34 @@
 		extend: "Ext.grid.Panel",
 		alias: "widget.lookupgrid",
 		
-//	initComponent:function() {
+		initComponent: function() {
+			Ext.apply(this, {
+				viewConfig: {
+					loadMask: false,
+					plugins : {
+						ptype : 'gridviewdragdrop',
+						dragGroup : 'dd',
+						dropGroup : 'dd'
+					},
+					listeners : {
+						scope: this,
+						drop : function(node, data, dropRec, dropPosition) {
+							this.fireEvent("cm_lookup_moved", {
+								node: node,
+								data: data,
+								dropRec: dropRec,
+								dropPosition: dropPosition
+							});
+						}
+					}
+				}
+			});
 
-//	   
-//	    this.on({
-//	      render: this.ddRender,
-//	      beforedestroy: function(g) { Ext.dd.ScrollManager.unregister(g.getView().getEditorParent()); }
-//	    });
-
-//  	},
+			this.callParent(arguments);
+		},
 
 	constructor: function() {
-		var pageSize = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
-		this.store = CMDBuild.ServiceProxy.lookup.getLookupGridStore(pageSize);
+		this.store = CMDBuild.ServiceProxy.lookup.getLookupGridStore();
 
 		this.columns = [{
 			hideable: false,
@@ -36,11 +51,13 @@
 			header : tr.parentdescription,
 			dataIndex : LOOKUP_FIELDS.ParentDescription,
 			flex: 1
-		},{
+		},
+		new Ext.ux.CheckColumn( {
 			header : tr.active,
 			dataIndex : LOOKUP_FIELDS.Active,
-			width: 50
-		}]
+			width: 90,
+			cmReadOnly: true
+		})];
 
 		this.addButton = new Ext.button.Button({	
 			iconCls : 'add',
@@ -64,82 +81,20 @@
 			this.lookupType = lookupType;
 		}
 
+		this.store.proxy.extraParams.type = this.lookupType.id;
+
 		this.loadData();
 	},
-	
-	ddRender: function(g) {
-		var ddrow = new Ext.ux.dd.GridReorderDropTarget(g, {
-			copy : false,
-			listeners : {
-				beforerowmove : function(objThis, oldIndex, newIndex, records) {
-					var g = objThis.getGrid();
-					var gStore = g.getStore();
 
-					//change the number of moved record
-					var recordMoved = records[0];
-					var rowList = [{
-						id: recordMoved.json.Id, 
-						index: gStore.getAt(newIndex).json.Number
-					}];
-
-					//change the number of the records between the new and old index
-					var fillRowList = function(firstIndex, lastIndex, direction) {
-						for (var i=firstIndex; i<lastIndex; ++i) {
-							var rec = gStore.getAt(i);
-							var index = rec.json.Number;
-							rowList.push({
-								id: rec.json.Id, 
-								index: index + direction
-							});
-						}
-					};
-					if (oldIndex > newIndex) {
-						fillRowList(newIndex, oldIndex, 1);
-					} else {
-						fillRowList(oldIndex+1, newIndex+1, -1);
-					}
-
-					var savePosition = function(type, rowList) {
-						CMDBuild.Ajax.request({
-							url: 'services/json/schema/modlookup/reorderlookup',
-							method: 'POST',
-							params: {
-								type: type ,
-								lookuplist: Ext.util.JSON.encode(rowList)
-							},
-							callback: function(response,options) {
-								gStore.load();
-								g.getEl().unmask();
-								g.getView().restoreScroll(scrollState);
-							}
-						});
-					}(records[0].json.Type, rowList);
-					
-					//manage scrollState
-					var scrollState = g.getView().getScrollState();
-					g.getView().restoreScroll(scrollState);
-		            
-				}
-			}
-		});
-
-		Ext.dd.ScrollManager.register(g.getView().getEditorParent());
-	},
-	
 	loadData: function(lookupIdToSelectAfterLoad) {
 		var sm;
-		
+
 		if (lookupIdToSelectAfterLoad) {
 			sm = this.getSelectionModel();
 		}
-		
+
 		if (this.lookupType) {
 			this.store.load({
-				params : {
-					type: this.lookupType.id,
-					start: 0,
-					limit: this.pageSize
-				}, 
 				callback: function() {
 					if (lookupIdToSelectAfterLoad) {
 						var selRecord = this.findRecord("Id", lookupIdToSelectAfterLoad);
