@@ -47,6 +47,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/model/wfwidget/CMLinkCardsModel.js"></script>
 
 <!-- VIEWS -->
+
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardWindow.js"></script>
@@ -83,8 +84,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/EditAttachmentWindow.js"></script>
-		
-
 
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
@@ -112,10 +111,14 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateReport.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenNote.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMEmailWindow.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMEmailGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMManageEmail.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/manageRelation/CMManageRelation.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/linkCards/CMLinkCards.js"></script>
 
 <!-- CONTROLLER -->
+
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
@@ -144,17 +147,12 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateModifyCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateReportController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageEmailController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenAttachmentController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenNoteController.js"></script>	
 <!--
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
-
 <script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMapTab.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/EmailWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/EmailGrid.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/workflow/extendedattribute/email/ManageEmail.js"></script>
-
 -->
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>
