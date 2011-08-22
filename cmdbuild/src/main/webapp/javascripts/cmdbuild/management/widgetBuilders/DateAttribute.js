@@ -19,9 +19,7 @@ CMDBuild.WidgetBuilders.DateAttribute.prototype.buildGridHeader = function(attri
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,
-		fixed: false,
-		width: this.headerWidth,
-		flex: 1,
+		flex: this.headerWidth,
 		//TODO read the format in the config
 		format: this.format
 	};
