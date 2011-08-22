@@ -342,7 +342,8 @@ CMDBuild.ServiceProxy.lookup = {
 				property : LOOKUP_FIELDS.Index,
 				direction : "ASC"
 			}],
-			autoLoad : true
+			autoLoad : true,
+			pageSize: 0 // Disable paging
 		});
 
 		return s;
