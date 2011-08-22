@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.Lookup;

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;

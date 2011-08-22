@@ -28,7 +28,7 @@ public class Settings {
 	}
 	
 	public void load(String key, String file) throws IOException {
-		DefaultProperties properties = createPropertiesClass(key);
+		DefaultProperties properties = getModule(key);
 		properties.load(file);
 		_map.put(key, properties);
 	}

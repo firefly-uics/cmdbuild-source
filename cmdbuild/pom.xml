@@ -25,6 +25,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-dms-alfresco</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-types</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -64,17 +69,6 @@
 			<artifactId>dbcp</artifactId>
 			<version>${tomcat.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<version>1.4.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>oro</artifactId>
-					<groupId>oro</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -285,32 +279,6 @@
 			<version>${tomcat.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- Workflow and DMS -->
-		<dependency> <!-- axis.jar -->
-			<groupId>axis</groupId>
-			<artifactId>axis</artifactId>
-			<version>1.4</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>axis-saaj</artifactId>
-					<groupId>org.apache.axis</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>axis-wsdl4j</artifactId>
-					<groupId>axis</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>axis-jaxrpc</artifactId>
-					<groupId>org.apache.axis</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- DMS -->
-		<dependency>
-			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-webservice</artifactId>
-			<version>${alfresco.version}</version>
-		</dependency>
 		<!-- SuperCSV -->
 		<dependency>
 			<groupId>net.sourceforge.supercsv</groupId>
@@ -393,12 +361,6 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${commons-lang.version}</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>

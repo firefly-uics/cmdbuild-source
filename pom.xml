@@ -9,7 +9,6 @@
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
-		<alfresco.version>2.1</alfresco.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<cuke4duke.version>0.4.3</cuke4duke.version>
 		<cxf.version>2.3.3</cxf.version>
@@ -20,6 +19,7 @@
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<tomcat.version>6.0.29</tomcat.version>
 		<tomcat-plugin.version>1.1</tomcat-plugin.version>
+		<axis.version>1.4</axis.version>
 		<!-- Test -->
 		<hamcrest.version>1.1</hamcrest.version>
 		<jmock.version>2.5.1</jmock.version> <!-- hamcrest 1.1 junit 4.4 -->
@@ -28,7 +28,9 @@
 	</properties>
 	<modules>
 		<module>cmdbuild</module>
+		<module>cmdbuild-commons</module>
 		<module>cmdbuild-dao</module>
+		<module>cmdbuild-dms</module>
 		<module>cmdbuild-docs</module>
 		<module>cmdbuild-graph</module>
 		<module>cmdbuild-test</module>
@@ -65,6 +67,32 @@
 				<exclusion>
 					<artifactId>junit-dep</artifactId>
 					<groupId>junit</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons-lang.version}</version>
+			<type>jar</type>
+		</dependency>
+		<!-- Workflow and DMS -->
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>${axis.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>axis-saaj</artifactId>
+					<groupId>org.apache.axis</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>axis-wsdl4j</artifactId>
+					<groupId>axis</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>axis-jaxrpc</artifactId>
+					<groupId>org.apache.axis</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

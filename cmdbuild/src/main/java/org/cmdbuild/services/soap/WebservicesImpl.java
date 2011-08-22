@@ -9,7 +9,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.AuthenticationService;
@@ -178,10 +178,15 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 		return true;
 	}
 
-	public boolean updateAttachmentDescription(String className, int cardId, String filename, String description){
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(getUserCtx());
-		return dmsLogic.updateDescription(className, cardId, filename, description);
+	public boolean updateAttachmentDescription(String className, int cardId, String filename, String description) {
+		try {
+			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+			dmsLogic.setUserContext(getUserCtx());
+			dmsLogic.updateDescription(className, cardId, filename, description);
+			return true;
+		} catch (final Exception e) {
+			return false;
+		}
 	}
 
 	public Workflow startWorkflow(Card card, boolean completeTask){

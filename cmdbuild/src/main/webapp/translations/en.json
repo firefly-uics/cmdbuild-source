@@ -420,7 +420,7 @@
             "menuTitle": "Relation Graph",
             "title": "Relation Graph Setup"
          },
-         "legacydms": {
+         "dms": {
             "categoryLookup": "CMDBuild category",
             "credential": "Credentials",
             "credentialPassword": "Password",

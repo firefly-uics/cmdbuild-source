@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -31,7 +32,6 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.utils.StringUtils;
-import org.cmdbuild.utils.TempDataSource;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
