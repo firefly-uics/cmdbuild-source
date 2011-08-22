@@ -17,7 +17,6 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden : !attribute.isbasedsp,
-		fixed : true,
 		width : headerWidth,
 		cmReadOnly: true
 	});

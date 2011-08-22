@@ -21,9 +21,7 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,
-		fixed: false,
-		width: this.MAXWIDTH,
-		flex: 1,
+		flex: this.MAXWIDTH,
 		renderer: this.gridRenderer
 	};
 };

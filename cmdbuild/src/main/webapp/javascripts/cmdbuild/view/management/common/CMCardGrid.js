@@ -415,7 +415,7 @@
 	function buildClassColumn(headers) {
 		return {
 			header: CMDBuild.Translation.management.modcard.subclass,
-			flex: 1,
+			width: 100,
 			sortable: true,
 			dataIndex: 'IdClass_value'
 		}
