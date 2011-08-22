@@ -13,13 +13,14 @@ CMDBuild.WidgetBuilders.TimeAttribute.prototype.format = "H:i:s";
  */
 CMDBuild.WidgetBuilders.TimeAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.TextField({
-		labelWidth: CMDBuild.CM_LABEL_WIDTH,
+		labelWidth: CMDBuild.LABEL_WIDTH,
 		labelAlign: "right",
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
 		format: this.format,
 		vtype: "time",
+		width: CMDBuild.SMALL_FIELD_WIDTH,
 		CMAttribute: attribute
 	});	
 };

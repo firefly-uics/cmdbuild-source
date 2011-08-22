@@ -37,7 +37,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new CMDBuild.Management.EntityRemoverDisplayField ({
 		labelAlign: "right",
-		labelWidth: CMDBuild.CM_LABEL_WIDTH,
+		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: attribute.description,
 		submitValue: false,
 		name: attribute.name,
@@ -55,26 +55,26 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 	if (attribute.len > this.MAXWIDTH) {
 		field = new Ext.form.TextArea({
 			labelAlign: "right",
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
  			fieldLabel: attribute.description,
     		name: attribute.name,
     		allowBlank: !attribute.isnotnull,
-    		width: 420
+    		width: CMDBuild.BIG_FIELD_WIDTH
 		});
 	} else {
 		field = new Ext.form.TextField({
 			labelAlign: "right",
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
  			fieldLabel: attribute.description,
  			name: attribute.name,
     		maxLength: attribute.len,
     		allowBlank: !attribute.isnotnull,
-    		width: (function(length) {
-				length = length + 8;
-    			if (length < 33) { //my chose
-    				return (length* 13)+6;
+			width: CMDBuild.LABEL_WIDTH + (function(length) {
+				length = (length * 13) + 12; // arbitrary choice
+				if (length < CMDBuild.BIG_FIELD_ONLY_WIDTH) {
+    				return length;
     			} else {
-    				return 420;
+    				return CMDBuild.BIG_FIELD_ONLY_WIDTH;
     			}
     		})(attribute.len)
 		});

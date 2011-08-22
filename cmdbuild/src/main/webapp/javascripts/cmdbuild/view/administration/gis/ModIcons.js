@@ -60,8 +60,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				region: "center",
 				frame: true,
 				defaults: {
-					labelWidth: CMDBuild.CM_LABEL_WIDTH,
-					width: CMDBuild.CM_BIG_FIELD_WIDTH
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},
 				items: [{
 					xtype:'hidden',

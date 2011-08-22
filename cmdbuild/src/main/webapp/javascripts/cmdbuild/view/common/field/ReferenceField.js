@@ -96,7 +96,7 @@
             Ext.apply(this, {
                 plugins: new CMDBuild.SetValueOnLoadPlugin(),
                 fieldLabel: attribute.description,
-                labelWidth: CMDBuild.CM_LABEL_WIDTH,
+                labelWidth: CMDBuild.LABEL_WIDTH,
                 name: attribute.name,
                 store: store,
                 queryMode: "local",

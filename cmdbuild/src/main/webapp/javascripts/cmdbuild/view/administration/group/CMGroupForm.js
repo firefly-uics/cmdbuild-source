@@ -26,8 +26,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		
 		this.groupName = new Ext.form.field.Text({
 			fieldLabel : tr.group_name,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : 'name',
 			allowBlank : false,
 			vtype: 'alphanum',
@@ -36,8 +36,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		
 		this.groupDescription = new Ext.form.field.Text({
 			fieldLabel : tr.group_description,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : 'description',
 			allowBlank : false
 		});
@@ -45,8 +45,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.groupEmail = new Ext.form.field.Text({
 			vtype : 'emailOrBlank',
 			fieldLabel : tr.email,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : 'email',
 			allowBlank : true
 		});
@@ -54,7 +54,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.activeCheck = new Ext.ux.form.XCheckbox({
 			xtype : 'xcheckbox',
 			fieldLabel : tr.is_active,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
 			name : 'isActive',
 			checked : true 
 		}); 
@@ -62,8 +62,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 		this.startingClass = new CMDBuild.field.ErasableCombo({
 			xtype : 'combo',
 			fieldLabel : tr.starting_class,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : 'startingClass',
 			valueField : 'id',
 			displayField : 'description',
@@ -77,7 +77,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			padding: "5 5 20 5",
 			autoScroll: true,
 			defaults: {
-				labelWidth: CMDBuild.CM_LABEL_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			},
 			items: [
 				this.groupName,

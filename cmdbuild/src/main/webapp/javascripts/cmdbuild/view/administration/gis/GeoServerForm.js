@@ -59,8 +59,8 @@
 	function items() {
 		var name = new Ext.form.TextField({
 			fieldLabel : tr_attribute.name,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : "name",
 			allowBlank : false,
 			cmImmutable: true
@@ -77,7 +77,7 @@
 			autoScroll : true,
 			name : "type",
 			fieldLabel : tr_attribute.type,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
 			valueField : "value",
 			displayField : "name",
 			hiddenName : "type",
@@ -88,8 +88,8 @@
 
 		var minZoom = new Ext.form.SliderField({
 			fieldLabel : tr.min_zoom,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			plugins : [ new CMDBuild.SliderFieldPlugin() ],
 			minValue : 0,
 			maxValue : 25,
@@ -98,8 +98,8 @@
 
 		var maxZoom = new Ext.form.SliderField({
 			fieldLabel : tr.max_zoom,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			plugins : [ new CMDBuild.SliderFieldPlugin() ],
 			minValue : 0,
 			maxValue : 25,
@@ -115,8 +115,8 @@
 		var description = new Ext.form.TextField({
 			xtype : "textfield",
 			fieldLabel : tr_attribute.description,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
-			width: CMDBuild.CM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : "description",
 			allowBlank : false
 		});
@@ -124,7 +124,7 @@
 		var file = new Ext.form.TextField({
 			inputType : "file",
 			fieldLabel: tr_geoserver.file,
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
 			name: "file",
 			form: this
 		});

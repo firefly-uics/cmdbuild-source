@@ -12,7 +12,7 @@
 			this.adminUser = new Ext.form.TextField({
 				name: 'admin_user',
 				fieldLabel: tr.admin_user,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false,
 				disabled: true
 			});
@@ -21,7 +21,7 @@
 				name: 'admin_password',
 				inputType: 'password', 
 				fieldLabel: tr.admin_password,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false,
 				disabled: true
 			});
@@ -29,7 +29,7 @@
 			this.confirmAdminPassword = new Ext.form.TextField({
 				inputType : 'password',
 				fieldLabel : tr.confirm_password,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				vtype : 'password',
 				initialPassField : this.adminPassword.getId(),
 				allowBlank : false,

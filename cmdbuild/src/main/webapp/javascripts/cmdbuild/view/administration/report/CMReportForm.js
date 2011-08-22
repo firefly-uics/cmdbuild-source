@@ -33,16 +33,28 @@ Ext.define("CMDBuild.view.administration.report.CMReportForm", {
 			})
 		]
 
+		var LABEL_WIDTH = 240;
+		var FIELD_WIDTH = LABEL_WIDTH + 260;
+		var STEP2_OFFSET = 100;
+		
 		this.step1 = new CMDBuild.view.administration.report.CMReportFormStep1({
 			frame: true,
 			border: false,
-			flex: 1
+			flex: 1,
+			fieldDefaults: {
+				labelWidth: LABEL_WIDTH,
+				width: FIELD_WIDTH
+			}
 		});
 
 		this.step2 = new CMDBuild.view.administration.report.CMReportFormStep2({
 			frame: false,
 			border: false,
-			flex: 1
+			flex: 1,
+			fieldDefaults: {
+				labelWidth: STEP2_OFFSET + LABEL_WIDTH,
+				width: STEP2_OFFSET + FIELD_WIDTH
+			}
 		});
 
 		Ext.apply(this, {

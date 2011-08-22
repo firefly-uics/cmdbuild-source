@@ -1,6 +1,6 @@
 (function() {
 
-CMDBuild.CM_LABEL_WIDTH = 250;
+CMDBuild.LABEL_WIDTH = 250;
 
 Ext.define("CMDBuild.app.Setup", {
 	statics: {

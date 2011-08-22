@@ -13,7 +13,7 @@
 			this.stoppable = new Ext.ux.form.XCheckbox({
 				name: 'userstoppable',
 				fieldLabel: CMDBuild.Translation.administration.modWorkflow.xpdlDownload.user_stoppable,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			Ext.apply(this, {
@@ -21,7 +21,7 @@
 				frame: true,
 				title : this.translation.upload_xpdl_tamplete,
 				defaults: {
-					labelWidth: CMDBuild.CM_LABEL_WIDTH
+					labelWidth: CMDBuild.LABEL_WIDTH
 				},
 				items: [
 					this.stoppable
@@ -63,7 +63,7 @@
 
 			this.versionCombo = new Ext.form.ComboBox( {
 				fieldLabel : this.translation.package_version,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : 'version',
 				xtype : 'combo',
 				queryMode : 'local',

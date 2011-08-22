@@ -67,7 +67,7 @@
 
 			this.activeCheck = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.active,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : LOOKUP_FIELDS.Active,
 				checked : true,
 				disabled : true
@@ -83,7 +83,7 @@
 				region: "center",
 				autoScroll: true,
 				defaults: {
-					labelWidth: CMDBuild.CM_LABEL_WIDTH
+					labelWidth: CMDBuild.LABEL_WIDTH
 				},
 				items: [ {
 					xtype : 'hidden',
@@ -92,19 +92,19 @@
 					xtype : 'textfield',
 					fieldLabel : tr.code,
 					name : LOOKUP_FIELDS.Code,
-					width: CMDBuild.CM_BIG_FIELD_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					disabled : true
 				}, {
 					xtype : 'textfield',
 					fieldLabel : tr.description,
 					name : LOOKUP_FIELDS.Description,
-					width: CMDBuild.CM_BIG_FIELD_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					allowBlank : false,
 					disabled : true
 				}, {
 					xtype : 'combo',
 					fieldLabel : tr.parentdescription,
-					width: CMDBuild.CM_BIG_FIELD_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name : LOOKUP_FIELDS.ParentId,
 					hiddenName : LOOKUP_FIELDS.ParentId,
 					valueField : LOOKUP_FIELDS.ParentId,
@@ -115,7 +115,7 @@
 				}, {
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
-					width: CMDBuild.CM_BIG_FIELD_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name : LOOKUP_FIELDS.Notes,
 					disabled : true
 				}, this.activeCheck] 

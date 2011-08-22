@@ -48,8 +48,8 @@
 			this.fieldMode = new Ext.form.ComboBox({
 				name: "fieldmode",
 				fieldLabel: tr.field_visibility,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_MIDDLE_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.MIDDLE_FIELD_WIDTH,
 				valueField: "value",
 				displayField: "name",
 				hiddenName: "fieldmode",
@@ -69,8 +69,8 @@
 			this.attributeGroup = new Ext.form.ComboBox({
 				name: "group",
 				fieldLabel: tr.group,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_MIDDLE_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.MIDDLE_FIELD_WIDTH,
 				valueField: "value",
 				displayField: "value",
 				hiddenName: "group",
@@ -85,8 +85,8 @@
 
 			this.attributeName = new Ext.form.TextField( {
 				fieldLabel : tr.name,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "name",
 				allowBlank : false,
 				vtype : "alphanum",
@@ -95,8 +95,8 @@
 
 			this.attributeDescription = new Ext.form.TextField({
 				fieldLabel : tr.description,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "description",
 				allowBlank : false,
 				vtype : "cmdbcomment"
@@ -104,25 +104,25 @@
 
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isnotnull,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : "isnotnull"
 			});
 
 			this.attributeUnique = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isunique,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : "isunique"
 			});
 
 			this.isBasedsp = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isbasedsp,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : "isbasedsp"
 			});
 
 			this.isActive = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isactive,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : "isactive"
 			});
 
@@ -146,7 +146,7 @@
 			this.comboType = new Ext.form.ComboBox({
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.type,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : "type",
 				triggerAction : "all",
 				valueField : "name",
@@ -160,8 +160,8 @@
 
 			this.stringLength = new Ext.form.NumberField({
 				fieldLabel : tr.length,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 				minValue : 1,
 				maxValue : Math.pow(2, 31) - 1,
 				name : "len",
@@ -170,8 +170,8 @@
 
 			this.decimalPrecision = new Ext.form.NumberField({
 				fieldLabel : tr.precision,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 				minValue : 1,
 				maxValue : 20,
 				name : "precision",
@@ -180,8 +180,8 @@
 
 			this.fieldFilter = new Ext.form.TextArea( {
 				fieldLabel : tr.referencequery,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "fieldFilter",
 				allowBlank : true,
 				vtype : "cmdbcommentrelaxed",
@@ -217,8 +217,8 @@
 
 			this.decimalScale = new Ext.form.NumberField( {
 				fieldLabel : tr.scale,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 				minValue : 1,
 				maxValue : 20,
 				name : "scale",
@@ -228,8 +228,8 @@
 			this.lookupTypes = new Ext.form.ComboBox({
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.lookup,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "lookup",
 				valueField : "type",
 				displayField : "type",
@@ -259,8 +259,8 @@
 			this.referenceDomains = new Ext.form.ComboBox({
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.domain,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "idDomain",
 				valueField : "idDomain",
 				displayField : "description",
@@ -273,8 +273,8 @@
 			this.foreignKeyDest = new CMDBuild.FkCombo( {
 				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 				fieldLabel : tr.destination,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "fkDestination",
 				hiddenName : "fkDestination",
 				valueField : "id",

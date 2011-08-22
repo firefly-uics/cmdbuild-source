@@ -20,7 +20,8 @@
 				autoScroll: true,
 				fieldDefaults: {
 					labelAlign: 'left',
-					labelWidth: 200
+					labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+					width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 				}
 			});
 
