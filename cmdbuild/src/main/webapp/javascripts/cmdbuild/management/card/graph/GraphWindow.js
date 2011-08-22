@@ -13,16 +13,8 @@ Ext.define("CMDBuild.Management.GraphWindow", {
 			title: CMDBuild.Translation.management.graph.title,
 			items: {
 				xtype: 'flash',
-				mediaCfg : {
-					mediaType: 'SWF',
-					url: 'flash/graph.swf',
-					start: true,
-					loop: false,
-					controls: false,
-					params: {
-						flashVars: graphParams
-					}
-				}
+				url: 'flash/graph.swf',
+				flashVars: graphParams
 			}
 		});
 
