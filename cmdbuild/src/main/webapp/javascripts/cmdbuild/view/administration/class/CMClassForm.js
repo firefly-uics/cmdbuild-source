@@ -42,8 +42,8 @@
 
 			this.inheriteCombo = new Ext.form.ComboBox( {
 				fieldLabel : tr.inherits,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : 'parent',
 				valueField : 'id',
 				displayField : 'description',
@@ -56,8 +56,8 @@
 
 			this.className = new Ext.form.field.Text( {
 				fieldLabel : tr.name,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : 'name',
 				allowBlank : false,
 				vtype : 'alphanum',
@@ -66,8 +66,8 @@
 
 			this.classDescription = new Ext.form.field.Text( {
 				fieldLabel : tr.description,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
-				width: CMDBuild.CM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : 'text',
 				allowBlank : false,
 				vtype : 'cmdbcomment'
@@ -75,14 +75,14 @@
 
 			this.isSuperClass = new Ext.ux.form.XCheckbox( {
 				fieldLabel : tr.superclass,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : 'superclass',
 				cmImmutable : true
 			});
 
 			this.isActive = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.active,
-				labelWidth: CMDBuild.CM_LABEL_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : 'active'
 			});
 
@@ -96,8 +96,8 @@
 
 			this.typeCombo = new Ext.form.field.ComboBox({
 				fieldLabel : tr.type,
-				labelWidth : CMDBuild.CM_LABEL_WIDTH,
-				width : CMDBuild.CM_MIDDLE_FIELD_WIDTH,
+				labelWidth : CMDBuild.LABEL_WIDTH,
+				width : CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
 				name : 'tableType',
 				hiddenName : 'tableType',
 				valueField : 'value',

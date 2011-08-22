@@ -17,7 +17,7 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 		this.formatCombo = new Ext.form.ComboBox({
 			fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.createreport.format_label,
 			labelAlign: "right",
-			labelWidth: CMDBuild.CM_LABEL_WIDTH,
+			labelWidth: CMDBuild.LABEL_WIDTH,
 			name : 'reportExtension',
 			editable : false,
 			disableKeyFilter : true,

@@ -19,8 +19,8 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = funct
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new Ext.form.DisplayField ({
 		labelAlign: "right",
-		labelWidth: CMDBuild.CM_LABEL_WIDTH,
-		width: CMDBuild.CM_BIG_FIELD_WIDTH,
+		labelWidth: CMDBuild.LABEL_WIDTH,
+		grow: true,
 		fieldLabel: attribute.description,
 		submitValue: false,
 		name: attribute.name + "_value",

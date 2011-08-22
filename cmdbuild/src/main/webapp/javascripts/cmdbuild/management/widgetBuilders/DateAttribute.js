@@ -5,7 +5,7 @@
 Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.DateAttribute = function() {
 	this.format = 'd/m/y';
-	this.fieldWidth = 200;
+	this.fieldWidth = CMDBuild.SMALL_FIELD_ONLY_WIDTH;
 	this.headerWidth = 60;
 };
 CMDBuild.extend(CMDBuild.WidgetBuilders.DateAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
@@ -33,12 +33,12 @@ CMDBuild.WidgetBuilders.DateAttribute.prototype.buildGridHeader = function(attri
 CMDBuild.WidgetBuilders.DateAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.DateField({
 		labelAlign: "right",
-		labelWidth: CMDBuild.CM_LABEL_WIDTH,
+		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
-		format: this.format,//TODO read the format in the config
-		width: this.fieldWidth,
+		format: this.format, //TODO read the format in the config
+		width: CMDBuild.LABEL_WIDTH + this.fieldWidth,
 		CMAttribute: attribute
 	});
 };

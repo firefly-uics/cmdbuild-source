@@ -12,6 +12,6 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.TextAttribute, CMDBuild.WidgetBuilders.S
  */
 CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(attribute) {
 	var attr = Ext.apply({},attribute);
-	attr.len = this.MAXWIDTH + 1;
+	attr.len = this.MAXWIDTH + 1; // MAXWIDTH is the length for switching to a textarea
 	return CMDBuild.WidgetBuilders.TextAttribute.superclass.buildAttributeField(attr);
 };

@@ -74,7 +74,7 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					autoHeight: true,
 					hideMode: 'offsets',
 					grow: true,
-					labelWidth: CMDBuild.CM_LABEL_WIDTH,
+					labelWidth: CMDBuild.LABEL_WIDTH,
 					bodyCls: "x-panel-default-framed",
 					CMAttribute: attribute,
 					
@@ -202,7 +202,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 
 	var field = new CMDBuild.field.LookupCombo({
 		labelAlign: "right",
-		labelWidth: CMDBuild.CM_LABEL_WIDTH,
+		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
 		labelSeparator: hideLabel ? '' : ":",
 		name: attribute.name,
