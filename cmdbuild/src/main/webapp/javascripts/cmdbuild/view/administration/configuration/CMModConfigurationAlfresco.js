@@ -1,10 +1,10 @@
 (function() {
-	var tr = CMDBuild.Translation.administration.setup.legacydms;
+	var tr = CMDBuild.Translation.administration.setup.dms;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationAlfresco", {
 		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
 		title: tr.title,
-		configFileName: 'legacydms',
+		configFileName: 'dms',
 
 		constructor: function() {
 			this.items = [

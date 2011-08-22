@@ -9,16 +9,6 @@
 	<artifactId>cmdbuild-dao</artifactId>
 	<packaging>pom</packaging>
 	<name>CMDBuild DAO</name>
-	<properties>
-		<guava.version>r09</guava.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
-	</dependencies>
 	<modules>
 		<module>cmdbuild-dao-core</module>
 		<module>cmdbuild-dao-postgresql</module>

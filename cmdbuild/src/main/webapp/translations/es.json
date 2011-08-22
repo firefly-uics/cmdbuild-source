@@ -420,7 +420,7 @@
             "menuTitle": "Gráfico de las Relaciones",
             "title": "Configuración Gráfico de las Relaciones"
          },
-         "legacydms": {
+         "dms": {
             "categoryLookup": "Categoría de CMDBuild",
             "credential": "Credenciales",
             "credentialPassword": "Clave",

@@ -94,7 +94,7 @@
 						CMDBuild.Config.dms = decoded.data;
 					},
 					callback: callback
-				},"legacydms");
+				},"dms");
 				
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {

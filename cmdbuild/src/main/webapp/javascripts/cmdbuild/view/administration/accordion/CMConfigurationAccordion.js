@@ -33,7 +33,7 @@
 				leaf : true,
 				cmName: 'modsetupgraph'
 			},{
-				text: tr.legacydms.menuTitle, 
+				text: tr.dms.menuTitle, 
 				leaf : true,
 				cmName: 'modsetupalfresco'
 			},{

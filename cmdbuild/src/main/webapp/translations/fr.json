@@ -420,7 +420,7 @@
             "menuTitle": "Relation Graphique",
             "title": "Relation Graphique Setup"
          },
-         "legacydms": {
+         "dms": {
             "categoryLookup": "CMDBuild categorie",
             "credential": "Credits",
             "credentialPassword": "Password",

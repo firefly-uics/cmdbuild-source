@@ -11,11 +11,6 @@
 	<name>CMDBuild DAO Core</name>
 	<dependencies>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${commons-lang.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.8.5</version>
@@ -25,6 +20,11 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-commons</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

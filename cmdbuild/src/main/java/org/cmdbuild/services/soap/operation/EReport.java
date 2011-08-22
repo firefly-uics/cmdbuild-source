@@ -9,6 +9,7 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.report.ReportFactoryDB;
@@ -21,7 +22,6 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
-import org.cmdbuild.utils.TempDataSource;
 
 public class EReport {
 	

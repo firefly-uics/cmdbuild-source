@@ -420,7 +420,7 @@
             "menuTitle": "Граф релација",
             "title": "Подешавање графа релација"
          },
-         "legacydms": {
+         "dms": {
             "categoryLookup": "CMDBuild категорија",
             "credential": "Подаци за приступ",
             "credentialPassword": "Лозинка",
