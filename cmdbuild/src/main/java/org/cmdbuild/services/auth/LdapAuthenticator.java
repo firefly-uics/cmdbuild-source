@@ -96,9 +96,11 @@ public class LdapAuthenticator implements Authenticator {
 				}
 			}
 		} catch (final NamingException e) {
-			Log.AUTH.error(String.format("Cannot find user with attribute %s equals %s", props.getLdapBindAttribute(),
-					userToFind));
-			throw e;
+			if (usertobind == null) {
+				Log.AUTH.error(String.format("Cannot find user with attribute %s equals %s", props
+						.getLdapBindAttribute(), userToFind));
+				throw e;
+			} // else we trust it's okay... thank you Active Directory!
 		}
 		return usertobind;
 	}
