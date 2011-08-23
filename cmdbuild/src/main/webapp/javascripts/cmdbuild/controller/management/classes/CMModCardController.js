@@ -156,8 +156,12 @@
 	
 	function onAbortCardClick() {
 		this.classOfCardToAdd = null;
-		var enableCMTbar = this.currentCard != null;
-		this.cardPanel.displayMode(enableCMTbar);
+		if (this.currentCard) {
+			onCardSelected.call(this, null, [this.currentCard]);
+		} else {
+			this.cardPanel.reset();
+			this.cardPanel.displayMode(enableCMTbar = false);
+		}
 	}
 	
 	function onSaveCardClick() {
