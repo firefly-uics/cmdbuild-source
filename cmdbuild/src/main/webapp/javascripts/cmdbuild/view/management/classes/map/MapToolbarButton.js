@@ -1,4 +1,6 @@
-CMDBuild.Management.MapToolbarButton = Ext.extend(Ext.Button, {
+Ext.define("CMDBuild.Management.MapToolbarButton", {
+	extend: "Ext.Button",
+	alias: "maptbbutton",
 	initComponent: function(){
 		CMDBuild.Management.MapToolbarButton.superclass.initComponent.apply(this, arguments)
 		
@@ -21,4 +23,3 @@ CMDBuild.Management.MapToolbarButton = Ext.extend(Ext.Button, {
 		});
 	}
 });
-Ext.reg('maptbbutton', CMDBuild.Management.MapToolbarButton);
