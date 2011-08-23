@@ -69,6 +69,18 @@
 			});
 		},
 
+		reset: function(idClass) {
+			this.activeFirstTab();
+			this.items.each(function(item) {
+				if (item.reset) {
+					item.reset();
+				}
+				if (item.onClassSelected) {
+					item.onClassSelected(idClass);
+				}
+			});
+		},
+
 		onAddCardButtonClick: function(idClass, reloadFields) {
 			this.setActiveTab(this.cardPanel);
 			this.items.each(function(item) {

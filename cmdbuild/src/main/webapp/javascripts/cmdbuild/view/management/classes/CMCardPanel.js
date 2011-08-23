@@ -177,7 +177,7 @@
 			this.editMode();
 			this.forceEditMode = false;
 		} else {
-			this.displayMode(enableCmBar = true);
+			this.displayMode(enableCmBar = false);
 		}
 	};
 

@@ -38,11 +38,11 @@
 			if (selection) {
 				this.currentEntry = selection;
 				this.view.cardGrid.onEntrySelected(selection);
+				this.view.onClassSelected(selection);
 
 				// notify sub-controllers
 				this.activityPanelController.onEntrySelected(selection);
 				this.relationsController.onEntrySelect(selection);// FIXME naming
-				this.showActivityPanel();
 			}
 		},
 
@@ -338,6 +338,7 @@
 		function success(response) {
 			CMDBuild.LoadMask.get().hide();
 			me.grid.reload();
+			me.view.reset(me.currentEntry.get("id"));
 		}
 
 		function failure() {
@@ -395,6 +396,7 @@
 				},
 	
 				success: function(response) {
+					this.view.reset(requestParams.IdClass);
 					updateActivityData.call(this, response);
 	
 					this.activityPanelController.view.reset();

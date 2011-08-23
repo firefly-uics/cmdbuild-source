@@ -141,8 +141,7 @@
 				},
 				success : function() {
 					this.cardGrid.reload();
-					this.cardPanel.reset();
-					this.cardPanel.displayMode(enableCMTbar = false);
+					this.view.reset(this.currentEntryId);
 
 					_CMCache.onClassContentChanged(this.currentEntryId);
 				},

@@ -24,6 +24,15 @@
 			});
 		},
 
+		onClassSelected: function(entry) {
+			var id = entry.get("id");
+			this.cardTabPanel.onClassSelected(id, activateFirst = true);
+		},
+
+		reset: function(id) {
+			this.cardTabPanel.reset(id);
+		},
+
 		/*
 		o = {
 				reloadFields: reloadFields,
