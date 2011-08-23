@@ -63,14 +63,20 @@
 	}
 
 	function buildFakeRoot(standard, simpletables) {
+		var first = standard[0];
+		first.cmIndex = 1;
+		first.expanded = true;
+
 		return {
 			leaf: false,
 			children:[
-				standard[0],
+				first,
 				{
 					text: CMDBuild.Translation.administration.modClass.classProperties.simple,
 					leaf: false,
-					children: simpletables
+					children: simpletables,
+					cmIndex: 2,
+					expanded: true
 				}
 			]
 		}

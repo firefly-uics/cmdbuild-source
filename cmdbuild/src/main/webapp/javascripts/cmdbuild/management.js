@@ -1,5 +1,7 @@
 (function() {
-	var menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion(),
+	var menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion({
+			cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
+		}),
 		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),	
 		classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
 			title: CMDBuild.Translation.administration.modClass.tree_title
@@ -81,6 +83,11 @@
 
 				function callback() {
 					if (--dangling == 0) {
+						hideIfEmpty(processAccordion);
+						hideIfEmpty(reportAccordion);
+						hideIfEmpty(menuAccordion);
+						hideIfEmpty(classesAccordion);
+
 						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 							new CMDBuild.view.CMMainViewport({
 								cmAccordions: me.cmAccordions,
@@ -89,10 +96,6 @@
 						);
 						_CMMainViewportController.selectStartingClass();
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-
-						if (processAccordion.isEmpty()) {
-							processAccordion.hide();
-						}
 
 						CMDBuild.view.CMMainViewport.hideSplash();
 					}
@@ -112,7 +115,7 @@
 					callback: callback
 				},"graph");
 
-				CMDBuild.ServiceProxy.report.read({
+				CMDBuild.ServiceProxy.report.getTypesTree({
 					scope: this,
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
@@ -156,4 +159,11 @@
 			}
 		}
 	});
+
+	function hideIfEmpty(a) {
+		if (a.isEmpty()) {
+			a.disable();
+			a.hide();
+		}
+	}
 })();

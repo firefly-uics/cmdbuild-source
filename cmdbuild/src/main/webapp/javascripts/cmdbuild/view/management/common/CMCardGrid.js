@@ -379,7 +379,8 @@
 				scope: this,			
 				iconCls: 'find',
 				text: CMDBuild.Translation.management.findfilter.set_filter,
-				handler: onOpenFilterButtonClick
+				handler: onOpenFilterButtonClick,
+				disabled: true
 			});
 
 			this.clearFilterButton = new Ext.button.Button({
@@ -396,7 +397,8 @@
 		if (this.cmAddPrintButton) {
 			this.printGridMenu = new CMDBuild.PrintMenuButton({
 				callback : function() { this.fireEvent("click"); },
-				formatList: ["pdf", "odt"]
+				formatList: ["pdf", "odt"],
+				disabled: true
 			});
 			items.push(this.printGridMenu);
 		}

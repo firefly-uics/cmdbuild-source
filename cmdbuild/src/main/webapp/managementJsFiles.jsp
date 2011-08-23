@@ -121,6 +121,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/linkCards/CMLinkCards.js"></script>
 
 <!-- CONTROLLER -->
+	<!-- ACCORDION -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/menu/CMMenuAccordionController.js"></script>
 
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>

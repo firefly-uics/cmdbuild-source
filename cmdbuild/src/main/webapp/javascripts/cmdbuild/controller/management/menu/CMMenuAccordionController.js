@@ -8,6 +8,10 @@
 			this.onAccordionNodeSelect = function(selection) {
 				_debug("menu selection ", selection)
 			}
+		},
+		onAccordionExpanded: function() {
+			_CMMainViewportController.bringTofrontPanelByCmName("class");
+			this.reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf.call(this);
 		}
 	});
 
