@@ -82,7 +82,7 @@
 				} ]
 			});
 
-			this.defaultGroup = new Ext.form.ComboBox( {
+			this.defaultGroup = new CMDBuild.field.ErasableCombo( {
 				name : 'defaultgroup',
 				fieldLabel : tr.defaultgroup,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -176,18 +176,21 @@
 		},
 
 		onUserSelected : function(user) {
-            var me = this;
+            var me = this,
+				store = this.defaultGroupStore;
 			this.reset();
 			this.disableModify(enableCMTBar = true);
 			this.updateDisableActionTextAndIconClass(user.get("isactive"));
-			this.defaultGroupStore.load( {
+			store.load( {
 				params : {
 					userid : user.get("userid")
 				},
                 callback: function() {
+					var defaultGroup = store.findRecord('isdefault', true);
+					if (defaultGroup) {
+						user.set("defaultgroup", defaultGroup.getId());
+					}
                     me.getForm().loadRecord(user);
-                    // TODO the user serialization has not the defaultGroup id
-                    // so the defaultGroup combo couldn't be populate
                 }
 			});
 		},
