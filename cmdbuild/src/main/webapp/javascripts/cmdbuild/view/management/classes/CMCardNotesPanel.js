@@ -110,20 +110,21 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		} else {
 			this.enable();
 		}
-		this.disableModify();
+
 		this.currentCardId = card.get("Id");
 		this.currentCardPrivileges = {
 			create: card.raw.priv_create,
 			write: card.raw.priv_write
 		};
+
 		var form = this.actualForm.getForm();
 		var displayform = this.displayPanel.getForm();
 		form.reset();
 		displayform.reset();
 		form.loadRecord(card);
 		displayform.loadRecord(card);
-		this.modifyNoteButton.setDisabled(!this.currentCardPrivileges.write);
-		this.enable();
+
+		this.disableModify();
 	},
 
 	reloadCard: function(eventParams) {
@@ -135,9 +136,16 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 	},
 
 	disableModify: function() {
-		this.modifyNoteButton.enable();
-		this.saveButton.disable();
-		this.cancelButton.disable();
+		if (this.currentCardPrivileges && this.currentCardPrivileges.write) {
+			this.modifyNoteButton.enable();
+		} else {
+			this.modifyNoteButton.disable();
+		}
+
+		if (this.withButtons) {
+			this.saveButton.disable();
+			this.cancelButton.disable();
+		}
 		if (this.rendered) {
 			this.getLayout().setActiveItem(this.displayPanel.id);
 		} else {
@@ -149,8 +157,10 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 
 	enableModify: function() {
 		this.modifyNoteButton.disable();
-		this.saveButton.enable();
-		this.cancelButton.enable();
+		if (this.withButtons) {
+			this.saveButton.enable();
+			this.cancelButton.enable();
+		}
 		this.getLayout().setActiveItem(this.actualForm.id);
 	}
 });

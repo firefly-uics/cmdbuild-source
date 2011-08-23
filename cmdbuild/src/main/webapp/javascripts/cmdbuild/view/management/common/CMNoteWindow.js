@@ -13,24 +13,28 @@ Ext.define("CMDBuild.view.management.common.CMNoteWindow", {
 			withButtons: false
 		});
 
-		var saveButton = new Ext.Button({
-			text: CMDBuild.Translation.common.buttons.save,
-			handler: saveNote,
-			scope: this,
-			disabled: true
-		});
+		var buttons = [];
+		if (this.masterCard && this.masterCard.raw && this.masterCard.raw.priv_write) {
+			var saveButton = new Ext.Button({
+				text: CMDBuild.Translation.common.buttons.save,
+				handler: saveNote,
+				scope: this,
+				disabled: true
+			});
 
-		var cancelButton = new Ext.Button({
-			text: CMDBuild.Translation.common.buttons.abort,
-			handler: function() {
-				this.note.onCardSelected(this.masterCard);
-				this.note.disableModify();
-			},
-			scope: this,
-			disabled: true
-		});
+			var cancelButton = new Ext.Button({
+				text: CMDBuild.Translation.common.buttons.abort,
+				handler: function() {
+					this.note.onCardSelected(this.masterCard);
+					this.note.disableModify();
+				},
+				scope: this,
+				disabled: true
+			});
+			buttons = [saveButton, cancelButton];
+		}
 
-		var closeButton = new Ext.Button({
+		buttons.push(new Ext.Button({
 			text: CMDBuild.Translation.common.buttons.close,
 			name: 'saveButton',
 			formBind: true,
@@ -38,12 +42,12 @@ Ext.define("CMDBuild.view.management.common.CMNoteWindow", {
 				this.destroy();
 			},
 			scope: this
-		});
+		}));
 
 		Ext.apply(this, {
 			items: [this.note],
 			buttonAlign: "center",
-			buttons: [ saveButton, cancelButton, closeButton ]
+			buttons: buttons
 		});
 
 		this.callParent(arguments);

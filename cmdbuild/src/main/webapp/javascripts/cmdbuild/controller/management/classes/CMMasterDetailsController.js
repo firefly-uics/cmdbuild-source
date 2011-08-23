@@ -125,11 +125,11 @@
 				}
 			};
 		},
-		
+
 		onOpenGraphClick: function(model) {
-			alert("@@ open graph detail");
+			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
 		},
-		
+
 		onOpenNoteClick: function(model) {
 			var w = new CMDBuild.view.management.common.CMNoteWindow({
 				masterCard: model
@@ -139,7 +139,7 @@
 				this.view.reload();
 			}, this, {single: true});
 		},
-		
+
 		onOpenAttachmentClick: function(model) {
 			new CMDBuild.controller.management.common.CMAttachmentsWindowController(
 				new CMDBuild.view.management.common.CMAttachmentsWindow({
