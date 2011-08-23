@@ -80,32 +80,29 @@
 				<%
 			}
 		%>
-		<!--
+
 		<script type="text/javascript" src="javascripts/OpenLayers/OpenLayers.js"></script>
-		<script type="text/javascript" src="javascripts/GeoExt/lib/GeoExt.js"></script>
-		
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/CMDBuildMap.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapLayer.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/LayerBuilder.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/GeoUtility.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapToolbarButton.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapEditingWindow.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapBuilder.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapPanel.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/MapController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/management/card/map/PopupController.js"></script> 
-		-->
+
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMDBuildMap.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapLayer.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/LayerBuilder.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/GeoUtility.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapToolbarButton.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapEditingWindow.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapBuilder.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapPanel.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/PopupController.js"></script> 
+
 		<%}%>
-			
-			
+
 		<script type="text/javascript">
 			Ext.onReady(function() {
 				CMDBuild.app.Management.init();
 			});
 		</script>
-		
-	 
-	 	<title>CMDBuild</title>
+
+		<title>CMDBuild</title>
 	</head>
 	<body>
 		<div id="header" class="cm_no_display">

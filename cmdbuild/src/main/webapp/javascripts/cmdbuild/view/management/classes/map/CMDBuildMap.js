@@ -3,7 +3,7 @@
 	 * @class CMDBuild.Management.CMDBuildMap
 	 */
 	CMDBuild.Management.CMDBuildMap = OpenLayers.Class(OpenLayers.Map, {
-		cmdbLayers: [], //array with the layers added		
+		cmdbLayers: [], //array with the layers added
 		update: function(params, withEditLayer) {
 			removeCmdbLayers.call(this);
 			addCmdbLayers.call(this, params, withEditLayer);

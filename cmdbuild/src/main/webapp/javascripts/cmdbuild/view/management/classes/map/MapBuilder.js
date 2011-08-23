@@ -4,10 +4,10 @@ CMDBuild.Management.MapBuilder = (function() {
 	var projection = new OpenLayers.Projection("EPSG:900913");
 	var displayProjection = new OpenLayers.Projection("EPSG:4326");	
 	
-	function buildMap() {
+	function buildMap(divId) {
 		var navControl = new OpenLayers.Control.Navigation();
 		var mouseControl = new OpenLayers.Control.MousePosition();
-		
+
 		var options = {
 	        projection: projection,
 	        displayProjection: displayProjection,
@@ -15,9 +15,10 @@ CMDBuild.Management.MapBuilder = (function() {
 	        numZoomLevels: 25,
 	        maxResolution: 156543.0339,
 	        maxExtent: bounds,
-	        controls: [navControl, mouseControl],
-		    eventListeners: {
-                "zoomend": function(event) {
+//	        controls: [navControl, mouseControl],
+	        div: divId,
+	        eventListeners: {
+				"zoomend": function(event) {
 					/*
 					 * Manage the visibility of
 					 * the features
@@ -32,13 +33,13 @@ CMDBuild.Management.MapBuilder = (function() {
 						}
 					}
 				}
-            }
-	    };
+			}
+		};
 		var map = new CMDBuild.Management.CMDBuildMap(options);
 		addBaseLayers(map);
 		return map;
 	};
-	
+
 	function addBaseLayers(map) {
 		var DEFAULT_MIN_ZOOM = 0;
 		var DEFAULT_MAX_ZOOM = 24;

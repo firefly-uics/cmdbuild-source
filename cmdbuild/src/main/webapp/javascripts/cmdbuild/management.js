@@ -18,13 +18,22 @@
 					scope: this,
 					success: function(response, options, decoded) {
 						CMDBuild.Config.cmdbuild = decoded.data;
-						this.buildComponents();
+
+						CMDBuild.ServiceProxy.configuration.readGisConfiguration({
+							scope: this,
+							success: function(response, options, decoded) {
+								CMDBuild.Config.gis = decoded.data;
+								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+							},
+							callback: function() {
+								this.buildComponents();
+							}
+						});
 					}
 				});
 			},
 
 			buildComponents: function() {
-
 				this.cmAccordions = [
 					this.menuAccordion = menuAccordion,
  					this.classesAccordion = classesAccordion,

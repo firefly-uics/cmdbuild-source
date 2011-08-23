@@ -9,6 +9,10 @@
 		},
 
 		initComponent: function() {
+			this.centralPanelItems = [this.cardGrid];
+
+			buildMapPanel.call(this);
+
 			this.centralPanel = new Ext.panel.Panel({
 				region: "center",
 				layout: "card",
@@ -16,7 +20,9 @@
 				hideMode: "offsets",
 				border: true,
 				frame: false,
-				items: [this.cardGrid],
+				cardGrid: this.cardGrid,
+				theMap: this.theMap,
+				items: this.centralPanelItems,
 				title: "@@ the grid",
 				tools:[{
 					type:'minimize',
@@ -30,7 +36,13 @@
 					type: "restore",
 					scope: this,
 					handler: onToolClick
-				}]
+				}],
+				showGrid: function() {
+					this.getLayout().setActiveItem(this.cardGrid.id);
+				},
+				showMap: function() {
+					this.getLayout().setActiveItem(this.theMap.id);
+				}
 			});
 
 			Ext.apply(this, {
@@ -74,16 +86,19 @@
 		// private, overridden in subclasses
 		buildComponents: function() {
 			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
+			var tbar = [
+				this.addCardButton = new CMDBuild.AddCardMenuButton({
+					classId: undefined
+				})
+			];
 
-			this.addCardButton = new CMDBuild.AddCardMenuButton({
-				classId: undefined
-			});
+			buildMapButton.call(this, tbar);
 
 			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
 				hideMode: "offsets",
 				filterCategory: this.cmName,
 				border: false,
-				tbar: [this.addCardButton],
+				tbar: tbar,
 				columns: []
 			});
 
@@ -162,6 +177,42 @@
 		toolClickCallBack[type].call(this);
 	} 
 
+	function buildMapButton(tbar) {
+		if (CMDBuild.Config.gis.enabled) {
+
+			this.showMapButton = new Ext.button.Button({
+				text: CMDBuild.Translation.management.modcard.tabs.map,
+				iconCls: 'map',
+				scope: this,
+				handler: function() {
+					this.centralPanel.showMap();
+				}
+			});
+
+			tbar.push('->', this.showMapButton);
+		}
+	}
+
+	function buildMapPanel() {
+		if (CMDBuild.Config.gis.enabled) {
+			this.showGridButton = new Ext.button.Button({
+				text: CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
+				iconCls: 'table',
+				scope: this,
+				handler: function() {
+					this.centralPanel.showGrid();
+				}
+			});
+
+			this.theMap = new CMDBuild.Management.MapPanel({
+				tbar: ['->', this.showGridButton],
+				frame: false,
+				border: false
+			});
+
+			this.centralPanelItems.push(this.theMap);
+		}
+	}
 /*
 CMDBuild.Management.ModCard = Ext.extend(CMDBuild.ModPanel, {
 	id: 'modcard',
