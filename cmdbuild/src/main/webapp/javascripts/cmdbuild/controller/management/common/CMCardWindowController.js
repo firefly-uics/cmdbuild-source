@@ -2,8 +2,10 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 	constructor: function(view) {
 		this.view = view;
 
-		this.view.cardPanel.saveButton.on("click", this.onSaveButtonClick, this);
-		this.view.cardPanel.cancelButton.on("click", this.onCancelButtonClick, this);
+		if (this.view.withButtons) {
+			this.view.cardPanel.saveButton.on("click", this.onSaveButtonClick, this);
+			this.view.cardPanel.cancelButton.on("click", this.onCancelButtonClick, this);
+		}
 	},
 
 	getForm: function() {

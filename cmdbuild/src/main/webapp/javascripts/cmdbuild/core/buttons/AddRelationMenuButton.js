@@ -27,20 +27,29 @@ Ext.define("CMDBuild.AddRelationMenuButton", {
 
 		this.menu.removeAll();
 		var d,
-			domains = _CMCache.getDirectedDomainsByEntryType(et);
+			domains = _CMCache.getDirectedDomainsByEntryType(et),
+			empty = true;
 
 		for (var i=0, l=domains.length; i<l; ++i) {
 			d = domains[i];
-			this.menu.add({
-				text: d.description,
-				domain: d,
-				scope: this,
-				handler: function(item, e){
-					this.fireEvent("cmClick", item.domain);
+			if (d) {
+				var cachedDomain = _CMCache.getDomainById(d.dom_id);
+				if (cachedDomain.hasCreatePrivileges()) {
+					this.menu.add({
+						text: d.description,
+						domain: d,
+						scope: this,
+						handler: function(item, e){
+							this.fireEvent("cmClick", item.domain);
+						}
+					});
+					empty = false;
 				}
-			});
+			}
 		}
-		
+
+		this.setDisabled(empty);
+
 		return domains.length > 0;
 	},
 

@@ -140,9 +140,17 @@
 			} else {
 				return undefined;
 			}
+		},
+
+		hasCreatePrivileges: function() {
+			if (this.raw) {
+				return this.raw.createPrivileges;
+			} else {
+				return this.data.createPrivileges;
+			}
 		}
 	});
-	
+
 	Ext.define("CMDBuild.cache.CMReportModel", {
 		extend: 'Ext.data.Model',
 		fields: [

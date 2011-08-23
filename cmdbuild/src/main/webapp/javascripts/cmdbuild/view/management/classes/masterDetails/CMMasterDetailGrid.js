@@ -56,32 +56,13 @@
 			this.reconfigure(null, []);
 		},
 
-		getIconsToRender: function() {
-			var icons = [];
-			if (this.editable) {
-				icons = ["editDetail", "deleteDetail", "showGraph", "note"];
-			} else {
-				icons = ["showDetail", "showGraph", "note"];
-			}
-
-			if (CMDBuild.Config.dms.enabled == "true") {
-				icons.push("attach");
-			}
-
-			return icons;
-		},
-
 		// override
 		buildExtraColumns: function() {
-			var iconToRender = this.getIconsToRender();
 			return [{
 				header : '&nbsp',
-				width : iconToRender.length * 20,
 				fixed : true,
 				sortable : false,
-				renderer : function() {
-					return imageTagBuilderForIcon(iconToRender);
-				},
+				renderer : imageTagBuilderForIcon,
 				align : 'center',
 				cellCls : 'grid-button',
 				dataIndex : 'Fake',
@@ -90,7 +71,7 @@
 			}];
 		}
 	});
-	
+
 	function load(idClassToLoad, setExtraParamsAndLoad) {
 		if (this.currentClassId != idClassToLoad) {
 			this.updateStoreForClassId(idClassToLoad, setExtraParamsAndLoad);
@@ -98,7 +79,7 @@
 			setExtraParamsAndLoad.call(this);
 		}
 	}
-	
+
 	function getDetailClass(detail) {
 		var cardinality = detail.get("cardinality");
 		if (cardinality == "1:N") {
@@ -108,8 +89,28 @@
 		}
 	}
 
-	function imageTagBuilderForIcon(iconName) {
-		var ICONS_FOLDER = "images/icons/",
+	function getIconsToRender(record) {
+		var icons = [];
+		_debug(record.raw);
+		if (record 
+				&& record.raw
+				&& record.raw.priv_write) {
+
+			icons = ["editDetail", "deleteDetail", "showGraph", "note"];
+		} else {
+			icons = ["showDetail", "showGraph", "note"];
+		}
+
+		if (CMDBuild.Config.dms.enabled == "true") {
+			icons.push("attach");
+		}
+
+		return icons;
+	}
+
+	function imageTagBuilderForIcon(value, meta, record) {
+		var iconsToRended = getIconsToRender(record),
+			ICONS_FOLDER = "images/icons/",
 			ICONS_EXTENSION = "png",
 			EVENT_CLASS_PREFIX = "action-masterdetail-",
 			TAG_TEMPLATE = '<img style="cursor:pointer" title="{0}" class="{1}{2}" src="{3}{4}.{5}"/>&nbsp;',
@@ -146,7 +147,7 @@
 					icon: "attach"
 				}
 			};
-		
+
 		function buildTag(iconName) {
 			var icon = icons[iconName];
 			if (icon) {
@@ -155,15 +156,15 @@
 				return Ext.String.format("<span>{0}</span>", iconName);
 			}
 		}
-	
-		if (Ext.isArray(iconName)) {
-			for (var i=0, len=iconName.length; i<len; ++i) {
-				tag += buildTag(iconName[i]);
+
+		if (Ext.isArray(iconsToRended)) {
+			for (var i=0, len=iconsToRended.length; i<len; ++i) {
+				tag += buildTag(iconsToRended[i]);
 			}
 		} else {
-			tag = buildTag(iconName);
+			tag = buildTag("");
 		}
-		
+
 		return tag;
 	}
 
