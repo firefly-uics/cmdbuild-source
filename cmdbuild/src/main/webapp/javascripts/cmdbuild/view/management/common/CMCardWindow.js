@@ -13,6 +13,11 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 			allowNoteFiled: true
 		});
 
+		if (this.classId) {
+			var privileges = _CMUtils.getClassPrivileges(this.classId);
+			this.cardPanel.writePrivilege = privileges.write;
+		}
+
 		if (!this.withButtons) {
 			this.closeButton = new Ext.button.Button({
 				text: CMDBuild.Translation.common.buttons.close,
