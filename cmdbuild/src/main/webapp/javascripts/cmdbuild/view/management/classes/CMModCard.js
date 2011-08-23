@@ -75,6 +75,10 @@
 			this.cardGrid.gridSearchField.reset();
 		},
 
+		reset: function(id) {
+			this.cardTabPanel.reset(id);
+		},
+
 		openCard: function(p) {
 			this.cardGrid.openCard(p);
 			this.cardTabPanel.onClassSelected(p.IdClass, activateFirst = false);

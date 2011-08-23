@@ -73,7 +73,30 @@
 
 			this.callParent(arguments);
 		},
-		
+
+		onClassSelected: function(id, activateFirst) {
+			if (activateFirst) {
+				this.showActivityPanel();
+			}
+
+			this.acutalPanel.items.each(function(item) {
+				if (item.onClassSelected) {
+					item.onClassSelected(id);
+				}
+			});
+		},
+
+		reset: function(idClass) {
+			this.showActivityPanel();
+			this.acutalPanel.items.each(function(item) {
+				if (item.reset) {
+					item.reset();
+				}
+				if (item.onClassSelected) {
+					item.onClassSelected(idClass);
+				}
+			});
+		},
 		/*
 		 o = {
 				reloadFields: reloadFields,
