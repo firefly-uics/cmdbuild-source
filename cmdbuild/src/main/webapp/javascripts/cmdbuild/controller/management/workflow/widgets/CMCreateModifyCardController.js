@@ -102,7 +102,7 @@
 				success : function(form, action) {
 					CMDBuild.LoadMask.get().hide();
 					this.savedCardId = action.result.id;
-
+					_CMCache.onClassContentChanged(params.IdClass);
 					onAbortCardClick.call(this);
 				},
 

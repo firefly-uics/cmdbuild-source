@@ -143,6 +143,8 @@
 					this.cardGrid.reload();
 					this.cardPanel.reset();
 					this.cardPanel.displayMode(enableCMTbar = false);
+
+					_CMCache.onClassContentChanged(this.currentEntryId);
 				},
 				callback : function() {
 					CMDBuild.LoadMask.get().hide();
@@ -163,7 +165,7 @@
 		var params = {},
 			form = this.cardPanel.getForm(),
 			view = this.cardPanel,
-			ex = [] //var ex = this.cardExtensionsProvider;
+			ex = []; //var ex = this.cardExtensionsProvider;
 		
 		var invalidAttributes = this.cardPanel.getInvalidAttributeAsHTML();
 		
@@ -171,12 +173,12 @@
 			params = {
 				IdClass: this.currentCard.get("IdClass"),
 				Id: this.cloneCard ? -1 : this.currentCard.get("Id")
-			}
+			};
 		} else {
 			params = {
 				IdClass: this.classOfCardToAdd,
 				Id: -1
-			}
+			};
 		}
 		
 		if (invalidAttributes == null) {
@@ -205,6 +207,7 @@
 					};
 
 					this.cardGrid.openCard(c);
+					_CMCache.onClassContentChanged(this.currentEntryId);
 				},
 
 				failure : function() {
@@ -275,11 +278,11 @@
 	}
 
 	function onSaveNoteClick() {
-		var form = this.notePanel.actualForm.getForm();
-		var params = {
-			IdClass: this.currentCard.get("IdClass"),
-			Id: this.currentCard.get("Id")
-		}
+		var form = this.notePanel.actualForm.getForm(),
+			params = {
+				IdClass: this.currentCard.get("IdClass"),
+				Id: this.currentCard.get("Id")
+			};
 
 		if (form.isValid()) {
 			form.submit({

@@ -41,6 +41,7 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 
 	// private, overridden in subclasses
 	onSaveSuccess: function(form, action) {
+		_CMCache.onClassContentChanged(this.view.classId);
 		this.view.destroy();
 	},
 
