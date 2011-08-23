@@ -26,21 +26,25 @@
 
 			this.attributesPanel = new CMDBuild.view.administration.classes.CMClassAttributesPanel({
 				title: tr.tabs.attributes,
-				border: false
+				border: false,
+				disabled: true
 			})
 
 			this.domainGrid = new CMDBuild.Administration.DomainGrid({
 				title : tr.tabs.domains,
-				border: false
+				border: false,
+				disabled: true
 			});
 
 			this.geoAttributesPanel = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
-				title: tr.tabs.geo_attributes
+				title: tr.tabs.geo_attributes,
+				disabled: true
 			});
 
 			this.layerVisibilityGrid = new CMDBuild.Administration.LayerVisibilityGrid({
 				title: tr.layers,
-				withCheckToHideLayer: true
+				withCheckToHideLayer: true,
+				disabled: true
 			});
 
 			this.tabPanel = new Ext.tab.Panel({

@@ -107,7 +107,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 
 		this.cmTBar = [this.modifyButton, this.enableGroupButton ];
 		this.cmButtons = [this.saveButton, this.abortButton];
-		
+
 		this.callParent(arguments);
 	},
 	
@@ -129,8 +129,9 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			bodyCls: 'cmgraypanel',
 			layout: "border"
 		});
-	 
+
 		this.callParent(arguments);
+		this.disableModify(enableTBar = false);
 	},
 	
 	updateDisableEnableGroup : function() {

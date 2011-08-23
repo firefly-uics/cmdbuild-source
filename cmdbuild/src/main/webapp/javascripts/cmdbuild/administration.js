@@ -157,7 +157,7 @@ Ext.define("CMDBuild.app.Administration", {
                         })
                     );
                     _CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-                    _CMMainViewportController.selectFirstSelectableLeaf();
+                    _CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
                     CMDBuild.view.CMMainViewport.hideSplash();
 				}
             }
@@ -191,7 +191,7 @@ Ext.define("CMDBuild.app.Administration", {
                 callback: callback
 			});
 
-			CMDBuild.ServiceProxy.report.read({
+			CMDBuild.ServiceProxy.report.getMenuTree({
 				success: function(response, options, reports) {
 					_CMCache.addReports(reports);
 					reportAccordion.updateStore();

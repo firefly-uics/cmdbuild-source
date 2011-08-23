@@ -17,8 +17,9 @@
 		onAccordionExpanded: function() {
 			_CMMainViewportController.bringTofrontPanelByCmName(this.accordion.cmName);
 			reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf.call(this);
-		}
+		},
 
+		reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf: reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf
 	});
 	
 	function manageTreeEvents() {
@@ -42,7 +43,7 @@
 				var toSelect = [selections[0]];
 				this.onAccordionNodeSelect(this.accordionSM, toSelect);
 			} else {
-				this.accordion.selectFirstLeaf();
+				this.accordion.selectFirstSelectableNode();
 			}
 		}
 	}

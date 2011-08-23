@@ -86,12 +86,20 @@
 		} else {
 			this.selectFirstSelectableLeaf();
 		}
-	}
+	};
 
 	ns.CMMainViewportController.prototype.selectFirstSelectableLeaf = function() {
+		var a = this.viewport.getFirstAccordionWithASelectableNode();
+		if (a) {
+			a.selectFirstSelectableNode();
+		}
+	};
+
+	ns.CMMainViewportController.prototype.selectFirstSelectableLeafOfOpenedAccordion = function() {
 		var a = this.viewport.getExpansedAccordion();
 		if (a) {
-			a.selectFirstLeaf();
+			this.bringTofrontPanelByCmName(a.cmName);
+			a.selectFirstSelectableNode();
 		}
 	}
 })();

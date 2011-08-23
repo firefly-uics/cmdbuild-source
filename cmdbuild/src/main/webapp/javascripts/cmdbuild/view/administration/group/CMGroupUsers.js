@@ -5,8 +5,7 @@ var tr = CMDBuild.Translation.administration.modsecurity;
 Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 	extend: "Ext.panel.Panel",
 	alias: "userpergroup",
-	
-	
+
 	initComponent: function() {
 
 		this.availableUsersStore = CMDBuild.ServiceProxy.group.getUserPerGroupStoreForGrid();
@@ -68,9 +67,9 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 			title: tr.group.groupchoice,
 			flex: 1
 		});
-		
+
 		var _this = this;
-		
+
 		var concatUsersIdOfAssignedUsers = function() {
 			var out = "";
 			var users = _this.assignedUsersStore.getRange();
@@ -83,7 +82,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 			}
 			return out;
 		};
-		
+
 		var saveGroupUsers = function() {
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.Ajax.request({
@@ -106,9 +105,9 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 		
 		Ext.apply(this, {
 			frame: false,
-            border: false,
-            bodyCls: "x-panel-body-default-framed",
-            cls: "x-panel-body-default-framed",            
+			border: false,
+			bodyCls: "x-panel-body-default-framed",
+			cls: "x-panel-body-default-framed",
 			padding: "0 0 0 0",
 			layout: {
 				type: 'hbox',
@@ -123,31 +122,32 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 				handler: saveGroupUsers
 			}]
 		});
-		this.callParent(arguments);    
+		this.callParent(arguments);
 	},
-	
-	onGroupSelected: function(group) {
-		  if (group) {
-			  this.groupId = group.get("id");
-		  } else { 
-			  this.groupId=-1;
-		  }
 
-		  if (this.groupId > 0) {
-			  this.availableUsersStore.load({
-				  params:{
-				  	groupId:this.groupId,
-				  	alreadyAssociated: false
-				  }
-			  });
-			  this.assignedUsersStore.load({
-				  params:{
-				  	groupId:this.groupId,
-				  	alreadyAssociated: true
-				  }
-			  });
-		  }
-	  }
+	onGroupSelected: function(group) {
+		if (group) {
+			this.groupId = group.get("id");
+		} else { 
+			this.groupId=-1;
+		}
+
+		if (this.groupId > 0) {
+			this.enable();
+			this.availableUsersStore.load({
+				params:{
+					groupId:this.groupId,
+					alreadyAssociated: false
+				}
+			});
+			this.assignedUsersStore.load({
+				params:{
+					groupId:this.groupId,
+					alreadyAssociated: true
+				}
+			});
+		}
+	}
 });
 
 })();

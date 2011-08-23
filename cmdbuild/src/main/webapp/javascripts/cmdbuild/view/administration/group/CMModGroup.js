@@ -48,15 +48,14 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 		this.callParent(arguments);
 	},
 
-	onGroupSelected: function(eventParams) {
-		this.privilegeGrid.enable();
-		this.userPerGroup.enable();
+	onGroupSelected: function() {
+		this.privilegeGrid.disable();
+		this.userPerGroup.disable();
 	},
 
 	onAddGroup: function() {
 		this.tabPanel.setActiveTab(this.tabPanel.items.get(0));
-		this.privilegeGrid.disable();
-		this.userPerGroup.disable();
+		this.onGroupSelected();
 	}
 });
 

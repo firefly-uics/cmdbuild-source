@@ -9,17 +9,16 @@
 		},
 
 		onViewOnFront: function(selection) {
+			this.view.onGroupSelected();
 			if (selection) {
-				this.view.onGroupSelected();
-                
-                var g = _CMCache.getGroupById(selection.get("id"));
-                if (g) { 
-                    this.groupFormController.onGroupSelected(g);
-                    this.view.privilegeGrid.setDisabled(g.get("isAdministrator"));
-                }
+				var g = _CMCache.getGroupById(selection.get("id"));
+				if (g) {
+					this.groupFormController.onGroupSelected(g);
+					this.view.privilegeGrid.setDisabled(g.get("isAdministrator"));
+				}
 
 				this.view.privilegeGrid.onGroupSelected(selection);
-				this.view.userPerGroup.onGroupSelected(selection);                
+				this.view.userPerGroup.onGroupSelected(selection);
 			}
 		}
 	});

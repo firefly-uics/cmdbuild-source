@@ -71,6 +71,9 @@
 		},
 
 		onClassSelected: function(id) {
+			var privileges = _CMUtils.getClassPrivileges(id);
+			this.writePrivilege = privileges.write;
+
 			_CMCache.getAttributeList(id, Ext.bind(fillForm, this));
 		},
 

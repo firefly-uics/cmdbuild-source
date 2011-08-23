@@ -49,7 +49,7 @@
 				layout: "border",
 				border: false,
 				items: [this.centralPanel, this.cardTabPanel]
-			})
+			});
 
 			this.callParent(arguments);
 		},
@@ -92,7 +92,8 @@
 			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
 			var tbar = [
 				this.addCardButton = new CMDBuild.AddCardMenuButton({
-					classId: undefined
+					classId: undefined,
+					disabled: true
 				})
 			];
 

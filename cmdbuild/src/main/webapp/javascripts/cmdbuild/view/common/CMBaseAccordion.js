@@ -5,12 +5,20 @@
 			{name: "cmName", type: "string"},
 			{name: "text", type: "string"},
 			{name: "id", type: "string"},
-			{name: "parent", type: "string"}
+			{name: "parent", type: "string"},
+			{name: "cmIndex", type: "ingeter"}
 		],
 		root : {
 			expanded : true,
 			children : []
-		}
+		},
+		sorters: [{
+			property : 'cmIndex',
+			direction: 'ASC'
+		},{
+			property : 'text',
+			direction: 'ASC'
+		}]
 	})
 	
 	/*
@@ -55,7 +63,7 @@
 			var treeStructure = this.buildTreeStructure(items);
 			root.removeAll();
 			root.appendChild(treeStructure);
-			this.store.sort("text", "ASC");
+			this.store.sort();
 			
 			this.afterUpdateStore();
 		},
@@ -130,13 +138,26 @@
 			return !(this.store.getRootNode().hasChildNodes())
 		},
 
-		selectFirstLeaf: function() {
+		getFirtsSelectableNode: function() {
+			if (this.disabled) {
+				_debug(this.cmName + " is disabled, return null for getFirstSelectableNode");
+				return null;
+			}
+
 			var l = this.getRootNode();
-			while (typeof l != "undefined" && !l.isLeaf()) {
+			while (l && !l.get("cmName")) {
 				l = l.firstChild;
 			}
 
-			if (typeof l != "undefined") {
+			_debug(this.cmName + " get first selectable node ", l);
+			return l;
+		},
+
+		selectFirstSelectableNode: function() {
+			var l = this.getFirtsSelectableNode();
+
+			if (l) {
+				this.expand();
 				// Defer the call because Ext.selection.RowModel
 				// for me.views.lenght says "can not refer to length of undefined"
 				Ext.Function.createDelayed(function() {

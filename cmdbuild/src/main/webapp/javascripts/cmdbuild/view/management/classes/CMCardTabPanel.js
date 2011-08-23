@@ -13,26 +13,33 @@
 			});
 
 			this.cardHistoryPanel = new CMDBuild.view.management.classes.CMCardHistoryTab({
-				title: tr.tabs.history
+				title: tr.tabs.history,
+				disabled: true
 			});
 
 			this.cardNotesPanel = new CMDBuild.view.management.classes.CMCardNotesPanel({
-				title: tr.tabs.notes
+				title: tr.tabs.notes,
+				disabled: true
 			});
 
 			this.relationsPanel = new CMDBuild.view.management.classes.CMCardRelationsPanel({
-				title: tr.tabs.relations
+				title: tr.tabs.relations,
+				disabled: true
 			});
 
 			this.mdPanel = new CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail({
-				title: tr.tabs.detail
+				title: tr.tabs.detail,
+				disabled: true
 			});
 
 			this.attachmentPanel = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
-				title: tr.tabs.attachments
+				title: tr.tabs.attachments,
+				disabled: true
 			});
 
 			this.callParent(arguments);
+
+			this.cardPanel.displayMode();
 		},
 		
 		initComponent: function() {
