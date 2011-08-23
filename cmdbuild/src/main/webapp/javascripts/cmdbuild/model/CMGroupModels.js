@@ -16,8 +16,8 @@
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: "description", type: "string"},
-			{name: "id", type: "string"},
-			{name: "isDefault", type: "boolean"}
+			{name: "id", type: "int"},
+			{name: "isdefault", type: "boolean"}
 		]
 	});
 	
@@ -43,6 +43,7 @@
 			{name: "isactive", type: "boolean"},
 			{name: "userid", type: "string"},
 			{name: "email", type: "string"},
+			{name: "defaultgroup", type: "int"}
 		]
 	});
 
