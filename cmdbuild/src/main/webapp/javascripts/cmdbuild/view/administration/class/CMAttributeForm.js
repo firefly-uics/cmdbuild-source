@@ -12,8 +12,11 @@
 	Ext.define("CMDBuild.FkCombo", {
 		extend: "Ext.form.ComboBox",
 		setValue: function(v) {
-			v = ""+v;
-			this.callParent([v]);
+			if (typeof v == "number") {
+				v = ""+v;
+			}
+
+			this.callParent([v]);CMDBuild.FkCombo
 		}
 	});
 
@@ -311,8 +314,8 @@
 					this.referenceDomains,
 					this.foreignKeyDest,
 					this.lookupTypes,
-                                        this.fieldFilter,
-                                        this.addMetadataBtn
+					this.fieldFilter,
+					this.addMetadataBtn
 				]
 			});
 
@@ -439,7 +442,7 @@
 
 		setDefaultValues: function() {
 			this.isActive.setValue(true);
-			this.isBasedsp.setValue(true);
+			this.isBasedsp.setValue(false);
 			this.fieldMode.setValue("write");
 		},
 
