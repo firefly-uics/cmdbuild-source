@@ -1,6 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modmenu;
-	
+
 	Ext.define("MenuStore", {
 		extend: "Ext.data.TreeStore",
 		fields: [
@@ -10,15 +10,23 @@
 			{name: "id", type: "string"},
 			{name: "parent", type: "string"},
 			{name: "objid", type: "string"},
-			{name: "subtype", type: "string"}
+			{name: "subtype", type: "string"},
+			{name: "cmIndex", type: "integer"}
 		],
 		root : {
 			text: "",
 			expanded : true,
 			children : []
-		}
-	})
-	
+		},
+		sorters: [{
+			property : 'cmIndex',
+			direction: 'ASC'
+		},{
+			property : 'text',
+			direction: 'ASC'
+		}]
+	});
+
 Ext.define("CMDBuild.Administration.MenuPanel", {
 	extend: "Ext.panel.Panel",
 	initComponent : function() {

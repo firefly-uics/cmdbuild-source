@@ -140,12 +140,11 @@
 
 		getFirtsSelectableNode: function() {
 			if (this.disabled) {
-				_debug(this.cmName + " is disabled, return null for getFirstSelectableNode");
 				return null;
 			}
 
 			var l = this.getRootNode();
-			while (l && !l.get("cmName")) {
+			while (l && (!l.get("cmName") || l.get("cmName") == "folder")) {
 				l = l.firstChild;
 			}
 

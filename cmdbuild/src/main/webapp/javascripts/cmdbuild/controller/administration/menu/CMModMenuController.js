@@ -1,13 +1,14 @@
 (function() {
-	
+	var index = 0;
+
 	Ext.define("CMDBuild.controller.administration.menu.CMModMenuController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
 			this.callParent(arguments);
-			
+
 			this.menutree = this.view.mp.treePanel;
 			this.availableItemsTree = this.view.mp.availabletreePanel;
-			
+
 			this.view.mp.saveButton.on("click", onSaveButtonClick, this);
 			this.view.mp.abortButton.on("click", onAbortButtonClick, this);
 			this.view.mp.deleteButton.on("click", onDeleteButtonClick, this);
@@ -16,7 +17,7 @@
 
 		onViewOnFront: function(menu) {
 			if (menu) {
-                this.currentMenu = menu;
+				this.currentMenu = menu;
 				this.currentMenuId = menu.get("id");
 				this.loadMenuTree(this.currentMenuId);
 				this.loadAvailableItemsTree(this.currentMenuId);
@@ -27,7 +28,7 @@
 			this.doLoadRequest({
 				url: 'services/json/schema/modmenu/getmenu',
 				tree: this.menutree,
-				sort: false
+				sort: true
 			});
 		},
 
@@ -104,7 +105,7 @@
 		for (var id in nodesMap) {
 			var node = nodesMap[id];
 			if (node.parent) {
-				linkToParent(node, nodesMap)
+				linkToParent(node, nodesMap);
 			} else {
 				out.push(node);
 			}
@@ -115,11 +116,14 @@
 		root.appendChild(out);
 
 		if (sort) {
-			tree.store.sort("text", "ASC");
+			tree.store.sort();
 		}
 	}
 
 	function buildNodeConf(node) {
+		var type = node.type,
+			superclass = node.superclass;
+
 		return {
 			id: node.id,
 			text: CMDBuild.Translation.administration.modmenu.availabletree[node.text] || node.text,
@@ -128,7 +132,9 @@
 			leaf: node.leaf,
 			parent: node.parent,
 			objid: node.objid,
-			subtype: node.subtype
+			subtype: node.subtype,
+			cmIndex: node.cmIndex,
+			iconCls: "cmdbuild-tree-" + (superclass ? "super" : "") + type +"-icon"
 		};
 	}
 
@@ -159,7 +165,7 @@
 	function getNodesToSend(node) {
 		var nodesToSend = [];
 		var canBeParent = false;
-		
+
 		if (node.get("type")) {
 			// a node without type isn't a menu item,
 			// for instance the menu fake root
@@ -173,9 +179,9 @@
 				text: node.get("text"),
 				// report only
 				objid: node.get("objid"),
-				subtype: node.get("subtype")
+				subtype: node.get("subtype"),
+				cmIndex: index++
 			});
-			
 		}
 
 		for (var i=0, len=node.childNodes.length; i<len; ++i) {

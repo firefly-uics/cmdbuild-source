@@ -521,15 +521,18 @@ public class Serializer {
 		jsonReportsFolder.put("text", "report");
 		jsonReportsFolder.put("id", AVAILABLE_REPORT);
 		jsonReportsFolder.put("iconCls", "cmdbuild-tree-folder-icon");
+		jsonReportsFolder.put("cmIndex", 3);
 		
 		jsonClassesFolder.put("text", "class");
 		jsonClassesFolder.put("id", AVAILABLE_CLASS);
-		jsonReportsFolder.put("iconCls", "cmdbuild-tree-folder-icon");
+		jsonClassesFolder.put("iconCls", "cmdbuild-tree-folder-icon");
+		jsonClassesFolder.put("cmIndex", 1);
 		
 		jsonProcessFolder.put("text", "processclass");
 		jsonProcessFolder.put("id", AVAILABLE_PROCESS_CLASS);
-		jsonReportsFolder.put("iconCls", "cmdbuild-tree-folder-icon");
-		
+		jsonProcessFolder.put("iconCls", "cmdbuild-tree-folder-icon");
+		jsonProcessFolder.put("cmIndex", 2);
+
 		jsonAvaiableItems.put(jsonReportsFolder);
 		jsonAvaiableItems.put(jsonClassesFolder);
 		jsonAvaiableItems.put(jsonProcessFolder);
@@ -743,8 +746,10 @@ public class Serializer {
 			if (menu.getParentId() > 0) {
 				jsonMenu.put("parent", menu.getParentId());
 			}
+
+			jsonMenu.put("cmIndex", menu.getNumber());
 			jsonMenu.put("leaf", !isFolder);
-			jsonMenu.put("selectable", !isFolder); 
+			jsonMenu.put("selectable", !isFolder);
 			jsonMenuList.put(jsonMenu);
 		}
 		
