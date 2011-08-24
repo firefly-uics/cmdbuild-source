@@ -4,15 +4,17 @@
 		
 		constructor: function() {
 			this.callParent(arguments);
-			
-			this.onAccordionNodeSelect = function(selection) {
-				_debug("menu selection ", selection)
-			}
 		},
+
 		onAccordionExpanded: function() {
 			_CMMainViewportController.bringTofrontPanelByCmName("class");
 			this.reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf.call(this);
+		},
+
+		onAccordionNodeSelect: function(selection) {
+			this.callParent(arguments);
 		}
+
 	});
 
 })();

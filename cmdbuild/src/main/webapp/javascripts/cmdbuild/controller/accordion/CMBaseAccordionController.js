@@ -8,7 +8,7 @@
 					this.onAccordionExpanded();
 				}
 			}, this);
-			
+
 			if (this.accordion.getSelectionModel) {
 				manageTreeEvents.call(this);
 			}
@@ -19,18 +19,18 @@
 			reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf.call(this);
 		},
 
+		onAccordionNodeSelect: function(sm, selections) {
+			if (selections.length > 0) {
+				var s = selections[0];
+				_CMMainViewportController.bringTofrontPanelByCmName(s.get("cmName"), s);
+			}
+		},
+
 		reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf: reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf
 	});
 	
 	function manageTreeEvents() {
 		this.accordionSM = this.accordion.getSelectionModel();
-
-		this.onAccordionNodeSelect = function(sm, selections) {
-			if (selections.length > 0) {
-				var s = selections[0];
-				_CMMainViewportController.bringTofrontPanelByCmName(s.get("cmName"), s);
-			}
-		};
 
 		this.accordionSM.on("selectionchange", this.onAccordionNodeSelect, this);
 	}

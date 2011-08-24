@@ -284,9 +284,9 @@
          "add_menu": "Add Menu",
          "available_elements": "Available Elements",
          "availabletree": {
-            "class": "Classi",
-            "processclass": "Attività",
-            "report": "Report",
+            "class": "Classes",
+            "processclass": "Activities",
+            "report": "Reports",
             "view": "Views"
          },
          "custom_menu": "Custom Menu",

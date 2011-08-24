@@ -27,14 +27,19 @@
 	});
 
 	function buildNodeConf(node) {
+		var type = node.type,
+		superclass = node.superclass;
+
 		var n = {
 			id: node.id,
 			idClass: node.id,
 			text: node.text,
 			tableType: node.tableType,
 			leaf: true,
-			cmName: node.type,
-			parent: node.parent
+			cmName: node.type == "processclass" ? "process" : node.type, //ugly compatibility hack
+			parent: node.parent,
+			iconCls: "cmdbuild-tree-" + (superclass ? "super" : "") + type +"-icon",
+			cmIndex: node.cmIndex
 		};
 
 		if (isAReport(node)) {

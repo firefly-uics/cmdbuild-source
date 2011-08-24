@@ -118,7 +118,7 @@ public class ModMenu extends JSONBase {
 				menuItem.setType(type);
 			}
 		}
-		
+		menuItem.setNumber(jsonItem.getInt("cmIndex"));
 		menuItem.setDescription(jsonItem.getString("text"));
 		menuItem.setGroupId(groupId);
 		return menuItem;
