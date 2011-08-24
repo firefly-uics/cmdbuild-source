@@ -200,7 +200,12 @@
 	      		iconCls : "modify",
 	      		text : tr.modify_card
 	    	});
-	    	    	
+
+	    	this.graphButton = new Ext.button.Button({
+	      		iconCls : "graph",
+	      		text : CMDBuild.Translation.management.graph.action
+	    	});
+
 	    	this.printCardMenu = new CMDBuild.PrintMenuButton({      		
 	    		text : CMDBuild.Translation.common.buttons.print+" "+CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
 	    		callback : function() { this.fireEvent("click")},
@@ -213,6 +218,7 @@
 				this.modifyCardButton,
 				this.deleteCardButton,
 				this.cloneCardButton,
+				this.graphButton,
 				this.printCardMenu
 			];
         }
