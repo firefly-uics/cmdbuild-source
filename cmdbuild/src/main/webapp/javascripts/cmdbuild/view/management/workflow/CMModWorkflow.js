@@ -20,7 +20,7 @@
 				hideMode: "offsets",
 				split: true,
 				border: false,
-				height: (100 - gridratio) + "%"
+				height: gridratio + "%"
 			});
 		},
 
