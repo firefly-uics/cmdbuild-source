@@ -17,7 +17,7 @@
 			this.widgetConf = c.widget;
 			this.activity = c.activity.raw || c.activity.data;
 			this.clientForm = c.clientForm;
-			this.noSelect = c.noSelect;
+			this.readOnly = c.widget.ReadOnly;
 
 			Ext.apply(this, this.widgetConf);
 
@@ -25,6 +25,9 @@
 				IdClass: this.activity.IdClass,
 				Id: this.activity.Id
 			});
+
+			this.writePrivileges = this.activity.priv_write && !this.readOnly;
+			this.addAttachmentButton.setDisabled(!this.writePrivileges);
 
 			this.loaded = false;
 		},

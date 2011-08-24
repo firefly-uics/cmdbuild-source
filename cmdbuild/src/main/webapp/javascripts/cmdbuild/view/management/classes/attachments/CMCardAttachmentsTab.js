@@ -44,14 +44,17 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 				{header: col_tr.version, sortable: true, dataIndex: 'Version', flex: 1},
 				{header: col_tr.filename, sortable: true, dataIndex: 'Filename', flex: 4},
 				{header: col_tr.description, sortable: true, dataIndex: 'Description', flex: 4},
-				{header: '&nbsp;', width: 60, fixed: true, sortable: false, renderer: renderAttachmentActions, align: 'center', cellCls: 'grid-button', dataIndex: 'Fake'}
+				{header: '&nbsp;', width: 60, fixed: true, sortable: false, renderer: this.renderAttachmentActions, align: 'center', cellCls: 'grid-button', dataIndex: 'Fake'}
 			]
 		});
 
 		this.callParent(arguments);
 	},
 
-	onCardSelected: function(card) {},
+	onCardSelected: function(card) {
+		this.writePrivileges = card.raw.priv_write;
+		this.addAttachmentButton.setDisabled(!this.writePrivileges);
+	},
 
 	reloadCard: function() {
 		this.loaded = false;
@@ -83,6 +86,18 @@ Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel
 
 	clearStore: function() {
 		this.store.removeAll();
+	},
+
+	renderAttachmentActions: function() {
+		var tr = CMDBuild.Translation.management.modcard,
+			out = '<img style="cursor:pointer" title="'+tr.download_attachment+'" class="action-attachment-download" src="images/icons/bullet_go.png"/>&nbsp;';
+
+			if (this.writePrivileges) {
+				out += '<img style="cursor:pointer" title="'+tr.edit_attachment+'" class="action-attachment-edit" src="images/icons/modify.png"/>&nbsp;'
+				+ '<img style="cursor:pointer" title="'+tr.delete_attachment+'" class="action-attachment-delete" src="images/icons/delete.png"/>';
+			}
+
+			return out;
 	}
 });
 
@@ -104,14 +119,6 @@ function buildStore() {
 	});
 
 	return s;
-}
-
-function renderAttachmentActions() {
-	// FIXME delete and modify should be hidden on readonly classes
-	var tr = CMDBuild.Translation.management.modcard;
-	return '<img style="cursor:pointer" title="'+tr.download_attachment+'" class="action-attachment-download" src="images/icons/bullet_go.png"/>&nbsp;'
-	     + '<img style="cursor:pointer" title="'+tr.edit_attachment+'" class="action-attachment-edit" src="images/icons/modify.png"/>&nbsp;'
-	     + '<img style="cursor:pointer" title="'+tr.delete_attachment+'" class="action-attachment-delete" src="images/icons/delete.png"/>';
 }
 
 })();

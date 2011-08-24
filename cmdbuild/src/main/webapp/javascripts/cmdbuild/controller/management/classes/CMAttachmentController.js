@@ -31,7 +31,7 @@
 			}
 
 			var et = _CMCache.getEntryTypeById(selection.get("id"));
-			if (et && et.get("priv_create")) {
+			if (et && et.get("priv_write")) {
 				this.view.addAttachmentButton.enable();
 			} else {
 				this.view.addAttachmentButton.disable();

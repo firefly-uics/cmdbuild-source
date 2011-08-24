@@ -80,11 +80,17 @@ public class ModWorkflow extends JSONBase {
 		final JSONArray rows = new JSONArray();
 		for (ICard card : cards) {
 			JSONObject jsonCard = Serializer.serializeCard(card, false);
+			boolean writePriv;
 			if (card.getAttributeValue(ProcessAttributes.FlowStatus.toString()).toString().equals(openedStatus.getDescription())
 					&& activityMap.keySet().contains(card.getId())) {
 				ActivityDO activity = activityMap.get(card.getId());
 				addActivityInfo(jsonCard, activity, userCtx);
+				writePriv = activity.isEditable();
+			} else {
+				// Closed or inconsistent activity
+				writePriv = false;
 			}
+			jsonCard.put("priv_write", writePriv);
 			rows.put(jsonCard);
 		}
 		return rows;
@@ -109,7 +115,6 @@ public class ModWorkflow extends JSONBase {
 		
 		jsonCard.put("CmdbuildExtendedAttributes", extAttrArray);
 		jsonCard.put("activityPerformerName", activity.getPerformer());
-		jsonCard.put("editableByCurrentUser", activity.isEditable());
 
 		boolean stoppable = (userCtx.privileges().isAdmin() || activity.isUserStoppable());
 		jsonCard.put("stoppable", stoppable);
