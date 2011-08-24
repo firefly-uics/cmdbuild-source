@@ -297,7 +297,8 @@
 				params: params,
 				success : function() {
 					this.notePanel.disableModify();
-					this.cardGrid.reload();
+					var val = this.notePanel.actualForm.getValue();
+					this.notePanel.displayPanel.setValue(val);
 				}
 			});
 		}
