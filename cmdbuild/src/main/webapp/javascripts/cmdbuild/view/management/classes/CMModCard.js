@@ -121,7 +121,7 @@
 				region: "south",
 				hideMode: "offsets",
 				split: true,
-				height: (100 - gridratio) + "%"
+				height: gridratio + "%"
 			});
 		}
 	});
