@@ -1,4 +1,5 @@
 (function() {
+	var TITLE_PREFIX = CMDBuild.Translation.management.modcard.title;
 
 	Ext.define("CMDBuild.view.management.classes.CMModCard", {
 		extend: "Ext.panel.Panel",
@@ -23,7 +24,7 @@
 				cardGrid: this.cardGrid,
 				theMap: this.theMap,
 				items: this.centralPanelItems,
-				title: "@@ the grid",
+				title: " ",
 				tools:[{
 					type:'minimize',
 					scope: this,
@@ -71,8 +72,17 @@
 
 			this.cardTabPanel.onClassSelected(id, activateFirst = true);
 			this.addCardButton.updateForEntry(entry);
+
+			this.updateTitleForEntry(entry);
+
+			this.cardGrid.openFilterButton.enable();
 			this.cardGrid.clearFilterButton.disable();
 			this.cardGrid.gridSearchField.reset();
+		},
+
+		updateTitleForEntry: function(entry) {
+			var description = entry.get("text") || entry.get("name");
+			this.centralPanel.setTitle(TITLE_PREFIX+description);
 		},
 
 		reset: function(id) {

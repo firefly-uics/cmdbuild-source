@@ -27,6 +27,8 @@
 		onClassSelected: function(entry) {
 			var id = entry.get("id");
 			this.cardTabPanel.onClassSelected(id, activateFirst = true);
+
+			this.updateTitleForEntry(entry);
 		},
 
 		reset: function(id) {

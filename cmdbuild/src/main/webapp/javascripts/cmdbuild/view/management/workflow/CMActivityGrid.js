@@ -61,6 +61,8 @@
 		onEntrySelected: function(entry) {
 			var id = entry.get("id");
 			this.setStatusToOpen();
+
+			this.openFilterButton.enable();
 			this.addCardButton.updateForEntry(entry);
 			this.clearFilterButton.disable();
 

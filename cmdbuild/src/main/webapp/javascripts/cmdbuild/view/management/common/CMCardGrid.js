@@ -123,7 +123,7 @@
 		extend: "Ext.grid.Panel",
 		columns: [],
 
-                extraParams: undefined, // extra params for the store
+		extraParams: undefined, // extra params for the store
 		filterCategory: undefined,
 		filterSubcategory: undefined,
 		cmStoreUrl: 'services/json/management/modcard/getcardlist',
