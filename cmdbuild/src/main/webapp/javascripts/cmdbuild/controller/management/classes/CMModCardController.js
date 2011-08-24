@@ -31,10 +31,13 @@
 			this.gridSM.on("selectionchange", onCardSelected, this);
 
 			// TODO build a separate controller for the cardtab
-			this.cardPanel.deleteCardButton.on("click", onDeleteCardClick, this);
+
 			this.cardPanel.cloneCardButton.on("click", onCloneCardClick, this);
-			this.cardPanel.modifyCardButton.on("click", onModifyCardClick, this);
+			this.cardPanel.graphButton.on("click", onShowGraphClick, this);
 			this.cardPanel.printCardMenu.on("click", onPrintCardMenuClick, this);
+
+			this.cardPanel.deleteCardButton.on("click", onDeleteCardClick, this);
+			this.cardPanel.modifyCardButton.on("click", onModifyCardClick, this);
 			this.cardPanel.cancelButton.on("click", onAbortCardClick, this);
 			this.cardPanel.saveButton.on("click", onSaveCardClick, this);
 
@@ -278,6 +281,12 @@
 				CMDBuild.LoadMask.get().hide();
 			}
 		});
+	}
+
+	function onShowGraphClick() {
+		var classId = this.currentCard.get("IdClass"),
+			cardId = this.currentCard.get("Id");
+		CMDBuild.Management.showGraphWindow(classId, cardId);
 	}
 
 	function onSaveNoteClick() {
