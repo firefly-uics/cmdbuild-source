@@ -2,7 +2,7 @@
    "description": "English",
    "release": "1.4.0-dev",
    "administration": {
-      "description": "Administration module.",
+      "description": "Administration module",
       "modClass": {
          "add_class": "Add Class",
          "attributeProperties": {
