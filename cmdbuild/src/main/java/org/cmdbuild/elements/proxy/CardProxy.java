@@ -16,9 +16,7 @@ public class CardProxy extends CardForwarder {
 	@Override
 	public ITable getSchema() {
 		ITable table =  super.getSchema();
-		if (!(table instanceof TableProxy))
-			table = new TableProxy(table, userCtx);
-		return table;
+		return new TableProxy(table, userCtx);
 	}
 
 	@Override

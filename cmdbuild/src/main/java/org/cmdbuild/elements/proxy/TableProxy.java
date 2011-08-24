@@ -21,6 +21,10 @@ public class TableProxy extends TableForwarder {
 
 	public TableProxy(ITable table, UserContext userCtx) {
 		super(table);
+		if (t instanceof TableProxy) {
+			// Unwrap the TableProxy
+			t = ((TableProxy)t).t;
+		}
 		this.userCtx = userCtx;
 	}
 

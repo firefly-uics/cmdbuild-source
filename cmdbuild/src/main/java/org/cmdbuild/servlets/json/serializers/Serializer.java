@@ -709,7 +709,7 @@ public class Serializer {
 						ITable menuEntryClass = UserContext.systemContext().tables().get(menu.getElementClassId());
 						PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
 						if (PrivilegeType.NONE.equals(privileges))
-							continue;
+							continue; // Exits for the outer loop
 						MenuType menuType = menu.getTypeEnum();
 						boolean writePriv = PrivilegeType.WRITE.equals(privileges);
 						jsonMenu.put("priv_write", writePriv);
@@ -722,7 +722,6 @@ public class Serializer {
 				jsonMenu.put("type", menu.getCode().toLowerCase());
 				jsonMenu.put("subtype", menu.getType().toLowerCase());
 				jsonMenu.put("text", menu.getDescription());
-				
 			} else {
 				jsonMenu.put("type", MenuCodeType.CLASS.getCodeType());
 				jsonMenu.put("subtype", MenuCodeType.CLASS.getCodeType());
