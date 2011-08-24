@@ -10,7 +10,7 @@ CREATE TABLE "User"
   CONSTRAINT "User_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
-COMMENT ON TABLE "User" IS 'MODE: reserved|TYPE: class|DESCR: Utenti|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "User" IS 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|MANAGER: class|STATUS: active';
 COMMENT ON COLUMN "User"."Id" IS 'MODE: reserved';
 COMMENT ON COLUMN "User"."IdClass" IS 'MODE: reserved';
 COMMENT ON COLUMN "User"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true|COLOR: #FFFFCC';
@@ -36,7 +36,7 @@ CREATE TABLE "Role"
   CONSTRAINT "Role_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
-COMMENT ON TABLE "Role" IS 'MODE: reserved|TYPE: class|DESCR: Roles|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "Role" IS 'MODE: reserved|TYPE: class|DESCR: Groups|SUPERCLASS: false|MANAGER: class|STATUS: active';
 COMMENT ON COLUMN "Role"."Id" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."IdClass" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true|COLOR: #FFFFCC';
@@ -46,7 +46,7 @@ COMMENT ON COLUMN "Role"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."BeginDate" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."Notes" IS 'MODE: read|DESCR: Notes';
 COMMENT ON COLUMN "Role"."Administrator" IS 'MODE: read|DESCR: Administrator|INDEX: 1|STATUS: active';
-COMMENT ON COLUMN "Role"."startingClass" IS 'MODE: read|DESCR: Administrator|INDEX: 2|STATUS: active';
+COMMENT ON COLUMN "Role"."startingClass" IS 'MODE: read|DESCR: Starting Class|INDEX: 2|STATUS: active';
 COMMENT ON COLUMN "Role"."Email" IS 'MODE: read|DESCR: Email|INDEX: 5';
 COMMENT ON COLUMN "Role"."DisabledModules" IS 'MODE: read';
 
@@ -91,7 +91,7 @@ CREATE TABLE "Grant"
   CONSTRAINT "Grant_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
-COMMENT ON TABLE "Grant" IS 'MODE: reserved|TYPE: class|DESCR: Grants|STATUS: active';
+COMMENT ON TABLE "Grant" IS 'MODE: reserved|TYPE: class|DESCR: Privileges|STATUS: active';
 COMMENT ON COLUMN "Grant"."Id" IS 'MODE: reserved';
 COMMENT ON COLUMN "Grant"."IdClass" IS 'MODE: reserved';
 COMMENT ON COLUMN "Grant"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true|COLOR: #FFFFCC';

@@ -374,7 +374,7 @@
             "email": "Email",
             "enable_user": "Activer Utilisateur",
             "groupmanagement": "Gestion des groupes utilisateurs",
-            "isactive": "est actif",
+            "isactive": "<em>est actif</em>",
             "modify_user": "Modifier Utilisateur",
             "password": "Password",
             "title": "Gestion utilisateur",
