@@ -76,6 +76,9 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					grow: true,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					bodyCls: "x-panel-default-framed",
+					bodyStyle: {
+						padding: "0"
+					},
 					CMAttribute: attribute,
 					
 					growSizeFix: function() {
@@ -198,13 +201,29 @@ var bindHiddenFieldToLastCombo = function(hiddenField, lastCombo) {
 
 //private
 var buildSingleLookupField = function(attribute, hideLabel) {
-	var store = _CMCache.getLookupStore(attribute.lookup);
+	var store = _CMCache.getLookupStore(attribute.lookup),
+		fieldLabel,
+		labelSeparator,
+		padding;
+
+	if (hideLabel) {
+		fieldLabel = "";
+		labelSeparator = "";
+		padding = "0 0 0 " + (CMDBuild.LABEL_WIDTH + 5);
+	} else {
+		fieldLabel = attribute.description;
+		if (!canBeBlank(attribute)) {
+			fieldLabel = "* "+fieldLabel;
+		}
+		labelSeparator = ":";
+	}
 
 	var field = new CMDBuild.field.LookupCombo({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
-		fieldLabel: hideLabel ? '' : canBeBlank(attribute) ? attribute.description : '* '+attribute.description,
-		labelSeparator: hideLabel ? '' : ":",
+		fieldLabel: fieldLabel,
+		labelSeparator: labelSeparator,
+		padding: padding,
 		name: attribute.name,
 		hiddenName: attribute.name,
 		store: store,
@@ -218,11 +237,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		minChars: 1,
 		CMAttribute: attribute
 	});
-	
-	if (hideLabel) {
-		field.padding = "0 0 0 110"
-	}
-	
+
 	field.filterByParentId = function(parentId) {
 		var autoselectedId;
 		this.setParentIdAndFilterStore(parentId);
