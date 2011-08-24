@@ -38,7 +38,7 @@ CREATE TABLE "Map"
   CONSTRAINT "Map_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2")
 );
 
-COMMENT ON TABLE "Map" IS 'MODE: reserved|TYPE: domain|DESCRDIR: è in relazione con|DESCRINV: è in relazione con|STATUS: active';
+COMMENT ON TABLE "Map" IS 'MODE: reserved|TYPE: domain|DESCRDIR: |DESCRINV: |STATUS: active';
 COMMENT ON COLUMN "Map"."IdDomain" IS 'MODE: reserved';
 COMMENT ON COLUMN "Map"."IdClass1" IS 'MODE: reserved';
 COMMENT ON COLUMN "Map"."IdObj1" IS 'MODE: reserved';
@@ -88,7 +88,7 @@ COMMENT ON COLUMN "LookUp"."Description" IS 'MODE: read|DESCR: Description|BASED
 COMMENT ON COLUMN "LookUp"."Status" IS 'MODE: reserved';
 COMMENT ON COLUMN "LookUp"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "LookUp"."BeginDate" IS 'MODE: reserved';
-COMMENT ON COLUMN "LookUp"."Notes" IS 'MODE: read|DESCR: Annotazioni';
+COMMENT ON COLUMN "LookUp"."Notes" IS 'MODE: read|DESCR: Notes';
 COMMENT ON COLUMN "LookUp"."Type" IS 'MODE: reserved';
 COMMENT ON COLUMN "LookUp"."ParentType" IS 'MODE: reserved';
 COMMENT ON COLUMN "LookUp"."ParentId" IS 'MODE: reserved';
@@ -97,31 +97,31 @@ COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: reserved';
 
 CREATE TABLE "Activity"
 (
-  "FlowStatus" integer, -- MODE: read|DESCR: Stato attività|INDEX: 2|LOOKUP: FlowStatus|REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: false|STATUS: active
-  "Priority" integer, -- MODE: reserved|INDEX: -1
-  "ActivityDefinitionId" varchar(200), -- MODE: reserved
-  "ProcessCode" varchar(200), -- MODE: reserved
-  "IsQuickAccept" boolean NOT NULL DEFAULT false, -- MODE: reserved
-  "ActivityDescription" text, -- MODE: write|DESCR: Descrizione Attività|INDEX: 4|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|COLOR: #FFFFFF|FONTCOLOR: #000000|LINEAFTER: false|CLASSORDER: |STATUS: active
-  "NextExecutor" varchar(200), -- MODE: reserved
+  "FlowStatus" integer,
+  "Priority" integer,
+  "ActivityDefinitionId" varchar(200),
+  "ProcessCode" varchar(200),
+  "IsQuickAccept" boolean NOT NULL DEFAULT false,
+  "ActivityDescription" text,
+  "NextExecutor" varchar(200),
   CONSTRAINT "Activity_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
-COMMENT ON TABLE "Activity" IS 'MODE: baseclass|TYPE: class|DESCR: Attività|SUPERCLASS: true|MANAGER: activity|STATUS: active';
+COMMENT ON TABLE "Activity" IS 'MODE: baseclass|TYPE: class|DESCR: Activity|SUPERCLASS: true|MANAGER: activity|STATUS: active';
 COMMENT ON COLUMN "Activity"."Id" IS 'MODE: reserved';
-COMMENT ON COLUMN "Activity"."IdClass" IS 'MODE: reserved|DESCR: Classe';
-COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0||LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
-COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Descrizione|INDEX: 1|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: true|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."IdClass" IS 'MODE: reserved|DESCR: Class';
+COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Activity Name|INDEX: 0||LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: true|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
 COMMENT ON COLUMN "Activity"."Status" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."BeginDate" IS 'MODE: reserved';
-COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Annotazioni';
-COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Stato attività|INDEX: 2|LOOKUP: FlowStatus|REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
+COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Notes';
+COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Activity Status|INDEX: 2|LOOKUP: FlowStatus|REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
 COMMENT ON COLUMN "Activity"."Priority" IS 'MODE: reserved|INDEX: -1';
 COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."IsQuickAccept" IS 'MODE: reserved';
-COMMENT ON COLUMN "Activity"."ActivityDescription" IS 'MODE: write|DESCR: Descrizione Attività|INDEX: 4|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|COLOR: #FFFFFF|FONTCOLOR: #000000|LINEAFTER: false|CLASSORDER: |STATUS: active';
+COMMENT ON COLUMN "Activity"."ActivityDescription" IS 'MODE: write|DESCR: Activity Description|INDEX: 4|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|COLOR: #FFFFFF|FONTCOLOR: #000000|LINEAFTER: false|CLASSORDER: |STATUS: active';
 COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved';
 
 

@@ -33,12 +33,12 @@ CREATE TABLE "Report"
 );
 COMMENT ON TABLE "Report" IS 'MODE: reserved|TYPE: class|DESCR: Report|SUPERCLASS: false|STATUS: active';
 COMMENT ON COLUMN "Report"."Id" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."Code" IS 'MODE: read|DESCR: Codice';
-COMMENT ON COLUMN "Report"."Description" IS 'MODE: read|DESCR: Descrizione';
+COMMENT ON COLUMN "Report"."Code" IS 'MODE: read|DESCR: Code';
+COMMENT ON COLUMN "Report"."Description" IS 'MODE: read|DESCR: Description';
 COMMENT ON COLUMN "Report"."Status" IS 'MODE: reserved';
 COMMENT ON COLUMN "Report"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "Report"."BeginDate" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."Type" IS 'MODE: read|DESCR: Tipo';
+COMMENT ON COLUMN "Report"."Type" IS 'MODE: read|DESCR: Type';
 COMMENT ON COLUMN "Report"."Query" IS 'MODE: read|DESCR: Query';
 COMMENT ON COLUMN "Report"."SimpleReport" IS 'MODE: reserved';
 COMMENT ON COLUMN "Report"."RichReport" IS 'MODE: reserved';
