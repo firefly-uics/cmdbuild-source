@@ -67,7 +67,8 @@
 				{
 					fieldLabel : tr.repositoryFSPath,
 					allowBlank : false,
-					name : 'repository.fspath'
+					name : 'repository.fspath',
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				}, 
 				{
 					fieldLabel : tr.repositoryWSPath,

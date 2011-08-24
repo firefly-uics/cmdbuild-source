@@ -11,7 +11,7 @@ public class DmsProperties extends DefaultProperties implements org.cmdbuild.dms
 	private static final String ENABLED = "enabled";
 	private static final String SERVER_URL = "server.url";
 	private static final String FILE_SERVER_PORT = "fileserver.port";
-	private static final String FILE_SERVER_TYPE = "fileserver.type";
+	private static final String FILE_SERVER_TYPE = "fileserver.type"; // Not used now
 	private static final String FILE_SERVER_URL = "fileserver.url";
 	/*
 	 * wspath is the path for the base space, fspath is the same thing, in terms
@@ -31,6 +31,7 @@ public class DmsProperties extends DefaultProperties implements org.cmdbuild.dms
 		setProperty(SERVER_URL, "http://localhost:8181/alfresco/api");
 		setProperty(FILE_SERVER_PORT, "1121");
 		setProperty(FILE_SERVER_URL, "localhost");
+		setProperty(FILE_SERVER_TYPE, "AlfrescoFTP");
 		setProperty(REPOSITORY_FS_PATH, "/Alfresco/User Homes/cmdbuild");
 		setProperty(REPOSITORY_WS_PATH, "/app:company_home/app:user_homes/");
 		setProperty(REPOSITORY_APP, "cm:cmdbuild");
@@ -71,10 +72,6 @@ public class DmsProperties extends DefaultProperties implements org.cmdbuild.dms
 
 	public void setFtpHost(String hostname) {
 		setProperty(FILE_SERVER_URL, hostname);
-	}
-
-	public void setFtpType(String type) {
-		setProperty(FILE_SERVER_TYPE, type);
 	}
 
 	public String getAlfrescoUser() {
