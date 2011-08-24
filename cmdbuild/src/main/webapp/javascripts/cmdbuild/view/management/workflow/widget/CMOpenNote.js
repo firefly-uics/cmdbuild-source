@@ -17,18 +17,28 @@
 			this.widgetConf = c.widget;
 			this.activity = c.activity.raw || c.activity.data;
 			this.clientForm = c.clientForm;
-			this.noSelect = c.noSelect;
+			this.readOnly = c.widget.ReadOnly;
 
 			Ext.apply(this, this.widgetConf);
 
 			var note = this.activity.Notes;
+
+			this.currentCardPrivileges = {
+				create: this.activity.priv_create && !this.readOnly,
+				write: this.activity.priv_write && !this.readOnly
+			};
+
 			this.actualForm.setValue(note || "");
 			this.displayPanel.setValue(note || "");
 		},
 
 		cmActivate: function() {
 			this.ownerCt.setActiveTab(this);
-			this.disableModify();
+			if (this.readOnly) {
+				this.disableModify();
+			} else {
+				this.enableModify();
+			}
 		}
 	});
 })();

@@ -17,7 +17,7 @@
 			var activity = this.ownerController.currentActivity,
 				form = this.view.actualForm.getForm();
 			
-			if (typeof activity.get == "function") {
+			if (typeof activity.get == "function" && activity.get("Id") != -1) {
 				var params = {
 					IdClass: activity.get("IdClass"),
 					Id: activity.get("Id")

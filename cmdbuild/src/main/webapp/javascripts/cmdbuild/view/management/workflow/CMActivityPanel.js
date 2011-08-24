@@ -206,7 +206,14 @@
 				}),
 				this.deleteCardButton = new Ext.button.Button({
 					iconCls : "delete",
-					text : tr.delete_card
+					text : tr.delete_card,
+					enable: function() {
+						if (this.stoppable) { // stoppable is set on setActivity
+							Ext.button.Button.prototype.enable.call(this);
+						} else {
+							this.disable();
+						}
+					}
 				}),
 				'->','-',
 				this.processStepName = new Ext.button.Button({
@@ -243,8 +250,8 @@
 		setActivity: function(activity) {
 			this.activityToLoad = activity;
 
-			var privileges = _CMUtils.getClassPrivileges(activity.get("IdClass"));
-			this.writePrivilege = privileges.write;
+			this.writePrivilege = activity.raw.priv_write;
+			this.deleteCardButton.stoppable = activity.raw.stoppable;
 		},
 
 		updateInfo : function(activity) {

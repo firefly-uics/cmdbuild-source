@@ -12,13 +12,8 @@
 			this.wiewIdenrifier = this.widgetConf.identifier;
 
 			this.activity = this.ownerController.currentActivity;
-			if (isANewActivity(this.activity)) {
-//				this.view.addAttachmentButton.disable();
-			} else {
-//				this.view.addAttachmentButton.enable();
-				this.currentClassId = this.activity.get("IdClass");
-				this.currentCardId = this.activity.get("Id");
-			}
+			this.currentClassId = this.activity.get("IdClass");
+			this.currentCardId = this.activity.get("Id");
 		},
 
 		destroy: function() {
@@ -38,10 +33,6 @@
 				this.callParent(arguments);
 			}
 		},
-
-
-
-
 
 		// TODO copied from CMBaseWFWidgetController, inherit them
 		onEditMode: function() {
@@ -63,8 +54,8 @@
 			return true;
 		}
 	});
-	
+
 	function isANewActivity(a) {
-		return typeof a.get != "function";
+		return typeof a.get != "function" || a.get("Id") == -1;
 	}
 })();
