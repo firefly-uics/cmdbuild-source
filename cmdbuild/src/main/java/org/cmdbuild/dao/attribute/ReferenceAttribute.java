@@ -25,10 +25,15 @@ public class ReferenceAttribute extends AttributeImpl {
 			referenceValue = (Reference) value;
 		} else if (value instanceof String) {
 			String stringValue = (String) value;
-			if (stringValue.isEmpty()) {
+			try {
+				final int intValue = Integer.parseInt(stringValue);
+				if (intValue > 0) {
+					referenceValue = new Reference(getReferenceDirectedDomain(), intValue, null);
+				} else {
+					referenceValue = null;
+				}
+			} catch (NumberFormatException e) {
 				referenceValue = null;
-			} else {
-				referenceValue = new Reference(getReferenceDirectedDomain(), Integer.parseInt(stringValue), null);
 			}
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
