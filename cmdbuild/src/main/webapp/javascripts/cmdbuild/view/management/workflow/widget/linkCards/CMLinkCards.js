@@ -4,6 +4,14 @@
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
+		initComponent: function() {
+			if (this.multiSelect) {
+				this.selType = "checkboxmodel"
+			}
+
+			this.callParent(arguments);
+		},
+
 		syncSelections: function(s) {
 			var sm = this.getSelectionModel();
 			sm.suspendEvents();

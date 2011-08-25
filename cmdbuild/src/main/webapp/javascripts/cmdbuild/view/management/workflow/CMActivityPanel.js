@@ -145,6 +145,8 @@
 				widgetsDefinition = data.CmdbuildExtendedAttributes || [],
 				me = this;
 
+			this.writePrivilege = activity.raw.priv_write;
+
 			this.removeAll();
 
 			if (widgetsDefinition.length > 0) {
@@ -153,6 +155,7 @@
 					me.add(new Ext.Button({
 						text: item.btnLabel || CMDBuild.Translation.management.modworkflow[item.labelId],
 						widgetDefinition: item,
+						disabled: true,
 						handler: function() {
 							me.fireEvent("cm-wfwidgetbutton-click", item);
 						},
@@ -189,9 +192,11 @@
 		},
 
 		editMode: function() {
-			this.items.each(function(i) {
-				i.enable();
-			});
+			if (this.writePrivilege) {
+				this.items.each(function(i) {
+					i.enable();
+				});
+			}
 		}
 	});
 	
