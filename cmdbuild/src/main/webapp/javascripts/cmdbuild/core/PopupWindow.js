@@ -28,7 +28,7 @@ Ext.define("CMDBuild.PopupWindow", {
 			var percentualWidth;
 			var configWidth = CMDBuild.Config.cmdbuild.popuppercentagewidth;
 			if (configWidth) {
-				percentualWidth = configHeight/100;
+				percentualWidth = configWidth/100;
 			} else {
 				percentualWidth = this.defaultSize;
 			}
