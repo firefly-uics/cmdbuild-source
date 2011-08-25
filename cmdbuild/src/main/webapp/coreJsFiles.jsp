@@ -104,7 +104,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/form/RangeSlidersFieldSet.js"></script>
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/IconsCombo.js"></script>-->
 <script type="text/javascript" src="javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/SliderFieldPlugin.js"></script>
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/CronFieldValidator/CronFieldValidationPlugin.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/form/CronFieldValidator/CronFieldValidator.js"></script>-->
 <!--<script type="text/javascript" src="javascripts/cmdbuild/grid/XCheckboxSelectionModel.js"></script>-->

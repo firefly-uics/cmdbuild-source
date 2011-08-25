@@ -4,36 +4,23 @@
 		extend: "Ext.panel.Panel",
 		cmName: 'changepassword',
 		title : CMDBuild.Translation.management.modutilities.changepassword.title,
-		
-		constructor: function() {
 
-			//TODO 3 to 4 in custom vtype
-			Ext.apply(Ext.form.VTypes, {
-			    password : function(val, field) {
-			        if (field.initialPassField) {
-		    	        var pwd = Ext.getCmp(field.initialPassField);
-		        	    return (val == pwd.getValue());
-			        }
-			        return true;
-			    },
-		    	passwordText : CMDBuild.Translation.management.modutilities.changepassword.validationtext
-			});
-			
+		constructor: function() {
 			this.saveBtn = new Ext.button.Button({
 				id:'confirmButton',
 				text: CMDBuild.Translation.common.buttons.save,
 				scope: this,
 				handler: onSaveButtonClick
-    		});
-    			
-    		this.abortBtn = new Ext.button.Button({
+			});
+
+			this.abortBtn = new Ext.button.Button({
 				text: CMDBuild.Translation.common.buttons.abort,
 				scope: this,
 				handler: function(){
 					this.form.getForm().reset();
 				}
 			});
-		
+
 			this.form = new Ext.form.Panel({
 				plugins: new CMDBuild.CallbackPlugin(),
 				url: 'services/json/schema/modsecurity/changepassword',
@@ -64,19 +51,19 @@
 				}]
 			});
 
-    		Ext.apply(this, {
-    			frame: true,
-    			border: false,
-    			layout: "border",
-	    		items:[this.form],
-    			buttonAlign: 'center',
+			Ext.apply(this, {
+				frame: true,
+				border: false,
+				layout: "border",
+				items:[this.form],
+				buttonAlign: 'center',
 				buttons: [this.saveBtn, this.abortBtn]
-	    	});
+			});
 
 			this.callParent(arguments);
-	    }
+		}
 	});
-	
+
 	function onSaveButtonClick(){
 		if (this.form.getForm().isValid()) {
 			this.form.getForm().submit({

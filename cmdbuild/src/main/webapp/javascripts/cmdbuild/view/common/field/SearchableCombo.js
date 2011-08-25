@@ -42,19 +42,6 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		this.createSearchWindow();
 	},
 
-    
-    growSizeFix: function() {
-/* TODO 3 to 4
-		if (this.storeIsLargerThenLimit()) {
-    		// the dropdown list is never opened. it needs to grow
-    		// only to fit the record selected on the popup window
-    		return;
-    	} else {
-    		CMDBuild.Management.SearchableCombo.superclass.growSizeFix.call(this);
-    	}     	
-*/
-    },
-    
     storeIsLargerThenLimit: function() {
     	if (this.store !== null) {
     		return this.store.getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
