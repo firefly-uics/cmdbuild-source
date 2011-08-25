@@ -51,13 +51,18 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     	
 	createSearchWindow: function() {
 		if (!this.disabled) {
-			var callback = Ext.Function.bind(this.buildSearchWindow,this, [this.store.baseParams], true);
+			var callback = Ext.Function.bind(this.buildSearchWindow, this, [this.store.baseParams], true);
 
 			CMDBuild.Management.FieldManager.loadAttributes(this.store.baseParams.IdClass, callback);	
 		}
 	},
 	
-	buildSearchWindow: function(attributeList, extraParams) {
+	buildSearchWindow: function(attributeList, storeParams) {
+		// TODO Filters should be handled differently
+		// NdPaolo: I don't know why the NoFilter was set in the first place
+		var extraParams = Ext.apply({}, storeParams);
+		delete extraParams.NoFilter;
+
 		new CMDBuild.Management.ReferenceSearchWindow({
 			idClass: this.store.baseParams.IdClass,
 			filterType: 'reference',
