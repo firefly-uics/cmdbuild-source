@@ -72,7 +72,6 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					items: fieldSetItems,
 					autoHeight: true,
 					hideMode: 'offsets',
-					grow: true,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					bodyCls: "x-panel-default-framed",
 					bodyStyle: {
@@ -93,7 +92,7 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 
 
 //private
-var canBeBlank = function(attribute) {
+function canBeBlank(attribute) {
 	return !((attribute.fieldmode == "required") || attribute.isnotnull);
 };
 
@@ -219,7 +218,6 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		valueField: 'Id',
 		displayField: 'Description',
 		allowBlank: canBeBlank(attribute),
-		grow: true, // XComboBox autogrow
 		minChars: 1,
 		CMAttribute: attribute
 	});
