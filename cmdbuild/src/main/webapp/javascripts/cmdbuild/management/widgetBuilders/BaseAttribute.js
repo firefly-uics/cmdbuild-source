@@ -122,21 +122,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	 * build a fieldSet with a combo-box and a field to edit a filtering criteria used in the
 	 * attribute section of the filter.
 	 */
-	buildFieldsetForFilter: function(fieldId,field,query,originalFieldName) {
-		var columnSeparetor = 20;
-        
-		var removeFieldButton = new Ext.button.Button({
-			iconCls: 'delete',
-            border: false
-		});
-		
-		var orPanel = new Ext.Panel({
-        	width: 30,
-            html: 'or',
-            border: false,
-            bodyCls: "x-panel-body-default-framed"
-        });
-
+	buildFieldsetForFilter: function(fieldId, field, query, originalFieldName) {
 		function selectionNeedsNoValue(selection) {
 			selection = CMDBuild.Utils.getFirstSelection(selection);
 			return ['null','notnull'].indexOf(selection.data.id) >= 0;
@@ -149,6 +135,24 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 				field.enable();
 			}
 		});
+
+		return this.genericBuildFieldsetForFilter(fieldId, [field], query, originalFieldName);
+	},
+
+	genericBuildFieldsetForFilter: function(fieldId, fields, query, originalFieldName) {
+		var removeFieldButton = new Ext.button.Button({
+			iconCls: 'delete',
+            border: false
+		});
+		
+		var orPanel = new Ext.Panel({
+        	width: 30,
+            html: 'or',
+            border: false,
+            bodyCls: "x-panel-body-default-framed"
+        });
+
+		var items = [removeFieldButton,query].concat(fields).concat([orPanel]);
 
 		var fieldset = new Ext.panel.Panel({
             frame: false,
@@ -166,9 +170,9 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
             defaults: {
         		margins:'0 5 0 0'
         	},
-        	items: [removeFieldButton,query,field,orPanel],
+        	items: items,
             getAttributeField: function(){
-            	return field;
+            	return fields[0];
             },
             getQueryCombo: function(){
             	return query;

@@ -24,19 +24,13 @@ CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.getQueryOptions = function
 /**
  * @override
  */
-CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = function(fieldId,field,query,originalFieldName){
+CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = function(fieldId, field, query, originalFieldName) {
 	var field2 = field.cloneConfig(); 
 	field2.name += "_end";
 	field2.hideLabel = true;
 	field2.disable();
 
-	var orPanel = new Ext.Panel({
-    	width: 30,
-    	style: {padding : '0', margin:'0 0 0 20px '},
-    	items: [{html: 'or'}]
-    });
-	
-	query.on('select',function(query, selection, id) {
+	query.on('select', function(query, selection, id) {
 		selection = CMDBuild.Utils.getFirstSelection(selection);
 		if (selection.data.id === "between") {
 			field.enable();
@@ -50,42 +44,18 @@ CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = f
 		}
 	});
 
-	var removeFieldButton = new Ext.Button({
-		iconCls: 'delete'
+	function selectionNeedsNoValue(selection) {
+		selection = CMDBuild.Utils.getFirstSelection(selection);
+		return ['null','notnull'].indexOf(selection.data.id) >= 0;
+	}
+
+	query.on('select',function(query, selection, id) {
+		if (selectionNeedsNoValue(selection)) {
+			field.disable();
+		} else {
+			field.enable();
+		}
 	});
-	
-	var fieldset = new Ext.form.FieldSet({
-        frame: false,
-        border: false,
-        style: {padding: '0', margin: '0'},
-   		bodyStyle: {padding: '1px 0 1px 0', margin: '0'},
-        removeButton: removeFieldButton,
-        fieldsetCategory: originalFieldName,
-        queryCombo: query,
-        hideMode: 'offsets',
-        layout: 'hbox',            
-        layoutConfig: {                
-            pack:'start',
-            align:'top'
-        },
-        defaults: {
-    		margins:'0 5 0 0'
-    	},
-        items: [{
-        	xtype: 'panel',
-        	margins: '0 30 0 0',
-        	items: [removeFieldButton]
-        },query,field,field2,orPanel],
-        getAttributeField: function(){
-        	return field;
-        },
-        getQueryCombo: function(){
-        	return query;
-        },
-        getOrPanel: function(){
-        	return orPanel;
-        }
-    });	
-           
-   	return fieldset;
+
+	return this.genericBuildFieldsetForFilter(fieldId, [field, field2], query, originalFieldName);
 };
