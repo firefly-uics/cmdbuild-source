@@ -67,7 +67,12 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 			this.bodyEl.dom.firstChild.style.width = length;
 			this.bodyEl.dom.style.width = length;
 
-			var fieldLength = this.labelEl.dom.clientWidth + this.bodyEl.dom.clientWidth;
+			var fieldLength = this.bodyEl.dom.clientWidth;
+
+			if (this.labelEl) {
+				fieldLength += this.labelEl.dom.clientWidth;
+			}
+
 			var triggersLength = this.getTriggersLength();
 
 			this.setWidth(fieldLength + triggersLength + PADDING);
