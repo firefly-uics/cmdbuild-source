@@ -82,7 +82,6 @@
 			for (var i=0;  i<fields.length; ++i) {
 				var field = fields[i];
 				resolveFieldTemplates(field);
-				syncSizeASAP(field);
 			}
 		}
 	});
@@ -122,29 +121,6 @@
 	function resolveFieldTemplates(field) {
 		if (field.resolveTemplate) {
 			field.resolveTemplate();
-		}
-	};
-
-	function syncSize(field) {
-		if (field && field.grow) {
-			if(field.growSizeFix) {
-     			field.growSizeFix();
-     			/** 
-    			* syncSize is Ext.BoxComponent
-    			* I have no time to understand why it
-    			* doesn't work with the reference fields
-    			**/
-    		} else if (field.syncSize) {
-				field.syncSize();
-    		}
-		}
-	};
-
-	function syncSizeASAP(field) {
-		if (field.rendered) {
-			syncSize(field);
-		} else {
-			field.on("render", syncSize, null, {single: true});
 		}
 	};
 

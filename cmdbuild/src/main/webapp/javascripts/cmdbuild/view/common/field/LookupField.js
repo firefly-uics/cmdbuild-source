@@ -52,7 +52,6 @@ Ext.define("CMDBuild.field.LookupCombo", {
 		this.store.filterBy(function(record, id) {
 			return record.get("ParentId") == parentId;
 		});
-//		this.growSizeFix(); TODO 3 to 4
 	}
 });
 
@@ -80,20 +79,6 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 						padding: "0"
 					},
 					CMAttribute: attribute,
-					
-					growSizeFix: function() {
-						for (var i = 0; i < fieldSetItems.length; i++) {
-							var field = fieldSetItems[i];
-							if (field.growSizeFix) {
-								if (field.rendered) {
-									field.growSizeFix();
-								} else {
-									field.on("render", field.growSizeFix, field, {single: true});
-								}
-							}
-						}
-					},
-					
 					setValue: function(v) {
 						hiddenField.setValue(v);
 					}

@@ -90,7 +90,6 @@
 			fieldLabel : tr.min_zoom,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			plugins : [ new CMDBuild.SliderFieldPlugin() ],
 			minValue : 0,
 			maxValue : 25,
 			name : "minZoom"
@@ -100,7 +99,6 @@
 			fieldLabel : tr.max_zoom,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			plugins : [ new CMDBuild.SliderFieldPlugin() ],
 			minValue : 0,
 			maxValue : 25,
 			value : 25,
