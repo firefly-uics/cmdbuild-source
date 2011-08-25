@@ -83,7 +83,11 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	},
 
 	recordDescriptionFixedForCarriageReturnBugOnComboBoxes: function(record) {
-		return record.get("Description").replace(/\n/g," ");
+		try {
+			return record.get("Description").replace(/\n/g," ");
+		} catch (e) {
+			""
+		}
 	},
 	
 	hideTrigger1 :false,

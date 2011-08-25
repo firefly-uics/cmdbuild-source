@@ -54,6 +54,8 @@
 
 		getInvalidAttributeAsHTML: function() {
 			var fields = this.getInvalidField();
+			var alreadyAdded = {};
+
 			if (fields.length == 0) {
 				return null;
 			} else {
@@ -61,12 +63,19 @@
 				for (var i=0, l=fields.length; i<l; ++i) {
 					var attribute = fields[i].CMAttribute;
 					var item="";
-					if (attribute.group) {
-						item = attribute.group + " - ";
+					if (attribute) {
+						if (alreadyAdded[attribute.description]) {
+							continue;
+						} else {
+							alreadyAdded[attribute.description] = true;
+							if (attribute.group) {
+								item = attribute.group + " - ";
+							}
+							out += "<li>" + item + attribute.description + "</li>";
+						}
 					}
-					out += "<li>" + item + attribute.description + "</li>";
 				}
-				
+
 				return out+"</ul>";
 			}
 		},
