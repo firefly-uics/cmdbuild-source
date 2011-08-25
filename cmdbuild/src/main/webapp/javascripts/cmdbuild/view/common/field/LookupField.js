@@ -120,6 +120,7 @@ function buildHiddenField(attribute) {
 		
 		updateParentsIfLoaded: function() {
 			var value = this.getValue();
+			value = parseInt(value);
 			if (this.lastCombo) {
 				this.lastCombo.setValueAndUpdateParents(value);
 			} else {
