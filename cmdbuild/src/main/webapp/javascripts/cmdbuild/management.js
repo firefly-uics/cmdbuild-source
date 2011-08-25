@@ -26,9 +26,17 @@
 							success: function(response, options, decoded) {
 								CMDBuild.Config.gis = decoded.data;
 								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-							},
-							callback: function() {
-								this.buildComponents();
+
+								CMDBuild.ServiceProxy.configuration.read({
+									scope: this,
+									success: function(response, options,decoded) {
+										CMDBuild.Config.graph = decoded.data;
+									},
+									callback: function() {
+										this.buildComponents();
+									}
+								},"graph");
+
 							}
 						});
 					}
@@ -76,9 +84,9 @@
 				CMDBuild.view.CMMainViewport.showSplash();
 				this.loadResources();
 			},
-			
+
 			loadResources: function() {
-				var dangling = 6,
+				var dangling = 5,
 					me = this;
 
 				function callback() {
@@ -107,13 +115,6 @@
 					},
 					callback: callback
 				},"dms");
-				
-				CMDBuild.ServiceProxy.configuration.read({
-					success: function(response, options,decoded) {
-						CMDBuild.Config.graph = decoded.data;
-					},
-					callback: callback
-				},"graph");
 
 				CMDBuild.ServiceProxy.report.getTypesTree({
 					scope: this,

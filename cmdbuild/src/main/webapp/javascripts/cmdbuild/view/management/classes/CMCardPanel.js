@@ -187,43 +187,45 @@
 	function buildTBar() {
 		if (this.withToolBar) {
 			this.deleteCardButton = new Ext.button.Button({
-	      		iconCls : "delete",
-	      		text : tr.delete_card
-	    	});
+				iconCls : "delete",
+				text : tr.delete_card
+			});
 
-	    	this.cloneCardButton = new Ext.button.Button({
-	      		iconCls : "clone",
-	      		text : tr.clone_card
-	    	});
+			this.cloneCardButton = new Ext.button.Button({
+				iconCls : "clone",
+				text : tr.clone_card
+			});
 
-	    	this.modifyCardButton = new Ext.button.Button({
-	      		iconCls : "modify",
-	      		text : tr.modify_card
-	    	});
+			this.modifyCardButton = new Ext.button.Button({
+				iconCls : "modify",
+				text : tr.modify_card
+			});
 
-	    	this.graphButton = new Ext.button.Button({
-	      		iconCls : "graph",
-	      		text : CMDBuild.Translation.management.graph.action
-	    	});
+			this.graphButton = new Ext.button.Button({
+				iconCls : "graph",
+				text : CMDBuild.Translation.management.graph.action
+			});
 
-	    	this.printCardMenu = new CMDBuild.PrintMenuButton({      		
-	    		text : CMDBuild.Translation.common.buttons.print+" "+CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
-	    		callback : function() { this.fireEvent("click")},
-	    		formatList: ["pdf", "odt"]
-	    	});
-
-//			this.openGraphAction = new CMDBuild.Management.GraphActionHandler().getAction(),
+			this.printCardMenu = new CMDBuild.PrintMenuButton({
+				text : CMDBuild.Translation.common.buttons.print+" "+CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
+				callback : function() { this.fireEvent("click")},
+				formatList: ["pdf", "odt"]
+			});
 
 			this.cmTBar = [
 				this.modifyCardButton,
 				this.deleteCardButton,
 				this.cloneCardButton,
-				this.graphButton,
-				this.printCardMenu
 			];
-        }
+
+			if (CMDBuild.Config.graph.enabled=="true") {
+				this.cmTBar.push(this.graphButton);
+			}
+
+			this.cmTBar.push(this.printCardMenu);
+		}
 	};
-	
+
 	function buildButtons() {
 		if (this.withButtons) {
 			this.saveButton = new Ext.button.Button({
