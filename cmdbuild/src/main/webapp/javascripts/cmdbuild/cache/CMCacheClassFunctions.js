@@ -19,7 +19,8 @@
 		},
 
 		getEntryTypes: function() {
-			return Ext.apply(classes, processes);
+			var tmp = Ext.apply({}, classes);
+			return Ext.apply(tmp, processes);
 		},
 
 		addClasses: function(etypes) {

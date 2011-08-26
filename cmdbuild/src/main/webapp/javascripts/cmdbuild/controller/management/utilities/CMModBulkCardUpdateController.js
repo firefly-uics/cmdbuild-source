@@ -1,20 +1,19 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.utilities.CMModBulkUpdateController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
-		
+
 		constructor: function() {
 			this.callParent(arguments);
 			this.gridSM = this.view.cardGrid.getSelectionModel();
 			this.treeSM = this.view.classTree.getSelectionModel();
 
 			this.treeSM.on("selectionchange", onClassTreeSelected, this);
-			this.gridSM.on("selectionchange", onGridSelectionChanged, this);
-			
+
 			this.view.saveButton.on("click", onSaveButtonClick, this);
 			this.view.abortButton.on("click", onAbortButtonClick, this);
 
 		},
-		
+
 		onViewOnFront: function() {
 			var s = this.treeSM.getSelection();
 			if (s.length == 0) {
@@ -22,7 +21,7 @@
 			}
 		}
 	});
-	
+
 	function onSaveButtonClick() {
 		if (this.gridSM.cmInverseSelection) {
 			Ext.Msg.show({
@@ -38,12 +37,18 @@
 				scope: this
 			});
 		} else {
-			save.call(this)
+			save.call(this);
 		}
-		
 	}
-	
+
 	function save() {
+		if (!this.gridSM.cmInverseSelection && !this.gridSM.cmHasSelections()) {
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, "@@ Vedi di selezionare qualcosa...");
+			CMDBuild.Msg.error(null, msg, false);
+
+			return;
+		}
+
 		var p = builSaveParams.call(this);
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/updatebulkcards',
@@ -58,22 +63,18 @@
 
 	function onAbortButtonClick() {
 		this.gridSM.cmDeselectAll();
-		this.view.cardForm.reset();		
+		this.view.cardForm.reset();
+
+		this.view.cardGrid.reload(reselect = false);
 	}
-	
-	function onGridSelectionChanged(sm, selection) {
-		var toDisable = selection.length == 0;
-		this.view.saveButton.setDisabled(toDisable);
-		this.view.abortButton.setDisabled(toDisable);
-	}
-	
+
 	function onClassTreeSelected(sm, selection) {
 		if (selection.length > 0) {
 			this.currentClassId = selection[0].get("id")
 			this.view.onClassTreeSelected(this.currentClassId);
 		}
 	}
-	
+
 	function builSaveParams() {
 		var params = this.view.cardForm.getCheckedValues();
 
@@ -98,7 +99,7 @@
 			}
 			return out;
 		}).call(this);
-		
+
 		return params;
 	}
 })();

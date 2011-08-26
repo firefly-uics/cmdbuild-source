@@ -13,13 +13,11 @@
 			this.cardSelected = [];
 
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save,
-				disabled: true
+				text: CMDBuild.Translation.common.buttons.save
 			});
 
 			this.abortButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.abort,
-				disabled: true
+				text: CMDBuild.Translation.common.buttons.abort
 			});
 
 			this.classTree = new CMDBuild.view.common.classes.CMClassAccordion({
@@ -36,9 +34,7 @@
 				filterCategory: this.cmName,
 				border: true,
 				cmAddGraphColumn: false,
-				selModel: new CMDBuild.selection.CheckboxModel({
-					injectCheckbox: "last"
-				}),
+				selModel: new CMDBuild.selection.CMCheckboxModel(),
 				columns: []
 			});
 
@@ -63,9 +59,10 @@
 					},
 					this.classTree
 				],
+				buttonAlign: "center",
 				buttons: [this.saveButton,this.abortButton]
 			});
-			
+
 			this.callParent(arguments);
 			this.firstShow = true;
 		},

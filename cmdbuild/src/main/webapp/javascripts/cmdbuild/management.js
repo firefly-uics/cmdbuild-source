@@ -109,6 +109,19 @@
 					}
 				}
 
+				CMDBuild.ServiceProxy.classes.read({
+					params: {
+						active: true
+					},
+					scope: this,
+					success: function(response, options, decoded) {
+						_CMCache.addClasses(decoded.classes);
+						classesAccordion.updateStore();
+						processAccordion.updateStore();
+					},
+					callback: callback
+				});
+
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
 						CMDBuild.Config.dms = decoded.data;
@@ -121,19 +134,6 @@
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
 						reportAccordion.updateStore();
-					},
-					callback: callback
-				});
-
-				CMDBuild.ServiceProxy.classes.read({
-					params: {
-						active: true
-					},
-					scope: this,
-					success: function(response, options, decoded) {
-						_CMCache.addClasses(decoded.classes);
-						classesAccordion.updateStore();
-						processAccordion.updateStore();
 					},
 					callback: callback
 				});
