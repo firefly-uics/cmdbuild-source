@@ -143,6 +143,9 @@
 			this.showAttributesColumn = true;
 			var key = "";
 			for (var i=0, l=attributes.length; i<l; i++) {
+				if (attributes[i].fieldmode == "hidden")
+					continue;
+
 				key = attributes[i].description
 				attributesToString += i==0 ? "" : " | ";
 				attributesToString += key;

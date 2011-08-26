@@ -98,17 +98,18 @@ function getSubFields(attribute, display) {
 				conf.name = "_" + attribute.name + "_" + conf.name;
 
 				var f = CMDBuild.Management.FieldManager.getFieldForAttr(conf, display);
-				// Mark the sub fields with a flag "cmDomainAttribute" because
-				// if a form has one of these fields can know to do a request to
-				// populate it. This is needed because the values of the relations attributes
-				// are not serialized in the grid data.
+				if (f) {
+					// Mark the sub fields with a flag "cmDomainAttribute" because
+					// if a form has one of these fields can know to do a request to
+					// populate it. This is needed because the values of the relations attributes
+					// are not serialized in the grid data.
+					// As an alternative, we can use an event to notify to the controller
+					// that the form is ready (has all the fields), so the controller can
+					// look for this kind of attributes and make the request if needed
+					f.cmDomainAttribute = true;
 
-				// as an alternative, we can use an event to notify to the controller
-				// that the form is ready (has all the fields), so the controller can
-				// look for this kind of attributes and make the request if needed
-				f.cmDomainAttribute = true;
-
-				fields.push(f);
+					fields.push(f);
+				}
 			}
 		}, this);
 	}
