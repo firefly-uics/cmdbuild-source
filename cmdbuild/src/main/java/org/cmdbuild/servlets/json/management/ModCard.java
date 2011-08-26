@@ -505,6 +505,8 @@ public class ModCard extends JSONBase {
 			@Parameter("isInverted") boolean isInverted, CardQuery cardQuery, ITableFactory tf) throws JSONException,
 			CMDBException {
 
+		cardQuery = (CardQuery) cardQuery.clone();
+
 		if (fullTextQuery != null) {
 			cardQuery.fullText(fullTextQuery.trim());
 		}
@@ -526,7 +528,7 @@ public class ModCard extends JSONBase {
 
 	private List<ICard> buildCardListToBulkUpdate(String[] cardsToUpdate, ITableFactory tf) {
 		List<ICard> cardsList = new LinkedList<ICard>();
-		if (cardsToUpdate[0] != "") { // if the first element is an empty string
+		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first element is an empty string
 										// the array is empty
 			for (String cardIdAndClass : cardsToUpdate) {
 				ICard cardToUpdate = stringToCard(tf, cardIdAndClass);

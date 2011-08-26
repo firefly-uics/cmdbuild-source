@@ -1,3 +1,6 @@
+<!-- SELECTIONS -->
+<script type="text/javascript" src="javascripts/cmdbuild/selection/CMCheckboxModel.js"></script>
+
 <!-- PROXIES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMRelationsProxy.js"></script>
 
