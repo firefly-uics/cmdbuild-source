@@ -19,7 +19,7 @@
 
 	function historyAttribute(label, value, changed) {
 		var cls = changed ? " class=\"changed\"" : "";
-		return "<p"+cls+"><b>"+label+"</b>: "+(value.dsc || value)+"</p>";
+		return "<p"+cls+"><b>"+label+"</b>: "+((value || {}).dsc || value)+"</p>";
 	};
 
 	Ext.define("CMDBuild.view.management.classes.CMCardHistoryTab", {
