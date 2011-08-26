@@ -246,9 +246,11 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	updateTemplateDeps: function(fullAttrName, externalDeps, localDeps) {
 		var qName = this.getQName(fullAttrName);
 		var template = this.xaVars[qName.localname];
-		var recursionVars = this.extractRecursionVarsAndUpdateLocalDeps(template, localDeps);
-		externalDeps[fullAttrName] = recursionVars;
-		this.updateTemplateSetDeps(recursionVars, externalDeps, localDeps);
+		if (typeof template == "string") {
+			var recursionVars = this.extractRecursionVarsAndUpdateLocalDeps(template, localDeps);
+			externalDeps[fullAttrName] = recursionVars;
+			this.updateTemplateSetDeps(recursionVars, externalDeps, localDeps);
+		}
 	},
 
 	/*
@@ -334,14 +336,18 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		var template = this.xaVars[localname];
 		CMDBuild.log.debug("Template", template);
 		CMDBuild.log.debug("Current context", ctx);
-		if (ns == "cql") {
-			this.executeCQLTemplate(localname, template, ctx, callback);
-		} else if (ns == "js") {
-			ctx.js[localname] = this.evalJSTemplate(localname, template, ctx);
-			callback(ctx);
+		if (typeof template == "string") {
+			if (ns == "cql") {
+				this.executeCQLTemplate(localname, template, ctx, callback);
+			} else if (ns == "js") {
+				ctx.js[localname] = this.evalJSTemplate(localname, template, ctx);
+				callback(ctx);
+			} else {
+				ctx.out[localname] = this.expandTemplate(template, ctx);
+				callback(ctx);
+			}
 		} else {
-			ctx.out[localname] = this.expandTemplate(template, ctx);
-			callback(ctx);
+			return template;
 		}
 	},
 
