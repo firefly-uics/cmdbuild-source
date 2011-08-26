@@ -171,7 +171,8 @@ CMDBuild.ServiceProxy.core = {
 			scope: p.scope || this,
 			success: p.success || Ext.emptyFn,
 			failure: p.failure || Ext.emptyFn,
-			callback: p.callback || Ext.emptyFn
+			callback: p.callback || Ext.emptyFn,
+			important: p.important
 		});
 	}
 };
