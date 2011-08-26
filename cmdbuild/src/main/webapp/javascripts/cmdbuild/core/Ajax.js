@@ -92,6 +92,8 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 			for (var i=0; i<decoded.errors.length; ++i) {
 				this.showError(response, decoded.errors[i], options);
 			}
+		} else {
+			this.showError(response, null, options);
 		}
 	},
 
