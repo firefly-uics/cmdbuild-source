@@ -290,8 +290,7 @@
 
 	function onAddCardButtonClick(p) {
 		this.view.onAddButtonClick();
-		this.currentActivity = null;
-		var me;
+		var me = this;
 
 		CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {
 			scope: this,
@@ -300,6 +299,7 @@
 		});
 
 		function success(response) {
+			me.currentActivity = null;
 			me.gridSM.deselectAll();
 
 			var template =  Ext.JSON.decode(response.responseText);
