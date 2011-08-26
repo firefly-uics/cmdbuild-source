@@ -42,7 +42,7 @@
 				failure : onAbortButtonClick
 			});
 		} else {
-			CMDBuild.Msg.error(null, "@@ ci sono campi non validi", false);
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 		}
 	}
 
@@ -56,25 +56,20 @@
 	}
 
 	function onEnableGroupButtonClick() {
-		var nonValid = this.view.getNonValidFields();
-		if (nonValid.length == 0) {
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/modsecurity/enabledisablegroup',
-				params : {
-					groupId : this.currentGroup.get("id"),
-					isActive : !this.currentGroup.get("isActive")
-				},
-				waitMsg : CMDBuild.Translation.common.wait_title,
-				method : 'POST',
-				scope : this,
-				success : function(response, options, decoded) {
-					var g = decoded.group;
-					_CMCache.onGroupSaved(g);
-				}
-			});
-		} else {
-			CMDBuild.Msg.error(null, "@@ ci sono campi non validi", false);
-		}
+		CMDBuild.Ajax.request({
+			url : 'services/json/schema/modsecurity/enabledisablegroup',
+			params : {
+				groupId : this.currentGroup.get("id"),
+				isActive : !this.currentGroup.get("isActive")
+			},
+			waitMsg : CMDBuild.Translation.common.wait_title,
+			method : 'POST',
+			scope : this,
+			success : function(response, options, decoded) {
+				var g = decoded.group;
+				_CMCache.onGroupSaved(g);
+			}
+		});
 	}
 
 	function onModifyButtonClick() {

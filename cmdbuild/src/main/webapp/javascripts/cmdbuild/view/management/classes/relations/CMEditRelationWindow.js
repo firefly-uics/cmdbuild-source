@@ -128,7 +128,8 @@
 			}
 		} catch (e) {
 			if (e == NO_SELECTION) {
-				CMDBuild.Msg.error("@@Error", "@@Devi selezionare qualcosa nella griglia");
+				var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
 			}
 			return;
 		}
@@ -136,7 +137,8 @@
 		try {
 			p.attrs = Ext.apply(p.attrs, getData(me.attributesPanel));
 		} catch (e) {
-			CMDBuild.Msg.error("@@Error", "@@I seguenti campi sono non validi" + e);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			CMDBuild.Msg.error(null, msg + e, false);
 			return;
 		}
 

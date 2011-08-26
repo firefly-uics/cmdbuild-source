@@ -609,6 +609,7 @@
       "detail": "Detalji",
       "error_message": "Greška",
       "error_moving_row": "Došlo je do greške prilikom obrade reda",
+      "invalid_fields" : "<em>Some fields have not been filled correctly</em>",
       "invalid_attributes": "Sledeća polja nisu korektno popunjena:",
       "invalid_extended_attributes": "Sledeće vizuelne kontrole nisu korektno popunjene:",
       "no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
@@ -848,6 +849,10 @@
          "delete_card_confirm": "Sigurno želite ukloniti ovu karticu?",
          "delete_relation": "Ukloni relaciju",
          "delete_relation_confirm": "Sigurni ste da želite ukloniti ovu relaciju?",
+         "detail_window": {
+            "detail_attributes": "<em>Detail's attributes</em>",
+            "relation_attributes": "<em>Relation's attributes</em>"
+         },
          "download_attachment": "Preuzmi prilog",
          "edit_attachment": "Izmeni prilog",
          "edit_relation": "Izmeni relaciju",
@@ -963,6 +968,9 @@
          "delete_card": "Ukloni proces",
          "delete_card_confirm": "Da li ste sigurni da želite ukloniti proces?",
          "extattrs": {
+            "attachments": {
+              "must_save_to_add": "<em>You can not add an attachment before saving the activity</em>"
+            },
             "createreport": {"format_label": "Formatiraj"},
             "linkcards": {"required": "Morate izabrati karticu - "},
             "manageemail": {
@@ -985,7 +993,10 @@
                "tofld": "Primalac",
                "viewicon": "Prikaži"
             },
-            "managerelation": {"required": "Morate izabrati relacije - "}
+            "managerelation": {"required": "Morate izabrati relacije - "},
+            "notes": {
+              "must_save_to_modify": "<em>You can not modify the notes before saving the activity</em>"
+            }
          },
          "history_columns": {
             "attributes": "Atributi",

@@ -39,8 +39,9 @@
 					});
 				}
 			} else {
-				new CMDBuild.Msg.error("@@ Errore", "@@ Non puoi salvare le note" +
-						"senza aver salvato prima l'attività ", popup = false);
+				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+						CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
+						popup = false);
 			}
 		}
 	});

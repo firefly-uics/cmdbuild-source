@@ -1,9 +1,6 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all-debug.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 
-<!--<script type="text/javascript" src="javascripts/ext-3-to-4-compatibility/ext3-core-compat.js"></script>-->
-<!--<script type="text/javascript" src="javascripts/ext-3-to-4-compatibility/ext3-compat.js"></script>-->
-
 <script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 <script type="text/javascript" src="javascripts/flash/swfobject.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
@@ -24,4 +21,3 @@
 
 <!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/HeaderButtons.js"></script>-->
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
-<!--<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Spinner.js"></script>-->

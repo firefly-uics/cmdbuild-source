@@ -43,8 +43,8 @@
 
 	function save() {
 		if (!this.gridSM.cmInverseSelection && !this.gridSM.cmHasSelections()) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, "@@ Vedi di selezionare qualcosa...");
-			CMDBuild.Msg.error(null, msg, false);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
 
 			return;
 		}

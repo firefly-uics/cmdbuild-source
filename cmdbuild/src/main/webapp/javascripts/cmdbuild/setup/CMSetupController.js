@@ -89,11 +89,8 @@
 	function onFinishClick() {
 		var nonValidFields = this.getNonValidFields();
 		if (nonValidFields.length > 0) {
-			Ext.Msg.show({
-				title: CMDBuild.Translation.common.failure, 
-				msg: "@@ Invalid values", 
-				buttons: Ext.MessageBox.OK
-			});
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			return;
 		} else {
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.ServiceProxy.setup.applySetup({
