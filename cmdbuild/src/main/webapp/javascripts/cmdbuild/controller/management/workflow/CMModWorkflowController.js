@@ -291,16 +291,17 @@
 	function onAddCardButtonClick(p) {
 		this.view.onAddButtonClick();
 		this.currentActivity = null;
-
-		this.gridSM.deselectAll();
+		var me;
 
 		CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {
 			scope: this,
 			success: success,
-			failure: failure
+			important: true
 		});
 
 		function success(response) {
+			me.gridSM.deselectAll();
+
 			var template =  Ext.JSON.decode(response.responseText);
 
 			template.data.ProcessInstanceId = undefined;
@@ -312,11 +313,7 @@
 				return template.raw[key];
 			}
 
-			updateForActivity.call(this, template, editMode = true);
-		}
-
-		function failure() {
-			CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.generic_error, true);
+			me.updateForActivity(template, editMode = true);
 		}
 	}
 
