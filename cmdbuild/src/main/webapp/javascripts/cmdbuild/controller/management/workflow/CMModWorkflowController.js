@@ -313,7 +313,7 @@
 				return template.raw[key];
 			}
 
-			me.updateForActivity(template, editMode = true);
+			updateForActivity.call(me, template, editMode = true);
 		}
 	}
 
