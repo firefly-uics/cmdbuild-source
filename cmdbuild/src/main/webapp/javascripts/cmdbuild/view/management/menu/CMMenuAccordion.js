@@ -15,7 +15,7 @@
 
 			for (var id in nodesMap) {
 				var node = nodesMap[id];
-				if (node.parent) {
+				if (node.parent && nodesMap[node.parent]) {
 					linkToParent(node, nodesMap)
 				} else {
 					out.push(node);
