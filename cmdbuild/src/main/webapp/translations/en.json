@@ -609,6 +609,7 @@
       "detail": "Details",
       "error_message": "Error",
       "error_moving_row": "An error occourred while moving the row",
+      "invalid_fields" : "Some fields have not been filled correctly",
       "invalid_attributes": "The following fields have not been filled correctly:",
       "invalid_extended_attributes": "The following visual controls have not been filled correctly:",
       "no_selections": "You have not selected any card to update",
@@ -848,6 +849,10 @@
          "delete_card_confirm": "Are you sure you want to delete this card?",
          "delete_relation": "Delete relation",
          "delete_relation_confirm": "Are you sure you want to delete this relation?",
+         "detail_window": {
+            "detail_attributes": "Detail's attributes",
+            "relation_attributes": "Relation's attributes"
+         },
          "download_attachment": "Download attachment",
          "edit_attachment": "Edit attachment",
          "edit_relation": "Edit relation",
@@ -963,6 +968,9 @@
          "delete_card": "Abort process",
          "delete_card_confirm": "Are you sure you want to delete this process?",
          "extattrs": {
+            "attachments": {
+              "must_save_to_add": "You can not add an attachment before saving the activity"
+            },
             "createreport": {"format_label": "Format"},
             "linkcards": {"required": "Please select some cards - "},
             "manageemail": {
@@ -985,7 +993,10 @@
                "tofld": "To",
                "viewicon": "View"
             },
-            "managerelation": {"required": "Please select some relations - "}
+            "managerelation": {"required": "Please select some relations - "},
+            "notes": {
+              "must_save_to_modify": "You can not modify the notes before saving the activity"
+            }
          },
          "history_columns": {
             "attributes": "Attributes",

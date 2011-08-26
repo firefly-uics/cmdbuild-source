@@ -609,6 +609,7 @@
       "detail": "Детаљи",
       "error_message": "Грешка",
       "error_moving_row": "Дошло је до грешке приликом обраде реда",
+      "invalid_fields" : "<em>Some fields have not been filled correctly</em>",
       "invalid_attributes": "Следећа поља нису коректно попуњена:",
       "invalid_extended_attributes": "Следеће визуелне контроле нису коректно попуњене:",
       "no_driver": "Недостаје одговарајући JDBC управљачки програм (драјвер).<br />Одговарајући драјвер можете пронаћи у CMDBuild инсталационом фолдеру и копирати у <b>lib<\/b> фолдер Tomcat сервера.",
@@ -848,6 +849,10 @@
          "delete_card_confirm": "Сигурно желите уклонити ову картицу?",
          "delete_relation": "Уклони релацију",
          "delete_relation_confirm": "Сигурни сте да желите уклонити ову релацију?",
+         "detail_window": {
+            "detail_attributes": "<em>Detail's attributes</em>",
+            "relation_attributes": "<em>Relation's attributes</em>"
+         },
          "download_attachment": "Преузми прилог",
          "edit_attachment": "Измени прилог",
          "edit_relation": "Измени релацију",
@@ -963,6 +968,9 @@
          "delete_card": "Уклони процес",
          "delete_card_confirm": "Да ли сте сигурни да желите уклонити процес?",
          "extattrs": {
+            "attachments": {
+              "must_save_to_add": "<em>You can not add an attachment before saving the activity</em>"
+            },
             "createreport": {"format_label": "Форматирај"},
             "linkcards": {"required": "Морате изабрати картицу - "},
             "manageemail": {
@@ -985,7 +993,10 @@
                "tofld": "Прималац",
                "viewicon": "Прикажи"
             },
-            "managerelation": {"required": "Морате изабрати релације - "}
+            "managerelation": {"required": "Морате изабрати релације - "},
+            "notes": {
+              "must_save_to_modify": "<em>You can not modify the notes before saving the activity</em>"
+            }
          },
          "history_columns": {
             "attributes": "Атрибути",

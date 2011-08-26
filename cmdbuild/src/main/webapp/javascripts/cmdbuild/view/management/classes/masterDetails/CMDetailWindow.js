@@ -90,7 +90,7 @@
 			} else {
 				Ext.Array.forEach(attributes, function(a) {
 					var dolly = Ext.apply({}, a);
-					dolly.group = "@@ Attributi Del Dettaglio";
+					dolly.group = CMDBuild.Translation.management.modcard.detail_window.detail_attributes;
 					out.push(dolly);
 				});
 			}
@@ -99,7 +99,7 @@
 			// a group to have a separated tab in the form
 			Ext.Array.forEach(domainAttributes, function(a) {
 				var dolly = Ext.apply({}, a);
-				dolly.group = "@@ Attributi della relazione";
+				dolly.group = CMDBuild.Translation.management.modcard.detail_window.relation_attributes;
 				// mark these attributes to be able to detect them
 				// when save or load the data. There is the possibility
 				// of a names collision.

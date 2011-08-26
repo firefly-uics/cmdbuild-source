@@ -609,6 +609,7 @@
       "detail": "Détails",
       "error_message": "Erreur",
       "error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
+      "invalid_fields" : "<em>Some fields have not been filled correctly</em>",
       "invalid_attributes": "Les différents champs n'ont pas été rempli correctement:",
       "invalid_extended_attributes": "Les contrôles visuels suivants n'ont pas été remplis correctement:",
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
@@ -848,6 +849,10 @@
          "delete_card_confirm": "Etes vous certain de supprimer cette fiche?",
          "delete_relation": "Supprimer relation",
          "delete_relation_confirm": "Etes vous certain de supprimer cette relation?",
+         "detail_window": {
+            "detail_attributes": "<em>Detail's attributes</em>",
+            "relation_attributes": "<em>Relation's attributes</em>"
+         },
          "download_attachment": "Chargement pièce jointe",
          "edit_attachment": "Editer pièce jointe",
          "edit_relation": "Editer relation",
@@ -963,6 +968,9 @@
          "delete_card": "Supprimer processus",
          "delete_card_confirm": "Etes-vous certain de vouloir supprimer le processus?",
          "extattrs": {
+            "attachments": {
+              "must_save_to_add": "<em>You can not add an attachment before saving the activity</em>"
+            },
             "createreport": {"format_label": "Format"},
             "linkcards": {"required": "Selectionnez quelques fiches -"},
             "manageemail": {
@@ -985,7 +993,10 @@
                "tofld": "A",
                "viewicon": "Vue"
             },
-            "managerelation": {"required": "Sélectionnez les relations -"}
+            "managerelation": {"required": "Sélectionnez les relations -"},
+            "notes": {
+              "must_save_to_modify": "<em>You can not modify the notes before saving the activity</em>"
+            }
          },
          "history_columns": {
             "attributes": "Attributs",

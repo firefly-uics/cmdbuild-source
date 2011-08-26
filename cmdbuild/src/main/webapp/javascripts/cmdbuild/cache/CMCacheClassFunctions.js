@@ -67,7 +67,8 @@
 			} else if (p) {
 				return p
 			} else {
-				CMDBuild.Msg.error("@@Error", "@@ Non ho la tabella con id " + id);
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+						Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, id));
 			}
 		},
 

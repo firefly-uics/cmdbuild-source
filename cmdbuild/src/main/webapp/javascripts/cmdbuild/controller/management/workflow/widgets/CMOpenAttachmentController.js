@@ -27,8 +27,10 @@
 		// override
 		onAddAttachmentButtonClick: function() {
 			if (isANewActivity(this.activity)) {
-				new CMDBuild.Msg.error("@@ Errore", "@@ Non puoi salvare le allegati " +
-						"senza aver salvato prima l'attività ", popup = false);
+				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+						CMDBuild.Translation.management.modworkflow.extattrs.attachments.must_save_to_add,
+						popup = false);
+
 			} else {
 				this.callParent(arguments);
 			}

@@ -45,8 +45,7 @@
 			});
 
 		} else {
-			//var msg = String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, "@@ ci sono campi non validi", false);
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 		}
 	}
 	

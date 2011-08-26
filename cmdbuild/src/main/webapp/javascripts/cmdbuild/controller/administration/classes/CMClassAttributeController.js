@@ -51,7 +51,7 @@
 	function onSaveClick() {
 		var nonValid = this.view.formPanel.getNonValidFields();
 		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, "@@Ci sono campi non validi", false);
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
 

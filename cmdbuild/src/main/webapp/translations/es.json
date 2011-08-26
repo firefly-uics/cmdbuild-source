@@ -848,6 +848,10 @@
          "delete_card_confirm": "Está seguro de querer eliminar esta tarjeta?",
          "delete_relation": "Eliminar relación",
          "delete_relation_confirm": "Está seguro de querer eliminar esta relación?",
+         "detail_window": {
+            "detail_attributes": "<em>Attributi del dettaglio</em>",
+            "relation_attributes": "<em>Attributi della relazione</em>"
+         },
          "download_attachment": "Descarga adjunto",
          "edit_attachment": "Modificar adjunto",
          "edit_relation": "Modificar relación",
@@ -963,6 +967,9 @@
          "delete_card": "Cierra proceso",
          "delete_card_confirm": "Está seguro de querer eliminar este proceso?",
          "extattrs": {
+            "attachments": {
+              "must_save_to_add": "<em>Non puoi aggiungere un allegato prima di aver salvato l'attività</em>"
+            },
             "createreport": {"format_label": "Formato"},
             "linkcards": {"required": "Es necesario seleccionar las tarjetas - "},
             "manageemail": {
@@ -985,7 +992,10 @@
                "tofld": "Destinatario",
                "viewicon": "Visualizar"
             },
-            "managerelation": {"required": "Es necesario seleccionar las relaciones - "}
+            "managerelation": {"required": "Es necesario seleccionar las relaciones - "},
+            "notes": {
+              "must_save_to_modify": "<em>Non puoi modificare le note prima di aver salvato l'attività</em>"
+            }
          },
          "history_columns": {
             "attributes": "Atributos",
