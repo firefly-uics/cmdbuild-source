@@ -62,7 +62,7 @@
 						sortable: false, 
 						renderer: this.renderDeleteActions, 
 						align: 'center', 
-						cellCls: 'grid-button', 
+						tdCls: 'grid-button', 
 						dataIndex: 'delete',
 						menuDisabled: true,
 						hideable: false

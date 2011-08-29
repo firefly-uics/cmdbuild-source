@@ -47,7 +47,7 @@
 						sortable: false, 
 						renderer: this.renderRelationActions, 
 						align: 'center', 
-						cellCls: 'grid-button', 
+						tdCls: 'grid-button', 
 						dataIndex: 'Fake',
 						menuDisabled: true,
 						hideable: false

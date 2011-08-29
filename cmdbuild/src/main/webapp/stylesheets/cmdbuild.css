@@ -869,3 +869,15 @@ em {
 	vertical-align: middle;
 }
 */
+
+.x-grid-cell-inner {
+	padding: 3px 6px;
+}
+
+.grid-button .x-grid-cell-inner {
+	padding: 0px 6px;
+}
+
+.grid-button .x-grid-row-checker {
+	margin-top: 3px;
+}
