@@ -29,6 +29,15 @@
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
 
 			this.cardGrid.on("itemdblclick", onModifyCardClick, this);
+
+			this.cardGrid.on("load", function(args) {
+				// args[1] is the array with the loaded records
+				// so, if there are no records clear the view
+				if (args[1] && args[1].length == 0) {
+					this.cardPanel.disableModify(enableBar = false);
+				}
+			}, this);
+
 			this.cardGrid.printGridMenu.on("click", onPrintGridMenuClick, this);
 			this.gridSM.on("selectionchange", onCardSelected, this);
 

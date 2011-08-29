@@ -102,7 +102,7 @@
 			cb = o.cb || Ext.emptyFn;
 
 			// store.loadPage does not allow the definition of a callBack
-			this.store.on("load", cb, scope, {single: true});
+			this.on("load", cb, scope, {single: true});
 			this.store.loadPage(Math.floor(pageNumber));
 		},
 
@@ -218,8 +218,13 @@
 				this.fireEvent("beforeload", arguments);
 			}, this);
 
-			this.mon(s, "load", function() {
+			this.mon(s, "load", function(store, records) {
 				this.fireEvent("load", arguments);
+
+				if (!this.getSelectionModel().hasSelection() && records && records.length > 0) {
+					this.getSelectionModel().select(0);
+				}
+
 			}, this);
 
 			return s;

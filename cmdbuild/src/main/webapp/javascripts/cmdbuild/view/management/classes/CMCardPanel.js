@@ -180,7 +180,7 @@
 			this.editMode();
 			this.forceEditMode = false;
 		} else {
-			this.displayMode(enableCmBar = false);
+			this.displayMode(enableCmBar = true);
 		}
 	};
 
