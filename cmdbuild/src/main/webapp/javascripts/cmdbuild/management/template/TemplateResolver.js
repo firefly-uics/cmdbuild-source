@@ -347,7 +347,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				callback(ctx);
 			}
 		} else {
-			return template;
+			ctx.out[localname] = template;
+			callback(ctx);
 		}
 	},
 
