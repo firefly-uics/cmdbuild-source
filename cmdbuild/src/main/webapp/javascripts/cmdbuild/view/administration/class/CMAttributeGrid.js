@@ -10,7 +10,9 @@
 		IS_INHERITED: "inherited",
 		IS_ACTIVE: "isactive",
 		FIELD_MODE: "fieldmode",
-		GROUP: "group"
+		GROUP: "group",
+		ABSOLUTE_CLASS_ORDER: "absoluteClassOrder",
+		CLASS_ORDER_SIGN: "classOrderSign"
 	};
 
 	var REQUEST = {
@@ -155,7 +157,7 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 			fields: [
 				ATTR.INDEX, ATTR.NAME, ATTR.DESCRIPTION, ATTR.TYPE, ATTR.IS_UNIQUE,
 				ATTR.IS_BASEDSP, ATTR.IS_NOT_NULL, ATTR.IS_INHERITED, ATTR.FIELD_MODE,
-				ATTR.IS_ACTIVE, ATTR.GROUP
+				ATTR.IS_ACTIVE, ATTR.GROUP, ATTR.ABSOLUTE_CLASS_ORDER, ATTR.CLASS_ORDER_SIGN
 			],
 			autoLoad : false,
 			proxy : {

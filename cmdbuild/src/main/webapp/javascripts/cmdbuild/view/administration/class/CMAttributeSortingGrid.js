@@ -8,10 +8,8 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 	initComponent:function() {
 
 		this.store = new Ext.data.Store({
-			fields: [
-				"index", "name", "description", "type", "isunique",
-				"isbasedsp", "isnotnull","inherited", 'fieldmode',
-				'isactive', "group"
+			fields: [ // TODO
+				"name", "description", "absoluteClassOrder", "classOrderSign"
 			],
 			autoLoad : false,
 			proxy : {
@@ -29,12 +27,6 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 		});
 
 		this.columns = [
-			{
-				id : 'index',
-				hideable : false,
-				hidden : true,
-				dataIndex : 'index'
-			},
 			{
 				id : 'absoluteClassOrder',
 				hideable : false,
