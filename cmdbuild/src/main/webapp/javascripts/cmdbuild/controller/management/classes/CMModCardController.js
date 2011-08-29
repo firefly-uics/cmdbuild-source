@@ -2,7 +2,9 @@
 
 	Ext.define("CMDBuild.controller.management.classes.CMModClassController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
-		
+		mixins: {
+			commonFunctions: "CMDBuild.controller.management.common.CMModClasseAndWFCommons"
+		},
 		constructor: function() {
 			this.callParent(arguments);
 
@@ -61,33 +63,6 @@
 				this.relationsController.onEntrySelect(selection);
 				this.mdController.onEntrySelect(selection);
 			}
-		},
-
-		/*
-		 * p = {
-				Id: the id of the card
-				IdClass: the id of the class which the card belongs,
-				activeFirstTab: true to force the tab panel to return to the first tab 
-			}
-		 */
-		openCard: function(p) {
-			var entryType = _CMCache.getEntryTypeById(p.IdClass),
-				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
-				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
-
-			if (p.activeFirstTab) {
-				this.view.cardTabPanel.activeFirstTab();
-			}
-
-			this.danglingCardToOpen = p;
-
-			accordion.expand();
-
-			Ext.Function.createDelayed(function() {
-			// TODO try to substitute this with the listener "afterlayout"
-				accordion.deselect();
-				accordion.selectNodeById(p.IdClass);
-			}, 100)();
 		}
 	});
 

@@ -144,12 +144,15 @@ public class CardQueryImpl implements CardQuery {
 	 */
 
 	public CardQuery fullText(String fullTextQuery) {
-		if (fullTextQuery != null && fullTextQuery.trim().isEmpty()) {
-			this.fullTextQuery = null;
-		} else {
-			this.fullTextQuery = fullTextQuery;
+		if (fullTextQuery != null) {
+			fullTextQuery = fullTextQuery.trim();
+			if (fullTextQuery.isEmpty()) {
+				fullTextQuery = null;
+			}
 		}
-	    return this;
+		this.fullTextQuery = fullTextQuery;
+
+		return this;
 	}
 
 	public CardQuery cardNotInRelation(DirectedDomain dDomain, ITable classDestination) {	  

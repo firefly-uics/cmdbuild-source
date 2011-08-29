@@ -80,9 +80,7 @@ public class ModCard extends JSONBase {
 			removeReadOnlySubclasses(cardQuery, userContext);
 		}
 
-		if (fullTextQuery != null) {
-			cardQuery.fullText(fullTextQuery.trim());
-		}
+		cardQuery.fullText(fullTextQuery);
 
 		applySortToCardQuery(sorters, cardQuery);
 

@@ -58,32 +58,40 @@
 		openCard: function(p) {
 			p['FilterCategory'] = this.filterCategory;
 
-			CMDBuild.ServiceProxy.card.getPosition({
-				params: p,
+			this.updateStoreForClassId(p.IdClass, {
 				scope: this,
-				failure: onGetPositionFailure,
-				success: function onGetPositionSuccess(response, options, resText) {
-					var position = resText.position,
-						pageNumber = getPageNumber(position),
-						pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-						relativeIndex = (position - 1) % pageSize;
-
-					this.updateStoreForClassId(p.IdClass, {
+				cb: function cbOfUpdateStoreForClassId() {
+					this.store.load({
 						scope: this,
-						cb: function cbOfUpdateStoreForClassId() {
-							this.loadPage(pageNumber, {
-								cb: function callBackOfLoadPage(records, operation, success) {
-									try {
-										this.getSelectionModel().select(relativeIndex);
-									} catch (e) {
-										_debug("I was not able to select the record at " + relativeIndex, p);
-										_trace();
-										
-									}
-								}
-							});
+						callback: function() {
+							_openCard.call(this, p);
 						}
 					});
+
+					function _openCard(p) {
+						CMDBuild.ServiceProxy.card.getPosition({
+							params: p,
+							scope: this,
+							failure: onGetPositionFailure,
+							success: function onGetPositionSuccess(response, options, resText) {
+								var position = resText.position,
+									pageNumber = getPageNumber(position),
+									pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+									relativeIndex = (position - 1) % pageSize;
+	
+								this.loadPage(pageNumber, {
+									cb: function callBackOfLoadPage(records, operation, success) {
+										try {
+											this.getSelectionModel().select(relativeIndex);
+										} catch (e) {
+											_debug("I was not able to select the record at " + relativeIndex, p);
+											_trace();
+										}
+									}
+								});
+							}
+						});
+					}
 				}
 			});
 		},

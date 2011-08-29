@@ -128,6 +128,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/menu/CMMenuAccordionController.js"></script>
 
 	<!-- COMMON -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClasseAndWFCommons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMDetailWindowController.js"></script>
