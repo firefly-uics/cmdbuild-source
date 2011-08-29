@@ -12,10 +12,11 @@
 		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
 		cmName: "Create/Modify card",
 
-		constructor: function(view, ownerCtrl) {
+		constructor: function(view, ownerController) {
 			this.callParent(arguments);
 
 			this.widgetConf = this.view.widgetConf;
+			this.ownerController = ownerController;
 			this.outputName = this.widgetConf.outputName;
 			this.noSelect = !(this.widgetConf.enabledFunctions['single'] || this.widgetConf.enabledFunctions['multi']);
 			this.wiewIdenrifier = this.widgetConf.identifier;
@@ -33,7 +34,9 @@
 			
 			this.callBacks = Ext.apply(this.callBacks, {
 				'action-relation-deletecard': this.onDeleteCard
-			})
+			});
+
+			this.view.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
 		onDeleteCard: function(model) {
@@ -71,6 +74,14 @@
 			} catch (e) {
 				_debug("There is no template resolver");
 				return undefined;
+			}
+		},
+
+		onBackToActivityButtonClick: function() {
+			try {
+				this.ownerController.showActivityPanel();
+			} catch (e) {
+				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
 		},
 		// end baseWFWidget Functions

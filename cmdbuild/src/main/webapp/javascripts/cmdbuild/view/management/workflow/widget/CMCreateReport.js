@@ -62,6 +62,10 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 			name : 'saveButton'
 		});
 
+		this.backToActivityButton = new Ext.button.Button({
+			text: CMDBuild.Translation.common.buttons.workflow.back
+		});
+
 		Ext.apply(this, {
 			layout: 'border',
 			buttonAlign: 'center',
@@ -69,7 +73,7 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 			cls: "x-panel-body-default-framed",
 			border: false,
 			frame: false,
-			buttons: [this.saveButton]
+			buttons: [this.saveButton, this.backToActivityButton]
 		});
 
 		this.callParent(arguments);

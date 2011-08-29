@@ -3,6 +3,16 @@
 		extend: "CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel",
 
 		initComponent: function() {
+			this.backToActivityButton = new Ext.button.Button({
+				text: CMDBuild.Translation.common.buttons.workflow.back
+			});
+
+			Ext.apply(this, {
+				buttonAlign: "center",
+				buttons: [this.backToActivityButton],
+				cls: "x-panel-body-default-framed"
+			});
+
 			this.callParent(arguments);
 			this.mon(this, "activate", function() {
 				this.enable();

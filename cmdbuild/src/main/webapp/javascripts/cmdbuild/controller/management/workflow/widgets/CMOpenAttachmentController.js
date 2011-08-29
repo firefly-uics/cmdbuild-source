@@ -14,6 +14,8 @@
 			this.activity = this.ownerController.currentActivity;
 			this.currentClassId = this.activity.get("IdClass");
 			this.currentCardId = this.activity.get("Id");
+
+			this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
 		destroy: function() {
@@ -54,6 +56,13 @@
 		},
 		isValid: function() {
 			return true;
+		},
+		onBackToActivityButtonClick: function() {
+			try {
+				this.ownerController.showActivityPanel();
+			} catch (e) {
+				CMDBuild.log.error("Something went wrong displaying the Activity panel");
+			}
 		}
 	});
 

@@ -69,14 +69,22 @@
 				noSelect: this.NoSelect,
 				hideMode: "offsets",
 				region: "center",
-				border: false
+				border: false,
+				cls: "cmborderbottom"
+			});
+
+			this.backToActivityButton = new Ext.button.Button({
+				text: CMDBuild.Translation.common.buttons.workflow.back
 			});
 
 			Ext.apply(this, {
 				items: [this.grid],
 				layout: "border",
 				border: false,
-				frame: false
+				frame: false,
+				buttonAlign: "center",
+				buttons: [this.backToActivityButton],
+				cls: "x-panel-body-default-framed"
 			});
 
 			this.callParent(arguments);

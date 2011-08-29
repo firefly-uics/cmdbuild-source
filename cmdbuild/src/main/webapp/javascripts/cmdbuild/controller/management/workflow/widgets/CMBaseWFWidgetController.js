@@ -16,6 +16,9 @@
 			this.outputName = this.widgetConf.outputName;
 			this.wiewIdenrifier = this.widgetConf.identifier;
 
+			if (this.view.backToActivityButton) {
+				this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
+			}
 		},
 
 		activeView: function() {
@@ -48,7 +51,15 @@
 				return undefined;
 			}
 		},
-		
+
+		onBackToActivityButtonClick: function() {
+			try {
+				this.ownerController.showActivityPanel();
+			} catch (e) {
+				CMDBuild.log.error("Something went wrong displaying the Activity panel");
+			}
+		},
+
 		// template for subclasses
 		beforeActiveView: Ext.emptyFn,
 		destroy: Ext.emptyFn,
