@@ -563,7 +563,7 @@
       "previous": "Indietro",
       "step1": {
          "choose": "Scegli la lingua di default",
-         "showLangChoose": "Mostra la scelta della lingua nella finestra di login"
+         "showLangChoose": "Mostra la scelta della lingua al login"
       },
       "step2": {
          "create_shark": "Crea uno schema Shark",
