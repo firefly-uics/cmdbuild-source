@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMAttachmentController", {
-		extend: "CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController",
+		extend: "CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController",
 
 		constructor: function(view, ownerController) {
 			this.callParent(arguments);

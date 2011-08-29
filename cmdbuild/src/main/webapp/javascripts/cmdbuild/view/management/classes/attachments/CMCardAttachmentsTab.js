@@ -12,7 +12,7 @@ Ext.define("CMAttachmentModel", {
 		'Author','Version','Filename','Description','Fake']
 });
 
-Ext.define("CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel", {
+Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel", {
 	extend: "Ext.grid.Panel",
 	translation : CMDBuild.Translation.management.modcard,
 	eventtype: 'card',

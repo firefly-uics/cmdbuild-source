@@ -4,11 +4,8 @@
 
 		initComponent: function() {
 			this.callParent(arguments);
-			this.on("activate", function() {
-				this.enable();
-			}, this);
-	
-			this.on("deactivate", function() {
+
+			this.mon(this, "deactivate", function() {
 				this.disable();
 			}, this);
 		},
@@ -33,6 +30,7 @@
 		},
 
 		cmActivate: function() {
+			this.enable();
 			this.ownerCt.setActiveTab(this);
 			if (this.readOnly) {
 				this.disableModify();

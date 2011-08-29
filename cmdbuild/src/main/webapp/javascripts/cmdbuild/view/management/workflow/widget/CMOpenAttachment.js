@@ -1,6 +1,6 @@
 (function() {
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMOpenAttachment", {
-		extend: "CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel",
+		extend: "CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel",
 
 		initComponent: function() {
 			this.backToActivityButton = new Ext.button.Button({
@@ -14,10 +14,7 @@
 			});
 
 			this.callParent(arguments);
-			this.mon(this, "activate", function() {
-				this.enable();
-			}, this);
-	
+
 			this.mon(this, "deactivate", function() {
 				this.disable();
 			}, this);
@@ -43,6 +40,7 @@
 		},
 
 		cmActivate: function() {
+			this.enable();
 			this.ownerCt.setActiveTab(this);
 		}
 	});

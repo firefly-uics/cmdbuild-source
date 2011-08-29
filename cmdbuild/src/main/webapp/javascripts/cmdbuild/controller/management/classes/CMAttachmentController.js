@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
-	Ext.define("CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController", {
+	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		mixins: {
 			observable: 'Ext.util.Observable'
 		},

@@ -32,7 +32,7 @@
 				disabled: true
 			});
 
-			this.attachmentPanel = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
+			this.attachmentPanel = new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
 				title: tr.tabs.attachments,
 				disabled: true
 			});
