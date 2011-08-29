@@ -4,6 +4,9 @@
 
 	Ext.define("CMDBuild.controller.management.workflow.CMModWorkflowController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
+		mixins: {
+			commonFunctions: "CMDBuild.controller.management.common.CMModClasseAndWFCommons"
+		},
 		constructor: function() {
 			this.callParent(arguments);
 			this.grid = this.view.cardGrid;
@@ -93,26 +96,6 @@
 
 		showActivityPanel: function() {
 			this.tabPanel.showActivityPanel();
-		},
-
-		openCard: function(p) {
-			var entryType = _CMCache.getEntryTypeById(p.IdClass),
-				accordion = _CMMainViewportController.getFirstAccordionWithANodeWithGivenId(p.IdClass),
-				modPanel = _CMMainViewportController.findModuleByCMName(entryType.get("type"));
-
-			if (p.activeFirstTab) {
-				this.view.cardTabPanel.activeFirstTab();
-			}
-
-			this.danglingCardToOpen = p;
-
-			accordion.expand();
-
-			Ext.Function.createDelayed(function() {
-			// TODO try to substitute this with the listener "afterlayout"
-				accordion.deselect();
-				accordion.selectNodeById(p.IdClass);
-			}, 100)();
 		},
 
 		isStateOpen: function() {
