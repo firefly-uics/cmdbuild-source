@@ -64,7 +64,7 @@
 				sortable : false,
 				renderer : imageTagBuilderForIcon,
 				align : 'center',
-				cellCls : 'grid-button',
+				tdCls : 'grid-button',
 				dataIndex : 'Fake',
 				menuDisabled : true,
 				hideable : false

@@ -16,6 +16,13 @@
 		},
 
 		//override
+		getHeaderConfig: function() {
+			var header = this.callParent(arguments);
+			header.tdCls = "grid-button";
+			return header;
+		},
+
+		//override
 		onHeaderClick: function(headerCt, header, e) {
 			if (header.isCheckerHd) {
 				e.stopEvent(); // We have to supress the event or it will scrollTo the change

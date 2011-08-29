@@ -34,6 +34,7 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 			dataIndex : "type",
 			width: this.exportMode ? 50 : 100,
 			fixed: true,
+			tdCls: "grid-button",
 			renderer: Ext.Function.bind(loadReportIcons, this),
 			menuDisabled: true,
 			hideable: false

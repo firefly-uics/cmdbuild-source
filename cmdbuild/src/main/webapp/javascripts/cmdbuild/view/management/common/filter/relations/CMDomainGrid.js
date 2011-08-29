@@ -146,7 +146,7 @@
 					return (value == true)?'<img class="action-attachment-download" src="images/icons/tick.png"/>':'';
 				},
 				align: 'center', 
-				cellCls: 'grid-button', 
+				tdCls: 'grid-button', 
 				dataIndex: 'setted',
 				menuDisabled: true,
 				id: 'imagecolumn',

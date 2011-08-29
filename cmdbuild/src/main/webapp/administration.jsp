@@ -23,10 +23,10 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="icon" href="images/favicon.ico" />
 
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all-gray.css" />
+		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 
 		<%@ include file="libsJsFiles.jsp"%>
 		<script type="text/javascript">

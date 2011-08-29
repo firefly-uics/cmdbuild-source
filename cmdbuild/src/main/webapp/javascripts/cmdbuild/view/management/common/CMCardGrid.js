@@ -309,8 +309,9 @@
 		 if (c && c.get("tableType") != "simpletable") {
 			var graphHeader = {
 				header: '&nbsp', 
-				width: 30, 
-				fixed: true, 
+				width: 30,
+				tdCls: "grid-button",
+				fixed: true,
 				sortable: false, 
 				renderer: renderGraphIcon, 
 				align: 'center', 

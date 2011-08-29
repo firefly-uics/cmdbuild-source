@@ -68,7 +68,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 				{header: tr.addresshdr, sortable: false, renderer: renderAddress, dataIndex: 'Fake', flex: 1},
 				{header: tr.subjecthdr, sortable: false, dataIndex: 'Subject', flex: 1},
 				{header: '&nbsp', sortable: false, renderer: renderEmailContent, dataIndex: 'Content', menuDisabled: true, hideable: false, flex: 2},
-				{header: '&nbsp', width: 90, fixed: true, sortable: false, renderer: renderEmailActions, align: 'center', cellCls: 'grid-button', dataIndex: 'Fake', menuDisabled: true, hideable: false}
+				{header: '&nbsp', width: 90, fixed: true, sortable: false, renderer: renderEmailActions, align: 'center', tdCls: 'grid-button', dataIndex: 'Fake', menuDisabled: true, hideable: false}
 			],
 			features: [{
 				ftype: 'groupingsummary',

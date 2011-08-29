@@ -32,7 +32,7 @@
 				sortable : false,
 				renderer : this.renderGraphIcon,
 				align : 'center',
-				cellCls : 'grid-button',
+				tdCls : 'grid-button',
 				dataIndex : 'Id',
 				menuDisabled : true,
 				id : 'imagecolumn',
