@@ -59,6 +59,18 @@
 					this.onCardSelected(card, reloadField = true, loadRemoteData = true);
 				}
 			}
+		},
+
+		// override
+		buildButtons: function() {
+			this.callParent(arguments);
+			this.cmButtons = this.cmButtons || [];
+
+			this.backToActivityButton = new Ext.button.Button({
+				text: CMDBuild.Translation.common.buttons.workflow.back
+			});
+
+			this.cmButtons.push(this.backToActivityButton);
 		}
 	});
 
