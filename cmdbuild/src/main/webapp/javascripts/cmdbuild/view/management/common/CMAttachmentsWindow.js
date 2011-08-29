@@ -6,7 +6,7 @@ Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
 				, CMDBuild.Translation.management.modcard.tabs.attachments 
 				, this.masterCard.Description);
 
-		this.grid = new CMDBuild.view.management.classes.attacchments.CMCardAttachmentsPanel({
+		this.grid = new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
 			border: false
 		});
 

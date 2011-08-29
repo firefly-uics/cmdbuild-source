@@ -20,7 +20,7 @@
 			this.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(this.mdPanel, this);
 
 			this.attachmentsPanel = this.view.cardTabPanel.attachmentPanel;
-			this.attachmentsController = new CMDBuild.controller.management.classes.attacchments.CMCardAttacchmentsController(this.attachmentsPanel);
+			this.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(this.attachmentsPanel);
 
 			this.relationsPanel = this.view.cardTabPanel.relationsPanel;
 			this.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(this.relationsPanel, this);

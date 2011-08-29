@@ -23,7 +23,7 @@
 
 		activeView: function() {
 			this.view.cmActivate();
-			this.beforeActiveView();
+			this.beforeActiveView(); // NdPaolo: Martino, are you still confusing before with after?
 		},
 
 		toString: function() {
