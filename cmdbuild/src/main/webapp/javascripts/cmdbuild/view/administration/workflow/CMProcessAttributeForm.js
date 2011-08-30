@@ -18,7 +18,6 @@
 					this.attributeDescription,
 					this.isBasedsp,
 					this.attributeUnique,
-					this.attributeNotNull,
 					this.isActive,
 					{
 						xtype: "hidden",
