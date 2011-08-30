@@ -6,6 +6,7 @@ CMDBuild.Management.ForeignKeyField = (function() {
 			var field = new CMDBuild.Management.SearchableCombo({
 				plugins: new CMDBuild.SetValueOnLoadPlugin(),
 				fieldLabel: attribute.description,
+				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: attribute.name,
 				store: store,
 				queryMode: 'local',
