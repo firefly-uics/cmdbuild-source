@@ -20,7 +20,13 @@
 		initComponent: function() {
 			this.buildTBar();
 
-			var me = this;
+			this.attrsColumn = new Ext.grid.column.Column({
+				header: CMDBuild.Translation.administration.modClass.tabs.attributes,
+				hideMode: "visibility", // Otherwise it fails calling twice hide() on it
+				flex: 3,
+				sortable: false,
+				dataIndex: "rel_attr"
+			});
 
 			Ext.apply(this, {
 				loadMask: false,
@@ -40,7 +46,7 @@
 					{header: col_tr.begin_date, flex: 1, sortable: false, dataIndex: 'rel_date'},
 					{header: col_tr.code, flex: 1, sortable: false, dataIndex: 'dst_code'},
 					{header: col_tr.description, flex: 2, sortable: false, dataIndex: 'dst_desc'},
-					{header: CMDBuild.Translation.administration.modClass.tabs.attributes, flex: 3, sortable: false, dataIndex: 'rel_attr'},
+					this.attrsColumn,
 					{
 						header: '&nbsp',
 						fixed: true, 
@@ -101,11 +107,10 @@
 			r.removeAll();
 			r.appendChild(nodes);
 
-			var attrsColumn = this.columns[5];
 			if (this.showAttributesColumn) {
-				attrsColumn.show();
+				this.attrsColumn.show();
 			} else {
-				attrsColumn.hide();
+				this.attrsColumn.hide();
 			}
 		},
 
