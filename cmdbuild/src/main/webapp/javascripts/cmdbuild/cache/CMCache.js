@@ -127,7 +127,8 @@
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = { 
 					limit: maxCards,
-					IdClass: foreignKye.fkDestination
+					IdClass: foreignKye.fkDestination,
+					NoFilter: true
 				};
 
 			return new Ext.data.JsonStore({
@@ -139,15 +140,14 @@
 					reader: {
 						type: 'json',
 						root: 'rows'
-					}
+					},
+					extraParams: baseParams
 				},
 				sortInfo: {
 					field: 'Description',
 					direction: 'ASC' 
 				},
-				autoLoad : {
-					params: baseParams
-				}
+				autoLoad : true
 			});
 		},
 
