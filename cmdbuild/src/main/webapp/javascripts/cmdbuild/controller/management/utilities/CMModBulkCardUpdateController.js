@@ -70,8 +70,19 @@
 
 	function onClassTreeSelected(sm, selection) {
 		if (selection.length > 0) {
-			this.currentClassId = selection[0].get("id")
-			this.view.onClassTreeSelected(this.currentClassId);
+			var node = selection[0],
+				selectable = false;
+
+			try {
+				selectable = node.raw.cmData.selectable;
+			} catch (e) {
+				// the folder has not cmData
+			}
+
+			if (selectable) {
+				this.currentClassId = node.get("id");
+				this.view.onClassTreeSelected(this.currentClassId);
+			}
 		}
 	}
 
