@@ -93,6 +93,7 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 
 //private
 function canBeBlank(attribute) {
+	// FIXME This should not be duplicated
 	return !((attribute.fieldmode == "required") || attribute.isnotnull);
 };
 
@@ -249,13 +250,11 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 
 //private
 var forgeAttributeForMultilevelLookup = function(attribute, lookupName) {
-	var notRequired = (attribute.fieldmode != "required"); 
-	var label = (notRequired ? '': '* ') + attribute.description;
-	
 	var forgedAttribute = {
 		lookup: lookupName,
 		isnotnull: attribute.isnotnull,
-		description: label,
+		fieldmode: attribute.fieldmode,
+		description: attribute.description,
 		name: attribute.name + "_" + lookupName
 	};
 	
