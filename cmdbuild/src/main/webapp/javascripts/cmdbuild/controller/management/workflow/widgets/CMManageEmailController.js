@@ -8,7 +8,7 @@
 
 		constructor: function() {
 			this.callParent(arguments);
-			this.isLoad = false;
+			this.loaded = false;
 
 			this.widgetConf = normalizewidgetData(this.view.widgetConf, this.TEMPLATE_FIELDS);
 
@@ -57,12 +57,11 @@
 		},
 
 		addTemplatesIfNeededOnLoad: function(callbackFn) {
-			if (this.isLoaded) {
+			if (this.loadeded) {
 				this.addTemplatesIfNeeded(callbackFn);
 			} else {
 				this.view.emailGrid.store.on('load', function() {
 					this.addTemplatesIfNeeded(callbackFn);
-					this.isLoad = true;
 				}, this, {single: true});
 			}
 		},
@@ -70,12 +69,15 @@
 		addTemplatesIfNeeded: function(callbackFn) {
 			if (this.readWrite
 					&& (this.usedTemplates.length > 0)
-					&& this.view.emailGrid.storeHasNoOutgoing()) {
-
+					&& this.templatesShouldBeAdded()) {
 				this.addTemplates(callbackFn);
 			} else if (callbackFn) {
 				callbackFn();
 			}
+		},
+
+		templatesShouldBeAdded: function() {
+			return this.view.emailGrid.storeHasNoOutgoing();
 		},
 
 		addTemplates: function(callbackFn) {
@@ -103,34 +105,23 @@
 		// override
 		beforeActiveView: function() {
 			if (this.readWrite) {
-				this.addTemplatesIfNeededOnLoad();
+				this.addTemplatesIfNeeded();
 			}
 
-			if (!this.isLoad) {
-				// 1) The boss want that the grid is loaded only the first time that was open
-				// 2) I don't know why the loadMask of the grid does not work!
+			if (!this.loaded) {
+				// FIXME I don't know why the loadMask of the grid does not work!
 				this.view.getEl().mask("Loading...");
 				this.view.emailGrid.store.load({
 					scope: this,
 					callback: function(records, operation, success) {
+						this.loaded = true;
 						this.view.getEl().unmask();
 					}
 				});
 			}
-		}
+		},
 
-//		,onSave: function(isAdvance) {
-//			if (this.readWrite) {
-//				if (isAdvance) {
-//					var realReactFn = this.realReact.createDelegate(this, [isAdvance]);
-//					this.emailGrid.addTemplatesIfNeededOnLoad(realReactFn);
-//				} else {
-//					this.realReact(isAdvance);
-//				}
-//			}
-//		}
-
-		,getData: function(isAdvance) {
+		getData: function(isAdvance) {
 			var outgoingEmails = this.view.getOutgoing(true),
 				outgoingEmailsEnc = Ext.JSON.encode(outgoingEmails),
 				deletedEnc = Ext.JSON.encode(this.view.getDeletedEmails());
@@ -140,9 +131,9 @@
 				Deleted: deletedEnc,
 				ImmediateSend: isAdvance
 			};
-		}
+		},
 
-		,isValid: function() {
+		isValid: function() {
 			if (this.widgetConf.Required && this.getOutgoing().length == 0) {
 				return false;
 			} else {
