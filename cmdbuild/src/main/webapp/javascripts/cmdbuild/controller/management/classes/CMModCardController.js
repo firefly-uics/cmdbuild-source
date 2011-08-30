@@ -34,7 +34,7 @@
 				// args[1] is the array with the loaded records
 				// so, if there are no records clear the view
 				if (args[1] && args[1].length == 0) {
-					this.cardPanel.disableModify(enableBar = false);
+					this.cardPanel.displayMode();
 				}
 			}, this);
 

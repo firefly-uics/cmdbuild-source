@@ -32,7 +32,7 @@
 				attributes: attributes,
 				split: true,
 				frame: false,
-				border: "1 0 0 0",
+				border: false,
 				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
 					padding: "5px"
@@ -42,9 +42,10 @@
 			this.callParent(arguments);
 
 			if (this.attributesPanel != null) {
-				this.tabPanel.region = "center";
-				this.items.push(this.attributesPanel);
 				this.layout = "border";
+				this.tabPanel.region = "center";
+				this.tabPanel.addCls("cmborderbottom");
+				this.items.push(this.attributesPanel);
 			} else {
 				this.attributesPanel = buildNullObject();
 			}
@@ -60,13 +61,13 @@
 					this.close();
 				}
 			});
-			
+
 			Ext.apply(this, {
 				buttonAlign: "center",
 				buttons: [this.saveButton, this.abortButton]
 			});
 		},
-		
+
 		// override
 		show: function() {
 			this.callParent(arguments);
@@ -76,10 +77,16 @@
 				rel_attrs = this.relation.rel_attr || {};
 				
 				for (var i = 0, l=fields.length; i<l; ++i) {
-					var f = fields[i],
-						name = f.CMAttribute.name,
-						val = rel_attrs[name];
-					
+					var f = fields[i];
+					var name;
+					if (f.CMAttribute) {
+						name = f.CMAttribute.name
+					} else {
+						name = f.name;
+					}
+
+					var val = rel_attrs[name];
+
 					if (val) {
 						f.setValue(val.id || val);
 					}
