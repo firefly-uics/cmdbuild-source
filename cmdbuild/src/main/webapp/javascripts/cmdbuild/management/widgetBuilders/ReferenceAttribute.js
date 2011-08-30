@@ -5,14 +5,46 @@
 Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.ReferenceAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.ReferenceAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
+/**
+ * @override
+ * @param attribute
+ * @return Ext.form.FieldSet
+ */
+CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = function(attribute) {
+	var fieldId = "_"+CMDBuild.Utils.nextId();
+	var attributeCopy = Ext.apply({}, {
+		fieldmode: "write", //change the fieldmode because in the filter must write on this field
+		name: attribute.name+fieldId
+	}, attribute);
+
+	var field = this.buildField(attributeCopy, hideLabel = true, skipSubAttributes = true);
+	var query = this.getQueryCombo(attributeCopy); 
+	var fieldset = this.buildFieldsetForFilter(fieldId,field,query,attributeCopy.description);
+	return fieldset;
+};
 
 /**
  * @override
  * @param attribute
  * @return CMDBuild.Management.ReferenceCombo
  */
-CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = function(attribute) {
-	var subFields = getSubFields(attribute, display = false);
+CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildField = function(attribute, hideLabel, skipSubAttributes) {
+	var field = this.buildAttributeField(attribute, skipSubAttributes);
+	field.hideLabel = hideLabel;
+	return this.markAsRequired(field, attribute);
+};
+
+/**
+ * @override
+ * @param attribute
+ * @return CMDBuild.Management.ReferenceCombo
+ */
+CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = function(attribute, skipSubAttributes) {
+	var subFields = [];
+	if (!skipSubAttributes) {
+		subFields = getSubFields(attribute, display = false);
+	}
+
 	return CMDBuild.Management.ReferenceField.build(attribute, subFields);
 };
 
