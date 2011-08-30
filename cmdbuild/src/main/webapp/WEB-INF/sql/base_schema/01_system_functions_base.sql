@@ -736,6 +736,8 @@ BEGIN
 	ELSIF (TG_OP='DELETE') THEN
 		-- RETURN NEW would return NULL forbidding the operation
 		RETURN OLD;
+	ELSE
+		NEW."BeginDate" = now();
 	END IF;
 	RETURN NEW;
 END;
