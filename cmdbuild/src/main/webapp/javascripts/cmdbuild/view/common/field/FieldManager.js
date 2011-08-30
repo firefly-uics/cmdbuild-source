@@ -22,23 +22,23 @@
 
 	Ext.define("CMDBuild.Management.FieldManager", {
 	statics: {
-	
+
 		loadAttributes: function(classId, callback) {
 			CMDBuild.Cache.getAttributeList(classId, callback);		
 		},
-		
-		getFieldForAttr: function(attribute, readonly) {
+
+		getFieldForAttr: function(attribute, readonly, skipSubAttributes) {
 			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) { 
 				return undefined;
 			}
-			
+
 			if (readonly || attribute.fieldmode == "read") {
 				return attributesMap[attribute.type].buildReadOnlyField(attribute);
 			} else {
-				return attributesMap[attribute.type].buildField(attribute);			
+				return attributesMap[attribute.type].buildField(attribute, hideLabel=undefined, skipSubAttributes);
 			}
 		},
-	
+
 		getHeaderForAttr: function(attribute) {
 			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) {
 				return undefined;
@@ -46,14 +46,14 @@
 				return attributesMap[attribute.type].buildGridHeader(attribute);
 			}
 		},
-		
+
 		getDisplayNameForAttr: function(attribute) {
 			if (attributeTypeIsNotHandled(attribute)) {
 				return undefined;
 			}
 			return attributesMap[attribute.type].getDisplayNameForAttr(attribute);
 		}, 
-	
+
 		getFieldSetForFilter: function(attribute) {
 			if (attributeTypeIsNotHandled(attribute)) {
 				return undefined;
