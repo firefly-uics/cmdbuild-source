@@ -52,6 +52,14 @@
 		}
 	});
 
+	Ext.define("XPDLVersionModel", {
+		extend: "Ext.data.Model",
+		fields: [
+			{name: "index", type: "int"},
+			{name: "id", type: "string"}
+		]
+	});
+
 	Ext.define("CMDBuild.view.administration.workflow.CMXpdlDownloadForm", {
 		extend: "Ext.form.Panel",
 		translation : CMDBuild.Translation.administration.modWorkflow.xpdlDownload,
@@ -70,12 +78,8 @@
 				displayField : 'id',
 				valueField : 'id',
 				store : Ext.create("Ext.data.Store", {
-					fields: ['id'],
-					data: [],
-					sorters : [ {
-						property : 'id',
-						direction : "DESC"
-					}]
+					model: "XPDLVersionModel",
+					data: []
 				}),
 				editable : false,
 				forceSelection : true,
@@ -96,14 +100,23 @@
 		},
 		
 		onProcessSelected: function(xpdl) {
-			this.versionCombo.store.removeAll();
+			var store = this.versionCombo.store;
 
+			store.removeAll();
 			for(var i=0; i<xpdl.versions.length; i++) {
-				this.versionCombo.store.add({id: xpdl.versions[i]});
+				var version = xpdl.versions[i];
+				store.add({id: version, index: version});
 			}
+			store.add({id: "template", index: 0});
 
-			this.versionCombo.store.add({id: 'template'});
-			this.versionCombo.setValue('template');
+			store.sort([
+				{
+					property : "index",
+					direction: 'DESC'
+				}
+			]);
+
+			this.versionCombo.setValue(store.getAt(0).getId());
 		}
 	});
 
