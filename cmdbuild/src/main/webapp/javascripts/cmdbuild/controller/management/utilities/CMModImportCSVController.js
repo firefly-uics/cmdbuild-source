@@ -5,17 +5,15 @@
 		
 		constructor: function() {
 			this.callParent(arguments);
-			
+
 			this.view.form.uploadButton.on("click", onUploadButtonClick, this);
 			this.view.form.classList.on("select", onClassListSelect, this);
 			this.view.updateButton.on("click", onUpdateButtonClick, this);
 			this.view.confirmButton.on("click", onConfirmButtonClick, this);
 			this.view.abortButton.on("click", onAbortButtonClick, this);
 		},
-		
-		onViewOnFront: function() {
 
-		}
+		onViewOnFront: function() {}
 	});
 
 	function onClassListSelect(combo, selections) {

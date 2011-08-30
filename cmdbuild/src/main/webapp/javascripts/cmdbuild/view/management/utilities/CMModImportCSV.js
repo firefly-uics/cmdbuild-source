@@ -25,6 +25,7 @@
 			Ext.apply(this, {
 				title: tr.title,
 				items:[this.form, this.grid],
+				buttonAlign: "center",
 				buttons: [
 					this.updateButton = new CMDBuild.buttons.UpdateButton(),
 					this.confirmButton = new CMDBuild.buttons.ConfirmButton(),
@@ -44,7 +45,7 @@
 		},
 		constructor: function() {
 	
-			this.classList = new Ext.form.ComboBox({
+			this.classList = new CMDBuild.field.CMBaseCombo({
 				store: _CMCache.getClassesStore(),
 				fieldLabel : tr.selectaclass,
 				width: 260,
@@ -75,7 +76,7 @@
 					allowBlank: false,
 					name: 'filecsv'
 				},
-				
+
 				new Ext.form.ComboBox({ 
 					name: 'separator',
 					fieldLabel: tr.separator,
@@ -84,20 +85,22 @@
 					hiddenName: 'separator',
 					store: new Ext.data.SimpleStore({
 						fields: ['value'],
-						data : [[','],[';'],['|']]
+						data : [[';'],[','],['|']]
 					}),
+					width: 150,
+					value: ";",
 					queryMode: 'local',
 					editable: false,
 					allowBlank: false
 				})],
-
+				buttonAlign: "center",
 				buttons: [this.uploadButton]
 			});
 
 			this.callParent(arguments);
 		}
 	});
-	
+
 	Ext.define("CMDBuild.view.management.utilities.CMModImportCSV.Grid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
@@ -127,14 +130,14 @@
 				fields:[],
 				data: []
 			});
-			
+
 			this.columns = [];
 			this.bbar = [this.searchField, "-", this.validFlag];
 			this.plugins = [this.cellEditing];
 			this.callParent(arguments);
 			
 		},
-		
+
 		loadData: function(data) {
 			this.store.loadData(data, append = false);
 		},
@@ -156,12 +159,12 @@
 				}
 			}
 		},
-		
+
 		//override
 		setColumnsForClass: function(classAttributes) {
 			this.classAttributes = classAttributes;
 		},
-		
+
 		//override
 		getStoreForFields: function(fields) {
 			fields.push("Id");
@@ -174,7 +177,7 @@
 				autoLoad: false
 			});
 		},
-		
+
 		configureHeadersAndStore: function(headersToShow) {
 			var grid = this;
 			var headers = [];
@@ -186,7 +189,8 @@
 
 				if (a) {
 					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(a);
-					var editor = CMDBuild.Management.FieldManager.getFieldForAttr(a);
+					var editor = CMDBuild.Management.FieldManager.getFieldForAttr(a, readOnly = false, skipSubFields = true);
+					editor.hideLabel = true;
 
 					if (a.type == "REFERENCE" || a.type == "LOOKUP") {
 						fields.push(header.dataIndex); // to have both name and name_value
@@ -196,17 +200,18 @@
 
 					if (header) {
 						header.field = editor;
+						header.hidden = false;
 						header.renderer = Ext.Function.bind(renderer, a,[header.dataIndex, grid],true);
 						headers.push(header);
 						fields.push(header.dataIndex);
 					}
 				}
 			}
-			
+
 			var s = this.getStoreForFields.call(this, fields);
 			this.reconfigure(s, headers);
 		},
-		
+
 		getRecordToUpload: function(){
 			var data = [];
 
