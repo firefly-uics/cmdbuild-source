@@ -4,6 +4,26 @@
 		standard: "CLASS"
 	};
 
+	function getTableType(classObj) {
+		return tableTypeMap[classObj.get("tableType")]
+	}
+
+	function cannotHaveUniqueAttributes(classObj) {
+		return isSuperClass(classObj) || isSimpleClass(classObj);
+	}
+
+	function cannotHaveNotNullAttributes(classObj) {
+		return isSuperClass(classObj);
+	}
+
+	function isSuperClass(classObj) {
+		return classObj && classObj.get("superclass");
+	}
+
+	function isSimpleClass(classObj) {
+		return getTableType(classObj) == tableTypeMap.simpletable;
+	}
+
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
 	
 	// FIXME this take a store given from the cache. The model set the valueField as a
@@ -16,7 +36,7 @@
 				v = ""+v;
 			}
 
-			this.callParent([v]);CMDBuild.FkCombo
+			this.callParent([v]);
 		}
 	});
 
@@ -361,13 +381,13 @@
 
 				this.attributeTypeStore.load({
 					params : {
-						tableType : tableTypeMap[this.classObj.get("tableType")]
+						tableType : getTableType(this.classObj)
 					}
 				});
 
 				this.hideContextualFields();
-				this.attributeUnique.cmImmutable = this.classObj.get("superclass");
-				this.attributeNotNull.cmImmutable = this.classObj.get("superclass");
+				this.attributeUnique.cmImmutable = cannotHaveUniqueAttributes(this.classObj);
+				this.attributeNotNull.cmImmutable = cannotHaveNotNullAttributes(this.classObj);
 			}
 		},
 
@@ -434,10 +454,8 @@
 			this.setDefaultValues();
 			this.hideContextualFields();
 			this.enableModify(all = true);
-			if (this.classObj && this.classObj.get("superclass")) {
-				this.attributeUnique.disable();
-				this.attributeNotNull.disable();
-			}
+			this.attributeUnique.setDisabled(cannotHaveUniqueAttributes(this.classObj));
+			this.attributeNotNull.setDisabled(cannotHaveNotNullAttributes(this.classObj));
 		},
 
 		setDefaultValues: function() {
