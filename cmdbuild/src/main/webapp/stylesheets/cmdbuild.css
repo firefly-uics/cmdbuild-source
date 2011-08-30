@@ -570,44 +570,6 @@ em {
     text-align: center;
 }
 
-
-/******************************************/
-/*
-.x-tree-node-expanded .cmdbuild-tree-superprocessclass-icon {
-	background-image:
-		url(../images/icons/tree/superclassprocess_expanded.png) !important;
-}
-
-.x-tree-node-collapsed .cmdbuild-tree-superprocessclass-icon {
-	background-image:
-		url(../images/icons/tree/superclassprocess_collapsed.png) !important;
-}
-
-.cmdbuild-tree-view-icon {
-	background-image: url(../images/icons/tree/view.png) !important;
-}
-
-.x-tree-node-leaf .cmdbuild-tree-folder-icon {
-	background-image: url(../images/icons/tree/folder_open.png) !important;
-}
-
-.x-tree-node-expanded .cmdbuild-tree-folder-icon {
-	background-image: url(../images/icons/tree/folder_expanded.gif)
-		!important;
-}
-
-.x-tree-node-collapsed .cmdbuild-tree-folder-icon {
-	background-image: url(../images/icons/tree/folder_collapsed.gif)
-		!important;
-}
-
-.x-tree-node-leaf .cmdbuild-tree-folder-icon {
-	background-image: url(../images/icons/tree/folder_expanded.gif)
-		!important;
-}
-
-*/
-
 /*
  * Login flags
  */

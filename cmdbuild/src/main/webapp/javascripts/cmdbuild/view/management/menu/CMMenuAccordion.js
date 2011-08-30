@@ -35,18 +35,30 @@
 			idClass: node.id,
 			text: node.text,
 			tableType: node.tableType,
-			leaf: true,
+			leaf: type != "folder",
 			cmName: node.type == "processclass" ? "process" : node.type, //ugly compatibility hack
 			parent: node.parent,
-			iconCls: "cmdbuild-tree-" + (superclass ? "super" : "") + type +"-icon",
+			iconCls: getIconClass(),
 			cmIndex: node.cmIndex
 		};
+
+		function getIconClass() {
+			if (type == "folder") {
+				return undefined;
+			} else {
+				var out = "cmdbuild-tree-";
+				if (superclass) {
+					out += "super";
+				}
+				return out + type + "-icon";
+			}
+		}
 
 		if (isAReport(node)) {
 			addReportStuff(n, node)
 		}
 
-		return n
+		return n;
 	}
 
 	function linkToParent(node, nodesMap) {
