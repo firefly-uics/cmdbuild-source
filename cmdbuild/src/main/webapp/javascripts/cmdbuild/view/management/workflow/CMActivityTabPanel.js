@@ -150,6 +150,11 @@
 			return this.widgetsMap;
 		},
 
+		onAddButtonClick: function() {
+			this.showActivityPanel();
+			this.disableTabs();
+		},
+
 		showActivityPanel: function() {
 			this.acutalPanel.setActiveTab(this.activityTab);
 		},

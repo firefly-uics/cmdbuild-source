@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -819,12 +820,18 @@ public class Serializer {
 					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("_AttrHist", true);
 					map.put("User", card.getUser());
-					map.put("BeginDate", card.getAttributeValue("BeginDate").toString()); //
-					try {
-						map.put("EndDate", card.getAttributeValue("EndDate").toString()); //
-					} catch (Exception e) {
-						// Skip EndDate if not in history
+					map.put("BeginDate", card.getAttributeValue("BeginDate").toString());
+					
+					final Date endDateForSorting;
+					if (card.getSchema().getAttributes().containsKey("EndDate")) {
+						final AttributeValue endDateAttrVal = card.getAttributeValue("EndDate");
+						map.put("EndDate", endDateAttrVal.toString());
+						endDateForSorting = endDateAttrVal.getDate();
+					} else {
+						// Skip EndDate if not in history, but add a fake end date for sorting
+						endDateForSorting = new Date();
 					}
+					map.put("_EndDate", endDateForSorting.getTime());
 					return map;
 				}
 
