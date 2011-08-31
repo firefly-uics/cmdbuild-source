@@ -45,13 +45,13 @@
 					}
 				}],
 				columns: [
-					{header: col_tr.begin_date,  width: 180, fixed: true, sortable: true, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
-					{header: col_tr.end_date,  width: 180, fixed: true, sortable: true, dataIndex: 'EndDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
-					{header: col_tr.user, width: 20, sortable: true, dataIndex: 'User', flex:1},
-					{header: col_tr.attributes, width: 60, fixed: true, sortable: true, renderer: tickRenderer, dataIndex: '_AttrHist', align: 'center', tdCls: 'grid-button', flex:1},
-					{header: col_tr.relation, width: 60, fixed: true, sortable: true, renderer: tickRenderer, dataIndex: '_RelHist', align: 'center', tdCls: 'grid-button', flex:1},
-					{header: col_tr.domain, width: 20, sortable: true, dataIndex: 'DomainDesc', flex:1},
-					{header: col_tr.description, width: 40, sortable: true, dataIndex: 'CardDescription', flex:1}
+					{header: col_tr.begin_date,  width: 180, fixed: true, sortable: false, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
+					{header: col_tr.end_date,  width: 180, fixed: true, sortable: false, dataIndex: 'EndDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
+					{header: col_tr.user, width: 20, sortable: false, dataIndex: 'User', flex:1},
+					{header: col_tr.attributes, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_AttrHist', align: 'center', tdCls: 'grid-button', flex:1},
+					{header: col_tr.relation, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_RelHist', align: 'center', tdCls: 'grid-button', flex:1},
+					{header: col_tr.domain, width: 20, sortable: false, dataIndex: 'DomainDesc', flex:1},
+					{header: col_tr.description, width: 40, sortable: false, dataIndex: 'CardDescription', flex:1}
 				],
 				store: new Ext.data.JsonStore({
 					proxy : {
@@ -62,12 +62,37 @@
 							root : 'rows'
 						}
 					},
-					sorters : [ {
-						property : 'BeginDate',
-						direction : "DESC"
-					}],
-					fields: [{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'}, {name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'}, 'User', '_AttrHist', '_RelHist', 'DomainDesc', 'Class', 'CardCode', 'CardDescription', 'Code'],
-					baseParams: { IsProcess: (this.eventmastertype == 'processclass')}
+					sorters : [
+						{
+							property : 'BeginDate',
+							direction : "DESC"
+						},{
+							property : 'EndDate',
+							direction : "DESC"
+						}
+					],
+					fields: [
+						{
+							name:'BeginDate',
+							type:'date',
+							dateFormat:'d/m/y H:i:s'
+						}, {
+							name:'EndDate',
+							type:'date',
+							dateFormat:'d/m/y H:i:s'
+						},
+						'User',
+						'_AttrHist',
+						'_RelHist',
+						'DomainDesc',
+						'Class',
+						'CardCode',
+						'CardDescription',
+						'Code'
+					],
+					baseParams: {
+						IsProcess: (this.eventmastertype == 'processclass')
+					}
 				})
 			});
 
