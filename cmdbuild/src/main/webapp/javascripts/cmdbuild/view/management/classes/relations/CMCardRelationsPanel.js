@@ -182,6 +182,11 @@
 		for (; i<l; ++i) {
 			r = relations[i];
 			c = _CMCache.getEntryTypeById(r.dst_cid);
+
+			if (!c) {
+				continue;
+			}
+
 			r.leaf = true;
 			r.label = c.get("text");
 			r.dom_id = dom_id;
