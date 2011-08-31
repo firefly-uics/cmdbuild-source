@@ -63,24 +63,13 @@
 						}
 					},
 					sorters : [
-						{
-							property : 'BeginDate',
-							direction : "DESC"
-						},{
-							property : 'EndDate',
-							direction : "DESC"
-						}
+						{ property : 'BeginDate', direction : "DESC" },
+						{ property : '_EndDate', direction : "DESC" }
 					],
 					fields: [
-						{
-							name:'BeginDate',
-							type:'date',
-							dateFormat:'d/m/y H:i:s'
-						}, {
-							name:'EndDate',
-							type:'date',
-							dateFormat:'d/m/y H:i:s'
-						},
+						{ name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s' },
+						{ name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s' },
+						{ name:'_EndDate', type:'int' }, // For sorting only
 						'User',
 						'_AttrHist',
 						'_RelHist',
@@ -115,7 +104,6 @@
 			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
 				this.disable();
 			} else {
-				this.enable();
 				this.currentCardId = card.raw.Id;
 				this.currentClassId = card.raw.IdClass;
 
@@ -123,6 +111,10 @@
 					create: card.raw.priv_create,
 					write: card.raw.priv_write
 				};
+
+				// FIXME The workflow does not call onAddCardButtonClick()
+				var existingCard = (this.currentCardId > 0);
+				this.setDisabled(!existingCard);
 
 				if (tabIsActive(this)) {
 					this.reloadCard();

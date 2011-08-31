@@ -56,7 +56,7 @@
 		},
 
 		onAddButtonClick: function() {
-			this.cardTabPanel.showActivityPanel();
+			this.cardTabPanel.onAddButtonClick();
 		}
 	});
 })();

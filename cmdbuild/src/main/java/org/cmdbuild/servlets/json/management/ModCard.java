@@ -607,9 +607,12 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCardHistory(ICard card, ITableFactory tf, RelationFactory rf,
-			@Parameter("IsProcess") boolean isProcess, UserContext userCtx) throws JSONException, CMDBException {
-		if (isProcess) {
+	public JSONObject getCardHistory(
+			ICard card,
+			ITableFactory tf,
+			RelationFactory rf,
+			UserContext userCtx) throws JSONException, CMDBException {
+		if (card.getSchema().isActivity()) {
 			return getProcessHistory(new JSONObject(), card, tf);
 		}
 
@@ -630,7 +633,6 @@ public class ModCard extends JSONBase {
 		CardQuery cardQuery = tf.get(card.getIdClass()).cards().list().history(card.getId())
 				.filter("User", AttributeFilterType.DONTCONTAINS, "RemoteApi")
 				.filter("User", AttributeFilterType.DONTCONTAINS, "System")
-				.order(ICard.CardAttributes.Code.toString(), OrderFilterType.ASC)
 				.order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.ASC);
 		return Serializer.serializeProcessAttributeHistory(card, cardQuery);
 	}
