@@ -1376,10 +1376,11 @@ public class PGCMBackend extends CMBackend {
 			stm = con.createStatement();
 			stm.executeQuery(CardQueryBuilder.CARD_ZERO_INDEX);
 			rs = stm.executeQuery(qb.buildPositionQuery(query, cardId));
-			if (!rs.next()) {
-				throw NotFoundExceptionType.CARD_NOTFOUND.createException(query.getTable().toString());
+			if (rs.next()) {
+				position = rs.getInt(1);
+			} else {
+				position = -1;
 			}
-			position = rs.getInt(1);
 		} catch (SQLException se) {
 			Log.PERSISTENCE.error("Errors getting card position", se);
 			throw NotFoundExceptionType.CARD_NOTFOUND.createException(query.getTable().toString());

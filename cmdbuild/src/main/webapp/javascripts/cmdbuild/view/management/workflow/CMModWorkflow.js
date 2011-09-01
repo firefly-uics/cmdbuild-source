@@ -12,7 +12,8 @@
 				hideMode: "offsets",
 				filterCategory: this.cmName,
 				border: false,
-				columns: []
+				columns: [],
+				forceSelectionOfFirst: true
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel({

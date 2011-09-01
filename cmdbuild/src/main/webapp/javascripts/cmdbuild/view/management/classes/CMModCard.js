@@ -89,12 +89,15 @@
 			this.cardTabPanel.reset(id);
 		},
 
-		openCard: function(p) {
-			this.cardGrid.openCard(p);
+		openCard: function(p, retryWithoutFilter) {
+			var entry = _CMCache.getEntryTypeById(p.IdClass);
+			this.cardGrid.openCard(p, retryWithoutFilter);
 			this.cardTabPanel.onClassSelected(p.IdClass, activateFirst = false);
-			this.addCardButton.updateForEntry(_CMCache.getEntryTypeById(p.IdClass));
-			this.cardGrid.clearFilterButton.disable();
-			this.cardGrid.gridSearchField.reset();
+			this.addCardButton.updateForEntry(entry);
+			this.updateTitleForEntry(entry);
+
+//			this.cardGrid.clearFilterButton.disable();
+//			this.cardGrid.gridSearchField.reset();
 		},
 
 		// private, overridden in subclasses
@@ -114,7 +117,8 @@
 				filterCategory: this.cmName,
 				border: false,
 				tbar: tbar,
-				columns: []
+				columns: [],
+				forceSelectionOfFirst: true
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({

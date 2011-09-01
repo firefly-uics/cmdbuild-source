@@ -23,6 +23,17 @@
 				this.panelControllers[panel.cmName] = new ns.CMBasePanelController(panel);
 			}
 		}, this);
+
+		var danglingCard = null;
+		this.getDanglingCard = function() {
+			var b = danglingCard;
+			danglingCard = null;
+			return b;
+		};
+
+		this.setDanglingCard = function(dc) {
+			danglingCard = dc;
+		};
 	};
 
 	ns.CMMainViewportController.prototype.bringTofrontPanelByCmName = function(cmName, params) {

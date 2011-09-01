@@ -29,6 +29,7 @@
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
 
 			this.cardGrid.on("itemdblclick", onModifyCardClick, this);
+			this.cardGrid.on("cmWrongSelection", onSelectionWentWrong, this);
 
 			this.cardGrid.on("load", function(args) {
 				// args[1] is the array with the loaded records
@@ -57,20 +58,27 @@
 
 		onViewOnFront: function(selection) {
 			if (selection) {
-				this.currentEntryId = selection.get("id");
-				this.currentEntry = _CMCache.getEntryTypeById(this.currentEntryId);
+				var newEntryId = selection.get("id"),
+					dc = _CMMainViewportController.getDanglingCard(),
+					entryIdChanged = this.currentEntryId != newEntryId;
 
-				if (this.danglingCardToOpen) {
-					this.view.openCard(this.danglingCardToOpen);
-					this.danglingCardToOpen = null;
-				} else {
+				if (entryIdChanged) {
+					this.currentEntryId = newEntryId;
+					this.currentEntry = _CMCache.getEntryTypeById(this.currentEntryId);
+
+					// sub-controllers
+					this.attachmentsController.onEntrySelect(selection);
+					this.relationsController.onEntrySelect(selection);
+					this.mdController.onEntrySelect(selection);
+
+				}
+
+				if (dc != null) {
+					this.view.openCard(dc, retryWithoutFilter = true);
+				} else if (entryIdChanged) {
 					this.view.onEntrySelected(selection);
 				}
 
-				// sub-controllers
-				this.attachmentsController.onEntrySelect(selection);
-				this.relationsController.onEntrySelect(selection);
-				this.mdController.onEntrySelect(selection);
 			}
 		}
 	});
@@ -92,7 +100,11 @@
 			this.mdController.onCardSelected(this.currentCard);
 		}
 	}
-	
+
+	function onSelectionWentWrong() {
+		this.view.cardTabPanel.reset(this.currentEntryId);
+	}
+
 	function onAddCardButtonClick(p) {
 		this.cloneCard = false;
 		this.currentCard = null;
