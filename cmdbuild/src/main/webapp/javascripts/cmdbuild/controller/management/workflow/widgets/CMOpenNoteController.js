@@ -34,7 +34,8 @@
 							this.view.disableModify();
 							var val = this.view.actualForm.getValue();
 							this.view.displayPanel.setValue(val);
-							syncActivityWithNewValue(activity, val);
+							syncSavedNoteWithModel(activity, val);
+							// TODO: reload history
 						}
 					});
 				}
@@ -46,7 +47,7 @@
 		}
 	});
 
-	function syncActivityWithNewValue(activity, val) {
+	function syncSavedNoteWithModel(activity, val) {
 		activity.set("Notes", val);
 		activity.commit();
 		if (activity.raw) {

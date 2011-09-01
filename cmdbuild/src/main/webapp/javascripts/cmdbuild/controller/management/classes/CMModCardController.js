@@ -297,8 +297,19 @@
 					this.notePanel.disableModify();
 					var val = this.notePanel.actualForm.getValue();
 					this.notePanel.displayPanel.setValue(val);
+					syncSavedNoteWithModel(this.currentCard, val);
+					// TODO: reload history
 				}
 			});
+		}
+	}
+
+	// "code reuse" from CMOpenNoteController
+	function syncSavedNoteWithModel(card, val) {
+		card.set("Notes", val);
+		card.commit();
+		if (card.raw) {
+			card.raw["Notes"] = val;
 		}
 	}
 })();
