@@ -30,6 +30,7 @@
 			this.grid.mon(this.grid.addCardButton, "cmClick", onAddCardButtonClick, this);
 			this.grid.mon(this.grid.printGridMenu, "click", onPrintGridMenuClick, this);
 			this.grid.mon(this.grid, "load", onGridLoad, this);
+			this.grid.mon(this.grid, "processTerminated", onProcessTermined, this);
 
 			this.gridSM.on("selectionchange", onActivitySelect, this);
 
@@ -39,20 +40,24 @@
 
 		onViewOnFront: function(selection) {
 			if (selection) {
-				this.currentEntry = selection;
-				this.view.onClassSelected(selection);
+				var newEntryId = selection.get("id"),
+					dc = _CMMainViewportController.getDanglingCard(),
+					entryIdChanged = this.currentEntryId != newEntryId;
 
-				var dc = _CMMainViewportController.getDanglingCard();
+				if (entryIdChanged) {
+					this.currentEntryId = newEntryId;
+					this.currentEntry = _CMCache.getEntryTypeById(this.currentEntryId);
+
+					// notify sub-controllers
+					this.activityPanelController.onEntrySelected(selection);
+					this.relationsController.onEntrySelect(selection);// FIXME naming
+				}
 
 				if (dc != null) {
 					this.view.openCard(dc, retryWithoutFilter = true);
 				} else {
 					this.view.onEntrySelected(selection);
 				}
-
-				// notify sub-controllers
-				this.activityPanelController.onEntrySelected(selection);
-				this.relationsController.onEntrySelect(selection);// FIXME naming
 			}
 		},
 
@@ -113,6 +118,11 @@
 			return this.grid.statusCombo.isStateOpen();
 		}
 	});
+
+	function onProcessTermined() {
+		this.grid.skipNextSelectFirst();
+		this.activityPanelController.clearViewForNoActivity();
+	}
 
 	function waitForBusyWidgets(cb, cbScope) {
 		new _CMUtils.PollingFunction({
