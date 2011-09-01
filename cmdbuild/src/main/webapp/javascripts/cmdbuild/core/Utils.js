@@ -42,6 +42,7 @@ CMDBuild.Utils = (function() {
 			}
 		},
 
+		// FIXME: Should be getEntryTypePrivileges
 		getClassPrivileges: function(classId) {
 			var entryType = _CMCache.getEntryTypeById(classId)
 
@@ -134,7 +135,21 @@ CMDBuild.Utils = (function() {
 
 			return out;
 		},
-		
+
+		getDescendantsById: function(entryTypeId) {
+			var children = this.getChildrenById(entryTypeId),
+				et = _CMCache.getEntryTypeById(entryTypeId),
+				out = [et];
+
+			for (var i=0; i<children.length; ++i) {
+				var c = children[i],
+					leaves = this.getDescendantsById(c.get("id"));
+				out = out.concat(leaves);
+			}
+
+			return out;
+		},
+
 		getChildrenById: function(entryTypeId) {
 			var ett = _CMCache.getEntryTypes(),
 				out = [];
