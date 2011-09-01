@@ -62,6 +62,7 @@ public class CardQueryImpl implements CardQuery {
     	this.history = false;
     	this.attributes = new LinkedHashSet<String>(); //to preserve order
     	this.filter = null;
+    	this.fullTextQuery = null;
     	this.relationFilter = new HashMap<DirectedDomain, CardQuery>();
     	this.notInRelation = new HashMap<DirectedDomain, ITable>();
     }

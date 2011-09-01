@@ -44,7 +44,7 @@ public class CardQueryBuilder {
 	// 1 = attributes list, 2 = table db name, 3 = table name, 4 = joins, 5 = where condition, 6 = order by, 7 = card id
 	public static final String CARD_ZERO_INDEX = "SELECT _cm_zero_rownum_sequence()";
 	private static final String CARD_INDEX =
-		"SELECT CASE WHEN list2.\"%3$s_Id\" = %7$s THEN list2.rownum ELSE 0 END AS rownum FROM " +
+		"SELECT CASE WHEN list2.\"%3$s_Id\" = %7$s THEN list2.rownum-1 ELSE -1 END AS rownum FROM " +
 			"(SELECT nextval('rownum') AS rownum, \"%3$s_Id\" FROM "+
 				"(SELECT DISTINCT %1$s FROM \"%2$s\" AS \"%3$s\" %4$s %5$s %6$s) AS list1) "+
 			"AS list2 "+

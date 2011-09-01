@@ -7,28 +7,26 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
-import org.cmdbuild.elements.DirectedDomain.DomainDirection;
-import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.CompositeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
 import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter;
+import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
+import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -37,16 +35,17 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.RelationFactory;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
+import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
@@ -60,7 +59,6 @@ import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.servlets.utils.builder.CardQueryParameter;
 import org.cmdbuild.utils.CQLFacadeCompiler;
-import org.cmdbuild.workflow.WorkflowConstants;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -398,47 +396,63 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCardPosition(JSONObject serializer, ICard card, UserContext userCtx,
-			@Parameter("withflowstatus") boolean withFlowStatus,
-			@Parameter(value = "sort", required = false) JSONArray sorters, CardQuery currentCardFilter)
-			throws JSONException, CMDBException {
-		CardQuery cardFilter = (CardQuery) currentCardFilter.clone();
+	public JSONObject getCardPosition(
+			@Parameter(value="retryWithoutFilter", required=false) boolean retryWithoutFilter,
+			JSONObject serializer,
+			ICard card,
+			final CardQuery currentCardQuery,
+			UserContext userCtx) throws JSONException {
+		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
 
-		removeAttributesNotNeededForPositionQuery(cardFilter);
-		if (withFlowStatus) {
-			Lookup stateLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.toString());
-			serializer.put("flowstatus", stateLookup.getCode());
-			String lookupId = String.valueOf(stateLookup.getId());
-			cardFilter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, lookupId);
+		int position = queryPosition(card, cardQuery);
 
-			if (stateLookup.getCode().startsWith(WorkflowConstants.StateOpen)) {
-				cardFilter.setNextExecutorFilter(userCtx);
-			}
+		if (position < 0 && retryWithoutFilter) {
+			// Not found in the current filter. Try without it.
+			cardQuery.reset();
+			position = queryPosition(card, cardQuery);
+			serializer.put("notFoundInFilter", true);
 		}
 
-		applySortToCardQuery(sorters, cardFilter);
-
-		serializer.put("position", cardFilter.position(card.getId()));
-
+		serializer.put("position", position);
 		return serializer;
 	}
 
-	private void removeAttributesNotNeededForPositionQuery(CardQuery cardQuery) {
-		String fullTextQuery = cardQuery.getFullTextQuery();
-		// fulltext query needs every field
-		if ((fullTextQuery == null) || (fullTextQuery.trim().length() == 0)) {
-			Set<String> attrList = new HashSet<String>();
-			addStandardAttributes(attrList);
+	private int queryPosition(final ICard card, final CardQuery cardQuery) {
+		removeAttributesNotNeededForPositionQuery(cardQuery);
+//		if (withFlowStatus) {
+//			Lookup stateLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.toString());
+//			serializer.put("flowstatus", stateLookup.getCode());
+//			String lookupId = String.valueOf(stateLookup.getId());
+//			cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, lookupId);
+//
+//			if (stateLookup.getCode().startsWith(WorkflowConstants.StateOpen)) {
+//				cardQuery.setNextExecutorFilter(userCtx);
+//			}
+//		}
+		return cardQuery.position(card.getId());
+	}
+
+	/*
+	 * If there is no full text query, we can remove unnecessary attributes
+	 */
+	private void removeAttributesNotNeededForPositionQuery(final CardQuery cardQuery) {
+		final String fullTextQuery = cardQuery.getFullTextQuery();
+		if (fullTextQuery == null) {
+			Set<String> attrList = getStandardAttributes(cardQuery);
 			addFilterAttributes(cardQuery.getFilter(), attrList);
 			addOrderingAttributes(cardQuery, attrList);
 			cardQuery.attributes(attrList.toArray(new String[attrList.size()]));
 		}
 	}
 
-	private void addStandardAttributes(Set<String> attrList) {
+	private Set<String> getStandardAttributes(final CardQuery cardQuery) {
+		Set<String> attrList = new HashSet<String>();
 		attrList.add(ICard.CardAttributes.Id.toString());
 		attrList.add(ICard.CardAttributes.Status.toString());
-		attrList.add(ProcessAttributes.FlowStatus.toString());
+		if (cardQuery.getTable().isActivity()) {
+			attrList.add(ProcessAttributes.FlowStatus.toString());
+		}
+		return attrList;
 	}
 
 	private void addFilterAttributes(AbstractFilter abstractFilter, Set<String> attrList) {

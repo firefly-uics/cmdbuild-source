@@ -40,8 +40,15 @@
 		onViewOnFront: function(selection) {
 			if (selection) {
 				this.currentEntry = selection;
-				this.view.cardGrid.onEntrySelected(selection);
 				this.view.onClassSelected(selection);
+
+				var dc = _CMMainViewportController.getDanglingCard();
+
+				if (dc != null) {
+					this.view.openCard(dc, retryWithoutFilter = true);
+				} else {
+					this.view.onEntrySelected(selection);
+				}
 
 				// notify sub-controllers
 				this.activityPanelController.onEntrySelected(selection);

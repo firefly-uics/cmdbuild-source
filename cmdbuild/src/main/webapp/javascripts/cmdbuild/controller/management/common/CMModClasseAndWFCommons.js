@@ -15,7 +15,7 @@ Ext.define("CMDBuild.controller.management.common.CMModClasseAndWFCommons", {
 			this.view.cardTabPanel.activeFirstTab();
 		}
 
-		this.danglingCardToOpen = p;
+		_CMMainViewportController.setDanglingCard(p);
 
 		if (accordion.collapsed) {
 			// waiting for the rendering for select the node
@@ -24,7 +24,7 @@ Ext.define("CMDBuild.controller.management.common.CMModClasseAndWFCommons", {
 				accordion.selectNodeById(p.IdClass);
 			}, {single: true});
 
-			accordion.expand();
+			accordion.expandSilently();
 		} else {
 			accordion.deselect();
 			accordion.selectNodeById(p.IdClass);

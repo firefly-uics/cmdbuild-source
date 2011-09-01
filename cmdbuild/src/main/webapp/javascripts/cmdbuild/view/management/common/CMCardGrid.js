@@ -6,6 +6,9 @@
 		extraParams: undefined, // extra params for the store
 		filterCategory: undefined,
 		filterSubcategory: undefined,
+
+		forceSelectionOfFirst: false, // listen load event and select the first row
+
 		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar 
@@ -35,62 +38,68 @@
 		},
 
 		updateStoreForClassId: function(classId, o) {
-			this.currentClassId = classId;
-			_CMCache.getAttributeList(classId, 
-				Ext.bind(function(attributes) {
-					this.setColumnsForClass(attributes);
-					if (o && o.cb) {
-						o.cb.call(o.scope || this);
-					} else {
-						this.store.loadPage(1);
-					}
-				}, this)
-			);
-		},
-		
 
-		/*
-		 * p = {
-				Id: the id of the card
-				IdClass: the id of the class which the card belongs
+			function callCbOrLoadFirstPage() {
+				if (o && o.cb) {
+					o.cb.call(o.scope || this);
+				} else {
+					this.store.loadPage(1);
+				}
 			}
-		 */
-		openCard: function(p) {
+
+			if (this.currentClassId == classId) {
+				callCbOrLoadFirstPage.call(this);
+			} else {
+				this.currentClassId = classId;
+				_CMCache.getAttributeList(classId, 
+					Ext.bind(function(attributes) {
+						this.setColumnsForClass(attributes);
+						callCbOrLoadFirstPage.call(this);
+					}, this)
+				);
+			}
+		},
+
+		openCard: function(p, retryWithoutFilter) {
+			var me = this;
+
 			p['FilterCategory'] = this.filterCategory;
+			p["retryWithoutFilter"] = retryWithoutFilter;
 
-			this.updateStoreForClassId(p.IdClass, {
-				scope: this,
-				cb: function cbOfUpdateStoreForClassId() {
-					this.store.load({
-						scope: this,
-						callback: function() {
-							_openCard.call(this, p);
+			CMDBuild.ServiceProxy.card.getPosition({
+				params: p,
+				failure: function onGetPositionFailure(response, options, decoded) {
+					// reconfigure the store and blah blah blah
+				},
+				success: function onGetPositionSuccess(response, options, resText) {
+					var position = resText.position,
+						found = position >= 0,
+						foundButNotInFilter = resText.notFoundInFilter;
+
+					if (found) {
+						if (foundButNotInFilter) {
+							_debug("Trovata forzando il filtro: " + position);
+
+							me.clearFilter(function() {
+									me.gridSearchField.reset();
+									updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
+								}, skipReload=true);
+
+						} else {
+							_debug("trovato al primo colpo: " + position);
+							updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
 						}
-					});
+					} else {
+						if (retryWithoutFilter) {
+							_debug("Non trovata proprio");
+							CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
+						} else {
+							_debug("Non è nel filtro");
+							CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+						}
 
-					function _openCard(p) {
-						CMDBuild.ServiceProxy.card.getPosition({
-							params: p,
-							scope: this,
-							failure: onGetPositionFailure,
-							success: function onGetPositionSuccess(response, options, resText) {
-								var position = resText.position,
-									pageNumber = getPageNumber(position),
-									pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-									relativeIndex = (position - 1) % pageSize;
-	
-								this.loadPage(pageNumber, {
-									cb: function callBackOfLoadPage(records, operation, success) {
-										try {
-											this.getSelectionModel().select(relativeIndex);
-										} catch (e) {
-											_debug("I was not able to select the record at " + relativeIndex, p);
-											_trace();
-										}
-									}
-								});
-							}
-						});
+						me.store.loadPage(1);
 					}
 				}
 			});
@@ -221,8 +230,16 @@
 			this.mon(s, "load", function(store, records) {
 				this.fireEvent("load", arguments);
 
-				if (!this.getSelectionModel().hasSelection() && records && records.length > 0) {
-					this.getSelectionModel().select(0);
+				if (this.forceSelectionOfFirst && !this.getSelectionModel().hasSelection()
+						&& records && records.length > 0) {
+
+					try {
+						this.getSelectionModel().select(0);
+					} catch (e) {
+						this.fireEvent("cmWrongSelection");
+						CMDBuild.log.info("Not selected the first record");
+						_trace();
+					}
 				}
 
 			}, this);
@@ -251,14 +268,30 @@
 		}
 	});
 
-	function onGetPositionFailure(response, options, decoded) {
-		this.store.loadPage(1);
-		if (decoded && decoded.reason == 'CARD_NOTFOUND') {
-			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
-		}
-		return false;
-	}
+	function updateStoreAndSelectGivenPosition(idClass, position) {
+		var me = this;
 
+		this.updateStoreForClassId(idClass, {
+			cb: function cbOfUpdateStoreForClassId() {
+				var	pageNumber = getPageNumber(position),
+					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+					relativeIndex = position % pageSize;
+
+				me.loadPage(pageNumber, {
+					cb: function callBackOfLoadPage(records, operation, success) {
+						try {
+							me.getSelectionModel().select(relativeIndex);
+						} catch (e) {
+							me.fireEvent("cmWrongSelection");
+							_debug("I was not able to select the record at " + relativeIndex);
+							_trace();
+						}
+					}
+				});
+			}
+		});
+	}
+	
 	function buildPagingBar() {
 		var items = [];
 
@@ -277,10 +310,12 @@
 			});
 
 			this.clearFilterButton = new Ext.button.Button({
-				scope: this,			
+				scope: this,
 				iconCls: 'clear_find',
 				text: CMDBuild.Translation.management.findfilter.clear_filter,
-				handler: clearFilter,
+				handler: function() {
+					this.clearFilter();
+				},
 				disabled: true
 			});
 
@@ -352,8 +387,8 @@
 			filterSubcategory: this.filterSubcategory
 		}).show();
 	}
-	
-	function clearFilter(cb) {
+
+	function clearFilter(cb, skipReload) {
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/resetcardfilter',
 			params: {
@@ -365,10 +400,12 @@
 					this.clearFilterButton.disable();
 				}
 
-				if (this.pagingBar) {
-					this.store.loadPage(1);
-				} else {
-					this.reload();
+				if (!skipReload) {
+					if (this.pagingBar) {
+						this.store.loadPage(1);
+					} else {
+						this.reload();
+					}
 				}
 
 				if (typeof cb == "function") {

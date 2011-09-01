@@ -15,6 +15,8 @@
 			this.buildButtons();
 
 			this.callParent(arguments);
+
+			this.mon(this, "activate", onActivate, this);
 		},
 
 		initComponent: function() {
@@ -102,11 +104,41 @@
 			}
 		},
 
+		loadCard: function(card, idClass) {
+			// if the panel is set to render the field on activation
+			// set the card as dangling
+			if (this.paramsForDeferrdFillFormCall) {
+				if (typeof card == "object") {
+					this.danglingCard = card;
+				} else {
+					this.danglingCard = {
+						get: function(key) {
+							var data = {
+								Id: card,
+								IdClass: idClass
+							};
+
+							return data[key];
+						}
+					};
+				}
+			} else {
+				this.callParent(arguments);
+			}
+		},
+
 		fillForm: fillForm,
 		// private, could be overridden
 		buildTBar: buildTBar,
 		buildButtons: buildButtons
 	});
+
+	function onActivate() {
+		if (this.paramsForDeferrdFillFormCall) {
+			var p = this.paramsForDeferrdFillFormCall;
+			fillForm.call(this, p.attributes, p.editMode);
+		}
+	}
 
 	function loadCard(card) {
 		if (this.loadRemoteData || this.hasDomainAttributes()) {
@@ -119,6 +151,27 @@
 	}
 
 	function fillForm(attributes, editMode) {
+		// If the panel is not active, we want defer the population
+		// with the field, because this allows a billion of mystical rendering issues
+
+		var deferOperation = false;
+		try {
+			deferOperation = this.ownerCt.layout.getActiveItem() != this;
+		} catch (e) {
+			// if fails, the panel is not in a TabPanel, so don't defer the call
+		}
+
+		if (deferOperation) {
+			this.paramsForDeferrdFillFormCall = {
+				attributes: attributes,
+				editMode: editMode
+			};
+
+			return;
+		}
+
+		this.paramsForDeferrdFillFormCall = null;
+
 		var panels = [],
 			groupedAttr = CMDBuild.Utils.groupAttributes(attributes, false);
 
@@ -141,7 +194,6 @@
 				panels.push(p);
 			}
 		}
-		
 
 		if (this.sideTabPanel) {
 			delete this.sideTabPanel;
