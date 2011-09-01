@@ -35,19 +35,21 @@
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
 			CMDBuild.Runtime.UserId = <%= user.getId() %>;
 			CMDBuild.Runtime.Username = '<%= user.getName() %>';
+
 			CMDBuild.Runtime.DefaultGroupId = <%= defaultGroup.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= defaultGroup.getName() %>';
 <%	if (userCtx.getGroups().size() == 1) { %>
 			CMDBuild.Runtime.LoginGroupId = <%= defaultGroup.getId() %>;
 <%	} %>
-			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
+
+			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
 			CMDBuild.Runtime.DisabledModules = {};
 <%
 	String[] disabledModules = defaultGroup.getDisabledModules();
 	for (String module : disabledModules) {
 %>
-				CMDBuild.Runtime.DisabledModules["<%= module %>"] = true;
+			CMDBuild.Runtime.DisabledModules["<%= module %>"] = true;
 <%
 	}
 	if (defaultGroup.getStartingClass() != null) {

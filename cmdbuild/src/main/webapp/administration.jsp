@@ -31,12 +31,15 @@
 		<%@ include file="libsJsFiles.jsp"%>
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
-			CMDBuild.Runtime.Username = "<%= user.getName() %>";
 			CMDBuild.Runtime.UserId = <%= user.getId() %>;
+			CMDBuild.Runtime.Username = "<%= user.getName() %>";
+
+			CMDBuild.Runtime.DefaultGroupId = <%= defaultGroup.getId() %>;
+			CMDBuild.Runtime.DefaultGroupName = '<%= defaultGroup.getName() %>';
+<%	if (userCtx.getGroups().size() == 1) { %>
+			CMDBuild.Runtime.LoginGroupId = <%= defaultGroup.getId() %>;
+<%	} %>
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
-			<%	if (userCtx.getGroups().size() == 1) { %>
-					CMDBuild.Runtime.RoleId = <%= defaultGroup.getId() %>;
-			<%	} %>
 		</script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 		<%@ include file="coreJsFiles.jsp"%>
