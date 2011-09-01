@@ -127,6 +127,17 @@
 			}
 		},
 
+		canReconfigureTheForm: function() {
+			var out = true;
+			try {
+				out = this.ownerCt.layout.getActiveItem() == this;
+			} catch (e) {
+				// if fails, the panel is not in a TabPanel, so don't defer the call
+			}
+
+			return out;
+		},
+
 		fillForm: fillForm,
 		// private, could be overridden
 		buildTBar: buildTBar,
@@ -154,12 +165,7 @@
 		// If the panel is not active, we want defer the population
 		// with the field, because this allows a billion of mystical rendering issues
 
-		var deferOperation = false;
-		try {
-			deferOperation = this.ownerCt.layout.getActiveItem() != this;
-		} catch (e) {
-			// if fails, the panel is not in a TabPanel, so don't defer the call
-		}
+		var deferOperation = !this.canReconfigureTheForm();
 
 		if (deferOperation) {
 			this.paramsForDeferrdFillFormCall = {

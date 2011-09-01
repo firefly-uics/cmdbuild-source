@@ -1,7 +1,8 @@
 (function() {
 	var STATE = "state",
 		STATE_VALUE_OPEN = "open.running",
-		STATE_VALUE_TERMINATED = "closed.terminated", 
+		STATE_VALUE_TERMINATED = "closed.terminated",
+		STATE_VALUE_COMPLETED = "closed.completed",
 		STATE_VALUE_ABORTED = "closed.aborted",
 
 		tr = CMDBuild.Translation.management.modworkflow;
@@ -28,7 +29,7 @@
 				},
 
 				isStateClosed: function() {
-					return this.getValue() == STATE_VALUE_TERMINATED;
+					return this.getValue() == STATE_VALUE_COMPLETED;
 				}
 			});
 
@@ -57,7 +58,25 @@
 
 			return ep;
 		},
-		
+
+		// override
+		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
+			this.statusCombo.setValue(resText.FlowStatus);
+			this.updateStatusParamInStoreProxyConfiguration();
+
+			this.callParent(arguments);
+		},
+
+		// private and overridden in CMActivityGrid
+		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
+			var flowStatusOfSearchedCard = resText.FlowStatus;
+			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
+				this.fireEvent("processTerminated");
+			} else {
+				this.callParent(arguments);
+			}
+		},
+
 		onEntrySelected: function(entry) {
 			var id = entry.get("id");
 			this.setStatusToOpen();
@@ -79,7 +98,7 @@
 			});
 		}
 	});
-	
+
 	function buildStoreOfProcessState() {
 		var storeOfState = new Ext.data.JsonStore({
 			fields : ['code', 'name', 'id'],

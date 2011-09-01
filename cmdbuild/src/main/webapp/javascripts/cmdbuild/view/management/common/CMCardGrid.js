@@ -8,6 +8,15 @@
 		filterSubcategory: undefined,
 
 		forceSelectionOfFirst: false, // listen load event and select the first row
+		skipSelectFirst: false,
+		shouldSelectFirst: function() {
+			var out = this.forceSelectionOfFirst && !this.skipSelectFirst;
+			this.skipSelectFirst = false;
+			return out;
+		},
+		skipNextSelectFirst: function() {
+			this.skipSelectFirst = true;
+		},
 
 		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
@@ -82,12 +91,7 @@
 					if (found) {
 						if (foundButNotInFilter) {
 							_debug("Trovata forzando il filtro: " + position);
-
-							me.clearFilter(function() {
-									me.gridSearchField.reset();
-									updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
-								}, skipReload=true);
-
+							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
 						} else {
 							_debug("trovato al primo colpo: " + position);
 							updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
@@ -99,13 +103,27 @@
 									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
 						} else {
 							_debug("Non è nel filtro");
-							CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+							me._onGetPositionFailureWithoutForcingTheFilter(resText);
 						}
 
 						me.store.loadPage(1);
 					}
 				}
 			});
+		},
+
+		// private and overridden in CMActivityGrid
+		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
+			var me = this;
+			me.clearFilter(function() {
+				me.gridSearchField.reset();
+				updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
+			}, skipReload=true);
+		},
+
+		// private and overridden in CMActivityGrid
+		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
+			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
 		},
 
 		loadPage: function(pageNumber, o) {
@@ -233,7 +251,7 @@
 			this.mon(s, "load", function(store, records) {
 				this.fireEvent("load", arguments);
 
-				if (this.forceSelectionOfFirst && !this.getSelectionModel().hasSelection()
+				if (this.shouldSelectFirst() && !this.getSelectionModel().hasSelection()
 						&& records && records.length > 0) {
 
 					try {
@@ -433,7 +451,7 @@
 		}
 
 		if (cardPosition) {
-			pageNumber = (parseInt(cardPosition) - 1) / pageSize;
+			pageNumber = parseInt(cardPosition) / pageSize;
 		}
 
 		return pageNumber + 1;

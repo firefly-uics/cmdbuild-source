@@ -29,5 +29,11 @@ Ext.define("CMDBuild.field.GridSearchField", {
 			this.setValue("");
 			this.onTrigger1Click();
 		}
+	},
+
+	reset: function() {
+		var s = this.grid.getStore();
+		this.setValue("");
+		s.proxy.extraParams["query"] = this.getRawValue();
 	}
 });

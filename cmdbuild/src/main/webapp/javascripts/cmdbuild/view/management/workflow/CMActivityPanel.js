@@ -12,7 +12,8 @@
 		initComponent: function() {
 
 			this.activityForm = new CMDBuild.view.management.workflow.CMActivityPanel.Form({
-				region: "center"
+				region: "center",
+				cmOwner: this
 			});
 
 			this.wfWidgetsPanel = new CMDBuild.view.management.workflow.CMActivityPanel.WFWidgetsPanel({
@@ -38,6 +39,10 @@
 			this.activityForm.on("cmdisplaymode", function() {
 				this.fireEvent("cmdisplaymode");
 			}, this);
+
+			this.mon(this, "activate", function() {
+				this.activityForm.fireEvent("activate");
+			}, this)
 
 		},
 
@@ -122,6 +127,17 @@
 
 		getInvalidAttributeAsHTML: function() {
 			return this.activityForm.getInvalidAttributeAsHTML();
+		},
+
+		isTheActivePanel: function() {
+			var out = true;
+			try {
+				out = this.ownerCt.layout.getActiveItem() == this;
+			} catch (e) {
+				// if fails, the panel is not in a TabPanel, so don't defer the call
+			}
+
+			return out;
 		}
 	});
 
@@ -282,6 +298,10 @@
 			}
 
 			this.fillForm(cleanedAttrs, editMode);
+		},
+
+		canReconfigureTheForm: function() {
+			return this.cmOwner.isTheActivePanel();
 		}
 	});
 

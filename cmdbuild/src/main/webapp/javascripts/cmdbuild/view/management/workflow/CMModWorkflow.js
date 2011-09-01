@@ -25,8 +25,9 @@
 			});
 		},
 
-		onClassSelected: function(entry) {
+		onEntrySelected: function(entry) {
 			var id = entry.get("id");
+			this.cardGrid.onEntrySelected(entry);
 			this.cardTabPanel.onClassSelected(id, activateFirst = true);
 
 			this.updateTitleForEntry(entry);

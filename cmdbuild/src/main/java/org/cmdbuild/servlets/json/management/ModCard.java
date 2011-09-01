@@ -16,6 +16,7 @@ import javax.activation.DataHandler;
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
+import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.AbstractFilter;
@@ -404,11 +405,22 @@ public class ModCard extends JSONBase {
 			UserContext userCtx) throws JSONException {
 		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
 
+		final Lookup flowStatusLookup;
+		if (card.getSchema().isActivity()) {
+			flowStatusLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.toString());
+			serializer.put("FlowStatus", flowStatusLookup.getCode());
+		} else {
+			flowStatusLookup = null;
+		}
+
 		int position = queryPosition(card, cardQuery);
 
 		if (position < 0 && retryWithoutFilter) {
 			// Not found in the current filter. Try without it.
 			cardQuery.reset();
+			if (flowStatusLookup != null) {
+				cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, flowStatusLookup.getId());
+			}
 			position = queryPosition(card, cardQuery);
 			serializer.put("notFoundInFilter", true);
 		}
@@ -419,16 +431,6 @@ public class ModCard extends JSONBase {
 
 	private int queryPosition(final ICard card, final CardQuery cardQuery) {
 		removeAttributesNotNeededForPositionQuery(cardQuery);
-//		if (withFlowStatus) {
-//			Lookup stateLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.toString());
-//			serializer.put("flowstatus", stateLookup.getCode());
-//			String lookupId = String.valueOf(stateLookup.getId());
-//			cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, lookupId);
-//
-//			if (stateLookup.getCode().startsWith(WorkflowConstants.StateOpen)) {
-//				cardQuery.setNextExecutorFilter(userCtx);
-//			}
-//		}
 		return cardQuery.position(card.getId());
 	}
 
