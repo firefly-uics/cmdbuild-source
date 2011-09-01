@@ -3,6 +3,14 @@
 		tr = CMDBuild.Translation.management.modcard,
 		col_tr = CMDBuild.Translation.management.modcard.relation_columns;
 
+	// Null-object to skip some checks
+	var nullButton = {
+		enable: function(){},
+		disable: function(){},
+		setDomainsForEntryType: function(){},
+		on: function(){}
+	};
+
 	Ext.define("CMRelationPanelModel", {
 		extend: "Ext.data.Model",
 		fields: [
@@ -65,20 +73,25 @@
 		},
 
 		buildTBar: function() {
+			this.tbar = [];
+
 			if (this.cmWithAddButton) {
 				this.addRelationButton = new CMDBuild.AddRelationMenuButton({
 					text : tr.add_relations
 				});
-
-				this.tbar = [this.addRelationButton]
+				this.tbar.push(this.addRelationButton);
 			} else {
-				// build a null-object to skip some check
-				this.addRelationButton = {
-					enable: function(){},
-					disable: function(){},
-					setDomainsForEntryType: function(){},
-					on: function(){}
-				}
+				this.addRelationButton = nullButton;
+			}
+
+			if (CMDBuild.Config.graph.enabled=="true") {
+				this.graphButton = new Ext.button.Button({
+					iconCls : "graph",
+					text : CMDBuild.Translation.management.graph.action
+				});
+				this.tbar.push(this.graphButton);
+			} else {
+				this.graphButton = nullButton;
 			}
 		},
 

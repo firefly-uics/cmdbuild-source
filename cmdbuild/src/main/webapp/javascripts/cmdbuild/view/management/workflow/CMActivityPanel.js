@@ -235,7 +235,19 @@
 							this.disable();
 						}
 					}
-				}),
+				})];
+
+			// TODO "code reuse" from CMCardPanel
+			this.graphButton = new Ext.button.Button({
+				iconCls : "graph",
+				text : CMDBuild.Translation.management.graph.action
+			});
+
+			if (CMDBuild.Config.graph.enabled=="true") {
+				this.cmTBar.push(this.graphButton);
+			}
+
+			this.cmTBar = this.cmTBar.concat([
 				'->','-',
 				this.processStepName = new Ext.button.Button({
 					overCls: Ext.button.Button.baseCls,
@@ -249,7 +261,7 @@
 					disable: Ext.emptyFn
 				}),
 				' '
-			];
+			]);
 		},
 
 		buildButtons: function() {

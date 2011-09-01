@@ -36,6 +36,10 @@
 
 			this.tabPanel.on("cmeditmode", onEditMode, this);
 			this.tabPanel.on("cmdisplaymode", onDisplayMode, this);
+
+			// graph "code reuse"
+			this.tabPanel.activityTab.activityForm.graphButton.on("click", onShowGraphClick, this);
+			this.tabPanel.relationsPanel.graphButton.on("click", onShowGraphClick, this);
 		},
 
 		onViewOnFront: function(selection) {
@@ -477,5 +481,12 @@
 			}
 		}
 		return {};
+	}
+
+	// ancient code reuse technique
+	function onShowGraphClick() {
+		var classId = this.currentActivity.get("IdClass"),
+			cardId = this.currentActivity.get("Id");
+		CMDBuild.Management.showGraphWindow(classId, cardId);
 	}
 })();
