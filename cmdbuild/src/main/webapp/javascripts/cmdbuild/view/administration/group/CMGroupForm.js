@@ -68,7 +68,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
 			valueField : 'id',
 			displayField : 'description',
 			editable: false,
-			store : _CMCache.getClassesStore(),
+			store : _CMCache.getClassesAndProcessesStore(),
 			queryMode: 'local'
 		});
 		
