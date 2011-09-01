@@ -61,9 +61,22 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			store: new MenuStore(),
 			border: true,
 			rootVisible: true,
+			columns: [{
+				dataIndex: "text",
+				editor: {
+					allowBlank: false,
+					xtype: "textfield"
+				},
+				flex: 1,
+				xtype: "treecolumn"
+			}],
+			plugins : {
+				ptype: "treeediting",
+				clicksToEdit: 1
+			},
 			viewConfig : {
 				plugins : {
-					ptype : 'treeviewdragdrop'
+					ptype: "treeviewdragdrop"
 				}
 			},
 			flex: 9
