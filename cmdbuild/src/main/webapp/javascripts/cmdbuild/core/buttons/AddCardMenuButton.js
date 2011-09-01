@@ -1,5 +1,8 @@
 (function() {
 
+var ARROW_ELEMENT_SELECTOR = ".x-btn-split";
+var ARROW_CLASS = "x-btn-split-right";
+
 Ext.define("CMDBuild.AddCardMenuButton", {
 	extend: "Ext.button.Split",
 	translation : CMDBuild.Translation.management.moddetail,
@@ -33,42 +36,26 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 
 		if (_CMUtils.isSuperclass(this.classId)) {
 			this.setDisabled(this.isEmpty());
+			this.showDropDownArrow();
 		} else {
 			var privileges = _CMUtils.getClassPrivileges(this.classId);
 			this.setDisabled(!privileges.create);
+			this.hideDropDownArrow();
 		}
 	},
 
 	showDropDownArrow: function() {
 		if (this.el) {
-			this.el.child(this.arrowSelector).addClass('x-btn-split');
+			this.el.child(ARROW_ELEMENT_SELECTOR).addCls(ARROW_CLASS);
 		}
 	},
 
 	hideDropDownArrow: function() {
 		if (this.el) {
-			this.el.child(this.arrowSelector).removeClass('x-btn-split');
+			this.el.child(ARROW_ELEMENT_SELECTOR).removeCls(ARROW_CLASS);
 		}
 	},
 
-	//private
-	manageDropDownArrowVisibility: function(table) {
-		if (!table) {
-			return;
-		}
-		if (this.isEmpty()) {
-			this.hideDropDownArrow();
-			if (table.priv_create) {
-				this.enable();
-			} else {
-				this.disable();
-			}
-		} else {
-			this.showDropDownArrow();
-			this.enable();
-		}
-	},
-	
 	disableIfEmpty: function() {
 		if (this.isEmpty()) {
 			this.disable();
@@ -93,24 +80,24 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	
 });
 
+	var WANNABE_DESCRIPTION = "text";
+
 	function fillMenu(entry) {
 		this.menu.removeAll();
 
 		if (entry) {
-			this.setTextSuffix(entry.data.text);
-			var children = _CMUtils.getChildrenById(entry.get("id"));
+			var id = entry.get("id"),
+				descendants = _CMUtils.getDescendantsById(id);
 
-			if (children && children.length>0) {
-				//is a superClass
-				addSubclassesToMenu.call(this, children);
+			this.setTextSuffix(entry.data.text);
+
+			Ext.Array.sort(descendants, function(et1, et2) {
+					return et1.get(WANNABE_DESCRIPTION) >= et2.get(WANNABE_DESCRIPTION);
+				});
+			for (var i=0; i<descendants.length; ++i) {
+				var d = descendants[i];
+				addSubclass.call(this, d);
 			}
-		}
-//		this.manageDropDownArrowVisibility(table);
-	}
-	
-	function addSubclassesToMenu(children) {		
-		for (var i = 0, len = children.length; i < len; i++) {
-			addSubclass.call(this, children[i]);
 		}
 	}
 
@@ -131,12 +118,6 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 				}
 			});
 		};
-
-		var children = _CMUtils.getChildrenById(entry.get("id"));
-		if (children && children.length>0) {
-			//is a superClass
-			addSubclassesToMenu.call(this, children);
-		}
 	}
 
 	function onClick() {
