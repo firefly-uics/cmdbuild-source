@@ -51,6 +51,9 @@
 				callCbOrLoadFirstPage.call(this);
 			} else {
 				this.currentClassId = classId;
+				if (this.printGridMenu) {
+					this.printGridMenu.setDisabled(!classId);
+				}
 				_CMCache.getAttributeList(classId, 
 					Ext.bind(function(attributes) {
 						this.setColumnsForClass(attributes);
