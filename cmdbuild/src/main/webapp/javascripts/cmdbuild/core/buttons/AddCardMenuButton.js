@@ -86,17 +86,22 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		this.menu.removeAll();
 
 		if (entry) {
-			var id = entry.get("id"),
-				descendants = _CMUtils.getDescendantsById(id);
+			var entryId = entry.get("id"),
+				isSuperclass = _CMUtils.isSuperclass(entryId);
 
 			this.setTextSuffix(entry.data.text);
 
-			Ext.Array.sort(descendants, function(et1, et2) {
-					return et1.get(WANNABE_DESCRIPTION) >= et2.get(WANNABE_DESCRIPTION);
-				});
-			for (var i=0; i<descendants.length; ++i) {
-				var d = descendants[i];
-				addSubclass.call(this, d);
+			if (isSuperclass) {
+				var descendants = _CMUtils.getDescendantsById(entryId);
+
+				Ext.Array.sort(descendants, function(et1, et2) {
+						return et1.get(WANNABE_DESCRIPTION) >= et2.get(WANNABE_DESCRIPTION);
+					});
+
+				for (var i=0; i<descendants.length; ++i) {
+					var d = descendants[i];
+					addSubclass.call(this, d);
+				}
 			}
 		}
 	}
