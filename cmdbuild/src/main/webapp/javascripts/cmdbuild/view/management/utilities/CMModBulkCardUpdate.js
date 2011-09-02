@@ -7,7 +7,7 @@
 		frame: false,
 		border: true,
 	
-		filterType: 'modutilities',
+		filterType: 'bulkcardupdate',
 
 		constructor: function() {
 			this.cardSelected = [];
@@ -79,6 +79,7 @@
 		onClassTreeSelected: function(classId) {
 			this.cardGrid.updateStoreForClassId(classId);
 			this.cardForm.fillWithFieldsForClassId(classId);
+			this.cardGrid.openFilterButton.enable();
 		},
 	
 		saveCardsChanges: function() {

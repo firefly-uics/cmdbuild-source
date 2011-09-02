@@ -50,6 +50,7 @@
 		}
 
 		var p = builSaveParams.call(this);
+		CMDBuild.LoadMask.get().show();
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/updatebulkcards',
 			params: p, 
@@ -57,6 +58,7 @@
 			success: function(response) {
 				this.view.cardGrid.reload(reselect = false);
 				onAbortButtonClick.call(this);
+				CMDBuild.LoadMask.get().hide();
 			}
 		});
 	}
