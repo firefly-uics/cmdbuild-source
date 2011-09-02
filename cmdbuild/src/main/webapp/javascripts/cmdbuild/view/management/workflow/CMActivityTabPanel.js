@@ -25,7 +25,9 @@
 			});
 
 			this.relationsPanel = new CMDBuild.view.management.classes.CMCardRelationsPanel({
-				title: CMDBuild.Translation.management.modworkflow.tabs.relations
+				title: CMDBuild.Translation.management.modworkflow.tabs.relations,
+				cmWithAddButton: false,
+				cmWithEditRelationIcons: false
 			});
 
 			this.openAttachmentPanel = new CMDBuild.view.management.workflow.widgets.CMOpenAttachment({

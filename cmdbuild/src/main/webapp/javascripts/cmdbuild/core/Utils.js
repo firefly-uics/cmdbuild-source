@@ -79,6 +79,10 @@ CMDBuild.Utils = (function() {
 			}
 		},
 
+		isProcess: function(id) {
+			return (!!_CMCache.getProcessById(id));
+		},
+
 		groupAttributes: function(attributes, allowNoteFiled) {
 			var groups = {};
 			var fieldsWithoutGroup = []; 
