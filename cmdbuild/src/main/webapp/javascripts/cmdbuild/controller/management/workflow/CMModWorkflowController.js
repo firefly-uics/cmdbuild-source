@@ -32,6 +32,10 @@
 			this.grid.mon(this.grid, "load", onGridLoad, this);
 			this.grid.mon(this.grid, "processTerminated", onProcessTermined, this);
 
+			this.grid.mon(this.grid, "itemdblclick", function() {
+				this.activityPanelController.onModifyButtonClick();
+			}, this);
+
 			this.gridSM.on("selectionchange", onActivitySelect, this);
 
 			this.tabPanel.on("cmeditmode", onEditMode, this);
@@ -187,9 +191,11 @@
 	}
 
 	function updateForActivity(a, editMode) {
-		var reloadFields = false;
-
 		this.currentActivity = a;
+
+		var reloadFields = false,
+			remotely = this.currentActivity.data.IdClass != this.currentEntryId;
+
 		if (this.idClassOfLastAttributesLoaded != this.currentActivity.data.IdClass) {
 			this.idClassOfLastAttributesLoaded = this.currentActivity.data.IdClass;
 			reloadFields = true;
@@ -217,6 +223,7 @@
 		this.view.updateForActivity(this.currentActivity, {
 			reloadFields: reloadFields,
 			editMode: editMode,
+			remotely: remotely,
 			cb: buildTheWidgetsControllers
 		});
 	}
@@ -405,7 +412,9 @@
 	
 					this.grid.openCard({
 						Id: this.currentActivity.raw.Id,
-						IdClass: this.currentActivity.raw.IdClass
+						// use the id class of the grid to use the right filter
+						// when look for the position
+						IdClass: this.currentEntryId
 					});
 				},
 	

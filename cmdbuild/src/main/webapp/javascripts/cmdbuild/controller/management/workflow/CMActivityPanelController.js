@@ -46,7 +46,9 @@
 			} else {
 				return true;
 			}
-		}
+		},
+
+		onModifyButtonClick: onModifyButtonClick
 	});
 
 	function onSaveButtonClick() {
