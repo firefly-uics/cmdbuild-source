@@ -280,7 +280,8 @@ BEGIN
 		' SET ' || quote_ident(RefIdColumn) || ' = ' || RefId ||
 			', "User" = ' || coalesce(quote_literal(UserName),'NULL') ||
 			RefClassUpdatePart ||
-		' WHERE "Status"=''A'' AND ' || quote_ident(CardIdColumn) || ' = ' || CardId;
+		' WHERE "Status"=''A'' AND ' || quote_ident(CardIdColumn) || ' = ' || CardId ||
+			' AND ' || quote_ident(RefIdColumn) || ' <> ' || RefId;
 END;
 $$ LANGUAGE plpgsql;
 
