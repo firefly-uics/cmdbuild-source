@@ -6,7 +6,7 @@
 
 		initComponent: function() {
 			if (this.multiSelect) {
-				this.selType = "checkboxmodel"
+				this.selType = "linkcardcheckboxmodel"
 			}
 
 			this.callParent(arguments);
@@ -38,6 +38,24 @@
 			var recIndex = this.getStore().find("Id", cardId);
 			if (recIndex >= 0) {
 				this.getSelectionModel().deselect(recIndex, true);
+			}
+		}
+	});
+
+	Ext.define('CMDBuild.selection.CMLinkCardCheckboxModel', {
+		extend: 'Ext.selection.CheckboxModel',
+		alias:  'selection.linkcardcheckboxmodel',
+
+		//override
+		onHeaderClick: function(headerCt, header, e) {
+			if (header.isCheckerHd) {
+				e.stopEvent(); // We have to supress the event or it will scrollTo the change
+				var isChecked = header.el.hasCls(Ext.baseCSSPrefix + 'grid-hd-checker-on');
+				if (isChecked) {
+					this.deselectAll();
+				} else {
+					this.selectAll();
+				}
 			}
 		}
 	});
