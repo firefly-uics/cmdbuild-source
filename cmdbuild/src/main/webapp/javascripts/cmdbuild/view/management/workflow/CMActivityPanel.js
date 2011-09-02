@@ -59,12 +59,18 @@
 			this.wfWidgetsPanel.updateWidgets(activity);
 
 			var loadCard = Ext.bind(function() {
-				this.activityForm.loadCard(activity);
+				if (o.remotely) {
+					this.activityForm.loadCard(activity.get("Id"), activity.get("IdClass"));
+				} else {
+					this.activityForm.loadCard(activity);
+				}
+
 				if (o.editMode) {
 					this.editMode();
 				} else {
 					this.displayMode(enableCMTbar = true);
 				}
+
 				if (o.cb) {
 					var scope = o.scope || this;
 					o.cb.call(this);
