@@ -24,6 +24,7 @@
 	Ext.define("CMDBuild.view.management.classes.CMCardRelationsPanel", {
 		extend: "Ext.tree.Panel",
 		cmWithAddButton: true,
+		cmWithEditRelationIcons: true,
 
 		initComponent: function() {
 			this.buildTBar();
@@ -59,7 +60,7 @@
 						header: '&nbsp',
 						fixed: true, 
 						sortable: false, 
-						renderer: this.renderRelationActions, 
+						renderer: Ext.bind(this.renderRelationActions, this),
 						align: 'center', 
 						tdCls: 'grid-button', 
 						dataIndex: 'Fake',
@@ -221,6 +222,7 @@
 		return nodes;
 	}
 
+	// scope: this
 	function renderRelationActions(value, metadata, record) {
 		if (record.get("depth") == 1) { // the domains node has no icons to render
 			return "";
@@ -232,7 +234,7 @@
 			domainObj = _CMCache.getDomainById(record.get("dom_id")),
 			table = _CMCache.getClassById(tableId);
 
-		if (domainObj.get("writePrivileges")) {
+		if (this.cmWithEditRelationIcons && domainObj.get("writePrivileges")) {
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>'
 			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>';
 		}
