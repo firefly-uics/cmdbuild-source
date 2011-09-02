@@ -1,5 +1,6 @@
 (function() {
-	var CLASS_ID_AS_RETURNED_BY_GETCARDLIST = "IdClass";
+	var ID_AS_RETURNED_BY_GETCARDLIST = "Id",
+		CLASS_ID_AS_RETURNED_BY_GETCARDLIST = "IdClass";
 
 	var tr = CMDBuild.Translation.management.modcard;
 
@@ -134,9 +135,13 @@
 					filterType: this.view.id,
 
 					successCb: function() {
-						me.loadData();
+						me.onAddRelationSuccess();
 					}
 				}).show();
+		},
+
+		onAddRelationSuccess: function() {
+			this.defaultOperationSuccess();
 		},
 
 		onEditRelationClick: function(model) {
@@ -152,11 +157,15 @@
 					},
 					filterType: this.view.id,
 					successCb: function() {
-						me.loadData();
+						me.onEditRelationSuccess();
 					}
 				}).show();
 				
 				
+		},
+
+		onEditRelationSuccess: function() {
+			this.defaultOperationSuccess();
 		},
 
 		onDeleteRelationClick: function(model) {
@@ -188,11 +197,24 @@
 			};
 		},
 
-		// to be override in CMManageRelationController
+		// overridden in CMManageRelationController
 		onDeleteRelationSuccess: function() {
-			this.loadData();
+			this.defaultOperationSuccess();
 		},
-		
+
+		// overridden in CMManageRelationController
+		defaultOperationSuccess: function() {
+			if (true) { // TODO Check if the modified relation was associated to a reference
+				var card = this.currentCard;
+				this.superController.openCard({
+					Id: card.get(ID_AS_RETURNED_BY_GETCARDLIST),
+					IdClass: card.get(CLASS_ID_AS_RETURNED_BY_GETCARDLIST)
+				});
+			} else {
+				this.loadData();
+			}
+		},
+
 		onEditCardClick: function(model) {
 			openCardWindow.call(this, model, true);
 		},

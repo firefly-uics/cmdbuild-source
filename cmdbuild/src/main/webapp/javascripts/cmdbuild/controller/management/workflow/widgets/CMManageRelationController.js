@@ -49,8 +49,12 @@
 			if (this.cardToDelete) {
 				removeCard.call(this);
 			} else {
-				this.loadData();
+				this.defaultOperationSuccess();
 			}
+		},
+
+		defaultOperationSuccess: function() {
+			this.loadData();
 		},
 
 		// baseWFWidget Functions
