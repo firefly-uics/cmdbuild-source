@@ -291,10 +291,13 @@ public class ModWorkflow extends JSONBase {
 
 	private Map<String, String> jsonObjectToStringMap(JSONObject jsonObject) {
 		final Map<String, String> valueMap = new HashMap<String, String>();
-		for (String key : JSONObject.getNames(jsonObject)) {
-			String value = jsonObject.optString(key);
-			if (value != null) {
-				valueMap.put(key, value);
+		if (jsonObject != null && jsonObject.length() > 0) {
+			// Awesome library, Douglas!
+			for (String key : JSONObject.getNames(jsonObject)) {
+				String value = jsonObject.optString(key);
+				if (value != null) {
+					valueMap.put(key, value);
+				}
 			}
 		}
 		return valueMap;
