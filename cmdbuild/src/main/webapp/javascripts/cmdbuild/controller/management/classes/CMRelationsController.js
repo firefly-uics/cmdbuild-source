@@ -1,4 +1,5 @@
 (function() {
+	var CLASS_ID_AS_RETURNED_BY_GETCARDLIST = "IdClass";
 
 	var tr = CMDBuild.Translation.management.modcard;
 
@@ -9,6 +10,7 @@
 
 			this.currentClass = null;
 			this.currentCard = null;
+			this.hasDomains = false;
 
 			this.callBacks = {
 				'action-relation-go': this.onFollowRelationClick,
@@ -45,10 +47,8 @@
 
 			this.view.disable();
 			this.view.clearStore();
-
-			this.hasDomains = false;
-			this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(selection);
 		},
+
 
 		onCardSelected: function(card) {
 			this.currentCard = card;
@@ -56,13 +56,26 @@
 				create: card.get("priv_create"),
 				write: card.get("priv_write")
 			};
+			this.updateCurrentClass(card);
 
-			if (this.currentClass != null && this.hasDomains) {
-				this.loadData();
+			if (this.hasDomains) {
 				this.view.enable();
+				this.loadData();
+			} else {
+				this.view.clearStore();
 			}
+		},
 
-			// else is a simple table that has no relations
+		updateCurrentClass: function(card) {
+			var classId = card.get(CLASS_ID_AS_RETURNED_BY_GETCARDLIST),
+				currentClass = _CMCache.getEntryTypeById(classId);
+			if (this.currentClass != currentClass) {
+				if (!currentClass || currentClass.get("tableType") == "simpletable") {
+					currentClass = null;
+				}
+				this.currentClass = currentClass;
+				this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(currentClass);
+			}
 		},
 
 		loadData: function() {

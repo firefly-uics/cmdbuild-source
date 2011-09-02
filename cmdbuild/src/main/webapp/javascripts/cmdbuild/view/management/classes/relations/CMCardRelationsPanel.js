@@ -7,7 +7,6 @@
 	var nullButton = {
 		enable: function(){},
 		disable: function(){},
-		setDomainsForEntryType: function(){},
 		on: function(){}
 	};
 
@@ -76,13 +75,11 @@
 		buildTBar: function() {
 			this.tbar = [];
 
+			this.addRelationButton = new CMDBuild.AddRelationMenuButton({
+				text : tr.add_relations
+			});
 			if (this.cmWithAddButton) {
-				this.addRelationButton = new CMDBuild.AddRelationMenuButton({
-					text : tr.add_relations
-				});
 				this.tbar.push(this.addRelationButton);
-			} else {
-				this.addRelationButton = nullButton;
 			}
 
 			if (CMDBuild.Config.graph.enabled=="true") {
