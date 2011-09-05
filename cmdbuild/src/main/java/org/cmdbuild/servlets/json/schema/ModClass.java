@@ -39,7 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModClass extends JSONBase {
-	
+
+	// NdPaolo: Is this still needed?
 	@JSONExported
 	public JSONArray tree(
 			@Parameter(value="active", required=false) boolean active,
@@ -143,12 +144,16 @@ public class ModClass extends JSONBase {
 		JSONArray jsonDomains = new JSONArray();
 		for (IDomain domain: allDomains) {
 			if (domain.getMode().isCustom() &&
-					(!activeOnly || domain.getStatus().isActive())) {
+					(!activeOnly || isActiveWithActiveClasses(domain))) {
 				jsonDomains.put(Serializer.serializeDomain(domain, activeOnly));
 			}
 		}
 		serializer.put("domains", jsonDomains);
 		return serializer;
+	}
+
+	private boolean isActiveWithActiveClasses(IDomain domain) {
+		return domain.getStatus().isActive() && isActive(domain.getClass1()) && isActive(domain.getClass2());
 	}
 
 	private boolean isActive(ITable table) {
