@@ -198,6 +198,9 @@
 						headers.push(header);
 					}
 					fields.push(header.dataIndex);
+				} else if (attribute.name == "Description") {
+					// FIXME Always add Description, even if hidden, for the reference popup
+					fields.push("Description");
 				}
 			}
 
