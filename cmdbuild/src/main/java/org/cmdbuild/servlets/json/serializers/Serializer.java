@@ -502,7 +502,7 @@ public class Serializer {
 	private static void addAccessPrivileges(JSONObject serializer, BaseSchema schema) throws JSONException {
 		Object privileges = schema.getMetadata().get(MetadataService.RUNTIME_PRIVILEGES_KEY);
 		if (privileges != null) {
-			boolean writePriv = PrivilegeType.WRITE.equals(privileges);
+			boolean writePriv = PrivilegeType.WRITE.equals(privileges) && !schema.getMode().alwaysReadPrivileges();
 			serializer.put("priv_write", writePriv);
 			boolean createPriv = writePriv;
 			if (schema instanceof ITable) {
