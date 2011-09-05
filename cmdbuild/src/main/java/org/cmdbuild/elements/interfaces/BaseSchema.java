@@ -63,7 +63,7 @@ public interface BaseSchema {
 		WRITE("write", true, true, true, false), 
 		READ("read", true, true, false, false),
 		BASECLASS("baseclass", false, true, false, true),
-		SYSREAD("sysread", false, false, true, true),
+		SYSREAD("sysread", false, true, true, true),
 		RESERVED("reserved", false, false, true, false),
 		NOACTIVE("noactive", false, false, false, false);
 
