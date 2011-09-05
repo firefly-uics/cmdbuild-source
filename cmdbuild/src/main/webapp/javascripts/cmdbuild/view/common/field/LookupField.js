@@ -147,31 +147,36 @@ function buildHiddenField(attribute) {
 
 //private
 var buildFieldSetItems = function(attribute, hiddenField) {
-	var lookupChain = attribute.lookupchain;
-	var fieldSetItems = [];
-	var currentField;
-	var parentField = null;
-	for (var i=0, len=lookupChain.length; i<len; ++i) {
-		var currentLookupType = lookupChain[len-i-1]; // reverse order
-		var forgedAttribute = forgeAttributeForMultilevelLookup(attribute, currentLookupType);
-		var hideLabel = (i != 0);
+	var lookupChain = attribute.lookupchain,
+		fieldSetItems = [],
+		parentField = null,
+		i, len, currentField;
+	for (i=0, len=lookupChain.length; i<len; ++i) {
+		var currentLookupType = lookupChain[len-i-1], // reverse order
+			forgedAttribute = forgeAttributeForMultilevelLookup(attribute, currentLookupType),
+			hideLabel = (i != 0);
 		currentField = buildSingleLookupField(forgedAttribute, hideLabel);
-		
+
 		if (parentField) {
 			currentField.parentField = parentField;
 			parentField.childField = currentField;
 		}
-		
 		fieldSetItems.push(currentField);
+
 		addEventsToMultilevelLookupCombo(currentField, parentField);
 		parentField = currentField;
-		
-		currentField.store.on('load', function() {
-			hiddenField.updateParentsIfLoaded();
-		}, currentField);
 	}
 	
 	bindHiddenFieldToLastCombo(hiddenField, currentField);
+
+	for (i=0, len=fieldSetItems.length; i<len; ++i) {
+		var store = currentField.store;
+		currentField = fieldSetItems[i];
+		store.mon(store, 'load', function() {
+			hiddenField.updateParentsIfLoaded();
+		});
+	}
+
 	return fieldSetItems;
 };
 
