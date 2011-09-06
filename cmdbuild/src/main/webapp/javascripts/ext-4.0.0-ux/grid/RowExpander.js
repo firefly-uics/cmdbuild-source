@@ -187,7 +187,13 @@ Ext.define('Ext.ux.RowExpander', {
             this.recordsExpanded[record.internalId] = false;
             this.view.fireEvent('collapsebody', rowNode, record, nextBd.dom);
         }
+		this.fixScrollbarNotShowing();
         this.view.up('gridpanel').invalidateScroller();
+    },
+
+	// Show or hide the scrollbar depending on the contents size
+    fixScrollbarNotShowing: function() {
+    	this.view.up('gridpanel').determineScrollbars();
     },
 
     onDblClick: function(view, cell, rowIdx, cellIndex, e) {
