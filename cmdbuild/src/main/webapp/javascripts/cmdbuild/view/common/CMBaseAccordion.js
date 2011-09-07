@@ -45,14 +45,19 @@
 				region: "center",
 				bodyStyle: { "border-top": "none" },
 				rootVisible: this.rootVisible,
-				autoScroll: true
+				viewConfig: {
+					// We are not using autoScroll because we are
+					// not interested in horizontal scrolling
+					style: {
+						"overflow-y": "auto"
+					}
+				}
 			});
 
 			Ext.apply(this, {
 				items: [this.tree],
 				layout: "border",
-				border: true,
-				autoScroll: true
+				border: true
 			});
 
 			this.callParent(arguments);
