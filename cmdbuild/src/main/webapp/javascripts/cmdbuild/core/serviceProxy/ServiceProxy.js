@@ -337,7 +337,8 @@ CMDBuild.ServiceProxy.lookup = {
 					type : type,
 					active : true,
 					short : true
-				}
+				},
+				actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
 			},
 			sorters : [ {
 				property : LOOKUP_FIELDS.Index,
@@ -361,7 +362,8 @@ CMDBuild.ServiceProxy.lookup = {
 				reader : {
 					type : 'json',
 					root : 'rows'
-				}
+				},
+				actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
 			},
 			sorters : [ {
 				property : 'Number',

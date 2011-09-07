@@ -40,17 +40,17 @@
 			hidden: true,
 			dataIndex : LOOKUP_FIELDS.Index
 		},{
-			header: tr.description,
-			dataIndex: LOOKUP_FIELDS.Description,
-			flex: 1
-		},{
 			header : tr.code,
 			dataIndex : LOOKUP_FIELDS.Code,
 			flex: 1
 		},{
+			header: tr.description,
+			dataIndex: LOOKUP_FIELDS.Description,
+			flex: 2
+		},{
 			header : tr.parentdescription,
 			dataIndex : LOOKUP_FIELDS.ParentDescription,
-			flex: 1
+			flex: 2
 		},
 		new Ext.ux.CheckColumn( {
 			header : tr.active,
