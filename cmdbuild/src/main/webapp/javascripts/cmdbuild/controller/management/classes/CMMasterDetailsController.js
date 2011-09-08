@@ -44,6 +44,7 @@
 			this.currentMasterData = null;
 
 			this.currentEntryType = selection;
+			this.view.disable();
 			this.view.loadDetailsAndFKThenBuildSideTabs(this.currentEntryType.get("id"));
 			this.view.resetDetailGrid();
 		},

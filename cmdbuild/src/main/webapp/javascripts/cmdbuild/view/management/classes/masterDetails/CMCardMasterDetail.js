@@ -85,11 +85,9 @@
 
 				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
 						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
-					this.disable();
 					this.fireEvent("empty");
 				} else {
 					this.empty = false;
-					this.enable();
 					buildTabs.call(this);
 				}
 			}
@@ -153,8 +151,12 @@
 
 		onAddCardButtonClick: function() {
 			this.disable();
-		}
+		},
 
+		onClassSelected: function() {
+			// Something is done on the controller, something else on the view: this is a mess!
+			this.disable();
+		}
 	});
 
 	function getId(tab) {
