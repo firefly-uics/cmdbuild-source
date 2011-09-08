@@ -856,7 +856,11 @@
          "download_attachment": "Preuzmi prilog",
          "edit_attachment": "Izmeni prilog",
          "edit_relation": "Izmeni relaciju",
-         "gis": {"geo_attributes": "Geografski atributi"},
+         "gis": {
+         	"geo_attributes": "Geografski atributi",
+         	"zoom": "<em>Zoom</em>",
+         	"position": "<em>Position</em>"
+         },
          "history_columns": {
             "activity_name": "Naziv aktivnosti",
             "attributes": "Atributi",

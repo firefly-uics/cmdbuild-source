@@ -856,7 +856,11 @@
          "download_attachment": "Scarica allegato",
          "edit_attachment": "Modifica allegato",
          "edit_relation": "Modifica relazione",
-         "gis": {"geo_attributes": "Attributi geografici"},
+         "gis": {
+         	"geo_attributes": "Attributi geografici",
+         	"zoom": "Zoom",
+         	"position": "Posizione"
+         },
          "history_columns": {
             "activity_name": "Nome attività",
             "attributes": "Attributi",

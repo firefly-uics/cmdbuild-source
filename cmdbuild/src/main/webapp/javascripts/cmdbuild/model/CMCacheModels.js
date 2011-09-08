@@ -1,5 +1,10 @@
 (function() {
 
+	Ext.define("CMDBuild.DummyModel", {
+		extend: "Ext.data.Model",
+		fields:[]
+	});
+
 	Ext.define("CMDBuild.cache.CMLookupTypeModel", {
 		extend: 'Ext.data.Model',
 		fields: [

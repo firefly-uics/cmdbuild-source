@@ -856,7 +856,11 @@
          "download_attachment": "Преузми прилог",
          "edit_attachment": "Измени прилог",
          "edit_relation": "Измени релацију",
-         "gis": {"geo_attributes": "Географски атрибути"},
+         "gis": {
+         	"geo_attributes": "Географски атрибути",
+         	"zoom": "<em>Zoom</em>",
+         	"position": "<em>Position</em>"
+         },
          "history_columns": {
             "activity_name": "Назив активности",
             "attributes": "Атрибути",

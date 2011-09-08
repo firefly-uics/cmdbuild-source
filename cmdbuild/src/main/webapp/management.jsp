@@ -85,16 +85,17 @@
 
 		<script type="text/javascript" src="javascripts/OpenLayers/OpenLayers.js"></script>
 
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMDBuildMap.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMap.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMSelectFeatureController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/PopupController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMZoomAndMousePositionControl.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapLayer.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/LayerBuilder.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/GeoUtility.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapToolbarButton.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapEditingWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapBuilder.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapPanel.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/PopupController.js"></script> 
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMMapController.js"></script>
 
 		<%}%>
 

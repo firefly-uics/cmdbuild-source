@@ -2,14 +2,14 @@
 	/**
 	 * @class CMDBuild.Management.CMDBuildMap
 	 */
-	CMDBuild.Management.CMDBuildMap = OpenLayers.Class(OpenLayers.Map, {
+	CMDBuild.Management.CMMap = OpenLayers.Class(OpenLayers.Map, {
 		cmdbLayers: [], //array with the layers added
-		update: function(params, withEditLayer) {
+
+		update: function(entryType, withEditLayer) {
 			removeCmdbLayers.call(this);
-			addCmdbLayers.call(this, params, withEditLayer);
-			this.controller.setSelectableLayers(this.cmdbLayers);
+			addCmdbLayers.call(this, entryType, withEditLayer);
 		},
-		
+
 		getEditableLayers: function() {
 			var layers = this.cmdbLayers;
 			var editLayers = [];
@@ -21,7 +21,7 @@
 			}
 			return editLayers;
 		},
-		
+
 		activateStrategies: function(acvitate) {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=layers.length; i<l; ++i) {
@@ -29,7 +29,15 @@
 				layer.activateStrategies(acvitate);
 			}
 		},
-		
+
+		refreshStrategies: function() {
+			var layers = this.cmdbLayers;
+			for (var i=0, l=layers.length; i<l; ++i) {
+				var layer = layers[i];
+				layer.refreshStrategies();
+			}
+		},
+
 		centerOnGeometry: function(geometry) {
 			try {
 				var geom = CMDBuild.GeoUtils.readGeoJSON(geometry.geometry);
@@ -43,9 +51,9 @@
 				 * if the server doesn't return a feature
 				 * the readGeoJSON methods throw an error.Rightly!!
 				 */
-			}			
+			}
 		},
-		
+
 		getFeatureByMasterCard: function(id) {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=this.layers.length; i<l; ++i) {
@@ -59,17 +67,17 @@
 			}
 			return null;
 		},
-		
-		clearSelection: function() {			
+
+		clearSelection: function() {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=this.layers.length; i<l; ++i) {
 				var layer = layers[i];
 				if (layer) {
-					layer.clearSelection();					
+					layer.clearSelection();
 				}
 			}
 		},
-		
+
 		getLayerByName: function(name) {
 			var l = this.getLayersByName(name);
 			if (l.length > 0) {
@@ -78,7 +86,7 @@
 				return null;
 			}
 		},
-		
+
 		getEditedGeometries: function() {
 			var mapOfFeatures = {};
 			var layers = this.cmdbLayers;
@@ -95,29 +103,21 @@
 			}
 			return mapOfFeatures;
 		},
-		
-		onLoadCard: function(cardId) {
-			var layers = this.cmdbLayers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].clearSelection();
-				layers[i].selectFeatureByMasterCard(cardId);				
-			}
-		},
-		
+
 		refreshFeatures: function() {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].refreshFeatures();			
+				layers[i].refreshFeatures();
 			}
 		},
-		
+
 		reselectLastSelection: function() {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=layers.length; i<l; ++i) {
 				layers[i].reselectLastSelection();
 			}
 		},
-		
+
 		removeAllPopups: function() {
 			var popups = this.popups;
 			for (var i=0, l=popups.length; i<l; i++) {
@@ -125,9 +125,9 @@
 			}
 		}
 	});
-	
-    // subroutine of the update method
-    function removeCmdbLayers() {
+
+	// subroutine of the update method
+	function removeCmdbLayers() {
 		if (this.cmdbLayers) {
 			var layer = this.cmdbLayers.pop();
 			while (layer) {
@@ -138,9 +138,9 @@
 				layer = this.cmdbLayers.pop();
 			}
 		}
-		this.cmdbLayers = [];		
+		this.cmdbLayers = [];
 	};
-	
+
 	function orderAttributesByIndex(geoAttributes) {
 		var out = [];
 		for (var i=0, l=geoAttributes.length; i<l; ++i) {
@@ -149,39 +149,39 @@
 		}
 		return out;
 	};
-	
+
 	// subroutine of the update method
-	function addCmdbLayers(params, withEditLayer) {
-		var geoAttributes = params.geoAttributes || [];
+	function addCmdbLayers(entryType, withEditLayer) {
+		var geoAttributes = entryType.getGeoAttrs() || [];
 		var orderedAttrs = orderAttributesByIndex(geoAttributes);
-		
+
 		for (var i = orderedAttrs.length; i>=0; i--) {
 			// add the related layer to the map
 			var attr = orderedAttrs[i];
-			var newLayer = CMDBuild.Management.CMDBuildMap.LayerBuilder.buildLayer({
-				classId: params.classId,
-		    	geoAttribute: attr,
-		    	withEditLayer: withEditLayer
+			var newLayer = CMDBuild.Management.CMMap.LayerBuilder.buildLayer({
+				classId: entryType.get("id"),
+				geoAttribute: attr,
+				withEditLayer: withEditLayer
 			});
+
 			addLayerToMap.call(this, newLayer);
 		}
-		
+
 		// add the editable layers to the map after
 		// the cmdb layers to see them over all
 		for (var i=0, l=this.cmdbLayers.length; i<l; ++i) {
-			var layer = this.cmdbLayers[i];		
+			var layer = this.cmdbLayers[i];
 			if (layer.editLayer) {
 				this.addLayers([layer.editLayer]);
 			}
 		}
 	};
-	
+
 	function addLayerToMap(layer) {
 		if (layer) {
 			this.cmdbLayers.push(layer);
 			layer.setVisibilityByZoom(this.getZoom());
 			this.addLayers([layer]);
-			this.controller.buildEditControls(layer);
 		}
 	};
 	
