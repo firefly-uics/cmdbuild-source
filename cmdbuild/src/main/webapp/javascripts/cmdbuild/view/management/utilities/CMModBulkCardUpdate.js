@@ -26,7 +26,8 @@
 				region: "west",
 				width: 200,
 				border: true,
-				split: true
+				split: true,
+				excludeSimpleTables: true
 			});
 
 			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({

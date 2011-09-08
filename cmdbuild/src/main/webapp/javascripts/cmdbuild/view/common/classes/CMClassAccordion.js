@@ -4,6 +4,8 @@
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modClass.tree_title,
 		cmName: "class",
+		excludeSimpleTables: false,
+
 		buildTreeStructure: function() {
 			var classes = _CMCache.getClasses();
 			var standard = []; // the standard CMDBuild classes
@@ -23,7 +25,7 @@
 					} else {
 						standard.push(node);
 					}
-				} else {
+				} else if (!this.excludeSimpleTables) {
 					simpletables.push(node);
 				}
 			}
