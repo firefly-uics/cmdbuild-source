@@ -46,6 +46,31 @@
 
 			this.view.on("select", onSelect, this);
 			this.view.on("deselect", onDeselect, this);
+
+			this.view.on("CM_toggle_map", function() {
+				var v = this.view;
+				if (v.grid.isVisible()) {
+					v.showMap();
+					v.mapButton.setIconCls("table");
+					v.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
+					this.mapController.centerMapOnSelection();
+				} else {
+					v.showGrid();
+					v.mapButton.setIconCls("map");
+					v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
+					loadPageForLastSelection.call(this, this.mapController.getLastSelection());
+				}
+			}, this);
+
+			if (this.view.hasMap()) {
+				this.mapController = 
+					new CMDBuild.controller.management.workflow.widgets.CMLinkCardsMapController({
+						view: this.view.mapPanel, 
+						ownerController: this,
+						model: this.model,
+						widgetConf: this.widgetConf
+					});
+			}
 		},
 
 		// override
@@ -110,8 +135,51 @@
 			} else {
 				return true;
 			}
+		},
+
+		syncSelections: function() {
+			this.model._silent = true;
+			this.view.syncSelections()
+			this.model._silent = false; 
 		}
 	});
+
+	function loadPageForLastSelection(selection) {
+
+		if (selection != null) {
+			var params = {
+				"retryWithoutFilter": true,
+				IdClass:this.widgetConf.ClassId,
+				Id: selection
+			}, 
+			me = this, 
+			grid = this.view.grid;
+
+			me.model._silent = true;
+
+			CMDBuild.ServiceProxy.card.getPosition({
+				params: params,
+				success: function onGetPositionSuccess(response, options, resText) {
+					var position = resText.position,
+						found = position >= 0,
+						foundButNotInFilter = resText.notFoundInFilter;
+	
+					if (found) {
+						var	pageNumber = grid.getPageNumber(position);
+						grid.loadPage(pageNumber, {
+							scope: me,
+							cb: function() {
+								me.model._silent = false;
+							}
+						})
+					}
+				}
+			});
+
+		} else {
+			this.syncSelections();
+		}
+	}
 
 	function onSelect(cardId) {
 		this.model.select(cardId);
@@ -120,21 +188,6 @@
 	function onDeselect(cardId) {
 		this.model.deselect(cardId);
 	}
-
-//		view.on("CM_toggle_map", function() {
-//			var v = this.view;
-//			if (v.cardGrid.isVisible()) {
-//				v.getLayout().setActiveItem(v.mapPanel.id);
-//				v.mapButton.setIconClass("table");
-//				v.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);				
-//			} else {
-//				v.getLayout().setActiveItem(v.cardGrid.id);
-//				v.mapButton.setIconClass("map");
-//				v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
-//				this.gridController.loadPageForLastSelection(this.mapController.getLastSelection());		
-//			}
-//		}, this);
-
 
 	function resolveTemplate() {
 		resolve.call(this);
@@ -188,7 +241,6 @@
 	}
 
 	function addListenerToDeps() {
-		//TODO vedere se funzionano
 		var ld = this.templateResolver.getLocalDepsAsField();
 		for (var i in ld) {
 			//before the blur if the value is changed

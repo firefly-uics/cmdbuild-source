@@ -40,7 +40,7 @@ CMDBuild.Management.MapBuilder = (function() {
 			layerSwitcher = new OpenLayers.Control.LayerSwitcher(),
 			mouseControl = new CMDBuild.Management.CMZoomAndMousePositionControl({
 				zoomLabel : CMDBuild.Translation.management.modcard.gis.zoom,
-				positionLabel : CMDBuild.Translation.management.modcard.gis.position,
+				positionLabel : CMDBuild.Translation.management.modcard.gis.position
 			});
 
 		map.addControl(layerSwitcher);
