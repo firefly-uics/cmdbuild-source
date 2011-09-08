@@ -18,14 +18,20 @@
 
 		// override
 		onViewOnFront: function(selection) {
+			var processId, process;
+
 			if (selection) {
+				processId = selection.data.id;
+				if (processId) {
+					process = _CMCache.getProcessById(processId);
+				}
 				this.view.onProcessSelected(selection.data);
 
-				this.processFormController.onProcessSelected(selection.data.id);
-				this.xpdlPanelController.onProcessSelected(selection.data.id);
-				this.cronPanelController.onProcessSelected(selection.data.id);
-				this.attributePanelController.onClassSelected(selection.data.id);
-				this.domainTabController.onClassSelected(selection.data.id);
+				this.processFormController.onProcessSelected(processId);
+				this.xpdlPanelController.onProcessSelected(processId, process);
+				this.cronPanelController.onProcessSelected(processId, process);
+				this.attributePanelController.onClassSelected(processId);
+				this.domainTabController.onClassSelected(processId);
 			}
 		},
 

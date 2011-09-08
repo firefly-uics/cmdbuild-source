@@ -19,12 +19,16 @@
 			this.jobGrid.addJobButton.on("click", onAddJobButtonClick, this);
 		},
 
-		onProcessSelected: function(processId) {
+		onProcessSelected: function(processId, process) {
 			this.currentProcessId = processId;
-			this.view.enable();
-			this.jobGrid.load(processId);
-			this.jobPanel.disableModify();
-			this.jobParemetersGrid.addParameterButton.disable();
+			if (!process || process.get("superclass")) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+				this.jobGrid.load(processId);
+				this.jobPanel.disableModify();
+				this.jobParemetersGrid.addParameterButton.disable();
+			}
 		},
 
 		onAddClassButtonClick: function() {

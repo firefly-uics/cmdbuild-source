@@ -14,15 +14,18 @@
 			this.downloadForm.submitButton.on("click", onDownloadSubmitClick, this);
 		},
 		
-		onProcessSelected: function(id) {
-			this.view.enable();
-			this.currentProcessId = id;
-			if (id > 0) {
+		onProcessSelected: function(processId, process) {
+			this.currentProcessId = processId;
+			if (!process || process.get("superclass")) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.Ajax.request({
 					url : 'services/json/schema/modworkflow/xpdlinfo',
 					method: 'POST',
-					params: {idClass : id},
+					params: {idClass : processId},
 					scope: this,
 					success: function(response, options, xpdlInfo) {
 						CMDBuild.LoadMask.get().hide();
