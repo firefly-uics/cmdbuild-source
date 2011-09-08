@@ -129,6 +129,10 @@
 			this.disable();
 		},
 
+		onClassSelected: function() {
+			this.disable();
+		},
+
 		convertRelationInNodes: convertRelationInNodes,
 		renderRelationActions: renderRelationActions
 	});
