@@ -16,7 +16,7 @@
 				autoScroll: true
 			});
 
-			this.cardHistoryPanel = new CMDBuild.view.management.classes.CMCardHistoryTab({
+			this.cardHistoryPanel = new CMDBuild.view.management.workflow.CMActivityHistoryTab({
 				title: CMDBuild.Translation.management.modworkflow.tabs.history
 			});
 

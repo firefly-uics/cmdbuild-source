@@ -111,6 +111,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMWFWidgetsPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityHistoryPanel.js"></script>
 	
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateModifyCard.js"></script>

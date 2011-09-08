@@ -2,26 +2,6 @@
 
 	var col_tr = CMDBuild.Translation.management.modcard.history_columns;
 
-	function genHistoryBody(record) {
-		var body = '';
-		if (record.raw['_RelHist']) {
-			body += historyAttribute(col_tr.domain, record.raw['DomainDesc'])
-				+ historyAttribute(col_tr.destclass, record.raw['Class'])
-				+ historyAttribute(col_tr.code, record.raw['CardCode'])
-				+ historyAttribute(col_tr.description, record.raw['CardDescription']);
-		}
-		for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
-			var ai = a[i];
-			body += historyAttribute(ai.d, ai.v || "", ai.c);
-		}
-		return body;
-	}
-
-	function historyAttribute(label, value, changed) {
-		var cls = changed ? " class=\"changed\"" : "";
-		return "<p"+cls+"><b>"+label+"</b>: "+((value || {}).dsc || value)+"</p>";
-	};
-
 	Ext.define("CMDBuild.view.management.classes.CMCardHistoryTab", {
 		extend: "Ext.grid.Panel",
 
@@ -44,15 +24,7 @@
 						return o;
 					}
 				}],
-				columns: [
-					{header: col_tr.begin_date,  width: 180, fixed: true, sortable: false, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
-					{header: col_tr.end_date,  width: 180, fixed: true, sortable: false, dataIndex: 'EndDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
-					{header: col_tr.user, width: 20, sortable: false, dataIndex: 'User', flex:1},
-					{header: col_tr.attributes, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_AttrHist', align: 'center', tdCls: 'grid-button', flex:1},
-					{header: col_tr.relation, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_RelHist', align: 'center', tdCls: 'grid-button', flex:1},
-					{header: col_tr.domain, width: 20, sortable: false, dataIndex: 'DomainDesc', flex:1},
-					{header: col_tr.description, width: 40, sortable: false, dataIndex: 'CardDescription', flex:1}
-				],
+				columns: this.getGridColumns(),
 				store: new Ext.data.JsonStore({
 					proxy : {
 						type : 'ajax',
@@ -63,22 +35,10 @@
 						}
 					},
 					sorters : [
-						{ property : 'BeginDate', direction : "DESC" },
-						{ property : '_EndDate', direction : "DESC" }
+						{property : 'BeginDate', direction : "DESC"},
+						{property : '_EndDate', direction : "DESC"}
 					],
-					fields: [
-						{ name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s' },
-						{ name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s' },
-						{ name:'_EndDate', type:'int' }, // For sorting only
-						'User',
-						'_AttrHist',
-						'_RelHist',
-						'DomainDesc',
-						'Class',
-						'CardCode',
-						'CardDescription',
-						'Code'
-					],
+					fields: this.getStoreFields(),
 					baseParams: {
 						IsProcess: (this.eventmastertype == 'processclass')
 					}
@@ -90,7 +50,34 @@
 				this.doLayout(); // to refresh the scrollbar status
 			}, this);
 		},
-	
+
+		getGridColumns: function() {
+			return [
+				{header: col_tr.begin_date,  width: 180, fixed: true, sortable: false, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
+				{header: col_tr.end_date,  width: 180, fixed: true, sortable: false, dataIndex: 'EndDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
+				{header: col_tr.user, width: 20, sortable: false, dataIndex: 'User', flex:1},
+				{header: col_tr.attributes, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_AttrHist', align: 'center', tdCls: 'grid-button', flex:1},
+				{header: col_tr.relation, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_RelHist', align: 'center', tdCls: 'grid-button', flex:1},
+				{header: col_tr.domain, width: 20, sortable: false, dataIndex: 'DomainDesc', flex:1},
+				{header: col_tr.description, width: 40, sortable: false, dataIndex: 'CardDescription', flex:1}
+			];
+		},
+
+		getStoreFields: function() {
+			return [
+					{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'},
+					{name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'},
+					{name:'_EndDate', type:'int'}, // For sorting only
+					'User',
+					'_AttrHist',
+					'_RelHist',
+					'DomainDesc',
+					'Class',
+					'CardCode',
+					'CardDescription'
+				]
+		},
+
 		onClassSelected: function(classId) {
 			if (this.currentClassId != classId) {
 				this.currentClassId = classId;
@@ -158,6 +145,26 @@
 		}
 	});
 
+	function genHistoryBody(record) {
+		var body = '';
+		if (record.raw['_RelHist']) {
+			body += historyAttribute(col_tr.domain, record.raw['DomainDesc'])
+				+ historyAttribute(col_tr.destclass, record.raw['Class'])
+				+ historyAttribute(col_tr.code, record.raw['CardCode'])
+				+ historyAttribute(col_tr.description, record.raw['CardDescription']);
+		}
+		for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
+			var ai = a[i];
+			body += historyAttribute(ai.d, ai.v || "", ai.c);
+		}
+		return body;
+	}
+
+	function historyAttribute(label, value, changed) {
+		var cls = changed ? " class=\"changed\"" : "";
+		return "<p"+cls+"><b>"+label+"</b>: "+((value || {}).dsc || value)+"</p>";
+	};
+
 	function tabIsActive(t) {
 		return t.ownerCt.layout.getActiveItem().id == t.id;
 	}
@@ -169,5 +176,4 @@
 			return '&nbsp;'
 		}
 	}
-
 })();

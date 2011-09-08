@@ -820,6 +820,7 @@ public class Serializer {
 					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("_AttrHist", true);
 					map.put("User", card.getUser());
+					map.put("Code", card.getCode());
 					map.put("BeginDate", card.getAttributeValue("BeginDate").toString());
 					
 					final Date endDateForSorting;
