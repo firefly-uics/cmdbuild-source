@@ -17,7 +17,11 @@ Ext.define("CMDBuild.Management.LinkCardsModel", {
 	},
 
 	select: function(selection) {
-		_debug("LinkCardsModel - select", selection);
+		_debug("LinkCardsModel - select " + selection);
+		if (this._silent) {
+			return;
+		}
+
 		if (this.isSelected(selection)) {
 			return;
 		} else {
@@ -30,7 +34,11 @@ Ext.define("CMDBuild.Management.LinkCardsModel", {
 	},
 
 	deselect : function(selection) {
-		_debug("LinkCardsModel - deselect", selection);
+		_debug("LinkCardsModel - deselect " + selection);
+		if (this._silent) {
+			return;
+		}
+
 		if (this.isSelected(selection)) {
 			delete this.selections[selection];
 			this.fireEvent("deselect", selection);

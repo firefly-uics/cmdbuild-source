@@ -1,6 +1,10 @@
 Ext.define("CMDBuild.Management.MapPanel", {
 	extend: "Ext.panel.Panel",
 
+	lon: undefined,
+	lat: undefined,
+	initialZoomLevel: undefined,
+
 	initComponent : function() {
 		Ext.apply(this, {
 			hideMode: "offsets"
@@ -15,11 +19,11 @@ Ext.define("CMDBuild.Management.MapPanel", {
 		this.callParent(arguments);
 
 		var map = CMDBuild.Management.MapBuilder.buildMap(this.body.dom.id),
-			lon = CMDBuild.Config.gis['center.lon'],
-			lat = CMDBuild.Config.gis['center.lat'],
+			lon = this.lon || CMDBuild.Config.gis['center.lon'] || 0,
+			lat = this.lat || CMDBuild.Config.gis['center.lat'] || 0,
 			center = new OpenLayers.LonLat(lon,lat),
 			projectedCenter = center.transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject()),
-			initialZoomLevel = CMDBuild.Config.gis.initialZoomLevel;
+			initialZoomLevel = this.initialZoomLevel || CMDBuild.Config.gis.initialZoomLevel || 0;
 
 		map.setCenter(projectedCenter, initialZoomLevel);
 

@@ -289,7 +289,9 @@
 		//private, could be overridden
 		buildExtraColumns: function() {
 			return [];
-		}
+		},
+
+		getPageNumber: getPageNumber
 	});
 
 	function updateStoreAndSelectGivenPosition(idClass, position) {

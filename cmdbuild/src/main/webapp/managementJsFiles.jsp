@@ -157,6 +157,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateModifyCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateReportController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsMapController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageEmailController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenAttachmentController.js"></script>
