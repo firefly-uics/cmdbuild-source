@@ -77,7 +77,10 @@
                     items: [field, button]
                 },
                 subFieldsPanel
-            ]
+            ],
+			resolveTemplate: function() {
+				field.resolveTemplate();
+			}
         });
     }
 
@@ -167,16 +170,30 @@
         },
 
         resolveTemplate: function() {
-            if (this.templateResolver && !this.disabled) {
-                this.templateResolver.resolveTemplates({
+			var me = this;
+            if (me.templateResolver && !me.disabled) {
+				if (me.templateResolverBusy) {
+					// Don't overlap requests
+					me.requireResolveTemplates = true;
+					return;
+				}
+				me.templateResolverBusy = true;
+                me.templateResolver.resolveTemplates({
                     attributes: [FILTER_FIELD],
-                    callback: this.onTemplateResolved,
-                    scope: this
+                    callback: function(out, ctx) {
+						me.onTemplateResolved(out, function afterStoreIsLoaded() {
+							me.templateResolverBusy = false;
+							if (me.requireResolveTemplates) {
+								me.requireResolveTemplates = false;
+								me.resolveTemplate();
+							}
+						});
+					}
                 });
             }
         },
 
-        onTemplateResolved: function(out, ctx) {
+        onTemplateResolved: function(out, afterStoreIsLoaded) {
             this.filtered = true;
             var store = this.store;
             var callParams = this.templateResolver.buildCQLQueryParameters(out[FILTER_FIELD]);
@@ -185,12 +202,13 @@
                 // For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
                 Ext.apply(store.baseParams, callParams);
 
-                var me = this;
+				var me = this;
                 store.load({
                     params: callParams,
                     callback: function() {
                         // Fail the validation if the current selection is not in the new filter
                         me.validate();
+						afterStoreIsLoaded();
                     }
                 });
             } else {
@@ -198,17 +216,24 @@
                 emptyDataSet[store.root] = [];
                 emptyDataSet[store.totalProperty] = 0;
                 store.loadData(emptyDataSet);
+				afterStoreIsLoaded();
             }
             this.addListenerToDeps();
         },
 
         addListenerToDeps: function() {
+			if (this.depsAdded) {
+				return;
+			}
+			this.depsAdded = true;
             // Adding the same listener twice does not double the fired events, that's why it works
-            var ld = this.templateResolver.getLocalDepsAsField();
-            for (var i in ld) {
-                // Before the blur if the value is changed
-                if (ld[i]) {
-                    ld[i].on("change", this.resolveTemplate, this);
+            var deps = this.templateResolver.getLocalDepsAsField();
+            for (var name in deps) {
+                var field = deps[name];
+                if (field) {
+                    field.mon(field, "change", function() {
+						this.resolveTemplate();
+					}, this);
                 }
             }
         }
