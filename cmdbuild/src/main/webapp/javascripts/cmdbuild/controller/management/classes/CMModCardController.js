@@ -11,6 +11,7 @@
 			this.currentEntryId = null;
 			this.currentEntry = null;
 			this.currentCard = null;
+			this.cardExtensionsProviders = [];
 
 			this.cardPanel = this.view.cardTabPanel.cardPanel;
 			this.notePanel = this.view.cardTabPanel.cardNotesPanel;
@@ -25,11 +26,36 @@
 			this.relationsPanel = this.view.cardTabPanel.relationsPanel;
 			this.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(this.relationsPanel, this);
 
+			if (typeof this.view.getMapPanel == "function") {
+				this.mapController = new CMDBuild.controller.management.classes.CMMapController(this.view.getMapPanel(), this.cardPanel, this);
+			} else {
+				this.mapController = {
+					onEntryTypeSelect: Ext.emptyFn,
+					getValues: function() {return false;},
+					refresh: Ext.emptyFn
+				};
+			}
+
 			this.gridSM = this.cardGrid.getSelectionModel();
 			this.view.addCardButton.on("cmClick", onAddCardButtonClick, this);
 
 			this.cardGrid.on("itemdblclick", onModifyCardClick, this);
 			this.cardGrid.on("cmWrongSelection", onSelectionWentWrong, this);
+
+			this.cardGrid.on("cmVisible", function onCardGridVisible(visible) {
+				if (visible 
+						&& this.currentEntryId 
+						&& this.currentCard) {
+					var currentGridSelection = this.gridSM.getSelection();
+					if (currentGridSelection 
+						&& currentGridSelection[0] && currentGridSelection[0].get("Id") != this.currentCard.get("Id")) {
+							this.cardGrid.openCard({
+								IdClass: this.currentEntryId,
+								Id: this.currentCard.get("Id")
+							}, retryWithoutFilter = true);
+					}
+				}
+			}, this);
 
 			this.cardGrid.on("load", function(args) {
 				// args[1] is the array with the loaded records
@@ -66,12 +92,13 @@
 				if (entryIdChanged) {
 					this.currentEntryId = newEntryId;
 					this.currentEntry = _CMCache.getEntryTypeById(this.currentEntryId);
+					this.currentCard = null;
 
 					// sub-controllers
 					this.attachmentsController.onEntrySelect(selection);
 					this.relationsController.onEntrySelect(selection);
 					this.mdController.onEntrySelect(selection);
-
+					this.mapController.onEntryTypeSelect(this.currentEntry);
 				}
 
 				if (dc != null) {
@@ -81,24 +108,45 @@
 				}
 
 			}
-		}
+		},
+
+		onCardSelected: onCardSelected
 	});
 
 	function onCardSelected(sm, selection) {
-		if (selection.length > 0) {
-			this.currentCard = selection[0];
+		if (Ext.isArray(selection)) {
+			if (selection.length > 0) {
+				this.currentCard = selection[0];
+	
+				// If the current entryType is a superclass the record has only the value defined
+				// in the super class. So, we say to the form to load the remote data.
+				var loadRemoteData = this.currentEntry.get("superclass"),
+					reloadFields = this.currentEntryId != this.currentCard.get("IdClass");
+	
+				this.view.cardTabPanel.onCardSelected(this.currentCard, reloadFields, loadRemoteData);
+	
+				// sub-controllers
+				this.attachmentsController.onCardSelected(this.currentCard);
+				this.relationsController.onCardSelected(this.currentCard);
+				this.mdController.onCardSelected(this.currentCard);
+			}
+		} else {
+			// it was not selected by the grid, so retrive remotely the
+			// card info and do the regular selection.
 
-			// If the current entryType is a superclass the record has only the value defined
-			// in the super class. So, we say to the form to load the remote data.
-			var loadRemoteData = this.currentEntry.get("superclass"),
-				reloadFields = this.currentEntryId != this.currentCard.get("IdClass");
+			CMDBuild.ServiceProxy.card.get({
+				params: selection,
+				scope: this,
+				success: function(a,b, response) {
+					var raw = response.card;
+					if (raw) {
+						var c = new CMDBuild.DummyModel(response.card);
+						c.raw = raw;
+						this.onCardSelected(sm = null, [c]);
+					}
+				}
+			});
 
-			this.view.cardTabPanel.onCardSelected(this.currentCard, reloadFields, loadRemoteData);
-
-			// sub-controllers
-			this.attachmentsController.onCardSelected(this.currentCard);
-			this.relationsController.onCardSelected(this.currentCard);
-			this.mdController.onCardSelected(this.currentCard);
 		}
 	}
 
@@ -114,6 +162,7 @@
 		
 		this.view.cardTabPanel.onAddCardButtonClick(this.classOfCardToAdd,reloadFields);
 		this.gridSM.deselectAll();
+		this.mapController.onAddCardButtonClick();
 	}
 	
 	function onModifyCardClick() {
@@ -153,7 +202,7 @@
 
 		Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);
 	}
-	
+
 	function onAbortCardClick() {
 		this.classOfCardToAdd = null;
 		if (this.currentCard) {
@@ -163,15 +212,14 @@
 			this.cardPanel.displayMode(enableCMTbar = false);
 		}
 	}
-	
+
 	function onSaveCardClick() {
 		var params = {},
 			form = this.cardPanel.getForm(),
 			view = this.cardPanel,
-			ex = []; //var ex = this.cardExtensionsProvider;
-		
-		var invalidAttributes = this.cardPanel.getInvalidAttributeAsHTML();
-		
+			invalidAttributes = this.cardPanel.getInvalidAttributeAsHTML(),
+			mapValuesToSend = this.mapController.getValues();
+
 		if (this.currentCard) {
 			params = {
 				IdClass: this.currentCard.get("IdClass"),
@@ -183,7 +231,11 @@
 				Id: -1
 			};
 		}
-		
+
+		if (mapValuesToSend) {
+			params["geoAttributes"] = mapValuesToSend;
+		}
+
 		if (invalidAttributes == null) {
 			CMDBuild.LoadMask.get().show();
 			form.submit({
@@ -191,7 +243,6 @@
 				url : 'services/json/management/modcard/updatecard',
 				scope: this,
 				params: params,
-
 				success : function(form, action) {
 					CMDBuild.LoadMask.get().hide();
 					this.cardPanel.displayMode();
@@ -202,6 +253,14 @@
 					};
 
 					this.cardGrid.openCard(c);
+
+					if (!this.cardGrid.cmVisible) {
+						// to load the card in the tab-panels
+						this.onCardSelected(selectionModel = null, card = c);
+					}
+
+					this.mapController.onCardSaved(c);
+
 					_CMCache.onClassContentChanged(this.currentEntryId);
 				},
 
@@ -275,6 +334,7 @@
 	function onShowGraphClick() {
 		var classId = this.currentCard.get("IdClass"),
 			cardId = this.currentCard.get("Id");
+
 		CMDBuild.Management.showGraphWindow(classId, cardId);
 	}
 

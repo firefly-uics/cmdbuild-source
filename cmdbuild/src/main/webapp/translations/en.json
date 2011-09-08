@@ -856,7 +856,11 @@
          "download_attachment": "Download attachment",
          "edit_attachment": "Edit attachment",
          "edit_relation": "Edit relation",
-         "gis": {"geo_attributes": "Geographical attributes"},
+         "gis": {
+         	"geo_attributes": "Geographical attributes",
+         	"zoom": "Zoom",
+         	"position": "Position"
+         },
          "history_columns": {
             "activity_name": "Activity name",
             "attributes": "Attributes",

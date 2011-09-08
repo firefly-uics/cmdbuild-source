@@ -54,7 +54,8 @@
 						this.splash = new Ext.window.Window({
 							modal: true,
 							closable: false,
-							draggable: false
+							draggable: false,
+							resizable: false
 						});
 					}
 

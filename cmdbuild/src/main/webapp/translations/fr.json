@@ -856,7 +856,11 @@
          "download_attachment": "Chargement pièce jointe",
          "edit_attachment": "Editer pièce jointe",
          "edit_relation": "Editer relation",
-         "gis": {"geo_attributes": "Attributs Geographiques"},
+         "gis": {
+         	"geo_attributes": "Attributs Geographiques",
+         	"zoom": "<em>Zoom</em>",
+         	"position": "<em>Posizione</em>"
+         },
          "history_columns": {
             "activity_name": "Nom activité",
             "attributes": "Attributs",

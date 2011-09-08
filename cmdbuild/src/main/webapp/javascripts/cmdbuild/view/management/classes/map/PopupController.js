@@ -1,6 +1,6 @@
 (function() {
-	CMDBuild.Management.CMDBuildMap.PopupController = OpenLayers.Class(OpenLayers.Control.SelectFeature, {
-	    initialize: function(layers, options) {
+	CMDBuild.Management.PopupController = OpenLayers.Class(CMDBuild.Management.CMSelectFeatureController, {
+		initialize: function(layers, options) {
 			layers = layers || [];
 			options = options || {};
 			
@@ -13,70 +13,81 @@
 				f.CM_over = false;
 				f.layer.map.removeAllPopups();
 			};
-			
-			OpenLayers.Control.SelectFeature.prototype.initialize.apply(this, [layers, options]);
+
+			CMDBuild.Management.CMSelectFeatureController.prototype.initialize.apply(this, [layers, options]);
 		}
 	});
-	
+
 	function onFeatureOver(f) {
 		f.CM_over = true;
-		
+
 		function showInfoBaloon(f) {
 			if (!f.CM_over || f.CM_busy) {
-    			return;
-    		}
-    		
+				return;
+			}
+
 			if (f.CM_card) {
 				buildPopUp(f);
 			} else {
 				f.CM_busy = true;
-				CMDBuild.ServiceProxy.getCard(f.attributes.master_class, f.attributes.master_card, function(response, options, decoded) {
-    				f.CM_busy = false;
-    				f.CM_card = decoded.card;
-    				f.CM_card_attributes = decoded.attributes;
-    				buildPopUp(f);
-    			});
+				CMDBuild.ServiceProxy.card.get({
+					params: {
+						Id: f.attributes.master_card,
+						IdClass: f.attributes.master_class
+					},
+					scope: this,
+					success: function(response, options, decoded) {
+						f.CM_busy = false;
+						f.CM_card = decoded.card;
+						f.CM_card_attributes = decoded.attributes;
+						buildPopUp(f);
+					}
+				});
 			}
-    	}
-		
-		Ext.defer(showInfoBaloon, 250, this, arguments);
+		}
+
+		// defer the call to deny a pop-up explosion ;) 
+		Ext.Function.createDelayed(showInfoBaloon, 250, this, arguments)();
 		return true;
 	}
-	
+
 	function buildPopUp(f) {
 		var g = f.geometry;
-		if (f.layer) {
-			f.layer.map.addPopup(new OpenLayers.Popup.FramedCloud(
-	            "cloud_"+f.id, 
-	            new OpenLayers.LonLat(g.x, g.y),
-	            null,
-	            buildPopupContent(f),
-	            null,
-	            closeButton = false
-	        ), exlusive=true);
+
+		if (g) {
+			var centeroid = g.getCentroid();
+
+			if (f.layer) {
+				f.layer.map.addPopup(new OpenLayers.Popup.FramedCloud(
+					"cloud_"+f.id, 
+					new OpenLayers.LonLat(centeroid.x, centeroid.y),
+					null,
+					buildPopupContent(f),
+					null,
+					closeButton = false
+				), exlusive=true);
+			}
 		}
 	}
-	
+
 	function buildPopupContent(f) {
-		var card = f.CM_card;
-		var attributes = f.CM_card_attributes;
-		
-		var htmlTemplate = "<div class=\"map_cloud_content\">" +
+		var card = f.CM_card,
+			attributes = f.CM_card_attributes,
+			htmlTemplate = "<div class=\"map_cloud_content\">" +
 				"<p class=\"map_cloud_title\">{0}</p>" +
-				"{1}</div>";
-		var itemTemplate = "<p class=\"map_cloud_item\"><strong>{0}:</strong>"
-			+ "<span>{1}</span></p>";
-		
-		
-		var items = "";
+				"{1}</div>",
+			itemTemplate = "<p class=\"map_cloud_item\"><strong>{0}:</strong>"
+			+ "<span>{1}</span></p>",
+			items = "";
+
 		for (var i=0, l=attributes.length; i<l; ++i) {
 			var at = attributes[i];
 			if (at.isbasedsp) {
 				var attrValue = card[at.name+"_value"] || card[at.name] || "-";
-				items += String.format(itemTemplate, at.description, attrValue);
+				items += Ext.String.format(itemTemplate, at.description, attrValue);
 			}
 		}
-		
-		return String.format(htmlTemplate, card.IdClass_value, items);
+
+		return Ext.String.format(htmlTemplate, card.IdClass_value, items);
 	}
 })();

@@ -5,7 +5,7 @@
 			// geographical attributes
 			var et = _CMCache.getEntryTypeById(classId);
 			if (et) {
-				return et.getGeoAttrs()
+				return et.getGeoAttrs();
 			}
 
 			return [];

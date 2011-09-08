@@ -684,6 +684,12 @@ em {
 	padding-left: 0.4em;
 }
 
+.olControlMousePosition {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 0.3em;
+}
+
 .importcsv-empty-cell {
 	background-color: #DDD;
 }
