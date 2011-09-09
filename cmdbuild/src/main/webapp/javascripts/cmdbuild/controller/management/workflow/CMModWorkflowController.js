@@ -63,7 +63,7 @@
 
 				if (dc != null) {
 					this.view.openCard(dc, retryWithoutFilter = true);
-				} else {
+				} else if (entryIdChanged) {
 					this.view.onEntrySelected(selection);
 				}
 			}

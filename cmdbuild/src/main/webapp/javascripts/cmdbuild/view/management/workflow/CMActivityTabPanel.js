@@ -79,6 +79,8 @@
 		onClassSelected: function(id, activateFirst) {
 			if (activateFirst) {
 				this.showActivityPanel();
+			} else {
+				this.ignoreTabActivationManagement = true; // see showActivityPanelIfNeeded
 			}
 
 			this.acutalPanel.items.each(function(item) {
@@ -123,6 +125,7 @@
 					this.widgetsMap[w.identifier] = ui;
 				}
 			}, this);
+
 			this.widgetsTab.disable();
 			this.activityTab.updateForActivity(activity, o);
 
@@ -170,6 +173,11 @@
 		},
 
 		showActivityPanelIfNeeded: function() {
+			if (this.ignoreTabActivationManagement) {
+				this.ignoreTabActivationManagement = false;
+				return;
+			}
+
 			var active = this.acutalPanel.getActiveTab().id;
 			if (active == this.widgetsTab.id
 				|| active == this.openNotePanel.id
