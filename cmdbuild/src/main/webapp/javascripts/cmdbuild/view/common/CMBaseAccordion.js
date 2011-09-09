@@ -1,8 +1,11 @@
 (function() {
+	var TREE_NODE_NAME_ATTRIBUTE = "cmName",
+		TREE_FOLDER_NODE_NAME = "folder";
+
 	Ext.define("CMDBuild.view.common.CMBaseAccordion.Store", {
 		extend: "Ext.data.TreeStore",
 		fields: [
-			{name: "cmName", type: "string"},
+			{name: TREE_NODE_NAME_ATTRIBUTE, type: "string"},
 			{name: "text", type: "string"},
 			{name: "id", type: "string"},
 			{name: "parent", type: "string"},
@@ -74,8 +77,8 @@
 		},
 
 		selectNodeById: function(node) {
-			var sm = this.getSelectionModel(),
-				node = typeof node == "object" ? node : this.store.getNodeById(node);
+			var sm = this.getSelectionModel();
+			node = typeof node == "object" ? node : this.store.getNodeById(node);
 
 			if (node) {
 				sm.select(node);
@@ -148,13 +151,28 @@
 				return null;
 			}
 
-			var l = this.getRootNode();
-			while (l && (!l.get("cmName") || l.get("cmName") == "folder")) {
-				l = l.firstChild;
+			var l = this.getRootNode(),
+				out = null;
+
+			while (l) {
+				if (this.nodeIsSelectable(l)) {
+					out = l;
+					break;
+				} else {
+					l = l.firstChild;
+				}
 			}
 
 			_debug(this.cmName + " get first selectable node ", l);
 			return l;
+		},
+
+		nodeIsSelectable: function(node) {
+			var name = node.get(TREE_NODE_NAME_ATTRIBUTE),
+				isFolder = (!name || name == TREE_FOLDER_NODE_NAME),
+				isRootNode = (this.getRootNode() == node),
+				isHidden = isRootNode && !this.rootVisible;
+			return !isFolder && !isHidden;
 		},
 
 		selectFirstSelectableNode: function() {
