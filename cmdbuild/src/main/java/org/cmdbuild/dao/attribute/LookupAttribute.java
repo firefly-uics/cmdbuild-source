@@ -22,9 +22,17 @@ public class LookupAttribute extends AttributeImpl {
 	protected Object convertValue(Object value) {
 		Lookup lookup;
 		if (value instanceof Integer) {
-			lookup = backend.getLookup((Integer) value);
+			Integer intValue = (Integer) value;
+			lookup = backend.getLookup(intValue);
+			if (lookup == null && intValue > 0) {
+				throw ORMExceptionType.ORM_TYPE_ERROR.createException();
+			}
 		} else if (value instanceof String) {
-			lookup = getLookupFromString((String) value);
+			String stringValue = (String) value;
+			lookup = getLookupFromString(stringValue);
+			if (lookup == null && !stringValue.trim().isEmpty()) {
+				throw ORMExceptionType.ORM_TYPE_ERROR.createException();
+			}
 		} else if (value instanceof Lookup) {
 			lookup = (Lookup) value;
 		} else {
