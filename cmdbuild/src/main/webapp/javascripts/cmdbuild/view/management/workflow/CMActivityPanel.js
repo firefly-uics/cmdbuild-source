@@ -54,7 +54,7 @@
 			}
 		 */
 		updateForActivity: function(activity, o) {
-			this.activityForm.setActivity(activity)
+			this.activityForm.setActivity(activity);
 			this.activityForm.updateInfo(activity);
 			this.wfWidgetsPanel.updateWidgets(activity);
 
@@ -88,7 +88,7 @@
 		},
 
 		updateForClosedActivity: function(activity) {
-			this.activityForm.setActivity = activity;
+			this.activityForm.setActivity(activity);
 			this.activityForm.updateInfo(activity);
 			this.wfWidgetsPanel.updateWidgets(activity);
 			
