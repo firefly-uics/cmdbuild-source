@@ -8,9 +8,18 @@
 
 		initComponent: function() {
 			this.callParent(arguments);
+			var me = this;
 
 			this.mon(this, "activate", function() {
-				this.store.load();
+				CMDBuild.LoadMask.get().show();
+				this.store.load({
+					callback: function(records, operation, success) {
+						Ext.Function.createDelayed(function() {
+							selectVisibleLayers.call(me, me.currentClassId);
+							CMDBuild.LoadMask.get().hide();
+						}, 500)();
+					}
+				});
 			}, this);
 		},
 
