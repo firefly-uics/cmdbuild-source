@@ -28,7 +28,7 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 			triggerAction: 'all',
 			allowBlank: false,
 			forceSelection: true,
-			queryMode: 'remote',
+			queryMode: 'local',
 			emptyText: this.translation.select_category,
 			width: 300
 		});
@@ -99,7 +99,7 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 				function deferredCall() {
 					CMDBuild.LoadMask.get().hide();
 					this.fireEvent('saved');
-					this.destroy();
+					this.close();
 				};
 				Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, this)();
 			},
