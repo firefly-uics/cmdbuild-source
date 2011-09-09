@@ -92,7 +92,7 @@
 				 * do nothing!
 				 * on show, check if the
 				 * current selected is different from the
-				 * last selected in the CMDBuild.state.
+				 * last card selected
 				 */
 			}
 		},

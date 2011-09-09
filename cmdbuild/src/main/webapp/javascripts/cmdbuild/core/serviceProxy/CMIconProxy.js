@@ -1,5 +1,5 @@
 (function() {
-	var iconStore = null
+	var iconStore = null;
 	CMDBuild.ServiceProxy.Icons = {
 		getIconStore: function() {
 			if (iconStore == null) {
