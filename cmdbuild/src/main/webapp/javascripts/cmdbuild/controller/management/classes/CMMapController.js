@@ -100,6 +100,7 @@
 		onAddCardButtonClick: function() {
 			this.mapPanel.getMap().clearSelection();
 			this.currentCardId = undefined;
+			this.mapPanel.getMap().refreshStrategies();
 		},
 
 		centerMapOnFeature: function(params) {
@@ -161,11 +162,8 @@
 		onCardSaved: function(c) {
 			if (this.mapPanel.cmVisible) {
 				this.mapPanel.getMap().clearSelection();
+				this.onCardSelected(c.Id);
 				this.mapPanel.getMap().refreshStrategies();
-
-				this.displayMode();
-
-				onCmVisible.call(this);
 			}
 		},
 
