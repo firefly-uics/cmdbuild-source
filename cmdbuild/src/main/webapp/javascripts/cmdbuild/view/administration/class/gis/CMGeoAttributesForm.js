@@ -212,7 +212,7 @@
 		}, this);
 		
 		this.styleFieldsMap = {
-			// TODO Extjs 3 to 4 - the template to show the icon
+			// TODO the template to show the icon
 			externalGraphic: new Ext.form.ComboBox({
 				store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 				name: "externalGraphic",

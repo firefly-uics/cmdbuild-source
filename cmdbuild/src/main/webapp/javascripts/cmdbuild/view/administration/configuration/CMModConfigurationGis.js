@@ -15,11 +15,11 @@
 			},{
 				xtype: 'numberfield',
 				name:'center.lat',
-				fieldLabel: tr.center_lat,
+				fieldLabel: tr.center_lat
 			},{
 				xtype: 'numberfield',
 				name:'center.lon',
-				fieldLabel: tr.center_lon,
+				fieldLabel: tr.center_lon
 			},{
 				xtype: 'numberfield',
 				name:'initialZoomLevel',

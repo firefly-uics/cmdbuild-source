@@ -1,7 +1,6 @@
 (function() {
 	// TODO 
 	// manage reference: if there is a reference, update the value of the combo after card save
-	// remove old code
 
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateModifyCard", {
 		extend: "CMDBuild.view.management.classes.CMCardPanel",

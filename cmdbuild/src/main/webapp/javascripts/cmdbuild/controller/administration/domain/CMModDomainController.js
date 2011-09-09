@@ -28,7 +28,6 @@
 			_CMMainViewportController.deselectAccordionByName("domain");
 			this.view.selectPropertiesTab();
 			this.formController.onAddButtonClick();
-//			this.attributesController.onAddDomainButtonClick();
 		}
 	});
 	

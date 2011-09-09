@@ -56,7 +56,7 @@ CMDBuild.ServiceProxy.administration = {
 					}
 				});
 			}
-			return domainGridStore
+			return domainGridStore;
 		}
 	}
 };

@@ -15,10 +15,8 @@
 			this.view.form.saveButton.on("click", onSaveButtonClick, this);
 			this.view.form.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.grid.addAttributeButton.on("click", onAddAttributeClick, this);
-//			this.view.grid.orderButton.on("click", buildOrderingWindow, this);
-//			this.view.grid.on("cm_attribute_moved", onAttributeMoved, this);
 		},
-		
+
 		onDomainSelected: function(domain) {
 			this.currentDomain = domain;
 			this.view.onDomainSelected(domain);

@@ -78,8 +78,6 @@
 
 		onClassDeleted: function() {
 			this.attributesPanel.disable();
-//			this.geoAttributesPanel.disable();
-//			this.domainGrid.disable();
 		},
 
 		onProcessSelected: Ext.emptyFn

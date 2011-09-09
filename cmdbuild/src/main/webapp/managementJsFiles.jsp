@@ -10,29 +10,29 @@
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/EditablePanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
-<script type="text/javascript" src="javascripts/cmdbuild/management/template/TemplateResolver.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/graph/GraphWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script><!-- must be here -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/graph/GraphWindow.js"></script>
 
-<!-- WIDGETS BUILDER-->
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/BaseAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/SimpleQueryAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/RangeQueryAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/TextualQueryAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/DecimalAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/DoubleAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/IntegerAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/IPAddressAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/DateAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/TimeStampAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/TimeAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/BooleanAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/ComboAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/LookupAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/ReferenceAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/ForeignKeyAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/StringAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/CharAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/widgetBuilders/TextAttribute.js"></script>
+<!-- WIDGETS BUILDERS -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/BaseAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/SimpleQueryAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/RangeQueryAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TextualQueryAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/DecimalAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/DoubleAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/IntegerAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/IPAddressAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/DateAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TimeStampAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TimeAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/BooleanAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ComboAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/LookupAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ReferenceAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ForeignKeyAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/StringAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/CharAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TextAttribute.js"></script>
 
 <!-- CUSTOM FIELDS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
@@ -100,7 +100,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
 
 	<!-- REPORT -->
-	<script type="text/javascript" src="javascripts/cmdbuild/management/report/ReportParamWin.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/report/ReportParamWin.js"></script>
 
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
@@ -112,7 +112,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityHistoryPanel.js"></script>
-	
+
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateModifyCard.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateReport.js"></script>
@@ -162,8 +162,5 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenAttachmentController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenNoteController.js"></script>	
-<!--
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/CardExtensionProvider.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/management/card/tabs/CardMapTab.js"></script>
--->
+
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>

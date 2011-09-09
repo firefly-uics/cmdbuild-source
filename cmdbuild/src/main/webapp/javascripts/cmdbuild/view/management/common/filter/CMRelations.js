@@ -132,20 +132,3 @@
 		}
 	});
 })();
-/*
-*	checkedRecords:{
-*		"2817277_I":{
- *			"type":"notRel",
- *			"destinationClass":2817435
- *		},
- *		"2817277_I":{
- *			"type":"all",
- *			"destinationClass":2817435
- *		},
- *		"2817343_I":{
- *			"type":"cards",
- *			"cards":["2817587_84","2817587_2371"],
- *			"destinationClass":2817587}
- *		}
- * 
- * */
