@@ -690,6 +690,14 @@ em {
 	padding: 0.3em;
 }
 
+.olControlLayerSwitcher .layersDiv {
+    background-color: #00488B !important;
+}
+
+.olControlLayerSwitcher div span {
+	background-color: #00488B !important;
+}
+
 .importcsv-empty-cell {
 	background-color: #DDD;
 }
@@ -849,3 +857,4 @@ em {
 .grid-button .x-grid-row-checker {
 	margin-top: 3px;
 }
+
