@@ -351,11 +351,13 @@
 				sfm.strokeWidth
 			],
 			setDefaults: function() {
+				sfm.fillOpacity.setValue(1);
 				sfm.fillColor.setValue("#000000");
 				sfm.pointRadius.setValue(3);
-				sfm.strokeWidth.setValue(1);
 				sfm.strokeDashstyle.setValue("solid");
+				sfm.strokeOpacity.setValue(1);
 				sfm.strokeColor.setValue("#000000");
+				sfm.strokeWidth.setValue(1);
 			}
 		});
 	};
