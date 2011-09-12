@@ -60,3 +60,34 @@ Ext.override(Ext.slider.Multi, {
         }
     }
 });
+
+/*
+ * Grid scrollbars not working anymore with 4.0.2a (all right with 4.0.1).
+ * Open a grid showing the scrollbar, go to a page without the scrollbar,
+ * wait 30 seconds, go back to the page with the scrollbar: it will not
+ * scroll the grid contents.
+ * 
+ * Should be fixed in 4.0.6, but we can't use it on an open source project,
+ * so this is the workaround from gordonk66:
+ * 
+ * grid.on('scrollershow', function(scroller) {
+ *     if (scroller && scroller.scrollEl) {
+ *         scroller.clearManagedListeners(); 
+ *         scroller.mon(scroller.scrollEl, 'scroll', scroller.onElScroll, scroller); 
+ *     }
+ * });
+ * 
+ * http://www.sencha.com/forum/showthread.php?137993-4.0.2-only-layout-fit-grid-scrollbar-when-used-does-not-scroll-content/page3
+ */
+
+Ext.grid.Panel.prototype.originalInitComponent = Ext.grid.Panel.prototype.initComponent;
+
+Ext.grid.Panel.prototype.initComponent = function() {
+	this.originalInitComponent(arguments);
+	this.mon(this, 'scrollershow', function(scroller) {
+		if (scroller && scroller.scrollEl) {
+			scroller.clearManagedListeners(); 
+			scroller.mon(scroller.scrollEl, 'scroll', scroller.onElScroll, scroller); 
+		}
+	});
+}
