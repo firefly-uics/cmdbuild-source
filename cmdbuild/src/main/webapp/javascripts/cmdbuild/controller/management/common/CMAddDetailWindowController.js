@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.controller.management.common.CMAddDetailWindowController", {
 		extend: "CMDBuild.controller.management.common.CMDetailWindowController",
 
@@ -9,8 +10,9 @@
 			if (this.view.referenceToMaster) {
 				var r = this.view.referenceToMaster;
 				p[r.name] = r.value;
+				this.saveRelationAction = this.view.hasRelationAttributes ? this.updateRelation : Ext.emptyFn;
 			} else {
-				this.addRelationAfterSave = true;
+				this.saveRelationAction = this.addRelation;
 			}
 
 			return p;
@@ -18,27 +20,36 @@
 
 		//override
 		onSaveSuccess: function(form, res) {
-			if (this.addRelationAfterSave) {
-				this.addRelationAfterSave = false;
-				var detailData = {
-					id: res.result.id,
-					cid: res.params.IdClass
-				};
-
-				var p = this.buildParamsToSaveRelation(detailData);
-
-				CMDBuild.ServiceProxy.relations.add({
-					params: { JSON: Ext.JSON.encode(p) },
-					scope: this,
-					success: function() {
-						this.view.destroy();
-					}
-				});
-			} else {
-				this.view.destroy();
+			if (this.saveRelationAction) {
+				this.saveRelationAction(form, res);
 			}
+			this.view.destroy();
 		},
-		
+
+		addRelation: function(form, res) {
+			var detailData = {
+				id: res.result.id,
+				cid: res.params.IdClass
+			};
+
+			var p = this.buildParamsToSaveRelation(detailData);
+
+			CMDBuild.ServiceProxy.relations.add({
+				params: { JSON: Ext.JSON.encode(p) }
+			});
+		},
+
+		updateRelation: function(form, res) {
+			var p = this.buildParamsToSaveRelation({
+				id: res.result.id,
+				cid: res.params.IdClass
+			});
+
+			CMDBuild.ServiceProxy.relations.modify({
+				params: { JSON: Ext.JSON.encode(p) }
+			});
+		},
+
 		// override
 		fillRelationAttributesParams: function(detailData, attributes) {
 			var out = this.callParent(arguments),

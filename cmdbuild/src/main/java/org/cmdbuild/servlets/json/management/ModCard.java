@@ -41,6 +41,7 @@ import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
@@ -275,10 +276,11 @@ public class ModCard extends JSONBase {
 			for (String suffix : attributeMap.get(attributeName)) {
 				filterList.add(buildFilterForAttribute(attribute, suffix, requestParams));
 			}
-			if (filterList.size() == 0)
+			if (filterList.isEmpty()) {
 				cardFilter.filter(filterList.iterator().next());
-			else
+			} else {
 				cardFilter.filter(new FilterOperator(OperatorType.OR, filterList));
+			}
 		}
 	}
 
@@ -672,16 +674,16 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	@Transacted
 	public void createRelations(@Parameter("JSON") JSONObject JSON, UserContext userCtx) throws JSONException {
-		saveRelation(JSON, userCtx);
+		saveRelation(JSON, userCtx, true);
 	}
 
 	@JSONExported
 	public void modifyRelation(@Parameter(required = false, value = "JSON") JSONObject JSON, UserContext userCtx)
 			throws JSONException {
-		saveRelation(JSON, userCtx);
+		saveRelation(JSON, userCtx, false);
 	}
 
-	private void saveRelation(JSONObject JSON, UserContext userCtx) throws JSONException {
+	private void saveRelation(JSONObject JSON, UserContext userCtx, boolean createRelation) throws JSONException {
 		final int relId = JSON.optInt("id");
 		final int domainId = JSON.getInt("did");
 		final JSONObject attributes = JSON.getJSONObject("attrs");
@@ -696,10 +698,16 @@ public class ModCard extends JSONBase {
 		do {
 			do {
 				final IRelation relation;
-				if (relId <= 0) {
+				if (relId > 0) {
+					relation = userCtx.relations().get(domain, relId);
+				} else if (createRelation) {
 					relation = userCtx.relations().create(domain);
 				} else {
-					relation = userCtx.relations().get(domain, relId);
+					// When a detail is added, we don't know the relation
+					// id so we have to load it from the two card ids
+					final ICard card1 = cardFromJson(attributes.getJSONObject("_1"), userCtx);
+					final ICard card2 = cardFromJson(attributes.getJSONObject("_2"), userCtx);
+					relation = userCtx.relations().get(domain, card1, card2);
 				}
 				fillAttributes(relation, attributes, userCtx, side1element, side2element);
 				relation.save();
@@ -712,6 +720,18 @@ public class ModCard extends JSONBase {
 			return attributes.getJSONArray(key).length() - 1;
 		} catch (Exception e) {
 			return 0;
+		}
+	}
+
+	private ICard cardFromJson(Object value, UserContext userCtx) throws JSONException, NotFoundException {
+		if (value instanceof JSONObject) {
+			JSONObject jsonCard = (JSONObject) value;
+			int cardId = jsonCard.getInt("id");
+			int classId = jsonCard.getInt("cid");
+			ICard card1 = userCtx.tables().get(classId).cards().get(cardId);
+			return card1;
+		} else {
+			return null;
 		}
 	}
 
@@ -729,10 +749,7 @@ public class ModCard extends JSONBase {
 					value = ((JSONArray) value).get(side1element);
 				}
 				if (value instanceof JSONObject) {
-					JSONObject jsonCard = (JSONObject) value;
-					int cardId = jsonCard.getInt("id");
-					int classId = jsonCard.getInt("cid");
-					ICard card1 = userCtx.tables().get(classId).cards().get(cardId);
+					ICard card1 = cardFromJson(value, userCtx);
 					relation.setCard1(card1);
 				}
 			} else if ("_2".equals(name)) {
@@ -740,10 +757,7 @@ public class ModCard extends JSONBase {
 					value = ((JSONArray) value).get(side2element);
 				}
 				if (value instanceof JSONObject) {
-					JSONObject jsonCard = (JSONObject) value;
-					int cardId = jsonCard.getInt("id");
-					int classId = jsonCard.getInt("cid");
-					ICard card2 = userCtx.tables().get(classId).cards().get(cardId);
+					ICard card2 = cardFromJson(value, userCtx);
 					relation.setCard2(card2);
 				}
 			} else {

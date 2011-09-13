@@ -69,22 +69,20 @@
 			// so the relation data was loaded because has some attributes
 			// use it to update the relation attributes;
 			if (this.relation) {
-				var p = this.buildParamsToSaveRelation({
-					id: this.view.cardId,
-					cid: this.view.classId
-				});
-
-				CMDBuild.ServiceProxy.relations.modify({
-					params: { JSON: Ext.JSON.encode(p) },
-					scope: this,
-					success: function() {
-						this.view.destroy();
-					}
-				});
-
-			} else {
-				this.view.destroy();
+				this.updateRelation(form, res);
 			}
+			this.view.destroy();
+		},
+
+		updateRelation: function(form, res) {
+			var p = this.buildParamsToSaveRelation({
+				id: this.view.cardId,
+				cid: this.view.classId
+			});
+
+			CMDBuild.ServiceProxy.relations.modify({
+				params: { JSON: Ext.JSON.encode(p) }
+			});
 		}
 	});
 
