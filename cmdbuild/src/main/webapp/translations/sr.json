@@ -82,8 +82,8 @@
             "domain": "Domen",
             "is_active": "Aktivan",
             "m_d": "M/D",
-            "md_label": "<em>Master/Detail Label<em>",
-			"master_detail": "Nadređeni/podređeni (Master/Detail)",
+            "md_label": "Naziv veze nadređeni/podređeni (Master/Detail)",
+            "master_detail": "Nadređeni/podređeni (Master/Detail)",
             "modify_domain": "Izmeni domen",
             "name": "Naziv",
             "title_add": "Dodaj domen",
@@ -522,7 +522,7 @@
       "loading": "Učitavanje u toku...",
       "loading_mask": {
          "classes": "Učitavanje klasa",
-         "domain": "<em>Loading domains</em>",
+         "domain": "Učitavanje domena",
          "configuration": "Učitavanje konfiguracije",
          "group": "Učitavanje liste grupa i korisnika",
          "lookup": "Učitavanje listi šifarnika",
@@ -605,11 +605,11 @@
       "title": "Podešavanja"
    },
    "errors": {
-      "busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
+   	  "busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
       "detail": "Detalji",
       "error_message": "Greška",
       "error_moving_row": "Došlo je do greške prilikom obrade reda",
-      "invalid_fields" : "<em>Some fields have not been filled correctly</em>",
+      "invalid_fields" : "Određena polja nisu korektno pounjena",
       "invalid_attributes": "Sledeća polja nisu korektno popunjena:",
       "invalid_extended_attributes": "Sledeće vizuelne kontrole nisu korektno popunjene:",
       "no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
@@ -639,7 +639,7 @@
          "NOTFOUND": "Element nije pronađen",
          "ORM_AMBIGUOUS_DIRECTION": "Smer relacije nije moguće automatski utvrditi",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Dodavanje priloga nije uspelo",
-         "ORM_ATTACHMENT_DELETE_FAILED": "<em>Attachment delete failed</em>",
+         "ORM_ATTACHMENT_DELETE_FAILED": "Brisanje priloga nije uspelo",
          "ORM_CANT_CREATE_DATABASE": "Kreiranje baze podataka nije uspelo.",
          "ORM_CANT_CREATE_USER": "Kreiranje korisnika nije uspelo",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Nije moguće obrisati kartice sa aktivnim relacijama",
@@ -796,7 +796,7 @@
             "question_sure": "Da li ste sigurni?"
          },
          "notinrel": "N D",
-         "notnull": "<em>Is not null</em>",
+         "notnull": "Ne može biti null",
          "nullo": "Sa null vrednošću",
          "relations": "Relacije",
          "remove": "Ukloni",
@@ -850,16 +850,16 @@
          "delete_relation": "Ukloni relaciju",
          "delete_relation_confirm": "Sigurni ste da želite ukloniti ovu relaciju?",
          "detail_window": {
-            "detail_attributes": "<em>Detail's attributes</em>",
-            "relation_attributes": "<em>Relation's attributes</em>"
+            "detail_attributes": "Atributi detalja",
+            "relation_attributes": "Atributi veze"
          },
          "download_attachment": "Preuzmi prilog",
          "edit_attachment": "Izmeni prilog",
          "edit_relation": "Izmeni relaciju",
          "gis": {
          	"geo_attributes": "Geografski atributi",
-         	"zoom": "<em>Zoom</em>",
-         	"position": "<em>Position</em>"
+         	"zoom": "Uvećanje",
+         	"position": "Pozicija"
          },
          "history_columns": {
             "activity_name": "Naziv aktivnosti",
@@ -973,7 +973,7 @@
          "delete_card_confirm": "Da li ste sigurni da želite ukloniti proces?",
          "extattrs": {
             "attachments": {
-              "must_save_to_add": "<em>You can not add an attachment before saving the activity</em>"
+              "must_save_to_add": "Ne može postaviti prilog pre nego što snimite aktivnost</em>"
             },
             "createreport": {"format_label": "Formatiraj"},
             "linkcards": {"required": "Morate izabrati karticu - "},
@@ -999,7 +999,7 @@
             },
             "managerelation": {"required": "Morate izabrati relacije - "},
             "notes": {
-              "must_save_to_modify": "<em>You can not modify the notes before saving the activity</em>"
+              "must_save_to_modify": "Ne možete modifikovati napomenu pre nego što snimite aktivnost"
             }
          },
          "history_columns": {

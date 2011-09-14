@@ -82,7 +82,7 @@
             "domain": "Домен",
             "is_active": "Активан",
             "m_d": "M/D",
-            "md_label": "<em>Master/Detail Label<em>",
+            "md_label": "Назив везе надређени/подређени (Master/Detail)",
             "master_detail": "Надређени/подређени (Master/Detail)",
             "modify_domain": "Измени домен",
             "name": "Назив",
@@ -522,7 +522,7 @@
       "loading": "Учитавање у току...",
       "loading_mask": {
          "classes": "Учитавање класа",
-         "domain": "<em>Loading domains</em>",
+         "domain": "Учитавање домена",
          "configuration": "Учитавање конфигурације",
          "group": "Учитавање листе група и корисника",
          "lookup": "Учитавање листи шифарника",
@@ -609,7 +609,7 @@
       "detail": "Детаљи",
       "error_message": "Грешка",
       "error_moving_row": "Дошло је до грешке приликом обраде реда",
-      "invalid_fields" : "<em>Some fields have not been filled correctly</em>",
+      "invalid_fields" : "Одређена поља нису коректно поуњена",
       "invalid_attributes": "Следећа поља нису коректно попуњена:",
       "invalid_extended_attributes": "Следеће визуелне контроле нису коректно попуњене:",
       "no_driver": "Недостаје одговарајући JDBC управљачки програм (драјвер).<br />Одговарајући драјвер можете пронаћи у CMDBuild инсталационом фолдеру и копирати у <b>lib<\/b> фолдер Tomcat сервера.",
@@ -639,7 +639,7 @@
          "NOTFOUND": "Елемент није пронађен",
          "ORM_AMBIGUOUS_DIRECTION": "Смер релације није могуће аутоматски утврдити",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Додавање прилога није успело",
-         "ORM_ATTACHMENT_DELETE_FAILED": "<em>Attachment delete failed</em>",
+         "ORM_ATTACHMENT_DELETE_FAILED": "Брисање прилога није успело",
          "ORM_CANT_CREATE_DATABASE": "Креирање базе података није успело.",
          "ORM_CANT_CREATE_USER": "Креирање корисника није успело",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Није могуће обрисати картице са активним релацијама",
@@ -796,7 +796,7 @@
             "question_sure": "Да ли сте сигурни?"
          },
          "notinrel": "Н Д",
-         "notnull": "<em>Is not null</em>",
+         "notnull": "Не може бити null",
          "nullo": "Са null вредношћу",
          "relations": "Релације",
          "remove": "Уклони",
@@ -850,16 +850,16 @@
          "delete_relation": "Уклони релацију",
          "delete_relation_confirm": "Сигурни сте да желите уклонити ову релацију?",
          "detail_window": {
-            "detail_attributes": "<em>Detail's attributes</em>",
-            "relation_attributes": "<em>Relation's attributes</em>"
+            "detail_attributes": "Атрибути детаља",
+            "relation_attributes": "Атрибути везе"
          },
          "download_attachment": "Преузми прилог",
          "edit_attachment": "Измени прилог",
          "edit_relation": "Измени релацију",
          "gis": {
          	"geo_attributes": "Географски атрибути",
-         	"zoom": "<em>Zoom</em>",
-         	"position": "<em>Position</em>"
+         	"zoom": "Увећање",
+         	"position": "Позиција"
          },
          "history_columns": {
             "activity_name": "Назив активности",
@@ -973,7 +973,7 @@
          "delete_card_confirm": "Да ли сте сигурни да желите уклонити процес?",
          "extattrs": {
             "attachments": {
-              "must_save_to_add": "<em>You can not add an attachment before saving the activity</em>"
+              "must_save_to_add": "Не може поставити прилог пре него што снимите активност</em>"
             },
             "createreport": {"format_label": "Форматирај"},
             "linkcards": {"required": "Морате изабрати картицу - "},
@@ -999,7 +999,7 @@
             },
             "managerelation": {"required": "Морате изабрати релације - "},
             "notes": {
-              "must_save_to_modify": "<em>You can not modify the notes before saving the activity</em>"
+              "must_save_to_modify": "Не можете модификовати напомену пре него што снимите активност"
             }
          },
          "history_columns": {
