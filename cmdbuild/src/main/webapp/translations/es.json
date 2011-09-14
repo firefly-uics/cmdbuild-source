@@ -82,7 +82,7 @@
             "domain": "Dominio",
             "is_active": "Activo",
             "m_d": "M/D",
-            "md_label": "<em>Master/Detail Label<em>",
+            "md_label": "Etiqueta Master/Detail",
             "master_detail": "Master/Detail",
             "modify_domain": "Modificar Dominio",
             "name": "Nombre",
@@ -522,7 +522,7 @@
       "loading": "Cargando...",
       "loading_mask": {
          "classes": "Estoy cargando las clases",
-         "domain": "<em>Caricamento domini</em>",
+         "domain": "Estoy cargando los dominios",
          "configuration": "Estoy cargando la configuración",
          "group": "Estoy cargando la lista usuarios y grupos",
          "lookup": "Estoy cargando la lista lookup",
@@ -609,7 +609,7 @@
       "detail": "Detalles",
       "error_message": "Error",
       "error_moving_row": "Se verificó un error en el traslado de la fila",
-      "invalid_fields" : "<em>Alcuni campi non sono stati compilati correttamente</em>",
+      "invalid_fields" : "Algunos campos no ha sido compilados correctamente",
       "invalid_attributes": "Los siguientes campos no han sido compilados correctamente: ",
       "invalid_extended_attributes": "Los siguientes controles visuales no fueron compilados correctamente: ",
       "no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
@@ -639,7 +639,7 @@
          "NOTFOUND_ERROR": "Elemento no encontrado",
          "ORM_AMBIGUOUS_DIRECTION": "Imposible determinar automáticamente la dirección de la relación",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Imposible cargar el adjunto",
-         "ORM_ATTACHMENT_DELETE_FAILED": "<em>Impossibile cancellare l'allegato</em>",
+         "ORM_ATTACHMENT_DELETE_FAILED": "Imposible eliminar el adjunto",
          "ORM_CANT_CREATE_DATABASE": "Imposible crear la base de datos",
          "ORM_CANT_CREATE_USER": "Imposible crear el usuario",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Imposible eliminar tarjetas habiendo relaciones",
@@ -796,7 +796,7 @@
             "question_sure": "Está seguro?"
          },
          "notinrel": "N D",
-         "notnull": "<em>Non è nullo</em>",
+         "notnull": "No es nulo",
          "nullo": "Es nulo",
          "relations": "Relaciones",
          "remove": "Remover",
@@ -850,16 +850,16 @@
          "delete_relation": "Eliminar relación",
          "delete_relation_confirm": "Está seguro de querer eliminar esta relación?",
          "detail_window": {
-            "detail_attributes": "<em>Attributi del dettaglio</em>",
-            "relation_attributes": "<em>Attributi della relazione</em>"
+            "detail_attributes": "Atributos del detalle",
+            "relation_attributes": "Atributos de la relación"
          },
          "download_attachment": "Descarga adjunto",
          "edit_attachment": "Modificar adjunto",
          "edit_relation": "Modificar relación",
          "gis": {
          	"geo_attributes": "Atributos geográficos",
-         	"zoom": "<em>Zoom</em>",
-         	"position": "<em>Posizione</em>"
+         	"zoom": "Zoom",
+         	"position": "Posición"
          },
          "history_columns": {
             "activity_name": "Nombre actividad",
@@ -973,7 +973,7 @@
          "delete_card_confirm": "Está seguro de querer eliminar este proceso?",
          "extattrs": {
             "attachments": {
-              "must_save_to_add": "<em>Non puoi aggiungere un allegato prima di aver salvato l'attività</em>"
+              "must_save_to_add": "No se puede agregar un adjunto antes de guardar la actividad"
             },
             "createreport": {"format_label": "Formato"},
             "linkcards": {"required": "Es necesario seleccionar las tarjetas - "},
@@ -999,7 +999,7 @@
             },
             "managerelation": {"required": "Es necesario seleccionar las relaciones - "},
             "notes": {
-              "must_save_to_modify": "<em>Non puoi modificare le note prima di aver salvato l'attività</em>"
+              "must_save_to_modify": "No se pueden modificar las notas antes de guardar la actividad"
             }
          },
          "history_columns": {
