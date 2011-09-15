@@ -56,11 +56,11 @@ public class ModWorkflow extends JSONBase {
 			@Parameter(value="sort",required=false) String sortField,
 			@Parameter(value="dir",required=false) String sortDirection,
 			@Parameter(value="query",required=false) String fullTextQuery,
-			ProcessQuery processFilter) throws  JSONException {
+			ProcessQuery processFilter // already filtered with the passed flow status
+		) throws  JSONException {
 
 		setFullTextQuery(fullTextQuery, processFilter);		
 		setSorting(sortField, sortDirection, processFilter);
-		setFilterByFlowStatus(processFilter, flowStatus);
 		processFilter.setNextExecutorFilter(userCtx);
 
 		final List<ICard> cards = getWFCards(limit, offset, processFilter);
@@ -163,20 +163,6 @@ public class ModWorkflow extends JSONBase {
 			ProcessQuery cardFilter) {
 		if (fullTextQuery != null)
 		    cardFilter.fullText(fullTextQuery.trim());
-	}
-
-	private void setFilterByFlowStatus(ProcessQuery cardFilter, String flowStatus) {
-		Lookup flowStatusLookup = WorkflowService.getInstance().getStatusLookupFor(flowStatus);
-		if (flowStatusLookup != null) {
-			Log.WORKFLOW.debug("Workflow status: " + flowStatusLookup.getDescription());
-			cardFilter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, flowStatusLookup.getId() + "");
-		} else {
-			//need to select all the cards, and "clear" the filtering by FlowStatus
-			cardFilter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.DIFFERENT,
-				String.valueOf(WorkflowService.getInstance().getStatusLookupFor(WorkflowConstants.StateClosedTerminated).getId()),
-				String.valueOf(WorkflowService.getInstance().getStatusLookupFor(WorkflowConstants.StateClosedAborted).getId())
-			);
-		}
 	}
 
 	private void setSorting(String sortField, String sortDirection,

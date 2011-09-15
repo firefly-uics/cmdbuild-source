@@ -5,7 +5,7 @@
 	Ext.define("CMDBuild.controller.management.workflow.CMModWorkflowController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		mixins: {
-			commonFunctions: "CMDBuild.controller.management.common.CMModClasseAndWFCommons"
+			commonFunctions: "CMDBuild.controller.management.common.CMModClassAndWFCommons"
 		},
 		constructor: function() {
 			this.callParent(arguments);
@@ -46,6 +46,7 @@
 			this.tabPanel.relationsPanel.graphButton.on("click", onShowGraphClick, this);
 		},
 
+		// FIXME: Wonderful "code reuse"
 		onViewOnFront: function(selection) {
 			if (selection) {
 				var newEntryId = selection.get("id"),
@@ -55,13 +56,19 @@
 				if (entryIdChanged) {
 					this.currentEntryId = newEntryId;
 					this.currentEntry = _CMCache.getEntryTypeById(this.currentEntryId);
+					this.currentCard = null;
 
 					// notify sub-controllers
 					this.activityPanelController.onEntrySelected(selection);
-					this.relationsController.onEntrySelect(selection);// FIXME naming
+					this.relationsController.onEntrySelect(selection); // FIXME naming
 				}
 
 				if (dc != null) {
+					if (dc.activateFirstTab) {
+						this.view.cardTabPanel.activateFirstTab();
+					} else {
+						this.view.cardTabPanel.activateRelationTab();
+					}
 					this.view.openCard(dc, retryWithoutFilter = true);
 				} else if (entryIdChanged) {
 					this.view.onEntrySelected(selection);
@@ -120,10 +127,6 @@
 
 		isStateOpen: function() {
 			return this.grid.statusCombo.isStateOpen();
-		},
-
-		isStateClosed: function() {
-			return this.grid.statusCombo.isStateOpen();
 		}
 	});
 
@@ -176,17 +179,18 @@
 
 	function onActivitySelect(sm, selection) {
 		if (selection.length > 0) {
+			var firstSelection = selection[0];
 
 			if (this.isStateOpen()) {
 				var editMode = this.activityPanelController.isAdvance 
-					&& this.currentActivity.data.Id == selection[0].data.Id;
+					&& this.currentActivity.data.Id == firstSelection.data.Id;
 
-				updateForActivity.call(this, selection[0], editMode);
+				updateForActivity.call(this, firstSelection, editMode);
 			} else {
-				loadClosedActivity.call(this, selection[0]);
+				loadClosedActivity.call(this, firstSelection);
 			}
 
-			this.relationsController.onCardSelected(selection[0]);
+			this.relationsController.onCardSelected(firstSelection);
 		}
 	}
 
@@ -266,8 +270,6 @@
 	function onStatusComboSelect() {
 		this.grid.updateStatusParamInStoreProxyConfiguration();
 		this.grid.loadPage(1);
-		// We want that a user could be able to start a process only if is watching the opened
-		this.grid.addCardButton.setDisabled(!this.isStateOpen());
 	}
 
 	function onPrintGridMenuClick(format) {

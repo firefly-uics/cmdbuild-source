@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.controller.management.classes.CMModClassController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		mixins: {
-			commonFunctions: "CMDBuild.controller.management.common.CMModClasseAndWFCommons"
+			commonFunctions: "CMDBuild.controller.management.common.CMModClassAndWFCommons"
 		},
 		constructor: function() {
 			this.callParent(arguments);
@@ -102,6 +102,11 @@
 				}
 
 				if (dc != null) {
+					if (dc.activateFirstTab) {
+						this.view.cardTabPanel.activateFirstTab();
+					} else {
+						this.view.cardTabPanel.activateRelationTab();
+					}
 					this.view.openCard(dc, retryWithoutFilter = true);
 				} else if (entryIdChanged) {
 					this.view.onEntrySelected(selection);

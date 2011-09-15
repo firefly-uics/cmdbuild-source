@@ -75,11 +75,13 @@
 		openCard: function(p, retryWithoutFilter) {
 			var me = this;
 
-			p['FilterCategory'] = this.filterCategory;
-			p["retryWithoutFilter"] = retryWithoutFilter;
+			var params = {
+				retryWithoutFilter: retryWithoutFilter
+			};
+			Ext.apply(params, p, this.getStoreExtraParams());
 
 			CMDBuild.ServiceProxy.card.getPosition({
-				params: p,
+				params: params,
 				failure: function onGetPositionFailure(response, options, decoded) {
 					// reconfigure the store and blah blah blah
 				},
@@ -280,7 +282,7 @@
 			};
 
 			if (this.CQL) {
-				p = Ext.apply(p, this.CQL);
+				Ext.apply(p, this.CQL);
 			}
 
 			return p;

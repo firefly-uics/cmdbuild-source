@@ -58,7 +58,7 @@
 
 		onClassSelected: function(id, activateFirst) {
 			if (activateFirst) {
-				this.activeFirstTab();
+				this.activateFirstTab();
 			}
 
 			this.items.each(function(item) {
@@ -77,7 +77,7 @@
 		},
 
 		reset: function(idClass) {
-			this.activeFirstTab();
+			this.activateFirstTab();
 			this.items.each(function(item) {
 				if (item.reset) {
 					item.reset();
@@ -97,8 +97,12 @@
 			});
 		},
 
-		activeFirstTab: function() {
+		activateFirstTab: function() {
 			this.setActiveTab(this.cardPanel);
+		},
+
+		activateRelationTab: function() {
+			this.setActiveTab(this.relationsPanel);
 		}
 	});
 	

@@ -233,9 +233,8 @@ public class WorkflowService {
 	}
 
 	public Lookup getStatusLookupFor(String status) {
-		// prevent old "open" state search
-		if ("open".equalsIgnoreCase(status)) {
-			status = SharkConstants.STATE_OPEN_RUNNING;
+		if (status == null) {
+			return null;
 		}
 		for (Lookup lkp : this.getStatusesLookup()) {
 			if (status.equalsIgnoreCase(lkp.getCode()))

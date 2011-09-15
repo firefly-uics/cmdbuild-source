@@ -100,26 +100,6 @@ public class ModWorkflow extends JSONBase {
 		}
 		return serializer;
 	}
-
-	@JSONExported
-	public JSONObject statuses(JSONObject out) throws Exception {
-		JSONArray statuses = new JSONArray();
-		
-		for(Lookup lkp : WorkflowService.getInstance().getStatusesLookup()) {
-			JSONObject jlkp = new JSONObject();
-			jlkp.put("code", lkp.getAttributeValue("Code").getString());
-			jlkp.put("name", lkp.getDescription());
-			jlkp.put("id", lkp.getId());
-			statuses.put(lkp.getNumber()-1,jlkp);
-		}
-		JSONObject jlkp = new JSONObject();
-		jlkp.put("code", "all");
-		jlkp.put("name", "all");
-		jlkp.put("id", 0);
-		statuses.put(jlkp);		
-		out.put("rows", statuses);
-		return out;
-	}
 	
 	@JSONExported
 	public JSONObject xpdlInfo(

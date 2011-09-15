@@ -1,12 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
-
-<Context displayName="CMDBuild">
-
-	<Resource name="jdbc/cmdbuild" auth="Container"
-		type="javax.sql.DataSource"
-		factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"
-		maxActive="100" maxIdle="30" maxWait="10000"
-		defaultAutoCommit="true" removeAbandoned="true"
-		removeAbandonedTimeout="60" logAbandoned="true" />
-
+<?xml version="1.0" encoding="UTF-8"?>
+<Context displayName="CMDBuild" path="/cmdbuild-1.4.0-SNAPSHOT">
+  <Resource auth="Container" defaultAutoCommit="true" factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory" logAbandoned="true" maxActive="100" maxIdle="30" maxWait="10000" name="jdbc/cmdbuild" removeAbandoned="true" removeAbandonedTimeout="60" type="javax.sql.DataSource"/>
 </Context>

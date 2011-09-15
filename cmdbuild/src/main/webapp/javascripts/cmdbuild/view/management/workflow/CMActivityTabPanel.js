@@ -185,6 +185,16 @@
 
 				this.showActivityPanel();
 			}
+		},
+
+		// FIXME "Code reuse"
+		activateFirstTab: function() {
+			this.acutalPanel.setActiveTab(this.activityTab);
+		},
+
+		// FIXME "Code reuse"
+		activateRelationTab: function() {
+			this.acutalPanel.setActiveTab(this.relationsPanel);
 		}
 	});
 
