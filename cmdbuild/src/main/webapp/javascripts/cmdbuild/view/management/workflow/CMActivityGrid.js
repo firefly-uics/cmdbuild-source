@@ -1,9 +1,9 @@
 (function() {
 	var STATE = "state",
 		STATE_VALUE_OPEN = "open.running",
-		STATE_VALUE_TERMINATED = "closed.terminated",
+		STATE_VALUE_SUSPENDED = "open.not_running.suspended",
 		STATE_VALUE_COMPLETED = "closed.completed",
-		STATE_VALUE_ABORTED = "closed.aborted",
+		STATE_VALUE_ALL = "all", // Not existent
 
 		tr = CMDBuild.Translation.management.modworkflow;
 	
@@ -15,21 +15,17 @@
 		constructor: function() {
 
 			this.statusCombo = new  Ext.form.field.ComboBox({
-				store: buildStoreOfProcessState.call(this),
-				name : 'stete',
-				hiddenName : 'state',
-				valueField : 'code',
-				displayField : 'name',
-				triggerAction: 'all',
+				store: buildProcessStateStore.call(this),
+				name : "state",
+				hiddenName : "state",
+				valueField : "code",
+				displayField : "description",
+				queryMode: "local",
 				allowBlank : false,
 				editable: false,
-				grow: true,
+				value : STATE_VALUE_OPEN,
 				isStateOpen: function() {
 					return this.getValue() == STATE_VALUE_OPEN;
-				},
-
-				isStateClosed: function() {
-					return this.getValue() == STATE_VALUE_COMPLETED;
 				}
 			});
 
@@ -44,12 +40,17 @@
 			this.callParent(arguments);
 		},
 
-		updateStatusParamInStoreProxyConfiguration: function() {
-			this.store.proxy.extraParams[STATE] = this.statusCombo.getValue();
+		setStatusToOpen: function() {
+			this.setStatus(STATE_VALUE_OPEN);
 		},
 
-		setStatusToOpen: function() {
-			this.statusCombo.setValue(STATE_VALUE_OPEN);
+		setStatus: function(value) {
+			this.statusCombo.setValue(value);
+			this.updateStatusParamInStoreProxyConfiguration();
+		},
+
+		updateStatusParamInStoreProxyConfiguration: function() {
+			this.store.proxy.extraParams[STATE] = this.statusCombo.getValue();
 		},
 
 		getStoreExtraParams: function() {
@@ -61,9 +62,7 @@
 
 		// override
 		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
-			this.statusCombo.setValue(resText.FlowStatus);
-			this.updateStatusParamInStoreProxyConfiguration();
-
+			this.setStatus(resText.FlowStatus);
 			this.callParent(arguments);
 		},
 
@@ -79,7 +78,6 @@
 
 		onEntrySelected: function(entry) {
 			var id = entry.get("id");
-			this.setStatusToOpen();
 
 			this.openFilterButton.enable();
 			this.addCardButton.updateForEntry(entry);
@@ -99,41 +97,22 @@
 		}
 	});
 
-	function buildStoreOfProcessState() {
-		var storeOfState = new Ext.data.JsonStore({
-			fields : ['code', 'name', 'id'],
-			proxy: {
-				type: "ajax",
-				url: "services/json/schema/modworkflow/statuses",
-				reader: {
-					type: "json",
-					root: "rows"
-				}
-			},
-			sorters: {
-				property: 'code',
-				direction: 'ASC'
-			},
-			autoLoad : true
+	function buildProcessStateStore() {
+		var tr = CMDBuild.Translation.management.modworkflow.statuses;
+
+		var wfStatuses = [
+			[STATE_VALUE_OPEN, tr[STATE_VALUE_OPEN]],
+			[STATE_VALUE_SUSPENDED, tr[STATE_VALUE_SUSPENDED]],
+			[STATE_VALUE_COMPLETED, tr[STATE_VALUE_COMPLETED]],
+			[STATE_VALUE_ALL, tr[STATE_VALUE_ALL]],
+		];
+
+		var store = Ext.create('Ext.data.ArrayStore', {
+			autoDestroy: true,
+			fields: [ "code", "description" ],
+			data: wfStatuses
 		});
 
-		storeOfState.on('load', function(store, records, options){
-			for (var i = 0, l = records.length ; i<l ; i++) {        		
-				if (records[i].data.code == STATE_VALUE_TERMINATED || records[i].data.code == STATE_VALUE_ABORTED) {
-					store.remove(records[i]);
-				} else {
-					localizeStatusName(records[i], store);
-				}
-			}
-		}, this);
-
-		return storeOfState;
+		return store;
 	}
-
-	function localizeStatusName(record, storeOfState) {
-		var code = record.data.code;
-		storeOfState.remove(record);
-		record.data.name = CMDBuild.Translation.management.modworkflow.statuses[code];
-		storeOfState.add(record);
-	};
 })();

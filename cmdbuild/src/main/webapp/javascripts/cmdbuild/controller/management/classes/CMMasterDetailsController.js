@@ -154,7 +154,7 @@
 		this.superController.openCard({
 			Id: model.get("Id"),
 			IdClass: model.get("IdClass"),
-			activeFirstTab: true
+			activateFirstTab: true
 		});
 	}
 
