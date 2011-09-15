@@ -68,7 +68,7 @@
 			this.firstShow = true;
 		},
 
-		afterBringToFront : function() {
+		beforeBringToFront : function() {
 			if (this.firstShow) {
 				this.classTree.updateStore();
 				this.firstShow = false;

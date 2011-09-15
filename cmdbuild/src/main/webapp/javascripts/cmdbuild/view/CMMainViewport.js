@@ -175,16 +175,19 @@
 		 * and bring it to front
 		 */
 		bringTofrontPanelByCmName: function(cmName, params, silent) {
-			var p = this.findModuleByCMName(cmName);
+			var p = this.findModuleByCMName(cmName),
+				activatePanel;
 
-			if (p && ((typeof p.afterBringToFront == "function" && p.afterBringToFront()) 
-					|| typeof p.afterBringToFront == "undefined")) {
-
-				this.cmPanels.layout.setActiveItem(p.id);
+			if (p) {
+				activatePanel = (typeof p.beforeBringToFront != "function" || p.beforeBringToFront(params) !== false);
+				if (activatePanel) {
+					this.cmPanels.layout.setActiveItem(p.id);
+				}
 				if (silent !== true) {
 					p.fireEvent("CM_iamtofront", params);
 				}
 			}
+			return activatePanel;
 		},
 
 		deselectAccordionByName: function(cmName) {

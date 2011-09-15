@@ -8,7 +8,7 @@
 				this.view.onReportTypeSelected(selection);
 
 				var r = selection.raw || selection.data;
-				if (r && typeof r.objid != "undefined") {
+				if (r && r.objid) {
 					// is a node from the menu accordion
 					// so ask directly the report
 					this.view.requestReport({

@@ -22,7 +22,17 @@
 		onAccordionNodeSelect: function(sm, selections) {
 			if (selections.length > 0) {
 				var s = selections[0];
-				_CMMainViewportController.bringTofrontPanelByCmName(s.get("cmName"), s);
+				if (_CMMainViewportController.bringTofrontPanelByCmName(s.get("cmName"), s) === false) {
+					// If the panel was not brought to front (report from the navigation menu),
+					// select the previous node or deselect the tree
+					if (this.lastSelection) {
+						sm.select(this.lastSelection);
+					} else {
+						sm.deselectAll(true);
+					}
+				} else {
+					this.lastSelection = selections;
+				};
 			}
 		},
 
