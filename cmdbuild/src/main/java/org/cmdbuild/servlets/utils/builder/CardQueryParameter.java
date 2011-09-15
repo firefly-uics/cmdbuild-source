@@ -53,9 +53,9 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 
 	private CardQuery filterServiceBuild(HttpServletRequest request) {
 		CardQuery filter;
-		int classId = parameter(Integer.class, FILTER_CLASSID, request);
+		final int classId = parameter(Integer.class, FILTER_CLASSID, request);
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
 		if (request.getParameterMap().containsKey(NO_FILTER_PARAMETER)) {
-			UserContext userCtx = new SessionVars().getCurrentUserContext();
 			filter = userCtx.tables().get(classId).cards().list();
 		} else {
 			String filterCategory = parameter(String.class, FILTER_CATEGORY_PARAMETER, request);
@@ -64,7 +64,9 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 			filter = FilterService.getFilter(classId, filterCategory, filterSubcategory);
 		}
 
-		setFlowStatus(filter, request);
+		if (filter.getTable().isActivity()) {
+			setWorkflowParameters(filter, request, userCtx);
+		}
 
 		return filter;//.clone();
 	}
@@ -77,10 +79,12 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 			} 
 	}
 
-	private void setFlowStatus(CardQuery filter, HttpServletRequest request) {
-		if (!filter.getTable().isActivity())
-			return;
+	private void setWorkflowParameters(CardQuery filter, HttpServletRequest request, UserContext userCtx) {
+		setFlowStatus(filter, request);
+		filter.setNextExecutorFilter(userCtx);
+	}
 
+	private void setFlowStatus(CardQuery filter, HttpServletRequest request) {
 		final String flowStatus = request.getParameter(FILTER_FLOW_STATUS_PARAMETER);
 		final Lookup flowStatusLookup = WorkflowService.getInstance().getStatusLookupFor(flowStatus);
 		if (flowStatusLookup != null) {
