@@ -80,9 +80,9 @@ Ext.override(Ext.slider.Multi, {
  * http://www.sencha.com/forum/showthread.php?137993-4.0.2-only-layout-fit-grid-scrollbar-when-used-does-not-scroll-content/page3
  */
 
-Ext.grid.Panel.prototype.originalInitComponent = Ext.grid.Panel.prototype.initComponent;
+Ext.panel.Table.prototype.originalInitComponent = Ext.panel.Table.prototype.initComponent;
 
-Ext.grid.Panel.prototype.initComponent = function() {
+Ext.panel.Table.prototype.initComponent = function() {
 	this.originalInitComponent(arguments);
 	this.mon(this, 'scrollershow', function(scroller) {
 		if (scroller && scroller.scrollEl) {
