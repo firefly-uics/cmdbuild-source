@@ -38,7 +38,7 @@
 
 	ns.CMMainViewportController.prototype.bringTofrontPanelByCmName = function(cmName, params) {
 		try {
-			this.viewport.bringTofrontPanelByCmName(cmName, params);
+			return this.viewport.bringTofrontPanelByCmName(cmName, params);
 		} catch (e) {
 			_debug("Cannot bring to front the panel " + cmName, e);
 		}
