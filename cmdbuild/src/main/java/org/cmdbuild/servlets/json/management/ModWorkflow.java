@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -61,7 +60,6 @@ public class ModWorkflow extends JSONBase {
 
 		setFullTextQuery(fullTextQuery, processFilter);		
 		setSorting(sortField, sortDirection, processFilter);
-		processFilter.setNextExecutorFilter(userCtx);
 
 		final List<ICard> cards = getWFCards(limit, offset, processFilter);
 		final Map<Integer, ActivityDO> activityMap = mngt.getActivityMap(classTable, cards, flowStatus);
