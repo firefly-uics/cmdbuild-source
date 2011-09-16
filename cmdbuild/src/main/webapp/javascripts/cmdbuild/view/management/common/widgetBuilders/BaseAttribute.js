@@ -24,7 +24,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 			labelSeparator: "",
 			hideLabel: true,
 			name: attribute.name + "_ftype",
-			mode: 'local',
+			queryMode: 'local',
 			store: store,
 			valueField: 'id',
 			displayField: 'type',
