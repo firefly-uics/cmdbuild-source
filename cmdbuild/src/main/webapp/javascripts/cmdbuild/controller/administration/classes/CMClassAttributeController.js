@@ -1,10 +1,48 @@
 (function() {
-	
+
+	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
+		constructor: function(view) {
+			this.view = view;
+			this.getGrid().on("cm_attribute_moved", this.onAttributeMoved, this);
+		},
+
+		onAttributeMoved: function() {
+			var g = this.getGrid();
+			var rowList = [];
+			var gStore = g.getStore();
+
+			for (var i=0; i<gStore.getCount(); i++) {
+				var rec = gStore.getAt(i);
+				rowList.push({ name: rec.get("name"), idx: i+1 });
+			}
+
+			CMDBuild.Ajax.request({
+				url: 'services/json/schema/modclass',
+				method: 'POST',
+				params: {
+					method: 'reorderAttribute',
+					tableId: this.getCurrentEntryTypeId(),
+					attributes: Ext.JSON.encode(rowList)
+				}
+			});
+		},
+
+		getGrid: function() {
+			throw "Unimplemented";
+		},
+
+		getCurrentEntryTypeId: function() {
+			throw "Unimplemented";
+		}
+	});
+
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
 	
 	Ext.define("CMDBuild.controller.administration.classes.CMClassAttributeController", {
+		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
 		constructor: function(view) {
-			this.view = view;
+			this.callParent(arguments);
+
 			this.currentClassId = null;
 
 			this.gridSM = this.view.gridPanel.getSelectionModel();
@@ -17,8 +55,15 @@
 			this.view.formPanel.deleteButton.on("click", onDeleteClick, this);
 			this.view.gridPanel.addAttributeButton.on("click", onAddAttributeClick, this);
 			this.view.gridPanel.orderButton.on("click", buildOrderingWindow, this);
-			this.view.gridPanel.on("cm_attribute_moved", onAttributeMoved, this);
             this.view.gridPanel.store.on("load", onAttributesAreLoaded, this);
+		},
+
+		getGrid: function() {
+			return this.view.gridPanel;
+		},
+
+		getCurrentEntryTypeId: function() {
+			return this.currentClassId;
 		},
 
 		onClassSelected: function(classId) {
@@ -134,27 +179,6 @@
 		this.currentAttribute = null;
 		this.view.formPanel.onAddAttributeClick();
 		this.view.gridPanel.onAddAttributeClick();
-	}
-
-	function onAttributeMoved() {
-		var g = this.view.gridPanel;
-		var rowList = [];
-		var gStore = g.getStore();
-
-		for (var i=0; i<gStore.getCount(); i++) {
-			var rec = gStore.getAt(i);
-			rowList.push({ name: rec.get("name"), idx: i+1 });
-		}
-
-		CMDBuild.Ajax.request({
-			url: 'services/json/schema/modclass',
-			method: 'POST',
-			params: {
-				method: 'reorderAttribute',
-				idClass: this.currentClassId,
-				attributes: Ext.JSON.encode(rowList)
-			}
-		});
 	}
 	
 	function buildOrderingWindow() {

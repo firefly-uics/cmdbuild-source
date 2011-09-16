@@ -3,8 +3,10 @@
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 	
 	Ext.define("CMDBuild.controller.administration.domain.CMDomainAttributesController", {
+		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
 		constructor: function(view) {
-			this.view = view;
+			this.callParent(arguments);
+
 			this.currentDomain = null;
 			this.currentAttribute = null;
 
@@ -15,6 +17,14 @@
 			this.view.form.saveButton.on("click", onSaveButtonClick, this);
 			this.view.form.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.grid.addAttributeButton.on("click", onAddAttributeClick, this);
+		},
+
+		getGrid: function() {
+			return this.view.grid;
+		},
+
+		getCurrentEntryTypeId: function() {
+			return this.currentDomain.get("id");
 		},
 
 		onDomainSelected: function(domain) {
