@@ -432,7 +432,7 @@ public class ModClass extends JSONBase {
 	public JSONObject reorderAttribute(
 			JSONObject serializer,
 			@Parameter("attributes") String jsonAttributeList,
-			ITable table) throws JSONException, CMDBException {   	
+			BaseSchema baseSchema) throws JSONException, CMDBException {   	
 		JSONArray attributeList = new JSONArray(jsonAttributeList);
 		Map<String, Integer> attributePositions = new HashMap<String, Integer>();
 		for(int i = 0; i < attributeList.length(); ++i) {
@@ -443,7 +443,7 @@ public class ModClass extends JSONBase {
 		}
 		for(String name : attributePositions.keySet()) {
 			int index = attributePositions.get(name);
-			IAttribute attribute = table.getAttribute(name);
+			IAttribute attribute = baseSchema.getAttribute(name);
 			attribute.setIndex(index);
 			attribute.save();
 		}
