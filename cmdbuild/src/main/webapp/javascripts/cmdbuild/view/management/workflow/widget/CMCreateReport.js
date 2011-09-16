@@ -22,13 +22,11 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 			editable : false,
 			disableKeyFilter : true,
 			forceSelection : true,
-			emptyText : ' ',// this.translation.PleaseSelect,
-			triggerAction : 'all',
-			mode : 'local',
-			store : new Ext.data.SimpleStore( {
-				id : 0,
+			queryMode : 'local',
+			store : new Ext.data.ArrayStore({
+				autoDestroy: true,
 				fields : [ 'value', 'text' ],
-				data : [ 
+				data : [
 					[ 'pdf', 'PDF' ],
 					[ 'csv', 'CSV' ],
 					[ 'odt', 'ODT' ],
@@ -37,7 +35,7 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 			}),
 			valueField: 'value',
 			displayField: 'text',
-			hiddenName: 'reportExtension'
+			value: 'pdf'
 		});
 
 		if (this.widgetConf.forceextension) {
@@ -83,7 +81,6 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 		this.mon(this.ownerCt, "cmactive", function() {
 			this.ownerCt.bringToFront(this);
 		}, this, {single: true});
-
 		this.ownerCt.cmActivate();
 	},
 
