@@ -69,11 +69,17 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(JSONObject serializer, @Parameter("limit") int limit, @Parameter("start") int offset,
+	public JSONObject getCardList(
+			JSONObject serializer,
+			@Parameter("limit") int limit,
+			@Parameter("start") int offset,
 			@Parameter(value = "sort", required = false) JSONArray sorters,
 			@Parameter(value = "query", required = false) String fullTextQuery,
-			@Parameter(value = "writeonly", required = false) boolean writeonly, CardQuery cardQuery,
+			@Parameter(value = "writeonly", required = false) boolean writeonly,
+			// Don't clone it or getCardPosition does not work, unless sort and query are set somewhere else
+			CardQuery cardQuery,
 			UserContext userContext) throws JSONException, CMDBException {
+
 		temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
 		JSONArray rows = new JSONArray();
 		if (writeonly) {
@@ -92,7 +98,7 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
-	private void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery) throws JSONException {
+	static void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery) throws JSONException {
 		if (sorters != null && sorters.length() > 0) {
 			JSONObject s = sorters.getJSONObject(0);
 			String sortField = s.getString("property");
