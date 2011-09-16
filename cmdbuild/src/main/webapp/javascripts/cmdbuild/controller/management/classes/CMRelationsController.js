@@ -18,7 +18,8 @@
 				'action-relation-edit': this.onEditRelationClick,
 				'action-relation-delete': this.onDeleteRelationClick,
 				'action-relation-editcard': this.onEditCardClick,
-				'action-relation-viewcard': this.onViewCardClick
+				'action-relation-viewcard': this.onViewCardClick,
+				'action-relation-attach': this.onOpenAttachmentClick 
 			};
 
 			this.view.store.getRootNode().on("append", function(root, newNode) {
@@ -221,8 +222,24 @@
 
 		onViewCardClick: function(model) {
 			openCardWindow.call(this, model, false);
+		},
+
+		onOpenAttachmentClick: function(model) {
+			new CMDBuild.controller.management.common.CMAttachmentsWindowController(
+				new CMDBuild.view.management.common.CMAttachmentsWindow({
+					cardInfo: modelToCardInfo(model)
+				}).show()
+			);
 		}
 	});
+
+	function modelToCardInfo(model) {
+		return {
+			Id: model.get("dst_id"),
+			ClassId: model.get("dst_cid"),
+			Description: model.get("dst_desc")
+		};
+	}
 
 	function openCardWindow(model, editable) {
 		var w = new CMDBuild.view.management.common.CMCardWindow({

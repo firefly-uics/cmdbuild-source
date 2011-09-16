@@ -133,7 +133,7 @@
 
 		onOpenNoteClick: function(model) {
 			var w = new CMDBuild.view.management.common.CMNoteWindow({
-				masterCard: model
+				cardInfo: model
 			}).show();
 			
 			w.mon(w, "destroy", function() {
@@ -144,11 +144,19 @@
 		onOpenAttachmentClick: function(model) {
 			new CMDBuild.controller.management.common.CMAttachmentsWindowController(
 				new CMDBuild.view.management.common.CMAttachmentsWindow({
-					masterCard: model
+					cardInfo: modelToCardInfo(model)
 				}).show()
 			);
 		}
 	});
+
+	function modelToCardInfo(model) {
+		return {
+			Id: model.get("Id"),
+			ClassId: model.get("IdClass"),
+			Description: model.get("Description")
+		};
+	}
 
 	function onDetailDoubleClick(grid, model, html, index, e, options) {
 		this.superController.openCard({

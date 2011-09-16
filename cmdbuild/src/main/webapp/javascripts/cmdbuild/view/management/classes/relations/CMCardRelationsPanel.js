@@ -246,6 +246,12 @@
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.view_relation+'" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}
 
+		if (CMDBuild.Config.dms.enabled == "true") {
+			actionsHtml += '<img style="cursor:pointer" title="'+
+				CMDBuild.Translation.management.moddetail.showattach+ // FIXME translation
+				'" class="action-relation-attach" src="images/icons/attach.png"/>';
+		}
+
 		return actionsHtml;
 	}
 
