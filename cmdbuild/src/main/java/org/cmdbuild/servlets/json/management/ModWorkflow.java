@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.servlets.json.management.ModCard.applySortToCardQuery;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,20 +54,20 @@ public class ModWorkflow extends JSONBase {
 			@Parameter("state")String flowStatus,
 			@Parameter("limit")int limit,
 			@Parameter("start")int offset,
-			@Parameter(value="sort",required=false) String sortField,
-			@Parameter(value="dir",required=false) String sortDirection,
+			@Parameter(value = "sort", required = false) JSONArray sorters,
 			@Parameter(value="query",required=false) String fullTextQuery,
-			ProcessQuery processFilter // already filtered with the passed flow status
+			// Don't clone it or getCardPosition does not work, unless sort and query are set somewhere else
+			ProcessQuery processQuery // already filtered with the passed flow status
 		) throws  JSONException {
 
-		setFullTextQuery(fullTextQuery, processFilter);		
-		setSorting(sortField, sortDirection, processFilter);
+		setFullTextQuery(fullTextQuery, processQuery);
+		applySortToCardQuery(sorters, processQuery);
 
-		final List<ICard> cards = getWFCards(limit, offset, processFilter);
+		final List<ICard> cards = getWFCards(limit, offset, processQuery);
 		final Map<Integer, ActivityDO> activityMap = mngt.getActivityMap(classTable, cards, flowStatus);
 
 		final JSONArray rows = serializeCards(mngt, userCtx, classTable, cards, activityMap);		
-		serializer.put("results", processFilter.getTotalRows());
+		serializer.put("results", processQuery.getTotalRows());
 		serializer.put("rows", rows);
 		return serializer;
 	}
