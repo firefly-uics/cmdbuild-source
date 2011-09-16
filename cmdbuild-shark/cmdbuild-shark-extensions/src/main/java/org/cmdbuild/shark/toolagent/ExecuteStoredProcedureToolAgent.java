@@ -92,11 +92,12 @@ public class ExecuteStoredProcedureToolAgent extends
 		List<Object> args = new ArrayList();
 		List<AppParameter> outClasses = new ArrayList();
 		
-		for(int i=1;i<parameters.length;i++) {
-			AppParameter param = parameters[i];
-			if(param.the_mode.equals("IN")) {
+		for (int i = 1; i < parameters.length; i++) {
+			final AppParameter param = parameters[i];
+			if (param.the_mode.contains("IN")) {
 				args.add(param.the_value);
-			} else if(param.the_mode.equals("OUT")) {
+			}
+			if (param.the_mode.contains("OUT")) {
 				outClasses.add(param);
 			}
 		}
