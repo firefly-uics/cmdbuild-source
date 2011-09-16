@@ -82,7 +82,7 @@
             "domain": "Domaine",
             "is_active": "Active",
             "m_d": "M/D",
-            "md_label": "<em>Master/Detail Label<em>",
+            "md_label": "Master/Detail Label",
             "master_detail": "Master/Detail",
             "modify_domain": "Modifier Domaine",
             "name": "Nom",
@@ -374,7 +374,7 @@
             "email": "Email",
             "enable_user": "Activer Utilisateur",
             "groupmanagement": "Gestion des groupes utilisateurs",
-            "isactive": "<em>est actif</em>",
+            "isactive": "est actif",
             "modify_user": "Modifier Utilisateur",
             "password": "Password",
             "title": "Gestion utilisateur",
@@ -522,7 +522,7 @@
       "loading": "Chargement...",
       "loading_mask": {
          "classes": "Chargement classes",
-         "domain": "<em>Loading domains</em>",
+         "domain": "Chargement domaines",
          "configuration": "Chargement configuration",
          "group": "Chargement utilisateurs et groupes",
          "lookup": "Chargement des types de Catalogues",
@@ -609,7 +609,7 @@
       "detail": "Détails",
       "error_message": "Erreur",
       "error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
-      "invalid_fields" : "<em>Some fields have not been filled correctly</em>",
+      "invalid_fields" : "Certains champs ne sont pas remplis correctement",
       "invalid_attributes": "Les différents champs n'ont pas été rempli correctement:",
       "invalid_extended_attributes": "Les contrôles visuels suivants n'ont pas été remplis correctement:",
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
@@ -639,7 +639,7 @@
          "NOTFOUND": "Non trouvé",
          "ORM_AMBIGUOUS_DIRECTION": "Ne peut déterminer automatiquement la direction de la relation",
          "ORM_ATTACHMENT_UPLOAD_FAILED": "Chargement du fichier joint en erreur",
-         "ORM_ATTACHMENT_DELETE_FAILED": "<em>Attachment delete failed</em>",
+         "ORM_ATTACHMENT_DELETE_FAILED": "Echec de la suppression de la pièce jointe",
          "ORM_CANT_CREATE_DATABASE": "Ne peut créer la base de données",
          "ORM_CANT_CREATE_USER": "Ne peut pas créer un utilisateur",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Ne peut supprimer des fiches avec des relations",
@@ -796,7 +796,7 @@
             "question_sure": "Etes vous certain?"
          },
          "notinrel": "N D",
-         "notnull": "<em>Is not null</em>",
+         "notnull": "N'est pas null",
          "nullo": "Est null",
          "relations": "Relations",
          "remove": "Supprimer",
@@ -850,16 +850,16 @@
          "delete_relation": "Supprimer relation",
          "delete_relation_confirm": "Etes vous certain de supprimer cette relation?",
          "detail_window": {
-            "detail_attributes": "<em>Detail's attributes</em>",
-            "relation_attributes": "<em>Relation's attributes</em>"
+            "detail_attributes": "Détails d'attributs",
+            "relation_attributes": "Relations d'attributs"
          },
          "download_attachment": "Chargement pièce jointe",
          "edit_attachment": "Editer pièce jointe",
          "edit_relation": "Editer relation",
          "gis": {
          	"geo_attributes": "Attributs Geographiques",
-         	"zoom": "<em>Zoom</em>",
-         	"position": "<em>Posizione</em>"
+         	"zoom": "Zoom",
+         	"position": "Position"
          },
          "history_columns": {
             "activity_name": "Nom activité",
@@ -973,7 +973,7 @@
          "delete_card_confirm": "Etes-vous certain de vouloir supprimer le processus?",
          "extattrs": {
             "attachments": {
-              "must_save_to_add": "<em>You can not add an attachment before saving the activity</em>"
+              "must_save_to_add": "Vous ne pouvez pas ajouter une pièce jointe avant de sauvegarder l'activité"
             },
             "createreport": {"format_label": "Format"},
             "linkcards": {"required": "Selectionnez quelques fiches -"},
@@ -999,7 +999,7 @@
             },
             "managerelation": {"required": "Sélectionnez les relations -"},
             "notes": {
-              "must_save_to_modify": "<em>You can not modify the notes before saving the activity</em>"
+              "must_save_to_modify": "Vous ne pouvez pas modifier les notes avant de sauver votre activité"
             }
          },
          "history_columns": {
@@ -1053,7 +1053,7 @@
       "wrong_time": "{0} est une valeur invalide. Le bon format est {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated</em>",
+ 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated",
       "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
       "warning_message": "Attention",
       "only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours."
