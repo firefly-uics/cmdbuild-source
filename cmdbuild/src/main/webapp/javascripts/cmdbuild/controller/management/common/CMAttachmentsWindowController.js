@@ -4,7 +4,9 @@ Ext.define("CMDBuild.controller.management.common.CMAttachmentsWindowController"
 		this.view = view;
 		this.gridController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(this.view.grid);
 
-		this.gridController.currentClassId = this.view.masterCard.get("IdClass");
-		this.gridController.currentCardId = this.view.masterCard.get("Id");
+		var cardInfo = this.view.cardInfo;
+		this.gridController.updateViewPrivilegesForTypeId(cardInfo.ClassId);
+		this.gridController.currentClassId = cardInfo.ClassId;
+		this.gridController.currentCardId = cardInfo.Id;
 	}
 });

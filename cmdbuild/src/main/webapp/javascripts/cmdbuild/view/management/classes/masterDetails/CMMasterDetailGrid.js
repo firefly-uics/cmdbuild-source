@@ -109,7 +109,7 @@
 	}
 
 	function imageTagBuilderForIcon(value, meta, record) {
-		var iconsToRended = getIconsToRender(record),
+		var iconsToRender = getIconsToRender(record),
 			ICONS_FOLDER = "images/icons/",
 			ICONS_EXTENSION = "png",
 			EVENT_CLASS_PREFIX = "action-masterdetail-",
@@ -157,9 +157,9 @@
 			}
 		}
 
-		if (Ext.isArray(iconsToRended)) {
-			for (var i=0, len=iconsToRended.length; i<len; ++i) {
-				tag += buildTag(iconsToRended[i]);
+		if (Ext.isArray(iconsToRender)) {
+			for (var i=0, len=iconsToRender.length; i<len; ++i) {
+				tag += buildTag(iconsToRender[i]);
 			}
 		} else {
 			tag = buildTag("");

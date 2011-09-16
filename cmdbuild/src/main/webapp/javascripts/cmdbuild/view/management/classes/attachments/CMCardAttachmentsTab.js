@@ -52,8 +52,12 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 	},
 
 	onCardSelected: function(card) {
-		this.writePrivileges = card.raw.priv_write;
-		this.addAttachmentButton.setDisabled(!this.writePrivileges);
+		this.updateWritePrivileges(card.raw.priv_write);
+	},
+
+	updateWritePrivileges: function(priv_write) {
+		this.writePrivileges = priv_write;
+		this.addAttachmentButton.setDisabled(!priv_write);
 	},
 
 	reloadCard: function() {

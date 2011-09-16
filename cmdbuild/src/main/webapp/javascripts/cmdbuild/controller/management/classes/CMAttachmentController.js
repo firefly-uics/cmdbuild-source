@@ -30,12 +30,16 @@
 				return;
 			}
 
-			var et = _CMCache.getEntryTypeById(selection.get("id"));
-			if (et && et.get("priv_write")) {
-				this.view.addAttachmentButton.enable();
-			} else {
-				this.view.addAttachmentButton.disable();
+			this.updateViewPrivilegesForTypeId(selection.get("id"));
+		},
+
+		updateViewPrivilegesForTypeId: function(entryTypeId) {
+			var et = _CMCache.getEntryTypeById(entryTypeId),
+				writePrivileges;
+			if (et) {
+				writePrivileges = et.get("priv_write");
 			}
+			this.view.updateWritePrivileges(writePrivileges);
 		},
 
 		onCardSelected: function(card) {
