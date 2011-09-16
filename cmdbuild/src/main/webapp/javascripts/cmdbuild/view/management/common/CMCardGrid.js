@@ -92,19 +92,15 @@
 
 					if (found) {
 						if (foundButNotInFilter) {
-							_debug("Trovata forzando il filtro: " + position);
 							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
 						} else {
-							_debug("trovato al primo colpo: " + position);
 							updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
 						}
 					} else {
 						if (retryWithoutFilter) {
-							_debug("Non trovata proprio");
 							CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
 									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
 						} else {
-							_debug("Non è nel filtro");
 							me._onGetPositionFailureWithoutForcingTheFilter(resText);
 						}
 
