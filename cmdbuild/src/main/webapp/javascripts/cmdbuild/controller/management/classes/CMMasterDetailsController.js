@@ -103,15 +103,15 @@
 				// relation at first
 				
 				if (this.currentDetail) {
+					var params = {
+						"DomainId" : this.currentDetail.get("id")
+					};
+					addCardParams(params, masterSide(this.currentDetail), this.currentMasterData);
+					addCardParams(params, detailSide(this.currentDetail), model);
+
 					CMDBuild.LoadMask.get().show()
 					CMDBuild.ServiceProxy.relations.remove({
-						params : {
-							"DomainId" : this.currentDetail.get("id"),
-							"Class1Id" : this.currentMasterData.get("IdClass"),
-							"Card1Id" : this.currentMasterData.get("Id"),
-							"Class2Id" : model.get("IdClass"),
-							"Card2Id" : model.get("Id")
-						},
+						params : params,
 						scope: this,
 						success: function() {
 							removeCard.call(this, model);
@@ -133,7 +133,7 @@
 
 		onOpenNoteClick: function(model) {
 			var w = new CMDBuild.view.management.common.CMNoteWindow({
-				cardInfo: model
+				masterCard: model
 			}).show();
 			
 			w.mon(w, "destroy", function() {
@@ -149,6 +149,22 @@
 			);
 		}
 	});
+
+	function masterSide(domainRecord) {
+		return {
+			"1:N" : 1,
+			"N:1" : 2
+		}[domainRecord.get("cardinality")];
+	}
+
+	function detailSide(domainRecord) {
+		return 3-masterSide(domainRecord);
+	}
+
+	function addCardParams(params, side, record) {
+		params["Class"+side+"Id"] = record.get("IdClass");
+		params["Card"+side+"Id"] = record.get("Id");
+	}
 
 	function modelToCardInfo(model) {
 		return {
