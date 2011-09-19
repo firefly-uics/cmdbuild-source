@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="CMDBuild" version="2.5">
+	<display-name>CMDBuild</display-name>
+
+	<context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application-context.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
+	<context-param>
+		<param-name>modules</param-name>
+		<param-value>database,cmdbuild,dms,workflow,email,graph,transformers,builders,gis,auth</param-value>
+	</context-param>
+	<context-param>
+		<param-name>moduleLoaders</param-name>
+		<param-value>ParameterTransformerInit</param-value>
+	</context-param>
+	<listener id="cmdbuildInit">
+		<listener-class>org.cmdbuild.plugins.CMDBInitListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>TranslationFilter</filter-name>
+		<filter-class>org.cmdbuild.filters.TranslationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>TranslationFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>ConfCheckFilter</filter-name>
+		<filter-class>org.cmdbuild.filters.ConfCheckFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ConfCheckFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>PatchManager</filter-name>
+		<filter-class>org.cmdbuild.filters.PatchManagerFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PatchManager</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>AuthFilter</filter-name>
+		<filter-class>org.cmdbuild.filters.AuthFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>org.cmdbuild.listeners.RequestListener</listener-class>
+	</listener>
+
+    <servlet>
+    	<servlet-name>SharkRestEndpoint</servlet-name>
+    	<servlet-class>org.cmdbuild.servlets.RestServlet</servlet-class>
+    	<init-param><param-name>resourcesPackage</param-name><param-value>org.cmdbuild.servlets.resource.shark</param-value></init-param>
+    	<init-param>
+    		<param-name>resources</param-name>
+    		<param-value>EventAudit,StoredProcedureToolAgentExecutor,CmdbuildStruct,SuspendProcess,SharkReportReader,CreateReportToolAgentExecutor</param-value>
+    	</init-param>
+        <init-param><param-name>httpauth-user</param-name><param-value>sharkUGM</param-value></init-param>
+        <init-param><param-name>httpauth-pwd</param-name><param-value>sharkUGM</param-value></init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SharkRestEndpoint</servlet-name>
+        <url-pattern>/shark/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>jsonDispatcher</servlet-name>
+		<servlet-class>org.cmdbuild.servlets.JSONDispatcher</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>jsonDispatcher</servlet-name>
+		<url-pattern>/services/json/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/services/soap/*</url-pattern>
+    </servlet-mapping>
+	
+</web-app>
