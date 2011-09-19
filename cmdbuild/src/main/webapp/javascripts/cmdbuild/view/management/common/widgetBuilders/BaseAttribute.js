@@ -71,11 +71,11 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	 * @return Ext.form.DisplayField
 	 */
 	buildReadOnlyField: function(attribute) {
-		var field = new Ext.form.DisplayField ({
+		var field = new Ext.form.DisplayField({
 			labelAlign: "right",
 			labelWidth: CMDBuild.LABEL_WIDTH,
  			fieldLabel: attribute.description,
-			grow: true,
+			width: CMDBuild.BIG_FIELD_WIDTH,
  			submitValue: false,
  			name: attribute.name,
  			disabled: false

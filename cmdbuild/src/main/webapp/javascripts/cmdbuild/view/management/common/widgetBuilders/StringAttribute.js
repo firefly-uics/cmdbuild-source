@@ -35,10 +35,11 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
  * @return CMDBuild.Management.EntityRemoverDisplayField
  */
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
-	var field = new CMDBuild.Management.EntityRemoverDisplayField ({
+	var field = new CMDBuild.Management.EntityRemoverDisplayField({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: attribute.description,
+		width: CMDBuild.BIG_FIELD_WIDTH,
 		submitValue: false,
 		name: attribute.name,
 		disabled: false
