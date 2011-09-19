@@ -1,4 +1,5 @@
 (function() {
+
 	var TRUE = "1";
 
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid", {
@@ -6,20 +7,11 @@
 
 		mapPanel: undefined,
 
-		initComponent: function() {
-			if (this.multiSelect) {
-				this.selType = "linkcardcheckboxmodel"
-			}
-
-			this.callParent(arguments);
-		},
-
 		syncSelections: function(s) {
 			var sm = this.getSelectionModel();
 			sm.clearSelections();
 
 			if (!this.noSelect && s) {
-				var store = this.getStore();
 				for (var i = 0, l = s.length; i<l; ++i) {
 					var cardId = s[i];
 					this.selectByCardId(cardId);
@@ -42,24 +34,6 @@
 		}
 	});
 
-	Ext.define('CMDBuild.selection.CMLinkCardCheckboxModel', {
-		extend: 'Ext.selection.CheckboxModel',
-		alias:  'selection.linkcardcheckboxmodel',
-
-		//override
-		onHeaderClick: function(headerCt, header, e) {
-			if (header.isCheckerHd) {
-				e.stopEvent(); // We have to supress the event or it will scrollTo the change
-				var isChecked = header.el.hasCls(Ext.baseCSSPrefix + 'grid-hd-checker-on');
-				if (isChecked) {
-					this.deselectAll();
-				} else {
-					this.selectAll();
-				}
-			}
-		}
-	});
-
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCards", {
 		extend: "Ext.panel.Panel",
 		constructor: function(c) {
@@ -76,16 +50,15 @@
 
 		initComponent: function() {
 			var c = this.widgetConf,
-				selType = this.NoSelect==TRUE ? "rowmodel" : "checkboxmodel",
-				multipleSelect = this.NoSelect!=TRUE && !this.SingleSelect,
+				selModel = selectionModelFromConfiguration(c),
+				noSelect = isNoSelect(c)
 				theMapIsToSet = (c.Map == "enabled" && CMDBuild.Config.gis.enabled);
 
 			this.grid = new CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid({
 				autoScroll : true,
 				filterSubcategory : c.identifier,
-				selType: selType,
-				multiSelect: multipleSelect,
-				noSelect: this.NoSelect,
+				selModel: selModel,
+				noSelect: noSelect,
 				hideMode: "offsets",
 				region: "center",
 				border: false,
@@ -159,6 +132,57 @@
 			return this.mapPanel != undefined;
 		}
 	});
+
+	/*
+	 * Same as the CheckboxModel but is does not supress selection events
+	 * and is does not allow pressing the header if 
+	 */
+	Ext.define('CMDBuild.selection.CMLinkCardCheckboxModel', {
+		extend: 'Ext.selection.CheckboxModel',
+		alias:  'selection.linkcardcheckboxmodel',
+
+		//override
+		getHeaderConfig: function() {
+			var hc = this.callParent(arguments);
+
+			hc.isCheckerHd = (this.mode != "SINGLE");
+			if (!hc.isCheckerHd) {
+				delete hc.cls;
+			}
+
+			return hc;
+		},
+
+		//override
+		onHeaderClick: function(headerCt, header, e) {
+			if (header.isCheckerHd) {
+				e.stopEvent();
+				var isChecked = header.el.hasCls(Ext.baseCSSPrefix + 'grid-hd-checker-on');
+				if (isChecked) {
+					this.deselectAll();
+				} else {
+					this.selectAll();
+				}
+			}
+		}
+	});
+
+	function selectionModelFromConfiguration(conf) {
+		if (isNoSelect(conf)) {
+			return new Ext.selection.RowModel();
+		}
+		if (conf.SingleSelect) {
+			return new CMDBuild.selection.CMLinkCardCheckboxModel({
+				mode: "SINGLE",
+				allowDeselect: true
+			});
+		}
+		return new CMDBuild.selection.CMLinkCardCheckboxModel();
+	}
+
+	function isNoSelect(c) {
+		return !!c.NoSelect;
+	}
 
 	function buildMapStuff(c) {
 		this.mapButton = new Ext.Button({
