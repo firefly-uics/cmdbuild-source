@@ -31,6 +31,8 @@
 			} else {
 				this.mapController = {
 					onEntryTypeSelect: Ext.emptyFn,
+					onAddCardButtonClick: Ext.emptyFn,
+					onCardSaved: Ext.emptyFn,
 					getValues: function() {return false;},
 					refresh: Ext.emptyFn
 				};
