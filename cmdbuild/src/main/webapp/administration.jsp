@@ -41,11 +41,15 @@
 <%	} %>
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
 		</script>
+		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+
 		<%@ include file="coreJsFiles.jsp"%>
-<!--		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>-->
 		<%@ include file="administrationJsFiles.jsp"%>
-<!--		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-administration.js"></script>-->
+<!--
+		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-administration.js"></script>
+-->
 	
 	<script type="text/javascript">
 	Ext.onReady(function() {

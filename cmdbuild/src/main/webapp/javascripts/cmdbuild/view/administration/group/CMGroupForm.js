@@ -200,4 +200,4 @@ function readModulesFromStructure() {
 	};
 }
 
-})()
+})();
