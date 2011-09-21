@@ -17,8 +17,6 @@ public class WorkflowProperties extends DefaultProperties {
 	private static final String ADMIN_PASSWORD = "password";
 	private static final String ENGINE_NAME = "engine";
 	private static final String SCOPE = "scope";
-	private static final String EXTENDED_ATRIBUTE_PACKAGE = "extendedattribute.package";
-	private static final String EXTENDED_ATTRIBUTE_CLASSES = "extendedattribute.classes";
 	
 	public WorkflowProperties() {
 		super();
@@ -28,8 +26,6 @@ public class WorkflowProperties extends DefaultProperties {
 		setProperty(ADMIN_PASSWORD, "enhydra");
 		setProperty(ENGINE_NAME, "shark");
 		setProperty(SCOPE, "");
-		setProperty(EXTENDED_ATRIBUTE_PACKAGE, "org.cmdbuild.workflow.extattr");
-		setProperty(EXTENDED_ATTRIBUTE_CLASSES, "ManageRelations,CreateModifyCard,LinkCards,OpenNote,OpenAttachment,CreateReport,ManageEmail");
 	}
 
 	public static WorkflowProperties getInstance() {
@@ -59,13 +55,6 @@ public class WorkflowProperties extends DefaultProperties {
 	
 	public String getScope(){
 		return getProperty(SCOPE);
-	}
-	
-	public String getExtendedAttributePackage() {
-		return getProperty(EXTENDED_ATRIBUTE_PACKAGE);
-	}
-	public String[] getExtendedAttributeClasses() {
-		return (getProperty(EXTENDED_ATTRIBUTE_CLASSES)).split(",");
 	}
 
 	@Override
