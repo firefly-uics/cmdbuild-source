@@ -14,3 +14,6 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/XCombo.js"></script>
 
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
+
+<!-- Administration Group Tree -->
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/TreeEditing.js"></script>
