@@ -268,7 +268,7 @@
 			this.cmTBar = [
 				this.modifyCardButton,
 				this.deleteCardButton,
-				this.cloneCardButton,
+				this.cloneCardButton
 			];
 
 			this.graphButton = new Ext.button.Button({
