@@ -45,14 +45,16 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	},
 
 	showDropDownArrow: function() {
-		if (this.el) {
-			this.el.child(ARROW_ELEMENT_SELECTOR).addCls(ARROW_CLASS);
+		var arrowEl = this.getArrowEl();
+		if (arrowEl) {
+			arrowEl.addCls(ARROW_CLASS);
 		}
 	},
 
 	hideDropDownArrow: function() {
-		if (this.el) {
-			this.el.child(ARROW_ELEMENT_SELECTOR).removeCls(ARROW_CLASS);
+		var arrowEl = this.getArrowEl();
+		if (arrowEl) {
+			arrowEl.removeCls(ARROW_CLASS);
 		}
 	},
 
@@ -63,11 +65,20 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 			this.enable();
 		}
 	},
-	
+
 	setTextSuffix: function(suffix) {
 		this.setText(this.textPrefix +" "+suffix);
 	},
-	
+
+	getArrowEl: function() {
+		try {
+			var arrowEl = Ext.DomQuery.selectNode(ARROW_ELEMENT_SELECTOR, this.el.dom);
+			return Ext.get(arrowEl);
+		} catch (e) {
+			return null;
+		}
+	},
+
 	//private
 	isEmpty: function() {
 		return (this.menu && this.menu.items.length == 0 );
@@ -77,10 +88,11 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	resetText: function() {
 		this.setText(this.baseText);
 	}
-	
 });
 
 	var WANNABE_DESCRIPTION = "text";
+
+
 
 	function fillMenu(entry) {
 		this.menu.removeAll();
