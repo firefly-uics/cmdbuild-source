@@ -112,5 +112,5 @@
 			this.bringTofrontPanelByCmName(a.cmName);
 			a.selectFirstSelectableNode();
 		}
-	}
+	};
 })();
