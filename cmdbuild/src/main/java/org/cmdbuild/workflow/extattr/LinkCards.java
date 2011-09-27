@@ -20,9 +20,8 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMWorkItem;
 import org.enhydra.shark.client.utilities.SharkWSFactory;
 import org.json.JSONObject;
 
-public class LinkCards extends AbstractCmdbuildExtendedAttribute {
-	static final String ClassName = "ClassName";
-	static final String Filter = "Filter";
+public class LinkCards extends AbstractFilteredExtendedAttribute {
+
 	static final String SingleSelect = "SingleSelect";
 	static final String NoSelect = "NoSelect";
 	static final String Required = "Required";
@@ -75,25 +74,11 @@ public class LinkCards extends AbstractCmdbuildExtendedAttribute {
 		facade.updateWorkItemValues(handle, userCtx, factory, workItem, newValues);
 	}
 
+	@Override
 	protected void addCustomParams(ActivityDO activityDO, JSONObject object,
 			ExtendedAttributeConfigParams eacp) throws Exception {
-		ITable targetClass = getLinkTargetClass(eacp);
-		object.put("ClassName", targetClass.getName());
-		object.put("ClassId", targetClass.getId());
+		super.addCustomParams(activityDO, object, eacp);
 		object.put("outputName", this.outParameters.get(0));
-	}
-
-	private ITable getLinkTargetClass(ExtendedAttributeConfigParams eacp) throws Exception {
-		Map<String,Object> params = eacp.getParameters();
-		String cName;
-		if (params.containsKey(Filter)) {
-			String cqlQuery = (String)params.get(Filter);
-			QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams(cqlQuery);
-			cName = q.getFrom().mainClass().getClassName();
-		} else {
-			cName = (String)params.get(ClassName);
-		}
-		return UserContext.systemContext().tables().get(cName);
 	}
 
 	@Override
