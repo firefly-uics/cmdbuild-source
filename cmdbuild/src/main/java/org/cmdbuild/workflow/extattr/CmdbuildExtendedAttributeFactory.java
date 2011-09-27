@@ -3,47 +3,35 @@ package org.cmdbuild.workflow.extattr;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.config.WorkflowProperties;
-import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
 
 public class CmdbuildExtendedAttributeFactory {
 
-	private static CmdbuildExtendedAttributeFactory instance = null;
-	private static Object instanceSyncObject = new Object();
-
-	public static CmdbuildExtendedAttributeFactory getInstance() {
-		if (instance == null) {
-			synchronized (instanceSyncObject) {
-				if (instance == null) {
-					instance = new CmdbuildExtendedAttributeFactory();
-				}
-			}
-		}
-		return instance;
-	}
+	// Initialization on Demand Holder design pattern
+	private static class InstanceHolder {
+       public static CmdbuildExtendedAttributeFactory INSTANCE = new CmdbuildExtendedAttributeFactory();
+    }
+ 
+    public static CmdbuildExtendedAttributeFactory getInstance() {
+        return InstanceHolder.INSTANCE;
+    }
 
 	Map<String, Class<? extends CmdbuildExtendedAttribute>> mapping;
 
-	@SuppressWarnings("unchecked")
 	private CmdbuildExtendedAttributeFactory() {
-		mapping = new HashMap();
+		mapping = new HashMap<String, Class<? extends CmdbuildExtendedAttribute>>();
 		configure();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void configure() {
-		WorkflowProperties props = WorkflowProperties.getInstance();
-		String pack = props.getExtendedAttributePackage();
-		for (String clsName : props.getExtendedAttributeClasses()) {
-			try {
-				String fullClassName = pack + "." + clsName;
-				Class<? extends CmdbuildExtendedAttribute> cls = (Class<? extends CmdbuildExtendedAttribute>) Class.forName(fullClassName);
-				this.register(cls);
-			} catch (ClassNotFoundException e) {
-				throw WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR.createException(clsName);
-			}
-		}
+		register(org.cmdbuild.workflow.extattr.ManageRelations.class);
+		register(org.cmdbuild.workflow.extattr.CreateModifyCard.class);
+		register(org.cmdbuild.workflow.extattr.LinkCards.class);
+		register(org.cmdbuild.workflow.extattr.OpenNote.class);
+		register(org.cmdbuild.workflow.extattr.OpenAttachment.class);
+		register(org.cmdbuild.workflow.extattr.CreateReport.class);
+		register(org.cmdbuild.workflow.extattr.ManageEmail.class);
+		register(org.cmdbuild.workflow.extattr.Calendar.class);
 	}
 
 	public void register(Class<? extends CmdbuildExtendedAttribute> extAttrCls) {
