@@ -131,12 +131,15 @@ public class EmailService {
 			Log.EMAIL.info(String.format("Sending email %d", email.getId()));
 			MimeMessage msg = new MimeMessage(smtpSession);
 			msg.setFrom(new InternetAddress(email.getFrom()));
-			msg.setRecipients(RecipientType.TO, email.getTO());
-			msg.setRecipients(RecipientType.CC, email.getCC());
+			if(email.getTO()!=null)
+				msg.setRecipients(RecipientType.TO, email.getTO());
+			if(email.getCC()!=null)
+				msg.setRecipients(RecipientType.CC, email.getCC());
 			String emailSubject = String.format("[%s %d] %s", email
 					.getActivityName(), email.getActivityId(), email
 					.getSubject());
-			msg.setSubject(emailSubject);
+			if(emailSubject!=null)
+				msg.setSubject(emailSubject);
 			Multipart mp = new MimeMultipart("alternative");
 			BodyPart bp = new MimeBodyPart();
 			bp.setContent(email.getBody(), "text/html; charset=UTF-8");
