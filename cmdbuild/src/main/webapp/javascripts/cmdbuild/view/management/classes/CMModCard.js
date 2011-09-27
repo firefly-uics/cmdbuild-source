@@ -278,6 +278,10 @@
 			this.getMapPanel = function() {
 				return this.theMap;
 			};
+		} else {
+			this.mapAddCardButton = {
+				updateForEntry: Ext.emptyFn
+			}
 		}
 	}
 })();
