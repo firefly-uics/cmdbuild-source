@@ -88,6 +88,9 @@ CMDBuild.Utils = (function() {
 			var fieldsWithoutGroup = []; 
 			for ( var i = 0; i < attributes.length; i++) {
 				var attribute = attributes[i];
+				if (!attribute) {
+					continue;
+				}
 				if (!allowNoteFiled && attribute.name == "Notes") {
 					continue;
 				} else {
