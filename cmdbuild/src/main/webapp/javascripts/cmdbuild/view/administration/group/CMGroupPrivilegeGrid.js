@@ -103,4 +103,4 @@ Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
   
 });
 
-})()
+})();
