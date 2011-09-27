@@ -161,8 +161,6 @@
 						me.onEditRelationSuccess();
 					}
 				}).show();
-				
-				
 		},
 
 		onEditRelationSuccess: function() {

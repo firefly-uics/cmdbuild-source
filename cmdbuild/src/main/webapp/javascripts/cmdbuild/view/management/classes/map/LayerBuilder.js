@@ -66,7 +66,9 @@
 		if (!editLayer) {
 			// the layer belongs to another class
 			var masterClass = _CMCache.getEntryTypeById(geoAttribute.masterTableId);
-			layerDescription = masterClass.get("text") + " - " + layerDescription;
+			if (masterClass) {
+				layerDescription = masterClass.get("text") + " - " + layerDescription;
+			}
 		}
 
 		var layer = new CMDBuild.Management.CMMap.MapLayer(layerDescription, {
