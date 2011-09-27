@@ -299,4 +299,4 @@
 
 		return new CMDBuild.view.management.classes.masterDetail.DetailWindow(c);
 	}
-})()
+})();

@@ -175,4 +175,4 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 		}
 	}
 });
-})()
+})();

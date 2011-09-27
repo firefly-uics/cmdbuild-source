@@ -23,4 +23,4 @@
 			{name: "isvisible", type: "boolean"}
 		]
 	});
-})()
+})();
