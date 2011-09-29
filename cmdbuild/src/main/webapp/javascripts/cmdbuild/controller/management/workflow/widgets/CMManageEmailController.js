@@ -57,9 +57,8 @@
 		},
 
 		addTemplatesIfNeededOnLoad: function(callbackFn) {
-			if (this.loadeded) {
-				this.addTemplatesIfNeeded(callbackFn);
-			} else {
+			this.addTemplatesIfNeeded(callbackFn);
+			if (!this.loadeded) {
 				this.view.emailGrid.store.on('load', function() {
 					this.addTemplatesIfNeeded(callbackFn);
 				}, this, {single: true});
