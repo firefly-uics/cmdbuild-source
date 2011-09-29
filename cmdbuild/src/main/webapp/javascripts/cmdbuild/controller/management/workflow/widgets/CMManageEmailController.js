@@ -105,7 +105,7 @@
 		// override
 		beforeActiveView: function() {
 			if (this.readWrite) {
-				this.addTemplatesIfNeeded();
+				this.addTemplatesIfNeededOnLoad();
 			}
 
 			if (!this.loaded) {
