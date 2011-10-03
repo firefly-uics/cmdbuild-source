@@ -118,6 +118,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCreateReport.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMOpenNote.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/CMCalendar.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMEmailWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMEmailGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMManageEmail.js"></script>
@@ -154,6 +155,7 @@
 
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMBaseWFWidgetController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCalendarController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateModifyCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMCreateReportController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>

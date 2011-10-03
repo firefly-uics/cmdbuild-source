@@ -245,6 +245,12 @@
 					me.openAttachmentPanel.configure(conf);
 
 					return me.openAttachmentPanel;
+				},
+				calendar: function() {
+					var w = new CMDBuild.view.management.workflow.widgets.CMCalendar(conf);
+					me.widgetsTab.add(w);
+
+					return w;
 				}
 			};
 
