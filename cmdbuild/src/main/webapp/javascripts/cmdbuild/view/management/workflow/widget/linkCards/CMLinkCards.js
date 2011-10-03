@@ -51,7 +51,7 @@
 		initComponent: function() {
 			var c = this.widgetConf,
 				selModel = selectionModelFromConfiguration(c),
-				noSelect = isNoSelect(c)
+				noSelect = isNoSelect(c),
 				theMapIsToSet = (c.Map == "enabled" && CMDBuild.Config.gis.enabled);
 
 			this.grid = new CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid({
@@ -97,7 +97,7 @@
 				this.fireEvent("deselect", s.get("Id"));
 			}, this);
 
-			this.grid.on("beforeload", onBeforeLoad, this)
+			this.grid.on("beforeload", onBeforeLoad, this);
 			this.grid.on("load", onLoad, this);
 		},
 
