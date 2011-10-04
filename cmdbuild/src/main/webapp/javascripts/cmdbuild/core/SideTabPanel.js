@@ -52,6 +52,10 @@
 			this.getCentralPanel = function() {
 				return centralPanel;
 			};
+
+			this.activateFirst = function() {
+				tabs.activateFirst();
+			};
 		},
 		
 		editMode: function() {

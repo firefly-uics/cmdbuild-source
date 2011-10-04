@@ -96,6 +96,11 @@
 
 		onAddCardButtonClick: function(idClass, reloadField) {
 			this.reset();
+
+			if (this.sideTabPanel) {
+				this.sideTabPanel.activateFirst();
+			}
+
 			if (reloadField) {
 				var cb = Ext.Function.createSequence(Ext.Function.bind(fillForm, this), this.editMode, this);
 				_CMCache.getAttributeList(idClass, cb);
