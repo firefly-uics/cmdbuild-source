@@ -304,6 +304,10 @@
 	}
 
 	function onItemDoubleclick(grid, model, html, index, e, options) {
+		if (!this.widgetConf.AllowCardEditing) {
+			return;
+		}
+
 		var priv = _CMUtils.getClassPrivileges(model.get("IdClass"));
 		if (priv && priv.write) {
 			this.onEditCardkClick(model);
