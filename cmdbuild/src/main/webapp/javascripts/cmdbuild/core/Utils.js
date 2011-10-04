@@ -128,7 +128,12 @@ CMDBuild.Utils = (function() {
 
 		isSuperclass: function(idClass) {
 			var c =  _CMCache.getEntryTypeById(idClass);
-			return c.get("superclass");
+			if (c) {
+				return c.get("superclass");
+			} else {
+				// TODO maybe is not the right thing to do...
+				return false;
+			}
 		},
 
 		getAncestorsId: function(entryTypeId) {

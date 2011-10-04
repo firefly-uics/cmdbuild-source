@@ -8,6 +8,7 @@
 				region: "north",
 				split: true,
 				border: false,
+				height: "30%",
 				cls: "cmborderbottom"
 			});
 
@@ -18,6 +19,7 @@
 				selType: "checkboxmodel",
 				multiSelect: true,
 				filterType: "filterwindow",
+				height: "70%",
 				items: [this.grid, this.filter]
 			});
 

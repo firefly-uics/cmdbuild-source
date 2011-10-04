@@ -3,6 +3,7 @@
 	var PADDING = 20;
 
 Ext.define("CMDBuild.field.CMBaseCombo", {
+	alias: "cmbasecombo",
 	extend: "Ext.form.field.ComboBox",
 
 	cmGreatestItem: "",
