@@ -26,6 +26,18 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 			}]
 		});
 
+		var comboOrderSign = new Ext.form.field.ComboBox({
+			typeAhead : true,
+			triggerAction : 'all',
+			selectOnTab : true,
+			store : [
+				[1,this.translation.direction.asc ],
+				[-1,this.translation.direction.desc ],
+				[0,this.translation.not_in_use ]
+			],
+			listClass : 'x-combo-list-small'
+		});
+
 		this.columns = [
 			{
 				id : 'absoluteClassOrder',
@@ -50,22 +62,14 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 				dataIndex : 'classOrderSign',
 				renderer : Ext.Function.bind(comboRender, this, [], true),
 				flex: 1,
-				field: {
-					xtype : 'combobox',
-					typeAhead : true,
-					triggerAction : 'all',
-					selectOnTab : true,
-					store : [
-						[1,this.translation.direction.asc ],
-						[-1,this.translation.direction.desc ],
-						[0,this.translation.not_in_use ]
-					],
-					lazyRender : true,
-					listClass : 'x-combo-list-small'
-				}
+				field: comboOrderSign
 			}
 		];
-		
+
+		this.mon(this, "render", function() {
+			comboOrderSign.ownerCt = this.ownerCt;
+		}, this);
+
 		this.plugins = [Ext.create('Ext.grid.plugin.CellEditing', {
 			clicksToEdit: 1
 		})];
