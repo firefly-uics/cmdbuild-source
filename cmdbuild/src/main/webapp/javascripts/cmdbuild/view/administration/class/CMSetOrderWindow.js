@@ -28,6 +28,12 @@ Ext.define("CMDBuild.Administration.SetOrderWindow", {
 	},
 	
 	onSave: function() {
+		var editPlugin = this.grid.plugins[0];
+
+		if (editPlugin) {
+			editPlugin.completeEdit(); // to update the record
+		}
+
 		this.hide();
 		var records = this.grid.getStore().getRange();
 		var recToSend = {};
