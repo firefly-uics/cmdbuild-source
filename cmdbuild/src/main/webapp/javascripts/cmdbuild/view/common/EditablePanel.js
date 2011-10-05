@@ -3,6 +3,7 @@
 	Ext.define("CMDBuild.Management.EditablePanel", {
 		extend: "Ext.panel.Panel",
 		attributes: undefined, //passed on new
+		cmMaxFieldWidth: undefined, // passed at configuration, if set is used as max value for combo grow
 		layout: "card",
 		activeItem: 0,
 		hideMode: "offsets",
@@ -10,12 +11,14 @@
 
 		initComponent : function() {
 			var editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
-				attributes: this.attributes
+				attributes: this.attributes,
+				cmMaxFieldWidth: this.cmMaxFieldWidth
 			});
 			
 			var displaySubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
 				editable: false,
-				attributes: this.attributes
+				attributes: this.attributes,
+				cmMaxFieldWidth: this.cmMaxFieldWidth
 			});
 
 			this.items = [displaySubpanel,editSubpanel];
