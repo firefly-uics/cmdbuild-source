@@ -196,6 +196,7 @@
 				border: false,
 				tabLabel: group,
 				bodyCls: "x-panel-body-default-framed",
+				cmMaxFieldWidth: this.getWidth() - 50, // See EditablePanel and CMBaseCombo
 				bodyStyle: {
 					padding: "5px"
 				}
