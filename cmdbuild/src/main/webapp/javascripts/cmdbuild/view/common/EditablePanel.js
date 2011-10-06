@@ -70,7 +70,7 @@
 		},
 		initComponent: function() {
 			if (this.attributes) {
-				this.items = getFields(this.attributes, this.editable);
+				this.items = getFields.call(this, this.attributes, this.editable);
 			}
 			this.on("show", function() {
 				if (this.editable) {
@@ -109,8 +109,8 @@
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, this.readOnlyForm);
 				} else {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, true); //true to have a displayField
-					if (field) {
-						field.width = 500 // TODO calculate panel width to use a percentage measure
+					if (field && this.cmMaxFieldWidth) {
+						field.width =  this.cmMaxFieldWidth;
 					}
 				}
 				if (field) {

@@ -1,7 +1,7 @@
 (function() {
 
 	var tr = CMDBuild.Translation.management.modcard;
-
+	var RIGHT_PADDING_FOR_MAX_FIELD_WIDTH = 80;
 	Ext.define("CMDBuild.view.management.classes.CMCardPanel", {
 		extend: "CMDBuild.view.management.classes.CMCardForm",
 
@@ -196,7 +196,7 @@
 				border: false,
 				tabLabel: group,
 				bodyCls: "x-panel-body-default-framed",
-				cmMaxFieldWidth: this.getWidth() - 50, // See EditablePanel and CMBaseCombo
+				cmMaxFieldWidth: this.getWidth() - RIGHT_PADDING_FOR_MAX_FIELD_WIDTH, // See EditablePanel and CMBaseCombo
 				bodyStyle: {
 					padding: "5px"
 				}
