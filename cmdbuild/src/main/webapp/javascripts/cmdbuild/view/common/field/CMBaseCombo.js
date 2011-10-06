@@ -77,15 +77,7 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 			var triggersLength = this.getTriggersLength(),
 				widthToSet = fieldLength + triggersLength + PADDING;
 
-			if (this.ownerCt 
-					&& this.ownerCt.cmMaxFieldWidth
-					&& this.ownerCt.cmMaxFieldWidth < widthToSet) {
-
-				this.setWidth(this.ownerCt.cmMaxFieldWidth);
-			} else {
-				this.setWidth(widthToSet);
-			}
-
+			this.setWidth(widthToSet);
 			tm.destroy();
 		}
 	},

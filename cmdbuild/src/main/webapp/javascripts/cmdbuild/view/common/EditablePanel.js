@@ -1,9 +1,9 @@
 (function() {
-	
+	var RIGHT_PADDING_FOR_MAX_FIELD_WIDTH = 40;
+
 	Ext.define("CMDBuild.Management.EditablePanel", {
 		extend: "Ext.panel.Panel",
 		attributes: undefined, //passed on new
-		cmMaxFieldWidth: undefined, // passed at configuration, if set is used as max value for combo grow
 		layout: "card",
 		activeItem: 0,
 		hideMode: "offsets",
@@ -11,14 +11,12 @@
 
 		initComponent : function() {
 			var editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
-				attributes: this.attributes,
-				cmMaxFieldWidth: this.cmMaxFieldWidth
+				attributes: this.attributes
 			});
 			
 			var displaySubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
 				editable: false,
-				attributes: this.attributes,
-				cmMaxFieldWidth: this.cmMaxFieldWidth
+				attributes: this.attributes
 			});
 
 			this.items = [displaySubpanel,editSubpanel];
@@ -79,6 +77,19 @@
 			}, this);
 			
 			this.callParent(arguments);
+
+			this.on("afterlayout", function() {
+				var tollerance = this.getWidth() - RIGHT_PADDING_FOR_MAX_FIELD_WIDTH;
+				this.cascade(function(item) {
+					if (item && (item instanceof Ext.form.Field)) {
+						if (item.getWidth() > tollerance ||
+								(item instanceof Ext.form.DisplayField && !item.cmSkipAfterLayoutResize)) {
+
+							item.setWidth(tollerance);
+						}
+					}
+				});
+			}, this);
 		},
 		switchFieldsToEdit: function() {
 			var fields = this.fields();
@@ -109,9 +120,6 @@
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, this.readOnlyForm);
 				} else {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, true); //true to have a displayField
-					if (field && this.cmMaxFieldWidth) {
-						field.width =  this.cmMaxFieldWidth;
-					}
 				}
 				if (field) {
 					fields.push(field);

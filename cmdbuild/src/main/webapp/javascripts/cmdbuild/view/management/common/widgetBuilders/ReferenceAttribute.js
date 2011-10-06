@@ -78,6 +78,8 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 			margin: "1 0 0 5"
 		});
 
+		field.cmSkipAfterLayoutResize = true; //see EditablePanel
+
 		field.setValue = Ext.Function.createSequence(field.setValue, function(v) {
 			var tm = new Ext.util.TextMetrics()
 			if (v) {
