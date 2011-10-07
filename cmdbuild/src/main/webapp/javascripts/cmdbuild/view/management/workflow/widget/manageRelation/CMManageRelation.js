@@ -32,6 +32,10 @@
 		},
 
 		cmActivate: function() {
+			this.mon(this.ownerCt, "cmactive", function() {
+				this.ownerCt.bringToFront(this);
+			}, this, {single: true});
+
 			this.ownerCt.cmActivate();
 		},
 
