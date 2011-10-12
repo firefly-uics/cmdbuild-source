@@ -845,9 +845,10 @@ em {
 	vertical-align: middle;
 }
 */
-
 .x-grid-cell-inner {
 	padding: 3px 6px;
+	height: 18px ! important;
+	overflow: hidden ! important;
 }
 
 .grid-button .x-grid-cell-inner {

@@ -3,6 +3,7 @@
 	var PADDING = 20;
 
 Ext.define("CMDBuild.field.CMBaseCombo", {
+	alias: "cmbasecombo",
 	extend: "Ext.form.field.ComboBox",
 
 	cmGreatestItem: "",
@@ -73,10 +74,10 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 				fieldLength += this.labelEl.dom.clientWidth;
 			}
 
-			var triggersLength = this.getTriggersLength();
+			var triggersLength = this.getTriggersLength(),
+				widthToSet = fieldLength + triggersLength + PADDING;
 
-			this.setWidth(fieldLength + triggersLength + PADDING);
-
+			this.setWidth(widthToSet);
 			tm.destroy();
 		}
 	},

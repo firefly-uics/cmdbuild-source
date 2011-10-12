@@ -1,5 +1,6 @@
 (function() {
-	
+	var RIGHT_PADDING_FOR_MAX_FIELD_WIDTH = 40;
+
 	Ext.define("CMDBuild.Management.EditablePanel", {
 		extend: "Ext.panel.Panel",
 		attributes: undefined, //passed on new
@@ -67,7 +68,7 @@
 		},
 		initComponent: function() {
 			if (this.attributes) {
-				this.items = getFields(this.attributes, this.editable);
+				this.items = getFields.call(this, this.attributes, this.editable);
 			}
 			this.on("show", function() {
 				if (this.editable) {
@@ -76,6 +77,19 @@
 			}, this);
 			
 			this.callParent(arguments);
+
+			this.on("afterlayout", function() {
+				var tollerance = this.getWidth() - RIGHT_PADDING_FOR_MAX_FIELD_WIDTH;
+				this.cascade(function(item) {
+					if (item && (item instanceof Ext.form.Field)) {
+						if (item.getWidth() > tollerance ||
+								(item instanceof Ext.form.DisplayField && !item.cmSkipAfterLayoutResize)) {
+
+							item.setWidth(tollerance);
+						}
+					}
+				});
+			}, this);
 		},
 		switchFieldsToEdit: function() {
 			var fields = this.fields();
@@ -106,9 +120,6 @@
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, this.readOnlyForm);
 				} else {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, true); //true to have a displayField
-					if (field) {
-						field.width = 500 // TODO calculate panel width to use a percentage measure
-					}
 				}
 				if (field) {
 					fields.push(field);
