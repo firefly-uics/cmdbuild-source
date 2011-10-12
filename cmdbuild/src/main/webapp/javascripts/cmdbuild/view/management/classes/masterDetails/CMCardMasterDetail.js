@@ -192,7 +192,10 @@
 				type="",
 				t;
 
-			for (var detailId in tabs) {
+			var sortedKeys = sortKeys(tabs);
+
+			for (var i = 0, l=sortedKeys.length; i<l; i++) {
+				var detailId = sortedKeys[i];
 				t = tabs[detailId];
 
 				if (typeof t.get == "undefined") {
@@ -227,6 +230,20 @@
 			this.on("show", build, this, {single: true});
 		}
 	}
+
+	function sortKeys(tabs) {
+		var sortedKeys = [];
+
+		for (var key in tabs) {
+			sortedKeys.push(key);
+		}
+
+		sortedKeys = Ext.Array.sort(sortedKeys, function sortingFunction(a, b) {
+			return a.toUpperCase() > b.toUpperCase();
+		});
+
+		return sortedKeys;
+	};
 
 	function getDetailClass(detail) {
 		var cardinality = detail.get("cardinality");

@@ -25,6 +25,25 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 				direction : "ASC"
 			}]
 		});
+ 
+		var tr = this.translation;
+		var comboOrderSign = new Ext.form.field.ComboBox({
+			typeAhead : true,
+			triggerAction : 'all',
+			selectOnTab : true,
+			valueField : "value",
+			displayField : "description",
+			listClass : 'x-combo-list-small',
+			queryMode: "local",
+			store : Ext.create('Ext.data.Store', {
+				fields: ["value", "description"],
+				data: [
+					{value: 1, description: tr.direction.asc },
+					{value:-1, description: tr.direction.desc },
+					{value:0, description:  tr.not_in_use }
+				]
+			})
+		});
 
 		this.columns = [
 			{
@@ -50,22 +69,14 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 				dataIndex : 'classOrderSign',
 				renderer : Ext.Function.bind(comboRender, this, [], true),
 				flex: 1,
-				field: {
-					xtype : 'combobox',
-					typeAhead : true,
-					triggerAction : 'all',
-					selectOnTab : true,
-					store : [
-						[1,this.translation.direction.asc ],
-						[-1,this.translation.direction.desc ],
-						[0,this.translation.not_in_use ]
-					],
-					lazyRender : true,
-					listClass : 'x-combo-list-small'
-				}
+				field: comboOrderSign
 			}
 		];
-		
+
+		this.mon(this, "render", function() {
+			comboOrderSign.ownerCt = this.ownerCt;
+		}, this);
+
 		this.plugins = [Ext.create('Ext.grid.plugin.CellEditing', {
 			clicksToEdit: 1
 		})];
@@ -76,7 +87,7 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 				dragGroup : 'dd',
 				dropGroup : 'dd'
 			}
-		}
+		};
 
 		this.callParent(arguments);
 
@@ -85,16 +96,21 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 				idClass : this.idClass
 			}
 		});
+
+		this.getEditor = function() {
+			return comboOrderSign;
+		};
 	}
 });
 
 function comboRender(value, meta, record, rowIndex, colIndex, store) {
-	if (value > 0)
+	if (value > 0) {
 		return '<span>'+ this.translation.direction.asc +'</span>';
-	else if (value < 0)
+	} else if (value < 0) {
 		return '<span>'+ this.translation.direction.desc +'</span>';
-	else
+	} else {
 		return '<span>'+ this.translation.not_in_use +'</span>';
+	}
 }
 
 })();

@@ -36,7 +36,15 @@
 				singleSelect: this.singleSelect
 			});
 
+			this.callBacks = {
+				'action-card-edit': this.onEditCardkClick,
+				"action-card-show": this.onShowCardkClick
+			};
+
 			this.view.setModel(this.model);
+
+			this.view.grid.on('beforeitemclick', cellclickHandler, this);
+			this.view.grid.on("itemdblclick", onItemDoubleclick, this);
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.view.clientForm,
@@ -140,9 +148,35 @@
 		syncSelections: function() {
 			this.model._silent = true;
 			this.view.syncSelections()
-			this.model._silent = false; 
+			this.model._silent = false;
+		},
+
+		onEditCardkClick: function(model) {
+			var w = getCardWindow(model, editable = true);
+
+			w.on("destroy", function() {
+				this.view.grid.reload();
+			}, this, {single: true});
+
+			new CMDBuild.controller.management.common.CMCardWindowController(w);
+			w.show();
+		},
+
+		onShowCardkClick: function(model) {
+			var w = getCardWindow(model, editable = false);
+			w.show();
 		}
 	});
+
+	function getCardWindow(model, editable) {
+		return new CMDBuild.view.management.common.CMCardWindow({
+			cmEditMode: editable,
+			withButtons: editable,
+			classId: model.get("IdClass"), // classid of the destination
+			cardId: model.get("Id"), // id of the card destination
+			title: model.get("IdClass_value")
+		});
+	}
 
 	function loadPageForLastSelection(selection) {
 
@@ -258,6 +292,27 @@
 					}
 				}, this);
 			}
+		}
+	}
+
+	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
+		var className = event.target.className; 
+
+		if (this.callBacks[className]) {
+			this.callBacks[className].call(this, model);
+		}
+	}
+
+	function onItemDoubleclick(grid, model, html, index, e, options) {
+		if (!this.widgetConf.AllowCardEditing) {
+			return;
+		}
+
+		var priv = _CMUtils.getClassPrivileges(model.get("IdClass"));
+		if (priv && priv.write) {
+			this.onEditCardkClick(model);
+		} else {
+			this.onShowCardkClick(model);
 		}
 	}
 })();

@@ -19,6 +19,7 @@ import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
+import org.cmdbuild.elements.TableImpl.OrderEntry;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.CompositeFilter;
@@ -137,14 +138,23 @@ public class ModCard extends JSONBase {
 
 		CardQuery masterQuery = tf.get(masterIdClass).cards().list().id(masterIdCard);
 
-		CardQuery detailQuery = directedDomain.getDestTable().cards().list()
+		ITable destinationTable = directedDomain.getDestTable();
+		CardQuery detailQuery = destinationTable.cards().list()
 				.cardInRelation(invertedDomain, masterQuery);
 
 		if (fullTextQuery != null) {
 			detailQuery.fullText(fullTextQuery.trim());
 		}
 
-		applySortToCardQuery(sorters, detailQuery);
+		if (sorters != null) {
+			applySortToCardQuery(sorters, detailQuery);
+		} else {
+			// if there is no sorters apply the default
+			detailQuery.clearOrder();
+			for (OrderEntry sortEntry : destinationTable.getOrdering()) {
+				detailQuery.order(sortEntry.getAttributeName(), sortEntry.getOrderDirection());
+			}
+		}
 
 		for (ICard card : detailQuery.subset(offset, limit).count()) {
 			rows.put(Serializer.serializeCardWithPrivileges(card, false));

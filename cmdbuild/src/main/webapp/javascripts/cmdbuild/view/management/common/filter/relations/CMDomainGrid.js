@@ -49,7 +49,7 @@
 
 			this.store.load(this.idClass);
 
-			this.getSelectionModel().on("selectionchange", function(sm, selection) {
+			this.mon(this.getSelectionModel(), "selectionchange", function(sm, selection) {
 				if (selection.length > 0) {
 					var s = selection[0],
 						classId = s.get("DestClassId");
@@ -58,13 +58,17 @@
 				}
 			}, this);
 
-			this.on('edit', function(editor, e) {
+			this.mon(this, 'edit', function(editor, e) {
 				var c = e.column.getEditor();
 				e.record.set(e.column.dataIndex, c.getRawValue());
 				e.record.set("DestClassId", c.getValue());
 				e.record.commit();
 
 				this.fireEvent("cm-select-destination-subclass", e.record);
+			}, this);
+
+			this.mon(this, "render", function() {
+				this.destinationCombo.ownerCt = this.ownerCt;
 			}, this);
 
 			this.notInRelationCheckColumn.on("checkchange", onCheckChange, this);
@@ -112,6 +116,14 @@
 				hideable: false
 			});
 
+			this.destinationCombo = new Ext.form.field.ComboBox({
+				store: this.destinationComboStore,
+				displayField: 'descr',
+				valueField: "id",
+				queryMode: "local",
+				triggerAction: 'all'
+			});
+
 			return [{
 				header : tr.domain,
 				dataIndex : 'DomainDescription',
@@ -124,14 +136,7 @@
 				header: tr.class_destination,
 				dataIndex: "DestDescription",
 				flex: 1,
-				editor: {
-					xtype:'combo',
-					store: this.destinationComboStore,
-					displayField: 'descr',
-					valueField: "id",
-					queryMode: "local",
-					triggerAction: 'all'
-				}
+				field: this.destinationCombo
 			}
 
 			,this.notInRelationCheckColumn

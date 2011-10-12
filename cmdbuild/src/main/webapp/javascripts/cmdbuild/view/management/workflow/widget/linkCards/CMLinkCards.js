@@ -4,7 +4,8 @@
 
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
-
+		cmAllowEditCard: false,
+		cmAllowShowCard: false,
 		mapPanel: undefined,
 
 		syncSelections: function(s) {
@@ -17,6 +18,39 @@
 					this.selectByCardId(cardId);
 				}
 			}
+		},
+
+		buildExtraColumns: function() {
+			var cols = [];
+			var imageColumnConf = {
+				header: '&nbsp', 
+				width: 30,
+				tdCls: "grid-button",
+				fixed: true,
+				sortable: false,
+				align: 'center',
+				dataIndex: 'Id',
+				menuDisabled: true,
+				hideable: false
+			};
+
+			if (this.cmAllowEditCard) {
+				cols.push(Ext.apply(imageColumnConf, {
+					renderer: function() {
+						return '<img style="cursor:pointer" class="action-card-edit" src="images/icons/modify.png"/>';
+					}
+				}));
+			}
+
+			if (this.cmAllowShowCard) {
+				cols.push(Ext.apply(imageColumnConf, {
+					renderer: function() {
+						return '<img style="cursor:pointer" class="action-card-show" src="images/icons/zoom.png"/>';
+					}
+				}));
+			}
+		
+			return cols;
 		},
 
 		selectByCardId: function(cardId) {
@@ -52,7 +86,18 @@
 			var c = this.widgetConf,
 				selModel = selectionModelFromConfiguration(c),
 				noSelect = isNoSelect(c),
-				theMapIsToSet = (c.Map == "enabled" && CMDBuild.Config.gis.enabled);
+				theMapIsToSet = (c.Map == "enabled" && CMDBuild.Config.gis.enabled),
+				allowEditCard = false,
+				allowShowCard = false;
+
+			if (c.AllowCardEditing == TRUE) {
+				var priv = _CMUtils.getClassPrivileges(c.ClassId);
+				if (priv && priv.write) {
+					allowEditCard = true;
+				} else {
+					allowShowCard = true;
+				}
+			}
 
 			this.grid = new CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid({
 				autoScroll : true,
@@ -62,7 +107,9 @@
 				hideMode: "offsets",
 				region: "center",
 				border: false,
-				cls: "cmborderbottom"
+				cls: "cmborderbottom",
+				cmAllowEditCard: allowEditCard,
+				cmAllowShowCard: allowShowCard
 			});
 
 			this.items = [this.grid];
