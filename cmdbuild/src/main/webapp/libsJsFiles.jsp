@@ -17,3 +17,6 @@
 
 <!-- Administration Group Tree -->
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/TreeEditing.js"></script>
+
+<!-- Calendar -->
+<script type="text/javascript" src="javascripts/extensible-1.5.0-beta1/extensible-all-debug.js"></script>

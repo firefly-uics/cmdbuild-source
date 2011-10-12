@@ -1000,6 +1000,9 @@
             "managerelation": {"required": "Morate izabrati relacije - "},
             "notes": {
               "must_save_to_modify": "Ne možete modifikovati napomenu pre nego što snimite aktivnost"
+            },
+            "calendar": {
+            	wrong_config: "<em>The calendar is not well configured</em>"
             }
          },
          "history_columns": {

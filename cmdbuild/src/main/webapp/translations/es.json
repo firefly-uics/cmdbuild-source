@@ -1000,6 +1000,9 @@
             "managerelation": {"required": "Es necesario seleccionar las relaciones - "},
             "notes": {
               "must_save_to_modify": "No se pueden modificar las notas antes de guardar la actividad"
+            },
+            "calendar": {
+            	wrong_config: "<em>Il calendario non è stato configurato correttamente</em>"
             }
          },
          "history_columns": {

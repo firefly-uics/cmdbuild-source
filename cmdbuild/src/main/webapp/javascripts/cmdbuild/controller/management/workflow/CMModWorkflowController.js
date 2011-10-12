@@ -255,6 +255,9 @@
 				},
 				openAttachment: function(w) {
 					return new CMDBuild.controller.management.workflow.widgets.CMAttachmentController(w, me);
+				},
+				calendar: function(w) {
+					return new CMDBuild.controller.management.workflow.widgets.CMCalendarController(w, me);
 				}
 			};
 
