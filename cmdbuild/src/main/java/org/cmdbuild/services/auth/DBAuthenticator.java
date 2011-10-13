@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.elements.wrappers.UserCard;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.utils.SecurityEncrypter;
 
@@ -19,20 +19,22 @@ public class DBAuthenticator implements Authenticator {
 	@Override
 	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		final UserContext userCtx = new AuthInfo(username).systemAuth();
-		checkPassword(userCtx.getUser(), unencryptedPassword);
-		return userCtx;
+		if (passwordMatch(userCtx.getUser(), unencryptedPassword)) {
+			return userCtx;
+		} else {
+			return null;
+		}
 	}
 
-	private void checkPassword(final User user, final String unencryptedPassword) {
+	private boolean passwordMatch(final User user, final String unencryptedPassword) {
 		final SecurityEncrypter se = new SecurityEncrypter();
 		final String encpass = se.encrypt(unencryptedPassword);
-		if (!user.getEncryptedPassword().equals(encpass))
-			throw AuthExceptionType.AUTH_WRONG_PASSWORD.createException();
+		return user.getEncryptedPassword().equals(encpass);
 	}
 
 	@Override
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
-		final AuthInfo authInfo = new AuthInfo(pwcb.getIdentifer());
+		final AuthInfo authInfo = new AuthInfo(pwcb.getIdentifier());
 		final String unencryptedPassword = getUnencryptedPassword(authInfo);
 		if (isDigested(pwcb)) {
 			pwcb.setPassword(unencryptedPassword);

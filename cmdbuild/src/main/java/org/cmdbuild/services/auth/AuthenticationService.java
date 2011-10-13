@@ -54,7 +54,11 @@ public class AuthenticationService implements Authenticator {
 	public UserContext jsonRpcAuth(final String username, final String unencryptedPassword) {
 		UserContext userCtx = null;
 		for (final Authenticator method : authMethods) {
-			userCtx = method.jsonRpcAuth(username, unencryptedPassword);
+			try {
+				userCtx = method.jsonRpcAuth(username, unencryptedPassword);
+			} catch (final Exception e) {
+				assert userCtx == null;
+			}
 			if (userCtx != null) {
 				userCtx.setAuthenticator(method);
 				break;

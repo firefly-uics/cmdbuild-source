@@ -41,18 +41,18 @@ public class LdapAuthenticator implements Authenticator {
 		try {
 			final DirContext ctx = initialize();
 			final String ldapUser = getUser(ctx, username);
-			if (bind(ctx, ldapUser, unencryptedPassword)) {
+			if ((ldapUser != null) && bind(ctx, ldapUser, unencryptedPassword)) {
 				return new AuthInfo(username).systemAuth();
 			}
 		} catch (final NamingException e) {
-			Log.AUTH.warn(String.format("Cannot authenticate user %s with LDAP", username));
 		}
+		Log.AUTH.warn(String.format("Cannot authenticate user '%s' on LDAP", username));
 		return null;
 	}
 
 	@Override
 	public boolean wsAuth(final WSPasswordCallback pwcb) {
-		final String identifier = pwcb.getIdentifer();
+		final String identifier = pwcb.getIdentifier();
 		final AuthInfo authInfo = new AuthInfo(identifier);
 		final String username = authInfo.getUsernameForAuthentication();
 		final String unencryptedPassword = pwcb.getPassword();
@@ -75,32 +75,21 @@ public class LdapAuthenticator implements Authenticator {
 		}
 	}
 
-	private String getUser(final DirContext ctx, final String userToFind) throws NamingException {
-
+	private String getUser(final DirContext ctx, final String userToFind) {
 		final SearchControls sc = new SearchControls();
 		sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-		String usertobind = StringUtils.EMPTY;
+		String usertobind = null;
 		final AuthProperties props = AuthProperties.getInstance();
 		final String searchFilter = generateSearchFilter(userToFind);
 		try {
 			final NamingEnumeration<SearchResult> results = ctx.search(props.getLdapBaseDN(), searchFilter, sc);
-			int counter = 0;
-			while (results.hasMore()) {
-				counter++;
-				if (counter > 1) {
-					Log.AUTH.error(String.format("Too many users for %s = %s", props.getLdapBindAttribute(), userToFind));
-					throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
-				} else {
-					final SearchResult sr = results.next();
-					usertobind = sr.getNameInNamespace();
-				}
+			if (results.hasMore()) {
+				final SearchResult sr = results.next();
+				usertobind = sr.getNameInNamespace();
 			}
 		} catch (final NamingException e) {
-			if (usertobind == null) {
-				Log.AUTH.error(String.format("Cannot find user with attribute %s equals %s", props
-						.getLdapBindAttribute(), userToFind));
-				throw e;
-			} // else we trust it's okay... thank you Active Directory!
+			Log.AUTH.debug("LDAP error", e);
+			assert usertobind == null;
 		}
 		return usertobind;
 	}

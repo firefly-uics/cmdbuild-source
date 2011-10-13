@@ -15,10 +15,10 @@ import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.RedirectException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
@@ -41,7 +41,11 @@ public abstract class AuthenticationFacade {
 
 	public static UserContext login(final String username, final String unencryptedPassword) throws AuthException {
 		final AuthenticationService as = new AuthenticationService();
-		return as.jsonRpcAuth(username, unencryptedPassword);
+		final UserContext userContext = as.jsonRpcAuth(username, unencryptedPassword);
+		if (userContext == null) {
+			throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
+		}
+		return userContext;
 	}
 
 	public static List<UserCard> getUserList(final int groupId) {
@@ -50,8 +54,8 @@ public abstract class AuthenticationFacade {
 			final UserContext systemCtx = UserContext.systemContext();
 			final IDomain userRoleDomain = systemCtx.domains().get(USER_GROUP_DOMAIN_NAME);
 			final GroupCard groupCard = GroupCard.get(groupId, systemCtx);
-			final Iterable<IRelation> userGroupRelations = systemCtx.relations().list(groupCard)
-				.domain(DirectedDomain.create(userRoleDomain, DomainDirection.I), true);
+			final Iterable<IRelation> userGroupRelations = systemCtx.relations().list(groupCard).domain(
+					DirectedDomain.create(userRoleDomain, DomainDirection.I), true);
 			for (final IRelation groupRel : userGroupRelations) {
 				list.add(new UserCard(groupRel.getCard1()));
 			}
@@ -81,8 +85,8 @@ public abstract class AuthenticationFacade {
 		final UserContext systemCtx = UserContext.systemContext();
 		final ICard userCard = systemCtx.tables().get(UserCard.USER_CLASS_NAME).cards().get(userId);
 		final IDomain userRoleDomain = systemCtx.domains().get(USER_GROUP_DOMAIN_NAME);
-		final Iterable<IRelation> userRoleRelations = systemCtx.relations()
-			.list(DirectedDomain.create(userRoleDomain, DomainDirection.D), userCard);
+		final Iterable<IRelation> userRoleRelations = systemCtx.relations().list(
+				DirectedDomain.create(userRoleDomain, DomainDirection.D), userCard);
 		return userRoleRelations;
 	}
 
@@ -92,7 +96,7 @@ public abstract class AuthenticationFacade {
 		setDefaultGroup(groupRelations, defaultGroupId);
 	}
 
-	private static void clearDefaultGroup(Iterable<IRelation> groupRelations) {
+	private static void clearDefaultGroup(final Iterable<IRelation> groupRelations) {
 		changeDefaultGroup(groupRelations, INVALID_GROUP_ID);
 	}
 
