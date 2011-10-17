@@ -1,6 +1,8 @@
 (function () {
 
-	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
+	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>",
+		FLOW_STATUS_CODE = "FlowStatus_code",
+		STATE_VALUE_OPEN = "open.running";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMModWorkflowController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
@@ -125,8 +127,9 @@
 			this.tabPanel.showActivityPanel();
 		},
 
-		isStateOpen: function() {
-			return this.grid.statusCombo.isStateOpen();
+		isStateOpen: function(activity) {
+			var data = activity.raw;
+			return data[FLOW_STATUS_CODE] == STATE_VALUE_OPEN;
 		}
 	});
 
@@ -181,7 +184,7 @@
 		if (selection.length > 0) {
 			var firstSelection = selection[0];
 
-			if (this.isStateOpen()) {
+			if (this.isStateOpen(firstSelection)) {
 				var editMode = this.activityPanelController.isAdvance 
 					&& this.currentActivity.data.Id == firstSelection.data.Id;
 

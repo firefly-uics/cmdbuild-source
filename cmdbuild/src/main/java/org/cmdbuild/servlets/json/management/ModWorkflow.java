@@ -12,9 +12,9 @@ import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
@@ -81,8 +81,11 @@ public class ModWorkflow extends JSONBase {
 		for (ICard card : cards) {
 			JSONObject jsonCard = Serializer.serializeCard(card, false);
 			boolean writePriv;
-			if (card.getAttributeValue(ProcessAttributes.FlowStatus.toString()).toString().equals(openedStatus.getDescription())
+			final Lookup flowStatus = card.getAttributeValue(ProcessAttributes.FlowStatus.toString()).getLookup();
+
+			if (openedStatus.equals(flowStatus)
 					&& activityMap.keySet().contains(card.getId())) {
+
 				ActivityDO activity = activityMap.get(card.getId());
 				addActivityInfo(jsonCard, activity, userCtx);
 				writePriv = activity.isEditable();
@@ -90,6 +93,8 @@ public class ModWorkflow extends JSONBase {
 				// Closed or inconsistent activity
 				writePriv = false;
 			}
+
+			jsonCard.put(ProcessAttributes.FlowStatus.toString() + "_code", flowStatus.getCode());
 			jsonCard.put("priv_write", writePriv);
 			rows.put(jsonCard);
 		}
