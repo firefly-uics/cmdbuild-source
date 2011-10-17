@@ -185,7 +185,7 @@ public class RelationQueryImpl implements RelationQuery {
 		Map<String, QueryAttributeDescriptor> queryMapping = queryComponents.getQueryMapping();
 		for (String attributeName: destinationClass.getAttributes().keySet()) {
 			QueryAttributeDescriptor qad = queryMapping.get(attributeName);
-			Log.SQL.debug("Setting value for attribute " + attributeName);
+			Log.SQL.trace("Setting value for attribute " + attributeName);
 			destCard.setValue(attributeName, rs, qad);
 		}
 	}
