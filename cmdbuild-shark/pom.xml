@@ -9,6 +9,11 @@
 	<artifactId>cmdbuild-shark</artifactId>
 	<packaging>pom</packaging>
 	<name>CMDBuild Shark</name>
+
+	<properties>
+		<shark.version>2.3</shark.version>
+	</properties>
+
 	<modules>
 		<module>cmdbuild-shark-types</module>
 		<module>cmdbuild-shark-extensions</module>

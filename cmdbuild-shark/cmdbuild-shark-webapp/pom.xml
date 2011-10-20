@@ -10,9 +10,7 @@
 	<artifactId>cmdbuild-shark-webapp</artifactId>
 	<packaging>war</packaging>
 	<name>CMDBuild Shark Webapp</name>
-	<properties>
-		<shark.version>2.3</shark.version>
-	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
