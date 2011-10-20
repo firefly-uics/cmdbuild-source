@@ -1,5 +1,5 @@
 (function() {
-	var menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion({
+	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
 			cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
 		}),
 		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),	
@@ -9,7 +9,7 @@
 		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
 			title: CMDBuild.Translation.management.modutilities.title
 		}),
-		processAccordion = new CMDBuild.view.administraton.accordion.CMProcessAccordion({
+		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 			rootVisible: true
 		});
 

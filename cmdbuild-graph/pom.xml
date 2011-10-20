@@ -9,6 +9,7 @@
 	<artifactId>cmdbuild-graph</artifactId>
 	<packaging>swf</packaging>
 	<name>CMDBuild Graph</name>
+	<version>1.0</version>
 
 	<properties>
 		<flash.core.version>1.0</flash.core.version>

@@ -9,6 +9,7 @@
 	<artifactId>cmdbuild-docs</artifactId>
 	<packaging>pom</packaging>
 	<name>CMDBuild Docs</name>
+	<version>0.1</version>
 	<build>
 		<plugins>
 			<plugin>
