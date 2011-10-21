@@ -1,32 +1,32 @@
 (function() {
 
-	var lookupAccordion = new CMDBuild.view.administraton.accordion.CMLookupAccordion({
+	var lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
 	}),
     
-    classesAccordion = new CMDBuild.view.administraton.accordion.CMClassAccordion({
+    classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
 	}),
     
-    groupsAccordion = new CMDBuild.view.administraton.accordion.CMGroupsAccordion({
+    groupsAccordion = new CMDBuild.view.administration.accordion.CMGroupsAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMGroupAccordionController
 	}),
     
-    menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion({
+    menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
 	}),
     
-    domainAccordion = new CMDBuild.view.administraton.accordion.CMDomainAccordion({
+    domainAccordion = new CMDBuild.view.administration.accordion.CMDomainAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMDomainAccordionController
 	}),
     
     reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),
     
-    processAccordion = new CMDBuild.view.administraton.accordion.CMProcessAccordion({
+    processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController
 	}),
     
-    gisAccordion = new CMDBuild.view.administraton.accordion.CMGISAccordion();
+    gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion();
 
     viewNS = CMDBuild.view.administration,
     controllerNS = CMDBuild.controller;
@@ -137,7 +137,7 @@ Ext.define("CMDBuild.app.Administration", {
                 menuAccordion,
                 groupsAccordion,
                 gisAccordion,
-                new CMDBuild.view.administraton.accordion.CMConfigurationAccordion()
+                new CMDBuild.view.administration.accordion.CMConfigurationAccordion()
             ]
             
             CMDBuild.view.CMMainViewport.showSplash(target = undefined, administration = true);

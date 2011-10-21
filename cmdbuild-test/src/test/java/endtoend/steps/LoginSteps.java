@@ -32,11 +32,6 @@ public class LoginSteps {
 		assertThat(webSite.currentUrl(), is(equalTo(LoginPage.URL)));
 	}
 
-	@Then("^the login button should be disabled$")
-	public void theLoginButtonShouldBeDisabled() {
-		assertThat(loginPage.loginButtonIsDisabled(), is(true));
-	}
-
 	@Then("^the version string should begin with \"([^\"]*)\"$")
 	public void theTextCMDBuildShouldBeOnThePage(String text) {
 		assertThat(loginPage.versionString(), startsWith(text));
@@ -46,12 +41,6 @@ public class LoginSteps {
 	public void iHaveFilledTheLoginFormWithInvalidData() {
 		loginPage.fillUsername("invaliduser");
 		loginPage.fillPassword("invalidpassword");
-	}
-
-	@When("^the login button is enabled$")
-	public void theLoginButtonIsEnabled() {
-		waitSomeTime();
-		loginPage.loginButtonIsEnabled();
 	}
 
 	@When("^I press the login button$")

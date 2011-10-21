@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>1.4.0.3-SNAPSHOT</version>
+		<version>1.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild</artifactId>
@@ -16,12 +16,19 @@
 		<json-java.version>20110113</json-java.version>
 		<quartz.version>1.8.3</quartz.version>
 		<restlet.version>2.0.1</restlet.version>
+		<cmdbuild-graph.version>1.0</cmdbuild-graph.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-dao-postgresql</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-graph</artifactId>
+			<version>${cmdbuild-graph.version}</version>
+			<type>swf</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -44,7 +51,13 @@
 			<artifactId>jsp-api</artifactId>
 			<version>2.0</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.4</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>dbcp</artifactId>
@@ -362,7 +375,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1.1</version>
+				<version>${maven-war-plugin.version}</version>
 				<configuration>
 					<!-- Remove when not using Spring and not the context.xml -->
 					<packagingExcludes>WEB-INF/lib/postgresql-*.jar</packagingExcludes>
@@ -400,7 +413,7 @@
 								<artifactItem>
 									<groupId>${project.groupId}</groupId>
 									<artifactId>cmdbuild-graph</artifactId>
-									<version>${project.version}</version>
+									<version>${cmdbuild-graph.version}</version>
 									<type>swf</type>
 									<outputDirectory>${project.build.directory}/${project.build.finalName}/flash
 									</outputDirectory>
@@ -429,7 +442,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.8</version>
+				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<includes>
 						<include>unit/**</include>
@@ -494,7 +507,7 @@
 					<!-- Run pure Java integration test -->
 					<plugin>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.8</version>
+						<version>${maven-failsafe-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>integration-test</id>

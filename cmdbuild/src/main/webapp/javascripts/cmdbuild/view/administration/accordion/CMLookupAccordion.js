@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMLookupAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMLookupAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modLookup.lookupTypes,
 		cmName: "lookuptype",
