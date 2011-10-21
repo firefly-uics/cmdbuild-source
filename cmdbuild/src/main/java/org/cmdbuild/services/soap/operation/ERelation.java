@@ -3,6 +3,8 @@ package org.cmdbuild.services.soap.operation;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.cmdbuild.elements.DirectedDomain;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
@@ -75,7 +77,7 @@ public class ERelation {
 			query = userCtx.relations().list(card).domain(domain);
 		} else {
 			Log.SOAP.debug("Getting all relation for domain " + domainName);
-			query = userCtx.relations().list().domain(domain);
+			query = userCtx.relations().list().domain(DirectedDomain.create(domain, DomainDirection.D));
 		}
 
 		final List<Relation> list = new LinkedList<Relation>();

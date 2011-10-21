@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.backend.postgresql;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Vector;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.CardImpl;
 import org.cmdbuild.elements.DirectedDomain;
+import org.cmdbuild.elements.DirectedDomain.DomainDirection;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.FilterOperator;
@@ -46,7 +49,14 @@ public class RelationQueryBuilder {
 	// 1 = class 1 id, 2 = class 2 id
 	private static final String SELECT_WHERE_TEMPLATE = 
 		"WHERE \"%1$s\".\"Status\"='A' AND \"Table1\".\"Status\"='A' AND \"Table2\".\"Status\"='A'";
-	
+	/**
+	 * @deprecated These are professional stuntmen, don't try this at home!
+	 */
+	private static final String SELECT_BY_DOMAIN_HACK = "SELECT \"Id\" AS id, \"IdDomain\"::int AS iddomain, TRUE AS direct,"
+			+ " \"IdClass1\"::int AS idclass1, \"IdObj1\" AS idobj1,"
+			+ " \"IdClass2\"::int AS idclass2, \"IdObj2\" AS idobj2,"
+			+ " \"BeginDate\" AS begindate, \"EndDate\" AS enddate, \"User\" AS username,"
+			+ " NULL AS fieldcode, NULL AS fielddescription" + " FROM \"%1$s\"" + " WHERE \"Status\" = 'A'";
 	// classdescription is needed by the report
 	private static final String SELECT_BY_CARD =
 		"SELECT id, iddomain, direct, idclass1, idobj1, idclass2, idobj2, fieldcode, fielddescription, begindate %5$s, classdescription, domaindescription" +
@@ -222,10 +232,7 @@ public class RelationQueryBuilder {
 	}
 
 	public String buildSelectQuery(RelationQuery relationQuery) {
-		Collection<String> cardPairsCollection = new LinkedList<String>();
-		for (ICard card : relationQuery.getCards())
-			cardPairsCollection.add(String.format("(%d,%d)", card.getIdClass(), card.getId()));
-		String cardPairs = StringUtils.join(cardPairsCollection, ",");
+		final String cardPairs = getCardPairsQueryPart(relationQuery);
 		String query;
 		String limitPortion = buildLimitOffset(relationQuery);
 		addFullCardsJoin(relationQuery);
@@ -240,13 +247,32 @@ public class RelationQueryBuilder {
 				if (relationQuery.isFullCards())
 					throw ORMExceptionType.ORM_FILTER_CONFLICT.createException();
 				query = String.format(SELECT_BY_CARD_DOMAINLIMITED, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, relationQuery.getDomainLimit());
-			} else if (relationQuery.isDomainCounted())
+			} else if (relationQuery.isDomainCounted()) {
 				query = String.format(SELECT_BY_CARD_DOMAINCOUNTED, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, additionalAttributes(), queryComponents.getJoinString());
-			else
+			} else if (isBlank(cardPairs)) {
+				if (relationQuery.getDomains().size() != 1) {
+					throw new IllegalArgumentException("should never happen");
+				}
+				final DirectedDomain domain = relationQuery.getDomains().iterator().next();
+				if (domain.getDirection() == DomainDirection.D) {
+					query = String.format(SELECT_BY_DOMAIN_HACK, domain.getDomain().getDBName());
+				} else {
+					throw new IllegalArgumentException("should never happen");
+				}
+			} else {
 				query = String.format(SELECT_BY_CARD, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, additionalAttributes(), queryComponents.getJoinString());
+			}
 		}
 		Log.SQL.debug(query);
 		return query;
+	}
+
+	private String getCardPairsQueryPart(RelationQuery relationQuery) {
+		Collection<String> cardPairsCollection = new LinkedList<String>();
+		for (ICard card : relationQuery.getCards()) {
+			cardPairsCollection.add(String.format("(%d,%d)", card.getIdClass(), card.getId()));
+		}
+		return StringUtils.join(cardPairsCollection, ",");
 	}
 
 	private void addFullCardsAttributes(RelationQuery relationQuery) {
