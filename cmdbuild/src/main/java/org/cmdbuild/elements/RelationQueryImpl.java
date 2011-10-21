@@ -254,6 +254,8 @@ public class RelationQueryImpl implements RelationQuery {
 			if (isHistory()) {
 				relation.setValue("EndDate", rs.getObject("enddate"));
 				relation.setValue("User", rs.getObject("username"));
+			} else {
+				relation.setValue("Status", "A");
 			}
 			relation.resetAttributes();
 			return relation;

@@ -87,10 +87,7 @@ public class LazyCard extends CardForwarder implements Serializable {
 				return classId;
 			}
 		}
-		if (!getSchemaForLoading().isSuperClass()) {
-			return getSchemaForLoading().getId();
-		}
-		return get().getIdClass(); // it might be a superclass
+		return getSchema().getId(); // it might be a superclass
 	}
 
 	public ITable getSchema() {
@@ -99,9 +96,13 @@ public class LazyCard extends CardForwarder implements Serializable {
 		if (cardId <= 0) {
 			return getSchemaForLoading();
 		}
-		if (lazyTable != null && !lazyTable.isSuperClass())
-			return lazyTable;
-		return get().getSchema(); // it might be a superclass
+		if (lazyTable == null) {
+			lazyTable = getSchemaForLoading();
+			if (lazyTable.isSuperClass()) {
+				lazyTable = get().getSchema();
+			}
+		}
+		return lazyTable;
 	}
 
 	public boolean equals(Object o) {
