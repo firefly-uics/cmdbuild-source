@@ -42,6 +42,7 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 
 		this.store = new Ext.data.Store({
 			model: "CMDBuild.cache.CMReporModelForGrid",
+			pageSize: getPageSize(),
 			proxy: {
 				type: "ajax",
 				url: 'services/json/management/modreport/getreportsbytype',
@@ -56,8 +57,17 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 			autoLoad: false
 		});
 
+		this.pagingBar = new Ext.toolbar.Paging({
+			store: this.store,
+			displayInfo: true,
+			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
+			emptyMsg: CMDBuild.Translation.common.display_topic_none
+		});
+
+		this.bbar = this.pagingBar;
+
 		this.callParent(arguments);
-		
+
 		this.on('beforeitemclick', cellclickHandler);
 	},
 
@@ -153,5 +163,16 @@ function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 			}]
 		}).show();
 	}
+}
+
+function getPageSize() {
+	var pageSize;
+	try {
+		pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+	} catch (e) {
+		pageSize = 20;
+	}
+
+	return pageSize;
 }
 })();
