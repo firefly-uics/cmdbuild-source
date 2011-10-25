@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-dao</artifactId>
-		<version>1.4.0.3-SNAPSHOT</version>
+		<version>1.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-dao-test</artifactId>
@@ -32,7 +32,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.8</version>
+				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<includes>
 						<include>unit/**</include>
@@ -55,7 +55,7 @@
 					<!-- Run pure Java integration test -->
 					<plugin>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.8</version>
+						<version>${maven-failsafe-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>integration-test</id>

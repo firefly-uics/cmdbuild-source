@@ -2,7 +2,6 @@ package endtoend.pageobjects;
 
 import org.springframework.stereotype.Component;
 
-import endtoend.pageobjects.AdministrationPage;
 import endtoend.steps.WebSiteSteps.User;
 
 @Component

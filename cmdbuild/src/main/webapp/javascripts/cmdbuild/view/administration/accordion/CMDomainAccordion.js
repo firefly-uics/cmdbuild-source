@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMDomainAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMDomainAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modClass.tabs.domains,
 		cmName: "domain",
