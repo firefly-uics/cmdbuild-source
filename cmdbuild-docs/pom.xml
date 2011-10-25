@@ -3,12 +3,13 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>1.4.0.3-SNAPSHOT</version>
+		<version>1.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-docs</artifactId>
 	<packaging>pom</packaging>
 	<name>CMDBuild Docs</name>
+	<version>0.1</version>
 	<build>
 		<plugins>
 			<plugin>

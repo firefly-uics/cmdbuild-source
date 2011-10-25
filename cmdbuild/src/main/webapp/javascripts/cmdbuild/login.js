@@ -9,7 +9,7 @@ Ext.onReady(function() {
 			}
 		}],
 		fn: function() {
-			var window = new CMDBuild.LoginPanel({ id : "login"});
+			var window = new CMDBuild.LoginPanel({ id : "login" });
 		}
 	});
 });
@@ -72,11 +72,11 @@ Ext.define("CMDBuild.LoginPanel", {
 			defaultType : 'textfield',
 			items : fields,
 			buttonAlign: 'center',
-			buttons : [{
+			buttons : [this.loginButton = new Ext.Button({
 				text : this.tr.login,
 				handler: this.doLogin,
 				scope: this
-			}]
+			})]
 		});
 
 		Ext.apply(this, {

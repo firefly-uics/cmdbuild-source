@@ -12,10 +12,6 @@ TestHelper.prototype = Ext.apply(TestHelper.prototype, {
 		this.pressButton(this.getLoginButton());
 	},
 
-	loginButtonIsDisabled : function() {
-		return this.getLoginButton().disabled;
-	},
-
 	/*
 	 * UI Access
 	 */
@@ -29,11 +25,7 @@ TestHelper.prototype = Ext.apply(TestHelper.prototype, {
 	},
 
 	getLoginButton : function() {
-		return this.getLoginForm().buttons[0];
-	},
-
-	getLoginForm : function() {
-		return this.getLoginPanel().form;
+		return this.getLoginPanel().loginButton;
 	},
 
 	getLoginPanel : function() {
