@@ -20,6 +20,7 @@ public class RelationForwarder implements IRelation {
 	}
 
 	public void save() { r.save(); }
+	public void forceSave() { r.forceSave(); }
 	public void delete() throws ORMException { r.delete(); }
 	public boolean equals(Object o) { return r.equals(o); }
 

@@ -58,6 +58,7 @@ public class CardForwarder implements ICard {
 	public Map<String, AttributeValue> getAttributeValueMap() { return get().getAttributeValueMap(); }
 	public boolean isNew() { return get().isNew(); }
 	public void save() throws ORMException { get().save(); }
+	public void forceSave() { get().forceSave(); }
 	public void setAttributeValueMap(Map<String, AttributeValue> values) { get().setAttributeValueMap(values); }
 
 	/******************************* TO BE CHANGED */

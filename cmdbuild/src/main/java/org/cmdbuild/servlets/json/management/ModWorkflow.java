@@ -8,13 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
@@ -168,15 +167,6 @@ public class ModWorkflow extends JSONBase {
 			ProcessQuery cardFilter) {
 		if (fullTextQuery != null)
 		    cardFilter.fullText(fullTextQuery.trim());
-	}
-
-	private void setSorting(String sortField, String sortDirection,
-			ProcessQuery cardFilter) {
-		if (sortField != null && sortDirection != null) {
-			if (sortField.endsWith("_value"))
-				sortField = sortField.substring(0, sortField.length()-6);
-			cardFilter.clearOrder().order(sortField, OrderFilterType.valueOf(sortDirection));
-		}
 	}
 
 	private List<ICard> getWFCards(int limit, int offset, ProcessQuery cardFilter) {

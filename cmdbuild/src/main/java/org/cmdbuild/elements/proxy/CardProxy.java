@@ -27,12 +27,22 @@ public class CardProxy extends CardForwarder {
 
 	@Override
 	public void save() throws ORMException {
+		checkPrivilegesAndSetUsername();
+		super.save();
+	}
+
+	@Override
+	public void forceSave() throws ORMException {
+		checkPrivilegesAndSetUsername();
+		super.forceSave();
+	}
+
+	private void checkPrivilegesAndSetUsername() {
 		if (c.isNew()) {
 			userCtx.privileges().assureCreatePrivilege(c.getSchema());
 		} else {
 			userCtx.privileges().assureWritePrivilege(c.getSchema());
 		}
 		c.setValue("User", userCtx.getUsername());
-		super.save();
 	}
 }

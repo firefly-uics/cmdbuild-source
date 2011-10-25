@@ -110,11 +110,10 @@ public class SharkFacade {
 			ActivityDO activity = new ActivityDO(procInfo.getValue(),actInfo,variables,
 					item.getProcessInstanceId(),item.getId(),cardId,true);
 
+			ICard card = userCtx.tables().get(procInfo.getValue().getCmdbuildBindedClass()).cards().get(cardId);
+			updateWFCard(params, card, actInfo);
+
 			if (!this.params.isEmpty()) {
-				ICard card = userCtx.tables().get(procInfo.getValue().getCmdbuildBindedClass()).cards().get(cardId);
-
-				updateWFCard(params, card, actInfo);
-
 				activity.updateVariables(params);
 				facade.updateWorkItemValues(handle, userCtx, factory, item, activity.variables);
 			}
@@ -144,7 +143,11 @@ public class SharkFacade {
 				}
 			}
 			card.getAttributeValue(ICard.CardAttributes.Code.toString()).setValue(activity.getActivityName());
-			card.save();
+			if (complete) {
+				card.forceSave();
+			} else {
+				card.save();
+			}
 		}
 	}
 
