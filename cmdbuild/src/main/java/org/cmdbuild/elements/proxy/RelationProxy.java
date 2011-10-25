@@ -3,6 +3,7 @@ package org.cmdbuild.elements.proxy;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.UserContext;
 
 public class RelationProxy extends RelationForwarder {
@@ -47,8 +48,18 @@ public class RelationProxy extends RelationForwarder {
 
 	@Override
 	public void save() {
+		checkPrivilegesAndSetUsername();
+		super.save();
+	}
+
+	@Override
+	public void forceSave() {
+		checkPrivilegesAndSetUsername();
+		super.forceSave();
+	}
+
+	private void checkPrivilegesAndSetUsername() {
 		userCtx.privileges().assureCreatePrivilege(r.getSchema());
 		r.setValue("User", userCtx.getUsername());
-		super.save();
 	}
 }

@@ -66,6 +66,11 @@ public interface IAbstractElement extends ObjectWithId {
 	public String getPrimaryKeyCondition();
 
 	public void save() throws ORMException;
+
+	/**
+	 * Saves it even if it has not been changed
+	 */
+	public void forceSave();
 	public void delete() throws ORMException;
 
 	public BaseSchema getSchema();

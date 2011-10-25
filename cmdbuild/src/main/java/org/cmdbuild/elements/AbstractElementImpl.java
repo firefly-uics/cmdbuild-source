@@ -2,11 +2,9 @@ package org.cmdbuild.elements;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.cmdbuild.dao.backend.CMBackend;
-import org.cmdbuild.dao.backend.postgresql.PGCMBackend;
 import org.cmdbuild.dao.backend.postgresql.QueryComponents.QueryAttributeDescriptor;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -15,6 +13,7 @@ import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.cmdbuild.logger.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractElementImpl implements IAbstractElement {
@@ -24,10 +23,14 @@ public abstract class AbstractElementImpl implements IAbstractElement {
 
 	private static final long serialVersionUID = 1L;
 
-	protected Map<String,AttributeValue> values = new Hashtable<String, AttributeValue>();
+	protected Map<String,AttributeValue> values;
 
 	protected BaseSchema schema;
 	protected String status;
+
+	protected AbstractElementImpl() {
+		values = new HashMap<String, AttributeValue>();
+	}
 
 	public abstract String toString();
 
@@ -77,6 +80,18 @@ public abstract class AbstractElementImpl implements IAbstractElement {
 			modify();
 			resetAttributes();
 		}
+	}
+
+	public void forceSave() {
+		if (!hasChanged()) {
+			// Force updating any (the first) value if nothing has changed
+			if (values.isEmpty()) {
+				Log.PERSISTENCE.warn("No values to force update!");
+			} else { 
+				values.values().iterator().next().setChanged(true);
+			}
+		}
+		save();
 	}
 
 	protected final void setDefaultValueIfPresent(String name, Object value) {
