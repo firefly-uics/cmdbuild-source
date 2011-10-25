@@ -48,7 +48,8 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 				url: 'services/json/management/modreport/getreportsbytype',
 				reader: {
 					type: "json",
-					root: "rows"
+					root: "rows",
+					totalProperty: 'results'
 				},
 				extraParams: {
 					type: "custom"
