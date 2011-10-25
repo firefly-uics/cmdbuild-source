@@ -158,6 +158,7 @@
 
 		updateGrid: function(classId, cqlParams) {
 			this.grid.CQL = cqlParams;
+			this.grid.store.proxy.extraParams = this.grid.getStoreExtraParams();
 			this.grid.updateStoreForClassId(classId);
 		},
 
