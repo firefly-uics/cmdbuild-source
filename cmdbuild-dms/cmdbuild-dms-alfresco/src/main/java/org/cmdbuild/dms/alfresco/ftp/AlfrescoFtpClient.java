@@ -74,7 +74,6 @@ class AlfrescoFtpClient implements FtpClient {
 			upload(ftp, filename, is);
 			logout(ftp);
 		} finally {
-			logout(ftp);
 			disconnect(ftp);
 		}
 	}
@@ -209,8 +208,6 @@ class AlfrescoFtpClient implements FtpClient {
 				final String message = String.format("error uploading file '%s'", filename);
 				throw new FtpOperationException(message);
 			}
-			// transfer files
-			ftpClient.logout();
 		} catch (final IOException e) {
 			throw new FtpOperationException(e);
 		} finally {
