@@ -1,6 +1,6 @@
 {
    "description": "Српски",
-   "release": "1.4.0-dev",
+   "release": "1.4.0 (26/10/2011)",
    "administration": {
       "description": "Администрациони модул",
       "modClass": {
