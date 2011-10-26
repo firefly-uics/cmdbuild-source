@@ -65,7 +65,12 @@
 			if (recIndex >= 0) {
 				this.getSelectionModel().deselect(recIndex, true);
 			}
+		},
+
+		shouldSelectFirst: function() {
+			return false;
 		}
+
 	});
 
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCards", {
@@ -136,16 +141,18 @@
 
 			this.callParent(arguments);
 
-			this.grid.getSelectionModel().on("select", function(sm, s) {
+			this.mon(this.grid.getSelectionModel(), "select", function(sm, s) {
 				this.fireEvent("select", s.get("Id"));
 			}, this);
 
-			this.grid.getSelectionModel().on("deselect", function(sm, s) {
+			this.mon(this.grid.getSelectionModel(), "deselect", function(sm, s) {
 				this.fireEvent("deselect", s.get("Id"));
 			}, this);
 
-			this.grid.on("beforeload", onBeforeLoad, this);
-			this.grid.on("load", onLoad, this);
+			this.mon(this.grid, "beforeload", onBeforeLoad, this);
+			// there is a problem with the loadMask, if remove the delay the
+			// selection is done before the unMask, then it is reset
+			this.mon(this.grid, "load", Ext.Function.createDelayed(onLoad, 1), this);
 		},
 
 		cmActivate: function() {
@@ -178,40 +185,11 @@
 
 		hasMap: function() {
 			return this.mapPanel != undefined;
-		}
-	});
-
-	/*
-	 * Same as the CheckboxModel but is does not supress selection events
-	 * and is does not allow pressing the header if 
-	 */
-	Ext.define('CMDBuild.selection.CMLinkCardCheckboxModel', {
-		extend: 'Ext.selection.CheckboxModel',
-		alias:  'selection.linkcardcheckboxmodel',
-
-		//override
-		getHeaderConfig: function() {
-			var hc = this.callParent(arguments);
-
-			hc.isCheckerHd = (this.mode != "SINGLE");
-			if (!hc.isCheckerHd) {
-				delete hc.cls;
-			}
-
-			return hc;
 		},
 
-		//override
-		onHeaderClick: function(headerCt, header, e) {
-			if (header.isCheckerHd) {
-				e.stopEvent();
-				var isChecked = header.el.hasCls(Ext.baseCSSPrefix + 'grid-hd-checker-on');
-				if (isChecked) {
-					this.deselectAll();
-				} else {
-					this.selectAll();
-				}
-			}
+		reset: function() {
+			this.grid.getSelectionModel().reset();
+			this.model.reset();
 		}
 	});
 
@@ -220,12 +198,16 @@
 			return new Ext.selection.RowModel();
 		}
 		if (conf.SingleSelect) {
-			return new CMDBuild.selection.CMLinkCardCheckboxModel({
+			return new CMDBuild.selection.CMMultiPageSelectionModel({
 				mode: "SINGLE",
-				allowDeselect: true
+				idProperty: "Id" // required to identify the records for the data and not the id of ext
 			});
 		}
-		return new CMDBuild.selection.CMLinkCardCheckboxModel();
+		return new CMDBuild.selection.CMMultiPageSelectionModel({
+			mode: "MULTI",
+			avoidCheckerHeader: true,
+			idProperty: "Id" // required to identify the records for the data and not the id of ext
+		});
 	}
 
 	function isNoSelect(c) {

@@ -236,9 +236,10 @@
 					type: "ajax",
 					url: this.cmStoreUrl,
 					reader: {
-						root: 'rows',
+						root: "rows",
 						type: "json",
-						totalProperty: 'results'
+						totalProperty: "results",
+						idProperty: "Id"
 					},
 					extraParams: this.getStoreExtraParams()
 				},

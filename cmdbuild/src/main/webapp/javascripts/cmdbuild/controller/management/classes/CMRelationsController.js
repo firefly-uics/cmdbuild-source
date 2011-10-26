@@ -131,10 +131,12 @@
 						rel_id: -1,
 						src: d.src
 					},
-					selType: isMany ? "checkboxmodel" : "rowmodel",
-					multiSelect: isMany,
+					selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+						mode: isMany ? "MULTI" : "SINGLE",
+						avoidCheckerHeader: true,
+						idProperty: "Id" // required to identify the records for the data and not the id of ext
+					}),
 					filterType: this.view.id,
-
 					successCb: function() {
 						me.onAddRelationSuccess();
 					}
@@ -159,7 +161,11 @@
 					filterType: this.view.id,
 					successCb: function() {
 						me.onEditRelationSuccess();
-					}
+					},
+					selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+						mode: "SINGLE",
+						idProperty: "Id" // required to identify the records for the data and not the id of ext
+					})
 				}).show();
 		},
 

@@ -43,19 +43,19 @@
 
 			this.view.setModel(this.model);
 
-			this.view.grid.on('beforeitemclick', cellclickHandler, this);
-			this.view.grid.on("itemdblclick", onItemDoubleclick, this);
-
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.view.clientForm,
 				xaVars: this.view.widgetConf,
 				serverVars: this.view.activity
 			});
 
-			this.view.on("select", onSelect, this);
-			this.view.on("deselect", onDeselect, this);
+			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);
+			this.mon(this.view.grid, 'itemdblclick', onItemDoubleclick, this);
 
-			this.view.on("CM_toggle_map", function() {
+			this.mon(this.view, "select", onSelect, this);
+			this.mon(this.view, "deselect", onDeselect, this);
+
+			this.mon(this.view, "CM_toggle_map", function() {
 				var v = this.view;
 				if (v.grid.isVisible()) {
 					v.showMap();
@@ -86,17 +86,37 @@
 			new _CMUtils.PollingFunction({
 				success: function() {
 					this.alertIfChangeDefaultSelection = true;
-					var classId = this.templateResolver.getVariable(CLASS_ID),
-						cqlQuery = this.templateResolver.getVariable(FILTER);
-	
+					var tr = this.templateResolver,
+						classId = tr.getVariable(CLASS_ID),
+						cqlQuery = tr.getVariable(FILTER);
+
 					if (cqlQuery) {
 						this.view.grid.openFilterButton.disable();
 						this.templateResolver.resolveTemplates({
-							attributes: [ FILTER ],
+							attributes: [ "Filter" ],
 							scope: this.view,
 							callback: function(out, ctx) {
 								var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
 								this.updateGrid(classId, cardReqParams);
+
+								var ld = tr.getLocalDepsAsField();
+								for (var i in ld) {
+									//before the blur if the value is changed
+									var field = ld[i];
+
+									if (field) {
+										field.mon(field, "change", function(f) {
+											f.changed = true;
+										}, this);
+
+										field.mon(field, "blur", function(f) {
+											if (f.changed) {
+												this.reset();
+												f.changed = false;
+											}
+										}, this);
+									}
+								}
 							}
 						});
 					} else {
@@ -108,7 +128,7 @@
 				},
 				checkFn: function() {
 					// I want exit if I'm not busy
-					return !this.isBusy()
+					return !this.isBusy();
 				},
 				cbScope: this,
 				checkFnScope: this
@@ -147,7 +167,7 @@
 
 		syncSelections: function() {
 			this.model._silent = true;
-			this.view.syncSelections()
+			this.view.syncSelections();
 			this.model._silent = false;
 		},
 
@@ -178,6 +198,7 @@
 		});
 	}
 
+	// used only on toggle the map
 	function loadPageForLastSelection(selection) {
 
 		if (selection != null) {
@@ -205,7 +226,7 @@
 							cb: function() {
 								me.model._silent = false;
 							}
-						})
+						});
 					}
 				}
 			});
@@ -229,7 +250,8 @@
 		function resolve() {
 			this.templateResolverIsBusy = true;
 
-			this.model.reset();
+			this.view.reset();
+
 			if (this.alertIfChangeDefaultSelection) {
 				CMDBuild.Msg.warn(null, Ext.String.format(CMDBuild.Translation.warnings.link_cards_changed_values
 						, this.view.widgetConf.ButtonLabel || this.view.id)
