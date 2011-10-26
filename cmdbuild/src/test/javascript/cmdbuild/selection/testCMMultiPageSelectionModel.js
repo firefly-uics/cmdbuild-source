@@ -52,6 +52,78 @@
 			assertEquals(1, this.sm.getCount());
 		},
 
+		"test does not select if model has not idProperty": function() {
+			var store = new Ext.data.Store({
+				fields: ["name"],
+				autoLoad: false,
+				pageSize: 3,
+				proxy: {
+					type: 'ajax',
+					url: STORE_URL,
+					reader: {
+						root: 'rows',
+						totalProperty: 'tot'
+					}
+				}
+			}),
+			grid = new Ext.grid.Panel({
+				renderTo: Ext.getBody(),
+				width: 400,
+				height: 400,
+				store: store,
+				selModel: new CMDBuild.selection.CMMultiPageSelectionModel(),
+				columns: [
+					{ header: 'Name',  dataIndex: 'name' }
+				]
+			}),
+			sm = grid.getSelectionModel();
+
+			store.loadPage(1);
+			this.server.respond();
+			
+			var r = store.first();
+			sm.select(r);
+			
+			assertFalse(sm.hasSelection());
+		},
+
+		"test select if model has not idProperty and pass a idProperty to the sm": function() {
+			var store = new Ext.data.Store({
+				fields: ["name"],
+				autoLoad: false,
+				pageSize: 3,
+				proxy: {
+					type: 'ajax',
+					url: STORE_URL,
+					reader: {
+						root: 'rows',
+						totalProperty: 'tot'
+					}
+				}
+			}),
+			grid = new Ext.grid.Panel({
+				renderTo: Ext.getBody(),
+				width: 400,
+				height: 400,
+				store: store,
+				selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+					idProperty: "name"
+				}),
+				columns: [
+					{ header: 'Name',  dataIndex: 'name' }
+				]
+			}),
+			sm = grid.getSelectionModel();
+
+			store.loadPage(1);
+			this.server.respond();
+			
+			var r = store.first();
+			sm.select(r);
+			
+			assertTrue(sm.hasSelection());
+		},
+
 		"test selection multiple record": function() {
 			this.store.loadPage(1);
 			this.server.respond();
@@ -205,10 +277,27 @@
 			assertEquals(1, this.sm.getCount());
 			this.sm.select(r);
 			assertEquals(0, this.sm.getCount());
+		},
+
+		"test mode:SINGLE works on selection in different page": function() {
+			setup.call(this, "SINGLE");
+
+			this.store.loadPage(1);
+			this.server.respond();
+			var a = this.store.first();
+			this.sm.select(a);
+
+			this.store.loadPage(2);
+			this.server.respond();
+			var b = this.store.first();
+			this.sm.select(b);
+
+			assertEquals(1, this.sm.getCount());
+			assertEquals(b.getId(), this.sm.getSelection()[0].getId());
 		}
 	});
 
-	function setup() {
+	function setup(mode) {
 		this.server = CMDBuild.test.CMServer.create();
 
 		this.store = new Ext.data.Store({
@@ -230,7 +319,9 @@
 			width: 400,
 			height: 400,
 			store: this.store,
-			selModel: new CMDBuild.selection.CMMultiPageSelectionModel(),
+			selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+				mode: mode || "MULTI"
+			}),
 			columns: [
 				{ header: 'Name',  dataIndex: 'name' },
 				{ header: 'Email', dataIndex: 'email', flex: 1 },

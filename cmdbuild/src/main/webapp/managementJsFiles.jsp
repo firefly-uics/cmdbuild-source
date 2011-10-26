@@ -1,5 +1,6 @@
 <!-- SELECTIONS -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMCheckboxModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
 <!-- PROXIES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMRelationsProxy.js"></script>
