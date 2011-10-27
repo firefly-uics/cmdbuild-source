@@ -349,7 +349,7 @@
 		if (this.cmAddPrintButton) {
 			this.printGridMenu = new CMDBuild.PrintMenuButton({
 				callback : function() { this.fireEvent("click"); },
-				formatList: ["pdf", "odt"],
+				formatList: ["pdf", "csv"],
 				disabled: true
 			});
 			items.push(this.printGridMenu);
