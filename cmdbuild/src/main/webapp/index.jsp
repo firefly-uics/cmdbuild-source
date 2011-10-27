@@ -14,7 +14,7 @@
 	SessionVars sessionVars = new SessionVars();
 	String lang = sessionVars.getLanguage();
 	UserContext userCtx = sessionVars.getCurrentUserContext();
-	String extVersion = "4.0.0";
+	String extVersion = "4.0.7";
 %>
 <html>
 	<head>

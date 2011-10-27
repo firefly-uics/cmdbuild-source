@@ -9,7 +9,7 @@
 
 <% 
 	String lang = new SessionVars().getLanguage();
-	String extVersion = "4.0.0";
+	String extVersion = "4.0.7";
 %>
 
 <html>

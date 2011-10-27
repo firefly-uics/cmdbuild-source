@@ -33,7 +33,7 @@
 			var id = getId(record, this.idProperty);
 
 			if (this.mode == SINGLE_MODE) {
-				this.cmSelections = {};
+				this.reset();
 				callOnRowDeselectForAllThePageEventuallySkipTheGivenRecord(this, this.views, record);
 			}
 
@@ -182,7 +182,9 @@
 		if (me.store) {
 			me.store.each(function(recordInThePage) {
 				for (var i=0; i < viewsLn; i++) {
-					if (idOfRecordToSkip 
+					if (typeof recordToSkip == "undefined") {
+						views[i].onRowDeselect(index, suppressEvent=true);
+					} else if (idOfRecordToSkip 
 							&& idOfRecordToSkip != getId(recordInThePage, me.idProperty)) {
 	
 						views[i].onRowDeselect(index, suppressEvent=true);
