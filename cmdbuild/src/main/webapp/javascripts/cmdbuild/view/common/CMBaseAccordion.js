@@ -47,14 +47,7 @@
 				frame: false,
 				region: "center",
 				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible,
-				viewConfig: {
-					// We are not using autoScroll because we are
-					// not interested in horizontal scrolling
-					style: {
-						"overflow-y": "auto"
-					}
-				}
+				rootVisible: this.rootVisible
 			});
 
 			Ext.apply(this, {

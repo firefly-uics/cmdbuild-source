@@ -1,6 +1,6 @@
 (function() {
 	Ext.ns("CMDBuild");
-	
+
 	// global constants
 	CMDBuild.LABEL_WIDTH = 150;
 
