@@ -81,6 +81,7 @@
 
 			this.openFilterButton.enable();
 			this.addCardButton.updateForEntry(entry);
+			this.gridSearchField.reset();
 			this.clearFilterButton.disable();
 
 			this.updateStoreForClassId(id, {
