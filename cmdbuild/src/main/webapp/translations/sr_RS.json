@@ -17,6 +17,11 @@
                "desc": "У опадајућем поретку"
             },
             "domain": "Домен",
+            "editorType": {
+                "label": "<em>Editor type</em>",
+                "plain":"<em>Plain text</em>",
+                "html":"<em>Html</em>"
+            },
             "field_hidden": "Скривен",
             "field_read": "Само за читање",
             "field_visibility": "Начин приступа",

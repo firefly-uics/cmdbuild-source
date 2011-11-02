@@ -320,6 +320,8 @@ public class ModClass extends JSONBase {
 			@Parameter(value="fkDestination", required=false) int fkDestinationId,
 			@Parameter(value="group", required=false) String group,
 			@Parameter(value="meta", required=false) JSONObject meta,
+			@Parameter(value="editorType", required=false) String editorType,
+
 			BaseSchema table,
 			UserContext userCtx) throws JSONException, CMDBException {
 		IAttribute attribute;
@@ -341,6 +343,9 @@ public class ModClass extends JSONBase {
 		attribute.setUnique(isUnique);
 		attribute.setFieldMode(fieldMode);
 		attribute.setGroup(group);
+		if (editorType != null) {
+			attribute.setEditorType(editorType);
+		}
 		if (length > 0) {
 			attribute.setLength(length);
 		}
@@ -355,7 +360,7 @@ public class ModClass extends JSONBase {
 		if (attributeTypeString.equals(AttributeType.REFERENCE.toString())) {
 			if (domainId > 0) {
 				attribute.setReferenceDomain(domainId);
-				IDomain domain= userCtx.domains().get(domainId);				
+				IDomain domain= userCtx.domains().get(domainId);
 				boolean isdirect=false;
 				String cardinality=domain.getCardinality();
 				if (cardinality.equals(IDomain.CARDINALITY_N1))

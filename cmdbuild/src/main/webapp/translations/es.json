@@ -17,6 +17,11 @@
                "desc": "Descendente"
             },
             "domain": "Dominio",
+            "editorType": {
+                "label": "<em>Tipo di editor</em>",
+                "plain":"<em>Testo semplice</em>",
+                "html":"<em>Editor HTML</em>"
+            },
             "field_hidden": "Escondido",
             "field_read": "Sólo lectura",
             "field_visibility": "Modalidad de edición",
