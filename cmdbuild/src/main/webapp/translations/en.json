@@ -17,6 +17,11 @@
                "desc": "Descending"
             },
             "domain": "Domain",
+            "editorType": {
+                "label": "Editor type",
+                "plain":"Plain text",
+                "html":"Html"
+            },
             "field_hidden": "Hidden",
             "field_read": "Read only",
             "field_visibility": "Editing mode",

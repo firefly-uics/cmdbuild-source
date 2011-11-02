@@ -12,7 +12,8 @@
 		FIELD_MODE: "fieldmode",
 		GROUP: "group",
 		ABSOLUTE_CLASS_ORDER: "absoluteClassOrder",
-		CLASS_ORDER_SIGN: "classOrderSign"
+		CLASS_ORDER_SIGN: "classOrderSign",
+		EDITOR_TYPE: "editorType"
 	};
 
 	var REQUEST = {
@@ -113,6 +114,11 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 			header : translation.type,
 			dataIndex : ATTR.TYPE,
 			flex: 1
+		},{
+			header : translation.editorType.label,
+			dataIndex : ATTR.EDITOR_TYPE,
+			flex: 1,
+			hidden : true
 		},
 		new Ext.ux.CheckColumn( {
 			header : translation.isbasedsp,
@@ -157,7 +163,8 @@ Ext.define("CMDBuild.view.administration.classes.CMAttributeGrid", {
 			fields: [
 				ATTR.INDEX, ATTR.NAME, ATTR.DESCRIPTION, ATTR.TYPE, ATTR.IS_UNIQUE,
 				ATTR.IS_BASEDSP, ATTR.IS_NOT_NULL, ATTR.IS_INHERITED, ATTR.FIELD_MODE,
-				ATTR.IS_ACTIVE, ATTR.GROUP, ATTR.ABSOLUTE_CLASS_ORDER, ATTR.CLASS_ORDER_SIGN
+				ATTR.IS_ACTIVE, ATTR.GROUP, ATTR.ABSOLUTE_CLASS_ORDER, ATTR.CLASS_ORDER_SIGN,
+				ATTR.EDITOR_TYPE
 			],
 			autoLoad : false,
 			proxy : {

@@ -1,8 +1,8 @@
 package org.cmdbuild.elements;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.dao.type.SQLQuery;
@@ -16,6 +16,7 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.utils.CQLFacadeCompiler;
+import org.opensaml.artifact.InvalidArgumentException;
 
 public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute {
 
@@ -259,6 +260,16 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 				return Boolean.toString(attribute.isLocal());
 			}
 		},
+		EDITORTYPE {
+			@Override
+			protected void setValueNotNull(AttributeImpl attribute, String editorType) {
+				attribute.setEditorType(editorType);
+			}
+			@Override
+			protected String getValue(IAttribute attribute) {
+				return attribute.getEditorType();
+			}
+		},
 		// computed
 		TYPE {
 			@Override
@@ -275,11 +286,13 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		protected String getValue(IAttribute attribute) {
 			return null;
 		}
-		protected void setValue(AttributeImpl attribute, String value) {
+
+		protected final void setValue(AttributeImpl attribute, String value) {
 			if (value != null) {
 				setValueNotNull(attribute, value);
 			}
 		}
+
 		protected void setValueNotNull(AttributeImpl attribute, String value) {
 			Log.PERSISTENCE.info(String.format("Found legacy meta-attribute %s for attribute %s.%s", name(), attribute.getSchema().getName(), attribute.getName()));
 		}
@@ -305,6 +318,8 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	private String referenceType = "restrict"; //TODO 
 	private boolean isReferenceDirect; 
 	private String referenceFilter = null;
+
+	private String editorType;
 
 	private LookupType lookupType;
 
@@ -653,7 +668,23 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	public String getGroup() {
 		return group;
 	}
+
 	public void setGroup(String group) {
 		this.group = group;
+	}
+
+	protected boolean isTypeAllowed(String editorType) {
+		return false; // default implementation
+	}
+
+	public final String getEditorType() {
+		return this.editorType;
+	}
+
+	public final void setEditorType(String editorType) {
+		if (!isTypeAllowed(editorType)) {
+			throw new InvalidArgumentException();
+		}
+		this.editorType = editorType;
 	}
 }
