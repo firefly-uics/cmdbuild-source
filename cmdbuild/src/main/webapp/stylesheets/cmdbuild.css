@@ -403,6 +403,11 @@ em {
 .down-hover {
 	background-image: url(../images/icons/down-hover.gif) !important;
 }
+
+.expand {
+	background-image: url(../images/icons/expand.png) !important;
+}
+
 /* Buttons */
 .clearButtonBGandBorder {
 	-moz-border-radius: 0 !important;
