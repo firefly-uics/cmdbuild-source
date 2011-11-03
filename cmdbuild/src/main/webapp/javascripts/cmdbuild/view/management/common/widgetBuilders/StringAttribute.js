@@ -32,10 +32,10 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 /**
  * @override
  * @param attribute
- * @return CMDBuild.Management.EntityRemoverDisplayField
+ * @return Ext.form.DisplayField
  */
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
-	var field = new CMDBuild.Management.EntityRemoverDisplayField({
+	var field = new Ext.form.DisplayField({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: attribute.description,
