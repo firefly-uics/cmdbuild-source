@@ -16,7 +16,6 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.utils.CQLFacadeCompiler;
-import org.opensaml.artifact.InvalidArgumentException;
 
 public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute {
 
@@ -683,7 +682,7 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 
 	public final void setEditorType(String editorType) {
 		if (!isTypeAllowed(editorType)) {
-			throw new InvalidArgumentException();
+			throw new IllegalArgumentException();
 		}
 		this.editorType = editorType;
 	}
