@@ -233,7 +233,6 @@ em {
 
 /* FOOTER */
 
-
 #footer {
 	color: #727262;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -404,7 +403,8 @@ em {
 	background-image: url(../images/icons/down-hover.gif) !important;
 }
 
-.expand {
+.expand, 
+.cmdisplayfield-expandbutton {
 	background-image: url(../images/icons/expand.png) !important;
 }
 
@@ -421,6 +421,16 @@ em {
 	border-style : none !important;
 	background-image: none !important;
 	background-color: #DFE9F6 !important
+}
+
+.cmdisplayfield-expandbutton {
+	background-repeat: no-repeat;
+	background-position: center center;
+	float: left;
+	margin-left: 10px;
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
 }
 
 /*trigger fields*/
@@ -471,52 +481,6 @@ em {
 /**
  MENU TREE
 **/
-
-/*
-#menu_panel .x-panel-header {
-	text-align: center;
-}
-
-.cmdbuild-menu-addfolder {
-	float: left;
-	clear: both;
-}
-
-.cmdbuild-menu-addfolder table,.cmdbuild-menu-addfolder input {
-	float: left;
-	margin: 5px;
-}
-
-.cmdbuild-tree-panel {
-	border-color: #D0D0D0;
-	border-style: solid;
-	border-width: 1px;
-	margin: 20px 30px !important;
-}
-
-.cmdbuild-tree-panel-clearedleft {
-	clear: left;
-}
-
-.cmdbuild-tree-panel-header {
-	background-color: #E5E5E5 !important;
-	font-size: 11px;
-	font-weight: bold;
-	border-color: #D0D0D0;
-	border-style: solid;
-	border-width: 0px 0px 1px 0px;
-	padding: 5px 5px;
-}
-
-.cmdbuild-tree-panel .x-tree-root-node {
-	padding: 5px;
-}
-
-.cmdbuild-tree-panel .ext-el-mask {
-	background-color: #DDDDDD;
-}
-
-*/
 
 .cmdbuild-tree-superclass-icon {
 	background-image: url(../images/icons/tree/superclass_collapsed.png) !important;
