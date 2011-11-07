@@ -35,15 +35,19 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
  * @return Ext.form.DisplayField
  */
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
-	var field = new Ext.form.DisplayField({
+	var field = new CMDBuild.view.common.field.CMDisplayField({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: attribute.description,
 		width: CMDBuild.BIG_FIELD_WIDTH,
 		submitValue: false,
 		name: attribute.name,
-		disabled: false
+		disabled: false,
+		style: {
+			overflow: "hidden"
+		}
 	});
+
 	return field;
 },
 /**
