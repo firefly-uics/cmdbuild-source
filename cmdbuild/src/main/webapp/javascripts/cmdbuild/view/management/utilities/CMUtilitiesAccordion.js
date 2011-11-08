@@ -45,12 +45,21 @@
 			root.removeAll();
 			root.appendChild(structure);
 		},
-		
+
 		submoduleIsEnabled: function(moduleName) {
 			if (moduleName == 'changePassword' && !CMDBuild.Runtime.CanChangePassword) {
 				return false;
 			} else {
 				return !CMDBuild.Runtime.DisabledModules[moduleName];
+			}
+		},
+
+		getSubmoduleCMName: function(submodule) {
+			var sm = this.submodules[submodule];
+			if (sm) {
+				return sm.cmName;
+			} else {
+				return undefined;
 			}
 		}
 
