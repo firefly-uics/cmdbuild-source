@@ -89,7 +89,7 @@
 		},
 
 		addEvent: function(event) {
-			this.eventStore.add(event)
+			this.eventStore.add(event);
 		},
 
 		clearStore: function() {

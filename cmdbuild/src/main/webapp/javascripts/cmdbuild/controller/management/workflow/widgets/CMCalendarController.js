@@ -137,6 +137,8 @@
 		var params = filterParams || {},
 			me = this;
 
+		me.view.clearStore();
+
 		params.IdClass = idClass;
 		if (!filterParams) {
 			params.CQL = this.paginationQuery;
