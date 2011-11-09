@@ -606,13 +606,15 @@ public class ModCard extends JSONBase {
 			} else {
 				referenceRelation = relationFactory.get(dd.getDomain(), refDstCard, card);
 			}
-			fillSingleReferenceAttributes(referenceName, referenceRelation, attributes);
-			referenceRelation.save();
+			if (fillSingleReferenceAttributes(referenceName, referenceRelation, attributes)) {
+				referenceRelation.save();				
+			}
 		}
 	}
 
-	public static void fillSingleReferenceAttributes(final String referenceName, final IRelation referenceRelation,
+	public static boolean fillSingleReferenceAttributes(final String referenceName, final IRelation referenceRelation,
 			Map<String, String> attributes) {
+		boolean changed = false;
 		for (IAttribute domAttr : referenceRelation.getSchema().getAttributes().values()) {
 			if (!domAttr.isDisplayable()) {
 				continue;
@@ -622,8 +624,10 @@ public class ModCard extends JSONBase {
 			final String reqAttrValue = attributes.get(reqAttrName);
 			if (reqAttrValue != null) {
 				referenceRelation.setValue(domAttrName, reqAttrValue);
+				changed = true;
 			}
 		}
+		return changed;
 	}
 
 	@JSONExported
