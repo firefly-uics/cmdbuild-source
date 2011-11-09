@@ -58,14 +58,16 @@ Ext.define("CMDBuild.field.LookupCombo", {
 Ext.define("CMDBuild.Management.LookupCombo", {
 	statics: {
 		build: function(attribute) {
+			var field;
 			if (attribute.lookupchain.length == 1) {
-				return buildSingleLookupField(attribute);
+				field = buildSingleLookupField(attribute);
+				field.isMultiLevel = false;
 			} else {
 				var hiddenField = buildHiddenField(attribute);
 				var fieldSetItems = buildFieldSetItems(attribute, hiddenField);
 				fieldSetItems.push(hiddenField);
 
-				var fieldSet = new Ext.panel.Panel({
+				field = new Ext.panel.Panel({
 					name: attribute.name, // adds only this field to the basic form
 					border: false,
 					frame: false,
@@ -80,11 +82,27 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					CMAttribute: attribute,
 					setValue: function(v) {
 						hiddenField.setValue(v);
-					}
-					
+					},
+					getValue: function() {
+						return hiddenField.getValue();
+					},
+					getRawValue: function() {
+						var out = "";
+						this.items.each(function(subField, index) {
+							if (subField !== hiddenField) {
+								if (index > 0) {
+									out += " - ";
+								}
+								out += subField.getRawValue();
+							}
+						});
+
+						return out;
+					},
+					isMultiLevel: true
 				});
-				
-				return fieldSet;
+
+				return field;
 			}
 		}
 	}
