@@ -40,5 +40,9 @@
 			<artifactId>cmdbuild-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis</artifactId>
+		</dependency>
 	</dependencies>
 </project>
