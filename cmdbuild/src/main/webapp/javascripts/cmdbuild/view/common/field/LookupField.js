@@ -55,6 +55,53 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	}
 });
 
+Ext.define("CMDBuild.field.MultiLevelLookupPanel", {
+	extend: "Ext.panel.Panel",
+	hiddenField: undefined,
+	CMAttribute: undefined,
+	initComponent: function() {
+		if (!this.hiddenField || !this.CMAttribute) {
+			throw "Error in MultiLevelLookup, hiddenField or CMAttribute is missing";
+		}
+
+		this.items = this.items || [];
+		this.items.push(this.hiddenField);
+
+		this.name = this.CMAttribute.name, // adds only this field to the basic form
+		this.callParent(arguments);
+	},
+
+	border: false,
+	frame: false,
+	autoHeight: true,
+	hideMode: 'offsets',
+	labelWidth: CMDBuild.LABEL_WIDTH,
+	bodyCls: "x-panel-default-framed",
+	isMultiLevel: true,
+	bodyStyle: {
+		padding: "0"
+	},
+	setValue: function(v) {
+		this.hiddenField.setValue(v);
+	},
+	getValue: function() {
+		return this.hiddenField.getValue();
+	},
+	getRawValue: function() {
+		var out = "";
+		this.items.each(function(subField, index) {
+			if (subField !== this.hiddenField) {
+				if (index > 0) {
+					out += " - ";
+				}
+				out += subField.getRawValue();
+			}
+		});
+
+		return out;
+	}
+});
+
 Ext.define("CMDBuild.Management.LookupCombo", {
 	statics: {
 		build: function(attribute) {
@@ -64,46 +111,14 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 				field.isMultiLevel = false;
 			} else {
 				var hiddenField = buildHiddenField(attribute);
-				var fieldSetItems = buildFieldSetItems(attribute, hiddenField);
-				fieldSetItems.push(hiddenField);
-
-				field = new Ext.panel.Panel({
-					name: attribute.name, // adds only this field to the basic form
-					border: false,
-					frame: false,
-					items: fieldSetItems,
-					autoHeight: true,
-					hideMode: 'offsets',
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					bodyCls: "x-panel-default-framed",
-					bodyStyle: {
-						padding: "0"
-					},
+				field = new CMDBuild.field.MultiLevelLookupPanel({
 					CMAttribute: attribute,
-					setValue: function(v) {
-						hiddenField.setValue(v);
-					},
-					getValue: function() {
-						return hiddenField.getValue();
-					},
-					getRawValue: function() {
-						var out = "";
-						this.items.each(function(subField, index) {
-							if (subField !== hiddenField) {
-								if (index > 0) {
-									out += " - ";
-								}
-								out += subField.getRawValue();
-							}
-						});
-
-						return out;
-					},
-					isMultiLevel: true
+					items: buildFieldSetItems(attribute, hiddenField),
+					hiddenField: hiddenField
 				});
-
-				return field;
 			}
+
+			return field;
 		}
 	}
 });
@@ -120,7 +135,7 @@ function buildHiddenField(attribute) {
 	var hiddenField = new Ext.form.Hidden({
 		name: attribute.name,
 		allowBlank: canBeBlank(attribute),
-		
+
 		updateParentsIfLoaded: function() {
 			var value = this.getValue();
 			value = parseInt(value);
@@ -130,11 +145,11 @@ function buildHiddenField(attribute) {
 				CMDBuild.log.error("Last combo not set");
 			}
 		},
-		
+
 		filterByParentId: function(lastComboId) {
 			this.setValueAndFireChange(lastComboId);
 		},
-		
+
 		chainedClear: function() {
 			this.setValueAndFireChange("");
 		},
@@ -148,7 +163,7 @@ function buildHiddenField(attribute) {
 				this.fireEvent('change', newValue, oldValue);
 			}
 		},
-		
+
 		setParentIdAndFilterStore: Ext.emptyFn
 	});
 
