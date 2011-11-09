@@ -1,6 +1,5 @@
-package org.cmdbuild.dao.view;
+package org.cmdbuild.auth;
 
-import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public interface CMAccessControlManager {
 
@@ -8,7 +7,7 @@ public interface CMAccessControlManager {
 	 * Access privileges
 	 */
 
-	boolean hasReadAccess(CMEntryType type);
+	boolean hasReadAccess(CMPrivilegedObject privilegedObject);
 
 	/*
 	 * Other privileges

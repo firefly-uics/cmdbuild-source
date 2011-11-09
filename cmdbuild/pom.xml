@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
@@ -18,10 +19,16 @@
 		<restlet.version>2.0.1</restlet.version>
 		<cmdbuild-graph.version>1.0</cmdbuild-graph.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-dao-postgresql</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-auth-default</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -239,13 +246,11 @@
 			<version>1.5</version>
 			<type>jar</type>
 		</dependency>
-		<!-- CAS Authentication -->
-		<dependency>
-			<groupId>org.jasig.cas.client</groupId>
-			<artifactId>cas-client-core</artifactId>
-			<version>3.2.0</version>
-		</dependency>
 		<!-- Workflow -->
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>xalan</groupId> <!-- serializer.jar -->
 			<artifactId>xalan</artifactId>
@@ -367,6 +372,21 @@
 			<artifactId>commons-io</artifactId>
 			<version>1.4</version>
 			<type>jar</type>
+		</dependency>
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>

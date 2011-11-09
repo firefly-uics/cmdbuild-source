@@ -50,17 +50,6 @@ public class ModSecurity extends JSONBase {
 	}
 	
 	@JSONExported
-	public JSONObject getGroup(
-			JSONObject serializer,
-			@Parameter("groupId") int groupId,
-			ITableFactory tf
-			) throws JSONException, AuthException {
-			GroupCard role= new GroupCard (tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().id(groupId).ignoreStatus().get());
-			serializer.put("data", Serializer.serializeGroupCard(role));	
-		return serializer;
-	}
-	
-	@JSONExported
 	public JSONObject getPrivilegeList(
 			JSONObject serializer,
 			ITableFactory tf,

@@ -1,8 +1,9 @@
 package org.cmdbuild.services.auth;
 
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.auth.CMPrivilegedObject;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.view.CMAccessControlManager;
+import org.cmdbuild.auth.CMAccessControlManager;
 
 public class AccessControlManagerWrapper implements CMAccessControlManager {
 
@@ -14,12 +15,16 @@ public class AccessControlManagerWrapper implements CMAccessControlManager {
 	}
 
 	@Override
-	public boolean hasReadAccess(CMEntryType type) {
-		if (type instanceof CMClass) {
-			return pm.hasReadPrivilege(systemContext.tables().get(type.getName()));
-		} else {
-			return pm.hasReadPrivilege(systemContext.domains().get(type.getName()));
+	public boolean hasReadAccess(CMPrivilegedObject privilegedObject) {
+		if (privilegedObject instanceof CMEntryType) {
+			final CMEntryType type = (CMEntryType) privilegedObject;
+			if (type instanceof CMClass) {
+				return pm.hasReadPrivilege(systemContext.tables().get(type.getName()));
+			} else {
+				return pm.hasReadPrivilege(systemContext.domains().get(type.getName()));
+			}
 		}
+		return false;
 	}
 
 	@Override
