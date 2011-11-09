@@ -343,7 +343,7 @@ public class ModClass extends JSONBase {
 		attribute.setUnique(isUnique);
 		attribute.setFieldMode(fieldMode);
 		attribute.setGroup(group);
-		if (editorType != null) {
+		if (editorType != null && editorType.length() > 0) {
 			attribute.setEditorType(editorType);
 		}
 		if (length > 0) {
