@@ -9,12 +9,18 @@ public class UserDomain extends UserEntryType implements CMDomain {
 	private final DBDomain inner;
 
 	static UserDomain create(final UserDataView view, final DBDomain inner) {
-		final CMAccessControlManager acm = view.getAccessControlManager();
-		if (inner != null && acm.hasReadAccess(inner) && (inner.isActive() || acm.hasDatabaseDesignerPrivileges())) {
+		if (isUserAccessible(view.getAccessControlManager(), inner)) {
 			return new UserDomain(view, inner);
 		} else {
 			return null;
 		}
+	}
+
+	public static boolean isUserAccessible(final CMAccessControlManager acm, final DBDomain inner) {
+		return inner != null && acm.hasReadAccess(inner)
+				&& (inner.isActive() || acm.hasDatabaseDesignerPrivileges())
+				&& UserClass.isUserAccessible(acm, inner.getClass1())
+				&& UserClass.isUserAccessible(acm, inner.getClass2());
 	}
 
 	private UserDomain(final UserDataView view, final DBDomain inner) {
