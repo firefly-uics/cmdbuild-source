@@ -828,6 +828,10 @@ em {
 	padding: 0px 6px;
 }
 
+.cm-bold {
+	font-weight: bold;
+}
+
 /*
 .grid-button .x-grid-row-checker {
 	margin-top: 3px;

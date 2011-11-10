@@ -140,7 +140,7 @@
 	function buildNodeForDomain(domainResponseObj, domainCachedData) {
 		var children = [],
 			attributes = domainCachedData.data.attributes,
-			attributesToString = "",
+			attributesToString = "<span class=\"cm-bold\">",
 			oversize = domainResponseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
 			src = domainResponseObj.src,
 			domId = domainCachedData.get("id"),
@@ -166,13 +166,13 @@
 				if (attributes[i].fieldmode == "hidden")
 					continue;
 
-				key = attributes[i].description
+				key = attributes[i].name;
 				attributesToString += i==0 ? "" : " | ";
 				attributesToString += key;
 				node.rel_attr_keys.push(key);
 			}
 
-			node.rel_attr = attributesToString;
+			node.rel_attr = attributesToString + "</span>";
 		}
 
 		if (oversize) {
@@ -210,7 +210,10 @@
 			attributesToString = "";
 			for (var j=0; j<node.rel_attr_keys.length; ++j) {
 				key = node.rel_attr_keys[j];
-				val = r.rel_attr[key] || " - "; // val never undefined
+				val = r.rel_attr[key];
+				if (typeof val == "undefined") {
+					val = " - "; // is not used the || operator because 0 and false are valid values for val
+				}
 
 				attributesToString += j==0 ? "" : " | ";
 				attributesToString += val.dsc || val;
@@ -260,6 +263,6 @@
 			s = domainResponseObj.relations_size,
 			postfix = s  > 1 ? CMDBuild.Translation.management.modcard.relation_columns.items : CMDBuild.Translation.management.modcard.relation_columns.item;
 		
-		return prefix + " ("+ s + " " + postfix + ")" ;
+		return "<span class=\"cm-bold\">" + prefix + " ("+ s + " " + postfix + ")</span>" ;
 	}
 })();
