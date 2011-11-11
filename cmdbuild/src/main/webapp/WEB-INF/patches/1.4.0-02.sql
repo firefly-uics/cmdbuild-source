@@ -1,4 +1,4 @@
-﻿-- Fixes reference values filling on attribute creation
+-- Fixes reference values filling on attribute creation
 
 CREATE OR REPLACE FUNCTION _cm_get_ref_source_class_domain_attribute(TableId oid, AttributeName text) RETURNS text AS $$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
