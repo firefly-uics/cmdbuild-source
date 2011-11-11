@@ -358,18 +358,18 @@ CREATE OR REPLACE FUNCTION _cm_get_ref_source_id_domain_attribute(TableId oid, A
 	END;
 $$ LANGUAGE SQL STABLE;
 
-CREATE OR REPLACE FUNCTION _cm_get_ref_target_id_domain_attribute(TableId oid, AttributeName text) RETURNS text AS $$
+CREATE OR REPLACE FUNCTION _cm_get_ref_source_class_domain_attribute(TableId oid, AttributeName text) RETURNS text AS $$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
-		WHEN TRUE THEN 'IdObj2'
-		WHEN FALSE THEN 'IdObj1'
+		WHEN TRUE THEN 'IdClass1'
+		WHEN FALSE THEN 'IdClass2'
 		ELSE NULL
 	END;
 $$ LANGUAGE SQL STABLE;
 
-CREATE OR REPLACE FUNCTION _cm_get_ref_target_class_domain_attribute(TableId oid, AttributeName text) RETURNS text AS $$
+CREATE OR REPLACE FUNCTION _cm_get_ref_target_id_domain_attribute(TableId oid, AttributeName text) RETURNS text AS $$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
-		WHEN TRUE THEN 'IdClass2'
-		WHEN FALSE THEN 'IdClass1'
+		WHEN TRUE THEN 'IdObj2'
+		WHEN FALSE THEN 'IdObj1'
 		ELSE NULL
 	END;
 $$ LANGUAGE SQL STABLE;
