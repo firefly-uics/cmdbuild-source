@@ -74,7 +74,7 @@ public class EntryQueryCommand {
 				final Object id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
 				final Long classId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.ClassId));
 				final DBClass realClass = driver.findClassById(classId);
-				final DBCard card = DBCard.create(driver, realClass, id);
+				final DBCard card = DBCard.newInstance(driver, realClass, id);
 
 				card.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
 				card.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
@@ -93,7 +93,7 @@ public class EntryQueryCommand {
 				final Long domainId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainId));
 				final String querySource = rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainQuerySource));
 				final DBDomain realDomain = driver.findDomainById(domainId);
-				final DBRelation relation = DBRelation.create(driver, realDomain, id);
+				final DBRelation relation = DBRelation.newInstance(driver, realDomain, id);
 
 				relation.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
 				relation.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
@@ -102,7 +102,7 @@ public class EntryQueryCommand {
 
 				addUserAttributes(a, relation, rs);
 
-				final QueryRelation queryRelation = QueryRelation.create(relation, querySource);
+				final QueryRelation queryRelation = QueryRelation.newInstance(relation, querySource);
 				row.setRelation(a, queryRelation);
 			}
 		}

@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.junit.Test;
@@ -42,6 +43,10 @@ public class SqlTypeConversionTest {
 		assertThat(SqlType.getSqlTypeString(type), is(equalTo(sqlType)));
 
 		sqlType = "regclass";
+		type = SqlType.createAttributeType(sqlType, NO_META);
+		assertThat(type, instanceOf(IntegerAttributeType.class));
+
+		sqlType = "bytea";
 		type = SqlType.createAttributeType(sqlType, NO_META);
 		assertThat(type, instanceOf(UndefinedAttributeType.class));
 	}

@@ -26,7 +26,7 @@ public enum SqlType {
 
 	// Missing cmdbuild types: Lookup, Reference, ForeignKey
 	// Missing sql types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
-	// Not used: regclass, bytea, _int4, _varchar
+	// Not used: bytea, _int4, _varchar
 
 	bool(BooleanAttributeType.class),
 	bpchar(CharAttributeType.class),
@@ -75,6 +75,8 @@ public enum SqlType {
 			return sqlParams;
 		}
 	},
+	// Used by some system tables
+	regclass(IntegerAttributeType.class),
 	text(TextAttributeType.class),
 	time(TimeAttributeType.class) {
 		@Override
@@ -135,7 +137,7 @@ public enum SqlType {
 		return new Object[0];
 	}
 
-	private final Class<?>[] getParamTypes(Object[] constructorParams) {
+	private Class<?>[] getParamTypes(Object[] constructorParams) {
 		final Class<?>[] paramTypes = new Class<?>[constructorParams.length];
 		for (int i=0; i<constructorParams.length; ++i) {
 			paramTypes[i] = constructorParams[i].getClass();

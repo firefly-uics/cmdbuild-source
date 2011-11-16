@@ -1,13 +1,12 @@
 package org.cmdbuild.auth;
 
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.cmdbuild.auth.user.AnonymousUser.ANONYMOUS_USER;
+import static org.cmdbuild.auth.AnonymousUser.ANONYMOUS_USER;
 
 @Component
 public class AuthenticationService {
@@ -43,28 +42,63 @@ public class AuthenticationService {
 		void foundUser(AuthenticatedUser authUser);
 	}
 
-	private final PasswordAuthenticator[] passwordAuthenticators;
-	private final ClientRequestAuthenticator[] clientRequestAuthenticators;
-	private final UserFetcher[] userFetchers;
-	private final UserStore userStore;
+	private static final PasswordAuthenticator[] NO_PASSWORD_AUTHENTICATORS = new PasswordAuthenticator[0];
+	private static final ClientRequestAuthenticator[] NO_CLIENTREQUEST_AUTHENTICATORS = new ClientRequestAuthenticator[0];
+	private static final UserFetcher[] NO_USER_FETCHERS = new UserFetcher[0];
+	private static final UserStore DUMB_STORE = new UserStore() {
 
-	// TODO: Too many parameters
+		@Override
+		public AuthenticatedUser getUser() {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public void setUser(AuthenticatedUser user) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+	};
+
+	private PasswordAuthenticator[] passwordAuthenticators;
+	private ClientRequestAuthenticator[] clientRequestAuthenticators;
+	private UserFetcher[] userFetchers;
+	private UserStore userStore;
+
 	@Autowired
-	public AuthenticationService(
-			final PasswordAuthenticator[] passwordAuthenticators,
-			final ClientRequestAuthenticator[] clientRequestAuthenticators,
-			final UserFetcher[] userFetchers,
-			final UserStore userStore) {
+	public AuthenticationService() {
+		passwordAuthenticators = NO_PASSWORD_AUTHENTICATORS;
+		clientRequestAuthenticators = NO_CLIENTREQUEST_AUTHENTICATORS;
+		userFetchers = NO_USER_FETCHERS;
+		userStore = DUMB_STORE;
+	}
+
+	public void setPasswordAuthenticators(final PasswordAuthenticator ... passwordAuthenticators) {
 		Validate.noNullElements(passwordAuthenticators);
-		Validate.noNullElements(clientRequestAuthenticators);
-		Validate.noNullElements(userFetchers);
-		Validate.notNull(userStore);
 		this.passwordAuthenticators = passwordAuthenticators;
+	}
+
+	public void setClientRequestAuthenticators(final ClientRequestAuthenticator ... clientRequestAuthenticators) {
+		Validate.noNullElements(clientRequestAuthenticators);
 		this.clientRequestAuthenticators = clientRequestAuthenticators;
+	}
+
+	public void setUserFetchers(final UserFetcher ... userFetchers) {
+		Validate.noNullElements(userFetchers);
 		this.userFetchers = userFetchers;
+	}
+
+	public void setUserStore(final UserStore userStore) {
+		Validate.notNull(userStore);
 		this.userStore = userStore;
 	}
 
+	/**
+	 * Actively checks the user credentials and returns the authenticated
+	 * user on success.
+	 * 
+	 * @param login
+	 * @param password unencrypted password
+	 * @return the user that was authenticated
+	 */
 	public AuthenticatedUser authenticate(final Login login, final String password) {
 		for (PasswordAuthenticator pa : passwordAuthenticators) {
 			if (pa.checkPassword(login, password)) {
@@ -80,11 +114,19 @@ public class AuthenticationService {
 		return ANONYMOUS_USER;
 	}
 
-	public void authenticate(final Login login, final PasswordCallback passwordCallback) {
+	/**
+	 * Extracts the unencrypted password for the user and sets it in the
+	 * {@param passwordCallback} for further processing.
+	 * 
+	 * @param login
+	 * @param passwordCallback object where to set the unencrypted password
+	 * @return the user to be authenticated as if the authentication succeeded
+	 */
+	public AuthenticatedUser authenticate(final Login login, final PasswordCallback passwordCallback) {
 		for (PasswordAuthenticator pa : passwordAuthenticators) {
 			final String pass = pa.fetchUnencryptedPassword(login);
 			if (pass != null) {
-				fetchUser(login, new FetchCallback() {
+				return fetchUser(login, new FetchCallback() {
 
 					@Override
 					public void foundUser(final AuthenticatedUser authUser) {
@@ -94,6 +136,7 @@ public class AuthenticationService {
 				});
 			}
 		}
+		return ANONYMOUS_USER;
 	}
 
 	public ClientAuthenticatorResponse authenticate(final ClientRequest request) {
