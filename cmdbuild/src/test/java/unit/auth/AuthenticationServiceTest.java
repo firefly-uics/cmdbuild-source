@@ -1,6 +1,6 @@
 package unit.auth;
 
-import static org.cmdbuild.auth.user.AnonymousUser.ANONYMOUS_USER;
+import static org.cmdbuild.auth.AnonymousUser.ANONYMOUS_USER;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -22,12 +22,7 @@ public class AuthenticationServiceTest {
 	private static final Login WRONG_LOGIN = Login.newInstance("Inexistent User");
 	private static final String PASSWORD = "cleartext password";
 	private static final String WRONG_PASSWORD = "wrong password";
-	private static final CMUser USER = new UserImpl();
-	private static final AuthenticatedUser AUTHENTICATED_USER = AuthenticatedUser.newInstance(USER);
-
-	private static final PasswordAuthenticator[] NO_PASSWORD_AUTHENTICATORS = new PasswordAuthenticator[0];
-	private static final ClientRequestAuthenticator[] NO_CLIENTREQUEST_AUTHENTICATORS = new ClientRequestAuthenticator[0];
-	private static final UserFetcher[] NO_USER_FETCHERS = new UserFetcher[0];
+	private static final CMUser USER = UserImpl.newInstanceBuilder().withName("username").build();
 
 	private final PasswordAuthenticator passwordAuthenticatorMock = mock(PasswordAuthenticator.class);
 	private final ClientRequestAuthenticator clientRequestAuthenticatorMock = mock(ClientRequestAuthenticator.class);
@@ -39,70 +34,50 @@ public class AuthenticationServiceTest {
 	 */
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void passwordAuthenticatorsMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService(
-				null,
-				NO_CLIENTREQUEST_AUTHENTICATORS,
-				NO_USER_FETCHERS,
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setPasswordAuthenticators((PasswordAuthenticator[])null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void passwordAuthenticatorsMustHaveNotNullElements() {
-		AuthenticationService as = new AuthenticationService(
-				new PasswordAuthenticator[]{null},
-				NO_CLIENTREQUEST_AUTHENTICATORS,
-				NO_USER_FETCHERS,
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setPasswordAuthenticators(new PasswordAuthenticator[]{null});
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void clientRequestAuthenticatorsMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService(
-				NO_PASSWORD_AUTHENTICATORS,
-				null,
-				NO_USER_FETCHERS,
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setClientRequestAuthenticators((ClientRequestAuthenticator[])null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void clientRequestAuthenticatorsMustHaveNotNullElements() {
-		AuthenticationService as = new AuthenticationService(
-				NO_PASSWORD_AUTHENTICATORS,
-				new ClientRequestAuthenticator[]{null},
-				NO_USER_FETCHERS,
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setClientRequestAuthenticators(new ClientRequestAuthenticator[]{null});
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userFetchersMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService(
-				NO_PASSWORD_AUTHENTICATORS,
-				NO_CLIENTREQUEST_AUTHENTICATORS,
-				null,
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setUserFetchers((UserFetcher[])null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userFetchersMustHaveNotNullElements() {
-		AuthenticationService as = new AuthenticationService(
-				NO_PASSWORD_AUTHENTICATORS,
-				NO_CLIENTREQUEST_AUTHENTICATORS,
-				new UserFetcher[]{null},
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setUserFetchers(new UserFetcher[]{null});
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userStoreMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService(
-				NO_PASSWORD_AUTHENTICATORS,
-				NO_CLIENTREQUEST_AUTHENTICATORS,
-				NO_USER_FETCHERS,
-				null);
+		AuthenticationService as = new AuthenticationService();
+		as.setUserStore(null);
 	}
 
 	/*
 	 * Login and password
 	 */
+
 	@Test
 	public void passwordAuthReturnsAnonymousUserIfNoAuthenticatorIsDefined() {
 		AuthenticationService as = emptyAuthenticatorService();
@@ -158,6 +133,7 @@ public class AuthenticationServiceTest {
 	/*
 	 * Login and PasswordCallback
 	 */
+
 	@Test
 	public void passwordCallbackAuthDoesNothingIfNoAuthenticatorIsDefined() {
 		AuthenticationService as = emptyAuthenticatorService();
@@ -216,6 +192,7 @@ public class AuthenticationServiceTest {
 	/*
 	 * ClientRequest
 	 */
+
 	@Test
 	public void clientRequestAuthReturnsAnonymousUserIfNoAuthenticatorIsDefined() {
 		AuthenticationService as = emptyAuthenticatorService();
@@ -290,19 +267,19 @@ public class AuthenticationServiceTest {
 	/*
 	 * Utility methods
 	 */
+
 	private AuthenticationService emptyAuthenticatorService() {
-		return new AuthenticationService(
-				NO_PASSWORD_AUTHENTICATORS,
-				NO_CLIENTREQUEST_AUTHENTICATORS,
-				NO_USER_FETCHERS,
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setUserStore(userStoreMock);
+		return as;
 	}
 
 	private AuthenticationService mockedAuthenticatorService() {
-		return new AuthenticationService(
-				new PasswordAuthenticator[]{passwordAuthenticatorMock},
-				new ClientRequestAuthenticator[]{clientRequestAuthenticatorMock},
-				new UserFetcher[]{userFectcherMock},
-				userStoreMock);
+		AuthenticationService as = new AuthenticationService();
+		as.setPasswordAuthenticators(passwordAuthenticatorMock);
+		as.setClientRequestAuthenticators(clientRequestAuthenticatorMock);
+		as.setUserFetchers(userFectcherMock);
+		as.setUserStore(userStoreMock);
+		return as;
 	}
 }

@@ -37,8 +37,7 @@
 
 	<modules>
 		<module>cmdbuild</module>
-		<module>auth/core</module>
-		<module>auth/default</module>
+		<module>auth</module>
 		<module>cmdbuild-commons</module>
 		<module>cmdbuild-dao</module>
 		<module>cmdbuild-dms</module>

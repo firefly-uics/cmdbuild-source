@@ -34,7 +34,7 @@ public class SimpleQueryTest extends QueryTestFixture {
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
 
-		DBCard.create(driver, newClass).set(ATTRIBUTE_1, attr1Value).set(ATTRIBUTE_2, attr2Value).save();
+		DBCard.newInstance(driver, newClass).set(ATTRIBUTE_1, attr1Value).set(ATTRIBUTE_2, attr2Value).save();
 
 		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(ATTRIBUTE_1).from(newClass).run();
