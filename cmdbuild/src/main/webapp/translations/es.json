@@ -131,6 +131,26 @@
             },
             "visibility": "Visibilidad"
          },
+         "widgets": {
+            "title": "<em>Widget</em>",
+            "commonFields": {
+               "type": "<em>Tipo</em>",
+               "buttonLabel": "<em>Testo del pulsante</em>",
+               "active": "<em>Attivo</em>"
+            },
+            "REPORT": {
+               "title": "<em>Crea Report</em>",
+               "fields": {
+                  "report": "<em>Report</em>",
+                  "force": "<em>Forza formato</em>",
+                  "presets": "<em>Attributi del report</em>"
+               },
+               "presetGrid": {
+                  "attribute": "<em>Attributo</em>",
+                  "value": "<em>Valore</em>"
+               }
+            }
+         },
          "include_inherited": "Incluye heredados",
          "layers": "Layers",
          "print_schema": "Imprimir esquema",

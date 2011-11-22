@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.TableTree;
@@ -579,6 +580,68 @@ public class ModClass extends JSONBase {
 				}
 			}
 			serializer.put("rows", rows);
+		return serializer;
+	}
+
+	// WIDGET DEFINITION
+
+	// TODO implement it
+	@Admin
+	@JSONExported
+	public JSONObject saveWidgetDefinition(
+			JSONObject serializer,
+			@Parameter("className") String className,
+			@Parameter(value="id", required=false) Integer widgetId,
+			@Parameter("definition") String widgetDefinition
+		) throws JSONException {
+			Random generator = new Random();
+			JSONObject def = new JSONObject(widgetDefinition);
+
+			if (widgetId == 0) {
+				serializer.put("id", generator.nextInt());
+			} else {
+				serializer.put("id", widgetId);
+			}
+
+			serializer.put("def", def);
+		return serializer;
+	}
+
+	@Admin
+	@JSONExported
+	public JSONObject readWidgetDefinition(
+			JSONObject serializer,
+			@Parameter("className") String className
+		) throws JSONException {
+
+			JSONArray widgets = new JSONArray();
+			JSONObject w1 = new JSONObject();
+
+			JSONObject def1 = new JSONObject();
+			def1.put("type", "REPORT");
+			def1.put("buttonLabel", "A report widget");
+			def1.put("active", true);
+			def1.put("buttonLabel", "asdfasdfasdf");
+			def1.put("forceFormat", "PDF");
+			def1.put("reportCode", 1123);
+
+			w1.put("id", 1);
+			w1.put("def", def1);
+
+			widgets.put(w1);
+
+			serializer.put("widgets", widgets);
+		return serializer;
+	}
+
+	@Admin
+	@JSONExported
+	public JSONObject removeWidgetDefinition(
+			JSONObject serializer,
+			@Parameter("className") String className,
+			@Parameter("id") int widgetId
+		) throws JSONException {
+
 		return serializer;
 	}
 }

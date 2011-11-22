@@ -40,23 +40,7 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 			hideable: false
 		}];
 
-		this.store = new Ext.data.Store({
-			model: "CMDBuild.cache.CMReporModelForGrid",
-			pageSize: getPageSize(),
-			proxy: {
-				type: "ajax",
-				url: 'services/json/management/modreport/getreportsbytype',
-				reader: {
-					type: "json",
-					root: "rows",
-					totalProperty: 'results'
-				},
-				extraParams: {
-					type: "custom"
-				}
-			},
-			autoLoad: false
-		});
+		this.store = _CMCache.getReportGridStore();
 
 		this.pagingBar = new Ext.toolbar.Paging({
 			store: this.store,
@@ -164,16 +148,5 @@ function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 			}]
 		}).show();
 	}
-}
-
-function getPageSize() {
-	var pageSize;
-	try {
-		pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-	} catch (e) {
-		pageSize = 20;
-	}
-
-	return pageSize;
 }
 })();
