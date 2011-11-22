@@ -131,6 +131,26 @@
             },
             "visibility": "Visibilità"
          },
+         "widgets": {
+            "title": "Widget",
+            "commonFields": {
+               "type": "Tipo",
+               "buttonLabel": "Testo del pulsante",
+               "active": "Attivo"
+            },
+            "REPORT": {
+               "title": "Crea Report",
+               "fields": {
+                  "report": "Report",
+                  "force": "Forza formato",
+                  "presets": "Attributi del report"
+               },
+               "presetGrid": {
+                  "attribute": "Attributo",
+                  "value": "Valore"
+               }
+            }
+         },
          "include_inherited": "Includi ereditati",
          "layers": "Layers",
          "print_schema": "Stampa Schema",

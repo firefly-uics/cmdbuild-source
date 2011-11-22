@@ -493,5 +493,5 @@ CMDBuild.ServiceProxy.menu = {
 	}
 };
 
-
+CMDBuild.ServiceProxy.url = {}; // filled in the extensions
 })();
