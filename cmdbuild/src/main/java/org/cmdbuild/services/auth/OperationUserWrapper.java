@@ -10,17 +10,20 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 public class OperationUserWrapper implements OperationUser {
 
 	private final static UserContext systemContext = UserContext.systemContext(); 
-	final PrivilegeManager pm;
-	final String username;
+	final UserContext userCtx;
 
 	public OperationUserWrapper(final UserContext userCtx) {
-		this.pm = userCtx.privileges();
-		this.username = userCtx.getRequestedUsername();
+		this.userCtx = userCtx;
 	}
 
 	@Override
-	public String getUsername() {
-		return username;
+	public String getOperationUsername() {
+		return userCtx.getRequestedUsername();
+	}
+
+	@Override
+	public String getPreferredGroupName() {
+		return userCtx.getDefaultGroup().getName();
 	}
 
 	@Override
@@ -28,9 +31,9 @@ public class OperationUserWrapper implements OperationUser {
 		if (privilegedObject instanceof CMEntryType) {
 			final CMEntryType type = (CMEntryType) privilegedObject;
 			if (type instanceof CMClass) {
-				return pm.hasReadPrivilege(systemContext.tables().get(type.getName()));
+				return userCtx.privileges().hasReadPrivilege(systemContext.tables().get(type.getName()));
 			} else {
-				return pm.hasReadPrivilege(systemContext.domains().get(type.getName()));
+				return userCtx.privileges().hasReadPrivilege(systemContext.domains().get(type.getName()));
 			}
 		}
 		return false;
@@ -41,9 +44,9 @@ public class OperationUserWrapper implements OperationUser {
 		if (privilegedObject instanceof CMEntryType) {
 			final CMEntryType type = (CMEntryType) privilegedObject;
 			if (type instanceof CMClass) {
-				return pm.hasWritePrivilege(systemContext.tables().get(type.getName()));
+				return userCtx.privileges().hasWritePrivilege(systemContext.tables().get(type.getName()));
 			} else {
-				return pm.hasWritePrivilege(systemContext.domains().get(type.getName()));
+				return userCtx.privileges().hasWritePrivilege(systemContext.domains().get(type.getName()));
 			}
 		}
 		return false;
@@ -51,22 +54,17 @@ public class OperationUserWrapper implements OperationUser {
 
 	@Override
 	public boolean hasAdministratorPrivileges() {
-		return pm.isAdmin();
+		return userCtx.privileges().isAdmin();
 	}
 
 	@Override
 	public boolean hasDatabaseDesignerPrivileges() {
-		return pm.isAdmin();
+		return userCtx.privileges().isAdmin();
 	}
 
 	@Override
 	public boolean hasPrivilege(CMPrivilege privilege) {
-		return pm.isAdmin();
-	}
-
-	@Override
-	public Iterable<PrivilegePair> getAllPrivileges() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return userCtx.privileges().isAdmin();
 	}
 
 	@Override
@@ -77,6 +75,6 @@ public class OperationUserWrapper implements OperationUser {
 		if (requested == DefaultPrivileges.WRITE) {
 			return hasWriteAccess(privilegedObject);
 		}
-		return pm.isAdmin();
+		return userCtx.privileges().isAdmin();
 	}
 }

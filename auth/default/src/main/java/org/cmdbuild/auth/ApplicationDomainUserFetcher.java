@@ -30,6 +30,11 @@ public class ApplicationDomainUserFetcher extends DBUserFetcher {
 	}
 
 	@Override
+	protected final String userDescriptionAttribute() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
 	protected String userPasswordAttribute() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

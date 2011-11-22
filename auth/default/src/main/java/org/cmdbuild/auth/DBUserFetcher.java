@@ -15,11 +15,10 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
-import org.cmdbuild.auth.acl.CMSecurityManager.PrivilegePair;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.GroupImpl;
-import org.cmdbuild.auth.acl.SimpleSecurityManager;
-import org.cmdbuild.auth.acl.SimpleSecurityManager.SimpleSecurityManagerBuilder;
+import org.cmdbuild.auth.acl.GroupImpl.GroupImplBuilder;
+import org.cmdbuild.auth.acl.PrivilegeSet.PrivilegePair;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;
@@ -57,7 +56,10 @@ public abstract class DBUserFetcher implements UserFetcher {
 	public CMUser fetchUser(Login login) {
 		final CMCard userCard = fetchUserCard(login);
 		final String userName = userCard.get(userNameAttribute()).toString();
-		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder().withName(userName);
+		final String userDescription = userCard.get(userDescriptionAttribute()).toString();
+		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder()
+				.withName(userName)
+				.withDescription(userDescription);
 
 		final Map<Object, CMGroup> allGroups = getAllGroups();
 		for (Object groupId : fetchGroupIdsForUser(userCard.getId())) {
@@ -105,17 +107,14 @@ public abstract class DBUserFetcher implements UserFetcher {
 			final CMCard groupCard = row.getCard(groupClassAlias);
 			final Object groupId = groupCard.getId();
 			final boolean groupIsGod = Boolean.TRUE.equals(groupCard.get(groupIsGodAttribute()));
-			final SimpleSecurityManagerBuilder ssmBuilder = SimpleSecurityManager.newInstanceBuilder();
-			ssmBuilder.withPrivileges(allPrivileges.get(groupId));
-			if (groupIsGod) {
-				ssmBuilder.withPrivilege(DefaultPrivileges.GOD);
-			}
-			final CMGroup group = GroupImpl.newInstanceBuilder()
+			final GroupImplBuilder groupBuilder = GroupImpl.newInstanceBuilder()
 					.withName(groupCard.get(groupNameAttribute()).toString())
 					.withDescription(groupCard.get(groupDescriptionAttribute()).toString())
-					.withSecurityManager(ssmBuilder.build())
-					.build();
-			groupCards.put(groupCard.getId(), group);
+					.withPrivileges(allPrivileges.get(groupId));
+			if (groupIsGod) {
+				groupBuilder.withPrivilege(new PrivilegePair(DefaultPrivileges.GOD));
+			}
+			groupCards.put(groupCard.getId(), groupBuilder.build());
 		}
 		return groupCards;
 	}
@@ -196,6 +195,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected abstract CMClass userClass();
 	protected abstract String userEmailAttribute();
 	protected abstract String userNameAttribute();
+	protected abstract String userDescriptionAttribute();
 	protected abstract String userPasswordAttribute();
 	protected abstract String userIdAttribute();
 	protected abstract CMDomain userGroupDomain();

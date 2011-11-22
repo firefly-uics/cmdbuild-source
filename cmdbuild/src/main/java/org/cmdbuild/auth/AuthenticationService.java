@@ -1,17 +1,19 @@
 package org.cmdbuild.auth;
 
+import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.user.CMUser;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.cmdbuild.auth.AnonymousUser.ANONYMOUS_USER;
+import static org.cmdbuild.auth.AuthenticatedUser.ANONYMOUS_USER;
 
 @Component
 public class AuthenticationService {
 
 	public static class ClientAuthenticatorResponse {
+
 		private final AuthenticatedUser user;
 		private final String redirectUrl;
 
@@ -30,7 +32,7 @@ public class AuthenticationService {
 		public final String getRedirectUrl() {
 			return redirectUrl;
 		}
-		}
+	}
 
 	public interface PasswordCallback {
 
@@ -94,18 +96,20 @@ public class AuthenticationService {
 	/**
 	 * Actively checks the user credentials and returns the authenticated
 	 * user on success.
-	 * 
+	 *
 	 * @param login
 	 * @param password unencrypted password
 	 * @return the user that was authenticated
 	 */
 	public AuthenticatedUser authenticate(final Login login, final String password) {
-		for (PasswordAuthenticator pa : passwordAuthenticators) {
+		for (final PasswordAuthenticator pa : passwordAuthenticators) {
 			if (pa.checkPassword(login, password)) {
-				return fetchUser(login, new FetchCallback() {
+				return fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
 					public void foundUser(final AuthenticatedUser authUser) {
+						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
+						authUser.setPasswordChanger(passwordChanger);
 						userStore.setUser(authUser);
 					}
 				});
@@ -117,19 +121,21 @@ public class AuthenticationService {
 	/**
 	 * Extracts the unencrypted password for the user and sets it in the
 	 * {@param passwordCallback} for further processing.
-	 * 
+	 *
 	 * @param login
 	 * @param passwordCallback object where to set the unencrypted password
 	 * @return the user to be authenticated as if the authentication succeeded
 	 */
 	public AuthenticatedUser authenticate(final Login login, final PasswordCallback passwordCallback) {
-		for (PasswordAuthenticator pa : passwordAuthenticators) {
+		for (final PasswordAuthenticator pa : passwordAuthenticators) {
 			final String pass = pa.fetchUnencryptedPassword(login);
 			if (pass != null) {
-				return fetchUser(login, new FetchCallback() {
+				return fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
 					public void foundUser(final AuthenticatedUser authUser) {
+						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
+						authUser.setPasswordChanger(passwordChanger);
 						userStore.setUser(authUser);
 						passwordCallback.setPassword(pass);
 					}
@@ -139,11 +145,17 @@ public class AuthenticationService {
 		return ANONYMOUS_USER;
 	}
 
+	/**
+	 * Tries to authenticate the user with a ClientRequestAuthenticator
+	 *
+	 * @param request object representing a client request
+	 * @return response object with the authenticated user or a redirect URL
+	 */
 	public ClientAuthenticatorResponse authenticate(final ClientRequest request) {
 		for (ClientRequestAuthenticator cra : clientRequestAuthenticators) {
 			ClientRequestAuthenticator.Response response = cra.authenticate(request);
 			if (response != null) {
-				final AuthenticatedUser authUser = fetchUser(response.getLogin(), new FetchCallback() {
+				final AuthenticatedUser authUser = fetchAuthenticatedUser(response.getLogin(), new FetchCallback() {
 					@Override
 					public void foundUser(final AuthenticatedUser authUser) {
 						userStore.setUser(authUser);
@@ -155,24 +167,41 @@ public class AuthenticationService {
 		return ClientAuthenticatorResponse.EMTPY_RESPONSE;
 	}
 
+	/**
+	 * Impersonate another user if the currently authenticated user has
+	 * the right privileges.
+	 *
+	 * @param login
+	 * @return the authenticated user
+	 */
 	public AuthenticatedUser impersonate(final Login login) {
+//		final AuthenticatedUser authUser = userStore.getUser();
+//		final CMUser user = fetchUser(login);
+//		authUser.impersonate(user);
+//		return authUser;
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 
 
-	private AuthenticatedUser fetchUser(final Login login, final FetchCallback callback) {
+	private AuthenticatedUser fetchAuthenticatedUser(final Login login, final FetchCallback callback) {
 		AuthenticatedUser authUser = ANONYMOUS_USER;
-		if (login != null) {
-			for (UserFetcher uf : userFetchers) {
-				final CMUser user = uf.fetchUser(login);
-				if (user != null) {
-					authUser = AuthenticatedUser.newInstance(user);
-					callback.foundUser(authUser);
-					break;
-				}
-			}
+		final CMUser user = fetchUser(login);
+		if (user != null) {
+			authUser = AuthenticatedUser.newInstance(user);
+			callback.foundUser(authUser);
 		}
 		return authUser;
+	}
+
+	private CMUser fetchUser(final Login login) {
+		CMUser user = null;
+		for (UserFetcher uf : userFetchers) {
+			user = uf.fetchUser(login);
+			if (user != null) {
+				break;
+			}
+		}
+		return user;
 	}
 }
