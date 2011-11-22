@@ -8,10 +8,9 @@ import java.util.List;
 import org.cmdbuild.auth.acl.AbstractSecurityManager;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
-import org.cmdbuild.auth.acl.CMSecurityManager.PrivilegePair;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.DefaultPrivileges.SimplePrivilege;
-
+import org.cmdbuild.auth.acl.PrivilegeSet.PrivilegePair;
 import org.cmdbuild.auth.acl.SimpleSecurityManager;
 import org.cmdbuild.auth.acl.SimpleSecurityManager.SimpleSecurityManagerBuilder;
 import org.junit.Test;

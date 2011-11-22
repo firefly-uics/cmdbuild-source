@@ -29,6 +29,11 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 	}
 
 	@Override
+	protected final String userDescriptionAttribute() {
+		return "Description";
+	}
+
+	@Override
 	protected final String userPasswordAttribute() {
 		return "Password";
 	}

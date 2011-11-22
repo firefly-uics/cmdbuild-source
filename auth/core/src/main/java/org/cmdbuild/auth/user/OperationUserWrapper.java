@@ -15,8 +15,8 @@ public abstract class OperationUserWrapper implements OperationUser {
 	}
 
 	@Override
-	public final String getUsername() {
-		return inner.getUsername();
+	public final String getOperationUsername() {
+		return inner.getOperationUsername();
 	}
 
 	@Override

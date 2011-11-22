@@ -71,7 +71,7 @@ public class DBAuthenticator implements Authenticator {
 	public void changePassword(final String username, final String oldPassword, final String newPassword) {
 		final Login login = Login.newInstance(username);
 		try {
-			getNewImplementation().changePassword(login, oldPassword, newPassword);
+			getNewImplementation().getPasswordChanger(login).changePassword(oldPassword, newPassword);
 		} catch (IllegalArgumentException e) {
 			throw AuthExceptionType.AUTH_WRONG_PASSWORD.createException();
 		}

@@ -11,6 +11,7 @@ public class UserImpl implements CMUser {
 	public static class UserImplBuilder implements Builder<UserImpl> {
 
 		private String name;
+		private String description;
 		private Set<CMGroup> groups;
 
 		private UserImplBuilder() {
@@ -19,6 +20,11 @@ public class UserImpl implements CMUser {
 
 		public UserImplBuilder withName(final String name) {
 			this.name = name;
+			return this;
+		}
+
+		public UserImplBuilder withDescription(final String description) {
+			this.description = description;
 			return this;
 		}
 
@@ -35,16 +41,19 @@ public class UserImpl implements CMUser {
 		@Override
 		public UserImpl build() {
 			Validate.notNull(name);
+			Validate.notNull(description);
 			Validate.noNullElements(groups);
 			return new UserImpl(this);
 		}
 	}
 
 	private final String name;
+	private final String description;
 	private final Set<CMGroup> groups;
 
 	private UserImpl(final UserImplBuilder builder) {
 		this.name = builder.name;
+		this.description = builder.description;
 		this.groups = builder.groups;
 	}
 
@@ -54,11 +63,40 @@ public class UserImpl implements CMUser {
 	}
 
 	@Override
+	public String getDescription() {
+		return this.description;
+	}
+
+	@Override
 	public Set<CMGroup> getGroups() {
 		return this.groups;
+	}
+
+	@Override
+	public String getDefaultGroupName() {
+		// TODO
+		return null;
 	}
 
 	public static UserImplBuilder newInstanceBuilder() {
 		return new UserImplBuilder();
 	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (!CMUser.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+		final CMUser other = CMUser.class.cast(obj);
+		return name.equals(other.getName());
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
 }

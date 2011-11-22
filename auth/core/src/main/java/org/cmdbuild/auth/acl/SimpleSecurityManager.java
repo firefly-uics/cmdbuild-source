@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
 
-public class SimpleSecurityManager extends AbstractSecurityManager {
+public class SimpleSecurityManager extends AbstractSecurityManager implements PrivilegeSet {
 
 	public static class SimpleSecurityManagerBuilder implements Builder<SimpleSecurityManager> {
 
