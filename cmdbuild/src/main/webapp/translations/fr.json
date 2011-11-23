@@ -426,6 +426,11 @@
             "rowlimit": "Limite colone",
             "sessiontimeout": "Session expirée (en secondes)",
             "startingClass": "Default class",
+            "tabs_position": {
+               "bottom": "<em>Bottom</em>",
+               "label": "<em>Tabs position in card panel</em>",
+               "top": "<em>Top</em>"
+            },
             "title": "CMDBuild Setup"
          },
          "gis": {

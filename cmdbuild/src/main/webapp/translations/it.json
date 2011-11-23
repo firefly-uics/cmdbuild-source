@@ -426,7 +426,12 @@
             "rowlimit": "Limite righe",
             "sessiontimeout": "Durata sessione (secondi)",
             "startingClass": "Classe di default",
-            "title": "Configurazione CMDBuild"
+            "tabs_position": {
+               "bottom": "Sotto",
+               "label": "Posizione linguette nel pannello card",
+               "top": "Sopra"
+            },
+            "title": "Configurazione CMDBuild",
          },
          "gis": {
             "center_lat": "Latitudine iniziale",

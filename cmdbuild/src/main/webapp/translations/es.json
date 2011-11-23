@@ -426,6 +426,11 @@
             "rowlimit": "Límite filas",
             "sessiontimeout": "Duración de la sesión (segundos)",
             "startingClass": "Clase por defecto",
+            "tabs_position": {
+               "bottom": "<em>Sotto</em>",
+               "label": "<em>Posizione linguette nel pannello card</em>",
+               "top": "<em>Sopra</em>"
+            },
             "title": "Configuración CMDBuild"
          },
          "gis": {

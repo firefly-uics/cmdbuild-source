@@ -426,6 +426,11 @@
             "rowlimit": "Broj redova na jednoj stranici",
             "sessiontimeout": "Sesija je istekla (seconds)",
             "startingClass": "Podrazumevana klasa",
+            "tabs_position": {
+               "bottom": "<em>Bottom</em>",
+               "label": "<em>Tabs position in card panel</em>",
+               "top": "<em>Top</em>"
+            },
             "title": "CMDBuild podešavanja"
          },
          "gis": {
