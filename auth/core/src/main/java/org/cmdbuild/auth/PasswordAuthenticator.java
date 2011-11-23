@@ -1,6 +1,6 @@
 package org.cmdbuild.auth;
 
-public interface PasswordAuthenticator {
+public interface PasswordAuthenticator extends CMAuthenticator {
 
 	interface PasswordChanger {
 

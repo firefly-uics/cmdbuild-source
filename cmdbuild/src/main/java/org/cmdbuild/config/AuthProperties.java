@@ -1,13 +1,16 @@
 package org.cmdbuild.config;
 
-import java.util.Arrays;
-import java.util.List;
+import com.google.common.collect.Sets;
+import java.util.Collections;
 
+import java.util.Set;
+import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.CasAuthenticator;
 import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.services.Settings;
 
-public class AuthProperties extends DefaultProperties implements HeaderAuthenticator.Configuration, CasAuthenticator.Configuration {
+public class AuthProperties extends DefaultProperties
+		implements HeaderAuthenticator.Configuration, CasAuthenticator.Configuration, AuthenticationService.Configuration {
 
 	private static final long serialVersionUID = 1L;
 	private static final String MODULE_NAME = "auth";
@@ -65,33 +68,31 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return (AuthProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
-	public String[] getServiceUsers() {
-		String commaSeparatedUsers = getProperty(SERVICE_USERS);
-		if (commaSeparatedUsers.length() == 0)
-			return new String[0];
-		return commaSeparatedUsers.split(",");
-	}
-
 	public boolean getForceWSPasswordDigest() {
 		return Boolean.parseBoolean(getProperty(FORCE_WS_PASSWORD_DIGEST));
 	}
 
+	@Override
 	public String getHeaderAttributeName() {
 		return getProperty(HEADER_ATTRIBUTE_NAME);
 	}
 
+	@Override
 	public String getCasServerUrl() {
 		return getProperty(CAS_SERVER_URL);
 	}
 
+	@Override
 	public String getCasLoginPage() {
 		return getProperty(CAS_LOGIN_PAGE);
 	}
 
+	@Override
 	public String getCasTicketParam() {
 		return getProperty(CAS_TICKET_PARAM, "ticket");
 	}
 
+	@Override
 	public String getCasServiceParam() {
 		return getProperty(CAS_SERVICE_PARAM, "service");
 	}
@@ -140,12 +141,27 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return getProperty(LDAP_AUTHENTICATION_PASSWORD);
 	}
 
-	public List<String> getAuthMethodNames() {
-		String csvNames = getProperty(AUTH_METHODS);
-		return Arrays.asList(csvNames.split(","));
-	}
-
 	public String getAutologin() {
 		return getProperty(AUTO_LOGIN, "");
+	}
+
+	@Override
+	public Set<String> getActiveAuthenticators() {
+		final String csMethods = getProperty(AUTH_METHODS);
+		if (csMethods.isEmpty()) {
+			return Collections.EMPTY_SET;
+		} else {
+			return Sets.newHashSet(csMethods.split(","));
+		}
+	}
+
+	@Override
+	public Set<String> getServiceUsers() {
+		final String csUsers = getProperty(SERVICE_USERS);
+		if (csUsers.isEmpty()) {
+			return Collections.EMPTY_SET;
+		} else {
+			return Sets.newHashSet(csUsers.split(","));
+		}
 	}
 }
