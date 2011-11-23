@@ -24,7 +24,7 @@
 				frame: false,
 				border: false,
 				hideMode: "offsets",
-				bodyCls: "x-panel-body-default-framed",
+				bodyCls: "x-panel-body-default-framed cmbordertop",
 				bodyStyle: {
 					padding: "5px 5px 0 5px"
 				},
@@ -47,8 +47,8 @@
 				return;
 			}
 
-			if (this.sideTabPanel) {
-				this.sideTabPanel.editMode();
+			if (this.tabPanel) {
+				this.tabPanel.editMode();
 			}
 
 			this.disableCMTbar();
@@ -58,8 +58,8 @@
 		},
 
 		displayMode: function(enableCmBar) {
-			if (this.sideTabPanel) {
-				this.sideTabPanel.displayMode();
+			if (this.tabPanel) {
+				this.tabPanel.displayMode();
 			}
 
 			if (enableCmBar && this.writePrivilege) {
@@ -67,7 +67,7 @@
 			} else {
 				this.disableCMTbar();
 			}
-			
+
 			this.disableCMButtons();
 			this.fireEvent("cmdisplaymode");
 		},
@@ -97,8 +97,8 @@
 		onAddCardButtonClick: function(idClass, reloadField) {
 			this.reset();
 
-			if (this.sideTabPanel) {
-				this.sideTabPanel.activateFirst();
+			if (this.tabPanel) {
+				this.tabPanel.activateFirst();
 			}
 
 			if (reloadField) {
@@ -194,7 +194,7 @@
 				attributes: attributes,
 				frame: false,
 				border: false,
-				tabLabel: group,
+				title: group,
 				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
 					padding: "5px"
@@ -206,8 +206,8 @@
 			}
 		}
 
-		if (this.sideTabPanel) {
-			delete this.sideTabPanel;
+		if (this.tabPanel) {
+			delete this.tabPanel;
 		}
 
 		if (panels.length == 0) {
@@ -217,7 +217,7 @@
 				attributes: [],
 				frame: false,
 				border: false,
-				tabLabel: "",
+				title: "",
 				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
 					padding: "5px"
@@ -225,14 +225,13 @@
 			})];
 		}
 
-		this.sideTabPanel = new CMDBuild.SideTabPanel({
-			tabs: panels,
+		this.tabPanel = new CMDBuild.view.management.common.CMTabPanel({
+			items: panels,
 			frame: false,
-			border: false,
 			flex: 1
 		});
 
-		this.add(this.sideTabPanel);
+		this.add(this.tabPanel);
 
 		if (this.danglingCard) {
 			loadCard.call(this, this.danglingCard);

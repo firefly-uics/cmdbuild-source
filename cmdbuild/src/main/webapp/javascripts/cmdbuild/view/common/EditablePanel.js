@@ -1,5 +1,9 @@
 (function() {
 	var RIGHT_PADDING_FOR_MAX_FIELD_WIDTH = 40;
+	var STATE = {
+		edit: "editMode",
+		display: "displayMode"
+	};
 
 	Ext.define("CMDBuild.Management.EditablePanel", {
 		extend: "Ext.panel.Panel",
@@ -9,33 +13,44 @@
 		hideMode: "offsets",
 		autoScroll: true,
 
+		_state: STATE.display,
+		_stateSwitchFail: false,
+
 		initComponent : function() {
 			var editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
-				attributes: this.attributes
-			});
-			
-			var displaySubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
-				editable: false,
-				attributes: this.attributes
-			});
+					attributes: this.attributes
+				}),
+
+				displaySubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
+					editable: false,
+					attributes: this.attributes
+				});
 
 			this.items = [displaySubpanel,editSubpanel];
 
 			// privileged functions
 			this.editMode = function() {
 				var layout = this.getLayout();
+				this._state = STATE.edit;
+
 				if (layout.setActiveItem) {
-					layout.setActiveItem(editSubpanel.id);
+					try {
+						layout.setActiveItem(editSubpanel.id);
+					} catch (e) {
+						this._stateSwitchFail = true;
+					}
 				}
 			};
 
 			this.displayMode = function() {
 				var layout = this.getLayout();
+				this._state = STATE.display;
+
 				if (layout.setActiveItem) {
 					try {
 						layout.setActiveItem(displaySubpanel.id);
 					} catch (e) {
-
+						this._stateSwitchFail = true;
 					}
 				}
 			};
@@ -49,9 +64,15 @@
 			};
 
 			this.callParent(arguments);
+
+			this.mon(this, "activate", function() {
+				if (this._stateSwitchFail) {
+					this[this._state]();
+				}
+			}, this);
 		}
 	});
-	
+
 	Ext.define("CMDBuild.Management.EditablePanel.SubPanel", {
 		extend: "Ext.panel.Panel",
 		frame: false,
@@ -109,7 +130,7 @@
 			return panel;
 		}
 	}
-	
+
 	function getFields(attributes, editable) {
 		var fields = [];
 		if (attributes) {
@@ -128,7 +149,7 @@
 		}
 		return fields;
 	};
-	
+
 	function resolveFieldTemplates(field) {
 		if (field.resolveTemplate) {
 			field.resolveTemplate();

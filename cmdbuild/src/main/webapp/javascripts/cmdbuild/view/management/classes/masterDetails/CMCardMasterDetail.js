@@ -28,7 +28,7 @@
 				cmAddGraphColumn: false
 			});
 
-			this.tabs = new CMDBuild.Tabs({
+			this.tabs = new CMDBuild.view.common.CMSideTabPanel({
 				region: "east"
 			});
 
