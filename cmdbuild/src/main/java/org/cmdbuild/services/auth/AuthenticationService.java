@@ -22,7 +22,7 @@ public class AuthenticationService implements Authenticator {
 	private static final List<Authenticator> authMethods = new ArrayList<Authenticator>();
 
 	public void loadAuthMethods() {
-		for (final String name : AuthProperties.getInstance().getAuthMethodNames()) {
+		for (final String name : AuthProperties.getInstance().getActiveAuthenticators()) {
 			try {
 				Log.AUTH.info("Adding authentication method " + name);
 				final Class<?> cls = Class.forName(AUTH_METHODS_PACKAGE + "." + name);

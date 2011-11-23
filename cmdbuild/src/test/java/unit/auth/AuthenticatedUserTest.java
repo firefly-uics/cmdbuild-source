@@ -1,7 +1,7 @@
 package unit.auth;
 
+import org.cmdbuild.auth.acl.InspectableSecurityManager;
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.auth.acl.SimpleSecurityManager;
 import java.util.List;
 import java.util.Collections;
 import java.util.Set;
@@ -10,14 +10,14 @@ import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.PrivilegeSet.PrivilegePair;
 import org.cmdbuild.auth.acl.DefaultPrivileges.SimplePrivilege;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
-import org.cmdbuild.auth.AuthenticatedUser;
+import org.cmdbuild.auth.AuthenticatedUserImpl;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.GroupImpl;
 import org.cmdbuild.auth.user.*;
 
 import org.junit.Test;
-import static org.cmdbuild.auth.AuthenticatedUser.ANONYMOUS_USER;
+import static org.cmdbuild.auth.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 public class AuthenticatedUserTest {
 
-	private static class AuthenticatedUserDouble extends AuthenticatedUser {
+	private static class AuthenticatedUserDouble extends AuthenticatedUserImpl {
 
 		private AuthenticatedUserDouble(final CMUser user) {
 			super(user);
@@ -76,12 +76,12 @@ public class AuthenticatedUserTest {
 
 	@Test
 	public void nullUserCreatesAnAnonymousUser() {
-		assertThat(AuthenticatedUser.newInstance(null), is(ANONYMOUS_USER));
+		assertThat(AuthenticatedUserImpl.newInstance(null), is(ANONYMOUS_USER));
 	}
 
 	@Test
 	public void notNullUserCreatesARegularUser() {
-		assertThat(AuthenticatedUser.newInstance(innerUser), is(not(ANONYMOUS_USER)));
+		assertThat(AuthenticatedUserImpl.newInstance(innerUser), is(not(ANONYMOUS_USER)));
 	}
 
 	/*
@@ -113,7 +113,7 @@ public class AuthenticatedUserTest {
 		when(innerUser.getDescription()).thenReturn("Inner");
 		when(innerUser.getGroups()).thenReturn(Collections.EMPTY_SET);
 		when(innerUser.getDefaultGroupName()).thenReturn("group");
-		AuthenticatedUser au = AuthenticatedUser.newInstance(innerUser);
+		AuthenticatedUserImpl au = AuthenticatedUserImpl.newInstance(innerUser);
 
 		assertThat(au.getName(), is("inner"));
 		assertThat(au.getDescription(), is("Inner"));
@@ -122,19 +122,49 @@ public class AuthenticatedUserTest {
 	}
 
 	/*
+	 * CMSecurityManager wrap
+	 */
+
+	@Test
+	public void forwardsCallsToTheSecurityManager() {
+		final CMPrivilege p = new SimplePrivilege();
+		final InspectableSecurityManager securityManager = mock(InspectableSecurityManager.class);
+		AuthenticatedUserDouble au = new AuthenticatedUserDouble(innerUser) {
+
+			@Override
+			protected InspectableSecurityManager getSecurityManager() {
+				return securityManager;
+			}
+		};
+
+		au.hasReadAccess(po1);
+		au.hasWriteAccess(po1);
+		au.hasDatabaseDesignerPrivileges();
+		au.hasAdministratorPrivileges();
+		au.hasPrivilege(p);
+		au.hasPrivilege(p, po1);
+
+		verify(securityManager, times(1)).hasReadAccess(po1);
+		verify(securityManager, times(1)).hasWriteAccess(po1);
+		verify(securityManager, times(1)).hasDatabaseDesignerPrivileges();
+		verify(securityManager, times(1)).hasAdministratorPrivileges();
+		verify(securityManager, times(1)).hasPrivilege(p, po1);
+	}
+
+	/*
 	 * Password change
 	 */
 
 	@Test
 	public void cannotChangePasswordIfPasswordChangerWasNotSet() {
-		AuthenticatedUser au = AuthenticatedUser.newInstance(innerUser);
+		AuthenticatedUserImpl au = AuthenticatedUserImpl.newInstance(innerUser);
 		assertFalse(au.canChangePassword());
 		assertFalse(au.changePassword("x", "y"));
 	}
 
 	@Test
 	public void canChangePasswordIfPasswordChangerWasSet() {
-		AuthenticatedUser au = AuthenticatedUser.newInstance(innerUser);
+		AuthenticatedUserImpl au = AuthenticatedUserImpl.newInstance(innerUser);
 		PasswordChanger passwordChanger = mock(PasswordChanger.class);
 		au.setPasswordChanger(passwordChanger);
 

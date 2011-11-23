@@ -1,5 +1,7 @@
 package org.cmdbuild.auth;
 
+import org.cmdbuild.auth.Login.LoginType;
+import java.util.Set;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.user.CMUser;
 import org.apache.commons.lang.Validate;
@@ -7,10 +9,29 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.cmdbuild.auth.AuthenticatedUser.ANONYMOUS_USER;
+import static org.cmdbuild.auth.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 @Component
 public class AuthenticationService {
+
+	public interface Configuration {
+		/**
+		 * Returns the names of the authenticators that should be activated,
+		 * or null if all authenticators should be activated.
+		 *
+		 * @return active authenticators or null
+		 */
+		Set<String> getActiveAuthenticators();
+
+		/**
+		 * Return the names of the service users. They can only log in
+		 * with password callback and can impersonate other users. Null
+		 * means that there is no service user defined.
+		 *
+		 * @return a list of service users or null
+		 */
+		Set<String> getServiceUsers();
+	}
 
 	public static class ClientAuthenticatorResponse {
 
@@ -41,22 +62,19 @@ public class AuthenticationService {
 
 	private interface FetchCallback {
 
-		void foundUser(AuthenticatedUser authUser);
+		void foundUser(AuthenticatedUserImpl authUser);
 	}
 
-	private static final PasswordAuthenticator[] NO_PASSWORD_AUTHENTICATORS = new PasswordAuthenticator[0];
-	private static final ClientRequestAuthenticator[] NO_CLIENTREQUEST_AUTHENTICATORS = new ClientRequestAuthenticator[0];
-	private static final UserFetcher[] NO_USER_FETCHERS = new UserFetcher[0];
 	private static final UserStore DUMB_STORE = new UserStore() {
 
 		@Override
 		public AuthenticatedUser getUser() {
-			throw new UnsupportedOperationException("Not supported yet.");
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void setUser(AuthenticatedUser user) {
-			throw new UnsupportedOperationException("Not supported yet.");
+			throw new UnsupportedOperationException();
 		}
 	};
 
@@ -65,11 +83,32 @@ public class AuthenticationService {
 	private UserFetcher[] userFetchers;
 	private UserStore userStore;
 
-	@Autowired
+	private final Set<String> serviceUsers;
+	private final Set<String> authenticatorNames;
+
 	public AuthenticationService() {
-		passwordAuthenticators = NO_PASSWORD_AUTHENTICATORS;
-		clientRequestAuthenticators = NO_CLIENTREQUEST_AUTHENTICATORS;
-		userFetchers = NO_USER_FETCHERS;
+		this(new Configuration() {
+
+			@Override
+			public Set<String> getActiveAuthenticators() {
+				return null;
+			}
+
+			@Override
+			public Set<String> getServiceUsers() {
+				return null;
+			}
+		});
+	}
+
+	@Autowired
+	public AuthenticationService(final Configuration conf) {
+		Validate.notNull(conf);
+		this.serviceUsers = conf.getServiceUsers();
+		this.authenticatorNames = conf.getActiveAuthenticators();
+		passwordAuthenticators = new PasswordAuthenticator[0];
+		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
+		userFetchers = new UserFetcher[0];
 		userStore = DUMB_STORE;
 	}
 
@@ -93,6 +132,22 @@ public class AuthenticationService {
 		this.userStore = userStore;
 	}
 
+	private boolean isInactive(final CMAuthenticator authenticator) {
+		return authenticatorNames != null && !authenticatorNames.contains(authenticator.getName());
+	}
+
+	private boolean isServiceUser(final CMUser user) {
+		return isServiceUser(user.getName());
+	}
+
+	private boolean isServiceUser(final Login login) {
+		return (login.getType() == LoginType.USERNAME) && isServiceUser(login.getValue());
+	}
+
+	private boolean isServiceUser(final String username) {
+		return serviceUsers != null && serviceUsers.contains(username);
+	}
+
 	/**
 	 * Actively checks the user credentials and returns the authenticated
 	 * user on success.
@@ -102,12 +157,18 @@ public class AuthenticationService {
 	 * @return the user that was authenticated
 	 */
 	public AuthenticatedUser authenticate(final Login login, final String password) {
+		if (isServiceUser(login)) {
+			return ANONYMOUS_USER;
+		}
 		for (final PasswordAuthenticator pa : passwordAuthenticators) {
+			if (isInactive(pa)) {
+				continue;
+			}
 			if (pa.checkPassword(login, password)) {
 				return fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
+					public void foundUser(final AuthenticatedUserImpl authUser) {
 						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
 						authUser.setPasswordChanger(passwordChanger);
 						userStore.setUser(authUser);
@@ -128,12 +189,15 @@ public class AuthenticationService {
 	 */
 	public AuthenticatedUser authenticate(final Login login, final PasswordCallback passwordCallback) {
 		for (final PasswordAuthenticator pa : passwordAuthenticators) {
+			if (isInactive(pa)) {
+				continue;
+			}
 			final String pass = pa.fetchUnencryptedPassword(login);
 			if (pass != null) {
 				return fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
+					public void foundUser(final AuthenticatedUserImpl authUser) {
 						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
 						authUser.setPasswordChanger(passwordChanger);
 						userStore.setUser(authUser);
@@ -153,11 +217,14 @@ public class AuthenticationService {
 	 */
 	public ClientAuthenticatorResponse authenticate(final ClientRequest request) {
 		for (ClientRequestAuthenticator cra : clientRequestAuthenticators) {
+			if (isInactive(cra)) {
+				continue;
+			}
 			ClientRequestAuthenticator.Response response = cra.authenticate(request);
 			if (response != null) {
 				final AuthenticatedUser authUser = fetchAuthenticatedUser(response.getLogin(), new FetchCallback() {
 					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
+					public void foundUser(final AuthenticatedUserImpl authUser) {
 						userStore.setUser(authUser);
 					}
 				});
@@ -175,20 +242,22 @@ public class AuthenticationService {
 	 * @return the authenticated user
 	 */
 	public AuthenticatedUser impersonate(final Login login) {
-//		final AuthenticatedUser authUser = userStore.getUser();
-//		final CMUser user = fetchUser(login);
-//		authUser.impersonate(user);
-//		return authUser;
-		throw new UnsupportedOperationException("Not implemented");
+		final AuthenticatedUser authUser = userStore.getUser();
+		if (authUser.hasAdministratorPrivileges() || isServiceUser(authUser)) {
+			final CMUser user = fetchUser(login);
+			authUser.impersonate(user);
+			return authUser;
+		}
+		throw new UnsupportedOperationException();
 	}
 
 
 
 	private AuthenticatedUser fetchAuthenticatedUser(final Login login, final FetchCallback callback) {
-		AuthenticatedUser authUser = ANONYMOUS_USER;
+		AuthenticatedUserImpl authUser = ANONYMOUS_USER;
 		final CMUser user = fetchUser(login);
 		if (user != null) {
-			authUser = AuthenticatedUser.newInstance(user);
+			authUser = AuthenticatedUserImpl.newInstance(user);
 			callback.foundUser(authUser);
 		}
 		return authUser;

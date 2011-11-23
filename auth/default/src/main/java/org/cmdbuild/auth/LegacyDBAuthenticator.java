@@ -29,6 +29,11 @@ public class LegacyDBAuthenticator extends LegacyDBUserFetcher implements Passwo
 	}
 
 	@Override
+	public String getName() {
+		return "DBAuthenticator";
+	}
+
+	@Override
 	public boolean checkPassword(final Login login, final String password) {
 		if (password == null) {
 			return false;

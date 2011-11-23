@@ -7,7 +7,7 @@ public interface CMGroup extends PrivilegeSet {
 
 	/**
 	 * Two CMGroups are equal if their name is equal
-	 * 
+	 *
 	 * @param obj
 	 * @return if the two groups are equal
 	 */

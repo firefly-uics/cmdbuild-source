@@ -1,7 +1,7 @@
 package org.cmdbuild.auth;
 
 
-public interface ClientRequestAuthenticator {
+public interface ClientRequestAuthenticator extends CMAuthenticator {
 
 	interface ClientRequest {
 

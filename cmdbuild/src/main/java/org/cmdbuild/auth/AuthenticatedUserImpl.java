@@ -8,18 +8,17 @@ import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
-import org.cmdbuild.auth.acl.CMSecurityManager;
+import org.cmdbuild.auth.acl.InspectableSecurityManager;
 import org.cmdbuild.auth.acl.SimpleSecurityManager;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.OperationUser;
 
-public class AuthenticatedUser implements CMUser, OperationUser {
+public class AuthenticatedUserImpl implements AuthenticatedUser {
 
 	private interface GroupFilter {
 		boolean matches(CMGroup group);
 	}
 
-	private static class AnonymousUser extends AuthenticatedUser {
+	private static class AnonymousUser extends AuthenticatedUserImpl {
 
 		private AnonymousUser() {
 			super(new CMUser() {
@@ -52,26 +51,26 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 		}
 	}
 
-	public static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();
+	public static final AuthenticatedUserImpl ANONYMOUS_USER = new AnonymousUser();
 
 	private final CMUser inner;
 	private PasswordChanger passwordChanger;
 
 	private CMGroup preferredGroup;
-	private SimpleSecurityManager securityManager;
+	private InspectableSecurityManager securityManager;
 
-	public static AuthenticatedUser newInstance(final CMUser user) {
+	public static AuthenticatedUserImpl newInstance(final CMUser user) {
 		if (user == null) {
 			return ANONYMOUS_USER;
 		} else {
-			return new AuthenticatedUser(user);
+			return new AuthenticatedUserImpl(user);
 		}
 	}
 
-	protected AuthenticatedUser(final CMUser user) {
+	protected AuthenticatedUserImpl(final CMUser user) {
 		Validate.notNull(user);
-		if (user instanceof AuthenticatedUser) {
-			this.inner = ((AuthenticatedUser)user).inner;
+		if (user instanceof AuthenticatedUserImpl) {
+			this.inner = ((AuthenticatedUserImpl)user).inner;
 		} else {
 			this.inner = user;
 		}
@@ -99,6 +98,7 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 		return firstGroup;
 	}
 
+	@Override
 	public boolean isValid() {
 		return getPreferredGroup() != null;
 	}
@@ -111,10 +111,12 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 		this.passwordChanger = passwordChanger;
 	}
 
+	@Override
 	public final boolean changePassword(final String oldPassword, final String newPassword) {
 		return canChangePassword() && passwordChanger.changePassword(oldPassword, newPassword);
 	}
 
+	@Override
 	public final boolean canChangePassword() {
 		return passwordChanger != null;
 	}
@@ -123,6 +125,7 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 	 * Preferred group
 	 */
 
+	@Override
 	public final void selectGroup(final String groupName) {
 		preferredGroup = getGroup(inner, groupName);
 	}
@@ -150,11 +153,12 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 	 * Privileges
 	 */
 
+	@Override
 	public final void filterPrivileges(final String groupName) {
 		this.securityManager = mergeGroupPrivileges(inner, filterName(groupName));
 	}
 
-	private SimpleSecurityManager mergeGroupPrivileges(final CMUser user, final GroupFilter filter) {
+	private InspectableSecurityManager mergeGroupPrivileges(final CMUser user, final GroupFilter filter) {
 		SimpleSecurityManager.SimpleSecurityManagerBuilder builder = SimpleSecurityManager.newInstanceBuilder();
 		for (final CMGroup g : user.getGroups()) {
 			if (filter.matches(g)) {
@@ -183,17 +187,18 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 	}
 
 	// TODO: change after impersonate
-	protected SimpleSecurityManager getSecurityManager() {
+	protected InspectableSecurityManager getSecurityManager() {
 		return securityManager;
 	}
 
 	/**
 	 * Impersonates another user, if possible. This method should be called
 	 * by the AuthenticationService.
-	 * 
+	 *
 	 * @param user user to impersonate
 	 */
-	void impersonate(CMUser user) {
+	@Override
+	public void impersonate(CMUser user) {
 		throw new IllegalArgumentException();
 	}
 
@@ -269,7 +274,7 @@ public class AuthenticatedUser implements CMUser, OperationUser {
 
 	@Override
 	public boolean hasPrivilege(CMPrivilege requested, CMPrivilegedObject privilegedObject) {
-		return hasPrivilege(requested, privilegedObject);
+		return getSecurityManager().hasPrivilege(requested, privilegedObject);
 	}
 
 }

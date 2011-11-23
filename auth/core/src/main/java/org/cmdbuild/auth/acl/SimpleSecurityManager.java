@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
 
-public class SimpleSecurityManager extends AbstractSecurityManager implements PrivilegeSet {
+public class SimpleSecurityManager extends AbstractSecurityManager implements InspectableSecurityManager {
 
 	public static class SimpleSecurityManagerBuilder implements Builder<SimpleSecurityManager> {
 
@@ -51,7 +51,7 @@ public class SimpleSecurityManager extends AbstractSecurityManager implements Pr
 			}
 			return grantedPrivileges;
 		}
-		
+
 		private void mergePrivilege(final CMPrivilege newPrivilege, final List<CMPrivilege> grantedPrivileges) {
 						final Iterator<CMPrivilege> iter = grantedPrivileges.iterator();
 			while (iter.hasNext()) {

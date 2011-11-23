@@ -76,6 +76,11 @@ public class CasAuthenticator implements ClientRequestAuthenticator {
 	}
 
 	@Override
+	public String getName() {
+		return "CasAuthenticator";
+	}
+
+	@Override
 	public Response authenticate(final ClientRequest request) {
 		final ClientRequest skipSsoRequest = new SkipSsoClientRequest(request);
 
