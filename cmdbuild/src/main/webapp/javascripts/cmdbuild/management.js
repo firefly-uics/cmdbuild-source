@@ -53,6 +53,13 @@
 					new Ext.panel.Panel({}),
 					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
 						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
+					}),
+					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
+						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
+					}),
+					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
+						cmName: "report",
+						cmControllerType: CMDBuild.controller.management.report.CMModReportController
 					})
 				];
 
@@ -64,22 +71,11 @@
 				if (!disabled[processAccordion.cmName]) {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
-
-					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
-						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
-					});
-					this.cmPanels.push(this.processPanel);
 				}
 
 				if (!disabled[reportAccordion.cmName]) {
 					this.reportAccordion = reportAccordion;
 					this.cmAccordions.push(this.reportAccordion);
-
-					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
-						cmName: "report",
-						cmControllerType: CMDBuild.controller.management.report.CMModReportController
-					});
-					this.cmPanels.push(this.reportPanel);
 				}
 
 				this.utilitiesTree = utilitiesTree;
