@@ -18,9 +18,9 @@
             },
             "domain": "Dominio",
             "editorType": {
-                "label": "<em>Tipo di editor</em>",
-                "plain":"<em>Testo semplice</em>",
-                "html":"<em>Editor HTML</em>"
+               "html": "<em>Editor HTML</em>",
+               "label": "<em>Tipo di editor</em>",
+               "plain": "<em>Testo semplice</em>"
             },
             "field_hidden": "Escondido",
             "field_read": "Sólo lectura",
@@ -87,8 +87,8 @@
             "domain": "Dominio",
             "is_active": "Activo",
             "m_d": "M/D",
-            "md_label": "Etiqueta Master/Detail",
             "master_detail": "Master/Detail",
+            "md_label": "Etiqueta Master/Detail",
             "modify_domain": "Modificar Dominio",
             "name": "Nombre",
             "title_add": "Agregar dominio",
@@ -131,26 +131,6 @@
             },
             "visibility": "Visibilidad"
          },
-         "widgets": {
-            "title": "<em>Widget</em>",
-            "commonFields": {
-               "type": "<em>Tipo</em>",
-               "buttonLabel": "<em>Testo del pulsante</em>",
-               "active": "<em>Attivo</em>"
-            },
-            "REPORT": {
-               "title": "<em>Crea Report</em>",
-               "fields": {
-                  "report": "<em>Report</em>",
-                  "force": "<em>Forza formato</em>",
-                  "presets": "<em>Attributi del report</em>"
-               },
-               "presetGrid": {
-                  "attribute": "<em>Attributo</em>",
-                  "value": "<em>Valore</em>"
-               }
-            }
-         },
          "include_inherited": "Incluye heredados",
          "layers": "Layers",
          "print_schema": "Imprimir esquema",
@@ -161,7 +141,27 @@
             "properties": "Propiedad"
          },
          "title": "Gestión de clases",
-         "tree_title": "Clases"
+         "tree_title": "Clases",
+         "widgets": {
+            "REPORT": {
+               "fields": {
+                  "force": "<em>Forza formato</em>",
+                  "presets": "<em>Attributi del report</em>",
+                  "report": "<em>Report</em>"
+               },
+               "presetGrid": {
+                  "attribute": "<em>Attributo</em>",
+                  "value": "<em>Valore</em>"
+               },
+               "title": "<em>Crea Report</em>"
+            },
+            "commonFields": {
+               "active": "<em>Attivo</em>",
+               "buttonLabel": "<em>Testo del pulsante</em>",
+               "type": "<em>Tipo</em>"
+            },
+            "title": "<em>Widget</em>"
+         }
       },
       "modLookup": {
          "add_lookuptype": "Agregar Tipo Lookup",
@@ -433,23 +433,6 @@
             },
             "title": "Configuración CMDBuild"
          },
-         "gis": {
-            "center_lat": "Latitud inicial",
-            "center_lon": "Longitud inicial",
-            "enable": "Habilitado",
-            "initial_zoom": "Zoom inicial",
-            "serverurl": "URL del servidor",
-            "title": "GIS"
-         },
-         "graph": {
-            "baseLevel": "Nivel por defecto",
-            "clusteringThreshold": "Umbral para el reagrupamiento de los nodos",
-            "enabled": "Habilitado",
-            "expandingThreshold": "Número máximo de nodos en un grupo expandible",
-            "extensionMaximumLevel": "Máximo nivel seleccionable",
-            "menuTitle": "Gráfico de las Relaciones",
-            "title": "Configuración Gráfico de las Relaciones"
-         },
          "dms": {
             "categoryLookup": "Categoría de CMDBuild",
             "credential": "Credenciales",
@@ -469,6 +452,23 @@
             "repositoryWSPath": "Recorrido para el servicio web",
             "serverUrl": "Url del servicio",
             "title": "Configuración Alfresco"
+         },
+         "gis": {
+            "center_lat": "Latitud inicial",
+            "center_lon": "Longitud inicial",
+            "enable": "Habilitado",
+            "initial_zoom": "Zoom inicial",
+            "serverurl": "URL del servidor",
+            "title": "GIS"
+         },
+         "graph": {
+            "baseLevel": "Nivel por defecto",
+            "clusteringThreshold": "Umbral para el reagrupamiento de los nodos",
+            "enabled": "Habilitado",
+            "expandingThreshold": "Número máximo de nodos en un grupo expandible",
+            "extensionMaximumLevel": "Máximo nivel seleccionable",
+            "menuTitle": "Gráfico de las Relaciones",
+            "title": "Configuración Gráfico de las Relaciones"
          },
          "modify": "Modificar",
          "save": "Confirma",
@@ -552,8 +552,8 @@
       "loading": "Cargando...",
       "loading_mask": {
          "classes": "Estoy cargando las clases",
-         "domain": "Estoy cargando los dominios",
          "configuration": "Estoy cargando la configuración",
+         "domain": "Estoy cargando los dominios",
          "group": "Estoy cargando la lista usuarios y grupos",
          "lookup": "Estoy cargando la lista lookup",
          "menu": "Estoy cargando los menúes",
@@ -635,15 +635,15 @@
       "title": "Configuración"
    },
    "errors": {
-   	  "busy_wf_widgets": "Los controles visuales están ocupados, controle el estado del servidor antes de intentar de nuevo. ",
+      "busy_wf_widgets": "Los controles visuales están ocupados, controle el estado del servidor antes de intentar de nuevo. ",
       "detail": "Detalles",
       "error_message": "Error",
       "error_moving_row": "Se verificó un error en el traslado de la fila",
-      "invalid_fields" : "Algunos campos no ha sido compilados correctamente",
       "invalid_attributes": "Los siguientes campos no han sido compilados correctamente: ",
       "invalid_extended_attributes": "Los siguientes controles visuales no fueron compilados correctamente: ",
+      "invalid_fields": "Algunos campos no ha sido compilados correctamente",
       "no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
-	  "no_selections": "No ha seleccionado ningua tarjeta",
+      "no_selections": "No ha seleccionado ningua tarjeta",
       "reasons": {
          "ATTACHMENT_NOTFOUND": "Adjunto {0} para la tarjeta {2} en {1} no encontrado",
          "ATTRIBUTE_NOTFOUND": "Atributo {1} de {0} no encontrado",
@@ -668,8 +668,8 @@
          "MENU_NOTFOUND": "Menú no encontrado",
          "NOTFOUND_ERROR": "Elemento no encontrado",
          "ORM_AMBIGUOUS_DIRECTION": "Imposible determinar automáticamente la dirección de la relación",
-         "ORM_ATTACHMENT_UPLOAD_FAILED": "Imposible cargar el adjunto",
          "ORM_ATTACHMENT_DELETE_FAILED": "Imposible eliminar el adjunto",
+         "ORM_ATTACHMENT_UPLOAD_FAILED": "Imposible cargar el adjunto",
          "ORM_CANT_CREATE_DATABASE": "Imposible crear la base de datos",
          "ORM_CANT_CREATE_USER": "Imposible crear el usuario",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Imposible eliminar tarjetas habiendo relaciones",
@@ -710,9 +710,9 @@
          "ORM_READ_ONLY_RELATION": "Relación de sólo lectura",
          "ORM_READ_ONLY_TABLE": "Tabla de sólo lectura",
          "ORM_SQL_PATCH": "Error SQL en el parche",
-         "ORM_TYPE_ERROR": "Tipo no correspondiente",
          "ORM_TABLE_HAS_CHILDREN": "Imposible eliminar Clases que tienen Subclases",
          "ORM_TABLE_HAS_DOMAIN": "Imposible eliminar Clases asociadas a un Dominio",
+         "ORM_TYPE_ERROR": "Tipo no correspondiente",
          "ORM_UNIQUE_VIOLATION": "Vínculo de unicidad violado",
          "PARAMETER_CLASS_UNAVAILABLE": "Imposible instanciar la clase Java {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilegios no encontrados para el grupo {0}",
@@ -887,9 +887,9 @@
          "edit_attachment": "Modificar adjunto",
          "edit_relation": "Modificar relación",
          "gis": {
-         	"geo_attributes": "Atributos geográficos",
-         	"zoom": "Zoom",
-         	"position": "Posición"
+            "geo_attributes": "Atributos geográficos",
+            "position": "Posición",
+            "zoom": "Zoom"
          },
          "history_columns": {
             "activity_name": "Nombre actividad",
@@ -948,7 +948,7 @@
          "showdetail": "Visualizar detalle",
          "showgraph": "Visualizar el gráfico",
          "shownotes": "Visualizar notas"
-      },      
+      },
       "modmenu": {"menu": "Navegación"},
       "modreport": {
          "add_report": "Agrega informe",
@@ -1002,9 +1002,8 @@
          "delete_card": "Cierra proceso",
          "delete_card_confirm": "Está seguro de querer eliminar este proceso?",
          "extattrs": {
-            "attachments": {
-              "must_save_to_add": "No se puede agregar un adjunto antes de guardar la actividad"
-            },
+            "attachments": {"must_save_to_add": "No se puede agregar un adjunto antes de guardar la actividad"},
+            "calendar": {"wrong_config": "<em>Il calendario non è stato configurato correttamente</em>"},
             "createreport": {"format_label": "Formato"},
             "linkcards": {"required": "Es necesario seleccionar las tarjetas - "},
             "manageemail": {
@@ -1028,12 +1027,7 @@
                "viewicon": "Visualizar"
             },
             "managerelation": {"required": "Es necesario seleccionar las relaciones - "},
-            "notes": {
-              "must_save_to_modify": "No se pueden modificar las notas antes de guardar la actividad"
-            },
-            "calendar": {
-            	wrong_config: "<em>Il calendario non è stato configurato correttamente</em>"
-            }
+            "notes": {"must_save_to_modify": "No se pueden modificar las notas antes de guardar la actividad"}
          },
          "history_columns": {
             "attributes": "Atributos",
@@ -1087,8 +1081,8 @@
    },
    "warnings": {
       "link_cards_changed_values": "La selección de \"{0}\" ha sido actualizada",
+      "only_filtered": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual ",
       "popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
-      "warning_message": "Atención",
-      "only_filtered": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual "
+      "warning_message": "Atención"
    }
 }

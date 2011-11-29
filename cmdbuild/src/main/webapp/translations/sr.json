@@ -18,9 +18,9 @@
             },
             "domain": "Domen",
             "editorType": {
-                "label": "<em>Editor type</em>",
-                "plain":"<em>Plain text</em>",
-                "html":"<em>Html</em>"
+               "html": "<em>Html</em>",
+               "label": "<em>Editor type</em>",
+               "plain": "<em>Plain text</em>"
             },
             "field_hidden": "Skriven",
             "field_read": "Samo za čitanje",
@@ -87,8 +87,8 @@
             "domain": "Domen",
             "is_active": "Aktivan",
             "m_d": "M/D",
-            "md_label": "Naziv veze nadređeni/podređeni (Master/Detail)",
             "master_detail": "Nadređeni/podređeni (Master/Detail)",
+            "md_label": "Naziv veze nadređeni/podređeni (Master/Detail)",
             "modify_domain": "Izmeni domen",
             "name": "Naziv",
             "title_add": "Dodaj domen",
@@ -131,26 +131,6 @@
             },
             "visibility": "Vidljivost"
          },
-         "widgets": {
-            "title": "<em>Widget</em>",
-            "commonFields": {
-               "type": "<em>Type</em>",
-               "buttonLabel": "<em>Button label</em>",
-               "active": "<em>Active</em>"
-            },
-            "REPORT": {
-               "title": "<em>Create report</em>",
-               "fields": {
-                  "report": "<em>Report</em>",
-                  "force": "<em>Force format</em>",
-                  "presets": "<em>Report attributes</em>"
-               },
-               "presetGrid": {
-                  "attribute": "<em>Attribute</em>",
-                  "value": "<em>Value</em>"
-               }
-            }
-         },
          "include_inherited": "Uključujući nasleđene",
          "layers": "Sloj",
          "print_schema": "Odštampaj šemu",
@@ -161,7 +141,27 @@
             "properties": "Obeležja"
          },
          "title": "Upravljanje klasama",
-         "tree_title": "Klase"
+         "tree_title": "Klase",
+         "widgets": {
+            "REPORT": {
+               "fields": {
+                  "force": "<em>Force format</em>",
+                  "presets": "<em>Report attributes</em>",
+                  "report": "<em>Report</em>"
+               },
+               "presetGrid": {
+                  "attribute": "<em>Attribute</em>",
+                  "value": "<em>Value</em>"
+               },
+               "title": "<em>Create report</em>"
+            },
+            "commonFields": {
+               "active": "<em>Active</em>",
+               "buttonLabel": "<em>Button label</em>",
+               "type": "<em>Type</em>"
+            },
+            "title": "<em>Widget</em>"
+         }
       },
       "modLookup": {
          "add_lookuptype": "Dodaj tip u šifarnik",
@@ -433,23 +433,6 @@
             },
             "title": "CMDBuild podešavanja"
          },
-         "gis": {
-            "center_lat": "Početna geografska širina",
-            "center_lon": "Početna geografska dužina",
-            "enable": "Uključen",
-            "initial_zoom": "Početno uvećanje",
-            "serverurl": "Adresa servera - URL",
-            "title": "GIS"
-         },
-         "graph": {
-            "baseLevel": "Podrazumevani broj nivoa",
-            "clusteringThreshold": "Prag za pregrupisavanje čvorova",
-            "enabled": "Uključen",
-            "expandingThreshold": "Maksimalan broj čvorova u grupi",
-            "extensionMaximumLevel": "Maksimalan broj nivoa koji se mogu selektovati",
-            "menuTitle": "Graf relacija",
-            "title": "Podešavanje grafa relacija"
-         },
          "dms": {
             "categoryLookup": "CMDBuild kategorija",
             "credential": "Podaci za pristup",
@@ -469,6 +452,23 @@
             "repositoryWSPath": "Putanja web servisa",
             "serverUrl": "Adresa (Url) servisa",
             "title": "Alfresco podešavanja"
+         },
+         "gis": {
+            "center_lat": "Početna geografska širina",
+            "center_lon": "Početna geografska dužina",
+            "enable": "Uključen",
+            "initial_zoom": "Početno uvećanje",
+            "serverurl": "Adresa servera - URL",
+            "title": "GIS"
+         },
+         "graph": {
+            "baseLevel": "Podrazumevani broj nivoa",
+            "clusteringThreshold": "Prag za pregrupisavanje čvorova",
+            "enabled": "Uključen",
+            "expandingThreshold": "Maksimalan broj čvorova u grupi",
+            "extensionMaximumLevel": "Maksimalan broj nivoa koji se mogu selektovati",
+            "menuTitle": "Graf relacija",
+            "title": "Podešavanje grafa relacija"
          },
          "modify": "Izmeni",
          "save": "Potvrdi",
@@ -552,8 +552,8 @@
       "loading": "Učitavanje u toku...",
       "loading_mask": {
          "classes": "Učitavanje klasa",
-         "domain": "Učitavanje domena",
          "configuration": "Učitavanje konfiguracije",
+         "domain": "Učitavanje domena",
          "group": "Učitavanje liste grupa i korisnika",
          "lookup": "Učitavanje listi šifarnika",
          "menu": "Učitavanje menija",
@@ -635,15 +635,15 @@
       "title": "Podešavanja"
    },
    "errors": {
-   	  "busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
+      "busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
       "detail": "Detalji",
       "error_message": "Greška",
       "error_moving_row": "Došlo je do greške prilikom obrade reda",
-      "invalid_fields" : "Određena polja nisu korektno pounjena",
       "invalid_attributes": "Sledeća polja nisu korektno popunjena:",
       "invalid_extended_attributes": "Sledeće vizuelne kontrole nisu korektno popunjene:",
+      "invalid_fields": "Određena polja nisu korektno pounjena",
       "no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
-	  "no_selections": "Niste izabrali karticu podataka koja će biti ažurirana",
+      "no_selections": "Niste izabrali karticu podataka koja će biti ažurirana",
       "reasons": {
          "ATTACHMENT_NOTFOUND": "Prilog {0} za objekat {2} u {1} ne postoji",
          "ATTRIBUTE_NOTFOUND": "Atribut {1} ne postoji u {0}",
@@ -668,8 +668,8 @@
          "MENU_NOTFOUND": "Meni ne postoji",
          "NOTFOUND": "Element nije pronađen",
          "ORM_AMBIGUOUS_DIRECTION": "Smer relacije nije moguće automatski utvrditi",
-         "ORM_ATTACHMENT_UPLOAD_FAILED": "Dodavanje priloga nije uspelo",
          "ORM_ATTACHMENT_DELETE_FAILED": "Brisanje priloga nije uspelo",
+         "ORM_ATTACHMENT_UPLOAD_FAILED": "Dodavanje priloga nije uspelo",
          "ORM_CANT_CREATE_DATABASE": "Kreiranje baze podataka nije uspelo.",
          "ORM_CANT_CREATE_USER": "Kreiranje korisnika nije uspelo",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Nije moguće obrisati kartice sa aktivnim relacijama",
@@ -710,9 +710,9 @@
          "ORM_READ_ONLY_RELATION": "Relacija je dostupna samo za čitanje",
          "ORM_READ_ONLY_TABLE": "Tabela je dostupna samo za čitanje",
          "ORM_SQL_PATCH": "SQL greška u patch datoteci",
-         "ORM_TYPE_ERROR": "Neodgovarajući tip",
          "ORM_TABLE_HAS_CHILDREN": "Klasa koja sadrži izvedene klase ne može biti uklonjena",
          "ORM_TABLE_HAS_DOMAIN": "Klasa za koju je definisan i domen ne može biti uklonjena",
+         "ORM_TYPE_ERROR": "Neodgovarajući tip",
          "ORM_UNIQUE_VIOLATION": "Narušeno ograničenje: jedinstvenost vrednosti",
          "PARAMETER_CLASS_UNAVAILABLE": "Instanciranje objekta Java klase {0} nije moguće",
          "PRIVILEGE_GROUP_NOTFOUND": "Ne postoje privilegije za grupu {0}",
@@ -887,9 +887,9 @@
          "edit_attachment": "Izmeni prilog",
          "edit_relation": "Izmeni relaciju",
          "gis": {
-         	"geo_attributes": "Geografski atributi",
-         	"zoom": "Uvećanje",
-         	"position": "Pozicija"
+            "geo_attributes": "Geografski atributi",
+            "position": "Pozicija",
+            "zoom": "Uvećanje"
          },
          "history_columns": {
             "activity_name": "Naziv aktivnosti",
@@ -1002,9 +1002,8 @@
          "delete_card": "Ukloni proces",
          "delete_card_confirm": "Da li ste sigurni da želite ukloniti proces?",
          "extattrs": {
-            "attachments": {
-              "must_save_to_add": "Ne može postaviti prilog pre nego što snimite aktivnost</em>"
-            },
+            "attachments": {"must_save_to_add": "Ne može postaviti prilog pre nego što snimite aktivnost</em>"},
+            "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
             "createreport": {"format_label": "Formatiraj"},
             "linkcards": {"required": "Morate izabrati karticu - "},
             "manageemail": {
@@ -1028,12 +1027,7 @@
                "viewicon": "Prikaži"
             },
             "managerelation": {"required": "Morate izabrati relacije - "},
-            "notes": {
-              "must_save_to_modify": "Ne možete modifikovati napomenu pre nego što snimite aktivnost"
-            },
-            "calendar": {
-            	wrong_config: "<em>The calendar is not well configured</em>"
-            }
+            "notes": {"must_save_to_modify": "Ne možete modifikovati napomenu pre nego što snimite aktivnost"}
          },
          "history_columns": {
             "attributes": "Atributi",
@@ -1086,9 +1080,9 @@
       "wrong_time": "{0} je nedozvoljena vrednost. Vrednost mora biti u formatu {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "Izabrani(a) \"{0}\" je ažuriran(a)",
+      "link_cards_changed_values": "Izabrani(a) \"{0}\" je ažuriran(a)",
+      "only_filtered": "Izmene će biti primenjene samo na kartice podataka koje zadovoljavaju postavljeni filter.",
       "popup_block": "Detektovan je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
-      "warning_message": "Pažnja",
-      "only_filtered": "Izmene će biti primenjene samo na kartice podataka koje zadovoljavaju postavljeni filter."
+      "warning_message": "Pažnja"
    }
 }
