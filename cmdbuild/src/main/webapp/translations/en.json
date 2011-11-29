@@ -18,9 +18,9 @@
             },
             "domain": "Domain",
             "editorType": {
-                "label": "Editor type",
-                "plain":"Plain text",
-                "html":"Html"
+               "html": "Html",
+               "label": "Editor type",
+               "plain": "Plain text"
             },
             "field_hidden": "Hidden",
             "field_read": "Read only",
@@ -87,8 +87,8 @@
             "domain": "Domain",
             "is_active": "Active",
             "m_d": "M/D",
-            "md_label": "Master/Detail Label",
             "master_detail": "Master/Detail",
+            "md_label": "Master/Detail Label",
             "modify_domain": "Modify Domain",
             "name": "Name",
             "title_add": "Add domain",
@@ -131,26 +131,6 @@
             },
             "visibility": "Visibility"
          },
-          "widgets": {
-            "title": "Widget",
-            "commonFields": {
-               "type": "Type",
-               "buttonLabel": "Button label",
-               "active": "Active"
-            },
-            "REPORT": {
-               "title": "Create report",
-               "fields": {
-                  "report": "Report",
-                  "force": "Force format",
-                  "presets": "Report attributes"
-               },
-               "presetGrid": {
-                  "attribute": "Attribute",
-                  "value": "Value"
-               }
-            }
-         },
          "include_inherited": "Include inherited",
          "layers": "Layers",
          "print_schema": "Print Schema",
@@ -161,7 +141,27 @@
             "properties": "Properties"
          },
          "title": "Manage classes",
-         "tree_title": "Class List"
+         "tree_title": "Class List",
+         "widgets": {
+            "REPORT": {
+               "fields": {
+                  "force": "Force format",
+                  "presets": "Report attributes",
+                  "report": "Report"
+               },
+               "presetGrid": {
+                  "attribute": "Attribute",
+                  "value": "Value"
+               },
+               "title": "Create report"
+            },
+            "commonFields": {
+               "active": "Active",
+               "buttonLabel": "Button label",
+               "type": "Type"
+            },
+            "title": "Widget"
+         }
       },
       "modLookup": {
          "add_lookuptype": "Add Lookup Type",
@@ -433,23 +433,6 @@
             },
             "title": "CMDBuild Setup"
          },
-         "gis": {
-            "center_lat": "Initial latitude",
-            "center_lon": "Initial longitude",
-            "enable": "Enable",
-            "initial_zoom": "Initial zoom level",
-            "serverurl": "Server URL",
-            "title": "GIS"
-         },
-         "graph": {
-            "baseLevel": "Default level",
-            "clusteringThreshold": "Threshold for clustering nodes",
-            "enabled": "Enabled",
-            "expandingThreshold": "Max number of nodes in an expandable cluster",
-            "extensionMaximumLevel": "Maximum level",
-            "menuTitle": "Relation Graph",
-            "title": "Relation Graph Setup"
-         },
          "dms": {
             "categoryLookup": "CMDBuild category",
             "credential": "Credentials",
@@ -469,6 +452,23 @@
             "repositoryWSPath": "Web service path",
             "serverUrl": "Server URL",
             "title": "Alfresco Setup"
+         },
+         "gis": {
+            "center_lat": "Initial latitude",
+            "center_lon": "Initial longitude",
+            "enable": "Enable",
+            "initial_zoom": "Initial zoom level",
+            "serverurl": "Server URL",
+            "title": "GIS"
+         },
+         "graph": {
+            "baseLevel": "Default level",
+            "clusteringThreshold": "Threshold for clustering nodes",
+            "enabled": "Enabled",
+            "expandingThreshold": "Max number of nodes in an expandable cluster",
+            "extensionMaximumLevel": "Maximum level",
+            "menuTitle": "Relation Graph",
+            "title": "Relation Graph Setup"
          },
          "modify": "Modify",
          "save": "Save",
@@ -552,8 +552,8 @@
       "loading": "Loading...",
       "loading_mask": {
          "classes": "Loading classes",
-         "domain": "Loading domains",
          "configuration": "Loading configuration",
+         "domain": "Loading domains",
          "group": "Loading users and groups",
          "lookup": "Loading lookup types",
          "menu": "Loading menus",
@@ -635,15 +635,15 @@
       "title": "Configure"
    },
    "errors": {
-   	  "busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
+      "busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
       "detail": "Details",
       "error_message": "Error",
       "error_moving_row": "An error occourred while moving the row",
-      "invalid_fields" : "Some fields have not been filled correctly",
       "invalid_attributes": "The following fields have not been filled correctly:",
       "invalid_extended_attributes": "The following visual controls have not been filled correctly:",
-      "no_selections": "You have not selected any card to update",
+      "invalid_fields": "Some fields have not been filled correctly",
       "no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
+      "no_selections": "You have not selected any card to update",
       "reasons": {
          "ATTACHMENT_NOTFOUND": "Attachment {0} for card {2} of {1} not found",
          "ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} non found",
@@ -668,8 +668,8 @@
          "MENU_NOTFOUND": "Menu not found",
          "NOTFOUND": "Item not found",
          "ORM_AMBIGUOUS_DIRECTION": "Can't automatically determine the direction for the relation",
-         "ORM_ATTACHMENT_UPLOAD_FAILED": "Attachment upload failed",
          "ORM_ATTACHMENT_DELETE_FAILED": "Attachment delete failed",
+         "ORM_ATTACHMENT_UPLOAD_FAILED": "Attachment upload failed",
          "ORM_CANT_CREATE_DATABASE": "Can't create the database",
          "ORM_CANT_CREATE_USER": "Can't create the user",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Can't delete cards having relations",
@@ -710,9 +710,9 @@
          "ORM_READ_ONLY_RELATION": "Read-only relation",
          "ORM_READ_ONLY_TABLE": "Read-only class",
          "ORM_SQL_PATCH": "Error in SQL patch",
-         "ORM_TYPE_ERROR": "Type mismatch",
          "ORM_TABLE_HAS_CHILDREN": "Cannot delete a class with subclasses",
          "ORM_TABLE_HAS_DOMAIN": "Cannot delete a class that has a domain",
+         "ORM_TYPE_ERROR": "Type mismatch",
          "ORM_UNIQUE_VIOLATION": "Unique constraint violated",
          "PARAMETER_CLASS_UNAVAILABLE": "Can't instantiate Java class {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilege not found for group {0}",
@@ -887,9 +887,9 @@
          "edit_attachment": "Edit attachment",
          "edit_relation": "Edit relation",
          "gis": {
-         	"geo_attributes": "Geographical attributes",
-         	"zoom": "Zoom",
-         	"position": "Position"
+            "geo_attributes": "Geographical attributes",
+            "position": "Position",
+            "zoom": "Zoom"
          },
          "history_columns": {
             "activity_name": "Activity name",
@@ -1002,9 +1002,8 @@
          "delete_card": "Abort process",
          "delete_card_confirm": "Are you sure you want to delete this process?",
          "extattrs": {
-            "attachments": {
-              "must_save_to_add": "You can not add an attachment before saving the activity"
-            },
+            "attachments": {"must_save_to_add": "You can not add an attachment before saving the activity"},
+            "calendar": {"wrong_config": "The calendar is not well configured"},
             "createreport": {"format_label": "Format"},
             "linkcards": {"required": "Please select some cards - "},
             "manageemail": {
@@ -1028,12 +1027,7 @@
                "viewicon": "View"
             },
             "managerelation": {"required": "Please select some relations - "},
-            "notes": {
-              "must_save_to_modify": "You can not modify the notes before saving the activity"
-            },
-            "calendar": {
-            	wrong_config: "The calendar is not well configured"
-            }
+            "notes": {"must_save_to_modify": "You can not modify the notes before saving the activity"}
          },
          "history_columns": {
             "attributes": "Attributes",
@@ -1086,9 +1080,9 @@
       "wrong_time": "{0} is not a valid value. It must be in the format {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated",
+      "link_cards_changed_values": "The selection of \"{0}\" has been updated",
+      "only_filtered": "The changes will be applied only to the cards that meet the current filter",
       "popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
-      "warning_message": "Warning",
-      "only_filtered": "The changes will be applied only to the cards that meet the current filter"
+      "warning_message": "Warning"
    }
 }
