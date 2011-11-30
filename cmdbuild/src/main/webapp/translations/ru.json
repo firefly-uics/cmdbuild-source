@@ -18,9 +18,9 @@
             },
             "domain": "Связь",
             "editorType": {
-               "html": "<em>Html</em>",
-               "label": "<em>Editor type</em>",
-               "plain": "<em>Plain text</em>"
+               "html": "Html",
+               "label": "Тип редактора",
+               "plain": "Чистый текст"
             },
             "field_hidden": "Скрытый",
             "field_read": "Только чтение",
@@ -145,22 +145,22 @@
          "widgets": {
             "REPORT": {
                "fields": {
-                  "force": "<em>Force format</em>",
-                  "presets": "<em>Report attributes</em>",
-                  "report": "<em>Report</em>"
+                  "force": "Формат",
+                  "presets": "Атрибуты отчета",
+                  "report": "Отчет"
                },
                "presetGrid": {
-                  "attribute": "<em>Attribute</em>",
-                  "value": "<em>Value</em>"
+                  "attribute": "Атрибут",
+                  "value": "Значение"
                },
-               "title": "<em>Create report</em>"
+               "title": "Создать отчет"
             },
             "commonFields": {
-               "active": "<em>Active</em>",
-               "buttonLabel": "<em>Button label</em>",
-               "type": "<em>Type</em>"
+               "active": "Активный",
+               "buttonLabel": "Метка кнопки",
+               "type": "Тип"
             },
-            "title": "<em>Widget</em>"
+            "title": "Виджет"
          }
       },
       "modLookup": {
@@ -427,9 +427,9 @@
             "sessiontimeout": "Время бездействия сессии (сек)",
             "startingClass": "Класс по умолчанию",
             "tabs_position": {
-               "bottom": "<em>Bottom</em>",
-               "label": "<em>Tabs position in card panel</em>",
-               "top": "<em>Top</em>"
+               "bottom": "В нижней части",
+               "label": "Положение закладок в панели карточек",
+               "top": "В верхней части"
             },
             "title": "Настройки CMDBuild"
          },
@@ -456,7 +456,7 @@
          "gis": {
             "center_lat": "Начальная широта",
             "center_lon": "Начальная долгота",
-            "enable": "Включить функции ГИС",
+            "enable": "Включить функциональность",
             "initial_zoom": "Начальный масштаб",
             "serverurl": "URL сервера",
             "title": "ГИС"
@@ -995,17 +995,17 @@
       "modworkflow": {
          "abort_card": "Прервать процесс",
          "abort_card_confirm": "Действительно удалить процесс?",
-         "activitydocumentation": "Operative Instruction",
+         "activitydocumentation": "Оперативные инструкции",
          "add_card": "Запуск",
-         "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
+         "calendar": {"wrong_config": "Календарь настроен некорректно"},
          "completed": "Выполнено",
          "custom_steps": "Настраиваемые шаги",
          "delete_card": "Прервать процесс",
          "delete_card_confirm": "Действительно удалить процесс?",
          "extattrs": {
             "attachments": {"must_save_to_add": "You can not add an attachment before saving the activity"},
-            "createreport": {"format_label": "Format"},
-            "linkcards": {"required": "Please select some cards - "},
+            "createreport": {"format_label": "Формат"},
+            "linkcards": {"required": "Пожалуйста, выберите карточки - "},
             "manageemail": {
                "addresshdr": "Адрес",
                "ccfld": "Копия",
@@ -1026,7 +1026,7 @@
                "tofld": "Кому",
                "viewicon": "Просмотреть"
             },
-            "managerelation": {"required": "Please select some relations - "},
+            "managerelation": {"required": "Пожалуйста, выберите связи - "},
             "notes": {"must_save_to_modify": "You can not modify the notes before saving the activity"}
          },
          "history_columns": {
@@ -1071,8 +1071,8 @@
    },
    "patch": {"patch_list": "Список доступных обновлений"},
    "vtype_text": {
-      "cmdbcomment": "Использование вертикальной черты (pipe) или апострофа не разрешено",
-      "cmdbcommentrelaxed": "Использование вертикальной черты (pipe) не разрешено",
+      "cmdbcomment": "Использование вертикальной черты | или апострофа не разрешено",
+      "cmdbcommentrelaxed": "Использование вертикальной черты | не разрешено",
       "invalid_character": "Неверный символ",
       "wrong_decimal_part": "Не более {0} десятичных знаков",
       "wrong_integer_part": "Не более {0} целочисленных знаков",
