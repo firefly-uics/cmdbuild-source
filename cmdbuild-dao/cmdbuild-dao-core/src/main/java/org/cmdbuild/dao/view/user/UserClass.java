@@ -1,16 +1,16 @@
 package org.cmdbuild.dao.view.user;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.auth.CMAccessControlManager;
 
 public class UserClass extends UserEntryType implements CMClass {
 
 	private final DBClass inner;
 
-	static UserClass create(final UserDataView view, final DBClass inner) {
-		final CMAccessControlManager acm = view.getAccessControlManager();
-		if (inner != null && acm.hasReadAccess(inner) && (inner.isActive() || acm.hasDatabaseDesignerPrivileges())) {
+	static UserClass newInstance(final UserDataView view, final DBClass inner) {
+		final OperationUser user = view.getOperationUser();
+		if (inner != null && user.hasReadAccess(inner) && (inner.isActive() || user.hasDatabaseDesignerPrivileges())) {
 			return new UserClass(view, inner);
 		} else {
 			return null;
@@ -22,13 +22,14 @@ public class UserClass extends UserEntryType implements CMClass {
 		this.inner = inner;
 	}
 
+	@Override
 	protected final DBClass inner() {
 		return inner;
 	}
 
 	@Override
 	public UserClass getParent() {
-		return UserClass.create(view, inner().getParent());
+		return UserClass.newInstance(view, inner().getParent());
 	}
 
 	@Override

@@ -39,24 +39,29 @@ public class UserImpl implements User {
 		return new UserImpl(SYSTEM_USER_ID, username, SYSTEM_USER_DESCRIPTION, EMPTY);
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		return username;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public String getEncryptedPassword() {
 		return encPassword;
 	}
 
+	@Override
 	public String toString() {
-		return getDescription();
+		return String.format("[User %s]", this.getName());
 	}
 
 }
