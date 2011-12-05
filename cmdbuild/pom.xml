@@ -113,6 +113,10 @@
 			<version>1.6.1</version>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
 
 		<!-- REST Client API for GeoServer -->
 		<dependency>
