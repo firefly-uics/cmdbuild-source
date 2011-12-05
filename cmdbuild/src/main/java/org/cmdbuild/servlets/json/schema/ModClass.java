@@ -1,10 +1,10 @@
 package org.cmdbuild.servlets.json.schema;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
 
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.TableTree;
@@ -20,6 +20,8 @@ import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IAttribute.FieldMode;
+import org.cmdbuild.elements.widget.ClassWidgets;
+import org.cmdbuild.elements.widget.Widget;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -35,6 +37,9 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.WorkflowCache;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +75,7 @@ public class ModClass extends JSONBase {
 				}
 			}
 		}
-		return tableList;		
+		return tableList;
 	}
 
 	@JSONExported
@@ -86,13 +91,13 @@ public class ModClass extends JSONBase {
 		}
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONObject getProcessSuperClasses(
 			JSONObject serializer,
 			ITableFactory tf ) throws JSONException, AuthException {
 		for(ITable table : tf.fullTree().superclasses().active().branch(ProcessType.BaseTable)){
-			JSONObject element = new JSONObject();			
+			JSONObject element = new JSONObject();
 			element.put("value", table.getId());
 			element.put("description", table.getDescription());
 			element.put("classname", table.getDBName());
@@ -122,11 +127,11 @@ public class ModClass extends JSONBase {
 			@Parameter(value="active", required=false) boolean active,
 			UserContext userCtx) throws JSONException, AuthException {
 		final Iterable<ITable> allTables = userCtx.tables().list();
-		
+
 		for (ITable table: allTables) {
 			if (!table.getMode().isDisplayable()) {
 				continue;
-			}	
+			}
 			if (active && !isActive(table)) {
 				continue;
 			}
@@ -177,7 +182,7 @@ public class ModClass extends JSONBase {
 		}
 		return true;
 	}
-	
+
 	@JSONExported
 	public JSONObject getAttributeList(
 			@Parameter(value="active", required=false) boolean active,
@@ -186,7 +191,7 @@ public class ModClass extends JSONBase {
 		serializer.put("rows", Serializer.serializeAttributeList(table, active));
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONObject saveOrderCriteria(
 			@Parameter(value="records") JSONObject orderCriteria,
@@ -209,15 +214,15 @@ public class ModClass extends JSONBase {
 		}
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONObject getAttributeTypes(
 			ITable table,
 			@Parameter("tableType") String tableTypeStirng,
 			JSONObject serializer ) throws JSONException, AuthException {
-		
+
 		CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
-		
+
 		for(AttributeType type : tableType.getAvaiableAttributeList()) {
 			if (type.isReserved()) {
 				continue;
@@ -357,7 +362,7 @@ public class ModClass extends JSONBase {
 			attribute.setScale(scale);
 		}
 		attribute.setStatus(SchemaStatus.fromBoolean(isActive));
-		
+
 		if (attributeTypeString.equals(AttributeType.REFERENCE.toString())) {
 			if (domainId > 0) {
 				attribute.setReferenceDomain(domainId);
@@ -433,12 +438,12 @@ public class ModClass extends JSONBase {
 		}
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONObject reorderAttribute(
 			JSONObject serializer,
 			@Parameter("attributes") String jsonAttributeList,
-			BaseSchema baseSchema) throws JSONException, CMDBException {   	
+			BaseSchema baseSchema) throws JSONException, CMDBException {
 		JSONArray attributeList = new JSONArray(jsonAttributeList);
 		Map<String, Integer> attributePositions = new HashMap<String, Integer>();
 		for(int i = 0; i < attributeList.length(); ++i) {
@@ -487,7 +492,7 @@ public class ModClass extends JSONBase {
 		domain.setMDLabel(mdLabel);
 		domain.setStatus(SchemaStatus.fromBoolean(isActive));
 		domain.save();
-		
+
 		serializer.put("domain", Serializer.serializeDomain(domain, false));
 		return serializer;
 	}
@@ -495,16 +500,16 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public void deleteDomain(
 			IDomain domain ) throws JSONException {
-		
+
 		boolean hasReference = false;
 		String cardinality = domain.getCardinality();
 		if(cardinality.equals(IDomain.CARDINALITY_11)||cardinality.equals(IDomain.CARDINALITY_1N)){
-			ITable table = domain.getClass2();	
+			ITable table = domain.getClass2();
 			hasReference = searchReference(table, domain);
 		}
 		if (!hasReference  && (cardinality.equals(IDomain.CARDINALITY_11)||cardinality.equals(IDomain.CARDINALITY_N1))){
 			ITable table = domain.getClass1();
-			hasReference = searchReference(table, domain);		
+			hasReference = searchReference(table, domain);
 		}
 		if (hasReference) {
 			throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
@@ -512,7 +517,7 @@ public class ModClass extends JSONBase {
 			domain.delete();
 		}
 	}
-	
+
 	private static boolean searchReference(ITable table, IDomain domain){
 		Map<String, IAttribute> attributes = table.getAttributes();
 		for (String attrName: attributes.keySet()){
@@ -583,65 +588,73 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-	// WIDGET DEFINITION
+	/*
+	 * Widget Definition
+	 */
 
-	// TODO implement it
-	@Admin
-	@JSONExported
-	public JSONObject saveWidgetDefinition(
-			JSONObject serializer,
-			@Parameter("className") String className,
-			@Parameter(value="id", required=false) Integer widgetId,
-			@Parameter("definition") String widgetDefinition
-		) throws JSONException {
-			Random generator = new Random();
-			JSONObject def = new JSONObject(widgetDefinition);
+	public static class JsonResponse {
 
-			if (widgetId == 0) {
-				serializer.put("id", generator.nextInt());
-			} else {
-				serializer.put("id", widgetId);
+		private boolean success;
+		private Object response;
+
+		public boolean isSuccess() {
+			return success;
+		}
+
+		public Object getResponse() {
+			return response;
+		}
+
+		public static JsonResponse success(final Object response) {
+			final JsonResponse responseObject = new JsonResponse();
+			responseObject.success = true;
+			responseObject.response = response;
+			return responseObject;
+		}
+
+		public String toString() {
+			final ObjectMapper mapper = new ObjectMapper();
+			try {
+				return mapper.writeValueAsString(this);
+			} catch (Exception e) {
+				return "Error serializing the object!";
 			}
-
-			serializer.put("def", def);
-		return serializer;
+		}
 	}
 
 	@Admin
 	@JSONExported
-	public JSONObject readWidgetDefinition(
-			JSONObject serializer,
-			@Parameter("className") String className
-		) throws JSONException {
+	public JsonResponse saveWidgetDefinition(
+			ITable table, // className
+			@Parameter(value="widget", required=true) String jsonWidget,
+			final UserContext userCtx) throws JsonParseException, JsonMappingException, IOException {
 
-			JSONArray widgets = new JSONArray();
-			JSONObject w1 = new JSONObject();
+		ObjectMapper mapper = new ObjectMapper();
+		final Widget w = mapper.readValue(jsonWidget, Widget.class);
 
-			JSONObject def1 = new JSONObject();
-			def1.put("type", "REPORT");
-			def1.put("buttonLabel", "A report widget");
-			def1.put("active", true);
-			def1.put("buttonLabel", "asdfasdfasdf");
-			def1.put("forceFormat", "PDF");
-			def1.put("reportCode", 1123);
+		final ClassWidgets classWidgets = new ClassWidgets(table);
+		classWidgets.saveWidget(w);
 
-			w1.put("id", 1);
-			w1.put("def", def1);
-
-			widgets.put(w1);
-
-			serializer.put("widgets", widgets);
-		return serializer;
+		return JsonResponse.success(w);
 	}
 
 	@Admin
 	@JSONExported
-	public JSONObject removeWidgetDefinition(
-			JSONObject serializer,
-			@Parameter("className") String className,
-			@Parameter("id") int widgetId
-		) throws JSONException {
+	public JsonResponse readWidgetDefinition(
+			ITable table, // className
+			final UserContext userCtx) {
+		// Move to table serialization
+		final ClassWidgets classWidgets = new ClassWidgets(table);
+		return JsonResponse.success(classWidgets.getWidgets());
+	}
 
-		return serializer;
+	@Admin
+	@JSONExported
+	public void removeWidgetDefinition(
+			ITable table, // className
+			@Parameter("id") String widgetId,
+			final UserContext userCtx) {
+		final ClassWidgets classWidgets = new ClassWidgets(table);
+		classWidgets.removeWidget(widgetId);
 	}
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.Login.LoginType;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class LoginTest {
