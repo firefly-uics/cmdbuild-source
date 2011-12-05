@@ -100,7 +100,7 @@ public class DBDataView extends QueryExecutorDataView {
 	@Override
 	public DBCard newCard(CMClass type) {
 		final DBClass dbType = findClassById(type.getId());
-		return DBCard.create(driver, dbType);
+		return DBCard.newInstance(driver, dbType);
 	}
 
 	@Override
