@@ -113,20 +113,23 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 		var addCardButton = new CMDBuild.AddCardMenuButton();
 		var entry = _CMCache.getClassById(this.idClass) || _CMCache.getProcessById(this.idClass);
 		addCardButton.updateForEntry(entry);
-		
+
 		addCardButton.on("cmClick", function buildTheAddWindow(p) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({
-				classId: p.classId,
-				cmEditMode: true,
 				withButtons: true,
 				title: p.className
-			}).show();
+			});
+
+			new CMDBuild.controller.management.common.CMCardWindowController(w, {
+				cmEditMode: true,
+				card: null,
+				entryType: p.classId
+			});
+			w.show();
 
 			w.on("destroy", function() {
 				this.grid.reload();
 			}, this);
-
-			new CMDBuild.controller.management.common.CMCardWindowController(w);
 
 		}, this);
 

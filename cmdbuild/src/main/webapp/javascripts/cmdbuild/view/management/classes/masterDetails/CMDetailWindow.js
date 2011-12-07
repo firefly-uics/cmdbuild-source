@@ -11,7 +11,7 @@
 		cmEditMode: false, // if true, after the attributes load go in edit mode
 		withButtons: false, // true to use the buttons build by the CMCardPanel
 
-		loadCard: function() {
+		loadCard: function() {_deprecated();
 			function fillForm(attributes) {
 				attributes = removeFKOrMasterDeference.call(this, attributes);
 				attributes = addDomainAttributesIfNeeded.call(this, attributes);

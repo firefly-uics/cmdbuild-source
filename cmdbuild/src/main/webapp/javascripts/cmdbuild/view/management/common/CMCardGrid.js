@@ -72,7 +72,7 @@
 			}
 		},
 
-		openCard: function(p, retryWithoutFilter) {
+		openCard: function(p, retryWithoutFilter) { _deprecated();
 			var me = this;
 
 			var params = {
@@ -111,7 +111,7 @@
 		},
 
 		// private and overridden in CMActivityGrid
-		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
+		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) { _overridden();
 			var me = this;
 			me.clearFilter(function() {
 				me.gridSearchField.reset();
@@ -120,7 +120,7 @@
 		},
 
 		// private and overridden in CMActivityGrid
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
+		_onGetPositionFailureWithoutForcingTheFilter: function(resText) { _overridden();
 			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
 		},
 

@@ -3,12 +3,10 @@
 	var tr = CMDBuild.Translation.management.modcard;
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
-		mixins: {
-			observable: 'Ext.util.Observable'
-		},
-		constructor: function(v, ownerCt) {
-			this.view = v;
-			this.ownerController = ownerCt;
+		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+
+		constructor: function() {
+			this.callParent(arguments);
 
 			this.callBacks = {
 				'action-attachment-delete': this.onDeleteAttachmentClick,
@@ -17,33 +15,22 @@
 			};
 
 			this.mon(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
-			this.view.on('beforeitemclick', cellclickHandler, this);
-			this.view.on("itemdblclick", onItemDoubleclick, this);
-			this.view.on('activate', this.view.loadCardAttachments, this.view);
+			this.mon(this.view, 'beforeitemclick', cellclickHandler, this);
+			this.mon(this.view, "itemdblclick", onItemDoubleclick, this);
+			this.mon(this.view, 'activate', this.view.loadCardAttachments, this.view);
 		},
 
-		onEntrySelect: function(selection) {
+		onEntryTypeSelected: function() {
+			this.callParent(arguments);
+
 			this.view.disable();
 			this.view.clearStore();
-
-			if (theModuleIsDisabled()) {
-				return;
-			}
-
-			this.updateViewPrivilegesForTypeId(selection.get("id"));
-		},
-
-		updateViewPrivilegesForTypeId: function(entryTypeId) {
-			var et = _CMCache.getEntryTypeById(entryTypeId),
-				writePrivileges;
-			if (et) {
-				writePrivileges = et.get("priv_write");
-			}
-			this.view.updateWritePrivileges(writePrivileges);
 		},
 
 		onCardSelected: function(card) {
-			if (theModuleIsDisabled()) {
+			this.callParent(arguments);
+
+			if (theModuleIsDisabled() || !card) {
 				return;
 			}
 
@@ -51,21 +38,34 @@
 			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
 				this.view.disable();
 			} else {
-				this.view.enable();
-				this.currentCardId = card.get("Id");
-				this.currentClassId = card.get("IdClass");
-				this.currentCardPrivileges = {
-					create: card.get("data.priv_create"),
-					write: card.get("data.priv_write")
-				};
+				this.updateViewPrivilegesForEntryType(et);
 
 				this.view.setExtraParams({
-					IdClass: this.currentClassId,
-					Id: this.currentCardId
+					IdClass: this.card.get("IdClass"),
+					Id: this.card.get("Id")
 				});
 
 				this.view.reloadCard();
+				this.view.enable();
 			}
+		},
+
+		onAddCardButtonClick: function(classIdOfNewCard) {
+			this.view.disable();
+		},
+
+		updateViewPrivilegesForEntryType: function(et) {
+			var writePrivileges;
+			if (et) {
+				writePrivileges = et.get("priv_write");
+			}
+
+			this.view.updateWritePrivileges(writePrivileges);
+		},
+
+		updateViewPrivilegesForTypeId: function(entryTypeId) {
+			var et = _CMCache.getEntryTypeById(entryTypeId);
+			this.updateViewPrivilegesForEntryType(et);
 		},
 
 		onDeleteAttachmentClick: function(record) {
@@ -76,26 +76,24 @@
 						return;
 					}
 
+					var me = this;
 					CMDBuild.LoadMask.get().show();
 					CMDBuild.Ajax.request({
 						url : 'services/json/management/modcard/deleteattachment',
 						params : {
-							"IdClass": this.currentClassId,
-							"Id": this.currentCardId,
+							"IdClass": me.card.get("IdClass"),
+							"Id": me.card.get("Id"),
 							"Filename": record.get("Filename")
 						},
-						waitTitle : CMDBuild.Translation.common.wait_title,
-						waitMsg : CMDBuild.Translation.common.wait_msg,
 						method : 'POST',
-						scope : this,
 						success : function() {
 							// Defer the call because Alfresco is not responsive
 							function deferredCall() {
 								CMDBuild.LoadMask.get().hide();
-								this.view.reloadCard();
+								me.view.reloadCard();
 							};
 
-							Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, this)();
+							Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, me)();
 						}
 				 	});
 
@@ -104,8 +102,8 @@
 
 		onDownloadAttachmentClick: function(record) {
 			var params = {
-				"IdClass": this.currentClassId,
-				"Id": this.currentCardId,
+				"IdClass": this.card.get("IdClass"),
+				"Id": this.card.get("Id"),
 				"Filename": record.get("Filename")
 			};
 
@@ -115,8 +113,8 @@
 
 		onEditAttachmentClick: function(record) {
 			var editAttachmentWin = new CMDBuild.Management.EditAttachmentWindow({
-				classId: this.currentClassId,
-				cardId: this.currentCardId,
+				classId: this.card.get("IdClass"),
+				cardId: this.card.get("Id"),
 				category: record.get("Category"),
 				filename: record.get("Filename"),
 				description: record.get("Description")
@@ -127,8 +125,8 @@
 
 		onAddAttachmentButtonClick: function() {
 			var addAttachmentWin = new CMDBuild.Management.AddAttachmentWindow({
-				classId: this.currentClassId,
-				cardId: this.currentCardId
+				classId: this.card.get("IdClass"),
+				cardId: this.card.get("Id")
 			}).show();
 
 			this.view.mon(addAttachmentWin, "saved", this.view.reloadCard, this.view);

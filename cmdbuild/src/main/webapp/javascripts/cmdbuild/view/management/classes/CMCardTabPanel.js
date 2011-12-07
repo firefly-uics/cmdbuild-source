@@ -4,8 +4,9 @@
 
 	Ext.define("CMDBuild.view.management.classes.CMCardTabPanel", {
 		extend: "Ext.tab.Panel",
-		
+
 		constructor: function() {
+
 			this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel({
 				title: tr.tabs.card,
 				withToolBar: true,
@@ -41,7 +42,7 @@
 
 			this.cardPanel.displayMode();
 		},
-		
+
 		initComponent: function() {
 			this.frame = false;
 			this.items = [
@@ -56,26 +57,6 @@
 			this.callParent(arguments);
 		},
 
-		onClassSelected: function(id, activateFirst) {
-			if (activateFirst) {
-				this.activateFirstTab();
-			}
-
-			this.items.each(function(item) {
-				if (item.onClassSelected) {
-					item.onClassSelected(id);
-				}
-			});
-		},
-
-		onCardSelected: function(card, reloadFields, loadRemoteData) {
-			this.items.each(function(item) {
-				if (item.onCardSelected) {
-					item.onCardSelected(card, reloadFields, loadRemoteData);
-				}
-			});
-		},
-
 		reset: function(idClass) {
 			this.activateFirstTab();
 			this.items.each(function(item) {
@@ -88,21 +69,67 @@
 			});
 		},
 
-		onAddCardButtonClick: function(idClass, reloadFields) {
-			this.setActiveTab(this.cardPanel);
-			this.items.each(function(item) {
-				if (item.onAddCardButtonClick) {
-					item.onAddCardButtonClick(idClass, reloadFields);
-				}
-			});
-		},
-
 		activateFirstTab: function() {
 			this.setActiveTab(this.cardPanel);
 		},
 
 		activateRelationTab: function() {
 			this.setActiveTab(this.relationsPanel);
+		},
+
+		getCardPanel: function() {
+			return this.cardPanel;
+		},
+
+		getNotePanel: function() {
+			return this.cardNotesPanel
+		},
+
+		getMDPanel: function() {
+			return this.mdPanel;
+		},
+
+		getAttachmentsPanel: function() {
+			return this.attachmentPanel;
+		},
+
+		getHistoryPanel: function() {
+			return this.cardHistoryPanel;
+		},
+
+		getRelationsPanel: function() {
+			return this.relationsPanel;
+		},
+
+		// DEPRECATED
+
+		onClassSelected: function(id, activateFirst) { _deprecated();
+			if (activateFirst) {
+				this.activateFirstTab();
+			}
+	
+			this.items.each(function(item) {
+				if (item.onClassSelected) {
+					item.onClassSelected(id);
+				}
+			});
+		},
+
+		onCardSelected: function(card, reloadFields, loadRemoteData) { _deprecated();
+			this.items.each(function(item) {
+				if (item.onCardSelected) {
+					item.onCardSelected(card, reloadFields, loadRemoteData);
+				}
+			});
+		},
+
+		onAddCardButtonClick: function(idClass, reloadFields) { _deprecated();
+			this.setActiveTab(this.cardPanel);
+			this.items.each(function(item) {
+				if (item.onAddCardButtonClick) {
+					item.onAddCardButtonClick(idClass, reloadFields);
+				}
+			});
 		}
 	});
 	

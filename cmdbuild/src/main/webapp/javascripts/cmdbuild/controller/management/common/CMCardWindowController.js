@@ -1,49 +1,89 @@
 Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
-	constructor: function(view) {
-		this.view = view;
 
-		if (this.view.withButtons) {
-			this.view.cardPanel.saveButton.on("click", this.onSaveButtonClick, this);
-			this.view.cardPanel.cancelButton.on("click", this.onCancelButtonClick, this);
+	extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
+
+	mixins: {
+		observable : "Ext.util.Observable"
+	},
+
+	/**
+	 * conf: {
+	 * 	entryType: id of the entry type,
+	 *  card: id of the card,
+	 *  cmEditMode: boolean
+	 * }
+	 * */
+	constructor: function(view, conf) {
+		if (typeof conf.entryType == "undefined") {
+			return;
 		}
+
+		this.callParent([view]);
+		this.onEntryTypeSelected(_CMCache.getEntryTypeById(conf.entryType));
+
+		var me = this;
+		this.mon(me.view, "show", function() {
+			me.loadFields(conf.entryType, function() {
+				if (conf.card) {
+					me.loadCard(loadRemote=true, {
+						Id: conf.card,
+						IdClass: conf.entryType
+					}, function(card) {
+						me.card = card;
+						me.view.loadCard(card);
+						if (conf.cmEditMode) {
+							me.view.editMode();
+						} else {
+							me.view.displayMode();
+						}
+					});
+				} else {
+					if (conf.cmEditMode) {
+						me.view.editMode();
+					} else {
+						me.view.displayMode();
+					}
+				}
+			});
+		});
 	},
 
 	getForm: function() {
-		return this.view.cardPanel.getForm()
+		return this.view.cardPanel.getForm();
 	},
 
-	onSaveButtonClick: function() {
+	onSaveCardClick: function() {
 		var form = this.getForm(),
 			params = this.buildSaveParams();
 
 		this.beforeRequest(form);
 
 		if (form.isValid()) {
-			form.submit({
-				method : 'POST',
-				url : 'services/json/management/modcard/updatecard',
-				params: params,
-				scope: this,
-				success : this.onSaveSuccess
-			});
+			this.doFormSubmit(params);
 		}
 	},
 
-	onCancelButtonClick: function() {
+	onAbortCardClick: function() {
 		this.view.destroy();
 	},
-	
+
+	onEntryTypeSelected: function(entryType) {
+		this.callParent(arguments);
+		this.view.setTitle(this.entryType.get("text"));
+	},
+
 	// private, overridden in subclasses
 	buildSaveParams: function() {
 		return {
-			IdClass: this.view.classId,
-			Id: this.view.cardId || -1
+			IdClass: this.entryType.get("id"),
+			Id: this.card ? this.card.get("Id") : -1
 		};
 	},
 
 	// private, overridden in subclasses
 	onSaveSuccess: function(form, action) {
-		_CMCache.onClassContentChanged(this.view.classId);
+		CMDBuild.LoadMask.get().hide();
+		_CMCache.onClassContentChanged(this.entryType.get("id"));
 		this.view.destroy();
 	},
 

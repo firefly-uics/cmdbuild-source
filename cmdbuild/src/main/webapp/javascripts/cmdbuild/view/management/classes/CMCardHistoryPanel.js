@@ -78,70 +78,74 @@
 				]
 		},
 
-		onClassSelected: function(classId) {
-			if (this.currentClassId != classId) {
-				this.currentClassId = classId;
-				this.disable();
-			}
-
+		reset: function() {
+			this.getStore().removeAll();
 		},
 
-		onCardSelected: function(card) {
-			var et = _CMCache.getEntryTypeById(card.get("IdClass"));
-			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
-				this.disable();
-			} else {
-				this.currentCardId = card.raw.Id;
-				this.currentClassId = card.raw.IdClass;
+		tabIsActive: tabIsActive,
 
-				this.currentCardPrivileges = {
-					create: card.raw.priv_create,
-					write: card.raw.priv_write
-				};
 
-				// FIXME The workflow does not call onAddCardButtonClick()
-				var existingCard = (this.currentCardId > 0);
-				this.setDisabled(!existingCard);
 
-				if (tabIsActive(this)) {
-					this.reloadCard();
-				} else {
-					this.on("activate", this.reloadCard, this);
-				}
-			}
-		},
+		// DEPRECATED
 
-		reloadCard: function() {
+		reloadCard: function() { _deprecated();
 			this.enable();
 			this.loaded = false;
 			this.loadCardHistory();
 		},
-	
-		loadCardHistory: function() {
+
+		loadCardHistory: function() { _deprecated();
 			if (this.loaded
 					|| !this.currentClassId
 					|| !this.currentCardId) {
 				return;
 			}
-
+	
 			this.getStore().load({
 				params : {
 					IdClass: this.currentClassId,
 					Id: this.currentCardId
 				}
 			});
-
+	
 			this.loaded = true;
 		},
 
-		onAddCardButtonClick: function() {
+		onAddCardButtonClick: function() { _deprecated();
 			this.disable();
 		},
 
-		reset: function() {
-			this.getStore().removeAll();
-			this.currentClassId = undefined;
-			this.currentClassId = undefined;
+		onClassSelected: function(classId) { _deprecated();
+			if (this.currentClassId != classId) {
+				this.currentClassId = classId;
+				this.disable();
+			}
+	
+		},
+	
+		onCardSelected: function(card) { _deprecated();
+			var et = _CMCache.getEntryTypeById(card.get("IdClass"));
+			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
+				this.disable();
+			} else {
+				this.currentCardId = card.raw.Id;
+				this.currentClassId = card.raw.IdClass;
+	
+				this.currentCardPrivileges = {
+					create: card.raw.priv_create,
+					write: card.raw.priv_write
+				};
+	
+				// FIXME The workflow does not call onAddCardButtonClick()
+				var existingCard = (this.currentCardId > 0);
+				this.setDisabled(!existingCard);
+	
+				if (tabIsActive(this)) {
+					this.reloadCard();
+				} else {
+					this.on("activate", this.reloadCard, this);
+				}
+			}
 		}
 	});
 

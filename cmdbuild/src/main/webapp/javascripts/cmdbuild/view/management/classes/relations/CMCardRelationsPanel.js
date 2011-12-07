@@ -70,14 +70,30 @@
 			});
 
 			this.callParent(arguments);
+
+			this.CMEVENTS = {
+				addButtonClick: "cm-add-relation-click",
+				domainNodeAppended: "cm-domain-node-appended",
+				openGraphClick: "cm-open-graph"
+			};
+
+			this.addEvents(this.CMEVENTS.addButtonClick);
+			this.addEvents(this.CMEVENTS.domainNodeAppended);
+			this.addEvents(this.CMEVENTS.openGraphClick);
 		},
 
 		buildTBar: function() {
 			this.tbar = [];
 
+			var me = this;
 			this.addRelationButton = new CMDBuild.AddRelationMenuButton({
 				text : tr.add_relations
 			});
+			
+			this.mon(this.addRelationButton, "cmClick", function(d) {
+				me.fireEvent(me.CMEVENTS.addButtonClick, d);
+			});
+
 			if (this.cmWithAddButton) {
 				this.tbar.push(this.addRelationButton);
 			}
@@ -85,8 +101,12 @@
 			if (CMDBuild.Config.graph.enabled=="true") {
 				this.graphButton = new Ext.button.Button({
 					iconCls : "graph",
-					text : CMDBuild.Translation.management.graph.action
+					text : CMDBuild.Translation.management.graph.action,
+					handler: function() {
+						me.fireEvent(me.CMEVENTS.openGraphClick);
+					}
 				});
+
 				this.tbar.push(this.graphButton);
 			} else {
 				this.graphButton = nullButton;
@@ -125,16 +145,19 @@
 			}
 		},
 
-		onAddCardButtonClick: function() {
-			this.disable();
-		},
-
-		onClassSelected: function() {
-			this.disable();
-		},
-
 		convertRelationInNodes: convertRelationInNodes,
-		renderRelationActions: renderRelationActions
+		renderRelationActions: renderRelationActions,
+
+
+		// DEPRECATED
+
+		onAddCardButtonClick: function() { _deprecated();
+			this.disable();
+		},
+	
+		onClassSelected: function() { _deprecated();
+			this.disable();
+		}
 	});
 	
 	function buildNodeForDomain(domainResponseObj, domainCachedData) {

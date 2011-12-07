@@ -162,6 +162,22 @@ CMDBuild.Utils = (function() {
 			return out;
 		},
 
+		forwardMethods: function (wrapper, target, methods) {
+			if (!Ext.isArray(methods)) {
+				methods = [methods]
+			}
+			for (var i=0, l=methods.length; i<l; ++i) {
+				var m = methods[i];
+				if (typeof m == "string" && typeof target[m] == "function") {
+					var fn = function() {
+						return target[arguments.callee.$name].apply(target, arguments);
+					};
+					fn.$name = m;
+					wrapper[m] = fn;
+				}
+			}
+		},
+
 		getChildrenById: function(entryTypeId) {
 			var ett = _CMCache.getEntryTypes(),
 				out = [];

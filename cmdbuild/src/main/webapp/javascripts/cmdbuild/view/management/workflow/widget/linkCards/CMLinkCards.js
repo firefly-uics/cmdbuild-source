@@ -119,10 +119,6 @@
 
 			this.items = [this.grid];
 
-			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back
-			});
-
 			if (theMapIsToSet) {
 				buildMapStuff.call(this, c);
 			} else {
@@ -134,8 +130,6 @@
 				hideMode: "offsets",
 				border: false,
 				frame: false,
-				buttonAlign: "center",
-				buttons: [this.backToActivityButton],
 				cls: "x-panel-body-default-framed"
 			});
 
@@ -153,14 +147,6 @@
 			// there is a problem with the loadMask, if remove the delay the
 			// selection is done before the unMask, then it is reset
 			this.mon(this.grid, "load", Ext.Function.createDelayed(onLoad, 1), this);
-		},
-
-		cmActivate: function() {
-			this.mon(this.ownerCt, "cmactive", function() {
-				this.ownerCt.bringToFront(this);
-			}, this, {single: true});
-
-			this.ownerCt.cmActivate();
 		},
 
 		updateGrid: function(classId, cqlParams) {

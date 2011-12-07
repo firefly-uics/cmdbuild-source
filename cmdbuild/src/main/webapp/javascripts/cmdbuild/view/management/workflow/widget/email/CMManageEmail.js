@@ -22,28 +22,14 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
 			border: false
 		});
 
-		this.backToActivityButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.workflow.back
-		});
-
 		Ext.apply(this, {
 			frame: false,
 			border: false,
 			items: [this.emailGrid],
-			buttonAlign: "center",
-			buttons: [this.backToActivityButton],
 			cls: "x-panel-body-default-framed"
 		});
 
 		this.callParent(arguments);
-	},
-
-	cmActivate: function() {
-		this.mon(this.ownerCt, "cmactive", function() {
-			this.ownerCt.bringToFront(this);
-		}, this, {single: true});
-
-		this.ownerCt.cmActivate();
 	},
 
 	getOutgoing: function(modifiedOnly) {
