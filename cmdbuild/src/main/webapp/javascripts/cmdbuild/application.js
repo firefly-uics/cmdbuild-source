@@ -41,6 +41,18 @@
 		}
 	}
 
+	_deprecated = function() {
+		var name = "", className = "";
+
+		try {
+			name  = arguments.callee.caller.$name;
+			className = arguments.callee.caller.$owner.$className;
+		} catch (e) {
+			_debug("DEPRECATED", _trace());
+		}
+		_debug("DEPRECATED: " + className + "." + name);
+	}
+
 	// TODO: Read from real configuration
 	CMDBuild.Config.defaultTimeout = 90;
 

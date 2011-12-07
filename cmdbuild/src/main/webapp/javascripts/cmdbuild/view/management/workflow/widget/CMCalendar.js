@@ -38,10 +38,6 @@
 			this.activity = c.activity.raw || c.activity.data;
 			this.clientForm = c.clientForm;
 
-			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back
-			});
-
 			this.eventStore = new Extensible.calendar.data.MemoryEventStore({
 				data : this.cmEventsData
 			});
@@ -71,8 +67,6 @@
 				frame: false,
 				border: false,
 				items: [this.calendar],
-				buttonAlign: "center",
-				buttons: [this.backToActivityButton],
 				layout: "border",
 				cls: "x-panel-body-default-framed"
 			});

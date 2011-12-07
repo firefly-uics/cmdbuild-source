@@ -77,13 +77,6 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMCreateReport", {
 		this.callParent(arguments);
 	},
 
-	cmActivate: function() {
-		this.mon(this.ownerCt, "cmactive", function() {
-			this.ownerCt.bringToFront(this);
-		}, this, {single: true});
-		this.ownerCt.cmActivate();
-	},
-
 	// add the required attributes
 	configureForm: function() {
 		if (!this.formPanelCreated) {

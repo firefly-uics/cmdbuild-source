@@ -62,10 +62,10 @@
 					
 					this.changePasswordPanel = new CMDBuild.view.management.utilities.CMModChangePassword(),
 
+					
 					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
+						cmControllerType: CMDBuild.controller.management.classes.CMModCardController
 					}),
-
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
@@ -80,6 +80,8 @@
 						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
 					})
 				];
+				// @@
+				modcard = this.cardPanel;
 
 				CMDBuild.view.CMMainViewport.showSplash();
 				this.loadResources();

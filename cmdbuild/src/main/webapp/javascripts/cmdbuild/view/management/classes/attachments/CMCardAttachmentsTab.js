@@ -51,15 +51,6 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 		this.callParent(arguments);
 	},
 
-	onCardSelected: function(card) {
-		this.updateWritePrivileges(card.raw.priv_write);
-	},
-
-	updateWritePrivileges: function(priv_write) {
-		this.writePrivileges = priv_write;
-		this.addAttachmentButton.setDisabled(!priv_write);
-	},
-
 	reloadCard: function() {
 		this.loaded = false;
 		if (this.ownerCt.layout.getActiveItem) { 
@@ -70,10 +61,6 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 			// it is not in a tabPanel
 			this.loadCardAttachments();
 		}
-	},
-
-	onAddCardButtonClick: function() {
-		this.disable();
 	},
 
 	loadCardAttachments: function() {
@@ -102,6 +89,21 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 			}
 
 			return out;
+	},
+
+	updateWritePrivileges: function(priv_write) {
+		this.writePrivileges = priv_write;
+		this.addAttachmentButton.setDisabled(!priv_write);
+	},
+
+	// DEPRECATED
+
+	onAddCardButtonClick: function() { _deprecated();
+		this.disable();
+	},
+	
+	onCardSelected: function(card) { _deprecated()
+		this.updateWritePrivileges(card.raw.priv_write);
 	}
 });
 

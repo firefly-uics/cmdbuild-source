@@ -1,42 +1,42 @@
 (function() {
 	Ext.define("CMDBuild.view.management.workflow.CMWFWidgetsPanel", {
-		extend: "Ext.panel.Panel",
+		extend: "CMDBuild.PopupWindow",
 
 		initComponent: function() {
-			Ext.apply(this, {
+			this.widgetsContainer = new Ext.panel.Panel({
 				layout: "card",
 				activeItem: 0,
 				hideMode: "offsets",
-				border: true,
+				border: false,
 				frame: false
 			});
 
+			var me = this;
+			Ext.apply(this, {
+				items: [this.widgetsContainer],
+				buttonAlign: "center",
+				buttons: [{
+					text: CMDBuild.Translation.common.buttons.workflow.back,
+					handler: function() {
+						me.hide();
+					}
+				}]
+			});
+
 			this.callParent(arguments);
-
-			this.on("activate", function() {
-				this.enable();
-			}, this);
-
-			this.on("deactivate", function() {
-				this.disable();
-			}, this);
 		},
 
-		cmActivate: function() {
-			this.enable();
-			try {
-				this.ownerCt.setActiveTab(this);
-				this.fireEvent("cmactive");
-			} catch (e) {
-				Ext.Function.createDelayed(function(){
-					this.cmActivate();
-				}, 100, this)();
-			}
-			return this;
+		showWidget: function(widget) {
+			this.show();
+			this.widgetsContainer.layout.setActiveItem(widget.id);
 		},
 
-		bringToFront: function(widget) {
-			this.layout.setActiveItem(widget.id);
+		addWidgt: function(w) {
+			this.widgetsContainer.add(w);
+		},
+
+		destroy: function() {
+			this.widgetsContainer.removeAll(autodestroy = true);
 		}
 	});
 })();

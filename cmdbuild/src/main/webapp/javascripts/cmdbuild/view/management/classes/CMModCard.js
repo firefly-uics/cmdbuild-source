@@ -6,6 +6,9 @@
 		cmName: "class",
 
 		constructor: function() {
+			this.CMEVENTS = {
+				addButtonClick: "cm-addcard-click"
+			};
 			this.buildComponents();
 			this.callParent(arguments);
 		},
@@ -58,51 +61,21 @@
 			});
 
 			this.callParent(arguments);
-		},
 
-		onEntrySelected: function(entry) {
-			var id = entry.get("id");
-
-			this.cardGrid.updateStoreForClassId(id, {
-				cb: function cbUpdateStoreForClassId() {
-					this.loadPage(1, {
-						cb: function cbLoadPage() {
-							try {
-								this.getSelectionModel().select(0);
-							} catch (e) {/* if empty*/}
-						}
-					});
-				}
-			});
-
-			this.cardTabPanel.onClassSelected(id, activateFirst = true);
-
-			this.addCardButton.updateForEntry(entry);
-			this.mapAddCardButton.updateForEntry(entry);
-
-			this.updateTitleForEntry(entry);
-
-			this.cardGrid.openFilterButton.enable();
-			this.cardGrid.clearFilterButton.disable();
-			this.cardGrid.gridSearchField.reset();
+			_CMUtils.forwardMethods(this, this.cardTabPanel, [
+				"activateFirstTab",
+				"getCardPanel",
+				"getNotePanel",
+				"getMDPanel",
+				"getAttachmentsPanel",
+				"getHistoryPanel",
+				"getRelationsPanel"
+			]);
 		},
 
 		updateTitleForEntry: function(entry) {
 			var description = entry.get("text") || entry.get("name");
 			this.centralPanel.setTitle(TITLE_PREFIX+description);
-		},
-
-		reset: function(id) {
-			this.cardTabPanel.reset(id);
-		},
-
-		openCard: function(p, retryWithoutFilter) {
-			var entry = _CMCache.getEntryTypeById(p.IdClass);
-			this.cardGrid.openCard(p, retryWithoutFilter);
-			this.cardTabPanel.onClassSelected(p.IdClass, activateFirst = false);
-			this.addCardButton.updateForEntry(entry);
-			this.mapAddCardButton.updateForEntry(entry);
-			this.updateTitleForEntry(entry);
 		},
 
 		// private, overridden in subclasses
@@ -114,6 +87,10 @@
 					disabled: true
 				})
 			];
+
+			this.mon(this.addCardButton, "cmClick", function(p) {
+				this.fireEvent(this.CMEVENTS.addButtonClick, p);
+			}, this);
 
 			buildMapButton.call(this, tbar);
 
@@ -132,6 +109,52 @@
 				split: true,
 				height: gridratio + "%"
 			});
+		},
+
+		getGrid: function() {
+			return this.cardGrid;
+		},
+
+		reset: function(id) { _deprecated();
+			this.cardTabPanel.reset(id);
+		},
+
+		openCard: function(p, retryWithoutFilter) { _deprecated();
+			var entry = _CMCache.getEntryTypeById(p.IdClass);
+			this.cardGrid.openCard(p, retryWithoutFilter);
+			this.cardTabPanel.onClassSelected(p.IdClass, activateFirst = false);
+			this.addCardButton.updateForEntry(entry);
+			this.mapAddCardButton.updateForEntry(entry);
+			this.updateTitleForEntry(entry);
+		},
+
+		onEntrySelected: function(entry) { _deprecated();
+			var id = entry.get("id");
+
+			this.cardGrid.updateStoreForClassId(id, {
+				cb: function cbUpdateStoreForClassId() {
+					this.loadPage(1, {
+						cb: function cbLoadPage() {
+							try {
+								this.getSelectionModel().select(0);
+							} catch (e) {
+								_debug(e);
+							}
+						}
+					});
+				}
+			});
+
+			this.cardTabPanel.onClassSelected(id, activateFirst = true);
+
+			this.addCardButton.updateForEntry(entry);
+			this.mapAddCardButton.updateForEntry(entry);
+
+			this.updateTitleForEntry(entry);
+
+			this.cardGrid.openFilterButton.enable();
+			this.cardGrid.clearFilterButton.disable();
+			this.cardGrid.gridSearchField.reset();
 		}
 	});
 
@@ -264,7 +287,7 @@
 			});
 
 			this.mapAddCardButton.on("cmClick", function(p) {
-				this.addCardButton.fireEvent("cmClick", p);
+				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
 
 			this.theMap = new CMDBuild.Management.MapPanel({
