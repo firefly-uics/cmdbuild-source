@@ -20,7 +20,7 @@ public class AvailableMenuItemsView extends TableForwarder {
 
 	static final String AvailableMenuView = "system_availablemenuitems";
 	Map<String, IAttribute> attributes;
-	
+
 	public AvailableMenuItemsView() {
 		super(UserContext.systemContext().tables().get(MenuCard.MENU_CLASS_NAME));
 	}
@@ -28,11 +28,11 @@ public class AvailableMenuItemsView extends TableForwarder {
 	public String getDBName() {
 		return AvailableMenuView;
 	}
-	
+
 	public Map<String, IAttribute> getAttributes() {
 		if (attributes == null) {
 			attributes = new HashMap<String, IAttribute>();
-			
+
 			Map<String, IAttribute> attr = backend.findAttributes(t);
 			attributes.put("IdClass", attr.get("IdClass"));
 			attributes.put("Description", attr.get("Description"));
@@ -40,7 +40,7 @@ public class AvailableMenuItemsView extends TableForwarder {
 			attributes.put("Type", attr.get("Type"));
 			attributes.put("IdElementObj", attr.get("IdElementObj"));
 			attributes.put("IdElementClass", attr.get("IdElementClass"));
-			attributes.put("IdGroup", attr.get("IdGroup"));
+			attributes.put("GroupName", attr.get("GroupName"));
 		}
 		return attributes;
 	}

@@ -29,27 +29,27 @@ import org.cmdbuild.workflow.WorkflowCache;
 import org.cmdbuild.workflow.operation.ActivityDO;
 
 public class EAdministration {
-	
+
 	private UserContext userCtx;
 
 	public EAdministration(UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
-	
+
 	public MenuSchema getClassMenuSchema()  {
 		TableTree tree =  userCtx.tables().fullTree().displayable();
 		return serializeDefaultTree(tree.exclude(ProcessType.BaseTable).getRootElement(), false, userCtx);
 	}
-	
+
 	public MenuSchema getProcessMenuSchema()  {
 		TableTree tree = userCtx.processTypes().tree();
 		return serializeDefaultTree(tree.getRootElement(), true, userCtx);
 	}
-	
+
 	public MenuSchema getMenuSchema() {
-		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getId());
+		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getName());
 		if (tree.getRootElement().getNumberOfChildren() == 0) {
-			tree = MenuCard.loadTreeForGroup(0);
+			tree = MenuCard.loadTreeForGroup(MenuCard.DEFAULT_GROUP);
 		}
 		return serializeTree(tree.getRootElement(), userCtx);
 	}
@@ -98,7 +98,7 @@ public class EAdministration {
 			menuSchema.setPrivilege(privileges.toString());
 		}
 	}
-	
+
 	public AttributeSchema serialize(IAttribute attribute) {
 		return serialize(attribute, null, attribute.getIndex());
 	}
@@ -120,9 +120,9 @@ public class EAdministration {
 		schema.setFieldmode(attribute.getFieldMode().getMode());
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
-		
+
 		schema.setMetadata(serializeMetadata(attribute, activity));
-		
+
 		AttributeType atype = attribute.getType();
 		switch (atype) {
 		case LOOKUP:
@@ -144,7 +144,7 @@ public class EAdministration {
 	}
 
 	private Metadata[] serializeMetadata(IAttribute attribute, ActivityDO activity) {
-		final Metadata[] commonMetadata = serializeMetadata(BaseSchema.class.cast(attribute), activity);		
+		final Metadata[] commonMetadata = serializeMetadata(BaseSchema.class.cast(attribute), activity);
 		final List<Metadata> metadata = new ArrayList<Metadata>(Arrays.asList(commonMetadata));
 		checkAttributeFilter(attribute, metadata);
 		final Metadata[] array = new Metadata[metadata.size()];
@@ -158,10 +158,10 @@ public class EAdministration {
 			checkProcessIsStopable(activity, tmpList);
 			checkProcessIsEditable(activity, tmpList);
 		}
-		
+
 		Metadata[] metadataList = new Metadata[tmpList.size()];
 		metadataList = tmpList.toArray(metadataList);
-		
+
 		return metadataList;
 	}
 
@@ -184,7 +184,7 @@ public class EAdministration {
 		m.setValue(String.valueOf(isStopable));
 		tmpList.add(m);
 	}
-	
+
 	private void checkProcessIsEditable(ActivityDO activity, List<Metadata> tmpList) {
 		Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
@@ -193,23 +193,23 @@ public class EAdministration {
 		} else {
 			m.setValue("read");
 		}
-		
+
 		tmpList.add(m);
 	}
 
 	private void checkAttributeFilter(IAttribute attribute, List<Metadata> tmpList) {
 		final String filter = attribute.getFilter();
-		if (StringUtils.isNotBlank(filter)) {			
+		if (StringUtils.isNotBlank(filter)) {
 			Metadata m = new Metadata();
 			m.setKey(MetadataService.SYSTEM_TEMPLATE_PREFIX);
 			m.setValue(filter);
 			tmpList.add(m);
-		}		
+		}
 	}
 
 	private MenuSchema serializeTree(CNode<MenuCard> node, UserContext userCtx) {
 		MenuSchema schema = new MenuSchema();
-		MenuCard menu = node.getData();		
+		MenuCard menu = node.getData();
 		if (checkIsReport(menu)) {
 			schema.setId(menu.getElementObjId());
 		} else {
@@ -238,8 +238,8 @@ public class EAdministration {
 			schema.setMenuType(MenuCodeType.CLASS.getCodeType());
 		}
 		schema.setDescription(menu.getDescription());
-		
-		
+
+
 		List<MenuSchema> children = new LinkedList<MenuSchema>();
 		for (CNode<MenuCard> child : node.getChildren()) {
 			MenuSchema childMenuSchema = null;
@@ -257,7 +257,7 @@ public class EAdministration {
 			} else {
 				childMenuSchema = serializeTree(child, userCtx);
 			}
-			
+
 			if (childMenuSchema != null) { // no privileges
 				children.add(childMenuSchema);
 			}
