@@ -22,73 +22,80 @@ import org.cmdbuild.utils.tree.CTree;
 
 public class MenuCard extends CardForwarder {
 
-	protected static final long serialVersionUID = 1L;
-	public static final int DEFAULT_GROUP_ID = 0;
-	public static final String GROUP_ID_ATTR = "IdGroup";
+	protected static final long serialVersionUID = 2L;
+
+	public static final String DEFAULT_GROUP = null;
+
+	public static final String GROUP_NAME_ATTR = "GroupName";
+	public static final String PARENT_ID_ATTR = "IdParent";
+	public static final String TYPE_ATTR = "Type";
+	public static final String ELEMENT_CLASS_ID_ATTR = "IdElementClass";
+	public static final String ELEMENT_OBJECT_ID_ATTR = "IdElementObj";
+	public static final String INDEX_ATTR = "Number";
 
 	public static final String MENU_CLASS_NAME = "Menu";
 	private static final ITable menuClass = UserContext.systemContext().tables().get(MENU_CLASS_NAME);
 
 	public enum MenuCodeType {
-		FOLDER("folder"), 
-		SYSTEM_FOLDER("system_folder"), 
-		CLASS("class"), 
-		PROCESS("processclass"), 
-		REPORT_PDF("reportpdf"), 
-		REPORT_CSV("reportcsv"), 
-		REPORT_ODT("reportodt"), 
+		FOLDER("folder"),
+		SYSTEM_FOLDER("system_folder"),
+		CLASS("class"),
+		PROCESS("processclass"),
+		REPORT_PDF("reportpdf"),
+		REPORT_CSV("reportcsv"),
+		REPORT_ODT("reportodt"),
 		REPORT_XML("reportxml"),
 		VIEW("view");
-	
+
 		private String ctype;
-		
+
 		MenuCodeType(String type) {
 			this.ctype = type;
 		}
-		
+
 		public String getCodeType(){
 			return this.ctype;
 		}
 	}
-	
+
 	public enum AllowedReportExtension {
 		PDF(ReportFactory.ReportExtension.PDF.toString().toLowerCase()),
 		CSV(ReportFactory.ReportExtension.CSV.toString().toLowerCase());
 		private String extension;
-		
+
 		AllowedReportExtension(String extension) {
 			this.extension = extension;
 		}
-		
+
 		public String getExtension(){
 			return this.extension;
 		}
 	}
-	
+
 	public enum MenuType {
-		FOLDER("folder"),  
-		CLASS("class"), 
-		SUPERCLASS("superclass"), 
-		PROCESS("processclass"), 
-		PROCESS_SUPERCLASS("superprocessclass"), 
-		REPORT_NORMAL("normal"), 
-		REPORT_HISTORICAL("historical"), 
-		REPORT_SNAPSHOT("snapshot"), 
+		FOLDER("folder"),
+		CLASS("class"),
+		SUPERCLASS("superclass"),
+		PROCESS("processclass"),
+		PROCESS_SUPERCLASS("superprocessclass"),
+		REPORT_NORMAL("normal"),
+		REPORT_HISTORICAL("historical"),
+		REPORT_SNAPSHOT("snapshot"),
 		REPORT_CUSTOM("custom"),
 		REPORT_OPENOFFICE("openoffice"),
 		VIEW("view");
-	
+
 		private String type;
-		
+
 		MenuType(String type) {
 			this.type = type;
 		}
-		
+
 		public String getType(){
 			return this.type;
 		}
 	}
-	
+
 	public static MenuCodeType getCodeValueOf (String type){
 		MenuCodeType[] mtypes = MenuCodeType.values();
 		try{
@@ -102,7 +109,7 @@ public class MenuCard extends CardForwarder {
 			return MenuCodeType.CLASS;
 		}
 	}
-	
+
 	public static MenuType getTypeValueOf (String type){
 		MenuType[] mtypes = MenuType.values();
 		try{
@@ -116,7 +123,7 @@ public class MenuCard extends CardForwarder {
 			return MenuType.CLASS;
 		}
 	}
-	
+
 	public MenuCard() throws NotFoundException {
 		super(menuClass.cards().create());
 	}
@@ -124,10 +131,10 @@ public class MenuCard extends CardForwarder {
 	private MenuCard(ICard card) throws NotFoundException {
 		super(card);
 	}
-	
+
 	public String getType() {
-		if (getAttributeValue("Type")!=null &&!getAttributeValue("Type").isNull())
-		    return getAttributeValue("Type").getString();
+		if (getAttributeValue(TYPE_ATTR)!=null &&!getAttributeValue(TYPE_ATTR).isNull())
+		    return getAttributeValue(TYPE_ATTR).getString();
 		else
 		    return "";
 	}
@@ -137,81 +144,78 @@ public class MenuCard extends CardForwarder {
 	}
 
 	public void setType(String type) {
-		getAttributeValue("Type").setValue(type);
+		getAttributeValue(TYPE_ATTR).setValue(type);
 	}
 
 	public int getParentId(){
-		if (!getAttributeValue("IdParent").isNull())
-			return getAttributeValue("IdParent").getInt();
+		if (!getAttributeValue(PARENT_ID_ATTR).isNull())
+			return getAttributeValue(PARENT_ID_ATTR).getInt();
 		else
 			return 0;
 	}
 
 	public void setParentId(Integer id){
-		getAttributeValue("IdParent").setValue(id);
+		getAttributeValue(PARENT_ID_ATTR).setValue(id);
 	}
 
-	public int getGroupId(){
-		if (!getAttributeValue("IdGroup").isNull())
-			return getAttributeValue("IdGroup").getInt();
-		else
-			return 0;
+	public String getGroupName(){
+		return getAttributeValue(GROUP_NAME_ATTR).getString();
 	}
 
-	public void setGroupId(Integer id){
-		getAttributeValue("IdGroup").setValue(id);
+	public void setGroupName(String name){
+		getAttributeValue(GROUP_NAME_ATTR).setValue(name);
 	}
 
 	public int getElementClassId(){
-		if (!getAttributeValue("IdElementClass").isNull())
-			return getAttributeValue("IdElementClass").getInt();
+		if (!getAttributeValue(ELEMENT_CLASS_ID_ATTR).isNull())
+			return getAttributeValue(ELEMENT_CLASS_ID_ATTR).getInt();
 		else
 			return 0;
 	}
 
 	public void setElementClassId(Integer id){
-		getAttributeValue("IdElementClass").setValue(id);
+		getAttributeValue(ELEMENT_CLASS_ID_ATTR).setValue(id);
 	}
 
 	public int getElementObjId(){
-		if (!getAttributeValue("IdElementObj").isNull())
-			return getAttributeValue("IdElementObj").getInt();
+		if (!getAttributeValue(ELEMENT_OBJECT_ID_ATTR).isNull())
+			return getAttributeValue(ELEMENT_OBJECT_ID_ATTR).getInt();
 		else
 			return 0;
 	}
 
 	public void setElementObjId(Integer id){
-		getAttributeValue("IdElementObj").setValue(id);
+		getAttributeValue(ELEMENT_OBJECT_ID_ATTR).setValue(id);
 	}
 
 	public int getNumber(){
-		if (!getAttributeValue("Number").isNull())
-			return getAttributeValue("Number").getInt();
+		if (!getAttributeValue(INDEX_ATTR).isNull())
+			return getAttributeValue(INDEX_ATTR).getInt();
 		else
 			return 0;
 	}
 
 	public void setNumber(Integer number){
-		getAttributeValue("Number").setValue(number);
+		getAttributeValue(INDEX_ATTR).setValue(number);
 	}
 
 	public boolean isReport() {
 		return getCode() != null && (
-				getCode().equals(MenuCodeType.REPORT_CSV.getCodeType()) || 
-				getCode().equals(MenuCodeType.REPORT_PDF.getCodeType()) || 
-				getCode().equals(MenuCodeType.REPORT_ODT.getCodeType()) || 
+				getCode().equals(MenuCodeType.REPORT_CSV.getCodeType()) ||
+				getCode().equals(MenuCodeType.REPORT_PDF.getCodeType()) ||
+				getCode().equals(MenuCodeType.REPORT_ODT.getCodeType()) ||
 				getCode().equals(MenuCodeType.REPORT_XML.getCodeType()) );
 	}
-	
+
 	public static void saveTree(CTree<MenuCard> tree) throws ORMException {
-		deleteTree(tree.getRootElement().getData().getGroupId());
+		deleteTree(tree.getRootElement().getData().getGroupName());
 		saveAllItems(tree.getRootElement().getChildren(), 0);
 	}
-	
-	public static void deleteTree(int groupId) throws ORMException {
+
+	public static void deleteTree(final String groupName) throws ORMException {
 		ICard template = menuClass.cards().create();
 		template.setStatus(ElementStatus.INACTIVE);
-		menuClass.cards().list().filter(GROUP_ID_ATTR, AttributeFilterType.EQUALS, String.valueOf(groupId)).update(template);
+		menuClass.cards().list().filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName).update(template);
 	}
 
 	public static void saveAllItems(List<CNode<MenuCard>> childrenList, int parentId) {
@@ -231,20 +235,21 @@ public class MenuCard extends CardForwarder {
 		}
 	}
 
-	public static CTree<MenuCard> loadTreeForGroup(Integer idGroup) throws ORMException {		try {
-			Iterable<ICard> list = getGroupMenuItems(idGroup);
+	public static CTree<MenuCard> loadTreeForGroup(final String groupName) throws ORMException {
+		try {
+			Iterable<ICard> list = getGroupMenuItems(groupName);
 			return buildTree(list);
 		} catch (NotFoundException e) {
 			Log.PERSISTENCE.fatal("Table "+MENU_CLASS_NAME+" does not exist !!!", e);
 			return null;
 		}
 	}
-	
+
 	public static CTree<MenuCard> loadAvailableItemsTreeForGroup(
-			Integer idGroup,
+			String groupName,
 			ITableFactory tf) throws ORMException {
 		try {
-			Iterable<ICard> list = new AvailableMenuItemsView().cards().list().filter("IdGroup", AttributeFilterType.EQUALS, idGroup.toString()).ignoreStatus();
+			Iterable<ICard> list = new AvailableMenuItemsView().cards().list().filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName).ignoreStatus();
 			return buildAvailableItemsTree(list, tf);
 		} catch (NotFoundException e) {
 			Log.PERSISTENCE.fatal("View "+AvailableMenuItemsView.AvailableMenuView+" does not exist !!!", e);
@@ -282,10 +287,9 @@ public class MenuCard extends CardForwarder {
 		return tree;
 	}
 
-	public static Iterable<MenuCard> loadListForGroup(Integer idGroup)
-			throws ORMException {
+	public static Iterable<MenuCard> loadListForGroup(final String groupName) {
 		try {
-			Iterable<ICard> list = getGroupMenuItems(idGroup);
+			Iterable<ICard> list = getGroupMenuItems(groupName);
 			return buildMenuCardList(list);
 		} catch (NotFoundException e) {
 			Log.PERSISTENCE.fatal("Table " + MENU_CLASS_NAME
@@ -294,15 +298,13 @@ public class MenuCard extends CardForwarder {
 		}
 	}
 
-	private static Iterable<ICard> getGroupMenuItems(Integer idGroup) {
-		Iterable<ICard> list = UserContext.systemContext().tables().get(
-				MENU_CLASS_NAME).cards().list().filter("IdGroup",
-				AttributeFilterType.EQUALS, idGroup.toString()).order(
-				"IdParent", OrderFilterType.ASC).order("Number",
-				OrderFilterType.ASC);
+	private static Iterable<ICard> getGroupMenuItems(final String groupName) {
+		Iterable<ICard> list = UserContext.systemContext().tables().get(MENU_CLASS_NAME).cards().list()
+				.filter(GROUP_NAME_ATTR,AttributeFilterType.EQUALS, groupName)
+				.order(PARENT_ID_ATTR, OrderFilterType.ASC).order(INDEX_ATTR, OrderFilterType.ASC);
 		return list;
 	}
-	
+
 	private static Iterable<MenuCard> buildMenuCardList(Iterable<ICard> list) throws NotFoundException {
 		List<MenuCard> menuCardList = new ArrayList<MenuCard>();
 		for(ICard card: list) {
@@ -357,40 +359,40 @@ public class MenuCard extends CardForwarder {
 		MenuCard root = new MenuCard();
 		CNode<MenuCard> rootNode = new CNode<MenuCard>();
 		rootNode.setData(root);
-		
+
 		MenuCard classes = new MenuCard();
 		classes.setDescription(MenuType.CLASS.getType());
 		classes.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		classes.setType(MenuType.FOLDER.getType());
 		CNode<MenuCard> classesNode = new CNode<MenuCard>();
 		classesNode.setData(classes);
-		
+
 		MenuCard processes = new MenuCard();
 		processes.setDescription(MenuType.PROCESS.getType());
 		processes.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		processes.setType(MenuType.FOLDER.getType());
 		CNode<MenuCard> processesNode = new CNode<MenuCard>();
 		processesNode.setData(processes);
-		
+
 		MenuCard reports = new MenuCard();
 		reports.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		reports.setType(MenuType.FOLDER.getType());
 		reports.setDescription("report");
 		CNode<MenuCard> reportsNode = new CNode<MenuCard>();
 		reportsNode.setData(reports);
-		
+
 		MenuCard views = new MenuCard();
 		views.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		views.setType(MenuType.FOLDER.getType());
 		views.setDescription(MenuType.VIEW.getType());
 		CNode<MenuCard> viewsNode = new CNode<MenuCard>();
 		viewsNode.setData(views);
-		
+
 		rootNode.addChild(classesNode);
 		rootNode.addChild(processesNode);
 		rootNode.addChild(reportsNode);
 		rootNode.addChild(viewsNode);
-		
+
 		for(CNode<MenuCard> childNode: classMap.values()){
 			classesNode.addChild(childNode);
 		}
@@ -407,6 +409,6 @@ public class MenuCard extends CardForwarder {
 		tree.setRootElement(rootNode);
 		return tree;
 	}
-	
+
 
 }

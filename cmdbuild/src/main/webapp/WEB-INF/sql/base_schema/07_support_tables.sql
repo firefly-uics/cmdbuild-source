@@ -7,7 +7,7 @@ SELECT cm_create_class_attribute('Menu', 'IdParent', 'integer', '0', false, fals
 SELECT cm_create_class_attribute('Menu', 'IdElementClass', 'regclass', null, false, false, 'MODE: reserved|DESCR: Class connect to this item');
 SELECT cm_create_class_attribute('Menu', 'IdElementObj', 'integer', '0', true, false, 'MODE: reserved|DESCR: Object connected to this item, 0 means no object');
 SELECT cm_create_class_attribute('Menu', 'Number', 'integer', '0', true, false, 'MODE: reserved|DESCR: Ordering');
-SELECT cm_create_class_attribute('Menu', 'IdGroup', 'integer', '0', true, false, 'MODE: reserved|DESCR: Group owner of this item, 0 means default group');
+SELECT cm_create_class_attribute('Menu', 'GroupName', 'text', '0', true, false, 'MODE: reserved');
 SELECT cm_create_class_attribute('Menu', 'Type', 'varchar (70)', '', true, false, 'MODE: reserved|DESCR: Group owner of this item, 0 means default group');
 
 CREATE TABLE "Report"
@@ -27,7 +27,7 @@ CREATE TABLE "Report"
   "ImagesLength" integer[],
   "ReportLength" integer[],
   "IdClass" regclass,
-  "Groups" integer[],
+  "Groups" varchar[],
   "ImagesName" varchar[],
   CONSTRAINT "Report_pkey" PRIMARY KEY ("Id")
 );
