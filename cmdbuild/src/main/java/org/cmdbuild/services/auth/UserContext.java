@@ -281,11 +281,6 @@ public class UserContext {
 		return groups.values();
 	}
 
-	// Needed because of report privileges
-	public boolean belongsTo(final int groupId) {
-		return groups.contains(groupId);
-	}
-
 	public boolean belongsTo(final String groupName) {
 		return groups.contains(groupName);
 	}
