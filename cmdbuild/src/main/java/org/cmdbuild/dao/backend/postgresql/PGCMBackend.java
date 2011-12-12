@@ -789,7 +789,7 @@ public class PGCMBackend extends CMBackend {
 				+ ReportCard.REPORT_CLASS_NAME
 				+ "\"', cast(string_to_array('"
 				+ arrayToCsv(bean.getSelectedGroups())
-				+ "',',') as int[]), cast(string_to_array('"
+				+ "',',') as varchar[]), cast(string_to_array('"
 				+ arrayToCsv(bean.getImagesName())
 				+ "',',') as varchar[])); ";
 		Connection connection = null;
@@ -882,7 +882,7 @@ public class PGCMBackend extends CMBackend {
 	}
 
 	private String buildUpdateReportQuery(ReportCard bean) {
-		final String queryBaseAttrsTM = "UPDATE \"Report\" SET \"Description\" = ?,\"Groups\" = cast(string_to_array('%s',',') as int[]) ";
+		final String queryBaseAttrsTM = "UPDATE \"Report\" SET \"Description\" = ?,\"Groups\" = cast(string_to_array('%s',',') as varchar[]) ";
 		final String queryBaseAttrs = String.format(queryBaseAttrsTM, arrayToCsv(bean.getSelectedGroups()));
 
 		final String queryFileDependentAttrsTM = ", \"Status\" = ?, \"User\" = ?, \"Type\" = ?, \"Query\" = ?,"
