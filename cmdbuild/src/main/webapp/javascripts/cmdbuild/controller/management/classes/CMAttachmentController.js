@@ -17,9 +17,9 @@
 			};
 
 			this.mon(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
-			this.view.on('beforeitemclick', cellclickHandler, this);
-			this.view.on("itemdblclick", onItemDoubleclick, this);
-			this.view.on('activate', this.view.loadCardAttachments, this.view);
+			this.mon(this.view, 'beforeitemclick', cellclickHandler, this);
+			this.mon(this.view, "itemdblclick", onItemDoubleclick, this);
+			this.mon(this.view, 'activate', this.view.loadCardAttachments, this.view);
 		},
 
 		onEntrySelect: function(selection) {
@@ -132,6 +132,13 @@
 			}).show();
 
 			this.view.mon(addAttachmentWin, "saved", this.view.reloadCard, this.view);
+		},
+
+		destroy: function() {
+			this.mun(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
+			this.mun(this.view, 'beforeitemclick', cellclickHandler, this);
+			this.mun(this.view, "itemdblclick", onItemDoubleclick, this);
+			this.mun(this.view, 'activate', this.view.loadCardAttachments, this.view);
 		}
 	});
 
