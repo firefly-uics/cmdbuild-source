@@ -143,7 +143,7 @@
          "title": "Upravljanje klasama",
          "tree_title": "Klase",
          "widgets": {
-            "REPORT": {
+            ".OpenReport": {
                "fields": {
                   "force": "<em>Force format</em>",
                   "presets": "<em>Report attributes</em>",

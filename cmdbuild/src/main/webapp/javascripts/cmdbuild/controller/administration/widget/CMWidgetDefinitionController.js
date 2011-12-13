@@ -25,18 +25,18 @@
 			this.view.reset(removeAllRecords = true);
 
 			var me = this;
-			CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
-				params: {
-					className: _CMCache.getClassById(this.classId).get("name")
-				},
-				success: function success(response, operation, responseData) {
-					var widgets = responseData.widgets;
-					for (var i=0, l=widgets.length, w; i<l; ++i) {
-						w = widgets[i];
-						addRecordToGrid(w, me);
-					}
-				}
-			});
+			// CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+				// params: {
+					// className: _CMCache.getClassById(this.classId).get("name")
+				// },
+				// success: function success(response, operation, responseData) {
+					// var widgets = responseData.widgets;
+					// for (var i=0, l=widgets.length, w; i<l; ++i) {
+						// w = widgets[i];
+						// addRecordToGrid(w, me);
+					// }
+				// }
+			// });
 		},
 
 		onAddClassButtonClick: function() {
@@ -79,7 +79,7 @@
 		var me = this,
 		definition = me.view.getWidgetDefinition(),
 		params = {
-			definition: Ext.encode(definition),
+			widget: Ext.encode(definition),
 			className: _CMCache.getClassById(this.classId).get("name")
 		}
 
@@ -90,9 +90,10 @@
 		CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
 			params: params,
 			success: function success(response, operation, responseData) {
-				var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(responseData.def, {
-					id: responseData.id
+				var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(responseData.response, {
+					type: definition.type
 				}));
+
 				me.view.addRecordToGrid(widgetModel, selectAfter = true);
 				me.view.disableModify(enableToolBar = true);
 			}

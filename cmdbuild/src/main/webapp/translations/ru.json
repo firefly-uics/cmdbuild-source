@@ -143,7 +143,7 @@
          "title": "Настройка классов",
          "tree_title": "Список классов",
          "widgets": {
-            "REPORT": {
+            ".OpenReport": {
                "fields": {
                   "force": "Формат",
                   "presets": "Атрибуты отчета",

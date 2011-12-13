@@ -8,15 +8,13 @@
 			this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 				clicksToEdit : 1
 			});
-			var tr = CMDBuild.Translation.administration.modClass.widgets["REPORT"].presetGrid;
+			var widgetName = CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm.WIDGET_NAME,
+				tr = CMDBuild.Translation.administration.modClass.widgets[widgetName].presetGrid;
+
 			Ext.apply(this, {
 				columns: [{
-					hideable : false,
-					hidden: true,
-					dataIndex : CMDBuild.model.CMReportAttribute._FIELDS.name
-				},{
 					header: tr.attribute,
-					dataIndex: CMDBuild.model.CMReportAttribute._FIELDS.description,
+					dataIndex : CMDBuild.model.CMReportAttribute._FIELDS.name,
 					flex: 1
 				},{
 					header: tr.value,
@@ -39,7 +37,15 @@
 		fillWithData: function(data) {
 			this.store.removeAll();
 			if (data) {
-				this.store.add(data);
+				var fields = CMDBuild.model.CMReportAttribute._FIELDS;
+
+				for (var key in data) {
+					var recordConf = {};
+					recordConf[fields.name] = key;
+					recordConf[fields.value] = data[key] || "";
+
+					this.store.add(new CMDBuild.model.CMReportAttribute(recordConf));
+				}
 			}
 		},
 
@@ -48,10 +54,13 @@
 		},
 
 		getData: function() {
-			var records = this.store.getRange();
-			var data = [];
+			var records = this.store.getRange(),
+				fields = CMDBuild.model.CMReportAttribute._FIELDS,
+				data = {};
+
 			for (var i=0, l=records.length; i<l; ++i) {
-				data.push(records[i].data);
+				var recData = records[i].data;
+				data[recData[fields.name]] = recData[fields.value];
 			}
 
 			return data;
@@ -62,7 +71,7 @@
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
 		statics: {
-			WIDGET_NAME: "REPORT"
+			WIDGET_NAME: ".OpenReport"
 		},
 
 		initComponent: function() {
@@ -176,7 +185,7 @@
 			var me = this;
 			return {
 				type: me.self.WIDGET_NAME,
-				buttonLabel: me.buttonLabel.getValue(),
+				label: me.buttonLabel.getValue(),
 				forceFormat: (function() {
 					if (me.forceFormatCheck.getValue()) {
 						return me.forceFormatOptions.getValue();
