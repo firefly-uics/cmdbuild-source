@@ -31,7 +31,7 @@
 			var me = this;
 			return {
 				type: me.self.WIDGET_NAME,
-				buttonLabel: me.view.buttonLabel.getValue()
+				label: me.view.buttonLabel.getValue()
 			};
 		},
 
@@ -81,17 +81,12 @@
 	}
 
 	function cleanServerAttributes(attributes) {
-		var out = [],
-			model = CMDBuild.model.CMReportAttribute;
+		var out = {};
 
 		for (var i=0, l=attributes.length; i<l; ++i) {
-			var attrConf = {},
-				attr = attributes[0];
+			var attr = attributes[0];
 
-			attrConf[model._FIELDS.name] = attr.name;
-			attrConf[model._FIELDS.description] = attr.description;
-
-			out.push(attrConf);
+			out[attr.name] = "";
 		}
 
 		return out;

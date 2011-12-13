@@ -143,7 +143,7 @@
          "title": "Gestión de clases",
          "tree_title": "Clases",
          "widgets": {
-            "REPORT": {
+            ".OpenReport": {
                "fields": {
                   "force": "<em>Forza formato</em>",
                   "presets": "<em>Attributi del report</em>",

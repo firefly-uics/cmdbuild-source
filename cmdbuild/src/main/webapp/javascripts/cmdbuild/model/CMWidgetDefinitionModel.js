@@ -2,7 +2,7 @@
 	var _FIELDS = {
 		id: "id",
 		type: "type",
-		label: "buttonLabel",
+		label: "label",
 		active: "active"
 	};
 
@@ -51,8 +51,7 @@
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: _REPORT_ATTRIBUTE_FIELDS.name, type: "string"},
-			{name: _REPORT_ATTRIBUTE_FIELDS.description, type: "string"},
-			{name: _REPORT_ATTRIBUTE_FIELDS.value, type: "string"},
+			{name: _REPORT_ATTRIBUTE_FIELDS.value, type: "string"}
 		]
 	});
 })();

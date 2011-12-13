@@ -139,10 +139,10 @@
 
 	function findWidgetClass(widgetName) {
 		var widgetClass = null;
-		var package = CMDBuild.view.administration.widget.form;
-		for (var key in package) {
-			if (package[key].WIDGET_NAME == widgetName) {
-				widgetClass = package[key];
+		var _package = CMDBuild.view.administration.widget.form;
+		for (var key in _package) {
+			if (_package[key].WIDGET_NAME == widgetName) {
+				widgetClass = _package[key];
 				break;
 			}
 		}
