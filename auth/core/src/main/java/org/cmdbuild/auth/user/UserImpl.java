@@ -2,6 +2,7 @@ package org.cmdbuild.auth.user;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.common.Builder;
@@ -10,12 +11,18 @@ public class UserImpl implements CMUser {
 
 	public static class UserImplBuilder implements Builder<UserImpl> {
 
+		private Long id;
 		private String name;
 		private String description;
 		private Set<CMGroup> groups;
 
 		private UserImplBuilder() {
 			this.groups = new HashSet<CMGroup>();
+		}
+
+		public UserImplBuilder withId(final Long id) {
+			this.id = id;
+			return this;
 		}
 
 		public UserImplBuilder withName(final String name) {
@@ -47,14 +54,21 @@ public class UserImpl implements CMUser {
 		}
 	}
 
+	private final Long id;
 	private final String name;
 	private final String description;
 	private final Set<CMGroup> groups;
 
 	private UserImpl(final UserImplBuilder builder) {
+		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
 		this.groups = builder.groups;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
 	}
 
 	@Override

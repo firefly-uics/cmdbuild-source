@@ -44,7 +44,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected final CMDataView view;
 
 	@GuardedBy("allGroupsCacheLock")
-	private static volatile Map<Object, CMGroup> allGroupsCache = null;
+	private static volatile Map<Long, CMGroup> allGroupsCache = null;
 	private static final Object allGroupsCacheLock = new Object();
 
 	protected DBUserFetcher(final CMDataView view) {
@@ -55,13 +55,15 @@ public abstract class DBUserFetcher implements UserFetcher {
 	@Override
 	public CMUser fetchUser(Login login) {
 		final CMCard userCard = fetchUserCard(login);
+		final Long userId = (Long) userCard.getId();
 		final String userName = userCard.get(userNameAttribute()).toString();
 		final String userDescription = userCard.get(userDescriptionAttribute()).toString();
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder()
+				.withId(userId)
 				.withName(userName)
 				.withDescription(userDescription);
 
-		final Map<Object, CMGroup> allGroups = getAllGroups();
+		final Map<Long, CMGroup> allGroups = getAllGroups();
 		for (Object groupId : fetchGroupIdsForUser(userCard.getId())) {
 			final CMGroup group = allGroups.get(groupId);
 			userBuilder.withGroup(group);
@@ -84,7 +86,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return userCard;
 	}
 
-	private Map<Object, CMGroup> getAllGroups() {
+	private Map<Long, CMGroup> getAllGroups() {
 		if (allGroupsCache == null) {
 			synchronized (allGroupsCacheLock) {
 				if (allGroupsCache == null) {
@@ -95,8 +97,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return allGroupsCache;
 	}
 
-	private Map<Object, CMGroup> fetchAllGroups() {
-		final Map<Object, CMGroup> groupCards = new HashMap<Object, CMGroup>();
+	private Map<Long, CMGroup> fetchAllGroups() {
+		final Map<Long, CMGroup> groupCards = new HashMap<Long, CMGroup>();
 		final Map<Object, List<PrivilegePair>> allPrivileges = fetchAllPrivileges();
 		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
 		final CMQueryResult groupRows = view
@@ -105,16 +107,17 @@ public abstract class DBUserFetcher implements UserFetcher {
 				.run();
 		for (CMQueryRow row : groupRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
-			final Object groupId = groupCard.getId();
+			final Long groupId = (Long) groupCard.getId();
 			final boolean groupIsGod = Boolean.TRUE.equals(groupCard.get(groupIsGodAttribute()));
 			final GroupImplBuilder groupBuilder = GroupImpl.newInstanceBuilder()
+					.withId(groupId)
 					.withName(groupCard.get(groupNameAttribute()).toString())
 					.withDescription(groupCard.get(groupDescriptionAttribute()).toString())
 					.withPrivileges(allPrivileges.get(groupId));
 			if (groupIsGod) {
 				groupBuilder.withPrivilege(new PrivilegePair(DefaultPrivileges.GOD));
 			}
-			groupCards.put(groupCard.getId(), groupBuilder.build());
+			groupCards.put(groupId, groupBuilder.build());
 		}
 		return groupCards;
 	}
@@ -170,7 +173,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 	private List<Object> fetchGroupIdsForUser(Object userId) {
 		final List<Object> groupIds = new ArrayList<Object>();
 		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
-		final Alias userClassAlias = Alias.canonicalAlias(userClass());
 		final CMQueryResult userGroupsRows = view
 				.select(anyAttribute(groupClassAlias))
 				.from(userClass())
