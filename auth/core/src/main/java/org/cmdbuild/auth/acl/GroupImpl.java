@@ -9,12 +9,18 @@ public class GroupImpl implements CMGroup {
 
 	public static class GroupImplBuilder implements Builder<GroupImpl> {
 
+		private Long id;
 		private String name;
 		private String description;
 		private List<PrivilegePair> privileges;
 
 		private GroupImplBuilder() {
 			privileges = new ArrayList<PrivilegePair>();
+		}
+
+		public GroupImplBuilder withId(final Long id) {
+			this.id = id;
+			return this;
 		}
 
 		public GroupImplBuilder withName(final String name) {
@@ -48,14 +54,21 @@ public class GroupImpl implements CMGroup {
 		}
 	}
 
+	private final Long id;
 	private final String name;
 	private final String description;
 	private final List<PrivilegePair> privileges;
 
 	private GroupImpl(final GroupImplBuilder builder) {
+		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
 		this.privileges = builder.privileges;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
 	}
 
 	@Override

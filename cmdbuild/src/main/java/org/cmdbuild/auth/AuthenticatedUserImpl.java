@@ -3,6 +3,7 @@ package org.cmdbuild.auth;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.acl.CMGroup;
@@ -22,6 +23,11 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 
 		private AnonymousUser() {
 			super(new CMUser() {
+
+				@Override
+				public Long getId() {
+					return null;
+				}
 
 				@Override
 				public String getName() {
@@ -205,6 +211,11 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	/*
 	 * CMUser
 	 */
+
+	@Override
+	public Long getId() {
+		return inner.getId();
+	}
 
 	@Override
 	public String getName() {

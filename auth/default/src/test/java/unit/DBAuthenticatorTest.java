@@ -12,11 +12,13 @@ public class DBAuthenticatorTest {
 
 	@Test(expected=java.lang.IllegalArgumentException.class)
 	public void viewCannotBeNull() {
+		@SuppressWarnings("unused")
 		LegacyDBAuthenticator authenticator = new LegacyDBAuthenticator(null);
 	}
 
 	@Test(expected=java.lang.IllegalArgumentException.class)
 	public void passwordHandlerIfProvidedCannotBeNull() {
+		@SuppressWarnings("unused")
 		LegacyDBAuthenticator authenticator = new LegacyDBAuthenticator(view, null);
 	}
 }
