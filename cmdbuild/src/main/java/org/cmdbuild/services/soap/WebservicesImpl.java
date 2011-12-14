@@ -61,7 +61,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType, Integer limit, Integer offset, String fullTextQuery){
 		ECard ecard = new ECard(getUserCtx());
-		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, null);
+		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, null, false);
 	}
 
 	public Card getCard(String className, Integer cardId, Attribute[] attributeList){

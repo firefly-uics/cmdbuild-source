@@ -49,7 +49,7 @@ public class ECard {
 
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query query,
 			final Order[] order, final Integer limit, final Integer offset, final String fullText,
-			final CQLQuery cqlQuery) {
+			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
 
 		Log.SOAP.debug("Getting list of " + className + " cards");
 
@@ -71,7 +71,7 @@ public class ECard {
 
 		final List<Card> wfCards = new LinkedList<Card>();
 		for (final ICard card : cards) {
-			final Card wfCard = prepareCard(attributeList, card, activityMap);
+			final Card wfCard = prepareCard(attributeList, card, activityMap, enableLongDateFormat);
 			wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
 			wfCards.add(wfCard);
 		}
@@ -107,13 +107,14 @@ public class ECard {
 	}
 
 	private Card prepareCard(final Attribute[] attributeList, final ICard card,
-			final Map<Integer, ActivityDO> activityMap) {
+			final Map<Integer, ActivityDO> activityMap, boolean enableLongDateFormat) {
 		Card wfCard;
+		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
 		addActivityDecription(card, activityMap.get(card.getId()));
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
-			wfCard = new Card(card, attributeList);
+			wfCard = new Card(card, attributeList, cardSerializer);
 		} else {
-			wfCard = new Card(card);
+			wfCard = new Card(card, cardSerializer);
 		}
 		return wfCard;
 	}
