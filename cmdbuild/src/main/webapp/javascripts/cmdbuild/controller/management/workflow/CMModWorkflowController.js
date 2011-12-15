@@ -81,11 +81,15 @@
 		onSaveButtonClick: function() {
 			// if is advance, also the widgets must be saved, so
 			// wait for the template resolver before call the save;
-
-			if (this.view.isAdvance) {
-				waitForBusyWidgets.call(this, save, this);
+			var me = this;
+			if (me.activityPanelController.isAdvance) {
+				waitForBusyWidgets(me, 
+					function() {
+						saveActivity(me)
+					}
+				);
 			} else {
-				saveActivity.call(this);
+				saveActivity(me);
 			}
 		},
 
@@ -138,7 +142,7 @@
 		this.activityPanelController.clearViewForNoActivity();
 	}
 
-	function waitForBusyWidgets(cb, cbScope) {
+	function waitForBusyWidgets(me, cb) {
 		new _CMUtils.PollingFunction({
 			success: cb,
 			failure: function failure() {
@@ -146,17 +150,17 @@
 			},
 			checkFn: function() {
 				// I want exit if there are no busy wc
-				return !areThereBusyWidget();
+				return !areThereBusyWidget(me);
 			},
-			cbScope: cbScope,
-			checkFnScope: this
+			cbScope: me,
+			checkFnScope: me
 		}).run();
 	}
 
-	function areThereBusyWidget() {
-		for (var wc in this.widgetsController) {
-			wc = this.widgetsController[wc];
-			if (wc.isBusy()) {
+	function areThereBusyWidget(me) {
+		for (var wc in me.widgetsController) {
+			wc = me.widgetsController[wc];
+			if (wc.isBusy && wc.isBusy()) {
 				return true;
 			} else {
 				continue;
@@ -366,20 +370,20 @@
 		}
 	}
 
-	function saveActivity() {
-		var data = this.currentActivity.raw,
+	function saveActivity(me) {
+		var data = me.currentActivity.raw,
 			requestParams = {
 				Id: data.Id,
 				IdClass: data.IdClass,
 				ProcessInstanceId: data.ProcessInstanceId,
 				WorkItemId: data.WorkItemId,
-				advance: this.activityPanelController.isAdvance,
-				attributes: Ext.JSON.encode(this.activityPanelController.view.getValues())
+				advance: me.activityPanelController.isAdvance,
+				attributes: Ext.JSON.encode(me.activityPanelController.view.getValues())
 			},
 			valid = false;
 		
 		if (requestParams.advance) {
-			valid = validate.call(this);
+			valid = validate.call(me);
 		} else {
 			// Business rule: Someone want the validation
 			// only if advance and not if want only save the activity
@@ -390,9 +394,9 @@
 			CMDBuild.LoadMask.get().show();
 
 			var ww = {};
-			for (var wc in this.widgetsController) {
-				wc = this.widgetsController[wc];
-				var wcData = wc.getData(advance = this.activityPanelController.isAdvance);
+			for (var wc in me.widgetsController) {
+				wc = me.widgetsController[wc];
+				var wcData = wc.getData(advance = me.activityPanelController.isAdvance);
 				if (wcData != null) {
 					ww[wc.wiewIdenrifier] = wcData;
 				}
@@ -405,29 +409,29 @@
 			CMDBuild.ServiceProxy.workflow.saveActivity({
 				timeout: 90,
 				params: requestParams,
-				scope : this,
-				clientValidation: this.activityPanelController.isAdvance, //to force the save request
+				scope : me,
+				clientValidation: me.activityPanelController.isAdvance, //to force the save request
 				callback: function(operation, success, response) {
 					CMDBuild.LoadMask.get().hide();
 				},
 	
 				success: function(response) {
-					this.view.reset(requestParams.IdClass);
-					updateActivityData.call(this, response);
+					me.view.reset(requestParams.IdClass);
+					updateActivityData.call(me, response);
 	
-					this.activityPanelController.view.reset();
-					this.activityPanelController.view.displayMode();
+					me.activityPanelController.view.reset();
+					me.activityPanelController.view.displayMode();
 	
-					this.grid.openCard({
-						Id: this.currentActivity.raw.Id,
+					me.grid.openCard({
+						Id: me.currentActivity.raw.Id,
 						// use the id class of the grid to use the right filter
 						// when look for the position
-						IdClass: this.currentEntryId
+						IdClass: me.currentEntryId
 					});
 				},
 	
 				failure : function(response) {
-					updateActivityData.call(this, response);
+					updateActivityData.call(me, response);
 				}
 			});
 		}
