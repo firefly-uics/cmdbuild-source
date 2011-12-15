@@ -56,22 +56,22 @@
 			return valid;
 		},
 
-		addTemplatesIfNeededOnLoad: function(callbackFn) {
-			this.addTemplatesIfNeeded(callbackFn);
+		addTemplatesIfNeededOnLoad: function() {
+			this.addTemplatesIfNeeded();
+
 			if (!this.loadeded) {
 				this.view.emailGrid.store.on('load', function() {
-					this.addTemplatesIfNeeded(callbackFn);
+					this.addTemplatesIfNeeded();
 				}, this, {single: true});
 			}
 		},
 
-		addTemplatesIfNeeded: function(callbackFn) {
+		addTemplatesIfNeeded: function() {
 			if (this.readWrite
 					&& (this.usedTemplates.length > 0)
 					&& this.templatesShouldBeAdded()) {
-				this.addTemplates(callbackFn);
-			} else if (callbackFn) {
-				callbackFn();
+
+				this.addTemplates();
 			}
 		},
 
@@ -79,7 +79,12 @@
 			return this.view.emailGrid.storeHasNoOutgoing();
 		},
 
-		addTemplates: function(callbackFn) {
+		addTemplates: function() {
+			if (this.busy) {
+				return;
+			}
+
+			this.busy = true;
 			this.templateResolver.resolveTemplates({
 				attributes: this.usedTemplates.vars,
 				callback: function(values) {
@@ -93,9 +98,8 @@
 							this.view.emailGrid.addTemplateToStore(v);
 						}
 					}
-					if (callbackFn) {
-						callbackFn();
-					}
+
+					this.busy = false;
 				},
 				scope: this
 			});
@@ -120,6 +124,7 @@
 			}
 		},
 
+		// override
 		getData: function(isAdvance) {
 			var outgoingEmails = this.view.getOutgoing(true),
 				outgoingEmailsEnc = Ext.JSON.encode(outgoingEmails),
@@ -132,12 +137,19 @@
 			};
 		},
 
+		// override
 		isValid: function() {
 			if (this.widgetConf.Required && this.getOutgoing().length == 0) {
 				return false;
 			} else {
 				return true;
 			}
+		},
+
+		// override
+		isBusy: function() {
+			this.addTemplatesIfNeeded();
+			return this.busy;
 		}
 
 	});
