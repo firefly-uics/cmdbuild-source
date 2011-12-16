@@ -6,7 +6,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +26,7 @@ public class WidgetSerializationTest {
 	private static ObjectMapper mapper = new ObjectMapper();
 
 	private static class EmptyWidget extends Widget {
+		public static String TYPE = ".WidgetSerializationTest$EmptyWidget";
 	}
 
 	@Test
@@ -34,7 +37,7 @@ public class WidgetSerializationTest {
 	}
 
 	@Test
-	public void basicWidgetSerialization() throws JsonParseException, JsonMappingException, IOException {
+	public void basicWidgetSerializationContainsBasicAttributesAndType() throws JsonParseException, JsonMappingException, IOException {
 		final String ID = "f81d4fae-7dec-11d0-a765-00a0c91e6bf6";
 		final String LABEL = "Do Something Awesome";
 
@@ -44,10 +47,19 @@ public class WidgetSerializationTest {
 		w.setActive(false);
 
 		String jw = mapper.writeValueAsString(w);
-		assertThat(jw, containsPair("type", ".WidgetSerializationTest$EmptyWidget"));
+		assertThat(jw, containsPair("type", EmptyWidget.TYPE));
 		assertThat(jw, containsPair("id", ID));
 		assertThat(jw, containsPair("label", LABEL));
 		assertThat(jw, containsPair("active", Boolean.FALSE));
+	}
+
+	@Test
+	public void widgetListSerializationContansType() throws JsonParseException, JsonMappingException, IOException {
+		List<Widget> wl =  new ArrayList<Widget>();
+		wl.add(new EmptyWidget());
+
+		String jw = mapper.writeValueAsString(wl);
+		assertThat(jw, containsPair("type", EmptyWidget.TYPE));
 	}
 
 	@Test

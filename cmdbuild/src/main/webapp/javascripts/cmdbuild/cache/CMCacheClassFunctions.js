@@ -50,6 +50,29 @@
 			return newEt;
 		},
 
+		addWidgetToEntryTypes: function(data, onlyActive) {
+			var entryTypes = this.getEntryTypes();
+			for (var id in entryTypes) {
+				var et = entryTypes[id];
+				var widgets = data[et.get("name")];
+
+				if (widgets) {
+					if (onlyActive) {
+						var toAdd = [];
+						for (var i=0, l=widgets.length; i<l; ++i) {
+							var w = widgets[i];
+							if (w.active) {
+								toAdd.push(w);
+							}
+						}
+						et.setWidgets(toAdd);
+					} else {
+						et.setWidgets(widgets);
+					}
+				}
+			}
+		},
+
 		getClassById: function(id) {
 			return classes[id];
 		},
@@ -189,8 +212,18 @@
 		onGeoAttributeVisibilityChanged: function(idClass, geoAttribute, isVisible) {
 			var owner = _CMCache.getEntryTypeById(idClass);
 			owner.createOrUpdateGeoAttr(geoAttribute);
-		}
+		},
 
+		onWidgetSaved: function(idClass, widget) {
+			var et = this.getEntryTypeById(idClass);
+			et.removeWidgetById(widget.id);
+			et.addWidget(widget);
+		},
+
+		onWidgetDeleted: function(idClass, id) {
+			var et = this.getEntryTypeById(idClass);
+			et.removeWidgetById(id);
+		}
 	});
 
 	function buildSuperclassesStore() {

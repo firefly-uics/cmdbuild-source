@@ -25,18 +25,12 @@
 			this.view.reset(removeAllRecords = true);
 
 			var me = this;
-			// CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
-				// params: {
-					// className: _CMCache.getClassById(this.classId).get("name")
-				// },
-				// success: function success(response, operation, responseData) {
-					// var widgets = responseData.widgets;
-					// for (var i=0, l=widgets.length, w; i<l; ++i) {
-						// w = widgets[i];
-						// addRecordToGrid(w, me);
-					// }
-				// }
-			// });
+			var et = _CMCache.getEntryTypeById(classId);
+				widgets = et.getWidgets();
+			for (var i=0, l=widgets.length, w; i<l; ++i) {
+				w = widgets[i];
+				addRecordToGrid(w, me);
+			}
 		},
 
 		onAddClassButtonClick: function() {
@@ -45,10 +39,7 @@
 	});
 
 	function addRecordToGrid(w, me) {
-		var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(w.def, {
-			id: w.id
-		}));
-		me.view.addRecordToGrid(widgetModel);
+		me.view.addRecordToGrid(new CMDBuild.model.CMWidgetDefinitionModel(w));
 	}
 
 	function onAddClick(widgetName) {
@@ -77,23 +68,23 @@
 		}
 
 		var me = this,
-		definition = me.view.getWidgetDefinition(),
-		params = {
-			widget: Ext.encode(definition),
-			className: _CMCache.getClassById(this.classId).get("name")
-		}
+			widgetDef = me.view.getWidgetDefinition();
 
 		if (this.model) {
-			params.id = this.model.get(_fields.id);
+			widgetDef.id = this.model.get(_fields.id);
 		}
 
 		CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
-			params: params,
+			params: {
+				widget: Ext.encode(widgetDef),
+				className: _CMCache.getClassById(me.classId).get("name")
+			},
 			success: function success(response, operation, responseData) {
 				var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(responseData.response, {
-					type: definition.type
+					type: widgetDef.type
 				}));
 
+				_CMCache.onWidgetSaved(me.classId, widgetDef);
 				me.view.addRecordToGrid(widgetModel, selectAfter = true);
 				me.view.disableModify(enableToolBar = true);
 			}
@@ -123,6 +114,9 @@
 				success: function() {
 					me.view.removeRecordFromGrid(id);
 					me.view.reset();
+
+					_CMCache.onWidgetDeleted(me.classId, id);
+
 					delete me.model;
 					delete me.subController;
 				}

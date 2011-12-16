@@ -23,8 +23,9 @@
 	//REPORT
 
 	var _REPORT_FIELDS = {
-			value: "id",
-			description: "description"
+			value: "title",
+			description: "description",
+			id: "id"
 		},
 
 		_REPORT_ATTRIBUTE_FIELDS = {
@@ -40,7 +41,8 @@
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: _REPORT_FIELDS.value, type: "string"},
-			{name: _REPORT_FIELDS.description, type: "string"}
+			{name: _REPORT_FIELDS.description, type: "string"},
+			{name: _REPORT_FIELDS.id, type: "string"}
 		]
 	});
 

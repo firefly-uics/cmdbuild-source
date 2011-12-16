@@ -56,4 +56,16 @@ public abstract class Widget {
 	public int hashCode() {
 		return getId().hashCode();
 	}
+
+	/*
+	 * HACK to serialize type information in lists
+	 */
+
+	public void setType(final String type) {
+	}
+
+	public String getType() {
+		final String fullName = this.getClass().getName();
+		return fullName.substring(fullName.lastIndexOf("."));
+	}
 }

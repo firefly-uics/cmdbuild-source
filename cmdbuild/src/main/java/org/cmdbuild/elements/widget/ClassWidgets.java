@@ -66,6 +66,7 @@ public class ClassWidgets {
 			if (w.getId().equals(id)) {
 				return i;
 			}
+			++i;
 		}
 		return -1;
 	}

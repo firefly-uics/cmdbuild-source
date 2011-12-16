@@ -3,7 +3,6 @@
 		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
 		constructor: function(view, supercontroller, widgetControllerManager) {
 			this.callParent(arguments);
-			this.widgetControllerManager = widgetControllerManager;
 
 			this.CMEVENTS = Ext.apply(this.CMEVENTS,  {
 				cardRemoved: "cm-card-removed"
@@ -16,7 +15,6 @@
 			this.mon(this.view, ev.cloneCardButtonClick, this.onCloneCardClick, this);
 			this.mon(this.view, ev.printCardButtonClick, this.onPrintCardMenuClick, this);
 			this.mon(this.view, ev.openGraphButtonClick, this.onShowGraphClick, this);
-			this.mon(this.view, ev.widgetButtonClick, this.onWidgetButtonClick, this);
 		},
 
 		onRemoveCardClick: function() {
@@ -79,16 +77,6 @@
 					CMDBuild.LoadMask.get().hide();
 				}
 			});
-		},
-
-		setWidgetManager: function(wm) {
-			this.widgetManager = wm;
-		},
-
-		onWidgetButtonClick: function(w) {
-			if (this.widgetControllerManager) {
-				this.widgetControllerManager.onWidgetButtonClick(w);
-			}
 		}
 	});
 })();

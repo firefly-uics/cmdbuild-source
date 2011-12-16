@@ -74,7 +74,7 @@
 		}
 
 		if (reportCode.self && reportCode.self.$className == "CMDBuild.model.CMReportAsComboItem") {
-			reportCode = reportCode.get(CMDBuild.model.CMReportAsComboItem._FIELDS.value);
+			reportCode = reportCode.get(CMDBuild.model.CMReportAsComboItem._FIELDS.id);
 		}
 
 		return reportCode;

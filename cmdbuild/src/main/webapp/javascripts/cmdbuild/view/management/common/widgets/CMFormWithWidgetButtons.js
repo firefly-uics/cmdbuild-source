@@ -23,7 +23,8 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 			border: false,
 			items: []
 		});
-		_CMUtils.forwardMethods(this, this.widgets, ["updateWidgets"]);
+
+		_CMUtils.forwardMethods(this, this.widgets, ["removeAllButtons", "addWidget"]);
 		this.widgets.hide();
 
 		Ext.apply(this, {
@@ -87,5 +88,9 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 		}
 
 		return out;
+	},
+
+	getWidgetButtonsPanel: function() {
+		return this.widgets;
 	}
 });

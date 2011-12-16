@@ -124,6 +124,18 @@
 					callback: callback
 				});
 
+				// Do a separate request for the widgets because, at this time
+				// it is not possible serialize them with the classes
+				CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
+					scope: this,
+					callback: callback,
+					success: function(response, options, decoded) {
+						// a day I'll can do a request to have only the active, now the cache
+						// discards the inactive if the flag onlyActive is true
+						_CMCache.addWidgetToEntryTypes(decoded.response, onlyActive = true);
+					}
+				});
+
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
 						CMDBuild.Config.dms = decoded.data;

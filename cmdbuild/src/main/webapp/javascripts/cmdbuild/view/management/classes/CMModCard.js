@@ -109,6 +109,11 @@
 				split: true,
 				height: gridratio + "%"
 			});
+
+			var widgetManager = new CMDBuild.view.management.classes.CMWidgetManager(this.cardTabPanel.getCardPanel());
+			this.getWidgetManager = function() {
+				return widgetManager;
+			}
 		},
 
 		getGrid: function() {

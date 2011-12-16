@@ -103,12 +103,10 @@
 			// }
 		},
 
-		// FIXME "Code reuse"
 		activateFirstTab: function() {
 			this.acutalPanel.setActiveTab(this.activityTab);
 		},
 
-		// FIXME "Code reuse"
 		activateRelationTab: function() {
 			this.acutalPanel.setActiveTab(this.relationsPanel);
 		},
@@ -127,6 +125,22 @@
 
 		getHistoryPanel: function() {
 			return this.cardHistoryPanel;
+		},
+
+		getAttachmentsPanel: function() {
+			return this.openAttachmentPanel;
+		},
+
+		getNotesPanel: function() {
+			return this.openNotePanel;
+		},
+
+		showWidget: function (w) {
+			if (w.extattrtype == "openNote") {
+				this.openNotePanel.cmActivate();
+			} else if (w.extattrtype == "openAttachment"){
+				this.openAttachmentPanel.cmActivate();
+			}
 		}
 	});
 

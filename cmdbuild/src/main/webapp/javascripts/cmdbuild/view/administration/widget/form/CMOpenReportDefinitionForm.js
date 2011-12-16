@@ -104,7 +104,7 @@
 			});
 
 			this.buttonLabel = new Ext.form.Field({
-				name: "buttonLabel",
+				name: "label",
 				fieldLabel: tr.commonFields.buttonLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
@@ -120,11 +120,15 @@
 			});
 
 			this.forceFormatOptions = new CMDBuild.field.CMBaseCombo({
-				store: new Ext.data.Store({
-					fields: ["value"],
-					data: [{value: "CSV"}, {value: "PDF"}]
+				store : new Ext.data.ArrayStore({
+					autoDestroy: true,
+					fields : [ 'value', 'text' ],
+					data : [
+						[ 'pdf', 'PDF' ],
+						[ 'csv', 'CSV' ]
+					]
 				}),
-				displayField: "value",
+				displayField: "text",
 				valueField: "value",
 				queryMode: "local",
 				flex: 3
@@ -160,7 +164,7 @@
 		},
 
 		fillWithModel: function(model) {
-			this.buttonLabel.setValue(model.get("buttonLabel"));
+			this.buttonLabel.setValue(model.get("label"));
 			this.reportCode.setValue(model.get("reportCode"));
 			this.active.setValue(model.get("active"));
 
