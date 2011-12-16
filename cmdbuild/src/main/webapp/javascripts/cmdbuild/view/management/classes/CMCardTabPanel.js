@@ -99,37 +99,6 @@
 
 		getRelationsPanel: function() {
 			return this.relationsPanel;
-		},
-
-		// DEPRECATED
-
-		onClassSelected: function(id, activateFirst) { _deprecated();
-			if (activateFirst) {
-				this.activateFirstTab();
-			}
-	
-			this.items.each(function(item) {
-				if (item.onClassSelected) {
-					item.onClassSelected(id);
-				}
-			});
-		},
-
-		onCardSelected: function(card, reloadFields, loadRemoteData) { _deprecated();
-			this.items.each(function(item) {
-				if (item.onCardSelected) {
-					item.onCardSelected(card, reloadFields, loadRemoteData);
-				}
-			});
-		},
-
-		onAddCardButtonClick: function(idClass, reloadFields) { _deprecated();
-			this.setActiveTab(this.cardPanel);
-			this.items.each(function(item) {
-				if (item.onAddCardButtonClick) {
-					item.onAddCardButtonClick(idClass, reloadFields);
-				}
-			});
 		}
 	});
 	

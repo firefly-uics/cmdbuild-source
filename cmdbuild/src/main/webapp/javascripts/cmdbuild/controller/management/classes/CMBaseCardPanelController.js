@@ -1,8 +1,10 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
-		constructor: function(view, supercontroller) {
+		constructor: function(view, supercontroller, widgetControllerManager) {
 			this.callParent(arguments);
+
+			this.widgetControllerManager = widgetControllerManager;
 
 			this.CMEVENTS = {
 				cardSaved: "cm-card-saved"
@@ -14,6 +16,7 @@
 			this.mon(this.view, ev.modifyCardButtonClick, function() { this.onModifyCardClick.apply(this, arguments); }, this);
 			this.mon(this.view, ev.saveCardButtonClick, function() { this.onSaveCardClick.apply(this, arguments); }, this);
 			this.mon(this.view, ev.abortButtonClick, function() { this.onAbortCardClick.apply(this, arguments); }, this);
+			this.mon(this.view, ev.widgetButtonClick, this.onWidgetButtonClick, this);
 		},
 
 		onEntryTypeSelected: function() {
@@ -36,6 +39,10 @@
 			// If the entryType id and the id of the card are different
 			// the fields are not right, refill the form before the loadCard
 			var reloadFields = this.entryType.get("id") != this.card.get("IdClass");
+
+			if (this.widgetControllerManager) {
+				this.widgetControllerManager.buildControllers(card);
+			}
 
 			var me = this;
 			if (reloadFields) {
@@ -165,6 +172,16 @@
 		isEditable: function(card) {
 			var data = card.raw || card.data;
 			return data.priv_write;
+		},
+
+		setWidgetManager: function(wm) {
+			this.widgetManager = wm;
+		},
+
+		onWidgetButtonClick: function(w) {
+			if (this.widgetControllerManager) {
+				this.widgetControllerManager.onWidgetButtonClick(w);
+			}
 		}
 	});
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.elements.AttributeImpl;
@@ -622,6 +623,28 @@ public class ModClass extends JSONBase {
 		}
 	}
 
+	@JSONExported
+	public JsonResponse getAllWidgets(
+			@Parameter(value="active", required=false) boolean active,
+			UserContext userCtx) {
+		final Iterable<ITable> allTables = userCtx.tables().list();
+		Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
+		for (ITable table: allTables) {
+			if (!table.getMode().isDisplayable()) {
+				continue;
+			}
+			if (active && !isActive(table)) {
+				continue;
+			}
+			final List<Widget> widgetList = new ClassWidgets(table).getWidgets();
+			if (widgetList.isEmpty()) {
+				continue;
+			}
+			allWidgets.put(table.getName(), widgetList);
+		}
+		return JsonResponse.success(allWidgets);
+	}
+
 	@Admin
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(
@@ -640,6 +663,7 @@ public class ModClass extends JSONBase {
 
 	@Admin
 	@JSONExported
+	@Deprecated
 	public JsonResponse readWidgetDefinition(
 			ITable table, // className
 			final UserContext userCtx) {

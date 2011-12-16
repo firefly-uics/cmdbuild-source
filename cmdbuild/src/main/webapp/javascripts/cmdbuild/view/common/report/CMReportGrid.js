@@ -93,8 +93,10 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 
 	// Block the report panel to front if selected from the navigation menu
 	beforeBringToFront : function(selection) {
-		var r = selection.raw || selection.data;
-		return !(r && r.objid);
+		if (selection) {
+			var r = selection.raw || selection.data;
+			return !(r && r.objid);
+		}
 	}
 
 });

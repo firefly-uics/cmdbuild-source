@@ -22,30 +22,28 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 		this.CMEVENTS = this.self.CMEVENTS;
 	},
 
-	updateWidgets: function(widgets) {
+	addWidget: function addWidget(widget) {
 		var me = this;
-		this.removeAll();
-
-		if (widgets.length > 0) {
-			this.show();
-			Ext.each(widgets, function(item) {
-				me.add(new Ext.Button({
-					text: item.btnLabel || CMDBuild.Translation.management.modworkflow[item.labelId],
-					widgetDefinition: item,
-					disabled: true,
-					handler: function() {
-						me.fireEvent(me.CMEVENTS.widgetButtonClick, item);
-					},
-					margins:'0 0 5 0'
-				}));
-			});
-			me.updateButtonsWidth();
-		} else {
-			this.hide();
+		if (me._hidden) {
+			me.show();
+			me._hidden = false;
 		}
+
+		me.add(new Ext.Button({
+			text: widget.btnLabel || widget.label
+				|| CMDBuild.Translation.management.modworkflow[widget.labelId],
+			widgetDefinition: widget,
+			disabled: true,
+			handler: function() {
+				me.fireEvent(me.CMEVENTS.widgetButtonClick, widget);
+			},
+			margins:'0 0 5 0'
+		}));
+
+		me.updateButtonsWidth();
 	},
 
-	updateButtonsWidth: function () {
+	updateButtonsWidth: function updateButtonsWidth() {
 		var maxW = 0;
 		this.items.each(function(item) {
 			var w = item.getWidth();
@@ -62,15 +60,21 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 		this.setWidth(maxW + 10); // 10 is the pudding
 	},
 
-	displayMode: function() {
+	displayMode: function displayMode() {
 		this.items.each(function(i) {
 			i.disable();
 		});
 	},
 
-	editMode: function() {
+	editMode: function editMode() {
 		this.items.each(function(i) {
 			i.enable();
 		});
+	},
+
+	removeAllButtons: function removeAllButtons() {
+		this.removeAll();
+		this.hide();
+		this._hidden = true;
 	}
 });
