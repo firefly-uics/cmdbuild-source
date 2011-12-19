@@ -35,11 +35,6 @@ Ext.define("CMDBuild.field.LanguageCombo", {
 				this.setValue(lang);
 			}}
 		});
-	},
-
-	getCurrentLanguage : function () {
-		var languageParam = Ext.urlDecode(window.location.search.substring(1))['language'];
-		return languageParam || CMDBuild.Config.cmdbuild.language;
 	}
 });
 
