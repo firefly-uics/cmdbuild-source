@@ -155,6 +155,12 @@
                },
                "title": "Создать отчет"
             },
+            ".Calendar": {
+               "fields": {
+                  "target": "<em>Target Class</em>"
+               },
+               "title": "<em>Calendar</em>"
+            },
             "commonFields": {
                "active": "Активный",
                "buttonLabel": "Метка кнопки",

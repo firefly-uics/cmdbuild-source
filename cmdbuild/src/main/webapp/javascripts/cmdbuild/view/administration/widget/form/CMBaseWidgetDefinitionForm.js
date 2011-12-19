@@ -22,11 +22,50 @@
 
 		// template method, must be implemented in subclasses
 		buildForm: function() {
-			throw "you must implement buildForm";
+			var tr = CMDBuild.Translation.administration.modClass.widgets;
+
+			
+
+			this.buttonLabel = new Ext.form.Field({
+				name: "label",
+				fieldLabel: tr.commonFields.buttonLabel,
+				labelWidth: CMDBuild.LABEL_WIDTH
+			});
+
+			this.active = new Ext.form.field.Checkbox({
+				name: "active",
+				fieldLabel: tr.commonFields.active,
+				labelWidth: CMDBuild.LABEL_WIDTH
+			});
+
+			this.defaultFields = new Ext.panel.Panel({
+				frame: true,
+				border: true,
+				items: [this.buttonLabel, this.active],
+				flex: 1
+			});
+
+			Ext.apply(this, {
+				items: [this.defaultFields]
+			});
 		},
 
 		getWidgetDefinition: function() {
 			throw "you must implement getWidgetDefinition";
+		},
+
+		fillWithModel: function(model) {
+			this.buttonLabel.setValue(model.get("label"));
+			this.active.setValue(model.get("active"));
+		},
+
+		getWidgetDefinition: function() {
+			var me = this;
+			return {
+				type: me.self.WIDGET_NAME,
+				label: me.buttonLabel.getValue(),
+				active: me.active.getValue(),
+			}
 		},
 
 		disableNonFieldElements: Ext.emptyFn,

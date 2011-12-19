@@ -4,7 +4,7 @@
 		extend: "Ext.grid.Panel",
 
 		initComponent: function() {
-			var tr = CMDBuild.Translation.administration.modClass.widgets.commonFields;
+			var tr = CMDBuild.Translation.administration.modClass.widgets;
 
 			this.store = new Ext.data.Store({
 				model: "CMDBuild.model.CMWidgetDefinitionModel",
@@ -12,16 +12,19 @@
 			});
 
 			this.columns = [{
-				header : tr.type,
+				header : tr.commonFields.type,
 				dataIndex : fields.type,
-				flex: 1
+				flex: 1,
+				renderer: function(value) {
+					return tr[value].title;
+				}
 			},{
-				header: tr.buttonLabel,
+				header: tr.commonFields.buttonLabel,
 				dataIndex: fields.label,
 				flex: 2
 			},
 			new Ext.ux.CheckColumn({
-				header : tr.active,
+				header : tr.commonFields.active,
 				dataIndex : fields.active,
 				width: 90,
 				cmReadOnly: true

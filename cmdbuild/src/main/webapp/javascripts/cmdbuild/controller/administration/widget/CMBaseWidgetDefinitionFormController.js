@@ -22,10 +22,6 @@
 			}
 		},
 
-		getDataToSubmit: function() {
-			throw "You have to implement this method";
-		},
-
 		fillFormWithModel: function(model) {
 			if (typeof model == "object" 
 				&& model.$className == "CMDBuild.model.CMWidgetDefinitionModel") {
@@ -34,9 +30,12 @@
 			}
 		},
 
+		setDefaultValues: function() {
+			this.view.active.setValue(true);
+		},
+
 		afterEnableEditing: Ext.emptyFn,
 		disableNonFieldElements: Ext.emptyFn,
-		enableNonFieldElements: Ext.emptyFn,
-		setDefaultValues: Ext.emptyFn
+		enableNonFieldElements: Ext.emptyFn
 	});
 })();

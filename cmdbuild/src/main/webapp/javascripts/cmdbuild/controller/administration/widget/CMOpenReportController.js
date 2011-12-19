@@ -27,16 +27,9 @@
 			);
 		},
 
-		getDataToSubmit: function() {
-			var me = this;
-			return {
-				type: me.self.WIDGET_NAME,
-				label: me.view.buttonLabel.getValue()
-			};
-		},
-
+		// override
 		setDefaultValues: function() {
-			this.view.active.setValue(true);
+			this.callParent(arguments);
 			this.view.forceFormatCheck.setValue(true);
 		}
 
