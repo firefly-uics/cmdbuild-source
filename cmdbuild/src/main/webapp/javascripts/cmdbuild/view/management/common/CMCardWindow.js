@@ -16,17 +16,21 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 		this.CMEVENTS = {
 			saveCardButtonClick: ee.saveCardButtonClick,
 			abortButtonClick: ee.abortButtonClick,
-			formFilled: ee.formFilled
+			formFilled: ee.formFilled,
+			widgetButtonClick: ee.widgetButtonClick
 		};
 
 		this.relayEvents(this.cardPanel, [
 			ee.saveCardButtonClick,
 			ee.abortButtonClick,
-			ee.formFilled
+			ee.formFilled,
+			ee.widgetButtonClick
 		]);
 
 		this.addEvents(ee.saveCardButtonClick);
 		this.addEvents(ee.abortButtonClick);
+		this.addEvents(ee.formFilled);
+		this.addEvents(ee.widgetButtonClick);
 
 		if (this.classId) {
 			var privileges = _CMUtils.getClassPrivileges(this.classId);
@@ -49,6 +53,6 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 
 		this.callParent(arguments);
 
-		_CMUtils.forwardMethods(this, this.cardPanel, ["displayMode", "editMode", "fillForm", "loadCard", "reset", "getForm"]);
+		_CMUtils.forwardMethods(this, this.cardPanel, ["displayMode", "editMode", "fillForm", "loadCard", "reset", "getForm", "getWidgetButtonsPanel"]);
 	}
 });

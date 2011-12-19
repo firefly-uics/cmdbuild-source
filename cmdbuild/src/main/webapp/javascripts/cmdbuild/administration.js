@@ -112,10 +112,8 @@
 				this.loadResources();
 			},
 			loadResources : function() {
-				var dangling = 7, me = this;
-
-				function callback() {
-					if(--dangling == 0) {
+				var me = this,
+					reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
 						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(new CMDBuild.view.CMMainViewport({
 							cmAccordions : me.cmAccordions,
 							cmPanels : me.cmPanels
@@ -123,16 +121,14 @@
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 						_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
 						CMDBuild.view.CMMainViewport.hideSplash();
-					}
-				}
-
+					});
 
 				CMDBuild.ServiceProxy.lookup.readAllTypes({
 					success : function(response, options, decoded) {
 						_CMCache.addLookupTypes(decoded);
 						lookupAccordion.updateStore();
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.classes.read({
@@ -144,14 +140,14 @@
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
 
 				// Do a separate request for the widgets because, at this time
 				// it is not possible serialize them with the classes
 				CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
 					scope : this,
-					callback : callback,
+					callback: reqBarrier.getCallback(),
 					success : function(response, options, decoded) {
 						_CMCache.addWidgetToEntryTypes(decoded.response);
 					}
@@ -163,7 +159,7 @@
 						groupsAccordion.updateStore();
 						menuAccordion.updateStore()
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.report.getMenuTree({
@@ -171,7 +167,7 @@
 						_CMCache.addReports(reports);
 						reportAccordion.updateStore();
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.administration.domain.list({
@@ -179,7 +175,7 @@
 						_CMCache.addDomains(decoded.domains);
 						domainAccordion.updateStore();
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
@@ -189,7 +185,7 @@
 
 						processAccordion.setDisabled(!CMDBuild.Config.workflow.enabled);
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
@@ -199,8 +195,10 @@
 
 						gisAccordion.setDisabled(!CMDBuild.Config.gis.enabled);
 					},
-					callback : callback
+					callback: reqBarrier.getCallback()
 				});
+
+				reqBarrier.start();
 			}
 		}
 	});

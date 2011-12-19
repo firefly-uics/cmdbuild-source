@@ -80,19 +80,13 @@
 						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
 					})
 				];
-				// @@
-				modcard = this.cardPanel;
-
 				CMDBuild.view.CMMainViewport.showSplash();
 				this.loadResources();
 			},
 
 			loadResources: function() {
-				var dangling = 5,
-					me = this;
-
-				function callback() {
-					if (--dangling == 0) {
+				var me = this,
+					reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
 						hideIfEmpty(processAccordion);
 						hideIfEmpty(reportAccordion);
 						hideIfEmpty(menuAccordion);
@@ -106,10 +100,9 @@
 						);
 						_CMMainViewportController.selectStartingClass();
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-
+	
 						CMDBuild.view.CMMainViewport.hideSplash();
-					}
-				}
+					});
 
 				CMDBuild.ServiceProxy.classes.read({
 					params: {
@@ -121,26 +114,26 @@
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
 
 				// Do a separate request for the widgets because, at this time
 				// it is not possible serialize them with the classes
 				CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
 					scope: this,
-					callback: callback,
 					success: function(response, options, decoded) {
 						// a day I'll can do a request to have only the active, now the cache
 						// discards the inactive if the flag onlyActive is true
 						_CMCache.addWidgetToEntryTypes(decoded.response, onlyActive = true);
-					}
+					},
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
 						CMDBuild.Config.dms = decoded.data;
 					},
-					callback: callback
+					callback: reqBarrier.getCallback
 				},"dms");
 
 				CMDBuild.ServiceProxy.report.getTypesTree({
@@ -149,7 +142,7 @@
 						_CMCache.addReports(reports);
 						reportAccordion.updateStore();
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.menu.read({
@@ -159,7 +152,7 @@
 							menuAccordion.updateStore(decoded);
 						}
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change "administration"
@@ -169,8 +162,10 @@
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
+
+				reqBarrier.start();
 			}
 		}
 	});

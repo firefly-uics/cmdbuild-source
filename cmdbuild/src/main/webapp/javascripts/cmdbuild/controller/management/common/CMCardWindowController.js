@@ -31,6 +31,9 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 					}, function(card) {
 						me.card = card;
 						me.view.loadCard(card);
+						if (me.widgetControllerManager) {
+							me.widgetControllerManager.buildControllers(card);
+						}
 						if (conf.cmEditMode) {
 							me.view.editMode();
 						} else {

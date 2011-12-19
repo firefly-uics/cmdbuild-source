@@ -229,6 +229,29 @@ CMDBuild.Utils = (function() {
 
 _CMUtils = CMDBuild.Utils;
 
+Ext.define("CMDBuild.Utils.CMRequestBarrier", {
+	constructor: function(cb) {
+		var me = this;
+		this.dangling = 1;
+
+		this.cb = function () {
+			me.dangling--;
+			if (me.dangling == 0) {
+				cb();
+			}
+		}
+	},
+
+	getCallback: function() {
+		this.dangling++;
+		return this.cb;
+	},
+
+	start: function() {
+		this.cb();
+	}
+});
+
 CMDBuild.extend = function(subClass, superClass) {
 	var ob = function() {};
 	ob.prototype = superClass.prototype;
