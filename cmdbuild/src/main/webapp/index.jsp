@@ -35,6 +35,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 		
 		<!-- 2. Translations -->

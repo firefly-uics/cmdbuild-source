@@ -36,6 +36,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
 
 	<!-- 2. Translations -->
