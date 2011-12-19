@@ -4,7 +4,12 @@
 		constructor: function(view, supercontroller, widgetControllerManager) {
 			this.callParent(arguments);
 
-			this.widgetControllerManager = widgetControllerManager;
+			if (widgetControllerManager) {
+				this.widgetControllerManager = widgetControllerManager;
+			} else {
+				var widgetManager = new CMDBuild.view.management.classes.CMWidgetManager(this.view);
+				this.widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(widgetManager);
+			}
 
 			this.CMEVENTS = {
 				cardSaved: "cm-card-saved"
@@ -141,13 +146,15 @@
 				CMDBuild.ServiceProxy.card.get({
 					params: params,
 					success: function(a,b, response) {
+						var data = response.card;
+						if (me.card) {
 						// Merge the data of the selected card with
 						// the remote data loaded from the server.
 						// the reason is that in the activity list
 						// the card have data that are not returned from the
 						// server, so use the data already in the record
-						var data = me.card.raw || me.card.data;
-						data = Ext.apply(data, response.card);
+							data = Ext.apply((me.card.raw || me.card.data), data);
+						}
 						var card = new CMDBuild.DummyModel(data);
 						(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card)
 					}
