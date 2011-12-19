@@ -155,6 +155,12 @@
                },
                "title": "<em>Crea Report</em>"
             },
+            ".Calendar": {
+               "fields": {
+                  "target": "<em>Classe di riferimento</em>"
+               },
+               "title": "<em>Calendario</em>"
+            },
             "commonFields": {
                "active": "<em>Attivo</em>",
                "buttonLabel": "<em>Testo del pulsante</em>",

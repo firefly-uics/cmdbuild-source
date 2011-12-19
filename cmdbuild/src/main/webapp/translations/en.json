@@ -155,6 +155,12 @@
                },
                "title": "Create report"
             },
+            ".Calendar": {
+               "fields": {
+                  "target": "Target Class"
+               },
+               "title": "Calendar"
+            },
             "commonFields": {
                "active": "Active",
                "buttonLabel": "Button label",

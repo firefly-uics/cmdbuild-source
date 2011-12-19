@@ -94,6 +94,8 @@
 			var tr = CMDBuild.Translation.administration.modClass.widgets;
 			var me = this;
 
+			this.callParent(arguments);
+
 			this.reportCode = new CMDBuild.field.CMBaseCombo({
 				name: "code",
 				fieldLabel: tr[me.self.WIDGET_NAME].fields.report,
@@ -101,18 +103,6 @@
 				valueField: CMDBuild.model.CMReportAsComboItem._FIELDS.value,
 				displayField: CMDBuild.model.CMReportAsComboItem._FIELDS.description,
 				store: _CMCache.getReportComboStore()
-			});
-
-			this.buttonLabel = new Ext.form.Field({
-				name: "label",
-				fieldLabel: tr.commonFields.buttonLabel,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
-			this.active = new Ext.form.field.Checkbox({
-				name: "active",
-				fieldLabel: tr.commonFields.active,
-				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.forceFormatCheck = new Ext.form.field.Checkbox({
@@ -143,19 +133,18 @@
 			});
 
 			this.presetGrid = new CMDBuild.view.administration.widget.form.CMOpenReportDefinitionPresetGrid({
-				title: tr[me.self.WIDGET_NAME].fields.presets
+				title: tr[me.self.WIDGET_NAME].fields.presets,
+				margin: "0 0 0 3"
 			});
 
+			// defaultFields is inherited
+			this.defaultFields.add(this.reportCode, this.forceFormat);
+
 			Ext.apply(this, {
-				layout: "hbox",
-				items: [{
-					xtype: "panel",
-					frame: true,
-					border: true,
-					items: [this.buttonLabel, this.reportCode, this.forceFormat, this.active],
-					margins: "0 5 0 0",
-					flex: 1
-				}, this.presetGrid]
+				layout: {
+					type: "hbox"
+				},
+				items: [this.defaultFields, this.presetGrid]
 			});
 		},
 
@@ -163,10 +152,10 @@
 			this.presetGrid.fillWithData(data);
 		},
 
+		// override
 		fillWithModel: function(model) {
-			this.buttonLabel.setValue(model.get("label"));
+			this.callParent(arguments);
 			this.reportCode.setValue(model.get("reportCode"));
-			this.active.setValue(model.get("active"));
 
 			var forceFormat = model.get("forceFormat");
 			if (forceFormat) {
@@ -177,28 +166,29 @@
 			this.fillPresetWithData(model.get("preset"));
 		},
 
+		// override
 		disableNonFieldElements: function() {
 			this.presetGrid.disable();
 		},
 
+		// override
 		enableNonFieldElements: function() {
 			this.presetGrid.enable();
 		},
 
+		// override
 		getWidgetDefinition: function() {
 			var me = this;
-			return {
-				type: me.self.WIDGET_NAME,
-				label: me.buttonLabel.getValue(),
+
+			return Ext.apply(me.callParent(arguments), {
 				forceFormat: (function() {
 					if (me.forceFormatCheck.getValue()) {
 						return me.forceFormatOptions.getValue();
 					}
 				})(),
 				reportCode: me.reportCode.getValue(),
-				active: me.active.getValue(),
 				preset: me.presetGrid.getData()
-			};
+			});
 		}
 	});
 })();
