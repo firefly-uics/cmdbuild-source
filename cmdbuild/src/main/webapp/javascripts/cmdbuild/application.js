@@ -70,11 +70,3 @@
 	
 	Ext.enableFx = false;
 })();
-
-function getCurrentLanguage() {
-	var languageParam = Ext.urlDecode(window.location.search.substring(1))['language'];
-	if (languageParam) 
-		return languageParam;
-	else
-		return CMDBuild.Config.cmdbuild.language;
-}

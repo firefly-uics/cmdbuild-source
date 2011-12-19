@@ -130,32 +130,9 @@ Ext.define("CMDBuild.LoginPanel", {
 	buildLanguagesCombo: function() {
 		if (CMDBuild.Config.cmdbuild.languageprompt == "true") {
 
-			this.language = new CMDBuild.field.CMIconCombo({
-				fieldLabel: this.tr.language,
-				store: new Ext.data.Store( {
-					model : 'TranslationModel',
-					proxy : {
-						type : 'ajax',
-						url : 'services/json/utils/listavailabletranslations',
-						reader : {
-							type : 'json',
-							root : 'translations'
-						}
-					},
-					autoLoad : true
-				}),
-				valueField: 'name',
-				displayField: 'value',
-				queryMode: 'local'
+			this.language = new CMDBuild.field.LanguageCombo({
+				fieldLabel: this.tr.language
 			});
-
-			this.language.on('select', function(combo, record) {
-				window.location = Ext.String.format('?language={0}', record[0].get("name"));
-			}, this);
-
-			this.language.store.on('load', function() {
-				this.setValue(getCurrentLanguage());
-			}, this.language);
 		}
 	},
 	
