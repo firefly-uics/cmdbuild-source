@@ -57,9 +57,8 @@ public class DBDomain extends DBEntryType implements CMDomain {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return String.format("[Domain %s]", getName());
 	}
-
 	public final String getPrivilegeId() {
 		return String.format("Domain:%d", getId());
 	}

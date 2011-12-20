@@ -48,7 +48,7 @@ public class DBClass extends DBEntryType implements CMClass {
 	}
 
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return String.format("[Class %s]", getName());
 	}
 
 	public final String getPrivilegeId() {
