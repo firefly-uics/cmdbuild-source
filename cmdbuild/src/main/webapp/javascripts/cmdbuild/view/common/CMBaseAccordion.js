@@ -71,7 +71,11 @@
 
 		selectNodeById: function(node) {
 			var sm = this.getSelectionModel();
-			node = typeof node == "object" ? node : this.store.getNodeById(node);
+
+			if (typeof node != "object") {
+				// this.store.getNodeById(node) does not find it
+				node = this.store.getRootNode().findChild("id", node, deep=true);
+			}
 
 			if (node) {
 				sm.select(node);
@@ -79,7 +83,7 @@
 					this.expand();
 				});
 			} else {
-				_debug("I have not find a node with id " + nodeId);
+				_debug("I have not found a node with id " + node);
 			}
 		},
 

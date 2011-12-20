@@ -157,7 +157,11 @@
             },
             ".Calendar": {
                "fields": {
-                  "target": "Target Class"
+                  "target": "Target Class",
+                  "start": "Start date",
+                  "end": "End date",
+                  "title": "Event title",
+                  "filter": "CQL Filter"
                },
                "title": "Calendar"
             },

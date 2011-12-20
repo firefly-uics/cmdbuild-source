@@ -10,14 +10,24 @@
 			// openReport
 			allowedTypes[CMDBuild.view.management.common.widgets.CMOpenReport.WIDGET_NAME] = CMDBuild.view.management.common.widgets.CMOpenReport;
 
+			// calendar
+			allowedTypes[CMDBuild.view.management.common.widgets.CMCalendar.WIDGET_NAME] = CMDBuild.view.management.common.widgets.CMCalendar;
+
 			var widgetClass = allowedTypes[widget.type];
 			if (widgetClass && typeof widgetClass == "function") {
-				var ui = new widgetClass();
+				var ui = new widgetClass({
+					hideMode: "offsets"
+				});
 				me.widgetsContainer.addWidgt(ui);
 				return ui;
 			} else {
 				return null;
 			}
+		},
+
+		// override
+		getFormForTemplateResolver: function() {
+			return this.mainView.getForm();
 		}
 	});
 })();

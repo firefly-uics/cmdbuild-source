@@ -19,7 +19,7 @@
 				conf = {
 					widget: widget,
 					activity: card,
-					clientForm: this.mainView.getActivityPanel().getForm()
+					clientForm: me.getFormForTemplateResolver()
 				},
 				builders = {
 					createModifyCard: function() {
@@ -53,7 +53,7 @@
 						return w;
 					},
 					calendar: function() {
-						var w = new CMDBuild.view.management.workflow.widgets.CMCalendar(conf);
+						var w = new CMDBuild.view.management.common.widgets.CMCalendar();
 						me.widgetsContainer.addWidgt(w);
 	
 						return w;
@@ -83,8 +83,13 @@
 			}
 		},
 
+		// override
+		getFormForTemplateResolver: function getFormForTemplateResolver() {
+			return this.mainView.getActivityPanel().getForm()
+		},
+
 		// for the back button is openAttachment and openNote
-		showActivityPanel: function() {
+		showActivityPanel: function showActivityPanel() {
 			this.mainView.activateFirstTab();
 		}
 	});

@@ -17,6 +17,7 @@
 			this.mon(this.view, "cm-abort", onAbortClick, this);
 			this.mon(this.view, "cm-remove", onRemoveClick, this);
 			this.mon(this.view, "cm-modify", onModifyClick, this);
+			this.mon(this.view, "cm-enable-modify", onEnableModify, this);
 		},
 
 		onClassSelected: function(classId) {
@@ -159,5 +160,11 @@
 
 	function onModifyClick() {
 		this.view.enableModify();
+	}
+
+	function onEnableModify() {
+		if (this.subController) {
+			this.subController.afterEnableEditing()
+		}
 	}
 })();

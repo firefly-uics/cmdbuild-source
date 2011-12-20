@@ -9,8 +9,8 @@
 			return this._buildWidget(widget, card);
 		},
 
-		showWidget: function(w) {
-			this.widgetsContainer.showWidget(w);
+		showWidget: function(w, title) {
+			this.widgetsContainer.showWidget(w, title);
 		},
 
 		buildWidgetsContainer: function() {
@@ -33,6 +33,8 @@
 		// implement in subclasses
 		_buildWidget: function(widget, card) {
 			throw "Implement in sublcasses";
-		}
+		},
+
+		getFormForTemplateResolver: Ext.emptyFn
 	});
 })();

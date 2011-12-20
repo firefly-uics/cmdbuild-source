@@ -110,6 +110,7 @@
 
 			this.saveButton.enable();
 			this.abortButton.enable();
+			this.fireEvent("cm-enable-modify");
 		},
 
 		disableModify: function(enableCMTbar) {

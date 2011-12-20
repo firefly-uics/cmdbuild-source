@@ -1,20 +1,44 @@
 (function() {
-	var FILTER = "xa:Filter",
-		CLASS_ID = "xa:ClassId";
+	Ext.define("CMDBuild.controller.management.workflow.widgets.CMCalendarControllerWidgetReader", {
+		getStartDate: function(w) { return w.EventStartDate; },
+		getEndDate: function(w) { return w.EventEndDate; },
+		getTitle: function(w) { return w.EventTitle; },
+		getTargetName: function(w) { return w.ClassName; },
+		getFilterVarName: function() { return "xa:Filter"}
+	});
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMCalendarController", {
-		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
-		cmName: "Calendar",
+	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader", {
+		getStartDate: function(w) { return w.startDate; },
+		getEndDate: function(w) { return w.endDate; },
+		getTitle: function(w) { return w.eventTitle; },
+		getTargetName: function(w) { return w.targetClass; },
+		getFilterVarName: function() {return "xa:filter"}
+	});
+
+	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
 
 		mixins: {
 			observable: "Ext.util.Observable"
 		},
 
-		constructor: function() {
-			this.callParent(arguments);
+		statics: {
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCalendar.WIDGET_NAME
+		},
 
-			if (!this.widgetConf.EventStartDate ||
-					!this.widgetConf.EventTitle) {
+		constructor: function(view, ownerController, widgetDef, clientForm, reader) {
+			// this.widgetConf = c.widget;
+			// this.activity = c.activity.raw || c.activity.data;
+
+			this.WIDGET_NAME = this.self.WIDGET_NAME;
+
+			this.view = view;
+			this.ownerController = ownerController;
+			this.widget = widgetDef;
+			this.clientForm = clientForm;
+			this.reader = reader;
+
+			if (!this.reader.getStartDate(this.widget) ||
+					!this.reader.getTitle(this.widget)) {
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.management.modworkflow.extattrs.calendar.wrong_config);
@@ -24,38 +48,20 @@
 			} else {
 				this.eventMapping = {
 					id: "Id",
-					start: this.widgetConf.EventStartDate,
-					end: this.widgetConf.EventEndDate,
-					title: this.widgetConf.EventTitle
+					start: this.reader.getStartDate(this.widget),
+					end: this.reader.getEndDate(this.widget),
+					title: this.reader.getTitle(this.widget)
 				};
 			}
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.view.clientForm,
-				xaVars: this.view.widgetConf,
+				clientForm: this.clientForm,
+				xaVars: this.widget,
 				serverVars: this.view.activity
 			});
 
-			this.mon(this.view, "eventclick", function(panel, model, el) {
-				var w = new CMDBuild.view.management.common.CMCardWindow({
-					cmEditMode: false,
-					withButtons: false,
-					classId: this.widgetConf.ClassId,
-					cardId: model.get("EventId"), // id of the card destination
-					title: model.get("Title")
-				});
-				w.show();
-
-			}, this);
-
-			this.mon(this.view, "viewchange", function(info) {
-				if (this.filteredWithCQL) {
-					return;
-				} else {
-					this.updatePaginationQuery();
-					doRequest.call(this, this.widgetConf.ClassId);
-				}
-			}, this);
+			this.mon(this.view, "eventclick", onEventClick, this);
+			this.mon(this.view, "viewchange", onViewChange, this);
 		},
 
 		// override
@@ -67,30 +73,29 @@
 			}
 
 			var me = this,
-				classId = this.templateResolver.getVariable(CLASS_ID),
-				cqlQuery = this.templateResolver.getVariable(FILTER);
+				cqlQuery = this.templateResolver.getVariable(me.reader.getFilterVarName());
 
 			if (cqlQuery) {
 				this.filteredWithCQL = true;
 				this.templateResolver.resolveTemplates({
-					attributes: [FILTER],
+					attributes: [me.reader.getFilterVarName()],
 					scope: me.view,
 					callback: function(out, ctx) {
 						var filterParams = me.templateResolver.buildCQLQueryParameters(cqlQuery, ctx);
-						doRequest.call(me, classId, filterParams);
+						doRequest(me, filterParams);
 					}
 				});
 			} else {
 				this.filteredWithCQL = false;
 				me.updatePaginationQuery();
-				doRequest.call(me, classId);
+				doRequest(me);
 			}
 		},
 
 		updatePaginationQuery: function() {
 			var me = this,
 				viewBounds = this.view.getWievBounds(),
-				className = this.widgetConf.ClassName;
+				className = me.reader.getTargetName(me.widget);
 
 			var out = "SELECT " +
 				me.eventMapping.id + "," +
@@ -108,6 +113,11 @@
 				"\"" + getCMDBuildDateStringFromDateObject(viewBounds.viewEnd) + "\"";
 
 			this.paginationQuery = out;
+		},
+
+		destroy: function() {
+			this.mun(this.view, "eventclick", onEventClick, this);
+			this.mun(this.view, "viewchange", onViewChange, this);
 		}
 	});
 
@@ -133,20 +143,25 @@
 		return d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear();
 	}
 
-	function doRequest(idClass, filterParams) {
-		var params = filterParams || {},
-			me = this;
+	function doRequest(me, filterParams) {
+		if (me.busy) {
+			return;
+		} else {
+			me.busy = true;
+		}
 
-		params.IdClass = idClass;
+		var params = filterParams || {};
+
 		if (!filterParams) {
-			params.CQL = this.paginationQuery;
+			params.CQL = me.paginationQuery;
 		}
 
 		CMDBuild.ServiceProxy.getCardList({
 			params: params,
 			success: function(response, operation, decodedResponse) {
+				me.busy = false;
+				me.view.clearStore();
 				var _eventData = decodedResponse.rows || [];
-
 				for (var i=0, l=_eventData.length; i<l; ++i) {
 					var eventConf = {},
 					rawEvent = _eventData[i],
@@ -167,8 +182,37 @@
 						me.view.addEvent(event);
 					}
 				}
-
 			}
 		});
 	}
+
+	function onEventClick(panel, model, el) {
+		var me = this,
+			target = _CMCache.getEntryTypeByName(me.reader.getTargetName(me.widget));
+
+		if (target) {
+			var w = new CMDBuild.view.management.common.CMCardWindow({
+				cmEditMode: false,
+				withButtons: false,
+				title: model.get("Title")
+			});
+	
+			new CMDBuild.controller.management.common.CMCardWindowController(w, {
+				entryType: target.get("id"), // classid of the destination
+				card: model.get("EventId"), // id of the card destination
+				cmEditMode: false
+			});
+			w.show();
+		}
+	}
+
+	function onViewChange() {
+		if (this.filteredWithCQL) {
+			return;
+		} else {
+			this.updatePaginationQuery();
+			doRequest(this);
+		}
+	}
+
 })();
