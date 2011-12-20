@@ -31,7 +31,7 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 	onWidgetButtonClick: function(w) {
 		var wc = this.controllers[this.getWidgetId(w)];
 		if (wc) {
-			this.view.showWidget(wc.view);
+			this.view.showWidget(wc.view, this.getWidgetLable(w));
 			wc.beforeActiveView();
 		}
 	},
@@ -121,6 +121,9 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 
 	getWidgetId: function(widget) {
 		throw "Must be implemented";
-	}
+	},
 
+	getWidgetLable: function(widget) {
+		throw "Must be implemented";
+	}
 });

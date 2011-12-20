@@ -3,12 +3,14 @@
 		extend: "CMDBuild.PopupWindow",
 
 		initComponent: function() {
+			this.widgetsToAdd = {};
 			this.widgetsContainer = new Ext.panel.Panel({
 				layout: "card",
 				activeItem: 0,
 				hideMode: "offsets",
 				border: false,
-				frame: false
+				frame: false,
+				items: [{}]
 			});
 
 			var me = this;
@@ -27,22 +29,31 @@
 			this.callParent(arguments);
 		},
 
-		showWidget: function(widget) {
+		showWidget: function(widget, title) {
+			this.setTitle(title);
 			this.show();
+			if (this.widgetsToAdd[widget.id]) {
+				this.widgetsContainer.add(widget);
+				delete this.widgetsToAdd[widget.id];
+			}
 			this.widgetsContainer.layout.setActiveItem(widget.id);
 			this.removeExtraButtons();
 			if (widget.getExtraButtons) {
 				var extraButtons = widget.getExtraButtons();
 				this.addExtraButtons(extraButtons);
 			}
+			if (widget.buttonLabel) {
+				this.setTitle(widget.buttonLabel)
+			}
 		},
 
 		addWidgt: function(w) {
-			this.widgetsContainer.add(w);
+			this.widgetsToAdd[w.id] = w;
 		},
 
 		destroy: function() {
 			this.widgetsContainer.removeAll(autodestroy = true);
+			delete this.widgetsToAdd;
 		},
 
 		addExtraButtons: function(extraButtons) {

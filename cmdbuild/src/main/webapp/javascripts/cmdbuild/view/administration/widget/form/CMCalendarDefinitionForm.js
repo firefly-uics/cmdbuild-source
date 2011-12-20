@@ -18,20 +18,90 @@
 				fieldLabel : tr.fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : 'targetClass',
-				valueField : 'id',
+				valueField : 'name',
 				displayField : 'description',
 				editable : false,
 				store : _CMCache.getClassesAndProcessesStore(),
 				queryMode : 'local'
 			});
 
-			this.defaultFields.add(this.targetClass);
+			this.startDate = new CMDBuild.field.ErasableCombo({
+				fieldLabel : tr.fields.start,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name : 'startDate',
+				valueField : 'id',
+				displayField : 'description',
+				editable : false,
+				store : new Ext.data.Store({
+					fields: ["id", "description"],
+					data: []
+				}),
+				queryMode : 'local'
+			});
+
+			this.endDate = new CMDBuild.field.ErasableCombo({
+				fieldLabel : tr.fields.end,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name : 'endDate',
+				valueField : 'id',
+				displayField : 'description',
+				editable : false,
+				store : new Ext.data.Store({
+					fields: ["id", "description"],
+					data: []
+				}),
+				queryMode : 'local'
+			});
+
+			this.eventTitle = new CMDBuild.field.ErasableCombo({
+				fieldLabel : tr.fields.title,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name : 'eventTitle',
+				valueField : 'id',
+				displayField : 'description',
+				editable : false,
+				store : new Ext.data.Store({
+					fields: ["id", "description"],
+					data: []
+				}),
+				queryMode : 'local'
+			});
+
+			// defaultFields is inherited
+			this.defaultFields.add(this.targetClass, this.startDate, this.endDate, this.eventTitle);
+
+			this.filter = new Ext.form.field.TextArea({
+				fieldLabel: tr.fields.filter,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name: "filter",
+				flex: 1
+			});
+
+			this.filterContainer = new Ext.panel.Panel({
+				layout: "hbox",
+				frame: true,
+				border: true,
+				items: [this.filter],
+				margin: "0 0 0 3",
+				flex: 1
+			});
+
+			Ext.apply(this, {
+				layout: {
+					type: "hbox"
+				},
+				items: [this.defaultFields, this.filterContainer]
+			});
 		},
 
 		// override
 		fillWithModel: function(model) {
 			this.callParent(arguments);
 			this.targetClass.setValue(model.get("targetClass"));
+			this.startDate.setValue(model.get("startDate"));
+			this.endDate.setValue(model.get("endDate"));
+			this.eventTitle.setValue(model.get("eventTitle"));
+			this.filter.setValue(model.get("filter"));
 		},
 
 		//override
@@ -39,7 +109,11 @@
 			var me = this;
 
 			return Ext.apply(me.callParent(arguments), {
-				targetClass: me.targetClass.getValue()
+				targetClass: me.targetClass.getValue(),
+				startDate: me.startDate.getValue(),
+				endDate: me.endDate.getValue(),
+				eventTitle: me.eventTitle.getValue(),
+				filter: me.filter.getValue()
 			});
 		}
 	});

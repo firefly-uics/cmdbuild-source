@@ -11,7 +11,7 @@
 						return new controllerPKG.CMCreateModifyCard(ui, me, widgetDef);
 					},
 					createReport: function(ui, superController, widgetDef) {
-						var controller = new CMDBuild.controller.management.common.widgets.CMOpenReportController(ui, superController, widgetDef);;
+						var controller = new CMDBuild.controller.management.common.widgets.CMOpenReportController(ui, superController, widgetDef);
 						controller.setWidgetReader(new CMDBuild.controller.management.common.widgets.CMWFOpenReportControllerWidgetReader());
 						return controller;
 					},
@@ -30,8 +30,9 @@
 					openAttachment: function(ui) {
 						return new controllerPKG.CMAttachmentController(ui, me, widgetDef);
 					},
-					calendar: function(ui) {
-						return new controllerPKG.CMCalendarController(ui, me, widgetDef);
+					calendar: function(ui, me, widgetDef) {
+						var reader = new CMDBuild.controller.management.workflow.widgets.CMCalendarControllerWidgetReader();
+						return new CMDBuild.controller.management.common.widgets.CMCalendarController(ui, me, widgetDef, me.view.getFormForTemplateResolver(), reader);
 					}
 				};
 
@@ -47,6 +48,11 @@
 		// override
 		getWidgetId: function(w) {
 			return w.identifier;
+		},
+
+		// override
+		getWidgetLable: function(w) {
+			return w.ButtonLabel;
 		},
 
 		// for the back button is openAttachment and openNote

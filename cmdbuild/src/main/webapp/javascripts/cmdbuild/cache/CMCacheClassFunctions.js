@@ -95,6 +95,17 @@
 			}
 		},
 
+		getEntryTypeByName: function(name) {
+			var entryTypes = this.getEntryTypes();
+			for (var id in entryTypes) {
+				var e = entryTypes[id];
+				if (name == e.get("name")) {
+					return e;
+				}
+			}
+			return null;
+		},
+
 		getSuperclassesAsStore: function() {
 			if (superclassesStore.cmFake) {
 				superclassesStore = buildSuperclassesStore();
