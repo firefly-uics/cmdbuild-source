@@ -55,7 +55,7 @@
 
 	function onWidgetDefinitionSelect(sm, record, index) {
 		this.model = record;
-		buildSubController(this, record.get("type"), record);
+		buildSubController(this, record.get("type"), record, this.classId);
 	}
 
 	function onWidgetDefinitionDeselect(sm, record, index) {
@@ -125,7 +125,7 @@
 		}
 	}
 
-	function buildSubController(me, widgetName, record) {
+	function buildSubController(me, widgetName, record, classId) {
 		if (me.subController) {
 			delete me.subController;
 		}
@@ -134,7 +134,8 @@
 		if (subControllerClass) {
 			var subView = me.view.buildWidgetForm(widgetName);
 			me.subController = subControllerClass.create({
-				view: subView
+				view: subView,
+				classId: classId
 			});
 
 			if (record) {

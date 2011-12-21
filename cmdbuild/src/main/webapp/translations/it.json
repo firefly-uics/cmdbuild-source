@@ -161,7 +161,8 @@
                   "start": "Data inizio",
                   "end": "Data fine",
                   "title": "Titolo evento",
-                  "filter": "Filtro CQL"
+                  "filter": "Filtro CQL",
+                  "defaultDate": "Data di default"
                },
                "title": "Calendario"
             },

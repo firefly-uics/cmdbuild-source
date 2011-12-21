@@ -53,6 +53,20 @@
 				queryMode : 'local'
 			});
 
+			this.defaultDate = new CMDBuild.field.ErasableCombo({
+				fieldLabel : tr.fields.defaultDate,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name : 'defaultDate',
+				valueField : 'id',
+				displayField : 'description',
+				editable : false,
+				store : new Ext.data.Store({
+					fields: ["id", "description"],
+					data: []
+				}),
+				queryMode : 'local'
+			});
+
 			this.eventTitle = new CMDBuild.field.ErasableCombo({
 				fieldLabel : tr.fields.title,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -68,7 +82,7 @@
 			});
 
 			// defaultFields is inherited
-			this.defaultFields.add(this.targetClass, this.startDate, this.endDate, this.eventTitle);
+			this.defaultFields.add(this.targetClass, this.startDate, this.endDate, this.defaultDate, this.eventTitle);
 
 			this.filter = new Ext.form.field.TextArea({
 				fieldLabel: tr.fields.filter,
@@ -102,6 +116,7 @@
 			this.endDate.setValue(model.get("endDate"));
 			this.eventTitle.setValue(model.get("eventTitle"));
 			this.filter.setValue(model.get("filter"));
+			this.defaultDate.setValue(model.get("defaultDate"));
 		},
 
 		//override
@@ -113,7 +128,8 @@
 				startDate: me.startDate.getValue(),
 				endDate: me.endDate.getValue(),
 				eventTitle: me.eventTitle.getValue(),
-				filter: me.filter.getValue()
+				filter: me.filter.getValue(),
+				defaultDate: me.defaultDate.getValue()
 			});
 		}
 	});

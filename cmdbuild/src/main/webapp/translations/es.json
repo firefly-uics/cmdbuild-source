@@ -161,7 +161,8 @@
                   "start": "<em>Data inizio</em>",
                   "end": "<em>Data fine</em>",
                   "title": "<em>Titolo evento</em>",
-                  "filter": "<em>Filtro CQL</em>"
+                  "filter": "<em>Filtro CQL</em>",
+                  "defaultDate": "<em>Data di default</em>"
                },
                "title": "<em>Calendario</em>"
             },
