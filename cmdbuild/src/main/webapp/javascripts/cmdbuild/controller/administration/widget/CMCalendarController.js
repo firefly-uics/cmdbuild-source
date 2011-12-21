@@ -16,6 +16,8 @@
 				},
 				this.view
 			);
+
+			fillDefaultDateStore(me);
 		}
 	});
 
@@ -25,35 +27,44 @@
 			if (targetClass.get) {
 				targetClass = targetClass.get("id");
 			}
+		} else if (typeof targetClass == "string") {
+			var tc = _CMCache.getEntryTypeByName(targetClass);
+			if (tc) {
+				targetClass = tc.get("id");
+			}
 		}
 
 		if (targetClass) {
-			_CMCache.getAttributeList(targetClass, function(l) {
-				fillAttributeStoresWithData(me, l);
+			_CMCache.getAttributeList(targetClass, function(attributes) {
+				fillAttributeStoresWithData(me, attributes);
 			});
 		} else {
 			fillAttributeStoresWithData(me, []);
 		}
 	}
 
-	function fillAttributeStoresWithData(me, attributes) {
+	function fillStoreByType(store, attributes, allowedTypes) {
+		store.removeAll();
+		for (var i=0, l=attributes.length; i<l; ++i) {
+			var a = attributes[i],
+				type = a.type;
 
-		function fillStoreByType(store, attributes, allowedTypes) {
-			store.removeAll();
-			for (var i=0, l=attributes.length; i<l; ++i) {
-				var a = attributes[i],
-					type = a.type;
+			if ((allowedTypes && allowedTypes.indexOf(type) >= 0) 
+				|| !allowedTypes) {
 
-				if ((allowedTypes && allowedTypes.indexOf(type) >= 0) 
-					|| !allowedTypes) {
-
-					store.add({id: a.name, description: a.description});
-				}
+				store.add({id: a.name, description: a.description});
 			}
 		}
-
+	}
+	function fillAttributeStoresWithData(me, attributes) {
 		fillStoreByType(me.view.startDate.store, attributes, ["DATE", "TIMESTAMP"]);
 		fillStoreByType(me.view.endDate.store, attributes, ["DATE", "TIMESTAMP"]);
 		fillStoreByType(me.view.eventTitle.store, attributes, false);
+	}
+
+	function fillDefaultDateStore(me) {
+		_CMCache.getAttributeList(me.classId, function(attributes) {
+			fillStoreByType(me.view.defaultDate.store, attributes, ["DATE", "TIMESTAMP"]);
+		});
 	}
 })();

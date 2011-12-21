@@ -31,7 +31,6 @@
 	Ext.define("CMDBuild.view.management.common.widgets.CMCalendar", {
 		extend : "Ext.panel.Panel",
 		withButtons : true,
-		cmEventsData : [],
 
 		statics : {
 			WIDGET_NAME : ".Calendar"
@@ -39,7 +38,7 @@
 
 		constructor : function() {
 			this.eventStore = new Extensible.calendar.data.MemoryEventStore({
-				data : this.cmEventsData
+				data : []
 			});
 
 			this.calendar = new Extensible.calendar.CalendarPanel({
@@ -69,28 +68,45 @@
 
 			this.callParent(arguments);
 		},
+
 		addEvent : function(event) {
 			this.eventStore.add(event);
 		},
+
 		clearStore : function() {
 			this.eventStore.removeAll();
 		},
+
 		getWievBounds : function() {
-			var info;
-			if(this.calendar.layout && this.calendar.layout.getActiveItem) {
-				var view = this.calendar.layout.getActiveItem();
-				if(view) {
-					if(view.getViewBounds) {
-						var vb = view.getViewBounds();
-						info = {
-							activeDate : view.getStartDate(),
-							viewStart : vb.start,
-							viewEnd : vb.end
-						};
+			var info,
+				view = getCurrentView(this);
+
+			if (view) {
+				if (view.getViewBounds) {
+					var vb = view.getViewBounds();
+					info = {
+						activeDate : view.getStartDate(),
+						viewStart : vb.start,
+						viewEnd : vb.end
 					};
-				}
+				};
 			}
+
 			return info;
+		},
+
+		setStartDate: function(date) {
+			this.calendar.setStartDate(date);
 		}
 	});
+
+	function getCurrentView(me) {
+		var v = null;
+		if(me.calendar.layout
+			&& me.calendar.layout.getActiveItem) {
+
+			v = me.calendar.layout.getActiveItem();
+		}
+		return v;
+	}
 })();

@@ -4,7 +4,8 @@
 		getEndDate: function(w) { return w.EventEndDate; },
 		getTitle: function(w) { return w.EventTitle; },
 		getTargetName: function(w) { return w.ClassName; },
-		getFilterVarName: function() { return "xa:Filter"}
+		getFilterVarName: function() { return "xa:Filter"; },
+		getDefaultDate: function(w) { return w.DefaultDate; }
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader", {
@@ -12,7 +13,8 @@
 		getEndDate: function(w) { return w.endDate; },
 		getTitle: function(w) { return w.eventTitle; },
 		getTargetName: function(w) { return w.targetClass; },
-		getFilterVarName: function() {return "xa:filter"}
+		getFilterVarName: function() {return "xa:filter"},
+		getDefaultDate: function(w) { return w.defaultDate; }
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
@@ -68,6 +70,8 @@
 		beforeActiveView: function() {
 			this.view.clearStore();
 
+			openDefaultDate(this);
+
 			if (this.skipLoading) {
 				return;
 			}
@@ -121,22 +125,36 @@
 		}
 	});
 
+	function openDefaultDate(me) {
+		var defaultDateAttr = me.reader.getDefaultDate(me.widget);
+		if (defaultDateAttr) {
+			var defaultDate = me.templateResolver.getVariable("client:" + defaultDateAttr);
+			var date = buildDate(defaultDate);
+			if (date) {
+				me.view.setStartDate(date);
+			}
+		}
+	}
+
 	// my expectation is a string in the form:
 	// d/m/y or d/m/y H:i:s
 	// the Date object accept a string in the format m/d/y or m/d/y H:i:s
 	// so invert the d with m and return a Date object
 	function buildDate(stringDate) {
-		var chunks = stringDate.split(" ");
-		var dateChunks = chunks[0].split("/");
-
-		var out = dateChunks[1] + "/" + dateChunks[0] + "/" + dateChunks[2] + " ";
-		if (chunks[1]) {
-			out += chunks[1];
+		if (stringDate) {
+			var chunks = stringDate.split(" ");
+			var dateChunks = chunks[0].split("/");
+			var out = dateChunks[1] + "/" + dateChunks[0] + "/" + dateChunks[2] + " ";
+			if (chunks[1]) {
+				out += chunks[1];
+			} else {
+				out += "00:00:00";
+			}
+	
+			return new Date(out);
 		} else {
-			out += "00:00:00";
+			return new Date();
 		}
-
-		return new Date(out);
 	}
 
 	function getCMDBuildDateStringFromDateObject(d) {
@@ -144,12 +162,6 @@
 	}
 
 	function doRequest(me, filterParams) {
-		if (me.busy) {
-			return;
-		} else {
-			me.busy = true;
-		}
-
 		var params = filterParams || {};
 
 		if (!filterParams) {
@@ -159,7 +171,6 @@
 		CMDBuild.ServiceProxy.getCardList({
 			params: params,
 			success: function(response, operation, decodedResponse) {
-				me.busy = false;
 				me.view.clearStore();
 				var _eventData = decodedResponse.rows || [];
 				for (var i=0, l=_eventData.length; i<l; ++i) {

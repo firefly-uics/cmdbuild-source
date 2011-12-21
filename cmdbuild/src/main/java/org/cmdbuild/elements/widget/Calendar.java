@@ -8,6 +8,7 @@ public class Calendar extends Widget {
 	private String endDate;
 	private String eventTitle;
 	private String filter;
+	private String defaultDate;
 
 	public String getTargetClass() {
 		return this.targetClass;
@@ -47,5 +48,13 @@ public class Calendar extends Widget {
 
 	public void setFilter(final String filter) {
 		this.filter = filter;
+	}
+
+	public String getDefaultDate() {
+		return defaultDate;
+	}
+
+	public void setDefaultDate(String defaultDate) {
+		this.defaultDate = defaultDate;
 	}
 }
