@@ -95,12 +95,6 @@
 						field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
 	
 					if (field) {
-						if(parameters[attribute.name] && typeof (parameters[attribute.name] != 'object')) {
-							field.setValue(parameters[attribute.name]);
-						} else if(attribute.defaultvalue) {
-							field.setValue(attribute.defaultvalue);
-						}
-	
 						this.formFields[i] = field;
 						this.formPanel.add(field);
 					}
@@ -110,10 +104,11 @@
 		},
 	
 		fillFormValues: function(parameters) {
-			for(var i=0;i<this.formFields.length;i++) {
-				var field = this.formFields[i];
-				if(parameters[field.name] && (typeof parameters[field.name] == 'object')) {
-					var value = this.getActivityFormVariable(parameters[field.name]);
+			for (var i=0; i<this.formFields.length; i++) {
+				var field = this.formFields[i],
+					value = parameters[field.name]
+
+				if (value) {
 					field.setValue(value);
 				}
 			}

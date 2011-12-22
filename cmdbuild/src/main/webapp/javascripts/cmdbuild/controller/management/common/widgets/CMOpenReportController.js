@@ -15,7 +15,7 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMOpenReport.WIDGET_NAME
 		},
 
-		constructor: function(view, ownerController, widgetDef) {
+		constructor: function(view, ownerController, widgetDef, clientForm, reader, card) {
 			if (typeof view != "object") {
 				throw "The view of a WFWidgetController must be an object"
 			}
@@ -25,7 +25,11 @@
 			this.view = view;
 			this.ownerController = ownerController;
 			this.widget = this.view.widgetConf || widgetDef;
+			this.clientForm = clientForm;
+			this.widgetReader = reader;
+			this.card = card;
 
+			this.presets = this.widgetReader.getPreset(this.widget);
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 		},
 
@@ -34,39 +38,60 @@
 		},
 
 		beforeActiveView: function() {
-			if (this.configured || !this.widgetReader) {
-				return;
-			}
-
-			this.view.setLoading(true);
 			var me = this,
 				wr = this.widgetReader;
 
-			Ext.Ajax.request({
-				url : 'services/json/management/modreport/createreportfactorybytypecode',
-				params : {
-					type: wr.getType(me.widget),
-					code: wr.getCode(me.widget)
-				},
-				success : function(response) {
-					var ret = Ext.JSON.decode(response.responseText),
-						attributes = ret.filled ? [] : ret.attribute; // filled == with no parameters
+			if (!me.widgetReader) {
+				return;
+			}
 
-					me.view.configureForm(attributes, wr.getPreset(me.widget));
-					me.view.fillFormValues(wr.getPreset(me.widget));
-					me.view.forceExtension(wr.getForceFormat(me.widget));
+			if (me.configured && me.templateResolver) {
+				resolveTemplate(me);
+			} else {
+				me.view.setLoading(true);
 
-					me.view.setLoading(false);
-					me.configured = true;
-				},
-				scope: me
-			});
+				Ext.Ajax.request({
+					url : 'services/json/management/modreport/createreportfactorybytypecode',
+					params : {
+						type: wr.getType(me.widget),
+						code: wr.getCode(me.widget)
+					},
+					success : function(response) {
+						var ret = Ext.JSON.decode(response.responseText);
+	
+						me.attributes = ret.filled ? [] : ret.attribute; // filled == with no parameters
+						me.view.configureForm(me.attributes);
+						me.templateResolver = new CMDBuild.Management.TemplateResolver({
+							clientForm: me.clientForm,
+							xaVars: me.presets,
+							serverVars: me.card.raw || me.card.data
+						});
+	
+						resolveTemplate(me);
+						me.view.setLoading(false);
+						me.configured = true;
+					},
+					scope: me
+				});
+			}
 		},
 
 		destroy: function() {
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 		}
 	});
+
+	function resolveTemplate(me) {
+		var wr = me.widgetReader;
+
+		me.templateResolver.resolveTemplates({
+			attributes: Ext.Object.getKeys(me.presets),
+			callback: function(o) {
+				me.view.fillFormValues(o);
+				me.view.forceExtension(wr.getForceFormat(me.widget));
+			}
+		});
+	}
 
 	function onSaveCardClick() {
 		var form = this.view.formPanel.getForm();

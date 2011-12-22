@@ -13,7 +13,7 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 			Ext.Array.forEach(definitions, function buildController(w, i) {
 				var ui = me.view.buildWidget(w, card);
 				if (ui) {
-					var wc = me.buildWidgetController(ui, w);
+					var wc = me.buildWidgetController(ui, w, card);
 					if (wc) {
 						me.controllers[me.getWidgetId(w)] = wc;
 					}
@@ -111,7 +111,7 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 	},
 
 	// To override in subclass
-	buildWidgetController: function(ui) {
+	buildWidgetController: function(ui, widget, card) {
 		throw "Must be implemented";
 	},
 
