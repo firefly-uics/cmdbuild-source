@@ -20,6 +20,7 @@
 		},
 
 		destroy: function() {
+			this.callParent(arguments);
 			this.mun(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
 		},
 

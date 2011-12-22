@@ -68,9 +68,18 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
 			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
+		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, false);
+	}
+
+	public CardList getCardListWithLongDateFormat(String className, Attribute[] attributeList, Query queryType,
+			Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
+		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, true);
+	}
+
+	private CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
+			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery, boolean enableLongDateFormat) {
 		ECard ecard = new ECard(getUserCtx());
-		return ecard
-				.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery);
+		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, enableLongDateFormat);
 	}
 
 	public Card getCard(String className, Integer cardId, Attribute[] attributeList) {
@@ -264,5 +273,4 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	public UserInfo getUserInfo() {
 		return UserContextToUserInfo.newInstance(getUserCtx()).build();
 	}
-
 }

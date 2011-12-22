@@ -1,18 +1,53 @@
 package org.cmdbuild.services.soap.types;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.cmdbuild.dao.attribute.AbstractDateAttribute;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 
 public class Card {
-	
+
+	public enum ValueSerializer {
+		LEGACY {
+			@Override
+			public String serialize(final AttributeValue value) {
+				return value.toString();
+			}
+		},
+		HACK {
+			@Override
+			public String serialize(final AttributeValue attributeValue) {
+				switch (attributeValue.getSchema().getType()) {
+				case DATE:
+				case TIME:
+				case TIMESTAMP:
+					return new SimpleDateFormat(AbstractDateAttribute.SOAP_DATETIME_FORMAT).format(attributeValue
+							.getDate());
+				default:
+					return attributeValue.toString();
+				}
+			}
+		};
+
+		public abstract String serialize(final AttributeValue value);
+
+		public static ValueSerializer forLongDateFormat(final boolean enableLongDateFormat) {
+			if (enableLongDateFormat) {
+				return HACK;
+			} else {
+				return LEGACY;
+			}
+		}
+	}
+
 	private String className;
 	private int id;
 	private Calendar beginDate;
@@ -20,76 +55,83 @@ public class Card {
 	private String user;
 	private List<Attribute> attributeList;
 	private List<Metadata> metadata;
-	
-	public Card(){ }
-	
-	public Card(ICard card) {
+
+	public Card() {
+	}
+
+	public Card(final ICard card) {
+		this(card, ValueSerializer.LEGACY);
+	}
+
+	public Card(final ICard card, final ValueSerializer valueSerializer) {
 		setup(card);
-		List<Attribute> attrs = new ArrayList<Attribute>();
-		for (AttributeValue av : card.getAttributeValueMap().values()) {
-			Attribute tmp = new Attribute();
-			String name = av.getSchema().getName();
-			String value = av.toString();
+		final List<Attribute> attrs = new ArrayList<Attribute>();
+		for (final AttributeValue av : card.getAttributeValueMap().values()) {
+			final Attribute tmp = new Attribute();
+			final String name = av.getSchema().getName();
+			final String value = valueSerializer.serialize(av);
 			tmp.setName(name);
 			tmp.setValue(value);
-			if (av.getId() != null){
+			if (av.getId() != null) {
 				tmp.setCode(av.getId().toString());
 			}
 			attrs.add(tmp);
 		}
 		this.setAttributeList(attrs);
 	}
-	
-	public Card(ICard card, Attribute[] attrs){
-		
+
+	public Card(final ICard card, final Attribute[] attrs, final ValueSerializer valueSerializer) {
+
 		AttributeValue value;
 		Attribute attribute;
-		List<Attribute> list = new ArrayList<Attribute>();
+		final List<Attribute> list = new ArrayList<Attribute>();
 		Log.SOAP.debug("Filtering card with following attributes");
-		for (Attribute a : attrs) {
-			String name = a.getName();
-			if (name != null && (!(name.equals("")))){
+		for (final Attribute a : attrs) {
+			final String name = a.getName();
+			if (name != null && (!(name.equals("")))) {
 				value = card.getAttributeValue(name);
 				attribute = new Attribute();
 				attribute.setName(name);
-				if (value != null){
-					attribute.setValue(value.toString());
+				if (value != null) {
+					attribute.setValue(valueSerializer.serialize(value));
 				}
-				if (value.getId() != null){
+				if (value.getId() != null) {
 					attribute.setCode(value.getId().toString());
 				}
-				Log.SOAP.debug("Attribute name=" + name + ", value="+ value);
-				String attributeName = attribute.getName();
-				if (!attributeName.equals("Id")
-						&& !attributeName.equals("ClassName")
-						&& !attributeName.equals("BeginDate")
-						&& !attributeName.equals("User")
+				Log.SOAP.debug("Attribute name=" + name + ", value=" + value);
+				final String attributeName = attribute.getName();
+				if (!attributeName.equals("Id") && !attributeName.equals("ClassName")
+						&& !attributeName.equals("BeginDate") && !attributeName.equals("User")
 						&& !attributeName.equals("EndDate")) {
 					list.add(attribute);
 				}
-			}		
-			
-			this.setAttributeList(list);
 			}
+
+			this.setAttributeList(list);
+		}
 		setup(card);
 	}
-	
-	private void setup(ICard card){
-		int id = card.getId();
+
+	public Card(final ICard card, final Attribute[] attrs) {
+		this(card, attrs, ValueSerializer.LEGACY);
+	}
+
+	private void setup(final ICard card) {
+		final int id = card.getId();
 		this.setId(id);
 		this.setClassName(card.getSchema().getName());
 		this.setUser(card.getUser());
 
 		// Convert Date to Calendar
-		Calendar beginDate = Calendar.getInstance();
+		final Calendar beginDate = Calendar.getInstance();
 		beginDate.setTime(card.getBeginDate());
 		this.setBeginDate(beginDate);
 		try {
-			Date endDate = card.getAttributeValue("EndDate").getDate();
-			Calendar endDateCalendar = Calendar.getInstance();
+			final Date endDate = card.getAttributeValue("EndDate").getDate();
+			final Calendar endDateCalendar = Calendar.getInstance();
 			endDateCalendar.setTime(endDate);
 			this.setEndDate(endDateCalendar);
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 		}
 	}
 
@@ -97,7 +139,7 @@ public class Card {
 		return className;
 	}
 
-	public void setClassName(String classname) {
+	public void setClassName(final String classname) {
 		this.className = classname;
 	}
 
@@ -105,7 +147,7 @@ public class Card {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(final int id) {
 		this.id = id;
 	}
 
@@ -113,7 +155,7 @@ public class Card {
 		return beginDate;
 	}
 
-	public void setBeginDate(Calendar beginDate) {
+	public void setBeginDate(final Calendar beginDate) {
 		this.beginDate = beginDate;
 	}
 
@@ -121,7 +163,7 @@ public class Card {
 		return endDate;
 	}
 
-	public void setEndDate(Calendar endDate) {
+	public void setEndDate(final Calendar endDate) {
 		this.endDate = endDate;
 	}
 
@@ -129,7 +171,7 @@ public class Card {
 		return user;
 	}
 
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		this.user = user;
 	}
 
@@ -137,7 +179,7 @@ public class Card {
 		return attributeList;
 	}
 
-	public void setAttributeList(List<Attribute> attributeList) {
+	public void setAttributeList(final List<Attribute> attributeList) {
 		this.attributeList = attributeList;
 	}
 
@@ -145,16 +187,17 @@ public class Card {
 		return metadata;
 	}
 
-	public void setMetadata(List<Metadata> metadata) {
+	public void setMetadata(final List<Metadata> metadata) {
 		this.metadata = metadata;
-	}	
-	
-	public String toString(){
-		String attributes= "";
-		Iterator<Attribute> itr= attributeList.iterator();
-		while(itr.hasNext()){
-			attributes +=itr.next().toString();
+	}
+
+	@Override
+	public String toString() {
+		String attributes = "";
+		final Iterator<Attribute> itr = attributeList.iterator();
+		while (itr.hasNext()) {
+			attributes += itr.next().toString();
 		}
-		return "[className: "+className+" id:"+id+" attributes: "+attributes+"]"; 
+		return "[className: " + className + " id:" + id + " attributes: " + attributes + "]";
 	}
 }
