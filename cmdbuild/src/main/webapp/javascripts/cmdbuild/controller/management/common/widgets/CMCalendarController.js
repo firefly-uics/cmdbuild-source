@@ -27,7 +27,7 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCalendar.WIDGET_NAME
 		},
 
-		constructor: function(view, ownerController, widgetDef, clientForm, reader) {
+		constructor: function(view, ownerController, widgetDef, clientForm, reader, card) {
 			// this.widgetConf = c.widget;
 			// this.activity = c.activity.raw || c.activity.data;
 
@@ -38,6 +38,7 @@
 			this.widget = widgetDef;
 			this.clientForm = clientForm;
 			this.reader = reader;
+			this.card = card;
 
 			if (!this.reader.getStartDate(this.widget) ||
 					!this.reader.getTitle(this.widget)) {
@@ -59,7 +60,7 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.clientForm,
 				xaVars: this.widget,
-				serverVars: this.view.activity
+				serverVars: this.card.raw || this.card.data
 			});
 
 			this.mon(this.view, "eventclick", onEventClick, this);
