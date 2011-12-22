@@ -3,7 +3,7 @@
 		extend: "CMDBuild.controller.management.common.CMBaseWidgetMananager",
 
 		// override
-		buildWidgetController: function buildWidgetController(ui, widgetDef) {
+		buildWidgetController: function buildWidgetController(ui, widgetDef, card) {
 			var me = this,
 				widgetBuilders = {};
 
@@ -15,7 +15,7 @@
 
 			var builder = widgetBuilders[widgetDef.type];
 			if (builder) {
-				return builder(ui, superController = me, widgetDef, me.view.getFormForTemplateResolver());
+				return builder(ui, superController = me, widgetDef, me.view.getFormForTemplateResolver(), card);
 			} else {
 				return null;
 			}
@@ -42,14 +42,25 @@
 		},
 	});
 
-	function openReportControllerBuilder(ui, superController, widgetDef) {
-		var controller = new CMDBuild.controller.management.common.widgets.CMOpenReportController(ui, superController, widgetDef);
-		controller.setWidgetReader(new CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader());
-		return controller;
+	function openReportControllerBuilder(ui, superController, widgetDef, clientForm, card) {
+		return new CMDBuild.controller.management.common.widgets.CMOpenReportController(
+			ui,
+			superController,
+			widgetDef,
+			clientForm,
+			new CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader(),
+			card
+		);
 	}
 
-	function calendarControllerBuilder(ui, superController, widgetDef, clientForm) {
-		var reader = new CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader();
-		return new CMDBuild.controller.management.common.widgets.CMCalendarController(ui, superController, widgetDef, clientForm, reader);
+	function calendarControllerBuilder(ui, superController, widgetDef, clientForm, card) {
+		return new CMDBuild.controller.management.common.widgets.CMCalendarController(
+			ui,
+			superController,
+			widgetDef,
+			clientForm,
+			new CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader(),
+			card
+		);
 	}
 })();

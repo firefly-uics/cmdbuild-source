@@ -3,17 +3,23 @@
 		extend: "CMDBuild.controller.management.common.CMBaseWidgetMananager",
 
 		// override
-		buildWidgetController: function buildWidgetController(ui, widgetDef) {
+		buildWidgetController: function buildWidgetController(ui, widgetDef, card) {
 			var me = this,
 				controllerPKG = CMDBuild.controller.management.workflow.widgets,
 				builders = {
 					createModifyCard: function(ui) {
 						return new controllerPKG.CMCreateModifyCard(ui, me, widgetDef);
 					},
-					createReport: function(ui, superController, widgetDef) {
-						var controller = new CMDBuild.controller.management.common.widgets.CMOpenReportController(ui, superController, widgetDef);
-						controller.setWidgetReader(new CMDBuild.controller.management.common.widgets.CMWFOpenReportControllerWidgetReader());
-						return controller;
+					createReport: function(ui, superController, widgetDef, card) {
+						return new CMDBuild.controller.management.common.widgets.CMOpenReportController(
+							ui,
+							superController,
+							widgetDef,
+							me.view.getFormForTemplateResolver(),
+							new CMDBuild.controller.management.common.widgets.CMWFOpenReportControllerWidgetReader(),
+							card
+						);
+						
 					},
 					linkCards: function(ui) {
 						return new controllerPKG.CMLinkCardsController(ui, me, widgetDef);
@@ -30,13 +36,19 @@
 					openAttachment: function(ui) {
 						return new controllerPKG.CMAttachmentController(ui, me, widgetDef);
 					},
-					calendar: function(ui, me, widgetDef) {
-						var reader = new CMDBuild.controller.management.workflow.widgets.CMCalendarControllerWidgetReader();
-						return new CMDBuild.controller.management.common.widgets.CMCalendarController(ui, me, widgetDef, me.view.getFormForTemplateResolver(), reader);
+					calendar: function(ui, me, widgetDef,card) {
+						return new CMDBuild.controller.management.common.widgets.CMCalendarController(
+							ui,
+							me,
+							widgetDef,
+							me.view.getFormForTemplateResolver(),
+							new CMDBuild.controller.management.workflow.widgets.CMCalendarControllerWidgetReader(),
+							card
+						);
 					}
 				};
 
-			return builders[widgetDef.extattrtype](ui, me, widgetDef);
+			return builders[widgetDef.extattrtype](ui, me, widgetDef, card);
 		},
 
 		// override
