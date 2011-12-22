@@ -44,42 +44,54 @@
 			},
 
 			buildComponents: function() {
+				var disabled = CMDBuild.Runtime.DisabledModules;
 				this.cmAccordions = [
-					this.menuAccordion = menuAccordion,
- 					this.classesAccordion = classesAccordion,
- 					this.processAccordion = processAccordion,
-					this.reportAccordion = reportAccordion,
-					this.utilitiesTree = utilitiesTree
+					this.menuAccordion = menuAccordion
 				];
 
 				this.cmPanels = [
 					new Ext.panel.Panel({}),
-					
-					new CMDBuild.view.common.report.CMReportGrid({
-						cmName: "report",
-						cmControllerType: CMDBuild.controller.management.report.CMModReportController
-					}),
-					
-					this.changePasswordPanel = new CMDBuild.view.management.utilities.CMModChangePassword(),
-
-					
 					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
 						cmControllerType: CMDBuild.controller.management.classes.CMModCardController
 					}),
+
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
 
-					this.bulkCardUpdates = new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
-					}),
-
-					this.exportCSV = new CMDBuild.view.management.utilities.CMModExportCSV(),
-
-					this.importCSV = new CMDBuild.view.management.utilities.CMModImportCSV({
-						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
+						cmName: "report",
+						cmControllerType: CMDBuild.controller.management.report.CMModReportController
 					})
 				];
+
+				if (!disabled[classesAccordion.cmName]) {
+					this.classesAccordion = classesAccordion;
+					this.cmAccordions.push(this.classesAccordion);
+				}
+
+				if (!disabled[processAccordion.cmName]) {
+					this.processAccordion = processAccordion;
+					this.cmAccordions.push(this.processAccordion);
+				}
+
+				if (!disabled[reportAccordion.cmName]) {
+					this.reportAccordion = reportAccordion;
+					this.cmAccordions.push(this.reportAccordion);
+				}
+
+				this.utilitiesTree = utilitiesTree;
+				if (this.utilitiesTree.getRootNode().childNodes.length > 0) {
+					this.cmAccordions.push(this.utilitiesTree);
+				}
+
+				for (var moduleName in this.utilitiesTree.submodules) {
+					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
+					if (!disabled[cmName]) {
+						addUtilitySubpanel(cmName, this.cmPanels);
+					}
+				}
+
 				CMDBuild.view.CMMainViewport.showSplash();
 				this.loadResources();
 			},
@@ -174,6 +186,31 @@
 		if (a.isEmpty()) {
 			a.disable();
 			a.hide();
+		}
+	}
+
+	function addUtilitySubpanel(cmName, panels) {
+		var builders = {
+			changepassword : function() {
+				return new CMDBuild.view.management.utilities.CMModChangePassword();
+			},
+			bulkcardupdate : function() {
+				return new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+					cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+				});
+			},
+			importcsv : function() {
+				return new CMDBuild.view.management.utilities.CMModImportCSV({
+					cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+				});
+			},
+			exportcsv : function() {
+				return new CMDBuild.view.management.utilities.CMModExportCSV();
+			}
+		};
+
+		if (typeof builders[cmName] == "function") {
+			panels.push(builders[cmName]());
 		}
 	}
 })();

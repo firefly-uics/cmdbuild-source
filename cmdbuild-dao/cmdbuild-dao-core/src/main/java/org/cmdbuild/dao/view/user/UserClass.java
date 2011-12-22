@@ -9,12 +9,15 @@ public class UserClass extends UserEntryType implements CMClass {
 	private final DBClass inner;
 
 	static UserClass create(final UserDataView view, final DBClass inner) {
-		final CMAccessControlManager acm = view.getAccessControlManager();
-		if (inner != null && acm.hasReadAccess(inner) && (inner.isActive() || acm.hasDatabaseDesignerPrivileges())) {
+		if (isUserAccessible(view.getAccessControlManager(), inner)) {
 			return new UserClass(view, inner);
 		} else {
 			return null;
 		}
+	}
+
+	public static boolean isUserAccessible(final CMAccessControlManager acm, final DBClass inner) {
+		return inner != null && acm.hasReadAccess(inner) && (inner.isActive() || acm.hasDatabaseDesignerPrivileges());
 	}
 
 	private UserClass(final UserDataView view, final DBClass inner) {

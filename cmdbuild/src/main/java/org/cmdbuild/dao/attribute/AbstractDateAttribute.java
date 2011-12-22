@@ -11,16 +11,20 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public abstract class AbstractDateAttribute extends AttributeImpl {
 
-	public AbstractDateAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+	public static final String REST_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+	public static final String SOAP_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+
+	public AbstractDateAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
 		super(schema, name, meta);
 	}
 
-	protected Date convertDateString(String stringValue, String... formats) {
+	protected Date convertDateString(final String stringValue, final String... formats) {
 		if (stringValue.length() != 0) {
-			for (String format : formats) {
+			for (final String format : formats) {
 				try {
 					return new SimpleDateFormat(format).parse(stringValue);
-				} catch (ParseException ex) {}
+				} catch (final ParseException ex) {
+				}
 			}
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		} else {

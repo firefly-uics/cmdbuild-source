@@ -206,8 +206,8 @@ DECLARE
 	ReferenceDomainId oid := _cm_read_reference_domain_id_comment(AttributeComment);
 
 	RefSourceIdAttribute text := _cm_get_ref_source_id_domain_attribute(TableId, AttributeName);
+	RefSourceClassIdAttribute text := _cm_get_ref_source_class_domain_attribute(TableId, AttributeName);
 	RefTargetIdAttribute text := _cm_get_ref_target_id_domain_attribute(TableId, AttributeName);
-	RefTargetClassIdAttribute text := _cm_get_ref_target_class_domain_attribute(TableId, AttributeName);
 
 	ChildId oid;
 BEGIN
@@ -220,10 +220,10 @@ BEGIN
 	FOR objid IN EXECUTE 'SELECT "Id" from '||TableId::regclass||' WHERE "Status"=''A'''
 	LOOP
 		FOR referencedid IN EXECUTE '
-			SELECT '|| quote_ident(RefSourceIdAttribute) ||
+			SELECT '|| quote_ident(RefTargetIdAttribute) ||
 			' FROM '|| ReferenceDomainId::regclass ||
-			' WHERE '|| quote_ident(RefTargetClassIdAttribute) ||'='|| TableId ||
-				' AND '|| quote_ident(RefTargetIdAttribute) ||'='|| objid ||
+			' WHERE '|| quote_ident(RefSourceClassIdAttribute) ||'='|| TableId ||
+				' AND '|| quote_ident(RefSourceIdAttribute) ||'='|| objid ||
 				' AND "Status"=''A'''
 		LOOP
 			EXECUTE 'SELECT count(*) FROM '||ReferenceTargetId::regclass||' where "Id"='||referencedid INTO ctrlint;

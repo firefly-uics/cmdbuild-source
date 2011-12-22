@@ -39,7 +39,20 @@ public interface Private {
 			@WebParam(name = "offset") Integer offset,
 			@WebParam(name = "fullTextQuery") String fullTextQuery,
 			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
-	
+
+	/*
+	 * HACK The Project Manager forced us to do this 
+	 */
+	public CardList getCardListWithLongDateFormat(
+			@WebParam(name = "className") String className, 
+			@WebParam(name = "attributeList") Attribute[] attributeList,
+			@WebParam(name = "queryType") Query queryType, 
+			@WebParam(name = "orderType") Order[] orderType,
+			@WebParam(name = "limit") Integer limit,
+			@WebParam(name = "offset") Integer offset,
+			@WebParam(name = "fullTextQuery") String fullTextQuery,
+			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
+
 	public Card getCard(
 			@WebParam(name = "className") String className,
 			@WebParam(name = "cardId") Integer cardId,

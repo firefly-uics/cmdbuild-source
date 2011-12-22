@@ -201,7 +201,7 @@
 				t = tabs[detailId];
 
 				if (typeof t.get == "undefined") {
-					// there is a FK and t is the server serializatino of the fk attirute
+					// there is a FK and t is the server serialization of the fk-attribute
 					type = FK;
 					detailLabel = t.description;
 				} else {
@@ -234,17 +234,21 @@
 	}
 
 	function sortKeys(tabs) {
-		var sortedKeys = [];
-
+		var keys = [];
 		for (var key in tabs) {
-			sortedKeys.push(key);
+			keys.push(key);
 		}
 
-		sortedKeys = Ext.Array.sort(sortedKeys, function sortingFunction(a, b) {
-			return a.toUpperCase() > b.toUpperCase();
-		});
+		return Ext.Array.sort(keys, function sortingFunction(key1, key2) {
+			var obj1 = tabs[key1],
+				obj2 = tabs[key2],
+				data1 = obj1.data || obj1,
+				data2 = obj2.data || obj2,
+				string1 = data1.md_label || data1.description || key1,
+				string2 = data2.md_label || data2.description || key2;
 
-		return sortedKeys;
+			return string1.toUpperCase() > string2.toUpperCase();
+		});
 	};
 
 	function getDetailClass(detail) {

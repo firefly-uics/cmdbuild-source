@@ -130,6 +130,13 @@
 			}).show();
 
 			this.view.mon(addAttachmentWin, "saved", this.view.reloadCard, this.view);
+		},
+
+		destroy: function() {
+			this.mun(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
+			this.mun(this.view, 'beforeitemclick', cellclickHandler, this);
+			this.mun(this.view, "itemdblclick", onItemDoubleclick, this);
+			this.mun(this.view, 'activate', this.view.loadCardAttachments, this.view);
 		}
 	});
 
