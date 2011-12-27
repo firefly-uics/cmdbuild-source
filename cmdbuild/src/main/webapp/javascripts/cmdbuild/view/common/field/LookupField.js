@@ -77,7 +77,6 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					bodyStyle: {
 						padding: "0"
 					},
-					CMAttribute: attribute,
 					setValue: function(v) {
 						hiddenField.setValue(v);
 					}
@@ -100,6 +99,7 @@ function canBeBlank(attribute) {
 // private
 function buildHiddenField(attribute) {
 	var hiddenField = new Ext.form.Hidden({
+		CMAttribute: attribute,
 		name: attribute.name,
 		allowBlank: canBeBlank(attribute),
 		
