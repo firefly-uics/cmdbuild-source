@@ -1,5 +1,7 @@
 package org.cmdbuild.elements.widget;
 
+import java.util.Map;
+
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.StringUtils;
@@ -8,6 +10,10 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
 public abstract class Widget {
+
+	protected interface WidgetAction {
+		Object execute() throws Exception;
+	}
 
 	private String id; // unique inside a class only
 	private String label;
@@ -18,7 +24,27 @@ public abstract class Widget {
 		setActive(true);
 	}
 
-	public void setId(final String id) {
+	public final Object executeAction(final String action, final Map<String, Object> dsVars) throws Exception {
+		final WidgetAction actionCommand = getActionCommand(action, dsVars);
+		if (actionCommand != null) {
+			return actionCommand.execute();
+		}
+		final String error = String.format("Action not defined for widget %s", getClass().getCanonicalName());
+		throw new UnsupportedOperationException(error);
+	}
+
+	/**
+	 * Returns the WidgetAction object for the action by that name. If no
+	 * action matches, then it should return null.
+	 * 
+	 * @param action (can be null)
+	 * @return a widget action or null
+	 */
+	protected WidgetAction getActionCommand(final String action, final Map<String, Object> dsVars) {
+		return null;
+	}
+
+	public final void setId(final String id) {
 		this.id = id;
 	}
 
@@ -26,24 +52,24 @@ public abstract class Widget {
 		return id;
 	}
 
-	public void setLabel(final String label) {
+	public final void setLabel(final String label) {
 		this.label = label;
 	}
 
-	public String getLabel() {
+	public final String getLabel() {
 		return label;
 	}
 
-	public void setActive(final boolean active) {
+	public final void setActive(final boolean active) {
 		this.active = active;
 	}
 
-	public boolean isActive() {
+	public final boolean isActive() {
 		return active;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (obj != null && obj instanceof Widget) {
 			final Widget other = (Widget) obj;
 			return this.getId().equals(other.getId());
@@ -53,7 +79,7 @@ public abstract class Widget {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return getId().hashCode();
 	}
 
@@ -61,10 +87,10 @@ public abstract class Widget {
 	 * HACK to serialize type information in lists
 	 */
 
-	public void setType(final String type) {
+	public final void setType(final String type) {
 	}
 
-	public String getType() {
+	public final String getType() {
 		final String fullName = this.getClass().getName();
 		return fullName.substring(fullName.lastIndexOf("."));
 	}

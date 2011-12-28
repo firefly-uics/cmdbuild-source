@@ -1,12 +1,15 @@
 package org.cmdbuild.elements.widget;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
@@ -28,6 +31,25 @@ public class ClassWidgets {
 
 	public List<Widget> getWidgets() {
 		return loadWidgets();
+	}
+
+	public Object executeAction(final String widgetId, final String action, final ICard card) throws Exception {
+		synchronized (GLOBAL_WIDGET_LOCK) {
+			final List<Widget> widgets = loadWidgets();
+			int index = findIndexById(widgets, widgetId);
+			if (index < 0) {
+				throw new IllegalArgumentException("Widget not found");
+			}
+			return widgets.get(index).executeAction(action, varMap(card));
+		}
+	}
+
+	private Map<String, Object> varMap(ICard card) {
+		final Map<String, Object> varMap = new HashMap<String, Object>();
+		for (final String key : card.getAttributeValueMap().keySet()) {
+			varMap.put(key, card.getValue(key));
+		}
+		return varMap;
 	}
 
 	public void saveWidget(final Widget widget) {
