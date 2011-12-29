@@ -24,8 +24,8 @@ public abstract class Widget {
 		setActive(true);
 	}
 
-	public final Object executeAction(final String action, final Map<String, Object> dsVars) throws Exception {
-		final WidgetAction actionCommand = getActionCommand(action, dsVars);
+	public final Object executeAction(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) throws Exception {
+		final WidgetAction actionCommand = getActionCommand(action, params, dsVars);
 		if (actionCommand != null) {
 			return actionCommand.execute();
 		}
@@ -40,7 +40,7 @@ public abstract class Widget {
 	 * @param action (can be null)
 	 * @return a widget action or null
 	 */
-	protected WidgetAction getActionCommand(final String action, final Map<String, Object> dsVars) {
+	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) {
 		return null;
 	}
 

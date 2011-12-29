@@ -652,7 +652,7 @@ public class ModClass extends JSONBase {
 			@Parameter(value="widget", required=true) String jsonWidget,
 			final UserContext userCtx) throws JsonParseException, JsonMappingException, IOException {
 
-		ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 		final Widget w = mapper.readValue(jsonWidget, Widget.class);
 
 		final ClassWidgets classWidgets = new ClassWidgets(table);

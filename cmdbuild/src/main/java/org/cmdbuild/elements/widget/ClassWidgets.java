@@ -33,14 +33,14 @@ public class ClassWidgets {
 		return loadWidgets();
 	}
 
-	public Object executeAction(final String widgetId, final String action, final ICard card) throws Exception {
+	public Object executeAction(final String widgetId, final String action, final Map<String, Object> params, final ICard card) throws Exception {
 		synchronized (GLOBAL_WIDGET_LOCK) {
 			final List<Widget> widgets = loadWidgets();
 			int index = findIndexById(widgets, widgetId);
 			if (index < 0) {
 				throw new IllegalArgumentException("Widget not found");
 			}
-			return widgets.get(index).executeAction(action, varMap(card));
+			return widgets.get(index).executeAction(action, params, varMap(card));
 		}
 	}
 
