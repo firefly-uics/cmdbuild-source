@@ -64,6 +64,7 @@ import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.servlets.utils.builder.CardQueryParameter;
 import org.cmdbuild.utils.CQLFacadeCompiler;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -868,9 +869,19 @@ public class ModCard extends JSONBase {
 	public JsonResponse callWidget(
 			final ICard card,
 			@Parameter("widgetId") final String widgetId,
-			@Parameter(required=false, value="action") final String action) throws Exception {
+			@Parameter(required=false, value="action") final String action,
+			@Parameter(required=false, value="params") final String jsonParams) throws Exception {
+
+		final ObjectMapper mapper = new ObjectMapper();
+		final Map<String, Object> params;
+		if (jsonParams == null) {
+			params = new HashMap<String, Object>();
+		} else {
+			params = new ObjectMapper().readValue(jsonParams, mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+		}
+
 		final ClassWidgets classWidgets = new ClassWidgets(card.getSchema());
-		return JsonResponse.success(classWidgets.executeAction(widgetId, action, card));
+		return JsonResponse.success(classWidgets.executeAction(widgetId, action, params, card));
 	}
 
 	static private DirectedDomain stringToDirectedDomain(DomainFactory df, String string) {

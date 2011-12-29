@@ -2,12 +2,13 @@ package unit.template;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.utils.template.TemplateResolver;
 import org.cmdbuild.utils.template.TemplateResolverEngine;
+import org.cmdbuild.utils.template.TemplateResolverImpl;
 import org.junit.Test;
 
 public class TemplateResolverTest {
@@ -15,7 +16,7 @@ public class TemplateResolverTest {
 	@Test
 	public void aSimpleStringIsKeptAsItIs() {
 		String template = "A simple string";
-		TemplateResolver tr = TemplateResolver.newInstanceBuilder().build();
+		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().build();
 		assertThat(tr.simpleEval(template), is(template));
 	}
 
@@ -24,7 +25,7 @@ public class TemplateResolverTest {
 		TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
 		when(engine.eval(anyString())).thenReturn(null);
 
-		TemplateResolver tr = TemplateResolver.newInstanceBuilder().build();
+		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().build();
 
 		assertThat(tr.simpleEval("{e1:param}"), is(String.valueOf((Object) null)));
 	}
@@ -41,8 +42,8 @@ public class TemplateResolverTest {
 	}
 
 	private void assertSingleParamIsItsStringRepresentation(final Object value) {
-		TemplateResolver tr = TemplateResolver.newInstanceBuilder()
-			.withEngine("e1",  engineWithParam("param", value))
+		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
+			.withEngine(engineWithParam("param", value), "e1")
 			.build();
 
 		assertThat(tr.simpleEval("{e1:param}"), is(String.valueOf(value)));
@@ -50,8 +51,8 @@ public class TemplateResolverTest {
 
 	@Test
 	public void leadingPartsAreKeptIntact() {
-		TemplateResolver tr = TemplateResolver.newInstanceBuilder()
-			.withEngine("e1", engineWithParam("param", 42))
+		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
+			.withEngine(engineWithParam("param", 42), "e1")
 			.build();
 
 		assertThat(tr.simpleEval("XXX{e1:param}"), is(String.format("XXX%s", 42)));
@@ -70,8 +71,8 @@ public class TemplateResolverTest {
 		when(engine.eval("param1")).thenReturn(value1);
 		when(engine.eval("param2")).thenReturn(value2);
 
-		TemplateResolver tr = TemplateResolver.newInstanceBuilder()
-			.withEngine("e1", engine)
+		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
+			.withEngine(engine, "e1")
 			.build();
 
 		assertThat(tr.simpleEval("XXX{e1:param1}YYY{e1:param2}ZZZ"), is(
