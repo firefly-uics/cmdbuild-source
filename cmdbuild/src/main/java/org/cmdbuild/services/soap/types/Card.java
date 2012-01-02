@@ -29,11 +29,18 @@ public class Card {
 				case DATE:
 				case TIME:
 				case TIMESTAMP:
-					return new SimpleDateFormat(AbstractDateAttribute.SOAP_DATETIME_FORMAT).format(attributeValue
-							.getDate());
+					return attributeValue.isNull() ? attributeValue.toString() : dateAsString(attributeValue);
 				default:
 					return attributeValue.toString();
 				}
+			}
+
+			private String dateAsString(final AttributeValue attributeValue) {
+				return dateFormat().format(attributeValue.getDate());
+			}
+
+			private SimpleDateFormat dateFormat() {
+				return new SimpleDateFormat(AbstractDateAttribute.SOAP_DATETIME_FORMAT);
 			}
 		};
 
