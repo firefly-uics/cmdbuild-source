@@ -336,7 +336,7 @@ CMDBuild.ServiceProxy.lookup = {
 				extraParams : {
 					type : type,
 					active : true,
-					short : true
+					"short" : true
 				},
 				actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
 			},

@@ -28,6 +28,7 @@
 			var me = this;
 			var et = _CMCache.getEntryTypeById(classId);
 				widgets = et.getWidgets();
+
 			for (var i=0, l=widgets.length, w; i<l; ++i) {
 				w = widgets[i];
 				addRecordToGrid(w, me);

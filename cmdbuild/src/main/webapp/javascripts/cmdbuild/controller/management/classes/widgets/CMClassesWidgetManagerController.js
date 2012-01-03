@@ -13,6 +13,9 @@
 			// calendar
 			widgetBuilders[CMDBuild.controller.management.common.widgets.CMCalendarController.WIDGET_NAME] = calendarControllerBuilder;
 
+			// ping
+			widgetBuilders[CMDBuild.controller.management.common.widgets.CMPingController.WIDGET_NAME] = pingControllerBuilder;
+
 			var builder = widgetBuilders[widgetDef.type];
 			if (builder) {
 				return builder(ui, superController = me, widgetDef, me.view.getFormForTemplateResolver(), card);
@@ -60,6 +63,16 @@
 			widgetDef,
 			clientForm,
 			new CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader(),
+			card
+		);
+	}
+
+	function pingControllerBuilder(ui, superController, widgetDef, clientForm, card) {
+		return new CMDBuild.controller.management.common.widgets.CMPingController(
+			ui,
+			superController,
+			widgetDef,
+			clientForm,
 			card
 		);
 	}

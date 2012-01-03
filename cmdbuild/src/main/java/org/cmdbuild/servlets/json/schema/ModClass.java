@@ -663,17 +663,6 @@ public class ModClass extends JSONBase {
 
 	@Admin
 	@JSONExported
-	@Deprecated
-	public JsonResponse readWidgetDefinition(
-			ITable table, // className
-			final UserContext userCtx) {
-		// Move to table serialization
-		final ClassWidgets classWidgets = new ClassWidgets(table);
-		return JsonResponse.success(classWidgets.getWidgets());
-	}
-
-	@Admin
-	@JSONExported
 	public void removeWidgetDefinition(
 			ITable table, // className
 			@Parameter("id") String widgetId,
