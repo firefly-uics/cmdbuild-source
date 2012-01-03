@@ -1,72 +1,4 @@
 (function() {
-
-	Ext.define("CMDBuild.view.administration.widget.form.CMOpenReportDefinitionPresetGrid", {
-		extend: "Ext.grid.Panel",
-		frame: false,
-		flex: 1,
-		initComponent: function() {
-			this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit : 1
-			});
-			var widgetName = CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm.WIDGET_NAME,
-				tr = CMDBuild.Translation.administration.modClass.widgets[widgetName].presetGrid;
-
-			Ext.apply(this, {
-				columns: [{
-					header: tr.attribute,
-					dataIndex : CMDBuild.model.CMReportAttribute._FIELDS.name,
-					flex: 1
-				},{
-					header: tr.value,
-					dataIndex: CMDBuild.model.CMReportAttribute._FIELDS.value,
-					editor: {
-						xtype: "textfield"
-					},
-					flex: 1
-				}],
-				store: new Ext.data.Store({
-					model: "CMDBuild.model.CMReportAttribute",
-					data: []
-				}),
-				plugins: [this.cellEditing]
-			});
-
-			this.callParent(arguments);
-		},
-
-		fillWithData: function(data) {
-			this.store.removeAll();
-			if (data) {
-				var fields = CMDBuild.model.CMReportAttribute._FIELDS;
-
-				for (var key in data) {
-					var recordConf = {};
-					recordConf[fields.name] = key;
-					recordConf[fields.value] = data[key] || "";
-
-					this.store.add(new CMDBuild.model.CMReportAttribute(recordConf));
-				}
-			}
-		},
-
-		count: function() {
-			return this.store.count();
-		},
-
-		getData: function() {
-			var records = this.store.getRange(),
-				fields = CMDBuild.model.CMReportAttribute._FIELDS,
-				data = {};
-
-			for (var i=0, l=records.length; i<l; ++i) {
-				var recData = records[i].data;
-				data[recData[fields.name]] = recData[fields.value];
-			}
-
-			return data;
-		}
-	});
-
 	Ext.define("CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
@@ -132,8 +64,10 @@
 				items: [this.forceFormatCheck, this.forceFormatOptions]
 			});
 
-			this.presetGrid = new CMDBuild.view.administration.widget.form.CMOpenReportDefinitionPresetGrid({
+			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
 				title: tr[me.self.WIDGET_NAME].fields.presets,
+				keyLabel: tr[me.self.WIDGET_NAME].presetGrid.attribute,
+				valueLabel: tr[me.self.WIDGET_NAME].presetGrid.value,
 				margin: "0 0 0 3"
 			});
 

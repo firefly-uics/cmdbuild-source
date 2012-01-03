@@ -417,7 +417,7 @@ em {
 	-khtml-border-radius: 0 !important;
 	border-radius: 0 !important;
 	padding: 0;
-	border-width: none !important;
+	border-width: 0 !important;
 	border-style : none !important;
 	background-image: none !important;
 	background-color: #DFE9F6 !important
@@ -792,36 +792,6 @@ em {
 
 /* custom icons */
 
-/*
-.icon-grid-image {
-	max-height: 20px;
-	max-width: 20px;
-	padding-top: 3px;
-}
-
-.icon-item {
-	width: 100%;
-}
-
-.icon-item-image-wrap {
-	display: table-cell;
-	width: 20px;
-	vertical-align: middle;
-	text-align: center;
-	padding: 2px;
-}
-
-.icon-item-image {
-	max-height: 20px;
-	max-width: 20px;
-	vertical-align: middle;
-}
-
-.icon-item-label {
-	display: table-cell;
-	vertical-align: middle;
-}
-*/
 .x-grid-cell-inner {
 	padding: 3px 6px;
 	height: 18px ! important;
@@ -840,8 +810,7 @@ em {
 	font-weight: bold;
 }
 
-/*
-.grid-button .x-grid-row-checker {
-	margin-top: 3px;
+.cm-pre {
+	font-size: 1.2em;
+	padding: 0.5em;
 }
-*/

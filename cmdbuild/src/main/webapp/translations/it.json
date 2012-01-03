@@ -166,6 +166,14 @@
                },
                "title": "Calendario"
             },
+            ".Ping": {
+               "fields": {
+                  "address": "Indirizzo",
+                  "count": "Numero di ping",
+                  "templates": "Template"
+               },
+               "title": "Ping"
+            },
             "commonFields": {
                "active": "Attivo",
                "buttonLabel": "Testo del pulsante",

@@ -13,6 +13,9 @@
 			// calendar
 			allowedTypes[CMDBuild.view.management.common.widgets.CMCalendar.WIDGET_NAME] = CMDBuild.view.management.common.widgets.CMCalendar;
 
+			// ping
+			allowedTypes[CMDBuild.view.management.common.widgets.CMPing.WIDGET_NAME] = CMDBuild.view.management.common.widgets.CMPing;
+
 			var widgetClass = allowedTypes[widget.type];
 			if (widgetClass && typeof widgetClass == "function") {
 				var ui = new widgetClass({

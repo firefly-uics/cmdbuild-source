@@ -11,6 +11,7 @@ public class Ping extends AbstractCommandExecutionWidget {
 
 	private String address;
 	private int count;
+	private Map<String,String> templates;
 
 	public void setAddress(final String address) {
 		this.address = address;
@@ -26,6 +27,14 @@ public class Ping extends AbstractCommandExecutionWidget {
 
 	public int getCount() {
 		return count;
+	}
+
+	public void setTemplates(Map<String, String> templates) {
+		this.templates = templates;
+	}
+
+	public Map<String, String> getTemplates() {
+		return templates;
 	}
 
 	@Override
