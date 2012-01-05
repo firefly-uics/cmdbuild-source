@@ -995,7 +995,9 @@
                "subjectfld": "Naslov poruke",
                "subjecthdr": "Naslov poruke",
                "tofld": "Primalac",
-               "viewicon": "Prikaži"
+               "viewicon": "Prikaži",
+               "mailsAreChanged":"<em>The generated e-mails are changed</em>",
+               "regenerates": "<em>Regenerate e-mails</em>"
             },
             "managerelation": {"required": "Morate izabrati relacije - "},
             "notes": {

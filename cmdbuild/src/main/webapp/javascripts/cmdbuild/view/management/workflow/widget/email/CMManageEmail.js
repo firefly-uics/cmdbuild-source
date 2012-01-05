@@ -32,10 +32,24 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
 			items: [this.emailGrid],
 			buttonAlign: "center",
 			buttons: [this.backToActivityButton],
-			cls: "x-panel-body-default-framed"
+			cls: "x-panel-body-default-framed",
+
+			// Wrap the grid
+			addTemplateToStore: function(t) {
+				return this.emailGrid.addTemplateToStore(t);
+			},
+			removeTemplatesFromStore: function() {
+				return this.emailGrid.removeTemplatesFromStore();
+			},
+			storeHasNoOutgoing: function() {
+				return this.emailGrid.storeHasNoOutgoing();
+			},
+			CMEVENTS: this.emailGrid.CMEVENTS
 		});
 
 		this.callParent(arguments);
+		this.addEvents([this.CMEVENTS.updateTemplatesButtonClick]);
+		this.relayEvents(this.emailGrid, [this.emailGrid.CMEVENTS.updateTemplatesButtonClick]);
 	},
 
 	cmActivate: function() {

@@ -995,7 +995,9 @@
                "subjectfld": "Sujet",
                "subjecthdr": "Sujet",
                "tofld": "A",
-               "viewicon": "Vue"
+               "viewicon": "Vue",
+               "mailsAreChanged":"<em>The generated e-mails are changed</em>",
+               "regenerates": "<em>Regenerate e-mails</em>"
             },
             "managerelation": {"required": "Sélectionnez les relations -"},
             "notes": {
