@@ -6,6 +6,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.jcip.annotations.NotThreadSafe;
+
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.CardQuery;
@@ -15,6 +17,8 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.services.auth.UserContext;
 
+// FIXME: it's not enough to synchronize the update
+@NotThreadSafe
 public class MetadataService {
 
 	public static final String RUNTIME_PREFIX = "runtime";
@@ -38,6 +42,10 @@ public class MetadataService {
 
 	public static MetadataMap getMetadata() {
 		return getMetadata(EMPTY, false);
+	}
+
+	public static Object getMetadata(final BaseSchema schema, String name) {
+		return getMetadata(schema).get(name);
 	}
 
 	public static MetadataMap getMetadata(BaseSchema schema) {

@@ -1,3 +1,7 @@
+if (typeof CMDBuild == "undefined") {
+	CMDBuild = {};
+}
+
 CMDBuild.LoadMask = {
 	get: function(text) {
 		if (!CMDBuild.LoadMask.instance) {

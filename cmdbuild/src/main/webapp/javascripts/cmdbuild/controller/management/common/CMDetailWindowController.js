@@ -1,15 +1,16 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.common.CMDetailWindowController", {
 		extend: "CMDBuild.controller.management.common.CMCardWindowController",
-		
+
 		constructor: function() {
 			this.callParent(arguments);
 
-			this.view.mon(this.view.cardPanel, "cmFormFilled", function() {
+			this.mon(this.view, this.view.CMEVENTS.formFilled, function() {
 				if (this.view.hasRelationAttributes) {
 					loadRelationToFillRelationAttributes.call(this);
 				}
 			}, this);
+
 		},
 
 		getRelationsAttribute: function() {
@@ -26,7 +27,7 @@
 
 			return out;
 		},
-		
+
 		// private, could be overridden
 		buildParamsToSaveRelation: function(detailData) {
 			var detail = this.view.detail;
@@ -62,7 +63,7 @@
 				f.setDisabled(f.CMAttribute && f.CMAttribute.cmRelationAttribute);
 			});
 		},
-		
+
 		//override
 		onSaveSuccess: function(form, res) {
 			// if this.relation is different to undefined,
@@ -71,7 +72,7 @@
 			if (this.relation) {
 				this.updateRelation(form, res);
 			}
-			this.view.destroy();
+			this.callParent(arguments);
 		},
 
 		updateRelation: function(form, res) {
@@ -117,7 +118,7 @@
 				try {
 					if (domains.length > 1) {
 					_debug("TODO ecco perchè sbaglia il modify, il get relation torna due domini, che " +
-							"in realtà è lo stesso nei due versi", domains)
+							"in realtà è lo stesso nei due versi", domains);
 					}
 					me.relation = domains[0].relations[0]; // set this for the save request
 					var fields = me.getRelationsAttribute(),

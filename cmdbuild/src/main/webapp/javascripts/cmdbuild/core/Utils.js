@@ -162,6 +162,22 @@ CMDBuild.Utils = (function() {
 			return out;
 		},
 
+		forwardMethods: function (wrapper, target, methods) {
+			if (!Ext.isArray(methods)) {
+				methods = [methods]
+			}
+			for (var i=0, l=methods.length; i<l; ++i) {
+				var m = methods[i];
+				if (typeof m == "string" && typeof target[m] == "function") {
+					var fn = function() {
+						return target[arguments.callee.$name].apply(target, arguments);
+					};
+					fn.$name = m;
+					wrapper[m] = fn;
+				}
+			}
+		},
+
 		getChildrenById: function(entryTypeId) {
 			var ett = _CMCache.getEntryTypes(),
 				out = [];
@@ -212,6 +228,29 @@ CMDBuild.Utils = (function() {
 })();
 
 _CMUtils = CMDBuild.Utils;
+
+Ext.define("CMDBuild.Utils.CMRequestBarrier", {
+	constructor: function(cb) {
+		var me = this;
+		this.dangling = 1;
+
+		this.cb = function () {
+			me.dangling--;
+			if (me.dangling == 0) {
+				cb();
+			}
+		}
+	},
+
+	getCallback: function() {
+		this.dangling++;
+		return this.cb;
+	},
+
+	start: function() {
+		this.cb();
+	}
+});
 
 CMDBuild.extend = function(subClass, superClass) {
 	var ob = function() {};

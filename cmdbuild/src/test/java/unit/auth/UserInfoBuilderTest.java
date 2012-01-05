@@ -16,6 +16,7 @@ import org.cmdbuild.services.auth.UserType;
 import org.junit.Before;
 import org.junit.Test;
 
+@Deprecated
 public class UserInfoBuilderTest {
 
 	private static final String BLANK = " \t";

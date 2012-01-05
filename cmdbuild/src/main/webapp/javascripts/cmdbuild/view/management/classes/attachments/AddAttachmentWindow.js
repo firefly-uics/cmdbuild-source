@@ -91,8 +91,6 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 		this.form.getForm().submit({
 			method: 'POST',
 			url: 'services/json/management/modcard/uploadattachment',
-			waitTitle : CMDBuild.Translation.common.wait_title,
-			waitMsg : CMDBuild.Translation.common.wait_msg,
 			scope: this,
 			success: function() {
 				// Defer the call because Alfresco is not responsive
