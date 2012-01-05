@@ -1,17 +1,36 @@
 Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 	extend: "CMDBuild.PopupWindow",
-	classId: undefined, // setted in instantiation
-	cardId: undefined,
+
 	cmEditMode: false, // if true, after the attributes load go in edit mode
 	withButtons: false, // true to use the buttons build by the CMCardPanel
 
 	initComponent:function() {
 
-		this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel( {
+		this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel({
 			withButtons: this.withButtons,
 			withToolBar: this.withToolBar,
 			allowNoteFiled: true
 		});
+
+		var ee = this.cardPanel.CMEVENTS;
+		this.CMEVENTS = {
+			saveCardButtonClick: ee.saveCardButtonClick,
+			abortButtonClick: ee.abortButtonClick,
+			formFilled: ee.formFilled,
+			widgetButtonClick: ee.widgetButtonClick
+		};
+
+		this.relayEvents(this.cardPanel, [
+			ee.saveCardButtonClick,
+			ee.abortButtonClick,
+			ee.formFilled,
+			ee.widgetButtonClick
+		]);
+
+		this.addEvents(ee.saveCardButtonClick);
+		this.addEvents(ee.abortButtonClick);
+		this.addEvents(ee.formFilled);
+		this.addEvents(ee.widgetButtonClick);
 
 		if (this.classId) {
 			var privileges = _CMUtils.getClassPrivileges(this.classId);
@@ -34,18 +53,6 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 
 		this.callParent(arguments);
 
-		this.on("show", this.loadCard, this);
-		this.cardPanel.on("cmdb-close-window", this.close, this);
-	},
-
-	loadCard: function() {
-		function fillForm(attributes) {
-			this.cardPanel.fillForm(attributes, this.cmEditMode);
-			if (this.cardId) {
-				this.cardPanel.loadCard(this.cardId, this.classId);
-			}
-		}
-
-		_CMCache.getAttributeList(this.classId, Ext.bind(fillForm, this));
+		_CMUtils.forwardMethods(this, this.cardPanel, ["displayMode", "editMode", "fillForm", "loadCard", "reset", "getForm", "getWidgetButtonsPanel"]);
 	}
 });

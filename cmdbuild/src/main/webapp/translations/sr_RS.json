@@ -1,6 +1,6 @@
 {
    "description": "Српски",
-   "release": "1.4.0-dev",
+   "release": "1.5-dev",
    "administration": {
       "description": "Администрациони модул",
       "modClass": {
@@ -17,6 +17,11 @@
                "desc": "У опадајућем поретку"
             },
             "domain": "Домен",
+            "editorType": {
+               "html": "<em>Html</em>",
+               "label": "<em>Editor type</em>",
+               "plain": "<em>Plain text</em>"
+            },
             "field_hidden": "Скривен",
             "field_read": "Само за читање",
             "field_visibility": "Начин приступа",
@@ -82,8 +87,8 @@
             "domain": "Домен",
             "is_active": "Активан",
             "m_d": "M/D",
-            "md_label": "Назив везе надређени/подређени (Master/Detail)",
             "master_detail": "Надређени/подређени (Master/Detail)",
+            "md_label": "Назив везе надређени/подређени (Master/Detail)",
             "modify_domain": "Измени домен",
             "name": "Назив",
             "title_add": "Додај домен",
@@ -136,7 +141,46 @@
             "properties": "Обележја"
          },
          "title": "Управљање класама",
-         "tree_title": "Класе"
+         "tree_title": "Класе",
+         "widgets": {
+            ".OpenReport": {
+               "fields": {
+                  "force": "<em>Force format</em>",
+                  "presets": "<em>Report attributes</em>",
+                  "report": "<em>Report</em>"
+               },
+               "presetGrid": {
+                  "attribute": "<em>Attribute</em>",
+                  "value": "<em>Value</em>"
+               },
+               "title": "<em>Create report</em>"
+            },
+            ".Calendar": {
+               "fields": {
+                  "target": "<em>Target Class</em>",
+                  "start": "<em>Start date</em>",
+                  "end": "<em>End date</em>",
+                  "title": "<em>Event title</em>",
+                  "filter": "<em>CQL Filter</em>",
+                  "defaultDate": "<em>Default date to open</em>"
+               },
+               "title": "<em>Calendar</em>"
+            },
+            ".Ping": {
+               "fields": {
+                  "address":"<em>Address to ping</em>",
+                  "count": "<em>Number of pings</em>",
+                  "templates": "<em>Templates</em>"
+               },
+               "title": "<em>Ping</em>"
+            },
+            "commonFields": {
+               "active": "<em>Active</em>",
+               "buttonLabel": "<em>Button label</em>",
+               "type": "<em>Type</em>"
+            },
+            "title": "<em>Widget</em>"
+         }
       },
       "modLookup": {
          "add_lookuptype": "Додај тип у шифарник",
@@ -401,24 +445,12 @@
             "rowlimit": "Број редова на једној страници",
             "sessiontimeout": "Сесија је истекла (seconds)",
             "startingClass": "Подразумевана класа",
+            "tabs_position": {
+               "bottom": "<em>Bottom</em>",
+               "label": "<em>Tabs position in card panel</em>",
+               "top": "<em>Top</em>"
+            },
             "title": "CMDBuild подешавања"
-         },
-         "gis": {
-            "center_lat": "Почетна географска ширина",
-            "center_lon": "Почетна географска дужина",
-            "enable": "Укључен",
-            "initial_zoom": "Почетно увећање",
-            "serverurl": "Адреса сервера - URL",
-            "title": "ГИС"
-         },
-         "graph": {
-            "baseLevel": "Подразумевани број нивоа",
-            "clusteringThreshold": "Праг за прегруписавање чворова",
-            "enabled": "Укључен",
-            "expandingThreshold": "Максималан број чворова у групи",
-            "extensionMaximumLevel": "Максималан број нивоа који се могу селектовати",
-            "menuTitle": "Граф релација",
-            "title": "Подешавање графа релација"
          },
          "dms": {
             "categoryLookup": "CMDBuild категорија",
@@ -439,6 +471,23 @@
             "repositoryWSPath": "Путања web сервиса",
             "serverUrl": "Адреса (Url) сервиса",
             "title": "Alfresco подешавања"
+         },
+         "gis": {
+            "center_lat": "Почетна географска ширина",
+            "center_lon": "Почетна географска дужина",
+            "enable": "Укључен",
+            "initial_zoom": "Почетно увећање",
+            "serverurl": "Адреса сервера - URL",
+            "title": "ГИС"
+         },
+         "graph": {
+            "baseLevel": "Подразумевани број нивоа",
+            "clusteringThreshold": "Праг за прегруписавање чворова",
+            "enabled": "Укључен",
+            "expandingThreshold": "Максималан број чворова у групи",
+            "extensionMaximumLevel": "Максималан број нивоа који се могу селектовати",
+            "menuTitle": "Граф релација",
+            "title": "Подешавање графа релација"
          },
          "modify": "Измени",
          "save": "Потврди",
@@ -522,8 +571,8 @@
       "loading": "Учитавање у току...",
       "loading_mask": {
          "classes": "Учитавање класа",
-         "domain": "Учитавање домена",
          "configuration": "Учитавање конфигурације",
+         "domain": "Учитавање домена",
          "group": "Учитавање листе група и корисника",
          "lookup": "Учитавање листи шифарника",
          "menu": "Учитавање менија",
@@ -605,15 +654,15 @@
       "title": "Подешавања"
    },
    "errors": {
-   	  "busy_wf_widgets": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
+      "busy_wf_widgets": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
       "detail": "Детаљи",
       "error_message": "Грешка",
       "error_moving_row": "Дошло је до грешке приликом обраде реда",
-      "invalid_fields" : "Одређена поља нису коректно поуњена",
       "invalid_attributes": "Следећа поља нису коректно попуњена:",
       "invalid_extended_attributes": "Следеће визуелне контроле нису коректно попуњене:",
+      "invalid_fields": "Одређена поља нису коректно поуњена",
       "no_driver": "Недостаје одговарајући JDBC управљачки програм (драјвер).<br />Одговарајући драјвер можете пронаћи у CMDBuild инсталационом фолдеру и копирати у <b>lib<\/b> фолдер Tomcat сервера.",
-	  "no_selections": "Нисте изабрали картицу података која ће бити ажурирана",
+      "no_selections": "Нисте изабрали картицу података која ће бити ажурирана",
       "reasons": {
          "ATTACHMENT_NOTFOUND": "Прилог {0} за објекат {2} у {1} не постоји",
          "ATTRIBUTE_NOTFOUND": "Атрибут {1} не постоји у {0}",
@@ -638,8 +687,8 @@
          "MENU_NOTFOUND": "Мени не постоји",
          "NOTFOUND": "Елемент није пронађен",
          "ORM_AMBIGUOUS_DIRECTION": "Смер релације није могуће аутоматски утврдити",
-         "ORM_ATTACHMENT_UPLOAD_FAILED": "Додавање прилога није успело",
          "ORM_ATTACHMENT_DELETE_FAILED": "Брисање прилога није успело",
+         "ORM_ATTACHMENT_UPLOAD_FAILED": "Додавање прилога није успело",
          "ORM_CANT_CREATE_DATABASE": "Креирање базе података није успело.",
          "ORM_CANT_CREATE_USER": "Креирање корисника није успело",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Није могуће обрисати картице са активним релацијама",
@@ -680,9 +729,9 @@
          "ORM_READ_ONLY_RELATION": "Релација је доступна само за читање",
          "ORM_READ_ONLY_TABLE": "Табела је доступна само за читање",
          "ORM_SQL_PATCH": "SQL грешка у patch датотеци",
-         "ORM_TYPE_ERROR": "Неодговарајући тип",
          "ORM_TABLE_HAS_CHILDREN": "Класа која садржи изведене класе не може бити уклоњена",
          "ORM_TABLE_HAS_DOMAIN": "Класа за коју је дефинисан и домен не може бити уклоњена",
+         "ORM_TYPE_ERROR": "Неодговарајући тип",
          "ORM_UNIQUE_VIOLATION": "Нарушено ограничење: јединственост вредности",
          "PARAMETER_CLASS_UNAVAILABLE": "Инстанцирање објекта Java класе {0} није могуће",
          "PRIVILEGE_GROUP_NOTFOUND": "Не постоје привилегије за групу {0}",
@@ -857,9 +906,9 @@
          "edit_attachment": "Измени прилог",
          "edit_relation": "Измени релацију",
          "gis": {
-         	"geo_attributes": "Географски атрибути",
-         	"zoom": "Увећање",
-         	"position": "Позиција"
+            "geo_attributes": "Географски атрибути",
+            "position": "Позиција",
+            "zoom": "Увећање"
          },
          "history_columns": {
             "activity_name": "Назив активности",
@@ -972,9 +1021,8 @@
          "delete_card": "Уклони процес",
          "delete_card_confirm": "Да ли сте сигурни да желите уклонити процес?",
          "extattrs": {
-            "attachments": {
-              "must_save_to_add": "Не може поставити прилог пре него што снимите активност</em>"
-            },
+            "attachments": {"must_save_to_add": "Не може поставити прилог пре него што снимите активност</em>"},
+            "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
             "createreport": {"format_label": "Форматирај"},
             "linkcards": {"required": "Морате изабрати картицу - "},
             "manageemail": {
@@ -1000,12 +1048,7 @@
                "regenerates": "<em>Regenerate e-mails</em>"
             },
             "managerelation": {"required": "Морате изабрати релације - "},
-            "notes": {
-              "must_save_to_modify": "Не можете модификовати напомену пре него што снимите активност"
-            },
-            "calendar": {
-            	wrong_config: "<em>The calendar is not well configured</em>"
-            }
+            "notes": {"must_save_to_modify": "Не можете модификовати напомену пре него што снимите активност"}
          },
          "history_columns": {
             "attributes": "Атрибути",
@@ -1058,9 +1101,9 @@
       "wrong_time": "{0} је недозвољена вредност. Вредност мора бити у формату {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "Изабрани(а) \"{0}\" је ажуриран(а)",
+      "link_cards_changed_values": "Изабрани(а) \"{0}\" је ажуриран(а)",
+      "only_filtered": "Измене ће бити примењене само на картице података које задовољавају постављени филтер.",
       "popup_block": "Детектован је програм за блокирање popup прозора, искључите га како бисте могли наставити операцију",
-      "warning_message": "Пажња",
-      "only_filtered": "Измене ће бити примењене само на картице података које задовољавају постављени филтер."
+      "warning_message": "Пажња"
    }
 }

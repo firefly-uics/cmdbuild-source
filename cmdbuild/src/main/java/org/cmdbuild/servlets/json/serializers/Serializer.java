@@ -293,6 +293,7 @@ public class Serializer {
 		jattr.put("isactive", attribute.getStatus().isActive());
 		jattr.put("isactive", attribute.getStatus().isActive());
 		jattr.put("fieldmode", attribute.getFieldMode().getMode());
+		jattr.put("editorType", attribute.getEditorType());
 		switch (attribute.getType()) {
 		case LOOKUP:
 			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS

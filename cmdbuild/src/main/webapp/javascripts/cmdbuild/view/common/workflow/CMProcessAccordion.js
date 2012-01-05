@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMProcessAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMProcessAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modWorkflow.tree_title,
 		cmName: 'process',

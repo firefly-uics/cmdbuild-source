@@ -35,8 +35,6 @@
 			this.callBacks = Ext.apply(this.callBacks, {
 				'action-relation-deletecard': this.onDeleteCard
 			});
-
-			this.view.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
 		onDeleteCard: function(model) {
@@ -58,11 +56,6 @@
 		},
 
 		// baseWFWidget Functions
-		activeView: function() {
-			this.beforeActiveView();
-			this.view.cmActivate();
-		},
-
 		toString: function() {
 			return this.cmName + " WFWidget controller";
 		},
@@ -78,14 +71,6 @@
 			} catch (e) {
 				_debug("There is no template resolver");
 				return undefined;
-			}
-		},
-
-		onBackToActivityButtonClick: function() {
-			try {
-				this.ownerController.showActivityPanel();
-			} catch (e) {
-				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
 		},
 		// end baseWFWidget Functions
@@ -111,6 +96,7 @@
 			resolveTemplate.call(this);
 		},
 
+		// override
 		beforeActiveView: function() {
 			var et = _CMCache.getEntryTypeById(this.idClass);
 			this.view.addRelationButton.setDomainsForEntryType(et);

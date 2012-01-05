@@ -1,11 +1,11 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
-		constructor: function(mapPanel, relatedFormPanel, ownerController) {
+		constructor: function(mapPanel, ownerController) {
 			var me = this;
 
-			if (mapPanel && relatedFormPanel && ownerController) {
+			if (mapPanel && ownerController) {
 				this.mapPanel = mapPanel;
-				this.relatedFormPanel = relatedFormPanel;
+
 				this.ownerController = ownerController;
 				this.cmIsInEditing = false;
 				this.editingControls = {};
@@ -188,8 +188,9 @@
 		this.mapPanel.mon(this.mapPanel, "cmGeoAttrMenuClicked", this.activateEditControls, this);
 		this.mapPanel.mon(this.mapPanel, "cmVisible", onCmVisible, this);
 
-		this.relatedFormPanel.mon(this.relatedFormPanel, "cmeditmode", this.editMode, this);
-		this.relatedFormPanel.mon(this.relatedFormPanel, "cmdisplaymode", this.displayMode, this);
+		// TODO remove the reference to the relatedFormPanel and listen the event in super controller
+		// this.relatedFormPanel.mon(this.relatedFormPanel, "cmeditmode", this.editMode, this);
+		// this.relatedFormPanel.mon(this.relatedFormPanel, "cmdisplaymode", this.displayMode, this);
 	}
 
 	function onLayerAdded(params) {

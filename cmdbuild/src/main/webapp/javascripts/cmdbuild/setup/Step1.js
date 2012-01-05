@@ -6,25 +6,10 @@
 		constructor: function() {
 			this.title = CMDBuild.Translation.configure.title;
 
- 			this.languageStore = CMDBuild.ServiceProxy.setup.getLanguageStore();
-
-			this.languageCombo = new CMDBuild.field.CMIconCombo({
+			this.languageCombo = new CMDBuild.field.LanguageCombo({
 				name: 'language',
-				iconClsField: 'name',
-				iconClsPrefix: 'ux-flag-',
 				fieldLabel: tr.choose,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: this.languageStore,
-				valueField: 'name',
-				displayField: 'value',
-				queryMode: 'local',
-				listeners: {
-					'select' : {
-						fn : function(combo, record) {
-							window.location = Ext.String.format('?language={0}', record[0].get("name"));
-						}
-					}
-				}
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.check = new Ext.ux.form.XCheckbox({
@@ -38,11 +23,6 @@
 
 		initComponent: function() {
 			this.items = [this.languageCombo, this.check];
-
-			this.languageStore.on('load', function() {
-				this.setValue(getCurrentLanguage());
-			}, this.languageCombo);
-
 			this.frame = true;
  			this.callParent(arguments);
  		}

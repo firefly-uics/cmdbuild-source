@@ -21,6 +21,7 @@ public class CmdbuildProperties extends DefaultProperties {
 	private static final String LANGUAGE_PROMPT = "languageprompt";
 	private static final String SESSION_TIMEOUT = "session.timeout";
 	private static final String INSTANCE_NAME = "instance_name";
+	private static final String TABS_POSITION = "card_tab_position";
 
 	private static final String DEMO_MODE_ADMIN = "demomode";
 
@@ -37,6 +38,7 @@ public class CmdbuildProperties extends DefaultProperties {
 		setProperty(LANGUAGE_PROMPT, String.valueOf(true));
 		setProperty(SESSION_TIMEOUT, "");
 		setProperty(INSTANCE_NAME, "");
+		setProperty(TABS_POSITION, "top");
 	}
 
 	public static CmdbuildProperties getInstance() {
@@ -86,6 +88,14 @@ public class CmdbuildProperties extends DefaultProperties {
 
 	public String getInstanceName() {
 		return getProperty(INSTANCE_NAME, "");
+	}
+
+	public void setTabsPosition(String instanceName) {
+		setProperty(TABS_POSITION, instanceName);
+	}
+
+	public String getTabsPosition() {
+		return getProperty(TABS_POSITION, "top");
 	}
 
 	public int getSessionTimoutOrZero() {
