@@ -995,7 +995,9 @@
                "subjectfld": "Objeto",
                "subjecthdr": "Objeto",
                "tofld": "Destinatario",
-               "viewicon": "Visualizar"
+               "viewicon": "Visualizar",
+               "mailsAreChanged":"<em>Le email generate sono cambiate</em>",
+               "regenerates": "<em>Rigenera email</em>"
             },
             "managerelation": {"required": "Es necesario seleccionar las relaciones - "},
             "notes": {

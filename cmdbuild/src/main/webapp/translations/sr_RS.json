@@ -995,7 +995,9 @@
                "subjectfld": "Наслов поруке",
                "subjecthdr": "Наслов поруке",
                "tofld": "Прималац",
-               "viewicon": "Прикажи"
+               "viewicon": "Прикажи",
+               "mailsAreChanged":"<em>The generated e-mails are changed</em>",
+               "regenerates": "<em>Regenerate e-mails</em>"
             },
             "managerelation": {"required": "Морате изабрати релације - "},
             "notes": {

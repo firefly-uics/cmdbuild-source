@@ -500,7 +500,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			};
 		}
 	},
-	
+
 	getLocalDepsAsField: function() {
 		var out = {};
 		for (var i in this.localDeps) {
@@ -508,6 +508,31 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			out[i] = f;
 		}
 		return out;
+	},
+
+	bindLocalDepsChange: function(callback, scope) {
+		var ld = this.getLocalDepsAsField(),
+			callback = callback || Ext.empltyFn,
+			scope = scope || this;
+
+		for (var i in ld) {
+			//before the blur if the value is changed
+			var field = ld[i];
+
+			if (field) {
+				field.mon(field, "change", function(f) {
+					f.changed = true;
+				}, this);
+
+				field.mon(field, "blur", function(f) {
+					if (f.changed) {
+						f.changed = false;
+
+						callback.call(scope);
+					}
+				}, this);
+			}
+		}
 	}
 };
 

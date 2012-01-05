@@ -1,4 +1,4 @@
-(function() {
+(function () {
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMManageEmailController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
 		cmName: "Create Report",
@@ -8,9 +8,12 @@
 
 		constructor: function() {
 			this.callParent(arguments);
-			this.loaded = false;
 
-			this.widgetConf = normalizewidgetData(this.view.widgetConf, this.TEMPLATE_FIELDS);
+			this.emailsWereGenerated = false;
+			this.gridStoreWasLoaded = false;
+
+			this.widgetConf = _normalizewidgetData(this.view.widgetConf, this.TEMPLATE_FIELDS);
+			this.readWrite = !this.widgetConf.ReadOnly;
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.view.clientForm,
@@ -18,110 +21,46 @@
 				serverVars: this.view.activity
 			});
 
-			this.usedTemplates = this.getTemplatesToResolve();
-			this.readWrite = !this.widgetConf.ReadOnly;
-		},
+			this.usedTemplates = _getTemplatesToResolve(this);
 
-		getTemplatesToResolve: function() {
-			var templatesVars = [];
-			var templatesLength;
-			for (var i=1; true; ++i) {
-				if (!this.isValidTemplate(i)) {
-					templatesLength = i-1;
-					break;
-				}
-				Ext.each(this.TEMPLATE_FIELDS, function(field) {
-					templatesVars.push(field+i);
-				});
-			}
-			return {
-				vars: templatesVars,
-				length: templatesLength
-			};
-		},
-
-		// the template is valid if at least one of his
-		// fields is defined
-		isValidTemplate: function(i) {
-			var extAttrDef = this.widgetConf,
-				valid = false;
-
-			Ext.each(this.TEMPLATE_FIELDS, function(field) {
-				if (extAttrDef[field + i]) {
-					valid = true;
-					return false;
-				}
-			});
-
-			return valid;
-		},
-
-		addTemplatesIfNeededOnLoad: function() {
-			this.addTemplatesIfNeeded();
-
-			if (!this.loadeded) {
-				this.view.emailGrid.store.on('load', function() {
-					this.addTemplatesIfNeeded();
-				}, this, {single: true});
-			}
-		},
-
-		addTemplatesIfNeeded: function() {
-			if (this.readWrite
-					&& (this.usedTemplates.length > 0)
-					&& this.templatesShouldBeAdded()) {
-
-				this.addTemplates();
-			}
-		},
-
-		templatesShouldBeAdded: function() {
-			return this.view.emailGrid.storeHasNoOutgoing();
-		},
-
-		addTemplates: function() {
-			if (this.busy) {
-				return;
-			}
-
-			this.busy = true;
-			this.templateResolver.resolveTemplates({
-				attributes: this.usedTemplates.vars,
-				callback: function(values) {
-					for (var i=1; i<=this.usedTemplates.length; ++i) {
-						var v = {};
-						var conditionExpr = values[this.TEMPLATE_CONDITION+i];
-						if (!conditionExpr || eval(conditionExpr)) {
-							Ext.each(this.TEMPLATE_FIELDS, function(field) {
-								v[field] = values[field+i];
-							});
-							this.view.emailGrid.addTemplateToStore(v);
-						}
-					}
-
-					this.busy = false;
-				},
-				scope: this
-			});
+			this.mon(this.view, this.view.CMEVENTS.updateTemplatesButtonClick, function() {
+				this.emailsWereGenerated = false;
+				this.addEmailFromTemplateIfNeeded();
+			}, this);
 		},
 
 		// override
 		beforeActiveView: function() {
-			if (this.readWrite) {
-				this.addTemplatesIfNeededOnLoad();
-			}
-
-			if (!this.loaded) {
-				// FIXME I don't know why the loadMask of the grid does not work!
-				this.view.getEl().mask("Loading...");
+			if (!this.gridStoreWasLoaded) {
+				this.view.getEl().mask(CMDBuild.Translation.common.wait_title);
 				this.view.emailGrid.store.load({
 					scope: this,
 					callback: function(records, operation, success) {
-						this.loaded = true;
+						this.gridStoreWasLoaded = true;
 						this.view.getEl().unmask();
+						this.addEmailFromTemplateIfNeeded();
 					}
 				});
+			} else {
+				this.addEmailFromTemplateIfNeeded();
 			}
+		},
+
+		addEmailFromTemplateIfNeeded: function() {
+			if (this.emailsWereGenerated) {
+				return;
+			}
+
+			var me = this;
+			if (me.readWrite
+					&& me.thereAreTemplates()) {
+
+				_createEmailFromTemplate(me);
+			}
+		},
+
+		thereAreTemplates: function() {
+			return this.usedTemplates.length > 0;
 		},
 
 		// override
@@ -139,7 +78,9 @@
 
 		// override
 		isValid: function() {
-			if (this.widgetConf.Required && this.getOutgoing().length == 0) {
+			if (this.widgetConf.Required 
+				&& this.getOutgoing().length == 0) {
+
 				return false;
 			} else {
 				return true;
@@ -148,13 +89,84 @@
 
 		// override
 		isBusy: function() {
-			this.addTemplatesIfNeeded();
+			this.addEmailFromTemplateIfNeeded();
 			return this.busy;
 		}
 
 	});
-	
-	function normalizewidgetData(extAttrDef, TEMPLATE_FIELDS) {
+
+	function _getTemplatesToResolve(me) {
+		var templatesVars = [];
+		var templatesLength;
+
+		// the template is valid if at least one of his
+		// fields is defined
+		function isValidTemplate(me, i) {
+			var extAttrDef = me.widgetConf,
+				valid = false;
+
+			Ext.each(me.TEMPLATE_FIELDS, function(field) {
+				if (extAttrDef[field + i]) {
+					valid = true;
+					return false;
+				}
+			});
+
+			return valid;
+		}
+
+		for (var i=1; true; ++i) {
+			if (!isValidTemplate(me, i)) {
+				templatesLength = i-1;
+				break;
+			}
+			Ext.each(me.TEMPLATE_FIELDS, function(field) {
+				templatesVars.push(field+i);
+			});
+		}
+
+		return {
+			vars: templatesVars,
+			length: templatesLength
+		};
+	}
+
+	function _createEmailFromTemplate(me) {
+		if (me.busy) {
+			return;
+		}
+
+		me.busy = true;
+		me.view.removeTemplatesFromStore();
+		me.emailsWereGenerated = true;
+
+		me.templateResolver.resolveTemplates({
+			attributes: me.usedTemplates.vars,
+			callback: function onTemlatesWereSolved(values) {
+				for (var i=1; i<=me.usedTemplates.length; ++i) {
+					var v = {};
+					var conditionExpr = values[me.TEMPLATE_CONDITION+i];
+					if (!conditionExpr || eval(conditionExpr)) {
+						Ext.each(me.TEMPLATE_FIELDS, function(field) {
+							v[field] = values[field+i];
+						});
+						me.view.addTemplateToStore(v);
+					}
+				}
+
+				me.templateResolver.bindLocalDepsChange(function() {
+					if (me.emailsWereGenerated) {
+						me.emailsWereGenerated = false;
+						new CMDBuild.Msg.warn(null, CMDBuild.Translation.management.modworkflow.extattrs.manageemail.mailsAreChanged);
+					}
+				});
+
+				me.busy = false;
+			}
+		});
+	}
+
+	function _normalizewidgetData(extAttrDef, TEMPLATE_FIELDS) {
 		var normalizedExtAttrDef = Ext.apply({}, extAttrDef);
 
 		Ext.each(TEMPLATE_FIELDS, function(attr) {

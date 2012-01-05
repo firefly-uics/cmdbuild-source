@@ -68,20 +68,32 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 		});
 		this.form = formPanel.getForm();
 
-		var buttons;
+		var buttons,
+			me = this;
+
 		if (this.readOnly) {
-			buttons = [new CMDBuild.buttons.CloseButton({
-				scope: this,
-				handler: this.close
+			buttons = [
+			new CMDBuild.buttons.CloseButton({
+				handler: function() {
+					me.close();
+				}
 			})];
 		} else {
-			buttons = [new CMDBuild.buttons.ConfirmButton({
-				scope: this,
-				handler: this.onConfirm
-			}),new CMDBuild.buttons.AbortButton({
-				scope: this,
-				handler: this.close
-			})];
+			buttons = [
+				new CMDBuild.buttons.ConfirmButton({
+					scope: this,
+					handler: function() {
+						me.updateRecord();
+						me.emailGrid.addToStoreIfNotInIt(me.record);
+						me.destroy();
+					}
+				}),
+				new CMDBuild.buttons.AbortButton({
+					handler: function() {
+						me.close();
+					}
+				})
+			];
 		}
 
 		Ext.apply(this, {
@@ -92,12 +104,6 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 		});
 
 		this.callParent(arguments);
-	},
-
-	onConfirm: function() {
-		this.updateRecord();
-		this.emailGrid.addToStoreIfNotInIt(this.record);
-		this.destroy();
 	},
 
 	updateRecord: function() {

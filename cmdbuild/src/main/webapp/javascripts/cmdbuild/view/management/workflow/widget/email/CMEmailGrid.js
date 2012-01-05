@@ -11,8 +11,12 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	extAttr: undefined,
 	processId: undefined,
 
+	CMEVENTS: {
+		updateTemplatesButtonClick: "cm-update-templates"
+	},
+
 	initComponent: function() {
-		
+
 		this.deletedEmails = [];
 
 		var readWrite = this.readWrite,
@@ -38,12 +42,25 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 			});
 
 		if (this.readWrite) {
-			var tbar = [{
-				iconCls : 'add',
-				text : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
-				handler : this.onComposeEmail,
-				scope: this
-			}];
+			var me = this,
+				tbar = [{
+					iconCls : 'add',
+					text : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
+					handler : function(values) {
+						new CMDBuild.Management.EmailWindow({
+							emailGrid: me,
+							record: me.createRecord(values)
+						}).show();
+					}
+				}, {
+					iconCls : 'x-tbar-loading',
+					text : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.regenerates,
+					handler : function() {
+						me.fireEvent(me.CMEVENTS.updateTemplatesButtonClick);
+					}
+				}];
+
+			me.addEvents([me.CMEVENTS.updateTemplatesButtonClick]);
 		}
 
 		function renderEmailActions(value, metadata, record) {
@@ -101,24 +118,22 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 		return true;
 	},
 
-	// scope: this
 	addTemplateToStore: function(values) {
 		var record = this.createRecord(values);
+		// mark the record added by template to be able to
+		// delete it in removeTemplatesToStore
+		record._cmTemplate = true;
 		this.addToStoreIfNotInIt(record);
 	},
 
-	// scope: this
-	onComposeEmail: function() {
-		this.showComposeEmailWindow({});
-	},
+	removeTemplatesFromStore: function() {
+		var me = this;
 
-	// scope: this
-	showComposeEmailWindow: function(values) {
-		var composeEmailWin = new CMDBuild.Management.EmailWindow({
-			emailGrid: this,
-			record: this.createRecord(values)
+		me.store.each(function(r) {
+			if (r._cmTemplate) {
+				me.store.remove(r);
+			}
 		});
-		composeEmailWin.show();
 	},
 
 	createRecord: function(recordValues) {
@@ -136,12 +151,11 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	},
 
 	onEditEmail: function(record) {
-		var editEmailWin = new CMDBuild.Management.EmailWindow({
+		new CMDBuild.Management.EmailWindow({
 			emailGrid: this,
 			readOnly: false,
 			record: record
-		});
-		editEmailWin.show();
+		}).show();
 	},
 
 	onDeleteEmail: function(record) {
@@ -226,8 +240,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	}
 
 	function doubleclickHandler(grid, model, html, index, e, options) {
-
 		var fn = recordIsEditable(model) ? this.onEditEmail : this.onViewEmail;
-		fn.call(grid, model);
+		fn.call(this, model);
 	}
 })();
