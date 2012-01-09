@@ -5,25 +5,16 @@
 		},
 
 		cmName: "base",
-		constructor: function(view, ownerController) {
+		constructor: function(view, ownerController, widgetDef) {
 			if (typeof view != "object") {
 				throw "The view of a WFWidgetController must be an object"
 			}
 
 			this.view = view;
 			this.ownerController = ownerController;
-			this.widgetConf = this.view.widgetConf;
+			this.widgetConf = this.view.widgetConf || widgetDef;
 			this.outputName = this.widgetConf.outputName;
 			this.wiewIdenrifier = this.widgetConf.identifier;
-
-			if (this.view.backToActivityButton) {
-				this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
-			}
-		},
-
-		activeView: function() {
-			this.view.cmActivate();
-			this.beforeActiveView(); // NdPaolo: Martino, are you still confusing before with after?
 		},
 
 		toString: function() {
@@ -49,14 +40,6 @@
 			} catch (e) {
 				_debug("There is no template resolver");
 				return undefined;
-			}
-		},
-
-		onBackToActivityButtonClick: function() {
-			try {
-				this.ownerController.showActivityPanel();
-			} catch (e) {
-				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
 		},
 

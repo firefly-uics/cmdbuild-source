@@ -1,5 +1,5 @@
 (function() {
-	var menuAccordion = new CMDBuild.view.administraton.accordion.CMMenuAccordion({
+	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
 			cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
 		}),
 		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),	
@@ -9,7 +9,7 @@
 		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
 			title: CMDBuild.Translation.management.modutilities.title
 		}),
-		processAccordion = new CMDBuild.view.administraton.accordion.CMProcessAccordion({
+		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 			rootVisible: true
 		});
 
@@ -52,11 +52,13 @@
 				this.cmPanels = [
 					new Ext.panel.Panel({}),
 					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-						cmControllerType: CMDBuild.controller.management.classes.CMModClassController
+						cmControllerType: CMDBuild.controller.management.classes.CMModCardController
 					}),
+
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
+
 					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
 						cmName: "report",
 						cmControllerType: CMDBuild.controller.management.report.CMModReportController
@@ -95,11 +97,8 @@
 			},
 
 			loadResources: function() {
-				var dangling = 5,
-					me = this;
-
-				function callback() {
-					if (--dangling == 0) {
+				var me = this,
+					reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
 						hideIfEmpty(processAccordion);
 						hideIfEmpty(reportAccordion);
 						hideIfEmpty(menuAccordion);
@@ -113,10 +112,9 @@
 						);
 						_CMMainViewportController.selectStartingClass();
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-
+	
 						CMDBuild.view.CMMainViewport.hideSplash();
-					}
-				}
+					});
 
 				CMDBuild.ServiceProxy.classes.read({
 					params: {
@@ -128,14 +126,26 @@
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
+				});
+
+				// Do a separate request for the widgets because, at this time
+				// it is not possible serialize them with the classes
+				CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
+					scope: this,
+					success: function(response, options, decoded) {
+						// a day I'll can do a request to have only the active, now the cache
+						// discards the inactive if the flag onlyActive is true
+						_CMCache.addWidgetToEntryTypes(decoded.response, onlyActive = true);
+					},
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
 						CMDBuild.Config.dms = decoded.data;
 					},
-					callback: callback
+					callback: reqBarrier.getCallback
 				},"dms");
 
 				CMDBuild.ServiceProxy.report.getTypesTree({
@@ -144,7 +154,7 @@
 						_CMCache.addReports(reports);
 						reportAccordion.updateStore();
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.menu.read({
@@ -154,7 +164,7 @@
 							menuAccordion.updateStore(decoded);
 						}
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
 
 				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change "administration"
@@ -164,8 +174,10 @@
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
 					},
-					callback: callback
+					callback: reqBarrier.getCallback()
 				});
+
+				reqBarrier.start();
 			}
 		}
 	});

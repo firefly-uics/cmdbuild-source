@@ -10,15 +10,16 @@ import org.alfresco.webservice.types.Store;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
 import org.cmdbuild.dms.documents.DocumentSearch;
 import org.cmdbuild.dms.documents.SingleDocumentSearch;
 import org.cmdbuild.dms.exception.FileNotFoundException;
 import org.cmdbuild.dms.properties.DmsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AlfrescoWebserviceClient {
 
-	private static final Logger logger = Logger.getLogger(AlfrescoWebserviceClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(AlfrescoWebserviceClient.class);
 
 	private static Map<String, AlfrescoWebserviceClient> cache = new WeakHashMap<String, AlfrescoWebserviceClient>();
 
@@ -136,7 +137,7 @@ abstract class AlfrescoWebserviceCommand<T> {
 	public static final String DEFAULT_STORE_ADDRESS = "SpacesStore";
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, DEFAULT_STORE_ADDRESS);
 
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private T result;
 

@@ -36,19 +36,7 @@ public class LoginPage extends PageObject {
 		return versionStringBox.getText();
 	}
 
-	public Boolean loginButtonIsEnabled() {
-		return !loginButtonIsDisabled();
-	}
-
-	public Boolean loginButtonIsDisabled() {
-		return callJsFunction("loginButtonIsDisabled");
-	}
-
 	public Boolean errorPopupIsDisplayed() {
 		return callJsFunction("errorPopupIsDisplayed");
-	}
-
-	public void waitForLoginButtonEnabled() {
-		callJsFunction("waitForLoginButtonEnabled");
 	}
 }

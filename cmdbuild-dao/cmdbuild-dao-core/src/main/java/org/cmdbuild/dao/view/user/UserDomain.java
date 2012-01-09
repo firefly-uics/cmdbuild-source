@@ -2,7 +2,7 @@ package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.view.CMAccessControlManager;
+import org.cmdbuild.auth.CMAccessControlManager;
 
 public class UserDomain extends UserEntryType implements CMDomain {
 
