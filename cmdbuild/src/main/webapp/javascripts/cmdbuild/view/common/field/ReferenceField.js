@@ -161,7 +161,7 @@
                     success : function(response, options, decoded) {
                     	var data = adaptResult(decoded);
                     	if (data) {
-                    		this.addToStoreIfNotInIt();
+                    		this.addToStoreIfNotInIt(data);
                 			this.setValue(theValue);
                     	} else {
                     		_debug("The remote reference is not found", params);
