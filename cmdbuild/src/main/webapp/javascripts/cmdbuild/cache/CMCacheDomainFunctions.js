@@ -196,7 +196,7 @@
 
 	function eraseAttribute(domainAttributes, attribute) {
 		for (var i=0, l=domainAttributes.length; i<l; ++i) {
-			if (domainAttributes[i].data.name == attribute.name) {
+			if (domainAttributes[i].name == attribute.name) {
 				Ext.Array.erase(domainAttributes, i, 1);
 				break;
 			}
