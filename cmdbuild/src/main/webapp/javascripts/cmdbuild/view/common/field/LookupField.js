@@ -121,13 +121,14 @@ function buildHiddenField(attribute) {
 			this.setValueAndFireChange("");
 		},
 
-		// The hidden field is never given the focus, so it never fires the change event,
+		// The hidden field is never given the focus, so it never fires the change and blur events,
 		// thus not updating filtered references depending on it
 		setValueAndFireChange: function(newValue) {
 			var oldValue = this.getValue() || "";
 			if (oldValue != newValue) {
 				this.setValue(newValue, true);
-				this.fireEvent('change', newValue, oldValue);
+				this.fireEvent('change', this, newValue, oldValue);
+				this.fireEvent('blur', this);
 			}
 		},
 		
