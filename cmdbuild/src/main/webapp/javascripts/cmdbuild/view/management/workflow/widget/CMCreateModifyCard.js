@@ -22,14 +22,6 @@
 			];
 		},
 
-		cmActivate: function() {
-			this.mon(this.ownerCt, "cmactive", function() {
-				this.ownerCt.bringToFront(this);
-			}, this, {single: true});
-
-			this.ownerCt.cmActivate();
-		},
-
 		initWidget: function(idClass, cardId) {
 			var et = _CMCache.getEntryTypeById(idClass);
 
@@ -64,12 +56,6 @@
 		buildButtons: function() {
 			this.callParent(arguments);
 			this.cmButtons = this.cmButtons || [];
-
-			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back
-			});
-
-			this.cmButtons.push(this.backToActivityButton);
 		}
 	});
 

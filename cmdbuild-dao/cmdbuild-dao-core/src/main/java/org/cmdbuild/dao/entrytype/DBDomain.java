@@ -55,8 +55,13 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		return meta;
 	}
 
+	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+
+	public final String getPrivilegeId() {
+		return String.format("Domain:%d", getId());
 	}
 
 	@Override

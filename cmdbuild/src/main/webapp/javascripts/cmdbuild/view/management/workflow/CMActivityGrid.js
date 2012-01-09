@@ -60,14 +60,17 @@
 			return ep;
 		},
 
+
+		// DEPRECATED
+
 		// override
-		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
+		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) { _deprecated();
 			this.setStatus(resText.FlowStatus);
 			this.callParent(arguments);
 		},
 
-		// private and overridden in CMActivityGrid
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
+		// override
+		_onGetPositionFailureWithoutForcingTheFilter: function(resText) { _deprecated();
 			var flowStatusOfSearchedCard = resText.FlowStatus;
 			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
 				this.fireEvent("processTerminated");
@@ -76,7 +79,7 @@
 			}
 		},
 
-		onEntrySelected: function(entry) {
+		onEntrySelected: function(entry) { _deprecated();
 			var id = entry.get("id");
 
 			this.openFilterButton.enable();

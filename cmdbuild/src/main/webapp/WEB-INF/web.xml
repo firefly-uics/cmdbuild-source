@@ -13,7 +13,7 @@
 
 	<context-param>
 		<param-name>modules</param-name>
-		<param-value>database,cmdbuild,dms,workflow,email,graph,transformers,builders,gis,auth</param-value>
+		<param-value>database,cmdbuild,dms,workflow,email,graph,gis,auth</param-value>
 	</context-param>
 	<context-param>
 		<param-name>moduleLoaders</param-name>
@@ -86,7 +86,7 @@
 		<servlet-name>jsonDispatcher</servlet-name>
 		<url-pattern>/services/json/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
         <servlet-name>CXFServlet</servlet-name>
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
@@ -97,5 +97,5 @@
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/services/soap/*</url-pattern>
     </servlet-mapping>
-	
+
 </web-app>

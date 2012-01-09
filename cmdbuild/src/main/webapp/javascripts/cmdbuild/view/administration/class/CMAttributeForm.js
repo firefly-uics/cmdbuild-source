@@ -2,6 +2,11 @@
 	var tableTypeMap = {
 		simpletable: "SIMPLECLASS",
 		standard: "CLASS"
+	},
+	
+	TEXT_EDITOR_TYPE = {
+		plain: "PLAIN",
+		html: "HTML"
 	};
 
 	function getTableType(classObj) {
@@ -309,12 +314,32 @@
 				store : _CMCache.getClassesAndProcessesStore()
 			});
 
+			this.textAttributeWidget = new Ext.form.ComboBox({
+				name: "editorType",
+				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.editorType.label,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.MIDDLE_FIELD_WIDTH,
+				valueField: "value",
+				displayField: "name",
+				queryMode: "local",
+				editable: false,
+				allowBlank: false,
+				store: new Ext.data.SimpleStore({
+					fields: ["value","name"],
+					data : [
+						[TEXT_EDITOR_TYPE.plain, CMDBuild.Translation.administration.modClass.attributeProperties.editorType.plain],
+						[TEXT_EDITOR_TYPE.html, CMDBuild.Translation.administration.modClass.attributeProperties.editorType.html]
+					]
+				})
+			});
+
 			this.contextualFields = {
 				STRING : [ this.stringLength ],
 				DECIMAL : [ this.decimalPrecision,this.decimalScale ],
 				LOOKUP : [ this.lookupTypes ],
 				FOREIGNKEY : [ this.foreignKeyDest ],
-				REFERENCE : [ this.referenceDomains, this.fieldFilter, this.addMetadataBtn ]
+				REFERENCE : [ this.referenceDomains, this.fieldFilter, this.addMetadataBtn ],
+				TEXT: [this.textAttributeWidget]
 			};
 
 			this.buildBasePropertiesPanel();
@@ -335,7 +360,8 @@
 					this.foreignKeyDest,
 					this.lookupTypes,
 					this.fieldFilter,
-					this.addMetadataBtn
+					this.addMetadataBtn,
+					this.textAttributeWidget
 				]
 			});
 

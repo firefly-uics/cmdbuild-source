@@ -11,9 +11,10 @@
 			this.singleSelect = this.widgetConf.SingleSelect;
 			this.wiewIdenrifier = this.widgetConf.identifier;
 
-			this.activity = this.ownerController.currentActivity;
-			this.currentClassId = this.activity.get("IdClass");
-			this.currentCardId = this.activity.get("Id");
+			this.ownerController = ownerController;
+			//this.activity = this.ownerController.currentActivity;
+			//this.currentClassId = this.activity.get("IdClass");
+			//this.currentCardId = this.activity.get("Id");
 
 			this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},

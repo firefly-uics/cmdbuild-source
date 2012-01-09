@@ -3,6 +3,8 @@ package org.cmdbuild.elements.wrappers;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.cmdbuild.auth.password.NaivePasswordHandler;
+import org.cmdbuild.auth.password.PasswordHandler;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardFactory;
@@ -19,7 +21,6 @@ import org.cmdbuild.services.auth.AuthInfo;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
-import org.cmdbuild.utils.SecurityEncrypter;
 
 public class UserCard extends LazyCard implements User {
 
@@ -66,7 +67,7 @@ public class UserCard extends LazyCard implements User {
 	}
 
 	public void setUnencryptedPassword(final String password) {
-		final SecurityEncrypter sd = new SecurityEncrypter();
+		final PasswordHandler sd = new NaivePasswordHandler();
 		getAttributeValue(ATTRIBUTE_PASSWORD).setValue(sd.encrypt(password));
 	}
 

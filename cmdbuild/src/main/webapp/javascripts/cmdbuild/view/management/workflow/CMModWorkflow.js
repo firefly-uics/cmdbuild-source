@@ -4,7 +4,20 @@
 	Ext.define("CMDBuild.view.management.workflow.CMModProcess", {
 		extend: "CMDBuild.view.management.classes.CMModCard",
 		cmName: "process",
-		
+
+		initComponent: function() {
+			this.callParent(arguments);
+			_CMUtils.forwardMethods(this, this.cardTabPanel, [
+				"getActivityPanel",
+				"getRelationsPanel",
+				"getHistoryPanel",
+				"buildWidgets",
+				"updateDocPanel",
+				"getWFWidgets",
+				"reset"
+			]);
+		},
+
 		buildComponents: function() {
 			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
 
@@ -23,42 +36,11 @@
 				border: false,
 				height: gridratio + "%"
 			});
-		},
 
-		onEntrySelected: function(entry) {
-			var id = entry.get("id");
-			this.cardGrid.onEntrySelected(entry);
-			this.cardTabPanel.onClassSelected(id, activateFirst = true);
-
-			this.updateTitleForEntry(entry);
-		},
-
-		reset: function(id) {
-			this.cardTabPanel.reset(id);
-		},
-
-		/*
-		o = {
-				reloadFields: reloadFields,
-				editMode: editMode,
-				cb: cb,
-				scope: this
+			var widgetManager = new CMDBuild.view.management.workflow.CMWidgetManager(this.cardTabPanel);
+			this.getWidgetManager = function() {
+				return widgetManager;
 			}
-		*/
-		updateForActivity: function(activity, o) {
-			this.cardTabPanel.updateForActivity(activity, o);
-		},
-
-		updateForClosedActivity: function(activity) {
-			this.cardTabPanel.updateForClosedActivity(activity);
-		},
-
-		getWFWidgets: function() {
-			return this.cardTabPanel.getWFWidgets();
-		},
-
-		onAddButtonClick: function() {
-			this.cardTabPanel.onAddButtonClick();
 		}
 	});
 })();
