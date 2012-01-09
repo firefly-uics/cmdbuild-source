@@ -184,15 +184,17 @@
 
 		if (attributes.length > 0) {
 			this.showAttributesColumn = true;
-			var key = "";
-			for (var i=0, l=attributes.length; i<l; i++) {
-				if (attributes[i].fieldmode == "hidden")
-					continue;
 
-				key = attributes[i].name;
+			for (var i=0, l=attributes.length; i<l; i++) {
+				var attr = attributes[i];
+				if (attr.fieldmode == "hidden") {
+					continue;
+				}
+
+				node.rel_attr_keys.push(attr.name);
+
 				attributesToString += i==0 ? "" : " | ";
-				attributesToString += key;
-				node.rel_attr_keys.push(key);
+				attributesToString += attr.description || attr.name;
 			}
 
 			node.rel_attr = attributesToString + "</span>";
