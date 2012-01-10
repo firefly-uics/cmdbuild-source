@@ -1,3 +1,33 @@
+(function() {
+	Ext.define("CMDBuild.view.management.common.widget.CMWidgetButton", {
+		extend: "Ext.Button",
+
+		widgetDefinition: undefined, // pass on instantiation
+
+		constructor: function() {
+			this.callParent(arguments);
+
+			var widget = this.widgetDefinition;
+
+			Ext.apply(this, {
+				margins:'0 0 5 0',
+				text: widget.btnLabel
+					|| widget.label
+					|| CMDBuild.Translation.management.modworkflow[widget.labelId],
+				disabled: !widget.alwaysenabled
+			})
+		},
+
+		disable: function() {
+			if (this.widgetDefinition && this.widgetDefinition.alwaysenabled) {
+				return this.enable();
+			} else {
+				return this.callParent(arguments);
+			}
+		}
+	});
+})();
+
 Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 	extend: "Ext.panel.Panel",
 	statics: {
@@ -29,15 +59,11 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 			me._hidden = false;
 		}
 
-		me.add(new Ext.Button({
-			text: widget.btnLabel || widget.label
-				|| CMDBuild.Translation.management.modworkflow[widget.labelId],
+		me.add(new CMDBuild.view.management.common.widget.CMWidgetButton({
 			widgetDefinition: widget,
-			disabled: true,
 			handler: function() {
 				me.fireEvent(me.CMEVENTS.widgetButtonClick, widget);
-			},
-			margins:'0 0 5 0'
+			}
 		}));
 
 		me.updateButtonsWidth();

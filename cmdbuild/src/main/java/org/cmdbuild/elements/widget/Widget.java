@@ -18,6 +18,7 @@ public abstract class Widget {
 	private String id; // unique inside a class only
 	private String label;
 	private boolean active;
+	private boolean alwaysenabled;
 
 	public Widget() {
 		label = StringUtils.EMPTY;
@@ -66,6 +67,14 @@ public abstract class Widget {
 
 	public final boolean isActive() {
 		return active;
+	}
+
+	public final void setAlwaysenabled(final boolean alwaysenabled) {
+		this.alwaysenabled = alwaysenabled;
+	}
+
+	public final boolean isAlwaysenabled() {
+		return alwaysenabled;
 	}
 
 	@Override

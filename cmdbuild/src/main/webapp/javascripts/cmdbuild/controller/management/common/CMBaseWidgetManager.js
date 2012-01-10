@@ -100,10 +100,12 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 		var ww = {};
 		for (var wc in this.controllers) {
 			wc = this.controllers[wc];
-			var wcData = wc.getData(advance);
 
-			if (wcData != null) {
-				ww[wc.wiewIdenrifier] = wcData;
+			if (typeof wc.getData == "function") {
+				var wcData = wc.getData(advance);
+				if (wcData != null) {
+					ww[wc.wiewIdenrifier] = wcData;
+				}
 			}
 		}
 
