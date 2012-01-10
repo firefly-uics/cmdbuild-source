@@ -17,7 +17,7 @@ var cf = new Ext.form.ColorField({
  * @param {Object} config
  * 
  * Modified by Tecnoteca at 11 August 2011: minimal change to work with ExtJs 4
- * 
+ * Modified by Tecnoteca at 10 January 2012: render issues
  */
 Ext.form.ColorField = function(config){
     Ext.form.ColorField.superclass.constructor.call(this, config);
@@ -201,6 +201,9 @@ Ext.extend(Ext.form.ColorField, Ext.form.TriggerField,  {
         this.menu.on(Ext.apply({}, this.menuListeners, {
             scope:this
         }));
-        this.menu.show(this.el, "tl-bl?");
+
+        this.menu.show(null, function() {
+        	this.menu.setPosition(this.menu.getWidth(), this.menu.getHeight());
+        }, this);
     }
 });
