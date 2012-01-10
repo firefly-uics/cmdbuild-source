@@ -38,10 +38,16 @@
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
+			this.alwaysenabled = new Ext.form.field.Checkbox({
+				name: "alwaysenabled",
+				fieldLabel: tr.commonFields.alwaysenabled,
+				labelWidth: CMDBuild.LABEL_WIDTH
+			});
+
 			this.defaultFields = new Ext.panel.Panel({
 				frame: true,
 				border: true,
-				items: [this.buttonLabel, this.active],
+				items: [this.buttonLabel, this.active, this.alwaysenabled],
 				flex: 1
 			});
 
@@ -57,6 +63,7 @@
 		fillWithModel: function(model) {
 			this.buttonLabel.setValue(model.get("label"));
 			this.active.setValue(model.get("active"));
+			this.alwaysenabled.setValue(model.get("alwaysenabled"));
 		},
 
 		getWidgetDefinition: function() {
@@ -65,6 +72,7 @@
 				type: me.self.WIDGET_NAME,
 				label: me.buttonLabel.getValue(),
 				active: me.active.getValue(),
+				alwaysenabled: me.alwaysenabled.getValue()
 			}
 		},
 

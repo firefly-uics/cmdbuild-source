@@ -176,6 +176,7 @@
             },
             "commonFields": {
                "active": "Активный",
+               "alwaysenabled": "<em>Always enabled</em>",
                "buttonLabel": "Метка кнопки",
                "type": "Тип"
             },

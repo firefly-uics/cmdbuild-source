@@ -176,6 +176,7 @@
             },
             "commonFields": {
                "active": "Active",
+               "alwaysenabled": "Always enabled",
                "buttonLabel": "Button label",
                "type": "Type"
             },
