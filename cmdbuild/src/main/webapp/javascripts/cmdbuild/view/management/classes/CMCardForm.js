@@ -18,7 +18,9 @@
 				cloneCardButtonClick: "cm-clone",
 				printCardButtonClick: "cm-print",
 				openGraphButtonClick: "cm-graph",
-				formFilled: "cmFormFilled"
+				formFilled: "cmFormFilled",
+				editModeDidAcitvate: "cmeditmode",
+				displayModeDidActivate: "cmdisplaymode"
 			};
 
 			this.addEvents(this.CMEVENTS.saveCardButtonClick);
@@ -28,6 +30,8 @@
 			this.addEvents(this.CMEVENTS.cloneCardButtonClick);
 			this.addEvents(this.CMEVENTS.printCardButtonClick);
 			this.addEvents(this.CMEVENTS.openGraphButtonClick);
+			this.addEvents(this.CMEVENTS.editModeDidAcitvate);
+			this.addEvents(this.CMEVENTS.displayModeDidActivate);
 
 			this.buildTBar();
 			this.buildButtons();
@@ -68,7 +72,7 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
-			this.fireEvent("cmeditmode");
+			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 		},
 
 		displayMode: function(enableCmBar) {
@@ -83,7 +87,7 @@
 			}
 
 			this.disableCMButtons();
-			this.fireEvent("cmdisplaymode");
+			this.fireEvent(this.CMEVENTS.displayModeDidActivate);
 		},
 
 		displayModeForNotEditableCard: function() {

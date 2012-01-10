@@ -46,8 +46,8 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 			ee.cloneCardButtonClick,
 			ee.printCardButtonClick,
 			ee.openGraphButtonClick,
-			"cmeditmode",
-			"cmdisplaymode"
+			ee.editModeDidAcitvate,
+			ee.displayModeDidActivate
 		]);
 
 		this.mon(this, "activate", function() {

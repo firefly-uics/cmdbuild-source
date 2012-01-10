@@ -1,8 +1,13 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
+
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+
+		cardDataProviders: [],
+
 		constructor: function(view, supercontroller, widgetControllerManager) {
 			this.callParent(arguments);
+			var ev = this.view.CMEVENTS;
 
 			if (widgetControllerManager) {
 				this.widgetControllerManager = widgetControllerManager;
@@ -12,12 +17,14 @@
 			}
 
 			this.CMEVENTS = {
-				cardSaved: "cm-card-saved"
+				cardSaved: "cm-card-saved",
+				editModeDidAcitvate: ev.editModeDidAcitvate,
+				displayModeDidActivate: ev.displayModeDidActivate
 			};
 
-			this.addEvents(this.CMEVENTS.cardSaved);
+			this.addEvents(this.CMEVENTS.cardSaved, ev.editModeDidAcitvate, ev.displayModeDidActivate);
+			this.relayEvents(this.view, [ev.editModeDidAcitvate, ev.displayModeDidActivate]);
 
-			var ev = this.view.CMEVENTS;
 			this.mon(this.view, ev.modifyCardButtonClick, function() { this.onModifyCardClick.apply(this, arguments); }, this);
 			this.mon(this.view, ev.saveCardButtonClick, function() { this.onSaveCardClick.apply(this, arguments); }, this);
 			this.mon(this.view, ev.abortButtonClick, function() { this.onAbortCardClick.apply(this, arguments); }, this);
@@ -73,7 +80,7 @@
 					Id: this.cloneCard ? -1 : this.card.get("Id")
 				};
 
-			addMapvaluesToSend(me, params);
+			addDataFromCardDataPoviders(me, params);
 
 			if (thereAraNotWrongAttributes(me)) {
 				this.doFormSubmit(params);
@@ -123,6 +130,10 @@
 			}));
 
 			this.view.editMode();
+		},
+
+		addCardDataProviders: function(dataProvider) {
+			this.cardDataProviders.push(dataProvider);
 		},
 
 		loadFields: function(entryTypeId, cb) {
@@ -192,12 +203,15 @@
 		}
 	});
 
-	function addMapvaluesToSend(me, params) {
-		// TODO manage map values
-//		var mapValuesToSend = me.mapController.getValues();
-//		if (mapValuesToSend) {
-//			params["geoAttributes"] = mapValuesToSend;
-//		}
+	function addDataFromCardDataPoviders(me, params) {
+		for (var provider in me.cardDataProviders) {
+			provider = me.cardDataProviders[provider];
+			var values = provider.getCardData();
+			if (values) {
+				params[provider.getCardDataName()] = values;
+			}
+		}
+
 		return params;
 	}
 
