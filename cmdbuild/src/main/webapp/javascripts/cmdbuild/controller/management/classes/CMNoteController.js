@@ -43,7 +43,7 @@
 					params: params,
 					success : function() {
 						CMDBuild.LoadMask.get().hide();
-						me.view.disableModify();
+						me.view.disableModify(enableToolbar = true);
 						var val = me.view.syncForms();
 						syncSavedNoteWithModel(me.card, val);
 					},
