@@ -63,9 +63,26 @@
 			this.onEntryTypeChanged(this.entryType);
 		},
 
+		getEntryType: function() {
+			return this.entryType || null;
+		},
+
+		getEntryTypeId: function() {
+			var id = null;
+			if (this.entryType) {
+				id = this.entryType.get("id");
+			}
+
+			return id;
+		},
+
 		setCard: function(card) {
 			this.card = card;
 			this.onCardChanged(card);
+		},
+
+		getCard: function() {
+			return this.card;
 		},
 
 		// private, called from setEntryType. Implement different
@@ -184,6 +201,14 @@
 				_CMCache.onClassContentChanged(me.entryType.get("id"));
 			});
 
+			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.editModeDidAcitvate, function() {
+				me.mapController.editMode();
+			}, me);
+
+			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.displayModeDidActivate, function() {
+				me.mapController.displayMode();
+			}, me);
+
 			me.subControllers.push(me.cardPanelController);
 		}
 	}
@@ -224,11 +249,14 @@
 				onAddCardButtonClick: Ext.emptyFn,
 				onCardSaved: Ext.emptyFn,
 				getValues: function() {return false;},
-				refresh: Ext.emptyFn
+				refresh: Ext.emptyFn,
+				editMode: Ext.emptyFn,
+				displayMode: Ext.emptyFn
 			};
 		}
 
 		me.subControllers.push(me.mapController);
+		me.cardPanelController.addCardDataProviders(me.mapController);
 	}
 
 	function onSelectionWentWrong() {
