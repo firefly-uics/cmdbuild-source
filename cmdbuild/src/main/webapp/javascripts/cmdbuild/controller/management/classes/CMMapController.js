@@ -85,7 +85,7 @@
 				return;
 			}
 
-			this.ownerController.onCardSelected(selectionModel = null, card = {
+			this.ownerController.onCardSelected(card = {
 				Id: prop.master_card,
 				IdClass: prop.master_class
 			});
@@ -94,15 +94,24 @@
 		},
 
 		onCardSelected: function(card) {
-			if (card) {
-				this.currentCardId = card.get("Id");
+			if (!this.mapPanel.cmVisible) {
+				return;
+				// the selection is defered when the map is shown
 			}
 
-			var layers = this.mapPanel.getMap().cmdbLayers;
+			var id = card;
+			if (card && typeof card.get == "function") {
+				id = card.get("Id");
+			}
 
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].clearSelection();
-				layers[i].selectFeatureByMasterCard(this.currentCardId);
+			if (id != this.currentCardId) {
+				this.currentCardId = id;
+				var layers = this.mapPanel.getMap().cmdbLayers;
+
+				for (var i=0, l=layers.length; i<l; ++i) {
+					layers[i].clearSelection();
+					layers[i].selectFeatureByMasterCard(this.currentCardId);
+				}
 			}
 		},
 
@@ -166,9 +175,16 @@
 
 		onCardSaved: function(c) {
 			if (this.mapPanel.cmVisible) {
-				this.mapPanel.getMap().clearSelection();
-				this.onCardSelected(c.Id);
 				this.mapPanel.getMap().refreshStrategies();
+				if (typeof this.currentCardId == "undefined") {
+					// the card is new, alert the owner to buble the selection event
+					this.ownerController.onCardSelected(card = {
+						Id: c.Id,
+						IdClass: c.IdClass
+					});
+				};
+
+				this.onCardSelected(c.Id);
 			}
 		},
 
@@ -195,32 +211,25 @@
 	function getCardData() {
 		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
 	};
-		
+
 	function onEntryTypeSelected(et) {
-		if (!et) {
+		if (!et 
+				|| !this.mapPanel.cmVisible) {
 			return;
 		}
 
-		if (this.mapPanel.cmVisible) {
-			this.currentClassId = et.get("id");
-			// if update the map on show and there is a card selected
-			var lastCard = this.ownerController.currentCard;
-			if (lastCard) {
-				this.currentCardId = lastCard.get("Id");
-				this.centerMapOnFeature(lastCard.data);
-			} else {
-				this.currentCardId = undefined;
-			}
-
-			this.updateMap(et);
+		this.currentClassId = et.get("id");
+		// if update the map on show and there is a card selected
+		var lastCard = this.ownerController.getCard();
+		if (lastCard) {
+			// this.currentCardId = lastCard.get("Id");
+			this.onCardSelected(lastCard);
+			this.centerMapOnFeature(lastCard.data);
 		} else {
-			/*
-			 * do nothing!
-			 * on show, check if the
-			 * current selected is different from the
-			 * last card selected
-			 */
+			this.currentCardId = undefined;
 		}
+
+		this.updateMap(et);
 	}
 
 	function registerMapEventListeners() {
@@ -339,11 +348,13 @@
 
 	function onCmVisible(visible) {
 		if (visible) {
-			var lastClassId = this.ownerController.getEntryTypeId(),
+			var lastClass = this.ownerController.getEntryType(),
 				lastCard = this.ownerController.getCard();
 
-			if (this.currentClassId != lastClassId) {
-				this.onEntryTypeSelected(this.ownerController.getEntryType());
+			if (lastClass 
+				&& this.currentClassId != lastClass.get("id")) {
+
+				this.onEntryTypeSelected(lastClass);
 			} else {
 				if (lastCard 
 						&& (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {

@@ -192,12 +192,8 @@
 					function(cardData) {
 
 				me.gridController.onCardSaved(cardData);
+				me.mapController.onCardSaved(cardData);
 
-//				if (!me.cardGrid.cmVisible) {
-//					// to load the card in the tab-panels
-//					me.onCardSelected(card = c);
-//				}
-//				this.mapController.onCardSaved(c);
 				_CMCache.onClassContentChanged(me.entryType.get("id"));
 			});
 
