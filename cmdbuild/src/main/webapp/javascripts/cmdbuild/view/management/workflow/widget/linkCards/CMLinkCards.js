@@ -112,7 +112,6 @@
 				hideMode: "offsets",
 				region: "center",
 				border: false,
-				cls: "cmborderbottom",
 				cmAllowEditCard: allowEditCard,
 				cmAllowShowCard: allowShowCard
 			});

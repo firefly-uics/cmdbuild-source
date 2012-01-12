@@ -29,6 +29,7 @@
 			this.mon(this.view, ev.saveCardButtonClick, function() { this.onSaveCardClick.apply(this, arguments); }, this);
 			this.mon(this.view, ev.abortButtonClick, function() { this.onAbortCardClick.apply(this, arguments); }, this);
 			this.mon(this.view, ev.widgetButtonClick, this.onWidgetButtonClick, this);
+			this.mon(this.view, ev.editModeDidAcitvate, this.onCardGoesInEdit, this)
 		},
 
 		onEntryTypeSelected: function() {
@@ -199,6 +200,12 @@
 		onWidgetButtonClick: function(w) {
 			if (this.widgetControllerManager) {
 				this.widgetControllerManager.onWidgetButtonClick(w);
+			}
+		},
+
+		onCardGoesInEdit: function() {
+			if (this.widgetControllerManager) {
+				this.widgetControllerManager.onCardGoesInEdit();
 			}
 		}
 	});

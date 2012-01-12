@@ -36,6 +36,15 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 		}
 	},
 
+	onCardGoesInEdit: function() {
+		for (var wc in this.controllers) {
+			wc = this.controllers[wc];
+			if (typeof wc.onEditMode == "function") {
+				wc.onEditMode();
+			}
+		}
+	},
+
 	getWrongWFAsHTML: function getWrongWFAsHTML() {
 		var out = "<ul>",
 			valid = true;
