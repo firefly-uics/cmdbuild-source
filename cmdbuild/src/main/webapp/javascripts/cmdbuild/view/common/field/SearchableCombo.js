@@ -25,7 +25,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     		if (this.storeIsLargerThenLimit()) {
         		this.onTrigger3Click();
         	} else {
-        		CMDBuild.Management.SearchableCombo.superclass.onTriggerClick.call(this);
+        		this.onTriggerClick();
         	}
     	};
     },
