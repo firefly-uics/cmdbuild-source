@@ -93,12 +93,15 @@
 			fields.each(function(f) {
 				try {
 					f.setValue(data[f.name]);
+					if (typeof f.isFiltered == "function" && f.isFiltered()) {
+						f.setServerVarsForTemplate(data);
+					}
 				} catch (e){
 					_debug("I can not set the value for " + f.name);
 				}
 			});
 		}
-		
+
 		this.fireEvent("cmFormFilled");
 	}
 
