@@ -14,11 +14,7 @@
                         getBasicForm: function() {
                             return getFormPanel(field).getForm();
                         },
-                        xaVars: xaVars,
-                        getServerVars: function() {
-                            // FIXME! It gives me the shivers! Use the controllers for God's sake!
-                            return getFormPanel(field).ownerCt.ownerCt.currentRecord.data;
-                        }
+                        xaVars: xaVars
                     });
                 }
 
@@ -109,7 +105,10 @@
                 grow: true, // XComboBox autogrow
                 minChars: 1,
                 filtered: false,
-                CMAttribute: attribute
+                CMAttribute: attribute,
+                listConfig: {
+                	loadMask: false
+                }
             });
 
             this.callParent(arguments);
@@ -241,7 +240,17 @@
 					}, this);
                 }
             }
-        }
+        },
+
+		isFiltered: function() {
+			return (typeof this.templateResolver != "undefined");
+		},
+
+		setServerVarsForTemplate: function(vars) {
+			if (this.templateResolver) {
+				this.templateResolver.serverVars = vars;
+			}
+		}
     });
 
     // see SearchableCombo.addToStoreIfNotInIt
