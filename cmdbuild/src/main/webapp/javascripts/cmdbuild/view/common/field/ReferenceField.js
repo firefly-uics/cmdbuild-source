@@ -14,11 +14,7 @@
                         getBasicForm: function() {
                             return getFormPanel(field).getForm();
                         },
-                        xaVars: xaVars,
-                        getServerVars: function() {
-                            // FIXME! It gives me the shivers! Use the controllers for God's sake!
-                            return getFormPanel(field).ownerCt.ownerCt.currentRecord.data;
-                        }
+                        xaVars: xaVars
                     });
                 }
 
@@ -236,7 +232,17 @@
 					}, this);
                 }
             }
-        }
+        },
+
+		isFiltered: function() {
+			return (typeof this.templateResolver != "undefined");
+		},
+
+		setServerVarsForTemplate: function(vars) {
+			if (this.templateResolver) {
+				this.templateResolver.serverVars = vars;
+			}
+		}
     });
 
     // see SearchableCombo.addToStoreIfNotInIt
