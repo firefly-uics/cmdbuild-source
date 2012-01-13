@@ -184,7 +184,7 @@
 
 		for (var i=0, l=ff.length; i<l; ++i) {
 			f = ff[i];
-			if (f.validate()) {
+			if (f.isValid()) {
 				data[f.name] = f.getValue();
 			} else {
 				nonValid += "<p><b>" + f.fieldLabel + "</b></p>";
