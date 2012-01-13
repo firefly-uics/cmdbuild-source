@@ -318,6 +318,6 @@
 				withButtons: o.editable
 			};
 
-		return new CMDBuild.view.management.classes.masterDetail.DetailWindow(c);
+		return new CMDBuild.view.management.common.CMCardWindow(c);
 	}
 })();

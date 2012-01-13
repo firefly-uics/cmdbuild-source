@@ -24,6 +24,7 @@
 				this.saveRelationAction(form, res);
 			}
 			this.view.destroy();
+			CMDBuild.LoadMask.get().hide();
 		},
 
 		addRelation: function(form, res) {

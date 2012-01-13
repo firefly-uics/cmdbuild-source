@@ -17,20 +17,26 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 			saveCardButtonClick: ee.saveCardButtonClick,
 			abortButtonClick: ee.abortButtonClick,
 			formFilled: ee.formFilled,
-			widgetButtonClick: ee.widgetButtonClick
+			widgetButtonClick: ee.widgetButtonClick,
+			editModeDidAcitvate: ee.editModeDidAcitvate,
+			displayModeDidActivate: ee.displayModeDidActivate
 		};
 
 		this.relayEvents(this.cardPanel, [
 			ee.saveCardButtonClick,
 			ee.abortButtonClick,
 			ee.formFilled,
-			ee.widgetButtonClick
+			ee.widgetButtonClick,
+			ee.editModeDidAcitvate,
+			ee.displayModeDidActivate
 		]);
 
 		this.addEvents(ee.saveCardButtonClick);
 		this.addEvents(ee.abortButtonClick);
 		this.addEvents(ee.formFilled);
 		this.addEvents(ee.widgetButtonClick);
+		this.addEvents(ee.editModeDidAcitvate);
+		this.addEvents(ee.displayModeDidActivate);
 
 		if (this.classId) {
 			var privileges = _CMUtils.getClassPrivileges(this.classId);
