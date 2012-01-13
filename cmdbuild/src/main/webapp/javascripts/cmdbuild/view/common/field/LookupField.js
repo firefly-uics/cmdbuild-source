@@ -67,6 +67,7 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 
 				var fieldSet = new Ext.panel.Panel({
 					name: attribute.name, // adds only this field to the basic form
+					fieldLabel: attribute.description,
 					border: false,
 					frame: false,
 					items: fieldSetItems,
@@ -79,8 +80,13 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 					},
 					setValue: function(v) {
 						hiddenField.setValue(v);
+					},
+					isValid: function() {
+						return hiddenField.isValid();
+					},
+					getValue: function() {
+						return hiddenField.getValue();
 					}
-					
 				});
 				
 				return fieldSet;
