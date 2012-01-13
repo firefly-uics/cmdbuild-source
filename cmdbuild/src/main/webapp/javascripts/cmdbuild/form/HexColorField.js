@@ -9,8 +9,8 @@ Ext.define("CMDBuild.form.HexColorField", {
 	
 	getValue: function() {
 		var value = this.value;
-		if (value[0] != "#") {
-			value = "#"+value;			
+		if (value && value[0] != "#") {
+			value = "#"+value;
 		}
 		return value;
 	}

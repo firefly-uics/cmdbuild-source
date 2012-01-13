@@ -25,7 +25,7 @@ public class WorkflowCache {
 
 	Set<WMEntity> loadedProcesses;
 
-	private static WorkflowCache instance = null;
+	private static volatile WorkflowCache instance = null;
 	private static Object instanceSyncObject = new Object();
 
 	public static WorkflowCache getInstance() {

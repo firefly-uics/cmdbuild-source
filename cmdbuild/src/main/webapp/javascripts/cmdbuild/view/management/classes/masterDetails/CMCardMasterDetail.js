@@ -28,7 +28,7 @@
 				cmAddGraphColumn: false
 			});
 
-			this.tabs = new CMDBuild.Tabs({
+			this.tabs = new CMDBuild.view.common.CMSideTabPanel({
 				region: "east"
 			});
 
@@ -149,11 +149,13 @@
 			this.detailGrid.reload();
 		},
 
-		onAddCardButtonClick: function() {
+		// DEPRECATED
+
+		onAddCardButtonClick: function() { _deprecated();
 			this.disable();
 		},
 
-		onClassSelected: function() {
+		onClassSelected: function() {_deprecated();
 			// Something is done on the controller, something else on the view: this is a mess!
 			this.disable();
 		}

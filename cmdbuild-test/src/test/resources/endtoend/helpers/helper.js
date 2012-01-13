@@ -17,7 +17,7 @@ TestHelper.prototype = {
 	},
 
 	popupIsDisplayed : function(iconClass) {
-		return Ext.Msg.isVisible() && this.elementHasAtLeastAChildWithClass(Ext.Msg.getDialog().getEl(), iconClass);
+		return Ext.MessageBox.isVisible() && this.elementHasAtLeastAChildWithClass(Ext.MessageBox.getEl(), iconClass);
 	},
 
 	elementHasAtLeastAChildWithClass : function(el, subelClass) {

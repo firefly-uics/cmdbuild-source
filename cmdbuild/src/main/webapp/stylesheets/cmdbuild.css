@@ -233,7 +233,6 @@ em {
 
 /* FOOTER */
 
-
 #footer {
 	color: #727262;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -403,6 +402,12 @@ em {
 .down-hover {
 	background-image: url(../images/icons/down-hover.gif) !important;
 }
+
+.expand, 
+.cmdisplayfield-expandbutton {
+	background-image: url(../images/icons/expand.png) !important;
+}
+
 /* Buttons */
 .clearButtonBGandBorder {
 	-moz-border-radius: 0 !important;
@@ -412,10 +417,20 @@ em {
 	-khtml-border-radius: 0 !important;
 	border-radius: 0 !important;
 	padding: 0;
-	border-width: none !important;
+	border-width: 0 !important;
 	border-style : none !important;
 	background-image: none !important;
 	background-color: #DFE9F6 !important
+}
+
+.cmdisplayfield-expandbutton {
+	background-repeat: no-repeat;
+	background-position: center center;
+	float: left;
+	margin-left: 10px;
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
 }
 
 /*trigger fields*/
@@ -466,52 +481,6 @@ em {
 /**
  MENU TREE
 **/
-
-/*
-#menu_panel .x-panel-header {
-	text-align: center;
-}
-
-.cmdbuild-menu-addfolder {
-	float: left;
-	clear: both;
-}
-
-.cmdbuild-menu-addfolder table,.cmdbuild-menu-addfolder input {
-	float: left;
-	margin: 5px;
-}
-
-.cmdbuild-tree-panel {
-	border-color: #D0D0D0;
-	border-style: solid;
-	border-width: 1px;
-	margin: 20px 30px !important;
-}
-
-.cmdbuild-tree-panel-clearedleft {
-	clear: left;
-}
-
-.cmdbuild-tree-panel-header {
-	background-color: #E5E5E5 !important;
-	font-size: 11px;
-	font-weight: bold;
-	border-color: #D0D0D0;
-	border-style: solid;
-	border-width: 0px 0px 1px 0px;
-	padding: 5px 5px;
-}
-
-.cmdbuild-tree-panel .x-tree-root-node {
-	padding: 5px;
-}
-
-.cmdbuild-tree-panel .ext-el-mask {
-	background-color: #DDDDDD;
-}
-
-*/
 
 .cmdbuild-tree-superclass-icon {
 	background-image: url(../images/icons/tree/superclass_collapsed.png) !important;
@@ -593,6 +562,14 @@ em {
 
 .ux-flag-it {
     background-image:url(../images/icons/flags/it.png) ! important;
+}
+
+.ux-flag-pt_BR {
+    background-image:url(../images/icons/flags/br.png) ! important;
+}
+
+.ux-flag-ru {
+	background-image: url(../images/icons/flags/ru.png) ! important;
 }
 
 .ux-flag-sr_RS {
@@ -815,36 +792,6 @@ em {
 
 /* custom icons */
 
-/*
-.icon-grid-image {
-	max-height: 20px;
-	max-width: 20px;
-	padding-top: 3px;
-}
-
-.icon-item {
-	width: 100%;
-}
-
-.icon-item-image-wrap {
-	display: table-cell;
-	width: 20px;
-	vertical-align: middle;
-	text-align: center;
-	padding: 2px;
-}
-
-.icon-item-image {
-	max-height: 20px;
-	max-width: 20px;
-	vertical-align: middle;
-}
-
-.icon-item-label {
-	display: table-cell;
-	vertical-align: middle;
-}
-*/
 .x-grid-cell-inner {
 	padding: 3px 6px;
 	height: 18px ! important;
@@ -859,7 +806,11 @@ em {
 	padding: 0px 6px;
 }
 
-.grid-button .x-grid-row-checker {
-	margin-top: 3px;
+.cm-bold {
+	font-weight: bold;
 }
 
+.cm-pre {
+	font-size: 1.2em;
+	padding: 0.5em;
+}

@@ -43,6 +43,9 @@ public class WorkflowService {
 	WMConnectInfo connectInfoTempl;
 	String sharkEndpoint;
 
+	private static String ENGINE = "shark";
+	private static String SCOPE = "";
+
 	String base64authentication;
 	private String sharkWSUser;
 	private String sharkWSPassword;
@@ -84,12 +87,12 @@ public class WorkflowService {
 
 	private void initConnectionInfoTemplate(WorkflowProperties props) {
 		connectInfoTempl = new WMConnectInfo();
-		connectInfoTempl.setEngineName(props.getEngine());
-		connectInfoTempl.setScope(props.getScope());
+		connectInfoTempl.setEngineName(ENGINE);
+		connectInfoTempl.setScope(SCOPE);
 	}
 
 	private void initAdminConnectionInfo(WorkflowProperties props) {
-		connectInfoAdmin = new WMConnectInfo(props.getUser(), props.getPassword(), props.getEngine(), props.getScope());
+		connectInfoAdmin = new WMConnectInfo(props.getUser(), props.getPassword(), ENGINE, SCOPE);
 	}
 
 	private void initWAPIConnection() {

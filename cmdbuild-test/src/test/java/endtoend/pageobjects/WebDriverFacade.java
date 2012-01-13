@@ -20,7 +20,6 @@ public class WebDriverFacade {
 		try {
 			return (Constructor<WebDriver>) Thread.currentThread().getContextClassLoader().loadClass(driverName).getConstructor();
 		} catch (Throwable problem) {
-			problem.printStackTrace();
 			throw new RuntimeException("Couldn't load " + driverName, problem);
 		}
 	}

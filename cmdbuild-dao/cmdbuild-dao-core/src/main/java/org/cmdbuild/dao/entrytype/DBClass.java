@@ -51,6 +51,10 @@ public class DBClass extends DBEntryType implements CMClass {
 		return ToStringBuilder.reflectionToString(this);
 	}
 
+	public final String getPrivilegeId() {
+		return String.format("Class:%d", getId());
+	}
+
 	public void setParent(final DBClass newParent) {
 		if (parent != newParent) {
 			if (parent != null) {
