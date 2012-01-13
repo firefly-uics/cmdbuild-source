@@ -3,11 +3,12 @@ package org.cmdbuild.services.auth;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ws.security.WSPasswordCallback;
+import org.cmdbuild.auth.password.NaivePasswordHandler;
+import org.cmdbuild.auth.password.PasswordHandler;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.services.WorkflowService;
-import org.cmdbuild.utils.SecurityEncrypter;
 
 public class DBAuthenticator implements Authenticator {
 
@@ -27,7 +28,7 @@ public class DBAuthenticator implements Authenticator {
 	}
 
 	private boolean passwordMatch(final User user, final String unencryptedPassword) {
-		final SecurityEncrypter se = new SecurityEncrypter();
+		final PasswordHandler se = new NaivePasswordHandler();
 		final String encpass = se.encrypt(unencryptedPassword);
 		return user.getEncryptedPassword().equals(encpass);
 	}
@@ -52,7 +53,7 @@ public class DBAuthenticator implements Authenticator {
 			return WorkflowService.getInstance().getSharkWSPassword();
 		}
 		final User user = getUser(authInfo);
-		final SecurityEncrypter enc = new SecurityEncrypter();
+		final PasswordHandler enc = new NaivePasswordHandler();
 		final String encryptedPassword = user.getEncryptedPassword();
 		final String unencryptedPassword = enc.decrypt(encryptedPassword);
 		return unencryptedPassword;

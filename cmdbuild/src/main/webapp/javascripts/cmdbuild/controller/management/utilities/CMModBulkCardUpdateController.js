@@ -23,7 +23,7 @@
 	});
 
 	function onSaveButtonClick() {
-		if (this.gridSM.cmInverseSelection) {
+		if (this.gridSM.cmReverse) {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.warnings.warning_message,
 				msg: CMDBuild.Translation.warnings.only_filtered,
@@ -42,7 +42,7 @@
 	}
 
 	function save() {
-		if (!this.gridSM.cmInverseSelection && !this.gridSM.cmHasSelections()) {
+		if (!this.gridSM.cmReverse && !this.gridSM.hasSelection()) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
 
@@ -64,7 +64,7 @@
 	}
 
 	function onAbortButtonClick() {
-		this.gridSM.cmDeselectAll();
+		this.gridSM.reset();
 		this.view.cardForm.reset();
 
 		this.view.cardGrid.reload(reselect = false);
@@ -94,7 +94,7 @@
 		params["FilterCategory"] = this.view.filterType;
 		params['IdClass'] = this.currentClassId;
 
-		params["isInverted"] = this.gridSM.cmInverseSelection;
+		params["isInverted"] = this.gridSM.cmReverse;
 
 		var fullTextQuery = this.view.cardGrid.gridSearchField.getValue();
 
@@ -103,7 +103,7 @@
 		}
 
 		params['selections'] = (function formatSelections() {
-			var ss = this.gridSM.getCmSelections();
+			var ss = this.gridSM.getSelection();
 			var out = [];
 			var s;
 			for (var i=0, l=ss.length; i<l; i++) {

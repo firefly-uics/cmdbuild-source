@@ -14,7 +14,7 @@ import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.dao.view.CMAccessControlManager;
+import org.cmdbuild.auth.CMAccessControlManager;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 

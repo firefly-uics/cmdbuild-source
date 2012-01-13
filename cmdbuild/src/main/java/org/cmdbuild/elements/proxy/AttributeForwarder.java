@@ -97,4 +97,7 @@ public class AttributeForwarder implements IAttribute {
 
 	public String getGroup() { return a.getGroup(); }
 	public void setGroup(String value) { a.setGroup(value); }
+
+	public String getEditorType() {return a.getEditorType();}
+	public void setEditorType(String editorType) { a.setEditorType(editorType);}
 }

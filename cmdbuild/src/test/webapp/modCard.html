@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>ModCard</title>
+
+		<!-- Libs -->
+		<link rel="stylesheet" type="text/css" href="../../main/webapp/javascripts/ext-4.0.7/resources/css/ext-all.css" />
+		<script type="text/javascript" src="../../main/webapp/javascripts/ext-4.0.7/ext-all-debug.js"></script>
+		<script type="text/javascript" src="../../main/webapp/javascripts/ext-4.0.7-ux/grid/RowExpander.js"></script>
+		<!-- CMDBuild -->
+		<link rel="stylesheet" type="text/css" href="../../main/webapp/stylesheets/cmdbuild.css" />
+
+		<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/Ajax.js"></script>
+		<script type="text/javascript" src="../../../target/en.js"></script>
+		<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
+
+			<!-- cache -->
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/model/CMCacheModels.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/model/CMSetupModels.js"></script>	
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/cache/CMCache.js"></script>
+
+			<!-- fields -->
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/BaseAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/SimpleQueryAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/RangeQueryAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/TextualQueryAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/DecimalAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/DoubleAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/IntegerAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/IPAddressAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/DateAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/TimeStampAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/TimeAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/BooleanAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/ComboAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/LookupAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/ReferenceAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/ForeignKeyAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/StringAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/CharAttribute.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widgetBuilders/TextAttribute.js"></script>
+
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/CMBaseCombo.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/CMHtmlEditorField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/LookupField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/SearchableCombo.js"></script>	
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
+
+			<!-- View -->
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMCardForm.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMEditablePanel.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widget/CMFormWithWidgetButtons.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/widget/CMWidgetButtonsPanel.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMTabPanel.js"></script>
+
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMCardPanel.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMCardNotesPanel.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/CMCardPanel.js"></script>
+
+				<!-- COMMON -->
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/Msg.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/PopupWindow.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMEditablePanel.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMSideTabPanel.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMTabPanel.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMCardWindow.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMNoteWindow.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/common/CMAttachmentsWindow.js"></script>
+
+				<!-- RELATIONS -->
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/relations/CMCardRelationsPanel.js"> </script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/relations/CMEditRelationWindow.js"> </script>
+
+				<!-- MD -->
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/masterDetails/CMMasterDetailGrid.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/masterDetails/CMCardMasterDetail.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/masterDetails/CMDetailWindow.js"></script>
+
+				<!-- ATTACHMENTS -->
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
+				<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/view/management/classes/attachments/EditAttachmentWindow.js"></script>
+
+			<!-- Controller -->
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMModCardSubController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMBaseCardPanelController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMCardPanelController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMAttachmentController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMRelationsController.js"></script>
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/controller/management/classes/CMMasterDetailsController.js"></script>
+			
+			<!-- Proxy -->
+			<script type="text/javascript" src="../../main/webapp/javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
+
+		<!-- Test Files -->
+		<script type="text/javascript" src="../../test/javascript/lib/sinon.js"></script>
+		<script type="text/javascript" src="../../test/javascript/core/CMServer.js"></script>
+		<script type="text/javascript" src="../../test/javascript/core/OverrideForTesting.js"></script>	
+		<script type="text/javascript" src="../../test/webapp/javascript/data/CardsDataSet.js"></script>
+		<script type="text/javascript" src="../../test/webapp/javascript/data/ClassesDataSet.js"></script>
+		<script type="text/javascript" src="../../test/webapp/javascript/data/AttributesDataSet.js"></script>
+		<script type="text/javascript" src="../../test/webapp/javascript/utils/LogPanel.js"></script>
+		<script type="text/javascript" src="../../test/webapp/javascript/utils/Fixtures.js"></script>
+		<script type="text/javascript" src="../../test/webapp/javascript/modCard/ModCardTestPage.js"></script>
+	</head>
+
+	<body></body>
+</html>
