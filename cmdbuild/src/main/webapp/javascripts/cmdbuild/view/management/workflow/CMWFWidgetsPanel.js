@@ -18,7 +18,7 @@
 				items: [this.widgetsContainer],
 				buttonAlign: "center",
 				buttons: [{
-					text: CMDBuild.Translation.common.buttons.workflow.back,
+					text: CMDBuild.Translation.common.buttons.close,
 					_cmNotRemoveMe: true, // flag to identiry the button when clean the buttons bar
 					handler: function() {
 						me.hide();
