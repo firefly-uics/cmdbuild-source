@@ -125,18 +125,18 @@
 						_CMCache.addClasses(decoded.classes);
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
-					},
-					callback: reqBarrier.getCallback()
-				});
 
-				// Do a separate request for the widgets because, at this time
-				// it is not possible serialize them with the classes
-				CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
-					scope: this,
-					success: function(response, options, decoded) {
-						// a day I'll can do a request to have only the active, now the cache
-						// discards the inactive if the flag onlyActive is true
-						_CMCache.addWidgetToEntryTypes(decoded.response, onlyActive = true);
+						// Do a separate request for the widgets because, at this time
+						// it is not possible serialize them with the classes
+						CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
+							scope: this,
+							success: function(response, options, decoded) {
+								// a day I'll can do a request to have only the active, now the cache
+								// discards the inactive if the flag onlyActive is true
+								_CMCache.addWidgetToEntryTypes(decoded.response, onlyActive = true);
+							},
+							callback: reqBarrier.getCallback()
+						});
 					},
 					callback: reqBarrier.getCallback()
 				});
