@@ -22,16 +22,23 @@
 
 		onClassSelected: function(classId) {
 			this.classId = classId;
-			this.view.enable();
 			this.view.reset(removeAllRecords = true);
 
 			var me = this;
 			var et = _CMCache.getEntryTypeById(classId);
-				widgets = et.getWidgets();
 
-			for (var i=0, l=widgets.length, w; i<l; ++i) {
-				w = widgets[i];
-				addRecordToGrid(w, me);
+			// BUSINESS RULE: currently the widgets are not inherited
+			// so, deny the definition on superclasses
+			if (et.get("superclass")) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+				var widgets = et.getWidgets();
+
+				for (var i=0, l=widgets.length, w; i<l; ++i) {
+					w = widgets[i];
+					addRecordToGrid(w, me);
+				}
 			}
 		},
 
