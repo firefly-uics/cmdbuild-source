@@ -36,6 +36,10 @@
 			this.callParent(arguments);
 			this.view.displayMode();
 			this.loadFields(this.entryType.get("id"));
+
+			if (this.widgetControllerManager) {
+				this.widgetControllerManager.buildControllers(null);
+			}
 		},
 
 		onCardSelected: function(card) {
