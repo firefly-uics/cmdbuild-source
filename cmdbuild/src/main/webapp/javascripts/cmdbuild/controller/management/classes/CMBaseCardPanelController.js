@@ -51,7 +51,7 @@
 
 			// If the current entryType is a superclass the record has only the value defined
 			// in the super class. So, load the card remotly and pass it to the form.
-			var loadRemoteData = this.entryType.get("superclass");
+			var loadRemoteData = this.entryType.get("superclass") && this.card.get("Id") != -1;
 
 			// If the entryType id and the id of the card are different
 			// the fields are not right, refill the form before the loadCard
@@ -185,7 +185,12 @@
 			me.view.loadCard(card);
 			if (card) {
 				if (me.isEditable(card)) {
-					me.view.displayMode(enableTBar = true);
+					if (card.get("Id") == -1 || me.cmForceEditing) {
+						me.view.editMode();
+						me.cmForceEditing = false;
+					} else {
+						me.view.displayMode(enableTBar = true);
+					}
 				} else {
 					me.view.displayModeForNotEditableCard();
 				}
@@ -193,8 +198,17 @@
 		},
 
 		isEditable: function(card) {
-			var data = card.raw || card.data;
-			return data.priv_write;
+			var out = false;
+			if (card.get("Id") == -1) {
+				var classId = card.get("IdClass");
+				var priv = _CMUtils.getClassPrivileges(classId);
+				out = priv.create;
+			} else {
+				var data = card.raw || card.data;
+				out = data.priv_write;
+			}
+
+			return out;
 		},
 
 		setWidgetManager: function(wm) {
