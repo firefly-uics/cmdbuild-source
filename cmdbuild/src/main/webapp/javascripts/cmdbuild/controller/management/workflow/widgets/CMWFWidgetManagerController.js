@@ -8,7 +8,8 @@
 				controllerPKG = CMDBuild.controller.management.workflow.widgets,
 				builders = {
 					createModifyCard: function(ui) {
-						return new controllerPKG.CMCreateModifyCard(ui, me, widgetDef);
+						var widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(ui.getWidgetManager());
+						return new controllerPKG.CMCreateModifyCard(ui, me, widgetDef, widgetControllerManager);
 					},
 					createReport: function(ui, superController, widgetDef, card) {
 						return new CMDBuild.controller.management.common.widgets.CMOpenReportController(
