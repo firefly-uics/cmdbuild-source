@@ -35,7 +35,7 @@
 						return new controllerPKG.CMOpenNoteController(ui, me, widgetDef);
 					},
 					openAttachment: function(ui) {
-						return new controllerPKG.CMAttachmentController(ui, me, widgetDef);
+						return new controllerPKG.CMAttachmentController(ui, me, widgetDef, card);
 					},
 					calendar: function(ui, me, widgetDef,card) {
 						return new CMDBuild.controller.management.common.widgets.CMCalendarController(
