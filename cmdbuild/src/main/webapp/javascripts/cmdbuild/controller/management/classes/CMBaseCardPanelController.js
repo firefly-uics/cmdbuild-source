@@ -231,9 +231,11 @@
 	function addDataFromCardDataPoviders(me, params) {
 		for (var provider in me.cardDataProviders) {
 			provider = me.cardDataProviders[provider];
-			var values = provider.getCardData();
-			if (values) {
-				params[provider.getCardDataName()] = values;
+			if (typeof provider.getCardData == "function") {
+				var values = provider.getCardData();
+				if (values) {
+					params[provider.getCardDataName()] = values;
+				}
 			}
 		}
 
