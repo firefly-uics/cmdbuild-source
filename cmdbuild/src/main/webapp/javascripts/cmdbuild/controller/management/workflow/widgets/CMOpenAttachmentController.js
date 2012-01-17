@@ -52,19 +52,26 @@
 		getVariable: function(variableName) {
 			return undefined
 		},
+
 		activeView: function() {
 			this.beforeActiveView();
 			this.view.cmActivate();
 		},
+
 		isValid: function() {
 			return true;
 		},
+
 		onBackToActivityButtonClick: function() {
 			try {
 				this.ownerController.showActivityPanel();
 			} catch (e) {
 				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
+		},
+
+		isBusy: function() {
+			return false;
 		}
 	});
 
