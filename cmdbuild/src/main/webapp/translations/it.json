@@ -448,7 +448,7 @@
             "startingClass": "Classe di default",
             "tabs_position": {
                "bottom": "Sotto",
-               "label": "Posizione linguette nel pannello card",
+               "label": "Posizione TAB sottopagine nel pannello card",
                "top": "Sopra"
             },
             "title": "Configurazione CMDBuild"
