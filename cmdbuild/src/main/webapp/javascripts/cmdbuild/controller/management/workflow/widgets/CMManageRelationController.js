@@ -12,10 +12,10 @@
 		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
 		cmName: "Create/Modify card",
 
-		constructor: function(view, ownerController) {
+		constructor: function(view, ownerController, widgetDef) {
 			this.callParent(arguments);
 
-			this.widgetConf = this.view.widgetConf;
+			this.widgetConf = widgetDef;
 			this.ownerController = ownerController;
 			this.outputName = this.widgetConf.outputName;
 			this.noSelect = !(this.widgetConf.enabledFunctions['single'] || this.widgetConf.enabledFunctions['multi']);
@@ -28,13 +28,16 @@
 			});
 
 			this.idClass = this.getVariable(ID_CLASS);
+
 			this.outputName = this.getVariable(OUTPUT_NAME);
 
 			this.templateResolverIsBusy = false;
-			
+
 			this.callBacks = Ext.apply(this.callBacks, {
 				'action-relation-deletecard': this.onDeleteCard
 			});
+
+			this.card = getFakeCard(this);
 		},
 
 		onDeleteCard: function(model) {
@@ -253,6 +256,21 @@
 						f.changed = false;
 					}
 				}, this);
+			}
+		}
+	}
+
+	// a object that fake a card,
+	// is passed at the ModifyRelationWindow
+	function getFakeCard(me) {
+		var data = {
+			Id: me.getVariable(ID_CARD),
+			IdClass: me.getVariable(ID_CLASS)
+		}
+
+		return {
+			get: function(k) {
+				return data[k];
 			}
 		}
 	}
