@@ -38,7 +38,7 @@ public class CmdbuildProperties extends DefaultProperties {
 		setProperty(LANGUAGE_PROMPT, String.valueOf(true));
 		setProperty(SESSION_TIMEOUT, "");
 		setProperty(INSTANCE_NAME, "");
-		setProperty(TABS_POSITION, "top");
+		setProperty(TABS_POSITION, "bottom");
 	}
 
 	public static CmdbuildProperties getInstance() {
