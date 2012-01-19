@@ -129,13 +129,10 @@
 			buildGridController(me, me.view.getGrid());
 			buildRelationsController(me, me.view.getRelationsPanel());
 			buildMapController(me);
+			buildMDController(me);
 
 			me.noteController = new CMDBuild.controller.management.classes.CMNoteController(me.view.getNotePanel());
 			me.subControllers.push(me.noteController);
-
-			me.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(me.view.getMDPanel(), me);
-			me.subControllers.push(me.mdController);
-
 			me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(me.view.getAttachmentsPanel());
 			me.subControllers.push(me.attachmentsController);
 
@@ -234,6 +231,16 @@
 		});
 
 		me.subControllers.push(me.relationsController);
+	}
+
+	function buildMDController(me) {
+		me.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(me.view.getMDPanel(), me);
+		me.mon(me.mdController, "empty", function(isVisible) {
+			if (isVisible) {
+				me.view.cardTabPanel.activateFirstTab();
+			}
+		});
+		me.subControllers.push(me.mdController);
 	}
 
 	function buildMapController(me) {
