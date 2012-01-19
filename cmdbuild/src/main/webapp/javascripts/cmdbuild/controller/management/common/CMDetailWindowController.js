@@ -159,7 +159,7 @@
 
 			if (attribute) {
 				if (isTheFKFieldToTarget.call(this, attribute) 
-						|| isMasterReference.call(this, attribute)) {
+						|| isTheReferenceOfTheDetail(this, attribute)) {
 					// not to create the relation if the
 					// detail has a reference to the master
 					// used to add a detail
@@ -185,10 +185,12 @@
 		return false;
 	};
 
-	function isMasterReference(attribute) {
-		return this.referencedIdClass
-				&& attribute
-				&& attribute.referencedIdClass == this.referencedIdClass;
+	function isTheReferenceOfTheDetail(me, attribute) {
+		if (!me.detail) {
+			return false;
+		} else {
+			return attribute.idDomain == me.detail.get("id");
+		}
 	};
 
 	function addDomainAttributesIfNeeded(attributes) {

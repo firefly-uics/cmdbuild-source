@@ -111,7 +111,7 @@
 		},
 
 		// private and overridden in CMActivityGrid
-		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) { _overridden();
+		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
 			var me = this;
 			me.clearFilter(function() {
 				me.gridSearchField.reset();
@@ -120,7 +120,7 @@
 		},
 
 		// private and overridden in CMActivityGrid
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) { _overridden();
+		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
 			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
 		},
 
