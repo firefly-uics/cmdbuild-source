@@ -31,6 +31,12 @@
 			this.mon(this.view.detailGrid, "itemdblclick", onDetailDoubleClick, this);
 			this.mon(this.view.addDetailButton, "cmClick", onAddDetailButtonClick, this);
 
+			this.addEvents(["empty"]);
+
+			this.mon(this.view, "empty", function() {
+				this.fireEvent("empty", this.view.isVisible());
+			}, this)
+
 			this.callBacks = {
 				'action-masterdetail-edit': this.onEditDetailClick,
 				'action-masterdetail-show': this.onShowDetailClick,
@@ -48,7 +54,6 @@
 			this.currentForeignKey = null;
 			this.currentDetail = null;
 
-			this.view.disable();
 			this.view.loadDetailsAndFKThenBuildSideTabs(this.entryType.get("id"));
 			this.view.resetDetailGrid();
 		},

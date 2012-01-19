@@ -55,6 +55,7 @@
 			var domainList = _CMCache.getMasterDetailsForClassId(classId),
 				me = this;
 
+			this.disable();
 			this.empty = true;
 			this.details = {};
 			this.details[MD] = {};
@@ -85,9 +86,11 @@
 
 				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
 						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
+
 					this.fireEvent("empty");
 				} else {
 					this.empty = false;
+					this.enable();
 					buildTabs.call(this);
 				}
 			}
@@ -231,6 +234,7 @@
 		} else {
 			this.on("show", build, this, {single: true});
 		}
+
 	}
 
 	function sortKeys(tabs) {
