@@ -177,7 +177,7 @@
 			}, skipReload=true);
 		},
 
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) { _overridden();
+		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
 			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
 		}
 	});
