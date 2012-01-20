@@ -266,4 +266,7 @@ public interface IAttribute extends BaseSchema {
 
 	public String getGroup();
 	public void setGroup(String value);
+
+	public String getEditorType();
+	public void setEditorType(String editorType);
 }

@@ -40,6 +40,7 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
+import org.cmdbuild.elements.widget.ClassWidgets;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -55,6 +56,7 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.schema.ModClass.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -62,6 +64,7 @@ import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.servlets.utils.builder.CardQueryParameter;
 import org.cmdbuild.utils.CQLFacadeCompiler;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -862,6 +865,25 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
+	@JSONExported
+	public JsonResponse callWidget(
+			final ICard card,
+			@Parameter("widgetId") final String widgetId,
+			@Parameter(required=false, value="action") final String action,
+			@Parameter(required=false, value="params") final String jsonParams) throws Exception {
+
+		final ObjectMapper mapper = new ObjectMapper();
+		final Map<String, Object> params;
+		if (jsonParams == null) {
+			params = new HashMap<String, Object>();
+		} else {
+			params = new ObjectMapper().readValue(jsonParams, mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+		}
+
+		final ClassWidgets classWidgets = new ClassWidgets(card.getSchema());
+		return JsonResponse.success(classWidgets.executeAction(widgetId, action, params, card));
+	}
+
 	static private DirectedDomain stringToDirectedDomain(DomainFactory df, String string) {
 		StringTokenizer st = new StringTokenizer(string, "_");
 		int domainId = Integer.parseInt(st.nextToken());
@@ -876,4 +898,5 @@ public class ModCard extends JSONBase {
 		int cardId = Integer.parseInt(st.nextToken());
 		return tf.get(classId).cards().get(cardId);
 	}
+
 }

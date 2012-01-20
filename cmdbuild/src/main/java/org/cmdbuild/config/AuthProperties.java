@@ -3,9 +3,11 @@ package org.cmdbuild.config;
 import java.util.Arrays;
 import java.util.List;
 
+import org.cmdbuild.auth.CasAuthenticator;
+import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.services.Settings;
 
-public class AuthProperties extends DefaultProperties {
+public class AuthProperties extends DefaultProperties implements HeaderAuthenticator.Configuration, CasAuthenticator.Configuration {
 
 	private static final long serialVersionUID = 1L;
 	private static final String MODULE_NAME = "auth";

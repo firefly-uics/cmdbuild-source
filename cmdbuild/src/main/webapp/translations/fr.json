@@ -1,6 +1,6 @@
 {
    "description": "Français",
-   "release": "1.4.0-dev",
+   "release": "1.5-dev",
    "administration": {
       "description": "Module d'administration",
       "modClass": {
@@ -17,6 +17,11 @@
                "desc": "Descendant"
             },
             "domain": "Domaine",
+            "editorType": {
+               "html": "<em>Html</em>",
+               "label": "<em>Editor type</em>",
+               "plain": "<em>Plain text</em>"
+            },
             "field_hidden": "Caché",
             "field_read": "Lecture Seule",
             "field_visibility": "Editer mode",
@@ -82,8 +87,8 @@
             "domain": "Domaine",
             "is_active": "Active",
             "m_d": "M/D",
-            "md_label": "Master/Detail Label",
             "master_detail": "Master/Detail",
+            "md_label": "Master/Detail Label",
             "modify_domain": "Modifier Domaine",
             "name": "Nom",
             "title_add": "Ajouter domaine",
@@ -136,7 +141,47 @@
             "properties": "Propriétés"
          },
          "title": "Gestion de classes",
-         "tree_title": "Liste de Class"
+         "tree_title": "Liste de Class",
+         "widgets": {
+            ".OpenReport": {
+               "fields": {
+                  "force": "<em>Force format</em>",
+                  "presets": "<em>Report attributes</em>",
+                  "report": "<em>Report</em>"
+               },
+               "presetGrid": {
+                  "attribute": "<em>Attribute</em>",
+                  "value": "<em>Value</em>"
+               },
+               "title": "<em>Create report</em>"
+            },
+            ".Calendar": {
+               "fields": {
+                  "target": "<em>Target Class</em>",
+                  "start": "<em>Start date</em>",
+                  "end": "<em>End date</em>",
+                  "title": "<em>Event title</em>",
+                  "filter": "<em>CQL Filter</em>",
+                  "defaultDate": "<em>Default date to open</em>"
+               },
+               "title": "<em>Calendar</em>"
+            },
+            ".Ping": {
+               "fields": {
+                  "address":"<em>Address to ping</em>",
+                  "count": "<em>Number of pings</em>",
+                  "templates": "<em>Templates</em>"
+               },
+               "title": "<em>Ping</em>"
+            },
+            "commonFields": {
+               "active": "<em>Active</em>",
+               "alwaysenabled": "<em>Always enabled</em>",
+               "buttonLabel": "<em>Button label</em>",
+               "type": "<em>Type</em>"
+            },
+            "title": "<em>Widget</em>"
+         }
       },
       "modLookup": {
          "add_lookuptype": "Ajouter type Catalogue",
@@ -401,24 +446,12 @@
             "rowlimit": "Limite colone",
             "sessiontimeout": "Session expirée (en secondes)",
             "startingClass": "Default class",
+            "tabs_position": {
+               "bottom": "<em>Bottom</em>",
+               "label": "<em>Tabs position in card panel</em>",
+               "top": "<em>Top</em>"
+            },
             "title": "CMDBuild Setup"
-         },
-         "gis": {
-            "center_lat": "Latitude Initiale",
-            "center_lon": "Longitude Initiale",
-            "enable": "Activer",
-            "initial_zoom": "Zoom Initiale",
-            "serverurl": "Server URL",
-            "title": "GIS"
-         },
-         "graph": {
-            "baseLevel": "Niveau Défaut",
-            "clusteringThreshold": "Seuil des groupes de nuds",
-            "enabled": "Activé",
-            "expandingThreshold": "Seuil maximum de noeuds ouverts",
-            "extensionMaximumLevel": "Niveau Maximum",
-            "menuTitle": "Relation Graphique",
-            "title": "Relation Graphique Setup"
          },
          "dms": {
             "categoryLookup": "CMDBuild categorie",
@@ -439,6 +472,23 @@
             "repositoryWSPath": "Web service path",
             "serverUrl": "Server URL",
             "title": "Alfresco Setup"
+         },
+         "gis": {
+            "center_lat": "Latitude Initiale",
+            "center_lon": "Longitude Initiale",
+            "enable": "Activer",
+            "initial_zoom": "Zoom Initiale",
+            "serverurl": "Server URL",
+            "title": "GIS"
+         },
+         "graph": {
+            "baseLevel": "Niveau Défaut",
+            "clusteringThreshold": "Seuil des groupes de nuds",
+            "enabled": "Activé",
+            "expandingThreshold": "Seuil maximum de noeuds ouverts",
+            "extensionMaximumLevel": "Niveau Maximum",
+            "menuTitle": "Relation Graphique",
+            "title": "Relation Graphique Setup"
          },
          "modify": "Modifier",
          "save": "Confirmer",
@@ -522,8 +572,8 @@
       "loading": "Chargement...",
       "loading_mask": {
          "classes": "Chargement classes",
-         "domain": "Chargement domaines",
          "configuration": "Chargement configuration",
+         "domain": "Chargement domaines",
          "group": "Chargement utilisateurs et groupes",
          "lookup": "Chargement des types de Catalogues",
          "menu": "Chargement menus",
@@ -609,11 +659,11 @@
       "detail": "Détails",
       "error_message": "Erreur",
       "error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
-      "invalid_fields" : "Certains champs ne sont pas remplis correctement",
       "invalid_attributes": "Les différents champs n'ont pas été rempli correctement:",
       "invalid_extended_attributes": "Les contrôles visuels suivants n'ont pas été remplis correctement:",
+      "invalid_fields": "Certains champs ne sont pas remplis correctement",
       "no_driver": "Aucun JDBC driver trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies du Tomcat.",
-	  "no_selections": "Vous n'avez pas séléctionné quelle fiche à mettre à jour",
+      "no_selections": "Vous n'avez pas séléctionné quelle fiche à mettre à jour",
       "reasons": {
          "ATTACHMENT_NOTFOUND": "Pièce jointe {0} pour la fiche {2} de {1} non trouvée",
          "ATTRIBUTE_NOTFOUND": "Attribut {1} de {0} non trouvé",
@@ -638,8 +688,8 @@
          "MENU_NOTFOUND": "Menu non trouvé",
          "NOTFOUND": "Non trouvé",
          "ORM_AMBIGUOUS_DIRECTION": "Ne peut déterminer automatiquement la direction de la relation",
-         "ORM_ATTACHMENT_UPLOAD_FAILED": "Chargement du fichier joint en erreur",
          "ORM_ATTACHMENT_DELETE_FAILED": "Echec de la suppression de la pièce jointe",
+         "ORM_ATTACHMENT_UPLOAD_FAILED": "Chargement du fichier joint en erreur",
          "ORM_CANT_CREATE_DATABASE": "Ne peut créer la base de données",
          "ORM_CANT_CREATE_USER": "Ne peut pas créer un utilisateur",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Ne peut supprimer des fiches avec des relations",
@@ -680,9 +730,9 @@
          "ORM_READ_ONLY_RELATION": "Relation en lecture seule",
          "ORM_READ_ONLY_TABLE": "Class en lecture seule",
          "ORM_SQL_PATCH": "Erreur dans le patch SQL",
-         "ORM_TYPE_ERROR": "Type inconnu",
          "ORM_TABLE_HAS_CHILDREN": "Supression impossible d'une class possédant une sous-classe",
          "ORM_TABLE_HAS_DOMAIN": "Supression impossible d'une class ratachée à un domaine",
+         "ORM_TYPE_ERROR": "Type inconnu",
          "ORM_UNIQUE_VIOLATION": "Violation de la contrainte unique",
          "PARAMETER_CLASS_UNAVAILABLE": "Ne peut pas instantier Java class {0}",
          "PRIVILEGE_GROUP_NOTFOUND": "Privilege non trouvé pour le groupe {0}",
@@ -857,9 +907,9 @@
          "edit_attachment": "Editer pièce jointe",
          "edit_relation": "Editer relation",
          "gis": {
-         	"geo_attributes": "Attributs Geographiques",
-         	"zoom": "Zoom",
-         	"position": "Position"
+            "geo_attributes": "Attributs Geographiques",
+            "position": "Position",
+            "zoom": "Zoom"
          },
          "history_columns": {
             "activity_name": "Nom activité",
@@ -914,7 +964,7 @@
          "deletedetail": "Supprimer détail",
          "detail": "Détail",
          "editdetail": "Editer détail",
-		 "showattach": "Voir pièces jointes",
+         "showattach": "Voir pièces jointes",
          "showdetail": "Voir détail",
          "showgraph": "Voir graph",
          "shownotes": "Voir notes"
@@ -972,9 +1022,8 @@
          "delete_card": "Supprimer processus",
          "delete_card_confirm": "Etes-vous certain de vouloir supprimer le processus?",
          "extattrs": {
-            "attachments": {
-              "must_save_to_add": "Vous ne pouvez pas ajouter une pièce jointe avant de sauvegarder l'activité"
-            },
+            "attachments": {"must_save_to_add": "Vous ne pouvez pas ajouter une pièce jointe avant de sauvegarder l'activité"},
+            "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
             "createreport": {"format_label": "Format"},
             "linkcards": {"required": "Selectionnez quelques fiches -"},
             "manageemail": {
@@ -1000,12 +1049,7 @@
                "regenerates": "<em>Regenerate e-mails</em>"
             },
             "managerelation": {"required": "Sélectionnez les relations -"},
-            "notes": {
-              "must_save_to_modify": "Vous ne pouvez pas modifier les notes avant de sauver votre activité"
-            },
-            "calendar": {
-            	wrong_config: "<em>The calendar is not well configured</em>"
-            }
+            "notes": {"must_save_to_modify": "Vous ne pouvez pas modifier les notes avant de sauver votre activité"}
          },
          "history_columns": {
             "attributes": "Attributs",
@@ -1058,9 +1102,9 @@
       "wrong_time": "{0} est une valeur invalide. Le bon format est {1}"
    },
    "warnings": {
- 	  "link_cards_changed_values": "The selection of \"{0}\" has been updated",
+      "link_cards_changed_values": "The selection of \"{0}\" has been updated",
+      "only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
       "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
-      "warning_message": "Attention",
-      "only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours."
+      "warning_message": "Attention"
    }
 }

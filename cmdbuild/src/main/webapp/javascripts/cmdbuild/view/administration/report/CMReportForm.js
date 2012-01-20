@@ -94,5 +94,6 @@ Ext.define("CMDBuild.view.administration.report.CMReportForm", {
 	reset: function() {
 		this.step1.reset();
 		this.step2.reset();
+		this.showStep1();
 	}
 });

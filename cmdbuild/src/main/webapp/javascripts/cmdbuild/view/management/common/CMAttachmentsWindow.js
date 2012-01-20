@@ -1,11 +1,7 @@
 Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
 	extend: "CMDBuild.PopupWindow",
-	cardInfo: null, // { Description, Id, ClassId
-	initComponent: function() {
-		this.title = Ext.String.format("{0} - {1}"
-				, CMDBuild.Translation.management.modcard.tabs.attachments 
-				, this.cardInfo.Description);
 
+	initComponent: function() {
 		this.grid = new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
 			border: false
 		});
@@ -27,14 +23,5 @@ Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
 		});
 
 		this.callParent(arguments);
-
-		this.on("show", function() {
-			this.grid.setExtraParams({
-				IdClass: this.cardInfo.ClassId,
-				Id: this.cardInfo.Id
-			});
-
-			this.grid.getStore().load();
-		}, this);
 	}
 });

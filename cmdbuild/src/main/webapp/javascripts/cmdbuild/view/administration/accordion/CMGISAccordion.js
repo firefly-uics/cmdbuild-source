@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.modcartography;
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMGISAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMGISAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: tr.title,
 		cmName: "gis",

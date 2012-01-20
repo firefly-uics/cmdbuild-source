@@ -47,6 +47,10 @@
 				disabled: true
 			});
 
+			this.widgetPanel = new CMDBuild.view.administration.widget.CMWidgetDefinitionPanel({
+				disabled: true
+			});
+
 			this.tabPanel = new Ext.tab.Panel({
 				frame: false,
 				border: false,
@@ -56,6 +60,7 @@
 				 this.classForm
 				,this.attributesPanel
 				,this.domainGrid
+				,this.widgetPanel
 				,this.layerVisibilityGrid
 				,this.geoAttributesPanel
 				]

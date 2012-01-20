@@ -10,16 +10,17 @@ import javax.activation.DataSource;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.log4j.Logger;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dms.exception.ConnectionException;
 import org.cmdbuild.dms.exception.FtpOperationException;
 import org.cmdbuild.dms.exception.InvalidLoginException;
 import org.cmdbuild.dms.properties.DmsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class AlfrescoFtpClient implements FtpClient {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final DmsProperties properties;
 
 	public AlfrescoFtpClient(final DmsProperties properties) {

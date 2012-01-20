@@ -29,16 +29,6 @@ public abstract class AuthenticationFacade {
 	public static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
 	private static final int INVALID_GROUP_ID = -1;
 
-	public User addUser(final String username, final String password, final String description) throws AuthException {
-		UserCard user = null;
-		user = new UserCard();
-		user.setUsername(username);
-		user.setUnencryptedPassword(password);
-		user.setDescription(description);
-		user.save();
-		return user;
-	}
-
 	public static UserContext login(final String username, final String unencryptedPassword) throws AuthException {
 		final AuthenticationService as = new AuthenticationService();
 		final UserContext userContext = as.jsonRpcAuth(username, unencryptedPassword);
@@ -90,7 +80,7 @@ public abstract class AuthenticationFacade {
 		return userRoleRelations;
 	}
 
-	static public void setDefaultGroupForUser(final int userId, final int defaultGroupId) {
+	public static void setDefaultGroupForUser(final int userId, final int defaultGroupId) {
 		final Iterable<IRelation> groupRelations = getGroupRelationsForUser(userId);
 		clearDefaultGroup(groupRelations);
 		setDefaultGroup(groupRelations, defaultGroupId);
