@@ -63,6 +63,6 @@
 		<div id="login_box_wrap">
 			<div id="login_box"></div>
 		</div>
-		<div id="release_box" class="x-panel-header" style="background: none; border: none; text-align: center;"><span class="x-panel-header-text">CMDBuild <tr:translation key="release"/></span></div>
+		<div id="release_box" class="x-panel-header" style="background: none; border: none; text-align: center;"><span class="x-panel-header-text-default">CMDBuild <tr:translation key="release"/></span></div>
 	</body>
 </html>

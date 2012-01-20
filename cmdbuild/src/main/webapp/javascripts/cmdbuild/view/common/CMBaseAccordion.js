@@ -117,7 +117,7 @@
 		},
 		
 		getNodeById: function(id) {
-			return this.store.getNodeById(id);
+			return this.store.getRootNode().findChild("id", id, deep=true);
 		},
 		
 		getRootNode: function() {
@@ -126,7 +126,7 @@
 
 		getAncestorsAsArray: function(nodeId) {
 			var out = [],
-				node = this.getNodeById(nodeId);
+				node = this.store.getRootNode().findChild("id", nodeId, deep=true);
 
 			if (node) {
 				out.push(node);

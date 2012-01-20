@@ -18,18 +18,12 @@
 					dc = _CMMainViewportController.getDanglingCard(),
 					entryIdChanged = this.entryType ? (this.entryType.get("id") != newEntryId) : true;
 
-				if (dc != null) {
-					if (dc.activateFirstTab) {
-						this.view.activateFirstTab();
-					}
-
-					if (this.gridController) {
-						this.gridController.openCard(dc, retryWithoutFilter = true);
-					}
-				} else if (entryIdChanged) {
-					this.setEntryType(newEntryId);
+				// if there is a danglingCard do the same things that happen
+				// when select a new entryType, the cardGridController is able to
+				// manage the dc and open it.
+				if (entryIdChanged || dc) {
+					this.setEntryType(newEntryId, dc);
 				}
-
 			}
 		},
 
@@ -55,12 +49,17 @@
 			}
 		},
 
-		setEntryType: function(entryTypeId) {
+		setEntryType: function(entryTypeId, dc) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
-
-			this.callForSubControllers("onEntryTypeSelected", this.entryType);
 			this.onEntryTypeChanged(this.entryType);
+			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc]);
+
+			if (dc != null) {
+				if (dc.activateFirstTab) {
+					this.view.activateFirstTab();
+				}
+			}
 		},
 
 		getEntryType: function() {
@@ -97,14 +96,14 @@
 
 		// private, call a given function for all the subcontrolles, and
 		// pass the arguments to them.
-		callForSubControllers: function(fnName, arguments) {
+		callForSubControllers: function(fnName, params) {
 			for (var i=0, l = this.subControllers.length, ct=null; i<l; ++i) {
 				ct = this.subControllers[i];
 				if (typeof fnName == "string" 
 					&& typeof ct[fnName] == "function") {
 
-					arguments = Ext.isArray(arguments) ? arguments : [arguments];
-					ct[fnName].apply(ct, arguments);
+					params = Ext.isArray(params) ? params : [params];
+					ct[fnName].apply(ct, params);
 				}
 			}
 		},
