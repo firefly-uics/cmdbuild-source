@@ -34,12 +34,17 @@
 			this.mon(this.view.printGridMenu, "click", this.onPrintGridMenuClick, this);
 		},
 
-		onEntryTypeSelected : function(entryType) {
+		onEntryTypeSelected : function(entryType, danglingCard) {
 			this.entryType = entryType;
-			var me = this;
+			var me = this,
+				afterStoreUpdated;
 
-			me.view.updateStoreForClassId(me.entryType.get("id"), {
-				cb: function cbUpdateStoreForClassId() {
+			if (danglingCard) {
+				afterStoreUpdated = function() {
+					me.openCard(danglingCard, retryWithoutFilter = true)
+				}
+			} else {
+				afterStoreUpdated = function cbUpdateStoreForClassId() {
 					me.view.loadPage(1, {
 						cb: function cbLoadPage() {
 							try {
@@ -50,8 +55,11 @@
 						}
 					});
 				}
-			});
+			}
 
+			me.view.updateStoreForClassId(me.entryType.get("id"), {
+				cb: afterStoreUpdated
+			});
 			me.view.openFilterButton.enable();
 			me.view.clearFilterButton.disable();
 			me.view.gridSearchField.reset();
@@ -109,7 +117,7 @@
 		},
 
 		onCardSaved: function(c) {
-			this.view.openCard(c);
+			this.openCard(c);
 		},
 
 		onCardDeleted: function() {

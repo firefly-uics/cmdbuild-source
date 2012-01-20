@@ -227,12 +227,25 @@
 
 		getFirstAccordionWithANodeWithGivenId: function(id) {
 			var currentAccordion = this.getExpansedAccordion();
-			if (currentAccordion && typeof currentAccordion.getNodeById(id) != "undefined") {
+			if (currentAccordion && currentAccordion.getNodeById(id)) {
 				return currentAccordion;
 			} else {
-				return this.cmAccordions.items.findBy(function(accordion) {
-					return (typeof accordion.getNodeById(id) != "undefined");
+				// return this.cmAccordions.items.findBy(function(accordion) {
+					// return (typeof accordion.getNodeById(id) != "undefined");
+				// });
+
+				var a = null;
+
+				this.foreachAccordion(function(accordion) {
+					if (a == null) {
+						var node = accordion.getNodeById(id);
+						if (node) {
+							a = accordion;
+						}
+					}
 				});
+	
+				return a;
 			}
 		},
 
