@@ -43,41 +43,22 @@
 
 			this.view.setModel(this.model);
 
-			this.view.grid.on('beforeitemclick', cellclickHandler, this);
-			this.view.grid.on("itemdblclick", onItemDoubleclick, this);
-
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.view.clientForm,
 				xaVars: this.view.widgetConf,
 				serverVars: this.view.activity
 			});
 
-			this.view.on("select", onSelect, this);
-			this.view.on("deselect", onDeselect, this);
+			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);
+			this.mon(this.view.grid, 'itemdblclick', onItemDoubleclick, this);
 
-			this.view.on("CM_toggle_map", function() {
-				var v = this.view;
-				if (v.grid.isVisible()) {
-					v.showMap();
-					v.mapButton.setIconCls("table");
-					v.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
-					this.mapController.centerMapOnSelection();
-				} else {
-					v.showGrid();
-					v.mapButton.setIconCls("map");
-					v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
-					loadPageForLastSelection.call(this, this.mapController.getLastSelection());
-				}
-			}, this);
+			this.mon(this.view, "select", onSelect, this);
+			this.mon(this.view, "deselect", onDeselect, this);
 
 			if (this.view.hasMap()) {
-				this.mapController = 
-					new CMDBuild.controller.management.workflow.widgets.CMLinkCardsMapController({
-						view: this.view.mapPanel, 
-						ownerController: this,
-						model: this.model,
-						widgetConf: this.widgetConf
-					});
+				var me = this;
+				listenToggleMapEvents(me);
+				buildMapController(me);
 			}
 		},
 
@@ -86,19 +67,13 @@
 			new _CMUtils.PollingFunction({
 				success: function() {
 					this.alertIfChangeDefaultSelection = true;
-					var classId = this.templateResolver.getVariable(CLASS_ID),
-						cqlQuery = this.templateResolver.getVariable(FILTER);
-	
+					var tr = this.templateResolver,
+						classId = tr.getVariable(CLASS_ID),
+						cqlQuery = tr.getVariable(FILTER);
+
 					if (cqlQuery) {
 						this.view.grid.openFilterButton.disable();
-						this.templateResolver.resolveTemplates({
-							attributes: [ FILTER ],
-							scope: this.view,
-							callback: function(out, ctx) {
-								var cardReqParams = this.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
-								this.updateGrid(classId, cardReqParams);
-							}
-						});
+						resolveFilterTemplate(this, cqlQuery, classId);
 					} else {
 						this.view.updateGrid(classId);
 					}
@@ -108,7 +83,7 @@
 				},
 				checkFn: function() {
 					// I want exit if I'm not busy
-					return !this.isBusy()
+					return !this.isBusy();
 				},
 				cbScope: this,
 				checkFnScope: this
@@ -118,7 +93,7 @@
 		// override
 		onEditMode: function() {
 			// for the auto-select
-			resolveTemplate.call(this);
+			resolveDefaultSelectionTemplate(this);
 		},
 
 		// override
@@ -147,7 +122,7 @@
 
 		syncSelections: function() {
 			this.model._silent = true;
-			this.view.syncSelections()
+			this.view.syncSelections();
 			this.model._silent = false;
 		},
 
@@ -168,6 +143,49 @@
 		}
 	});
 
+	function listenToggleMapEvents(me) {
+		me.mon(me.view, "CM_toggle_map", function() {
+			var v = me.view;
+			if (v.grid.isVisible()) {
+				v.showMap();
+				v.mapButton.setIconCls("table");
+				v.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
+				if (me.mapController) {
+					me.mapController.centerMapOnSelection();
+				}
+			} else {
+				v.showGrid();
+				v.mapButton.setIconCls("map");
+				v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
+				loadPageForLastSelection.call(me, me.mapController.getLastSelection());
+			}
+		}, me);
+	}
+
+	function buildMapController(me) {
+		me.mapController = new CMDBuild.controller.management.workflow.widgets.CMLinkCardsMapController({
+			view: me.view.mapPanel, 
+			ownerController: me,
+			model: me.model,
+			widgetConf: me.widgetConf
+		});
+	}
+
+	function resolveFilterTemplate(me, cqlQuery, classId) {
+		var view = me.view;
+		me.templateResolver.resolveTemplates({
+			attributes: ["Filter"],
+			callback: function(out, ctx) {
+				var cardReqParams = me.view.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
+				me.view.updateGrid(classId, cardReqParams);
+
+				me.templateResolver.bindLocalDepsChange(function() {
+					me.view.reset();
+				});
+			}
+		});
+	}
+
 	function getCardWindow(model, editable) {
 		return new CMDBuild.view.management.common.CMCardWindow({
 			cmEditMode: editable,
@@ -178,8 +196,8 @@
 		});
 	}
 
+	// used only on toggle the map
 	function loadPageForLastSelection(selection) {
-
 		if (selection != null) {
 			var params = {
 				"retryWithoutFilter": true,
@@ -205,7 +223,7 @@
 							cb: function() {
 								me.model._silent = false;
 							}
-						})
+						});
 					}
 				}
 			});
@@ -223,76 +241,54 @@
 		this.model.deselect(cardId);
 	}
 
-	function resolveTemplate() {
-		resolve.call(this);
 
-		function resolve() {
-			this.templateResolverIsBusy = true;
+	function alertIfNeeded(me) {
+		if (me.alertIfChangeDefaultSelection) {
+			CMDBuild.Msg.warn(null, Ext.String.format(CMDBuild.Translation.warnings.link_cards_changed_values
+					, me.view.widgetConf.ButtonLabel || me.view.id)
+					, popup=false);
 
-			this.model.reset();
-			if (this.alertIfChangeDefaultSelection) {
-				CMDBuild.Msg.warn(null, Ext.String.format(CMDBuild.Translation.warnings.link_cards_changed_values
-						, this.view.widgetConf.ButtonLabel || this.view.id)
-						, popup=false);
-
-				this.alertIfChangeDefaultSelection = false;
-			}
-
-			this.templateResolver.resolveTemplates({
-				attributes: [ 'DefaultSelection' ],
-				callback: onTemplateResolved,
-				scope: this
-			});
-		}
-
-		function onTemplateResolved(out, ctx) {
-			function callback(request, options, response) {
-				var resp = Ext.JSON.decode(response.responseText);
-
-				if (resp.rows) {
-					for ( var i = 0, l = resp.rows.length; i < l; i++) {
-						var r = resp.rows[i];
-						this.model.select(r.Id);
-					}
-				}
-
-				this.templateResolverIsBusy = false;
-			}
-
-			// do the request only if there are a default selection
-			var defaultSelection = this.templateResolver.buildCQLQueryParameters(out.DefaultSelection, ctx);
-			if (defaultSelection) {
-				CMDBuild.ServiceProxy.getCardList({
-					params: defaultSelection,
-					callback: Ext.bind(callback,this)
-				});
-
-				addListenerToDeps.call(this);
-			} else {
-				this.templateResolverIsBusy = false;
-			}
+			me.alertIfChangeDefaultSelection = false;
 		}
 	}
 
-	function addListenerToDeps() {
-		var ld = this.templateResolver.getLocalDepsAsField();
-		for (var i in ld) {
-			//before the blur if the value is changed
-			var field = ld[i];
+	function resolveDefaultSelectionTemplate(me) {
 
-			if (field) {
-				field.mon(field, "change", function(f) {
-					f.changed = true;
-				}, this);
+		me.templateResolverIsBusy = true;
+		me.view.reset();
+		alertIfNeeded(me);
 
-				field.mon(field, "blur", function(f) {
-					if (f.changed) {
-						resolveTemplate.call(this);
-						f.changed = false;
-					}
-				}, this);
+		me.templateResolver.resolveTemplates({
+			attributes: ['DefaultSelection'],
+			callback: function onDefaultSelectionTemplateResolved(out, ctx) {
+				var defaultSelection = me.templateResolver.buildCQLQueryParameters(out.DefaultSelection, ctx);
+				// do the request only if there are a default selection
+				if (defaultSelection) {
+					CMDBuild.ServiceProxy.getCardList({
+						params: defaultSelection,
+						callback: function callback(request, options, response) {
+							var resp = Ext.JSON.decode(response.responseText);
+
+							if (resp.rows) {
+								for ( var i = 0, l = resp.rows.length; i < l; i++) {
+									var r = resp.rows[i];
+									me.model.select(r.Id);
+								}
+							}
+			
+							me.templateResolverIsBusy = false;
+						}
+					});
+	
+					me.templateResolver.bindLocalDepsChange(function() {
+						resolveDefaultSelectionTemplate(me);
+					});
+
+				} else {
+					me.templateResolverIsBusy = false;
+				}
 			}
-		}
+		});
 	}
 
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {

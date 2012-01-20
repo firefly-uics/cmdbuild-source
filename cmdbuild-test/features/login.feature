@@ -12,6 +12,5 @@ Feature: Login
 	Scenario: Login with invalid credentials
 		Given I am on the login page
 		And I have filled the login form with invalid data
-		When the login button is enabled
-		And I press the login button
+		When I press the login button
 		Then it should fail with a popup window

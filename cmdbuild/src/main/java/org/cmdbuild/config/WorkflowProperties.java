@@ -12,20 +12,16 @@ public class WorkflowProperties extends DefaultProperties {
 	private static final String MODULE_NAME = "workflow";
 	
 	private static final String ENABLED = "enabled";
-	private static final String ENDPOINT = "endpoint";//where is the sharkWebServices shark application
+	private static final String ENDPOINT = "endpoint";
 	private static final String ADMIN_USERNAME = "user";
 	private static final String ADMIN_PASSWORD = "password";
-	private static final String ENGINE_NAME = "engine";
-	private static final String SCOPE = "scope";
 	
 	public WorkflowProperties() {
 		super();
 		setProperty(ENABLED, String.valueOf(false));
-		setProperty(ENDPOINT, "http://localhost:8081/sharkWebServices");
+		setProperty(ENDPOINT, "http://localhost:8080/shark");
 		setProperty(ADMIN_USERNAME, "admin");
 		setProperty(ADMIN_PASSWORD, "enhydra");
-		setProperty(ENGINE_NAME, "shark");
-		setProperty(SCOPE, "");
 	}
 
 	public static WorkflowProperties getInstance() {
@@ -47,14 +43,6 @@ public class WorkflowProperties extends DefaultProperties {
 	
 	public String getPassword(){
 		return getProperty(ADMIN_PASSWORD);
-	}
-	
-	public String getEngine(){
-		return getProperty(ENGINE_NAME);
-	}
-	
-	public String getScope(){
-		return getProperty(SCOPE);
 	}
 
 	@Override

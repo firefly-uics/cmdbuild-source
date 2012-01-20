@@ -25,7 +25,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     		if (this.storeIsLargerThenLimit()) {
         		this.onTrigger3Click();
         	} else {
-        		CMDBuild.Management.SearchableCombo.superclass.onTriggerClick.call(this);
+        		this.onTriggerClick();
         	}
     	};
     },
@@ -66,6 +66,10 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		new CMDBuild.Management.ReferenceSearchWindow({
 			idClass: this.store.baseParams.IdClass,
 			filterType: 'reference',
+			selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+				mode: "SINGLE",
+				idProperty: "Id" // required to identify the records for the data and not the id of ext
+			}),
 			extraParams: extraParams
 		}).show().on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);

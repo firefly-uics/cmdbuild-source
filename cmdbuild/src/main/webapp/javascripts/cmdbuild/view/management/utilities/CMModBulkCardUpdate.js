@@ -35,7 +35,9 @@
 				filterCategory: this.cmName,
 				border: true,
 				cmAddGraphColumn: false,
-				selModel: new CMDBuild.selection.CMCheckboxModel(),
+				selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+					idProperty: "Id" // required to identify the records for the data and not the id of ext
+				}),
 				columns: []
 			});
 

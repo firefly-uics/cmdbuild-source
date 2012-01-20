@@ -36,6 +36,13 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildField = function(attri
 
 /**
  * @override
+ */
+CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildCellEditor = function(attribute) {
+	return CMDBuild.Management.FieldManager.getFieldForAttr(attribute, readOnly = false, skipSubFields = true);
+};
+
+/**
+ * @override
  * @param attribute
  * @return CMDBuild.Management.ReferenceCombo
  */

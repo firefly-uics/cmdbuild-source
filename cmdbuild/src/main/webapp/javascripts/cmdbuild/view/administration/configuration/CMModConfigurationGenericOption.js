@@ -57,6 +57,17 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 				maxValue: 100,
 				minValue: 0
 			},{
+				fieldLabel: tr.tabs_position.label,
+				xtype: 'combobox',
+				name: 'card_tab_position',
+				allowBlank: false,
+				displayField: "description",
+				valueField: "value",
+				store: new Ext.data.Store({
+					fields: ["value", "description"],
+					data: [{value: "top", description: tr.tabs_position.top}, {value: "bottom", description: tr.tabs_position.bottom}]
+				})
+			},{
 				fieldLabel: tr.sessiontimeout,
 				xtype: 'numberfield',
 				name: 'session.timeout',

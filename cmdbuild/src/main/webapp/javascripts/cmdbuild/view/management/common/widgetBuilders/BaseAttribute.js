@@ -87,7 +87,15 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	 */
 	buildGridHeader: function(attribute) {
 		throw new Error('not implemented');
-	},	
+	},
+	/***
+	 * 
+	 * @param attribute
+	 * @return a Ext.form.field.* used for the attribute in the grid
+	 */
+	buildCellEditor: function(attribute) {
+		return CMDBuild.Management.FieldManager.getFieldForAttr(attribute, readOnly = false);
+	},
 	getDisplayNameForAttr: function(attribute) {
 		return attribute.name;
 	},

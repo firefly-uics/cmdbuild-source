@@ -64,7 +64,7 @@
 			}
 			var sm = this.getSelectionModel();
 			this.store.loadForDomainId(domain.get("id"));
-			this.filterInherited(this.filtering);
+
 			if (this.rendered) {
 				this.selectRecordAtIndexOrTheFirst(indexAttributeToSelectAfter);
 			}
