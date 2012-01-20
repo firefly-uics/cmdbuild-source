@@ -11,6 +11,7 @@
 				"getActivityPanel",
 				"getRelationsPanel",
 				"getHistoryPanel",
+				"getAttachmentsPanel",
 				"buildWidgets",
 				"updateDocPanel",
 				"getWFWidgets",

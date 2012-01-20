@@ -132,6 +132,7 @@
 
 			me.noteController = new CMDBuild.controller.management.classes.CMNoteController(me.view.getNotePanel());
 			me.subControllers.push(me.noteController);
+
 			me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(me.view.getAttachmentsPanel());
 			me.subControllers.push(me.attachmentsController);
 
