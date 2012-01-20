@@ -48,7 +48,7 @@
 
 			this.parentStore = new Ext.data.Store({
 				model : "CMLookupTypeForParentStoreCombo",
-				autoLoad : true,
+				autoLoad : false,
 
 				proxy : {
 					url : 'services/json/schema/modlookup/getparentlist',
@@ -111,7 +111,8 @@
 					displayField : LOOKUP_FIELDS.ParentDescription,
 					minChars : 0,
 					disabled : true,
-					store : this.parentStore
+					store : this.parentStore,
+					queryMode: "local"
 				}, {
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
