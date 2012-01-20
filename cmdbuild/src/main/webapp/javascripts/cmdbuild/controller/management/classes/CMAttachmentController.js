@@ -35,19 +35,27 @@
 			}
 
 			var et = _CMCache.getEntryTypeById(card.get("IdClass"));
-			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
+			if (this.disableTheTabBeforeCardSelection(et)) {
 				this.view.disable();
 			} else {
-				this.updateViewPrivilegesForEntryType(et);
-
-				this.view.setExtraParams({
-					IdClass: this.card.get("IdClass"),
-					Id: this.card.get("Id")
-				});
-
-				this.view.reloadCard();
-				this.view.enable();
+				this.updateView(et);
 			}
+		},
+
+		updateView: function(et) {
+			this.updateViewPrivilegesForEntryType(et);
+
+			this.view.setExtraParams({
+				IdClass: this.card.get("IdClass"),
+				Id: this.card.get("Id")
+			});
+
+			this.view.reloadCard();
+			this.view.enable();
+		},
+
+		disableTheTabBeforeCardSelection: function(entryType) {
+			return (entryType && entryType.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable);
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {

@@ -1,35 +1,18 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMAttachmentController", {
-		extend: "CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController",
+	Ext.define("CMDBuild.controller.management.workflow.CMActivityAttachmentsController", {
+		extend : "CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController",
 
-		constructor: function(view, ownerController, widget, card) {
-			this.callParent(arguments);
-
-			this.widgetConf = this.view.widgetConf;
-			this.outputName = this.widgetConf.outputName;
-			this.singleSelect = this.widgetConf.SingleSelect;
-			this.wiewIdenrifier = this.widgetConf.identifier;
-			this.card = card;
-			this.ownerController = ownerController;
-
-			//this.currentClassId = this.activity.get("IdClass");
-			//this.currentCardId = this.activity.get("Id");
-
-			this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
-		},
-
-		destroy: function() {
-			this.callParent(arguments);
-			this.mun(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
-		},
-
-		beforeActiveView: function() {
-			this.onCardSelected(this.card);
-			this.view.loadCardAttachments();
+		// override
+		// we want the attachments in readOnly mode, so set the privilege
+		// to can only read. Then if there is the OpenAttachement extend attribute
+		// it'll enable the editing
+		updateViewPrivilegesForEntryType: function(et) {
+			this.view.updateWritePrivileges(false);
 		},
 
 		// override
+		// It is not possible add an attachment at the first step of the process
 		onAddAttachmentButtonClick: function() {
 			if (isANewActivity(this.card)) {
 				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
@@ -41,38 +24,53 @@
 			}
 		},
 
-		// TODO copied from CMBaseWFWidgetController, inherit them
-		onEditMode: function() {
-			_debug(this + " edit mode");
+		// override
+		// to avoid the enable of the tab when the user is editing a new
+		// activity
+		disableTheTabBeforeCardSelection: function(entryType) {
+			var superCondition = this.callParent(arguments);
+			return superCondition || isANewActivity(this.card);
 		},
 
-		getData: function() {
-			return null;
+		// override
+		updateView: function() {
+			this.callParent(arguments);
+			this.view.hideBackButton();
+		}
+	});
+
+	Ext.define("CMDBuild.controller.management.workflow.widgets.CMAttachmentController", {
+		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
+
+		constructor: function(view, ownerController, widget, card) {
+			this.callParent(arguments);
+
+			this.card = card;
+
+			this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
+		destroy: function() {
+			this.callParent(arguments);
+			this.mun(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
+		},
+
+		// override
 		getVariable: function(variableName) {
 			return undefined
 		},
 
 		activeView: function() {
-			this.beforeActiveView();
 			this.view.cmActivate();
-		},
-
-		isValid: function() {
-			return true;
 		},
 
 		onBackToActivityButtonClick: function() {
 			try {
+				this.view.hideBackButton();
 				this.ownerController.showActivityPanel();
 			} catch (e) {
 				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
-		},
-
-		isBusy: function() {
-			return false;
 		}
 	});
 
