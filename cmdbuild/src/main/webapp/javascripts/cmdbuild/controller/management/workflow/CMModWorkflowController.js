@@ -19,8 +19,9 @@
 			me.relationsController = new CMDBuild.controller.management.workflow.CMActivityRelationsController(me.view.getRelationsPanel(), me);
 			me.historyController = new CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController(me.view.getHistoryPanel());
 			me.attachmentsController = new CMDBuild.controller.management.workflow.CMActivityAttachmentsController(me.view.getAttachmentsPanel(), me);
+			me.noteController = new CMDBuild.controller.management.workflow.CMNoteController(me.view.getNotesPanel(), me);
 
-			me.subControllers = [me.relationsController, me.historyController, me.attachmentsController];
+			me.subControllers = [me.relationsController, me.historyController, me.attachmentsController, me.noteController];
 
 			buildActivityPanelController(me);
 			buildGridController(me);

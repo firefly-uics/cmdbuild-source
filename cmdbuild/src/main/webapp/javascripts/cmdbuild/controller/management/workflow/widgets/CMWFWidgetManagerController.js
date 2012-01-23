@@ -32,7 +32,7 @@
 						return new controllerPKG.CMManageRelationController(ui, me, widgetDef);
 					},
 					openNote: function(ui) {
-						return new controllerPKG.CMOpenNoteController(ui, me, widgetDef);
+						return new controllerPKG.CMOpenNoteController(ui, me, widgetDef, card);
 					},
 					openAttachment: function(ui) {
 						return new controllerPKG.CMAttachmentController(ui, me, widgetDef, card);

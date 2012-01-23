@@ -15,16 +15,28 @@
 
 		onCardSelected: function(card) {
 			this.callParent(arguments);
+			this.updateView(card);
 
-			if (!card || CMDBuild.Utils.isSimpleTable(card.get("IdClass"))) {
+			if (this.disableTheTabBeforeCardSelection(card)) {
 				this.view.disable();
-				return;
 			} else {
 				this.view.enable();
-				this.view.reset();
 				this.view.loadCard(card);
-				this.view.disableModify(couldModoify = card.raw.priv_write);
 			}
+		},
+
+		disableTheTabBeforeCardSelection: function(card) {
+			return !card || CMDBuild.Utils.isSimpleTable(card.get("IdClass"));
+		},
+
+		updateView: function(card) {
+			this.updateViewPrivilegesForCard(card);
+			this.view.reset();
+			this.view.disableModify();
+		},
+
+		updateViewPrivilegesForCard: function(card) {
+			this.view.updateWritePrivileges(this.card.raw.priv_write);
 		},
 
 		onSaveNoteClick: function() {
@@ -35,7 +47,7 @@
 					Id: me.card.get("Id")
 				};
 
-			if (form.isValid()) {
+			if (form.isValid() && me.beforeSave(me.card)) {
 				CMDBuild.LoadMask.get().show();
 				form.submit({
 					method : 'POST',
@@ -56,7 +68,13 @@
 
 		onCancelNoteClick: function() {
 			this.view.loadCard(this.card);
-			this.view.disableModify(couldModoify = this.card.raw.priv_write);
+			this.view.disableModify(couldModify = this.card.raw.priv_write);
+		},
+
+		// called before the save request
+		// override in subclass, return false to avoid the save
+		beforeSave: function(card) {
+			return true;
 		}
 	});
 

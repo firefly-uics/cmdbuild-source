@@ -1,51 +1,76 @@
 
 (function() {
+	Ext.define("CMDBuild.controller.management.workflow.CMNoteController", {
+		extend: "CMDBuild.controller.management.classes.CMNoteController",
+
+		// override to deny to add a note to a new process
+		disableTheTabBeforeCardSelection: function(card) {
+			if (isANewActivity(card)) {
+				return true;
+			} else {
+				return this.callParent(arguments);
+			}
+		},
+
+		// override: return alwais false because we want that
+		// in process the user could modify the notes only if
+		// there is an openNote extended attribute defined.
+		updateViewPrivilegesForCard: function(card) {
+			this.view.updateWritePrivileges(false);
+		},
+
+		// is not possible to save the note if the
+		// activity is not already saved
+		beforeSave: function(card) {
+			var isNew = isANewActivity(card);
+
+			if (isNew) {
+				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+					CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
+					popup = false);
+			}
+
+			return !isNew;
+		}
+	});
+
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMOpenNoteController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
 
-		constructor: function() {
+		constructor: function(view, ownerController, widget, card) {
 			this.callParent(arguments);
 
-			this.mon(this.view.saveButton, "click", this.onSaveNoteClick, this);
+			this.card = card;
+			try {
+				this.view.updateWritePrivileges(this.card.raw.priv_write && !this.readOnly);
+			} catch (e) {
+				this.view.updateWritePrivileges(false);
+			}
+
+			this.view.disableModify();
+
+			this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
 		destroy: function() {
-			this.mun(this.view.saveButton, "click", this.onSaveNoteClick, this);
+			this.callParent(arguments);
+			this.mun(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
-		onSaveNoteClick: function() {
-			var activity = this.ownerController.currentActivity,
-				form = this.view.actualForm.getForm();
-			
-			if (typeof activity.get == "function" && activity.get("Id") != -1) {
-				var params = {
-					IdClass: activity.get("IdClass"),
-					Id: activity.get("Id")
-				};
-				if (form.isValid()) {
-					form.submit({
-						method : 'POST',
-						url : 'services/json/management/modcard/updatecard',
-						waitTitle : CMDBuild.Translation.common.wait_title,
-						waitMsg : CMDBuild.Translation.common.wait_msg,
-						scope: this,
-						params: params,
-						success : function() {
-							this.view.disableModify();
-							var val = this.view.actualForm.getValue();
-							this.view.displayPanel.setValue(val);
-							syncSavedNoteWithModel(activity, val);
-							// TODO: reload history
-						}
-					});
-				}
-			} else {
-				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
-						popup = false);
+		onBackToActivityButtonClick: function() {
+			try {
+				this.view.hideBackButton();
+				this.view.disableModify();
+				this.ownerController.showActivityPanel();
+			} catch (e) {
+				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
 		}
 	});
+
+	function isANewActivity(a) {
+		return (typeof a.get == "function" && a.get("Id") == -1);
+	}
 
 	function syncSavedNoteWithModel(activity, val) {
 		activity.set("Notes", val);

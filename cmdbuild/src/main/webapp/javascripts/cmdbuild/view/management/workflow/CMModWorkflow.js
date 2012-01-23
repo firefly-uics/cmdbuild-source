@@ -12,6 +12,7 @@
 				"getRelationsPanel",
 				"getHistoryPanel",
 				"getAttachmentsPanel",
+				"getNotesPanel",
 				"buildWidgets",
 				"updateDocPanel",
 				"getWFWidgets",
