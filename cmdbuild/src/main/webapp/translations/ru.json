@@ -157,26 +157,26 @@
             },
             ".Calendar": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "start": "<em>Start date</em>",
-                  "end": "<em>End date</em>",
-                  "title": "<em>Event title</em>",
-                  "filter": "<em>CQL Filter</em>",
-                  "defaultDate": "<em>Default date to open</em>"
+                  "target": "Целевой класс",
+                  "start": "Начальная дата",
+                  "end": "Конечная дата",
+                  "title": "Заголовок события",
+                  "filter": "CQL фильтр",
+                  "defaultDate": "Дата по умолчанию"
                },
-               "title": "<em>Calendar</em>"
+               "title": "Календарь"
             },
             ".Ping": {
                "fields": {
-                  "address":"<em>Address to ping</em>",
-                  "count": "<em>Number of pings</em>",
-                  "templates": "<em>Templates</em>"
+                  "address":"Адрес",
+                  "count": "Количество пакетов",
+                  "templates": "Шаблоны"
                },
-               "title": "<em>Ping</em>"
+               "title": "Пинг"
             },
             "commonFields": {
                "active": "Активный",
-               "alwaysenabled": "<em>Always enabled</em>",
+               "alwaysenabled": "Всегда включен",
                "buttonLabel": "Метка кнопки",
                "type": "Тип"
             },
@@ -272,11 +272,11 @@
          "title": "Процессы",
          "tree_title": "Процессы",
          "xpdlDownload": {
-            "download_tamplete": "Загрузить шаблон",
-            "download_xpdl_tamplete": "Загрузить XPDL шаблон",
+            "download_tamplete": "Выгрузить шаблон",
+            "download_xpdl_tamplete": "Выгрузить XPDL",
             "package_version": "Версия",
             "process_name": "Имя процесса",
-            "user_stoppable": "Может быть остановлен"
+            "user_stoppable": "Может быть остановлен пользователем"
          },
          "xpdlUpload": {
             "deleted_image": "Файл эскиза был удален, т.к. он не синхронизирован с XPDL файлом",
@@ -338,9 +338,9 @@
          "custom_menus": "Настраиваемые меню",
          "delete_menu": "Удалить меню",
          "menu_root": "Меню",
-         "modify_menu": "Редатрировать меню",
+         "modify_menu": "Редактировать меню",
          "new_folder": "Новая папка",
-         "title": "Настрока меню"
+         "title": "Настройка меню"
       },
       "modreport": {
          "add": "Создать отчет",
@@ -483,9 +483,9 @@
          },
          "graph": {
             "baseLevel": "Уровень по умолчанию",
-            "clusteringThreshold": "Threshold for clustering nodes",
+            "clusteringThreshold": "Лимит числа отображаемых по отдельности узлов",
             "enabled": "Enabled",
-            "expandingThreshold": "Max number of nodes in an expandable cluster",
+            "expandingThreshold": "Максимальное число узлов, при котором возможно разворачивание",
             "extensionMaximumLevel": "Максимальный уровень",
             "menuTitle": "Отображение связей",
             "title": "Настройка отображения связей"
@@ -655,12 +655,12 @@
       "title": "Конфигурирование"
    },
    "errors": {
-      "busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
+      "busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
       "detail": "Подробно",
       "error_message": "Ошибка",
       "error_moving_row": "При перемещении строки произошла ошибка",
       "invalid_attributes": "Данные поля были заполнены с ошибками:",
-      "invalid_extended_attributes": "The following visual controls have not been filled correctly:",
+      "invalid_extended_attributes": "Данные виджеты были заполнены с ошибками:",
       "invalid_fields": "Некоторые поля были заполнены с ошибками",
       "no_driver": "Драйвер JDBC не найден.<br />Вы можете установить его в Tomcat из дистрибутива CMDBuild.",
       "no_selections": "Не выбрано ни одной карточки для заполнения",
@@ -796,7 +796,7 @@
       "show_detail": "Подробно",
       "template_error": "Ошибка шаблона",
       "unknown_error": "Неизвестная ошибка",
-      "wrong_wf_widgets": "There was an error saving the following visual controls: "
+      "wrong_wf_widgets": "При сохранении следующих виджетов произошла ошибка: "
    },
    "info": {"card_not_found": "Данные не совпадают с текущим фильтром"},
    "login": {
@@ -1004,8 +1004,8 @@
             "selectaclass": "Выберите класс",
             "separator": "Разделитель",
             "shownonvalid": "Показывать только неверные записи",
-            "title": "Импорт из CSV-файла",
-            "title_export": "Экспорт в CSV-файл",
+            "title": "Импорт из CSV файла",
+            "title_export": "Экспорт в CSV файл",
             "warning": "Предупреждение"
          },
          "title": "Инструменты"
@@ -1023,7 +1023,7 @@
          "delete_card": "Прервать процесс",
          "delete_card_confirm": "Действительно удалить процесс?",
          "extattrs": {
-            "attachments": {"must_save_to_add": "You can not add an attachment before saving the activity"},
+            "attachments": {"must_save_to_add": "Нельзя добавлять вложенный файл в карточку до сохранения процесса"},
             "createreport": {"format_label": "Формат"},
             "linkcards": {"required": "Пожалуйста, выберите карточки - "},
             "manageemail": {
@@ -1045,11 +1045,11 @@
                "subjecthdr": "Тема",
                "tofld": "Кому",
                "viewicon": "Просмотреть",
-               "mailsAreChanged": "<em>The generated e-mails are changed</em>",
-               "regenerates": "<em>Regenerate e-mails</em>"
+               "mailsAreChanged": "Сгенерированные почтовые сообщения изменены.",
+               "regenerates": "Повторить генерацию почтовых сообщений."
             },
             "managerelation": {"required": "Пожалуйста, выберите связи - "},
-            "notes": {"must_save_to_modify": "You can not modify the notes before saving the activity"}
+            "notes": {"must_save_to_modify": "Нельзя редактировать комментарии до сохранения процесса"}
          },
          "history_columns": {
             "attributes": "Атрибуты",
@@ -1061,7 +1061,7 @@
             "user": "Пользователь"
          },
          "interrupted": "Прерван",
-         "modify_card": "Edit activity",
+         "modify_card": "Редактировать процесс",
          "modify_note": "Редактировать комментарий",
          "open_attachment": "Открыть вложенные файлы",
          "open_note": "Открыть комментарий",
@@ -1075,7 +1075,7 @@
          },
          "tabs": {
             "attachments": "Вложенные файлы",
-            "card": "Activity",
+            "card": "Процесс",
             "detail": "Дополнительно",
             "history": "История",
             "notes": "Комментарии",
