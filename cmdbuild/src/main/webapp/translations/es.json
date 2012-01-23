@@ -176,7 +176,7 @@
             },
             "commonFields": {
                "active": "Activo",
-               "alwaysenabled": "<em>Sempre abilitato</em>",
+               "alwaysenabled": "Siempre habilitado",
                "buttonLabel": "Etiqueta del botón",
                "type": "Tipo"
             },
