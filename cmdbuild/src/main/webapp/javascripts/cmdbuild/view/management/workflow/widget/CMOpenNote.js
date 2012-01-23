@@ -4,10 +4,7 @@
 
 		initComponent: function() {
 			this.callParent(arguments);
-
-			this.mon(this, "deactivate", function() {
-				this.disable();
-			}, this);
+			this.backToActivityButton.hide();
 		},
 
 		configure: function(c) {
@@ -19,19 +16,15 @@
 			Ext.apply(this, this.widgetConf);
 
 			var note = this.activity.Notes;
-
-			this.currentCardPrivileges = {
-				create: this.activity.priv_create && !this.readOnly,
-				write: this.activity.priv_write && !this.readOnly
-			};
-
 			this.actualForm.setValue(note || "");
 			this.displayPanel.setValue(note || "");
 		},
 
 		cmActivate: function() {
 			this.enable();
+			this.backToActivityButton.show();
 			this.ownerCt.setActiveTab(this);
+
 			if (this.readOnly) {
 				this.disableModify();
 			} else {
@@ -45,10 +38,15 @@
 			this.buttons = this.buttons || [];
 
 			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back
+				text: CMDBuild.Translation.common.buttons.workflow.back,
+				hidden: true
 			});
 
 			this.buttons.push(this.backToActivityButton);
+		},
+
+		hideBackButton: function() {
+			this.backToActivityButton.hide();
 		}
 	});
 })();

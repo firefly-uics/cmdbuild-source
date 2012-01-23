@@ -137,8 +137,8 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 		return v;
 	},
 
-	disableModify: function(couldModify) {
-		if (couldModify) {
+	disableModify: function() {
+		if (this.privWrite) {
 			this.modifyNoteButton.enable();
 		} else {
 			this.modifyNoteButton.disable();
@@ -165,6 +165,10 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.cancelButton.enable();
 		}
 		this.getLayout().setActiveItem(this.actualForm.id);
+	},
+
+	updateWritePrivileges: function(privWrite) {
+		this.privWrite = privWrite;
 	},
 
 	// to implement in subclass to have extra button on instantiation
