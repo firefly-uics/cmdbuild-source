@@ -50,10 +50,12 @@
 		}
 
 		var p = builSaveParams.call(this);
+		p.confirmed = true;
+
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/updatebulkcards',
-			params: p, 
+			params: p,
 			scope: this,
 			success: function(response) {
 				this.view.cardGrid.reload(reselect = false);

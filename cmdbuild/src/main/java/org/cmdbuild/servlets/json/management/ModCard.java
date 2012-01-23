@@ -547,11 +547,14 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public void updateBulkCards(Map<String, String> attributes,
+	public JSONObject updateBulkCards(Map<String, String> attributes,
 			@Parameter(value = "selections", required = false) String[] cardsToUpdate,
 			@Parameter(value = "fullTextQuery", required = false) String fullTextQuery,
-			@Parameter("isInverted") boolean isInverted, CardQuery cardQuery, ITableFactory tf) throws JSONException,
+			@Parameter("isInverted") boolean isInverted,
+			@Parameter(value="confirmed", required=false) boolean updateConfirmed,
+			CardQuery cardQuery, ITableFactory tf) throws JSONException,
 			CMDBException {
+		final JSONObject out = new JSONObject();
 
 		cardQuery = (CardQuery) cardQuery.clone();
 
@@ -559,7 +562,7 @@ public class ModCard extends JSONBase {
 			cardQuery.fullText(fullTextQuery.trim());
 		}
 
-		List<ICard> cardsList = buildCardListToBulkUpdate(cardsToUpdate, tf);
+		final List<ICard> cardsList = buildCardListToBulkUpdate(cardsToUpdate, tf);
 		if (isInverted) {
 			if (!cardsList.isEmpty()) {
 				cardQuery.excludeCards(cardsList);
@@ -567,11 +570,18 @@ public class ModCard extends JSONBase {
 		} else {
 			cardQuery.cards(cardsList);
 		}
+		cardQuery.clearOrder().subset(0, 0);
 
-		ICard card = cardQuery.getTable().cards().create(); // Unprivileged card
-															// as a template
-		setCardAttributes(card, attributes, true);
-		cardQuery.clearOrder().subset(0, 0).update(card);
+		if (updateConfirmed) {
+			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged card as a template
+			setCardAttributes(card, attributes, true);
+			cardQuery.update(card);
+		} else {
+			cardQuery.count().iterator();
+			out.put("count", cardQuery.getTotalRows());
+		}
+
+		return out;
 	}
 
 	private List<ICard> buildCardListToBulkUpdate(String[] cardsToUpdate, ITableFactory tf) {
