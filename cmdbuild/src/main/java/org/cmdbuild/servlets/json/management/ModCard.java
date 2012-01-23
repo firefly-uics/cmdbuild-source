@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
@@ -223,11 +225,22 @@ public class ModCard extends JSONBase {
 			for (Entry<String, Object> entry : di.iterator().next().getRelationAttributes()) {
 				final String name = entry.getKey();
 				Object value = entry.getValue();
-				if (value instanceof DateTime) {
-					value = new Date(((DateTime) value).getMillis());
+
+				if (value instanceof CMLookup) {
+					// FIXME Temporary till the new DAO is finished
+					final CMLookup lookup = (CMLookup) value;
+					final Integer lookupId = (Integer) lookup.getId();
+					final String lookupDescription = CMBackend.INSTANCE.getLookup(lookupId).toString();
+
+					jsonRef.put(name, lookupId);
+					jsonRef.put(name+"_value", lookupDescription);
+				} else {
+					if (value instanceof DateTime) {
+						value = new Date(((DateTime) value).getMillis());
+					} 
+					final String stringValue = domain.getAttribute(name).valueToString(value);
+					jsonRef.put(name, stringValue);
 				}
-				final String stringValue = domain.getAttribute(name).valueToString(value);
-				jsonRef.put(name, stringValue);
 			}
 			jsonRefAttr.put(reference.getName(), jsonRef);
 		}
