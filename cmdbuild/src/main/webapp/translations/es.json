@@ -18,9 +18,9 @@
             },
             "domain": "Dominio",
             "editorType": {
-               "html": "<em>Editor HTML</em>",
-               "label": "<em>Tipo di editor</em>",
-               "plain": "<em>Testo semplice</em>"
+               "html": "Editor HTML",
+               "label": "Tipo de editor",
+               "plain": "Texo simple"
             },
             "field_hidden": "Escondido",
             "field_read": "Sólo lectura",
@@ -145,42 +145,42 @@
          "widgets": {
             ".OpenReport": {
                "fields": {
-                  "force": "<em>Forza formato</em>",
-                  "presets": "<em>Attributi del report</em>",
-                  "report": "<em>Report</em>"
+                  "force": "Forzar formato",
+                  "presets": "Atributos del reporte",
+                  "report": "Reporte"
                },
                "presetGrid": {
-                  "attribute": "<em>Attributo</em>",
-                  "value": "<em>Valore</em>"
+                  "attribute": "Atributo",
+                  "value": "Valor"
                },
-               "title": "<em>Crea Report</em>"
+               "title": "Crea Reporte"
             },
             ".Calendar": {
                "fields": {
-                  "target": "<em>Classe di riferimento</em>",
-                  "start": "<em>Data inizio</em>",
-                  "end": "<em>Data fine</em>",
-                  "title": "<em>Titolo evento</em>",
-                  "filter": "<em>Filtro CQL</em>",
-                  "defaultDate": "<em>Data di default</em>"
+                  "target": "Clase de referencia",
+                  "start": "Fecha inicio",
+                  "end": "Fecha fin",
+                  "title": "Título evento",
+                  "filter": "Filtro CQL",
+                  "defaultDate": "Fecha de default"
                },
-               "title": "<em>Calendario</em>"
+               "title": "Calendario"
             },
             ".Ping": {
                "fields": {
-                  "address": "<em>Indirizzo</em>",
-                  "count": "<em>Numero di ping</em>",
-                  "templates": "<em>Template</em>"
+                  "address": "Dirección",
+                  "count": "Número de ping",
+                  "templates": "Plantillas"
                },
-               "title": "<em>Ping</em>"
+               "title": "Ping"
             },
             "commonFields": {
-               "active": "<em>Attivo</em>",
+               "active": "Activo",
                "alwaysenabled": "<em>Sempre abilitato</em>",
-               "buttonLabel": "<em>Testo del pulsante</em>",
-               "type": "<em>Tipo</em>"
+               "buttonLabel": "Etiqueta del botón",
+               "type": "Tipo"
             },
-            "title": "<em>Widget</em>"
+            "title": "Widget"
          }
       },
       "modLookup": {
@@ -447,9 +447,9 @@
             "sessiontimeout": "Duración de la sesión (segundos)",
             "startingClass": "Clase por defecto",
             "tabs_position": {
-               "bottom": "<em>Sotto</em>",
-               "label": "<em>Posizione linguette nel pannello card</em>",
-               "top": "<em>Sopra</em>"
+               "bottom": "Abajo",
+               "label": "Posición pestañas en el panel card",
+               "top": "Arriba"
             },
             "title": "Configuración CMDBuild"
          },
@@ -1023,7 +1023,7 @@
          "delete_card_confirm": "Está seguro de querer eliminar este proceso?",
          "extattrs": {
             "attachments": {"must_save_to_add": "No se puede agregar un adjunto antes de guardar la actividad"},
-            "calendar": {"wrong_config": "<em>Il calendario non è stato configurato correttamente</em>"},
+            "calendar": {"wrong_config": "El calendario no ha sido configurado correctamente"},
             "createreport": {"format_label": "Formato"},
             "linkcards": {"required": "Es necesario seleccionar las tarjetas - "},
             "manageemail": {
@@ -1045,8 +1045,8 @@
                "subjecthdr": "Objeto",
                "tofld": "Destinatario",
                "viewicon": "Visualizar",
-               "mailsAreChanged":"<em>Le email generate sono cambiate</em>",
-               "regenerates": "<em>Rigenera email</em>"
+               "mailsAreChanged":"Los emails gerenados han sido cambiados",
+               "regenerates": "Regenera email"
             },
             "managerelation": {"required": "Es necesario seleccionar las relaciones - "},
             "notes": {"must_save_to_modify": "No se pueden modificar las notas antes de guardar la actividad"}

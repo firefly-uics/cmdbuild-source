@@ -18,9 +18,9 @@
             },
             "domain": "Domínio",
             "editorType": {
-               "html": "<em>Html<\/em>",
-               "label": "<em>Editor type<\/em>",
-               "plain": "<em>Plain text<\/em>"
+               "html": "Html",
+               "label": "Tipo do Editor",
+               "plain": "Texto sem formatação"
             },
             "field_hidden": "Oculto",
             "field_read": "Somente leitura",
@@ -103,41 +103,41 @@
          "geo_attributes": {
             "externalGraphic": "Ícone",
             "fillColor": "Cor de preenchimento",
-            "fillOpacity": "Fill opacity",
+            "fillOpacity": "Opacidade do Preenchimento",
             "graphicHeight": "Altura do ícone",
-            "graphicOpacity": "Icon opacity",
+            "graphicOpacity": "Opacidade do ícone",
             "graphicWidth": "Largura do ícone",
             "master": "Classe de referência",
             "max_zoom": "Zoom máximo",
             "min_zoom": "Zoom mínimo",
-            "pointRadius": "Point radius",
-            "strokeColor": "Stroke color",
-            "strokeDashstyle": "Stroke dashstyle",
-            "strokeOpacity": "Stroke opacity",
+            "pointRadius": "Raio do ponto",
+            "strokeColor": "Cor da Linha Tracejada",
+            "strokeDashstyle": "Estilo da Linha Tracejada",
+            "strokeOpacity": "Opacidade da Linha Tracejada",
             "strokeStyles": {
-               "dash": "Dash",
-               "dashdot": "Dashdot",
-               "dot": "Dot",
-               "longdash": "Longdash",
-               "longdashdot": "Longdashdot",
-               "solid": "Solid"
+               "dash": "Traço",
+               "dashdot": "Traço-Ponto",
+               "dot": "Ponto",
+               "longdash": "Traço Longo",
+               "longdashdot": "Traço Curto",
+               "solid": "Sólido"
             },
-            "strokeWidth": "Stroke width",
-            "style": "Stile",
+            "strokeWidth": "Largura do Traço",
+            "style": "Estilo",
             "type": {
-               "line": "Line",
-               "point": "Point",
-               "polygon": "Polygon"
+               "line": "Linha",
+               "point": "Ponto",
+               "polygon": "Polígono"
             },
-            "visibility": "Visibility"
+            "visibility": "Visibilidade"
          },
          "include_inherited": "Herança incluida",
-         "layers": "Layers",
-         "print_schema": "Print Schema",
+         "layers": "Camadas",
+         "print_schema": "Imprimir Schema",
          "tabs": {
             "attributes": "Atributos",
             "domains": "Domínios",
-            "geo_attributes": "Geographical attributes",
+            "geo_attributes": "Atributos Geográficos",
             "properties": "Propriedades"
          },
          "title": "Gerenciar classes",
@@ -145,42 +145,42 @@
          "widgets": {
             ".OpenReport": {
                "fields": {
-                  "force": "<em>Force format<\/em>",
-                  "presets": "<em>Report attributes<\/em>",
-                  "report": "<em>Report<\/em>"
+                  "force": "Formato atribuido",
+                  "presets": "Atributos do Relatório",
+                  "report": "Relatórios"
                },
                "presetGrid": {
-                  "attribute": "<em>Attribute<\/em>",
-                  "value": "<em>Value<\/em>"
+                  "attribute": "Atributos",
+                  "value": "Valor"
                },
-               "title": "<em>Create report<\/em>"
+               "title": "Criar Relatório"
             },
             ".Calendar": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "start": "<em>Start date</em>",
-                  "end": "<em>End date</em>",
-                  "title": "<em>Event title</em>",
-                  "filter": "<em>CQL Filter</em>",
-                  "defaultDate": "<em>Default date to open</em>"
+                  "target": "Classe Alvo",
+                  "start": "Data Início",
+                  "end": "Data Final",
+                  "title": "Título do Evento",
+                  "filter": "Filtro CQL",
+                  "defaultDate": "Data padrão para abrir"
                },
-               "title": "<em>Calendar</em>"
+               "title": "Calendário"
             },
             ".Ping": {
                "fields": {
-                  "address":"<em>Address to ping</em>",
-                  "count": "<em>Number of pings</em>",
-                  "templates": "<em>Templates</em>"
+                  "address":"Endereço para pingar",
+                  "count": "Número de pings",
+                  "templates": "Templates"
                },
-               "title": "<em>Ping</em>"
+               "title": "Ping"
             },
             "commonFields": {
-               "active": "<em>Active<\/em>",
-               "alwaysenabled": "<em>Always enabled</em>",
-               "buttonLabel": "<em>Button label<\/em>",
-               "type": "<em>Type<\/em>"
+               "active": "Ativo",
+               "alwaysenabled": "Sempre habilitado",
+               "buttonLabel": "Descrição do botão",
+               "type": "Tipo"
             },
-            "title": "<em>Widget<\/em>"
+            "title": "Widget"
          }
       },
       "modLookup": {
@@ -292,7 +292,7 @@
       "modcartography": {
          "external_services": {
             "admin_password": "Senha do Admin",
-            "admin_user": "Nome de usuário do Admin",
+            "admin_user": "Usuário Admin",
             "description": {
                "geoserver": "GeoServer",
                "google": "Google Maps",
@@ -433,23 +433,23 @@
          "cmdbuild": {
             "cardpanelheight": "Altura do painel do cartão em porcentagem",
             "fieldsetgeneraltitle": "Geral",
-            "fieldsetlanguageltitle": "Linguagem",
+            "fieldsetlanguageltitle": "Idioma",
             "fieldsetpopupwindowtitle": "Janelas Popup",
             "instancename": "Nome da instância",
-            "language": "Linguagem Padrão",
-            "languagePrompt": "Visualizar escolha de linguagem",
+            "language": "Idioma Padrão",
+            "languagePrompt": "Visualizar escolha de idioma",
             "menuTitle": "Opções Gerais",
-            "popupheightlabel": "Popup percentage height",
-            "popupwidthlabel": "Popup percentage width",
-            "referencecombolimit": "References and lookup combobox limit",
+            "popupheightlabel": "Porcentagem Altura Janela Popup",
+            "popupwidthlabel": "Porcentagem Comprimento Janela Popup",
+            "referencecombolimit": "Referências e Limite da caixa de combinação de pesquisa",
             "relationlimit": "Limites de relacionamentos",
             "rowlimit": "Limite de Linha",
             "sessiontimeout": "Tempo de Expiração da Sessão (segundos)",
             "startingClass": "Classe Padrão",
             "tabs_position": {
-               "bottom": "<em>Bottom<\/em>",
-               "label": "<em>Tabs position in card panel<\/em>",
-               "top": "<em>Top<\/em>"
+               "bottom": "Inferior",
+               "label": "Posição dos Tabs no painel do cartão",
+               "top": "Superior"
             },
             "title": "Configuração CMDBuild"
          },
@@ -513,7 +513,7 @@
                "smtpserver": "Servidor SMTP",
                "ssl": "Habilitar SSL",
                "title": "Email",
-               "username": "Nome de Usuário"
+               "username": "Usuário"
             },
             "enabled": "Habilitado",
             "endpoint": "URL do Servidor",
@@ -523,7 +523,7 @@
             "password": "Senha",
             "scope": "Escopo",
             "title": "Engine do Workflow Engine",
-            "user": "Nome de Usuário"
+            "user": "Usuário"
          }
       },
       "welcome": {
@@ -612,8 +612,8 @@
       "next": "Próximo",
       "previous": "Anterior",
       "step1": {
-         "choose": "Escolha uma linguagem padrão",
-         "showLangChoose": "Mostar seleção de linguagem na caixa de Login"
+         "choose": "Escolha um idioma padrão",
+         "showLangChoose": "Mostar seleção de idioma na caixa de Login"
       },
       "step2": {
          "create_shark": "Criar um Esquema para o Shark",
@@ -652,7 +652,7 @@
          "text": "O Assistente de Configuração foi executado com sucesso, clicando OK você será redirecionado para a aplicação",
          "title": "Configuração Feita"
       },
-      "title": "Configure"
+      "title": "Configurar"
    },
    "errors": {
       "busy_wf_widgets": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
@@ -670,7 +670,7 @@
          "AUTH_CLASS_NOT_AUTHORIZED": "Privilégios não suficientes para acessar a classe {0}",
          "AUTH_DEMO_MODE": "Operação não permitida em modo demo",
          "AUTH_DOMAIN_NOT_AUTHORIZED": "Privilégios não suficientes para acessar o domínio {0}",
-         "AUTH_LOGIN_WRONG": "Nome de usuário ou senha incorretos",
+         "AUTH_LOGIN_WRONG": "Usuário ou senha incorretos",
          "AUTH_MULTIPLE_GROUPS": "O usuário possui vários grupos associados",
          "AUTH_NOT_AUTHORIZED": "Operação não autorizada",
          "AUTH_NOT_CONFIGURED": "Erro na configuração da autenticação",
@@ -702,7 +702,7 @@
          "ORM_DOMAIN_HAS_REFERENCE": "Não se poder remover um domínio que com referências associadas",
          "ORM_DUPLICATE_ATTRIBUTE": "Este atributo já existe",
          "ORM_DUPLICATE_TABLE": "Uma classe com este nome já existe",
-         "ORM_DUPLICATE_USER": "Este nome de usuário já existe",
+         "ORM_DUPLICATE_USER": "Este usuário já existe",
          "ORM_ERROR_CARD_SELECT": "Não foi possível recuperar os cartões",
          "ORM_ERROR_CARD_UPDATE": "Não foi possível atualizar os cartões",
          "ORM_ERROR_DOMAIN_CREATE": "Não foi possível criar o domínio",
@@ -802,14 +802,14 @@
    "login": {
       "change_user": "Alterar usuário",
       "failed": "Login falhou",
-      "language": "Linguagem",
+      "language": "Idioma",
       "login": "Login",
       "multi_group": "Escolha um grupo",
       "password": "Senha",
       "relogin_message": "A sessão de autenticação expirou. Por favor, insira sua senha novamente.",
       "relogin_title": "Sessão expirada",
       "title": "Favor faça o Login",
-      "username": "Nome de Usuário",
+      "username": "Usuário",
       "waitMsg": "Enviando dados...",
       "waitTitle": "Conectando"
    },
@@ -853,15 +853,15 @@
          "save_filter": "Salvar filtro",
          "selectedAttr": "Atributos selecionados",
          "set_filter": "Filtro de Pesquisa",
-         "setted": "Filter setted",
+         "setted": "Filtro atribuido",
          "show_all": "Mostrar todos",
          "title": "Escolha um atributo",
          "window_title": "Filtro de Pesquisa"
       },
       "graph": {
-         "action": "Relation graph",
-         "icon_tooltip": "Open relation graph",
-         "title": "Relation graph"
+         "action": "Gráfico de relacionamento",
+         "icon_tooltip": "Abrir gráfico de relacionamento",
+         "title": "Gráfico de relacionamento"
       },
       "modcard": {
          "add_attachment": "Adicionar anexo",
@@ -950,7 +950,7 @@
             "attachments": "Anexos",
             "card": "Cartão",
             "detail": "Detalhe",
-            "history": "História",
+            "history": "Histórico",
             "map": "Mapa",
             "notes": "Notas",
             "relations": "Relacionamentos"
@@ -1023,7 +1023,7 @@
          "delete_card_confirm": "Você tem certeza que deseja remover este processo?",
          "extattrs": {
             "attachments": {"must_save_to_add": "Você não pode adicionar um anexo antes de salvar a atividade"},
-            "calendar": {"wrong_config": "<em>The calendar is not well configured<\/em>"},
+            "calendar": {"wrong_config": "O calendário não está configurado corretamente"},
             "createreport": {"format_label": "Formato"},
             "linkcards": {"required": "Favor selecionar alguns cartões - "},
             "manageemail": {
@@ -1045,8 +1045,8 @@
                "subjecthdr": "Assunto",
                "tofld": "Para",
                "viewicon": "Visualizar",
-               "mailsAreChanged": "<em>The generated e-mails are changed</em>",
-               "regenerates": "<em>Regenerate e-mails</em>"
+               "mailsAreChanged": "Os e-mails gerados foram alterados",
+               "regenerates": "Regenerar os e-mails"
             },
             "managerelation": {"required": "Favor selecionar alguns relacionamentos - "},
             "notes": {"must_save_to_modify": "Você não pode modificar as notas antes de salvar a atividade"}
@@ -1077,7 +1077,7 @@
             "attachments": "Anexos",
             "card": "Atividade",
             "detail": "Detalhes",
-            "history": "História",
+            "history": "Histórico",
             "notes": "Nota",
             "options": "Opções",
             "relations": "Relacionamentos",
