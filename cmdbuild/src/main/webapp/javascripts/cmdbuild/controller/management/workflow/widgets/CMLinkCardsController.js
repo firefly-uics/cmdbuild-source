@@ -88,7 +88,9 @@
 					this.alertIfChangeDefaultSelection = true;
 					var classId = this.templateResolver.getVariable(CLASS_ID),
 						cqlQuery = this.templateResolver.getVariable(FILTER);
-	
+
+					// CQL filter and regular filter cannot be merged now.
+					// The button should be enabled only if no other filter is present.
 					if (cqlQuery) {
 						this.view.grid.openFilterButton.disable();
 						this.templateResolver.resolveTemplates({
@@ -101,6 +103,7 @@
 						});
 					} else {
 						this.view.updateGrid(classId);
+						this.view.grid.openFilterButton.enable();
 					}
 				},
 				failure: function failure() {
