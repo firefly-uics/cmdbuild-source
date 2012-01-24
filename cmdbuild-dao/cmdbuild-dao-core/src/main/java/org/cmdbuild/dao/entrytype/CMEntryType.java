@@ -30,4 +30,6 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 	Iterable<? extends CMAttribute> getAllAttributes();
 
 	CMAttribute getAttribute(String name);
+
+	String getKeyAttributeName();
 }

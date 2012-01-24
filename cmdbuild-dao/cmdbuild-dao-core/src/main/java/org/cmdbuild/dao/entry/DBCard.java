@@ -34,4 +34,24 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	public DBClass getType() {
 		return (DBClass) super.getType();
 	}
+
+	@Override
+	public Object getCode() {
+		return get(getType().getCodeAttributeName());
+	}
+
+	@Override
+	public Object getDescription() {
+		return get(getType().getDescriptionAttributeName());
+	}
+
+	@Override
+	public CMCardDefinition setCode(Object value) {
+		return set(getType().getCodeAttributeName(), value);
+	}
+
+	@Override
+	public CMCardDefinition setDescription(Object value) {
+		return set(getType().getDescriptionAttributeName(), value);
+	}
 }

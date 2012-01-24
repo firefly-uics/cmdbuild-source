@@ -15,8 +15,8 @@ public interface Const {
 
 	enum SystemAttributes {
 		Id("Id"),
-		ClassId("IdClass", "oid"),
-		DomainId("IdDomain", "oid"),
+		ClassId("IdClass", SqlType.regclass.sqlCast()),
+		DomainId("IdDomain", SqlType.regclass.sqlCast()),
 		DomainId1("IdObj1"),
 		DomainId2("IdObj2"),
 		Code("Code"),

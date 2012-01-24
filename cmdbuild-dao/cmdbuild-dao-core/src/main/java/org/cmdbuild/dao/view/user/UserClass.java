@@ -53,4 +53,14 @@ public class UserClass extends UserEntryType implements CMClass {
 		return inner().isSuperclass();
 	}
 
+	@Override
+	public String getCodeAttributeName() {
+		return inner.getCodeAttributeName();
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		return inner.getDescriptionAttributeName();
+	}
+
 }

@@ -1,17 +1,15 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-import org.cmdbuild.dao.entry.CMLookup;
-import org.cmdbuild.dao.entry.DBLookup;
-import org.cmdbuild.dao.entrytype.DBLookupType;
+import org.cmdbuild.dao.reference.CMReference;
+import org.cmdbuild.dao.reference.LookupReference;
 
 
-public class LookupAttributeType implements CMAttributeType<CMLookup> {
+public class LookupAttributeType implements CMAttributeType<LookupReference> {
 
-	private final DBLookupType lookupType;
+	public final String lookupTypeName;
 
 	public LookupAttributeType(final String lookupTypeName) {
-		// TODO Get the lookup type
-		this.lookupType = new DBLookupType(lookupTypeName);
+		this.lookupTypeName = lookupTypeName;
 	}
 
 	@Override
@@ -20,8 +18,13 @@ public class LookupAttributeType implements CMAttributeType<CMLookup> {
 	}
 
 	@Override
-	public CMLookup convertNotNullValue(Object value) {
-		// TODO Get the lookup
-		return new DBLookup(lookupType, value);
+	public LookupReference convertNotNullValue(Object value) {
+		if (value instanceof CMReference) {
+			if (value instanceof LookupReference) {
+				return (LookupReference) value;
+			}
+			value = ((CMReference)value).getId();
+		}
+		return LookupReference.newInstance(lookupTypeName, value);
 	}
 }

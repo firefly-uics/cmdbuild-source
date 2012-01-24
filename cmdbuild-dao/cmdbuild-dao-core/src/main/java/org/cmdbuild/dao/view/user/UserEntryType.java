@@ -61,6 +61,11 @@ public abstract class UserEntryType implements CMEntryType {
 		return UserAttribute.newInstance(view, inner().getAttribute(name));
 	}
 
+	@Override
+	public String getKeyAttributeName() {
+		return inner().getKeyAttributeName();
+	}
+
 	/*
 	 * Object overrides
 	 */

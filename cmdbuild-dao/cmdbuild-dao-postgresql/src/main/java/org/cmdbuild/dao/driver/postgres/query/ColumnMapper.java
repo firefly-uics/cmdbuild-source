@@ -170,6 +170,10 @@ public class ColumnMapper {
 		return out;
 	}
 
+	/*
+	 * Syntax "%s#%s" is to cover the case of two subclasses having a local
+	 * (not inherited) attribute by the same name.
+	 */
 	// FIXME Refactor to remove duplicate code
 	void addAttribute(final QueryAliasAttribute qa) {
 		final Alias typeAlias = qa.getEntryTypeAlias();
