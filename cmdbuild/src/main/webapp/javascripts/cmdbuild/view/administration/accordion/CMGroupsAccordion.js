@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMGroupsAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMGroupsAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modsecurity.title,
 		cmName: "group",

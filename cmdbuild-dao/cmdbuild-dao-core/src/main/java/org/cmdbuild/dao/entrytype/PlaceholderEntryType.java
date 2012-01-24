@@ -37,4 +37,8 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	public boolean isSystem() {
 		throw new UnsupportedOperationException();
 	}
+
+	public final String getPrivilegeId() {
+		throw new UnsupportedOperationException();
+	}
 }

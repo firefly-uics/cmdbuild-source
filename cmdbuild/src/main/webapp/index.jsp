@@ -14,7 +14,7 @@
 	SessionVars sessionVars = new SessionVars();
 	String lang = sessionVars.getLanguage();
 	UserContext userCtx = sessionVars.getCurrentUserContext();
-	String extVersion = "4.0.0";
+	String extVersion = "4.0.7";
 %>
 <html>
 	<head>
@@ -35,6 +35,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 		
 		<!-- 2. Translations -->
@@ -62,6 +63,6 @@
 		<div id="login_box_wrap">
 			<div id="login_box"></div>
 		</div>
-		<div id="release_box" class="x-panel-header" style="background: none; border: none; text-align: center;"><span class="x-panel-header-text">CMDBuild <tr:translation key="release"/></span></div>
+		<div id="release_box" class="x-panel-header" style="background: none; border: none; text-align: center;"><span class="x-panel-header-text-default">CMDBuild <tr:translation key="release"/></span></div>
 	</body>
 </html>

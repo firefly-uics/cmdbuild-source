@@ -28,7 +28,7 @@
 				cmAddGraphColumn: false
 			});
 
-			this.tabs = new CMDBuild.Tabs({
+			this.tabs = new CMDBuild.view.common.CMSideTabPanel({
 				region: "east"
 			});
 
@@ -55,6 +55,7 @@
 			var domainList = _CMCache.getMasterDetailsForClassId(classId),
 				me = this;
 
+			this.disable();
 			this.empty = true;
 			this.details = {};
 			this.details[MD] = {};
@@ -85,9 +86,11 @@
 
 				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
 						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
+
 					this.fireEvent("empty");
 				} else {
 					this.empty = false;
+					this.enable();
 					buildTabs.call(this);
 				}
 			}
@@ -149,11 +152,13 @@
 			this.detailGrid.reload();
 		},
 
-		onAddCardButtonClick: function() {
+		// DEPRECATED
+
+		onAddCardButtonClick: function() { _deprecated();
 			this.disable();
 		},
 
-		onClassSelected: function() {
+		onClassSelected: function() {_deprecated();
 			// Something is done on the controller, something else on the view: this is a mess!
 			this.disable();
 		}
@@ -229,6 +234,7 @@
 		} else {
 			this.on("show", build, this, {single: true});
 		}
+
 	}
 
 	function sortKeys(tabs) {

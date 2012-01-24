@@ -1,6 +1,6 @@
 {
    "description": "Italiano",
-   "release": "1.4.0-dev",
+   "release": "1.5-dev",
    "administration": {
       "description": "Modulo di Amministrazione",
       "modClass": {
@@ -17,6 +17,11 @@
                "desc": "Discendente"
             },
             "domain": "Dominio",
+            "editorType": {
+               "html": "Editor HTML",
+               "label": "Tipo di editor",
+               "plain": "Testo semplice"
+            },
             "field_hidden": "Nascosto",
             "field_read": "Sola lettura",
             "field_visibility": "Modalità editing",
@@ -82,8 +87,8 @@
             "domain": "Dominio",
             "is_active": "Attivo",
             "m_d": "M/D",
-            "md_label": "Master/Detail Label",
             "master_detail": "Master/Detail",
+            "md_label": "Master/Detail Label",
             "modify_domain": "Modifica Dominio",
             "name": "Nome",
             "title_add": "Aggiungi dominio",
@@ -136,7 +141,47 @@
             "properties": "Proprietà"
          },
          "title": "Gestione classi",
-         "tree_title": "Classi"
+         "tree_title": "Classi",
+         "widgets": {
+            ".OpenReport": {
+               "fields": {
+                  "force": "Forza formato",
+                  "presets": "Attributi del report",
+                  "report": "Report"
+               },
+               "presetGrid": {
+                  "attribute": "Attributo",
+                  "value": "Valore"
+               },
+               "title": "Crea Report"
+            },
+            ".Calendar": {
+               "fields": {
+                  "target": "Classe di riferimento",
+                  "start": "Data inizio",
+                  "end": "Data fine",
+                  "title": "Titolo evento",
+                  "filter": "Filtro CQL",
+                  "defaultDate": "Data di default"
+               },
+               "title": "Calendario"
+            },
+            ".Ping": {
+               "fields": {
+                  "address": "Indirizzo",
+                  "count": "Numero di ping",
+                  "templates": "Template"
+               },
+               "title": "Ping"
+            },
+            "commonFields": {
+               "active": "Attivo",
+               "alwaysenabled": "Sembre abilitato",
+               "buttonLabel": "Testo del pulsante",
+               "type": "Tipo"
+            },
+            "title": "Widget"
+         }
       },
       "modLookup": {
          "add_lookuptype": "Aggiungi Tipo Lookup",
@@ -401,24 +446,12 @@
             "rowlimit": "Limite righe",
             "sessiontimeout": "Durata sessione (secondi)",
             "startingClass": "Classe di default",
+            "tabs_position": {
+               "bottom": "Sotto",
+               "label": "Posizione TAB sottopagine nel pannello card",
+               "top": "Sopra"
+            },
             "title": "Configurazione CMDBuild"
-         },
-         "gis": {
-            "center_lat": "Latitudine iniziale",
-            "center_lon": "Longitudine iniziale",
-            "enable": "Abilitato",
-            "initial_zoom": "Zoom iniziale",
-            "serverurl": "Server URL",
-            "title": "GIS"
-         },
-         "graph": {
-            "baseLevel": "Livello di default",
-            "clusteringThreshold": "Soglia per il raggruppamento dei nodi",
-            "enabled": "Abilitato",
-            "expandingThreshold": "Numero massimo di nodi in un gruppo espandibile",
-            "extensionMaximumLevel": "Massimo livello selezionabile",
-            "menuTitle": "Grafo delle Relazioni",
-            "title": "Configurazione Grafo delle Relazioni"
          },
          "dms": {
             "categoryLookup": "Categoria di CMDBuild",
@@ -439,6 +472,23 @@
             "repositoryWSPath": "Percorso per il web service",
             "serverUrl": "Url del servizio",
             "title": "Configurazione Alfresco"
+         },
+         "gis": {
+            "center_lat": "Latitudine iniziale",
+            "center_lon": "Longitudine iniziale",
+            "enable": "Abilitato",
+            "initial_zoom": "Zoom iniziale",
+            "serverurl": "Server URL",
+            "title": "GIS"
+         },
+         "graph": {
+            "baseLevel": "Livello di default",
+            "clusteringThreshold": "Soglia per il raggruppamento dei nodi",
+            "enabled": "Abilitato",
+            "expandingThreshold": "Numero massimo di nodi in un gruppo espandibile",
+            "extensionMaximumLevel": "Massimo livello selezionabile",
+            "menuTitle": "Grafo delle Relazioni",
+            "title": "Configurazione Grafo delle Relazioni"
          },
          "modify": "Modifica",
          "save": "Conferma",
@@ -522,8 +572,8 @@
       "loading": "Caricamento in corso...",
       "loading_mask": {
          "classes": "Caricamento classi",
-         "domain": "Caricamento domini",
          "configuration": "Caricamento configurazione",
+         "domain": "Caricamento domini",
          "group": "Caricamento lista utenti e gruppi",
          "lookup": "Caricamento lista lookup",
          "menu": "Caricamento menu",
@@ -605,15 +655,15 @@
       "title": "Configurazione"
    },
    "errors": {
-   	  "busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
+      "busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
       "detail": "Dettagli",
       "error_message": "Errore",
       "error_moving_row": "Si è verificato un errore muovendo la riga",
-      "invalid_fields" : "Alcuni campi non sono stati compilati correttamente",
       "invalid_attributes": "I seguenti campi non sono stati compilati correttamente:",
-      "invalid_extended_attributes": "I seguenti controlli visuali non sono stati compilati correttamente:",      
+      "invalid_extended_attributes": "I seguenti controlli visuali non sono stati compilati correttamente:",
+      "invalid_fields": "Alcuni campi non sono stati compilati correttamente",
       "no_driver": "Non è presente il driver JDBC.<br />Può essere trovato nel file del rilascio di CMDBuild e copiato tra le librerie di Tomcat.",
-	  "no_selections": "Non hai selezionato nessuna scheda",
+      "no_selections": "Non hai selezionato nessuna scheda",
       "reasons": {
          "ATTACHMENT_NOTFOUND": "Allegato {0} per la scheda {2} in {1} non trovato",
          "ATTRIBUTE_NOTFOUND": "Attributo {1} di {0} non trovato",
@@ -638,8 +688,8 @@
          "MENU_NOTFOUND": "Menu non trovato",
          "NOTFOUND": "Elemento non trovato",
          "ORM_AMBIGUOUS_DIRECTION": "Impossibile determinare automaticamente la direzione della relazione",
-         "ORM_ATTACHMENT_UPLOAD_FAILED": "Impossibile caricare l'allegato",
          "ORM_ATTACHMENT_DELETE_FAILED": "Impossibile cancellare l'allegato",
+         "ORM_ATTACHMENT_UPLOAD_FAILED": "Impossibile caricare l'allegato",
          "ORM_CANT_CREATE_DATABASE": "Impossibile creare il database",
          "ORM_CANT_CREATE_USER": "Impossibile creare l'utente",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Impossibile cancellare schede aventi relazioni",
@@ -857,9 +907,9 @@
          "edit_attachment": "Modifica allegato",
          "edit_relation": "Modifica relazione",
          "gis": {
-         	"geo_attributes": "Attributi geografici",
-         	"zoom": "Zoom",
-         	"position": "Posizione"
+            "geo_attributes": "Attributi geografici",
+            "position": "Posizione",
+            "zoom": "Zoom"
          },
          "history_columns": {
             "activity_name": "Nome attività",
@@ -934,7 +984,10 @@
          "treetitle": "Report"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Modifica massiva schede"},
+         "bulkupdate": {
+            "title": "Modifica massiva schede",
+            "countMessage": "Saranno modificate {0} schede"
+         },
          "changepassword": {
             "newpw": "Nuova password",
             "oldpw": "Vecchia password",
@@ -972,9 +1025,8 @@
          "delete_card": "Arresta processo",
          "delete_card_confirm": "Sicuro di voler cancellare questo processo?",
          "extattrs": {
-            "attachments": {
-              "must_save_to_add": "Non puoi aggiungere un allegato prima di aver salvato l'attività"
-            },
+            "attachments": {"must_save_to_add": "Non puoi aggiungere un allegato prima di aver salvato l'attività"},
+            "calendar": {"wrong_config": "Il calendario non è stato configurato correttamente"},
             "createreport": {"format_label": "Formato"},
             "linkcards": {"required": "È necessario selezionare delle card - "},
             "manageemail": {
@@ -1000,12 +1052,7 @@
                "regenerates": "Rigenera email"
             },
             "managerelation": {"required": "È necessario selezionare delle relazioni - "},
-            "notes": {
-              "must_save_to_modify": "Non puoi modificare le note prima di aver salvato l'attività"
-            },
-            "calendar": {
-            	wrong_config: "Il calendario non è stato configurato correttamente"
-            }
+            "notes": {"must_save_to_modify": "Non puoi modificare le note prima di aver salvato l'attività"}
          },
          "history_columns": {
             "attributes": "Attributi",
@@ -1058,9 +1105,9 @@
       "wrong_time": "{0} non è un valore valido. Deve essere nel formato {1}"
    },
    "warnings": {
-   	  "link_cards_changed_values": "La selezione di \"{0}\" è stata aggiornata",
+      "link_cards_changed_values": "La selezione di \"{0}\" è stata aggiornata",
+      "only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",
       "popup_block": "Abbiamo rilevato un blocco popup, disabilitalo per eseguire questa operazione",
-      "warning_message": "Attenzione",
-      "only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente"
+      "warning_message": "Attenzione"
    }
 }

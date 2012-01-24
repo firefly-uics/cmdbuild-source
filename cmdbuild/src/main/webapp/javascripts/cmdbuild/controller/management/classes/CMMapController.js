@@ -1,11 +1,43 @@
 (function() {
+	Ext.define("CMDBuild.controller.management.common.CMCardDataProvider", {
+		constructor: function(target, dataName) {
+			if (target) {
+				this.target = target;
+			} else {
+				throw "You have to pass aterget to the CMCardDataProvider";
+			}
+
+			var me = this.target;
+			if (typeof dataName == "string") {
+				me.getCardDataName = function() {
+					return dataName;
+				}
+			} else {
+				throw "You have to set a cmCardDataName for the CMCardDataProvider " + me.$className;
+			}
+
+			if (typeof me.getCardData != "function") {
+				me.getCardData = function() {
+					throw "You have to implement the getCardData method in " + me.$className;
+				}
+			}
+
+			return target;
+		}
+	});
+
 	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
-		constructor: function(mapPanel, relatedFormPanel, ownerController) {
+
+		mixins: {
+			observable: "Ext.util.Observable"
+		},
+
+		constructor: function(mapPanel, ownerController) {
 			var me = this;
 
-			if (mapPanel && relatedFormPanel && ownerController) {
+			if (mapPanel && ownerController) {
 				this.mapPanel = mapPanel;
-				this.relatedFormPanel = relatedFormPanel;
+
 				this.ownerController = ownerController;
 				this.cmIsInEditing = false;
 				this.editingControls = {};
@@ -29,6 +61,7 @@
 
 				registerMapEventListeners.call(this);
 
+				return new CMDBuild.controller.management.common.CMCardDataProvider(this, "geoAttributes");
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
 			}
@@ -52,7 +85,7 @@
 				return;
 			}
 
-			this.ownerController.onCardSelected(selectionModel = null, card = {
+			this.ownerController.onCardSelected(card = {
 				Id: prop.master_card,
 				IdClass: prop.master_class
 			});
@@ -60,40 +93,25 @@
 			this.onCardSelected(prop.master_card);
 		},
 
-		onCardSelected: function(cardId) {
-			this.currentCardId = cardId;
-			var layers = this.mapPanel.getMap().cmdbLayers;
-
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].clearSelection();
-				layers[i].selectFeatureByMasterCard(cardId);
-			}
-		},
-
-		onEntryTypeSelect: function(et) {
-			if (!et) {
+		onCardSelected: function(card) {
+			if (!this.mapPanel.cmVisible) {
 				return;
+				// the selection is defered when the map is shown
 			}
 
-			if (this.mapPanel.cmVisible) {
-				this.currentClassId = et.get("id");
-				// if update the map on show and there is a card selected
-				var lastCard = this.ownerController.currentCard;
-				if (lastCard) {
-					this.currentCardId = lastCard.get("Id");
-					this.centerMapOnFeature(lastCard.data);
-				} else {
-					this.currentCardId = undefined;
-				}
+			var id = card;
+			if (card && typeof card.get == "function") {
+				id = card.get("Id");
+			}
 
-				this.updateMap(et);
-			} else {
-				/*
-				 * do nothing!
-				 * on show, check if the
-				 * current selected is different from the
-				 * last card selected
-				 */
+			if (id != this.currentCardId) {
+				this.currentCardId = id;
+				var layers = this.mapPanel.getMap().cmdbLayers;
+
+				for (var i=0, l=layers.length; i<l; ++i) {
+					layers[i].clearSelection();
+					layers[i].selectFeatureByMasterCard(this.currentCardId);
+				}
 			}
 		},
 
@@ -136,10 +154,6 @@
 			activateControl.call(this, layerId, "transform");
 		},
 
-		getValues: function() {
-			return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
-		},
-
 		editMode: function() {
 			this.cmIsInEditing = true;
 
@@ -161,9 +175,16 @@
 
 		onCardSaved: function(c) {
 			if (this.mapPanel.cmVisible) {
-				this.mapPanel.getMap().clearSelection();
-				this.onCardSelected(c.Id);
 				this.mapPanel.getMap().refreshStrategies();
+				if (typeof this.currentCardId == "undefined") {
+					// the card is new, alert the owner to buble the selection event
+					this.ownerController.onCardSelected(card = {
+						Id: c.Id,
+						IdClass: c.IdClass
+					});
+				};
+
+				this.onCardSelected(c.Id);
 			}
 		},
 
@@ -177,19 +198,51 @@
 
 		selectFeature: function(feauture) {
 			this.selectControl.select(feauture);
-		}
+		},
+
+		onEntryTypeSelected: onEntryTypeSelected,
+		getCardData: getCardData,
+
+		// FIXME: for compatibility
+		onEntryTypeSelect: onEntryTypeSelected,
+		getValues: getCardData
 	});
 
-	function registerMapEventListeners() {
-		this.mapPanel.mon(this.mapPanel, "addlayer", onLayerAdded, this);
-		this.mapPanel.mon(this.mapPanel, "removelayer",onLayerRemoved,this);
-		this.mapPanel.mon(this.mapPanel, "addFeatureButtonToogle", onAddFeatureButtonToggle, this);
-		this.mapPanel.mon(this.mapPanel, "onRemoveFeatureButtonClick", onRemoveFeatureButtonClick, this);
-		this.mapPanel.mon(this.mapPanel, "cmGeoAttrMenuClicked", this.activateEditControls, this);
-		this.mapPanel.mon(this.mapPanel, "cmVisible", onCmVisible, this);
+	function getCardData() {
+		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
+	};
 
-		this.relatedFormPanel.mon(this.relatedFormPanel, "cmeditmode", this.editMode, this);
-		this.relatedFormPanel.mon(this.relatedFormPanel, "cmdisplaymode", this.displayMode, this);
+	function onEntryTypeSelected(et) {
+		if (!et 
+				|| !this.mapPanel.cmVisible) {
+			return;
+		}
+
+		this.currentClassId = et.get("id");
+		// if update the map on show and there is a card selected
+		var lastCard = this.ownerController.getCard();
+		if (lastCard) {
+			// this.currentCardId = lastCard.get("Id");
+			this.onCardSelected(lastCard);
+			this.centerMapOnFeature(lastCard.data);
+		} else {
+			this.currentCardId = undefined;
+		}
+
+		this.updateMap(et);
+	}
+
+	function registerMapEventListeners() {
+		this.mon(this.mapPanel, "addlayer", onLayerAdded, this);
+		this.mon(this.mapPanel, "removelayer",onLayerRemoved,this);
+		this.mon(this.mapPanel, "addFeatureButtonToogle", onAddFeatureButtonToggle, this);
+		this.mon(this.mapPanel, "onRemoveFeatureButtonClick", onRemoveFeatureButtonClick, this);
+		this.mon(this.mapPanel, "cmGeoAttrMenuClicked", this.activateEditControls, this);
+		this.mon(this.mapPanel, "cmVisible", onCmVisible, this);
+
+		// TODO remove the reference to the relatedFormPanel and listen the event in super controller
+		// this.relatedFormPanel.mon(this.relatedFormPanel, "cmeditmode", this.editMode, this);
+		// this.relatedFormPanel.mon(this.relatedFormPanel, "cmdisplaymode", this.displayMode, this);
 	}
 
 	function onLayerAdded(params) {
@@ -295,11 +348,13 @@
 
 	function onCmVisible(visible) {
 		if (visible) {
-			var lastClassId = this.ownerController.currentEntryId,
-				lastCard = this.ownerController.currentCard;
+			var lastClass = this.ownerController.getEntryType(),
+				lastCard = this.ownerController.getCard();
 
-			if (this.currentClassId != lastClassId) {
-				this.onEntryTypeSelect(this.ownerController.currentEntry);
+			if (lastClass 
+				&& this.currentClassId != lastClass.get("id")) {
+
+				this.onEntryTypeSelected(lastClass);
 			} else {
 				if (lastCard 
 						&& (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {

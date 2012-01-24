@@ -1,5 +1,9 @@
 (function() {
 
+if (typeof CMDBuild.Management == "undefined") {
+	CMDBuild.Management = {};
+}
+
 CMDBuild.Management.TemplateResolver = function(config) {
 	Ext.apply(this, config);
 };

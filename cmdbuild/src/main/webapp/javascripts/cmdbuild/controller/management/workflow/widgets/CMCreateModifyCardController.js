@@ -1,14 +1,15 @@
 (function() {
 	var OUTPUT_NAME = "xa:outputName",
 		ID_CLASS = "xa:idClass",
-		ID_CARD = "xa:id";
+		ID_CARD = "xa:cardId";
 
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMCreateModifyCard", {
-		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
+		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
+
 		cmName: "Create/Modify card",
 
-		constructor: function() {
-			this.callParent(arguments);
+		constructor: function(ui, me, widgetDef, widgetControllerManager) {
+			this.callParent([ui, me, widgetControllerManager]);
 
 			this.templateResolverIsBusy = false;
 			this.idClassToAdd = undefined;
@@ -23,9 +24,7 @@
 			this.idClass = this.getVariable(ID_CLASS);
 			this.outputName = this.getVariable(OUTPUT_NAME);
 
-			this.view.mon(this.view.cancelButton, "click", onAbortCardClick, this);
-			this.view.mon(this.view.saveButton, "click", onSaveCardClick, this);
-			this.view.mon(this.view.addCardButton, "cmClick", onAddCardClick, this);
+			this.mon(this.view.addCardButton, "cmClick", onAddCardClick, this);
 		},
 
 		getCardId: function() {
@@ -46,15 +45,79 @@
 		},
 
 		// override
+		onSaveSuccess: function(form, operation) {
+			this.callParent(arguments);
+			var card = {
+				raw: form.getValues()
+			}
+			this.view.loadCard(card);
+		},
+
+		// **** BaseWFWidget methods
+
+		toString: function() {
+			return this.cmName + " WFWidget controller";
+		},
+
+		isBusy: function() {
+			_debug(this + " is busy");
+			return false;
+		},
+
+		getData: function() {
+			return null;
+		},
+
+		getVariable: function(variableName) {
+			try {
+				return this.templateResolver.getVariable(variableName);
+			} catch (e) {
+				_debug("There is no template resolver");
+				return undefined;
+			}
+		},
+
 		onEditMode: function() {
 			// for the auto-select
 			resolveTemplate.call(this);
 		},
 
-		// override
 		beforeActiveView: function() {
+			var et = _CMCache.getEntryTypeById(this.idClass);
 			this.cardId = this.getCardId();
 			this.view.initWidget(this.idClass, this.cardId);
+			this.onEntryTypeSelected(et);
+
+			if (!this.cardId || this.cardId == -1 && !et.data.superclass) {
+				this.onAddCardButtonClick(this.idClass, reloadFields = true);
+			} else {
+				var data = {
+					IdClass: this.idClass,
+					Id: this.cardId
+				}, card = {
+					get: function(k) {
+						return data[k];
+					}
+				}, me = this;
+
+				if (this.widgetControllerManager) {
+					this.widgetControllerManager.buildControllers(card);
+				}
+
+				CMDBuild.ServiceProxy.card.get({
+					params: data,
+					scope: this,
+					success: function(a,b, response) {
+						var raw = response.card;
+						if (raw) {
+							var c = new CMDBuild.DummyModel(response.card);
+							c.raw = raw;
+							this.cmForceEditing = !et.data.superclass // see loadCardStandardCallBack of CMBaseCardPanelController
+							this.onCardSelected(c);
+						}
+					}
+				});
+			}
 		},
 
 		// override
@@ -69,52 +132,8 @@
 		}
 	});
 
-	function onAddCardClick(p) {
-		this.idClassToAdd = p.classId;
-		this.view.onAddCardButtonClick(this.idClassToAdd, reloadFields = true);
-	}
-
-	function onAbortCardClick() {
-		this.ownerController.showActivityPanel();
-	}
-
-	function onSaveCardClick() {
-		var params = {},
-			form = this.view.getForm(),
-			view = this.view,
-			invalidAttributes = this.view.getInvalidAttributeAsHTML();
-		
-		params = {
-			// this.idClassToAdd has a value only if was pushed the add button for
-			// super-classes
-			IdClass: this.idClassToAdd || this.idClass,
-			Id: this.cardId
-		};
-
-		if (invalidAttributes == null) {
-			CMDBuild.LoadMask.get().show();
-			form.submit({
-				method : 'POST',
-				url : 'services/json/management/modcard/updatecard',
-				scope: this,
-				params: params,
-
-				success : function(form, action) {
-					CMDBuild.LoadMask.get().hide();
-					this.savedCardId = action.result.id;
-					_CMCache.onClassContentChanged(params.IdClass);
-					onAbortCardClick.call(this);
-				},
-
-				failure : function() {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
-		} else {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
-		}
-
+	function onAddCardClick(o) {
+		this.onAddCardButtonClick(o.classId);
 	}
 
 	function resolveTemplate() {
