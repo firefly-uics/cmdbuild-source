@@ -984,7 +984,10 @@
          "treetitle": "Rapport"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Mise à jour multiple"},
+         "bulkupdate": {
+         	"title": "Mise à jour multiple",
+            "countMessage": "<em>{0} cards will be modified</em>"
+         },
          "changepassword": {
             "newpw": "Nouveau mot de passe",
             "oldpw": "Ancien mot de passe",

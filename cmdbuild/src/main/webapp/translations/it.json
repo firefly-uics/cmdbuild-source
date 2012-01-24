@@ -984,7 +984,10 @@
          "treetitle": "Report"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Modifica massiva schede"},
+         "bulkupdate": {
+            "title": "Modifica massiva schede",
+            "countMessage": "Saranno modificate {0} schede"
+         },
          "changepassword": {
             "newpw": "Nuova password",
             "oldpw": "Vecchia password",

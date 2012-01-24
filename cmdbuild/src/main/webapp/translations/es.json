@@ -984,7 +984,10 @@
          "treetitle": "Informe"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Modificar tarjetas masivamente"},
+         "bulkupdate": {
+            "title": "Modificar tarjetas masivamente",
+            "countMessage": "<em>Saranno modificate {0} schede</em>"
+         },
          "changepassword": {
             "newpw": "Nueva clave",
             "oldpw": "Antigua clave",

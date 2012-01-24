@@ -984,7 +984,10 @@
          "treetitle": "Izveštaj"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Masovna izmena kartica"},
+         "bulkupdate": {
+            "title": "Masovna izmena kartica",
+            "countMessage": "<em>{0} cards will be modified</em>"
+         },
          "changepassword": {
             "newpw": "Nova lozinka",
             "oldpw": "Stara lozinka",
