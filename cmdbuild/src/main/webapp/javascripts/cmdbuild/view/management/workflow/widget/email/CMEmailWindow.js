@@ -1,3 +1,5 @@
+(function() {
+
 Ext.define("CMDBuild.Management.EmailWindow", {
 	extend: "CMDBuild.PopupWindow",
 
@@ -8,17 +10,15 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 	initComponent : function() {
 		var body;
 		if (this.readOnly) {
-			body = {
-				xtype: "panel",
+			body = new Ext.panel.Panel({
 				frame: true,
 				border: true,
 				html: this.record.get("Content"),
 				autoScroll: true,
 				flex: 1
-			};
+			});
 		} else {
-			body = {
-				xtype : 'htmleditor',
+			body = new Ext.form.field.HtmlEditor({
 				name : 'Content',
 				fieldLabel : 'Content',
 				hideLabel: true,
@@ -27,7 +27,7 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 				enableFont: false,
 				value: this.record.get("Content"),
 				flex: 1
-			};
+			});
 		}
 
 		var formPanel = new Ext.form.FormPanel({
@@ -75,7 +75,7 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 			buttons = [
 			new CMDBuild.buttons.CloseButton({
 				handler: function() {
-					me.close();
+					me.destroy();
 				}
 			})];
 		} else {
@@ -90,7 +90,7 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 				}),
 				new CMDBuild.buttons.AbortButton({
 					handler: function() {
-						me.close();
+						me.destroy();
 					}
 				})
 			];
@@ -104,6 +104,7 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 		});
 
 		this.callParent(arguments);
+		fixIEFocusIssue(this, body);
 	},
 
 	updateRecord: function() {
@@ -115,3 +116,17 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 		this.record.commit();
 	}
 });
+
+function fixIEFocusIssue(me, body) {
+	// Sometimes on IE the HtmlEditor is not able to
+	// take the focus after the mouse click. With this
+	// call it works. The reason is currently unknown.
+	if (Ext.isIE) {
+		me.mon(body, "render", function() {
+			try {
+				body.focus();
+			} catch (e) {}
+		}, me);
+	}
+}
+})();

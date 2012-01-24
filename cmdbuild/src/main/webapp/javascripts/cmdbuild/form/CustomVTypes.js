@@ -63,7 +63,7 @@ Ext.apply(Ext.form.VTypes, {
     emailaddrspeclist : function(v) {
     	var a = v.split(",");
     	for (var i=0,len=a.length; i<len; ++i) {
-    		var sv = a[i].trim();
+    		var sv = Ext.String.trim(a[i]);
     		if (sv && !Ext.form.VTypes.emailaddrspec(sv)) {
     			return false;
     		}
