@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.reference.CMReference;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
@@ -32,7 +33,10 @@ public class EntryInsertCommand {
 		final Map<String, Object> valueMap = new HashMap<String, Object>();
 		for (Map.Entry<String, Object> v : entry.getValues()) {
 			final String name = v.getKey();
-			final Object value = v.getValue();
+			Object value = v.getValue();
+			if (value instanceof CMReference) {
+				value = ((CMReference)value).getId();
+			}
 			valueMap.put(quoteIdent(name), value);
 		}
 		return valueMap;

@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 public class DBClass extends DBEntryType implements CMClass {
 
 	public static class ClassMetadata extends EntryTypeMetadata {
@@ -106,5 +104,17 @@ public class DBClass extends DBEntryType implements CMClass {
 	@Override
 	public boolean isSuperclass() {
 		return meta().isSuperclass(); 
+	}
+
+	@Override
+	public String getCodeAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Code";
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Description";
 	}
 }

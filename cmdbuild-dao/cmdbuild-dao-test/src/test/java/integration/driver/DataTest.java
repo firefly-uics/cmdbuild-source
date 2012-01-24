@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(value = Parameterized.class)
-public class DataTest extends QueryTestFixture {
+public class DataTest extends DriverFixture {
 
 	public DataTest(String driverBeanName) {
 		super(driverBeanName);
