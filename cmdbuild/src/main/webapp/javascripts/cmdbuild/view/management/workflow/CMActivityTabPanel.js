@@ -273,12 +273,13 @@
 				border: false,
 				collapsible: true,
 				collapsed: true,
+				animCollapse: false,
 				split: true,
 				margins: "5 5 5 0",
 				title: CMDBuild.Translation.management.modworkflow.activitydocumentation,
 				html: ""
 			});
-			
+
 			this.callParent(arguments);
 		},
 
