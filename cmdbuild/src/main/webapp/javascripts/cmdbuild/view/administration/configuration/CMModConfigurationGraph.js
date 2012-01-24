@@ -10,7 +10,7 @@
 			this.items = [{
 				xtype: 'xcheckbox',
 				name: 'enabled',
-				fieldLabel: CMDBuild.Translation.administration.setup.gis.enable
+				fieldLabel: CMDBuild.Translation.administration.setup.graph.enabled
 			}, {
 				xtype : 'numberfield',
 				fieldLabel : tr.baseLevel,

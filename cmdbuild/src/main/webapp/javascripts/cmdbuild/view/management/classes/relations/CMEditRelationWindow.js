@@ -183,7 +183,7 @@
 			f;
 
 		for (var i=0, l=ff.length; i<l; ++i) {
-			f = ff[i];
+			 f = ff[i];
 			if (f.isValid()) {
 				data[f.name] = f.getValue();
 			} else {

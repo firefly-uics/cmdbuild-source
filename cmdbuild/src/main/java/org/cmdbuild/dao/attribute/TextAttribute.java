@@ -10,6 +10,11 @@ public class TextAttribute extends DaoWrapperAttribute {
 
 	private static CMAttributeType<?> TEXT_TYPE = new TextAttributeType();
 
+	private enum ALLOWED_TYPES{
+		PLAIN,
+		HTML;
+	}
+
 	public TextAttribute(BaseSchema schema, String name, Map<String, String> meta) {
 		super(schema, name, meta);
 		daoType = TEXT_TYPE;
@@ -23,5 +28,11 @@ public class TextAttribute extends DaoWrapperAttribute {
 	@Override
 	public String notNullValueToDBFormat(Object value) {
 		return escapeAndQuote((String)value);
+	}
+
+	@Override
+	protected boolean isTypeAllowed(String editorType) {
+		ALLOWED_TYPES type = ALLOWED_TYPES.valueOf(editorType);
+		return type != null;
 	}
 }

@@ -42,6 +42,7 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
+import org.cmdbuild.elements.widget.ClassWidgets;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -57,6 +58,7 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.schema.ModClass.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -64,6 +66,7 @@ import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.servlets.utils.builder.CardQueryParameter;
 import org.cmdbuild.utils.CQLFacadeCompiler;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -544,11 +547,14 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public void updateBulkCards(Map<String, String> attributes,
+	public JSONObject updateBulkCards(Map<String, String> attributes,
 			@Parameter(value = "selections", required = false) String[] cardsToUpdate,
 			@Parameter(value = "fullTextQuery", required = false) String fullTextQuery,
-			@Parameter("isInverted") boolean isInverted, CardQuery cardQuery, ITableFactory tf) throws JSONException,
+			@Parameter("isInverted") boolean isInverted,
+			@Parameter(value="confirmed", required=false) boolean updateConfirmed,
+			CardQuery cardQuery, ITableFactory tf) throws JSONException,
 			CMDBException {
+		final JSONObject out = new JSONObject();
 
 		cardQuery = (CardQuery) cardQuery.clone();
 
@@ -556,7 +562,7 @@ public class ModCard extends JSONBase {
 			cardQuery.fullText(fullTextQuery.trim());
 		}
 
-		List<ICard> cardsList = buildCardListToBulkUpdate(cardsToUpdate, tf);
+		final List<ICard> cardsList = buildCardListToBulkUpdate(cardsToUpdate, tf);
 		if (isInverted) {
 			if (!cardsList.isEmpty()) {
 				cardQuery.excludeCards(cardsList);
@@ -564,11 +570,18 @@ public class ModCard extends JSONBase {
 		} else {
 			cardQuery.cards(cardsList);
 		}
+		cardQuery.clearOrder().subset(0, 0);
 
-		ICard card = cardQuery.getTable().cards().create(); // Unprivileged card
-															// as a template
-		setCardAttributes(card, attributes, true);
-		cardQuery.clearOrder().subset(0, 0).update(card);
+		if (updateConfirmed) {
+			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged card as a template
+			setCardAttributes(card, attributes, true);
+			cardQuery.update(card);
+		} else {
+			cardQuery.count().iterator();
+			out.put("count", cardQuery.getTotalRows());
+		}
+
+		return out;
 	}
 
 	private List<ICard> buildCardListToBulkUpdate(String[] cardsToUpdate, ITableFactory tf) {
@@ -875,6 +888,25 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
+	@JSONExported
+	public JsonResponse callWidget(
+			final ICard card,
+			@Parameter("widgetId") final String widgetId,
+			@Parameter(required=false, value="action") final String action,
+			@Parameter(required=false, value="params") final String jsonParams) throws Exception {
+
+		final ObjectMapper mapper = new ObjectMapper();
+		final Map<String, Object> params;
+		if (jsonParams == null) {
+			params = new HashMap<String, Object>();
+		} else {
+			params = new ObjectMapper().readValue(jsonParams, mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+		}
+
+		final ClassWidgets classWidgets = new ClassWidgets(card.getSchema());
+		return JsonResponse.success(classWidgets.executeAction(widgetId, action, params, card));
+	}
+
 	static private DirectedDomain stringToDirectedDomain(DomainFactory df, String string) {
 		StringTokenizer st = new StringTokenizer(string, "_");
 		int domainId = Integer.parseInt(st.nextToken());
@@ -889,4 +921,5 @@ public class ModCard extends JSONBase {
 		int cardId = Integer.parseInt(st.nextToken());
 		return tf.get(classId).cards().get(cardId);
 	}
+
 }

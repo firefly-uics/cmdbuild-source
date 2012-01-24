@@ -105,7 +105,10 @@
                 grow: true, // XComboBox autogrow
                 minChars: 1,
                 filtered: false,
-                CMAttribute: attribute
+                CMAttribute: attribute,
+                listConfig: {
+                	loadMask: false
+                }
             });
 
             this.callParent(arguments);
@@ -155,8 +158,13 @@
                     method : "POST",
                     scope : this,
                     success : function(response, options, decoded) {
-                		this.addToStoreIfNotInIt(adaptResult(decoded));
-                		this.setValue(theValue);
+                    	var data = adaptResult(decoded);
+                    	if (data) {
+                    		this.addToStoreIfNotInIt(data);
+                			this.setValue(theValue);
+                    	} else {
+                    		_debug("The remote reference is not found", params);
+                    	}
                     }
                 });
 
@@ -248,10 +256,14 @@
     // see SearchableCombo.addToStoreIfNotInIt
     function adaptResult(result) {
     	var data = result.rows[0];
-    	return {
-    		get: function(key) {
-    			return data[key];
-    		}
-    	};
+    	if (data) {
+    		return {
+	    		get: function(key) {
+	    			return data[key];
+	    		}
+	    	};
+    	} else {
+    		return null;
+    	}
     }
 })();

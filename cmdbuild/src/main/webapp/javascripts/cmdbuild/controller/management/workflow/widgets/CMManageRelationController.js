@@ -12,10 +12,10 @@
 		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
 		cmName: "Create/Modify card",
 
-		constructor: function(view, ownerController) {
+		constructor: function(view, ownerController, widgetDef) {
 			this.callParent(arguments);
 
-			this.widgetConf = this.view.widgetConf;
+			this.widgetConf = widgetDef;
 			this.ownerController = ownerController;
 			this.outputName = this.widgetConf.outputName;
 			this.noSelect = !(this.widgetConf.enabledFunctions['single'] || this.widgetConf.enabledFunctions['multi']);
@@ -28,15 +28,16 @@
 			});
 
 			this.idClass = this.getVariable(ID_CLASS);
+
 			this.outputName = this.getVariable(OUTPUT_NAME);
 
 			this.templateResolverIsBusy = false;
-			
+
 			this.callBacks = Ext.apply(this.callBacks, {
 				'action-relation-deletecard': this.onDeleteCard
 			});
 
-			this.view.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
+			this.card = getFakeCard(this);
 		},
 
 		onDeleteCard: function(model) {
@@ -58,11 +59,6 @@
 		},
 
 		// baseWFWidget Functions
-		activeView: function() {
-			this.beforeActiveView();
-			this.view.cmActivate();
-		},
-
 		toString: function() {
 			return this.cmName + " WFWidget controller";
 		},
@@ -78,14 +74,6 @@
 			} catch (e) {
 				_debug("There is no template resolver");
 				return undefined;
-			}
-		},
-
-		onBackToActivityButtonClick: function() {
-			try {
-				this.ownerController.showActivityPanel();
-			} catch (e) {
-				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
 		},
 		// end baseWFWidget Functions
@@ -111,6 +99,7 @@
 			resolveTemplate.call(this);
 		},
 
+		// override
 		beforeActiveView: function() {
 			var et = _CMCache.getEntryTypeById(this.idClass);
 			this.view.addRelationButton.setDomainsForEntryType(et);
@@ -267,6 +256,21 @@
 						f.changed = false;
 					}
 				}, this);
+			}
+		}
+	}
+
+	// a object that fake a card,
+	// is passed at the ModifyRelationWindow
+	function getFakeCard(me) {
+		var data = {
+			Id: me.getVariable(ID_CARD),
+			IdClass: me.getVariable(ID_CLASS)
+		}
+
+		return {
+			get: function(k) {
+				return data[k];
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMClassAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMClassAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modClass.tree_title,
 		cmName: "class",

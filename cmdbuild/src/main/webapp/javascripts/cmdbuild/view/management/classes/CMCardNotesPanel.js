@@ -8,6 +8,11 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 	withButtons: true, // used in the windows to have specific buttons
 
 	initComponent : function() {
+		this.CMEVENTS = {
+			saveNoteButtonClick: "cm-save-clicked",
+			cancelNoteButtonClick: "cm-cancel-clicked"
+		};
+
 		this.modifyNoteButton = new Ext.button.Button( {
 			iconCls : 'modify',
 			text : this.translation.modify_note,
@@ -75,68 +80,65 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			],
 			buttonAlign: 'center'
 		});
+
 		this.callParent(arguments);
 	},
 
 	buildButtons: function() {
 		if (this.withButtons) {
+			var me = this;
 			this.buttons = [
 				this.saveButton = new Ext.button.Button({
 					text : CMDBuild.Translation.common.buttons.save,
 					name: 'saveButton',
-					formBind : true
+					formBind : true,
+					handler: function() {
+						me.fireEvent(me.CMEVENTS.saveNoteButtonClick);
+					}
 				}),
-		
+
 				this.cancelButton = new Ext.button.Button({
 					text : CMDBuild.Translation.common.buttons.abort,
 					name: 'cancelButton',
-					handler : this.disableModify,
-					scope : this
+					handler : function() {
+						me.fireEvent(me.CMEVENTS.cancelNoteButtonClick);
+					}
 				})
 			];
+			var extra = this.getExtraButtons();
+			if (extra) {
+				if (Ext.isArray(extra)) {
+					this.buttons = this.buttons.concat(extra);
+				} else {
+					this.buttons.push(extra);
+				}
+			}
 		}
 	},
 
-	onClassSelected: function() {
-		this.disableModify();
-		this.disable();
+	reset: function() {
+		this.actualForm.getForm().reset();
+		this.displayPanel.getForm().reset();
 	},
 
-	onCardSelected: function(card) {
-		var idClass = card.raw.IdClass;
-		if (CMDBuild.Utils.isSimpleTable(idClass)) {
-			this.disable();
-			return;
-		} else {
-			this.enable();
-		}
-
-		this.currentCardId = card.get("Id");
-		this.currentCardPrivileges = {
-			create: card.raw.priv_create,
-			write: card.raw.priv_write
-		};
-
-		var form = this.actualForm.getForm();
-		var displayform = this.displayPanel.getForm();
-		form.reset();
-		displayform.reset();
-		form.loadRecord(card);
-		displayform.loadRecord(card);
-
-		this.disableModify();
+	loadCard: function(card) {
+		this.actualForm.getForm().loadRecord(card);
+		this.displayPanel.getForm().loadRecord(card);
 	},
 
-	reloadCard: function(eventParams) {
-		this.enable();
+	getForm: function() {
+		return this.actualForm.getForm();
 	},
 
-	onAddCardButtonClick: function() {
-		this.disable();
+	syncForms: function() {
+		var v = this.actualForm.getValue();
+		this.displayPanel.setValue(v);
+
+		return v;
 	},
 
 	disableModify: function() {
-		if (this.currentCardPrivileges && this.currentCardPrivileges.write) {
+		if (this.privWrite) {
 			this.modifyNoteButton.enable();
 		} else {
 			this.modifyNoteButton.disable();
@@ -146,6 +148,7 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.saveButton.disable();
 			this.cancelButton.disable();
 		}
+
 		if (this.rendered) {
 			this.getLayout().setActiveItem(this.displayPanel.id);
 		} else {
@@ -162,6 +165,50 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.cancelButton.enable();
 		}
 		this.getLayout().setActiveItem(this.actualForm.id);
+	},
+
+	updateWritePrivileges: function(privWrite) {
+		this.privWrite = privWrite;
+	},
+
+	// to implement in subclass to have extra button on instantiation
+	getExtraButtons: Ext.emptyFn,
+
+	
+	// DEPRECATED
+
+	reloadCard: function(eventParams) { _deprecated();
+		this.enable();
+	},
+
+	onAddCardButtonClick: function() { _deprecated();
+		this.disable();
+	},
+
+	onClassSelected: function() { _deprecated();
+		this.disableModify();
+		this.disable();
+	},
+	
+	onCardSelected: function(card) { _deprecated();
+		var idClass = card.raw.IdClass;
+		if (CMDBuild.Utils.isSimpleTable(idClass)) {
+			this.disable();
+			return;
+		} else {
+			this.enable();
+		}
+	
+		this.currentCardId = card.get("Id");
+		this.currentCardPrivileges = {
+			create: card.raw.priv_create,
+			write: card.raw.priv_write
+		};
+	
+		this.reset();
+		this.loadCard(card);
+	
+		this.disableModify();
 	}
 });
 

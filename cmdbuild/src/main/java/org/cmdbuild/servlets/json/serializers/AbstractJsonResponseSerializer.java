@@ -51,16 +51,21 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(BooleanAttributeType attributeType) {
+				valueForJson = value;
 			}
 
 			@Override
 			public void visit(DateTimeAttributeType attributeType) {
-				valueForJson = DATE_TIME_FORMATTER.print((DateTime) value);
+				if (value != null) {
+					valueForJson = DATE_TIME_FORMATTER.print((DateTime) value);
+				}
 			}
 
 			@Override
 			public void visit(DateAttributeType attributeType) {
-				valueForJson = DATE_FORMATTER.print((DateTime) value);
+				if (value != null) {
+					valueForJson = DATE_FORMATTER.print((DateTime) value);
+				}
 			}
 
 			@Override

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMMenuAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMMenuAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modmenu.menu_root,
 		cmName: "menu",
