@@ -36,7 +36,12 @@
 		},
 
 		updateViewPrivilegesForCard: function(card) {
-			this.view.updateWritePrivileges(this.card.raw.priv_write);
+			var priv = false;
+			if (card && card.raw) {
+				priv = card.raw.priv_write;
+			}
+
+			this.view.updateWritePrivileges(priv);
 		},
 
 		onSaveNoteClick: function() {
