@@ -98,16 +98,17 @@
 			}
 		});
 	}
-	
+
 	function successCB() {
 		resetSession.call(this);
 		this.grid.load();
+		_CMCache.reloadReportStores();
 		this.form.disableModify();
 		this.form.reset();
 		this.form.step2.removeAll();
 		this.form.showStep1();
 	}
-	
+
 	function insertJasperReport() {
 		CMDBuild.LoadMask.get().show();
 		this.form.step2.getForm().submit({

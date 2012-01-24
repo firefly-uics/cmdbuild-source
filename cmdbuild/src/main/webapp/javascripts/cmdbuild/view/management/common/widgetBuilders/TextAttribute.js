@@ -1,3 +1,8 @@
+(function() {
+	TEXT_EDITOR_TYPE = {
+		plain: "PLAIN",
+		html: "HTML"
+	};
 /**
  * @class CMDBuild.WidgetBuilders.TextAttribute
  * @extends CMDBuild.WidgetBuilders.StringAttribute
@@ -11,7 +16,27 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.TextAttribute, CMDBuild.WidgetBuilders.S
  * @return Ext.form.TextArea
  */
 CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(attribute) {
-	var attr = Ext.apply({},attribute);
-	attr.len = this.MAXWIDTH + 1; // MAXWIDTH is the length for switching to a textarea
-	return CMDBuild.WidgetBuilders.TextAttribute.superclass.buildAttributeField(attr);
+	if (attribute.editorType == TEXT_EDITOR_TYPE.plain) {
+		var attr = Ext.apply({},attribute);
+		attr.len = this.MAXWIDTH + 1; // MAXWIDTH is the length for switching to a textarea
+		return CMDBuild.WidgetBuilders.TextAttribute.superclass.buildAttributeField(attr);
+	} else {
+		var editor = new CMDBuild.view.common.field.CMHtmlEditorField({
+			labelAlign: "right",
+			labelWidth: CMDBuild.LABEL_WIDTH,
+ 			fieldLabel: attribute.description,
+			width: CMDBuild.BIG_FIELD_WIDTH + 100,
+ 			name: attribute.name,
+ 			disabled: false,
+			border: false,
+			frame: false,
+			enableLinks: true,
+			enableSourceEdit: true,
+			enableFont: false,
+			resizable: true
+		});
+
+		return editor;
+	}
 };
+})();

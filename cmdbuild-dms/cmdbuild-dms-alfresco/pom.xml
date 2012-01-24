@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>cmdbuild-dms</artifactId>
 		<groupId>org.cmdbuild</groupId>
-		<version>1.4.0.6-SNAPSHOT</version>
+		<version>1.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>cmdbuild-dms-alfresco</artifactId>
 	<name>CMDBuild DMS Alfresco</name>
@@ -39,6 +39,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-commons</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis</artifactId>
 		</dependency>
 	</dependencies>
 </project>

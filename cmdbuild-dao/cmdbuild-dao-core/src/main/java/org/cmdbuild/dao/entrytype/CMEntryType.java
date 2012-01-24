@@ -1,6 +1,8 @@
 package org.cmdbuild.dao.entrytype;
 
-public interface CMEntryType extends Deactivable {
+import org.cmdbuild.auth.CMPrivilegedObject;
+
+public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 
 	void accept(CMEntryTypeVisitor visitor);
 

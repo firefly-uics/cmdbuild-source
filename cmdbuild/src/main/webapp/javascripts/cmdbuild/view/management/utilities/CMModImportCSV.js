@@ -146,7 +146,7 @@
 			this.store.clearFilter(false);
 			var nonValid = this.validFlag.getValue();
 			var query = this.searchField.getRawValue().toUpperCase();
-			
+
 			if (query == "") {
 				if (nonValid) {
 					this.store.filterBy(isInvalid, this);
@@ -189,13 +189,16 @@
 
 				if (a) {
 					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(a);
-					var editor = CMDBuild.Management.FieldManager.getFieldForAttr(a, readOnly = false, skipSubFields = true);
+					var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(a);
 					editor.hideLabel = true;
 
 					if (a.type == "REFERENCE" || a.type == "LOOKUP") {
 						fields.push(header.dataIndex); // to have both name and name_value
 						header.dataIndex = removeValuePostfix(header.dataIndex);
-						editor.on('select', updateStoreRecord, this);
+						editor.on("select", updateStoreRecord, this);
+						editor.on("cmdbuild-reference-selected", function(record, field) {
+							updateStoreRecord.call(this, field, record);
+						}, this);
 					}
 
 					if (header) {
@@ -218,22 +221,26 @@
 			this.store.each(function(r) {
 				if (!r.dirty) {
 					return;
-				} else {
-					var changes = r.getChanges();
-					var toPush = r.data;
-					for (var invalid in toPush.invalid_fields) {
-						if (changes[invalid]) {
-							continue;
-						}
-						toPush[invalid] = invalid_fields[invalid];
-					}
-					data.push(toPush);
 				}
+
+				var changes = r.getChanges(),
+					toPush = r.data,
+					invalid_fields = toPush.invalid_fields;
+
+				for (var invalid in invalid_fields) {
+					if (changes[invalid]) {
+						continue;
+					}
+
+					toPush[invalid] = invalid_fields[invalid];
+				}
+
+				data.push(toPush);
 			});
 
 			return data;
 		},
-		
+
 		removeAll: function() {
 			this.store.removeAll();
 		}
@@ -246,9 +253,9 @@
 				return classAttr;
 			}
 		}
-		return null
+		return null;
 	}
-	
+
 	function isInvalidAndFilterQuery(record, id) {
 		var query = this.searchField.getRawValue().toUpperCase();
 		if (this.isInvalid(record, id)) {
@@ -288,7 +295,7 @@
 		}
 		return false;
 	}
-	
+
 	function isInvalidAndFilterQuery(record, id) {
 		var query = this.searchField.getRawValue().toUpperCase();
 		if (isInvalid.call(this, record, id)) {
@@ -297,12 +304,12 @@
 			return false;
 		}
 	}
-	
+
 	function renderer(value, metadata, record, rowindex, collindex, store, grid, nameColumn) {
-		var cardId = record.get("Id");
-		var storeRecordIndex = grid.store.find("Id", cardId)
-		var storeRecord = grid.store.getAt(storeRecordIndex)
-		
+		var cardId = record.get("Id"),
+			storeRecordIndex = grid.store.find("Id", cardId),
+			storeRecord = grid.store.getAt(storeRecordIndex);
+
 		if ( !value ) {
 			var invalid_attr_list = record.get("invalid_fields");
 			if (invalid_attr_list[nameColumn]) {
@@ -311,26 +318,38 @@
 				return	'<span class="importcsv-empty-cell"></span>';
 			}
 		} else {	
-			if (this.type == "REFERENCE" || this.type == "LOOKUP") 
+			if (this.type == "REFERENCE" || this.type == "LOOKUP") {
 				return storeRecord.get(nameColumn+"_value");
-			else 
+			} else if (this.type == "DATE") {
+				if (typeof storeRecord.get(nameColumn) == "string") {
+					return storeRecord.get(nameColumn);
+				} else {
+					var h = grid.getHeaderAtIndex(collindex);
+					return h.field.getRawValue();
+				}
+			} else {
 				return storeRecord.get(nameColumn);
+			}
 		}
 	}
-	
-	function updateStoreRecord(field, record, index) {
-		record = record[0];
-		var sm = this.getSelectionModel();
-		var gridRecord = sm.getSelection()[0];
-		var storeRecordIndex = this.store.find("Id", gridRecord.data["Id"]);
-		var storeRecord = this.store.getAt(storeRecordIndex);
+
+	function updateStoreRecord(field, record) {
+		if (Ext.isArray(record)) {
+			record = record[0];
+		}
+
+		var sm = this.getSelectionModel(),
+			gridRecord = sm.getSelection()[0],
+			storeRecordIndex = this.store.find("Id", gridRecord.data["Id"]),
+			storeRecord = this.store.getAt(storeRecordIndex);
+
 		storeRecord.set(field.name+"_value", record.data.Description);
 		storeRecord.set(field.name, record.data.Id);
 		gridRecord.set(field.name, record.data.Id);
 
 		return false;
 	}
-	
+
 	function removeValuePostfix(name) {
 		var index = name.lastIndexOf("_value");
 		return name.slice(0,index);

@@ -18,7 +18,7 @@
 	User user = userCtx.getUser();
 	Group defaultGroup = userCtx.getDefaultGroup();
 	FilterService.clearFilters(null, null);
-	String extVersion = "4.0.0";
+	String extVersion = "4.0.7";
 %>
 
 <html>
@@ -28,7 +28,7 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" />
 
-		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.0-beta1/resources/css/extensible-all.css" />
+		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.0/resources/css/extensible-all.css" />
 
 		<link rel="icon" href="images/favicon.ico" />
 		

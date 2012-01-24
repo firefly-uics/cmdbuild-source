@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.setup;
 
-	Ext.define("CMDBuild.view.administraton.accordion.CMConfigurationAccordion", {
+	Ext.define("CMDBuild.view.administration.accordion.CMConfigurationAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: tr.setupTitle,
 		cmName: "setup",

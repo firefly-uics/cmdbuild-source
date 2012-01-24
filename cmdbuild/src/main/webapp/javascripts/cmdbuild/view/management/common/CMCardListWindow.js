@@ -3,6 +3,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 	idClass: undefined, // passed at instantiation
 	filterType: undefined, // passed at instantiation
+	selModel: undefined, // if undefined is used the default selType
 	selType: 'rowmodel', // to allow the opportunity to pass a selection model to the grid
 	multiSelect: false,
 	extraParams: {},
@@ -19,7 +20,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			scope: this
 		});
 
-		this.grid = new CMDBuild.view.management.common.CMCardGrid({
+		var gridConfig = {
 			filterCategory: this.filterType || this.id,
 			filterSubcategory: this.id,
 			cmAdvancedFilter: false,
@@ -30,7 +31,15 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			selType: this.selType,
 			multiSelect: this.multiSelect,
 			CQL: this.extraParams
-		});
+		};
+
+		if (typeof this.selModel == "undefined") {
+			gridConfig["selType"] = this.selType;
+		} else {
+			gridConfig["selModel"] = this.selModel;
+		}
+
+		this.grid = new CMDBuild.view.management.common.CMCardGrid(gridConfig);
 
 		this.filter = new CMDBuild.Management.Attributes({
 			attributeList: {}, 
@@ -104,20 +113,23 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 		var addCardButton = new CMDBuild.AddCardMenuButton();
 		var entry = _CMCache.getClassById(this.idClass) || _CMCache.getProcessById(this.idClass);
 		addCardButton.updateForEntry(entry);
-		
+
 		addCardButton.on("cmClick", function buildTheAddWindow(p) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({
-				classId: p.classId,
-				cmEditMode: true,
 				withButtons: true,
 				title: p.className
-			}).show();
+			});
+
+			new CMDBuild.controller.management.common.CMCardWindowController(w, {
+				cmEditMode: true,
+				card: null,
+				entryType: p.classId
+			});
+			w.show();
 
 			w.on("destroy", function() {
 				this.grid.reload();
 			}, this);
-
-			new CMDBuild.controller.management.common.CMCardWindowController(w);
 
 		}, this);
 
