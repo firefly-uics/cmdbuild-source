@@ -18,9 +18,9 @@
             },
             "domain": "Domaine",
             "editorType": {
-               "html": "<em>Html</em>",
-               "label": "<em>Editor type</em>",
-               "plain": "<em>Plain text</em>"
+               "html": "Html",
+               "label": "Type éditeur",
+               "plain": "Texte plein"
             },
             "field_hidden": "Caché",
             "field_read": "Lecture Seule",
@@ -145,42 +145,42 @@
          "widgets": {
             ".OpenReport": {
                "fields": {
-                  "force": "<em>Force format</em>",
-                  "presets": "<em>Report attributes</em>",
-                  "report": "<em>Report</em>"
+                  "force": "Forcé format",
+                  "presets": "Rapport attributs",
+                  "report": "Rapport"
                },
                "presetGrid": {
-                  "attribute": "<em>Attribute</em>",
-                  "value": "<em>Value</em>"
+                  "attribute": "Attribut",
+                  "value": "Valeur"
                },
-               "title": "<em>Create report</em>"
+               "title": "Créer rapport"
             },
             ".Calendar": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "start": "<em>Start date</em>",
-                  "end": "<em>End date</em>",
-                  "title": "<em>Event title</em>",
-                  "filter": "<em>CQL Filter</em>",
-                  "defaultDate": "<em>Default date to open</em>"
+                  "target": "Class cible",
+                  "start": "Date début",
+                  "end": "Date fin",
+                  "title": "Titre",
+                  "filter": "Filtre",
+                  "defaultDate": "Date par défaut à l'ouverture"
                },
-               "title": "<em>Calendar</em>"
+               "title": "Calendrier"
             },
             ".Ping": {
                "fields": {
-                  "address":"<em>Address to ping</em>",
-                  "count": "<em>Number of pings</em>",
-                  "templates": "<em>Templates</em>"
+                  "address":"Adresse pour ping",
+                  "count": "Nombre de pings",
+                  "templates": "Modèles"
                },
-               "title": "<em>Ping</em>"
+               "title": "Ping"
             },
             "commonFields": {
-               "active": "<em>Active</em>",
-               "alwaysenabled": "<em>Always enabled</em>",
-               "buttonLabel": "<em>Button label</em>",
-               "type": "<em>Type</em>"
+               "active": "Active",
+               "alwaysenabled": "Toujours actif",
+               "buttonLabel": "Nom du bouton",
+               "type": "Type"
             },
-            "title": "<em>Widget</em>"
+            "title": "Widget"
          }
       },
       "modLookup": {
@@ -447,9 +447,9 @@
             "sessiontimeout": "Session expirée (en secondes)",
             "startingClass": "Default class",
             "tabs_position": {
-               "bottom": "<em>Bottom</em>",
-               "label": "<em>Tabs position in card panel</em>",
-               "top": "<em>Top</em>"
+               "bottom": "Bas",
+               "label": "Position dans le panneau",
+               "top": "Haut"
             },
             "title": "CMDBuild Setup"
          },
@@ -1023,7 +1023,7 @@
          "delete_card_confirm": "Etes-vous certain de vouloir supprimer le processus?",
          "extattrs": {
             "attachments": {"must_save_to_add": "Vous ne pouvez pas ajouter une pièce jointe avant de sauvegarder l'activité"},
-            "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
+            "calendar": {"wrong_config": "Le calendrier n'est pas bien configuré"},
             "createreport": {"format_label": "Format"},
             "linkcards": {"required": "Selectionnez quelques fiches -"},
             "manageemail": {
@@ -1045,8 +1045,8 @@
                "subjecthdr": "Sujet",
                "tofld": "A",
                "viewicon": "Vue",
-               "mailsAreChanged":"<em>The generated e-mails are changed</em>",
-               "regenerates": "<em>Regenerate e-mails</em>"
+               "mailsAreChanged":"La génération des emails a changé",
+               "regenerates": "Regénerer les e-mails"
             },
             "managerelation": {"required": "Sélectionnez les relations -"},
             "notes": {"must_save_to_modify": "Vous ne pouvez pas modifier les notes avant de sauver votre activité"}
