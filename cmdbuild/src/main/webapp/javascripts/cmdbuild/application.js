@@ -1,6 +1,6 @@
 (function() {
 	Ext.ns("CMDBuild");
-	
+
 	// global constants
 	CMDBuild.LABEL_WIDTH = 150;
 
@@ -41,6 +41,18 @@
 		}
 	}
 
+	_deprecated = function() {
+		var name = "", className = "";
+
+		try {
+			name  = arguments.callee.caller.$name;
+			className = arguments.callee.caller.$owner.$className;
+		} catch (e) {
+			_debug("DEPRECATED", _trace());
+		}
+		_debug("DEPRECATED: " + className + "." + name);
+	}
+
 	// TODO: Read from real configuration
 	CMDBuild.Config.defaultTimeout = 90;
 
@@ -58,11 +70,3 @@
 	
 	Ext.enableFx = false;
 })();
-
-function getCurrentLanguage() {
-	var languageParam = Ext.urlDecode(window.location.search.substring(1))['language'];
-	if (languageParam) 
-		return languageParam;
-	else
-		return CMDBuild.Config.cmdbuild.language;
-}

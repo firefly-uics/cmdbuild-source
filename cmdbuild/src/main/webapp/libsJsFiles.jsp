@@ -3,6 +3,7 @@
 
 <script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 <script type="text/javascript" src="javascripts/flash/swfobject.js"></script>
+
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
 
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/RowExpander.js"></script>
@@ -19,4 +20,9 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/plugins/TreeEditing.js"></script>
 
 <!-- Calendar -->
-<script type="text/javascript" src="javascripts/extensible-1.5.0-beta1/extensible-all-debug.js"></script>
+<!-- for a bug in the library is needed to import manually the EventMappings and EventModel files -->
+	<script type="text/javascript" src="javascripts/extensible-1.5.0/src/calendar/data/EventMappings.js"></script>
+	<script type="text/javascript" src="javascripts/extensible-1.5.0/src/calendar/data/EventModel.js"></script>
+<!-- remove them when update extensible -->
+
+<script type="text/javascript" src="javascripts/extensible-1.5.0/extensible-all-debug.js"></script>

@@ -1,8 +1,5 @@
 package endtoend.pageobjects;
 
-import endtoend.pageobjects.PageObject;
-import endtoend.pageobjects.WebSite;
-
 public class AdministrationPage extends PageObject {
 	public static String URL = WebSite.BASE_URL + "administration.jsp";
 	

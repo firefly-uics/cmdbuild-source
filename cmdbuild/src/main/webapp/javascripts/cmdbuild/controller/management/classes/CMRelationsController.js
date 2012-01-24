@@ -5,12 +5,10 @@
 	var tr = CMDBuild.Translation.management.modcard;
 
 	Ext.define("CMDBuild.controller.management.classes.CMCardRelationsController", {
-		constructor: function(v, sc) {
-			this.view = v;
-			this.superController = sc;
+		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
-			this.currentClass = null;
-			this.currentCard = null;
+		constructor: function(v, sc) {
+			this.callParent(arguments);
 			this.hasDomains = false;
 
 			this.callBacks = {
@@ -29,22 +27,26 @@
 				}
 			}, this);
 
-			this.view.addRelationButton.on("cmClick", this.onAddRelationButtonClick, this);
+			this.mon(this.view, this.view.CMEVENTS.openGraphClick, this.onShowGraphClick, this);
+			this.mon(this.view, this.view.CMEVENTS.addButtonClick, this.onAddRelationButtonClick, this);
+			this.mon(this.view, 'beforeitemclick', cellclickHandler, this);
+			this.mon(this.view, "itemdblclick", onItemDoubleclick, this);
+			this.mon(this.view, "activate", this.loadData, this);
 
-			this.view.on('beforeitemclick', cellclickHandler, this);
-			this.view.on("itemdblclick", onItemDoubleclick, this);
-			this.view.on("activate", this.loadData, this);
+			this.CMEVENTS = {
+				serverOperationSuccess: "cm-server-success"
+			};
+
+			this.addEvents(this.CMEVENTS.serverOperationSuccess);
 		},
 
-		onEntrySelect: function(selection) {
-			var cachedEntryType = _CMCache.getEntryTypeById(selection.get("id"));
+		onEntryTypeSelected: function(entryType) {
+			this.callParent(arguments);
 
-			this.currentCard = null;
+			this.card = null;
 
-			if (!cachedEntryType || cachedEntryType.get("tableType") == "simpletable") {
-				this.currentClass = null;
-			} else {
-				this.currentClass = selection;
+			if (!this.entryType || this.entryType.get("tableType") == "simpletable") {
+				this.entryType = null;
 			}
 
 			this.view.disable();
@@ -53,24 +55,24 @@
 
 
 		onCardSelected: function(card) {
-			this.currentCard = card;
-			this.currentCardPrivileges = {
-				create: card.get("priv_create"),
-				write: card.get("priv_write")
-			};
-			this.updateCurrentClass(card);
+			this.callParent(arguments);
+			this.view.clearStore();
+			this.view.disable();
 
-			if (this.hasDomains) {
-				this.view.enable();
-				this.loadData();
-			} else {
-				this.view.clearStore();
+			if (card) {
+				this.updateCurrentClass(card);
+
+				if (this.hasDomains) {
+					this.view.enable();
+					this.loadData();
+				}
 			}
 		},
 
 		updateCurrentClass: function(card) {
 			var classId = card.get(CLASS_ID_AS_RETURNED_BY_GETCARDLIST),
 				currentClass = _CMCache.getEntryTypeById(classId);
+
 			if (this.currentClass != currentClass) {
 				if (!currentClass || currentClass.get("tableType") == "simpletable") {
 					currentClass = null;
@@ -81,7 +83,7 @@
 		},
 
 		loadData: function() {
-			if (this.currentCard == null || !tabIsActive(this.view)) {
+			if (this.card == null || !tabIsActive(this.view)) {
 				return;
 			}
 
@@ -92,8 +94,8 @@
 
 			CMDBuild.ServiceProxy.relations.getList({
 				params: {
-					Id: this.currentCard.get("Id"),
-					IdClass: this.currentCard.get("IdClass"),
+					Id: this.card.get("Id"),
+					IdClass: this.card.get("IdClass"),
 					domainlimit: CMDBuild.Config.cmdbuild.relationlimit
 				},
 				scope: this,
@@ -124,17 +126,19 @@
 
 			var me = this,
 				a = new CMDBuild.view.management.classes.relations.CMEditRelationWindow({
-					currentCard: this.currentCard,
+					currentCard: this.card,
 					relation: {
 						dst_cid: d.dst_cid,
 						dom_id: d.dom_id,
 						rel_id: -1,
 						src: d.src
 					},
-					selType: isMany ? "checkboxmodel" : "rowmodel",
-					multiSelect: isMany,
+					selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+						mode: isMany ? "MULTI" : "SINGLE",
+						avoidCheckerHeader: true,
+						idProperty: "Id" // required to identify the records for the data and not the id of ext
+					}),
 					filterType: this.view.id,
-
 					successCb: function() {
 						me.onAddRelationSuccess();
 					}
@@ -159,7 +163,11 @@
 					filterType: this.view.id,
 					successCb: function() {
 						me.onEditRelationSuccess();
-					}
+					},
+					selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
+						mode: "SINGLE",
+						idProperty: "Id" // required to identify the records for the data and not the id of ext
+					})
 				}).show();
 		},
 
@@ -204,11 +212,7 @@
 		// overridden in CMManageRelationController
 		defaultOperationSuccess: function() {
 			if (true) { // TODO Check if the modified relation was associated to a reference
-				var card = this.currentCard;
-				this.superController.openCard({
-					Id: card.get(ID_AS_RETURNED_BY_GETCARDLIST),
-					IdClass: card.get(CLASS_ID_AS_RETURNED_BY_GETCARDLIST)
-				});
+				this.fireEvent(this.CMEVENTS.serverOperationSuccess);
 			} else {
 				this.loadData();
 			}
@@ -223,18 +227,30 @@
 		},
 
 		onOpenAttachmentClick: function(model) {
-			new CMDBuild.controller.management.common.CMAttachmentsWindowController(
-				new CMDBuild.view.management.common.CMAttachmentsWindow({
-					cardInfo: modelToCardInfo(model)
-				}).show()
-			);
+			var w = new CMDBuild.view.management.common.CMAttachmentsWindow();
+			new CMDBuild.controller.management.common.CMAttachmentsWindowController(w,modelToCardInfo(model));
+			w.show();
+		}
+	});
+
+
+	Ext.define("CMDBuild.controller.management.workflow.CMActivityRelationsController", {
+		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
+		onCardSelected: function(card) {
+			if (card && card._cmNew) {
+				this.card = card;
+				this.view.clearStore();
+				this.view.disable();
+			} else {
+				this.callParent(arguments);
+			}
 		}
 	});
 
 	function modelToCardInfo(model) {
 		return {
 			Id: model.get("dst_id"),
-			ClassId: model.get("dst_cid"),
+			IdClass: model.get("dst_cid"),
 			Description: model.get("dst_desc")
 		};
 	}
@@ -243,18 +259,22 @@
 		var w = new CMDBuild.view.management.common.CMCardWindow({
 			cmEditMode: editable,
 			withButtons: editable,
-			classId: model.get("dst_cid"), // classid of the destination
-			cardId: model.get("dst_id"), // id of the card destination
 			title: model.get("label") + " - " + model.get("dst_desc")
 		});
 
 		if (editable) {
 			w.on("destroy", function() {
-				this.loadData();
+				// cause the reload of the main card-grid, it is needed
+				// for the case in which I'm editing the target card
+				this.fireEvent(this.CMEVENTS.serverOperationSuccess);
 			}, this, {single: true});
 		}
-		
-		new CMDBuild.controller.management.common.CMCardWindowController(w);
+
+		new CMDBuild.controller.management.common.CMCardWindowController(w, {
+			entryType: model.get("dst_cid"), // classid of the destination
+			card: model.get("dst_id"), // id of the card destination
+			cmEditMode: editable
+		});
 		w.show();
 	}
 
@@ -285,8 +305,8 @@
 
 			CMDBuild.ServiceProxy.relations.getList({
 				params: {
-					Id: this.currentCard.get("Id"),
-					IdClass: this.currentCard.get("IdClass"),
+					Id: this.card.get("Id"),
+					IdClass: this.card.get("IdClass"),
 					domainId: node.get("dom_id"),
 					src: node.get("src")
 				},

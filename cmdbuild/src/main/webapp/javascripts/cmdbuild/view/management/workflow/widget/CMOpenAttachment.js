@@ -14,10 +14,6 @@
 			});
 
 			this.callParent(arguments);
-
-			this.mon(this, "deactivate", function() {
-				this.disable();
-			}, this);
 		},
 
 		configure: function(c) {
@@ -41,7 +37,21 @@
 
 		cmActivate: function() {
 			this.enable();
+
+			// rendering issues, call showBackButton only after	
+			// that the  panel did actually activated
+			this.mon(this, "activate", this.showBackButton, this, {single: true});
+
 			this.ownerCt.setActiveTab(this);
+		},
+
+		hideBackButton: function() {
+			this.backToActivityButton.hide();
+		},
+
+		showBackButton: function() {
+			this.backToActivityButton.show();
+			this.ownerCt.doLayout();
 		}
 	});
 })();

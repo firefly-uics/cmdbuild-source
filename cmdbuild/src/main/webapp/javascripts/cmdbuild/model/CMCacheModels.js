@@ -30,6 +30,11 @@
 			{name: "priv_write",type: 'boolean'},
 		],
 
+		constructor: function() {
+			this.callParent(arguments);
+			this._widgets = [];
+		},
+
 		deleteGeoAttr: function(a) {
 			var attrs = this.getGeoAttrs(),
 				next;
@@ -103,6 +108,30 @@
 			}
 
 			return out;
+		},
+
+		setWidgets: function(widgets) {
+			this._widgets = widgets || [];
+		},
+
+		getWidgets: function() {
+			return this._widgets;
+		},
+
+		addWidget: function(w) {
+			this._widgets.push(w);
+		},
+
+		removeWidgetById: function(id) {
+			var ww = this._widgets;
+			for (var i=0, l=ww.length; i<l; ++i) {
+				var widget = ww[i];
+				if (widget.id == id) {
+					delete ww[i];
+					ww.splice(i, 1);
+					return;
+				}
+			}
 		}
 	});
 	

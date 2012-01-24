@@ -47,14 +47,7 @@
 				frame: false,
 				region: "center",
 				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible,
-				viewConfig: {
-					// We are not using autoScroll because we are
-					// not interested in horizontal scrolling
-					style: {
-						"overflow-y": "auto"
-					}
-				}
+				rootVisible: this.rootVisible
 			});
 
 			Ext.apply(this, {
@@ -78,7 +71,11 @@
 
 		selectNodeById: function(node) {
 			var sm = this.getSelectionModel();
-			node = typeof node == "object" ? node : this.store.getNodeById(node);
+
+			if (typeof node != "object") {
+				// this.store.getNodeById(node) does not find it
+				node = this.store.getRootNode().findChild("id", node, deep=true);
+			}
 
 			if (node) {
 				sm.select(node);
@@ -86,7 +83,7 @@
 					this.expand();
 				});
 			} else {
-				_debug("I have not find a node with id " + nodeId);
+				_debug("I have not found a node with id " + node);
 			}
 		},
 
@@ -120,7 +117,7 @@
 		},
 		
 		getNodeById: function(id) {
-			return this.store.getNodeById(id);
+			return this.store.getRootNode().findChild("id", id, deep=true);
 		},
 		
 		getRootNode: function() {
@@ -129,7 +126,7 @@
 
 		getAncestorsAsArray: function(nodeId) {
 			var out = [],
-				node = this.getNodeById(nodeId);
+				node = this.store.getRootNode().findChild("id", nodeId, deep=true);
 
 			if (node) {
 				out.push(node);

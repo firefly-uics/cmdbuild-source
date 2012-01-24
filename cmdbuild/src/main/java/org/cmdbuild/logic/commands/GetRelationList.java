@@ -34,7 +34,7 @@ public class GetRelationList extends AbstractGetRelation {
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
 		final CMDomain dom;
 		if (domainWithSource != null) {
-			dom = view.findDomain(domainWithSource.domainId);
+			dom = view.findDomain(domainWithSource.domainNameOrId);
 			Validate.notNull(dom);
 		} else {
 			dom = anyDomain();

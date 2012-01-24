@@ -15,7 +15,7 @@
 	UserContext userCtx = sessionVars.getCurrentUserContext();
 	User user = userCtx.getUser();
 	Group defaultGroup = userCtx.getDefaultGroup();
-	String extVersion = "4.0.0";
+	String extVersion = "4.0.7";
 	if (!userCtx.privileges().isAdmin())
 		response.sendRedirect("management.jsp");
 %>

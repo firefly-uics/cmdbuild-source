@@ -2,6 +2,9 @@
 	var TRUE = "1";
 
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMLinkCardsMapController", {
+		mixins: {
+			observable: "Ext.util.Observable"
+		},
 		/*
 		 * conf is an object like
 		 * {
@@ -15,45 +18,41 @@
 		constructor: function(conf) {
 			Ext.apply(this, conf);
 
-			var multipleSelect = this.NoSelect!=TRUE && !this.SingleSelect;
-			
-			this.map = this.view.getMap();
-
 			this.classId = this.widgetConf.ClassId;
 
-			this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
-				hover: false,
-				toggle: true,
-				clickout: false,
-				multiple: multipleSelect,
-				multipleKey: "shiftKey"
-			});
-
-			this.map.addControl(this.selectControl);
-			this.selectControl.activate();
-
-			this.popupControl = new CMDBuild.Management.PopupController();
-			this.map.addControl(this.popupControl);
-			this.popupControl.activate();
+			var multipleSelect = this.NoSelect!=TRUE && !this.SingleSelect,
+				referredEntryType = _CMCache.getEntryTypeById(this.classId);
 
 			this.lastSelection = null;
 
-			this.view.mon(this.view, "addlayer", onLayerAdded, this);
-			this.view.mon(this.view, "removelayer",onLayerRemoved,this);
+			this.mon(this.view, "addlayer", onLayerAdded, this);
+			this.mon(this.view, "removelayer",onLayerRemoved,this);
 
-			this.model.on("select", function(selection) {
-				this.selectByCardId(selection);
-			}, this);
+			this.mon(this.model, "select", this.selectByCardId, this);
+			this.mon(this.model, "deselect", this.deselectByCardId, this);
 
-			this.model.on("deselect", function(selection) {
-				this.deselectByCardId(selection);
-			}, this);
+			this.mon(this.view, "render", function() {
+				this.map = this.view.getMap();
 
-			var referredEntryType = _CMCache.getEntryTypeById(this.classId);
-			if (referredEntryType) {
-				this.map.update(referredEntryType, withEditLayer = false);
-			}
+				this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
+					hover: false,
+					toggle: true,
+					clickout: false,
+					multiple: multipleSelect,
+					multipleKey: "shiftKey"
+				});
+	
+				this.map.addControl(this.selectControl);
+				this.selectControl.activate();
+	
+				this.popupControl = new CMDBuild.Management.PopupController();
+				this.map.addControl(this.popupControl);
+				this.popupControl.activate();
 
+				if (referredEntryType) {
+					this.map.update(referredEntryType, withEditLayer = false);
+				}
+			}, this, {single: true});
 		},
 
 		buildEditControls: function() {
@@ -65,18 +64,22 @@
 		},
 
 		selectByCardId: function(cardId) {
-			var feature = getFeatureByMasterCard.call(this, cardId);
+			if (this.map) {
+				var feature = getFeatureByMasterCard.call(this, cardId);
 
-			if (feature != null) {
-				this.selectControl.select(feature);
+				if (feature != null) {
+					this.selectControl.select(feature);
+				}
 			}
 		},
 
 		deselectByCardId: function(cardId) {
-			var feature = getFeatureByMasterCard.call(this, cardId);
-			
-			if (feature != null) {
-				this.selectControl.unselect(feature);
+			if (this.map) {
+				var feature = getFeatureByMasterCard.call(this, cardId);
+
+				if (feature != null) {
+					this.selectControl.unselect(feature);
+				}
 			}
 		},
 

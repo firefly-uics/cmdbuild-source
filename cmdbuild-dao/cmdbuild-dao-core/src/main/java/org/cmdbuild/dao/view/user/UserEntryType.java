@@ -80,4 +80,8 @@ public abstract class UserEntryType implements CMEntryType {
 		// TODO Add username
 		return inner().toString();
 	}
+
+	public final String getPrivilegeId() {
+		return inner().getPrivilegeId();
+	}
 }
