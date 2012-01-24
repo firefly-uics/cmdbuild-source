@@ -30,6 +30,24 @@
 		onDomainSelected: function(domain) {
 			this.currentDomain = domain;
 			this.view.onDomainSelected(domain);
+		},
+
+		// synch the chache
+		anAttributeWasMoved: function(savedAttributes) {
+			if (this.currentDomain, savedAttributes) {
+				var oldAttributes = this.currentDomain.get("attributes");
+				for (var i = 0; i<savedAttributes.length; ++i) {
+					var newAttr = savedAttributes[i];
+
+					for (var j=0; j<oldAttributes.length; ++j) {
+						oldAttr = oldAttributes[j];
+						if (oldAttr.name == newAttr.name) {
+							oldAttr.index = newAttr.idx;
+							break;
+						}
+					}
+				}
+			}
 		}
 	});
 

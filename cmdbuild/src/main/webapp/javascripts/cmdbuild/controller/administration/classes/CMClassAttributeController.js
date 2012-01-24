@@ -16,6 +16,7 @@
 				rowList.push({ name: rec.get("name"), idx: i+1 });
 			}
 
+			var me = this;
 			CMDBuild.Ajax.request({
 				url: 'services/json/schema/modclass',
 				method: 'POST',
@@ -23,6 +24,9 @@
 					method: 'reorderAttribute',
 					tableId: this.getCurrentEntryTypeId(),
 					attributes: Ext.JSON.encode(rowList)
+				},
+				success: function() {
+					me.anAttributeWasMoved(rowList);
 				}
 			});
 		},
@@ -33,7 +37,9 @@
 
 		getCurrentEntryTypeId: function() {
 			throw "Unimplemented";
-		}
+		},
+
+		anAttributeWasMoved: function(attributeList) {}
 	});
 
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
