@@ -23,25 +23,43 @@
 	});
 
 	function onSaveButtonClick() {
-		if (this.gridSM.cmReverse) {
-			Ext.Msg.show({
-				title: CMDBuild.Translation.warnings.warning_message,
-				msg: CMDBuild.Translation.warnings.only_filtered,
-				buttons: Ext.Msg.OKCANCEL,
-				fn: function(button) {
-					if (button == "ok") {
-						save.call(this);
-					}
-				},
-				icon: Ext.MessageBox.WARNING,
-				scope: this
-			});
-		} else {
-			save.call(this);
-		}
+		var cardToModifyMSG = "<p>" + CMDBuild.Translation.management.modutilities.bulkupdate.countMessage + ".</p>",
+			me = this;
+
+		CMDBuild.LoadMask.get().show();
+		CMDBuild.Ajax.request({
+			url: 'services/json/management/modcard/updatebulkcards',
+			params: builSaveParams.call(me),
+			scope: me,
+			success: function(response, request, decordedResp) {
+				var msg = "";
+				if (me.gridSM.cmReverse) {
+					// Add the info that will be modified only the card in the filter
+					msg += "<p>" + CMDBuild.Translation.warnings.only_filtered + ".</p>";
+				}
+
+				msg += Ext.String.format(cardToModifyMSG, decordedResp.count);
+				CMDBuild.LoadMask.get().hide();
+				showWarningMsg(me, msg);
+			}
+		});
 	}
 
-	function save() {
+	function showWarningMsg(me, msg) {
+		Ext.Msg.show({
+			title: CMDBuild.Translation.warnings.warning_message,
+			msg: msg,
+			buttons: Ext.Msg.OKCANCEL,
+			icon: Ext.MessageBox.WARNING,
+			fn: function(button) {
+				if (button == "ok") {
+					save.call(me);
+				}
+			}
+		});
+	}
+
+	function save(confirm) {
 		if (!this.gridSM.cmReverse && !this.gridSM.hasSelection()) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
@@ -49,15 +67,15 @@
 			return;
 		}
 
-		var p = builSaveParams.call(this);
-		p.confirmed = true;
+		var params = builSaveParams.call(this)
+		params.confirmed = true;
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.Ajax.request({
 			url: 'services/json/management/modcard/updatebulkcards',
-			params: p,
+			params: params,
 			scope: this,
-			success: function(response) {
+			success: function(response, request, decordedResp) {
 				this.view.cardGrid.reload(reselect = false);
 				onAbortButtonClick.call(this);
 				CMDBuild.LoadMask.get().hide();

@@ -984,7 +984,10 @@
          "treetitle": "Отчеты"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Массовое обновление"},
+         "bulkupdate": {
+         	"title": "Массовое обновление",
+            "countMessage": "<em>{0} cards will be modified</em>"
+         },
          "changepassword": {
             "newpw": "Новый пароль",
             "oldpw": "Старый пароль",

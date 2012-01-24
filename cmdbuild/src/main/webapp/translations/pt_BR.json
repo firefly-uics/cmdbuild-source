@@ -984,7 +984,10 @@
          "treetitle": "Relatório"
       },
       "modutilities": {
-         "bulkupdate": {"title": "Atualização Múltiplas"},
+         "bulkupdate": {
+            "title": "Atualização Múltiplas",
+            "countMessage": "<em>{0} cards will be modified</em>"
+         },
          "changepassword": {
             "newpw": "Senha Nova",
             "oldpw": "Senha Antiga",
