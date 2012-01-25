@@ -4,8 +4,14 @@
 		constructor: function(view, supercontroller) {
 			this.callParent(arguments);
 
+			this.CMEVENTS = {
+				noteWasSaved: "cm-note-saved"
+			};
+
 			this.mon(this.view, this.view.CMEVENTS.saveNoteButtonClick, this.onSaveNoteClick, this);
 			this.mon(this.view, this.view.CMEVENTS.cancelNoteButtonClick, this.onCancelNoteClick, this);
+
+			this.addEvents(this.addEvents.noteWasSaved);
 		},
 
 		onEntryTypeSelected: function() {
@@ -63,6 +69,7 @@
 						me.view.disableModify(enableToolbar = true);
 						var val = me.view.syncForms();
 						syncSavedNoteWithModel(me.card, val);
+						me.fireEvent(me.CMEVENTS.noteWasSaved);
 					},
 					failure: function() {
 						CMDBuild.LoadMask.get().hide();
