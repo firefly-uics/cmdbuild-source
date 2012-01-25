@@ -36,6 +36,13 @@
 
 			if (isStateOpen(card) || card._cmNew) {
 				me.view.updateDocPanel(card);
+				if (card._cmNew) {
+					// I could be in a tab different to the first one,
+					// but to edit a new card is necessary to have the editing form.
+					// So I force the view to go on the ActivityTab
+
+					me.view.showActivityPanel();
+				}
 			} else {
 				me.view.updateDocPanel(null);
 			}
