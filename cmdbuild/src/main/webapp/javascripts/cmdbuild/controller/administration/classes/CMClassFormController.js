@@ -104,6 +104,7 @@
 		},
 		
 		onPrintClass: function(format) {
+			if (typeof format != "string") { return; }
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.Ajax.request( {
 				url : CMDBuild.ServiceProxy.administration.printSchema,
