@@ -240,9 +240,12 @@
 	}
 
 	function fillForm(attributes, editMode) {
+		// TODO: Now CMCardPanelController check if it is possible to load the fields.
+		// Check if some other subclass of CMCardPanController need it
+		// and remove from here
+
 		// If the panel is not active, we defer the population
 		// with the field, because this allows a billion of mystical rendering issues
-
 		var deferOperation = !this.canReconfigureTheForm();
 
 		if (deferOperation) {

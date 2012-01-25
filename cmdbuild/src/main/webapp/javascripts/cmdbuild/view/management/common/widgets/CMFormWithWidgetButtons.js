@@ -92,5 +92,9 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 
 	getWidgetButtonsPanel: function() {
 		return this.widgets;
+	},
+
+	formIsVisisble: function() {
+		return this.form.isVisible(deep = true);
 	}
 });
