@@ -39,6 +39,17 @@
 
 		// override
 		onCardSelected: function(card) {
+			// TODO: copied from CMCardPanelController. Find the way/time to inherits it
+			if (!this.view.formIsVisisble()) {
+				// defer the calls to update the view
+				// because there are several rendering issues
+				// when the view will be activate, do the selection
+				this.cardToLoadOnActivivate = card;
+				return;
+			} else {
+				this.cardToLoadOnActivivate = null;
+			}
+
 			this.card = card;
 
 			if (card == null) {
