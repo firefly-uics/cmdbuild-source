@@ -137,7 +137,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				inputType:'password',
 				vtype: 'password',
-				initialPassField: 'lim_password',
+				initialPassField: this.limPassword.getId(),
 				disabled: true
 			});
 
