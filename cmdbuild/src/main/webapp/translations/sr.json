@@ -18,9 +18,9 @@
             },
             "domain": "Domen",
             "editorType": {
-               "html": "<em>Html</em>",
-               "label": "<em>Editor type</em>",
-               "plain": "<em>Plain text</em>"
+               "html": "Html",
+               "label": "Vrsta editora",
+               "plain": "Obični tekst"
             },
             "field_hidden": "Skriven",
             "field_read": "Samo za čitanje",
@@ -145,42 +145,42 @@
          "widgets": {
             ".OpenReport": {
                "fields": {
-                  "force": "<em>Force format</em>",
-                  "presets": "<em>Report attributes</em>",
-                  "report": "<em>Report</em>"
+                  "force": "Prinudno formatiranje",
+                  "presets": "Atributi izveštaja",
+                  "report": "Izveštaj"
                },
                "presetGrid": {
-                  "attribute": "<em>Attribute</em>",
-                  "value": "<em>Value</em>"
+                  "attribute": "Atribut",
+                  "value": "Vrednost"
                },
-               "title": "<em>Create report</em>"
+               "title": "Kreiraj izveštaj"
             },
             ".Calendar": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "start": "<em>Start date</em>",
-                  "end": "<em>End date</em>",
-                  "title": "<em>Event title</em>",
-                  "filter": "<em>CQL Filter</em>",
-                  "defaultDate": "<em>Default date to open</em>"
+                  "target": "Ciljna klasa",
+                  "start": "Datum početka",
+                  "end": "Datum završetka",
+                  "title": "Naziv događaja",
+                  "filter": "CQL filter",
+                  "defaultDate": "Podrazumevani datum otvaranja"
                },
-               "title": "<em>Calendar</em>"
+               "title": "Kalendar"
             },
             ".Ping": {
                "fields": {
-                  "address":"<em>Address to ping</em>",
-                  "count": "<em>Number of pings</em>",
-                  "templates": "<em>Templates</em>"
+                  "address":"Adresa na koju se šalje ping",
+                  "count": "Broj ping pokušaja",
+                  "templates": "Šabloni"
                },
-               "title": "<em>Ping</em>"
+               "title": "Ping"
             },
             "commonFields": {
-               "active": "<em>Active</em>",
-               "alwaysenabled": "<em>Always enabled</em>",
-               "buttonLabel": "<em>Button label</em>",
-               "type": "<em>Type</em>"
+               "active": "Aktivan",
+               "alwaysenabled": "Uvek uključen",
+               "buttonLabel": "Naslov dugmeta",
+               "type": "Tip"
             },
-            "title": "<em>Widget</em>"
+            "title": "Komponenta (Widget)"
          }
       },
       "modLookup": {
@@ -447,9 +447,9 @@
             "sessiontimeout": "Sesija je istekla (seconds)",
             "startingClass": "Podrazumevana klasa",
             "tabs_position": {
-               "bottom": "<em>Bottom</em>",
-               "label": "<em>Tabs position in card panel</em>",
-               "top": "<em>Top</em>"
+               "bottom": "Pri dnu",
+               "label": "Pozicija tab-a u panelu kartice",
+               "top": "Pri vrhu"
             },
             "title": "CMDBuild podešavanja"
          },
@@ -986,7 +986,7 @@
       "modutilities": {
          "bulkupdate": {
             "title": "Masovna izmena kartica",
-            "countMessage": "<em>{0} cards will be modified</em>"
+            "countMessage": "{0} kartica će biti izmenjeno"
          },
          "changepassword": {
             "newpw": "Nova lozinka",
