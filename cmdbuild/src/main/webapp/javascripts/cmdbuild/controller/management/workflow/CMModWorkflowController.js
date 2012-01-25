@@ -19,12 +19,12 @@
 			me.relationsController = new CMDBuild.controller.management.workflow.CMActivityRelationsController(me.view.getRelationsPanel(), me);
 			me.historyController = new CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController(me.view.getHistoryPanel());
 			me.attachmentsController = new CMDBuild.controller.management.workflow.CMActivityAttachmentsController(me.view.getAttachmentsPanel(), me);
-			me.noteController = new CMDBuild.controller.management.workflow.CMNoteController(me.view.getNotesPanel(), me);
 
-			me.subControllers = [me.relationsController, me.historyController, me.attachmentsController, me.noteController];
+			me.subControllers = [me.relationsController, me.historyController, me.attachmentsController];
 
 			buildActivityPanelController(me);
 			buildGridController(me);
+			buildNoteController(me);
 		},
 
 		onCardChanged: function(card) {
@@ -96,6 +96,16 @@
 		me.subControllers.push(me.gridController);
 	}
 
+	function buildNoteController(me) {
+		me.noteController = new CMDBuild.controller.management.workflow.CMNoteController(me.view.getNotesPanel(), me);
+		me.subControllers.push(me.noteController);
+		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function() {
+			if (me.historyController) {
+				me.historyController.onCardSelected(me.card);
+			}
+		}, me);
+	}
+
 	function onProcessTermined() {
 		this.activityPanelController.clearView();
 	}
@@ -107,5 +117,4 @@
 			this.activityPanelController.clearView();
 		}
 	}
-
 })();

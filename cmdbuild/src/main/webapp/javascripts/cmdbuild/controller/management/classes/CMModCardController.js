@@ -129,9 +129,7 @@
 			buildRelationsController(me, me.view.getRelationsPanel());
 			buildMapController(me);
 			buildMDController(me);
-
-			me.noteController = new CMDBuild.controller.management.classes.CMNoteController(me.view.getNotePanel());
-			me.subControllers.push(me.noteController);
+			buildNoteController(me);
 
 			me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(me.view.getAttachmentsPanel());
 			me.subControllers.push(me.attachmentsController);
@@ -260,6 +258,16 @@
 
 		me.subControllers.push(me.mapController);
 		me.cardPanelController.addCardDataProviders(me.mapController);
+	}
+
+	function buildNoteController(me) {
+		me.noteController = new CMDBuild.controller.management.classes.CMNoteController(me.view.getNotePanel());
+		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function() {
+			if (me.cardHistoryPanelController) {
+				me.cardHistoryPanelController.onCardSelected(me.card);
+			}
+		}, me);
+		me.subControllers.push(me.noteController);
 	}
 
 	function onSelectionWentWrong() {
