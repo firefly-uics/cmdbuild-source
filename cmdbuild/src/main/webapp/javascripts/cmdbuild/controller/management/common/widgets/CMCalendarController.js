@@ -123,6 +123,14 @@
 		destroy: function() {
 			this.mun(this.view, "eventclick", onEventClick, this);
 			this.mun(this.view, "viewchange", onViewChange, this);
+		},
+
+		isBusy: function() {
+			return false;
+		},
+
+		isValid: function() {
+			return true;
 		}
 	});
 
