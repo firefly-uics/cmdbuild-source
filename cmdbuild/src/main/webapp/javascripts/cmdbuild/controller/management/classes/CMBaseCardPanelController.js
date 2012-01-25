@@ -121,7 +121,11 @@
 		},
 
 		onAbortCardClick: function() {
-			this.onCardSelected(this.card);
+			if (this.card && this.card.get("Id") == -1) {
+				this.onCardSelected(null);
+			} else {
+				this.onCardSelected(this.card);
+			}
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {
