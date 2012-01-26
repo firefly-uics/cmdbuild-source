@@ -1025,8 +1025,8 @@
          "delete_card": "Уклони процес",
          "delete_card_confirm": "Да ли сте сигурни да желите уклонити процес?",
          "extattrs": {
-            "attachments": {"must_save_to_add": "Не може поставити прилог пре него што снимите активност</em>"},
-            "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
+            "attachments": {"must_save_to_add": "Не може поставити прилог пре него што снимите активност"},
+            "calendar": {"wrong_config": "Календар није добро подешен"},
             "createreport": {"format_label": "Форматирај"},
             "linkcards": {"required": "Морате изабрати картицу - "},
             "manageemail": {
@@ -1048,8 +1048,8 @@
                "subjecthdr": "Наслов поруке",
                "tofld": "Прималац",
                "viewicon": "Прикажи",
-               "mailsAreChanged":"<em>The generated e-mails are changed</em>",
-               "regenerates": "<em>Regenerate e-mails</em>"
+               "mailsAreChanged":"Генерисана е-пошта је измењена",
+               "regenerates": "Изнова генериши е-пошту"
             },
             "managerelation": {"required": "Морате изабрати релације - "},
             "notes": {"must_save_to_modify": "Не можете модификовати напомену пре него што снимите активност"}

@@ -1025,8 +1025,8 @@
          "delete_card": "Ukloni proces",
          "delete_card_confirm": "Da li ste sigurni da želite ukloniti proces?",
          "extattrs": {
-            "attachments": {"must_save_to_add": "Ne može postaviti prilog pre nego što snimite aktivnost</em>"},
-            "calendar": {"wrong_config": "<em>The calendar is not well configured</em>"},
+            "attachments": {"must_save_to_add": "Ne može postaviti prilog pre nego što snimite aktivnost"},
+            "calendar": {"wrong_config": "Kalendar nije dobro podešen"},
             "createreport": {"format_label": "Formatiraj"},
             "linkcards": {"required": "Morate izabrati karticu - "},
             "manageemail": {
@@ -1048,8 +1048,8 @@
                "subjecthdr": "Naslov poruke",
                "tofld": "Primalac",
                "viewicon": "Prikaži",
-               "mailsAreChanged":"<em>The generated e-mails are changed</em>",
-               "regenerates": "<em>Regenerate e-mails</em>"
+               "mailsAreChanged":"Generisana e-pošta je izmenjena",
+               "regenerates": "Iznova generiši e-poštu"
             },
             "managerelation": {"required": "Morate izabrati relacije - "},
             "notes": {"must_save_to_modify": "Ne možete modifikovati napomenu pre nego što snimite aktivnost"}
