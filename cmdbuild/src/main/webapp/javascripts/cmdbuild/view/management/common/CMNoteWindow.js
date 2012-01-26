@@ -49,6 +49,10 @@ Ext.define("CMDBuild.view.management.common.CMNoteWindow", {
 
 	syncForms: function() {
 		return this.note.syncForms();
+	},
+
+	updateWritePrivileges: function(priv) {
+		return this.note.updateWritePrivileges(priv);
 	}
 });
 
