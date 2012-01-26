@@ -1048,7 +1048,7 @@
                "subjecthdr": "Subject",
                "tofld": "To",
                "viewicon": "View",
-               "mailsAreChanged":"The generated e-mails are changed",
+               "mailsAreChanged":"The generated e-mails have changed",
                "regenerates": "Regenerate e-mails"
             },
             "managerelation": {"required": "Please select some relations - "},

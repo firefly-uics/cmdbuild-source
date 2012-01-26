@@ -986,7 +986,7 @@
       "modutilities": {
          "bulkupdate": {
             "title": "Modificar tarjetas masivamente",
-            "countMessage": "<em>Saranno modificate {0} schede</em>"
+            "countMessage": "Serán modificadas {0} tarjetas"
          },
          "changepassword": {
             "newpw": "Nueva clave",
