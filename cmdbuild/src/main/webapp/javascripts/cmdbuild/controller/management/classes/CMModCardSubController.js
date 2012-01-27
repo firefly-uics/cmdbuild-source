@@ -32,5 +32,11 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 			cardId = this.card.get("Id");
 
 		CMDBuild.Management.showGraphWindow(classId, cardId);
+	},
+
+	onCloneCard: function() {
+		if (this.view) {
+			this.view.disable();
+		}
 	}
 });

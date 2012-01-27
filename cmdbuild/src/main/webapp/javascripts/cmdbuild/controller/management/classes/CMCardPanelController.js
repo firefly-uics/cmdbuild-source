@@ -5,10 +5,11 @@
 			this.callParent(arguments);
 
 			this.CMEVENTS = Ext.apply(this.CMEVENTS,  {
-				cardRemoved: "cm-card-removed"
+				cardRemoved: "cm-card-removed",
+				cloneCard: "cm-card-clone"
 			});
 
-			this.addEvents(this.CMEVENTS.cardRemoved);
+			this.addEvents(this.CMEVENTS.cardRemoved, this.CMEVENTS.cloneCard);
 
 			var ev = this.view.CMEVENTS;
 			this.mon(this.view, ev.removeCardButtonClick, this.onRemoveCardClick, this);
@@ -70,6 +71,7 @@
 		onCloneCardClick: function() {
 			this.onModifyCardClick();
 			this.cloneCard = true;
+			this.fireEvent(this.CMEVENTS.cloneCard);
 		},
 
 		onPrintCardMenuClick: function(format) {

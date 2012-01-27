@@ -200,6 +200,8 @@
 				me.mapController.displayMode();
 			}, me);
 
+			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cloneCard, onCloneCard, me);
+
 			me.subControllers.push(me.cardPanelController);
 		}
 	}
@@ -278,5 +280,9 @@
 		this.setCard(null);
 		this.callForSubControllers("onAddCardButtonClick", p.classId);
 		this.view.activateFirstTab();
+	}
+
+	function onCloneCard() {
+		this.callForSubControllers("onCloneCard");
 	}
 })();
