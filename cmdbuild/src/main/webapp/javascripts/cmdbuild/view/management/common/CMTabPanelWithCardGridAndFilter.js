@@ -51,6 +51,7 @@
 			this.idClass = classId;
 			this.grid.updateStoreForClassId(classId);
 			this.filter.updateMenuForClassId(classId);
+			this.filter.removeAllFieldsets();
 		},
 		
 		onResetFilterButtonClick: function() {
