@@ -65,9 +65,9 @@
 
 		// override
 		getData: function(isAdvance) {
-			var outgoingEmails = this.view.getOutgoing(true),
-				outgoingEmailsEnc = Ext.JSON.encode(outgoingEmails),
-				deletedEnc = Ext.JSON.encode(this.view.getDeletedEmails());
+			var outgoingEmails = this.view.getOutgoing(true);
+			var	outgoingEmailsEnc = Ext.JSON.encode(outgoingEmails);
+			var	deletedEnc = Ext.JSON.encode(this.view.getDeletedEmails());
 
 			return {
 				Outgoing: outgoingEmailsEnc,
