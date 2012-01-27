@@ -44,18 +44,18 @@
 	}
 
 	function fillStoreByType(store, attributes, allowedTypes) {
+		allowedTypes = allowedTypes || [];
 		store.removeAll();
 		for (var i=0, l=attributes.length; i<l; ++i) {
 			var a = attributes[i],
 				type = a.type;
 
-			if ((allowedTypes && allowedTypes.indexOf(type) >= 0) 
-				|| !allowedTypes) {
-
+			if (Ext.Array.indexOf(allowedTypes, type) >= 0) {
 				store.add({id: a.name, description: a.description});
 			}
 		}
 	}
+
 	function fillAttributeStoresWithData(me, attributes) {
 		fillStoreByType(me.view.startDate.store, attributes, ["DATE", "TIMESTAMP"]);
 		fillStoreByType(me.view.endDate.store, attributes, ["DATE", "TIMESTAMP"]);
