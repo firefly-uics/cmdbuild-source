@@ -183,7 +183,10 @@
 				editable: false,
 				cmImmutable: true,
 				queryMode: "local",
-				store : this.attributeTypeStore
+				store : this.attributeTypeStore,
+				listConfig: {
+					loadMask: false
+				}
 			});
 
 			this.stringLength = new Ext.form.NumberField({

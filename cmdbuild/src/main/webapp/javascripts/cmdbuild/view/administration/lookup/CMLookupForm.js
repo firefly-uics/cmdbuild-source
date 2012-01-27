@@ -112,7 +112,10 @@
 					minChars : 0,
 					disabled : true,
 					store : this.parentStore,
-					queryMode: "local"
+					queryMode: "local",
+					listConfig: {
+						loadMask: false
+					}
 				}, {
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
