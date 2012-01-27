@@ -44,7 +44,7 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 				{header: col_tr.version, sortable: true, dataIndex: 'Version', flex: 1},
 				{header: col_tr.filename, sortable: true, dataIndex: 'Filename', flex: 4},
 				{header: col_tr.description, sortable: true, dataIndex: 'Description', flex: 4},
-				{header: '&nbsp;', width: 60, fixed: true, sortable: false, renderer: this.renderAttachmentActions, align: 'center', tdCls: 'grid-button', dataIndex: 'Fake'}
+				{header: '&nbsp;', width: 80, sortable: false, renderer: this.renderAttachmentActions, align: 'center', tdCls: 'grid-button', dataIndex: 'Fake'}
 			]
 		});
 
