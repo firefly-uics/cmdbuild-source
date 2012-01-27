@@ -173,7 +173,11 @@
 		},
 
 		reset: function() {
-			this.grid.getSelectionModel().reset();
+			var sm = this.grid.getSelectionModel();
+			if (typeof sm.reset == "function") {
+				sm.reset();
+			}
+
 			this.model.reset();
 		}
 	});
