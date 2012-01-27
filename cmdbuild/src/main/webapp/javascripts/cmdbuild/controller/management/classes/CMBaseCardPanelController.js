@@ -229,7 +229,10 @@
 			if (this.widgetControllerManager) {
 				this.widgetControllerManager.onCardGoesInEdit();
 			}
-		}
+		},
+
+		// override
+		onCloneCard: Ext.emptyFn
 	});
 
 	function addDataFromCardDataPoviders(me, params) {
