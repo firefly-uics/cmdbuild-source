@@ -129,6 +129,10 @@
 			}
 
 			return out;
+		},
+
+		isValid: function() {
+			return true;
 		}
 	});
 
