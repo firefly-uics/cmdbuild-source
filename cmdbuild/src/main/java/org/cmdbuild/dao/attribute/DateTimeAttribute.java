@@ -27,8 +27,8 @@ public class DateTimeAttribute extends AbstractDateAttribute {
 		if (value instanceof Date) {
 			dateValue = (Date) value;
 		} else if (value instanceof String) {
-			dateValue = convertDateString((String) value, JSON_DATETIME_FORMAT, SOAP_DATETIME_FORMAT,
-					REST_DATETIME_FORMAT);
+			dateValue = convertDateString((String) value, JSON_DATETIME_FORMAT, DateAttribute.JSON_DATE_FORMAT,
+					SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT);
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
