@@ -49,7 +49,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 					handler : function(values) {
 						new CMDBuild.Management.EmailWindow({
 							emailGrid: me,
-							record: me.createRecord(values)
+							record: me.createRecord({})
 						}).show();
 					}
 				}, {
