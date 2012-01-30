@@ -152,15 +152,10 @@
 	function buildDate(stringDate) {
 		if (stringDate) {
 			var chunks = stringDate.split(" ");
-			var dateChunks = chunks[0].split("/");
-			var out = dateChunks[1] + "/" + dateChunks[0] + "/" + dateChunks[2] + " ";
-			if (chunks[1]) {
-				out += chunks[1];
-			} else {
-				out += "00:00:00";
-			}
-	
-			return new Date(out);
+			var date = chunks[0];
+			var time = chunks[1] || "00:00:00";
+
+			return  Ext.Date.parse(date + " " + time, "d/m/y H:i:s");
 		} else {
 			return new Date();
 		}
