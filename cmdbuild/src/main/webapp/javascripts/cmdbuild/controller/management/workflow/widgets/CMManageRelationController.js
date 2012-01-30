@@ -102,7 +102,8 @@
 		// override
 		beforeActiveView: function() {
 			var et = _CMCache.getEntryTypeById(this.idClass);
-			this.view.addRelationButton.setDomainsForEntryType(et);
+
+			this.view.addRelationButton.setDomainsForEntryType(et, this.widgetConf.domainIdNoDir);
 
 			this.cardId = this.getCardId();
 			if (this.cardId > 0) {

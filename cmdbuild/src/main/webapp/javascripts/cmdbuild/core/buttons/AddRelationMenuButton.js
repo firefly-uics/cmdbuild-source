@@ -20,30 +20,35 @@ Ext.define("CMDBuild.AddRelationMenuButton", {
 		this.callParent(arguments);
 	},
 
-	setDomainsForEntryType: function(et) {
+	setDomainsForEntryType: function(et, singleDomainId) {
 		if (!et) {
 			return;
 		}
 
 		this.menu.removeAll();
+
 		var d,
 			domains = _CMCache.getDirectedDomainsByEntryType(et),
-			empty = true;
+			empty = true,
+			addAll = (typeof singleDomainId == "undefined");
 
 		for (var i=0, l=domains.length; i<l; ++i) {
 			d = domains[i];
+
 			if (d) {
-				var cachedDomain = _CMCache.getDomainById(d.dom_id);
-				if (cachedDomain.hasCreatePrivileges()) {
-					this.menu.add({
-						text: d.description,
-						domain: d,
-						scope: this,
-						handler: function(item, e){
-							this.fireEvent("cmClick", item.domain);
-						}
-					});
-					empty = false;
+				if (addAll || (d.dom_id == singleDomainId)) {
+					var cachedDomain = _CMCache.getDomainById(d.dom_id);
+					if (cachedDomain.hasCreatePrivileges()) {
+						this.menu.add({
+							text: d.description,
+							domain: d,
+							scope: this,
+							handler: function(item, e){
+								this.fireEvent("cmClick", item.domain);
+							}
+						});
+						empty = false;
+					}
 				}
 			}
 		}
@@ -53,16 +58,15 @@ Ext.define("CMDBuild.AddRelationMenuButton", {
 		return domains.length > 0;
 	},
 
-	
 	setTextSuffix: function(suffix) {
 		this.setText(this.textPrefix +" "+suffix);
 	},
-	
+
 	//private
 	isEmpty: function(){
 		return (this.menu.items.items.length == 0 );
 	},
-	
+
 	//private
 	resetText: function() {
 		this.setText(this.baseText);
