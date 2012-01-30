@@ -17,12 +17,6 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 					if (wc) {
 						me.controllers[me.getWidgetId(w)] = wc;
 					}
-
-				// on add, the widget controllers are build after that
-				// the form go in editing, so call the onEditMode to notify the editing status
-//				if (me.editMode) {
-//					wc.onEditMode();
-//				}
 				}
 			}, this);
 		}
@@ -119,6 +113,10 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 		}
 
 		return ww;
+	},
+
+	hideWidgetsContainer: function() {
+		this.view.widgetsContainer.hide();
 	},
 
 	// To override in subclass

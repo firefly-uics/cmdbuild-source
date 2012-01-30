@@ -54,6 +54,7 @@
 		destroy: function() {
 			this.widgetsContainer.removeAll(autodestroy = true);
 			delete this.widgetsToAdd;
+			this.callParent(arguments);
 		},
 
 		addExtraButtons: function(extraButtons) {

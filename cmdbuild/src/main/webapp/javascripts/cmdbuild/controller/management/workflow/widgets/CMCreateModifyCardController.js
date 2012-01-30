@@ -8,8 +8,8 @@
 
 		cmName: "Create/Modify card",
 
-		constructor: function(ui, me, widgetDef, widgetControllerManager) {
-			this.callParent([ui, me, widgetControllerManager]);
+		constructor: function(ui, supercontroller, widgetDef, widgetControllerManager) {
+			this.callParent([ui, supercontroller, widgetControllerManager]);
 
 			this.templateResolverIsBusy = false;
 			this.idClassToAdd = undefined;
@@ -47,10 +47,9 @@
 		// override
 		onSaveSuccess: function(form, operation) {
 			this.callParent(arguments);
-			var card = {
-				raw: form.getValues()
+			if (typeof this.superController.hideWidgetsContainer == "function") {
+				this.superController.hideWidgetsContainer();
 			}
-			this.view.loadCard(card);
 		},
 
 		// **** BaseWFWidget methods
