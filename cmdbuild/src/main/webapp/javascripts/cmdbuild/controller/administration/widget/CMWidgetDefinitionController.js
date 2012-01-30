@@ -110,27 +110,37 @@
 	}
 
 	function onRemoveClick() {
-		if (this.model && this.subController) {
-			var me = this,
-				id = this.model.get(_fields.id),
-				params = {
-					id: id,
-					className: _CMCache.getClassById(me.classId).get("name")
-				};
+		var me = this;
 
-			CMDBuild.ServiceProxy.CMWidgetConfiguration.remove({
-				params: params,
-				success: function() {
-					me.view.removeRecordFromGrid(id);
-					me.view.reset();
+		Ext.Msg.show({
+			title: CMDBuild.Translation.common.buttons.remove,
+			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {
+					if (me.model && me.subController) {
+						var id = me.model.get(_fields.id),
+							params = {
+								id: id,
+								className: _CMCache.getClassById(me.classId).get("name")
+							};
 
-					_CMCache.onWidgetDeleted(me.classId, id);
-
-					delete me.model;
-					delete me.subController;
+						CMDBuild.ServiceProxy.CMWidgetConfiguration.remove({
+							params: params,
+							success: function() {
+								me.view.removeRecordFromGrid(id);
+								me.view.reset();
+			
+								_CMCache.onWidgetDeleted(me.classId, id);
+			
+								delete me.model;
+								delete me.subController;
+							}
+						});
+					}
 				}
-			});
-		}
+			}
+		});
 	}
 
 	function buildSubController(me, widgetName, record, classId) {
