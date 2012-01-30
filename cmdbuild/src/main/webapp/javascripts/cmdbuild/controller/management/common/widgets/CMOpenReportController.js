@@ -76,6 +76,14 @@
 			}
 		},
 
+		isBusy: function() {
+			return false;
+		},
+
+		isValid: function() {
+			return true;
+		},
+
 		destroy: function() {
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 		}
