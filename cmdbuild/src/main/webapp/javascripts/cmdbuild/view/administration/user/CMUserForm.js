@@ -93,7 +93,10 @@
 				editable : false,
 				allowBlank : true,
 				store : this.defaultGroupStore,
-				queryMode : 'local'
+				queryMode : 'local',
+				listConfig: {
+					loadMask: false
+				}
 			});
 
 			this.userInfo = new Ext.form.FieldSet( {
