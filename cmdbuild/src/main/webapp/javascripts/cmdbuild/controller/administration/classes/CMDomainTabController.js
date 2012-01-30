@@ -99,10 +99,9 @@
 	}
 	
 	function onAddDomainButton() {
-		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
-		domainAccordion.expand();
-		Ext.Function.createDelayed(function() {
-			_CMMainViewportController.panelControllers["domain"].onAddDomainButtonClick();
-		}, 100)();
+		var domainAccordion = _CMMainViewportController.accordionControllers["domain"];
+		if (domainAccordion) {
+			domainAccordion.expandForAdd();
+		}
 	}
 })();

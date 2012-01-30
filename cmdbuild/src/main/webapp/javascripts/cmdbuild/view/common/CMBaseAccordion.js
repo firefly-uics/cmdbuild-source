@@ -95,8 +95,12 @@
 
 		expandSilently: function() {
 			this.cmSilent = true;
-			this.expand();
+			Ext.panel.Panel.prototype.expand.call(this);
+		},
+
+		expand: function() {
 			this.cmSilent = false;
+			this.callParent(arguments);
 		},
 
 		removeNodeById: function(nodeId) {

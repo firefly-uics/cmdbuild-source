@@ -5,9 +5,15 @@
 		constructor: function(accordion) {
 			this.store = accordion.store;
 			this.callParent(arguments);
-			
+
 			_CMCache.on("cm_domain_saved", updateStore, this);
 			_CMCache.on("cm_domain_deleted", onDomainDeleted, this);
+		},
+
+		expandForAdd: function() {
+			this.accordion.expandSilently();
+			_CMMainViewportController.bringTofrontPanelByCmName(this.accordion.cmName);
+			_CMMainViewportController.panelControllers["domain"].onAddDomainButtonClick();
 		}
 	});
 
