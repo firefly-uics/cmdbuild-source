@@ -73,10 +73,6 @@ Ext.define("CMDBuild.Administration.AttributeSortingGrid", {
 			}
 		];
 
-		this.mon(this, "render", function() {
-			comboOrderSign.ownerCt = this.ownerCt;
-		}, this);
-
 		this.plugins = [Ext.create('Ext.grid.plugin.CellEditing', {
 			clicksToEdit: 1
 		})];
