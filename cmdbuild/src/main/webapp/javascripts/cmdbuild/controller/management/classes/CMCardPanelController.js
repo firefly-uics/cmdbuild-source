@@ -74,6 +74,15 @@
 			this.fireEvent(this.CMEVENTS.cloneCard);
 		},
 
+		onAbortCardClick: function() {
+			if (this.cloneCard) {
+				this.onCardSelected(null);
+				this.cloneCard = false;
+			} else {
+				this.callParent(arguments);
+			}
+		},
+
 		onPrintCardMenuClick: function(format) {
 			var me = this;
 			if (typeof format != "string") {

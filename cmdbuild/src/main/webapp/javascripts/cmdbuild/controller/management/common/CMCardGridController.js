@@ -124,6 +124,10 @@
 			this.view.reload();
 		},
 
+		onCloneCard: function() {
+			this.onAddCardButtonClick();
+		},
+
 		openCard: function(p, retryWithoutFilter) {
 			var me = this,
 				params = {
