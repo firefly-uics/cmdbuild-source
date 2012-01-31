@@ -5,6 +5,7 @@
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
 		<version>1.5-SNAPSHOT</version>
+		<relativePath>../..</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-auth-default</artifactId>
