@@ -6,7 +6,6 @@ SET escape_string_warning = off;
 
 
 CREATE FUNCTION _cm_add_class_cascade_delete_on_relations_trigger(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -17,12 +16,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_class_history_trigger(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -33,12 +32,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_create_card_history_row()
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_class_sanity_check_trigger(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -49,12 +48,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_sanity_check();
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_domain_history_trigger(domainid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -65,12 +64,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_create_relation_history_row()
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_domain_sanity_check_trigger(domainid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -81,12 +80,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_sanity_check();
 	';
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_fk_constraints(fksourceid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	FKTargetId oid := _cm_get_fk_target_table_id(FKSourceId, AttributeName);
@@ -104,12 +103,12 @@ BEGIN
 		PERFORM _cm_add_restrict_trigger(SubTableId, FKSourceId, AttributeName);
 	END LOOP;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_fk_trigger(tableid oid, fksourceid oid, fkattribute text, fktargetid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TriggerVariant text;
@@ -132,12 +131,12 @@ BEGIN
 			');
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_reference_handling(tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	objid integer;
@@ -150,8 +149,8 @@ DECLARE
 	ReferenceDomainId oid := _cm_read_reference_domain_id_comment(AttributeComment);
 
 	RefSourceIdAttribute text := _cm_get_ref_source_id_domain_attribute(TableId, AttributeName);
+	RefSourceClassIdAttribute text := _cm_get_ref_source_class_domain_attribute(TableId, AttributeName);
 	RefTargetIdAttribute text := _cm_get_ref_target_id_domain_attribute(TableId, AttributeName);
-	RefTargetClassIdAttribute text := _cm_get_ref_target_class_domain_attribute(TableId, AttributeName);
 
 	ChildId oid;
 BEGIN
@@ -164,10 +163,10 @@ BEGIN
 	FOR objid IN EXECUTE 'SELECT "Id" from '||TableId::regclass||' WHERE "Status"=''A'''
 	LOOP
 		FOR referencedid IN EXECUTE '
-			SELECT '|| quote_ident(RefSourceIdAttribute) ||
+			SELECT '|| quote_ident(RefTargetIdAttribute) ||
 			' FROM '|| ReferenceDomainId::regclass ||
-			' WHERE '|| quote_ident(RefTargetClassIdAttribute) ||'='|| TableId ||
-				' AND '|| quote_ident(RefTargetIdAttribute) ||'='|| objid ||
+			' WHERE '|| quote_ident(RefSourceClassIdAttribute) ||'='|| TableId ||
+				' AND '|| quote_ident(RefSourceIdAttribute) ||'='|| objid ||
 				' AND "Status"=''A'''
 		LOOP
 			EXECUTE 'SELECT count(*) FROM '||ReferenceTargetId::regclass||' where "Id"='||referencedid INTO ctrlint;
@@ -187,12 +186,12 @@ BEGIN
 	-- Trigger on domain (relation -> reference)
 	PERFORM _cm_add_update_reference_trigger(TableId, AttributeName);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_restrict_trigger(fktargetclassid oid, fkclassid oid, fkattribute text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF FKClassId IS NULL THEN
@@ -210,12 +209,12 @@ BEGIN
 				');
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_simpleclass_sanity_check_trigger(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -226,12 +225,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_spherical_mercator() RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	FoundSrid integer;
@@ -241,12 +240,12 @@ BEGIN
 		INSERT INTO "spatial_ref_sys" ("srid","auth_name","auth_srid","srtext","proj4text") VALUES (900913,'spatialreferencing.org',900913,'','+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +units=m +k=1.0 +nadgrids=@null +no_defs');
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_update_reference_trigger(tableid oid, refattribute text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	DomainId oid := _cm_get_reference_domain_id(TableId, RefAttribute);
@@ -270,12 +269,12 @@ BEGIN
 				');
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_add_update_relation_trigger(tableid oid, reftableid oid, refattribute text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	DomainId oid := _cm_get_reference_domain_id(RefTableId, RefAttribute);
@@ -299,12 +298,12 @@ BEGIN
 			');
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_default_to_src(tableid oid, attributename text, newdefault text) RETURNS text
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SQLType text := _cm_get_attribute_sqltype(TableId, AttributeName);
@@ -321,12 +320,12 @@ BEGIN
 		RETURN NewDefault;
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_is_empty(tableid oid, attributename text) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	Out boolean;
@@ -336,30 +335,30 @@ BEGIN
 	    ' AND '|| quote_ident(AttributeName) ||'::text <> '''' LIMIT 1' INTO Out;
 	RETURN Out;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_is_inherited(tableid oid, attributename text) RETURNS boolean
-    LANGUAGE sql
     AS $_$
 	SELECT pg_attribute.attinhcount <> 0
 	FROM pg_attribute
 	WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_attribute_is_local(tableid oid, attributename text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT (attinhcount = 0) FROM pg_attribute WHERE attrelid = $1 AND attname = $2 LIMIT 1;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_attribute_is_notnull(tableid oid, attributename text) RETURNS boolean
-    LANGUAGE sql
     AS $_$
 SELECT pg_attribute.attnotnull OR c.oid IS NOT NULL
 FROM pg_attribute
@@ -367,12 +366,12 @@ LEFT JOIN pg_constraint AS c
 	ON c.conrelid = pg_attribute.attrelid
 	AND c.conname::text = _cm_notnull_constraint_name(pg_attribute.attname::text)
 WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_attribute_is_unique(tableid oid, attributename text) RETURNS boolean
-    LANGUAGE plpgsql STABLE
     AS $$
 DECLARE
 	IsUnique boolean;
@@ -382,30 +381,30 @@ BEGIN
 		WHERE pg_index.indrelid = TableId AND relname = _cm_unique_index_name(TableId, AttributeName);
 	RETURN IsUnique;
 END;
-$$;
+$$
+    LANGUAGE plpgsql STABLE;
 
 
 
 CREATE FUNCTION _cm_attribute_list(tableid oid) RETURNS SETOF text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT attname::text FROM pg_attribute WHERE attrelid = $1 AND attnum > 0 AND atttypid > 0 ORDER BY attnum;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_attribute_list_cs(classid oid) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT array_to_string(array(
 		SELECT quote_ident(name) FROM _cm_attribute_list($1) AS name
 	),',');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_attribute_notnull_is_check(tableid oid, attributename text) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -416,12 +415,12 @@ BEGIN
 		OR _cm_check_comment(_cm_comment_for_attribute(TableId, AttributeName), 'MODE', 'reserved')
 	);
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_root_table_id(tableid oid, attributename text) RETURNS oid
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	CurrentTableId oid := TableId;
@@ -432,12 +431,12 @@ BEGIN
 	END LOOP;
 	RETURN CurrentTableId;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_set_notnull(tableid oid, attributename text, willbenotnull boolean) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -454,12 +453,12 @@ BEGIN
 
 	PERFORM _cm_attribute_set_notnull_unsafe(TableId, AttributeName, WillBeNotNull);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_set_notnull_unsafe(tableid oid, attributename text, willbenotnull boolean) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
     IsCheck boolean := _cm_attribute_notnull_is_check(TableId, AttributeName);
@@ -481,12 +480,12 @@ BEGIN
 		END IF;
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_set_uniqueness(tableid oid, attributename text, attributeunique boolean) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_attribute_is_unique(TableId, AttributeName) <> AttributeUnique THEN
@@ -498,12 +497,12 @@ BEGIN
 		PERFORM _cm_attribute_set_uniqueness_unsafe(TableId, AttributeName, AttributeUnique);
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_attribute_set_uniqueness_unsafe(tableid oid, attributename text, attributeunique boolean) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF AttributeUnique THEN
@@ -516,23 +515,23 @@ BEGIN
 		EXECUTE 'DROP INDEX '|| _cm_unique_index_id(TableId, AttributeName)::regclass;
 	END IF;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_cascade(id integer, tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'DELETE FROM '|| TableId::regclass ||
 		' WHERE '||quote_ident(AttributeName)||' = '||Id::text;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_check_attribute_comment_and_type(attributecomment text, sqltype text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SpecialTypeCount integer := 0; 
@@ -559,28 +558,28 @@ BEGIN
 		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_check_comment(classcomment text, key text, value text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT (_cm_read_comment($1, $2) ILIKE $3);
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_check_id_exists(id integer, tableid oid, deletedalso boolean) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_value_exists($1, $2, 'Id', $3);
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_check_value_exists(id integer, tableid oid, attributename text, deletedalso boolean) RETURNS boolean
-    LANGUAGE plpgsql STABLE
     AS $$
 DECLARE
 	Out BOOLEAN := TRUE;
@@ -597,180 +596,180 @@ BEGIN
 	END IF;
 	RETURN Out;
 END
-$$;
+$$
+    LANGUAGE plpgsql STABLE;
 
 
 
 CREATE FUNCTION _cm_class_has_children(tableid oid) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT (COUNT(*) > 0) FROM pg_inherits WHERE inhparent = $1 AND _cm_is_cmobject(inhrelid) LIMIT 1;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_class_has_domains(tableid oid) RETURNS boolean
-    LANGUAGE sql
     AS $_$
 	SELECT (COUNT(*) > 0) FROM _cm_domain_list() AS d
 	WHERE _cm_table_id(_cm_read_comment(_cm_comment_for_cmobject(d), 'CLASS1')) = $1 OR
 		_cm_table_id(_cm_read_comment(_cm_comment_for_cmobject(d), 'CLASS2')) = $1;
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_class_list() RETURNS SETOF oid
-    LANGUAGE sql STABLE
     AS $$
 	SELECT oid FROM pg_class WHERE _cm_is_any_class_comment(_cm_comment_for_cmobject(oid));
-$$;
+$$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_classfk_name(cmclassname text, attributename text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_cmtable($1) || '_' || $2 || '_fkey';
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_classfk_name(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_cmtable($1) || '_' || $2 || '_fkey';
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_classidx_name(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT 'idx_' || REPLACE(_cm_cmtable_lc($1), '_', '') || '_' || lower($2);
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_classpk_name(cmclassname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_cmtable($1) || '_pkey';
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_cmschema(cmname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT (_cm_split_cmname($1))[1];
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_cmschema(tableid oid) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_namespace.nspname::text FROM pg_class
 	JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
 	WHERE pg_class.oid=$1
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_cmtable(cmname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT (_cm_split_cmname($1))[2];
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_cmtable(tableid oid) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_class.relname::text FROM pg_class	WHERE pg_class.oid=$1
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_cmtable_lc(cmname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT lower(_cm_cmtable($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_cmtable_lc(tableid oid) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT lower(_cm_cmtable($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_comment_for_attribute(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 SELECT description
 FROM pg_description
 JOIN pg_attribute ON pg_description.objoid = pg_attribute.attrelid AND pg_description.objsubid = pg_attribute.attnum
 WHERE attrelid = $1 and attname = $2 LIMIT 1;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_comment_for_class(cmclass text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_comment_for_table_id(_cm_table_id($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_comment_for_cmobject(tableid oid) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT description FROM pg_description
 	WHERE objoid = $1 AND objsubid = 0 AND _cm_read_comment(description, 'TYPE') IS NOT NULL LIMIT 1;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_comment_for_domain(cmdomain text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_comment_for_table_id(_cm_domain_id($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_comment_for_table_id(tableid oid) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT description FROM pg_description WHERE objoid = $1;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_copy_fk_trigger(fromid oid, toid oid) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT _cm_copy_trigger($1, $2, '%_fkey');
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_copy_restrict_trigger(fromid oid, toid oid) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT _cm_copy_trigger($1, $2, '_Constr_%');
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_copy_superclass_attribute_comments(tableid oid, parenttableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeName text;
@@ -781,12 +780,12 @@ BEGIN
 			' IS '|| quote_literal(_cm_comment_for_attribute(ParentTableId, AttributeName));
 	END LOOP;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_copy_trigger(fromid oid, toid oid, triggernamematcher text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TriggerData record;
@@ -813,20 +812,20 @@ BEGIN
 		';
 	END LOOP;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_copy_update_relation_trigger(fromid oid, toid oid) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT _cm_copy_trigger($1, $2, '_UpdRel_%');
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_create_class_history(cmclassname text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -841,24 +840,24 @@ BEGIN
 	';
 	PERFORM _cm_create_index(_cm_history_id(CMClassName), 'CurrentId');
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_create_class_indexes(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_create_index(TableId, 'Code');
 	PERFORM _cm_create_index(TableId, 'Description');
 	PERFORM _cm_create_index(TableId, 'IdClass');
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_create_class_triggers(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_is_superclass(TableId) THEN
@@ -871,12 +870,12 @@ BEGIN
 		PERFORM _cm_add_class_cascade_delete_on_relations_trigger(TableId);
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_create_domain_indexes(domainid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
     Cardinality text := _cm_domain_cardinality(DomainId);
@@ -915,23 +914,23 @@ BEGIN
 		' )';
 	END IF;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_create_domain_triggers(domainid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_add_domain_sanity_check_trigger(DomainId);
 	PERFORM _cm_add_domain_history_trigger(DomainId);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_create_index(tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'CREATE INDEX ' || quote_ident(_cm_classidx_name(TableId, AttributeName)) ||
@@ -942,12 +941,12 @@ EXCEPTION
 		RAISE LOG 'Index for attribute %.% not created because the attribute does not exist',
 			TableId::regclass, quote_ident(AttributeName);
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_create_schema_if_needed(cmname text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_cmschema(CMName) IS NOT NULL THEN
@@ -957,12 +956,12 @@ EXCEPTION
 	WHEN duplicate_schema THEN
 		RETURN;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_delete_local_attributes(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeName text;
@@ -973,12 +972,12 @@ BEGIN
 		END IF;
 	END LOOP;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_delete_relation(username text, domainid oid, cardidcolumn text, cardid integer) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 BEGIN
@@ -986,12 +985,12 @@ BEGIN
 		' SET "Status" = ''N'', "User" = ' || coalesce(quote_literal(UserName),'NULL') ||
 		' WHERE "Status" = ''A'' AND ' || quote_ident(CardIdColumn) || ' = ' || CardId;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_dest_classid_for_domain_attribute(domainid oid, attributename text) RETURNS oid
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_table_id(
 		_cm_read_comment(
@@ -1006,60 +1005,60 @@ CREATE FUNCTION _cm_dest_classid_for_domain_attribute(domainid oid, attributenam
 			END
 		)
 	);
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_dest_reference_classid(domainid oid, refidcolumn text, refid integer) RETURNS oid
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_subclassid(_cm_dest_classid_for_domain_attribute($1, $2), $3)
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_domain_cardinality(domainid oid) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_read_domain_cardinality(_cm_comment_for_table_id($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_domain_cmname(cmdomain text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT coalesce(_cm_cmschema($1)||'.','')||coalesce('Map_'||_cm_cmtable($1),'Map');
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_domain_cmname_lc(cmdomainname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT lower(_cm_domain_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_domain_dbname(cmdomain text) RETURNS regclass
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname(_cm_domain_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_domain_dbname_unsafe(cmdomain text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe(_cm_domain_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_domain_direction(domainid oid) RETURNS boolean
-    LANGUAGE plpgsql STABLE STRICT
     AS $$
 DECLARE
 	Cardinality text := _cm_domain_cardinality(DomainId);
@@ -1072,44 +1071,44 @@ BEGIN
 		RETURN NULL;
 	END IF;
 END
-$$;
+$$
+    LANGUAGE plpgsql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_domain_id(cmdomain text) RETURNS oid
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_table_id(_cm_domain_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_domain_list() RETURNS SETOF oid
-    LANGUAGE sql STABLE
     AS $$
 	SELECT oid FROM pg_class WHERE _cm_is_domain_comment(_cm_comment_for_cmobject(oid));
-$$;
+$$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_domainidx_name(domainid oid, type text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT 'idx_' || _cm_cmtable_lc($1) || '_' || lower($2);
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_domainpk_name(cmdomainname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_classpk_name(_cm_domain_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_drop_triggers_recursively(tableid oid, triggername text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SubClassId oid;
@@ -1118,22 +1117,22 @@ BEGIN
 		EXECUTE 'DROP TRIGGER IF EXISTS '|| quote_ident(TriggerName) ||' ON '|| SubClassId::regclass;
 	END LOOP;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_get_attribute_default(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_attrdef.adsrc
 		FROM pg_attribute JOIN pg_attrdef ON pg_attrdef.adrelid = pg_attribute.attrelid AND pg_attrdef.adnum = pg_attribute.attnum
 		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_attribute_sqltype(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_type.typname::text || CASE
 				WHEN pg_type.typname IN ('varchar','bpchar') THEN '(' || pg_attribute.atttypmod - 4 || ')'
@@ -1144,24 +1143,24 @@ CREATE FUNCTION _cm_get_attribute_sqltype(tableid oid, attributename text) RETUR
 			END
 		FROM pg_attribute JOIN pg_type ON pg_type.oid = pg_attribute.atttypid
 		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_domain_reference_target_comment(domaincomment text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT CASE _cm_read_domain_cardinality($1)
 		WHEN '1:N' THEN _cm_read_comment($1, 'CLASS1')
 		WHEN 'N:1' THEN _cm_read_comment($1, 'CLASS2')
 		ELSE NULL
 	END
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_get_fk_target(tableid oid, attributename text) RETURNS text
-    LANGUAGE plpgsql STABLE STRICT
     AS $$
 DECLARE
 	AttributeComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -1171,28 +1170,28 @@ BEGIN
 		_cm_read_reference_target_comment(AttributeComment)
 	);
 END
-$$;
+$$
+    LANGUAGE plpgsql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_get_fk_target_comment(attributecomment text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_read_comment($1, 'FKTARGETCLASS');
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_get_fk_target_table_id(tableid oid, attributename text) RETURNS oid
-    LANGUAGE plpgsql STABLE STRICT
     AS $_$ BEGIN
 	RETURN _cm_table_id(_cm_get_fk_target($1, $2));
-END $_$;
+END $_$
+    LANGUAGE plpgsql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_get_geometry_type(tableid oid, attribute text) RETURNS text
-    LANGUAGE plpgsql STABLE
     AS $_$
 DECLARE
 	GeoType text;
@@ -1208,120 +1207,120 @@ BEGIN
 EXCEPTION WHEN undefined_table THEN
 	RETURN NULL;
 END
-$_$;
+$_$
+    LANGUAGE plpgsql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_lookup_type_comment(attributecomment text) RETURNS text
-    LANGUAGE sql
     AS $_$
 	SELECT _cm_read_comment($1, 'LOOKUP');
-$_$;
+$_$
+    LANGUAGE sql;
+
+
+
+CREATE FUNCTION _cm_get_ref_source_class_domain_attribute(tableid oid, attributename text) RETURNS text
+    AS $_$
+	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
+		WHEN TRUE THEN 'IdClass1'
+		WHEN FALSE THEN 'IdClass2'
+		ELSE NULL
+	END;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_ref_source_id_domain_attribute(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
 		WHEN TRUE THEN 'IdObj1'
 		WHEN FALSE THEN 'IdObj2'
 		ELSE NULL
 	END;
-$_$;
-
-
-
-CREATE FUNCTION _cm_get_ref_target_class_domain_attribute(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
-    AS $_$
-	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
-		WHEN TRUE THEN 'IdClass2'
-		WHEN FALSE THEN 'IdClass1'
-		ELSE NULL
-	END;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_ref_target_id_domain_attribute(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
 		WHEN TRUE THEN 'IdObj2'
 		WHEN FALSE THEN 'IdObj1'
 		ELSE NULL
 	END;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_reference_domain_id(tableid oid, attributename text) RETURNS oid
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_read_reference_domain_id_comment(_cm_comment_for_attribute($1, $2));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_get_type_comment(classcomment text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_read_comment($1, 'TYPE');
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_history_cmname(cmclass text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT $1 || '_history';
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_history_dbname(cmtable text) RETURNS regclass
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname(_cm_history_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_history_dbname_unsafe(cmtable text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe(_cm_history_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_history_id(cmtable text) RETURNS oid
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_id(_cm_history_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_historyfk_name(cmclassname text, attributename text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_classfk_name(_cm_history_cmname($1), $2);
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_historypk_name(cmclassname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_classpk_name(_cm_history_cmname($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_insert_relation(username text, domainid oid, cardidcolumn text, cardid integer, refidcolumn text, refid integer, cardclassid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	CardClassIdColumnPart text;
@@ -1368,148 +1367,148 @@ BEGIN
 			')';
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_is_active_comment(classcomment text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'STATUS', 'active');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_any_class(classid oid) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_any_class_comment(_cm_comment_for_table_id($1))
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_any_class_comment(classcomment text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'TYPE', '%class');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_cmobject(tableid oid) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_comment_for_cmobject($1) IS NOT NULL;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_domain_comment(classcomment text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'TYPE', 'domain');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_geometry_type(cmattributetype text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT $1 IN ('POINT','LINESTRING','POLYGON');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_process(classid oid) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT $1 IN (SELECT _cm_subtables_and_itself(_cm_table_id('Activity')));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_process(cmclass text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_process(_cm_table_id($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_reference_comment(attributecomment text) RETURNS boolean
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT COALESCE(_cm_read_reference_domain_comment($1),'') != '';
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_is_simpleclass(cmclass text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_simpleclass_comment(_cm_comment_for_class($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_simpleclass(classid oid) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_simpleclass_comment(_cm_comment_for_table_id($1))
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_simpleclass_comment(classcomment text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'TYPE', 'simpleclass');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_superclass(cmclass text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_superclass_comment(_cm_comment_for_class($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_superclass(classid oid) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_superclass_comment(_cm_comment_for_table_id($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_is_superclass_comment(classcomment text) RETURNS boolean
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'SUPERCLASS', 'true');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_join_cmname(cmschema name, cmtable name) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT $1 || '.' || $2;
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_legacy_class_is_process(text) RETURNS boolean
-    LANGUAGE sql
     AS $_$
 	SELECT (_cm_legacy_read_comment($1, 'MANAGER') = 'activity');
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_legacy_get_menu_code(boolean, boolean, boolean, boolean) RETURNS character varying
-    LANGUAGE plpgsql
     AS $_$
     DECLARE 
         issuperclass ALIAS FOR $1;
@@ -1526,12 +1525,12 @@ CREATE FUNCTION _cm_legacy_get_menu_code(boolean, boolean, boolean, boolean) RET
 
 	RETURN menucode;
     END;
-$_$;
+$_$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_legacy_get_menu_type(boolean, boolean, boolean, boolean) RETURNS character varying
-    LANGUAGE plpgsql
     AS $_$
     DECLARE 
         issuperclass ALIAS FOR $1;
@@ -1548,44 +1547,44 @@ CREATE FUNCTION _cm_legacy_get_menu_type(boolean, boolean, boolean, boolean) RET
 
 	RETURN menutype;
     END;
-$_$;
+$_$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_legacy_read_comment(text, text) RETURNS character varying
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT COALESCE(_cm_read_comment($1, $2), '');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_new_card_id() RETURNS integer
-    LANGUAGE sql
     AS $$
 	SELECT nextval(('class_seq'::text)::regclass)::integer;
-$$;
+$$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_notnull_constraint_name(attributename text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT '_NotNull_'||$1;
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_parent_id(tableid oid) RETURNS SETOF oid
-    LANGUAGE sql
     AS $_$
 	SELECT COALESCE((SELECT inhparent FROM pg_inherits WHERE inhrelid = $1 AND _cm_is_cmobject(inhparent) LIMIT 1), NULL);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_propagate_superclass_triggers(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	ParentId oid := _cm_parent_id(TableId);
@@ -1594,79 +1593,79 @@ BEGIN
 	PERFORM _cm_copy_update_relation_trigger(ParentId, TableId);
 	PERFORM _cm_copy_fk_trigger(ParentId, TableId);
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_read_comment(comment text, key text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT SUBSTRING($1 FROM E'(?:^|\\|)'||$2||E':[ ]*([^ \\|]+)');
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_read_domain_cardinality(attributecomment text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_read_comment($1, 'CARDIN');
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_read_reference_domain_comment(attributecomment text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_read_comment($1, 'REFERENCEDOM');
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_read_reference_domain_id_comment(attributecomment text) RETURNS oid
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_domain_id(_cm_read_reference_domain_comment($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_read_reference_target_comment(attributecomment text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_get_domain_reference_target_comment(_cm_comment_for_domain(_cm_read_reference_domain_comment($1)));
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_read_reference_target_id_comment(attributecomment text) RETURNS oid
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_table_id(_cm_read_reference_target_comment($1));
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_read_reference_type_comment(attributecomment text) RETURNS text
-    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT COALESCE(_cm_read_comment($1, 'REFERENCETYPE'),'restrict');
-$_$;
+$_$
+    LANGUAGE sql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_remove_attribute_triggers(tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_remove_fk_constraints(TableId, AttributeName);
 	PERFORM _cm_remove_reference_handling(TableId, AttributeName);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_remove_constraint_trigger(fktargetclassid oid, fkclassid oid, fkattribute text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -1674,12 +1673,12 @@ BEGIN
 			' ON ' || FKTargetClassId::regclass || ';
 	';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_remove_fk_constraints(fksourceid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TargetId oid := _cm_get_fk_target_table_id(FKSourceId, AttributeName);
@@ -1698,12 +1697,12 @@ BEGIN
 		PERFORM _cm_remove_constraint_trigger(SubTableId, FKSourceId, AttributeName);
 	END LOOP;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_remove_reference_handling(tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	-- remove UpdRel and UpdRef triggers
@@ -1716,24 +1715,24 @@ BEGIN
 		_cm_update_reference_trigger_name(TableId, AttributeName)
 	);
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_restrict(id integer, tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $_$
 BEGIN
 	IF _cm_check_value_exists($1, $2, $3, FALSE) THEN
 		RAISE EXCEPTION 'CM_RESTRICT_VIOLATION';
 	END IF;
 END;
-$_$;
+$_$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_set_attribute_comment(tableid oid, attributename text, comment text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SubClassId oid;
@@ -1742,12 +1741,12 @@ BEGIN
 		EXECUTE 'COMMENT ON COLUMN '|| SubClassId::regclass ||'.'|| quote_ident(AttributeName) ||' IS '|| quote_literal(Comment);
 	END LOOP;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_set_attribute_default(tableid oid, attributename text, newdefault text, updateexisting boolean) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	CurrentDefaultSrc text := _cm_get_attribute_default(TableId, AttributeName);
@@ -1766,32 +1765,32 @@ BEGIN
 		END IF;
     END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_setnull(id integer, tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'UPDATE '|| TableId::regclass ||
 		' SET '||quote_ident(AttributeName)||' = NULL'||
 		' WHERE '||quote_ident(AttributeName)||' = '||Id::text;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_split_cmname(cmname text) RETURNS text[]
-    LANGUAGE sql IMMUTABLE
     AS $_$
     SELECT regexp_matches($1,E'(?:([^\\.]+)\\.)?([^\\.]+)?');
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_subclassid(superclassid oid, cardid integer) RETURNS oid
-    LANGUAGE plpgsql STABLE STRICT
     AS $$
 DECLARE
 	Out integer;
@@ -1799,46 +1798,46 @@ BEGIN
 	EXECUTE 'SELECT tableoid FROM '||SuperClassId::regclass||' WHERE "Id"='||CardId||' LIMIT 1' INTO Out;
 	RETURN Out;
 END;
-$$;
+$$
+    LANGUAGE plpgsql STABLE STRICT;
 
 
 
 CREATE FUNCTION _cm_subtables_and_itself(tableid oid) RETURNS SETOF oid
-    LANGUAGE sql
     AS $_$
 	SELECT $1 WHERE _cm_is_cmobject($1)
 	UNION
 	SELECT _cm_subtables_and_itself(inhrelid) FROM pg_inherits WHERE inhparent = $1
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION _cm_table_dbname(cmname text) RETURNS regclass
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe($1)::regclass;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_table_dbname_unsafe(cmname text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT coalesce(quote_ident(_cm_cmschema($1))||'.','')||quote_ident(_cm_cmtable($1));
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_table_id(cmname text) RETURNS oid
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe($1)::regclass::oid;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_table_is_empty(tableid oid) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	NotFound boolean;
@@ -1847,12 +1846,12 @@ BEGIN
 	EXECUTE 'SELECT (COUNT(*) = 0) FROM '|| TableId::regclass ||' LIMIT 1' INTO NotFound;
 	RETURN NotFound;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_cascade_delete_on_relations() RETURNS trigger
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	RAISE DEBUG 'Trigger % on %', TG_NAME, TG_TABLE_NAME;
@@ -1865,13 +1864,13 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_create_card_history_row() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $_$
+    AS $$
 BEGIN
 	-- Does not create the row on logic deletion
 	IF (TG_OP='UPDATE') THEN
@@ -1887,13 +1886,13 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$_$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_create_relation_history_row() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $_$
+    AS $$
 BEGIN
 	-- Does not create the row on logic deletion
 	IF (TG_OP='UPDATE') THEN
@@ -1908,13 +1907,13 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$_$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_fk() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $_$
+    AS $$
 DECLARE
 	SourceAttribute text := TG_ARGV[0];
 	TargetClassId oid := TG_ARGV[1]::regclass::oid;
@@ -1937,12 +1936,12 @@ BEGIN
 
 	RETURN NEW;
 END;
-$_$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_restrict() RETURNS trigger
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TableId oid := TG_ARGV[0]::regclass::oid;
@@ -1954,23 +1953,23 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_row_or_statement(tgtype smallint) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT CASE $1 & cast(1 as int2)
          WHEN 0 THEN 'STATEMENT'
          ELSE 'ROW'
        END;
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_trigger_sanity_check() RETURNS trigger
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF (TG_OP='UPDATE') THEN
@@ -2004,12 +2003,12 @@ BEGIN
 	NEW."BeginDate" = now();
 	RETURN NEW;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_sanity_check_simple() RETURNS trigger
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF (TG_OP='UPDATE') THEN
@@ -2024,13 +2023,13 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_update_reference() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $_$
+    AS $$
 DECLARE
 	AttributeName text := TG_ARGV[0];
 	TableId oid := TG_ARGV[1]::regclass::oid;
@@ -2068,13 +2067,13 @@ BEGIN
 
 	RETURN NEW;
 END;
-$_$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_update_relation() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $_$
+    AS $$
 DECLARE
 	AttributeName text := TG_ARGV[0];
 	DomainId oid := TG_ARGV[1]::regclass::oid;
@@ -2105,12 +2104,12 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$_$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_trigger_when(tgtype smallint) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT CASE $1 & cast(2 as int2)
          WHEN 0 THEN 'AFTER'
@@ -2125,32 +2124,32 @@ CREATE FUNCTION _cm_trigger_when(tgtype smallint) RETURNS text
          WHEN 24 THEN 'UPDATE OR DELETE'
          WHEN 12 THEN 'INSERT OR DELETE'
        END;
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_unique_index_id(tableid oid, attributename text) RETURNS oid
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT (
 		quote_ident(_cm_cmschema($1))
 		||'.'||
 		quote_ident(_cm_unique_index_name($1, $2))
 	)::regclass::oid;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_unique_index_name(tableid oid, attributename text) RETURNS text
-    LANGUAGE sql STABLE
     AS $_$
 	SELECT '_Unique_'|| _cm_cmtable($1) ||'_'|| $2;
-$_$;
+$_$
+    LANGUAGE sql STABLE;
 
 
 
 CREATE FUNCTION _cm_update_reference(tableid oid, attributename text, cardid integer, referenceid integer) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'UPDATE ' || TableId::regclass ||
@@ -2158,20 +2157,20 @@ BEGIN
 		' WHERE "Status"=''A'' AND "Id" = ' || CardId::text ||
 		' AND coalesce(' || quote_ident(AttributeName) || ', 0) <> ' || coalesce(ReferenceId, 0)::text;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_update_reference_trigger_name(reftableid oid, refattribute text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT '_UpdRef_'|| _cm_cmtable($1) ||'_'|| $2;
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_update_relation(username text, domainid oid, cardidcolumn text, cardid integer, refidcolumn text, refid integer) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	RefClassUpdatePart text;
@@ -2190,20 +2189,20 @@ BEGIN
 		' WHERE "Status"=''A'' AND ' || quote_ident(CardIdColumn) || ' = ' || CardId ||
 			' AND ' || quote_ident(RefIdColumn) || ' <> ' || RefId;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION _cm_update_relation_trigger_name(reftableid oid, refattribute text) RETURNS text
-    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT '_UpdRel_'|| _cm_cmtable($1) ||'_'|| $2;
-$_$;
+$_$
+    LANGUAGE sql IMMUTABLE;
 
 
 
 CREATE FUNCTION _cm_zero_rownum_sequence() RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	temp BIGINT;
@@ -2212,12 +2211,12 @@ BEGIN
 EXCEPTION WHEN undefined_table THEN
 	CREATE TEMPORARY SEQUENCE rownum MINVALUE 0 START 1;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_create_attribute(tableid oid, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_check_attribute_comment_and_type(AttributeComment, SQLType);
@@ -2240,12 +2239,12 @@ BEGIN
     PERFORM _cm_add_fk_constraints(TableId, AttributeName);
 	PERFORM _cm_add_reference_handling(TableId, AttributeName);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_create_class(cmclass text, parentid oid, classcomment text) RETURNS integer
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	IsSimpleClass boolean := _cm_is_simpleclass_comment(ClassComment);
@@ -2316,28 +2315,28 @@ BEGIN
 
 	RETURN TableId::integer;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_create_class(cmclass text, cmparentclass text, classcomment text) RETURNS integer
-    LANGUAGE sql
     AS $_$
 	SELECT cm_create_class($1, _cm_table_id($2), $3);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_create_class_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_create_attribute(_cm_table_id($1), $2, $3, $4, $5, $6, $7);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_create_domain(cmdomain text, domaincomment text) RETURNS integer
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	DomainId oid;
@@ -2366,20 +2365,20 @@ BEGIN
 
 	RETURN DomainId;
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_create_domain_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_create_attribute(_cm_domain_id($1), $2, $3, $4, $5, $6, $7);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_delete_attribute(tableid oid, attributename text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	GeoType text := _cm_get_geometry_type(TableId, AttributeName);
@@ -2400,12 +2399,12 @@ BEGIN
 		EXECUTE 'ALTER TABLE '|| TableId::regclass ||' DROP COLUMN '|| quote_ident(AttributeName) ||' CASCADE';
 	END IF;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_delete_class(tableid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_class_has_domains(TableId) THEN
@@ -2421,28 +2420,28 @@ BEGIN
 	-- Cascade for the history table
 	EXECUTE 'DROP TABLE '|| TableId::regclass ||' CASCADE';
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_delete_class(cmclass text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_class(_cm_table_id($1));
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_delete_class_attribute(cmclass text, attributename text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_attribute(_cm_table_id($1), $2);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_delete_domain(domainid oid) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF NOT _cm_table_is_empty(DomainId) THEN
@@ -2453,28 +2452,28 @@ BEGIN
 
 	EXECUTE 'DROP TABLE '|| DomainId::regclass ||' CASCADE';
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_delete_domain(cmdomain text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_domain(_cm_domain_id($1));
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_delete_domain_attribute(cmclass text, attributename text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_attribute(_cm_domain_id($1), $2);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_modify_attribute(tableid oid, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, newcomment text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -2502,12 +2501,12 @@ BEGIN
 	PERFORM _cm_set_attribute_default(TableId, AttributeName, AttributeDefault, FALSE);
 	PERFORM _cm_set_attribute_comment(TableId, AttributeName, NewComment);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_modify_class(tableid oid, newcomment text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_table_id(TableId);
@@ -2520,28 +2519,28 @@ BEGIN
 
 	EXECUTE 'COMMENT ON TABLE ' || TableId::regclass || ' IS ' || quote_literal(NewComment);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_modify_class(cmclass text, newcomment text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_class(_cm_table_id($1), $2);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_modify_class_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_attribute(_cm_table_id($1), $2, $3, $4, $5, $6, $7);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_modify_domain(domainid oid, newcomment text) RETURNS void
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_table_id(DomainId);
@@ -2557,50 +2556,50 @@ BEGIN
 	-- Check that the cardinality does not change
 	EXECUTE 'COMMENT ON TABLE '|| DomainId::regclass || ' IS '|| quote_literal(NewComment);
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION cm_modify_domain(cmdomain text, domaincomment text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_domain(_cm_domain_id($1), $2);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION cm_modify_domain_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_attribute(_cm_domain_id($1), $2, $3, $4, $5, $6, $7);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION set_data_employee() RETURNS trigger
-    LANGUAGE plpgsql
     AS $$
   BEGIN
     NEW."Description" = coalesce(NEW."Surname", '') || ' ' || coalesce(NEW."Name", '');
     RETURN NEW;
   END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION set_data_suppliercontact() RETURNS trigger
-    LANGUAGE plpgsql
     AS $$
   BEGIN
     NEW."Description" = coalesce(NEW."Surname", '') || ' ' || coalesce(NEW."Name", '');
     RETURN NEW;
   END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_attribute_create(cmclass character varying, attributename character varying, denormalizedsqltype character varying, attributedefault character varying, attributenotnull boolean, attributeunique boolean, attributecomment character varying, attributereference character varying, attributereferencedomain character varying, attributereferencetype character varying, attributereferenceisdirect boolean) RETURNS integer
-    LANGUAGE plpgsql
     AS $$
 DECLARE
     AttributeIndex integer;
@@ -2633,23 +2632,23 @@ BEGIN
 		END INTO AttributeIndex;
     RETURN AttributeIndex;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_attribute_delete(cmclass character varying, attributename character varying) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM cm_delete_class_attribute(CMClass, AttributeName);
 	RETURN TRUE;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_attribute_modify(cmclass text, attributename text, attributenewname text, denormalizedsqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 DECLARE
     SQLType varchar;
@@ -2668,12 +2667,12 @@ BEGIN
 		AttributeDefault, AttributeNotNull, AttributeUnique, AttributeComment);
 	RETURN TRUE;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_class_create(classname character varying, parentclass character varying, issuperclass boolean, classcomment character varying) RETURNS integer
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	-- consistency checks for wrong signatures
@@ -2683,20 +2682,20 @@ BEGIN
 
 	RETURN cm_create_class(ClassName, ParentClass, ClassComment);
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_class_delete(cmclass character varying) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_class($1);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION system_class_modify(classid integer, newclassname character varying, newissuperclass boolean, newclasscomment character varying) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_cmtable(ClassId) <> NewClassName
@@ -2708,12 +2707,12 @@ BEGIN
 	PERFORM cm_modify_class(ClassId::oid, NewClassComment);
 	RETURN TRUE;
 END;
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_domain_create(cmdomain text, domainclass1 text, domainclass2 text, domaincomment text) RETURNS integer
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TableName text := _cm_domain_cmname(CMDomain);
@@ -2724,20 +2723,20 @@ BEGIN
 
 	RETURN cm_create_domain(CMDomain, DomainComment);
 END
-$$;
+$$
+    LANGUAGE plpgsql;
 
 
 
 CREATE FUNCTION system_domain_delete(cmdomain text) RETURNS void
-    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_domain($1);
-$_$;
+$_$
+    LANGUAGE sql;
 
 
 
 CREATE FUNCTION system_domain_modify(domainid oid, domainname text, domainclass1 text, domainclass2 text, newcomment text) RETURNS boolean
-    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_table_id(DomainId);
@@ -2754,8 +2753,8 @@ BEGIN
 
 	RETURN TRUE;
 END;
-$$;
-
+$$
+    LANGUAGE plpgsql;
 
 
 SET default_tablespace = '';
@@ -6499,8 +6498,8 @@ INHERITS ("Workplace");
 
 CREATE SEQUENCE class_seq
     INCREMENT BY 1
-    NO MINVALUE
     NO MAXVALUE
+    NO MINVALUE
     CACHE 1;
 
 
@@ -6509,7 +6508,7 @@ COMMENT ON SEQUENCE class_seq IS 'Sequence for autoincrement class';
 
 
 
-SELECT pg_catalog.setval('class_seq', 789, true);
+SELECT pg_catalog.setval('class_seq', 820, true);
 
 
 
@@ -6564,15 +6563,15 @@ CREATE VIEW system_relationlist_history AS
 
 
 
-INSERT INTO "Building" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Address", "ZIP", "City", "Country") VALUES (64, '"Building"', 'DC', 'Data Center', 'A', 'admin', '2011-07-24 18:40:14.637', NULL, 'Main street 16', '58213', 'London', 25);
-INSERT INTO "Building" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Address", "ZIP", "City", "Country") VALUES (76, '"Building"', 'B2', 'Office Building B', 'A', 'admin', '2011-07-24 18:41:06.636', NULL, 'Liverpool Street 22', '12100', 'London', 25);
-INSERT INTO "Building" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Address", "ZIP", "City", "Country") VALUES (73, '"Building"', 'B1', 'Office Building A', 'A', 'admin', '2011-07-24 18:41:12.996', NULL, 'Liverpool Street 18', '12100', 'London', 25);
+INSERT INTO "Building" VALUES (64, '"Building"', 'DC', 'Data Center', 'A', 'admin', '2011-07-24 18:40:14.637', NULL, 'Main street 16', '58213', 'London', 25);
+INSERT INTO "Building" VALUES (76, '"Building"', 'B2', 'Office Building B', 'A', 'admin', '2011-07-24 18:41:06.636', NULL, 'Liverpool Street 22', '12100', 'London', 25);
+INSERT INTO "Building" VALUES (73, '"Building"', 'B1', 'Office Building A', 'A', 'admin', '2011-07-24 18:41:12.996', NULL, 'Liverpool Street 18', '12100', 'London', 25);
 
 
 
-INSERT INTO "Building_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Address", "ZIP", "City", "Country", "CurrentId", "EndDate") VALUES (71, '"Building"', 'Data Center', 'Data Center', 'U', 'admin', '2011-07-24 18:28:28.63', NULL, 'Main street 16', '58213', 'London', NULL, 64, '2011-07-24 18:35:47.898');
-INSERT INTO "Building_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Address", "ZIP", "City", "Country", "CurrentId", "EndDate") VALUES (74, '"Building"', 'Data Center', 'Data Center', 'U', 'admin', '2011-07-24 18:35:47.898', NULL, 'Main street 16', '58213', 'London', 25, 64, '2011-07-24 18:40:14.637');
-INSERT INTO "Building_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Address", "ZIP", "City", "Country", "CurrentId", "EndDate") VALUES (77, '"Building"', 'B1', 'Office Building A', 'U', 'admin', '2011-07-24 18:40:06.618', NULL, 'Liverpool street 18', '12100', 'London', 25, 73, '2011-07-24 18:41:12.996');
+INSERT INTO "Building_history" VALUES (71, '"Building"', 'Data Center', 'Data Center', 'U', 'admin', '2011-07-24 18:28:28.63', NULL, 'Main street 16', '58213', 'London', NULL, 64, '2011-07-24 18:35:47.898');
+INSERT INTO "Building_history" VALUES (74, '"Building"', 'Data Center', 'Data Center', 'U', 'admin', '2011-07-24 18:35:47.898', NULL, 'Main street 16', '58213', 'London', 25, 64, '2011-07-24 18:40:14.637');
+INSERT INTO "Building_history" VALUES (77, '"Building"', 'B1', 'Office Building A', 'U', 'admin', '2011-07-24 18:40:06.618', NULL, 'Liverpool street 18', '12100', 'London', 25, 73, '2011-07-24 18:41:12.996');
 
 
 
@@ -6588,313 +6587,313 @@ INSERT INTO "Building_history" ("Id", "IdClass", "Code", "Description", "Status"
 
 
 
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (134, '"Employee"', '10', 'Taylor William', 'A', 'admin', '2011-07-24 23:35:18.412', NULL, 'Taylor', 'William', 21, 22, 146, 'william.taylor@gmail.com', 108, '23456', '763477', '', 24);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (118, '"Employee"', '02', 'Johnson Mary', 'A', 'admin', '2011-07-24 23:36:23.281', NULL, 'Johnson', 'Mary', 21, 147, 23, 'mary.johnson@gmail.com', 108, '76543', '9876554', '', 24);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (124, '"Employee"', '05', 'Brown Robert', 'A', 'admin', '2011-07-24 23:43:44.824', NULL, 'Brown', 'Robert', 149, 22, 146, 'robert.brown@gmail.com', 110, '65432', '24555556', '', 152);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (122, '"Employee"', '04', 'Jones Patricia', 'A', 'admin', '2011-07-24 23:45:11.466', NULL, 'Jones', 'Patricia', 21, 148, 145, 'patricia.jones@gmail.com', 112, '76543', '45678889', '', 24);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (132, '"Employee"', '09', 'Moore Elizabeth', 'A', 'admin', '2011-07-24 23:45:30.27', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@gmail.com', 110, '76545', '2345666', '', 151);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (126, '"Employee"', '06', 'Davis Michael', 'A', 'admin', '2011-07-24 23:46:29.744', NULL, 'Davis', 'Michael', 21, 147, 23, 'michael.davis@gmail.com', 110, '45556', '3567789', '', 24);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (130, '"Employee"', '08', 'Wilson Barbara', 'A', 'admin', '2011-07-24 23:47:15.594', NULL, 'Wilson', 'Barbara', 21, 147, 146, 'barbara.wilson@gmail.com', 112, '644353', '7789999', '', 151);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (128, '"Employee"', '07', 'Miller Linda', 'A', 'admin', '2011-07-24 23:48:03.801', NULL, 'Miller', 'Linda', 21, 147, 23, 'linda.miller@gmail.com', 108, '5757578', '686868686', '', 24);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (120, '"Employee"', '03', 'Williams John', 'A', 'admin', '2011-07-24 23:48:45.557', NULL, 'Williams', 'John', 150, 22, 146, 'john.williams@gmail.com', 108, '64646', '56868768', '', 24);
-INSERT INTO "Employee" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State") VALUES (116, '"Employee"', '01', 'Smith James', 'A', 'admin', '2011-07-24 23:49:33.373', NULL, 'Smith', 'James', 149, 22, 146, 'james.smith@gmail.com', 112, '565675', '27575678', '', 24);
+INSERT INTO "Employee" VALUES (134, '"Employee"', '10', 'Taylor William', 'A', 'admin', '2011-07-24 23:35:18.412', NULL, 'Taylor', 'William', 21, 22, 146, 'william.taylor@gmail.com', 108, '23456', '763477', '', 24);
+INSERT INTO "Employee" VALUES (118, '"Employee"', '02', 'Johnson Mary', 'A', 'admin', '2011-07-24 23:36:23.281', NULL, 'Johnson', 'Mary', 21, 147, 23, 'mary.johnson@gmail.com', 108, '76543', '9876554', '', 24);
+INSERT INTO "Employee" VALUES (124, '"Employee"', '05', 'Brown Robert', 'A', 'admin', '2011-07-24 23:43:44.824', NULL, 'Brown', 'Robert', 149, 22, 146, 'robert.brown@gmail.com', 110, '65432', '24555556', '', 152);
+INSERT INTO "Employee" VALUES (122, '"Employee"', '04', 'Jones Patricia', 'A', 'admin', '2011-07-24 23:45:11.466', NULL, 'Jones', 'Patricia', 21, 148, 145, 'patricia.jones@gmail.com', 112, '76543', '45678889', '', 24);
+INSERT INTO "Employee" VALUES (132, '"Employee"', '09', 'Moore Elizabeth', 'A', 'admin', '2011-07-24 23:45:30.27', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@gmail.com', 110, '76545', '2345666', '', 151);
+INSERT INTO "Employee" VALUES (126, '"Employee"', '06', 'Davis Michael', 'A', 'admin', '2011-07-24 23:46:29.744', NULL, 'Davis', 'Michael', 21, 147, 23, 'michael.davis@gmail.com', 110, '45556', '3567789', '', 24);
+INSERT INTO "Employee" VALUES (130, '"Employee"', '08', 'Wilson Barbara', 'A', 'admin', '2011-07-24 23:47:15.594', NULL, 'Wilson', 'Barbara', 21, 147, 146, 'barbara.wilson@gmail.com', 112, '644353', '7789999', '', 151);
+INSERT INTO "Employee" VALUES (128, '"Employee"', '07', 'Miller Linda', 'A', 'admin', '2011-07-24 23:48:03.801', NULL, 'Miller', 'Linda', 21, 147, 23, 'linda.miller@gmail.com', 108, '5757578', '686868686', '', 24);
+INSERT INTO "Employee" VALUES (120, '"Employee"', '03', 'Williams John', 'A', 'admin', '2011-07-24 23:48:45.557', NULL, 'Williams', 'John', 150, 22, 146, 'john.williams@gmail.com', 108, '64646', '56868768', '', 24);
+INSERT INTO "Employee" VALUES (116, '"Employee"', '01', 'Smith James', 'A', 'admin', '2011-07-24 23:49:33.373', NULL, 'Smith', 'James', 149, 22, 146, 'james.smith@gmail.com', 112, '565675', '27575678', '', 24);
 
 
 
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (164, '"Employee"', '10', 'Taylor William', 'U', 'admin', '2011-07-24 19:04:25.125', NULL, 'Taylor', 'William', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 134, '2011-07-24 23:35:18.412');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (167, '"Employee"', '02', 'Johnson Mary', 'U', 'admin', '2011-07-24 18:55:41.127', NULL, 'Johnson', 'Mary', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 118, '2011-07-24 23:36:23.281');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (171, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 19:03:30.275', NULL, 'Moore', 'Elizabeth', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 132, '2011-07-24 23:40:39.563');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (174, '"Employee"', '05', 'Brown Robert', 'U', 'admin', '2011-07-24 18:56:57.522', NULL, 'Brown', 'Robert', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 124, '2011-07-24 23:43:44.824');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (177, '"Employee"', '04', 'Jones Patricia', 'U', 'admin', '2011-07-24 18:56:41.314', NULL, 'Jones', 'Patricia', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 122, '2011-07-24 23:45:11.466');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (180, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 23:40:39.563', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@gmail.com', 110, '76545', '2345666', '', NULL, 132, '2011-07-24 23:45:30.27');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (181, '"Employee"', '06', 'Davis Michael', 'U', 'admin', '2011-07-24 19:01:57.725', NULL, 'Davis', 'Michael', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 126, '2011-07-24 23:46:29.744');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (184, '"Employee"', '08', 'Wilson Barbara', 'U', 'admin', '2011-07-24 19:03:05.826', NULL, 'Wilson', 'Barbara', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 130, '2011-07-24 23:47:15.594');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (187, '"Employee"', '07', 'Miller Linda', 'U', 'admin', '2011-07-24 19:02:43.379', NULL, 'Miller', 'Linda', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 128, '2011-07-24 23:48:03.801');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (190, '"Employee"', '03', 'Williams John', 'U', 'admin', '2011-07-24 18:56:16.778', NULL, 'Williams', 'John', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 120, '2011-07-24 23:48:45.557');
-INSERT INTO "Employee_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Surname", "Name", "Type", "Qualification", "Level", "Email", "Office", "Phone", "Mobile", "Fax", "State", "CurrentId", "EndDate") VALUES (193, '"Employee"', '01', 'Smith James', 'U', 'admin', '2011-07-24 18:54:06.251', NULL, 'Smith', 'James', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 116, '2011-07-24 23:49:33.373');
+INSERT INTO "Employee_history" VALUES (164, '"Employee"', '10', 'Taylor William', 'U', 'admin', '2011-07-24 19:04:25.125', NULL, 'Taylor', 'William', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 134, '2011-07-24 23:35:18.412');
+INSERT INTO "Employee_history" VALUES (167, '"Employee"', '02', 'Johnson Mary', 'U', 'admin', '2011-07-24 18:55:41.127', NULL, 'Johnson', 'Mary', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 118, '2011-07-24 23:36:23.281');
+INSERT INTO "Employee_history" VALUES (171, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 19:03:30.275', NULL, 'Moore', 'Elizabeth', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 132, '2011-07-24 23:40:39.563');
+INSERT INTO "Employee_history" VALUES (174, '"Employee"', '05', 'Brown Robert', 'U', 'admin', '2011-07-24 18:56:57.522', NULL, 'Brown', 'Robert', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 124, '2011-07-24 23:43:44.824');
+INSERT INTO "Employee_history" VALUES (177, '"Employee"', '04', 'Jones Patricia', 'U', 'admin', '2011-07-24 18:56:41.314', NULL, 'Jones', 'Patricia', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 122, '2011-07-24 23:45:11.466');
+INSERT INTO "Employee_history" VALUES (180, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 23:40:39.563', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@gmail.com', 110, '76545', '2345666', '', NULL, 132, '2011-07-24 23:45:30.27');
+INSERT INTO "Employee_history" VALUES (181, '"Employee"', '06', 'Davis Michael', 'U', 'admin', '2011-07-24 19:01:57.725', NULL, 'Davis', 'Michael', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 126, '2011-07-24 23:46:29.744');
+INSERT INTO "Employee_history" VALUES (184, '"Employee"', '08', 'Wilson Barbara', 'U', 'admin', '2011-07-24 19:03:05.826', NULL, 'Wilson', 'Barbara', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 130, '2011-07-24 23:47:15.594');
+INSERT INTO "Employee_history" VALUES (187, '"Employee"', '07', 'Miller Linda', 'U', 'admin', '2011-07-24 19:02:43.379', NULL, 'Miller', 'Linda', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 128, '2011-07-24 23:48:03.801');
+INSERT INTO "Employee_history" VALUES (190, '"Employee"', '03', 'Williams John', 'U', 'admin', '2011-07-24 18:56:16.778', NULL, 'Williams', 'John', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 120, '2011-07-24 23:48:45.557');
+INSERT INTO "Employee_history" VALUES (193, '"Employee"', '01', 'Smith James', 'U', 'admin', '2011-07-24 18:54:06.251', NULL, 'Smith', 'James', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 116, '2011-07-24 23:49:33.373');
 
 
 
-INSERT INTO "Floor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building") VALUES (79, '"Floor"', 'DC01', 'Data Center - Floor 1', 'A', 'admin', '2011-07-24 18:42:21.976', NULL, 64);
-INSERT INTO "Floor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building") VALUES (87, '"Floor"', 'B102', 'Office Building A - Floor 2', 'A', 'admin', '2011-07-24 18:43:43.349', NULL, 73);
-INSERT INTO "Floor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building") VALUES (83, '"Floor"', 'B101', 'Office Building A - Floor 1', 'A', 'admin', '2011-07-24 18:43:49.308', NULL, 73);
-INSERT INTO "Floor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building") VALUES (92, '"Floor"', 'B103', 'Office Building A - Floor 3', 'A', 'admin', '2011-07-24 18:44:07.204', NULL, 73);
-INSERT INTO "Floor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building") VALUES (96, '"Floor"', 'B201', 'Office Building B - Floor 1', 'A', 'admin', '2011-07-24 18:44:21.333', NULL, 76);
-INSERT INTO "Floor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building") VALUES (100, '"Floor"', 'B202', 'Office Building B - Floor 2', 'A', 'admin', '2011-07-24 18:44:39.015', NULL, 76);
+INSERT INTO "Floor" VALUES (79, '"Floor"', 'DC01', 'Data Center - Floor 1', 'A', 'admin', '2011-07-24 18:42:21.976', NULL, 64);
+INSERT INTO "Floor" VALUES (87, '"Floor"', 'B102', 'Office Building A - Floor 2', 'A', 'admin', '2011-07-24 18:43:43.349', NULL, 73);
+INSERT INTO "Floor" VALUES (83, '"Floor"', 'B101', 'Office Building A - Floor 1', 'A', 'admin', '2011-07-24 18:43:49.308', NULL, 73);
+INSERT INTO "Floor" VALUES (92, '"Floor"', 'B103', 'Office Building A - Floor 3', 'A', 'admin', '2011-07-24 18:44:07.204', NULL, 73);
+INSERT INTO "Floor" VALUES (96, '"Floor"', 'B201', 'Office Building B - Floor 1', 'A', 'admin', '2011-07-24 18:44:21.333', NULL, 76);
+INSERT INTO "Floor" VALUES (100, '"Floor"', 'B202', 'Office Building B - Floor 2', 'A', 'admin', '2011-07-24 18:44:39.015', NULL, 76);
 
 
 
-INSERT INTO "Floor_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Building", "CurrentId", "EndDate") VALUES (90, '"Floor"', 'B101', 'Office Building - Floor 1', 'U', 'admin', '2011-07-24 18:43:05.005', NULL, 73, 83, '2011-07-24 18:43:49.308');
+INSERT INTO "Floor_history" VALUES (90, '"Floor"', 'B101', 'Office Building - Floor 1', 'U', 'admin', '2011-07-24 18:43:05.005', NULL, 73, 83, '2011-07-24 18:43:49.308');
 
 
 
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (684, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:39.184', NULL, 677, '"Asset"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (685, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:40.023', NULL, 677, '"Building"', 'r');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (686, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:42.286', NULL, 677, '"Computer"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (687, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:43.741', NULL, 677, '"Employee"', 'r');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (688, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:46.229', NULL, 677, '"Floor"', 'r');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (690, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:52.557', NULL, 677, '"License"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (691, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:53.246', NULL, 677, '"Monitor"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (692, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:54.607', NULL, 677, '"NetworkDevice"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (693, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:55.341', NULL, 677, '"NetworkPoint"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (694, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:56.333', NULL, 677, '"Notebook"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (695, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:59.19', NULL, 677, '"Office"', 'r');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (689, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:50.334', NULL, 677, '"Invoice"', '-');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (696, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:08.549', NULL, 677, '"PC"', 'r');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (697, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:10.981', NULL, 677, '"Printer"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (698, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:12.422', NULL, 677, '"Rack"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (699, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:14.145', NULL, 677, '"Room"', 'r');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (700, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:15.638', NULL, 677, '"Server"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (701, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:23.485', NULL, 677, '"UPS"', 'w');
-INSERT INTO "Grant" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdRole", "IdGrantedClass", "Mode") VALUES (702, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:24.318', NULL, 677, '"Workplace"', 'r');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (1, '"LookUp"', NULL, 'New', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (2, '"LookUp"', NULL, 'Received', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (3, '"LookUp"', NULL, 'Draft', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (4, '"LookUp"', NULL, 'Outgoing', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (5, '"LookUp"', NULL, 'Sent', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (6, '"LookUp"', 'open.running', 'Avviato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 1, true);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (7, '"LookUp"', 'open.not_running.suspended', 'Sospeso', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (8, '"LookUp"', 'closed.completed', 'Completato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (9, '"LookUp"', 'closed.terminated', 'Terminato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (10, '"LookUp"', 'closed.aborted', 'Interrotto', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (330, '"LookUp"', NULL, '15 inches', 'A', NULL, '2011-08-10 12:51:17.832', NULL, 'Screen size', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (25, '"LookUp"', 'EN', 'England', 'A', NULL, '2011-07-22 16:14:25.018', '', 'Country', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (65, '"LookUp"', 'IT', 'Italy', 'A', NULL, '2011-07-24 18:30:46.348', '', 'Country', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (66, '"LookUp"', 'DE', 'Germany', 'A', NULL, '2011-07-24 18:31:36.096', '', 'Country', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (67, '"LookUp"', 'FR', 'France', 'A', NULL, '2011-07-24 18:32:31.507', '', 'Country', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (68, '"LookUp"', 'ES', 'Spain', 'A', NULL, '2011-07-24 18:33:04.705', '', 'Country', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (69, '"LookUp"', 'US', 'United States', 'A', NULL, '2011-07-24 18:33:40.414', '', 'Country', NULL, NULL, 6, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (70, '"LookUp"', 'AT', 'Austria', 'A', NULL, '2011-07-24 18:34:20.568', '', 'Country', NULL, NULL, 7, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (31, '"LookUp"', '', 'IBM', 'A', NULL, '2011-07-22 17:18:15.301', '', 'Brand', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (135, '"LookUp"', '', 'HP', 'A', NULL, '2011-07-24 23:05:55.228', '', 'Brand', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (136, '"LookUp"', '', 'Sony', 'A', NULL, '2011-07-24 23:06:03.174', '', 'Brand', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (137, '"LookUp"', '', 'Cisco', 'A', NULL, '2011-07-24 23:06:08.352', '', 'Brand', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (138, '"LookUp"', '', 'Acer', 'A', NULL, '2011-07-24 23:07:09.511', '', 'Brand', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (139, '"LookUp"', '', 'Canon', 'A', NULL, '2011-07-24 23:07:16.833', '', 'Brand', NULL, NULL, 6, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (140, '"LookUp"', '', 'Epson', 'A', NULL, '2011-07-24 23:07:26.466', '', 'Brand', NULL, NULL, 7, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (141, '"LookUp"', '', 'Microsoft', 'A', NULL, '2011-07-24 23:08:28.50', '', 'Brand', NULL, NULL, 8, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (30, '"LookUp"', '', 'In use', 'A', NULL, '2011-07-22 17:18:01.123', '', 'Asset state', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (142, '"LookUp"', '', 'To repair', 'A', NULL, '2011-07-24 23:11:03.069', '', 'Asset state', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (143, '"LookUp"', '', 'Scrapped', 'A', NULL, '2011-07-24 23:11:29.004', '', 'Asset state', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (144, '"LookUp"', '', 'Available', 'A', NULL, '2011-07-24 23:12:02.806', '', 'Asset state', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (23, '"LookUp"', '', 'Gold', 'A', NULL, '2011-07-22 13:26:03.44', '', 'Employee level', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (145, '"LookUp"', '', 'Platinum', 'A', NULL, '2011-07-24 23:14:09.353', '', 'Employee level', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (146, '"LookUp"', '', 'Silver', 'A', NULL, '2011-07-24 23:14:14.316', '', 'Employee level', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (22, '"LookUp"', '', 'Clerk', 'A', NULL, '2011-07-22 13:25:24.554', '', 'Employee qualification', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (147, '"LookUp"', '', 'Head office', 'A', NULL, '2011-07-24 23:16:13.323', '', 'Employee qualification', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (148, '"LookUp"', '', 'Manager', 'A', NULL, '2011-07-24 23:16:42.143', '', 'Employee qualification', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (21, '"LookUp"', '', 'Employee', 'A', NULL, '2011-07-22 13:24:18.278', '', 'Employee type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (149, '"LookUp"', '', 'External consultant', 'A', NULL, '2011-07-24 23:17:39.293', '', 'Employee type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (150, '"LookUp"', '', 'Stage', 'A', NULL, '2011-07-24 23:18:48.401', '', 'Employee type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (24, '"LookUp"', '', 'Active', 'A', NULL, '2011-07-22 13:26:50.947', '', 'Employee state', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (151, '"LookUp"', '', 'Inactive', 'A', NULL, '2011-07-24 23:20:32.346', '', 'Employee state', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (152, '"LookUp"', '', 'Suspended', 'A', NULL, '2011-07-24 23:20:44.553', '', 'Employee state', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (331, '"LookUp"', NULL, '17 inches', 'A', NULL, '2011-08-10 12:51:49.421', NULL, 'Screen size', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (26, '"LookUp"', '', 'Sales', 'A', NULL, '2011-07-22 16:29:41.332', '', 'Invoice type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (153, '"LookUp"', '', 'Credit memo', 'A', NULL, '2011-07-24 23:21:34.255', '', 'Invoice type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (27, '"LookUp"', '', 'Office', 'A', NULL, '2011-07-22 16:53:21.211', '', 'Room usage type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (154, '"LookUp"', '', 'Warehouse', 'A', NULL, '2011-07-24 23:27:33.024', '', 'Room usage type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (155, '"LookUp"', '', 'Meeting room', 'A', NULL, '2011-07-24 23:27:56.837', '', 'Room usage type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (156, '"LookUp"', '', 'Training room', 'A', NULL, '2011-07-24 23:28:51.596', '', 'Room usage type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (157, '"LookUp"', '', 'Laboratory', 'A', NULL, '2011-07-24 23:29:09.958', '', 'Room usage type', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (28, '"LookUp"', '', 'Manufacturer', 'A', NULL, '2011-07-22 16:57:35.695', '', 'Supplier type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (158, '"LookUp"', '', 'Distributor', 'A', NULL, '2011-07-24 23:30:40.294', '', 'Supplier type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (32, '"LookUp"', '', 'Hardware', 'A', NULL, '2011-07-22 17:27:40.27', '', 'Technical reference role', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (159, '"LookUp"', '', 'Systemistic', 'A', NULL, '2011-07-24 23:31:31.02', '', 'Technical reference role', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (160, '"LookUp"', '', 'Applicative', 'A', NULL, '2011-07-24 23:31:52.712', '', 'Technical reference role', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (161, '"LookUp"', '', 'Security', 'A', NULL, '2011-07-24 23:32:14.583', '', 'Technical reference role', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (29, '"LookUp"', '', 'Single user', 'A', NULL, '2011-07-22 17:06:16.706', '', 'Workplace type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (162, '"LookUp"', '', 'Multiuser', 'A', NULL, '2011-07-24 23:32:53.643', '', 'Workplace type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (163, '"LookUp"', '', 'Public', 'A', NULL, '2011-07-24 23:33:31.912', '', 'Workplace type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (279, '"LookUp"', 'CA', 'Canada', 'A', NULL, '2011-08-01 00:16:00.92', NULL, 'Country', NULL, NULL, 8, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (327, '"LookUp"', NULL, 'RAID 1', 'A', NULL, '2011-08-10 12:47:58.52', NULL, 'RAID', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (328, '"LookUp"', NULL, 'RAID 2', 'A', NULL, '2011-08-10 12:48:15.145', NULL, 'RAID', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (329, '"LookUp"', NULL, 'RAID 5', 'A', NULL, '2011-08-10 12:48:22.138', NULL, 'RAID', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (332, '"LookUp"', NULL, '19 inches', 'A', NULL, '2011-08-10 12:51:54.889', NULL, 'Screen size', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (333, '"LookUp"', NULL, '16 inches', 'A', NULL, '2011-08-10 12:52:00.662', NULL, 'Screen size', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (334, '"LookUp"', NULL, '13 inches', 'A', NULL, '2011-08-10 12:52:13.899', NULL, 'Screen size', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (335, '"LookUp"', NULL, '21 inches', 'A', NULL, '2011-08-10 12:52:23.554', NULL, 'Screen size', NULL, NULL, 6, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (393, '"LookUp"', '2', 'CRT', 'A', NULL, '2011-08-10 14:49:48.263', NULL, 'Monitor type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (395, '"LookUp"', NULL, 'A4', 'A', NULL, '2011-08-10 15:09:43.103', NULL, 'Paper size', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (396, '"LookUp"', NULL, 'A3', 'A', NULL, '2011-08-10 15:09:56.059', NULL, 'Paper size', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (397, '"LookUp"', NULL, 'A0', 'A', NULL, '2011-08-10 15:10:02.023', NULL, 'Paper size', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (398, '"LookUp"', NULL, 'Laser', 'A', NULL, '2011-08-10 15:10:16.39', NULL, 'Printer type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (399, '"LookUp"', NULL, 'Inkjet', 'A', NULL, '2011-08-10 15:10:32.346', NULL, 'Printer type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (400, '"LookUp"', NULL, 'Thermal', 'A', NULL, '2011-08-10 15:11:04.536', NULL, 'Printer type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (401, '"LookUp"', NULL, 'Impact', 'A', NULL, '2011-08-10 15:12:02.035', NULL, 'Printer type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (402, '"LookUp"', NULL, 'Plotter', 'A', NULL, '2011-08-10 15:12:07.47', NULL, 'Printer type', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (403, '"LookUp"', NULL, 'Local', 'A', NULL, '2011-08-10 15:14:24.402', NULL, 'Printer usage', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (404, '"LookUp"', NULL, 'Network', 'A', NULL, '2011-08-10 15:14:58.444', NULL, 'Printer usage', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (405, '"LookUp"', NULL, 'Personal productivity software', 'A', NULL, '2011-08-10 15:17:53.016', NULL, 'License category', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (406, '"LookUp"', NULL, 'Enterprise software', 'A', NULL, '2011-08-10 15:23:54.486', NULL, 'License category', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (407, '"LookUp"', NULL, 'Technical software', 'A', NULL, '2011-08-10 15:24:07.238', NULL, 'License category', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (408, '"LookUp"', NULL, 'Router', 'A', NULL, '2011-08-10 15:29:48.467', NULL, 'Network device type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (409, '"LookUp"', NULL, 'Switch', 'A', NULL, '2011-08-10 15:30:13.078', NULL, 'Network device type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (410, '"LookUp"', NULL, 'Access point', 'A', NULL, '2011-08-10 15:30:25.474', NULL, 'Network device type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (394, '"LookUp"', '3', 'Plasma', 'A', NULL, '2011-08-10 14:50:22.995', NULL, 'Monitor type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (411, '"LookUp"', NULL, 'Patch panel', 'A', NULL, '2011-08-10 15:30:56.609', NULL, 'Network device type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (482, '"LookUp"', NULL, 'Red', 'A', NULL, '2011-08-10 15:41:41.655', NULL, 'Cable color', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (483, '"LookUp"', NULL, 'Black', 'A', NULL, '2011-08-10 15:41:59.826', NULL, 'Cable color', NULL, NULL, 2, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (484, '"LookUp"', NULL, 'White', 'A', NULL, '2011-08-10 15:42:04.579', NULL, 'Cable color', NULL, NULL, 3, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (485, '"LookUp"', NULL, 'Yellow', 'A', NULL, '2011-08-10 15:42:10.843', NULL, 'Cable color', NULL, NULL, 4, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (486, '"LookUp"', NULL, 'Blue', 'A', NULL, '2011-08-10 15:42:49.445', NULL, 'Cable color', NULL, NULL, 5, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (487, '"LookUp"', NULL, 'Green', 'A', NULL, '2011-08-10 15:42:57.692', NULL, 'Cable color', NULL, NULL, 6, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (488, '"LookUp"', NULL, 'Cyan', 'A', NULL, '2011-08-10 15:43:28.67', NULL, 'Cable color', NULL, NULL, 7, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (489, '"LookUp"', NULL, 'Brown', 'A', NULL, '2011-08-10 15:43:39.476', NULL, 'Cable color', NULL, NULL, 8, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (490, '"LookUp"', NULL, 'Gray', 'A', NULL, '2011-08-10 15:43:47.898', NULL, 'Cable color', NULL, NULL, 9, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (491, '"LookUp"', NULL, 'Orange', 'A', NULL, '2011-08-10 15:44:02.059', NULL, 'Cable color', NULL, NULL, 10, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (492, '"LookUp"', NULL, 'Pink', 'A', NULL, '2011-08-10 15:44:10.968', NULL, 'Cable color', NULL, NULL, 11, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (493, '"LookUp"', NULL, 'Magenta', 'A', NULL, '2011-08-10 15:44:32.391', NULL, 'Cable color', NULL, NULL, 12, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (392, '"LookUp"', '1', 'LCD', 'A', NULL, '2011-08-10 14:49:35.013', NULL, 'Monitor type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (703, '"LookUp"', NULL, 'Document', 'A', NULL, '2011-08-23 23:01:52.029', NULL, 'AlfrescoCategory', NULL, NULL, 1, false);
-INSERT INTO "LookUp" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "ParentType", "ParentId", "Number", "IsDefault") VALUES (704, '"LookUp"', NULL, 'Image', 'A', NULL, '2011-08-23 23:02:08.292', NULL, 'AlfrescoCategory', NULL, NULL, 2, false);
-
-
-
-
-
-
-
-
-
-
-
-
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 120, '"PC"', 518, 'A', 'admin', '2011-08-23 17:26:13.647', NULL, 520);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 126, '"PC"', 526, 'A', 'admin', '2011-08-23 17:28:42.292', NULL, 528);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 128, '"PC"', 534, 'A', 'admin', '2011-08-23 17:29:52.21', NULL, 536);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 130, '"PC"', 542, 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 544);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 134, '"Monitor"', 550, 'A', 'admin', '2011-08-23 17:34:12.416', NULL, 553);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 128, '"Monitor"', 555, 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 557);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 130, '"Monitor"', 561, 'A', 'admin', '2011-08-23 17:36:00.497', NULL, 563);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 118, '"Monitor"', 567, 'A', 'admin', '2011-08-23 17:36:50.525', NULL, 569);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 132, '"Monitor"', 573, 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 575);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 130, '"Printer"', 579, 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 581);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 120, '"Printer"', 585, 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 587);
-INSERT INTO "Map_AssetAssignee" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_AssetAssignee"', '"Employee"', 122, '"Printer"', 591, 'A', 'admin', '2011-08-23 17:40:48.481', NULL, 593);
-
-
-
-
-
-
-INSERT INTO "Map_AssetReference" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "Role") VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 526, 'A', 'admin', '2011-08-23 17:28:42.292', NULL, 532, NULL);
-INSERT INTO "Map_AssetReference" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "Role") VALUES ('"Map_AssetReference"', '"Employee"', 134, '"PC"', 534, 'A', 'admin', '2011-08-23 17:29:52.21', NULL, 540, NULL);
-INSERT INTO "Map_AssetReference" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "Role") VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 542, 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 548, NULL);
-INSERT INTO "Map_AssetReference" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "Role") VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 518, 'A', 'admin', '2011-08-29 12:37:39.83', NULL, 524, 32);
-
-
-
-INSERT INTO "Map_AssetReference_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "Role") VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 518, 'U', 'admin', '2011-08-23 17:26:13.647', '2011-08-29 12:37:39.83', 524, NULL);
-
-
-
-INSERT INTO "Map_BuildingFloor" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_BuildingFloor"', '"Building"', 64, '"Floor"', 79, 'A', 'admin', '2011-07-24 18:42:21.976', NULL, 81);
-INSERT INTO "Map_BuildingFloor" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_BuildingFloor"', '"Building"', 73, '"Floor"', 83, 'A', 'admin', '2011-07-24 18:43:05.005', NULL, 85);
-INSERT INTO "Map_BuildingFloor" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_BuildingFloor"', '"Building"', 73, '"Floor"', 87, 'A', 'admin', '2011-07-24 18:43:43.349', NULL, 89);
-INSERT INTO "Map_BuildingFloor" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_BuildingFloor"', '"Building"', 73, '"Floor"', 92, 'A', 'admin', '2011-07-24 18:44:07.204', NULL, 94);
-INSERT INTO "Map_BuildingFloor" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_BuildingFloor"', '"Building"', 76, '"Floor"', 96, 'A', 'admin', '2011-07-24 18:44:21.333', NULL, 98);
-INSERT INTO "Map_BuildingFloor" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_BuildingFloor"', '"Building"', 76, '"Floor"', 100, 'A', 'admin', '2011-07-24 18:44:39.015', NULL, 102);
-
-
-
-
-
-
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 79, '"Room"', 104, 'A', 'admin', '2011-07-24 18:45:44.718', NULL, 106);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 79, '"Room"', 200, 'A', 'admin', '2011-07-24 23:51:13.304', NULL, 202);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 83, '"Room"', 206, 'A', 'admin', '2011-07-24 23:56:14.609', NULL, 208);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 83, '"Room"', 212, 'A', 'admin', '2011-07-24 23:56:56.466', NULL, 214);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 83, '"Room"', 218, 'A', 'admin', '2011-07-24 23:57:24.774', NULL, 220);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 87, '"Room"', 224, 'A', 'admin', '2011-07-24 23:57:56.042', NULL, 226);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 87, '"Room"', 230, 'A', 'admin', '2011-07-24 23:58:29.941', NULL, 232);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 92, '"Room"', 236, 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 238);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 96, '"Room"', 242, 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 244);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 96, '"Room"', 248, 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 250);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 96, '"Room"', 254, 'A', 'admin', '2011-07-25 00:00:42.222', NULL, 256);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 100, '"Room"', 260, 'A', 'admin', '2011-07-25 00:01:29.684', NULL, 262);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 100, '"Room"', 266, 'A', 'admin', '2011-07-25 00:01:52.818', NULL, 268);
-INSERT INTO "Map_FloorRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_FloorRoom"', '"Floor"', 100, '"Room"', 272, 'A', 'admin', '2011-07-25 00:02:19.16', NULL, 274);
+INSERT INTO "Grant" VALUES (684, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:39.184', NULL, 677, '"Asset"', 'w');
+INSERT INTO "Grant" VALUES (685, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:40.023', NULL, 677, '"Building"', 'r');
+INSERT INTO "Grant" VALUES (686, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:42.286', NULL, 677, '"Computer"', 'w');
+INSERT INTO "Grant" VALUES (687, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:43.741', NULL, 677, '"Employee"', 'r');
+INSERT INTO "Grant" VALUES (688, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:46.229', NULL, 677, '"Floor"', 'r');
+INSERT INTO "Grant" VALUES (690, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:52.557', NULL, 677, '"License"', 'w');
+INSERT INTO "Grant" VALUES (691, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:53.246', NULL, 677, '"Monitor"', 'w');
+INSERT INTO "Grant" VALUES (692, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:54.607', NULL, 677, '"NetworkDevice"', 'w');
+INSERT INTO "Grant" VALUES (693, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:55.341', NULL, 677, '"NetworkPoint"', 'w');
+INSERT INTO "Grant" VALUES (694, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:56.333', NULL, 677, '"Notebook"', 'w');
+INSERT INTO "Grant" VALUES (695, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:59.19', NULL, 677, '"Office"', 'r');
+INSERT INTO "Grant" VALUES (689, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:45:50.334', NULL, 677, '"Invoice"', '-');
+INSERT INTO "Grant" VALUES (696, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:08.549', NULL, 677, '"PC"', 'r');
+INSERT INTO "Grant" VALUES (697, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:10.981', NULL, 677, '"Printer"', 'w');
+INSERT INTO "Grant" VALUES (698, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:12.422', NULL, 677, '"Rack"', 'w');
+INSERT INTO "Grant" VALUES (699, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:14.145', NULL, 677, '"Room"', 'r');
+INSERT INTO "Grant" VALUES (700, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:15.638', NULL, 677, '"Server"', 'w');
+INSERT INTO "Grant" VALUES (701, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:23.485', NULL, 677, '"UPS"', 'w');
+INSERT INTO "Grant" VALUES (702, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:24.318', NULL, 677, '"Workplace"', 'r');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO "LookUp" VALUES (1, '"LookUp"', NULL, 'New', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (2, '"LookUp"', NULL, 'Received', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (3, '"LookUp"', NULL, 'Draft', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (4, '"LookUp"', NULL, 'Outgoing', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (5, '"LookUp"', NULL, 'Sent', 'A', NULL, '2011-03-16 11:15:25.057396', NULL, 'EmailStatus', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (6, '"LookUp"', 'open.running', 'Avviato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 1, true);
+INSERT INTO "LookUp" VALUES (7, '"LookUp"', 'open.not_running.suspended', 'Sospeso', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (8, '"LookUp"', 'closed.completed', 'Completato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (9, '"LookUp"', 'closed.terminated', 'Terminato', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (10, '"LookUp"', 'closed.aborted', 'Interrotto', 'A', NULL, '2011-03-16 11:15:27.503898', NULL, 'FlowStatus', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (330, '"LookUp"', NULL, '15 inches', 'A', NULL, '2011-08-10 12:51:17.832', NULL, 'Screen size', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (25, '"LookUp"', 'EN', 'England', 'A', NULL, '2011-07-22 16:14:25.018', '', 'Country', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (65, '"LookUp"', 'IT', 'Italy', 'A', NULL, '2011-07-24 18:30:46.348', '', 'Country', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (66, '"LookUp"', 'DE', 'Germany', 'A', NULL, '2011-07-24 18:31:36.096', '', 'Country', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (67, '"LookUp"', 'FR', 'France', 'A', NULL, '2011-07-24 18:32:31.507', '', 'Country', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (68, '"LookUp"', 'ES', 'Spain', 'A', NULL, '2011-07-24 18:33:04.705', '', 'Country', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (69, '"LookUp"', 'US', 'United States', 'A', NULL, '2011-07-24 18:33:40.414', '', 'Country', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (70, '"LookUp"', 'AT', 'Austria', 'A', NULL, '2011-07-24 18:34:20.568', '', 'Country', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (31, '"LookUp"', '', 'IBM', 'A', NULL, '2011-07-22 17:18:15.301', '', 'Brand', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (135, '"LookUp"', '', 'HP', 'A', NULL, '2011-07-24 23:05:55.228', '', 'Brand', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (136, '"LookUp"', '', 'Sony', 'A', NULL, '2011-07-24 23:06:03.174', '', 'Brand', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (137, '"LookUp"', '', 'Cisco', 'A', NULL, '2011-07-24 23:06:08.352', '', 'Brand', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (138, '"LookUp"', '', 'Acer', 'A', NULL, '2011-07-24 23:07:09.511', '', 'Brand', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (139, '"LookUp"', '', 'Canon', 'A', NULL, '2011-07-24 23:07:16.833', '', 'Brand', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (140, '"LookUp"', '', 'Epson', 'A', NULL, '2011-07-24 23:07:26.466', '', 'Brand', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (141, '"LookUp"', '', 'Microsoft', 'A', NULL, '2011-07-24 23:08:28.50', '', 'Brand', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (30, '"LookUp"', '', 'In use', 'A', NULL, '2011-07-22 17:18:01.123', '', 'Asset state', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (142, '"LookUp"', '', 'To repair', 'A', NULL, '2011-07-24 23:11:03.069', '', 'Asset state', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (143, '"LookUp"', '', 'Scrapped', 'A', NULL, '2011-07-24 23:11:29.004', '', 'Asset state', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (144, '"LookUp"', '', 'Available', 'A', NULL, '2011-07-24 23:12:02.806', '', 'Asset state', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (23, '"LookUp"', '', 'Gold', 'A', NULL, '2011-07-22 13:26:03.44', '', 'Employee level', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (145, '"LookUp"', '', 'Platinum', 'A', NULL, '2011-07-24 23:14:09.353', '', 'Employee level', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (146, '"LookUp"', '', 'Silver', 'A', NULL, '2011-07-24 23:14:14.316', '', 'Employee level', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (22, '"LookUp"', '', 'Clerk', 'A', NULL, '2011-07-22 13:25:24.554', '', 'Employee qualification', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (147, '"LookUp"', '', 'Head office', 'A', NULL, '2011-07-24 23:16:13.323', '', 'Employee qualification', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (148, '"LookUp"', '', 'Manager', 'A', NULL, '2011-07-24 23:16:42.143', '', 'Employee qualification', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (21, '"LookUp"', '', 'Employee', 'A', NULL, '2011-07-22 13:24:18.278', '', 'Employee type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (149, '"LookUp"', '', 'External consultant', 'A', NULL, '2011-07-24 23:17:39.293', '', 'Employee type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (150, '"LookUp"', '', 'Stage', 'A', NULL, '2011-07-24 23:18:48.401', '', 'Employee type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (24, '"LookUp"', '', 'Active', 'A', NULL, '2011-07-22 13:26:50.947', '', 'Employee state', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (151, '"LookUp"', '', 'Inactive', 'A', NULL, '2011-07-24 23:20:32.346', '', 'Employee state', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (152, '"LookUp"', '', 'Suspended', 'A', NULL, '2011-07-24 23:20:44.553', '', 'Employee state', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (331, '"LookUp"', NULL, '17 inches', 'A', NULL, '2011-08-10 12:51:49.421', NULL, 'Screen size', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (26, '"LookUp"', '', 'Sales', 'A', NULL, '2011-07-22 16:29:41.332', '', 'Invoice type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (153, '"LookUp"', '', 'Credit memo', 'A', NULL, '2011-07-24 23:21:34.255', '', 'Invoice type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (27, '"LookUp"', '', 'Office', 'A', NULL, '2011-07-22 16:53:21.211', '', 'Room usage type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (154, '"LookUp"', '', 'Warehouse', 'A', NULL, '2011-07-24 23:27:33.024', '', 'Room usage type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (155, '"LookUp"', '', 'Meeting room', 'A', NULL, '2011-07-24 23:27:56.837', '', 'Room usage type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (156, '"LookUp"', '', 'Training room', 'A', NULL, '2011-07-24 23:28:51.596', '', 'Room usage type', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (157, '"LookUp"', '', 'Laboratory', 'A', NULL, '2011-07-24 23:29:09.958', '', 'Room usage type', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (28, '"LookUp"', '', 'Manufacturer', 'A', NULL, '2011-07-22 16:57:35.695', '', 'Supplier type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (158, '"LookUp"', '', 'Distributor', 'A', NULL, '2011-07-24 23:30:40.294', '', 'Supplier type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (32, '"LookUp"', '', 'Hardware', 'A', NULL, '2011-07-22 17:27:40.27', '', 'Technical reference role', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (159, '"LookUp"', '', 'Systemistic', 'A', NULL, '2011-07-24 23:31:31.02', '', 'Technical reference role', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (160, '"LookUp"', '', 'Applicative', 'A', NULL, '2011-07-24 23:31:52.712', '', 'Technical reference role', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (161, '"LookUp"', '', 'Security', 'A', NULL, '2011-07-24 23:32:14.583', '', 'Technical reference role', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (29, '"LookUp"', '', 'Single user', 'A', NULL, '2011-07-22 17:06:16.706', '', 'Workplace type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (162, '"LookUp"', '', 'Multiuser', 'A', NULL, '2011-07-24 23:32:53.643', '', 'Workplace type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (163, '"LookUp"', '', 'Public', 'A', NULL, '2011-07-24 23:33:31.912', '', 'Workplace type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (279, '"LookUp"', 'CA', 'Canada', 'A', NULL, '2011-08-01 00:16:00.92', NULL, 'Country', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (327, '"LookUp"', NULL, 'RAID 1', 'A', NULL, '2011-08-10 12:47:58.52', NULL, 'RAID', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (328, '"LookUp"', NULL, 'RAID 2', 'A', NULL, '2011-08-10 12:48:15.145', NULL, 'RAID', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (329, '"LookUp"', NULL, 'RAID 5', 'A', NULL, '2011-08-10 12:48:22.138', NULL, 'RAID', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (332, '"LookUp"', NULL, '19 inches', 'A', NULL, '2011-08-10 12:51:54.889', NULL, 'Screen size', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (333, '"LookUp"', NULL, '16 inches', 'A', NULL, '2011-08-10 12:52:00.662', NULL, 'Screen size', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (334, '"LookUp"', NULL, '13 inches', 'A', NULL, '2011-08-10 12:52:13.899', NULL, 'Screen size', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (335, '"LookUp"', NULL, '21 inches', 'A', NULL, '2011-08-10 12:52:23.554', NULL, 'Screen size', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (393, '"LookUp"', '2', 'CRT', 'A', NULL, '2011-08-10 14:49:48.263', NULL, 'Monitor type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (395, '"LookUp"', NULL, 'A4', 'A', NULL, '2011-08-10 15:09:43.103', NULL, 'Paper size', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (396, '"LookUp"', NULL, 'A3', 'A', NULL, '2011-08-10 15:09:56.059', NULL, 'Paper size', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (397, '"LookUp"', NULL, 'A0', 'A', NULL, '2011-08-10 15:10:02.023', NULL, 'Paper size', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (398, '"LookUp"', NULL, 'Laser', 'A', NULL, '2011-08-10 15:10:16.39', NULL, 'Printer type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (399, '"LookUp"', NULL, 'Inkjet', 'A', NULL, '2011-08-10 15:10:32.346', NULL, 'Printer type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (400, '"LookUp"', NULL, 'Thermal', 'A', NULL, '2011-08-10 15:11:04.536', NULL, 'Printer type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (401, '"LookUp"', NULL, 'Impact', 'A', NULL, '2011-08-10 15:12:02.035', NULL, 'Printer type', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (402, '"LookUp"', NULL, 'Plotter', 'A', NULL, '2011-08-10 15:12:07.47', NULL, 'Printer type', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (403, '"LookUp"', NULL, 'Local', 'A', NULL, '2011-08-10 15:14:24.402', NULL, 'Printer usage', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (404, '"LookUp"', NULL, 'Network', 'A', NULL, '2011-08-10 15:14:58.444', NULL, 'Printer usage', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (405, '"LookUp"', NULL, 'Personal productivity software', 'A', NULL, '2011-08-10 15:17:53.016', NULL, 'License category', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (406, '"LookUp"', NULL, 'Enterprise software', 'A', NULL, '2011-08-10 15:23:54.486', NULL, 'License category', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (407, '"LookUp"', NULL, 'Technical software', 'A', NULL, '2011-08-10 15:24:07.238', NULL, 'License category', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (408, '"LookUp"', NULL, 'Router', 'A', NULL, '2011-08-10 15:29:48.467', NULL, 'Network device type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (409, '"LookUp"', NULL, 'Switch', 'A', NULL, '2011-08-10 15:30:13.078', NULL, 'Network device type', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (410, '"LookUp"', NULL, 'Access point', 'A', NULL, '2011-08-10 15:30:25.474', NULL, 'Network device type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (394, '"LookUp"', '3', 'Plasma', 'A', NULL, '2011-08-10 14:50:22.995', NULL, 'Monitor type', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (411, '"LookUp"', NULL, 'Patch panel', 'A', NULL, '2011-08-10 15:30:56.609', NULL, 'Network device type', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (482, '"LookUp"', NULL, 'Red', 'A', NULL, '2011-08-10 15:41:41.655', NULL, 'Cable color', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (483, '"LookUp"', NULL, 'Black', 'A', NULL, '2011-08-10 15:41:59.826', NULL, 'Cable color', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (484, '"LookUp"', NULL, 'White', 'A', NULL, '2011-08-10 15:42:04.579', NULL, 'Cable color', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (485, '"LookUp"', NULL, 'Yellow', 'A', NULL, '2011-08-10 15:42:10.843', NULL, 'Cable color', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (486, '"LookUp"', NULL, 'Blue', 'A', NULL, '2011-08-10 15:42:49.445', NULL, 'Cable color', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (487, '"LookUp"', NULL, 'Green', 'A', NULL, '2011-08-10 15:42:57.692', NULL, 'Cable color', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (488, '"LookUp"', NULL, 'Cyan', 'A', NULL, '2011-08-10 15:43:28.67', NULL, 'Cable color', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (489, '"LookUp"', NULL, 'Brown', 'A', NULL, '2011-08-10 15:43:39.476', NULL, 'Cable color', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (490, '"LookUp"', NULL, 'Gray', 'A', NULL, '2011-08-10 15:43:47.898', NULL, 'Cable color', NULL, NULL, 9, false);
+INSERT INTO "LookUp" VALUES (491, '"LookUp"', NULL, 'Orange', 'A', NULL, '2011-08-10 15:44:02.059', NULL, 'Cable color', NULL, NULL, 10, false);
+INSERT INTO "LookUp" VALUES (492, '"LookUp"', NULL, 'Pink', 'A', NULL, '2011-08-10 15:44:10.968', NULL, 'Cable color', NULL, NULL, 11, false);
+INSERT INTO "LookUp" VALUES (493, '"LookUp"', NULL, 'Magenta', 'A', NULL, '2011-08-10 15:44:32.391', NULL, 'Cable color', NULL, NULL, 12, false);
+INSERT INTO "LookUp" VALUES (392, '"LookUp"', '1', 'LCD', 'A', NULL, '2011-08-10 14:49:35.013', NULL, 'Monitor type', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (703, '"LookUp"', NULL, 'Document', 'A', NULL, '2011-08-23 23:01:52.029', NULL, 'AlfrescoCategory', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (704, '"LookUp"', NULL, 'Image', 'A', NULL, '2011-08-23 23:02:08.292', NULL, 'AlfrescoCategory', NULL, NULL, 2, false);
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 120, '"PC"', 518, 'A', 'admin', '2011-08-23 17:26:13.647', NULL, 520);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 126, '"PC"', 526, 'A', 'admin', '2011-08-23 17:28:42.292', NULL, 528);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 128, '"PC"', 534, 'A', 'admin', '2011-08-23 17:29:52.21', NULL, 536);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 130, '"PC"', 542, 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 544);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 134, '"Monitor"', 550, 'A', 'admin', '2011-08-23 17:34:12.416', NULL, 553);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 128, '"Monitor"', 555, 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 557);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 130, '"Monitor"', 561, 'A', 'admin', '2011-08-23 17:36:00.497', NULL, 563);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 118, '"Monitor"', 567, 'A', 'admin', '2011-08-23 17:36:50.525', NULL, 569);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 132, '"Monitor"', 573, 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 575);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 130, '"Printer"', 579, 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 581);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 120, '"Printer"', 585, 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 587);
+INSERT INTO "Map_AssetAssignee" VALUES ('"Map_AssetAssignee"', '"Employee"', 122, '"Printer"', 591, 'A', 'admin', '2011-08-23 17:40:48.481', NULL, 593);
+
+
+
+
+
+
+INSERT INTO "Map_AssetReference" VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 526, 'A', 'admin', '2011-08-23 17:28:42.292', NULL, 532, NULL);
+INSERT INTO "Map_AssetReference" VALUES ('"Map_AssetReference"', '"Employee"', 134, '"PC"', 534, 'A', 'admin', '2011-08-23 17:29:52.21', NULL, 540, NULL);
+INSERT INTO "Map_AssetReference" VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 542, 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 548, NULL);
+INSERT INTO "Map_AssetReference" VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 518, 'A', 'admin', '2011-08-29 12:37:39.83', NULL, 524, 32);
+
+
+
+INSERT INTO "Map_AssetReference_history" VALUES ('"Map_AssetReference"', '"Employee"', 116, '"PC"', 518, 'U', 'admin', '2011-08-23 17:26:13.647', '2011-08-29 12:37:39.83', 524, NULL);
+
+
+
+INSERT INTO "Map_BuildingFloor" VALUES ('"Map_BuildingFloor"', '"Building"', 64, '"Floor"', 79, 'A', 'admin', '2011-07-24 18:42:21.976', NULL, 81);
+INSERT INTO "Map_BuildingFloor" VALUES ('"Map_BuildingFloor"', '"Building"', 73, '"Floor"', 83, 'A', 'admin', '2011-07-24 18:43:05.005', NULL, 85);
+INSERT INTO "Map_BuildingFloor" VALUES ('"Map_BuildingFloor"', '"Building"', 73, '"Floor"', 87, 'A', 'admin', '2011-07-24 18:43:43.349', NULL, 89);
+INSERT INTO "Map_BuildingFloor" VALUES ('"Map_BuildingFloor"', '"Building"', 73, '"Floor"', 92, 'A', 'admin', '2011-07-24 18:44:07.204', NULL, 94);
+INSERT INTO "Map_BuildingFloor" VALUES ('"Map_BuildingFloor"', '"Building"', 76, '"Floor"', 96, 'A', 'admin', '2011-07-24 18:44:21.333', NULL, 98);
+INSERT INTO "Map_BuildingFloor" VALUES ('"Map_BuildingFloor"', '"Building"', 76, '"Floor"', 100, 'A', 'admin', '2011-07-24 18:44:39.015', NULL, 102);
+
+
+
+
+
+
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 79, '"Room"', 104, 'A', 'admin', '2011-07-24 18:45:44.718', NULL, 106);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 79, '"Room"', 200, 'A', 'admin', '2011-07-24 23:51:13.304', NULL, 202);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 83, '"Room"', 206, 'A', 'admin', '2011-07-24 23:56:14.609', NULL, 208);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 83, '"Room"', 212, 'A', 'admin', '2011-07-24 23:56:56.466', NULL, 214);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 83, '"Room"', 218, 'A', 'admin', '2011-07-24 23:57:24.774', NULL, 220);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 87, '"Room"', 224, 'A', 'admin', '2011-07-24 23:57:56.042', NULL, 226);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 87, '"Room"', 230, 'A', 'admin', '2011-07-24 23:58:29.941', NULL, 232);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 92, '"Room"', 236, 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 238);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 96, '"Room"', 242, 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 244);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 96, '"Room"', 248, 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 250);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 96, '"Room"', 254, 'A', 'admin', '2011-07-25 00:00:42.222', NULL, 256);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 100, '"Room"', 260, 'A', 'admin', '2011-07-25 00:01:29.684', NULL, 262);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 100, '"Room"', 266, 'A', 'admin', '2011-07-25 00:01:52.818', NULL, 268);
+INSERT INTO "Map_FloorRoom" VALUES ('"Map_FloorRoom"', '"Floor"', 100, '"Room"', 272, 'A', 'admin', '2011-07-25 00:02:19.16', NULL, 274);
 
 
 
 
 
 
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 134, 'A', 'admin', '2011-07-24 23:35:18.412', NULL, 166);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 118, 'A', 'admin', '2011-07-24 23:36:23.281', NULL, 169);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 110, '"Employee"', 132, 'A', 'admin', '2011-07-24 23:40:39.563', NULL, 173);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 110, '"Employee"', 124, 'A', 'admin', '2011-07-24 23:43:44.824', NULL, 176);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 112, '"Employee"', 122, 'A', 'admin', '2011-07-24 23:45:11.466', NULL, 179);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 110, '"Employee"', 126, 'A', 'admin', '2011-07-24 23:46:29.744', NULL, 183);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 112, '"Employee"', 130, 'A', 'admin', '2011-07-24 23:47:15.594', NULL, 186);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 128, 'A', 'admin', '2011-07-24 23:48:03.801', NULL, 189);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 120, 'A', 'admin', '2011-07-24 23:48:45.557', NULL, 192);
-INSERT INTO "Map_Members" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_Members"', '"Office"', 112, '"Employee"', 116, 'A', 'admin', '2011-07-24 23:49:33.373', NULL, 195);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 134, 'A', 'admin', '2011-07-24 23:35:18.412', NULL, 166);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 118, 'A', 'admin', '2011-07-24 23:36:23.281', NULL, 169);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 110, '"Employee"', 132, 'A', 'admin', '2011-07-24 23:40:39.563', NULL, 173);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 110, '"Employee"', 124, 'A', 'admin', '2011-07-24 23:43:44.824', NULL, 176);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 112, '"Employee"', 122, 'A', 'admin', '2011-07-24 23:45:11.466', NULL, 179);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 110, '"Employee"', 126, 'A', 'admin', '2011-07-24 23:46:29.744', NULL, 183);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 112, '"Employee"', 130, 'A', 'admin', '2011-07-24 23:47:15.594', NULL, 186);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 128, 'A', 'admin', '2011-07-24 23:48:03.801', NULL, 189);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 108, '"Employee"', 120, 'A', 'admin', '2011-07-24 23:48:45.557', NULL, 192);
+INSERT INTO "Map_Members" VALUES ('"Map_Members"', '"Office"', 112, '"Employee"', 116, 'A', 'admin', '2011-07-24 23:49:33.373', NULL, 195);
 
 
 
 
 
 
-INSERT INTO "Map_NetworkDeviceConnection" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 12:18:14.794', NULL, 761, 7, 490);
-INSERT INTO "Map_NetworkDeviceConnection" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 12:19:16.945', NULL, 765, 4, 492);
-INSERT INTO "Map_NetworkDeviceConnection" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 15:15:53.993', NULL, 767, 5, 492);
-INSERT INTO "Map_NetworkDeviceConnection" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 15:17:32.047', NULL, 769, 3, 489);
-INSERT INTO "Map_NetworkDeviceConnection" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 15:17:43.319', NULL, 771, 5, 490);
+INSERT INTO "Map_NetworkDeviceConnection" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 12:18:14.794', NULL, 761, 7, 490);
+INSERT INTO "Map_NetworkDeviceConnection" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 12:19:16.945', NULL, 765, 4, 492);
+INSERT INTO "Map_NetworkDeviceConnection" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 15:15:53.993', NULL, 767, 5, 492);
+INSERT INTO "Map_NetworkDeviceConnection" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'N', 'admin', '2011-09-02 15:17:32.047', NULL, 769, 3, 489);
+INSERT INTO "Map_NetworkDeviceConnection" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 15:17:43.319', NULL, 771, 5, 490);
 
 
 
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 12:10:10.378', '2011-09-02 12:12:14.952', 761, 4, 487);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:12:14.952', '2011-09-02 12:17:42.029', 761, 5, 487);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:17:42.029', '2011-09-02 12:18:14.794', 761, 7, 490);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 12:18:31.48', '2011-09-02 12:18:39.058', 765, 3, 492);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:18:39.058', '2011-09-02 12:19:16.945', 765, 4, 492);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 12:20:29.104', '2011-09-02 12:20:40.731', 767, 4, 492);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:20:40.731', '2011-09-02 15:15:53.993', 767, 5, 492);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 15:16:37.924', '2011-09-02 15:16:57.895', 769, 4, 489);
-INSERT INTO "Map_NetworkDeviceConnection_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "PortNumber", "CableColor") VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 15:16:57.895', '2011-09-02 15:17:32.047', 769, 3, 489);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 12:10:10.378', '2011-09-02 12:12:14.952', 761, 4, 487);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:12:14.952', '2011-09-02 12:17:42.029', 761, 5, 487);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:17:42.029', '2011-09-02 12:18:14.794', 761, 7, 490);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 12:18:31.48', '2011-09-02 12:18:39.058', 765, 3, 492);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:18:39.058', '2011-09-02 12:19:16.945', 765, 4, 492);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 12:20:29.104', '2011-09-02 12:20:40.731', 767, 4, 492);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 12:20:40.731', '2011-09-02 15:15:53.993', 767, 5, 492);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 747, 'U', 'admin', '2011-09-02 15:16:37.924', '2011-09-02 15:16:57.895', 769, 4, 489);
+INSERT INTO "Map_NetworkDeviceConnection_history" VALUES ('"Map_NetworkDeviceConnection"', '"NetworkDevice"', 755, '"NetworkDevice"', 755, 'U', 'admin', '2011-09-02 15:16:57.895', '2011-09-02 15:17:32.047', 769, 3, 489);
 
 
 
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 104, 'A', 'admin', '2011-07-24 23:50:09.333', NULL, 198);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 200, 'A', 'admin', '2011-07-24 23:51:13.304', NULL, 204);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 206, 'A', 'admin', '2011-07-24 23:56:14.609', NULL, 210);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 212, 'A', 'admin', '2011-07-24 23:56:56.466', NULL, 216);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 218, 'A', 'admin', '2011-07-24 23:57:24.774', NULL, 222);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 224, 'A', 'admin', '2011-07-24 23:57:56.042', NULL, 228);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 230, 'A', 'admin', '2011-07-24 23:58:29.941', NULL, 234);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 236, 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 240);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 242, 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 246);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 248, 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 252);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 266, 'A', 'admin', '2011-07-25 00:01:52.818', NULL, 270);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'A', 'admin', '2011-09-02 11:53:26.90', NULL, 264);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 272, 'A', 'admin', '2011-09-02 11:54:54.974', NULL, 276);
-INSERT INTO "Map_OfficeRoom" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 254, 'A', 'admin', '2011-09-02 11:56:58.957', NULL, 258);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 104, 'A', 'admin', '2011-07-24 23:50:09.333', NULL, 198);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 200, 'A', 'admin', '2011-07-24 23:51:13.304', NULL, 204);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 206, 'A', 'admin', '2011-07-24 23:56:14.609', NULL, 210);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 212, 'A', 'admin', '2011-07-24 23:56:56.466', NULL, 216);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 218, 'A', 'admin', '2011-07-24 23:57:24.774', NULL, 222);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 224, 'A', 'admin', '2011-07-24 23:57:56.042', NULL, 228);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 230, 'A', 'admin', '2011-07-24 23:58:29.941', NULL, 234);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 236, 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 240);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 242, 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 246);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 248, 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 252);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 266, 'A', 'admin', '2011-07-25 00:01:52.818', NULL, 270);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'A', 'admin', '2011-09-02 11:53:26.90', NULL, 264);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 272, 'A', 'admin', '2011-09-02 11:54:54.974', NULL, 276);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 254, 'A', 'admin', '2011-09-02 11:56:58.957', NULL, 258);
 
 
 
-INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 260, 'U', 'admin', '2011-07-25 00:01:29.684', '2011-09-02 11:53:26.90', 264);
-INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'U', 'admin', '2011-09-02 11:53:26.90', '2011-09-02 11:53:26.90', 264);
-INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 272, 'U', 'admin', '2011-07-25 00:02:19.16', '2011-09-02 11:54:54.974', 276);
-INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 272, 'U', 'admin', '2011-09-02 11:54:54.974', '2011-09-02 11:54:54.974', 276);
-INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 254, 'U', 'admin', '2011-07-25 00:00:42.222', '2011-09-02 11:56:58.957', 258);
-INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 254, 'U', 'admin', '2011-09-02 11:56:58.957', '2011-09-02 11:56:58.957', 258);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 260, 'U', 'admin', '2011-07-25 00:01:29.684', '2011-09-02 11:53:26.90', 264);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'U', 'admin', '2011-09-02 11:53:26.90', '2011-09-02 11:53:26.90', 264);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 272, 'U', 'admin', '2011-07-25 00:02:19.16', '2011-09-02 11:54:54.974', 276);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 272, 'U', 'admin', '2011-09-02 11:54:54.974', '2011-09-02 11:54:54.974', 276);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 254, 'U', 'admin', '2011-07-25 00:00:42.222', '2011-09-02 11:56:58.957', 258);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 254, 'U', 'admin', '2011-09-02 11:56:58.957', '2011-09-02 11:56:58.957', 258);
 
 
 
@@ -6904,19 +6903,19 @@ INSERT INTO "Map_OfficeRoom_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass
 
 
 
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 236, '"PC"', 518, 'A', 'admin', '2011-08-23 17:26:13.647', NULL, 522);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 248, '"PC"', 526, 'A', 'admin', '2011-08-23 17:28:42.292', NULL, 530);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 104, '"PC"', 534, 'A', 'admin', '2011-08-23 17:29:52.21', NULL, 538);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 272, '"PC"', 542, 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 546);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 272, '"Monitor"', 555, 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 559);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 242, '"Monitor"', 561, 'A', 'admin', '2011-08-23 17:36:00.497', NULL, 565);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 230, '"Monitor"', 567, 'A', 'admin', '2011-08-23 17:36:50.525', NULL, 571);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 272, '"Monitor"', 573, 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 577);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 242, '"Printer"', 579, 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 583);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 212, '"Printer"', 585, 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 589);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 266, '"Printer"', 591, 'A', 'admin', '2011-08-23 17:40:48.481', NULL, 595);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 200, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 12:06:33.699', NULL, 749);
-INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_RoomAsset"', '"Room"', 104, '"NetworkDevice"', 755, 'A', 'admin', '2011-09-02 12:08:39.585', NULL, 757);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 236, '"PC"', 518, 'A', 'admin', '2011-08-23 17:26:13.647', NULL, 522);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 248, '"PC"', 526, 'A', 'admin', '2011-08-23 17:28:42.292', NULL, 530);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 104, '"PC"', 534, 'A', 'admin', '2011-08-23 17:29:52.21', NULL, 538);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 272, '"PC"', 542, 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 546);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 272, '"Monitor"', 555, 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 559);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 242, '"Monitor"', 561, 'A', 'admin', '2011-08-23 17:36:00.497', NULL, 565);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 230, '"Monitor"', 567, 'A', 'admin', '2011-08-23 17:36:50.525', NULL, 571);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 272, '"Monitor"', 573, 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 577);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 242, '"Printer"', 579, 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 583);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 212, '"Printer"', 585, 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 589);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 266, '"Printer"', 591, 'A', 'admin', '2011-08-23 17:40:48.481', NULL, 595);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 200, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 12:06:33.699', NULL, 749);
+INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 104, '"NetworkDevice"', 755, 'A', 'admin', '2011-09-02 12:08:39.585', NULL, 757);
 
 
 
@@ -6935,14 +6934,14 @@ INSERT INTO "Map_RoomAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdOb
 
 
 
-INSERT INTO "Map_SupplierAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_SupplierAsset"', '"Supplier"', 714, '"PC"', 526, 'N', 'admin', '2011-08-29 13:07:08.776', NULL, 717);
-INSERT INTO "Map_SupplierAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"PC"', 526, 'A', 'admin', '2011-08-29 13:27:49.732', NULL, 725);
-INSERT INTO "Map_SupplierAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 12:06:33.699', NULL, 751);
-INSERT INTO "Map_SupplierAsset" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"NetworkDevice"', 755, 'A', 'admin', '2011-09-02 12:08:39.585', NULL, 759);
+INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 714, '"PC"', 526, 'N', 'admin', '2011-08-29 13:07:08.776', NULL, 717);
+INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"PC"', 526, 'A', 'admin', '2011-08-29 13:27:49.732', NULL, 725);
+INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 12:06:33.699', NULL, 751);
+INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"NetworkDevice"', 755, 'A', 'admin', '2011-09-02 12:08:39.585', NULL, 759);
 
 
 
-INSERT INTO "Map_SupplierAsset_history" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id") VALUES ('"Map_SupplierAsset"', '"Supplier"', 714, '"PC"', 526, 'U', 'admin', '2011-08-29 13:03:27.919', '2011-08-29 13:07:08.776', 717);
+INSERT INTO "Map_SupplierAsset_history" VALUES ('"Map_SupplierAsset"', '"Supplier"', 714, '"PC"', 526, 'U', 'admin', '2011-08-29 13:03:27.919', '2011-08-29 13:07:08.776', 717);
 
 
 
@@ -6958,9 +6957,9 @@ INSERT INTO "Map_SupplierAsset_history" ("IdDomain", "IdClass1", "IdObj1", "IdCl
 
 
 
-INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "DefaultGroup") VALUES ('"Map_UserRole"', '"User"', 13, '"Role"', 14, 'A', 'system', '2011-03-16 11:15:37.266624', NULL, 16, NULL);
-INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "DefaultGroup") VALUES ('"Map_UserRole"', '"User"', 678, '"Role"', 677, 'A', 'admin', '2011-08-23 22:41:46.419', NULL, 681, NULL);
-INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id", "DefaultGroup") VALUES ('"Map_UserRole"', '"User"', 679, '"Role"', 677, 'A', 'admin', '2011-08-23 22:41:46.632', NULL, 683, NULL);
+INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 13, '"Role"', 14, 'A', 'system', '2011-03-16 11:15:37.266624', NULL, 16, NULL);
+INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 678, '"Role"', 677, 'A', 'admin', '2011-08-23 22:41:46.419', NULL, 681, NULL);
+INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 679, '"Role"', 677, 'A', 'admin', '2011-08-23 22:41:46.632', NULL, 683, NULL);
 
 
 
@@ -6973,239 +6972,266 @@ INSERT INTO "Map_UserRole" ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj
 
 
 
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (34, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (36, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (38, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (40, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (42, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (44, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (46, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (48, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (50, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (52, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (54, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (56, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (58, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (60, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 58, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (62, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 58, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (296, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (298, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (300, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (302, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (304, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (306, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (308, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (310, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (312, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (314, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (316, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (318, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (320, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (322, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (324, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 322, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (326, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 322, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (353, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (355, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (357, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (359, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (361, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (363, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (365, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (367, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (369, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (371, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (373, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (375, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (377, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (379, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (381, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (383, '"Menu"', 'class', 'Computer', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Computer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (385, '"Menu"', 'class', 'PC', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"PC"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (387, '"Menu"', 'class', 'Notebook', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Notebook"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (389, '"Menu"', 'class', 'Server', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Server"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (391, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (433, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (435, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (437, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (439, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (441, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (443, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (445, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (447, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (449, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (451, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (453, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (455, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (457, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (459, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (461, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (463, '"Menu"', 'class', 'Computer', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Computer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (465, '"Menu"', 'class', 'PC', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"PC"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (467, '"Menu"', 'class', 'Notebook', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Notebook"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (469, '"Menu"', 'class', 'Server', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Server"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (471, '"Menu"', 'class', 'Monitor', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Monitor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (473, '"Menu"', 'class', 'Printer', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Printer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (475, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"NetworkDevice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (477, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (479, '"Menu"', 'class', 'UPS', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"UPS"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (481, '"Menu"', 'class', 'License', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"License"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (624, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2011-08-23 18:30:53.073', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (626, '"Menu"', 'class', 'Employee', 'A', 'system', '2011-08-23 18:30:53.177', NULL, 624, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (628, '"Menu"', 'class', 'Office', 'A', 'system', '2011-08-23 18:30:53.179', NULL, 624, '"Office"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (630, '"Menu"', 'class', 'Workplace', 'A', 'system', '2011-08-23 18:30:53.181', NULL, 624, '"Workplace"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (632, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2011-08-23 18:30:53.183', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (634, '"Menu"', 'class', 'Supplier', 'A', 'system', '2011-08-23 18:30:53.184', NULL, 632, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (636, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2011-08-23 18:30:53.186', NULL, 632, '"SupplierContact"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (638, '"Menu"', 'class', 'Invoice', 'A', 'system', '2011-08-23 18:30:53.188', NULL, 632, '"Invoice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (640, '"Menu"', 'folder', 'Locations', 'A', 'system', '2011-08-23 18:30:53.189', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (642, '"Menu"', 'class', 'Building', 'A', 'system', '2011-08-23 18:30:53.191', NULL, 640, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (644, '"Menu"', 'class', 'Room', 'A', 'system', '2011-08-23 18:30:53.193', NULL, 640, '"Room"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (646, '"Menu"', 'class', 'Floor', 'A', 'system', '2011-08-23 18:30:53.195', NULL, 640, '"Floor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (648, '"Menu"', 'class', 'Network point', 'A', 'system', '2011-08-23 18:30:53.197', NULL, 640, '"NetworkPoint"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (650, '"Menu"', 'folder', 'Assets', 'A', 'system', '2011-08-23 18:30:53.199', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (652, '"Menu"', 'class', 'Asset', 'A', 'system', '2011-08-23 18:30:53.201', NULL, 650, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (654, '"Menu"', 'class', 'Computer', 'A', 'system', '2011-08-23 18:30:53.203', NULL, 650, '"Computer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (656, '"Menu"', 'class', 'PC', 'A', 'system', '2011-08-23 18:30:53.204', NULL, 650, '"PC"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (658, '"Menu"', 'class', 'Notebook', 'A', 'system', '2011-08-23 18:30:53.206', NULL, 650, '"Notebook"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (660, '"Menu"', 'class', 'Server', 'A', 'system', '2011-08-23 18:30:53.208', NULL, 650, '"Server"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (662, '"Menu"', 'class', 'Monitor', 'A', 'system', '2011-08-23 18:30:53.211', NULL, 650, '"Monitor"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (664, '"Menu"', 'class', 'Printer', 'A', 'system', '2011-08-23 18:30:53.212', NULL, 650, '"Printer"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (666, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2011-08-23 18:30:53.214', NULL, 650, '"NetworkDevice"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (668, '"Menu"', 'class', 'Rack', 'A', 'system', '2011-08-23 18:30:53.216', NULL, 650, '"Rack"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (670, '"Menu"', 'class', 'UPS', 'A', 'system', '2011-08-23 18:30:53.218', NULL, 650, '"UPS"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (672, '"Menu"', 'class', 'License', 'A', 'system', '2011-08-23 18:30:53.219', NULL, 650, '"License"', 0, 0, 0, 'class');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (674, '"Menu"', 'folder', 'Report', 'A', 'system', '2011-08-23 18:30:53.221', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type") VALUES (676, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2011-08-23 18:30:53.223', NULL, 674, '"Report"', 597, 0, 0, 'custom');
-
-
-
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (280, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-07-22 17:59:02.57', NULL, 0, NULL, 0, 0, 0, 'folder', 34, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (281, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-07-22 17:59:02.576', NULL, 34, '"Employee"', 0, 0, 0, 'class', 36, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (282, '"Menu"', 'class', 'Office', 'U', 'system', '2011-07-22 17:59:02.612', NULL, 34, '"Office"', 0, 0, 0, 'class', 38, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (283, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-07-22 17:59:02.615', NULL, 34, '"Workplace"', 0, 0, 0, 'class', 40, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (284, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-07-22 17:59:02.617', NULL, 0, NULL, 0, 0, 0, 'folder', 42, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (285, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-07-22 17:59:02.62', NULL, 42, '"Supplier"', 0, 0, 0, 'class', 44, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (286, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-07-22 17:59:02.623', NULL, 42, '"SupplierContact"', 0, 0, 0, 'class', 46, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (287, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-07-22 17:59:02.626', NULL, 42, '"Invoice"', 0, 0, 0, 'class', 48, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (288, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-07-22 17:59:02.629', NULL, 0, NULL, 0, 0, 0, 'folder', 50, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (289, '"Menu"', 'class', 'Building', 'U', 'system', '2011-07-22 17:59:02.632', NULL, 50, '"Building"', 0, 0, 0, 'class', 52, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (290, '"Menu"', 'class', 'Room', 'U', 'system', '2011-07-22 17:59:02.634', NULL, 50, '"Room"', 0, 0, 0, 'class', 54, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (291, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-07-22 17:59:02.637', NULL, 50, '"Floor"', 0, 0, 0, 'class', 56, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (292, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-07-22 17:59:02.64', NULL, 0, NULL, 0, 0, 0, 'folder', 58, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (293, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-07-22 17:59:02.643', NULL, 58, '"Asset"', 0, 0, 0, 'class', 60, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (294, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-07-22 17:59:02.646', NULL, 58, '"Rack"', 0, 0, 0, 'class', 62, '2011-08-10 12:40:07.301');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (336, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 12:40:08.89', NULL, 0, NULL, 0, 0, 0, 'folder', 296, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (337, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 12:40:08.893', NULL, 296, '"Employee"', 0, 0, 0, 'class', 298, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (338, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:40:08.895', NULL, 296, '"Office"', 0, 0, 0, 'class', 300, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (339, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:40:08.896', NULL, 296, '"Workplace"', 0, 0, 0, 'class', 302, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (340, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:40:08.899', NULL, 0, NULL, 0, 0, 0, 'folder', 304, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (341, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:40:08.90', NULL, 304, '"Supplier"', 0, 0, 0, 'class', 306, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (342, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:40:08.902', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class', 308, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (343, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:40:08.903', NULL, 304, '"Invoice"', 0, 0, 0, 'class', 310, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (344, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:40:08.905', NULL, 0, NULL, 0, 0, 0, 'folder', 312, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (345, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 12:40:08.907', NULL, 312, '"Building"', 0, 0, 0, 'class', 314, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (346, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 12:40:08.908', NULL, 312, '"Room"', 0, 0, 0, 'class', 316, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (347, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 12:40:08.91', NULL, 312, '"Floor"', 0, 0, 0, 'class', 318, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (348, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 12:40:08.911', NULL, 312, '"NetworkPoint"', 0, 0, 0, 'class', 320, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (349, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 12:40:08.913', NULL, 0, NULL, 0, 0, 0, 'folder', 322, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (350, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 12:40:08.915', NULL, 322, '"Asset"', 0, 0, 0, 'class', 324, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (351, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 12:40:08.917', NULL, 322, '"Rack"', 0, 0, 0, 'class', 326, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (412, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 12:54:25.998', NULL, 0, NULL, 0, 0, 0, 'folder', 353, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (413, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 12:54:26', NULL, 353, '"Employee"', 0, 0, 0, 'class', 355, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (414, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:54:26.001', NULL, 353, '"Office"', 0, 0, 0, 'class', 357, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (415, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:54:26.003', NULL, 353, '"Workplace"', 0, 0, 0, 'class', 359, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (416, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:54:26.004', NULL, 0, NULL, 0, 0, 0, 'folder', 361, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (417, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:54:26.006', NULL, 361, '"Supplier"', 0, 0, 0, 'class', 363, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (418, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:54:26.008', NULL, 361, '"SupplierContact"', 0, 0, 0, 'class', 365, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (419, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:54:26.009', NULL, 361, '"Invoice"', 0, 0, 0, 'class', 367, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (420, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:54:26.011', NULL, 0, NULL, 0, 0, 0, 'folder', 369, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (421, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 12:54:26.012', NULL, 369, '"Building"', 0, 0, 0, 'class', 371, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (422, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 12:54:26.014', NULL, 369, '"Room"', 0, 0, 0, 'class', 373, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (423, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 12:54:26.015', NULL, 369, '"Floor"', 0, 0, 0, 'class', 375, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (424, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 12:54:26.017', NULL, 369, '"NetworkPoint"', 0, 0, 0, 'class', 377, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (425, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 12:54:26.019', NULL, 0, NULL, 0, 0, 0, 'folder', 379, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (426, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 12:54:26.176', NULL, 379, '"Asset"', 0, 0, 0, 'class', 381, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (427, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-10 12:54:26.178', NULL, 379, '"Computer"', 0, 0, 0, 'class', 383, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (428, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-10 12:54:26.179', NULL, 379, '"PC"', 0, 0, 0, 'class', 385, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (429, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-10 12:54:26.181', NULL, 379, '"Notebook"', 0, 0, 0, 'class', 387, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (430, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-10 12:54:26.183', NULL, 379, '"Server"', 0, 0, 0, 'class', 389, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (431, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 12:54:26.185', NULL, 379, '"Rack"', 0, 0, 0, 'class', 391, '2011-08-10 15:33:56.677');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (598, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 15:33:56.829', NULL, 0, NULL, 0, 0, 0, 'folder', 433, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (599, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 15:33:56.834', NULL, 433, '"Employee"', 0, 0, 0, 'class', 435, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (600, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 15:33:56.836', NULL, 433, '"Office"', 0, 0, 0, 'class', 437, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (601, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 15:33:56.839', NULL, 433, '"Workplace"', 0, 0, 0, 'class', 439, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (602, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 15:33:56.841', NULL, 0, NULL, 0, 0, 0, 'folder', 441, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (603, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 15:33:56.844', NULL, 441, '"Supplier"', 0, 0, 0, 'class', 443, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (604, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 15:33:56.846', NULL, 441, '"SupplierContact"', 0, 0, 0, 'class', 445, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (605, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 15:33:56.849', NULL, 441, '"Invoice"', 0, 0, 0, 'class', 447, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (606, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 15:33:56.852', NULL, 0, NULL, 0, 0, 0, 'folder', 449, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (607, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 15:33:56.854', NULL, 449, '"Building"', 0, 0, 0, 'class', 451, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (608, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 15:33:56.857', NULL, 449, '"Room"', 0, 0, 0, 'class', 453, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (609, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 15:33:56.86', NULL, 449, '"Floor"', 0, 0, 0, 'class', 455, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (610, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 15:33:56.862', NULL, 449, '"NetworkPoint"', 0, 0, 0, 'class', 457, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (611, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 15:33:56.865', NULL, 0, NULL, 0, 0, 0, 'folder', 459, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (612, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 15:33:56.867', NULL, 459, '"Asset"', 0, 0, 0, 'class', 461, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (613, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-10 15:33:56.871', NULL, 459, '"Computer"', 0, 0, 0, 'class', 463, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (614, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-10 15:33:56.873', NULL, 459, '"PC"', 0, 0, 0, 'class', 465, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (615, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-10 15:33:56.875', NULL, 459, '"Notebook"', 0, 0, 0, 'class', 467, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (616, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-10 15:33:56.879', NULL, 459, '"Server"', 0, 0, 0, 'class', 469, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (617, '"Menu"', 'class', 'Monitor', 'U', 'system', '2011-08-10 15:33:56.881', NULL, 459, '"Monitor"', 0, 0, 0, 'class', 471, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (618, '"Menu"', 'class', 'Printer', 'U', 'system', '2011-08-10 15:33:56.883', NULL, 459, '"Printer"', 0, 0, 0, 'class', 473, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (619, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2011-08-10 15:33:56.886', NULL, 459, '"NetworkDevice"', 0, 0, 0, 'class', 475, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (620, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 15:33:56.889', NULL, 459, '"Rack"', 0, 0, 0, 'class', 477, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (621, '"Menu"', 'class', 'UPS', 'U', 'system', '2011-08-10 15:33:56.891', NULL, 459, '"UPS"', 0, 0, 0, 'class', 479, '2011-08-23 18:30:52.77');
-INSERT INTO "Menu_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "IdParent", "IdElementClass", "IdElementObj", "Number", "IdGroup", "Type", "CurrentId", "EndDate") VALUES (622, '"Menu"', 'class', 'License', 'U', 'system', '2011-08-10 15:33:56.893', NULL, 459, '"License"', 0, 0, 0, 'class', 481, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu" VALUES (34, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (36, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Employee"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (38, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Office"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (40, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 34, '"Workplace"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (42, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (44, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"Supplier"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (46, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"SupplierContact"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (48, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 42, '"Invoice"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (50, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (52, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Building"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (54, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Room"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (56, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 50, '"Floor"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (58, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (60, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 58, '"Asset"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (62, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 12:40:07.301', NULL, 58, '"Rack"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (296, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (298, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Employee"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (300, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Office"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (302, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 296, '"Workplace"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (304, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (306, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"Supplier"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (308, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (310, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 304, '"Invoice"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (312, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (314, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Building"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (316, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Room"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (318, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"Floor"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (320, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 312, '"NetworkPoint"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (322, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (324, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 322, '"Asset"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (326, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 12:54:25.886', NULL, 322, '"Rack"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (353, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (355, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Employee"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (357, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Office"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (359, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 353, '"Workplace"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (361, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (363, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"Supplier"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (365, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"SupplierContact"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (367, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 361, '"Invoice"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (369, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (371, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Building"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (373, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Room"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (375, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"Floor"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (377, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 369, '"NetworkPoint"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (379, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (381, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Asset"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (383, '"Menu"', 'class', 'Computer', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Computer"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (385, '"Menu"', 'class', 'PC', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"PC"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (387, '"Menu"', 'class', 'Notebook', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Notebook"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (389, '"Menu"', 'class', 'Server', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Server"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (391, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-10 15:33:56.677', NULL, 379, '"Rack"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (433, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (435, '"Menu"', 'class', 'Employee', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Employee"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (437, '"Menu"', 'class', 'Office', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Office"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (439, '"Menu"', 'class', 'Workplace', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 433, '"Workplace"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (441, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (443, '"Menu"', 'class', 'Supplier', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"Supplier"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (445, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"SupplierContact"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (447, '"Menu"', 'class', 'Invoice', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 441, '"Invoice"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (449, '"Menu"', 'folder', 'Locations', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (451, '"Menu"', 'class', 'Building', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Building"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (453, '"Menu"', 'class', 'Room', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Room"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (455, '"Menu"', 'class', 'Floor', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"Floor"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (457, '"Menu"', 'class', 'Network point', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 449, '"NetworkPoint"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (459, '"Menu"', 'folder', 'Assets', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (461, '"Menu"', 'class', 'Asset', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Asset"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (463, '"Menu"', 'class', 'Computer', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Computer"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (465, '"Menu"', 'class', 'PC', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"PC"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (467, '"Menu"', 'class', 'Notebook', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Notebook"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (469, '"Menu"', 'class', 'Server', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Server"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (471, '"Menu"', 'class', 'Monitor', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Monitor"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (473, '"Menu"', 'class', 'Printer', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Printer"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (475, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"NetworkDevice"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (477, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Rack"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (479, '"Menu"', 'class', 'UPS', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"UPS"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (481, '"Menu"', 'class', 'License', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"License"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (624, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (626, '"Menu"', 'class', 'Employee', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Employee"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (628, '"Menu"', 'class', 'Office', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Office"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (630, '"Menu"', 'class', 'Workplace', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Workplace"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (632, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 1, 0, 'folder');
+INSERT INTO "Menu" VALUES (634, '"Menu"', 'class', 'Supplier', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Supplier"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (636, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"SupplierContact"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (638, '"Menu"', 'class', 'Invoice', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Invoice"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (640, '"Menu"', 'folder', 'Locations', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 2, 0, 'folder');
+INSERT INTO "Menu" VALUES (642, '"Menu"', 'class', 'Building', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Building"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (644, '"Menu"', 'class', 'Room', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Room"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (646, '"Menu"', 'class', 'Floor', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Floor"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (648, '"Menu"', 'class', 'Network point', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"NetworkPoint"', 0, 3, 0, 'class');
+INSERT INTO "Menu" VALUES (650, '"Menu"', 'folder', 'Assets', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 3, 0, 'folder');
+INSERT INTO "Menu" VALUES (652, '"Menu"', 'class', 'Asset', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Asset"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (654, '"Menu"', 'class', 'Computer', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Computer"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (656, '"Menu"', 'class', 'PC', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"PC"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (658, '"Menu"', 'class', 'Notebook', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Notebook"', 0, 3, 0, 'class');
+INSERT INTO "Menu" VALUES (660, '"Menu"', 'class', 'Server', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Server"', 0, 4, 0, 'class');
+INSERT INTO "Menu" VALUES (662, '"Menu"', 'class', 'Monitor', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Monitor"', 0, 5, 0, 'class');
+INSERT INTO "Menu" VALUES (664, '"Menu"', 'class', 'Printer', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Printer"', 0, 6, 0, 'class');
+INSERT INTO "Menu" VALUES (666, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"NetworkDevice"', 0, 7, 0, 'class');
+INSERT INTO "Menu" VALUES (668, '"Menu"', 'class', 'Rack', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Rack"', 0, 8, 0, 'class');
+INSERT INTO "Menu" VALUES (670, '"Menu"', 'class', 'UPS', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"UPS"', 0, 9, 0, 'class');
+INSERT INTO "Menu" VALUES (672, '"Menu"', 'class', 'License', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"License"', 0, 10, 0, 'class');
+INSERT INTO "Menu" VALUES (674, '"Menu"', 'folder', 'Report', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 4, 0, 'folder');
+INSERT INTO "Menu" VALUES (676, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 674, '"Report"', 597, 0, 0, 'custom');
+
+
+
+INSERT INTO "Menu_history" VALUES (280, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-07-22 17:59:02.57', NULL, 0, NULL, 0, 0, 0, 'folder', 34, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (281, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-07-22 17:59:02.576', NULL, 34, '"Employee"', 0, 0, 0, 'class', 36, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (282, '"Menu"', 'class', 'Office', 'U', 'system', '2011-07-22 17:59:02.612', NULL, 34, '"Office"', 0, 0, 0, 'class', 38, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (283, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-07-22 17:59:02.615', NULL, 34, '"Workplace"', 0, 0, 0, 'class', 40, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (284, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-07-22 17:59:02.617', NULL, 0, NULL, 0, 0, 0, 'folder', 42, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (285, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-07-22 17:59:02.62', NULL, 42, '"Supplier"', 0, 0, 0, 'class', 44, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (286, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-07-22 17:59:02.623', NULL, 42, '"SupplierContact"', 0, 0, 0, 'class', 46, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (287, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-07-22 17:59:02.626', NULL, 42, '"Invoice"', 0, 0, 0, 'class', 48, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (288, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-07-22 17:59:02.629', NULL, 0, NULL, 0, 0, 0, 'folder', 50, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (289, '"Menu"', 'class', 'Building', 'U', 'system', '2011-07-22 17:59:02.632', NULL, 50, '"Building"', 0, 0, 0, 'class', 52, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (290, '"Menu"', 'class', 'Room', 'U', 'system', '2011-07-22 17:59:02.634', NULL, 50, '"Room"', 0, 0, 0, 'class', 54, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (291, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-07-22 17:59:02.637', NULL, 50, '"Floor"', 0, 0, 0, 'class', 56, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (292, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-07-22 17:59:02.64', NULL, 0, NULL, 0, 0, 0, 'folder', 58, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (293, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-07-22 17:59:02.643', NULL, 58, '"Asset"', 0, 0, 0, 'class', 60, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (294, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-07-22 17:59:02.646', NULL, 58, '"Rack"', 0, 0, 0, 'class', 62, '2011-08-10 12:40:07.301');
+INSERT INTO "Menu_history" VALUES (336, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 12:40:08.89', NULL, 0, NULL, 0, 0, 0, 'folder', 296, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (337, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 12:40:08.893', NULL, 296, '"Employee"', 0, 0, 0, 'class', 298, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (338, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:40:08.895', NULL, 296, '"Office"', 0, 0, 0, 'class', 300, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (339, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:40:08.896', NULL, 296, '"Workplace"', 0, 0, 0, 'class', 302, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (340, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:40:08.899', NULL, 0, NULL, 0, 0, 0, 'folder', 304, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (341, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:40:08.90', NULL, 304, '"Supplier"', 0, 0, 0, 'class', 306, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (342, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:40:08.902', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class', 308, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (343, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:40:08.903', NULL, 304, '"Invoice"', 0, 0, 0, 'class', 310, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (344, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:40:08.905', NULL, 0, NULL, 0, 0, 0, 'folder', 312, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (345, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 12:40:08.907', NULL, 312, '"Building"', 0, 0, 0, 'class', 314, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (346, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 12:40:08.908', NULL, 312, '"Room"', 0, 0, 0, 'class', 316, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (347, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 12:40:08.91', NULL, 312, '"Floor"', 0, 0, 0, 'class', 318, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (348, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 12:40:08.911', NULL, 312, '"NetworkPoint"', 0, 0, 0, 'class', 320, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (349, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 12:40:08.913', NULL, 0, NULL, 0, 0, 0, 'folder', 322, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (350, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 12:40:08.915', NULL, 322, '"Asset"', 0, 0, 0, 'class', 324, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (351, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 12:40:08.917', NULL, 322, '"Rack"', 0, 0, 0, 'class', 326, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (412, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 12:54:25.998', NULL, 0, NULL, 0, 0, 0, 'folder', 353, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (413, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 12:54:26', NULL, 353, '"Employee"', 0, 0, 0, 'class', 355, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (414, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:54:26.001', NULL, 353, '"Office"', 0, 0, 0, 'class', 357, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (415, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:54:26.003', NULL, 353, '"Workplace"', 0, 0, 0, 'class', 359, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (416, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:54:26.004', NULL, 0, NULL, 0, 0, 0, 'folder', 361, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (417, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:54:26.006', NULL, 361, '"Supplier"', 0, 0, 0, 'class', 363, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (418, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:54:26.008', NULL, 361, '"SupplierContact"', 0, 0, 0, 'class', 365, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (419, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:54:26.009', NULL, 361, '"Invoice"', 0, 0, 0, 'class', 367, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (420, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:54:26.011', NULL, 0, NULL, 0, 0, 0, 'folder', 369, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (421, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 12:54:26.012', NULL, 369, '"Building"', 0, 0, 0, 'class', 371, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (422, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 12:54:26.014', NULL, 369, '"Room"', 0, 0, 0, 'class', 373, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (423, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 12:54:26.015', NULL, 369, '"Floor"', 0, 0, 0, 'class', 375, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (424, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 12:54:26.017', NULL, 369, '"NetworkPoint"', 0, 0, 0, 'class', 377, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (425, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 12:54:26.019', NULL, 0, NULL, 0, 0, 0, 'folder', 379, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (426, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 12:54:26.176', NULL, 379, '"Asset"', 0, 0, 0, 'class', 381, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (427, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-10 12:54:26.178', NULL, 379, '"Computer"', 0, 0, 0, 'class', 383, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (428, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-10 12:54:26.179', NULL, 379, '"PC"', 0, 0, 0, 'class', 385, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (429, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-10 12:54:26.181', NULL, 379, '"Notebook"', 0, 0, 0, 'class', 387, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (430, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-10 12:54:26.183', NULL, 379, '"Server"', 0, 0, 0, 'class', 389, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (431, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 12:54:26.185', NULL, 379, '"Rack"', 0, 0, 0, 'class', 391, '2011-08-10 15:33:56.677');
+INSERT INTO "Menu_history" VALUES (598, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-10 15:33:56.829', NULL, 0, NULL, 0, 0, 0, 'folder', 433, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (599, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-10 15:33:56.834', NULL, 433, '"Employee"', 0, 0, 0, 'class', 435, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (600, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 15:33:56.836', NULL, 433, '"Office"', 0, 0, 0, 'class', 437, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (601, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 15:33:56.839', NULL, 433, '"Workplace"', 0, 0, 0, 'class', 439, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (602, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 15:33:56.841', NULL, 0, NULL, 0, 0, 0, 'folder', 441, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (603, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 15:33:56.844', NULL, 441, '"Supplier"', 0, 0, 0, 'class', 443, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (604, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 15:33:56.846', NULL, 441, '"SupplierContact"', 0, 0, 0, 'class', 445, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (605, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 15:33:56.849', NULL, 441, '"Invoice"', 0, 0, 0, 'class', 447, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (606, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 15:33:56.852', NULL, 0, NULL, 0, 0, 0, 'folder', 449, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (607, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-10 15:33:56.854', NULL, 449, '"Building"', 0, 0, 0, 'class', 451, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (608, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-10 15:33:56.857', NULL, 449, '"Room"', 0, 0, 0, 'class', 453, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (609, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-10 15:33:56.86', NULL, 449, '"Floor"', 0, 0, 0, 'class', 455, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (610, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-10 15:33:56.862', NULL, 449, '"NetworkPoint"', 0, 0, 0, 'class', 457, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (611, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-10 15:33:56.865', NULL, 0, NULL, 0, 0, 0, 'folder', 459, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (612, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-10 15:33:56.867', NULL, 459, '"Asset"', 0, 0, 0, 'class', 461, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (613, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-10 15:33:56.871', NULL, 459, '"Computer"', 0, 0, 0, 'class', 463, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (614, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-10 15:33:56.873', NULL, 459, '"PC"', 0, 0, 0, 'class', 465, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (615, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-10 15:33:56.875', NULL, 459, '"Notebook"', 0, 0, 0, 'class', 467, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (616, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-10 15:33:56.879', NULL, 459, '"Server"', 0, 0, 0, 'class', 469, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (617, '"Menu"', 'class', 'Monitor', 'U', 'system', '2011-08-10 15:33:56.881', NULL, 459, '"Monitor"', 0, 0, 0, 'class', 471, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (618, '"Menu"', 'class', 'Printer', 'U', 'system', '2011-08-10 15:33:56.883', NULL, 459, '"Printer"', 0, 0, 0, 'class', 473, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (619, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2011-08-10 15:33:56.886', NULL, 459, '"NetworkDevice"', 0, 0, 0, 'class', 475, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (620, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-10 15:33:56.889', NULL, 459, '"Rack"', 0, 0, 0, 'class', 477, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (621, '"Menu"', 'class', 'UPS', 'U', 'system', '2011-08-10 15:33:56.891', NULL, 459, '"UPS"', 0, 0, 0, 'class', 479, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (622, '"Menu"', 'class', 'License', 'U', 'system', '2011-08-10 15:33:56.893', NULL, 459, '"License"', 0, 0, 0, 'class', 481, '2011-08-23 18:30:52.77');
+INSERT INTO "Menu_history" VALUES (790, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2011-08-23 18:30:53.073', NULL, 0, NULL, 0, 0, 0, 'folder', 624, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (791, '"Menu"', 'class', 'Employee', 'U', 'system', '2011-08-23 18:30:53.177', NULL, 624, '"Employee"', 0, 0, 0, 'class', 626, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (792, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-23 18:30:53.179', NULL, 624, '"Office"', 0, 0, 0, 'class', 628, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (793, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-23 18:30:53.181', NULL, 624, '"Workplace"', 0, 0, 0, 'class', 630, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (794, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-23 18:30:53.183', NULL, 0, NULL, 0, 0, 0, 'folder', 632, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (795, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-23 18:30:53.184', NULL, 632, '"Supplier"', 0, 0, 0, 'class', 634, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (796, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-23 18:30:53.186', NULL, 632, '"SupplierContact"', 0, 0, 0, 'class', 636, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (797, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-23 18:30:53.188', NULL, 632, '"Invoice"', 0, 0, 0, 'class', 638, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (798, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-23 18:30:53.189', NULL, 0, NULL, 0, 0, 0, 'folder', 640, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (799, '"Menu"', 'class', 'Building', 'U', 'system', '2011-08-23 18:30:53.191', NULL, 640, '"Building"', 0, 0, 0, 'class', 642, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (800, '"Menu"', 'class', 'Room', 'U', 'system', '2011-08-23 18:30:53.193', NULL, 640, '"Room"', 0, 0, 0, 'class', 644, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (801, '"Menu"', 'class', 'Floor', 'U', 'system', '2011-08-23 18:30:53.195', NULL, 640, '"Floor"', 0, 0, 0, 'class', 646, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (802, '"Menu"', 'class', 'Network point', 'U', 'system', '2011-08-23 18:30:53.197', NULL, 640, '"NetworkPoint"', 0, 0, 0, 'class', 648, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (803, '"Menu"', 'folder', 'Assets', 'U', 'system', '2011-08-23 18:30:53.199', NULL, 0, NULL, 0, 0, 0, 'folder', 650, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (804, '"Menu"', 'class', 'Asset', 'U', 'system', '2011-08-23 18:30:53.201', NULL, 650, '"Asset"', 0, 0, 0, 'class', 652, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (805, '"Menu"', 'class', 'Computer', 'U', 'system', '2011-08-23 18:30:53.203', NULL, 650, '"Computer"', 0, 0, 0, 'class', 654, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (806, '"Menu"', 'class', 'PC', 'U', 'system', '2011-08-23 18:30:53.204', NULL, 650, '"PC"', 0, 0, 0, 'class', 656, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (807, '"Menu"', 'class', 'Notebook', 'U', 'system', '2011-08-23 18:30:53.206', NULL, 650, '"Notebook"', 0, 0, 0, 'class', 658, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (808, '"Menu"', 'class', 'Server', 'U', 'system', '2011-08-23 18:30:53.208', NULL, 650, '"Server"', 0, 0, 0, 'class', 660, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (809, '"Menu"', 'class', 'Monitor', 'U', 'system', '2011-08-23 18:30:53.211', NULL, 650, '"Monitor"', 0, 0, 0, 'class', 662, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (810, '"Menu"', 'class', 'Printer', 'U', 'system', '2011-08-23 18:30:53.212', NULL, 650, '"Printer"', 0, 0, 0, 'class', 664, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (811, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2011-08-23 18:30:53.214', NULL, 650, '"NetworkDevice"', 0, 0, 0, 'class', 666, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (812, '"Menu"', 'class', 'Rack', 'U', 'system', '2011-08-23 18:30:53.216', NULL, 650, '"Rack"', 0, 0, 0, 'class', 668, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (813, '"Menu"', 'class', 'UPS', 'U', 'system', '2011-08-23 18:30:53.218', NULL, 650, '"UPS"', 0, 0, 0, 'class', 670, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (814, '"Menu"', 'class', 'License', 'U', 'system', '2011-08-23 18:30:53.219', NULL, 650, '"License"', 0, 0, 0, 'class', 672, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (815, '"Menu"', 'folder', 'Report', 'U', 'system', '2011-08-23 18:30:53.221', NULL, 0, NULL, 0, 0, 0, 'folder', 674, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (816, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2011-08-23 18:30:53.223', NULL, 674, '"Report"', 597, 0, 0, 'custom', 676, '2012-01-31 11:29:35.93578');
 
 
 
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (505, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.minzoom', 'N', 'system', '2011-09-19 16:59:23.120594', '0');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (507, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.maxzoom', 'N', 'system', '2011-09-19 16:59:23.120594', '25');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (509, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.style', 'N', 'system', '2011-09-19 16:59:23.120594', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Building.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (511, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.visibility', 'N', 'system', '2011-09-19 16:59:23.120594', 'Building');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (513, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.index', 'N', 'system', '2011-09-19 16:59:23.120594', '1');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (495, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.minzoom', 'N', 'system', '2011-09-19 16:59:28.659447', '0');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (497, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.maxzoom', 'N', 'system', '2011-09-19 16:59:28.659447', '25');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (499, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'N', 'system', '2011-09-19 16:59:28.659447', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (501, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'N', 'system', '2011-09-19 16:59:28.659447', 'Supplier');
-INSERT INTO "Metadata" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (503, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'N', 'system', '2011-09-19 16:59:28.659447', '0');
+INSERT INTO "Metadata" VALUES (505, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.minzoom', 'N', 'system', '2011-09-19 16:59:23.120594', '0');
+INSERT INTO "Metadata" VALUES (507, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.maxzoom', 'N', 'system', '2011-09-19 16:59:23.120594', '25');
+INSERT INTO "Metadata" VALUES (509, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.style', 'N', 'system', '2011-09-19 16:59:23.120594', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Building.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}');
+INSERT INTO "Metadata" VALUES (511, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.visibility', 'N', 'system', '2011-09-19 16:59:23.120594', 'Building');
+INSERT INTO "Metadata" VALUES (513, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.index', 'N', 'system', '2011-09-19 16:59:23.120594', '1');
+INSERT INTO "Metadata" VALUES (495, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.minzoom', 'N', 'system', '2011-09-19 16:59:28.659447', '0');
+INSERT INTO "Metadata" VALUES (497, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.maxzoom', 'N', 'system', '2011-09-19 16:59:28.659447', '25');
+INSERT INTO "Metadata" VALUES (499, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'N', 'system', '2011-09-19 16:59:28.659447', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}');
+INSERT INTO "Metadata" VALUES (501, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'N', 'system', '2011-09-19 16:59:28.659447', 'Supplier');
+INSERT INTO "Metadata" VALUES (503, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'N', 'system', '2011-09-19 16:59:28.659447', '0');
 
 
 
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (780, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.minzoom', 'U', 'system', '2011-08-23 15:41:08.854', '0', 505, '2011-09-19 16:59:23.120594');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (781, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.maxzoom', 'U', 'system', '2011-08-23 15:41:08.854', '25', 507, '2011-09-19 16:59:23.120594');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (782, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.style', 'U', 'system', '2011-08-23 15:41:08.854', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Building.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}', 509, '2011-09-19 16:59:23.120594');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (783, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.visibility', 'U', 'system', '2011-08-23 15:41:08.854', 'Building', 511, '2011-09-19 16:59:23.120594');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (784, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.index', 'U', 'system', '2011-08-23 15:41:08.854', '1', 513, '2011-09-19 16:59:23.120594');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (785, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.minzoom', 'U', 'system', '2011-08-23 15:39:20.948', '0', 495, '2011-09-19 16:59:28.659447');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (786, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.maxzoom', 'U', 'system', '2011-08-23 15:39:20.948', '25', 497, '2011-09-19 16:59:28.659447');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (787, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'U', 'system', '2011-08-23 15:39:20.948', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}', 499, '2011-09-19 16:59:28.659447');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (788, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'U', 'system', '2011-08-23 15:39:20.948', 'Supplier', 501, '2011-09-19 16:59:28.659447');
-INSERT INTO "Metadata_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CurrentId", "EndDate") VALUES (789, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'U', 'system', '2011-08-23 15:39:20.948', '0', 503, '2011-09-19 16:59:28.659447');
+INSERT INTO "Metadata_history" VALUES (780, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.minzoom', 'U', 'system', '2011-08-23 15:41:08.854', '0', 505, '2011-09-19 16:59:23.120594');
+INSERT INTO "Metadata_history" VALUES (781, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.maxzoom', 'U', 'system', '2011-08-23 15:41:08.854', '25', 507, '2011-09-19 16:59:23.120594');
+INSERT INTO "Metadata_history" VALUES (782, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.style', 'U', 'system', '2011-08-23 15:41:08.854', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Building.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}', 509, '2011-09-19 16:59:23.120594');
+INSERT INTO "Metadata_history" VALUES (783, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.visibility', 'U', 'system', '2011-08-23 15:41:08.854', 'Building', 511, '2011-09-19 16:59:23.120594');
+INSERT INTO "Metadata_history" VALUES (784, '"Metadata"', 'gis.Detail_Building_Location', 'system.gis.index', 'U', 'system', '2011-08-23 15:41:08.854', '1', 513, '2011-09-19 16:59:23.120594');
+INSERT INTO "Metadata_history" VALUES (785, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.minzoom', 'U', 'system', '2011-08-23 15:39:20.948', '0', 495, '2011-09-19 16:59:28.659447');
+INSERT INTO "Metadata_history" VALUES (786, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.maxzoom', 'U', 'system', '2011-08-23 15:39:20.948', '25', 497, '2011-09-19 16:59:28.659447');
+INSERT INTO "Metadata_history" VALUES (787, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'U', 'system', '2011-08-23 15:39:20.948', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}', 499, '2011-09-19 16:59:28.659447');
+INSERT INTO "Metadata_history" VALUES (788, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'U', 'system', '2011-08-23 15:39:20.948', 'Supplier', 501, '2011-09-19 16:59:28.659447');
+INSERT INTO "Metadata_history" VALUES (789, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'U', 'system', '2011-08-23 15:39:20.948', '0', 503, '2011-09-19 16:59:28.659447');
 
 
 
-INSERT INTO "Monitor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize") VALUES (550, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'A', 'admin', '2011-08-23 17:34:12.416', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, 134, NULL, NULL, 392, NULL);
-INSERT INTO "Monitor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize") VALUES (555, '"Monitor"', 'MON0002', 'Acer - B243WCydr', 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 'PRT576', NULL, NULL, NULL, NULL, 138, 'B243WCydr', 272, 128, NULL, NULL, 392, 330);
-INSERT INTO "Monitor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize") VALUES (561, '"Monitor"', 'MON0003', 'Acer - V193HQb', 'A', 'admin', '2011-08-23 17:36:00.497', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'V193HQb', 242, 130, NULL, NULL, 392, NULL);
-INSERT INTO "Monitor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize") VALUES (573, '"Monitor"', 'MON0004', 'Epson - W1934S-BN', 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 'KR57667', NULL, NULL, NULL, NULL, 140, 'W1934S-BN', 272, 132, NULL, NULL, 393, 330);
-INSERT INTO "Monitor" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize") VALUES (567, '"Monitor"', 'MON0007', 'Hp - V220', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'SR6576', NULL, NULL, '2011-09-06', NULL, 135, 'V220', 230, 118, NULL, NULL, 392, 330);
+INSERT INTO "Monitor" VALUES (550, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'A', 'admin', '2011-08-23 17:34:12.416', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, 134, NULL, NULL, 392, NULL);
+INSERT INTO "Monitor" VALUES (555, '"Monitor"', 'MON0002', 'Acer - B243WCydr', 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 'PRT576', NULL, NULL, NULL, NULL, 138, 'B243WCydr', 272, 128, NULL, NULL, 392, 330);
+INSERT INTO "Monitor" VALUES (561, '"Monitor"', 'MON0003', 'Acer - V193HQb', 'A', 'admin', '2011-08-23 17:36:00.497', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'V193HQb', 242, 130, NULL, NULL, 392, NULL);
+INSERT INTO "Monitor" VALUES (573, '"Monitor"', 'MON0004', 'Epson - W1934S-BN', 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 'KR57667', NULL, NULL, NULL, NULL, 140, 'W1934S-BN', 272, 132, NULL, NULL, 393, 330);
+INSERT INTO "Monitor" VALUES (567, '"Monitor"', 'MON0007', 'Hp - V220', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'SR6576', NULL, NULL, '2011-09-06', NULL, 135, 'V220', 230, 118, NULL, NULL, 392, 330);
 
 
 
-INSERT INTO "Monitor_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize", "CurrentId", "EndDate") VALUES (551, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'U', 'admin', '2011-08-23 17:34:02.111', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, NULL, NULL, NULL, 392, NULL, 550, '2011-08-23 17:34:12.416');
-INSERT INTO "Monitor_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "ScreenSize", "CurrentId", "EndDate") VALUES (774, '"Monitor"', 'MON0007', 'Hp - V220', 'U', 'admin', '2011-08-23 17:36:50.525', NULL, 'SR6576', NULL, NULL, NULL, NULL, 135, 'V220', 230, 118, NULL, NULL, 392, 330, 567, '2011-09-07 11:59:52.223');
+INSERT INTO "Monitor_history" VALUES (551, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'U', 'admin', '2011-08-23 17:34:02.111', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, NULL, NULL, NULL, 392, NULL, 550, '2011-08-23 17:34:12.416');
+INSERT INTO "Monitor_history" VALUES (774, '"Monitor"', 'MON0007', 'Hp - V220', 'U', 'admin', '2011-08-23 17:36:50.525', NULL, 'SR6576', NULL, NULL, NULL, NULL, 135, 'V220', 230, 118, NULL, NULL, 392, 330, 567, '2011-09-07 11:59:52.223');
 
 
 
-INSERT INTO "NetworkDevice" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PortNumber", "PortSpeed") VALUES (747, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750 S.N. YRTU87', 'A', 'admin', '2011-09-02 12:07:44.126', NULL, 'YRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL);
-INSERT INTO "NetworkDevice" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PortNumber", "PortSpeed") VALUES (755, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'A', 'admin', '2011-09-02 12:15:10.417', NULL, 'YFGE87', 723, '2011-07-04', '2011-09-13', NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL);
+INSERT INTO "NetworkDevice" VALUES (747, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750 S.N. YRTU87', 'A', 'admin', '2011-09-02 12:07:44.126', NULL, 'YRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL);
+INSERT INTO "NetworkDevice" VALUES (755, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'A', 'admin', '2011-09-02 12:15:10.417', NULL, 'YFGE87', 723, '2011-07-04', '2011-09-13', NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL);
 
 
 
-INSERT INTO "NetworkDevice_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PortNumber", "PortSpeed", "CurrentId", "EndDate") VALUES (752, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:06:33.699', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-14', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:04.477');
-INSERT INTO "NetworkDevice_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PortNumber", "PortSpeed", "CurrentId", "EndDate") VALUES (753, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:07:04.477', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:44.126');
-INSERT INTO "NetworkDevice_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PortNumber", "PortSpeed", "CurrentId", "EndDate") VALUES (762, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:08:39.585', NULL, 'YFGE87', 723, NULL, NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:14:44.964');
-INSERT INTO "NetworkDevice_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PortNumber", "PortSpeed", "CurrentId", "EndDate") VALUES (763, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:14:44.964', NULL, 'YFGE87', 723, '2011-07-04', NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:15:10.417');
+INSERT INTO "NetworkDevice_history" VALUES (752, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:06:33.699', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-14', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:04.477');
+INSERT INTO "NetworkDevice_history" VALUES (753, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:07:04.477', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:44.126');
+INSERT INTO "NetworkDevice_history" VALUES (762, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:08:39.585', NULL, 'YFGE87', 723, NULL, NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:14:44.964');
+INSERT INTO "NetworkDevice_history" VALUES (763, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:14:44.964', NULL, 'YFGE87', 723, '2011-07-04', NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:15:10.417');
 
 
 
@@ -7221,47 +7247,49 @@ INSERT INTO "NetworkDevice_history" ("Id", "IdClass", "Code", "Description", "St
 
 
 
-INSERT INTO "Office" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "ShortDescription", "Responsible") VALUES (110, '"Office"', 'OFF03', 'Office 03 - Legal Department', 'A', 'admin', '2011-07-24 18:49:18.638', NULL, 'Legal Department', NULL);
-INSERT INTO "Office" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "ShortDescription", "Responsible") VALUES (108, '"Office"', 'OFF02', 'Office 02 - Administration', 'A', 'admin', '2011-07-24 18:49:25.82', NULL, 'Administration', NULL);
-INSERT INTO "Office" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "ShortDescription", "Responsible") VALUES (112, '"Office"', 'OFF01', 'Office 01 - Headquarters', 'A', 'admin', '2011-07-24 23:38:05.699', NULL, 'Head Office', NULL);
+INSERT INTO "Office" VALUES (110, '"Office"', 'OFF03', 'Office 03 - Legal Department', 'A', 'admin', '2011-07-24 18:49:18.638', NULL, 'Legal Department', NULL);
+INSERT INTO "Office" VALUES (108, '"Office"', 'OFF02', 'Office 02 - Administration', 'A', 'admin', '2011-07-24 18:49:25.82', NULL, 'Administration', NULL);
+INSERT INTO "Office" VALUES (112, '"Office"', 'OFF01', 'Office 01 - Headquarters', 'A', 'admin', '2011-07-24 23:38:05.699', NULL, 'Head Office', NULL);
 
 
 
-INSERT INTO "Office_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "ShortDescription", "Responsible", "CurrentId", "EndDate") VALUES (113, '"Office"', 'OFF02', 'Office 02 - Legal Department', 'U', 'admin', '2011-07-24 18:48:13.386', NULL, 'Legal Department', NULL, 110, '2011-07-24 18:49:18.638');
-INSERT INTO "Office_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "ShortDescription", "Responsible", "CurrentId", "EndDate") VALUES (114, '"Office"', 'OFF01', 'Office 01 - Administration', 'U', 'admin', '2011-07-24 18:47:26.769', NULL, 'Administration', NULL, 108, '2011-07-24 18:49:25.82');
-INSERT INTO "Office_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "ShortDescription", "Responsible", "CurrentId", "EndDate") VALUES (170, '"Office"', 'OFF01', 'Office 01 - Head Office', 'U', 'admin', '2011-07-24 18:49:09.575', NULL, 'Head Office', NULL, 112, '2011-07-24 23:38:05.699');
+INSERT INTO "Office_history" VALUES (113, '"Office"', 'OFF02', 'Office 02 - Legal Department', 'U', 'admin', '2011-07-24 18:48:13.386', NULL, 'Legal Department', NULL, 110, '2011-07-24 18:49:18.638');
+INSERT INTO "Office_history" VALUES (114, '"Office"', 'OFF01', 'Office 01 - Administration', 'U', 'admin', '2011-07-24 18:47:26.769', NULL, 'Administration', NULL, 108, '2011-07-24 18:49:25.82');
+INSERT INTO "Office_history" VALUES (170, '"Office"', 'OFF01', 'Office 01 - Head Office', 'U', 'admin', '2011-07-24 18:49:09.575', NULL, 'Head Office', NULL, 112, '2011-07-24 23:38:05.699');
 
 
 
-INSERT INTO "PC" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard") VALUES (534, '"PC"', 'PC0002', 'Intel Pentium P4', 'A', 'admin', '2011-08-23 17:29:52.21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Pentium P4', 104, 128, 134, NULL, 1, 2, NULL, NULL, NULL, NULL);
-INSERT INTO "PC" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard") VALUES (542, '"PC"', 'PC0004', 'Sony Vajo F', 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 'TY747687', NULL, NULL, NULL, NULL, 136, 'Vajo F', 272, 130, 116, NULL, 8, 4, NULL, 2, NULL, NULL);
-INSERT INTO "PC" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard") VALUES (518, '"PC"', 'PC0001', 'Acer - Netbook D250', 'A', 'admin', '2011-08-23 23:46:34.587', NULL, '43434', NULL, '2011-04-03', NULL, NULL, 138, 'D250', 236, 120, 116, NULL, 4, 2, NULL, 1, NULL, NULL);
-INSERT INTO "PC" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard") VALUES (526, '"PC"', 'PC0003', 'Hp - A6316', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, NULL, 723, NULL, '2011-09-06', NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "PC" VALUES (534, '"PC"', 'PC0002', 'Intel Pentium P4', 'A', 'admin', '2011-08-23 17:29:52.21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Pentium P4', 104, 128, 134, NULL, 1, 2, NULL, NULL, NULL, NULL);
+INSERT INTO "PC" VALUES (542, '"PC"', 'PC0004', 'Sony Vajo F', 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 'TY747687', NULL, NULL, NULL, NULL, 136, 'Vajo F', 272, 130, 116, NULL, 8, 4, NULL, 2, NULL, NULL);
+INSERT INTO "PC" VALUES (518, '"PC"', 'PC0001', 'Acer - Netbook D250', 'A', 'admin', '2011-08-23 23:46:34.587', NULL, '43434', NULL, '2011-04-03', NULL, NULL, 138, 'D250', 236, 120, 116, NULL, 4, 2, NULL, 1, NULL, NULL);
+INSERT INTO "PC" VALUES (526, '"PC"', 'PC0003', 'Hp - A6316', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, NULL, 723, NULL, '2011-09-06', NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 
 
-INSERT INTO "PC_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard", "CurrentId", "EndDate") VALUES (710, '"PC"', 'PC0001', 'Acer - Netbook D250', 'U', 'admin', '2011-08-23 17:26:13.647', NULL, '43434', NULL, NULL, NULL, NULL, 138, 'D250', 236, 120, 116, NULL, 4, 2, NULL, 1, NULL, NULL, 518, '2011-08-23 23:46:34.587');
-INSERT INTO "PC_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard", "CurrentId", "EndDate") VALUES (718, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-23 17:28:42.292', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:03:27.919');
-INSERT INTO "PC_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard", "CurrentId", "EndDate") VALUES (719, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:03:27.919', NULL, NULL, 714, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:07:08.776');
-INSERT INTO "PC_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard", "CurrentId", "EndDate") VALUES (726, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:07:08.776', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:27:49.732');
-INSERT INTO "PC_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "RAM", "CPUNumber", "CPUSpeed", "HDSize", "SoundCard", "VideoCard", "CurrentId", "EndDate") VALUES (776, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:27:49.732', NULL, NULL, 723, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-09-07 11:59:52.223');
+INSERT INTO "PC_history" VALUES (710, '"PC"', 'PC0001', 'Acer - Netbook D250', 'U', 'admin', '2011-08-23 17:26:13.647', NULL, '43434', NULL, NULL, NULL, NULL, 138, 'D250', 236, 120, 116, NULL, 4, 2, NULL, 1, NULL, NULL, 518, '2011-08-23 23:46:34.587');
+INSERT INTO "PC_history" VALUES (718, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-23 17:28:42.292', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:03:27.919');
+INSERT INTO "PC_history" VALUES (719, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:03:27.919', NULL, NULL, 714, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:07:08.776');
+INSERT INTO "PC_history" VALUES (726, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:07:08.776', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:27:49.732');
+INSERT INTO "PC_history" VALUES (776, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:27:49.732', NULL, NULL, 723, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-09-07 11:59:52.223');
 
 
 
-INSERT INTO "Patch" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes") VALUES (773, '"Patch"', '1.3.1-05', 'Create database', 'A', 'system', '2011-09-05 12:01:42.544', NULL);
+INSERT INTO "Patch" VALUES (773, '"Patch"', '1.3.1-05', 'Create database', 'A', 'system', '2011-09-05 12:01:42.544', NULL);
+INSERT INTO "Patch" VALUES (818, '"Patch"', '1.4.0-01', 'Reorders tree nodes that were not properly ordered when saving them', 'A', 'system', '2012-01-31 11:29:35.93578', NULL);
+INSERT INTO "Patch" VALUES (820, '"Patch"', '1.4.0-02', 'Fixes reference values filling on attribute creation', 'A', 'system', '2012-01-31 11:29:36.004394', NULL);
 
 
 
 
 
 
-INSERT INTO "Printer" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PaperSize", "Color", "Usage") VALUES (579, '"Printer"', 'PRT0001', 'Canon - IX5000', 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 'YT687', NULL, NULL, NULL, NULL, 139, 'IX5000', 242, 130, NULL, NULL, 399, 395, true, NULL);
-INSERT INTO "Printer" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PaperSize", "Color", "Usage") VALUES (585, '"Printer"', 'PRT0002', 'Epson - ELP 6200L', 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 'RTD575', NULL, NULL, NULL, NULL, 140, 'ELP 6200L', 212, 120, NULL, NULL, 399, 395, false, NULL);
-INSERT INTO "Printer" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PaperSize", "Color", "Usage") VALUES (591, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'YU6874', NULL, NULL, '2011-09-06', NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, 399, NULL, false, NULL);
+INSERT INTO "Printer" VALUES (579, '"Printer"', 'PRT0001', 'Canon - IX5000', 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 'YT687', NULL, NULL, NULL, NULL, 139, 'IX5000', 242, 130, NULL, NULL, 399, 395, true, NULL);
+INSERT INTO "Printer" VALUES (585, '"Printer"', 'PRT0002', 'Epson - ELP 6200L', 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 'RTD575', NULL, NULL, NULL, NULL, 140, 'ELP 6200L', 212, 120, NULL, NULL, 399, 395, false, NULL);
+INSERT INTO "Printer" VALUES (591, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'YU6874', NULL, NULL, '2011-09-06', NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, 399, NULL, false, NULL);
 
 
 
-INSERT INTO "Printer_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "SerialNumber", "Supplier", "PurchaseDate", "AcceptanceDate", "FinalCost", "Brand", "Model", "Room", "Assignee", "TechnicalReference", "Workplace", "Type", "PaperSize", "Color", "Usage", "CurrentId", "EndDate") VALUES (775, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'U', 'admin', '2011-08-23 17:40:48.481', NULL, 'YU6874', NULL, NULL, NULL, NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, 399, NULL, false, NULL, 591, '2011-09-07 11:59:52.223');
+INSERT INTO "Printer_history" VALUES (775, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'U', 'admin', '2011-08-23 17:40:48.481', NULL, 'YU6874', NULL, NULL, NULL, NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, 399, NULL, false, NULL, 591, '2011-09-07 11:59:52.223');
 
 
 
@@ -7271,7 +7299,7 @@ INSERT INTO "Printer_history" ("Id", "IdClass", "Code", "Description", "Status",
 
 
 
-INSERT INTO "Report" ("Id", "Code", "Description", "Status", "User", "BeginDate", "Type", "Query", "SimpleReport", "RichReport", "Wizard", "Images", "ImagesLength", "ReportLength", "IdClass", "Groups", "ImagesName") VALUES (597, 'Location list with assets', 'Location list with assets', 'A', NULL, '2011-08-23 18:16:36.567', 'custom', 'SELECT
+INSERT INTO "Report" VALUES (597, 'Location list with assets', 'Location list with assets', 'A', NULL, '2011-08-23 18:16:36.567', 'custom', 'SELECT
 "Asset"."Code" AS "AssetCode", max("Asset"."Description") AS "AssetDescription", max("LookUp1"."Description") AS "AssetBrand",
 "Workplace"."Code" AS "WorkplaceCode", max("Workplace"."Description") AS "WorkplaceDescription", max("Employee"."Description") as "Assignee", max(lower("Employee"."Email")) as "Email",
 coalesce("Room"."Code", ''Not defined'') AS "RoomCode",
@@ -7291,31 +7319,31 @@ ORDER BY "Room"."Code"', '\\254\\355\\000\\005sr\\000(net.sf.jasperreports.engin
 
 
 
-INSERT INTO "Role" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Administrator", "startingClass", "Email", "DisabledModules") VALUES (14, '"Role"', 'SuperUser', 'SuperUser', 'A', 'system', '2011-03-16 11:15:37.240985', NULL, true, NULL, NULL, NULL);
-INSERT INTO "Role" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Administrator", "startingClass", "Email", "DisabledModules") VALUES (677, '"Role"', 'Helpdesk', 'Helpdesk', 'A', 'admin', '2011-08-23 22:31:24.685', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}');
+INSERT INTO "Role" VALUES (14, '"Role"', 'SuperUser', 'SuperUser', 'A', 'system', '2011-03-16 11:15:37.240985', NULL, true, NULL, NULL, NULL);
+INSERT INTO "Role" VALUES (677, '"Role"', 'Helpdesk', 'Helpdesk', 'A', 'admin', '2011-08-23 22:31:24.685', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}');
 
 
 
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (104, '"Room"', 'DC01001', 'Data Center - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:50:09.333', NULL, 79, 27, 28.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (200, '"Room"', 'DC01002', 'Data Center - Floor 1 - Room 002
+INSERT INTO "Room" VALUES (104, '"Room"', 'DC01001', 'Data Center - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:50:09.333', NULL, 79, 27, 28.00, 110);
+INSERT INTO "Room" VALUES (200, '"Room"', 'DC01002', 'Data Center - Floor 1 - Room 002
 ', 'A', 'admin', '2011-07-24 23:51:13.304', NULL, 79, 157, 62.00, 108);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (206, '"Room"', 'B101001', 'Office Building A - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:56:14.609', NULL, 83, 27, 18.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (212, '"Room"', 'B101002', 'Office Building A - Floor 1 - Room 002', 'A', 'admin', '2011-07-24 23:56:56.466', NULL, 83, 27, 18.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (218, '"Room"', 'B101003', 'Office Building A - Floor 1 - Room 003', 'A', 'admin', '2011-07-24 23:57:24.774', NULL, 83, 27, 18.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (224, '"Room"', 'B102001', 'Office Building A - Floor 2 - Room 001', 'A', 'admin', '2011-07-24 23:57:56.042', NULL, 87, 155, 48.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (230, '"Room"', 'B102002', 'Office Building A - Floor 2 - Room 002', 'A', 'admin', '2011-07-24 23:58:29.941', NULL, 87, 156, 48.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (236, '"Room"', 'B103001', 'Office Building A - Floor 3 - Room 001', 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 92, 154, 128.00, 112);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (242, '"Room"', 'B201001', 'Office Building B - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 96, 27, 18.00, 108);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (248, '"Room"', 'B201002', 'Office Building B - Floor 1 - Room 002', 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 96, 27, 18.00, 108);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (260, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'A', 'admin', '2011-09-02 11:53:26.90', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 108);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (254, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'A', 'admin', '2011-09-02 11:56:58.957', NULL, 96, 156, 18.00, 110);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (266, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'A', 'admin', '2011-08-30 16:22:46.448', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building C</span><span class="hps">.<br>
+INSERT INTO "Room" VALUES (206, '"Room"', 'B101001', 'Office Building A - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:56:14.609', NULL, 83, 27, 18.00, 110);
+INSERT INTO "Room" VALUES (212, '"Room"', 'B101002', 'Office Building A - Floor 1 - Room 002', 'A', 'admin', '2011-07-24 23:56:56.466', NULL, 83, 27, 18.00, 110);
+INSERT INTO "Room" VALUES (218, '"Room"', 'B101003', 'Office Building A - Floor 1 - Room 003', 'A', 'admin', '2011-07-24 23:57:24.774', NULL, 83, 27, 18.00, 110);
+INSERT INTO "Room" VALUES (224, '"Room"', 'B102001', 'Office Building A - Floor 2 - Room 001', 'A', 'admin', '2011-07-24 23:57:56.042', NULL, 87, 155, 48.00, 110);
+INSERT INTO "Room" VALUES (230, '"Room"', 'B102002', 'Office Building A - Floor 2 - Room 002', 'A', 'admin', '2011-07-24 23:58:29.941', NULL, 87, 156, 48.00, 110);
+INSERT INTO "Room" VALUES (236, '"Room"', 'B103001', 'Office Building A - Floor 3 - Room 001', 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 92, 154, 128.00, 112);
+INSERT INTO "Room" VALUES (242, '"Room"', 'B201001', 'Office Building B - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 96, 27, 18.00, 108);
+INSERT INTO "Room" VALUES (248, '"Room"', 'B201002', 'Office Building B - Floor 1 - Room 002', 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 96, 27, 18.00, 108);
+INSERT INTO "Room" VALUES (260, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'A', 'admin', '2011-09-02 11:53:26.90', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 108);
+INSERT INTO "Room" VALUES (254, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'A', 'admin', '2011-09-02 11:56:58.957', NULL, 96, 156, 18.00, 110);
+INSERT INTO "Room" VALUES (266, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'A', 'admin', '2011-08-30 16:22:46.448', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building C</span><span class="hps">.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112);
-INSERT INTO "Room" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office") VALUES (272, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'A', 'admin', '2011-09-02 11:54:54.974', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg yu5y uy5 u 5yu 5yu yj yu5 5yu 5yu u5yu 5 u<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
+INSERT INTO "Room" VALUES (272, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'A', 'admin', '2011-09-02 11:54:54.974', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg yu5y uy5 u 5yu 5yu yj yu5 5yu 5yu u5yu 5 u<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg ir</li><li>egie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oure</li><li>òghore goireò gierhg ierò girehg iregh iregh ireg iregie
@@ -7335,16 +7363,16 @@ oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
 
 
 
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (196, '"Room"', 'DC01001', 'Data Center - Floor 1 - Room 001', 'U', 'admin', '2011-07-24 18:45:44.718', NULL, 79, NULL, 28.00, NULL, 104, '2011-07-24 23:50:09.333');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (711, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-07-25 00:01:52.818', NULL, 100, 27, 24.00, 112, 266, '2011-08-29 12:20:03.608');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (712, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-29 12:20:03.608', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of the work</span> <span class="hps">in the building</span> <span class="hps">C.<br>
+INSERT INTO "Room_history" VALUES (196, '"Room"', 'DC01001', 'Data Center - Floor 1 - Room 001', 'U', 'admin', '2011-07-24 18:45:44.718', NULL, 79, NULL, 28.00, NULL, 104, '2011-07-24 23:50:09.333');
+INSERT INTO "Room_history" VALUES (711, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-07-25 00:01:52.818', NULL, 100, 27, 24.00, 112, 266, '2011-08-29 12:20:03.608');
+INSERT INTO "Room_history" VALUES (712, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-29 12:20:03.608', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of the work</span> <span class="hps">in the building</span> <span class="hps">C.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-29 12:20:42.359');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (729, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-07-25 00:02:19.16', NULL, 100, 27, 24.00, 112, 272, '2011-08-30 16:20:50.591');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (730, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:20:50.591', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
+INSERT INTO "Room_history" VALUES (729, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-07-25 00:02:19.16', NULL, 100, 27, 24.00, 112, 272, '2011-08-30 16:20:50.591');
+INSERT INTO "Room_history" VALUES (730, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:20:50.591', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
@@ -7361,7 +7389,7 @@ oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ', 100, 27, 24.00, 112, 272, '2011-08-30 16:21:11.789');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (731, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:21:11.789', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
+INSERT INTO "Room_history" VALUES (731, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:21:11.789', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg ir</li><li>egie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oure</li><li>òghore goireò gierhg ierò girehg iregh iregh ireg iregie
@@ -7378,49 +7406,49 @@ oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ', 100, 27, 24.00, 112, 272, '2011-08-30 16:21:22.461');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (732, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-29 12:20:42.359', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building</span> <span class="hps">C.<br>
+INSERT INTO "Room_history" VALUES (732, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-29 12:20:42.359', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building</span> <span class="hps">C.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:21:38.937');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (733, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:21:38.937', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingb </span><span class="hps">C.<br>
+INSERT INTO "Room_history" VALUES (733, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:21:38.937', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingb </span><span class="hps">C.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:21:48.929');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (734, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:21:48.929', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingb </span><span class="hps">ruruhf3 ir3hfg 3ihf ir3hf i3h .<br>
+INSERT INTO "Room_history" VALUES (734, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:21:48.929', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingb </span><span class="hps">ruruhf3 ir3hfg 3ihf ir3hf i3h .<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:22:03.09');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (735, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:22:03.09', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building C</span><span class="hps">.<br>
+INSERT INTO "Room_history" VALUES (735, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:22:03.09', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building C</span><span class="hps">.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:22:22.253');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (736, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:22:22.253', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingqC</span><span class="hps">.<br>
+INSERT INTO "Room_history" VALUES (736, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:22:22.253', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingqC</span><span class="hps">.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:22:36.904');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (737, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:22:36.904', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the_building_C</span><span class="hps">.<br>
+INSERT INTO "Room_history" VALUES (737, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:22:36.904', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the_building_C</span><span class="hps">.<br>
   <br>
 Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:22:46.448');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (738, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-07-25 00:01:29.684', NULL, 100, 27, 24.00, 112, 260, '2011-08-30 16:23:31.002');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (739, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:23:31.002', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-08-30 16:23:44.308');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (740, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:23:44.308', 'The room is <span style="color: rgb(255, 0, 0);">temporary </span>used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-08-30 16:24:10.851');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (741, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-07-25 00:00:42.222', NULL, 96, 27, 18.00, 108, 254, '2011-08-30 16:36:35.379');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (742, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:24:10.851', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-09-02 11:53:03.347');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (743, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-09-02 11:53:03.347', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 112, 260, '2011-09-02 11:53:26.90');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (744, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:21:22.461', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg yu5y uy5 u 5yu 5yu yj yu5 5yu 5yu u5yu 5 u<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
+INSERT INTO "Room_history" VALUES (738, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-07-25 00:01:29.684', NULL, 100, 27, 24.00, 112, 260, '2011-08-30 16:23:31.002');
+INSERT INTO "Room_history" VALUES (739, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:23:31.002', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-08-30 16:23:44.308');
+INSERT INTO "Room_history" VALUES (740, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:23:44.308', 'The room is <span style="color: rgb(255, 0, 0);">temporary </span>used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-08-30 16:24:10.851');
+INSERT INTO "Room_history" VALUES (741, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-07-25 00:00:42.222', NULL, 96, 27, 18.00, 108, 254, '2011-08-30 16:36:35.379');
+INSERT INTO "Room_history" VALUES (742, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:24:10.851', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-09-02 11:53:03.347');
+INSERT INTO "Room_history" VALUES (743, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-09-02 11:53:03.347', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 112, 260, '2011-09-02 11:53:26.90');
+INSERT INTO "Room_history" VALUES (744, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:21:22.461', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg yu5y uy5 u 5yu 5yu yj yu5 5yu 5yu u5yu 5 u<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg ir</li><li>egie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oure</li><li>òghore goireò gierhg ierò girehg iregh iregh ireg iregie
@@ -7437,28 +7465,15 @@ oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ', 100, 27, 24.00, 112, 272, '2011-09-02 11:54:54.974');
-INSERT INTO "Room_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Floor", "UsageType", "Surface", "Office", "CurrentId", "EndDate") VALUES (745, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-08-30 16:36:35.379', NULL, 96, 156, 18.00, 108, 254, '2011-09-02 11:56:58.957');
+INSERT INTO "Room_history" VALUES (745, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-08-30 16:36:35.379', NULL, 96, 156, 18.00, 108, 254, '2011-09-02 11:56:58.957');
 
 
 
-INSERT INTO "Scheduler" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CronExpression", "Detail") VALUES (515, '"Scheduler"', 'StartProcess', 'Test workflow', 'N', 'system', '2011-08-23 16:42:08.164', NULL, '0 0 0 * * ?', 'Test');
+INSERT INTO "Scheduler" VALUES (515, '"Scheduler"', 'StartProcess', 'Test workflow', 'N', 'system', '2011-08-23 16:42:08.164', NULL, '0 0 0 * * ?', 'Test');
 
 
 
-INSERT INTO "Scheduler_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "CronExpression", "Detail", "CurrentId", "EndDate") VALUES (516, '"Scheduler"', 'StartProcess', 'Test workflow', 'U', 'system', '2011-08-23 16:40:29.549', NULL, '0 0 0 * * ?', 'Test', 515, '2011-08-23 16:42:08.164');
-
-
-
-
-
-
-
-
-
-INSERT INTO "Supplier" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country") VALUES (706, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'A', 'admin', '2011-08-23 23:29:19.436', 'This supplier is very <font color="#ff0000">reliable</font>.<br><span id="result_box" class="short_text" lang="en"><span class="hps">Delivery dates</span> <span class="hps">are always</span> <span class="hps">fulfilled.<br></span></span>Rating:<br><ul><li>quality: good</li><li>prices: good</li></ul><span id="result_box" class="short_text" lang="en"><span class="hps"></span></span>', 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', 65);
-INSERT INTO "Supplier" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country") VALUES (714, '"Supplier"', 'SUP02', 'HP', 'A', 'admin', '2011-08-29 12:50:04.459', NULL, 28, NULL, NULL, NULL, NULL, 'info@hp.com', 'www.hp.com', 69);
-INSERT INTO "Supplier" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country") VALUES (721, '"Supplier"', 'SUP003', 'Dell', 'A', 'admin', '2011-08-29 13:21:30.725', NULL, 28, NULL, NULL, NULL, NULL, 'info@dell.com', 'www.dell.com', 69);
-INSERT INTO "Supplier" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country") VALUES (723, '"Supplier"', 'SUP004', 'Misco', 'A', 'admin', '2011-08-29 13:23:10.823', NULL, 158, NULL, NULL, NULL, NULL, NULL, NULL, 25);
+INSERT INTO "Scheduler_history" VALUES (516, '"Scheduler"', 'StartProcess', 'Test workflow', 'U', 'system', '2011-08-23 16:40:29.549', NULL, '0 0 0 * * ?', 'Test', 515, '2011-08-23 16:42:08.164');
 
 
 
@@ -7468,10 +7483,10 @@ INSERT INTO "Supplier" ("Id", "IdClass", "Code", "Description", "Status", "User"
 
 
 
-INSERT INTO "Supplier_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country", "CurrentId", "EndDate") VALUES (707, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'U', 'admin', '2011-08-23 23:16:41.642', NULL, 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', NULL, 706, '2011-08-23 23:18:50.004');
-INSERT INTO "Supplier_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country", "CurrentId", "EndDate") VALUES (708, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'U', 'admin', '2011-08-23 23:18:50.004', NULL, 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', 65, 706, '2011-08-23 23:23:33.472');
-INSERT INTO "Supplier_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country", "CurrentId", "EndDate") VALUES (709, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'U', 'admin', '2011-08-23 23:23:33.472', '​This supplier is very reliable.<br><span id="result_box" class="short_text" lang="en"><span class="hps">Delivery dates</span> <span class="hps">are always</span> <span class="hps">fulfilled.</span></span><br>', 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', 65, 706, '2011-08-23 23:29:19.436');
-INSERT INTO "Supplier_history" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Type", "Address", "ZIP", "City", "Phone", "Email", "WebSite", "Country", "CurrentId", "EndDate") VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U', 'admin', '2011-08-29 12:48:58.926', NULL, 28, NULL, NULL, NULL, NULL, 'info@dell.com', 'www.dell.com', 69, 714, '2011-08-29 12:50:04.459');
+INSERT INTO "Supplier" VALUES (706, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'A', 'admin', '2011-08-23 23:29:19.436', 'This supplier is very <font color="#ff0000">reliable</font>.<br><span id="result_box" class="short_text" lang="en"><span class="hps">Delivery dates</span> <span class="hps">are always</span> <span class="hps">fulfilled.<br></span></span>Rating:<br><ul><li>quality: good</li><li>prices: good</li></ul><span id="result_box" class="short_text" lang="en"><span class="hps"></span></span>', 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', 65);
+INSERT INTO "Supplier" VALUES (714, '"Supplier"', 'SUP02', 'HP', 'A', 'admin', '2011-08-29 12:50:04.459', NULL, 28, NULL, NULL, NULL, NULL, 'info@hp.com', 'www.hp.com', 69);
+INSERT INTO "Supplier" VALUES (721, '"Supplier"', 'SUP003', 'Dell', 'A', 'admin', '2011-08-29 13:21:30.725', NULL, 28, NULL, NULL, NULL, NULL, 'info@dell.com', 'www.dell.com', 69);
+INSERT INTO "Supplier" VALUES (723, '"Supplier"', 'SUP004', 'Misco', 'A', 'admin', '2011-08-29 13:23:10.823', NULL, 158, NULL, NULL, NULL, NULL, NULL, NULL, 25);
 
 
 
@@ -7481,9 +7496,22 @@ INSERT INTO "Supplier_history" ("Id", "IdClass", "Code", "Description", "Status"
 
 
 
-INSERT INTO "User" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Username", "Password", "Email") VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2011-03-16 11:15:37.221385', NULL, 'admin', 'DQdKW32Mlms=', NULL);
-INSERT INTO "User" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Username", "Password", "Email") VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2011-08-23 22:36:40.224', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@cmdbuild.org');
-INSERT INTO "User" ("Id", "IdClass", "Code", "Description", "Status", "User", "BeginDate", "Notes", "Username", "Password", "Email") VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2011-08-23 22:37:48.154', NULL, 'mdavis', 'Nlg70IVc7/U=', 'davis.michael@cmdbuild.org');
+INSERT INTO "Supplier_history" VALUES (707, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'U', 'admin', '2011-08-23 23:16:41.642', NULL, 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', NULL, 706, '2011-08-23 23:18:50.004');
+INSERT INTO "Supplier_history" VALUES (708, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'U', 'admin', '2011-08-23 23:18:50.004', NULL, 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', 65, 706, '2011-08-23 23:23:33.472');
+INSERT INTO "Supplier_history" VALUES (709, '"Supplier"', 'SUP001', 'Tecnoteca Srl', 'U', 'admin', '2011-08-23 23:23:33.472', '​This supplier is very reliable.<br><span id="result_box" class="short_text" lang="en"><span class="hps">Delivery dates</span> <span class="hps">are always</span> <span class="hps">fulfilled.</span></span><br>', 28, 'Via L''Aquila 1/B', '33010', 'Tavagnacco (UD)', '+39 0432 689094', 'tecnoteca@tecnoteca.com', 'http://www.tecnoteca.com', 65, 706, '2011-08-23 23:29:19.436');
+INSERT INTO "Supplier_history" VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U', 'admin', '2011-08-29 12:48:58.926', NULL, 28, NULL, NULL, NULL, NULL, 'info@dell.com', 'www.dell.com', 69, 714, '2011-08-29 12:50:04.459');
+
+
+
+
+
+
+
+
+
+INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2011-03-16 11:15:37.221385', NULL, 'admin', 'DQdKW32Mlms=', NULL);
+INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2011-08-23 22:36:40.224', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@cmdbuild.org');
+INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2011-08-23 22:37:48.154', NULL, 'mdavis', 'Nlg70IVc7/U=', 'davis.michael@cmdbuild.org');
 
 
 
