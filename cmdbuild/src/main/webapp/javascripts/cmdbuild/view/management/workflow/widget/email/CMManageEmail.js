@@ -35,9 +35,6 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
 			removeTemplatesFromStore: function() {
 				return this.emailGrid.removeTemplatesFromStore();
 			},
-			storeHasNoOutgoing: function() {
-				return this.emailGrid.storeHasNoOutgoing();
-			},
 			CMEVENTS: this.emailGrid.CMEVENTS
 		});
 

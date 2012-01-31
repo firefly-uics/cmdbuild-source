@@ -243,7 +243,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 	public void react(WMSessionHandle handle, UserContext userCtx,
 			SharkWSFactory factory, SharkWSFacade facade,
 			WMWorkItem workItem, ActivityDO activityDO,
-			Map<String, String[]> submissionParameters) {
+			Map<String, String[]> submissionParameters, boolean advance) {
 		Log.WORKFLOW.debug("react "+extAttrName);
 		if(!configured) {return;}
 		Map<String,Object> outValues = new HashMap<String,Object>();
@@ -252,7 +252,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 			outValues.put(outParamName, outParamValue);
 		}
 		ExtendedAttributeConfigParams eacp = (ExtendedAttributeConfigParams)activityDO.getCmdbExtAttrParam(identifier());
-		this.doReact(handle, userCtx, factory, facade, workItem, activityDO, submissionParameters, eacp, outValues);
+		this.doReact(handle, userCtx, factory, facade, workItem, activityDO, submissionParameters, eacp, outValues, advance);
 	}
 	
 	/**
@@ -265,6 +265,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 	 * @param activityDO
 	 * @param requestParameters
 	 * @param outputParameters
+	 * @param advance 
 	 * @throws Exception
 	 */
 	protected void doReact(WMSessionHandle handle, UserContext userCtx,
@@ -272,7 +273,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 			WMWorkItem workItem, ActivityDO activityDO,
 			Map<String, String[]> submissionParameters,
 			ExtendedAttributeConfigParams oldConfig,
-			Map<String, Object> outputParameters) {
+			Map<String, Object> outputParameters, boolean advance) {
 	}
 	
 	/**

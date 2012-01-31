@@ -410,12 +410,12 @@ public class SharkFacade {
 	}
 
 	public boolean saveWorkflowWidget(final ActivityIdentifier ai, final String identifier,
-			final Map<String, String[]> values) {
-		return reactToExtendedAttributeSubmission(ai.getProcessInstanceId(), ai.getWorkItemId(), values, identifier);
+			final Map<String, String[]> values, boolean advance) {
+		return reactToExtendedAttributeSubmission(ai.getProcessInstanceId(), ai.getWorkItemId(), values, identifier, advance);
 	}
 
 	public boolean reactToExtendedAttributeSubmission(final String processInstanceId, final String workItemId,
-			final Map<String, String[]> submissionParameters, final String extAttrIdentifier) {
+			final Map<String, String[]> submissionParameters, final String extAttrIdentifier, final boolean advance) {
 		WorkflowOperation<Boolean> operation = new WorkflowOperation<Boolean>() {
 			public Boolean execute(WMSessionHandle handle,
 					SharkWSFactory factory, UserContext userCtx)
@@ -431,7 +431,7 @@ public class SharkFacade {
 				activity.configureExtendedAttributes(handle, userCtx, factory, item);
 				for( CmdbuildExtendedAttribute cmdbExtAttr : activity.cmdbExtAttrs ) {
 					if(cmdbExtAttr.identifier().equals(extAttrIdentifier)) {
-						cmdbExtAttr.react(handle, userCtx, factory, facade, item, activity, submissionParameters);
+						cmdbExtAttr.react(handle, userCtx, factory, facade, item, activity, submissionParameters, advance);
 						return true;
 					}
 				}

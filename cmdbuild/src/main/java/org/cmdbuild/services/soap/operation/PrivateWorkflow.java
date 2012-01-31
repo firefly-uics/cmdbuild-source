@@ -45,7 +45,7 @@ public class PrivateWorkflow {
 		} else {
 			activity = startWorkflow(card, management);
 		}
-		applyWorkflowWidget(management, activity, submissionWidgets);
+		applyWorkflowWidget(management, activity, submissionWidgets, completeTask);
 		updateActivity(card, management, activity, completeTask);
 		Workflow workflow = new Workflow();
 		workflow.setProcessid(activity.getCmdbuildCardId());
@@ -54,13 +54,13 @@ public class PrivateWorkflow {
 	}
 	
 
-	private void applyWorkflowWidget(SharkFacade management, ActivityDO activity, WorkflowWidgetSubmission[] submissionWidgets) {
+	private void applyWorkflowWidget(SharkFacade management, ActivityDO activity, WorkflowWidgetSubmission[] submissionWidgets, boolean completeTask) {
 		if (submissionWidgets == null) {
 			return;
 		}
 		boolean allWWSucceded = true;
 		for (WorkflowWidgetSubmission widget : submissionWidgets) {
-			boolean currentSucceeded = executeWorkflowWidget(management, activity, widget);
+			boolean currentSucceeded = executeWorkflowWidget(management, activity, widget, completeTask);
 			if (!currentSucceeded) {
 				Log.SOAP.error("Workflow widget "+widget.getIdentifier()+" failed");
 				throw WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR.createException(widget.getIdentifier());
@@ -71,13 +71,13 @@ public class PrivateWorkflow {
 		}
 	}
 
-	private boolean executeWorkflowWidget(SharkFacade management, ActivityDO activity, WorkflowWidgetSubmission widgets) {
+	private boolean executeWorkflowWidget(SharkFacade management, ActivityDO activity, WorkflowWidgetSubmission widgets, boolean completeTask) {
 		Map<String, String[]> submissionParameters = new HashMap<String, String[]>();
 		for (WorkflowWidgetSubmissionParameter parameter : widgets.getParameters()){
 			submissionParameters.put(parameter.getKey(), parameter.getValues());
 		}
 		return management.reactToExtendedAttributeSubmission(activity.getProcessInstanceId(), activity.getWorkItemId(), 
-				submissionParameters, widgets.getIdentifier());
+				submissionParameters, widgets.getIdentifier(), completeTask);
 	}
 
 	private ActivityDO startWorkflow(Card card, SharkFacade management) {
