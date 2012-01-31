@@ -51,7 +51,7 @@ public class CreateReport extends AbstractCmdbuildExtendedAttribute {
 			SharkWSFactory factory, SharkWSFacade facade, WMWorkItem workItem,
 			ActivityDO activityDO, Map<String, String[]> submissionParameters,
 			ExtendedAttributeConfigParams oldConfig,
-			Map<String, Object> outputParameters) {
+			Map<String, Object> outputParameters, boolean advance) {
 		Map<String,Object> prm = oldConfig.getParameters();
 		
 		boolean saveAlfresco, storeProcess;

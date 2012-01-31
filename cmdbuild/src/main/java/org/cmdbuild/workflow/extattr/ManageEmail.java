@@ -24,7 +24,7 @@ public class ManageEmail extends AbstractCmdbuildExtendedAttribute {
 
 	static final String READONLY_PARAM = "ReadOnly";
 	static final String DISABLED_PARAM = "Disabled";
-	static final String REACT_OUTGOING = "Outgoing";
+	static final String REACT_UPDATED = "Updated";
 	static final String REACT_DELETED = "Deleted";
 	static final String REACT_SEND = "ImmediateSend";
 
@@ -49,14 +49,16 @@ public class ManageEmail extends AbstractCmdbuildExtendedAttribute {
 			SharkWSFactory factory, SharkWSFacade facade, WMWorkItem workItem,
 			ActivityDO activityDO, Map<String, String[]> submissionParameters,
 			ExtendedAttributeConfigParams oldConfig,
-			Map<String, Object> outputParameters) {
+			Map<String, Object> outputParameters, boolean advance) {
 		if (isReadOnly(oldConfig.getParameters())) {
 			return;
 		} else {
 			ICard processCard = getProcessCard(handle, userCtx, factory, workItem, activityDO);
 			Log.WORKFLOW.info(String.format("ManageEmail doReact for classid %d cardid %d", processCard.getIdClass(), processCard.getId()));
-			updateOutgoingEmails(submissionParameters, processCard);
-			sendOutgoingIfRequested(submissionParameters, processCard);
+			updateEmails(submissionParameters, processCard);
+			if (advance) {
+				EmailCard.sendOutgoingAndDrafts(processCard);
+			}
 		}
 	}
 
@@ -72,14 +74,7 @@ public class ManageEmail extends AbstractCmdbuildExtendedAttribute {
 		return false;
 	}
 
-	private void sendOutgoingIfRequested(Map<String, String[]> submissionParameters, ICard processCard) {
-		boolean immediateSend = Boolean.parseBoolean(firstStringOrNull(submissionParameters.get(REACT_SEND)));
-		if (immediateSend) {
-			EmailCard.sendOutgoing(processCard);
-		}
-	}
-
-	private void updateOutgoingEmails(Map<String, String[]> submissionParameters, ICard processCard) {
+	private void updateEmails(Map<String, String[]> submissionParameters, ICard processCard) {
 		try {
 			deleteEmails(submissionParameters, processCard);
 			createUpdateEmails(submissionParameters, processCard);
@@ -98,7 +93,7 @@ public class ManageEmail extends AbstractCmdbuildExtendedAttribute {
 	}
 
 	private void createUpdateEmails(Map<String, String[]> submissionParameters, ICard processCard) throws JSONException {
-		JSONArray outgoingEmailsJson = new JSONArray(firstStringOrNull(submissionParameters.get(REACT_OUTGOING)));
+		JSONArray outgoingEmailsJson = new JSONArray(firstStringOrNull(submissionParameters.get(REACT_UPDATED)));
 		for (int i=0, n=outgoingEmailsJson.length(); i<n; ++i) {
 			JSONObject outgoingJson = outgoingEmailsJson.getJSONObject(i);
 			Map<String, String> emailValues = jsonToValueMap(outgoingJson);

@@ -201,7 +201,7 @@ public class ModWorkflow extends JSONBase {
 		processCard = startProcessIfNotStarted(sharkFacade, ai, processCard);
 		final JSONObject out = Serializer.serializeActivityIds(ai, processCard);
 		try {
-			saveWorkflowWidgets(sharkFacade, ai, ww);
+			saveWorkflowWidgets(sharkFacade, ai, ww, advance);
 			updateActivityAttributes(sharkFacade, ai, attributes, advance);
 		} catch (Exception e) {
 			throw new PartialFailureException(out, e);
@@ -220,7 +220,7 @@ public class ModWorkflow extends JSONBase {
 		return processCard;
 	}
 
-	private void saveWorkflowWidgets(SharkFacade sharkFacade, ActivityIdentifier ai, JSONObject ww) throws JSONException, MultipleException {
+	private void saveWorkflowWidgets(SharkFacade sharkFacade, ActivityIdentifier ai, JSONObject ww, boolean advance) throws JSONException, MultipleException {
 		MultipleException me = null;
 		if (ww.length() == 0) {
 			// JSONObject.getNames(ww) returns null if the object is empty
@@ -229,7 +229,7 @@ public class ModWorkflow extends JSONBase {
 		for (String identifier : JSONObject.getNames(ww)) {
 			final Map<String, String[]> values = jsonObjectToStringArrayMap(ww.getJSONObject(identifier));
 			try {
-				sharkFacade.saveWorkflowWidget(ai, identifier, values);
+				sharkFacade.saveWorkflowWidget(ai, identifier, values, advance);
 			} catch (Exception e) {
 				if (me == null) {
 					me = new MultipleException(e);

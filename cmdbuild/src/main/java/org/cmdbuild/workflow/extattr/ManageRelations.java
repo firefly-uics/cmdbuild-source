@@ -68,7 +68,7 @@ public class ManageRelations extends AbstractCmdbuildExtendedAttribute {
 			WMWorkItem workItem, ActivityDO activityDO,
 			Map<String, String[]> submissionParameters, 
 			ExtendedAttributeConfigParams oldConfig,
-			Map<String, Object> outputParameters) {
+			Map<String, Object> outputParameters, boolean advance) {
 		if(this.outParameters.size() == 0){ return; }
 		// so here.. we need to create/remove the relationships (nope!),
 		// create the ReferenceType[] and save it in shark

@@ -70,9 +70,8 @@
 			var	deletedEnc = Ext.JSON.encode(this.view.getDeletedEmails());
 
 			return {
-				Outgoing: outgoingEmailsEnc,
-				Deleted: deletedEnc,
-				ImmediateSend: isAdvance
+				Updated: outgoingEmailsEnc,
+				Deleted: deletedEnc
 			};
 		},
 

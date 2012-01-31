@@ -108,8 +108,8 @@ public class EmailCard extends LazyCard {
 		return new EmailCard(emailCard);
 	}
 
-    static public void sendOutgoing(ICard processCard) {
-    	Iterable<ICard> outgoingCards = listOutgoing(processCard);
+    static public void sendOutgoingAndDrafts(ICard processCard) {
+    	Iterable<ICard> outgoingCards = listOutgoingAndDrafts(processCard);
     	for (ICard outgoingCard : outgoingCards) {
     		EmailCard outgoing = new EmailCard(outgoingCard);
     		outgoing.sendAndSave();
@@ -123,7 +123,7 @@ public class EmailCard extends LazyCard {
 	    	setEmailStatus(EmailStatus.SENT);
 		} catch (CMDBException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
-			setEmailStatus(EmailStatus.DRAFT);
+			setEmailStatus(EmailStatus.OUTGOING);
 		}
     	save();
     }
@@ -133,9 +133,10 @@ public class EmailCard extends LazyCard {
 		setFrom(wfAddress);
 	}
 
-	private static CardQuery listOutgoing(ICard processCard) {
-		return list(processCard).filter(EmailStatusAttr, AttributeFilterType.EQUALS,
-    				String.valueOf(EmailStatus.OUTGOING.getLookup().getId()));
+	private static CardQuery listOutgoingAndDrafts(ICard processCard) {
+		return list(processCard).filter(EmailStatusAttr, AttributeFilterType.IN,
+    				String.valueOf(EmailStatus.OUTGOING.getLookup().getId()),
+    				String.valueOf(EmailStatus.DRAFT.getLookup().getId()));
 	}
 
 	private void parseMessage(Message message) throws MessagingException, IOException {

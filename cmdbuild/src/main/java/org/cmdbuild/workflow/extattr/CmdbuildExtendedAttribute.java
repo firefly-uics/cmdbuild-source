@@ -58,6 +58,7 @@ public interface CmdbuildExtendedAttribute {
 	 * @param factory
 	 * @param workItem
 	 * @param activityDO
+	 * @param advance 
 	 * @param requestParameters
 	 * @throws Exception
 	 */
@@ -67,7 +68,7 @@ public interface CmdbuildExtendedAttribute {
 			SharkWSFacade facade,
 			WMWorkItem workItem,
 			ActivityDO activityDO,
-			Map<String, String[]> submissionParameters);
+			Map<String, String[]> submissionParameters, boolean advance);
 	
 	/**
 	 * build a string that identifies an extended attribute

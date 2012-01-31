@@ -106,18 +106,6 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 		this.isLoaded = true;
 	},
 
-	// scope: this
-	storeHasNoOutgoing: function(store) {
-		var records = this.store.getRange();
-		for (var i=0, len=records.length; i<len; ++i) {
-			var record = records[i];
-			if (this.recordIsOutgoing(record)) {
-				return false;
-			}
-		}
-		return true;
-	},
-
 	addTemplateToStore: function(values) {
 		var record = this.createRecord(values);
 		// mark the record added by template to be able to
@@ -137,7 +125,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	},
 
 	createRecord: function(recordValues) {
-		recordValues["EmailStatus_value"] = "Outgoing";
+		recordValues["EmailStatus_value"] = recordValues["EmailStatus_value"] || "Draft";
 		return new CMDBuild.management.mail.Model(recordValues);
 	},
 
@@ -189,18 +177,12 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 			store.loadRecords([record], {addRecords: true});
 		}
 	},
-	recordIsOutgoing: recordIsOutgoing,
 	recordIsEditable: recordIsEditable
 });
 
-	function recordIsOutgoing(record) {
-		var status = record.get('EmailStatus_value');
-		return (status == 'Outgoing');
-	}
-
 	function recordIsEditable(record) {
 		var status = record.get('EmailStatus_value');
-		return (status == 'Outgoing') || (status == 'Draft');
+		return (status == 'Draft');
 	}
 
 	function recordIsReceived(record) {
