@@ -45,17 +45,17 @@ public class EmailService {
 			for (int i = 0, n = messages.length; i < n; ++i) {
 				Message currentMessage = messages[i];
 				singleMessageArray[0] = currentMessage;
+				Folder destinationFolder = importedFolder;
 				try {
 					EmailCard email = new EmailCard(currentMessage);
 					logEmail(i, email);
 					email.save();
-					inbox.copyMessages(singleMessageArray, importedFolder);
-				} catch (IllegalArgumentException e) {
+				} catch (Exception e) {
 					Log.EMAIL.warn("Invalid email");
-					inbox.copyMessages(singleMessageArray, rejectedFolder);
+					destinationFolder = rejectedFolder;
 				}
-				inbox.setFlags(singleMessageArray,
-						new Flags(Flags.Flag.DELETED), true);
+				inbox.copyMessages(singleMessageArray, destinationFolder);
+				inbox.setFlags(singleMessageArray, new Flags(Flags.Flag.DELETED), true);
 			}
 			inbox.expunge();
 			store.close();

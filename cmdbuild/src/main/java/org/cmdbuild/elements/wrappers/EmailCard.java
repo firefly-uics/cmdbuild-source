@@ -227,9 +227,8 @@ public class EmailCard extends LazyCard {
         String activityClassName = activityParts.group(1);
         int activityId = Integer.parseInt(activityParts.group(2));
         try {
-            ICard activity = UserContext.systemContext().tables().get(ProcessType.BaseTable).cards().get(activityId);
-            if (activityClassName.equals(activity.getSchema().getName()))
-                return activity;
+            final ICard activity = UserContext.systemContext().tables().get(activityClassName).cards().get(activityId);
+            return activity;
         } catch (NotFoundException e) {
         }
         throw new IllegalArgumentException();
