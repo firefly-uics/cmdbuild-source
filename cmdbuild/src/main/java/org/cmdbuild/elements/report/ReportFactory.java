@@ -21,6 +21,7 @@ import net.sf.jasperreports.engine.JRBand;
 import net.sf.jasperreports.engine.JRElementGroup;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRGroup;
 import net.sf.jasperreports.engine.JRImage;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRSubreport;
@@ -41,6 +42,7 @@ import net.sf.jasperreports.engine.export.oasis.JROdtExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.logger.Log;
@@ -369,19 +371,23 @@ public abstract class ReportFactory {
 	/**
 	 * Get all the bands of the report
 	 */
-	public static List<JRBand> getBands(JRBaseReport jasperDesign) {
+	public static List<JRBand> getBands(JRBaseReport jasperDesign) { 
 		List<JRBand> bands = new LinkedList<JRBand>();
 		bands.add(jasperDesign.getTitle());
 		bands.add(jasperDesign.getPageHeader());
 		bands.add(jasperDesign.getColumnHeader());
 		for(JRBand detail : jasperDesign.getDetailSection().getBands()) {
 			bands.add(detail);	
-		}		
+		}
 		bands.add(jasperDesign.getColumnFooter());
 		bands.add(jasperDesign.getPageFooter());
 		bands.add(jasperDesign.getLastPageFooter());
-		bands.add(jasperDesign.getSummary());
-		
+		bands.add(jasperDesign.getSummary());		
+		for(JRGroup group : jasperDesign.getGroups()) {
+			for(JRBand band : (JRBand[]) ArrayUtils.addAll(group.getGroupFooterSection().getBands(), group.getGroupHeaderSection().getBands())) {
+				bands.add(band);
+			}
+		}
 		return bands;
 	}
 
