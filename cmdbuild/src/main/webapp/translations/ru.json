@@ -1,6 +1,6 @@
 {
    "description": "Русский",
-   "release": "1.6-dev",
+   "release": "2.0-dev",
    "administration": {
       "description": "Администрирование",
       "modClass": {
