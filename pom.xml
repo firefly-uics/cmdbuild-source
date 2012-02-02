@@ -43,9 +43,7 @@
 		<module>cmdbuild-commons</module>
 		<module>cmdbuild-dao</module>
 		<module>cmdbuild-dms</module>
-		<module>cmdbuild-docs</module>
 		<module>cmdbuild-graph</module>
-		<module>cmdbuild-test</module>
 		<module>cmdbuild-shark</module>
 		<module>cmdbuild-ws-client</module>
 	</modules>
