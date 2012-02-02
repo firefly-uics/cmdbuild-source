@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModReport extends JSONBase {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private static ReportFacade reportFacade = new ReportFacade();
@@ -56,9 +56,9 @@ public class ModReport extends JSONBase {
 			jsonObj.put("selectable", true);
 			rows.put(jsonObj);
 		}
-		return rows;        	
+		return rows;
 	}
-	
+
 	@JSONExported
 	public String getReportTypes(
 			Map<String, String> params) throws JSONException {
@@ -66,12 +66,12 @@ public class ModReport extends JSONBase {
 		for (String type : reportFacade.getReportTypes()) {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("id", type);
-    		serializer.append("rows", jsonObj);    		
+    		serializer.append("rows", jsonObj);
 		}
-				
-		return serializer.toString();        	
+
+		return serializer.toString();
 	}
-	
+
 	@JSONExported
 	public JSONObject getReportsByType(
 			JSONObject serializer,
@@ -92,18 +92,6 @@ public class ModReport extends JSONBase {
 		serializer.put("results", numRecords);
 		return serializer;
 	}
-
-	@JSONExported
-	public JSONObject getGroups(Map<String, String> params) throws JSONException {
-		JSONObject serializer = new JSONObject();
-       	for (GroupCard group : GroupCard.allActive()) {
-			JSONObject jsonGroup = new JSONObject();
-			jsonGroup.put("id", group.getAttributeValue("Id"));
-			jsonGroup.put("description", group.getAttributeValue("Description"));
-			serializer.append("rows", jsonGroup);
-		}
-       	return serializer;
-	}
 	
 	@JSONExported
 	public JSONObject createReportFactoryByTypeCode(
@@ -112,18 +100,18 @@ public class ModReport extends JSONBase {
 			@Parameter("type") String type,
 			@Parameter("code") String code,
 			ITableFactory tf) throws Exception {
-		
-		ReportCard reportCard = null;		
+
+		ReportCard reportCard = null;
 		for(ReportCard report : ReportCard.findReportsByType(ReportType.valueOf(type.toUpperCase()))) {
 			if(report.getCode().equalsIgnoreCase(code)) {
 				reportCard = report;
 				break;
 			}
 		}
-		
+
 		if(reportCard == null)
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(code);
-		
+
 		if(!reportCard.isUserAllowed(userCtx)) {
 			String groups = StringUtils.join(userCtx.getGroups(), ", ");
 			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(groups, reportCard.getCode());
@@ -147,7 +135,7 @@ public class ModReport extends JSONBase {
 		new SessionVars().setReportFactory(factory);
 		return serializer;
 	}
-	
+
 	/**
 	 * Create report factory obj
 	 */
@@ -159,7 +147,7 @@ public class ModReport extends JSONBase {
 			@Parameter("extension") String extension,
 			ITableFactory tf) throws Exception {
 		ReportFactoryDB reportFactory=null;
-		
+
 		if(ReportType.valueOf(type.toUpperCase()) == ReportType.CUSTOM) {
 			ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
 			reportFactory = new ReportFactoryDB(id, reportExtension);
@@ -168,14 +156,14 @@ public class ModReport extends JSONBase {
 			if(reportExtension == ReportExtension.ZIP) {
 				serializer.put("filled", true);
 			}
-			
+
 			else {
 				// if no parameters
 				if(reportFactory.getReportParameters().isEmpty()) {
 					reportFactory.fillReport();
 					serializer.put("filled", true);
-				} 
-				
+				}
+
 				// else, prepare required parameters
 				else {
 					serializer.put("filled", false);
@@ -186,15 +174,15 @@ public class ModReport extends JSONBase {
 				}
 			}
 		}
-						
+
 		new SessionVars().setReportFactory(reportFactory);
-		return serializer;	
+		return serializer;
 	}
-		
-	
+
+
 	/**
 	 * Set user-defined parameters and fill report
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@JSONExported
 	public JSONObject updateReportFactoryParams(
@@ -205,19 +193,19 @@ public class ModReport extends JSONBase {
 		if (formParameters.containsKey("reportExtension")) {
 			reportFactory.setReportExtension(ReportExtension.valueOf(formParameters.get("reportExtension").toUpperCase()));
 		}
-		
+
 		for(ReportParameter reportParameter : reportFactory.getReportParameters()) {
 			// update parameter
 			reportParameter.parseValue(formParameters.get(reportParameter.getFullName()));
 			Log.REPORT.debug("Setting parameter "+reportParameter.getFullName()+": "+reportParameter.getValue());
 		}
-		
+
 		reportFactory.fillReport();
 		new SessionVars().setReportFactory(reportFactory);
-		return serializer;	
+		return serializer;
 	}
-	
-	
+
+
 	/**
 	 * Print report to output stream
 	 */
@@ -236,21 +224,21 @@ public class ModReport extends JSONBase {
 			ReportFactoryTemplate reportFactoryTemplate = (ReportFactoryTemplate) reportFactory;
 			filename = reportFactoryTemplate.getJasperPrint().getName();
 		}
-		
+
 		// add extension
 		filename += "." + reportFactory.getReportExtension().toString().toLowerCase();
-		
+
 		// send to stream
 		DataSource dataSource = TempDataSource.create(filename, reportFactory.getContentType());
 		OutputStream outputStream = dataSource.getOutputStream();
-		reportFactory.sendReportToStream(outputStream);		
+		reportFactory.sendReportToStream(outputStream);
 		outputStream.flush();
 		outputStream.close();
-		
+
 		if (!notDelete) {
 			new SessionVars().removeReportFactory();
 		}
-		
+
 		return new DataHandler(dataSource);
 	}
 
@@ -262,7 +250,7 @@ public class ModReport extends JSONBase {
 		report.delete();
 		return serializer;
 	}
-	
+
 	/**
 	 * Print cards on screen
 	 */
@@ -285,21 +273,21 @@ public class ModReport extends JSONBase {
             }
             return attributeOrder;
     }
-	
+
 	private JSONObject serializeReport(ReportCard report) throws JSONException {
 		JSONObject serializer = null;
-		
+
 		serializer = new JSONObject();
 		serializer.put("id", report.getId());
 		serializer.put("title", report.getCode());
 		serializer.put("description", report.getDescription());
 		serializer.put("type", report.getType());
-		serializer.put("query", report.getQuery());		
+		serializer.put("query", report.getQuery());
 		serializer.put("groups", report.getSelectedGroups());
-		
+
 		return serializer;
 	}
-	
+
 	 @JSONExported
     public JSONObject printCardDetails(
     				@Parameter("format") String format,
@@ -312,5 +300,5 @@ public class ModReport extends JSONBase {
 		new SessionVars().setReportFactory(rftd);
 		return serializer;
     }
-	
+
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.ClassAlias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
+import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 /*
@@ -15,17 +16,18 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
  */
 public class QuerySpecsImpl implements QuerySpecs {
 
+	private final List<QueryAliasAttribute> attributes;
 	private ClassAlias from;
 	private final List<JoinClause> joinClauses;
-	private final List<QueryAliasAttribute> attributes;
 	private Long offset;
 	private Long limit;
 	private WhereClause whereClause;
 
 	protected QuerySpecsImpl() {
+		attributes = new ArrayList<QueryAliasAttribute>();
 		from = UNDEFINED_CLASS_ALIAS;
 		joinClauses = new ArrayList<JoinClause>();
-		attributes = new ArrayList<QueryAliasAttribute>();
+		whereClause = new EmptyWhereClause();
 		offset = null;
 		limit = null;
 	}

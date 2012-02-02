@@ -27,6 +27,11 @@ public class HeaderAuthenticator implements ClientRequestAuthenticator {
 	}
 
 	@Override
+	public String getName() {
+		return "HeaderAuthenticator";
+	}
+
+	@Override
 	public Response authenticate(final ClientRequest request) {
 		final String loginString = request.getHeader(conf.getHeaderAttributeName());
 		if (loginString != null) {

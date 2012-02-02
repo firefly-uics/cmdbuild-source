@@ -3,6 +3,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 public interface CMAttributeTypeVisitor {
 
 	void visit(BooleanAttributeType attributeType);
+	void visit(EntryTypeAttributeType attributeType);
 	void visit(DateTimeAttributeType attributeType);
 	void visit(DateAttributeType attributeType);
 	void visit(DecimalAttributeType attributeType);
@@ -16,5 +17,4 @@ public interface CMAttributeTypeVisitor {
 	void visit(StringAttributeType attributeType);
 	void visit(TextAttributeType attributeType);
 	void visit(TimeAttributeType attributeType);
-
 }

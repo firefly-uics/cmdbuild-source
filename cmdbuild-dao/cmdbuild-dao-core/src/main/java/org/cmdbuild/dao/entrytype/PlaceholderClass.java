@@ -38,4 +38,14 @@ public abstract class PlaceholderClass extends PlaceholderEntryType implements C
 	public Set<? extends CMClass> getLeaves() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String getCodeAttributeName() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -43,6 +43,11 @@ public class ColumnMapper {
 			this.sqlType = sqlType;
 			this.sqlTypeString = sqlTypeString;
 		}
+
+		@Override
+		public String toString() {
+			return String.format("[%s,%s,%s]", name, alias, sqlType);
+		}
 	}
 
 	private static class AliasAttributes {
@@ -100,6 +105,11 @@ public class ColumnMapper {
 		Iterable<CMEntryType> getEntryTypes() {
 			return map.keySet();
 		}
+
+		@Override
+		public String toString() {
+			return map.toString();
+		}
 	}
 
 	private static class AliasStore {
@@ -119,6 +129,11 @@ public class ColumnMapper {
 
 		Set<Alias> getAliases() {
 			return map.keySet();
+		}
+
+		@Override
+		public String toString() {
+			return map.toString();
 		}
 	}
 
@@ -155,6 +170,10 @@ public class ColumnMapper {
 		return out;
 	}
 
+	/*
+	 * Syntax "%s#%s" is to cover the case of two subclasses having a local
+	 * (not inherited) attribute by the same name.
+	 */
 	// FIXME Refactor to remove duplicate code
 	void addAttribute(final QueryAliasAttribute qa) {
 		final Alias typeAlias = qa.getEntryTypeAlias();
@@ -218,5 +237,10 @@ public class ColumnMapper {
 
 	public Set<Alias> getDomainAliases() {
 		return domainAliases.getAliases();
+	}
+
+	@Override
+	public String toString() {
+		return String.format("[Classes=%s,Domains=%s]", classAliases, domainAliases);
 	}
 }

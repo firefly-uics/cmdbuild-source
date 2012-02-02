@@ -9,9 +9,9 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public interface QuerySpecs {
 
+	Iterable<QueryAliasAttribute> getAttributes();
 	ClassAlias getDBFrom();
 	List<JoinClause> getJoins();
-	Iterable<QueryAliasAttribute> getAttributes();
 	WhereClause getWhereClause();
 	Long getOffset();
 	Long getLimit();

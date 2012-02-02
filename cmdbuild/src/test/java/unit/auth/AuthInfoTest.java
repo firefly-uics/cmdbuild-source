@@ -1,8 +1,10 @@
 package unit.auth;
 
+import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Collection;
 
+import java.util.Set;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.StringUtils;
@@ -144,10 +146,10 @@ public class AuthInfoTest {
 	public void setUp() {
 		authInfo = new AuthInfo(context.authData) {
 			@Override
-			protected String[] getServiceUsers() {
-				return new String[] { SERVICE_USER_1, SERVICE_USER_2, SERVICE_USER_3, //
+			protected Set<String> getServiceUsers() {
+				return Sets.newHashSet(new String[] { SERVICE_USER_1, SERVICE_USER_2, SERVICE_USER_3, //
 						SERVICE_USER_1 + DOMAIN_2LV, SERVICE_USER_2 + DOMAIN_2LV, SERVICE_USER_3 + DOMAIN_2LV,//
-						SERVICE_USER_1 + DOMAIN_3LV, SERVICE_USER_2 + DOMAIN_3LV, SERVICE_USER_3 + DOMAIN_3LV };
+						SERVICE_USER_1 + DOMAIN_3LV, SERVICE_USER_2 + DOMAIN_3LV, SERVICE_USER_3 + DOMAIN_3LV });
 			}
 
 			@Override
@@ -202,7 +204,7 @@ public class AuthInfoTest {
 	public void testHasServiceUser() {
 		Assert.assertEquals(context.toString(), context.hasServiceUser, authInfo.hasServiceUser());
 	}
-	
+
 	private static class Context {
 
 		public final String authData;

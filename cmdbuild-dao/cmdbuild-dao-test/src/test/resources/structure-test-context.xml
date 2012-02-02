@@ -13,7 +13,7 @@
 				<property name="portNumber" value="10083" />
 				<property name="user" value="test" />
 				<property name="password" value="test" />
-				<property name="databaseName" value="cmdbuild_test" />
+				<property name="databaseName" value="cmdbuild-test" />
 			</bean>
 		</constructor-arg>
 	</bean>
