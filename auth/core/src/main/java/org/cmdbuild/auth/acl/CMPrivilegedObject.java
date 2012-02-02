@@ -1,4 +1,4 @@
-package org.cmdbuild.auth;
+package org.cmdbuild.auth.acl;
 
 public interface CMPrivilegedObject {
 

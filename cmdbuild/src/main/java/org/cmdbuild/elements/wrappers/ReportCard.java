@@ -25,18 +25,18 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.UserContext;
 
 public class ReportCard extends CardForwarder {
-	
+
 	public static final String REPORT_CLASS_NAME = "Report";
 	private static final ITable reportClass = UserContext.systemContext().tables().get(REPORT_CLASS_NAME);
 
-	private static final long serialVersionUID = 1L;		
+	private static final long serialVersionUID = 1L;
 
 	// number of subreport elements (administration side)
 	private int subreportsNumber = -1;
-	
+
 	// jasper design created from uploaded file (administration side)
     private JasperDesign jd = null;
-    
+
     // id of the report we're editing, "-1" if it's a new one (administration side)
     private int originalId = -1;
 
@@ -53,9 +53,9 @@ public class ReportCard extends CardForwarder {
 		for(ICard card : UserContext.systemContext().tables().get(REPORT_CLASS_NAME).cards().list())
 			list.add(new ReportCard(card));
 		return list;
-	}	
-	
-	public static List<ReportCard> findReportsByType(ReportType type) throws ORMException {		
+	}
+
+	public static List<ReportCard> findReportsByType(ReportType type) throws ORMException {
 		List<ReportCard> list = new ArrayList<ReportCard>();
 		for(ICard card : UserContext.systemContext().tables()
 				.get(REPORT_CLASS_NAME).cards().list()
@@ -64,7 +64,7 @@ public class ReportCard extends CardForwarder {
 			list.add(new ReportCard(card));
 		return list;
 	}
-	
+
 	public static ReportCard findReportById(int id) throws NotFoundException, ORMException {
 		return new ReportCard(UserContext.systemContext().tables().get(REPORT_CLASS_NAME).cards().get(id));
 	}
@@ -72,23 +72,23 @@ public class ReportCard extends CardForwarder {
 	public ReportType getType() {
 		return ReportType.valueOf(getAttributeValue("Type").getString().toUpperCase());
 	}
-	
+
 	public void setType(ReportType type) {
 		getAttributeValue("Type").setValue(type.toString().toLowerCase());
 	}
-		
+
 	public String getQuery(){
 		return getAttributeValue("Query").getString();
-	}	
-	
+	}
+
 	public void setQuery(String value){
 		getAttributeValue("Query").setValue(value);
-	}	
-	
+	}
+
 	public int getOriginalId() {
 		return originalId;
 	}
-	
+
 	public void setOriginalId(int originalId) {
 		this.originalId = originalId;
 	}
@@ -100,32 +100,32 @@ public class ReportCard extends CardForwarder {
 	public void setJd(JasperDesign jd) {
 		this.jd = jd;
 	}
-	
-	public void setSelectedGroups(int[] newvalue) {
-		getAttributeValue("Groups").setValue(IntArray.valueOf(newvalue));
+
+	public void setSelectedGroups(String[] newvalue) {
+		getAttributeValue("Groups").setValue(newvalue);
 	}
 
-	public int[] getSelectedGroups() {		
-		return getAttributeValue("Groups").getIntArrayValue();
+	public String[] getSelectedGroups() {
+		return getAttributeValue("Groups").getStringArrayValue();
 	}
-	
+
 	/**
 	 * Get rich report as byte array
 	 */
 	public byte[] getRichReportBA() {
 		return getAttributeValue("RichReport").getBinary();
 	}
-	
+
 	/**
 	 * Get rich report as JasperReport objects array
 	 */
-	public JasperReport[] getRichReportJRA() throws ClassNotFoundException, IOException {		
+	public JasperReport[] getRichReportJRA() throws ClassNotFoundException, IOException {
 		int parseLength = 0;
 		byte[] singleBin = null;
 		int[] length = getReportLength();
-		JasperReport[] obj = new JasperReport[length.length];		
+		JasperReport[] obj = new JasperReport[length.length];
 		byte[] bin = getRichReportBA();
-		
+
 		//splits the reports in master and subreports
 		for(int i=0; i<length.length; i++){
 			singleBin = new byte[length[i]];
@@ -136,11 +136,11 @@ public class ReportCard extends CardForwarder {
 			if(singleBin!=null&&length[i]>0)
 				obj[i] = (JasperReport) fromByte(singleBin);
 		}
-		
+
 		return obj;
 	}
 
-	public void setRichReport(byte[] richReport) {		
+	public void setRichReport(byte[] richReport) {
 		getAttributeValue("RichReport").setValue(ByteArray.valueOf(richReport));
 	}
 
@@ -166,7 +166,7 @@ public class ReportCard extends CardForwarder {
 	public byte[] getImagesBA() {
 		return getAttributeValue("Images").getBinary();
 	}
-	
+
 	/**
 	 * Get report images as input stream array
 	 */
@@ -178,7 +178,7 @@ public class ReportCard extends CardForwarder {
 			obj = new InputStream[imagesLength.length];
 			int parseLength = 0;
 			byte[] singleBin = null;
-			
+
 			//splits the images
 			for(int i=0; i<imagesLength.length; i++) {
 				singleBin = new byte[imagesLength[i]];
@@ -216,7 +216,7 @@ public class ReportCard extends CardForwarder {
 	public String[] getImagesName() {
 		return getAttributeValue("ImagesName").getStringArrayValue();
 	}
-	
+
 	public void setImagesName(String[] imagesNames) {
 		getAttributeValue("ImagesName").setValue(StringArray.valueOf(imagesNames));
 	}
@@ -234,7 +234,7 @@ public class ReportCard extends CardForwarder {
 		if (userCtx.privileges().isAdmin()) {
 			allowed = true;
 		} else {
-			int[] groupsAllowed = this.getSelectedGroups();
+			String[] groupsAllowed = this.getSelectedGroups();
 			if (groupsAllowed != null){
 				for (int i = groupsAllowed.length -1; i>=0; --i) {
 					if (userCtx.belongsTo(groupsAllowed[i])) {

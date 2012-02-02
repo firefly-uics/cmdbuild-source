@@ -1,5 +1,5 @@
 (function() {
-	
+
 	var tr = CMDBuild.Translation.administration.modreport.importJRFormStep1;
 
 	Ext.define("CMDBuild.view.administration.report.CMReportFormStep1", {
@@ -41,15 +41,15 @@
 			this.groups = new Ext.ux.form.MultiSelect({
 				fieldLabel : tr.enabled_groups,
 				name : "groups",
-				dataFields : [ 'id', 'description' ],
-				valueField : 'id',
+				dataFields : [ 'name', 'description' ],
+				valueField : 'name',
 				displayField : 'description',
 				allowBlank : true,
 				store : new Ext.data.Store( {
-					fields : [ 'id', 'description' ],
+					fields : [ 'name', 'description' ],
 					proxy : {
 						type : "ajax",
-						url : 'services/json/management/modreport/getgroups',
+						url : 'services/json/schema/modreport/getgroups',
 						reader : {
 							type : "json",
 							root : "rows"
@@ -58,7 +58,7 @@
 					autoLoad : true
 				})
 			});
-			
+
 			this.items = [
 				this.name,
 				this.description,

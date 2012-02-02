@@ -11,4 +11,12 @@
 	<artifactId>cmdbuild-auth-core</artifactId>
 	<packaging>jar</packaging>
 	<name>CMDBuild Auth Core</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>

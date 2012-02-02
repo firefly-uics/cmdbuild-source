@@ -1,23 +1,24 @@
 package org.cmdbuild.dao.view.user;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.auth.CMAccessControlManager;
 
 public class UserClass extends UserEntryType implements CMClass {
 
 	private final DBClass inner;
 
-	static UserClass create(final UserDataView view, final DBClass inner) {
-		if (isUserAccessible(view.getAccessControlManager(), inner)) {
+	static UserClass newInstance(final UserDataView view, final DBClass inner) {
+		final OperationUser user = view.getOperationUser();
+		if (isUserAccessible(user, inner)) {
 			return new UserClass(view, inner);
 		} else {
 			return null;
 		}
 	}
 
-	public static boolean isUserAccessible(final CMAccessControlManager acm, final DBClass inner) {
-		return inner != null && acm.hasReadAccess(inner) && (inner.isActive() || acm.hasDatabaseDesignerPrivileges());
+	public static boolean isUserAccessible(final OperationUser user, final DBClass inner) {
+		return inner != null && user.hasReadAccess(inner) && (inner.isActive() || user.hasDatabaseDesignerPrivileges());
 	}
 
 	private UserClass(final UserDataView view, final DBClass inner) {
@@ -25,13 +26,14 @@ public class UserClass extends UserEntryType implements CMClass {
 		this.inner = inner;
 	}
 
+	@Override
 	protected final DBClass inner() {
 		return inner;
 	}
 
 	@Override
 	public UserClass getParent() {
-		return UserClass.create(view, inner().getParent());
+		return UserClass.newInstance(view, inner().getParent());
 	}
 
 	@Override
@@ -53,6 +55,16 @@ public class UserClass extends UserEntryType implements CMClass {
 	@Override
 	public boolean isSuperclass() {
 		return inner().isSuperclass();
+	}
+
+	@Override
+	public String getCodeAttributeName() {
+		return inner.getCodeAttributeName();
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		return inner.getDescriptionAttributeName();
 	}
 
 }

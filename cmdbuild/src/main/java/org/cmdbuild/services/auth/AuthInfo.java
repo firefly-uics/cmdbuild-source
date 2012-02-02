@@ -1,5 +1,6 @@
 package org.cmdbuild.services.auth;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +74,7 @@ public class AuthInfo {
 		return false;
 	}
 
-	protected String[] getServiceUsers() {
+	protected Set<String> getServiceUsers() {
 		return AuthProperties.getInstance().getServiceUsers();
 	}
 

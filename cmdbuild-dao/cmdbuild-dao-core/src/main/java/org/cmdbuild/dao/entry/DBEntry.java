@@ -70,7 +70,7 @@ public abstract class DBEntry {
 				// TODO It was lazy loaded: load the remaining values
 				throw new UnsupportedOperationException("Not implemented");
 			} else {
-				throw new IllegalArgumentException();
+				throw newAttributeInexistent(key);
 			}
 		}
 		return values.get(key);
@@ -86,7 +86,7 @@ public abstract class DBEntry {
 
 	public final void setOnly(final String key, final Object value) {
 		if (type.getAttribute(key) == null) {
-			throw new IllegalArgumentException();
+			throw newAttributeInexistent(key);
 		}
 		values.put(key, toNative(key, value));
 	}
@@ -94,12 +94,25 @@ public abstract class DBEntry {
 	private Object toNative(final String key, final Object value) {
 		if (value == null) {
 			return null;
-		} else {
+		}
+		try {
 			return type.getAttribute(key).getType().convertNotNullValue(value);
+		} catch (final Exception e) {
+			throw newInvalidValue(key, value);
 		}
 	}
 
 	protected void saveOnly() {
 		id = driver.create(this);
+	}
+
+	private RuntimeException newAttributeInexistent(final String key) {
+		final String message = String.format("Attribute '%s.%s' does not exist", type.getName(), key);
+		return new IllegalArgumentException(message);
+	}
+
+	private RuntimeException newInvalidValue(final String key, final Object value) {
+		final String message = String.format("Value '%s' (%s) is not valid for attribute '%s.%s'", value, value.getClass(), type.getName(), key);
+		return new IllegalArgumentException(message);
 	}
 }

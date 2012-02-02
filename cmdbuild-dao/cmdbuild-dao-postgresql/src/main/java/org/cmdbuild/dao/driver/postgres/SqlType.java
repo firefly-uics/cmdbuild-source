@@ -14,19 +14,19 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 
 public enum SqlType {
-
-	// Missing cmdbuild types: Lookup, Reference, ForeignKey
-	// Missing sql types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
-	// Not used: regclass, bytea, _int4, _varchar
 
 	bool(BooleanAttributeType.class),
 	bpchar(CharAttributeType.class),
@@ -37,10 +37,24 @@ public enum SqlType {
 		}
 	},
 	float8(DoubleAttributeType.class),
+	geometry(GeometryAttributeType.class) { // POINT, LINESTRING, POLYGON
+		@Override
+		public Object javaToSqlValue(Object value) {
+			// TODO
+			throw new UnsupportedOperationException("Not implemented yet");
+		}
+		@Override
+		public Object sqlToJavaValue(Object value) {
+			// TODO
+			throw new UnsupportedOperationException("Not implemented yet");
+		}
+	},
 	inet(IPAddressAttributeType.class),
-	int4(IntegerAttributeType.class, LookupAttributeType.class) {
+	int4(IntegerAttributeType.class, LookupAttributeType.class,
+			ReferenceAttributeType.class, ForeignKeyAttributeType.class) {
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(AttributeMetadata meta) {
+			// TODO ReferenceAttributeType, ForeignKeyAttributeType
 			if (meta.isLookup()) {
 				return LookupAttributeType.class;
 			} else {
@@ -49,21 +63,22 @@ public enum SqlType {
 		}
 		@Override
 		protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
+			// TODO ReferenceAttributeType, ForeignKeyAttributeType
 			if (meta.isLookup()) {
 				final Object[] params = new Object[1];
-				params[0] = meta.getLookupType();
+				params[0] = meta.getLookupType(); // lookup type
 				return params;
 			} else {
 				return super.getConstructorParams(stringParams, meta);
 			}
 		}
 	},
-	numeric(DecimalAttributeType.class) { // precision and scale
+	numeric(DecimalAttributeType.class) {
 		@Override
 		protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
 			final Object[] params = new Object[2];
-			params[0] = Integer.valueOf(stringParams[0]);
-			params[1] = Integer.valueOf(stringParams[1]);
+			params[0] = Integer.valueOf(stringParams[0]); // precision
+			params[1] = Integer.valueOf(stringParams[1]); // scale
 			return params;
 		}
 		@Override
@@ -73,6 +88,11 @@ public enum SqlType {
 			sqlParams[0] = decimalType.precision;
 			sqlParams[1] = decimalType.scale;
 			return sqlParams;
+		}
+	},
+	regclass(EntryTypeAttributeType.class) { // Used by some system tables
+		public String sqlCast() {
+			return "oid";
 		}
 	},
 	text(TextAttributeType.class),
@@ -89,11 +109,11 @@ public enum SqlType {
 		}
 	},
 	unknown(UndefinedAttributeType.class),
-	varchar(StringAttributeType.class) { // length
+	varchar(StringAttributeType.class) {
 		@Override
 		protected Object[] getConstructorParams(String[] stringParams, AttributeMetadata meta) {
 			final Object[] params = new Object[1];
-			params[0] = Integer.valueOf(stringParams[0]);
+			params[0] = Integer.valueOf(stringParams[0]); // length
 			return params;
 		}
 		@Override
@@ -121,6 +141,10 @@ public enum SqlType {
 		return value;
 	}
 
+	public String sqlCast() {
+		return null;
+	}
+
 	final CMAttributeType<?> createAttributeType(String[] stringParams, AttributeMetadata meta) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		final Object[] constructorParams = getConstructorParams(stringParams, meta);
 		final Class<?>[] paramTypes = getParamTypes(constructorParams);
@@ -135,7 +159,7 @@ public enum SqlType {
 		return new Object[0];
 	}
 
-	private final Class<?>[] getParamTypes(Object[] constructorParams) {
+	private Class<?>[] getParamTypes(Object[] constructorParams) {
 		final Class<?>[] paramTypes = new Class<?>[constructorParams.length];
 		for (int i=0; i<constructorParams.length; ++i) {
 			paramTypes[i] = constructorParams[i].getClass();
