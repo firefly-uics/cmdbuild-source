@@ -477,15 +477,10 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>${tomcat-plugin.version}</version>
 			</plugin>
-			<!--
-				Allows to run the application on an optional Jetty server <plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty.version}</version> </plugin>
-			-->
 			<plugin>
 				<groupId>croche.maven</groupId>
 				<artifactId>maven-merge-file-plugin</artifactId>
+				<version>0.4</version>
 				<executions>
 					<execution>
 						<id>create-translation-file</id>
