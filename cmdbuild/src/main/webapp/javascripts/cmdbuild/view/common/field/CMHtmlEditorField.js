@@ -1,3 +1,4 @@
+(function() {
 Ext.define("CMDBuild.view.common.field.CMHtmlEditorField", {
 	extend: "Ext.form.field.HtmlEditor",
 	enableExpand: true, // to have a button that increase the height
@@ -48,4 +49,6 @@ Ext.define("CMDBuild.view.common.field.CMHtmlEditorField", {
 			});
 		}
 	}
-})
+});
+
+})();
