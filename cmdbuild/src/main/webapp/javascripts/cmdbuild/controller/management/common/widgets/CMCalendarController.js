@@ -98,24 +98,38 @@
 		},
 
 		updatePaginationQuery: function() {
+			function addSingleQuote(s) {
+				return "'" + s + "'";
+			}
+
 			var me = this,
 				viewBounds = this.view.getWievBounds(),
 				className = me.reader.getTargetName(me.widget);
 
+			var e_start = me.eventMapping.start,
+				e_end = me.eventMapping.end,
+				v_start = getCMDBuildDateStringFromDateObject(viewBounds.viewStart),
+				v_end = getCMDBuildDateStringFromDateObject(viewBounds.viewEnd);
+
 			var out = "SELECT " +
 				me.eventMapping.id + "," +
 				me.eventMapping.title + "," +
-				me.eventMapping.start + ",";
+				e_start + ",";
 
 			if (me.eventMapping.end) {
 				out += me.eventMapping.end;
-			}
 
-			out += " FROM " + className +
-				" WHERE " + me.eventMapping.start + " >= " +
-				"\"" + getCMDBuildDateStringFromDateObject(viewBounds.viewStart) + "\"" +
-				" AND " + me.eventMapping.start + " <= " +
-				"\"" + getCMDBuildDateStringFromDateObject(viewBounds.viewEnd) + "\"";
+				out += " FROM " + className +
+				" WHERE " + e_start + " <= " + addSingleQuote(v_end) +
+				" AND " + e_end + " >= " + addSingleQuote(v_start);
+			} else {
+				// the event has no end so we want
+				// only the ones that starts in the temporal window
+
+				out += " FROM " + className + 
+				" WHERE " + e_start + " >= " + addSingleQuote(v_start) +
+				" AND " + e_start + " <= " + addSingleQuote(v_end) + "\"";
+			}
 
 			this.paginationQuery = out;
 		},
@@ -162,7 +176,8 @@
 	}
 
 	function getCMDBuildDateStringFromDateObject(d) {
-		return d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear();
+		// d.getMonth return the month 0-11
+		return d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
 	}
 
 	function doRequest(me, filterParams) {
