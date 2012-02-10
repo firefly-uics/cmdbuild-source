@@ -10,7 +10,7 @@ public class TextAttribute extends DaoWrapperAttribute {
 
 	private static CMAttributeType<?> TEXT_TYPE = new TextAttributeType();
 
-	private enum ALLOWED_TYPES{
+	private enum ALLOWED_TYPES {
 		PLAIN,
 		HTML;
 	}
