@@ -677,7 +677,11 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	}
 
 	public final String getEditorType() {
-		return this.editorType;
+		if (this.editorType != null) {
+			return this.editorType;
+		} else {
+			return "PLAIN";
+		}
 	}
 
 	public final void setEditorType(String editorType) {
