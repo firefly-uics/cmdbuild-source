@@ -31,7 +31,25 @@ public class TextAttribute extends DaoWrapperAttribute {
 	}
 
 	@Override
-	protected boolean isTypeAllowed(String editorType) {
+	public String getEditorType() {
+		final String editorType = super.getEditorType();
+		if (editorType == null) {
+			return ALLOWED_TYPES.PLAIN.toString();
+		} else {
+			return editorType;
+		}
+	}
+
+	@Override
+	public void setEditorType(final String editorType) {
+		if (isTypeAllowed(editorType)) {
+			super.setEditorType(editorType);
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	private boolean isTypeAllowed(String editorType) {
 		ALLOWED_TYPES type = ALLOWED_TYPES.valueOf(editorType);
 		return type != null;
 	}
