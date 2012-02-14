@@ -157,7 +157,7 @@
 
 		loadCard: function(loadRemoteData, params, cb) {
 			var me = this;
-			if (loadRemoteData) {
+			if (loadRemoteData || me.view.hasDomainAttributes()) {
 				params = params || {
 					Id: me.card.get("Id"),
 					IdClass: me.card.get("IdClass")
@@ -168,15 +168,18 @@
 					success: function(a,b, response) {
 						var data = response.card;
 						if (me.card) {
-						// Merge the data of the selected card with
-						// the remote data loaded from the server.
-						// the reason is that in the activity list
-						// the card have data that are not returned from the
-						// server, so use the data already in the record
+							// Merge the data of the selected card with
+							// the remote data loaded from the server.
+							// the reason is that in the activity list
+							// the card have data that are not returned from the
+							// server, so use the data already in the record
 							data = Ext.apply((me.card.raw || me.card.data), data);
+
+							addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);
+
+							var card = new CMDBuild.DummyModel(data);
+							(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card)
 						}
-						var card = new CMDBuild.DummyModel(data);
-						(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card)
 					}
 				});
 			} else {
@@ -259,4 +262,25 @@
 			return true;
 		}
 	}
+
+	function addRefenceAttributesToDataIfNeeded(referenceAttributes, data) {
+		// the referenceAttributes are like this:
+		//	referenceAttributes: {
+		//		referenceName: {
+		//			firstAttr: 32,
+		//			secondAttr: "Foo"
+		//		},
+		//		secondReference: {...}
+		//	}
+		var ra = referenceAttributes;
+		if (ra) {
+			for (var referenceName in ra) {
+				var attrs = ra[referenceName];
+				for (var attribute in attrs) {
+					data["_" + referenceName + "_" + attribute] = attrs[attribute];
+				}
+			}
+		}
+	}
+
 })();

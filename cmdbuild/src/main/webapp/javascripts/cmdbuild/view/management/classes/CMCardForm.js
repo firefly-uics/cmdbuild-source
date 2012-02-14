@@ -209,6 +209,8 @@
 		this.fireEvent(this.CMEVENTS.formFilled);
 	}
 
+	// FIXME: probably never reached 'couse the reference's attributes are added
+	// in the controller
 	function addReferenceAttrsToData(data, referenceAttributes) {
 		for (var referenceName in referenceAttributes || {}) {
 			var attributes = referenceAttributes[referenceName];
