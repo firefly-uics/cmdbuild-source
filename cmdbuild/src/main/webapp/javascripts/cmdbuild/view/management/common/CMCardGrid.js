@@ -192,9 +192,14 @@
 				var attribute = classAttributes[i];
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 				if (header) {
-					if (attribute.name != "Notes") {
+					// There was a day in which I receved the order to skip the Notes attribute.
+					// Today, the boss told  me to enable the notes. So, I leave the condition
+					// commented to document the that a day the notes were hidden.
+
+					// if (attribute.name != "Notes") {
 						headers.push(header);
-					}
+					// }
+
 					fields.push(header.dataIndex);
 				} else if (attribute.name == "Description") {
 					// FIXME Always add Description, even if hidden, for the reference popup
