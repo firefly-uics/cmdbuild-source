@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +25,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.ClassSchema;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLParameter;
 import org.cmdbuild.services.soap.types.CQLQuery;
@@ -136,7 +139,7 @@ public class ECard {
 
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
 		Card wfCard;
-		final ITable table = userCtx.tables().get(className);
+		final ITable table = table(className);
 		final ICard card = table.cards().get(cardId);
 		addActivityDecription(card);
 
@@ -194,7 +197,7 @@ public class ECard {
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, Integer offset) {
 
 		final List<Card> list = new LinkedList<Card>();
-		final ITable table = userCtx.tables().get(className);
+		final ITable table = table(className);
 		final ICard currentICard = table.cards().get(cardId);
 		final Card currentCard = new Card(currentICard);
 		list.add(currentCard);
@@ -251,28 +254,15 @@ public class ECard {
 
 	public boolean deleteCard(final String className, final int cardId) {
 		Log.SOAP.debug("Deleting card " + cardId + "from " + className);
-		final ICard card = userCtx.tables().get(className).cards().get(cardId);
+		final ICard card = table(className).cards().get(cardId);
 		card.delete();
 		return true;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {
-		final ITable table = userCtx.tables().get(className);
-		Log.SOAP.debug("Getting Attribute Schema for class " + className);
-		final Map<String, IAttribute> attributes = table.getAttributes();
-		final List<AttributeSchema> list = new LinkedList<AttributeSchema>();
-		for (final IAttribute attribute : attributes.values()) {
-			if (attribute.getMode().equals(Mode.RESERVED))
-				continue;
-			if (!attribute.getStatus().isActive())
-				continue;
-			final EAdministration administration = new EAdministration(userCtx);
-			list.add(administration.serialize(attribute));
-		}
-
-		AttributeSchema[] attrs = new AttributeSchema[list.size()];
-		attrs = list.toArray(attrs);
-		return attrs;
+		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
+		final List<AttributeSchema> attributes = getClassSchema(className).getAttributes();
+		return attributes.toArray(new AttributeSchema[attributes.size()]);
 	}
 
 	public Reference[] getReference(final String classname, final Query query, final Order[] order,
@@ -443,6 +433,52 @@ public class ECard {
 			return targetAttributeName;
 		}
 
+	}
+
+	public ClassSchema getClassSchema(final String className) {
+		Log.SOAP.info(format("getting schema for class '%s'", className));
+		final ClassSchema classSchema = new ClassSchema();
+		final ITable table = table(className);
+
+		classSchema.setName(table.getName());
+		classSchema.setDescription(table.getDescription());
+		classSchema.setSuperClass(table.isSuperClass());
+	
+		final List<AttributeSchema> attributes = new ArrayList<AttributeSchema>();
+		for (final IAttribute attribute : table.getAttributes().values()) {
+			if (keepAttribute(attribute)) {
+				final AttributeSchema attributeSchema = attributeSchema(attribute);
+				attributes.add(attributeSchema);
+			}
+		}
+		classSchema.setAttributes(attributes);
+
+		return classSchema;
+	}
+
+	private ITable table(final String className) {
+		Log.SOAP.info(format("getting table for class '%s'", className));
+		return userCtx.tables().get(className);
+	}
+
+	private boolean keepAttribute(final IAttribute attribute) {
+		final boolean keep;
+		if (attribute.getMode().equals(Mode.RESERVED)) {
+			keep = false;
+		} else if (!attribute.getStatus().isActive()) {
+			keep = false;
+		} else {
+			keep = true;
+		}
+		Log.SOAP.info(format("attribute '%s' kept: %b", attribute.getName(), keep));
+		return keep;
+	}
+
+	private AttributeSchema attributeSchema(final IAttribute attribute) {
+		Log.SOAP.info(format("serializing attribute '%s'", attribute.getName()));
+		final EAdministration administration = new EAdministration(userCtx);
+		final AttributeSchema attributeSchema = administration.serialize(attribute);
+		return attributeSchema;
 	}
 
 }
