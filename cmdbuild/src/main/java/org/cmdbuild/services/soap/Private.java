@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlMimeType;
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.ClassSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -179,4 +180,6 @@ public interface Private {
 	
 	public UserInfo getUserInfo();
 	
+	public ClassSchema getClassSchema(@WebParam(name = "className") String className);
+
 }

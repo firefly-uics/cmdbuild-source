@@ -56,6 +56,7 @@ public class Card {
 	}
 
 	private String className;
+	private String description;
 	private int id;
 	private Calendar beginDate;
 	private Calendar endDate;
@@ -127,6 +128,7 @@ public class Card {
 		final int id = card.getId();
 		this.setId(id);
 		this.setClassName(card.getSchema().getName());
+		this.setDescription(card.getSchema().getDescription());
 		this.setUser(card.getUser());
 
 		// Convert Date to Calendar
@@ -148,6 +150,14 @@ public class Card {
 
 	public void setClassName(final String classname) {
 		this.className = classname;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 
 	public int getId() {

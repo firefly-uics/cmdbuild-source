@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,8 +207,10 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	}
 
 	public AttributeSchema[] getAttributeList(String className){
-		ECard op = new ECard(getUserCtx());
-		return op.getAttributeList(className);
+		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
+		final ECard op = new ECard(getUserCtx());
+		final AttributeSchema[] attributes = op.getAttributeList(className);
+		return attributes;
 	}
 
 	public AttributeSchema[] getActivityObjects(String className, Integer cardid){
