@@ -174,12 +174,11 @@
 							// the card have data that are not returned from the
 							// server, so use the data already in the record
 							data = Ext.apply((me.card.raw || me.card.data), data);
-
-							addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);
-
-							var card = new CMDBuild.DummyModel(data);
-							(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card)
 						}
+
+						addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);
+						var card = new CMDBuild.DummyModel(data);
+						(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card)
 					}
 				});
 			} else {

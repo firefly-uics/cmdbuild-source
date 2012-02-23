@@ -131,18 +131,20 @@
 		},
 
 		onEditCardkClick: function(model) {
-			var w = getCardWindow(model, editable = true);
+			var editable = true,
+				w = getCardWindow(model, editable);
 
 			w.on("destroy", function() {
 				this.view.grid.reload();
 			}, this, {single: true});
 
-			new CMDBuild.controller.management.common.CMCardWindowController(w);
 			w.show();
 		},
 
 		onShowCardkClick: function(model) {
-			var w = getCardWindow(model, editable = false);
+			var editable = false,
+				w = getCardWindow(model, editable);
+
 			w.show();
 		}
 	});
@@ -191,13 +193,19 @@
 	}
 
 	function getCardWindow(model, editable) {
-		return new CMDBuild.view.management.common.CMCardWindow({
+		var w = new CMDBuild.view.management.common.CMCardWindow({
 			cmEditMode: editable,
 			withButtons: editable,
-			classId: model.get("IdClass"), // classid of the destination
-			cardId: model.get("Id"), // id of the card destination
 			title: model.get("IdClass_value")
 		});
+
+		new CMDBuild.controller.management.common.CMCardWindowController(w, {
+			entryType: model.get("IdClass"),
+			card: model.get("Id"),
+			cmEditMode: editable
+		});
+
+		return w;
 	}
 
 	// used only on toggle the map
