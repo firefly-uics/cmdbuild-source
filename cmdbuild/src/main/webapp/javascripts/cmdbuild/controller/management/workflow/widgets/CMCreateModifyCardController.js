@@ -49,6 +49,7 @@
 			this.callParent(arguments);
 			if (typeof this.superController.hideWidgetsContainer == "function") {
 				this.superController.hideWidgetsContainer();
+				updateLocalDepsIfReferenceToModifiedClass(this, operation.result.id);
 			}
 		},
 
@@ -134,6 +135,27 @@
 			return true;
 		}
 	});
+
+	function updateLocalDepsIfReferenceToModifiedClass(me, id) {
+		var deps = me.templateResolver.getLocalDepsAsField();
+		id = id || me.card.get("Id");
+
+		if (deps) {
+			for (var key in deps) {
+				var field = deps[key];
+				if (field &&
+					field.CMAttribute &&
+					field.CMAttribute.referencedIdClass == me.idClass) {
+
+					field.store.load({
+						callback: function() {
+							field.setValue(id);
+						}
+					});
+				}
+			}
+		}
+	}
 
 	function onAddCardClick(o) {
 		this.onAddCardButtonClick(o.classId);
