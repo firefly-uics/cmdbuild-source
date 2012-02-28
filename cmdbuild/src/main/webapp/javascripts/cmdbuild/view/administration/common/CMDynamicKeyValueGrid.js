@@ -54,7 +54,7 @@
 			};
 
 			return c;
-		},
+		}
 	});
 
 	function onCellClick(grid, model, htmlelement, rowIndex, event, opt) {
