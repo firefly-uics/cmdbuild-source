@@ -1,3 +1,51 @@
+CMDBuild 1.5.1 (released 2012/03/01)
+
+
+NEW FEATURES
+
+ * Notes on card grid
+As a Generic User
+I want the notes to be visible in the grid
+So that I can export them in CSV
+
+ * Add attachments on closed activities
+As a generic user
+I want to attach files to closed activity
+So that I can still update the attachments
+
+
+FIXES
+
+ * Subreports not found if in JRGroups
+
+ * Management module does not work if use the compressed file
+
+ * Calendar wrong request
+
+ * Calendar definition: It is not possible set the attribute to use as Event title
+
+ * Latest executor wrong if "system / username"
+
+ * Old text attributes appear as HTML
+
+ * Reference attributes not showed
+
+ * AllowCardEditing on linkCards
+
+ * Extjs 4.0.7 still has problems with scrollbars
+
+ * CSV header repeated printing the card grid
+
+ * CreateModifyCard widget does not update the reference on activity form
+
+ * IE7 not starting
+
+ * IE7 does not display the header and footer of main interface
+
+
+
+
+
 CMDBuild 1.5.0 (released 2012/01/31)
 
 
