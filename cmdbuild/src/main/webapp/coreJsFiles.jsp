@@ -12,6 +12,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDBuildStructure.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
@@ -25,6 +26,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMConfigurationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMIconProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMWidgetConfigurationProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMDashboardProxy.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
@@ -43,6 +45,7 @@
 <!-- FIELDS  -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMBaseCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMGroupSelectionList.js"></script>
 
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>

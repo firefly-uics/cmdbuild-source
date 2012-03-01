@@ -183,6 +183,19 @@
             "title": "Komponenta (Widget)"
          }
       },
+      "modDashboard": {
+          "properties": {
+             "add": "<em>Add Dashboard</em>",
+             "modify": "<em>Modify Dashboard</em>",
+             "remove": "<em>Remove Dashboard</em>",
+             "fields": {
+                "name": "<em>Name</em>",
+                "description": "<em>Description</em>",
+                "groups": "<em>Available for groups</em>"
+             }
+          },
+          "title": "</em>Dashboard</em>"
+      },
       "modLookup": {
          "add_lookuptype": "Dodaj tip u šifarnik",
          "lookupForm": {

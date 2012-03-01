@@ -42,7 +42,7 @@
 		// override
 		getWidgetLable: function(w) {
 			return w.label;
-		},
+		}
 	});
 
 	function openReportControllerBuilder(ui, superController, widgetDef, clientForm, card) {

@@ -195,6 +195,10 @@
 			<id>javanet</id> <!-- for JTA -->
 			<url>http://download.java.net/maven/2</url>
 		</repository>
+		<repository>
+			<id>jstd-maven-plugin google code repo</id>
+			<url>http://jstd-maven-plugin.googlecode.com/svn/maven2</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
