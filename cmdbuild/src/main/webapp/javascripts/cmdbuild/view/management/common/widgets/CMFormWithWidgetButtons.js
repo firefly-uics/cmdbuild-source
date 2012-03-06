@@ -11,7 +11,8 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 			"reset",
 			"getInvalidAttributeAsHTML",
 			"fillForm",
-			"getForm"
+			"getForm",
+			"hasDomainAttributes"
 		]);
 
 		this.widgets = new CMDBuild.view.management.common.widget.CMWidgetButtonsPanel({

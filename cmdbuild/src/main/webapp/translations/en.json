@@ -431,7 +431,7 @@
       },
       "setup": {
          "cmdbuild": {
-            "cardpanelheight": "Heigth of card panel in percentiles",
+            "cardpanelheight": "Height of card panel in percentiles",
             "fieldsetgeneraltitle": "General",
             "fieldsetlanguageltitle": "Language",
             "fieldsetpopupwindowtitle": "Popup windows",

@@ -59,7 +59,7 @@
 	function fillAttributeStoresWithData(me, attributes) {
 		fillStoreByType(me.view.startDate.store, attributes, ["DATE", "TIMESTAMP"]);
 		fillStoreByType(me.view.endDate.store, attributes, ["DATE", "TIMESTAMP"]);
-		fillStoreByType(me.view.eventTitle.store, attributes, false);
+		fillStoreByType(me.view.eventTitle.store, attributes, ["TEXT", "STRING"]);
 	}
 
 	function fillDefaultDateStore(me) {

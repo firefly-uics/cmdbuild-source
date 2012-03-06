@@ -106,4 +106,4 @@
 			displayField.setValue(field.getValue());
 		});
 	}
-})()
+})();

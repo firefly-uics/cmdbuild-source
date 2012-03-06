@@ -16,24 +16,30 @@
 	Ext.define("CMDBuild.app.Management", {
 		statics: {
 			init: function() {
+				var me = this,
+					cb = function() {
+						me.buildComponents();
+					}
+
 				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
-					scope: this,
 					success: function(response, options, decoded) {
 						CMDBuild.Config.cmdbuild = decoded.data;
 
 						CMDBuild.ServiceProxy.configuration.readGisConfiguration({
-							scope: this,
 							success: function(response, options, decoded) {
 								CMDBuild.Config.gis = decoded.data;
 								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
 								CMDBuild.ServiceProxy.configuration.read({
-									scope: this,
 									success: function(response, options,decoded) {
 										CMDBuild.Config.graph = decoded.data;
-									},
-									callback: function() {
-										this.buildComponents();
+
+										CMDBuild.ServiceProxy.configuration.readWFConfiguration({
+											success : function(response, options, decoded) {
+												CMDBuild.Config.workflow = decoded.data;
+											},
+											callback: cb
+										});
 									}
 								},"graph");
 
