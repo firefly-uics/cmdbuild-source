@@ -1,6 +1,6 @@
 {
    "description": "Српски",
-   "release": "1.5-dev",
+   "release": "2.0-dev",
    "administration": {
       "description": "Администрациони модул",
       "modClass": {
