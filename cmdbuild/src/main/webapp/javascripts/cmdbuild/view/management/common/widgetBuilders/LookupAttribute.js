@@ -43,6 +43,75 @@
 		}
 	};
 
+	/**
+	 * @override
+	 */
+	
+	CMDBuild.WidgetBuilders.LookupAttribute.prototype.genericBuildFieldsetForFilter = function(fieldId, fields, query, originalFieldName) {
+
+		var field = fields[0];
+
+		if (field instanceof CMDBuild.field.MultiLevelLookupPanel) {
+			var removeFieldButton = new Ext.button.Button({
+				iconCls : 'delete',
+				border : false,
+				padding : "3 0 0 3"
+			});
+	
+			var orPanel = new Ext.Panel({
+				columnWidth: 0.2,
+				html : 'or',
+				border : false,
+				bodyCls : "x-panel-body-default-framed"
+			});
+
+			field.columnWidth = .5;
+			field.items.each(function(f) {
+				f.padding = 0;
+			});
+
+			var fieldset = new Ext.panel.Panel({
+				frame : false,
+				border : false,
+				bodyCls : "x-panel-body-default-framed",
+				removeButton : removeFieldButton,
+				fieldsetCategory : originalFieldName,
+				queryCombo : query,
+				hideMode : 'offsets',
+
+				layout : {
+					type : 'hbox',
+					pack : 'start',
+					align : 'top'
+				},
+
+				defaults: {
+					margins:'0 5 0 0'
+				},
+
+				items : [removeFieldButton, query, field, orPanel],	
+
+				getAttributeField : function() {
+					return fields[0];
+				},
+
+				getQueryCombo : function() {
+					return query;
+				},
+
+				getOrPanel : function() {
+					return orPanel;
+				}
+			});
+
+			return fieldset;
+
+		} else {
+			return CMDBuild.WidgetBuilders.BaseAttribute.prototype.genericBuildFieldsetForFilter.call(this, arguments);
+		}
+	}
+
+
 	function buildFakeField(attribute) {
 		return new CMDBuild.field.ErasableCombo({
 			labelAlign: "right",
