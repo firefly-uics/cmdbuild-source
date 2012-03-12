@@ -58,7 +58,7 @@ public class ECard {
 
 		Log.SOAP.debug("Getting list of " + className + " cards");
 
-		return new AbstractCardListCommand(fullText, attributeList, query, order, offset, offset, fullText, cqlQuery) {
+		return new AbstractCardListCommand(className, attributeList, query, order, limit, offset, fullText, cqlQuery) {
 			CardList getOutput() {
 				final CardList cardList = new CardList();
 				for (final ICard card : cards) {
@@ -78,7 +78,7 @@ public class ECard {
 
 		Log.SOAP.debug("Getting list of " + className + " cards");
 
-		return new AbstractCardListCommand(fullText, attributeList, query, order, offset, offset, fullText, cqlQuery) {
+		return new AbstractCardListCommand(className, attributeList, query, order, limit, offset, fullText, cqlQuery) {
 			CardListExt getOutput() {
 				final CardListExt cardList = new CardListExt();
 				for (final ICard card : cards) {
