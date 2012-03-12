@@ -18,6 +18,7 @@ import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
 import org.cmdbuild.services.soap.types.CardList;
+import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Lookup;
 import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
@@ -32,19 +33,6 @@ import org.cmdbuild.services.soap.types.Workflow;
 )
 public interface Private {
 	public CardList getCardList(
-			@WebParam(name = "className") String className, 
-			@WebParam(name = "attributeList") Attribute[] attributeList,
-			@WebParam(name = "queryType") Query queryType, 
-			@WebParam(name = "orderType") Order[] orderType,
-			@WebParam(name = "limit") Integer limit,
-			@WebParam(name = "offset") Integer offset,
-			@WebParam(name = "fullTextQuery") String fullTextQuery,
-			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
-
-	/*
-	 * HACK The Project Manager forced us to do this 
-	 */
-	public CardList getCardListWithLongDateFormat(
 			@WebParam(name = "className") String className, 
 			@WebParam(name = "attributeList") Attribute[] attributeList,
 			@WebParam(name = "queryType") Query queryType, 
@@ -179,7 +167,35 @@ public interface Private {
 	public String sync(@WebParam(name = "xml") String xml);
 	
 	public UserInfo getUserInfo();
-	
+
+	/*
+	 * r2.1 
+	 */
+
+	// HACK The Project Manager forced us to do this
+	public CardList getCardListWithLongDateFormat(
+			@WebParam(name = "className") String className, 
+			@WebParam(name = "attributeList") Attribute[] attributeList,
+			@WebParam(name = "queryType") Query queryType, 
+			@WebParam(name = "orderType") Order[] orderType,
+			@WebParam(name = "limit") Integer limit,
+			@WebParam(name = "offset") Integer offset,
+			@WebParam(name = "fullTextQuery") String fullTextQuery,
+			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
+
+	/*
+	 * r2.2 
+	 */
+
 	public ClassSchema getClassSchema(@WebParam(name = "className") String className);
 
+	public CardListExt getCardListExt(
+			@WebParam(name = "className") String className, 
+			@WebParam(name = "attributeList") Attribute[] attributeList,
+			@WebParam(name = "queryType") Query queryType, 
+			@WebParam(name = "orderType") Order[] orderType,
+			@WebParam(name = "limit") Integer limit,
+			@WebParam(name = "offset") Integer offset,
+			@WebParam(name = "fullTextQuery") String fullTextQuery,
+			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
 }

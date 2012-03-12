@@ -56,7 +56,6 @@ public class Card {
 	}
 
 	private String className;
-	private String description;
 	private int id;
 	private Calendar beginDate;
 	private Calendar endDate;
@@ -89,7 +88,6 @@ public class Card {
 	}
 
 	public Card(final ICard card, final Attribute[] attrs, final ValueSerializer valueSerializer) {
-
 		AttributeValue value;
 		Attribute attribute;
 		final List<Attribute> list = new ArrayList<Attribute>();
@@ -124,11 +122,10 @@ public class Card {
 		this(card, attrs, ValueSerializer.LEGACY);
 	}
 
-	private void setup(final ICard card) {
+	protected void setup(final ICard card) {
 		final int id = card.getId();
 		this.setId(id);
 		this.setClassName(card.getSchema().getName());
-		this.setDescription(card.getSchema().getDescription());
 		this.setUser(card.getUser());
 
 		// Convert Date to Calendar
@@ -150,14 +147,6 @@ public class Card {
 
 	public void setClassName(final String classname) {
 		this.className = classname;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(final String description) {
-		this.description = description;
 	}
 
 	public int getId() {
