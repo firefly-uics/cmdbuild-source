@@ -57,17 +57,17 @@ public class AttributeValue implements Serializable {
 	public void setValue(ResultSet rs, QueryAttributeDescriptor qad) throws ORMException {
 		try {
 			this.loading = true;
-			final String valueAlias = qad.getValueAlias();
-			Object value = rs.getObject(valueAlias);
+			final int valueIndex = qad.getValueIndex();
+			Object value = rs.getObject(valueIndex);
 			if (value instanceof java.sql.Array) {
 				value = ((java.sql.Array)value).getArray();
 			} else if (value instanceof PGobject) {
 				value = ((PGobject)value).getValue();
 			}
 			if (schema.getType() == AttributeType.REFERENCE) {
-				int refId = rs.getInt(valueAlias);
+				int refId = rs.getInt(valueIndex);
 				if (refId > 0) {
-					final String refDescription = rs.getString(qad.getDescriptionAlias());
+					final String refDescription = rs.getString(qad.getDescriptionIndex());
 					value = new Reference(schema.getReferenceDirectedDomain(), refId, refDescription, true);
 				} else {
 					value = null;
