@@ -30,7 +30,9 @@ import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLParameter;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
+import org.cmdbuild.services.soap.types.CardExt;
 import org.cmdbuild.services.soap.types.CardList;
+import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Metadata;
 import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
@@ -56,35 +58,64 @@ public class ECard {
 
 		Log.SOAP.debug("Getting list of " + className + " cards");
 
-		final CardQueryBuilder cardQueryBuilder = createCardQueryBuilder(className, query, cqlQuery);
-		cardQueryBuilder.setPage(limit, offset);
-		cardQueryBuilder.setFullText(fullText);
-		cardQueryBuilder.setOrder(order);
-		cardQueryBuilder.applyActivityFilters(userCtx);
+		return new AbstractCardListCommand(fullText, attributeList, query, order, offset, offset, fullText, cqlQuery) {
+			CardList getOutput() {
+				final CardList cardList = new CardList();
+				for (final ICard card : cards) {
+					final Card wfCard = prepareCard(attributeList, card, activityMap, enableLongDateFormat);
+					wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+					cardList.addCard(wfCard);
+				}
+				cardList.setTotalRows(count);
+				return cardList;
+			}
+		}.getOutput();
+	}
 
-		final CardQuery cardQuery = cardQueryBuilder.getCardQuery();
-		final ITable table = cardQueryBuilder.getTable();
+	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query query,
+			final Order[] order, final Integer limit, final Integer offset, final String fullText,
+			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
 
-		final List<ICard> cards = new ArrayList<ICard>();
-		for (final ICard card : cardQuery.count()) {
-			cards.add(card);
+		Log.SOAP.debug("Getting list of " + className + " cards");
+
+		return new AbstractCardListCommand(fullText, attributeList, query, order, offset, offset, fullText, cqlQuery) {
+			CardListExt getOutput() {
+				final CardListExt cardList = new CardListExt();
+				for (final ICard card : cards) {
+					final CardExt wfCard = prepareCardExt(attributeList, card, activityMap, enableLongDateFormat);
+					wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+					cardList.addCard(wfCard);
+				}
+				cardList.setTotalRows(count);
+				return cardList;
+			}
+		}.getOutput();
+	}
+
+	private abstract class AbstractCardListCommand {
+
+		protected final ITable table;
+		protected final Integer count;
+		protected final List<ICard> cards;
+		protected final Map<Integer, ActivityDO> activityMap;
+
+		public AbstractCardListCommand(final String className, final Attribute[] attributeList, final Query query,
+			final Order[] order, final Integer limit, final Integer offset, final String fullText,
+			final CQLQuery cqlQuery) {
+			final CardQueryBuilder cqb = createCardQueryBuilder(className, query, cqlQuery);
+			cqb.setPage(limit, offset);
+			cqb.setFullText(fullText);
+			cqb.setOrder(order);
+			cqb.applyActivityFilters(userCtx);
+			final CardQuery cardQuery = cqb.getCardQuery();
+			this.table = cardQuery.getTable();
+			this.cards = new ArrayList<ICard>();
+			for (final ICard card : cardQuery.count()) {
+				cards.add(card);
+			}
+			this.count = cardQuery.getTotalRows();
+			this.activityMap = getActivityMapIfNeeded(table, cards, attributeList);
 		}
-
-		final Map<Integer, ActivityDO> activityMap = getActivityMapIfNeeded(table, cards, attributeList);
-
-		final List<Card> wfCards = new LinkedList<Card>();
-		for (final ICard card : cards) {
-			final Card wfCard = prepareCard(attributeList, card, activityMap, enableLongDateFormat);
-			wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
-			wfCards.add(wfCard);
-		}
-		final int count = cardQuery.getTotalRows();
-
-		final CardList cardList = new CardList();
-		cardList.setTotalRows(count);
-		cardList.setCards(wfCards);
-
-		return cardList;
 	}
 
 	private CardQueryBuilder createCardQueryBuilder(final String className, final Query query, final CQLQuery cqlQuery) {
@@ -118,6 +149,20 @@ public class ECard {
 			wfCard = new Card(card, attributeList, cardSerializer);
 		} else {
 			wfCard = new Card(card, cardSerializer);
+		}
+		return wfCard;
+	}
+
+	// FIXME Refactoring with unit tests (it's a total mess!)
+	private CardExt prepareCardExt(final Attribute[] attributeList, final ICard card,
+			final Map<Integer, ActivityDO> activityMap, boolean enableLongDateFormat) {
+		CardExt wfCard;
+		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
+		addActivityDecription(card, activityMap.get(card.getId()));
+		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
+			wfCard = new CardExt(card, attributeList, cardSerializer);
+		} else {
+			wfCard = new CardExt(card, cardSerializer);
 		}
 		return wfCard;
 	}
