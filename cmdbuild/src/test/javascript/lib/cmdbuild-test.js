@@ -134,11 +134,48 @@
 		return new RegExp("^" + url);
 	}
 
+	CMDBuild.test.clickButton = function(b) {
+		b.btnEl.dom.click();
+	}
+
+
+
+
 	// configuration structure
 	Ext.define("CMDBuild.Config", {
 		statics: {
 			cmdbuild: {}
 		}
 	});
+
+
+	// So, another episode of "the testing saga":
+	// Jasmine's "pretty printer" goes crazy with the Ext's
+	// objects. So, override the formatter to have only the class
+	// name. If the tests will needs more info abaut an object
+	// write here the behaviour to print them.
+	var extpp = {
+		"Ext.button.Button": function(o) {
+			return "(with text " + o.text + ")";
+		},
+		"Ext.form.field.Text": function(o) {
+			return "(with label " + o.fieldLabel+ ")";
+		}
+	}
+
+	var realPrinter = jasmine.PrettyPrinter.prototype.format;
+	jasmine.PrettyPrinter.prototype.format = function(value) {
+		var className = Ext.getClassName(value);
+
+		if (className) {
+			if (typeof extpp[className] == "function") {
+				className += " " + extpp[className](value);
+			}
+
+			this.emitScalar(className);
+		} else {
+			realPrinter.apply(this, arguments);
+		}
+	};
 
 })();

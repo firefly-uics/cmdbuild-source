@@ -183,6 +183,19 @@
             "title": "Widget"
          }
       },
+      "modDashboard": {
+          "properties": {
+             "add": "Add Dashboard",
+             "modify": "Modify Dashboard",
+             "remove": "Remove Dashboard",
+             "fields": {
+                "name": "Name",
+                "description": "Description",
+                "groups": "Available for groups"
+             }
+          },
+          "title": "Dashboard"
+      },
       "modLookup": {
          "add_lookuptype": "Add Lookup Type",
          "lookupForm": {

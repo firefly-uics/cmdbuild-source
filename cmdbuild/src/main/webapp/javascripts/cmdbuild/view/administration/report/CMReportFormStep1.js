@@ -1,5 +1,5 @@
 (function() {
-	
+
 	var tr = CMDBuild.Translation.administration.modreport.importJRFormStep1;
 
 	Ext.define("CMDBuild.view.administration.report.CMReportFormStep1", {
@@ -38,27 +38,8 @@
 				maxLength : 100
 			});
 
-			this.groups = new Ext.ux.form.MultiSelect({
-				fieldLabel : tr.enabled_groups,
-				name : "groups",
-				dataFields : [ 'id', 'description' ],
-				valueField : 'id',
-				displayField : 'description',
-				allowBlank : true,
-				store : new Ext.data.Store( {
-					fields : [ 'id', 'description' ],
-					proxy : {
-						type : "ajax",
-						url : 'services/json/management/modreport/getgroups',
-						reader : {
-							type : "json",
-							root : "rows"
-						}
-					},
-					autoLoad : true
-				})
-			});
-			
+			this.groups = new CMDBuild.view.common.field.CMGroupSelectionList();
+
 			this.items = [
 				this.name,
 				this.description,
@@ -81,9 +62,6 @@
 
 	function setValueToMultiselect(m, stringValue) {
 		var v = stringValue.split(",");
-		// if disabled, the mystical multiselect is not able to set his value
-		m.enable();
 		m.setValue(v);
-		m.disable();
 	}
 })();
