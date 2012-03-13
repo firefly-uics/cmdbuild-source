@@ -36,6 +36,11 @@
 			}
 		},
 
+		updateStoreToSelectNodeWithId: function(id) {
+			this.accordion.updateStore();
+			this.accordion.selectNodeById(id);
+		},
+
 		reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf: reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf
 	});
 	

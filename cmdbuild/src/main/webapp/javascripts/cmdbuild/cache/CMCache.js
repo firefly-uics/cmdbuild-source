@@ -11,7 +11,8 @@
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
 			groups: "CMDBUild.cache.CMCacheGroupsFunctions",
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
-			reports: "CMDBUild.cache.CMCacheReportFunctions"
+			reports: "CMDBUild.cache.CMCacheReportFunctions",
+			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions"
 		},
 
 		constructor: function() {
