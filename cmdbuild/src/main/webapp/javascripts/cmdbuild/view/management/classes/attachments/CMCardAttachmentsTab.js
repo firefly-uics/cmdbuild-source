@@ -7,8 +7,8 @@ Ext.define("CMAttachmentModel", {
 	extend: "Ext.data.Model",
 
 	fields: ['Category',
-		{name:'CreationDate', type:'date', dateFormat:'d/m/y H:i:s'},
-		{name:'ModificationDate', type:'date', dateFormat:'d/m/y H:i:s'},
+		{name:'CreationDate', type:'date', dateFormat:'d/m/Y H:i:s'},
+		{name:'ModificationDate', type:'date', dateFormat:'d/m/Y H:i:s'},
 		'Author','Version','Filename','Description','Fake']
 });
 
@@ -38,8 +38,8 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 			}],
 			columns: [
 				{header: col_tr.category, dataIndex: 'Category', hidden: true},
-				{header: col_tr.creation_date, sortable: true, dataIndex: 'CreationDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex: 2},
-				{header: col_tr.modification_date, sortable: true, dataIndex: 'ModificationDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex: 2},
+				{header: col_tr.creation_date, sortable: true, dataIndex: 'CreationDate', renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s'), flex: 2},
+				{header: col_tr.modification_date, sortable: true, dataIndex: 'ModificationDate', renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s'), flex: 2},
 				{header: col_tr.author, sortable: true, dataIndex: 'Author', flex: 2},
 				{header: col_tr.version, sortable: true, dataIndex: 'Version', flex: 1},
 				{header: col_tr.filename, sortable: true, dataIndex: 'Filename', flex: 4},
