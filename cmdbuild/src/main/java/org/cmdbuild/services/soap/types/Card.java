@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cmdbuild.dao.attribute.AbstractDateAttribute;
+import org.cmdbuild.dao.attribute.DateAttribute;
+import org.cmdbuild.dao.attribute.DateTimeAttribute;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.NotFoundException;
@@ -18,33 +20,44 @@ public class Card {
 	public enum ValueSerializer {
 		LEGACY {
 			@Override
-			public String serialize(final AttributeValue value) {
-				return value.toString();
-			}
-		},
-		HACK {
-			@Override
-			public String serialize(final AttributeValue attributeValue) {
+			public String serializeNotNull(final AttributeValue attributeValue) {
 				switch (attributeValue.getSchema().getType()) {
 				case DATE:
-				case TIME:
+					return dateAsString(attributeValue, DateAttribute.LEGACY_JSON_DATE_FORMAT);
 				case TIMESTAMP:
-					return attributeValue.isNull() ? attributeValue.toString() : dateAsString(attributeValue);
+					return dateAsString(attributeValue, DateTimeAttribute.LEGACY_JSON_DATETIME_FORMAT);
 				default:
 					return attributeValue.toString();
 				}
 			}
-
-			private String dateAsString(final AttributeValue attributeValue) {
-				return dateFormat().format(attributeValue.getDate());
-			}
-
-			private SimpleDateFormat dateFormat() {
-				return new SimpleDateFormat(AbstractDateAttribute.SOAP_DATETIME_FORMAT);
+		},
+		HACK {
+			@Override
+			public String serializeNotNull(final AttributeValue attributeValue) {
+				switch (attributeValue.getSchema().getType()) {
+				case DATE:
+				case TIME:
+				case TIMESTAMP:
+					return dateAsString(attributeValue, AbstractDateAttribute.SOAP_DATETIME_FORMAT);
+				default:
+					return attributeValue.toString();
+				}
 			}
 		};
 
-		public abstract String serialize(final AttributeValue value);
+		public final String serialize(final AttributeValue attributeValue) {
+			if (attributeValue.isNull()) {
+				return attributeValue.toString();
+			} else {
+				return serializeNotNull(attributeValue);
+			}
+		}
+
+		public abstract String serializeNotNull(final AttributeValue attributeValue);
+
+		protected final String dateAsString(final AttributeValue attributeValue, final String dateFormat) {
+			return new SimpleDateFormat(dateFormat).format(attributeValue.getDate());
+		}
 
 		public static ValueSerializer forLongDateFormat(final boolean enableLongDateFormat) {
 			if (enableLongDateFormat) {

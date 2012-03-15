@@ -65,8 +65,8 @@
 
 		getStoreFields: function() {
 			return [
-					{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'},
-					{name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'},
+					{name:'BeginDate', type:'date', dateFormat:'d/m/Y H:i:s'},
+					{name:'EndDate', type:'date', dateFormat:'d/m/Y H:i:s'},
 					{name:'_EndDate', type:'int'}, // For sorting only
 					'User',
 					'_AttrHist',
