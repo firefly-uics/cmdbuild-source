@@ -10,10 +10,11 @@
 
 		constructor: function(ui, supercontroller, widgetDef, widgetControllerManager) {
 			this.callParent([ui, supercontroller, widgetControllerManager]);
-
+			this.widgetDef = widgetDef;
 			this.templateResolverIsBusy = false;
 			this.idClassToAdd = undefined;
 			this.savedCardId = undefined;
+			this.wiewIdenrifier = widgetDef.identifier;
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.view.clientForm,
@@ -47,6 +48,7 @@
 		// override
 		onSaveSuccess: function(form, operation) {
 			this.callParent(arguments);
+			this.savedCardId = operation.result.id;
 			if (typeof this.superController.hideWidgetsContainer == "function") {
 				this.superController.hideWidgetsContainer();
 				updateLocalDepsIfReferenceToModifiedClass(this, operation.result.id);
@@ -65,7 +67,14 @@
 		},
 
 		getData: function() {
-			return null;
+			var out = null;
+			var outName = this.widgetDef.outputName;
+			if (outName && this.savedCardId) {
+				out = {};
+				out[outName] = this.savedCardId;
+			}
+
+			return out;
 		},
 
 		getVariable: function(variableName) {
