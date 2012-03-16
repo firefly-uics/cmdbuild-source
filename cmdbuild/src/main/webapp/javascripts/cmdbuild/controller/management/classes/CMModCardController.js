@@ -224,10 +224,7 @@
 	function buildRelationsController(me, view) {
 		me.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(view, me);
 		me.mon(me.relationsController, me.relationsController.CMEVENTS.serverOperationSuccess, function() {
-			me.openCard({
-				Id: me.card.get("Id"),
-				IdClass: me.card.get("IdClass")
-			});
+			me.gridController.reload(reselect=true);
 		});
 
 		me.subControllers.push(me.relationsController);
