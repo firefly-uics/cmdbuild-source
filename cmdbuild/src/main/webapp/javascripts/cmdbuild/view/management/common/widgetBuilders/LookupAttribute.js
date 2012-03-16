@@ -107,7 +107,7 @@
 			return fieldset;
 
 		} else {
-			return CMDBuild.WidgetBuilders.BaseAttribute.prototype.genericBuildFieldsetForFilter.call(this, arguments);
+			return CMDBuild.WidgetBuilders.BaseAttribute.prototype.genericBuildFieldsetForFilter.apply(this, arguments);
 		}
 	}
 
