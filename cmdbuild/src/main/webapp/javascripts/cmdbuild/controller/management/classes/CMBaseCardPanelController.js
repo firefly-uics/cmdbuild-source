@@ -172,8 +172,10 @@
 							// the remote data loaded from the server.
 							// the reason is that in the activity list
 							// the card have data that are not returned from the
-							// server, so use the data already in the record
-							data = Ext.apply((me.card.raw || me.card.data), data);
+							// server, so use the data already in the record.
+							// For activities, the privileges returned from the
+							// server are of the class and not of the activity
+							data = Ext.applyIf((me.card.raw || me.card.data), data);
 						}
 
 						addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);
