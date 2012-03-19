@@ -3,13 +3,13 @@ package org.cmdbuild.services.soap.types;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardList {
-
+public class CardListExt {
+	
 	private int totalRows;
-	private List<Card> cards;
-
-	public CardList() {
-		cards = new ArrayList<Card>();
+	private List<CardExt> cards;
+	
+	public CardListExt(){
+		cards = new ArrayList<CardExt>();
 	}
 
 	public int getTotalRows() {
@@ -20,15 +20,15 @@ public class CardList {
 		this.totalRows = totalRows;
 	}
 
-	public List<Card> getCards() {
+	public List<CardExt> getCards() {
 		return cards;
 	}
 
-	public void setCards(List<Card> cards) {
+	public void setCards(List<CardExt> cards) {
 		this.cards = cards;
 	}
 
-	public void addCard(Card card) {
+	public void addCard(CardExt card) {
 		this.cards.add(card);
 	}
 }

@@ -160,8 +160,8 @@
 	}
 
 	// my expectation is a string in the form:
-	// d/m/y or d/m/y H:i:s
-	// the Date object accept a string in the format m/d/y or m/d/y H:i:s
+	// d/m/Y or d/m/Y H:i:s
+	// the Date object accept a string in the format m/d/Y or m/d/Y H:i:s
 	// so invert the d with m and return a Date object
 	function buildDate(stringDate) {
 		if (stringDate) {
@@ -169,7 +169,7 @@
 			var date = chunks[0];
 			var time = chunks[1] || "00:00:00";
 
-			return  Ext.Date.parse(date + " " + time, "d/m/y H:i:s");
+			return  Ext.Date.parse(date + " " + time, "d/m/Y H:i:s");
 		} else {
 			return new Date();
 		}

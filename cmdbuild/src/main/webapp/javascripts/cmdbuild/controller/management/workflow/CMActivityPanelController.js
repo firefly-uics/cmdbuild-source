@@ -109,13 +109,8 @@
 
 		// override
 		onSaveCardClick: function() {
-			// if is advance, also the widgets must be saved, so
-			// wait for the template resolver before call the save;
-			if (this.isAdvance) {
-				this.widgetControllerManager.waitForBusyWidgets(save, this);
-			} else {
-				save.call(this);
-			}
+			this.isAdvance = false;
+			save.call(this);
 		},
 
 		// override
@@ -131,7 +126,7 @@
 
 		onAdvanceCardButtonClick: function() {
 			this.isAdvance = true;
-			this.onSaveCardClick();
+			this.widgetControllerManager.waitForBusyWidgets(save, this);
 		},
 
 		clearView: function() {

@@ -4,7 +4,7 @@
  */
 Ext.ns("CMDBuild.WidgetBuilders"); 
 CMDBuild.WidgetBuilders.DateAttribute = function() {
-	this.format = 'd/m/y';
+	this.format = 'd/m/Y';
 	this.fieldWidth = CMDBuild.SMALL_FIELD_ONLY_WIDTH;
 	this.headerWidth = 60;
 };

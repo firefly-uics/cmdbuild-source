@@ -134,7 +134,7 @@
 					retryWithoutFilter: retryWithoutFilter
 				};
 
-			Ext.apply(params, p, me.view.getStoreExtraParams());
+			fillParams(params, p, me);
 	
 			CMDBuild.ServiceProxy.card.getPosition({
 				params: params,
@@ -181,6 +181,10 @@
 			return pageNumber + 1;
 		},
 
+		reload: function(reselect) {
+			this.view.reload(reselect);
+		},
+
 		_onGetPositionSuccessForcingTheFilter: function() {
 			var me = this.view;
 			me.clearFilter(function() {
@@ -193,6 +197,13 @@
 			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
 		}
 	});
+
+	function fillParams(params, p, me) {
+		Ext.apply(params, p, me.view.getStoreExtraParams());
+		if (me.view.gridSearchField && me.view.gridSearchField.getValue()) {
+			params.query = me.view.gridSearchField.getValue();
+		}
+	}
 
 	function updateStoreAndSelectGivenPosition(idClass, position) {
 		var me = this;
