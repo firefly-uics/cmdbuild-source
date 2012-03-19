@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>cmdbuild-main</artifactId>
 		<groupId>org.cmdbuild</groupId>
-		<version>1.5.2</version>
+		<version>1.5.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>cmdbuild-dms</artifactId>
 	<packaging>pom</packaging>
