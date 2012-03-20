@@ -59,10 +59,10 @@ public class RelationQueryBuilder {
 			+ " NULL AS fieldcode, NULL AS fielddescription" + " FROM \"%1$s\"" + " WHERE \"Status\" = 'A'";
 	// classdescription is needed by the report
 	private static final String SELECT_BY_CARD =
-		"SELECT id, iddomain, direct, idclass1, idobj1, idclass2, idobj2, fieldcode, fielddescription, begindate %5$s, classdescription, domaindescription" +
+		"SELECT %5$s id, iddomain, direct, idclass1, idobj1, idclass2, idobj2, fieldcode, fielddescription, begindate, classdescription, domaindescription" +
 		" FROM system_relationlist AS r %6$s WHERE (idclass1, idobj1) IN (%1$s) AND \"status\"='A' %2$s %3$s %4$s";
 	private static final String SELECT_BY_CARD_DOMAINCOUNTED =
-		"SELECT DISTINCT count, c.iddomain AS iddomain, c.direct AS direct, id, idclass1, idobj1, idclass2, idobj2, fieldcode, fielddescription, begindate %5$s" +
+		"SELECT DISTINCT %5$s count, c.iddomain AS iddomain, c.direct AS direct, id, idclass1, idobj1, idclass2, idobj2, fieldcode, fielddescription, begindate" +
 		" FROM system_relationlist AS r %6$s" +
 		" JOIN (SELECT COUNT(*) AS count, iddomain, direct FROM system_relationlist" +
 		" WHERE (idclass1, idobj1) IN (%1$s) AND status='A' GROUP BY iddomain, direct, idclass1, idobj1) AS c" +
@@ -248,7 +248,7 @@ public class RelationQueryBuilder {
 					throw ORMExceptionType.ORM_FILTER_CONFLICT.createException();
 				query = String.format(SELECT_BY_CARD_DOMAINLIMITED, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, relationQuery.getDomainLimit());
 			} else if (relationQuery.isDomainCounted()) {
-				query = String.format(SELECT_BY_CARD_DOMAINCOUNTED, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, additionalAttributes(), queryComponents.getJoinString());
+				query = String.format(SELECT_BY_CARD_DOMAINCOUNTED, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, leadingAttributes(), queryComponents.getJoinString());
 			} else if (isBlank(cardPairs)) {
 				if (relationQuery.getDomains().size() != 1) {
 					throw new IllegalArgumentException("should never happen");
@@ -260,7 +260,7 @@ public class RelationQueryBuilder {
 					throw new IllegalArgumentException("should never happen");
 				}
 			} else {
-				query = String.format(SELECT_BY_CARD, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, additionalAttributes(), queryComponents.getJoinString());
+				query = String.format(SELECT_BY_CARD, cardPairs, getDomainFilter(relationQuery), getOrdering(relationQuery), limitPortion, leadingAttributes(), queryComponents.getJoinString());
 			}
 		}
 		Log.SQL.debug(query);
@@ -300,11 +300,11 @@ public class RelationQueryBuilder {
 		}
 	}
 
-	private String additionalAttributes() {
+	private String leadingAttributes() {
 		if (queryComponents.getAttributeList().isEmpty())
 			return "";
 		else
-			return ", "+queryComponents.getAttributeString();
+			return queryComponents.getAttributeString() + ", ";
 	}
 
 	private void addFullCardsJoin(RelationQuery relationQuery) {
