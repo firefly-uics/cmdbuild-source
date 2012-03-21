@@ -2,6 +2,15 @@
 Ext.define("CMDBuild.view.common.field.CMHtmlEditorField", {
 	extend: "Ext.form.field.HtmlEditor",
 	enableExpand: true, // to have a button that increase the height
+
+	initComponent: function() {
+		// set the defaultValue to empty string,
+		// because the Ext default value has encoding problems
+		// when used in some query
+		this.defaultValue = "";
+		this.callParent();
+	},
+
 	createToolbar: function() {
 		var me = this;
 
