@@ -8,8 +8,13 @@
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
 
+		_lastCard: null, // to sync the editable panel when goes in edit mode
+
+		_isInEditMode: false,
+
 		constructor: function(conf) {
 			Ext.apply(this, conf);
+
 			this.CMEVENTS = {
 				saveCardButtonClick: "cm-save",
 				abortButtonClick: "cm-abort",
@@ -65,8 +70,14 @@
 		},
 
 		editMode: function() {
+			this._isInEditMode = true;
+
 			if (this.tabPanel) {
 				this.tabPanel.editMode();
+			}
+
+			if (this._lastCard) {
+				this.loadCard(this._lastCard);
 			}
 
 			this.disableCMTbar();
@@ -76,6 +87,8 @@
 		},
 
 		displayMode: function(enableCmBar) {
+			this._isInEditMode = false;
+
 			if (this.tabPanel) {
 				this.tabPanel.displayMode();
 			}
@@ -102,11 +115,20 @@
 
 		// fill the form with the data in the card
 		loadCard: function(card) {
+			this._lastCard = card;
 			this.reset();
+
 			if (!card) { return; }
 
 			if (typeof card == "object") {
-				_fillWithData.call(this, card.raw || card.data);
+				var data = card.raw || card.data;
+
+				if (this._isInEditMode) {
+					_fillEditableFields(this, data);
+				} else {
+					_fillDisplayFields(this, data);
+				}
+
 			} else {
 				throw "Card must be an object";
 			}
@@ -141,7 +163,7 @@
 					invalid.push(field);
 				}
 			});
-			
+
 			return invalid;
 		},
 
@@ -190,12 +212,29 @@
 		}
 	});
 
-	function _fillWithData(data, referenceAttributes) {
-		var fields = this.getForm().getFields();
+	function _fillDisplayFields(me, data, referenceAttributes) {
+		_fillFields(me, data, referenceAttributes, function(f) {
+			return !f._belongToEditableSubpanel;
+		});
+	}
+
+	function _fillEditableFields(me, data, referenceAttributes) {
+		_fillFields(me, data, referenceAttributes, function(f) {
+			return f._belongToEditableSubpanel;
+		});
+	}
+
+	function _fillFields(me, data, referenceAttributes, fieldSelector) {
+		var fields = me.getForm().getFields();
 		addReferenceAttrsToData(data, referenceAttributes);
 
 		if (fields) {
 			fields.each(function(f) {
+
+				if (!fieldSelector(f)) {
+					return;
+				}
+
 				try {
 					f.setValue(data[f.name]);
 					if (typeof f.isFiltered == "function" && f.isFiltered()) {
@@ -206,7 +245,8 @@
 				}
 			});
 		}
-		this.fireEvent(this.CMEVENTS.formFilled);
+
+		me.fireEvent(me.CMEVENTS.formFilled);
 	}
 
 	// FIXME: probably never reached 'couse the reference's attributes are added
@@ -242,6 +282,8 @@
 	}
 
 	function fillForm(attributes, editMode) {
+		this._lastCard = null;
+
 		// TODO: Now CMCardPanelController check if it is possible to load the fields.
 		// Check if some other subclass of CMCardPanController need it
 		// and remove from here

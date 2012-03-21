@@ -17,19 +17,25 @@
 		_stateSwitchFail: false,
 
 		initComponent : function() {
-			var editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
-					attributes: this.attributes
-				}),
-
+			var editSubpanel = null,
 				displaySubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
 					editable: false,
 					attributes: this.attributes
 				});
 
-			this.items = [displaySubpanel,editSubpanel];
+			this.items = [displaySubpanel];
 
 			// privileged functions
+
 			this.editMode = function() {
+				if (editSubpanel == null) {
+					editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
+						attributes: this.attributes
+					});
+
+					this.add(editSubpanel);
+				}
+
 				var layout = this.getLayout();
 				this._state = STATE.edit;
 
@@ -84,34 +90,39 @@
 		attributes: undefined, //configuration
 		editable: true,
 		hideMode: "offsets",
+
 		fields: function() {
-			return this.items.items;
+			return this.attributes;
 		},
+
 		initComponent: function() {
-			if (this.attributes) {
-				this.items = getFields.call(this, this.attributes, this.editable);
-			}
+
 			this.on("show", function() {
 				if (this.editable) {
 					this.switchFieldsToEdit();
 				}
 			}, this);
-			
+
 			this.callParent(arguments);
 
-			this.on("afterlayout", function() {
-				var tollerance = this.getWidth() - RIGHT_PADDING_FOR_MAX_FIELD_WIDTH;
-				this.cascade(function(item) {
-					if (item && (item instanceof Ext.form.Field)) {
-						if (item.getWidth() > tollerance ||
-								(item instanceof Ext.form.DisplayField && !item.cmSkipAfterLayoutResize)) {
+			if (this.attributes) {
+				addFields.call(this, this.attributes, this.editable);
+			}
 
-							item.setWidth(tollerance);
-						}
-					}
-				});
-			}, this);
+			// this.on("afterlayout", function() {
+				// var tollerance = this.getWidth() - RIGHT_PADDING_FOR_MAX_FIELD_WIDTH;
+				// this.cascade(function(item) {
+					// if (item && (item instanceof Ext.form.Field)) {
+						// if (item.getWidth() > tollerance ||
+								// (item instanceof Ext.form.DisplayField && !item.cmSkipAfterLayoutResize)) {
+// 
+							// item.setWidth(tollerance);
+						// }
+					// }
+				// });
+			// }, this);
 		},
+
 		switchFieldsToEdit: function() {
 			var fields = this.fields();
 			for (var i=0;  i<fields.length; ++i) {
@@ -131,23 +142,26 @@
 		}
 	}
 
-	function getFields(attributes, editable) {
-		var fields = [];
+	function addFields(attributes, editable) {
 		if (attributes) {
 			for (var i=0; i<attributes.length; ++i) {
 				var attribute = attributes[i];
 				var field;
+
 				if (editable) {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, this.readOnlyForm);
 				} else {
 					field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, true); //true to have a displayField
 				}
+
 				if (field) {
-					fields.push(field);
+					// add a flag to the field to know directly
+					// if belongs to a panel in edit mode
+					field._belongToEditableSubpanel = this.editable;
+					this.add(field);
 				}
 			}
 		}
-		return fields;
 	};
 
 	function resolveFieldTemplates(field) {

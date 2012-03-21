@@ -57,9 +57,8 @@
 			// the fields are not right, refill the form before the loadCard
 			var reloadFields = this.entryType.get("id") != this.card.get("IdClass");
 
-			if (this.widgetControllerManager) {
-				this.widgetControllerManager.buildControllers(card);
-			}
+			// defer this call to release the UI event manage
+			Ext.defer(buildWidgetControllers, 1, this, [card]);
 
 			var me = this;
 			if (reloadFields) {
@@ -238,6 +237,12 @@
 		// override
 		onCloneCard: Ext.emptyFn
 	});
+
+	function buildWidgetControllers(card) {
+		if (this.widgetControllerManager) {
+			this.widgetControllerManager.buildControllers(card);
+		}
+	}
 
 	function addDataFromCardDataPoviders(me, params) {
 		for (var provider in me.cardDataProviders) {
