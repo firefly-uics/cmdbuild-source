@@ -78,6 +78,7 @@
 
 			if (this._lastCard) {
 				this.loadCard(this._lastCard);
+				this.callFieldTemplateResolverIfNeeded();
 			}
 
 			this.disableCMTbar();
@@ -204,6 +205,16 @@
 				}
 
 				return out+"</ul>";
+			}
+		},
+		
+		callFieldTemplateResolverIfNeeded: function() {
+			var fields = this.getForm().getFields().items;
+			for (var i=0;  i<fields.length; ++i) {
+				var field = fields[i];
+				if (field && field.resolveTemplate) {
+					field.resolveTemplate();
+				}
 			}
 		},
 

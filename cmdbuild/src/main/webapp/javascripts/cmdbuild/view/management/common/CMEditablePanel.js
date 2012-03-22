@@ -96,13 +96,6 @@
 		},
 
 		initComponent: function() {
-
-			this.on("show", function() {
-				if (this.editable) {
-					this.switchFieldsToEdit();
-				}
-			}, this);
-
 			this.callParent(arguments);
 
 			if (this.attributes) {
@@ -121,14 +114,6 @@
 					// }
 				// });
 			// }, this);
-		},
-
-		switchFieldsToEdit: function() {
-			var fields = this.fields();
-			for (var i=0;  i<fields.length; ++i) {
-				var field = fields[i];
-				resolveFieldTemplates(field);
-			}
 		}
 	});
 
@@ -163,11 +148,4 @@
 			}
 		}
 	};
-
-	function resolveFieldTemplates(field) {
-		if (field.resolveTemplate) {
-			field.resolveTemplate();
-		}
-	};
-
 })();
