@@ -70,26 +70,24 @@
 		},
 
 		editMode: function() {
-			this._isInEditMode = true;
+			if (this._isInEditMode) {
+				return;
+			}
+
+			this.ensureEditPanel();
 
 			if (this.tabPanel) {
 				this.tabPanel.editMode();
-			}
-
-			if (this._lastCard) {
-				this.loadCard(this._lastCard);
-				this.callFieldTemplateResolverIfNeeded();
 			}
 
 			this.disableCMTbar();
 			this.enableCMButtons();
 
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
+			this._isInEditMode = true;
 		},
 
 		displayMode: function(enableCmBar) {
-			this._isInEditMode = false;
-
 			if (this.tabPanel) {
 				this.tabPanel.displayMode();
 			}
@@ -102,6 +100,7 @@
 
 			this.disableCMButtons();
 			this.fireEvent(this.CMEVENTS.displayModeDidActivate);
+			this._isInEditMode = false;
 		},
 
 		displayModeForNotEditableCard: function() {
@@ -114,8 +113,13 @@
 			}
 		},
 
+		reset: function() {
+			this._isInEditMode = false;
+			this.mixins.cmFormFunctions.reset.apply(this);
+		},
+
 		// fill the form with the data in the card
-		loadCard: function(card) {
+		loadCard: function(card, bothPanels) {
 			this._lastCard = card;
 			this.reset();
 
@@ -124,7 +128,9 @@
 			if (typeof card == "object") {
 				var data = card.raw || card.data;
 
-				if (this._isInEditMode) {
+				if (bothPanels) {
+					_fillFields(this, data);
+				} else if (this._isInEditMode) {
 					_fillEditableFields(this, data);
 				} else {
 					_fillDisplayFields(this, data);
@@ -144,6 +150,19 @@
 			}
 
 			return out;
+		},
+
+		ensureEditPanel: function() {
+			if (this.tabPanel 
+					&& !this._isInEditMode) {
+
+				this.tabPanel.ensureEditPanel();
+
+				if (this._lastCard) {
+					this.loadCard(this._lastCard, bothPanels=true);
+					this.callFieldTemplateResolverIfNeeded();
+				}
+			}
 		},
 
 		// popolate the form with the right subpanels and fields
@@ -207,7 +226,7 @@
 				return out+"</ul>";
 			}
 		},
-		
+
 		callFieldTemplateResolverIfNeeded: function() {
 			var fields = this.getForm().getFields().items;
 			for (var i=0;  i<fields.length; ++i) {
@@ -242,7 +261,8 @@
 		if (fields) {
 			fields.each(function(f) {
 
-				if (!fieldSelector(f)) {
+				if (typeof fieldSelector == "function"
+					&& !fieldSelector(f)) {
 					return;
 				}
 

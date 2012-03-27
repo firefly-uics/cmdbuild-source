@@ -1,7 +1,12 @@
 Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
+
 	constructor: function(view) {
 		this.view = view;
 		this.controllers = {};
+	},
+
+	setDelegate: function(delegate) {
+		this.delegate = delegate;
 	},
 
 	buildControllers: function(card) {
@@ -23,11 +28,15 @@ Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
 	},
 
 	onWidgetButtonClick: function(w) {
-		var wc = this.controllers[this.getWidgetId(w)];
-		if (wc) {
-			this.view.showWidget(wc.view, this.getWidgetLable(w));
-			wc.beforeActiveView();
-		}
+		this.delegate.ensureEditPanel();
+		var me = this;
+		Ext.defer(function() {
+			var wc = me.controllers[me.getWidgetId(w)];
+			if (wc) {
+				me.view.showWidget(wc.view, me.getWidgetLable(w));
+				wc.beforeActiveView();
+			}
+		}, 1);
 	},
 
 	onCardGoesInEdit: function() {

@@ -22,17 +22,18 @@
 				fieldLabel : tr.fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : 'targetClass',
-				valueField : 'name',
+				valueField : 'id',
 				displayField : 'description',
 				editable : false,
 				store : _CMCache.getClassesAndProcessesStore(),
 				queryMode : 'local'
 			});
 
-			this.cqlText = new Ext.form.field.TextArea({
+			this.cqlText = new Ext.form.field.Text({
 				fieldLabel : tr.fields.cql,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name : 'cql'
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name : 'idcardcqlselector'
 			});
 
 			this.readOnlyCheck = new Ext.form.field.Checkbox({
@@ -50,7 +51,7 @@
 			this.callParent(arguments);
 
 			this.targetClass.setValue(model.get("targetClass"));
-			this.cqlText.setValue(model.get("cql"));
+			this.cqlText.setValue(model.get("idcardcqlselector"));
 			this.readOnlyCheck.setValue(model.get("readonly"));
 		},
 
@@ -60,7 +61,7 @@
 
 			return Ext.apply(me.callParent(arguments), {
 				targetClass: me.targetClass.getValue(),
-				cql: me.cqlText.getValue(),
+				idcardcqlselector: me.cqlText.getValue(),
 				readonly: me.readOnlyCheck.getValue()
 			});
 		}

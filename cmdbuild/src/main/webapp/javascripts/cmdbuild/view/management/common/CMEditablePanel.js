@@ -27,7 +27,10 @@
 
 			// privileged functions
 
-			this.editMode = function() {
+			// to defer the editSubPanel initializzation
+			// is public because is called from outside when
+			// a widget need the form
+			this.ensureEditPanel = function() {
 				if (editSubpanel == null) {
 					editSubpanel = new CMDBuild.Management.EditablePanel.SubPanel({
 						attributes: this.attributes
@@ -35,6 +38,10 @@
 
 					this.add(editSubpanel);
 				}
+			}
+
+			this.editMode = function() {
+				this.ensureEditPanel();
 
 				var layout = this.getLayout();
 				this._state = STATE.edit;

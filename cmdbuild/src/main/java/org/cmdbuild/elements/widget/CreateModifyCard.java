@@ -3,16 +3,16 @@ package org.cmdbuild.elements.widget;
 
 public class CreateModifyCard extends Widget {
 
-	private String cql;
+	private String idcardcqlselector;
 	private String targetClass;
 	private boolean readonly;
 
-	public String getCql() {
-		return cql;
+	public String getIdcardcqlselector() {
+		return idcardcqlselector;
 	}
 
-	public void setCql(String cql) {
-		this.cql = cql;
+	public void setIdcardcqlselector(String idcardcqlselector) {
+		this.idcardcqlselector = idcardcqlselector;
 	}
 
 	public String getTargetClass() {
