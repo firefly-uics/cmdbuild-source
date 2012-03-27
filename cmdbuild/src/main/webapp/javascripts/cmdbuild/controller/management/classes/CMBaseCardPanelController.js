@@ -16,6 +16,8 @@
 				this.widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(widgetManager);
 			}
 
+			this.widgetControllerManager.setDelegate(this);
+
 			this.CMEVENTS = {
 				cardSaved: "cm-card-saved",
 				editModeDidAcitvate: ev.editModeDidAcitvate,
@@ -235,7 +237,12 @@
 		},
 
 		// override
-		onCloneCard: Ext.emptyFn
+		onCloneCard: Ext.emptyFn,
+
+		// widgetManager delegate
+		ensureEditPanel: function() {
+			this.view.ensureEditPanel();
+		}
 	});
 
 	function buildWidgetControllers(card) {

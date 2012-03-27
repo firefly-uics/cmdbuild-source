@@ -60,7 +60,7 @@
 		addExtraButtons: function(extraButtons) {
 			var bar = this.getButtonBar();
 			if (bar) {
-				bar.add(extraButtons);
+				bar.insert(0, extraButtons);
 			}
 		},
 
