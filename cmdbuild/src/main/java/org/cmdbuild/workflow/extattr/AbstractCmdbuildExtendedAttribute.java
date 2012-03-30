@@ -171,7 +171,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 		ExtendedAttributeConfigParams eacf = new ExtendedAttributeConfigParams(
 				staticParams, processVars, currentOutVars);
 		activityDO.setCmdbExtAttrParam(this.identifier(), eacf);
-		doConfigure(handle,userCtx,factory,workItem,activityDO,processVars,currentOutVars);
+		doConfigure(handle,userCtx,factory,workItem,activityDO,currentOutVars);
 		
 		configured = true;
 	}
@@ -215,19 +215,19 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 	}
 
 	/**
-	 * subclasses have to implement this method which is called by the handle method
+	 * subclasses may implement this method which is called by the handle method
 	 * @param handle
-	 * @param user
-	 * @param role
 	 * @param factory
 	 * @param workItem
 	 * @param activityDO
-	 * @param processVars
+	 * @param user
+	 * @param role
 	 * @throws Exception
 	 */
-	protected abstract void doConfigure(WMSessionHandle handle, UserContext userCtx,
+	protected void doConfigure(WMSessionHandle handle, UserContext userCtx,
 			SharkWSFactory factory, WMWorkItem workItem, ActivityDO activityDO,
-			Map<String,Object> processVars, Map<String,Object> currentOutValues);
+			Map<String,Object> currentOutValues) {
+	}
 	
 	/**
 	 * @see CmdbuildExtendedAttribute.react

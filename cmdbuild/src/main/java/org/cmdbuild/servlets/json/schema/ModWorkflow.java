@@ -6,10 +6,8 @@ import java.io.IOException;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
@@ -26,7 +24,6 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.workflow.CmdbuildProcessInfo;
 import org.cmdbuild.workflow.operation.SharkFacade;
-import org.cmdbuild.workflow.utils.SimpleXMLDoc;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -172,21 +169,6 @@ public class ModWorkflow extends JSONBase {
 		ByteArrayDataSource ds = new ByteArrayDataSource(contents,"application/xpdl");
 		ds.setName(processType.getName() + "_" + version + ".xpdl");
 		return new DataHandler(ds);
-	}	
-
-	@Admin
-	@JSONExported(contentType="application/xpdl")
-	public SimpleXMLDoc workflowTemplate(
-			ProcessType processType,
-			@Parameter(value="user",required=false) String[] users,
-			@Parameter(value="role",required=false) String[] roles,
-			HttpServletResponse response) throws Exception {
-
-		SimpleXMLDoc out = processType.getXPDLManager().template(users, roles);
-		String fname = processType.getName() + ".xpdl";
-		response.setHeader("Content-disposition", "attachment; filename=" + fname);
-		Log.WORKFLOW.debug("returning xpdl template file: " + fname);
-		return out;
 	}
 
 	@Admin

@@ -454,18 +454,6 @@ public class SharkFacade {
 		};
 		return execute(operation);
 	}
-	
-	public boolean suspendProcess( final String processInstanceId ) {
-		WorkflowOperation<Boolean> operation = new WorkflowOperation<Boolean>() {
-			public Boolean execute(WMSessionHandle handle,
-					SharkWSFactory factory, UserContext userCtx)
-					throws Exception {
-				facade.suspendProcess(handle, userCtx, factory, processInstanceId);
-				return true;
-			}
-		};
-		return execute(operation);
-	}
 
 	public boolean resumeProcess( final String processInstanceId ) {
 		WorkflowOperation<Boolean> operation = new WorkflowOperation<Boolean>() {

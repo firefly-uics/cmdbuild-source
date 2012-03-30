@@ -33,13 +33,6 @@ public class ManageEmail extends AbstractCmdbuildExtendedAttribute {
 	}
 
 	@Override
-	protected void doConfigure(WMSessionHandle handle, UserContext userCtx,
-			SharkWSFactory factory, WMWorkItem workItem, ActivityDO activityDO,
-			Map<String, Object> processVars,
-			Map<String, Object> currentOutValues) {
-	}
-
-	@Override
 	protected void addCustomParams(ActivityDO activityDO, JSONObject object, ExtendedAttributeConfigParams eacp) throws Exception {
 		object.put(DISABLED_PARAM, !EmailService.isConfigured());
 	}
