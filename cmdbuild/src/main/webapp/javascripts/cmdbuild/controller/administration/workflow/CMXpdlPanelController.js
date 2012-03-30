@@ -81,8 +81,8 @@
 		var version = this.downloadForm.versionCombo.getValue(),
 		url = "";
 
-		if(version == 'template') {
-			url = 'services/json/schema/modworkflow/workflowtemplate';
+		if (version == 'template' || !version) {
+			url = 'services/json/workflow/downloadxpdltemplate';
 		} else {
 			url = 'services/json/schema/modworkflow/downloadxpdl';
 		}

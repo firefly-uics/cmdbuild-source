@@ -45,6 +45,7 @@
 		<module>cmdbuild-graph</module>
 		<module>cmdbuild-shark</module>
 		<module>cmdbuild-ws-client</module>
+		<module>shark/commons</module>
 	</modules>
 
 	<dependencyManagement>

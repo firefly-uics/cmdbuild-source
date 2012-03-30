@@ -2,7 +2,10 @@ package org.cmdbuild.workflow.type;
 
 import java.io.Serializable;
 
-public class LookupType implements Serializable {
+import org.cmdbuild.common.annotations.Legacy;
+
+@Legacy("Kept for backward compatibility")
+public class ReferenceType implements Serializable {
 
 	/**
 	 * 
@@ -10,54 +13,51 @@ public class LookupType implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	int id;
-	String type;
+	int idClass;
 	String description;
-	String code;
 	
-	public LookupType() {
+	public ReferenceType(){
 		id = -1;
-		type = "";
+		idClass = -1;
 		description = "";
-		code="";
 	}
-	public LookupType(int id, String type, String description, String code) {
+	public ReferenceType(int id, int idClass, String description) {
 		super();
 		this.id = id;
-		this.type = type;
+		this.idClass = idClass;
 		this.description = description;
-		this.code=code;
 	}
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getType() {
-		return type;
+
+	public int getIdClass() {
+		return idClass;
 	}
-	public void setType(String type) {
-		this.type = type;
+
+	public void setIdClass(int idClass) {
+		this.idClass = idClass;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
-		this.code = code;
 	}
 	
 	public boolean checkValidity() {
 		return id > 0;
 	}
-	
+
 	@Override
 	public String toString(){
-			return "LookupType[id: "+this.id+" code: "+this.code+" description: "+this.description+"]";
+			return "ReferenceType[idclass: "+this.idClass+" id: "+this.id+" description: "+this.description+"]";
 	}
 }

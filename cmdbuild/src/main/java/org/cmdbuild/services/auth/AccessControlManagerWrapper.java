@@ -5,6 +5,9 @@ import org.cmdbuild.auth.CMPrivilegedObject;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.auth.CMAccessControlManager;
 
+/**
+ * Wrapper for the CMAccessControlManager on top of the legacy UserContext
+ */
 public class AccessControlManagerWrapper implements CMAccessControlManager {
 
 	private final static UserContext systemContext = UserContext.systemContext(); 

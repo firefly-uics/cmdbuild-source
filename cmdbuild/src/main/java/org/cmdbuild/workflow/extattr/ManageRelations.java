@@ -53,7 +53,6 @@ public class ManageRelations extends AbstractCmdbuildExtendedAttribute {
 	@Override
 	protected void doConfigure(WMSessionHandle handle, UserContext userCtx,
 			SharkWSFactory factory, WMWorkItem workItem, ActivityDO activityDO,
-			Map<String, Object> processVars,
 			Map<String, Object> currentOutValues) {
 		ExtendedAttributeConfigParams eacf = (ExtendedAttributeConfigParams)activityDO.getCmdbExtAttrsParams().get(identifier);
 		String domainName = (String)eacf.getParameters().get(Domain);
