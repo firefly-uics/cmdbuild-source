@@ -73,6 +73,7 @@
 			};
 
 			this.getFields = function() {
+				this.ensureEditPanel();
 				return editSubpanel.fields();
 			};
 
@@ -99,7 +100,11 @@
 		hideMode: "offsets",
 
 		fields: function() {
-			return this.attributes;
+			if (this.items && this.items.items) {
+				return this.items.items;
+			} else {
+				return [];
+			}
 		},
 
 		initComponent: function() {
