@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
@@ -89,10 +88,6 @@ public class ActivityDO {
 				Log.WORKFLOW.error("Failed to configure extended attribute: " + cea.extendedAttributeName(), e);
 			}
 		}
-	}
-	
-	public boolean isUserStoppable() {
-		return (this.processInfo != null) ? this.processInfo.isUserStoppable() : false;
 	}
 	
 	public Object getCmdbExtAttrParam(String id) {

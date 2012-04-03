@@ -4,6 +4,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.workflow.xpdl.PackageHandler;
 
 /**
  * Wrapper for the CMWorkflowEngine on top of the legacy UserContext
@@ -11,16 +12,18 @@ import org.cmdbuild.services.auth.UserContext;
 public class WorkflowEngineWrapper implements CMWorkflowEngine {
 
 	private final UserContext userCtx;
+	private final PackageHandler packagehandler;
 
-	public WorkflowEngineWrapper(UserContext userCtx) {
+	public WorkflowEngineWrapper(final UserContext userCtx, final PackageHandler packagehandler) {
 		this.userCtx = userCtx;
+		this.packagehandler = packagehandler;
 	}
 
 	@Override
 	public CMProcessClass findProcessClass(Object idOrName) {
 		Validate.notNull(idOrName);
 		final ProcessType processType = findProcessType(idOrName);
-		return new ProcessClassWrapper(processType);
+		return new ProcessClassWrapper(processType, packagehandler);
 	}
 
 	private ProcessType findProcessType(final Object idOrName) {

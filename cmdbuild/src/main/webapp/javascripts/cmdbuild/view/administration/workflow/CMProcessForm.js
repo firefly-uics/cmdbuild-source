@@ -11,11 +11,18 @@
 		initComponent : function() {
 			this.callParent(arguments);
 
+			this.userStoppable = new Ext.ux.form.XCheckbox({
+				name: 'userstoppable',
+				fieldLabel: CMDBuild.Translation.administration.modWorkflow.xpdlDownload.user_stoppable,
+				labelWidth: CMDBuild.LABEL_WIDTH
+			});
+			this.form.add(this.userStoppable);
 			this.typeCombo.hide();
 		},
 
 		//override
 		setDefaults: function() {
+			this.userStoppable.setValue(false);
 			this.isActive.setValue(true);
 			this.inheriteCombo.setValue(_CMCache.getActivityRootId())
 		},

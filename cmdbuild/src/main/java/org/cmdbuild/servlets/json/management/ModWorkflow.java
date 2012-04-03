@@ -82,8 +82,9 @@ public class ModWorkflow extends JSONBase {
 			boolean writePriv;
 			final Lookup flowStatus = card.getAttributeValue(ProcessAttributes.FlowStatus.toString()).getLookup();
 
-			if (openedStatus.equals(flowStatus)
-					&& activityMap.keySet().contains(card.getId())) {
+			if (openedStatus.equals(flowStatus) && activityMap.keySet().contains(card.getId())) {
+				boolean stoppable = card.getSchema().isUserStoppable() || userCtx.privileges().isAdmin();
+				jsonCard.put("stoppable", stoppable);
 
 				ActivityDO activity = activityMap.get(card.getId());
 				addActivityInfo(jsonCard, activity, userCtx);
@@ -119,9 +120,6 @@ public class ModWorkflow extends JSONBase {
 		
 		jsonCard.put("CmdbuildExtendedAttributes", extAttrArray);
 		jsonCard.put("activityPerformerName", activity.getPerformer());
-
-		boolean stoppable = (userCtx.privileges().isAdmin() || activity.isUserStoppable());
-		jsonCard.put("stoppable", stoppable);
 
 		if(activity.getActivityInfo().isQuickAcceptActivity()){
 			jsonCard.put("QuickAccept", activity.getActivityInfo().getQuickAcceptVariable());

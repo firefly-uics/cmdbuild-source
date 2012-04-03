@@ -3,6 +3,7 @@ package org.cmdbuild.elements.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.TableImpl.OrderEntry;
 
@@ -33,4 +34,9 @@ public interface ITable extends BaseSchema {
 	public boolean isTheTableActivity();
 
 	public Iterable<IAttribute> fkDetails();
+
+	@Legacy("Temporary during workflow refactoring")
+	public boolean isUserStoppable();
+	@Legacy("Temporary during workflow refactoring")
+	public void setUserStoppable(boolean userStoppable);
 }
