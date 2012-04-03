@@ -90,6 +90,17 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 				return Boolean.toString(table.isSuperClass());
 			}
 		},
+		USERSTOPPABLE {
+			@Override
+			public void setValue(ITable table, String value) {
+				table.setUserStoppable(Boolean.parseBoolean(value));
+			}
+
+			@Override
+			public String getValue(ITable table) {
+				return Boolean.toString(table.isUserStoppable());
+			}
+		},
 		MANAGER;
 
 		public String getValue(ITable table) {
@@ -115,6 +126,7 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 
 	private String description = "";
 	private boolean isSuperClass = false;
+	private boolean userStoppable = false;
 
 	TableImpl() {
 		setTableType(CMTableType.CLASS);
@@ -357,5 +369,15 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isUserStoppable() {
+		return userStoppable;
+	}
+
+	@Override
+	public void setUserStoppable(boolean userStoppable) {
+		this.userStoppable = userStoppable;
 	}
 }

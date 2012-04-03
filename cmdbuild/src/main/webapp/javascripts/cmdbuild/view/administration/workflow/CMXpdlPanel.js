@@ -10,12 +10,6 @@
 				text: this.translation.upload_template
 			});
 
-			this.stoppable = new Ext.ux.form.XCheckbox({
-				name: 'userstoppable',
-				fieldLabel: CMDBuild.Translation.administration.modWorkflow.xpdlDownload.user_stoppable,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
 			Ext.apply(this, {
 				fileUpload: true,
 				frame: true,
@@ -23,9 +17,7 @@
 				defaults: {
 					labelWidth: CMDBuild.LABEL_WIDTH
 				},
-				items: [
-					this.stoppable
-				,{
+				items: [{
 					xtype: 'textfield',
 					inputType : 'file',
 					allowBlank: true,
@@ -46,9 +38,6 @@
 			});
 
 			this.callParent(arguments);
-		},
-		onProcessSelected: function(xpdl) {
-			this.stoppable.setValue(xpdl.userstoppable);
 		}
 	});
 

@@ -35,6 +35,7 @@ import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.WorkflowCache;
@@ -258,6 +259,7 @@ public class ModClass extends JSONBase {
 			@Parameter(value="isprocess",required=false) boolean isProcess,
 			@Parameter(value="tableType",required=false) String tableType,
 			@Parameter("active") boolean isActive,
+			@Parameter("userstoppable")  boolean isProcessUserStoppable,
 			ITable table ) throws JSONException, CMDBException {
 		if (table.isNew()) { // TODO: move it to Table!
 			if (tableType != null && tableType.equals("simpletable")) {
@@ -278,8 +280,12 @@ public class ModClass extends JSONBase {
 			table.setSuperClass(isSuperClass);
 			table.setMode(isSuperClass ? Mode.READ.getModeString() : Mode.WRITE.getModeString());
 		}
-		if (description.length() == 0)
+		if (description.length() == 0) {
 			description = name;
+		}
+		if (isProcess) {
+			table.setUserStoppable(isProcessUserStoppable);
+		}
 		table.setDescription(description);
 		table.setStatus(SchemaStatus.fromBoolean(isActive));
 		table.save();
@@ -592,36 +598,6 @@ public class ModClass extends JSONBase {
 	/*
 	 * Widget Definition
 	 */
-
-	public static class JsonResponse {
-
-		private boolean success;
-		private Object response;
-
-		public boolean isSuccess() {
-			return success;
-		}
-
-		public Object getResponse() {
-			return response;
-		}
-
-		public static JsonResponse success(final Object response) {
-			final JsonResponse responseObject = new JsonResponse();
-			responseObject.success = true;
-			responseObject.response = response;
-			return responseObject;
-		}
-
-		public String toString() {
-			final ObjectMapper mapper = new ObjectMapper();
-			try {
-				return mapper.writeValueAsString(this);
-			} catch (Exception e) {
-				return "Error serializing the object!";
-			}
-		}
-	}
 
 	@JSONExported
 	public JsonResponse getAllWidgets(

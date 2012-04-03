@@ -378,10 +378,6 @@ public class ECard {
 			}
 		}
 
-		public ITable getTable() {
-			return table;
-		}
-
 		public CardQuery getCardQuery() {
 			return cardQuery;
 		}

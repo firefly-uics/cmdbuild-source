@@ -22,13 +22,11 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.utils.tree.CNode;
-import org.cmdbuild.workflow.CmdbuildProcessInfo;
 import org.cmdbuild.workflow.operation.SharkFacade;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@SuppressWarnings("restriction")
 public class ModWorkflow extends JSONBase {
 	private static final String ps = File.separator;
 	private static final String UPLOADED_FILE_RELATIVE_PATH = "images"+ps+"workflow"+ps;
@@ -105,9 +103,6 @@ public class ModWorkflow extends JSONBase {
 		JSONObject row = new JSONObject();
 		row.put("idClass", processType.getId());
 		row.put("name", processType.getName());
-
-		CmdbuildProcessInfo procInfo = processType.getProcInfo();
-		row.put("userstoppable", procInfo != null ? procInfo.isUserStoppable() : false);
 
 		Integer[] versions = processType.getPackageVersions();
 		row.put("configured", versions.length != 0);

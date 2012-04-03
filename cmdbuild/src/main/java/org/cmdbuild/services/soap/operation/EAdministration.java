@@ -100,10 +100,10 @@ public class EAdministration {
 	}
 	
 	public AttributeSchema serialize(IAttribute attribute) {
-		return serialize(attribute, null, attribute.getIndex());
+		return serialize(attribute, attribute.getIndex());
 	}
 
-	public AttributeSchema serialize(IAttribute attribute, ActivityDO activity, int client_index) {
+	public AttributeSchema serialize(IAttribute attribute, int client_index) {
 		AttributeSchema schema = new AttributeSchema();
 		schema.setIdClass(attribute.getSchema().getId());
 		schema.setName(attribute.getDBName());
@@ -121,7 +121,7 @@ public class EAdministration {
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
 		
-		schema.setMetadata(serializeMetadata(attribute, activity));
+		schema.setMetadata(serializeMetadata(attribute));
 		
 		AttributeType atype = attribute.getType();
 		switch (atype) {
@@ -143,26 +143,31 @@ public class EAdministration {
 		return schema;
 	}
 
-	private Metadata[] serializeMetadata(IAttribute attribute, ActivityDO activity) {
-		final Metadata[] commonMetadata = serializeMetadata(BaseSchema.class.cast(attribute), activity);		
+	private Metadata[] serializeMetadata(IAttribute attribute) {
+		final Metadata[] commonMetadata = serializeMetadata(attribute);		
 		final List<Metadata> metadata = new ArrayList<Metadata>(Arrays.asList(commonMetadata));
 		checkAttributeFilter(attribute, metadata);
 		final Metadata[] array = new Metadata[metadata.size()];
 		return metadata.toArray(array);
 	}
 
-	public Metadata[] serializeMetadata(BaseSchema baseSchema, ActivityDO activity) {
-		final TreeMap<String, Object> metadata = baseSchema.getMetadata();
-		List<Metadata> tmpList = serializeMetadata(metadata);
+	public Metadata[] serializeMetadata(ITable table, ActivityDO activity) {
+		final TreeMap<String, Object> metadata = table.getMetadata();
+		List<Metadata> meta = serializeMetadata(metadata);
 		if (activity != null){
-			checkProcessIsStopable(activity, tmpList);
-			checkProcessIsEditable(activity, tmpList);
+			addProcessIsStoppable(table, meta);
+			addProcessIsEditable(activity, meta);
 		}
-		
-		Metadata[] metadataList = new Metadata[tmpList.size()];
-		metadataList = tmpList.toArray(metadataList);
-		
-		return metadataList;
+		return meta.toArray(new Metadata[meta.size()]);
+	}
+
+	public Metadata[] serializeMetadata(BaseSchema baseSchema) {
+		return metaMapToArray(baseSchema.getMetadata());
+	}
+
+	private Metadata[] metaMapToArray(final TreeMap<String, Object> metadata) {
+		final List<Metadata> meta = serializeMetadata(metadata);
+		return meta.toArray(new Metadata[meta.size()]);
 	}
 
 	private List<Metadata> serializeMetadata(TreeMap<String, Object> metadata) {
@@ -176,16 +181,15 @@ public class EAdministration {
 		return tmpList;
 	}
 
-
-	private void checkProcessIsStopable(ActivityDO activity, List<Metadata> tmpList) {
-		boolean isStopable = activity.isUserStoppable();
+	private void addProcessIsStoppable(ITable table, List<Metadata> meta) {
+		boolean isStoppable = table.isUserStoppable();
 		Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PROCESS_ISSTOPPABLE);
-		m.setValue(String.valueOf(isStopable));
-		tmpList.add(m);
+		m.setValue(String.valueOf(isStoppable));
+		meta.add(m);
 	}
-	
-	private void checkProcessIsEditable(ActivityDO activity, List<Metadata> tmpList) {
+
+	private void addProcessIsEditable(ActivityDO activity, List<Metadata> tmpList) {
 		Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
 		if (activity.isEditable()){

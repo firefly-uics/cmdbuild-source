@@ -29,7 +29,6 @@
 					scope: this,
 					success: function(response, options, xpdlInfo) {
 						CMDBuild.LoadMask.get().hide();
-						this.uploadForm.onProcessSelected(xpdlInfo.data);
 						this.downloadForm.onProcessSelected(xpdlInfo.data);
 					},
 					failure: function() {

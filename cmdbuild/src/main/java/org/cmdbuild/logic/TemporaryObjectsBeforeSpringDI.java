@@ -12,15 +12,19 @@ import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
+import org.cmdbuild.workflow.xpdl.PackageHandler;
+import org.cmdbuild.workflow.xpdl.SharkPackageHandler;
 
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
 
 	final static CachingDriver driver;
+	final static PackageHandler packageHandler;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource);
+		packageHandler = new SharkPackageHandler();
 	}
 
 	public static CachingDriver getDriver() {
@@ -33,6 +37,6 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMWorkflowEngine getWorkflowEngine(UserContext userCtx) {
-		return new WorkflowEngineWrapper(userCtx);
+		return new WorkflowEngineWrapper(userCtx, packageHandler);
 	}
 }

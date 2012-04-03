@@ -58,7 +58,6 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
-import org.cmdbuild.servlets.json.schema.ModClass.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
