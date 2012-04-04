@@ -88,30 +88,19 @@ public class ERelation {
 
 	}
 
-	public Relation[] getRelationHistory(Relation relation) {
-
-		Log.SOAP.debug("Getting relation history between cardId "
-				+ relation.getCard1Id() + " (classname: "
-				+ relation.getClass1Name() + ") and cardId "
-				+ relation.getCard2Id() + "(classname: "
-				+ relation.getClass2Name() + ")");
-
-		ICard card1 = userCtx.tables().get(relation.getClass1Name()).cards()
-				.get(relation.getCard1Id());
-		ICard card2 = userCtx.tables().get(relation.getClass2Name()).cards()
-				.get(relation.getCard2Id());
-		List<Relation> list = new LinkedList<Relation>();
-		for (IRelation r : userCtx.relations().list(card1).history()) {
-			if (card2 != null) {
-				if (r.getCard2().equals(card2)) {
-					list.add(new Relation(r));
-				}
-			} else {
-				list.add(new Relation(r));
-			}
+	public Relation[] getRelationHistory(final Relation relation) {
+		Log.SOAP.debug(String.format("Getting relation history for card (%d, %s)", relation.getCard1Id(), relation
+				.getClass1Name()));
+		if (relation.getCard2Id() > 0 || relation.getClass2Name() != null || relation.getDomainName() != null) {
+			throw new UnsupportedOperationException("You fool!");
 		}
-		Relation[] relationlist = new Relation[list.size()];
-		relationlist = list.toArray(relationlist);
+		final ICard card1 = userCtx.tables().get(relation.getClass1Name()).cards().get(relation.getCard1Id());
+		final List<Relation> list = new LinkedList<Relation>();
+		for (IRelation r : userCtx.relations().list(card1).history()) {
+			list.add(new Relation(r));
+		}
+		final Relation[] relationlist = list.toArray(new Relation[list.size()]);
 		return relationlist;
 	}
+
 }
