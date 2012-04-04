@@ -28,5 +28,13 @@ Ext.define("CMDBuild.view.management.common.CMTabPanel", {
 				item.displayMode();
 			}
 		});
+	},
+
+	ensureEditPanel: function() {
+		this.items.each(function(item) {
+			if (typeof item.ensureEditPanel == "function") {
+				item.ensureEditPanel();
+			}
+		});
 	}
 });

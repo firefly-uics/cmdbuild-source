@@ -77,7 +77,7 @@
 		var out = {};
 
 		for (var i=0, l=attributes.length; i<l; ++i) {
-			var attr = attributes[0];
+			var attr = attributes[i];
 
 			out[attr.name] = "";
 		}

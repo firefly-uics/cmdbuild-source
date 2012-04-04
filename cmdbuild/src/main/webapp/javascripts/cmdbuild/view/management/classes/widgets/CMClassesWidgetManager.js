@@ -16,11 +16,18 @@
 			// ping
 			allowedTypes[CMDBuild.view.management.common.widgets.CMPing.WIDGET_NAME] = CMDBuild.view.management.common.widgets.CMPing;
 
+			// createModifyCard
+			allowedTypes[CMDBuild.view.management.common.widgets.CMCreateModifyCard.WIDGET_NAME] = createModifyCard;
+
+
 			var widgetClass = allowedTypes[widget.type];
-			if (widgetClass && typeof widgetClass == "function") {
+			if (widgetClass 
+				&& typeof widgetClass == "function") {
+				
 				var ui = new widgetClass({
 					hideMode: "offsets"
 				});
+
 				me.widgetsContainer.addWidgt(ui);
 				return ui;
 			} else {
@@ -33,4 +40,15 @@
 			return this.mainView.getForm();
 		}
 	});
+
+	function createModifyCard() {
+		var w = new CMDBuild.view.management.common.widgets.CMCreateModifyCard();
+		var widgetManager = new CMDBuild.view.management.classes.CMWidgetManager(w);
+
+		w.getWidgetManager = function() {
+			return widgetManager;
+		}
+
+		return w;
+	}
 })();

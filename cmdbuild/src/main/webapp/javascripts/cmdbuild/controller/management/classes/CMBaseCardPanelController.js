@@ -16,6 +16,8 @@
 				this.widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(widgetManager);
 			}
 
+			this.widgetControllerManager.setDelegate(this);
+
 			this.CMEVENTS = {
 				cardSaved: "cm-card-saved",
 				editModeDidAcitvate: ev.editModeDidAcitvate,
@@ -57,9 +59,8 @@
 			// the fields are not right, refill the form before the loadCard
 			var reloadFields = this.entryType.get("id") != this.card.get("IdClass");
 
-			if (this.widgetControllerManager) {
-				this.widgetControllerManager.buildControllers(card);
-			}
+			// defer this call to release the UI event manage
+			Ext.defer(buildWidgetControllers, 1, this, [card]);
 
 			var me = this;
 			if (reloadFields) {
@@ -236,8 +237,19 @@
 		},
 
 		// override
-		onCloneCard: Ext.emptyFn
+		onCloneCard: Ext.emptyFn,
+
+		// widgetManager delegate
+		ensureEditPanel: function() {
+			this.view.ensureEditPanel();
+		}
 	});
+
+	function buildWidgetControllers(card) {
+		if (this.widgetControllerManager) {
+			this.widgetControllerManager.buildControllers(card);
+		}
+	}
 
 	function addDataFromCardDataPoviders(me, params) {
 		for (var provider in me.cardDataProviders) {
