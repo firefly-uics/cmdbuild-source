@@ -1,3 +1,30 @@
+CMDBuild 1.5.3 (released 2012/04/04)
+
+
+NEW FEATURES
+
+ * CreateModifyCard widget also in classes
+As a generic user
+I want to modify a the card of a reference when I'm editing a card
+So that I have not to switch class to do that
+
+
+FIXES
+
+ * Superclass queries don't remove inactive subclasses
+
+ * Very long attribute names cannot be queried
+
+ * Slow html field rendering in IE
+
+ * Open Report configuration does not show all report attributes
+
+ * It is not possible to update the relation attributes on the EditRelationWindow
+
+
+
+
+
 CMDBuild 1.5.2 (released 2012/03/19)
 
 
