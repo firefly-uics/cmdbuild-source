@@ -3,8 +3,10 @@ package unit.dao;
 import static org.cmdbuild.dao.attribute.AbstractDateAttribute.REST_DATETIME_FORMAT;
 import static org.cmdbuild.dao.attribute.AbstractDateAttribute.SOAP_DATETIME_FORMAT;
 import static org.cmdbuild.dao.attribute.DateAttribute.JSON_DATE_FORMAT;
+import static org.cmdbuild.dao.attribute.DateAttribute.LEGACY_JSON_DATE_FORMAT;
 import static org.cmdbuild.dao.attribute.DateAttribute.POSTGRES_DATE_FORMAT;
 import static org.cmdbuild.dao.attribute.DateTimeAttribute.JSON_DATETIME_FORMAT;
+import static org.cmdbuild.dao.attribute.DateTimeAttribute.LEGACY_JSON_DATETIME_FORMAT;
 import static org.cmdbuild.dao.attribute.DateTimeAttribute.POSTGRES_DATETIME_FORMAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -151,6 +153,7 @@ public class AttributeValueTest {
 	public void readDateValueFromString() {
 		Date today = today();
 		assertEquals(today, dateAttribute.readValue(dateToString(today, JSON_DATE_FORMAT)));
+		assertEquals(today, dateAttribute.readValue(dateToString(today, LEGACY_JSON_DATE_FORMAT)));
 		assertEquals(today, dateAttribute.readValue(dateToString(today, SOAP_DATETIME_FORMAT)));
 		assertEquals(today, dateAttribute.readValue(dateToString(today, REST_DATETIME_FORMAT)));
 		assertEquals(null, dateAttribute.readValue(""));
@@ -206,8 +209,10 @@ public class AttributeValueTest {
 	public void readDateTimeValueFromString() {
 		Date now = nowNotMillis();
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, JSON_DATETIME_FORMAT)));
+		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, LEGACY_JSON_DATETIME_FORMAT)));
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, SOAP_DATETIME_FORMAT)));
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, REST_DATETIME_FORMAT)));
+		assertEquals(today(), dateAttribute.readValue(dateToString(now, JSON_DATE_FORMAT)));
 		assertEquals(null, dateTimeAttribute.readValue(""));
 		assertTypeErrorOnRead("not a date", dateTimeAttribute);
 	}
