@@ -139,18 +139,19 @@
 						_CMCache.addClasses(decoded.classes);
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
+
+						// Do a separate request for the widgets because, at this time
+						// it is not possible serialize them with the classes
+						CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
+							scope : this,
+							callback: reqBarrier.getCallback(),
+							success : function(response, options, decoded) {
+								_CMCache.addWidgetToEntryTypes(decoded.response);
+							}
+						});
+
 					},
 					callback: reqBarrier.getCallback()
-				});
-
-				// Do a separate request for the widgets because, at this time
-				// it is not possible serialize them with the classes
-				CMDBuild.ServiceProxy.CMWidgetConfiguration.groupedByEntryType({
-					scope : this,
-					callback: reqBarrier.getCallback(),
-					success : function(response, options, decoded) {
-						_CMCache.addWidgetToEntryTypes(decoded.response);
-					}
 				});
 
 				CMDBuild.ServiceProxy.group.read({
