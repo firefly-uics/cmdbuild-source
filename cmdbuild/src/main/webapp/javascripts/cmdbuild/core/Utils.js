@@ -291,7 +291,8 @@ CMDBuild.checkInterface = function(obj, interfaceName) {
 }
 
 CMDBuild.validateInterface = function(obj, interfaceName) {
+	CMDBuild.IS_NOT_CONFORM_TO_INTERFACE = "The object {0} must implement the interface: {1}";
 	if (!CMDBuild.checkInterface(obj, interfaceName)) {
-		throw "The object " + obj.toString() + " must implement the interface: " + interfaceName;
+		throw Ext.String.format(CMDBuild.IS_NOT_CONFORM_TO_INTERFACE, obj.toString(), interfaceName);
 	}
 }

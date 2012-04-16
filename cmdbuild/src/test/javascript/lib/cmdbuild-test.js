@@ -138,8 +138,10 @@
 		b.btnEl.dom.click();
 	}
 
-
-
+	CMDBuild.test.selectGridRow = function(grid, row) {
+		row = row || 0;
+		grid.getSelectionModel().select(row);
+	}
 
 	// configuration structure
 	Ext.define("CMDBuild.Config", {
@@ -158,6 +160,7 @@
 		"Ext.button.Button": function(o) {
 			return "(with text " + o.text + ")";
 		},
+
 		"Ext.form.field.Text": function(o) {
 			return "(with label " + o.fieldLabel+ ")";
 		}
@@ -178,4 +181,32 @@
 		}
 	};
 
+	// /******
+
+	//override describe to allow the run of a set of tests
+
+	// var realDescribe = jasmine.Env.prototype.describe;
+	// jasmine.Env.prototype.describe = function(description, specDefinitions) {
+// 
+		// // specs to run
+		// var focusSpecs = [
+			// 'CMDBUild.cache.CMCacheDashboardFunctions',
+			// 'CMDashboardModel',
+			// 'CMDashboardChartConfigurationFormController',
+			// 'GaugeTypeStrategy',
+			// // 'CMDashboardChartConfigurationPanel',
+			// // 'CMDashboardChartConfigurationPanelController',
+			// // 'CMDashboardChartConfigurationGridController',
+			// // 'CMDashboardChartConfigurationGridSpec',
+			// 'CMDashboardChartConfigurationForm'
+			// // 'GaugeTypeStrategy'
+			// // 'CMDashboardModel',
+		// ];
+// 
+		// if (Ext.Array.contains(focusSpecs, description)) {
+			// realDescribe.apply(this, arguments);
+		// }
+	// }
+
+	// *******/
 })();

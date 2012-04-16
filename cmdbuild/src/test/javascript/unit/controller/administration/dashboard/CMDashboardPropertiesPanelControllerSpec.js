@@ -147,6 +147,13 @@
 
 		it('clean the view and the data when remove a dashboard', function() {
 			var dashboard = aDashboard();
+			var remove = CMDBuild.ServiceProxy.Dashboard.remove();
+
+			CMDBuild.ServiceProxy.Dashboard.remove = function(dashboardId, success, scope) {
+				_CMCache.removeDashboardWithId(dashboardId);
+				success.apply(scope);
+			};
+
 			controller.dashboardWasSelected(dashboard);
 			controller.onRemoveButtonClick();
 
@@ -155,6 +162,8 @@
 			expect(view.disableFields).toHaveBeenCalled();
 			expect(view.disableButtons).toHaveBeenCalled();
 			expect(view.disableTBarButtons).toHaveBeenCalled();
+
+			CMDBuild.ServiceProxy.Dashboard.remove = remove;
 		})
 	});
 

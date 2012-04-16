@@ -192,10 +192,55 @@
          }
       },
       "modDashboard": {
+          "charts": {
+             "alert": {
+                "wrongConfiguration": "Il grafico non è configurato correttamente"
+             },
+             "availableCharts": {
+                "gauge": "Manometro"
+             },
+             "buttons": {
+                "add": "Aggiungi grafico",
+                "modify": "Modifica grafico",
+                "remove": "Rimuovi grafico",
+                "preview": "Anteprima"
+             },
+             "fields": {
+                "active": "Attivo",
+                "autoload": "Carica automaticamente",
+                "background": "Colore di sfondo",
+                "chartType": "Tipo di grafico",
+                "dataSource": "Sorgente dati",
+                "defaultValue": "Valore di default",
+                "description": "Descrizione",
+                "fieldType": "Tipo di field",
+                "foreground": "Colore in primo piano",
+                "lookupType": "Tipo lookup",
+                "max": "Massimo",
+                "min": "Minimo",
+                "name": "Nome",
+                "steps": "Intervalli",
+                "valueField": "Campo valore"
+             },
+             "inputTypes": {
+                "integer": "Intero",
+                "string": "Stringa",
+                "date": "Data"
+             },
+             "title": "Grafici",
+             "typeFieldOptions": {
+                "freeString" : "Stringa libera",
+                "freeInt" : "Intero libero",
+                "lookup" : "Seleziona da una lookup",
+                "classes" : "Seleziona una classe di CMDBuild",
+                "user" : "Utente corrente",
+                "group" : "Gruppo corrente"
+             }
+          },
           "properties": {
-             "add": "Aggiungi Dashboard",
-             "modify": "Modifica Dashboard",
-             "remove": "Rimuovi Dashboard",
+             "add": "Aggiungi dashboard",
+             "modify": "Modifica dashboard",
+             "remove": "Rimuovi dashboard",
              "fields": {
                 "name": "Nome",
                 "description": "Descrizione",

@@ -8,6 +8,7 @@
 		cmName:'dashboard',
 		setTitleSuffix: Ext.emptyFn,
 		getPropertiesPanel: Ext.emptyFn,
+		getChartsConfigurationPanel: Ext.emptyFn,
 		setDelegate: Ext.emptyFn,
 		toString: function() {
 			return Ext.getClassName(this);
@@ -39,6 +40,7 @@
 
 		initComponent : function() {
 			var me = this;
+
 			this.addButton = new Ext.button.Button({
 				text: CMDBuild.Translation.administration.modDashboard.properties.add,
 				iconCls: "add",
@@ -57,9 +59,10 @@
 					region: "center",
 					border: false,
 					frame: false,
-					items: [{
-						xtype: "dashboardproperties"
-					}]
+					items: [
+						propertiesPanel(me),
+						chartsConfigurationPanel(me)
+					]
 				}],
 				tbar: [this.addButton]
 			});
@@ -74,17 +77,26 @@
 			}
 
 			this.setTitle(title);
-		},
-
-		getPropertiesPanel: function() {
-			var tabPanel = this.items.get(0);
-			var panel;
-			if (tabPanel) {
-				panel = tabPanel.items.get(0);
-			}
-
-			return panel;
 		}
 	});
 
+	function propertiesPanel(me) {
+		var p = Ext.createByAlias('widget.dashboardproperties');
+
+		me.getPropertiesPanel = function() {
+			return p;
+		}
+
+		return p;
+	}
+
+	function chartsConfigurationPanel(me) {
+		var p = Ext.createByAlias('widget.dashboardchartsconfiguration');
+
+		me.getChartsConfigurationPanel = function() {
+			return p;
+		}
+
+		return p;
+	}
 })();

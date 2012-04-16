@@ -34,8 +34,13 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesPanel.js"></script>
 
 	<!-- DASHBOARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script><!-- Required in the CMDashboardChartConfigurationDataSourcePanel -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardPropertiesPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationDataSourcePanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMModDashboard.js"></script>
 
 	<!-- GIS -->
@@ -46,7 +51,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
-	
+
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGroupsAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupForm.js"></script>
@@ -153,6 +158,9 @@
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDashboardAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationFormController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationGridController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardPropertiesPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
 

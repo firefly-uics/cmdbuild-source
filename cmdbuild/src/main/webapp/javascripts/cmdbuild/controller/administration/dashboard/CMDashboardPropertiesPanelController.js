@@ -2,6 +2,8 @@
 
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardPropertiesPanelController", {
 
+		alias: "controller.cmdashboardproperties",
+
 		mixins: {
 			viewDelegate: "CMDBuild.view.administration.dashboard.CMDashboardPropertiesDelegate"
 		},
