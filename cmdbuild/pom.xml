@@ -1,4 +1,3 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
@@ -21,6 +20,11 @@
 	</properties>
 
 	<dependencies>
+		<dependency> <!-- @Legacy remove when we get rid of CachedSharkWSFactory -->
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxrpc-api</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-dao-postgresql</artifactId>
@@ -44,9 +48,16 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-shark-commons</artifactId>
+			<artifactId>cmdbuild-shark-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency> <!-- Remove this when everything is moved to cmdbuild-shark-client -->
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-ejbandws-client</artifactId>
+			<version>${shark.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-types</artifactId>
@@ -68,7 +79,6 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>1.4.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -256,37 +266,7 @@
 			<version>1.5</version>
 			<type>jar</type>
 		</dependency>
-		<!-- Workflow -->
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId> <!-- serializer.jar -->
-			<artifactId>xalan</artifactId>
-			<version>2.7.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.sharkwf</groupId>
-			<artifactId>shark-clientapi</artifactId>
-			<version>${shark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.sharkwf</groupId>
-			<artifactId>shark-commonapi</artifactId>
-			<version>${shark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.sharkwf</groupId>
-			<artifactId>shark-wmentity</artifactId>
-			<version>${shark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.sharkwf</groupId>
-			<artifactId>shark-wsclient</artifactId>
-			<version>${shark.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>catalina</artifactId>
@@ -320,17 +300,6 @@
 				<exclusion>
 					<artifactId>jakarta-regexp</artifactId>
 					<groupId>jakarta-regexp</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml</groupId>
-			<artifactId>jaxrpc-api</artifactId>
-			<version>1.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.activation</groupId>
-					<artifactId>activation</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -478,18 +447,12 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven-surefire-plugin.version}</version>
-				<configuration>
-					<includes>
-						<include>unit/**</include>
-					</includes>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tomcat-maven-plugin</artifactId>
-				<version>${tomcat-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>croche.maven</groupId>
@@ -557,7 +520,6 @@
 						</executions>
 						<configuration>
 							<includes>
-								<include>integration/*.java</include>
 								<include>integration/**/*.java</include>
 							</includes>
 						</configuration>

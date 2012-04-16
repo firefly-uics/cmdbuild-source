@@ -47,12 +47,4 @@
 		</dependency>
 	</dependencies>
 
-	<!-- For xercesImpl till XERCESJ-1454 is fixed -->
-	<repositories>
-		<repository>
-			<id>atlassian</id>
-			<url>https://maven.atlassian.com/content/groups/public</url>
-		</repository>
-	</repositories>
-
 </project>

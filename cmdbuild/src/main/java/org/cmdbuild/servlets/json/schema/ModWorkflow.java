@@ -95,23 +95,7 @@ public class ModWorkflow extends JSONBase {
 		}
 		return serializer;
 	}
-	
-	@JSONExported
-	public JSONObject xpdlInfo(
-			ProcessType processType,
-			JSONObject out) throws Exception {
-		JSONObject row = new JSONObject();
-		row.put("idClass", processType.getId());
-		row.put("name", processType.getName());
 
-		Integer[] versions = processType.getPackageVersions();
-		row.put("configured", versions.length != 0);
-		row.put("versions", versions);
-
-		out.put("data", row);
-		return out;
-	}
-	
 	@Admin
 	@JSONExported
 	public JSONObject uploadXPDL(

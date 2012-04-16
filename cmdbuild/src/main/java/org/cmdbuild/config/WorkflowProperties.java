@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.services.WorkflowService;
+import org.cmdbuild.workflow.service.RemoteSharkService;
 
-public class WorkflowProperties extends DefaultProperties {
+public class WorkflowProperties extends DefaultProperties implements RemoteSharkService.Config {
 
 	private static final long serialVersionUID = 8184420208391927123L;
 	
@@ -32,15 +33,18 @@ public class WorkflowProperties extends DefaultProperties {
 		String enabled = getProperty(ENABLED, Boolean.FALSE.toString());
 		return Boolean.parseBoolean(enabled);
 	}
-	
-	public String getEndpoint(){
+
+	@Override
+	public String getServerUrl(){
 		return getProperty(ENDPOINT);
 	}
-	
-	public String getUser(){
+
+	@Override
+	public String getUsername(){
 		return getProperty(ADMIN_USERNAME);
 	}
-	
+
+	@Override
 	public String getPassword(){
 		return getProperty(ADMIN_PASSWORD);
 	}
