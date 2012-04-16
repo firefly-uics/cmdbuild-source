@@ -4,21 +4,26 @@ import javax.activation.DataSource;
 
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.workflow.CMProcessClass;
-import org.cmdbuild.workflow.xpdl.PackageHandler;
-import org.cmdbuild.workflow.xpdl.XPDLException;
+import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.ProcessDefinitionManager;
 
 public class ProcessClassWrapper extends ClassWrapper implements CMProcessClass {
 
-	private final PackageHandler packageHandler;
+	private final ProcessDefinitionManager processDefinitionManager;
 
-	public ProcessClassWrapper(final ITable table, final PackageHandler packageHandler) {
+	public ProcessClassWrapper(final ITable table, final ProcessDefinitionManager processDefinitionManager) {
 		super(table);
-		this.packageHandler = packageHandler;
+		this.processDefinitionManager = processDefinitionManager;
 	}
 
 	@Override
-	public DataSource getDefinitionTemplate() throws XPDLException {
-		return packageHandler.getXpdlTemplate(this);
+	public DataSource getDefinitionTemplate() throws CMWorkflowException {
+		return processDefinitionManager.getTemplate(this);
+	}
+
+	@Override
+	public String[] getDefinitionVersions() throws CMWorkflowException {
+		return processDefinitionManager.getVersions(this);
 	}
 
 	@Override

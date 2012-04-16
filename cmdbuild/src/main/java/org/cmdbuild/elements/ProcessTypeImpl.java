@@ -71,11 +71,6 @@ public class ProcessTypeImpl extends TableProxy implements ProcessType {
 		return procInfo;
 	}
 
-	public Integer[] getPackageVersions() {
-		String className = getName();
-		return WorkflowCache.getInstance().getPackageVersionsForClass(className);
-	}
-
 	public ActivityDO startActivityTemplate() {
 		ActivityDO template = sharkFacade.startActivityTemplate(getName());
 		template.setCmdbuildClassId(getId());

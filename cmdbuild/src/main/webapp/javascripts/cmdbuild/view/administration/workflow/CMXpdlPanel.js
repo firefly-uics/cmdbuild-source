@@ -88,13 +88,13 @@
 			this.callParent(arguments);
 		},
 		
-		onProcessSelected: function(xpdl) {
+		onProcessSelected: function(versions) {
 			var store = this.versionCombo.store;
 
 			store.removeAll();
-			for(var i=0; i<xpdl.versions.length; i++) {
-				var version = xpdl.versions[i];
-				store.add({id: version, index: version});
+			for(var i=0; i<versions.length; i++) {
+				var v = versions[i];
+				store.add({id: v, index: v});
 			}
 			store.add({id: "template", index: 0});
 

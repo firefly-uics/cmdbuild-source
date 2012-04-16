@@ -21,20 +21,32 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.xpdl.XPDLDocument.ScriptLanguages;
 
 /**
- * Package handler that uses XPDL definitions.
+ * Process Definition Manager that uses XPDL definitions.
  */
-public abstract class AbstractXpdlPackageHandler implements PackageHandler {
+public class XpdlManager extends AbstractProcessDefinitionManager {
+
+	public interface GroupQueryAdapter {
+
+		String[] getAllGroupNames();
+	}
 
 	public static final String XPDL_MIME_TYPE = "application/x-xpdl";
 	public static final String XPDL_EXTENSION = "xpdl";
 
+	final GroupQueryAdapter groupQueryAdapter;
+
+	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter) {
+		super(workflowService);
+		this.groupQueryAdapter = groupQueryAdapter;
+	}
+
 	@Override
-	public DataSource getXpdlTemplate(CMProcessClass process) throws XPDLException {
+	public DataSource getTemplate(final CMProcessClass process) throws XPDLException {
 		XPDLDocument doc = new XPDLDocument(getPackageId(process));
 		doc.createCustomTypeDeclarations();
 		doc.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
@@ -49,14 +61,14 @@ public abstract class AbstractXpdlPackageHandler implements PackageHandler {
 	private DataSource createDataSource(final CMProcessClass process, final XPDLDocument doc) throws XPDLException {
 		final byte[] xpdl = XPDLPackageFactory.xpdlByteArray(doc.getPkg());
 		final ByteArrayDataSource ds = new ByteArrayDataSource(xpdl, XPDL_MIME_TYPE);
-		ds.setName(String.format("%s.%s", process.getDescription(), XPDL_EXTENSION));
+		ds.setName(String.format("%s.%s", process.getName(), XPDL_EXTENSION));
 		return ds;
 	}
 
-	@Legacy("Should use the new authentication framework")
+	@Legacy("Should use the new authentication framework, passed as a constructor parameter")
 	private void addAllGroupsToTemplate(XPDLDocument doc) {
-		for (GroupCard groupCard : GroupCard.all()) {
-			doc.addRoleParticipant(groupCard.getName());
+		for (String name : groupQueryAdapter.getAllGroupNames()) {
+			doc.addRoleParticipant(name);
 		}
 	}
 
@@ -78,16 +90,6 @@ public abstract class AbstractXpdlPackageHandler implements PackageHandler {
 	@Legacy("As in 1.x")
 	private void addBindedClass(XPDLDocument doc, final CMProcessClass process) {
 		doc.addProcessExtendedAttribute(getProcessId(process), "cmdbuildBindedClass", process.getName());
-	}
-
-	@Legacy("As in 1.x")
-	private String getPackageId(final CMProcessClass process) {
-		return "Package_" + process.getName().toLowerCase();
-	}
-
-	@Legacy("As in 1.x")
-	private String getProcessId(final CMProcessClass process) {
-		return "Process_" + process.getName().toLowerCase();
 	}
 
 	private class DaoToXpdlAttributeTypeConverter implements CMAttributeTypeVisitor {

@@ -23,13 +23,14 @@
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.Ajax.request({
-					url : 'services/json/schema/modworkflow/xpdlinfo',
+					url : 'services/json/workflow/xpdlversions',
 					method: 'POST',
 					params: {idClass : processId},
 					scope: this,
-					success: function(response, options, xpdlInfo) {
+					success: function(response, options, json) {
 						CMDBuild.LoadMask.get().hide();
-						this.downloadForm.onProcessSelected(xpdlInfo.data);
+						var versions = json.response;
+						this.downloadForm.onProcessSelected(versions);
 					},
 					failure: function() {
 						CMDBuild.LoadMask.get().hide();

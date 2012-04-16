@@ -21,6 +21,5 @@ public interface ProcessType extends ITable {
 	// TODO
 
 	CmdbuildProcessInfo getProcInfo();
-	Integer[] getPackageVersions();
 	ActivityDO startActivityTemplate();
 }
