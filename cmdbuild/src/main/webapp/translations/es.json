@@ -192,17 +192,62 @@
          }
       },
       "modDashboard": {
+          "charts": {
+             "alert": {
+                "wrongConfiguration": "<em>Il grafico non è configurato correttamente</em>"
+             },
+             "availableCharts": {
+                "gauge": "<em>Manometro</em>"
+             },
+             "buttons": {
+                "add": "<em>Aggiungi grafico</em>",
+                "modify": "<em>Modifica grafico</em>",
+                "remove": "<em>Rimuovi grafico</em>",
+                "preview": "<em>Anteprima</em>"
+             },
+             "fields": {
+                "active": "<em>Attivo</em>",
+                "autoload": "<em>Carica automaticamente</em>",
+                "background": "<em>Colore di sfondo</em>",
+                "chartType": "<em>Tipo di grafico</em>",
+                "dataSource": "<em>Sorgente dati</em>",
+                "defaultValue": "<em>Valore di default</em>",
+                "description": "<em>Descrizione</em>",
+                "fieldType": "<em>Tipo di field</em>",
+                "foreground": "<em>Colore in primo piano</em>",
+                "lookupType": "<em>Tipo lookup</em>",
+                "max": "<em>Massimo</em>",
+                "min": "<em>Minimo</em>",
+                "name": "<em>Nome</em>",
+                "steps": "<em>Intervalli</em>",
+                "valueField": "<em>Campo valore</em>"
+             },
+             "inputTypes": {
+                "integer": "<em>Intero</em>",
+                "string": "<em>Stringa</em>",
+                "date": "<em>Data</em>"
+             },
+             "title": "<em>Grafici</em>",
+             "typeFieldOptions": {
+                "freeString" : "<em>Stringa libera</em>",
+                "freeInt" : "<em>Intero libero</em>",
+                "lookup" : "<em>Seleziona da una lookup</em>",
+                "classes" : "<em>Seleziona una classe di CMDBuild</em>",
+                "user" : "<em>Utente corrente</em>",
+                "group" : "<em>Gruppo corrente</em>"
+             }
+          },
           "properties": {
-             "add": "<em>Aggiungi Dashboard</em>",
-             "modify": "<em>Modifica Dashboard</em>",
-             "remove": "<em>Rimuovi Dashboard</em>",
+             "add": "<em>Aggiungi dashboard</em>",
+             "modify": "<em>Modifica dashboard</em>",
+             "remove": "<em>Rimuovi dashboard</em>",
              "fields": {
                 "name": "<em>Nome</em>",
                 "description": "<em>Descrizione</em>",
                 "groups": "<em>Disponibile per i gruppi</em>"
              }
           },
-          "title": "</em>Dashboard</em>"
+          "title": "<em>Dashboard</em>"
       },
       "modLookup": {
          "add_lookuptype": "Agregar Tipo Lookup",

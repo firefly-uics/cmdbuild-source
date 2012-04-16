@@ -117,6 +117,62 @@
 			expect(arg.getName()).toEqual("Bar");
 			expect(arg.getDescription()).toEqual("Bar");
 		});
+
+		// datasources
+
+		it ('can get the store with the given data sources', function() {
+			_CMCache.setAvailableDataSources(null);
+			var dss = _CMCache.getAvailableDataSourcesStore(),
+				items = dss.data.items;
+
+			expect(items.length).toBe(0);
+
+			_CMCache.setAvailableDataSources(someDataSources());
+			dss = _CMCache.getAvailableDataSourcesStore(),
+			items = dss.data.items;
+
+			expect(items.length).toBe(2);
+			expect(items[0].get("name")).toBe("cm_datasource_1");
+			expect(items[1].get("name")).toBe("cm_datasource_2");
+
+			_CMCache.setAvailableDataSources(null);
+			dss = _CMCache.getAvailableDataSourcesStore(),
+			items = dss.data.items;
+
+			expect(items.length).toBe(0);
+		});
+
+		it ('can get the input configuration of a datasource', function() {
+			_CMCache.setAvailableDataSources(someDataSources());
+			var input = _CMCache.getDataSourceInput("cm_datasource_1");
+
+			expect(input).toEqual([{
+				name: "in11",
+				type: "integer"
+			},{
+				name: "in12",
+				type: "string"
+			},{
+				name: "in13",
+				type: "date"
+			}]);
+		});
+
+		it ('can get the output configuration of a datasource', function() {
+			_CMCache.setAvailableDataSources(someDataSources());
+			var output = _CMCache.getDataSourceOutput("cm_datasource_1");
+
+			expect(output).toEqual([{
+				name: "out11",
+				type: "integer"
+			},{
+				name: "out12",
+				type: "string"
+			},{
+				name: "out13",
+				type: "date"
+			}]);
+		});
 	});
 
 	function fooDashboardConfig() {
@@ -126,5 +182,53 @@
 			description: "Amazing dashboard for amazing people",
 			charts: []
 		};
+	}
+
+	function someDataSources() {
+		return [{
+			name: "cm_datasource_1",
+			input: [{
+				name: "in11",
+				type: "integer"
+			},{
+				name: "in12",
+				type: "string"
+			},{
+				name: "in13",
+				type: "date"
+			}],
+			output: [{
+				name: "out11",
+				type: "integer"
+			},{
+				name: "out12",
+				type: "string"
+			},{
+				name: "out13",
+				type: "date"
+			}]
+		}, {
+			name: "cm_datasource_2",
+			input: [{
+				name: "in21",
+				type: "integer"
+			},{
+				name: "in22",
+				type: "string"
+			},{
+				name: "in23",
+				type: "date"
+			}],
+			output: [{
+				name: "out21",
+				type: "integer"
+			},{
+				name: "out22",
+				type: "string"
+			},{
+				name: "out23",
+				type: "date"
+			}]
+		}]
 	}
 })();

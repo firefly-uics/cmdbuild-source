@@ -192,6 +192,51 @@
          }
       },
       "modDashboard": {
+          "charts": {
+             "alert": {
+                "wrongConfiguration": "The chart is not well configured"
+             },
+             "availableCharts": {
+                "gauge": "Gauge"
+             },
+             "buttons": {
+                "add": "Add Chart",
+                "modify": "Modify chart",
+                "remove": "Remove chart",
+                "preview": "Preview"
+             },
+             "fields": {
+                "active": "Active",
+                "autoload": "Load automatically",
+                "background": "Background color",
+                "chartType": "Chart type",
+                "dataSource": "Data source",
+                "defaultValue": "Default value",
+                "description": "Description",
+                "fieldType": "Field type",
+                "foreground": "Foreground color",
+                "lookupType": "Lookup type",
+                "max": "Maximum",
+                "min": "Minimum",
+                "name": "Name",
+                "steps": "Steps",
+                "valueField": "Value field"
+             },
+             "inputTypes": {
+                "integer": "Integer",
+                "string": "String",
+                "date": "Date"
+             },
+             "title": "Charts",
+             "typeFieldOptions": {
+                "freeString" : "Free String",
+                "freeInt" : "Free Integer",
+                "lookup" : "Select from a lookup",
+                "classes" : "Select from all CMDBuild classes",
+                "user" : "Current user",
+                "group" : "Current group"
+             }
+          },
           "properties": {
              "add": "Add Dashboard",
              "modify": "Modify Dashboard",

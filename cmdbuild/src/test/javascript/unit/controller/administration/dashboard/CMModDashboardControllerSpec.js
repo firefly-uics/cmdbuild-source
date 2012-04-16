@@ -1,5 +1,5 @@
 (function() {
-	var view, realCache, controller, treeNode, getPropertiesPanel;
+	var view, realCache, controller, treeNode, subcontroller;
 
 	describe("CMDBuild.controller.administration.dashboard.CMModDashboardController", function() {
 
@@ -24,11 +24,18 @@
 				get: function() {return "foo"}
 			};
 
-			view = new CMDBuild.view.administration.dashboard.CMModDashboardInterface();
-			view.on = Ext.emptyFn;
+			view = jasmine.createSpyObj("ModDashboard", [
+				"setDelegate",
+				"setTitleSuffix",
+				"on"
+			]);
 
-			getPropertiesPanel = spyOn(view, "getPropertiesPanel").andReturn(new CMDBuild.view.administration.dashboard.CMDashboardPropertiesPanelInterface());
-			controller = new CMDBuild.controller.administration.dashboard.CMModDashboardController(view);
+			subcontroller = jasmine.createSpyObj("SubController", [
+				"dashboardWasSelected",
+				"prepareForAdd"
+			]);
+
+			controller = new CMDBuild.controller.administration.dashboard.CMModDashboardController(view, subcontroller, subcontroller);
 		});
 
 		afterEach(function() {
@@ -37,12 +44,8 @@
 			delete view;
 			delete controller;
 			delete treeNode;
-			delete getPropertiesPanel;
+			delete subcontroller;
 			delete _CMMainViewportController;
-		});
-
-		it("Istantiate the subcontrolelrs", function() {
-			expect(controller.propertiesPanelController).toBeDefined();
 		});
 
 		it("Take the dashboard from cache when is calld onViewOnFront", function() {
@@ -54,28 +57,24 @@
 		});
 
 		it("Say to the view to set his title when is calld onViewOnFront", function() {
-			var setTitleSuffix = spyOn(view, "setTitleSuffix");
-
 			controller.onViewOnFront(treeNode);
-			expect(setTitleSuffix).toHaveBeenCalled();
+			expect(view.setTitleSuffix).toHaveBeenCalled();
 		});
 
 		it("Nofity to the subcontrollers that a dashboard was selected", function() {
-			var dashboardWasSelected = spyOn(controller.propertiesPanelController, "dashboardWasSelected");
-
 			controller.onViewOnFront(treeNode);
-			expect(dashboardWasSelected).toHaveBeenCalled();
-			var args = dashboardWasSelected.argsForCall[0];
+			expect(subcontroller.dashboardWasSelected.callCount).toBe(2);
+
+			var args = subcontroller.dashboardWasSelected.argsForCall[0];
 			expect(args[0].get("name")).toEqual("Foo");
 		});
 
 		it("Prepare the view to add a dashboard", function() {
-			var prepareForAdd = spyOn(controller.propertiesPanelController, "prepareForAdd"),
-				deselectTree = spyOn(_CMMainViewportController, "deselectAccordionByName")
+			var deselectTree = spyOn(_CMMainViewportController, "deselectAccordionByName")
 
 			controller.onAddButtonClick();
 
-			expect(prepareForAdd).toHaveBeenCalled();
+			expect(subcontroller.prepareForAdd).toHaveBeenCalled();
 			expect(deselectTree).toHaveBeenCalledWith(view.cmName);
 		});
 	});

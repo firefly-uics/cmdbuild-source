@@ -188,7 +188,8 @@
 
 				CMDBuild.ServiceProxy.Dashboard.list({
 					success : function(response, options, decoded) {
-						_CMCache.addDashboards(decoded.dashboards);
+						_CMCache.addDashboards(decoded.response.dashboards);
+						_CMCache.setAvailableDataSources(decoded.response.dataSources);
 						dashboardsAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()

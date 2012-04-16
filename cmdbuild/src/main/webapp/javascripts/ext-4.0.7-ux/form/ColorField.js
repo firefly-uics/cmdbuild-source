@@ -125,7 +125,7 @@ Ext.extend(Ext.form.ColorField, Ext.form.TriggerField,  {
      */
     setValue : function(hex){
 		Ext.form.ColorField.superclass.setValue.call(this, hex);
-		this.setColor(hex);
+		this.setColor(hex || "FFFFFF");
     },
 	
 	/**

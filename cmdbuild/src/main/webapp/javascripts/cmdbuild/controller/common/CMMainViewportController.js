@@ -18,7 +18,13 @@
 
 		this.viewport.foreachPanel(function(panel) {
 			if (typeof panel.cmControllerType == "function") {
-				this.panelControllers[panel.cmName] = new panel.cmControllerType(panel);
+				// We start to use the cmcreate factory method to have the possibility
+				// to ignet the subcontrollers in tests
+				if (typeof panel.cmControllerType.cmcreate == "function") {
+					this.panelControllers[panel.cmName] = new panel.cmControllerType.cmcreate(panel);
+				} else {
+					this.panelControllers[panel.cmName] = new panel.cmControllerType(panel);
+				}
 			} else {
 				this.panelControllers[panel.cmName] = new ns.CMBasePanelController(panel);
 			}
