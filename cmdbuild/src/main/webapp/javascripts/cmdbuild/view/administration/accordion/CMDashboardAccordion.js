@@ -1,11 +1,57 @@
 (function() {
 
+	Ext.define("CMDBuild.view.administration.accordion.CMDashboardAccordionDelegate", {
+		onChartDropped: Ext.emptyFn
+	});
+
 	Ext.define("CMDBuild.view.administration.accordion.CMDashboardAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modDashboard.title,
 
 		cmName: "dashboard",
 
+		// override
+		_buildTreePanel: function() {
+			var me = this;
+
+			return Ext.create("Ext.tree.Panel", {
+				store: this.store,
+				border: false,
+				frame: false,
+				region: "center",
+				bodyStyle: { "border-top": "none" },
+				rootVisible: this.rootVisible,
+				viewConfig: {
+					plugins: {
+						ptype: 'treeviewdragdrop',
+						dragGroup: 'dasboardTreeDGroup',
+						dropGroup: 'chartGridDDGroup',
+						enableDrag: false
+					},
+					listeners: {
+						beforedrop: function(node, data, dropRec, dropPosition) {
+							if (me.delegate) {
+								var dashobardId = null,
+									chartId = null;
+
+								if (dropRec && typeof dropRec.getId == "function") {
+									dashobardId = dropRec.getId();
+								}
+
+								if (data && data.records && data.records.length > 0) {
+									chartId = data.records[0].getId();
+								}
+
+								me.delegate.onChartDropped(chartId, dashobardId);
+							}
+							return false;
+						}
+					}
+				}
+			});
+		},
+
+		// override
 		buildTreeStructure: function() {
 			var domains = _CMCache.getDashboards();
 			var out = [];
@@ -15,6 +61,11 @@
 			}
 
 			return out;
+		},
+
+		setDelegate: function(d) {
+			CMDBuild.validateInterface(d, "CMDBuild.view.administration.accordion.CMDashboardAccordionDelegate");
+			this.delegate = d;
 		}
 	});
 

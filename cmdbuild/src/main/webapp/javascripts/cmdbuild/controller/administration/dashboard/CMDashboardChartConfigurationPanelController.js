@@ -37,14 +37,12 @@
 		},
 
 		dashboardWasSelected: function(d) {
-			if (this.dashboard != d) {
-				this.dashboard = d;
-				this.view.enableTBarButtons(onlyAdd=true);
-				this.view.disableButtons();
+			this.dashboard = d;
+			this.view.enableTBarButtons(onlyAdd=true);
+			this.view.disableButtons();
 	
-				this.formController.initView(d);
-				this.gridController.loadCharts(d.getCharts());
-			}
+			this.formController.initView(d);
+			this.gridController.loadCharts(d.getCharts());
 		},
 
 		prepareForAdd: function() {

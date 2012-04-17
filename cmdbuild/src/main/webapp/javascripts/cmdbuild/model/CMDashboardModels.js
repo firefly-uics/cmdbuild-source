@@ -41,6 +41,19 @@ Ext.define("CMDBuild.model.CMDashboard", {
 		return this.get('charts') || [];
 	},
 
+	getChartWithId: function(id) {
+		var charts = this.getCharts();
+
+		for (var i=0, l=charts.length, chart; i<l; ++i) {
+			chart = charts[i];
+			if (chart.getId() == id) {
+				return chart;
+			}
+		}
+
+		return null;
+	},
+
 	setName: function(v) {
 		this.set("name", v)
 	},

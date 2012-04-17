@@ -151,6 +151,25 @@
 						cb(d.getCharts());
 					}
 				}
+			},
+
+			move: function(fromDashboardId, toDashboardId, chartId, cb) {
+				var fromDashboard = _CMCache.getDashboardById(fromDashboardId),
+					toDashboard = _CMCache.getDashboardById(toDashboardId),
+					chart = null;
+
+				if (fromDashboard) {
+					chart = fromDashboard.getChartWithId(chartId);
+					fromDashboard.removeChart(chartId);
+				}
+
+				if (toDashboard && chart) {
+					toDashboard.addChart(chart);
+				}
+
+				if (typeof cb == "function") {
+					cb();
+				}
 			}
 		}
 	};
