@@ -12,6 +12,7 @@
 			view = {
 				updateStore: function() {},
 				selectNodeById: function() {},
+				setDelegate: function() {},
 				on: function() {}
 			};
 

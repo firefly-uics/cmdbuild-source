@@ -38,7 +38,7 @@
 
 			if (this.dashboard) {
 				this.view.setTitleSuffix(this.dashboard.get("description"));
-				this.callMethodForAllSubcontrollers("dashboardWasSelected", [this.dashboard])
+				this.callMethodForAllSubcontrollers("dashboardWasSelected", [this.dashboard]);
 			}
 		},
 

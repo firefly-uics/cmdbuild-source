@@ -69,5 +69,22 @@
 			expect(charts.length).toBe(2);
 			expect(charts[0].getId()).toBe(3);
 		});
+
+		it('is able to retrieve a chart', function() {
+			dashboard.addChart(new CMDBuild.model.CMDashboardChart({
+				id: 1
+			}));
+
+			dashboard.addChart(new CMDBuild.model.CMDashboardChart({
+				id: 2
+			}));
+
+			dashboard.replaceChart(1, new CMDBuild.model.CMDashboardChart({
+				id: 3
+			}));
+
+			var chart = dashboard.getChartWithId(2);
+			expect(chart.getId()).toBe(2);
+		});
 	});
 })();

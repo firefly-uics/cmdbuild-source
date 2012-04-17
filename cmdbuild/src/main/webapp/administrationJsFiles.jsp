@@ -159,6 +159,9 @@
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDashboardAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationFormController.js"></script>
+		<!-- CHARTS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartGaugeStrategy.js"></script>
+
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationGridController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardPropertiesPanelController.js"></script>

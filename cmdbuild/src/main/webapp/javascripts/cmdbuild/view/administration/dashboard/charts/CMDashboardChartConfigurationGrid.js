@@ -57,6 +57,20 @@
 					},
 					flex: 1
 				}],
+				viewConfig: {
+					plugins: {
+						ptype: 'gridviewdragdrop',
+						dragGroup: 'chartGridDDGroup',
+						dropGroup: 'dasboardTreeDGroup',
+						enableDrop: false
+					},
+					listeners: {
+						drop: function(node, data, dropRec, dropPosition) {
+							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+							_debug("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
+						}
+					}
+				}
 			});
 
 			this.callParent(arguments);
