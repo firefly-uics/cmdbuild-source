@@ -40,8 +40,10 @@
 		<module>auth/core</module>
 		<module>auth/default</module>
 		<module>cmdbuild-commons</module>
-		<module>cmdbuild-dao</module>
-		<module>cmdbuild-dms</module>
+		<module>dao/core</module>
+		<module>dao/postgresql</module>
+		<module>dms/core</module>
+		<module>dms/alfresco</module>
 		<module>cmdbuild-graph</module>
 		<module>cmdbuild-shark</module>
 		<module>cmdbuild-ws-client</module>

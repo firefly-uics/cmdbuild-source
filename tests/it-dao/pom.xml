@@ -6,9 +6,8 @@
 		<version>2.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cmdbuild-dao-test</artifactId>
-	<packaging>jar</packaging>
-	<name>CMDBuild DAO Integration Testing</name>
+	<artifactId>it-dao</artifactId>
+	<name>CMDBuild DAO Integration Tests</name>
 	<description>
 		Integration tests between components from different DAO
 		projects, including testing for every database driver. 
@@ -33,28 +32,16 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>integration-ci</id>
-			<activation>
-				<property>
-					<name>ci</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>${maven-failsafe-plugin.version}</version>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
 
