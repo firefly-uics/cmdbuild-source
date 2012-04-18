@@ -41,6 +41,7 @@
 				toBeEnabled : function(expected) {
 					return !this.actual.disabled;
 				},
+
 				toBeHidden : function(expected) {
 					return this.actual.getEl().dom.style.display == "none";
 				}
@@ -54,15 +55,38 @@
 			_CMCache.getAvailableDataSourcesStore = realDataSourceStoreFunction;
 		});
 
-		it('starts with all the fields disabled', function() {
+		it('starts with all the fields disabled empty and the specific fields hidden', function() {
+			expectAllTheFieldsAreEmpty();
 			expectAllTheFieldsAreDisabled();
+			expectSpecificFieldsHidden();
 		});
 
-		it('is able to enable the fields', function() {
+		it('is able to enable the visible fields', function() {
 			view.enableFields();
 
+			// only the fields that are always shown
 			expect(view.nameField).toBeEnabled();
 			expectAllMutableFieldsAreEnabled();
+			expectAllTheOutputFieldsAreNotEnabled();
+
+			// show also some field that are hidden
+			view.disableFields();
+			view.showFieldsWithName(["maximum", "minimum", "steps"]);
+			view.enableFields();
+			expectAllMutableFieldsAreEnabled();
+			expect(view.maximumField).toBeEnabled();
+			expect(view.minimumField).toBeEnabled();
+			expect(view.stepsField).toBeEnabled();
+			expect(view.fgColorField).not.toBeEnabled();
+			expect(view.bgColorField).not.toBeEnabled();
+			expect(view.singleSerieField).not.toBeEnabled();
+			expect(view.labelField).not.toBeEnabled();
+
+			// show all the remaining fields
+			view.disableFields();
+			view.showFieldsWithName(["fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.enableFields();
+			expectAllTheOutputFieldsAreEnabled();
 		});
 
 		it('is able to enable only the mutable fields', function() {
@@ -79,8 +103,22 @@
 			expectAllTheFieldsAreDisabled();
 		});
 
-		it('starts with the fields empty', function() {
-			expectAllTheFieldsAreEmpty();
+		it('disables the fields when hides them', function() {
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.enableFields();
+			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			expectAllTheOutputFieldsAreNotEnabled();
+		});
+
+		it('enable the fields when shows them only if the form is enabled', function() {
+			view.enableFields();
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			expectAllTheOutputFieldsAreEnabled();
+
+			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.disableFields();
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			expectAllTheOutputFieldsAreNotEnabled();
 		});
 
 		it('is able to fill the fields', function() {
@@ -126,7 +164,9 @@
 				steps: 20,
 				fgcolor: "#FFFFFF",
 				bgcolor: "#FFFFFF",
-				singleSerieField : null
+				legend: true,
+				singleSerieField : null,
+				labelField: null
 			};
 
 			view.fillFieldsWith(data);
@@ -194,11 +234,24 @@
 			expect(view.stepsField).toBeHidden();
 		});
 
-		it ('is able to load the data for the field to map the single output chart', function() {
+		it ('is able to load the data for singleSerieField', function() {
 			var availableFields = [['foo'],['bar']];
+			var reset = spyOn(view.singleSerieField, "reset");
+
 			expect(view.singleSerieField.store.data.length).toBe(0);
 			view.setSingleSerieFieldAvailableData(availableFields);
 			expect(view.singleSerieField.store.data.length).toBe(2);
+			expect(reset).toHaveBeenCalled();
+		});
+
+		it ('is able to load the data for labelField', function() {
+			var availableFields = [['foo'],['bar']];
+			var reset = spyOn(view.labelField, "reset");
+
+			expect(view.labelField.store.data.length).toBe(0);
+			view.setLabelFieldAvailableData(availableFields);
+			expect(view.labelField.store.data.length).toBe(2);
+			expect(reset).toHaveBeenCalled();
 		});
 
 		// delegate
@@ -255,12 +308,14 @@
 	});
 
 	function expectSpecificFieldsHidden() {
+		expect(view.showLegend).toBeHidden();
 		expect(view.maximumField).toBeHidden();
 		expect(view.minimumField).toBeHidden();
 		expect(view.stepsField).toBeHidden();
 		expect(view.fgColorField).toBeHidden();
 		expect(view.bgColorField).toBeHidden();
 		expect(view.singleSerieField).toBeHidden();
+		expect(view.labelField).toBeHidden();
 	};
 
 	function expectAllMutableFieldsAreEnabled() {
@@ -269,11 +324,28 @@
 		expect(view.autoLoadCheck).toBeEnabled();
 		expect(view.dataSourcePanel.dataSourceCombo).toBeEnabled();
 		expect(view.typeField).toBeEnabled();
+	}
+
+	function expectAllTheOutputFieldsAreEnabled() {
+		expect(view.showLegend).toBeEnabled();
 		expect(view.maximumField).toBeEnabled();
 		expect(view.minimumField).toBeEnabled();
 		expect(view.stepsField).toBeEnabled();
 		expect(view.fgColorField).toBeEnabled();
 		expect(view.bgColorField).toBeEnabled();
+		expect(view.singleSerieField).toBeEnabled();
+		expect(view.labelField).toBeEnabled();
+	}
+
+	function expectAllTheOutputFieldsAreNotEnabled() {
+		expect(view.showLegend).not.toBeEnabled();
+		expect(view.maximumField).not.toBeEnabled();
+		expect(view.minimumField).not.toBeEnabled();
+		expect(view.stepsField).not.toBeEnabled();
+		expect(view.fgColorField).not.toBeEnabled();
+		expect(view.bgColorField).not.toBeEnabled();
+		expect(view.singleSerieField).not.toBeEnabled();
+		expect(view.labelField).not.toBeEnabled();
 	}
 
 	function expectAllTheFieldsAreDisabled() {
@@ -283,11 +355,7 @@
 		expect(view.autoLoadCheck).not.toBeEnabled();
 		expect(view.dataSourcePanel.dataSourceCombo).not.toBeEnabled();
 		expect(view.typeField).not.toBeEnabled();
-		expect(view.maximumField).not.toBeEnabled();
-		expect(view.minimumField).not.toBeEnabled();
-		expect(view.stepsField).not.toBeEnabled();
-		expect(view.fgColorField).not.toBeEnabled();
-		expect(view.bgColorField).not.toBeEnabled();
+		expectAllTheOutputFieldsAreNotEnabled();
 	}
 
 	function expectAllTheFieldsAreEmpty() {
@@ -302,5 +370,8 @@
 		expect(view.stepsField.getValue()).toEqual(null);
 		expect(view.fgColorField.getValue()).toEqual(undefined);
 		expect(view.bgColorField.getValue()).toEqual(undefined);
+		expect(view.showLegend.getValue()).toEqual(false);
+		expect(view.singleSerieField.getValue()).toEqual(null);
+		expect(view.labelField.getValue()).toEqual(null);
 	}
 })();

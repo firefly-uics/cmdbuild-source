@@ -181,32 +181,33 @@
 		}
 	};
 
-	// /******
+/******
 
 	//override describe to allow the run of a set of tests
 
-	// var realDescribe = jasmine.Env.prototype.describe;
-	// jasmine.Env.prototype.describe = function(description, specDefinitions) {
-// 
-		// // specs to run
-		// var focusSpecs = [
-			// 'CMDBUild.cache.CMCacheDashboardFunctions',
+	var realDescribe = jasmine.Env.prototype.describe;
+	jasmine.Env.prototype.describe = function(description, specDefinitions) {
+
+		// specs to run
+		var focusSpecs = [
+			//'CMDBUild.cache.CMCacheDashboardFunctions',
 			// 'CMDashboardModel',
 			// 'CMDashboardChartConfigurationFormController',
 			// 'GaugeTypeStrategy',
-			// // 'CMDashboardChartConfigurationPanel',
-			// // 'CMDashboardChartConfigurationPanelController',
-			// // 'CMDashboardChartConfigurationGridController',
-			// // 'CMDashboardChartConfigurationGridSpec',
-			// 'CMDashboardChartConfigurationForm'
-			// // 'GaugeTypeStrategy'
-			// // 'CMDashboardModel',
-		// ];
-// 
-		// if (Ext.Array.contains(focusSpecs, description)) {
-			// realDescribe.apply(this, arguments);
-		// }
-	// }
+			// 'CMDashboardChartConfigurationPanel',
+			// 'CMDashboardChartConfigurationPanelController',
+			// 'CMDashboardChartConfigurationGridController',
+			// 'CMDashboardChartConfigurationGridSpec',
+			'CMDashboardChartConfigurationForm'
+			// 'GaugeTypeStrategy'
+			// 'CMDashboardModel',
+		];
 
-	// *******/
+		if (Ext.Array.contains(focusSpecs, description)) {
+			realDescribe.apply(this, arguments);
+		}
+	};
+
+*******/
+
 })();

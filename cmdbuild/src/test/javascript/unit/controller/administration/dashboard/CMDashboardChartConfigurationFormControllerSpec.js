@@ -17,12 +17,14 @@
 				"getFieldsValue",
 				"showDataSourceInputFields",
 				"setSingleSerieFieldAvailableData",
+				"setLabelFieldAvailableData",
 				"getDataSourceConfiguration",
-				"fillDataSourcePanel"
+				"fillDataSourcePanel",
+				"isValid"
 			]);
 
-			controller = new CMDBuild.controller.administration.dashboard
-				.CMDashboardChartConfigurationFormController(view);
+			controller = CMDBuild.controller.administration.dashboard
+				.CMDashboardChartConfigurationFormController.cmcreate(view);
 
 			chartTypeStrategy = new CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy();
 		});
@@ -88,7 +90,19 @@
 			controller.getFormData();
 			expect(view.getFieldsValue).toHaveBeenCalled();
 			expect(extractInterestedValues).toHaveBeenCalled();
-		})
+		});
+
+		it('is able to validate the form', function() {
+			view.isValid.andReturn(true);
+			expect(controller.isValid()).toBeTruthy();
+			expect(view.isValid).toHaveBeenCalled();
+
+			view.isValid.reset();
+			view.isValid.andReturn(false);
+
+			expect(controller.isValid()).toBeFalsy();
+			expect(view.isValid).toHaveBeenCalled();
+		});
 
 		// typeStrategy setting
 
@@ -105,7 +119,7 @@
 			var showChartFields = spyOn(chartTypeStrategy, "showChartFields"),
 				setChartDataSourceName = spyOn(chartTypeStrategy, "setChartDataSourceName");
 
-			expect(controller.chartTypeStrategy).toBeNull();
+			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
 
 			controller.setChartTypeStrategy(chartTypeStrategy);
 			expect(controller.chartTypeStrategy).toBe(chartTypeStrategy);
@@ -120,23 +134,29 @@
 			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy");
 			view.hideOutputFields.reset();
 
+			controller.onTypeChanged("pie");
+			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy");
+			view.hideOutputFields.reset();
+
 			controller.onTypeChanged(undefined);
-			expect(controller.chartTypeStrategy).toBeNull();
+			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
 			expect(view.hideOutputFields).toHaveBeenCalled();
 		});
 
-		it('onDataSourceChanged', function() {
+		it('manage the data sourche change', function() {
 			var dsName = "cm_datasource_1",
 				input = [
 					{name: "input1", type: "date"},
 					{name: "input2", type: "integer"},
 					{name: "input3", type: "string"}
 				],
-				getDataSourceInput = spyOn(_CMCache, "getDataSourceInput").andReturn(input);
+				getDataSourceInput = spyOn(_CMCache, "getDataSourceInput").andReturn(input),
+				setChartDataSourceName = spyOn(controller.chartTypeStrategy, "setChartDataSourceName");
 
 			controller.onDataSourceChanged(dsName);
 
 			expect(getDataSourceInput).toHaveBeenCalledWith(dsName);
+			expect(setChartDataSourceName).toHaveBeenCalled();
 			expect(view.showDataSourceInputFields).toHaveBeenCalledWith(input);
 		});
 	});

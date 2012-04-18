@@ -197,7 +197,8 @@
                 "wrongConfiguration": "Il grafico non è configurato correttamente"
              },
              "availableCharts": {
-                "gauge": "Manometro"
+                "gauge": "Manometro",
+                "pie": "Torta"
              },
              "buttons": {
                 "add": "Aggiungi grafico",
@@ -215,12 +216,14 @@
                 "description": "Descrizione",
                 "fieldType": "Tipo di field",
                 "foreground": "Colore in primo piano",
+                "legend": "Mostra legenda",
                 "lookupType": "Tipo lookup",
                 "max": "Massimo",
                 "min": "Minimo",
                 "name": "Nome",
                 "steps": "Intervalli",
-                "valueField": "Campo valore"
+                "valueField": "Campo valore",
+                "labelField": "Campo etichette"
              },
              "inputTypes": {
                 "integer": "Intero",

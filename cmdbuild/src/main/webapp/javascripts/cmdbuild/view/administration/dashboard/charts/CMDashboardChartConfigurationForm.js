@@ -65,7 +65,7 @@
 				items: [{
 					padding: '0 0 5 0',
 					items: mainPropertiesItems(me),
-					cls: 'cmborderbottom',
+					cls: 'cmborderbottom'
 				}, 
 					this.dataSourcePanel
 				, {
@@ -81,8 +81,10 @@
 		// fields management
 
 		enableFields: function(onlyMutable) {
+			this._disabled = false;
 			iterateOverFields(this, function(field) {
-				if (onlyMutable && field.cmImmutable) {
+				if ((onlyMutable && field.cmImmutable) 
+						|| !field.isVisible()) {
 					return;
 				}
 
@@ -91,6 +93,7 @@
 		},
 
 		disableFields: function() {
+			this._disabled = true;
 			iterateOverFields(this, function(field) {
 				field.disable();
 			});
@@ -130,21 +133,38 @@
 
 		hideFieldsWithName: function(names) {
 			callFunctionForItemWithNames(this, names, "hide");
+			callFunctionForItemWithNames(this, names, "disable");
 		},
 
 		showFieldsWithName: function(names) {
 			callFunctionForItemWithNames(this, names, "show");
+			if (this._disabled) {
+				callFunctionForItemWithNames(this, names, "disable");
+			} else {
+				callFunctionForItemWithNames(this, names, "enable");
+			}
 		},
 
 		showDataSourceInputFields: function(inputConf) {
 			this.dataSourcePanel.setDataSourceInputFields(inputConf);
 		},
 
-		setSingleSerieFieldAvailableData: function(storeData) {
-			this.singleSerieField.setAvailableFields(storeData);
+		setSingleSerieFieldAvailableData: function(data) {
+			this.singleSerieField.reset();
+			this.singleSerieField.setAvailableFields(data);
+		},
+
+		setLabelFieldAvailableData: function(data) {
+			this.labelField.setAvailableFields(data);
+			this.labelField.reset();
+		},
+
+		isValid: function() {
+			return this.getForm().isValid();
 		},
 
 		// delegate
+
 		setDelegate: function(d) {
 			CMDBuild.validateInterface(d, "CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationFormDelegate");
 			this.delegate = d;
@@ -185,7 +205,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				disabled: true
 			})
-		]
+		];
 	}
 
 	function outputConfiguretionItems(me) {
@@ -204,12 +224,22 @@
 				store: new Ext.data.SimpleStore({
 					fields: ["value", "name"],
 					data : [
-						["gauge", tr.availableCharts.gauge]
+						["gauge", tr.availableCharts.gauge],
+						["pie", tr.availableCharts.pie]
 					]
 				}),
 				disabled: true
 			}),
-	
+
+			me.showLegend = new Ext.form.field.Checkbox({
+				fieldLabel: tr.fields.legend,
+				name: "legend",
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				disabled: true,
+				hidden: true
+			}),
+
 			me.maximumField = new Ext.form.field.Number({
 				name: "maximum",
 				fieldLabel: tr.fields.max,
@@ -219,7 +249,7 @@
 				disabled: true,
 				hidden: true
 			}),
-	
+
 			me.minimumField = new Ext.form.field.Number({
 				name: "minimum",
 				fieldLabel: tr.fields.min,
@@ -258,39 +288,22 @@
 				hidden: true
 			}),
 
-			me.singleSerieField = new Ext.form.field.ComboBox({
-				fieldLabel: tr.fields.valueField,
-				name: "singleSerieField",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: "value",
-				displayField: "value",
-				hiddenName: "dataSource",
-				queryMode: "local",
-				editable: false,
-				allowBlank: false,
-				store: new Ext.data.SimpleStore({
-					fields: ["value"],
-					data : []
-				}),
-				setAvailableFields: function(data) {
-					this.store.loadData(data);
-				},
-				disabled: true,
-				hidden: true
-			})
+			me.singleSerieField = getConfigurableCombo("singleSerieField",  tr.fields.valueField),
+			me.labelField = getConfigurableCombo("labelField", tr.fields.labelField)
 		];
 
 		me.hideOutputFields = function() {
 			me.hideFieldsWithName([
+				"legend",
 				"maximum",
 				"minimum",
 				"steps",
 				"fgcolor",
 				"bgcolor",
-				"singleSerieField"
+				"singleSerieField",
+				"labelField"
 			]);
-		}
+		};
 
 		return outPutItems;
 	}
@@ -337,6 +350,29 @@
 
 				item[fnName]();
 			}
+		});
+	}
+
+	function getConfigurableCombo(name, label) {
+		return new Ext.form.field.ComboBox({
+			fieldLabel: label,
+			name: name,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			valueField: "value",
+			displayField: "value",
+			queryMode: "local",
+			editable: false,
+			allowBlank: false,
+			store: new Ext.data.SimpleStore({
+				fields: ["value"],
+				data : []
+			}),
+			setAvailableFields: function(data) {
+				this.store.loadData(data);
+			},
+			disabled: true,
+			hidden: true
 		});
 	}
 })();

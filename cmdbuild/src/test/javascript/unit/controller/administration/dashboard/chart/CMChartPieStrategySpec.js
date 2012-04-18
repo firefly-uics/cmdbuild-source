@@ -1,7 +1,7 @@
 (function() {
 
-	describe('CMChartGaugeTypeStrategy', function() {
-		var gauge, view;
+	describe('CMChartPieTypeStrategy', function() {
+		var pie, view;
 
 		beforeEach(function() {
 			view = jasmine.createSpyObj("CMDashboardChartConfigurationFormSpy", [
@@ -12,19 +12,20 @@
 				"showFieldsWithName",
 				"cleanFields",
 				"setDelegate",
+				"setLabelFieldAvailableData",
 				"setSingleSerieFieldAvailableData"
 			]);
 
 			afterEach(function() {
 				delete view;
-				delete gauge;
+				delete pie;
 			});
 
-			gauge = new CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy(view);
+			pie = new CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy(view);
 		});
 
 		it ('fill the right fields of the form', function() {
-			var chart = aGauge();
+			var chart = aPie();
 			var dsName = "Foo";
 			var getDataSourceOutput = spyOn(_CMCache, "getDataSourceOutput").andReturn([
 				{name: "foo", type: "string"},
@@ -32,21 +33,17 @@
 				{name: "bart", type: "integer"}
 			]);
 
-			gauge.setChartDataSourceName(dsName);
-			gauge.fillFieldsForChart(chart);
+			pie.setChartDataSourceName(dsName);
+			pie.fillFieldsForChart(chart);
 
 			expect(view.fillFieldsWith).toHaveBeenCalled();
 			var data = view.fillFieldsWith.argsForCall[0][0];
-			expect(data.maximum).toEqual(chart.getMaximum());
-			expect(data.minimum).toEqual(chart.getMinimum());
-			expect(data.fgcolor).toEqual(chart.getFgColor());
-			expect(data.bgcolor).toEqual(chart.getBgColor());
-			expect(data.steps).toEqual(chart.getSteps());
 			expect(data.singleSerieField).toEqual(chart.getSingleSerieField());
+			expect(data.labelField).toEqual(chart.getLabelField());
 		});
 
 		it ('say to the view to show the right fields', function() {
-			var chart = aGauge();
+			var chart = aPie();
 			var dsName = "Foo";
 			var getDataSourceOutput = spyOn(_CMCache, "getDataSourceOutput").andReturn([
 				{name: "foo", type: "string"},
@@ -54,36 +51,26 @@
 				{name: "bart", type: "integer"}
 			]);
 
-			gauge.setChartDataSourceName(dsName);
-			gauge.showChartFields(chart);
+			pie.setChartDataSourceName(dsName);
+			pie.showChartFields(chart);
 
 			expect(view.showFieldsWithName).toHaveBeenCalledWith([
-				'maximum',
-				'minimum',
-				'steps',
-				'fgcolor',
-				'bgcolor',
-				'singleSerieField'
+				'singleSerieField',
+				'labelField',
+				'legend'
 			]);
 
 			expect(getDataSourceOutput).toHaveBeenCalledWith(dsName);
-			expect(view.setSingleSerieFieldAvailableData).toHaveBeenCalled();
-			expect(view.setSingleSerieFieldAvailableData).toHaveBeenCalledWith([
-				['bar'], ['bart']
-			]);
 		});
 
 		it ('is able to read the right field from the form', function() {
-			var chart = aGauge();
-			var values = gauge.extractInterestedValues(chart.data);
+			var chart = aPie();
+			var values = pie.extractInterestedValues(chart.data);
 
 			expect(values).toEqual({
-				minimum: 1,
-				maximum: 1000,
-				steps: 20,
-				bgcolor: '#ffffff',
-				fgcolor: '000000',
-				singleSerieField: "bar"
+				singleSerieField: "bar",
+				labelField: "foo",
+				legend: true
 			});
 		});
 
@@ -95,16 +82,18 @@
 				{name: "bart", type: "integer"}
 			]);
 
-			expect(gauge.dataSourceName).toBeNull();
+			expect(pie.dataSourceName).toBeNull();
 
-			gauge.setChartDataSourceName(dsName);
+			pie.setChartDataSourceName(dsName);
 
-			expect(gauge.dataSourceName).toEqual(dsName);
 			expect(view.setSingleSerieFieldAvailableData).toHaveBeenCalledWith([
-				['bar'], ['bart']
+				[ 'bar' ], [ 'bart' ]
 			]);
-		});
+			expect(view.setLabelFieldAvailableData).toHaveBeenCalledWith([
+				[ 'foo' ], [ 'bar' ], [ 'bart' ]
+			]);
 
+		});
 	});
 
 	function aChart(config) {
@@ -119,14 +108,11 @@
 		return new CMDBuild.model.CMDashboardChart(config);
 	}
 
-	function aGauge() {
+	function aPie() {
 		return aChart({
-			minimum: 1,
-			maximum: 1000,
-			steps: 20,
-			bgcolor: '#ffffff',
-			fgcolor: '000000',
-			singleSerieField: 'bar'
+			labelField: 'foo',
+			singleSerieField: 'bar',
+			legend: true
 		});
 	}
 })();

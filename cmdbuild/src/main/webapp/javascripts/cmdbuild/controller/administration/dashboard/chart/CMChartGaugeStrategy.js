@@ -32,11 +32,11 @@
 
 		showChartFields: function() {
 			this.form.showFieldsWithName(this.interestedFields);
-			this.form.setSingleSerieFieldAvailableData(getAvailableDsOutputFields(this.dataSourceName));
 		},
 
 		setChartDataSourceName: function(dsName) {
 			this.dataSourceName = dsName;
+			this.form.setSingleSerieFieldAvailableData(getAvailableDsOutputFields(this.dataSourceName));
 		},
 
 		// private

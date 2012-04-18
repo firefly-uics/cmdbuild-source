@@ -23,7 +23,8 @@
 				"prepareForAdd",
 				"prepareForChart",
 				"prepareForModify",
-				"getFormData"
+				"getFormData",
+				"isValid"
 			]);
 
 			gridSubController = jasmine.createSpyObj("gridSubController", [
@@ -111,11 +112,15 @@
 				autoLoad: false,
 				id: 2
 			};
+
+			formSubController.isValid.andReturn(true);
 			formSubController.getFormData.andReturn(formData);
 
 			controller.dashboardWasSelected(aDashboard());
 			controller.onSaveButtonClick();
 
+			expect(formSubController.isValid).toHaveBeenCalled();
+			expect(formSubController.getFormData).toHaveBeenCalled();
 			expect(view.disableButtons).toHaveBeenCalled();
 			expect(view.disableTBarButtons).toHaveBeenCalled();
 			expect(proxy.add).toHaveBeenCalled();
@@ -124,8 +129,22 @@
 			expect(params[1]).toBe(formData);
 		});
 
+		it('does not try to add a chart if the form is not valid', function() {
+
+			formSubController.isValid.andReturn(false);
+
+			controller.onSaveButtonClick();
+
+			expect(formSubController.isValid).toHaveBeenCalled();
+			expect(formSubController.getFormData).not.toHaveBeenCalled();
+			expect(view.disableButtons).not.toHaveBeenCalled();
+			expect(view.disableTBarButtons).not.toHaveBeenCalled();
+			expect(proxy.add).not.toHaveBeenCalled();
+		});
+
 		it ('is able to modify a chart', function() {
 			selectAChart();
+			
 			var formData = {
 				name: "Chart foo oo",
 				description: "Description of foo oo",
@@ -134,9 +153,12 @@
 				id: 2
 			};
 
+			formSubController.isValid.andReturn(true);
 			formSubController.getFormData.andReturn(formData);
 
 			controller.onSaveButtonClick();
+
+			expect(formSubController.isValid).toHaveBeenCalled();
 			expect(view.disableButtons).toHaveBeenCalled();
 			expect(view.disableTBarButtons).toHaveBeenCalled();
 			expect(proxy.modify).toHaveBeenCalled();
@@ -145,15 +167,6 @@
 			expect(params[1]).toBe(2); // chartId
 			expect(params[2]).toBe(formData);
 		});
-
-		// TODO: clicco su save
-		// chiedo i dati al controller del form
-		// disabilito il form
-		// disabilito i bottoni (tutti)
-		// faccio la richiesta
-		// se ok dico al controller della griglia di:
-			// se era modifica di aggiornare la riga e riselezionarla
-			// se era add di aggiungerla e selezionarla
 
 		it('prepare to abort the editing', function() {
 			controller.onAddButtonClick();
