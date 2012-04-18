@@ -45,10 +45,10 @@
 		<module>dms/core</module>
 		<module>dms/alfresco</module>
 		<module>cmdbuild-graph</module>
-		<module>cmdbuild-shark</module>
 		<module>cmdbuild-ws-client</module>
 		<module>shark/commons</module>
 		<module>shark/client</module>
+		<module>shark/server</module>
 	</modules>
 
 	<dependencyManagement>

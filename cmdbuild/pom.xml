@@ -51,18 +51,19 @@
 			<artifactId>cmdbuild-shark-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency> <!-- Remove this when everything is moved to cmdbuild-shark-client -->
+
+		<!-- Remove this when everything is moved to cmdbuild-shark-client -->
+		<dependency>
 			<groupId>net.sourceforge.sharkwf</groupId>
 			<artifactId>shark-ejbandws-client</artifactId>
 			<version>${shark.version}</version>
-			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-types</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- -->
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

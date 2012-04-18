@@ -14,91 +14,91 @@ CREATE TABLE objectid (
 
 
 CREATE TABLE qrtz_blob_triggers (
-    trigger_name character varying(80) NOT NULL,
-    trigger_group character varying(80) NOT NULL,
+    sched_name character varying(120) NOT NULL,
+    trigger_name character varying(200) NOT NULL,
+    trigger_group character varying(200) NOT NULL,
     blob_data bytea
 );
 
 
 
 CREATE TABLE qrtz_calendars (
-    calendar_name character varying(80) NOT NULL,
+    sched_name character varying(120) NOT NULL,
+    calendar_name character varying(200) NOT NULL,
     calendar bytea NOT NULL
 );
 
 
 
 CREATE TABLE qrtz_cron_triggers (
-    trigger_name character varying(80) NOT NULL,
-    trigger_group character varying(80) NOT NULL,
-    cron_expression character varying(80) NOT NULL,
+    sched_name character varying(120) NOT NULL,
+    trigger_name character varying(200) NOT NULL,
+    trigger_group character varying(200) NOT NULL,
+    cron_expression character varying(120) NOT NULL,
     time_zone_id character varying(80)
 );
 
 
 
 CREATE TABLE qrtz_fired_triggers (
+    sched_name character varying(120) NOT NULL,
     entry_id character varying(95) NOT NULL,
-    trigger_name character varying(80) NOT NULL,
-    trigger_group character varying(80) NOT NULL,
-    is_volatile boolean NOT NULL,
-    instance_name character varying(80) NOT NULL,
+    trigger_name character varying(200) NOT NULL,
+    trigger_group character varying(200) NOT NULL,
+    instance_name character varying(200) NOT NULL,
     fired_time bigint NOT NULL,
+    priority integer NOT NULL,
     state character varying(16) NOT NULL,
-    job_name character varying(80),
-    job_group character varying(80),
-    is_stateful boolean,
+    job_name character varying(200),
+    job_group character varying(200),
+    is_nonconcurrent boolean,
     requests_recovery boolean
 );
 
 
 
 CREATE TABLE qrtz_job_details (
-    job_name character varying(80) NOT NULL,
-    job_group character varying(80) NOT NULL,
-    description character varying(120),
-    job_class_name character varying(128) NOT NULL,
+    sched_name character varying(120) NOT NULL,
+    job_name character varying(200) NOT NULL,
+    job_group character varying(200) NOT NULL,
+    description character varying(250),
+    job_class_name character varying(250) NOT NULL,
     is_durable boolean NOT NULL,
-    is_volatile boolean NOT NULL,
-    is_stateful boolean NOT NULL,
+    is_nonconcurrent boolean NOT NULL,
+    is_update_data boolean NOT NULL,
     requests_recovery boolean NOT NULL,
     job_data bytea
 );
 
 
 
-CREATE TABLE qrtz_job_listeners (
-    job_name character varying(80) NOT NULL,
-    job_group character varying(80) NOT NULL,
-    job_listener character varying(80) NOT NULL
-);
-
-
-
 CREATE TABLE qrtz_locks (
+    sched_name character varying(120) NOT NULL,
     lock_name character varying(40) NOT NULL
 );
 
 
 
 CREATE TABLE qrtz_paused_trigger_grps (
-    trigger_group character varying(80) NOT NULL
+    sched_name character varying(120) NOT NULL,
+    trigger_group character varying(200) NOT NULL
 );
 
 
 
 CREATE TABLE qrtz_scheduler_state (
-    instance_name character varying(80) NOT NULL,
+    sched_name character varying(120) NOT NULL,
+    instance_name character varying(200) NOT NULL,
     last_checkin_time bigint NOT NULL,
-    checkin_interval bigint NOT NULL,
-    recoverer character varying(80)
+    checkin_interval bigint NOT NULL
 );
 
 
 
 CREATE TABLE qrtz_simple_triggers (
-    trigger_name character varying(80) NOT NULL,
-    trigger_group character varying(80) NOT NULL,
+    sched_name character varying(120) NOT NULL,
+    trigger_name character varying(200) NOT NULL,
+    trigger_group character varying(200) NOT NULL,
     repeat_count bigint NOT NULL,
     repeat_interval bigint NOT NULL,
     times_triggered bigint NOT NULL
@@ -106,28 +106,40 @@ CREATE TABLE qrtz_simple_triggers (
 
 
 
-CREATE TABLE qrtz_trigger_listeners (
-    trigger_name character varying(80) NOT NULL,
-    trigger_group character varying(80) NOT NULL,
-    trigger_listener character varying(80) NOT NULL
+CREATE TABLE qrtz_simprop_triggers (
+    sched_name character varying(120) NOT NULL,
+    trigger_name character varying(200) NOT NULL,
+    trigger_group character varying(200) NOT NULL,
+    str_prop_1 character varying(512),
+    str_prop_2 character varying(512),
+    str_prop_3 character varying(512),
+    int_prop_1 integer,
+    int_prop_2 integer,
+    long_prop_1 bigint,
+    long_prop_2 bigint,
+    dec_prop_1 numeric(13,4),
+    dec_prop_2 numeric(13,4),
+    bool_prop_1 boolean,
+    bool_prop_2 boolean
 );
 
 
 
 CREATE TABLE qrtz_triggers (
-    trigger_name character varying(80) NOT NULL,
-    trigger_group character varying(80) NOT NULL,
-    job_name character varying(80) NOT NULL,
-    job_group character varying(80) NOT NULL,
-    is_volatile boolean NOT NULL,
-    description character varying(120),
+    sched_name character varying(120) NOT NULL,
+    trigger_name character varying(200) NOT NULL,
+    trigger_group character varying(200) NOT NULL,
+    job_name character varying(200) NOT NULL,
+    job_group character varying(200) NOT NULL,
+    description character varying(250),
     next_fire_time bigint,
     prev_fire_time bigint,
+    priority integer,
     trigger_state character varying(16) NOT NULL,
     trigger_type character varying(8) NOT NULL,
     start_time bigint NOT NULL,
     end_time bigint,
-    calendar_name character varying(80),
+    calendar_name character varying(200),
     misfire_instr smallint,
     job_data bytea
 );
@@ -135,6 +147,8 @@ CREATE TABLE qrtz_triggers (
 
 
 CREATE TABLE shkactivities (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     id character varying(100) NOT NULL,
     activitysetdefinitionid character varying(90),
     activitydefinitionid character varying(90) NOT NULL,
@@ -157,14 +171,14 @@ CREATE TABLE shkactivities (
     laststatetimetzo bigint NOT NULL,
     limittime bigint NOT NULL,
     limittimetzo bigint NOT NULL,
-    description character varying(254),
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    description text
 );
 
 
 
 CREATE TABLE shkactivitydata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     activity numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -177,24 +191,24 @@ CREATE TABLE shkactivitydata (
     variablevaluebool boolean,
     isresult boolean NOT NULL,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkactivitydatablobs (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     activitydatawob numeric(19,0) NOT NULL,
     variablevalue bytea,
-    ordno integer NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    ordno integer NOT NULL
 );
 
 
 
 CREATE TABLE shkactivitydatawob (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     activity numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -206,14 +220,14 @@ CREATE TABLE shkactivitydatawob (
     variablevaluebool boolean,
     isresult boolean NOT NULL,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkactivityhistorydetails (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     activityid character varying(100) NOT NULL,
     activityhistoryinfo numeric(19,0) NOT NULL,
     thetype integer NOT NULL,
@@ -222,6 +236,14 @@ CREATE TABLE shkactivityhistorydetails (
     theusername character varying(100) NOT NULL,
     reassignfrom character varying(100),
     reassignto character varying(100),
+    priority integer,
+    limittime bigint,
+    description text,
+    category character varying(254),
+    name character varying(254),
+    deadlinetimelimit bigint,
+    deadlineexceptionname character varying(100),
+    deadlineissynchronous boolean,
     variabledefinitionid character varying(100),
     variabletype integer,
     variablevalue bytea,
@@ -232,26 +254,37 @@ CREATE TABLE shkactivityhistorydetails (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkactivityhistoryinfo (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
+    internalversion integer NOT NULL,
     processid character varying(100) NOT NULL,
     processname character varying(254),
     processfactoryname character varying(200) NOT NULL,
     processfactoryversion character varying(20) NOT NULL,
     processdefinitionid character varying(90) NOT NULL,
     processdefinitionname character varying(90),
+    processpriority integer,
+    processlimittime bigint,
+    processdescription text,
     packageid character varying(90) NOT NULL,
     activityid character varying(100) NOT NULL,
     activityname character varying(254),
+    activitypriority integer,
+    activitylimittime bigint,
+    activitydescription text,
+    activitycategory character varying(254),
     activitydefinitionid character varying(90) NOT NULL,
     activitydefinitionname character varying(90),
     activitydefinitiontype integer,
+    deadlinetimelimit bigint,
+    deadlineexceptionname character varying(100),
+    deadlineissynchronous boolean,
     createdtime bigint NOT NULL,
     createdtimetzo bigint,
     startedtime bigint,
@@ -266,6 +299,8 @@ CREATE TABLE shkactivityhistoryinfo (
     rejectedtimetzo bigint,
     closedtime bigint,
     closedtimetzo bigint,
+    deletiontime bigint,
+    deletiontimetzo bigint,
     createdbyusername character varying(100),
     startedbyusername character varying(100),
     suspendedbyusername character varying(100),
@@ -273,48 +308,53 @@ CREATE TABLE shkactivityhistoryinfo (
     acceptedbyusername character varying(100),
     rejectedbyusername character varying(100),
     closedbyusername character varying(100),
+    deletedbyusername character varying(100),
     currentusername character varying(100),
     laststate character varying(100),
     laststatetime bigint,
     laststatetimetzo bigint,
+    lastrecordedtime bigint,
+    lastrecordedtimetzo bigint,
+    lastrecordedbyusername character varying(100),
     activityduration bigint,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    isdeleted boolean
 );
 
 
 
 CREATE TABLE shkactivitystateeventaudits (
-    keyvalue character varying(30) NOT NULL,
-    name character varying(50) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    keyvalue character varying(30) NOT NULL,
+    name character varying(50) NOT NULL
 );
 
 
 
 CREATE TABLE shkactivitystates (
-    keyvalue character varying(30) NOT NULL,
-    name character varying(50) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    keyvalue character varying(30) NOT NULL,
+    name character varying(50) NOT NULL
 );
 
 
 
 CREATE TABLE shkandjointable (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     process numeric(19,0) NOT NULL,
     blockactivity numeric(19,0),
     activitydefinitionid character varying(90) NOT NULL,
     activity numeric(19,0) NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkassignmenteventaudits (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     recordedtime bigint NOT NULL,
     recordedtimetzo bigint NOT NULL,
     theusername character varying(100) NOT NULL,
@@ -336,14 +376,14 @@ CREATE TABLE shkassignmenteventaudits (
     newresourceusername character varying(100) NOT NULL,
     newresourcename character varying(100),
     isaccepted boolean NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkassignmentstable (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     activity numeric(19,0) NOT NULL,
     theresource numeric(19,0) NOT NULL,
     activityid character varying(100) NOT NULL,
@@ -352,23 +392,23 @@ CREATE TABLE shkassignmentstable (
     resourceid character varying(100) NOT NULL,
     isaccepted boolean NOT NULL,
     isvalid boolean NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkcounters (
-    name character varying(100) NOT NULL,
-    the_number numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    name character varying(100) NOT NULL,
+    the_number numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkcreateprocesseventaudits (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     recordedtime bigint NOT NULL,
     recordedtimetzo bigint NOT NULL,
     theusername character varying(100) NOT NULL,
@@ -390,14 +430,14 @@ CREATE TABLE shkcreateprocesseventaudits (
     pprocessdefinitionid character varying(90),
     pprocessdefinitionname character varying(90),
     ppackageid character varying(90),
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkdataeventaudits (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     recordedtime bigint NOT NULL,
     recordedtimetzo bigint NOT NULL,
     theusername character varying(100) NOT NULL,
@@ -414,14 +454,14 @@ CREATE TABLE shkdataeventaudits (
     processdefinitionid character varying(90) NOT NULL,
     processdefinitionname character varying(90),
     packageid character varying(90) NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkdeadlines (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     process numeric(19,0) NOT NULL,
     activity numeric(19,0) NOT NULL,
     cnt numeric(19,0) NOT NULL,
@@ -429,67 +469,84 @@ CREATE TABLE shkdeadlines (
     timelimittzo bigint NOT NULL,
     exceptionname character varying(100) NOT NULL,
     issynchronous boolean NOT NULL,
-    isexecuted boolean NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    isexecuted boolean NOT NULL
 );
 
 
 
 CREATE TABLE shkeventtypes (
-    keyvalue character varying(30) NOT NULL,
-    name character varying(50) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    keyvalue character varying(30) NOT NULL,
+    name character varying(50) NOT NULL
+);
+
+
+
+CREATE TABLE shkglobaldata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
+    dataid character varying(100) NOT NULL,
+    datatype integer NOT NULL,
+    datavalue bytea,
+    datavaluexml text,
+    datavaluevchar character varying(4000),
+    datavaluedbl double precision,
+    datavaluelong bigint,
+    datavaluedate timestamp without time zone,
+    datavaluebool boolean,
+    ordno integer NOT NULL
 );
 
 
 
 CREATE TABLE shkgroupgrouptable (
-    sub_gid numeric(19,0) NOT NULL,
-    groupid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    sub_gid numeric(19,0) NOT NULL,
+    groupid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkgrouptable (
-    groupid character varying(100) NOT NULL,
-    description character varying(254),
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    groupid character varying(100) NOT NULL,
+    description character varying(254)
 );
 
 
 
 CREATE TABLE shkgroupuser (
-    username character varying(100) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    username character varying(100) NOT NULL
 );
 
 
 
 CREATE TABLE shkgroupuserpacklevelpart (
-    participantoid numeric(19,0) NOT NULL,
-    useroid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    participantoid numeric(19,0) NOT NULL,
+    useroid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkgroupuserproclevelpart (
-    participantoid numeric(19,0) NOT NULL,
-    useroid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    participantoid numeric(19,0) NOT NULL,
+    useroid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkneweventauditdata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     dataeventaudit numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -501,24 +558,24 @@ CREATE TABLE shkneweventauditdata (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkneweventauditdatablobs (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     neweventauditdatawob numeric(19,0) NOT NULL,
     variablevalue bytea,
-    ordno integer NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    ordno integer NOT NULL
 );
 
 
 
 CREATE TABLE shkneweventauditdatawob (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     dataeventaudit numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -529,31 +586,31 @@ CREATE TABLE shkneweventauditdatawob (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shknextxpdlversions (
-    xpdlid character varying(90) NOT NULL,
-    nextversion character varying(20) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdlid character varying(90) NOT NULL,
+    nextversion character varying(20) NOT NULL
 );
 
 
 
 CREATE TABLE shknormaluser (
-    username character varying(100) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    username character varying(100) NOT NULL
 );
 
 
 
 CREATE TABLE shkoldeventauditdata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     dataeventaudit numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -565,24 +622,24 @@ CREATE TABLE shkoldeventauditdata (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkoldeventauditdatablobs (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     oldeventauditdatawob numeric(19,0) NOT NULL,
     variablevalue bytea,
-    ordno integer NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    ordno integer NOT NULL
 );
 
 
 
 CREATE TABLE shkoldeventauditdatawob (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     dataeventaudit numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -593,68 +650,68 @@ CREATE TABLE shkoldeventauditdatawob (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkpacklevelparticipant (
-    participant_id character varying(90) NOT NULL,
-    packageoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    participant_id character varying(90) NOT NULL,
+    packageoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkpacklevelxpdlapp (
-    application_id character varying(90) NOT NULL,
-    packageoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    application_id character varying(90) NOT NULL,
+    packageoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkpacklevelxpdlapptaappdetail (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkpacklevelxpdlapptaappdetusr (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkpacklevelxpdlapptaappuser (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkpacklevelxpdlapptoolagntapp (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkprocessdata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     process numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -666,24 +723,24 @@ CREATE TABLE shkprocessdata (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkprocessdatablobs (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     processdatawob numeric(19,0) NOT NULL,
     variablevalue bytea,
-    ordno integer NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    ordno integer NOT NULL
 );
 
 
 
 CREATE TABLE shkprocessdatawob (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     process numeric(19,0) NOT NULL,
     variabledefinitionid character varying(100) NOT NULL,
     variabletype integer NOT NULL,
@@ -694,28 +751,28 @@ CREATE TABLE shkprocessdatawob (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkprocessdefinitions (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     name character varying(200) NOT NULL,
     packageid character varying(90) NOT NULL,
     processdefinitionid character varying(90) NOT NULL,
     processdefinitionname character varying(90),
     processdefinitioncreated bigint NOT NULL,
     processdefinitionversion character varying(20) NOT NULL,
-    state integer NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    state integer NOT NULL
 );
 
 
 
 CREATE TABLE shkprocesses (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     syncversion bigint NOT NULL,
     id character varying(100) NOT NULL,
     processdefinition numeric(19,0) NOT NULL,
@@ -735,20 +792,25 @@ CREATE TABLE shkprocesses (
     laststatetimetzo bigint NOT NULL,
     limittime bigint NOT NULL,
     limittimetzo bigint NOT NULL,
-    description character varying(254),
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    description text
 );
 
 
 
 CREATE TABLE shkprocesshistorydetails (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     processid character varying(100) NOT NULL,
     processhistoryinfo numeric(19,0) NOT NULL,
     thetype integer NOT NULL,
     recordedtime bigint NOT NULL,
     recordedtimetzo bigint NOT NULL,
     theusername character varying(100) NOT NULL,
+    priority integer,
+    limittime bigint,
+    description text,
+    category character varying(254),
+    name character varying(254),
     variabledefinitionid character varying(100),
     variabletype integer,
     variablevalue bytea,
@@ -759,20 +821,25 @@ CREATE TABLE shkprocesshistorydetails (
     variablevaluedate timestamp without time zone,
     variablevaluebool boolean,
     ordno integer NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkprocesshistoryinfo (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
+    internalversion integer NOT NULL,
     processid character varying(100) NOT NULL,
     processname character varying(254),
     processfactoryname character varying(200) NOT NULL,
     processfactoryversion character varying(20) NOT NULL,
     processdefinitionid character varying(90) NOT NULL,
     processdefinitionname character varying(90),
+    processpriority integer,
+    processlimittime bigint,
+    processdescription text,
+    processcategory character varying(254),
     packageid character varying(90) NOT NULL,
     pactivityid character varying(100),
     pprocessid character varying(100),
@@ -794,113 +861,120 @@ CREATE TABLE shkprocesshistoryinfo (
     resumedtimetzo bigint,
     closedtime bigint,
     closedtimetzo bigint,
+    deletiontime bigint,
+    deletiontimetzo bigint,
     createdbyusername character varying(100),
     startedbyusername character varying(100),
     suspendedbyusername character varying(100),
     resumedbyusername character varying(100),
     closedbyusername character varying(100),
+    deletedbyusername character varying(100),
     laststate character varying(100),
     laststatetime bigint,
     laststatetimetzo bigint,
+    lastrecordedtime bigint,
+    lastrecordedtimetzo bigint,
+    lastrecordedbyusername character varying(100),
     processduration bigint,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    isdeleted boolean
 );
 
 
 
 CREATE TABLE shkprocessrequesters (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     id character varying(100) NOT NULL,
     activityrequester numeric(19,0),
-    resourcerequester numeric(19,0),
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    resourcerequester numeric(19,0)
 );
 
 
 
 CREATE TABLE shkprocessstateeventaudits (
-    keyvalue character varying(30) NOT NULL,
-    name character varying(50) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    keyvalue character varying(30) NOT NULL,
+    name character varying(50) NOT NULL
 );
 
 
 
 CREATE TABLE shkprocessstates (
-    keyvalue character varying(30) NOT NULL,
-    name character varying(50) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    keyvalue character varying(30) NOT NULL,
+    name character varying(50) NOT NULL
 );
 
 
 
 CREATE TABLE shkproclevelparticipant (
-    participant_id character varying(90) NOT NULL,
-    processoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    participant_id character varying(90) NOT NULL,
+    processoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkproclevelxpdlapp (
-    application_id character varying(90) NOT NULL,
-    processoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    application_id character varying(90) NOT NULL,
+    processoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkproclevelxpdlapptaappdetail (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkproclevelxpdlapptaappdetusr (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkproclevelxpdlapptaappuser (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkproclevelxpdlapptoolagntapp (
-    xpdl_appoid numeric(19,0) NOT NULL,
-    toolagentoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    xpdl_appoid numeric(19,0) NOT NULL,
+    toolagentoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkresourcestable (
-    username character varying(100) NOT NULL,
-    name character varying(100),
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    username character varying(100) NOT NULL,
+    name character varying(100)
 );
 
 
 
 CREATE TABLE shkstateeventaudits (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     recordedtime bigint NOT NULL,
     recordedtimetzo bigint NOT NULL,
     theusername character varying(100) NOT NULL,
@@ -921,186 +995,185 @@ CREATE TABLE shkstateeventaudits (
     newprocessstate numeric(19,0),
     oldactivitystate numeric(19,0),
     newactivitystate numeric(19,0),
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shktoolagentapp (
-    tool_agent_name character varying(250) NOT NULL,
-    app_name character varying(90) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    tool_agent_name character varying(250) NOT NULL,
+    app_name character varying(90) NOT NULL
 );
 
 
 
 CREATE TABLE shktoolagentappdetail (
-    app_mode numeric(10,0) NOT NULL,
-    toolagent_appoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    app_mode numeric(10,0) NOT NULL,
+    toolagent_appoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shktoolagentappdetailuser (
-    toolagent_appoid numeric(19,0) NOT NULL,
-    useroid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    toolagent_appoid numeric(19,0) NOT NULL,
+    useroid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shktoolagentappuser (
-    toolagent_appoid numeric(19,0) NOT NULL,
-    useroid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    toolagent_appoid numeric(19,0) NOT NULL,
+    useroid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shktoolagentuser (
-    username character varying(100) NOT NULL,
-    pwd character varying(100),
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    username character varying(100) NOT NULL,
+    pwd character varying(100)
 );
 
 
 
 CREATE TABLE shkusergrouptable (
-    userid numeric(19,0) NOT NULL,
-    groupid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    userid numeric(19,0) NOT NULL,
+    groupid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkuserpacklevelpart (
-    participantoid numeric(19,0) NOT NULL,
-    useroid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    participantoid numeric(19,0) NOT NULL,
+    useroid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkuserproclevelparticipant (
-    participantoid numeric(19,0) NOT NULL,
-    useroid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    participantoid numeric(19,0) NOT NULL,
+    useroid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkusertable (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     userid character varying(100) NOT NULL,
     firstname character varying(50),
     lastname character varying(50),
     passwd character varying(50) NOT NULL,
-    email character varying(254),
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    email character varying(254)
 );
 
 
 
 CREATE TABLE shkxpdlapplicationpackage (
-    package_id character varying(90) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    package_id character varying(90) NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdlapplicationprocess (
-    process_id character varying(90) NOT NULL,
-    packageoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    process_id character varying(90) NOT NULL,
+    packageoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdldata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     xpdlcontent bytea NOT NULL,
     xpdlclasscontent bytea NOT NULL,
     xpdl numeric(19,0) NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdlhistory (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     xpdlid character varying(90) NOT NULL,
     xpdlversion character varying(20) NOT NULL,
     xpdlclassversion bigint NOT NULL,
     xpdluploadtime timestamp without time zone NOT NULL,
-    xpdlhistoryuploadtime timestamp without time zone NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    xpdlhistoryuploadtime timestamp without time zone NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdlhistorydata (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     xpdlcontent bytea NOT NULL,
     xpdlclasscontent bytea NOT NULL,
     xpdlhistory numeric(19,0) NOT NULL,
-    cnt numeric(19,0) NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    cnt numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdlparticipantpackage (
-    package_id character varying(90) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    package_id character varying(90) NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdlparticipantprocess (
-    process_id character varying(90) NOT NULL,
-    packageoid numeric(19,0) NOT NULL,
     objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    objectversion integer NOT NULL,
+    process_id character varying(90) NOT NULL,
+    packageoid numeric(19,0) NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdlreferences (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     referredxpdlid character varying(90) NOT NULL,
     referringxpdl numeric(19,0) NOT NULL,
-    referredxpdlnumber integer NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    referredxpdlnumber integer NOT NULL
 );
 
 
 
 CREATE TABLE shkxpdls (
+    objectid numeric(19,0) NOT NULL,
+    objectversion integer NOT NULL,
     xpdlid character varying(90) NOT NULL,
     xpdlversion character varying(20) NOT NULL,
     xpdlclassversion bigint NOT NULL,
-    xpdluploadtime timestamp without time zone NOT NULL,
-    objectid numeric(19,0) NOT NULL,
-    objectversion integer NOT NULL
+    xpdluploadtime timestamp without time zone NOT NULL
 );
 
 
 
+INSERT INTO objectid VALUES (1000100);
 
 
 
@@ -1122,11 +1195,6 @@ CREATE TABLE shkxpdls (
 
 
 
-INSERT INTO qrtz_locks (lock_name) VALUES ('TRIGGER_ACCESS');
-INSERT INTO qrtz_locks (lock_name) VALUES ('JOB_ACCESS');
-INSERT INTO qrtz_locks (lock_name) VALUES ('CALENDAR_ACCESS');
-INSERT INTO qrtz_locks (lock_name) VALUES ('STATE_ACCESS');
-INSERT INTO qrtz_locks (lock_name) VALUES ('MISFIRE_ACCESS');
 
 
 
@@ -1160,9 +1228,21 @@ INSERT INTO qrtz_locks (lock_name) VALUES ('MISFIRE_ACCESS');
 
 
 
+INSERT INTO shkactivitystateeventaudits VALUES (1000013, 0, 'open.running', 'open.running');
+INSERT INTO shkactivitystateeventaudits VALUES (1000015, 0, 'open.not_running.not_started', 'open.not_running.not_started');
+INSERT INTO shkactivitystateeventaudits VALUES (1000017, 0, 'open.not_running.suspended', 'open.not_running.suspended');
+INSERT INTO shkactivitystateeventaudits VALUES (1000019, 0, 'closed.completed', 'closed.completed');
+INSERT INTO shkactivitystateeventaudits VALUES (1000021, 0, 'closed.terminated', 'closed.terminated');
+INSERT INTO shkactivitystateeventaudits VALUES (1000023, 0, 'closed.aborted', 'closed.aborted');
 
 
 
+INSERT INTO shkactivitystates VALUES (1000001, 0, 'open.running', 'open.running');
+INSERT INTO shkactivitystates VALUES (1000003, 0, 'open.not_running.not_started', 'open.not_running.not_started');
+INSERT INTO shkactivitystates VALUES (1000005, 0, 'open.not_running.suspended', 'open.not_running.suspended');
+INSERT INTO shkactivitystates VALUES (1000007, 0, 'closed.completed', 'closed.completed');
+INSERT INTO shkactivitystates VALUES (1000009, 0, 'closed.terminated', 'closed.terminated');
+INSERT INTO shkactivitystates VALUES (1000011, 0, 'closed.aborted', 'closed.aborted');
 
 
 
@@ -1187,6 +1267,16 @@ INSERT INTO qrtz_locks (lock_name) VALUES ('MISFIRE_ACCESS');
 
 
 
+INSERT INTO shkeventtypes VALUES (1000024, 0, 'packageLoaded', 'packageLoaded');
+INSERT INTO shkeventtypes VALUES (1000025, 0, 'packageUnloaded', 'packageUnloaded');
+INSERT INTO shkeventtypes VALUES (1000026, 0, 'packageUpdated', 'packageUpdated');
+INSERT INTO shkeventtypes VALUES (1000027, 0, 'processCreated', 'processCreated');
+INSERT INTO shkeventtypes VALUES (1000028, 0, 'processStateChanged', 'processStateChanged');
+INSERT INTO shkeventtypes VALUES (1000029, 0, 'processContextChanged', 'processContextChanged');
+INSERT INTO shkeventtypes VALUES (1000030, 0, 'activityStateChanged', 'activityStateChanged');
+INSERT INTO shkeventtypes VALUES (1000031, 0, 'activityContextChanged', 'activityContextChanged');
+INSERT INTO shkeventtypes VALUES (1000032, 0, 'activityResultChanged', 'activityResultChanged');
+INSERT INTO shkeventtypes VALUES (1000033, 0, 'activityAssignmentChanged', 'activityAssignmentChanged');
 
 
 
@@ -1274,9 +1364,21 @@ INSERT INTO qrtz_locks (lock_name) VALUES ('MISFIRE_ACCESS');
 
 
 
+INSERT INTO shkprocessstateeventaudits VALUES (1000012, 0, 'open.running', 'open.running');
+INSERT INTO shkprocessstateeventaudits VALUES (1000014, 0, 'open.not_running.not_started', 'open.not_running.not_started');
+INSERT INTO shkprocessstateeventaudits VALUES (1000016, 0, 'open.not_running.suspended', 'open.not_running.suspended');
+INSERT INTO shkprocessstateeventaudits VALUES (1000018, 0, 'closed.completed', 'closed.completed');
+INSERT INTO shkprocessstateeventaudits VALUES (1000020, 0, 'closed.terminated', 'closed.terminated');
+INSERT INTO shkprocessstateeventaudits VALUES (1000022, 0, 'closed.aborted', 'closed.aborted');
 
 
 
+INSERT INTO shkprocessstates VALUES (1000000, 0, 'open.running', 'open.running');
+INSERT INTO shkprocessstates VALUES (1000002, 0, 'open.not_running.not_started', 'open.not_running.not_started');
+INSERT INTO shkprocessstates VALUES (1000004, 0, 'open.not_running.suspended', 'open.not_running.suspended');
+INSERT INTO shkprocessstates VALUES (1000006, 0, 'closed.completed', 'closed.completed');
+INSERT INTO shkprocessstates VALUES (1000008, 0, 'closed.terminated', 'closed.terminated');
+INSERT INTO shkprocessstates VALUES (1000010, 0, 'closed.aborted', 'closed.aborted');
 
 
 
@@ -1364,62 +1466,57 @@ ALTER TABLE ONLY objectid
 
 
 ALTER TABLE ONLY qrtz_blob_triggers
-    ADD CONSTRAINT qrtz_blob_triggers_pkey PRIMARY KEY (trigger_name, trigger_group);
+    ADD CONSTRAINT qrtz_blob_triggers_pkey PRIMARY KEY (sched_name, trigger_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_calendars
-    ADD CONSTRAINT qrtz_calendars_pkey PRIMARY KEY (calendar_name);
+    ADD CONSTRAINT qrtz_calendars_pkey PRIMARY KEY (sched_name, calendar_name);
 
 
 
 ALTER TABLE ONLY qrtz_cron_triggers
-    ADD CONSTRAINT qrtz_cron_triggers_pkey PRIMARY KEY (trigger_name, trigger_group);
+    ADD CONSTRAINT qrtz_cron_triggers_pkey PRIMARY KEY (sched_name, trigger_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_fired_triggers
-    ADD CONSTRAINT qrtz_fired_triggers_pkey PRIMARY KEY (entry_id);
+    ADD CONSTRAINT qrtz_fired_triggers_pkey PRIMARY KEY (sched_name, entry_id);
 
 
 
 ALTER TABLE ONLY qrtz_job_details
-    ADD CONSTRAINT qrtz_job_details_pkey PRIMARY KEY (job_name, job_group);
-
-
-
-ALTER TABLE ONLY qrtz_job_listeners
-    ADD CONSTRAINT qrtz_job_listeners_pkey PRIMARY KEY (job_name, job_group, job_listener);
+    ADD CONSTRAINT qrtz_job_details_pkey PRIMARY KEY (sched_name, job_name, job_group);
 
 
 
 ALTER TABLE ONLY qrtz_locks
-    ADD CONSTRAINT qrtz_locks_pkey PRIMARY KEY (lock_name);
+    ADD CONSTRAINT qrtz_locks_pkey PRIMARY KEY (sched_name, lock_name);
 
 
 
 ALTER TABLE ONLY qrtz_paused_trigger_grps
-    ADD CONSTRAINT qrtz_paused_trigger_grps_pkey PRIMARY KEY (trigger_group);
+    ADD CONSTRAINT qrtz_paused_trigger_grps_pkey PRIMARY KEY (sched_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_scheduler_state
-    ADD CONSTRAINT qrtz_scheduler_state_pkey PRIMARY KEY (instance_name);
+    ADD CONSTRAINT qrtz_scheduler_state_pkey PRIMARY KEY (sched_name, instance_name);
 
 
 
 ALTER TABLE ONLY qrtz_simple_triggers
-    ADD CONSTRAINT qrtz_simple_triggers_pkey PRIMARY KEY (trigger_name, trigger_group);
+    ADD CONSTRAINT qrtz_simple_triggers_pkey PRIMARY KEY (sched_name, trigger_name, trigger_group);
 
 
 
-ALTER TABLE ONLY qrtz_trigger_listeners
-    ADD CONSTRAINT qrtz_trigger_listeners_pkey PRIMARY KEY (trigger_name, trigger_group, trigger_listener);
+ALTER TABLE ONLY qrtz_simprop_triggers
+    ADD CONSTRAINT qrtz_simprop_triggers_pkey PRIMARY KEY (sched_name, trigger_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_triggers
-    ADD CONSTRAINT qrtz_triggers_pkey PRIMARY KEY (trigger_name, trigger_group);
+    ADD CONSTRAINT qrtz_triggers_pkey PRIMARY KEY (sched_name, trigger_name, trigger_group);
 
 
 
@@ -1500,6 +1597,11 @@ ALTER TABLE ONLY shkdeadlines
 
 ALTER TABLE ONLY shkeventtypes
     ADD CONSTRAINT shkeventtypes_objectid PRIMARY KEY (objectid);
+
+
+
+ALTER TABLE ONLY shkglobaldata
+    ADD CONSTRAINT shkglobaldata_objectid PRIMARY KEY (objectid);
 
 
 
@@ -1778,453 +1880,532 @@ ALTER TABLE ONLY shkxpdls
 
 
 
-CREATE UNIQUE INDEX i1_shkactivities ON shkactivities USING btree (id);
+CREATE INDEX idx_qrtz_ft_inst_job_req_rcvry ON qrtz_fired_triggers USING btree (sched_name, instance_name, requests_recovery);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivitydata ON shkactivitydata USING btree (cnt);
+CREATE INDEX idx_qrtz_ft_j_g ON qrtz_fired_triggers USING btree (sched_name, job_name, job_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivitydatablobs ON shkactivitydatablobs USING btree (activitydatawob, ordno);
+CREATE INDEX idx_qrtz_ft_jg ON qrtz_fired_triggers USING btree (sched_name, job_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivitydatawob ON shkactivitydatawob USING btree (cnt);
+CREATE INDEX idx_qrtz_ft_t_g ON qrtz_fired_triggers USING btree (sched_name, trigger_name, trigger_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivityhistorydetails ON shkactivityhistorydetails USING btree (cnt);
+CREATE INDEX idx_qrtz_ft_tg ON qrtz_fired_triggers USING btree (sched_name, trigger_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivityhistoryinfo ON shkactivityhistoryinfo USING btree (activityid);
+CREATE INDEX idx_qrtz_ft_trig_inst_name ON qrtz_fired_triggers USING btree (sched_name, instance_name);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivitystateeventaudits ON shkactivitystateeventaudits USING btree (keyvalue);
+CREATE INDEX idx_qrtz_j_grp ON qrtz_job_details USING btree (sched_name, job_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkactivitystates ON shkactivitystates USING btree (keyvalue);
+CREATE INDEX idx_qrtz_j_req_recovery ON qrtz_job_details USING btree (sched_name, requests_recovery);
 
 
 
-CREATE UNIQUE INDEX i1_shkandjointable ON shkandjointable USING btree (cnt);
+CREATE INDEX idx_qrtz_t_c ON qrtz_triggers USING btree (sched_name, calendar_name);
 
 
 
-CREATE UNIQUE INDEX i1_shkassignmenteventaudits ON shkassignmenteventaudits USING btree (cnt);
+CREATE INDEX idx_qrtz_t_g ON qrtz_triggers USING btree (sched_name, trigger_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkassignmentstable ON shkassignmentstable USING btree (cnt);
+CREATE INDEX idx_qrtz_t_j ON qrtz_triggers USING btree (sched_name, job_name, job_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkcounters ON shkcounters USING btree (name);
+CREATE INDEX idx_qrtz_t_jg ON qrtz_triggers USING btree (sched_name, job_group);
 
 
 
-CREATE UNIQUE INDEX i1_shkcreateprocesseventaudits ON shkcreateprocesseventaudits USING btree (cnt);
+CREATE INDEX idx_qrtz_t_n_g_state ON qrtz_triggers USING btree (sched_name, trigger_group, trigger_state);
 
 
 
-CREATE UNIQUE INDEX i1_shkdataeventaudits ON shkdataeventaudits USING btree (cnt);
+CREATE INDEX idx_qrtz_t_n_state ON qrtz_triggers USING btree (sched_name, trigger_name, trigger_group, trigger_state);
 
 
 
-CREATE UNIQUE INDEX i1_shkdeadlines ON shkdeadlines USING btree (cnt);
+CREATE INDEX idx_qrtz_t_next_fire_time ON qrtz_triggers USING btree (sched_name, next_fire_time);
 
 
 
-CREATE UNIQUE INDEX i1_shkeventtypes ON shkeventtypes USING btree (keyvalue);
+CREATE INDEX idx_qrtz_t_nft_misfire ON qrtz_triggers USING btree (sched_name, misfire_instr, next_fire_time);
 
 
 
-CREATE UNIQUE INDEX i1_shkgroupgrouptable ON shkgroupgrouptable USING btree (sub_gid, groupid);
+CREATE INDEX idx_qrtz_t_nft_st ON qrtz_triggers USING btree (sched_name, trigger_state, next_fire_time);
 
 
 
-CREATE UNIQUE INDEX i1_shkgrouptable ON shkgrouptable USING btree (groupid);
+CREATE INDEX idx_qrtz_t_nft_st_misfire ON qrtz_triggers USING btree (sched_name, misfire_instr, next_fire_time, trigger_state);
 
 
 
-CREATE UNIQUE INDEX i1_shkgroupuser ON shkgroupuser USING btree (username);
+CREATE INDEX idx_qrtz_t_nft_st_misfire_grp ON qrtz_triggers USING btree (sched_name, misfire_instr, next_fire_time, trigger_group, trigger_state);
 
 
 
-CREATE UNIQUE INDEX i1_shkgroupuserpacklevelpart ON shkgroupuserpacklevelpart USING btree (participantoid, useroid);
+CREATE INDEX idx_qrtz_t_state ON qrtz_triggers USING btree (sched_name, trigger_state);
 
 
 
-CREATE UNIQUE INDEX i1_shkgroupuserproclevelpart ON shkgroupuserproclevelpart USING btree (participantoid, useroid);
+CREATE UNIQUE INDEX shkactivities_i1 ON shkactivities USING btree (id);
 
 
 
-CREATE UNIQUE INDEX i1_shkneweventauditdata ON shkneweventauditdata USING btree (cnt);
+CREATE INDEX shkactivities_i2 ON shkactivities USING btree (process, activitysetdefinitionid, activitydefinitionid);
 
 
 
-CREATE UNIQUE INDEX i1_shkneweventauditdatablobs ON shkneweventauditdatablobs USING btree (neweventauditdatawob, ordno);
+CREATE INDEX shkactivities_i3 ON shkactivities USING btree (process, state);
 
 
 
-CREATE UNIQUE INDEX i1_shkneweventauditdatawob ON shkneweventauditdatawob USING btree (cnt);
+CREATE UNIQUE INDEX shkactivitydata_i1 ON shkactivitydata USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shknextxpdlversions ON shknextxpdlversions USING btree (xpdlid, nextversion);
+CREATE UNIQUE INDEX shkactivitydata_i2 ON shkactivitydata USING btree (activity, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shknormaluser ON shknormaluser USING btree (username);
+CREATE UNIQUE INDEX shkactivitydatablobs_i1 ON shkactivitydatablobs USING btree (activitydatawob, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkoldeventauditdata ON shkoldeventauditdata USING btree (cnt);
+CREATE UNIQUE INDEX shkactivitydatawob_i1 ON shkactivitydatawob USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkoldeventauditdatablobs ON shkoldeventauditdatablobs USING btree (oldeventauditdatawob, ordno);
+CREATE UNIQUE INDEX shkactivitydatawob_i2 ON shkactivitydatawob USING btree (activity, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkoldeventauditdatawob ON shkoldeventauditdatawob USING btree (cnt);
+CREATE UNIQUE INDEX shkactivityhistorydetails_i1 ON shkactivityhistorydetails USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkpacklevelparticipant ON shkpacklevelparticipant USING btree (participant_id, packageoid);
+CREATE INDEX shkactivityhistorydetails_i2 ON shkactivityhistorydetails USING btree (activityid);
 
 
 
-CREATE UNIQUE INDEX i1_shkpacklevelxpdlapp ON shkpacklevelxpdlapp USING btree (application_id, packageoid);
+CREATE UNIQUE INDEX shkactivityhistoryinfo_i1 ON shkactivityhistoryinfo USING btree (activityid);
 
 
 
-CREATE UNIQUE INDEX i1_shkpacklevelxpdlapptaappdetail ON shkpacklevelxpdlapptaappdetail USING btree (xpdl_appoid, toolagentoid);
+CREATE INDEX shkactivityhistoryinfo_i2 ON shkactivityhistoryinfo USING btree (processid);
 
 
 
-CREATE UNIQUE INDEX i1_shkpacklevelxpdlapptaappdetusr ON shkpacklevelxpdlapptaappdetusr USING btree (xpdl_appoid, toolagentoid);
+CREATE UNIQUE INDEX shkactivitystateeventaudits_i1 ON shkactivitystateeventaudits USING btree (keyvalue);
 
 
 
-CREATE UNIQUE INDEX i1_shkpacklevelxpdlapptaappuser ON shkpacklevelxpdlapptaappuser USING btree (xpdl_appoid, toolagentoid);
+CREATE UNIQUE INDEX shkactivitystateeventaudits_i2 ON shkactivitystateeventaudits USING btree (name);
 
 
 
-CREATE UNIQUE INDEX i1_shkpacklevelxpdlapptoolagntapp ON shkpacklevelxpdlapptoolagntapp USING btree (xpdl_appoid, toolagentoid);
+CREATE UNIQUE INDEX shkactivitystates_i1 ON shkactivitystates USING btree (keyvalue);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessdata ON shkprocessdata USING btree (cnt);
+CREATE UNIQUE INDEX shkactivitystates_i2 ON shkactivitystates USING btree (name);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessdatablobs ON shkprocessdatablobs USING btree (processdatawob, ordno);
+CREATE UNIQUE INDEX shkandjointable_i1 ON shkandjointable USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessdatawob ON shkprocessdatawob USING btree (cnt);
+CREATE INDEX shkandjointable_i2 ON shkandjointable USING btree (process, blockactivity, activitydefinitionid);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessdefinitions ON shkprocessdefinitions USING btree (name);
+CREATE INDEX shkandjointable_i3 ON shkandjointable USING btree (activity);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocesses ON shkprocesses USING btree (id);
+CREATE UNIQUE INDEX shkassignmenteventaudits_i1 ON shkassignmenteventaudits USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocesshistorydetails ON shkprocesshistorydetails USING btree (cnt);
+CREATE UNIQUE INDEX shkassignmentstable_i1 ON shkassignmentstable USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocesshistoryinfo ON shkprocesshistoryinfo USING btree (processid);
+CREATE UNIQUE INDEX shkassignmentstable_i2 ON shkassignmentstable USING btree (activity, theresource);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessrequesters ON shkprocessrequesters USING btree (id);
+CREATE INDEX shkassignmentstable_i3 ON shkassignmentstable USING btree (theresource, isvalid);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessstateeventaudits ON shkprocessstateeventaudits USING btree (keyvalue);
+CREATE INDEX shkassignmentstable_i4 ON shkassignmentstable USING btree (activityid);
 
 
 
-CREATE UNIQUE INDEX i1_shkprocessstates ON shkprocessstates USING btree (keyvalue);
+CREATE INDEX shkassignmentstable_i5 ON shkassignmentstable USING btree (resourceid);
 
 
 
-CREATE UNIQUE INDEX i1_shkproclevelparticipant ON shkproclevelparticipant USING btree (participant_id, processoid);
+CREATE UNIQUE INDEX shkcounters_i1 ON shkcounters USING btree (name);
 
 
 
-CREATE UNIQUE INDEX i1_shkproclevelxpdlapp ON shkproclevelxpdlapp USING btree (application_id, processoid);
+CREATE UNIQUE INDEX shkcreateprocesseventaudits_i1 ON shkcreateprocesseventaudits USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkproclevelxpdlapptaappdetail ON shkproclevelxpdlapptaappdetail USING btree (xpdl_appoid, toolagentoid);
+CREATE UNIQUE INDEX shkdataeventaudits_i1 ON shkdataeventaudits USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkproclevelxpdlapptaappdetusr ON shkproclevelxpdlapptaappdetusr USING btree (xpdl_appoid, toolagentoid);
+CREATE UNIQUE INDEX shkdeadlines_i1 ON shkdeadlines USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkproclevelxpdlapptaappuser ON shkproclevelxpdlapptaappuser USING btree (xpdl_appoid, toolagentoid);
+CREATE INDEX shkdeadlines_i2 ON shkdeadlines USING btree (process, timelimit);
 
 
 
-CREATE UNIQUE INDEX i1_shkproclevelxpdlapptoolagntapp ON shkproclevelxpdlapptoolagntapp USING btree (xpdl_appoid, toolagentoid);
+CREATE INDEX shkdeadlines_i3 ON shkdeadlines USING btree (activity, timelimit);
 
 
 
-CREATE UNIQUE INDEX i1_shkresourcestable ON shkresourcestable USING btree (username);
+CREATE UNIQUE INDEX shkeventtypes_i1 ON shkeventtypes USING btree (keyvalue);
 
 
 
-CREATE UNIQUE INDEX i1_shkstateeventaudits ON shkstateeventaudits USING btree (cnt);
+CREATE UNIQUE INDEX shkeventtypes_i2 ON shkeventtypes USING btree (name);
 
 
 
-CREATE UNIQUE INDEX i1_shktoolagentapp ON shktoolagentapp USING btree (tool_agent_name, app_name);
+CREATE UNIQUE INDEX shkglobaldata_i1 ON shkglobaldata USING btree (dataid, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shktoolagentappdetail ON shktoolagentappdetail USING btree (app_mode, toolagent_appoid);
+CREATE UNIQUE INDEX shkgroupgrouptable_i1 ON shkgroupgrouptable USING btree (sub_gid, groupid);
 
 
 
-CREATE UNIQUE INDEX i1_shktoolagentappdetailuser ON shktoolagentappdetailuser USING btree (toolagent_appoid, useroid);
+CREATE INDEX shkgroupgrouptable_i2 ON shkgroupgrouptable USING btree (groupid);
 
 
 
-CREATE UNIQUE INDEX i1_shktoolagentappuser ON shktoolagentappuser USING btree (toolagent_appoid, useroid);
+CREATE UNIQUE INDEX shkgrouptable_i1 ON shkgrouptable USING btree (groupid);
 
 
 
-CREATE UNIQUE INDEX i1_shktoolagentuser ON shktoolagentuser USING btree (username);
+CREATE UNIQUE INDEX shkgroupuser_i1 ON shkgroupuser USING btree (username);
 
 
 
-CREATE UNIQUE INDEX i1_shkusergrouptable ON shkusergrouptable USING btree (userid, groupid);
+CREATE UNIQUE INDEX shkgroupuserpacklevelpart_i1 ON shkgroupuserpacklevelpart USING btree (participantoid, useroid);
 
 
 
-CREATE UNIQUE INDEX i1_shkuserpacklevelpart ON shkuserpacklevelpart USING btree (participantoid, useroid);
+CREATE UNIQUE INDEX shkgroupuserproclevelpart_i1 ON shkgroupuserproclevelpart USING btree (participantoid, useroid);
 
 
 
-CREATE UNIQUE INDEX i1_shkuserproclevelparticipant ON shkuserproclevelparticipant USING btree (participantoid, useroid);
+CREATE UNIQUE INDEX shkneweventauditdata_i1 ON shkneweventauditdata USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkusertable ON shkusertable USING btree (userid);
+CREATE UNIQUE INDEX shkneweventauditdata_i2 ON shkneweventauditdata USING btree (dataeventaudit, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlapplicationpackage ON shkxpdlapplicationpackage USING btree (package_id);
+CREATE UNIQUE INDEX shkneweventauditdatablobs_i1 ON shkneweventauditdatablobs USING btree (neweventauditdatawob, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlapplicationprocess ON shkxpdlapplicationprocess USING btree (process_id, packageoid);
+CREATE UNIQUE INDEX shkneweventauditdatawob_i1 ON shkneweventauditdatawob USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdldata ON shkxpdldata USING btree (cnt);
+CREATE UNIQUE INDEX shkneweventauditdatawob_i2 ON shkneweventauditdatawob USING btree (dataeventaudit, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlhistory ON shkxpdlhistory USING btree (xpdlid, xpdlversion);
+CREATE UNIQUE INDEX shknextxpdlversions_i1 ON shknextxpdlversions USING btree (xpdlid, nextversion);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlhistorydata ON shkxpdlhistorydata USING btree (cnt);
+CREATE UNIQUE INDEX shknormaluser_i1 ON shknormaluser USING btree (username);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlparticipantpackage ON shkxpdlparticipantpackage USING btree (package_id);
+CREATE UNIQUE INDEX shkoldeventauditdata_i1 ON shkoldeventauditdata USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlparticipantprocess ON shkxpdlparticipantprocess USING btree (process_id, packageoid);
+CREATE UNIQUE INDEX shkoldeventauditdata_i2 ON shkoldeventauditdata USING btree (dataeventaudit, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdlreferences ON shkxpdlreferences USING btree (referredxpdlid, referringxpdl);
+CREATE UNIQUE INDEX shkoldeventauditdatablobs_i1 ON shkoldeventauditdatablobs USING btree (oldeventauditdatawob, ordno);
 
 
 
-CREATE UNIQUE INDEX i1_shkxpdls ON shkxpdls USING btree (xpdlid, xpdlversion);
+CREATE UNIQUE INDEX shkoldeventauditdatawob_i1 ON shkoldeventauditdatawob USING btree (cnt);
 
 
 
-CREATE INDEX i2_shkactivities ON shkactivities USING btree (process, activitysetdefinitionid, activitydefinitionid);
+CREATE UNIQUE INDEX shkoldeventauditdatawob_i2 ON shkoldeventauditdatawob USING btree (dataeventaudit, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i2_shkactivitydata ON shkactivitydata USING btree (activity, variabledefinitionid, ordno);
+CREATE UNIQUE INDEX shkpacklevelparticipant_i1 ON shkpacklevelparticipant USING btree (participant_id, packageoid);
 
 
 
-CREATE UNIQUE INDEX i2_shkactivitydatawob ON shkactivitydatawob USING btree (activity, variabledefinitionid, ordno);
+CREATE UNIQUE INDEX shkpacklevelxpdlapp_i1 ON shkpacklevelxpdlapp USING btree (application_id, packageoid);
 
 
 
-CREATE INDEX i2_shkactivityhistorydetails ON shkactivityhistorydetails USING btree (activityid);
+CREATE UNIQUE INDEX shkpacklevelxpdlapptaappdetail_i1 ON shkpacklevelxpdlapptaappdetail USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE INDEX i2_shkactivityhistoryinfo ON shkactivityhistoryinfo USING btree (processid);
+CREATE UNIQUE INDEX shkpacklevelxpdlapptaappdetusr_i1 ON shkpacklevelxpdlapptaappdetusr USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE UNIQUE INDEX i2_shkactivitystateeventaudits ON shkactivitystateeventaudits USING btree (name);
+CREATE UNIQUE INDEX shkpacklevelxpdlapptaappuser_i1 ON shkpacklevelxpdlapptaappuser USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE UNIQUE INDEX i2_shkactivitystates ON shkactivitystates USING btree (name);
+CREATE UNIQUE INDEX shkpacklevelxpdlapptoolagntapp_i1 ON shkpacklevelxpdlapptoolagntapp USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE INDEX i2_shkandjointable ON shkandjointable USING btree (process, blockactivity, activitydefinitionid);
+CREATE UNIQUE INDEX shkprocessdata_i1 ON shkprocessdata USING btree (cnt);
 
 
 
-CREATE UNIQUE INDEX i2_shkassignmentstable ON shkassignmentstable USING btree (activity, theresource);
+CREATE UNIQUE INDEX shkprocessdata_i2 ON shkprocessdata USING btree (process, variabledefinitionid, ordno);
 
 
 
-CREATE INDEX i2_shkdeadlines ON shkdeadlines USING btree (process, timelimit);
+CREATE UNIQUE INDEX shkprocessdatablobs_i1 ON shkprocessdatablobs USING btree (processdatawob, ordno);
 
 
 
-CREATE UNIQUE INDEX i2_shkeventtypes ON shkeventtypes USING btree (name);
+CREATE UNIQUE INDEX shkprocessdatawob_i1 ON shkprocessdatawob USING btree (cnt);
 
 
 
-CREATE INDEX i2_shkgroupgrouptable ON shkgroupgrouptable USING btree (groupid);
+CREATE UNIQUE INDEX shkprocessdatawob_i2 ON shkprocessdatawob USING btree (process, variabledefinitionid, ordno);
 
 
 
-CREATE UNIQUE INDEX i2_shkneweventauditdata ON shkneweventauditdata USING btree (dataeventaudit, variabledefinitionid, ordno);
+CREATE UNIQUE INDEX shkprocessdefinitions_i1 ON shkprocessdefinitions USING btree (name);
 
 
 
-CREATE UNIQUE INDEX i2_shkneweventauditdatawob ON shkneweventauditdatawob USING btree (dataeventaudit, variabledefinitionid, ordno);
+CREATE UNIQUE INDEX shkprocesses_i1 ON shkprocesses USING btree (id);
 
 
 
-CREATE UNIQUE INDEX i2_shkoldeventauditdata ON shkoldeventauditdata USING btree (dataeventaudit, variabledefinitionid, ordno);
+CREATE INDEX shkprocesses_i2 ON shkprocesses USING btree (processdefinition);
 
 
 
-CREATE UNIQUE INDEX i2_shkoldeventauditdatawob ON shkoldeventauditdatawob USING btree (dataeventaudit, variabledefinitionid, ordno);
+CREATE INDEX shkprocesses_i3 ON shkprocesses USING btree (state);
 
 
 
-CREATE UNIQUE INDEX i2_shkprocessdata ON shkprocessdata USING btree (process, variabledefinitionid, ordno);
+CREATE INDEX shkprocesses_i4 ON shkprocesses USING btree (activityrequesterid);
 
 
 
-CREATE UNIQUE INDEX i2_shkprocessdatawob ON shkprocessdatawob USING btree (process, variabledefinitionid, ordno);
+CREATE INDEX shkprocesses_i5 ON shkprocesses USING btree (resourcerequesterid);
 
 
 
-CREATE INDEX i2_shkprocesses ON shkprocesses USING btree (processdefinition);
+CREATE UNIQUE INDEX shkprocesshistorydetails_i1 ON shkprocesshistorydetails USING btree (cnt);
 
 
 
-CREATE INDEX i2_shkprocesshistorydetails ON shkprocesshistorydetails USING btree (processid);
+CREATE INDEX shkprocesshistorydetails_i2 ON shkprocesshistorydetails USING btree (processid);
 
 
 
-CREATE INDEX i2_shkprocessrequesters ON shkprocessrequesters USING btree (activityrequester);
+CREATE UNIQUE INDEX shkprocesshistoryinfo_i1 ON shkprocesshistoryinfo USING btree (processid);
 
 
 
-CREATE UNIQUE INDEX i2_shkprocessstateeventaudits ON shkprocessstateeventaudits USING btree (name);
+CREATE UNIQUE INDEX shkprocessrequesters_i1 ON shkprocessrequesters USING btree (id);
 
 
 
-CREATE UNIQUE INDEX i2_shkprocessstates ON shkprocessstates USING btree (name);
+CREATE INDEX shkprocessrequesters_i2 ON shkprocessrequesters USING btree (activityrequester);
 
 
 
-CREATE UNIQUE INDEX i2_shkxpdldata ON shkxpdldata USING btree (xpdl);
+CREATE INDEX shkprocessrequesters_i3 ON shkprocessrequesters USING btree (resourcerequester);
 
 
 
-CREATE INDEX i3_shkactivities ON shkactivities USING btree (process, state);
+CREATE UNIQUE INDEX shkprocessstateeventaudits_i1 ON shkprocessstateeventaudits USING btree (keyvalue);
 
 
 
-CREATE INDEX i3_shkandjointable ON shkandjointable USING btree (activity);
+CREATE UNIQUE INDEX shkprocessstateeventaudits_i2 ON shkprocessstateeventaudits USING btree (name);
 
 
 
-CREATE INDEX i3_shkassignmentstable ON shkassignmentstable USING btree (theresource, isvalid);
+CREATE UNIQUE INDEX shkprocessstates_i1 ON shkprocessstates USING btree (keyvalue);
 
 
 
-CREATE INDEX i3_shkdeadlines ON shkdeadlines USING btree (activity, timelimit);
+CREATE UNIQUE INDEX shkprocessstates_i2 ON shkprocessstates USING btree (name);
 
 
 
-CREATE INDEX i3_shkprocesses ON shkprocesses USING btree (state);
+CREATE UNIQUE INDEX shkproclevelparticipant_i1 ON shkproclevelparticipant USING btree (participant_id, processoid);
 
 
 
-CREATE INDEX i3_shkprocessrequesters ON shkprocessrequesters USING btree (resourcerequester);
+CREATE UNIQUE INDEX shkproclevelxpdlapp_i1 ON shkproclevelxpdlapp USING btree (application_id, processoid);
 
 
 
-CREATE INDEX i4_shkassignmentstable ON shkassignmentstable USING btree (activityid);
+CREATE UNIQUE INDEX shkproclevelxpdlapptaappdetail_i1 ON shkproclevelxpdlapptaappdetail USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE INDEX i4_shkprocesses ON shkprocesses USING btree (activityrequesterid);
+CREATE UNIQUE INDEX shkproclevelxpdlapptaappdetusr_i1 ON shkproclevelxpdlapptaappdetusr USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE INDEX i5_shkassignmentstable ON shkassignmentstable USING btree (resourceid);
+CREATE UNIQUE INDEX shkproclevelxpdlapptaappuser_i1 ON shkproclevelxpdlapptaappuser USING btree (xpdl_appoid, toolagentoid);
 
 
 
-CREATE INDEX i5_shkprocesses ON shkprocesses USING btree (resourcerequesterid);
+CREATE UNIQUE INDEX shkproclevelxpdlapptoolagntapp_i1 ON shkproclevelxpdlapptoolagntapp USING btree (xpdl_appoid, toolagentoid);
+
+
+
+CREATE UNIQUE INDEX shkresourcestable_i1 ON shkresourcestable USING btree (username);
+
+
+
+CREATE UNIQUE INDEX shkstateeventaudits_i1 ON shkstateeventaudits USING btree (cnt);
+
+
+
+CREATE UNIQUE INDEX shktoolagentapp_i1 ON shktoolagentapp USING btree (tool_agent_name, app_name);
+
+
+
+CREATE UNIQUE INDEX shktoolagentappdetail_i1 ON shktoolagentappdetail USING btree (app_mode, toolagent_appoid);
+
+
+
+CREATE UNIQUE INDEX shktoolagentappdetailuser_i1 ON shktoolagentappdetailuser USING btree (toolagent_appoid, useroid);
+
+
+
+CREATE UNIQUE INDEX shktoolagentappuser_i1 ON shktoolagentappuser USING btree (toolagent_appoid, useroid);
+
+
+
+CREATE UNIQUE INDEX shktoolagentuser_i1 ON shktoolagentuser USING btree (username);
+
+
+
+CREATE UNIQUE INDEX shkusergrouptable_i1 ON shkusergrouptable USING btree (userid, groupid);
+
+
+
+CREATE UNIQUE INDEX shkuserpacklevelpart_i1 ON shkuserpacklevelpart USING btree (participantoid, useroid);
+
+
+
+CREATE UNIQUE INDEX shkuserproclevelparticipant_i1 ON shkuserproclevelparticipant USING btree (participantoid, useroid);
+
+
+
+CREATE UNIQUE INDEX shkusertable_i1 ON shkusertable USING btree (userid);
+
+
+
+CREATE UNIQUE INDEX shkxpdlapplicationpackage_i1 ON shkxpdlapplicationpackage USING btree (package_id);
+
+
+
+CREATE UNIQUE INDEX shkxpdlapplicationprocess_i1 ON shkxpdlapplicationprocess USING btree (process_id, packageoid);
+
+
+
+CREATE UNIQUE INDEX shkxpdldata_i1 ON shkxpdldata USING btree (cnt);
+
+
+
+CREATE UNIQUE INDEX shkxpdldata_i2 ON shkxpdldata USING btree (xpdl);
+
+
+
+CREATE UNIQUE INDEX shkxpdlhistory_i1 ON shkxpdlhistory USING btree (xpdlid, xpdlversion);
+
+
+
+CREATE UNIQUE INDEX shkxpdlhistorydata_i1 ON shkxpdlhistorydata USING btree (cnt);
+
+
+
+CREATE UNIQUE INDEX shkxpdlparticipantpackage_i1 ON shkxpdlparticipantpackage USING btree (package_id);
+
+
+
+CREATE UNIQUE INDEX shkxpdlparticipantprocess_i1 ON shkxpdlparticipantprocess USING btree (process_id, packageoid);
+
+
+
+CREATE UNIQUE INDEX shkxpdlreferences_i1 ON shkxpdlreferences USING btree (referredxpdlid, referringxpdl);
+
+
+
+CREATE UNIQUE INDEX shkxpdls_i1 ON shkxpdls USING btree (xpdlid, xpdlversion);
 
 
 
 ALTER TABLE ONLY qrtz_blob_triggers
-    ADD CONSTRAINT qrtz_blob_triggers_trigger_name_fkey FOREIGN KEY (trigger_name, trigger_group) REFERENCES qrtz_triggers(trigger_name, trigger_group);
+    ADD CONSTRAINT qrtz_blob_triggers_sched_name_fkey FOREIGN KEY (sched_name, trigger_name, trigger_group) REFERENCES qrtz_triggers(sched_name, trigger_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_cron_triggers
-    ADD CONSTRAINT qrtz_cron_triggers_trigger_name_fkey FOREIGN KEY (trigger_name, trigger_group) REFERENCES qrtz_triggers(trigger_name, trigger_group);
-
-
-
-ALTER TABLE ONLY qrtz_job_listeners
-    ADD CONSTRAINT qrtz_job_listeners_job_name_fkey FOREIGN KEY (job_name, job_group) REFERENCES qrtz_job_details(job_name, job_group);
+    ADD CONSTRAINT qrtz_cron_triggers_sched_name_fkey FOREIGN KEY (sched_name, trigger_name, trigger_group) REFERENCES qrtz_triggers(sched_name, trigger_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_simple_triggers
-    ADD CONSTRAINT qrtz_simple_triggers_trigger_name_fkey FOREIGN KEY (trigger_name, trigger_group) REFERENCES qrtz_triggers(trigger_name, trigger_group);
+    ADD CONSTRAINT qrtz_simple_triggers_sched_name_fkey FOREIGN KEY (sched_name, trigger_name, trigger_group) REFERENCES qrtz_triggers(sched_name, trigger_name, trigger_group);
 
 
 
-ALTER TABLE ONLY qrtz_trigger_listeners
-    ADD CONSTRAINT qrtz_trigger_listeners_trigger_name_fkey FOREIGN KEY (trigger_name, trigger_group) REFERENCES qrtz_triggers(trigger_name, trigger_group);
+ALTER TABLE ONLY qrtz_simprop_triggers
+    ADD CONSTRAINT qrtz_simprop_triggers_sched_name_fkey FOREIGN KEY (sched_name, trigger_name, trigger_group) REFERENCES qrtz_triggers(sched_name, trigger_name, trigger_group);
 
 
 
 ALTER TABLE ONLY qrtz_triggers
-    ADD CONSTRAINT qrtz_triggers_job_name_fkey FOREIGN KEY (job_name, job_group) REFERENCES qrtz_job_details(job_name, job_group);
+    ADD CONSTRAINT qrtz_triggers_sched_name_fkey FOREIGN KEY (sched_name, job_name, job_group) REFERENCES qrtz_job_details(sched_name, job_name, job_group);
 
 
 
