@@ -7,4 +7,8 @@ public class XPDLException extends CMProcessDefinitionException {
 	public XPDLException(Throwable cause) {
         super(cause);
     }
+
+	public XPDLException(final String message) {
+		super(message);
+	}
 }

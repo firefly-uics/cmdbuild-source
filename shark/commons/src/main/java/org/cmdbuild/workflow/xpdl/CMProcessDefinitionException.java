@@ -9,4 +9,12 @@ public class CMProcessDefinitionException extends CMWorkflowException {
 	public CMProcessDefinitionException(final Throwable nativeException) {
         super(nativeException);
     }
+
+	public CMProcessDefinitionException(final String message) {
+		super(message);
+	}
+
+	public CMProcessDefinitionException(final String message, final Throwable nativeException) {
+		super(message, nativeException);
+	}
 }

@@ -139,6 +139,10 @@ public class XPDLDocument {
 		return pkg;
 	}
 
+	public String getPackageId() {
+		return pkg.getId();
+	}
+
 	public void addProcess(final String wpId) {
 		WorkflowProcess wp = (WorkflowProcess) pkg.getWorkflowProcesses().generateNewElement();
 		wp.setId(wpId);
@@ -177,11 +181,27 @@ public class XPDLDocument {
 	}
 
 	public void addProcessExtendedAttribute(final String wpId, final String key, final String value) {
-		ExtendedAttributes xattrs = pkg.getWorkflowProcess(wpId).getExtendedAttributes();
-		ExtendedAttribute xa = (ExtendedAttribute) xattrs.generateNewElement();
+		final ExtendedAttributes xattrs = pkg.getWorkflowProcess(wpId).getExtendedAttributes();
+		final ExtendedAttribute xa = (ExtendedAttribute) xattrs.generateNewElement();
 		xa.setName(key);
 		xa.setVValue(value);
 		xattrs.add(xa);
+	}
+
+	public String getProcessExtendedAttribute(String wpId, final String key) {
+		final WorkflowProcess wp = pkg.getWorkflowProcess(wpId);
+		if (wp == null) {
+			return null;
+		}
+		final ExtendedAttributes xattrs = wp.getExtendedAttributes();
+		if (xattrs == null) {
+			return null;
+		}
+		final ExtendedAttribute xa = xattrs.getFirstExtendedAttributeForName(key);
+		if (xa == null) {
+			return null;
+		}
+		return xa.getVValue();
 	}
 
 	public void addRoleParticipant(final String participantId) {

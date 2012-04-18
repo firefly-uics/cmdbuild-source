@@ -7,4 +7,12 @@ public class CMWorkflowException extends Exception {
 	public CMWorkflowException(final Throwable nativeException) {
 		super(nativeException);
 	}
+
+	public CMWorkflowException(final String message) {
+		super(message);
+	}
+
+	public CMWorkflowException(final String message, final Throwable nativeException) {
+		super(message, nativeException);
+	}
 }

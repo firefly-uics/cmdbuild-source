@@ -27,7 +27,18 @@ public class ProcessClassWrapper extends ClassWrapper implements CMProcessClass 
 	}
 
 	@Override
+	public DataSource getDefinition(final String version) throws CMWorkflowException {
+		return processDefinitionManager.getDefinition(this, version);
+	}
+
+	@Override
+	public void updateDefinition(DataSource pkgDefData) throws CMWorkflowException {
+		processDefinitionManager.updateDefinition(this, pkgDefData);
+	}
+
+	@Override
 	public boolean isUserStoppable() {
 		return table.isUserStoppable();
 	}
+
 }

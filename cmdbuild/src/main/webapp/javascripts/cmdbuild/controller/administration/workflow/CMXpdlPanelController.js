@@ -50,24 +50,24 @@
 		CMDBuild.LoadMask.get().show();
 
 		this.uploadForm.getForm().submit({
-			url: 'services/json/schema/modworkflow/uploadxpdl',
+			url: 'services/json/workflow/uploadxpdl',
 			params: {
 				idClass: this.currentProcessId
 			},
 			scope: this,
 			success: function(form, action) {
 				CMDBuild.LoadMask.get().hide();
-				var result = Ext.decode(action.response.responseText),
-					msg = "<ul>";
-				
-				for (var i=0, len=result.messages.length; i<len; ++i) {
-					msg += "<li>" 
-						+ CMDBuild.Translation.administration.modWorkflow.xpdlUpload[result.messages[i]]
-						+ "</li>";
+				var messages = (Ext.decode(action.response.responseText) || {}).response;
+				if (messages && messages.length > 0) {
+					var msg = "<ul>";
+					for (var i=0, len=messages.length; i<len; ++i) {
+						msg += "<li>" 
+							+ CMDBuild.Translation.administration.modWorkflow.xpdlUpload[messages[i]]
+							+ "</li>";
+					}
+					msg+="</ul>";
+					CMDBuild.Msg.info(CMDBuild.Translation.common.success, msg);
 				}
-				msg+="</ul>";
-				
-				CMDBuild.Msg.info(CMDBuild.Translation.common.success, msg);
 			},
 			failure: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -84,7 +84,7 @@
 		if (version == 'template' || !version) {
 			url = 'services/json/workflow/downloadxpdltemplate';
 		} else {
-			url = 'services/json/schema/modworkflow/downloadxpdl';
+			url = 'services/json/workflow/downloadxpdl';
 		}
 
 		this.downloadForm.getForm().submit({
