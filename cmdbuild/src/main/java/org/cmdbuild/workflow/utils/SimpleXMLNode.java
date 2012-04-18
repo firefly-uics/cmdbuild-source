@@ -1,11 +1,13 @@
 package org.cmdbuild.workflow.utils;
 
+import org.cmdbuild.common.annotations.Legacy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Really deadly simple xml node producer
  */
+@Legacy("Remove when REST is finally gone")
 public class SimpleXMLNode{
 	
 	private Document document;

@@ -14,11 +14,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.cmdbuild.common.annotations.Legacy;
 import org.w3c.dom.Document;
 
 /**
  * Really deadly simple xml document producer
  */
+@Legacy("Remove when REST is finally gone")
 public class SimpleXMLDoc{
 
 	private SimpleXMLNode root;
