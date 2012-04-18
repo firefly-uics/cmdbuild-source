@@ -6,7 +6,8 @@
 		getChartData: Ext.emptyFn,
 		showChartFields: Ext.emptyFn,
 		extractInterestedValues: Ext.emptyFn,
-		setChartDataSourceName: Ext.emptyFn
+		setChartDataSourceName: Ext.emptyFn,
+		updateDataSourceDependantFields: Ext.emptyFn
 	});
 
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController", {
@@ -15,12 +16,40 @@
 			viewDelegate: "CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationFormDelegate"
 		},
 
-		constructor : function(view) {
+		statics: {
+			cmcreate: function(view) {
+
+				function getStrategyFor(type, view) {
+					var strategis = {
+						"gauge": CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy,
+						"pie": CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy
+					};
+
+					if (typeof strategis[type] == "function") {
+						return new strategis[type](view);
+					} else {
+						return null;
+					}
+				}
+
+				return new CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController(view, getStrategyFor);
+			}
+		},
+
+		constructor : function(view, strategiesMapping) {
 			this.callParent(arguments);
 			this.view = view;
 			this.view.setDelegate(this);
-			this.chartTypeStrategy = null;
-			this. chartDataSourceName = null;
+			this.setChartTypeStrategy(null);
+			this.chartDataSourceName = null;
+
+			if (typeof strategiesMapping == "function") {
+				this._getStrategy = strategiesMapping;
+			} else {
+				this._getStrategy = function() {
+					return null;
+				};
+			}
 		},
 
 		initComponent : function() {
@@ -52,10 +81,8 @@
 
 			this.view.fillDataSourcePanel(chart.getDataSourceInputConfiguration());
 
-			if (this.chartTypeStrategy) {
-				this.chartTypeStrategy.showChartFields(chart);
-				this.chartTypeStrategy.fillFieldsForChart(chart);
-			}
+			this.chartTypeStrategy.showChartFields(chart);
+			this.chartTypeStrategy.fillFieldsForChart(chart);
 		},
 
 		prepareForModify: function() {
@@ -63,26 +90,20 @@
 		},
 
 		setChartTypeStrategy: function(s) {
-			// set also if s is null but check the interface only if is
-			// an object. It can be null when add a new chart
-			this.chartTypeStrategy = s;
+			this.chartTypeStrategy = s || new CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy();
 
-			if (s) {
-				CMDBuild.validateInterface(s, "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
-				this.chartTypeStrategy.setChartDataSourceName(this. chartDataSourceName);
-				this.chartTypeStrategy.showChartFields();
-			} else {
-				this.view.hideOutputFields();
-			}
+			this.view.hideOutputFields();
+
+			CMDBuild.validateInterface(this.chartTypeStrategy, "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
+			this.chartTypeStrategy.setChartDataSourceName(this.chartDataSourceName);
+			this.chartTypeStrategy.showChartFields();
 		},
 
 		getFormData: function() {
 			var data = this.view.getFieldsValue();
 			var chartSpecificData = {};
 
-			if (this.chartTypeStrategy) {
-				chartSpecificData = this.chartTypeStrategy.extractInterestedValues(data);
-			}
+			chartSpecificData = this.chartTypeStrategy.extractInterestedValues(data);
 
 			var out = Ext.apply(extractGeneralData(data), chartSpecificData);
 			out.dataSource = this.view.getDataSourceConfiguration();
@@ -90,16 +111,22 @@
 			return out;
 		},
 
+		isValid: function() {
+			return this.view.isValid();
+		},
+
 		// viewDelegate
 
 		onTypeChanged: function(type) {
-			this.setChartTypeStrategy(getStrategyFor(type, this));
+			var s = this._getStrategy(type, this.view);
+			this.setChartTypeStrategy(s);
 		},
 
 		onDataSourceChanged: function(dsName) {
 			var input = _CMCache.getDataSourceInput(dsName);
-			this. chartDataSourceName = dsName;
+			this.chartDataSourceName = dsName;
 			this.view.showDataSourceInputFields(input);
+			this.chartTypeStrategy.setChartDataSourceName(this.chartDataSourceName);
 		},
 
 		onDataSourceInputFieldTypeChanged: function(value, fieldset) {
@@ -119,7 +146,7 @@
 				group: function(fieldset) {
 					fieldset.resetFieldset();
 				}
-			}
+			};
 
 			callbacks[value](fieldset);
 		}
@@ -135,15 +162,4 @@
 		};
 	}
 
-	function getStrategyFor(type, me) {
-		var strategis = {
-			"gauge": CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy
-		}
-
-		if (typeof strategis[type] == "function") {
-			return new strategis[type](me.view);
-		} else {
-			return null;
-		}
-	}
 })();

@@ -152,7 +152,7 @@
 			}
 		},
 
-		// callback definid on instantiation
+		// callback defined on instantiation
 		afterInputFieldTypeChanged: Ext.emptyFn,
 
 		initComponent: function() {
@@ -224,9 +224,10 @@
 				description: tr.fields.defaultValue,
 				fieldmode: "write",
 				lookup: type,
-				disabled: this.typeComboIsdisabled(),
 				lookupchain: _CMCache.getLookupchainForType(type)
 			});
+
+			this.defaultField.setDisabled(this.typeComboIsdisabled());
 
 			if (Ext.getClassName(this.defaultField) == "CMDBuild.field.LookupCombo") {
 				this.defaultField.labelWidth = SUBFIELD_LABEL_WIDTH;

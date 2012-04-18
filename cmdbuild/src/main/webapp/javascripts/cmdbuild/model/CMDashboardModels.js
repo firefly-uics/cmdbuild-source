@@ -130,13 +130,17 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'type',type : 'string'},
 		{name : 'dataSource', type: 'auto'},
 
-		// gauge
+		// datasource mapping
+		{name : 'singleSerieField', type : 'string'},
+		{name : 'labelField', type : 'string'},
+
+		// fonfiguration
 		{name : 'maximum',type : 'nit'},
 		{name : 'minimum',type : 'nit'},
 		{name : 'steps',type : 'nit'},
 		{name : 'fgcolor',type : 'string'},
 		{name : 'bgcolor',type : 'string'},
-		{name : 'singleSerieField', type : 'string'}
+		{name : 'legend', type : 'boolean'}
 	],
 
 	getName: function() {
@@ -153,6 +157,10 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 
 	isAutoload: function() {
 		return this.get('autoLoad');
+	},
+
+	withLegend: function() {
+		return this.get('legend');
 	},
 
 	getType: function() {
@@ -181,6 +189,10 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 
 	getSingleSerieField: function() {
 		return this.get('singleSerieField');
+	},
+
+	getLabelField: function() {
+		return this.get('labelField');
 	},
 
 	getDataSourceName: function() {

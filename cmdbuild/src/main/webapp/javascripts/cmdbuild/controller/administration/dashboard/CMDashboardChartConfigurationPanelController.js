@@ -87,6 +87,11 @@
 		},
 
 		onSaveButtonClick: function() {
+			if (!this.formController.isValid()) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				return;
+			}
+
 			var formData = this.formController.getFormData(),
 				me = this,
 				cb =  function(charts, idToSelect) {
@@ -126,52 +131,89 @@
 		}
 	});
 
+	// TODO: temporary ugly solution
+	// Do a preview controller that is able to load the charts
+
 	function getChartFromConfiguration(data) {
 
 		if (!data.type) {
 			return {
 				xtype: "panel",
 				html: tr.alert.wrongConfiguration
-			}
+			};
 		}
 
-		var bgcolor = data.bgcolor || '#ffffff';
-		var fgcolor = data.fgcolor || '#99CC00';
+		if (data.type == "gauge") {
 
-		return {
-			xtype : 'chart',
-			animate : {
-				easing : 'elasticIn',
-				duration : 2000
-			},
-			store : Ext.create('Ext.data.JsonStore', {
-				fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
-				data : generateData(5)
-			}),
-			insetPadding : 25,
-			flex : 1,
-			axes : [{
-				type : 'gauge',
-				position : 'gauge',
-				minimum : data.minimum || 0,
-				maximum : data.maximum || 1000,
-				steps : data.steps || 20,
-				margin: 5
-			}],
-			series : [{
-				type : 'gauge',
-				field : 'data1',
-				donut : 60,
-				colorSet : [fgcolor, bgcolor]
-			}]
+			var bgcolor = data.bgcolor || '#ffffff';
+			var fgcolor = data.fgcolor || '#99CC00';
+	
+			return {
+				xtype : 'chart',
+				animate : {
+					easing : 'elasticIn',
+					duration : 2000
+				},
+				store : Ext.create('Ext.data.JsonStore', {
+					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
+					data : generateData(5)
+				}),
+				insetPadding : 25,
+				flex : 1,
+				axes : [{
+					type : 'gauge',
+					position : 'gauge',
+					minimum : data.minimum || 0,
+					maximum : data.maximum || 1000,
+					steps : data.steps || 20,
+					margin: 5
+				}],
+				series : [{
+					type : 'gauge',
+					field : 'data1',
+					donut : 60,
+					colorSet : [fgcolor, bgcolor]
+				}]
+			};
+		}
+
+		if (data.type == "pie") {
+			return {
+				xtype : 'chart',
+				legend: data.legend,
+				animate : {
+					easing : 'elasticIn',
+					duration : 2000
+				},
+				store : Ext.create('Ext.data.JsonStore', {
+					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
+					data : generateData(5)
+				}),
+				series : [ {
+					type : 'pie',
+					field : 'data1',
+					showInLegend : true,
+					highlight : {
+						segment : {
+							margin : 5
+						}
+					},
+					label : {
+						field : 'name',
+						display : 'rotate',
+						contrast : true,
+						font : '1.3em Arial'
+					}
+				} ]
+			};
 		}
 	}
 
 	function buildSubControllers(view) {
 		return {
-			formController: new CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController(view.getFormPanel()),
+			formController: CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController.cmcreate(view.getFormPanel()),
 			gridController: new CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationGridController.cmcreate(view.getGridPanel())
-		}
+		};
 	}
 
 

@@ -41,7 +41,7 @@
 					header : tr.fields.chartType,
 					dataIndex : 'type',
 					renderer: function(value) {
-						return tr.availableCharts[value]
+						return tr.availableCharts[value];
 					},
 					flex : 1
 				}, {
@@ -61,8 +61,7 @@
 					plugins: {
 						ptype: 'gridviewdragdrop',
 						dragGroup: 'chartGridDDGroup',
-						dropGroup: 'dasboardTreeDGroup',
-						enableDrop: false
+						dropGroup: 'dasboardTreeDGroup'
 					},
 					listeners: {
 						drop: function(node, data, dropRec, dropPosition) {
