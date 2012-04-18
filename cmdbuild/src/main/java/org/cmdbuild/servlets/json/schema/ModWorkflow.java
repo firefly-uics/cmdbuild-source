@@ -1,16 +1,11 @@
 package org.cmdbuild.servlets.json.schema;
 
 import java.io.File;
-import java.io.IOException;
 
-import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.ServletException;
 
-import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -98,60 +93,6 @@ public class ModWorkflow extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject uploadXPDL(
-			@Parameter(value="xpdlfile", required=false) FileItem xpdlFile,
-			@Parameter(value="imgfile",required=false) FileItem image,
-			ProcessType processType,
-			JSONObject serializer,
-			@Parameter("userstoppable") boolean userStoppable) throws IOException, JSONException {
-		JSONArray messages = new JSONArray();	
-		if (!"".equals(xpdlFile.getName())) {
-			processType.getXPDLManager().upload(xpdlFile.getInputStream(), userStoppable);
-			messages.put("saved_xpdl");
-		}
-		
-		if (!"".equals(image.getName())) {
-			saveImage(image, processType);
-			messages.put("saved_image");
-		} else {
-			removeImage(processType);
-			messages.put("deleted_image");
-		}
-		serializer.put("messages", messages);
-		return serializer;
-	}
-	
-	private void saveImage(FileItem image, ProcessType processType) throws IOException {
-		String filterPattern = processType.getName()+".*";
-		String[] processImages = customFileStore.list(UPLOADED_FILE_RELATIVE_PATH, filterPattern);
-		String relativeUploadPath = UPLOADED_FILE_RELATIVE_PATH+processType.getName()+customFileStore.getExtension(image.getName());
-		if (processImages.length > 0) {
-			customFileStore.remove(UPLOADED_FILE_RELATIVE_PATH+processImages[0]);
-		}
-		customFileStore.save(image, relativeUploadPath);
-	}
-	
-	private void removeImage(ProcessType processType) {
-		String filterPattern = processType.getName()+".*";
-		String[] processImages = customFileStore.list(UPLOADED_FILE_RELATIVE_PATH, filterPattern);
-		if (processImages.length > 0) {
-			customFileStore.remove(UPLOADED_FILE_RELATIVE_PATH+processImages[0]);
-		}
-	}
-
-	@Admin
-	@JSONExported
-	public DataHandler downloadXPDL(
-			ProcessType processType,
-			@Parameter("version") int version ) throws CMDBWorkflowException {
-		byte[] contents = processType.getXPDLManager().download(version);
-		ByteArrayDataSource ds = new ByteArrayDataSource(contents,"application/xpdl");
-		ds.setName(processType.getName() + "_" + version + ".xpdl");
-		return new DataHandler(ds);
-	}
-
-	@Admin
-	@JSONExported
 	public JSONObject removeAllInconsistentProcesses(
 			JSONObject serializer,
 			SharkFacade sharkFacade) throws JSONException, CMDBException {
@@ -159,16 +100,6 @@ public class ModWorkflow extends JSONBase {
 		return serializer;
 	}
 
-	@Admin
-	@JSONExported
-	public JSONObject removeInconsistentProcesses(
-			JSONObject serializer,
-			ITable classTable,
-			SharkFacade sharkFacade) throws JSONException, CMDBException {
-		sharkFacade.removeInconsistentProcesses(classTable);
-		return serializer;
-	}
-	
 	public static String getSketchURL(ITable table) throws JSONException {
 		String filterPattern = table.getName() + ".*";
 		String[] processImages = customFileStore.list(UPLOADED_FILE_RELATIVE_PATH, filterPattern);

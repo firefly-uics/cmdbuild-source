@@ -53,6 +53,7 @@ public class XPDLDocumentTest {
 		Package pkg = doc.getPkg();
 
 		assertThat(pkg.getId(), is(TEST_PKG_ID));
+		assertThat(doc.getPackageId(), is(TEST_PKG_ID));
 		assertThat(pkg.getPackageHeader().getXPDLVersion(), is("2.1"));
 
 		assertThat(pkg.getName(), is(""));
@@ -183,11 +184,13 @@ public class XPDLDocumentTest {
 		WorkflowProcess wp = doc.getPkg().getWorkflowProcess(TEST_WP_ID);
 
 		assertThat(wp.getExtendedAttributes().size(), is(0));
+		assertThat(doc.getProcessExtendedAttribute(TEST_WP_ID, TEST_XA_KEY), is(nullValue()));
 
 		doc.addProcessExtendedAttribute(TEST_WP_ID, TEST_XA_KEY, TEST_XA_VALUE);
 
 		assertThat(wp.getExtendedAttributes().size(), is(1));
 		assertThat(wp.getExtendedAttributes().getFirstExtendedAttributeForName(TEST_XA_KEY).getVValue(), is(TEST_XA_VALUE));
+		assertThat(doc.getProcessExtendedAttribute(TEST_WP_ID, TEST_XA_KEY), is(TEST_XA_VALUE));
 	}
 
 	/*

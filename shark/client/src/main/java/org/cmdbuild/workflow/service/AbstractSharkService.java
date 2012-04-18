@@ -6,6 +6,7 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
+import org.enhydra.shark.api.client.wfservice.PackageAdministration;
 import org.enhydra.shark.api.client.wfservice.SharkInterface;
 import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
 
@@ -75,6 +76,32 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			@Override
 			protected String[] command() throws Exception {
 				return shark().getPackageAdministration().getPackageVersions(handle(), pkgId);
+			}
+		}.execute();
+	}
+
+	@Override
+	public void uploadPackage(final String pkgId, final byte[] pkgDefData) throws CMWorkflowException {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws Exception {
+				PackageAdministration pa = shark().getPackageAdministration();
+				if (pa.getPackageVersions(handle(), pkgId).length == 0) {
+					pa.uploadPackage(handle(), pkgDefData);
+				} else {
+					pa.updatePackage(handle(), pkgId, pkgDefData);
+				}
+				return null;
+			}
+		}.execute();
+	}
+
+	@Override
+	public byte[] downloadPackage(final String pkgId, final String pkgVer) throws CMWorkflowException {
+		return new TransactedExecutor<byte[]>() {
+			@Override
+			protected byte[] command() throws Exception {
+				return shark().getPackageAdministration().getPackageContent(handle(), pkgId, pkgVer);
 			}
 		}.execute();
 	}

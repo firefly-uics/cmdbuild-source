@@ -23,12 +23,12 @@
 					allowBlank: true,
 					width: 300,
 					inputType: 'file',
-					name: 'xpdlfile',
+					name: 'xpdl',
 					fieldLabel: this.translation.xpdl_file
 				},{
 					xtype: 'textfield',
 					inputType: 'file',
-					name: 'imgfile',
+					name: 'sketch',
 					allowBlank: true,
 					width: 300,
 					fieldLabel: this.translation.jpg_file

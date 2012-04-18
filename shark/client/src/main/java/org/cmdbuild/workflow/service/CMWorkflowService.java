@@ -7,6 +7,10 @@ import org.cmdbuild.workflow.CMWorkflowException;
  */
 public interface CMWorkflowService {
 
-	String[] getPackageVersions(String packageId) throws CMWorkflowException;
+	String[] getPackageVersions(String pkgId) throws CMWorkflowException;
+
+	void uploadPackage(String pkgId, byte[] pkgDefData) throws CMWorkflowException;
+
+	byte[] downloadPackage(String pkgId, String pkgVer) throws CMWorkflowException;
 
 }

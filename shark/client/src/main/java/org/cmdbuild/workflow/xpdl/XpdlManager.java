@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.xpdl;
 
+import java.io.IOException;
+
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
 
@@ -22,6 +24,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.xpdl.XPDLDocument.ScriptLanguages;
 
@@ -35,10 +38,11 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		String[] getAllGroupNames();
 	}
 
-	public static final String XPDL_MIME_TYPE = "application/x-xpdl";
-	public static final String XPDL_EXTENSION = "xpdl";
+	private static final String DEFAULT_SYSTEM_PARTICIPANT = "System";
+	@Legacy("As in 1.x") private static final String CMDBUILD_BINDED_CLASS = "cmdbuildBindedClass";
 
 	final GroupQueryAdapter groupQueryAdapter;
+
 
 	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter) {
 		super(workflowService);
@@ -60,8 +64,8 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	private DataSource createDataSource(final CMProcessClass process, final XPDLDocument doc) throws XPDLException {
 		final byte[] xpdl = XPDLPackageFactory.xpdlByteArray(doc.getPkg());
-		final ByteArrayDataSource ds = new ByteArrayDataSource(xpdl, XPDL_MIME_TYPE);
-		ds.setName(String.format("%s.%s", process.getName(), XPDL_EXTENSION));
+		final ByteArrayDataSource ds = new ByteArrayDataSource(xpdl, getMimeType());
+		ds.setName(String.format("%s.%s", process.getName(), getFileExtension()));
 		return ds;
 	}
 
@@ -71,8 +75,6 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 			doc.addRoleParticipant(name);
 		}
 	}
-
-	private static final String DEFAULT_SYSTEM_PARTICIPANT = "System";
 
 	private void addProcessWithFields(XPDLDocument doc, final CMProcessClass process) {
 		final String wpId = getProcessId(process);
@@ -89,8 +91,36 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	@Legacy("As in 1.x")
 	private void addBindedClass(XPDLDocument doc, final CMProcessClass process) {
-		doc.addProcessExtendedAttribute(getProcessId(process), "cmdbuildBindedClass", process.getName());
+		doc.addProcessExtendedAttribute(getProcessId(process), CMDBUILD_BINDED_CLASS, process.getName());
 	}
+
+	@Override
+	public void updateDefinition(CMProcessClass process, DataSource pkgDefData) throws CMWorkflowException {
+		try {
+			final XPDLDocument xpdl = new XPDLDocument(XPDLPackageFactory.readXpdl(pkgDefData.getInputStream()));
+			if (!getPackageId(process).equals(xpdl.getPackageId())) {
+				throw new XPDLException("The package id does not match");
+			}
+			final String bindedClass = xpdl.getProcessExtendedAttribute(getProcessId(process), CMDBUILD_BINDED_CLASS);
+			if (!process.getName().equals(bindedClass)) {
+				throw new XPDLException("The process id does not match");
+			}
+		} catch (IOException e) {
+			throw new CMWorkflowException(e);
+		}
+		super.updateDefinition(process, pkgDefData);
+	}
+
+	@Override
+	protected String getMimeType() {
+		return "application/x-xpdl";
+	}
+
+	@Override
+	protected String getFileExtension() {
+		return "xpdl";
+	}
+
 
 	private class DaoToXpdlAttributeTypeConverter implements CMAttributeTypeVisitor {
 
