@@ -71,16 +71,22 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 
 	updateButtonsWidth: function updateButtonsWidth() {
 		var maxW = 0;
-		this.items.each(function(item) {
+		var buttons = this.items.items;
+		var l = buttons.length;
+
+		for (var i=0; i<l; ++i)  {
+			var item = buttons[i];
 			var w = item.getWidth();
 			if (w > maxW) {
 				maxW = w;
 			}
-		});
+		}
 
-		this.items.each(function(item) {
+		for (var i=0; i<l; ++i)  {
+			var item = buttons[i];
 			item.setWidth(maxW);
-		});
+		}
+
 		// to fix the width of the panel, auto width does
 		// not work with IE7
 		this.setWidth(maxW + 10); // 10 is the pudding

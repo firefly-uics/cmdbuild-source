@@ -86,9 +86,11 @@
 				}
 
 				// show the header and the footer, that are initially hidden
-				var divs = Ext.DomQuery.select("div[class=cm_no_display]");
+				var hiddenCls = "cm_no_display"
+				var divs = Ext.DomQuery.select("div[class="+hiddenCls+"]");
 				for (var i=0, l=divs.length; i<l; ++i) {
-					divs[i].setAttribute("class", "");
+					var e = new Ext.Element(divs[i]);
+					e.removeCls(hiddenCls);
 				}
 
 				return this;

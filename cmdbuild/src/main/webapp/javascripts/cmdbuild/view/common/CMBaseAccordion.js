@@ -41,14 +41,7 @@
 			Ext.apply(this, c);
 			this.store = Ext.create('CMDBuild.view.common.CMBaseAccordion.Store');
 
-			this.tree = Ext.create("Ext.tree.Panel", {
-				store: this.store,
-				border: false,
-				frame: false,
-				region: "center",
-				bodyStyle: { "border-top": "none" },
-				rootVisible: this.rootVisible
-			});
+			this.tree = this._buildTreePanel();;
 
 			Ext.apply(this, {
 				items: [this.tree],
@@ -187,6 +180,17 @@
 					this.selectNodeById(l);
 				}, 100, this)();
 			}
+		},
+
+		_buildTreePanel: function() {
+			return Ext.create("Ext.tree.Panel", {
+				store: this.store,
+				border: false,
+				frame: false,
+				region: "center",
+				bodyStyle: { "border-top": "none" },
+				rootVisible: this.rootVisible
+			});
 		},
 
 		buildTreeStructure: function() {

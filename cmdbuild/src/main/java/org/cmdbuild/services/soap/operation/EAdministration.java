@@ -98,12 +98,12 @@ public class EAdministration {
 			menuSchema.setPrivilege(privileges.toString());
 		}
 	}
-
+	
 	public AttributeSchema serialize(IAttribute attribute) {
-		return serialize(attribute, null, attribute.getIndex());
+		return serialize(attribute, attribute.getIndex());
 	}
 
-	public AttributeSchema serialize(IAttribute attribute, ActivityDO activity, int client_index) {
+	public AttributeSchema serialize(IAttribute attribute, int client_index) {
 		AttributeSchema schema = new AttributeSchema();
 		schema.setIdClass(attribute.getSchema().getId());
 		schema.setName(attribute.getDBName());
@@ -120,9 +120,9 @@ public class EAdministration {
 		schema.setFieldmode(attribute.getFieldMode().getMode());
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
-
-		schema.setMetadata(serializeMetadata(attribute, activity));
-
+		
+		schema.setMetadata(serializeMetadata(attribute));
+		
 		AttributeType atype = attribute.getType();
 		switch (atype) {
 		case LOOKUP:
@@ -143,26 +143,31 @@ public class EAdministration {
 		return schema;
 	}
 
-	private Metadata[] serializeMetadata(IAttribute attribute, ActivityDO activity) {
-		final Metadata[] commonMetadata = serializeMetadata(BaseSchema.class.cast(attribute), activity);
+	private Metadata[] serializeMetadata(IAttribute attribute) {
+		final Metadata[] commonMetadata = serializeMetadata(attribute);		
 		final List<Metadata> metadata = new ArrayList<Metadata>(Arrays.asList(commonMetadata));
 		checkAttributeFilter(attribute, metadata);
 		final Metadata[] array = new Metadata[metadata.size()];
 		return metadata.toArray(array);
 	}
 
-	public Metadata[] serializeMetadata(BaseSchema baseSchema, ActivityDO activity) {
-		final TreeMap<String, Object> metadata = baseSchema.getMetadata();
-		List<Metadata> tmpList = serializeMetadata(metadata);
+	public Metadata[] serializeMetadata(ITable table, ActivityDO activity) {
+		final TreeMap<String, Object> metadata = table.getMetadata();
+		List<Metadata> meta = serializeMetadata(metadata);
 		if (activity != null){
-			checkProcessIsStopable(activity, tmpList);
-			checkProcessIsEditable(activity, tmpList);
+			addProcessIsStoppable(table, meta);
+			addProcessIsEditable(activity, meta);
 		}
+		return meta.toArray(new Metadata[meta.size()]);
+	}
 
-		Metadata[] metadataList = new Metadata[tmpList.size()];
-		metadataList = tmpList.toArray(metadataList);
+	public Metadata[] serializeMetadata(BaseSchema baseSchema) {
+		return metaMapToArray(baseSchema.getMetadata());
+	}
 
-		return metadataList;
+	private Metadata[] metaMapToArray(final TreeMap<String, Object> metadata) {
+		final List<Metadata> meta = serializeMetadata(metadata);
+		return meta.toArray(new Metadata[meta.size()]);
 	}
 
 	private List<Metadata> serializeMetadata(TreeMap<String, Object> metadata) {
@@ -176,16 +181,15 @@ public class EAdministration {
 		return tmpList;
 	}
 
-
-	private void checkProcessIsStopable(ActivityDO activity, List<Metadata> tmpList) {
-		boolean isStopable = activity.isUserStoppable();
+	private void addProcessIsStoppable(ITable table, List<Metadata> meta) {
+		boolean isStoppable = table.isUserStoppable();
 		Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PROCESS_ISSTOPPABLE);
-		m.setValue(String.valueOf(isStopable));
-		tmpList.add(m);
+		m.setValue(String.valueOf(isStoppable));
+		meta.add(m);
 	}
 
-	private void checkProcessIsEditable(ActivityDO activity, List<Metadata> tmpList) {
+	private void addProcessIsEditable(ActivityDO activity, List<Metadata> tmpList) {
 		Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
 		if (activity.isEditable()){
@@ -193,23 +197,23 @@ public class EAdministration {
 		} else {
 			m.setValue("read");
 		}
-
+		
 		tmpList.add(m);
 	}
 
 	private void checkAttributeFilter(IAttribute attribute, List<Metadata> tmpList) {
 		final String filter = attribute.getFilter();
-		if (StringUtils.isNotBlank(filter)) {
+		if (StringUtils.isNotBlank(filter)) {			
 			Metadata m = new Metadata();
 			m.setKey(MetadataService.SYSTEM_TEMPLATE_PREFIX);
 			m.setValue(filter);
 			tmpList.add(m);
-		}
+		}		
 	}
 
 	private MenuSchema serializeTree(CNode<MenuCard> node, UserContext userCtx) {
 		MenuSchema schema = new MenuSchema();
-		MenuCard menu = node.getData();
+		MenuCard menu = node.getData();		
 		if (checkIsReport(menu)) {
 			schema.setId(menu.getElementObjId());
 		} else {
@@ -238,8 +242,8 @@ public class EAdministration {
 			schema.setMenuType(MenuCodeType.CLASS.getCodeType());
 		}
 		schema.setDescription(menu.getDescription());
-
-
+		
+		
 		List<MenuSchema> children = new LinkedList<MenuSchema>();
 		for (CNode<MenuCard> child : node.getChildren()) {
 			MenuSchema childMenuSchema = null;
@@ -257,7 +261,7 @@ public class EAdministration {
 			} else {
 				childMenuSchema = serializeTree(child, userCtx);
 			}
-
+			
 			if (childMenuSchema != null) { // no privileges
 				children.add(childMenuSchema);
 			}

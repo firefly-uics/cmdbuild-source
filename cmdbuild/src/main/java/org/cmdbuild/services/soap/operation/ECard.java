@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,11 +25,14 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.ClassSchema;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLParameter;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
+import org.cmdbuild.services.soap.types.CardExt;
 import org.cmdbuild.services.soap.types.CardList;
+import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Metadata;
 import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
@@ -53,35 +58,64 @@ public class ECard {
 
 		Log.SOAP.debug("Getting list of " + className + " cards");
 
-		final CardQueryBuilder cardQueryBuilder = createCardQueryBuilder(className, query, cqlQuery);
-		cardQueryBuilder.setPage(limit, offset);
-		cardQueryBuilder.setFullText(fullText);
-		cardQueryBuilder.setOrder(order);
-		cardQueryBuilder.applyActivityFilters(userCtx);
+		return new AbstractCardListCommand(className, attributeList, query, order, limit, offset, fullText, cqlQuery) {
+			CardList getOutput() {
+				final CardList cardList = new CardList();
+				for (final ICard card : cards) {
+					final Card wfCard = prepareCard(attributeList, card, activityMap, enableLongDateFormat);
+					wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+					cardList.addCard(wfCard);
+				}
+				cardList.setTotalRows(count);
+				return cardList;
+			}
+		}.getOutput();
+	}
 
-		final CardQuery cardQuery = cardQueryBuilder.getCardQuery();
-		final ITable table = cardQueryBuilder.getTable();
+	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query query,
+			final Order[] order, final Integer limit, final Integer offset, final String fullText,
+			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
 
-		final List<ICard> cards = new ArrayList<ICard>();
-		for (final ICard card : cardQuery.count()) {
-			cards.add(card);
+		Log.SOAP.debug("Getting list of " + className + " cards");
+
+		return new AbstractCardListCommand(className, attributeList, query, order, limit, offset, fullText, cqlQuery) {
+			CardListExt getOutput() {
+				final CardListExt cardList = new CardListExt();
+				for (final ICard card : cards) {
+					final CardExt wfCard = prepareCardExt(attributeList, card, activityMap, enableLongDateFormat);
+					wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+					cardList.addCard(wfCard);
+				}
+				cardList.setTotalRows(count);
+				return cardList;
+			}
+		}.getOutput();
+	}
+
+	private abstract class AbstractCardListCommand {
+
+		protected final ITable table;
+		protected final Integer count;
+		protected final List<ICard> cards;
+		protected final Map<Integer, ActivityDO> activityMap;
+
+		public AbstractCardListCommand(final String className, final Attribute[] attributeList, final Query query,
+			final Order[] order, final Integer limit, final Integer offset, final String fullText,
+			final CQLQuery cqlQuery) {
+			final CardQueryBuilder cqb = createCardQueryBuilder(className, query, cqlQuery);
+			cqb.setPage(limit, offset);
+			cqb.setFullText(fullText);
+			cqb.setOrder(order);
+			cqb.applyActivityFilters(userCtx);
+			final CardQuery cardQuery = cqb.getCardQuery();
+			this.table = cardQuery.getTable();
+			this.cards = new ArrayList<ICard>();
+			for (final ICard card : cardQuery.count()) {
+				cards.add(card);
+			}
+			this.count = cardQuery.getTotalRows();
+			this.activityMap = getActivityMapIfNeeded(table, cards, attributeList);
 		}
-
-		final Map<Integer, ActivityDO> activityMap = getActivityMapIfNeeded(table, cards, attributeList);
-
-		final List<Card> wfCards = new LinkedList<Card>();
-		for (final ICard card : cards) {
-			final Card wfCard = prepareCard(attributeList, card, activityMap, enableLongDateFormat);
-			wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
-			wfCards.add(wfCard);
-		}
-		final int count = cardQuery.getTotalRows();
-
-		final CardList cardList = new CardList();
-		cardList.setTotalRows(count);
-		cardList.setCards(wfCards);
-
-		return cardList;
 	}
 
 	private CardQueryBuilder createCardQueryBuilder(final String className, final Query query, final CQLQuery cqlQuery) {
@@ -119,6 +153,20 @@ public class ECard {
 		return wfCard;
 	}
 
+	// FIXME Refactoring with unit tests (it's a total mess!)
+	private CardExt prepareCardExt(final Attribute[] attributeList, final ICard card,
+			final Map<Integer, ActivityDO> activityMap, boolean enableLongDateFormat) {
+		CardExt wfCard;
+		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
+		addActivityDecription(card, activityMap.get(card.getId()));
+		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
+			wfCard = new CardExt(card, attributeList, cardSerializer);
+		} else {
+			wfCard = new CardExt(card, cardSerializer);
+		}
+		return wfCard;
+	}
+
 	private void addActivityDecription(final ICard card) {
 		if (card.getSchema().isActivity()) {
 			final SharkFacade sharkFacade = new SharkFacade(userCtx);
@@ -136,7 +184,7 @@ public class ECard {
 
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
 		Card wfCard;
-		final ITable table = userCtx.tables().get(className);
+		final ITable table = table(className);
 		final ICard card = table.cards().get(cardId);
 		addActivityDecription(card);
 
@@ -194,7 +242,7 @@ public class ECard {
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, Integer offset) {
 
 		final List<Card> list = new LinkedList<Card>();
-		final ITable table = userCtx.tables().get(className);
+		final ITable table = table(className);
 		final ICard currentICard = table.cards().get(cardId);
 		final Card currentCard = new Card(currentICard);
 		list.add(currentCard);
@@ -251,28 +299,15 @@ public class ECard {
 
 	public boolean deleteCard(final String className, final int cardId) {
 		Log.SOAP.debug("Deleting card " + cardId + "from " + className);
-		final ICard card = userCtx.tables().get(className).cards().get(cardId);
+		final ICard card = table(className).cards().get(cardId);
 		card.delete();
 		return true;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {
-		final ITable table = userCtx.tables().get(className);
-		Log.SOAP.debug("Getting Attribute Schema for class " + className);
-		final Map<String, IAttribute> attributes = table.getAttributes();
-		final List<AttributeSchema> list = new LinkedList<AttributeSchema>();
-		for (final IAttribute attribute : attributes.values()) {
-			if (attribute.getMode().equals(Mode.RESERVED))
-				continue;
-			if (!attribute.getStatus().isActive())
-				continue;
-			final EAdministration administration = new EAdministration(userCtx);
-			list.add(administration.serialize(attribute));
-		}
-
-		AttributeSchema[] attrs = new AttributeSchema[list.size()];
-		attrs = list.toArray(attrs);
-		return attrs;
+		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
+		final List<AttributeSchema> attributes = getClassSchema(className).getAttributes();
+		return attributes.toArray(new AttributeSchema[attributes.size()]);
 	}
 
 	public Reference[] getReference(final String classname, final Query query, final Order[] order,
@@ -341,10 +376,6 @@ public class ECard {
 					cardQuery.filter(query.toAbstractFilter(table));
 				}
 			}
-		}
-
-		public ITable getTable() {
-			return table;
 		}
 
 		public CardQuery getCardQuery() {
@@ -443,6 +474,52 @@ public class ECard {
 			return targetAttributeName;
 		}
 
+	}
+
+	public ClassSchema getClassSchema(final String className) {
+		Log.SOAP.info(format("getting schema for class '%s'", className));
+		final ClassSchema classSchema = new ClassSchema();
+		final ITable table = table(className);
+
+		classSchema.setName(table.getName());
+		classSchema.setDescription(table.getDescription());
+		classSchema.setSuperClass(table.isSuperClass());
+	
+		final List<AttributeSchema> attributes = new ArrayList<AttributeSchema>();
+		for (final IAttribute attribute : table.getAttributes().values()) {
+			if (keepAttribute(attribute)) {
+				final AttributeSchema attributeSchema = attributeSchema(attribute);
+				attributes.add(attributeSchema);
+			}
+		}
+		classSchema.setAttributes(attributes);
+
+		return classSchema;
+	}
+
+	private ITable table(final String className) {
+		Log.SOAP.info(format("getting table for class '%s'", className));
+		return userCtx.tables().get(className);
+	}
+
+	private boolean keepAttribute(final IAttribute attribute) {
+		final boolean keep;
+		if (attribute.getMode().equals(Mode.RESERVED)) {
+			keep = false;
+		} else if (!attribute.getStatus().isActive()) {
+			keep = false;
+		} else {
+			keep = true;
+		}
+		Log.SOAP.info(format("attribute '%s' kept: %b", attribute.getName(), keep));
+		return keep;
+	}
+
+	private AttributeSchema attributeSchema(final IAttribute attribute) {
+		Log.SOAP.info(format("serializing attribute '%s'", attribute.getName()));
+		final EAdministration administration = new EAdministration(userCtx);
+		final AttributeSchema attributeSchema = administration.serialize(attribute);
+		return attributeSchema;
 	}
 
 }

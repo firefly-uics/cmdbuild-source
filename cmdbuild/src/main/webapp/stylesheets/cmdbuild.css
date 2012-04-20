@@ -339,6 +339,10 @@ em {
 	background-image: url(../images/icons/key.png) !important;
 }
 
+.preview {
+	background-image: url(../images/icons/preview.png) !important;
+}
+
 .order {
 	background-image: url(../images/icons/order.png) !important;
 }
@@ -738,6 +742,10 @@ em {
 	padding: 5px 5px 0 5px;
 }
 
+.cmgraypanel-nopadding {
+	background: #F1F1F1 ! important;
+}
+
 .cmborder {
 	border-style: solid ! important;
 	border-width: 1px ! important;
@@ -761,6 +769,18 @@ em {
 .cmborderleft {
 	border-left-style: solid ! important;
 	border-left-width: 1px ! important;
+}
+
+/* fieldset */
+.cmfieldset {
+	border: 1px #E1E1E1 solid;
+	padding: 5px 5px 0 15px;
+	margin-bottom: 10px;
+}
+
+.cmfieldset-header {
+	font-weight: bold;
+	color: #555555;
 }
 
 /*

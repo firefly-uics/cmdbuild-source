@@ -393,7 +393,8 @@ public class Serializer {
 				}
 			}
 			serializeSketchUrl(jsonTable, table);
-			jsonTable.put("type", "processclass");			
+			jsonTable.put("type", "processclass");
+			jsonTable.put("userstoppable", table.isUserStoppable());
 		} else {
 			jsonTable.put("type", "class");
 		}

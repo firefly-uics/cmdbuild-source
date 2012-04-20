@@ -9,7 +9,8 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public class DateTimeAttribute extends AbstractDateAttribute {
 
-	public static final String JSON_DATETIME_FORMAT = "dd/MM/yy HH:mm:ss";
+	public static final String JSON_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	public static final String LEGACY_JSON_DATETIME_FORMAT = "dd/MM/yy HH:mm:ss";
 	public static final String POSTGRES_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	public DateTimeAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
@@ -28,7 +29,7 @@ public class DateTimeAttribute extends AbstractDateAttribute {
 			dateValue = (Date) value;
 		} else if (value instanceof String) {
 			dateValue = convertDateString((String) value, JSON_DATETIME_FORMAT, DateAttribute.JSON_DATE_FORMAT,
-					SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT);
+					SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT, LEGACY_JSON_DATETIME_FORMAT);
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}

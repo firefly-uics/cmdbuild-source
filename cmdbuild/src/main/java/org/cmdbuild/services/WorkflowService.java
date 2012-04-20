@@ -23,7 +23,6 @@ import org.cmdbuild.workflow.WorkflowCache;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
-import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.client.utilities.SharkWSFactory;
 
 public class WorkflowService {
@@ -75,7 +74,7 @@ public class WorkflowService {
 		this.configured = true;
 		this.enabled = props.isEnabled();
 		if (enabled) {
-			sharkEndpoint = props.getEndpoint();
+			sharkEndpoint = props.getServerUrl();
 			factory = new CachedSharkWSFactory(sharkEndpoint);
 			sharkEventListeners = new HashSet<SharkWSFacade.SharkEventListener>();
 			initAdminConnectionInfo(props);
@@ -92,7 +91,7 @@ public class WorkflowService {
 	}
 
 	private void initAdminConnectionInfo(WorkflowProperties props) {
-		connectInfoAdmin = new WMConnectInfo(props.getUser(), props.getPassword(), ENGINE, SCOPE);
+		connectInfoAdmin = new WMConnectInfo(props.getUsername(), props.getPassword(), ENGINE, SCOPE);
 	}
 
 	private void initWAPIConnection() {
@@ -181,7 +180,7 @@ public class WorkflowService {
 			handle = getWapi().connect(connectInfoAdmin);
 		} else {
 			WorkflowProperties props = WorkflowProperties.getInstance();
-			String adminUser = props.getUser();
+			String adminUser = props.getUsername();
 			String adminPassword = props.getPassword();
 			String connectionGroup = userCtx.getDefaultGroup().getName(); // !!!!!!!!!!!!!!!
 			WMConnectInfo connInfo = new WMConnectInfo(adminUser + "@" + connectionGroup,

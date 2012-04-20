@@ -16,6 +16,10 @@
 			// ping
 			widgetBuilders[CMDBuild.controller.management.common.widgets.CMPingController.WIDGET_NAME] = pingControllerBuilder;
 
+
+			// createModifyCard
+			widgetBuilders[CMDBuild.controller.management.common.widgets.CMCreateModifyCardController.WIDGET_NAME] = createModifyCardControllerBuilder;
+
 			var builder = widgetBuilders[widgetDef.type];
 			if (builder) {
 				return builder(ui, superController = me, widgetDef, me.view.getFormForTemplateResolver(), card);
@@ -42,7 +46,7 @@
 		// override
 		getWidgetLable: function(w) {
 			return w.label;
-		},
+		}
 	});
 
 	function openReportControllerBuilder(ui, superController, widgetDef, clientForm, card) {
@@ -74,6 +78,20 @@
 			widgetDef,
 			clientForm,
 			card
+		);
+	}
+
+	function createModifyCardControllerBuilder(ui, supreController, widgetDef, clientForm, card) {
+		var widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(ui.getWidgetManager());
+		var widgetReader = new CMDBuild.controller.management.classes.widgets.CMCreateModifyCardWidgetReader();
+		return new CMDBuild.controller.management.common.widgets.CMCreateModifyCardController(
+			ui,
+			supreController,
+			widgetDef,
+			clientForm,
+			card,
+			widgetReader,
+			widgetControllerManager
 		);
 	}
 })();

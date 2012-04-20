@@ -672,18 +672,11 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 		this.group = group;
 	}
 
-	protected boolean isTypeAllowed(String editorType) {
-		return false; // default implementation
-	}
-
-	public final String getEditorType() {
+	public String getEditorType() {
 		return this.editorType;
 	}
 
-	public final void setEditorType(String editorType) {
-		if (!isTypeAllowed(editorType)) {
-			throw new IllegalArgumentException();
-		}
+	public void setEditorType(String editorType) {
 		this.editorType = editorType;
 	}
 }

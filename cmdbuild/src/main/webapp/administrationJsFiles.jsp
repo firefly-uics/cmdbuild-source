@@ -3,7 +3,9 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMWidgetDefinitionModel.js"></script>
+
 
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
@@ -31,7 +33,16 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesForm.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesPanel.js"></script>
 
-	
+	<!-- DASHBOARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script><!-- Required in the CMDashboardChartConfigurationDataSourcePanel -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardPropertiesPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationDataSourcePanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMModDashboard.js"></script>
+
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerLayersGrid.js"></script>
@@ -40,7 +51,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
-	
+
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGroupsAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupForm.js"></script>
@@ -109,6 +120,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMOpenReportDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCalendarDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMPingDefinitionForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCreateModifyCardDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWidgetDefinitionMainForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionPanel.js"></script>
 
@@ -143,7 +155,18 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassAttributeController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassFormController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMModClassController.js"></script>
-	
+
+	<!-- DASHBOARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDashboardAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationFormController.js"></script>
+		<!-- CHARTS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartGaugeStrategy.js"></script>
+
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationGridController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationPanelController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardPropertiesPanelController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
+
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMMenuAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/menu/CMModMenuController.js"></script>
@@ -170,6 +193,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMOpenReportController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCalendarController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
 
 
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script> 

@@ -44,7 +44,10 @@ public class CustomFilesStore {
 	}
 
 	public void save(FileItem file, String filePath) throws IOException {
-		InputStream inputStream = file.getInputStream();
+		save(file.getInputStream(), filePath);
+	}
+
+	public void save(InputStream inputStream, String filePath) throws IOException {
 		String destinationPath = absoluteRootDirectory+filePath;
 		FileOutputStream outputStream = null;
 		try {

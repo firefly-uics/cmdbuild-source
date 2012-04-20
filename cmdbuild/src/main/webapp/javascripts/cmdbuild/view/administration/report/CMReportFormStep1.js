@@ -38,26 +38,7 @@
 				maxLength : 100
 			});
 
-			this.groups = new Ext.ux.form.MultiSelect({
-				fieldLabel : tr.enabled_groups,
-				name : "groups",
-				dataFields : [ 'name', 'description' ],
-				valueField : 'name',
-				displayField : 'description',
-				allowBlank : true,
-				store : new Ext.data.Store( {
-					fields : [ 'name', 'description' ],
-					proxy : {
-						type : "ajax",
-						url : 'services/json/schema/modreport/getgroups',
-						reader : {
-							type : "json",
-							root : "rows"
-						}
-					},
-					autoLoad : true
-				})
-			});
+			this.groups = new CMDBuild.view.common.field.CMGroupSelectionList();
 
 			this.items = [
 				this.name,
@@ -81,9 +62,6 @@
 
 	function setValueToMultiselect(m, stringValue) {
 		var v = stringValue.split(",");
-		// if disabled, the mystical multiselect is not able to set his value
-		m.enable();
 		m.setValue(v);
-		m.disable();
 	}
 })();

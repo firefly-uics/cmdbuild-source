@@ -82,8 +82,23 @@
 				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupFieldStore(type);
 			}
 			return lookupAttributeStoreMap[type];
+		},
+
+		getLookupchainForType: function(type) {
+			var chain = [];
+			while (type != "") {
+				for (var i in lookupTypes) {
+					var lt = lookupTypes[i];
+					if (lt.get("id") == type) {
+						chain.push(type);
+						type = lt.get("parent");
+						break;
+					}
+				}
+			}
+
+			return chain;
 		}
-		
 	});
 
 	function buildLookupTypeStore(onlyLeaves) {

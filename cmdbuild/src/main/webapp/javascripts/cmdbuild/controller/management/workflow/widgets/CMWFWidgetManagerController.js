@@ -9,7 +9,17 @@
 				builders = {
 					createModifyCard: function(ui) {
 						var widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(ui.getWidgetManager());
-						return new controllerPKG.CMCreateModifyCard(ui, me, widgetDef, widgetControllerManager);
+						var widgetReader = new CMDBuild.controller.management.workflow.widgets.CMCreateModifyCardWidgetReader();
+
+						return new CMDBuild.controller.management.common.widgets.CMCreateModifyCardController(
+							ui,
+							me,
+							widgetDef,
+							me.view.getFormForTemplateResolver(),
+							card,
+							widgetReader,
+							widgetControllerManager
+						);
 					},
 					createReport: function(ui, superController, widgetDef, card) {
 						return new CMDBuild.controller.management.common.widgets.CMOpenReportController(
