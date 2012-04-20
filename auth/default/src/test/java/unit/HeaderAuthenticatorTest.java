@@ -27,6 +27,7 @@ public class HeaderAuthenticatorTest {
 
 	@Test(expected=java.lang.IllegalArgumentException.class)
 	public void configurationCannotBeNull() {
+		@SuppressWarnings("unused")
 		HeaderAuthenticator authenticator = new HeaderAuthenticator(null);
 	}
 

@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(value = Parameterized.class)
-public class SimpleQueryTest extends QueryTestFixture {
+public class SimpleQueryTest extends DriverFixture {
 
 	public SimpleQueryTest(final String driverBeanName) {
 		super(driverBeanName);
@@ -34,18 +34,18 @@ public class SimpleQueryTest extends QueryTestFixture {
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
 
-		DBCard.create(driver, newClass).set(ATTRIBUTE_1, attr1Value).set(ATTRIBUTE_2, attr2Value).save();
+		DBCard.newInstance(driver, newClass).setCode(attr1Value).setDescription(attr2Value).save();
 
 		final CMQueryResult result = new QuerySpecsBuilder(view)
-			.select(ATTRIBUTE_1).from(newClass).run();
+			.select(newClass.getCodeAttributeName()).from(newClass).run();
 
 		// TEST ATTRIBUTE_1 is extracted but not ATTRIBUTE_2
 		final CMQueryRow firstRow = result.iterator().next();
 		assertThat(result.size(), is(1));
-		assertThat(firstRow.getCard(newClass).get(ATTRIBUTE_1), is(attr1Value));
+		assertThat(firstRow.getCard(newClass).getCode(), is(attr1Value));
 		try {
-			firstRow.getCard(newClass).get(ATTRIBUTE_2);
-			fail("Value for attribute " + ATTRIBUTE_2 + " should have not been loaded");
+			firstRow.getCard(newClass).getDescription();
+			fail("Value for description attribute should have not been loaded");
 		} catch (final UnsupportedOperationException e) {
 			assertThat(e.getMessage(), is("Not implemented"));
 		}
@@ -59,20 +59,20 @@ public class SimpleQueryTest extends QueryTestFixture {
 		final DBClass A = driver.createClass("A", S2);
 		final DBClass B = driver.createClass("B", S1);
 		final DBClass C = driver.createClass("C", S1);
-		insertCard(A, ATTRIBUTE_1, "A");
-		insertCard(B, ATTRIBUTE_1, "B");
-		insertCard(C, ATTRIBUTE_1, "C");
+		insertCardWithCode(A, "A");
+		insertCardWithCode(B, "B");
+		insertCardWithCode(C, "C");
 
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(view)
-			.select(ATTRIBUTE_1).from(S1).run();
+			.select(S1.getCodeAttributeName()).from(S1).run();
 
 		// then
 		assertThat(result.size(), is(3));
 		for (CMQueryRow row : result) {
 			final CMCard c = row.getCard(S1);
 			// the value was intentionally set to the class name
-			final String expectedClassName = (String) c.get(ATTRIBUTE_1);
+			final String expectedClassName = (String) c.getCode();
 			assertThat(c.getType().getName(), is(expectedClassName));
 		}
 	}
@@ -89,7 +89,7 @@ public class SimpleQueryTest extends QueryTestFixture {
 
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(view)
-			.select(ATTRIBUTE_1).from(newClass).offset(OFFSET).limit(LIMIT).run();
+			.select(newClass.getCodeAttributeName()).from(newClass).offset(OFFSET).limit(LIMIT).run();
 
 		// then
 		assertThat(result.size(), is(LIMIT));
@@ -102,13 +102,14 @@ public class SimpleQueryTest extends QueryTestFixture {
 		final DBClass newClass = driver.createClass("A", null);
 		insertCards(newClass, 5);
 		final Object cardAttributeToFind = "3";
+		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(view)
-			.select(ATTRIBUTE_1)
+			.select(codeAttributeName)
 			.from(newClass)
 			.where(
-				QueryAliasAttribute.attribute(Alias.canonicalAlias(newClass), ATTRIBUTE_1),
+				QueryAliasAttribute.attribute(Alias.canonicalAlias(newClass), codeAttributeName),
 				Operator.EQUALS,
 				cardAttributeToFind)
 			.run();
@@ -116,6 +117,6 @@ public class SimpleQueryTest extends QueryTestFixture {
 		// then
 		final CMQueryRow firstRow = result.iterator().next();
 		assertThat(result.size(), is(1));
-		assertThat(firstRow.getCard(newClass).get(ATTRIBUTE_1), is(cardAttributeToFind));
+		assertThat(firstRow.getCard(newClass).get(codeAttributeName), is(cardAttributeToFind));
 	}
 }

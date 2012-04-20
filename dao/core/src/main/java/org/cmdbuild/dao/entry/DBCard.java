@@ -6,11 +6,11 @@ import org.cmdbuild.dao.entrytype.DBClass;
 
 public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 
-	public static DBCard create(final DBDriver driver, final DBClass type) {
+	public static DBCard newInstance(final DBDriver driver, final DBClass type) {
 		return new DBCard(driver, type, null);
 	}
 
-	public static DBCard create(final DBDriver driver, final DBClass type, final Object id) {
+	public static DBCard newInstance(final DBDriver driver, final DBClass type, final Object id) {
 		return new DBCard(driver, type, id);
 	}
 
@@ -18,17 +18,40 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 		super(driver, type, id);
 	}
 
+	@Override
 	public final DBCard set(final String key, final Object value) {
 		setOnly(key, value);
 		return this;
 	}
 
+	@Override
 	public DBCard save() {
 		saveOnly();
 		return  this;
 	}
 
+	@Override
 	public DBClass getType() {
 		return (DBClass) super.getType();
+	}
+
+	@Override
+	public Object getCode() {
+		return get(getType().getCodeAttributeName());
+	}
+
+	@Override
+	public Object getDescription() {
+		return get(getType().getDescriptionAttributeName());
+	}
+
+	@Override
+	public CMCardDefinition setCode(Object value) {
+		return set(getType().getCodeAttributeName(), value);
+	}
+
+	@Override
+	public CMCardDefinition setDescription(Object value) {
+		return set(getType().getDescriptionAttributeName(), value);
 	}
 }

@@ -9,6 +9,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 
 public class ClassWrapper implements CMClass {
 
@@ -107,4 +108,18 @@ public class ClassWrapper implements CMClass {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public String getKeyAttributeName() {
+		return CardAttributes.Id.toString();
+	}
+
+	@Override
+	public String getCodeAttributeName() {
+		return CardAttributes.Code.toString();
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		return CardAttributes.Description.toString();
+	}
 }

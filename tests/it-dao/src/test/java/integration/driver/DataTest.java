@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(value = Parameterized.class)
-public class DataTest extends QueryTestFixture {
+public class DataTest extends DriverFixture {
 
 	public DataTest(String driverBeanName) {
 		super(driverBeanName);
@@ -30,7 +30,7 @@ public class DataTest extends QueryTestFixture {
 		// given
 		final DBClass newClass = driver.createClass(A_CLASS_NAME, null);
 		// when
-		final CMCard newCard = DBCard.create(driver, newClass)
+		final CMCard newCard = DBCard.newInstance(driver, newClass)
 			.set(ATTRIBUTE_1, "Pizza").save(); // FIXME
 		//then
 		assertThat(newCard.getId(), is(notNullValue()));

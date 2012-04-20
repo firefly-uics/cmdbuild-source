@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
@@ -153,6 +154,11 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		@Override
 		public void visit(DoubleAttributeType attributeType) {
 			xpdlType = XPDLDocument.StandardAndCustomTypes.FLOAT;
+		}
+
+		@Override
+		public void visit(EntryTypeAttributeType attributeType) {
+			xpdlType = null;
 		}
 
 		@Override

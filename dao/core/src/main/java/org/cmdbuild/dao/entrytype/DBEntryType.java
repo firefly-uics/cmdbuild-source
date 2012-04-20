@@ -106,6 +106,12 @@ public abstract class DBEntryType implements CMEntryType {
 		return attributesByName.get(name);
 	}
 
+	@Override
+	public String getKeyAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Id";
+	}
+
 	/*
 	 * Object overrides
 	 */
