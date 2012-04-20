@@ -9,8 +9,8 @@ public class UserAttribute implements CMAttribute {
 	private final UserDataView view;
 	private final DBAttribute inner;
 
-	static UserAttribute create(final UserDataView view, final DBAttribute inner) {
-		if (inner != null && inner.isActive() || view.getAccessControlManager().hasDatabaseDesignerPrivileges()) {
+	static UserAttribute newInstance(final UserDataView view, final DBAttribute inner) {
+		if (inner != null && inner.isActive() || view.getOperationUser().hasDatabaseDesignerPrivileges()) {
 			return new UserAttribute(view, inner);
 		} else {
 			return null;

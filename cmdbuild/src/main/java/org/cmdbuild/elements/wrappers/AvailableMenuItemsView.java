@@ -7,6 +7,8 @@ import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.CardFactoryImpl;
 import org.cmdbuild.elements.interfaces.CardFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.proxy.TableForwarder;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -20,7 +22,7 @@ public class AvailableMenuItemsView extends TableForwarder {
 
 	static final String AvailableMenuView = "system_availablemenuitems";
 	Map<String, IAttribute> attributes;
-	
+
 	public AvailableMenuItemsView() {
 		super(UserContext.systemContext().tables().get(MenuCard.MENU_CLASS_NAME));
 	}
@@ -28,19 +30,19 @@ public class AvailableMenuItemsView extends TableForwarder {
 	public String getDBName() {
 		return AvailableMenuView;
 	}
-	
+
 	public Map<String, IAttribute> getAttributes() {
 		if (attributes == null) {
 			attributes = new HashMap<String, IAttribute>();
-			
+
 			Map<String, IAttribute> attr = backend.findAttributes(t);
-			attributes.put("IdClass", attr.get("IdClass"));
-			attributes.put("Description", attr.get("Description"));
-			attributes.put("Code", attr.get("Code"));
-			attributes.put("Type", attr.get("Type"));
-			attributes.put("IdElementObj", attr.get("IdElementObj"));
-			attributes.put("IdElementClass", attr.get("IdElementClass"));
-			attributes.put("IdGroup", attr.get("IdGroup"));
+			attributes.put(CardAttributes.ClassId.toString(), attr.get(CardAttributes.ClassId.toString()));
+			attributes.put(CardAttributes.Description.toString(), attr.get(CardAttributes.Description.toString()));
+			attributes.put(CardAttributes.Code.toString(), attr.get(CardAttributes.Code.toString()));
+			attributes.put(MenuCard.TYPE_ATTR, attr.get(MenuCard.TYPE_ATTR));
+			attributes.put(MenuCard.ELEMENT_OBJECT_ID_ATTR, attr.get(MenuCard.ELEMENT_OBJECT_ID_ATTR));
+			attributes.put(MenuCard.ELEMENT_CLASS_ID_ATTR, attr.get(MenuCard.ELEMENT_CLASS_ID_ATTR));
+			attributes.put(MenuCard.GROUP_NAME_ATTR, attr.get(MenuCard.GROUP_NAME_ATTR));
 		}
 		return attributes;
 	}

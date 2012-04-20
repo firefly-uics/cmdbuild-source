@@ -1,9 +1,10 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
@@ -13,10 +14,10 @@ import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.reference.CMReference;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
@@ -52,6 +53,15 @@ public abstract class AbstractJsonResponseSerializer {
 			@Override
 			public void visit(BooleanAttributeType attributeType) {
 				valueForJson = value;
+			}
+
+			@Override
+			public void visit(EntryTypeAttributeType attributeType) {
+				if (value instanceof CMReference) {
+					valueForJson = ((CMReference)value).getId();
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override
@@ -100,9 +110,10 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(LookupAttributeType attributeType) {
-				if (value instanceof CMLookup) {
-					final CMLookup lookup = (CMLookup) value;
-					final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) lookup.getId());
+				if (value instanceof CMReference) {
+					// FIXME
+					final Object id = ((CMReference)value).getId();
+					final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) id);
 					try {
 						valueForJson = idAndDescription(oldLookup.getId(), oldLookup.getDescription());
 					} catch (JSONException e) {
@@ -115,7 +126,11 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(ReferenceAttributeType attributeType) {
-				valueForJson = value;
+				if (value instanceof CMReference) {
+					valueForJson = ((CMReference)value).getId();
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override

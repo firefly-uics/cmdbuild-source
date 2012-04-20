@@ -29,27 +29,27 @@ import org.cmdbuild.workflow.WorkflowCache;
 import org.cmdbuild.workflow.operation.ActivityDO;
 
 public class EAdministration {
-	
+
 	private UserContext userCtx;
 
 	public EAdministration(UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
-	
+
 	public MenuSchema getClassMenuSchema()  {
 		TableTree tree =  userCtx.tables().fullTree().displayable();
 		return serializeDefaultTree(tree.exclude(ProcessType.BaseTable).getRootElement(), false, userCtx);
 	}
-	
+
 	public MenuSchema getProcessMenuSchema()  {
 		TableTree tree = userCtx.processTypes().tree();
 		return serializeDefaultTree(tree.getRootElement(), true, userCtx);
 	}
-	
+
 	public MenuSchema getMenuSchema() {
-		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getId());
+		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getName());
 		if (tree.getRootElement().getNumberOfChildren() == 0) {
-			tree = MenuCard.loadTreeForGroup(0);
+			tree = MenuCard.loadTreeForGroup(MenuCard.DEFAULT_GROUP);
 		}
 		return serializeTree(tree.getRootElement(), userCtx);
 	}

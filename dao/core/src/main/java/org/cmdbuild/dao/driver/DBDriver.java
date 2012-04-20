@@ -30,4 +30,11 @@ public interface DBDriver {
 	void update(DBEntry entry);
 	void delete(DBEntry entry);
 	CMQueryResult query(QuerySpecs query);
+
+/* add parameters for query and executeStatement?
+ * note: SQL available only to the System user, not even to admin!
+	CMQueryResult query(String language, String query); // "CQL", "from Table ..."
+	void executeStatement(String language, String statement); // "SQL", "CREATE TABLE ..."
+	void executeScript(String language, String script); // "SQL", "classpath:/createdb.sql"
+*/
 }

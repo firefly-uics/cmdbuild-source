@@ -89,8 +89,11 @@ public class QueryCreator {
 	}
 
 	private void appendPart(final PartCreator partCreator) {
-		sb.append(" ").append(partCreator.getPart());
-		params.addAll(partCreator.getParams());
+		final String part = partCreator.getPart();
+		if (StringUtils.isNotEmpty(part)) {
+			sb.append(" ").append(part);
+			params.addAll(partCreator.getParams());
+		}
 	}
 
 	public String getQuery() {

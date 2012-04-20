@@ -2,7 +2,7 @@
 	Ext.define("CMGroupModelForList", {
 		extend: 'Ext.data.Model',
 		fields: [
-			{name: 'id', type: 'int'},
+			{name: 'name', type: 'string'},
 			{name: 'description', type: 'string'}
 		]
 	});
@@ -11,8 +11,8 @@
 		extend: "Ext.ux.form.MultiSelect",
 		fieldLabel : CMDBuild.Translation.administration.modreport.importJRFormStep1.enabled_groups,
 		name : "groups",
-		dataFields : [ 'id', 'description' ],
-		valueField : 'id',
+		dataFields : [ 'name', 'description' ],
+		valueField : 'name',
 		displayField : 'description',
 		allowBlank : true,
 		initComponent: function() {
@@ -21,7 +21,7 @@
 					model: "CMGroupModelForList",
 					proxy : {
 						type : "ajax",
-						url : 'services/json/management/modreport/getgroups',
+						url : 'services/json/schema/modreport/getgroups',
 						reader : {
 							type : "json",
 							root : "rows"

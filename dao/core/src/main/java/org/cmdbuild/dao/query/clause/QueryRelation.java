@@ -20,7 +20,7 @@ public class QueryRelation {
 		return new QueryDomain(relation.getType(), querySource);
 	}
 
-	public static QueryRelation create(DBRelation relation, String querySource) {
+	public static QueryRelation newInstance(DBRelation relation, String querySource) {
 		return new QueryRelation(relation, querySource);
 	}
 }

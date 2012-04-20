@@ -1,6 +1,5 @@
 package org.cmdbuild.servlets.json.schema;
 
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,11 +28,10 @@ public class ModMenu extends JSONBase {
 	@JSONExported
 	public JSONArray getMenu(
 			JSONObject serializer,
-			@Parameter("group") int groupId
-	) throws JSONException, AuthException, NotFoundException, ORMException {	
-		if (groupId >= 0) {
-			Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupId);			
-			return Serializer.serializeMenuList(menuList, UserContext.systemContext(), null);		
+			@Parameter("group") String groupName) throws JSONException {
+		if (groupName != null) {
+			Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
+			return Serializer.serializeMenuList(menuList, UserContext.systemContext(), null);
 		}
 		return new JSONArray();
 	}
@@ -44,11 +42,10 @@ public class ModMenu extends JSONBase {
 			JSONObject serializer,
 			ITableFactory tf,
 			UserContext userCtx,
-			@Parameter("group") int groupId
-	) throws JSONException {
-		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupId);
+			@Parameter("group") String groupName) throws JSONException {
+		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupName);
 		JSONArray jsonAvailableItems = Serializer.buildJsonAvaiableMenuItems();
-		
+
 		addAvailableTables(tf, menuList, jsonAvailableItems);
 		addAvailableReports(userCtx, menuList, jsonAvailableItems);
 		return jsonAvailableItems;
@@ -58,48 +55,48 @@ public class ModMenu extends JSONBase {
 	@JSONExported
 	public JSONObject saveMenu(
 			JSONObject serializer,
-			@Parameter("group") int groupId,
+			@Parameter("group") String groupName,
 			@Parameter("menuItems") JSONArray jsonMenuItems
 	) throws Exception {
-		MenuCard.deleteTree(groupId);
+		MenuCard.deleteTree(groupName);
 		Map<Object, Integer> idMap = new HashMap<Object, Integer>();
-		
+
 		int len=jsonMenuItems.length();
 		while (len > 0) {
 			int startLength = len;
-			
+
 			for (int i=0; i<jsonMenuItems.length(); ++i) {
 				JSONObject jsonItem = jsonMenuItems.getJSONObject(i);
-				
+
 				if (idMap.keySet().contains(jsonItem.get("id"))) {
 					continue;
 				}
 
 				MenuCard menuItem = new MenuCard();
-				menuItem = getMenuCardFromJSONObject(groupId, jsonItem);
-				
+				menuItem = getMenuCardFromJSONObject(groupName, jsonItem);
+
 				if (jsonItem.has("parent") &&
 						idMap.keySet().contains(jsonItem.get("parent"))) {
 					menuItem.setParentId(idMap.get(jsonItem.get("parent")));
 				}
-				
+
 				menuItem.save();
 				Object givenId = jsonItem.get("id");
 				idMap.put(givenId, menuItem.getId());
 				--len;
 			}
-			
+
 			if (len == startLength) {
 				throw new Exception();
 			}
 		}
-		
+
 		return serializer;
 	}
 
-	private MenuCard getMenuCardFromJSONObject(int groupId, JSONObject jsonItem) throws JSONException {
+	private MenuCard getMenuCardFromJSONObject(String groupName, JSONObject jsonItem) throws JSONException {
 		MenuCard menuItem = new MenuCard();
-				
+
 		String type = jsonItem.getString("type");
 		if (MenuCodeType.FOLDER.getCodeType().equals(type)) {
 			menuItem.setCode(MenuCodeType.FOLDER.getCodeType());
@@ -120,44 +117,44 @@ public class ModMenu extends JSONBase {
 		}
 		menuItem.setNumber(jsonItem.getInt("cmIndex"));
 		menuItem.setDescription(jsonItem.getString("text"));
-		menuItem.setGroupId(groupId);
+		menuItem.setGroupName(groupName);
 		return menuItem;
 	}
-	
+
 	@Admin
 	@JSONExported
 	public JSONObject deleteMenu(
 			JSONObject serializer,
-			@Parameter("group") int groupId
+			@Parameter("group") String groupName
 		) throws JSONException {
-		MenuCard.deleteTree(groupId);
+		MenuCard.deleteTree(groupName);
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONArray getGroupMenu(
 			UserContext userCtx
 		) throws JSONException, AuthException, NotFoundException, ORMException {
 		JSONArray response = null;
 		//get the menu associated to the user's group
-		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(userCtx.getDefaultGroup().getId());
+		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(userCtx.getDefaultGroup().getName());
 		//if there isn't any menu associated to the user's group, get the default menu
 		if (!menuList.iterator().hasNext()) {
-			menuList = MenuCard.loadListForGroup(MenuCard.DEFAULT_GROUP_ID);
+			menuList = MenuCard.loadListForGroup(MenuCard.DEFAULT_GROUP);
 		}
-		
-		if (menuList.iterator().hasNext()) {	
+
+		if (menuList.iterator().hasNext()) {
 			try {
 				response = Serializer.serializeMenuList(menuList, userCtx, getAvailableReportId(userCtx));
 			} catch (NullPointerException e) {
 				// Empty tree if something goes wrong... AKA workflow problems
-			}	
+			}
 		}
-		
+
 		if (response == null) {
 			response = new JSONArray();
 		}
-		
+
 		return response;
 	}
 
@@ -229,6 +226,6 @@ public class ModMenu extends JSONBase {
 		}
 		return false;
 	}
-	
-	
+
+
 }
