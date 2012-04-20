@@ -53,8 +53,8 @@
 
 		getGridColumns: function() {
 			return [
-				{header: col_tr.begin_date,  width: 180, fixed: true, sortable: false, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
-				{header: col_tr.end_date,  width: 180, fixed: true, sortable: false, dataIndex: 'EndDate', renderer: Ext.util.Format.dateRenderer('d/m/y H:i:s'), flex:1},
+				{header: col_tr.begin_date,  width: 180, fixed: true, sortable: false, dataIndex: 'BeginDate', renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s'), flex:1},
+				{header: col_tr.end_date,  width: 180, fixed: true, sortable: false, dataIndex: 'EndDate', renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s'), flex:1},
 				{header: col_tr.user, width: 20, sortable: false, dataIndex: 'User', flex:1},
 				{header: col_tr.attributes, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_AttrHist', align: 'center', tdCls: 'grid-button', flex:1},
 				{header: col_tr.relation, width: 60, fixed: true, sortable: false, renderer: tickRenderer, dataIndex: '_RelHist', align: 'center', tdCls: 'grid-button', flex:1},
@@ -65,8 +65,8 @@
 
 		getStoreFields: function() {
 			return [
-					{name:'BeginDate', type:'date', dateFormat:'d/m/y H:i:s'},
-					{name:'EndDate', type:'date', dateFormat:'d/m/y H:i:s'},
+					{name:'BeginDate', type:'date', dateFormat:'d/m/Y H:i:s'},
+					{name:'EndDate', type:'date', dateFormat:'d/m/Y H:i:s'},
 					{name:'_EndDate', type:'int'}, // For sorting only
 					'User',
 					'_AttrHist',

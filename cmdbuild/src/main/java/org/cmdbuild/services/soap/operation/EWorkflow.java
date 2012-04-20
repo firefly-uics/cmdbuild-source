@@ -161,7 +161,7 @@ public class EWorkflow {
 			if (v.getClientIndex() >= 0) {
 				String visibility = v.getType().name();
 				EAdministration administration = new EAdministration(userCtx);
-				AttributeSchema element = administration.serialize(v.getAttribute(), template, v.getClientIndex());				
+				AttributeSchema element = administration.serialize(v.getAttribute(), v.getClientIndex());				
 				element.setVisibility(visibility);
 				attrs.add(element);
 			}

@@ -14,17 +14,16 @@ import org.cmdbuild.services.auth.UserContext;
  */
 public class DataAccessLogic {
 
-
-	final CMDataView view;
+	private final CMDataView view;
 
 	// FIXME Temporary constructor before switching to Spring DI
 	public DataAccessLogic(final UserContext userCtx) {
 		view = TemporaryObjectsBeforeSpringDI.getUserContextView(userCtx);
 	}
 
-//	public DataAccessBL(final CMDataView view) {
-//		this.view = view;
-//	}
+	public DataAccessLogic(final CMDataView view) {
+		this.view = view;
+	}
 
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
 		return new GetRelationList(view).exec(srcCard, dom);

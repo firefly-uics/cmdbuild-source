@@ -262,3 +262,37 @@ CMDBuild.extend = function(subClass, superClass) {
 		superClass.prototype.constructor = superClass;
 	}
 };
+
+CMDBuild.isMixedWith = function(obj, mixinName) {
+	var m = obj.mixins || {};
+	for (var key in m) {
+		var mixinObj = m[key];
+		if (Ext.getClassName(mixinObj) == mixinName) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+CMDBuild.instanceOf = function(obj, className) {
+	while (obj) {
+		if (Ext.getClassName(obj) == className) {
+			return true;
+		}
+		obj = obj.superclass
+	}
+
+	return false;
+}
+
+CMDBuild.checkInterface = function(obj, interfaceName) {
+	return CMDBuild.isMixedWith(obj, interfaceName) || CMDBuild.instanceOf(obj, interfaceName);
+}
+
+CMDBuild.validateInterface = function(obj, interfaceName) {
+	CMDBuild.IS_NOT_CONFORM_TO_INTERFACE = "The object {0} must implement the interface: {1}";
+	if (!CMDBuild.checkInterface(obj, interfaceName)) {
+		throw Ext.String.format(CMDBuild.IS_NOT_CONFORM_TO_INTERFACE, obj.toString(), interfaceName);
+	}
+}

@@ -197,7 +197,8 @@ public class PGCMBackend extends CMBackend {
 
 	private static String[] TABLE_META_IN_COMMENTS = { TableDataDefinitionMeta.TYPE.toString(),
 			TableDataDefinitionMeta.MODE.toString(), TableDataDefinitionMeta.DESCR.toString(),
-			TableDataDefinitionMeta.STATUS.toString(), TableDataDefinitionMeta.SUPERCLASS.toString() };
+			TableDataDefinitionMeta.STATUS.toString(), TableDataDefinitionMeta.SUPERCLASS.toString(),
+			TableDataDefinitionMeta.USERSTOPPABLE.toString() };
 
 	private static String[] DOMAIN_META_IN_COMMENTS = { DomainDataDefinitionMeta.TYPE.toString(),
 			DomainDataDefinitionMeta.MODE.toString(), DomainDataDefinitionMeta.LABEL.toString(),

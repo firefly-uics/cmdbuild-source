@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.cmdbuild.services.soap.operation.EWorkflow;
 import org.cmdbuild.services.soap.operation.PrivateWorkflow;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
+import org.cmdbuild.services.soap.structure.ClassSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -33,6 +36,7 @@ import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
 import org.cmdbuild.services.soap.types.CardList;
+import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Lookup;
 import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
@@ -69,17 +73,6 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
 			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
 		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, false);
-	}
-
-	public CardList getCardListWithLongDateFormat(String className, Attribute[] attributeList, Query queryType,
-			Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
-		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, true);
-	}
-
-	private CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
-			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery, boolean enableLongDateFormat) {
-		ECard ecard = new ECard(getUserCtx());
-		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, enableLongDateFormat);
 	}
 
 	public Card getCard(String className, Integer cardId, Attribute[] attributeList) {
@@ -218,8 +211,10 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	}
 
 	public AttributeSchema[] getAttributeList(String className) {
-		ECard op = new ECard(getUserCtx());
-		return op.getAttributeList(className);
+		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
+		final ECard op = new ECard(getUserCtx());
+		final AttributeSchema[] attributes = op.getAttributeList(className);
+		return attributes;
 	}
 
 	public ActivitySchema getActivityObjects(String className, Integer cardid) {
@@ -272,5 +267,37 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	public UserInfo getUserInfo() {
 		return UserContextToUserInfo.newInstance(getUserCtx()).build();
+	}
+
+	/*
+	 * r2.1 
+	 */
+
+	public CardList getCardListWithLongDateFormat(String className, Attribute[] attributeList, Query queryType,
+			Order[] orderType, Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
+		return getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, true);
+	}
+
+	private CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
+			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery, boolean enableLongDateFormat) {
+		ECard ecard = new ECard(getUserCtx());
+		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, enableLongDateFormat);
+	}
+
+	/*
+	 * r2.2 
+	 */
+
+	public ClassSchema getClassSchema(final String className) {
+		Log.SOAP.info(format("getting schema for class '%s'", className));
+		final ECard op = new ECard(getUserCtx());
+		final ClassSchema classSchema = op.getClassSchema(className);
+		return classSchema;
+	}
+
+	public CardListExt getCardListExt(String className, Attribute[] attributeList, Query queryType, Order[] orderType,
+			Integer limit, Integer offset, String fullTextQuery, CQLQuery cqlQuery) {
+		ECard ecard = new ECard(getUserCtx());
+		return ecard.getCardListExt(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, false);
 	}
 }

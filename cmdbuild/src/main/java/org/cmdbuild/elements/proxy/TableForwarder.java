@@ -63,5 +63,8 @@ public class TableForwarder implements ITable {
 	public CMTableType getTableType() { return t.getTableType(); }
 	public void setTableType(CMTableType type) { t.setTableType(type); }
 
-	public Iterable<IAttribute> fkDetails() { return t.fkDetails(); }	
+	public Iterable<IAttribute> fkDetails() { return t.fkDetails(); }
+
+	public boolean isUserStoppable() { return t.isUserStoppable(); }
+	public void setUserStoppable(boolean userStoppable) { t.setUserStoppable(userStoppable); };
 }

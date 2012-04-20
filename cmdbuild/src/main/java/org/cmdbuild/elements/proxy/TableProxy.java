@@ -137,4 +137,10 @@ public class TableProxy extends TableForwarder {
 		}
 		return fkDetails;
 	}
+
+	@Override
+	public void setUserStoppable(boolean userStoppable) {
+		userCtx.privileges().assureAdminPrivilege();
+		super.setUserStoppable(userStoppable);
+	}
 }

@@ -7,6 +7,9 @@ import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
+/**
+ * Wrapper for the CMAccessControlManager on top of the legacy UserContext
+ */
 public class OperationUserWrapper implements OperationUser {
 
 	private final static UserContext systemContext = UserContext.systemContext(); 

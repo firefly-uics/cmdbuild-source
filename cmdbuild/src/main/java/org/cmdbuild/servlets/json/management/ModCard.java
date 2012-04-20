@@ -58,7 +58,6 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.JSONBase;
-import org.cmdbuild.servlets.json.schema.ModClass.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -191,11 +190,24 @@ public class ModCard extends JSONBase {
 	public JSONObject getCard(
 			ICard card,
 			UserContext userCtx,
+			@Parameter("IdClass") int requestedIdClass,
 			JSONObject serializer) throws JSONException {
+		card = fetchRealCardForSuperclasses(card, requestedIdClass);
 		serializer.put("card", Serializer.serializeCardWithPrivileges(card, false));
 		serializer.put("attributes", Serializer.serializeAttributeList(card.getSchema(), true));
 		addReferenceAttributes(card, userCtx, serializer);
 		return serializer;
+	}
+
+	/*
+	 * Yes we can!
+	 */
+	private ICard fetchRealCardForSuperclasses(ICard card, int requestedIdClass) {
+		card.getCode(); // HACK to fetch the card
+		if (card.getSchema().getId() != requestedIdClass) {
+			card = card.getSchema().cards().get(card.getId());
+		}
+		return card;
 	}
 
 	/*

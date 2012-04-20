@@ -5,13 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.SharkWSFacade;
 import org.cmdbuild.workflow.operation.ActivityDO;
 import org.cmdbuild.workflow.type.ReferenceType;
@@ -28,13 +26,6 @@ public class LinkCards extends AbstractFilteredExtendedAttribute {
 
 	public String extendedAttributeName() {
 		return "linkCards";
-	}
-
-	@Override
-	protected void doConfigure(WMSessionHandle handle, UserContext userCtx,
-			SharkWSFactory factory, WMWorkItem workItem, ActivityDO activityDO,
-			Map<String, Object> processVars,
-			Map<String, Object> currentOutValues) {
 	}
 
 	@Override

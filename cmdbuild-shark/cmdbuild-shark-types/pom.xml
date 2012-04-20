@@ -8,9 +8,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-shark-types</artifactId>
 	<packaging>jar</packaging>
-	<name>CMDBuild Shark Types</name>
-    <properties>
-        <netbeans.hint.jdkPlatform>JDK_1.5</netbeans.hint.jdkPlatform>
-    </properties>
+	<name>CMDBuild Shark Legacy Commons (former Shark Types)</name>
 </project>
 

@@ -76,7 +76,7 @@ public class MethodParameterResolver {
 				return ((Parameter)arg0).required();
 			}
 		},
-		URIPARAM(URIParameter.class){
+		URIPARAM(URIParameter.class){ // REST ONLY
 			@SuppressWarnings("unchecked")
 			@Override
 			Object getObj(Annotation annot, Class type, HttpServletRequest request) {
@@ -95,7 +95,7 @@ public class MethodParameterResolver {
 				return false;
 			}
 		},
-		OUTXML(OutSimpleXML.class){
+		OUTXML(OutSimpleXML.class){ // REST ONLY
 			@SuppressWarnings("unchecked")
 			@Override
 			Object getObj(Annotation annot, Class arg1, HttpServletRequest arg2) {

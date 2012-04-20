@@ -10,12 +10,6 @@
 				text: this.translation.upload_template
 			});
 
-			this.stoppable = new Ext.ux.form.XCheckbox({
-				name: 'userstoppable',
-				fieldLabel: CMDBuild.Translation.administration.modWorkflow.xpdlDownload.user_stoppable,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
 			Ext.apply(this, {
 				fileUpload: true,
 				frame: true,
@@ -23,20 +17,18 @@
 				defaults: {
 					labelWidth: CMDBuild.LABEL_WIDTH
 				},
-				items: [
-					this.stoppable
-				,{
+				items: [{
 					xtype: 'textfield',
 					inputType : 'file',
 					allowBlank: true,
 					width: 300,
 					inputType: 'file',
-					name: 'xpdlfile',
+					name: 'xpdl',
 					fieldLabel: this.translation.xpdl_file
 				},{
 					xtype: 'textfield',
 					inputType: 'file',
-					name: 'imgfile',
+					name: 'sketch',
 					allowBlank: true,
 					width: 300,
 					fieldLabel: this.translation.jpg_file
@@ -46,9 +38,6 @@
 			});
 
 			this.callParent(arguments);
-		},
-		onProcessSelected: function(xpdl) {
-			this.stoppable.setValue(xpdl.userstoppable);
 		}
 	});
 
@@ -99,13 +88,13 @@
 			this.callParent(arguments);
 		},
 		
-		onProcessSelected: function(xpdl) {
+		onProcessSelected: function(versions) {
 			var store = this.versionCombo.store;
 
 			store.removeAll();
-			for(var i=0; i<xpdl.versions.length; i++) {
-				var version = xpdl.versions[i];
-				store.add({id: version, index: version});
+			for(var i=0; i<versions.length; i++) {
+				var v = versions[i];
+				store.add({id: v, index: v});
 			}
 			store.add({id: "template", index: 0});
 

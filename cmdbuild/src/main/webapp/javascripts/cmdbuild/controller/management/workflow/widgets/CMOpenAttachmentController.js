@@ -1,4 +1,6 @@
 (function() {
+	var CLOSED_CODE = "closed.completed",
+		TRUE = "true";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityAttachmentsController", {
 		extend : "CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController",
@@ -7,8 +9,20 @@
 		// we want the attachments in readOnly mode, so set the privilege
 		// to can only read. Then if there is the OpenAttachement extend attribute
 		// it'll enable the editing
+
+		// new business rule: read a configuration parameter to enable the editing
+		// of attachments of closed activities
 		updateViewPrivilegesForEntryType: function(et) {
-			this.view.updateWritePrivileges(false);
+			var priv = false;
+			if (CMDBuild.Config.workflow.add_attachment_on_closed_activities == TRUE &&
+					this.card &&
+					this.card.raw &&
+					this.card.raw.FlowStatus_code == CLOSED_CODE) {
+
+				priv = true;
+			}
+
+			this.view.updateWritePrivileges(priv);
 		},
 
 		// override

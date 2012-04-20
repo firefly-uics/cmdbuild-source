@@ -166,6 +166,14 @@
                },
                "title": "Calendário"
             },
+            ".CreateModifyCard": {
+               "fields": {
+                  "target": "<em>Target Class</em>",
+                  "cql": "<em>Card CQL selector</em>",
+                  "readOnly": "<em>Read only</em>"
+               },
+               "title": "<em>Create or Modify Card</em>"
+            },
             ".Ping": {
                "fields": {
                   "address":"Endereço para pingar",
@@ -182,6 +190,64 @@
             },
             "title": "Widget"
          }
+      },
+      "modDashboard": {
+          "charts": {
+             "alert": {
+                "wrongConfiguration": "<em>The chart is not well configured</em>"
+             },
+             "availableCharts": {
+                "gauge": "<em>Gauge</em>"
+             },
+             "buttons": {
+                "add": "<em>Add Chart</em>",
+                "modify": "<em>Modify chart</em>",
+                "remove": "<em>Remove chart</em>",
+                "preview": "<em>Preview</em>"
+             },
+             "fields": {
+                "active": "<em>Active</em>",
+                "autoload": "<em>Load automatically</em>",
+                "background": "<em>Background color</em>",
+                "chartType": "<em>Chart type</em>",
+                "dataSource": "<em>Data source</em>",
+                "defaultValue": "<em>Default value</em>",
+                "description": "<em>Description</em>",
+                "fieldType": "<em>Field type</em>",
+                "foreground": "<em>Foreground color</em>",
+                "lookupType": "<em>Lookup type</em>",
+                "max": "<em>Maximum</em>",
+                "min": "<em>Minimum</em>",
+                "name": "<em>Name</em>",
+                "steps": "<em>Steps</em>",
+                "valueField": "<em>Value field</em>"
+             },
+             "inputTypes": {
+                "integer": "<em>Integer</em>",
+                "string": "<em>String</em>",
+                "date": "<em>Date</em>"
+             },
+             "title": "<em>Charts</em>",
+             "typeFieldOptions": {
+                "freeString" : "<em>Free String</em>",
+                "freeInt" : "<em>Free Integer</em>",
+                "lookup" : "<em>Select from a lookup</em>",
+                "classes" : "<em>Select from all CMDBuild classes</em>",
+                "user" : "<em>Current user</em>",
+                "group" : "<em>Current group</em>"
+             }
+          },
+          "properties": {
+             "add": "<em>Add Dashboard</em>",
+             "modify": "<em>Modify Dashboard</em>",
+             "remove": "<em>Remove Dashboard</em>",
+             "fields": {
+                "name": "<em>Name</em>",
+                "description": "<em>Description</em>",
+                "groups": "<em>Available for groups</em>"
+             }
+          },
+          "title": "<em>Dashboard</em>"
       },
       "modLookup": {
          "add_lookuptype": "Adicionar tipo Pesquisa",

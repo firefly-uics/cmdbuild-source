@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,6 +40,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class CmdbuildUtils {
+
+	private static final Pattern SYSTEM_USER_PATTERN;
+
+	static {
+		final String pattern = "^" + AbstractWSToolAgent.SYSTEM_USER + "( / \\w+)?$";
+		SYSTEM_USER_PATTERN = Pattern.compile(pattern);
+	}
+
 	public enum HttpMethod {
 		GET,POST,PUT,DELETE;
 	}
@@ -341,17 +350,21 @@ public class CmdbuildUtils {
 	static public String getCurrentUserNameForProcessInstance(Private stub,
 			String cmdbuildProcessClass, int cmdbuildProcessId) throws Exception {
 		Card card = stub.getCard(cmdbuildProcessClass, cmdbuildProcessId, usernameAttributeArray());
-
-		if (AbstractWSToolAgent.SYSTEM_USER.equals(card.getUser())) {
+ 
+		if (isSystemUser(card.getUser())) {
 			List<Card> history = stub.getCardHistory(cmdbuildProcessClass, cmdbuildProcessId, null, null).getCards();
 			for (Card historyItem : history) {
-				if (!AbstractWSToolAgent.SYSTEM_USER.equals(historyItem.getUser())) {
+				if (!isSystemUser(historyItem.getUser())) {
 					card = historyItem;
 					break;
 				}
 			}
 		}
 		return card.getUser();
+	}
+
+	private static boolean isSystemUser(String username) {
+		return SYSTEM_USER_PATTERN.matcher(username).find();
 	}
 
 	private final static String CLASS_USERATTRIBUTE = "User";

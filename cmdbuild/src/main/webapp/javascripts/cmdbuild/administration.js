@@ -6,6 +6,11 @@
 		classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
 			cmControllerType : CMDBuild.controller.accordion.CMClassAccordionController
 		}),
+
+		dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
+			cmControllerType : CMDBuild.controller.accordion.CMDashboardAccordionController
+		});
+
 		groupsAccordion = new CMDBuild.view.administration.accordion.CMGroupsAccordion({
 			cmControllerType : CMDBuild.controller.accordion.CMGroupAccordionController
 		}),
@@ -74,6 +79,9 @@
 						cmControllerType : controllerNS.common.CMUnconfiguredModPanelController,
 						cmName : "notconfiguredpanel"
 					}),
+					new CMDBuild.view.administration.dashboard.CMModDashboard({
+						cmControllerType : controllerNS.administration.dashboard.CMModDashboardController
+					}),
 					new CMDBuild.view.administration.configuration.CMModConfigurationGenericOption({
 						cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
 						cmName : "modsetupcmdbuild"
@@ -104,7 +112,7 @@
 					})
 				];
 
-				this.cmAccordions = [classesAccordion, processAccordion, domainAccordion, lookupAccordion,
+				this.cmAccordions = [classesAccordion, processAccordion, domainAccordion, dashboardsAccordion, lookupAccordion,
 					reportAccordion, menuAccordion, groupsAccordion, gisAccordion,
 					new CMDBuild.view.administration.accordion.CMConfigurationAccordion()]
 
@@ -174,6 +182,15 @@
 					success : function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
 						domainAccordion.updateStore();
+					},
+					callback: reqBarrier.getCallback()
+				});
+
+				CMDBuild.ServiceProxy.Dashboard.list({
+					success : function(response, options, decoded) {
+						_CMCache.addDashboards(decoded.response.dashboards);
+						_CMCache.setAvailableDataSources(decoded.response.dataSources);
+						dashboardsAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()
 				});

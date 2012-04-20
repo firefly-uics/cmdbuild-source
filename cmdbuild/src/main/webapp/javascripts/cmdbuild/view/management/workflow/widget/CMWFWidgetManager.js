@@ -23,7 +23,7 @@
 				},
 				builders = {
 					createModifyCard: function() {
-						var w = new CMDBuild.view.management.workflow.widgets.CMCreateModifyCard(conf);
+						var w = new CMDBuild.view.management.common.widgets.CMCreateModifyCard(conf);
 						me.widgetsContainer.addWidgt(w);
 	
 						var widgetManager = new CMDBuild.view.management.classes.CMWidgetManager(w);

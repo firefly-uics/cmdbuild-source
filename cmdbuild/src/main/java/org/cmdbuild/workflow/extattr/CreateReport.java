@@ -41,12 +41,6 @@ public class CreateReport extends AbstractCmdbuildExtendedAttribute {
 	static final String REPORT_CODE = "Code";
 
 	@Override
-	protected void doConfigure(WMSessionHandle handle, UserContext userCtx, SharkWSFactory factory,
-			WMWorkItem workItem, ActivityDO activityDO, Map<String, Object> processVars,
-			Map<String, Object> currentOutValues) {
-	}
-
-	@Override
 	protected void doReact(WMSessionHandle handle, UserContext userCtx,
 			SharkWSFactory factory, SharkWSFacade facade, WMWorkItem workItem,
 			ActivityDO activityDO, Map<String, String[]> submissionParameters,
