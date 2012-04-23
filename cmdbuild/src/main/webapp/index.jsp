@@ -49,7 +49,7 @@
 	%>
 			CMDBuild.Runtime.Username = '<%= user.getName() %>';
 			CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(userCtx.getGroups()) %>;
-	<% } %>	
+	<% } %>
 		</script>
 		<!-- 3. Login script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>

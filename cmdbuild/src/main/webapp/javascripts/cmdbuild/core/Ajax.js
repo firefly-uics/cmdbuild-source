@@ -124,7 +124,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 					CMDBuild.LoginWindow.show();
 					return;
 				}
-				var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reason_parameters);
+				var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.parameters);
 				if (translatedErrorString) {
 					errorBody.text = translatedErrorString;
 				}

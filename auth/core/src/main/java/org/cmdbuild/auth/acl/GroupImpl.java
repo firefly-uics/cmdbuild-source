@@ -1,7 +1,10 @@
 package org.cmdbuild.auth.acl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
 
@@ -13,9 +16,12 @@ public class GroupImpl implements CMGroup {
 		private String name;
 		private String description;
 		private List<PrivilegePair> privileges;
+		private Set<String> disabledModules;
+		private Long startingClassId;
 
 		private GroupImplBuilder() {
 			privileges = new ArrayList<PrivilegePair>();
+			disabledModules = new HashSet<String>();
 		}
 
 		public GroupImplBuilder withId(final Long id) {
@@ -43,10 +49,19 @@ public class GroupImpl implements CMGroup {
 			return this;
 		}
 
+		public GroupImplBuilder withoutModule(final String moduleName) {
+			this.disabledModules.add(moduleName);
+			return this;
+		}
+
+		public GroupImplBuilder withStartingClassId(final Long classId) {
+			this.startingClassId = classId;
+			return this;
+		}
+
 		@Override
 		public GroupImpl build() {
 			Validate.notNull(name);
-			Validate.notNull(privileges);
 			if (description == null) {
 				description = name;
 			}
@@ -58,12 +73,16 @@ public class GroupImpl implements CMGroup {
 	private final String name;
 	private final String description;
 	private final List<PrivilegePair> privileges;
+	private final Set<String> disabledModules;
+	private final Long startingClassId;
 
 	private GroupImpl(final GroupImplBuilder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
 		this.privileges = builder.privileges;
+		this.disabledModules = builder.disabledModules;
+		this.startingClassId = builder.startingClassId;
 	}
 
 	@Override
@@ -84,6 +103,16 @@ public class GroupImpl implements CMGroup {
 	@Override
 	public List<PrivilegePair> getAllPrivileges() {
 		return privileges;
+	}
+
+	@Override
+	public Set<String> getDisabledModules() {
+		return this.disabledModules;
+	}
+
+	@Override
+	public Long getStartingClassId() {
+		return this.startingClassId;
 	}
 
 	public static GroupImplBuilder newInstanceBuilder() {

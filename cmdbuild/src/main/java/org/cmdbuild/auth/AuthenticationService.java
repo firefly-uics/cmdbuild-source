@@ -1,17 +1,16 @@
 package org.cmdbuild.auth;
 
-import org.cmdbuild.auth.Login.LoginType;
-import java.util.Set;
-import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
-import org.cmdbuild.auth.user.CMUser;
-import org.apache.commons.lang.Validate;
-import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import static org.cmdbuild.auth.AuthenticatedUserImpl.ANONYMOUS_USER;
 
-@Component
+import java.util.Set;
+
+import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
+import org.cmdbuild.auth.Login.LoginType;
+import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
+import org.cmdbuild.auth.user.CMUser;
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class AuthenticationService {
 
 	public interface Configuration {
@@ -251,7 +250,15 @@ public class AuthenticationService {
 		throw new UnsupportedOperationException();
 	}
 
-
+	/**
+	 * Get the currently authenticated user. It can be anonymous but it will
+	 * never be null.
+	 *
+	 * @return the authenticated user
+	 */
+	public AuthenticatedUser getAuthenticatedUser() {
+		return userStore.getUser();
+	}
 
 	private AuthenticatedUser fetchAuthenticatedUser(final Login login, final FetchCallback callback) {
 		AuthenticatedUserImpl authUser = ANONYMOUS_USER;

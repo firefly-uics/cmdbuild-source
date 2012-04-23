@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.auth.AuthenticatedUser;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.AuthenticationFacade;
@@ -32,22 +33,16 @@ public class AuthFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		try {
 			String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+			final AuthenticatedUser user = new SessionVars().getUser();
 			if (isRootPage(uri)) {
 				redirectToLogin(httpResponse);
-			} else if (isLoginPage(uri)) {
-				if (AuthenticationFacade.isLoggedIn(httpRequest)) {
-					UserContext userCtx = new SessionVars().getCurrentUserContext();
-					if (userCtx.hasDefaultGroup()) {
-						redirectToManagement(httpResponse);
-					}
+			}
+			if (user.isValid()) {
+				if (isLoginPage(uri)) {
+					redirectToManagement(httpResponse);
 				}
-			} else if (isApplicable(uri)) {
-				if (AuthenticationFacade.isLoggedIn(httpRequest)) {
-					UserContext userCtx = new SessionVars().getCurrentUserContext();
-					if (!userCtx.hasDefaultGroup() && !isLogout(uri)) {
-						redirectToLogin(httpResponse);
-					}
-				} else {
+			} else {
+				if (isProtectedPage(uri)) {
 					redirectToLogin(httpResponse);
 				}
 			}
@@ -65,10 +60,6 @@ public class AuthFilter implements Filter {
 		throw new RedirectException(LOGIN_URL);
 	}
 
-	private boolean isLogout(String uri) {
-		return uri.equals("/logout.jsp");
-	}
-
 	private boolean isRootPage(String uri) {
 		return uri.equals("/");
 	}
@@ -77,11 +68,12 @@ public class AuthFilter implements Filter {
 		return uri.equals("/"+LOGIN_URL);
 	}
 
-    protected boolean isApplicable(String uri){
+    protected boolean isProtectedPage(String uri){
 		boolean isException = uri.startsWith("/services/") ||
 			uri.startsWith("/shark/") ||
 			uri.startsWith("/cmdbuildrest/") ||
-			uri.matches("^(.*)(css|js|png|jpg|gif)$");
+			uri.matches("^(.*)(css|js|png|jpg|gif)$") ||
+			isLoginPage(uri);
 		return !isException;
     }
 }

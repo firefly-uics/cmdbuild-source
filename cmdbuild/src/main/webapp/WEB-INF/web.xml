@@ -3,6 +3,18 @@
 	<display-name>CMDBuild</display-name>
 
 	<context-param>
+		<param-name>modules</param-name>
+		<param-value>database,cmdbuild,dms,workflow,email,graph,gis,auth</param-value>
+	</context-param>
+	<context-param>
+		<param-name>moduleLoaders</param-name>
+		<param-value>ParameterTransformerInit</param-value>
+	</context-param>
+	<listener id="cmdbuildInit">
+		<listener-class>org.cmdbuild.plugins.CMDBInitListener</listener-class>
+	</listener>
+
+	<context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:application-context.xml</param-value>
     </context-param>
@@ -62,7 +74,7 @@
 	</listener>
 
     <servlet>
-    	<servlet-name>SharkRestEndpoint</servlet-name>
+    	<servlet-name>legacy-rest</servlet-name>
     	<servlet-class>org.cmdbuild.servlets.RestServlet</servlet-class>
     	<init-param><param-name>resourcesPackage</param-name><param-value>org.cmdbuild.servlets.resource.shark</param-value></init-param>
     	<init-param>
@@ -74,27 +86,27 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>SharkRestEndpoint</servlet-name>
+        <servlet-name>legacy-rest</servlet-name>
         <url-pattern>/shark/*</url-pattern>
     </servlet-mapping>
 
 	<servlet>
-		<servlet-name>jsonDispatcher</servlet-name>
+		<servlet-name>legacy-json</servlet-name>
 		<servlet-class>org.cmdbuild.servlets.JSONDispatcher</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>jsonDispatcher</servlet-name>
+		<servlet-name>legacy-json</servlet-name>
 		<url-pattern>/services/json/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
-        <servlet-name>CXFServlet</servlet-name>
+        <servlet-name>soapws</servlet-name>
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>CXFServlet</servlet-name>
+        <servlet-name>soapws</servlet-name>
         <url-pattern>/services/soap/*</url-pattern>
     </servlet-mapping>
 

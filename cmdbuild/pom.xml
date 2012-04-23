@@ -67,15 +67,18 @@
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.4</version>
+			<artifactId>jsp-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.0</version>
-			<scope>provided</scope>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -366,7 +369,6 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

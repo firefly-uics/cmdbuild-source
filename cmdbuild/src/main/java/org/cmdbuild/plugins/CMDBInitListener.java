@@ -10,7 +10,6 @@ import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.Settings;
-import org.cmdbuild.services.auth.AuthenticationService;
 import org.cmdbuild.services.scheduler.SchedulerService;
 import org.cmdbuild.services.scheduler.job.JobCard;
 import org.cmdbuild.services.scheduler.quartz.QuartzScheduler;
@@ -30,7 +29,6 @@ public class CMDBInitListener implements ServletContextListener {
         loadPlugins(evt);
         setupPatchManager();
         setupSchedulerService();
-        setupAuthenticationService();
 	}
 
 	private void loadConfiguration(ServletContextEvent evt) {
@@ -76,11 +74,6 @@ public class CMDBInitListener implements ServletContextListener {
 				e.printStackTrace();
 			}
         }
-	}
-
-	private void setupAuthenticationService() {
-		AuthenticationService as = new AuthenticationService();
-		as.loadAuthMethods();
 	}
 
 	private void setupSchedulerService() {

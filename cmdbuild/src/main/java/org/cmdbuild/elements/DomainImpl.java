@@ -380,4 +380,10 @@ public class DomainImpl extends BaseSchemaImpl implements IDomain {
 			throw ORMExceptionType.ORM_AMBIGUOUS_DIRECTION.createException();
 		return directed;
 	}
+
+	@Override
+	public String getPrivilegeId() {
+		// Should match the new DAO implementation!
+		return String.format("Domain:%d", getId());
+	}
 }

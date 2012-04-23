@@ -1,17 +1,19 @@
 package org.cmdbuild.auth;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import net.jcip.annotations.GuardedBy;
-import org.apache.commons.lang.Validate;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import net.jcip.annotations.GuardedBy;
+
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
@@ -75,7 +77,12 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {
 		final Alias userClassAlias = Alias.canonicalAlias(userClass());
 		final CMQueryRow userRow = view
-				.select(attribute(userClassAlias, userPasswordAttribute()))
+				.select(
+					// FIXME: anyAttribute()
+					attribute(userClassAlias, userNameAttribute()),
+					attribute(userClassAlias, userDescriptionAttribute()),
+					attribute(userClassAlias, userPasswordAttribute())
+				)
 				.from(userClass(), as(userClassAlias))
 				.where(
 					attribute(userClassAlias, loginAttributeName(login)),
@@ -102,24 +109,52 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final Map<Object, List<PrivilegePair>> allPrivileges = fetchAllPrivileges();
 		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
 		final CMQueryResult groupRows = view
-				.select(anyAttribute(groupClassAlias))
+				.select(
+						// FIXME: anyAttribute()
+						attribute(groupClassAlias, groupNameAttribute()),
+						attribute(groupClassAlias, groupDescriptionAttribute()),
+						attribute(groupClassAlias, groupIsGodAttribute()),
+						attribute(groupClassAlias, groupDisabledModulesAttribute()),
+						attribute(groupClassAlias, groupStartingClassAttribute())
+				)
 				.from(groupClass(), as(groupClassAlias))
 				.run();
-		for (CMQueryRow row : groupRows) {
+		for (final CMQueryRow row : groupRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
 			final Long groupId = (Long) groupCard.getId();
-			final boolean groupIsGod = Boolean.TRUE.equals(groupCard.get(groupIsGodAttribute()));
 			final GroupImplBuilder groupBuilder = GroupImpl.newInstanceBuilder()
 					.withId(groupId)
 					.withName(groupCard.get(groupNameAttribute()).toString())
-					.withDescription(groupCard.get(groupDescriptionAttribute()).toString())
-					.withPrivileges(allPrivileges.get(groupId));
+					.withDescription(groupCard.get(groupDescriptionAttribute()).toString());
+
+			final boolean groupIsGod = Boolean.TRUE.equals(groupCard.get(groupIsGodAttribute()));
 			if (groupIsGod) {
 				groupBuilder.withPrivilege(new PrivilegePair(DefaultPrivileges.GOD));
+			} else if (allPrivileges.containsKey(groupId)) {
+				groupBuilder.withPrivileges(allPrivileges.get(groupId));
+				for (final String moduleName : getDisabledModules(groupCard)) {
+					groupBuilder.withoutModule(moduleName);
+				}
 			}
+
+			final Long startingClassId = (Long) groupCard.get(groupStartingClassAttribute());
+			groupBuilder.withStartingClassId(startingClassId);
+
 			groupCards.put(groupId, groupBuilder.build());
 		}
 		return groupCards;
+	}
+
+	private String[] getDisabledModules(final CMCard groupCard) {
+		final String groupDisabledModules = (String) groupCard.get(groupDisabledModulesAttribute());
+		if (groupDisabledModules != null) {
+			final int start = groupDisabledModules.lastIndexOf("{"),
+				end = groupDisabledModules.indexOf("{");
+			if (start == 0 && end == (groupDisabledModules.length() - 1)) {
+				return groupDisabledModules.substring(start, end).split(",");
+			}
+		}
+		return new String[0];
 	}
 
 	/*
@@ -129,7 +164,12 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final Map<Object, List<PrivilegePair>> allPrivileges = new HashMap<Object, List<PrivilegePair>>();
 		final Alias privilegeClassAlias = Alias.canonicalAlias(privilegeClass());
 		final CMQueryResult privilegeRows = view
-				.select(anyAttribute(privilegeClassAlias))
+				.select(
+						// FIXME: anyAttribute()
+						attribute(privilegeClassAlias, privilegeClassIdAttribute()),
+						attribute(privilegeClassAlias, privilegeGroupIdAttribute()),
+						attribute(privilegeClassAlias, privilegeTypeAttribute())
+				)
 				.from(privilegeClass(), as(privilegeClassAlias))
 				.run();
 		for (CMQueryRow row : privilegeRows) {
@@ -229,6 +269,14 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return "Administrator";
 	}
 
+	private String groupDisabledModulesAttribute() {
+		return "DisabledModules";
+	}
+
+	private String groupStartingClassAttribute() {
+		return "startingClass";
+	}
+
 	private final String DB_READ_PRIVILEGE = "r";
 	private final String DB_WRITE_PRIVILEGE = "w";
 
@@ -237,7 +285,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	}
 
 	private String privilegeGroupIdAttribute() {
-		return "IdGrantedClass";
+		return "IdRole";
 	}
 
 	private String privilegeClassIdAttribute() {

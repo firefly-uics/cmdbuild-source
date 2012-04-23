@@ -41,7 +41,7 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 
 				@Override
 				public Set<CMGroup> getGroups() {
-					return Collections.EMPTY_SET;
+					return Collections.emptySet();
 				}
 
 				@Override
@@ -49,6 +49,16 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 					return null;
 				}
 			});
+		}
+
+		@Override
+		public boolean isValid() {
+			return false;
+		}
+
+		@Override
+		public boolean isAnonymous() {
+			return true;
 		}
 
 		@Override
@@ -107,6 +117,11 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	@Override
 	public boolean isValid() {
 		return getPreferredGroup() != null;
+	}
+
+	@Override
+	public boolean isAnonymous() {
+		return false;
 	}
 
 	/*
