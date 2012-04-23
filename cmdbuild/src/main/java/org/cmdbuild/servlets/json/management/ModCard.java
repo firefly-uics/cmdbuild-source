@@ -215,7 +215,7 @@ public class ModCard extends JSONBase {
 	 * needed till it can be fixed by the new DAO in the next release 
 	 */
 	private void addReferenceAttributes(ICard card, UserContext userCtx, JSONObject serializer) throws JSONException {
-		final DataAccessLogic dataAccesslogic = new DataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 
 		final JSONObject jsonRefAttr = new JSONObject();
@@ -692,7 +692,7 @@ public class ModCard extends JSONBase {
 			return getProcessHistory(new JSONObject(), card, tf);
 		}
 
-		final DataAccessLogic dataAccesslogic = new DataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final GetRelationHistoryResponse out = dataAccesslogic.getRelationHistory(src);
 		final JSONObject jsonOutput = new JsonGetRelationHistoryResponse(out).toJson();
@@ -722,7 +722,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
 			@Parameter(value = "domainId", required = false) Long domainId,
 			@Parameter(value = "src", required = false) String querySource) throws JSONException {
-		final DataAccessLogic dataAccesslogic = new DataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);

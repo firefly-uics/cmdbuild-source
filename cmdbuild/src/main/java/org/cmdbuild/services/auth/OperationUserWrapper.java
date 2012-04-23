@@ -8,7 +8,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
 /**
- * Wrapper for the CMAccessControlManager on top of the legacy UserContext
+ * Wrapper for the OperationUser on top of the legacy UserContext
  */
 public class OperationUserWrapper implements OperationUser {
 

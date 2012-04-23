@@ -100,4 +100,6 @@ public class AttributeForwarder implements IAttribute {
 
 	public String getEditorType() {return a.getEditorType();}
 	public void setEditorType(String editorType) { a.setEditorType(editorType);}
+
+	public String getPrivilegeId() { return a.getPrivilegeId(); }
 }

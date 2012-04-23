@@ -17,7 +17,6 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.services.WorkflowService;
-import org.cmdbuild.services.auth.AuthInfo;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
@@ -73,19 +72,6 @@ public class UserCard extends LazyCard implements User {
 
 	public static User getUser(final String login) {
 		return getUser(login, false);
-	}
-
-	public static User getUser(final AuthInfo authInfo) {
-		final String authusername;
-		final boolean elevatePrivileges;
-		if (authInfo.isSharkUser() && authInfo.hasServiceUser()) {
-			authusername = authInfo.getUsername();
-			elevatePrivileges = true;
-		} else {
-			authusername = authInfo.getUsernameForAuthentication();
-			elevatePrivileges = false;
-		}
-		return getUser(authusername, elevatePrivileges);
 	}
 
 	public static User getUser(final String login, final boolean elevatePrivileges) {

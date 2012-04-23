@@ -32,6 +32,7 @@ public class AbstractElementTest {
 				attrs.put(FAKE_INT_ATTRIBUTE_NAME, AttributeImpl.create(this, FAKE_INT_ATTRIBUTE_NAME, AttributeType.INTEGER));
 				return attrs;
 			}
+			public String getPrivilegeId() { return null; }
 		};
 	}
 

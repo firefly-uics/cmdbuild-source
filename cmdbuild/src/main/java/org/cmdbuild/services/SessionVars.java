@@ -2,19 +2,23 @@ package org.cmdbuild.services;
 
 import java.util.Map;
 
+import org.cmdbuild.auth.AuthenticatedUser;
+import org.cmdbuild.auth.AuthenticatedUserImpl;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.csv.CSVData;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.services.auth.AuthenticatedUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 
 /*
  * Should be merged with the RequestListener
  */
 
-public class SessionVars {
+public class SessionVars implements UserStore {
 
 	private static final String AUTH_KEY = "auth";
 	private static final String LANGUAGE_KEY = "language";	
@@ -23,12 +27,29 @@ public class SessionVars {
 	private static final String NEWREPORT_KEY = "newReport";
 	private static final String CSVDATA_KEY = "csvdata";
 
-	public UserContext getCurrentUserContext() {
-		return (UserContext) RequestListener.getCurrentSessionObject(AUTH_KEY);
+	@Override
+	public AuthenticatedUser getUser() {
+		AuthenticatedUser authUser = (AuthenticatedUser) RequestListener.getCurrentSessionObject(AUTH_KEY);
+		if (authUser == null) {
+			authUser = AuthenticatedUserImpl.newInstance(null);
+			setUser(authUser);
+		}
+		return authUser;
 	}
 
-	public void setCurrentUserContext(UserContext userCtx) {
-		RequestListener.setCurrentSessionObject(AUTH_KEY, userCtx);
+	@Override
+	public void setUser(AuthenticatedUser user) {
+		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
+	}
+
+	@Deprecated
+	public UserContext getCurrentUserContext() {
+		final AuthenticatedUser authUser = getUser();
+		if (authUser.getId() == null) { // Anonymous User
+			return null;
+		} else {
+			return new AuthenticatedUserWrapper(getUser());
+		}
 	}
 
 	@SuppressWarnings("unchecked")

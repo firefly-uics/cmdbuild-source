@@ -26,7 +26,7 @@ public class MenuCard extends CardForwarder {
 
 	public static final String DEFAULT_GROUP = null;
 
-	public static final String GROUP_NAME_ATTR = "GroupName";
+	public static final String GROUP_NAME_ATTR = "IdGroup";
 	public static final String PARENT_ID_ATTR = "IdParent";
 	public static final String TYPE_ATTR = "Type";
 	public static final String ELEMENT_CLASS_ID_ATTR = "IdElementClass";

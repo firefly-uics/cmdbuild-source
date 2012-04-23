@@ -28,6 +28,7 @@ import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.JSONDispatcherService;
 import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
 import org.cmdbuild.services.auth.AuthenticationFacade;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin;
 import org.cmdbuild.servlets.json.JSONBase.Configuration;
@@ -38,6 +39,7 @@ import org.cmdbuild.servlets.json.JSONBase.Transacted;
 import org.cmdbuild.servlets.json.JSONBase.Unauthorized;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
@@ -87,7 +89,7 @@ public class JSONDispatcher extends HttpServlet {
 				targetClass.init(httpRequest, httpResponse);
 				setSpringApplicationContext(targetClass);
 
-				@SuppressWarnings("rawtypes") Class[] types = methodInfo.getParamClasses();
+				Class<?>[] types = methodInfo.getParamClasses();
 				Annotation[][] paramsAnnots = methodInfo.getParamsAnnotations();
 
 				Object[] params = MethodParameterResolver.getInstance().resolve(types, paramsAnnots, httpRequest, httpResponse);
@@ -245,10 +247,21 @@ public class JSONDispatcher extends HttpServlet {
 		if (Void.TYPE == returnType) {
 			return addSuccessAndWarningsToJSONObject(new JSONObject());
 		} else if (methodResponse instanceof JSONObject) {
-			JSONObject jres = (JSONObject)methodResponse;
+			JSONObject jres = (JSONObject) methodResponse;
 			return addSuccessAndWarningsToJSONObject(jres);
+		} else if (methodResponse instanceof JsonResponse) {
+			return serializeJsonResponse();
 		} else {
 			return methodResponse;
+		}
+	}
+
+	private Object serializeJsonResponse() {
+		final ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			return "{\"success\":false}";
 		}
 	}
 

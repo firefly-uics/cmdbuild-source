@@ -9,12 +9,11 @@ import javax.activation.DataHandler;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.services.auth.AuthenticationService;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
@@ -45,7 +44,6 @@ import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.types.Workflow;
-import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -59,10 +57,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	WebServiceContext wsc;
 
 	private UserContext getUserCtx() {
-		MessageContext msgCtx = wsc.getMessageContext();
-		AuthenticationService as = new AuthenticationService();
-		WebserviceUtils utils = new WebserviceUtils();
-		return as.getWSUserContext(utils.getAuthData(msgCtx));
+		return new SessionVars().getCurrentUserContext();
 	}
 
 	@Override

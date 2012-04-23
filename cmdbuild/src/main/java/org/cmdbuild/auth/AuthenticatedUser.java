@@ -5,11 +5,14 @@ import org.cmdbuild.auth.user.OperationUser;
 
 public interface AuthenticatedUser extends CMUser, OperationUser {
 
-	boolean canChangePassword();
-
-	boolean changePassword(final String oldPassword, final String newPassword);
+	boolean isValid();
+	boolean isAnonymous();
 
 	void filterPrivileges(final String groupName);
+	void selectGroup(final String groupName);
+
+	boolean canChangePassword();
+	boolean changePassword(final String oldPassword, final String newPassword);
 
 	/**
 	 * Impersonates another user, if possible. This method should be called
@@ -18,9 +21,5 @@ public interface AuthenticatedUser extends CMUser, OperationUser {
 	 * @param user user to impersonate
 	 */
 	void impersonate(CMUser user);
-
-	boolean isValid();
-
-	void selectGroup(final String groupName);
 
 }

@@ -85,7 +85,7 @@ public class ClassWrapper implements CMClass {
 
 	@Override
 	public String getPrivilegeId() {
-		throw new UnsupportedOperationException();
+		return table.getPrivilegeId();
 	}
 
 	@Override
