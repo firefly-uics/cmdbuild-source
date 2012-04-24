@@ -8,6 +8,7 @@ import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
@@ -17,10 +18,12 @@ public class InMemoryDriver extends CachingDriver {
 
 	private final Collection<DBClass> allClasses;
 	private final Collection<DBDomain> allDomains;
+	private final Collection<DBFunction> allFunctions;
 
 	public InMemoryDriver() {
 		allClasses = new ArrayList<DBClass>();
 		allDomains = new ArrayList<DBDomain>();
+		allFunctions = new ArrayList<DBFunction>();
 	}
 
 	/*
@@ -69,6 +72,15 @@ public class InMemoryDriver extends CachingDriver {
 	@Override
 	protected void deleteDomainNoCache(DBDomain dbDomain) {
 		allDomains.remove(dbDomain);
+	}
+
+	/*
+	 * CachingDriver Functions
+	 */
+
+	@Override
+	public Collection<DBFunction> findAllFunctionsNoCache() {
+		return new ArrayList<DBFunction>(allFunctions);
 	}
 
 	/*

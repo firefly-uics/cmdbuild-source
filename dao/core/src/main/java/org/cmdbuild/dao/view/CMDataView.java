@@ -4,6 +4,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
 /**
@@ -57,6 +58,13 @@ public interface CMDataView {
 	 * @return all domains (active and inactive)
 	 */
 	Iterable<? extends CMDomain> findAllDomains();
+
+	/**
+	 * Returns the functions defined in the schema.
+	 * 
+	 * @return defined functions
+	 */
+	Iterable<? extends CMFunction> findAllFunctions();
 
 	/**
 	 * Returns an empty card to be modified and saved. 

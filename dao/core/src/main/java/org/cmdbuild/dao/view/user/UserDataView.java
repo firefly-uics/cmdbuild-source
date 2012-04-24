@@ -3,6 +3,7 @@ package org.cmdbuild.dao.view.user;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 
+import org.cmdbuild.auth.CMAccessControlManager;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -12,9 +13,9 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.auth.CMAccessControlManager;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
@@ -116,6 +117,14 @@ public class UserDataView extends QueryExecutorDataView {
 	@Override
 	public Iterable<UserDomain> findAllDomains() {
 		return proxyDomains(view.findAllDomains());
+	}
+
+	/**
+	 * Returns all the defined functions for every user.
+	 */
+	@Override
+	public Iterable<? extends CMFunction> findAllFunctions() {
+		return view.findAllFunctions();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package org.cmdbuild.services;
 
 import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.workflow.WorkflowCache;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,5 +21,6 @@ public class CacheManager {
 
 	public void clearDatabaseCache() {
 		backend.clearCache();
+		TemporaryObjectsBeforeSpringDI.getDriver().clearCache();
 	}
 }

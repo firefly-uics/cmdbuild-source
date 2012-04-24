@@ -7,8 +7,13 @@ import org.apache.commons.lang.Validate;
 
 public class DecimalAttributeType implements CMAttributeType<BigDecimal> {
 
-	public final int precision;
-	public final int scale;
+	public final Integer precision;
+	public final Integer scale;
+
+	public DecimalAttributeType() {
+		this.precision = null;
+		this.scale = null;
+	}
 
 	public DecimalAttributeType(final Integer precision, final Integer scale) {
 		Validate.isTrue(precision > 0);
@@ -32,7 +37,7 @@ public class DecimalAttributeType implements CMAttributeType<BigDecimal> {
 			if (stringValue.isEmpty()) {
 				decimalValue = null;
 			} else {
-				// throws NumberFormatException
+				// Throws NumberFormatException if the number cannot be parsed
 				decimalValue = new BigDecimal(stringValue);
 			}
 		} else if (value instanceof Double) {

@@ -6,7 +6,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 
 public class DBAttribute implements CMAttribute {
 
-	public static class AttributeMetadata extends EntryTypeMetadata {
+	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
 
 		public final boolean isLookup() {

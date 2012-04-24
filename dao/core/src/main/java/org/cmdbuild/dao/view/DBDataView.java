@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
@@ -95,6 +96,11 @@ public class DBDataView extends QueryExecutorDataView {
 	@Override
 	public DBDomain findDomainByName(String name) {
 		return driver.findDomainByName(name);
+	}
+
+	@Override
+	public Iterable<? extends CMFunction> findAllFunctions() {
+		return driver.findAllFunctions();
 	}
 
 	@Override

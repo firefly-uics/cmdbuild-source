@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
@@ -22,6 +23,8 @@ public interface DBDriver {
 	Collection<DBDomain> findAllDomains();
 	DBDomain findDomainById(Object id);
 	DBDomain findDomainByName(String name);
+
+	Collection<DBFunction> findAllFunctions();
 
 	DBDomain createDomain(String name, DBClass class1, DBClass class2); // TODO Allow more than two classes
 	void deleteDomain(DBDomain dbDomain);

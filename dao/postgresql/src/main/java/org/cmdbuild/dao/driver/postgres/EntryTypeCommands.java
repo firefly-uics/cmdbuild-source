@@ -13,13 +13,15 @@ import java.util.regex.Pattern;
 
 import org.cmdbuild.dao.driver.postgres.Utils.CommentMapper;
 import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
+import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.dao.function.DBFunction;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -211,6 +213,47 @@ public class EntryTypeCommands {
 		AttributeMetadata meta = new AttributeMetadata();
 		extractCommentToMetadata(comment, meta, Utils.ATTRIBUTE_COMMENT_MAPPER);
 		return meta;
+	}
+
+	private enum InputOutput {
+		i, o;
+	}
+
+	public List<DBFunction> findAllFunctions() {
+		final List<DBFunction> functionList = jdbcTemplate.query(
+				"SELECT * FROM _cm_function_list()",
+		        new RowMapper<DBFunction>() {
+		            public DBFunction mapRow(ResultSet rs, int rowNum) throws SQLException {
+		                final String name = rs.getString("function_name");
+		                final boolean returnsSet = rs.getBoolean("returns_set");
+		                final DBFunction function = new DBFunction(name, returnsSet);
+		                addParameters(rs, function);		                
+		                return function;
+		            }
+
+					private void addParameters(ResultSet rs, DBFunction function) throws SQLException {
+		                final String[] argIo = (String[]) rs.getArray("arg_io").getArray();
+		                final String[] argNames = (String[]) rs.getArray("arg_names").getArray();
+		                final String[] argTypes = (String[]) rs.getArray("arg_types").getArray();
+		                if (argIo.length != argNames.length || argNames.length != argTypes.length) {
+		                	return; // Can't happen
+		                }
+		                for (int i = 0; i < argIo.length; ++i) {
+		                	final String name = argNames[i];
+		                	final CMAttributeType<?> type = SqlType.createAttributeType(argTypes[i]);
+		                	final InputOutput io = InputOutput.valueOf(argIo[i]);
+		                	switch (io) {
+		                	case i:
+		                		function.addInputParameter(name, type);
+		                		break;
+		                	case o:
+		                		function.addOutputParameter(name, type);
+		                		break;
+		                	}
+		                }
+					}
+		        });
+		return functionList;
 	}
 
 	/*

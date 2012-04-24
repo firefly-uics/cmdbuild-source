@@ -222,15 +222,20 @@ CREATE OR REPLACE FUNCTION _cm_get_attribute_default(TableId oid, AttributeName 
 		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
 $$ LANGUAGE SQL STABLE;
 
-CREATE OR REPLACE FUNCTION _cm_get_attribute_sqltype(TableId oid, AttributeName text) RETURNS text AS $$
-	SELECT pg_type.typname::text || CASE
-				WHEN pg_type.typname IN ('varchar','bpchar') THEN '(' || pg_attribute.atttypmod - 4 || ')'
+CREATE OR REPLACE FUNCTION _cm_get_sqltype_string(SqlTypeId oid, TypeMod integer) RETURNS text AS $$
+	SELECT pg_type.typname::text || COALESCE(
+			CASE
+				WHEN pg_type.typname IN ('varchar','bpchar') THEN '(' || $2 - 4 || ')'
 				WHEN pg_type.typname = 'numeric' THEN '(' ||
-					pg_attribute.atttypmod / 65536 || ',' ||
-					pg_attribute.atttypmod - pg_attribute.atttypmod / 65536 * 65536 - 4|| ')'
-				ELSE ''
-			END
-		FROM pg_attribute JOIN pg_type ON pg_type.oid = pg_attribute.atttypid
+					$2 / 65536 || ',' ||
+					$2 - $2 / 65536 * 65536 - 4|| ')'
+			END, '')
+		FROM pg_type WHERE pg_type.oid = $1;
+$$ LANGUAGE SQL STABLE;
+
+CREATE OR REPLACE FUNCTION _cm_get_attribute_sqltype(TableId oid, AttributeName text) RETURNS text AS $$
+	SELECT _cm_get_sqltype_string(pg_attribute.atttypid, pg_attribute.atttypmod)
+		FROM pg_attribute
 		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
 $$ LANGUAGE SQL STABLE;
 

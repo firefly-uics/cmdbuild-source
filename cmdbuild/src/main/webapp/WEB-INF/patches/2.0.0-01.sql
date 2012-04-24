@@ -1,6 +1,21 @@
---
--- Function objects
---
+-- Dashboard base functions
+
+CREATE OR REPLACE FUNCTION _cm_get_sqltype_string(SqlTypeId oid, TypeMod integer) RETURNS text AS $$
+	SELECT pg_type.typname::text || COALESCE(
+			CASE
+				WHEN pg_type.typname IN ('varchar','bpchar') THEN '(' || $2 - 4 || ')'
+				WHEN pg_type.typname = 'numeric' THEN '(' ||
+					$2 / 65536 || ',' ||
+					$2 - $2 / 65536 * 65536 - 4|| ')'
+			END, '')
+		FROM pg_type WHERE pg_type.oid = $1;
+$$ LANGUAGE SQL STABLE;
+
+CREATE OR REPLACE FUNCTION _cm_get_attribute_sqltype(TableId oid, AttributeName text) RETURNS text AS $$
+	SELECT _cm_get_sqltype_string(pg_attribute.atttypid, pg_attribute.atttypmod)
+		FROM pg_attribute
+		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
+$$ LANGUAGE SQL STABLE;
 
 CREATE OR REPLACE FUNCTION _cm_function_list(
 		OUT function_name text,
