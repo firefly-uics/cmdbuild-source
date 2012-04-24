@@ -162,6 +162,7 @@
 		<!-- CHARTS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartGaugeStrategy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartPieStrategy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartBarStrategy.js"></script>
 
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationGridController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationPanelController.js"></script>

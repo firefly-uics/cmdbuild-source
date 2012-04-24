@@ -133,6 +133,10 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		// datasource mapping
 		{name : 'singleSerieField', type : 'string'},
 		{name : 'labelField', type : 'string'},
+		{name : 'categoryAxisField', type : 'string'},
+		{name : 'categoryAxisLabel', type : 'string'},
+		{name : 'valueAxisFields', type : 'auto'},
+		{name : 'valueAxisLabel', type : 'string'},
 
 		// fonfiguration
 		{name : 'maximum',type : 'nit'},
@@ -140,8 +144,7 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'steps',type : 'nit'},
 		{name : 'fgcolor',type : 'string'},
 		{name : 'bgcolor',type : 'string'},
-		{name : 'legend', type : 'boolean'}
-	],
+		{name : 'chartOrientation', type : 'string'}],
 
 	getName: function() {
 		return this.get('name');
@@ -187,12 +190,32 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		return this.get('bgcolor');
 	},
 
+	getChartOrientation: function() {
+		return this.get("chartOrientation");
+	},
+	
 	getSingleSerieField: function() {
 		return this.get('singleSerieField');
 	},
 
 	getLabelField: function() {
 		return this.get('labelField');
+	},
+
+	getCategoryAxisField: function() {
+		return this.get("categoryAxisField");
+	},
+
+	getCategoryAxisLabel: function() {
+		return this.get("categoryAxisLabel");
+	},
+
+	getValueAxisFields: function() {
+		return this.get("valueAxisFields");
+	},
+
+	getValueAxisLabel: function() {
+		return this.get("valueAxisLabel");
 	},
 
 	getDataSourceName: function() {

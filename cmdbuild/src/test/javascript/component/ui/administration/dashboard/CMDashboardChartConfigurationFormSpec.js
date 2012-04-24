@@ -35,7 +35,7 @@
 						}]
 					}]
 				})
-			}
+			};
 
 			this.addMatchers({
 				toBeEnabled : function(expected) {
@@ -59,6 +59,9 @@
 			expectAllTheFieldsAreEmpty();
 			expectAllTheFieldsAreDisabled();
 			expectSpecificFieldsHidden();
+
+			expect(view.categoryAxesFieldSet).toBeHidden();
+			expect(view.valueAxesFieldSet).toBeHidden();
 		});
 
 		it('is able to enable the visible fields', function() {
@@ -81,10 +84,17 @@
 			expect(view.bgColorField).not.toBeEnabled();
 			expect(view.singleSerieField).not.toBeEnabled();
 			expect(view.labelField).not.toBeEnabled();
+			expect(view.orientationField).not.toBeEnabled();
+			expect(view.categoryAxesFieldSet.categoryAxesField).not.toBeEnabled();
+			expect(view.categoryAxesFieldSet.categoryAxesLabel).not.toBeEnabled();
+			expect(view.valueAxesFieldSet.valueAxesFields).not.toBeEnabled();
+			expect(view.valueAxesFieldSet.valueAxesLabel).not.toBeEnabled();
 
 			// show all the remaining fields
 			view.disableFields();
-			view.showFieldsWithName(["fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.showFieldsWithName(["fgcolor", "bgcolor", "singleSerieField", "labelField", "legend", "categoryAxisField",
+				"categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
+
 			view.enableFields();
 			expectAllTheOutputFieldsAreEnabled();
 		});
@@ -104,20 +114,29 @@
 		});
 
 		it('disables the fields when hides them', function() {
-			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend", "chartOrientation"]);
 			view.enableFields();
-			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend", "chartOrientation"]);
 			expectAllTheOutputFieldsAreNotEnabled();
 		});
 
 		it('enable the fields when shows them only if the form is enabled', function() {
 			view.enableFields();
-			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor",
+				"bgcolor", "singleSerieField", "labelField", "legend",
+				"categoryAxisField", "categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
+
 			expectAllTheOutputFieldsAreEnabled();
 
-			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor",
+				"bgcolor", "singleSerieField", "labelField", "legend",
+				"categoryAxisField", "categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
+
 			view.disableFields();
-			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend"]);
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor",
+				"bgcolor", "singleSerieField", "labelField", "legend",
+				"categoryAxisField", "categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
+
 			expectAllTheOutputFieldsAreNotEnabled();
 		});
 
@@ -166,7 +185,12 @@
 				bgcolor: "#FFFFFF",
 				legend: true,
 				singleSerieField : null,
-				labelField: null
+				labelField: null,
+				chartOrientation: "vertical",
+				categoryAxisField: null,
+				categoryAxisLabel: 'Foo',
+				valueAxisFields: [],
+				valueAxisLabel: 'Bar'
 			};
 
 			view.fillFieldsWith(data);
@@ -198,6 +222,8 @@
 
 		it('starts with the type specific fields hidden ', function() {
 			expectSpecificFieldsHidden();
+			expect(view.categoryAxesFieldSet).toBeHidden();
+			expect(view.valueAxesFieldSet).toBeHidden();
 		});
 
 		it('is able to hide fields by name', function() {
@@ -254,7 +280,48 @@
 			expect(reset).toHaveBeenCalled();
 		});
 
+		// axes fieldSets
+
+		it ('is able to show the axes fieldsets', function() {
+			view.showAxesFieldSets();
+			expect(view.categoryAxesFieldSet).not.toBeHidden();
+			expect(view.valueAxesFieldSet).not.toBeHidden();
+		});
+
+		it ('is able to hide the axes fieldsets', function() {
+			view.showAxesFieldSets();
+			view.hideAxesFieldSets();
+
+			expect(view.categoryAxesFieldSet).toBeHidden();
+			expect(view.valueAxesFieldSet).toBeHidden();
+		});
+
+		it ('is able to set the available data for the category axes', function() {
+			var field = view.categoryAxesFieldSet.categoryAxesField,
+				availableFields = [['foo'],['bar']],
+				reset = spyOn(field, "reset");
+
+			expect(field.store.data.length).toBe(0);
+			view.setCategoryAxesAvailableData(availableFields);
+
+			expect(field.store.data.length).toBe(2);
+			expect(reset).toHaveBeenCalled();
+		});
+
+		it ('is able to set the available data for the value axes', function() {
+			var field = view.valueAxesFieldSet.valueAxesFields,
+				availableFields = [['foo'],['bar']],
+				reset = spyOn(field, "reset");
+
+			expect(field.store.data.length).toBe(0);
+			view.setValueAxesAvailableData(availableFields);
+
+			expect(field.store.data.length).toBe(2);
+			expect(reset).toHaveBeenCalled();
+		});
+
 		// delegate
+
 		it('throw exception if pass to setDelegate a non conform object', function() {
 			delegate = new Object();
 			assertException("The view must throw exception for non conform object on setDelegate",
@@ -316,6 +383,15 @@
 		expect(view.bgColorField).toBeHidden();
 		expect(view.singleSerieField).toBeHidden();
 		expect(view.labelField).toBeHidden();
+		expect(view.orientationField).toBeHidden();
+
+		// category axes
+		expect(view.categoryAxesFieldSet.categoryAxesField).toBeHidden();
+		expect(view.categoryAxesFieldSet.categoryAxesLabel).toBeHidden();
+
+		// value axes
+		expect(view.valueAxesFieldSet.valueAxesFields).toBeHidden();
+		expect(view.valueAxesFieldSet.valueAxesLabel).toBeHidden();
 	};
 
 	function expectAllMutableFieldsAreEnabled() {
@@ -335,6 +411,15 @@
 		expect(view.bgColorField).toBeEnabled();
 		expect(view.singleSerieField).toBeEnabled();
 		expect(view.labelField).toBeEnabled();
+		expect(view.orientationField).toBeEnabled();
+
+		// category axes
+		expect(view.categoryAxesFieldSet.categoryAxesField).toBeEnabled();
+		expect(view.categoryAxesFieldSet.categoryAxesLabel).toBeEnabled();
+
+		// value axes
+		expect(view.valueAxesFieldSet.valueAxesFields).toBeEnabled();
+		expect(view.valueAxesFieldSet.valueAxesLabel).toBeEnabled();
 	}
 
 	function expectAllTheOutputFieldsAreNotEnabled() {
@@ -346,6 +431,15 @@
 		expect(view.bgColorField).not.toBeEnabled();
 		expect(view.singleSerieField).not.toBeEnabled();
 		expect(view.labelField).not.toBeEnabled();
+		expect(view.orientationField).not.toBeEnabled();
+
+		// category axes
+		expect(view.categoryAxesFieldSet.categoryAxesField).not.toBeEnabled();
+		expect(view.categoryAxesFieldSet.categoryAxesLabel).not.toBeEnabled();
+
+		// value axes
+		expect(view.valueAxesFieldSet.valueAxesFields).not.toBeEnabled();
+		expect(view.valueAxesFieldSet.valueAxesLabel).not.toBeEnabled();
 	}
 
 	function expectAllTheFieldsAreDisabled() {
@@ -373,5 +467,14 @@
 		expect(view.showLegend.getValue()).toEqual(false);
 		expect(view.singleSerieField.getValue()).toEqual(null);
 		expect(view.labelField.getValue()).toEqual(null);
+		expect(view.orientationField.getValue()).toEqual(null);
+
+		// category axes
+		expect(view.categoryAxesFieldSet.categoryAxesField.getValue()).toEqual(null);
+		expect(view.categoryAxesFieldSet.categoryAxesLabel.getValue()).toEqual("");
+
+		// value axes
+		expect(view.valueAxesFieldSet.valueAxesFields.getValue()).toEqual([]);
+		expect(view.valueAxesFieldSet.valueAxesLabel.getValue()).toEqual("");
 	}
 })();

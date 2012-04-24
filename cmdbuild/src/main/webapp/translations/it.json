@@ -198,7 +198,8 @@
              },
              "availableCharts": {
                 "gauge": "Manometro",
-                "pie": "Torta"
+                "pie": "Torta",
+                "bar": "Istogramma"
              },
              "buttons": {
                 "add": "Aggiungi grafico",
@@ -210,20 +211,30 @@
                 "active": "Attivo",
                 "autoload": "Carica automaticamente",
                 "background": "Colore di sfondo",
+                "categoryFieldset": "Asse delle categorie",
                 "chartType": "Tipo di grafico",
                 "dataSource": "Sorgente dati",
                 "defaultValue": "Valore di default",
                 "description": "Descrizione",
                 "fieldType": "Tipo di field",
                 "foreground": "Colore in primo piano",
+                "labelField": "Campo etichette",
                 "legend": "Mostra legenda",
                 "lookupType": "Tipo lookup",
                 "max": "Massimo",
                 "min": "Minimo",
                 "name": "Nome",
+                "orientation": {
+                   "label": "Orientazione",
+                   "values": {
+                      "horizontal": "Orizzontale",
+                      "vertical": "Verticale"
+                   }
+                },
                 "steps": "Intervalli",
+                "title": "Titolo",
                 "valueField": "Campo valore",
-                "labelField": "Campo etichette"
+                "valueFieldset": "Asse dei valori"
              },
              "inputTypes": {
                 "integer": "Intero",

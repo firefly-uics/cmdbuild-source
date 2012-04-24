@@ -41,7 +41,13 @@
 						}, {
 							id : 2,
 							name : "Card opened per class",
-							description : "A pie chart with the number of opened card in a year, divided per class"
+							description : "A pie chart with the number of opened card in a year, divided per class",
+							type: "pie"
+						}, {
+							id : 3,
+							name : "Card opened per class",
+							description : "A bar ...",
+							type: "bar"
 						}]
 					}, {
 						id : 2,

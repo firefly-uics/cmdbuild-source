@@ -198,7 +198,8 @@
              },
              "availableCharts": {
                 "gauge": "Gauge",
-                "pie": "Pie"
+                "pie": "Pie",
+                "bar": "Bar"
              },
              "buttons": {
                 "add": "Add Chart",
@@ -210,20 +211,30 @@
                 "active": "Active",
                 "autoload": "Load automatically",
                 "background": "Background color",
+                "categoryFieldset": "Category axis",
                 "chartType": "Chart type",
                 "dataSource": "Data source",
                 "defaultValue": "Default value",
                 "description": "Description",
                 "fieldType": "Field type",
                 "foreground": "Foreground color",
+                "labelField": "Label field",
                 "legend": "Show legend",
                 "lookupType": "Lookup type",
                 "max": "Maximum",
                 "min": "Minimum",
                 "name": "Name",
+                "orientation": {
+                   "label": "Orientation",
+                   "values": {
+                      "horizontal": "Horizontal",
+                      "vertical": "Vertical"
+                   }
+                },
                 "steps": "Steps",
+                "title": "Title",
                 "valueField": "Value field",
-                "labelField": "Label field"
+                "valueFieldset": "Value axis"
              },
              "inputTypes": {
                 "integer": "Integer",

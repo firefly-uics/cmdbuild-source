@@ -10,7 +10,12 @@
 		showFieldsWithName: Ext.emptyFn,
 
 		showDataSourceInputFields: Ext.emptyFn,
-		showSingleOutoputDSMapping: Ext.emptyFn
+		showSingleOutoputDSMapping: Ext.emptyFn,
+
+		showAxesFieldSets: Ext.emptyFn,
+		hideAxesFieldSets:Ext.emptyFn,
+		setCategoryAxesAvailableData: Ext.emptyFn,
+		setValueAxesAvailableData: Ext.emptyFn
 	});
 
 	Ext.define("CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationFormDelegate", {
@@ -78,6 +83,10 @@
 			addSequenceToTypeSetValue(me);
 		},
 
+		isValid: function() {
+			return this.getForm().isValid();
+		},
+
 		// fields management
 
 		enableFields: function(onlyMutable) {
@@ -120,10 +129,6 @@
 			return out;
 		},
 
-		getDataSourceConfiguration: function() {
-			return this.dataSourcePanel.getData();
-		},
-
 		cleanFields: function() {
 			this.dataSourcePanel.removeDataSourceInputFields();
 			iterateOverFields(this, function(field) {
@@ -145,6 +150,12 @@
 			}
 		},
 
+		// data source management
+
+		getDataSourceConfiguration: function() {
+			return this.dataSourcePanel.getData();
+		},
+
 		showDataSourceInputFields: function(inputConf) {
 			this.dataSourcePanel.setDataSourceInputFields(inputConf);
 		},
@@ -159,8 +170,24 @@
 			this.labelField.reset();
 		},
 
-		isValid: function() {
-			return this.getForm().isValid();
+		// axes fieldSets
+
+		showAxesFieldSets: function() {
+			this.categoryAxesFieldSet.show();
+			this.valueAxesFieldSet.show();
+		},
+
+		hideAxesFieldSets: function() {
+			this.categoryAxesFieldSet.hide();
+			this.valueAxesFieldSet.hide();
+		},
+
+		setCategoryAxesAvailableData: function(data) {
+			this.categoryAxesFieldSet.setAvaiableData(data);
+		},
+
+		setValueAxesAvailableData: function(data) {
+			this.valueAxesFieldSet.setAvaiableData(data);
 		},
 
 		// delegate
@@ -225,7 +252,8 @@
 					fields: ["value", "name"],
 					data : [
 						["gauge", tr.availableCharts.gauge],
-						["pie", tr.availableCharts.pie]
+						["pie", tr.availableCharts.pie],
+						["bar", tr.availableCharts.bar]
 					]
 				}),
 				disabled: true
@@ -289,7 +317,36 @@
 			}),
 
 			me.singleSerieField = getConfigurableCombo("singleSerieField",  tr.fields.valueField),
-			me.labelField = getConfigurableCombo("labelField", tr.fields.labelField)
+			me.labelField = getConfigurableCombo("labelField", tr.fields.labelField),
+
+			me.orientationField = new Ext.form.field.ComboBox({
+				fieldLabel: tr.fields.orientation.label,
+				name: "chartOrientation",
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: "value",
+				displayField: "description",
+				queryMode: "local",
+				editable: false,
+				allowBlank: false,
+				store: new Ext.data.SimpleStore({
+					fields: ["value", "description"],
+					data : [
+						["horizontal", tr.fields.orientation.values.horizontal],
+						["vertical", tr.fields.orientation.values.vertical],
+					]
+				}),
+				disabled: true,
+				hidden: true
+			}),
+
+			me.categoryAxesFieldSet = new CMDBuild.view.administration.dashboard._CategoryAxesConfigFieldset({
+				hidden: true
+			}),
+
+			me.valueAxesFieldSet = new CMDBuild.view.administration.dashboard._ValueAxesConfigFieldset({
+				hidden: true
+			})
 		];
 
 		me.hideOutputFields = function() {
@@ -301,12 +358,98 @@
 				"fgcolor",
 				"bgcolor",
 				"singleSerieField",
-				"labelField"
+				"labelField",
+				"categoryAxisField",
+				"categoryAxisLabel",
+				"valueAxisFields",
+				"valueAxisLabel"
 			]);
+			me.hideAxesFieldSets();
 		};
 
 		return outPutItems;
 	}
+
+	Ext.define("CMDBuild.view.administration.dashboard._CategoryAxesConfigFieldset", {
+
+		extend: "Ext.form.FieldSet",
+		title: tr.fields.categoryFieldset,
+		baseCls: "cmfieldset",
+
+		initComponent: function() {
+			this.categoryAxesField = getConfigurableCombo("categoryAxisField", tr.fields.valueField);
+			this.categoryAxesLabel = new Ext.form.field.Text({
+				fieldLabel: tr.fields.title,
+				name: "categoryAxisLabel",
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				disabled: true,
+				hidden: true
+			}),
+
+			Ext.apply(this, {
+				items: [this.categoryAxesLabel, this.categoryAxesField]
+			});
+
+			this.callParent(arguments);
+		},
+
+		setAvaiableData: function(data) {
+			this.categoryAxesField.store.loadData(data);
+			this.categoryAxesField.reset();
+		}
+	});
+
+	Ext.define("CMDBuild.view.administration.dashboard._ValueAxesConfigFieldset", {
+
+		extend: "Ext.form.FieldSet",
+		title: tr.fields.valueFieldset,
+		baseCls: "cmfieldset",
+
+		initComponent: function() {
+			this.valueAxesFields = new CMDBuild.view.common.field.CMGroupSelectionList({
+				fieldLabel: tr.fields.valueField,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				store: new Ext.data.SimpleStore({
+					fields: ["value"],
+					data: []
+				}),
+				name : "valueAxisFields",
+				dataFields : ['value'],
+				valueField : 'value',
+				displayField : 'value',
+				allowBlank: false,
+				disabled: true,
+				hidden: true
+			});
+
+			this.valueAxesLabel = new Ext.form.field.Text({
+				fieldLabel: tr.fields.title,
+				name: "valueAxisLabel",
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				disabled: true,
+				hidden: true
+			}),
+
+			Ext.apply(this, {
+				items: [this.valueAxesLabel, this.valueAxesFields]
+			});
+
+			this.callParent(arguments);
+		},
+
+		setAvaiableData: function(data) {
+			try {
+				this.valueAxesFields.reset();
+				this.valueAxesFields.store.loadData(data);
+			} catch (e) {
+				// I'm not able to understand what crashes
+				// after these operations :.(
+			}
+		}
+	});
 
 	function iterateOverFields(me, fn) {
 		if (typeof fn != "function") {
@@ -353,7 +496,7 @@
 		});
 	}
 
-	function getConfigurableCombo(name, label) {
+	function getConfigurableCombo(name, label, visible) {
 		return new Ext.form.field.ComboBox({
 			fieldLabel: label,
 			name: name,
@@ -372,7 +515,7 @@
 				this.store.loadData(data);
 			},
 			disabled: true,
-			hidden: true
+			hidden: !visible
 		});
 	}
 })();
