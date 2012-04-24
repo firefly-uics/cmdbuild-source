@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.DBTypeObject;
 import org.cmdbuild.dao.Metadata;
 
-public abstract class DBEntryType implements CMEntryType {
+public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
 	public static class EntryTypeMetadata extends Metadata {
 		protected static final String BASE_NS = "system.entrytype.";
@@ -35,16 +35,11 @@ public abstract class DBEntryType implements CMEntryType {
 		}
 	}
 
-	private final Object id;
-	private final String name;
-
 	private final Map<String, DBAttribute> attributesByName;
 	private final List<DBAttribute> attributes;
 
 	protected DBEntryType(final String name, final Object id, final List<DBAttribute> attributes) {
-		Validate.notEmpty(name);
-		this.id = id;
-		this.name = name;
+		super(name, id);
 		this.attributes = attributes;
 		this.attributesByName = initAttributesByName(attributes);
 	}
@@ -65,16 +60,6 @@ public abstract class DBEntryType implements CMEntryType {
 	/*
 	 * CMEntryType overrides
 	 */
-
-	@Override
-	public Object getId() {
-		return id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
 
 	@Override
 	public String getDescription() {
@@ -106,27 +91,4 @@ public abstract class DBEntryType implements CMEntryType {
 		return attributesByName.get(name);
 	}
 
-	/*
-	 * Object overrides
-	 */
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof CMEntryType == false)
-			return false;
-		if (this == obj)
-			return true;
-		CMEntryType other = (CMEntryType) obj;
-		return this.id.equals(other.getId());
-	}
-
-	@Override
-	public String toString() {
-		return name;
-	}
 }

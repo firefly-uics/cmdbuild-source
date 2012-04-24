@@ -1,14 +1,11 @@
 package org.cmdbuild.dao.entrytype;
 
 import org.cmdbuild.auth.CMPrivilegedObject;
+import org.cmdbuild.dao.CMTypeObject;
 
-public interface CMEntryType extends Deactivable, CMPrivilegedObject {
+public interface CMEntryType extends Deactivable, CMTypeObject, CMPrivilegedObject {
 
 	void accept(CMEntryTypeVisitor visitor);
-
-	Object getId();
-
-	String getName();
 
 	String getDescription();
 

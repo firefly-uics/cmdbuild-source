@@ -13,6 +13,7 @@ import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -62,6 +63,11 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 	@Override
 	protected void deleteDomainNoCache(final DBDomain dbDomain) {
 		new EntryTypeCommands(jdbcTemplate).deleteDomain(dbDomain);
+	}
+
+	@Override
+	protected List<DBFunction> findAllFunctionsNoCache() {
+		return new EntryTypeCommands(jdbcTemplate).findAllFunctions();
 	}
 
 	/*

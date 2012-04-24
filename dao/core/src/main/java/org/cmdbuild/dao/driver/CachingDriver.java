@@ -2,16 +2,17 @@ package org.cmdbuild.dao.driver;
 
 import java.util.Collection;
 
-import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.CMTypeObject;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.function.DBFunction;
 
 public abstract class CachingDriver implements DBDriver {
 
-	private class EntryTypeStore<T extends CMEntryType> {
+	private class TypeObjectStore<T extends CMTypeObject> {
 		final Collection<T> collection;
 
-		EntryTypeStore(Collection<T> collection) {
+		TypeObjectStore(Collection<T> collection) {
 			this.collection = collection;
 		}
 
@@ -46,21 +47,22 @@ public abstract class CachingDriver implements DBDriver {
 		}
 	}
 
-	private volatile EntryTypeStore<DBClass> allClassesStore;
-	private volatile EntryTypeStore<DBDomain> allDomainsStore;
+	private volatile TypeObjectStore<DBClass> allClassesStore;
+	private volatile TypeObjectStore<DBDomain> allDomainsStore;
+	private volatile TypeObjectStore<DBFunction> allFunctionsStore;
 
 	@Override
 	public final Collection<DBClass> findAllClasses() {
 		return getAllClassesStore().getCollection();
 	}
 
-	private EntryTypeStore<DBClass> getAllClassesStore() {
-		EntryTypeStore<DBClass> refForSafeClearCache = allClassesStore;
+	private TypeObjectStore<DBClass> getAllClassesStore() {
+		TypeObjectStore<DBClass> refForSafeClearCache = allClassesStore;
 		if (allClassesStore == null) {
 			synchronized (this) {
 				refForSafeClearCache = allClassesStore;
 				if (allClassesStore == null) {
-					this.allClassesStore = refForSafeClearCache = new EntryTypeStore<DBClass>(findAllClassesNoCache());
+					this.allClassesStore = refForSafeClearCache = new TypeObjectStore<DBClass>(findAllClassesNoCache());
 				}
 			}
 		}
@@ -123,13 +125,13 @@ public abstract class CachingDriver implements DBDriver {
 		return getAllDomainsStore().getCollection();
 	}
 
-	private EntryTypeStore<DBDomain> getAllDomainsStore() {
-		EntryTypeStore<DBDomain> refForSafeClearCache = allDomainsStore;
+	private TypeObjectStore<DBDomain> getAllDomainsStore() {
+		TypeObjectStore<DBDomain> refForSafeClearCache = allDomainsStore;
 		if (allDomainsStore == null) {
 			synchronized (this) {
 				refForSafeClearCache = allDomainsStore;
 				if (allDomainsStore == null) {
-					this.allDomainsStore = refForSafeClearCache = new EntryTypeStore<DBDomain>(findAllDomainsNoCache());
+					this.allDomainsStore = refForSafeClearCache = new TypeObjectStore<DBDomain>(findAllDomainsNoCache());
 				}
 			}
 		}
@@ -169,14 +171,35 @@ public abstract class CachingDriver implements DBDriver {
 		return getAllDomainsStore().getByName(name);
 	}
 
+	@Override
+	public Collection<DBFunction> findAllFunctions() {
+		return getAllFunctionsStore().getCollection();
+	}
+
+	private TypeObjectStore<DBFunction> getAllFunctionsStore() {
+		TypeObjectStore<DBFunction> refForSafeClearCache = allFunctionsStore;
+		if (allFunctionsStore == null) {
+			synchronized (this) {
+				refForSafeClearCache = allFunctionsStore;
+				if (allFunctionsStore == null) {
+					this.allFunctionsStore = refForSafeClearCache = new TypeObjectStore<DBFunction>(findAllFunctionsNoCache());
+				}
+			}
+		}
+		return refForSafeClearCache;
+	}
+
+	protected abstract Collection<DBFunction> findAllFunctionsNoCache();
+
 	/*
 	 * Cache management
 	 */
 
 	public void clearCache() {
 		synchronized (this) {
-			allClassesStore = null;
-			allDomainsStore = null;
+			clearClassesCache();
+			clearDomainsCache();
+			clearFunctionsCache();
 		}
 	}
 
@@ -189,6 +212,12 @@ public abstract class CachingDriver implements DBDriver {
 	public void clearDomainsCache() {
 		synchronized (this) {
 			allDomainsStore = null;
+		}
+	}
+
+	public void clearFunctionsCache() {
+		synchronized (this) {
+			allFunctionsStore = null;
 		}
 	}
 }

@@ -5,7 +5,11 @@ import org.apache.commons.lang.Validate;
 
 public class StringAttributeType extends TextAttributeType {
 
-	public final int length;
+	public final Integer length;
+
+	public StringAttributeType() {
+		this.length = null;
+	}
 
 	public StringAttributeType(final Integer length) {
 		Validate.isTrue(length > 0);
