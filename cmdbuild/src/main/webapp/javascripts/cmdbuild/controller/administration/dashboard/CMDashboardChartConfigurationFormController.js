@@ -1,12 +1,65 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy", {
-		dataSourceName: null,
+	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface", {
+		extractInterestedValues: Ext.emptyFn,
+		showChartFields: Ext.emptyFn,
+		setChartDataSourceName: Ext.emptyFn,
+		getAvailableDsOutputFields: Ext.emptyFn,
 		fillFieldsForChart: Ext.emptyFn,
 		getChartData: Ext.emptyFn,
-		showChartFields: Ext.emptyFn,
-		extractInterestedValues: Ext.emptyFn,
-		setChartDataSourceName: Ext.emptyFn,
+		updateDataSourceDependantFields: Ext.emptyFn
+	});
+
+	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy", {
+
+		extend: "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface",
+
+		interestedFields: [], 	// fill this array in the subclasses with the name of the
+								// form attributes managed from the strategy
+
+		dataSourceName: null,
+
+		constructor: function(form) {
+			this.form = form;
+		},
+
+		extractInterestedValues: function(data) {
+			var out = {},
+				me = this;
+	
+			for (var i=0, l=me.interestedFields.length; i<l; ++i) {
+				out[me.interestedFields[i]] = data[me.interestedFields[i]];
+			}
+	
+			return out;
+		},
+	
+		showChartFields: function() {
+			this.form.showFieldsWithName(this.interestedFields);
+		},
+
+		setChartDataSourceName: function(dsName) {
+			this.dataSourceName = dsName;
+			this.updateDataSourceDependantFields();
+		},
+
+		getAvailableDsOutputFields: function (allowedTypes) {
+			var dataSourceOutput = this.dataSourceName ? _CMCache.getDataSourceOutput(this.dataSourceName) : [],
+				allowedTypes = allowedTypes || ["string", "integer", "date"],
+				out = [];
+
+			for (var i=0, l=dataSourceOutput.length, d; i<l; ++i) {
+				d = dataSourceOutput[i];
+				if (Ext.Array.contains(allowedTypes, d.type)) {
+					out.push([d.name]);
+				}
+			}
+
+			return out;
+		},
+
+		fillFieldsForChart: Ext.emptyFn,
+		getChartData: Ext.emptyFn,
 		updateDataSourceDependantFields: Ext.emptyFn
 	});
 
@@ -22,7 +75,8 @@
 				function getStrategyFor(type, view) {
 					var strategis = {
 						"gauge": CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy,
-						"pie": CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy
+						"pie": CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy,
+						"bar": CMDBuild.controller.administration.dashboard.charts.CMChartBarStrategy
 					};
 
 					if (typeof strategis[type] == "function") {
@@ -90,11 +144,11 @@
 		},
 
 		setChartTypeStrategy: function(s) {
-			this.chartTypeStrategy = s || new CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy();
+			this.chartTypeStrategy = s || new CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface();
 
 			this.view.hideOutputFields();
 
-			CMDBuild.validateInterface(this.chartTypeStrategy, "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
+			CMDBuild.validateInterface(this.chartTypeStrategy, "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface");
 			this.chartTypeStrategy.setChartDataSourceName(this.chartDataSourceName);
 			this.chartTypeStrategy.showChartFields();
 		},

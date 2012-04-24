@@ -196,9 +196,10 @@
              "alert": {
                 "wrongConfiguration": "<em>The chart is not well configured</em>"
              },
-             "availableCharts": {
+            "availableCharts": {
                 "gauge": "<em>Gauge</em>",
-                "pie": "<em>Pie</em>"
+                "pie": "<em>Pie</em>",
+                "bar": "<em>Bar</em>"
              },
              "buttons": {
                 "add": "<em>Add Chart</em>",
@@ -210,20 +211,30 @@
                 "active": "<em>Active</em>",
                 "autoload": "<em>Load automatically</em>",
                 "background": "<em>Background color</em>",
+                "categoryFieldset": "<em>Category axis</em>",
                 "chartType": "<em>Chart type</em>",
                 "dataSource": "<em>Data source</em>",
                 "defaultValue": "<em>Default value</em>",
                 "description": "<em>Description</em>",
                 "fieldType": "<em>Field type</em>",
                 "foreground": "<em>Foreground color</em>",
+                "labelField": "<em>Label field</em>",
                 "legend": "<em>Show legend</em>",
                 "lookupType": "<em>Lookup type</em>",
                 "max": "<em>Maximum</em>",
                 "min": "<em>Minimum</em>",
                 "name": "<em>Name</em>",
+                "orientation": {
+                   "label": "<em>Orientation</em>",
+                   "values": {
+                      "horizontal": "<em>Horizontal</em>",
+                      "vertical": "<em>Vertical</em>"
+                   }
+                },
                 "steps": "<em>Steps</em>",
+                "title": "<em>Title</em>",
                 "valueField": "<em>Value field</em>",
-                "labelField": "<em>Label field</em>"
+                "valueFieldset": "<em>Value axis</em>"
              },
              "inputTypes": {
                 "integer": "<em>Integer</em>",

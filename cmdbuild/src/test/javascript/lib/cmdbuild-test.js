@@ -136,12 +136,28 @@
 
 	CMDBuild.test.clickButton = function(b) {
 		b.btnEl.dom.click();
-	}
+	};
 
 	CMDBuild.test.selectGridRow = function(grid, row) {
 		row = row || 0;
 		grid.getSelectionModel().select(row);
-	}
+	};
+
+	/**
+	 * return a jasmine spy object with a spy for each
+	 * function in the prototype
+	 */
+	CMDBuild.test.spyObj = function(o, baseName, extraSpy) {
+		var funtionsToSpy = extraSpy || [];
+
+		for (var key in o.prototype) {
+			if (typeof o.prototype[key] == "function") {
+				funtionsToSpy.push(key);
+			}
+		}
+
+		return jasmine.createSpyObj(baseName, funtionsToSpy);
+	};
 
 	// configuration structure
 	Ext.define("CMDBuild.Config", {
@@ -198,8 +214,10 @@
 			// 'CMDashboardChartConfigurationPanelController',
 			// 'CMDashboardChartConfigurationGridController',
 			// 'CMDashboardChartConfigurationGridSpec',
-			'CMDashboardChartConfigurationForm'
-			// 'GaugeTypeStrategy'
+			'CMDashboardChartConfigurationForm',
+			'CMChartBarTypeStrategy',
+			'CMChartPieTypeStrategy',
+			'CMChartGaugeTypeStrategy'
 			// 'CMDashboardModel',
 		];
 

@@ -198,7 +198,8 @@
              },
              "availableCharts": {
                 "gauge": "<em>Manometro</em>",
-                "pie": "<em>Torta</em>"
+                "pie": "<em>Torta</em>",
+                "bar": "<em>Istogramma</em>"
              },
              "buttons": {
                 "add": "<em>Aggiungi grafico</em>",
@@ -210,20 +211,30 @@
                 "active": "<em>Attivo</em>",
                 "autoload": "<em>Carica automaticamente</em>",
                 "background": "<em>Colore di sfondo</em>",
+                "categoryFieldset": "<em>Asse delle categorie</em>",
                 "chartType": "<em>Tipo di grafico</em>",
                 "dataSource": "<em>Sorgente dati</em>",
                 "defaultValue": "<em>Valore di default</em>",
                 "description": "<em>Descrizione</em>",
                 "fieldType": "<em>Tipo di field</em>",
                 "foreground": "<em>Colore in primo piano</em>",
+                "labelField": "<em>Campo etichette</em>",
                 "legend": "<em>Mostra legenda</em>",
                 "lookupType": "<em>Tipo lookup</em>",
                 "max": "<em>Massimo</em>",
                 "min": "<em>Minimo</em>",
                 "name": "<em>Nome</em>",
+                "orientation": {
+                   "label": "<em>Orientazione</em>",
+                   "values": {
+                      "horizontal": "<em>Orizzontale</em>",
+                      "vertical": "<em>Verticale</em>"
+                   }
+                },
                 "steps": "<em>Intervalli</em>",
+                "title": "<em>Titolo</em>",
                 "valueField": "<em>Campo valore</em>",
-                "labelField": "<em>Campo etichette</em>"
+                "valueFieldset": "<em>Asse dei valori</em>"
              },
              "inputTypes": {
                 "integer": "<em>Intero</em>",

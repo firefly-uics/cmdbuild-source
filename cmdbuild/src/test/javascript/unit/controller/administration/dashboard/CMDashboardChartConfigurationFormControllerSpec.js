@@ -6,27 +6,13 @@
 	describe('CMDashboardChartConfigurationFormController', function() {
 
 		beforeEach(function() {
-			view = jasmine.createSpyObj("CMDashboardChartConfigurationFormSpy", [
-				"fillFieldsWith",
-				"showFieldsWithName",
-				"disableFields",
-				"enableFields",
-				"hideOutputFields",
-				"cleanFields",
-				"setDelegate",
-				"getFieldsValue",
-				"showDataSourceInputFields",
-				"setSingleSerieFieldAvailableData",
-				"setLabelFieldAvailableData",
-				"getDataSourceConfiguration",
-				"fillDataSourcePanel",
-				"isValid"
-			]);
+			view = CMDBuild.test.spyObj(CMDBuild.view.administration.dashboard
+					.CMDashboardChartConfigurationForm, "CMDashboardChartConfigurationFormSpy", ["hideOutputFields"]);
 
 			controller = CMDBuild.controller.administration.dashboard
 				.CMDashboardChartConfigurationFormController.cmcreate(view);
 
-			chartTypeStrategy = new CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy();
+			chartTypeStrategy = new CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface();
 		});
 
 		afterEach(function() {
@@ -108,7 +94,7 @@
 
 		it('throws an exception if try to set a strategy that is not istance of CMDashboardChartConfigurationFormControllerTypeStrategy', function() {
 			var s = {};
-			var expectedError = Ext.String.format(CMDBuild.IS_NOT_CONFORM_TO_INTERFACE, s, "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
+			var expectedError = Ext.String.format(CMDBuild.IS_NOT_CONFORM_TO_INTERFACE, s, "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface");
 
 			expect(function() {
 				controller.setChartTypeStrategy(s);
@@ -119,7 +105,7 @@
 			var showChartFields = spyOn(chartTypeStrategy, "showChartFields"),
 				setChartDataSourceName = spyOn(chartTypeStrategy, "setChartDataSourceName");
 
-			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
+			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface");
 
 			controller.setChartTypeStrategy(chartTypeStrategy);
 			expect(controller.chartTypeStrategy).toBe(chartTypeStrategy);
@@ -138,8 +124,12 @@
 			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy");
 			view.hideOutputFields.reset();
 
+			controller.onTypeChanged("bar");
+			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartBarStrategy");
+			view.hideOutputFields.reset();
+
 			controller.onTypeChanged(undefined);
-			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy");
+			expect(Ext.getClassName(controller.chartTypeStrategy)).toEqual("CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategyInterface");
 			expect(view.hideOutputFields).toHaveBeenCalled();
 		});
 

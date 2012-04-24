@@ -4,6 +4,7 @@
 
 		interestedFields: ['singleSerieField', 'labelField', 'legend'],
 
+		// override
 		fillFieldsForChart: function(chart) {
 			this.form.fillFieldsWith({
 				labelField: chart.getLabelField(),
@@ -12,24 +13,10 @@
 			});
 		},
 
-		setChartDataSourceName: function(dsName) {
-			this.callParent(arguments);
-			this.form.setLabelFieldAvailableData(getAvailableDsOutputFields(this.dataSourceName));
+		// override
+		updateDataSourceDependantFields: function() {
+			this.form.setSingleSerieFieldAvailableData(this.getAvailableDsOutputFields(["integer"]));
+			this.form.setLabelFieldAvailableData(this.getAvailableDsOutputFields());
 		}
 	});
-
-	function getAvailableDsOutputFields(dsName) {
-		var dataSourceOutput = [];
-		if (dsName) {
-			dataSourceOutput = _CMCache.getDataSourceOutput(dsName);
-		}
-
-		var out = [];
-		for (var i=0, l=dataSourceOutput.length, d; i<l; ++i) {
-			d = dataSourceOutput[i];
-			out.push([d.name]);
-		}
-
-		return out;
-	}
 })();

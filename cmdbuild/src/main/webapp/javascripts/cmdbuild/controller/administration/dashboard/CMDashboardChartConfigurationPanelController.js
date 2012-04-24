@@ -131,6 +131,7 @@
 		}
 	});
 
+	
 	// TODO: temporary ugly solution
 	// Do a preview controller that is able to load the charts
 
@@ -138,8 +139,10 @@
 
 		if (!data.type) {
 			return {
-				xtype: "panel",
-				html: tr.alert.wrongConfiguration
+				xtype : "panel",
+				frame : false,
+				border : false,
+				html : tr.alert.wrongConfiguration
 			};
 		}
 
@@ -206,6 +209,76 @@
 					}
 				} ]
 			};
+		}
+
+		if (data.type == "bar") {
+			var vertical = data.chartOrientation == "vertical",
+				axesConf = {};
+
+			if (vertical) {
+				axesConf.category = "bottom";
+				axesConf.values = "left";
+				axesConf.type = "column";
+			} else {
+				axesConf.category = "left";
+				axesConf.values = "bottom";
+				axesConf.type = "bar";
+			}
+			return {
+				xtype : 'chart',
+				legend: data.legend,
+				store : Ext.create('Ext.data.JsonStore', {
+					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
+					data : generateData(5)
+				}),
+				axes : [ {
+					type : 'Numeric',
+					position : axesConf.values,
+					fields : [ 'data1', 'data2' ],
+					title : data.valueAxisLabel,
+					minimum: 0,
+					grid : true
+				}, {
+					type : 'Category',
+					position : axesConf.category,
+					fields : [ 'name' ],
+					title : data.categoryAxisLabel
+				} ],
+				series : [ {
+					type : axesConf.type,
+					axis : axesConf.values,
+					highlight : true,
+					xField : 'name',
+					yField : [ 'data1', 'data2' ]
+				} ]
+			};
+
+//			return {
+//				xtype : 'chart',
+//				legend: data.legend,
+//				animate: true,
+//				store : Ext.create('Ext.data.JsonStore', {
+//					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
+//					data : generateData(5)
+//				}),
+//				axes : [ {
+//					type : 'Numeric',
+//					fields : ["data1", "data2"], //data.valueAxisFields,
+//					title : "@@ Valori", //data.valueAxisLabel,
+//					grid : true
+//				}, {
+//					type : 'Category',
+//					fields : ["name"], //data.categoryAxisField,
+//					title : "@@ categories"//data.categoryAxisLabel
+//				} ],
+//				series : [ {
+//					type : 'bar',
+//					axis : 'bottom',
+//					highlight : true,
+//					xField : "name", //data.categoryAxisField,
+//					yField : ["data1", "data2"] // data.valueAxisFields
+//				} ]
+//			};
 		}
 	}
 
