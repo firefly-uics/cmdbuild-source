@@ -74,8 +74,10 @@ public abstract class AbstractElementImpl implements IAbstractElement {
 		setDefaultValueIfPresent(CardAttributes.Status.toString(), ElementStatus.ACTIVE.value());
 		if (isNew()) {
 			int id = create();
-			setValue(CardAttributes.Id.toString(), (Integer)id);
-			resetAttributes();
+			if (id > 0) { // HACK to allow triggers to ignore inserts
+				setValue(CardAttributes.Id.toString(), (Integer)id);
+				resetAttributes();
+			}
 		} else if (hasChanged()) {
 			modify();
 			resetAttributes();

@@ -106,26 +106,12 @@ public class CardImpl extends AbstractElementImpl implements ICard {
 	@Override
 	protected void modify() {
 		backend.modifyCard(this);
-		updateReferences();
 	}
 
 	@Override
 	protected int create() {
 		int id = backend.createCard(this);
-		updateReferences();
 		return id;
-	}
-
-	private void updateReferences() {
-		assert !isNew();
-		for(AttributeValue value: values.values()){
-			IAttribute attribute = value.getSchema();
-			if (attribute.getType() == AttributeType.REFERENCE && value.isChanged()) {
-				// TODO: manage delete reference
-				// TODO: relations for reference attribute have to be handled in the DATABASE!
-				//value.getReference().getRelation().save();
-			}
-		}
 	}
 
 	@Override
