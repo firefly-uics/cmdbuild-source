@@ -22,15 +22,19 @@ BEGIN
 		returns_set := R.proretset;
 		IF R.proargmodes IS NULL
 		THEN
-			-- create arrays from other columns
-			arg_io := ARRAY['o'::char];
-			arg_types := ARRAY[_cm_get_sqltype_string(R.prorettype, NULL)];
-			arg_names := ARRAY[''::text];
+			arg_io := '{}'::char[];
+			arg_types := '{}'::text[];
+			arg_names := '{}'::text[];
+			-- add input columns
 			FOR i IN SELECT generate_series(1, array_upper(R.proargtypes,1)) LOOP
-				arg_io := 'i'::char || arg_io;
-				arg_types := _cm_get_sqltype_string(R.proargtypes[i], NULL) || arg_types;
-				arg_names := COALESCE(R.proargnames[i], ''::text) || arg_names;
+				arg_io := arg_io || 'i'::char;
+				arg_types := arg_types || _cm_get_sqltype_string(R.proargtypes[i], NULL);
+				arg_names := arg_names || COALESCE(R.proargnames[i], ''::text);
 			END LOOP;
+			-- add single output column
+			arg_io := arg_io || 'o'::char;
+			arg_types := arg_types || _cm_get_sqltype_string(R.prorettype, NULL);
+			arg_names := arg_names || ''::text;
 		ELSE
 			-- just normalize existing columns
 			arg_io := R.proargmodes;
@@ -41,7 +45,7 @@ BEGIN
 				IF arg_io[i] = 't' THEN
 					arg_io[i] := 'o';
 				END IF;
-				arg_types := _cm_get_sqltype_string(R.proallargtypes[i], NULL) || arg_types;
+				arg_types := arg_types || _cm_get_sqltype_string(R.proallargtypes[i], NULL);
 			END LOOP;
 		END IF;
 		RETURN NEXT;
