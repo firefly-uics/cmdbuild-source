@@ -16,7 +16,7 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.TextAttribute, CMDBuild.WidgetBuilders.S
  * @return Ext.form.TextArea
  */
 CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(attribute) {
-	if (attribute.editorType == TEXT_EDITOR_TYPE.plain) {
+	if (attribute.editorType != TEXT_EDITOR_TYPE.html) {
 		var attr = Ext.apply({},attribute);
 		attr.len = this.MAXWIDTH + 1; // MAXWIDTH is the length for switching to a textarea
 		return CMDBuild.WidgetBuilders.TextAttribute.superclass.buildAttributeField(attr);

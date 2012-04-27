@@ -46,15 +46,7 @@
 					flex : 1
 				}, {
 					header: tr.fields.dataSource,
-					dataIndex: 'dataSource',
-					renderer: function(value){
-						var out = "";
-						if (Ext.getClassName(value) == "CMDBuild.model.CMDashboardChartDataSource") {
-							out = value.getName() || "";
-						}
-
-						return out;
-					},
+					dataIndex: 'dataSourceName',
 					flex: 1
 				}],
 				viewConfig: {

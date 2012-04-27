@@ -126,6 +126,8 @@
 				out[field.name]= field.getValue();
 			});
 
+			out.dataSourceParameters = this.getDataSourceConfiguration();
+
 			return out;
 		},
 
@@ -244,7 +246,6 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				valueField: "value",
 				displayField: "name",
-				hiddenName: "dataSource",
 				queryMode: "local",
 				editable: false,
 				allowBlank: false,
@@ -316,7 +317,7 @@
 				hidden: true
 			}),
 
-			me.singleSerieField = getConfigurableCombo("singleSerieField",  tr.fields.valueField),
+			me.singleSerieField = getConfigurableCombo("singleSeriesField",  tr.fields.valueField),
 			me.labelField = getConfigurableCombo("labelField", tr.fields.labelField),
 
 			me.orientationField = new Ext.form.field.ComboBox({
@@ -357,7 +358,7 @@
 				"steps",
 				"fgcolor",
 				"bgcolor",
-				"singleSerieField",
+				"singleSeriesField",
 				"labelField",
 				"categoryAxisField",
 				"categoryAxisLabel",

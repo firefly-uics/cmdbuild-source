@@ -2,6 +2,7 @@
 	var tr = CMDBuild.Translation.administration.modDashboard.charts,
 
 	_integerStore = new Ext.data.SimpleStore({
+		cmType : "integer_store",
 		fields: ["value", "description"],
 		data: [
 			["free", tr.typeFieldOptions.freeInt],
@@ -11,6 +12,7 @@
 	}),
 
 	_stringStore = new Ext.data.SimpleStore({
+		cmType : "string_store",
 		fields: ["value", "description"],
 		data: [
 			["free", tr.typeFieldOptions.freeString],
@@ -19,6 +21,10 @@
 			["user", tr.typeFieldOptions.user],
 			["group", tr.typeFieldOptions.group],
 		]
+	}),
+
+	_fakeStore = new Ext.data.SimpleStore({
+		cmType : "fake_store"
 	});
 
 	Ext.define("CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationDataSourcePanel", {
@@ -33,7 +39,7 @@
 		initComponent: function() {
 
 			this.dataSourceCombo = new Ext.form.field.ComboBox({
-				name: "dataSource",
+				name: "dataSourceName",
 				fieldLabel: tr.fields.dataSource,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -60,16 +66,21 @@
 		setDataSourceInputFields: function(input) {
 			this.removeDataSourceInputFields();
 			var me = this;
-			for (var i=0, l=input.length, item; i<l; ++i) {
+			var builders = CMDBuild.view.administration.dashboard._DataSourceInputFildSet.builders;
+			for (var i=0, l=input.length, item, builder; i<l; ++i) {
 				item = input[i];
-				this.inputFieldSets.push(
-					CMDBuild.view.administration.dashboard.
-						_DataSourceInputFildSet.builders[item.type](item,
-						this.afterInputFieldTypeChanged,
-						function dataSourceComboIsDisabled() {
-							return me.dataSourceCombo.isDisabled()
-						})
-				);
+				if (item && item.type) {
+					builder = typeof builders[item.type] == "function" ? builders[item.type] : builders["DEFAULT"];
+	
+					this.inputFieldSets.push(
+						builder(item,
+							this.afterInputFieldTypeChanged,
+							function dataSourceComboIsDisabled() {
+								return me.dataSourceCombo.isDisabled();
+							}
+						)
+					);
+				}
 			}
 
 			this.add(this.inputFieldSets);
@@ -78,21 +89,18 @@
 		removeDataSourceInputFields: function() {
 			for (var i=0, l=this.inputFieldSets.length, item; i<l; ++i) {
 				item = this.inputFieldSets[i];
-				this.remove(item)
+				this.remove(item);
 			}
 
 			this.inputFieldSets = [];
 		},
 
 		getData: function() {
-			var data = {
-				name: this.dataSourceCombo.getValue(),
-				input: []
-			}
+			var data = [];
 
 			this.items.each(function(item) {
 				if (Ext.getClassName(item) == "CMDBuild.view.administration.dashboard._DataSourceInputFildSet") {
-					data.input.push(item.getData())
+					data.push(item.getData());
 				}
 			});
 
@@ -124,15 +132,16 @@
 
 		statics: {
 			builders: {
-				date: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
+				DEFAULT: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
 					return new CMDBuild.view.administration.dashboard._DataSourceInputFildSet({
 						input: input,
 						typeComboIsdisabled: typeComboIsdisabled,
-						afterInputFieldTypeChanged: afterInputFieldTypeChanged
+						afterInputFieldTypeChanged: afterInputFieldTypeChanged,
+						fieldTypeStore: undefined
 					});
 				},
 		
-				integer: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
+				INTEGER: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
 					return new CMDBuild.view.administration.dashboard._DataSourceInputFildSet({
 						input: input,
 						typeComboIsdisabled: typeComboIsdisabled,
@@ -141,7 +150,7 @@
 					});
 				},
 		
-				string: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
+				STRING: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
 					return new CMDBuild.view.administration.dashboard._DataSourceInputFildSet({
 						input: input,
 						typeComboIsdisabled: typeComboIsdisabled,
@@ -165,6 +174,10 @@
 				name = me.input.name,
 				type = me.input.type;
 
+			me.baseCls = "cmfieldset";
+			me.title = name + " (" + tr.inputTypes[type] + ")";
+			me.callParent(arguments);
+
 			if (me.fieldTypeStore) {
 				me.fieldType = new Ext.form.field.ComboBox({
 					fieldLabel: tr.fields.fieldType,
@@ -175,7 +188,7 @@
 					queryMode: "local",
 					editable: false,
 					allowBlank: false,
-					store: me.fieldTypeStore,
+					store: me.fieldTypeStore || _fakeStore,
 					disabled: me.typeComboIsdisabled()
 				});
 
@@ -185,38 +198,29 @@
 					}
 				);
 
-				me.items = [me.fieldType];
+				me.add(me.fieldType);
 			} else {
-				// is a input of type date. It hasn't a
-				// combo to select the field, has only the
-				// default that is a datefield
-
-				me.defaultField = new Ext.form.field.Date({
-					format : 'd/m/Y',
-					fieldLabel: tr.fields.defaultValue,
-					labelWidth: SUBFIELD_LABEL_WIDTH,
-					width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
-					disabled: me.typeComboIsdisabled()
-				});
-
-				me.items = [me.defaultField];
+				this.addDefaultFieldFromFieldManager();
 			}
-
-			me.baseCls = "cmfieldset";
-			me.title = name + " (" + tr.inputTypes[type] + ")";
-			me.callParent(arguments);
 		},
 
-		addTextFieldForDefault: function() {
-			this.resetFieldset();
+		addDefaultFieldFromFieldManager: function(conf) {
+			conf = conf || {
+				name: this.input.name,
+				type: this.input.type,
+				description: tr.fields.defaultValue
+			};
 
-			this.defaultField = new Ext.form.field.Text({
-				fieldLabel: tr.fields.defaultValue,
-				labelWidth: SUBFIELD_LABEL_WIDTH,
-				disabled: this.typeComboIsdisabled()
-			});
+			this.defaultField = CMDBuild.Management.FieldManager.getFieldForAttr(conf,
+				readonly=false, skipSubField=true);
 
-			this.add(this.defaultField);
+			if (this.defaultField) {
+				this.defaultField.labelAlign = "left";
+				this.defaultField.labelWidth = SUBFIELD_LABEL_WIDTH;
+				this.defaultField.disabled = this.typeComboIsdisabled();
+
+				this.add(this.defaultField);
+			}
 		},
 
 		addLookupFieldForDefault: function(type) {
@@ -276,7 +280,7 @@
 				valueField : 'type',
 				store: _CMCache.getLookupTypeAsStore(),
 				disabled: me.typeComboIsdisabled()
-			})
+			});
 
 			this.lookupTypeField.setValue = Ext.Function.createSequence(this.lookupTypeField.setValue, function(v) {
 				if (Ext.isArray(v)) {
@@ -314,7 +318,7 @@
 			var data = {
 				name: this.input.name,
 				type: this.input.type
-			}
+			};
 
 			if (this.fieldType) {
 				data.fieldType = this.fieldType.getValue();

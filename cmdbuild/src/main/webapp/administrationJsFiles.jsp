@@ -34,7 +34,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesPanel.js"></script>
 
 	<!-- DASHBOARD -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script><!-- Required in the CMDashboardChartConfigurationDataSourcePanel -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardPropertiesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationDataSourcePanel.js"></script>

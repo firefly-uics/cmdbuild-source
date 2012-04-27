@@ -55,7 +55,7 @@ Ext.define("CMDBuild.model.CMDashboard", {
 	},
 
 	setName: function(v) {
-		this.set("name", v)
+		this.set("name", v);
 	},
 
 	setDescription: function(v) {
@@ -128,17 +128,18 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'active', type: 'boolean'},
 		{name : 'autoLoad', type: 'boolean'},
 		{name : 'type',type : 'string'},
-		{name : 'dataSource', type: 'auto'},
-
+		{name : 'dataSourceName', type: 'string'},
+		{name : 'dataSourceParameters', type: 'auto'},
+		
 		// datasource mapping
-		{name : 'singleSerieField', type : 'string'},
+		{name : 'singleSeriesField', type : 'string'},
 		{name : 'labelField', type : 'string'},
 		{name : 'categoryAxisField', type : 'string'},
 		{name : 'categoryAxisLabel', type : 'string'},
 		{name : 'valueAxisFields', type : 'auto'},
 		{name : 'valueAxisLabel', type : 'string'},
 
-		// fonfiguration
+		// configuration
 		{name : 'maximum',type : 'nit'},
 		{name : 'minimum',type : 'nit'},
 		{name : 'steps',type : 'nit'},
@@ -194,8 +195,8 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		return this.get("chartOrientation");
 	},
 	
-	getSingleSerieField: function() {
-		return this.get('singleSerieField');
+	getSingleSeriesField: function() {
+		return this.get('singleSeriesField');
 	},
 
 	getLabelField: function() {
@@ -219,21 +220,11 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 	},
 
 	getDataSourceName: function() {
-		var ds = this.get("dataSource");
-		if (ds) {
-			return ds.getName();
-		} else {
-			return null;
-		}
+		return this.get("dataSourceName");
 	},
 
 	getDataSourceInputConfiguration: function() {
-		var ds = this.get("dataSource");
-		if (ds) {
-			return ds.getInput() || [];
-		} else {
-			return [];
-		}
+		return this.get("dataSourceParameters") || [];
 	}
 });
 

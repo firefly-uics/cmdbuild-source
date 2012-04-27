@@ -34,7 +34,7 @@
 							name: "out13", type: "date"
 						}]
 					}]
-				})
+				});
 			};
 
 			this.addMatchers({
@@ -92,7 +92,7 @@
 
 			// show all the remaining fields
 			view.disableFields();
-			view.showFieldsWithName(["fgcolor", "bgcolor", "singleSerieField", "labelField", "legend", "categoryAxisField",
+			view.showFieldsWithName(["fgcolor", "bgcolor", "singleSeriesField", "labelField", "legend", "categoryAxisField",
 				"categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
 
 			view.enableFields();
@@ -114,22 +114,22 @@
 		});
 
 		it('disables the fields when hides them', function() {
-			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend", "chartOrientation"]);
+			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSeriesField", "labelField", "legend", "chartOrientation"]);
 			view.enableFields();
-			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSerieField", "labelField", "legend", "chartOrientation"]);
+			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor", "bgcolor", "singleSeriesField", "labelField", "legend", "chartOrientation"]);
 			expectAllTheOutputFieldsAreNotEnabled();
 		});
 
 		it('enable the fields when shows them only if the form is enabled', function() {
 			view.enableFields();
 			view.showFieldsWithName(["maximum", "minimum", "steps", "fgcolor",
-				"bgcolor", "singleSerieField", "labelField", "legend",
+				"bgcolor", "singleSeriesField", "labelField", "legend",
 				"categoryAxisField", "categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
 
 			expectAllTheOutputFieldsAreEnabled();
 
 			view.hideFieldsWithName(["maximum", "minimum", "steps", "fgcolor",
-				"bgcolor", "singleSerieField", "labelField", "legend",
+				"bgcolor", "singleSeriesField", "labelField", "legend",
 				"categoryAxisField", "categoryAxisLabel", "valueAxisFields", "valueAxisLabel", "chartOrientation"]);
 
 			view.disableFields();
@@ -146,7 +146,7 @@
 				description: "Bar",
 				active: true,
 				autoLoad: true,
-				dataSource: "cm_datasource_1",
+				dataSourceName: "cm_datasource_1",
 				type: "PIE",
 				maximum: 100,
 				minimum: 1,
@@ -161,7 +161,7 @@
 			expect(view.descriptionArea.getValue()).toEqual(data.description);
 			expect(view.activeCheck.getValue()).toEqual(data.active);
 			expect(view.autoLoadCheck.getValue()).toEqual(data.autoLoad);
-			expect(view.dataSourcePanel.dataSourceCombo.getValue()).toEqual(data.dataSource);
+			expect(view.dataSourcePanel.dataSourceCombo.getValue()).toEqual(data.dataSourceName);
 			expect(view.typeField.getValue()).toEqual(data.type);
 			expect(view.maximumField.getValue()).toEqual(data.maximum);
 			expect(view.minimumField.getValue()).toEqual(data.minimum);
@@ -176,15 +176,16 @@
 				description: "Bar",
 				active: true,
 				autoLoad: true,
-				dataSource: "cm_datasource_1",
-				type: "PIE",
+				dataSourceName: "cm_datasource_1",
+				dataSourceParameters: [],
+				type: "pie",
 				maximum: 100,
 				minimum: 1,
 				steps: 20,
 				fgcolor: "#FFFFFF",
 				bgcolor: "#FFFFFF",
 				legend: true,
-				singleSerieField : null,
+				singleSeriesField : null,
 				labelField: null,
 				chartOrientation: "vertical",
 				categoryAxisField: null,
@@ -196,7 +197,26 @@
 			view.fillFieldsWith(data);
 			var out = view.getFieldsValue();
 
-			expect(data).toEqual(out);
+			expect(out.name).toEqual(data.name);
+			expect(out.description).toEqual(data.description);
+			expect(out.active).toEqual(data.active);
+			expect(out.autoLoad).toEqual(data.autoLoad);
+			expect(out.dataSourceName).toEqual(data.dataSourceName);
+			expect(out.type).toEqual(data.type);
+			expect(out.maximum).toEqual(data.maximum);
+			expect(out.minimum).toEqual(data.minimum);
+			expect(out.steps).toEqual(data.steps);
+			expect(out.fgcolor).toEqual(data.fgcolor);
+			expect(out.bgcolor).toEqual(data.bgcolor);
+			expect(out.legend).toEqual(data.legend);
+			expect(out.singleSeriesField).toEqual(data.singleSeriesField);
+			expect(out.labelField).toEqual(data.labelField);
+			expect(out.chartOrientation).toEqual(data.chartOrientation);
+			expect(out.categoryAxisField).toEqual(data.categoryAxisField);
+			expect(out.categoryAxisLabel).toEqual(data.categoryAxisLabel);
+			expect(out.valueAxisFields).toEqual(data.valueAxisFields);
+			expect(out.valueAxisLabel).toEqual(data.valueAxisLabel);
+			expect(out.dataSourceParameters).toEqual(data.dataSourceParameters);
 		});
 
 		it('is able to reset the values of fields', function() {
@@ -205,7 +225,7 @@
 				description: "Bar",
 				active: true,
 				autoLoad: true,
-				dataSource: "cm_datasource_1",
+				dataSourceName: "cm_datasource_1",
 				type: "PIE",
 				maximum: 100,
 				minimum: 1,
@@ -365,7 +385,7 @@
 			view.setDelegate(delegate);
 
 			view.fillFieldsWith({
-				dataSource: "cm_datasource_1"
+				dataSourceName: "cm_datasource_1"
 			});
 
 			expect(onDataSourceChanged).toHaveBeenCalled();

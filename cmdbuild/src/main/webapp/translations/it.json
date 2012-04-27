@@ -237,9 +237,17 @@
                 "valueFieldset": "Asse dei valori"
              },
              "inputTypes": {
-                "integer": "Intero",
-                "string": "Stringa",
-                "date": "Data"
+                "BOOLEAN": "Buleano",
+                "DECIMAL": "Decimale",
+                "INTEGER": "Intero",
+                "DOUBLE": "Decimale a precision doppia",
+                "DATE": "Data",
+                "TIMESTAMP": "Timestamp",
+                "TIME": "Orario",
+                "STRING": "Stringa",
+                "TEXT": "Testo",
+                "CHAR": "Carattere",
+                "INET": "Indirizzo di rete"
              },
              "title": "Grafici",
              "typeFieldOptions": {

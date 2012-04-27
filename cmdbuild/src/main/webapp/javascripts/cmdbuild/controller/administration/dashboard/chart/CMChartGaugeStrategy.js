@@ -2,7 +2,7 @@
 	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy", {
 		extend: "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy",
 
-		interestedFields: ['maximum', 'minimum', 'steps', 'fgcolor', 'bgcolor', 'singleSerieField'],
+		interestedFields: ['maximum', 'minimum', 'steps', 'fgcolor', 'bgcolor', 'singleSeriesField'],
 
 		// override
 		fillFieldsForChart: function(chart) {
@@ -12,7 +12,7 @@
 				fgcolor: chart.getFgColor(),
 				bgcolor: chart.getBgColor(),
 				steps: chart.getSteps(),
-				singleSerieField: chart.getSingleSerieField()
+				singleSeriesField: chart.getSingleSeriesField()
 			});
 		},
 
