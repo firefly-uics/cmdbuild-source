@@ -38,7 +38,7 @@
 
 			expect(view.fillFieldsWith).toHaveBeenCalled();
 			var data = view.fillFieldsWith.argsForCall[0][0];
-			expect(data.singleSerieField).toEqual(chart.getSingleSerieField());
+			expect(data.singleSeriesField).toEqual(chart.getSingleSeriesField());
 			expect(data.labelField).toEqual(chart.getLabelField());
 		});
 
@@ -55,7 +55,7 @@
 			pie.showChartFields(chart);
 
 			expect(view.showFieldsWithName).toHaveBeenCalledWith([
-				'singleSerieField',
+				'singleSeriesField',
 				'labelField',
 				'legend'
 			]);
@@ -68,7 +68,7 @@
 			var values = pie.extractInterestedValues(chart.data);
 
 			expect(values).toEqual({
-				singleSerieField: "bar",
+				singleSeriesField: "bar",
 				labelField: "foo",
 				legend: true
 			});
@@ -111,7 +111,7 @@
 	function aPie() {
 		return aChart({
 			labelField: 'foo',
-			singleSerieField: 'bar',
+			singleSeriesField: 'bar',
 			legend: true
 		});
 	}

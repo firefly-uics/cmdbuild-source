@@ -237,9 +237,17 @@
                 "valueFieldset": "<em>Value axis</em>"
              },
              "inputTypes": {
-                "integer": "<em>Integer</em>",
-                "string": "<em>String</em>",
-                "date": "<em>Date</em>"
+                "BOOLEAN": "<em>Boolean</em>",
+                "DECIMAL": "<em>Decimal</em>",
+                "INTEGER": "<em>Integer</em>",
+                "DOUBLE": "<em>Double</em>",
+                "DATE": "<em>Date</em>",
+                "TIMESTAMP": "<em>Timestamp</em>",
+                "TIME": "<em>Time</em>",
+                "STRING": "<em>String</em>",
+                "TEXT": "<em>Text</em>",
+                "CHAR": "<em>Char</em>",
+                "INET": "<em>Net address</em>"
              },
              "title": "<em>Charts</em>",
              "typeFieldOptions": {

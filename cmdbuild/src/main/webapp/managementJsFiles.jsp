@@ -13,40 +13,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script><!-- must be here -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/graph/GraphWindow.js"></script>
 
-<!-- WIDGETS BUILDERS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/BaseAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/SimpleQueryAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/RangeQueryAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TextualQueryAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/DecimalAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/DoubleAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/IntegerAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/IPAddressAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/DateAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TimeStampAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TimeAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/BooleanAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ComboAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/LookupAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ReferenceAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ForeignKeyAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/StringAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/CharAttribute.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TextAttribute.js"></script>
-
-<!-- CUSTOM FIELDS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMHtmlEditorField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/SearchableCombo.js"></script>	
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
-
 <!-- MODELS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>

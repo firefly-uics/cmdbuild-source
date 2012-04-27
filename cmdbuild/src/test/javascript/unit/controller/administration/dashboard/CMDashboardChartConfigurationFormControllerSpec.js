@@ -38,9 +38,9 @@
 		});
 
 		it('is able to prepare the form to a selected chart', function() {
-			var showChartFields = spyOn(chartTypeStrategy, "showChartFields");
-			var fillFieldsForChart = spyOn(chartTypeStrategy, "fillFieldsForChart");
-			var c = aChart();
+			var showChartFields = spyOn(chartTypeStrategy, "showChartFields"),
+				fillFieldsForChart = spyOn(chartTypeStrategy, "fillFieldsForChart"),
+				c = aChart();
 
 			controller.setChartTypeStrategy(chartTypeStrategy);
 			controller.prepareForChart(c);
@@ -49,13 +49,18 @@
 			expect(view.fillFieldsWith).toHaveBeenCalled();
 			expect(view.disableFields).toHaveBeenCalled();
 			expect(view.hideOutputFields).toHaveBeenCalled();
+			expect(view.fillDataSourcePanel).toHaveBeenCalledWith(c.getDataSourceInputConfiguration());
+
 			expect(fillFieldsForChart).toHaveBeenCalledWith(c);
+			expect(showChartFields).toHaveBeenCalledWith(c);
 
 			var data = view.fillFieldsWith.argsForCall[0][0];
 			expect(data.name).toEqual(c.getName());
 			expect(data.description).toEqual(c.getDescription());
 			expect(data.active).toEqual(c.isActive());
 			expect(data.autoLoad).toEqual(c.isAutoload());
+			expect(data.dataSourceName).toEqual("cm_datasource_1");
+			expect(data.type).toEqual("none");
 		});
 
 		it('is able to enable the fields to modify a chart', function() {
@@ -63,17 +68,13 @@
 			expect(view.enableFields).toHaveBeenCalledWith(onlyMutable=true);
 		});
 
-		it('is able to read to retrieve the values from the form', function() {
+		it('is able to retrieve the values from the form', function() {
 			var extractInterestedValues = spyOn(chartTypeStrategy, "extractInterestedValues");
-			view.getFieldsValue.andReturn({
-				id: 2,
-				active: true,
-				autoload: true,
-				name: "Chart foo",
-				description: "Description of Foo"
-			});
+
 			controller.setChartTypeStrategy(chartTypeStrategy);
-			controller.getFormData();
+
+			var data = controller.getFormData();
+
 			expect(view.getFieldsValue).toHaveBeenCalled();
 			expect(extractInterestedValues).toHaveBeenCalled();
 		});
@@ -157,7 +158,10 @@
 			active: true,
 			autoload: true,
 			name: "Chart foo",
-			description: "Description of Foo"
+			description: "Description of Foo",
+			dataSourceName: "cm_datasource_1",
+			dataSourceParameters: [],
+			type: "none"
 		}, config);
 
 		return new CMDBuild.model.CMDashboardChart(config);

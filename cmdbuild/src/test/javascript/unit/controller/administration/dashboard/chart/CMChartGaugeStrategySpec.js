@@ -42,7 +42,7 @@
 			expect(data.fgcolor).toEqual(chart.getFgColor());
 			expect(data.bgcolor).toEqual(chart.getBgColor());
 			expect(data.steps).toEqual(chart.getSteps());
-			expect(data.singleSerieField).toEqual(chart.getSingleSerieField());
+			expect(data.singleSeriesField).toEqual(chart.getSingleSeriesField());
 		});
 
 		it ('say to the view to show the right fields', function() {
@@ -63,7 +63,7 @@
 				'steps',
 				'fgcolor',
 				'bgcolor',
-				'singleSerieField'
+				'singleSeriesField'
 			]);
 
 			expect(getDataSourceOutput).toHaveBeenCalledWith(dsName);
@@ -83,7 +83,7 @@
 				steps: 20,
 				bgcolor: '#ffffff',
 				fgcolor: '000000',
-				singleSerieField: "bar"
+				singleSeriesField: "bar"
 			});
 		});
 
@@ -126,7 +126,7 @@
 			steps: 20,
 			bgcolor: '#ffffff',
 			fgcolor: '000000',
-			singleSerieField: 'bar'
+			singleSeriesField: 'bar'
 		});
 	}
 })();

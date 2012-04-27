@@ -129,7 +129,7 @@
 				description: chart.getDescription(),
 				active: chart.isActive(),
 				autoLoad: chart.isAutoload(),
-				dataSource: chart.getDataSourceName(),
+				dataSourceName: chart.getDataSourceName(),
 				type: chart.getType()
 			});
 
@@ -154,15 +154,12 @@
 		},
 
 		getFormData: function() {
-			var data = this.view.getFieldsValue();
+			var data = this.view.getFieldsValue() || {};
 			var chartSpecificData = {};
 
 			chartSpecificData = this.chartTypeStrategy.extractInterestedValues(data);
 
-			var out = Ext.apply(extractGeneralData(data), chartSpecificData);
-			out.dataSource = this.view.getDataSourceConfiguration();
-
-			return out;
+			return Ext.apply(extractGeneralData(data), chartSpecificData);
 		},
 
 		isValid: function() {
@@ -186,7 +183,8 @@
 		onDataSourceInputFieldTypeChanged: function(value, fieldset) {
 			var callbacks = {
 				free: function(fieldset) {
-					fieldset.addTextFieldForDefault();
+					fieldset.resetFieldset();	
+					fieldset.addDefaultFieldFromFieldManager();
 				},
 				classes: function(fieldset) {
 					fieldset.addClassesFieldForDefault();
@@ -212,7 +210,9 @@
 			description: data.description,
 			active: data.active,
 			autoLoad: data.autoLoad,
-			type: data.type
+			type: data.type,
+			dataSourceName: data.dataSourceName,
+			dataSourceParameters: data.dataSourceParameters
 		};
 	}
 

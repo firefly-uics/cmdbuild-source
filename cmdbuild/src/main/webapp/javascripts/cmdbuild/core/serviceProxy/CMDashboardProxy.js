@@ -1,14 +1,14 @@
 (function() {
 	CMDBuild.ServiceProxy.url.Dashboard = {
 		save : "",
-		list : "services/json/dashboard/read",
+		list : "services/json/dashboard/list",
 		remove : ""
 	};
 
 	CMDBuild.ServiceProxy.Dashboard = {
 		list : function(p) {
 			// p.method = "GET";
-			// p.url = urls.read;
+			// p.url = CMDBuild.ServiceProxy.url.Dashboard.list;
 
 			// CMDBuild.ServiceProxy.core.doRequest(p);
 
@@ -25,29 +25,19 @@
 							name : "Card opened per group",
 							description : "A pie chart with the number of opened card in a year, divided per group",
 							type: "gauge",
-							dataSource: {
-								name: 'cm_datasource_1',
-								input: [{
-									name: 'in11',
-									type: 'integer',
-									fieldType: 'free',
-									defaultValue: 545
-								}]
-							},
+							autoLoad: true,
+							dataSourceName: 'cm_datasource_1',
+							dataSourceParameters: [{
+								name: 'in11',
+								type: 'integer',
+								fieldType: 'free',
+								defaultValue: 545
+							}],
 							minimum: 10,
 							maximum: 1000,
 							steps: 20,
-							singleSerieField: "out11"
-						}, {
-							id : 2,
-							name : "Card opened per class",
-							description : "A pie chart with the number of opened card in a year, divided per class",
-							type: "pie"
-						}, {
-							id : 3,
-							name : "Card opened per class",
-							description : "A bar ...",
-							type: "bar"
+							singleSeriesField: "out11",
+							labelField: "out12"
 						}]
 					}, {
 						id : 2,
@@ -60,21 +50,46 @@
 					dataSources: [{
 						name: "cm_datasource_1",
 						input: [{
-							name: "in11",
-							type: "integer"
+							name: "intero",
+							type: "INTEGER"
 						},{
-							name: "in12",
-							type: "string"
+							name: "double",
+							type: "DOUBLE"
 						},{
-							name: "in13",
-							type: "date"
+							name: "decimal",
+							type: "DECIMAL"
+						},{
+							name: "Data",
+							type: "DATE"
+						},{
+							name: "Timestamp",
+							type: "TIMESTAMP"
+						},{
+							name: "Time",
+							type: "TIME"
+						},{
+							name: "String",
+							type: "STRING"
+						},{
+							name: "Char",
+							type: "CHAR"
+						},,{
+							name: "Text",
+							type: "TEXT"
+						},{
+							name: "Inet",
+							type: "INET"
+						},{
+							name: "Boolean",
+							type: "BOOLEAN"
 						}],
+
 						output: [{
 							name: "out11",
-							type: "integer"
+							type: "INTEGER"
 						},{
 							name: "out12",
-							type: "string"
+							type: "STRING"
 						},{
 							name: "out13",
 							type: "date"
@@ -103,10 +118,39 @@
 						}]
 					}]
 				}
-			}
+			};
 
 			p.success.call(this, null, null, decoded);
 			p.callback.call();
+
+
+//			/*
+//			 *  real call, but withouth dashboards
+//			 */
+//			p.method = "GET";
+//			p.url = CMDBuild.ServiceProxy.url.Dashboard.list;
+//
+//			var success = p.success;
+//
+//			p.success = function(response, options, decoded) {
+//				decoded.response.dashboards = [{
+//					id : 1,
+//					groups : [14],
+//					name : "Foo",
+//					description : "Amazing dashboard for amazing people",
+//					charts : []
+//				}, {
+//					id : 2,
+//					groups : [],
+//					name : "Bar",
+//					description : "Cool dashboard for cool people",
+//					charts : []
+//				}];
+//
+//				success(response, options, decoded);
+//			};
+//
+//			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
 		add : function(dashboardData, success, scope) {

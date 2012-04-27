@@ -206,18 +206,20 @@
 
 		// specs to run
 		var focusSpecs = [
-			//'CMDBUild.cache.CMCacheDashboardFunctions',
-			// 'CMDashboardModel',
-			// 'CMDashboardChartConfigurationFormController',
-			// 'GaugeTypeStrategy',
-			// 'CMDashboardChartConfigurationPanel',
-			// 'CMDashboardChartConfigurationPanelController',
-			// 'CMDashboardChartConfigurationGridController',
-			// 'CMDashboardChartConfigurationGridSpec',
-			'CMDashboardChartConfigurationForm',
-			'CMChartBarTypeStrategy',
-			'CMChartPieTypeStrategy',
-			'CMChartGaugeTypeStrategy'
+//			'CMDBUild.cache.CMCacheDashboardFunctions',
+//			 'CMDashboardModel',
+//			 'CMDashboardChartConfigurationFormController',
+//			 'GaugeTypeStrategy',
+//			 'CMDashboardChartConfigurationPanel',
+//			 'CMDashboardChartConfigurationPanelController',
+//			 'CMDashboardChartConfigurationGridController',
+//			 'CMDashboardChartConfigurationGridSpec',
+//			'CMDashboardChartConfigurationDataSourcePanel',
+//			'_DataSourceInputFildSet'
+//			'CMDashboardChartConfigurationForm',
+//			'CMChartBarTypeStrategy',
+//			'CMChartPieTypeStrategy',
+//			'CMChartGaugeTypeStrategy'
 			// 'CMDashboardModel',
 		];
 

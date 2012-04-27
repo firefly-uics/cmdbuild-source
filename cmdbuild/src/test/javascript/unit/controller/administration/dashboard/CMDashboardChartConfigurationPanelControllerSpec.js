@@ -7,31 +7,10 @@
 	describe('CMDashboardChartConfigurationPanelController', function() {
 
 		beforeEach(function() {
-			view = jasmine.createSpyObj(
-				"CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationPanelInterface", [
-				"enableTBarButtons",
-				"disableTBarButtons",
-				"enableButtons",
-				"disableButtons",
-				"setDelegate",
-				"getFormPanel",
-				"getGridPanel"
-			]);
-
-			formSubController = jasmine.createSpyObj("formSubController", [
-				"initView",
-				"prepareForAdd",
-				"prepareForChart",
-				"prepareForModify",
-				"getFormData",
-				"isValid"
-			]);
-
-			gridSubController = jasmine.createSpyObj("gridSubController", [
-				"loadCharts",
-				"setDelegate",
-				"clearSelection"
-			]);
+			
+			view = CMDBuild.test.spyObj(CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationPanelInterface, "view");
+			formSubController = CMDBuild.test.spyObj(CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController, "formSubController"); 
+			gridSubController = CMDBuild.test.spyObj(CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationGridController, "gridSubController");
 
 			proxy = jasmine.createSpyObj("proxySpy", [
 				"remove",
@@ -102,7 +81,6 @@
 			expect(view.disableButtons).toHaveBeenCalled();
 			expect(view.disableTBarButtons).toHaveBeenCalled();
 		});
-
 
 		it('is able to add a chart', function() {
 			var formData = {
