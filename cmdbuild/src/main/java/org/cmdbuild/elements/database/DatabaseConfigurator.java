@@ -308,7 +308,8 @@ public class DatabaseConfigurator {
 			stm.execute(FileUtils.getContents(baseSqlPath + "08_user_tables.sql"));
 			stm.execute(FileUtils.getContents(baseSqlPath + "09_system_views_extras.sql"));
 			stm.execute(FileUtils.getContents(baseSqlPath + "10_system_functions_extras.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "11_workflow_lookup.sql"));
+			stm.execute(FileUtils.getContents(baseSqlPath + "11_workflow.sql"));
+			stm.execute(FileUtils.getContents(baseSqlPath + "12_tecnoteca_extras.sql"));
 		} finally {
 			stm.close();
 		}
