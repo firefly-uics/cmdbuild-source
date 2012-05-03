@@ -12,12 +12,6 @@ This file may be used under the terms of the GNU General Public License version 
 If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
 
 */
-﻿/**
- * Serbian Cyrillic Translation
- * by Čolovic Vladan (cyrillic, utf8 encoding)
- * sr_RS (ex: sr_CS, sr_YU)
- * 12 May 2007
- */
 Ext.onReady(function() {
     if(Ext.Updater) {
         Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">Учитавам...</div>';

@@ -12,11 +12,6 @@ This file may be used under the terms of the GNU General Public License version 
 If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
 
 */
-﻿/**
- * Russian translation
- * By ZooKeeper (utf-8 encoding)
- * 6 November 2007
- */
 Ext.onReady(function() {
     if(Ext.Updater) {
         Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">Идет загрузка...</div>';
