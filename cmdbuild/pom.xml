@@ -399,17 +399,6 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeTypes>mar</includeTypes>
-							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/modules
-							</outputDirectory>
-						</configuration>
-					</execution>
-					<execution>
 						<id>copy</id>
 						<phase>prepare-package</phase>
 						<goals>
@@ -489,6 +478,36 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>croche.maven</groupId>
+										<artifactId>maven-merge-file-plugin</artifactId>
+										<versionRange>[0.4,)</versionRange>
+										<goals>
+											<goal>merge</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<profiles>

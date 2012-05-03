@@ -12,14 +12,6 @@ This file may be used under the terms of the GNU General Public License version 
 If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
 
 */
-﻿/**
- * List compiled by mystix on the extjs.com forums.
- * Thank you Mystix!
- *
- * Hungarian Translations (utf-8 encoded)
- * by Amon <amon@theba.hu> (27 Apr 2008)
- * encoding fixed by Vili (17 Feb 2009)
- */
 Ext.onReady(function() {
     if(Ext.Updater) {
         Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">Betöltés...</div>';

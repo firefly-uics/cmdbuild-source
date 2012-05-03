@@ -12,13 +12,6 @@ This file may be used under the terms of the GNU General Public License version 
 If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
 
 */
-﻿/**
- * France (France) translation
- * By Thylia
- * 09-11-2007, 02:22 PM
- * updated by disizben (22 Sep 2008)
- * updated by Thylia (20 Apr 2010)
- */
 Ext.onReady(function() {
     if(Ext.Updater) {
         Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">En cours de chargement...</div>';

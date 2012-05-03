@@ -12,11 +12,6 @@ This file may be used under the terms of the GNU General Public License version 
 If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
 
 */
-﻿/**
- * Traditional Chinese translation
- * By hata1234
- * 09 April 2007
- */
 Ext.onReady(function(){
     if(Ext.Updater) {
         Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">讀取中...</div>';
