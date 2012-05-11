@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-shark</artifactId>
-		<version>1.5.4</version>
+		<version>1.5.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>cmdbuild-shark-webapp</artifactId>
 	<packaging>war</packaging>

@@ -5,7 +5,7 @@
 	<groupId>org.cmdbuild</groupId>
 	<artifactId>cmdbuild-main</artifactId>
 	<packaging>pom</packaging>
-	<version>1.5.4</version>
+	<version>1.5.5-SNAPSHOT</version>
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
