@@ -35,6 +35,7 @@ public class DBClass extends DBEntryType implements CMClass {
 		this(name, id, new ClassMetadata(), attributes);
 	}
 
+	@Override
     public void accept(CMEntryTypeVisitor visitor) {
         visitor.visit(this);
     }
@@ -106,5 +107,10 @@ public class DBClass extends DBEntryType implements CMClass {
 	@Override
 	public boolean isSuperclass() {
 		return meta().isSuperclass(); 
+	}
+
+	@Override
+	public boolean holdsHistory() {
+		return true; // Simple classes do not
 	}
 }

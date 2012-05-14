@@ -44,12 +44,12 @@ BEGIN
 			FOR i IN SELECT generate_series(1, array_upper(R.proargtypes,1)) LOOP
 				arg_io := arg_io || 'i'::char;
 				arg_types := arg_types || _cm_get_sqltype_string(R.proargtypes[i], NULL);
-				arg_names := arg_names || COALESCE(R.proargnames[i], ''::text);
+				arg_names := arg_names || COALESCE(R.proargnames[i], '$'||i);
 			END LOOP;
 			-- add single output column
 			arg_io := arg_io || 'o'::char;
 			arg_types := arg_types || _cm_get_sqltype_string(R.prorettype, NULL);
-			arg_names := arg_names || ''::text;
+			arg_names := arg_names || function_name;
 		ELSE
 			-- just normalize existing columns
 			arg_io := R.proargmodes;
@@ -61,6 +61,13 @@ BEGIN
 					arg_io[i] := 'o';
 				END IF;
 				arg_types := arg_types || _cm_get_sqltype_string(R.proallargtypes[i], NULL);
+				IF arg_names[i] = '' THEN
+					IF arg_io[i] = 'i' THEN
+						arg_names[i] = '$'||i;
+					ELSE
+						arg_names[i] = 'column'||i;
+					END IF;
+				END IF;
 			END LOOP;
 		END IF;
 		RETURN NEXT;

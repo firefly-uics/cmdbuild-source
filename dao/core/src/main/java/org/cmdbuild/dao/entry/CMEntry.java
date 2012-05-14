@@ -1,14 +1,12 @@
 package org.cmdbuild.dao.entry;
 
-import java.util.Map;
-
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.joda.time.DateTime;
 
 /**
  * Immutable data store entry
  */
-public interface CMEntry {
+public interface CMEntry extends CMValueSet {
 
 	public interface CMEntryDefinition {
 		public CMEntryDefinition set(final String key, final Object value);
@@ -18,8 +16,6 @@ public interface CMEntry {
 	public CMEntryType getType();
 
 	public Object getId();
-	public Object get(final String key);
-	public Iterable<Map.Entry<String, Object>> getValues();
 
 	public String getUser();
 	public DateTime getBeginDate();

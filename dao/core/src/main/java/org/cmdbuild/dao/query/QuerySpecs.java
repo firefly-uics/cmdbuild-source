@@ -2,14 +2,16 @@ package org.cmdbuild.dao.query;
 
 import java.util.List;
 
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
-import org.cmdbuild.dao.query.clause.alias.ClassAlias;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public interface QuerySpecs {
 
-	ClassAlias getDBFrom();
+	CMEntryType getFromType();
+	Alias getFromAlias();
 	List<JoinClause> getJoins();
 	Iterable<QueryAliasAttribute> getAttributes();
 	WhereClause getWhereClause();

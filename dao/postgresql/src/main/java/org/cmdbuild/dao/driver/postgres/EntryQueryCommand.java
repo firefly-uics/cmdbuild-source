@@ -9,7 +9,9 @@ import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.entry.DBFunctionCallOutput;
 import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -64,7 +66,20 @@ public class EntryQueryCommand {
 				final DBQueryRow row = new DBQueryRow();
 				createBasicCards(rs, row);
 				createBasicRelations(rs, row);
+				createFunctionCallOutput(rs, row);
 				result.add(row);
+			}
+		}
+
+		private void createFunctionCallOutput(final ResultSet rs, final DBQueryRow row) throws SQLException {
+			for (Alias a : columnMapper.getFunctionCallAliases()) {
+				final DBFunctionCallOutput out = new DBFunctionCallOutput();
+				final CMEntryType hackSinceAFunctionCanAppearOnlyInTheFromClause = querySpecs.getFromType();
+				for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(a, hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
+					final Object sqlValue = rs.getObject(eta.index);
+					out.set(eta.name, eta.sqlType.sqlToJavaValue(sqlValue));
+				}
+				row.setFunctionCallOutput(a, out);
 			}
 		}
 

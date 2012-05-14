@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.DBTypeObject;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -58,26 +57,20 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 	}
 
 	@Override
-	public Iterable<CMFunctionParameter> getInputParameters() {
+	public List<CMFunctionParameter> getInputParameters() {
 		return unmodifiableInputParameters;
 	}
 
 	@Override
-	public Iterable<CMFunctionParameter> getOutputParameters() {
+	public List<CMFunctionParameter> getOutputParameters() {
 		return unmodifiableOutputParameters;
 	}
 
 	public void addInputParameter(String name, final CMAttributeType<?> type) {
-		if (StringUtils.isBlank(name)) {
-			name = String.format("_%d", inputParameters.size()+1);
-		}
 		inputParameters.add(new DBFunctionParameter(name, type));
 	}
 
 	public void addOutputParameter(String name, final CMAttributeType<?> type) {
-		if (StringUtils.isBlank(name)) {
-			name = String.format("_%d", outputParameters.size()+1);
-		}
 		outputParameters.add(new DBFunctionParameter(name, type));
 	}
 

@@ -15,10 +15,6 @@ public abstract class UserEntryType implements CMEntryType {
 		this.view = view;
 	}
 
-    public final void accept(CMEntryTypeVisitor visitor) {
-    	inner().accept(visitor);
-    }
-
 	protected abstract DBEntryType inner();
 
 	@Override
@@ -60,6 +56,11 @@ public abstract class UserEntryType implements CMEntryType {
 	public UserAttribute getAttribute(String name) {
 		return UserAttribute.create(view, inner().getAttribute(name));
 	}
+
+	@Override
+    public final void accept(final CMEntryTypeVisitor visitor) {
+    	inner().accept(visitor);
+    }
 
 	/*
 	 * Object overrides

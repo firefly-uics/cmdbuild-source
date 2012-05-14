@@ -189,6 +189,11 @@ public abstract class CachingDriver implements DBDriver {
 		return refForSafeClearCache;
 	}
 
+	@Override
+	public DBFunction findFunctionByName(final String name) {
+		return getAllFunctionsStore().getByName(name);
+	}
+
 	protected abstract Collection<DBFunction> findAllFunctionsNoCache();
 
 	/*

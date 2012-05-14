@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.entry.DBFunctionCallOutput;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
@@ -22,11 +24,13 @@ public class DBQueryRow implements CMQueryRow {
 
 	Map<Alias, DBCard> cards;
 	Map<Alias, QueryRelation> relations;
+	Map<Alias, DBFunctionCallOutput> other;
 
 	// Should we have a reference to the QuerySpecs?
 	public DBQueryRow() {
 		cards = new HashMap<Alias, DBCard>();
 		relations = new HashMap<Alias, QueryRelation>();
+		other = new HashMap<Alias, DBFunctionCallOutput>();
 	}
 
 	public void setCard(final Alias alias, final DBCard card) {
@@ -35,6 +39,10 @@ public class DBQueryRow implements CMQueryRow {
 
 	public void setRelation(final Alias alias, final QueryRelation relation) {
 		relations.put(alias, relation);
+	}
+
+	public void setFunctionCallOutput(final Alias alias, final DBFunctionCallOutput functionCallOutput) {
+		other.put(alias, functionCallOutput);
 	}
 
 	public void setValue(final Alias alias, final String key, final Object value) {
@@ -77,5 +85,14 @@ public class DBQueryRow implements CMQueryRow {
 	@Override
 	public QueryRelation getRelation(CMDomain type) {
 		return getRelation(Alias.canonicalAlias(type));
+	}
+
+	@Override
+	public CMValueSet getValueSet(final Alias alias) {
+		if (other.containsKey(alias)) {
+			return other.get(alias);
+		} else {
+			return getEntry(alias);
+		}
 	}
 }

@@ -12,6 +12,13 @@ public interface CMEntryType extends Deactivable, CMTypeObject, CMPrivilegedObje
 	boolean isSystem();
 
 	/**
+	 * Indicates if it holds historic data
+	 * 
+	 * @return if it holds historic data
+	 */
+	boolean holdsHistory();
+
+	/**
 	 * Returns a sorted list of active attributes for this entry type.
 	 * 
 	 * @return attributes in the correct display order
