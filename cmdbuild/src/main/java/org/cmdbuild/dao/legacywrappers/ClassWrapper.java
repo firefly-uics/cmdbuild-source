@@ -9,6 +9,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 
 public class ClassWrapper implements CMClass {
 
@@ -78,7 +79,7 @@ public class ClassWrapper implements CMClass {
 	}
 
 	@Override
-	public void accept(CMEntryTypeVisitor visitor) {
+	public void accept(final CMEntryTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -105,6 +106,11 @@ public class ClassWrapper implements CMClass {
 	@Override
 	public boolean isAncestorOf(CMClass cmClass) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean holdsHistory() {
+		return (table.getTableType() != CMTableType.SIMPLECLASS);
 	}
 
 }

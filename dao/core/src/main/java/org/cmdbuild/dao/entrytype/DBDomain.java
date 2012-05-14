@@ -105,4 +105,9 @@ public class DBDomain extends DBEntryType implements CMDomain {
 	public void setDescription2(String description2) {
 		meta().setDescription2(description2);
 	}
+
+	@Override
+	public boolean holdsHistory() {
+		return true;
+	}
 }

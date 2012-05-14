@@ -25,6 +25,7 @@ public interface DBDriver {
 	DBDomain findDomainByName(String name);
 
 	Collection<DBFunction> findAllFunctions();
+	DBFunction findFunctionByName(String name);
 
 	DBDomain createDomain(String name, DBClass class1, DBClass class2); // TODO Allow more than two classes
 	void deleteDomain(DBDomain dbDomain);

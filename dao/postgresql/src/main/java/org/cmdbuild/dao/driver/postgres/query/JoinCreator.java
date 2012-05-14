@@ -21,7 +21,7 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 
 public class JoinCreator extends PartCreator {
 
-	private abstract class UnionCreator<T> {
+	private abstract class UnionCreator<T> { // TODO: use CMEntryType instead of <T>
 
 		private final Iterable<T> typeSet;
 		protected final Alias typeAlias;
@@ -48,7 +48,8 @@ public class JoinCreator extends PartCreator {
 		}
 
 		private void appendTableSelect(T type, boolean isHistoryAppend, boolean first) {
-			final String quotedTableName = isHistoryAppend ? Utils.quoteTypeHistory(getEntryType(type)) : Utils.quoteType(getEntryType(type));
+			final CMEntryType entryType = getEntryType(type);
+			final String quotedTableName = isHistoryAppend ? Utils.quoteTypeHistory(entryType) : Utils.quoteType(entryType);
 			if (!first) {
 				sb.append(" UNION ALL ");
 			}
@@ -60,9 +61,6 @@ public class JoinCreator extends PartCreator {
 		}
 
 		protected void appendStatusWhere(boolean isHistoryAppend) {
-			if (isHistoryAppend) {
-				return;
-			}
 			sb.append(" WHERE ")
 					.append(quoteIdent(SystemAttributes.Status))
 					.append(OPERATOR_EQ)

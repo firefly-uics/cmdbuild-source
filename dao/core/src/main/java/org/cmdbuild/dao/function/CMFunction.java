@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.function;
 
+import java.util.List;
+
 import org.cmdbuild.dao.CMTypeObject;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 
@@ -10,8 +12,8 @@ public interface CMFunction extends CMTypeObject {
 		CMAttributeType<?> getType();
 	}
 
-	Iterable<CMFunctionParameter> getInputParameters();
-	Iterable<CMFunctionParameter> getOutputParameters();
+	List<CMFunctionParameter> getInputParameters();
+	List<CMFunctionParameter> getOutputParameters();
 
 	boolean returnsSet();
 }

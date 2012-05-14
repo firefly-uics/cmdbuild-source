@@ -23,6 +23,6 @@ public class StringAttributeType extends TextAttributeType {
 
 	@Override
 	protected boolean stringLimitExceeded(String stringValue) {
-		return (stringValue.length() > length);
+		return (length != null && stringValue.length() > length);
 	}
 }

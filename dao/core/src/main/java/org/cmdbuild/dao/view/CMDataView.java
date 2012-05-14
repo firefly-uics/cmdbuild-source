@@ -59,6 +59,8 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMDomain> findAllDomains();
 
+	CMFunction findFunctionByName(String name);
+
 	/**
 	 * Returns the functions defined in the schema.
 	 * 

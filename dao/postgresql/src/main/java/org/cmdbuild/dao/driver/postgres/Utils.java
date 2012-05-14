@@ -1,13 +1,20 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static com.google.common.base.CharMatcher.DIGIT;
+import static com.google.common.base.CharMatcher.inRange;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
@@ -122,31 +129,101 @@ public abstract class Utils {
 	 */
 
 	public static String quoteIdent(final String name) {
-		return String.format("\"%s\"", name.replace("\"", "\"\""));
+		if (inRange('a', 'z').or(DIGIT).matchesAllOf(name)) {
+			return name;
+		} else {
+			return String.format("\"%s\"", name.replace("\"", "\"\""));
+		}
 	}
 
 	public static String quoteIdent(final SystemAttributes sa) {
 		return quoteIdent(sa.getDBName());
 	}
 
-	public static String quoteType(final CMEntryType type) {
-		return quoteIdent(getTypeName(type));
-	}
+	static class TypeQuoter implements CMEntryTypeVisitor {
 
-	public static String quoteTypeHistory(final CMEntryType type) {
-		return quoteIdent(getTypeName(type) + Const.HISTORY_SUFFIX);
-	}
+		String quotedTypeName;
+		List<Object> queryParams;
 
-	public static String getTypeName(CMEntryType type) {
-		if (type instanceof CMDomain) {
-			return domainNameToTableName(type.getName());
-		} else {
-			return type.getName();
+		public String quote(final CMEntryType type,  final List<Object> queryParams) {
+			this.queryParams = queryParams;
+			type.accept(this);
+			return quotedTypeName;
+		}
+
+		@Override
+		public void visit(final CMClass type) {
+			quotedTypeName = quoteIdent(type.getName());
+		}
+
+		@Override
+		public void visit(final CMDomain type) {
+			quotedTypeName = quoteIdent(DOMAIN_PREFIX + type.getName());
+		}
+
+		@Override
+		public void visit(final CMFunctionCall functionCall) {
+			quotedTypeName = String.format("%s(%s)",
+					quoteIdent(functionCall.getFunction().getName()),
+					functionParams(functionCall)
+				);
+		}
+
+		private String functionParams(final CMFunctionCall functionCall) {
+			queryParams.addAll(functionCall.getParams());
+			return genQuestionMarks(functionCall.getParams().size());
+		}
+
+		private String genQuestionMarks(int length) {
+			final StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < length; ++i) {
+				if (i > 0) {
+					sb.append(",");
+				}
+				sb.append("?");
+			}
+			return sb.toString();
 		}
 	}
 
-	public static String domainNameToTableName(final String domainName) {
-		return DOMAIN_PREFIX + domainName;
+	// TODO: params are needed for functions but they should not be passed here
+	public static String quoteType(final CMEntryType type, final List<Object> queryParams) {
+		return new TypeQuoter().quote(type, queryParams);
+	}
+
+	@Deprecated // but first the other one needs to be fixed
+	public static String quoteType(final CMEntryType type) {
+		final List<Object> queryParams = new ArrayList<Object>(0);
+		return new TypeQuoter().quote(type, queryParams);
+	}
+
+	static class EntryTypeHistoryQuoter implements CMEntryTypeVisitor {
+
+		String quotedTypeName;
+
+		public String quote(final CMEntryType type) {
+			type.accept(this);
+			return quotedTypeName;
+		}
+
+		@Override
+		public void visit(final CMClass type) {
+			quotedTypeName = quoteIdent(type.getName() + Const.HISTORY_SUFFIX);
+		}
+
+		@Override
+		public void visit(final CMDomain type) {
+			quotedTypeName = quoteIdent(DOMAIN_PREFIX + type.getName() + Const.HISTORY_SUFFIX);
+		}
+
+		@Override
+		public void visit(final CMFunctionCall type) {
+			throw new UnsupportedOperationException("Cannot specify history for functions");
+		}
+	}
+
+	public static String quoteTypeHistory(final CMEntryType type) {
+		return new EntryTypeHistoryQuoter().quote(type);
 	}
 
 	public static String tableNameToDomainName(final String tableName) {

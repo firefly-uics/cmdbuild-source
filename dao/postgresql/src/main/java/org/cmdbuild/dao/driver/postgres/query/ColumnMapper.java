@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
@@ -122,7 +123,8 @@ public class ColumnMapper {
 		}
 	}
 
-	private AliasStore classAliases = new AliasStore();
+	private AliasStore cardSourceAliases = new AliasStore();
+	private AliasStore functionCallAliases = new AliasStore();
 	private AliasStore domainAliases = new AliasStore();
 
 	private Integer currentIndex;
@@ -135,7 +137,13 @@ public class ColumnMapper {
 	}
 
 	void addClassAlias(final Alias alias, final Iterable<? extends CMClass> aliasClasses) {
-		classAliases.addAlias(alias, aliasClasses);
+		cardSourceAliases.addAlias(alias, aliasClasses);
+	}
+
+	void addFunctionCallAlias(final Alias alias, final CMFunctionCall functioncallAlias) {
+		List<CMFunctionCall> i = new ArrayList<CMFunctionCall>(1);
+		i.add(functioncallAlias);
+		functionCallAliases.addAlias(alias, i);
 	}
 
 	void addDomainAlias(final Alias alias, final Set<QueryDomain> aliasQueryDomains) {
@@ -148,9 +156,12 @@ public class ColumnMapper {
 
 	private AliasAttributes getAliasAttributes(final Alias entryTypeAlias) {
 		AliasAttributes out;
-		out = classAliases.getAliasAttributes(entryTypeAlias);
+		out = cardSourceAliases.getAliasAttributes(entryTypeAlias);
 		if (out == null) {
 			out = domainAliases.getAliasAttributes(entryTypeAlias);
+		}
+		if (out == null) {
+			out = functionCallAliases.getAliasAttributes(entryTypeAlias);
 		}
 		return out;
 	}
@@ -193,10 +204,18 @@ public class ColumnMapper {
 	}
 
 	private void fillAliases(QuerySpecs query) {
-		addClassAlias(query.getDBFrom().getAlias(), query.getDBFrom().getType().getLeaves());
-		for (JoinClause jc : query.getJoins()) {
-			addDomainAlias(jc.getDomainAlias(), jc.getQueryDomains());
-			addClassAlias(jc.getTargetAlias(), jc.getTargets());
+		final CMEntryType from = query.getFromType();
+		// FIXME: Use a visitor!
+		if (from instanceof CMClass) {
+			final CMClass fromClass = (CMClass) from;
+			addClassAlias(query.getFromAlias(), fromClass.getLeaves());
+			for (JoinClause jc : query.getJoins()) {
+				addDomainAlias(jc.getDomainAlias(), jc.getQueryDomains());
+				addClassAlias(jc.getTargetAlias(), jc.getTargets());
+			}
+		} else if (from instanceof CMFunctionCall) {
+			final CMFunctionCall fromFunctionCall = (CMFunctionCall) from;
+			addFunctionCallAlias(query.getFromAlias(), fromFunctionCall);
 		}
 	}
 
@@ -213,10 +232,14 @@ public class ColumnMapper {
 	}
 
 	public Set<Alias> getClassAliases() {
-		return classAliases.getAliases();
+		return cardSourceAliases.getAliases();
 	}
 
 	public Set<Alias> getDomainAliases() {
 		return domainAliases.getAliases();
+	}
+
+	public Set<Alias> getFunctionCallAliases() {
+		return functionCallAliases.getAliases();
 	}
 }

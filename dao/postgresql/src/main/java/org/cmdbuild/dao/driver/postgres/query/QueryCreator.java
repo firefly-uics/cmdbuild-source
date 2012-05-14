@@ -9,7 +9,6 @@ import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.ClassAlias;
 
 public class QueryCreator {
 
@@ -73,18 +72,17 @@ public class QueryCreator {
 	}
 
 	private void appendFrom() {
-		final ClassAlias from = query.getDBFrom();
-		sb.append(" FROM ONLY ").append(Utils.quoteType(from.getType())).append(" AS ").append(Utils.quoteAlias(from.getAlias()));
+		final PartCreator fromPartCreator = new FromPartCreator(query);
+		appendPart(fromPartCreator);
 	}
 
 	private void appendJoin() {
-		final PartCreator joinCreator = new JoinCreator(query.getDBFrom().getAlias(), query.getJoins(), columnMapper);
+		final PartCreator joinCreator = new JoinCreator(query.getFromAlias(), query.getJoins(), columnMapper);
 		appendPart(joinCreator);
 	}
 
 	private void appendWhere() {
-		final PartCreator wherePartCreator = new WherePartCreator(query.getDBFrom().getAlias(),
-				query.getWhereClause());
+		final PartCreator wherePartCreator = new WherePartCreator(query);
 		appendPart(wherePartCreator);
 	}
 

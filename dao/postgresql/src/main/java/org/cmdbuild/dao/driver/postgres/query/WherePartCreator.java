@@ -6,20 +6,21 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
-import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
-import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
 public class WherePartCreator extends PartCreator implements WhereClauseVisitor {
 
-	public WherePartCreator(final Alias fromAlias, final WhereClause whereClause) {
+	public WherePartCreator(final QuerySpecs query) {
 		super();
-		whereClause.accept(this);
+		query.getWhereClause().accept(this);
 		// FIXME: append the status IF NOT a history query
-		and(attributeFilter(attribute(fromAlias, SystemAttributes.Status.getDBName()), OPERATOR_EQ, STATUS_ACTIVE_VALUE));
+		if (query.getFromType().holdsHistory()) {
+			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), OPERATOR_EQ, STATUS_ACTIVE_VALUE));
+		}
 	}
 
 	private WherePartCreator append(final String string) {

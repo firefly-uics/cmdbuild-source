@@ -1,8 +1,8 @@
 package org.cmdbuild.dao.view.user;
 
+import org.cmdbuild.auth.CMAccessControlManager;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.auth.CMAccessControlManager;
 
 public class UserClass extends UserEntryType implements CMClass {
 
@@ -55,4 +55,8 @@ public class UserClass extends UserEntryType implements CMClass {
 		return inner().isSuperclass();
 	}
 
+	@Override
+	public boolean holdsHistory() {
+		return inner().holdsHistory();
+	}
 }

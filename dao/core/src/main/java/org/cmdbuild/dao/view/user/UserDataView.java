@@ -119,6 +119,11 @@ public class UserDataView extends QueryExecutorDataView {
 		return proxyDomains(view.findAllDomains());
 	}
 
+	@Override
+	public CMFunction findFunctionByName(final String name) {
+		return view.findFunctionByName(name);
+	}
+
 	/**
 	 * Returns all the defined functions for every user.
 	 */

@@ -104,6 +104,11 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
+	public CMFunction findFunctionByName(final String name) {
+		return driver.findFunctionByName(name);
+	}
+
+	@Override
 	public DBCard newCard(CMClass type) {
 		final DBClass dbType = findClassById(type.getId());
 		return DBCard.create(driver, dbType);

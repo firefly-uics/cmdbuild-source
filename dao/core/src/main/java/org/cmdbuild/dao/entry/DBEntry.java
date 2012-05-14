@@ -7,7 +7,7 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.joda.time.DateTime;
 
-public abstract class DBEntry {
+public abstract class DBEntry implements CMValueSet {
 
 	final DBDriver driver;
 

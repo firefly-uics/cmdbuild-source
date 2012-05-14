@@ -26,4 +26,9 @@ public abstract class PlaceholderDomain extends PlaceholderEntryType implements 
 	public String getDescription2() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean holdsHistory() {
+		throw new UnsupportedOperationException();
+	}
 }

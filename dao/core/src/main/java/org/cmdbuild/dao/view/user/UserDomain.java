@@ -52,4 +52,9 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		return inner().getDescription2();
 	}
 
+
+	@Override
+	public boolean holdsHistory() {
+		return inner().holdsHistory();
+	}
 }
