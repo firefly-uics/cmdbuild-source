@@ -12,6 +12,7 @@ import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.elements.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.SharkWSFacade;
 import org.cmdbuild.workflow.operation.ActivityDO;
@@ -26,20 +27,23 @@ import org.json.JSONObject;
 public abstract class AbstractCmdbuildExtendedAttribute implements
 		CmdbuildExtendedAttribute {
 	
-	static final String Label = "ButtonLabel";
-	static final String clientVarPrefix = "client:";
+	private static final String FILTER_KEY = "Filter";
+	private static final String BUTTON_LABEL_KEY = "ButtonLabel";
+
+	private static final String CLIENT_VAR_PREFIX = "client:";
+	private static final String DATABASE_TEMPLATE_PREFIX = "dbtmpl:";
+
 	private Map<String,String> map = new HashMap<String, String>();
 	protected boolean configured = false;
 
 	public class ExtendedAttributeConfigParams {
 		Map<String,Object> parameters;
 		Map<String,Object> currentOuts;
-		
-		@SuppressWarnings("unchecked")
+
 		public ExtendedAttributeConfigParams(Map<String,String> staticParams,
 				Map<String,Object> variableParams,
 				Map<String,Object> currentOuts) {
-			this.parameters = new HashMap();
+			this.parameters = new HashMap<String, Object>();
 			parameters.putAll(staticParams);
 			parameters.putAll(variableParams);
 			this.currentOuts = currentOuts;
@@ -72,7 +76,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 	 * &lt;ext.attr.Name&gt;&lt;(ext.attr.Value.HashCode)&gt;
 	 */
 	String identifier;
-	
+
 	/**
 	 * superclasses must use a default constructor to be called by the ext.attr. factory
 	 * @param extAttrName
@@ -109,7 +113,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 		StringTokenizer token1 = new StringTokenizer(attributeValue.trim(),"\r\n");
 		while( token1.hasMoreTokens() ) {
 			String tmp = token1.nextToken().trim();
-			int eqIdx = isVar(tmp);
+			int eqIdx = isInput(tmp);
 			if(-1 != eqIdx){
 				//variable
 				String key = tmp.substring(0,eqIdx).trim();
@@ -122,6 +126,10 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 						// adds brackets to the variable, so that it can be parsed as a template
 						Log.WORKFLOW.trace("client var: " + key + " - map to client var: " + value);
 						staticParams.put(key, String.format("{%s}", value));
+					} else if (isDBTemplate(value)) {
+						final String dbTemplateName = getDBTemplateName(value);
+						final String dbTemplate = new DBTemplateService().getTemplate(dbTemplateName);
+						staticParams.put(key, dbTemplate);
 					} else {
 						value = getStrippedVar(value);
 						Log.WORKFLOW.trace("static var: " + key + " = " + value);
@@ -134,8 +142,8 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 				outParameters.add(tmp);
 			}
 		}
-		if(this.staticParams.containsKey(Label)) {
-			this.buttonLabel = this.staticParams.get(Label);
+		if(this.staticParams.containsKey(BUTTON_LABEL_KEY)) {
+			this.buttonLabel = this.staticParams.get(BUTTON_LABEL_KEY);
 		}
 	}
 
@@ -160,8 +168,8 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 				Log.WORKFLOW.error("error configuring ext attr " + this.extAttrName, e);
 				throw WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR.createException(extAttrName);
 			}
-			if(processVars.containsKey(Label)) {
-				this.buttonLabel = (String)processVars.get(Label);
+			if(processVars.containsKey(BUTTON_LABEL_KEY)) {
+				this.buttonLabel = (String)processVars.get(BUTTON_LABEL_KEY);
 			}
 		} else {
 			processVars = new HashMap<String, Object>();
@@ -329,12 +337,11 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 		map.put(key, value);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<WorkflowWidgetDefinitionParameter> getWorkflowWidgetDefinitionParameterList() {
-		Iterator iteratorMap = map.entrySet().iterator();
+		Iterator<Map.Entry<String,String>> iteratorMap = map.entrySet().iterator();
 		List<WorkflowWidgetDefinitionParameter> wwdpList = new ArrayList<WorkflowWidgetDefinitionParameter>(); 
 		while(iteratorMap.hasNext()){
-		      Map.Entry me = (Map.Entry)iteratorMap.next();
+			Map.Entry<String,String> me = iteratorMap.next();
 		      WorkflowWidgetDefinitionParameter wwdp = new WorkflowWidgetDefinitionParameter();
 		      wwdp.setKey((String) me.getKey());
 		      wwdp.setValue((String)me.getValue());
@@ -385,27 +392,19 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 		return this.buttonLabel;
 	}
 
-	/**
-	 * return the index of the char '='
-	 * @param s
-	 * @return
-	 */
-	private int isVar(String s){ return s.indexOf('='); }
-	
-	/**
-	 * true if the value does not starts with quotation
-	 * @param value
-	 * @return
-	 */
-	private boolean isProcVar(String key, String value){
-		return !(key.equals("Filter") || // For backward compatibility
-				value.startsWith("\"") ||
-				value.startsWith("'") || 
-				value.startsWith(clientVarPrefix) ||
+	private int isInput(final String s) {
+		return s.indexOf('=');
+	}
+
+	private boolean isProcVar(final String key, final String value){
+		return !(key.equals(FILTER_KEY) || // For backward compatibility
+				isStringValue(value) || 
+				isClientVar(value) ||
+				isDBTemplate(value) ||
 				isNumeric(value));
 	}
 	
-	private boolean isNumeric(String s) {
+	private boolean isNumeric(final String s) {
 		try{
 			Integer.parseInt(s);
 			return true;
@@ -413,23 +412,35 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 		return false;
 	}
 	
-	private boolean isClientVar(String s) {
-		return s.startsWith(clientVarPrefix);
+	private boolean isClientVar(final String s) {
+		return s.startsWith(CLIENT_VAR_PREFIX);
 	}
-	
+
+	private String getDBTemplateName(final String value){
+		return value.substring(DATABASE_TEMPLATE_PREFIX.length());
+	}
+
+	private boolean isDBTemplate(final String s) {
+		return s.startsWith(DATABASE_TEMPLATE_PREFIX);
+	}
+
 	/**
-	 * remove starting/trailing quotations
+	 * remove starting/trailing quotations if string value
 	 * @param value
 	 * @return
 	 */
 	private String getStrippedVar(String value){
-		if ((value.startsWith("\"") && value.endsWith("\""))
-				|| (value.startsWith("'") && value.endsWith("'"))) {
+		if (isStringValue(value)) {
 			value = value.substring(1, value.length()-1);
 		}
 		return value;
 	}
-	
+
+	private boolean isStringValue(final String value) {
+		return (value.startsWith("\"") && value.endsWith("\""))
+				|| (value.startsWith("'") && value.endsWith("'"));
+	}
+
 	protected final int[] convertToIntArray(String[] stringValues) {
 		if (stringValues != null) {
 			int[] intValues = new int[stringValues.length];

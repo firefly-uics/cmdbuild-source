@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.CacheManager;
+import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -84,5 +85,6 @@ public class Utils extends JSONBase {
 	@Admin
 	public void clearCache() {
 		new CacheManager().clearAllCaches();
+		new DBTemplateService().reload();
 	}
 }
