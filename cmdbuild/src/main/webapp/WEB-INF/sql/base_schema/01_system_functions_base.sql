@@ -427,6 +427,10 @@ CREATE OR REPLACE FUNCTION _cm_is_any_class(ClassId oid) RETURNS boolean AS $$
 	SELECT _cm_is_any_class_comment(_cm_comment_for_table_id($1))
 $$ LANGUAGE SQL STABLE;
 
+CREATE OR REPLACE FUNCTION _cm_is_system(TableId oid) RETURNS BOOLEAN AS $$
+	SELECT _cm_check_comment(_cm_comment_for_table_id($1), 'MODE', 'reserved')
+$$ LANGUAGE SQL STABLE;
+
 
 CREATE OR REPLACE FUNCTION _cm_get_geometry_type(TableId oid, Attribute text) RETURNS text AS $$
 DECLARE
