@@ -1,3 +1,5 @@
+(function() {
+
 Ext.define("CMDBuild.Management.SearchableCombo", {
 	extend: "CMDBuild.field.CMBaseCombo",
 
@@ -32,12 +34,12 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     
 	onTrigger2Click: function() {
 		if (!this.disabled) {
-			this.setValue([""]); // if use clearValue the form does not send the value, so it is not possible delete the value on server side
-			this.fireEvent("clear");
-			this.fireEvent('change', this, this.getValue(), this.startValue);
+			reset.call(this);
 		}
 	},
-	
+
+	reset: reset,
+
 	onTrigger3Click: function(){
 		this.createSearchWindow();
 	},
@@ -103,3 +105,11 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	hideTrigger2 :false,
 	hideTrigger3 :false
 });
+
+	function reset() {
+		this.setValue([""]); // if use clearValue the form does not send the value, so it is not possible delete the value on server side
+		this.fireEvent("clear");
+		this.fireEvent('change', this, this.getValue(), this.startValue);
+	}
+
+})();
