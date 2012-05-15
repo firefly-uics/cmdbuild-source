@@ -158,9 +158,12 @@
 
 				this.tabPanel.ensureEditPanel();
 
+				// to reset the stores if go in edit for a
+				// new card and the filter has no deps
+				this.callFieldTemplateResolverIfNeeded();
+
 				if (this._lastCard) {
 					this.loadCard(this._lastCard, bothPanels=true);
-					this.callFieldTemplateResolverIfNeeded();
 				}
 			}
 		},
