@@ -199,7 +199,8 @@
              "availableCharts": {
                 "gauge": "<em>Manometro</em>",
                 "pie": "<em>Torta</em>",
-                "bar": "<em>Istogramma</em>"
+                "bar": "<em>Istogramma</em>",
+                "line": "<em>Linea</em>"
              },
              "buttons": {
                 "add": "<em>Aggiungi grafico</em>",
@@ -218,6 +219,7 @@
                 "description": "<em>Descrizione</em>",
                 "fieldType": "<em>Tipo di field</em>",
                 "foreground": "<em>Colore in primo piano</em>",
+                "fromClass": "<em>Dalla classe</em>",
                 "labelField": "<em>Campo etichette</em>",
                 "legend": "<em>Mostra legenda</em>",
                 "lookupType": "<em>Tipo lookup</em>",
@@ -251,12 +253,13 @@
              },
              "title": "<em>Grafici</em>",
              "typeFieldOptions": {
-                "freeString" : "<em>Stringa libera</em>",
-                "freeInt" : "<em>Intero libero</em>",
-                "lookup" : "<em>Seleziona da una lookup</em>",
+                "card" : "<em>Card</em>",
                 "classes" : "<em>Seleziona una classe di CMDBuild</em>",
-                "user" : "<em>Utente corrente</em>",
-                "group" : "<em>Gruppo corrente</em>"
+                "freeInt" : "<em>Intero libero</em>",
+                "freeString" : "<em>Stringa libera</em>",
+                "group" : "<em>Gruppo corrente</em>",
+                "lookup" : "<em>Seleziona da una lookup</em>",
+                "user" : "<em>Utente corrente</em>"
              }
           },
           "properties": {
@@ -635,6 +638,7 @@
          "add": "Agrega",
          "close": "Cierra",
          "like": "como",
+         "load": "<em>Carica</em>",
          "modify": "Modificar",
          "print": "Imprimir",
          "remove": "Remover",
@@ -681,6 +685,11 @@
       "success": "Éxito",
       "tbd_body": "Trabajos en curso",
       "tbd_title": "Trabajos en curso",
+      "tooltip": {
+         "editParameters": "<em>Modifica i parametri</em>",
+         "reload": "<em>Ricarica</em>",
+         "showData": "<em>Mostra i dati</em>"
+      },
       "tree_names": {
          "class": "Estándar",
          "process": "Actividad",

@@ -22,7 +22,8 @@ Ext.define("CMDBuild.model.CMDashboard", {
 		{name : 'description', type : "string"},
 		{name : 'id', type : "int"},
 		{name : 'groups', type: 'auto'},
-		{name : 'charts', type: 'auto'}
+		{name : 'charts', type: 'auto'},
+		{name : 'columns', type: 'auto'}
 	],
 
 	getName: function() {
@@ -52,6 +53,11 @@ Ext.define("CMDBuild.model.CMDashboard", {
 		}
 
 		return null;
+	},
+
+	getColumns: function() {
+		var c = this.get("columns");
+		return c || [];
 	},
 
 	setName: function(v) {
@@ -127,7 +133,9 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'description', type : 'string'},
 		{name : 'active', type: 'boolean'},
 		{name : 'autoLoad', type: 'boolean'},
+		{name : 'legend', type: 'boolean'},
 		{name : 'type',type : 'string'},
+		{name : 'height',type : 'int'},
 		{name : 'dataSourceName', type: 'string'},
 		{name : 'dataSourceParameters', type: 'auto'},
 		
@@ -145,6 +153,7 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'steps',type : 'nit'},
 		{name : 'fgcolor',type : 'string'},
 		{name : 'bgcolor',type : 'string'},
+		
 		{name : 'chartOrientation', type : 'string'}],
 
 	getName: function() {
@@ -169,6 +178,10 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 
 	getType: function() {
 		return this.get('type');
+	},
+
+	getheight: function() {
+		return this.get('height');
 	},
 
 	getMaximum: function() {

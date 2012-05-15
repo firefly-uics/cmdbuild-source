@@ -7,7 +7,8 @@
 		data: [
 			["free", tr.typeFieldOptions.freeInt],
 			["classes", tr.typeFieldOptions.classes],
-			["lookup", tr.typeFieldOptions.lookup]
+			["lookup", tr.typeFieldOptions.lookup],
+			["card", tr.typeFieldOptions.card]
 		]
 	}),
 
@@ -17,7 +18,6 @@
 		data: [
 			["free", tr.typeFieldOptions.freeString],
 			["classes", tr.typeFieldOptions.classes],
-			["lookup", tr.typeFieldOptions.lookup],
 			["user", tr.typeFieldOptions.user],
 			["group", tr.typeFieldOptions.group],
 		]
@@ -267,6 +267,56 @@
 			this.add(this.defaultField);
 		},
 
+		addClassesFieldForReferenceWidget: function() {
+
+			this.resetFieldset();
+
+			this.classToUseForReferenceWidget = new CMDBuild.field.ErasableCombo({
+				fieldLabel : tr.fields.fromClass,
+				labelWidth: SUBFIELD_LABEL_WIDTH,
+				valueField : 'id',
+				displayField : 'description',
+				editable: false,
+				store : _CMCache.getClassesStore(),
+				queryMode: 'local',
+				disabled: this.typeComboIsdisabled()
+			});
+
+			this.add(this.classToUseForReferenceWidget);
+
+			var me = this;
+			this.classToUseForReferenceWidget.setValue = Ext.Function.createSequence(this.classToUseForReferenceWidget.setValue,
+				function(value) {
+					if (Ext.isArray(value)) {
+						value = value[0];
+					}
+
+					if (typeof value.getId == "function") {
+						value = value.getId();
+					}
+
+					if (me.defaultField) {
+						me.remove(me.defaultField);
+					}
+
+					me.defaultField = new CMDBuild.field.ErasableCombo({
+						fieldLabel : tr.fields.defaultValue,
+						labelWidth: SUBFIELD_LABEL_WIDTH,
+						valueField: "Id",
+						displayField: 'Description',
+						editable: false,
+						store : _CMCache.getReferenceStore({
+							referencedIdClass: value
+						}),
+						queryMode: 'local',
+						disabled: me.typeComboIsdisabled()
+					});
+
+					me.add(me.defaultField);
+				}
+			);
+		},
+
 		addLookupTypesField: function() {
 			var me = this;
 
@@ -312,6 +362,10 @@
 			if (this.lookupTypeField) {
 				this.remove(this.lookupTypeField);
 			}
+
+			if (this.classToUseForReferenceWidget) {
+				this.remove(this.classToUseForReferenceWidget);
+			}
 		},
 
 		getData: function() {
@@ -336,14 +390,29 @@
 				data.lookupType = this.lookupTypeField.getValue();
 			}
 
+			if (this.classToUseForReferenceWidget) {
+				data.classToUseForReferenceWidget = this.classToUseForReferenceWidget.getValue();
+			}
+
 			return data;
 		},
 
 		setData: function(data) {
-			if (data.fieldType && this.fieldType) {
+			if (data.fieldType 
+					&& this.fieldType) {
+
 				this.fieldType.setValue(data.fieldType);
-				if (data.lookupType && this.lookupTypeField) {
+
+				if (data.lookupType 
+						&& this.lookupTypeField) {
+
 					this.lookupTypeField.setValue(data.lookupType);
+				}
+
+				if (data.classToUseForReferenceWidget 
+						&& this.classToUseForReferenceWidget) {
+
+					this.classToUseForReferenceWidget.setValue(data.classToUseForReferenceWidget);
 				}
 			}
 

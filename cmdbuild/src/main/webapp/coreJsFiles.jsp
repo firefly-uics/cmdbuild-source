@@ -77,6 +77,7 @@
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
@@ -88,8 +89,15 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
+	<!-- DASHBOARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortletForm.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortlet.js"></script>	
+
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMMainViewportController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
+
+	<!-- DASHBOARD -->
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>	

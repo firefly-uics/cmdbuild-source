@@ -199,7 +199,8 @@
             "availableCharts": {
                 "gauge": "<em>Gauge</em>",
                 "pie": "<em>Pie</em>",
-                "bar": "<em>Bar</em>"
+                "bar": "<em>Bar</em>",
+                "line": "<em>Line</em>"
              },
              "buttons": {
                 "add": "<em>Add Chart</em>",
@@ -218,6 +219,7 @@
                 "description": "<em>Description</em>",
                 "fieldType": "<em>Field type</em>",
                 "foreground": "<em>Foreground color</em>",
+                "fromClass": "<em>From Class</em>",
                 "labelField": "<em>Label field</em>",
                 "legend": "<em>Show legend</em>",
                 "lookupType": "<em>Lookup type</em>",
@@ -251,12 +253,13 @@
              },
              "title": "<em>Charts</em>",
              "typeFieldOptions": {
-                "freeString" : "<em>Free String</em>",
-                "freeInt" : "<em>Free Integer</em>",
-                "lookup" : "<em>Select from a lookup</em>",
+                "card" : "<em>Card</em>",
                 "classes" : "<em>Select from all CMDBuild classes</em>",
-                "user" : "<em>Current user</em>",
-                "group" : "<em>Current group</em>"
+                "freeInt" : "<em>Free Integer</em>",
+                "freeString" : "<em>Free String</em>",
+                "group" : "<em>Current group</em>",
+                "lookup" : "<em>Select from a lookup</em>",
+                "user" : "<em>Current user</em>"
              }
           },
           "properties": {
@@ -597,6 +600,7 @@
          "add": "Додај",
          "as": "као",
          "close": "Затвори",
+         "load": "<em>Load</em>",
          "modify": "Измени",
          "print": "Штампај",
          "remove": "Уклони",
@@ -643,6 +647,11 @@
       "success": "Успех",
       "tbd_body": "У току је извршавање операције",
       "tbd_title": "У току је извршавање операције",
+      "tooltip": {
+         "editParameters": "<em>Edit the parameters</em>",
+         "reload": "<em>Reload</em>",
+         "showData": "<em>Show data</em>"
+      },
       "tree_names": {
          "class": "Стандардне",
          "process": "Активност",

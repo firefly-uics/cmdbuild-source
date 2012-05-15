@@ -1,25 +1,30 @@
 (function() {
-	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
+
+	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({ // TODO move in common
 			cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
 		}),
 		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),	
-		classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
+		classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({ // TODO move in common
 			title: CMDBuild.Translation.administration.modClass.tree_title
 		}),
-		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({
+		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({ // TODO move in common
 			title: CMDBuild.Translation.management.modutilities.title
 		}),
-		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
+		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({ // TODO move in common
 			rootVisible: true
-		});
+		}),
+		dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion(); // TODO move in common
 
 	Ext.define("CMDBuild.app.Management", {
 		statics: {
 			init: function() {
+
+				Ext.tip.QuickTipManager.init();
+
 				var me = this,
 					cb = function() {
 						me.buildComponents();
-					}
+					};
 
 				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 					success: function(response, options, decoded) {
@@ -52,6 +57,7 @@
 			buildComponents: function() {
 				var disabled = CMDBuild.Runtime.DisabledModules;
 				this.cmAccordions = [
+					this.dashboardsAccordion = dashboardsAccordion,
 					this.menuAccordion = menuAccordion
 				];
 
@@ -68,6 +74,10 @@
 					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
 						cmName: "report",
 						cmControllerType: CMDBuild.controller.management.report.CMModReportController
+					}),
+
+					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
+						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
 					})
 				];
 
@@ -179,6 +189,22 @@
 					},
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
+					},
+					callback: reqBarrier.getCallback()
+				});
+
+				CMDBuild.ServiceProxy.Dashboard.list({
+					success : function(response, options, decoded) {
+						_CMCache.addDashboards(decoded.response.dashboards);
+						_CMCache.setAvailableDataSources(decoded.response.dataSources);
+						dashboardsAccordion.updateStore();
+					},
+					callback: reqBarrier.getCallback()
+				});
+
+				CMDBuild.ServiceProxy.lookup.readAllTypes({
+					success : function(response, options, decoded) {
+						_CMCache.addLookupTypes(decoded);
 					},
 					callback: reqBarrier.getCallback()
 				});

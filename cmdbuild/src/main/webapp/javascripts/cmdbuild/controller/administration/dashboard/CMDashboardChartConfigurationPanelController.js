@@ -65,14 +65,20 @@
 		},
 
 		onPreviewButtonClick: function() {
-			var formData = this.formController.getFormData();
-			new Ext.window.Window({
+			var formData = CMDBuild.model.CMDashboardChart.build(this.formController.getFormData());
+			var store = CMDBuild.view.management.dashboard.CMChartPortletController.buildStoreForChart(formData);
+
+			var chartWindow = new CMDBuild.view.management.dashboard.CMChartWindow({
+				chartConfiguration: formData,
+				store: store,
 				title: formData.name,
 				width: 400,
-				height: 400,
-				layout : 'fit',
-				items : getChartFromConfiguration(formData)
+				height: 400
 			}).show();
+
+			if (chartWindow.chartPortlet) {
+				new CMDBuild.view.management.dashboard.CMChartPortletController(chartWindow.chartPortlet, formData, store);
+			}
 		},
 
 		onRemoveButtonClick: function() {
@@ -131,157 +137,6 @@
 		}
 	});
 
-	
-	// TODO: temporary ugly solution
-	// Do a preview controller that is able to load the charts
-
-	function getChartFromConfiguration(data) {
-
-		if (!data.type) {
-			return {
-				xtype : "panel",
-				frame : false,
-				border : false,
-				html : tr.alert.wrongConfiguration
-			};
-		}
-
-		if (data.type == "gauge") {
-
-			var bgcolor = data.bgcolor || '#ffffff';
-			var fgcolor = data.fgcolor || '#99CC00';
-	
-			return {
-				xtype : 'chart',
-				animate : {
-					easing : 'elasticIn',
-					duration : 2000
-				},
-				store : Ext.create('Ext.data.JsonStore', {
-					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
-					data : generateData(5)
-				}),
-				insetPadding : 25,
-				flex : 1,
-				axes : [{
-					type : 'gauge',
-					position : 'gauge',
-					minimum : data.minimum || 0,
-					maximum : data.maximum || 1000,
-					steps : data.steps || 20,
-					margin: 5
-				}],
-				series : [{
-					type : 'gauge',
-					field : 'data1',
-					donut : 60,
-					colorSet : [fgcolor, bgcolor]
-				}]
-			};
-		}
-
-		if (data.type == "pie") {
-			return {
-				xtype : 'chart',
-				legend: data.legend,
-				animate : {
-					easing : 'elasticIn',
-					duration : 2000
-				},
-				store : Ext.create('Ext.data.JsonStore', {
-					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
-					data : generateData(5)
-				}),
-				series : [ {
-					type : 'pie',
-					field : 'data1',
-					showInLegend : true,
-					highlight : {
-						segment : {
-							margin : 5
-						}
-					},
-					label : {
-						field : 'name',
-						display : 'rotate',
-						contrast : true,
-						font : '1.3em Arial'
-					}
-				} ]
-			};
-		}
-
-		if (data.type == "bar") {
-			var vertical = data.chartOrientation == "vertical",
-				axesConf = {};
-
-			if (vertical) {
-				axesConf.category = "bottom";
-				axesConf.values = "left";
-				axesConf.type = "column";
-			} else {
-				axesConf.category = "left";
-				axesConf.values = "bottom";
-				axesConf.type = "bar";
-			}
-			return {
-				xtype : 'chart',
-				legend: data.legend,
-				store : Ext.create('Ext.data.JsonStore', {
-					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
-					data : generateData(5)
-				}),
-				axes : [ {
-					type : 'Numeric',
-					position : axesConf.values,
-					fields : [ 'data1', 'data2' ],
-					title : data.valueAxisLabel,
-					minimum: 0,
-					grid : true
-				}, {
-					type : 'Category',
-					position : axesConf.category,
-					fields : [ 'name' ],
-					title : data.categoryAxisLabel
-				} ],
-				series : [ {
-					type : axesConf.type,
-					axis : axesConf.values,
-					highlight : true,
-					xField : 'name',
-					yField : [ 'data1', 'data2' ]
-				} ]
-			};
-
-//			return {
-//				xtype : 'chart',
-//				legend: data.legend,
-//				animate: true,
-//				store : Ext.create('Ext.data.JsonStore', {
-//					fields : ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
-//					data : generateData(5)
-//				}),
-//				axes : [ {
-//					type : 'Numeric',
-//					fields : ["data1", "data2"], //data.valueAxisFields,
-//					title : "@@ Valori", //data.valueAxisLabel,
-//					grid : true
-//				}, {
-//					type : 'Category',
-//					fields : ["name"], //data.categoryAxisField,
-//					title : "@@ categories"//data.categoryAxisLabel
-//				} ],
-//				series : [ {
-//					type : 'bar',
-//					axis : 'bottom',
-//					highlight : true,
-//					xField : "name", //data.categoryAxisField,
-//					yField : ["data1", "data2"] // data.valueAxisFields
-//				} ]
-//			};
-		}
-	}
-
 	function buildSubControllers(view) {
 		return {
 			formController: CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController.cmcreate(view.getFormPanel()),
@@ -289,48 +144,4 @@
 		};
 	}
 
-
-// TODO do something better
-
-	generateData = function(n, floor) {
-		var data = [], p = (Math.random() * 11) + 1, i;
-		floor = (!floor && floor !== 0) ? 20 : floor;
-
-		for( i = 0; i < (n || 12); i++) {
-			data.push({
-				name : Ext.Date.monthNames[i % 12],
-				data1 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data2 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data3 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data4 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data5 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data6 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data7 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data8 : Math.floor(Math.max((Math.random() * 100), floor)),
-				data9 : Math.floor(Math.max((Math.random() * 100), floor))
-			});
-		}
-		return data;
-	};
-
-	generateDataNegative = function(n, floor) {
-		var data = [], p = (Math.random() * 11) + 1, i;
-		floor = (!floor && floor !== 0) ? 20 : floor;
-
-		for( i = 0; i < (n || 12); i++) {
-			data.push({
-				name : Ext.Date.monthNames[i % 12],
-				data1 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data2 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data3 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data4 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data5 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data6 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data7 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data8 : Math.floor(((Math.random() - 0.5) * 100), floor),
-				data9 : Math.floor(((Math.random() - 0.5) * 100), floor)
-			});
-		}
-		return data;
-	};
 })();

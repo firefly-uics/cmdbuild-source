@@ -86,7 +86,9 @@
 
 		getLookupchainForType: function(type) {
 			var chain = [];
-			while (type != "") {
+			type = type || "";
+
+			while (type) {
 				for (var i in lookupTypes) {
 					var lt = lookupTypes[i];
 					if (lt.get("id") == type) {

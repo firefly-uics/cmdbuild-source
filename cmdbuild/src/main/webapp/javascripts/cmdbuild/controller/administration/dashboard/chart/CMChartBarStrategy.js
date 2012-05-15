@@ -30,7 +30,7 @@
 		// override
 		updateDataSourceDependantFields: function(dsName) {
 			this.form.setCategoryAxesAvailableData(this.getAvailableDsOutputFields());
-			this.form.setValueAxesAvailableData(this.getAvailableDsOutputFields(["integer"]));
+			this.form.setValueAxesAvailableData(this.getAvailableDsOutputFields(["INTEGER"]));
 		},
 
 		// override
