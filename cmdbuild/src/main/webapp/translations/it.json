@@ -199,7 +199,8 @@
              "availableCharts": {
                 "gauge": "Manometro",
                 "pie": "Torta",
-                "bar": "Istogramma"
+                "bar": "Istogramma",
+                "line": "Linea"
              },
              "buttons": {
                 "add": "Aggiungi grafico",
@@ -218,6 +219,7 @@
                 "description": "Descrizione",
                 "fieldType": "Tipo di field",
                 "foreground": "Colore in primo piano",
+                "fromClass": "Dalla classe",
                 "labelField": "Campo etichette",
                 "legend": "Mostra legenda",
                 "lookupType": "Tipo lookup",
@@ -251,12 +253,13 @@
              },
              "title": "Grafici",
              "typeFieldOptions": {
-                "freeString" : "Stringa libera",
-                "freeInt" : "Intero libero",
-                "lookup" : "Seleziona da una lookup",
                 "classes" : "Seleziona una classe di CMDBuild",
-                "user" : "Utente corrente",
-                "group" : "Gruppo corrente"
+                "card" : "Card",
+                "freeInt" : "Intero libero",
+                "freeString" : "Stringa libera",
+                "group" : "Gruppo corrente",
+                "lookup" : "Seleziona da una lookup",
+                "user" : "Utente corrente"
              }
           },
           "properties": {
@@ -635,6 +638,7 @@
          "add": "Aggiungi",
          "as": "come",
          "close": "Chiudi",
+         "load": "Carica",
          "modify": "Modifica",
          "print": "Stampa",
          "remove": "Cancella",
@@ -681,6 +685,11 @@
       "success": "Successo",
       "tbd_body": "Lavori in corso",
       "tbd_title": "Lavori in corso",
+      "tooltip": {
+         "editParameters": "Modifica i parametri",
+         "reload": "Ricarica",
+         "showData": "Mostra i dati"
+      },
       "tree_names": {
          "class": "Standard",
          "process": "Attività",

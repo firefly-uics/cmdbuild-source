@@ -45,7 +45,7 @@
 
 		getAvailableDsOutputFields: function (allowedTypes) {
 			var dataSourceOutput = this.dataSourceName ? _CMCache.getDataSourceOutput(this.dataSourceName) : [],
-				allowedTypes = allowedTypes || ["string", "integer", "date"],
+				allowedTypes = allowedTypes || ["STRING", "INTEGER", "DATE"],
 				out = [];
 
 			for (var i=0, l=dataSourceOutput.length, d; i<l; ++i) {
@@ -76,7 +76,8 @@
 					var strategis = {
 						"gauge": CMDBuild.controller.administration.dashboard.charts.CMChartGaugeStrategy,
 						"pie": CMDBuild.controller.administration.dashboard.charts.CMChartPieStrategy,
-						"bar": CMDBuild.controller.administration.dashboard.charts.CMChartBarStrategy
+						"bar": CMDBuild.controller.administration.dashboard.charts.CMChartBarStrategy,
+						"line": CMDBuild.controller.administration.dashboard.charts.CMChartLineStrategy
 					};
 
 					if (typeof strategis[type] == "function") {
@@ -197,6 +198,9 @@
 				},
 				group: function(fieldset) {
 					fieldset.resetFieldset();
+				},
+				card: function(fieldset) {
+					fieldset.addClassesFieldForReferenceWidget();
 				}
 			};
 
@@ -216,4 +220,43 @@
 		};
 	}
 
+	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartLineStrategy", {
+		extend: "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy",
+
+		constructor: function(form) {
+			this.form = form;
+		},
+
+		interestedFields: [
+			"legend",
+			"categoryAxisField",
+			"categoryAxisLabel",
+			"valueAxisFields",
+			"valueAxisLabel"
+		],
+
+		// override
+		fillFieldsForChart: function(chart) {
+			this.form.fillFieldsWith({
+				legend: chart.withLegend(),
+				categoryAxisField: chart.getCategoryAxisField(),
+				categoryAxisLabel: chart.getCategoryAxisLabel(),
+				valueAxisFields: chart.getValueAxisFields(),
+				valueAxisLabel: chart.getValueAxisLabel()
+			});
+		},
+
+		// override
+		updateDataSourceDependantFields: function(dsName) {
+			this.form.setCategoryAxesAvailableData(this.getAvailableDsOutputFields());
+			this.form.setValueAxesAvailableData(this.getAvailableDsOutputFields(["INTEGER"]));
+		},
+
+		// override
+		showChartFields: function() {
+			this.callParent(arguments);
+			this.form.showAxesFieldSets();
+		}
+	});
+	
 })();

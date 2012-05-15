@@ -327,6 +327,13 @@ em {
 	background-image: url(../images/icons/arrow_right.png) !important;
 }
 
+.arrow_refresh {
+	background-image: url(../images/icons/arrow_refresh.png) !important;
+}
+
+.edit_form {
+	background-image: url(../images/icons/application_form_edit.png) !important;
+}
 .find {
 	background-image: url(../images/icons/find.png) !important;
 }

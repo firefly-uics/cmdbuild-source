@@ -16,105 +16,252 @@
 				success : true,
 				response: {
 					dashboards : [{
-						id : 1,
-						name : "Foo",
-						groups : [14],
-						description : "Amazing dashboard for amazing people",
-						charts : [{
-							id : 1,
-							name : "Card opened per group",
-							description : "A pie chart with the number of opened card in a year, divided per group",
-							type: "gauge",
-							autoLoad: true,
-							dataSourceName: 'cm_datasource_1',
-							dataSourceParameters: [{
-								name: 'in11',
-								type: 'integer',
-								fieldType: 'free',
-								defaultValue: 545
-							}],
-							minimum: 10,
-							maximum: 1000,
-							steps: 20,
-							singleSeriesField: "out11",
-							labelField: "out12"
-						}]
-					}, {
 						id : 2,
 						groups : [],
 						name : "Bar",
-						description : "Cool dashboard for cool people",
-						charts : []
+						description : "Allarmi e statistiche",
+						charts : [{
+							id: 1,
+							name: "openedCard",
+							description: "Card aperte",
+							type: "gauge",
+							active: true,
+							autoLoad: false,
+							maximum: 1000,
+							minimum: 0,
+							steps: 10,
+							fgcolor: "#99CC00",
+							bgcolor: "#dddddd",
+							dataSourceName: "gauge_datasource",
+							singleSeriesField: "card_aperte",
+							height: 300,
+							dataSourceParameters: [{
+								name: "Classe",
+								type: "STRING",
+								fieldType: "classes",
+								lookupType: undefined
+							}]
+						}, {
+							id: 2,
+							name: "deletedCard",
+							description: "Card cancellate",
+							type: "gauge",
+							active: true,
+							autoLoad: true,
+							maximum: 1000,
+							minimum: 0,
+							steps: 10,
+							fgcolor: "#FF0000",
+							bgcolor: "#dddddd",
+							height: 300,
+							dataSourceName: "gauge_datasource",
+							singleSeriesField: "card_cancellate",
+							dataSourceParameters: [{
+								name: "Classe",
+								type: "STRING",
+								fieldType: "classes",
+								defaultValue: 1655406
+							}]
+						}, {
+							id: 3,
+							name: "nagiosAllarm",
+							description: "Allarmi Nagios",
+							type: "bar",
+							active: true,
+							autoLoad: false,
+							legend: true,
+							height: 500,
+							dataSourceName: "cm_nagios_allarms",
+							categoryAxisField: "mese",
+							categoryAxisLabel: "Mesi",
+							valueAxisFields: ["count_2011", "count_2012"],
+							valueAxisLabel: "Numero Allarmi",
+							chartOrientation: "horizontal", // "vertical
+							dataSourceParameters: [{
+								name: "IP",
+								type: "INET",
+								defaultValue: "1.1.1.1"
+							}, {
+								name: "date",
+								type: "DATE",
+								defaultValue: "12/12/1280"
+							}, {
+								name: "time",
+								type: "TIME",
+								defaultValue: "12:12:12"
+							}, {
+								name: "Timestamp",
+								type: "TIMESTAMP"
+							}, {
+								name: "Classe_string",
+								type: "STRING",
+								fieldType: "classes",
+								defaultValue: "Computer"
+							}, {
+								name: "Classe_int",
+								type: "INTEGER",
+								fieldType: "classes",
+								defaultValue: 1655406
+							}, {
+								name: "Pinko",
+								type: "INTEGER",
+								fieldType: "lookup",
+								lookupType: "ccccc"
+							}]
+						}, {
+							id: 4,
+							name: "cardPerClassSubclass",
+							description: "Card per sottoclasse di asset",
+							type: "bar",
+							active: true,
+							autoLoad: true,
+							dataSourceName: "cm_card_per_asset_subclass",
+							categoryAxisField: "nome_classe",
+							categoryAxisLabel: "Nome classe",
+							valueAxisFields: ["numero_card"],
+							valueAxisLabel: "Numero di card",
+							chartOrientation: "vertical"
+						}, {
+							id: 5,
+							name: "statoDegliAsset",
+							description: "Asset per marca",
+							type: "pie",
+							active: true,
+							autoLoad: true,
+							legend: true,
+							dataSourceName: "cm_brand_asset",
+							singleSeriesField: "count",
+							labelField: "brand_name"
+						}, {
+							id: 6,
+							name: "nagiosAllarm",
+							description: "Allarmi Nagios",
+							type: "line",
+							active: true,
+							autoLoad: false,
+							legend: true,
+							height: 500,
+							dataSourceName: "cm_nagios_allarms",
+							categoryAxisField: "mese",
+							categoryAxisLabel: "Mesi",
+							valueAxisFields: ["count_2011", "count_2012"],
+							valueAxisLabel: "Numero Allarmi",
+							dataSourceParameters: [{
+								name: "Classe_int",
+								type: "INTEGER",
+								fieldType: "card",
+								classToUseForReferenceWidget: "1655741",
+								defaultValue: "747"
+							}]
+						}],
+
+						columns: [{
+							width: 0.4,
+							charts: [1, 2, 5]
+						}, {
+							width: 0.6,
+							charts: [3, 4, 6]
+						}]
 					}],
 
 					dataSources: [{
-						name: "cm_datasource_1",
+							name: "cm_card_per_asset_subclass",
+							input: [],
+							output: [{
+								name: "nome_classe",
+								type: "STRING"
+							}, {
+								name: "numero_card",
+								type: "INTEGER"
+							}]
+						},{
+						name: "cm_nagios_allarms",
 						input: [{
-							name: "intero",
-							type: "INTEGER"
-						},{
-							name: "double",
-							type: "DOUBLE"
-						},{
-							name: "decimal",
-							type: "DECIMAL"
-						},{
-							name: "Data",
+							name: "IP",
+							type: "INET"
+						}, {
+							name: "date",
 							type: "DATE"
-						},{
+						}, {
+							name: "time",
+							type: "TIME"
+						}, {
 							name: "Timestamp",
 							type: "TIMESTAMP"
-						},{
-							name: "Time",
-							type: "TIME"
-						},{
-							name: "String",
+						}, {
+							name: "Classe_string",
 							type: "STRING"
-						},{
-							name: "Char",
-							type: "CHAR"
-						},,{
-							name: "Text",
-							type: "TEXT"
-						},{
-							name: "Inet",
-							type: "INET"
-						},{
-							name: "Boolean",
-							type: "BOOLEAN"
-						}],
+						}, {
+							name: "Classe_int",
+							type: "INTEGER"
+						}
+//						,{
+//							name: "double",
+//							type: "DOUBLE"
+//						},{
+//							name: "decimal",
+//							type: "DECIMAL"
+//						}
+//						,{
+//							name: "Data",
+//							type: "DATE"
+//						}
+//						,{
+//							name: "Timestamp",
+//							type: "TIMESTAMP"
+//						},{
+//							name: "Time",
+//							type: "TIME"
+//						},{
+//							name: "String",
+//							type: "STRING"
+//						},{
+//							name: "Char",
+//							type: "CHAR"
+//						},,{
+//							name: "Text",
+//							type: "TEXT"
+//						},{
+//							name: "Inet",
+//							type: "INET"
+//						},{
+//							name: "Boolean",
+//							type: "BOOLEAN"
+//						}
+						],
 
 						output: [{
-							name: "out11",
+							name: "count_2011",
 							type: "INTEGER"
 						},{
-							name: "out12",
-							type: "STRING"
+							name: "count_2012",
+							type: "INTEGER"
 						},{
-							name: "out13",
-							type: "date"
+							name: "mese",
+							type: "STRING"
 						}]
 					}, {
-						name: "cm_datasource_2",
+						name: "gauge_datasource",
 						input: [{
-							name: "in21",
-							type: "integer"
-						},{
-							name: "in22",
-							type: "string"
-						},{
-							name: "in23",
-							type: "date"
+							name: "Classe",
+							type: "STRING"
 						}],
 						output: [{
-							name: "out21",
-							type: "integer"
+							name: "card_aperte",
+							type: "INTEGER"
 						},{
-							name: "out22",
-							type: "string"
-						},{
-							name: "out23",
-							type: "date"
+							name: "card_cancellate",
+							type: "INTEGER"
+						}]
+					}, {
+						name: "cm_brand_asset",
+						input: [],
+						output: [{
+							name: "brand_name",
+							type: "STRING"
+						}, {
+							name: "count",
+							type: "INTEGER"
 						}]
 					}]
 				}

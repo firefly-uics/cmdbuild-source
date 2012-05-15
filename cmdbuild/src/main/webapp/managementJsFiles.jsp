@@ -73,6 +73,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/EditAttachmentWindow.js"></script>
 
+	<!-- DASHBOARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script> <!-- TODO: mone in commons file -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dashboard/CMModDashbaord.js"></script>
+
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
@@ -128,6 +132,9 @@
 		<!--  -->
 
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMCreateModifyCardController.js"></script>
+
+	<!-- DASHBOARD -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dashboard/CMModDashboardController.js"></script>
 
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModBulkCardUpdateController.js"></script>

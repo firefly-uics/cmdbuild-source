@@ -199,7 +199,8 @@
              "availableCharts": {
                 "gauge": "Gauge",
                 "pie": "Pie",
-                "bar": "Bar"
+                "bar": "Bar",
+                "line": "Line"
              },
              "buttons": {
                 "add": "Add Chart",
@@ -218,6 +219,7 @@
                 "description": "Description",
                 "fieldType": "Field type",
                 "foreground": "Foreground color",
+                "fromClass": "From class",
                 "labelField": "Label field",
                 "legend": "Show legend",
                 "lookupType": "Lookup type",
@@ -251,12 +253,13 @@
              },
              "title": "Charts",
              "typeFieldOptions": {
-                "freeString" : "Free String",
-                "freeInt" : "Free Integer",
-                "lookup" : "Select from a lookup",
+                "card" : "Card",
                 "classes" : "Select from all CMDBuild classes",
-                "user" : "Current user",
-                "group" : "Current group"
+                "freeInt" : "Free Integer",
+                "freeString" : "Free String",
+                "group" : "Current group",
+                "lookup" : "Select from a lookup",
+                "user" : "Current user"
              }
           },
           "properties": {
@@ -635,6 +638,7 @@
          "add": "Add",
          "as": "as",
          "close": "Close",
+         "load": "Load",
          "modify": "Modify",
          "print": "Print",
          "remove": "Remove",
@@ -681,6 +685,11 @@
       "success": "Success",
       "tbd_body": "Work in progress",
       "tbd_title": "Work in progress",
+      "tooltip": {
+         "editParameters": "Edit the parameters",
+         "reload": "Reload",
+         "showData": "Show data"
+      },
       "tree_names": {
          "class": "Standard",
          "process": "Activity",

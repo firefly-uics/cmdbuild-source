@@ -3,7 +3,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMWidgetDefinitionModel.js"></script>
 
 

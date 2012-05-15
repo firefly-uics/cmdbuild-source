@@ -49,9 +49,9 @@
 			var chart = aGauge();
 			var dsName = "Foo";
 			var getDataSourceOutput = spyOn(_CMCache, "getDataSourceOutput").andReturn([
-				{name: "foo", type: "string"},
-				{name: "bar", type: "integer"},
-				{name: "bart", type: "integer"}
+				{name: "foo", type: "STRING"},
+				{name: "bar", type: "INTEGER"},
+				{name: "bart", type: "INTEGER"}
 			]);
 
 			gauge.setChartDataSourceName(dsName);
@@ -90,9 +90,9 @@
 		it ('is able to set the chart datasource', function() {
 			var dsName = "Foo";
 			var getDataSourceOutput = spyOn(_CMCache, "getDataSourceOutput").andReturn([
-				{name: "foo", type: "string"},
-				{name: "bar", type: "integer"},
-				{name: "bart", type: "integer"}
+				{name: "foo", type: "STRING"},
+				{name: "bar", type: "INTEGER"},
+				{name: "bart", type: "INTEGER"}
 			]);
 
 			expect(gauge.dataSourceName).toBeNull();
