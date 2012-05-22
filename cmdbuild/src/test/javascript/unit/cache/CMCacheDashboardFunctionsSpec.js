@@ -21,17 +21,18 @@
 		});
 
 		it("Retrieves a dashboard adding an array of dashboards", function() {
-			_CMCache.addDashboards([{
-				id: 1,
-				name: "foo",
-				description: "Amazing dashboard for amazing people",
-				charts: []
-			}, {
-				id: 2,
-				name: "bar",
-				description: "Cool dashboard for cool people",
-				charts: []
-			}]);
+			_CMCache.addDashboards({
+				1: {
+					name: "foo",
+					description: "Amazing dashboard for amazing people",
+					charts: []
+				}, 
+				2: {
+					name: "bar",
+					description: "Cool dashboard for cool people",
+					charts: []
+				}
+			});
 
 			var d = _CMCache.getDashboardById(2);
 			expect(d).toBeDefined();
@@ -39,18 +40,18 @@
 		});
 
 		it("Is able to modify a dashboard", function() {
-			_CMCache.addDashboards([{
-				id: 1,
-				name: "foo",
-				description: "Amazing dashboard for amazing people",
-				charts: [],
-				groups: []
-			}, {
-				id: 2,
-				name: "bar",
-				description: "Cool dashboard for cool people",
-				charts: []
-			}]);
+			_CMCache.addDashboards({
+				1: {
+					name: "foo",
+					description: "Amazing dashboard for amazing people",
+					charts: []
+				}, 
+				2: {
+					name: "bar",
+					description: "Cool dashboard for cool people",
+					charts: []
+				}
+			});
 
 			_CMCache.modifyDashboard({
 				id: 1,

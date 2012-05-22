@@ -124,13 +124,14 @@
 			controller.dashboardWasSelected(dashboard);
 			controller.onSaveButtonClick();
 
-			var arg = modify.mostRecentCall.args[0];
+			var id = modify.mostRecentCall.args[0];
+			var args = modify.mostRecentCall.args[1];
 			expect(view.getFieldsValue).toHaveBeenCalled();
 			expect(modify).toHaveBeenCalled();
-			expect(arg.name).toEqual("Foo");
-			expect(arg.description).toEqual("Bar");
-			expect(arg.id).toEqual(1);
-			expect(arg.groups).toEqual([1]);
+			expect(id).toEqual(1);
+			expect(args.name).toEqual("Foo");
+			expect(args.description).toEqual("Bar");
+			expect(args.groups).toEqual([1]);
 		});
 
 		it('call the service proxy to remove a dashboard', function() {
