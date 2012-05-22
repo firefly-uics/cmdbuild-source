@@ -39,6 +39,9 @@
 
 		buildDashboardColumns: function(dashboard) {
 			if (dashboard) {
+
+				updateTitle(this, dashboard.get("description"));
+
 				if (this.renderdDashboards[dashboard.getId()]) {
 					this.getLayout().setActiveItem(this.renderdDashboards[dashboard.getId()]);
 				} else {
@@ -47,7 +50,6 @@
 					var columns = [];
 					var me = this;
 	
-					updateTitle(this, dashboard.get("description"));
 					this.dashbaord = dashboard;
 	
 					for (var i=0, l=columnsConf.length, conf; i<l; ++i) {

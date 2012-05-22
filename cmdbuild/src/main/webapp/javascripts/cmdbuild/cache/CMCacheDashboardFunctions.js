@@ -24,9 +24,18 @@
 
 		DASHBOARD_EVENTS: events,
 
+		/*
+		 * dd is a map : {
+		 * 	dashboardId: {dashboardDefinition},
+		 * 	dashboardId: {dashboardDefinition},
+		 *  ...
+		 * } 
+		 */
 		addDashboards: function(dd) {
-			for (var i=0, l=dd.length; i<l; ++i) {
-				this.addDashboard(dd[i]);
+			for (var key in dd) {
+				var definition = dd[key];
+				definition.id = key;
+				this.addDashboard(definition);
 			}
 		},
 
@@ -46,8 +55,8 @@
 			}
 		},
 
-		modifyDashboard: function(dashboard) {
-			var d = dashboards[dashboard.id];
+		modifyDashboard: function(dashboard, id) {
+			var d = dashboards[dashboard.id] || dashboards[id];
 			if (d) {
 				d.setName(dashboard.name);
 				d.setDescription(dashboard.description);

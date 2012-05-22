@@ -1,9 +1,9 @@
 package unit.serializers.jackson;
 
-import static org.hamcrest.text.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static utils.JsonMatchers.containsPair;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 public class WidgetSerializationTest {
@@ -90,19 +89,4 @@ public class WidgetSerializationTest {
 		return mapper.writeValueAsString(w);
 	}
 
-	/*
-	 * Utility methods
-	 */
-
-	private static Matcher<String> containsPair(String key, Object value) {
-		String valueString;
-		if (value == null) {
-			valueString = "null";
-		} else if (value instanceof String) {
-			valueString = String.format("\"%s\"", value);
-		} else {
-			valueString = value.toString();
-		}
-        return containsString(String.format("\"%s\":%s", key, valueString));
-    }
 }

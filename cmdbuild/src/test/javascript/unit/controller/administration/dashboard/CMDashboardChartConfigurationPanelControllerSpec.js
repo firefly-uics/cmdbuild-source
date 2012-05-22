@@ -8,7 +8,7 @@
 
 		beforeEach(function() {
 			
-			view = CMDBuild.test.spyObj(CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationPanelInterface, "view");
+			view = CMDBuild.test.spyObj(CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationPanelInterface, "view", ["enable", "disable"]);
 			formSubController = CMDBuild.test.spyObj(CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationFormController, "formSubController"); 
 			gridSubController = CMDBuild.test.spyObj(CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationGridController, "gridSubController");
 
@@ -76,7 +76,7 @@
 			expect(proxy.remove).toHaveBeenCalled();
 			var params = proxy.remove.argsForCall[0];
 			expect(params[0]).toBe(1); // dashboardId
-			expect(params[1]).toBe(2); // chartId
+			expect(params[1]).toBe('2'); // chartId
 
 			expect(view.disableButtons).toHaveBeenCalled();
 			expect(view.disableTBarButtons).toHaveBeenCalled();
@@ -142,7 +142,7 @@
 			expect(proxy.modify).toHaveBeenCalled();
 			var params = proxy.modify.argsForCall[0];
 			expect(params[0]).toBe(1); // dashboardId
-			expect(params[1]).toBe(2); // chartId
+			expect(params[1]).toBe('2'); // chartId
 			expect(params[2]).toBe(formData);
 		});
 

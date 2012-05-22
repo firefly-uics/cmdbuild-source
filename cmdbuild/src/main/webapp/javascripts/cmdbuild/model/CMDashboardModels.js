@@ -4,10 +4,11 @@ Ext.define("CMDBuild.model.CMDashboard", {
 
 	statics : {
 		build: function(d) {
-			d.charts = d.charts || [];
+			d.charts = d.charts || {};
 			var models = [];
-			for (var i=0, l=d.charts.length; i<l; ++i) {
-				var c = d.charts[i];
+			for (var id in d.charts) {
+				var c = d.charts[id];
+				c.id = id;
 				models.push(CMDBuild.model.CMDashboardChart.build(c));
 			}
 	
@@ -128,7 +129,7 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 
 	fields: [
 		// generic
-		{name : 'id',type : 'int'},
+		{name : 'id',type : 'string'},
 		{name : 'name', type : 'string'},
 		{name : 'description', type : 'string'},
 		{name : 'active', type: 'boolean'},
@@ -148,9 +149,9 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'valueAxisLabel', type : 'string'},
 
 		// configuration
-		{name : 'maximum',type : 'nit'},
-		{name : 'minimum',type : 'nit'},
-		{name : 'steps',type : 'nit'},
+		{name : 'maximum',type : 'int'},
+		{name : 'minimum',type : 'int'},
+		{name : 'steps',type : 'int'},
 		{name : 'fgcolor',type : 'string'},
 		{name : 'bgcolor',type : 'string'},
 		

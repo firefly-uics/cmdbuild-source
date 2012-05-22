@@ -48,8 +48,8 @@
 
 			var charts = dashboard.getCharts();
 			expect(charts.length).toBe(2);
-			expect(charts[0].getId()).toBe(1);
-			expect(charts[1].getId()).toBe(3);
+			expect(charts[0].getId()).toBe('1');
+			expect(charts[1].getId()).toBe('3');
 		});
 
 		it('is able to replace a chart', function() {
@@ -67,7 +67,7 @@
 
 			var charts = dashboard.getCharts();
 			expect(charts.length).toBe(2);
-			expect(charts[0].getId()).toBe(3);
+			expect(charts[0].getId()).toBe('3');
 		});
 
 		it('is able to retrieve a chart', function() {
@@ -84,7 +84,7 @@
 			}));
 
 			var chart = dashboard.getChartWithId(2);
-			expect(chart.getId()).toBe(2);
+			expect(chart.getId()).toBe('2');
 		});
 	});
 })();

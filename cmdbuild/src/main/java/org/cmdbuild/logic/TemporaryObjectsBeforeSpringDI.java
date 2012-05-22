@@ -13,12 +13,11 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.services.DBService;
-import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.store.MapDashboardStore;
 import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
-import org.cmdbuild.workflow.WorkflowConstants;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
@@ -51,6 +50,10 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static CachingDriver getDriver() {
 		return driver;
+	}
+
+	public static DashboardLogic getDashboardLogic(UserContext userCtx) {
+		return new DashboardLogic(getUserContextView(userCtx), new MapDashboardStore());
 	}
 
 	public static CMDataView getUserContextView(UserContext userCtx) {

@@ -22,6 +22,9 @@ public class JsonResponse {
 		return responseObject;
 	}
 
+	/**
+	 * Use only in the JsonDispatcher, remove when switching to Spring MVC.
+	 */
 	public String toString() {
 		final ObjectMapper mapper = new ObjectMapper();
 		try {

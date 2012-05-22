@@ -34,10 +34,12 @@
 
 		initComponent : function() {
 			this.callParent(arguments);
+			this.view.disable();
 		},
 
 		dashboardWasSelected: function(d) {
 			this.dashboard = d;
+			this.view.enable();
 			this.view.enableTBarButtons(onlyAdd=true);
 			this.view.disableButtons();
 	
@@ -46,7 +48,7 @@
 		},
 
 		prepareForAdd: function() {
-			// alert("prepareForAdddashboard");
+			this.view.disable();
 		},
 
 		// viewDelegate
@@ -109,8 +111,7 @@
 			this.formController.initView();
 
 			if (this.chart) {
-				formData.id = this.chart.getId(),
-				this.proxy.modify(this.dashboard.getId(), formData.id, formData, cb);
+				this.proxy.modify(this.dashboard.getId(), this.chart.getId(), formData, cb);
 			} else {
 				this.proxy.add(this.dashboard.getId(), formData, cb);
 			}

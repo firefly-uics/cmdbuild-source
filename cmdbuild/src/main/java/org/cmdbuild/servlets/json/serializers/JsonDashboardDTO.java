@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import java.util.Map;
+
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -19,21 +21,14 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.logic.DashboardLogic.DashboardDefinition;
+import org.cmdbuild.model.dashboard.DashboardDefinition;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public interface JsonDashboardResponses {
+public interface JsonDashboardDTO {
 
 	public class JsonDashboardListResponse {
-
-		static Function<DashboardDefinition, JsonDashboard> dashboardConverter = new Function<DashboardDefinition, JsonDashboard>() {
-			@Override
-			public JsonDashboard apply(final DashboardDefinition input) {
-				return new JsonDashboard(input);
-			}
-		};
 
 		static Function<CMFunction, JsonDataSource> dataSourceConverter = new Function<CMFunction, JsonDataSource>() {
 			@Override
@@ -42,25 +37,20 @@ public interface JsonDashboardResponses {
 			}
 		};
 
-		private final Iterable<JsonDashboard> dashboards;
+		private final Map<Long, DashboardDefinition> dashboards;
 		private final Iterable<JsonDataSource> dataSources;
 
-		public JsonDashboardListResponse(final Iterable<DashboardDefinition> dashboards, final Iterable<? extends CMFunction> dataSources) {
-			this.dashboards = Iterables.transform(dashboards, dashboardConverter);
+		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards, final Iterable<? extends CMFunction> dataSources) {
+			this.dashboards = dashboards;
 			this.dataSources = Iterables.transform(dataSources, dataSourceConverter);
 		}
 
-		public Iterable<JsonDashboard> getDashboards() {
+		public Map<Long, DashboardDefinition> getDashboards() {
 			return dashboards;
 		}
+
 		public Iterable<JsonDataSource> getDataSources() {
 			return dataSources;
-		}
-	}
-
-	public class JsonDashboard {
-
-		private JsonDashboard(final DashboardDefinition inner) {
 		}
 	}
 
@@ -123,32 +113,32 @@ public interface JsonDashboardResponses {
 
 			@Override
 			public void visit(BooleanAttributeType attributeType) {
-				typeName = AttributeType.BOOLEAN.toString().toLowerCase();
+				typeName = AttributeType.BOOLEAN.toString();
 			}
 
 			@Override
 			public void visit(DateTimeAttributeType attributeType) {
-				typeName = AttributeType.TIMESTAMP.toString().toLowerCase();
+				typeName = AttributeType.TIMESTAMP.toString();
 			}
 
 			@Override
 			public void visit(DateAttributeType attributeType) {
-				typeName = AttributeType.DATE.toString().toLowerCase();
+				typeName = AttributeType.DATE.toString();
 			}
 
 			@Override
 			public void visit(DecimalAttributeType attributeType) {
-				typeName = AttributeType.DECIMAL.toString().toLowerCase();
+				typeName = AttributeType.DECIMAL.toString();
 			}
 
 			@Override
 			public void visit(DoubleAttributeType attributeType) {
-				typeName = AttributeType.DOUBLE.toString().toLowerCase();
+				typeName = AttributeType.DOUBLE.toString();
 			}
 
 			@Override
 			public void visit(ForeignKeyAttributeType attributeType) {
-				typeName = AttributeType.FOREIGNKEY.toString().toLowerCase();
+				typeName = AttributeType.FOREIGNKEY.toString();
 			}
 
 			@Override
@@ -158,37 +148,37 @@ public interface JsonDashboardResponses {
 
 			@Override
 			public void visit(IntegerAttributeType attributeType) {
-				typeName = AttributeType.INTEGER.toString().toLowerCase();
+				typeName = AttributeType.INTEGER.toString();
 			}
 
 			@Override
 			public void visit(IPAddressAttributeType attributeType) {
-				typeName = AttributeType.INET.toString().toLowerCase();
+				typeName = AttributeType.INET.toString();
 			}
 
 			@Override
 			public void visit(LookupAttributeType attributeType) {
-				typeName = AttributeType.LOOKUP.toString().toLowerCase();
+				typeName = AttributeType.LOOKUP.toString();
 			}
 
 			@Override
 			public void visit(ReferenceAttributeType attributeType) {
-				typeName = AttributeType.REFERENCE.toString().toLowerCase();
+				typeName = AttributeType.REFERENCE.toString();
 			}
 
 			@Override
 			public void visit(StringAttributeType attributeType) {
-				typeName = AttributeType.STRING.toString().toLowerCase();
+				typeName = AttributeType.STRING.toString();
 			}
 
 			@Override
 			public void visit(TextAttributeType attributeType) {
-				typeName = AttributeType.TEXT.toString().toLowerCase();
+				typeName = AttributeType.TEXT.toString();
 			}
 
 			@Override
 			public void visit(TimeAttributeType attributeType) {
-				typeName = AttributeType.TIME.toString().toLowerCase();
+				typeName = AttributeType.TIME.toString();
 			}
 		};
 	}

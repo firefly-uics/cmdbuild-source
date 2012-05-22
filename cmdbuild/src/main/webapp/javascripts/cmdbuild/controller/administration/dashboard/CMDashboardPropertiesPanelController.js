@@ -55,8 +55,7 @@
 		onSaveButtonClick: function() {
 			var data = this.view.getFieldsValue();
 			if (this.dashboard) {
-				data.id = this.dashboard.getId();
-				CMDBuild.ServiceProxy.Dashboard.modify(data, proxySuccess, this);
+				CMDBuild.ServiceProxy.Dashboard.modify(this.dashboard.getId(), data, proxySuccess, this);
 			} else {
 				CMDBuild.ServiceProxy.Dashboard.add(data, proxySuccess, this);
 			}
