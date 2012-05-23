@@ -13,6 +13,7 @@ public interface CMProcessClass extends CMClass {
 	 * Creates a definition template for this process.  
 	 * 
 	 * @return a template process definition versions
+	 * @throws CMWorkflowException
 	 */
 	DataSource getDefinitionTemplate() throws CMWorkflowException;
 
@@ -20,6 +21,7 @@ public interface CMProcessClass extends CMClass {
 	 * Returns the available process definition versions .
 	 * 
 	 * @return process definition versions
+	 * @throws CMWorkflowException
 	 */
 	String[] getDefinitionVersions() throws CMWorkflowException;
 
@@ -27,6 +29,7 @@ public interface CMProcessClass extends CMClass {
 	 * Returns one version of the definition file for this process.  
 	 * 
 	 * @return process definition
+	 * @throws CMWorkflowException
 	 */
 	DataSource getDefinition(String version) throws CMWorkflowException;
 
@@ -46,4 +49,15 @@ public interface CMProcessClass extends CMClass {
 	 * @return if process can be stopped by every user that can modify it
 	 */
 	boolean isUserStoppable();
+
+	/**
+	 * Returns the start activity for a group. It considers the latest
+	 * package version that is bound to this process.
+	 * 
+	 * @param groupName
+	 * @return start activity for the group
+	 * @throws CMWorkflowException if no activity is defined for that group
+	 */
+	CMActivity getStartActivity(String groupName) throws CMWorkflowException;
+
 }

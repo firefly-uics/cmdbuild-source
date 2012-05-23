@@ -106,6 +106,26 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}.execute();
 	}
 
+	@Override
+	public byte[][] downloadAllPackages() throws CMWorkflowException {
+		return new TransactedExecutor<byte[][]>() {
+			@Override
+			protected byte[][] command() throws Exception {
+				final PackageAdministration pa = shark().getPackageAdministration();
+				final String[] pkgIds = pa.getOpenedPackageIds(handle());
+				final byte[][] out = new byte[pkgIds.length][];
+				for (int i = 0; i < pkgIds.length; ++i) {
+					final String pkgId = pkgIds[i];
+					final String pkgVer = pa.getCurrentPackageVersion(handle(), pkgId);
+					final byte[] rawPkg = pa.getPackageContent(handle(), pkgId, pkgVer);
+					out[i] = rawPkg;
+				}
+				return out;
+			}
+		}.execute();
+	}
+
+
 	private final SharkInterface shark() throws Exception {
 		if (shark == null) {
 			synchronized (this) {

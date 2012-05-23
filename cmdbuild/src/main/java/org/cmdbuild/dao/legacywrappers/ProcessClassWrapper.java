@@ -3,6 +3,7 @@ package org.cmdbuild.dao.legacywrappers;
 import javax.activation.DataSource;
 
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
@@ -39,6 +40,11 @@ public class ProcessClassWrapper extends ClassWrapper implements CMProcessClass 
 	@Override
 	public boolean isUserStoppable() {
 		return table.isUserStoppable();
+	}
+
+	@Override
+	public CMActivity getStartActivity(String groupName) throws CMWorkflowException {
+		return processDefinitionManager.getStartActivity(this, groupName);
 	}
 
 }
