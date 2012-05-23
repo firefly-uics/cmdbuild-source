@@ -13,10 +13,29 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 
 public class Workflow extends JSONBase {
+
+	@JSONExported
+	public JsonResponse getStartActivity(
+			@Parameter("idClass") Long processClassId,
+			//@Parameter("groupName") String groupName,
+			final UserContext userCtx) throws CMWorkflowException {
+		final WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final CMActivity ad;
+		// FIXME Move this in the logic and handle passing a groupName for both types of users
+		if (userCtx.privileges().isAdmin()) {
+			ad = logic.getAdminStartActivity(processClassId);
+		} else {
+			final String groupName = userCtx.getDefaultGroup().getName();
+			ad = logic.getStartActivity(processClassId, groupName);
+		}
+		return JsonResponse.success(JsonActivityDefinition.fromActivityDefinition(ad));
+	}
 
 	@Admin
 	@JSONExported

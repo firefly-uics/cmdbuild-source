@@ -23,24 +23,24 @@ import org.enhydra.jxpdl.XPDLRepositoryHandler;
 import org.enhydra.jxpdl.elements.Package;
 import org.w3c.dom.Document;
 
-public class XPDLPackageFactory {
+public class XpdlPackageFactory {
 
 	private static final boolean IS_XML_REPRESENTATION = true;
 
-	public static Package readXpdl(final InputStream is) throws XPDLException {
+	public static Package readXpdl(final InputStream is) throws XpdlException {
 		try {
 			byte[] pkgContent = IOUtils.toByteArray(is);
 			return readXpdl(pkgContent);
 		} catch (Exception e) {
-			throw new XPDLException(e);
+			throw new XpdlException(e);
 		}
 	}
 
-	public static Package readXpdl(final byte[] pkgContent) throws XPDLException {
+	public static Package readXpdl(final byte[] pkgContent) throws XpdlException {
 		try {
 			return xmlInterface().openPackageFromStream(pkgContent, IS_XML_REPRESENTATION);
 		} catch (Exception e) {
-			throw new XPDLException(e);
+			throw new XpdlException(e);
 		}
 	}
 
@@ -48,18 +48,18 @@ public class XPDLPackageFactory {
 		return new XMLInterfaceImpl();
 	}
 
-	public static byte[] xpdlByteArray(final Package pkg) throws XPDLException {
+	public static byte[] xpdlByteArray(final Package pkg) throws XpdlException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		XPDLPackageFactory.writeXpdl(pkg, os);
+		XpdlPackageFactory.writeXpdl(pkg, os);
 		return os.toByteArray();
 	}
 
-	public static void writeXpdl(final Package pkg, final OutputStream os) throws XPDLException {
+	public static void writeXpdl(final Package pkg, final OutputStream os) throws XpdlException {
 		try {
 			final Document document = writeDocument(pkg);
 			writeDocumentToOutputStream(document, os);
 		} catch (Exception e) {
-			throw new XPDLException(e);
+			throw new XpdlException(e);
 		}
 	}
 

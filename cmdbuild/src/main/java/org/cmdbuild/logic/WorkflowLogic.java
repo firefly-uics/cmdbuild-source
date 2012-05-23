@@ -8,6 +8,7 @@ import javax.activation.DataSource;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -30,6 +31,29 @@ public class WorkflowLogic {
 	public WorkflowLogic(final CMWorkflowEngine wfEngine) {
 		this.wfEngine = wfEngine;
 	}
+
+	/*
+	 * Management
+	 */
+
+	/**
+	 * 
+	 * @param process class name or id
+	 * @param group name or null for the admin start (amazingly awful thing)
+	 * @return
+	 * @throws CMWorkflowException
+	 */
+	public CMActivity getStartActivity(final Object processClassNameOrId, final String groupName) throws CMWorkflowException {
+		return wfEngine.findProcessClass(processClassNameOrId).getStartActivity(groupName);
+	}
+
+	public CMActivity getAdminStartActivity(final Object processClassNameOrId) throws CMWorkflowException {
+		return getStartActivity(processClassNameOrId, null);
+	}
+
+	/*
+	 * Administration
+	 */
 
 	public DataSource getProcessDefinitionTemplate(final Object processClassNameOrId) throws CMWorkflowException {
 		return wfEngine.findProcessClass(processClassNameOrId).getDefinitionTemplate();
@@ -67,4 +91,5 @@ public class WorkflowLogic {
 		final String relativeUploadPath = SKETCH_PATH+process.getName()+customFileStore.getExtension(ds.getName());
 		customFileStore.save(ds.getInputStream(), relativeUploadPath);
 	}
+
 }

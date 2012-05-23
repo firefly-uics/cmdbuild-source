@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
-import org.cmdbuild.workflow.xpdl.XPDLPackageFactory;
+import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.shark.api.common.SharkConstants;
 import org.junit.Before;
@@ -65,15 +65,15 @@ public class RemoteWorkflowServiceTest {
 		pkg.getScript().setType(SharkConstants.GRAMMAR_JAVA);
 		pkg.getPackageHeader().setXPDLVersion("2.1");
 		pkg.setName("n1");
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(pkg));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(pkg));
 
 		pkg.getPackageHeader().setXPDLVersion("1.0");
 		pkg.setName("n2");
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(pkg));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(pkg));
 
 		assertEquals(2, ws.getPackageVersions(pkgId).length);
 
-		pkg = XPDLPackageFactory.readXpdl(ws.downloadPackage(pkgId, "1"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(pkgId, "1"));
 		assertThat(pkg.getName(), is("n1"));
 	}
 

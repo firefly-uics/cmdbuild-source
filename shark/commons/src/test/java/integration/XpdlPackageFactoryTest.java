@@ -14,12 +14,12 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
-import org.cmdbuild.workflow.xpdl.XPDLException;
-import org.cmdbuild.workflow.xpdl.XPDLPackageFactory;
+import org.cmdbuild.workflow.xpdl.XpdlException;
+import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.enhydra.jxpdl.elements.Package;
 import org.junit.Test;
 
-public class XPDLPackageFactoryTest {
+public class XpdlPackageFactoryTest {
 
 	private Charset XPDL_CHARSET = Charset.forName("UTF-8");
 
@@ -29,12 +29,12 @@ public class XPDLPackageFactoryTest {
 			"<xpdl:Package xmlns=\"http://www.wfmc.org/2008/XPDL2.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Id=\"%s\" xsi:schemaLocation=\"http://www.wfmc.org/2008/XPDL2.1 http://www.wfmc.org/standards/docs/bpmnxpdl_31.xsd\"/>\n";
 
 	@Test
-	public void emptyPackageSerializationWorks() throws XPDLException {
+	public void emptyPackageSerializationWorks() throws XpdlException {
 		Package pkg = new Package();
 		pkg.setId(PACKAGE_NAME);
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		XPDLPackageFactory.writeXpdl(pkg, os);
+		XpdlPackageFactory.writeXpdl(pkg, os);
 		String xpdl = new String(os.toByteArray(), XPDL_CHARSET);
 
 		assertThat(xpdl, is(String.format(EMPTY_XML_FORMAT, PACKAGE_NAME)));
@@ -45,7 +45,7 @@ public class XPDLPackageFactoryTest {
 		String xpdl = String.format(EMPTY_XML_FORMAT, PACKAGE_NAME);
 
 		ByteArrayInputStream is = new ByteArrayInputStream(xpdl.getBytes(XPDL_CHARSET));
-		Package pkg = XPDLPackageFactory.readXpdl(is);
+		Package pkg = XpdlPackageFactory.readXpdl(is);
 
 		assertThat(pkg.getId(), is(PACKAGE_NAME));
 	}
@@ -54,12 +54,12 @@ public class XPDLPackageFactoryTest {
 	public void packageSerializationRoundtripCreatesTheSameFile() throws Exception {
 		byte[] resourceData = obtainByteData("/xpdl/testpkg.xpdl");
 		ByteArrayInputStream is = new ByteArrayInputStream(resourceData);
-		Package pkg = XPDLPackageFactory.readXpdl(is);
+		Package pkg = XpdlPackageFactory.readXpdl(is);
 
 		assertThat(pkg.getParticipant("Role"), is(notNullValue()));
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		XPDLPackageFactory.writeXpdl(pkg, os);
+		XpdlPackageFactory.writeXpdl(pkg, os);
 
 		String inputXml = new String(resourceData, XPDL_CHARSET);
 		String outputXml = new String(os.toByteArray(), XPDL_CHARSET);

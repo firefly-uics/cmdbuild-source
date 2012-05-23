@@ -1,22 +1,29 @@
 package org.cmdbuild.workflow.xpdl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.jcip.annotations.NotThreadSafe;
+
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
+import org.enhydra.jxpdl.XMLInterface;
+import org.enhydra.jxpdl.XMLInterfaceImpl;
 import org.enhydra.jxpdl.elements.DataField;
 import org.enhydra.jxpdl.elements.DataTypes;
-import org.enhydra.jxpdl.elements.ExtendedAttribute;
-import org.enhydra.jxpdl.elements.ExtendedAttributes;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.jxpdl.elements.Participant;
 import org.enhydra.jxpdl.elements.TypeDeclaration;
 import org.enhydra.jxpdl.elements.TypeDeclarations;
 import org.enhydra.jxpdl.elements.WorkflowProcess;
+import org.enhydra.jxpdl.elements.WorkflowProcesses;
 import org.enhydra.shark.api.common.SharkConstants;
 
 /**
  * It makes easier the handling of the XPDL DOM
  */
-public class XPDLDocument {
+@NotThreadSafe
+public class XpdlDocument {
 
 	public enum ScriptLanguages {
 		JAVA(SharkConstants.GRAMMAR_JAVA),
@@ -124,14 +131,16 @@ public class XPDLDocument {
 	public static final String ARRAY_DECLARED_TYPE_LOCATION_SUFFIX = "<>";
 
 	private final Package pkg;
+	private final XMLInterface xmlInterface;
 
-	public XPDLDocument(final String pkgId) {
+	public XpdlDocument(final String pkgId) {
 		this(new Package());
 		pkg.setId(pkgId);
 		pkg.getPackageHeader().setXPDLVersion(DEFAULT_XPDL_VERSION);
 	}
 
-	public XPDLDocument(final Package pkg) {
+	public XpdlDocument(final Package pkg) {
+		xmlInterface = new XMLInterfaceImpl();
 		this.pkg = pkg;
 	}
 
@@ -143,28 +152,69 @@ public class XPDLDocument {
 		return pkg.getId();
 	}
 
-	public void addProcess(final String wpId) {
+	public XpdlProcess createProcess(final String wpId) {
+		turnReadWrite();
 		WorkflowProcess wp = (WorkflowProcess) pkg.getWorkflowProcesses().generateNewElement();
 		wp.setId(wpId);
 		pkg.getWorkflowProcesses().add(wp);
+		return new XpdlProcess(this, wp);
+	}
+
+	public XpdlProcess findProcess(final String wpId) {
+		final WorkflowProcess wp = pkg.getWorkflowProcess(wpId);
+		if (wp != null) {
+			return new XpdlProcess(this, wp);
+		} else {
+			return null;
+		}
+	}
+
+	public List<XpdlProcess> findAllProcesses() {
+		final WorkflowProcesses wps = pkg.getWorkflowProcesses();
+		final List<XpdlProcess> out = new ArrayList<XpdlProcess>(wps.size());
+		for (int i = 0; i < wps.size(); ++i) {
+			final WorkflowProcess wp = (WorkflowProcess) wps.get(i);
+			out.add(new XpdlProcess(this, wp));
+		}
+		return out;
 	}
 
 	public void addPackageField(final String dfId, final StandardAndCustomTypes type) {
+		turnReadWrite();
 		DataField df = createDataField(dfId, type);
 		pkg.getDataFields().add(df);
 	}
 
-	public void addProcessField(final String wpId, final String dfId, final StandardAndCustomTypes type) {
-		DataField df = createDataField(dfId, type);
-		pkg.getWorkflowProcess(wpId).getDataFields().add(df);
-	}
-
-	private DataField createDataField(final String dfId, final StandardAndCustomTypes type) {
+	DataField createDataField(final String dfId, final StandardAndCustomTypes type) {
 		DataField df = (DataField) pkg.getDataFields().generateNewElement();
 		df.setId(dfId);
 		type.setTypeToField(df);
 		return df;
 	}
+
+	public void setDefaultScriptingLanguage(final ScriptLanguages lang) {
+		pkg.getScript().setType(lang.mimeType);
+	}
+
+	public void addRoleParticipant(final String participantId) {
+		turnReadWrite();
+		Participant p = (Participant) pkg.getParticipants().generateNewElement();
+		p.setId(participantId);
+		p.getParticipantType().setTypeROLE(); // Default but better safe than sorry
+		pkg.getParticipants().add(p);
+	}
+
+	public void addSystemParticipant(final String participantId) {
+		turnReadWrite();
+		Participant p = (Participant) pkg.getParticipants().generateNewElement();
+		p.setId(participantId);
+		p.getParticipantType().setTypeSYSTEM();
+		pkg.getParticipants().add(p);
+	}
+
+	/*
+	 * For backward compatibility
+	 */
 
 	public void createCustomTypeDeclarations() {
 		TypeDeclarations types = pkg.getTypeDeclarations();
@@ -176,60 +226,16 @@ public class XPDLDocument {
 		}
 	}
 
-	public void setDefaultScriptingLanguage(final ScriptLanguages lang) {
-		pkg.getScript().setType(lang.mimeType);
-	}
-
-	public void addProcessExtendedAttribute(final String wpId, final String key, final String value) {
-		final ExtendedAttributes xattrs = pkg.getWorkflowProcess(wpId).getExtendedAttributes();
-		final ExtendedAttribute xa = (ExtendedAttribute) xattrs.generateNewElement();
-		xa.setName(key);
-		xa.setVValue(value);
-		xattrs.add(xa);
-	}
-
-	public String getProcessExtendedAttribute(String wpId, final String key) {
-		final WorkflowProcess wp = pkg.getWorkflowProcess(wpId);
-		if (wp == null) {
-			return null;
-		}
-		final ExtendedAttributes xattrs = wp.getExtendedAttributes();
-		if (xattrs == null) {
-			return null;
-		}
-		final ExtendedAttribute xa = xattrs.getFirstExtendedAttributeForName(key);
-		if (xa == null) {
-			return null;
-		}
-		return xa.getVValue();
-	}
-
-	public void addRoleParticipant(final String participantId) {
-		Participant p = (Participant) pkg.getParticipants().generateNewElement();
-		p.setId(participantId);
-		p.getParticipantType().setTypeROLE(); // Default but better safe than sorry
-		pkg.getParticipants().add(p);
-	}
-
-	public void addSystemParticipant(final String participantId) {
-		Participant p = (Participant) pkg.getParticipants().generateNewElement();
-		p.setId(participantId);
-		p.getParticipantType().setTypeSYSTEM();
-		pkg.getParticipants().add(p);
-	}
-
 	private void addExternalReferenceType(TypeDeclarations types, StandardAndCustomTypes t) {
 		addExternalReferenceType(types, t.getDeclaredTypeId(), t.getDeclaredTypeLocation());
 	}
 
-	/*
-	 * For backward compatibility
-	 */
 	private void addExternalReferenceArrayType(TypeDeclarations types, StandardAndCustomTypes t) {
 		addExternalReferenceType(types, t.getDeclaredTypeId()+ARRAY_DECLARED_TYPE_NAME_SUFFIX, t.getDeclaredTypeLocation()+ARRAY_DECLARED_TYPE_LOCATION_SUFFIX);
 	}
 
 	private void addExternalReferenceType(final TypeDeclarations types, final String id, final String location) {
+		turnReadWrite();
 		TypeDeclaration type = (TypeDeclaration) types.generateNewElement();
 		type.setId(id);
 		type.getDataTypes().getExternalReference().setLocation(location);
@@ -237,4 +243,31 @@ public class XPDLDocument {
 		types.add(type);
 	}
 
+	/**
+	 * Aberration because the library does not allow graph traversal when in
+	 * read/write mode. This function should be called before querying the
+	 * graph unless elements are accessed by id.
+	 * 
+	 * We are more interested in development speed than running speed, so we
+	 * put the whole package in read only.
+	 */
+	void turnReadOnly() {
+		if (!pkg.isReadOnly()) {
+			pkg.setReadOnly(true);
+			pkg.initCaches(xmlInterface);
+		}
+	}
+
+	/**
+	 * Aberration because the library rejects changes to the tree when in read
+	 * only mode. This function should be called before every "add" operation.
+	 * 
+	 * We are more interested in development speed than running speed, so we
+	 * put the whole package in read write.
+	 */
+	void turnReadWrite() {
+		if (pkg.isReadOnly()) {
+			pkg.setReadOnly(false);
+		}
+	}
 }

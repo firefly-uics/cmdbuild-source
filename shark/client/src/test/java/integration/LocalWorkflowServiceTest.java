@@ -12,10 +12,10 @@ import java.util.UUID;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.LocalSharkService;
-import org.cmdbuild.workflow.xpdl.XPDLDocument;
-import org.cmdbuild.workflow.xpdl.XPDLException;
-import org.cmdbuild.workflow.xpdl.XPDLPackageFactory;
-import org.cmdbuild.workflow.xpdl.XPDLDocument.ScriptLanguages;
+import org.cmdbuild.workflow.xpdl.XpdlDocument;
+import org.cmdbuild.workflow.xpdl.XpdlException;
+import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
+import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguages;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.shark.api.client.wfservice.PackageInvalid;
 import org.junit.Before;
@@ -44,7 +44,7 @@ public class LocalWorkflowServiceTest {
 	}
 
 	@Test
-	public void definitionsCannotBeRubbish() throws XPDLException, CMWorkflowException {
+	public void definitionsCannotBeRubbish() throws XpdlException, CMWorkflowException {
 		try {
 			ws.uploadPackage(pkgId, new byte[0]);
 			fail();
@@ -54,10 +54,10 @@ public class LocalWorkflowServiceTest {
 	}
 
 	@Test
-	public void definitionsMustHaveDefaultScriptingLanguage() throws XPDLException, CMWorkflowException {
-		final XPDLDocument xpdl = new XPDLDocument(pkgId);
+	public void definitionsMustHaveDefaultScriptingLanguage() throws XpdlException, CMWorkflowException {
+		final XpdlDocument xpdl = new XpdlDocument(pkgId);
 		try {
-			ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(xpdl.getPkg()));
+			ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(xpdl.getPkg()));
 			fail();
 		} catch (final CMWorkflowException we) {
 			assertThat(we.getCause(), instanceOf(PackageInvalid.class));
@@ -66,14 +66,14 @@ public class LocalWorkflowServiceTest {
 			assertThat(sharkException.getXPDLValidationErrors(), containsString("Unsupported script language"));
 		}
 		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(xpdl.getPkg()));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(xpdl.getPkg()));
 	}
 
 	@Test
 	public void packageVersionIncreasesWithEveryUpload() throws CMWorkflowException {
-		final XPDLDocument xpdl = new XPDLDocument(pkgId);
+		final XpdlDocument xpdl = new XpdlDocument(pkgId);
 		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
-		final byte[] xpdlFile = XPDLPackageFactory.xpdlByteArray(xpdl.getPkg());
+		final byte[] xpdlFile = XpdlPackageFactory.xpdlByteArray(xpdl.getPkg());
 
 		String[] versions = ws.getPackageVersions(pkgId);
 		assertEquals(0, versions.length);
@@ -91,37 +91,58 @@ public class LocalWorkflowServiceTest {
 
 	@Test
 	public void anyPackageVersionCanBeDownloaded() throws CMWorkflowException {
-		final XPDLDocument xpdl = new XPDLDocument(pkgId);
+		final XpdlDocument xpdl = new XpdlDocument(pkgId);
 		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
 		Package pkg = xpdl.getPkg();
 
 		pkg.setName("n1");
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(pkg));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(pkg));
 
 		pkg.setName("n2");
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(pkg));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(pkg));
 
 		pkg.setName("n3");
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(pkg));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(pkg));
 
-		pkg = XPDLPackageFactory.readXpdl(ws.downloadPackage(pkgId, "1"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(pkgId, "1"));
 		assertThat(pkg.getName(), is("n1"));
 
-		pkg = XPDLPackageFactory.readXpdl(ws.downloadPackage(pkgId, "3"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(pkgId, "3"));
 		assertThat(pkg.getName(), is("n3"));
 	}
 
 	@Test
 	public void xpdl1PackagesAreNotConvertedToXpdl2() throws CMWorkflowException {
-		final XPDLDocument xpdl = new XPDLDocument(pkgId);
+		final XpdlDocument xpdl = new XpdlDocument(pkgId);
 		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
 		Package pkg = xpdl.getPkg();
 
 		pkg.getPackageHeader().setXPDLVersion("1.0");
-		ws.uploadPackage(pkgId, XPDLPackageFactory.xpdlByteArray(pkg));
+		ws.uploadPackage(pkgId, XpdlPackageFactory.xpdlByteArray(pkg));
 
-		pkg = XPDLPackageFactory.readXpdl(ws.downloadPackage(pkgId, "1"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(pkgId, "1"));
 		assertThat(pkg.getPackageHeader().getXPDLVersion(), is("1.0"));
 	}
 
+	@Test
+	public void canDownloadAllPackages() throws CMWorkflowException {
+		String ID1 = UUID.randomUUID().toString();
+		String ID2 = UUID.randomUUID().toString();
+		int initialSize = ws.downloadAllPackages().length;
+
+		ws.uploadPackage(ID1, createXpdl(ID1));
+
+		assertThat(ws.downloadAllPackages().length, is(initialSize+1));
+
+		ws.uploadPackage(ID2, createXpdl(ID2));
+		ws.uploadPackage(ID2, createXpdl(ID2));
+
+		assertThat(ws.downloadAllPackages().length, is(initialSize+2));
+	}
+
+	private byte[] createXpdl(final String packageId) throws XpdlException {
+		XpdlDocument xpdl = new XpdlDocument(packageId);
+		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
+		return XpdlPackageFactory.xpdlByteArray(xpdl.getPkg());
+	}
 }

@@ -1,14 +1,14 @@
 package org.cmdbuild.workflow.xpdl;
 
-public class XPDLException extends CMProcessDefinitionException {
+public class XpdlException extends CMProcessDefinitionException {
 
 	private static final long serialVersionUID = -853518722848389606L;
 
-	public XPDLException(Throwable cause) {
+	public XpdlException(Throwable cause) {
         super(cause);
     }
 
-	public XPDLException(final String message) {
+	public XpdlException(final String message) {
 		super(message);
 	}
 }

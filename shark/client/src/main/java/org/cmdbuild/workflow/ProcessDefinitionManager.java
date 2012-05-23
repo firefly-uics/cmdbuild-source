@@ -45,4 +45,15 @@ public interface ProcessDefinitionManager {
 	 */
 	void updateDefinition(CMProcessClass process, DataSource pkgDefData) throws CMWorkflowException;
 
+	/**
+	 * Gets the first process activity for a group. It is totally a CMDBuild
+	 * customization, since the workflow engine starts every starting activity.
+	 * 
+	 * @param process
+	 * @param name of the group that is going to start the process
+	 * @return activity definition
+	 * @throws CMWorkflowException
+	 */
+	CMActivity getStartActivity(CMProcessClass process, String groupName) throws CMWorkflowException;
+
 }
