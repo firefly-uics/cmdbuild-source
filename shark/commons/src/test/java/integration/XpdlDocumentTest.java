@@ -1,5 +1,6 @@
 package integration;
 
+import static org.cmdbuild.workflow.xpdl.XpdlActivity.VARIABLE_PREFIX;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -14,12 +15,14 @@ import java.io.FileOutputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
+import org.cmdbuild.workflow.xpdl.XpdlActivity;
+import org.cmdbuild.workflow.xpdl.XpdlActivity.XpdlVariableSuffix;
+import org.cmdbuild.workflow.xpdl.XpdlActivitySet;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguages;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
-import org.cmdbuild.workflow.xpdl.XpdlActivity;
-import org.cmdbuild.workflow.xpdl.XpdlActivitySet;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.BasicType;
@@ -254,6 +257,42 @@ public class XpdlDocumentTest {
 		act.setPerformer("P1");
 
 		assertThat(act.getFirstPerformer(), is("P1"));
+	}
+
+	@Test
+	public void variablesToProcessCanBeExtracted() {
+		CMActivityVariableToProcess var;
+
+		doc = new XpdlDocument(TEST_PKG_ID);
+		XpdlActivity act = doc.createProcess(TEST_WP_ID).createActivity("A1");
+
+		assertThat(act.getVariablesToProcess().size(), is(0));
+
+		act.addExtendedAttribute("Rubbish", "Foo");
+		act.addExtendedAttribute(VARIABLE_PREFIX + XpdlVariableSuffix.VIEW, null);
+
+		assertThat(act.getVariablesToProcess().size(), is(0));
+
+		act.addExtendedAttribute(VARIABLE_PREFIX + XpdlVariableSuffix.VIEW, "Bar");
+
+		assertThat(act.getVariablesToProcess().size(), is(1));
+
+		var = act.getVariablesToProcess().get(0);
+		assertThat(var.getName(), is("Bar"));
+		assertThat(var.getType(), is(CMActivityVariableToProcess.Type.READ_ONLY));
+
+		act.addExtendedAttribute(VARIABLE_PREFIX + XpdlVariableSuffix.UPDATE, "Foo");
+		act.addExtendedAttribute(VARIABLE_PREFIX + XpdlVariableSuffix.UPDATEREQUIRED, "Baz");
+
+		assertThat(act.getVariablesToProcess().size(), is(3));
+
+		var = act.getVariablesToProcess().get(1);
+		assertThat(var.getName(), is("Foo"));
+		assertThat(var.getType(), is(CMActivityVariableToProcess.Type.READ_WRITE));
+
+		var = act.getVariablesToProcess().get(2);
+		assertThat(var.getName(), is("Baz"));
+		assertThat(var.getType(), is(CMActivityVariableToProcess.Type.READ_WRITE_REQUIRED));
 	}
 
 	/*
