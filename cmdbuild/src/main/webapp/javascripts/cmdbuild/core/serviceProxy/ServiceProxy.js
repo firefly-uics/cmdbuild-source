@@ -164,12 +164,21 @@ CMDBuild.ServiceProxy.core = {
 		}
 	},
 	doRequest: function(p) {
+		var successWithAdapter = Ext.Function.createInterceptor(p.success || Ext.emptyFn, function(response) {
+			if (p.adapter) {
+				var json =  Ext.JSON.decode(response.responseText);
+				var adaptedJson = p.adapter(json);
+				_debug("Adapted JSON result", json, adaptedJson);
+				response.responseText = Ext.JSON.encode(adaptedJson);
+			} 
+		});
+
 		CMDBuild.Ajax.request( {
 			url: p.url,
 			method: p.method,
 			params: p.params || {},
 			scope: p.scope || this,
-			success: p.success || Ext.emptyFn,
+			success: successWithAdapter,
 			failure: p.failure || Ext.emptyFn,
 			callback: p.callback || Ext.emptyFn,
 			important: p.important
@@ -291,11 +300,42 @@ CMDBuild.ServiceProxy.card = {
 CMDBuild.ServiceProxy.workflow = {
 	getstartactivitytemplate: function(idClass, p) {
 		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
-			url: 'services/json/management/modworkflow/getstartactivitytemplate',
+			url: 'services/json/workflow/getstartactivity',
 			method: 'GET',
-			params : {
+			params: {
 				idClass : idClass,
 				id : -1
+			},
+			adapter: function(input) {
+				var activity = input.response;
+
+				var vars = {};
+				for (i = 0, len = activity.variables.length; i < len; ++i) {
+					var v = activity.variables[i];
+					vars[v.name] = "";
+					vars[v.name+"_index"] = i;
+					vars[v.name+"_type"] = {
+						READ_ONLY: "VIEW",
+						READ_WRITE: "UPDATE",
+						READ_WRITE_REQUIRED: "UPDATEREQUIRED"
+					}[v.type];
+				}
+
+				var widgets = [];
+
+				return {
+					data: Ext.apply(vars, {
+						Id: -1,
+						IdClass: parseInt(idClass),
+						ProcessInstanceId: "tostart",
+						activityPerformerName: activity.performerName,
+						Code: activity.description,
+						CmdbuildExtendedAttributes: widgets,
+						priv_create: true,
+						priv_write: true
+					}),
+					success: true
+				};
 			}
 		}, p));
 	},

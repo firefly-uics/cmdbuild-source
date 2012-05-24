@@ -30,8 +30,22 @@ public class XpdlActivityWrapper implements CMActivity {
 	}
 
 	@Override
+	public String getDescription() {
+		return inner.getName();
+	}
+
+	@Override
+	public String getInstructions() {
+		return inner.getDescription();
+	}
+
+	@Override
 	public ActivityPerformer getFirstRolePerformer() {
 		return ActivityPerformer.newRolePerformer(inner.getFirstPerformer());
 	}
 
+	@Override
+	public List<CMActivityVariableToProcess> getVariables() {
+		return inner.getVariablesToProcess();
+	}
 }
