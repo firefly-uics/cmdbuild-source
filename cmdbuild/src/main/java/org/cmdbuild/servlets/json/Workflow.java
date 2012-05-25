@@ -23,7 +23,6 @@ public class Workflow extends JSONBase {
 	@JSONExported
 	public JsonResponse getStartActivity(
 			@Parameter("idClass") Long processClassId,
-			//@Parameter("groupName") String groupName,
 			final UserContext userCtx) throws CMWorkflowException {
 		final WorkflowLogic logic = new WorkflowLogic(userCtx);
 		final CMActivity ad;
