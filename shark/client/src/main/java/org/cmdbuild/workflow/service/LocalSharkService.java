@@ -2,6 +2,7 @@ package org.cmdbuild.workflow.service;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 
 /**
@@ -27,6 +28,7 @@ public class LocalSharkService extends AbstractSharkService {
 	}
 
 	protected WMConnectInfo getConnectionInfo() {
-		return new WMConnectInfo(config.getUsername(), "", DEFAULT_ENGINE_NAME, DEFAULT_SCOPE);
+		return new WMConnectInfo(config.getUsername(), StringUtils.EMPTY, DEFAULT_ENGINE_NAME, DEFAULT_SCOPE);
 	}
+
 }

@@ -19,6 +19,10 @@
 			<version>${shark.version}</version>
 			<type>war</type>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-shark-extensions</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
-
 </project>
