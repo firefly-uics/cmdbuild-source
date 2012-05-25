@@ -179,8 +179,8 @@ public class Serializer {
 		JSONObject serializer = new JSONObject();
 		try {
 			serializer.put("Category", attachment.getCategory());
-			serializer.put("CreationDate", new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(attachment.getCreated()));
-			serializer.put("ModificationDate", new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(attachment.getModified()));
+			serializer.put("CreationDate", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(attachment.getCreated()));
+			serializer.put("ModificationDate", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(attachment.getModified()));
 			serializer.put("Author", attachment.getAuthor());
 			serializer.put("Version", attachment.getVersion());
 			serializer.put("Filename", attachment.getName());
