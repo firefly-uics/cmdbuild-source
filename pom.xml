@@ -48,6 +48,7 @@
 		<module>cmdbuild-ws-client</module>
 		<module>shark/commons</module>
 		<module>shark/client</module>
+		<module>shark/extensions</module>
 		<module>shark/server</module>
 	</modules>
 

@@ -10,38 +10,15 @@ import static org.junit.Assert.fail;
 import java.util.UUID;
 
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.service.CMWorkflowService;
-import org.cmdbuild.workflow.service.LocalSharkService;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguages;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.shark.api.client.wfservice.PackageInvalid;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class LocalWorkflowServiceTest {
-
-	private static String USERNAME = "admin";
-
-	private static CMWorkflowService ws;
-	private String pkgId;
-
-	@BeforeClass
-	public static void initWorkflowService() {
-		ws = new LocalSharkService(new LocalSharkService.Config() {
-			public String getUsername() {
-				return USERNAME;
-			}
-		});
-	}
-
-	@Before
-	public void createRandomPackageName() {
-		pkgId = UUID.randomUUID().toString();
-	}
+public class XpdlHandlingTest extends LocalWorkflowServiceTest {
 
 	@Test
 	public void definitionsCannotBeRubbish() throws XpdlException, CMWorkflowException {
@@ -81,12 +58,12 @@ public class LocalWorkflowServiceTest {
 		ws.uploadPackage(pkgId, xpdlFile);
 
 		versions = ws.getPackageVersions(pkgId);
-		assertThat(versions, is(new String[] {"1"}));
+		assertThat(versions, is(new String[] { "1" }));
 
 		ws.uploadPackage(pkgId, xpdlFile);
 		ws.uploadPackage(pkgId, xpdlFile);
 		versions = ws.getPackageVersions(pkgId);
-		assertThat(versions, is(new String[] {"1","2","3"}));
+		assertThat(versions, is(new String[] { "1", "2", "3" }));
 	}
 
 	@Test
@@ -132,17 +109,12 @@ public class LocalWorkflowServiceTest {
 
 		ws.uploadPackage(ID1, createXpdl(ID1));
 
-		assertThat(ws.downloadAllPackages().length, is(initialSize+1));
+		assertThat(ws.downloadAllPackages().length, is(initialSize + 1));
 
 		ws.uploadPackage(ID2, createXpdl(ID2));
 		ws.uploadPackage(ID2, createXpdl(ID2));
 
-		assertThat(ws.downloadAllPackages().length, is(initialSize+2));
+		assertThat(ws.downloadAllPackages().length, is(initialSize + 2));
 	}
 
-	private byte[] createXpdl(final String packageId) throws XpdlException {
-		XpdlDocument xpdl = new XpdlDocument(packageId);
-		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
-		return XpdlPackageFactory.xpdlByteArray(xpdl.getPkg());
-	}
 }
