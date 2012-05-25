@@ -3,7 +3,6 @@ package org.cmdbuild.workflow.xpdl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.Activity;
@@ -12,11 +11,6 @@ import org.enhydra.jxpdl.elements.ExtendedAttributes;
 import org.enhydra.jxpdl.elements.Performer;
 
 public class XpdlActivity implements XpdlExtendedAttributesHolder  {
-
-	@Legacy("As in 1.x")
-	private static final String ADMIN_START_XA = "adminStart";
-
-	public static final String VARIABLE_PREFIX = "VariableToProcess_";
 
 	public enum XpdlVariableSuffix {
 		VIEW {
@@ -39,58 +33,6 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder  {
 		};
 
 		public abstract Type toGlobalType();
-	}
-
-	private static class XpdlActivityVariableToProcess implements CMActivityVariableToProcess {
-
-		private final String name;
-		private final Type type;
-
-		XpdlActivityVariableToProcess(final String name, final Type type) {
-			this.name = name;
-			this.type = type;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public Type getType() {
-			return type;
-		}
-
-		/**
-		 * Create a new instance if the passed extended attribute is a
-		 * variable to process.
-		 * 
-		 * @param activity extended attribute
-		 * @return a new instance or null if not a valid extended attribute
-		 */
-		static XpdlActivityVariableToProcess newInstance(final ExtendedAttribute xa) {
-			final String key = xa.getName();
-			final String name = xa.getVValue();
-			if (key == null || name == null) {
-				return null;
-			}
-			if (isVariableKey(key)) {
-				final Type type = extractType(key);
-				return new XpdlActivityVariableToProcess(name, type);
-			} else {
-				return null;
-			}
-		}
-
-		private static boolean isVariableKey(final String key) {
-			return key.startsWith(VARIABLE_PREFIX);
-		}
-
-		private static Type extractType(final String key) {
-			final String suffix = key.substring(VARIABLE_PREFIX.length());
-			final XpdlVariableSuffix xpdlType = XpdlVariableSuffix.valueOf(suffix);
-			return xpdlType.toGlobalType();
-		}
 	}
 
 	final XpdlDocument doc;
@@ -180,23 +122,23 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder  {
 		return extendedAttributes.getFirstExtendedAttributeValue(key);
 	}
 
-	@Legacy("As in 1.x")
-	public boolean isAdminStart() {
-		return (extendedAttributes.getFirstExtendedAttribute(ADMIN_START_XA) != null);
+	public XpdlExtendedAttribute getFirstExtendedAttribute(final String key) {
+		final ExtendedAttribute xa = extendedAttributes.getFirstExtendedAttribute(key);
+		return XpdlExtendedAttribute.newInstance(xa);
 	}
 
-	public List<CMActivityVariableToProcess> getVariablesToProcess() {
-		final List<CMActivityVariableToProcess> vars = new ArrayList<CMActivityVariableToProcess>();
+	public List<XpdlExtendedAttribute> getExtendedAttributes() {
+		final List<XpdlExtendedAttribute> xxas = new ArrayList<XpdlExtendedAttribute>();
 		final ExtendedAttributes xattrs = inner.getExtendedAttributes();
 		if (xattrs != null) {
 			for (int i = 0; i < xattrs.size(); ++i) {
 				final ExtendedAttribute xa = (ExtendedAttribute) xattrs.get(i);
-				final CMActivityVariableToProcess v = XpdlActivityVariableToProcess.newInstance(xa);
-				if (v != null) {
-					vars.add(v);
+				final XpdlExtendedAttribute xxa = XpdlExtendedAttribute.newInstance(xa);
+				if (xxa != null) {
+					xxas.add(xxa);
 				}
 			}
 		}
-		return vars;
+		return xxas;
 	}
 }

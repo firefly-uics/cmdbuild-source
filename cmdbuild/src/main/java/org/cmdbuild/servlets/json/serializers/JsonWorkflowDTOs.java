@@ -6,27 +6,7 @@ import org.cmdbuild.elements.widget.Widget;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-
 public interface JsonWorkflowDTOs {
-	
-	public class JsonActivityVariable {
-
-		private final CMActivityVariableToProcess inner;
-
-		public JsonActivityVariable(final CMActivityVariableToProcess variable) {
-			this.inner = variable;
-		}
-
-		public String getName() {
-			return inner.getName();
-		}
-
-		public CMActivityVariableToProcess.Type getType() {
-			return inner.getType();
-		}
-	}
 
 	public class JsonActivityDefinition {
 
@@ -52,15 +32,8 @@ public interface JsonWorkflowDTOs {
 			return inner.getInstructions();
 		}
 
-		public Iterable<JsonActivityVariable> getVariables() {
-			return Iterables.transform(inner.getVariables(), new Function<CMActivityVariableToProcess, JsonActivityVariable>() {
-
-				@Override
-				public JsonActivityVariable apply(CMActivityVariableToProcess input) {
-					return new JsonActivityVariable(input);
-				}
-				
-			});
+		public Iterable<CMActivityVariableToProcess> getVariables() {
+			return inner.getVariables();
 		}
 
 		public Iterable<Widget> getWidgets() {
