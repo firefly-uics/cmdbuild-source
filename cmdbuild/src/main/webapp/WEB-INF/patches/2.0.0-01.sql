@@ -76,3 +76,6 @@ BEGIN
 	RETURN;
 END
 $$ LANGUAGE PLPGSQL STABLE;
+
+SELECT cm_create_class('_Dashboards', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
+SELECT cm_create_class_attribute('_Dashboards', 'Definition', 'text', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');

@@ -233,6 +233,7 @@
                       "vertical": "Verticale"
                    }
                 },
+                "required": "Obbligatorio",
                 "steps": "Intervalli",
                 "title": "Titolo",
                 "valueField": "Campo valore",

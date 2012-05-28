@@ -9,9 +9,13 @@
 			{name: "name", type: "string"},
 			{name: "text", type: "string"},
 			{name: "startingClass", type: "string"}
-		]
+		],
+
+		isActive: function() {
+			return this.get("isActive");
+		}
 	});
-	
+
 	Ext.define("CMDBuild.cache.CMGroupModelForCombo", {
 		extend: 'Ext.data.Model',
 		fields: [

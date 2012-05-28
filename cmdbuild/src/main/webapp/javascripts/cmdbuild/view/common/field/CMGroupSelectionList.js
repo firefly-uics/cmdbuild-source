@@ -1,12 +1,4 @@
 (function() {
-	Ext.define("CMGroupModelForList", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: 'id', type: 'int'},
-			{name: 'description', type: 'string'}
-		]
-	});
-
 	Ext.define("CMDBuild.view.common.field.CMGroupSelectionList", {
 		extend: "Ext.ux.form.MultiSelect",
 		fieldLabel : CMDBuild.Translation.administration.modreport.importJRFormStep1.enabled_groups,
@@ -17,18 +9,16 @@
 		allowBlank : true,
 		initComponent: function() {
 			if (!this.store) {
-				this.store  = new Ext.data.Store( {
-					model: "CMGroupModelForList",
-					proxy : {
-						type : "ajax",
-						url : 'services/json/management/modreport/getgroups',
-						reader : {
-							type : "json",
-							root : "rows"
-						}
-					},
-					autoLoad : true
-				});
+				if (_CMCache && 
+						typeof _CMCache.getActiveGroupsStore == "function") {
+
+					this.store = _CMCache.getActiveGroupsStore();
+				} else {
+					this.store = new Ext.data.Store({
+						fields: ["fake"],
+						data: []
+					});
+				}
 			}
 
 			this.callParent(arguments);

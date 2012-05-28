@@ -3,18 +3,28 @@
 	CMDBuild.ServiceProxy.url.Dashboard = {
 		add : "services/json/dashboard/add",
 		modify: "services/json/dashboard/modifybaseproperties",
+		fullList : "services/json/dashboard/fulllist",
 		list : "services/json/dashboard/list",
 		remove : "services/json/dashboard/remove",
 		addChart: "services/json/dashboard/addchart",
 		modifyChart: "services/json/dashboard/modifychart",
 		removeChart: "services/json/dashboard/removechart",
-		moveChart: "services/json/dashboard/movechart"
+		moveChart: "services/json/dashboard/movechart",
+		getChartData: "services/json/dashboard/getchartdata",
+		getChartDataForPreview: "services/json/dashboard/getchartdataforpreview"
 	};
 
 	CMDBuild.ServiceProxy.Dashboard = {
 		list : function(p) {
 			p.method = "GET";
 			p.url = CMDBuild.ServiceProxy.url.Dashboard.list;
+	
+			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
+
+		fullList : function(p) {
+			p.method = "GET";
+			p.url = CMDBuild.ServiceProxy.url.Dashboard.fullList;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
@@ -160,6 +170,45 @@
 		
 						if (typeof cb == "function") {
 							cb();
+						}
+					}
+				});
+			},
+
+			getData: function(dashboardId, chartId, params, cb) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: "GET",
+					url: CMDBuild.ServiceProxy.url.Dashboard.getChartData,
+					params: {
+						dashboardId: dashboardId,
+						chartId: chartId,
+						params: Ext.encode(params)
+					},
+					success: function(operation, configuration, decodedResponse) {
+						if (typeof cb == "function") {
+							var response = decodedResponse.response || {};
+							response = response.rows || [];
+
+							cb(response);
+						}
+					}
+				});
+			},
+
+			getDataForPreview: function(dataSourceName, params, cb) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: "GET",
+					url: CMDBuild.ServiceProxy.url.Dashboard.getChartDataForPreview,
+					params: {
+						dataSourceName: dataSourceName,
+						params: Ext.encode(params)
+					},
+					success: function(operation, configuration, decodedResponse) {
+						if (typeof cb == "function") {
+							var response = decodedResponse.response || {};
+							response = response.rows || [];
+
+							cb(response);
 						}
 					}
 				});

@@ -1,5 +1,5 @@
 (function() {
-	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartBarStrategy", {
+	Ext.define("CMDBuild.controller.administration.dashboard.charts.CMChartLineStrategy", {
 		extend: "CMDBuild.controller.administration.dashboard.charts.CMChartTypeStrategy",
 
 		constructor: function(form) {
@@ -11,8 +11,7 @@
 			"categoryAxisField",
 			"categoryAxisLabel",
 			"valueAxisFields",
-			"valueAxisLabel",
-			"chartOrientation"
+			"valueAxisLabel"
 		],
 
 		// override
@@ -22,8 +21,7 @@
 				categoryAxisField: chart.getCategoryAxisField(),
 				categoryAxisLabel: chart.getCategoryAxisLabel(),
 				valueAxisFields: chart.getValueAxisFields(),
-				valueAxisLabel: chart.getValueAxisLabel(),
-				chartOrientation: chart.getChartOrientation()
+				valueAxisLabel: chart.getValueAxisLabel()
 			});
 		},
 
@@ -39,5 +37,4 @@
 			this.form.showAxesFieldSets();
 		}
 	});
-
 })();

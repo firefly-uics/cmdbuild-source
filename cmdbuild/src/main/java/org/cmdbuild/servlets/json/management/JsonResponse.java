@@ -30,7 +30,15 @@ public class JsonResponse {
 		try {
 			return mapper.writeValueAsString(this);
 		} catch (Exception e) {
-			return "Error serializing the object!";
+			throw new JsonSerializationException(e);
 		}
+	}
+}
+
+class JsonSerializationException extends RuntimeException {
+	private static final long serialVersionUID = -7338020753437636167L;
+
+	public JsonSerializationException(Exception e) {
+		super(e);
 	}
 }

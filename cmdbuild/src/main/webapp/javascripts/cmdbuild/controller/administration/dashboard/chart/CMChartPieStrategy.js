@@ -15,8 +15,8 @@
 
 		// override
 		updateDataSourceDependantFields: function() {
-			this.form.setSingleSerieFieldAvailableData(this.getAvailableDsOutputFields(["INTEGER"]));
-			this.form.setLabelFieldAvailableData(this.getAvailableDsOutputFields());
+			this.form.setSingleSerieFieldAvailableData(this.getAvailableDsOutputFields(["INTEGER", "DECIMAL", "DOUBLE"]));
+			this.form.setLabelFieldAvailableData(this.getAvailableDsOutputFields(["INTEGER", "STRING", "TEXT"]));
 		}
 	});
 })();

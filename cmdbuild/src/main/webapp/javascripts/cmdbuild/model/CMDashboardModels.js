@@ -27,6 +27,25 @@ Ext.define("CMDBuild.model.CMDashboard", {
 		{name : 'columns', type: 'auto'}
 	],
 
+	constructor: function() {
+		this.callParent(arguments);
+		if (this.getColumns().length == 0) {
+			var chartIDs = [];
+			var charts = this.getCharts();
+			for (var i=0, l=charts.length, chart; i<l; ++i) {
+				chart = charts[i];
+				if (chart) {
+					chartIDs.push(chart.getId());
+				}
+			}
+
+			this.setColumns([{
+				width: 1,
+				charts: chartIDs
+			}]);
+		}
+	},
+
 	getName: function() {
 		return this.get("name");
 	},
@@ -59,6 +78,10 @@ Ext.define("CMDBuild.model.CMDashboard", {
 	getColumns: function() {
 		var c = this.get("columns");
 		return c || [];
+	},
+
+	setColumns: function(v) {
+		this.set("columns", v);
 	},
 
 	setName: function(v) {
@@ -154,7 +177,7 @@ Ext.define("CMDBuild.model.CMDashboardChart", {
 		{name : 'steps',type : 'int'},
 		{name : 'fgcolor',type : 'string'},
 		{name : 'bgcolor',type : 'string'},
-		
+		{name : 'classToUseForReferenceWidget',type : 'string'},
 		{name : 'chartOrientation', type : 'string'}],
 
 	getName: function() {

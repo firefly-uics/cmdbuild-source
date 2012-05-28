@@ -233,6 +233,7 @@
                       "vertical": "<em>Verticale</em>"
                    }
                 },
+                "required": "<em>Obbligatorio</em>",
                 "steps": "<em>Intervalli</em>",
                 "title": "<em>Titolo</em>",
                 "valueField": "<em>Campo valore</em>",

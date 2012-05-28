@@ -68,18 +68,19 @@
 
 		onPreviewButtonClick: function() {
 			var formData = CMDBuild.model.CMDashboardChart.build(this.formController.getFormData());
-			var store = CMDBuild.view.management.dashboard.CMChartPortletController.buildStoreForChart(formData);
+			var store = CMDBuild.controller.common.chart.CMChartPortletController.buildStoreForChart(formData);
 
 			var chartWindow = new CMDBuild.view.management.dashboard.CMChartWindow({
 				chartConfiguration: formData,
 				store: store,
 				title: formData.name,
-				width: 400,
-				height: 400
+				width: "80%",
+				height: "80%"
 			}).show();
 
 			if (chartWindow.chartPortlet) {
-				new CMDBuild.view.management.dashboard.CMChartPortletController(chartWindow.chartPortlet, formData, store);
+				CMDBuild.controller.common.chart.CMChartPortletController.buildForPreview(
+						chartWindow.chartPortlet, formData, store, this.dashboard.getId());
 			}
 		},
 

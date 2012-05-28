@@ -114,7 +114,7 @@
 
 				this.cmAccordions = [classesAccordion, processAccordion, domainAccordion, dashboardsAccordion, lookupAccordion,
 					reportAccordion, menuAccordion, groupsAccordion, gisAccordion,
-					new CMDBuild.view.administration.accordion.CMConfigurationAccordion()]
+					new CMDBuild.view.administration.accordion.CMConfigurationAccordion()];
 
 				CMDBuild.view.CMMainViewport.showSplash( target = undefined, administration = true);
 				this.loadResources();
@@ -165,7 +165,7 @@
 					success : function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
 						groupsAccordion.updateStore();
-						menuAccordion.updateStore()
+						menuAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()
 				});
@@ -186,7 +186,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.ServiceProxy.Dashboard.list({
+				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
 						_CMCache.setAvailableDataSources(decoded.response.dataSources);

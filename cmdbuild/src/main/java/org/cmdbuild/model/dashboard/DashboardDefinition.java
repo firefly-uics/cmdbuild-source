@@ -12,12 +12,12 @@ public class DashboardDefinition {
 
 	private LinkedHashMap<String, ChartDefinition> charts;
 	private ArrayList<DashboardColumn> columns;
-	private ArrayList<Integer> groups;
+	private ArrayList<String> groups;
 
 	public DashboardDefinition() {
 		charts = new LinkedHashMap<String, ChartDefinition>();
 		columns = new ArrayList<DashboardColumn>();
-		groups = new ArrayList<Integer>();
+		groups = new ArrayList<String>();
 	}
 
 	public String getName() {
@@ -94,19 +94,19 @@ public class DashboardDefinition {
 	}
 
 	// groups
-	public ArrayList<Integer> getGroups() {
+	public ArrayList<String> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(ArrayList<Integer> groups) {
+	public void setGroups(ArrayList<String> groups) {
 		this.groups = groups;
 	}
 
-	public void addGroup(Integer group) {
+	public void addGroup(String group) {
 		this.groups.add(group);
 	}
 
-	public void removeGroup(Integer group) {
+	public void removeGroup(String group) {
 		this.groups.remove(group);
 	}
 

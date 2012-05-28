@@ -14,8 +14,8 @@
 		TEXT: new CMDBuild.WidgetBuilders.TextAttribute(),
 		CHAR: new CMDBuild.WidgetBuilders.CharAttribute(),			
 		INET: new CMDBuild.WidgetBuilders.IPAddressAttribute()
-	}
-	
+	};
+
 	function attributeTypeIsNotHandled(attribute) {
 		return !attributesMap[attribute.type];
 	}

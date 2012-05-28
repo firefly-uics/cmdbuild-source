@@ -219,7 +219,9 @@ public class ChartDefinition {
 	public static class ChartInput {
 
 		private String name, type, fieldType, defaultValue, lookupType,
-				className;
+				className, classToUseForReferenceWidget;
+
+		private boolean required;
 
 		public String getName() {
 			return name;
@@ -267,6 +269,22 @@ public class ChartDefinition {
 
 		public void setClassName(String className) {
 			this.className = className;
+		}
+
+		public String getClassToUseForReferenceWidget() {
+			return classToUseForReferenceWidget;
+		}
+
+		public void setClassToUseForReferenceWidget(String classToUseForReferenceWidget) {
+			this.classToUseForReferenceWidget = classToUseForReferenceWidget;
+		}
+
+		public boolean isRequired() {
+			return required;
+		}
+
+		public void setRequired(boolean required) {
+			this.required = required;
 		}
 	}
 }

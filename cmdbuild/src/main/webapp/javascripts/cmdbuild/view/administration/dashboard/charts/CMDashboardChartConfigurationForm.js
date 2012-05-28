@@ -254,7 +254,8 @@
 					data : [
 						["gauge", tr.availableCharts.gauge],
 						["pie", tr.availableCharts.pie],
-						["bar", tr.availableCharts.bar]
+						["bar", tr.availableCharts.bar],
+						["line", tr.availableCharts.line],
 					]
 				}),
 				disabled: true

@@ -2,23 +2,25 @@
 
 	var view,
 		delegate,
-		server;
+		server,
+		getActiveGroupsStore;
 
 	describe('CMDBuild.view.administration.dashboard.CMDashboardPropertiesPanel', function() {
 
 		beforeEach(function() {
 			server = CMDBuild.test.CMServer.create();
 
-			// return a fake gropus list
-			server.bindUrl("services/json/management/modreport/getgroups", function(params) {
-				return {
-					"success":true,
-					"rows":[
-						{"id":1,"description":"SuperUser"},
-						{"id":2,"description":"Helpdesk"}
+			getActiveGroupsStore = _CMCache.getActiveGroupsStore;
+
+			_CMCache.getActiveGroupsStore = function() {
+				return new Ext.data.Store({
+					model: "CMDBuild.cache.CMGroupModel",
+					data: [
+					       {id: 1, name: "SuperUser", description: "SuperUser"},
+					       {id: 2, name: "HelpDesk", description: "HelpDesk"}
 					]
-				}
-			});
+				});
+			};
 
 			view = new CMDBuild.view.administration.dashboard.CMDashboardPropertiesPanel({
 				renderTo: Ext.getBody()
@@ -35,6 +37,7 @@
 
 		afterEach(function() {
 			server.restore();
+			_CMCache.getActiveGroupsStore = getActiveGroupsStore;
 			delete server;
 			delete view;
 			delete delegate;
@@ -106,13 +109,13 @@
 				view.fillFieldsWith({
 					name: "Foo",
 					description: "Bar",
-					groups: [1]
+					groups: ["SuperUser"]
 				});
 
 				var data = view.getFieldsValue();
 				expect(data.name).toEqual("Foo");
 				expect(data.description).toEqual("Bar");
-				expect(data.groups).toEqual([1]);
+				expect(data.groups).toEqual(["SuperUser"]);
 			});
 		});
 
@@ -146,13 +149,13 @@
 				view.fillFieldsWith({
 					name: "Foo",
 					description: "Bar",
-					groups: [1]
+					groups: ["SuperUser"]
 				});
 	
 				var data = view.getFieldsValue();
 				expect(data.name).toEqual("Foo");
 				expect(data.description).toEqual("Bar");
-				expect(data.groups).toEqual([1]);
+				expect(data.groups).toEqual(["SuperUser"]);
 			});
 		});
 
@@ -193,7 +196,7 @@
 		});
 
 		it('call the delegate onAbortButtonClick method if click on abort button', function() {
-			var onAbortButtonClick = spyOn (delegate, "onAbortButtonClick")
+			var onAbortButtonClick = spyOn (delegate, "onAbortButtonClick");
 			view.setDelegate(delegate);
 			view.abortButton.handler.call(view);
 
@@ -201,7 +204,7 @@
 		});
 
 		it('call the delegate onSaveButtonClick method if click on save button', function() {
-			var onSaveButtonClick = spyOn (delegate, "onSaveButtonClick")
+			var onSaveButtonClick = spyOn (delegate, "onSaveButtonClick");
 			view.setDelegate(delegate);
 			view.saveButton.handler.call(view);
 

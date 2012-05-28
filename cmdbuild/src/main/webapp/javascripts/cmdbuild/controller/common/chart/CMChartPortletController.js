@@ -1,5 +1,47 @@
 (function() {
-	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletController", {
+	Ext.define("CMDBuild.controller.common.chart.CMChartPortletControllerPreviewStrategy", {
+		doRequest: function(caller, cb) {
+			var me = caller;	
+			var chartId = me.chartConfiguration.getId();
+			var params = me.readParamsFromForm();
+			var dsName = me.chartConfiguration.getDataSourceName();
+			var loaded = false;
+
+			function success(data) {
+				me.store.loadData(data);
+				loaded = true;
+
+				if (cb && typeof cb == "function") {
+					cb(loaded);
+				}
+			}
+	
+			CMDBuild.ServiceProxy.Dashboard.chart.getDataForPreview(dsName, params, success);
+		}
+	});
+
+	Ext.define("CMDBuild.controller.common.chart.CMChartPortletControllerDefaultStrategy", {
+		doRequest: function(caller, cb) {
+			var me = caller;
+			var dashbaordId = me.dashboardId;
+			var chartId = me.chartConfiguration.getId();
+			var params = me.readParamsFromForm();
+			var loaded = false;
+	
+			function success(data) {
+				me.store.loadData(data);
+				loaded = true;
+	
+				if (cb && typeof cb == "function") {
+					cb(loaded);
+				}
+			}
+	
+			CMDBuild.ServiceProxy.Dashboard.chart.getData(dashbaordId, chartId, params, success);
+		}
+	});
+
+	Ext.define("CMDBuild.controller.common.chart.CMChartPortletController", {
 		statics: {
 			buildStoreForChart: function(chartConfiguration) {
 				var fields = [];
@@ -16,13 +58,29 @@
 					fields : fields,
 					data : []
 				});
+			},
+
+			build: function(view, chartConfiguration, store, dashboardId) {
+				var strategy = new CMDBuild.controller.common.chart.CMChartPortletControllerDefaultStrategy();
+				var controller = new CMDBuild.controller.common.chart.CMChartPortletController(view, chartConfiguration, store, dashboardId, strategy);
+
+				return controller;
+			},
+
+			buildForPreview: function(view, chartConfiguration, store, dashboardId) {
+				var strategy = new CMDBuild.controller.common.chart.CMChartPortletControllerPreviewStrategy();
+				var controller = new CMDBuild.controller.common.chart.CMChartPortletController(view, chartConfiguration, store, dashboardId, strategy);
+
+				return controller;
 			}
 		},
 
-		constructor: function(view, chartConfiguration, store) {
+		constructor: function(view, chartConfiguration, store, dashboardId, strategy) {
+			this.dashboardId = dashboardId;
 			this.view = view;
 			this.chartConfiguration = chartConfiguration;
 			this.store = store;
+			this.strategy = strategy;
 
 			this.view.setDelegate(this);
 
@@ -33,106 +91,71 @@
 			}
 		},
 
+		readParamsFromForm: function() {
+			var parametersToSend = {};
+			var parametersConfiguration = this.chartConfiguration.getDataSourceInputConfiguration();
+
+			for (var	i=0,
+						l=parametersConfiguration.length,
+						p,
+						field; i<l; ++i) {
+
+				p = parametersConfiguration[i];
+				field = this.view.findField(p.name);
+				if (field) {
+					parametersToSend[p.name] = field.getValue();
+				}
+			}
+
+			return parametersToSend;
+		},
+
+		doRequest: function(cb) {
+			var me = this;
+			cb = Ext.Function.createSequence(cb||Ext.emptyFn, function() {
+				me.unmaskView();
+			});
+
+			this.maskView();
+			this.strategy.doRequest(this, cb);
+		},
+
+		maskView: function() {
+			var el = this.view.getEl();
+			if (el) {
+				el.mask(CMDBuild.Translation.common.loading);
+			}
+		},
+
+		unmaskView: function() {
+			var el = this.view.getEl();
+			if (el) {
+				el.unmask();
+			}
+		},
+
 		// as view delegate
-		onReloadButtonClick: function() {
-			var loaded = false;
+		onReloadButtonClick: function(cb) {
 			if (this.view.formIsValid()) {
-				this.store.loadData(generateData(this.chartConfiguration.getDataSourceName()));
-				loaded = true;
+				this.doRequest(cb);
 			} else {
 				this.view.showParamsForm(toggle=true);
 			}
-
-			return loaded;
 		},
 
-		onFormLoadButtonClick: function(panel) {
-			var loaded = this.onReloadButtonClick();
+		onFormLoadButtonClick: function() {
+			var me = this;
+			this.onReloadButtonClick(function (loaded) {
+				if (!me.view.chartRendered && loaded) {
+					me.view.renderChart();
+				}
 
-			if (!this.view.chartRendered && loaded) {
-				this.view.renderChart();
-			}
-
-			if (this.chartConfiguration.getDataSourceInputConfiguration().length == 0) {
-				// The user has clicked the load button in chart without input parameters
-				// so there are no reasons to leave the panel showed
-				this.view.hideParamsForm(toggle=true);
-			}
+				if (me.chartConfiguration.getDataSourceInputConfiguration().length == 0) {
+					// The user has clicked the load button in chart without input parameters
+					// so there are no reasons to leave the panel showed
+					me.view.hideParamsForm(toggle=true);
+				}
+			});
 		}
 	});
-
-	// Super fake to allow the development
-	// as soon replaced with real server calls
-	function generateData (sourceName) {
-		var sources = {
-			cm_card_per_asset_subclass: function() {
-				var data = [];
-				var assetsSubclasses = ["Notebook", "PC", "Server", "License",
-				"Monitor", "Network Device", "Printer", "Rack", "UPS"];
-
-				for (var i=0, l=assetsSubclasses.length; i<l; ++i) {
-					var rec = {
-						nome_classe: assetsSubclasses[i],
-						numero_card: Math.floor(Math.max((Math.random() * 100), 20))
-					};
-
-					data.push(rec);
-				}
-
-				return data;
-			},
-
-			gauge_datasource: function() {
-				var cardCancellate = Math.floor(Math.max((Math.random() * 200)));
-
-				return [{
-					card_aperte: 200 + cardCancellate,
-					card_cancellate: cardCancellate
-				}];
-			},
-
-			cm_brand_asset: function() {
-				var data = [];
-				var brands = ["IBM", "HP", "Sony", "Cisco", "Acer", "Canon", "Epson", "Microsoft"];
-				for (var i=0, l=brands.length; i<l; ++i) {
-					var rec = {
-						brand_name: brands[i],
-						count: Math.floor(Math.max((Math.random() * 100), 20))
-					};
-
-					data.push(rec);
-				}
-
-				return data;
-			},
-
-			cm_nagios_allarms: function() {
-				var data = [];
-				var months = [
-					"Gennaio", "Febbraio", "Marzo", "Aprile",
-					"Maggio", "Giugno", "Luglio", "Agosto",
-					"Settebre", "Ottobre", "Novembre", "Dicembre"
-				];
-
-				for (var i=0, l=months.length; i<l; ++i) {
-					var rec = {
-						mese: months[i],
-						count_2011: Math.floor(Math.max((Math.random() * 100), 20)),
-						count_2012: Math.floor(Math.max((Math.random() * 100), 20))
-					};
-
-					data.push(rec);
-				}
-
-				return data;
-			}
-		};
-
-		if (typeof sources[sourceName] == "function") {
-			return sources[sourceName]();
-		} else {
-			return [];
-		}
-
-	};
 })();

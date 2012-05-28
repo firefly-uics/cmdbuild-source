@@ -16,29 +16,18 @@ import java.util.LinkedHashMap;
 
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.model.dashboard.ChartDefinition.ChartInput;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
-import org.junit.Before;
 import org.junit.Test;
 
 public class DashboardDefinitionSeralizationTest {
 
-	private static ObjectMapper mapper;
-
-	@Before
-	public void setUp() {
-		mapper = new ObjectMapper();
-
-		mapper.setSerializationConfig(mapper.copySerializationConfig()
-			.withSerializationInclusion(JsonSerialize.Inclusion.NON_NULL) // to exclude null values
-			.withSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY) // to exclude empty map or array
-		);
-	}
+	private static final ObjectMapper mapper = new DashboardObjectMapper();
 
 	/*
 	 * ChartInput
@@ -297,7 +286,7 @@ public class DashboardDefinitionSeralizationTest {
 		jdc = mapper.writeValueAsString(cd);
 
 		assertThat(jdc, containsArrayWithKey("[\"a field\",\"a second field\"]","valueAxisFields"));
-		assertThat(jdc, containsArrayWithKey("[{\"name\":\"inputName\"}]","dataSourceParameters"));
+		assertThat(jdc, containsArrayWithKey("[{\"name\":\"inputName\",\"required\":false}]","dataSourceParameters"));
 	}
 
 	@Test
@@ -407,7 +396,7 @@ public class DashboardDefinitionSeralizationTest {
 		dd.setDescription("the description");
 		dd.addChart("key", new ChartDefinition());
 		dd.addColumn(new DashboardColumn());
-		dd.addGroup(new Integer(4));
+		dd.addGroup("the group");
 
 		jDd = mapper.writeValueAsString(dd);
 
@@ -426,7 +415,7 @@ public class DashboardDefinitionSeralizationTest {
 			"}", "charts"));
 
 		assertThat(jDd, containsArrayWithKey("[{\"width\":0.0}]", "columns"));
-		assertThat(jDd, containsArrayWithKey("[4]", "groups"));
+		assertThat(jDd, containsArrayWithKey("[\"the group\"]", "groups"));
 	}
 
 	@Test
@@ -444,7 +433,7 @@ public class DashboardDefinitionSeralizationTest {
 					"\"name\":\"the name\"," +
 					"\"description\":\"the description\"," +
 					"\"charts\":{\"key\":{\"name\":\"a chart\"}}," +
-					"\"groups\":[\"55\", \"61\"]," +
+					"\"groups\":[\"a group\", \"another group\"]," +
 					"\"columns\":[{\"width\":0.3,\"charts\":[\"key\"]}]" +
 				"}";
 
@@ -452,10 +441,10 @@ public class DashboardDefinitionSeralizationTest {
 		assertEquals("the name", dd.getName());
 		assertEquals("the description", dd.getDescription());
 
-		ArrayList<Integer> groups = dd.getGroups();
+		ArrayList<String> groups = dd.getGroups();
 		assertEquals(2, groups.size());
-		assertEquals(new Integer(55), groups.get(0));
-		assertEquals(new Integer(61), groups.get(1));
+		assertEquals("a group", groups.get(0));
+		assertEquals("another group", groups.get(1));
 
 		ArrayList<DashboardColumn> columns = dd.getColumns();
 		assertEquals(1, columns.size());

@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -39,6 +40,11 @@ public interface JsonDashboardDTO {
 
 		private final Map<Long, DashboardDefinition> dashboards;
 		private final Iterable<JsonDataSource> dataSources;
+
+		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards) {
+			this.dashboards = dashboards;
+			this.dataSources = new LinkedList<JsonDataSource>();
+		}
 
 		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards, final Iterable<? extends CMFunction> dataSources) {
 			this.dashboards = dashboards;

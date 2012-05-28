@@ -89,14 +89,17 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMDashboardColumn", {
 		extend: "Ext.app.PortalColumn",
 		addChart: function(chartConf, store) {
-			var c = new CMDBuild.view.management.dashboard.CMChartPortlet({
-				chartConfiguration: chartConf,
-				store: store
-			});
+			if (chartConf.isActive()) {
+				var c = new CMDBuild.view.management.dashboard.CMChartPortlet({
+					chartConfiguration: chartConf,
+					store: store
+				});
 
-			this.add(c);
+				this.add(c);
+				return c;
+			}
 
-			return c;
+			return null;
 		}
 	});
 

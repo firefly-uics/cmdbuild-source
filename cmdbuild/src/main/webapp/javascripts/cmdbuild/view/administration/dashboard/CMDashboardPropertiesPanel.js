@@ -180,6 +180,8 @@
 		me.groupsSelectionList = new CMDBuild.view.common.field.CMGroupSelectionList({
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			dataFields : [ 'name', 'description' ],
+			valueField : 'name',
 			disabled: true
 		});
 

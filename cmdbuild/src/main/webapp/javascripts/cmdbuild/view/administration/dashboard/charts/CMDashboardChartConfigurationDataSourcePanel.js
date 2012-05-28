@@ -178,6 +178,16 @@
 			me.title = name + " (" + tr.inputTypes[type] + ")";
 			me.callParent(arguments);
 
+			me.requiredCheck = new Ext.form.field.Checkbox({
+				fieldLabel: tr.fields.required,
+				name: "required",
+				labelWidth: SUBFIELD_LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				disabled: me.typeComboIsdisabled()
+			});
+
+			me.add(me.requiredCheck);
+
 			if (me.fieldTypeStore) {
 				me.fieldType = new Ext.form.field.ComboBox({
 					fieldLabel: tr.fields.fieldType,
@@ -371,7 +381,8 @@
 		getData: function() {
 			var data = {
 				name: this.input.name,
-				type: this.input.type
+				type: this.input.type,
+				required: this.requiredCheck.getValue()
 			};
 
 			if (this.fieldType) {
@@ -398,6 +409,9 @@
 		},
 
 		setData: function(data) {
+
+			this.requiredCheck.setValue(data.required);
+
 			if (data.fieldType 
 					&& this.fieldType) {
 

@@ -33,7 +33,7 @@
 							editable: false,
 							store : _CMCache.getClassesAndProcessesStore(),
 							queryMode: 'local',
-							allowBlank: false
+							allowBlank: !parameterConfiguration.required
 						});
 					},
 
@@ -71,7 +71,7 @@
 							editable: false,
 							store : _CMCache.getClassesAndProcessesStore(),
 							queryMode: 'local',
-							allowBlank: false,
+							allowBlank: !parameterConfiguration.required,
 							value: parameterConfiguration.defaultValue
 						});
 					},
@@ -85,17 +85,14 @@
 							var conf = {
 								description: parameterConfiguration.name,
 								name: parameterConfiguration.name,
+								isnotnull: parameterConfiguration.required,
 								fieldmode: "write",
 								type: "LOOKUP",
 								lookup: ltype,
 								lookupchain: _CMCache.getLookupchainForType(ltype)
 							};
 
-							var field = CMDBuild.Management.FieldManager.getFieldForAttr(conf,
-									readonly=false, skipSubField=true);
-
-							field.allowBlank = false;
-							return field;
+							return CMDBuild.Management.FieldManager.getFieldForAttr(conf, readonly=false, skipSubField=true);
 						}
 					},
 
@@ -114,11 +111,19 @@
 					},
 
 					card: function(parameterConfiguration) {
-						return CMDBuild.Management.ReferenceField.build({
+						var required = parameterConfiguration.required;
+
+						var field =  CMDBuild.Management.ReferenceField.build({
 							name: parameterConfiguration.name,
-							description: parameterConfiguration.name,
-							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
+							description: (required ? "* " : "" ) + parameterConfiguration.name,
+							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget,
+							isnotnull: required
 						});
+
+						if (field) {
+							field.setValue(parameterConfiguration.defaultValue);
+							return field;
+						}
 					}
 				};
 
@@ -133,7 +138,8 @@
 				var conf = {
 					name: parameterConfiguration.name,
 					type: parameterConfiguration.type,
-					description: parameterConfiguration.name
+					description: parameterConfiguration.name,
+					isnotnull: parameterConfiguration.required
 				};
 
 				var field = CMDBuild.Management.FieldManager.getFieldForAttr(conf,
@@ -141,7 +147,6 @@
 
 				if (field) {
 					field.setValue(parameterConfiguration.defaultValue);
-					field.allowBlank = false;
 					return field;
 				}
 			}

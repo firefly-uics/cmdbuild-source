@@ -77,8 +77,17 @@
 
 			expect(callback).toHaveBeenCalled();
 			var args = callback.argsForCall[0];
-			expect(args[0].data).toEqual(dashboardConfig);
-		})
+			var data = args[0].data;
+
+			expect(dashboardConfig.id).toEqual(data.id);
+			expect(dashboardConfig.name).toEqual(data.name);
+			expect(dashboardConfig.description).toEqual(data.description);
+			expect(dashboardConfig.charts).toEqual(data.charts);
+			expect(dashboardConfig.groups).toEqual(data.groups);
+			// if no columns build a single column with width 1
+			expect(1).toEqual(data.columns[0].width);
+			expect([]).toEqual(data.columns[0].charts);
+		});
 
 		it("Remove a dashboard of a given id", function() {
 			_CMCache.addDashboard(fooDashboardConfig());
@@ -181,7 +190,9 @@
 			id: 1,
 			name: "foo",
 			description: "Amazing dashboard for amazing people",
-			charts: []
+			charts: [],
+			groups: [],
+			columns: []
 		};
 	}
 

@@ -20,11 +20,11 @@
 		},
 
 		buildChart: function(chartConf, column) {
-			var store = CMDBuild.view.management.dashboard.CMChartPortletController.buildStoreForChart(chartConf);
+			var store = CMDBuild.controller.common.chart.CMChartPortletController.buildStoreForChart(chartConf);
 			var chartView = column.addChart(chartConf, store);
 
 			if (chartView) {
-				new CMDBuild.view.management.dashboard.CMChartPortletController(chartView, chartConf, store);
+				CMDBuild.controller.common.chart.CMChartPortletController.build(chartView, chartConf, store, this.dashboard.getId());
 			}
 		},
 

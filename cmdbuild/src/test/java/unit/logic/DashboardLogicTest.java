@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 
 import org.cmdbuild.logic.DashboardLogic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI.SimplifiedUserContext;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
@@ -20,11 +21,12 @@ import org.junit.Test;
 public class DashboardLogicTest {
 	private static DashboardLogic logic;
 	private static DashboardStore store;
-
+	private static SimplifiedUserContext userCOntext;
 	@Before
 	public void setUp() {
+		userCOntext = mock(SimplifiedUserContext.class);
 		store = mock(DashboardStore.class);
-		logic = new DashboardLogic(null, store);
+		logic = new DashboardLogic(null, store, userCOntext);
 	}
 
 	@SuppressWarnings("serial")
@@ -71,7 +73,7 @@ public class DashboardLogicTest {
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 		final Long dashboardId = new Long(123);
 		final String name = "name", description = "description";
-		final ArrayList<Integer> groups = new ArrayList<Integer>(){{ add(1); }};
+		final ArrayList<String> groups = new ArrayList<String>(){{ add("a group"); }};
 
 		final DashboardDefinition changes = new DashboardDefinition() {{
 			setName(name);

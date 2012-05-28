@@ -233,6 +233,7 @@
                       "vertical": "<em>Vertical</em>"
                    }
                 },
+                "required": "<em>Required</em>",
                 "steps": "<em>Steps</em>",
                 "title": "<em>Title</em>",
                 "valueField": "<em>Value field</em>",

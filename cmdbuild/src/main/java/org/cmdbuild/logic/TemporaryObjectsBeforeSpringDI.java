@@ -14,8 +14,9 @@ import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.AccessControlManagerWrapper;
+import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.store.MapDashboardStore;
+import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
@@ -53,7 +54,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DashboardLogic getDashboardLogic(UserContext userCtx) {
-		return new DashboardLogic(getUserContextView(userCtx), new MapDashboardStore());
+		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(userCtx));
 	}
 
 	public static CMDataView getUserContextView(UserContext userCtx) {
@@ -63,5 +64,25 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static CMWorkflowEngine getWorkflowEngine(UserContext userCtx) {
 		return new WorkflowEngineWrapper(userCtx, processDefinitionManager);
+	}
+
+	public static class SimplifiedUserContext {
+		private UserContext userContext;
+
+		public SimplifiedUserContext(UserContext userContext) {
+			this.userContext = userContext;
+		}
+
+		public List<String> getGroupNames() {
+			List<String> groupNames = new ArrayList<String>();
+			for (Group g : userContext.getGroups()) {
+				groupNames.add(g.getName());
+			}
+			return groupNames;
+		}
+
+		public boolean isAdmin() {
+			return userContext.privileges().isAdmin();
+		}
 	}
 }

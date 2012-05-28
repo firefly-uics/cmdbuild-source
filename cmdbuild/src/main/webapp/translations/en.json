@@ -233,6 +233,7 @@
                       "vertical": "Vertical"
                    }
                 },
+                "required": "Required",
                 "steps": "Steps",
                 "title": "Title",
                 "valueField": "Value field",

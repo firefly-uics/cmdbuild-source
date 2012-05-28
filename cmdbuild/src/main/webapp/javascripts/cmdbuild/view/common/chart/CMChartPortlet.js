@@ -173,6 +173,10 @@
 										// could be rendering problems if the chart
 										// was moved between two columns
 			});
+		},
+
+		findField: function(name) {
+			return this.form.getForm().findField(name);
 		}
 	});
 

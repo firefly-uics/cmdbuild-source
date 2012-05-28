@@ -8,6 +8,7 @@ import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.DashboardLogic.GetChartDataResponse;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonDashboardDTO.JsonDashboardListResponse;
@@ -15,30 +16,29 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 public class Dashboard extends JSONBase {
 
-	private static ObjectMapper mapper;
-
-	public Dashboard() {
-		super();
-		mapper = new ObjectMapper();
-
-		mapper.setSerializationConfig(mapper.copySerializationConfig()
-			.withSerializationInclusion(JsonSerialize.Inclusion.NON_NULL) // to exclude null values
-			.withSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY) // to exclude empty map or array
-		);
-	}
+	private static final ObjectMapper mapper = new DashboardObjectMapper();
 
 	@Admin
+	@JSONExported
+	public JsonResponse fullList(
+			final UserContext userCtx) {
+		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic(userCtx);
+		JsonDashboardListResponse response = new JsonDashboardListResponse(
+				logic.fullListDashboards(),
+				logic.listDataSources()
+			);
+		return JsonResponse.success(response);
+	}
+
 	@JSONExported
 	public JsonResponse list(
 			final UserContext userCtx) {
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic(userCtx);
 		JsonDashboardListResponse response = new JsonDashboardListResponse(
-				logic.listDashboards(),
-				logic.listDataSources()
+				logic.listDashboards()
 			);
 		return JsonResponse.success(response);
 	}
@@ -134,14 +134,27 @@ public class Dashboard extends JSONBase {
 
 	@JSONExported
 	public JsonResponse getChartData(
-			@Parameter(value = "chartId") final Long chartId,
+			@Parameter(value = "dashboardId") final long dashboardId,
+			@Parameter(value = "chartId") final String chartId,
 			@Parameter(value = "params") final String jsonParams,
 			final UserContext userCtx) throws JsonParseException, JsonMappingException, IOException {
 
 		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic(userCtx);
-		final ObjectMapper mapper = new ObjectMapper();
 		@SuppressWarnings("unchecked") final Map<String, Object> params = mapper.readValue(jsonParams, Map.class);
-		GetChartDataResponse result = logic.getChartData(chartId, params);
+		GetChartDataResponse result = logic.getChartData(dashboardId, chartId, params);
+		return JsonResponse.success(result);
+	}
+
+	@Admin
+	@JSONExported
+	public JsonResponse getChartDataForPreview(
+			@Parameter(value = "dataSourceName") final String dataSourceName,
+			@Parameter(value = "params") final String jsonParams,
+			final UserContext userCtx) throws JsonParseException, JsonMappingException, IOException {
+
+		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic(userCtx);
+		@SuppressWarnings("unchecked") final Map<String, Object> params = mapper.readValue(jsonParams, Map.class);
+		GetChartDataResponse result = logic.getChartData(dataSourceName, params);
 		return JsonResponse.success(result);
 	}
 }
