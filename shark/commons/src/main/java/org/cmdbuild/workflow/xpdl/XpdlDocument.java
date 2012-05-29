@@ -25,17 +25,32 @@ import org.enhydra.shark.api.common.SharkConstants;
 @NotThreadSafe
 public class XpdlDocument {
 
-	public enum ScriptLanguages {
-		JAVA(SharkConstants.GRAMMAR_JAVA),
-		JAVASCRIPT(SharkConstants.GRAMMAR_JAVA_SCRIPT),
-		PYTHON(SharkConstants.GRAMMAR_PYTHON_SCRIPT),
-		GROOVY("text/groovy");
+	public enum ScriptLanguage {
+		JAVA(SharkConstants.GRAMMAR_JAVA), //
+		JAVASCRIPT(SharkConstants.GRAMMAR_JAVA_SCRIPT), //
+		PYTHON(SharkConstants.GRAMMAR_PYTHON_SCRIPT), // 
+		GROOVY("text/groovy"), //
+		;
 
 		private final String mimeType;
 
-		private ScriptLanguages(final String mimeType) {
+		private ScriptLanguage(final String mimeType) {
 			this.mimeType = mimeType;
 		}
+
+		public String getMimeType() {
+			return mimeType;
+		}
+
+		public static ScriptLanguage of(final String mimeType) {
+			for (ScriptLanguage language : values()) {
+				if (language.mimeType.equals(mimeType)) {
+					return language;
+				}
+			}
+			throw new IllegalArgumentException("invalid mime-type");
+		}
+
 	}
 
 	public enum StandardAndCustomTypes {
@@ -192,7 +207,7 @@ public class XpdlDocument {
 		return df;
 	}
 
-	public void setDefaultScriptingLanguage(final ScriptLanguages lang) {
+	public void setDefaultScriptingLanguage(final ScriptLanguage lang) {
 		pkg.getScript().setType(lang.mimeType);
 	}
 
@@ -200,7 +215,8 @@ public class XpdlDocument {
 		turnReadWrite();
 		Participant p = (Participant) pkg.getParticipants().generateNewElement();
 		p.setId(participantId);
-		p.getParticipantType().setTypeROLE(); // Default but better safe than sorry
+		p.getParticipantType().setTypeROLE(); // Default but better safe than
+		// sorry
 		pkg.getParticipants().add(p);
 	}
 
@@ -231,7 +247,9 @@ public class XpdlDocument {
 	}
 
 	private void addExternalReferenceArrayType(TypeDeclarations types, StandardAndCustomTypes t) {
-		addExternalReferenceType(types, t.getDeclaredTypeId()+ARRAY_DECLARED_TYPE_NAME_SUFFIX, t.getDeclaredTypeLocation()+ARRAY_DECLARED_TYPE_LOCATION_SUFFIX);
+		addExternalReferenceType(types, t.getDeclaredTypeId() + ARRAY_DECLARED_TYPE_NAME_SUFFIX, t
+				.getDeclaredTypeLocation()
+				+ ARRAY_DECLARED_TYPE_LOCATION_SUFFIX);
 	}
 
 	private void addExternalReferenceType(final TypeDeclarations types, final String id, final String location) {
@@ -245,11 +263,11 @@ public class XpdlDocument {
 
 	/**
 	 * Aberration because the library does not allow graph traversal when in
-	 * read/write mode. This function should be called before querying the
-	 * graph unless elements are accessed by id.
+	 * read/write mode. This function should be called before querying the graph
+	 * unless elements are accessed by id.
 	 * 
-	 * We are more interested in development speed than running speed, so we
-	 * put the whole package in read only.
+	 * We are more interested in development speed than running speed, so we put
+	 * the whole package in read only.
 	 */
 	void turnReadOnly() {
 		if (!pkg.isReadOnly()) {
@@ -262,8 +280,8 @@ public class XpdlDocument {
 	 * Aberration because the library rejects changes to the tree when in read
 	 * only mode. This function should be called before every "add" operation.
 	 * 
-	 * We are more interested in development speed than running speed, so we
-	 * put the whole package in read write.
+	 * We are more interested in development speed than running speed, so we put
+	 * the whole package in read write.
 	 */
 	void turnReadWrite() {
 		if (pkg.isReadOnly()) {

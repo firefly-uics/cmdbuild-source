@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow;
 
 import java.util.List;
+
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.eventaudit.AssignmentEventAuditPersistenceObject;
 import org.enhydra.shark.api.internal.eventaudit.CreateProcessEventAuditPersistenceObject;

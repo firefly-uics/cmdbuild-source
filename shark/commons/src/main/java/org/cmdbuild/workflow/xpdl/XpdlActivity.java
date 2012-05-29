@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
+import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.Activity;
 import org.enhydra.jxpdl.elements.ExtendedAttribute;
 import org.enhydra.jxpdl.elements.ExtendedAttributes;
+import org.enhydra.jxpdl.elements.ImplementationTypes;
 import org.enhydra.jxpdl.elements.Performer;
+import org.enhydra.jxpdl.elements.TSScript;
+import org.enhydra.jxpdl.elements.TaskTypes;
 
-public class XpdlActivity implements XpdlExtendedAttributesHolder  {
+public class XpdlActivity implements XpdlExtendedAttributesHolder {
 
 	public enum XpdlVariableSuffix {
 		VIEW {
@@ -84,11 +88,44 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder  {
 		}
 	}
 
+	public boolean isScriptingType() {
+		return inner.getActivityType() == XPDLConstants.ACTIVITY_TYPE_TASK_SCRIPT;
+	}
+
+	public ScriptLanguage getScriptLanguage() {
+		final TSScript tsScript = getScript();
+		final String mimeType = tsScript.getScriptType();
+		return ScriptLanguage.of(mimeType);
+	}
+
+	public String getScriptExpression() {
+		final TSScript tsScript = getScript();
+		final String script = tsScript.toValue();
+		return script;
+	}
+
+	public void setScriptingType(final ScriptLanguage language, final String expression) {
+		final TSScript tsScript = getScript();
+		tsScript.setScriptType(language.getMimeType());
+		tsScript.setValue(expression);
+	}
+
+	private TSScript getScript() {
+		final ImplementationTypes implementationTypes = inner.getActivityTypes().getImplementation()
+				.getImplementationTypes();
+		implementationTypes.setTask();
+		final TaskTypes taskTypes = implementationTypes.getTask().getTaskTypes();
+		taskTypes.setTaskScript();
+		final TSScript tsScript = taskTypes.getTaskScript().getScript();
+		return tsScript;
+	}
+
 	/**
-	 * Sets the only performer for this activity. We are not interested
-	 * in more than one performer.
+	 * Sets the only performer for this activity. We are not interested in more
+	 * than one performer.
 	 * 
-	 * @param name of the first and only performer
+	 * @param name
+	 *            of the first and only performer
 	 */
 	public void setPerformer(final String performerName) {
 		doc.turnReadWrite();
@@ -98,8 +135,9 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder  {
 		inner.getPerformers().add(performer);
 	}
 
-	/**List<CMActivityVariableToProcess>
-	 * Returns the first performer for this activity.
+	/**
+	 * List<CMActivityVariableToProcess> Returns the first performer for this
+	 * activity.
 	 * 
 	 * @return name of the first performer
 	 */
