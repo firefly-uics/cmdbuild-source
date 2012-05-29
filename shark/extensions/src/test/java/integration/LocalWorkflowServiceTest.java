@@ -1,22 +1,32 @@
 package integration;
 
-import java.util.UUID;
+import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.LocalSharkService;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
-import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguages;
+import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
 
-public abstract class LocalWorkflowServiceTest {
+import utils.WriteXpdlOnFailure;
+import utils.XpdlTest;
 
-	private static String USERNAME = "admin";
+public abstract class LocalWorkflowServiceTest implements XpdlTest {
+
+	private static final String USERNAME = "admin";
 
 	protected static CMWorkflowService ws;
-	protected String pkgId;
+
+	protected String packageId;
+	protected XpdlDocument xpdlDocument;
+
+	@Rule
+	public TestRule testWatcher = new WriteXpdlOnFailure(this);
 
 	@BeforeClass
 	public static void initWorkflowService() {
@@ -28,17 +38,30 @@ public abstract class LocalWorkflowServiceTest {
 	}
 
 	@Before
-	public void createRandomPackageName() {
-		pkgId = randomPackageName();
+	public void createRandomPackageName() throws Exception {
+		packageId = randomName();
+		xpdlDocument = newXpdl(packageId);
 	}
 
-	protected final String randomPackageName() {
-		return UUID.randomUUID().toString();
+	@Override
+	public XpdlDocument getXpdlDocument() {
+		return xpdlDocument;
 	}
 
-	protected final byte[] createXpdl(final String packageId) throws XpdlException {
-		XpdlDocument xpdl = new XpdlDocument(packageId);
-		xpdl.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
+	/**
+	 * Creates a new {@link XpdlDocument} with default scripting language
+	 * {@code ScriptLanguages.JAVA}.
+	 */
+	protected final XpdlDocument newXpdl(final String packageId) throws XpdlException {
+		final XpdlDocument xpdl = new XpdlDocument(packageId);
+		xpdl.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
+		return xpdl;
+	}
+
+	/**
+	 * Serializes an {@link XpdlDocument} in a byte array.
+	 */
+	protected final byte[] serialize(final XpdlDocument xpdl) throws XpdlException {
 		return XpdlPackageFactory.xpdlByteArray(xpdl.getPkg());
 	}
 

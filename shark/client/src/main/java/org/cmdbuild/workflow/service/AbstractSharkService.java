@@ -26,7 +26,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 				final T result = command();
 				commitTransaction();
 				return result;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				rollbackTransaction();
 				throw new CMWorkflowException(e);
 			}
@@ -43,7 +43,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		private final void rollbackTransaction() {
 			try {
 				SharkInterfaceWrapper.getUserTransaction().rollback();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		}
 
@@ -60,10 +60,10 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	private void configureSharkInterfaceWrapper(final Properties props) {
 		try {
 			SharkInterfaceWrapper.setProperties(props, true);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			// Otherwise it ingores even unchecked exceptions
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// Can never happen with this configuration! Shark APIs love to
 			// throw java.lang.Exception even when it can't. Take a look at
 			// SharkInterfaceWrapper.setProperty(...) and have a good laugh!
@@ -85,7 +85,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
-				PackageAdministration pa = shark().getPackageAdministration();
+				final PackageAdministration pa = shark().getPackageAdministration();
 				if (pa.getPackageVersions(handle(), pkgId).length == 0) {
 					pa.uploadPackage(handle(), pkgDefData);
 				} else {
@@ -125,6 +125,20 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}.execute();
 	}
 
+	@Override
+	public void startProcess(final String pkgId, final String wpId) throws CMWorkflowException {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws Exception {
+				final String procDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId, "",
+						wpId);
+				final String procInstId = wapi().createProcessInstance(handle(), procDefId, null);
+				@SuppressWarnings("unused")
+				final String newProcInstId = wapi().startProcess(handle(), procInstId);
+				return null;
+			}
+		}.execute();
+	}
 
 	private final SharkInterface shark() throws Exception {
 		if (shark == null) {

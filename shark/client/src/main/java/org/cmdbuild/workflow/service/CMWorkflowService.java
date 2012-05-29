@@ -17,7 +17,10 @@ public interface CMWorkflowService {
 	 * Download all the open packages as byte arrays
 	 * 
 	 * @return an array of bytes one for each open package
-	 * @throws CMWorkflowException 
+	 * @throws CMWorkflowException
 	 */
 	byte[][] downloadAllPackages() throws CMWorkflowException;
+
+	void startProcess(String pkgId, String wpId) throws CMWorkflowException;
+
 }
