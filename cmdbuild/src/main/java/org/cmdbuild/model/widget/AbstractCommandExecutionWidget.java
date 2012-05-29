@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.widget;
+package org.cmdbuild.model.widget;
 
 import java.io.BufferedReader;
 import java.io.IOException;

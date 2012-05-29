@@ -13,8 +13,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
-import org.cmdbuild.elements.widget.Ping;
-import org.cmdbuild.elements.widget.AbstractCommandExecutionWidget.ExecuteCommandAction;
+import org.cmdbuild.model.widget.Ping;
+import org.cmdbuild.model.widget.AbstractCommandExecutionWidget.ExecuteCommandAction;
 import org.cmdbuild.utils.template.TemplateResolver;
 import org.junit.Test;
 

@@ -21,8 +21,6 @@ import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.IAttribute.FieldMode;
-import org.cmdbuild.elements.widget.ClassWidgets;
-import org.cmdbuild.elements.widget.Widget;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -31,9 +29,11 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
+import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -612,7 +612,7 @@ public class ModClass extends JSONBase {
 			if (active && !isActive(table)) {
 				continue;
 			}
-			final List<Widget> widgetList = new ClassWidgets(table).getWidgets();
+			final List<Widget> widgetList = new DBClassWidgetStore(table).getWidgets();
 			if (widgetList.isEmpty()) {
 				continue;
 			}
@@ -631,7 +631,7 @@ public class ModClass extends JSONBase {
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget w = mapper.readValue(jsonWidget, Widget.class);
 
-		final ClassWidgets classWidgets = new ClassWidgets(table);
+		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
 		classWidgets.saveWidget(w);
 
 		return JsonResponse.success(w);
@@ -643,7 +643,7 @@ public class ModClass extends JSONBase {
 			ITable table, // className
 			@Parameter("id") String widgetId,
 			final UserContext userCtx) {
-		final ClassWidgets classWidgets = new ClassWidgets(table);
+		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
 		classWidgets.removeWidget(widgetId);
 	}
 }
