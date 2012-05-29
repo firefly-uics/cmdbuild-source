@@ -263,6 +263,11 @@
                 "user" : "Current user"
              }
           },
+          "layout": {
+             "add": "Add a column",
+             "remove": "Remove empty columns",
+             "title": "Layout"
+          },
           "properties": {
              "add": "Add Dashboard",
              "modify": "Modify Dashboard",

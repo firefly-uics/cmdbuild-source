@@ -263,6 +263,11 @@
                 "user" : "<em>Current user</em>"
              }
           },
+          "layout": {
+             "add": "<em>Add a column</em>",
+             "remove": "<em>Remove empty columns</em>",
+             "title": "<em>Layout</em>"
+          },
           "properties": {
              "add": "<em>Add Dashboard</em>",
              "modify": "<em>Modify Dashboard</em>",

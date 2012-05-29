@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.cmdbuild.logic.DashboardLogic;
@@ -9,6 +10,7 @@ import org.cmdbuild.logic.DashboardLogic.GetChartDataResponse;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
+import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonDashboardDTO.JsonDashboardListResponse;
@@ -16,6 +18,7 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 public class Dashboard extends JSONBase {
 
@@ -68,6 +71,20 @@ public class Dashboard extends JSONBase {
 		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DashboardDefinition.class);
 
 		logic.modifyBaseProperties(dashboardId, dashboard);
+	}
+
+	@Admin
+	@JSONExported
+	public void modifyColumns(
+			final UserContext userCtx,
+			@Parameter(value = "dashboardId") final Long dashboardId,
+			@Parameter(value = "columnsConfiguration") final String jsonColumns) throws Exception{
+
+		final DashboardLogic logic = TemporaryObjectsBeforeSpringDI.getDashboardLogic(userCtx);
+		final ArrayList<DashboardColumn> columns = 
+			mapper.readValue(jsonColumns, new TypeReference<ArrayList<DashboardColumn>>(){});
+
+		logic.setColumns(dashboardId, columns);
 	}
 
 	@Admin

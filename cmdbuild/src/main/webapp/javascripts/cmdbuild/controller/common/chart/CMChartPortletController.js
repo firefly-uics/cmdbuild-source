@@ -10,13 +10,15 @@
 			function success(data) {
 				me.store.loadData(data);
 				loaded = true;
-
+			}
+	
+			function callback() {
 				if (cb && typeof cb == "function") {
 					cb(loaded);
 				}
 			}
-	
-			CMDBuild.ServiceProxy.Dashboard.chart.getDataForPreview(dsName, params, success);
+
+			CMDBuild.ServiceProxy.Dashboard.chart.getDataForPreview(dsName, params, success, callback);
 		}
 	});
 
@@ -31,13 +33,15 @@
 			function success(data) {
 				me.store.loadData(data);
 				loaded = true;
+			}
 	
+			function callback() {
 				if (cb && typeof cb == "function") {
 					cb(loaded);
 				}
 			}
-	
-			CMDBuild.ServiceProxy.Dashboard.chart.getData(dashbaordId, chartId, params, success);
+
+			CMDBuild.ServiceProxy.Dashboard.chart.getData(dashbaordId, chartId, params, success, callback);
 		}
 	});
 

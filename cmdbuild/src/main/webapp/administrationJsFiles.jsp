@@ -34,6 +34,7 @@
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardLayoutPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardPropertiesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationDataSourcePanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/charts/CMDashboardChartConfigurationForm.js"></script>
@@ -156,6 +157,7 @@
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDashboardAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardLayoutPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationFormController.js"></script>
 		<!-- CHARTS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/chart/CMChartGaugeStrategy.js"></script>

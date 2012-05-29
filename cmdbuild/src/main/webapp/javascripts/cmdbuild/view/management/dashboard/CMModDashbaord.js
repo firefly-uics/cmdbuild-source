@@ -1,29 +1,4 @@
 (function() {
-
-	Ext.override(Ext.app.PortalPanel, {
-		/**
-		 * override to fix a bug: crash if no configured columns
-		 */
-		beforeLayout : function() {
-			var items = this.layout.getLayoutItems(), len = items.length, i = 0, item;
-
-			for (; i < len; i++) {
-				item = items[i];
-				// item.columnWidth = 1 / len;
-				item.removeCls( [ 'x-portal-column-first', 'x-portal-column-last' ]);
-			}
-
-			// CMDBUild patch
-			if (len > 0) {
-				items[0].addCls('x-portal-column-first');
-				items[len - 1].addCls('x-portal-column-last');
-			}
-			// end CMDBUild patch
-
-			return this.callParent(arguments);
-		}
-	});
-
 	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 
 		extend: "Ext.panel.Panel",
@@ -45,7 +20,6 @@
 				if (this.renderdDashboards[dashboard.getId()]) {
 					this.getLayout().setActiveItem(this.renderdDashboards[dashboard.getId()]);
 				} else {
-					
 					var columnsConf = dashboard.getColumns();
 					var columns = [];
 					var me = this;
@@ -83,23 +57,6 @@
 
 		setDelegate: function(d) {
 			this.delegate = d;
-		}
-	});
-
-	Ext.define("CMDBuild.view.management.dashboard.CMDashboardColumn", {
-		extend: "Ext.app.PortalColumn",
-		addChart: function(chartConf, store) {
-			if (chartConf.isActive()) {
-				var c = new CMDBuild.view.management.dashboard.CMChartPortlet({
-					chartConfiguration: chartConf,
-					store: store
-				});
-
-				this.add(c);
-				return c;
-			}
-
-			return null;
 		}
 	});
 

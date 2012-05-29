@@ -4,8 +4,6 @@
 <script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 <script type="text/javascript" src="javascripts/flash/swfobject.js"></script>
 
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
-
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/CheckColumn.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/event/Broadcast.js"></script>
@@ -31,5 +29,6 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/portal/PortalColumn.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/portal/PortalPanel.js"></script>
 
-
 <script type="text/javascript" src="javascripts/extensible-1.5.0/extensible-all.js"></script>
+
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
