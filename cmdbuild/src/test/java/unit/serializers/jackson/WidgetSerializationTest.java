@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.elements.widget.OpenReport;
-import org.cmdbuild.elements.widget.Widget;
+import org.cmdbuild.model.widget.OpenReport;
+import org.cmdbuild.model.widget.Widget;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;

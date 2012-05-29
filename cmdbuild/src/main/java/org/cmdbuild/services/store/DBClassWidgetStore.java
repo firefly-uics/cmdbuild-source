@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.widget;
+package org.cmdbuild.services.store;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,11 +13,12 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.meta.MetadataService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-public class ClassWidgets {
+public class DBClassWidgetStore {
 
 	private static final String WIDGETS_META = MetadataService.SYSTEM_PREFIX + ".widgets";
 
@@ -25,7 +26,7 @@ public class ClassWidgets {
 
 	private final ITable table;
 
-	public ClassWidgets(final ITable table) {
+	public DBClassWidgetStore(final ITable table) {
 		this.table = table;
 	}
 

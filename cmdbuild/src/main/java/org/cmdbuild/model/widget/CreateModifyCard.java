@@ -1,4 +1,4 @@
-package org.cmdbuild.elements.widget;
+package org.cmdbuild.model.widget;
 
 
 public class CreateModifyCard extends Widget {

@@ -42,7 +42,6 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
-import org.cmdbuild.elements.widget.ClassWidgets;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -57,6 +56,7 @@ import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
+import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
@@ -915,7 +915,7 @@ public class ModCard extends JSONBase {
 			params = new ObjectMapper().readValue(jsonParams, mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
 		}
 
-		final ClassWidgets classWidgets = new ClassWidgets(card.getSchema());
+		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(card.getSchema());
 		return JsonResponse.success(classWidgets.executeAction(widgetId, action, params, card));
 	}
 
