@@ -22,6 +22,10 @@ import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
+import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory;
+import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
+import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
+import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlManager;
 
 @Legacy("Spring should be used")
@@ -38,15 +42,24 @@ public class TemporaryObjectsBeforeSpringDI {
 		}
 	};
 
-	final static CachingDriver driver;
-	final static CMWorkflowService workflowService;
-	final static ProcessDefinitionManager processDefinitionManager;
+	private static final CachingDriver driver;
+	private static final CMWorkflowService workflowService;
+	private static final ProcessDefinitionManager processDefinitionManager;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource);
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
-		processDefinitionManager = new XpdlManager(workflowService, gca);
+		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlVariableFactory(), newXpdlWidgetFactory());
+	}
+
+	private static XpdlExtendedAttributeVariableFactory newXpdlVariableFactory() {
+		return new SharkStyleXpdlExtendedAttributeVariableFactory();
+	}
+
+	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {
+		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
+		return factory;
 	}
 
 	public static CachingDriver getDriver() {

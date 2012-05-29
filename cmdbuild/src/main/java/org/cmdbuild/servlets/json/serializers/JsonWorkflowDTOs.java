@@ -1,9 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import java.util.ArrayList;
-
-import org.cmdbuild.elements.widget.Widget;
 import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 public interface JsonWorkflowDTOs {
@@ -36,8 +34,8 @@ public interface JsonWorkflowDTOs {
 			return inner.getVariables();
 		}
 
-		public Iterable<Widget> getWidgets() {
-			return new ArrayList<Widget>(0);
+		public Iterable<CMActivityWidget> getWidgets() {
+			return inner.getWidgets();
 		}
 
 		public static JsonActivityDefinition fromActivityDefinition(final CMActivity ad) {

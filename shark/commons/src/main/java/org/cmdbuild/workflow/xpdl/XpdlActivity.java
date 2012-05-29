@@ -16,29 +16,6 @@ import org.enhydra.jxpdl.elements.TaskTypes;
 
 public class XpdlActivity implements XpdlExtendedAttributesHolder {
 
-	public enum XpdlVariableSuffix {
-		VIEW {
-			@Override
-			public Type toGlobalType() {
-				return CMActivityVariableToProcess.Type.READ_ONLY;
-			}
-		},
-		UPDATE {
-			@Override
-			public Type toGlobalType() {
-				return CMActivityVariableToProcess.Type.READ_WRITE;
-			}
-		},
-		UPDATEREQUIRED {
-			@Override
-			public Type toGlobalType() {
-				return CMActivityVariableToProcess.Type.READ_WRITE_REQUIRED;
-			}
-		};
-
-		public abstract Type toGlobalType();
-	}
-
 	final XpdlDocument doc;
 	final XpdlProcess process;
 	final Activity inner;

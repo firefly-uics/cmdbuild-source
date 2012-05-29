@@ -7,7 +7,7 @@ public class XpdlExtendedAttribute {
 	private final String key;
 	private final String value;
 
-	private XpdlExtendedAttribute(final String key, final String value) {
+	public XpdlExtendedAttribute(final String key, final String value) {
 		this.key = key;
 		this.value = value;
 	}

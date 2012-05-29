@@ -43,11 +43,17 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	private static final String DEFAULT_SYSTEM_PARTICIPANT = "System";
 
-	final GroupQueryAdapter groupQueryAdapter;
+	private final GroupQueryAdapter groupQueryAdapter;
+	private final XpdlExtendedAttributeVariableFactory xpdlVariableFactory;
+	private final XpdlExtendedAttributeWidgetFactory xpdlWidgetFactory;
 
-	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter) {
+	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter,
+			final XpdlExtendedAttributeVariableFactory xpdlvariablefactory,
+			final XpdlExtendedAttributeWidgetFactory xpdlwidgetfactory) {
 		super(workflowService);
 		this.groupQueryAdapter = groupQueryAdapter;
+		this.xpdlVariableFactory = xpdlvariablefactory;
+		this.xpdlWidgetFactory = xpdlwidgetfactory;
 	}
 
 	@Override
@@ -135,7 +141,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		info.packageId = xproc.getDocument().getPackageId();
 		info.startActivities = new ArrayList<CMActivity>();
 		for (final XpdlActivity xact : xproc.getStartingActivities()) {
-			info.startActivities.add(new XpdlActivityWrapper(xact));
+			info.startActivities.add(new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory));
 		}
 		return info;
 	}
@@ -159,6 +165,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 			return xpdlType;
 		}
 
+		@Override
 		public void visit(final BooleanAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.BOOLEAN;
 		}
