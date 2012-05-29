@@ -29,7 +29,7 @@ import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
-import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguages;
+import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 
 /**
  * Process Definition Manager that uses XPDL definitions.
@@ -45,7 +45,6 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	final GroupQueryAdapter groupQueryAdapter;
 
-
 	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter) {
 		super(workflowService);
 		this.groupQueryAdapter = groupQueryAdapter;
@@ -53,9 +52,9 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	@Override
 	public DataSource getTemplate(final CMProcessClass process) throws XpdlException {
-		XpdlDocument doc = new XpdlDocument(getPackageId(process));
+		final XpdlDocument doc = new XpdlDocument(getPackageId(process));
 		doc.createCustomTypeDeclarations();
-		doc.setDefaultScriptingLanguage(ScriptLanguages.JAVA);
+		doc.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
 		addProcessWithFields(doc, process);
 		doc.addSystemParticipant(DEFAULT_SYSTEM_PARTICIPANT);
 		addAllGroupsToTemplate(doc);
@@ -71,19 +70,19 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	}
 
 	@Legacy("Should use the new authentication framework, passed as a constructor parameter")
-	private void addAllGroupsToTemplate(XpdlDocument doc) {
-		for (String name : groupQueryAdapter.getAllGroupNames()) {
+	private void addAllGroupsToTemplate(final XpdlDocument doc) {
+		for (final String name : groupQueryAdapter.getAllGroupNames()) {
 			doc.addRoleParticipant(name);
 		}
 	}
 
-	private void addProcessWithFields(XpdlDocument doc, final CMProcessClass process) {
+	private void addProcessWithFields(final XpdlDocument doc, final CMProcessClass process) {
 		final String wpId = getProcessId(process);
-		XpdlProcess proc = doc.createProcess(wpId);
+		final XpdlProcess proc = doc.createProcess(wpId);
 		addBindedClass(doc, process);
 		final DaoToXpdlAttributeTypeConverter typeConverter = new DaoToXpdlAttributeTypeConverter();
-		for (CMAttribute a : process.getAllAttributes()) {
-			XpdlDocument.StandardAndCustomTypes type = typeConverter.convertType(a.getType());
+		for (final CMAttribute a : process.getAllAttributes()) {
+			final XpdlDocument.StandardAndCustomTypes type = typeConverter.convertType(a.getType());
 			if (type != null) {
 				proc.addField(a.getName(), type);
 			}
@@ -91,12 +90,12 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	}
 
 	@Legacy("As in 1.x")
-	private void addBindedClass(XpdlDocument doc, final CMProcessClass process) {
+	private void addBindedClass(final XpdlDocument doc, final CMProcessClass process) {
 		doc.findProcess(getProcessId(process)).setBindToClass(process.getName());
 	}
 
 	@Override
-	public void updateDefinition(CMProcessClass process, DataSource pkgDefData) throws CMWorkflowException {
+	public void updateDefinition(final CMProcessClass process, final DataSource pkgDefData) throws CMWorkflowException {
 		try {
 			final XpdlDocument xpdl = new XpdlDocument(XpdlPackageFactory.readXpdl(pkgDefData.getInputStream()));
 			if (!getPackageId(process).equals(xpdl.getPackageId())) {
@@ -110,29 +109,29 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 			if (!process.getName().equals(bindedClass)) {
 				throw new XpdlException("The process is not bound to this class");
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new CMWorkflowException(e);
 		}
 		super.updateDefinition(process, pkgDefData);
 	}
 
 	@Override
-	protected void addPackage(byte[] pkgDef, Map<String, ProcessInfo> processInfoMap) {
+	protected void addPackage(final byte[] pkgDef, final Map<String, ProcessInfo> processInfoMap) {
 		try {
 			final XpdlDocument xpdl = new XpdlDocument(XpdlPackageFactory.readXpdl(pkgDef));
-			for (XpdlProcess xproc : xpdl.findAllProcesses()) {
+			for (final XpdlProcess xproc : xpdl.findAllProcesses()) {
 				final String className = xproc.getBindToClass();
 				if (className != null) {
 					processInfoMap.put(className, createProcessInfo(xproc));
 				}
 			}
-		} catch (XpdlException e) {
+		} catch (final XpdlException e) {
 			// TODO LOG failure
 		}
 	}
 
 	private ProcessInfo createProcessInfo(final XpdlProcess xproc) {
-		ProcessInfo info = new ProcessInfo();
+		final ProcessInfo info = new ProcessInfo();
 		info.packageId = xproc.getDocument().getPackageId();
 		info.startActivities = new ArrayList<CMActivity>();
 		for (final XpdlActivity xact : xproc.getStartingActivities()) {
@@ -160,72 +159,72 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 			return xpdlType;
 		}
 
-		public void visit(BooleanAttributeType attributeType) {
+		public void visit(final BooleanAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.BOOLEAN;
 		}
 
 		@Override
-		public void visit(DateTimeAttributeType attributeType) {
+		public void visit(final DateTimeAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.DATETIME;
 		}
 
 		@Override
-		public void visit(DateAttributeType attributeType) {
+		public void visit(final DateAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.DATETIME;
 		}
 
 		@Override
-		public void visit(DecimalAttributeType attributeType) {
+		public void visit(final DecimalAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.FLOAT;
 		}
 
 		@Override
-		public void visit(DoubleAttributeType attributeType) {
+		public void visit(final DoubleAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.FLOAT;
 		}
 
 		@Override
-		public void visit(ForeignKeyAttributeType attributeType) {
+		public void visit(final ForeignKeyAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.REFERENCE;
 		}
 
 		@Override
-		public void visit(GeometryAttributeType attributeType) {
+		public void visit(final GeometryAttributeType attributeType) {
 			xpdlType = null;
 		}
 
 		@Override
-		public void visit(IntegerAttributeType attributeType) {
+		public void visit(final IntegerAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.INTEGER;
 		}
 
 		@Override
-		public void visit(IPAddressAttributeType attributeType) {
+		public void visit(final IPAddressAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.STRING;
 		}
 
 		@Override
-		public void visit(LookupAttributeType attributeType) {
+		public void visit(final LookupAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.LOOKUP;
 		}
 
 		@Override
-		public void visit(ReferenceAttributeType attributeType) {
+		public void visit(final ReferenceAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.REFERENCE;
 		}
 
 		@Override
-		public void visit(StringAttributeType attributeType) {
+		public void visit(final StringAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.STRING;
 		}
 
 		@Override
-		public void visit(TextAttributeType attributeType) {
+		public void visit(final TextAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.STRING;
 		}
 
 		@Override
-		public void visit(TimeAttributeType attributeType) {
+		public void visit(final TimeAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.DATETIME;
 		}
 	}
