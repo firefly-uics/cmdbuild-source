@@ -101,4 +101,5 @@
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 
 	<!-- DASHBOARD -->
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>	

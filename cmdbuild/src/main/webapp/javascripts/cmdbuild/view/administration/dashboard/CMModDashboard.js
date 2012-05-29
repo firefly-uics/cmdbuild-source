@@ -61,7 +61,8 @@
 					frame: false,
 					items: [
 						propertiesPanel(me),
-						chartsConfigurationPanel(me)
+						chartsConfigurationPanel(me),
+						layoutConfigurationPanel(me)
 					]
 				}],
 				tbar: [this.addButton]
@@ -99,4 +100,15 @@
 
 		return p;
 	}
+
+	function layoutConfigurationPanel(me) {
+		var p = Ext.createByAlias('widget.dashboardlayoutconfiguration');
+
+		me.getLayoutConfigurationPanel = function() {
+			return p;
+		}
+
+		return p;
+	}
+
 })();

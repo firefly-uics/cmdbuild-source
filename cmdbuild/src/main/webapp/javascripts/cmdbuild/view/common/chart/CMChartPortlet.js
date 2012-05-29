@@ -133,9 +133,13 @@
 				this.reloadButton.enable();
 				this.doLayout();
 				if (!this.chartRendered) {
-					this.chart.setHeight(250);
-					this.adjustSize(this.getHeight() + 250);
-					this.chartRendered = true;
+					try {
+						this.chart.setHeight(250);
+						this.adjustSize(this.getHeight() + 250);
+						this.chartRendered = true;
+					} catch (e) {
+						_debug("Chart portlet: Rendering issue");
+					}
 				}
 			}
 		},
@@ -205,6 +209,23 @@
 
 			this.reconfigure(store, columns);
 			this.cmFake = false;
+		}
+	});
+
+	Ext.define("CMDBuild.view.management.dashboard.CMDashboardColumn", {
+		extend: "Ext.app.PortalColumn",
+		addChart: function(chartConf, store, alsoInactive) {
+			if (alsoInactive || chartConf.isActive()) {
+				var c = new CMDBuild.view.management.dashboard.CMChartPortlet({
+					chartConfiguration: chartConf,
+					store: store
+				});
+
+				this.add(c);
+				return c;
+			}
+
+			return null;
 		}
 	});
 

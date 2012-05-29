@@ -58,7 +58,7 @@ Ext.define('Ext.app.PortalPanel', {
 
         for (; i < len; i++) {
             item = items[i];
-            // item.columnWidth = 1 / len;
+            item.columnWidth = 1 / len;
             item.removeCls(['x-portal-column-first', 'x-portal-column-last']);
         }
 

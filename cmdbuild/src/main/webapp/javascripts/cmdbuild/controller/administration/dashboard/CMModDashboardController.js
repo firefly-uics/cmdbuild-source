@@ -11,19 +11,20 @@
 			cmcreate: function(view) {
 				var propertiesPanelController = Ext.createByAlias('controller.cmdashboardproperties', view.getPropertiesPanel());
 				var chartsConfigurationController = CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelController.cmcreate(view.getChartsConfigurationPanel());
-
-				return new CMDBuild.controller.administration.dashboard.CMModDashboardController(view, propertiesPanelController, chartsConfigurationController);
+				var layoutConfigurationController = Ext.createByAlias('controller.cmdashboardlayoutconf', view.getLayoutConfigurationPanel());
+				return new CMDBuild.controller.administration.dashboard.CMModDashboardController(view, propertiesPanelController, chartsConfigurationController, layoutConfigurationController);
 			}
 		},
 
-		constructor: function(view, propertiesPanelController, chartsConfigurationController) {
+		constructor: function(view, propertiesPanelController, chartsConfigurationController, layoutConfigurationController) {
 			this.callParent(arguments);
 			this.dashboard = null;
 			this.view.setDelegate(this);
 
 			this.subcontrollers = [
 				this.propertiesPanelController = propertiesPanelController,
-				this.chartsConfigurationController = chartsConfigurationController
+				this.chartsConfigurationController = chartsConfigurationController,
+				this.layoutConfigurationController = layoutConfigurationController
 			]
 		},
 

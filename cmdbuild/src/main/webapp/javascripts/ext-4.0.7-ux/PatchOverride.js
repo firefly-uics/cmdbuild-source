@@ -1,3 +1,27 @@
+	Ext.override(Ext.app.PortalPanel, {
+		/**
+		 * override to fix a bug: crash if no configured columns
+		 */
+		beforeLayout : function() {
+			var items = this.layout.getLayoutItems(), len = items.length, i = 0, item;
+
+			for (; i < len; i++) {
+				item = items[i];
+				// item.columnWidth = 1 / len; // to allow me to set the column width
+				item.removeCls( [ 'x-portal-column-first', 'x-portal-column-last' ]);
+			}
+
+			// CMDBUild patch
+			if (len > 0) {
+				items[0].addCls('x-portal-column-first');
+				items[len - 1].addCls('x-portal-column-last');
+			}
+			// end CMDBUild patch
+
+			return this.callParent(arguments);
+		}
+	});
+
 Ext.override(Ext.slider.Multi, {
     onDisable: function() {
         var me = this,

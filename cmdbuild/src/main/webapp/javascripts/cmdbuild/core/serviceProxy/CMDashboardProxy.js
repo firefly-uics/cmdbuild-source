@@ -3,6 +3,7 @@
 	CMDBuild.ServiceProxy.url.Dashboard = {
 		add : "services/json/dashboard/add",
 		modify: "services/json/dashboard/modifybaseproperties",
+		modifyColumns: "services/json/dashboard/modifycolumns",
 		fullList : "services/json/dashboard/fulllist",
 		list : "services/json/dashboard/list",
 		remove : "services/json/dashboard/remove",
@@ -55,9 +56,45 @@
 					dashboardConfiguration: Ext.encode(dashboardConfiguration)
 				},
 				success: function(operation, configuration, decodedResponse) {
-					 success.apply(scope);
+					success.apply(scope);
 
-					 _CMCache.modifyDashboard(dashboardConfiguration, dashboardId);
+					_CMCache.modifyDashboard(dashboardConfiguration, dashboardId);
+				}
+			});
+		},
+
+		modify : function(dashboardId, dashboardConfiguration, success, scope) {
+			CMDBuild.ServiceProxy.core.doRequest({
+				method: "POST",
+				url: CMDBuild.ServiceProxy.url.Dashboard.modify,
+				params: {
+					dashboardId: dashboardId,
+					dashboardConfiguration: Ext.encode(dashboardConfiguration)
+				},
+				success: function(operation, configuration, decodedResponse) {
+					success.apply(scope);
+
+					_CMCache.modifyDashboard(dashboardConfiguration, dashboardId);
+				}
+			});
+		},
+
+		modifyColumns : function(dashboardId, columnsConfiguration, success, scope) {
+			CMDBuild.ServiceProxy.core.doRequest({
+				method: "POST",
+				url: CMDBuild.ServiceProxy.url.Dashboard.modifyColumns,
+
+				params: {
+					dashboardId: dashboardId,
+					columnsConfiguration: Ext.encode(columnsConfiguration)
+				},
+
+				success: function(operation, configuration, decodedResponse) {
+					CMDBuild.Msg.success(arguments);
+					var d = _CMCache.getDashboardById(dashboardId);
+					if (d) {
+						d.setColumns(columnsConfiguration);
+					}
 				}
 			});
 		},
@@ -175,7 +212,7 @@
 				});
 			},
 
-			getData: function(dashboardId, chartId, params, cb) {
+			getData: function(dashboardId, chartId, params, success, callback) {
 				CMDBuild.ServiceProxy.core.doRequest({
 					method: "GET",
 					url: CMDBuild.ServiceProxy.url.Dashboard.getChartData,
@@ -185,13 +222,14 @@
 						params: Ext.encode(params)
 					},
 					success: function(operation, configuration, decodedResponse) {
-						if (typeof cb == "function") {
+						if (typeof success == "function") {
 							var response = decodedResponse.response || {};
 							response = response.rows || [];
 
-							cb(response);
+							success(response);
 						}
-					}
+					},
+					callback: callback || Ext.emptyFn
 				});
 			},
 
