@@ -5,11 +5,12 @@ import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
-public abstract class Widget {
+public abstract class Widget implements CMActivityWidget {
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;
@@ -25,6 +26,7 @@ public abstract class Widget {
 		setActive(true);
 	}
 
+	@Override
 	public final Object executeAction(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) throws Exception {
 		final WidgetAction actionCommand = getActionCommand(action, params, dsVars);
 		if (actionCommand != null) {
@@ -49,6 +51,7 @@ public abstract class Widget {
 		this.id = id;
 	}
 
+	@Override
 	public final String getId() {
 		return id;
 	}
@@ -57,6 +60,7 @@ public abstract class Widget {
 		this.label = label;
 	}
 
+	@Override
 	public final String getLabel() {
 		return label;
 	}
@@ -73,6 +77,7 @@ public abstract class Widget {
 		this.alwaysenabled = alwaysenabled;
 	}
 
+	@Override
 	public final boolean isAlwaysenabled() {
 		return alwaysenabled;
 	}
