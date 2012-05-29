@@ -58,11 +58,6 @@
 			<artifactId>shark-ejbandws-client</artifactId>
 			<version>${shark.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-shark-types</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<!-- -->
 
 		<dependency>

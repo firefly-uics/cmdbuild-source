@@ -54,12 +54,10 @@
 				<executions>
 					<execution>
 						<id>test-jar</id>
-						<phase>package</phase>
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
 						<configuration>
-							<classifier>test</classifier>
 							<includes>
 								<include>utils/**</include>
 							</includes>
