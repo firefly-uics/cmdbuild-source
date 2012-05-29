@@ -1,20 +1,27 @@
-package unit.workflow;
+package unit;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
-import org.cmdbuild.workflow.xpdl.ValuePairWidgetFactory;
+import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttribute;
 import org.junit.Test;
 
-public class ValuePairWidgetFactoryTest {
+public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 
 	private final ValuePairXpdlExtendedAttributeWidgetFactory widgetFactory;
 
-	public ValuePairWidgetFactoryTest() {
+	public ValuePairXpdlExtendedAttributeWidgetFactoryTest() {
 		widgetFactory = new ValuePairXpdlExtendedAttributeWidgetFactory();
 	}
 
@@ -25,7 +32,7 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void createDelegatesCreationToTheSpecificWidgetFactory() {
-		ValuePairWidgetFactory aFactory = mock(ValuePairWidgetFactory.class);
+		SingleActivityWidgetFactory aFactory = mock(SingleActivityWidgetFactory.class);
 		CMActivityWidget aWidget = addFactoryReturningWidget(aFactory, "A");
 
 		assertNull(createWidget("A", "Serialization"));
@@ -40,7 +47,7 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void widgetSerializationCannotBeNull() {
-		ValuePairWidgetFactory aFactory = mock(ValuePairWidgetFactory.class);
+		SingleActivityWidgetFactory aFactory = mock(SingleActivityWidgetFactory.class);
 		addFactoryReturningWidget(aFactory, "A");
 
 		widgetFactory.addWidgetFactory(aFactory);
@@ -54,7 +61,7 @@ public class ValuePairWidgetFactoryTest {
 	 * Utils
 	 */
 
-	private CMActivityWidget addFactoryReturningWidget(final ValuePairWidgetFactory aFactory, final String name) {
+	private CMActivityWidget addFactoryReturningWidget(final SingleActivityWidgetFactory aFactory, final String name) {
 		CMActivityWidget aWidget =  mock(CMActivityWidget.class);
 		when(aFactory.getWidgetName()).thenReturn(name);
 		when(aFactory.createWidget(anyString())).thenReturn(aWidget);
