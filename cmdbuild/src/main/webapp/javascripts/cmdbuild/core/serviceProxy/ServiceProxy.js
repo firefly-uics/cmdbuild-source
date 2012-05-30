@@ -297,40 +297,71 @@ CMDBuild.ServiceProxy.card = {
 	}
 };
 
+/*
+ * Workflow adapters
+ */
+
+function adaptVariables(inputVars) {
+	var outputVars = {};
+	for (i = 0, len = inputVars.length; i < len; ++i) {
+		var v = inputVars[i];
+		outputVars[v.name] = "";
+		outputVars[v.name+"_index"] = i;
+		outputVars[v.name+"_type"] = {
+			READ_ONLY: "VIEW",
+			READ_WRITE: "UPDATE",
+			READ_WRITE_REQUIRED: "UPDATEREQUIRED"
+		}[v.type];
+	}
+	return outputVars;
+}
+
+function adaptWidgets(inputWidgets) {
+	var outputWidgets = [];
+	Ext.Array.forEach(inputWidgets, function(w) {
+		outputWidgets.push(adaptWidget(w));
+	});
+	return outputWidgets;
+}
+
+function adaptWidget(inputWidget) {
+	return Ext.apply({
+		identifier : inputWidget.id,
+		ButtonLabel : inputWidget.label,
+		btnLabel : inputWidget.label
+	}, {
+		".OpenNote" : function() {
+			return {
+				extattrtype : "openNote"
+			};
+		},
+		".OpenAttachment" : function() {
+			return {
+				extattrtype : "openAttachment"
+			};
+		}
+	}[inputWidget.type]());
+}
+
 CMDBuild.ServiceProxy.workflow = {
-	getstartactivitytemplate: function(idClass, p) {
+	getstartactivitytemplate: function(classId, p) {
 		CMDBuild.ServiceProxy.core.doRequest(Ext.apply({
 			url: 'services/json/workflow/getstartactivity',
 			method: 'GET',
 			params: {
-				idClass : idClass,
+				idClass : classId,
 				id : -1
 			},
 			adapter: function(input) {
 				var activity = input.response;
-
-				var vars = {};
-				for (i = 0, len = activity.variables.length; i < len; ++i) {
-					var v = activity.variables[i];
-					vars[v.name] = "";
-					vars[v.name+"_index"] = i;
-					vars[v.name+"_type"] = {
-						READ_ONLY: "VIEW",
-						READ_WRITE: "UPDATE",
-						READ_WRITE_REQUIRED: "UPDATEREQUIRED"
-					}[v.type];
-				}
-
-				var widgets = [];
-
 				return {
-					data: Ext.apply(vars, {
+					data: Ext.apply(adaptVariables(activity.variables), {
 						Id: -1,
-						IdClass: parseInt(idClass),
+						IdClass: parseInt(classId),
 						ProcessInstanceId: "tostart",
 						activityPerformerName: activity.performerName,
 						Code: activity.description,
-						CmdbuildExtendedAttributes: widgets,
+						CmdbuildExtendedAttributes: adaptWidgets(activity.widgets),
 						priv_create: true,
 						priv_write: true
 					}),

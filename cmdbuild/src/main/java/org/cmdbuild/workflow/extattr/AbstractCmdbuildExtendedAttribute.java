@@ -34,12 +34,11 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 	public class ExtendedAttributeConfigParams {
 		Map<String,Object> parameters;
 		Map<String,Object> currentOuts;
-		
-		@SuppressWarnings("unchecked")
+
 		public ExtendedAttributeConfigParams(Map<String,String> staticParams,
 				Map<String,Object> variableParams,
 				Map<String,Object> currentOuts) {
-			this.parameters = new HashMap();
+			this.parameters = new HashMap<String,Object>();
 			parameters.putAll(staticParams);
 			parameters.putAll(variableParams);
 			this.currentOuts = currentOuts;
@@ -109,7 +108,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 		StringTokenizer token1 = new StringTokenizer(attributeValue.trim(),"\r\n");
 		while( token1.hasMoreTokens() ) {
 			String tmp = token1.nextToken().trim();
-			int eqIdx = isVar(tmp);
+			int eqIdx = isInputParameter(tmp);
 			if(-1 != eqIdx){
 				//variable
 				String key = tmp.substring(0,eqIdx).trim();
@@ -390,7 +389,7 @@ public abstract class AbstractCmdbuildExtendedAttribute implements
 	 * @param s
 	 * @return
 	 */
-	private int isVar(String s){ return s.indexOf('='); }
+	private int isInputParameter(String s){ return s.indexOf('='); }
 	
 	/**
 	 * true if the value does not starts with quotation

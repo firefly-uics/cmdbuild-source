@@ -22,6 +22,8 @@ import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
+import org.cmdbuild.workflow.widget.OpenAttachmentWidgetFactory;
+import org.cmdbuild.workflow.widget.OpenNoteWidgetFactory;
 import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
@@ -59,6 +61,8 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {
 		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
+		factory.addWidgetFactory(new OpenAttachmentWidgetFactory());
+		factory.addWidgetFactory(new OpenNoteWidgetFactory());
 		return factory;
 	}
 
