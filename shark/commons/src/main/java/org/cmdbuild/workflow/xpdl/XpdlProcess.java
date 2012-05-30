@@ -6,11 +6,13 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
 import org.enhydra.jxpdl.elements.ActivitySet;
 import org.enhydra.jxpdl.elements.DataField;
+import org.enhydra.jxpdl.elements.Transition;
 import org.enhydra.jxpdl.elements.WorkflowProcess;
 
 public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHolder {
 
-	@Legacy("As in 1.x") private static final String BIND_TO_CLASS_XA = "cmdbuildBindToClass";
+	@Legacy("As in 1.x")
+	private static final String BIND_TO_CLASS_XA = "cmdbuildBindToClass";
 
 	private final XpdlDocument doc;
 	final WorkflowProcess inner;
@@ -42,8 +44,10 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	/**
 	 * Creates and adds a new activity set to a process.
 	 * 
-	 * @param process id
-	 * @param activity set id
+	 * @param process
+	 *            id
+	 * @param activity
+	 *            set id
 	 * @return the created activity set
 	 */
 	public XpdlActivitySet createActivitySet(final String activitySetId) {
@@ -97,4 +101,17 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	public String getBindToClass() {
 		return extendedAttributes.getFirstExtendedAttributeValue(BIND_TO_CLASS_XA);
 	}
+
+	public XpdlTransition createTransition(final XpdlActivity from, final XpdlActivity to) {
+		final Transition transition = (Transition) inner.getTransitions().generateNewElement();
+		transition.setId(String.format("%s--%s", from.getId(), to.getId()));
+		transition.setFrom(from.getId());
+		transition.setTo(to.getId());
+		transition.getCondition().setTypeNONE();
+
+		inner.getTransitions().add(transition);
+
+		return new XpdlTransition(transition);
+	}
+
 }

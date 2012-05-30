@@ -1,16 +1,20 @@
 package integration;
 
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static utils.XpdlTestUtils.randomName;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.workflow.CMEventManager;
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
+import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import utils.MockEventsDelegator;
@@ -18,19 +22,14 @@ import utils.MockEventsDelegator;
 public class EventDelegationTest extends LocalWorkflowServiceTest {
 
 	private final String wpId = randomName();
-	private final String activityId = randomName();
+
+	private XpdlProcess process;
 
 	private CMEventManager eventManager;
 
 	@Before
 	public void createAndUploadPackage() throws Exception {
-		final XpdlProcess process = xpdlDocument.createProcess(wpId);
-
-		final XpdlActivity activity = process.createActivity(activityId);
-		final String expression = "greeting = \"hello, world\";";
-		activity.setScriptingType(ScriptLanguage.JAVA, expression);
-
-		ws.uploadPackage(xpdlDocument.getPackageId(), serialize(xpdlDocument));
+		process = xpdlDocument.createProcess(wpId);
 	}
 
 	@Before
@@ -44,13 +43,68 @@ public class EventDelegationTest extends LocalWorkflowServiceTest {
 	}
 
 	@Test
-	public void startProcessExecutesImplementationActivities() throws Exception {
-		ws.startProcess(packageId, wpId);
-		verify(eventManager).processStarted(wpId);
-		verify(eventManager).activityStarted(activityId);
-		verify(eventManager).activityClosed(activityId);
-		verify(eventManager).processClosed(wpId);
+	public void startScriptAndStop() throws Exception {
+		final XpdlActivity activity = process.createActivity(randomName());
+		activity.setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
+
+		uploadXpdlAndStartProcess();
+
+		final InOrder inOrder = inOrder(eventManager);
+		inOrder.verify(eventManager).processStarted(wpId);
+		inOrder.verify(eventManager).activityStarted(activity.getId());
+		inOrder.verify(eventManager).activityClosed(activity.getId());
+		inOrder.verify(eventManager).processClosed(wpId);
 		verifyNoMoreInteractions(eventManager);
+	}
+
+	@Test
+	public void startStopsAtFirstNoImplementationActivity() throws Exception {
+		// order matters for this test
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+		final XpdlActivity scriptActivity = process.createActivity(randomName());
+		scriptActivity.setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
+		process.createTransition(scriptActivity, noImplActivity);
+
+		uploadXpdlAndStartProcess();
+
+		final InOrder inOrder = inOrder(eventManager);
+		inOrder.verify(eventManager).processStarted(wpId);
+		inOrder.verify(eventManager).activityStarted(scriptActivity.getId());
+		inOrder.verify(eventManager).activityClosed(scriptActivity.getId());
+		inOrder.verify(eventManager).activityStarted(noImplActivity.getId());
+		verifyNoMoreInteractions(eventManager);
+	}
+
+	@Test
+	public void subflowStartAndStop() throws Exception {
+		final XpdlProcess subprocess = xpdlDocument.createProcess(randomName());
+		final XpdlActivity scriptActivity = subprocess.createActivity(randomName());
+		scriptActivity.setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
+
+		final XpdlActivity subflowActivity = process.createActivity(randomName());
+		subflowActivity.setSubProcess(subprocess);
+
+		uploadXpdlAndStartProcess();
+
+		final InOrder inOrder = inOrder(eventManager);
+		inOrder.verify(eventManager).processStarted(wpId);
+		inOrder.verify(eventManager).activityStarted(subflowActivity.getId());
+		inOrder.verify(eventManager).processStarted(subprocess.getId());
+		inOrder.verify(eventManager).activityStarted(scriptActivity.getId());
+		inOrder.verify(eventManager).activityClosed(scriptActivity.getId());
+		inOrder.verify(eventManager).processClosed(subprocess.getId());
+		inOrder.verify(eventManager).activityClosed(subflowActivity.getId());
+		inOrder.verify(eventManager).processClosed(wpId);
+		verifyNoMoreInteractions(eventManager);
+	}
+
+	/*
+	 * Utils
+	 */
+
+	private void uploadXpdlAndStartProcess() throws CMWorkflowException, XpdlException {
+		ws.uploadPackage(xpdlDocument.getPackageId(), serialize(xpdlDocument));
+		ws.startProcess(packageId, wpId);
 	}
 
 }

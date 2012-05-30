@@ -3,7 +3,6 @@ package org.cmdbuild.workflow.xpdl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.Activity;
@@ -11,6 +10,7 @@ import org.enhydra.jxpdl.elements.ExtendedAttribute;
 import org.enhydra.jxpdl.elements.ExtendedAttributes;
 import org.enhydra.jxpdl.elements.ImplementationTypes;
 import org.enhydra.jxpdl.elements.Performer;
+import org.enhydra.jxpdl.elements.SubFlow;
 import org.enhydra.jxpdl.elements.TSScript;
 import org.enhydra.jxpdl.elements.TaskTypes;
 
@@ -95,6 +95,14 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 		taskTypes.setTaskScript();
 		final TSScript tsScript = taskTypes.getTaskScript().getScript();
 		return tsScript;
+	}
+
+	public void setSubProcess(final XpdlProcess subprocess) {
+		final ImplementationTypes implementationTypes = inner.getActivityTypes().getImplementation()
+				.getImplementationTypes();
+		implementationTypes.setSubFlow();
+		final SubFlow subflow = implementationTypes.getSubFlow();
+		subflow.setId(subprocess.getId());
 	}
 
 	/**
