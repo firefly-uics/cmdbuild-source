@@ -6,9 +6,7 @@ import static utils.XpdlTestUtils.randomName;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.workflow.CMEventManager;
-import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
-import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.junit.After;
@@ -21,15 +19,12 @@ import utils.MockEventsDelegator;
 
 public class EventDelegationTest extends LocalWorkflowServiceTest {
 
-	private final String wpId = randomName();
-
 	private XpdlProcess process;
-
 	private CMEventManager eventManager;
 
 	@Before
 	public void createAndUploadPackage() throws Exception {
-		process = xpdlDocument.createProcess(wpId);
+		process = xpdlDocument.createProcess(randomName());
 	}
 
 	@Before
@@ -47,13 +42,13 @@ public class EventDelegationTest extends LocalWorkflowServiceTest {
 		final XpdlActivity activity = process.createActivity(randomName());
 		activity.setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
 
-		uploadXpdlAndStartProcess();
+		uploadXpdlAndStartProcess(process);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(wpId);
+		inOrder.verify(eventManager).processStarted(process.getId());
 		inOrder.verify(eventManager).activityStarted(activity.getId());
 		inOrder.verify(eventManager).activityClosed(activity.getId());
-		inOrder.verify(eventManager).processClosed(wpId);
+		inOrder.verify(eventManager).processClosed(process.getId());
 		verifyNoMoreInteractions(eventManager);
 	}
 
@@ -65,10 +60,10 @@ public class EventDelegationTest extends LocalWorkflowServiceTest {
 		scriptActivity.setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
 		process.createTransition(scriptActivity, noImplActivity);
 
-		uploadXpdlAndStartProcess();
+		uploadXpdlAndStartProcess(process);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(wpId);
+		inOrder.verify(eventManager).processStarted(process.getId());
 		inOrder.verify(eventManager).activityStarted(scriptActivity.getId());
 		inOrder.verify(eventManager).activityClosed(scriptActivity.getId());
 		inOrder.verify(eventManager).activityStarted(noImplActivity.getId());
@@ -84,27 +79,18 @@ public class EventDelegationTest extends LocalWorkflowServiceTest {
 		final XpdlActivity subflowActivity = process.createActivity(randomName());
 		subflowActivity.setSubProcess(subprocess);
 
-		uploadXpdlAndStartProcess();
+		uploadXpdlAndStartProcess(process);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(wpId);
+		inOrder.verify(eventManager).processStarted(process.getId());
 		inOrder.verify(eventManager).activityStarted(subflowActivity.getId());
 		inOrder.verify(eventManager).processStarted(subprocess.getId());
 		inOrder.verify(eventManager).activityStarted(scriptActivity.getId());
 		inOrder.verify(eventManager).activityClosed(scriptActivity.getId());
 		inOrder.verify(eventManager).processClosed(subprocess.getId());
 		inOrder.verify(eventManager).activityClosed(subflowActivity.getId());
-		inOrder.verify(eventManager).processClosed(wpId);
+		inOrder.verify(eventManager).processClosed(process.getId());
 		verifyNoMoreInteractions(eventManager);
-	}
-
-	/*
-	 * Utils
-	 */
-
-	private void uploadXpdlAndStartProcess() throws CMWorkflowException, XpdlException {
-		ws.uploadPackage(xpdlDocument.getPackageId(), serialize(xpdlDocument));
-		ws.startProcess(packageId, wpId);
 	}
 
 }

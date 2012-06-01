@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
@@ -22,7 +21,7 @@ public class XpdlHandlingTest extends LocalWorkflowServiceTest {
 	@Test
 	public void definitionsCannotBeRubbish() throws XpdlException, CMWorkflowException {
 		try {
-			ws.uploadPackage(packageId, new byte[0]);
+			ws.uploadPackage(xpdlDocument.getPackageId(), new byte[0]);
 			fail();
 		} catch (final CMWorkflowException we) {
 			assertThat(we.getCause().getMessage(), containsString("The package byte[] representation can't be parsed"));
@@ -31,9 +30,8 @@ public class XpdlHandlingTest extends LocalWorkflowServiceTest {
 
 	@Test
 	public void definitionsMustHaveDefaultScriptingLanguage() throws XpdlException, CMWorkflowException {
-		final XpdlDocument xpdl = new XpdlDocument(packageId);
 		try {
-			ws.uploadPackage(packageId, serialize(xpdl));
+			upload(newXpdlNoScriptingLanguage(xpdlDocument.getPackageId()));
 			fail();
 		} catch (final CMWorkflowException we) {
 			assertThat(we.getCause(), instanceOf(PackageInvalid.class));
@@ -41,59 +39,54 @@ public class XpdlHandlingTest extends LocalWorkflowServiceTest {
 			assertThat(sharkException.getMessage(), containsString("Error in package"));
 			assertThat(sharkException.getXPDLValidationErrors(), containsString("Unsupported script language"));
 		}
-		xpdl.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
-		ws.uploadPackage(packageId, serialize(xpdl));
+		xpdlDocument.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
+		upload(xpdlDocument);
 	}
 
 	@Test
 	public void packageVersionIncreasesWithEveryUpload() throws CMWorkflowException {
-		final XpdlDocument xpdl = newXpdl(packageId);
-		final byte[] xpdlFile = serialize(xpdl);
-
-		String[] versions = ws.getPackageVersions(packageId);
+		String[] versions = ws.getPackageVersions(xpdlDocument.getPackageId());
 		assertEquals(0, versions.length);
 
-		ws.uploadPackage(packageId, xpdlFile);
+		upload(xpdlDocument);
 
-		versions = ws.getPackageVersions(packageId);
+		versions = ws.getPackageVersions(xpdlDocument.getPackageId());
 		assertThat(versions, is(new String[] { "1" }));
 
-		ws.uploadPackage(packageId, xpdlFile);
-		ws.uploadPackage(packageId, xpdlFile);
-		versions = ws.getPackageVersions(packageId);
+		upload(xpdlDocument);
+		upload(xpdlDocument);
+		versions = ws.getPackageVersions(xpdlDocument.getPackageId());
 		assertThat(versions, is(new String[] { "1", "2", "3" }));
 	}
 
 	@Test
 	public void anyPackageVersionCanBeDownloaded() throws CMWorkflowException {
-		final XpdlDocument xpdl = newXpdl(packageId);
-		Package pkg = xpdl.getPkg();
+		Package pkg = xpdlDocument.getPkg();
 
 		pkg.setName("n1");
-		ws.uploadPackage(packageId, serialize(xpdl));
+		upload(xpdlDocument);
 
 		pkg.setName("n2");
-		ws.uploadPackage(packageId, serialize(xpdl));
+		upload(xpdlDocument);
 
 		pkg.setName("n3");
-		ws.uploadPackage(packageId, serialize(xpdl));
+		upload(xpdlDocument);
 
-		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(packageId, "1"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(xpdlDocument.getPackageId(), "1"));
 		assertThat(pkg.getName(), is("n1"));
 
-		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(packageId, "3"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(xpdlDocument.getPackageId(), "3"));
 		assertThat(pkg.getName(), is("n3"));
 	}
 
 	@Test
 	public void xpdl1PackagesAreNotConvertedToXpdl2() throws CMWorkflowException {
-		final XpdlDocument xpdl = newXpdl(packageId);
-		Package pkg = xpdl.getPkg();
+		Package pkg = xpdlDocument.getPkg();
 
 		pkg.getPackageHeader().setXPDLVersion("1.0");
-		ws.uploadPackage(packageId, serialize(xpdl));
+		upload(xpdlDocument);
 
-		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(packageId, "1"));
+		pkg = XpdlPackageFactory.readXpdl(ws.downloadPackage(xpdlDocument.getPackageId(), "1"));
 		assertThat(pkg.getPackageHeader().getXPDLVersion(), is("1.0"));
 	}
 
@@ -103,12 +96,12 @@ public class XpdlHandlingTest extends LocalWorkflowServiceTest {
 		final String ID2 = randomName();
 		final int initialSize = ws.downloadAllPackages().length;
 
-		ws.uploadPackage(ID1, serialize(newXpdl(ID1)));
+		upload(newXpdl(ID1));
 
 		assertThat(ws.downloadAllPackages().length, is(initialSize + 1));
 
-		ws.uploadPackage(ID2, serialize(newXpdl(ID2)));
-		ws.uploadPackage(ID2, serialize(newXpdl(ID2)));
+		upload(newXpdl(ID2));
+		upload(newXpdl(ID2));
 
 		assertThat(ws.downloadAllPackages().length, is(initialSize + 2));
 	}
