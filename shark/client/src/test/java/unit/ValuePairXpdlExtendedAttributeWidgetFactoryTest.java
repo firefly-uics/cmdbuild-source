@@ -54,7 +54,7 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 
 		assertNull(createWidget("A", null));
 
-		verify(aFactory.createWidget(anyString()), never());
+		verify(aFactory, never()).createWidget(anyString());
 	}
 
 	/*
