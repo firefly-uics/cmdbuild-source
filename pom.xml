@@ -207,7 +207,7 @@
 					</executions>
 					<configuration>
 						<includes>
-							<include>integration/**/*.java</include>
+							<include>integration/**</include>
 						</includes>
 					</configuration>
 				</plugin>
