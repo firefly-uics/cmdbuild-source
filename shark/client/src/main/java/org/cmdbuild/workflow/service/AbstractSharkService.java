@@ -1,9 +1,14 @@
 package org.cmdbuild.workflow.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
+import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
+import org.enhydra.shark.api.client.wfmc.wapi.WMAttributeIterator;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.PackageAdministration;
@@ -15,11 +20,10 @@ import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
  */
 public abstract class AbstractSharkService implements CMWorkflowService {
 
-	protected static final String DEFAULT_ENGINE_NAME = "";
-	protected static final String DEFAULT_SCOPE = "";
+	protected static final String DEFAULT_ENGINE_NAME = StringUtils.EMPTY;
+	protected static final String DEFAULT_SCOPE = StringUtils.EMPTY;
 
 	protected abstract class TransactedExecutor<T> {
-
 		public T execute() throws CMWorkflowException {
 			try {
 				beginTransaction();
@@ -61,7 +65,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		try {
 			SharkInterfaceWrapper.setProperties(props, true);
 		} catch (final RuntimeException e) {
-			// Otherwise it ingores even unchecked exceptions
+			// Otherwise it ignores even unchecked exceptions
 			throw e;
 		} catch (final Exception e) {
 			// Can never happen with this configuration! Shark APIs love to
@@ -126,16 +130,15 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public void startProcess(final String pkgId, final String wpId) throws CMWorkflowException {
-		new TransactedExecutor<Void>() {
+	public String startProcess(final String pkgId, final String wpId) throws CMWorkflowException {
+		return new TransactedExecutor<String>() {
 			@Override
-			protected Void command() throws Exception {
-				final String procDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId, "",
-						wpId);
+			protected String command() throws Exception {
+				final String procDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId,
+						StringUtils.EMPTY, wpId);
 				final String procInstId = wapi().createProcessInstance(handle(), procDefId, null);
-				@SuppressWarnings("unused")
 				final String newProcInstId = wapi().startProcess(handle(), procInstId);
-				return null;
+				return newProcInstId;
 			}
 		}.execute();
 	}
@@ -167,6 +170,39 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	private final WAPI wapi() throws Exception {
 		return shark().getWAPIConnection();
+	}
+
+	@Override
+	public Map<String, Object> getProcessInstanceVariables(final String wpInstId) throws Exception {
+		return new TransactedExecutor<Map<String, Object>>() {
+			@Override
+			protected Map<String, Object> command() throws Exception {
+				final Map<String, Object> variables = new HashMap<String, Object>();
+				final WMAttributeIterator iterator = wapi().listProcessInstanceAttributes(handle(), wpInstId, null,
+						false);
+				for (final WMAttribute attribute : iterator.getArray()) {
+					final String name = attribute.getName();
+					final Object value = attribute.getValue();
+					variables.put(name, value);
+				}
+				return variables;
+			}
+		}.execute();
+	}
+
+	@Override
+	public void setProcessInstanceVariables(final String wpInstId, final Map<String, Object> variables)
+			throws Exception {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws Exception {
+				for (final String name : variables.keySet()) {
+					final Object value = variables.get(name);
+					wapi().assignProcessInstanceAttribute(handle(), wpInstId, name, value);
+				}
+				return null;
+			}
+		}.execute();
 	}
 
 }

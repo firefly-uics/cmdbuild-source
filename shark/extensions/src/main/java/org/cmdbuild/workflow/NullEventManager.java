@@ -20,4 +20,7 @@ public class NullEventManager implements CMEventManager {
 	public void activityClosed(final String activityDefinitionId) {
 	}
 
+	public void noActiveActivities() {
+	}
+
 }

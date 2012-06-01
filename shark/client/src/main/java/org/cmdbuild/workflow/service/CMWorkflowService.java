@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.service;
 
+import java.util.Map;
+
 import org.cmdbuild.workflow.CMWorkflowException;
 
 /**
@@ -21,6 +23,10 @@ public interface CMWorkflowService {
 	 */
 	byte[][] downloadAllPackages() throws CMWorkflowException;
 
-	void startProcess(String pkgId, String wpId) throws CMWorkflowException;
+	String startProcess(String pkgId, String wpId) throws CMWorkflowException;
+
+	void setProcessInstanceVariables(String wpInstId, Map<String, Object> variables) throws Exception;
+
+	Map<String, Object> getProcessInstanceVariables(String wpInstId) throws Exception;
 
 }

@@ -2,11 +2,13 @@ package integration;
 
 import static utils.XpdlTestUtils.randomName;
 
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.LocalSharkService;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
+import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -22,7 +24,6 @@ public abstract class LocalWorkflowServiceTest implements XpdlTest {
 
 	protected static CMWorkflowService ws;
 
-	protected String packageId;
 	protected XpdlDocument xpdlDocument;
 
 	@Rule
@@ -39,8 +40,7 @@ public abstract class LocalWorkflowServiceTest implements XpdlTest {
 
 	@Before
 	public void createRandomPackageName() throws Exception {
-		packageId = randomName();
-		xpdlDocument = newXpdl(packageId);
+		xpdlDocument = newXpdl(randomName());
 	}
 
 	@Override
@@ -48,14 +48,47 @@ public abstract class LocalWorkflowServiceTest implements XpdlTest {
 		return xpdlDocument;
 	}
 
+	/*
+	 * Utils
+	 */
+
 	/**
 	 * Creates a new {@link XpdlDocument} with default scripting language
 	 * {@code ScriptLanguages.JAVA}.
 	 */
 	protected final XpdlDocument newXpdl(final String packageId) throws XpdlException {
-		final XpdlDocument xpdl = new XpdlDocument(packageId);
+		final XpdlDocument xpdl = newXpdlNoScriptingLanguage(packageId);
 		xpdl.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
 		return xpdl;
+	}
+
+	/**
+	 * Creates a new {@link XpdlDocument} with no default scripting language.
+	 */
+	protected final XpdlDocument newXpdlNoScriptingLanguage(final String packageId) throws XpdlException {
+		return new XpdlDocument(packageId);
+	}
+
+	/**
+	 * Uploads the {@link XpdlDocument} and starts the specified
+	 * {@link XpdlProcess}.
+	 * 
+	 * @return the process instance's id
+	 */
+	protected final String uploadXpdlAndStartProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException,
+			XpdlException {
+		upload(xpdlDocument);
+		return ws.startProcess(xpdlDocument.getPackageId(), xpdlProcess.getId());
+	}
+
+	/**
+	 * Uploads an {@link XpdlDocument}.
+	 * 
+	 * @throws CMWorkflowException
+	 * @throws XpdlException
+	 */
+	protected final void upload(final XpdlDocument xpdlDocument) throws XpdlException, CMWorkflowException {
+		ws.uploadPackage(xpdlDocument.getPackageId(), serialize(xpdlDocument));
 	}
 
 	/**
