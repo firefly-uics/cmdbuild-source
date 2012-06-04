@@ -49,6 +49,7 @@
 		<module>shark/commons</module>
 		<module>shark/client</module>
 		<module>shark/extensions</module>
+		<module>shark/legacy-extensions</module>
 		<module>shark/server</module>
 	</modules>
 
