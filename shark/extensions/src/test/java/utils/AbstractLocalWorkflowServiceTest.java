@@ -1,4 +1,4 @@
-package integration;
+package utils;
 
 import static utils.XpdlTestUtils.randomName;
 
@@ -18,7 +18,7 @@ import org.junit.rules.TestRule;
 import utils.WriteXpdlOnFailure;
 import utils.XpdlTest;
 
-public abstract class LocalWorkflowServiceTest implements XpdlTest {
+public abstract class AbstractLocalWorkflowServiceTest implements XpdlTest {
 
 	private static final String USERNAME = "admin";
 

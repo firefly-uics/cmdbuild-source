@@ -16,7 +16,9 @@ import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.shark.api.client.wfservice.PackageInvalid;
 import org.junit.Test;
 
-public class XpdlHandlingTest extends LocalWorkflowServiceTest {
+import utils.AbstractLocalWorkflowServiceTest;
+
+public class XpdlHandlingTest extends AbstractLocalWorkflowServiceTest {
 
 	@Test
 	public void definitionsCannotBeRubbish() throws XpdlException, CMWorkflowException {
