@@ -18,9 +18,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import utils.AbstractLocalWorkflowServiceTest;
 import utils.MockEventsDelegator;
 
-public class VariablesTest extends LocalWorkflowServiceTest {
+public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 
 	private static final String A_BOOLEAN = "aBoolean";
 	private static final String AN_INTEGER = "anInteger";
@@ -64,7 +65,7 @@ public class VariablesTest extends LocalWorkflowServiceTest {
 	}
 
 	@Test
-	public void variableSettedThenReaded() throws Exception {
+	public void variableSettedThenRead() throws Exception {
 		process.createActivity(randomName());
 
 		final String wpInstId = uploadXpdlAndStartProcess(process);

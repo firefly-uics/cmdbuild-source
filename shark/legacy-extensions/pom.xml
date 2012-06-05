@@ -12,11 +12,77 @@
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Legacy Extensions</name>
 
+	<properties>
+		<beanshell.version>2.0b4</beanshell.version>
+	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-clientapi</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-commonapi</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-internalapi</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-toolagent-standard</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-utilities-wmentity</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-shark-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-extensions</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-ws-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-shark-commons</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-shark-extensions</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh</artifactId>
+			<version>${beanshell.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -25,6 +91,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
