@@ -31,7 +31,7 @@ public class RemoteWorkflowServiceTest {
 	 * The Tomcat plugin deploys the webapp as the artifact id.
 	 * It has to change when the artifact id changes.
 	 */
-	private static String WEBAPP_NAME = "it-shark-client";
+	private static String WEBAPP_NAME = "it-shark";
 
 	private static CMWorkflowService ws;
 	private String pkgId;
