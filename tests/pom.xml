@@ -16,7 +16,7 @@
 
 	<modules>
 		<module>it-dao</module>
-		<module>it-shark-client</module>
+		<module>it-shark</module>
 	</modules>
 
 </project>
