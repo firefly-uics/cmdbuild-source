@@ -45,7 +45,7 @@ public class XpdlActivityWrapper implements CMActivity {
 	}
 
 	@Override
-	public String getName() {
+	public String getId() {
 		return inner.getId();
 	}
 

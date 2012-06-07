@@ -17,7 +17,7 @@ public interface CMActivity {
 		Object executeAction(String action, Map<String, Object> params, Map<String, Object> dsVars) throws Exception;
 	}
 
-	String getName();
+	String getId();
 
 	String getDescription();
 

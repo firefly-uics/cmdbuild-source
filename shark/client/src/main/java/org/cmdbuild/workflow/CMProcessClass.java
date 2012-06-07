@@ -51,13 +51,28 @@ public interface CMProcessClass extends CMClass {
 	boolean isUserStoppable();
 
 	/**
-	 * Returns the start activity for a group. It considers the latest
+	 * Returns the start activity for the curent user. It considers the latest
 	 * package version that is bound to this process.
 	 * 
-	 * @param groupName
-	 * @return start activity for the group
-	 * @throws CMWorkflowException if no activity is defined for that group
+	 * Normally there is no suck thing as "start activity", so this is an
+	 * amazingly awful thing we do.
+	 * 
+	 * @return start activity for the current user
+	 * @throws CMWorkflowException if no activity is found
 	 */
-	CMActivity getStartActivity(String groupName) throws CMWorkflowException;
+	CMActivity getStartActivity() throws CMWorkflowException;
 
+	/**
+	 * Returns the package id for this process class.
+	 * 
+	 * @return package id for this process class
+	 */
+	String getPackageId() throws CMWorkflowException;
+
+	/**
+	 * Returns the process definition id for this process class.
+	 * 
+	 * @return process definition id for this process class
+	 */
+	String getProcessDefinitionId() throws CMWorkflowException;
 }

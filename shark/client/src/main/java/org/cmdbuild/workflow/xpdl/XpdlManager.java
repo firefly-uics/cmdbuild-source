@@ -58,7 +58,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	@Override
 	public DataSource getTemplate(final CMProcessClass process) throws XpdlException {
-		final XpdlDocument doc = new XpdlDocument(getPackageId(process));
+		final XpdlDocument doc = new XpdlDocument(getStandardPackageId(process));
 		doc.createCustomTypeDeclarations();
 		doc.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
 		addProcessWithFields(doc, process);
@@ -83,8 +83,8 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	}
 
 	private void addProcessWithFields(final XpdlDocument doc, final CMProcessClass process) {
-		final String wpId = getProcessId(process);
-		final XpdlProcess proc = doc.createProcess(wpId);
+		final String procDefId = getStandardProcessDefinitionId(process);
+		final XpdlProcess proc = doc.createProcess(procDefId);
 		addBindedClass(doc, process);
 		final DaoToXpdlAttributeTypeConverter typeConverter = new DaoToXpdlAttributeTypeConverter();
 		for (final CMAttribute a : process.getAllAttributes()) {
@@ -97,17 +97,17 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	@Legacy("As in 1.x")
 	private void addBindedClass(final XpdlDocument doc, final CMProcessClass process) {
-		doc.findProcess(getProcessId(process)).setBindToClass(process.getName());
+		doc.findProcess(getStandardProcessDefinitionId(process)).setBindToClass(process.getName());
 	}
 
 	@Override
 	public void updateDefinition(final CMProcessClass process, final DataSource pkgDefData) throws CMWorkflowException {
 		try {
 			final XpdlDocument xpdl = new XpdlDocument(XpdlPackageFactory.readXpdl(pkgDefData.getInputStream()));
-			if (!getPackageId(process).equals(xpdl.getPackageId())) {
+			if (!getStandardPackageId(process).equals(xpdl.getPackageId())) {
 				throw new XpdlException("The package id does not match");
 			}
-			final XpdlProcess proc = xpdl.findProcess(getProcessId(process));
+			final XpdlProcess proc = xpdl.findProcess(getStandardProcessDefinitionId(process));
 			if (proc == null) {
 				throw new XpdlException("The process id does not match");
 			}
@@ -139,6 +139,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	private ProcessInfo createProcessInfo(final XpdlProcess xproc) {
 		final ProcessInfo info = new ProcessInfo();
 		info.packageId = xproc.getDocument().getPackageId();
+		info.processDefinitionId = xproc.getId();
 		info.startActivities = new ArrayList<CMActivity>();
 		for (final XpdlActivity xact : xproc.getStartingActivities()) {
 			info.startActivities.add(new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory));

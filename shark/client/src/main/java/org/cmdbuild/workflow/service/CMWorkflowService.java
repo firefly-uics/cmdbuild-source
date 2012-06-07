@@ -23,10 +23,44 @@ public interface CMWorkflowService {
 	 */
 	byte[][] downloadAllPackages() throws CMWorkflowException;
 
-	String startProcess(String pkgId, String wpId) throws CMWorkflowException;
+	/**
+	 * Create and start the process.
+	 *  
+	 * @param pkgId package id
+	 * @param procDefId workflow process definition id (as defined in the xpdl)
+	 * @return newly created process instance id
+	 * @throws CMWorkflowException
+	 */
+	String startProcess(String pkgId, String procDefId) throws CMWorkflowException;
 
-	void setProcessInstanceVariables(String wpInstId, Map<String, Object> variables) throws Exception;
+	void setProcessInstanceVariables(String procInstId, Map<String, Object> variables) throws CMWorkflowException;
 
-	Map<String, Object> getProcessInstanceVariables(String wpInstId) throws Exception;
+	Map<String, Object> getProcessInstanceVariables(String procInstId) throws CMWorkflowException;
 
+	/**
+	 * Returns a list of open activities for a process instance.
+	 * 
+	 * @param procInstId
+	 * @return list of open activity instances for the process instance
+	 * @throws CMWorkflowException
+	 */
+	WSActivityInstInfo[] findOpenActivitiesForProcessInstance(String procInstId) throws CMWorkflowException;
+
+	/**
+	 * Returns a list of open activities for a process definition.
+	 * 
+	 * @param procDefId
+	 * @return list of open activity instances for the process definition
+	 * @throws CMWorkflowException
+	 */
+	WSActivityInstInfo[] findOpenActivitiesForProcess(String procDefId) throws CMWorkflowException;
+
+	/**
+	 * Aborts the current activity, stopping that flow path.
+	 * 
+	 * @param procInstId process instance id
+	 * @param actInstId activity instance id
+	 * @throws CMWorkflowException
+	 */
+	void abortActivityInstance(String procInstId, String actInstId) throws CMWorkflowException;
 }

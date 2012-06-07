@@ -27,6 +27,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	 */
 	protected static class ProcessInfo {
 		String packageId;
+		String processDefinitionId;
 		String lastProcessVersionId;
 		List<CMActivity> startActivities;
 	}
@@ -78,7 +79,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 
 	@Override
 	public final CMActivity getStartActivity(final CMProcessClass process, final String groupName) throws CMWorkflowException {
-		ProcessInfo pi = processInfoCache().get(process.getName());
+		final ProcessInfo pi = processInfoCache().get(process.getName());
 		if (groupName == null) {
 			return getStartActivityForAdmin(pi);
 		} else {
@@ -122,13 +123,31 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 
 	protected abstract void addPackage(byte[] pkgDef, Map<String, ProcessInfo> processInfoMap);
 
-	@Legacy("As in 1.x")
-	protected final String getPackageId(final CMProcessClass process) {
-		return "Package_" + process.getName().toLowerCase();
+	public final String getPackageId(final CMProcessClass process) throws CMWorkflowException {
+		final ProcessInfo pi = processInfoCache().get(process.getName());
+		if (pi != null) {
+			return pi.packageId;
+		} else {
+			return null;
+		}
 	}
 
 	@Legacy("As in 1.x")
-	protected final String getProcessId(final CMProcessClass process) {
+	protected final String getStandardPackageId(final CMProcessClass process) {
+		return "Package_" + process.getName().toLowerCase();
+	}
+
+	public final String getProcessDefinitionId(final CMProcessClass process) throws CMWorkflowException {
+		final ProcessInfo pi = processInfoCache().get(process.getName());
+		if (pi != null) {
+			return pi.processDefinitionId;
+		} else {
+			return null;
+		}
+	}
+
+	@Legacy("As in 1.x")
+	protected final String getStandardProcessDefinitionId(final CMProcessClass process) {
 		return "Process_" + process.getName().toLowerCase();
 	}
 

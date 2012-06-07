@@ -7,12 +7,17 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
+import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
+import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstanceState;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttributeIterator;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
+import org.enhydra.shark.api.client.wfmc.wapi.WMFilter;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.PackageAdministration;
 import org.enhydra.shark.api.client.wfservice.SharkInterface;
+import org.enhydra.shark.api.common.ActivityFilterBuilder;
+import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
 
 /**
@@ -130,13 +135,13 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public String startProcess(final String pkgId, final String wpId) throws CMWorkflowException {
+	public String startProcess(final String pkgId, final String procDefId) throws CMWorkflowException {
 		return new TransactedExecutor<String>() {
 			@Override
 			protected String command() throws Exception {
-				final String procDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId,
-						StringUtils.EMPTY, wpId);
-				final String procInstId = wapi().createProcessInstance(handle(), procDefId, null);
+				final String uniqueProcDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId,
+						StringUtils.EMPTY, procDefId);
+				final String procInstId = wapi().createProcessInstance(handle(), uniqueProcDefId, null);
 				final String newProcInstId = wapi().startProcess(handle(), procInstId);
 				return newProcInstId;
 			}
@@ -173,12 +178,12 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public Map<String, Object> getProcessInstanceVariables(final String wpInstId) throws Exception {
+	public Map<String, Object> getProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
 		return new TransactedExecutor<Map<String, Object>>() {
 			@Override
 			protected Map<String, Object> command() throws Exception {
 				final Map<String, Object> variables = new HashMap<String, Object>();
-				final WMAttributeIterator iterator = wapi().listProcessInstanceAttributes(handle(), wpInstId, null,
+				final WMAttributeIterator iterator = wapi().listProcessInstanceAttributes(handle(), procInstId, null,
 						false);
 				for (final WMAttribute attribute : iterator.getArray()) {
 					final String name = attribute.getName();
@@ -191,18 +196,77 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public void setProcessInstanceVariables(final String wpInstId, final Map<String, Object> variables)
-			throws Exception {
+	public void setProcessInstanceVariables(final String procInstId, final Map<String, Object> variables)
+			throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
 				for (final String name : variables.keySet()) {
 					final Object value = variables.get(name);
-					wapi().assignProcessInstanceAttribute(handle(), wpInstId, name, value);
+					wapi().assignProcessInstanceAttribute(handle(), procInstId, name, value);
 				}
 				return null;
 			}
 		}.execute();
 	}
 
+	@Override
+	public WSActivityInstInfo[] findOpenActivitiesForProcessInstance(final String procInstId) throws CMWorkflowException {
+		return new TransactedExecutor<WSActivityInstInfo[]>() {
+			@Override
+			protected WSActivityInstInfo[] command() throws Exception {
+				final WMFilter filter = openActivitiesForProcessInstance(procInstId);
+				final WMActivityInstance[] ais = wapi().listActivityInstances(handle(), filter, false).getArray();
+				final WSActivityInstInfo[] out = new WSActivityInstInfo[ais.length];
+				for (int i = 0; i < ais.length; ++i) {
+					out[i] = new WMActivityInstanceWrapper(ais[i]);
+				}
+				return out;
+			}
+
+			private WMFilter openActivitiesForProcessInstance(final String procInstId) throws Exception {
+				final ActivityFilterBuilder fb = shark().getActivityFilterBuilder();
+				return fb.and(handle(),
+						fb.addProcessIdEquals(handle(), procInstId),
+						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN)
+					);
+			}
+		}.execute();
+	}
+
+	@Override
+	public WSActivityInstInfo[] findOpenActivitiesForProcess(final String procDefId) throws CMWorkflowException {
+		return new TransactedExecutor<WSActivityInstInfo[]>() {
+			@Override
+			protected WSActivityInstInfo[] command() throws Exception {
+				final WMFilter filter = openActivitiesForProcess(procDefId);
+				final WMActivityInstance[] ais = wapi().listActivityInstances(handle(), filter, false).getArray();
+				final WSActivityInstInfo[] out = new WSActivityInstInfo[ais.length];
+				for (int i = 0; i < ais.length; ++i) {
+					out[i] = new WMActivityInstanceWrapper(ais[i]);
+				}
+				return out;
+			}
+
+			private WMFilter openActivitiesForProcess(final String procDefId) throws Exception {
+				final ActivityFilterBuilder fb = shark().getActivityFilterBuilder();
+				return fb.and(handle(),
+						fb.addProcessDefIdEquals(handle(), procDefId),
+						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN)
+					);
+			}
+		}.execute();
+	}
+
+	@Override
+	public void abortActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws Exception {
+				// From Shark's FAQ, "terminate [...] tries to follow the next activity(s), [...] abort [...] doesn't."
+				wapi().changeActivityInstanceState(handle(), procInstId, actInstId, WMActivityInstanceState.CLOSED_ABORTED);
+				return null;
+			}
+		}.execute();
+	}
 }

@@ -167,16 +167,16 @@ public class XpdlDocument {
 		return pkg.getId();
 	}
 
-	public XpdlProcess createProcess(final String wpId) {
+	public XpdlProcess createProcess(final String procDefId) {
 		turnReadWrite();
 		WorkflowProcess wp = (WorkflowProcess) pkg.getWorkflowProcesses().generateNewElement();
-		wp.setId(wpId);
+		wp.setId(procDefId);
 		pkg.getWorkflowProcesses().add(wp);
 		return new XpdlProcess(this, wp);
 	}
 
-	public XpdlProcess findProcess(final String wpId) {
-		final WorkflowProcess wp = pkg.getWorkflowProcess(wpId);
+	public XpdlProcess findProcess(final String procDefId) {
+		final WorkflowProcess wp = pkg.getWorkflowProcess(procDefId);
 		if (wp != null) {
 			return new XpdlProcess(this, wp);
 		} else {

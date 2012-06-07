@@ -39,7 +39,7 @@ public abstract class AbstractLocalWorkflowServiceTest implements XpdlTest {
 	}
 
 	@Before
-	public void createRandomPackageName() throws Exception {
+	public void createRandomPackage() throws Exception {
 		xpdlDocument = newXpdl(randomName());
 	}
 
@@ -78,6 +78,17 @@ public abstract class AbstractLocalWorkflowServiceTest implements XpdlTest {
 	protected final String uploadXpdlAndStartProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException,
 			XpdlException {
 		upload(xpdlDocument);
+		return startProcess(xpdlProcess);
+	}
+
+	/**
+	 * Starts an {@link XpdlProcess}.
+	 * 
+	 * @param xpdlProcess
+	 * @return the process instance id
+	 * @throws CMWorkflowException
+	 */
+	protected final String startProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException {
 		return ws.startProcess(xpdlDocument.getPackageId(), xpdlProcess.getId());
 	}
 

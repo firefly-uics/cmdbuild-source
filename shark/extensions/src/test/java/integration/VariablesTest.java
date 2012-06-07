@@ -54,10 +54,10 @@ public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 		final XpdlActivity activity = process.createActivity(randomName());
 		activity.setScriptingType(ScriptLanguage.JAVA, "aBoolean = true; anInteger = 42; aString = \"foo\";");
 
-		final String wpInstId = uploadXpdlAndStartProcess(process);
+		final String procInstId = uploadXpdlAndStartProcess(process);
 		verify(eventManager).processClosed(process.getId());
 
-		final Map<String, Object> variables = ws.getProcessInstanceVariables(wpInstId);
+		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
 
 		assertThat((Boolean) variables.get(A_BOOLEAN), equalTo(true));
 		assertThat((Long) variables.get(AN_INTEGER), equalTo(42L));
@@ -68,16 +68,16 @@ public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 	public void variableSettedThenRead() throws Exception {
 		process.createActivity(randomName());
 
-		final String wpInstId = uploadXpdlAndStartProcess(process);
+		final String procInstId = uploadXpdlAndStartProcess(process);
 		verify(eventManager).processStarted(process.getId());
 
 		final Map<String, Object> settedVariables = new HashMap<String, Object>();
 		settedVariables.put(A_BOOLEAN, true);
 		settedVariables.put(AN_INTEGER, 42);
 		settedVariables.put(A_STRING, "foo");
-		ws.setProcessInstanceVariables(wpInstId, settedVariables);
+		ws.setProcessInstanceVariables(procInstId, settedVariables);
 
-		final Map<String, Object> readedVariables = ws.getProcessInstanceVariables(wpInstId);
+		final Map<String, Object> readedVariables = ws.getProcessInstanceVariables(procInstId);
 		assertThat((Boolean) readedVariables.get(A_BOOLEAN), equalTo(true));
 		assertThat((Long) readedVariables.get(AN_INTEGER), equalTo(42L));
 		assertThat((String) readedVariables.get(A_STRING), equalTo("foo"));
