@@ -19,12 +19,14 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 
 	private final XpdlActivities activities;
 	private final XpdlExtendedAttributes extendedAttributes;
+	private final XpdlApplications applications;
 
 	XpdlProcess(final XpdlDocument doc, final WorkflowProcess workflowProcess) {
 		this.doc = doc;
 		this.inner = workflowProcess;
 		this.activities = new XpdlProcessActivities(this);
 		this.extendedAttributes = new XpdlProcessExtendedAttributes(this);
+		this.applications = new XpdlProcessApplications(this);
 	}
 
 	public XpdlDocument getDocument() {
@@ -37,7 +39,7 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 
 	public void addField(final String dfId, final StandardAndCustomTypes type) {
 		doc.turnReadWrite();
-		DataField df = doc.createDataField(dfId, type);
+		final DataField df = doc.createDataField(dfId, type);
 		inner.getDataFields().add(df);
 	}
 
@@ -52,14 +54,14 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	 */
 	public XpdlActivitySet createActivitySet(final String activitySetId) {
 		doc.turnReadWrite();
-		ActivitySet as = (ActivitySet) inner.getActivitySets().generateNewElement();
+		final ActivitySet as = (ActivitySet) inner.getActivitySets().generateNewElement();
 		as.setId(activitySetId);
 		inner.getActivitySets().add(as);
 		return new XpdlActivitySet(this, as);
 	}
 
 	public XpdlActivitySet findActivitySet(final String activitySetId) {
-		ActivitySet as = inner.getActivitySets().getActivitySet(activitySetId);
+		final ActivitySet as = inner.getActivitySets().getActivitySet(activitySetId);
 		if (as != null) {
 			return new XpdlActivitySet(this, as);
 		} else {
@@ -78,7 +80,7 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	}
 
 	@Override
-	public XpdlActivity createActivity(String activityId) {
+	public XpdlActivity createActivity(final String activityId) {
 		return activities.createActivity(activityId);
 	}
 
@@ -103,6 +105,7 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	}
 
 	public XpdlTransition createTransition(final XpdlActivity from, final XpdlActivity to) {
+		doc.turnReadWrite();
 		final Transition transition = (Transition) inner.getTransitions().generateNewElement();
 		transition.setId(String.format("%s--%s", from.getId(), to.getId()));
 		transition.setFrom(from.getId());
@@ -112,6 +115,10 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 		inner.getTransitions().add(transition);
 
 		return new XpdlTransition(transition);
+	}
+
+	public XpdlApplication createApplication(final String id) {
+		return applications.createApplication(id);
 	}
 
 }

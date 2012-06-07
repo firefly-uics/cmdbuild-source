@@ -77,10 +77,10 @@ public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 		settedVariables.put(A_STRING, "foo");
 		ws.setProcessInstanceVariables(wpInstId, settedVariables);
 
-		final Map<String, Object> readedVariables = ws.getProcessInstanceVariables(wpInstId);
-		assertThat((Boolean) readedVariables.get(A_BOOLEAN), equalTo(true));
-		assertThat((Long) readedVariables.get(AN_INTEGER), equalTo(42L));
-		assertThat((String) readedVariables.get(A_STRING), equalTo("foo"));
+		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(wpInstId);
+		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(true));
+		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(42L));
+		assertThat((String) readVariables.get(A_STRING), equalTo("foo"));
 	}
 
 }

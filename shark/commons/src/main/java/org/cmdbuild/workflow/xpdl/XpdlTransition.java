@@ -8,7 +8,7 @@ public class XpdlTransition {
 	@SuppressWarnings("unused")
 	private final Transition inner;
 
-	public XpdlTransition(final Transition transition) {
+	XpdlTransition(final Transition transition) {
 		Validate.notNull(transition);
 		inner = transition;
 	}
