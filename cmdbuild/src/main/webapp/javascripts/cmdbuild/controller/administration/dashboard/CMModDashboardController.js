@@ -4,7 +4,8 @@
 		extend: "CMDBuild.controller.CMBasePanelController",
 
 		mixins: {
-			modDashboardDelegate: "CMDBuild.view.administration.dashboard.CMModDashboardDelegate"
+			modDashboardDelegate: "CMDBuild.view.administration.dashboard.CMModDashboardDelegate",
+			chartPanelDelegate: "CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate" 
 		},
 
 		statics: {
@@ -19,13 +20,15 @@
 		constructor: function(view, propertiesPanelController, chartsConfigurationController, layoutConfigurationController) {
 			this.callParent(arguments);
 			this.dashboard = null;
-			this.view.setDelegate(this);
 
 			this.subcontrollers = [
 				this.propertiesPanelController = propertiesPanelController,
 				this.chartsConfigurationController = chartsConfigurationController,
 				this.layoutConfigurationController = layoutConfigurationController
-			]
+			];
+
+			this.view.setDelegate(this);
+			this.chartsConfigurationController.setDelegate(this);
 		},
 
 		onViewOnFront: function(relatedTreeNode) {
@@ -46,7 +49,15 @@
 		// view delegate
 		onAddButtonClick: function() {
 			this.callMethodForAllSubcontrollers("prepareForAdd", [this.dashboard]);
+			this.view.activateFirstTab();
 			_CMMainViewportController.deselectAccordionByName(this.view.cmName);
+		},
+
+		// chartPanelDelegate
+		dashboardChartAreChanged: function() {
+			if (this.dashboard) {
+				this.layoutConfigurationController.dashboardWasSelected(this.dashboard);
+			}
 		}
 	});
 

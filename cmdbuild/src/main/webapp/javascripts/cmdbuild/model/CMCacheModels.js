@@ -27,7 +27,7 @@
 			{name: "type",type: 'string'},
 			{name: "name",type: 'string'},
 			{name: "priv_create",type: 'boolean'},
-			{name: "priv_write",type: 'boolean'},
+			{name: "priv_write",type: 'boolean'}
 		],
 
 		constructor: function() {

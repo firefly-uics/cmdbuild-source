@@ -27,6 +27,10 @@
 		// the origianl multiselect set the field
 		// as readonly if disabled. We don't want this
 		// behabiour
-		updateReadOnly: Ext.emptyFn
+		updateReadOnly: Ext.emptyFn,
+
+		reset: function() {
+			this.setValue([]);
+		}
 	});
 })();

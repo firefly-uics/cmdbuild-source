@@ -10,12 +10,12 @@ Ext.define("CMDBuild.Management.Attributes", {
 	extend: "Ext.form.Panel",
 	url: 'services/json/management/modcard/setcardfilter',
 	title: CMDBuild.Translation.management.findfilter.attributes,
+	autoScroll: false,
 
 	//custom attributes
 	translation: CMDBuild.Translation.management.findfilter,
 	attributeList: {},
 	IdClass: 0,
-	autoScroll: false,
 
 	initComponent:function() {
 		this.fieldsetCategory = {};
@@ -52,7 +52,15 @@ Ext.define("CMDBuild.Management.Attributes", {
 		Ext.apply(this, {
 			layout: 'border',
 			tbar: tbar,
-			items: [this.fieldsPanel]
+			items: [this.fieldsPanel],
+			listeners: {
+				added: function(me) {
+					// needed because the zIndexParent is not set
+					// for the menu, because when created is not owned
+					// in a floating element
+					me.menu.registerWithOwnerCt();
+				}
+			}
 		});
 
 		this.callParent(arguments);

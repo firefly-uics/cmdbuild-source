@@ -11,31 +11,33 @@
 					return new CMDBuild.model.CMDashboard({
 						id: 1,
 						name: "Foo",
-						description: "Cool dashboard for cool people",
+						description: "Cool dashboard for cool people"
 					});
 				}
-			}
+			};
 
 			_CMMainViewportController = { // have to be global
 				deselectAccordionByName: function() {}
 			};
 
 			treeNode = {
-				get: function() {return "foo"}
+				get: function() {return "foo";}
 			};
 
 			view = jasmine.createSpyObj("ModDashboard", [
 				"setDelegate",
 				"setTitleSuffix",
-				"on"
+				"on",
+				"activateFirstTab"
 			]);
 
 			subcontroller = jasmine.createSpyObj("SubController", [
 				"dashboardWasSelected",
-				"prepareForAdd"
+				"prepareForAdd",
+				"setDelegate"
 			]);
 
-			controller = new CMDBuild.controller.administration.dashboard.CMModDashboardController(view, subcontroller, subcontroller);
+			controller = new CMDBuild.controller.administration.dashboard.CMModDashboardController(view, subcontroller, subcontroller, subcontroller);
 		});
 
 		afterEach(function() {
@@ -63,14 +65,14 @@
 
 		it("Nofity to the subcontrollers that a dashboard was selected", function() {
 			controller.onViewOnFront(treeNode);
-			expect(subcontroller.dashboardWasSelected.callCount).toBe(2);
+			expect(subcontroller.dashboardWasSelected.callCount).toBe(3);
 
 			var args = subcontroller.dashboardWasSelected.argsForCall[0];
 			expect(args[0].get("name")).toEqual("Foo");
 		});
 
 		it("Prepare the view to add a dashboard", function() {
-			var deselectTree = spyOn(_CMMainViewportController, "deselectAccordionByName")
+			var deselectTree = spyOn(_CMMainViewportController, "deselectAccordionByName");
 
 			controller.onAddButtonClick();
 

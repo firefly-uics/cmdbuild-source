@@ -8,6 +8,9 @@
 			addNeededDomStuff();
 
 			server = CMDBuild.test.CMServer.create();
+
+			CMDBuild.Config.cmdbuild.languageprompt = true;
+
 			loginPanel = new CMDBuild.LoginPanel();
 
 			this.addMatchers({
@@ -43,7 +46,7 @@
 						{"name":123,"value":group1},
 						{"name":456,"value":group2}
 					]
-				}
+				};
 			});
 
 			// fill the form to be valid

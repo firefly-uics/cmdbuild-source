@@ -8,6 +8,9 @@
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
 		constructor: function(v, sc) {
+
+			this.mixins.observable.constructor.call(this, arguments);
+
 			this.callParent(arguments);
 			this.hasDomains = false;
 

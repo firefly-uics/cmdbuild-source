@@ -110,16 +110,18 @@
 			});
 
 			buttons.push(this.showTableViewButton, this.reloadButton);
-
-			Ext.apply(this, {
-				title: this.chartConfiguration.getDescription() || this.chartConfiguration.getName() || "",
-				layout: 'border',
-				//height: this.chartConfiguration.getheight() || 400,
-				items: [this.chart, this.tableView, this.form],
-				tbar: buttons
-			});
-
 			this.chartBuilder = new CMDBuild.view.management.dashboard.CMChartConfigurationReader();
+
+			
+			this.title = this.chartConfiguration.getDescription() || this.chartConfiguration.getName() || "";
+			this.layout = 'border';
+			this.height = 100;
+			this.items = [this.chart, this.tableView, this.form];
+			this.tbar = buttons;
+			this.resizable = {
+				handles : 'n s'
+			};
+
 			this.callParent(arguments);
 		},
 
@@ -168,6 +170,14 @@
 
 		formIsValid: function() {
 			return this.form.getForm().isValid();
+		},
+
+		formIsLoading: function() {
+			return this.form.isLoading();
+		},
+
+		checkStoreLoad: function(cb) {
+			this.form.checkStoreLoad(cb);
 		},
 
 		adjustSize: function(height) {

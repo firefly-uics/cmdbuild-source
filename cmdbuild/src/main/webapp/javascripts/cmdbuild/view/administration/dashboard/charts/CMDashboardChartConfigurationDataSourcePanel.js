@@ -19,7 +19,7 @@
 			["free", tr.typeFieldOptions.freeString],
 			["classes", tr.typeFieldOptions.classes],
 			["user", tr.typeFieldOptions.user],
-			["group", tr.typeFieldOptions.group],
+			["group", tr.typeFieldOptions.group]
 		]
 	}),
 
@@ -266,7 +266,7 @@
 			this.defaultField = new CMDBuild.field.ErasableCombo({
 				fieldLabel : tr.fields.defaultValue,
 				labelWidth: SUBFIELD_LABEL_WIDTH,
-				valueField : 'id',
+				valueField : this.input.type == "STRING" ? 'name' : 'id',
 				displayField : 'description',
 				editable: false,
 				store : _CMCache.getClassesAndProcessesStore(),

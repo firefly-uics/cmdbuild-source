@@ -255,7 +255,7 @@
 						["gauge", tr.availableCharts.gauge],
 						["pie", tr.availableCharts.pie],
 						["bar", tr.availableCharts.bar],
-						["line", tr.availableCharts.line],
+						["line", tr.availableCharts.line]
 					]
 				}),
 				disabled: true
@@ -335,7 +335,7 @@
 					fields: ["value", "description"],
 					data : [
 						["horizontal", tr.fields.orientation.values.horizontal],
-						["vertical", tr.fields.orientation.values.vertical],
+						["vertical", tr.fields.orientation.values.vertical]
 					]
 				}),
 				disabled: true,
@@ -413,6 +413,7 @@
 				fieldLabel: tr.fields.valueField,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				value: [],
 				store: new Ext.data.SimpleStore({
 					fields: ["value"],
 					data: []
@@ -460,11 +461,15 @@
 
 		me.cascade(function(item) {
 			if (item 
-				&& (item instanceof Ext.form.Field)) {
+				&& isAField(item)) {
 
 				fn(item);
 			}
 		});
+	}
+
+	function isAField(item) {
+		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect));
 	}
 
 	function addSequenceToTypeSetValue(me) {
@@ -490,7 +495,7 @@
 
 		me.cascade(function(item) {
 			if (item 
-				&& (item instanceof Ext.form.Field)
+				&& isAField(item)
 				&& Ext.Array.contains(names, item.name)) {
 
 				item[fnName]();

@@ -6,10 +6,12 @@ Ext.define("CMDBuild.Management.SearchFilterWindow", {
 	className : '',
 
 	initComponent : function() {
+		var me = this;
+
 		this.attributes = new CMDBuild.Management.Attributes({
-			attributeList : this.attributeList,
-			IdClass : this.IdClass,
-			windowSize : this.windowSize
+			attributeList : me.attributeList,
+			IdClass : me.IdClass,
+			windowSize : me.windowSize
 		});
 
 		this.url = this.attributes.url;
@@ -40,7 +42,7 @@ Ext.define("CMDBuild.Management.SearchFilterWindow", {
 			]
 		});
 
-		this.callParent(arguments)
+		this.callParent(arguments);
 	},
 
 	sendForm : function() {

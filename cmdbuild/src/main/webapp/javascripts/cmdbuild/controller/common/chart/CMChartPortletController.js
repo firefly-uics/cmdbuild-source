@@ -139,12 +139,16 @@
 		},
 
 		// as view delegate
+
 		onReloadButtonClick: function(cb) {
-			if (this.view.formIsValid()) {
-				this.doRequest(cb);
-			} else {
-				this.view.showParamsForm(toggle=true);
-			}
+			var me = this;
+			this.view.checkStoreLoad(function() {
+				if (me.view.formIsValid()) {
+					me.doRequest(cb);
+				} else {
+					me.view.showParamsForm(toggle=true);
+				}
+			});
 		},
 
 		onFormLoadButtonClick: function() {

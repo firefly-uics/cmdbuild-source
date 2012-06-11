@@ -14,18 +14,28 @@ Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelC
 		this.proxy = CMDBuild.ServiceProxy.Dashboard;
 	},
 
+	// called by the super-controller
+
 	dashboardWasSelected: function(dashboard) {
-		this.dashboard = dashboard;
-		if (this.view.isTheActiveTab()) {
-			this.view.configureForDashboard(dashboard);
+		var me = this;
+
+		me.dashboard = dashboard;
+		me.view.enable();
+
+		if (me.view.isTheActiveTab()) {
+			me.view.configureForDashboard(me.dashboard);
 		} else {
-			var me = this;
-			this.view.mon(this.view, "activate", function() {
-				me.view.configureForDashboard(dashboard);
-			}, {
+			me.view.mon(me.view, "activate", function() {
+				me.view.configureForDashboard(me.dashboard);
+			}, me, {
 				single: true
 			});
 		}
+	},
+
+	prepareForAdd: function() {
+		this.view.clearAll();
+		this.view.disable();
 	},
 
 	// view delegate

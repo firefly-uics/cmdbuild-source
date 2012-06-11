@@ -311,7 +311,7 @@
 			storeRecord = grid.store.getAt(storeRecordIndex);
 
 		if ( !value ) {
-			var invalid_attr_list = record.get("invalid_fields");
+			var invalid_attr_list = record.get("invalid_fields") || {};
 			if (invalid_attr_list[nameColumn]) {
 				return	'<span class="importcsv-invalid-cell">' + invalid_attr_list[nameColumn] + '</span>';
 			} else {

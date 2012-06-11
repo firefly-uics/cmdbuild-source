@@ -133,7 +133,7 @@ function getSubFields(attribute, display) {
 		fields = [];
 
 	if (d) {
-		Ext.Array.forEach(d.data.attributes, function(a, intex, all) {
+		Ext.Array.forEach(d.data.attributes || [], function(a, intex, all) {
 			if (a.isbasedsp) {
 				var conf = Ext.apply({}, a);
 				conf.name = "_" + attribute.name + "_" + conf.name;

@@ -14,7 +14,7 @@
 	SessionVars sessionVars = new SessionVars();
 	String lang = sessionVars.getLanguage();
 	UserContext userCtx = sessionVars.getCurrentUserContext();
-	String extVersion = "4.0.7";
+	String extVersion = "4.1.0";
 %>
 <html>
 	<head>
@@ -25,15 +25,18 @@
 
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
-	
+
 		<!-- 1. Main script -->
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>	
+
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMConfigurationProxy.js"></script>
+
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
@@ -50,6 +53,11 @@
 			CMDBuild.Runtime.Username = '<%= user.getName() %>';
 			CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(userCtx.getGroups()) %>;
 	<% } %>	
+
+		Ext.onReady(function() {
+			CMDBuild.LoginPanel.buildAfterRequest();
+		});
+
 		</script>
 		<!-- 3. Login script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>

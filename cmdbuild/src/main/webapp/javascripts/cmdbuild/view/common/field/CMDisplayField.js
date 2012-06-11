@@ -26,33 +26,34 @@
 
 		constructor : function() {
 			this.callParent(arguments);
-
 			this.expandButtonMarkup = Ext.DomHelper.markup({tag: "div", cls: "cmdisplayfield-expandbutton"});
 		},
 
 		setValue : function() {
-			this.resetSize();
 			this.hideExpandButton();
+
+			if (this.rendered) {
+				if (this.inputEl) {
+					this.inputEl.setHeight("auto");
+				}
+			}
 
 			this.callParent(arguments);
 
 			if (this.rendered) {
-				var height = this.getHeight();
-				if (height > MAX_HEIGHT) {
-					this.setHeight(MAX_HEIGHT);
+				if (this.getHeight() > MAX_HEIGHT) {
 					this.showExpandButton();
+					if (this.inputEl) {
+						this.inputEl.setHeight(MAX_HEIGHT);
+					}
 				}
 			}
 		},
 
 		showExpandButton: function() {
-			var ct = this.getContentTarget(),
-				oldWidth = ct.getWidth();
-
-			ct.setWidth(oldWidth - EXPAND_BUTTON_SIZE);
-
-			if (!this.expandButtonEl) {
-				this.expandButtonEl = Ext.DomHelper.insertAfter(ct, this.expandButtonMarkup, returnElement = true);
+			var el = this.inputEl;
+			if (el && !this.expandButtonEl) {
+				this.expandButtonEl = Ext.DomHelper.insertBefore(el, this.expandButtonMarkup, returnElement = true);
 				addClickListener(this, this.expandButtonEl);
 			}
 
@@ -63,14 +64,6 @@
 			if (this.expandButtonEl) {
 				this.expandButtonEl.hide();
 			}
-		},
-
-		resetSize: function() {
-			this.setHeight("auto");
-			var ct = this.getContentTarget();
-			if (ct) {
-				ct.setWidth("auto");
-			}
 		}
 	});
 
@@ -79,20 +72,14 @@
 			var displayField = new Ext.form.field.Display({
 					xtype: "displayfield",
 					hideLabel: true,
-					region: "center"
+					region: "center",
+					margin: "50 50 50 50"
 				}),
 				popup = new CMDBuild.PopupWindow({
 					title: field.fieldLabel,
-					items: [{
-						xtype: "panel",
-						layout: "border",
-						border: false,
-						frame: false,
-						padding: "5",
-						autoScroll: true,
-						items: [displayField]
-					}],
+					items:[displayField],
 					buttonAlign: "center",
+					autoScroll: true,
 					buttons: [{
 						text: CMDBuild.Translation.common.btns.close,
 						handler: function() {

@@ -18,6 +18,8 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 			return;
 		}
 
+		this.mixins.observable.constructor.call(this, arguments);
+
 		this.callParent([view]);
 		this.onEntryTypeSelected(_CMCache.getEntryTypeById(conf.entryType));
 

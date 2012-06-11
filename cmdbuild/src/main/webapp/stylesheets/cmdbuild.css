@@ -418,6 +418,9 @@ em {
 .cmdisplayfield-expandbutton {
 	background-image: url(../images/icons/expand.png) !important;
 }
+.cmdisplayfield-expandbutton {
+	margin: "0 20px 0 0"
+}
 
 /* Buttons */
 .clearButtonBGandBorder {
@@ -617,9 +620,11 @@ em {
 	padding-left: 24px ! important;
 }
 
+/*
 .x-combo-list {
 	z-index: 40000
 }
+*/
 
 /*Map toolbar icons*/
 .mapToolbarPan {

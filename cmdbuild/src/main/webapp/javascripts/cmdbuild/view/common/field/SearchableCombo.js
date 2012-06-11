@@ -83,7 +83,9 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		var _store = this.store,
 			id = record.get("Id");
 
-		if (_store.find('Id', id) == -1 ) {
+		if (_store 
+				&& _store.find('Id', id) == -1 ) {
+
 			_store.add({
 				Id : id,
 				Description: this.recordDescriptionFixedForCarriageReturnBugOnComboBoxes(record)

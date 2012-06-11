@@ -24,20 +24,22 @@
 			{name: "isdefault", type: "boolean"}
 		]
 	});
-	
-	Ext.define("CMDBuild.cache.CMPrivilegeModel", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "groupId", type: "string"},,
-			{name: "classname", type: "string"},
-			{name: "classid", type: "string"},			
-			{name: "privilege_mode", type: "string"},
-			
-			{name: "none_privilege", type: "boolean"},
-			{name: "read_privilege", type: "boolean"},
-			{name: "write_privilege", type: "boolean"}
-		]
-	});
+
+	/*
+	 * Crash on administration
+	 */
+//	Ext.define("CMDBuild.cache.CMPrivilegeModel", {
+//		extend: 'Ext.data.Model',
+//		fields: [
+//			{name: "groupId", type: "string"},,
+//			{name: "classname", type: "string"},
+//			{name: "classid", type: "string"},			
+//			{name: "privilege_mode", type: "string"},
+//			{name: "none_privilege", type: "boolean"},
+//			{name: "read_privilege", type: "boolean"},
+//			{name: "write_privilege", type: "boolean"}
+//		]
+//	});
 	
 	Ext.define("CMDBuild.cache.CMUserForGridModel", {
 		extend: 'Ext.data.Model',

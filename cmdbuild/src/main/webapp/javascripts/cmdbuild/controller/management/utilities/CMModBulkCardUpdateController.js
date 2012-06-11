@@ -39,8 +39,10 @@
 				}
 
 				msg += Ext.String.format(cardToModifyMSG, decordedResp.count);
-				CMDBuild.LoadMask.get().hide();
 				showWarningMsg(me, msg);
+			},
+			callback: function() {
+				CMDBuild.LoadMask.get().hide();
 			}
 		});
 	}
@@ -78,6 +80,8 @@
 			success: function(response, request, decordedResp) {
 				this.view.cardGrid.reload(reselect = false);
 				onAbortButtonClick.call(this);
+			},
+			callback: function() {
 				CMDBuild.LoadMask.get().hide();
 			}
 		});
@@ -96,7 +100,7 @@
 				selectable = false;
 
 			try {
-				selectable = node.raw.cmData.selectable;
+				selectable = (node.raw.cmData.type == "class");
 			} catch (e) {
 				// the folder has not cmData
 			}

@@ -1,22 +1,25 @@
-Ext.onReady(function() {
-	Ext.QuickTips.init();
-	CMDBuild.ChainedAjax.execute({
-		requests: [{
-			url: 'services/json/schema/setup/getconfiguration',
-			params: { name: 'cmdbuild' },
-			success: function(response, options, decoded) {
-				CMDBuild.Config.cmdbuild = decoded.data;
-			}
-		}],
-		fn: function() {
-			var window = new CMDBuild.LoginPanel({ id : "login" });
-		}
-	});
-});
+(function() {
 
 Ext.define("CMDBuild.LoginPanel", {
 	extend: "Ext.panel.Panel",
 	tr: CMDBuild.Translation.login,
+
+	statics: {
+		buildAfterRequest: function() {
+			CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+				scope : this,
+				success : function(response, options, decoded) {
+					CMDBuild.Config.cmdbuild = decoded.data;
+				},
+				callback: function() {
+					new CMDBuild.LoginPanel({
+						id : "login"
+					});
+				}
+			});
+		}
+	},
+
 	initComponent: function() {
 		this.buildLanguagesCombo();
 		var scope = this;
@@ -84,7 +87,6 @@ Ext.define("CMDBuild.LoginPanel", {
 			frame: false,
 			border: false,
 			hideMode: "offsets",
-			border: false,
 			items: [this.form,{
 				xtype: 'panel',
 				border: false,
@@ -182,3 +184,4 @@ Ext.define("CMDBuild.LoginPanel", {
 		});
 	}
 });
+})();

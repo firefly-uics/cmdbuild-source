@@ -150,18 +150,18 @@
             	// ask to the server the record to add, return false to
             	// not set the value, and set it on success
 
-                var params = Ext.apply({Id: theValue}, this.store.baseParams);
+                var params = Ext.apply({Id: theValue}, this.store.baseParams),
+                	me = this;
 
                 CMDBuild.Ajax.request({
-                    url : this.store.proxy.url,
+                    url : me.store.proxy.url,
                     params: params,
                     method : "POST",
-                    scope : this,
                     success : function(response, options, decoded) {
                     	var data = adaptResult(decoded);
                     	if (data) {
-                    		this.addToStoreIfNotInIt(data);
-                			this.setValue(theValue);
+                    		me.addToStoreIfNotInIt(data);
+                			me.setValue(theValue);
                     	} else {
                     		_debug("The remote reference is not found", params);
                     	}

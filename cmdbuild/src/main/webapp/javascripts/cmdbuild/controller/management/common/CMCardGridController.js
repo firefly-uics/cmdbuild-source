@@ -6,6 +6,9 @@
 		},
 
 		constructor: function(view, supercontroller) {
+			
+			this.mixins.observable.constructor.call(this, arguments);
+			
 			if (typeof view == "undefined") {
 				throw ("OOO snap, you have not passed a view to me");
 			} else {

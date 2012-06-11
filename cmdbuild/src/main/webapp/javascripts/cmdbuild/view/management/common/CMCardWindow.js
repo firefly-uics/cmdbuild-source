@@ -9,7 +9,8 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 		this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel({
 			withButtons: this.withButtons,
 			withToolBar: this.withToolBar,
-			allowNoteFiled: true
+			allowNoteFiled: true,
+			border: false
 		});
 
 		var ee = this.cardPanel.CMEVENTS;
