@@ -97,5 +97,5 @@ $$ LANGUAGE PLPGSQL;
 
 SELECT patch_200_02();
 
-DROP FUNCTION _patch_prevexecutors(ClassId oid, Id integer);
+DROP FUNCTION _patch_prevexecutors(Class regclass, Id integer);
 DROP FUNCTION patch_200_02();
