@@ -47,7 +47,6 @@
 			<version>${shark.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-commons</artifactId>
@@ -63,7 +62,18 @@
 			<artifactId>cmdbuild-ws-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh</artifactId>
+			<version>${beanshell.version}</version>
+		</dependency>
 
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-shark-client</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-commons</artifactId>
@@ -78,10 +88,19 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Local Shark instance -->
 		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-			<version>${beanshell.version}</version>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-embedded</artifactId>
+			<version>${shark.version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-hsql-emptydb</artifactId>
+			<version>${shark.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

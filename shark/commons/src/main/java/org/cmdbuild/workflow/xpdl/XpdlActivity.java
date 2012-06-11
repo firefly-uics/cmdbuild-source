@@ -12,6 +12,7 @@ import org.enhydra.jxpdl.elements.ImplementationTypes;
 import org.enhydra.jxpdl.elements.Performer;
 import org.enhydra.jxpdl.elements.SubFlow;
 import org.enhydra.jxpdl.elements.TSScript;
+import org.enhydra.jxpdl.elements.TaskApplication;
 import org.enhydra.jxpdl.elements.TaskTypes;
 
 public class XpdlActivity implements XpdlExtendedAttributesHolder {
@@ -88,10 +89,7 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 	}
 
 	private TSScript getScript() {
-		final ImplementationTypes implementationTypes = inner.getActivityTypes().getImplementation()
-				.getImplementationTypes();
-		implementationTypes.setTask();
-		final TaskTypes taskTypes = implementationTypes.getTask().getTaskTypes();
+		final TaskTypes taskTypes = getTaskTypes();
 		taskTypes.setTaskScript();
 		final TSScript tsScript = taskTypes.getTaskScript().getScript();
 		return tsScript;
@@ -114,7 +112,7 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 	 */
 	public void setPerformer(final String performerName) {
 		doc.turnReadWrite();
-		Performer performer = (Performer) inner.getPerformers().generateNewElement();
+		final Performer performer = (Performer) inner.getPerformers().generateNewElement();
 		performer.setValue(performerName);
 		inner.getPerformers().clear();
 		inner.getPerformers().add(performer);
@@ -130,7 +128,7 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 		if (inner.getPerformers().isEmpty()) {
 			return null;
 		} else {
-			Performer p = (Performer) inner.getPerformers().get(0);
+			final Performer p = (Performer) inner.getPerformers().get(0);
 			return p.toValue();
 		}
 	}
@@ -164,4 +162,24 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 		}
 		return xxas;
 	}
+
+	public boolean isTaskApplication() {
+		return inner.getActivityType() == XPDLConstants.ACTIVITY_TYPE_TASK_APPLICATION;
+	}
+
+	public void setTaskApplication(final String applicationId) {
+		final TaskTypes taskTypes = getTaskTypes();
+		taskTypes.setTaskApplication();
+		final TaskApplication taskApplication = taskTypes.getTaskApplication();
+		taskApplication.setId(applicationId);
+	}
+
+	private TaskTypes getTaskTypes() {
+		final ImplementationTypes implementationTypes = inner.getActivityTypes().getImplementation()
+				.getImplementationTypes();
+		implementationTypes.setTask();
+		final TaskTypes taskTypes = implementationTypes.getTask().getTaskTypes();
+		return taskTypes;
+	}
+
 }
