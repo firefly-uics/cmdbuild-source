@@ -37,8 +37,8 @@ public class SharkConditionalEvaluator implements ConditionEvaluator {
 		condition = null;
 		try {
 			final XPDLBrowser xpdlb = Shark.getInstance().getXPDLBrowser();
-			condition = WMEntityUtilities.findEAAndGetValue(toolAgent.getSessionHandle(), xpdlb, toolAgent
-					.getToolInfo(), CONDITION_EXTENDED_ATTRIBUTE);
+			condition = WMEntityUtilities.findEAAndGetValue(toolAgent.getSessionHandle(), xpdlb,
+					toolAgent.getToolInfo(), CONDITION_EXTENDED_ATTRIBUTE);
 		} catch (final Exception e) {
 			// Skipping condition
 		}

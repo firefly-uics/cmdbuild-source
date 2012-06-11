@@ -3,57 +3,29 @@ package integration;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-
-import java.util.UUID;
+import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.service.CMWorkflowService;
-import org.cmdbuild.workflow.service.RemoteSharkService;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.shark.api.common.SharkConstants;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import utils.AbstractRemoteWorkflowServiceTest;
+
 /**
- * Smoke tests to be reasonably sure that the web connection works just like
- * the local one. This is not tested throughly because we assume that it
- * is going to work just like the embedded Shark instance.
+ * Smoke tests to be reasonably sure that the web connection works just like the
+ * local one. This is not tested throughly because we assume that it is going to
+ * work just like the embedded Shark instance.
  */
-public class RemoteWorkflowServiceTest {
+public class RemoteWorkflowServiceTest extends AbstractRemoteWorkflowServiceTest {
 
-	private static String USERNAME = "admin";
-	private static String PASSWORD = "enhydra";
-	private static String SERVER_HOST = "localhost";
-	private static int SERVER_PORT = 8080;
-	/**
-	 * The Tomcat plugin deploys the webapp as the artifact id.
-	 * It has to change when the artifact id changes.
-	 */
-	private static String WEBAPP_NAME = "it-shark";
-
-	private static CMWorkflowService ws;
 	private String pkgId;
-
-	@BeforeClass
-	public static void initWorkflowService() {
-		ws = new RemoteSharkService(new RemoteSharkService.Config() {
-			public String getServerUrl() {
-				return String.format("http://%s:%d/%s", SERVER_HOST, SERVER_PORT, WEBAPP_NAME);
-			}
-			public String getUsername() {
-				return USERNAME;
-			}
-			public String getPassword() {
-				return PASSWORD;
-			}
-		});
-	}
 
 	@Before
 	public void createRandomPackageName() {
-		pkgId = UUID.randomUUID().toString();
+		pkgId = randomName();
 	}
 
 	@Test

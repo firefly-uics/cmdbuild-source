@@ -9,9 +9,9 @@ import static org.junit.Assert.fail;
 import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
-import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.shark.api.client.wfservice.PackageInvalid;
 import org.junit.Test;
