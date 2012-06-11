@@ -100,8 +100,14 @@ Ext.define("CMDBuild.model.CMDashboard", {
 		this.set('charts', v);
 	},
 
-	addChart: function(c) {
-		this.getCharts().push(c);
+	addChart: function(chart) {
+		this.getCharts().push(chart);
+
+		// add the new chart to the first column
+		var columns = this.getColumns();
+		if (columns.length > 0) {
+			columns[0].charts.push(chart.getId());
+		}
 	},
 
 	removeChart: function(id) {

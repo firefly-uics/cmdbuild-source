@@ -114,18 +114,6 @@
 				addFields.call(this, this.attributes, this.editable);
 			}
 
-			// this.on("afterlayout", function() {
-				// var tollerance = this.getWidth() - RIGHT_PADDING_FOR_MAX_FIELD_WIDTH;
-				// this.cascade(function(item) {
-					// if (item && (item instanceof Ext.form.Field)) {
-						// if (item.getWidth() > tollerance ||
-								// (item instanceof Ext.form.DisplayField && !item.cmSkipAfterLayoutResize)) {
-// 
-							// item.setWidth(tollerance);
-						// }
-					// }
-				// });
-			// }, this);
 		}
 	});
 

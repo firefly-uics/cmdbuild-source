@@ -79,7 +79,7 @@
 			expect(params[1]).toBe('2'); // chartId
 
 			expect(view.disableButtons).toHaveBeenCalled();
-			expect(view.disableTBarButtons).toHaveBeenCalled();
+			expect(view.enableTBarButtons).toHaveBeenCalledWith(onlyAdd=true);
 		});
 
 		it('is able to add a chart', function() {

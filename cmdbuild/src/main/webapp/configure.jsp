@@ -5,12 +5,12 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@page import="org.cmdbuild.services.DBService"%>
+<%@ page import="org.cmdbuild.services.DBService"%>
 
 <% 
 	String lang = new SessionVars().getLanguage();
 	String jdbcDriverVersion = DBService.getDriverVersion();
-	String extVersion = "4.0.7";
+	String extVersion = "4.1.0";
 %>
 
 <html>

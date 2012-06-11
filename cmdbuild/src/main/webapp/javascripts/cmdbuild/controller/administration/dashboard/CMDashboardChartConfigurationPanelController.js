@@ -2,6 +2,10 @@
 
 	var tr = CMDBuild.Translation.administration.modDashboard.charts;
 
+	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate", {
+		dashboardChartAreChanged: Ext.emptyFn
+	});
+
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelController", {
 
 		alias: "controller.cmdashboardchartconfiguration",
@@ -18,7 +22,7 @@
 			gridControllerDelegate: "CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationGridControllerDelegate"
 		},
 
-		constructor : function(view, formController, gridController, proxy) {
+		constructor : function(view, formController, gridController, proxy, delegate) {
 			this.callParent(arguments);
 
 			this.dashboard = null;
@@ -27,6 +31,7 @@
 			this.formController = formController;
 			this.gridController = gridController;
 			this.proxy = proxy || CMDBuild.ServiceProxy.Dashboard.chart;
+			this.setDelegate(delegate);
 
 			this.view.setDelegate(this);
 			this.gridController.setDelegate(this);
@@ -49,6 +54,10 @@
 
 		prepareForAdd: function() {
 			this.view.disable();
+		},
+
+		setDelegate: function(delegate) {
+			this.delegate = delegate || new CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate();
 		},
 
 		// viewDelegate
@@ -86,12 +95,13 @@
 
 		onRemoveButtonClick: function() {
 			this.view.disableButtons();
-			this.view.disableTBarButtons();
+			this.view.enableTBarButtons(onlyAdd=true);
 			this.formController.initView();
 
 			var me = this;
 			this.proxy.remove(this.dashboard.getId(), this.chart.getId(), function(charts) {
 				me.gridController.loadCharts(charts);
+				me.delegate.dashboardChartAreChanged();
 			});
 		},
 
@@ -105,6 +115,7 @@
 				me = this,
 				cb =  function(charts, idToSelect) {
 					me.gridController.loadCharts(charts, idToSelect);
+					me.delegate.dashboardChartAreChanged();
 				};
 
 			this.view.disableButtons();

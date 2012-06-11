@@ -205,22 +205,23 @@
 	jasmine.Env.prototype.describe = function(description, specDefinitions) {
 
 		// specs to run
-		var focusSpecs = [
+		var focusSpecs = [ 
+//			'CMDBuild.LoginPanel'
 //			'CMDBUild.cache.CMCacheDashboardFunctions',
-//			 'CMDashboardModel',
-//			 'CMDashboardChartConfigurationFormController',
-//			 'GaugeTypeStrategy',
-//			 'CMDashboardChartConfigurationPanel',
-//			 'CMDashboardChartConfigurationPanelController',
-//			 'CMDashboardChartConfigurationGridController',
-//			 'CMDashboardChartConfigurationGridSpec',
-//			'CMDashboardChartConfigurationDataSourcePanel',
+//			'CMDashboardModel',
+//			'CMDashboardChartConfigurationFormController',
+//			'GaugeTypeStrategy',
+//			'CMDashboardChartConfigurationPanel',
+//			'CMDashboardChartConfigurationPanelController',
+//			'CMDashboardChartConfigurationGridController',
+//			'CMDashboardChartConfigurationGridSpec',
+//			CMDashboardChartConfigurationDataSourcePanel',
 //			'_DataSourceInputFildSet'
 //			'CMDashboardChartConfigurationForm',
 //			'CMChartBarTypeStrategy',
 //			'CMChartPieTypeStrategy',
-//			'CMChartGaugeTypeStrategy'
-			// 'CMDashboardModel',
+//			'CMChartGaugeTypeStrategy',
+//			'CMDashboardModel',
 		];
 
 		if (Ext.Array.contains(focusSpecs, description)) {

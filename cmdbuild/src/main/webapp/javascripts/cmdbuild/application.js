@@ -66,7 +66,9 @@
 	
 	// Component masks are shown at 20000 z-index. This oddly fixes
 	// the problem of masks appearing on top of new windows.
-	Ext.WindowMgr.zseed = 30000;
-	
+	// Ext.WindowMgr.zseed = 30000;
+
+	Ext.WindowManager.getNextZSeed();	// to increase the default zseed. Is needed for the combo on windoows
+										// probably it fix also the prev problem
 	Ext.enableFx = false;
 })();

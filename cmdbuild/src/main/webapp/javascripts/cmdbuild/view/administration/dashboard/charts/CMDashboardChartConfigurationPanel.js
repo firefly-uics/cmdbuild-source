@@ -53,11 +53,11 @@
 		// Toolbar
 		enableTBarButtons: function(onlyAdd) {
 			this.addButton.enable();
-			if (!onlyAdd) {
-				this.modifyButton.enable();
-				this.removeButton.enable();
-				this.previewButton.enable();
-			}
+			var disable = onlyAdd === true; // check that is a true boolean
+
+			this.modifyButton.setDisabled(disable);
+			this.removeButton.setDisabled(disable);
+			this.previewButton.setDisabled(disable);
 		},
 
 		disableTBarButtons: function() {

@@ -1,6 +1,14 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMCardPanelController", {
+
 		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
+
+		mixins : {
+			observable : "Ext.util.Observable"
+		},
+
+		hasListeners: {},
+
 		constructor: function(view, supercontroller, widgetControllerManager) {
 			this.callParent(arguments);
 
@@ -9,7 +17,13 @@
 				cloneCard: "cm-card-clone"
 			});
 
-			this.addEvents(this.CMEVENTS.cardRemoved, this.CMEVENTS.cloneCard);
+			this.addEvents(
+				this.CMEVENTS.cardRemoved,
+				this.CMEVENTS.cloneCard,
+				this.CMEVENTS.cardSaved,
+				this.CMEVENTS.editModeDidAcitvate,
+				this.CMEVENTS.displayModeDidActivate
+			);
 
 			var ev = this.view.CMEVENTS;
 			this.mon(this.view, ev.removeCardButtonClick, this.onRemoveCardClick, this);

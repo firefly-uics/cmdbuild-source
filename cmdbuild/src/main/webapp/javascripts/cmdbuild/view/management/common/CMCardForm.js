@@ -13,6 +13,7 @@
 		_isInEditMode: false,
 
 		constructor: function(conf) {
+
 			Ext.apply(this, conf);
 
 			this.CMEVENTS = {
@@ -28,15 +29,17 @@
 				displayModeDidActivate: "cmdisplaymode"
 			};
 
-			this.addEvents(this.CMEVENTS.saveCardButtonClick);
-			this.addEvents(this.CMEVENTS.abortButtonClick);
-			this.addEvents(this.CMEVENTS.removeCardButtonClick);
-			this.addEvents(this.CMEVENTS.modifyCardButtonClick);
-			this.addEvents(this.CMEVENTS.cloneCardButtonClick);
-			this.addEvents(this.CMEVENTS.printCardButtonClick);
-			this.addEvents(this.CMEVENTS.openGraphButtonClick);
-			this.addEvents(this.CMEVENTS.editModeDidAcitvate);
-			this.addEvents(this.CMEVENTS.displayModeDidActivate);
+			this.addEvents([
+				this.CMEVENTS.saveCardButtonClick,
+				this.CMEVENTS.abortButtonClick,
+				this.CMEVENTS.removeCardButtonClick,
+				this.CMEVENTS.modifyCardButtonClick,
+				this.CMEVENTS.cloneCardButtonClick,
+				this.CMEVENTS.printCardButtonClick,
+				this.CMEVENTS.openGraphButtonClick,
+				this.CMEVENTS.editModeDidAcitvate,
+				this.CMEVENTS.displayModeDidActivate
+			]);
 
 			this.buildTBar();
 			this.buildButtons();

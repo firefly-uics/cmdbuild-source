@@ -149,13 +149,17 @@
 			var me = this,
 				columnsConf = dashboardConfiguration.getColumns();
 
-			me.portal.removeAll();
-			me.slider.removeAddedThumbs();
+			me.clearAll();
 
 			for (var i=0, l=columnsConf.length, conf; i<l; ++i) {
 				conf = columnsConf[i];
 				me.addColumn(conf, skipColumnsWidthSync = true);
 			}
+		},
+
+		clearAll: function() {
+			this.portal.removeAll();
+			this.slider.removeAddedThumbs();
 		},
 
 		countColumns: function() {

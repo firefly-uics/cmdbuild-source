@@ -11,7 +11,7 @@ Ext.define("CMDBuild.PopupWindow", {
 	layout: 'fit',
 	resizable: false,
 	defaultSize: 0.80,
-	
+
 	initComponent: function() {
 		if (!this.autoHeight) {
 			var percentualHeight;
@@ -46,11 +46,13 @@ Ext.define("CMDBuild.PopupWindow", {
 	    		that.setPosition(newXPos, newYPos);
 	    	};
 
-			this.on('render', function() {
-				Ext.Function.createDelayed(function() {
-					redraw.call(this);
-				}, 1, this);
-			});
+// TODO I do know the why of this code
+
+//			this.on('render', function() {
+//				Ext.Function.createDelayed(function() {
+//					redraw.call(this);
+//				}, 1, this);
+//			});
 		}
 
 		this.callParent(arguments);

@@ -22,7 +22,7 @@
 			property : 'text',
 			direction: 'ASC'
 		}]
-	})
+	});
 	
 	/*
 	 * this class can not be instantiated,
@@ -55,6 +55,11 @@
 		updateStore: function(items) {
 			var root = this.store.getRootNode();
 			var treeStructure = this.buildTreeStructure(items);
+			if (Ext.isArray(treeStructure) 
+					&& treeStructure.length == 0) {
+				treeStructure = [{}];
+			}
+
 			root.removeAll();
 			root.appendChild(treeStructure);
 			this.store.sort();

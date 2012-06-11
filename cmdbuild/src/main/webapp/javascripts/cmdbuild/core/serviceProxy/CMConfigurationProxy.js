@@ -27,8 +27,8 @@ CMDBuild.ServiceProxy.configuration = {
 
 function readConf(p, name) {
 	p.method = "GET";
-	p.url = configurationURL,
-	p.params = { name: name }
+	p.url = configurationURL;
+	p.params = { name: name };
 
 	CMDBuild.ServiceProxy.core.doRequest(p);
 }

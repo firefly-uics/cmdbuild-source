@@ -2,6 +2,9 @@
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 		constructor: function(view, supercontroller) {
+
+			this.mixins.observable.constructor.call(this, arguments);
+
 			this.callParent(arguments);
 
 			this.CMEVENTS = {

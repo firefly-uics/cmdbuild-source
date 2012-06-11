@@ -126,6 +126,13 @@ public class DashboardLogic {
 		DashboardDefinition dashboard = store.get(dashboardId);
 		String chartId = UUID.randomUUID().toString();
 		dashboard.addChart(chartId, chartDefinition);
+		// add the chart to the first column if it has some
+		// column configured
+		List<DashboardColumn> columns = dashboard.getColumns();
+		if (columns.size() > 0) {
+			columns.get(0).addChart(chartId);
+		}
+
 		store.modify(dashboardId, dashboard);
 		return chartId;
 	}

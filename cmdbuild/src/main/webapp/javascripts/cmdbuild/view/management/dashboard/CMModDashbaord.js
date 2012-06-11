@@ -9,6 +9,7 @@
 			this.items = [{xtype: "panel"}];
 			this.renderdDashboards = {};
 			this.dashbaord = null;
+			this.border = false;
 			this.callParent(arguments);
 		},
 

@@ -78,6 +78,16 @@
 			}
 
 			this.setTitle(title);
+		},
+
+		activateFirstTab: function() {
+			var t = this.items.first();
+			if (t) {
+				var l = t.getLayout();
+				if (l) {
+					l.setActiveItem(0);
+				}
+			}
 		}
 	});
 

@@ -162,7 +162,7 @@
 	
 	function buildNodeForDomain(domainResponseObj, domainCachedData) {
 		var children = [],
-			attributes = domainCachedData.data.attributes,
+			attributes = domainCachedData.data.attributes || [],
 			attributesToString = "<span class=\"cm-bold\">",
 			oversize = domainResponseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
 			src = domainResponseObj.src,
