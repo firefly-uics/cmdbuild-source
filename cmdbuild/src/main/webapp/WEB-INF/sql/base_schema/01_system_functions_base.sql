@@ -1056,10 +1056,11 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL;
 
-/*
- * A temporary sequence is local to every connection,
- * so it is guaranteed not to be accessed concurrently
- */
+--
+-- A temporary sequence is local to every connection,
+-- so it is guaranteed not to be accessed concurrently
+--
+
 CREATE OR REPLACE FUNCTION _cm_zero_rownum_sequence() RETURNS VOID AS $$
 DECLARE
 	temp BIGINT;
@@ -1069,3 +1070,29 @@ EXCEPTION WHEN undefined_table THEN
 	CREATE TEMPORARY SEQUENCE rownum MINVALUE 0 START 1;
 END
 $$ LANGUAGE PLPGSQL;
+
+-- 
+-- Useful functions for patches and such
+-- 
+
+CREATE OR REPLACE FUNCTION _cm_disable_triggers_recursively(SuperClass regclass) RETURNS VOID AS $$
+DECLARE
+	CurrentClass regclass := $1;
+BEGIN
+	FOR CurrentClass IN SELECT _cm_subtables_and_itself(SuperClass) LOOP
+		EXECUTE 'ALTER TABLE '|| CurrentClass::regclass ||' DISABLE TRIGGER USER';
+	END LOOP;
+END;
+$$
+LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION _cm_enable_triggers_recursively(SuperClass regclass) RETURNS VOID AS $$
+DECLARE
+	CurrentClass regclass := $1;
+BEGIN
+	FOR CurrentClass IN SELECT _cm_subtables_and_itself(SuperClass) LOOP
+		EXECUTE 'ALTER TABLE '|| CurrentClass::text ||' ENABLE TRIGGER USER';
+	END LOOP;
+END;
+$$
+LANGUAGE PLPGSQL;

@@ -6,6 +6,6 @@ import org.cmdbuild.dao.function.CMFunction;
 
 public interface CMFunctionCall extends CMEntryType {
 
-	public CMFunction getFunction();
-	public List<Object> getParams();
+	CMFunction getFunction();
+	List<Object> getParams();
 }

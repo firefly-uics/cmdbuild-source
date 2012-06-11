@@ -14,8 +14,8 @@ public interface JsonWorkflowDTOs {
 			this.inner = activity;
 		}
 
-		public String getName() {
-			return inner.getName();
+		public String getId() {
+			return inner.getId();
 		}
 
 		public String getDescription() {

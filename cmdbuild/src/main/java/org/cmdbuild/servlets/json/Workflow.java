@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -16,6 +18,7 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 
 public class Workflow extends JSONBase {
@@ -25,15 +28,29 @@ public class Workflow extends JSONBase {
 			@Parameter("idClass") Long processClassId,
 			final UserContext userCtx) throws CMWorkflowException {
 		final WorkflowLogic logic = new WorkflowLogic(userCtx);
-		final CMActivity ad;
-		// FIXME Move this in the logic and handle passing a groupName for both types of users
-		if (userCtx.privileges().isAdmin()) {
-			ad = logic.getAdminStartActivity(processClassId);
-		} else {
-			final String groupName = userCtx.getDefaultGroup().getName();
-			ad = logic.getStartActivity(processClassId, groupName);
-		}
+		final CMActivity ad = logic.getStartActivity(processClassId);
 		return JsonResponse.success(JsonActivityDefinition.fromActivityDefinition(ad));
+	}
+
+	@JSONExported
+	public JsonResponse saveActivity(
+//	Id, ProcessInstanceId, WorkItemId, attributes, ww
+			@Parameter("IdClass") Long processClassId,
+			@Parameter("advance") boolean advance,
+			final UserContext userCtx) throws CMWorkflowException {
+		final WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final Map<String, Object> vars = new HashMap<String, Object>(); // TODO
+//		if (processCardId) {
+			final CMProcessInstance procInst = logic.startProcess(processClassId, vars, advance);
+//		} else {
+//			...
+//		}
+		return JsonResponse.success(new HashMap<String, Object>() {{
+			put("Id", procInst.getCardId());
+			put("IdClass", procInst.getType().getId());
+			put("ProcessInstanceId", procInst.getProcessInstanceId());
+			// WorkItemId -> WHY?!?!?!?!?!?!
+		}});
 	}
 
 	@Admin

@@ -152,6 +152,7 @@ public abstract class CMBackend {
 	public abstract IDomain getDomain(Integer domainId);
 	public abstract Lookup getLookup(Integer idLookup);
 	public abstract Lookup getLookup(String type, String description);
+	public abstract Lookup getFirstLookupByCode(String type, String code);
 	public abstract List<Lookup> getLookupList(String type, String description);
 	public abstract LookupType getLookupType(final String type);
 	public abstract LookupType getLookupTypeOrDie(final String type);

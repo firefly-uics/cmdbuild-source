@@ -13,11 +13,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.ORMException;
@@ -128,7 +128,7 @@ public class ECard {
 			return getActivityMap(table, cards);
 		}
 		for (final Attribute a : attributeList) {
-			if (ProcessAttributes.ActivityDescription.toString().equals(a.getName())) {
+			if (ProcessAttributes.ActivityDefinitionName.toString().equals(a.getName())) {
 				return getActivityMap(table, cards);
 			}
 		}
@@ -178,7 +178,7 @@ public class ECard {
 	private void addActivityDecription(final ICard card, final ActivityDO activityDo) {
 		if (activityDo != null) {
 			final String activityDescription = activityDo.getActivityInfo().getActivityDescription();
-			card.setValue(ProcessAttributes.ActivityDescription.toString(), activityDescription);
+			card.setValue(ProcessAttributes.ActivityDefinitionName.toString(), activityDescription);
 		}
 	}
 

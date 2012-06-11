@@ -44,7 +44,7 @@ public class StringArray {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		if (value == null || value.length == 0) {
+		if (value == null) { // WAS: || value.length == 0
 			sb.append("null");
 		} else {
 			sb.append("'{");

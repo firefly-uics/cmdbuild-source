@@ -234,7 +234,7 @@ public class SharkWSFacade {
 				int cardId = this.getCmdbuildCardId(handle, userCtx, factory, out);
 				String table = this.getProcessInfo(handle, factory, out).getValue().getCmdbuildBindedClass();
 				ICard crd = UserContext.systemContext().tables().get(table).cards().get(cardId);
-				crd.setValue(ProcessAttributes.NextExecutor.toString(), nextExecutor);
+				crd.setValue(ProcessAttributes.CurrentActivityPerformers.toString(), nextExecutor);
 				crd.save();
 			}
 			Log.WORKFLOW.debug("..end");

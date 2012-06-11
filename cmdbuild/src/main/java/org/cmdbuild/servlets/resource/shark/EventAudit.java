@@ -161,7 +161,7 @@ public class EventAudit extends AbstractSharkResource {
 		ICard crd = UserContext.systemContext().tables().get(processClass).cards().get(cardId);
 		
 		//set the next executor name
-		crd.setValue(ProcessAttributes.NextExecutor.toString(), performer);
+		crd.setValue(ProcessAttributes.CurrentActivityPerformers.toString(), performer);
 
 		crd.save();
 	}
