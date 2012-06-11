@@ -62,6 +62,11 @@
 			<artifactId>cmdbuild-ws-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh</artifactId>
+			<version>${beanshell.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -81,12 +86,6 @@
 			<artifactId>cmdbuild-shark-extensions</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-			<version>${beanshell.version}</version>
 			<scope>test</scope>
 		</dependency>
 

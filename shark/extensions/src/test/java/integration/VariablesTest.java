@@ -10,9 +10,9 @@ import java.util.Map;
 
 import org.cmdbuild.workflow.CMEventManager;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
-import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
+import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,11 +51,15 @@ public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 
 	@Test
 	public void variableModifiedFromScript() throws Exception {
-		final XpdlActivity activity = process.createActivity(randomName());
-		activity.setScriptingType(ScriptLanguage.JAVA, "aBoolean = true; anInteger = 42; aString = \"foo\";");
+		final XpdlActivity scriptActivity = process.createActivity(randomName());
+		scriptActivity.setScriptingType(ScriptLanguage.JAVA, "aBoolean = true; anInteger = 42; aString = \"foo\";");
+
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+
+		process.createTransition(scriptActivity, noImplActivity);
 
 		final String wpInstId = uploadXpdlAndStartProcess(process);
-		verify(eventManager).processClosed(process.getId());
+		verify(eventManager).activityClosed(scriptActivity.getId());
 
 		final Map<String, Object> variables = ws.getProcessInstanceVariables(wpInstId);
 
