@@ -8,16 +8,16 @@ import org.joda.time.DateTime;
  */
 public interface CMEntry extends CMValueSet {
 
-	public interface CMEntryDefinition {
-		public CMEntryDefinition set(final String key, final Object value);
-		public CMEntry save();
+	interface CMEntryDefinition {
+		CMEntryDefinition set(String key, Object value);
+		CMEntry save();
 	}
 
-	public CMEntryType getType();
+	CMEntryType getType();
 
-	public Object getId();
+	Object getId();
 
-	public String getUser();
-	public DateTime getBeginDate();
-	public DateTime getEndDate();
+	String getUser();
+	DateTime getBeginDate();
+	DateTime getEndDate();
 }

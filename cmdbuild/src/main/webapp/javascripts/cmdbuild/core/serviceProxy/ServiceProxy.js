@@ -379,7 +379,7 @@ CMDBuild.ServiceProxy.workflow = {
 	},
 
 	saveActivity: function(p) {
-		p.url = 'services/json/management/modworkflow/saveactivity';
+		p.url = 'services/json/workflow/saveactivity';
 		p.method = 'POST';
 
 		CMDBuild.ServiceProxy.core.doRequest(p);

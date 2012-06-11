@@ -453,7 +453,7 @@ public class ModCard extends JSONBase {
 
 		final Lookup flowStatusLookup;
 		if (card.getSchema().isActivity()) {
-			flowStatusLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.toString());
+			flowStatusLookup = (Lookup) card.getValue(ProcessAttributes.FlowStatus.dbColumnName());
 			serializer.put("FlowStatus", flowStatusLookup.getCode());
 		} else {
 			flowStatusLookup = null;

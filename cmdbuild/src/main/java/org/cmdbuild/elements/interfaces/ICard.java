@@ -22,6 +22,10 @@ public interface ICard extends IAbstractElement {
 		public String toString() {
 			return descr;
 		}
+
+		public String dbColumnName() {
+			return descr;
+		}
 	}
 
 	public ITable getSchema();

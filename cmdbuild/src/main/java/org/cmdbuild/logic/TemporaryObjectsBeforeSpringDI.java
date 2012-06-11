@@ -80,7 +80,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMWorkflowEngine getWorkflowEngine(UserContext userCtx) {
-		return new WorkflowEngineWrapper(userCtx, processDefinitionManager);
+		return new WorkflowEngineWrapper(userCtx, workflowService, processDefinitionManager);
 	}
 
 	public static class SimplifiedUserContext {

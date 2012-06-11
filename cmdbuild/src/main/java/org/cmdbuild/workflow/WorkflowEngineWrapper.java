@@ -1,40 +1,160 @@
 package org.cmdbuild.workflow;
 
+import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
+import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
+import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
+import org.cmdbuild.workflow.service.CMWorkflowService;
+import org.cmdbuild.workflow.service.WSActivityInstInfo;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
- * Wrapper for the CMWorkflowEngine on top of the legacy UserContext
+ * Wrapper for the CMWorkflowEngine on top of the legacy UserContext and
+ * a load of Wrappers from the legacy DAO later to the new interfaces.
  */
 public class WorkflowEngineWrapper implements CMWorkflowEngine {
 
 	private final UserContext userCtx;
-	private final ProcessDefinitionManager packagehandler;
+	private final CMWorkflowService workflowService;
+	private final ProcessDefinitionManager processDefinitionManager;
 
-	public WorkflowEngineWrapper(final UserContext userCtx, final ProcessDefinitionManager packagehandler) {
+	public WorkflowEngineWrapper(final UserContext userCtx, final CMWorkflowService workflowService,
+			final ProcessDefinitionManager processDefinitionManager) {
 		this.userCtx = userCtx;
-		this.packagehandler = packagehandler;
+		this.workflowService = workflowService;
+		this.processDefinitionManager = processDefinitionManager;
 	}
 
 	@Override
 	public CMProcessClass findProcessClass(Object idOrName) {
 		Validate.notNull(idOrName);
 		final ProcessType processType = findProcessType(idOrName);
-		return new ProcessClassWrapper(processType, packagehandler);
+		return new ProcessClassWrapper(userCtx, processType, processDefinitionManager);
+	}
+
+	@Override
+	public CMProcessClass findProcessClassById(Object id) {
+		Validate.notNull(id);
+		final ProcessType processType = findProcessTypeById(id);
+		return new ProcessClassWrapper(userCtx, processType, processDefinitionManager);
+	}
+
+	@Override
+	public CMProcessClass findProcessClassByName(String name) {
+		Validate.notNull(name);
+		final ProcessType processType = findProcessTypeByName(name);
+		return new ProcessClassWrapper(userCtx, processType, processDefinitionManager);
 	}
 
 	private ProcessType findProcessType(final Object idOrName) {
-		final ProcessType processType;
 		if (idOrName instanceof String) {
 			final String name = (String) idOrName;
-			processType = userCtx.processTypes().get(name);
+			return findProcessTypeByName(name);
 		} else {
-			final int id = ((Number) idOrName).intValue();
-			processType = userCtx.processTypes().get(id);
+			return findProcessTypeById(idOrName);
 		}
-		return processType;
 	}
 
+	private ProcessType findProcessTypeById(Object idObject) {
+		final int id = ((Number) idObject).intValue();
+		return userCtx.processTypes().get(id);
+	}
+
+	private ProcessType findProcessTypeByName(String name) {
+		return userCtx.processTypes().get(name);
+	}
+
+	@Override
+	public Iterable<? extends CMProcessClass> findProcessClasses() {
+		return Iterables.filter(findAllProcessClasses(), new Predicate<CMProcessClass>() {
+
+			@Override
+			public boolean apply(CMProcessClass input) {
+				return input.isActive();
+			}
+
+		});
+	}
+
+	@Override
+	public Iterable<? extends CMProcessClass> findAllProcessClasses() {
+		return Iterables.transform(userCtx.processTypes().list(), new Function<ProcessType, CMProcessClass>() {
+
+			@Override
+			public CMProcessClass apply(ProcessType input) {
+				return new ProcessClassWrapper(userCtx, input, processDefinitionManager);
+			}
+
+		});
+	}
+
+	@Override
+	public CMProcessInstance startProcess(final CMProcessClass processDefinition) throws CMWorkflowException {
+		final CMActivity startActivity = processDefinition.getStartActivity();
+		if (startActivity == null) {
+			return null;
+		}
+		final String procInstId = workflowService.startProcess(processDefinition.getPackageId(),
+				processDefinition.getProcessDefinitionId());
+		WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(), procInstId);
+		
+		CMProcessInstanceDefinition proc = newProcessInstance(processDefinition, procInstId);
+		proc.addActivity(startActInstInfo);
+		return proc.save();
+	}
+
+	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
+			throws CMWorkflowException {
+		WSActivityInstInfo startActInstInfo = null;
+		final WSActivityInstInfo[] ais = workflowService.findOpenActivitiesForProcessInstance(procInstId);
+		for (int i = 0; i < ais.length; ++i) {
+			final String actDefId = ais[i].getActivityDefinitionId();
+			if (startActivityId.equals(actDefId)) {
+				startActInstInfo = ais[i];
+			} else {
+				workflowService.abortActivityInstance(procInstId, actDefId);
+			}
+		}
+		return startActInstInfo;
+	}
+
+	private CMProcessInstanceDefinition newProcessInstance(final CMProcessClass processDefinition, final String procInstId) {
+		return ProcessInstanceWrapper.newInstance(userCtx,
+				processDefinitionManager,
+				findProcessTypeById(processDefinition.getId()),
+				procInstId);
+	}
+
+	@Override
+	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> vars)
+			throws CMWorkflowException {
+		// TODO Save variables on the database (and on shark for the widgets, damn it!)
+		// TODO Widgets
+	}
+
+	@Override
+	public CMProcessInstance advanceActivity(final CMActivityInstance activityInstance) throws CMWorkflowException {
+		throw new UnsupportedOperationException("TODO Come on! Cut me some slack!");
+	}
+
+	@Override
+	public void sync() {
+		userCtx.privileges().assureAdminPrivilege();
+		for (final CMProcessClass proc : findAllProcessClasses()) {
+			// LOG
+			syncProcess(proc);
+		}
+	}
+
+	private void syncProcess(final CMProcessClass proc) {
+		throw new UnsupportedOperationException("TODO Come on! Cut me some slack!");
+	}
 }

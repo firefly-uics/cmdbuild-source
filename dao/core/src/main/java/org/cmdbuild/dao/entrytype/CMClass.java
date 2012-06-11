@@ -3,13 +3,14 @@ package org.cmdbuild.dao.entrytype;
 
 public interface CMClass extends CMEntryType {
 
-	public CMClass getParent();
-	public Iterable<? extends CMClass> getChildren();
-	public Iterable<? extends CMClass> getLeaves();
-	public boolean isAncestorOf(CMClass cmClass);
-	public boolean isSuperclass();
-
-	public interface CMClassDefinition {
+	interface CMClassDefinition {
 		
 	}
+
+	CMClass getParent();
+	Iterable<? extends CMClass> getChildren();
+	Iterable<? extends CMClass> getLeaves();
+	boolean isAncestorOf(CMClass cmClass);
+	boolean isSuperclass();
+
 }

@@ -102,6 +102,20 @@ public class SchemaCache {
 		return null;
 	}
 
+	public Lookup getFirstLookupByCode(String type, String code) {
+		if (code == null || type == null) {
+			return null;
+		}
+		for(final Lookup lookup : getLookups().values()) {
+			final String lcode = lookup.getCode();
+			final String ltype = lookup.getType();
+			if (code.equals(lcode) && type.equals(ltype)) { 
+				return lookup;
+			}
+		}
+		return null;
+	}
+
 	public List<Lookup> getLookupList(String type, String description) {
 		List<Lookup> list = new ArrayList<Lookup>();
 		for(Lookup lookup : getLookups().values()) {

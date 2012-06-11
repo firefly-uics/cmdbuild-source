@@ -5,6 +5,6 @@ public interface CMActivityInstance {
 
 	CMProcessInstance getProcessInstance();
 
-	Object getId();
+	String getId();
 	CMActivity getDefinition();
 }

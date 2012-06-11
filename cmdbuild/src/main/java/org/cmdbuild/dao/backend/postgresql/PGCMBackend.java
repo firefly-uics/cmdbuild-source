@@ -1456,6 +1456,10 @@ public class PGCMBackend extends CMBackend {
 		return cache.getLookup(type, description);
 	}
 
+	public Lookup getFirstLookupByCode(String type, String code) {
+		return cache.getFirstLookupByCode(type, code);
+	}
+
 	public List<Lookup> getLookupList(String type, String description) {
 		return cache.getLookupList(type, description);
 	}

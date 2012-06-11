@@ -7,10 +7,10 @@ import org.cmdbuild.dao.entrytype.CMClass;
  */
 public interface CMCard extends CMEntry {
 	
-	public interface CMCardDefinition extends CMEntryDefinition {
-		public CMCardDefinition set(final String key, final Object value);
-		public CMCard save();
+	interface CMCardDefinition extends CMEntryDefinition {
+		CMCardDefinition set(String key, Object value);
+		CMCard save();
 	}
 
-	public CMClass getType();
+	CMClass getType();
 }
