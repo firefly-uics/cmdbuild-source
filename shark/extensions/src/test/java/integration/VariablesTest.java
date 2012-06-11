@@ -10,9 +10,9 @@ import java.util.Map;
 
 import org.cmdbuild.workflow.CMEventManager;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
-import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
+import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,11 +51,15 @@ public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 
 	@Test
 	public void variableModifiedFromScript() throws Exception {
-		final XpdlActivity activity = process.createActivity(randomName());
-		activity.setScriptingType(ScriptLanguage.JAVA, "aBoolean = true; anInteger = 42; aString = \"foo\";");
+		final XpdlActivity scriptActivity = process.createActivity(randomName());
+		scriptActivity.setScriptingType(ScriptLanguage.JAVA, "aBoolean = true; anInteger = 42; aString = \"foo\";");
+
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+
+		process.createTransition(scriptActivity, noImplActivity);
 
 		final String procInstId = uploadXpdlAndStartProcess(process);
-		verify(eventManager).processClosed(process.getId());
+		verify(eventManager).activityClosed(scriptActivity.getId());
 
 		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
 
@@ -77,10 +81,10 @@ public class VariablesTest extends AbstractLocalWorkflowServiceTest {
 		settedVariables.put(A_STRING, "foo");
 		ws.setProcessInstanceVariables(procInstId, settedVariables);
 
-		final Map<String, Object> readedVariables = ws.getProcessInstanceVariables(procInstId);
-		assertThat((Boolean) readedVariables.get(A_BOOLEAN), equalTo(true));
-		assertThat((Long) readedVariables.get(AN_INTEGER), equalTo(42L));
-		assertThat((String) readedVariables.get(A_STRING), equalTo("foo"));
+		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
+		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(true));
+		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(42L));
+		assertThat((String) readVariables.get(A_STRING), equalTo("foo"));
 	}
 
 }

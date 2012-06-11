@@ -7,6 +7,7 @@ import static utils.XpdlTestUtils.randomName;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
+import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.junit.Before;
@@ -23,17 +24,16 @@ public class ActivityQueryTest extends AbstractLocalWorkflowServiceTest {
 	@Before
 	public void createAndUploadProcess() {
 		p1 = xpdlDocument.createProcess(randomName());
-		p1.createTransition(
-				p1.createActivity("A"),
-				p1.createActivity("B")
-			);
+		p1.createTransition(p1.createActivity("A"), p1.createActivity("B"));
 		p1.createActivity("C").setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
 
 		p2 = xpdlDocument.createProcess(randomName());
 		p2.createActivity("X");
 
 		p3 = xpdlDocument.createProcess(randomName());
-		p3.createActivity("Y").setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
+		final XpdlActivity yActivity = p3.createActivity("Y");
+		yActivity.setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
+		p3.createTransition(yActivity, p3.createActivity("Z"));
 	}
 
 	@Test
@@ -43,10 +43,10 @@ public class ActivityQueryTest extends AbstractLocalWorkflowServiceTest {
 		String pi12 = startProcess(p1);
 		String pi31 = startProcess(p3);
 
-		assertThat(openActivitiesForProcessInstance(pi11), is(new String[] {"A"}));
-		assertThat(openActivitiesForProcessInstance(pi12), is(new String[] {"A"}));
-		assertThat(openActivitiesForProcessInstance(pi21), is(new String[] {"X"}));
-		assertThat(openActivitiesForProcessInstance(pi31), is(new String[] {}));
+		assertThat(openActivitiesForProcessInstance(pi11), is(new String[] { "A" }));
+		assertThat(openActivitiesForProcessInstance(pi12), is(new String[] { "A" }));
+		assertThat(openActivitiesForProcessInstance(pi21), is(new String[] { "X" }));
+		assertThat(openActivitiesForProcessInstance(pi31), is(new String[] { "Z" }));
 	}
 
 	@Test
@@ -56,9 +56,9 @@ public class ActivityQueryTest extends AbstractLocalWorkflowServiceTest {
 		startProcess(p1);
 		startProcess(p3);
 
-		assertThat(openActivitiesForProcess(p1.getId()), is(new String[] {"A","A"}));
-		assertThat(openActivitiesForProcess(p2.getId()), is(new String[] {"X"}));
-		assertThat(openActivitiesForProcess(p3.getId()), is(new String[] {}));
+		assertThat(openActivitiesForProcess(p1.getId()), is(new String[] { "A", "A" }));
+		assertThat(openActivitiesForProcess(p2.getId()), is(new String[] { "X" }));
+		assertThat(openActivitiesForProcess(p3.getId()), is(new String[] { "Z" }));
 	}
 
 	private String[] openActivitiesForProcessInstance(final String processInstanceId) throws CMWorkflowException {
