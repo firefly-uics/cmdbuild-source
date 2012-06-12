@@ -266,6 +266,10 @@
 			<id>atlassian</id>
 			<url>https://maven.atlassian.com/content/groups/public</url>
 		</repository>
+		<repository> <!-- Oswego for Shark -->
+			<id>jboss-thirdparty-releases</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
