@@ -18,10 +18,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import utils.AbstractLocalWorkflowServiceTest;
+import utils.AbstractLocalSharkServiceTest;
 import utils.MockEventsDelegator;
 
-public class VariablesTest extends AbstractLocalWorkflowServiceTest {
+public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 	private static final String A_BOOLEAN = "aBoolean";
 	private static final String AN_INTEGER = "anInteger";
