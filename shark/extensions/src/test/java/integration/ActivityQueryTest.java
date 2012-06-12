@@ -13,9 +13,9 @@ import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.AbstractLocalWorkflowServiceTest;
+import utils.AbstractLocalSharkServiceTest;
 
-public class ActivityQueryTest extends AbstractLocalWorkflowServiceTest {
+public class ActivityQueryTest extends AbstractLocalSharkServiceTest {
 
 	private XpdlProcess p1;
 	private XpdlProcess p2;
@@ -38,10 +38,10 @@ public class ActivityQueryTest extends AbstractLocalWorkflowServiceTest {
 
 	@Test
 	public void openActivitiesCanBeQueriedForAProcessInstance() throws CMWorkflowException {
-		String pi11 = uploadXpdlAndStartProcess(p1);
-		String pi21 = startProcess(p2);
-		String pi12 = startProcess(p1);
-		String pi31 = startProcess(p3);
+		final String pi11 = uploadXpdlAndStartProcess(p1);
+		final String pi21 = startProcess(p2);
+		final String pi12 = startProcess(p1);
+		final String pi31 = startProcess(p3);
 
 		assertThat(openActivitiesForProcessInstance(pi11), is(new String[] { "A" }));
 		assertThat(openActivitiesForProcessInstance(pi12), is(new String[] { "A" }));

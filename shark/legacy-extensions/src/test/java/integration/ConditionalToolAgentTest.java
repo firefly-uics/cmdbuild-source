@@ -18,10 +18,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.AbstractLocalWorkflowServiceTest;
+import utils.AbstractLocalSharkServiceTest;
 import utils.DummyToolAgent;
 
-public class ConditionalToolAgentTest extends AbstractLocalWorkflowServiceTest {
+public class ConditionalToolAgentTest extends AbstractLocalSharkServiceTest {
 
 	@Before
 	public void intializeDummyToolAgent() throws Exception {

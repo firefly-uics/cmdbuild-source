@@ -12,14 +12,12 @@ import org.enhydra.shark.api.common.SharkConstants;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.AbstractRemoteWorkflowServiceTest;
-
 /**
  * Smoke tests to be reasonably sure that the web connection works just like the
  * local one. This is not tested throughly because we assume that it is going to
  * work just like the embedded Shark instance.
  */
-public class RemoteWorkflowServiceTest extends AbstractRemoteWorkflowServiceTest {
+public class RemoteWorkflowServiceTest extends AbstractRemoteSharkServiceTest {
 
 	private String pkgId;
 

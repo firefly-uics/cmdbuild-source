@@ -1,13 +1,13 @@
-package utils;
+package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
 
-import org.apache.log4j.Logger;
-import org.cmdbuild.workflow.CMEventManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TestLoggerEventManager implements CMEventManager {
+public class LoggerEventManager implements CMEventManager {
 
-	private static final Logger logger = Logger.getLogger("IT");
+	private static final Logger logger = LoggerFactory.getLogger("IT");
 
 	@Override
 	public void activityClosed(final String activityDefinitionId) {

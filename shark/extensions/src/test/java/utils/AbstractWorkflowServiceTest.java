@@ -43,7 +43,7 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 * Creates a new {@link XpdlDocument} with default scripting language
 	 * {@code ScriptLanguages.JAVA}.
 	 */
-	protected final XpdlDocument newXpdl(final String packageId) throws XpdlException {
+	protected XpdlDocument newXpdl(final String packageId) throws XpdlException {
 		final XpdlDocument xpdl = newXpdlNoScriptingLanguage(packageId);
 		xpdl.setDefaultScriptingLanguage(ScriptLanguage.JAVA);
 		return xpdl;
@@ -52,7 +52,7 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	/**
 	 * Creates a new {@link XpdlDocument} with no default scripting language.
 	 */
-	protected final XpdlDocument newXpdlNoScriptingLanguage(final String packageId) throws XpdlException {
+	protected XpdlDocument newXpdlNoScriptingLanguage(final String packageId) throws XpdlException {
 		return new XpdlDocument(packageId);
 	}
 
@@ -62,8 +62,7 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 * 
 	 * @return the process instance's id
 	 */
-	protected final String uploadXpdlAndStartProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException,
-			XpdlException {
+	protected String uploadXpdlAndStartProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException, XpdlException {
 		upload(xpdlDocument);
 		return startProcess(xpdlProcess);
 	}
@@ -74,7 +73,7 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 * @throws CMWorkflowException
 	 * @throws XpdlException
 	 */
-	protected final void upload(final XpdlDocument xpdlDocument) throws XpdlException, CMWorkflowException {
+	protected void upload(final XpdlDocument xpdlDocument) throws XpdlException, CMWorkflowException {
 		ws.uploadPackage(xpdlDocument.getPackageId(), serialize(xpdlDocument));
 	}
 
@@ -83,14 +82,23 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 * 
 	 * @return the process instance's id
 	 */
-	protected final String startProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException, XpdlException {
-		return ws.startProcess(xpdlDocument.getPackageId(), xpdlProcess.getId());
+	protected String startProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException, XpdlException {
+		return startProcess(xpdlProcess.getId());
+	}
+
+	/**
+	 * Starts the specified process Id.
+	 * 
+	 * @return the process instance's id
+	 */
+	protected String startProcess(final String processId) throws CMWorkflowException, XpdlException {
+		return ws.startProcess(xpdlDocument.getPackageId(), processId);
 	}
 
 	/**
 	 * Serializes an {@link XpdlDocument} in a byte array.
 	 */
-	protected final byte[] serialize(final XpdlDocument xpdl) throws XpdlException {
+	protected byte[] serialize(final XpdlDocument xpdl) throws XpdlException {
 		return XpdlPackageFactory.xpdlByteArray(xpdl.getPkg());
 	}
 

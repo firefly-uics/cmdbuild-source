@@ -18,9 +18,7 @@ import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.AbstractRemoteWorkflowServiceTest;
-
-public class LogFileTest extends AbstractRemoteWorkflowServiceTest {
+public class LogFileTest extends AbstractRemoteSharkServiceTest {
 
 	private XpdlProcess process;
 

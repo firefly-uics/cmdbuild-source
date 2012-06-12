@@ -15,10 +15,10 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import utils.AbstractLocalWorkflowServiceTest;
+import utils.AbstractLocalSharkServiceTest;
 import utils.MockEventsDelegator;
 
-public class EventDelegationTest extends AbstractLocalWorkflowServiceTest {
+public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 
 	private XpdlProcess process;
 	private CMEventManager eventManager;
