@@ -26,7 +26,18 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-extensions</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-commonapi</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-internalapi</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
