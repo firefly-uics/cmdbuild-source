@@ -20,6 +20,7 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class Workflow extends JSONBase {
 
@@ -36,10 +37,11 @@ public class Workflow extends JSONBase {
 	public JsonResponse saveActivity(
 //	Id, ProcessInstanceId, WorkItemId, attributes, ww
 			@Parameter("IdClass") Long processClassId,
+			@Parameter("attributes") final String jsonVars,
 			@Parameter("advance") boolean advance,
-			final UserContext userCtx) throws CMWorkflowException {
+			final UserContext userCtx) throws CMWorkflowException, Exception {
 		final WorkflowLogic logic = new WorkflowLogic(userCtx);
-		final Map<String, Object> vars = new HashMap<String, Object>(); // TODO
+		@SuppressWarnings("unchecked") final Map<String, Object> vars = new ObjectMapper().readValue(jsonVars, Map.class);
 //		if (processCardId) {
 			final CMProcessInstance procInst = logic.startProcess(processClassId, vars, advance);
 //		} else {
