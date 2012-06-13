@@ -2,7 +2,18 @@
 
 	Ext.define("CMDBuild.DummyModel", {
 		extend: "Ext.data.Model",
-		fields:[]
+		fields:[],
+
+		// in recent past, ExtJs add any data passed to the
+		// constructor to the new model. In ExtJs 4.1 this is
+		// not true. So use the setFields at the costructor to
+		// set the fields of the DummyModel every time that it
+		// is created
+		constructor: function(data) {
+			data = data || {};
+			CMDBuild.DummyModel.setFields(Ext.Object.getKeys(data));
+			this.callParent(arguments);
+		}
 	});
 
 	Ext.define("CMDBuild.cache.CMLookupTypeModel", {

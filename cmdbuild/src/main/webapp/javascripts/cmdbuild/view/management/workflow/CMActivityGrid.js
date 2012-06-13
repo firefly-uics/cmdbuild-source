@@ -11,7 +11,7 @@
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
 		cmStoreUrl: "services/json/management/modworkflow/getactivitylist",
-		
+
 		constructor: function() {
 
 			this.statusCombo = new  Ext.form.field.ComboBox({
@@ -38,6 +38,16 @@
 			this.tbar = [this.addCardButton, this.statusCombo];
 
 			this.callParent(arguments);
+
+			this.plugins = [{
+				ptype: "rowexpander",
+				rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
+				getRowBodyFeatureData: function(data, idx, record, orig) {
+					var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
+					o.rowBody = "<div>@@ Bella li</div>";
+					return o;
+				}
+			}]
 		},
 
 		setStatusToOpen: function() {

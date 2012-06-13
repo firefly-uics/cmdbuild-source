@@ -184,7 +184,7 @@
             },
             "commonFields": {
                "active": "Attivo",
-               "alwaysenabled": "Sembre abilitato",
+               "alwaysenabled": "Sempre abilitato",
                "buttonLabel": "Testo del pulsante",
                "type": "Tipo"
             },
