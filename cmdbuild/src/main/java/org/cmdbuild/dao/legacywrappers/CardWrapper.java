@@ -109,7 +109,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	}
 
 	protected boolean isUserAttributeName(final String name) {
-		return cardSystemAttributes.contains(name);
+		return !cardSystemAttributes.contains(name);
 	}
 
 	@Override

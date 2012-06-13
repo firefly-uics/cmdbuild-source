@@ -86,11 +86,16 @@ public class WorkflowLogic {
 			throw new UnsupportedOperationException(String.format("Not just one activity to advance! (%d activities)", activities.size()));
 		}
 		final CMActivityInstance firstActInst = activities.get(0);
-		wfEngine.updateActivity(firstActInst, vars);
+		return updateActivity(firstActInst, vars, advance);
+	}
+
+	private CMProcessInstance updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> vars,
+			final boolean advance) throws CMWorkflowException {
+		wfEngine.updateActivity(activityInstance, vars);
 		if (advance) {
-			return wfEngine.advanceActivity(firstActInst);
+			return wfEngine.advanceActivity(activityInstance);
 		} else {
-			return procInst;
+			return activityInstance.getProcessInstance();
 		}
 	}
 

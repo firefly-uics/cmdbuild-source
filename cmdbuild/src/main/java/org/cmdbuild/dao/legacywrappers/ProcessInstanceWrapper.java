@@ -76,7 +76,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	protected boolean isUserAttributeName(final String name) {
-		return processSystemAttributes.contains(name);
+		return !processSystemAttributes.contains(name);
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		return CMBackend.INSTANCE.getFirstLookupByCode(FLOW_STATUS_LOOKUP, flowStatusLookupCode);
 	}
 
-	public static ProcessInstanceWrapper newInstance(
+	public static ProcessInstanceWrapper createProcessInstance(
 			final UserContext userCtx,
 			final ProcessDefinitionManager processDefinitionManager,
 			final ProcessType processType,
@@ -195,6 +195,16 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		final ProcessInstanceWrapper wrapper = new ProcessInstanceWrapper(userCtx, processDefinitionManager, process);
 		wrapper.setState(WSProcessInstanceState.OPEN);
 		return wrapper;
+	}
+
+	public static CMProcessInstanceDefinition readProcessInstance(
+			final UserContext userCtx,
+			final ProcessDefinitionManager processDefinitionManager,
+			final ProcessType processType,
+			final CMProcessInstance processInstance) {
+		int cardId = Integer.valueOf(processInstance.getCardId().toString()).intValue();
+		final Process process = processType.cards().get(cardId);
+		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, process);
 	}
 
 }

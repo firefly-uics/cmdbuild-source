@@ -188,6 +188,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 				for (final WMAttribute attribute : iterator.getArray()) {
 					final String name = attribute.getName();
 					final Object value = attribute.getValue();
+					// TODO Convert variables from Shark's own types to CMDBuild's types
 					variables.put(name, value);
 				}
 				return variables;
@@ -198,6 +199,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	@Override
 	public void setProcessInstanceVariables(final String procInstId, final Map<String, Object> variables)
 			throws CMWorkflowException {
+		// TODO Convert variables from CMDBuild's types to Shark's own types
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {

@@ -1,11 +1,11 @@
 package org.cmdbuild.workflow;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
-import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
@@ -127,21 +127,38 @@ public class WorkflowEngineWrapper implements CMWorkflowEngine {
 	}
 
 	private CMProcessInstanceDefinition newProcessInstance(final CMProcessClass processDefinition, final String procInstId) {
-		return ProcessInstanceWrapper.newInstance(userCtx,
+		return ProcessInstanceWrapper.createProcessInstance(userCtx,
 				processDefinitionManager,
 				findProcessTypeById(processDefinition.getId()),
 				procInstId);
 	}
 
 	@Override
-	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> vars)
+	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> inputValues)
 			throws CMWorkflowException {
-		// TODO Save variables on the database (and on shark for the widgets, damn it!)
-		// TODO Widgets
+		final Map<String, Object> nativeValues = new HashMap<String, Object>(inputValues.size());
+		final CMProcessInstance procInst = activityInstance.getProcessInstance();
+		final CMProcessInstanceDefinition procInstDef = modifyProcessInstance(procInst);
+		for (final String key : inputValues.keySet()) {
+			final Object value = inputValues.get(key);
+			procInstDef.set(key, value);
+			nativeValues.put(key, procInstDef.get(key));
+		}
+		// TODO Widgets: execute update and save output to nativeValues
+		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), nativeValues);
+		procInstDef.save();
+	}
+
+	private CMProcessInstanceDefinition modifyProcessInstance(final CMProcessInstance processInstance) {
+		return ProcessInstanceWrapper.readProcessInstance(userCtx,
+				processDefinitionManager,
+				findProcessTypeById(processInstance.getType().getId()),
+				processInstance);
 	}
 
 	@Override
 	public CMProcessInstance advanceActivity(final CMActivityInstance activityInstance) throws CMWorkflowException {
+		// TODO Widgets: tell them that you are advancing the activity (send emails, ...)
 		throw new UnsupportedOperationException("TODO Come on! Cut me some slack!");
 	}
 

@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
  */
 public interface CMEntry extends CMValueSet {
 
-	interface CMEntryDefinition {
+	interface CMEntryDefinition extends CMValueSet {
 		CMEntryDefinition set(String key, Object value);
 		CMEntry save();
 	}
