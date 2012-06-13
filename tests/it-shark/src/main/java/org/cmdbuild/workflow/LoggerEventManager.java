@@ -2,13 +2,9 @@ package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
 
-import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class LoggerEventManager implements CMEventManager {
-
-	private static final WMSessionHandle UNUSED_SHANDLE = null;
-	private static final String LOGGER_CATEGORY = "IT";
 
 	private final CallbackUtilities cus;
 
@@ -47,7 +43,7 @@ public class LoggerEventManager implements CMEventManager {
 	}
 
 	private void logWithId(final String message, final String id) {
-		cus.info(UNUSED_SHANDLE, LOGGER_CATEGORY, format("%s: %s", message, id));
+		cus.info(TestLoggerConstants.UNUSED_SHANDLE, TestLoggerConstants.LOGGER_CATEGORY, format("%s: %s", message, id));
 	}
 
 }
