@@ -721,6 +721,11 @@ em {
 	display: block
 }
 
+/* fix the icon size rendering on Extjs 4.1*/
+.x-message-box-info, .x-message-box-warning, .x-message-box-question, .x-message-box-error {
+	background-size: 16px 16px;
+}
+
 /* Toolbar*/
 .cmtoolbaritem {
 	font-size: 11px ! important;

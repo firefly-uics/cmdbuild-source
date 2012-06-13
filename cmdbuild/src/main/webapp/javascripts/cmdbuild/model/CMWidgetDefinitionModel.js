@@ -17,7 +17,19 @@
 			{name: _FIELDS.label, type: 'string'},
 			{name: _FIELDS.active, type: 'boolean', defaultValue: true}
 		],
-		idProperty: _FIELDS.id
+		idProperty: _FIELDS.id,
+		constructor: function(raw) {
+
+			// it's late, I need all the raw data
+			// but that are not always the same for all
+			// definitions. The solution is to subclass this
+			// class with the real widget model implementation
+			// but I don't know if is possible
+			// to add different models to the grid. So use this hack
+			// to return to the behaviour of the models before Extjs 4.1
+			this.callParent(arguments);
+			this.data = raw;
+		}
 	});
 
 	//REPORT
