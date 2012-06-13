@@ -2,12 +2,19 @@ package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
+import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class LoggerEventManager implements CMEventManager {
 
-	private static final Logger logger = LoggerFactory.getLogger("IT");
+	private static final WMSessionHandle UNUSED_SHANDLE = null;
+	private static final String LOGGER_CATEGORY = "IT";
+
+	private final CallbackUtilities cus;
+
+	public LoggerEventManager(final CallbackUtilities cus) {
+		this.cus = cus;
+	}
 
 	@Override
 	public void activityClosed(final String activityDefinitionId) {
@@ -40,7 +47,7 @@ public class LoggerEventManager implements CMEventManager {
 	}
 
 	private void logWithId(final String message, final String id) {
-		logger.info(format("%s: %s", message, id));
+		cus.info(UNUSED_SHANDLE, LOGGER_CATEGORY, format("%s: %s", message, id));
 	}
 
 }

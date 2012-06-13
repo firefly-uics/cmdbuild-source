@@ -1,11 +1,13 @@
 package org.cmdbuild.workflow;
 
+import org.enhydra.shark.api.internal.working.CallbackUtilities;
+
 public class LoggerEventsDelegator extends SharkEventsDelegator {
 
-	private static final CMEventManager eventManager = new LoggerEventManager();
-
-	public LoggerEventsDelegator() {
-		super(eventManager);
+	@Override
+	public void configure(final CallbackUtilities cus) throws Exception {
+		super.configure(cus);
+		setEventManager(new LoggerEventManager(cus));
 	}
 
 }
