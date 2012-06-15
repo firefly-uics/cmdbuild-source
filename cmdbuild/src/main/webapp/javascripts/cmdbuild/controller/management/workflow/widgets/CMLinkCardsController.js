@@ -6,9 +6,9 @@
 	 * the template to calculate the selection and if needed add dependencies to the fields
 	 */
 
-	var FILTER = "xa:Filter",
+	var FILTER = "Filter",
 		CLASS_ID = "xa:ClassId",
-		DEFAULT_SELECTION = "xa:DefaultSelection",
+		DEFAULT_SELECTION = "DefaultSelection",
 		TABLE_VIEW_NAME = "table",
 		MAP_VIEW_NAME = "map",
 		STARTING_VIEW = TABLE_VIEW_NAME,
@@ -48,6 +48,7 @@
 				xaVars: this.view.widgetConf,
 				serverVars: this.view.activity
 			});
+			this.isFiltered = !!this.view.widgetConf[FILTER];
 
 			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);
 			this.mon(this.view.grid, 'itemdblclick', onItemDoubleclick, this);
@@ -69,14 +70,13 @@
 					this.alertIfChangeDefaultSelection = true;
 
 					var tr = this.templateResolver,
-						classId = tr.getVariable(CLASS_ID),
-						cqlQuery = tr.getVariable(FILTER);
+						classId = tr.getVariable(CLASS_ID);
 
 					// CQL filter and regular filter cannot be merged now.
 					// The button should be enabled only if no other filter is present.
-					if (cqlQuery) {
+					if (this.isFiltered) {
 						this.view.grid.openFilterButton.disable();
-						resolveFilterTemplate(this, cqlQuery, classId);
+						resolveFilterTemplate(this, classId);
 					} else {
 						this.view.updateGrid(classId);
 						this.view.grid.openFilterButton.enable();
@@ -177,12 +177,12 @@
 		});
 	}
 
-	function resolveFilterTemplate(me, cqlQuery, classId) {
+	function resolveFilterTemplate(me, classId) {
 		var view = me.view;
 		me.templateResolver.resolveTemplates({
-			attributes: ["Filter"],
+			attributes: [FILTER],
 			callback: function(out, ctx) {
-				var cardReqParams = me.view.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
+				var cardReqParams = me.view.getTemplateResolver().buildCQLQueryParameters(out[FILTER], ctx);
 				me.view.updateGrid(classId, cardReqParams);
 
 				me.templateResolver.bindLocalDepsChange(function() {
@@ -271,9 +271,9 @@
 		alertIfNeeded(me);
 
 		me.templateResolver.resolveTemplates({
-			attributes: ['DefaultSelection'],
+			attributes: [DEFAULT_SELECTION],
 			callback: function onDefaultSelectionTemplateResolved(out, ctx) {
-				var defaultSelection = me.templateResolver.buildCQLQueryParameters(out.DefaultSelection, ctx);
+				var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[DEFAULT_SELECTION], ctx);
 				// do the request only if there are a default selection
 				if (defaultSelection) {
 					CMDBuild.ServiceProxy.getCardList({
