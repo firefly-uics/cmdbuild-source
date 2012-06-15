@@ -447,6 +447,14 @@ em {
 	cursor: pointer;
 }
 
+.show_detail_link {
+	cursor: pointer;
+	font-weight: bold;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	text-decoration: underline;
+}
+
 /*trigger fields*/
 .trigger-edit {
 	background-image: url(../images/form/trigger-edit.png) !important;
@@ -722,7 +730,11 @@ em {
 }
 
 /* fix the icon size rendering on Extjs 4.1*/
-.x-message-box-info, .x-message-box-warning, .x-message-box-question, .x-message-box-error {
+
+.x-window-header .x-message-box-info,
+.x-window-header .x-message-box-warning,
+.x-window-header .x-message-box-question,
+.x-window-header .x-message-box-error {
 	background-size: 16px 16px;
 }
 
