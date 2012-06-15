@@ -1,37 +1,7 @@
 Ext.ns('CMDBuild.Msg');
-CMDBuild.Msg.DetailList= [];
-
-CMDBuild.Msg.buildDetailLink = function(stacktrace) {
-	var id = CMDBuild.Msg.DetailList.length;
-	CMDBuild.Msg.DetailList[id] = stacktrace;
-	return '<br /><a id="detail_'+id+'" href="#" onClick="CMDBuild.Msg.buildDetaiWindow(this.id)">' + CMDBuild.Translation.errors.show_detail +'</a>';
-};
-
-CMDBuild.Msg.buildDetaiWindow = function(id) {
-	var index = id.split("_")[1];
-	var text = CMDBuild.Msg.DetailList[index];
-	
-	var closeHandler = function() {
-		win.destroy();
-	};
-	
-	var win = new CMDBuild.PopupWindow({
-		title: CMDBuild.Translation.errors.detail,
-		items: [{
-			xtype: 'panel',
-			autoScroll: true,			
-			html: '<pre style="padding:5px; font-size: 1.2em">'+text+'</pre>'
-		}],
-		buttonAlign: 'center',
-		buttons: [{
-			text: CMDBuild.Translation.common.btns.close,
-			handler: closeHandler
-		}]
-	}).show(); 
-};
 
 CMDBuild.Msg.alert = function(title, text, popup, iconCls) {
-	var title = title || "&nbsp";
+	title = title || "&nbsp";
 	var win;
 	if (popup) {
 		win = Ext.Msg.show({
@@ -62,21 +32,54 @@ CMDBuild.Msg.info = function(title, text, popup) {
 	CMDBuild.Msg.alert(title, text, popup, Ext.MessageBox.INFO);
 };
 
+CMDBuild.Msg.warn = function(title, text, popup) {
+	title = title || CMDBuild.Translation.errors.warning_message || "Warning";
+	CMDBuild.Msg.alert(title, text, popup, Ext.MessageBox.WARNING);
+};
+
+CMDBuild.Msg.DetailList= [];
+
 CMDBuild.Msg.error = function(title, body, popup) {
 	var text = body;
-	var title = title || CMDBuild.Translation.errors.error_message || "Error";
+	title = title || CMDBuild.Translation.errors.error_message || "Error";
+
 	if (typeof body == "object") {
 		text = body.text;
 		if (body.detail) {
-			text += CMDBuild.Msg.buildDetailLink(body.detail);			
+			text += buildDetailLink(CMDBuild.Msg.DetailList.length, body.detail);
 		}
 	}
-	var win = CMDBuild.Msg.alert(title, text, popup, Ext.MessageBox.ERROR);
-	//TODO try to remove the stack-trace to the array CMDBuild.Msg.DetailList
+
+	CMDBuild.Msg.alert(title, text, popup, Ext.MessageBox.ERROR);
+	// TODO try to remove the stack-trace to the array CMDBuild.Msg.DetailList
 	// there are some problems because the Ext.Msg.show object doesn't listen events
 };
 
-CMDBuild.Msg.warn = function(title, text, popup) {
-	var title = title || CMDBuild.Translation.errors.warning_message || "Warning";
-	CMDBuild.Msg.alert(title, text, popup, Ext.MessageBox.WARNING);
+function buildDetailLink(id, stacktrace) {
+	CMDBuild.Msg.DetailList[id] = stacktrace;
+	var linkClass = "show_detail_link",
+		template = '<p class="{0}" id="detail_{1}" onClick="buildDetaiWindow(this.id)">{2}</p>';
+
+	return Ext.String.format(template, linkClass, id, CMDBuild.Translation.errors.show_detail);
+};
+
+function buildDetaiWindow(id) {
+	var index = id.split("_")[1];
+	var htmlTemplate = '<pre style="padding:5px; font-size: 1.2em">{0}</pre>';
+
+	var win = new CMDBuild.PopupWindow({
+		title: CMDBuild.Translation.errors.detail,
+		items: [{
+			xtype: 'panel',
+			autoScroll: true,
+			html: Ext.String.format(htmlTemplate, CMDBuild.Msg.DetailList[index])
+		}],
+		buttonAlign: 'center',
+		buttons: [{
+			text: CMDBuild.Translation.common.btns.close,
+			handler: function() {
+				win.destroy();
+			}
+		}]
+	}).show();
 };
