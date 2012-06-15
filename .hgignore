@@ -4,7 +4,8 @@ syntax: glob
 .classpath
 .settings
 target
+.externalToolBuilders
 
+META-INF/MANIFEST.MF
+DatabaseManager.log
 
-syntax: glob
-**/META-INF/MANIFEST.MF
