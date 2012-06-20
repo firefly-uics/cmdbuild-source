@@ -114,7 +114,7 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 
 		inner.getTransitions().add(transition);
 
-		return new XpdlTransition(transition);
+		return new XpdlTransition(this, transition);
 	}
 
 	public XpdlApplication createApplication(final String id) {
