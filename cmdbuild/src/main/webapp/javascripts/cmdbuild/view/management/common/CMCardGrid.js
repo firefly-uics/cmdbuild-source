@@ -1,4 +1,100 @@
 (function() {
+
+	var activityRowClass = "cm_activity_row";
+	var activityRowClass_selected = "cm_activity_row_selected";
+	var activityRowClass_over = "cm_activity_row_over";
+	var activityRowLabelClass = "cm_activity_row_label";
+	var activityRowNotEditable = "cm_activity_row_not_editable";
+	var ACTIVITY_SELECTION_EVENT = "cm_activity_selected";
+
+	Ext.define("CMDBuild.view.management.common.CMMultipleActivityRowExpander", {
+		extend: "Ext.ux.RowExpander",
+		alias: 'plugin.activityrowexpander',
+		expandOnDblClick: false,
+		rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
+		getRowBodyFeatureData: function(data, idx, record, orig) {
+			var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
+			var activities = [{
+				group: "Gruppo 1",
+				name: "Attività 2.1"
+			},{
+				group: "Gruppo 2",
+				name: "Attività 2.2"
+			},{
+				group: "Gruppo 3",
+				name: "Attività 2.3",
+				editable: true
+			}]; // record.getActivites();
+
+			o.rowBody = (function(activities){
+				var out = "";
+				for (var i=0, l=activities.length; i<l; ++i){
+					var a = activities[i];
+					var pClass = activityRowClass;
+
+					if (!a.editable) {
+						pClass += (" " + activityRowNotEditable);
+					}
+					out += Ext.String.format('<p class="{0}"> <span class="{1}">{2}:</span> {3}</p>', pClass, activityRowLabelClass, a.group, a.name);
+				}
+
+				return out;
+			})(activities);
+
+			return o;
+		},
+
+		// override
+		init: function(grid) {
+			this.callParent(arguments);
+			grid.on("select", function() {
+				selectSubRow(grid, null);
+			});
+		},
+
+		onRowExpanded: function(grid, rowNode, record, nextBd) {
+			grid.view.refreshSize();
+			if (nextBd 
+					&& record
+					&& typeof record.subRows == "undefined") {
+
+				record.subRows = [];
+				var childRows = nextBd.query("p." + activityRowClass);
+
+				for (var i=0, l=childRows.length; i<l; ++i) {
+					var childRow = childRows[i];
+					var rowEl = new Ext.Element(childRow);
+
+					record.subRows.push(rowEl);
+					rowEl.referredRecord = record;
+
+					rowEl.addClsOnOver(activityRowClass_over, function test(overElement) {
+						// don't add the class if is the selected row
+						return !overElement.hasCls(activityRowClass_selected);
+					});
+
+					rowEl.addListener("click", function(evt, e, o) {
+						selectSubRow(grid, this);
+						grid.fireEvent(ACTIVITY_SELECTION_EVENT, this);
+					}, rowEl);
+				}
+			}
+		}
+	});
+
+	function selectSubRow(grid, subrow) {
+		if (grid.lastSubRowSelected) {
+			grid.lastSubRowSelected.removeCls(activityRowClass_selected);
+		}
+
+		grid.lastSubRowSelected = subrow;
+
+		if (subrow) {
+			subrow.removeCls(activityRowClass_over);
+			subrow.addCls(activityRowClass_selected);
+		}
+	}
+
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 		columns: [],
@@ -33,6 +129,10 @@
 			if (this.cmPaginate) {
 				buildPagingBar.call(this);
 			}
+
+			this.plugins = [{
+				ptype: "activityrowexpander"
+			}];
 
 			this.callParent(arguments);
 		},
@@ -150,7 +250,7 @@
 					} else {
 						this.getSelectionModel().select(0);
 					}
-				}
+				};
 			}
 
 			this.store.load({
@@ -378,7 +478,7 @@
 			width: 100,
 			sortable: true,
 			dataIndex: 'IdClass_value'
-		}
+		};
 	}
 
 	function buildGraphIconColumn(headers) {

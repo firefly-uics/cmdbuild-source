@@ -863,3 +863,38 @@ em {
 	font-size: 1.2em;
 	padding: 0.5em;
 }
+
+
+/* Activity rows*/
+
+.cm_activity_row
+{
+	background: #FAFAFA;
+	border-bottom: 1px #EEE solid;
+	border-top: 1px #DDD solid;
+	border-left: 0.5em #D1D1D1 solid;
+	padding: 0.2em 0.2em 0.2em 1em !important;
+	margin: 0 !important;
+}
+
+.cm_activity_row_label
+{
+	font-weight: bold;
+}
+
+.cm_activity_row_selected
+{
+	background: #dfe8f6;
+	border-top: 1px #A3BAE9 dotted !important;
+	border-bottom: 1px #A3BAE9 dotted !important;
+}
+
+.cm_activity_row_over
+{
+	background: #EEE;
+}
+
+.cm_activity_row_not_editable
+{
+	color: #666;
+}

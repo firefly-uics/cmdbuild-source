@@ -1,10 +1,5 @@
 (function() {
-	var tr =  CMDBuild.Translation.management.modworkflow,
-		modeConvertionMatrix = {
-			VIEW: "read",
-			UPDATE: "write",
-			REQUIRED: "required"
-		};
+	var tr =  CMDBuild.Translation.management.modworkflow;
 
 	Ext.define("CMDBuild.view.management.workflow.CMActivityPanel", {
 		extend: "CMDBuild.view.management.common.CMFormWithWidgetButtons",
@@ -49,28 +44,19 @@
 			this.withToolBar = true;
 			this.callParent(arguments);
 
-			this.processStepName = new Ext.button.Button({
-				overCls: Ext.button.Button.baseCls,
-				pressedCls: Ext.button.Button.baseCls,
-				disable: Ext.emptyFn
-			});
+			this.activityPerformerName = new Ext.form.DisplayField();
+			this.activityDescription = new Ext.form.DisplayField();
 
-			this.processStepCode = new Ext.button.Button({
-				overCls: Ext.button.Button.baseCls,
-				pressedCls: Ext.button.Button.baseCls,
-				disable: Ext.emptyFn
-			});
-			
-			this.modifyCardButton.setText(tr.modify_card)
-			this.deleteCardButton.setText(tr.delete_card)
+			this.modifyCardButton.setText(tr.modify_card);
+			this.deleteCardButton.setText(tr.delete_card);
 			this.cmTBar = [
 				this.modifyCardButton,
 				this.deleteCardButton,
 				CMDBuild.Config.graph.enabled=="true" ? this.graphButton : '-',
 				'->','-',
-				this.processStepName,
+				this.activityPerformerName,
 				'-',
-				this.processStepCode,
+				this.activityDescription,
 				' '
 			];
 		},
@@ -94,12 +80,12 @@
 			this.deleteCardButton.disable();
 		},
 
-		updateInfo : function(card) {
-			card = card || {};
-			var data = card.raw || card.data || {};
+		updateInfo : function(performerName, activityDescription) {
+			this.activityPerformerName.setValue(performerName || "");
+			this.activityDescription.setValue(activityDescription || "");
 
-			this.processStepName.setText(data.activityPerformerName || "");
-			this.processStepCode.setText(data.Code || "");
+			this.activityPerformerName.doComponentLayout();
+			this.activityDescription.doComponentLayout();
 		},
 
 		canReconfigureTheForm: function() {

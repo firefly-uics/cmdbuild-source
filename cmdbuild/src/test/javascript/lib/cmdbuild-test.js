@@ -222,6 +222,7 @@
 //			'CMChartPieTypeStrategy',
 //			'CMChartGaugeTypeStrategy',
 //			'CMDashboardModel',
+//			'CMWorkflowState'
 		];
 
 		if (Ext.Array.contains(focusSpecs, description)) {
