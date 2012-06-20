@@ -43,7 +43,7 @@
 			var widgetManager = new CMDBuild.view.management.workflow.CMWidgetManager(this.cardTabPanel);
 			this.getWidgetManager = function() {
 				return widgetManager;
-			}
+			};
 		}
 	});
 })();

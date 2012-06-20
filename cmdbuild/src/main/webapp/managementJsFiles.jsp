@@ -8,6 +8,9 @@
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 
+<!-- STATES -->
+<script type="text/javascript" src="javascripts/cmdbuild/state/CMWorkflowState.js"></script>
+
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script><!-- must be here -->

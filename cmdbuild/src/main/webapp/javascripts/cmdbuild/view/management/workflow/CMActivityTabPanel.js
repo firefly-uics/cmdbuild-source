@@ -166,15 +166,9 @@
 			this.callParent(arguments);
 		},
 
-		updateBody: function(activity) {
+		updateBody: function(instructions) {
 			if (this.body) {
-				var activityDoc;
-				if (activity) {
-					activityDoc = activity.data.ActivityDescription;
-				}
-
-				var text = '<div style="padding: 5px">' + (activityDoc || "") + '</div>';
-				this.body.update(text);
+				this.body.update(instructions || "");
 			}
 		}
 	});

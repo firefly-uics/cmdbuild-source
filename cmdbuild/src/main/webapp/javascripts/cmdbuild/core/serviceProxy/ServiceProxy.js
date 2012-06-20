@@ -351,23 +351,24 @@ CMDBuild.ServiceProxy.workflow = {
 			params: {
 				idClass : classId,
 				id : -1
-			},
-			adapter: function(input) {
-				var activity = input.response;
-				return {
-					data: Ext.apply(adaptVariables(activity.variables), {
-						Id: -1,
-						IdClass: parseInt(classId),
-						ProcessInstanceId: "tostart",
-						activityPerformerName: activity.performerName,
-						Code: activity.description,
-						CmdbuildExtendedAttributes: adaptWidgets(activity.widgets),
-						priv_create: true,
-						priv_write: true
-					}),
-					success: true
-				};
 			}
+			
+//			,adapter: function(input) {
+//				var activity = input.response;
+//				return {
+//					data: Ext.apply(adaptVariables(activity.variables), {
+//						Id: -1,
+//						IdClass: parseInt(classId),
+//						ProcessInstanceId: "tostart",
+//						activityPerformerName: activity.performerName,
+//						Code: activity.description,
+//						CmdbuildExtendedAttributes: adaptWidgets(activity.widgets),
+//						priv_create: true,
+//						priv_write: true
+//					}),
+//					success: true
+//				};
+//			}
 		}, p));
 	},
 

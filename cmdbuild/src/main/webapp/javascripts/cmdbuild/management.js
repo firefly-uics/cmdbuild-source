@@ -57,7 +57,6 @@
 			buildComponents: function() {
 				var disabled = CMDBuild.Runtime.DisabledModules;
 				this.cmAccordions = [
-					this.dashboardsAccordion = dashboardsAccordion,
 					this.menuAccordion = menuAccordion
 				];
 
@@ -95,6 +94,9 @@
 					this.reportAccordion = reportAccordion;
 					this.cmAccordions.push(this.reportAccordion);
 				}
+
+				this.dashboardsAccordion = dashboardsAccordion;
+				this.cmAccordions.push(this.dashboardsAccordion);
 
 				this.utilitiesTree = utilitiesTree;
 				if (this.utilitiesTree.getRootNode().childNodes.length > 0) {

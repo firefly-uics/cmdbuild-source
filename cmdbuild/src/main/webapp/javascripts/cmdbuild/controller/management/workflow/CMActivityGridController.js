@@ -1,12 +1,12 @@
 (function() {
-	var STATE = "state",
-	STATE_VALUE_OPEN = "open.running",
-	STATE_VALUE_SUSPENDED = "open.not_running.suspended",
-	STATE_VALUE_COMPLETED = "closed.completed",
-	STATE_VALUE_ALL = "all"; // Not existent
+	var STATE_VALUE_COMPLETED = "closed.completed";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityGridController", {
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
+
+		mixins: {
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
+		},
 
 		constructor: function(view, supercontroller) {
 			this.callParent(arguments);
@@ -14,42 +14,34 @@
 			this.CMEVENTS.processClosed = "processTerminated";
 
 			this.addEvents(this.CMEVENTS.processClosed);
+
 			// from cmmodworkflow
 			this.mon(this.view.statusCombo, "select", onStatusComboSelect, this);
 			this.mon(this.view.addCardButton, "cmClick", this.onAddCardButtonClick, this);
-		},
 
-		onEntryTypeSelected : function(entryType) {
-			this.callParent(arguments);
-			this.view.addCardButton.updateForEntry(entryType);
+			_CMWFState.addDelegate(this);
 		},
 
 		onAddCardButtonClick: function(p) {
 			this.gridSM.deselectAll();
 
-			var me = this;
-	
+			_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance({
+				classId: p.classId
+			}));
+
+			CMDBuild.LoadMask.get().show();
+
 			CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {
 				scope: this,
-				success: success,
+				success: function success(response, request, decoded) {
+					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+					_CMWFState.setActivityInstance(activity);
+				},
+				callback: function() {
+					CMDBuild.LoadMask.get().hide();
+				},
 				important: true
 			});
-	
-			function success(response) {
-				var template =  Ext.JSON.decode(response.responseText);
-	
-				template.data.ProcessInstanceId = undefined;
-				template.data.WorkItemId = undefined;
-				template._cmNew = true;
-
-				// to unify the Ext.models with the server response;
-				template.raw = template.data; 
-				template.get = function(key) {
-					return template.raw[key];
-				};
-
-				this.onCardSelected(null, [template]);
-			}
 		},
 
 		// override
@@ -67,6 +59,17 @@
 			} else {
 				this.callParent(arguments);
 			}
+		},
+
+		// wfStateDelegate
+		onProcessClassRefChange : function(entryType) {
+			// FIXME: for compatibility, remove when switch to a state obj also on ModCard
+			this.onEntryTypeSelected(entryType);
+		},
+
+		onEntryTypeSelected: function(entryType, danglingCard) {
+			this.callParent(arguments);
+			this.view.addCardButton.updateForEntry(entryType);
 		}
 	});
 

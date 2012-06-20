@@ -46,6 +46,10 @@
 			this._widgets = [];
 		},
 
+		isSuperClass: function() {
+			return this.get("superclass");
+		},
+
 		deleteGeoAttr: function(a) {
 			var attrs = this.getGeoAttrs(),
 				next;

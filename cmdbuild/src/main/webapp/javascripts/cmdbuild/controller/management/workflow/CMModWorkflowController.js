@@ -1,16 +1,21 @@
 (function () {
 
-	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>",
-		FLOW_STATUS_CODE = "FlowStatus_code",
+	var FLOW_STATUS_CODE = "FlowStatus_code",
 		STATE_VALUE_OPEN = "open.running";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMModWorkflowController", {
 
 		extend: "CMDBuild.controller.management.common.CMModController",
 
+		mixins: {
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
+		},
+
 		constructor: function() {
 			this.callParent(arguments);
 			this.widgetsController = {};
+
+			_CMWFState.addDelegate(this);
 		},
 
 		buildSubControllers: function() {
@@ -27,7 +32,13 @@
 			buildNoteController(me);
 		},
 
-		onCardChanged: function(card) {
+		// wfStateDelegate
+		onActivityInstanceChange: function(activityInstance) {
+			this.view.updateDocPanel(activityInstance.getInstructions());
+		},
+
+		// deprecated
+		onCardChanged: function(card) { _deprecated();
 			var me = this;
 
 			if (card == null) {
@@ -48,6 +59,14 @@
 			}
 
 			me.callParent(arguments);
+		},
+
+		// override
+		// is called when the view is bring to front from the main viewport
+		// Set the entry type of the _CMWFState instead to store it inside
+		// this controller
+		setEntryType: function(et) {
+			_CMWFState.setProcessClassRef(_CMCache.getEntryTypeById(et));
 		},
 
 		// override
