@@ -16,5 +16,4 @@ public class OpenNoteWidgetFactory extends ValuePairWidgetFactory {
 	public Widget createWidget(final Map<String, String> valuePairs) {
 		return new OpenNote();
 	}
-
 }

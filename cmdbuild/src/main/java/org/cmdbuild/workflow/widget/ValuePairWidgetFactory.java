@@ -15,7 +15,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
 
-	private static final String LINE_SEPARATOR = "\n";
+	private static final String LINE_SEPARATOR = "\r?\n";
 	private static final String VALUE_SEPARATOR = "=";
 
 	private static final String SINGLE_QUOTES = "'";
@@ -92,4 +92,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	protected abstract Widget createWidget(Map<String, String> valueMap);
 
+	protected final boolean readBoolean(String value) {
+		return (value != null);
+	}
 }
