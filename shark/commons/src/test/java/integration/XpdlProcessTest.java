@@ -6,9 +6,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static utils.XpdlTestUtils.randomName;
 
+import java.util.List;
+
+import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlActivitySet;
-import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
+import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.enhydra.jxpdl.elements.DataType;
 import org.enhydra.jxpdl.elements.Package;
 import org.enhydra.jxpdl.elements.WorkflowProcess;
@@ -109,6 +112,23 @@ public class XpdlProcessTest extends AbstractXpdlTest {
 
 		assertThat(xpdlProcess.getStartingActivities().size(), is(2));
 		assertThat(xpdlProcess.getStartingManualActivitiesRecursive().size(), is(6));
+	}
+
+	@Test
+	public void startingActivitiesAreFoundEvenAfterStartEvents() {
+		final XpdlProcess xpdlProcess = xpdlDocument.createProcess(randomName());
+		XpdlActivity start = xpdlProcess.createActivity("S");
+		start.setStartEventType();
+		XpdlActivity noImpl = xpdlProcess.createActivity("NI");
+		xpdlProcess.createTransition(start, noImpl);
+
+		List<XpdlActivity> startingActivities = xpdlProcess.getStartingActivities();
+		assertThat(startingActivities.size(), is(1));
+		assertThat(startingActivities.get(0).getId(), is("S"));
+
+		List<XpdlActivity> startingManualActivities = xpdlProcess.getStartingManualActivitiesRecursive();
+		assertThat(startingManualActivities.size(), is(1));
+		assertThat(startingManualActivities.get(0).getId(), is("NI"));
 	}
 
 }

@@ -10,16 +10,18 @@ import static utils.XpdlTestUtils.randomName;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
+import org.cmdbuild.workflow.xpdl.XpdlTransition;
 import org.junit.Before;
 import org.junit.Test;
 
 public class XpdlActivityTest extends AbstractXpdlTest {
 
+	private XpdlProcess xpdlProcess;
 	private XpdlActivity xpdlActivity;
 
 	@Before
 	public void createActivity() throws Exception {
-		final XpdlProcess xpdlProcess = xpdlDocument.createProcess(randomName());
+		xpdlProcess = xpdlDocument.createProcess(randomName());
 		xpdlActivity = xpdlProcess.createActivity(randomName());
 	}
 
@@ -50,4 +52,29 @@ public class XpdlActivityTest extends AbstractXpdlTest {
 		assertThat(xpdlActivity.getScriptExpression(), equalTo(expression));
 	}
 
+	@Test
+	public void activityCanBeChangedToEventType() throws Exception {
+		xpdlActivity.setStartEventType();
+		assertThat(xpdlActivity.isStartEventType(), is(true));
+		assertThat(xpdlActivity.isEndEventType(), is(false));
+
+		xpdlActivity.setEndEventType();
+		assertThat(xpdlActivity.isEndEventType(), is(true));
+		assertThat(xpdlActivity.isStartEventType(), is(false));
+	}
+
+	@Test
+	public void outgoingTransitionsCanBeQueried() throws Exception {
+		assertThat(xpdlActivity.getOutgoingTransitions().size(), is(0));
+
+		xpdlProcess.createTransition(xpdlActivity, xpdlProcess.createActivity("A"));
+		assertThat(xpdlActivity.getOutgoingTransitions().size(), is(1));
+		XpdlTransition t = xpdlActivity.getOutgoingTransitions().get(0);
+		assertThat(t.getSource().getId(), is(xpdlActivity.getId()));
+		assertThat(t.getDestination().getId(), is("A"));
+
+		xpdlProcess.createTransition(xpdlActivity, xpdlProcess.createActivity("B"));
+		xpdlProcess.createTransition(xpdlActivity, xpdlProcess.createActivity("C"));
+		assertThat(xpdlActivity.getOutgoingTransitions().size(), is(3));
+	}
 }

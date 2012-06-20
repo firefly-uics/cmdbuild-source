@@ -14,6 +14,7 @@ import org.enhydra.jxpdl.elements.SubFlow;
 import org.enhydra.jxpdl.elements.TSScript;
 import org.enhydra.jxpdl.elements.TaskApplication;
 import org.enhydra.jxpdl.elements.TaskTypes;
+import org.enhydra.jxpdl.elements.Transition;
 
 public class XpdlActivity implements XpdlExtendedAttributesHolder {
 
@@ -66,6 +67,26 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 		}
 	}
 
+	public void setStartEventType() {
+		doc.turnReadWrite();
+		inner.getActivityTypes().setEvent();
+		inner.getActivityTypes().getEvent().getEventTypes().setStartEvent();
+	}
+
+	public boolean isStartEventType() {
+		return inner.getActivityType() == XPDLConstants.ACTIVITY_TYPE_EVENT_START;
+	}
+
+	public void setEndEventType() {
+		doc.turnReadWrite();
+		inner.getActivityTypes().setEvent();
+		inner.getActivityTypes().getEvent().getEventTypes().setEndEvent();
+	}
+
+	public boolean isEndEventType() {
+		return inner.getActivityType() == XPDLConstants.ACTIVITY_TYPE_EVENT_END;
+	}
+
 	public boolean isScriptingType() {
 		return inner.getActivityType() == XPDLConstants.ACTIVITY_TYPE_TASK_SCRIPT;
 	}
@@ -83,6 +104,7 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 	}
 
 	public void setScriptingType(final ScriptLanguage language, final String expression) {
+		doc.turnReadWrite();
 		final TSScript tsScript = getScript();
 		tsScript.setScriptType(language.getMimeType());
 		tsScript.setValue(expression);
@@ -96,6 +118,7 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 	}
 
 	public void setSubProcess(final XpdlProcess subprocess) {
+		doc.turnReadWrite();
 		final ImplementationTypes implementationTypes = inner.getActivityTypes().getImplementation()
 				.getImplementationTypes();
 		implementationTypes.setSubFlow();
@@ -180,6 +203,16 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 		implementationTypes.setTask();
 		final TaskTypes taskTypes = implementationTypes.getTask().getTaskTypes();
 		return taskTypes;
+	}
+
+	public List<XpdlTransition> getOutgoingTransitions() {
+		doc.turnReadOnly();
+		final List<XpdlTransition> outgoing = new ArrayList<XpdlTransition>();
+		for (final Object o : inner.getOutgoingTransitions()) {
+			final Transition transition = (Transition) o;
+			outgoing.add(new XpdlTransition(process, transition));
+		}
+		return outgoing;
 	}
 
 }

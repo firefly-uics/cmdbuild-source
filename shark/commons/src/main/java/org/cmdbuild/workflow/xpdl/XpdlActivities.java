@@ -44,12 +44,24 @@ abstract class XpdlActivities {
 	}
 
 	public final List<XpdlActivity> getStartingManualActivitiesRecursive() {
-		List<XpdlActivity> out = new ArrayList<XpdlActivity>();
+		final List<XpdlActivity> out = new ArrayList<XpdlActivity>();
 		for (XpdlActivity sa : getStartingActivities()) {
 			if (sa.isManualType()) {
 				out.add(sa);
 			} else if (sa.isBlockType()) {
 				out.addAll(sa.getBlockActivitySet().getStartingManualActivitiesRecursive());
+			} else if (sa.isStartEventType()) {
+				for (final XpdlTransition t : sa.getOutgoingTransitions()) {
+					if (t.hasCondition()) {
+						// Transitions with conditions can be skipped
+						// so they are not considered
+						continue;
+					}
+					final XpdlActivity nextActivity = t.getDestination();
+					if (nextActivity.isManualType()) {
+						out.add(nextActivity);
+					}
+				}
 			}
 		}
 		return out;
