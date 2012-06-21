@@ -6,5 +6,6 @@ public interface CMActivityInstance {
 	CMProcessInstance getProcessInstance();
 
 	String getId();
-	CMActivity getDefinition();
+	CMActivity getDefinition() throws CMWorkflowException;
+	String getPerformerName();
 }

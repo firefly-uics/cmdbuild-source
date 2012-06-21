@@ -7,14 +7,16 @@ import java.util.Map;
 
 import javax.activation.DataSource;
 
+import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
-import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 
 /**
  * Business Logic Layer for Workflow Operations.
@@ -24,9 +26,9 @@ public class WorkflowLogic {
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 	private static final CustomFilesStore customFileStore = new CustomFilesStore();
 
-	private final CMWorkflowEngine wfEngine;
+	private final ContaminatedWorkflowEngine wfEngine;
 
-	public WorkflowLogic(final CMWorkflowEngine wfEngine) {
+	public WorkflowLogic(final ContaminatedWorkflowEngine wfEngine) {
 		this.wfEngine = wfEngine;
 	}
 
@@ -38,8 +40,21 @@ public class WorkflowLogic {
 		return isWorkflowEnabled() && wfEngine.findProcessClassByName(className).isUsable();
 	}
 
+	@Legacy("Old DAO")
 	public boolean isWorkflowEnabled() {
 		return WorkflowProperties.getInstance().isEnabled();
+	}
+
+	/**
+	 * Queries the data store for process instances. It should accept an
+	 * object representing the filter, and not the query object itself.
+	 * 
+	 * @param cardQuery
+	 * @return
+	 */
+	@Legacy("Old DAO")
+	public Iterable<CMProcessInstance> query(final CardQuery cardQuery) {
+		return wfEngine.query(cardQuery);
 	}
 
 	/*
