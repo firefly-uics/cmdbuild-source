@@ -44,7 +44,7 @@ public class ProcessTypeFactoryImpl implements ProcessTypeFactory {
 
 	public Iterable<ProcessType> list() {
 		List<ProcessType> list = new LinkedList<ProcessType>();
-		for (ITable realTable : backend.getTableList()) {
+		for (ITable realTable : tree()) {
 			list.add(new ProcessTypeImpl(realTable, userCtx));
 		}
 		return list;

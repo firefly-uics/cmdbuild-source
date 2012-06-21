@@ -47,50 +47,49 @@ BEGIN
 
 	PERFORM _cm_disable_triggers_recursively(Activity);
 
-	RAISE INFO '... basic changes';
+	RAISE INFO '... drop unused columns';
 
 	ALTER TABLE "Activity" DROP COLUMN "Priority";
 	ALTER TABLE "Activity" DROP COLUMN "IsQuickAccept";
 	ALTER TABLE "Activity" DROP COLUMN "ActivityDescription";
 
-	ALTER TABLE "Activity" ALTER COLUMN "ProcessCode" TYPE text;
+	RAISE INFO '... add new columns';
 
-	ALTER TABLE "Activity" RENAME COLUMN "ActivityDefinitionId" TO "ActivityInstanceId";
-	ALTER TABLE "Activity" ALTER COLUMN "ActivityInstanceId" TYPE varchar[] USING ARRAY[]::varchar[];
-
-	RAISE INFO '... ActivityDefinitionName';
-
-	ALTER TABLE "Activity" ADD COLUMN "ActivityDefinitionName" varchar[];
-	UPDATE "Activity" SET "ActivityDefinitionName" = CASE
-			WHEN "Code" IS NULL THEN ARRAY[]::varchar[]
-			ELSE ARRAY["Code"::varchar]
-		END;
-
-	UPDATE "Activity" SET "Code" = NULL;
-
-	RAISE INFO '... PrevExecutors';
-
+	ALTER TABLE "Activity" ADD COLUMN "ActivityInstanceId" varchar[];
 	ALTER TABLE "Activity" ADD COLUMN "PrevExecutors" varchar[];
 	UPDATE "Activity" SET "PrevExecutors" = CASE
 			WHEN "Status" = 'A' THEN _patch_prevexecutors("Activity"."IdClass", "Activity"."Id")
 			ELSE ARRAY[]::varchar[]
 		END;
+	ALTER TABLE "Activity" ADD COLUMN "UniqueProcessDefinition" text;
 
-	RAISE INFO '... NextExecutor';
+	RAISE INFO '... alter old columns';
 
-	ALTER TABLE "Activity" ALTER COLUMN "NextExecutor" TYPE varchar[] USING CASE
-			WHEN "NextExecutor" IS NULL THEN ARRAY[]::varchar[]
-			ELSE ARRAY["NextExecutor"::varchar]
+	ALTER TABLE "Activity" ALTER COLUMN "ProcessCode" TYPE text;
+	ALTER TABLE "Activity" ALTER COLUMN "ActivityDefinitionId" TYPE varchar[] USING ARRAY["ActivityDefinitionId"::varchar];
+	ALTER TABLE "Activity" ALTER COLUMN "NextExecutor" TYPE varchar[] USING ARRAY["NextExecutor"::varchar];
+
+	RAISE INFO '... update values (keep history intact but clear the current open activities)';
+
+	UPDATE "Activity" SET "ActivityDefinitionId" = ARRAY[]::varchar[] WHERE "Status"='A' OR "Code" IS NULL;
+	UPDATE "Activity" SET "ActivityInstanceId" = CASE
+			WHEN "Status"='A' OR "Code" IS NULL THEN ARRAY[]::varchar[]
+			ELSE ARRAY[null::varchar]
 		END;
+	UPDATE "Activity" SET "NextExecutor" = ARRAY[]::varchar[] WHERE "Status"='A' OR "Code" IS NULL;
+
+	UPDATE "Activity" SET "Code" = NULL;
 
 	PERFORM _cm_enable_triggers_recursively(Activity);
 
-	PERFORM _cm_set_attribute_comment(Activity, 'FlowStatus', 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus|STATUS: active');
+	PERFORM _cm_set_attribute_comment(Activity, 'FlowStatus', 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus');
 	PERFORM _cm_set_attribute_comment(Activity, 'ProcessCode', 'MODE: reserved|DESCR: Process Instance Id');
 	PERFORM _cm_set_attribute_comment(Activity, 'ActivityInstanceId', 'MODE: reserved|DESCR: Activity Instance Ids');
-	PERFORM _cm_set_attribute_comment(Activity, 'ActivityDefinitionName', 'MODE: reserved|DESCR: Activity Definition name (for the grid)|INDEX: 4|STATUS: active');
 	PERFORM _cm_set_attribute_comment(Activity, 'NextExecutor', 'MODE: reserved|DESCR: Activity Instance performers');
 	PERFORM _cm_set_attribute_comment(Activity, 'PrevExecutors', 'MODE: reserved|DESCR: Process Instance performers up to now');
+
+	PERFORM _cm_set_attribute_comment(Activity, 'UniqueProcessDefinition', 'MODE: reserved|DESCR: Unique Process Definition (for speed)');
+	PERFORM _cm_set_attribute_comment(Activity, 'ActivityDefinitionId', 'MODE: reserved|DESCR: Activity Definition Ids (for speed)');
 
 END
 $$ LANGUAGE PLPGSQL;

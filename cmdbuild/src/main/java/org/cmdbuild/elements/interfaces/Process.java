@@ -1,14 +1,16 @@
 package org.cmdbuild.elements.interfaces;
 
+
 public interface Process extends ICard {
 
 	public enum ProcessAttributes {
 		ProcessInstanceId("ProcessCode"),
 		FlowStatus("FlowStatus"),
 		ActivityInstanceId("ActivityInstanceId"),
-		ActivityDefinitionName("ActivityDefinitionName"),
 		CurrentActivityPerformers("NextExecutor"),
-		AllActivityPerformers("PrevExecutors");
+		AllActivityPerformers("PrevExecutors"),
+		UniqueProcessDefinition("UniqueProcessDefinition"),
+		ActivityDefinitionId("ActivityDefinitionId");
 
 		private final String columnName;
 
@@ -24,4 +26,5 @@ public interface Process extends ICard {
 			return columnName;
 		}
 	}
+
 }

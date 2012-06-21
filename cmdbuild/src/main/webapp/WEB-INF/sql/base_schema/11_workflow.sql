@@ -16,6 +16,7 @@ CREATE TABLE "Activity"
 (
   "FlowStatus" integer,
   "ProcessCode" text,
+  "UniqueProcessDefinition" text;
   "ActivityInstanceId" varchar[],
   "ActivityDefinitionName" varchar[],
   "NextExecutor" varchar[],
@@ -34,8 +35,9 @@ COMMENT ON COLUMN "Activity"."BeginDate" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Notes';
 COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus|STATUS: active';
 COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
+COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition';
 COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
-COMMENT ON COLUMN "Activity"."ActivityDefinitionName" IS 'MODE: reserved|DESCR: Activity Definition name (for the grid)|INDEX: 4|STATUS: active';
+COMMENT ON COLUMN "Activity"."ActivityDefinitionName" IS 'MODE: reserved|DESCR: Activity Definition name (for the grid)';
 COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
 COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
 

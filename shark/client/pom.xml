@@ -39,6 +39,11 @@
 			<artifactId>shark-clientutilities-misc</artifactId>
 			<version>${shark.version}</version>
 		</dependency>
+		<dependency> <!-- To split unique process definition ids to their components -->
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-utilities-misc</artifactId>
+			<version>${shark.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.sharkwf</groupId>
 			<artifactId>shark-utilities-wmentity</artifactId>

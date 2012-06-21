@@ -10,6 +10,9 @@ public interface CMEntry extends CMValueSet {
 
 	interface CMEntryDefinition extends CMValueSet {
 		CMEntryDefinition set(String key, Object value);
+		/**
+		 * Save the entry if something has changed
+		 */
 		CMEntry save();
 	}
 

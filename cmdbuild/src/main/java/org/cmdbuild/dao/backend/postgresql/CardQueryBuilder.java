@@ -13,25 +13,24 @@ import org.cmdbuild.elements.TableImpl;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
 import org.cmdbuild.elements.filters.FilterOperator;
+import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.FullTextFilter;
 import org.cmdbuild.elements.filters.LimitFilter;
 import org.cmdbuild.elements.filters.OrderFilter;
-import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.CardQuery;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.Group;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.utils.StringUtils;
 
 public class CardQueryBuilder {
@@ -314,7 +313,6 @@ public class CardQueryBuilder {
 				queryComponents.addAttribute(attrFullName, attrAlias, attribute);
 			}
 		}
-		addNextExecutorJoin(cardQuery, queryComponents);
 	}
 
 	private void mapRelationJoin(CardQuery cardQuery){
@@ -449,7 +447,7 @@ public class CardQueryBuilder {
 		if (filter != null) {
 			whereParts.add(filter.toString(queryMapping));
 		}
-		addNextExecutorWherePart(cardQuery, whereParts);
+		addPrevExecutorsWherePart(cardQuery, whereParts);
 
 		whereParts.addAll(buildNotInRelationFilterWhereParts(cardQuery));
 
@@ -511,50 +509,15 @@ public class CardQueryBuilder {
 	 * Next Executor
 	 */
 
-	private void addNextExecutorJoin(CardQuery cardQuery, QueryComponents queryComponents) {
-		if (cardQuery.needsNextExecutorFilter()) {
-			String tableAlias = cardQuery.getTable().getName() + "_NextExecutor";
-			String nextExecutorJoin = String.format("LEFT JOIN %1$s AS \"%2$s\""+
-					" ON \"%2$s\".\"CurrentId\" = \"%3$s\".\"Id\" AND"+
-					" \"%2$s\".\"NextExecutor\" = %4$s",
-					historyTableOrSubquery(cardQuery.getTable()),
-					tableAlias, cardQuery.getTable().getDBName(),
-					nextExecutorGroupCondition(cardQuery));
-			queryComponents.getJoinList().add(nextExecutorJoin);
-		}
-	}
-
-	private String historyTableOrSubquery(ITable table) {
-		List<ITable> subClasses = UserContext.systemContext().processTypes().tree().branch(table.getName()).getLeaves();
-		if (subClasses.size() > 0) {
-			List<String> unionQueries = new ArrayList<String>();
-			for (ITable subClass : subClasses) {
-				unionQueries.add(String.format("SELECT \"Id\",\"CurrentId\",\"NextExecutor\" FROM \"%s_history\"",
-						subClass.getDBName()));
-			}
-			return "(" + StringUtils.join(unionQueries, " UNION ") + ")";
-		} else {
-			return String.format("\"%s_history\"", table.getDBName());
-		}
-	}
-
-	private void addNextExecutorWherePart(CardQuery cardQuery, List<String> whereParts) {
-		if (cardQuery.needsNextExecutorFilter()) {
+	private void addPrevExecutorsWherePart(CardQuery cardQuery, List<String> whereParts) {
+		if (cardQuery.needsPrevExecutorsFilter()) {
+			final Collection<Group> groups = cardQuery.getExecutorFilterGroups();
 			String tableAlias = cardQuery.getTable().getName();
-			String historyTableAlias = cardQuery.getTable().getName() + "_NextExecutor";
 			String nextExecutorWherePart = String.format(
-					"(\"%1$s\".\"NextExecutor\" = %3$s OR \"%2$s\".\"Id\" IS NOT NULL)",
-					tableAlias, historyTableAlias, nextExecutorGroupCondition(cardQuery));
+					"\"%s\".\"PrevExecutors\" && string_to_array('%s',',')::varchar[]",
+					tableAlias, StringUtils.join(groups, ","));
 			whereParts.add(nextExecutorWherePart);
 		}
 	}
 
-	private String nextExecutorGroupCondition(CardQuery cardQuery) {
-		Collection<Group> groups = cardQuery.getExecutorFilterGroups();
-		if (groups.size() > 1) {
-			return String.format("ANY (string_to_array('%s',','))", StringUtils.join(groups, ","));
-		} else {
-			return String.format("'%s'", groups.iterator().next());
-		}
-	}
 }

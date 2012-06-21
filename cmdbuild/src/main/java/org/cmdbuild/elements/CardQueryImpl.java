@@ -50,7 +50,7 @@ public class CardQueryImpl implements CardQuery {
     private Integer totalRows;
     private HashMap<DirectedDomain, CardQuery> relationFilter; //to manage the ICard and IDomain for the relation filter
     private HashMap<DirectedDomain, ITable> notInRelation; //to manage the ICard and IDomain for the relation filter
-	private UserContext filterNextExecutor;
+	private UserContext filterPrevExecutors;
 
     public CardQueryImpl(ITable table) {
     	this.table = table;
@@ -83,7 +83,7 @@ public class CardQueryImpl implements CardQuery {
     	cloned.history = this.history;
     	cloned.ignoreStatus = this.ignoreStatus;
     	cloned.totalRows = this.totalRows;
-    	cloned.filterNextExecutor = this.filterNextExecutor;
+    	cloned.filterPrevExecutors = this.filterPrevExecutors;
     	return cloned;
     }
     
@@ -365,17 +365,17 @@ public class CardQueryImpl implements CardQuery {
 	}
 
 	/*
-	 * I'm not proud of this. Should be refactored completely in the next few weeks.
+	 * I'm not proud of this. It should be refactored completely in the next few... decades ;)
 	 */
-	public void setNextExecutorFilter(UserContext userCtx) {
-		filterNextExecutor = userCtx;			
+	public void setPrevExecutorsFilter(UserContext userCtx) {
+		filterPrevExecutors = userCtx;			
 	}
 
-	public boolean needsNextExecutorFilter() {
-		return (filterNextExecutor != null && !filterNextExecutor.privileges().isAdmin());
+	public boolean needsPrevExecutorsFilter() {
+		return (filterPrevExecutors != null && !filterPrevExecutors.privileges().isAdmin());
 	}
 
 	public  Collection<Group> getExecutorFilterGroups() {
-		return filterNextExecutor.getGroups();
+		return filterPrevExecutors.getGroups();
 	}
 }

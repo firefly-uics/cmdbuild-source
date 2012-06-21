@@ -1,8 +1,6 @@
 package org.cmdbuild.workflow.xpdl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
@@ -25,7 +23,6 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
@@ -44,16 +41,13 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 	private static final String DEFAULT_SYSTEM_PARTICIPANT = "System";
 
 	private final GroupQueryAdapter groupQueryAdapter;
-	private final XpdlExtendedAttributeVariableFactory xpdlVariableFactory;
-	private final XpdlExtendedAttributeWidgetFactory xpdlWidgetFactory;
 
-	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter,
-			final XpdlExtendedAttributeVariableFactory xpdlvariablefactory,
-			final XpdlExtendedAttributeWidgetFactory xpdlwidgetfactory) {
-		super(workflowService);
+	public XpdlManager(final CMWorkflowService workflowService,
+			final GroupQueryAdapter groupQueryAdapter,
+			final XpdlProcessDefinitionStore xpdlProcessDefinitionStore) {
+		super(xpdlProcessDefinitionStore);
 		this.groupQueryAdapter = groupQueryAdapter;
-		this.xpdlVariableFactory = xpdlvariablefactory;
-		this.xpdlWidgetFactory = xpdlwidgetfactory;
+
 	}
 
 	@Override
@@ -119,32 +113,6 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 			throw new CMWorkflowException(e);
 		}
 		super.updateDefinition(process, pkgDefData);
-	}
-
-	@Override
-	protected void addPackage(final byte[] pkgDef, final Map<String, ProcessInfo> processInfoMap) {
-		try {
-			final XpdlDocument xpdl = new XpdlDocument(XpdlPackageFactory.readXpdl(pkgDef));
-			for (final XpdlProcess xproc : xpdl.findAllProcesses()) {
-				final String className = xproc.getBindToClass();
-				if (className != null) {
-					processInfoMap.put(className, createProcessInfo(xproc));
-				}
-			}
-		} catch (final XpdlException e) {
-			// TODO LOG failure
-		}
-	}
-
-	private ProcessInfo createProcessInfo(final XpdlProcess xproc) {
-		final ProcessInfo info = new ProcessInfo();
-		info.packageId = xproc.getDocument().getPackageId();
-		info.processDefinitionId = xproc.getId();
-		info.startActivities = new ArrayList<CMActivity>();
-		for (final XpdlActivity xact : xproc.getStartingActivities()) {
-			info.startActivities.add(new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory));
-		}
-		return info;
 	}
 
 	@Override

@@ -7,9 +7,8 @@ import java.util.Map;
 
 import javax.activation.DataSource;
 
-import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.services.CustomFilesStore;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessClass;
@@ -27,13 +26,20 @@ public class WorkflowLogic {
 
 	private final CMWorkflowEngine wfEngine;
 
-	@Legacy("Temporary constructor before switching to Spring DI")
-	public WorkflowLogic(final UserContext userCtx) {
-		wfEngine = TemporaryObjectsBeforeSpringDI.getWorkflowEngine(userCtx);
-	}
-
 	public WorkflowLogic(final CMWorkflowEngine wfEngine) {
 		this.wfEngine = wfEngine;
+	}
+
+	/*
+	 * Ungliness to be used in old code
+	 */
+
+	public boolean isProcessUsable(String className) {
+		return isWorkflowEnabled() && wfEngine.findProcessClassByName(className).isUsable();
+	}
+
+	public boolean isWorkflowEnabled() {
+		return WorkflowProperties.getInstance().isEnabled();
 	}
 
 	/*

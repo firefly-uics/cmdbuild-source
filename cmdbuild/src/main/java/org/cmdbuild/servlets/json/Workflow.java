@@ -12,6 +12,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -19,6 +20,7 @@ import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefin
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessInstance;
+import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -28,7 +30,7 @@ public class Workflow extends JSONBase {
 	public JsonResponse getStartActivity(
 			@Parameter("idClass") Long processClassId,
 			final UserContext userCtx) throws CMWorkflowException {
-		final WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final CMActivity ad = logic.getStartActivity(processClassId);
 		return JsonResponse.success(JsonActivityDefinition.fromActivityDefinition(ad));
 	}
@@ -40,7 +42,7 @@ public class Workflow extends JSONBase {
 			@Parameter("attributes") final String jsonVars,
 			@Parameter("advance") boolean advance,
 			final UserContext userCtx) throws CMWorkflowException, Exception {
-		final WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		@SuppressWarnings("unchecked") final Map<String, Object> vars = new ObjectMapper().readValue(jsonVars, Map.class);
 //		if (processCardId) {
 			final CMProcessInstance procInst = logic.startProcess(processClassId, vars, advance);
@@ -60,7 +62,7 @@ public class Workflow extends JSONBase {
 	public DataHandler downloadXpdlTemplate(
 			@Parameter("idClass") Long processClassId,
 			final UserContext userCtx) throws CMWorkflowException {
-		WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final DataSource ds = logic.getProcessDefinitionTemplate(processClassId);
 		return new DataHandler(ds);
 	}
@@ -70,7 +72,7 @@ public class Workflow extends JSONBase {
 	public JsonResponse xpdlVersions(
 			@Parameter(value = "idClass", required = true) Long processClassId,
 			final UserContext userCtx) throws CMWorkflowException {
-		WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final String[] versions = logic.getProcessDefinitionVersions(processClassId);
 		return JsonResponse.success(versions);
 	}
@@ -81,7 +83,7 @@ public class Workflow extends JSONBase {
 			@Parameter("idClass") Long processClassId,
 			@Parameter("version") String version,
 			final UserContext userCtx) throws CMWorkflowException {
-		WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final DataSource ds = logic.getProcessDefinition(processClassId, version);
 		return new DataHandler(ds);
 	}
@@ -94,7 +96,7 @@ public class Workflow extends JSONBase {
 			@Parameter(value="sketch",required=false) FileItem sketchFile,
 			final UserContext userCtx) throws CMWorkflowException, IOException {
 		final List<String> messages = new ArrayList<String>();
-		WorkflowLogic logic = new WorkflowLogic(userCtx);
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		if (xpdlFile.getSize() != 0) {
 			logic.updateProcessDefinition(processClassId, wrapAsDataSource(xpdlFile));
 			messages.add("saved_xpdl");
@@ -128,4 +130,10 @@ public class Workflow extends JSONBase {
 		};
 	}
 
+	@Admin
+	@JSONExported
+	public void sync(UserContext userCtx) throws CMWorkflowException {
+		final CMWorkflowEngine workflowEngine = TemporaryObjectsBeforeSpringDI.getWorkflowEngine(userCtx);
+		workflowEngine.sync();
+	}
 }

@@ -46,6 +46,8 @@ import org.cmdbuild.workflow.operation.SharkFacade;
  */
 public class ECard {
 
+	private final String ACTIVITY_DESCRIPTION = "ActivityDescription";
+
 	private final UserContext userCtx;
 
 	public ECard(final UserContext userCtx) {
@@ -128,7 +130,7 @@ public class ECard {
 			return getActivityMap(table, cards);
 		}
 		for (final Attribute a : attributeList) {
-			if (ProcessAttributes.ActivityDefinitionName.toString().equals(a.getName())) {
+			if (ACTIVITY_DESCRIPTION.equals(a.getName())) {
 				return getActivityMap(table, cards);
 			}
 		}
@@ -178,7 +180,7 @@ public class ECard {
 	private void addActivityDecription(final ICard card, final ActivityDO activityDo) {
 		if (activityDo != null) {
 			final String activityDescription = activityDo.getActivityInfo().getActivityDescription();
-			card.setValue(ProcessAttributes.ActivityDefinitionName.toString(), activityDescription);
+			card.setValue(ACTIVITY_DESCRIPTION, activityDescription);
 		}
 	}
 
@@ -437,7 +439,7 @@ public class ECard {
 		private CardQuery applyFilters(final UserContext userCtx, final CardQuery cardQuery) {
 			CardQuery filteredCardQuery = guestFilter(cardQuery, userCtx);
 			if (filteredCardQuery == null) {
-				cardQuery.setNextExecutorFilter(userCtx);
+				cardQuery.setPrevExecutorsFilter(userCtx);
 				filteredCardQuery = cardQuery;
 			}
 			return filteredCardQuery;

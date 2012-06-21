@@ -1,9 +1,7 @@
 package org.cmdbuild.workflow.xpdl;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
@@ -13,52 +11,29 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
-import org.cmdbuild.workflow.service.CMWorkflowService;
 
 /**
  * Process Definition Manager that uses XPDL definitions.
  */
 public abstract class AbstractProcessDefinitionManager implements ProcessDefinitionManager {
 
-	/**
-	 * Process information for caching.
-	 */
-	protected static class ProcessInfo {
-		String packageId;
-		String processDefinitionId;
-		String lastProcessVersionId;
-		List<CMActivity> startActivities;
-	}
+	private final ProcessDefinitionStore store;
 
-	private volatile Map<String, ProcessInfo> processInfoLazyCacheDontUseDirectly; // = new HashMap<Object, ProcessInfo>();
-
-	private Map<String, ProcessInfo> processInfoCache() throws CMWorkflowException {
-		if (processInfoLazyCacheDontUseDirectly == null) {
-			synchronized (this) {
-				if (processInfoLazyCacheDontUseDirectly == null) {
-					processInfoLazyCacheDontUseDirectly = AbstractProcessDefinitionManager.this.fetchProcessDefinitionInfo();
-				}
-			}
-		}
-		return processInfoLazyCacheDontUseDirectly;
-	}
-
-	private final CMWorkflowService workflowService;
-
-	public AbstractProcessDefinitionManager(final CMWorkflowService workflowService) {
-		this.workflowService = workflowService;
+	public AbstractProcessDefinitionManager(final ProcessDefinitionStore store) {
+		this.store = store;
 	}
 
 	@Override
 	public final String[] getVersions(final CMProcessClass process) throws CMWorkflowException {
-		return workflowService.getPackageVersions(getPackageId(process));
+		return store.getPackageVersions(process.getName());
 	}
 
 	@Override
 	public DataSource getDefinition(final CMProcessClass process, final String version) throws CMWorkflowException {
-		final byte[] pkgDef = workflowService.downloadPackage(getPackageId(process), version);
+		final byte[] pkgDef = store.downloadPackage(process.getName(), version);
 		final ByteArrayDataSource ds = new ByteArrayDataSource(pkgDef, getMimeType());
 		ds.setName(String.format("%s_%s.%s", process.getName(), version, getFileExtension()));
 		return ds;
@@ -69,8 +44,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 		try {
 			byte[] binaryData = IOUtils.toByteArray(pkgDefData.getInputStream());
 			synchronized (this) {
-				workflowService.uploadPackage(getPackageId(process), binaryData);
-				addPackage(binaryData, processInfoCache()); // TODO Test cache updated
+				store.uploadPackage(process.getName(), binaryData);
 			}
 		} catch (IOException e) {
 			throw new CMWorkflowException(e);
@@ -79,16 +53,16 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 
 	@Override
 	public final CMActivity getStartActivity(final CMProcessClass process, final String groupName) throws CMWorkflowException {
-		final ProcessInfo pi = processInfoCache().get(process.getName());
+		final List<CMActivity> startActivities = store.getStartActivities(process.getName());
 		if (groupName == null) {
-			return getStartActivityForAdmin(pi);
+			return getStartActivityForAdmin(startActivities);
 		} else {
-			return getStartActivityForNonAdmin(pi, groupName);
+			return getStartActivityForNonAdmin(startActivities, groupName);
 		}
 	}
 
-	private CMActivity getStartActivityForNonAdmin(ProcessInfo pi, final String groupName) {
-		for (CMActivity a : pi.startActivities) {
+	private CMActivity getStartActivityForNonAdmin(final List<CMActivity> startActivities, final String groupName) {
+		for (CMActivity a : startActivities) {
 			for (ActivityPerformer p : a.getPerformers()) {
 				if (p.isRole(groupName)) {
 					return a;
@@ -98,11 +72,11 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 		return null;
 	}
 
-	private CMActivity getStartActivityForAdmin(ProcessInfo pi) {
-		if (pi.startActivities.size() == 1) {
-			return pi.startActivities.get(0);
+	private CMActivity getStartActivityForAdmin(final List<CMActivity> startActivities) {
+		if (startActivities.size() == 1) {
+			return startActivities.get(0);
 		} else {
-			for (CMActivity a : pi.startActivities) {
+			for (CMActivity a : startActivities) {
 				for (ActivityPerformer p : a.getPerformers()) {
 					if (p.isAdmin()) {
 						return a;
@@ -113,23 +87,13 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 		}
 	}
 
-	private Map<String, ProcessInfo> fetchProcessDefinitionInfo() throws CMWorkflowException {
-		final Map<String, ProcessInfo> out = new HashMap<String, ProcessInfo>();
-		for (byte[] pkgDef : workflowService.downloadAllPackages()) {
-			addPackage(pkgDef, out);
-		}
-		return out;
+	@Override
+	public CMActivity getActivity(final CMProcessInstance processInstance, final String activityInstanceId) throws CMWorkflowException {
+		return store.getActivity(processInstance.getUniqueProcessDefinition(), activityInstanceId);
 	}
 
-	protected abstract void addPackage(byte[] pkgDef, Map<String, ProcessInfo> processInfoMap);
-
 	public final String getPackageId(final CMProcessClass process) throws CMWorkflowException {
-		final ProcessInfo pi = processInfoCache().get(process.getName());
-		if (pi != null) {
-			return pi.packageId;
-		} else {
-			return null;
-		}
+		return store.getPackageId(process.getName());
 	}
 
 	@Legacy("As in 1.x")
@@ -138,12 +102,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	public final String getProcessDefinitionId(final CMProcessClass process) throws CMWorkflowException {
-		final ProcessInfo pi = processInfoCache().get(process.getName());
-		if (pi != null) {
-			return pi.processDefinitionId;
-		} else {
-			return null;
-		}
+		return store.getProcessDefinitionId(process.getName());
 	}
 
 	@Legacy("As in 1.x")

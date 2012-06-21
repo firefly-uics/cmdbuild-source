@@ -10,27 +10,27 @@ import java.util.Map;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.elements.interfaces.IAttribute.FieldMode;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
-import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.elements.interfaces.IAttribute.FieldMode;
 import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DBClassWidgetStore;
@@ -38,7 +38,6 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.workflow.WorkflowCache;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -128,13 +127,14 @@ public class ModClass extends JSONBase {
 			JSONObject serializer,
 			@Parameter(value="active", required=false) boolean active,
 			UserContext userCtx) throws JSONException, AuthException {
+		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<ITable> allTables = userCtx.tables().list();
 
 		for (ITable table: allTables) {
 			if (!table.getMode().isDisplayable()) {
 				continue;
 			}
-			if (active && !isActive(table)) {
+			if (active && !isActive(table, workflowLogic)) {
 				continue;
 			}
 			final JSONObject jsonTable = Serializer.serializeTable(table);
@@ -148,11 +148,12 @@ public class ModClass extends JSONBase {
 			JSONObject serializer,
 			@Parameter(value="active", required=false) boolean activeOnly,
 			UserContext userCtx) throws JSONException, AuthException {
+		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<IDomain> allDomains = userCtx.domains().list();
 		JSONArray jsonDomains = new JSONArray();
 		for (IDomain domain: allDomains) {
 			if (domain.getMode().isCustom() &&
-					(!activeOnly || isActiveWithActiveClasses(domain))) {
+					(!activeOnly || isActiveWithActiveClasses(domain, workflowLogic))) {
 				jsonDomains.put(Serializer.serializeDomain(domain, activeOnly));
 			}
 		}
@@ -160,27 +161,20 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-	private boolean isActiveWithActiveClasses(IDomain domain) {
-		return domain.getStatus().isActive() && isActive(domain.getClass1()) && isActive(domain.getClass2());
+	private boolean isActiveWithActiveClasses(IDomain domain, WorkflowLogic workflowLogic) {
+		return domain.getStatus().isActive() &&
+				isActive(domain.getClass1(), workflowLogic) &&
+				isActive(domain.getClass2(), workflowLogic);
 	}
 
-	private boolean isActive(ITable table) {
+	private boolean isActive(ITable table, WorkflowLogic workflowLogic) {
 		if (!table.getStatus().isActive()) {
 			return false;
 		}
 		// consider a process active if is
 		// in the wfcache --> have an XPDL
 		if (table.isActivity() && !table.isSuperClass()) {
-			try {
-				return WorkflowService.getInstance().isEnabled()
-						&& WorkflowCache.getInstance().hasProcessClass(
-								table.getName());
-			} catch (NullPointerException e) {
-				// shark configured but connection failed
-				return false;
-			} catch (CMDBWorkflowException e) {
-				return false;
-			}
+			return workflowLogic.isProcessUsable(table.getName());
 		}
 		return true;
 	}
@@ -603,13 +597,14 @@ public class ModClass extends JSONBase {
 	public JsonResponse getAllWidgets(
 			@Parameter(value="active", required=false) boolean active,
 			UserContext userCtx) {
+		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<ITable> allTables = userCtx.tables().list();
 		Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
 		for (ITable table: allTables) {
 			if (!table.getMode().isDisplayable()) {
 				continue;
 			}
-			if (active && !isActive(table)) {
+			if (active && !isActive(table, workflowLogic)) {
 				continue;
 			}
 			final List<Widget> widgetList = new DBClassWidgetStore(table).getWidgets();

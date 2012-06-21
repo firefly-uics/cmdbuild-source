@@ -30,7 +30,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 		cardSystemAttributes.add(TableHistory.EndDateAttribute);
 	}
 
-	private final ICard card;
+	protected final ICard card;
 
 	public CardWrapper(final ICard card) {
 		this.card = card;

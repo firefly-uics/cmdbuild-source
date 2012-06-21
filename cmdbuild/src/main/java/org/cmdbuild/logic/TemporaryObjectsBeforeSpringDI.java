@@ -12,12 +12,13 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
+import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
-import org.cmdbuild.workflow.CMWorkflowEngine;
+import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.service.CMWorkflowService;
@@ -31,6 +32,7 @@ import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlManager;
+import org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore;
 
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
@@ -49,12 +51,20 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final CachingDriver driver;
 	private static final CMWorkflowService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
+	private static final WorkflowLogger workflowLogger;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource);
+
+		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
-		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlVariableFactory(), newXpdlWidgetFactory());
+
+		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
+	}
+
+	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {		
+		return new XpdlProcessDefinitionStore(workflowService, newXpdlVariableFactory(), newXpdlWidgetFactory());
 	}
 
 	private static XpdlExtendedAttributeVariableFactory newXpdlVariableFactory() {
@@ -84,8 +94,14 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new UserDataView(new DBDataView(driver), acm);
 	}
 
-	public static CMWorkflowEngine getWorkflowEngine(UserContext userCtx) {
-		return new WorkflowEngineWrapper(userCtx, workflowService, processDefinitionManager);
+	public static WorkflowLogic getWorkflowLogic(UserContext userCtx) {
+		return new WorkflowLogic(getWorkflowEngine(userCtx));
+	}
+
+	public static ContaminatedWorkflowEngine getWorkflowEngine(UserContext userCtx) {
+		final ContaminatedWorkflowEngine workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService, processDefinitionManager);
+		workflowEngine.setEventListener(workflowLogger);
+		return workflowEngine;
 	}
 
 	public static class SimplifiedUserContext {

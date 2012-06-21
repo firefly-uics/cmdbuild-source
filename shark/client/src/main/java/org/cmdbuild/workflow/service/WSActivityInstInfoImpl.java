@@ -3,12 +3,14 @@ package org.cmdbuild.workflow.service;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMParticipant;
 
-public class WMActivityInstanceWrapper implements WSActivityInstInfo {
+public class WSActivityInstInfoImpl implements WSActivityInstInfo {
 
-	final WMActivityInstance inner;
+	private WMActivityInstance inner;
 
-	WMActivityInstanceWrapper(final WMActivityInstance activityInstance) {
-		this.inner = activityInstance;
+	static WSActivityInstInfo newInstance(final WMActivityInstance activityInstance) {
+		WSActivityInstInfoImpl instance = new WSActivityInstInfoImpl();
+		instance.inner = activityInstance;
+		return instance;
 	}
 
 	@Override
