@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.serializers;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.CMActivityInstance;
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 public interface JsonWorkflowDTOs {
@@ -44,7 +45,7 @@ public interface JsonWorkflowDTOs {
 
 		private final CMActivityInstance activityInstance;
 
-		public JsonActivityInstance(CMActivityInstance activityInstance) {
+		public JsonActivityInstance(CMActivityInstance activityInstance) throws CMWorkflowException {
 			super(activityInstance.getDefinition());
 			this.activityInstance = activityInstance;
 		}

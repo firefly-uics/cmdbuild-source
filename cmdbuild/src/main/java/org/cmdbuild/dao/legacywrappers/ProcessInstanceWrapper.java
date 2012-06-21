@@ -37,9 +37,13 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	private class ActivityInstanceImpl implements CMActivityInstance {
 
 		final String activityInstanceId;
+		final String activityInstancePerformer;
+		final String activityDefinitionId;
 
-		public ActivityInstanceImpl(final String activityInstanceId) {
+		public ActivityInstanceImpl(final String activityInstanceId, final String activityInstancePerformer, final String activityDefinitionId) {
 			this.activityInstanceId = activityInstanceId;
+			this.activityInstancePerformer = activityInstancePerformer;
+			this.activityDefinitionId = activityDefinitionId;
 		}
 
 		@Override
@@ -53,8 +57,13 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		}
 
 		@Override
-		public CMActivity getDefinition() {
-			throw new UnsupportedOperationException("Is it really needed?");
+		public CMActivity getDefinition() throws CMWorkflowException {
+			return getActivity(activityDefinitionId);
+		}
+
+		@Override
+		public String getPerformerName() {
+			return activityInstancePerformer;
 		}
 		
 	}
@@ -110,7 +119,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		return card.getAttributeValue(ProcessAttributes.ActivityDefinitionId.dbColumnName()).getStringArrayValue();
 	}
 
-	private String[] getActivityPerformers() {
+	private String[] getActivityInstancePerformers() {
 		return card.getAttributeValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName()).getStringArrayValue();
 	}
 
@@ -125,11 +134,14 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 
 	@Override
 	public List<CMActivityInstance> getActivities() {
-		final List<CMActivityInstance> ais = new ArrayList<CMActivityInstance>();
-		for (final String aid : getActivityInstanceIds()) {
-			ais.add(new ActivityInstanceImpl(aid));
+		final List<CMActivityInstance> out = new ArrayList<CMActivityInstance>();
+		final String[] ais = getActivityInstanceIds();
+		final String[] ads = getActivityDefinitionIds();
+		final String[] perfs = getActivityInstancePerformers();
+		for (int i = 0; i < ais.length; ++i) {
+			out.add(new ActivityInstanceImpl(ais[i], perfs[i], ads[i]));
 		}
-		return ais;
+		return out;
 	}
 
 	/*
@@ -195,7 +207,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 
 		final String participantGroup = getActivityParticipantGroup(activityInfo);
 		card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
-				addToBack(getActivityPerformers(), participantGroup));
+				addToBack(getActivityInstancePerformers(), participantGroup));
 		card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
 				addDistinct(getAllActivityPerformers(), participantGroup));
 	}
@@ -212,13 +224,17 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 				ArrayUtils.remove(getActivityDefinitionIds(), index));
 
 		card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
-				ArrayUtils.remove(getActivityPerformers(), index));
+				ArrayUtils.remove(getActivityInstancePerformers(), index));
 	}
 
 	private String getActivityParticipantGroup(WSActivityInstInfo activityInfo) throws CMWorkflowException {
-		final CMActivity activity = processDefinitionManager.getActivity(this, activityInfo.getActivityDefinitionId());
+		final CMActivity activity = getActivity(activityInfo.getActivityInstanceId());
 		// TODO Check if participant is a role in the xpdl or not!
 		return activity.getFirstRolePerformer().getName();
+	}
+
+	private CMActivity getActivity(final String activityInstanceId) throws CMWorkflowException {
+		return processDefinitionManager.getActivity(this, activityInstanceId);
 	}
 
 	private String[] addToBack(final String[] original, final String element) {
