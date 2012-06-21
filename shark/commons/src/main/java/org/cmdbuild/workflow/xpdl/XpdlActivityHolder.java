@@ -5,12 +5,20 @@ import java.util.List;
 public interface XpdlActivityHolder {
 
 	/**
-	 * Creates and adds a new activity to this element
+	 * Creates and adds a new activity to this element.
 	 * 
 	 * @param activity id
 	 * @return the created activity
 	 */
-	public XpdlActivity createActivity(final String activityId);
+	XpdlActivity createActivity(String activityId);
+
+	/**
+	 * Retrieves the activity by that id.
+	 * 
+	 * @param activity id
+	 * @return the activity by that id
+	 */
+	XpdlActivity getActivity(String activityId);
 
 	/**
 	 * Get the starting activities for this element (those that have no
@@ -18,7 +26,7 @@ public interface XpdlActivityHolder {
 	 * 
 	 * @return list of starting activities
 	 */
-	public List<XpdlActivity> getStartingActivities();
+	List<XpdlActivity> getStartingActivities();
 
-	public List<XpdlActivity> getStartingManualActivitiesRecursive();
+	List<XpdlActivity> getStartingManualActivitiesRecursive();
 }

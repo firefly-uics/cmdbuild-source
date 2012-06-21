@@ -66,4 +66,12 @@ public class ProcessClassWrapper extends ClassWrapper implements CMProcessClass 
 		return processDefinitionManager.getProcessDefinitionId(this);
 	}
 
+	@Override
+	public boolean isUsable() {
+		try {
+			return isActive() && getPackageId() != null;
+		} catch (CMWorkflowException e) {
+			return false;
+		}
+	}
 }

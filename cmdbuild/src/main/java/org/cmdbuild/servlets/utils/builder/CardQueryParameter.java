@@ -81,7 +81,7 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 
 	private void setWorkflowParameters(CardQuery filter, HttpServletRequest request, UserContext userCtx) {
 		setFlowStatus(filter, request);
-		filter.setNextExecutorFilter(userCtx);
+		filter.setPrevExecutorsFilter(userCtx);
 	}
 
 	private void setFlowStatus(CardQuery filter, HttpServletRequest request) {

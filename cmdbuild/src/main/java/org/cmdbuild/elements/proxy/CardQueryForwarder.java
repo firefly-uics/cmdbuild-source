@@ -43,8 +43,8 @@ public class CardQueryForwarder implements CardQuery {
 	public CardQuery filterUpdate(String attributeName, AttributeFilterType filterType, Object... value) {
 		cardQuery.filterUpdate(attributeName, filterType, value); return this;
 	}
-	public boolean needsNextExecutorFilter() { return cardQuery.needsNextExecutorFilter(); }
-	public void setNextExecutorFilter(UserContext userCtx) { cardQuery.setNextExecutorFilter(userCtx); }
+	public boolean needsPrevExecutorsFilter() { return cardQuery.needsPrevExecutorsFilter(); }
+	public void setPrevExecutorsFilter(UserContext userCtx) { cardQuery.setPrevExecutorsFilter(userCtx); }
 	public Collection<Group> getExecutorFilterGroups() { return cardQuery.getExecutorFilterGroups(); };
 
 	public CardQuery fullText(String fullTextQuery) { cardQuery.fullText(fullTextQuery); return this; }

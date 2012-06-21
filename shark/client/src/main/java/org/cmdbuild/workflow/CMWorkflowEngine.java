@@ -65,6 +65,10 @@ public interface CMWorkflowEngine {
 
 	/**
 	 * Synchronizes the local store with the workflow service.
+	 * 
+	 * @throws CMWorkflowException
 	 */
-	void sync();
+	void sync() throws CMWorkflowException;
+
+	void setEventListener(CMWorkflowEngineListener eventListener);
 }

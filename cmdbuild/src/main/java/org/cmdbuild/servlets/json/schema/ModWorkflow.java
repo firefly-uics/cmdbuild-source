@@ -10,6 +10,7 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.UserContext;
@@ -17,6 +18,7 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.utils.tree.CNode;
+import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.operation.SharkFacade;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,15 +90,6 @@ public class ModWorkflow extends JSONBase {
 			element.put("value", table.getDescription());
 			serializer.append("classes", element);
 		}
-		return serializer;
-	}
-
-	@Admin
-	@JSONExported
-	public JSONObject removeAllInconsistentProcesses(
-			JSONObject serializer,
-			SharkFacade sharkFacade) throws JSONException, CMDBException {
-		sharkFacade.removeAllInconsistentProcesses();
 		return serializer;
 	}
 

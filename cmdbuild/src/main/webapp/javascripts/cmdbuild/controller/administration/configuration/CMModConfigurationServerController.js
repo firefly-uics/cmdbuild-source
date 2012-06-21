@@ -15,7 +15,7 @@
 			
 			this.view.clearProcesses.on("click", function() {
 				CMDBuild.Ajax.request( {
-					url : 'services/json/schema/modworkflow/removeallinconsistentprocesses',
+					url : 'services/json/workflow/sync',
 					loadMask : true,
 					success : CMDBuild.Msg.success
 				});

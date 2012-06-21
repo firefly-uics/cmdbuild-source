@@ -34,8 +34,8 @@ public interface CardQuery extends Iterable<ICard>, Cloneable {
 	public CardQuery filter(String attributeName, CardQuery subQuery);
 	public CardQuery filterUpdate(String attributeName, AttributeFilterType filterType, Object... value);
 
-	public void setNextExecutorFilter(UserContext userCtx); // Horrible: as usual we are in a hurry
-	public boolean needsNextExecutorFilter();
+	public void setPrevExecutorsFilter(UserContext userCtx); // Horrible: as usual we are in a hurry
+	public boolean needsPrevExecutorsFilter();
 	public Collection<Group> getExecutorFilterGroups();
 
     @Deprecated

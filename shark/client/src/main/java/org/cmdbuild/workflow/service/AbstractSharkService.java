@@ -13,12 +13,15 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttributeIterator;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 import org.enhydra.shark.api.client.wfmc.wapi.WMFilter;
+import org.enhydra.shark.api.client.wfmc.wapi.WMProcessInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.PackageAdministration;
 import org.enhydra.shark.api.client.wfservice.SharkInterface;
 import org.enhydra.shark.api.common.ActivityFilterBuilder;
+import org.enhydra.shark.api.common.ProcessFilterBuilder;
 import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
+import org.enhydra.shark.utilities.MiscUtilities;
 
 /**
  * Base class for Shark implementations.
@@ -27,6 +30,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	protected static final String DEFAULT_ENGINE_NAME = StringUtils.EMPTY;
 	protected static final String DEFAULT_SCOPE = StringUtils.EMPTY;
+	protected static final String LAST_VERSION = StringUtils.EMPTY;
 
 	protected abstract class TransactedExecutor<T> {
 		public T execute() throws CMWorkflowException {
@@ -90,17 +94,16 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public void uploadPackage(final String pkgId, final byte[] pkgDefData) throws CMWorkflowException {
-		new TransactedExecutor<Void>() {
+	public String uploadPackage(final String pkgId, final byte[] pkgDefData) throws CMWorkflowException {
+		return new TransactedExecutor<String>() {
 			@Override
-			protected Void command() throws Exception {
+			protected String command() throws Exception {
 				final PackageAdministration pa = shark().getPackageAdministration();
 				if (pa.getPackageVersions(handle(), pkgId).length == 0) {
-					pa.uploadPackage(handle(), pkgDefData);
+					return pa.uploadPackage(handle(), pkgDefData).getPkgVer();
 				} else {
-					pa.updatePackage(handle(), pkgId, pkgDefData);
+					return pa.updatePackage(handle(), pkgId, pkgDefData).getPkgVer();
 				}
-				return null;
 			}
 		}.execute();
 	}
@@ -116,34 +119,86 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public byte[][] downloadAllPackages() throws CMWorkflowException {
-		return new TransactedExecutor<byte[][]>() {
+	public WSPackageDef[] downloadAllPackages() throws CMWorkflowException {
+		return new TransactedExecutor<WSPackageDef[]>() {
 			@Override
-			protected byte[][] command() throws Exception {
+			protected WSPackageDef[] command() throws Exception {
 				final PackageAdministration pa = shark().getPackageAdministration();
 				final String[] pkgIds = pa.getOpenedPackageIds(handle());
-				final byte[][] out = new byte[pkgIds.length][];
+				final WSPackageDef[] out = new WSPackageDef[pkgIds.length];
 				for (int i = 0; i < pkgIds.length; ++i) {
-					final String pkgId = pkgIds[i];
-					final String pkgVer = pa.getCurrentPackageVersion(handle(), pkgId);
-					final byte[] rawPkg = pa.getPackageContent(handle(), pkgId, pkgVer);
-					out[i] = rawPkg;
+					final String id = pkgIds[i];
+					final String version = pa.getCurrentPackageVersion(handle(), id);
+					final byte[] data = pa.getPackageContent(handle(), id, version);
+					out[i] = newWSPackageDef(id, version, data);
 				}
 				return out;
+			}
+
+			private WSPackageDef newWSPackageDef(final String id, final String version, final byte[] data) {
+				return new WSPackageDef() {
+
+					@Override
+					public String getPackageId() {
+						return id;
+					}
+
+					@Override
+					public String getPackageVersion() {
+						return version;
+					}
+
+					@Override
+					public byte[] getData() {
+						return data;
+					}
+					
+				};
 			}
 		}.execute();
 	}
 
 	@Override
-	public String startProcess(final String pkgId, final String procDefId) throws CMWorkflowException {
-		return new TransactedExecutor<String>() {
+	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId) throws CMWorkflowException {
+		return new TransactedExecutor<WSProcessInstInfo>() {
 			@Override
-			protected String command() throws Exception {
+			protected WSProcessInstInfo command() throws Exception {
 				final String uniqueProcDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId,
-						StringUtils.EMPTY, procDefId);
+						LAST_VERSION, procDefId);
 				final String procInstId = wapi().createProcessInstance(handle(), uniqueProcDefId, null);
 				final String newProcInstId = wapi().startProcess(handle(), procInstId);
-				return newProcInstId;
+				return newWSProcessInstInfo(uniqueProcDefId, newProcInstId);
+			}
+
+			private WSProcessInstInfo newWSProcessInstInfo(final String uniqueProcDefId, final String procInstId) {
+				return new WSProcessInstInfo() {
+
+					@Override
+					public String getPackageId() {
+						return MiscUtilities.getProcessMgrPkgId(uniqueProcDefId);
+					}
+
+					@Override
+					public String getPackageVersion() {
+						return MiscUtilities.getProcessMgrVersion(uniqueProcDefId);
+					}
+
+					@Override
+					public String getProcessDefinitionId() {
+						return MiscUtilities.getProcessMgrProcDefId(uniqueProcDefId);
+					}
+
+					@Override
+					public String getProcessInstanceId() {
+						return procInstId;
+					}
+
+					@Override
+					public WSProcessInstanceState getStatus() {
+						return WSProcessInstanceState.OPEN; // Guessed
+					}
+					
+				};
 			}
 		}.execute();
 	}
@@ -175,6 +230,30 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	private final WAPI wapi() throws Exception {
 		return shark().getWAPIConnection();
+	}
+
+	@Override
+	public WSProcessInstInfo[] listOpenProcessInstances(final String procDefId) throws CMWorkflowException {
+		return new TransactedExecutor<WSProcessInstInfo[]>() {
+			@Override
+			protected WSProcessInstInfo[] command() throws Exception {
+				final WMProcessInstance[] pis = wapi().listProcessInstances(handle(),
+						openProcessInstances(procDefId), false).getArray();
+				final WSProcessInstInfo[] out = new WSProcessInstInfo[pis.length];
+				for (int i = 0; i < pis.length; ++i) {
+					out[i] = WSProcessInstInfoImpl.newInstance(pis[i]);
+				}
+				return out;
+			}
+
+			private WMFilter openProcessInstances(final String procDefId) throws Exception {
+				final ProcessFilterBuilder fb = shark().getProcessFilterBuilder();
+				return fb.and(handle(),
+						fb.addProcessDefIdEquals(handle(), procDefId),
+						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN)
+					);
+			}
+		}.execute();
 	}
 
 	@Override
@@ -221,7 +300,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 				final WMActivityInstance[] ais = wapi().listActivityInstances(handle(), filter, false).getArray();
 				final WSActivityInstInfo[] out = new WSActivityInstInfo[ais.length];
 				for (int i = 0; i < ais.length; ++i) {
-					out[i] = new WMActivityInstanceWrapper(ais[i]);
+					out[i] = WSActivityInstInfoImpl.newInstance(ais[i]);
 				}
 				return out;
 			}
@@ -245,7 +324,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 				final WMActivityInstance[] ais = wapi().listActivityInstances(handle(), filter, false).getArray();
 				final WSActivityInstInfo[] out = new WSActivityInstInfo[ais.length];
 				for (int i = 0; i < ais.length; ++i) {
-					out[i] = new WMActivityInstanceWrapper(ais[i]);
+					out[i] = WSActivityInstInfoImpl.newInstance(ais[i]);
 				}
 				return out;
 			}

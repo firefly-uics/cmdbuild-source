@@ -9,6 +9,9 @@ public interface CMCard extends CMEntry {
 	
 	interface CMCardDefinition extends CMEntryDefinition {
 		CMCardDefinition set(String key, Object value);
+		/**
+		 * Save the card if something has changed
+		 */
 		CMCard save();
 	}
 

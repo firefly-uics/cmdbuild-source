@@ -92,7 +92,7 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 * @return the process instance's id
 	 */
 	protected String startProcess(final String processId) throws CMWorkflowException, XpdlException {
-		return ws.startProcess(xpdlDocument.getPackageId(), processId);
+		return ws.startProcess(xpdlDocument.getPackageId(), processId).getProcessInstanceId();
 	}
 
 	/**

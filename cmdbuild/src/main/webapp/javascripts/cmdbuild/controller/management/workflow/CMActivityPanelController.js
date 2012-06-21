@@ -369,7 +369,7 @@
 
 	function updateCardData(me, response) {
 		if (me.card) {
-			var card = Ext.decode(response.responseText);
+			var card = Ext.decode(response.responseText).response;
 
 			me.card.raw = Ext.apply(me.card.raw, {
 				Id: card.Id,

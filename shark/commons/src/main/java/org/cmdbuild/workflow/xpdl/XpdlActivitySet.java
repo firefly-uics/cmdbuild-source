@@ -22,6 +22,11 @@ public class XpdlActivitySet implements XpdlActivityHolder {
 	}
 
 	@Override
+	public XpdlActivity getActivity(final String activityId) {
+		return new XpdlActivity(process, inner.getActivity(activityId));
+	}
+
+	@Override
 	public List<XpdlActivity> getStartingActivities() {
 		return activities.getStartingActivities();
 	}

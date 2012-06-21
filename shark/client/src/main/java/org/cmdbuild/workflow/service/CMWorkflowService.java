@@ -11,27 +11,43 @@ public interface CMWorkflowService {
 
 	String[] getPackageVersions(String pkgId) throws CMWorkflowException;
 
-	void uploadPackage(String pkgId, byte[] pkgDefData) throws CMWorkflowException;
+	/**
+	 * 
+	 * @param pkgId
+	 * @param pkgDefData
+	 * @return uploaded package version
+	 * @throws CMWorkflowException
+	 */
+	String uploadPackage(String pkgId, byte[] pkgDefData) throws CMWorkflowException;
 
 	byte[] downloadPackage(String pkgId, String pkgVer) throws CMWorkflowException;
 
 	/**
-	 * Download all the open packages as byte arrays
+	 * Download the last version of every open package
 	 * 
-	 * @return an array of bytes one for each open package
+	 * @return an array of package versions
 	 * @throws CMWorkflowException
 	 */
-	byte[][] downloadAllPackages() throws CMWorkflowException;
+	WSPackageDef[] downloadAllPackages() throws CMWorkflowException;
 
 	/**
-	 * Create and start the process.
+	 * Create and start the latest version of a process.
 	 *  
 	 * @param pkgId package id
 	 * @param procDefId workflow process definition id (as defined in the xpdl)
 	 * @return newly created process instance id
 	 * @throws CMWorkflowException
 	 */
-	String startProcess(String pkgId, String procDefId) throws CMWorkflowException;
+	WSProcessInstInfo startProcess(String pkgId, String procDefId) throws CMWorkflowException;
+
+	/**
+	 * List open process instances by process definition id.
+	 * 
+	 * @param procDefId
+	 * @return 
+	 * @throws CMWorkflowException
+	 */
+	WSProcessInstInfo[] listOpenProcessInstances(String procDefId) throws CMWorkflowException;
 
 	void setProcessInstanceVariables(String procInstId, Map<String, Object> variables) throws CMWorkflowException;
 

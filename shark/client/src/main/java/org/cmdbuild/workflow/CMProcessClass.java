@@ -75,4 +75,12 @@ public interface CMProcessClass extends CMClass {
 	 * @return process definition id for this process class
 	 */
 	String getProcessDefinitionId() throws CMWorkflowException;
+
+	/**
+	 * Returns if the process is active and a process
+	 * definition was loaded for it.
+	 * 
+	 * @return if the process can be started or advanced
+	 */
+	boolean isUsable();
 }

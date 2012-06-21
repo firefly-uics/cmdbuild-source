@@ -85,6 +85,11 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	}
 
 	@Override
+	public XpdlActivity getActivity(final String activityId) {
+		return new XpdlActivity(this, inner.getActivity(activityId));
+	}
+
+	@Override
 	public List<XpdlActivity> getStartingActivities() {
 		return activities.getStartingActivities();
 	}
