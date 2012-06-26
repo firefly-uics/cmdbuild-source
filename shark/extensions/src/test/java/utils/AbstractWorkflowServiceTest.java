@@ -4,6 +4,7 @@ import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
+import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlException;
@@ -60,9 +61,10 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 * Uploads the {@link XpdlDocument} and starts the specified
 	 * {@link XpdlProcess}.
 	 * 
-	 * @return the process instance's id
+	 * @return the process instance's info
 	 */
-	protected String uploadXpdlAndStartProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException, XpdlException {
+	protected WSProcessInstInfo uploadXpdlAndStartProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException,
+			XpdlException {
 		upload(xpdlDocument);
 		return startProcess(xpdlProcess);
 	}
@@ -80,19 +82,19 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	/**
 	 * Starts the specified {@link XpdlProcess}.
 	 * 
-	 * @return the process instance's id
+	 * @return the process instance's info
 	 */
-	protected String startProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException, XpdlException {
+	protected WSProcessInstInfo startProcess(final XpdlProcess xpdlProcess) throws CMWorkflowException, XpdlException {
 		return startProcess(xpdlProcess.getId());
 	}
 
 	/**
 	 * Starts the specified process Id.
 	 * 
-	 * @return the process instance's id
+	 * @return the process instance's info
 	 */
-	protected String startProcess(final String processId) throws CMWorkflowException, XpdlException {
-		return ws.startProcess(xpdlDocument.getPackageId(), processId).getProcessInstanceId();
+	protected WSProcessInstInfo startProcess(final String processId) throws CMWorkflowException, XpdlException {
+		return ws.startProcess(xpdlDocument.getPackageId(), processId);
 	}
 
 	/**

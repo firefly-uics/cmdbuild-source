@@ -58,7 +58,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 		process.createTransition(scriptActivity, noImplActivity);
 
-		final String procInstId = uploadXpdlAndStartProcess(process);
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
 		verify(eventManager).activityClosed(scriptActivity.getId());
 
 		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
@@ -72,7 +72,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	public void variableSettedThenRead() throws Exception {
 		process.createActivity(randomName());
 
-		final String procInstId = uploadXpdlAndStartProcess(process);
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
 		verify(eventManager).processStarted(process.getId());
 
 		final Map<String, Object> settedVariables = new HashMap<String, Object>();

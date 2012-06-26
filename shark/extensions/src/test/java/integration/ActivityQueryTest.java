@@ -7,6 +7,7 @@ import static utils.XpdlTestUtils.randomName;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
+import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
@@ -38,10 +39,10 @@ public class ActivityQueryTest extends AbstractLocalSharkServiceTest {
 
 	@Test
 	public void openActivitiesCanBeQueriedForAProcessInstance() throws CMWorkflowException {
-		final String pi11 = uploadXpdlAndStartProcess(p1);
-		final String pi21 = startProcess(p2);
-		final String pi12 = startProcess(p1);
-		final String pi31 = startProcess(p3);
+		final WSProcessInstInfo pi11 = uploadXpdlAndStartProcess(p1);
+		final WSProcessInstInfo pi21 = startProcess(p2);
+		final WSProcessInstInfo pi12 = startProcess(p1);
+		final WSProcessInstInfo pi31 = startProcess(p3);
 
 		assertThat(openActivitiesForProcessInstance(pi11), is(new String[] { "A" }));
 		assertThat(openActivitiesForProcessInstance(pi12), is(new String[] { "A" }));
@@ -61,8 +62,9 @@ public class ActivityQueryTest extends AbstractLocalSharkServiceTest {
 		assertThat(openActivitiesForProcess(p3.getId()), is(new String[] { "Z" }));
 	}
 
-	private String[] openActivitiesForProcessInstance(final String processInstanceId) throws CMWorkflowException {
-		return defIds(ws.findOpenActivitiesForProcessInstance(processInstanceId));
+	private String[] openActivitiesForProcessInstance(final WSProcessInstInfo processInstanceInfo)
+			throws CMWorkflowException {
+		return defIds(ws.findOpenActivitiesForProcessInstance(processInstanceInfo.getProcessInstanceId()));
 	}
 
 	private String[] openActivitiesForProcess(final String processDefinitionId) throws CMWorkflowException {
