@@ -462,9 +462,10 @@ public class ConnectorJob implements Runnable {
 
 	private void setReferenceAttribute(ICard card, IAttribute cardAttribute,String attributeValue) {
 		String attributeName = cardAttribute.getName();
+		AttributeValue  av = card.getAttributeValue(attributeName);
 
 		if (attributeValue.equals("")) {
-			Log.SOAP.warn("ExternalSync - The external Connector has request to modify a reference but doesn't know the value to insert");
+			av.setValue(null);
 		} else {
 			ITable referencedClass = userCtx.tables().get(cardAttribute.getReferenceTarget().getName());
 
@@ -474,7 +475,6 @@ public class ConnectorJob implements Runnable {
 			Iterator<ICard> cardIterator = referencedCardList.iterator();
 			if (cardIterator.hasNext()) {
 				ICard referencedCard = cardIterator.next();
-				AttributeValue  av = card.getAttributeValue(attributeName);
 				av.setValue(new Reference(av.getSchema().getReferenceDirectedDomain(), referencedCard.getId(),referencedCard.getDescription()));
 			} else {
 				Log.SOAP.error("ExternalSync - Reference not inserted - No cards found having "
