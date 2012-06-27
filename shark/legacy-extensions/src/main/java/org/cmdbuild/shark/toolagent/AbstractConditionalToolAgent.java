@@ -1,5 +1,9 @@
 package org.cmdbuild.shark.toolagent;
 
+import static java.lang.String.format;
+
+import org.cmdbuild.workflow.api.SharkWorkflowApi;
+import org.cmdbuild.workflow.api.WorkflowApi;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.WMEntity;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
@@ -7,6 +11,7 @@ import org.enhydra.shark.api.internal.toolagent.ApplicationBusy;
 import org.enhydra.shark.api.internal.toolagent.ApplicationNotDefined;
 import org.enhydra.shark.api.internal.toolagent.ApplicationNotStarted;
 import org.enhydra.shark.api.internal.toolagent.ToolAgentGeneralException;
+import org.enhydra.shark.api.internal.working.CallbackUtilities;
 import org.enhydra.shark.toolagent.AbstractToolAgent;
 
 public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
@@ -18,6 +23,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	private final ConditionEvaluator conditionEvaluator;
+	private WorkflowApi workflowApi;
 
 	public AbstractConditionalToolAgent() {
 		conditionEvaluator = null;
@@ -43,6 +49,31 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		return assId;
 	}
 
+	public WorkflowApi getWorkflowApi() {
+		return workflowApi;
+	}
+
+	public String getId() {
+		return toolInfo.getId();
+	}
+
+	@Override
+	public void configure(final CallbackUtilities cus) throws Exception {
+		super.configure(cus);
+		configureApi(cus);
+	}
+
+	private void configureApi(final CallbackUtilities cus) throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException {
+		final String classname = cus.getProperty("org.cmdbuild.workflow.api.classname");
+		cus.info(null, format("loading api '%s'", classname));
+		final Class<? extends SharkWorkflowApi> sharkWorkflowApiClass = Class.forName(classname).asSubclass(
+				SharkWorkflowApi.class);
+		final SharkWorkflowApi sharkWorkflowApi = sharkWorkflowApiClass.newInstance();
+		sharkWorkflowApi.configure(cus);
+		workflowApi = sharkWorkflowApi;
+	}
+
 	@Override
 	public void invokeApplication(final WMSessionHandle shandle, final long handle, final WMEntity appInfo,
 			final WMEntity toolInfo, final String applicationName, final String procInstId, final String assId,
@@ -53,7 +84,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		setStatus(APP_STATUS_RUNNING);
 		try {
 			if (conditionEvaluator().evaluate()) {
-				innerInvoke(shandle, handle, appInfo, toolInfo, applicationName, procInstId, assId, parameters, appMode);
+				innerInvoke();
 			}
 			setStatus(APP_STATUS_FINISHED);
 		} catch (final Exception e) {
@@ -70,8 +101,26 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		this.status = status;
 	}
 
-	protected abstract void innerInvoke(WMSessionHandle shandle, long handle, WMEntity appInfo, WMEntity toolInfo,
-			String applicationName, String procInstId, String assId, AppParameter[] parameters, Integer appMode)
-			throws ApplicationNotStarted, ApplicationNotDefined, ApplicationBusy, ToolAgentGeneralException;
+	protected abstract void innerInvoke() throws Exception;
+
+	@SuppressWarnings("unchecked")
+	public <T> T getParameterValue(final String name) {
+		final Object value = getParameter(name).the_value;
+		return (T) value;
+	}
+
+	public <T> void setParameterValue(final String name, final T value) {
+		getParameter(name).the_value = value;
+	}
+
+	private AppParameter getParameter(final String name) {
+		for (final AppParameter parameter : parameters) {
+			final String formalName = parameter.the_formal_name;
+			if (formalName.equals(name)) {
+				return parameter;
+			}
+		}
+		throw new IllegalArgumentException(format("missing parameter for name '%s'", name));
+	}
 
 }

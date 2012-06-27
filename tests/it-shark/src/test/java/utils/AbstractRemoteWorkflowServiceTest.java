@@ -35,14 +35,8 @@ public abstract class AbstractRemoteWorkflowServiceTest extends AbstractWorkflow
 		FileUtils.writeStringToFile(getLogFile(), EMPTY);
 	}
 
-	protected final boolean hasLine(final String match) throws IOException {
-		final List<String> lines = FileUtils.readLines(getLogFile());
-		for (final String line : lines) {
-			if (line.equals(match)) {
-				return true;
-			}
-		}
-		return false;
+	protected List<String> logLines() throws IOException {
+		return FileUtils.readLines(getLogFile());
 	}
 
 }

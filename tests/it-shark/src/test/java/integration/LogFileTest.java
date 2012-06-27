@@ -1,7 +1,10 @@
 package integration;
 
 import static java.lang.String.format;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static utils.XpdlTestUtils.randomName;
 
@@ -42,11 +45,11 @@ public class LogFileTest extends AbstractRemoteSharkServiceTest {
 		assertTrue(fileIsEmpty());
 		startProcess();
 		assertFalse(fileIsEmpty());
-		assertTrue(hasLine(entryWithId("processStarted", processId)));
-		assertTrue(hasLine(entryWithId("activityStarted", activityId)));
-		assertTrue(hasLine(entryWithId("activityClosed", activityId)));
-		assertTrue(hasLine(entryWithId("processClosed", processId)));
-		assertFalse(hasLine("foo"));
+		assertThat(logLines(), hasItem(entryWithId("processStarted", processId)));
+		assertThat(logLines(), hasItem(entryWithId("activityStarted", activityId)));
+		assertThat(logLines(), hasItem(entryWithId("activityClosed", activityId)));
+		assertThat(logLines(), hasItem(entryWithId("processClosed", processId)));
+		assertThat(logLines(), not(hasItem("foo")));
 	}
 
 	private boolean fileIsEmpty() throws IOException {

@@ -2,6 +2,8 @@ package utils;
 
 import static utils.XpdlTestUtils.randomName;
 
+import java.util.Map;
+
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -102,6 +104,18 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 */
 	protected byte[] serialize(final XpdlDocument xpdl) throws XpdlException {
 		return XpdlPackageFactory.xpdlByteArray(xpdl.getPkg());
+	}
+
+	/**
+	 * Returns the instance variables for the specified process instance.
+	 * 
+	 * @param processInstInfo
+	 * @return the instance variables for the specified process instance
+	 * @throws CMWorkflowException
+	 */
+	protected Map<String, Object> instanceVariablesForProcess(final WSProcessInstInfo processInstInfo)
+			throws CMWorkflowException {
+		return ws.getProcessInstanceVariables(processInstInfo.getProcessInstanceId());
 	}
 
 }

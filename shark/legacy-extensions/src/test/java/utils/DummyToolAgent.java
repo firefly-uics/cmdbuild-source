@@ -3,9 +3,6 @@ package utils;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.shark.toolagent.AbstractConditionalToolAgent;
-import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
-import org.enhydra.shark.api.client.wfservice.WMEntity;
-import org.enhydra.shark.api.internal.toolagent.AppParameter;
 import org.enhydra.shark.api.internal.toolagent.ApplicationBusy;
 import org.enhydra.shark.api.internal.toolagent.ApplicationNotDefined;
 import org.enhydra.shark.api.internal.toolagent.ApplicationNotStarted;
@@ -35,10 +32,8 @@ public class DummyToolAgent extends AbstractConditionalToolAgent {
 	}
 
 	@Override
-	protected void innerInvoke(final WMSessionHandle shandle, final long handle, final WMEntity appInfo,
-			final WMEntity toolInfo, final String applicationName, final String procInstId, final String assId,
-			final AppParameter[] parameters, final Integer appMode) throws ApplicationNotStarted,
-			ApplicationNotDefined, ApplicationBusy, ToolAgentGeneralException {
+	protected void innerInvoke() throws ApplicationNotStarted, ApplicationNotDefined, ApplicationBusy,
+			ToolAgentGeneralException {
 		listener.invoked();
 		listener.startingStatus(status);
 		_status = status;
