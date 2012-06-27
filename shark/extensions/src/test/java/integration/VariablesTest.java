@@ -26,6 +26,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	private static final String A_BOOLEAN = "aBoolean";
 	private static final String AN_INTEGER = "anInteger";
 	private static final String A_STRING = "aString";
+	private static final String UNDEFINED = "undefined";
 
 	private XpdlProcess process;
 	private CMEventManager eventManager;
@@ -50,7 +51,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	}
 
 	@Test
-	public void variableModifiedFromScript() throws Exception {
+	public void variablesModifiedFromScript() throws Exception {
 		final XpdlActivity scriptActivity = process.createActivity(randomName());
 		scriptActivity.setScriptingType(ScriptLanguage.JAVA, "aBoolean = true; anInteger = 42; aString = \"foo\";");
 
@@ -69,7 +70,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	}
 
 	@Test
-	public void variableSettedThenRead() throws Exception {
+	public void variablesSettedThenRead() throws Exception {
 		process.createActivity(randomName());
 
 		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
@@ -85,6 +86,21 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(true));
 		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(42L));
 		assertThat((String) readVariables.get(A_STRING), equalTo("foo"));
+	}
+
+	@Test
+	public void undefinedVariableSettedThenRead() throws Exception {
+		process.createActivity(randomName());
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).processStarted(process.getId());
+
+		final Map<String, Object> settedVariables = new HashMap<String, Object>();
+		settedVariables.put(UNDEFINED, "baz");
+		ws.setProcessInstanceVariables(procInstId, settedVariables);
+
+		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
+		assertThat((String) readVariables.get(UNDEFINED), equalTo("baz"));
 	}
 
 }
