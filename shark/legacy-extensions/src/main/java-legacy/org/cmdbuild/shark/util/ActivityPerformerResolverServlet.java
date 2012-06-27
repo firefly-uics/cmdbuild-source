@@ -94,9 +94,9 @@ public class ActivityPerformerResolverServlet extends HttpServlet {
 		if( !checkAuth(req,resp) )
 			return;
 		
-		String procInstId = req.getParameter("processinstanceid");
-		String actInstId = req.getParameter("activityinstanceid");
-		String expr = req.getParameter("expression");
+		String procInstId = req.getParameterValue("processinstanceid");
+		String actInstId = req.getParameterValue("activityinstanceid");
+		String expr = req.getParameterValue("expression");
 		
 		try {
 			System.out.println("ActivityPerformer for " + procInstId + ", " + actInstId + ", " + expr);
