@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow.api;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.Map;
 
@@ -14,6 +15,9 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
+	private static final String URL_SEPARATOR = "/";
+	private static final String URL_SUFFIX = "services/soap/Private";
+
 	private Private proxy;
 
 	@Override
@@ -23,7 +27,8 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	}
 
 	private void configureProxy(final CallbackUtilities cus) {
-		final String url = cus.getProperty("org.cmdbuild.ws.url");
+		final String base_url = cus.getProperty("org.cmdbuild.ws.url");
+		final String url = completeUrl(base_url);
 		final String username = cus.getProperty("org.cmdbuild.ws.username");
 		final String password = cus.getProperty("org.cmdbuild.ws.password");
 
@@ -34,11 +39,19 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
 		final SoapClient<Private> soapClient = new SoapClientBuilder<Private>() //
 				.forClass(Private.class) //
+				.withUrl(url) //
 				.withUsername(username) //
 				.withPasswordType(PasswordType.DIGEST) //
 				.withPassword(password) //
 				.build();
 		proxy = soapClient.getProxy();
+	}
+
+	private String completeUrl(final String baseUrl) {
+		return new StringBuilder(baseUrl) //
+				.append(baseUrl.endsWith(URL_SEPARATOR) ? EMPTY : URL_SEPARATOR) //
+				.append(URL_SUFFIX) //
+				.toString();
 	}
 
 	public Private getProxy() {
