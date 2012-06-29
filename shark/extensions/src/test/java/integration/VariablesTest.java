@@ -1,6 +1,7 @@
 package integration;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static utils.XpdlTestUtils.randomName;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.workflow.CMEventManager;
+import org.cmdbuild.workflow.type.ReferenceType;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
@@ -26,7 +28,10 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	private static final String A_BOOLEAN = "aBoolean";
 	private static final String AN_INTEGER = "anInteger";
 	private static final String A_STRING = "aString";
+
 	private static final String UNDEFINED = "undefined";
+
+	private static final String A_REFERENCE = "reference";
 
 	private XpdlProcess process;
 	private CMEventManager eventManager;
@@ -101,6 +106,27 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
 		assertThat((String) readVariables.get(UNDEFINED), equalTo("baz"));
+	}
+
+	@Test
+	public void declareTypesSettedThenRead() throws Exception {
+		process.createActivity(randomName());
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).processStarted(process.getId());
+
+		final Map<String, Object> settedVariables = new HashMap<String, Object>();
+		settedVariables.put(A_REFERENCE, newReference(42));
+		ws.setProcessInstanceVariables(procInstId, settedVariables);
+
+		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
+		assertThat(readVariables.get(A_REFERENCE), hasProperty("id", equalTo(42)));
+	}
+
+	private ReferenceType newReference(final int id) {
+		final ReferenceType reference = new ReferenceType();
+		reference.setId(id);
+		return reference;
 	}
 
 }
