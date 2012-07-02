@@ -1,9 +1,13 @@
 package org.cmdbuild.workflow.widget;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 
@@ -94,5 +98,39 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	protected final boolean readBoolean(String value) {
 		return (value != null);
+	}
+
+	protected final Integer readInteger(String value) {
+		Integer out = null;
+		try {
+			out = Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			// ignore it
+		}
+
+		return out;
+	}
+
+	protected final String readClassNameFromCQLFilter(String filter) {
+		String className = null;
+		try {
+			QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams(filter);
+			className = q.getFrom().mainClass().getClassName();
+		} catch (Exception e) {
+			// ignore it
+		}
+
+		return className;
+	}
+
+	protected final List<String> extractParametersWithNullAsValue(Map<String,String> valueMap) {
+		final ArrayList<String> out = new ArrayList<String>();
+		for(String key:valueMap.keySet()) {
+			if (valueMap.get(key) == null) {
+				out.add(key);
+			}
+		}
+
+		return out;
 	}
 }

@@ -1,27 +1,33 @@
 (function () {
+
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMManageEmailController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
-		cmName: "Create Report",
 
-		TEMPLATE_FIELDS: ['ToAddresses','CcAddresses','Subject','Content','Condition'],
-		TEMPLATE_CONDITION: 'Condition',
+		statics: {
+			WIDGET_NAME: ".ManageEmail"
+		},
 
-		constructor: function() {
+		TEMPLATE_FIELDS: ['toAddresses','ccAddresses','subject','content','condition'],
+		TEMPLATE_CONDITION: 'condition',
+
+		constructor: function(ui, supercontroller, widget, clientForm, card) {
+
+			this.reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
+
 			this.callParent(arguments);
 
 			this.emailsWereGenerated = false;
 			this.gridStoreWasLoaded = false;
 
-			this.widgetConf = _normalizewidgetData(this.view.widgetConf, this.TEMPLATE_FIELDS);
-			this.readWrite = !this.widgetConf.ReadOnly;
+			this.widgetConf = widget;
+			this.templatesData = _extractVariablesForTemplateResolver(this);
+			this.readWrite = !this.reader.readOnly(widget);
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.view.clientForm,
-				xaVars: this.widgetConf,
-				serverVars: this.view.activity
+				clientForm: clientForm,
+				xaVars: this.templatesData,
+				serverVars: card
 			});
-
-			this.usedTemplates = _getTemplatesToResolve(this);
 
 			this.mon(this.view, this.view.CMEVENTS.updateTemplatesButtonClick, function() {
 				this.emailsWereGenerated = false;
@@ -60,7 +66,12 @@
 		},
 
 		thereAreTemplates: function() {
-			return this.usedTemplates.length > 0;
+			return this.countTemplates() > 0;
+		},
+
+		countTemplates: function() {
+			var t = this.reader.templates(this.widgetConf) || [];
+			return t.length;
 		},
 
 		// override
@@ -77,13 +88,8 @@
 
 		// override
 		isValid: function() {
-			if (this.widgetConf.Required 
-				&& this.getOutgoing().length == 0) {
-
-				return false;
-			} else {
-				return true;
-			}
+			return !(this.reader.required(this.widgetConf)
+				&& this.getOutgoing().length == 0);
 		},
 
 		// override
@@ -93,42 +99,6 @@
 		}
 
 	});
-
-	function _getTemplatesToResolve(me) {
-		var templatesVars = [];
-		var templatesLength;
-
-		// the template is valid if at least one of his
-		// fields is defined
-		function isValidTemplate(me, i) {
-			var extAttrDef = me.widgetConf,
-				valid = false;
-
-			Ext.each(me.TEMPLATE_FIELDS, function(field) {
-				if (extAttrDef[field + i]) {
-					valid = true;
-					return false;
-				}
-			});
-
-			return valid;
-		}
-
-		for (var i=1; true; ++i) {
-			if (!isValidTemplate(me, i)) {
-				templatesLength = i-1;
-				break;
-			}
-			Ext.each(me.TEMPLATE_FIELDS, function(field) {
-				templatesVars.push(field+i);
-			});
-		}
-
-		return {
-			vars: templatesVars,
-			length: templatesLength
-		};
-	}
 
 	function _createEmailFromTemplate(me) {
 		if (me.busy) {
@@ -140,9 +110,9 @@
 		me.emailsWereGenerated = true;
 
 		me.templateResolver.resolveTemplates({
-			attributes: me.usedTemplates.vars,
+			attributes: Ext.Object.getKeys(me.templatesData),
 			callback: function onTemlatesWereSolved(values) {
-				for (var i=1; i<=me.usedTemplates.length; ++i) {
+				for (var i=1; i<=me.countTemplates(); ++i) {
 					var v = {};
 					var conditionExpr = values[me.TEMPLATE_CONDITION+i];
 					if (!conditionExpr || eval(conditionExpr)) {
@@ -165,16 +135,24 @@
 		});
 	}
 
-	function _normalizewidgetData(extAttrDef, TEMPLATE_FIELDS) {
-		var normalizedExtAttrDef = Ext.apply({}, extAttrDef);
+	/**
+	 * Extract the variables of each template and
+	 * add a suffix to them with the index.
+	 * This is needed to be passed as a unique array to the
+	 * template resolver
+	 */
+	function _extractVariablesForTemplateResolver(me) {
+		var templates = me.reader.templates(me.widgetConf) || [];
+		var variables = {};
 
-		Ext.each(TEMPLATE_FIELDS, function(attr) {
-			if (normalizedExtAttrDef[attr+1]) {
-				return false;
+		for (var i=0, l=templates.length, t=null; i<l; ++i) {
+			t = templates[i];
+			for (var key in t) {
+				variables[key + (i+1)] = t[key];
 			}
-			normalizedExtAttrDef[attr+1] = extAttrDef[attr];
-			delete normalizedExtAttrDef[attr];
-		});
-		return normalizedExtAttrDef;
+		}
+
+		_debug("ManageEmail, templateResolver variables", variables);
+		return variables;
 	}
 })();

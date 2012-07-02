@@ -14,7 +14,7 @@
 			this.WIDGET_NAME = this.self.WIDGET_NAME;
 			this.CMEVENTS = {
 				saveButtonClick: "cm-save-click"
-			}
+			};
 
 			this.formatCombo = new Ext.form.ComboBox({
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.createreport.format_label,
@@ -73,7 +73,7 @@
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveButtonClick);
 				}
-			})]
+			})];
 		},
 
 		forceExtension: function(extension) {

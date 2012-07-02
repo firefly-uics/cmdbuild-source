@@ -1,19 +1,11 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMCalendarControllerWidgetReader", {
-		getStartDate: function(w) { return w.EventStartDate; },
-		getEndDate: function(w) { return w.EventEndDate; },
-		getTitle: function(w) { return w.EventTitle; },
-		getTargetName: function(w) { return w.ClassName; },
-		getFilterVarName: function() { return "xa:Filter"; },
-		getDefaultDate: function(w) { return w.DefaultDate; }
-	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader", {
 		getStartDate: function(w) { return w.startDate; },
 		getEndDate: function(w) { return w.endDate; },
 		getTitle: function(w) { return w.eventTitle; },
 		getTargetName: function(w) { return w.targetClass; },
-		getFilterVarName: function() {return "xa:filter"},
+		getFilterVarName: function() {return "xa:filter";},
 		getDefaultDate: function(w) { return w.defaultDate; }
 	});
 
@@ -27,7 +19,7 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCalendar.WIDGET_NAME
 		},
 
-		constructor: function(view, ownerController, widgetDef, clientForm, reader, card) {
+		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			// this.widgetConf = c.widget;
 			// this.activity = c.activity.raw || c.activity.data;
 
@@ -37,7 +29,7 @@
 			this.ownerController = ownerController;
 			this.widget = widgetDef;
 			this.clientForm = clientForm;
-			this.reader = reader;
+			this.reader = new CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader();
 			this.card = card;
 
 			if (!this.reader.getStartDate(this.widget) ||

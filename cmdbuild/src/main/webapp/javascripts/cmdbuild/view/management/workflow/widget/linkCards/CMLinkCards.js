@@ -1,7 +1,4 @@
 (function() {
-
-	var TRUE = "1";
-
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 		cmAllowEditCard: false,
@@ -12,7 +9,7 @@
 			var sm = this.getSelectionModel();
 			sm.clearSelections();
 
-			if (!this.noSelect && s) {
+			if (!this.readOnly && s) {
 				for (var i = 0, l = s.length; i<l; ++i) {
 					var cardId = s[i];
 					this.selectByCardId(cardId);
@@ -75,12 +72,15 @@
 
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCards", {
 		extend: "Ext.panel.Panel",
-		constructor: function(c) {
-			this.widgetConf = c.widget;
-			this.activity = c.activity.raw || c.activity.data;
-			this.clientForm = c.clientForm;
 
-			this.callParent([this.widgetConf]); // to apply the conf to the panel
+		statics: {
+			WIDGET_NAME: ".LinkCards"
+		},
+
+		constructor: function(c) {
+			this.widget = c.widget;
+			this.widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
+			this.callParent([this.widget]); // to apply the conf to the panel
 		},
 
 		setModel: function(m) {
@@ -88,15 +88,16 @@
 		},
 
 		initComponent: function() {
-			var c = this.widgetConf,
-				selModel = selectionModelFromConfiguration(c),
-				noSelect = isNoSelect(c),
-				theMapIsToSet = (c.Map == "enabled" && CMDBuild.Config.gis.enabled),
+			var c = this.widget,
+				selModel = selectionModelFromConfiguration(c, this),
+				readOnly = this.widgetReader.readOnly(c),
+				theMapIsToSet = (this.widgetReader.enableMap(c) 
+						&& CMDBuild.Config.gis.enabled),
 				allowEditCard = false,
 				allowShowCard = false;
 
-			if (c.AllowCardEditing == TRUE) {
-				var priv = _CMUtils.getClassPrivileges(c.ClassId);
+			if (this.widgetReader.allowCardEditing(c)) {
+				var priv = _CMUtils.getClassPrivilegesByName(this.widgetReader.className(c));
 				if (priv && priv.write) {
 					allowEditCard = true;
 				} else {
@@ -106,9 +107,9 @@
 
 			this.grid = new CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid({
 				autoScroll : true,
-				filterSubcategory : c.identifier,
+				filterSubcategory : this.widgetReader.id(c),
 				selModel: selModel,
-				noSelect: noSelect,
+				readOnly: readOnly,
 				hideMode: "offsets",
 				region: "center",
 				border: false,
@@ -154,14 +155,6 @@
 			this.grid.updateStoreForClassId(classId);
 		},
 
-		getTemplateResolver: function() {
-			return this.templateResolver || new CMDBuild.Management.TemplateResolver({
-				clientForm: this.clientForm,
-				xaVars: this.widgetConf,
-				serverVars: this.activity
-			});
-		},
-
 		syncSelections: function() {
 			if (this.model) {
 				this.grid.syncSelections(this.model.getSelections());
@@ -174,7 +167,7 @@
 
 		reset: function() {
 			var sm = this.grid.getSelectionModel();
-			if (typeof sm.reset == "function") {
+			if (sm && typeof sm.reset == "function") {
 				sm.reset();
 			}
 
@@ -182,25 +175,23 @@
 		}
 	});
 
-	function selectionModelFromConfiguration(conf) {
-		if (isNoSelect(conf)) {
+	function selectionModelFromConfiguration(conf, me) {
+		if (me.widgetReader.readOnly(conf)) {
 			return new Ext.selection.RowModel();
 		}
-		if (conf.SingleSelect) {
+
+		if (me.widgetReader.singleSelect(conf)) {
 			return new CMDBuild.selection.CMMultiPageSelectionModel({
 				mode: "SINGLE",
 				idProperty: "Id" // required to identify the records for the data and not the id of ext
 			});
 		}
+
 		return new CMDBuild.selection.CMMultiPageSelectionModel({
 			mode: "MULTI",
 			avoidCheckerHeader: true,
 			idProperty: "Id" // required to identify the records for the data and not the id of ext
 		});
-	}
-
-	function isNoSelect(c) {
-		return !!c.NoSelect;
 	}
 
 	function buildMapStuff(c) {

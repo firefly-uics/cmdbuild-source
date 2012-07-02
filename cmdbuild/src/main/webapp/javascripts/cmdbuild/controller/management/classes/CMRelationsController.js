@@ -111,7 +111,7 @@
 
 		onFollowRelationClick: function(model) {
 			if (model.get("depth") > 1) {
-				this.superController.openCard({
+				_CMMainViewportController.openCard({
 					Id: model.get("dst_id"),
 					IdClass: model.get("dst_cid")
 				});

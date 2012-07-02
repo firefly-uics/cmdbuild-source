@@ -2,21 +2,21 @@
 	Ext.define("CMDBuild.view.management.workflow.widgets.CMManageRelation", {
 		extend: "CMDBuild.view.management.classes.CMCardRelationsPanel",
 
-		constructor: function(c) {
-			this.extattrtype = "manageRelation";
-			this.widgetConf = c.widget;
-			this.activity = c.activity.raw || c.activity.data;
-			this.clientForm = c.clientForm;
+		statics: {
+			WIDGET_NAME: ".ManageRelation"
+		},
 
+		constructor: function(c) {
+			this.widgetConf = c.widget;
 			this.callParent(arguments);
 		},
 
 		initComponent: function() {
-			var createAndLink = this.widgetConf.enabledFunctions.createAndLinkElement || false,
-				linkElement = this.widgetConf.enabledFunctions.linkElement || false;
+			var reader = CMDBuild.management.model.widget.ManageRelationConfigurationReader;
 
 			Ext.apply(this, {
-				cmWithAddButton: createAndLink || linkElement,
+				cmWithAddButton: reader.canCreateAndLinkCard(this.widgetConf) 
+					|| reader.canCreateRelation(this.widgetConf),
 				border: false,
 				frame: false,
 				cls: "x-panel-body-default-framed"
@@ -30,24 +30,25 @@
 				return "";
 			}
 
-			var tr = CMDBuild.Translation.management.modcard,
-				actionsHtml = '',
-				enabledFunctions = this.widgetConf.enabledFunctions,
-				extAttrDef = this.widgetConf,
+			var actionsHtml = '',
+				reader = CMDBuild.management.model.widget.ManageRelationConfigurationReader,
+				widget = this.widgetConf,
 				isSel = (function(record) {
-						var id = parseInt(record.get('CardId'));
-						if(undefined === extAttrDef.currentValue){return false;}
-						return extAttrDef.currentValue.indexOf(id) >= 0;
-					})(record);
+					var id = parseInt(record.get('CardId'));
+					if (typeof widget.currentValue == "undefined") {
+						return false;
+					} else {
+						return widget.currentValue.indexOf(id) >= 0;
+					}
+				})(record);
 
-			if (enabledFunctions['single'] || enabledFunctions['multi']) {
-				var type = 'checkbox';
-				if (enabledFunctions['single']) {
-					type = 'radio';
-				}
+			if (reader.singleSelection(widget) 
+					|| reader.multiSelection(widget)) {
+
+				var type = reader.singleSelection(widget) ? 'radio' : 'checkbox';
 
 				actionsHtml += '<input type="' + type + '" name="'
-						+ this.widgetConf.outputName + '" value="'
+						+ reader.outputName(widget) + '" value="'
 						+ record.get('dst_id') + '"';
 
 				if (isSel) {
@@ -57,16 +58,19 @@
 				actionsHtml += '/>';
 			}
 
-			if (enabledFunctions['allowModify']) {
+			if (reader.canModifyARelation(widget)) {
 				actionsHtml += getImgTag("edit", "link_edit.png");
 			}
-			if (enabledFunctions['allowUnlink']) {
+
+			if (reader.canRemoveARelation(widget)) {
 				actionsHtml += getImgTag("delete", "link_delete.png");
 			}
-			if (enabledFunctions['allowModifyCard']) {
+
+			if (reader.canModifyALinkedCard(widget)) {
 				actionsHtml += getImgTag("editcard", "modify.png");
 			}
-			if (enabledFunctions['allowDelete']) {
+
+			if (reader.canRemoveARelation) {
 				actionsHtml += getImgTag("deletecard", "delete.png");
 			}
 

@@ -136,7 +136,9 @@
 			}
 
 			r.removeAll();
-			r.appendChild(nodes);
+			if (nodes.length > 0) {
+				r.appendChild(nodes);
+			}
 
 			if (this.showAttributesColumn) {
 				this.attrsColumn.show();

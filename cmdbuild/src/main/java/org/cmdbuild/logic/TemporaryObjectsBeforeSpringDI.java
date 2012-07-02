@@ -23,7 +23,11 @@ import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
+import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
+import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
+import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
+import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenAttachmentWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenNoteWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
@@ -73,10 +77,15 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {
 		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
+
 		factory.addWidgetFactory(new CreateModifyCardWidgetFactory());
 		factory.addWidgetFactory(new OpenAttachmentWidgetFactory());
 		factory.addWidgetFactory(new OpenNoteWidgetFactory());
 		factory.addWidgetFactory(new OpenReportWidgetFactory());
+		factory.addWidgetFactory(new CalendarWidgetFactory());
+		factory.addWidgetFactory(new LinkCardsWidgetFactory());
+		factory.addWidgetFactory(new ManageRelationWidgetFactory());
+		factory.addWidgetFactory(new ManageEmailWidgetFactory());
 
 		return factory;
 	}

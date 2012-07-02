@@ -125,6 +125,8 @@
 	function buildNoteController(me) {
 		me.noteController = new CMDBuild.controller.management.workflow.CMNoteController(me.view.getNotesPanel(), me);
 		me.subControllers.push(me.noteController);
+
+		// the history has to know when the notes are changed
 		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function() {
 			if (me.historyController) {
 				me.historyController.onCardSelected(me.card);

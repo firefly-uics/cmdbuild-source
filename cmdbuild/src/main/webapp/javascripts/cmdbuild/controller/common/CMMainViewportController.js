@@ -119,4 +119,31 @@
 			a.selectFirstSelectableNode();
 		}
 	};
+
+	/*
+	 * p = {
+			Id: the id of the card
+			IdClass: the id of the class which the card belongs,
+			activateFirstTab: true to force the tab panel to return to the first tab 
+		}
+	*/
+	ns.CMMainViewportController.prototype.openCard = function(p) {
+		var accordion = this.getFirstAccordionWithANodeWithGivenId(p.IdClass);
+
+		this.setDanglingCard(p);
+
+		if (accordion.collapsed) {
+			// waiting for the rendering for select the node
+			accordion.mon(accordion, "afterlayout", function() {
+				accordion.deselect();
+				accordion.selectNodeById(p.IdClass);
+			}, {single: true});
+
+			accordion.expandSilently();
+		} else {
+			accordion.deselect();
+			accordion.selectNodeById(p.IdClass);
+		}
+	};
+
 })();

@@ -201,7 +201,7 @@
 	}
 
 	function onDetailDoubleClick(grid, model, html, index, e, options) {
-		this.superController.openCard({
+		_CMMainViewportController.openCard({
 			Id: model.get("Id"),
 			IdClass: model.get("IdClass"),
 			activateFirstTab: true

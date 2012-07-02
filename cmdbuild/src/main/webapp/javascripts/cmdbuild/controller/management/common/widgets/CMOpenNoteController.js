@@ -31,16 +31,48 @@
 			}
 
 			return !isNew;
+		},
+
+		// override to retrieve the activityInstance
+		// from the WorkflowState
+		_getSaveParams: function() {
+			var ai = _CMWFState.getActivityInstance();
+			var processClass = _CMWFState.getProcessClassRef();
+
+			if (ai && processClass) { // FIXME the process class id must be taken from ai
+				return {
+					IdClass: processClass.getId(),
+					Id: ai.getId()
+				};
+			} else {
+				return {};
+			}
 		}
 	});
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMOpenNoteController", {
-		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
+	Ext.define("CMDBuild.controller.management.common.widgets.CMWidgetControllerInterface", {
+		beforeActiveView: function() {
+			_debug("Called beforeActiveView for class " + Ext.getClassName(this));
+		}
+	});
 
-		constructor: function(view, ownerController, widget, card) {
-			this.callParent(arguments);
+	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenNoteController", {
+//		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
 
+		mixins: {
+			observable: "Ext.util.Observable",
+			widgetController: "CMDBuild.controller.management.common.widgets.CMWidgetControllerInterface"
+		},
+
+		statics: {
+			WIDGET_NAME: ".OpenNote"
+		},
+
+		constructor: function(ui, supercontroller, widget, templateResolver, card) {
 			this.card = card;
+			this.view = ui;
+			this.ownerController = supercontroller;
+
 			try {
 				this.view.updateWritePrivileges(this.card.raw.priv_write && !this.readOnly);
 			} catch (e) {
@@ -53,7 +85,6 @@
 		},
 
 		destroy: function() {
-			this.callParent(arguments);
 			this.mun(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
@@ -68,8 +99,14 @@
 		}
 	});
 
-	function isANewActivity(a) {
-		return (typeof a.get == "function" && a.get("Id") == -1);
+	function isANewActivity() {
+		var ai = _CMWFState.getActivityInstance();
+
+		if (ai) {
+			return  ai.isNew();
+		} else {
+			return false;
+		}
 	}
 
 	function syncSavedNoteWithModel(activity, val) {

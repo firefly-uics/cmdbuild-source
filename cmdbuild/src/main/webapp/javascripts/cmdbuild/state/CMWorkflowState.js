@@ -15,6 +15,10 @@
 			return (this.data.id  == null || typeof this.data.id == "undefined");
 		},
 
+		getId: function() {
+			return this.data.id;
+		},
+
 		getVariables: function() {
 			return this.data.variables || [];
 		},
@@ -29,6 +33,10 @@
 
 		getInstructions: function() {
 			return this.data.instructions || "";
+		},
+
+		getWidgets: function() {
+			return this.data.widgets || [];
 		}
 	});
 

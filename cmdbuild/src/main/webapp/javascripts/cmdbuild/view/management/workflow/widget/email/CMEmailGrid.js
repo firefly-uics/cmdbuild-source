@@ -1,14 +1,26 @@
 (function() {
+
+	var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
+	var fields = reader.FIELDS;
+
 	Ext.define("CMDBuild.management.mail.Model", {
 		extend: 'Ext.data.Model',
-		fields: ['Id', 'EmailStatus_value', 'BeginDate', 'FromAddress', 'ToAddresses', 'CcAddresses', 'Subject', 'Content', 'Fake']
+		fields: [
+			fields.ID,
+			fields.STATUS,
+			fields.BEGIN_DATE,
+			fields.FROM_ADDRESS,
+			fields.TO_ADDRESS,
+			fields.CC_ADDRESS, 
+			fields.SUBJECT,
+			fields.CONTENT,
+			'Fake' // for the icons
+		]
 	});
 
 Ext.define("CMDBuild.Management.EmailGrid", {
 
 	extend: "Ext.grid.GridPanel",
-	extAttrDef: undefined,
-	extAttr: undefined,
 	processId: undefined,
 
 	CMEVENTS: {
@@ -36,8 +48,8 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 						ProcessId: this.processId
 					}
 				},
-				sorters: {property: 'EmailStatus_value', direction: 'ASC'},
-				groupField: "EmailStatus_value",
+				sorters: {property: fields.STATUS, direction: 'ASC'},
+				groupField: fields.STATUS,
 				autoLoad: false
 			});
 
@@ -80,11 +92,11 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 			tbar: tbar,
 			store: store,
 			columns: [
-				{header: '&nbsp', sortable: true, dataIndex: 'EmailStatus_value', hidden: true},
-				{header: tr.datehdr, sortable: true, dataIndex: 'BeginDate', flex: 1},
+				{header: '&nbsp', sortable: true, dataIndex: fields.STATUS, hidden: true},
+				{header: tr.datehdr, sortable: true, dataIndex: fields.BEGIN_DATE, flex: 1},
 				{header: tr.addresshdr, sortable: false, renderer: renderAddress, dataIndex: 'Fake', flex: 1},
-				{header: tr.subjecthdr, sortable: false, dataIndex: 'Subject', flex: 1},
-				{header: '&nbsp', sortable: false, renderer: renderEmailContent, dataIndex: 'Content', menuDisabled: true, hideable: false, flex: 2},
+				{header: tr.subjecthdr, sortable: false, dataIndex: fields.SUBJECT, flex: 1},
+				{header: '&nbsp', sortable: false, renderer: renderEmailContent, dataIndex: fields.CONTENT, menuDisabled: true, hideable: false, flex: 2},
 				{header: '&nbsp', width: 90, fixed: true, sortable: false, renderer: renderEmailActions, align: 'center', tdCls: 'grid-button', dataIndex: 'Fake', menuDisabled: true, hideable: false}
 			],
 			features: [{
@@ -125,7 +137,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	},
 
 	createRecord: function(recordValues) {
-		recordValues["EmailStatus_value"] = recordValues["EmailStatus_value"] || "Draft";
+		recordValues[fields.STATUS] = recordValues[fields.STATUS] || "Draft";
 		return new CMDBuild.management.mail.Model(recordValues);
 	},
 
@@ -181,25 +193,25 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 });
 
 	function recordIsEditable(record) {
-		var status = record.get('EmailStatus_value');
+		var status = record.get(fields.STATUS);
 		return (status == 'Draft');
 	}
 
 	function recordIsReceived(record) {
-		var status = record.get('EmailStatus_value');
+		var status = record.get(fields.STATUS);
 		return (status == 'Received') || (status == 'New');
 	}
 
 	function renderAddress(value, metadata, record) {
 		if (recordIsReceived(record)) {
-			return record.data['FromAddress'];
+			return record.data[fields.FROM_ADDRESS];
 		} else {
-			return record.data['ToAddresses'];
+			return record.data[fields.TO_ADDRESS];
 		}
 	}
 
 	function renderEmailContent(value, metadata, record) {
-		var htmlContent = record.data['Content'];
+		var htmlContent = record.data[fields.CONTENT];
 		if (htmlContent) {
 			return htmlContent.replace(/\<[Bb][Rr][\/]?\>/g," ").replace(/\<[^\>]*\>/g,"");
 		} else {

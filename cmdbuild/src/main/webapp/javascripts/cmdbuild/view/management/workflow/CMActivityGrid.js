@@ -73,22 +73,6 @@
 
 		// DEPRECATED
 
-		// override
-		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) { _deprecated();
-			this.setStatus(resText.FlowStatus);
-			this.callParent(arguments);
-		},
-
-		// override
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) { _deprecated();
-			var flowStatusOfSearchedCard = resText.FlowStatus;
-			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
-				this.fireEvent("processTerminated");
-			} else {
-				this.callParent(arguments);
-			}
-		},
-
 		onEntrySelected: function(entry) { _deprecated();
 			var id = entry.get("id");
 
@@ -112,20 +96,17 @@
 	});
 
 	function buildProcessStateStore() {
-		var tr = CMDBuild.Translation.management.modworkflow.statuses;
-
-		var wfStatuses = [
-			[STATE_VALUE_OPEN, tr[STATE_VALUE_OPEN]],
-			[STATE_VALUE_SUSPENDED, tr[STATE_VALUE_SUSPENDED]],
-			[STATE_VALUE_COMPLETED, tr[STATE_VALUE_COMPLETED]],
-			[STATE_VALUE_ALL, tr[STATE_VALUE_ALL]]
-		];
-
-		var store = Ext.create('Ext.data.ArrayStore', {
-			autoDestroy: true,
-			fields: [ "code", "description" ],
-			data: wfStatuses
-		});
+		var tr = CMDBuild.Translation.management.modworkflow.statuses,
+			store = Ext.create('Ext.data.ArrayStore', {
+				autoDestroy: true,
+				fields: [ "code", "description" ],
+				data: [
+					[STATE_VALUE_OPEN, tr[STATE_VALUE_OPEN]],
+					[STATE_VALUE_SUSPENDED, tr[STATE_VALUE_SUSPENDED]],
+					[STATE_VALUE_COMPLETED, tr[STATE_VALUE_COMPLETED]],
+					[STATE_VALUE_ALL, tr[STATE_VALUE_ALL]]
+				]
+			});
 
 		return store;
 	}

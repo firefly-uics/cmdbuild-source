@@ -93,14 +93,6 @@
 				this.ignoreTabActivationManagement = false;
 				return;
 			}
-
-			// var active = this.acutalPanel.getActiveTab().id;
-			// if (active == this.widgetsTab.id
-				// || active == this.openNotePanel.id
-				// || active == this.openAttachmentPanel.id) {
-// 
-				// this.showActivityPanel();
-			// }
 		},
 
 		activateFirstTab: function() {
@@ -136,9 +128,11 @@
 		},
 
 		showWidget: function (w) {
-			if (w.extattrtype == "openNote") {
+			var type = w.widgetConf.type;
+
+			if (type == ".OpenNote") {
 				this.openNotePanel.cmActivate();
-			} else if (w.extattrtype == "openAttachment"){
+			} else if (type == ".OpenAttachment"){
 				this.openAttachmentPanel.cmActivate();
 			}
 		}

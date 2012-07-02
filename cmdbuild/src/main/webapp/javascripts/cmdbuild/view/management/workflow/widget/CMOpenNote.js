@@ -9,11 +9,7 @@
 
 		configure: function(c) {
 			this.widgetConf = c.widget;
-			this.activity = c.activity.raw || c.activity.data;
-			this.clientForm = c.clientForm;
-			this.readOnly = c.widget.ReadOnly;
-
-			Ext.apply(this, this.widgetConf);
+			this.activity = c.activityInstance.raw || c.activityInstance.data;
 
 			var note = this.activity.Notes;
 			this.actualForm.setValue(note || "");
@@ -24,12 +20,7 @@
 			this.enable();
 			this.backToActivityButton.show();
 			this.ownerCt.setActiveTab(this);
-
-			if (this.readOnly) {
-				this.disableModify();
-			} else {
-				this.enableModify();
-			}
+			this.enableModify();
 		},
 
 		buildButtons: function() {

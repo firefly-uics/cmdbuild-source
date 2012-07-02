@@ -44,7 +44,7 @@
 
 			if (danglingCard) {
 				afterStoreUpdated = function() {
-					me.openCard(danglingCard, retryWithoutFilter = true)
+					me.openCard(danglingCard, retryWithoutFilter = true);
 				}
 			} else {
 				afterStoreUpdated = function cbUpdateStoreForClassId() {

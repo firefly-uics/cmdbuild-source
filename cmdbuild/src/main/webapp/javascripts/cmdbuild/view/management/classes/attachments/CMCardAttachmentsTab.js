@@ -1,6 +1,5 @@
 (function() {
 
-var ACTIVITY_CLOSE_COMPLETED = 'closed.completed';
 var tr = CMDBuild.Translation.management.modcard;
 
 Ext.define("CMAttachmentModel", {

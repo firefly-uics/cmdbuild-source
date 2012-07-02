@@ -6,92 +6,67 @@
 	 * the template to calculate the selection and if needed add dependencies to the fields
 	 */
 
-	var FILTER = "xa:Filter",
-		CLASS_ID = "xa:ClassId",
-		DEFAULT_SELECTION = "xa:DefaultSelection",
+	var FILTER = "filter",
+		DEFAULT_SELECTION = "defaultSelection",
 		TABLE_VIEW_NAME = "table",
-		MAP_VIEW_NAME = "map",
 		STARTING_VIEW = TABLE_VIEW_NAME,
-		TRUE = "1";
+		widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
 
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMLinkCardsController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
-		cmName: "Link cards",
 
 		mixins: {
 			observable: "Ext.util.Observable"
 		},
 
-		constructor: function() {
+		statics: {
+			WIDGET_NAME: ".LinkCards"
+		},
+
+		constructor: function(ui, supercontroller, widget, clientForm, card) {
 			this.callParent(arguments);
+			ensureEntryType(this);
 
 			this.currentView = STARTING_VIEW;
-			this.templateResolverIsBusy = false;
+			this.templateResolverIsBusy = false; // is busy when load the default selection
 			this.alertIfChangeDefaultSelection = false;
+			this.singleSelect = widgetReader.singleSelect(this.widgetConf);
+			this.readOnly = widgetReader.readOnly(this.widgetConf);
 
-			this.singleSelect = this.widgetConf.SingleSelect;
-			this.noSelect = this.widgetConf.NoSelect;
-
-			this.model = new CMDBuild.Management.LinkCardsModel({
-				singleSelect: this.singleSelect
-			});
 
 			this.callBacks = {
 				'action-card-edit': this.onEditCardkClick,
 				"action-card-show": this.onShowCardkClick
 			};
 
+			this.model = new CMDBuild.Management.LinkCardsModel({
+				singleSelect: this.singleSelect
+			});
 			this.view.setModel(this.model);
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.view.clientForm,
-				xaVars: this.view.widgetConf,
-				serverVars: this.view.activity
+				clientForm: clientForm,
+				xaVars: widget,
+				serverVars: card
 			});
 
 			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);
 			this.mon(this.view.grid, 'itemdblclick', onItemDoubleclick, this);
-
 			this.mon(this.view, "select", onSelect, this);
 			this.mon(this.view, "deselect", onDeselect, this);
 
 			if (this.view.hasMap()) {
-				var me = this;
-				listenToggleMapEvents(me);
-				buildMapController(me);
+				listenToggleMapEvents(this);
+				buildMapController(this);
 			}
 		},
 
 		// override
 		beforeActiveView: function() {
-			new _CMUtils.PollingFunction({
-				success: function() {
-					this.alertIfChangeDefaultSelection = true;
+			var classId = this.targetEntryType.getId(),
+				cqlQuery = widgetReader.filter(this.widgetConf);
 
-					var tr = this.templateResolver,
-						classId = tr.getVariable(CLASS_ID),
-						cqlQuery = tr.getVariable(FILTER);
-
-					// CQL filter and regular filter cannot be merged now.
-					// The button should be enabled only if no other filter is present.
-					if (cqlQuery) {
-						this.view.grid.openFilterButton.disable();
-						resolveFilterTemplate(this, cqlQuery, classId);
-					} else {
-						this.view.updateGrid(classId);
-						this.view.grid.openFilterButton.enable();
-					}
-				},
-				failure: function failure() {
-					CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
-				},
-				checkFn: function() {
-					// I want exit if I'm not busy
-					return !this.isBusy();
-				},
-				cbScope: this,
-				checkFnScope: this
-			}).run();
+			loadTheGridAsSoonAsPossible(this, cqlQuery, classId);
 		},
 
 		// override
@@ -108,7 +83,7 @@
 		// override
 		getData: function() {
 			var out = null;
-			if (!this.noSelect && this.outputName) {
+			if (!this.readOnly && this.outputName) {
 				out = {};
 				out[this.outputName] = this.model.getSelections();
 			}
@@ -117,7 +92,8 @@
 
 		// override
 		isValid: function() {
-			if (!this.noSelect && this.widgetConf.Required == TRUE) {
+			if (!this.readOnly &&
+					widgetReader.required(this.widgetConf)) {
 				return this.model.hasSelection();
 			} else {
 				return true;
@@ -146,8 +122,48 @@
 				w = getCardWindow(model, editable);
 
 			w.show();
+		},
+
+		getLabel: function() {
+			return widgetReader.label(this.widgetConf);
 		}
 	});
+
+	function ensureEntryType(me) {
+		me.targetEntryType = _CMCache.getEntryTypeByName(widgetReader.className(me.widgetConf));
+
+		if (me.targetEntryType == null) {
+			throw {error: "There is no entry type for this widget", widget: me.widgetConf};
+		}
+	}
+
+	// when the linkCard is not busy load the grid
+	function loadTheGridAsSoonAsPossible(me, cqlQuery, classId) {
+		new _CMUtils.PollingFunction({
+			success: function() {
+				me.alertIfChangeDefaultSelection = true;
+
+				// CQL filter and regular filter cannot be merged now.
+				// The filter button should be enabled only if no other filter is present.
+				if (cqlQuery) {
+					me.view.grid.openFilterButton.disable();
+					resolveFilterTemplate(me, cqlQuery, classId);
+				} else {
+					me.view.updateGrid(classId);
+					me.view.grid.openFilterButton.enable();
+				}
+			},
+			failure: function failure() {
+				CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
+			},
+			checkFn: function() {
+				// I want exit if I'm not busy
+				return !me.isBusy();
+			},
+			cbScope: me,
+			checkFnScope: me
+		}).run();
+	}
 
 	function listenToggleMapEvents(me) {
 		me.mon(me.view, "CM_toggle_map", function() {
@@ -177,21 +193,6 @@
 		});
 	}
 
-	function resolveFilterTemplate(me, cqlQuery, classId) {
-		var view = me.view;
-		me.templateResolver.resolveTemplates({
-			attributes: ["Filter"],
-			callback: function(out, ctx) {
-				var cardReqParams = me.view.getTemplateResolver().buildCQLQueryParameters(cqlQuery, ctx);
-				me.view.updateGrid(classId, cardReqParams);
-
-				me.templateResolver.bindLocalDepsChange(function() {
-					me.view.reset();
-				});
-			}
-		});
-	}
-
 	function getCardWindow(model, editable) {
 		var w = new CMDBuild.view.management.common.CMCardWindow({
 			cmEditMode: editable,
@@ -213,7 +214,7 @@
 		if (selection != null) {
 			var params = {
 				"retryWithoutFilter": true,
-				IdClass:this.widgetConf.ClassId,
+				IdClass: this.widgetConf.ClassId, // FIXME there is no classid
 				Id: selection
 			}, 
 			me = this, 
@@ -225,8 +226,7 @@
 				params: params,
 				success: function onGetPositionSuccess(response, options, resText) {
 					var position = resText.position,
-						found = position >= 0,
-						foundButNotInFilter = resText.notFoundInFilter;
+						found = position >= 0;
 	
 					if (found) {
 						var	pageNumber = grid.getPageNumber(position);
@@ -257,23 +257,57 @@
 	function alertIfNeeded(me) {
 		if (me.alertIfChangeDefaultSelection) {
 			CMDBuild.Msg.warn(null, Ext.String.format(CMDBuild.Translation.warnings.link_cards_changed_values
-					, me.view.widgetConf.ButtonLabel || me.view.id)
+					, widgetReader.label(me.widgetConf) || me.view.id)
 					, popup=false);
 
 			me.alertIfChangeDefaultSelection = false;
 		}
 	}
 
-	function resolveDefaultSelectionTemplate(me) {
+	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
+		var className = event.target.className; 
 
+		if (this.callBacks[className]) {
+			this.callBacks[className].call(this, model);
+		}
+	}
+
+	function onItemDoubleclick(grid, model, html, index, e, options) {
+		if (! widgetReader.allowCardEditing(this.widgetConf)) {
+			return;
+		}
+
+		var priv = _CMUtils.getClassPrivileges(model.get("IdClass"));
+		if (priv && priv.write) {
+			this.onEditCardkClick(model);
+		} else {
+			this.onShowCardkClick(model);
+		}
+	}
+
+	function resolveFilterTemplate(me, cqlQuery, classId) {
+		me.templateResolver.resolveTemplates({
+			attributes: [FILTER],
+			callback: function(out, ctx) {
+				var cardReqParams = me.templateResolver.buildCQLQueryParameters(cqlQuery, ctx);
+				me.view.updateGrid(classId, cardReqParams);
+
+				me.templateResolver.bindLocalDepsChange(function() {
+					me.view.reset();
+				});
+			}
+		});
+	}
+
+	function resolveDefaultSelectionTemplate(me) {
 		me.templateResolverIsBusy = true;
 		me.view.reset();
 		alertIfNeeded(me);
 
 		me.templateResolver.resolveTemplates({
-			attributes: ['DefaultSelection'],
+			attributes: [DEFAULT_SELECTION],
 			callback: function onDefaultSelectionTemplateResolved(out, ctx) {
-				var defaultSelection = me.templateResolver.buildCQLQueryParameters(out.DefaultSelection, ctx);
+				var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[DEFAULT_SELECTION], ctx);
 				// do the request only if there are a default selection
 				if (defaultSelection) {
 					CMDBuild.ServiceProxy.getCardList({
@@ -291,7 +325,7 @@
 							me.templateResolverIsBusy = false;
 						}
 					});
-	
+
 					me.templateResolver.bindLocalDepsChange(function() {
 						resolveDefaultSelectionTemplate(me);
 					});
@@ -301,26 +335,5 @@
 				}
 			}
 		});
-	}
-
-	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var className = event.target.className; 
-
-		if (this.callBacks[className]) {
-			this.callBacks[className].call(this, model);
-		}
-	}
-
-	function onItemDoubleclick(grid, model, html, index, e, options) {
-		if (!this.widgetConf.AllowCardEditing) {
-			return;
-		}
-
-		var priv = _CMUtils.getClassPrivileges(model.get("IdClass"));
-		if (priv && priv.write) {
-			this.onEditCardkClick(model);
-		} else {
-			this.onShowCardkClick(model);
-		}
 	}
 })();

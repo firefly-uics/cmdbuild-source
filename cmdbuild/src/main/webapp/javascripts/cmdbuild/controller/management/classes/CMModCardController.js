@@ -152,7 +152,7 @@
 
 				if (selection 
 					&& selection[0] && selection[0].get("Id") != this.card.get("Id")) {
-						this.view.getGrid().openCard({
+						this.gridController.openCard({
 							IdClass: this.entryType.get("id"),
 							Id: this.card.get("Id")
 						}, retryWithoutFilter = true);

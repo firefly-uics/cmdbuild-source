@@ -54,7 +54,19 @@
 		getDomainById: function(id) {
 			return domains[id];
 		},
-		
+
+		getDomainByName: function(name) {
+			for (var domain in domains) {
+				domain = domains[domain];
+				if (domain.get("name") == name) {
+					return domain;
+				}
+			}
+
+			_debug("There are no domains with name " + name);
+			return null;
+		},
+
 		getDomainAttributesStore: function() {
 			if (!attributeStore) {
 			

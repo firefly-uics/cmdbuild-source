@@ -22,8 +22,15 @@
 			this.isAdvance = false;
 
 			this.mon(this.view, this.view.CMEVENTS.advanceCardButtonClick, this.onAdvanceCardButtonClick, this);
+			this.mon(this.view, this.view.CMEVENTS.editModeDidAcitvate, onEditMode, this);
+			this.mon(this.view, this.view.CMEVENTS.displayModeDidActivate, onDisplayMode, this);
 
 			_CMWFState.addDelegate(this);
+		},
+
+		// wfStateDelegate
+		onProcessInstanceChange: function(processInstance) {
+			this.clearView();
 		},
 
 		// wfStateDelegate
@@ -41,11 +48,19 @@
 //				
 //	//			updateWidget = isStateOpen(data) || card._cmNew;
 //	
+			// at first update the widget because they could depends
+			// to the form. The Template resolver starts when the form goes
+			// in edit mode, so the widgets must be already ready to done them works
+
+			// TODO update passing null if the process is closed
+			me.widgetControllerManager.buildControllers(activityInstance);
+
 			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
 
 			if (processInstance) {
 				// Load always the fields
 				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
+					// TODO: manage the advance
 					if (activityInstance.isNew()) {
 						me.view.editMode();
 					}
@@ -54,17 +69,6 @@
 //					}
 				});
 			}
-
-//			// TODO: manage the widgets
-//	//		me.widgetControllerManager.buildControllers(updateWidget ? card : null);
-//	
-//			if (!this.entryType || !this.card) { return; }
-//	
-
-//	
-//			// reload always the fields because the activity of the
-//			// same process may be in different step
-//
 		},
 
 		// override // deprecated
@@ -109,11 +113,12 @@
 		// override
 		onAbortCardClick: function() {
 			this.isAdvance = false;
-			if (this.card && this.card._cmNew) {
-				this.clearView();
-				this.onCardSelected(null);
+			var activityInstance = _CMWFState.getActivityInstance();
+
+			if (activityInstance && activityInstance.isNew()) {
+				this.onProcessInstanceChange();
 			} else {
-				this.onCardSelected(this.card);
+				this.onActivityInstanceChange(activityInstance);
 			}
 		},
 
@@ -242,18 +247,13 @@
 	}
 
 	function onEditMode() {
-		_debug("onEditMode");
 		this.editMode = true;
-		if (this.widgetsController) {
-			for (var wc in this.widgetsController) {
-				wc = this.widgetsController[wc];
-				wc.onEditMode();
-			}
+		if (this.widgetControllerManager) {
+			this.widgetControllerManager.onCardGoesInEdit();
 		}
 	}
 
 	function onDisplayMode() {
-		_debug("onDisplayMode");
 		this.editMode = false;
 	}
 
@@ -277,12 +277,13 @@
 
 			if (valid) {
 
+				requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
 				_debug("save the process with params", requestParams);
 
 				// FIXME: do the request below
 
 //				CMDBuild.LoadMask.get().show();
-//				requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
+//				
 //				CMDBuild.ServiceProxy.workflow.saveActivity({
 //					params: requestParams,
 //					scope : this,

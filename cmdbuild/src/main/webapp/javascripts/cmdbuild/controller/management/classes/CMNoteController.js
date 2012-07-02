@@ -56,10 +56,7 @@
 		onSaveNoteClick: function() {
 			var me = this,
 				form = me.view.getForm(),
-				params = {
-					IdClass: me.card.get("IdClass"),
-					Id: me.card.get("Id")
-				};
+				params = me._getSaveParams();
 
 			if (form.isValid() && me.beforeSave(me.card)) {
 				CMDBuild.LoadMask.get().show();
@@ -90,6 +87,17 @@
 		// override in subclass, return false to avoid the save
 		beforeSave: function(card) {
 			return true;
+		},
+
+		_getSaveParams: function() {
+			if (this.card) {
+				return {
+					IdClass: me.card.get("IdClass"),
+					Id: me.card.get("Id")
+				};
+			} else {
+				return {};
+			}
 		}
 	});
 
@@ -109,8 +117,10 @@
 
 		onCardSelected: function(card) {
 			this.callParent(arguments);
+			var title = "";
+
 			if (this.card) {
-			var title = Ext.String.format("{0} - {1}"
+				thitle = Ext.String.format("{0} - {1}"
 					, CMDBuild.Translation.management.modcard.tabs.notes 
 					, this.card.get("Description"));
 			}
