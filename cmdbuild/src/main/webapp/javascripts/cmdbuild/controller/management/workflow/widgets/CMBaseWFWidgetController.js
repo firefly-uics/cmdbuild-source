@@ -7,14 +7,14 @@
 		cmName: "base",
 		constructor: function(view, ownerController, widgetDef) {
 			if (typeof view != "object") {
-				throw "The view of a WFWidgetController must be an object"
+				throw "The view of a WFWidgetController must be an object";
 			}
 
 			this.view = view;
 			this.ownerController = ownerController;
 			this.widgetConf = this.view.widgetConf || widgetDef;
 			this.outputName = this.widgetConf.outputName;
-			this.wiewIdenrifier = this.widgetConf.identifier;
+			this.wiewIdenrifier = this.widgetConf.id;
 		},
 
 		toString: function() {

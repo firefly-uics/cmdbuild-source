@@ -3,10 +3,13 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
 
 	loaded: false,
 
+	statics: {
+		WIDGET_NAME: ".ManageEmail"
+	},
+
 	constructor: function(c) {
 		this.widgetConf = c.widget;
 		this.activity = c.activity.raw || c.activity.data;
-		this.clientForm = c.clientForm;
 
 		this.callParent([this.widgetConf]); // to apply the conf to the panel
 	},
@@ -14,8 +17,6 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
 	initComponent : function() {
 		this.emailGrid = new CMDBuild.Management.EmailGrid( {
 			autoScroll : true,
-			extAttrDef : this.widgetConf,
-			extAttr : this,
 			processId : this.activity.Id,
 			readWrite : !this.widgetConf.ReadOnly,
 			frame: false,

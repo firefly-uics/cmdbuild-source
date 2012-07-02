@@ -1,5 +1,8 @@
 (function() {
 
+var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
+var fields = reader.FIELDS;
+
 Ext.define("CMDBuild.Management.EmailWindow", {
 	extend: "CMDBuild.PopupWindow",
 
@@ -13,19 +16,19 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 			body = new Ext.panel.Panel({
 				frame: true,
 				border: true,
-				html: this.record.get("Content"),
+				html: this.record.get(fields.CONTENT),
 				autoScroll: true,
 				flex: 1
 			});
 		} else {
 			body = new Ext.form.field.HtmlEditor({
-				name : 'Content',
+				name : fields.CONTENT,
 				fieldLabel : 'Content',
 				hideLabel: true,
 				enableLinks: false,
 				enableSourceEdit: false,
 				enableFont: false,
-				value: this.record.get("Content"),
+				value: this.record.get(fields.CONTENT),
 				flex: 1
 			});
 		}
@@ -44,28 +47,29 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 			},
 			items : [{
 					xtype: this.readOnly ? 'displayfield' : 'hidden',
-					name : 'FromAddress',
+					name : fields.FROM_ADDRESS,
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
-					value: this.record.get("FromAddress")
+					value: this.record.get(fields.FROM_ADDRESS)
 				},{
 					xtype: this.readOnly ? 'displayfield' : 'textfield',
 					vtype: this.readOnly ? undefined : 'emailaddrspec',
-					name : 'ToAddresses',
+					name : fields.TO_ADDRESS,
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
-					value: this.record.get("ToAddresses")
+					value: this.record.get(fields.TO_ADDRESS)
 				},{
 					xtype: this.readOnly ? 'displayfield' : 'textfield',
 					vtype: this.readOnly ? undefined : 'emailaddrspeclist',
-					name : 'CcAddresses',
+					name : fields.CC_ADDRESS,
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
-					value: this.record.get("CcAddresses")
+					value: this.record.get(fields.CC_ADDRESS)
 				},{
 					xtype: this.readOnly ? 'displayfield' : 'textfield',
-					name : 'Subject',
+					name : fields.SUBJECT,
 					fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
-					value: this.record.get("Subject")
+					value: this.record.get(fields.SUBJECT)
 				},body]
 		});
+
 		this.form = formPanel.getForm();
 
 		var buttons,
@@ -112,7 +116,7 @@ Ext.define("CMDBuild.Management.EmailWindow", {
 		for (var key in formValues) {
 			this.record.set(key, formValues[key]);
 		}
-		this.record.set("Description", formValues["ToAddresses"]);
+		this.record.set("Description", formValues[fields.TO_ADDRESS]);
 		this.record.commit();
 	}
 });

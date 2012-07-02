@@ -18,7 +18,7 @@
 
 		configure: function(c) {
 			this.widgetConf = c.widget;
-			this.activity = c.activity.raw || c.activity.data;
+			this.activity = c.activityInstance.raw || c.activityInstance.data;
 			this.clientForm = c.clientForm;
 			this.readOnly = c.widget.ReadOnly;
 

@@ -172,58 +172,6 @@
 			}
 		},
 
-		openCard: function(p, retryWithoutFilter) { _deprecated();
-			var me = this;
-
-			var params = {
-				retryWithoutFilter: retryWithoutFilter
-			};
-			Ext.apply(params, p, this.getStoreExtraParams());
-
-			CMDBuild.ServiceProxy.card.getPosition({
-				params: params,
-				failure: function onGetPositionFailure(response, options, decoded) {
-					// reconfigure the store and blah blah blah
-				},
-				success: function onGetPositionSuccess(response, options, resText) {
-					var position = resText.position,
-						found = position >= 0,
-						foundButNotInFilter = resText.notFoundInFilter;
-
-					if (found) {
-						if (foundButNotInFilter) {
-							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
-						} else {
-							updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
-						}
-					} else {
-						if (retryWithoutFilter) {
-							CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
-									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
-						} else {
-							me._onGetPositionFailureWithoutForcingTheFilter(resText);
-						}
-
-						me.store.loadPage(1);
-					}
-				}
-			});
-		},
-
-		// private and overridden in CMActivityGrid
-		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
-			var me = this;
-			me.clearFilter(function() {
-				me.gridSearchField.reset();
-				updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
-			}, skipReload=true);
-		},
-
-		// private and overridden in CMActivityGrid
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
-			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
-		},
-
 		loadPage: function(pageNumber, o) {
 			o = o || {};
 			scope = o.scope || this;

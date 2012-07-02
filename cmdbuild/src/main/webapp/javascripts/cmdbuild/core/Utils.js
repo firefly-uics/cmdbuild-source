@@ -44,23 +44,32 @@ CMDBuild.Utils = (function() {
 
 		// FIXME: Should be getEntryTypePrivileges
 		getClassPrivileges: function(classId) {
-			var entryType = _CMCache.getEntryTypeById(classId)
+			var entryType = _CMCache.getEntryTypeById(classId);
+			return _CMUtils.getEntryTypePrivileges(entryType);
+		},
+
+		getClassPrivilegesByName: function(className) {
+			var entryType = _CMCache.getEntryTypeByName(className || "");
+			return _CMUtils.getEntryTypePrivileges(entryType);
+			
+		},
+
+		getEntryTypePrivileges: function(entryType) {
+			var privileges = {
+				write: false,
+				create: false
+			};
 
 			if (entryType) {
 				privileges = {
 					write: entryType.get("priv_write"),
 					create: entryType.get("priv_create")
 				};
-			} else {
-				privileges = {
-					write: false,
-					create: false
-				};
 			}
 
 			return privileges;
 		},
-		
+
 		isEmpty: function(o) {
 			if (o) {
 				for (var i in o) {

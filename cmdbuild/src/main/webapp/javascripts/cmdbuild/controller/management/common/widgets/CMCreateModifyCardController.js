@@ -1,49 +1,10 @@
 (function() {
-
-	Ext.define("CMDBuild.controller.management.classes.widgets.CMCreateModifyCardWidgetReader", {
-		configure: function(controller) {
-			controller.templateResolver.resolveTemplates({
-				attributes: ["idcardcqlselector"],
-				callback: function(o) {
-					controller.idClass = controller.widgetDef.targetClass;
-					controller.cardId = normalizeIdCard(o["idcardcqlselector"]);
-				}
-			});
-		},
-
-		getCQLOfTheCardId: function(widgetDef) {
-			return widgetDef.idcardcqlselector
-		},
-
-		isEditable: function(controller) {
-			return (!controller.widgetDef.readonly) 
-				&& controller.clientForm.owner._isInEditMode; // Ugly, but in the world there are also ugly stuff
-		}
-	});
-
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMCreateModifyCardWidgetReader", {
-		configure: function(controller) {
-			controller.templateResolver.resolveTemplates({
-				attributes: ["outputName","idClass","ObjId"],
-				callback: function(o) {
-					controller.idClass = o["idClass"];
-					controller.outputName = o["outputName"],
-					controller.cardId = normalizeIdCard(o["ObjId"]);
-				}
-			});
-		},
-
-		getCQLOfTheCardId: function(widgetDef) {
-			return widgetDef.ObjId;
-		},
-
-		isEditable: function(controller) {
-			return !controller.widgetDef.ReadOnly;
-		}
-	});
-
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCreateModifyCardController", {
 		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
+
+		mixins : {
+			observable : "Ext.util.Observable"
+		},
 
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCreateModifyCard.WIDGET_NAME
@@ -51,20 +12,23 @@
 
 		cmName: "Create/Modify card",
 
-		constructor: function(ui, supercontroller, widgetDef, clientForm, card, reader, widgetControllerManager) {
+		constructor: function(ui, supercontroller, widget, clientForm, card) {
+			var widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(ui.getWidgetManager());
+
 			this.callParent([ui, supercontroller, widgetControllerManager]);
 
-			this.widgetDef = widgetDef;
+			this.mixins.observable.constructor.call(this, arguments);
+
+			this.widget = widget;
 			this.clientForm = clientForm;
 			this.templateResolverIsBusy = false;
 			this.idClassToAdd = undefined;
 			this.savedCardId = undefined;
-			this.wiewIdenrifier = widgetDef.identifier;
-			this.reader = reader;
+			this.wiewIdenrifier = widget.id;
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
-				xaVars: widgetDef,
+				xaVars: widget,
 				serverVars: card.raw || card.data
 			});
 
@@ -94,14 +58,32 @@
 			});
 		},
 
+		getCQLOfTheCardId: function() {
+			return this.widget.idcardcqlselector;
+		},
+
+		isWidgetEditable: function(controller) {
+			return (!this.widget.readonly) 
+				&& this.clientForm.owner._isInEditMode; // Ugly, but in the world there are also ugly stuff
+		},
+
 		// **** BaseWFWidget methods
 
 		beforeActiveView: function() {
+			var me = this;
 			this.card = null;
-			this.reader.configure(this);
-			this.entryType = _CMCache.getEntryTypeById(this.idClass);
-			this.view.initWidget(this.idClass, this.cardId, this.reader.isEditable(this));
-			loadAndFillFields(this, this.idClass, this.cardId);
+			this.targetClassName = this.widget.targetClass;
+			this.entryType = _CMCache.getEntryTypeByName(this.targetClassName);
+
+			this.view.initWidget(this.entryType, this.isWidgetEditable());
+
+			this.templateResolver.resolveTemplates({
+				attributes: ["idcardcqlselector"],
+				callback: function(o) {
+					me.cardId = normalizeIdCard(o["idcardcqlselector"]);
+					loadAndFillFields(me);
+				}
+			});
 		},
 
 		isBusy: function() {
@@ -133,7 +115,7 @@
 		},
 
 		isEditable: function() {
-			return this.callParent(arguments) && this.reader.isEditable(this);
+			return this.callParent(arguments) && this.isWidgetEditable();
 		},
 
 		toString: function() {
@@ -141,8 +123,9 @@
 		}
 	});
 
-	function loadAndFillFields(me, classId, cardId) {
-		var isANewCard = cardId == -1;
+	function loadAndFillFields(me) {
+		var classId = me.entryType.getId();
+		var isANewCard = me.cardId == -1;
 
 		if (isANewCard) {
 				me.card = new CMDBuild.DummyModel({
@@ -152,7 +135,7 @@
 				me.loadCard();
 		} else {
 			me.loadCard(loadRemoteData = true, {
-				Id: cardId,
+				Id: me.cardId,
 				IdClass: classId
 			});
 		}
@@ -182,7 +165,7 @@
 		// es {cliengt:field_name}
 
 		var referenceRX = /^\{client:(\w+)\}$/;
-		var cql = me.reader.getCQLOfTheCardId(me.widgetDef);
+		var cql = me.getCQLOfTheCardId();
 		var match = referenceRX.exec(cql);
 		if (match != null) {
 			var referenceName = match[1];

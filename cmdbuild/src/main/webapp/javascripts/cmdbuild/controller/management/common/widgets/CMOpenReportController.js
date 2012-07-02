@@ -1,9 +1,9 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader",{
-		getType: function(w) {return "custom"},
-		getCode: function(w) {return w.reportCode},
-		getPreset: function(w) {return w.preset},
-		getForceFormat: function(w) {return w.forceFormat}
+		getType: function(w) {return "custom";},
+		getCode: function(w) {return w.reportCode;},
+		getPreset: function(w) {return w.preset;},
+		getForceFormat: function(w) {return w.forceFormat;}
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportController", {
@@ -15,9 +15,9 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMOpenReport.WIDGET_NAME
 		},
 
-		constructor: function(view, ownerController, widgetDef, clientForm, reader, card) {
+		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			if (typeof view != "object") {
-				throw "The view of a WFWidgetController must be an object"
+				throw "The view of a WFWidgetController must be an object";
 			}
 
 			this.WIDGET_NAME = this.self.WIDGET_NAME;
@@ -26,15 +26,11 @@
 			this.ownerController = ownerController;
 			this.widget = this.view.widgetConf || widgetDef;
 			this.clientForm = clientForm;
-			this.widgetReader = reader;
+			this.widgetReader = new CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader();
 			this.card = card;
 
 			this.presets = this.widgetReader.getPreset(this.widget);
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
-		},
-
-		setWidgetReader: function(widgetReader) {
-			this.widgetReader = widgetReader;
 		},
 
 		beforeActiveView: function() {

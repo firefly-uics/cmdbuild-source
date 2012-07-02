@@ -56,6 +56,10 @@
 	Ext.define("CMDBuild.controller.management.workflow.widgets.CMAttachmentController", {
 		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
 
+		statics: {
+			WIDGET_NAME: ".OpenAttachment"
+		},
+
 		constructor: function(view, ownerController, widget, card) {
 			this.callParent(arguments);
 
@@ -71,7 +75,7 @@
 
 		// override
 		getVariable: function(variableName) {
-			return undefined
+			return undefined;
 		},
 
 		activeView: function() {

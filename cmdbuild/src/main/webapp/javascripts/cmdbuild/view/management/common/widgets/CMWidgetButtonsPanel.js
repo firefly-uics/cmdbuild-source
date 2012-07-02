@@ -19,11 +19,14 @@
 		},
 
 		disable: function() {
-			if (this.widgetDefinition && this.widgetDefinition.alwaysenabled) {
-				return this.enable();
-			} else {
-				return this.callParent(arguments);
-			}
+			// FIXME: resume the condition
+//			if (this.widgetDefinition && this.widgetDefinition.alwaysenabled) {
+//				return this.enable();
+//			} else {
+//				return this.callParent(arguments);
+//			}
+
+			return this.enable();
 		}
 	});
 })();

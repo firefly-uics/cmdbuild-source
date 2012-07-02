@@ -124,15 +124,6 @@
 			this.cardTabPanel.reset(id);
 		},
 
-		openCard: function(p, retryWithoutFilter) { _deprecated();
-			var entry = _CMCache.getEntryTypeById(p.IdClass);
-			this.cardGrid.openCard(p, retryWithoutFilter);
-			this.cardTabPanel.onClassSelected(p.IdClass, activateFirst = false);
-			this.addCardButton.updateForEntry(entry);
-			this.mapAddCardButton.updateForEntry(entry);
-			this.updateTitleForEntry(entry);
-		},
-
 		onEntrySelected: function(entry) { _deprecated();
 			var id = entry.get("id");
 

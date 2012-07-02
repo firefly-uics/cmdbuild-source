@@ -183,7 +183,14 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 	@Override
 	public final String getPackageId(final String className) throws CMWorkflowException {
-		return cache.getPackageInfoByClass(className).getId();
+		PackageInfo pi = cache.getPackageInfoByClass(className);
+		if (pi != null) {
+			return pi.getId();
+		} else {
+			// is null when the process was created
+			// but the XPDL is not yet uploaded
+			return null;
+		}
 	}
 
 	@Override

@@ -38,11 +38,9 @@
 			})]
 		},
 
-		initWidget: function(idClass, cardId, isEditable) {
-			var et = _CMCache.getEntryTypeById(idClass);
-
-			if (et.data.superclass) {
-				this.addCardButton.updateForEntry(et);
+		initWidget: function(entryType, isEditable) {
+			if (entryType.isSuperClass()) {
+				this.addCardButton.updateForEntry(entryType);
 				this.addCardButton.setDisabled(!isEditable);
 			} else {
 				this.addCardButton.disable();

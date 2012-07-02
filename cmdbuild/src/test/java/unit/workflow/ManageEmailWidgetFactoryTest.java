@@ -1,0 +1,70 @@
+package unit.workflow;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.cmdbuild.model.widget.ManageEmail;
+import org.cmdbuild.model.widget.ManageEmail.Template;
+import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
+import org.junit.Test;
+
+public class ManageEmailWidgetFactoryTest {
+
+	@Test
+	public void singleTemplateDefinition() {
+		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory();
+		final ManageEmail w = (ManageEmail) factory.createWidget(
+			"ToAddresses='to@a.a'\n" +
+			"CCAddresses='cc@a.a'\n" +
+			"Subject='the subject'\n" +
+			"Content='the content'\n"
+		);
+
+		assertThat(w.getTemplates().size(), is(1));
+		Template t = w.getTemplates().get(0);
+		assertThat(t.getToAddresses(), is("to@a.a"));
+		assertThat(t.getCcAddresses(), is("cc@a.a"));
+		assertThat(t.getSubject(), is("the subject"));
+		assertThat(t.getContent(), is("the content"));
+	}
+
+	@Test
+	public void moreThanOneTemplateDefinitions() {
+		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory();
+		final ManageEmail w = (ManageEmail) factory.createWidget(
+			"ToAddresses='to@a.a'\n" +
+			"CCAddresses='cc@a.a'\n" +
+			"Subject='the subject'\n" +
+			"Content='the content'\n" +
+
+			"ToAddresses1='to@a.a 1'\n" +
+			"CCAddresses1='cc@a.a 1'\n" +
+			"Subject1='the subject 1'\n" +
+			"Content1='the content 1'\n" +
+
+			"Content2='the content 2'\n" +
+
+			"Condition3='condition'\n"
+		);
+
+		assertThat(w.getTemplates().size(), is(4));
+
+		Template t = w.getTemplates().get(0);
+		assertThat(t.getToAddresses(), is("to@a.a"));
+		assertThat(t.getCcAddresses(), is("cc@a.a"));
+		assertThat(t.getSubject(), is("the subject"));
+		assertThat(t.getContent(), is("the content"));
+
+		t = w.getTemplates().get(1);
+		assertThat(t.getToAddresses(), is("to@a.a 1"));
+		assertThat(t.getCcAddresses(), is("cc@a.a 1"));
+		assertThat(t.getSubject(), is("the subject 1"));
+		assertThat(t.getContent(), is("the content 1"));
+
+		t = w.getTemplates().get(2);
+		assertThat(t.getContent(), is("the content 2"));
+		
+		t = w.getTemplates().get(3);
+		assertThat(t.getCondition(), is("condition"));
+	}
+}

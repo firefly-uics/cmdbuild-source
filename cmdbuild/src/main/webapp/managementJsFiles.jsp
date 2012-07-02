@@ -43,13 +43,18 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
 
 		<!-- WIDGWTS -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMBaseWidgetManager.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetButtonsPanel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMFormWithWidgetButtons.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenReport.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMCalendar.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMPing.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMCreateModifyCard.js"></script>
+
+		<!-- TODO: move to commons -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/linkCards/CMLinkCards.js"></script>
+
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMBaseWidgetManager.js"></script>
+
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
@@ -110,7 +115,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMEmailGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/email/CMManageEmail.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/manageRelation/CMManageRelation.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/widget/linkCards/CMLinkCards.js"></script>
 
 <!-- CONTROLLER -->
 	<!-- ACCORDION -->
@@ -124,16 +128,23 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
 
+		<!-- they are not common but the widget need them -->
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMBaseWFWidgetController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMBaseCardPanelController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMAttachmentController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMRelationsController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMMasterDetailsController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMNoteController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsMapController.js"></script>
+		<!--  -->
+
 		<!-- WIDGETS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenNoteController.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenAttachmentController.js"></script>	
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenReportController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMCalendarController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMPingController.js"></script>
-
-		<!-- they are not common but the CreateModifyCardController need it-->
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMBaseWFWidgetController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMBaseCardPanelController.js"></script>
-		<!--  -->
-
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMCreateModifyCardController.js"></script>
 
 	<!-- DASHBOARD -->
@@ -155,11 +166,6 @@
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/widgets/CMClassesWidgetManagerController.js"></script>
 
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMAttachmentController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMRelationsController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMMasterDetailsController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMNoteController.js"></script>
-
 	<!-- REPORT-->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
 
@@ -171,11 +177,7 @@
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMWFWidgetManagerController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMWFOpenReportControllerWidgetReader.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMLinkCardsMapController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageEmailController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMManageRelationController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenAttachmentController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/widgets/CMOpenNoteController.js"></script>	
 
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>
