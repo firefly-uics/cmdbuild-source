@@ -20,6 +20,7 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
@@ -53,16 +54,19 @@ public class TemporaryObjectsBeforeSpringDI {
 	};
 
 	private static final CachingDriver driver;
-	private static final CMWorkflowService workflowService;
+	private static final DBDataView dbDataView;
+	private static final RemoteSharkService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
 	private static final WorkflowLogger workflowLogger;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new PostgresDriver(datasource);
+		dbDataView = new DBDataView(driver);
 
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
+		workflowService.setVariableConverter(new SharkTypesConverter(dbDataView));
 
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 	}
@@ -100,7 +104,7 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static CMDataView getUserContextView(UserContext userCtx) {
 		final CMAccessControlManager acm = new AccessControlManagerWrapper(userCtx.privileges());
-		return new UserDataView(new DBDataView(driver), acm);
+		return new UserDataView(dbDataView, acm);
 	}
 
 	public static WorkflowLogic getWorkflowLogic(UserContext userCtx) {

@@ -20,7 +20,7 @@ public class SimpleFunctionQueryCreatorTest {
 	private static class IdentityAttributeType implements CMAttributeType<Object> {
 
 		@Override
-		public Object convertNotNullValue(Object value) {
+		public Object convertValue(Object value) {
 			return value;
 		}
 

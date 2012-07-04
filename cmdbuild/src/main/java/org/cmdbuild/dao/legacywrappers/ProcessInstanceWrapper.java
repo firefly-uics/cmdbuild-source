@@ -228,7 +228,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	private String getActivityParticipantGroup(WSActivityInstInfo activityInfo) throws CMWorkflowException {
-		final CMActivity activity = getActivity(activityInfo.getActivityInstanceId());
+		final CMActivity activity = getActivity(activityInfo.getActivityDefinitionId());
 		// TODO Check if participant is a role in the xpdl or not!
 		return activity.getFirstRolePerformer().getName();
 	}

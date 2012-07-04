@@ -164,6 +164,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 			nativeValues.put(key, procInstDef.get(key));
 		}
 		// TODO Widgets: execute update and save output to nativeValues
+		// Values should be native to CMDBuild, not to Shark
 		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), nativeValues);
 		procInstDef.save();
 	}

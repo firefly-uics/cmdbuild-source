@@ -88,8 +88,8 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	@Override
-	public CMActivity getActivity(final CMProcessInstance processInstance, final String activityInstanceId) throws CMWorkflowException {
-		return store.getActivity(processInstance.getUniqueProcessDefinition(), activityInstanceId);
+	public CMActivity getActivity(final CMProcessInstance processInstance, final String activityDefinitionId) throws CMWorkflowException {
+		return store.getActivity(processInstance.getUniqueProcessDefinition(), activityDefinitionId);
 	}
 
 	public final String getPackageId(final CMProcessClass process) throws CMWorkflowException {

@@ -8,10 +8,14 @@ import java.util.Set;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.AttributeValue;
+import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.history.TableHistory;
 import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.services.auth.UserContext;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
@@ -63,38 +67,64 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 
 	@Override
 	public final Object get(String key) {
-		return card.getValue(key);
+		final AttributeValue av = card.getAttributeValue(key);
+		if (av.isNull()) {
+			return null;
+		}
+		switch (av.getSchema().getType()) {
+		case FOREIGNKEY:
+			return toCardReference(av.getCard());
+		case REFERENCE:
+			return toCardReference(av.getReference());
+		case LOOKUP:
+			return LookupWrapper.newInstance(av.getLookup());
+		default:
+			return av.getObject();
+		}
+	}
+
+	private CardReference toCardReference(final Reference ref) {
+		final ITable table = UserContext.systemContext().tables().get(ref.getClassId());
+		final Long cardId = Long.valueOf(ref.getId());
+		return CardReference.newInstance(table.getName(), cardId);
+	}
+
+	private CardReference toCardReference(final ICard c) {
+		final ITable table = c.getSchema();
+		final Long cardId = Long.valueOf(c.getId());
+		return CardReference.newInstance(table.getName(), cardId);
 	}
 
 	@Override
 	public final Iterable<Entry<String, Object>> getValues() {
-		return Iterables.transform(getNonSystemAttributeValueMap(), new Function<Entry<String,AttributeValue>, Entry<String, Object>>() {
-
-			@Override
-			public Entry<String, Object> apply(final Entry<String, AttributeValue> input) {
-				return new Entry<String, Object>() {
+		return Iterables.transform(getNonSystemAttributeValueMap(),
+				new Function<Entry<String, AttributeValue>, Entry<String, Object>>() {
 
 					@Override
-					public String getKey() {
-						return input.getKey();
+					public Entry<String, Object> apply(final Entry<String, AttributeValue> input) {
+						return new Entry<String, Object>() {
+
+							@Override
+							public String getKey() {
+								return input.getKey();
+							}
+
+							@Override
+							public Object getValue() {
+								return input.getValue();
+							}
+
+							@Override
+							public Object setValue(Object value) {
+								final Object oldValue = getValue();
+								card.setValue(getKey(), value);
+								return oldValue;
+							}
+
+						};
 					}
 
-					@Override
-					public Object getValue() {
-						return input.getValue();
-					}
-
-					@Override
-					public Object setValue(Object value) {
-						final Object oldValue = getValue(); 
-						card.setValue(getKey(), value);
-						return oldValue;
-					}
-
-				};
-			}
-			
-		});
+				});
 	}
 
 	private Iterable<Entry<String, AttributeValue>> getNonSystemAttributeValueMap() {

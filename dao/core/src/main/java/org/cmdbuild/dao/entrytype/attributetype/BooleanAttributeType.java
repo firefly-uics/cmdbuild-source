@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
 
-public class BooleanAttributeType implements CMAttributeType<Boolean> {
+public class BooleanAttributeType extends AbstractAttributeType<Boolean> {
 
 	public BooleanAttributeType() {
 	}
@@ -12,7 +12,7 @@ public class BooleanAttributeType implements CMAttributeType<Boolean> {
 	}
 
 	@Override
-	public Boolean convertNotNullValue(Object value) {
+	protected Boolean convertNotNullValue(Object value) {
 		final Boolean booleanValue;
 		if (value instanceof Boolean) {
 			booleanValue = (Boolean) value;

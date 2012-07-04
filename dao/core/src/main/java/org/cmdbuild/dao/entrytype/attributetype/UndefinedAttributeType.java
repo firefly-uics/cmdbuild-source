@@ -12,7 +12,7 @@ public class UndefinedAttributeType implements CMAttributeType<Object> {
 	}
 
 	@Override
-	public Object convertNotNullValue(Object value) {
+	public final Object convertValue(Object value) {
 		return value;
 	}
 }

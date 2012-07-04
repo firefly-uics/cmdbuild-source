@@ -5,7 +5,7 @@ import static utils.XpdlTestUtils.randomName;
 import java.util.Map;
 
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.service.CMWorkflowService;
+import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
@@ -18,7 +18,7 @@ import org.junit.rules.TestRule;
 
 public class AbstractWorkflowServiceTest implements XpdlTest {
 
-	protected static CMWorkflowService ws;
+	protected static AbstractSharkService ws;
 	protected XpdlDocument xpdlDocument;
 
 	@Rule

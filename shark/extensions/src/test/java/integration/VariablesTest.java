@@ -3,13 +3,18 @@ package integration;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static utils.XpdlTestUtils.randomName;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.workflow.CMEventManager;
+import org.cmdbuild.workflow.TypesConverter;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
@@ -19,6 +24,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import utils.AbstractLocalSharkServiceTest;
 import utils.MockEventsDelegator;
@@ -76,6 +83,16 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 	@Test
 	public void variablesSettedThenRead() throws Exception {
+		final TypesConverter typesConverter = mock(TypesConverter.class);
+		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				return invocation.getArguments()[0];
+			}
+			
+		});
+		ws.setVariableConverter(typesConverter);
+
 		process.createActivity(randomName());
 
 		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
@@ -86,6 +103,8 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		settedVariables.put(AN_INTEGER, 42);
 		settedVariables.put(A_STRING, "foo");
 		ws.setProcessInstanceVariables(procInstId, settedVariables);
+
+		verify(typesConverter, times(3)).toWorkflowType(anyObject());
 
 		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
 		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(true));

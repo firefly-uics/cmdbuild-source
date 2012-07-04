@@ -34,12 +34,12 @@ public interface CMAttributeType<T> {
 	}
 
 	/**
-	 * Casts a value that is assumed not to be null to the native type.
+	 * Casts a value that can be null to the native type.
 	 * 
-	 * @param not null value of any type
+	 * @param value of any type
 	 * @return value of the native type
 	 */
-	T convertNotNullValue(Object value);
+	T convertValue(Object value);
 
 	void accept(CMAttributeTypeVisitor visitor);
 }

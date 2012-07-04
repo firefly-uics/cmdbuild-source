@@ -92,11 +92,7 @@ public abstract class DBEntry implements CMValueSet {
 	}
 
 	private Object toNative(final String key, final Object value) {
-		if (value == null) {
-			return null;
-		} else {
-			return type.getAttribute(key).getType().convertNotNullValue(value);
-		}
+		return type.getAttribute(key).getType().convertValue(value);
 	}
 
 	protected void saveOnly() {

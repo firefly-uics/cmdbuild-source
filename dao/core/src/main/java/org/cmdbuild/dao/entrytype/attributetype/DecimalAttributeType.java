@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang.Validate;
 
 
-public class DecimalAttributeType implements CMAttributeType<BigDecimal> {
+public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 
 	public final Integer precision;
 	public final Integer scale;
@@ -28,7 +28,7 @@ public class DecimalAttributeType implements CMAttributeType<BigDecimal> {
 	}
 
 	@Override
-	public BigDecimal convertNotNullValue(Object value) {
+	protected BigDecimal convertNotNullValue(Object value) {
 		BigDecimal decimalValue;
 		if (value instanceof BigDecimal) {
 			decimalValue = (BigDecimal) value;

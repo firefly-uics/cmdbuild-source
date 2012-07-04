@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
 
-public class ReferenceAttributeType implements CMAttributeType<Object> {
+public class ReferenceAttributeType extends AbstractAttributeType<Object> {
 
 	public ReferenceAttributeType() {
 	}
@@ -12,7 +12,7 @@ public class ReferenceAttributeType implements CMAttributeType<Object> {
 	}
 
 	@Override
-	public Object convertNotNullValue(Object value) {
+	protected Object convertNotNullValue(Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

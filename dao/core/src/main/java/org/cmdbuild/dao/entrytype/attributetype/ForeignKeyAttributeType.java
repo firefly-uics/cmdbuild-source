@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
 
-public class ForeignKeyAttributeType implements CMAttributeType<Object> {
+public class ForeignKeyAttributeType extends AbstractAttributeType<Object> {
 
 	public ForeignKeyAttributeType() {
 	}
@@ -12,7 +12,7 @@ public class ForeignKeyAttributeType implements CMAttributeType<Object> {
 	}
 
 	@Override
-	public Object convertNotNullValue(Object value) {
+	protected Object convertNotNullValue(Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }
