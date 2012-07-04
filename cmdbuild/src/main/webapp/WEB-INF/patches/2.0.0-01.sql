@@ -1,5 +1,9 @@
 -- Dashboard base functions
 
+CREATE OR REPLACE FUNCTION _cm_read_comment(Comment text, Key text) RETURNS text AS $$
+	SELECT TRIM(SUBSTRING($1 FROM E'(?:^|\\|)'||$2||E':[ ]*([^\\|]+)'));
+$$ LANGUAGE SQL STABLE RETURNS NULL ON NULL INPUT;
+
 CREATE OR REPLACE FUNCTION _cm_get_sqltype_string(SqlTypeId oid, TypeMod integer) RETURNS text AS $$
 	SELECT pg_type.typname::text || COALESCE(
 			CASE

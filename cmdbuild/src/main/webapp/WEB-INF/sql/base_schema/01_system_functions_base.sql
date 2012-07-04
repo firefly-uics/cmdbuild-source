@@ -163,7 +163,7 @@ CREATE OR REPLACE FUNCTION _cm_comment_for_table_id(TableId oid) RETURNS text AS
 $$ LANGUAGE SQL STABLE;
 
 CREATE OR REPLACE FUNCTION _cm_read_comment(Comment text, Key text) RETURNS text AS $$
-	SELECT SUBSTRING($1 FROM E'(?:^|\\|)'||$2||E':[ ]*([^ \\|]+)');
+	SELECT TRIM(SUBSTRING($1 FROM E'(?:^|\\|)'||$2||E':[ ]*([^\\|]+)'));
 $$ LANGUAGE SQL STABLE RETURNS NULL ON NULL INPUT;
 
 CREATE OR REPLACE FUNCTION _cm_comment_for_cmobject(TableId oid) RETURNS text AS $$
