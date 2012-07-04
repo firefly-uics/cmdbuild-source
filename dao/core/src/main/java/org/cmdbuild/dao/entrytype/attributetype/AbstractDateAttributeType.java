@@ -3,9 +3,10 @@ package org.cmdbuild.dao.entrytype.attributetype;
 import org.joda.time.DateTime;
 
 
-public abstract class AbstractDateAttributeType implements CMAttributeType<DateTime> {
+public abstract class AbstractDateAttributeType extends AbstractAttributeType<DateTime> {
 
-	public DateTime convertNotNullValue(Object value) {
+	@Override
+	protected DateTime convertNotNullValue(Object value) {
 		if (value instanceof String) {
 			return convertDateString((String) value);
 		} else if (value instanceof java.util.Date) {

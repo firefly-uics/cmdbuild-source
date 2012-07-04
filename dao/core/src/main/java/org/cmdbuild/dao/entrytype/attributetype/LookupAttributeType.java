@@ -5,7 +5,7 @@ import org.cmdbuild.dao.entry.DBLookup;
 import org.cmdbuild.dao.entrytype.DBLookupType;
 
 
-public class LookupAttributeType implements CMAttributeType<CMLookup> {
+public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 
 	private final DBLookupType lookupType;
 
@@ -20,7 +20,7 @@ public class LookupAttributeType implements CMAttributeType<CMLookup> {
 	}
 
 	@Override
-	public CMLookup convertNotNullValue(Object value) {
+	protected CMLookup convertNotNullValue(Object value) {
 		// TODO Get the lookup
 		return new DBLookup(lookupType, value);
 	}

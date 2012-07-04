@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
 
-public class GeometryAttributeType implements CMAttributeType<Object> {
+public class GeometryAttributeType extends AbstractAttributeType<Object> {
 
 	public GeometryAttributeType() {
 	}
@@ -12,7 +12,7 @@ public class GeometryAttributeType implements CMAttributeType<Object> {
 	}
 
 	@Override
-	public Object convertNotNullValue(Object value) {
+	protected Object convertNotNullValue(Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

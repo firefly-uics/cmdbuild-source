@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
 
-public class TextAttributeType implements CMAttributeType<String> {
+public class TextAttributeType extends AbstractAttributeType<String> {
 
 	public TextAttributeType() {
 	}
@@ -12,7 +12,7 @@ public class TextAttributeType implements CMAttributeType<String> {
 	}
 
 	@Override
-	public String convertNotNullValue(Object value) {
+	protected String convertNotNullValue(Object value) {
 		if (!(value instanceof String)) {
 			throw new IllegalArgumentException();
 		}

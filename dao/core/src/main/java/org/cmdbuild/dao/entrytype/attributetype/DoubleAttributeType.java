@@ -2,7 +2,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 
 
-public class DoubleAttributeType implements CMAttributeType<Double> {
+public class DoubleAttributeType extends AbstractAttributeType<Double> {
 
 	public DoubleAttributeType() {
 	}
@@ -13,7 +13,7 @@ public class DoubleAttributeType implements CMAttributeType<Double> {
 	}
 
 	@Override
-	public Double convertNotNullValue(Object value) {
+	protected Double convertNotNullValue(Object value) {
 		Double doubleValue;
 		if (value instanceof Double) {
 			doubleValue = (Double) value;

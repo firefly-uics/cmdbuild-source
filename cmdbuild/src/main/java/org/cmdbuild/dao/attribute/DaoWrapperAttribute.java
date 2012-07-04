@@ -21,7 +21,7 @@ public abstract class DaoWrapperAttribute extends AttributeImpl {
 
 	protected Object convertValue(Object value) {
 		try {
-			return daoType.convertNotNullValue(value);
+			return daoType.convertValue(value);
 		} catch (Throwable t) {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}

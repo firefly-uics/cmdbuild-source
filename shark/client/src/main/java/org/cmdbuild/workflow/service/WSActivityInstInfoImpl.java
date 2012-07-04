@@ -1,5 +1,6 @@
 package org.cmdbuild.workflow.service;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMParticipant;
 
@@ -53,4 +54,19 @@ public class WSActivityInstInfoImpl implements WSActivityInstInfo {
 		return names;
 	}
 
+	/*
+	 * Object overrides
+	 */
+
+	@Override
+	public String toString() {
+	     return new ToStringBuilder(this).
+	    	       append("processInstanceId", getProcessInstanceId()).
+	    	       append("activityDefinitionId", getActivityDefinitionId()).
+	    	       append("activityInstanceId", getActivityInstanceId()).
+	    	       append("activityName", getActivityName()).
+	    	       append("activityDescription", getActivityDescription()).
+	    	       append("participants", getParticipants()).
+	    	       toString();
+	}
 }

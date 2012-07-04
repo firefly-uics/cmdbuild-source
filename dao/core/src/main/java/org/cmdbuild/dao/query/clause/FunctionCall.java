@@ -72,10 +72,8 @@ public class FunctionCall implements CMFunctionCall {
 		final Iterator<Object> actualParams = values.iterator();
 		while (formalParams.hasNext()) {
 			final CMAttributeType<?> paramType = formalParams.next().getType();
-			Object normalizedValue = actualParams.next();
-			if (normalizedValue != null) {
-				normalizedValue = paramType.convertNotNullValue(normalizedValue);
-			}
+			final Object value = actualParams.next();
+			final Object normalizedValue = paramType.convertValue(value);
 			actualParamsNormalized.add(normalizedValue);
 		}
 		return actualParamsNormalized;

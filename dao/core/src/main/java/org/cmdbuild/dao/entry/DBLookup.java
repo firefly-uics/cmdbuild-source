@@ -22,4 +22,13 @@ public class DBLookup implements CMLookup {
 		return id;
 	}
 
+	@Override
+	public String getCode() {
+		throw new UnsupportedOperationException("Not implemented yet!");
+	}
+
+	@Override
+	public String getDescription() {
+		throw new UnsupportedOperationException("Not implemented yet!");
+	}
 }

@@ -2,7 +2,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 
 
-public class IntegerAttributeType implements CMAttributeType<Integer> {
+public class IntegerAttributeType extends AbstractAttributeType<Integer> {
 
 	public IntegerAttributeType() {
 	}
@@ -13,7 +13,7 @@ public class IntegerAttributeType implements CMAttributeType<Integer> {
 	}
 
 	@Override
-	public Integer convertNotNullValue(Object value) {
+	protected Integer convertNotNullValue(Object value) {
 		Integer intValue;
 		if (value instanceof Integer) {
 			intValue = (Integer) value;

@@ -10,8 +10,9 @@ import org.cmdbuild.dao.type.ByteArray;
 import org.cmdbuild.dao.type.IntArray;
 import org.cmdbuild.dao.type.StringArray;
 import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ObjectWithId;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ObjectWithId;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
@@ -134,6 +135,10 @@ public class AttributeValue implements Serializable {
 
 	public Double getDouble() {
 		return (Double) value;
+	}
+
+	public ICard getCard() {
+		return (ICard) value;
 	}
 
 	public Reference getReference() {

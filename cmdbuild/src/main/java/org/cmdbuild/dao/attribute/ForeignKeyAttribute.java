@@ -24,9 +24,9 @@ public class ForeignKeyAttribute extends AttributeImpl {
 	}
 
 	@Override
-	protected Object convertValue(Object maybeValue) {
+	protected ICard convertValue(Object maybeValue) {
 		try {
-			final Integer intValue = IntegerAttribute.INTEGER_TYPE.convertNotNullValue(maybeValue);
+			final Integer intValue = IntegerAttribute.INTEGER_TYPE.convertValue(maybeValue);
 			ICard destCard = null;
 			if (intValue != null) {
 				destCard = new LazyCard(getFKTargetClass(), intValue);
