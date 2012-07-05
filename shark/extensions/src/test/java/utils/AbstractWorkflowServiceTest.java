@@ -24,10 +24,6 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	@Rule
 	public TestRule testWatcher = new WriteXpdlOnFailure(this);
 
-	public AbstractWorkflowServiceTest() {
-		super();
-	}
-
 	@Before
 	public void createXpdlDocument() throws Exception {
 		xpdlDocument = newXpdl(randomName());
