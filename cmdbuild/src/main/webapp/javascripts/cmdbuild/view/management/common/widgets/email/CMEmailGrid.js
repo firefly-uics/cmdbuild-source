@@ -18,7 +18,7 @@
 		]
 	});
 
-Ext.define("CMDBuild.Management.EmailGrid", {
+Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 
 	extend: "Ext.grid.GridPanel",
 	processId: undefined,
@@ -59,7 +59,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 					iconCls : 'add',
 					text : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
 					handler : function(values) {
-						new CMDBuild.Management.EmailWindow({
+						new CMDBuild.view.management.common.widgets.CMEmailWindow({
 							emailGrid: me,
 							record: me.createRecord({})
 						}).show();
@@ -128,12 +128,15 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 
 	removeTemplatesFromStore: function() {
 		var me = this;
+		var data = me.store.data.clone();
 
-		me.store.each(function(r) {
-			if (r._cmTemplate) {
-				me.store.remove(r);
+		for (var i=0, l=data.length, r=null; i<l; ++i) {
+			r = data.getAt(i);
+
+			if (r && r._cmTemplate) {
+				me.store.remove(r);	
 			}
-		});
+		}
 	},
 
 	createRecord: function(recordValues) {
@@ -142,7 +145,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	},
 
 	onViewEmail: function(record) {
-		var viewEmailWin = new CMDBuild.Management.EmailWindow({
+		var viewEmailWin = new CMDBuild.view.management.common.widgets.CMEmailWindow({
 			emailGrid: this,
 			readOnly: true,
 			record: record
@@ -151,7 +154,7 @@ Ext.define("CMDBuild.Management.EmailGrid", {
 	},
 
 	onEditEmail: function(record) {
-		new CMDBuild.Management.EmailWindow({
+		new CMDBuild.view.management.common.widgets.CMEmailWindow({
 			emailGrid: this,
 			readOnly: false,
 			record: record

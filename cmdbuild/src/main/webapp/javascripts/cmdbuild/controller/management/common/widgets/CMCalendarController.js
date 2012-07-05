@@ -5,14 +5,15 @@
 		getEndDate: function(w) { return w.endDate; },
 		getTitle: function(w) { return w.eventTitle; },
 		getTargetName: function(w) { return w.targetClass; },
-		getFilterVarName: function() {return "xa:filter";},
+		getFilterVarName: function(w) { return "xa:filter"; },
 		getDefaultDate: function(w) { return w.defaultDate; }
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
 
 		mixins: {
-			observable: "Ext.util.Observable"
+			observable: "Ext.util.Observable",
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
@@ -20,20 +21,14 @@
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
-			// this.widgetConf = c.widget;
-			// this.activity = c.activity.raw || c.activity.data;
 
-			this.WIDGET_NAME = this.self.WIDGET_NAME;
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.view = view;
-			this.ownerController = ownerController;
-			this.widget = widgetDef;
-			this.clientForm = clientForm;
 			this.reader = new CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader();
-			this.card = card;
 
-			if (!this.reader.getStartDate(this.widget) ||
-					!this.reader.getTitle(this.widget)) {
+			if (!this.reader.getStartDate(this.widgetConf) ||
+					!this.reader.getTitle(this.widgetConf)) {
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.management.modworkflow.extattrs.calendar.wrong_config);
@@ -43,15 +38,15 @@
 			} else {
 				this.eventMapping = {
 					id: "Id",
-					start: this.reader.getStartDate(this.widget),
-					end: this.reader.getEndDate(this.widget),
-					title: this.reader.getTitle(this.widget)
+					start: this.reader.getStartDate(this.widgetConf),
+					end: this.reader.getEndDate(this.widgetConf),
+					title: this.reader.getTitle(this.widgetConf)
 				};
 			}
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.clientForm,
-				xaVars: this.widget,
+				xaVars: this.widgetConf,
 				serverVars: this.card.raw || this.card.data
 			});
 
@@ -96,7 +91,7 @@
 
 			var me = this,
 				viewBounds = this.view.getWievBounds(),
-				className = me.reader.getTargetName(me.widget);
+				className = me.reader.getTargetName(me.widgetConf);
 
 			var e_start = me.eventMapping.start,
 				e_end = me.eventMapping.end,
@@ -129,19 +124,11 @@
 		destroy: function() {
 			this.mun(this.view, "eventclick", onEventClick, this);
 			this.mun(this.view, "viewchange", onViewChange, this);
-		},
-
-		isBusy: function() {
-			return false;
-		},
-
-		isValid: function() {
-			return true;
 		}
 	});
 
 	function openDefaultDate(me) {
-		var defaultDateAttr = me.reader.getDefaultDate(me.widget);
+		var defaultDateAttr = me.reader.getDefaultDate(me.widgetConf);
 		if (defaultDateAttr) {
 			var defaultDate = me.templateResolver.getVariable("client:" + defaultDateAttr);
 			var date = buildDate(defaultDate);
@@ -210,7 +197,7 @@
 
 	function onEventClick(panel, model, el) {
 		var me = this,
-			target = _CMCache.getEntryTypeByName(me.reader.getTargetName(me.widget));
+			target = _CMCache.getEntryTypeByName(me.reader.getTargetName(me.widgetConf));
 
 		if (target) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({

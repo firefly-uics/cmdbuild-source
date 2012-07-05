@@ -1,5 +1,5 @@
 (function() {
-	Ext.define("CMDBuild.view.management.workflow.widgets.CMOpenNotes", {
+	Ext.define("CMDBuild.view.management.common.widgets.CMOpenNotes", {
 		extend: "CMDBuild.view.management.classes.CMCardNotesPanel",
 
 		initComponent: function() {

@@ -69,10 +69,6 @@
 			});
 		},
 
-		activateFirstTab: function() {
-			this.setActiveTab(this.cardPanel);
-		},
-
 		activateRelationTab: function() {
 			this.setActiveTab(this.relationsPanel);
 		},
@@ -81,16 +77,8 @@
 			return this.cardPanel;
 		},
 
-		getNotePanel: function() {
-			return this.cardNotesPanel
-		},
-
 		getMDPanel: function() {
 			return this.mdPanel;
-		},
-
-		getAttachmentsPanel: function() {
-			return this.attachmentPanel;
 		},
 
 		getHistoryPanel: function() {
@@ -99,7 +87,28 @@
 
 		getRelationsPanel: function() {
 			return this.relationsPanel;
+		},
+
+		getNotePanel: function() { // TODO: substitute with getNotesPanel
+			return this.cardNotesPanel;
+		},
+
+		// CMTabbedWidgetDelegate
+
+		getAttachmentsPanel: function() {
+			return this.attachmentPanel;
+		},
+
+		getNotesPanel: function() {
+			return this.cardNotesPanel;
+		},
+
+		showWidget: function (w) {
+			return false; // not implemented yet
+		},
+
+		activateFirstTab: function() {
+			this.setActiveTab(this.cardPanel);
 		}
 	});
-	
 })();

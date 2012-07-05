@@ -3,7 +3,7 @@
 var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
 var fields = reader.FIELDS;
 
-Ext.define("CMDBuild.Management.EmailWindow", {
+Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 	extend: "CMDBuild.PopupWindow",
 
 	emailGrid: undefined,

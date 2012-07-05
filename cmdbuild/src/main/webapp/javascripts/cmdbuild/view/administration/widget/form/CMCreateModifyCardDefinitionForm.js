@@ -22,7 +22,7 @@
 				fieldLabel : tr.fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name : 'targetClass',
-				valueField : 'id',
+				valueField : 'name',
 				displayField : 'description',
 				editable : false,
 				store : _CMCache.getClassesAndProcessesStore(),

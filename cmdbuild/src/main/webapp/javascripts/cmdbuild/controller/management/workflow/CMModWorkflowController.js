@@ -89,12 +89,8 @@
 		return data[FLOW_STATUS_CODE] == STATE_VALUE_OPEN;
 	}
 
-	function buildWidgetControllerManager(me) {
-		return new CMDBuild.controller.management.workflow.CMWidgetManager(me.view.getWidgetManager());
-	}
-
 	function buildActivityPanelController(me) {
-		var widgetControllerManager = buildWidgetControllerManager(me);
+		var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(me.view.getWidgetManager());
 		me.activityPanelController = new CMDBuild.controller.management
 		.workflow.CMActivityPanelController(me.view.getActivityPanel(), me, widgetControllerManager);
 

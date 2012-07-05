@@ -1,7 +1,8 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.common.widgets.CMPingController", {
 		mixins: {
-			observable: 'Ext.util.Observable'
+			observable: "Ext.util.Observable",
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
@@ -9,17 +10,8 @@
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
-			if (typeof view != "object") {
-				throw "The view of a WFWidgetController must be an object"
-			}
-
-			this.WIDGET_NAME = this.self.WIDGET_NAME;
-
-			this.view = view;
-			this.ownerController = ownerController;
-			this.widget = this.view.widgetConf || widgetDef;
-			this.clientForm = clientForm;
-			this.card = card;
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 		},
 
 		beforeActiveView: function() {
@@ -27,8 +19,8 @@
 			me.view.removeAll();
 
 			if (!me.templateResolver) {
-				var xaVars = me.widget.templates || {};
-				xaVars["_address"] = me.widget.address;
+				var xaVars = me.widgetConf.templates || {};
+				xaVars["_address"] = me.widgetConf.address;
 
 				me.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
@@ -53,7 +45,7 @@
 				var pingParams = {
 					IdClass: me.card.get("IdClass"),
 					Id: me.card.get("Id"),
-					widgetId: me.widget.id,
+					widgetId: me.widgetConf.id,
 					action: "legacytr",
 					params: Ext.encode({
 						address: o._address

@@ -1,9 +1,12 @@
 package org.cmdbuild.workflow.widget;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.model.widget.Widget;
@@ -132,5 +135,25 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		}
 
 		return out;
+	}
+
+	protected final Map<String, String> extractUnmanagedParameters(Map<String, String> valueMap, Set<String> managedParameters) {
+		Map<String, String> out = new HashMap<String, String>();
+
+		for (String key: valueMap.keySet()) {
+			if (!managedParameters.contains(key)) {
+				out.put(key, valueMap.get(key));
+			}
+		}
+
+		return out;
+	}
+
+	protected final Map<String, String> extractUnmanagedParameters(Map<String, String> valueMap, String... managedParameters) {
+		Set<String> parameters = new HashSet<String>();
+		for (String s: managedParameters) {
+			parameters.add(s);
+		}
+		return extractUnmanagedParameters(valueMap, parameters);
 	}
 }

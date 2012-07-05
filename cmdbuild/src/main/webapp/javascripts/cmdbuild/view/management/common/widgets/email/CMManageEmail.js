@@ -1,4 +1,4 @@
-Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
+Ext.define("CMDBuild.view.management.common.widgets.CMManageEmail", {
 	extend: "Ext.panel.Panel",
 
 	loaded: false,
@@ -15,7 +15,7 @@ Ext.define("CMDBuild.view.management.workflow.widgets.CMManageEmail", {
 	},
 
 	initComponent : function() {
-		this.emailGrid = new CMDBuild.Management.EmailGrid( {
+		this.emailGrid = new CMDBuild.view.management.common.widgets.CMEmailGrid({
 			autoScroll : true,
 			processId : this.activity.Id,
 			readWrite : !this.widgetConf.ReadOnly,

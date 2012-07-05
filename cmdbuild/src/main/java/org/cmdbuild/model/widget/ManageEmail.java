@@ -2,11 +2,13 @@ package org.cmdbuild.model.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ManageEmail extends Widget {
 
-	public static class Template {
+	public static class EmailTemplate {
 		private String toAddresses;
 		private String ccAddresses;
 		private String subject;
@@ -47,11 +49,13 @@ public class ManageEmail extends Widget {
 
 	private boolean readOnly;
 
-	private Collection<Template> templates;
+	private Collection<EmailTemplate> emailTemplates;
+	private Map<String, String> templates;
 
 	public ManageEmail() {
 		super();
-		this.templates = new ArrayList<Template>();
+		emailTemplates = new ArrayList<EmailTemplate>();
+		templates = new HashMap<String, String>();
 	}
 
 	public boolean isReadOnly() {
@@ -62,19 +66,23 @@ public class ManageEmail extends Widget {
 		this.readOnly = readOnly;
 	}
 
-	public List<Template> getTemplates() {
-		return new ArrayList<Template>(templates);
+	public List<EmailTemplate> getEmailTemplates() {
+		return new ArrayList<EmailTemplate>(emailTemplates);
 	}
 
-	public void setTemplates(Collection<Template> templates) {
-		if (templates == null) {
-			templates = new ArrayList<Template>();
+	public void setEmailTemplates(Collection<EmailTemplate> emailTemplates) {
+		if (emailTemplates == null) {
+			emailTemplates = new ArrayList<EmailTemplate>();
 		}
 
-		this.templates = templates;
+		this.emailTemplates = emailTemplates;
 	}
 
-	public void addTemplate(Template template) {
-		this.templates.add(template);
+	public Map<String, String> getTemplates() {
+		return templates;
+	}
+
+	public void setTemplates(Map<String, String> templates) {
+		this.templates = templates;
 	}
 }

@@ -280,22 +280,20 @@
 				requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
 				_debug("save the process with params", requestParams);
 
-				// FIXME: do the request below
+				CMDBuild.LoadMask.get().show();
 
-//				CMDBuild.LoadMask.get().show();
-//				
-//				CMDBuild.ServiceProxy.workflow.saveActivity({
-//					params: requestParams,
-//					scope : this,
-//					clientValidation: this.isAdvance, //to force the save request
-//					callback: function(operation, success, response) {
-//						CMDBuild.LoadMask.get().hide();
-//					},
-//					success: function(response) {
-//						updateCardData(me, response);
-//						me.fireEvent(me.CMEVENTS.cardSaved, me.card);
-//					}
-//				});
+				CMDBuild.ServiceProxy.workflow.saveActivity({
+					params: requestParams,
+					scope : this,
+					clientValidation: this.isAdvance, //to force the save request
+					callback: function(operation, success, response) {
+						CMDBuild.LoadMask.get().hide();
+					},
+					success: function(response) {
+						updateCardData(me, response);
+						me.fireEvent(me.CMEVENTS.cardSaved, me.card);
+					}
+				});
 			}
 
 		} else {

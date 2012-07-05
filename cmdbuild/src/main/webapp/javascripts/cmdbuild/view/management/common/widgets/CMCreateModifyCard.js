@@ -35,7 +35,7 @@
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveCardButtonClick);
 				}
-			})]
+			})];
 		},
 
 		initWidget: function(entryType, isEditable) {

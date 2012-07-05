@@ -1,5 +1,5 @@
 (function() {
-	Ext.define("CMDBuild.view.management.workflow.CMWFWidgetsPanel", {
+	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetsWindow", {
 		extend: "CMDBuild.PopupWindow",
 
 		initComponent: function() {

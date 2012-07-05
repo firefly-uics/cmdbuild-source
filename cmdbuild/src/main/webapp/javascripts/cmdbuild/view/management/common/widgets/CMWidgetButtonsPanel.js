@@ -15,16 +15,15 @@
 					|| widget.label
 					|| CMDBuild.Translation.management.modworkflow[widget.labelId],
 				disabled: !widget.alwaysenabled
-			})
+			});
 		},
 
 		disable: function() {
-			// FIXME: resume the condition
-//			if (this.widgetDefinition && this.widgetDefinition.alwaysenabled) {
-//				return this.enable();
-//			} else {
-//				return this.callParent(arguments);
-//			}
+			if (this.widgetDefinition && this.widgetDefinition.alwaysenabled) {
+				return this.enable();
+			} else {
+				return this.callParent(arguments);
+			}
 
 			return this.enable();
 		}

@@ -1,5 +1,7 @@
 package org.cmdbuild.model.widget;
 
+import java.util.Map;
+
 public class LinkCards extends Widget {
 
 	/**
@@ -74,6 +76,11 @@ public class LinkCards extends Widget {
 	 * during the save operation
 	 */
 	private String outputName;
+
+	/**
+	 * Templates to use for the CQL filters
+	 */
+	private Map<String, String> templates;
 
 	public String getFilter() {
 		return filter;
@@ -169,5 +176,13 @@ public class LinkCards extends Widget {
 
 	public void setOutputName(String outputName) {
 		this.outputName = outputName;
+	}
+
+	public Map<String, String> getTemplates() {
+		return templates;
+	}
+
+	public void setTemplates(Map<String, String> templates) {
+		this.templates = templates;
 	}
 }

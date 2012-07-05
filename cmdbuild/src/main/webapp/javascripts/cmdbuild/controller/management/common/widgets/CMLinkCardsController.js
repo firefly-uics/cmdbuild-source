@@ -12,19 +12,22 @@
 		STARTING_VIEW = TABLE_VIEW_NAME,
 		widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMLinkCardsController", {
-		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
+	Ext.define("CMDBuild.controller.management.common.widgets.CMLinkCardsController", {
 
 		mixins: {
-			observable: "Ext.util.Observable"
+			observable: "Ext.util.Observable",
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
 			WIDGET_NAME: ".LinkCards"
 		},
 
-		constructor: function(ui, supercontroller, widget, clientForm, card) {
-			this.callParent(arguments);
+		constructor: function(view, supercontroller, widget, clientForm, card) {
+
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
+
 			ensureEntryType(this);
 
 			this.currentView = STARTING_VIEW;
@@ -46,7 +49,7 @@
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
-				xaVars: widget,
+				xaVars: _extractVariablesForTemplateResolver(widget),
 				serverVars: card
 			});
 
@@ -83,9 +86,9 @@
 		// override
 		getData: function() {
 			var out = null;
-			if (!this.readOnly && this.outputName) {
+			if (!this.readOnly) {
 				out = {};
-				out[this.outputName] = this.model.getSelections();
+				out["output"] = this.model.getSelections();
 			}
 			return out;
 		},
@@ -283,6 +286,17 @@
 		} else {
 			this.onShowCardkClick(model);
 		}
+	}
+
+	function _extractVariablesForTemplateResolver(widget) {
+		var variables = {};
+		variables[DEFAULT_SELECTION] = widgetReader.defaultSelection(widget);
+		variables[FILTER] = widgetReader.filter(widget);
+
+		Ext.apply(variables, widgetReader.templates(widget));
+		_debug("LinkCards template resolver init with:", variables);
+
+		return variables;
 	}
 
 	function resolveFilterTemplate(me, cqlQuery, classId) {

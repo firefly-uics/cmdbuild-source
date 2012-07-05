@@ -53,29 +53,26 @@
 		}
 	});
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMAttachmentController", {
-		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
+	Ext.define("CMDBuild.controller.management.common.widgets.CMAttachmentController", {
+
+		mixins: {
+			observable: "Ext.util.Observable",
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"	
+		},
 
 		statics: {
 			WIDGET_NAME: ".OpenAttachment"
 		},
 
-		constructor: function(view, ownerController, widget, card) {
-			this.callParent(arguments);
-
-			this.card = card;
+		constructor: function(view, ownerController, widgetDef, clientForm, card) {
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
 			this.mon(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
 		},
 
 		destroy: function() {
-			this.callParent(arguments);
 			this.mun(this.view.backToActivityButton, "click", this.onBackToActivityButtonClick, this);
-		},
-
-		// override
-		getVariable: function(variableName) {
-			return undefined;
 		},
 
 		activeView: function() {
@@ -85,7 +82,7 @@
 		onBackToActivityButtonClick: function() {
 			try {
 				this.view.hideBackButton();
-				this.ownerController.showActivityPanel();
+				this.ownerController.activateFirstTab();
 			} catch (e) {
 				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}
