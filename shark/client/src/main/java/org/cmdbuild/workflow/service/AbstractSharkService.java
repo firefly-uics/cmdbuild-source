@@ -214,7 +214,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}.execute();
 	}
 
-	private final SharkInterface shark() throws Exception {
+	private SharkInterface shark() throws Exception {
 		if (shark == null) {
 			synchronized (this) {
 				if (shark == null) {
@@ -225,7 +225,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return shark;
 	}
 
-	private final WMSessionHandle handle() throws Exception {
+	private WMSessionHandle handle() throws Exception {
 		if (shandle == null) {
 			synchronized (this) {
 				if (shandle == null) {
@@ -239,7 +239,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	abstract protected WMConnectInfo getConnectionInfo();
 
-	private final WAPI wapi() throws Exception {
+	protected WAPI wapi() throws Exception {
 		return shark().getWAPIConnection();
 	}
 

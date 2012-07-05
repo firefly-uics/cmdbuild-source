@@ -78,15 +78,14 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- compile scope because they are used for custom types -->
 		<dependency>
 			<groupId>axis</groupId>
 			<artifactId>axis</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxrpc-api</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 
 	</dependencies>
