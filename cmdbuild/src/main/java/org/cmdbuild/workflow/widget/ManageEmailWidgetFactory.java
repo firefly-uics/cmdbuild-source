@@ -1,11 +1,13 @@
 package org.cmdbuild.workflow.widget;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.cmdbuild.model.widget.ManageEmail;
-import org.cmdbuild.model.widget.ManageEmail.Template;
+import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
@@ -16,10 +18,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String CONTENT = "Content";
 	private final static String CONDITION = "Condition";
 	private final static String READ_ONLY = "ReadOnly";
+	private final static String LABEL = "ButtonLabel";
+
+	private final static String WIDGET_NAME = "manageEmail";
 
 	@Override
 	public String getWidgetName() {
-		return "manageEmail";
+		return WIDGET_NAME;
 	}
 
 	/*
@@ -29,39 +34,48 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	@Override
 	protected Widget createWidget(Map<String, String> valueMap) {
 		ManageEmail widget = new ManageEmail();
-		Map<String, Template> templates = new LinkedHashMap<String, Template>(); // I want preserve the order
+		Map<String, EmailTemplate> emailTemplate = new LinkedHashMap<String, EmailTemplate>(); // I want preserve the order
+		Set<String> managedParameters = new HashSet<String>();
+		managedParameters.add(READ_ONLY);
+		managedParameters.add(LABEL);
 
 		Map<String, String> toAddresses = getAttributesStartingWith(valueMap, TO_ADDRESSES);
 		for (String key: toAddresses.keySet()) {
-			Template t = getTemplateForKey(key, templates, TO_ADDRESSES);
+			EmailTemplate t = getTemplateForKey(key, emailTemplate, TO_ADDRESSES);
 			t.setToAddresses(valueMap.get(key));
 		}
+		managedParameters.addAll(toAddresses.keySet());
 
 		Map<String, String> ccAddresses = getAttributesStartingWith(valueMap, CC_ADDRESSES);
 		for (String key: ccAddresses.keySet()) {
-			Template t = getTemplateForKey(key, templates, CC_ADDRESSES);
+			EmailTemplate t = getTemplateForKey(key, emailTemplate, CC_ADDRESSES);
 			t.setCcAddresses(valueMap.get(key));
 		}
+		managedParameters.addAll(ccAddresses.keySet());
 
 		Map<String, String> subjects = getAttributesStartingWith(valueMap, SUBJECT);
 		for (String key: subjects.keySet()) {
-			Template t = getTemplateForKey(key, templates, SUBJECT);
+			EmailTemplate t = getTemplateForKey(key, emailTemplate, SUBJECT);
 			t.setSubject(valueMap.get(key));
 		}
+		managedParameters.addAll(subjects.keySet());
 
 		Map<String, String> contents = getAttributesStartingWith(valueMap, CONTENT);
 		for (String key: contents.keySet()) {
-			Template t = getTemplateForKey(key, templates, CONTENT);
+			EmailTemplate t = getTemplateForKey(key, emailTemplate, CONTENT);
 			t.setContent(valueMap.get(key));
 		}
+		managedParameters.addAll(contents.keySet());
 
 		Map<String, String> conditions = getAttributesStartingWith(valueMap, CONDITION);
 		for (String key: conditions.keySet()) {
-			Template t = getTemplateForKey(key, templates, CONDITION);
+			EmailTemplate t = getTemplateForKey(key, emailTemplate, CONDITION);
 			t.setCondition(valueMap.get(key));
 		}
+		managedParameters.addAll(conditions.keySet());
 
-		widget.setTemplates(templates.values());
+		widget.setEmailTemplates(emailTemplate.values());
+		widget.setTemplates(extractUnmanagedParameters(valueMap, managedParameters));
 		widget.setReadOnly(readBoolean(valueMap.get(READ_ONLY)));
 
 		return widget;
@@ -79,7 +93,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		return out;
 	}
 
-	private Template getTemplateForKey(String key, Map<String, Template> templates, String attributeName) {
+	private EmailTemplate getTemplateForKey(String key, Map<String, EmailTemplate> templates, String attributeName) {
 		String postFix = key.replaceFirst(attributeName, "");
 		if ("".equals(postFix)) {
 			postFix = "implicitTemplateName";
@@ -88,7 +102,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		if (templates.containsKey(postFix)) {
 			return templates.get(postFix);
 		} else {
-			Template t = new Template();
+			EmailTemplate t = new EmailTemplate();
 			templates.put(postFix, t);
 			return t;
 		}

@@ -1,37 +1,39 @@
 (function() {
-	// TODO 1) find a lot of time
-	// TODO 2) when I have found it, do mixing to apply the baseWFController methods
-	// I know that code reuse != copy and paste
-
 	var ID_CLASS = "xa:idClass",
 		ID_CARD = "xa:id",
 		CARD_CQL_SELECTOR = "objId",
+		OUTPUT = "output",
 		reader = null;
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMManageRelationController", {
+	Ext.define("CMDBuild.controller.management.common.widgets.CMManageRelationController", {
 		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
 
 		statics: {
 			WIDGET_NAME: ".ManageRelation"
 		},
 
+		mixins: {
+			observable: "Ext.util.Observable",
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
+		},
+
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.callParent(arguments);
 
-			this.widgetConf = widgetDef;
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
+
 			reader = CMDBuild.management.model.widget.ManageRelationConfigurationReader;
 			ensureEntryType(this);
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
-				xaVars: widgetDef,
+				xaVars: widgetDef, // TODO: pass only the CARD_CQL_SELECTOR??
 				serverVars: card
 			});
 
 			this.templateResolverIsBusy = false;
-			this.ownerController = ownerController;
-			this.outputName = reader.outputName(this.widgetConf);
-			this.wiewIdenrifier = reader.id(this.widgetConf);
+
 			this.readOnly = !(reader.singleSelection(this.widgetConf) 
 				|| reader.multiSelection(this.widgetConf));
 
@@ -66,26 +68,6 @@
 		defaultOperationSuccess: function() {
 			this.loadData();
 		},
-
-		// baseWFWidget Functions
-		toString: function() {
-			return this.cmName + " WFWidget controller";
-		},
-
-		isBusy: function() {
-			_debug(this + " is busy");
-			return false;
-		},
-
-		getVariable: function(variableName) {
-			try {
-				return this.templateResolver.getVariable(variableName);
-			} catch (e) {
-				_debug("There is no template resolver");
-				return undefined;
-			}
-		},
-		// end baseWFWidget Functions
 
 		getCardId: function(cb) {
 			// remember that -1 is the id for a new card
@@ -135,29 +117,30 @@
 
 		getData: function() {
 			var out = null;
-			if (undefined != this.outputName) {
-				out = {};
-				var data = [],
-					nodes = Ext.query('input[name='+this.outputName+']');
+			out = {};
+			var data = [],
+				nodes = Ext.query('input[name='+this.view.CHECK_NAME+']');
 
-				Ext.each(nodes, function(item) {
-					if(item.checked) {
-						data.push(item.value);
-					}
-				});
+			for (var i=0, l=nodes.length, item=null; i<l; ++i) {
+				item = nodes[i];
 
-				out[this.outputName] = data;
+				if(item && item.checked) {
+					data.push(item.value);
+				}
 			}
+
+			out[OUTPUT] = data;
 
 			return out;
 		},
 
 		isValid: function() {
-			if (!this.readOnly && reader.required(this.widgetConf)) {
+			if (reader.required(this.widgetConf)
+					&& !this.readOnly) {
 				try {
-					return this.getData()[this.outputName].length > 0;
+					return this.getData()[OUTPUT].length > 0;
 				} catch (e) {
-					// if here data is null or data has not this.outputName,
+					// if here, data is null or data has not selections,
 					// so the ww is not valid
 					return false;
 				}

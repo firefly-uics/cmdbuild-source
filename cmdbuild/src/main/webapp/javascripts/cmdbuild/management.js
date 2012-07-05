@@ -162,6 +162,9 @@
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response, options,decoded) {
 						CMDBuild.Config.dms = decoded.data;
+						
+						// FIXME: @@ remove this is only for debug
+						CMDBuild.Config.dms.enabled = true;
 					},
 					callback: reqBarrier.getCallback
 				},"dms");

@@ -12,7 +12,7 @@
 			}
 		},
 
-		// override: return alwais false because we want that
+		// override: return always false because we want that
 		// in process the user could modify the notes only if
 		// there is an openNote extended attribute defined.
 		updateViewPrivilegesForCard: function(card) {
@@ -50,28 +50,21 @@
 		}
 	});
 
-	Ext.define("CMDBuild.controller.management.common.widgets.CMWidgetControllerInterface", {
-		beforeActiveView: function() {
-			_debug("Called beforeActiveView for class " + Ext.getClassName(this));
-		}
-	});
-
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenNoteController", {
-//		extend: "CMDBuild.controller.management.workflow.widget.CMBaseWFWidgetController",
+		extend: "CMDBuild.controller.management.common.widgets.CMWidgetController",
 
 		mixins: {
 			observable: "Ext.util.Observable",
-			widgetController: "CMDBuild.controller.management.common.widgets.CMWidgetControllerInterface"
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
 			WIDGET_NAME: ".OpenNote"
 		},
 
-		constructor: function(ui, supercontroller, widget, templateResolver, card) {
-			this.card = card;
-			this.view = ui;
-			this.ownerController = supercontroller;
+		constructor: function(view, supercontroller, widget, templateResolver, card) {
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
 			try {
 				this.view.updateWritePrivileges(this.card.raw.priv_write && !this.readOnly);
@@ -92,7 +85,7 @@
 			try {
 				this.view.hideBackButton();
 				this.view.disableModify();
-				this.ownerController.showActivityPanel();
+				this.ownerController.activateFirstTab();
 			} catch (e) {
 				CMDBuild.log.error("Something went wrong displaying the Activity panel");
 			}

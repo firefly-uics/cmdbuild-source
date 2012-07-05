@@ -1,5 +1,5 @@
 (function() {
-	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid", {
+	Ext.define("CMDBuild.view.management.common.widgets.CMLinkCardsGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 		cmAllowEditCard: false,
 		cmAllowShowCard: false,
@@ -70,7 +70,7 @@
 
 	});
 
-	Ext.define("CMDBuild.view.management.workflow.widgets.CMLinkCards", {
+	Ext.define("CMDBuild.view.management.common.widgets.CMLinkCards", {
 		extend: "Ext.panel.Panel",
 
 		statics: {
@@ -105,7 +105,7 @@
 				}
 			}
 
-			this.grid = new CMDBuild.view.management.workflow.widgets.CMLinkCardsGrid({
+			this.grid = new CMDBuild.view.management.common.widgets.CMLinkCardsGrid({
 				autoScroll : true,
 				filterSubcategory : this.widgetReader.id(c),
 				selModel: selModel,

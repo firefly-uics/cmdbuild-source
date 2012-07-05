@@ -1,5 +1,10 @@
 Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 	extend: "Ext.panel.Panel",
+
+	mixins: {
+		widgetManagerDelegate: "CMDBuild.view.management.common.widgets.CMWidgetManagerDelegate"
+	},
+
 	withToolBar: false,
 	withButtons: false,
 	initComponent: function() {
@@ -92,11 +97,20 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 		return out;
 	},
 
-	getWidgetButtonsPanel: function() {
-		return this.widgets;
-	},
-
 	formIsVisisble: function() {
 		return this.form.isVisible(deep = true);
+	},
+
+	// CMWidgetManagerDelegate
+
+	getFormForTemplateResolver: function() {
+		return this.form.getForm();
+	},
+
+	showCardPanel: Ext.emptyFn,
+
+	getWidgetButtonsPanel: function() {
+		return this.widgets;
 	}
+
 });

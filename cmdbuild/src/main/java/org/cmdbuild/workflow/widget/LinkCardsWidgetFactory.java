@@ -21,6 +21,7 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	private static final String MAP_LONGITUDE = "StartMapWithLongitude";
 	private static final String MAP_ZOOM = "StartMapWithZoom";
 	private static final String REQUIRED = "Required";
+	private static final String LABEL = "ButtonLabel";
 
 	@Override
 	public String getWidgetName() {
@@ -42,6 +43,10 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
 		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
 		widget.setRequired(readBoolean(valueMap.get(REQUIRED)));
+		widget.setTemplates(extractUnmanagedParameters(valueMap,
+			FILTER, CLASS_NAME, DEFAULT_SELECTION, READ_ONLY, 
+			SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE,
+			MAP_LONGITUDE, MAP_ZOOM, REQUIRED, LABEL));
 
 		return widget;
 	}

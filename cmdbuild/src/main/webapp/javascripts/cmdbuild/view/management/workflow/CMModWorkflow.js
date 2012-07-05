@@ -40,7 +40,11 @@
 				height: gridratio + "%"
 			});
 
-			var widgetManager = new CMDBuild.view.management.workflow.CMWidgetManager(this.cardTabPanel);
+			var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManager(
+				this.cardTabPanel.getActivityPanel(), // as CMWidgetManagerDelegate
+				this.cardTabPanel // as CMTabbedWidgetDelegate
+			);
+
 			this.getWidgetManager = function() {
 				return widgetManager;
 			};

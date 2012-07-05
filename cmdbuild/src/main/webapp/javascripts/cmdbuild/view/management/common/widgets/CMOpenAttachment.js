@@ -1,5 +1,5 @@
 (function() {
-	Ext.define("CMDBuild.view.management.workflow.widgets.CMOpenAttachment", {
+	Ext.define("CMDBuild.view.management.common.widgets.CMOpenAttachment", {
 		extend: "CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel",
 
 		initComponent: function() {
@@ -19,14 +19,12 @@
 		configure: function(c) {
 			this.widgetConf = c.widget;
 			this.activity = c.activityInstance.raw || c.activityInstance.data;
-			this.clientForm = c.clientForm;
+
 			this.readOnly = c.widget.ReadOnly;
 
-			Ext.apply(this, this.widgetConf);
-
 			this.setExtraParams({
-				IdClass: this.activity.IdClass,
-				Id: this.activity.Id
+				IdClass: _CMWFState.getProcessClassRef().getId(),
+				Id: _CMWFState.getProcessInstance().getId()
 			});
 
 			this.writePrivileges = this.activity.priv_write && !this.readOnly;

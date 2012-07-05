@@ -110,10 +110,10 @@
 				height: gridratio + "%"
 			});
 
-			var widgetManager = new CMDBuild.view.management.classes.CMWidgetManager(this.cardTabPanel.getCardPanel());
+			var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManager(this.cardTabPanel.getCardPanel(), this.cardTabPanel);
 			this.getWidgetManager = function() {
 				return widgetManager;
-			}
+			};
 		},
 
 		getGrid: function() {

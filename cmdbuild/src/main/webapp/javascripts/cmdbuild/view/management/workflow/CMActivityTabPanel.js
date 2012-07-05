@@ -2,6 +2,10 @@
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel", {
 		extend: "Ext.panel.Panel",
 
+		mixins: {
+			// cmTabbedWidgetDelegate: "CMDBuild.view.management.common.widgets.CMTabbedWidgetDelegate"
+		},
+
 		constructor: function(config) {
 
 			this.activityTab = new CMDBuild.view.management.workflow.CMActivityPanel({
@@ -14,7 +18,7 @@
 				title: CMDBuild.Translation.management.modworkflow.tabs.history
 			});
 
-			this.openNotePanel = new CMDBuild.view.management.workflow.widgets.CMOpenNotes({
+			this.openNotePanel = new CMDBuild.view.management.common.widgets.CMOpenNotes({
 				title: CMDBuild.Translation.management.modworkflow.tabs.notes
 			});
 
@@ -24,7 +28,7 @@
 				cmWithEditRelationIcons: false
 			});
 
-			this.openAttachmentPanel = new CMDBuild.view.management.workflow.widgets.CMOpenAttachment({
+			this.openAttachmentPanel = new CMDBuild.view.management.common.widgets.CMOpenAttachment({
 				title: CMDBuild.Translation.management.modworkflow.tabs.attachments
 			});
 
@@ -95,10 +99,6 @@
 			}
 		},
 
-		activateFirstTab: function() {
-			this.acutalPanel.setActiveTab(this.activityTab);
-		},
-
 		activateRelationTab: function() {
 			this.acutalPanel.setActiveTab(this.relationsPanel);
 		},
@@ -119,6 +119,8 @@
 			return this.cardHistoryPanel;
 		},
 
+		// CMTabbedWidgetDelegate
+
 		getAttachmentsPanel: function() {
 			return this.openAttachmentPanel;
 		},
@@ -127,14 +129,31 @@
 			return this.openNotePanel;
 		},
 
+		// return false if is not able to manage the widget
 		showWidget: function (w) {
-			var type = w.widgetConf.type;
 
-			if (type == ".OpenNote") {
-				this.openNotePanel.cmActivate();
-			} else if (type == ".OpenAttachment"){
-				this.openAttachmentPanel.cmActivate();
+			var managedClasses = {
+				"CMDBuild.view.management.common.widgets.CMOpenAttachment": function(me) {
+					me.openAttachmentPanel.cmActivate();
+				},
+
+				"CMDBuild.view.management.common.widgets.CMOpenNotes": function(me) {
+					me.openNotePanel.cmActivate();
+				}
+			};
+
+			var fn = managedClasses[Ext.getClassName(w)];
+
+			if (typeof fn == "function") {
+				fn(this);
+				return true;
+			} else {
+				return false;
 			}
+		},
+
+		activateFirstTab: function() {
+			this.acutalPanel.setActiveTab(this.activityTab);
 		}
 	});
 

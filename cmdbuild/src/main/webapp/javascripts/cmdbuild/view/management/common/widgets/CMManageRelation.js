@@ -1,10 +1,14 @@
 (function() {
-	Ext.define("CMDBuild.view.management.workflow.widgets.CMManageRelation", {
+	Ext.define("CMDBuild.view.management.common.widgets.CMManageRelation", {
 		extend: "CMDBuild.view.management.classes.CMCardRelationsPanel",
 
 		statics: {
-			WIDGET_NAME: ".ManageRelation"
+			WIDGET_NAME: ".ManageRelation",
 		},
+
+		// used by the controller to identify the
+		// selected rows
+		CHECK_NAME: "manage_relation_check",
 
 		constructor: function(c) {
 			this.widgetConf = c.widget;
@@ -14,13 +18,12 @@
 		initComponent: function() {
 			var reader = CMDBuild.management.model.widget.ManageRelationConfigurationReader;
 
-			Ext.apply(this, {
-				cmWithAddButton: reader.canCreateAndLinkCard(this.widgetConf) 
-					|| reader.canCreateRelation(this.widgetConf),
-				border: false,
-				frame: false,
-				cls: "x-panel-body-default-framed"
-			});
+			this.CHECK_NAME += reader.id(this.widgetConf);
+			this.border= false;
+			this.frame = false;
+			this.cls = "x-panel-body-default-framed";
+			this.cmWithAddButton = reader.canCreateAndLinkCard(this.widgetConf) 
+					|| reader.canCreateRelation(this.widgetConf);
 
 			this.callParent(arguments);
 		},
@@ -48,7 +51,7 @@
 				var type = reader.singleSelection(widget) ? 'radio' : 'checkbox';
 
 				actionsHtml += '<input type="' + type + '" name="'
-						+ reader.outputName(widget) + '" value="'
+						+ this.CHECK_NAME + '" value="'
 						+ record.get('dst_id') + '"';
 
 				if (isSel) {

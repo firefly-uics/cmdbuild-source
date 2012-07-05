@@ -12,8 +12,8 @@
 			if (widgetControllerManager) {
 				this.widgetControllerManager = widgetControllerManager;
 			} else {
-				var widgetManager = new CMDBuild.view.management.classes.CMWidgetManager(this.view);
-				this.widgetControllerManager = new CMDBuild.controller.management.classes.CMWidgetManager(widgetManager);
+				var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManager(this.view);
+				this.widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(widgetManager);
 			}
 
 			this.widgetControllerManager.setDelegate(this);
@@ -40,7 +40,7 @@
 			this.loadFields(this.entryType.get("id"));
 
 			if (this.widgetControllerManager) {
-				this.widgetControllerManager.buildControllers(null);
+				this.widgetControllerManager.removeAll();
 			}
 		},
 

@@ -122,6 +122,9 @@ Ext.define("CMDBuild.management.model.widget.LinkCardsConfigurationReader", {
 		},
 		label: function(w) {
 			return w.label;
+		},
+		templates: function(w) {
+			return w.templates || {};
 		}
 	}
 });
@@ -204,7 +207,10 @@ Ext.define("CMDBuild.management.model.widget.ManageEmailConfigurationReader", {
 			return w.label;
 		},
 		templates: function(w) {
-			return w.templates;
+			return w.templates || {};
+		},
+		emailTemplates: function(w) {
+			return w.emailTemplates || {};
 		}
 	}
 });

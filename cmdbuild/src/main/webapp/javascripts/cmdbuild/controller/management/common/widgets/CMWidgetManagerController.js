@@ -1,5 +1,5 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.common.CMBaseWidgetMananager", {
+	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
 		constructor: function(view) {
 			this.view = view;
@@ -18,15 +18,17 @@
 	
 			if (card) {
 				var definitions = me.takeWidgetFromCard(card);
-				Ext.Array.forEach(definitions, function buildController(w, i) {
-					var ui = me.view.buildWidget(w, card);
+				for (var i=0, l=definitions.length, w=null, ui=null; i<l; ++i) {
+					w = definitions[i];
+					ui = me.view.buildWidget(w, card);
+
 					if (ui) {
 						var wc = me.buildWidgetController(ui, w, card);
 						if (wc) {
 							me.controllers[me.getWidgetId(w)] = wc;
 						}
 					}
-				}, this);
+				}
 			}
 		},
 	
@@ -93,7 +95,7 @@
 	
 			return false;
 		},
-	
+
 		waitForBusyWidgets: function waitForBusyWidgets(cb, cbScope) {
 			var me = this;
 	
@@ -119,7 +121,7 @@
 				if (typeof wc.getData == "function") {
 					var wcData = wc.getData(advance);
 					if (wcData != null) {
-						ww[wc.wiewIdenrifier] = wcData;
+						ww[wc.getWidgetId()] = wcData;
 					}
 				}
 			}
@@ -151,23 +153,31 @@
 		hideWidgetsContainer: function() {
 			this.view.hideWidgetsContainer();
 		},
-
-		// to override in subclasses
 	
-		takeWidgetFromCard: function(activityInstance) {
-			if (Ext.getClassName(activityInstance) == "CMDBuild.model.CMActivityInstance") {
-				return activityInstance.getWidgets();
+		takeWidgetFromCard: function(card) {
+			var widgets = [];
+			if (Ext.getClassName(card) == "CMDBuild.model.CMActivityInstance") {
+				widgets = card.getWidgets();
 			} else {
-				return [];
+				var et = _CMCache.getEntryTypeById(card.get("IdClass"));
+				if (et) {
+					widgets = et.getWidgets();
+				}
 			}
+
+			return widgets;
 		},
 	
 		getWidgetId: function(widget) {
 			return widget.id;
 		},
-	
+
 		getWidgetLable: function(widget) {
 			return widget.label;
+		},
+
+		activateFirstTab: function() {
+			this.view.activateFirstTab();
 		}
 	});
 
@@ -179,13 +189,11 @@
 			me.controllerClasses[controller.WIDGET_NAME] = controller;
 		}
 
-		// TODO: move all to commonControllers
-
 		// openNote
 		addControllerClass(commonControllers.CMOpenNoteController);
 
 		// openAttachment
-		addControllerClass(CMDBuild.controller.management.workflow.widgets.CMAttachmentController);
+		addControllerClass(commonControllers.CMAttachmentController);
 
 		// createModifyCard
 		addControllerClass(commonControllers.CMCreateModifyCardController);
@@ -197,12 +205,15 @@
 		addControllerClass(commonControllers.CMOpenReportController);
 
 		// linkCards
-		addControllerClass(CMDBuild.controller.management.workflow.widgets.CMLinkCardsController);
+		addControllerClass(commonControllers.CMLinkCardsController);
 
 		// manageRelation
-		addControllerClass(CMDBuild.controller.management.workflow.widgets.CMManageRelationController);
+		addControllerClass(commonControllers.CMManageRelationController);
 
 		// manageRelation
-		addControllerClass(CMDBuild.controller.management.workflow.widgets.CMManageEmailController);
+		addControllerClass(commonControllers.CMManageEmailController);
+
+		// ping
+		addControllerClass(commonControllers.CMPingController);
 	}
 })();

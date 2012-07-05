@@ -8,7 +8,8 @@
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportController", {
 		mixins: {
-			observable: 'Ext.util.Observable'
+			observable: "Ext.util.Observable",
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
@@ -16,20 +17,13 @@
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
-			if (typeof view != "object") {
-				throw "The view of a WFWidgetController must be an object";
-			}
 
-			this.WIDGET_NAME = this.self.WIDGET_NAME;
+			this.mixins.observable.constructor.call(this);
+			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.view = view;
-			this.ownerController = ownerController;
-			this.widget = this.view.widgetConf || widgetDef;
-			this.clientForm = clientForm;
 			this.widgetReader = new CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader();
-			this.card = card;
+			this.presets = this.widgetReader.getPreset(this.widgetConf);
 
-			this.presets = this.widgetReader.getPreset(this.widget);
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 		},
 
@@ -49,8 +43,8 @@
 				Ext.Ajax.request({
 					url : 'services/json/management/modreport/createreportfactorybytypecode',
 					params : {
-						type: wr.getType(me.widget),
-						code: wr.getCode(me.widget)
+						type: wr.getType(me.widgetConf),
+						code: wr.getCode(me.widgetConf)
 					},
 					success : function(response) {
 						var ret = Ext.JSON.decode(response.responseText);
@@ -72,14 +66,6 @@
 			}
 		},
 
-		isBusy: function() {
-			return false;
-		},
-
-		isValid: function() {
-			return true;
-		},
-
 		destroy: function() {
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 		}
@@ -92,7 +78,7 @@
 			attributes: Ext.Object.getKeys(me.presets),
 			callback: function(o) {
 				me.view.fillFormValues(o);
-				me.view.forceExtension(wr.getForceFormat(me.widget));
+				me.view.forceExtension(wr.getForceFormat(me.widgetConf));
 			}
 		});
 	}
