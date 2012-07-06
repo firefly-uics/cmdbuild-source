@@ -39,7 +39,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 		widget.setTargetClass(className);
 		widget.setIdcardcqlselector(valueMap.get(OBJ_ID));
-		widget.setReadonly(readBoolean(valueMap.get(READONLY)));
+		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
 	}
 
 	private void configureWidgetFromReference(CreateModifyCard widget, final Map<String, String> valueMap) {

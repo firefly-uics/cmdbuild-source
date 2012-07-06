@@ -35,14 +35,14 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		setFilterAndClassName(valueMap, widget);
 		setOutputName(valueMap, widget);
 		widget.setDefaultSelection(valueMap.get(DEFAULT_SELECTION));
-		widget.setReadOnly(readBoolean(valueMap.get(READ_ONLY)));
-		widget.setSingleSelect(readBoolean(valueMap.get(SINGLE_SELECT)));
-		widget.setAllowCardEditing(readBoolean(valueMap.get(ALLOW_CARD_EDITING)));
-		widget.setEnableMap(readBoolean(valueMap.get(WITH_MAP)));
+		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
+		widget.setSingleSelect(readBooleanTrueIfPresent(valueMap.get(SINGLE_SELECT)));
+		widget.setAllowCardEditing(readBooleanTrueIfPresent(valueMap.get(ALLOW_CARD_EDITING)));
+		widget.setEnableMap(readBooleanTrueIfPresent(valueMap.get(WITH_MAP)));
 		widget.setMapLatitude(readInteger(valueMap.get(MAP_LATITUDE)));
 		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
 		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
-		widget.setRequired(readBoolean(valueMap.get(REQUIRED)));
+		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
 		widget.setTemplates(extractUnmanagedParameters(valueMap,
 			FILTER, CLASS_NAME, DEFAULT_SELECTION, READ_ONLY, 
 			SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE,

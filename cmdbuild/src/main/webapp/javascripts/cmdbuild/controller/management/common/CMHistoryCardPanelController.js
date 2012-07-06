@@ -42,14 +42,47 @@
 	});
 
 	Ext.define("CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController", {
+
 		extend: "CMDBuild.controller.management.classes.CMCardHistoryPanelController",
-		onCardSelected: function(card) {
+
+		mixins: {
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
+		},
+
+		constructor: function() {
+			this.callParent(arguments);
+			_CMWFState.addDelegate(this);
+		},
+
+		// wfStateDelegate
+		onProcessInstanceChange: function(processInstance) {
+			if (processInstance.isNew()) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+			}
+		},
+
+		// wfStateDelegate
+		onActivityInstanceChange: function(activityInstance) {
+			// TODO: do the request if visible
+		},
+
+		// deprecated
+		onEntryTypeSelected: function(entryType) { _deprecated();
+			this.callParent(arguments);
+		},
+
+		// deprecated
+		onCardSelected: function(card) { _deprecated();
 			if (card._cmNew) {
 				this.card = card;
 				this.view.disable();
 			} else {
 				this.callParent(arguments);
 			}
-		}
+		},
+
+		
 	});
 })();
