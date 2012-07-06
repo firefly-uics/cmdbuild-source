@@ -49,6 +49,15 @@ public interface CMWorkflowService {
 	 */
 	WSProcessInstInfo[] listOpenProcessInstances(String procDefId) throws CMWorkflowException;
 
+	/**
+	 * Retrieve informations about an open process instance.
+	 * 
+	 * @param procInstId process instance id
+	 * @return 
+	 * @throws CMWorkflowException
+	 */
+	WSProcessInstInfo getProcessInstance(String procInstId) throws CMWorkflowException;
+
 	void setProcessInstanceVariables(String procInstId, Map<String, Object> variables) throws CMWorkflowException;
 
 	Map<String, Object> getProcessInstanceVariables(String procInstId) throws CMWorkflowException;
@@ -72,11 +81,20 @@ public interface CMWorkflowService {
 	WSActivityInstInfo[] findOpenActivitiesForProcess(String procDefId) throws CMWorkflowException;
 
 	/**
-	 * Aborts the current activity, stopping that flow path.
+	 * Aborts the specified activity, stopping that flow path.
 	 * 
 	 * @param procInstId process instance id
 	 * @param actInstId activity instance id
 	 * @throws CMWorkflowException
 	 */
 	void abortActivityInstance(String procInstId, String actInstId) throws CMWorkflowException;
+
+	/**
+	 * Advances the specified activity, returning when the flow has stopped.
+	 * 
+	 * @param procInstId process instance id
+	 * @param actInstId activity instance id
+	 * @throws CMWorkflowException
+	 */
+	void advanceActivityInstance(String procInstId, String actInstId) throws CMWorkflowException;
 }

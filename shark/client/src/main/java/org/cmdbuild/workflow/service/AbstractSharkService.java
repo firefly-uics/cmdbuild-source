@@ -268,6 +268,17 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
+	public WSProcessInstInfo getProcessInstance(final String procInstId) throws CMWorkflowException {
+		return new TransactedExecutor<WSProcessInstInfo>() {
+			@Override
+			protected WSProcessInstInfo command() throws Exception {
+				final WMProcessInstance pi = wapi().getProcessInstance(handle(), procInstId);
+				return WSProcessInstInfoImpl.newInstance(pi);
+			}
+		}.execute();
+	}
+
+	@Override
 	public Map<String, Object> getProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
 		return new TransactedExecutor<Map<String, Object>>() {
 			@Override
@@ -353,11 +364,24 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	@Override
 	public void abortActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
+		// From Shark's FAQ, "terminate [...] tries to follow the next activity(s), [...] abort [...] doesn't."
+		changeActivityInstanceStates(procInstId, actInstId, WMActivityInstanceState.CLOSED_ABORTED);
+	}
+
+	@Override
+	public void advanceActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
+		changeActivityInstanceStates(procInstId, actInstId, WMActivityInstanceState.OPEN_RUNNING, WMActivityInstanceState.CLOSED_COMPLETED);
+	}
+
+	private void changeActivityInstanceStates(final String procInstId, final String actInstId, final WMActivityInstanceState... states) throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
-				// From Shark's FAQ, "terminate [...] tries to follow the next activity(s), [...] abort [...] doesn't."
-				wapi().changeActivityInstanceState(handle(), procInstId, actInstId, WMActivityInstanceState.CLOSED_ABORTED);
+				final WAPI wapi = wapi();
+				final WMSessionHandle handle = handle();
+				for (final WMActivityInstanceState state : states) {
+					wapi.changeActivityInstanceState(handle, procInstId, actInstId, state);
+				}
 				return null;
 			}
 		}.execute();
