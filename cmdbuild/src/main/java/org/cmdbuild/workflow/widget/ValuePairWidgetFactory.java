@@ -99,8 +99,12 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	protected abstract Widget createWidget(Map<String, String> valueMap);
 
-	protected final boolean readBoolean(String value) {
+	protected final boolean readBooleanTrueIfPresent(String value) {
 		return (value != null);
+	}
+
+	protected final boolean readBooleanTrueIfTrue(String value) {
+		return Boolean.parseBoolean(value);
 	}
 
 	protected final Integer readInteger(String value) {

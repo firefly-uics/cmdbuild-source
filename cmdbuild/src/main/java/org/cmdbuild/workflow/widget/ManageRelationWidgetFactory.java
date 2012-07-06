@@ -13,6 +13,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	private final static String CLASS_NAME = "ClassName";
 	private final static String CARD_CQL_SELECTOR = "ObjId";
 	private final static String REQUIRED = "Required";
+	private final static String IS_DIRECT = "IsDirect";
 
 	@Override
 	public String getWidgetName() {
@@ -26,10 +27,18 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		widget.setDomainName(valueMap.get(DOMAIN));
 		widget.setClassName(valueMap.get(CLASS_NAME));
 		widget.setObjId(valueMap.get(CARD_CQL_SELECTOR));
-		widget.setRequired(readBoolean(valueMap.get(REQUIRED)));
+		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
+		setSource(widget, valueMap.get(IS_DIRECT));
 		setEnabledFunctions(widget, valueMap.get(FUNCTIONS));
 
 		return widget;
+	}
+
+	private void setSource(ManageRelation widget, String isDirect) {
+		if (isDirect != null) {
+			final String source = readBooleanTrueIfTrue(isDirect) ? "_1" : "_2";
+			widget.setSource(source);
+		}
 	}
 
 	private void setEnabledFunctions(ManageRelation widget, String functions) {

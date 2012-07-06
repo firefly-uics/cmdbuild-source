@@ -171,7 +171,7 @@
 					Id: this.cardId,
 					IdClass: this.idClass,
 					domainId: domain.getId(),
-					src: getSrc.call(this)
+					src: getSrc(this)
 				},
 				scope: this,
 				success: function(a,b, response) {
@@ -233,21 +233,19 @@
 		};
 	}
 
-	function getSrc() {
+	function getSrc(me) {
+		var src = reader.source(me.widgetConf);
+		if (src == null) {
+			// TODO: do this check server side
+			var targetClassId = _CMUtils.getAncestorsId(me.targetEntryType.getId());
+			if (Ext.Array.contains(targetClassId, me.domain.get("idClass1"))) {
+				src = "_1";
+			} else {
+				sec = "_2";
+			}
+		}
 
-		// TODO: manage the direction
-
-		return "_1";
-
-//		var src,
-//			directedDomain = this.widgetConf.domainId.split("_");
-//
-//		if (directedDomain[1] == "D") {
-//			src = "_1";
-//		} else {
-//			src = "_2";
-//		}
-//		return src;
+		return src;
 	}
 
 	function resolveTemplate() {

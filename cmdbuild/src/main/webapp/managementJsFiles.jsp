@@ -19,8 +19,8 @@
 <!-- MODELS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
-	<!-- it is not a ext model, but a day maybe it will be -->
-	<script type="text/javascript" src="javascripts/cmdbuild/model/wfwidget/CMLinkCardsModel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMLinkCardsModel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
 
 <!-- VIEWS -->
 

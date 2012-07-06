@@ -76,7 +76,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
 		widget.setEmailTemplates(emailTemplate.values());
 		widget.setTemplates(extractUnmanagedParameters(valueMap, managedParameters));
-		widget.setReadOnly(readBoolean(valueMap.get(READ_ONLY)));
+		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
 
 		return widget;
 	}

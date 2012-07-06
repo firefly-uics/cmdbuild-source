@@ -22,9 +22,10 @@ public class ManageRelation extends Widget {
 	private boolean required;
 
 	/*
-	 * TODO: I don't know what it is
+	 * to define the EntryType that is
+	 * source for the relation
 	 */
-	private String outputName;
+	private String source;
 
 	/* 
 	 * #################################
@@ -106,14 +107,6 @@ public class ManageRelation extends Widget {
 		this.required = required;
 	}
 
-	public String getOutputName() {
-		return outputName;
-	}
-
-	public void setOutputName(String outputName) {
-		this.outputName = outputName;
-	}
-
 	public String getObjId() {
 		return objId;
 	}
@@ -136,6 +129,14 @@ public class ManageRelation extends Widget {
 
 	public void setSingleSelection(boolean singleSelection) {
 		this.singleSelection = singleSelection;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	public boolean isCanCreateRelation() {
