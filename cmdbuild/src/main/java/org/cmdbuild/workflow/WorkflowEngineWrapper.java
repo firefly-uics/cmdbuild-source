@@ -178,8 +178,17 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	@Override
 	public CMProcessInstance advanceActivity(final CMActivityInstance activityInstance) throws CMWorkflowException {
+		final CMProcessInstance procInst = activityInstance.getProcessInstance();
+		final String procInstId = procInst.getProcessInstanceId();
 		// TODO Widgets: tell them that you are advancing the activity (send emails, ...)
-		throw new UnsupportedOperationException("TODO Come on! Cut me some slack!");
+		workflowService.advanceActivityInstance(procInstId, activityInstance.getId());
+		return retrieveChangedProcessInstanceFromDataStore(procInst);
+	}
+
+	private CMProcessInstance retrieveChangedProcessInstanceFromDataStore(CMProcessInstance procInst) throws CMWorkflowException {
+		// TODO fetch it from the database, because shark changed it
+		final WSProcessInstInfo procInstInfo = workflowService.getProcessInstance(procInst.getProcessInstanceId());
+		return syncProcessStateAndActivities(procInst, procInstInfo);
 	}
 
 	/**
@@ -254,13 +263,13 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		editableProcessInstance.setState(WSProcessInstanceState.UNSUPPORTED).save();
 	}
 
-	private void syncProcessStateAndActivities(CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
+	private CMProcessInstance syncProcessStateAndActivities(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
 		final CMProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
 		editableProcessInstance.setState(processInstanceInfo.getStatus());
 		editableProcessInstance.setUniqueProcessDefinition(processInstanceInfo);
 		final WSActivityInstInfo[] activities = workflowService.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
 		editableProcessInstance.setActivities(activities);
-		editableProcessInstance.save();
+		return editableProcessInstance.save();
 	}
 
 	@Override
