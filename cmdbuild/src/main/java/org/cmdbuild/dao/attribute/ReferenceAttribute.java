@@ -27,18 +27,24 @@ public class ReferenceAttribute extends AttributeImpl {
 			String stringValue = (String) value;
 			try {
 				final int intValue = Integer.parseInt(stringValue);
-				if (intValue > 0) {
-					referenceValue = new Reference(getReferenceDirectedDomain(), intValue, null);
-				} else {
-					referenceValue = null;
-				}
+				referenceValue = createReference(intValue);
 			} catch (NumberFormatException e) {
 				referenceValue = null;
 			}
+		} else if (value instanceof Number) {
+			final int intValue = ((Number) value).intValue();
+			referenceValue = createReference(intValue);
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
 		return referenceValue;
+	}
+
+	private Reference createReference(final int intValue) {
+		if (intValue <= 0) {
+			return null;
+		}
+		return new Reference(getReferenceDirectedDomain(), intValue, null);
 	}
 
 	@Override
