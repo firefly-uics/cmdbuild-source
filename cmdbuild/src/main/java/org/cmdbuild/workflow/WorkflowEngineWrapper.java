@@ -188,7 +188,11 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	private CMProcessInstance retrieveChangedProcessInstanceFromDataStore(CMProcessInstance procInst) throws CMWorkflowException {
 		// TODO fetch it from the database, because shark changed it
 		final WSProcessInstInfo procInstInfo = workflowService.getProcessInstance(procInst.getProcessInstanceId());
-		return syncProcessStateAndActivities(procInst, procInstInfo);
+		if (procInstInfo == null) {
+			return completeProcess(procInst);
+		} else {
+			return syncProcessStateAndActivities(procInst, procInstInfo);
+		}
 	}
 
 	/**
@@ -259,8 +263,14 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	private void removeOutOfSyncProcess(CMProcessInstance processInstance) {
+		modifyProcessInstance(processInstance).setState(WSProcessInstanceState.UNSUPPORTED).save();
+	}
+
+	private CMProcessInstance completeProcess(final CMProcessInstance processInstance) throws CMWorkflowException {
 		final CMProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
-		editableProcessInstance.setState(WSProcessInstanceState.UNSUPPORTED).save();
+		editableProcessInstance.setState(WSProcessInstanceState.COMPLETED);
+		editableProcessInstance.setActivities(new WSActivityInstInfo[0]);
+		return editableProcessInstance.save();
 	}
 
 	private CMProcessInstance syncProcessStateAndActivities(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
