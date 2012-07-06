@@ -88,6 +88,14 @@
 				}
 			}
 			return null;
+		},
+
+		// if close the window the content is destroyed
+		// so substitute close with hide for this window
+		// (close is called when press the ESC key or clicking
+		// the X top-right button of the window)
+		close: function() {
+			this.hide();
 		}
 	});
 })();
