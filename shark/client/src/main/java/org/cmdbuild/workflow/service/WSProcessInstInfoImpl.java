@@ -10,6 +10,8 @@ public class WSProcessInstInfoImpl extends WSProcessDefInfoImpl implements WSPro
 	protected WSProcessInstanceState status;
 
 	static WSProcessInstInfo newInstance(WMProcessInstance processInstance) {
+		if (processInstance == null)
+			return null;
 		WSProcessInstInfoImpl instance = new WSProcessInstInfoImpl();
 		instance.packageId = MiscUtilities.getProcessMgrPkgId(processInstance.getProcessFactoryName());
 		instance.packageVersion = MiscUtilities.getProcessMgrVersion(processInstance.getProcessFactoryName());
