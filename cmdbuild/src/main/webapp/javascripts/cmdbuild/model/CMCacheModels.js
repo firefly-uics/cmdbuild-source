@@ -38,7 +38,8 @@
 			{name: "type",type: 'string'},
 			{name: "name",type: 'string'},
 			{name: "priv_create",type: 'boolean'},
-			{name: "priv_write",type: 'boolean'}
+			{name: "priv_write",type: 'boolean'},
+			{name: "meta", type:"auto"}
 		],
 
 		constructor: function() {
@@ -91,7 +92,7 @@
 			try {
 				a = this.data.meta.geoAttributes;
 			} catch (e) {
-				CMDBuild.log.Error("Something went wrong: CMDBuild.cache.CMEntryTypeModel " + this.data.text + " getGeoAttrs");
+				_debug("Something went wrong: CMDBuild.cache.CMEntryTypeModel " + this.data.text + " getGeoAttrs");
 			}
 			return a;
 		},
