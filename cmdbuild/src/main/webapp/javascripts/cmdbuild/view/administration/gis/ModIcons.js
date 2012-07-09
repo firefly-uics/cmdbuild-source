@@ -94,10 +94,16 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.callParent(arguments);
 		
 		this.on('show', function() {
-			CMDBuild.log.info("on show icons grid");
-			if (!this.iconsGrid.getSelectionModel().hasSelection()) {
-				this.iconsGrid.getSelectionModel().select(0);
+			var sm = this.iconsGrid.getSelectionModel();
+			var store = this.iconsGrid.getStore();
+
+			if (sm && !sm.hasSelection()
+					&& store
+					&& store.data.length > 0) {
+
+				sm.select(0);
 			}
+
 			this.uploadForm.setFieldsDisabled();
 		}, this);
 		
