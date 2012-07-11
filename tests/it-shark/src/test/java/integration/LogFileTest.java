@@ -1,8 +1,11 @@
 package integration;
 
 import static java.lang.String.format;
+import static org.cmdbuild.workflow.LoggerEventManager.ACTIVITY_CLOSED_LOG;
+import static org.cmdbuild.workflow.LoggerEventManager.ACTIVITY_STARTED_LOG;
+import static org.cmdbuild.workflow.LoggerEventManager.PROCESS_CLOSED_LOG;
+import static org.cmdbuild.workflow.LoggerEventManager.PROCESS_STARTED_LOG;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -45,11 +48,10 @@ public class LogFileTest extends AbstractRemoteSharkServiceTest {
 		assertTrue(fileIsEmpty());
 		startProcess();
 		assertFalse(fileIsEmpty());
-		assertThat(logLines(), hasItem(entryWithId("processStarted", processId)));
-		assertThat(logLines(), hasItem(entryWithId("activityStarted", activityId)));
-		assertThat(logLines(), hasItem(entryWithId("activityClosed", activityId)));
-		assertThat(logLines(), hasItem(entryWithId("processClosed", processId)));
-		assertThat(logLines(), not(hasItem("foo")));
+		assertThat(logLines(), hasItem(entryWithId(PROCESS_STARTED_LOG, processId)));
+		assertThat(logLines(), hasItem(entryWithId(ACTIVITY_STARTED_LOG, activityId)));
+		assertThat(logLines(), hasItem(entryWithId(ACTIVITY_CLOSED_LOG, activityId)));
+		assertThat(logLines(), hasItem(entryWithId(PROCESS_CLOSED_LOG, processId)));
 	}
 
 	private boolean fileIsEmpty() throws IOException {

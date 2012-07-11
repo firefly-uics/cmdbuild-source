@@ -69,9 +69,8 @@ public class SharkConditionalEvaluator implements ConditionEvaluator {
 		return condition != null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<String, Object> obtainContext() throws Exception {
-		final Map<String, Object> out = new HashMap();
+		final Map<String, Object> out = new HashMap<String, Object>();
 		final WAPI wapi = Shark.getInstance().getWAPIConnection();
 
 		// first get the process variables
