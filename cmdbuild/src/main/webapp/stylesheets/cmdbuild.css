@@ -867,6 +867,11 @@ em {
 
 /* Activity rows*/
 
+.x-grid-row-expander
+{
+	margin: 0px!important;
+}
+
 .cm_activity_row
 {
 	background: #FAFAFA;

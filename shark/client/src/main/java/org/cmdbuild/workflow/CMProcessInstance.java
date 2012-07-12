@@ -15,7 +15,7 @@ public interface CMProcessInstance extends CMCard {
 
 		CMProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException;
 		void addActivity(WSActivityInstInfo activityInfo) throws CMWorkflowException;
-		void removeActivity(String activityInstanceId);
+		void removeActivity(String activityInstanceId) throws CMWorkflowException;
 
 		CMProcessInstanceDefinition setState(WSProcessInstanceState state);
 

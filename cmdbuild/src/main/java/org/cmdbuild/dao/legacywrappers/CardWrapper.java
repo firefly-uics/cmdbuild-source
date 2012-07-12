@@ -29,6 +29,8 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	static {
 		cardSystemAttributes = new HashSet<String>();
 		for (final CardAttributes a : CardAttributes.values()) {
+			if (a.isVisibleByUsers())
+				continue;
 			cardSystemAttributes.add(a.dbColumnName());
 		}
 		cardSystemAttributes.add(TableHistory.EndDateAttribute);
@@ -111,7 +113,8 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 
 							@Override
 							public Object getValue() {
-								return input.getValue();
+								final AttributeValue av = input.getValue();
+								return av.getObject();
 							}
 
 							@Override

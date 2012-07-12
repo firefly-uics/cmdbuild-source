@@ -22,7 +22,8 @@
 						var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
 						o.rowBody = genHistoryBody(record);
 						return o;
-					}
+					},
+					expanderWidth: 18
 				}],
 				columns: this.getGridColumns(),
 				store: new Ext.data.JsonStore({

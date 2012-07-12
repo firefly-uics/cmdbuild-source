@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.elements.Lookup;
@@ -169,10 +170,11 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	public CMProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		removeClosedActivities(activityInfos);
 		addNewActivities(activityInfos);
+		updateCodeWithOneRandomActivityInfo();
 		return this;
 	}
 
-	private void removeClosedActivities(WSActivityInstInfo[] activityInfos) {
+	private void removeClosedActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		final Set<String> newActivityInstInfoIds = new HashSet<String>(activityInfos.length);
 		for (final WSActivityInstInfo ai : activityInfos) {
 			newActivityInstInfoIds.add(ai.getActivityInstanceId());
@@ -196,6 +198,28 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		}
 	}
 
+	private void updateCodeWithOneRandomActivityInfo() throws CMWorkflowException {
+		final List<CMActivityInstance> activities = getActivities();
+		final String code;
+		if (activities.isEmpty()) {
+			code = null;
+		} else {
+			final CMActivity randomActivity = activities.get(0).getDefinition();
+			final String randomActivityLabel;
+			if (randomActivity.getDescription() != null) {
+				randomActivityLabel = randomActivity.getDescription();
+			} else {
+				randomActivityLabel = StringUtils.EMPTY;
+			}
+			if (activities.size() > 1) {
+				code = String.format("%s, ...", randomActivityLabel);
+			} else {
+				code = randomActivityLabel;
+			}
+		}
+		card.setCode(code);
+	}
+
 	@Override
 	public void addActivity(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
 		Validate.notNull(activityInfo);
@@ -210,10 +234,12 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 				addToBack(getActivityInstancePerformers(), participantGroup));
 		card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
 				addDistinct(getAllActivityPerformers(), participantGroup));
+
+		updateCodeWithOneRandomActivityInfo();
 	}
 
 	@Override
-	public void removeActivity(final String activityInstanceId) {
+	public void removeActivity(final String activityInstanceId) throws CMWorkflowException {
 		int index = ArrayUtils.indexOf(getActivityInstanceIds(), activityInstanceId);
 		if (index == ArrayUtils.INDEX_NOT_FOUND) {
 			return;
@@ -225,6 +251,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 
 		card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
 				ArrayUtils.remove(getActivityInstancePerformers(), index));
+
+		updateCodeWithOneRandomActivityInfo();
 	}
 
 	private String getActivityParticipantGroup(WSActivityInstInfo activityInfo) throws CMWorkflowException {

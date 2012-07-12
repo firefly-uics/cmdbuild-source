@@ -34,7 +34,18 @@
 
 		// wfStateDelegate
 		onActivityInstanceChange: function(activityInstance) {
+
 			this.view.updateDocPanel(activityInstance.getInstructions());
+
+			if (!activityInstance.nullObject 
+					&& activityInstance.isNew()) {
+
+				// I could be in a tab different to the first one,
+				// but to edit a new card is necessary to have the editing form.
+				// So I force the view to go on the ActivityTab
+
+				this.view.showActivityPanel();
+			}
 		},
 
 		// deprecated
@@ -65,24 +76,17 @@
 		// is called when the view is bring to front from the main viewport
 		// Set the entry type of the _CMWFState instead to store it inside
 		// this controller
-		setEntryType: function(et) {
-			_CMWFState.setProcessClassRef(_CMCache.getEntryTypeById(et));
+		setEntryType: function(entryTypeId) {
+			var entryType = _CMCache.getEntryTypeById(entryTypeId);
+			_CMWFState.setProcessClassRef(entryType);
+			this.view.updateTitleForEntry(entryType);
 		},
 
 		// override
-		onEntryTypeChanged: function(entryType) {
-			this.view.updateTitleForEntry(entryType);
+		onEntryTypeChanged: function(entryType) { _deprecated();
+			
 		}
 	});
-
-	function onCardSaved(card) {
-		this.gridController.openCard({
-			Id: card.raw.Id,
-			// use the id class of the grid to use the right filter
-			// when look for the position
-			IdClass: this.entryType.get("id")
-		});
-	}
 
 	function isStateOpen(card) {
 		var data = card.raw;
@@ -94,7 +98,6 @@
 		me.activityPanelController = new CMDBuild.controller.management
 		.workflow.CMActivityPanelController(me.view.getActivityPanel(), me, widgetControllerManager);
 
-		me.mon(me.activityPanelController, me.activityPanelController.CMEVENTS.cardSaved, onCardSaved, me);
 		me.mon(me.activityPanelController, me.activityPanelController.CMEVENTS.cardRemoved,
 			function() {
 				me.gridController.onCardDeleted();
@@ -111,9 +114,12 @@
 		me.mon(me.gridController, me.gridController.CMEVENTS.cardSelected, me.onCardSelected, me);
 		me.mon(me.gridController, me.gridController.CMEVENTS.load, onGridLoad, me);
 		me.mon(me.gridController, me.gridController.CMEVENTS.processClosed, onProcessTermined, me);
+
 		me.grid.mon(me.gridController, "itemdblclick", function() {
 			me.activityPanelController.onModifyCardClick();
 		}, me);
+
+		me.activityPanelController.setDelegate(me.gridController);
 
 		me.subControllers.push(me.gridController);
 	}

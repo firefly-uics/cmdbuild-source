@@ -45,24 +45,28 @@
 			if (danglingCard) {
 				afterStoreUpdated = function() {
 					me.openCard(danglingCard, retryWithoutFilter = true);
-				}
+				};
 			} else {
 				afterStoreUpdated = function cbUpdateStoreForClassId() {
 					me.view.loadPage(1, {
-						cb: function cbLoadPage() {
-							try {
-								me.gridSM.select(0);
-							} catch (e) {
-								_debug(e);
+						cb: function cbLoadPage(args) {
+							var records = args[1];
+							if (records && records.length > 0) {
+								try {
+									me.gridSM.select(0);
+								} catch (e) {
+									_debug(e);
+								}
 							}
 						}
 					});
-				}
+				};
 			}
 
 			me.view.updateStoreForClassId(me.entryType.get("id"), {
 				cb: afterStoreUpdated
 			});
+
 			me.view.openFilterButton.enable();
 			me.view.clearFilterButton.disable();
 			me.view.gridSearchField.reset();
