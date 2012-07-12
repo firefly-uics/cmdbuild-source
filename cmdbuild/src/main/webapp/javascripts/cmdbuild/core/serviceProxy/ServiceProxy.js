@@ -372,6 +372,21 @@ CMDBuild.ServiceProxy.workflow = {
 		}, p));
 	},
 
+	getActivityInstance: function(params, conf) {
+		conf.url = 'services/json/workflow/getactivityinstance';
+		conf.method = "POST";
+		conf.params = params;
+		conf.important = true;
+
+		if (typeof conf.callback == "undefined") {
+			conf.callback = function() {
+				CMDBuild.LoadMask.get().hide();
+			};
+		}
+
+		CMDBuild.ServiceProxy.core.doRequest(conf);
+	},
+
 	terminateActivity: function(p) {
 		p.url = 'services/json/management/modworkflow/abortprocess';
 		p.method = "POST";

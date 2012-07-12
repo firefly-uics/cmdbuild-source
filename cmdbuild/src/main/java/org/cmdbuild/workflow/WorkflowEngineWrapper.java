@@ -10,6 +10,7 @@ import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.services.auth.UserContext;
@@ -280,6 +281,14 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		final WSActivityInstInfo[] activities = workflowService.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
 		editableProcessInstance.setActivities(activities);
 		return editableProcessInstance.save();
+	}
+
+	@Override
+	public CMProcessInstance findProcessInstance(
+		CMProcessClass processDefinition, Long cardId) {
+		final ProcessType processType = findProcessTypeById(processDefinition.getId());
+		final Process processCard = processType.cards().get(cardId.intValue());
+		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
 
 	@Override

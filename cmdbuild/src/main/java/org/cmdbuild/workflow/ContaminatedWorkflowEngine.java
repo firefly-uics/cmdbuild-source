@@ -10,4 +10,6 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 public interface ContaminatedWorkflowEngine extends CMWorkflowEngine {
 
 	Iterable<CMProcessInstance> query(CardQuery cardQuery);
+
+	CMProcessInstance findProcessInstance(CMProcessClass processClass, Long cardId);
 }

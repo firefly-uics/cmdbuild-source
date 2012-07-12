@@ -8,11 +8,20 @@
 
 	Ext.define("CMDBuild.model.CMActivityInstance", {
 		constructor: function(data) {
-			this.data = data || {};
+			if (data) {
+				this.data = data;
+			} else {
+				this.data = {};
+				this.nullObject = true;
+			}
 		},
 
 		isNew: function() {
-			return (this.data.id  == null || typeof this.data.id == "undefined");
+			if (this.nullObject) {
+				return false;
+			} else {
+				return (this.data.id  == null || typeof this.data.id == "undefined");
+			}
 		},
 
 		getId: function() {
@@ -41,12 +50,35 @@
 	});
 
 	Ext.define("CMDBuild.model.CMProcessInstance", {
-		constructor: function(data) {
-			this.data = data || {};
+		extend: "Ext.data.Model",
+
+		fields: [
+			"beginDate",
+			"classDescription",
+			"className",
+			"endDate",
+			"flowStatus",
+			{name: "id", type: "integer"},
+			{name: "classId", type: "integer"},
+			{name: "values", type: "auto"},
+			{name: "activityInstanceInfoList", type: "auto"}
+		],
+
+		STATE: {
+			OPEN: "OPEN",
+			SUSPENDED: "SUSPENDED",
+			COMPLETED: "COMPLETED",
+			TERMINATED: "TERMINATED",
+			ABORTED: "ABORTED",
+			UNSUPPORTED: "UNSUPPORTED"
+		},
+
+		getActivityInfoList: function() {
+			return this.get("activityInstanceInfoList") || [];
 		},
 
 		getId: function() {
-			return this.data.id || null;
+			return this.get("id") || null;
 		},
 
 		isNew: function() {
@@ -54,17 +86,25 @@
 		},
 
 		getValues: function() {
-			return this.data.values || {};
+			return this.get("values") || {};
 		},
 
 		getClassId: function() {
-			return this.data.classId || null;
+			return this.get("classId") || null;
 		},
 
 		applyValues: function(values) {
 			if (values) {
 				this.data.values = Ext.apply(this.getValues(), values);
 			}
+		},
+
+		getFlowStatus: function() {
+			return this.get("flowStatus");
+		},
+
+		isStateOpen: function() {
+			return this.getFlowStatus() == this.STATE.OPEN;
 		}
 	});
 
@@ -115,6 +155,7 @@
 					}
 
 					function onProcessInstanceChange() {
+						// set the current CMActivityInstance to a empty activity
 						me.setActivityInstance(new CMDBuild.model.CMActivityInstance());
 						me.notifyToDelegates("onProcessInstanceChange", [processInstance]);
 					}

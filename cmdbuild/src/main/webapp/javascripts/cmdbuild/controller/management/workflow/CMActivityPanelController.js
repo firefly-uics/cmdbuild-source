@@ -4,6 +4,10 @@
 		FLOW_STATUS_CODE = "FlowStatus_code",
 		STATE_VALUE_OPEN = "open.running";
 
+	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate", {
+		onCardSaved: Ext.emptyFn
+	});
+
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMCardPanelController",
 
@@ -11,7 +15,7 @@
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
 
-		constructor: function(v, owner, widgetControllerManager) {
+		constructor: function(v, owner, widgetControllerManager, delegate) {
 			this.callParent(arguments);
 
 			// this flag is used to define if the user has click on the
@@ -26,6 +30,12 @@
 			this.mon(this.view, this.view.CMEVENTS.displayModeDidActivate, onDisplayMode, this);
 
 			_CMWFState.addDelegate(this);
+			this.setDelegate(delegate || new CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate());
+		},
+
+		setDelegate: function(d) {
+			CMDBuild.validateInterface(d, "CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate");
+			this.delegate = d;
 		},
 
 		// wfStateDelegate
@@ -35,40 +45,55 @@
 
 		// wfStateDelegate
 		onActivityInstanceChange: function(activityInstance) {
-			_debug("** ** ** ** ** ** ** activity instance ", activityInstance);
+
+			if (!this.view.isVisible()) {
+				// is not necessary update the view
+				// so wait that the panel is active
+				this.mon(this.view, "activate", function() {
+					this.onActivityInstanceChange(activityInstance);
+				}, this, {
+					single: true
+				});
+
+				return;
+			}
 
 			var me = this;
 			var processInstance = _CMWFState.getProcessInstance();
 
-			me.view.displayMode();
+			// reduce the layouts work while
+			// fill the panel and build the widgets.
+			// Resume it at the end
+			// and force a layout update
+			Ext.suspendLayouts();
 
+			me.view.displayMode(enableToolbar = true);
 
-//				// could have no raw if is the server template
-//				data = card.raw || card.data || {CmdbuildExtendedAttributes: []},
-//				
-//	//			updateWidget = isStateOpen(data) || card._cmNew;
-//	
 			// at first update the widget because they could depends
 			// to the form. The Template resolver starts when the form goes
 			// in edit mode, so the widgets must be already ready to done them works
 
-			// TODO update passing null if the process is closed
-			me.widgetControllerManager.buildControllers(activityInstance);
+			var updateWidget = processInstance.isStateOpen() || activityInstance.isNew();
+			if (updateWidget) {
+				me.widgetControllerManager.buildControllers(activityInstance);
+			} else {
+				me.widgetControllerManager.buildControllers(null);
+			}
 
 			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
 
-			if (processInstance) {
-				// Load always the fields
-				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
-					// TODO: manage the advance
-					if (activityInstance.isNew()) {
-						me.view.editMode();
-					}
-//					else {
-//						me.loadCard(loadRemoteData);
-//					}
-				});
-			}
+			// Load always the fields
+			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
+				// TODO: manage the advance
+				if (activityInstance.isNew()) {
+					me.view.editMode();
+				} else {
+					me.fillFormWidthProcessInstanceData(processInstance);
+				}
+			});
+
+			Ext.resumeLayouts();
+			this.view.doLayout();
 		},
 
 		// override // deprecated
@@ -80,10 +105,11 @@
 		// override
 		onModifyCardClick: function() {
 			this.isAdvance = false;
-			var data = this.card.raw || this.card.data;
+			var pi = _CMWFState.getProcessInstance();
 
-			if (isStateOpen(data)) {
-				this.callParent(arguments);
+			if (pi && pi.isStateOpen()) {
+				// FIXME: check privileges
+				this.view.editMode();
 			}
 		},
 
@@ -135,6 +161,7 @@
 		loadFields: function(entryTypeId, cb) {
 			var me = this;
 			var activityInstance = _CMWFState.getActivityInstance();
+			var processInstance = _CMWFState.getProcessInstance();
 			var variables = [];
 
 			if (activityInstance) {
@@ -144,9 +171,12 @@
 			_CMCache.getAttributeList(entryTypeId, function(attributes) {
 
 				if (activityInstance.isNew()
-//						|| isStateOpen(me.card.data)
-					) {
+						|| processInstance.isStateOpen()) {
+
 					attributes = filterAttributesInStep(attributes, variables);
+				} else {
+					// if here, we have a closed process, so show
+					// all the attributes
 				}
 
 				me.view.fillForm(attributes, editMode = false);
@@ -157,12 +187,15 @@
 			});
 		},
 
-		loadCardStandardCallBack: function(card) {
-			var me = this,
-				data = card.raw || card.data,
-				editable = (isStateOpen(data) && data.priv_write);
+		fillFormWidthProcessInstanceData: function(processInstance) {
 
-			me.view.loadCard(card);
+			if (processInstance == null) {return;}
+
+			var me = this,
+				editable = true; //FIXME: manage privileges (isStateOpen(data) && data.priv_write);
+
+			me.view.loadCard(new CMDBuild.DummyModel(processInstance.getValues()));
+
 			if (me.isAdvance) {
 				me.isAdvance = false;
 				editable ? me.view.editMode() : me.view.displayModeForNotEditableCard();
@@ -173,9 +206,11 @@
 					me.view.displayModeForNotEditableCard();
 				}
 
-				if (isNotStoppable(data)) {
-					me.view.disableStopButton();
-				}
+				// FIXME: manage stoppable
+
+//				if (isNotStoppable(data)) {
+//					me.view.disableStopButton();
+//				}
 			}
 		},
 
@@ -289,9 +324,9 @@
 					callback: function(operation, success, response) {
 						CMDBuild.LoadMask.get().hide();
 					},
-					success: function(response) {
-						updateCardData(me, response);
-						me.fireEvent(me.CMEVENTS.cardSaved, me.card);
+					success: function(operation, requestConfiguration, decodedResponse) {
+						_debug(arguments);
+						this.delegate.onCardSaved(decodedResponse.response.Id);
 					}
 				});
 			}
@@ -364,17 +399,5 @@
 		}
 
 		return valid;
-	}
-
-	function updateCardData(me, response) {
-		if (me.card) {
-			var card = Ext.decode(response.responseText).response;
-
-			me.card.raw = Ext.apply(me.card.raw, {
-				Id: card.Id,
-				ProcessInstanceId: card.ProcessInstanceId,
-				WorkItemId: card.WorkItemId
-			});
-		}
 	}
 })();

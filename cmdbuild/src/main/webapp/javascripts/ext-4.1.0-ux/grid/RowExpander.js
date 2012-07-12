@@ -118,16 +118,7 @@ Ext.define('Ext.ux.RowExpander', {
 
         grid.mon(grid, 'render', this.bindView, this, {single: true});
 
-        // CMDBuild
-        // patch to allow the use of the reconfigure on the grid
-        grid.mon(grid, 'reconfigure', this.onReconfigure, this);
      },
- 
-    onReconfigure : function(grid, store, columns) {
-		if (columns) {
-			grid.headerCt.insert(0, this.getHeaderConfig());
-		}
-	},
 
     getHeaderId: function() {
         if (!this.headerId) {
@@ -186,7 +177,7 @@ Ext.define('Ext.ux.RowExpander', {
         }
     },
 
-    toggleRow: function(rowIdx) {
+    toggleRow: function(rowIdx, forceExpand) {
         var rowNode = this.view.getNode(rowIdx),
             row = Ext.get(rowNode),
             nextBd = Ext.get(row).down(this.rowBodyTrSelector),
@@ -198,20 +189,13 @@ Ext.define('Ext.ux.RowExpander', {
             nextBd.removeCls(this.rowBodyHiddenCls);
             this.recordsExpanded[record.internalId] = true;
             this.view.fireEvent('expandbody', rowNode, record, nextBd.dom);
-
-            this.onRowExpanded(grid, rowNode, record, nextBd); // CMDBuild, see below
         } else {
             row.addCls(this.rowCollapsedCls);
             nextBd.addCls(this.rowBodyHiddenCls);
             this.recordsExpanded[record.internalId] = false;
             this.view.fireEvent('collapsebody', rowNode, record, nextBd.dom);
-
-            this.onRowCollapsed(grid, rowNode, record, nextBd); // CMDBuild, see below
         }
     },
-
-    onRowCollapsed: Ext.emptyFn,	// CMDBuild
-    onRowExpanded: Ext.emptyFn,		// add to have not to listen the events for the plugin subclasses
 
     onDblClick: function(view, cell, rowIdx, cellIndex, e) {
         this.toggleRow(rowIdx);
@@ -224,7 +208,7 @@ Ext.define('Ext.ux.RowExpander', {
 
         return {
             id: this.getHeaderId(),
-            width: 24,
+            width: this.expanderWidth || 24,
             sortable: false,
             resizable: false,
             draggable: false,

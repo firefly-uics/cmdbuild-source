@@ -5,7 +5,8 @@
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
 
 		mixins: {
-			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate",
+			activityPanelControllerDelegate: "CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate"
 		},
 
 		constructor: function(view, supercontroller) {
@@ -18,6 +19,7 @@
 			// from cmmodworkflow
 			this.mon(this.view.statusCombo, "select", onStatusComboSelect, this);
 			this.mon(this.view.addCardButton, "cmClick", this.onAddCardButtonClick, this);
+			this.mon(this.view, "activityInstaceSelect", this.onActivityInfoSelect, this);
 
 			_CMWFState.addDelegate(this);
 		},
@@ -42,6 +44,60 @@
 				},
 				important: true
 			});
+		},
+
+		/*
+		 * The activityInfo has only the base info about the activity.
+		 * Do a request to have the activity data and set it in the _CMWFState
+		 */
+		onActivityInfoSelect: function(activityInfoId) {
+
+			// prevent the selection of the same activity
+			var lastSelection = _CMWFState.getActivityInstance();
+			if (!lastSelection ||
+					lastSelection.getId() == activityInfoId) {
+
+				return;
+			}
+
+			updateViewSelection(activityInfoId, this);
+			CMDBuild.ServiceProxy.workflow.getActivityInstance({
+				idClass: _CMWFState.getProcessClassRef().getId(),
+				processInstanceId: _CMWFState.getProcessInstance().getId(),
+				activityInstanceId: activityInfoId
+			}, {
+				scope: this,
+				success: function success(response, request, decoded) {
+					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+					_CMWFState.setActivityInstance(activity);
+				}
+			});
+		},
+
+		// override
+		onCardSelected: function(sm, selection) {
+			if (Ext.isArray(selection)) {
+				if (selection.length > 0) {
+					var pi = selection[0];
+					var activities = pi.getActivityInfoList();
+
+					_CMWFState.setProcessInstance(pi);
+
+					if (activities.length > 0) {
+						toggleRow(pi, this);
+
+						if (activities.length == 1) {
+							var ai = activities[0];
+							if (ai && ai.id) {
+								this.onActivityInfoSelect(ai.id);
+							}
+						}
+
+					} else {
+						_debug("A proces without activities", pi);
+					}
+				}
+			}
 		},
 
 		// override
@@ -70,11 +126,40 @@
 		onEntryTypeSelected: function(entryType, danglingCard) {
 			this.callParent(arguments);
 			this.view.addCardButton.updateForEntry(entryType);
+		},
+
+		// activityPanelControllerDelegate
+		onCardSaved: function(cardId) {
+			this.openCard({
+				Id: cardId,
+				// use the id class of the grid to use the right filter
+				// when look for the position
+				IdClass: this.entryType.get("id")
+			});
 		}
 	});
 
 	function onStatusComboSelect() {
 		this.view.updateStatusParamInStoreProxyConfiguration();
 		this.view.loadPage(1);
+	}
+
+	function toggleRow(pi, me) {
+		var p = me.view.plugins[0];
+		if (p) {
+			p.toggleRow(pi.index, forceExpand = true);
+		}
+	}
+
+	function updateViewSelection(activityInfoId, me) {
+		try {
+			var activityRowEl = Ext.query('p[id='+activityInfoId+']', me.view.getEl().dom)[0];
+			activityRowEl = new Ext.Element(activityRowEl);
+			var p = me.view.plugins[0];
+
+			p.selectSubRow(me.view, activityRowEl);
+		} catch (e) {
+			_debug("Can't select the activity " + activityInfoId);
+		}
 	}
 })();

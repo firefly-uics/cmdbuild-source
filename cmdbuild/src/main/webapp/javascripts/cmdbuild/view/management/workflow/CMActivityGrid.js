@@ -5,12 +5,16 @@
 		STATE_VALUE_COMPLETED = "closed.completed",
 		STATE_VALUE_ALL = "all", // Not existent
 
+		GET_PROCESS_INSTANCE_URL = "services/json/workflow/getprocessinstancelist",
+
 		tr = CMDBuild.Translation.management.modworkflow;
-	
+
 	Ext.define("CMDBuild.view.management.workflow.CMActivityGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
-		cmStoreUrl: "services/json/management/modworkflow/getactivitylist",
+		cmStoreUrl: GET_PROCESS_INSTANCE_URL,
+
+		CLASS_COLUMN_DATA_INDEX: "classDescription", // for the header configuration
 
 		constructor: function() {
 
@@ -37,17 +41,11 @@
 
 			this.tbar = [this.addCardButton, this.statusCombo];
 
-			this.callParent(arguments);
-
 			this.plugins = [{
-				ptype: "rowexpander",
-				rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
-				getRowBodyFeatureData: function(data, idx, record, orig) {
-					var o = Ext.ux.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
-					o.rowBody = "<div>@@ Bella li</div>";
-					return o;
-				}
-			}]
+				ptype: "activityrowexpander"
+			}];
+
+			this.callParent(arguments);
 		},
 
 		setStatusToOpen: function() {
@@ -70,28 +68,57 @@
 			return ep;
 		},
 
+		// override
+		buildColumnsForAttributes: function(classAttributes) {
+			var columns = this.callParent(arguments);
+			var headers = columns.headers;
 
-		// DEPRECATED
-
-		onEntrySelected: function(entry) { _deprecated();
-			var id = entry.get("id");
-
-			this.openFilterButton.enable();
-			this.addCardButton.updateForEntry(entry);
-			this.gridSearchField.reset();
-			this.clearFilterButton.disable();
-
-			this.updateStoreForClassId(id, {
-				cb: function cbUpdateStoreForClassId() {
-					this.loadPage(1, {
-						cb: function cbLoadPage() {
-							try {
-								this.getSelectionModel().select(0);
-							} catch (e) {/* if empty*/}
+			for (var i=0, l=headers.length; i<l; ++i) {
+				headers[i].renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+					var h = headers[colIndex -1]; // colIndex starts at 1
+					if (value) {
+						return value;
+					} else {
+						if (h && h.dataIndex) {
+							var values = record.get("values");
+							if (values) {
+								return values[h.dataIndex];
+							}
 						}
-					});
-				}
+					}
+					
+				};
+			}
+
+			return columns;
+		},
+
+		// override
+		buildStore: function(fields, pageSize) {
+			return new Ext.data.Store({
+				model: CMDBuild.model.CMProcessInstance,
+				pageSize: pageSize,
+				remoteSort: true,
+				proxy: {
+					type: "ajax",
+					url: this.cmStoreUrl,
+					reader: {
+						type: "json",
+						root: "response.rows",
+						totalProperty: "response.results",
+						idProperty: "id"
+					},
+					extraParams: this.getStoreExtraParams()
+				},
+				autoLoad: false
 			});
+		},
+
+		// called by the activityrowexpander plugin
+		// when an activity is selected with a mouse click
+		onActivitySelected: function(activityInstanceId) {
+			_debug("Activity selection", activityInstanceId);
+			this.fireEvent("activityInstaceSelect", activityInstanceId);
 		}
 	});
 

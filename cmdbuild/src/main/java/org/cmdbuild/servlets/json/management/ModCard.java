@@ -103,7 +103,7 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
-	static void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery) throws JSONException {
+	public static void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery) throws JSONException {
 		if (sorters != null && sorters.length() > 0) {
 			JSONObject s = sorters.getJSONObject(0);
 			String sortField = s.getString("property");

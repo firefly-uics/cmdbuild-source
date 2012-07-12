@@ -61,11 +61,15 @@
 			} else {
 				this.view.enable();
 			}
-		},
 
-		// wfStateDelegate
-		onActivityInstanceChange: function(activityInstance) {
-			// TODO: do the request if visible
+			if (!this.view.isVisible()) {
+				this.removeManagedListener(this.view, "activate");
+				this.mon(this.view, "activate", function() {
+					this.load();
+				}, this, {single: true});
+			} else {
+				this.load();
+			}
 		},
 
 		// deprecated
@@ -83,6 +87,17 @@
 			}
 		},
 
-		
+		// override
+		load: function() {
+			var processInstance = _CMWFState.getProcessInstance();
+			if (processInstance) {
+				this.view.getStore().load({
+					params : {
+						IdClass: processInstance.get("classId"),
+						Id: processInstance.get("id")
+					}
+				});
+			}
+		}
 	});
 })();

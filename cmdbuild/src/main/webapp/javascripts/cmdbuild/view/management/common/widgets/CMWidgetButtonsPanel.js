@@ -6,16 +6,10 @@
 
 		constructor: function() {
 			this.callParent(arguments);
-
-			var widget = this.widgetDefinition;
-
-			Ext.apply(this, {
-				margins:'0 0 5 0',
-				text: widget.btnLabel
-					|| widget.label
-					|| CMDBuild.Translation.management.modworkflow[widget.labelId],
-				disabled: !widget.alwaysenabled
-			});
+			this.margins ='0 0 5 0';
+			this.text = this.widgetDefinition.label
+					|| CMDBuild.Translation.management.modworkflow[this.widgetDefinition.labelId];
+			this.disabled = !this.widgetDefinition.alwaysenabled;
 		},
 
 		disable: function() {
@@ -24,8 +18,6 @@
 			} else {
 				return this.callParent(arguments);
 			}
-
-			return this.enable();
 		}
 	});
 })();
@@ -39,18 +31,18 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 	},
 
 	initComponent: function() {
-		Ext.apply(this, {
-			frame: false,
-			border: false,
-			layout : 'vbox',
-			bodyCls: "x-panel-body-default-framed",
-			bodyStyle: {
-				padding: "30px 5px 0 5px"
-			}
-		});
+		this.frame = false;
+		this.border = false;
+		this.layout = {
+			type : 'vbox',
+			align : 'stretch'
+		};
+		this.bodyCls = "x-panel-body-default-framed";
+		this.bodyStyle = {
+			padding: "30px 5px 0 5px"
+		};
 
 		this.callParent(arguments);
-
 		this.CMEVENTS = this.self.CMEVENTS;
 	},
 
@@ -67,31 +59,6 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanel", {
 				me.fireEvent(me.CMEVENTS.widgetButtonClick, widget);
 			}
 		}));
-
-		me.updateButtonsWidth();
-	},
-
-	updateButtonsWidth: function updateButtonsWidth() {
-		var maxW = 0;
-		var buttons = this.items.items;
-		var l = buttons.length;
-
-		for (var i=0; i<l; ++i)  {
-			var item = buttons[i];
-			var w = item.getWidth();
-			if (w > maxW) {
-				maxW = w;
-			}
-		}
-
-		for (var i=0; i<l; ++i)  {
-			var item = buttons[i];
-			item.setWidth(maxW);
-		}
-
-		// to fix the width of the panel, auto width does
-		// not work with IE7
-		this.setWidth(maxW + 10); // 10 is the pudding
 	},
 
 	displayMode: function displayMode() {

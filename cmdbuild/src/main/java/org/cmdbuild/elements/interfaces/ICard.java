@@ -6,17 +6,24 @@ public interface ICard extends IAbstractElement {
 
 	public enum CardAttributes {
 		ClassId("IdClass"),
-		Id("Id"), Code("Code"),
-		Description("Description"),
+		Id("Id"),
+		Code("Code", true),
+		Description("Description", true),
 		Status("Status"),
 		User("User"),
 		BeginDate("BeginDate"),
-		Notes("Notes");
+		Notes("Notes", true);
 
 		private final String descr;
+		private final boolean visibleByUsers;
 
 		CardAttributes(String descr) {
+			this(descr, false);
+		}
+
+		CardAttributes(String descr, boolean visibleByUsers) {
 			this.descr = descr;
+			this.visibleByUsers = visibleByUsers;
 		}
 
 		public String toString() {
@@ -25,6 +32,10 @@ public interface ICard extends IAbstractElement {
 
 		public String dbColumnName() {
 			return descr;
+		}
+
+		public boolean isVisibleByUsers() {
+			return visibleByUsers;
 		}
 	}
 

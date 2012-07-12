@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.management.ModCard.applySortToCardQuery;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,19 +14,83 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.elements.interfaces.ProcessQuery;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
+import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
+import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Workflow extends JSONBase {
+	/**
+	 * Get the workItems OR closed processes, depending on the state required.
+	 * If required state is closed, then processes with state closed.*
+	 * (completed/terminated/aborted) will be returned.
+	 * If state is open, the activities in open.not_running.not_started 
+	 * and open.running will be returned
+	 * 
+	 * @param params
+	 * @return
+	 * @throws JSONException
+	 * @throws CMWorkflowException
+	 */
+	@JSONExported
+	public JsonResponse getProcessInstanceList(JSONObject serializer, UserContext userCtx, // TODO: but is the right name? It returns ProcessInstances
+			@Parameter("state") String flowStatus,
+			@Parameter("limit") int limit,
+			@Parameter("start") int offset,
+			@Parameter(value = "sort", required = false) JSONArray sorters,
+			@Parameter(value = "query", required = false) String fullTextQuery,
+
+
+			/*
+			 * Don't clone it or getCardPosition does not work,
+			 * unless sort and query are set somewhere else
+			 * already filtered with the passed flow status
+			 */
+			ProcessQuery processQuery
+
+	) throws JSONException, CMWorkflowException {
+
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final List<JsonProcessCard> processInstances = new ArrayList<JsonProcessCard>();
+
+		configureQuery(processQuery, fullTextQuery, sorters, limit, offset);
+
+		for (CMProcessInstance pi : logic.query(processQuery)) {
+			processInstances.add(new JsonProcessCard(pi));
+		}
+
+		final int totalRows =  processQuery.getTotalRows();
+
+		return JsonResponse.success(new HashMap<String, Object>() {{
+			put("results", totalRows);
+			put("rows", processInstances);
+		}});
+
+	}
+
+	private void configureQuery(ProcessQuery processQuery,
+			String fullTextQuery, JSONArray sorters, int limit, int offset)
+			throws JSONException {
+		if (fullTextQuery != null) {
+			processQuery.fullText(fullTextQuery.trim());
+		}
+		applySortToCardQuery(sorters, processQuery);
+		processQuery.subset(offset, limit).count();
+	}
 
 	@JSONExported
 	public JsonResponse getStartActivity(
@@ -33,6 +99,19 @@ public class Workflow extends JSONBase {
 		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final CMActivity ad = logic.getStartActivity(processClassId);
 		return JsonResponse.success(JsonActivityDefinition.fromActivityDefinition(ad));
+	}
+
+	@JSONExported
+	public JsonResponse getActivityInstance(
+			@Parameter("idClass") Long processClassId,
+			@Parameter("processInstanceId") Long processInstanceId,
+			@Parameter("activityInstanceId") String activityInstanceId,
+			final UserContext userCtx) throws CMWorkflowException {
+
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final CMActivityInstance ad = logic.getActivityInstance(processClassId, processInstanceId, activityInstanceId);
+
+		return JsonResponse.success(new JsonActivityInstance(ad));
 	}
 
 	@JSONExported

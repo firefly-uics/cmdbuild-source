@@ -106,6 +106,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMModWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMMultipleActivityRowExpander.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityHistoryPanel.js"></script>
 
@@ -164,8 +165,8 @@
 
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityGridController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityPanelController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityGridController.js"></script>
 
 
 <script type="text/javascript" src="javascripts/cmdbuild/management.js"></script>

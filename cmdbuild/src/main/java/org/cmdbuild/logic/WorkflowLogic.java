@@ -72,6 +72,23 @@ public class WorkflowLogic {
 		return wfEngine.findProcessClass(processClassNameOrId).getStartActivity();
 	}
 
+	public CMProcessInstance getProcessInstance(
+		final Object processClassNameOrId, final Long cardId) {
+		final CMProcessClass proc = wfEngine.findProcessClass(processClassNameOrId);
+
+		return wfEngine.findProcessInstance(proc, cardId);
+	}
+
+	public CMActivityInstance getActivityInstance(final Object processClassNameOrId, final Long processCardId, final Object activityInstanceId) {
+		CMProcessInstance pi = getProcessInstance(processClassNameOrId, processCardId);
+		for (CMActivityInstance a:pi.getActivities()) {
+			if (a.getId().equals(activityInstanceId)) {
+				return a;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Starts the process, kills every activity except for the one that this
 	 * user wanted to start, advances it if requested.
