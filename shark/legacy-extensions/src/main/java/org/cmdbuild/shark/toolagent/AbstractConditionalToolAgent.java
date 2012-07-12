@@ -16,6 +16,8 @@ import org.enhydra.shark.toolagent.AbstractToolAgent;
 
 public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
+	private static final String CMDBUILD_API_CLASSNAME_PROPERTY = "org.cmdbuild.workflow.api.classname";
+
 	public static interface ConditionEvaluator {
 
 		boolean evaluate();
@@ -65,7 +67,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	private void configureApi(final CallbackUtilities cus) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		final String classname = cus.getProperty("org.cmdbuild.workflow.api.classname");
+		final String classname = cus.getProperty(CMDBUILD_API_CLASSNAME_PROPERTY);
 		cus.info(null, format("loading api '%s'", classname));
 		final Class<? extends SharkWorkflowApi> sharkWorkflowApiClass = Class.forName(classname).asSubclass(
 				SharkWorkflowApi.class);
