@@ -3,12 +3,28 @@
 	Ext.define("CMDBuild.controller.management.workflow.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
 
+		mixins: {
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate",
+		},
+
+		constructor: function() {
+			this.callParent(arguments);
+			_CMWFState.addDelegate(this);
+		},
+
+		// override
+		onEntryTypeSelected: function() { _deprecated(); },
+
+		// override
+		onCardSelected: function(card) { _deprecated();	},
+
 		// override to deny to add a note to a new process
-		disableTheTabBeforeCardSelection: function(card) {
-			if (isANewActivity(card)) {
+		disableTheTabBeforeCardSelection: function(processInstance) {
+			if (!processInstance 
+					|| processInstance.isNew()) {
 				return true;
 			} else {
-				return this.callParent(arguments);
+				return CMDBuild.Utils.isSimpleTable(processInstance.getClassId());
 			}
 		},
 
@@ -36,22 +52,49 @@
 		// override to retrieve the activityInstance
 		// from the WorkflowState
 		_getSaveParams: function() {
-			var ai = _CMWFState.getActivityInstance();
-			var processClass = _CMWFState.getProcessClassRef();
+			var pi = _CMWFState.getProcessInstance();
 
-			if (ai && processClass) { // FIXME the process class id must be taken from ai
+			if (pi) {
 				return {
-					IdClass: processClass.getId(),
-					Id: ai.getId()
+					IdClass: pi.getClassId(),
+					Id: pi.getId()
 				};
 			} else {
 				return {};
 			}
-		}
+		},
+
+		// override
+		// don't use the card passed by superclass success
+		// after save request. Use the processInstance instead
+		syncSavedNoteWithModel: function(card, value) {
+			var pi = _CMWFState.getProcessInstance();
+
+			if (pi) {
+				pi.setNotes(value);
+			}
+		},
+
+		// wfStateDelegate
+		onProcessClassRefChange: function() {
+			this.view.disable();
+		},
+
+		onProcessInstanceChange: function(pi) {
+			this.updateView(pi);
+			this.view.loadCard(new CMDBuild.DummyModel(pi.getValues()));
+
+			if (this.disableTheTabBeforeCardSelection(pi)) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+			}
+		},
+
+		onActivityInstanceChange: Ext.emptyFn
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenNoteController", {
-		extend: "CMDBuild.controller.management.common.widgets.CMWidgetController",
 
 		mixins: {
 			observable: "Ext.util.Observable",
@@ -67,7 +110,7 @@
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
 			try {
-				this.view.updateWritePrivileges(this.card.raw.priv_write && !this.readOnly);
+				this.view.updateWritePrivileges(this.card.hasWritePrivileges());
 			} catch (e) {
 				this.view.updateWritePrivileges(false);
 			}
@@ -102,11 +145,4 @@
 		}
 	}
 
-	function syncSavedNoteWithModel(activity, val) {
-		activity.set("Notes", val);
-		activity.commit();
-		if (activity.raw) {
-			activity.raw["Notes"] = val;
-		}
-	}
 })();

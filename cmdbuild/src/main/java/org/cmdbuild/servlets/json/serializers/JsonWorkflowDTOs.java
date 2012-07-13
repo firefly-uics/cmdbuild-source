@@ -75,6 +75,10 @@ public class JsonWorkflowDTOs {
 		public String getDescription() throws CMWorkflowException {
 			return activityInstance.getDefinition().getDescription();
 		}
+
+		public Boolean getWritePrivileges() {
+			return true; //TODO: implement
+		}
 	}
 
 	/*
@@ -95,6 +99,10 @@ public class JsonWorkflowDTOs {
 
 		public String getPerformerName() {
 			return activityInstance.getPerformerName();
+		}
+
+		public Boolean getWritePrivileges() {
+			return true; //TODO: implement
 		}
 	}
 

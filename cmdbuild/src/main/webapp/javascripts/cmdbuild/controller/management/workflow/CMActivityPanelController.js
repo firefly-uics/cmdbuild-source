@@ -45,19 +45,6 @@
 
 		// wfStateDelegate
 		onActivityInstanceChange: function(activityInstance) {
-
-			if (!this.view.isVisible()) {
-				// is not necessary update the view
-				// so wait that the panel is active
-				this.mon(this.view, "activate", function() {
-					this.onActivityInstanceChange(activityInstance);
-				}, this, {
-					single: true
-				});
-
-				return;
-			}
-
 			var me = this;
 			var processInstance = _CMWFState.getProcessInstance();
 

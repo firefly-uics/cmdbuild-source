@@ -177,6 +177,7 @@
 		 * and bring it to front
 		 */
 		bringTofrontPanelByCmName: function(cmName, params, silent) {
+			Ext.suspendLayouts();
 			var p = this.findModuleByCMName(cmName),
 				activatePanel;
 
@@ -189,6 +190,8 @@
 					p.fireEvent("CM_iamtofront", params);
 				}
 			}
+			Ext.resumeLayouts();
+			this.doLayout();
 			return activatePanel;
 		},
 

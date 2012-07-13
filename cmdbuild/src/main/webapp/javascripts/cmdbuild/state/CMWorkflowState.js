@@ -46,6 +46,10 @@
 
 		getWidgets: function() {
 			return this.data.widgets || [];
+		},
+
+		hasWritePrivileges: function() {
+			return this.data.writePrivileges;
 		}
 	});
 
@@ -105,6 +109,10 @@
 
 		isStateOpen: function() {
 			return this.getFlowStatus() == this.STATE.OPEN;
+		},
+
+		setNotes: function(notes) {
+			this.data.values.Notes = notes;
 		}
 	});
 

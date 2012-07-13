@@ -7,14 +7,7 @@
 			this.backToActivityButton.hide();
 		},
 
-		configure: function(c) {
-			this.widgetConf = c.widget;
-			this.activity = c.activityInstance.raw || c.activityInstance.data;
-
-			var note = this.activity.Notes;
-			this.actualForm.setValue(note || "");
-			this.displayPanel.setValue(note || "");
-		},
+		configure: Ext.emptyFn,
 
 		cmActivate: function() {
 			this.enable();
