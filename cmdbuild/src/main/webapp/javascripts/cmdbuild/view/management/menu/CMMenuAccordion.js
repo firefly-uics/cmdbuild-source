@@ -16,7 +16,7 @@
 			for (var id in nodesMap) {
 				var node = nodesMap[id];
 				if (node.parent && nodesMap[node.parent]) {
-					linkToParent(node, nodesMap)
+					linkToParent(node, nodesMap);
 				} else {
 					out.push(node);
 				}
@@ -55,7 +55,7 @@
 		}
 
 		if (isAReport(node)) {
-			addReportStuff(n, node)
+			addReportStuff(n, node);
 		}
 
 		return n;
@@ -69,12 +69,12 @@
 	}
 
 	function isAReport(node) {
-		return node.type.indexOf("report") > -1
+		return node.type.indexOf("report") > -1;
 	}
 	
 	function addReportStuff(n, node) {
 		n.cmName = "report";
 		n.objid = node.objid;
-		n.subtype = node.type
+		n.subtype = node.type;
 	}
 })();

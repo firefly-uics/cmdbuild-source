@@ -427,6 +427,7 @@
          "available_elements": "Available Elements",
          "availabletree": {
             "class": "Classes",
+            "dashboard": "Dashboards",
             "processclass": "Activities",
             "report": "Reports",
             "view": "Views"

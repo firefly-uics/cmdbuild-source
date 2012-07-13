@@ -8,13 +8,17 @@ import java.util.Set;
 
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
+import org.cmdbuild.elements.wrappers.AvailableMenuItemsView;
 import org.cmdbuild.elements.wrappers.MenuCard;
-import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.elements.wrappers.MenuCard.AllowedReportExtension;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
+import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.logic.DashboardLogic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -30,10 +34,10 @@ public class ModMenu extends JSONBase {
 	public JSONArray getMenu(
 			JSONObject serializer,
 			@Parameter("group") int groupId
-	) throws JSONException, AuthException, NotFoundException, ORMException {	
+	) throws JSONException, AuthException, NotFoundException, ORMException {
 		if (groupId >= 0) {
-			Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupId);			
-			return Serializer.serializeMenuList(menuList, UserContext.systemContext(), null);		
+			Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupId);
+			return Serializer.serializeMenuList(menuList, UserContext.systemContext(), null);
 		}
 		return new JSONArray();
 	}
@@ -48,9 +52,11 @@ public class ModMenu extends JSONBase {
 	) throws JSONException {
 		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(groupId);
 		JSONArray jsonAvailableItems = Serializer.buildJsonAvaiableMenuItems();
-		
+
 		addAvailableTables(tf, menuList, jsonAvailableItems);
 		addAvailableReports(userCtx, menuList, jsonAvailableItems);
+		addAvailableDashboards(userCtx, jsonAvailableItems);
+
 		return jsonAvailableItems;
 	}
 
@@ -63,7 +69,7 @@ public class ModMenu extends JSONBase {
 	) throws Exception {
 		MenuCard.deleteTree(groupId);
 		Map<Object, Integer> idMap = new HashMap<Object, Integer>();
-		
+
 		int len=jsonMenuItems.length();
 		while (len > 0) {
 			int startLength = len;
@@ -209,6 +215,27 @@ public class ModMenu extends JSONBase {
 					jsonAvaiableItems.put(jsonReport);
 				}
 			}
+		}
+	}
+
+	private final String DASHBOARD = "dashboard";
+
+	private void addAvailableDashboards(UserContext userCtx,
+			JSONArray jsonAvailableItems) throws JSONException {
+		final DashboardLogic dl = TemporaryObjectsBeforeSpringDI.getDashboardLogic(userCtx);
+		final Map<Long, DashboardDefinition> dashboards = dl.fullListDashboards();
+		for (Long id: dashboards.keySet()) {
+			DashboardDefinition df = dashboards.get(id);
+			JSONObject jsonDashboard = new JSONObject();
+			jsonDashboard.put("id", id);
+			jsonDashboard.put("text", df.getDescription());
+			jsonDashboard.put("leaf", true);
+			jsonDashboard.put("cmName", DASHBOARD);
+			jsonDashboard.put("iconCls", DASHBOARD);
+			jsonDashboard.put("type", DASHBOARD);
+			jsonDashboard.put("parent", Serializer.AVAILABLE_DASHBOARDS);
+
+			jsonAvailableItems.put(jsonDashboard);
 		}
 	}
 

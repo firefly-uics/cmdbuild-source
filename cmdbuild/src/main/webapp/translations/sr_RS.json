@@ -389,6 +389,7 @@
          "available_elements": "Доступни елементи",
          "availabletree": {
             "class": "Класе",
+            "dashboard": "<em>Dashboards</em>",
             "processclass": "Активности",
             "report": "Извештаји",
             "view": "Погледи"
