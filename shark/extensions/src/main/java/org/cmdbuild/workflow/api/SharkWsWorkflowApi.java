@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
 import org.cmdbuild.services.soap.Private;
@@ -68,14 +69,24 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	}
 
 	@Override
-	public int createCard(final String className, final Map<String, String> attributes) {
+	public int createCard(final String className, final Map<String, Object> attributes) {
 		final Card card = new Card();
 		card.setClassName(className);
 		for (final String name : attributes.keySet()) {
-			card.getAttributeList().add(attribute(name, attributes.get(name)));
+			final Object value = attributes.get(name);
+			final String stringValue = convertToWsString(value);
+			card.getAttributeList().add(attribute(name, stringValue));
 		}
 		final int id = proxy.createCard(card);
 		return id;
+	}
+
+	private String convertToWsString(final Object value) {
+		if (value == null) {
+			return StringUtils.EMPTY;
+		} else {
+			return value.toString();
+		}
 	}
 
 	private Attribute attribute(final String name, final String value) {

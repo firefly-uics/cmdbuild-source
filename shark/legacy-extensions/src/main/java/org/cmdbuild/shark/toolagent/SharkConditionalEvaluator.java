@@ -1,5 +1,7 @@
 package org.cmdbuild.shark.toolagent;
 
+import static java.lang.String.format;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,21 +12,27 @@ import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 import org.enhydra.shark.api.client.wfservice.WMEntity;
 import org.enhydra.shark.api.client.wfservice.XPDLBrowser;
+import org.enhydra.shark.api.internal.working.CallbackUtilities;
 import org.enhydra.shark.utilities.WMEntityUtilities;
 
 import bsh.Interpreter;
 
-@Legacy("It is the same ugly code wrote a long time ago in a Galaxy far, far away... and never changed!")
+@Legacy("Partially refactored")
 public class SharkConditionalEvaluator implements ConditionEvaluator {
 
 	public static final String CONDITION_EXTENDED_ATTRIBUTE = "Condition";
 
 	private final AbstractConditionalToolAgent toolAgent;
-
+	private CallbackUtilities cus;
 	private String condition = null;
 
 	public SharkConditionalEvaluator(final AbstractConditionalToolAgent toolAgent) {
 		this.toolAgent = toolAgent;
+	}
+
+	@Override
+	public void configure(final CallbackUtilities cus) throws Exception {
+		this.cus = cus;
 	}
 
 	@Override
@@ -40,7 +48,8 @@ public class SharkConditionalEvaluator implements ConditionEvaluator {
 			condition = WMEntityUtilities.findEAAndGetValue(toolAgent.getSessionHandle(), xpdlb,
 					toolAgent.getToolInfo(), CONDITION_EXTENDED_ATTRIBUTE);
 		} catch (final Exception e) {
-			// Skipping condition
+			// Should this be an error?
+			cus.debug(null, "Exception getting tool condition", e);
 		}
 	}
 
@@ -52,15 +61,14 @@ public class SharkConditionalEvaluator implements ConditionEvaluator {
 			try {
 				final Map<String, Object> ctxt = obtainContext();
 				final boolean conditionValue = evaluate(ctxt);
-				System.err.println("Condition " + condition + " in  " + info + " evaluated to " + conditionValue);
+				cus.debug(null, format("Condition '%s' in '%s' evaluated to %b", condition, info, conditionValue));
 				return conditionValue;
 			} catch (final Exception e) {
-				System.err.println("Exception evaluating condition for " + info);
-				e.printStackTrace();
+				cus.error(null, format("Exception evaluating condition for '%s'", info), e);
 				return false;
 			}
 		} else {
-			System.err.println("No condition for " + info);
+			cus.debug(null, format("No condition for '%s'", info));
 			return true;
 		}
 	}
