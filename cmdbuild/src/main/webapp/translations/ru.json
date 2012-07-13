@@ -427,6 +427,7 @@
          "available_elements": "Доступные элементы",
          "availabletree": {
             "class": "Классы",
+            "dashboard": "<em>Dashboards</em>",
             "processclass": "Процессы",
             "report": "Отчеты",
             "view": "Виды"

@@ -38,7 +38,8 @@ public class MenuCard extends CardForwarder {
 		REPORT_CSV("reportcsv"), 
 		REPORT_ODT("reportodt"), 
 		REPORT_XML("reportxml"),
-		VIEW("view");
+		VIEW("view"),
+		DASHBOARD("dashboard");
 	
 		private String ctype;
 		

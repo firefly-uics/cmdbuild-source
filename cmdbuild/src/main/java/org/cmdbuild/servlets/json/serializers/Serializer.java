@@ -60,6 +60,7 @@ public class Serializer {
 	public static final String AVAILABLE_CLASS = "availableclass";
 	public static final String AVAILABLE_PROCESS_CLASS = "availableprocessclass";
 	public static final String AVAILABLE_REPORT = "availablereport";
+	public static final String AVAILABLE_DASHBOARDS = "availabledashboards";
 
 	public static JSONObject serializeCard(ICard card, boolean printReserved) {
 		return serializeCard(card, printReserved, false, false);
@@ -520,12 +521,8 @@ public class Serializer {
 		JSONObject jsonClassesFolder = new JSONObject();
 		JSONObject jsonReportsFolder = new JSONObject();
 		JSONObject jsonProcessFolder = new JSONObject();
-		
-		jsonReportsFolder.put("text", "report");
-		jsonReportsFolder.put("id", AVAILABLE_REPORT);
-		jsonReportsFolder.put("iconCls", "cmdbuild-tree-folder-icon");
-		jsonReportsFolder.put("cmIndex", 3);
-		
+		JSONObject jsonDashboardsFolder = new JSONObject();
+
 		jsonClassesFolder.put("text", "class");
 		jsonClassesFolder.put("id", AVAILABLE_CLASS);
 		jsonClassesFolder.put("iconCls", "cmdbuild-tree-folder-icon");
@@ -536,9 +533,20 @@ public class Serializer {
 		jsonProcessFolder.put("iconCls", "cmdbuild-tree-folder-icon");
 		jsonProcessFolder.put("cmIndex", 2);
 
+		jsonReportsFolder.put("text", "report");
+		jsonReportsFolder.put("id", AVAILABLE_REPORT);
+		jsonReportsFolder.put("iconCls", "cmdbuild-tree-folder-icon");
+		jsonReportsFolder.put("cmIndex", 3);
+
+		jsonDashboardsFolder.put("text", "dashboard");
+		jsonDashboardsFolder.put("id", AVAILABLE_DASHBOARDS);
+		jsonDashboardsFolder.put("iconCls", "cmdbuild-tree-folder-icon");
+		jsonDashboardsFolder.put("cmIndex", 4);
+
 		jsonAvaiableItems.put(jsonReportsFolder);
 		jsonAvaiableItems.put(jsonClassesFolder);
 		jsonAvaiableItems.put(jsonProcessFolder);
+		jsonAvaiableItems.put(jsonDashboardsFolder);
 		
 		return jsonAvaiableItems;
 	}

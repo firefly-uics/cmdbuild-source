@@ -427,6 +427,7 @@
          "available_elements": "Dostupni elementi",
          "availabletree": {
             "class": "Klase",
+            "dashboard": "<em>Dashboards</em>",
             "processclass": "Aktivnosti",
             "report": "Izveštaji",
             "view": "Pogledi"

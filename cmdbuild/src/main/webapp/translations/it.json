@@ -427,6 +427,7 @@
          "available_elements": "Elementi disponibili",
          "availabletree": {
             "class": "Classi",
+            "dashboard": "Dashboard",
             "processclass": "Attività",
             "report": "Report",
             "view": "Viste"

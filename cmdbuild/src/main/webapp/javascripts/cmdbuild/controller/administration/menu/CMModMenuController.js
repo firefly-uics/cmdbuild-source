@@ -113,7 +113,10 @@
 
 		var root = tree.store.getRootNode();
 		root.removeAll();
-		root.appendChild(out);
+
+		if (out.length > 0) {
+			root.appendChild(out);
+		}
 
 		if (sort) {
 			tree.store.sort();
