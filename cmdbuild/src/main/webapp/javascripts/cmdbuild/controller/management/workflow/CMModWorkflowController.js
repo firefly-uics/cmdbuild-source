@@ -131,7 +131,7 @@
 		// the history has to know when the notes are changed
 		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function() {
 			if (me.historyController) {
-				me.historyController.onCardSelected(me.card);
+				me.historyController.onProcessInstanceChange(_CMWFState.getProcessInstance());
 			}
 		}, me);
 	}

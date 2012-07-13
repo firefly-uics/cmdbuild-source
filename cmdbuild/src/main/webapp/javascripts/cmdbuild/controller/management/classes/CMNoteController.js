@@ -68,7 +68,7 @@
 						CMDBuild.LoadMask.get().hide();
 						me.view.disableModify(enableToolbar = true);
 						var val = me.view.syncForms();
-						syncSavedNoteWithModel(me.card, val);
+						me.syncSavedNoteWithModel(me.card, val);
 						me.fireEvent(me.CMEVENTS.noteWasSaved);
 					},
 					failure: function() {
@@ -92,22 +92,22 @@
 		_getSaveParams: function() {
 			if (this.card) {
 				return {
-					IdClass: me.card.get("IdClass"),
-					Id: me.card.get("Id")
+					IdClass: this.card.get("IdClass"),
+					Id: this.card.get("Id")
 				};
 			} else {
 				return {};
 			}
+		},
+
+		syncSavedNoteWithModel: function(card, val) {
+			card.set("Notes", val);
+			card.commit();
+			if (card.raw) {
+				card.raw["Notes"] = val;
+			}
 		}
 	});
-
-	function syncSavedNoteWithModel(card, val) {
-		card.set("Notes", val);
-		card.commit();
-		if (card.raw) {
-			card.raw["Notes"] = val;
-		}
-	}
 
 	Ext.define("CMDBuild.view.management.common.CMNoteWindowController", {
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
@@ -120,7 +120,7 @@
 			var title = "";
 
 			if (this.card) {
-				thitle = Ext.String.format("{0} - {1}"
+				title = Ext.String.format("{0} - {1}"
 					, CMDBuild.Translation.management.modcard.tabs.notes 
 					, this.card.get("Description"));
 			}

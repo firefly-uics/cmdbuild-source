@@ -875,8 +875,7 @@ em {
 .cm_activity_row
 {
 	background: #FAFAFA;
-	border-bottom: 1px #EEE solid;
-	border-top: 1px #DDD solid;
+	border-top: 1px #EEE solid;
 	border-left: 0.5em #D1D1D1 solid;
 	padding: 0.2em 0.2em 0.2em 1em !important;
 	margin: 0 !important;

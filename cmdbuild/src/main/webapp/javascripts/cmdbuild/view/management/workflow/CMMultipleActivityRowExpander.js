@@ -29,7 +29,7 @@
 						var a = activities[i];
 						var pClass = activityRowClass;
 
-						if (!a.editable) {
+						if (!a.writePrivileges) {
 							pClass += (" " + activityRowNotEditable);
 						}
 						out += Ext.String.format('<p id={0} class="{1}"> <span class="{2}">{3}: </span>{4}</p>', a.id, pClass, activityRowLabelClass, a.performerName, a.description);

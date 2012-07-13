@@ -1,4 +1,8 @@
 (function() {
+	/*
+	 * Use it as mixin to have basic functionalities for
+	 * CMWidgetController
+	 */
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWidgetController", {
 
 		statics: {

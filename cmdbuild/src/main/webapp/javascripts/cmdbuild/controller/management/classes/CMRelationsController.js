@@ -56,7 +56,6 @@
 			this.view.clearStore();
 		},
 
-
 		onCardSelected: function(card) {
 			this.callParent(arguments);
 			this.view.clearStore();
@@ -239,15 +238,85 @@
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityRelationsController", {
 		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
-		onCardSelected: function(card) {
-			if (card && card._cmNew) {
-				this.card = card;
-				this.view.clearStore();
-				this.view.disable();
-			} else {
-				this.callParent(arguments);
+
+		mixins: {
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
+		},
+
+		constructor: function() {
+			this.callParent(arguments);
+			_CMWFState.addDelegate(this);
+		},
+
+		onEntryTypeSelected: function() {_deprecated();},
+		onCardSelected: function(card) {_deprecated();},
+
+		// override
+		updateForProcessInstance: function(pi) {
+			var classId = pi.getClassId();
+
+			if (!classId) { return; }
+
+			var entryType = _CMCache.getEntryTypeById(classId);
+
+			if (this.lastEntryType != entryType) {
+				if (!entryType || entryType.get("tableType") == "simpletable") {
+					entryType = null;
+				}
+				this.lastEntryType = entryType;
+				this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(entryType);
 			}
-		}
+		},
+
+		// override
+		loadData: function() {
+			var pi = _CMWFState.getProcessInstance();
+			if (pi == null || !tabIsActive(this.view)) {
+				return;
+			}
+
+			var el = this.view.getEl();
+			if (el) {
+				el.mask();
+			}
+
+			CMDBuild.ServiceProxy.relations.getList({
+				params: {
+					Id: pi.getId(),
+					IdClass: pi.getClassId(),
+					domainlimit: CMDBuild.Config.cmdbuild.relationlimit
+				},
+				scope: this,
+				success: function(a,b, response) {
+					el.unmask();
+					this.view.fillWithData(response.domains);
+				}
+			});
+		},
+
+		// wfStateDelegate
+		onProcessClassRefChange: function(entryType) {
+			this.view.disable();
+			this.view.clearStore();
+		},
+
+		onProcessInstanceChange: function(processInstance) {
+			if (processInstance 
+					&& processInstance.isNew()) {
+
+				this.onProcessClassRefChange();
+			} else {
+				this.updateForProcessInstance(processInstance);
+				if (this.hasDomains) {
+					this.view.enable();
+					this.loadData();
+				} else {
+					this.view.disable();
+				}
+			}
+		},
+
+		onActivityInstanceChange: Ext.emptyFn
 	});
 
 	function modelToCardInfo(model) {

@@ -149,13 +149,7 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			this.cancelButton.disable();
 		}
 
-		if (this.rendered) {
-			this.getLayout().setActiveItem(this.displayPanel.id);
-		} else {
-			this.on("render", function() {
-				this.getLayout().setActiveItem(this.displayPanel.id);
-			}, this, {single: true});
-		}
+		this.getLayout().setActiveItem(this.displayPanel.id);
 	},
 
 	enableModify: function() {
