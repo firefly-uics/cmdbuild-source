@@ -45,7 +45,7 @@ public class SharkWsWorkflowApiTest {
 	public void createCardCalledAsExpected() throws Exception {
 		when(proxy.createCard(any(Card.class))).thenReturn(42);
 
-		final Map<String, String> attributes = new TreeMap<String, String>();
+		final Map<String, Object> attributes = new TreeMap<String, Object>();
 		attributes.put("Code", "bar");
 		attributes.put("Description", "baz");
 

@@ -16,7 +16,7 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	}
 
 	@Override
-	public int createCard(final String className, final Map<String, String> attributes) {
+	public int createCard(final String className, final Map<String, Object> attributes) {
 		return mock.createCard(className, attributes);
 	}
 
