@@ -1,7 +1,8 @@
 package unit;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -10,9 +11,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static utils.matchers.AttributeListMatcher.containsAttribute;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Relation;
@@ -55,11 +59,11 @@ public class SharkWsWorkflowApiTest {
 		verify(proxy).createCard(argument.capture());
 		verifyNoMoreInteractions(proxy);
 
-		assertThat(argument.getValue().getClassName(), equalTo("foo"));
+		assertThat(argument.getValue().getClassName(), is("foo"));
 		assertThat(argument.getValue().getAttributeList(), containsAttribute("Code", "bar"));
 		assertThat(argument.getValue().getAttributeList(), containsAttribute("Description", "baz"));
 		assertThat(argument.getValue().getAttributeList(), not(containsAttribute("Dummy", "dummy")));
-		assertThat(id, equalTo(42));
+		assertThat(id, is(42));
 	}
 
 	@Test
@@ -70,11 +74,36 @@ public class SharkWsWorkflowApiTest {
 		verify(proxy).createRelation(argument.capture());
 		verifyNoMoreInteractions(proxy);
 
-		assertThat(argument.getValue().getDomainName(), equalTo("foo"));
-		assertThat(argument.getValue().getClass1Name(), equalTo("bar"));
-		assertThat(argument.getValue().getCard1Id(), equalTo(1));
-		assertThat(argument.getValue().getClass2Name(), equalTo("baz"));
-		assertThat(argument.getValue().getCard2Id(), equalTo(2));
+		assertThat(argument.getValue().getDomainName(), is("foo"));
+		assertThat(argument.getValue().getClass1Name(), is("bar"));
+		assertThat(argument.getValue().getCard1Id(), is(1));
+		assertThat(argument.getValue().getClass2Name(), is("baz"));
+		assertThat(argument.getValue().getCard2Id(), is(2));
 	}
 
+	@Test
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public void selectAttributeCalledAsExpected() throws Exception {
+		Attribute returnedAttribute = new Attribute();
+		returnedAttribute.setName("bar");
+		returnedAttribute.setValue("barValue");
+		Card cardMock = mock(Card.class);
+		when(cardMock.getAttributeList())
+			.thenReturn(Arrays.asList(returnedAttribute));
+		when(proxy.getCard(any(String.class), any(Integer.class), any(List.class)))
+			.thenReturn(cardMock);
+
+		String out = api.selectAttribute("foo", 12, "bar");
+
+		final ArgumentCaptor<String> classNameCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Integer> cardIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		final ArgumentCaptor<List> attributeNameCaptor = ArgumentCaptor.forClass(List.class);
+		verify(proxy).getCard(classNameCaptor.capture(), cardIdCaptor.capture(), attributeNameCaptor.capture());
+		verifyNoMoreInteractions(proxy);
+
+		assertThat(classNameCaptor.getValue(), is("foo"));
+		assertThat(cardIdCaptor.getValue(), is(12));
+		assertThat(attributeNameCaptor.getValue(), is(nullValue()));
+		assertThat(out, is("barValue"));
+	}
 }

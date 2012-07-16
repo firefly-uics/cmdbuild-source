@@ -4,16 +4,6 @@ import org.cmdbuild.workflow.type.ReferenceType;
 
 public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 
-	private static class CardRef {
-		final String className;
-		final int cardId;
-
-		public CardRef(final String className, final int cardId) {
-			this.className = className;
-			this.cardId = cardId;
-		}
-	}
-
 	private static final String DOMAIN_NAME = "DomainName";
 	private static final String CLASS_NAME_PREFIX = "ClassName";
 	private static final String OBJ_ID_PREFIX = "ObjId";

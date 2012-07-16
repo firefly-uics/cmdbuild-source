@@ -185,3 +185,13 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		}
 	}
 }
+
+class CardRef {
+	final String className;
+	final int cardId;
+
+	public CardRef(final String className, final int cardId) {
+		this.className = className;
+		this.cardId = cardId;
+	}
+}
