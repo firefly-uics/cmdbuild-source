@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
 import org.enhydra.jxpdl.XMLUtil;
@@ -35,7 +36,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	private final ConditionEvaluator conditionEvaluator;
-	private WorkflowApi workflowApi;
+	private SharkWorkflowApi workflowApi;
 
 	public AbstractConditionalToolAgent() {
 		conditionEvaluator = new SharkConditionalEvaluator(this);
@@ -62,6 +63,10 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	public WorkflowApi getWorkflowApi() {
+		return workflowApi;
+	}
+
+	public SchemaApi getSchemaApi() {
 		return workflowApi;
 	}
 
@@ -114,12 +119,25 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(final String name) {
-		final Object value = getParameter(name).the_value;
+		final Object value = getParameterOrDie(name).the_value;
 		return (T) value;
 	}
 
 	public <T> void setParameterValue(final String name, final T value) {
 		getParameter(name).the_value = value;
+	}
+
+	private AppParameter getParameterOrDie(final String name) {
+		final AppParameter parameter = getParameter(name);
+		if (parameter == null) {
+			throw new IllegalArgumentException(format("missing parameter for name '%s'", name));
+		} else {
+			return parameter;
+		}
+	}
+
+	public boolean hasParameter(final String name) {
+		return (getParameter(name) != null);
 	}
 
 	private AppParameter getParameter(final String name) {
@@ -129,7 +147,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 				return parameter;
 			}
 		}
-		throw new IllegalArgumentException(format("missing parameter for name '%s'", name));
+		return null;
 	}
 
 	/**

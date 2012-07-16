@@ -17,6 +17,20 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
+	private static SchemaApi NULL_SCHEMA_API = new SchemaApi() {
+
+		@Override
+		public ClassInfo findClass(final String className) {
+			throw new UnsupportedOperationException("Not yet configured");
+		}
+
+		@Override
+		public ClassInfo findClass(final int classId) {
+			throw new UnsupportedOperationException("Not yet configured");
+		}
+
+	};
+
 	private static final String CMDBUILD_WS_URL_PROPERTY = "org.cmdbuild.ws.url";
 	private static final String CMDBUILD_WS_USERNAME_PROPERTY = "org.cmdbuild.ws.username";
 	private static final String CMDBUILD_WS_PASSWORD_PROPERTY = "org.cmdbuild.ws.password";
@@ -25,14 +39,15 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	private static final String URL_SUFFIX = "services/soap/Private";
 
 	private Private proxy;
+	private SchemaApi schemaApi = NULL_SCHEMA_API;
 
 	@Override
 	public void configure(final CallbackUtilities cus) {
 		super.configure(cus);
-		configureProxy(cus);
+		setProxy(newProxy(cus));
 	}
 
-	private void configureProxy(final CallbackUtilities cus) {
+	private Private newProxy(final CallbackUtilities cus) {
 		final String base_url = cus.getProperty(CMDBUILD_WS_URL_PROPERTY);
 		final String url = completeUrl(base_url);
 		final String username = cus.getProperty(CMDBUILD_WS_USERNAME_PROPERTY);
@@ -50,7 +65,7 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 				.withPasswordType(PasswordType.DIGEST) //
 				.withPassword(password) //
 				.build();
-		proxy = soapClient.getProxy();
+		return soapClient.getProxy();
 	}
 
 	private String completeUrl(final String baseUrl) {
@@ -60,12 +75,9 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 				.toString();
 	}
 
-	public Private getProxy() {
-		return proxy;
-	}
-
 	public void setProxy(final Private proxy) {
 		this.proxy = proxy;
+		schemaApi = new CachedWsSchemaApi(proxy);
 	}
 
 	@Override
@@ -106,6 +118,20 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		relation.setClass2Name(className2);
 		relation.setCard2Id(id2);
 		proxy.createRelation(relation);
+	}
+
+	/*
+	 * SchemaApi
+	 */
+
+	@Override
+	public ClassInfo findClass(final String className) {
+		return schemaApi.findClass(className);
+	}
+
+	@Override
+	public ClassInfo findClass(final int classId) {
+		return schemaApi.findClass(classId);
 	}
 
 }
