@@ -26,4 +26,14 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 		mock.createRelation(domainName, className1, id1, className2, id2);
 	}
 
+	@Override
+	public ClassInfo findClass(String className) {
+		return null;
+	}
+
+	@Override
+	public ClassInfo findClass(int classId) {
+		return null;
+	}
+
 }

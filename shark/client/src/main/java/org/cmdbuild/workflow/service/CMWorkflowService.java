@@ -41,6 +41,17 @@ public interface CMWorkflowService {
 	WSProcessInstInfo startProcess(String pkgId, String procDefId) throws CMWorkflowException;
 
 	/**
+	 * Create the latest version of a process, sets the variables, starts it.
+	 * 
+	 * @param pkgId package id
+	 * @param procDefId workflow process definition id (as defined in the xpdl)
+	 * @param variables values for variables
+	 * @return newly created process instance id
+	 * @throws CMWorkflowException
+	 */
+	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, Object> variables) throws CMWorkflowException;
+
+	/**
 	 * List open process instances by process definition id.
 	 * 
 	 * @param procDefId

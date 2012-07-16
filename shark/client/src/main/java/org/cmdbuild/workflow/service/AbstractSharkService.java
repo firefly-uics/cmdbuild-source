@@ -1,5 +1,6 @@
 package org.cmdbuild.workflow.service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -171,12 +172,18 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	@Override
 	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId) throws CMWorkflowException {
+		return startProcess(pkgId, procDefId, Collections.<String, Object>emptyMap());
+	}
+
+	@Override
+	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId, final Map<String, Object> variables) throws CMWorkflowException {
 		return new TransactedExecutor<WSProcessInstInfo>() {
 			@Override
 			protected WSProcessInstInfo command() throws Exception {
 				final String uniqueProcDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId,
 						LAST_VERSION, procDefId);
 				final String procInstId = wapi().createProcessInstance(handle(), uniqueProcDefId, null);
+				setProcessInstanceVariablesNotTransacted(procInstId, variables);
 				final String newProcInstId = wapi().startProcess(handle(), procInstId);
 				return newWSProcessInstInfo(uniqueProcDefId, newProcInstId);
 			}
@@ -304,14 +311,19 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
-				for (final String name : variables.keySet()) {
-					final Object nativeValue = variables.get(name);
-					final Object sharkValue = variableConverter.toWorkflowType(nativeValue);
-					wapi().assignProcessInstanceAttribute(handle(), procInstId, name, sharkValue);
-				}
+				setProcessInstanceVariablesNotTransacted(procInstId, variables);
 				return null;
 			}
 		}.execute();
+	}
+
+	private void setProcessInstanceVariablesNotTransacted(final String procInstId,
+			final Map<String, Object> variables) throws Exception {
+		for (final String name : variables.keySet()) {
+			final Object nativeValue = variables.get(name);
+			final Object sharkValue = variableConverter.toWorkflowType(nativeValue);
+			wapi().assignProcessInstanceAttribute(handle(), procInstId, name, sharkValue);
+		}
 	}
 
 	@Override

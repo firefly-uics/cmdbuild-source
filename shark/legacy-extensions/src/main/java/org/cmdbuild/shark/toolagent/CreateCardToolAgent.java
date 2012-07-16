@@ -35,7 +35,7 @@ public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 			} else if (parmOut.the_class == ReferenceType.class) {
 				final ReferenceType ref = new ReferenceType();
 				ref.setId(newCardId);
-				//ref.setIdClass(...); // TODO
+				ref.setIdClass(getSchemaApi().findClass(classname).getId());
 				ref.setDescription(description);
 				parmOut.the_value = ref;
 			}
