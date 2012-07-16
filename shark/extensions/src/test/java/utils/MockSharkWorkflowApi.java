@@ -27,6 +27,11 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	}
 
 	@Override
+	public String selectAttribute(final String className, final int cardId, final String attributeName) {
+		return mock.selectAttribute(className, cardId, attributeName);
+	}
+
+	@Override
 	public ClassInfo findClass(String className) {
 		return null;
 	}

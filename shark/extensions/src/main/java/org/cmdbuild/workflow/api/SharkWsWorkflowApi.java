@@ -3,6 +3,7 @@ package org.cmdbuild.workflow.api;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +38,8 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
 	private static final String URL_SEPARATOR = "/";
 	private static final String URL_SUFFIX = "services/soap/Private";
+
+	private static final List<Attribute> ALL_ATTRIBUTES = null;
 
 	private Private proxy;
 	private SchemaApi schemaApi = NULL_SCHEMA_API;
@@ -118,6 +121,17 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		relation.setClass2Name(className2);
 		relation.setCard2Id(id2);
 		proxy.createRelation(relation);
+	}
+
+	@Override
+	public String selectAttribute(final String className, final int cardId, final String attributeName) {
+		final Card card = proxy.getCard(className, cardId, ALL_ATTRIBUTES);
+		for (final Attribute a : card.getAttributeList()) {
+			if (StringUtils.equals(attributeName, a.getName())) {
+				return a.getValue();
+			}
+		}
+		return null;
 	}
 
 	/*
