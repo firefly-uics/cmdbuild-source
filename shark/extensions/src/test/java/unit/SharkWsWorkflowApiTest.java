@@ -16,19 +16,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
+import org.cmdbuild.services.soap.CardList;
+import org.cmdbuild.services.soap.CqlQuery;
+import org.cmdbuild.services.soap.Filter;
 import org.cmdbuild.services.soap.Private;
+import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.services.soap.Relation;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.SharkWsWorkflowApi;
+import org.cmdbuild.workflow.type.ReferenceType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 /**
- * Tests that the web service implementation of {@link SharkWorkflowApi}
- * calls the SOAP proxy correctly.
+ * Tests that the web service implementation of {@link SharkWorkflowApi} calls
+ * the SOAP proxy correctly.
  */
 public class SharkWsWorkflowApiTest {
 
@@ -50,8 +56,8 @@ public class SharkWsWorkflowApiTest {
 		when(proxy.createCard(any(Card.class))).thenReturn(42);
 
 		final Map<String, Object> attributes = new TreeMap<String, Object>();
-		attributes.put("Code", "bar");
-		attributes.put("Description", "baz");
+		attributes.put(Constants.CODE_ATTRIBUTE, "bar");
+		attributes.put(Constants.DESCRIPTION_ATTRIBUTE, "baz");
 
 		final int id = api.createCard("foo", attributes);
 
@@ -60,8 +66,8 @@ public class SharkWsWorkflowApiTest {
 		verifyNoMoreInteractions(proxy);
 
 		assertThat(argument.getValue().getClassName(), is("foo"));
-		assertThat(argument.getValue().getAttributeList(), containsAttribute("Code", "bar"));
-		assertThat(argument.getValue().getAttributeList(), containsAttribute("Description", "baz"));
+		assertThat(argument.getValue().getAttributeList(), containsAttribute(Constants.CODE_ATTRIBUTE, "bar"));
+		assertThat(argument.getValue().getAttributeList(), containsAttribute(Constants.DESCRIPTION_ATTRIBUTE, "baz"));
 		assertThat(argument.getValue().getAttributeList(), not(containsAttribute("Dummy", "dummy")));
 		assertThat(id, is(42));
 	}
@@ -82,16 +88,11 @@ public class SharkWsWorkflowApiTest {
 	}
 
 	@Test
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void selectAttributeCalledAsExpected() throws Exception {
-		Attribute returnedAttribute = new Attribute();
-		returnedAttribute.setName("bar");
-		returnedAttribute.setValue("barValue");
 		Card cardMock = mock(Card.class);
-		when(cardMock.getAttributeList())
-			.thenReturn(Arrays.asList(returnedAttribute));
-		when(proxy.getCard(any(String.class), any(Integer.class), any(List.class)))
-			.thenReturn(cardMock);
+		when(cardMock.getAttributeList()).thenReturn(Arrays.asList(attribute("bar", "barValue")));
+		when(proxy.getCard(any(String.class), any(Integer.class), any(List.class))).thenReturn(cardMock);
 
 		String out = api.selectAttribute("foo", 12, "bar");
 
@@ -105,5 +106,48 @@ public class SharkWsWorkflowApiTest {
 		assertThat(cardIdCaptor.getValue(), is(12));
 		assertThat(attributeNameCaptor.getValue(), is(nullValue()));
 		assertThat(out, is("barValue"));
+	}
+
+	@Test
+	@SuppressWarnings({ "unchecked" })
+	public void selectReferenceCalledAsExpected() throws Exception {
+		CardList cardListMock = mock(CardList.class);
+		Card cardMock = mock(Card.class);
+		when(cardListMock.getCards()).thenReturn(Arrays.asList(cardMock));
+		when(cardMock.getId()).thenReturn(100);
+		when(cardMock.getAttributeList()).thenReturn(
+				Arrays.asList(attribute(Constants.CLASS_ID_ATTRIBUTE, "6"),
+						attribute(Constants.DESCRIPTION_ATTRIBUTE, "dd")));
+		when(proxy.getCardList(any(String.class), any(List.class), any(Query.class), //
+				any(List.class), any(Integer.class), any(Integer.class), any(String.class), any(CqlQuery.class)))
+				.thenReturn(cardListMock);
+
+		ReferenceType out = api.selectReference("foo", "bar", "baz");
+
+		final ArgumentCaptor<String> classNameCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+		verify(proxy).getCardList(classNameCaptor.capture(), any(List.class), queryCaptor.capture(), //
+				any(List.class), any(Integer.class), any(Integer.class), any(String.class), any(CqlQuery.class));
+		verifyNoMoreInteractions(proxy);
+
+		assertThat(classNameCaptor.getValue(), is("foo"));
+		final Filter filter = queryCaptor.getValue().getFilter();
+		assertThat(filter.getName(), is("bar"));
+		assertThat(filter.getValue(), is(Arrays.asList("baz")));
+
+		assertThat(out.getId(), is(100));
+		assertThat(out.getIdClass(), is(6));
+		assertThat(out.getDescription(), is("dd"));
+	}
+
+	/*
+	 * Utils
+	 */
+
+	private Attribute attribute(final String name, final String value) {
+		Attribute a = new Attribute();
+		a.setName(name);
+		a.setValue(value);
+		return a;
 	}
 }

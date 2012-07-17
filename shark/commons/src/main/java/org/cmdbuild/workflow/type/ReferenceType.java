@@ -60,4 +60,35 @@ public class ReferenceType implements Serializable {
 	public String toString(){
 			return "ReferenceType[idclass: "+this.idClass+" id: "+this.id+" description: "+this.description+"]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + id;
+		result = prime * result + idClass;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReferenceType other = (ReferenceType) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (id != other.id)
+			return false;
+		if (idClass != other.idClass)
+			return false;
+		return true;
+	}
 }

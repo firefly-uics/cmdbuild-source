@@ -26,7 +26,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-commons</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.sharkwf</groupId>

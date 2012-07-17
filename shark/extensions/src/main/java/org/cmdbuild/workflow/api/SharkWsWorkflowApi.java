@@ -7,13 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
+import org.cmdbuild.services.soap.CqlQuery;
+import org.cmdbuild.services.soap.Filter;
+import org.cmdbuild.services.soap.Order;
 import org.cmdbuild.services.soap.Private;
+import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.services.soap.Relation;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.PasswordType;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.SoapClientBuilder;
 import org.cmdbuild.services.soap.client.SoapClient;
+import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class SharkWsWorkflowApi extends SharkWorkflowApi {
@@ -39,7 +45,11 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	private static final String URL_SEPARATOR = "/";
 	private static final String URL_SUFFIX = "services/soap/Private";
 
-	private static final List<Attribute> ALL_ATTRIBUTES = null;
+	private static final String SOAP_OPERATOR_EQUALS = "EQUALS";
+	private static final List<Attribute> SOAP_ALL_ATTRIBUTES = null;
+	private static final List<Order> SOAP_NO_ORDERING = null;
+	private static final String SOAP_NO_FULLTEXT = null;
+	private static final CqlQuery SOAP_NO_CQL = null;
 
 	private Private proxy;
 	private SchemaApi schemaApi = NULL_SCHEMA_API;
@@ -125,13 +135,51 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
 	@Override
 	public String selectAttribute(final String className, final int cardId, final String attributeName) {
-		final Card card = proxy.getCard(className, cardId, ALL_ATTRIBUTES);
+		final Card card = proxy.getCard(className, cardId, SOAP_ALL_ATTRIBUTES);
 		for (final Attribute a : card.getAttributeList()) {
 			if (StringUtils.equals(attributeName, a.getName())) {
 				return a.getValue();
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ReferenceType selectReference(String className, String attributeName, String attributeValue) {
+		final int limit = 1, offset = 0;
+		final List<Card> cardList = proxy.getCardList(className, SOAP_ALL_ATTRIBUTES,
+				filterByAttribute(attributeName, attributeValue), //
+				SOAP_NO_ORDERING, limit, offset, SOAP_NO_FULLTEXT, SOAP_NO_CQL).getCards();
+		if (cardList.isEmpty()) {
+			return new ReferenceType();
+		} else {
+			return referenceType(cardList.get(0));
+		}
+	}
+
+	private ReferenceType referenceType(Card card) {
+		final ReferenceType rt = new ReferenceType();
+		rt.setId(card.getId());
+		for (final Attribute attribute : card.getAttributeList()) {
+			final String attributeName = attribute.getName();
+			if (Constants.CLASS_ID_ATTRIBUTE.equals(attributeName)) {
+				int classId = Integer.parseInt(attribute.getValue());
+				rt.setIdClass(classId);
+			} else if (Constants.DESCRIPTION_ATTRIBUTE.equals(attributeName)) {
+				rt.setDescription(attribute.getValue());
+			}
+		}
+		return rt;
+	}
+
+	public Query filterByAttribute(String attributeName, String attributeValue) {
+		final Filter filter = new Filter();
+		filter.setName(attributeName);
+		filter.setOperator(SOAP_OPERATOR_EQUALS);
+		filter.getValue().add(attributeValue);
+		final Query query = new Query();
+		query.setFilter(filter);
+		return query;
 	}
 
 	/*

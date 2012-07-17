@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
+import org.cmdbuild.workflow.type.ReferenceType;
 
 public class MockSharkWorkflowApi extends SharkWorkflowApi {
 
@@ -32,6 +33,11 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	}
 
 	@Override
+	public ReferenceType selectReference(String className, String attributeName, String attributeValue) {
+		return mock.selectReference(className, attributeName, attributeValue);
+	}
+
+	@Override
 	public ClassInfo findClass(String className) {
 		return null;
 	}
@@ -40,5 +46,6 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	public ClassInfo findClass(int classId) {
 		return null;
 	}
+
 
 }
