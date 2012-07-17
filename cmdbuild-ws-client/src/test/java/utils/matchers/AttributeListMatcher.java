@@ -17,7 +17,6 @@ public class AttributeListMatcher extends TypeSafeMatcher<List<Attribute>> {
 		this.value = value;
 	}
 
-	@Override
 	public void describeTo(final Description description) {
 		description //
 				.appendText(" contains an attribute with name ") //
@@ -29,12 +28,17 @@ public class AttributeListMatcher extends TypeSafeMatcher<List<Attribute>> {
 	@Override
 	public boolean matchesSafely(final List<Attribute> attributes) {
 		for (final Attribute attribute : attributes) {
-			final boolean found = name.equals(attribute.getName()) && value.equals(attribute.getValue());
-			if (found) {
+			final boolean matchesName = name.equals(attribute.getName());
+			final boolean matchesValue = (value == null) ? true : value.equals(attribute.getValue());
+			if (matchesName && matchesValue) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public static Matcher<List<Attribute>> containsAttribute(final String name) {
+		return new AttributeListMatcher(name, null);
 	}
 
 	public static Matcher<List<Attribute>> containsAttribute(final String name, final String value) {
