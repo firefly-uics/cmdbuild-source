@@ -19,6 +19,7 @@ import org.cmdbuild.services.soap.Relation;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.PasswordType;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.SoapClientBuilder;
 import org.cmdbuild.services.soap.client.SoapClient;
+import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
@@ -26,14 +27,31 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
 	private static SchemaApi NULL_SCHEMA_API = new SchemaApi() {
 
+		private static final String EXCEPTION_CAUSE = "Tool not yet configured";
+
 		@Override
 		public ClassInfo findClass(final String className) {
-			throw new UnsupportedOperationException("Not yet configured");
+			throw new UnsupportedOperationException(EXCEPTION_CAUSE);
 		}
 
 		@Override
 		public ClassInfo findClass(final int classId) {
-			throw new UnsupportedOperationException("Not yet configured");
+			throw new UnsupportedOperationException(EXCEPTION_CAUSE);
+		}
+
+		@Override
+		public LookupType selectLookupById(int id) {
+			throw new UnsupportedOperationException(EXCEPTION_CAUSE);
+		}
+
+		@Override
+		public LookupType selectLookupByCode(String type, String code) {
+			throw new UnsupportedOperationException(EXCEPTION_CAUSE);
+		}
+
+		@Override
+		public LookupType selectLookupByDescription(String type, String description) {
+			throw new UnsupportedOperationException(EXCEPTION_CAUSE);
 		}
 
 	};
@@ -196,4 +214,18 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		return schemaApi.findClass(classId);
 	}
 
+	@Override
+	public LookupType selectLookupById(int id) {
+		return schemaApi.selectLookupById(id);
+	}
+
+	@Override
+	public LookupType selectLookupByCode(String type, String code) {
+		return schemaApi.selectLookupByCode(type, code);
+	}
+
+	@Override
+	public LookupType selectLookupByDescription(String type, String description) {
+		return schemaApi.selectLookupByDescription(type, description);
+	}
 }
