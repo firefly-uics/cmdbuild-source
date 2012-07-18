@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
+import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 
 public class MockSharkWorkflowApi extends SharkWorkflowApi {
@@ -44,6 +45,21 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 
 	@Override
 	public ClassInfo findClass(int classId) {
+		return null;
+	}
+
+	@Override
+	public LookupType selectLookupById(int id) {
+		return null;
+	}
+
+	@Override
+	public LookupType selectLookupByCode(String type, String code) {
+		return null;
+	}
+
+	@Override
+	public LookupType selectLookupByDescription(String type, String description) {
 		return null;
 	}
 

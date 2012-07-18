@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.api;
 
+import org.cmdbuild.workflow.type.LookupType;
+
 /**
  * API to query the database structure.
  */
@@ -45,4 +47,8 @@ public interface SchemaApi {
 
 	ClassInfo findClass(String className);
 	ClassInfo findClass(int classId);
+
+	LookupType selectLookupById(int id);
+	LookupType selectLookupByCode(String type, String code);
+	LookupType selectLookupByDescription(String type, String description);
 }

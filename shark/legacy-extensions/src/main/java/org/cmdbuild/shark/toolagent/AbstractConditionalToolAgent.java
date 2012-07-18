@@ -140,6 +140,12 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		return (getParameter(name) != null);
 	}
 
+	/**
+	 * Gets the application parameter or null if not present.
+	 * 
+	 * @param name parameter name
+	 * @return parameter or null
+	 */
 	private AppParameter getParameter(final String name) {
 		for (final AppParameter parameter : parameters) {
 			final String formalName = parameter.the_formal_name;
