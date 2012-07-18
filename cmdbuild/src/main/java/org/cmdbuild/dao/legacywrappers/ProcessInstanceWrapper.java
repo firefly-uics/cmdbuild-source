@@ -145,6 +145,17 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		return out;
 	}
 
+	@Override
+	public CMActivityInstance getActivityInstance(String activityInstanceId) {
+		for (CMActivityInstance ai: getActivities()) {
+			if (ai.getId().equals(activityInstanceId)) {
+				return ai;
+			}
+		}
+
+		return null;
+	}
+
 	/*
 	 * CMProcessInstanceDefinition
 	 */
@@ -181,7 +192,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		}
 		for (final String oldActInstId : getActivityInstanceIds()) {
 			if (newActivityInstInfoIds.contains(oldActInstId))
-				return;
+				continue;
 			removeActivity(oldActInstId);
 		}
 	}
@@ -193,7 +204,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		}
 		for (final WSActivityInstInfo ai : activityInfos) {
 			if (oldActivityInstanceIds.contains(ai.getActivityInstanceId()))
-				return;
+				continue;
 			addActivity(ai);
 		}
 	}

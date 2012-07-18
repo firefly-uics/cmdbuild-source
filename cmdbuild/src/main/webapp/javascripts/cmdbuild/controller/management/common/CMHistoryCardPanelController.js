@@ -64,6 +64,7 @@
 
 			if (!this.view.isVisible()) {
 				this.removeManagedListener(this.view, "activate");
+
 				this.mon(this.view, "activate", function() {
 					this.load();
 				}, this, {single: true});

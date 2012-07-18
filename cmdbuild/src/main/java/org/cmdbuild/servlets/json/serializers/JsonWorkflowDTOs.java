@@ -5,21 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dao.attribute.DateTimeAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONException;
 
 public class JsonWorkflowDTOs {
 
 	private JsonWorkflowDTOs() {}
-
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DateTimeAttribute.JSON_DATETIME_FORMAT);
 
 	public static class JsonActivityDefinition {
 
@@ -106,7 +105,7 @@ public class JsonWorkflowDTOs {
 		}
 	}
 
-	public static class JsonProcessCard {
+	public static class JsonProcessCard extends AbstractJsonResponseSerializer {
 		private CMProcessInstance processInstance;
 
 		public JsonProcessCard(CMProcessInstance processInstance) {
@@ -118,17 +117,20 @@ public class JsonWorkflowDTOs {
 		}
 
 		public String getBeginDate() {
-			return DATE_TIME_FORMATTER.print(processInstance.getBeginDate());
+			return formatDateTime(processInstance.getBeginDate());
 		}
 
 		public String getEndDate() {
-			return DATE_TIME_FORMATTER.print(processInstance.getEndDate());
+			return formatDateTime(processInstance.getEndDate());
 		}
 
 		public Map<String,Object> getValues() {
 			final Map<String, Object> output = new HashMap<String, Object>();
-			for (Map.Entry<String, Object> entry: processInstance.getValues()) {
-				output.put(entry.getKey(), entry.getValue());
+			for (CMAttribute attr : processInstance.getType().getAttributes()) {
+				final String name = attr.getName();
+				final Object value = javaToJsonValue(attr.getType(), processInstance.get(name));
+
+				output.put(name, value);
 			}
 
 			return output;
@@ -158,6 +160,10 @@ public class JsonWorkflowDTOs {
 
 		public String getClassDescription() {
 			return processInstance.getType().getDescription();
+		}
+
+		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
+			return new JsonAttributeValueVisitor(type, value).valueForJson();
 		}
 	}
 }

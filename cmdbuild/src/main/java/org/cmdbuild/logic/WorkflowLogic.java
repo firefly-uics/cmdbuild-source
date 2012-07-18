@@ -107,6 +107,17 @@ public class WorkflowLogic {
 		return updateOnlyActivity(procInst, vars, advance);
 	}
 
+	public CMProcessInstance updateProcess(Long processClassNameOrId,
+			Long processCardId, String activityInstanceId,
+			Map<String, Object> vars, boolean advance) throws CMWorkflowException {
+
+		final CMProcessClass proc = wfEngine.findProcessClass(processClassNameOrId);
+		final CMProcessInstance procInst = wfEngine.findProcessInstance(proc, processCardId);
+		final CMActivityInstance activityInstance = procInst.getActivityInstance(activityInstanceId);
+
+		return updateActivity(activityInstance, vars, advance);
+	}
+
 	/**
 	 * Updates and (optionally) advances the only activity of a process
 	 * instance.
@@ -181,5 +192,4 @@ public class WorkflowLogic {
 		final String relativeUploadPath = SKETCH_PATH+process.getName()+customFileStore.getExtension(ds.getName());
 		customFileStore.save(ds.getInputStream(), relativeUploadPath);
 	}
-
 }

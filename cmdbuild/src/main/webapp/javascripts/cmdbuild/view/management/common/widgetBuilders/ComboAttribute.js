@@ -13,7 +13,7 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildGridHeader = function(attr
 	return {
 		header : attribute.description,
 		sortable : true,
-		dataIndex : attribute.name+"_value",
+		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,
 		flex: 60
 	};

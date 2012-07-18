@@ -32,6 +32,7 @@
 						if (!a.writePrivileges) {
 							pClass += (" " + activityRowNotEditable);
 						}
+
 						out += Ext.String.format('<p id={0} class="{1}"> <span class="{2}">{3}: </span>{4}</p>', a.id, pClass, activityRowLabelClass, a.performerName, a.description);
 					}
 				}
@@ -50,13 +51,30 @@
 			});
 
 			// CMDBuild
-			// patch to allow the use of the reconfigure on the grid
+			// patch to allow the listen the grid reconfigure
 			grid.mon(grid, 'reconfigure', this.onReconfigure, this);
 		},
 
 		onReconfigure : function(grid, store, columns) {
 			if (columns) {
 				grid.headerCt.insert(0, this.getHeaderConfig());
+				this.recordsExpanded = {};
+			}
+
+			if (store) {
+				store.on("beforeload", function(store, peration, eOpts) {
+					for (var id in this.recordsExpanded) {
+						var record = this.recordsExpanded[id];
+						if (record) {
+							var subRows = record._subRows || [];
+							for (var i=0, l=subRows.length; i<l; ++i) {
+								subRows[i].destroy();
+							}
+
+							this.recordsExpanded[id] = true;
+						}
+					}
+				}, this);
 			}
 
 			selectSubRow(grid, null);
@@ -109,7 +127,7 @@
 				// expand
 				row.removeCls(this.rowCollapsedCls);
 				nextBd.removeCls(this.rowBodyHiddenCls);
-				this.recordsExpanded[record.internalId] = true;
+				this.recordsExpanded[record.internalId] = record;
 				this.view.fireEvent('expandbody', rowNode, record, nextBd.dom);
 
 				this.onRowExpanded(grid, rowNode, record, nextBd); // CMDBuild, see below
@@ -126,20 +144,24 @@
 
 		onRowExpanded: function(grid, rowNode, record, nextBd) {
 			grid.view.refreshSize();
-			if (nextBd 
-					&& record
-					&& typeof record.subRows == "undefined") {
+			if (nextBd && record) {
+				// Wrap the activity DOM rows with
+				// an Ext.Element to handle the events
+				if (!record._alreadyExpanded) {
+					record._subRows = [];
+					var childRows = nextBd.query("p." + activityRowClass);
+					for (var i=0, l=childRows.length; i<l; ++i) {
+						var childRow = childRows[i];
+						var rowEl = new Ext.Element(childRow);
+						record._subRows.push(rowEl);
+						rowEl.referredRecord = record;
+					}
+					record._alreadyExpanded = true;
+				}
 
-				record.subRows = [];
-				var childRows = nextBd.query("p." + activityRowClass);
-
-				for (var i=0, l=childRows.length; i<l; ++i) {
-					var childRow = childRows[i];
-					var rowEl = new Ext.Element(childRow);
-
-					record.subRows.push(rowEl);
-					rowEl.referredRecord = record;
-
+				// listen some event on the activity rows
+				for (var i=0, l=record._subRows.length, rowEl = null; i<l; ++i) {
+					rowEl = record._subRows[i];
 					rowEl.addClsOnOver(activityRowClass_over, function test(overElement) {
 						// don't add the class if is the selected row
 						return !overElement.hasCls(activityRowClass_selected);
@@ -155,7 +177,16 @@
 			}
 		},
 
-		onRowCollapsed: Ext.emptyFn,
+		onRowCollapsed: function(grid, rowNode, record, nextBd) {
+			if (nextBd && record) {
+				var subRows = record._subRows || [];
+				for (var i=0, l=subRows.length, sr = null; i<l; ++i) {
+					sr = subRows[i];
+					sr.clearListeners();
+				}
+			}
+		},
+
 		selectSubRow: selectSubRow
 	});
 

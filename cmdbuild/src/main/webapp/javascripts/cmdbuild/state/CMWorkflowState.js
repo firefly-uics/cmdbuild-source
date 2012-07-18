@@ -111,6 +111,10 @@
 			return this.getFlowStatus() == this.STATE.OPEN;
 		},
 
+		isStateCompleted: function() {
+			return this.getFlowStatus() == this.STATE.COMPLETED;
+		},
+
 		setNotes: function(notes) {
 			this.data.values.Notes = notes;
 		}

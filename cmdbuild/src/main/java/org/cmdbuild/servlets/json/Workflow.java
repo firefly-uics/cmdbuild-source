@@ -117,17 +117,24 @@ public class Workflow extends JSONBase {
 	@JSONExported
 	public JsonResponse saveActivity(
 //	Id, ProcessInstanceId, WorkItemId, attributes, ww
-			@Parameter("IdClass") Long processClassId,
+			@Parameter("IdClass") final Long processClassId,
+			@Parameter(value = "Id", required=false) final long processCardId, // even with Long, it won't be null
+			@Parameter(value = "activityInstanceId", required=false) final String activityInstanceId,
 			@Parameter("attributes") final String jsonVars,
 			@Parameter("advance") boolean advance,
 			final UserContext userCtx) throws CMWorkflowException, Exception {
+
 		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
-		@SuppressWarnings("unchecked") final Map<String, Object> vars = new ObjectMapper().readValue(jsonVars, Map.class);
-//		if (processCardId) {
-			final CMProcessInstance procInst = logic.startProcess(processClassId, vars, advance);
-//		} else {
-//			...
-//		}
+		final CMProcessInstance procInst;
+		@SuppressWarnings("unchecked")
+		final Map<String, Object> vars = new ObjectMapper().readValue(jsonVars, Map.class);
+
+		if (processCardId > 0) { // should check for null
+			procInst = logic.updateProcess(processClassId, processCardId, activityInstanceId, vars, advance);
+		} else {
+			procInst = logic.startProcess(processClassId, vars, advance);
+		}
+
 		return JsonResponse.success(new HashMap<String, Object>() {{
 			put("Id", procInst.getCardId());
 			put("IdClass", procInst.getType().getId());
