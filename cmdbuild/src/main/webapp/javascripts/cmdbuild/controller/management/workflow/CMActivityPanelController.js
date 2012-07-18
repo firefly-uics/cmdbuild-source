@@ -1,8 +1,6 @@
 (function() {
 
-	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>",
-		FLOW_STATUS_CODE = "FlowStatus_code",
-		STATE_VALUE_OPEN = "open.running";
+	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate", {
 		onCardSaved: Ext.emptyFn
@@ -40,7 +38,14 @@
 
 		// wfStateDelegate
 		onProcessInstanceChange: function(processInstance) {
+			var me = this;
 			this.clearView();
+
+			if (processInstance.isStateCompleted()) {
+				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
+					me.fillFormWidthProcessInstanceData(processInstance);
+				});
+			}
 		},
 
 		// wfStateDelegate
@@ -56,6 +61,8 @@
 
 			me.view.displayMode(enableToolbar = true);
 
+			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
+
 			// at first update the widget because they could depends
 			// to the form. The Template resolver starts when the form goes
 			// in edit mode, so the widgets must be already ready to done them works
@@ -67,11 +74,9 @@
 				me.widgetControllerManager.buildControllers(null);
 			}
 
-			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
-
 			// Load always the fields
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
-				// TODO: manage the advance
+
 				if (activityInstance.isNew()) {
 					me.view.editMode();
 				} else {
@@ -179,12 +184,13 @@
 			if (processInstance == null) {return;}
 
 			var me = this,
-				editable = true; //FIXME: manage privileges (isStateOpen(data) && data.priv_write);
+				editable = processInstance.isStateOpen(); //FIXME: manage privileges (isStateOpen(data) && data.priv_write);
 
 			me.view.loadCard(new CMDBuild.DummyModel(processInstance.getValues()));
 
-			if (me.isAdvance) {
-				me.isAdvance = false;
+			if (me.isAdvance 
+					&& processInstance.getId() == me.idToAdvance) {
+
 				editable ? me.view.editMode() : me.view.displayModeForNotEditableCard();
 			} else {
 				if (editable) {
@@ -210,11 +216,7 @@
 		return !data.stoppable;
 	}
 
-	function isStateOpen(data) {
-		return data[FLOW_STATUS_CODE] == STATE_VALUE_OPEN;
-	}
-
-	function deleteActivity() {
+	function deleteActivity() { // FIXME: does not work
 		var me = this;
 
 		me.clearView();
@@ -283,18 +285,26 @@
 		var me = this,
 			requestParams = {},
 			pi = _CMWFState.getProcessInstance(),
+			ai = _CMWFState.getActivityInstance(),
 			valid;
 
 		if (pi) {
-			 requestParams = {
-				Id: pi.getId(),
+			requestParams = {
 				IdClass: pi.getClassId(),
 				advance: me.isAdvance,
 				attributes: Ext.JSON.encode(this.view.getValues())
 			};	
 
+			if (pi.getId()) {
+				requestParams.Id = pi.getId();
+			}
+
+			if (ai && ai.getId) {
+				requestParams.activityInstanceId = ai.getId();
+			}
+
 			// Business rule: Someone want the validation
-			// only if advance and not if want only save the activity
+			// only if advance and not if save only
 			valid = requestParams.advance ? validate(me) : true;
 
 			if (valid) {
@@ -312,53 +322,21 @@
 						CMDBuild.LoadMask.get().hide();
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
-						_debug(arguments);
-						this.delegate.onCardSaved(decodedResponse.response.Id);
+						var savedCardId = decodedResponse.response.Id;
+						this.delegate.onCardSaved(savedCardId);
+
+						// to enable the editing for the
+						// right processInstance
+						if (me.isAdvance) {
+							me.idToAdvance = savedCardId;
+						}
 					}
 				});
 			}
-
 		} else {
-			throw "There are no processInstance to save";
+			_debug("There are no processInstance to save");
 		}
 	}
-
-// Code version management ;)
-
-//	function save() {
-//		var me = this,
-//			data = this.card.raw,
-//			requestParams = {
-//				Id: data.Id,
-//				IdClass: data.IdClass,
-//				ProcessInstanceId: data.ProcessInstanceId,
-//				WorkItemId: data.WorkItemId,
-//				advance: this.isAdvance,
-//				attributes: Ext.JSON.encode(this.view.getValues())
-//			},
-//
-//			// Business rule: Someone want the validation
-//			// only if advance and not if want only save the activity
-//			valid = requestParams.advance ? validate(me) : true;
-//
-//		if (valid) {
-//			CMDBuild.LoadMask.get().show();
-//
-//			requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
-//			CMDBuild.ServiceProxy.workflow.saveActivity({
-//				params: requestParams,
-//				scope : this,
-//				clientValidation: this.isAdvance, //to force the save request
-//				callback: function(operation, success, response) {
-//					CMDBuild.LoadMask.get().hide();
-//				},
-//				success: function(response) {
-//					updateCardData(me, response);
-//					me.fireEvent(me.CMEVENTS.cardSaved, me.card);
-//				}
-//			});
-//		}
-//	}
 
 	function validateForm(me) {
 		var invalidAttributes = me.view.getInvalidAttributeAsHTML();

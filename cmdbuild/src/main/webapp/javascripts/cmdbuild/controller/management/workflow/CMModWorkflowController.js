@@ -137,7 +137,7 @@
 	}
 
 	function onProcessTermined() {
-		this.activityPanelController.clearView();
+		_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 	}
 
 	function onGridLoad(args) {

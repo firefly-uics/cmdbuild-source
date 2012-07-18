@@ -44,11 +44,21 @@
 			this.withToolBar = true;
 			this.callParent(arguments);
 
-			this.activityPerformerName = new Ext.form.DisplayField();
-			this.activityDescription = new Ext.form.DisplayField();
+			/*
+			 * use buttons as label because the display fields
+			 * have some strange behaviours, the time is short,
+			 * this solution works, is enough
+			 */
+			var buttonAsLabelConf = {
+				pressedCls: "",
+				overCls:""
+			};
+			this.activityPerformerName = new Ext.button.Button(buttonAsLabelConf);
+			this.activityDescription = new Ext.button.Button(buttonAsLabelConf);
 
 			this.modifyCardButton.setText(tr.modify_card);
 			this.deleteCardButton.setText(tr.delete_card);
+
 			this.cmTBar = [
 				this.modifyCardButton,
 				this.deleteCardButton,
@@ -81,11 +91,8 @@
 		},
 
 		updateInfo : function(performerName, activityDescription) {
-			this.activityPerformerName.setValue(performerName || "");
-			this.activityDescription.setValue(activityDescription || "");
-
-			this.activityPerformerName.doComponentLayout();
-			this.activityDescription.doComponentLayout();
+			this.activityPerformerName.setText(performerName || "");
+			this.activityDescription.setText(activityDescription || "");
 		},
 
 		canReconfigureTheForm: function() {

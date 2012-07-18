@@ -154,6 +154,7 @@
 				var attribute = classAttributes[i];
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 				if (header) {
+					this.addRendererToHeader(header);
 					// There was a day in which I receved the order to skip the Notes attribute.
 					// Today, the boss told  me to enable the notes. So, I leave the condition
 					// commented to document the that a day the notes were hidden.
@@ -181,7 +182,25 @@
 			};
 		},
 
-		// private, could be overridden
+		// protected
+		addRendererToHeader: function(h) {
+			/*
+			 * attributes like reference and lookup are serialized like:
+			 * {
+			 * ...
+			 * lookupAttrName: the id of the lookup
+			 * lookupAttrName_value: the description of the lookup
+			 * ..
+			 * }
+			 * 
+			 * the grid have to display the description, so look for the _value first
+			 */
+			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+				return record.raw[h.dataIndex + "_value"] || record.raw[h.dataIndex];
+			};
+		},
+
+		// protected
 		getStoreForFields: function(fields) {
 			var pageSize;
 			try {
@@ -216,7 +235,7 @@
 			return s;
 		},
 
-		//private, could be overridden
+		//protected
 		buildStore: function(fields, pageSize) {
 			fields.push({name: "Id", type: "int"});
 			fields.push({name: "IdClass", type: "int"});
@@ -241,7 +260,7 @@
 			});;
 		},
 
-		//private, could be overridden
+		//protected
 		getStoreExtraParams: function() {
 			var p = {
 				IdClass : this.currentClassId || -1,
@@ -256,7 +275,7 @@
 			return p;
 		},
 
-		//private, could be overridden
+		//protected
 		buildExtraColumns: function() {
 			return [];
 		},

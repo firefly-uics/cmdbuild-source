@@ -69,28 +69,31 @@
 		},
 
 		// override
-		buildColumnsForAttributes: function(classAttributes) {
-			var columns = this.callParent(arguments);
-			var headers = columns.headers;
-
-			for (var i=0, l=headers.length; i<l; ++i) {
-				headers[i].renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
-					var h = headers[colIndex -1]; // colIndex starts at 1
-					if (value) {
-						return value;
-					} else {
-						if (h && h.dataIndex) {
-							var values = record.get("values");
-							if (values) {
-								return values[h.dataIndex];
-							}
+		addRendererToHeader: function(h) {
+			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+				var out = value;
+				if (!out) {
+					// search it from the values field of the record
+					if (h && h.dataIndex) {
+						var values = record.get("values");
+						if (values) {
+							out = values[h.dataIndex + "_value"]
+								|| values[h.dataIndex];
 						}
 					}
-					
-				};
-			}
+				}
 
-			return columns;
+				// Some values (like reference or lookup) are
+				// serialized as object {id: "", description:""}.
+				// Here we display the description
+				if (out != null 
+						&& typeof out == "object") {
+
+					out = out.description;
+				}
+
+				return out;
+			};
 		},
 
 		// override

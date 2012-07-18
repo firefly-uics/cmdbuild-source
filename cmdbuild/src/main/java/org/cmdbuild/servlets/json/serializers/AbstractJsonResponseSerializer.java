@@ -45,7 +45,7 @@ public abstract class AbstractJsonResponseSerializer {
 		}
 	}
 
-	protected final Object javaToJsonValue(final CMAttributeType<?> type, final Object value) throws JSONException {
+	protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) throws JSONException {
 		return new CMAttributeTypeVisitor() {
 			Object valueForJson;
 

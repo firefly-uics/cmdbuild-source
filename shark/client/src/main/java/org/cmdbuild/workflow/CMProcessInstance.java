@@ -59,7 +59,20 @@ public interface CMProcessInstance extends CMCard {
 	 */
 	WSProcessInstanceState getState();
 
+	/**
+	 * Get all the process instance activities.
+	 * 
+	 * @return the process instance activities
+	 */
 	List<CMActivityInstance> getActivities();
+
+	/**
+	 * Get an activity by its id.
+	 * 
+	 * @param activityInstanceId
+	 * @return activity instance
+	 */
+	CMActivityInstance getActivityInstance(String activityInstanceId);
 
 	/**
 	 * Returns an object with the ids to uniquely identify a process definition. 

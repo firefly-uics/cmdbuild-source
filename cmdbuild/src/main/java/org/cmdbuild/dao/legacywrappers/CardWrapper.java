@@ -70,6 +70,10 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	@Override
 	public final Object get(String key) {
 		final AttributeValue av = card.getAttributeValue(key);
+		return extractAndConvertValue(av);
+	}
+
+	private Object extractAndConvertValue(final AttributeValue av) {
 		if (av.isNull()) {
 			return null;
 		}
@@ -80,6 +84,10 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 			return toCardReference(av.getReference());
 		case LOOKUP:
 			return LookupWrapper.newInstance(av.getLookup());
+		case DATE:
+		case TIME:
+		case TIMESTAMP:
+			return new DateTime(av.getDate().getTime());
 		default:
 			return av.getObject();
 		}
@@ -114,7 +122,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 							@Override
 							public Object getValue() {
 								final AttributeValue av = input.getValue();
-								return av.getObject();
+								return extractAndConvertValue(av);
 							}
 
 							@Override
