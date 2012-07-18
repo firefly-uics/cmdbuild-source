@@ -1,15 +1,19 @@
 package org.cmdbuild.api.fluent;
 
-/**
- * API for access to CMDBuild data/schema.
- */
-public interface FluentApi {
+public class FluentApi {
 
-	/**
-	 * Creates a new {@link CardCreator}.
-	 * 
-	 * @return a newly created {@link CardCreator}.
-	 */
-	CardCreator newCard();
+	private final FluentApiExecutor executor;
+
+	public FluentApi(final FluentApiExecutor executor) {
+		this.executor = executor;
+	}
+
+	public NewCard newCard() {
+		return new NewCard(executor);
+	}
+
+	public ExistingCard existingCard() {
+		return new ExistingCard(executor);
+	}
 
 }
