@@ -26,7 +26,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	public CardDescriptor create(final NewCard newCard) {
 		final org.cmdbuild.services.soap.Card card = soapCardFor(newCard);
 		final int id = proxy.createCard(card);
-		return new CardDescriptor(newCard.getClassName(), id);
+		return CardDescriptor.newInstance(newCard.getClassName(), id);
 	}
 
 	public void update(final ExistingCard existingCard) {
