@@ -76,7 +76,7 @@ public class SharkTypesConverterTest {
 		CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12);
-		CardReference src = CardReference.newInstance(srcClass.getName(), 42);
+		CardReference src = CardReference.newInstance(srcClass.getName(), 42, null);
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 		
 		ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(src));
@@ -91,7 +91,7 @@ public class SharkTypesConverterTest {
 		CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12);
-		CardReference src0 = CardReference.newInstance(srcClass.getName(), 42);
+		CardReference src0 = CardReference.newInstance(srcClass.getName(), 42, null);
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 		CardReference[] src = new CardReference[] { src0 };
 
