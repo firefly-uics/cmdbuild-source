@@ -1,14 +1,19 @@
 package org.cmdbuild.api.fluent.ws;
 
-import static org.cmdbuild.api.utils.AttributeUtils.attributesFor;
+import static org.cmdbuild.api.utils.SoapUtils.attributesFor;
+import static org.cmdbuild.api.utils.SoapUtils.cardFrom;
+import static org.cmdbuild.api.utils.SoapUtils.soapCardFor;
+import static org.cmdbuild.api.utils.SoapUtils.soapRelationFor;
 
-import org.cmdbuild.api.fluent.AbstractCard;
+import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.NewCard;
-import org.cmdbuild.services.soap.Card;
+import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.services.soap.Private;
+import org.cmdbuild.services.soap.Relation;
 
 public class WsFluentApiExecutor implements FluentApiExecutor {
 
@@ -19,13 +24,13 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	public CardDescriptor create(final NewCard newCard) {
-		final Card card = cardFor(newCard);
+		final org.cmdbuild.services.soap.Card card = soapCardFor(newCard);
 		final int id = proxy.createCard(card);
 		return new CardDescriptor(newCard.getClassName(), id);
 	}
 
 	public void update(final ExistingCard existingCard) {
-		final Card card = cardFor(existingCard);
+		final org.cmdbuild.services.soap.Card card = soapCardFor(existingCard);
 		card.setId(existingCard.getId());
 		proxy.updateCard(card);
 	}
@@ -34,11 +39,22 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		proxy.deleteCard(existingCard.getClassName(), existingCard.getId());
 	}
 
-	private Card cardFor(final AbstractCard card) {
-		final Card wsCard = new Card();
-		wsCard.setClassName(card.getClassName());
-		wsCard.getAttributeList().addAll(attributesFor(card.getAttributes()));
-		return wsCard;
+	public Card fetch(final ExistingCard existingCard) {
+		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
+				existingCard.getClassName(), //
+				existingCard.getId(), //
+				attributesFor(existingCard.getAttributes()));
+		return cardFrom(soapCard);
+	}
+
+	public void create(final NewRelation newRelation) {
+		final Relation relation = soapRelationFor(newRelation);
+		proxy.createRelation(relation);
+	}
+
+	public void delete(final ExistingRelation existingRelation) {
+		final Relation relation = soapRelationFor(existingRelation);
+		proxy.deleteRelation(relation);
 	}
 
 }
