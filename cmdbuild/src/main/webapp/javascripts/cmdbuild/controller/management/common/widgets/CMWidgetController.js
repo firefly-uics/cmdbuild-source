@@ -62,6 +62,34 @@
 			return true;
 		},
 
+		getTemplateResolverServerVars: function() {
+			var out = {};
+
+			if (this.card) {
+				if (Ext.getClassName(this.card) == "CMDBuild.model.CMActivityInstance") {
+					// Retrieve the process instance because it stores
+					// the data. this.card has only the varibles to show in this step
+					var pi = _CMWFState.getProcessInstance();
+					if (pi) {
+						// The processes use a new serialization.
+						// Add backward compatibility attributes
+						// to the card values
+						out = Ext.apply({
+							"Id": pi.get("Id"),
+							"IdClass": pi.get("IdClass"),
+							"IdClass_value": pi.get("IdClass_value")
+						}, pi.getValues());
+					}
+				} else {
+					out = this.card.raw || this.card.data;
+				}
+			}
+
+			_debug("Server vars", out);
+
+			return out;
+		},
+
 		beforeActiveView: Ext.emptyFn,
 		destroy: Ext.emptyFn,
 		onEditMode: Ext.emptyFn

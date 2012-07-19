@@ -184,19 +184,19 @@
 
 		// protected
 		addRendererToHeader: function(h) {
-			/*
-			 * attributes like reference and lookup are serialized like:
-			 * {
-			 * ...
-			 * lookupAttrName: the id of the lookup
-			 * lookupAttrName_value: the description of the lookup
-			 * ..
-			 * }
-			 * 
-			 * the grid have to display the description, so look for the _value first
-			 */
+
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
-				return record.raw[h.dataIndex + "_value"] || record.raw[h.dataIndex];
+				value = value || record.get(h.dataIndex);
+				// Some values (like reference or lookup) are
+				// serialized as object {id: "", description:""}.
+				// Here we display the description
+				if (value != null 
+						&& typeof value == "object") {
+
+					value = value.description;
+				}
+
+				return value;
 			};
 		},
 

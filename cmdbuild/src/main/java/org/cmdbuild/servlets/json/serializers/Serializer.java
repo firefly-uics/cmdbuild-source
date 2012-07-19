@@ -94,8 +94,12 @@ public class Serializer {
 						valueString = valueString.replace("\n", " "); 
 					}
 					if (id != null) {
-						jsoncard.put(attributeName, id);
-						jsoncard.put(attributeName+"_value", valueString);
+//						jsoncard.put(attributeName, id);
+//						jsoncard.put(attributeName+"_value", valueString);
+						JSONObject a = new JSONObject();
+						a.put("id", id);
+						a.put("description", valueString);
+						jsoncard.put(attributeName, a);
 					} else {
 						jsoncard.put(attributeName, valueString);
 					}

@@ -192,4 +192,11 @@ public class WorkflowLogic {
 		final String relativeUploadPath = SKETCH_PATH+process.getName()+customFileStore.getExtension(ds.getName());
 		customFileStore.save(ds.getInputStream(), relativeUploadPath);
 	}
+
+	public void abortProcess(Long processClassNameOrId, long processCardId) throws CMWorkflowException {
+		final CMProcessClass process = wfEngine.findProcessClass(processClassNameOrId);
+		final CMProcessInstance pi = wfEngine.findProcessInstance(process, processCardId);
+
+		wfEngine.abortProcessInstance(pi);
+	}
 }

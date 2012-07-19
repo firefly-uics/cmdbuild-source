@@ -24,8 +24,14 @@ public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 	protected Widget createWidget(Map<String, String> valueMap) {
 		final Calendar widget = new Calendar();
 
-		widget.setTargetClass(valueMap.get(TARGET_CLASS));
-		widget.setFilter(valueMap.get(CQL_FILTER));
+		final String filter = valueMap.get(CQL_FILTER);
+		if (filter != null) {
+			widget.setFilter(filter);
+			widget.setTargetClass(readClassNameFromCQLFilter(filter));
+		} else {
+			widget.setTargetClass(valueMap.get(TARGET_CLASS));
+		}
+
 		widget.setEventTitle(valueMap.get(TITLE));
 		widget.setStartDate(valueMap.get(START_DATE));
 		widget.setEndDate(valueMap.get(END_DATE));

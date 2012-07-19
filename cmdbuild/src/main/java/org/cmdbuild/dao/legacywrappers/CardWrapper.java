@@ -96,13 +96,13 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	private CardReference toCardReference(final Reference ref) {
 		final ITable table = UserContext.systemContext().tables().get(ref.getClassId());
 		final Long cardId = Long.valueOf(ref.getId());
-		return CardReference.newInstance(table.getName(), cardId);
+		return CardReference.newInstance(table.getName(), cardId, ref.getDescription());
 	}
 
 	private CardReference toCardReference(final ICard c) {
 		final ITable table = c.getSchema();
 		final Long cardId = Long.valueOf(c.getId());
-		return CardReference.newInstance(table.getName(), cardId);
+		return CardReference.newInstance(table.getName(), cardId, c.getDescription());
 	}
 
 	@Override

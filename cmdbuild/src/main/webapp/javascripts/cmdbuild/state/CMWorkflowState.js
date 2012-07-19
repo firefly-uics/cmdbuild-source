@@ -77,6 +77,28 @@
 			UNSUPPORTED: "UNSUPPORTED"
 		},
 
+		// override to backward compatibility
+		// with the old serialization
+		get: function(key) {
+			var out;
+			if (key == "Id") {
+				out = this.getId();
+			} else if (key == "IdClass") {
+				out = this.getClassId();
+			} else if (key == "IdClass_value") {
+				out = this.getClassDescription();
+			} else {
+				out = this.callParent(arguments);
+				if (!out) {
+					// try in the values
+					var values = this.data.values || {};
+					out = values[key];
+				}
+			}
+
+			return out;
+		},
+ 
 		getActivityInfoList: function() {
 			return this.get("activityInstanceInfoList") || [];
 		},
@@ -95,6 +117,10 @@
 
 		getClassId: function() {
 			return this.get("classId") || null;
+		},
+
+		getClassDescription: function() {
+			return this.get("classDescription");
 		},
 
 		applyValues: function(values) {
@@ -117,6 +143,17 @@
 
 		setNotes: function(notes) {
 			this.data.values.Notes = notes;
+		},
+
+		asDummyModel: function() {
+			var values = this.getValues();
+			// add the old serialization data that
+			// could be called in the template resolver
+			values.Id = this.getId();
+			values.IdClass = this.getClassId();
+			values.IdClass_value = this.getClassDescription();
+
+			return new CMDBuild.DummyModel(values);
 		}
 	});
 

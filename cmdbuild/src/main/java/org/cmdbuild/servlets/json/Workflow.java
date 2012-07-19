@@ -94,7 +94,7 @@ public class Workflow extends JSONBase {
 
 	@JSONExported
 	public JsonResponse getStartActivity(
-			@Parameter("idClass") Long processClassId,
+			@Parameter("classId") Long processClassId,
 			final UserContext userCtx) throws CMWorkflowException {
 		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final CMActivity ad = logic.getStartActivity(processClassId);
@@ -103,8 +103,8 @@ public class Workflow extends JSONBase {
 
 	@JSONExported
 	public JsonResponse getActivityInstance(
-			@Parameter("idClass") Long processClassId,
-			@Parameter("processInstanceId") Long processInstanceId,
+			@Parameter("classId") Long processClassId,
+			@Parameter("cardId") Long processInstanceId,
 			@Parameter("activityInstanceId") String activityInstanceId,
 			final UserContext userCtx) throws CMWorkflowException {
 
@@ -117,8 +117,8 @@ public class Workflow extends JSONBase {
 	@JSONExported
 	public JsonResponse saveActivity(
 //	Id, ProcessInstanceId, WorkItemId, attributes, ww
-			@Parameter("IdClass") final Long processClassId,
-			@Parameter(value = "Id", required=false) final long processCardId, // even with Long, it won't be null
+			@Parameter("classId") final Long processClassId,
+			@Parameter(value = "cardId", required=false) final long processCardId, // even with Long, it won't be null
 			@Parameter(value = "activityInstanceId", required=false) final String activityInstanceId,
 			@Parameter("attributes") final String jsonVars,
 			@Parameter("advance") boolean advance,
@@ -141,6 +141,23 @@ public class Workflow extends JSONBase {
 			put("ProcessInstanceId", procInst.getProcessInstanceId());
 			// WorkItemId -> WHY?!?!?!?!?!?!
 		}});
+	}
+
+	@JSONExported
+	public JsonResponse abortprocess(
+			@Parameter("classId") final Long processClassId,
+			@Parameter("cardId") final long processCardId,
+			final UserContext userCtx) throws CMWorkflowException {
+
+		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+
+		if (processCardId < 0) { // should check for null
+			//TODO throw an exception
+		} else {
+			logic.abortProcess(processClassId, processCardId);
+		}
+
+		return JsonResponse.success(null);
 	}
 
 	@Admin

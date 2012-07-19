@@ -3,8 +3,16 @@
 		EXPAND_BUTTON_SIZE = 50;
 
 	Ext.form.field.Display.override({
-		setValue : function() {
-			this.callOverridden(arguments);
+		setValue : function(value) {
+			// for the attributes like lookup and reference
+			// that has as value an object like {id:"", description:""}
+			if (value != null
+					&& typeof value == "object") {
+
+				value = value.description;
+			}
+
+			this.callOverridden([value]);
 			this._addTargetToLinks();
 		},
 

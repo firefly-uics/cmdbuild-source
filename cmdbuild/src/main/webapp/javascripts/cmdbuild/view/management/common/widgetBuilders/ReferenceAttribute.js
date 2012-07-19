@@ -62,7 +62,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		width: CMDBuild.BIG_FIELD_WIDTH,
 		fieldLabel: attribute.description,
 		submitValue: false,
-		name: attribute.name + "_value",
+		name: attribute.name,
 		disabled: false
 	});
 	

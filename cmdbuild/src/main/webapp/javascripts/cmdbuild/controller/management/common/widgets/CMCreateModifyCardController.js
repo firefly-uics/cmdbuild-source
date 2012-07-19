@@ -26,7 +26,7 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
 				xaVars: widget,
-				serverVars: card.raw || card.data
+				serverVars: this.getTemplateResolverServerVars()
 			});
 
 			this.mon(this.view.addCardButton, "cmClick", onAddCardClick, this);

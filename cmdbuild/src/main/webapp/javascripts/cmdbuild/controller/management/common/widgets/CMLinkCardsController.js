@@ -50,7 +50,7 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
 				xaVars: _extractVariablesForTemplateResolver(widget),
-				serverVars: card
+				serverVars: this.getTemplateResolverServerVars()
 			});
 
 			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);

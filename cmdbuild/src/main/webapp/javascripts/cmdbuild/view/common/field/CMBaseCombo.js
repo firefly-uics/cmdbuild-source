@@ -92,14 +92,20 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 
 	// override
 	setValue: function(v) {
+		this.callParent([this.extractIdIfValueIsObject(v)]);
+	},
+
+	// private
+	extractIdIfValueIsObject: function(v) {
 		if (v != null 
-			&& typeof v == "object" // the new serialization of reference and lookup
-			&& !Ext.isArray(v) // is an array when select a value from the UI
-		) {
-			this.callParent([v.description]);
-		} else {
-			this.callParent([v]);
+				&& typeof v == "object" // the new serialization of reference and lookup
+				&& !Ext.isArray(v) // is an array when select a value from the UI
+				) {
+
+			v = v.id;
 		}
+
+		return v;
 	}
 });
 

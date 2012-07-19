@@ -47,13 +47,6 @@
 			}
 		},
 
-		getDisplayNameForAttr: function(attribute) {
-			if (attributeTypeIsNotHandled(attribute)) {
-				return undefined;
-			}
-			return attributesMap[attribute.type].getDisplayNameForAttr(attribute);
-		}, 
-
 		getFieldSetForFilter: function(attribute) {
 			if (attributeTypeIsNotHandled(attribute)) {
 				return undefined;

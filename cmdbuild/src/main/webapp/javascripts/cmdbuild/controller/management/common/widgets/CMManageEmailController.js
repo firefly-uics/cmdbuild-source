@@ -32,7 +32,7 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
 				xaVars: xavars,
-				serverVars: card
+				serverVars: this.getTemplateResolverServerVars()
 			});
 
 			this.mon(this.view, this.view.CMEVENTS.updateTemplatesButtonClick, function() {

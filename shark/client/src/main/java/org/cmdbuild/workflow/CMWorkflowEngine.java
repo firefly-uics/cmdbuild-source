@@ -43,6 +43,14 @@ public interface CMWorkflowEngine {
 	CMProcessInstance startProcess(CMProcessClass type) throws CMWorkflowException;
 
 	/**
+	 * Aborts the process instance.
+	 * 
+	 * @param processInstance process instance
+	 * @throws CMWorkflowException
+	 */
+	void abortProcessInstance(CMProcessInstance processInstance) throws CMWorkflowException;
+
+	/**
 	 * Updates the variables of the process instance to which the activity
 	 * instance belongs. Executes the default action of each widget defined
 	 * in the activity instance. It leaves the activity instance in its

@@ -1,14 +1,4 @@
 (function() {
-
-	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader", {
-		getStartDate: function(w) { return w.startDate; },
-		getEndDate: function(w) { return w.endDate; },
-		getTitle: function(w) { return w.eventTitle; },
-		getTargetName: function(w) { return w.targetClass; },
-		getFilterVarName: function(w) { return "xa:filter"; },
-		getDefaultDate: function(w) { return w.defaultDate; }
-	});
-
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
 
 		mixins: {
@@ -47,11 +37,9 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.clientForm,
 				xaVars: this.widgetConf,
-				serverVars: this.card.raw || this.card.data
+				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			this.mon(this.view, "eventclick", onEventClick, this);
-			this.mon(this.view, "viewchange", onViewChange, this);
 		},
 
 		// override
@@ -65,7 +53,7 @@
 			}
 
 			var me = this,
-				cqlQuery = this.templateResolver.getVariable(me.reader.getFilterVarName());
+				cqlQuery = this.templateResolver.getVariable("xa:" + me.reader.getFilterVarName());
 
 			if (cqlQuery) {
 				this.filteredWithCQL = true;
@@ -81,6 +69,13 @@
 				this.filteredWithCQL = false;
 				me.updatePaginationQuery();
 				doRequest(me);
+			}
+
+			if (!this._alreadyOpene) {
+				this.mon(this.view, "eventclick", onEventClick, this);
+				this.mon(this.view, "viewchange", onViewChange, this);
+
+				this._alreadyOpened = true;
 			}
 		},
 

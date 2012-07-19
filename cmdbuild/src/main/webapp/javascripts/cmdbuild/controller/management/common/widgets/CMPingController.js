@@ -25,7 +25,7 @@
 				me.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
 					xaVars: xaVars,
-					serverVars: me.card.raw || me.card.data
+					serverVars: this.getTemplateResolverServerVars()
 				});
 			}
 

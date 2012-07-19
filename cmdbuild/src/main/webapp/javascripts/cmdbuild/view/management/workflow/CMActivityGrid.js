@@ -69,34 +69,6 @@
 		},
 
 		// override
-		addRendererToHeader: function(h) {
-			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
-				var out = value;
-				if (!out) {
-					// search it from the values field of the record
-					if (h && h.dataIndex) {
-						var values = record.get("values");
-						if (values) {
-							out = values[h.dataIndex + "_value"]
-								|| values[h.dataIndex];
-						}
-					}
-				}
-
-				// Some values (like reference or lookup) are
-				// serialized as object {id: "", description:""}.
-				// Here we display the description
-				if (out != null 
-						&& typeof out == "object") {
-
-					out = out.description;
-				}
-
-				return out;
-			};
-		},
-
-		// override
 		buildStore: function(fields, pageSize) {
 			return new Ext.data.Store({
 				model: CMDBuild.model.CMProcessInstance,

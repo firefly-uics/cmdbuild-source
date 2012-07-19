@@ -18,6 +18,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMAttributeIterator;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 import org.enhydra.shark.api.client.wfmc.wapi.WMFilter;
 import org.enhydra.shark.api.client.wfmc.wapi.WMProcessInstance;
+import org.enhydra.shark.api.client.wfmc.wapi.WMProcessInstanceState;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.PackageAdministration;
 import org.enhydra.shark.api.client.wfservice.SharkInterface;
@@ -394,6 +395,21 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 				for (final WMActivityInstanceState state : states) {
 					wapi.changeActivityInstanceState(handle, procInstId, actInstId, state);
 				}
+				return null;
+			}
+		}.execute();
+	}
+
+	@Override
+	public void abortProcessInstance(final String procInstId) throws CMWorkflowException {
+		changeProcessInstanceState(procInstId, WMProcessInstanceState.CLOSED_ABORTED);
+	}
+
+	private void changeProcessInstanceState(final String procInstId, final WMProcessInstanceState state) throws CMWorkflowException {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws Exception {
+				wapi().changeProcessInstanceState(handle(), procInstId, state);
 				return null;
 			}
 		}.execute();

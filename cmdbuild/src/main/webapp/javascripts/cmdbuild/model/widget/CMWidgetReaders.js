@@ -130,3 +130,24 @@ Ext.define("CMDBuild.management.model.widget.ManageEmailConfigurationReader", {
 		}
 	}
 });
+
+Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader", {
+	getStartDate : function(w) {
+		return w.startDate;
+	},
+	getEndDate : function(w) {
+		return w.endDate;
+	},
+	getTitle : function(w) {
+		return w.eventTitle;
+	},
+	getTargetName : function(w) {
+		return w.targetClass;
+	},
+	getFilterVarName : function(w) {
+		return "filter";
+	},
+	getDefaultDate : function(w) {
+		return w.defaultDate;
+	}
+});

@@ -24,17 +24,11 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildGridHeader = function(attr
  */
 CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var attr = Ext.apply({}, attribute);
-	attr.name = attribute.name+"_value";
+	attr.name = attribute.name;
 	
 	return CMDBuild.WidgetBuilders.ComboAttribute.superclass.buildReadOnlyField(attr);
 };
-/**
- * @override
- * @return string
- */
-CMDBuild.WidgetBuilders.ComboAttribute.prototype.getDisplayNameForAttr = function(attribute) {
-	return attribute.name+"_value";
-};
+
 /**
  * @override
  */

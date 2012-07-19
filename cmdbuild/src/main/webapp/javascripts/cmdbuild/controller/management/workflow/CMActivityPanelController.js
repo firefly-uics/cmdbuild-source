@@ -41,7 +41,9 @@
 			var me = this;
 			this.clearView();
 
-			if (processInstance.isStateCompleted()) {
+			if (processInstance != null // is null on abort of a new process
+					&& processInstance.isStateCompleted()) {
+
 				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 					me.fillFormWidthProcessInstanceData(processInstance);
 				});
@@ -77,11 +79,14 @@
 			// Load always the fields
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 
+				// fill always the process to trigger the
+				// template resolver of filtered references
+				me.fillFormWidthProcessInstanceData(processInstance);
+
 				if (activityInstance.isNew()) {
 					me.view.editMode();
-				} else {
-					me.fillFormWidthProcessInstanceData(processInstance);
 				}
+
 			});
 
 			Ext.resumeLayouts();
@@ -186,7 +191,7 @@
 			var me = this,
 				editable = processInstance.isStateOpen(); //FIXME: manage privileges (isStateOpen(data) && data.priv_write);
 
-			me.view.loadCard(new CMDBuild.DummyModel(processInstance.getValues()));
+			me.view.loadCard(processInstance.asDummyModel());
 
 			if (me.isAdvance 
 					&& processInstance.getId() == me.idToAdvance) {
@@ -218,14 +223,20 @@
 
 	function deleteActivity() { // FIXME: does not work
 		var me = this;
+		var processInstance = _CMWFState.getProcessInstance();
+
+		if (!processInstance
+				|| processInstance.isNew()) {
+			return;
+		}
 
 		me.clearView();
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.workflow.terminateActivity({
 			params: {
-				WorkItemId: this.card.raw["WorkItemId"],
-				ProcessInstanceId: this.card.raw["ProcessInstanceId"]
+				classId: processInstance.getClassId(),
+				cardId: processInstance.getId()
 			},
 			success: success,
 			failure: failure
@@ -290,13 +301,13 @@
 
 		if (pi) {
 			requestParams = {
-				IdClass: pi.getClassId(),
-				advance: me.isAdvance,
-				attributes: Ext.JSON.encode(this.view.getValues())
-			};	
+				classId: pi.getClassId(),
+				attributes: Ext.JSON.encode(this.view.getValues()),
+				advance: me.isAdvance
+			};
 
 			if (pi.getId()) {
-				requestParams.Id = pi.getId();
+				requestParams.cardId = pi.getId();
 			}
 
 			if (ai && ai.getId) {

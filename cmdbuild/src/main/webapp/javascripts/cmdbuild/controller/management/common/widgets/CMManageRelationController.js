@@ -29,7 +29,7 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
 				xaVars: widgetDef, // TODO: pass only the CARD_CQL_SELECTOR??
-				serverVars: card
+				serverVars: this.getTemplateResolverServerVars()
 			});
 
 			this.templateResolverIsBusy = false;
@@ -241,7 +241,7 @@
 			if (Ext.Array.contains(targetClassId, me.domain.get("idClass1"))) {
 				src = "_1";
 			} else {
-				sec = "_2";
+				src = "_2";
 			}
 		}
 

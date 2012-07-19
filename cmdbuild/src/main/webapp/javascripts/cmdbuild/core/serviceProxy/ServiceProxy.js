@@ -349,26 +349,8 @@ CMDBuild.ServiceProxy.workflow = {
 			url: 'services/json/workflow/getstartactivity',
 			method: 'GET',
 			params: {
-				idClass : classId,
-				id : -1
+				classId : classId
 			}
-			
-//			,adapter: function(input) {
-//				var activity = input.response;
-//				return {
-//					data: Ext.apply(adaptVariables(activity.variables), {
-//						Id: -1,
-//						IdClass: parseInt(classId),
-//						ProcessInstanceId: "tostart",
-//						activityPerformerName: activity.performerName,
-//						Code: activity.description,
-//						CmdbuildExtendedAttributes: adaptWidgets(activity.widgets),
-//						priv_create: true,
-//						priv_write: true
-//					}),
-//					success: true
-//				};
-//			}
 		}, p));
 	},
 
@@ -388,9 +370,9 @@ CMDBuild.ServiceProxy.workflow = {
 	},
 
 	terminateActivity: function(p) {
-		p.url = 'services/json/management/modworkflow/abortprocess';
+		p.url = 'services/json/workflow/abortprocess';
 		p.method = "POST";
-		
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
 

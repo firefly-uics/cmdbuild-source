@@ -262,22 +262,27 @@
 		addReferenceAttrsToData(data, referenceAttributes);
 
 		if (fields) {
-			fields.each(function(f) {
+			fields = [].concat(fields.items);
+			for (var i=0, l=fields.length, f=null; i<l; ++i) {
+				f = fields[i];
 
 				if (typeof fieldSelector == "function"
-					&& !fieldSelector(f)) {
+						&& !fieldSelector(f)) {
+
 					return;
 				}
 
 				try {
 					f.setValue(data[f.name]);
-					if (typeof f.isFiltered == "function" && f.isFiltered()) {
+					if (typeof f.isFiltered == "function" 
+						&& f.isFiltered()) {
+
 						f.setServerVarsForTemplate(data);
 					}
-				} catch (e){
+				} catch (e) {
 					_debug("I can not set the value for " + f.name);
 				}
-			});
+			}
 		}
 
 		me.fireEvent(me.CMEVENTS.formFilled);

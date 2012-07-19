@@ -125,6 +125,8 @@
         },
 
         setValue: function(v) {
+        	v = this.extractIdIfValueIsObject(v);
+
             if (this.store.isOneTime || this.preSetValue(v) !== false) {
             	this.callParent(arguments);
             }

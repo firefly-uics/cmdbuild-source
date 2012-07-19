@@ -154,6 +154,12 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
+	public void abortProcessInstance(CMProcessInstance processInstance) throws CMWorkflowException {
+		workflowService.abortProcessInstance(processInstance.getProcessInstanceId());
+		modifyProcessInstance(processInstance).setState(WSProcessInstanceState.ABORTED).save();
+	}
+
+	@Override
 	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> inputValues)
 			throws CMWorkflowException {
 		final Map<String, Object> nativeValues = new HashMap<String, Object>(inputValues.size());

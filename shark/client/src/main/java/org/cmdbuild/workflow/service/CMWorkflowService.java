@@ -108,4 +108,12 @@ public interface CMWorkflowService {
 	 * @throws CMWorkflowException
 	 */
 	void advanceActivityInstance(String procInstId, String actInstId) throws CMWorkflowException;
+
+	/**
+	 * Aborts the specified process instance
+	 * 
+	 * @param procInstId process instance id
+	 * @throws CMWorkflowException
+	 */
+	void abortProcessInstance(String procInstId) throws CMWorkflowException;
 }

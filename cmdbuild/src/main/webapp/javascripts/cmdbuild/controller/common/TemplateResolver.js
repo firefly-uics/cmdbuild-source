@@ -85,13 +85,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		}
 
 		var field = this.getBasicForm().getFields().findBy(findCriteria);
-		
-		// TODO I think that it's not necessary because now we looking for the name in
-		// the attribute configuration
 
-//		if (!field) {
-//			field = this.getBasicForm().findField(varName+"_value");
-//		}
 		return field;
 	},
 
@@ -102,14 +96,25 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getActivityServerVariable: function(varName) {
 		var splitLocalname = this.splitLocalName(varName);
-		var suffix = {
-				"": "",
-				"Id": "",
-				"Description": "_value"
-			}[splitLocalname.detail];
-		var value = this.getServerVars()[splitLocalname.name + suffix];
-		CMDBuild.log.debug("Activity server variable " + varName + " = " + value);
-		return value;
+		var sv = this.getServerVars();
+		if (!sv) {
+			CMDBuild.log.debug("Activity server variable " + varName + " = No server vars");
+			return undefined;
+		}
+
+		var v = sv[splitLocalname.name];
+		if (v != null && 
+				typeof v == "object") {
+
+			if (splitLocalname.detail == "Description") {
+				v = v.description;
+			} else {
+				v = v.id;
+			}
+		}
+
+		CMDBuild.log.debug("Activity server variable " + varName + " = " + v);
+		return v;
 	},
 
 	getServerVars: function() {
@@ -125,6 +130,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 					detail: localname.slice(splitIndex+1)
 				};
 		} else if ((splitIndex = localname.search("_value")) > 0) {
+			// For backward compatibility,
+			// AttributeName_value is treated like AttributeName.Description
 			return {
 				name: localname.slice(0,splitIndex),
 				detail: "Description"

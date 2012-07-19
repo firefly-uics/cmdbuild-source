@@ -62,8 +62,8 @@
 
 			updateViewSelection(activityInfoId, this);
 			CMDBuild.ServiceProxy.workflow.getActivityInstance({
-				idClass: _CMWFState.getProcessClassRef().getId(),
-				processInstanceId: _CMWFState.getProcessInstance().getId(),
+				classId: _CMWFState.getProcessClassRef().getId(),
+				cardId: _CMWFState.getProcessInstance().getId(),
 				activityInstanceId: activityInfoId
 			}, {
 				scope: this,

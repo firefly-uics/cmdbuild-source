@@ -96,9 +96,7 @@ CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
 	buildCellEditor: function(attribute) {
 		return CMDBuild.Management.FieldManager.getFieldForAttr(attribute, readOnly = false);
 	},
-	getDisplayNameForAttr: function(attribute) {
-		return attribute.name;
-	},
+
 	/**
 	 * @param attribute
 	 * @return Ext.form.FieldSet 
