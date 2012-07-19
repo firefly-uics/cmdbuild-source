@@ -1,0 +1,25 @@
+package org.cmdbuild.dao.reference;
+
+
+public class LookupReference extends AbstractReference {
+
+	private final String lookupTypeName;
+
+	public static LookupReference newInstance(final String lookupTypeName, final Object lookupId) {
+		return new LookupReference(lookupTypeName, lookupId);
+	}
+
+	private LookupReference(final String typeName, final Object id) {
+		super(id);
+		this.lookupTypeName = typeName;
+	}
+
+	public String getLookupTypeName() {
+		return lookupTypeName;
+	}
+
+	@Override
+	public void accept(CMReferenceVisitor visitor) {
+		visitor.visit(this);
+	}
+}
