@@ -9,9 +9,11 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.NewCard;
+import org.cmdbuild.api.fluent.NewRelation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,6 +57,33 @@ public class FluentApiTest {
 		existingCard.delete();
 
 		verify(executor).delete(existingCard);
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenFetchingExistingCard() {
+		final ExistingCard existingCard = api.existingCard();
+		existingCard.fetch();
+
+		verify(executor).fetch(existingCard);
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenCreatingNewRelation() {
+		final NewRelation newRelation = api.newRelation();
+		newRelation.create();
+
+		verify(executor).create(newRelation);
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenDeletingExistingRelation() {
+		final ExistingRelation existingRelation = api.existingRelation();
+		existingRelation.delete();
+
+		verify(executor).delete(existingRelation);
 		verifyNoMoreInteractions(executor);
 	}
 

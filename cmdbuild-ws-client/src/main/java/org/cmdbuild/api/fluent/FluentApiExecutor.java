@@ -8,4 +8,10 @@ public interface FluentApiExecutor {
 
 	void delete(ExistingCard existingCard);
 
+	Card fetch(ExistingCard existingCard);
+
+	void create(NewRelation newRelation);
+
+	void delete(ExistingRelation existingRelation);
+
 }

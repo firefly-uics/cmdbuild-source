@@ -16,4 +16,12 @@ public class FluentApi {
 		return new ExistingCard(executor);
 	}
 
+	public NewRelation newRelation() {
+		return new NewRelation(executor);
+	}
+
+	public ExistingRelation existingRelation() {
+		return new ExistingRelation(executor);
+	}
+
 }
