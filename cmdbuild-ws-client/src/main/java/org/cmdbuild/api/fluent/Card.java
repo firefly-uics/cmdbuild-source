@@ -15,6 +15,14 @@ public class Card extends CardDescriptor {
 		return unmodifiableMap(attributes);
 	}
 
+	public String getCode() {
+		return attributes.get(CODE_ATTRIBUTE);
+	}
+
+	public String getDescription() {
+		return attributes.get(DESCRIPTION_ATTRIBUTE);
+	}
+
 	void addAttribute(final String name, final String value) {
 		attributes.put(name, value);
 	}
