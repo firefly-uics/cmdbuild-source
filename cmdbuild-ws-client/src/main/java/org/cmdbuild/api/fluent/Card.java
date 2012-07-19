@@ -7,31 +7,9 @@ import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Card {
+public class Card extends CardDescriptor {
 
-	private String className;
-	private int id;
-	private final Map<String, String> attributes;
-
-	public Card() {
-		this.attributes = new HashMap<String, String>();
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	void setClassName(final String className) {
-		this.className = className;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	void setId(final int id) {
-		this.id = id;
-	}
+	private final Map<String, String> attributes = new HashMap<String, String>();
 
 	public Map<String, String> getAttributes() {
 		return unmodifiableMap(attributes);

@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class FluentApiTest {
 
-	private static final CardDescriptor CARD_DESCRIPTOR = new CardDescriptor("classname", 42);
+	private static final CardDescriptor CARD_DESCRIPTOR = CardDescriptor.newInstance("classname", 42);
 
 	private FluentApiExecutor executor;
 	private FluentApi api;
