@@ -2,37 +2,27 @@ package org.cmdbuild.api.fluent;
 
 public class ExistingCard extends ActiveCard {
 
-	public ExistingCard(final FluentApiExecutor apiExecutor) {
-		super(apiExecutor);
-	}
-
-	public ExistingCard forClassName(final String className) {
-		super.setClassName(className);
-		return this;
-	}
-
-	public ExistingCard withId(final int id) {
-		super.setId(id);
-		return this;
+	public ExistingCard(final String className, final Integer id, final FluentApiExecutor executor) {
+		super(className, id, executor);
 	}
 
 	public ExistingCard withCode(final String value) {
-		super.addCodeAttribute(value);
+		super.setCode(value);
 		return this;
 	}
 
 	public ExistingCard withDescription(final String value) {
-		super.addDescriptionAttribute(value);
+		super.setDescription(value);
 		return this;
 	}
 
 	public ExistingCard with(final String name, final String value) {
-		super.addAttribute(name, value);
+		super.set(name, value);
 		return this;
 	}
 
 	public ExistingCard withAttribute(final String name, final String value) {
-		super.addAttribute(name, value);
+		super.set(name, value);
 		return this;
 	}
 

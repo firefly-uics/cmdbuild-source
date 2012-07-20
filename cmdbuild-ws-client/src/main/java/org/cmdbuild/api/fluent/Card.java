@@ -9,7 +9,12 @@ import java.util.Map;
 
 public class Card extends CardDescriptor {
 
-	private final Map<String, String> attributes = new HashMap<String, String>();
+	private final Map<String, String> attributes;
+
+	public Card(final String className, final Integer id) {
+		super(className, id);
+		attributes = new HashMap<String, String>();
+	}
 
 	public Map<String, String> getAttributes() {
 		return unmodifiableMap(attributes);
@@ -23,16 +28,16 @@ public class Card extends CardDescriptor {
 		return attributes.get(DESCRIPTION_ATTRIBUTE);
 	}
 
-	void addAttribute(final String name, final String value) {
+	void set(final String name, final String value) {
 		attributes.put(name, value);
 	}
 
-	void addCodeAttribute(final String value) {
-		addAttribute(CODE_ATTRIBUTE, value);
+	void setCode(final String value) {
+		set(CODE_ATTRIBUTE, value);
 	}
 
-	void addDescriptionAttribute(final String value) {
-		addAttribute(DESCRIPTION_ATTRIBUTE, value);
+	void setDescription(final String value) {
+		set(DESCRIPTION_ATTRIBUTE, value);
 	}
 
 }

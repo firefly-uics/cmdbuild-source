@@ -12,10 +12,15 @@ import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.services.soap.Attribute;
+import org.cmdbuild.services.soap.Filter;
+import org.cmdbuild.services.soap.FilterOperator;
+import org.cmdbuild.services.soap.Query;
 
 public class SoapUtils {
 
 	private static final FluentApiExecutor NULL_NEVER_USED_EXECUTOR = null;
+
+	public static final String OPERATOR_EQUALS = "EQUALS";
 
 	private SoapUtils() {
 		// prevents instantiation
@@ -53,9 +58,10 @@ public class SoapUtils {
 	}
 
 	public static Card cardFrom(final org.cmdbuild.services.soap.Card soapCard) {
-		final ExistingCard card = new ExistingCard(NULL_NEVER_USED_EXECUTOR) //
-				.forClassName(soapCard.getClassName()) //
-				.withId(soapCard.getId());
+		final ExistingCard card = new ExistingCard( //
+				soapCard.getClassName(), //
+				soapCard.getId(), //
+				NULL_NEVER_USED_EXECUTOR);
 		for (final Attribute attribute : soapCard.getAttributeList()) {
 			card.withAttribute(attribute.getName(), attribute.getValue());
 		}
@@ -70,6 +76,26 @@ public class SoapUtils {
 		soapRelation.setClass2Name(relation.getClassName2());
 		soapRelation.setCard2Id(relation.getClassId2());
 		return soapRelation;
+	}
+
+	public static Query queryFor(final Filter filter) {
+		final Query query = new Query();
+		query.setFilter(filter);
+		return query;
+	}
+
+	public static Query queryFor(final FilterOperator filterOperator) {
+		final Query query = new Query();
+		query.setFilterOperator(filterOperator);
+		return query;
+	}
+
+	public static Filter equalsFilterFor(final String name, final String value) {
+		final Filter filter = new Filter();
+		filter.setName(name);
+		filter.setOperator(OPERATOR_EQUALS);
+		filter.getValue().add(value);
+		return filter;
 	}
 
 }
