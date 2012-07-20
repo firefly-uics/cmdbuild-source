@@ -28,7 +28,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	@Before
 	public void createExistingCard() throws Exception {
 		existingCard = api() //
-				.existingCard(CLASSNAME, CARD_ID) // \
+				.existingCard(CLASS_NAME, CARD_ID) // \
 				.withCode(CODE_VALUE) //
 				.withDescription(DESCRIPTION_VALUE) //
 				.with(ATTRIBUTE_1, ATTRIBUTE_1_VALUE) //

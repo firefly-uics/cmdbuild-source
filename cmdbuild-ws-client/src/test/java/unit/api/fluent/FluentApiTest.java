@@ -20,10 +20,11 @@ import org.junit.Test;
 
 public class FluentApiTest {
 
-	private static final String CLASSNAME = "classname";
+	private static final String CLASS_NAME = "class";
+	private static final String DOMAIN_NAME = "domain";
 	private static final int CARD_ID = 42;
 
-	private static final CardDescriptor CARD_DESCRIPTOR = new CardDescriptor(CLASSNAME, CARD_ID);
+	private static final CardDescriptor CARD_DESCRIPTOR = new CardDescriptor(CLASS_NAME, CARD_ID);
 
 	private FluentApiExecutor executor;
 	private FluentApi api;
@@ -36,7 +37,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenCreatingNewCard() {
-		final NewCard newCard = api.newCard(CLASSNAME);
+		final NewCard newCard = api.newCard(CLASS_NAME);
 
 		when(executor.create(newCard)).thenReturn(CARD_DESCRIPTOR);
 
@@ -48,7 +49,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenUpdatingExistingCard() {
-		final ExistingCard existingCard = api.existingCard(CLASSNAME, CARD_ID);
+		final ExistingCard existingCard = api.existingCard(CLASS_NAME, CARD_ID);
 		existingCard.update();
 
 		verify(executor).update(existingCard);
@@ -57,7 +58,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenDeletingExistingCard() {
-		final ExistingCard existingCard = api.existingCard(CLASSNAME, CARD_ID);
+		final ExistingCard existingCard = api.existingCard(CLASS_NAME, CARD_ID);
 		existingCard.delete();
 
 		verify(executor).delete(existingCard);
@@ -66,7 +67,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenFetchingExistingCard() {
-		final ExistingCard existingCard = api.existingCard(CLASSNAME, CARD_ID);
+		final ExistingCard existingCard = api.existingCard(CLASS_NAME, CARD_ID);
 		existingCard.fetch();
 
 		verify(executor).fetch(existingCard);
@@ -75,7 +76,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenCreatingNewRelation() {
-		final NewRelation newRelation = api.newRelation();
+		final NewRelation newRelation = api.newRelation(DOMAIN_NAME);
 		newRelation.create();
 
 		verify(executor).create(newRelation);
@@ -84,7 +85,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenDeletingExistingRelation() {
-		final ExistingRelation existingRelation = api.existingRelation();
+		final ExistingRelation existingRelation = api.existingRelation(DOMAIN_NAME);
 		existingRelation.delete();
 
 		verify(executor).delete(existingRelation);
@@ -93,7 +94,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenFetchingClass() {
-		final QueryClass queryClass = api.queryClass(CLASSNAME);
+		final QueryClass queryClass = api.queryClass(CLASS_NAME);
 		queryClass.fetch();
 
 		verify(executor).fetch(queryClass);

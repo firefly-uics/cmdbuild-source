@@ -2,13 +2,8 @@ package org.cmdbuild.api.fluent;
 
 public class ExistingRelation extends ActiveRelation {
 
-	public ExistingRelation(final FluentApiExecutor executor) {
-		super(executor);
-	}
-
-	public ExistingRelation withDomainName(final String domainName) {
-		super.setDomainName(domainName);
-		return this;
+	public ExistingRelation(final FluentApiExecutor executor, final String domainName) {
+		super(executor, domainName);
 	}
 
 	public ExistingRelation withCard1(final String className, final int cardId) {
