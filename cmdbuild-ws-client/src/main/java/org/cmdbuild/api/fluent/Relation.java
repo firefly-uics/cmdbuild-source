@@ -2,17 +2,16 @@ package org.cmdbuild.api.fluent;
 
 public class Relation {
 
-	private String domainName;
+	private final String domainName;
 	private CardDescriptor card1;
 	private CardDescriptor card2;
 
-	public String getDomainName() {
-		return domainName;
+	public Relation(final String domainName) {
+		this.domainName = domainName;
 	}
 
-	public Relation setDomainName(final String domainName) {
-		this.domainName = domainName;
-		return this;
+	public String getDomainName() {
+		return domainName;
 	}
 
 	public String getClassName1() {

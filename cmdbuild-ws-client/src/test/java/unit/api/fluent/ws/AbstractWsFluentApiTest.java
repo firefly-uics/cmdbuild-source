@@ -15,8 +15,9 @@ import org.mockito.ArgumentCaptor;
 
 public abstract class AbstractWsFluentApiTest {
 
-	protected static final String CLASSNAME = "classname";
-	protected static final String ANOTHER_CLASSNAME = randomString();
+	protected static final String CLASS_NAME = "class";
+	protected static final String ANOTHER_CLASS_NAME = randomString();
+	protected static final String DOMAIN_NAME = "domain";
 
 	protected static final String ATTRIBUTE_1 = "attribute_1";
 	protected static final String ATTRIBUTE_2 = "attribute_2";
@@ -26,8 +27,6 @@ public abstract class AbstractWsFluentApiTest {
 	protected static final String DESCRIPTION_VALUE = randomString();
 	protected static final String ATTRIBUTE_1_VALUE = randomString();
 	protected static final String ATTRIBUTE_2_VALUE = randomString();
-
-	protected static final String DOMAIN_NAME = "domainname";
 
 	protected static final int CARD_ID = 123;
 	protected static final int ANOTHER_CARD_ID = 321;
