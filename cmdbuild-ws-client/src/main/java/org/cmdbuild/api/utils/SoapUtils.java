@@ -3,6 +3,7 @@ package org.cmdbuild.api.utils;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,6 +51,14 @@ public class SoapUtils {
 		return (value == null) ? EMPTY : value;
 	}
 
+	public static Map<String, String> attributesAsMap(final List<Attribute> attributes) {
+		final Map<String, String> attributesMap = new HashMap<String, String>();
+		for (final Attribute attribute : attributes) {
+			attributesMap.put(attribute.getName(), attribute.getValue());
+		}
+		return attributesMap;
+	}
+
 	public static org.cmdbuild.services.soap.Card soapCardFor(final Card card) {
 		final org.cmdbuild.services.soap.Card soapCard = new org.cmdbuild.services.soap.Card();
 		soapCard.setClassName(card.getClassName());
@@ -59,9 +68,9 @@ public class SoapUtils {
 
 	public static Card cardFrom(final org.cmdbuild.services.soap.Card soapCard) {
 		final ExistingCard card = new ExistingCard( //
+				NULL_NEVER_USED_EXECUTOR, //
 				soapCard.getClassName(), //
-				soapCard.getId(), //
-				NULL_NEVER_USED_EXECUTOR);
+				soapCard.getId());
 		for (final Attribute attribute : soapCard.getAttributeList()) {
 			card.withAttribute(attribute.getName(), attribute.getValue());
 		}

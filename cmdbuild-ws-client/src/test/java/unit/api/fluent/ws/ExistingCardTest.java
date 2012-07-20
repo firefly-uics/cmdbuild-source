@@ -82,7 +82,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void soapCardIsConvertedtoFluentApiCardWhenFetchingExistingCard() {
+	public void soapCardIsConvertedToFluentApiCardWhenFetchingExistingCard() {
 		when(proxy().getCard( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //

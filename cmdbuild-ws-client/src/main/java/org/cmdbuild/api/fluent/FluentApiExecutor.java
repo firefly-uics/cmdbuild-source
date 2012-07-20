@@ -1,6 +1,7 @@
 package org.cmdbuild.api.fluent;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FluentApiExecutor {
 
@@ -17,5 +18,7 @@ public interface FluentApiExecutor {
 	void delete(ExistingRelation existingRelation);
 
 	List<CardDescriptor> fetch(QueryClass classQuery);
+
+	Map<String, String> execute(CallFunction callFunction);
 
 }
