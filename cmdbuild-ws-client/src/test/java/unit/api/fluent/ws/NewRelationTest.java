@@ -16,10 +16,9 @@ public class NewRelationTest extends AbstractWsFluentApiTest {
 
 	@Before
 	public void createNewRelation() throws Exception {
-		newRelation = api().newRelation() //
-				.withDomainName(DOMAIN_NAME) //
-				.withCard1(CLASSNAME, CARD_ID) //
-				.withCard2(ANOTHER_CLASSNAME, ANOTHER_CARD_ID);
+		newRelation = api().newRelation(DOMAIN_NAME) //
+				.withCard1(CLASS_NAME, CARD_ID) //
+				.withCard2(ANOTHER_CLASS_NAME, ANOTHER_CARD_ID);
 	}
 
 	@Test

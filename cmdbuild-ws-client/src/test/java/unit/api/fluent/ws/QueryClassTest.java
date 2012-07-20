@@ -36,7 +36,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 	@Before
 	public void createQueryClass() throws Exception {
-		queryClass = api().queryClass(CLASSNAME) //
+		queryClass = api().queryClass(CLASS_NAME) //
 				.withCode(CODE_VALUE) //
 				.withDescription(DESCRIPTION_VALUE) //
 				.with(ATTRIBUTE_1, ATTRIBUTE_1_VALUE) //
@@ -117,7 +117,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 		).thenReturn(cardList(queryClass.getClassName(), CARD_ID, ANOTHER_CARD_ID));
 
 		final List<CardDescriptor> descriptors = queryClass.fetch();
-		descriptors.add(new CardDescriptor(CLASSNAME, CARD_ID));
+		descriptors.add(new CardDescriptor(CLASS_NAME, CARD_ID));
 	}
 
 	private CardList cardList(final String className, final int... ids) {

@@ -16,12 +16,12 @@ public class FluentApi {
 		return new ExistingCard(className, id, executor);
 	}
 
-	public NewRelation newRelation() {
-		return new NewRelation(executor);
+	public NewRelation newRelation(final String domainName) {
+		return new NewRelation(executor, domainName);
 	}
 
-	public ExistingRelation existingRelation() {
-		return new ExistingRelation(executor);
+	public ExistingRelation existingRelation(final String domainName) {
+		return new ExistingRelation(executor, domainName);
 	}
 
 	public QueryClass queryClass(final String className) {
