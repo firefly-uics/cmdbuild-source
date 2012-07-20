@@ -3,9 +3,9 @@ package org.cmdbuild.api.fluent;
 public class CardDescriptor {
 
 	private final String className;
-	private final int id;
+	private final Integer id;
 
-	public CardDescriptor(final String className, final int id) {
+	public CardDescriptor(final String className, final Integer id) {
 		this.className = className;
 		this.id = id;
 	}
@@ -14,7 +14,7 @@ public class CardDescriptor {
 		return className;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
