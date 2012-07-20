@@ -1,5 +1,7 @@
 package org.cmdbuild.api.fluent;
 
+import java.util.List;
+
 public interface FluentApiExecutor {
 
 	CardDescriptor create(NewCard newCard);
@@ -13,5 +15,7 @@ public interface FluentApiExecutor {
 	void create(NewRelation newRelation);
 
 	void delete(ExistingRelation existingRelation);
+
+	List<CardDescriptor> fetch(QueryClass classQuery);
 
 }
