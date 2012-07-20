@@ -8,12 +8,12 @@ public class FluentApi {
 		this.executor = executor;
 	}
 
-	public NewCard newCard() {
-		return new NewCard(executor);
+	public NewCard newCard(final String className) {
+		return new NewCard(className, executor);
 	}
 
-	public ExistingCard existingCard() {
-		return new ExistingCard(executor);
+	public ExistingCard existingCard(final String className, final int id) {
+		return new ExistingCard(className, id, executor);
 	}
 
 	public NewRelation newRelation() {
@@ -22,6 +22,10 @@ public class FluentApi {
 
 	public ExistingRelation existingRelation() {
 		return new ExistingRelation(executor);
+	}
+
+	public QueryClass queryClass(final String className) {
+		return new QueryClass(className, executor);
 	}
 
 }

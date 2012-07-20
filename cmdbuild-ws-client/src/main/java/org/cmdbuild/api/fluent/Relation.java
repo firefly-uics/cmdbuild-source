@@ -24,7 +24,7 @@ public class Relation {
 	}
 
 	public Relation setCard1(final String className, final int id) {
-		this.card1 = CardDescriptor.newInstance(className, id);
+		this.card1 = new CardDescriptor(className, id);
 		return this;
 	}
 
@@ -37,7 +37,7 @@ public class Relation {
 	}
 
 	public Relation setCard2(final String className, final int id) {
-		this.card2 = CardDescriptor.newInstance(className, id);
+		this.card2 = new CardDescriptor(className, id);
 		return this;
 	}
 
