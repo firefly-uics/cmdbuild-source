@@ -1,6 +1,8 @@
 package org.cmdbuild.api.fluent.ws;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static org.cmdbuild.api.utils.SoapUtils.attributesAsMap;
 import static org.cmdbuild.api.utils.SoapUtils.attributesFor;
 import static org.cmdbuild.api.utils.SoapUtils.cardFrom;
 import static org.cmdbuild.api.utils.SoapUtils.equalsFilterFor;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.api.fluent.CallFunction;
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.ExistingCard;
@@ -121,6 +124,13 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 			descriptors.add(cardDescriptor);
 		}
 		return unmodifiableList(descriptors);
+	}
+
+	public Map<String, String> execute(final CallFunction callFunction) {
+		final List<Attribute> outputs = proxy.callFunction( //
+				callFunction.getFunctionName(), //
+				attributesFor(callFunction.getInputs()));
+		return unmodifiableMap(attributesAsMap(outputs));
 	}
 
 }

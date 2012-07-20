@@ -9,11 +9,11 @@ public class FluentApi {
 	}
 
 	public NewCard newCard(final String className) {
-		return new NewCard(className, executor);
+		return new NewCard(executor, className);
 	}
 
 	public ExistingCard existingCard(final String className, final int id) {
-		return new ExistingCard(className, id, executor);
+		return new ExistingCard(executor, className, id);
 	}
 
 	public NewRelation newRelation(final String domainName) {
@@ -25,7 +25,11 @@ public class FluentApi {
 	}
 
 	public QueryClass queryClass(final String className) {
-		return new QueryClass(className, executor);
+		return new QueryClass(executor, className);
+	}
+
+	public CallFunction callFunction(final String functionName) {
+		return new CallFunction(executor, functionName);
 	}
 
 }

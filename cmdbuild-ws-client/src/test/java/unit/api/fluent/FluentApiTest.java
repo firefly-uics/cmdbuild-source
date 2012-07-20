@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.api.fluent.CallFunction;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.ExistingRelation;
@@ -22,6 +23,8 @@ public class FluentApiTest {
 
 	private static final String CLASS_NAME = "class";
 	private static final String DOMAIN_NAME = "domain";
+	private static final String FUNCTION_NAME = "function";
+
 	private static final int CARD_ID = 42;
 
 	private static final CardDescriptor CARD_DESCRIPTOR = new CardDescriptor(CLASS_NAME, CARD_ID);
@@ -98,6 +101,15 @@ public class FluentApiTest {
 		queryClass.fetch();
 
 		verify(executor).fetch(queryClass);
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenExecutingFunctionCall() {
+		final CallFunction functionCall = api.callFunction(FUNCTION_NAME);
+		functionCall.execute();
+
+		verify(executor).execute(functionCall);
 		verifyNoMoreInteractions(executor);
 	}
 

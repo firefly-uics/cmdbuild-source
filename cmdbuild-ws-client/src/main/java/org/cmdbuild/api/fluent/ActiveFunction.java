@@ -1,11 +1,11 @@
 package org.cmdbuild.api.fluent;
 
-abstract class ActiveCard extends Card {
+abstract class ActiveFunction extends Function {
 
 	private final FluentApiExecutor executor;
 
-	public ActiveCard(final FluentApiExecutor executor, final String className, final Integer id) {
-		super(className, id);
+	public ActiveFunction(final FluentApiExecutor executor, final String functionName) {
+		super(functionName);
 		this.executor = executor;
 	}
 

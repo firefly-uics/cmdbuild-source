@@ -2,8 +2,8 @@ package org.cmdbuild.api.fluent;
 
 public class NewCard extends ActiveCard {
 
-	public NewCard(final String className, final FluentApiExecutor executor) {
-		super(className, null, executor);
+	public NewCard(final FluentApiExecutor executor, final String className) {
+		super(executor, className, null);
 	}
 
 	public NewCard withCode(final String value) {

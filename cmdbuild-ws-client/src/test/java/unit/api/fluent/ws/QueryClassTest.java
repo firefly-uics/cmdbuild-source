@@ -85,7 +85,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void soapCardIsConvertedtoFluentApiCardWhenFetchingClass() {
+	public void soapCardIsConvertedToFluentApiCardWhenFetchingClass() {
 		when(proxy().getCardList( //
 				eq(queryClass.getClassName()), //
 				anyListOf(Attribute.class), //
