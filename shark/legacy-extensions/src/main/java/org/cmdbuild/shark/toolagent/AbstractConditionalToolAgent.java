@@ -180,15 +180,18 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	 * @return extended attribute value for that key
 	 */
 	protected final String getExtendedAttribute(final String name) {
+		String value = null;
 		try {
 			final String eaXml = getParameterValue(EXTENDED_ATTRIBUTES_PARAM);
 			final ExtendedAttributes eas = XMLUtil.destringyfyExtendedAttributes(eaXml);
 			final ExtendedAttribute ea = eas.getFirstExtendedAttributeForName(name);
-			return ea.getVValue();
+			if (ea != null) {
+				value = ea.getVValue();
+			}
 		} catch (final Exception e) {
 			cus.error(null, format("unable to get extended attribute '%s'", name));
-			return null;
 		}
+		return value;
 	}
 }
 

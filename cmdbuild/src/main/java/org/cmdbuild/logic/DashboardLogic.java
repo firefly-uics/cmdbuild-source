@@ -172,9 +172,9 @@ public class DashboardLogic {
 	}
 
 	/*
-	 * Should be replaced by anyAttribute(f) when it works
+	 * TODO: Should be replaced by anyAttribute(f) when it works
 	 */
-	private Object[] fakeAnyAttribute(CMFunction function, Alias f) {
+	public static Object[] fakeAnyAttribute(CMFunction function, Alias f) {
 		List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
 		for (CMFunction.CMFunctionParameter p : function.getOutputParameters()) {
 			attributes.add(attribute(f, p.getName()));

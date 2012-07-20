@@ -239,8 +239,11 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	private Map<String, WSProcessInstInfo> queryWSOpenAndSuspended(final CMProcessClass processClass) throws CMWorkflowException {
 		final Map<String, WSProcessInstInfo> wsInfo = new HashMap<String, WSProcessInstInfo>();
-		for (WSProcessInstInfo pis : workflowService.listOpenProcessInstances(processClass.getProcessDefinitionId())) {
-			wsInfo.put(pis.getProcessInstanceId(), pis);
+		final String processDefinitionId = processClass.getProcessDefinitionId();
+		if (processDefinitionId != null) {
+			for (WSProcessInstInfo pis : workflowService.listOpenProcessInstances(processDefinitionId)) {
+				wsInfo.put(pis.getProcessInstanceId(), pis);
+			}
 		}
 		return wsInfo;
 	}

@@ -198,4 +198,12 @@ public interface Private {
 			@WebParam(name = "offset") Integer offset,
 			@WebParam(name = "fullTextQuery") String fullTextQuery,
 			@WebParam(name = "cqlQuery") CQLQuery cqlQuery);
+
+	/*
+	 * r2.3
+	 */
+
+	public Attribute[] callFunction(
+			@WebParam(name = "functionName") String functionName,
+			@WebParam(name = "params") Attribute[] params);
 }

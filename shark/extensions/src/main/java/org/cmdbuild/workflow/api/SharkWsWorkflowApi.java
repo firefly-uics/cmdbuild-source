@@ -3,6 +3,8 @@ package org.cmdbuild.workflow.api;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -190,7 +192,7 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		return rt;
 	}
 
-	public Query filterByAttribute(String attributeName, String attributeValue) {
+	private Query filterByAttribute(String attributeName, String attributeValue) {
 		final Filter filter = new Filter();
 		filter.setName(attributeName);
 		filter.setOperator(SOAP_OPERATOR_EQUALS);
@@ -198,6 +200,23 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		final Query query = new Query();
 		query.setFilter(filter);
 		return query;
+	}
+
+	@Override
+	public Map<String, String> callFunction(final String functionName, final Map<String, Object> params) {
+		final List<Attribute> wsInput = new ArrayList<Attribute>(params.size());
+		for (final Map.Entry<String, Object> p : params.entrySet()) {
+			final Attribute a = new Attribute();
+			a.setName(p.getKey());
+			a.setValue(convertToWsString(p.getValue()));
+			wsInput.add(a);
+		}
+		final List<Attribute> wsOutput = proxy.callFunction(functionName, wsInput);
+		final Map<String, String> output = new HashMap<String, String>();
+		for (final Attribute a : wsOutput) {
+			output.put(a.getName(), a.getValue());
+		}
+		return output;
 	}
 
 	/*
@@ -228,4 +247,5 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	public LookupType selectLookupByDescription(String type, String description) {
 		return schemaApi.selectLookupByDescription(type, description);
 	}
+
 }

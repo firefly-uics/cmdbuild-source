@@ -39,27 +39,32 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	}
 
 	@Override
-	public ClassInfo findClass(String className) {
+	public Map<String, String> callFunction(final String functionName, final Map<String, Object> params) {
+		return mock.callFunction(functionName, params);
+	}
+
+	@Override
+	public ClassInfo findClass(final String className) {
 		return null;
 	}
 
 	@Override
-	public ClassInfo findClass(int classId) {
+	public ClassInfo findClass(final int classId) {
 		return null;
 	}
 
 	@Override
-	public LookupType selectLookupById(int id) {
+	public LookupType selectLookupById(final int id) {
 		return null;
 	}
 
 	@Override
-	public LookupType selectLookupByCode(String type, String code) {
+	public LookupType selectLookupByCode(final String type, final String code) {
 		return null;
 	}
 
 	@Override
-	public LookupType selectLookupByDescription(String type, String description) {
+	public LookupType selectLookupByDescription(final String type, final String description) {
 		return null;
 	}
 

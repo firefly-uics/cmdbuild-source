@@ -1,9 +1,13 @@
 package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
+import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.logic.DashboardLogic.fakeAnyAttribute;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.annotation.Resource;
@@ -11,9 +15,17 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.AuthenticationService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
@@ -300,4 +312,81 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		ECard ecard = new ECard(getUserCtx());
 		return ecard.getCardListExt(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery, false);
 	}
+
+	/*
+	 * r2.3 
+	 */
+
+	@Override
+	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
+		final CMFunction function = view.findFunctionByName(functionName);
+		final Object[] actualParams = convertFunctionInput(function, params);
+
+		final Alias f = Alias.as("f");
+		CMQueryResult queryResult = view
+			.select(fakeAnyAttribute(function, f))
+			.from(call(function, actualParams), f)
+			.run();
+
+		if (queryResult.isEmpty()) {
+			return new Attribute[0];
+		} else {
+			final CMQueryRow row = queryResult.iterator().next();
+			return convertFunctionOutput(function, row.getValueSet(f));
+		}
+	}
+
+	/**
+	 * Converts the web service parameters to objects suited for the
+	 * persistence layer.
+	 * 
+	 * Actually it does not need to convert from String to the native
+	 * Object because the persistence layer does it automatically!
+	 * 
+	 * @param function
+	 * @param params received from the web services
+	 * @return params for the persistence layer
+	 */
+	private Object[] convertFunctionInput(CMFunction function, Attribute[] wsParams) {
+		final Map<String,String> paramsMap = new HashMap<String,String>();
+		for (final Attribute p : wsParams) {
+			paramsMap.put(p.getName(), p.getValue());
+		}
+		final List<CMFunctionParameter> functionParams = function.getInputParameters();
+		final List<String> params = new ArrayList<String>(functionParams.size());
+		for (final CMFunctionParameter fp : functionParams) {
+			final String functionParamName = fp.getName();
+			final String stringValue = paramsMap.get(functionParamName);
+			params.add(stringValue);
+		}
+		return params.toArray();
+	}
+
+	private Attribute[] convertFunctionOutput(CMFunction function, CMValueSet valueSet) {
+		final List<CMFunctionParameter> outputParams =  function.getOutputParameters();
+		final Attribute[] output = new Attribute[outputParams.size()];
+		int i = 0;
+		for (final CMFunctionParameter p : outputParams) {
+			final Attribute a = nativeValueToWsAttribute(p, valueSet);
+			output[i] = a;
+			++i;
+		}
+		return output;
+	}
+
+	private Attribute nativeValueToWsAttribute(final CMFunctionParameter functionParam, CMValueSet valueSet) {
+		final Attribute a = new Attribute();
+		final String paramName = functionParam.getName();
+		a.setName(paramName);
+		final Object value = valueSet.get(paramName);
+		a.setValue(nativeValueToWsString(value));
+		return a;
+	}
+
+	private String nativeValueToWsString(final Object value) {
+		// TODO Fix for dates
+		return value.toString();
+	}
+
 }
