@@ -44,7 +44,7 @@ public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 	private int createCard(final String classname, final Map<String, Object> attributes) {
 		final NewCard newCard = getFluentApi().newCard(classname);
 		for (final Entry<String, Object> attribute : attributes.entrySet()) {
-			newCard.with(attribute.getKey(), attribute.getValue().toString());
+			newCard.with(attribute.getKey(), attribute.getValue());
 		}
 		final CardDescriptor cardDescriptor = newCard.create();
 		final int newCardId = cardDescriptor.getId();

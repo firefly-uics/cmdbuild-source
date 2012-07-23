@@ -16,12 +16,12 @@ public class NewCard extends ActiveCard {
 		return this;
 	}
 
-	public NewCard with(final String name, final String value) {
+	public NewCard with(final String name, final Object value) {
 		super.set(name, value);
 		return this;
 	}
 
-	public NewCard withAttribute(final String name, final String value) {
+	public NewCard withAttribute(final String name, final Object value) {
 		super.set(name, value);
 		return this;
 	}
