@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
+import java.util.Calendar;
+
 import org.joda.time.DateTime;
 
 
@@ -14,6 +16,9 @@ public abstract class AbstractDateAttributeType extends AbstractAttributeType<Da
 			return new DateTime(instant);
 		} else if (value instanceof DateTime) {
 			return (DateTime) value;
+		} else if (value instanceof Calendar) {
+			final long instant = ((Calendar) value).getTimeInMillis();
+			return new DateTime(instant);
 		} else {
 			throw new IllegalArgumentException();
 		}

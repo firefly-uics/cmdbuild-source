@@ -28,6 +28,8 @@ public class DateAttribute extends AbstractDateAttribute {
 		Date dateValue;
 		if (value instanceof Date) {
 			dateValue = normalizeToMidnight((Date) value);
+		} else if (value instanceof Calendar) {
+			dateValue = normalizeToMidnight(((Calendar) value).getTime());
 		} else if (value instanceof String) {
 			dateValue = convertDateString((String) value, JSON_DATE_FORMAT, SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT,
 					LEGACY_JSON_DATE_FORMAT);

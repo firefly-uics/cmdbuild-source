@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -285,6 +286,15 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 
 	private CMProcessInstance syncProcessStateAndActivities(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
 		final CMProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
+
+		// Sync variables (should be removed when bidirectional communication is implemented)
+		final Map<String, Object> vars = workflowService.getProcessInstanceVariables(processInstance.getProcessInstanceId());
+		for (final CMAttribute a : processInstance.getType().getAttributes()) {
+			final String attributeName = a.getName();
+			final Object newValue = vars.get(attributeName);
+			editableProcessInstance.set(attributeName, newValue);
+		}
+
 		editableProcessInstance.setState(processInstanceInfo.getStatus());
 		editableProcessInstance.setUniqueProcessDefinition(processInstanceInfo);
 		final WSActivityInstInfo[] activities = workflowService.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
