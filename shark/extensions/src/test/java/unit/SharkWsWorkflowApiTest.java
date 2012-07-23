@@ -20,7 +20,6 @@ import org.cmdbuild.services.soap.CqlQuery;
 import org.cmdbuild.services.soap.Filter;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
-import org.cmdbuild.services.soap.Relation;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.SharkWsWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -46,21 +45,6 @@ public class SharkWsWorkflowApiTest {
 		final SharkWsWorkflowApi api = new SharkWsWorkflowApi();
 		api.setProxy(proxy);
 		this.api = api.workflowApi();
-	}
-
-	@Test
-	public void createRelationCalledAsExpected() throws Exception {
-		api.createRelation("foo", "bar", 1, "baz", 2);
-
-		final ArgumentCaptor<Relation> argument = ArgumentCaptor.forClass(Relation.class);
-		verify(proxy).createRelation(argument.capture());
-		verifyNoMoreInteractions(proxy);
-
-		assertThat(argument.getValue().getDomainName(), is("foo"));
-		assertThat(argument.getValue().getClass1Name(), is("bar"));
-		assertThat(argument.getValue().getCard1Id(), is(1));
-		assertThat(argument.getValue().getClass2Name(), is("baz"));
-		assertThat(argument.getValue().getCard2Id(), is(2));
 	}
 
 	@Test

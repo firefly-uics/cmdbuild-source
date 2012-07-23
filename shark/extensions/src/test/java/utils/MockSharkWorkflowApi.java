@@ -64,12 +64,6 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 		return new WorkflowApi() {
 
 			@Override
-			public void createRelation(final String domainName, final String className1, final int id1,
-					final String className2, final int id2) {
-				mock.createRelation(domainName, className1, id1, className2, id2);
-			}
-
-			@Override
 			public String selectAttribute(final String className, final int cardId, final String attributeName) {
 				return mock.selectAttribute(className, cardId, attributeName);
 			}

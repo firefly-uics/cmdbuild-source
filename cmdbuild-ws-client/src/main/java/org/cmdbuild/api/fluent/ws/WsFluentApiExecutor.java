@@ -98,9 +98,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final org.cmdbuild.services.soap.Relation soapRelation = new org.cmdbuild.services.soap.Relation();
 		soapRelation.setDomainName(relation.getDomainName());
 		soapRelation.setClass1Name(relation.getClassName1());
-		soapRelation.setCard1Id(relation.getClassId1());
+		soapRelation.setCard1Id(relation.getCardId1());
 		soapRelation.setClass2Name(relation.getClassName2());
-		soapRelation.setCard2Id(relation.getClassId2());
+		soapRelation.setCard2Id(relation.getCardId2());
 		return soapRelation;
 	}
 

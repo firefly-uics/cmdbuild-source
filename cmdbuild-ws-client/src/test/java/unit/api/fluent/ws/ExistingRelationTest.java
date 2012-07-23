@@ -31,9 +31,9 @@ public class ExistingRelationTest extends AbstractWsFluentApiTest {
 		final Relation wsRelation = capturedRelation();
 		assertThat(wsRelation.getDomainName(), equalTo(existingRelation.getDomainName()));
 		assertThat(wsRelation.getClass1Name(), equalTo(existingRelation.getClassName1()));
-		assertThat(wsRelation.getCard1Id(), equalTo(existingRelation.getClassId1()));
+		assertThat(wsRelation.getCard1Id(), equalTo(existingRelation.getCardId1()));
 		assertThat(wsRelation.getClass2Name(), equalTo(existingRelation.getClassName2()));
-		assertThat(wsRelation.getCard2Id(), equalTo(existingRelation.getClassId2()));
+		assertThat(wsRelation.getCard2Id(), equalTo(existingRelation.getCardId2()));
 	}
 
 }
