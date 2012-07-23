@@ -2,8 +2,6 @@ package utils;
 
 import static org.mockito.Mockito.mock;
 
-import java.util.Map;
-
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.workflow.api.SchemaApi;
@@ -72,11 +70,6 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 			public ReferenceType selectReference(final String className, final String attributeName,
 					final String attributeValue) {
 				return mock.selectReference(className, attributeName, attributeValue);
-			}
-
-			@Override
-			public Map<String, String> callFunction(final String functionName, final Map<String, Object> params) {
-				return mock.callFunction(functionName, params);
 			}
 
 		};
