@@ -19,9 +19,10 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 		final CardRef card1 = getCard1();
 		final CardRef card2 = getCard2();
 
-		getWorkflowApi().createRelation(domainName, //
-				card1.className, card1.cardId, //
-				card2.className, card2.cardId);
+		getFluentApi().newRelation(domainName) //
+				.withCard1(card1.className, card1.cardId) //
+				.withCard2(card2.className, card2.cardId) //
+				.create();
 
 		setParameterValue(DONE, RESULT_ALWAYS_TRUE_OR_THROWS);
 	}

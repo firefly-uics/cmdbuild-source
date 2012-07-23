@@ -162,7 +162,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
 
-		assertThat((Long) variables.get("the_answer"), equalTo(null));
+		assertThat(variables.get("the_answer"), equalTo(null));
 	}
 
 	@Test

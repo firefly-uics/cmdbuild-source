@@ -20,7 +20,6 @@ import org.cmdbuild.services.soap.Filter;
 import org.cmdbuild.services.soap.Order;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
-import org.cmdbuild.services.soap.Relation;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.PasswordType;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.SoapClientBuilder;
 import org.cmdbuild.services.soap.client.SoapClient;
@@ -187,18 +186,6 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 					}
 				}
 				return null;
-			}
-
-			@Override
-			public void createRelation(final String domainName, final String className1, final int id1,
-					final String className2, final int id2) {
-				final Relation relation = new Relation();
-				relation.setDomainName(domainName);
-				relation.setClass1Name(className1);
-				relation.setCard1Id(id1);
-				relation.setClass2Name(className2);
-				relation.setCard2Id(id2);
-				proxy.createRelation(relation);
 			}
 
 			@Override
