@@ -82,6 +82,27 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	}
 
 	@Test
+	public void variableModifiedFromMultipleScripts() throws Exception {
+		final XpdlActivity firstScriptActivity = process.createActivity(randomName());
+		firstScriptActivity.setScriptingType(ScriptLanguage.JAVA, "anInteger = 1;");
+
+		final XpdlActivity secondScriptActivity = process.createActivity(randomName());
+		secondScriptActivity.setScriptingType(ScriptLanguage.JAVA, "anInteger++;");
+
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+
+		process.createTransition(firstScriptActivity, secondScriptActivity);
+		process.createTransition(secondScriptActivity, noImplActivity);
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).activityClosed(firstScriptActivity.getId());
+
+		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
+
+		assertThat((Long) variables.get(AN_INTEGER), equalTo(2L));
+	}
+
+	@Test
 	public void variablesSettedThenRead() throws Exception {
 		final TypesConverter typesConverter = mock(TypesConverter.class);
 		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
@@ -125,6 +146,23 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
 		assertThat((String) readVariables.get(UNDEFINED), equalTo("baz"));
+	}
+
+	@Test
+	public void localVariablesSettedWithinScriptCannotBeRead() throws Exception {
+		final XpdlActivity scriptActivity = process.createActivity(randomName());
+		scriptActivity.setScriptingType(ScriptLanguage.JAVA, "the_answer = 42;");
+
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+
+		process.createTransition(scriptActivity, noImplActivity);
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).activityClosed(scriptActivity.getId());
+
+		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
+
+		assertThat((Long) variables.get("the_answer"), equalTo(null));
 	}
 
 	@Test
