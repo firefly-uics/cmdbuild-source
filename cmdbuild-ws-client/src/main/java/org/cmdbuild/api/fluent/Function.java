@@ -8,18 +8,18 @@ import java.util.Map;
 public class Function {
 
 	private final String functionName;
-	private final Map<String, String> inputParameters;
+	private final Map<String, Object> inputParameters;
 
 	public Function(final String functionName) {
 		this.functionName = functionName;
-		inputParameters = new HashMap<String, String>();
+		inputParameters = new HashMap<String, Object>();
 	}
 
 	public String getFunctionName() {
 		return functionName;
 	}
 
-	public Map<String, String> getInputs() {
+	public Map<String, Object> getInputs() {
 		return unmodifiableMap(inputParameters);
 	}
 
