@@ -34,7 +34,7 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 		return getCard(2);
 	}
 
-	private CardRef getCard(int side) {
+	private CardRef getCard(final int side) {
 		final String className;
 		final int cardId;
 		if (hasParameter(CLASS_NAME_PREFIX + side)) {

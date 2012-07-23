@@ -55,14 +55,11 @@ public class CachedWsSchemaApiTest {
 	@Test
 	public void classInformationsAreRetrievedAndCached() {
 		ClassInfo classInfo;
-		when(proxy.getCardMenuSchema()).thenReturn(
-				wsMenuItem(CLASS1_NAME, CLASS1_ID, //
-						wsMenuItem(CLASS2_NAME, CLASS2_ID) //
-				)
-		);
-		when(proxy.getActivityMenuSchema()).thenReturn(
-				wsMenuItem(PROCESS1_NAME, PROCESS1_ID) //
-		);
+		when(proxy.getCardMenuSchema()).thenReturn(wsMenuItem(CLASS1_NAME, CLASS1_ID, //
+				wsMenuItem(CLASS2_NAME, CLASS2_ID) //
+				));
+		when(proxy.getActivityMenuSchema()).thenReturn(wsMenuItem(PROCESS1_NAME, PROCESS1_ID) //
+				);
 
 		classInfo = api.findClass(CLASS1_NAME);
 
@@ -87,14 +84,11 @@ public class CachedWsSchemaApiTest {
 
 	@Test
 	public void classInformationsAreRetrievedOnCacheMiss() {
-		when(proxy.getCardMenuSchema()).thenReturn(
-				wsMenuItem(CLASS1_NAME, CLASS1_ID) //
-		).thenReturn(
-				wsMenuItem(CLASS2_NAME, CLASS2_ID) //
-		);
-		when(proxy.getActivityMenuSchema()).thenReturn(
-				wsMenuItem(PROCESS1_NAME, PROCESS1_ID) //
-		);
+		when(proxy.getCardMenuSchema()).thenReturn(wsMenuItem(CLASS1_NAME, CLASS1_ID) //
+				).thenReturn(wsMenuItem(CLASS2_NAME, CLASS2_ID) //
+				);
+		when(proxy.getActivityMenuSchema()).thenReturn(wsMenuItem(PROCESS1_NAME, PROCESS1_ID) //
+				);
 
 		assertThat(api.findClass(CLASS1_NAME), not(nullValue()));
 
@@ -112,11 +106,9 @@ public class CachedWsSchemaApiTest {
 	@Test
 	public void lookupInformationsAreRetrievedByTypeAndCached() {
 		when(proxy.getLookupList(LOOKUP_TYPE, null, false)).thenReturn(
-			Arrays.asList(
-					wsLookup(LOOKUP_TYPE, 1, "c1", "d1"), //
-					wsLookup(LOOKUP_TYPE, 2, "c2", "d2")  //
-				)
-		);
+				Arrays.asList(wsLookup(LOOKUP_TYPE, 1, "c1", "d1"), //
+						wsLookup(LOOKUP_TYPE, 2, "c2", "d2") //
+				));
 
 		assertThat(api.selectLookupByCode(LOOKUP_TYPE, "c2"), is(lookup(LOOKUP_TYPE, 2, "c2", "d2")));
 
@@ -132,15 +124,10 @@ public class CachedWsSchemaApiTest {
 	@Test
 	public void lookupInformationsByTypeAreRetrievedOnCacheMiss() {
 		when(proxy.getLookupList(LOOKUP_TYPE, null, false)).thenReturn(
-			Arrays.asList(
-					wsLookup(LOOKUP_TYPE, 1, "c1", "d1") //
-				)
-		).thenReturn(
-			Arrays.asList(
-					wsLookup(LOOKUP_TYPE, 1, "c1", "d1"), //
-					wsLookup(LOOKUP_TYPE, 2, "c2", "d2")  //
-				)
-		);
+				Arrays.asList(wsLookup(LOOKUP_TYPE, 1, "c1", "d1") //
+				)).thenReturn(Arrays.asList(wsLookup(LOOKUP_TYPE, 1, "c1", "d1"), //
+				wsLookup(LOOKUP_TYPE, 2, "c2", "d2") //
+				));
 
 		assertThat(api.selectLookupByCode(LOOKUP_TYPE, "c1"), is(lookup(LOOKUP_TYPE, 1, "c1", "d1")));
 
@@ -154,12 +141,8 @@ public class CachedWsSchemaApiTest {
 
 	@Test
 	public void lookupInformationsAreRetrievedByIdAndCached() {
-		when(proxy.getLookupById(1)).thenReturn(
-			wsLookup(LOOKUP_TYPE, 1, "c1", "d1")
-		);
-		when(proxy.getLookupById(2)).thenReturn(
-			wsLookup(LOOKUP_TYPE, 2, "c2", "d2")
-		);
+		when(proxy.getLookupById(1)).thenReturn(wsLookup(LOOKUP_TYPE, 1, "c1", "d1"));
+		when(proxy.getLookupById(2)).thenReturn(wsLookup(LOOKUP_TYPE, 2, "c2", "d2"));
 
 		assertThat(api.selectLookupById(1), is(lookup(LOOKUP_TYPE, 1, "c1", "d1")));
 
@@ -177,14 +160,10 @@ public class CachedWsSchemaApiTest {
 	@Test
 	public void lookupInformationsByIdAreCachedEvenByTypeQuery() {
 		when(proxy.getLookupList(LOOKUP_TYPE, null, false)).thenReturn(
-			Arrays.asList(
-					wsLookup(LOOKUP_TYPE, 1, "c1", "d1"), //
-					wsLookup(LOOKUP_TYPE, 2, "c2", "d2")  //
-				)
-		);
-		when(proxy.getLookupById(3)).thenReturn(
-			wsLookup("t2", 3, "c3", "d3")
-		);
+				Arrays.asList(wsLookup(LOOKUP_TYPE, 1, "c1", "d1"), //
+						wsLookup(LOOKUP_TYPE, 2, "c2", "d2") //
+				));
+		when(proxy.getLookupById(3)).thenReturn(wsLookup("t2", 3, "c3", "d3"));
 
 		api.selectLookupByCode(LOOKUP_TYPE, "c2");
 
@@ -197,6 +176,7 @@ public class CachedWsSchemaApiTest {
 		verify(proxy, times(1)).getLookupById(3);
 		verifyNoMoreInteractions(proxy);
 	}
+
 	/*
 	 * Utils
 	 */
@@ -205,7 +185,7 @@ public class CachedWsSchemaApiTest {
 		final MenuSchema menuItem = new MenuSchema();
 		menuItem.setClassname(name);
 		menuItem.setId(id);
-		for (MenuSchema child : children) {
+		for (final MenuSchema child : children) {
 			menuItem.getChildren().add(child);
 		}
 		return menuItem;

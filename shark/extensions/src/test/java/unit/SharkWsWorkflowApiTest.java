@@ -27,6 +27,7 @@ import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.services.soap.Relation;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.SharkWsWorkflowApi;
+import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class SharkWsWorkflowApiTest {
 
 	private Private proxy;
 
-	private SharkWorkflowApi api;
+	private WorkflowApi api;
 
 	@Before
 	public void setUp() throws Exception {
@@ -48,7 +49,7 @@ public class SharkWsWorkflowApiTest {
 
 		final SharkWsWorkflowApi api = new SharkWsWorkflowApi();
 		api.setProxy(proxy);
-		this.api = api;
+		this.api = api.workflowApi();
 	}
 
 	@Test
@@ -90,11 +91,11 @@ public class SharkWsWorkflowApiTest {
 	@Test
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void selectAttributeCalledAsExpected() throws Exception {
-		Card cardMock = mock(Card.class);
+		final Card cardMock = mock(Card.class);
 		when(cardMock.getAttributeList()).thenReturn(Arrays.asList(attribute("bar", "barValue")));
 		when(proxy.getCard(any(String.class), any(Integer.class), any(List.class))).thenReturn(cardMock);
 
-		String out = api.selectAttribute("foo", 12, "bar");
+		final String out = api.selectAttribute("foo", 12, "bar");
 
 		final ArgumentCaptor<String> classNameCaptor = ArgumentCaptor.forClass(String.class);
 		final ArgumentCaptor<Integer> cardIdCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -111,8 +112,8 @@ public class SharkWsWorkflowApiTest {
 	@Test
 	@SuppressWarnings({ "unchecked" })
 	public void selectReferenceCalledAsExpected() throws Exception {
-		CardList cardListMock = mock(CardList.class);
-		Card cardMock = mock(Card.class);
+		final CardList cardListMock = mock(CardList.class);
+		final Card cardMock = mock(Card.class);
 		when(cardListMock.getCards()).thenReturn(Arrays.asList(cardMock));
 		when(cardMock.getId()).thenReturn(100);
 		when(cardMock.getAttributeList()).thenReturn(
@@ -122,7 +123,7 @@ public class SharkWsWorkflowApiTest {
 				any(List.class), any(Integer.class), any(Integer.class), any(String.class), any(CqlQuery.class)))
 				.thenReturn(cardListMock);
 
-		ReferenceType out = api.selectReference("foo", "bar", "baz");
+		final ReferenceType out = api.selectReference("foo", "bar", "baz");
 
 		final ArgumentCaptor<String> classNameCaptor = ArgumentCaptor.forClass(String.class);
 		final ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
@@ -145,7 +146,7 @@ public class SharkWsWorkflowApiTest {
 	 */
 
 	private Attribute attribute(final String name, final String value) {
-		Attribute a = new Attribute();
+		final Attribute a = new Attribute();
 		a.setName(name);
 		a.setValue(value);
 		return a;

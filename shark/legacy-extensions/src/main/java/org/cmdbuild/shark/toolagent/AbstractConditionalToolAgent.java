@@ -24,7 +24,7 @@ import org.enhydra.shark.toolagent.AbstractToolAgent;
 
 public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
-	private static final String EXTENDED_ATTRIBUTES_PARAM = "ExtendedAttributes"; 
+	private static final String EXTENDED_ATTRIBUTES_PARAM = "ExtendedAttributes";
 	private static final String CMDBUILD_API_CLASSNAME_PROPERTY = "org.cmdbuild.workflow.api.classname";
 
 	public static interface ConditionEvaluator {
@@ -63,11 +63,11 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	public WorkflowApi getWorkflowApi() {
-		return workflowApi;
+		return workflowApi.workflowApi();
 	}
 
 	public SchemaApi getSchemaApi() {
-		return workflowApi;
+		return workflowApi.schemaApi();
 	}
 
 	public String getId() {
@@ -143,7 +143,8 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	/**
 	 * Gets the application parameter or null if not present.
 	 * 
-	 * @param name parameter name
+	 * @param name
+	 *            parameter name
 	 * @return parameter or null
 	 */
 	private AppParameter getParameter(final String name) {
@@ -162,8 +163,8 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	protected final Map<String, Object> getInputParameterValues() {
 		final Map<String, Object> paramMap = new HashMap<String, Object>();
 		for (final AppParameter p : parameters) {
-			if (XPDLConstants.FORMAL_PARAMETER_MODE_OUT.equals(p.the_mode) ||
-					EXTENDED_ATTRIBUTES_PARAM.equals(p.the_formal_name)) {
+			if (XPDLConstants.FORMAL_PARAMETER_MODE_OUT.equals(p.the_mode)
+					|| EXTENDED_ATTRIBUTES_PARAM.equals(p.the_formal_name)) {
 				continue;
 			}
 			final String formalName = p.the_formal_name;
@@ -176,7 +177,8 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	/**
 	 * Decodes the XML because Shark 2.3 does not use jxpdl, so it would crash.
 	 * 
-	 * @param name extended attribute key
+	 * @param name
+	 *            extended attribute key
 	 * @return extended attribute value for that key
 	 */
 	protected final String getExtendedAttribute(final String name) {

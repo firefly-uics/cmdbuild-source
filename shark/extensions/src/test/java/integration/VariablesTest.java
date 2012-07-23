@@ -86,10 +86,10 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		final TypesConverter typesConverter = mock(TypesConverter.class);
 		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
 			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
+			public Object answer(final InvocationOnMock invocation) throws Throwable {
 				return invocation.getArguments()[0];
 			}
-			
+
 		});
 		ws.setVariableConverter(typesConverter);
 

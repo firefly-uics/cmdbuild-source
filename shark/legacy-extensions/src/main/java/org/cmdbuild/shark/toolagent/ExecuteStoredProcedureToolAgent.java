@@ -30,7 +30,7 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 		return functionName;
 	}
 
-	private Object convertToProcessValue(String stringValue, Class<?> clazz) {
+	private Object convertToProcessValue(final String stringValue, final Class<?> clazz) {
 		// TODO
 		if (clazz.equals(String.class)) {
 			return stringValue;

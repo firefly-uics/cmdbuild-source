@@ -2,7 +2,6 @@ package org.cmdbuild.shark.toolagent;
 
 import org.cmdbuild.workflow.type.ReferenceType;
 
-
 public class SelectAttributeToolAgent extends AbstractConditionalToolAgent {
 
 	private static final String CLASS_NAME = "ClassName";

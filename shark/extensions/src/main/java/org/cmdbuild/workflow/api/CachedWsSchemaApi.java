@@ -57,7 +57,7 @@ public class CachedWsSchemaApi implements SchemaApi {
 		final ClassInfo classInfo = new ClassInfo(classSchema.getClassname(), classSchema.getId());
 		classesById.put(classInfo.getId(), classInfo);
 		classesByName.put(classInfo.getName(), classInfo);
-		for (MenuSchema subclassSchema : classSchema.getChildren()) {
+		for (final MenuSchema subclassSchema : classSchema.getChildren()) {
 			addClassToMapRecursively(subclassSchema);
 		}
 	}
@@ -101,7 +101,7 @@ public class CachedWsSchemaApi implements SchemaApi {
 		return lookupList;
 	}
 
-	private List<LookupType> updateLookupType(String type) {
+	private List<LookupType> updateLookupType(final String type) {
 		final List<Lookup> wsLookupList = proxy.getLookupList(type, ANY_DESCRIPTION, NO_PARENT_LIST);
 		final List<LookupType> lookupList = convertLookupList(wsLookupList);
 		lookupsByType.put(type, lookupList);

@@ -2,7 +2,7 @@ package org.cmdbuild.workflow.api;
 
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
-public abstract class SharkWorkflowApi implements WorkflowApi, SchemaApi {
+public abstract class SharkWorkflowApi {
 
 	private CallbackUtilities cus;
 
@@ -13,5 +13,9 @@ public abstract class SharkWorkflowApi implements WorkflowApi, SchemaApi {
 	protected CallbackUtilities cus() {
 		return cus;
 	}
+
+	public abstract WorkflowApi workflowApi();
+
+	public abstract SchemaApi schemaApi();
 
 }

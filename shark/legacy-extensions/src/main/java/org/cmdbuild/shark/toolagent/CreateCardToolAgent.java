@@ -8,6 +8,7 @@ import java.util.Map;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
+
 public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 
 	private static final String CREATE_CARD = "createCard";
@@ -21,10 +22,10 @@ public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 	protected void innerInvoke() throws Exception {
 		final String classname = getClassName();
 		final Map<String, Object> attributes = getAttributeMap();
-		
+
 		final int newCardId = getWorkflowApi().createCard(classname, attributes);
 
-		final String description =  String.valueOf(attributes.get(Constants.DESCRIPTION_ATTRIBUTE));
+		final String description = String.valueOf(attributes.get(Constants.DESCRIPTION_ATTRIBUTE));
 		for (final AppParameter parmOut : getReturnParameters()) {
 			if (parmOut.the_class == Long.class) {
 				parmOut.the_value = newCardId;
