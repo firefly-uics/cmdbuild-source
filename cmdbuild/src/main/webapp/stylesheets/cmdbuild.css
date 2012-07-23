@@ -570,10 +570,6 @@ em {
 	background-image: url(../images/icons/flags/en.png) ! important;
 }
 
-.ux-flag-it {
-	background-image: url(../images/icons/flags/it.png) ! important;
-}
-
 .ux-flag-es {
 	background-image: url(../images/icons/flags/es.png) ! important;
 }
@@ -584,6 +580,10 @@ em {
 
 .ux-flag-it {
     background-image:url(../images/icons/flags/it.png) ! important;
+}
+
+.ux-flag-ja {
+    background-image:url(../images/icons/flags/ja.png) ! important;
 }
 
 .ux-flag-pt_BR {
