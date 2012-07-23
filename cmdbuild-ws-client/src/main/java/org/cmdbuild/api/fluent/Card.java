@@ -9,26 +9,35 @@ import java.util.Map;
 
 public class Card extends CardDescriptor {
 
-	private final Map<String, String> attributes;
+	private final Map<String, Object> attributes;
 
 	public Card(final String className, final Integer id) {
 		super(className, id);
-		attributes = new HashMap<String, String>();
+		attributes = new HashMap<String, Object>();
 	}
 
-	public Map<String, String> getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return unmodifiableMap(attributes);
 	}
 
 	public String getCode() {
-		return attributes.get(CODE_ATTRIBUTE);
+		return get(CODE_ATTRIBUTE, String.class);
 	}
 
 	public String getDescription() {
-		return attributes.get(DESCRIPTION_ATTRIBUTE);
+		return get(DESCRIPTION_ATTRIBUTE, String.class);
 	}
 
-	void set(final String name, final String value) {
+	public Object get(final String name) {
+		return attributes.get(name);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T get(final String name, final Class<T> clazz) {
+		return (T) attributes.get(name);
+	}
+
+	void set(final String name, final Object value) {
 		attributes.put(name, value);
 	}
 

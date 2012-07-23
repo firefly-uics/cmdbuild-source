@@ -1,7 +1,7 @@
 package unit.api.fluent.ws;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.api.utils.SoapUtils.attribute;
+import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.attribute;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
