@@ -1,5 +1,6 @@
 package org.cmdbuild.workflow.api;
 
+import org.cmdbuild.api.fluent.FluentApi;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public abstract class SharkWorkflowApi {
@@ -14,8 +15,10 @@ public abstract class SharkWorkflowApi {
 		return cus;
 	}
 
-	public abstract WorkflowApi workflowApi();
+	public abstract FluentApi fluentApi();
 
 	public abstract SchemaApi schemaApi();
+
+	public abstract WorkflowApi workflowApi();
 
 }

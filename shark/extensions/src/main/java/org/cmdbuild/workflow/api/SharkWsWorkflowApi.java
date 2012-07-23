@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.api.fluent.FluentApi;
+import org.cmdbuild.api.fluent.FluentApiExecutor;
+import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
@@ -71,6 +74,8 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	private static final String SOAP_NO_FULLTEXT = null;
 	private static final CqlQuery SOAP_NO_CQL = null;
 
+	private static FluentApi fluentApi;
+
 	private Private proxy;
 	private SchemaApi schemaApi = NULL_SCHEMA_API;
 
@@ -78,6 +83,82 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	public void configure(final CallbackUtilities cus) {
 		super.configure(cus);
 		setProxy(newProxy(cus));
+	}
+
+	public void setProxy(final Private proxy) {
+		this.proxy = proxy;
+		synchronized (proxy) {
+			if (fluentApi == null) {
+				final FluentApiExecutor fluentApiExecutor = new WsFluentApiExecutor(proxy);
+				fluentApi = new FluentApi(fluentApiExecutor);
+			}
+		}
+		schemaApi = new CachedWsSchemaApi(proxy);
+	}
+
+	private Private newProxy(final CallbackUtilities cus) {
+		final String base_url = cus.getProperty(CMDBUILD_WS_URL_PROPERTY);
+		final String url = completeUrl(base_url);
+		final String username = cus.getProperty(CMDBUILD_WS_USERNAME_PROPERTY);
+		final String password = cus.getProperty(CMDBUILD_WS_PASSWORD_PROPERTY);
+
+		cus.info(null, format("creating soap client for url '%s', username '%s', password '%s'", //
+				url, //
+				username, //
+				password));
+
+		final SoapClient<Private> soapClient = new SoapClientBuilder<Private>() //
+				.forClass(Private.class) //
+				.withUrl(url) //
+				.withUsername(username) //
+				.withPasswordType(PasswordType.DIGEST) //
+				.withPassword(password) //
+				.build();
+		return soapClient.getProxy();
+	}
+
+	private String completeUrl(final String baseUrl) {
+		return new StringBuilder(baseUrl) //
+				.append(baseUrl.endsWith(URL_SEPARATOR) ? EMPTY : URL_SEPARATOR) //
+				.append(URL_SUFFIX) //
+				.toString();
+	}
+
+	@Override
+	public FluentApi fluentApi() {
+		return fluentApi;
+	}
+
+	@Override
+	public SchemaApi schemaApi() {
+		return new SchemaApi() {
+
+			@Override
+			public ClassInfo findClass(final String className) {
+				return schemaApi.findClass(className);
+			}
+
+			@Override
+			public ClassInfo findClass(final int classId) {
+				return schemaApi.findClass(classId);
+			}
+
+			@Override
+			public LookupType selectLookupById(final int id) {
+				return schemaApi.selectLookupById(id);
+			}
+
+			@Override
+			public LookupType selectLookupByCode(final String type, final String code) {
+				return schemaApi.selectLookupByCode(type, code);
+			}
+
+			@Override
+			public LookupType selectLookupByDescription(final String type, final String description) {
+				return schemaApi.selectLookupByDescription(type, description);
+			}
+
+		};
 	}
 
 	@Override
@@ -121,19 +202,6 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 			}
 
 			@Override
-			public int createCard(final String className, final Map<String, Object> attributes) {
-				final Card card = new Card();
-				card.setClassName(className);
-				for (final String name : attributes.keySet()) {
-					final Object value = attributes.get(name);
-					final String stringValue = convertToWsString(value);
-					card.getAttributeList().add(attribute(name, stringValue));
-				}
-				final int id = proxy.createCard(card);
-				return id;
-			}
-
-			@Override
 			public Map<String, String> callFunction(final String functionName, final Map<String, Object> params) {
 				final List<Attribute> wsInput = new ArrayList<Attribute>(params.size());
 				for (final Map.Entry<String, Object> p : params.entrySet()) {
@@ -152,84 +220,12 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		};
 	}
 
-	@Override
-	public SchemaApi schemaApi() {
-		return new SchemaApi() {
-
-			@Override
-			public ClassInfo findClass(final String className) {
-				return schemaApi.findClass(className);
-			}
-
-			@Override
-			public ClassInfo findClass(final int classId) {
-				return schemaApi.findClass(classId);
-			}
-
-			@Override
-			public LookupType selectLookupById(final int id) {
-				return schemaApi.selectLookupById(id);
-			}
-
-			@Override
-			public LookupType selectLookupByCode(final String type, final String code) {
-				return schemaApi.selectLookupByCode(type, code);
-			}
-
-			@Override
-			public LookupType selectLookupByDescription(final String type, final String description) {
-				return schemaApi.selectLookupByDescription(type, description);
-			}
-
-		};
-	}
-
-	private Private newProxy(final CallbackUtilities cus) {
-		final String base_url = cus.getProperty(CMDBUILD_WS_URL_PROPERTY);
-		final String url = completeUrl(base_url);
-		final String username = cus.getProperty(CMDBUILD_WS_USERNAME_PROPERTY);
-		final String password = cus.getProperty(CMDBUILD_WS_PASSWORD_PROPERTY);
-
-		cus.info(null, format("creating soap client for url '%s', username '%s', password '%s'", //
-				url, //
-				username, //
-				password));
-
-		final SoapClient<Private> soapClient = new SoapClientBuilder<Private>() //
-				.forClass(Private.class) //
-				.withUrl(url) //
-				.withUsername(username) //
-				.withPasswordType(PasswordType.DIGEST) //
-				.withPassword(password) //
-				.build();
-		return soapClient.getProxy();
-	}
-
-	private String completeUrl(final String baseUrl) {
-		return new StringBuilder(baseUrl) //
-				.append(baseUrl.endsWith(URL_SEPARATOR) ? EMPTY : URL_SEPARATOR) //
-				.append(URL_SUFFIX) //
-				.toString();
-	}
-
-	public void setProxy(final Private proxy) {
-		this.proxy = proxy;
-		schemaApi = new CachedWsSchemaApi(proxy);
-	}
-
 	private String convertToWsString(final Object value) {
 		if (value == null) {
 			return StringUtils.EMPTY;
 		} else {
 			return value.toString();
 		}
-	}
-
-	private Attribute attribute(final String name, final String value) {
-		final Attribute attribute = new Attribute();
-		attribute.setName(name);
-		attribute.setValue(value);
-		return attribute;
 	}
 
 	private ReferenceType referenceType(final Card card) {

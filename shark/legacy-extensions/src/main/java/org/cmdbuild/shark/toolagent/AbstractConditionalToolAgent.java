@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -60,6 +61,10 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	public String getAssId() {
 		return assId;
+	}
+
+	public FluentApi getFluentApi() {
+		return workflowApi.fluentApi();
 	}
 
 	public WorkflowApi getWorkflowApi() {
