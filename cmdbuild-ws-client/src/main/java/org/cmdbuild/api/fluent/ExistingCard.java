@@ -16,12 +16,12 @@ public class ExistingCard extends ActiveCard {
 		return this;
 	}
 
-	public ExistingCard with(final String name, final String value) {
+	public ExistingCard with(final String name, final Object value) {
 		super.set(name, value);
 		return this;
 	}
 
-	public ExistingCard withAttribute(final String name, final String value) {
+	public ExistingCard withAttribute(final String name, final Object value) {
 		super.set(name, value);
 		return this;
 	}
