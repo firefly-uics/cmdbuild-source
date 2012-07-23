@@ -1,7 +1,5 @@
 package org.cmdbuild.workflow.api;
 
-import java.util.Map;
-
 import org.cmdbuild.workflow.type.ReferenceType;
 
 /**
@@ -13,5 +11,4 @@ public interface WorkflowApi {
 
 	ReferenceType selectReference(String className, String attributeName, String attributeValue);
 
-	Map<String, String> callFunction(String functionName, Map<String, Object> params);
 }

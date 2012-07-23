@@ -23,7 +23,7 @@ public class Function {
 		return unmodifiableMap(inputParameters);
 	}
 
-	void set(final String name, final String value) {
+	void set(final String name, final Object value) {
 		inputParameters.put(name, value);
 	}
 
