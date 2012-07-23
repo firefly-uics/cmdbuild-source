@@ -1,7 +1,6 @@
 package unit;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -9,12 +8,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static utils.matchers.AttributeListMatcher.containsAttribute;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
@@ -50,27 +46,6 @@ public class SharkWsWorkflowApiTest {
 		final SharkWsWorkflowApi api = new SharkWsWorkflowApi();
 		api.setProxy(proxy);
 		this.api = api.workflowApi();
-	}
-
-	@Test
-	public void createCardCalledAsExpected() throws Exception {
-		when(proxy.createCard(any(Card.class))).thenReturn(42);
-
-		final Map<String, Object> attributes = new TreeMap<String, Object>();
-		attributes.put(Constants.CODE_ATTRIBUTE, "bar");
-		attributes.put(Constants.DESCRIPTION_ATTRIBUTE, "baz");
-
-		final int id = api.createCard("foo", attributes);
-
-		final ArgumentCaptor<Card> argument = ArgumentCaptor.forClass(Card.class);
-		verify(proxy).createCard(argument.capture());
-		verifyNoMoreInteractions(proxy);
-
-		assertThat(argument.getValue().getClassName(), is("foo"));
-		assertThat(argument.getValue().getAttributeList(), containsAttribute(Constants.CODE_ATTRIBUTE, "bar"));
-		assertThat(argument.getValue().getAttributeList(), containsAttribute(Constants.DESCRIPTION_ATTRIBUTE, "baz"));
-		assertThat(argument.getValue().getAttributeList(), not(containsAttribute("Dummy", "dummy")));
-		assertThat(id, is(42));
 	}
 
 	@Test

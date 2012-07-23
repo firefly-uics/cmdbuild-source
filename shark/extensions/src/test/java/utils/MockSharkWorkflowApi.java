@@ -4,6 +4,8 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
+import org.cmdbuild.api.fluent.FluentApi;
+import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -12,10 +14,17 @@ import org.cmdbuild.workflow.type.ReferenceType;
 
 public class MockSharkWorkflowApi extends SharkWorkflowApi {
 
+	public static final FluentApiExecutor fluentApiExecutor;
 	public static final WorkflowApi mock;
 
 	static {
+		fluentApiExecutor = mock(FluentApiExecutor.class);
 		mock = mock(WorkflowApi.class);
+	}
+
+	@Override
+	public FluentApi fluentApi() {
+		return new FluentApi(fluentApiExecutor);
 	}
 
 	@Override
@@ -53,11 +62,6 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	@Override
 	public WorkflowApi workflowApi() {
 		return new WorkflowApi() {
-
-			@Override
-			public int createCard(final String className, final Map<String, Object> attributes) {
-				return mock.createCard(className, attributes);
-			}
 
 			@Override
 			public void createRelation(final String domainName, final String className1, final int id1,
