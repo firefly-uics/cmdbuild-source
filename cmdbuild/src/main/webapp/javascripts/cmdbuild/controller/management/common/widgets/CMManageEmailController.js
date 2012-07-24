@@ -43,9 +43,13 @@
 
 		// override
 		beforeActiveView: function() {
+			var pi = _CMWFState.getProcessInstance();
 			if (!this.gridStoreWasLoaded) {
 				this.view.getEl().mask(CMDBuild.Translation.common.wait_title);
 				this.view.emailGrid.store.load({
+					params: {
+						ProcessId: pi.getId()
+					},
 					scope: this,
 					callback: function(records, operation, success) {
 						this.gridStoreWasLoaded = true;
