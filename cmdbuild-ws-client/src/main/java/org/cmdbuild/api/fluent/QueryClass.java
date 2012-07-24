@@ -28,7 +28,7 @@ public class QueryClass extends ActiveCard {
 		return this;
 	}
 
-	public List<CardDescriptor> fetch() {
+	public List<Card> fetch() {
 		return executor().fetch(this);
 	}
 

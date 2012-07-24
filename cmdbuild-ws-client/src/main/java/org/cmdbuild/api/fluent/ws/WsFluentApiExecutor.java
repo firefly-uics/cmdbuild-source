@@ -22,6 +22,7 @@ import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.QueryClass;
 import org.cmdbuild.api.fluent.Relation;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.CardList;
 import org.cmdbuild.services.soap.CqlQuery;
@@ -39,6 +40,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	private static final String OPERATOR_AND = "AND";
 
 	private static final List<Attribute> ALL_ATTRIBUTES = null;
+	private static final Query NO_QUERY = null;
 	private static final List<Order> NO_ORDERING = null;
 	private static final int NO_LIMIT = 0;
 	private static final int OFFSET_BEGINNING = 0;
@@ -71,15 +73,12 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
 				existingCard.getClassName(), //
 				existingCard.getId(), //
-				attributesFor(existingCard));
+				hasAttributes(existingCard) ? attributesFor(existingCard) : ALL_ATTRIBUTES);
 		return cardFrom(soapCard);
 	}
 
 	private Card cardFrom(final org.cmdbuild.services.soap.Card soapCard) {
-		final ExistingCard card = new ExistingCard( //
-				NULL_NEVER_USED_EXECUTOR, //
-				soapCard.getClassName(), //
-				soapCard.getId());
+		final ExistingCard card = newExistingCardFrom(soapCard);
 		for (final Attribute attribute : soapCard.getAttributeList()) {
 			card.withAttribute(attribute.getName(), attribute.getValue());
 		}
@@ -104,17 +103,17 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return soapRelation;
 	}
 
-	public List<CardDescriptor> fetch(final QueryClass queryClass) {
+	public List<Card> fetch(final QueryClass queryClass) {
 		final CardList cardList = proxy.getCardList( //
 				queryClass.getClassName(), //
 				ALL_ATTRIBUTES, //
-				queriedAttributesFor(queryClass), //
+				hasAttributes(queryClass) ? queriedAttributesFor(queryClass) : NO_QUERY, //
 				NO_ORDERING, //
 				NO_LIMIT, //
 				OFFSET_BEGINNING, //
 				NO_FULLTEXT, //
 				NO_CQL);
-		return cardDescriptorsFor(cardList);
+		return cardsFor(cardList);
 	}
 
 	private Query queriedAttributesFor(final QueryClass queryClass) {
@@ -153,13 +152,26 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return filter;
 	}
 
-	private List<CardDescriptor> cardDescriptorsFor(final CardList cardList) {
-		final List<CardDescriptor> descriptors = new ArrayList<CardDescriptor>();
+	private List<Card> cardsFor(final CardList cardList) {
+		final List<Card> cards = new ArrayList<Card>();
 		for (final org.cmdbuild.services.soap.Card wsCard : cardList.getCards()) {
-			final CardDescriptor cardDescriptor = new CardDescriptor(wsCard.getClassName(), wsCard.getId());
-			descriptors.add(cardDescriptor);
+			final ExistingCard card = newExistingCardFrom(wsCard);
+			for (final Attribute attribute : wsCard.getAttributeList()) {
+				final String attributeName = attribute.getName();
+				if (Constants.CLASS_ID_ATTRIBUTE.equals(attributeName)) {
+					final int classId = Integer.parseInt(attribute.getValue());
+					card.withClassId(classId);
+				} else if (Constants.DESCRIPTION_ATTRIBUTE.equals(attributeName)) {
+					card.withDescription(attribute.getValue());
+				}
+			}
+			cards.add(card);
 		}
-		return unmodifiableList(descriptors);
+		return unmodifiableList(cards);
+	}
+
+	private ExistingCard newExistingCardFrom(final org.cmdbuild.services.soap.Card wsCard) {
+		return new ExistingCard(NULL_NEVER_USED_EXECUTOR, wsCard.getClassName(), wsCard.getId());
 	}
 
 	public Map<String, String> execute(final CallFunction callFunction) {
@@ -184,8 +196,15 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	public static org.cmdbuild.services.soap.Card soapCardFor(final Card card) {
 		final org.cmdbuild.services.soap.Card soapCard = new org.cmdbuild.services.soap.Card();
 		soapCard.setClassName(card.getClassName());
+		if (card.getId() != null) {
+			soapCard.setId(card.getId());
+		}
 		soapCard.getAttributeList().addAll(attributesFor(card));
 		return soapCard;
+	}
+
+	private boolean hasAttributes(final Card card) {
+		return !card.getAttributes().isEmpty();
 	}
 
 	public static List<Attribute> attributesFor(final Card card) {
