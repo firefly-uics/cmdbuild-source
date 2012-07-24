@@ -104,6 +104,29 @@ public class SharkTypesConverterTest {
 		assertThat(dst0.getDescription(), is(StringUtils.EMPTY));
 	}
 
+	@Test
+	public void lookupTypesAreConvertedToInteger() {
+		LookupType src = mock(LookupType.class);
+
+		when(src.getType()).thenReturn("t");
+		when(src.getId()).thenReturn(42);
+		when(src.getCode()).thenReturn("c");
+		when(src.getDescription()).thenReturn("d");
+
+		Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
+
+		assertThat(dst, is(42));
+	}
+
+	@Test
+	public void referenceTypesAreConvertedToInteger() {
+		ReferenceType src = mock(ReferenceType.class);
+
+		when(src.getId()).thenReturn(42);
+		Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
+		assertThat(dst, is(42));
+	}
+
 	/*
 	 * Utils
 	 */
