@@ -565,6 +565,9 @@ em {
  * Login flags
  */
  
+.ux-flag-de {
+	background-image: url(../images/icons/flags/de.png) ! important;
+}
 
 .ux-flag-en {
 	background-image: url(../images/icons/flags/en.png) ! important;
