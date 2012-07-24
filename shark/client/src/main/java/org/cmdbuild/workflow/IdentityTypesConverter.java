@@ -6,4 +6,9 @@ public class IdentityTypesConverter implements TypesConverter {
 	public Object toWorkflowType(final Object obj) {
 		return obj;
 	}
+
+	@Override
+	public Object fromWorkflowType(final Object obj) {
+		return obj;
+	}
 }
