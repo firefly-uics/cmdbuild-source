@@ -104,14 +104,8 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 	@Test
 	public void variablesSettedThenRead() throws Exception {
-		final TypesConverter typesConverter = mock(TypesConverter.class);
-		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(final InvocationOnMock invocation) throws Throwable {
-				return invocation.getArguments()[0];
-			}
+		final TypesConverter typesConverter = identityTypesConverterMock();
 
-		});
 		ws.setVariableConverter(typesConverter);
 
 		process.createActivity(randomName());
@@ -180,10 +174,31 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		assertThat(readVariables.get(A_REFERENCE), hasProperty("id", equalTo(42)));
 	}
 
+	/*
+	 * Utils
+	 */
+
 	private ReferenceType newReference(final int id) {
 		final ReferenceType reference = new ReferenceType();
 		reference.setId(id);
 		return reference;
 	}
 
+	private TypesConverter identityTypesConverterMock() {
+		final TypesConverter typesConverter = mock(TypesConverter.class);
+		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(final InvocationOnMock invocation) throws Throwable {
+				return invocation.getArguments()[0];
+			}
+
+		});
+		when(typesConverter.fromWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(final InvocationOnMock invocation) throws Throwable {
+				return invocation.getArguments()[0];
+			}
+		});
+		return typesConverter;
+	}
 }
