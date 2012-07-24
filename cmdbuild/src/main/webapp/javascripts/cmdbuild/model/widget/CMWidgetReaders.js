@@ -100,7 +100,7 @@ Ext.define("CMDBuild.management.model.widget.ManageEmailConfigurationReader", {
 	statics: {
 		FIELDS: {
 			ID: 'Id',
-			STATUS: 'EmailStatus_value',
+			STATUS: 'EmailStatus',
 			BEGIN_DATE: 'BeginDate',
 			FROM_ADDRESS: 'FromAddress',
 			TO_ADDRESS: 'toAddresses',
