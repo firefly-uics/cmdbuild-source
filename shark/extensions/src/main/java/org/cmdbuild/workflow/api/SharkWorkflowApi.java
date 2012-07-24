@@ -19,6 +19,4 @@ public abstract class SharkWorkflowApi {
 
 	public abstract SchemaApi schemaApi();
 
-	public abstract WorkflowApi workflowApi();
-
 }

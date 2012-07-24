@@ -138,11 +138,4 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 		};
 	}
 
-	@Override
-	public WorkflowApi workflowApi() {
-		return new WorkflowApi() {
-
-		};
-	}
-
 }
