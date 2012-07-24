@@ -43,9 +43,6 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 						root: 'rows',
 						type: "json",
 						totalProperty: 'results'
-					},
-					extraParams: {
-						ProcessId: this.processId
 					}
 				},
 				sorters: {property: fields.STATUS, direction: 'ASC'},
@@ -101,7 +98,14 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 			],
 			features: [{
 				ftype: 'groupingsummary',
-				groupHeaderTpl: '{name}',
+				groupHeaderTpl: [
+					'{name:this.formatName}',
+					{
+						formatName: function(name) {
+							return tr.lookup[name] || name
+						}
+					}
+				],
 				hideGroupedHeader: true,
 				enableGroupingMenu: false
 			}]
