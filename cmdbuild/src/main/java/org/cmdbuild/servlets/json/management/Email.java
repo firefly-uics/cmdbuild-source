@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.mail.MessagingException;
 
+import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessType;
@@ -20,22 +21,31 @@ import org.json.JSONObject;
 
 public class Email extends JSONBase {
 
+	private final String EMAIL_STATUS = "EmailStatus";
 	@JSONExported
 	public JSONObject getEmailList(
 			@Parameter("ProcessId") int processId,
 			ITableFactory tf,
-	        JSONObject output) throws MessagingException, IOException, JSONException {
+			JSONObject output) throws MessagingException, IOException, JSONException {
 		ICard processCard = tf.get(ProcessType.BaseTable).cards().get(processId);
 		try {
 			EmailService.syncEmail();
 		} catch (CMDBException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
 		}
-	    JSONArray jsonEmails = new JSONArray();
-	    for (ICard email : EmailCard.list(processCard)) {
-	    	jsonEmails.put(Serializer.serializeCard(email, true));
-	    }
-	    output.put("rows", jsonEmails);
-	    return output;
+		JSONArray jsonEmails = new JSONArray();
+		for (ICard email : EmailCard.list(processCard)) {
+			JSONObject jsonEmail = Serializer.serializeCard(email, true);
+			try {
+				AttributeValue emailStatus = email.getAttributeValue(EMAIL_STATUS);
+				jsonEmail.put(EMAIL_STATUS, emailStatus.toString());
+			} catch (JSONException e) {
+				// ignore it
+			}
+
+			jsonEmails.put(jsonEmail);
+		}
+		output.put("rows", jsonEmails);
+		return output;
 	}
 };
