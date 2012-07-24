@@ -97,7 +97,7 @@
          "domains_title": "Gestione domini",
          "errors": {"table": {
             "cast": "Non è possibile cambiare la proprietà \"superclasse\", la classe possiede o dati o sottoclassi",
-            "duplicate": "Esiste già una class con lo stesso nome",
+            "duplicate": "Esiste già una classe con lo stesso nome",
             "parent_not_found": "La classe da cui ereditare non esiste"
          }},
          "geo_attributes": {
@@ -180,7 +180,7 @@
                   "cql": "Selettore CQL",
                   "readOnly": "Sola visualizzazione"
                },
-               "title": "Crea o modifica Card"
+               "title": "Crea o modifica scheda"
             },
             "commonFields": {
                "active": "Attivo",
@@ -324,7 +324,7 @@
          "domains_title": "Gestione domini",
          "errors": {"table": {
             "cast": "Non è possibile cambiare la proprietà \"superclasse\", la classe possiede o dati o sottoclassi",
-            "duplicate": "Esiste già una class con lo stesso nome",
+            "duplicate": "Esiste già una classe con lo stesso nome",
             "parent_not_found": "La superclasse di processo specificata non esiste"
          }},
          "include_inherited": "Includi ereditati",
@@ -529,7 +529,7 @@
       },
       "setup": {
          "cmdbuild": {
-            "cardpanelheight": "Altezza in percentuale del pannello card",
+            "cardpanelheight": "Altezza in percentuale del pannello scheda",
             "fieldsetgeneraltitle": "Generali",
             "fieldsetlanguageltitle": "Lingua",
             "fieldsetpopupwindowtitle": "Finestre popup",
@@ -546,7 +546,7 @@
             "startingClass": "Classe di default",
             "tabs_position": {
                "bottom": "Sotto",
-               "label": "Posizione TAB sottopagine nel pannello card",
+               "label": "Posizione TAB sottopagine nel pannello scheda",
                "top": "Sopra"
             },
             "title": "Configurazione CMDBuild"
@@ -709,7 +709,7 @@
    },
    "configure": {
       "failure": {
-         "text": "Il setup ha incotrato i seguenti errori: ",
+         "text": "Il setup ha incontrato i seguenti errori: ",
          "title": "Errore nel Setup"
       },
       "finish": "Fine",
@@ -782,7 +782,7 @@
          "AUTH_NO_GROUPS": "L'utente non è associato ad alcun gruppo",
          "AUTH_UNKNOWN_GROUP": "Gruppo inesistente",
          "AUTH_WRONG_PASSWORD": "Password sbagliata",
-         "CARD_NOTFOUND": "Card non trovata in {0}",
+         "CARD_NOTFOUND": "Scheda non trovata in {0}",
          "CLASS_NOTFOUND": "Classe {0} non trovata",
          "CQL_COMPILATION_FAILED": "Impossibile interpretare l'espressione CQL",
          "DOMAIN_NOTFOUND": "Dominio {0} non trovato",
@@ -800,15 +800,15 @@
          "ORM_CHANGE_LOOKUPTYPE_ERROR": "Impossibile cambiare il tipo della lookup",
          "ORM_CONTAINS_DATA": "Non è possibile cancellare classi o attributi di tabelle o domini contenenti dati",
          "ORM_CQL_COMPILATION_FAILED": "Query CQL non valida",
-         "ORM_CSV_INVALID_ATTRIBUTES": "Impossibile salvare le card: rilevati valori non validi",
+         "ORM_CSV_INVALID_ATTRIBUTES": "Impossibile salvare le schede: rilevati valori non validi",
          "ORM_DATABASE_CONNECTION_ERROR": "Errore nella connessione al database, prova a controllare i parametri di connessione",
          "ORM_DBNOTCONFIGURED": "Database non configurato",
          "ORM_DOMAIN_HAS_REFERENCE": "Impossibile cancellare un dominio a cui sono associati attributi reference",
          "ORM_DUPLICATE_ATTRIBUTE": "Esiste già un attributo con questo nome",
          "ORM_DUPLICATE_TABLE": "Esiste già una classe con questo nome",
          "ORM_DUPLICATE_USER": "Nome utente già esistente",
-         "ORM_ERROR_CARD_SELECT": "Impossibile recuperare le card",
-         "ORM_ERROR_CARD_UPDATE": "Impossibile aggiornare le card",
+         "ORM_ERROR_CARD_SELECT": "Impossibile recuperare le schede",
+         "ORM_ERROR_CARD_UPDATE": "Impossibile aggiornare le schede",
          "ORM_ERROR_DOMAIN_CREATE": "Impossibile creare il dominio",
          "ORM_ERROR_DOMAIN_DELETE": "Impossibile cancellare il dominio",
          "ORM_ERROR_DOMAIN_MODIFY": "Impossibile modificare il dominio",
@@ -821,14 +821,14 @@
          "ORM_ERROR_RELATION_CREATE": "Impossibile creare la relazione",
          "ORM_ERROR_RELATION_MODIFY": "Impossibile modificare la relazione",
          "ORM_FILTER_CONFLICT": "Conflitto nella definizione del filtro",
-         "ORM_FULLCARDS_MULTIPLEDOMAINS": "Impossibile recuperare card collegate su più domini",
+         "ORM_FULLCARDS_MULTIPLEDOMAINS": "Impossibile recuperare schede collegate su più domini",
          "ORM_GENERIC_ERROR": "Si è verificato un errore durante la lettura/il salvataggio dei dati",
          "ORM_ICONS_FILE_ALREADY_EXISTS": "Il file {0} esiste già",
          "ORM_ICONS_FILE_NOT_FOUND": "Il file non è stato trovato",
          "ORM_ICONS_UNSUPPORTED_TYPE": "Tipo di file non supportato",
          "ORM_ILLEGAL_NAME_ERROR": "Nome illegale: {0}",
          "ORM_LOOKUPTYPE_ALREADY_EXISTS": "Esiste già un'altro tipo lookup con la stessa descrizione",
-         "ORM_MALFORMED_PATCH": "Patch illegibile",
+         "ORM_MALFORMED_PATCH": "Patch illeggibile",
          "ORM_NOT_NULL_VIOLATION": "Vincolo di non nullità violato",
          "ORM_POSTGIS_NOT_FOUND": "PostGIS non installato",
          "ORM_READ_ONLY_RELATION": "Relazione in sola lettura",
@@ -850,7 +850,7 @@
          "REPORT_INVALID_PARAMETER_CMDBUILD_CLASS": "Classe CMDBuild di un parametro reference non valida!",
          "REPORT_INVALID_PARAMETER_CMDBUILD_LOOKUP": "Nome lookup di un parametro non valido!",
          "REPORT_INVALID_PARAMETER_FORMAT": "Formato di un parametro definito nel report non valido! Formati validi: \"nome\", \"nome.classe.attributo\", \"nome.lookup.nomelookup\"",
-         "REPORT_INVALID_PARAMETER_LOOKUP_CLASS": "Classe Java di un parametro lookup non valido!  Classe richiesta:\"java.lang.Integer\"",
+         "REPORT_INVALID_PARAMETER_LOOKUP_CLASS": "Classe Java di un parametro lookup non valido! Classe richiesta:\"java.lang.Integer\"",
          "REPORT_INVALID_PARAMETER_REFERENCE_CLASS": "Classe Java di un parametro reference non valida! Classe richiesta:\"java.lang.Integer\"",
          "REPORT_INVALID_PARAMETER_VALUE": "Valore di un parametro inserito non valido!",
          "REPORT_INVISIBLE_PARAMETER": "Uno dei parametri del report fa riferimento ad un attributo non visibile, impossibile procedere.",
@@ -866,7 +866,7 @@
          "WF_CANNOT_CONFIGURE_CMDBEXTATTR": "Impossibile configurare l'extended attribute {0}",
          "WF_CANNOT_FIND_XPDL": "Impossibile trovare l'XPDL",
          "WF_CANNOT_GETWAPI_CONNECTION": "Impossibile connettersi al motore workflow",
-         "WF_CANNOT_GET_PROCESSCARDID": "Impossibile recuperare l'id della card",
+         "WF_CANNOT_GET_PROCESSCARDID": "Impossibile recuperare l'id della scheda",
          "WF_CANNOT_GET_PROCESS_VARIABLES": "Impossibile recuperare i campi dell'attività",
          "WF_CANNOT_GET_WORKITEM": "Impossibile recuperare l'attività utente",
          "WF_CANNOT_GET_WORKITEMS": "Impossibile recuperare le attività utente",
@@ -902,7 +902,7 @@
       "unknown_error": "Si è verificato un errore",
       "wrong_wf_widgets": "C'è stato un errore nel salvataggio dei seguenti controlli visuali: "
    },
-   "info": {"card_not_found": "La card non rispetta più il filtro impostato"},
+   "info": {"card_not_found": "La scheda non rispetta più il filtro impostato"},
    "login": {
       "change_user": "Cambia utente",
       "failed": "Accesso Fallito",
@@ -945,7 +945,7 @@
             "attention": "Attenzione",
             "error": "Errore",
             "no_removed": "Il filtro non è stato rimosso",
-            "no_server": "Server inraggiungibile",
+            "no_server": "Server irraggiungibile",
             "no_set": "Il filtro non è stato impostato",
             "question_sure": "Sei sicuro?"
          },
@@ -1037,7 +1037,7 @@
          "modify_card": "Modifica scheda",
          "modify_note": "Modifica nota",
          "modify_relation_window": {"window_title": "Modifica relazioni"},
-         "open_relation": "Apri card collegata",
+         "open_relation": "Apri scheda collegata",
          "other_fields": "Altro",
          "relation_columns": {
             "begin_date": "Data inizio",
@@ -1061,7 +1061,7 @@
          },
          "title": "Elenco - ",
          "treetitle": "Schede dati",
-         "view_relation": "Visualizza card collegata"
+         "view_relation": "Visualizza scheda collegata"
       },
       "moddetail": {
          "adddetail": "Aggiungi Dettaglio",
@@ -1069,7 +1069,7 @@
          "detail": "Dettagli",
          "editdetail": "Modifica dettaglio",
          "showattach": "Visualizza allegati",
-         "showdetail": "Visulaizza dettaglio",
+         "showdetail": "Visualizza dettaglio",
          "showgraph": "Visualizza grafo",
          "shownotes": "Visualizza note"
       },
@@ -1107,7 +1107,7 @@
             "importfailure": "Import fallito",
             "importsuccess": "Import avvenuto con successo",
             "info": "Informazione",
-            "noupdate": "Non ci sono card da aggiornare",
+            "noupdate": "Non ci sono schede da aggiornare",
             "selectaclass": "Seleziona una classe",
             "separator": "Separatore",
             "shownonvalid": "Mostra solo record non validi",
@@ -1132,7 +1132,7 @@
             "attachments": {"must_save_to_add": "Non puoi aggiungere un allegato prima di aver salvato l'attività"},
             "calendar": {"wrong_config": "Il calendario non è stato configurato correttamente"},
             "createreport": {"format_label": "Formato"},
-            "linkcards": {"required": "È necessario selezionare delle card - "},
+            "linkcards": {"required": "È necessario selezionare delle schede - "},
             "manageemail": {
                "addresshdr": "Indirizzo",
                "ccfld": "CC",
@@ -1211,7 +1211,7 @@
    "warnings": {
       "link_cards_changed_values": "La selezione di \"{0}\" è stata aggiornata",
       "only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",
-      "popup_block": "Abbiamo rilevato un blocco popup, disabilitalo per eseguire questa operazione",
+      "popup_block": "Abbiamo rilevato un blocco popup, disabilitato per eseguire questa operazione",
       "warning_message": "Attenzione"
    }
 }
