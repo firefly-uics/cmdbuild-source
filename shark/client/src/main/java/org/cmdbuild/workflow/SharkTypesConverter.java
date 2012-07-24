@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.workflow.type.LookupType;
@@ -50,6 +51,19 @@ public class SharkTypesConverter implements TypesConverter {
 		}
 	}
 
+	@Override
+	public Object fromWorkflowType(Object obj) {
+		if (obj instanceof LookupType) {
+			final LookupType lt = LookupType.class.cast(obj);
+			return convertLookup(lt);
+		} else if (obj instanceof ReferenceType) {
+			final ReferenceType ref = ReferenceType.class.cast(obj);
+			return convertReference(ref);
+		} else {
+			return obj;
+		}
+	}
+
 	private LookupType convertLookup(final CMLookup cml) {
 		final LookupType lt = new LookupType();
 		lt.setType(cml.getType().getName());
@@ -57,6 +71,10 @@ public class SharkTypesConverter implements TypesConverter {
 		lt.setCode(cml.getCode());
 		lt.setDescription(cml.getDescription());
 		return lt;
+	}
+
+	private Integer convertLookup(final LookupType lt) {
+		return lt.getId();
 	}
 
 	private ReferenceType[] convertReferenceArray(CardReference[] refArray) {
@@ -74,6 +92,10 @@ public class SharkTypesConverter implements TypesConverter {
 		rt.setIdClass(objectIdToInt(refClass.getId()));
 		rt.setDescription(NO_DESCRIPTION);
 		return rt;
+	}
+
+	private Integer convertReference(final ReferenceType ref) {
+		return ref.getId();
 	}
 
 	/**
