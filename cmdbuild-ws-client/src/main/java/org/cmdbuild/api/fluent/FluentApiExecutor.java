@@ -17,7 +17,7 @@ public interface FluentApiExecutor {
 
 	void delete(ExistingRelation existingRelation);
 
-	List<CardDescriptor> fetch(QueryClass classQuery);
+	List<Card> fetch(QueryClass classQuery);
 
 	Map<String, String> execute(CallFunction callFunction);
 

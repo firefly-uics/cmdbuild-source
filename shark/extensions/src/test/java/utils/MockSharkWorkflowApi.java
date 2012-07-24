@@ -8,7 +8,6 @@ import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.LookupType;
-import org.cmdbuild.workflow.type.ReferenceType;
 
 public class MockSharkWorkflowApi extends SharkWorkflowApi {
 
@@ -60,12 +59,6 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 	@Override
 	public WorkflowApi workflowApi() {
 		return new WorkflowApi() {
-
-			@Override
-			public ReferenceType selectReference(final String className, final String attributeName,
-					final String attributeValue) {
-				return mock.selectReference(className, attributeName, attributeValue);
-			}
 
 		};
 	}

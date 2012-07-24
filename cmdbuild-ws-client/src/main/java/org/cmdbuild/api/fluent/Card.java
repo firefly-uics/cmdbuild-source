@@ -1,11 +1,14 @@
 package org.cmdbuild.api.fluent;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
+import static org.cmdbuild.common.Constants.CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Card extends CardDescriptor {
 
@@ -16,8 +19,24 @@ public class Card extends CardDescriptor {
 		attributes = new HashMap<String, Object>();
 	}
 
+	public boolean has(final String name) {
+		return attributes.containsKey(name);
+	}
+
+	public boolean hasAttribute(final String name) {
+		return has(name);
+	}
+
+	public Set<String> getAttributeNames() {
+		return unmodifiableSet(attributes.keySet());
+	}
+
 	public Map<String, Object> getAttributes() {
 		return unmodifiableMap(attributes);
+	}
+
+	public Integer getClassId() {
+		return get(CLASS_ID_ATTRIBUTE, Integer.class);
 	}
 
 	public String getCode() {
@@ -34,11 +53,15 @@ public class Card extends CardDescriptor {
 
 	@SuppressWarnings("unchecked")
 	public <T> T get(final String name, final Class<T> clazz) {
-		return (T) attributes.get(name);
+		return (T) get(name);
 	}
 
 	void set(final String name, final Object value) {
 		attributes.put(name, value);
+	}
+
+	void setClassId(final int classId) {
+		set(CLASS_ID_ATTRIBUTE, classId);
 	}
 
 	void setCode(final String value) {

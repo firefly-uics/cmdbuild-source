@@ -10,13 +10,12 @@ public class SelectAttributeToolAgent extends AbstractConditionalToolAgent {
 	private static final String OBJ_ID = "ObjId";
 	private static final String OBJ_REFERENCE = "ObjReference";
 	private static final String ATTRIBUTE_NAME = "AttributeName";
-
 	private static final String ATTRIBUTE_VALUE = "AttributeValue";
 
 	@Override
 	protected void innerInvoke() throws Exception {
 		final String attributeName = getParameterValue(ATTRIBUTE_NAME);
-		final Card card = existingCard() //
+		final Card card = existingCard()//
 				.withAttribute(attributeName, null) //
 				.fetch();
 		final String attributeValue = card.get(attributeName, String.class);
