@@ -7,8 +7,6 @@ import org.cmdbuild.workflow.type.ReferenceType;
  */
 public interface WorkflowApi {
 
-	String selectAttribute(String className, int cardId, String attributeName);
-
 	ReferenceType selectReference(String className, String attributeName, String attributeValue);
 
 }

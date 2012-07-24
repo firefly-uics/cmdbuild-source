@@ -1,7 +1,6 @@
 package unit;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -45,27 +44,6 @@ public class SharkWsWorkflowApiTest {
 		final SharkWsWorkflowApi api = new SharkWsWorkflowApi();
 		api.setProxy(proxy);
 		this.api = api.workflowApi();
-	}
-
-	@Test
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void selectAttributeCalledAsExpected() throws Exception {
-		final Card cardMock = mock(Card.class);
-		when(cardMock.getAttributeList()).thenReturn(Arrays.asList(attribute("bar", "barValue")));
-		when(proxy.getCard(any(String.class), any(Integer.class), any(List.class))).thenReturn(cardMock);
-
-		final String out = api.selectAttribute("foo", 12, "bar");
-
-		final ArgumentCaptor<String> classNameCaptor = ArgumentCaptor.forClass(String.class);
-		final ArgumentCaptor<Integer> cardIdCaptor = ArgumentCaptor.forClass(Integer.class);
-		final ArgumentCaptor<List> attributeNameCaptor = ArgumentCaptor.forClass(List.class);
-		verify(proxy).getCard(classNameCaptor.capture(), cardIdCaptor.capture(), attributeNameCaptor.capture());
-		verifyNoMoreInteractions(proxy);
-
-		assertThat(classNameCaptor.getValue(), is("foo"));
-		assertThat(cardIdCaptor.getValue(), is(12));
-		assertThat(attributeNameCaptor.getValue(), is(nullValue()));
-		assertThat(out, is("barValue"));
 	}
 
 	@Test
