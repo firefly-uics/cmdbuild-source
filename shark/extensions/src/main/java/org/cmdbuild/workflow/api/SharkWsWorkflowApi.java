@@ -5,7 +5,6 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
@@ -172,17 +171,6 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 				} else {
 					return referenceType(cardList.get(0));
 				}
-			}
-
-			@Override
-			public String selectAttribute(final String className, final int cardId, final String attributeName) {
-				final Card card = proxy.getCard(className, cardId, SOAP_ALL_ATTRIBUTES);
-				for (final Attribute a : card.getAttributeList()) {
-					if (StringUtils.equals(attributeName, a.getName())) {
-						return a.getValue();
-					}
-				}
-				return null;
 			}
 
 		};

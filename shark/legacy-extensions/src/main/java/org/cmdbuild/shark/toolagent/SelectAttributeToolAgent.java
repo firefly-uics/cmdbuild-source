@@ -1,5 +1,7 @@
 package org.cmdbuild.shark.toolagent;
 
+import org.cmdbuild.api.fluent.Card;
+import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.workflow.type.ReferenceType;
 
 public class SelectAttributeToolAgent extends AbstractConditionalToolAgent {
@@ -13,15 +15,15 @@ public class SelectAttributeToolAgent extends AbstractConditionalToolAgent {
 
 	@Override
 	protected void innerInvoke() throws Exception {
-		final CardRef card = getCard();
 		final String attributeName = getParameterValue(ATTRIBUTE_NAME);
-
-		final String attributeValue = getWorkflowApi().selectAttribute(card.className, card.cardId, attributeName);
-
+		final Card card = existingCard() //
+				.withAttribute(attributeName, null) //
+				.fetch();
+		final String attributeValue = card.get(attributeName, String.class);
 		setParameterValue(ATTRIBUTE_VALUE, attributeValue);
 	}
 
-	private CardRef getCard() {
+	private ExistingCard existingCard() {
 		final String className;
 		final int cardId;
 		if (hasParameter(CLASS_NAME)) {
@@ -33,6 +35,7 @@ public class SelectAttributeToolAgent extends AbstractConditionalToolAgent {
 			className = getSchemaApi().findClass(objReference.getIdClass()).getName();
 			cardId = objReference.getId();
 		}
-		return new CardRef(className, cardId);
+		return getFluentApi().existingCard(className, cardId);
 	}
+
 }
