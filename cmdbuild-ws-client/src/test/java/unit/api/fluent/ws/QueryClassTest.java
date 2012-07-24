@@ -1,5 +1,6 @@
 package unit.api.fluent.ws;
 
+import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.soapCardFor;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.equalTo;
@@ -18,10 +19,9 @@ import static utils.matchers.QueryEqualFilterMatcher.containsFilter;
 
 import java.util.List;
 
-import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.QueryClass;
 import org.cmdbuild.services.soap.Attribute;
-import org.cmdbuild.services.soap.Card;
 import org.cmdbuild.services.soap.CardList;
 import org.cmdbuild.services.soap.CqlQuery;
 import org.cmdbuild.services.soap.FilterOperator;
@@ -97,7 +97,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 				any(CqlQuery.class)) //
 		).thenReturn(cardList(queryClass.getClassName(), CARD_ID, ANOTHER_CARD_ID));
 
-		final List<CardDescriptor> descriptors = queryClass.fetch();
+		final List<Card> descriptors = queryClass.fetch();
 		assertThat(descriptors.size(), equalTo(2));
 		assertThat(descriptors.get(0).getId(), equalTo(CARD_ID));
 		assertThat(descriptors.get(1).getId(), equalTo(ANOTHER_CARD_ID));
@@ -116,18 +116,17 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 				any(CqlQuery.class)) //
 		).thenReturn(cardList(queryClass.getClassName(), CARD_ID, ANOTHER_CARD_ID));
 
-		final List<CardDescriptor> descriptors = queryClass.fetch();
-		descriptors.add(new CardDescriptor(CLASS_NAME, CARD_ID));
+		final List<Card> cards = queryClass.fetch();
+		cards.add(new Card(CLASS_NAME, CARD_ID));
 	}
 
 	private CardList cardList(final String className, final int... ids) {
 		final CardList cardList = new CardList();
 		cardList.setTotalRows(ids.length);
-		final List<Card> cards = cardList.getCards();
+		final List<org.cmdbuild.services.soap.Card> cards = cardList.getCards();
 		for (final int id : ids) {
-			final Card card = new Card();
-			card.setId(id);
-			cards.add(card);
+			final Card card = new Card(className, id);
+			cards.add(soapCardFor(card));
 		}
 		return cardList;
 	}

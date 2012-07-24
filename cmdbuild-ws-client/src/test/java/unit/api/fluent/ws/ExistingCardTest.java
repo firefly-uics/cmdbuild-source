@@ -1,6 +1,6 @@
 package unit.api.fluent.ws;
 
-import static org.cmdbuild.api.utils.SoapUtils.soapCardFor;
+import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.soapCardFor;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.allOf;
@@ -92,10 +92,10 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 		final org.cmdbuild.api.fluent.Card card = existingCard.fetch();
 
 		assertThat(card.getClassName(), equalTo(existingCard.getClassName()));
-		assertThat(card.getAttributes(), hasEntry(CODE_ATTRIBUTE, CODE_VALUE));
-		assertThat(card.getAttributes(), hasEntry(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE));
-		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_1, ATTRIBUTE_1_VALUE));
-		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_2, ATTRIBUTE_2_VALUE));
+		assertThat(card.getAttributes(), hasEntry(CODE_ATTRIBUTE, (Object) CODE_VALUE));
+		assertThat(card.getAttributes(), hasEntry(DESCRIPTION_ATTRIBUTE, (Object) DESCRIPTION_VALUE));
+		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_1, (Object) ATTRIBUTE_1_VALUE));
+		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_2, (Object) ATTRIBUTE_2_VALUE));
 	}
 
 }

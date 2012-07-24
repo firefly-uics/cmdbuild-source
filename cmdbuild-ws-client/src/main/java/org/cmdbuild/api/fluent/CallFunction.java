@@ -8,7 +8,7 @@ public class CallFunction extends ActiveFunction {
 		super(executor, functionName);
 	}
 
-	public CallFunction with(final String name, final String value) {
+	public CallFunction with(final String name, final Object value) {
 		super.set(name, value);
 		return this;
 	}

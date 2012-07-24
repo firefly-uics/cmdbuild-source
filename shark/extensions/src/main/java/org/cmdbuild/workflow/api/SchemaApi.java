@@ -33,22 +33,25 @@ public interface SchemaApi {
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			ClassInfo other = (ClassInfo) obj;
+			final ClassInfo other = (ClassInfo) obj;
 			return (id == other.id);
 		}
 	}
 
 	ClassInfo findClass(String className);
+
 	ClassInfo findClass(int classId);
 
 	LookupType selectLookupById(int id);
+
 	LookupType selectLookupByCode(String type, String code);
+
 	LookupType selectLookupByDescription(String type, String description);
 }

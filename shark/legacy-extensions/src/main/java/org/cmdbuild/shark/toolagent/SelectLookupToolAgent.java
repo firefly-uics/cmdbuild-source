@@ -42,7 +42,7 @@ public class SelectLookupToolAgent extends AbstractConditionalToolAgent {
 		return getSchemaApi().selectLookupByDescription(type, description);
 	}
 
-	private void setOutput(LookupType lookup) {
+	private void setOutput(final LookupType lookup) {
 		if (hasParameter(OUTPUT_LOOKUP)) {
 			setParameterValue(OUTPUT_LOOKUP, lookup);
 		}

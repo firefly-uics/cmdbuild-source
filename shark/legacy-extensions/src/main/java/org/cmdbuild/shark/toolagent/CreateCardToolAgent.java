@@ -4,10 +4,14 @@ import static java.util.Arrays.asList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
+
 public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 
 	private static final String CREATE_CARD = "createCard";
@@ -21,10 +25,9 @@ public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 	protected void innerInvoke() throws Exception {
 		final String classname = getClassName();
 		final Map<String, Object> attributes = getAttributeMap();
-		
-		final int newCardId = getWorkflowApi().createCard(classname, attributes);
+		final int newCardId = createCard(classname, attributes);
 
-		final String description =  String.valueOf(attributes.get(Constants.DESCRIPTION_ATTRIBUTE));
+		final String description = String.valueOf(attributes.get(Constants.DESCRIPTION_ATTRIBUTE));
 		for (final AppParameter parmOut : getReturnParameters()) {
 			if (parmOut.the_class == Long.class) {
 				parmOut.the_value = newCardId;
@@ -36,6 +39,16 @@ public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 				parmOut.the_value = ref;
 			}
 		}
+	}
+
+	private int createCard(final String classname, final Map<String, Object> attributes) {
+		final NewCard newCard = getFluentApi().newCard(classname);
+		for (final Entry<String, Object> attribute : attributes.entrySet()) {
+			newCard.with(attribute.getKey(), attribute.getValue());
+		}
+		final CardDescriptor cardDescriptor = newCard.create();
+		final int newCardId = cardDescriptor.getId();
+		return newCardId;
 	}
 
 	private String getClassName() {

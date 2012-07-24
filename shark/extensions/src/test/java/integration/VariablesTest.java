@@ -82,9 +82,36 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	}
 
 	@Test
-	public void variablesSettedThenRead() throws Exception {
-		final TypesConverter typesConverter = identityTypesConverterMock();
+	public void variableModifiedFromMultipleScripts() throws Exception {
+		final XpdlActivity firstScriptActivity = process.createActivity(randomName());
+		firstScriptActivity.setScriptingType(ScriptLanguage.JAVA, "anInteger = 1;");
 
+		final XpdlActivity secondScriptActivity = process.createActivity(randomName());
+		secondScriptActivity.setScriptingType(ScriptLanguage.JAVA, "anInteger++;");
+
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+
+		process.createTransition(firstScriptActivity, secondScriptActivity);
+		process.createTransition(secondScriptActivity, noImplActivity);
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).activityClosed(firstScriptActivity.getId());
+
+		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
+
+		assertThat((Long) variables.get(AN_INTEGER), equalTo(2L));
+	}
+
+	@Test
+	public void variablesSettedThenRead() throws Exception {
+		final TypesConverter typesConverter = mock(TypesConverter.class);
+		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(final InvocationOnMock invocation) throws Throwable {
+				return invocation.getArguments()[0];
+			}
+
+		});
 		ws.setVariableConverter(typesConverter);
 
 		process.createActivity(randomName());
@@ -122,6 +149,23 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	}
 
 	@Test
+	public void localVariablesSettedWithinScriptCannotBeRead() throws Exception {
+		final XpdlActivity scriptActivity = process.createActivity(randomName());
+		scriptActivity.setScriptingType(ScriptLanguage.JAVA, "the_answer = 42;");
+
+		final XpdlActivity noImplActivity = process.createActivity(randomName());
+
+		process.createTransition(scriptActivity, noImplActivity);
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).activityClosed(scriptActivity.getId());
+
+		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
+
+		assertThat(variables.get("the_answer"), equalTo(null));
+	}
+
+	@Test
 	public void declareTypesSettedThenRead() throws Exception {
 		process.createActivity(randomName());
 
@@ -136,31 +180,10 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		assertThat(readVariables.get(A_REFERENCE), hasProperty("id", equalTo(42)));
 	}
 
-	/*
-	 * Utils
-	 */
-
 	private ReferenceType newReference(final int id) {
 		final ReferenceType reference = new ReferenceType();
 		reference.setId(id);
 		return reference;
 	}
 
-	private TypesConverter identityTypesConverterMock() {
-		final TypesConverter typesConverter = mock(TypesConverter.class);
-		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				return invocation.getArguments()[0];
-			}
-			
-		});
-		when(typesConverter.fromWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				return invocation.getArguments()[0];
-			}
-		});
-		return typesConverter;
-	}
 }

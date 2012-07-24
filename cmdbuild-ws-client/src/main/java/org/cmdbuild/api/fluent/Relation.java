@@ -18,7 +18,7 @@ public class Relation {
 		return card1.getClassName();
 	}
 
-	public int getClassId1() {
+	public int getCardId1() {
 		return card1.getId();
 	}
 
@@ -31,7 +31,7 @@ public class Relation {
 		return card2.getClassName();
 	}
 
-	public int getClassId2() {
+	public int getCardId2() {
 		return card2.getId();
 	}
 
