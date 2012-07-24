@@ -62,7 +62,7 @@
             "modify_class": "Klasse bearbeiten",
             "name": "Name",
             "print_class": "Klasse ausdrucken",
-            "remove_class": "Klasse wegnehmen",
+            "remove_class": "Klasse entfernen",
             "simple": "Einfach",
             "standard": "Standard",
             "superclass": "Superklasse",
@@ -131,7 +131,7 @@
             },
             "visibility": "Sichtbarkeit"
          },
-         "include_inherited": "Übernommene enthalten",
+         "include_inherited": "Geerbte enthalten",
          "layers": "Ebenen",
          "print_schema": "Schema ausdrucken",
          "tabs": {
@@ -180,7 +180,7 @@
                   "cql": "CQL Auswertung",
                   "readOnly": "Nur Anzeige"
                },
-               "title": "Card erstellen oder bearbeiten"
+               "title": "Karte erstellen oder bearbeiten"
             },
             "commonFields": {
                "active": "Aktiv",
@@ -194,88 +194,88 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "The chart is not well configured"
+                "wrongConfiguration": "Das Diagramm ist nicht gut konfiguriert"
              },
              "availableCharts": {
-                "gauge": "Gauge",
-                "pie": "Pie",
-                "bar": "Bar",
-                "line": "Line"
+                "gauge": "Tachometer",
+                "pie": "Torten",
+                "bar": "Balken",
+                "line": "Linen"
              },
              "buttons": {
-                "add": "Add Chart",
-                "modify": "Modify chart",
-                "remove": "Remove chart",
-                "preview": "Preview"
+                "add": "Diagramm hinzufügen",
+                "modify": "Diagramm bearbeiten",
+                "remove": "Diagramm entfernen",
+                "preview": "Vorschau"
              },
              "fields": {
-                "active": "Active",
-                "autoload": "Load automatically",
-                "background": "Background color",
-                "categoryFieldset": "Category axis",
-                "chartType": "Chart type",
-                "dataSource": "Data source",
-                "defaultValue": "Default value",
-                "description": "Description",
-                "fieldType": "Field type",
-                "foreground": "Foreground color",
-                "fromClass": "From class",
-                "labelField": "Label field",
-                "legend": "Show legend",
-                "lookupType": "Lookup type",
-                "max": "Maximum",
-                "min": "Minimum",
+                "active": "Aktiv",
+                "autoload": "Automatisch laden",
+                "background": "Hintergrundfarbe",
+                "categoryFieldset": "Kategorieachse",
+                "chartType": "Diagramm Typ",
+                "dataSource": "Datasource",
+                "defaultValue": "Default-Wert",
+                "description": "Beschreibung",
+                "fieldType": "Feld Typ",
+                "foreground": "Vordergundfarbe",
+                "fromClass": "aus der Klasse",
+                "labelField": "Label-Feld",
+                "legend": "Ansicht Legende",
+                "lookupType": "Lookup-Typ",
+                "max": "Maximal",
+                "min": "Minimal",
                 "name": "Name",
                 "orientation": {
-                   "label": "Orientation",
+                   "label": "Orientierung",
                    "values": {
-                      "horizontal": "Horizontal",
-                      "vertical": "Vertical"
+                      "horizontal": "Horizontale",
+                      "vertical": "Vertikale"
                    }
                 },
-                "required": "Required",
-                "steps": "Steps",
-                "title": "Title",
-                "valueField": "Value field",
-                "valueFieldset": "Value axis"
+                "required": "Erforderlich",
+                "steps": "Schritte",
+                "title": "Titel",
+                "valueField": "Feldwert",
+                "valueFieldset": "Achsenwert"
              },
              "inputTypes": {
-                "BOOLEAN": "Boolean",
-                "DECIMAL": "Decimal",
-                "INTEGER": "Integer",
-                "DOUBLE": "Double",
-                "DATE": "Date",
-                "TIMESTAMP": "Timestamp",
+                "BOOLEAN": "Boolesch",
+                "DECIMAL": "Dezimal",
+                "INTEGER": "Ganzzahlig",
+                "DOUBLE": "Doppelt",
+                "DATE": "Datum",
+                "TIMESTAMP": "Timestempel",
                 "TIME": "Time",
                 "STRING": "String",
                 "TEXT": "Text",
-                "CHAR": "Char",
-                "INET": "Net address"
+                "CHAR": "Schriftzeichen",
+                "INET": "IP-Adresse"
              },
-             "title": "Charts",
+             "title": "Diagramme",
              "typeFieldOptions": {
-                "card" : "Card",
-                "classes" : "Select from all CMDBuild classes",
-                "freeInt" : "Free Integer",
-                "freeString" : "Free String",
-                "group" : "Current group",
-                "lookup" : "Select from a lookup",
-                "user" : "Current user"
+                "card" : "Karte",
+                "classes" : "Aus allen CMDBuild Klassen markieren",
+                "freeInt" : "Freie Ganzzahl",
+                "freeString" : "Freier String",
+                "group" : "Aktuelle Gruppe",
+                "lookup" : "Aus einem Lookup markieren",
+                "user" : "Aktueller Benutzer"
              }
           },
           "layout": {
-             "add": "Add a column",
-             "remove": "Remove empty columns",
+             "add": "Eine Spalte hinzufügen",
+             "remove": "Leere Spalten entfernen",
              "title": "Layout"
           },
           "properties": {
-             "add": "Add Dashboard",
-             "modify": "Modify Dashboard",
-             "remove": "Remove Dashboard",
+             "add": "Dashboard hinzufügen",
+             "modify": "Dashboard bearbeiten",
+             "remove": "Dashboard entfernen",
              "fields": {
                 "name": "Name",
-                "description": "Description",
-                "groups": "Available for groups"
+                "description": "Beschreibung",
+                "groups": "Verfügbar für Gruppen"
              }
           },
           "title": "Dashboard"
@@ -327,7 +327,7 @@
             "duplicate": "Es gibt bereits eine Klasse mit demselben Name",
             "parent_not_found": "Die bestimmte Superklasse existiert nicht"
          }},
-         "include_inherited": "Übernommene enthalten",
+         "include_inherited": "Geerbte enthalten",
          "process_property": "Eigenschaften",
          "scheduler": {
             "addJob": "Job hinzufügen",
@@ -477,7 +477,7 @@
             "availableusers": "Verfügbare Benutzer",
             "delete_group": "Gruppe sperren",
             "disabled_modules": "Gesperrte Funktionalitäten",
-            "email": "<em>Email</em>",
+            "email": "<em>E-Mail</em>",
             "enable_group": "Gruppe freigeben",
             "group_description": "Beschreibung",
             "group_name": "Gruppenname",
@@ -693,9 +693,9 @@
       "tbd_body": "Baustelle",
       "tbd_title": "Baustelle",
       "tooltip": {
-         "editParameters": "<em>Edit the parameters</em>",
-         "reload": "<em>Reload</em>",
-         "showData": "<em>Show data</em>"
+         "editParameters": "<em>Parameter bearbeiten</em>",
+         "reload": "<em>Neu laden</em>",
+         "showData": "<em>Ansicht Datei</em>"
       },
       "tree_names": {
          "class": "Standard",
@@ -846,7 +846,7 @@
          "REPORT_IMPORT_ERROR": "Fehler während der Berichtseingabe",
          "REPORT_INVALID_FILE": "Berichtsdatei ist ungültig",
          "REPORT_INVALID_PARAMETER_CLASS": "Parameter Java Klasse ungültig! Vorgang abgebrochen.",
-         "REPORT_INVALID_PARAMETER_CMDBUILD_ATTRIBUTE": "CMDBuild Attributname in den Parameter ungültig! Vorgang abgebrochen.",
+         "REPORT_INVALID_PARAMETER_CMDBUILD_ATTRIBUTE": "CMDBuild Attributname in den Parametern ungültig! Vorgang abgebrochen.",
          "REPORT_INVALID_PARAMETER_CMDBUILD_CLASS": "CMDBuild Klasse eines Reference Parameters ungültig! Vorgang abgebrochen.",
          "REPORT_INVALID_PARAMETER_CMDBUILD_LOOKUP": "Lookup Name eines Parameters ungültig! Vorgang abgebrochen.",
          "REPORT_INVALID_PARAMETER_FORMAT": "Format eines Berichtsparameters ungültig! Gültige Formate: \"name\", \"name.klasse.attribut\", \"name.lookup.lookupname\"",
@@ -1037,7 +1037,7 @@
          "modify_card": "Karte bearbeiten",
          "modify_note": "Note bearbeiten",
          "modify_relation_window": {"window_title": "Beziehungen bearbeiten"},
-         "open_relation": "Verbundene Card öffnen",
+         "open_relation": "Verbundene Karte öffnen",
          "other_fields": "Sonstiges",
          "relation_columns": {
             "begin_date": "Anfangsdatum",
@@ -1061,7 +1061,7 @@
          },
          "title": "Liste - ",
          "treetitle": "Datenkarten",
-         "view_relation": "Ansicht verbundene Card"
+         "view_relation": "Ansicht verbundene Karte"
       },
       "moddetail": {
          "adddetail": "Detail hinzufügen",
@@ -1107,7 +1107,7 @@
             "importfailure": "Fehlimport",
             "importsuccess": "Import war erfolgreich",
             "info": "Information",
-            "noupdate": "Keine aktualisierenden Cards",
+            "noupdate": "Keine aktualisierenden Karten",
             "selectaclass": "Eine Klasse markieren",
             "separator": "Trennzeichen",
             "shownonvalid": "Nur ungültige Datensätze einblenden",
@@ -1132,7 +1132,7 @@
             "attachments": {"must_save_to_add": "Sie können die Anlage vor dem Aktivitätsspeicher nicht hinzufügen"},
             "calendar": {"wrong_config": "Der Kalender ist nicht richtig konfiguriert"},
             "createreport": {"format_label": "Format"},
-            "linkcards": {"required": "Dafür muss man einige Cards markieren - "},
+            "linkcards": {"required": "Dafür muss man einige Karten markieren - "},
             "manageemail": {
                "addresshdr": "Adresse",
                "ccfld": "CC",
@@ -1204,7 +1204,7 @@
       "cmdbcommentrelaxed": "Der senkrechte Strich ist nicht erlaubt",
       "invalid_character": "Ungültige Schrift",
       "wrong_decimal_part": "Maximal {0} Dezimalziffern",
-      "wrong_integer_part": "Maximal {0} Integer-Zahlen",
+      "wrong_integer_part": "Maximal {0} Ganzzahlen",
       "wrong_ip_address": "Ungültige IP Adresse",
       "wrong_time": "{0} ist kein gültiger Wert. Er muss im Format {1} sein"
    },
