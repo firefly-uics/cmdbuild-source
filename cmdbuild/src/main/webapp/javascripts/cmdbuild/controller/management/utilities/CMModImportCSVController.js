@@ -35,7 +35,54 @@
 			}
 		});
 	}
-	
+
+	function onUpdateButtonClick() {
+		var records = this.view.grid.getRecordToUpload();
+		if (records.length == 0) {
+			CMDBuild.Msg.warn(tr.warning, tr.noupdate);
+		} else {
+			CMDBuild.Ajax.request({
+				method : 'POST',
+				url : 'services/json/management/importcsv/updatecsvrecords',
+				params : {
+					data : Ext.JSON.encode(records)
+				},
+				waitTitle : CMDBuild.Translation.common.wait_title,
+				waitMsg : CMDBuild.Translation.common.wait_msg,
+				scope : this,
+				success : updateGridRecords
+			});
+		}
+	}
+
+	function onConfirmButtonClick() {
+		CMDBuild.LoadMask.get().show();
+		CMDBuild.Ajax.request({
+			method: 'POST',
+			url : 'services/json/management/importcsv/storecsvrecords',
+			waitTitle : CMDBuild.Translation.common.wait_title,
+			waitMsg : CMDBuild.Translation.common.wait_msg,
+			timeout: 600000,
+			scope: this,
+			success: function(a,b,c) {
+				CMDBuild.LoadMask.get().hide();
+				CMDBuild.Msg.info(tr.info, tr.importsuccess);
+				onAbortButtonClick.call(this);
+			},
+			failure: function(a,b,c) {
+				CMDBuild.LoadMask.get().hide();
+				CMDBuild.Msg.error(tr.error, tr.importfailure, true);
+			}
+		});
+	}
+
+	function onAbortButtonClick() {
+		this.view.form.reset();
+		this.view.grid.removeAll();
+	}
+
+	// callback called after the upload of the csv file
+	// and after the update of the grid records
 	function updateGridRecords() {
 		CMDBuild.Ajax.request({
 			method: 'GET',
@@ -49,47 +96,5 @@
 			}
 		});
 	}
-	
-	function onUpdateButtonClick() {
-		var records = this.view.grid.getRecordToUpload();
-		_debug(" to upload ", records);
-    	if (records.length == 0) {
-    		CMDBuild.Msg.warn(tr.warning, tr.noupdate);
-    	}
-    	CMDBuild.Ajax.request({
-    		method: 'POST',
-    		url : 'services/json/management/importcsv/updatecsvrecords',
-    		params: { data: Ext.JSON.encode(records) },
-			waitTitle : CMDBuild.Translation.common.wait_title,
-			waitMsg : CMDBuild.Translation.common.wait_msg,
-			scope: this,
-			success: updateGridRecords
-		});
-	}
-	
-	function onConfirmButtonClick() {
-		CMDBuild.LoadMask.get().show();
-    	CMDBuild.Ajax.request({
-    		method: 'POST',
-    		url : 'services/json/management/importcsv/storecsvrecords',
-			waitTitle : CMDBuild.Translation.common.wait_title,
-			waitMsg : CMDBuild.Translation.common.wait_msg,
-			timeout: 600000,
-			scope: this,
-			success: function(a,b,c) {
-    			CMDBuild.LoadMask.get().hide();
-    			CMDBuild.Msg.info(tr.info, tr.importsuccess);
-	    		onAbortButtonClick.call(this);
-    		},
-    		failure: function(a,b,c) {
-    			CMDBuild.LoadMask.get().hide();
-    			CMDBuild.Msg.error(tr.error, tr.importfailure, true);
-    		}
-		});
-	}
-	
-	function onAbortButtonClick() {
-		this.view.form.reset();
-		this.view.grid.removeAll();
-	}
+
 })();

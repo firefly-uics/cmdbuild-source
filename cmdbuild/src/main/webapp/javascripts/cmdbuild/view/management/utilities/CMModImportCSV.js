@@ -101,6 +101,13 @@
 		}
 	});
 
+	var OBJECT_VALUES = "__objectValues__",
+		ID = "Id",
+		CLASS_ID = "IdClass",
+		CLASS_DESCRIPTION = "IdClass_value",
+		WRONG_FIELDS = "not_valid_values",
+		CARD = "card";
+
 	Ext.define("CMDBuild.view.management.utilities.CMModImportCSV.Grid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
@@ -122,8 +129,12 @@
 				}
 			});
 
+			var me = this;
 			this.searchField = new CMDBuild.field.LocaleSearchField({
-				grid: this
+				grid: me,
+				onTrigger1Click: function() {
+					me.filterStore();
+				}
 			});
 
 			this.store = new Ext.data.Store({
@@ -135,27 +146,48 @@
 			this.bbar = [this.searchField, "-", this.validFlag];
 			this.plugins = [this.cellEditing];
 			this.callParent(arguments);
-			
 		},
 
-		loadData: function(data) {
-			this.store.loadData(data, append = false);
+		/*
+		 * rawData is an array of object
+		 * {
+		 * 	card: {...}
+		 * 	not_valid_fields: {...}
+		 * }
+		 */
+		loadData: function(rawData) {
+			var records = [];
+			for (var	i=0,
+						l=rawData.length,
+						r=null,
+						card=null; i<l; ++i) {
+
+				r = rawData[i];
+				card = r[CARD];
+				card[WRONG_FIELDS] = r[WRONG_FIELDS];
+
+				records.push(new CMDBuild.DummyModel(card));
+			}
+
+			this.store.loadRecords(records);
 		},
 
 		filterStore: function() {
+			var me = this;
+
 			this.store.clearFilter(false);
 			var nonValid = this.validFlag.getValue();
 			var query = this.searchField.getRawValue().toUpperCase();
 
 			if (query == "") {
 				if (nonValid) {
-					this.store.filterBy(isInvalid, this);
+					this.store.filterBy(isInvalid, me);
 				}
 			} else {
 				if (nonValid) {
-					this.store.filterBy(isInvalidAndFilterQuery, this);
+					this.store.filterBy(isInvalidAndFilterQuery, me);
 				} else {
-					this.store.filterBy(filterQuery, this);
+					this.store.filterBy(filterQuery, me);
 				}
 			}
 		},
@@ -167,10 +199,10 @@
 
 		//override
 		getStoreForFields: function(fields) {
-			fields.push("Id");
-			fields.push("IdClass");
-			fields.push("IdClass_value");
-			
+			fields.push(ID);
+			fields.push(CLASS_ID);
+			fields.push(CLASS_DESCRIPTION);
+
 			return new Ext.data.Store({
 				fields: fields,
 				data: [],
@@ -185,16 +217,16 @@
 
 			for (var i=0, l=headersToShow.length; i<l; i++) {
 
-				var a = findInClassAttributes.call(this, headersToShow[i]);
+				var a = getClassAttributeByName(this, headersToShow[i]);
 
-				if (a) {
+				if (a != null) {
 					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(a);
 					var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(a);
 					editor.hideLabel = true;
 
-					if (a.type == "REFERENCE" || a.type == "LOOKUP") {
-						fields.push(header.dataIndex); // to have both name and name_value
-						header.dataIndex = removeValuePostfix(header.dataIndex);
+					if (a.type == "REFERENCE"
+							|| a.type == "LOOKUP") {
+
 						editor.on("select", updateStoreRecord, this);
 						editor.on("cmdbuild-reference-selected", function(record, field) {
 							updateStoreRecord.call(this, field, record);
@@ -211,32 +243,46 @@
 				}
 			}
 
-			var s = this.getStoreForFields.call(this, fields);
-			this.reconfigure(s, headers);
+			// Add a field to use to read the real value set by
+			// the editors.
+			fields.push(OBJECT_VALUES);
+
+			this.reconfigure(this.getStoreForFields(fields), headers);
 		},
 
-		getRecordToUpload: function(){
+		getRecordToUpload: function() {
 			var data = [];
+			var records = this.store.data.items || [];
 
-			this.store.each(function(r) {
-				if (!r.dirty) {
-					return;
-				}
+			for (var i=0, l=records.length, r=null; i<l; ++i) {
+				r = records[i];
 
-				var changes = r.getChanges(),
-					toPush = r.data,
-					invalid_fields = toPush.invalid_fields;
+				if (r.dirty) {
+					var currentData = {};
+					var objectValues = r.data[OBJECT_VALUES] || {};
+					var wrongFields = r.get(WRONG_FIELDS);
 
-				for (var invalid in invalid_fields) {
-					if (changes[invalid]) {
-						continue;
+					for (var i=0, l=this.classAttributes.length; i<l; i++) {
+						var name = this.classAttributes[i].name;
+						var value = objectValues[name] || r.data[name] || wrongFields[name];
+
+						if (value) {
+							if (typeof value == "object") {
+								currentData[name] = value.id;
+								currentData[name + "_description"] = value.description;
+							} else {
+								currentData[name] = value;
+							}
+						}
 					}
 
-					toPush[invalid] = invalid_fields[invalid];
-				}
+					currentData[ID] = r.get(ID);
+					currentData[CLASS_ID] = r.get(CLASS_ID);
+					currentData[CLASS_DESCRIPTION] = r.get(CLASS_DESCRIPTION);
 
-				data.push(toPush);
-			});
+					data.push(currentData);
+				}
+			}
 
 			return data;
 		},
@@ -246,27 +292,20 @@
 		}
 	});
 
-	function findInClassAttributes(a) {
-		for (var i=0, l=this.classAttributes.length; i<l; i++) {
-			var classAttr = this.classAttributes[i];
-			if (classAttr.name == a) {
+	function getClassAttributeByName(me, name) {
+		for (var i=0, l=me.classAttributes.length; i<l; i++) {
+			var classAttr = me.classAttributes[i];
+			if (classAttr.name == name) {
 				return classAttr;
 			}
 		}
+
 		return null;
 	}
 
-	function isInvalidAndFilterQuery(record, id) {
-		var query = this.searchField.getRawValue().toUpperCase();
-		if (this.isInvalid(record, id)) {
-			return this.filterQuery(record, id);
-		} else {
-			return false;
-		}
-	}
-
 	function isInvalid(record, id) {
-		var invalidFields = record.get("invalid_fields");
+		var invalidFields = record.get(WRONG_FIELDS);
+		// return true if there are some invalid fields
 		for (var i in invalidFields) {
 			return true;
 		}
@@ -275,83 +314,72 @@
 
 	function filterQuery(record, id) {
 		var query = this.searchField.getRawValue().toUpperCase();
-		for (var attr in record.data) {
-			var attribute = record.data[attr];
-			if (attr == 'invalid_fields') {
-				for (var invalid in attribute) {
-					var attributeInString = (attribute[invalid]+"").toUpperCase();
-					var searchIndex = attributeInString.search(query);
-					if (searchIndex != -1) {
-						return true;
-					}
-				}
-			} else {
-				var attributeInString = (attribute+"").toUpperCase();
-				var searchIndex = attributeInString.search(query);
-				if (searchIndex != -1) {
-					return true;
-				}
+		var data = Ext.apply({}, record.get(WRONG_FIELDS), record.data);
+		var objectValues = record.data[OBJECT_VALUES] || {};
+
+		for (var attributeName in data) {
+			var value = objectValues[attributeName] || data[attributeName];
+			var attributeAsString = "";
+			var searchIndex = -1;
+
+			if (typeof value == "object") {
+				value = value.description;
+			}
+			attributeAsString = (value+"").toUpperCase();
+			searchIndex = attributeAsString.search(query);
+			if (searchIndex != -1) {
+				return true;
 			}
 		}
+
 		return false;
 	}
 
 	function isInvalidAndFilterQuery(record, id) {
-		var query = this.searchField.getRawValue().toUpperCase();
-		if (isInvalid.call(this, record, id)) {
+		if (isInvalid(record, id)) {
 			return filterQuery.call(this, record, id);
 		} else {
 			return false;
 		}
 	}
 
-	function renderer(value, metadata, record, rowindex, collindex, store, grid, nameColumn) {
-		var cardId = record.get("Id"),
-			storeRecordIndex = grid.store.find("Id", cardId),
-			storeRecord = grid.store.getAt(storeRecordIndex);
+	function renderer(value, metadata, record, rowindex, collindex, store, grid, colName) {
+		// look before if there is a object value, if not search it as simple value;
+		var objectValues = record.get(OBJECT_VALUES) || {};
+		var v = objectValues[colName]|| record.get(colName);
 
-		if ( !value ) {
-			var invalid_attr_list = record.get("invalid_fields") || {};
-			if (invalid_attr_list[nameColumn]) {
-				return	'<span class="importcsv-invalid-cell">' + invalid_attr_list[nameColumn] + '</span>';
+		if (v && typeof v == "object") {
+			v = v.description;
+		}
+
+		if (v) {
+			return v;
+		} else {
+			var wrongs = record.get(WRONG_FIELDS);
+			if (wrongs[colName]) {
+				return	'<span class="importcsv-invalid-cell">' + wrongs[colName] + '</span>';
 			} else {
 				return	'<span class="importcsv-empty-cell"></span>';
 			}
-		} else {	
-			if (this.type == "REFERENCE" || this.type == "LOOKUP") {
-				return storeRecord.get(nameColumn+"_value");
-			} else if (this.type == "DATE") {
-				if (typeof storeRecord.get(nameColumn) == "string") {
-					return storeRecord.get(nameColumn);
-				} else {
-					var h = grid.getHeaderAtIndex(collindex);
-					return h.field.getRawValue();
-				}
-			} else {
-				return storeRecord.get(nameColumn);
-			}
 		}
 	}
 
-	function updateStoreRecord(field, record) {
-		if (Ext.isArray(record)) {
-			record = record[0];
+	function updateStoreRecord(field, selectedValue) {
+		if (Ext.isArray(selectedValue)) {
+			selectedValue = selectedValue[0];
 		}
 
-		var sm = this.getSelectionModel(),
-			gridRecord = sm.getSelection()[0],
-			storeRecordIndex = this.store.find("Id", gridRecord.data["Id"]),
-			storeRecord = this.store.getAt(storeRecordIndex);
+		var record = this.getSelectionModel().getSelection()[0];
+		var objectValues = record.get(OBJECT_VALUES) || {};
 
-		storeRecord.set(field.name+"_value", record.data.Description);
-		storeRecord.set(field.name, record.data.Id);
-		gridRecord.set(field.name, record.data.Id);
+		objectValues[field.name] = {
+			description: selectedValue.get("Description"),
+			id: selectedValue.get("Id")
+		};
 
-		return false;
+		record.set(OBJECT_VALUES, objectValues);
+
+		return false; // to block the set value of the editor;
 	}
 
-	function removeValuePostfix(name) {
-		var index = name.lastIndexOf("_value");
-		return name.slice(0,index);
-	}
 })();
