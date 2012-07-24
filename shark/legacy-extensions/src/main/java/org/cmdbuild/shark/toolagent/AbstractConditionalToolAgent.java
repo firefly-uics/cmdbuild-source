@@ -8,7 +8,6 @@ import java.util.Map;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
-import org.cmdbuild.workflow.api.WorkflowApi;
 import org.enhydra.jxpdl.XMLUtil;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.ExtendedAttribute;
@@ -65,10 +64,6 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	public FluentApi getFluentApi() {
 		return workflowApi.fluentApi();
-	}
-
-	public WorkflowApi getWorkflowApi() {
-		return workflowApi.workflowApi();
 	}
 
 	public SchemaApi getSchemaApi() {

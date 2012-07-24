@@ -6,17 +6,14 @@ import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
-import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.LookupType;
 
 public class MockSharkWorkflowApi extends SharkWorkflowApi {
 
 	public static final FluentApiExecutor fluentApiExecutor;
-	public static final WorkflowApi mock;
 
 	static {
 		fluentApiExecutor = mock(FluentApiExecutor.class);
-		mock = mock(WorkflowApi.class);
 	}
 
 	@Override
@@ -52,13 +49,6 @@ public class MockSharkWorkflowApi extends SharkWorkflowApi {
 			public LookupType selectLookupByDescription(final String type, final String description) {
 				return null;
 			}
-
-		};
-	}
-
-	@Override
-	public WorkflowApi workflowApi() {
-		return new WorkflowApi() {
 
 		};
 	}
