@@ -69,6 +69,7 @@
 				if (Ext.getClassName(this.card) == "CMDBuild.model.CMActivityInstance") {
 					// Retrieve the process instance because it stores
 					// the data. this.card has only the varibles to show in this step
+					// (is the activity instance)
 					var pi = _CMWFState.getProcessInstance();
 					if (pi) {
 						// The processes use a new serialization.

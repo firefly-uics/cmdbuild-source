@@ -19,6 +19,8 @@ import org.json.JSONObject;
 
 public class ImportCSV extends JSONBase {
 
+	private final static String DESCRIPTION_SUFFIX = "_description";
+
 	@JSONExported
 	public void uploadCSV(
 			@Parameter("filecsv") FileItem file,
@@ -59,15 +61,18 @@ public class ImportCSV extends JSONBase {
 					String attrValue = jsonCard.getString(attrName);
 					String attrDescription = null;
 					try {
-						attrDescription = jsonCard.getString(attrName+"_value");
+						attrDescription = jsonCard.getString(attrName+DESCRIPTION_SUFFIX);
 					} catch (Exception e) {
-						// who cares if the _value is not found!
+						// do nothing
 					}
 					csvCard.setValidatedFromJSON(attrName, attrValue, attrDescription);
 				}
 			}
-			if (!cards.remove(csvCard))
+
+			if (!cards.remove(csvCard)) {
 				Log.OTHER.error("CSV card not found!");
+			}
+
 			cards.add(csvCard);
 		}
 	}
@@ -84,8 +89,10 @@ public class ImportCSV extends JSONBase {
 
 	private JSONObject serializeCSVCard(ICard card) throws JSONException {
 		JSONObject jsonCard = Serializer.serializeCard(card, false);
-		Object invalidFields = card.getExtendedProperties().get(CSVCard.invalidXpName);
-		jsonCard.put("invalid_fields", invalidFields);
-		return jsonCard;
+		JSONObject output = new JSONObject();
+		output.put("card", jsonCard);
+		output.put("not_valid_values", card.getExtendedProperties().get(CSVCard.invalidXpName));
+
+		return output;
 	}
 };
