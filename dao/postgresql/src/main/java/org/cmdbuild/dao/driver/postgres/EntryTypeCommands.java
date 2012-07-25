@@ -13,14 +13,13 @@ import java.util.regex.Pattern;
 
 import org.cmdbuild.dao.driver.postgres.Utils.CommentMapper;
 import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
+import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
+import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -225,8 +224,9 @@ public class EntryTypeCommands {
 		        new RowMapper<DBFunction>() {
 		            public DBFunction mapRow(ResultSet rs, int rowNum) throws SQLException {
 		                final String name = rs.getString("function_name");
+		                final Long id = rs.getLong("function_id");
 		                final boolean returnsSet = rs.getBoolean("returns_set");
-		                final DBFunction function = new DBFunction(name, returnsSet);
+		                final DBFunction function = new DBFunction(name, id, returnsSet);
 		                addParameters(rs, function);		                
 		                return function;
 		            }

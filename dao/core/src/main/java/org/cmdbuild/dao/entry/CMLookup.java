@@ -6,7 +6,7 @@ public interface CMLookup {
 
 	public CMLookupType getType();
 
-	public Object getId();
+	public Long getId();
 
 	/**
 	 * Returns a hopefully unique string identifier.

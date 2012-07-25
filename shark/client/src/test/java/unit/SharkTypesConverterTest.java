@@ -75,14 +75,14 @@ public class SharkTypesConverterTest {
 	public void cardReferencesAreConvertedToReferenceTypeDTOs() {
 		CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
-		when(srcClass.getId()).thenReturn(12);
-		CardReference src = CardReference.newInstance(srcClass.getName(), 42, null);
+		when(srcClass.getId()).thenReturn(12L);
+		CardReference src = CardReference.newInstance(srcClass.getName(), 42L, null);
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 		
 		ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(src));
 
 		assertThat(dst.getId(), is(42));
-		assertThat(dst.getIdClass(), is(srcClass.getId()));
+		assertThat(dst.getIdClass(), is(12));
 		assertThat(dst.getDescription(), is(StringUtils.EMPTY));
 	}
 
@@ -90,8 +90,8 @@ public class SharkTypesConverterTest {
 	public void cardReferenceArraysAreConvertedToReferenceTypeDTOArrays() {
 		CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
-		when(srcClass.getId()).thenReturn(12);
-		CardReference src0 = CardReference.newInstance(srcClass.getName(), 42, null);
+		when(srcClass.getId()).thenReturn(12L);
+		CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, null);
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 		CardReference[] src = new CardReference[] { src0 };
 
@@ -100,7 +100,7 @@ public class SharkTypesConverterTest {
 		assertThat(dst.length, is(src.length));
 		ReferenceType dst0 = dst[0];
 		assertThat(dst0.getId(), is(42));
-		assertThat(dst0.getIdClass(), is(srcClass.getId()));
+		assertThat(dst0.getIdClass(), is(12));
 		assertThat(dst0.getDescription(), is(StringUtils.EMPTY));
 	}
 

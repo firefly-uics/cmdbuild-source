@@ -36,8 +36,8 @@ public class CardManagementTest {
 		final String attrName = "A";
 		final Object attrValue = "Some text";
 		final DBAttribute classAttributes[] = { new DBAttribute(attrName, new TextAttributeType(), new AttributeMetadata()) };
-		final Object classKey = Long.valueOf(777L);
-		final Object cardKey = Long.valueOf(42L);
+		final Long classKey = Long.valueOf(777L);
+		final Long cardKey = Long.valueOf(42L);
 		given(driver.findClassById(classKey)).willReturn(new DBClass("C", classKey, new DBClass.ClassMetadata(), Arrays.asList(classAttributes)));
 		given(driver.create(any(DBEntry.class))).willReturn(cardKey);
 

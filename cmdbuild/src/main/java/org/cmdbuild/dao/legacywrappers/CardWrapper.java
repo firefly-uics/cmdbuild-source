@@ -43,7 +43,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	}
 
 	@Override
-	public final Object getId() {
+	public final Long getId() {
 		return Long.valueOf(card.getId());
 	}
 

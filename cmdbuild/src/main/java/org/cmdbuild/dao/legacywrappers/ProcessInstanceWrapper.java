@@ -103,7 +103,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	@Override
-	public Object getCardId() {
+	public Long getCardId() {
 		return getId();
 	}
 

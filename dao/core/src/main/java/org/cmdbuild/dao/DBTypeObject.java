@@ -5,17 +5,17 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public abstract class DBTypeObject implements CMTypeObject {
 
-	private final Object id;
+	private final Long id;
 	private final String name;
 
-	protected DBTypeObject(final String name, final Object id) {
+	protected DBTypeObject(final String name, final Long id) {
 		Validate.notEmpty(name);
 		this.id = id;
 		this.name = name;
 	}
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		return id;
 	}
 

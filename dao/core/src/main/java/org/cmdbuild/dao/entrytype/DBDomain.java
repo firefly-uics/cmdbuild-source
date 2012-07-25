@@ -33,13 +33,13 @@ public class DBDomain extends DBEntryType implements CMDomain {
 	@Deprecated private DBClass class1;
 	@Deprecated private DBClass class2;
 
-	public DBDomain(final String name, final Object id, final DomainMetadata meta, final List<DBAttribute> attributes) {
+	public DBDomain(final String name, final Long id, final DomainMetadata meta, final List<DBAttribute> attributes) {
 		super(name, id, attributes);
 		this.meta = meta;
 	}
 
 	@Deprecated
-	public DBDomain(final String name, final Object id, final List<DBAttribute> attributes) {
+	public DBDomain(final String name, final Long id, final List<DBAttribute> attributes) {
 		this(name, id, new DomainMetadata(), attributes);
 	}
 

@@ -9,6 +9,7 @@ import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
@@ -83,7 +84,7 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 	}
 
-	private class CreateEntry extends Command<Object> {
+	private class CreateEntry extends Command<Long> {
 
 		private final DBEntry entry;
 
@@ -92,7 +93,7 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 
 		@Override
-		protected Object execCommand() {
+		protected Long execCommand() {
 			return innerDriver.create(entry);
 		}
 
@@ -191,7 +192,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBClass findClassById(Object id) {
+	public DBClass findClassById(final Long id) {
 		return innerDriver.findClassById(id);
 	}
 
@@ -216,7 +217,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBDomain findDomainById(final Object id) {
+	public DBDomain findDomainById(final Long id) {
 		return innerDriver.findDomainById(id);
 	}
 
@@ -226,7 +227,17 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public Object create(DBEntry entry) {
+	public Collection<DBFunction> findAllFunctions() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public DBFunction findFunctionByName(final String name) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public Long create(DBEntry entry) {
 		return new CreateEntry(entry).exec();
 	}
 

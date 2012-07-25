@@ -24,19 +24,7 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public final DBClass findClass(final Object idOrName) {
-		DBClass c = null;
-		if (idOrName instanceof String) {
-			c = findClassByName((String) idOrName);
-		}
-		if (c == null) {
-			c = findClassById(idOrName);
-		}
-		return c;
-	}
-
-	@Override
-	public DBClass findClassById(Object id) {
+	public DBClass findClassById(Long id) {
 		return driver.findClassById(id);
 	}
 
@@ -77,19 +65,7 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public final DBDomain findDomain(final Object idOrName) {
-		DBDomain c = null;
-		if (idOrName instanceof String) {
-			c = findDomainByName((String) idOrName);
-		}
-		if (c == null) {
-			c = findDomainById(idOrName);
-		}
-		return c;
-	}
-
-	@Override
-	public DBDomain findDomainById(Object id) {
+	public DBDomain findDomainById(Long id) {
 		return driver.findDomainById(id);
 	}
 

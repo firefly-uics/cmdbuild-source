@@ -23,6 +23,7 @@ $$ LANGUAGE SQL STABLE;
 
 CREATE OR REPLACE FUNCTION _cm_function_list(
 		OUT function_name text,
+		OUT function_id oid,
 		OUT arg_io char[],
 		OUT arg_names text[],
 		OUT arg_types text[],
@@ -38,6 +39,7 @@ BEGIN
 		WHERE _cm_comment_for_cmobject(oid) IS NOT NULL
 	LOOP
 		function_name := R.proname::text;
+		function_id := R.oid;
 		returns_set := R.proretset;
 		IF R.proargmodes IS NULL
 		THEN

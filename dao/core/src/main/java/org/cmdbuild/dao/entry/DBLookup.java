@@ -5,9 +5,9 @@ import org.cmdbuild.dao.entrytype.CMLookupType;
 public class DBLookup implements CMLookup {
 
 	private final CMLookupType type;
-	private final Object id;
+	private final Long id;
 
-	public DBLookup(final CMLookupType type, final Object id) {
+	public DBLookup(final CMLookupType type, final Long id) {
 		this.type = type;
 		this.id = id;
 	}
@@ -18,7 +18,7 @@ public class DBLookup implements CMLookup {
 	}
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		return id;
 	}
 

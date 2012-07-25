@@ -2,14 +2,14 @@ package org.cmdbuild.dao.reference;
 
 public abstract class AbstractReference implements CMReference {
 
-	private Object id;
+	private Long id;
 
-	protected AbstractReference(final Object id) {
+	protected AbstractReference(final Long id) {
 		this.id = id;
 	}
 
 	@Override
-	public final Object getId() {
+	public final Long getId() {
 		return id;
 	}
 

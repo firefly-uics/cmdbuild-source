@@ -17,6 +17,8 @@ import org.junit.Test;
 
 public class SimpleFunctionQueryCreatorTest {
 
+	static private final Long USELESS_FUNCTION_ID = null;
+
 	private static class IdentityAttributeType implements CMAttributeType<Object> {
 
 		@Override
@@ -31,7 +33,7 @@ public class SimpleFunctionQueryCreatorTest {
 
 	}
 
-	DBFunction setFunc = new DBFunction("func", true);
+	DBFunction setFunc = new DBFunction("func", USELESS_FUNCTION_ID, true);
 	Alias f = Alias.as("f");
 
 	@Test

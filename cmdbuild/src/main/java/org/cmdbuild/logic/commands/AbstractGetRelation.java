@@ -50,7 +50,7 @@ public class AbstractGetRelation {
 	}
 
 	protected CMClass getCardType(final Card src) {
-		final CMClass type = view.findClass(src.classNameOrId);
+		final CMClass type = view.findClassById(src.classId);
 		Validate.notNull(type);
 		return type;
 	}

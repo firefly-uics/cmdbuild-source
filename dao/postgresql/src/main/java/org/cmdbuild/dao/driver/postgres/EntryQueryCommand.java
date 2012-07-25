@@ -86,7 +86,7 @@ public class EntryQueryCommand {
 		private void createBasicCards(final ResultSet rs, final DBQueryRow row) throws SQLException {
 			for (Alias a : columnMapper.getClassAliases()) {
 				// Always extract a Long for the Id even if it's integer
-				final Object id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
+				final Long id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
 				final Long classId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.ClassId));
 				final DBClass realClass = driver.findClassById(classId);
 				final DBCard card = DBCard.create(driver, realClass, id);
@@ -104,7 +104,7 @@ public class EntryQueryCommand {
 
 		private void createBasicRelations(final ResultSet rs, final DBQueryRow row) throws SQLException {
 			for (Alias a : columnMapper.getDomainAliases()) {
-				final Object id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
+				final Long id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
 				final Long domainId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainId));
 				final String querySource = rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainQuerySource));
 				final DBDomain realDomain = driver.findDomainById(domainId);

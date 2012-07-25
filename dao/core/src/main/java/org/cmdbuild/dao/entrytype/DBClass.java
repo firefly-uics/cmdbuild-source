@@ -24,14 +24,14 @@ public class DBClass extends DBEntryType implements CMClass {
 	private DBClass parent;
 	private Set<DBClass> children;
 
-	public DBClass(final String name, final Object id, final ClassMetadata meta, final List<DBAttribute> attributes) {
+	public DBClass(final String name, final Long id, final ClassMetadata meta, final List<DBAttribute> attributes) {
 		super(name, id, attributes);
 		this.meta = meta;
 		children = new HashSet<DBClass>();
 	}
 
 	@Deprecated
-	public DBClass(final String name, final Object id, final List<DBAttribute> attributes) {
+	public DBClass(final String name, final Long id, final List<DBAttribute> attributes) {
 		this(name, id, new ClassMetadata(), attributes);
 	}
 

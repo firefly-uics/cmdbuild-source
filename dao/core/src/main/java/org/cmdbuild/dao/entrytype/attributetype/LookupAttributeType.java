@@ -4,7 +4,6 @@ import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entry.DBLookup;
 import org.cmdbuild.dao.entrytype.DBLookupType;
 
-
 public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 
 	private final DBLookupType lookupType;
@@ -22,6 +21,11 @@ public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 	@Override
 	protected CMLookup convertNotNullValue(Object value) {
 		// TODO Get the lookup
-		return new DBLookup(lookupType, value);
+		if (value instanceof Number) {
+			final Number number = (Number) value;
+			return new DBLookup(lookupType, number.longValue());
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 }

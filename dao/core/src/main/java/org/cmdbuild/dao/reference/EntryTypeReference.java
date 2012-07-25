@@ -3,11 +3,11 @@ package org.cmdbuild.dao.reference;
 
 public class EntryTypeReference extends AbstractReference {
 
-	public static EntryTypeReference newInstance(final Object id) {
+	public static EntryTypeReference newInstance(final Long id) {
 		return new EntryTypeReference(id);
 	}
 
-	private EntryTypeReference(final Object id) {
+	private EntryTypeReference(final Long id) {
 		super(id);
 	}
 

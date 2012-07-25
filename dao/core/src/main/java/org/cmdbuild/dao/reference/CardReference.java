@@ -10,11 +10,11 @@ public class CardReference extends AbstractReference {
 	@Legacy("We should think about how to solve this problem after the 2.0 is out...")
 	private final String description;
 
-	public static CardReference newInstance(final String className, final Object cardId, final String description) {
+	public static CardReference newInstance(final String className, final Long cardId, final String description) {
 		return new CardReference(className, cardId, description);
 	}
 
-	private CardReference(final String className, final Object cardId, final String description) {
+	private CardReference(final String className, final Long cardId, final String description) {
 		super(cardId);
 		this.className = className;
 		this.description = description;

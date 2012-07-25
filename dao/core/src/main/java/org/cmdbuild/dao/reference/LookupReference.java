@@ -5,11 +5,11 @@ public class LookupReference extends AbstractReference {
 
 	private final String lookupTypeName;
 
-	public static LookupReference newInstance(final String lookupTypeName, final Object lookupId) {
+	public static LookupReference newInstance(final String lookupTypeName, final Long lookupId) {
 		return new LookupReference(lookupTypeName, lookupId);
 	}
 
-	private LookupReference(final String typeName, final Object id) {
+	private LookupReference(final String typeName, final Long id) {
 		super(id);
 		this.lookupTypeName = typeName;
 	}

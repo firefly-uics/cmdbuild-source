@@ -109,7 +109,7 @@ public class FunctionCall implements CMFunctionCall {
 	}
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		return function.getId();
 	}
 
