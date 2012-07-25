@@ -44,7 +44,7 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void parametersPassedToProxyWhenExecutingCallableFunction() {
+	public void parametersPassedToProxyWhenExecutingCallableFunction() throws Exception {
 		when(proxy().callFunction( //
 				anyString(), //
 				anyListOf(Attribute.class)) //
@@ -61,7 +61,7 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void outputAttributesAreConvertedToMapStringStringWhenExecutingCallableFunction() {
+	public void outputAttributesAreConvertedToMapStringStringWhenExecutingCallableFunction() throws Exception {
 		when(proxy().callFunction( //
 				anyString(), //
 				anyListOf(Attribute.class)) //

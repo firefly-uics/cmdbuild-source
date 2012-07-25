@@ -32,4 +32,8 @@ public class FluentApi {
 		return new CallFunction(executor, functionName);
 	}
 
+	public CreateReport createReport(final String title, final String format) {
+		return new CreateReport(executor, title, format);
+	}
+
 }

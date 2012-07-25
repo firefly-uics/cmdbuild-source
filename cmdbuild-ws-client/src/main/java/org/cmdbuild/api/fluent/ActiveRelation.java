@@ -7,7 +7,6 @@ abstract class ActiveRelation extends Relation {
 	public ActiveRelation(final FluentApiExecutor executor, final String domainName) {
 		super(domainName);
 		this.executor = executor;
-
 	}
 
 	protected FluentApiExecutor executor() {

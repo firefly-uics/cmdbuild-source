@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.api.fluent.CallFunction;
 import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
@@ -24,6 +25,8 @@ public class FluentApiTest {
 	private static final String CLASS_NAME = "class";
 	private static final String DOMAIN_NAME = "domain";
 	private static final String FUNCTION_NAME = "function";
+	private static final String REPORT_NAME = "report";
+	private static final String REPORT_FORMAT = "xyz";
 
 	private static final int CARD_ID = 42;
 
@@ -100,7 +103,7 @@ public class FluentApiTest {
 		final QueryClass queryClass = api.queryClass(CLASS_NAME);
 		queryClass.fetch();
 
-		verify(executor).fetch(queryClass);
+		verify(executor).fetchCards(queryClass);
 		verifyNoMoreInteractions(executor);
 	}
 
@@ -110,6 +113,15 @@ public class FluentApiTest {
 		functionCall.execute();
 
 		verify(executor).execute(functionCall);
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenCreatingReport() {
+		final CreateReport createReport = api.createReport(REPORT_NAME, REPORT_FORMAT);
+		createReport.download();
+
+		verify(executor).download(createReport);
 		verifyNoMoreInteractions(executor);
 	}
 

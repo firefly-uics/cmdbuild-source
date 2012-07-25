@@ -29,7 +29,7 @@ public class QueryClass extends ActiveCard {
 	}
 
 	public List<Card> fetch() {
-		return executor().fetch(this);
+		return executor().fetchCards(this);
 	}
 
 }
