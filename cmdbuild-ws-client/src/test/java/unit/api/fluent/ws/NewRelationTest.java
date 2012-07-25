@@ -22,7 +22,7 @@ public class NewRelationTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void parametersPassedToProxyWhenCreatingNewRelation() {
+	public void parametersPassedToProxyWhenCreatingNewRelation() throws Exception {
 		newRelation.create();
 
 		verify(proxy()).createRelation(relationCapturer());

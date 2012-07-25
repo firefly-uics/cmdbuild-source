@@ -2,26 +2,25 @@ package org.cmdbuild.api.fluent.ws;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
 
-import java.text.SimpleDateFormat;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.api.fluent.CallFunction;
+import javax.activation.DataHandler;
+
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
-import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
-import org.cmdbuild.api.fluent.NewCard;
-import org.cmdbuild.api.fluent.NewRelation;
-import org.cmdbuild.api.fluent.QueryClass;
+import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.Relation;
+import org.cmdbuild.api.fluent.Report;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.CardList;
@@ -31,6 +30,7 @@ import org.cmdbuild.services.soap.FilterOperator;
 import org.cmdbuild.services.soap.Order;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
+import org.cmdbuild.services.soap.ReportParams;
 
 public class WsFluentApiExecutor implements FluentApiExecutor {
 
@@ -53,27 +53,27 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		this.proxy = proxy;
 	}
 
-	public CardDescriptor create(final NewCard newCard) {
-		final org.cmdbuild.services.soap.Card card = soapCardFor(newCard);
-		final int id = proxy.createCard(card);
-		return new CardDescriptor(newCard.getClassName(), id);
+	public CardDescriptor create(final Card card) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(card);
+		final int id = proxy.createCard(soapCard);
+		return new CardDescriptor(card.getClassName(), id);
 	}
 
-	public void update(final ExistingCard existingCard) {
+	public void update(final Card existingCard) {
 		final org.cmdbuild.services.soap.Card card = soapCardFor(existingCard);
 		card.setId(existingCard.getId());
 		proxy.updateCard(card);
 	}
 
-	public void delete(final ExistingCard existingCard) {
-		proxy.deleteCard(existingCard.getClassName(), existingCard.getId());
+	public void delete(final Card card) {
+		proxy.deleteCard(card.getClassName(), card.getId());
 	}
 
-	public Card fetch(final ExistingCard existingCard) {
+	public Card fetch(final Card card) {
 		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
-				existingCard.getClassName(), //
-				existingCard.getId(), //
-				hasAttributes(existingCard) ? attributesFor(existingCard) : ALL_ATTRIBUTES);
+				card.getClassName(), //
+				card.getId(), //
+				hasAttributes(card) ? attributesFor(card) : ALL_ATTRIBUTES);
 		return cardFrom(soapCard);
 	}
 
@@ -85,12 +85,12 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return card;
 	}
 
-	public void create(final NewRelation newRelation) {
-		proxy.createRelation(soapRelationFor(newRelation));
+	public void create(final Relation relation) {
+		proxy.createRelation(soapRelationFor(relation));
 	}
 
-	public void delete(final ExistingRelation existingRelation) {
-		proxy.deleteRelation(soapRelationFor(existingRelation));
+	public void delete(final Relation relation) {
+		proxy.deleteRelation(soapRelationFor(relation));
 	}
 
 	private org.cmdbuild.services.soap.Relation soapRelationFor(final Relation relation) {
@@ -103,11 +103,11 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return soapRelation;
 	}
 
-	public List<Card> fetch(final QueryClass queryClass) {
+	public List<Card> fetchCards(final Card card) {
 		final CardList cardList = proxy.getCardList( //
-				queryClass.getClassName(), //
+				card.getClassName(), //
 				ALL_ATTRIBUTES, //
-				hasAttributes(queryClass) ? queriedAttributesFor(queryClass) : NO_QUERY, //
+				hasAttributes(card) ? queriedAttributesFor(card) : NO_QUERY, //
 				NO_ORDERING, //
 				NO_LIMIT, //
 				OFFSET_BEGINNING, //
@@ -116,10 +116,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return cardsFor(cardList);
 	}
 
-	private Query queriedAttributesFor(final QueryClass queryClass) {
+	private Query queriedAttributesFor(final Card card) {
 		final FilterOperator filterOperator = new FilterOperator();
 		filterOperator.setOperator(OPERATOR_AND);
-		filterOperator.getSubquery().addAll(queriesFor(queryClass));
+		filterOperator.getSubquery().addAll(queriesFor(card));
 		return queryFor(filterOperator);
 	}
 
@@ -129,9 +129,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return query;
 	}
 
-	private List<Query> queriesFor(final QueryClass queryClass) {
+	private List<Query> queriesFor(final Card card) {
 		final List<Query> queries = new ArrayList<Query>();
-		for (final Entry<String, Object> attributeEntry : queryClass.getAttributes().entrySet()) {
+		for (final Entry<String, Object> attributeEntry : card.getAttributes().entrySet()) {
 			final Query attributeQuery = queryFor(equalsFilter(attributeEntry.getKey(), attributeEntry.getValue()));
 			queries.add(attributeQuery);
 		}
@@ -148,7 +148,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final Filter filter = new Filter();
 		filter.setName(name);
 		filter.setOperator(OPERATOR_EQUALS);
-		filter.getValue().add(convert(value));
+		filter.getValue().add(WsHelper.convertToWsType(value));
 		return filter;
 	}
 
@@ -174,11 +174,21 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return new ExistingCard(NULL_NEVER_USED_EXECUTOR, wsCard.getClassName(), wsCard.getId());
 	}
 
-	public Map<String, String> execute(final CallFunction callFunction) {
+	public Map<String, String> execute(final Function function) {
 		final List<Attribute> outputs = proxy.callFunction( //
-				callFunction.getFunctionName(), //
-				attributesFor(callFunction));
+				function.getFunctionName(), //
+				attributesFor(function));
 		return unmodifiableMap(attributesAsMap(outputs));
+	}
+
+	public DownloadedReport download(final Report report) {
+		final ReportHelper helper = new ReportHelper(proxy);
+		final org.cmdbuild.services.soap.Report soapReport = helper.getReport(DEFAULT_TYPE, report.getTitle());
+		final List<ReportParams> reportParams = helper.compileParams(report.getParameters());
+		final DataHandler dataHandler = helper.getDataHandler(soapReport, report.getFormat(), reportParams);
+		final File file = helper.temporaryFile();
+		helper.saveToFile(dataHandler, file);
+		return new DownloadedReport(file);
 	}
 
 	private Map<String, String> attributesAsMap(final List<Attribute> attributes) {
@@ -211,8 +221,8 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return attributesFor(card.getAttributes());
 	}
 
-	public static List<Attribute> attributesFor(final CallFunction callFunction) {
-		return attributesFor(callFunction.getInputs());
+	public static List<Attribute> attributesFor(final Function function) {
+		return attributesFor(function.getInputs());
 	}
 
 	private static List<Attribute> attributesFor(final Map<String, Object> map) {
@@ -231,24 +241,8 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	public static Attribute attribute(final String name, final Object value) {
 		final Attribute attribute = new Attribute();
 		attribute.setName(name);
-		attribute.setValue(convert(value));
+		attribute.setValue(WsHelper.convertToWsType(value));
 		return attribute;
-	}
-
-	private static String convert(final Object value) {
-		final String stringValue;
-		if (value == null) {
-			stringValue = EMPTY;
-		} else if (value instanceof Number) {
-			stringValue = Number.class.cast(value).toString();
-		} else if (value instanceof Date) {
-			final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-			final Date date = Date.class.cast(value);
-			stringValue = formatter.format(date);
-		} else {
-			stringValue = value.toString();
-		}
-		return stringValue;
 	}
 
 }

@@ -5,20 +5,22 @@ import java.util.Map;
 
 public interface FluentApiExecutor {
 
-	CardDescriptor create(NewCard newCard);
+	CardDescriptor create(Card card);
 
-	void update(ExistingCard existingCard);
+	void update(Card card);
 
-	void delete(ExistingCard existingCard);
+	void delete(Card card);
 
-	Card fetch(ExistingCard existingCard);
+	Card fetch(Card card);
 
-	void create(NewRelation newRelation);
+	void create(Relation relation);
 
-	void delete(ExistingRelation existingRelation);
+	void delete(Relation relation);
 
-	List<Card> fetch(QueryClass classQuery);
+	List<Card> fetchCards(Card card);
 
-	Map<String, String> execute(CallFunction callFunction);
+	Map<String, String> execute(Function function);
+
+	DownloadedReport download(Report report);
 
 }

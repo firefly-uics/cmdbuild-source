@@ -36,7 +36,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void parametersPassedToProxyWhenUpdatingExistingCard() {
+	public void parametersPassedToProxyWhenUpdatingExistingCard() throws Exception {
 		existingCard.update();
 
 		verify(proxy()).updateCard(cardCapturer());
@@ -52,7 +52,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void parametersPassedToProxyWhenDeletingExistingCard() {
+	public void parametersPassedToProxyWhenDeletingExistingCard() throws Exception {
 		existingCard.delete();
 
 		verify(proxy()).deleteCard(existingCard.getClassName(), existingCard.getId());
@@ -61,7 +61,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void parametersPassedToProxyWhenFetchingExistingCard() {
+	public void parametersPassedToProxyWhenFetchingExistingCard() throws Exception {
 		when(proxy().getCard( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
@@ -82,7 +82,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void soapCardIsConvertedToFluentApiCardWhenFetchingExistingCard() {
+	public void soapCardIsConvertedToFluentApiCardWhenFetchingExistingCard() throws Exception {
 		when(proxy().getCard( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //

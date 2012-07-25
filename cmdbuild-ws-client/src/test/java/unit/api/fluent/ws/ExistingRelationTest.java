@@ -22,7 +22,7 @@ public class ExistingRelationTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void parametersPassedToProxyWhenDeletingExistingRelation() {
+	public void parametersPassedToProxyWhenDeletingExistingRelation() throws Exception {
 		existingRelation.delete();
 
 		verify(proxy()).deleteRelation(relationCapturer());
