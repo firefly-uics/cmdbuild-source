@@ -68,8 +68,9 @@ public class CreateCardToolAgent extends AbstractConditionalToolAgent {
 			attributes.put(Constants.DESCRIPTION_ATTRIBUTE, description);
 		} else {
 			for (final Map.Entry<String, Object> entry : getInputParameterValues().entrySet()) {
-				if (CLASS_NAME.equals(entry.getKey()))
+				if (CLASS_NAME.equals(entry.getKey())) {
 					continue;
+				}
 				attributes.put(entry.getKey(), entry.getValue());
 			}
 		}
