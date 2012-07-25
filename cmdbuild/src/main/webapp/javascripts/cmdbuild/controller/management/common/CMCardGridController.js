@@ -157,7 +157,7 @@
 						if (foundButNotInFilter) {
 							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
 						} else {
-							updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
+							updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 						}
 					} else {
 						if (retryWithoutFilter) {
@@ -192,11 +192,12 @@
 			this.view.reload(reselect);
 		},
 
-		_onGetPositionSuccessForcingTheFilter: function() {
-			var me = this.view;
-			me.clearFilter(function() {
-				me.gridSearchField.reset();
-				updateStoreAndSelectGivenPosition.call(me, p.IdClass, position);
+		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
+			var me = this;
+			var view = me.view;
+			view.clearFilter(function() {
+				view.gridSearchField.reset();
+				updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 			}, skipReload=true);
 		},
 
@@ -212,21 +213,20 @@
 		}
 	}
 
-	function updateStoreAndSelectGivenPosition(idClass, position) {
-		var me = this;
-
-		this.view.updateStoreForClassId(idClass, {
+	function updateStoreAndSelectGivenPosition(me, idClass, position) {
+		var view = me.view;
+		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
-				var	pageNumber = me.getPageNumber(position),
+				var	pageNumber = getPageNumber(position),
 					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
 					relativeIndex = position % pageSize;
 
-				me.view.loadPage(pageNumber, {
+				view.loadPage(pageNumber, {
 					cb: function callBackOfLoadPage(records, operation, success) {
 						try {
 							me.gridSM.select(relativeIndex);
 						} catch (e) {
-							me.view.fireEvent("cmWrongSelection");
+							view.fireEvent("cmWrongSelection");
 							_debug("I was not able to select the record at " + relativeIndex);
 							_trace();
 						}
@@ -234,5 +234,20 @@
 				});
 			}
 		});
+	}
+
+	function getPageNumber(cardPosition) {
+		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+			pageNumber = 1;
+
+		if (cardPosition == 0) {
+			return pageNumber;
+		}
+
+		if (cardPosition) {
+			pageNumber = parseInt(cardPosition) / pageSize;
+		}
+
+		return pageNumber + 1;
 	}
 })();

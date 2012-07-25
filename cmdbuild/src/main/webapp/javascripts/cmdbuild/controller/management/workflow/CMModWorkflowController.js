@@ -76,16 +76,14 @@
 		// is called when the view is bring to front from the main viewport
 		// Set the entry type of the _CMWFState instead to store it inside
 		// this controller
-		setEntryType: function(entryTypeId) {
+		setEntryType: function(entryTypeId, danglingCard) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
-			_CMWFState.setProcessClassRef(entryType);
+			_CMWFState.setProcessClassRef(entryType, danglingCard);
 			this.view.updateTitleForEntry(entryType);
 		},
 
 		// override
-		onEntryTypeChanged: function(entryType) { _deprecated();
-			
-		}
+		onEntryTypeChanged: function(entryType) { _deprecated(); }
 	});
 
 	function isStateOpen(card) {
@@ -113,7 +111,6 @@
 		me.gridController = new CMDBuild.controller.management.workflow.CMActivityGridController(me.view.cardGrid);
 		me.mon(me.gridController, me.gridController.CMEVENTS.cardSelected, me.onCardSelected, me);
 		me.mon(me.gridController, me.gridController.CMEVENTS.load, onGridLoad, me);
-		me.mon(me.gridController, me.gridController.CMEVENTS.processClosed, onProcessTermined, me);
 
 		me.grid.mon(me.gridController, "itemdblclick", function() {
 			me.activityPanelController.onModifyCardClick();
@@ -134,10 +131,6 @@
 				me.historyController.onProcessInstanceChange(_CMWFState.getProcessInstance());
 			}
 		}, me);
-	}
-
-	function onProcessTermined() {
-		_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 	}
 
 	function onGridLoad(args) {

@@ -37,6 +37,7 @@
 			{name: "tableType",type: 'string'},
 			{name: "type",type: 'string'},
 			{name: "name",type: 'string'},
+			{name: "userstoppable",type: 'boolean'},
 			{name: "priv_create",type: 'boolean'},
 			{name: "priv_write",type: 'boolean'},
 			{name: "meta", type:"auto"}
@@ -49,6 +50,10 @@
 
 		isSuperClass: function() {
 			return this.get("superclass");
+		},
+
+		isUserStoppable: function() {
+			return this.get("userstoppable");
 		},
 
 		deleteGeoAttr: function(a) {

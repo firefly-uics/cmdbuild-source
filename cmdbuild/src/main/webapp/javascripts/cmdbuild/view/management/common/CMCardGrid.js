@@ -278,35 +278,9 @@
 		//protected
 		buildExtraColumns: function() {
 			return [];
-		},
-
-		getPageNumber: getPageNumber
+		}
 	});
 
-	function updateStoreAndSelectGivenPosition(idClass, position) {
-		var me = this;
-
-		this.updateStoreForClassId(idClass, {
-			cb: function cbOfUpdateStoreForClassId() {
-				var	pageNumber = getPageNumber(position),
-					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-					relativeIndex = position % pageSize;
-
-				me.loadPage(pageNumber, {
-					cb: function callBackOfLoadPage(records, operation, success) {
-						try {
-							me.getSelectionModel().select(relativeIndex);
-						} catch (e) {
-							me.fireEvent("cmWrongSelection");
-							_debug("I was not able to select the record at " + relativeIndex);
-							_trace();
-						}
-					}
-				});
-			}
-		});
-	}
-	
 	function buildPagingBar() {
 		var items = [];
 
@@ -434,20 +408,5 @@
 		if (event.target.className == 'action-open-graph') {
 			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
 		}
-	}
-
-	function getPageNumber(cardPosition) {
-		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-			pageNumber = 1;
-
-		if (cardPosition == 0) {
-			return pageNumber;
-		}
-
-		if (cardPosition) {
-			pageNumber = parseInt(cardPosition) / pageSize;
-		}
-
-		return pageNumber + 1;
 	}
 })();

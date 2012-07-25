@@ -165,10 +165,10 @@
 				delegates = [];
 
 			Ext.apply(this, {
-				setProcessClassRef: function(pcr) {
-					if (processClassRef !== pcr) {
+				setProcessClassRef: function(pcr, danglingCard) {
+					if (processClassRef !== pcr || danglingCard) {
 						processClassRef = pcr;
-						this.notifyToDelegates("onProcessClassRefChange", [pcr]);
+						this.notifyToDelegates("onProcessClassRefChange", [pcr, danglingCard]);
 
 						this.setProcessInstance(new CMDBuild.model.CMProcessInstance({
 							classId: processClassRef.getId()

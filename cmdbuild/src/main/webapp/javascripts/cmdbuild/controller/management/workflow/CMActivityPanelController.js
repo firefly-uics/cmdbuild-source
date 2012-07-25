@@ -204,12 +204,23 @@
 					me.view.displayModeForNotEditableCard();
 				}
 
-				// FIXME: manage stoppable
-
-//				if (isNotStoppable(data)) {
-//					me.view.disableStopButton();
-//				}
+				var processClassId = processInstance.getClassId();
+				if (processClassId) {
+					var processClass = _CMCache.getEntryTypeById(processClassId);
+					if (processClass && !processClass.isUserStoppable()) {
+						me.view.disableStopButton();
+					}
+				}
 			}
+		},
+
+		// override
+		onShowGraphClick: function() {
+			var pi = _CMWFState.getProcessInstance();
+			var classId = pi.getClassId();
+			var cardId = pi.getId();
+
+			CMDBuild.Management.showGraphWindow(classId, cardId);
 		},
 
 		// override
@@ -217,11 +228,7 @@
 		onSaveSuccess: Ext.emptyFn
 	});
 
-	function isNotStoppable(data) {
-		return !data.stoppable;
-	}
-
-	function deleteActivity() { // FIXME: does not work
+	function deleteActivity() {
 		var me = this;
 		var processInstance = _CMWFState.getProcessInstance();
 

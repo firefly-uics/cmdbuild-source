@@ -19,7 +19,7 @@
 		constructor: function() {
 
 			this.statusCombo = new  Ext.form.field.ComboBox({
-				store: buildProcessStateStore.call(this),
+				store: buildProcessStateStore(),
 				name : "state",
 				hiddenName : "state",
 				valueField : "code",
