@@ -2,7 +2,7 @@ package org.cmdbuild.dao.driver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -14,7 +14,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 
 public class InMemoryDriver extends CachingDriver {
 
-	private AtomicInteger idGenerator = new AtomicInteger(42);
+	private AtomicLong idGenerator = new AtomicLong(42);
 
 	private final Collection<DBClass> allClasses;
 	private final Collection<DBDomain> allDomains;
@@ -88,7 +88,7 @@ public class InMemoryDriver extends CachingDriver {
 	 */
 
 	@Override
-	public Object create(DBEntry entry) {
+	public Long create(DBEntry entry) {
 		throw new UnsupportedOperationException();
 	}
 

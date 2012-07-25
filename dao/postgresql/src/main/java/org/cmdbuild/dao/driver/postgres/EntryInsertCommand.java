@@ -38,7 +38,7 @@ public class EntryInsertCommand {
 		return valueMap;
 	}
 
-	public Object executeAndReturnKey() {
+	public Long executeAndReturnKey() {
 		// TODO LOG insertActor.getInsertString();
 		return insertActor.executeAndReturnKey(valueMap).longValue();
 	}

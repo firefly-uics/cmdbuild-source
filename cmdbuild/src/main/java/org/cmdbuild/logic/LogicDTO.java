@@ -3,38 +3,38 @@ package org.cmdbuild.logic;
 public interface LogicDTO {
 
 	class Card {
-		public final Object classNameOrId;
-		public final Long cardId; // TODO It should be an Object
+		public final Long classId;
+		public final Long cardId;
 
-		public Card(final Object classNameOrId, final Number cardId) {
-			this.classNameOrId = classNameOrId;
-			this.cardId = cardId.longValue();
+		public Card(final long classId, final long cardId) {
+			this.classId = classId;
+			this.cardId = cardId;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("(%s, %s)", classNameOrId, cardId);
+			return String.format("(%s, %s)", classId, cardId);
 		}
 	}
 
 	class DomainWithSource {
-		public final Object domainNameOrId;
+		public final Long domainId;
 		public final String querySource;
 
-		public DomainWithSource(final Object domainNameOrId, final String querySource) {
-			this.domainNameOrId = domainNameOrId;
+		public DomainWithSource(final Long domainId, final String querySource) {
+			this.domainId = domainId;
 			this.querySource = querySource;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("%s.%s", domainNameOrId, querySource);
+			return String.format("%s.%s", domainId, querySource);
 		}
 
-		public static DomainWithSource create(final Object domainNameOrId, final String querySource) {
+		public static DomainWithSource create(final Long domainId, final String querySource) {
 			final DomainWithSource dom;
-			if (domainNameOrId != null && querySource != null) {
-				dom = new DomainWithSource(domainNameOrId, querySource);
+			if (domainId != null && querySource != null) {
+				dom = new DomainWithSource(domainId, querySource);
 			} else {
 				dom = null;
 			}

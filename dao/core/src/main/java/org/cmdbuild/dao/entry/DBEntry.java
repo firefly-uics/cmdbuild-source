@@ -12,14 +12,14 @@ public abstract class DBEntry implements CMValueSet {
 	final DBDriver driver;
 
 	private final DBEntryType type;
-	private Object id;
+	private Long id;
 	private final Map<String, Object> values;
 
 	private String user;
 	private DateTime beginDate;
 	private DateTime endDate;
 
-	protected DBEntry(final DBDriver driver, final DBEntryType type, final Object id) {
+	protected DBEntry(final DBDriver driver, final DBEntryType type, final Long id) {
 		this.driver = driver;
 		this.type = type;
 		this.id = id;
@@ -30,7 +30,7 @@ public abstract class DBEntry implements CMValueSet {
 		return type;
 	}
 
-	public final Object getId() {
+	public final Long getId() {
 		return id;
 	}
 

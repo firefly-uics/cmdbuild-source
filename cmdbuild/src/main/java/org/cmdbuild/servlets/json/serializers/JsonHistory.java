@@ -35,7 +35,7 @@ public abstract class JsonHistory {
 	}
 
 	protected interface HistoryItem {
-		Object getId();
+		Long getId();
 		long getInstant();
 		Map<String,ValueAndDescription> getAttributes();
 		Map<String,Object> getExtraAttributes();
@@ -66,7 +66,7 @@ public abstract class JsonHistory {
 	private Map<Object, ItemTimeline> itemsTimeline = new HashMap<Object, ItemTimeline>();
 
 	protected final void addHistoryItem(HistoryItem hi) {
-		final Object id = hi.getId();
+		final Long id = hi.getId();
 		ItemTimeline timeline = itemsTimeline.get(id);
 		if (timeline == null) {
 			timeline = new ItemTimeline();

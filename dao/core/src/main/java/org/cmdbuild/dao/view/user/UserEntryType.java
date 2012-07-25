@@ -23,7 +23,7 @@ public abstract class UserEntryType implements CMEntryType {
 	}
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		return inner().getId();
 	}
 

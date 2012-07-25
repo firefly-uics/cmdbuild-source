@@ -104,8 +104,8 @@ public class SharkTypesConverter implements TypesConverter {
 	 * 
 	 * @return legacy id standard
 	 */
-	private int objectIdToInt(Object idObj) {
-		final Integer id = ID_TYPE.convertValue(idObj);
+	private int objectIdToInt(Long objId) {
+		final Integer id = ID_TYPE.convertValue(objId);
 		if (id == null) {
 			return -1;
 		} else {

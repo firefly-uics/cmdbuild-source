@@ -15,6 +15,8 @@ import org.junit.Test;
 
 public class QuotingTest {
 
+	static private final Long USELESS_FUNCTION_ID = null;
+
 	@Test
 	public void identStringsAreQuoted() {
 		assertThat(Utils.quoteIdent("xy"), is("xy"));
@@ -29,7 +31,7 @@ public class QuotingTest {
 	@Test
 	public void functionCallsAreQuoted() {
 		List<Object> params = new ArrayList<Object>();
-		DBFunction func = new DBFunction("func", true);
+		DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
 		assertThat(Utils.quoteType(call(func), params), is("func()"));
 
 		func.addInputParameter("i1", new IntegerAttributeType());

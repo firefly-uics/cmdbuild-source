@@ -2,7 +2,7 @@ package org.cmdbuild.dao;
 
 public interface CMTypeObject {
 
-	Object getId();
+	Long getId();
 
 	String getName();
 

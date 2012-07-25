@@ -112,7 +112,7 @@ public class JsonWorkflowDTOs {
 			this.processInstance = processInstance;
 		}
 
-		public Object getId() {
+		public Long getId() {
 			return processInstance.getCardId();
 		}
 

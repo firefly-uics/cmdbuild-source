@@ -34,12 +34,7 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserClass findClass(Object idOrName) {
-		return UserClass.create(this, view.findClass(idOrName));
-	}
-
-	@Override
-	public UserClass findClassById(Object id) {
+	public UserClass findClassById(Long id) {
 		return UserClass.create(this, view.findClassById(id));
 	}
 
@@ -70,12 +65,7 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserDomain findDomain(Object idOrName) {
-		return UserDomain.create(this, view.findDomain(idOrName));
-	}
-
-	@Override
-	public UserDomain findDomainById(Object id) {
+	public UserDomain findDomainById(Long id) {
 		return UserDomain.create(this, view.findDomainById(id));
 	}
 

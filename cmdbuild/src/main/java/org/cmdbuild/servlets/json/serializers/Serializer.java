@@ -807,8 +807,8 @@ public class Serializer {
 			addHistoryItem(new HistoryItem() {
 
 				@Override
-				public Object getId() {
-					return card.getId();
+				public Long getId() {
+					return Long.valueOf(card.getId());
 				}
 
 

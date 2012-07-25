@@ -47,14 +47,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	public CMProcessClass findProcessClass(Object idOrName) {
-		Validate.notNull(idOrName);
-		final ProcessType processType = findProcessType(idOrName);
-		return wrap(processType);
-	}
-
-	@Override
-	public CMProcessClass findProcessClassById(Object id) {
+	public CMProcessClass findProcessClassById(Long id) {
 		Validate.notNull(id);
 		final ProcessType processType = findProcessTypeById(id);
 		return wrap(processType);

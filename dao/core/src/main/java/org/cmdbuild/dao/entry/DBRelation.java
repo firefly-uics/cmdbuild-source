@@ -18,11 +18,11 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 		return new DBRelation(driver, type, null);
 	}
 
-	public static DBRelation create(final DBDriver driver, final DBDomain type, final Object id) {
+	public static DBRelation create(final DBDriver driver, final DBDomain type, final Long id) {
 		return new DBRelation(driver, type, id);
 	}
 
-	private DBRelation(final DBDriver driver, final DBDomain type, final Object id) {
+	private DBRelation(final DBDriver driver, final DBDomain type, final Long id) {
 		super(driver, type, id);
 	}
 

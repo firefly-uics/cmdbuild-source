@@ -244,7 +244,7 @@ public class ModCard extends JSONBase {
 				if (value instanceof CMLookup) {
 					// FIXME Temporary till the new DAO is finished
 					final CMLookup lookup = (CMLookup) value;
-					final Integer lookupId = (Integer) lookup.getId();
+					final Integer lookupId = lookup.getId().intValue();
 					final String lookupDescription = CMBackend.INSTANCE.getLookup(lookupId).toString();
 
 					jsonRef.put(name, lookupId);

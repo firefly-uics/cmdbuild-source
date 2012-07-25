@@ -21,6 +21,8 @@ import org.junit.Test;
 @SuppressWarnings({"unchecked","serial"})
 public class FunctionCallTest {
 
+	static private final Long USELESS_FUNCTION_ID = null;
+
 	private static class IdentityAttributeType implements CMAttributeType<Object> {
 
 		@Override
@@ -52,7 +54,7 @@ public class FunctionCallTest {
 
 	@Test
 	public void parametersCanBeSpecifiedAsAnArray() {
-		DBFunction function = new DBFunction("func", true);
+		DBFunction function = new DBFunction("func", USELESS_FUNCTION_ID, true);
 		function.addInputParameter("p1", new IdentityAttributeType());
 		function.addInputParameter("p2", new IdentityAttributeType());
 
@@ -64,7 +66,7 @@ public class FunctionCallTest {
 
 	@Test
 	public void parametersCanBeSpecifiedAsAMap() {
-		DBFunction function = new DBFunction("func", true);
+		DBFunction function = new DBFunction("func", USELESS_FUNCTION_ID, true);
 		function.addInputParameter("p1", new IdentityAttributeType());
 		function.addInputParameter("p2", new IdentityAttributeType());
 		function.addInputParameter("p3", new IdentityAttributeType());

@@ -7,8 +7,7 @@ import java.util.Map;
  */
 public interface CMWorkflowEngine {
 
-	CMProcessClass findProcessClass(Object idOrName);
-	CMProcessClass findProcessClassById(Object id);
+	CMProcessClass findProcessClassById(Long id);
 	CMProcessClass findProcessClassByName(String name);
 
 	/**

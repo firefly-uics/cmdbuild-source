@@ -42,8 +42,8 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 
 	private boolean returnsSet;
 
-	public DBFunction(final String name, final boolean returnsSet) {
-		super(name, name);
+	public DBFunction(final String name, final Long id, final boolean returnsSet) {
+		super(name, id);
 		this.inputParameters = new ArrayList<CMFunctionParameter>();
 		this.unmodifiableInputParameters = Collections.unmodifiableList(inputParameters);
 		this.outputParameters = new ArrayList<CMFunctionParameter>();

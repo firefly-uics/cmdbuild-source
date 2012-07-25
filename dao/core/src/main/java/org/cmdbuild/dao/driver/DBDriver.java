@@ -14,14 +14,14 @@ public interface DBDriver {
 	static final String BASE_CLASS_NAME = "Class";
 
 	Collection<DBClass> findAllClasses();
-	DBClass findClassById(Object id);
+	DBClass findClassById(Long id);
 	DBClass findClassByName(String name);
 
 	DBClass createClass(String name, DBClass parent);
 	void deleteClass(DBClass dbClass);
 
 	Collection<DBDomain> findAllDomains();
-	DBDomain findDomainById(Object id);
+	DBDomain findDomainById(Long id);
 	DBDomain findDomainByName(String name);
 
 	Collection<DBFunction> findAllFunctions();
@@ -30,7 +30,7 @@ public interface DBDriver {
 	DBDomain createDomain(String name, DBClass class1, DBClass class2); // TODO Allow more than two classes
 	void deleteDomain(DBDomain dbDomain);
 
-	Object create(DBEntry entry);
+	Long create(DBEntry entry);
 	void update(DBEntry entry);
 	void delete(DBEntry entry);
 	CMQueryResult query(QuerySpecs query);

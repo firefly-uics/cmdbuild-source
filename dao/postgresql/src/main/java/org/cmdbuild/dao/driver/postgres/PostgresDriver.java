@@ -75,7 +75,7 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 	 */
 
 	@Override
-	public Object create(final DBEntry entry) {
+	public Long create(final DBEntry entry) {
 		return new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
 	}
 

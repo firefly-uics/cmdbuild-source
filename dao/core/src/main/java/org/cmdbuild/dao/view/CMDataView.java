@@ -13,8 +13,7 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 public interface CMDataView {
 
 //	CMClassDefinition newClass(String name);
-	CMClass findClass(Object idOrName);
-	CMClass findClassById(Object id);
+	CMClass findClassById(Long id);
 	CMClass findClassByName(String name);
 
 	/**
@@ -31,8 +30,7 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMClass> findAllClasses();
 
-	CMDomain findDomain(Object idOrName);
-	CMDomain findDomainById(Object id);
+	CMDomain findDomainById(Long id);
 	CMDomain findDomainByName(String name);
 
 	/**

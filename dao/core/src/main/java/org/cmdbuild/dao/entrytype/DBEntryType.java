@@ -38,7 +38,7 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 	private final Map<String, DBAttribute> attributesByName;
 	private final List<DBAttribute> attributes;
 
-	protected DBEntryType(final String name, final Object id, final List<DBAttribute> attributes) {
+	protected DBEntryType(final String name, final Long id, final List<DBAttribute> attributes) {
 		super(name, id);
 		this.attributes = attributes;
 		this.attributesByName = initAttributesByName(attributes);

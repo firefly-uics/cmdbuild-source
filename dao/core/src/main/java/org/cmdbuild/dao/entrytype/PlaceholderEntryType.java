@@ -4,7 +4,7 @@ package org.cmdbuild.dao.entrytype;
 public abstract class PlaceholderEntryType implements CMEntryType {
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		throw new UnsupportedOperationException();
 	}
 

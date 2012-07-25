@@ -10,11 +10,11 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 		return new DBCard(driver, type, null);
 	}
 
-	public static DBCard create(final DBDriver driver, final DBClass type, final Object id) {
+	public static DBCard create(final DBDriver driver, final DBClass type, final Long id) {
 		return new DBCard(driver, type, id);
 	}
 
-	private DBCard(final DBDriver driver, final DBClass type, final Object id) {
+	private DBCard(final DBDriver driver, final DBClass type, final Long id) {
 		super(driver, type, id);
 	}
 

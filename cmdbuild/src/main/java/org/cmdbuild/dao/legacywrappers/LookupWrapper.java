@@ -29,7 +29,7 @@ public class LookupWrapper implements CMLookup {
 	}
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		return Long.valueOf(inner.getId());
 	}
 

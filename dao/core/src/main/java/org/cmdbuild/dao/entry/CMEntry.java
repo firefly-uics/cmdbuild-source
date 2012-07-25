@@ -18,7 +18,7 @@ public interface CMEntry extends CMValueSet {
 
 	CMEntryType getType();
 
-	Object getId();
+	Long getId();
 
 	String getUser();
 	DateTime getBeginDate();

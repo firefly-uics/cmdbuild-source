@@ -40,7 +40,7 @@ public interface CMProcessInstance extends CMCard {
 	 * 
 	 * @return identifier of the data store card
 	 */
-	Object getCardId();
+	Long getCardId();
 
 	/**
 	 * We cannot override {@link CMCard.getId()} because it would break the

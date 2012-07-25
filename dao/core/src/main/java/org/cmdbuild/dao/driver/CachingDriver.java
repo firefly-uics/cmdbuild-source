@@ -37,7 +37,7 @@ public abstract class CachingDriver implements DBDriver {
 			return null;
 		}
 
-		T getById(final Object id) {
+		T getById(final Long id) {
 			for (T e : collection) {
 				if (e.getId().equals(id)) {
 					return e;
@@ -93,25 +93,11 @@ public abstract class CachingDriver implements DBDriver {
 	protected abstract void deleteClassNoCache(final DBClass dbClass);
 
 	@Override
-	public final DBClass findClassById(Object id) {
+	public final DBClass findClassById(Long id) {
 		try {
-			return getAllClassesStore().getById(normalizeId(id));
+			return getAllClassesStore().getById(id);
 		} catch (Exception e) {
 			return null;
-		}
-	}
-
-	// TODO It should be implemented by every driver
-	// public abstract Object normalizeId(Object id);
-	public Object normalizeId(final Object id) {
-		if (id instanceof Long) {
-			return id;
-		} else if (id instanceof Number) {
-			return ((Number) id).longValue();
-		} else if (id instanceof String) {
-			return Long.valueOf((String) id);
-		} else {
-			throw new IllegalArgumentException("Invalid Id");
 		}
 	}
 
@@ -162,7 +148,7 @@ public abstract class CachingDriver implements DBDriver {
 	protected abstract void deleteDomainNoCache(final DBDomain dbDomain);
 
 	@Override
-	public DBDomain findDomainById(final Object id) {
+	public DBDomain findDomainById(final Long id) {
 		return getAllDomainsStore().getById(id);
 	}
 

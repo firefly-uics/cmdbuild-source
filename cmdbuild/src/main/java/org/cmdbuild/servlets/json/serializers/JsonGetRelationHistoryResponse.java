@@ -45,7 +45,7 @@ public class JsonGetRelationHistoryResponse extends AbstractJsonResponseSerializ
 			addHistoryItem(new HistoryItem() {
 
 				@Override
-				public Object getId() {
+				public Long getId() {
 					return relation.getId();
 				}
 

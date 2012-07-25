@@ -102,9 +102,9 @@ public abstract class AbstractJsonResponseSerializer {
 			public void visit(LookupAttributeType attributeType) {
 				if (value instanceof CMLookup) {
 					final CMLookup lookup = (CMLookup) value;
-					final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) lookup.getId());
+					final Lookup oldLookup = systemLookupOperation.getLookupById(lookup.getId().intValue());
 					try {
-						valueForJson = idAndDescription(oldLookup.getId(), oldLookup.getDescription());
+						valueForJson = idAndDescription(Long.valueOf(oldLookup.getId()), oldLookup.getDescription());
 					} catch (JSONException e) {
 						valueForJson = null;
 					}
@@ -140,7 +140,7 @@ public abstract class AbstractJsonResponseSerializer {
 		}.valueForJson();
 	}
 
-	private JSONObject idAndDescription(final Object id, final String description) throws JSONException {
+	private JSONObject idAndDescription(final Long id, final String description) throws JSONException {
 		final JSONObject jsonObject = new JSONObject();
 		jsonObject.put("id", id);
 		jsonObject.put("dsc", description);

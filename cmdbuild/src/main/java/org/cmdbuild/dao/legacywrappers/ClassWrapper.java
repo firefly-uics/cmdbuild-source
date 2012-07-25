@@ -25,7 +25,7 @@ public class ClassWrapper implements CMClass {
 	}
 
 	@Override
-	public Object getId() {
+	public Long getId() {
 		return Long.valueOf(table.getId());
 	}
 
