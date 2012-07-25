@@ -30,7 +30,11 @@
 			}
 		}, this);
 
+		// the danglig card is used to open a card
+		// from a panel to another (something called follow the relations
+		// between cards)
 		var danglingCard = null;
+
 		this.getDanglingCard = function() {
 			var b = danglingCard;
 			danglingCard = null;
@@ -137,7 +141,7 @@
 			accordion.mon(accordion, "afterlayout", function() {
 				accordion.deselect();
 				accordion.selectNodeById(p.IdClass);
-			}, {single: true});
+			}, null, {single: true});
 
 			accordion.expandSilently();
 		} else {

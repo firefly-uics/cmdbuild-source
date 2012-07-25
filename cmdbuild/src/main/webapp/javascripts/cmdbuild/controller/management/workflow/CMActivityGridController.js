@@ -107,20 +107,20 @@
 		},
 
 		// override
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
-			var flowStatusOfSearchedCard = resText.FlowStatus;
+		_onGetPositionFailureWithoutForcingTheFilter: function(response) {
+			var flowStatusOfSearchedCard = response.FlowStatus;
 			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
 				this.view.skipNextSelectFirst();
-				this.fireEvent(this.CMEVENTS.processClosed);
+				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 			} else {
 				this.callParent(arguments);
 			}
 		},
 
 		// wfStateDelegate
-		onProcessClassRefChange : function(entryType) {
+		onProcessClassRefChange : function(entryType, danglingCard) {
 			// FIXME: for compatibility, remove when switch to a state obj also on ModCard
-			this.onEntryTypeSelected(entryType);
+			this.onEntryTypeSelected(entryType, danglingCard);
 		},
 
 		onEntryTypeSelected: function(entryType, danglingCard) {
