@@ -1,10 +1,7 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +18,11 @@ import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFactory {
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
+
+	/**
+	 * Key in the value map that holds the output variable name.
+	 */
+	public static final String OUTPUT_KEY = null;
 
 	private static final String LINE_SEPARATOR = "\r?\n";
 	private static final String VALUE_SEPARATOR = "=";
@@ -61,7 +63,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		final String pair[] = line.split(VALUE_SEPARATOR, 2);
 		if (pair.length > 0 && !pair[0].isEmpty()) {
 			if (pair.length == 1 || pair[1].isEmpty()) {
-				valueMap.put(pair[0], null);
+				valueMap.put(OUTPUT_KEY, pair[0]);
 			} else {
 				try {
 					valueMap.put(pair[0], interpretValue(pair[1]));
@@ -86,15 +88,6 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		} else {
 			throw new UnsupportedOperationException("Grab a variable!");
 		}
-	}
-
-	private CMActivityWidget createWidgetAndAddStandardAttributes(final Map<String, String> valueMap) {
-		final Widget widget = createWidget(valueMap);
-		final String label = valueMap.get(BUTTON_LABEL);
-		if (label != null) {
-			widget.setLabel(label);
-		}
-		return widget;
 	}
 
 	protected abstract Widget createWidget(Map<String, String> valueMap);
@@ -130,24 +123,14 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		return className;
 	}
 
-	protected final List<String> extractParametersWithNullAsValue(Map<String,String> valueMap) {
-		final ArrayList<String> out = new ArrayList<String>();
-		for(String key:valueMap.keySet()) {
-			if (valueMap.get(key) == null) {
-				out.add(key);
-			}
-		}
-
-		return out;
-	}
-
 	protected final Map<String, String> extractUnmanagedParameters(Map<String, String> valueMap, Set<String> managedParameters) {
 		Map<String, String> out = new HashMap<String, String>();
 
 		for (String key: valueMap.keySet()) {
-			if (!managedParameters.contains(key)) {
-				out.put(key, valueMap.get(key));
+			if (key == null || managedParameters.contains(key)) {
+				continue;
 			}
+			out.put(key, valueMap.get(key));
 		}
 
 		return out;

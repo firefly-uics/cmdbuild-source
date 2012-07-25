@@ -1,51 +1,33 @@
 package org.cmdbuild.servlets.json.management;
 
-import java.io.IOException;
-
-import javax.mail.MessagingException;
-
-import org.cmdbuild.elements.AttributeValue;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.wrappers.EmailCard;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.listeners.RequestListener;
-import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.logic.EmailLogic;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
-import org.cmdbuild.servlets.json.serializers.Serializer;
+import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
+
+@Legacy("Move to email widget actions")
 public class Email extends JSONBase {
 
-	private final String EMAIL_STATUS = "EmailStatus";
 	@JSONExported
-	public JSONObject getEmailList(
-			@Parameter("ProcessId") int processId,
-			ITableFactory tf,
-			JSONObject output) throws MessagingException, IOException, JSONException {
-		ICard processCard = tf.get(ProcessType.BaseTable).cards().get(processId);
-		try {
-			EmailService.syncEmail();
-		} catch (CMDBException e) {
-			RequestListener.getCurrentRequest().pushWarning(e);
-		}
-		JSONArray jsonEmails = new JSONArray();
-		for (ICard email : EmailCard.list(processCard)) {
-			JSONObject jsonEmail = Serializer.serializeCard(email, true);
-			try {
-				AttributeValue emailStatus = email.getAttributeValue(EMAIL_STATUS);
-				jsonEmail.put(EMAIL_STATUS, emailStatus.toString());
-			} catch (JSONException e) {
-				// ignore it
-			}
+	public JsonResponse getEmailList(
+			@Parameter("ProcessId") long processCardId,
+			final UserContext userContext) {
+		final EmailLogic logic = TemporaryObjectsBeforeSpringDI.getEmailLogic(userContext);
+		logic.retrieveEmails();
+		Iterable<EmailLogic.Email> emails = logic.getEmails(processCardId);
+		return JsonResponse.success(Iterators.transform(emails.iterator(), new Function<EmailLogic.Email, JsonEmail>() {
 
-			jsonEmails.put(jsonEmail);
-		}
-		output.put("rows", jsonEmails);
-		return output;
+			@Override
+			public JsonEmail apply(final EmailLogic.Email input) {
+				return new JsonEmail(input);
+			}
+		}));
 	}
+
 };

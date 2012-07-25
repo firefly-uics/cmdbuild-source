@@ -7,14 +7,14 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
+import org.cmdbuild.logic.EmailLogic;
+import org.cmdbuild.logic.EmailLogic.EmailStatus;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.json.JSONException;
 
 public class JsonWorkflowDTOs {
 
@@ -164,6 +164,47 @@ public class JsonWorkflowDTOs {
 
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
 			return new JsonAttributeValueVisitor(type, value).valueForJson();
+		}
+	}
+
+	public static class JsonEmail extends AbstractJsonResponseSerializer {
+
+		private final EmailLogic.Email email;
+
+		public JsonEmail(final EmailLogic.Email email) {
+			this.email = email;
+		}
+
+		public Long getId() {
+			return email.getId();
+		}
+
+		public String getFromAddress() {
+			return email.getFromAddress();
+		}
+
+		public String getToAddresses() {
+			return email.getToAddresses();
+		}
+
+		public String getCcAddresses() {
+			return email.getCcAddresses();
+		}
+
+		public String getSubject() {
+			return email.getSubject();
+		}
+
+		public String getContent() {
+			return email.getContent();
+		}
+
+		public String getDate() {
+			return formatDateTime(email.getDate());
+		}
+
+		public EmailStatus getStatus() {
+			return email.getStatus();
 		}
 	}
 }

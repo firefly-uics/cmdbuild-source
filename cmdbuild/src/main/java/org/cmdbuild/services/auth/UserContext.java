@@ -11,16 +11,17 @@ import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessTypeFactory;
 import org.cmdbuild.elements.interfaces.RelationFactory;
-import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -146,7 +147,7 @@ public class UserContext {
 		final ICard card = DomainUserUtils.queryDomainUser(username).getCard();
 		final String domain = DomainUserUtils.MetadataUtils.getGroupTable();
 
-		final DataAccessLogic dataAccesslogic = new DataAccessLogic(UserContext.systemContext());
+		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final DomainWithSource dom = DomainWithSource.create(null, null);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);

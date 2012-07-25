@@ -93,7 +93,7 @@ public class WorkflowLogic {
 	 * Starts the process, kills every activity except for the one that this
 	 * user wanted to start, advances it if requested.
 	 * 
-	 * @param process class name or id
+	 * @param process class id
 	 * @param variable values
 	 * @return the created process instance
 	 * @throws CMWorkflowException 
@@ -101,21 +101,25 @@ public class WorkflowLogic {
 	public CMProcessInstance startProcess(
 			final Long processClassId,
 			final Map<String, Object> vars,
+			final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final CMProcessClass proc = wfEngine.findProcessClassById(processClassId);
 		final CMProcessInstance procInst = wfEngine.startProcess(proc);
-		return updateOnlyActivity(procInst, vars, advance);
+		return updateOnlyActivity(procInst, vars, widgetSubmission, advance);
 	}
 
 	public CMProcessInstance updateProcess(Long processClassId,
-			Long processCardId, String activityInstanceId,
-			Map<String, Object> vars, boolean advance) throws CMWorkflowException {
+			final Long processCardId,
+			final String activityInstanceId,
+			final Map<String, Object> vars,
+			final Map<String, Object> widgetSubmission,
+			boolean advance) throws CMWorkflowException {
 
 		final CMProcessClass proc = wfEngine.findProcessClassById(processClassId);
 		final CMProcessInstance procInst = wfEngine.findProcessInstance(proc, processCardId);
 		final CMActivityInstance activityInstance = procInst.getActivityInstance(activityInstanceId);
 
-		return updateActivity(activityInstance, vars, advance);
+		return updateActivity(activityInstance, vars, widgetSubmission, advance);
 	}
 
 	/**
@@ -128,19 +132,25 @@ public class WorkflowLogic {
 	 * @return the updated process instance
 	 * @throws CMWorkflowException
 	 */
-	private CMProcessInstance updateOnlyActivity(final CMProcessInstance procInst, final Map<String, Object> vars,
+	private CMProcessInstance updateOnlyActivity(
+			final CMProcessInstance procInst,
+			final Map<String, Object> vars,
+			final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final List<CMActivityInstance> activities = procInst.getActivities();
 		if (activities.size() != 1) {
 			throw new UnsupportedOperationException(String.format("Not just one activity to advance! (%d activities)", activities.size()));
 		}
 		final CMActivityInstance firstActInst = activities.get(0);
-		return updateActivity(firstActInst, vars, advance);
+		return updateActivity(firstActInst, vars, widgetSubmission, advance);
 	}
 
-	private CMProcessInstance updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> vars,
+	private CMProcessInstance updateActivity(
+			final CMActivityInstance activityInstance,
+			final Map<String, Object> vars,
+			final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
-		wfEngine.updateActivity(activityInstance, vars);
+		wfEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		if (advance) {
 			return wfEngine.advanceActivity(activityInstance);
 		} else {

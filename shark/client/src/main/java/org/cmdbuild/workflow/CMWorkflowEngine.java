@@ -57,9 +57,13 @@ public interface CMWorkflowEngine {
 	 * 
 	 * @param activityInstance activity instance object to update
 	 * @param vars map of values to update
+	 * @param widgetSubmission map of widget ids and submission objects
 	 * @throws CMWorkflowException
 	 */
-	void updateActivity(CMActivityInstance activityInstance, Map<String, Object> vars) throws CMWorkflowException;
+	void updateActivity(
+			CMActivityInstance activityInstance,
+			Map<String, Object> vars,
+			Map<String, Object> widgetSubmission) throws CMWorkflowException;
 
 	/**
 	 * Advances an activity.

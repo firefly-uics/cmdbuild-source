@@ -15,6 +15,7 @@ import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
@@ -154,8 +155,10 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> inputValues)
-			throws CMWorkflowException {
+	public void updateActivity(
+			final CMActivityInstance activityInstance,
+			final Map<String, Object> inputValues,
+			final Map<String, Object> widgetSubmission) throws CMWorkflowException {
 		final Map<String, Object> nativeValues = new HashMap<String, Object>(inputValues.size());
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();
 		final CMProcessInstanceDefinition procInstDef = modifyProcessInstance(procInst);
@@ -164,10 +167,25 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 			procInstDef.set(key, value);
 			nativeValues.put(key, procInstDef.get(key));
 		}
-		// TODO Widgets: execute update and save output to nativeValues
-		// Values should be native to CMDBuild, not to Shark
+		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), nativeValues);
 		procInstDef.save();
+	}
+
+	private void saveWidgets(
+			final CMActivityInstance activityInstance,
+			final Map<String, Object> widgetSubmission,
+			final Map<String, Object> nativeValues) throws CMWorkflowException {
+		for (final CMActivityWidget w : activityInstance.getDefinition().getWidgets()) {
+			final Object submission = widgetSubmission.get(w.getId());
+			if (submission == null)
+				continue;
+			try {
+				w.save(activityInstance, submission, nativeValues);
+			} catch (final Exception e) {
+				throw new CMWorkflowException("Widget save failed", e);
+			}
+		}
 	}
 
 	private CMProcessInstanceDefinition modifyProcessInstance(final CMProcessInstance processInstance) {
@@ -181,13 +199,15 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	public CMProcessInstance advanceActivity(final CMActivityInstance activityInstance) throws CMWorkflowException {
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();
 		final String procInstId = procInst.getProcessInstanceId();
-		// TODO Widgets: tell them that you are advancing the activity (send emails, ...)
+		for (final CMActivityWidget w : activityInstance.getDefinition().getWidgets()) {
+			w.advance(activityInstance);
+		}
 		workflowService.advanceActivityInstance(procInstId, activityInstance.getId());
 		return retrieveChangedProcessInstanceFromDataStore(procInst);
 	}
 
 	private CMProcessInstance retrieveChangedProcessInstanceFromDataStore(CMProcessInstance procInst) throws CMWorkflowException {
-		// TODO fetch it from the database, because shark changed it
+		// TODO After bidirectional communication, fetch it from the database, because shark changed it
 		final WSProcessInstInfo procInstInfo = workflowService.getProcessInstance(procInst.getProcessInstanceId());
 		if (procInstInfo == null) {
 			return completeProcess(procInst);
@@ -280,7 +300,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	private CMProcessInstance syncProcessStateAndActivities(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
 		final CMProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
 
-		// Sync variables (should be removed when bidirectional communication is implemented)
+		// TODO Sync variables (should be removed when bidirectional communication is implemented)
 		final Map<String, Object> vars = workflowService.getProcessInstanceVariables(processInstance.getProcessInstanceId());
 		for (final CMAttribute a : processInstance.getType().getAttributes()) {
 			final String attributeName = a.getName();

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
+import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
@@ -12,9 +13,11 @@ import org.junit.Test;
 
 public class ManageEmailWidgetFactoryTest {
 
+	private static final EmailLogic UNUSED_EMAIL_LOGIC = null;
+
 	@Test
 	public void singleEmailTemplateDefinition() {
-		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory();
+		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory(UNUSED_EMAIL_LOGIC);
 		final ManageEmail w = (ManageEmail) factory.createWidget(
 			"ToAddresses='to@a.a'\n" +
 			"CCAddresses='cc@a.a'\n" +
@@ -32,7 +35,7 @@ public class ManageEmailWidgetFactoryTest {
 
 	@Test
 	public void moreThanOneEmailTemplateDefinitions() {
-		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory();
+		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory(UNUSED_EMAIL_LOGIC);
 		final ManageEmail w = (ManageEmail) factory.createWidget(
 			"ToAddresses='to@a.a'\n" +
 			"CCAddresses='cc@a.a'\n" +
@@ -72,7 +75,7 @@ public class ManageEmailWidgetFactoryTest {
 
 	@Test
 	public void readAlsoTheTemplates() {
-		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory();
+		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory(UNUSED_EMAIL_LOGIC);
 		final ManageEmail w = (ManageEmail) factory.createWidget(
 			"ToAddresses='to@a.a'\n" +
 
