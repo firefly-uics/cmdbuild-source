@@ -59,10 +59,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return new CardDescriptor(card.getClassName(), id);
 	}
 
-	public void update(final Card existingCard) {
-		final org.cmdbuild.services.soap.Card card = soapCardFor(existingCard);
-		card.setId(existingCard.getId());
-		proxy.updateCard(card);
+	public void update(final Card card) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(card);
+		soapCard.setId(card.getId());
+		proxy.updateCard(soapCard);
 	}
 
 	public void delete(final Card card) {
