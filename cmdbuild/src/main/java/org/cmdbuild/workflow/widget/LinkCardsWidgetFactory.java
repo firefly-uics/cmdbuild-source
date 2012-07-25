@@ -1,8 +1,8 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
 
@@ -23,6 +23,12 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	private static final String REQUIRED = "Required";
 	private static final String LABEL = "ButtonLabel";
 
+	private final DataAccessLogic dataAccessLogic;
+
+	public LinkCardsWidgetFactory(final DataAccessLogic dataAccessLogic) {
+		this.dataAccessLogic = dataAccessLogic;
+	}
+
 	@Override
 	public String getWidgetName() {
 		return WIDGET_NAME;
@@ -30,10 +36,10 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 
 	@Override
 	protected Widget createWidget(Map<String, String> valueMap) {
-		LinkCards widget = new LinkCards();
+		LinkCards widget = new LinkCards(dataAccessLogic);
 
 		setFilterAndClassName(valueMap, widget);
-		setOutputName(valueMap, widget);
+		widget.setOutputName(valueMap.get(OUTPUT_KEY));
 		widget.setDefaultSelection(valueMap.get(DEFAULT_SELECTION));
 		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
 		widget.setSingleSelect(readBooleanTrueIfPresent(valueMap.get(SINGLE_SELECT)));
@@ -66,15 +72,4 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		}
 	}
 
-	/*
-	 * The outputName is set as key with null value
-	 * in the XPDL definition. If there are some of
-	 * this kind of value, take the first as outputName
-	 */
-	private void setOutputName(Map<String, String> valueMap, LinkCards widget) {
-		List<String> outputs = extractParametersWithNullAsValue(valueMap);
-		if (outputs.size() > 0) {
-			widget.setOutputName(outputs.get(0));
-		}
-	}
 }

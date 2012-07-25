@@ -82,14 +82,14 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {
 		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
 
-		factory.addWidgetFactory(new CreateModifyCardWidgetFactory());
+		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new OpenAttachmentWidgetFactory());
 		factory.addWidgetFactory(new OpenNoteWidgetFactory());
 		factory.addWidgetFactory(new OpenReportWidgetFactory());
 		factory.addWidgetFactory(new CalendarWidgetFactory());
-		factory.addWidgetFactory(new LinkCardsWidgetFactory());
+		factory.addWidgetFactory(new LinkCardsWidgetFactory(getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new ManageRelationWidgetFactory());
-		factory.addWidgetFactory(new ManageEmailWidgetFactory());
+		factory.addWidgetFactory(new ManageEmailWidgetFactory(getSystemEmailLogic()));
 
 		return factory;
 	}
@@ -105,6 +105,18 @@ public class TemporaryObjectsBeforeSpringDI {
 	public static CMDataView getUserContextView(UserContext userCtx) {
 		final CMAccessControlManager acm = new AccessControlManagerWrapper(userCtx.privileges());
 		return new UserDataView(dbDataView, acm);
+	}
+
+	public static CMDataView getSystemView() {
+		return dbDataView;
+	}
+
+	public static DataAccessLogic getDataAccessLogic(UserContext userCtx) {
+		return new DataAccessLogic(getUserContextView(userCtx));
+	}
+
+	public static DataAccessLogic getSystemDataAccessLogic() {
+		return new DataAccessLogic(getSystemView());
 	}
 
 	public static WorkflowLogic getWorkflowLogic(UserContext userCtx) {
@@ -135,5 +147,13 @@ public class TemporaryObjectsBeforeSpringDI {
 		public boolean isAdmin() {
 			return userContext.privileges().isAdmin();
 		}
+	}
+
+	public static EmailLogic getEmailLogic(final UserContext userContext) {
+		return new EmailLogic(userContext);
+	}
+
+	private static EmailLogic getSystemEmailLogic() {
+		return getEmailLogic(UserContext.systemContext());
 	}
 }

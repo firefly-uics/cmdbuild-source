@@ -5,5 +5,6 @@ public interface Constants {
 	String CODE_ATTRIBUTE = "Code";
 	String DESCRIPTION_ATTRIBUTE = "Description";
 
+	String ID_ATTRIBUTE = "Id";
 	String CLASS_ID_ATTRIBUTE = "IdClass";
 }

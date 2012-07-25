@@ -2,7 +2,6 @@ package unit.workflow;
 
 import static org.cmdbuild.workflow.widget.ValuePairWidgetFactory.BUTTON_LABEL;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
@@ -52,17 +51,27 @@ public class ValuePairWidgetFactoryTest {
 	}
 
 	@Test
-	public void noEqualSignOrEmptyAfterAreConsideredNull() {
+	public void noEqualSignIsOutputValue() {
 		final FakeWidgetFactory factory = new FakeWidgetFactory();
 
 		factory.createWidget(
-				"A\n" +
+				"A\n"
+			);
+
+		assertThat(factory.valueMap.size(), is(1));
+		assertThat(factory.valueMap.get(null), is("A"));
+	}
+
+	@Test
+	public void emptyAfterEqualSignIsOutputValue() {
+		final FakeWidgetFactory factory = new FakeWidgetFactory();
+
+		factory.createWidget(
 				"B="
 			);
 
-		assertThat(factory.valueMap.size(), is(2));
-		assertThat(factory.valueMap.get("A"), is(nullValue()));
-		assertThat(factory.valueMap.get("B"), is(nullValue()));
+		assertThat(factory.valueMap.size(), is(1));
+		assertThat(factory.valueMap.get(null), is("B"));
 	}
 
 	@Test

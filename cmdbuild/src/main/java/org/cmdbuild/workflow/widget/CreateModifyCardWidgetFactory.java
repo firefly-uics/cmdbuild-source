@@ -3,6 +3,7 @@ package org.cmdbuild.workflow.widget;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.Widget;
 
@@ -14,7 +15,11 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	private static final String OBJ_ID = "ObjId";
 	private static final String READONLY = "ReadOnly";
 
-	// TODO manage the outputName when implementing save
+	private final DataAccessLogic dataAccessLogic;
+
+	public CreateModifyCardWidgetFactory(final DataAccessLogic dataAccessLogic) {
+		this.dataAccessLogic = dataAccessLogic;
+	}
 
 	@Override
 	public String getWidgetName() {
@@ -23,12 +28,13 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 	@Override
 	protected Widget createWidget(final Map<String, String> valueMap) {
-		CreateModifyCard widget = new CreateModifyCard();
+		CreateModifyCard widget = new CreateModifyCard(dataAccessLogic);
 		if (valueMap.containsKey(OBJ_REF)) {
 			configureWidgetFromReference(widget, valueMap);
 		} else {
 			configureWidgetFromClassName(widget, valueMap);
 		}
+		widget.setOutputName(valueMap.get(OUTPUT_KEY));
 
 		return widget;
 	}

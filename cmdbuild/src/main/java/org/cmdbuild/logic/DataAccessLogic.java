@@ -1,5 +1,12 @@
 package org.cmdbuild.logic;
 
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+
+import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
@@ -7,7 +14,6 @@ import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.services.auth.UserContext;
 
 /**
  * Business Logic Layer for Data Access
@@ -15,11 +21,6 @@ import org.cmdbuild.services.auth.UserContext;
 public class DataAccessLogic {
 
 	private final CMDataView view;
-
-	// FIXME Temporary constructor before switching to Spring DI
-	public DataAccessLogic(final UserContext userCtx) {
-		view = TemporaryObjectsBeforeSpringDI.getUserContextView(userCtx);
-	}
 
 	public DataAccessLogic(final CMDataView view) {
 		this.view = view;
@@ -31,5 +32,19 @@ public class DataAccessLogic {
 
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
 		return new GetRelationHistory(view).exec(srcCard);
+	}
+
+	public CMCard getCard(final String className, final Object cardId) {
+		final CMClass cardType = view.findClassByName(className);
+		final CMQueryResult result = view.select(
+				attribute(cardType, Constants.DESCRIPTION_ATTRIBUTE))
+			.from(cardType)
+			.where(attribute(cardType, Constants.ID_ATTRIBUTE), Operator.EQUALS, cardId)
+			.run();
+		if (result.isEmpty()) {
+			return null;
+		} else {
+			return result.iterator().next().getCard(cardType);
+		}
 	}
 }

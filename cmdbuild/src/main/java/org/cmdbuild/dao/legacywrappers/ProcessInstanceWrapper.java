@@ -272,8 +272,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		return activity.getFirstRolePerformer().getName();
 	}
 
-	private CMActivity getActivity(final String activityInstanceId) throws CMWorkflowException {
-		return processDefinitionManager.getActivity(this, activityInstanceId);
+	private CMActivity getActivity(final String activityDefinitionId) throws CMWorkflowException {
+		return processDefinitionManager.getActivity(this, activityDefinitionId);
 	}
 
 	private String[] addToBack(final String[] original, final String element) {

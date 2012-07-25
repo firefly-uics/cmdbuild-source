@@ -40,7 +40,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 					type: "ajax",
 					url: 'services/json/management/email/getemaillist',
 					reader: {
-						root: 'rows',
+						root: 'response',
 						type: "json",
 						totalProperty: 'results'
 					}

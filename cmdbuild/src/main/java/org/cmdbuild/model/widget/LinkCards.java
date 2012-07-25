@@ -1,30 +1,35 @@
 package org.cmdbuild.model.widget;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.reference.CardReference;
+import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.workflow.CMActivityInstance;
 
 public class LinkCards extends Widget {
 
+	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+
 	/**
-	 * A CQL query to fill the linkCard grid
-	 * Use it or the className
+	 * A CQL query to fill the linkCard grid Use it or the className
 	 */
 	private String filter;
 
 	/**
-	 * Fill the linkCard grid with the cards
-	 * of this class. Use it or the filter
+	 * Fill the linkCard grid with the cards of this class. Use it or the filter
 	 */
 	private String className;
 
 	/**
-	 * A CQL query to define the starting
-	 * selection
+	 * A CQL query to define the starting selection
 	 */
 	private String defaultSelection;
 
 	/**
-	 * If true, the grid is in read-only mode
-	 * so you can not select its rows
+	 * If true, the grid is in read-only mode so you can not select its rows
 	 */
 	private boolean readOnly;
 
@@ -34,46 +39,39 @@ public class LinkCards extends Widget {
 	private boolean singleSelect;
 
 	/**
-	 * Add an icon at the right of each row
-	 * to edit the referred card
+	 * Add an icon at the right of each row to edit the referred card
 	 */
 	private boolean allowCardEditing;
 
 	/**
-	 * If true, the user must select a card
-	 * on this widget before to can advance
+	 * If true, the user must select a card on this widget before to can advance
 	 * with the process
 	 */
 	private boolean required;
 
 	/**
-	 * If true, enable the map module for
-	 * this widget
+	 * If true, enable the map module for this widget
 	 */
 	private boolean enableMap;
 
 	/**
-	 * The latitude to use as
-	 * default for the map module
+	 * The latitude to use as default for the map module
 	 */
 	private Integer mapLatitude;
 
 	/**
-	 * The longitude to use as
-	 * default for the map module
+	 * The longitude to use as default for the map module
 	 */
 	private Integer mapLongitude;
 
 	/**
-	 * The zoom level to use as
-	 * default for the map module
+	 * The zoom level to use as default for the map module
 	 */
 	private Integer mapZoom;
 
 	/**
-	 * The name of the variable in which
-	 * find the selections of the widget
-	 * during the save operation
+	 * The name of the variable where to put the selections of the widget during
+	 * the save operation
 	 */
 	private String outputName;
 
@@ -82,11 +80,17 @@ public class LinkCards extends Widget {
 	 */
 	private Map<String, String> templates;
 
+	private final DataAccessLogic dataAccessLogic;
+
+	public LinkCards(final DataAccessLogic dataAccessLogic) {
+		this.dataAccessLogic = dataAccessLogic;
+	}
+
 	public String getFilter() {
 		return filter;
 	}
 
-	public void setFilter(String filter) {
+	public void setFilter(final String filter) {
 		this.filter = filter;
 	}
 
@@ -94,7 +98,7 @@ public class LinkCards extends Widget {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public void setClassName(final String className) {
 		this.className = className;
 	}
 
@@ -102,7 +106,7 @@ public class LinkCards extends Widget {
 		return defaultSelection;
 	}
 
-	public void setDefaultSelection(String defaultSelection) {
+	public void setDefaultSelection(final String defaultSelection) {
 		this.defaultSelection = defaultSelection;
 	}
 
@@ -110,7 +114,7 @@ public class LinkCards extends Widget {
 		return singleSelect;
 	}
 
-	public void setSingleSelect(boolean singleSelect) {
+	public void setSingleSelect(final boolean singleSelect) {
 		this.singleSelect = singleSelect;
 	}
 
@@ -118,7 +122,7 @@ public class LinkCards extends Widget {
 		return allowCardEditing;
 	}
 
-	public void setAllowCardEditing(boolean allowCardEditing) {
+	public void setAllowCardEditing(final boolean allowCardEditing) {
 		this.allowCardEditing = allowCardEditing;
 	}
 
@@ -126,7 +130,7 @@ public class LinkCards extends Widget {
 		return readOnly;
 	}
 
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(final boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
@@ -134,7 +138,7 @@ public class LinkCards extends Widget {
 		return required;
 	}
 
-	public void setRequired(boolean required) {
+	public void setRequired(final boolean required) {
 		this.required = required;
 	}
 
@@ -142,7 +146,7 @@ public class LinkCards extends Widget {
 		return enableMap;
 	}
 
-	public void setEnableMap(boolean enableMap) {
+	public void setEnableMap(final boolean enableMap) {
 		this.enableMap = enableMap;
 	}
 
@@ -150,7 +154,7 @@ public class LinkCards extends Widget {
 		return mapLatitude;
 	}
 
-	public void setMapLatitude(Integer mapLatitude) {
+	public void setMapLatitude(final Integer mapLatitude) {
 		this.mapLatitude = mapLatitude;
 	}
 
@@ -158,7 +162,7 @@ public class LinkCards extends Widget {
 		return mapLongitude;
 	}
 
-	public void setMapLongitude(Integer mapLongitude) {
+	public void setMapLongitude(final Integer mapLongitude) {
 		this.mapLongitude = mapLongitude;
 	}
 
@@ -166,7 +170,7 @@ public class LinkCards extends Widget {
 		return mapZoom;
 	}
 
-	public void setMapZoom(Integer mapZoom) {
+	public void setMapZoom(final Integer mapZoom) {
 		this.mapZoom = mapZoom;
 	}
 
@@ -174,7 +178,7 @@ public class LinkCards extends Widget {
 		return outputName;
 	}
 
-	public void setOutputName(String outputName) {
+	public void setOutputName(final String outputName) {
 		this.outputName = outputName;
 	}
 
@@ -182,7 +186,28 @@ public class LinkCards extends Widget {
 		return templates;
 	}
 
-	public void setTemplates(Map<String, String> templates) {
+	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
+	}
+
+	@Override
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+		if (outputName != null) {
+			output.put(outputName, outputValue(input));
+		}
+	}
+
+	private CardReference[] outputValue(final Object input) {
+		@SuppressWarnings("unchecked") final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
+		final List<Object> selectedCardIds = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
+		for (Object cardId : selectedCardIds) {
+			final CMCard card = dataAccessLogic.getCard(className, cardId);
+			final CardReference cardReference = CardReference.newInstance(card);
+			if (cardReference != null) {
+				selectedCards.add(cardReference);
+			}
+		}
+		return selectedCards.toArray(new CardReference[selectedCards.size()]);
 	}
 }

@@ -19,7 +19,6 @@ import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
@@ -300,8 +299,8 @@ public class EmailCard extends LazyCard {
     	setEmailStatus(EmailStatus.fromName(status));
     }
 
-    public EmailStatus getEmailStatus() {
+    public String getEmailStatusDescription() {
     	Lookup statusLookup = getAttributeValue(EmailStatusAttr).getLookup();
-    	return EmailStatus.fromLookup(statusLookup);
+    	return statusLookup.getDescription();
     }
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
@@ -45,6 +46,14 @@ public abstract class Widget implements CMActivityWidget {
 	 */
 	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) {
 		return null;
+	}
+
+	@Override
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+	}
+
+	@Override
+	public void advance(final CMActivityInstance activityInstance) {
 	}
 
 	public final void setId(final String id) {

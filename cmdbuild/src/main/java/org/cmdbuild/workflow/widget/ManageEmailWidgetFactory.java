@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
@@ -22,6 +23,12 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
 	private final static String WIDGET_NAME = "manageEmail";
 
+	private final EmailLogic emailLogic;
+
+	public ManageEmailWidgetFactory(final EmailLogic emailLogic) {
+		this.emailLogic = emailLogic;
+	}
+
 	@Override
 	public String getWidgetName() {
 		return WIDGET_NAME;
@@ -33,7 +40,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	 */
 	@Override
 	protected Widget createWidget(Map<String, String> valueMap) {
-		ManageEmail widget = new ManageEmail();
+		ManageEmail widget = new ManageEmail(emailLogic);
 		Map<String, EmailTemplate> emailTemplate = new LinkedHashMap<String, EmailTemplate>(); // I want preserve the order
 		Set<String> managedParameters = new HashSet<String>();
 		managedParameters.add(READ_ONLY);
