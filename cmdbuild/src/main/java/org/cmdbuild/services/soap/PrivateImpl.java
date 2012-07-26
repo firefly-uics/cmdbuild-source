@@ -15,6 +15,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
@@ -385,8 +386,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	}
 
 	private String nativeValueToWsString(final Object value) {
-		// TODO Fix for dates
-		return value.toString();
+		if (value == null) {
+			return StringUtils.EMPTY;
+		} else {
+			// TODO Fix for dates using CMAttributeTypeVisitor
+			return value.toString();
+		}
 	}
 
 }
