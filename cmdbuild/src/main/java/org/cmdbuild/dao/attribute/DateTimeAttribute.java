@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.attribute;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ public class DateTimeAttribute extends AbstractDateAttribute {
 		Date dateValue;
 		if (value instanceof Date) {
 			dateValue = (Date) value;
+		} else if (value instanceof Calendar) {
+			dateValue = ((Calendar) value).getTime();
 		} else if (value instanceof String) {
 			dateValue = convertDateString((String) value, JSON_DATETIME_FORMAT, DateAttribute.JSON_DATE_FORMAT,
 					SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT, LEGACY_JSON_DATETIME_FORMAT);
