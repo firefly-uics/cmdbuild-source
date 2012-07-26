@@ -1151,6 +1151,7 @@
                "subjectfld": "Oggetto",
                "subjecthdr": "Oggetto",
                "tofld": "Destinatario",
+               "updateTemplateConfirm":"Le email non inviate verranno perse.",
                "viewicon": "Visualizza",
                "mailsAreChanged":"Le email generate sono cambiate",
                "regenerates": "Rigenera email"
@@ -1176,6 +1177,7 @@
          "status": " Stato",
          "statuses": {
             "all": "Tutti",
+            "closed.aborted": "Abortito",
             "closed.completed": "Completato",
             "open.not_running.suspended": "Sospeso",
             "open.running": "Attivo"

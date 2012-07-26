@@ -18,7 +18,7 @@ public class ManageEmail extends Widget {
 
 	private static class Submission {
 		public List<Email> updated = new ArrayList<Email>();
-		public List<Email> deleted = new ArrayList<Email>();
+		public List<Long> deleted = new ArrayList<Long>();
 	}
 
 	public static class EmailTemplate extends AbstractEmail {
@@ -85,16 +85,26 @@ public class ManageEmail extends Widget {
 	}
 
 	private Submission decodeInput(final Object input) {
-		@SuppressWarnings("unchecked") final Map<String, List<Map<String, Object>>> inputMap = (Map<String, List<Map<String, Object>>>) input;
+		@SuppressWarnings("unchecked") final Map<String, List<?>> inputMap = (Map<String, List<?>>) input;
 		final Submission emails = new Submission();
 		fillEmails(emails.updated, inputMap.get(UPDATED_SUBMISSION_PARAM));
-		fillEmails(emails.deleted, inputMap.get(DELETED_SUBMISSION_PARAM));
+		fillIds(emails.deleted, inputMap.get(DELETED_SUBMISSION_PARAM));
 		return emails;
 	}
 
-	private void fillEmails(final List<Email> emailList, final List<Map<String, Object>> emailMapList) {
+	private void fillEmails(final List<Email> emailList, final List<?> emailObjectList) {
+		@SuppressWarnings("unchecked")
+		final List<Map<String, Object>> emailMapList = (List<Map<String, Object>>) emailObjectList;
 		for (final Map<String, Object> emailMap : emailMapList) {
 			emailList.add(newEmailInstance(emailMap));
+		}
+	}
+
+	private void fillIds(final List<Long> emailIds, final List<?> idsObjectList) {
+		@SuppressWarnings("unchecked")
+		final List<Number> idsList = (List<Number>) idsObjectList;
+		for (final Number id : idsList) {
+			emailIds.add(id.longValue());
 		}
 	}
 
@@ -114,10 +124,10 @@ public class ManageEmail extends Widget {
 		return email;
 	}
 
-	private void deleteEmails(final CMActivityInstance activityInstance, final List<Email> deletedEmails) {
+	private void deleteEmails(final CMActivityInstance activityInstance, final List<Long> deletedEmails) {
 		final Long processCardId = activityInstance.getProcessInstance().getCardId();
-		for (final Email email : deletedEmails) {
-			emailLogic.deleteEmail(processCardId, email);
+		for (final Long emailId : deletedEmails) {
+			emailLogic.deleteEmail(processCardId, emailId);
 		}
 	}
 

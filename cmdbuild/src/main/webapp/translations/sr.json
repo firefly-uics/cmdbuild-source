@@ -1151,6 +1151,7 @@
                "subjectfld": "Naslov poruke",
                "subjecthdr": "Naslov poruke",
                "tofld": "Primalac",
+               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
                "viewicon": "Prikaži",
                "mailsAreChanged":"Generisana e-pošta je izmenjena",
                "regenerates": "Iznova generiši e-poštu"
@@ -1176,6 +1177,7 @@
          "status": " Stanje",
          "statuses": {
             "all": "Sva",
+            "closed.aborted": "<em>Aborted</em>",
             "closed.completed": "Završen",
             "open.not_running.suspended": "Suspendovan",
             "open.running": "Aktivan"

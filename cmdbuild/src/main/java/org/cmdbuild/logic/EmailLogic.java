@@ -162,9 +162,9 @@ public class EmailLogic {
 		EmailCard.sendOutgoingAndDrafts(processCard);
 	}
 
-	public void deleteEmail(final Long processCardId, final Email email) {
+	public void deleteEmail(final Long processCardId, final Long emailId) {
 		final ICard processCard = fetchProcessCard(processCardId);
-		final EmailCard emailCard = EmailCard.get(processCard, email.getId().intValue());
+		final EmailCard emailCard = EmailCard.get(processCard, emailId.intValue());
 		emailCard.delete();
 	}
 

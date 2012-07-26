@@ -1151,6 +1151,7 @@
                "subjectfld": "Assunto",
                "subjecthdr": "Assunto",
                "tofld": "Para",
+               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
                "viewicon": "Visualizar",
                "mailsAreChanged": "Os e-mails gerados foram alterados",
                "regenerates": "Regenerar os e-mails"
@@ -1176,6 +1177,7 @@
          "status": "Estado",
          "statuses": {
             "all": "Todos",
+            "closed.aborted": "<em>Aborted</em>",
             "closed.completed": "Completado",
             "open.not_running.suspended": "Suspenso",
             "open.running": "Abrir"

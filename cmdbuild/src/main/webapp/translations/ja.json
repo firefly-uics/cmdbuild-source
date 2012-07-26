@@ -1151,6 +1151,7 @@
                "subjectfld": "件名",
                "subjecthdr": "件名",
                "tofld": "To",
+               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
                "viewicon": "ビュー",
                "mailsAreChanged":"作成された電子メールは変更されました",
                "regenerates": "電子メール再作成"
@@ -1177,6 +1178,7 @@
          "statuses": {
             "all": "すべて",
             "closed.completed": "完了",
+            "closed.aborted": "<em>Aborted</em>",
             "open.not_running.suspended": "中断",
             "open.running": "開いています"
          },

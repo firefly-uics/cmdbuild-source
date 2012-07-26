@@ -4,7 +4,8 @@
 
 		mixins: {
 			observable: "Ext.util.Observable",
-			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
+			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController",
+			emailgriddelegate: "CMDBuild.view.management.common.widgets.CMEmailGridDelegate"
 		},
 
 		statics: {
@@ -28,20 +29,22 @@
 			this.readWrite = !this.reader.readOnly(widget);
 
 			var xavars = Ext.apply({}, this.reader.templates(this.widgetConf), this.emailTemplatesData);
-			_debug("XAVARS passed to templateResolver", xavars);
+
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
 				xaVars: xavars,
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			this.mon(this.view, this.view.CMEVENTS.updateTemplatesButtonClick, function() {
-				this.emailsWereGenerated = false;
-				this.addEmailFromTemplateIfNeeded();
-			}, this);
+			this.view.setDelegate(this);
 		},
 
 		// override
+		/*
+		 * If the grid is already loaded add the emails generated from the templates
+		 * (if there are templates, and if the email are not already generated).
+		 * Otherwise, load the grid before. 
+		 */
 		beforeActiveView: function() {
 			var pi = _CMWFState.getProcessInstance();
 			if (!this.gridStoreWasLoaded) {
@@ -62,16 +65,23 @@
 			}
 		},
 
+		/*
+		 * Resolve the template only if there are
+		 * no draft mails, because the draft mails are
+		 * saved from this step, and assume that
+		 * the user has already modified the template
+		 * for this step.
+		 */
 		addEmailFromTemplateIfNeeded: function() {
 			if (this.emailsWereGenerated) {
 				return;
 			}
 
-			var me = this;
-			if (me.readWrite
-					&& me.thereAreTemplates()) {
+			if (this.readWrite
+					&& this.thereAreTemplates()
+					&& !this.view.hasDraftEmails()) {
 
-				_createEmailFromTemplate(me);
+				_createEmailFromTemplate(this);
 			}
 		},
 
@@ -82,6 +92,16 @@
 		countTemplates: function() {
 			var t = this.reader.emailTemplates(this.widgetConf) || [];
 			return t.length;
+		},
+
+		removeUnsentEmails: function() {
+			var emailToRemove = [].concat(this.view.getNewEmails())
+				.concat(this.view.getDraftEmails());
+
+			for (var i=0, l=emailToRemove.length, e=null; i<l; ++i) {
+				e = emailToRemove[i];
+				this.view.removeRecord(e);
+			}
 		},
 
 		// override
@@ -102,8 +122,14 @@
 		isBusy: function() {
 			this.addEmailFromTemplateIfNeeded();
 			return this.busy;
-		}
+		},
 
+		// as emailgriddelegate
+		onUpdateTemplatesButtonClick: function() {
+			this.removeUnsentEmails(); // New and Draft
+			this.emailsWereGenerated = false;
+			this.addEmailFromTemplateIfNeeded();
+		}
 	});
 
 	function _createEmailFromTemplate(me) {
@@ -143,7 +169,7 @@
 		});
 	}
 
-	/**
+	/*
 	 * Extract the variables of each EmailTemplate,
 	 * add a suffix to them with the index,
 	 * and put them all in the templates map.
