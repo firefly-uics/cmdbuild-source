@@ -214,7 +214,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		if (procInstInfo == null) {
 			return completeProcess(procInst);
 		} else {
-			return syncProcessStateAndActivities(procInst, procInstInfo);
+			return syncProcessStateActivitiesAndVariables(procInst, procInstInfo);
 		}
 	}
 
@@ -299,17 +299,26 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		return editableProcessInstance.save();
 	}
 
+	private CMProcessInstance syncProcessStateActivitiesAndVariables(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
+		return syncProcessStateActivitiesAndMaybeVariables(processInstance, processInstanceInfo, true);
+	}
+
 	private CMProcessInstance syncProcessStateAndActivities(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo) throws CMWorkflowException {
+		return syncProcessStateActivitiesAndMaybeVariables(processInstance, processInstanceInfo, false);
+	}
+
+	private CMProcessInstance syncProcessStateActivitiesAndMaybeVariables(final CMProcessInstance processInstance, final WSProcessInstInfo processInstanceInfo, final boolean syncVariables) throws CMWorkflowException {
 		final CMProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
 
 		// TODO Sync variables (should be removed when bidirectional communication is implemented)
-		final Map<String, Object> vars = workflowService.getProcessInstanceVariables(processInstance.getProcessInstanceId());
-		for (final CMAttribute a : processInstance.getType().getAttributes()) {
-			final String attributeName = a.getName();
-			final Object newValue = vars.get(attributeName);
-			editableProcessInstance.set(attributeName, newValue);
+		if (syncVariables) {
+			final Map<String, Object> vars = workflowService.getProcessInstanceVariables(processInstance.getProcessInstanceId());
+			for (final CMAttribute a : processInstance.getType().getAttributes()) {
+				final String attributeName = a.getName();
+				final Object newValue = vars.get(attributeName);
+				editableProcessInstance.set(attributeName, newValue);
+			}
 		}
-
 		editableProcessInstance.setState(processInstanceInfo.getStatus());
 		editableProcessInstance.setUniqueProcessDefinition(processInstanceInfo);
 		final WSActivityInstInfo[] activities = workflowService.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
