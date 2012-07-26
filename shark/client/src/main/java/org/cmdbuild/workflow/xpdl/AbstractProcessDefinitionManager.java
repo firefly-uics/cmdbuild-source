@@ -76,8 +76,8 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 		if (startActivities.size() == 1) {
 			return startActivities.get(0);
 		} else {
-			for (CMActivity a : startActivities) {
-				for (ActivityPerformer p : a.getPerformers()) {
+			for (final CMActivity a : startActivities) {
+				for (final ActivityPerformer p : a.getPerformers()) {
 					if (p.isAdmin()) {
 						return a;
 					}

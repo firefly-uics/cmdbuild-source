@@ -131,11 +131,13 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		WSActivityInstInfo startActInstInfo = null;
 		final WSActivityInstInfo[] ais = workflowService.findOpenActivitiesForProcessInstance(procInstId);
 		for (int i = 0; i < ais.length; ++i) {
-			final String actDefId = ais[i].getActivityDefinitionId();
+			final WSActivityInstInfo ai = ais[i];
+			final String actDefId = ai.getActivityDefinitionId();
 			if (startActivityId.equals(actDefId)) {
-				startActInstInfo = ais[i];
+				startActInstInfo = ai;
 			} else {
-				workflowService.abortActivityInstance(procInstId, actDefId);
+				final String actInstId = ai.getActivityInstanceId();
+				workflowService.abortActivityInstance(procInstId, actInstId);
 			}
 		}
 		return startActInstInfo;

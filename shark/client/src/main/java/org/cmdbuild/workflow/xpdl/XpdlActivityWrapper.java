@@ -11,8 +11,7 @@ import org.cmdbuild.workflow.CMActivity;
 public class XpdlActivityWrapper implements CMActivity {
 
 	@Legacy("As in 1.x")
-	public static final String ADMIN_START_XA = "adminStart";
-
+	public static final String ADMIN_START_XA = "AdminStart";
 
 	private final XpdlActivity inner;
 	private final XpdlExtendedAttributeVariableFactory variableFactory;
@@ -41,7 +40,7 @@ public class XpdlActivityWrapper implements CMActivity {
 
 	@Legacy("As in 1.x")
 	private boolean isAdminStart() {
-		return (inner.getFirstExtendedAttribute(ADMIN_START_XA) != null);
+		return inner.hasExtendedAttributeIgnoreCase(ADMIN_START_XA);
 	}
 
 	@Override
