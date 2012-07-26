@@ -186,6 +186,22 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 		return xxas;
 	}
 
+	public boolean hasExtendedAttributeIgnoreCase(final String key) {
+		if (key == null) {
+			return false;
+		}
+		final ExtendedAttributes xattrs = inner.getExtendedAttributes();
+		if (xattrs != null) {
+			for (int i = 0; i < xattrs.size(); ++i) {
+				final ExtendedAttribute xa = (ExtendedAttribute) xattrs.get(i);
+				if (key.equalsIgnoreCase(xa.getName())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public boolean isTaskApplication() {
 		return inner.getActivityType() == XPDLConstants.ACTIVITY_TYPE_TASK_APPLICATION;
 	}
