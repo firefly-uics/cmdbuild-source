@@ -23,25 +23,22 @@ Ext.define("CMDBuild.view.management.common.widgets.CMManageEmail", {
 			border: false
 		});
 
-		Ext.apply(this, {
-			frame: false,
-			border: false,
-			items: [this.emailGrid],
-			cls: "x-panel-body-default-framed",
+		_CMUtils.forwardMethods(this, this.emailGrid, [
+			"addTemplateToStore",
+			"hasDraftEmails",
+			"removeTemplatesFromStore",
+			"getDraftEmails",
+			"getNewEmails",
+			"removeRecord",
+			"setDelegate"
+		]);
 
-			// Wrap the grid
-			addTemplateToStore: function(t) {
-				return this.emailGrid.addTemplateToStore(t);
-			},
-			removeTemplatesFromStore: function() {
-				return this.emailGrid.removeTemplatesFromStore();
-			},
-			CMEVENTS: this.emailGrid.CMEVENTS
-		});
+		this.frame = false;
+		this.border = false;
+		this.items = [this.emailGrid];
+		this.cls = "x-panel-body-default-framed";
 
 		this.callParent(arguments);
-		this.addEvents([this.CMEVENTS.updateTemplatesButtonClick]);
-		this.relayEvents(this.emailGrid, [this.emailGrid.CMEVENTS.updateTemplatesButtonClick]);
 	},
 
 	getOutgoing: function(modifiedOnly) {

@@ -1151,6 +1151,7 @@
                "subjectfld": "Тема",
                "subjecthdr": "Тема",
                "tofld": "Кому",
+               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
                "viewicon": "Просмотреть",
                "mailsAreChanged": "Сгенерированные почтовые сообщения изменены.",
                "regenerates": "Повторить генерацию почтовых сообщений."
@@ -1176,6 +1177,7 @@
          "status": "Статус",
          "statuses": {
             "all": "Все",
+            "closed.aborted": "<em>Aborted</em>",
             "closed.completed": "Завершенные",
             "open.not_running.suspended": "Приостановленные",
             "open.running": "Открытые"

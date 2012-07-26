@@ -1113,6 +1113,7 @@
                "subjectfld": "Наслов поруке",
                "subjecthdr": "Наслов поруке",
                "tofld": "Прималац",
+               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
                "viewicon": "Прикажи",
                "mailsAreChanged":"Генерисана е-пошта је измењена",
                "regenerates": "Изнова генериши е-пошту"
@@ -1138,6 +1139,7 @@
          "status": " Стање",
          "statuses": {
             "all": "Сва",
+            "closed.aborted": "<em>Aborted</em>",
             "closed.completed": "Завршен",
             "open.not_running.suspended": "Суспендован",
             "open.running": "Активан"

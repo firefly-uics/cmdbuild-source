@@ -3,6 +3,7 @@
 		STATE_VALUE_OPEN = "open.running",
 		STATE_VALUE_SUSPENDED = "open.not_running.suspended",
 		STATE_VALUE_COMPLETED = "closed.completed",
+		STATE_VALUE_ABORTED = "closed.aborted",
 		STATE_VALUE_ALL = "all", // Not existent
 
 		GET_PROCESS_INSTANCE_URL = "services/json/workflow/getprocessinstancelist",
@@ -106,6 +107,7 @@
 					[STATE_VALUE_OPEN, tr[STATE_VALUE_OPEN]],
 					[STATE_VALUE_SUSPENDED, tr[STATE_VALUE_SUSPENDED]],
 					[STATE_VALUE_COMPLETED, tr[STATE_VALUE_COMPLETED]],
+					[STATE_VALUE_ABORTED, tr[STATE_VALUE_ABORTED]],
 					[STATE_VALUE_ALL, tr[STATE_VALUE_ALL]]
 				]
 			});

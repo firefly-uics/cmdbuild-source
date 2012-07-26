@@ -1151,6 +1151,7 @@
                "subjectfld": "Betreff",
                "subjecthdr": "Betreff",
                "tofld": "Empfänger",
+               "updateTemplateConfirm":"Das wird alle nicht gesendete E-Mails löschen,
                "viewicon": "Ansicht",
                "mailsAreChanged":"Generierte E-Mails haben sich geändert",
                "regenerates": "E-Mail regenerieren"
@@ -1176,6 +1177,7 @@
          "status": " Status",
          "statuses": {
             "all": "Alle",
+            "closed.aborted": "Abgestürzt",
             "closed.completed": "Beendet",
             "open.not_running.suspended": "Unterbrochen",
             "open.running": "Aktiv"
