@@ -2,6 +2,8 @@ package integration;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
@@ -10,11 +12,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static utils.XpdlTestUtils.randomName;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.workflow.CMEventManager;
 import org.cmdbuild.workflow.TypesConverter;
+import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
@@ -35,6 +39,9 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 	private static final String A_BOOLEAN = "aBoolean";
 	private static final String AN_INTEGER = "anInteger";
 	private static final String A_STRING = "aString";
+	private static final String A_DATE = "aDate";
+	private static final String A_LOOKUP = "aLookup";
+	private static final String A_FLOAT = "aFloat";
 
 	private static final String UNDEFINED = "undefined";
 
@@ -50,6 +57,12 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		process.addField(A_BOOLEAN, StandardAndCustomTypes.BOOLEAN);
 		process.addField(AN_INTEGER, StandardAndCustomTypes.INTEGER);
 		process.addField(A_STRING, StandardAndCustomTypes.STRING);
+		process.addField(A_DATE, StandardAndCustomTypes.DATETIME);
+		process.addField(A_FLOAT, StandardAndCustomTypes.FLOAT);
+
+		xpdlDocument.createCustomTypeDeclarations();
+		process.addField(A_REFERENCE, StandardAndCustomTypes.REFERENCE);
+		process.addField(A_LOOKUP, StandardAndCustomTypes.LOOKUP);
 	}
 
 	@Before
@@ -172,6 +185,23 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
 		assertThat(readVariables.get(A_REFERENCE), hasProperty("id", equalTo(42)));
+	}
+
+	@Test
+	public void declaredVariablesAreInitializedWithDefaultValuesOrEmptyConstructors() throws Exception {
+		process.createActivity(randomName());
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		verify(eventManager).processStarted(process.getId());
+		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
+
+		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(false));
+		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(0L));
+		assertThat((Date) readVariables.get(A_DATE), is(notNullValue()));
+		assertThat((Double) readVariables.get(A_FLOAT), equalTo(0.0));
+
+		assertThat((ReferenceType) readVariables.get(A_REFERENCE), equalTo(new ReferenceType()));
+		assertThat((LookupType) readVariables.get(A_LOOKUP), equalTo(new LookupType()));
 	}
 
 	/*
