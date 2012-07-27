@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;

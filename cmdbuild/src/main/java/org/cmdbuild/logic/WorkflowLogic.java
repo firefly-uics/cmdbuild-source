@@ -12,7 +12,6 @@ import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;

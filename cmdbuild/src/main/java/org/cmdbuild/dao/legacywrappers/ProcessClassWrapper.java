@@ -5,11 +5,11 @@ import javax.activation.DataSource;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.user.UserProcessClass;
 
-public class ProcessClassWrapper extends ClassWrapper implements CMProcessClass {
+public class ProcessClassWrapper extends ClassWrapper implements UserProcessClass {
 
 	private final UserContext userCtx;
 	private final ProcessDefinitionManager processDefinitionManager;
@@ -73,5 +73,15 @@ public class ProcessClassWrapper extends ClassWrapper implements CMProcessClass 
 		} catch (CMWorkflowException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isStoppable() {
+		return userCtx.privileges().isAdmin() || this.isUserStoppable();
+	}
+
+	@Override
+	public boolean isStartable() throws CMWorkflowException {
+		return (getStartActivity() != null);
 	}
 }
