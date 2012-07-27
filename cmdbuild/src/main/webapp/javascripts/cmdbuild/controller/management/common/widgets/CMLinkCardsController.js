@@ -88,8 +88,9 @@
 			var out = null;
 			if (!this.readOnly) {
 				out = {};
-				out["output"] = this.model.getSelections();
+				out["output"] = convertElementsFromStringToInt(this.model.getSelections());
 			}
+
 			return out;
 		},
 
@@ -349,5 +350,27 @@
 				}
 			}
 		});
+	}
+
+	/*
+	 * Local solution for a global issue.
+	 * The card model is a CMDBuild.Dummymodel,
+	 * it takes a map and set all the key as fields of the model,
+	 * so there are no type specification.
+	 * Server side I want that the Ids are integer, so now
+	 * cast it in this function, but the real solution is to
+	 * find a way to say to the card that its id is a number.
+	 */
+	function convertElementsFromStringToInt(input) {
+		input = input || [];
+		var output = [];
+		for (var i=0, l=input.length, element=null; i<l; ++i) {
+			element = parseInt(input[i]);
+			if (element) {
+				output.push(element);
+			}
+		}
+
+		return output;
 	}
 })();

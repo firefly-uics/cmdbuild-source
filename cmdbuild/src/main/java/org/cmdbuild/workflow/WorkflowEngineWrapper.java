@@ -21,6 +21,7 @@ import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 
@@ -50,14 +51,14 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	public CMProcessClass findProcessClassById(Long id) {
+	public UserProcessClass findProcessClassById(Long id) {
 		Validate.notNull(id);
 		final ProcessType processType = findProcessTypeById(id);
 		return wrap(processType);
 	}
 
 	@Override
-	public CMProcessClass findProcessClassByName(String name) {
+	public UserProcessClass findProcessClassByName(String name) {
 		Validate.notNull(name);
 		final ProcessType processType = findProcessTypeByName(name);
 		return wrap(processType);
@@ -81,7 +82,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		return userCtx.processTypes().get(name);
 	}
 
-	private CMProcessClass wrap(final ProcessType processType) {
+	private UserProcessClass wrap(final ProcessType processType) {
 		return new ProcessClassWrapper(userCtx, processType, processDefinitionManager);
 	}
 
@@ -90,11 +91,11 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 	
 	@Override
-	public Iterable<? extends CMProcessClass> findProcessClasses() {
-		return Iterables.filter(findAllProcessClasses(), new Predicate<CMProcessClass>() {
+	public Iterable<UserProcessClass> findProcessClasses() {
+		return Iterables.filter(findAllProcessClasses(), new Predicate<UserProcessClass>() {
 
 			@Override
-			public boolean apply(CMProcessClass input) {
+			public boolean apply(UserProcessClass input) {
 				return input.isActive();
 			}
 
@@ -102,11 +103,11 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	public Iterable<? extends CMProcessClass> findAllProcessClasses() {
-		return Iterables.transform(userCtx.processTypes().list(), new Function<ProcessType, CMProcessClass>() {
+	public Iterable<UserProcessClass> findAllProcessClasses() {
+		return Iterables.transform(userCtx.processTypes().list(), new Function<ProcessType, UserProcessClass>() {
 
 			@Override
-			public CMProcessClass apply(ProcessType input) {
+			public UserProcessClass apply(ProcessType input) {
 				return wrap(input);
 			}
 
