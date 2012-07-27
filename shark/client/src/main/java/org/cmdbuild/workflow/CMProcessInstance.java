@@ -64,7 +64,7 @@ public interface CMProcessInstance extends CMCard {
 	 * 
 	 * @return the process instance activities
 	 */
-	List<CMActivityInstance> getActivities();
+	List<? extends CMActivityInstance> getActivities();
 
 	/**
 	 * Get an activity by its id.

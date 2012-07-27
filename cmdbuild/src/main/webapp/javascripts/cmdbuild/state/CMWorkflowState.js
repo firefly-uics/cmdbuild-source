@@ -48,8 +48,8 @@
 			return this.data.widgets || [];
 		},
 
-		hasWritePrivileges: function() {
-			return this.data.writePrivileges;
+		isWritable: function() {
+			return this.data.writable || false;
 		}
 	});
 

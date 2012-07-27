@@ -14,9 +14,10 @@ import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessClass;
-import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
+import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance;
 
 /**
  * Business Logic Layer for Workflow Operations.
@@ -53,7 +54,7 @@ public class WorkflowLogic {
 	 * @return
 	 */
 	@Legacy("Old DAO")
-	public Iterable<CMProcessInstance> query(final CardQuery cardQuery) {
+	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
 		return wfEngine.query(cardQuery);
 	}
 
@@ -72,16 +73,16 @@ public class WorkflowLogic {
 		return wfEngine.findProcessClassById(processClassId).getStartActivity();
 	}
 
-	public CMProcessInstance getProcessInstance(
+	public UserProcessInstance getProcessInstance(
 		final Long processClassId, final Long cardId) {
 		final CMProcessClass proc = wfEngine.findProcessClassById(processClassId);
 
 		return wfEngine.findProcessInstance(proc, cardId);
 	}
 
-	public CMActivityInstance getActivityInstance(final Long processClassId, final Long processCardId, final Object activityInstanceId) {
-		CMProcessInstance pi = getProcessInstance(processClassId, processCardId);
-		for (CMActivityInstance a:pi.getActivities()) {
+	public UserActivityInstance getActivityInstance(final Long processClassId, final Long processCardId, final Object activityInstanceId) {
+		UserProcessInstance pi = getProcessInstance(processClassId, processCardId);
+		for (UserActivityInstance a:pi.getActivities()) {
 			if (a.getId().equals(activityInstanceId)) {
 				return a;
 			}
@@ -98,17 +99,17 @@ public class WorkflowLogic {
 	 * @return the created process instance
 	 * @throws CMWorkflowException 
 	 */
-	public CMProcessInstance startProcess(
+	public UserProcessInstance startProcess(
 			final Long processClassId,
 			final Map<String, Object> vars,
 			final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final CMProcessClass proc = wfEngine.findProcessClassById(processClassId);
-		final CMProcessInstance procInst = wfEngine.startProcess(proc);
+		final UserProcessInstance procInst = wfEngine.startProcess(proc);
 		return updateOnlyActivity(procInst, vars, widgetSubmission, advance);
 	}
 
-	public CMProcessInstance updateProcess(Long processClassId,
+	public UserProcessInstance updateProcess(Long processClassId,
 			final Long processCardId,
 			final String activityInstanceId,
 			final Map<String, Object> vars,
@@ -116,8 +117,8 @@ public class WorkflowLogic {
 			boolean advance) throws CMWorkflowException {
 
 		final CMProcessClass proc = wfEngine.findProcessClassById(processClassId);
-		final CMProcessInstance procInst = wfEngine.findProcessInstance(proc, processCardId);
-		final CMActivityInstance activityInstance = procInst.getActivityInstance(activityInstanceId);
+		final UserProcessInstance procInst = wfEngine.findProcessInstance(proc, processCardId);
+		final UserActivityInstance activityInstance = procInst.getActivityInstance(activityInstanceId);
 
 		return updateActivity(activityInstance, vars, widgetSubmission, advance);
 	}
@@ -132,21 +133,21 @@ public class WorkflowLogic {
 	 * @return the updated process instance
 	 * @throws CMWorkflowException
 	 */
-	private CMProcessInstance updateOnlyActivity(
-			final CMProcessInstance procInst,
+	private UserProcessInstance updateOnlyActivity(
+			final UserProcessInstance procInst,
 			final Map<String, Object> vars,
 			final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
-		final List<CMActivityInstance> activities = procInst.getActivities();
+		final List<UserActivityInstance> activities = procInst.getActivities();
 		if (activities.size() != 1) {
 			throw new UnsupportedOperationException(String.format("Not just one activity to advance! (%d activities)", activities.size()));
 		}
-		final CMActivityInstance firstActInst = activities.get(0);
+		final UserActivityInstance firstActInst = activities.get(0);
 		return updateActivity(firstActInst, vars, widgetSubmission, advance);
 	}
 
-	private CMProcessInstance updateActivity(
-			final CMActivityInstance activityInstance,
+	private UserProcessInstance updateActivity(
+			final UserActivityInstance activityInstance,
 			final Map<String, Object> vars,
 			final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
@@ -205,7 +206,7 @@ public class WorkflowLogic {
 
 	public void abortProcess(Long processClassId, long processCardId) throws CMWorkflowException {
 		final CMProcessClass process = wfEngine.findProcessClassById(processClassId);
-		final CMProcessInstance pi = wfEngine.findProcessInstance(process, processCardId);
+		final UserProcessInstance pi = wfEngine.findProcessInstance(process, processCardId);
 
 		wfEngine.abortProcessInstance(pi);
 	}

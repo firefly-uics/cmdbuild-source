@@ -16,12 +16,12 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
-import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
@@ -29,13 +29,16 @@ import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfoImpl;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
+import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 import org.enhydra.shark.api.common.SharkConstants;
 
-public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInstance, CMProcessInstanceDefinition {
+public class ProcessInstanceWrapper extends CardWrapper implements UserProcessInstance, UserProcessInstanceDefinition {
 
 	private static final String FLOW_STATUS_LOOKUP = "FlowStatus";
 
-	private class ActivityInstanceImpl implements CMActivityInstance {
+	private class ActivityInstanceImpl implements UserActivityInstance {
 
 		final String activityInstanceId;
 		final String activityInstancePerformer;
@@ -48,7 +51,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		}
 
 		@Override
-		public CMProcessInstance getProcessInstance() {
+		public UserProcessInstance getProcessInstance() {
 			return ProcessInstanceWrapper.this;
 		}
 
@@ -66,7 +69,11 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		public String getPerformerName() {
 			return activityInstancePerformer;
 		}
-		
+
+		@Override
+		public boolean isWritable() {
+			return userCtx.privileges().isAdmin() || userCtx.belongsTo(activityInstancePerformer);
+		}
 	}
 
 	@SuppressWarnings("serial")
@@ -134,8 +141,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	@Override
-	public List<CMActivityInstance> getActivities() {
-		final List<CMActivityInstance> out = new ArrayList<CMActivityInstance>();
+	public List<UserActivityInstance> getActivities() {
+		final List<UserActivityInstance> out = new ArrayList<UserActivityInstance>();
 		final String[] ais = getActivityInstanceIds();
 		final String[] ads = getActivityDefinitionIds();
 		final String[] perfs = getActivityInstancePerformers();
@@ -146,8 +153,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	@Override
-	public CMActivityInstance getActivityInstance(String activityInstanceId) {
-		for (CMActivityInstance ai: getActivities()) {
+	public UserActivityInstance getActivityInstance(String activityInstanceId) {
+		for (UserActivityInstance ai: getActivities()) {
 			if (ai.getId().equals(activityInstanceId)) {
 				return ai;
 			}
@@ -164,7 +171,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	 * Sets only non-system values
 	 */
 	@Override
-	public CMProcessInstanceDefinition set(final String key, final Object value) {
+	public UserProcessInstanceDefinition set(final String key, final Object value) {
 		if (isUserAttributeName(key)) {
 			card.setValue(key, value);
 		}
@@ -172,13 +179,13 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	@Override
-	public CMProcessInstance save() {
+	public UserProcessInstance save() {
 		card.save();
 		return this;
 	}
 
 	@Override
-	public CMProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
+	public UserProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		removeClosedActivities(activityInfos);
 		addNewActivities(activityInfos);
 		updateCodeWithOneRandomActivityInfo();
@@ -210,7 +217,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	private void updateCodeWithOneRandomActivityInfo() throws CMWorkflowException {
-		final List<CMActivityInstance> activities = getActivities();
+		final List<UserActivityInstance> activities = getActivities();
 		final String code;
 		if (activities.isEmpty()) {
 			code = null;
@@ -293,7 +300,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	@Override
-	public CMProcessInstanceDefinition setState(final WSProcessInstanceState state) {
+	public UserProcessInstanceDefinition setState(final WSProcessInstanceState state) {
 		final Lookup flowStatusLookup = lookupForFlowStatus(state);
 		card.setValue(ProcessAttributes.FlowStatus.dbColumnName(), flowStatusLookup);
 		return this;
@@ -319,7 +326,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 	}
 
 	@Override
-	public CMProcessInstanceDefinition setUniqueProcessDefinition(final WSProcessDefInfo info) {
+	public UserProcessInstanceDefinition setUniqueProcessDefinition(final WSProcessDefInfo info) {
 		final String value = String.format("%s#%s#%s", info.getPackageId(), info.getPackageVersion(), info.getProcessDefinitionId());
 		card.setValue(ProcessAttributes.UniqueProcessDefinition.dbColumnName(), value);
 		return this;
@@ -382,7 +389,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements CMProcessInst
 		return wrapper;
 	}
 
-	public static CMProcessInstanceDefinition readProcessInstance(
+	public static UserProcessInstanceDefinition readProcessInstance(
 			final UserContext userCtx,
 			final ProcessDefinitionManager processDefinitionManager,
 			final ProcessType processType,

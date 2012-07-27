@@ -24,10 +24,11 @@ import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInsta
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowEngine;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +55,6 @@ public class Workflow extends JSONBase {
 			@Parameter(value = "sort", required = false) JSONArray sorters,
 			@Parameter(value = "query", required = false) String fullTextQuery,
 
-
 			/*
 			 * Don't clone it or getCardPosition does not work,
 			 * unless sort and query are set somewhere else
@@ -69,7 +69,7 @@ public class Workflow extends JSONBase {
 
 		configureQuery(processQuery, fullTextQuery, sorters, limit, offset);
 
-		for (CMProcessInstance pi : logic.query(processQuery)) {
+		for (UserProcessInstance pi : logic.query(processQuery)) {
 			processInstances.add(new JsonProcessCard(pi));
 		}
 
@@ -109,7 +109,7 @@ public class Workflow extends JSONBase {
 			final UserContext userCtx) throws CMWorkflowException {
 
 		final WorkflowLogic logic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
-		final CMActivityInstance ad = logic.getActivityInstance(processClassId, processInstanceId, activityInstanceId);
+		final UserActivityInstance ad = logic.getActivityInstance(processClassId, processInstanceId, activityInstanceId);
 
 		return JsonResponse.success(new JsonActivityInstance(ad));
 	}
