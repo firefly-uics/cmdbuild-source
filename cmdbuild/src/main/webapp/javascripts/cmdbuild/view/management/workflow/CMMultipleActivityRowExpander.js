@@ -29,7 +29,7 @@
 						var a = activities[i];
 						var pClass = activityRowClass;
 
-						if (!a.writePrivileges) {
+						if (!a.writable) {
 							pClass += (" " + activityRowNotEditable);
 						}
 

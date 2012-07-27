@@ -85,6 +85,8 @@
 
 				if (activityInstance.isNew()) {
 					me.view.editMode();
+				} else if (!activityInstance.isWritable()) {
+					me.view.displayModeForNotEditableCard();
 				}
 
 			});
@@ -93,19 +95,15 @@
 			this.view.doLayout();
 		},
 
-		// override // deprecated
-		onEntryTypeSelected: function(entryType) { _deprecated(); },
-
-		// override // deprecated
-		onCardSelected: function(card) {_deprecated(); },
-
 		// override
 		onModifyCardClick: function() {
 			this.isAdvance = false;
 			var pi = _CMWFState.getProcessInstance();
+			var ai = _CMWFState.getActivityInstance();
 
-			if (pi && pi.isStateOpen()) {
-				// FIXME: check privileges
+			if (pi && pi.isStateOpen()
+					&& ai && ai.isWritable()) {
+
 				this.view.editMode();
 			}
 		},
@@ -225,7 +223,12 @@
 
 		// override
 		doFormSubmit: Ext.emptyFn,
-		onSaveSuccess: Ext.emptyFn
+		onSaveSuccess: Ext.emptyFn,
+
+		// override
+		// deprecated
+		onEntryTypeSelected: function(entryType) { _deprecated(); },
+		onCardSelected: function(card) {_deprecated(); }
 	});
 
 	function deleteActivity() {

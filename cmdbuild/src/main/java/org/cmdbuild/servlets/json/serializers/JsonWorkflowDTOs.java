@@ -11,9 +11,9 @@ import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.logic.EmailLogic.EmailStatus;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
-import org.cmdbuild.workflow.CMActivityInstance;
-import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 public class JsonWorkflowDTOs {
@@ -57,9 +57,9 @@ public class JsonWorkflowDTOs {
 	 * The base info to show the activities in the grid
 	 */
 	public static class JsonActivityInstanceInfo {
-		private final CMActivityInstance activityInstance;
+		private final UserActivityInstance activityInstance;
 
-		public JsonActivityInstanceInfo(final CMActivityInstance activityInstance) {
+		public JsonActivityInstanceInfo(final UserActivityInstance activityInstance) {
 			this.activityInstance = activityInstance;
 		}
 
@@ -75,8 +75,8 @@ public class JsonWorkflowDTOs {
 			return activityInstance.getDefinition().getDescription();
 		}
 
-		public Boolean getWritePrivileges() {
-			return true; //TODO: implement
+		public Boolean isWritable() {
+			return activityInstance.isWritable();
 		}
 	}
 
@@ -85,30 +85,33 @@ public class JsonWorkflowDTOs {
 	 */
 	public static class JsonActivityInstance extends JsonActivityDefinition {
 
-		private final CMActivityInstance activityInstance;
+		@SuppressWarnings("unused")
+		private final UserActivityInstance activityInstance;
+		private final JsonActivityInstanceInfo info;
 
-		public JsonActivityInstance(CMActivityInstance activityInstance) throws CMWorkflowException {
+		public JsonActivityInstance(UserActivityInstance activityInstance) throws CMWorkflowException {
 			super(activityInstance.getDefinition());
 			this.activityInstance = activityInstance;
+			info = new JsonActivityInstanceInfo(activityInstance);
 		}
 
 		public String getId() {
-			return activityInstance.getId();
+			return info.getId();
 		}
 
 		public String getPerformerName() {
-			return activityInstance.getPerformerName();
+			return info.getPerformerName();
 		}
 
-		public Boolean getWritePrivileges() {
-			return true; //TODO: implement
+		public Boolean isWritable() {
+			return info.isWritable();
 		}
 	}
 
 	public static class JsonProcessCard extends AbstractJsonResponseSerializer {
-		private CMProcessInstance processInstance;
+		private UserProcessInstance processInstance;
 
-		public JsonProcessCard(CMProcessInstance processInstance) {
+		public JsonProcessCard(UserProcessInstance processInstance) {
 			this.processInstance = processInstance;
 		}
 
@@ -139,7 +142,7 @@ public class JsonWorkflowDTOs {
 		public List<JsonActivityInstanceInfo> getActivityInstanceInfoList() throws CMWorkflowException {
 			List<JsonActivityInstanceInfo> out = new ArrayList<JsonActivityInstanceInfo>();
 
-			for (CMActivityInstance ai: processInstance.getActivities()) {
+			for (UserActivityInstance ai: processInstance.getActivities()) {
 				out.add(new JsonActivityInstanceInfo(ai));
 			}
 
