@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static utils.XpdlTestUtils.randomName;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.type.LookupType;
@@ -91,5 +92,20 @@ public class RemoteWorkflowServiceTest extends AbstractRemoteSharkServiceTest {
 		assertThat(val.getId(), is(42));
 		assertThat(val.getIdClass(), is(666));
 		assertThat(val.getDescription(), is("desc"));
+	}
+
+	@Test
+	public void variablesNotDefinedInTheXpdlCanBeSettedAnyway() throws Exception {
+		XpdlProcess process = xpdlDocument.createProcess(randomName());
+		process.createActivity(randomName());
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+
+		final Map<String, Object> settedVariables = new HashMap<String, Object>();
+		settedVariables.put("UNDEFINED", "baz");
+		ws.setProcessInstanceVariables(procInstId, settedVariables);
+
+		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
+		assertThat((String) readVariables.get("UNDEFINED"), is("baz"));
 	}
 }
