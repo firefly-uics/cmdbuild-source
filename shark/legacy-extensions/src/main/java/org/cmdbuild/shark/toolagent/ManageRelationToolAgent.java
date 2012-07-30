@@ -4,6 +4,8 @@ import org.cmdbuild.workflow.type.ReferenceType;
 
 public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 
+	private static final String CREATE_PREFIX = "create";
+
 	private static final String DOMAIN_NAME = "DomainName";
 	private static final String CLASS_NAME_PREFIX = "ClassName";
 	private static final String OBJ_ID_PREFIX = "ObjId";
@@ -15,16 +17,26 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 	@Override
 	protected void innerInvoke() throws Exception {
 		final String domainName = getParameterValue(DOMAIN_NAME);
-
 		final CardRef card1 = getCard1();
 		final CardRef card2 = getCard2();
 
-		getFluentApi().newRelation(domainName) //
-				.withCard1(card1.className, card1.cardId) //
-				.withCard2(card2.className, card2.cardId) //
-				.create();
+		if (isCreation()) {
+			getFluentApi().newRelation(domainName) //
+					.withCard1(card1.className, card1.cardId) //
+					.withCard2(card2.className, card2.cardId) //
+					.create();
+		} else { // is deletion
+			getFluentApi().existingRelation(domainName) //
+					.withCard1(card1.className, card1.cardId) //
+					.withCard2(card2.className, card2.cardId) //
+					.delete();
+		}
 
 		setParameterValue(DONE, RESULT_ALWAYS_TRUE_OR_THROWS);
+	}
+
+	private boolean isCreation() {
+		return getId().startsWith(CREATE_PREFIX);
 	}
 
 	private CardRef getCard1() {
