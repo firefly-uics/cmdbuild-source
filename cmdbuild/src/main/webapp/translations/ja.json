@@ -1,5 +1,5 @@
 {
-   "description": "Japanese",
+   "description": "日本語",
    "release": "2.0-dev",
    "administration": {
       "description": "管理者モジュール",
@@ -59,10 +59,10 @@
             "active": "アクティブ",
             "description": "説明",
             "inherits": "継承元",
-            "modify_class": "クラスの更新",
+            "modify_class": "クラス更新",
             "name": "名前",
-            "print_class": "クラスの印刷",
-            "remove_class": "クラスの削除",
+            "print_class": "クラス印刷",
+            "remove_class": "クラス削除",
             "simple": "単純",
             "standard": "標準",
             "superclass": "スーパークラス",
@@ -176,11 +176,11 @@
             },
             ".CreateModifyCard": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "cql": "<em>Card CQL selector</em>",
-                  "readOnly": "<em>Read only</em>"
+                  "target": "ターゲットクラス",
+                  "cql": "カード CQL 選択</em>",
+                  "readOnly": "読み取り専用"
                },
-               "title": "Create or Modify Card"
+               "title": "カードの作成または変更"
             },
             "commonFields": {
                "active": "アクティブ",
@@ -194,91 +194,91 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "The chart is not well configured"
+                "wrongConfiguration": "グラフは正しく構成されていません"
              },
              "availableCharts": {
-                "gauge": "Gauge",
-                "pie": "Pie",
-                "bar": "Bar",
-                "line": "Line"
+                "gauge": "ゲージ",
+                "pie": "円",
+                "bar": "棒",
+                "line": "線"
              },
              "buttons": {
-                "add": "Add Chart",
-                "modify": "Modify chart",
-                "remove": "Remove chart",
-                "preview": "Preview"
+                "add": "追加",
+                "modify": "修正",
+                "remove": "削除",
+                "preview": "プレビュー"
              },
              "fields": {
-                "active": "Active",
-                "autoload": "Load automatically",
-                "background": "Background color",
-                "categoryFieldset": "Category axis",
-                "chartType": "Chart type",
-                "dataSource": "Data source",
-                "defaultValue": "Default value",
-                "description": "Description",
-                "fieldType": "Field type",
-                "foreground": "Foreground color",
-                "fromClass": "From class",
-                "labelField": "Label field",
-                "legend": "Show legend",
-                "lookupType": "Lookup type",
-                "max": "Maximum",
-                "min": "Minimum",
-                "name": "Name",
+                "active": "アクティブ",
+                "autoload": "自動ロード",
+                "background": "背景色",
+                "categoryFieldset": "カテゴリ軸",
+                "chartType": "グラフのタイプ",
+                "dataSource": "データソース",
+                "defaultValue": "既定値",
+                "description": "説明",
+                "fieldType": "フィールドタイプ",
+                "foreground": "前景色",
+                "fromClass": "クラスから",
+                "labelField": "ラベルフィールド",
+                "legend": "凡例を表示",
+                "lookupType": "ルックアップタイプ",
+                "max": "最大",
+                "min": "最少",
+                "name": "名前",
                 "orientation": {
-                   "label": "Orientation",
+                   "label": "方向",
                    "values": {
-                      "horizontal": "Horizontal",
-                      "vertical": "Vertical"
+                      "horizontal": "水平",
+                      "vertical": "垂直"
                    }
                 },
-                "required": "Required",
-                "steps": "Steps",
-                "title": "Title",
-                "valueField": "Value field",
-                "valueFieldset": "Value axis"
+                "required": "必要",
+                "steps": "ステップ",
+                "title": "タイトル",
+                "valueField": "値フィールド",
+                "valueFieldset": "値軸"
              },
              "inputTypes": {
-                "BOOLEAN": "Boolean",
-                "DECIMAL": "Decimal",
-                "INTEGER": "Integer",
-                "DOUBLE": "Double",
-                "DATE": "Date",
-                "TIMESTAMP": "Timestamp",
-                "TIME": "Time",
-                "STRING": "String",
-                "TEXT": "Text",
-                "CHAR": "Char",
-                "INET": "Net address"
+                "BOOLEAN": "ブーリアン",
+                "DECIMAL": "小数",
+                "INTEGER": "整数",
+                "DOUBLE": "倍精度",
+                "DATE": "日付",
+                "TIMESTAMP": "タイムスタンプ",
+                "TIME": "時間",
+                "STRING": "文字列",
+                "TEXT": "テキスト",
+                "CHAR": "文字",
+                "INET": "ネットワークアドレス"
              },
-             "title": "Charts",
+             "title": "グラフ",
              "typeFieldOptions": {
-                "card" : "Card",
-                "classes" : "Select from all CMDBuild classes",
-                "freeInt" : "Free Integer",
-                "freeString" : "Free String",
-                "group" : "Current group",
-                "lookup" : "Select from a lookup",
-                "user" : "Current user"
+                "card" : "カード",
+                "classes" : "すべてのCMDBuildクラスから選択",
+                "freeInt" : "任意の整数",
+                "freeString" : "任意の文字列",
+                "group" : "現在のグループ",
+                "lookup" : "ルックアップから選択",
+                "user" : "現在のユーザ"
              }
           },
           "layout": {
-             "add": "Add a column",
-             "remove": "Remove empty columns",
-             "title": "Layout"
+             "add": "列を追加",
+             "remove": "空の列削除",
+             "title": "レイアウト"
           },
           "properties": {
-             "add": "Add Dashboard",
-             "modify": "Modify Dashboard",
-             "remove": "Remove Dashboard",
+             "add": "ダッシュボード追加",
+             "modify": "タッシュボード変更",
+             "remove": "ダッシュボード削除",
              "fields": {
-                "name": "Name",
-                "description": "Description",
-                "groups": "Available for groups"
+                "name": "名前",
+                "description": "説明",
+                "groups": "利用可能なグループ"
              }
           },
-          "title": "Dashboard"
+          "title": "ダッシュボード"
       },
       "modLookup": {
          "add_lookuptype": "ルックアップタイプ追加",
@@ -307,7 +307,7 @@
             "active": "アクティブ",
             "delete_lookuptype": "ルックアップタイプ削除",
             "description": "説明",
-            "modify_lookuptype": "ルックアップタイプの更新",
+            "modify_lookuptype": "ルックアップタイプ更新",
             "parent": "親",
             "title": "ルックアップ管理"
          },
@@ -427,7 +427,7 @@
          "available_elements": "利用可能なエレメント",
          "availabletree": {
             "class": "クラス",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "ダッシュボード",
             "processclass": "アクティビティ",
             "report": "レポート",
             "view": "ビュー"
@@ -474,7 +474,7 @@
          "defaultgroup": "* 既定 *",
          "group": {
             "add_group": "グループ追加",
-            "availableusers": "可能なユーザ",
+            "availableusers": "利用可能なユーザ",
             "delete_group": "グループ無効化",
             "disabled_modules": "無効なモジュール",
             "email": "電子メール",
@@ -484,7 +484,7 @@
             "groupchoice": "ルックアップユーザ",
             "is_active": "アクティブ",
             "is_administrator": "はadministrator",
-            "modify_group": "グループ更新",
+            "modify_group": "グループ変更",
             "starting_class": "初期ページ",
             "title": "グループ管理",
             "usermanagement": "関連ユーザ管理"
@@ -495,7 +495,7 @@
             "classname": "クラス名",
             "delete_privilege": "権限削除",
             "modify_privilege": "権限更新",
-            "none_privilege": "無 ",
+            "none_privilege": "権限なし",
             "privilege_mode": "権限",
             "read_privilege": "読取権限",
             "write_privilege": "書込権限"
@@ -634,7 +634,7 @@
          "abort": "キャンセル",
          "apply": "適用",
          "close": "クローズ",
-         "confirm": "OK",
+         "confirm": "確認",
          "exportbtn": "エキスポート",
          "importbtn": "インポート",
          "save": "保存",
@@ -645,7 +645,7 @@
          "add": "追加",
          "as": "as",
          "close": "クローズ",
-         "load": "<em>Load</em>",
+         "load": "ロード",
          "modify": "更新",
          "print": "印刷",
          "remove": "削除",
@@ -662,7 +662,7 @@
          "areyousure": "本当にいいですか?",
          "title": "確認"
       },
-      "credits": "クレジット",
+      "credits": "Credits",
       "display_topic": "トピックス表示中",
       "display_topic_none": "表示するトピックスはありません",
       "display_topic_of": "of ",
@@ -682,20 +682,20 @@
       "logout": "ログアウト",
       "remove": "削除",
       "splash": {
-         "consultant": "ITILのコンサルタントとサポート",
-         "design": "デザイン",
-         "implementation": "実装",
-         "maintainer": "メンテナンス",
+         "consultant": "　ITILのコンサルタントとサポート",
+         "design": "　デザイン",
+         "implementation": "　実装",
+         "maintainer": "　メンテナンス",
          "municipality": "ウディーネ市(Municipality of Udine)",
-         "principal": "初期プロジェクトの主要メンバ"
+         "principal": "　初期プロジェクトの主要メンバ"
       },
       "success": "成功",
       "tbd_body": "進行中",
       "tbd_title": "進行中",
       "tooltip": {
-         "editParameters": "<em>Edit the parameters</em>",
-         "reload": "<em>Reload</em>",
-         "showData": "<em>Show data</em>"
+         "editParameters": "パラメータを編集",
+         "reload": "再ロード",
+         "showData": "データ表示"
       },
       "tree_names": {
          "class": "標準",
@@ -925,15 +925,15 @@
          "attachments": "添付",
          "attribute": "属性",
          "attributes": "属性",
-         "begin": "開始位置",
+         "begin": "開始する",
          "between": "間",
          "clear_filter": "フィルタクリア",
          "different": "異なる",
          "direction": "方向",
-         "dontbegin": "始まらない",
+         "dontbegin": "開始しない",
          "dontend": "終了しない",
          "dontlike": "含まない",
-         "end": "終了",
+         "end": "終了する",
          "equals": "同じ",
          "filter": "フィルタ",
          "go_filter": "フィルタ",
@@ -1034,8 +1034,8 @@
             "zoom_in": "ズームイン",
             "zoom_out": "ズームアウト"
          },
-         "modify_card": "カードの更新",
-         "modify_note": "ノートの更新",
+         "modify_card": "カード更新",
+         "modify_note": "ノート更新",
          "modify_relation_window": {"window_title": "リレーション更新"},
          "open_relation": "関連するカードを開く",
          "other_fields": "その他",
@@ -1151,7 +1151,6 @@
                "subjectfld": "件名",
                "subjecthdr": "件名",
                "tofld": "To",
-               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
                "viewicon": "ビュー",
                "mailsAreChanged":"作成された電子メールは変更されました",
                "regenerates": "電子メール再作成"
@@ -1178,7 +1177,6 @@
          "statuses": {
             "all": "すべて",
             "closed.completed": "完了",
-            "closed.aborted": "<em>Aborted</em>",
             "open.not_running.suspended": "中断",
             "open.running": "開いています"
          },
