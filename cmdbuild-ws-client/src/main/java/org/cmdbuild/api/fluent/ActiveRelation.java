@@ -2,15 +2,15 @@ package org.cmdbuild.api.fluent;
 
 abstract class ActiveRelation extends Relation {
 
-	private final FluentApiExecutor executor;
+	private final FluentApi api;
 
-	ActiveRelation(final FluentApiExecutor executor, final String domainName) {
+	ActiveRelation(final FluentApi api, final String domainName) {
 		super(domainName);
-		this.executor = executor;
+		this.api = api;
 	}
 
-	protected FluentApiExecutor executor() {
-		return executor;
+	protected FluentApi getApi() {
+		return api;
 	}
 
 }

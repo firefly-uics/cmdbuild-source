@@ -4,8 +4,8 @@ import java.util.List;
 
 public class QueryClass extends ActiveCard {
 
-	QueryClass(final FluentApiExecutor executor, final String className) {
-		super(executor, className, null);
+	QueryClass(final FluentApi api, final String className) {
+		super(api, className, null);
 	}
 
 	public QueryClass withCode(final String value) {
@@ -29,7 +29,7 @@ public class QueryClass extends ActiveCard {
 	}
 
 	public List<Card> fetch() {
-		return executor().fetchCards(this);
+		return api().getExecutor().fetchCards(this);
 	}
 
 }

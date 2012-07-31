@@ -4,8 +4,8 @@ import java.util.Map;
 
 public class CallFunction extends ActiveFunction {
 
-	CallFunction(final FluentApiExecutor executor, final String functionName) {
-		super(executor, functionName);
+	CallFunction(final FluentApi api, final String functionName) {
+		super(api, functionName);
 	}
 
 	public CallFunction with(final String name, final Object value) {
@@ -14,7 +14,7 @@ public class CallFunction extends ActiveFunction {
 	}
 
 	public Map<String, String> execute() {
-		return executor().execute(this);
+		return getApi().getExecutor().execute(this);
 	}
 
 }

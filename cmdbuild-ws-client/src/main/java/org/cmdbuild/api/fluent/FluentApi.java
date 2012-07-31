@@ -8,32 +8,36 @@ public class FluentApi {
 		this.executor = executor;
 	}
 
+	public FluentApiExecutor getExecutor() {
+		return executor;
+	}
+
 	public NewCard newCard(final String className) {
-		return new NewCard(executor, className);
+		return new NewCard(this, className);
 	}
 
 	public ExistingCard existingCard(final String className, final int id) {
-		return new ExistingCard(executor, className, id);
+		return new ExistingCard(this, className, id);
 	}
 
 	public NewRelation newRelation(final String domainName) {
-		return new NewRelation(executor, domainName);
+		return new NewRelation(this, domainName);
 	}
 
 	public ExistingRelation existingRelation(final String domainName) {
-		return new ExistingRelation(executor, domainName);
+		return new ExistingRelation(this, domainName);
 	}
 
 	public QueryClass queryClass(final String className) {
-		return new QueryClass(executor, className);
+		return new QueryClass(this, className);
 	}
 
 	public CallFunction callFunction(final String functionName) {
-		return new CallFunction(executor, functionName);
+		return new CallFunction(this, functionName);
 	}
 
 	public CreateReport createReport(final String title, final String format) {
-		return new CreateReport(executor, title, format);
+		return new CreateReport(this, title, format);
 	}
 
 }
