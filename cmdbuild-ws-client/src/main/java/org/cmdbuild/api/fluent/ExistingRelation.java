@@ -2,8 +2,8 @@ package org.cmdbuild.api.fluent;
 
 public class ExistingRelation extends ActiveRelation {
 
-	ExistingRelation(final FluentApiExecutor executor, final String domainName) {
-		super(executor, domainName);
+	ExistingRelation(final FluentApi api, final String domainName) {
+		super(api, domainName);
 	}
 
 	public ExistingRelation withCard1(final String className, final int cardId) {
@@ -17,7 +17,7 @@ public class ExistingRelation extends ActiveRelation {
 	}
 
 	public void delete() {
-		executor().delete(this);
+		getApi().getExecutor().delete(this);
 	}
 
 }

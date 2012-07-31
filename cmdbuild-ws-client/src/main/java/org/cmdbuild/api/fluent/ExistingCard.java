@@ -2,8 +2,8 @@ package org.cmdbuild.api.fluent;
 
 public class ExistingCard extends ActiveCard {
 
-	ExistingCard(final FluentApiExecutor executor, final String className, final Integer id) {
-		super(executor, className, id);
+	ExistingCard(final FluentApi api, final String className, final Integer id) {
+		super(api, className, id);
 	}
 
 	public ExistingCard withClassId(final int classId) {
@@ -32,15 +32,15 @@ public class ExistingCard extends ActiveCard {
 	}
 
 	public void update() {
-		executor().update(this);
+		api().getExecutor().update(this);
 	}
 
 	public void delete() {
-		executor().delete(this);
+		api().getExecutor().delete(this);
 	}
 
 	public Card fetch() {
-		return executor().fetch(this);
+		return api().getExecutor().fetch(this);
 	}
 
 }

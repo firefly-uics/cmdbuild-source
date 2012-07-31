@@ -2,15 +2,15 @@ package org.cmdbuild.api.fluent;
 
 abstract class ActiveReport extends Report {
 
-	private final FluentApiExecutor executor;
+	private final FluentApi api;
 
-	ActiveReport(final FluentApiExecutor executor, final String title, final String format) {
+	ActiveReport(final FluentApi api, final String title, final String format) {
 		super(title, format);
-		this.executor = executor;
+		this.api = api;
 	}
 
-	protected FluentApiExecutor executor() {
-		return executor;
+	protected FluentApi getApi() {
+		return api;
 	}
 
 }
