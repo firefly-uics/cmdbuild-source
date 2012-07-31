@@ -4,7 +4,7 @@ abstract class ActiveCard extends Card {
 
 	private final FluentApiExecutor executor;
 
-	public ActiveCard(final FluentApiExecutor executor, final String className, final Integer id) {
+	ActiveCard(final FluentApiExecutor executor, final String className, final Integer id) {
 		super(className, id);
 		this.executor = executor;
 	}

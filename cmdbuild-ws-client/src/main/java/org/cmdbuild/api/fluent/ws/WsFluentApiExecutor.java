@@ -17,6 +17,7 @@ import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.Relation;
@@ -32,6 +33,7 @@ import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.services.soap.ReportParams;
 
+@SuppressWarnings("restriction")
 public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private static final FluentApiExecutor NULL_NEVER_USED_EXECUTOR = null;
@@ -78,7 +80,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	private Card cardFrom(final org.cmdbuild.services.soap.Card soapCard) {
-		final ExistingCard card = newExistingCardFrom(soapCard);
+		final ExistingCard card = existingCardFrom(soapCard);
 		for (final Attribute attribute : soapCard.getAttributeList()) {
 			card.withAttribute(attribute.getName(), attribute.getValue());
 		}
@@ -154,9 +156,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private List<Card> cardsFor(final CardList cardList) {
 		final List<Card> cards = new ArrayList<Card>();
-		for (final org.cmdbuild.services.soap.Card wsCard : cardList.getCards()) {
-			final ExistingCard card = newExistingCardFrom(wsCard);
-			for (final Attribute attribute : wsCard.getAttributeList()) {
+		for (final org.cmdbuild.services.soap.Card soapCard : cardList.getCards()) {
+			final ExistingCard card = existingCardFrom(soapCard);
+			for (final Attribute attribute : soapCard.getAttributeList()) {
 				final String attributeName = attribute.getName();
 				if (Constants.CLASS_ID_ATTRIBUTE.equals(attributeName)) {
 					final int classId = Integer.parseInt(attribute.getValue());
@@ -170,8 +172,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return unmodifiableList(cards);
 	}
 
-	private ExistingCard newExistingCardFrom(final org.cmdbuild.services.soap.Card wsCard) {
-		return new ExistingCard(NULL_NEVER_USED_EXECUTOR, wsCard.getClassName(), wsCard.getId());
+	private ExistingCard existingCardFrom(final org.cmdbuild.services.soap.Card soapCard) {
+		return new FluentApi(NULL_NEVER_USED_EXECUTOR) //
+				.existingCard(soapCard.getClassName(), soapCard.getId());
 	}
 
 	public Map<String, String> execute(final Function function) {

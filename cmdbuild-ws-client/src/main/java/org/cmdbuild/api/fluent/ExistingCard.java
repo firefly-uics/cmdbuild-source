@@ -2,7 +2,7 @@ package org.cmdbuild.api.fluent;
 
 public class ExistingCard extends ActiveCard {
 
-	public ExistingCard(final FluentApiExecutor executor, final String className, final Integer id) {
+	ExistingCard(final FluentApiExecutor executor, final String className, final Integer id) {
 		super(executor, className, id);
 	}
 

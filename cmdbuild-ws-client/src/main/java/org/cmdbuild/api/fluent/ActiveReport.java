@@ -4,7 +4,7 @@ abstract class ActiveReport extends Report {
 
 	private final FluentApiExecutor executor;
 
-	public ActiveReport(final FluentApiExecutor executor, final String title, final String format) {
+	ActiveReport(final FluentApiExecutor executor, final String title, final String format) {
 		super(title, format);
 		this.executor = executor;
 	}

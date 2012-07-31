@@ -2,7 +2,7 @@ package org.cmdbuild.api.fluent;
 
 public class ExistingRelation extends ActiveRelation {
 
-	public ExistingRelation(final FluentApiExecutor executor, final String domainName) {
+	ExistingRelation(final FluentApiExecutor executor, final String domainName) {
 		super(executor, domainName);
 	}
 

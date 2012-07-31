@@ -1,6 +1,5 @@
 package unit.api.fluent.ws;
 
-import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.soapCardFor;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.equalTo;
@@ -117,7 +116,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 		).thenReturn(cardList(queryClass.getClassName(), CARD_ID, ANOTHER_CARD_ID));
 
 		final List<Card> cards = queryClass.fetch();
-		cards.add(new Card(CLASS_NAME, CARD_ID));
+		cards.clear();
 	}
 
 	private CardList cardList(final String className, final int... ids) {
@@ -125,8 +124,10 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 		cardList.setTotalRows(ids.length);
 		final List<org.cmdbuild.services.soap.Card> cards = cardList.getCards();
 		for (final int id : ids) {
-			final Card card = new Card(className, id);
-			cards.add(soapCardFor(card));
+			final org.cmdbuild.services.soap.Card soapCard = new org.cmdbuild.services.soap.Card();
+			soapCard.setClassName(className);
+			soapCard.setId(id);
+			cards.add(soapCard);
 		}
 		return cardList;
 	}

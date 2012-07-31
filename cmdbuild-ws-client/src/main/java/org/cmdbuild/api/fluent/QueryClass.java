@@ -4,7 +4,7 @@ import java.util.List;
 
 public class QueryClass extends ActiveCard {
 
-	public QueryClass(final FluentApiExecutor executor, final String className) {
+	QueryClass(final FluentApiExecutor executor, final String className) {
 		super(executor, className, null);
 	}
 

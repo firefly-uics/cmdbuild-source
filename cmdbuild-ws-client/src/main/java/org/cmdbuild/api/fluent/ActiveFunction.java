@@ -4,7 +4,7 @@ abstract class ActiveFunction extends Function {
 
 	private final FluentApiExecutor executor;
 
-	public ActiveFunction(final FluentApiExecutor executor, final String functionName) {
+	ActiveFunction(final FluentApiExecutor executor, final String functionName) {
 		super(functionName);
 		this.executor = executor;
 	}
