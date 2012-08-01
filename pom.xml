@@ -212,7 +212,8 @@
 					</executions>
 					<configuration>
 						<includes>
-							<include>integration/**</include>
+							<include>integration/*.java</include>
+							<include>integration/**/*.java</include>
 						</includes>
 					</configuration>
 				</plugin>

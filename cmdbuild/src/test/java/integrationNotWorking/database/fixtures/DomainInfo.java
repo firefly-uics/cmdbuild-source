@@ -1,4 +1,4 @@
-package integration.database.fixtures;
+package integrationNotWorking.database.fixtures;
 
 import org.cmdbuild.elements.interfaces.IDomain;
 

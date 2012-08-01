@@ -1,8 +1,8 @@
-package integration.database;
+package integrationNotWorking.database;
 
 import static org.junit.Assert.fail;
-import integration.database.fixtures.DBDataFixture;
-import integration.database.fixtures.DomainInfo;
+import integrationNotWorking.database.fixtures.DBDataFixture;
+import integrationNotWorking.database.fixtures.DomainInfo;
 
 import java.sql.SQLException;
 import java.util.Arrays;
