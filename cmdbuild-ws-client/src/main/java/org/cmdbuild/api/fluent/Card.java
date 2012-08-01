@@ -14,7 +14,7 @@ public class Card extends CardDescriptor {
 
 	private final Map<String, Object> attributes;
 
-	public Card(final String className, final Integer id) {
+	Card(final String className, final Integer id) {
 		super(className, id);
 		attributes = new HashMap<String, Object>();
 	}
