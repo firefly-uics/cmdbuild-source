@@ -1,4 +1,4 @@
-package integration.database.fixtures;
+package integrationNotWorking.database.fixtures;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

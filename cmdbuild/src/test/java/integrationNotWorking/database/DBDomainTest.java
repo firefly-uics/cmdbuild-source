@@ -1,10 +1,10 @@
-package integration.database;
+package integrationNotWorking.database;
 
-import static integration.database.matcher.SqlExceptionMatcher.hasType;
+import static integrationNotWorking.database.matcher.SqlExceptionMatcher.hasType;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import integration.database.fixtures.DBDataFixture;
-import integration.database.fixtures.DomainInfo;
+import integrationNotWorking.database.fixtures.DBDataFixture;
+import integrationNotWorking.database.fixtures.DomainInfo;
 
 import java.sql.SQLException;
 

@@ -1,12 +1,12 @@
-package integration.database;
+package integrationNotWorking.database;
 
-import static integration.database.matcher.IsParentTableOfMatcher.isParentTableOf;
-import static integration.database.matcher.SqlExceptionMatcher.hasType;
+import static integrationNotWorking.database.matcher.IsParentTableOfMatcher.isParentTableOf;
+import static integrationNotWorking.database.matcher.SqlExceptionMatcher.hasType;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import integration.database.fixtures.DBDataFixture;
+import integrationNotWorking.database.fixtures.DBDataFixture;
 
 import java.sql.SQLException;
 import java.util.Date;
