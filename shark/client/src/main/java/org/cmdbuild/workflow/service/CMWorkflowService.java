@@ -13,12 +13,12 @@ public interface CMWorkflowService {
 
 	/**
 	 * 
-	 * @param pkgId
+	 * @param pkgId package id can be null if new
 	 * @param pkgDefData
-	 * @return uploaded package version
+	 * @return uploaded package info
 	 * @throws CMWorkflowException
 	 */
-	String uploadPackage(String pkgId, byte[] pkgDefData) throws CMWorkflowException;
+	WSPackageDefInfo uploadPackage(String pkgId, byte[] pkgDefData) throws CMWorkflowException;
 
 	byte[] downloadPackage(String pkgId, String pkgVer) throws CMWorkflowException;
 

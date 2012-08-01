@@ -22,6 +22,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMProcessInstanceState;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.PackageAdministration;
 import org.enhydra.shark.api.client.wfservice.SharkInterface;
+import org.enhydra.shark.api.client.wfservice.WMEntity;
 import org.enhydra.shark.api.common.ActivityFilterBuilder;
 import org.enhydra.shark.api.common.ProcessFilterBuilder;
 import org.enhydra.shark.api.common.SharkConstants;
@@ -107,16 +108,34 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public String uploadPackage(final String pkgId, final byte[] pkgDefData) throws CMWorkflowException {
-		return new TransactedExecutor<String>() {
+	public WSPackageDefInfo uploadPackage(final String pkgId, final byte[] pkgDefData) throws CMWorkflowException {
+		return new TransactedExecutor<WSPackageDefInfo>() {
 			@Override
-			protected String command() throws Exception {
+			protected WSPackageDefInfo command() throws Exception {
 				final PackageAdministration pa = shark().getPackageAdministration();
-				if (pa.getPackageVersions(handle(), pkgId).length == 0) {
-					return pa.uploadPackage(handle(), pkgDefData).getPkgVer();
+				final WMEntity uploadedPackage;
+				if (pkgId == null || pa.getPackageVersions(handle(), pkgId).length == 0) {
+					uploadedPackage = pa.uploadPackage(handle(), pkgDefData);
 				} else {
-					return pa.updatePackage(handle(), pkgId, pkgDefData).getPkgVer();
+					uploadedPackage = pa.updatePackage(handle(), pkgId, pkgDefData);
 				}
+				return newWSPackageDefInfo(uploadedPackage.getPkgId(), uploadedPackage.getPkgVer());
+			}
+
+			private WSPackageDefInfo newWSPackageDefInfo(final String id, final String version) {
+				return new WSPackageDefInfo() {
+
+					@Override
+					public String getPackageId() {
+						return id;
+					}
+
+					@Override
+					public String getPackageVersion() {
+						return version;
+					}
+
+				};
 			}
 		}.execute();
 	}

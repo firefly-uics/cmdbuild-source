@@ -37,10 +37,12 @@
 			{name: "tableType",type: 'string'},
 			{name: "type",type: 'string'},
 			{name: "name",type: 'string'},
-			{name: "userstoppable",type: 'boolean'},
 			{name: "priv_create",type: 'boolean'},
 			{name: "priv_write",type: 'boolean'},
-			{name: "meta", type:"auto"}
+			{name: "meta", type:"auto"},
+			// Process only
+			{name: "userstoppable",type: 'boolean'},
+			{name: "startable", type: "boolean"}
 		],
 
 		constructor: function() {
@@ -54,6 +56,14 @@
 
 		isUserStoppable: function() {
 			return this.get("userstoppable");
+		},
+
+		isStartable: function() {
+			return this.get("startable");
+		},
+
+		isProcess: function() {
+			return this.get("type") == "processclass";
 		},
 
 		deleteGeoAttr: function(a) {

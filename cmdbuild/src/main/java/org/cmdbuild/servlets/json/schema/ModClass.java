@@ -38,6 +38,8 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -126,20 +128,47 @@ public class ModClass extends JSONBase {
 	public JSONObject getAllClasses(
 			JSONObject serializer,
 			@Parameter(value="active", required=false) boolean active,
-			UserContext userCtx) throws JSONException, AuthException {
+			UserContext userCtx) throws JSONException, AuthException, CMWorkflowException {
+
 		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<ITable> allTables = userCtx.tables().list();
+		final Iterable<UserProcessClass> processClasses = workflowLogic.findAllProcessClasses();
+		final HashMap<String, ITable> processTables = new HashMap<String, ITable>();
 
 		for (ITable table: allTables) {
-			if (!table.getMode().isDisplayable()) {
+			// Skip the table not displayable and
+			// the ones not active if only active is required
+			if (!table.getMode().isDisplayable() 
+					|| (active && !table.getStatus().isActive())) {
+
 				continue;
 			}
-			if (active && !isActive(table, workflowLogic)) {
+
+			// Skip here the processes. Serialize them after,
+			// using the workflow logic to retrieve them
+			if (table.isActivity()) {
+				processTables.put(table.getName(), table);
 				continue;
 			}
+
 			final JSONObject jsonTable = Serializer.serializeTable(table);
 			serializer.append("classes", jsonTable);
 		}
+
+		// add the processes
+		for (UserProcessClass pc: processClasses) {
+			if (active && !pc.isUsable() 
+					&& !pc.isSuperclass()) { // serialize always the superclasses
+
+				continue;
+			} else {
+				ITable table = processTables.get(pc.getName());
+				if (table != null) {
+					serializer.append("classes", Serializer.serializeTable(table, pc));
+				}
+			}
+		}
+
 		return serializer;
 	}
 
