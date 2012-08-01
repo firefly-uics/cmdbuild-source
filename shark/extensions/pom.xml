@@ -46,6 +46,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.sourceforge.sharkwf</groupId>
+			<artifactId>shark-scripting-standard</artifactId>
+			<version>${shark.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-client</artifactId>
 			<version>${project.version}</version>

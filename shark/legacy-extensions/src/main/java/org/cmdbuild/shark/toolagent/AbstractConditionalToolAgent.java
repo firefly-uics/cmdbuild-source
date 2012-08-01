@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.api.fluent.FluentApi;
+import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.enhydra.jxpdl.XMLUtil;
@@ -25,7 +26,6 @@ import org.enhydra.shark.toolagent.AbstractToolAgent;
 public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	private static final String EXTENDED_ATTRIBUTES_PARAM = "ExtendedAttributes";
-	private static final String CMDBUILD_API_CLASSNAME_PROPERTY = "org.cmdbuild.workflow.api.classname";
 
 	public static interface ConditionEvaluator {
 
@@ -36,6 +36,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	private final ConditionEvaluator conditionEvaluator;
+	private ConfigurationHelper configurationHelper;
 	private SharkWorkflowApi workflowApi;
 
 	public AbstractConditionalToolAgent() {
@@ -77,19 +78,9 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	@Override
 	public void configure(final CallbackUtilities cus) throws Exception {
 		super.configure(cus);
-		configureApi(cus);
+		configurationHelper = new ConfigurationHelper(cus);
+		workflowApi = configurationHelper.newSharkWorkflowApi();
 		conditionEvaluator.configure(cus);
-	}
-
-	private void configureApi(final CallbackUtilities cus) throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException {
-		final String classname = cus.getProperty(CMDBUILD_API_CLASSNAME_PROPERTY);
-		cus.info(null, format("loading api '%s'", classname));
-		final Class<? extends SharkWorkflowApi> sharkWorkflowApiClass = Class.forName(classname).asSubclass(
-				SharkWorkflowApi.class);
-		final SharkWorkflowApi sharkWorkflowApi = sharkWorkflowApiClass.newInstance();
-		sharkWorkflowApi.configure(cus);
-		workflowApi = sharkWorkflowApi;
 	}
 
 	@Override
