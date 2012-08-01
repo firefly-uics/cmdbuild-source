@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.api.fluent.ActiveQueryRelations;
 import org.cmdbuild.api.fluent.CallFunction;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
@@ -81,6 +82,15 @@ public class FluentApiTest {
 	}
 
 	@Test
+	public void executorCalledWhenFetchingClass() {
+		final QueryClass queryClass = api.queryClass(CLASS_NAME);
+		queryClass.fetch();
+
+		verify(executor).fetchCards(queryClass);
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
 	public void executorCalledWhenCreatingNewRelation() {
 		final NewRelation newRelation = api.newRelation(DOMAIN_NAME);
 		newRelation.create();
@@ -99,11 +109,11 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenFetchingClass() {
-		final QueryClass queryClass = api.queryClass(CLASS_NAME);
-		queryClass.fetch();
+	public void executorCalledWhenFetchingRelations() {
+		final ActiveQueryRelations query = api.queryRelations(CLASS_NAME, CARD_ID);
+		query.fetch();
 
-		verify(executor).fetchCards(queryClass);
+		verify(executor).fetch(query);
 		verifyNoMoreInteractions(executor);
 	}
 
