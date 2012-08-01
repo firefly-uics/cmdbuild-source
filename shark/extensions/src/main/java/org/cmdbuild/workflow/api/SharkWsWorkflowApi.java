@@ -1,15 +1,10 @@
 package org.cmdbuild.workflow.api;
 
-import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
 import org.cmdbuild.services.soap.Private;
-import org.cmdbuild.services.soap.client.CmdbuildSoapClient.PasswordType;
-import org.cmdbuild.services.soap.client.CmdbuildSoapClient.SoapClientBuilder;
-import org.cmdbuild.services.soap.client.SoapClient;
+import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.type.LookupType;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
@@ -46,12 +41,7 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 
 	};
 
-	private static final String CMDBUILD_WS_URL_PROPERTY = "org.cmdbuild.ws.url";
-	private static final String CMDBUILD_WS_USERNAME_PROPERTY = "org.cmdbuild.ws.username";
-	private static final String CMDBUILD_WS_PASSWORD_PROPERTY = "org.cmdbuild.ws.password";
-
-	private static final String URL_SEPARATOR = "/";
-	private static final String URL_SUFFIX = "services/soap/Private";
+	private ConfigurationHelper configurationHelper;
 
 	private static FluentApi fluentApi;
 
@@ -60,7 +50,8 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 	@Override
 	public void configure(final CallbackUtilities cus) {
 		super.configure(cus);
-		setProxy(newProxy(cus));
+		configurationHelper = new ConfigurationHelper(cus);
+		setProxy(configurationHelper.newProxy());
 	}
 
 	public void setProxy(final Private proxy) {
@@ -71,34 +62,6 @@ public class SharkWsWorkflowApi extends SharkWorkflowApi {
 			}
 		}
 		schemaApi = new CachedWsSchemaApi(proxy);
-	}
-
-	private Private newProxy(final CallbackUtilities cus) {
-		final String base_url = cus.getProperty(CMDBUILD_WS_URL_PROPERTY);
-		final String url = completeUrl(base_url);
-		final String username = cus.getProperty(CMDBUILD_WS_USERNAME_PROPERTY);
-		final String password = cus.getProperty(CMDBUILD_WS_PASSWORD_PROPERTY);
-
-		cus.info(null, format("creating soap client for url '%s', username '%s', password '%s'", //
-				url, //
-				username, //
-				password));
-
-		final SoapClient<Private> soapClient = new SoapClientBuilder<Private>() //
-				.forClass(Private.class) //
-				.withUrl(url) //
-				.withUsername(username) //
-				.withPasswordType(PasswordType.DIGEST) //
-				.withPassword(password) //
-				.build();
-		return soapClient.getProxy();
-	}
-
-	private String completeUrl(final String baseUrl) {
-		return new StringBuilder(baseUrl) //
-				.append(baseUrl.endsWith(URL_SEPARATOR) ? EMPTY : URL_SEPARATOR) //
-				.append(URL_SUFFIX) //
-				.toString();
 	}
 
 	@Override
