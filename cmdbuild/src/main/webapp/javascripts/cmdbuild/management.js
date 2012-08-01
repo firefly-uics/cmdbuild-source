@@ -85,7 +85,8 @@
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!disabled[processAccordion.cmName]) {
+				if (!disabled[processAccordion.cmName] 
+					&& CMDBuild.Config.workflow.enabled == "true") {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
