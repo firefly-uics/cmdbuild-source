@@ -16,6 +16,7 @@ import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 
 /**
@@ -55,6 +56,10 @@ public class WorkflowLogic {
 	@Legacy("Old DAO")
 	public Iterable<UserProcessInstance> query(final CardQuery cardQuery) {
 		return wfEngine.query(cardQuery);
+	}
+
+	public Iterable<UserProcessClass> findAllProcessClasses() {
+		return wfEngine.findAllProcessClasses();
 	}
 
 	/*

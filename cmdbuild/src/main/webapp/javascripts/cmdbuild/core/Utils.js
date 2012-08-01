@@ -51,19 +51,18 @@ CMDBuild.Utils = (function() {
 		getClassPrivilegesByName: function(className) {
 			var entryType = _CMCache.getEntryTypeByName(className || "");
 			return _CMUtils.getEntryTypePrivileges(entryType);
-			
 		},
 
-		getEntryTypePrivileges: function(entryType) {
+		getEntryTypePrivileges: function(et) {
 			var privileges = {
 				write: false,
 				create: false
 			};
 
-			if (entryType) {
+			if (et) {
 				privileges = {
-					write: entryType.get("priv_write"),
-					create: entryType.get("priv_create")
+					write: et.get("priv_write"),
+					create: et.isProcess() ? et.isStartable() : et.get("priv_create")
 				};
 			}
 

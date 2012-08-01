@@ -48,9 +48,10 @@ import org.cmdbuild.services.gis.GeoLayer;
 import org.cmdbuild.services.gis.GeoTable;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
-import org.cmdbuild.servlets.json.schema.ModWorkflow;
 import org.cmdbuild.utils.tree.CNode;
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.WorkflowCache;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -387,6 +388,23 @@ public class Serializer {
 		return serializeTable(table, false);
 	}
 
+	public static JSONObject serializeTable(ITable table, UserProcessClass pc) throws JSONException {
+		JSONObject jsonProcess = serializeTable(table, false);
+		boolean isStartable = !pc.isSuperclass();
+		if (isStartable) {
+			try {
+				isStartable = pc.isStartable();
+			} catch (CMWorkflowException e) {
+				isStartable = false;
+			}
+		}
+
+		// add this to look in the XPDL if the current user has
+		// the privileges to start the process and ignore the table privileges (priv_create)
+		jsonProcess.put("startable", isStartable);
+		return jsonProcess;
+	}
+
 	public static JSONObject serializeTable(ITable table, boolean onlyConfigured) throws JSONException {
 		JSONObject jsonTable = new JSONObject();
 		
@@ -397,7 +415,7 @@ public class Serializer {
 					return null;
 				}
 			}
-			serializeSketchUrl(jsonTable, table);
+
 			jsonTable.put("type", "processclass");
 			jsonTable.put("userstoppable", table.isUserStoppable());
 		} else {
@@ -482,13 +500,6 @@ public class Serializer {
 			}
 		} catch (NullPointerException e) {
 			// If the table has no parent
-		}
-	}
-	
-	private static void serializeSketchUrl(JSONObject serializer, ITable table) throws JSONException {
-		String sketch = ModWorkflow.getSketchURL(table);
-		if (sketch != null) {
-			serializer.put("sketch_url", sketch);
 		}
 	}
 	

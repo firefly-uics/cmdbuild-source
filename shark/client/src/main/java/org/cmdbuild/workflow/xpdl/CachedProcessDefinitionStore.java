@@ -9,6 +9,7 @@ import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSPackageDef;
+import org.cmdbuild.workflow.service.WSPackageDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 
 public abstract class CachedProcessDefinitionStore implements ProcessDefinitionStore {
@@ -223,8 +224,8 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 	@Override
 	public synchronized void uploadPackage(final String className, byte[] pkgData) throws CMWorkflowException {
 		final String pkgId = getPackageId(className);
-		final String pkgVer = workflowService.uploadPackage(pkgId, pkgData);
-		cache.addCurrentPackageVersion(pkgId, pkgVer, pkgData);
+		final WSPackageDefInfo pkgInfo = workflowService.uploadPackage(pkgId, pkgData);
+		cache.addCurrentPackageVersion(pkgInfo.getPackageId(), pkgInfo.getPackageVersion(), pkgData);
 	}
 
 	protected abstract PackageVersionInfo createPackageVersionInfo(byte[] pkgDef) throws CMProcessDefinitionException;

@@ -49,7 +49,14 @@
 		},
 
 		isWritable: function() {
+			if (this.nullObject) {
+				return false;
+			}
 			return this.data.writable || false;
+		},
+
+		isNullObject: function() {
+			return this.nullObject;
 		}
 	});
 

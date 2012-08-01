@@ -61,8 +61,6 @@
 			// and force a layout update
 			Ext.suspendLayouts();
 
-			me.view.displayMode(enableToolbar = true);
-
 			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
 
 			// at first update the widget because they could depends
@@ -78,17 +76,10 @@
 
 			// Load always the fields
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
-
 				// fill always the process to trigger the
 				// template resolver of filtered references
 				me.fillFormWidthProcessInstanceData(processInstance);
-
-				if (activityInstance.isNew()) {
-					me.view.editMode();
-				} else if (!activityInstance.isWritable()) {
-					me.view.displayModeForNotEditableCard();
-				}
-
+				manageEditavility(me, activityInstance, processInstance);
 			});
 
 			Ext.resumeLayouts();
@@ -183,32 +174,9 @@
 		},
 
 		fillFormWidthProcessInstanceData: function(processInstance) {
-
-			if (processInstance == null) {return;}
-
-			var me = this,
-				editable = processInstance.isStateOpen(); //FIXME: manage privileges (isStateOpen(data) && data.priv_write);
-
-			me.view.loadCard(processInstance.asDummyModel());
-
-			if (me.isAdvance 
-					&& processInstance.getId() == me.idToAdvance) {
-
-				editable ? me.view.editMode() : me.view.displayModeForNotEditableCard();
-			} else {
-				if (editable) {
-					me.view.displayMode(enableTbar = true);
-				} else {
-					me.view.displayModeForNotEditableCard();
-				}
-
-				var processClassId = processInstance.getClassId();
-				if (processClassId) {
-					var processClass = _CMCache.getEntryTypeById(processClassId);
-					if (processClass && !processClass.isUserStoppable()) {
-						me.view.disableStopButton();
-					}
-				}
+			if (processInstance != null) {
+				this.view.loadCard(processInstance.asDummyModel());
+				this.view.displayModeForNotEditableCard();
 			}
 		},
 
@@ -276,10 +244,11 @@
 		},
 		out = [];
 
-		for (var i=0, attr=null; i<attributes.length; ++i) {
-			attr = attributes[i];
-			for (var j=0, variable=null; j<variables.length; ++j) {
-				variable = variables[j];
+		for (var j=0, variable=null; j<variables.length; ++j) {
+			variable = variables[j];
+
+			for (var i=0, attr=null; i<attributes.length; ++i) {
+				attr = attributes[i];
 				if (attr.name == variable.name) {
 					attr.fieldmode = modeConvertionMatrix[variable.type];
 					out.push(attr);
@@ -385,5 +354,41 @@
 		}
 
 		return valid;
+	}
+
+	function manageEditavility(me, activityInstance, processInstance) {
+
+		if (activityInstance.isNullObject()) {
+			me.view.displayModeForNotEditableCard();
+			return;
+		}
+
+		if (activityInstance.isNew()) {
+			me.view.editMode();
+			return;
+		}
+
+		if (activityInstance.isWritable()) {
+			if (me.isAdvance
+					&& processInstance.getId() == me.idToAdvance) {
+
+				me.view.editMode();
+				me.isAdvance = false;
+				return;
+			} else {
+				me.view.displayMode(enableTbar = true);
+
+				// check if the user can stop this process
+				var processClassId = processInstance.getClassId();
+				if (processClassId) {
+					var processClass = _CMCache.getEntryTypeById(processClassId);
+					if (processClass && !processClass.isUserStoppable()) {
+						me.view.disableStopButton();
+					}
+				}
+			}
+		} else {
+			me.view.displayModeForNotEditableCard();
+		}
 	}
 })();
