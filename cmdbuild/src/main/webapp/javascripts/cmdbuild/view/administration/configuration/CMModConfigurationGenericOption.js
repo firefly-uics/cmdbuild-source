@@ -23,7 +23,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			valueField : 'id',
 			displayField : 'description',
 			editable : false,
-			store : _CMCache.getClassesAndProcessesStore(),
+			store : _CMCache.getClassesAndProcessesAndDahboardsStore(),
 			queryMode : 'local'
 		});
 		

@@ -26,9 +26,21 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 		this.mon(this, "render", function() {
 			this._growSizeFix();
 		}, this);
+
+//		when _growSizeFix abort because the combo
+//		is not visible (this.isVisibile(deep=true)), there are no way to know
+//		when it return to be shown. So, use this event to eventually adjust the size
+//		when the combo is actually used
+		this.mon(this, "focus", function() {
+			this._growSizeFix();
+		}, this);
 	},
 
 	_growSizeFix: function(added) {
+		if (!this.isVisible(deep = true)) {
+			return;
+		}
+
 		// compare the size of the added records with the max already
 		// in the store. If no added find the max size over all the records
 		var data = added || this.store.getRange();

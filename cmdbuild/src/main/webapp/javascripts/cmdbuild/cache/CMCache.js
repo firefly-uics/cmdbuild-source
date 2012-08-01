@@ -4,8 +4,11 @@
 		tr = CMDBuild.Translation,
 		constants = CMDBuild.Constants;
 
+		var dashboardClassesProcessStore = null;
+
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
+
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
@@ -173,8 +176,60 @@
 			reloadRelferenceStore(this.mapOfReferenceStore, idClass);
 		},
 
-		getTableGroup: getTableGroup
+		getTableGroup: getTableGroup,
+
+		getClassesAndProcessesAndDahboardsStore: function() {
+			if (dashboardClassesProcessStore == null) {
+				var classesAndProcessStore = this.getClassesAndProcessesStore();
+				var me = this;
+
+				dashboardClassesProcessStore = new Ext.data.Store({
+					model: "CMTableForComboModel",
+					cmFill: function() {
+						var dashboards = readDashboardsForComboStore(me);
+						var classesAndProcesses = classesAndProcessStore.data.items;
+
+						this.removeAll();
+						this.add(dashboards);
+						this.add(classesAndProcesses);
+					},
+					sorters: [{
+						property : 'description',
+						direction : 'ASC'
+					}]
+				});
+
+				classesAndProcessStore.cmFill = Ext.Function.createSequence(classesAndProcessStore.cmFill, function() {
+					dashboardClassesProcessStore.removeAll();
+					dashboardClassesProcessStore.add(classesAndProcessStore.data.items);
+					dashboardClassesProcessStore.add(readDashboardsForComboStore(me));
+				});
+
+				this.on(this.DASHBOARD_EVENTS.add, dashboardClassesProcessStore.cmFill, dashboardClassesProcessStore);
+				this.on(this.DASHBOARD_EVENTS.remove, dashboardClassesProcessStore.cmFill, dashboardClassesProcessStore);
+				this.on(this.DASHBOARD_EVENTS.modify, dashboardClassesProcessStore.cmFill, dashboardClassesProcessStore);
+			}
+
+			return dashboardClassesProcessStore;
+		}
 	});
+
+	function readDashboardsForComboStore(me) {
+		var dashboardsRaw = me.getDashboards();
+		var dashboards = [];
+		for (var d in dashboardsRaw) {
+			d = dashboardsRaw[d];
+			if (d) {
+				dashboards.push({
+					id: d.getId(),
+					name: d.getName(),
+					description: d.getDescription()
+				});
+			}
+		}
+
+		return dashboards;
+	}
 
 	function getTableGroup (table) {
 		//the simple table are discriminate by the tableType
