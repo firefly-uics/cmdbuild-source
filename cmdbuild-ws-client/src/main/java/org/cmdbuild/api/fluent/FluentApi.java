@@ -40,4 +40,8 @@ public class FluentApi {
 		return new CreateReport(this, title, format);
 	}
 
+	public ActiveQueryRelations queryRelations(final String className, final int id) {
+		return new ActiveQueryRelations(this, className, id);
+	}
+
 }

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
@@ -20,10 +21,12 @@ import javax.activation.DataHandler;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.services.soap.Report;
+import org.cmdbuild.services.soap.ReportParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
+@SuppressWarnings("restriction")
 public class CreateReportTest extends AbstractWsFluentApiTest {
 
 	private static final String TEMPORARY_FILE_PREFIX = "dummy";
@@ -90,7 +93,7 @@ public class CreateReportTest extends AbstractWsFluentApiTest {
 	public void returnedUrlIsValidFile() throws Exception {
 		when(proxy().getReportList(anyString(), anyInt(), anyInt())) //
 				.thenReturn(asList(report(REPORT_ID, REPORT_TITLE)));
-		when(proxy().getReport(eq(REPORT_ID), eq(REPORT_FORMAT), anyList())) //
+		when(proxy().getReport(eq(REPORT_ID), eq(REPORT_FORMAT), anyListOf(ReportParams.class))) //
 				.thenReturn(dataHandlerFor(url));
 
 		final DownloadedReport downloadedReport = createReport.download();

@@ -21,6 +21,7 @@ import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.Relation;
+import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
@@ -76,33 +77,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				card.getClassName(), //
 				card.getId(), //
 				hasAttributes(card) ? attributesFor(card) : ALL_ATTRIBUTES);
-		return cardFrom(soapCard);
-	}
-
-	private Card cardFrom(final org.cmdbuild.services.soap.Card soapCard) {
-		final ExistingCard card = existingCardFrom(soapCard);
-		for (final Attribute attribute : soapCard.getAttributeList()) {
-			card.withAttribute(attribute.getName(), attribute.getValue());
-		}
-		return card;
-	}
-
-	public void create(final Relation relation) {
-		proxy.createRelation(soapRelationFor(relation));
-	}
-
-	public void delete(final Relation relation) {
-		proxy.deleteRelation(soapRelationFor(relation));
-	}
-
-	private org.cmdbuild.services.soap.Relation soapRelationFor(final Relation relation) {
-		final org.cmdbuild.services.soap.Relation soapRelation = new org.cmdbuild.services.soap.Relation();
-		soapRelation.setDomainName(relation.getDomainName());
-		soapRelation.setClass1Name(relation.getClassName1());
-		soapRelation.setCard1Id(relation.getCardId1());
-		soapRelation.setClass2Name(relation.getClassName2());
-		soapRelation.setCard2Id(relation.getCardId2());
-		return soapRelation;
+		return cardFor(soapCard);
 	}
 
 	public List<Card> fetchCards(final Card card) {
@@ -146,7 +121,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return query;
 	}
 
-	public Filter equalsFilter(final String name, final Object value) {
+	private Filter equalsFilter(final String name, final Object value) {
 		final Filter filter = new Filter();
 		filter.setName(name);
 		filter.setOperator(OPERATOR_EQUALS);
@@ -157,24 +132,65 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	private List<Card> cardsFor(final CardList cardList) {
 		final List<Card> cards = new ArrayList<Card>();
 		for (final org.cmdbuild.services.soap.Card soapCard : cardList.getCards()) {
-			final ExistingCard card = existingCardFrom(soapCard);
-			for (final Attribute attribute : soapCard.getAttributeList()) {
-				final String attributeName = attribute.getName();
-				if (Constants.CLASS_ID_ATTRIBUTE.equals(attributeName)) {
-					final int classId = Integer.parseInt(attribute.getValue());
-					card.withClassId(classId);
-				} else if (Constants.DESCRIPTION_ATTRIBUTE.equals(attributeName)) {
-					card.withDescription(attribute.getValue());
-				}
-			}
-			cards.add(card);
+			cards.add(cardFor(soapCard));
 		}
 		return unmodifiableList(cards);
+	}
+
+	private Card cardFor(final org.cmdbuild.services.soap.Card soapCard) {
+		final ExistingCard card = existingCardFrom(soapCard);
+		for (final Attribute attribute : soapCard.getAttributeList()) {
+			final String attributeName = attribute.getName();
+			if (Constants.CLASS_ID_ATTRIBUTE.equals(attributeName)) {
+				final int classId = Integer.parseInt(attribute.getValue());
+				card.withClassId(classId);
+			} else {
+				card.with(attributeName, attribute.getValue());
+			}
+		}
+		return card;
 	}
 
 	private ExistingCard existingCardFrom(final org.cmdbuild.services.soap.Card soapCard) {
 		return new FluentApi(NULL_NEVER_USED_EXECUTOR) //
 				.existingCard(soapCard.getClassName(), soapCard.getId());
+	}
+
+	public void create(final Relation relation) {
+		proxy.createRelation(soapRelationFor(relation));
+	}
+
+	public void delete(final Relation relation) {
+		proxy.deleteRelation(soapRelationFor(relation));
+	}
+
+	private org.cmdbuild.services.soap.Relation soapRelationFor(final Relation relation) {
+		final org.cmdbuild.services.soap.Relation soapRelation = new org.cmdbuild.services.soap.Relation();
+		soapRelation.setDomainName(relation.getDomainName());
+		soapRelation.setClass1Name(relation.getClassName1());
+		soapRelation.setCard1Id(relation.getCardId1());
+		soapRelation.setClass2Name(relation.getClassName2());
+		soapRelation.setCard2Id(relation.getCardId2());
+		return soapRelation;
+	}
+
+	public List<Relation> fetch(final RelationsQuery query) {
+		final List<org.cmdbuild.services.soap.Relation> soapRelations = proxy.getRelationList( //
+				query.getDomainName(), //
+				query.getClassName(), //
+				query.getCardId());
+		final List<Relation> relations = new ArrayList<Relation>();
+		for (final org.cmdbuild.services.soap.Relation soapRelation : soapRelations) {
+			relations.add(relationFor(soapRelation));
+		}
+		return unmodifiableList(relations);
+	}
+
+	private Relation relationFor(final org.cmdbuild.services.soap.Relation soapRelation) {
+		final Relation relation = new Relation(soapRelation.getDomainName());
+		relation.setCard1(soapRelation.getClass1Name(), soapRelation.getCard1Id());
+		relation.setCard2(soapRelation.getClass2Name(), soapRelation.getCard2Id());
+		return relation;
 	}
 
 	public Map<String, String> execute(final Function function) {

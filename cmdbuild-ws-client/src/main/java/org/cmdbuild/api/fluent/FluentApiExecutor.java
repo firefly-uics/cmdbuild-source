@@ -13,11 +13,13 @@ public interface FluentApiExecutor {
 
 	Card fetch(Card card);
 
+	List<Card> fetchCards(Card card);
+
 	void create(Relation relation);
 
 	void delete(Relation relation);
 
-	List<Card> fetchCards(Card card);
+	List<Relation> fetch(RelationsQuery query);
 
 	Map<String, String> execute(Function function);
 
