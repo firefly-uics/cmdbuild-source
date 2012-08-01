@@ -177,10 +177,10 @@
             ".CreateModifyCard": {
                "fields": {
                   "target": "Clase de referencia",
-                  "cql": "<em>Selettore CQL</em>",
-                  "readOnly": "<em>Sola visualizzazione</em>"
+                  "cql": "Selector CQL",
+                  "readOnly": "Sólo lectura"
                },
-               "title": "<em>Crea o modifica Card</em>"
+               "title": "Crea o modifica la tarjeta"
             },
             "commonFields": {
                "active": "Activo",
@@ -194,91 +194,91 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "<em>Il grafico non è configurato correttamente</em>"
+                "wrongConfiguration": "El gráfico no está configurado correctamente"
              },
              "availableCharts": {
-                "gauge": "<em>Manometro</em>",
-                "pie": "<em>Torta</em>",
-                "bar": "<em>Istogramma</em>",
-                "line": "<em>Linea</em>"
+                "gauge": "Manómetro",
+                "pie": "Tarta",
+                "bar": "Histograma",
+                "line": "Barra"
              },
              "buttons": {
-                "add": "<em>Aggiungi grafico</em>",
-                "modify": "<em>Modifica grafico</em>",
-                "remove": "<em>Rimuovi grafico</em>",
-                "preview": "<em>Anteprima</em>"
+                "add": "Añadir gráfico",
+                "modify": "Modificar gráfico",
+                "remove": "Remover gráfico",
+                "preview": "Preestreno"
              },
              "fields": {
-                "active": "<em>Attivo</em>",
-                "autoload": "<em>Carica automaticamente</em>",
-                "background": "<em>Colore di sfondo</em>",
-                "categoryFieldset": "<em>Asse delle categorie</em>",
-                "chartType": "<em>Tipo di grafico</em>",
-                "dataSource": "<em>Sorgente dati</em>",
-                "defaultValue": "<em>Valore di default</em>",
-                "description": "<em>Descrizione</em>",
-                "fieldType": "<em>Tipo di field</em>",
-                "foreground": "<em>Colore in primo piano</em>",
-                "fromClass": "<em>Dalla classe</em>",
-                "labelField": "<em>Campo etichette</em>",
-                "legend": "<em>Mostra legenda</em>",
-                "lookupType": "<em>Tipo lookup</em>",
-                "max": "<em>Massimo</em>",
-                "min": "<em>Minimo</em>",
-                "name": "<em>Nome</em>",
+                "active": "Activo",
+                "autoload": "Descargar automáticamente",
+                "background": "Color de fondo",
+                "categoryFieldset": "Barra de las categorías",
+                "chartType": "Tipo de gráfico",
+                "dataSource": "Fuente de datos",
+                "defaultValue": "Valor por omisión",
+                "description": "Descripción",
+                "fieldType": "Tipo de campo",
+                "foreground": "Color de primer plano",
+                "fromClass": "De la clase",
+                "labelField": "Campo de etiquetas",
+                "legend": "Visualizar leyenda",
+                "lookupType": "Tipo Lookup",
+                "max": "Máximo",
+                "min": "Mínimo",
+                "name": "Nombre",
                 "orientation": {
-                   "label": "<em>Orientazione</em>",
+                   "label": "Orientación",
                    "values": {
-                      "horizontal": "<em>Orizzontale</em>",
-                      "vertical": "<em>Verticale</em>"
+                      "horizontal": "Horizontal",
+                      "vertical": "Vertical"
                    }
                 },
-                "required": "<em>Obbligatorio</em>",
-                "steps": "<em>Intervalli</em>",
-                "title": "<em>Titolo</em>",
-                "valueField": "<em>Campo valore</em>",
-                "valueFieldset": "<em>Asse dei valori</em>"
+                "required": "Obligatorio",
+                "steps": "Intervalos",
+                "title": "Título",
+                "valueField": "Campo valor",
+                "valueFieldset": "Barra de los valores"
              },
              "inputTypes": {
-                "BOOLEAN": "<em>Buleano</em>",
-                "DECIMAL": "<em>Decimale</em>",
-                "INTEGER": "<em>Intero</em>",
-                "DOUBLE": "<em>Decimale a precision doppia</em>",
-                "DATE": "<em>Data</em>",
-                "TIMESTAMP": "<em>Timestamp</em>",
-                "TIME": "<em>Orario</em>",
-                "STRING": "<em>Stringa</em>",
-                "TEXT": "<em>Testo</em>",
-                "CHAR": "<em>Carattere</em>",
-                "INET": "<em>Indirizzo di rete</em>"
+                "BOOLEAN": "Booleano",
+                "DECIMAL": "Decimal",
+                "INTEGER": "Entero",
+                "DOUBLE": "Decimal de doble precisión",
+                "DATE": "Fecha",
+                "TIMESTAMP": "Timestamp",
+                "TIME": "Horario",
+                "STRING": "Cadena",
+                "TEXT": "Texto",
+                "CHAR": "Caráctere",
+                "INET": "Dirección de red"
              },
-             "title": "<em>Grafici</em>",
+             "title": "Gráficos",
              "typeFieldOptions": {
-                "card" : "<em>Card</em>",
-                "classes" : "<em>Seleziona una classe di CMDBuild</em>",
-                "freeInt" : "<em>Intero libero</em>",
-                "freeString" : "<em>Stringa libera</em>",
-                "group" : "<em>Gruppo corrente</em>",
-                "lookup" : "<em>Seleziona da una lookup</em>",
-                "user" : "<em>Utente corrente</em>"
+                "card" : "Tarjeta",
+                "classes" : "Seleccionar una clase de CMDBuild",
+                "freeInt" : "Entero libre",
+                "freeString" : "Cadena libre",
+                "group" : "Grupo corriente",
+                "lookup" : "Seleccionar de una lookup",
+                "user" : "Usuario corriente"
              }
           },
           "layout": {
-             "add": "Aggiungi una colonna",
-             "remove": "Rimuovi le colonne vuote",
-             "title": "Layout"
+             "add": "Añadir una columna",
+             "remove": "Remover las columnas vacías",
+             "title": "Plano"
           },
           "properties": {
-             "add": "<em>Aggiungi dashboard</em>",
-             "modify": "<em>Modifica dashboard</em>",
-             "remove": "<em>Rimuovi dashboard</em>",
+             "add": "Añadir cuadro de mando",
+             "modify": "Modificar cuadro de mando",
+             "remove": "Remover cuadro de mando",
              "fields": {
-                "name": "<em>Nome</em>",
-                "description": "<em>Descrizione</em>",
-                "groups": "<em>Disponibile per i gruppi</em>"
+                "name": "Nombre",
+                "description": "Descripción",
+                "groups": "Disponible para los grupos"
              }
           },
-          "title": "<em>Dashboard</em>"
+          "title": "Cuadro de mando"
       },
       "modLookup": {
          "add_lookuptype": "Agregar Tipo Lookup",
@@ -427,7 +427,7 @@
          "available_elements": "Elementos disponibles",
          "availabletree": {
             "classes": "Clases",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "Cuadros de mando",
             "processes": "Actividad",
             "reports": "Informe",
             "views": "Vistas"
@@ -645,7 +645,7 @@
          "add": "Agrega",
          "close": "Cierra",
          "like": "como",
-         "load": "<em>Carica</em>",
+         "load": "Cargar",
          "modify": "Modificar",
          "print": "Imprimir",
          "remove": "Remover",
@@ -693,9 +693,9 @@
       "tbd_body": "Trabajos en curso",
       "tbd_title": "Trabajos en curso",
       "tooltip": {
-         "editParameters": "<em>Modifica i parametri</em>",
-         "reload": "<em>Ricarica</em>",
-         "showData": "<em>Mostra i dati</em>"
+         "editParameters": "Modifica los parámetros",
+         "reload": "Recargar",
+         "showData": "Mostrar los datos"
       },
       "tree_names": {
          "class": "Estándar",
@@ -1151,7 +1151,7 @@
                "subjectfld": "Objeto",
                "subjecthdr": "Objeto",
                "tofld": "Destinatario",
-               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
+               "updateTemplateConfirm":"Esto borrará todos los emails no enviado.",
                "viewicon": "Visualizar",
                "mailsAreChanged":"Los emails gerenados han sido cambiados",
                "regenerates": "Regenera email"
@@ -1178,7 +1178,7 @@
          "statuses": {
             "all": "Todos",
             "closed.completed": "Completo",
-            "closed.aborted": "<em>Abortito</em>",
+            "closed.aborted": "Abortado",
             "open.not_running.suspended": "Suspendido",
             "open.running": "Activo"
          },
