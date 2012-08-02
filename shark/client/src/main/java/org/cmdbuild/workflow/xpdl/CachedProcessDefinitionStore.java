@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow.xpdl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,7 +158,13 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 	@Override
 	public List<CMActivity> getStartActivities(final String className) throws CMWorkflowException {
-		return cache.getProcessInfoByClass(className).getStartActivities();
+		final ProcessInfo pi = cache.getProcessInfoByClass(className);
+		if (pi == null) {
+			// it is null when the process was created but the XPDL is not yet uploaded
+			return Collections.<CMActivity> emptyList();
+		} else {
+			return pi.getStartActivities();
+		}
 	}
 
 	@Override
