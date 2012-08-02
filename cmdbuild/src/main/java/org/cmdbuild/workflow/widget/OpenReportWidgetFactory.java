@@ -1,9 +1,7 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Widget;
@@ -46,7 +44,7 @@ public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 
 		OpenReport widget = new OpenReport();
 		widget.setReportCode(reportCode);
-		widget.setPreset(extractReportParameters(valueMap));
+		widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		forceFormat(valueMap, widget);
 
 		return widget;
@@ -58,15 +56,5 @@ public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 		} else if (valueMap.containsKey(FORCE_CSV)) {
 			widget.setForceFormat("csv");
 		}
-	}
-
-	private Map<String, String> extractReportParameters(Map<String, String> allParameters) {
-		final Map<String, String> reportParameters = new HashMap<String, String>();
-		for (final Map.Entry<String, String> entry : allParameters.entrySet()) {
-			if (!ArrayUtils.contains(KNOWN_PARAMETERS, entry.getKey())) {
-				reportParameters.put(entry.getKey(), entry.getValue());
-			}
-		}
-		return reportParameters;
 	}
 }
