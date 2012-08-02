@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ManageCardToolAgent extends AbstractConditionalToolAgent {
+abstract class ManageCardToolAgent extends AbstractConditionalToolAgent {
 
 	protected static final String CLASS_NAME = "ClassName";
 	protected static final String OBJ_ID = "ObjId";
