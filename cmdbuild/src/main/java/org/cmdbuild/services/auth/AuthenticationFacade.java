@@ -43,7 +43,7 @@ public abstract class AuthenticationFacade {
 		try {
 			final UserContext systemCtx = UserContext.systemContext();
 			final IDomain userRoleDomain = systemCtx.domains().get(USER_GROUP_DOMAIN_NAME);
-			final GroupCard groupCard = GroupCard.get(groupId, systemCtx);
+			final GroupCard groupCard = GroupCard.getOrCreate(groupId);
 			final Iterable<IRelation> userGroupRelations = systemCtx.relations().list(groupCard).domain(
 					DirectedDomain.create(userRoleDomain, DomainDirection.I), true);
 			for (final IRelation groupRel : userGroupRelations) {

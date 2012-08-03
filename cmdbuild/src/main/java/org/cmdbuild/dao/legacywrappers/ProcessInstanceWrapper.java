@@ -62,7 +62,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 		@Override
 		public CMActivity getDefinition() throws CMWorkflowException {
-			return getActivity(activityDefinitionId);
+			return findActivity(activityDefinitionId);
 		}
 
 		@Override
@@ -247,7 +247,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
 				addToBack(getActivityDefinitionIds(), activityInfo.getActivityDefinitionId()));
 
-		final String participantGroup = getActivityParticipantGroup(activityInfo);
+		final String participantGroup = extractActivityParticipantGroup(activityInfo);
 		card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
 				addToBack(getActivityInstancePerformers(), participantGroup));
 		card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
@@ -273,13 +273,14 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		updateCodeWithOneRandomActivityInfo();
 	}
 
-	private String getActivityParticipantGroup(WSActivityInstInfo activityInfo) throws CMWorkflowException {
-		final CMActivity activity = getActivity(activityInfo.getActivityDefinitionId());
+	private String extractActivityParticipantGroup(WSActivityInstInfo activityInfo) throws CMWorkflowException {
+		final CMActivity activity = findActivity(activityInfo.getActivityDefinitionId());
+		final String performerExpression = activity.getFirstRolePerformer().getName();
 		// TODO Check if participant is a role in the xpdl or not!
-		return activity.getFirstRolePerformer().getName();
+		return performerExpression;
 	}
 
-	private CMActivity getActivity(final String activityDefinitionId) throws CMWorkflowException {
+	private CMActivity findActivity(final String activityDefinitionId) throws CMWorkflowException {
 		return processDefinitionManager.getActivity(this, activityDefinitionId);
 	}
 

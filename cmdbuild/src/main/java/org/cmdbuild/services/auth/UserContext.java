@@ -169,8 +169,7 @@ public class UserContext {
 
 				for (final ICard targetCard : targetClassQuery) {
 					final int id = targetCard.getId();
-					final UserContext systemContext = UserContext.systemContext();
-					final GroupCard groupCard = GroupCard.get(id, systemContext);
+					final GroupCard groupCard = GroupCard.getOrCreate(id);
 					final Group group = groupCard.toGroup(false);
 					groups.add(group);
 				}

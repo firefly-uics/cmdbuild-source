@@ -7,12 +7,16 @@ import java.util.Map;
 
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.workflow.ConfigurationHelper;
+import org.cmdbuild.workflow.Constants;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
 import org.enhydra.jxpdl.XMLUtil;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.ExtendedAttribute;
 import org.enhydra.jxpdl.elements.ExtendedAttributes;
+import org.enhydra.shark.Shark;
+import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
+import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.client.wfservice.WMEntity;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
@@ -185,6 +189,18 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 			cus.error(null, format("unable to get extended attribute '%s'", name));
 		}
 		return value;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getProcessAttributeValue(final String name) throws Exception {
+		final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(shandle, procInstId,
+				Constants.CURRENT_USER_VARIABLE);
+		final Object value = attribute.getValue();
+		return (T) value;
+	}
+
+	private WAPI wapi() throws Exception {
+		return Shark.getInstance().getWAPIConnection();
 	}
 }
 
