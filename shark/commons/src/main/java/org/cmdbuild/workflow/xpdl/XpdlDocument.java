@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.cmdbuild.workflow.Constants;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.jxpdl.XMLInterface;
@@ -87,14 +88,14 @@ public class XpdlDocument {
 		/*
 		 * For backward compatibility
 		 */
-		REFERENCE("Reference", ReferenceType.class.getName()) {
+		REFERENCE(Constants.XPDL_REFERENCE_DECLARED_TYPE, ReferenceType.class.getName()) {
 			@Override
 			protected void selectDataType(DataTypes dataTypes) {
 				dataTypes.setDeclaredType();
 				dataTypes.getDeclaredType().setId(getDeclaredTypeId());
 			}
 		},
-		LOOKUP("Lookup", LookupType.class.getName()) {
+		LOOKUP(Constants.XPDL_LOOKUP_DECLARED_TYPE, LookupType.class.getName()) {
 			@Override
 			protected void selectDataType(DataTypes dataTypes) {
 				dataTypes.setDeclaredType();
@@ -142,7 +143,7 @@ public class XpdlDocument {
 	 */
 	private static final String DEFAULT_XPDL_VERSION = "2.1";
 
-	public static final String ARRAY_DECLARED_TYPE_NAME_SUFFIX = "s";
+	public static final String ARRAY_DECLARED_TYPE_NAME_SUFFIX = Constants.XPDL_ARRAY_DECLARED_TYPE_SUFFIX;
 	public static final String ARRAY_DECLARED_TYPE_LOCATION_SUFFIX = "<>";
 
 	private final Package pkg;

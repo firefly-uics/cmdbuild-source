@@ -237,7 +237,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(value="disabledModules", required=false) String[] disabledModules,
 			UserContext userCtx
 		) throws JSONException, AuthException {
-		GroupCard group = GroupCard.get(groupId, userCtx);
+		GroupCard group = GroupCard.getOrCreate(groupId);
 		if (name != null) {
 			group.setName(name);
 		}
@@ -264,7 +264,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter(value="users", required=false) String users,
 			@Parameter("groupId") int groupId,
 			UserContext userCtx) {
-		final GroupCard group = GroupCard.get(groupId, userCtx);
+		final GroupCard group = GroupCard.getOrCreate(groupId);
 		final IDomain userGroupDomain = userCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
 
 		final List<UserCard> oldUserList = AuthenticationFacade.getUserList(groupId);

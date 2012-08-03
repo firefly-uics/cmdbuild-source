@@ -4,18 +4,20 @@
 package org.cmdbuild.workflow.xpdl;
 
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.workflow.Constants;
 import org.cmdbuild.workflow.utils.SimpleXMLNode;
+import org.enhydra.jxpdl.XPDLConstants;
 
 public enum XPDLAttributeType {
-	BOOLEAN(DataType.BASIC,"BOOLEAN"),
-	STRING(DataType.BASIC,"STRING"),
-	DOUBLE(DataType.BASIC,"FLOAT"),
-	INT(DataType.BASIC,"INTEGER"),
-	DATETIME(DataType.BASIC,"DATETIME"),
-	LOOKUP(DataType.DECLARED,"Lookup"),
-	REFERENCE(DataType.DECLARED,"Reference"),
-	REFERENCES(DataType.DECLARED, "References"),
-	LOOKUPS(DataType.DECLARED, "Lookups");
+	BOOLEAN(DataType.BASIC, XPDLConstants.BASIC_TYPE_BOOLEAN),
+	STRING(DataType.BASIC, XPDLConstants.BASIC_TYPE_STRING),
+	DOUBLE(DataType.BASIC, XPDLConstants.BASIC_TYPE_FLOAT),
+	INT(DataType.BASIC, XPDLConstants.BASIC_TYPE_INTEGER),
+	DATETIME(DataType.BASIC, XPDLConstants.BASIC_TYPE_DATETIME),
+	LOOKUP(DataType.DECLARED, Constants.XPDL_LOOKUP_DECLARED_TYPE),
+	REFERENCE(DataType.DECLARED, Constants.XPDL_REFERENCE_DECLARED_TYPE),
+	REFERENCES(DataType.DECLARED, Constants.XPDL_REFERENCE_ARRAY_DECLARED_TYPE),
+	LOOKUPS(DataType.DECLARED, Constants.XPDL_LOOKUP_ARRAY_DECLARED_TYPE);
 	
 	DataType type;
 	String xpdl;

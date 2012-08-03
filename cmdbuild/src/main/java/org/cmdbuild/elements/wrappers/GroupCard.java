@@ -1,11 +1,14 @@
 package org.cmdbuild.elements.wrappers;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.dao.type.StringArray;
 import org.cmdbuild.elements.AttributeValue;
+import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
@@ -130,14 +133,27 @@ public class GroupCard extends LazyCard {
 		return list;
 	}
 
-	public static GroupCard get(int groupId, UserContext userCtx) {
+	public static GroupCard getOrCreate(int groupId) {
 		ICard card;
-		if (groupId > 0) {
-			card = userCtx.tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+		if (groupId <= 0) {
+			card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
 		} else {
-			card = userCtx.tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
+			card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
 		}
 		GroupCard group = new GroupCard(card);
 		return group;
+	}
+
+	public static GroupCard getOrNull(String groupName) {
+		GroupCard groupCard = null;
+		if (groupName == null || groupName.isEmpty()) {
+			CardQuery groupQuery = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list()
+					.ignoreStatus().filter(GROUP_NAME_ATTRIBUTE, AttributeFilterType.EQUALS, groupName);
+			Iterator<ICard> it = groupQuery.iterator();
+			if (it.hasNext()) {
+				groupCard = new GroupCard(it.next());
+			}
+		}
+		return groupCard;
 	}
 }

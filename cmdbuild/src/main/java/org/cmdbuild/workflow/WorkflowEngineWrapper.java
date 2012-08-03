@@ -8,12 +8,16 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
+import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.elements.wrappers.GroupCard;
+import org.cmdbuild.elements.wrappers.UserCard;
+import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
@@ -173,8 +177,28 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 			nativeValues.put(key, procInstDef.get(key));
 		}
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
+		fillCustomProcessVariables(activityInstance, nativeValues);
 		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), nativeValues);
 		procInstDef.save();
+	}
+
+	private void fillCustomProcessVariables(final CMActivityInstance activityInstance, final Map<String, Object> nativeValues) {
+		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
+		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
+	}
+
+	private CardReference currentUserReference() {
+		final User currentUser = userCtx.getUser();
+		return CardReference.newInstance(UserCard.USER_CLASS_NAME, Long.valueOf(currentUser.getId()), currentUser.getDescription());
+	}
+
+	private Object currentGroupReference(final CMActivityInstance activityInstance) {
+		final GroupCard groupCard = GroupCard.getOrNull(activityInstance.getPerformerName());
+		if (groupCard != null) {
+			return CardReference.newInstance(GroupCard.GROUP_CLASS_NAME, Long.valueOf(groupCard.getId()), groupCard.getDescription());
+		} else {
+			return null;
+		}
 	}
 
 	private void saveWidgets(

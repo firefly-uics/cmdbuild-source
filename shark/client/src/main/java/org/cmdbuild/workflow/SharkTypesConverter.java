@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.workflow.type.LookupType;
@@ -74,7 +73,11 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	private Integer convertLookup(final LookupType lt) {
-		return lt.getId();
+		if (lt.checkValidity()) {
+			return lt.getId();
+		} else {
+			return null;
+		}
 	}
 
 	private ReferenceType[] convertReferenceArray(CardReference[] refArray) {
@@ -95,7 +98,11 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	private Integer convertReference(final ReferenceType ref) {
-		return ref.getId();
+		if (ref.checkValidity()) {
+			return ref.getId();
+		} else {
+			return null;
+		}
 	}
 
 	/**
