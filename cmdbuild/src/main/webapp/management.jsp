@@ -49,7 +49,7 @@
 			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
 			CMDBuild.Runtime.DisabledModules = {};
 <%
-	String[] disabledModules = defaultGroup.getDisabledModules();
+	String[] disabledModules = new String[0]; //TODO Remove it and use UIConfiguration defaultGroup.getDisabledModules();
 	for (String module : disabledModules) {
 %>
 			CMDBuild.Runtime.DisabledModules["<%= module %>"] = true;

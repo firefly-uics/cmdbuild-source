@@ -15,6 +15,7 @@ import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.GroupImpl;
 import org.cmdbuild.services.auth.UserContext;
@@ -27,10 +28,19 @@ public class GroupCard extends LazyCard {
 	public static final String GROUP_NAME_ATTRIBUTE = ICard.CardAttributes.Code.toString();
 	public static final String GROUP_DESCRIPTION_ATTRIBUTE = ICard.CardAttributes.Description.toString();
 
-	public static final String GROUP_ATTRIBUTE_DISABLEDMODULES = "DisabledModules";
 	public static final String GROUP_ATTRIBUTE_EMAIL = "Email";
 	public static final String GROUP_ATTRIBUTE_ISADMIN = "Administrator";
 	public static final String GROUP_ATTRIBUTE_STARTINGCLASS = "startingClass";
+
+	// UIConfiguration
+	public static final String GROUP_ATTRIBUTE_DISABLEDMODULES = "DisabledModules";
+	public static final String GROUP_ATTRIBUTE_DISABLEDCARDTABS = "DisabledCardTabs";
+	public static final String GROUP_ATTRIBUTE_DISABLEDPROCESSTABS = "DisabledProcessTabs";
+	public static final String GROUP_ATTRIBUTE_HIDESIDEPANEL = "HideSidePanel";
+	public static final String GROUP_ATTRIBUTE_FULLSCREEN = "FullScreenMode";
+	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD = "SimpleHistoryModeForCard";
+	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS = "SimpleHistoryModeForProcess";
+	public static final String GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED = "ProcessWidgetAlwaysEnabled";
 
 	private static final ITable roleClass = UserContext.systemContext().tables().get(GROUP_CLASS_NAME);
 
@@ -45,7 +55,7 @@ public class GroupCard extends LazyCard {
 
 	public Group toGroup(boolean defaultGroup) {
 		return new GroupImpl(this.getId(), this.getName(), this.getDescription(),
-				this.isAdmin(), this.getStartingClassOrDefault(), defaultGroup, this.getDisabledModules());
+				this.isAdmin(), this.getStartingClassOrDefault(), defaultGroup, this.getUIConfiguration());
 	}
 	
 	public String getName() {
@@ -63,24 +73,59 @@ public class GroupCard extends LazyCard {
 	public String getEmail(){
 		return getAttributeValue(GROUP_ATTRIBUTE_EMAIL).getString();
 	}
-	
+
 	public void setEmail(String email){
 		getAttributeValue(GROUP_ATTRIBUTE_EMAIL).setValue(email);
 	}
 
-	public String[] getDisabledModules() {
-		StringArray sa = (StringArray) getValue(GROUP_ATTRIBUTE_DISABLEDMODULES);
+	public UIConfiguration getUIConfiguration() {
+		UIConfiguration uiConfiguration = new UIConfiguration();
+
+		uiConfiguration.setDisabledModules(getStringArrayValue(GROUP_ATTRIBUTE_DISABLEDMODULES));
+		uiConfiguration.setDisabledCardTabs(getStringArrayValue(GROUP_ATTRIBUTE_DISABLEDCARDTABS));
+		uiConfiguration.setDisabledProcessTabs(getStringArrayValue(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS));
+		uiConfiguration.setHideSidePanel(getBooleanValue(GROUP_ATTRIBUTE_HIDESIDEPANEL));
+		uiConfiguration.setFullScreenMode(getBooleanValue(GROUP_ATTRIBUTE_FULLSCREEN));
+		uiConfiguration.setSimpleHistoryModeForCard(getBooleanValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
+		uiConfiguration.setSimpleHistoryModeForProcess(getBooleanValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
+		uiConfiguration.setProcessWidgetAlwaysEnabled(getBooleanValue(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
+
+		return uiConfiguration;
+	}
+
+	private String[] getStringArrayValue(String attributeName) {
+		StringArray sa = (StringArray) getValue(attributeName);
 		if (sa != null) {
 			return sa.getValue();
 		} else {
-			return null;
+			return new String[0];
 		}
 	}
 
-	public void setDisabledModules(String[] modules) {		
-		setValue(GROUP_ATTRIBUTE_DISABLEDMODULES, modules);
+	private boolean getBooleanValue(String attributeName) {
+		Boolean b = (Boolean) getValue(attributeName);
+		if (b != null) {
+			return b.booleanValue();
+		} else {
+			return false;
+		}
 	}
-	
+
+	public void setUIConfiguration(UIConfiguration uiConfiguration) {
+		if (uiConfiguration == null) {
+			uiConfiguration = new UIConfiguration();
+		}
+
+		setValue(GROUP_ATTRIBUTE_DISABLEDMODULES, uiConfiguration.getDisabledModules());
+		setValue(GROUP_ATTRIBUTE_DISABLEDCARDTABS, uiConfiguration.getDisabledCardTabs());
+		setValue(GROUP_ATTRIBUTE_DISABLEDPROCESSTABS, uiConfiguration.getDisabledProcessTabs());
+		setValue(GROUP_ATTRIBUTE_HIDESIDEPANEL, uiConfiguration.isHideSidePanel());
+		setValue(GROUP_ATTRIBUTE_FULLSCREEN, uiConfiguration.isFullScreenMode());
+		setValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD, uiConfiguration.isSimpleHistoryModeForCard());
+		setValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS, uiConfiguration.isSimpleHistoryModeForProcess());
+		setValue(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED, uiConfiguration.isProcessWidgetAlwaysEnabled());
+	}
+
 	public boolean isAdmin(){
 		return getAttributeValue(GROUP_ATTRIBUTE_ISADMIN).getBoolean();
 	}
@@ -134,14 +179,19 @@ public class GroupCard extends LazyCard {
 	}
 
 	public static GroupCard getOrCreate(int groupId) {
-		ICard card;
+		GroupCard groupCard;
 		if (groupId <= 0) {
-			card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
+			ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
+			groupCard = new GroupCard(card);
 		} else {
-			card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+			groupCard = getOrDie(groupId);
 		}
-		GroupCard group = new GroupCard(card);
-		return group;
+		return groupCard;
+	}
+
+	public static GroupCard getOrDie(int groupId) {
+		ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+		return new GroupCard(card);
 	}
 
 	public static GroupCard getOrNull(String groupName) {

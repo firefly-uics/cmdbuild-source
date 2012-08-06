@@ -1,6 +1,7 @@
 package org.cmdbuild.services.auth;
 
 import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.model.profile.UIConfiguration;
 
 public interface Group {
 
@@ -9,6 +10,11 @@ public interface Group {
 	String getDescription();
 	boolean isAdmin();
 	ITable getStartingClass(); 
-	String[] getDisabledModules();
 	boolean isDefault();
+
+	/**
+	 * 
+	 * @return the configuration of the UI for this group
+	 */
+	UIConfiguration getUIConfiguration();
 }

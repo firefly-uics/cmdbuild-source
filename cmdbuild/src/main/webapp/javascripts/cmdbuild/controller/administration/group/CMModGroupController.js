@@ -5,6 +5,7 @@
 		constructor: function() {
 			this.callParent(arguments);
 			this.groupFormController = new CMDBuild.controller.administration.group.CMGroupFormController(this.view.groupForm);
+			this.groupUIConfigurationController = new CMDBuild.controller.administration.group.CMGroupUIConfigurationController(this.view.uiConfigurationPanel);
 			this.view.addGroupButton.on("click", onAddGroupButtonClick, this);
 		},
 
@@ -14,6 +15,8 @@
 				var g = _CMCache.getGroupById(selection.get("id"));
 				if (g) {
 					this.groupFormController.onGroupSelected(g);
+					this.groupUIConfigurationController.onGroupSelected(g);
+
 					this.view.privilegeGrid.setDisabled(g.get("isAdministrator"));
 				}
 
@@ -22,7 +25,7 @@
 			}
 		}
 	});
-	
+
 	function onAddGroupButtonClick() {
 		this.groupFormController.onAddGroupButtonClick();
 		this.view.onAddGroup();

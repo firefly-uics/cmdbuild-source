@@ -438,7 +438,6 @@
             "add_group": "Додај групу",
             "availableusers": "Доступни корисници",
             "delete_group": "Искључи групу",
-            "disabled_modules": "Неактивни модули",
             "email": "Email",
             "enable_group": "Укључи групу",
             "group_description": "Опис",
@@ -467,6 +466,20 @@
             "properties": "Обележја"
          },
          "title": "Корисници и групе",
+         "uiconfiguration": {
+            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_modules": "Неактивни модули",
+            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "generic_properties": {
+               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
+               "card_simple_history": "<em>Simple history for cards</em>",
+               "full_screen_navigation": "<em>Full screen navigation</em>",
+               "hide_side_panel": "<em>Hide side panel</em>",
+               "process_simple_history": "<em>Simple history for processes</em>"
+            },
+            "other": "<em>Other options</em>",
+            "title": "<em>UI configuration</em>"
+         },
          "user": {
             "add_user": "Додај корисника",
             "availablegroups": "Доступне групе",

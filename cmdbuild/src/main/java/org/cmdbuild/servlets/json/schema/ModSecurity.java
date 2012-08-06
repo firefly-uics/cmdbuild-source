@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,18 +23,28 @@ import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.dashboard.DashboardObjectMapper;
+import org.cmdbuild.model.profile.UIConfiguration;
+import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
 import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
+import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModSecurity extends JSONBase {
+
+	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 
 	@JSONExported
 	public String getGroupList(JSONObject serializer) throws JSONException,
@@ -48,7 +59,39 @@ public class ModSecurity extends JSONBase {
 		serializer.put("groups", groups);
 		return serializer.toString();
 	}
-	
+
+	@JSONExported
+	public JsonResponse getUIConfiguration(
+			UserContext userCtx) throws JSONException, AuthException, ORMException {
+
+		return JsonResponse.success(userCtx.getDefaultGroup().getUIConfiguration());
+	}
+
+	@Admin
+	@JSONExported
+	public JsonResponse getGroupUIConfiguration(
+			@Parameter("id") int groupId,
+			UserContext userCtx) throws JSONException, AuthException, ORMException {
+
+		GroupCard group = GroupCard.getOrDie(groupId);
+		return JsonResponse.success(group.getUIConfiguration());
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveGroupUIConfiguration(
+			@Parameter("id") int groupId,
+			@Parameter("uiConfiguration") String jsonUIConfiguration,
+			UserContext userCtx
+		) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
+
+		final GroupCard group = GroupCard.getOrDie(groupId);
+		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
+
+		group.setUIConfiguration(uiConfiguration);
+		group.save();
+	}
+
 	@JSONExported
 	public JSONObject getPrivilegeList(
 			JSONObject serializer,
@@ -113,7 +156,7 @@ public class ModSecurity extends JSONBase {
 					unassociatedUserMap.put(userCard.getId(), userCard);
 				}
 			}
-			userList = unassociatedUserMap.values();			
+			userList = unassociatedUserMap.values();
 		}
 
 		serializer.put("users", Serializer.serializeUserList(userList));
@@ -234,7 +277,6 @@ public class ModSecurity extends JSONBase {
 			@Parameter("isActive") boolean isActive,
 			@Parameter("isAdministrator") boolean isAdministrator,
 			@Parameter(value="users", required=false) String users,
-			@Parameter(value="disabledModules", required=false) String[] disabledModules,
 			UserContext userCtx
 		) throws JSONException, AuthException {
 		GroupCard group = GroupCard.getOrCreate(groupId);
@@ -252,7 +294,7 @@ public class ModSecurity extends JSONBase {
 		} else {
 			group.setStatus(ElementStatus.INACTIVE);
 		}
-		group.setDisabledModules(disabledModules);
+
 		group.save();
 		serializer.put("group", Serializer.serializeGroupCard(group));
 		return serializer;

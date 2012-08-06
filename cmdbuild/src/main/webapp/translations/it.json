@@ -476,7 +476,6 @@
             "add_group": "Aggiungi Gruppo",
             "availableusers": "Utenti disponibili",
             "delete_group": "Disabilita Gruppo",
-            "disabled_modules": "Funzionalità disabilitate",
             "email": "Email",
             "enable_group": "Abilita Gruppo",
             "group_description": "Descrizione",
@@ -505,6 +504,20 @@
             "properties": "Proprietà"
          },
          "title": "Utenti e Gruppi",
+         "uiconfiguration": {
+            "disabled_class_tabs": "Schede del modulo Classi disabilitate",
+            "disabled_modules": "Funzionalità disabilitate",
+            "disabled_process_tabs": "Schede del modulo Processi disabilitate",
+            "generic_properties": {
+               "always_enabled_widgets": "Widget dei processi sempre abilitati",
+               "card_simple_history": "Visualizzazione storia semplificata per le schede",
+               "full_screen_navigation": "Visualizzazione a tutto schermo",
+               "hide_side_panel": "Nascondi il pannello a sinistra",
+               "process_simple_history": "Visualizzazione storia semplificata per i processi"
+            },
+            "other": "Altre opzioni",
+            "title": "Configurazione UI"
+         },
          "user": {
             "add_user": "Aggiungi Utente",
             "availablegroups": "Gruppi disponibili",

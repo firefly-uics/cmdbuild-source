@@ -535,6 +535,35 @@ CMDBuild.ServiceProxy.group = {
 				direction : "ASC"
 			}]
 		});
+	},
+
+	getUIConfiguration: function(groupId, cbs) {
+		cbs = cbs || {};
+
+		CMDBuild.ServiceProxy.core.doRequest({
+			url: "services/json/schema/modsecurity/getgroupuiconfiguration",
+			params: {id: groupId},
+			method: "GET",
+			success: cbs.success || Ext.emptyFn,
+			failure: cbs.failure || Ext.emptyFn,
+			callback: cbs.callback || Ext.emptyFn
+		});
+	},
+
+	saveUIConfiguration: function(groupId, uiConfiguration, cbs) {
+		cbs = cbs || {};
+
+		CMDBuild.ServiceProxy.core.doRequest({
+			url: "services/json/schema/modsecurity/savegroupuiconfiguration",
+			params: {
+				id: groupId,
+				uiConfiguration: uiConfiguration
+			},
+			method: "POST",
+			success: cbs.success || Ext.emptyFn,
+			failure: cbs.failure || Ext.emptyFn,
+			callback: cbs.callback || Ext.emptyFn
+		});
 	}
 };
 

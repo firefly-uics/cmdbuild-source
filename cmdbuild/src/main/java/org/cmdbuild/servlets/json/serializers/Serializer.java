@@ -631,7 +631,6 @@ public class Serializer {
 		jsonGroup.put("isAdministrator", groupCard.isAdmin());
 		jsonGroup.put("startingClass", groupCard.getStartingClassId());
 		jsonGroup.put("isActive", groupCard.getStatus().isActive());
-		jsonGroup.put("disabledModules", groupCard.getDisabledModules());
 		jsonGroup.put("text", groupCard.getDescription());
 		jsonGroup.put("selectable", true);
 		jsonGroup.put("type", "group");

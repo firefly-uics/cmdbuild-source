@@ -476,7 +476,6 @@
             "add_group": "Создать группу",
             "availableusers": "Доступные пользователи",
             "delete_group": "Отключить группу",
-            "disabled_modules": "Отключенные функции",
             "email": "Email",
             "enable_group": "Включить группу",
             "group_description": "Описание",
@@ -505,6 +504,20 @@
             "properties": "Свойства"
          },
          "title": "Пользователи и группы",
+         "uiconfiguration": {
+            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_modules": "Отключенные функции",
+            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "generic_properties": {
+               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
+               "card_simple_history": "<em>Simple history for cards</em>",
+               "full_screen_navigation": "<em>Full screen navigation</em>",
+               "hide_side_panel": "<em>Hide side panel</em>",
+               "process_simple_history": "<em>Simple history for processes</em>"
+            },
+            "other": "<em>Other options</em>",
+            "title": "<em>UI configuration</em>"
+         },
          "user": {
             "add_user": "Добавить пользователя",
             "availablegroups": "Доступные группы",
