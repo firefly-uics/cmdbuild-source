@@ -1,10 +1,12 @@
 package unit.workflow;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
@@ -22,7 +24,8 @@ public class ManageEmailWidgetFactoryTest {
 			"ToAddresses='to@a.a'\n" +
 			"CCAddresses='cc@a.a'\n" +
 			"Subject='the subject'\n" +
-			"Content='the content'\n"
+			"Content='the content'\n",
+			mock(CMValueSet.class)
 		);
 
 		assertThat(w.getEmailTemplates().size(), is(1));
@@ -49,7 +52,8 @@ public class ManageEmailWidgetFactoryTest {
 
 			"Content2='the content 2'\n" +
 
-			"Condition3='condition'\n"
+			"Condition3='condition'\n",
+			mock(CMValueSet.class)
 		);
 
 		assertThat(w.getEmailTemplates().size(), is(4));
@@ -83,7 +87,8 @@ public class ManageEmailWidgetFactoryTest {
 
 			"Ashibabalea='from Ashi when baba={client:lea}'\n" +
 
-			"Foo='Bar'\n"
+			"Foo='Bar'\n",
+			mock(CMValueSet.class)
 		);
 
 		assertThat(w.getEmailTemplates().size(), is(2));

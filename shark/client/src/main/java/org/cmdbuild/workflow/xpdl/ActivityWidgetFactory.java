@@ -1,5 +1,6 @@
 package org.cmdbuild.workflow.xpdl;
 
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 
 /**
@@ -7,5 +8,5 @@ import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
  */
 public interface ActivityWidgetFactory {
 
-	CMActivityWidget createWidget(String serialization);
+	CMActivityWidget createWidget(String serialization, CMValueSet processVariables);
 }

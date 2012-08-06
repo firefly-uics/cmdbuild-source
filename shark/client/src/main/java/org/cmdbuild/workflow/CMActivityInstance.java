@@ -1,5 +1,9 @@
 package org.cmdbuild.workflow;
 
+import java.util.List;
+
+import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+
 
 public interface CMActivityInstance {
 
@@ -8,4 +12,13 @@ public interface CMActivityInstance {
 	String getId();
 	CMActivity getDefinition() throws CMWorkflowException;
 	String getPerformerName();
+
+	/**
+	 * Returns the activity widgets for this process instance,
+	 * with expansion of "server" variables.
+	 * 
+	 * @return ordered list of widgets for this activity instance
+	 * @throws CMWorkflowException 
+	 */
+	List<CMActivityWidget> getWidgets() throws CMWorkflowException;
 }

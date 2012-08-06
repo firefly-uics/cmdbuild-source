@@ -35,12 +35,12 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, String> valueMap) {
+	protected Widget createWidget(Map<String, Object> valueMap) {
 		LinkCards widget = new LinkCards(dataAccessLogic);
 
 		setFilterAndClassName(valueMap, widget);
-		widget.setOutputName(valueMap.get(OUTPUT_KEY));
-		widget.setDefaultSelection(valueMap.get(DEFAULT_SELECTION));
+		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
+		widget.setDefaultSelection(readString(valueMap.get(DEFAULT_SELECTION)));
 		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
 		widget.setSingleSelect(readBooleanTrueIfPresent(valueMap.get(SINGLE_SELECT)));
 		widget.setAllowCardEditing(readBooleanTrueIfPresent(valueMap.get(ALLOW_CARD_EDITING)));
@@ -49,10 +49,10 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
 		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
 		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
-		widget.setTemplates(extractUnmanagedParameters(valueMap,
-			FILTER, CLASS_NAME, DEFAULT_SELECTION, READ_ONLY, 
-			SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE,
-			MAP_LONGITUDE, MAP_ZOOM, REQUIRED, LABEL));
+		widget.setTemplates(extractUnmanagedStringParameters(valueMap,
+				FILTER, CLASS_NAME, DEFAULT_SELECTION, READ_ONLY, 
+				SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE,
+				MAP_LONGITUDE, MAP_ZOOM, REQUIRED, LABEL));
 
 		return widget;
 	}
@@ -61,14 +61,14 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	 * If the filter is set the given ClassName is ignored
 	 * and is used the filter
 	 */
-	private void setFilterAndClassName(Map<String, String> valueMap,
+	private void setFilterAndClassName(Map<String, Object> valueMap,
 			LinkCards widget) {
-		final String filter = valueMap.get(FILTER);
+		final String filter = readString(valueMap.get(FILTER));
 		if (filter != null) {
 			widget.setFilter(filter);
 			widget.setClassName(readClassNameFromCQLFilter(filter));
 		} else {
-			widget.setClassName(valueMap.get(CLASS_NAME));
+			widget.setClassName(readString(valueMap.get(CLASS_NAME)));
 		}
 	}
 

@@ -13,7 +13,7 @@ public class OpenAttachmentWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	public Widget createWidget(final Map<String, String> valuePairs) {
+	public Widget createWidget(final Map<String, Object> valuePairs) {
 		return new OpenAttachment();
 	}
 

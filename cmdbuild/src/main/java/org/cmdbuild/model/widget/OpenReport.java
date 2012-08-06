@@ -6,7 +6,7 @@ public class OpenReport extends Widget {
 
 	private String reportCode;
 	private String forceFormat;
-	private Map<String,String> preset;
+	private Map<String,Object> preset;
 
 	public void setReportCode(final String reportCode) {
 		this.reportCode = reportCode;
@@ -24,11 +24,11 @@ public class OpenReport extends Widget {
 		return forceFormat;
 	}	
 
-	public void setPreset(final Map<String,String> preset) {
+	public void setPreset(final Map<String,Object> preset) {
 		this.preset = preset;
 	}
 
-	public Map<String,String> getPreset() {
+	public Map<String,Object> getPreset() {
 		return preset;
 	}
 }

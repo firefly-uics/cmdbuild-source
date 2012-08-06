@@ -205,7 +205,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 			final CMActivityInstance activityInstance,
 			final Map<String, Object> widgetSubmission,
 			final Map<String, Object> nativeValues) throws CMWorkflowException {
-		for (final CMActivityWidget w : activityInstance.getDefinition().getWidgets()) {
+		for (final CMActivityWidget w : activityInstance.getWidgets()) {
 			final Object submission = widgetSubmission.get(w.getId());
 			if (submission == null)
 				continue;
@@ -228,7 +228,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	public UserProcessInstance advanceActivity(final CMActivityInstance activityInstance) throws CMWorkflowException {
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();
 		final String procInstId = procInst.getProcessInstanceId();
-		for (final CMActivityWidget w : activityInstance.getDefinition().getWidgets()) {
+		for (final CMActivityWidget w : activityInstance.getWidgets()) {
 			w.advance(activityInstance);
 		}
 		workflowService.advanceActivityInstance(procInstId, activityInstance.getId());

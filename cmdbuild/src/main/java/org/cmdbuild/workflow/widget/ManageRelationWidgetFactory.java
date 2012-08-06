@@ -21,20 +21,20 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, String> valueMap) {
+	protected Widget createWidget(Map<String, Object> valueMap) {
 		ManageRelation widget = new ManageRelation();
 
-		widget.setDomainName(valueMap.get(DOMAIN));
-		widget.setClassName(valueMap.get(CLASS_NAME));
-		widget.setObjId(valueMap.get(CARD_CQL_SELECTOR));
+		widget.setDomainName(readString(valueMap.get(DOMAIN)));
+		widget.setClassName(readString(valueMap.get(CLASS_NAME)));
+		widget.setObjId(readString(valueMap.get(CARD_CQL_SELECTOR)));
 		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
 		setSource(widget, valueMap.get(IS_DIRECT));
-		setEnabledFunctions(widget, valueMap.get(FUNCTIONS));
+		setEnabledFunctions(widget, readString(valueMap.get(FUNCTIONS)));
 
 		return widget;
 	}
 
-	private void setSource(ManageRelation widget, String isDirect) {
+	private void setSource(ManageRelation widget, Object isDirect) {
 		if (isDirect != null) {
 			final String source = readBooleanTrueIfTrue(isDirect) ? "_1" : "_2";
 			widget.setSource(source);
@@ -57,7 +57,6 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	private boolean isEnabled(String functions, int index) {
-		String s = functions.trim();
 		boolean enabled = false;
 		try {
 			char c = functions.charAt(index);

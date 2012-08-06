@@ -9,8 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
@@ -41,7 +40,7 @@ public class XpdlActivityWrapperTest {
 	public void extractsNoVariablesOrWidgetsIfNoExtendedAttributes() {
 		assertThat(wrapper.getVariables().size(), is(0));
 		assertThat(wrapper.getWidgets().size(), is(0));
-		verify(widgetFactory, never()).createWidget(any(XpdlExtendedAttribute.class));
+		verify(widgetFactory, never()).createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class));
 		verify(variableFactory, never()).createVariable(any(XpdlExtendedAttribute.class));
 	}
 
@@ -70,17 +69,17 @@ public class XpdlActivityWrapperTest {
 		xpdlActivity.addExtendedAttribute("SomeOtherKey", "SomeOtherValue");
 
 		assertThat(wrapper.getWidgets().size(), is(0));
-		verify(widgetFactory, times(2)).createWidget(any(XpdlExtendedAttribute.class));
+		verify(widgetFactory, times(2)).createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class));
 	}
 
 	@Test
 	public void widgetsAreExtracted() {
 		xpdlActivity.addExtendedAttribute("SomeKey", "SomeValue");
 		xpdlActivity.addExtendedAttribute("SomeOtherKey", "SomeOtherValue");
-		when(widgetFactory.createWidget(any(XpdlExtendedAttribute.class))).thenReturn(notNullWidget());
+		when(widgetFactory.createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class))).thenReturn(notNullWidget());
 
 		assertThat(wrapper.getWidgets().size(), is(2));
-		verify(widgetFactory, times(2)).createWidget(any(XpdlExtendedAttribute.class));
+		verify(widgetFactory, times(2)).createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class));
 	}
 
 	/*

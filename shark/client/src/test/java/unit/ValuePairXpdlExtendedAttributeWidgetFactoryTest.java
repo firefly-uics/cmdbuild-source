@@ -3,6 +3,7 @@ package unit;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
@@ -42,7 +44,7 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 
 		assertThat(createWidget("A", "Serialization"), is(aWidget));
 
-		verify(aFactory, times(1)).createWidget(eq("Serialization"));
+		verify(aFactory, times(1)).createWidget(eq("Serialization"), any(CMValueSet.class));
 	}
 
 	@Test
@@ -54,7 +56,7 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 
 		assertNull(createWidget("A", null));
 
-		verify(aFactory, never()).createWidget(anyString());
+		verify(aFactory, never()).createWidget(anyString(), any(CMValueSet.class));
 	}
 
 	/*
@@ -64,12 +66,12 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 	private CMActivityWidget addFactoryReturningWidget(final SingleActivityWidgetFactory aFactory, final String name) {
 		CMActivityWidget aWidget =  mock(CMActivityWidget.class);
 		when(aFactory.getWidgetName()).thenReturn(name);
-		when(aFactory.createWidget(anyString())).thenReturn(aWidget);
+		when(aFactory.createWidget(anyString(), any(CMValueSet.class))).thenReturn(aWidget);
 		return aWidget;
 	}
 
 	private CMActivityWidget createWidget(final String key, final String value) {
-		return widgetFactory.createWidget(new XpdlExtendedAttribute(key, value));
+		return widgetFactory.createWidget(new XpdlExtendedAttribute(key, value), mock(CMValueSet.class));
 	}
 
 }

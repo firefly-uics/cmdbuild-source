@@ -129,6 +129,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		return workflowEngine;
 	}
 
+	public static CMWorkflowService getWorkflowService() {
+		return workflowService;
+	}
+
 	public static class SimplifiedUserContext {
 		private UserContext userContext;
 

@@ -78,6 +78,10 @@ public class JsonWorkflowDTOs {
 		public Boolean isWritable() {
 			return activityInstance.isWritable();
 		}
+
+		public Iterable<CMActivityWidget> getWidgets() throws CMWorkflowException {
+			return activityInstance.getWidgets();
+		}
 	}
 
 	/*

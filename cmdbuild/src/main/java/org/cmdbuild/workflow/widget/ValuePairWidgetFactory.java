@@ -6,16 +6,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 
 /**
- * Single activity widget factory that knows how to decode a list of
- * key/value pairs.
+ * Single activity widget factory that knows how to decode a list of key/value
+ * pairs.
  */
 public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFactory {
+
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
 
@@ -27,12 +29,15 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	private static final String LINE_SEPARATOR = "\r?\n";
 	private static final String VALUE_SEPARATOR = "=";
 
+	private static final String FILTER_KEY = "Filter";
 	private static final String SINGLE_QUOTES = "'";
 	private static final String DOUBLE_QUOTES = "\"";
 	private static final String CLIENT_PREFIX = "client:";
+	private static final String DB_TEMPLATE_PREFIX = "dbtmpl:";
 
-	public final CMActivityWidget createWidget(final String serialization) {
-		final Map<String,String> valueMap = deserialize(serialization);
+	@Override
+	public final CMActivityWidget createWidget(final String serialization, final CMValueSet processInstanceVariables) {
+		final Map<String, Object> valueMap = deserialize(serialization, processInstanceVariables);
 		final Widget widget = createWidget(valueMap);
 		setWidgetId(widget, serialization);
 		setWidgetLabel(widget, valueMap);
@@ -44,89 +49,119 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		widget.setId(id);
 	}
 
-	private void setWidgetLabel(Widget widget, Map<String, String> valueMap) {
-		final String label = valueMap.get(BUTTON_LABEL);
+	private void setWidgetLabel(Widget widget, Map<String, Object> valueMap) {
+		final String label = (String) valueMap.get(BUTTON_LABEL);
 		if (label != null) {
 			widget.setLabel(label);
 		}
 	}
 
-	private Map<String,String> deserialize(final String serialization) {
-		final Map<String,String> valueMap = new HashMap<String,String>();
+	private Map<String, Object> deserialize(final String serialization, final CMValueSet processInstanceVariables) {
+		final Map<String, Object> valueMap = new HashMap<String, Object>();
 		for (final String line : serialization.split(LINE_SEPARATOR)) {
-			addPair(valueMap, line);
+			addPair(valueMap, line, processInstanceVariables);
 		}
 		return valueMap;
 	}
 
-	private void addPair(final Map<String, String> valueMap, final String line) {
+	private void addPair(final Map<String, Object> valueMap, final String line,
+			final CMValueSet processInstanceVariables) {
 		final String pair[] = line.split(VALUE_SEPARATOR, 2);
 		if (pair.length > 0 && !pair[0].isEmpty()) {
+			final String key = pair[0];
 			if (pair.length == 1 || pair[1].isEmpty()) {
-				valueMap.put(OUTPUT_KEY, pair[0]);
+				valueMap.put(OUTPUT_KEY, key);
 			} else {
-				try {
-					valueMap.put(pair[0], interpretValue(pair[1]));
-				} catch (Exception e) {
-					// Ignore malformed lines
-				}
+				final Object value = interpretValue(key, pair[1], processInstanceVariables);
+				valueMap.put(key, value);
 			}
 		}
 	}
 
-	/*
-	 * TODO switch to a strategy when
-	 */
-	private String interpretValue(final String value) {
-		if (Character.isDigit(value.charAt(0))) {
+	private Object interpretValue(final String key, final String value, final CMValueSet processInstanceVariables) {
+		if (FILTER_KEY.equals(key)) {
 			return value;
-		} else if ((value.startsWith(DOUBLE_QUOTES) && value.endsWith(DOUBLE_QUOTES))
-				|| (value.startsWith(SINGLE_QUOTES) && value.endsWith(SINGLE_QUOTES))) {
-			return value.substring(1, value.length()-1);
+		} else if (Character.isDigit(value.charAt(0))) {
+			return readInteger(value);
+		} else if (betweenQuotes(value)) {
+			// Quoted values and the Filter (!) parameter are interpreted as strings
+			return value.substring(1, value.length() - 1);
 		} else if (value.startsWith(CLIENT_PREFIX)) {
+			// "Client" variables are always interpreted by the
+			// template resolver on the client side
 			return String.format("{%s}", value);
+		} else if (value.startsWith(DB_TEMPLATE_PREFIX)) {
+			return "TODO";
 		} else {
-			throw new UnsupportedOperationException("Grab a variable!");
+			// Process variables are fetched from the process instance
+			return processInstanceVariables.get(value);
 		}
 	}
 
-	protected abstract Widget createWidget(Map<String, String> valueMap);
+	private boolean betweenQuotes(final String value) {
+		return (value.startsWith(DOUBLE_QUOTES) && value.endsWith(DOUBLE_QUOTES))
+				|| (value.startsWith(SINGLE_QUOTES) && value.endsWith(SINGLE_QUOTES));
+	}
 
-	protected final boolean readBooleanTrueIfPresent(String value) {
+	protected abstract Widget createWidget(Map<String, Object> valueMap);
+
+	protected final String readString(Object value) {
+		if (value instanceof String) {
+			return (String) value;
+		} else if (value != null) {
+			return value.toString();
+		} else {
+			return null;
+		}
+	}
+
+	protected final boolean readBooleanTrueIfPresent(Object value) {
 		return (value != null);
 	}
 
-	protected final boolean readBooleanTrueIfTrue(String value) {
-		return Boolean.parseBoolean(value);
-	}
-
-	protected final Integer readInteger(String value) {
-		Integer out = null;
-		try {
-			out = Integer.parseInt(value);
-		} catch (NumberFormatException e) {
-			// ignore it
+	protected final boolean readBooleanTrueIfTrue(Object value) {
+		if (value instanceof String) {
+			return Boolean.parseBoolean((String) value);
+		} else if (value instanceof Boolean) {
+			return (Boolean) value;
+		} else {
+			return false;
 		}
-
-		return out;
 	}
 
-	protected final String readClassNameFromCQLFilter(String filter) {
-		String className = null;
-		try {
-			QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams(filter);
-			className = q.getFrom().mainClass().getClassName();
-		} catch (Exception e) {
-			// ignore it
+	protected final Integer readInteger(Object value) {
+		if (value instanceof String) {
+			try {
+				return Integer.parseInt((String) value);
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		} else if (value instanceof Integer) {
+			return (Integer) value;
+		} else if (value instanceof Number) {
+			return ((Number) value).intValue();
+		} else {
+			return null;
 		}
-
-		return className;
 	}
 
-	protected final Map<String, String> extractUnmanagedParameters(Map<String, String> valueMap, Set<String> managedParameters) {
-		Map<String, String> out = new HashMap<String, String>();
+	protected final String readClassNameFromCQLFilter(Object filter) {
+		if (filter instanceof String) {
+			try {
+				QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams((String) filter);
+				return q.getFrom().mainClass().getClassName();
+			} catch (Exception e) {
+				// return null later
+			}
+		}
+		return null;
+	}
 
-		for (String key: valueMap.keySet()) {
+	protected final Map<String, Object> extractUnmanagedParameters(Map<String, Object> valueMap,
+			Set<String> managedParameters) {
+		Map<String, Object> out = new HashMap<String, Object>();
+
+		for (String key : valueMap.keySet()) {
 			if (key == null || managedParameters.contains(key)) {
 				continue;
 			}
@@ -136,11 +171,31 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		return out;
 	}
 
-	protected final Map<String, String> extractUnmanagedParameters(Map<String, String> valueMap, String... managedParameters) {
+	protected final Map<String, Object> extractUnmanagedParameters(Map<String, Object> valueMap,
+			String... managedParameters) {
 		Set<String> parameters = new HashSet<String>();
-		for (String s: managedParameters) {
+		for (String s : managedParameters) {
 			parameters.add(s);
 		}
 		return extractUnmanagedParameters(valueMap, parameters);
+	}
+
+	protected final Map<String, String> extractUnmanagedStringParameters(Map<String, Object> valueMap,
+			Set<String> managedParameters) {
+		final Map<String, Object> rawParameters = extractUnmanagedParameters(valueMap, managedParameters);
+		final Map<String, String> stringParameters = new HashMap<String, String>();
+		for (Map.Entry<String, Object> rawEntry : rawParameters.entrySet()) {
+			stringParameters.put(rawEntry.getKey(), readString(rawEntry.getValue()));
+		}
+		return stringParameters;
+	}
+
+	protected final Map<String, String> extractUnmanagedStringParameters(Map<String, Object> valueMap,
+			String... managedParameters) {
+		Set<String> parameters = new HashSet<String>();
+		for (String s : managedParameters) {
+			parameters.add(s);
+		}
+		return extractUnmanagedStringParameters(valueMap, parameters);
 	}
 }
