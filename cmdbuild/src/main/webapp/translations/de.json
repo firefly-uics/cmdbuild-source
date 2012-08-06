@@ -476,7 +476,6 @@
             "add_group": "Gruppe hinzufügen",
             "availableusers": "Verfügbare Benutzer",
             "delete_group": "Gruppe sperren",
-            "disabled_modules": "Gesperrte Funktionalitäten",
             "email": "<em>E-Mail</em>",
             "enable_group": "Gruppe freigeben",
             "group_description": "Beschreibung",
@@ -505,6 +504,20 @@
             "properties": "Eigenschaften"
          },
          "title": "Benutzer und Gruppen",
+         "uiconfiguration": {
+            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_modules": "Gesperrte Funktionalitäten",
+            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "generic_properties": {
+               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
+               "card_simple_history": "<em>Simple history for cards</em>",
+               "full_screen_navigation": "<em>Full screen navigation</em>",
+               "hide_side_panel": "<em>Hide side panel</em>",
+               "process_simple_history": "<em>Simple history for processes</em>"
+            },
+            "other": "<em>Other options</em>",
+            "title": "<em>UI configuration</em>"
+         },
          "user": {
             "add_user": "Benutzer hinzufügen",
             "availablegroups": "Verfügbare Gruppen",

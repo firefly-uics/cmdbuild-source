@@ -4,7 +4,7 @@
 		constructor: function(view) {
 			this.view = view;
 			this.currentGroup = null;
-			
+
 			this.view.saveButton.on("click", onSaveButtonClick, this);
 			this.view.abortButton.on("click", onAbortButtonClick, this);
 			this.view.enableGroupButton.on("click", onEnableGroupButtonClick, this);
@@ -13,15 +13,15 @@
 
 		onGroupSelected: function(g) {
 			this.currentGroup = g;
+			this.view.reset();
 			if (g == null) {
 				this.view.disableModify(enableTBar = false);
-				this.view.reset();
 			} else {
 				this.view.loadGroup(g);
 				this.view.disableModify(enableTBar = true);
 			}
 		},
-		
+
 		onAddGroupButtonClick: function() {
 			this.currentGroup = null;
 			this.view.reset();
@@ -77,27 +77,11 @@
 	}
 
 	function buildParamsForSave() {
-		var modules = this.view.modulesCheckInput.toArray;
-		var disabledModules = (function() {
-			var out = [];
-			for ( var i = 0, len = modules.length; i < len; ++i) {
-				var module = modules[i];
-				if (module.checked) {
-					out.push(module.module);
-				}
-			}
-			return out;
-		})();
-	
 		var params = this.view.getData();
 		if (this.currentGroup == null) {
 			params.id = -1;
 		} else {
 			params.id = this.currentGroup.get("id");
-		}
-
-		if (disabledModules.length > 0) {
-			params.disabledModules = disabledModules
 		}
 	
 		return params;

@@ -51,4 +51,91 @@
 		]
 	});
 
+	Ext.define("CMDBuild.model.CMUIConfigurationModel", {
+		extend: 'Ext.data.Model',
+		fields: [
+			{name: "disabledModules", type: "auto"},
+			{name: "disabledCardTabs", type: "auto"},
+			{name: "disabledProcessTabs", type: "auto"},
+			{name: "fullScreenMode", type: "boolean"},
+			{name: "hideSidePanel", type: "boolean"},
+			{name: "processWidgetAlwaysEnabled", type: "boolean"},
+			{name: "simpleHistoryModeForCard", type: "boolean"},
+			{name: "simpleHistoryModeForProcess", type: "boolean"}
+		],
+
+		/*
+		 * GETTERS
+		 */
+		getDisabledModules: function() {
+			return this.get("disabledModules") || [];
+		},
+
+		getDisabledCardTabs: function() {
+			return this.get("disabledCardTabs") || [];
+		},
+
+		getDisabledProcessTabs: function() {
+			return this.get("disabledProcessTabs") || [];
+		},
+
+		isFullScreenMode: function() {
+			return this.get("fullScreenMode") || false;
+		},
+
+		isHideSidePanel: function() {
+			return this.get("hideSidePanel") || false;
+		},
+
+		isProcessWidgetAlwaysEnabled: function() {
+			return this.get("processWidgetAlwaysEnabled") || false;
+		},
+
+		isSimpleHistoryModeForCard: function() {
+			return this.get("simpleHistoryModeForCard") || false;
+		},
+
+		isSimpleHistoryModeForProcess: function() {
+			return this.get("simpleHistoryModeForProcess") || false;
+		},
+
+		/*
+		 * SETTERS
+		 */
+		setDisabledModules: function(disabledModules) {
+			return this.set("disabledModules", disabledModules);
+		},
+
+		setDisabledCardTabs: function(disabledCardTabs) {
+			return this.set("disabledCardTabs", disabledCardTabs);
+		},
+
+		setDisabledProcessTabs: function(disabledProcessTabs) {
+			return this.set("disabledProcessTabs", disabledProcessTabs);
+		},
+
+		setFullScreenMode: function(fullScreenMode) {
+			return this.set("fullScreenMode", fullScreenMode);
+		},
+
+		setHideSidePanel: function(hideSidePanel) {
+			return this.set("hideSidePanel", hideSidePanel);
+		},
+
+		setProcessWidgetAlwaysEnabled: function(processWidgetAlwaysEnabled) {
+			return this.set("processWidgetAlwaysEnabled", processWidgetAlwaysEnabled);
+		},
+
+		setSimpleHistoryModeForCard: function(simpleHistoryModeForCard) {
+			return this.set("simpleHistoryModeForCard", simpleHistoryModeForCard);
+		},
+
+		setSimpleHistoryModeForProcess: function(simpleHistoryModeForProcess) {
+			return this.set("simpleHistoryModeForProcess", simpleHistoryModeForProcess);
+		},
+
+		toString: function() {
+			return Ext.encode(this.getData());
+		}
+	});
 })();

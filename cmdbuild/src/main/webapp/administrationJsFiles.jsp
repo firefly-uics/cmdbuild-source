@@ -53,6 +53,7 @@
 
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGroupsAccordion.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupUIConfigurationPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupPrivilegeGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupUsers.js"></script>
@@ -130,6 +131,7 @@
 	
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMGroupAccordionController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMGroupUIConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMGroupFormController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMModGroupController.js"></script>
 	

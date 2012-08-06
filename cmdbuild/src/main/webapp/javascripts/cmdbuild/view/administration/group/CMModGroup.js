@@ -25,6 +25,8 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			title: tr.users
 		});
 
+		this.uiConfigurationPanel = new CMDBuild.view.administration.group.CMGroupUIConfigurationPanel();
+
 		this.tabPanel = new Ext.TabPanel({
 			border : false,
 			activeTab : 0,
@@ -32,7 +34,8 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			items : [
 				this.groupForm,
 				this.privilegeGrid,
-				this.userPerGroup
+				this.userPerGroup,
+				this.uiConfigurationPanel
 			]
 		});
 
@@ -51,6 +54,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 	onGroupSelected: function() {
 		this.privilegeGrid.disable();
 		this.userPerGroup.disable();
+		this.uiConfigurationPanel.disable();
 	},
 
 	onAddGroup: function() {
