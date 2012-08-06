@@ -1264,8 +1264,8 @@ public class PGCMBackend extends CMBackend {
 			if (rs.next()) {
 				id = rs.getInt(1);
 			} else {
-				Log.PERSISTENCE.error("Error retrieving generated primary key");
-				throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
+				Log.PERSISTENCE.error("Error retrieving generated primary key: is there a trigger ignoring the insert?");
+				id = 0;
 			}
 		} catch (SQLException se) {
 			Log.PERSISTENCE.error("Errors creating card", se);

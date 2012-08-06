@@ -389,6 +389,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		var params = {
 			CQL: ""
 		};
+		var openSlashes = 0; // 0 or 1
 		var templateParts = this.splitTemplate(cqlQuery);
 		for (var i=0, len=templateParts.length; i<len; ++i) {
 			var item = templateParts[i];
@@ -398,10 +399,17 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				if (value !== 0 && !value) { // NOTE: CQL is undefined if any of its variables is undefined OR EMPTY
 					return undefined;
 				}
-				params.CQL += "{"+escapedVarName+"}";
-				params[escapedVarName] = value;
+				if (openSlashes == 0) {
+					params.CQL += "{"+escapedVarName+"}";
+					params[escapedVarName] = value;
+				} else {
+					params.CQL += value;
+				}
 			}
-			if (item.text) { params.CQL += item.text; }
+			if (item.text) {
+				params.CQL += item.text;
+				openSlashes ^= (item.text.match(/\//g) || []).length % 2;
+			}
 		}
 		return params;
 	},

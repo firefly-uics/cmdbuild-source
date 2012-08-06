@@ -10,8 +10,8 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public class DateAttribute extends AbstractDateAttribute {
 
-	public static final String JSON_DATE_FORMAT = "dd/MM/yyyy";
-	public static final String LEGACY_JSON_DATE_FORMAT = "dd/MM/yy";
+	public static final String JSON_DATE_FORMAT = "dd/MM/yyyy"; // Two-digit years are converted to 00yy!
+	public static final String LEGACY_JSON_DATE_FORMAT = "dd/MM/yy"; // Accepts four-digit years as well
 	public static final String POSTGRES_DATE_FORMAT = "yyyy-MM-dd";
 
 	public DateAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
@@ -31,8 +31,8 @@ public class DateAttribute extends AbstractDateAttribute {
 		} else if (value instanceof Calendar) {
 			dateValue = normalizeToMidnight(((Calendar) value).getTime());
 		} else if (value instanceof String) {
-			dateValue = convertDateString((String) value, JSON_DATE_FORMAT, SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT,
-					LEGACY_JSON_DATE_FORMAT);
+			dateValue = convertDateString((String) value, LEGACY_JSON_DATE_FORMAT, SOAP_DATETIME_FORMAT,
+					REST_DATETIME_FORMAT);
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
