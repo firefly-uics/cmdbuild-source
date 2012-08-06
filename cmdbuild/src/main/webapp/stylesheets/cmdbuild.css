@@ -544,6 +544,10 @@ em {
 	background-image: url(../images/icons/tree/group.png) !important;
 }
 
+.cmdbuild-tree-dashboard-icon {
+	background-image: url(../images/icons/tree/dashboard.png) !important;
+}
+
 /* Ext.ux.CheckColumn*/
 .x-grid-checkheader {
     height: 14px;
