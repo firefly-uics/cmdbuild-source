@@ -39,7 +39,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	 * ...first do it works...
 	 */
 	@Override
-	protected Widget createWidget(Map<String, String> valueMap) {
+	protected Widget createWidget(Map<String, Object> valueMap) {
 		ManageEmail widget = new ManageEmail(emailLogic);
 		Map<String, EmailTemplate> emailTemplate = new LinkedHashMap<String, EmailTemplate>(); // I want preserve the order
 		Set<String> managedParameters = new HashSet<String>();
@@ -49,51 +49,51 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		Map<String, String> toAddresses = getAttributesStartingWith(valueMap, TO_ADDRESSES);
 		for (String key: toAddresses.keySet()) {
 			EmailTemplate t = getTemplateForKey(key, emailTemplate, TO_ADDRESSES);
-			t.setToAddresses(valueMap.get(key));
+			t.setToAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(toAddresses.keySet());
 
 		Map<String, String> ccAddresses = getAttributesStartingWith(valueMap, CC_ADDRESSES);
 		for (String key: ccAddresses.keySet()) {
 			EmailTemplate t = getTemplateForKey(key, emailTemplate, CC_ADDRESSES);
-			t.setCcAddresses(valueMap.get(key));
+			t.setCcAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(ccAddresses.keySet());
 
 		Map<String, String> subjects = getAttributesStartingWith(valueMap, SUBJECT);
 		for (String key: subjects.keySet()) {
 			EmailTemplate t = getTemplateForKey(key, emailTemplate, SUBJECT);
-			t.setSubject(valueMap.get(key));
+			t.setSubject(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(subjects.keySet());
 
 		Map<String, String> contents = getAttributesStartingWith(valueMap, CONTENT);
 		for (String key: contents.keySet()) {
 			EmailTemplate t = getTemplateForKey(key, emailTemplate, CONTENT);
-			t.setContent(valueMap.get(key));
+			t.setContent(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(contents.keySet());
 
 		Map<String, String> conditions = getAttributesStartingWith(valueMap, CONDITION);
 		for (String key: conditions.keySet()) {
 			EmailTemplate t = getTemplateForKey(key, emailTemplate, CONDITION);
-			t.setCondition(valueMap.get(key));
+			t.setCondition(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(conditions.keySet());
 
 		widget.setEmailTemplates(emailTemplate.values());
-		widget.setTemplates(extractUnmanagedParameters(valueMap, managedParameters));
+		widget.setTemplates(extractUnmanagedStringParameters(valueMap, managedParameters));
 		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
 
 		return widget;
 	}
 
-	private Map<String, String> getAttributesStartingWith(Map<String, String> valueMap, String prefix) {
+	private Map<String, String> getAttributesStartingWith(Map<String, Object> valueMap, String prefix) {
 		Map<String, String> out = new HashMap<String, String>();
 
-		for (String key: valueMap.keySet()) {
+		for (final String key: valueMap.keySet()) {
 			if (key.startsWith(prefix)) {
-				out.put(key, valueMap.get(key));
+				out.put(key, readString(valueMap.get(key)));
 			}
 		}
 

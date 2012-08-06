@@ -6,6 +6,7 @@ import java.util.Map;
 import net.jcip.annotations.ThreadSafe;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 
 
@@ -29,12 +30,12 @@ public class ValuePairXpdlExtendedAttributeWidgetFactory implements XpdlExtended
 	}
 
 	@Override
-	public CMActivityWidget createWidget(final XpdlExtendedAttribute xa) {
+	public CMActivityWidget createWidget(final XpdlExtendedAttribute xa, final CMValueSet processInstanceVariables) {
 		final String name = xa.getKey();
 		final String serialization = xa.getValue();
 		final ActivityWidgetFactory f = factories.get(name);
 		if (f != null && serialization != null) {
-			return f.createWidget(serialization);
+			return f.createWidget(serialization, processInstanceVariables);
 		}
 		return null;
 	}

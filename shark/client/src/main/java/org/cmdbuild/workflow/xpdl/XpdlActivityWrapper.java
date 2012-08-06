@@ -2,13 +2,31 @@ package org.cmdbuild.workflow.xpdl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
 
 public class XpdlActivityWrapper implements CMActivity {
+
+	private static CMValueSet UNAVAILABLE_PROCESS_INSTANCE = new CMValueSet() {
+
+		final String EXCEPTION = "Process instance not available";
+
+		@Override
+		public Object get(final String key) {
+			throw new UnsupportedOperationException(EXCEPTION);
+		}
+
+		@Override
+		public Iterable<Entry<String, Object>> getValues() {
+			throw new UnsupportedOperationException(EXCEPTION);
+		}
+
+	};
 
 	@Legacy("As in 1.x")
 	public static final String ADMIN_START_XA = "AdminStart";
@@ -77,14 +95,18 @@ public class XpdlActivityWrapper implements CMActivity {
 
 	@Override
 	public List<CMActivityWidget> getWidgets() {
+		return getWidgets(UNAVAILABLE_PROCESS_INSTANCE);
+	}
+
+	@Override
+	public List<CMActivityWidget> getWidgets(final CMValueSet processInstanceVariables) {
 		List<CMActivityWidget> widgets = new ArrayList<CMActivityWidget>();
 		for (XpdlExtendedAttribute xa : inner.getExtendedAttributes()) {
-			final CMActivityWidget w = widgetFactory.createWidget(xa);
+			final CMActivityWidget w = widgetFactory.createWidget(xa, processInstanceVariables);
 			if (w != null) {
 				widgets.add(w);
 			}
 		}
 		return widgets;
 	}
-
 }

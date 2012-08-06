@@ -27,28 +27,28 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, String> valueMap) {
+	protected Widget createWidget(final Map<String, Object> valueMap) {
 		CreateModifyCard widget = new CreateModifyCard(dataAccessLogic);
 		if (valueMap.containsKey(OBJ_REF)) {
 			configureWidgetFromReference(widget, valueMap);
 		} else {
 			configureWidgetFromClassName(widget, valueMap);
 		}
-		widget.setOutputName(valueMap.get(OUTPUT_KEY));
+		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 
 		return widget;
 	}
 
-	private void configureWidgetFromClassName(CreateModifyCard widget, final Map<String, String> valueMap) {
-		final String className = valueMap.get(CLASS_NAME);
+	private void configureWidgetFromClassName(CreateModifyCard widget, final Map<String, Object> valueMap) {
+		final String className = readString(valueMap.get(CLASS_NAME));
 		Validate.notEmpty(className, CLASS_NAME + " is required");
 
 		widget.setTargetClass(className);
-		widget.setIdcardcqlselector(valueMap.get(OBJ_ID));
+		widget.setIdcardcqlselector(readString(valueMap.get(OBJ_ID)));
 		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
 	}
 
-	private void configureWidgetFromReference(CreateModifyCard widget, final Map<String, String> valueMap) {
+	private void configureWidgetFromReference(CreateModifyCard widget, final Map<String, Object> valueMap) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

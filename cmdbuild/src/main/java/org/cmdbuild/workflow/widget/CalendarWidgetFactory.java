@@ -21,21 +21,21 @@ public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, String> valueMap) {
+	protected Widget createWidget(Map<String, Object> valueMap) {
 		final Calendar widget = new Calendar();
 
-		final String filter = valueMap.get(CQL_FILTER);
+		final String filter = readString(valueMap.get(CQL_FILTER));
 		if (filter != null) {
 			widget.setFilter(filter);
 			widget.setTargetClass(readClassNameFromCQLFilter(filter));
 		} else {
-			widget.setTargetClass(valueMap.get(TARGET_CLASS));
+			widget.setTargetClass(readString(valueMap.get(TARGET_CLASS)));
 		}
 
-		widget.setEventTitle(valueMap.get(TITLE));
-		widget.setStartDate(valueMap.get(START_DATE));
-		widget.setEndDate(valueMap.get(END_DATE));
-		widget.setDefaultDate(valueMap.get(DEFAULT_DATE));
+		widget.setEventTitle(readString(valueMap.get(TITLE)));
+		widget.setStartDate(readString(valueMap.get(START_DATE)));
+		widget.setEndDate(readString(valueMap.get(END_DATE)));
+		widget.setDefaultDate(readString(valueMap.get(DEFAULT_DATE)));
 
 		return widget;
 	}

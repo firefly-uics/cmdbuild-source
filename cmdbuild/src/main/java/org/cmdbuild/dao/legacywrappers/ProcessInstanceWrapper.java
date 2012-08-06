@@ -11,19 +11,21 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.dao.entry.LazyValueSet;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.services.auth.Group;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMActivityInstance;
+import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfoImpl;
@@ -74,6 +76,20 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		public boolean isWritable() {
 			return userCtx.privileges().isAdmin() || userCtx.belongsTo(activityInstancePerformer);
 		}
+
+		@Override
+		public List<CMActivityWidget> getWidgets() throws CMWorkflowException {
+			return getDefinition().getWidgets(new LazyValueSet() {
+				@Override
+				protected Map<String, Object> load() {
+					try {
+						return workflowService.getProcessInstanceVariables(getProcessInstanceId());
+					} catch (final CMWorkflowException exception) {
+						throw new IllegalStateException("Process server unreachable", exception);
+					}
+				}
+			});
+		}
 	}
 
 	@SuppressWarnings("serial")
@@ -96,6 +112,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	private final UserContext userCtx;
 	private final ProcessDefinitionManager processDefinitionManager;
+	private final CMWorkflowService workflowService;
 
 	public ProcessInstanceWrapper(final UserContext userCtx,
 			final ProcessDefinitionManager processDefinitionManager,
@@ -103,6 +120,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		super(process);
 		this.userCtx = userCtx;
 		this.processDefinitionManager = processDefinitionManager;
+		this.workflowService = TemporaryObjectsBeforeSpringDI.getWorkflowService();
 	}
 
 	protected boolean isUserAttributeName(final String name) {

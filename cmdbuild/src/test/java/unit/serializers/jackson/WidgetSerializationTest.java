@@ -30,17 +30,18 @@ public class WidgetSerializationTest {
 
 	@Test
 	public void widgetsAreCreatedActiveWithEmptyLabel() {
-		Widget w =  new EmptyWidget();
+		Widget w = new EmptyWidget();
 		assertEquals(StringUtils.EMPTY, w.getLabel());
 		assertTrue(w.isActive());
 	}
 
 	@Test
-	public void basicWidgetSerializationContainsBasicAttributesAndType() throws JsonParseException, JsonMappingException, IOException {
+	public void basicWidgetSerializationContainsBasicAttributesAndType() throws JsonParseException,
+			JsonMappingException, IOException {
 		final String ID = "f81d4fae-7dec-11d0-a765-00a0c91e6bf6";
 		final String LABEL = "Do Something Awesome";
 
-		Widget w =  new EmptyWidget();
+		Widget w = new EmptyWidget();
 		w.setId(ID);
 		w.setLabel(LABEL);
 		w.setActive(false);
@@ -54,7 +55,7 @@ public class WidgetSerializationTest {
 
 	@Test
 	public void widgetListSerializationContansType() throws JsonParseException, JsonMappingException, IOException {
-		List<Widget> wl =  new ArrayList<Widget>();
+		List<Widget> wl = new ArrayList<Widget>();
 		wl.add(new EmptyWidget());
 
 		String jw = mapper.writeValueAsString(wl);
@@ -65,7 +66,7 @@ public class WidgetSerializationTest {
 	public void reportSerialization() throws JsonParseException, JsonMappingException, IOException {
 		final String FORMAT = "CSV";
 		final String CODE = "BrilliantReport";
-		final Map<String,String> PRESET = new HashMap<String,String>();
+		final Map<String, Object> PRESET = new HashMap<String, Object>();
 		PRESET.put("K1", "V1");
 		PRESET.put("K2", "V2");
 		final String jw = createOpenReportJson(CODE, FORMAT, PRESET);
@@ -80,7 +81,7 @@ public class WidgetSerializationTest {
 		assertEquals(jw, mapper.writeValueAsString(orw));
 	}
 
-	private String createOpenReportJson(final String CODE, final String FORMAT, final Map<String, String> PRESET)
+	private String createOpenReportJson(final String CODE, final String FORMAT, final Map<String, Object> PRESET)
 			throws IOException, JsonGenerationException, JsonMappingException {
 		OpenReport w = new OpenReport();
 		w.setForceFormat(FORMAT);

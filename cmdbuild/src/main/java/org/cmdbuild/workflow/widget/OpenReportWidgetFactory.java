@@ -38,8 +38,8 @@ public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, String> valueMap) {
-		final String reportCode = valueMap.get(REPORT_CODE);
+	protected Widget createWidget(Map<String, Object> valueMap) {
+		final String reportCode = readString(valueMap.get(REPORT_CODE));
 		Validate.notEmpty(reportCode, REPORT_CODE + " is required");
 
 		OpenReport widget = new OpenReport();
@@ -50,7 +50,7 @@ public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 		return widget;
 	}
 
-	private void forceFormat(Map<String, String> valueMap, OpenReport widget) {
+	private void forceFormat(Map<String, Object> valueMap, OpenReport widget) {
 		if (valueMap.containsKey(FORCE_PDF)) {
 			widget.setForceFormat("pdf");
 		} else if (valueMap.containsKey(FORCE_CSV)) {
