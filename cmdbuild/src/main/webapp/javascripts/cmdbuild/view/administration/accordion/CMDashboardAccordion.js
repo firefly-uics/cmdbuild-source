@@ -75,7 +75,7 @@
 			text: d.get("description"),
 			leaf: true,
 			cmName: "dashboard",
-			iconCls: "dashboard"
+			iconCls: "cmdbuild-tree-dashboard-icon"
 		};
 	}
 
