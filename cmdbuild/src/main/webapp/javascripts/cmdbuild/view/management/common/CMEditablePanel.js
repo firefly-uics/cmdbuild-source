@@ -11,7 +11,7 @@
 		layout: "card",
 		activeItem: 0,
 		hideMode: "offsets",
-		autoScroll: true,
+		autoScroll: false,
 
 		_state: STATE.display,
 		_stateSwitchFail: false,

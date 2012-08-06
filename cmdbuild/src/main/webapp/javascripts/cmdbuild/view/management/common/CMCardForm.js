@@ -59,7 +59,7 @@
 					padding: "5px 5px 0 5px"
 				},
 				cls: "x-panel-body-default-framed",
-				autoScroll: true,
+				autoScroll: false,
 				tbar: this.cmTBar,
 				buttonAlign: 'center',
 				buttons: this.cmButtons,
