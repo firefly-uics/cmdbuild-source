@@ -2,7 +2,7 @@
    "description": "日本語",
    "release": "2.0-dev",
    "administration": {
-      "description": "管理者モジュール",
+      "description": "アドミニストレーションモジュール",
       "modClass": {
          "add_class": "クラス追加",
          "attributeProperties": {
@@ -11,7 +11,7 @@
             "criterion": "基準",
             "delete_attribute": "属性削除",
             "description": "説明",
-            "destination": "あて先",
+            "destination": "宛先",
             "direction": {
                "asc": "昇順",
                "desc": "降順"
@@ -42,14 +42,14 @@
                "title": "メタデータ編集",
                "value": "値"
             },
-            "modify_attribute": "属性更新",
+            "modify_attribute": "属性修正",
             "msg_warning_drop_row": "再並び替えは継承属性が表示されている場合のみ有効です",
             "name": "名前",
             "not_in_use": "未使用",
-            "pipeNotAllowed": "| の代わりにORをお使いください",
+            "pipeNotAllowed": "| の代わりに OR をお使いください",
             "precision": "精度",
             "referencequery": "フィルタ",
-            "scale": "Scale",
+            "scale": "スケール",
             "set_sorting_criteria": "並び替えセット",
             "type": "タイプ",
             "typeProperties": "タイププロパティ"
@@ -89,10 +89,10 @@
             "m_d": "M/D",
             "master_detail": "マスタ/ディテール",
             "md_label": "マスタ/ディテールラベル",
-            "modify_domain": "ドメイン更新",
+            "modify_domain": "ドメイン修正",
             "name": "名前",
             "title_add": "ドメイン追加",
-            "title_modify": "ドメイン \"{0}\"の更新"
+            "title_modify": "ドメイン \"{0}\"の修正"
          },
          "domains_title": "ドメイン管理",
          "errors": {"table": {
@@ -177,10 +177,10 @@
             ".CreateModifyCard": {
                "fields": {
                   "target": "ターゲットクラス",
-                  "cql": "カード CQL 選択</em>",
+                  "cql": "カード CQL 選択",
                   "readOnly": "読み取り専用"
                },
-               "title": "カードの作成または変更"
+               "title": "カードの作成または修正"
             },
             "commonFields": {
                "active": "アクティブ",
@@ -224,7 +224,7 @@
                 "legend": "凡例を表示",
                 "lookupType": "ルックアップタイプ",
                 "max": "最大",
-                "min": "最少",
+                "min": "最小",
                 "name": "名前",
                 "orientation": {
                    "label": "方向",
@@ -270,7 +270,7 @@
           },
           "properties": {
              "add": "ダッシュボード追加",
-             "modify": "タッシュボード変更",
+             "modify": "タッシュボード修正",
              "remove": "ダッシュボード削除",
              "fields": {
                 "name": "名前",
@@ -332,7 +332,7 @@
          "scheduler": {
             "addJob": "ジョブ追加",
             "addParameter": "パラメータ追加",
-            "advanced": "上級",
+            "advanced": "高度な",
             "basic": "基本",
             "cronexpression": "クローン表示",
             "dayOfMounth": "日",
@@ -388,8 +388,8 @@
       },
       "modcartography": {
          "external_services": {
-            "admin_password": "Admin パスワード",
-            "admin_user": "Admin ユーザ名",
+            "admin_password": "管理者パスワード",
+            "admin_user": "管理者ユーザ名",
             "description": {
                "geoserver": "Geoサーバ",
                "google": "Googleマップ",
@@ -423,7 +423,7 @@
       },
       "modconnectors": {"title": "コネクタ"},
       "modmenu": {
-         "add_menu": "メニュ追加",
+         "add_menu": "メニュー追加",
          "available_elements": "利用可能なエレメント",
          "availabletree": {
             "class": "クラス",
@@ -432,19 +432,19 @@
             "report": "レポート",
             "view": "ビュー"
          },
-         "custom_menu": "カスタムメニュ",
-         "custom_menus": "カスタムメニュ",
-         "delete_menu": "メニュ削除",
-         "menu_root": "メニュ",
-         "modify_menu": "メニュ更新",
+         "custom_menu": "カスタムメニュー",
+         "custom_menus": "カスタムメニュー",
+         "delete_menu": "メニュー削除",
+         "menu_root": "メニュー",
+         "modify_menu": "メニュー更新",
          "new_folder": "新しいフォルダ",
-         "title": "メニュ管理"
+         "title": "メニュー管理"
       },
       "modreport": {
          "add": "レポート追加",
          "importJRFormStep1": {
             "description": "レポートの説明",
-            "enabled_groups": "有効なグループ",
+            "enabled_groups": "可能なグループ",
             "fieldset": "jasper レポートインポート",
             "master_report_jrxml": "マスタレポート(.jrxml)",
             "menuTitle": "Jasper-reports レポート",
@@ -453,7 +453,7 @@
          "importJRFormStep2": {
             "duplicate_images": "警告: 同名のレポートイメージがあります。処理を継続できません。",
             "fieldset_generic": "jasperレポートをインポート",
-            "fieldset_images": "必要なimages",
+            "fieldset_images": "必要なイメージ",
             "fieldset_subreports": "必要なサブレポート",
             "menuTitle": "レポート Jasper-reports",
             "nothing_to_import": "イメージまたはサブレポートが見つかりません。インポートを続けるにはご確認ください。",
@@ -484,7 +484,7 @@
             "groupchoice": "ルックアップユーザ",
             "is_active": "アクティブ",
             "is_administrator": "はadministrator",
-            "modify_group": "グループ変更",
+            "modify_group": "グループ修正",
             "starting_class": "初期ページ",
             "title": "グループ管理",
             "usermanagement": "関連ユーザ管理"
@@ -494,7 +494,7 @@
             "add_privilege": "権限追加",
             "classname": "クラス名",
             "delete_privilege": "権限削除",
-            "modify_privilege": "権限更新",
+            "modify_privilege": "権限変更",
             "none_privilege": "権限なし",
             "privilege_mode": "権限",
             "read_privilege": "読取権限",
@@ -507,7 +507,7 @@
          "title": "ユーザとグループ",
          "user": {
             "add_user": "ユーザ追加",
-            "availablegroups": "有効なグループ",
+            "availablegroups": "可能なグループ",
             "change_password": "パスワード変更",
             "confirmation": "確認",
             "defaultgroup": "既定のグループ",
@@ -515,7 +515,7 @@
             "description": "説明",
             "disable_user": "無効なユーザ",
             "email": "電子メール",
-            "enable_user": "有効なユーザ",
+            "enable_user": "可能なユーザ",
             "groupmanagement": "ユーザグループ管理",
             "isactive": "アクティブ",
             "modify_user": "ユーザ更新",
@@ -553,11 +553,11 @@
          },
          "dms": {
             "categoryLookup": "CMDBuild カテゴリ",
-            "credential": "Credentials",
+            "credential": "資格",
             "credentialPassword": "パスワード",
             "credentialUser": "ユーザ名",
             "delay": "オペレーション遅延",
-            "enabled": "有効化",
+            "enabled": "有効",
             "fileserver": "ファイルサーバ",
             "fileserverPort": "ポート",
             "fileserverType": "タイプ",
@@ -600,7 +600,7 @@
          },
          "setupTitle": "セットアップ",
          "workflow": {
-            "credential": "Credentials",
+            "credential": "資格",
             "email": {
                "address": "電子メールアドレス",
                "imapserver": "IMAP サーバ",
@@ -675,7 +675,7 @@
          "domain": "ドメインロード中",
          "group": "ユーザとグループをロード中",
          "lookup": "ルックアップタイプをロード中",
-         "menu": "メニュをロード中",
+         "menu": "メニューをロード中",
          "report": "レポートをロード中",
          "workflow": "アクティビティをロード中"
       },
@@ -811,15 +811,15 @@
          "ORM_ERROR_CARD_UPDATE": "カードを更新出来ません",
          "ORM_ERROR_DOMAIN_CREATE": "ドメインを作成できません",
          "ORM_ERROR_DOMAIN_DELETE": "ドメインを削除できません",
-         "ORM_ERROR_DOMAIN_MODIFY": "ドメインを変更できません",
+         "ORM_ERROR_DOMAIN_MODIFY": "ドメインを修正できません",
          "ORM_ERROR_GENERIC_SQL": "SQL エラー: {0}",
          "ORM_ERROR_GETTING_PK": "主キーを取得できません",
          "ORM_ERROR_INCOMPATIBLE_CLASS": "不整合クラス: {0}",
          "ORM_ERROR_LOOKUP_CREATE": "ルックアップを作成できません",
          "ORM_ERROR_LOOKUP_DELETE": "ルックアップを削除できません",
-         "ORM_ERROR_LOOKUP_MODIFY": "ルックアップを変更できません",
+         "ORM_ERROR_LOOKUP_MODIFY": "ルックアップを修正できません",
          "ORM_ERROR_RELATION_CREATE": "リレーションを作成できません",
-         "ORM_ERROR_RELATION_MODIFY": "リレーションを変更できません",
+         "ORM_ERROR_RELATION_MODIFY": "リレーションを修正できません",
          "ORM_FILTER_CONFLICT": "フィルタの定義が競合しています",
          "ORM_FULLCARDS_MULTIPLEDOMAINS": "多ドメインのすべてのカードを取得できません",
          "ORM_GENERIC_ERROR": "データのロード／保存時にエラーが発生しました",
@@ -950,8 +950,8 @@
             "question_sure": "本当にいいですか?"
          },
          "notinrel": "N D",
-         "notnull": "Is not null",
-         "nullo": "Is null",
+         "notnull": "null値でない",
+         "nullo": "null値",
          "relations": "リレーション",
          "remove": "削除",
          "save_filter": "フィルタ保存",
@@ -1029,7 +1029,7 @@
          },
          "maptoolbar": {
             "add": "追加",
-            "drag": "更新",
+            "drag": "修正",
             "drag_map": "マップをドラッグ",
             "zoom_in": "ズームイン",
             "zoom_out": "ズームアウト"
@@ -1139,7 +1139,7 @@
                "compose": "電子メール作成",
                "datehdr": "日付",
                "deleteicon": "削除",
-               "editicon": "更新",
+               "editicon": "修正",
                "fromfld": "From",
                "lookup": {
                   "Draft": "下書き",
@@ -1151,12 +1151,13 @@
                "subjectfld": "件名",
                "subjecthdr": "件名",
                "tofld": "To",
+               "updateTemplateConfirm":"これは、全ての未送信メールを削除します。",
                "viewicon": "ビュー",
                "mailsAreChanged":"作成された電子メールは変更されました",
                "regenerates": "電子メール再作成"
             },
             "managerelation": {"required": "リレーションを選択ください - "},
-            "notes": {"must_save_to_modify": "アクティビティの保存前は、ノートを変更出来ません。"}
+            "notes": {"must_save_to_modify": "アクティビティの保存前は、ノートを修正出来ません。"}
          },
          "history_columns": {
             "attributes": "属性",
@@ -1176,6 +1177,7 @@
          "status": "ステータス",
          "statuses": {
             "all": "すべて",
+            "closed.aborted": "中止",
             "closed.completed": "完了",
             "open.not_running.suspended": "中断",
             "open.running": "開いています"
