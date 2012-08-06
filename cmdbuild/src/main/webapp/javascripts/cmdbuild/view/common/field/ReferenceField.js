@@ -1,6 +1,7 @@
 (function() {
 
-    var FILTER_FIELD = "_SystemFieldFilter";
+    var FILTER_FIELD = "_SystemFieldFilter",
+    	CHANGE_EVENT = "change";
 
     Ext.define("CMDBuild.Management.ReferenceField", {
         statics: {
@@ -54,7 +55,7 @@
         });
 
         // If the field has no value the relation attributes must be disabled
-        field.mon(field, "change", function(combo, val) {
+        field.mon(field, CHANGE_EVENT, function(combo, val) {
             var disabled = val == "";
             Ext.Array.forEach(subFields, function (sf) {
                 sf.setDisabled(disabled);
@@ -114,117 +115,123 @@
             this.callParent(arguments);
         },
 
-        getErrors: function(rawValue) {
-            if (this.templateResolver) {
-                var value = this.getValue();
-                if (value && this.store.find(this.valueField, value) == -1) {
-                    return [CMDBuild.Translation.errors.reference_invalid];
-                }
-            }
-            return this.callParent(arguments);
-        },
+		getErrors : function(rawValue) {
+			if (this.templateResolver) {
+				var value = this.getValue();
+				if (value
+						&& this.store.find(this.valueField,
+								value) == -1) {
+					return [ CMDBuild.Translation.errors.reference_invalid ];
+				}
+			}
+			return this.callParent(arguments);
+		},
 
-        setValue: function(v) {
+		setValue : function(v) {
         	v = this.extractIdIfValueIsObject(v);
 
-            if (this.store.isOneTime || this.preSetValue(v) !== false) {
-            	this.callParent(arguments);
-            }
-        },
+			if (this.store.isOneTime // is one time seems that has a CQL filter
+					|| this.ensureToHaveTheValueInStore(v) !== false) {
 
-        /*
-         * Adds the record when the store is not completely loaded (too many records)
-         */
-        preSetValue: function(value) {
-			value = CMDBuild.Utils.getFirstSelection(value);
+				this.callParent([v]);
+			}
+		},
 
-        	if (!value || this.store.isLoading()) {
-        		return true;
-        	}
+		/*
+		 * Adds the record when the store is not completely loaded (too many
+		 * records)
+		 */
+		ensureToHaveTheValueInStore: function(value) {
 
-        	var theValue = value; // but value is a string or an array
-            if (typeof value == "object") {
-            	theValue = value.get(this.valueField);
-            }
+			value = normalizeValue(this, value);
 
-	        var valueNotInStore = this.store.find(this.valueField, theValue) == -1;
-            if (valueNotInStore) {
-            	// ask to the server the record to add, return false to
-            	// not set the value, and set it on success
+			if (!value || this.store.isLoading()) {
+				return true;
+			}
 
-                var params = Ext.apply({Id: theValue}, this.store.baseParams),
-                	me = this;
+			var valueNotInStore = this.store.find(this.valueField, value) == -1;
+			if (valueNotInStore) {
+				// ask to the server the record to add, return false to
+				// not set the value, and set it on success
 
-                CMDBuild.Ajax.request({
-                    url : me.store.proxy.url,
-                    params: params,
-                    method : "POST",
-                    success : function(response, options, decoded) {
-                    	var data = adaptResult(decoded);
-                    	if (data) {
-                    		me.addToStoreIfNotInIt(data);
-                			me.setValue(theValue);
-                    	} else {
-                    		_debug("The remote reference is not found", params);
-                    	}
-                    }
-                });
+				var params = Ext.apply({Id: value}, this.store.baseParams);
 
-                return false;
-            }
-            return true;
-        },
+				CMDBuild.Ajax.request({
+					url : this.store.proxy.url,
+					params: params,
+					method : "POST",
+					scope : this,
+					success : function(response, options, decoded) {
+						var data = adaptResult(decoded);
+						if (data) {
+							this.addToStoreIfNotInIt(data);
+							this.setValue(value);
+						} else {
+							_debug("The remote reference is not found", params);
+						}
+					}
+				});
 
-        resolveTemplate: function() {
+				return false;
+			}
+
+			return true;
+		},
+
+		resolveTemplate : function() {
 			var me = this;
-            if (me.templateResolver && !me.disabled) {
+			if (me.templateResolver && !me.disabled) {
 				if (me.templateResolverBusy) {
 					// Don't overlap requests
 					me.requireResolveTemplates = true;
 					return;
 				}
 				me.templateResolverBusy = true;
-                me.templateResolver.resolveTemplates({
-                    attributes: [FILTER_FIELD],
-                    callback: function(out, ctx) {
-						me.onTemplateResolved(out, function afterStoreIsLoaded() {
-							me.templateResolverBusy = false;
-							if (me.requireResolveTemplates) {
-								me.requireResolveTemplates = false;
-								me.resolveTemplate();
+				me.templateResolver.resolveTemplates( {
+					attributes : [ FILTER_FIELD ],
+					callback : function(out, ctx) {
+						me.onTemplateResolved(
+							out,
+							function afterStoreIsLoaded() {
+								me.templateResolverBusy = false;
+								if (me.requireResolveTemplates) {
+									me.requireResolveTemplates = false;
+									me.resolveTemplate();
+								}
 							}
-						});
+						);
 					}
-                });
-            }
-        },
+				});
+			}
+		},
 
-        onTemplateResolved: function(out, afterStoreIsLoaded) {
-            this.filtered = true;
-            var store = this.store;
-            var callParams = this.templateResolver.buildCQLQueryParameters(out[FILTER_FIELD]);
-            this.callParams = Ext.apply({}, callParams);
-            if (callParams) {
-                // For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
-                Ext.apply(store.baseParams, callParams);
+		onTemplateResolved: function(out, afterStoreIsLoaded) {
+			this.filtered = true;
+			var store = this.store;
+			var callParams = this.templateResolver.buildCQLQueryParameters(out[FILTER_FIELD]);
+
+			if (callParams) {
+				// For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
+				Ext.apply(store.baseParams, callParams);
 
 				var me = this;
-                store.load({
-                    params: callParams,
-                    callback: function() {
-                        // Fail the validation if the current selection is not in the new filter
-                        me.validate();
+				store.load({
+					params: callParams,
+					callback: function() {
+						// Fail the validation if the current selection is not in the new filter
+						me.validate();
 						afterStoreIsLoaded();
-                    }
-                });
-            } else {
-                var emptyDataSet = {};
-                emptyDataSet[store.root] = [];
-                emptyDataSet[store.totalProperty] = 0;
-                store.loadData(emptyDataSet);
+					}
+				});
+			} else {
+				var emptyDataSet = {};
+				emptyDataSet[store.root] = [];
+				emptyDataSet[store.totalProperty] = 0;
+				store.loadData(emptyDataSet);
 				afterStoreIsLoaded();
-            }
-            this.addListenerToDeps();
+			}
+
+			this.addListenerToDeps();
         },
 
         addListenerToDeps: function() {
@@ -237,7 +244,7 @@
             for (var name in deps) {
                 var field = deps[name];
                 if (field) {
-                    field.mon(field, "change", function() {
+                    field.mon(field, CHANGE_EVENT, function() {
 						this.resolveTemplate();
 					}, this);
                 }
@@ -268,4 +275,18 @@
     		return null;
     	}
     }
+
+	// if set the velue programmatically it could be a integer or a
+	// string or null or undefined
+	// if the set is raised after a selection on the UI, the value is an array
+	// of models
+	function normalizeValue(me, v) {
+		v = CMDBuild.Utils.getFirstSelection(v);
+		if (v && typeof v == "object" && typeof v.get == "function") {
+			v = v.get(me.valueField);
+		}
+
+		return v;
+	}
+
 })();

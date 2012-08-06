@@ -298,7 +298,10 @@
 				allowBlank : false,
 				cmImmutable : true,
 				store: this.domainStore,
-				queryMode : "local"
+				queryMode : "local",
+				listConfig: {
+					loadMask: false
+				}
 			});
 
 			this.foreignKeyDest = new CMDBuild.FkCombo( {

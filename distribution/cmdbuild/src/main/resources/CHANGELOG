@@ -1,3 +1,26 @@
+CMDBuild 1.5.4 (released 2012/05/11)
+
+
+NEW FEATURES
+
+ * Triggers to ignore inserts
+As a SQL Fanatic
+I want the system to allow blocked inserts
+So that I can stop operations in before triggers
+
+
+FIXES
+
+ * Two-digit years are mapped to the first century
+
+ * Could not select a domain when create a reference attribute
+
+ * Widget not loaded
+
+
+
+
+
 CMDBuild 1.5.3 (released 2012/04/04)
 
 
