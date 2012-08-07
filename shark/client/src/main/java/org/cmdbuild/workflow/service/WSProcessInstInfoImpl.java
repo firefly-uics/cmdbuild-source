@@ -9,10 +9,10 @@ public class WSProcessInstInfoImpl extends WSProcessDefInfoImpl implements WSPro
 	protected String processInstanceId;
 	protected WSProcessInstanceState status;
 
-	static WSProcessInstInfo newInstance(WMProcessInstance processInstance) {
+	static WSProcessInstInfo newInstance(final WMProcessInstance processInstance) {
 		if (processInstance == null)
 			return null;
-		WSProcessInstInfoImpl instance = new WSProcessInstInfoImpl();
+		final WSProcessInstInfoImpl instance = new WSProcessInstInfoImpl();
 		instance.packageId = MiscUtilities.getProcessMgrPkgId(processInstance.getProcessFactoryName());
 		instance.packageVersion = MiscUtilities.getProcessMgrVersion(processInstance.getProcessFactoryName());
 		instance.processDefinitionId = processInstance.getProcessDefinitionId();
@@ -27,7 +27,7 @@ public class WSProcessInstInfoImpl extends WSProcessDefInfoImpl implements WSPro
 			// best to assume that it might be null.
 			return WSProcessInstanceState.UNSUPPORTED;
 		}
-		switch(state.value()) {
+		switch (state.value()) {
 		case WMProcessInstanceState.OPEN_RUNNING_INT:
 			return WSProcessInstanceState.OPEN;
 		case WMProcessInstanceState.CLOSED_COMPLETED_INT:

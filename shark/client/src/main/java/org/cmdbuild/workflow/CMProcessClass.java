@@ -10,7 +10,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 public interface CMProcessClass extends CMClass {
 
 	/**
-	 * Creates a definition template for this process.  
+	 * Creates a definition template for this process.
 	 * 
 	 * @return a template process definition versions
 	 * @throws CMWorkflowException
@@ -26,7 +26,7 @@ public interface CMProcessClass extends CMClass {
 	String[] getDefinitionVersions() throws CMWorkflowException;
 
 	/**
-	 * Returns one version of the definition file for this process.  
+	 * Returns one version of the definition file for this process.
 	 * 
 	 * @return process definition
 	 * @throws CMWorkflowException
@@ -58,7 +58,8 @@ public interface CMProcessClass extends CMClass {
 	 * amazingly awful thing we do.
 	 * 
 	 * @return start activity for the current user
-	 * @throws CMWorkflowException if no activity is found
+	 * @throws CMWorkflowException
+	 *             if no activity is found
 	 */
 	CMActivity getStartActivity() throws CMWorkflowException;
 
@@ -77,8 +78,8 @@ public interface CMProcessClass extends CMClass {
 	String getProcessDefinitionId() throws CMWorkflowException;
 
 	/**
-	 * Returns if the process is active and a process
-	 * definition was loaded for it.
+	 * Returns if the process is active and a process definition was loaded for
+	 * it.
 	 * 
 	 * @return if the process can be started or advanced
 	 */

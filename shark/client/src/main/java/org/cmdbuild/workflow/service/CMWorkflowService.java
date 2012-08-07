@@ -13,7 +13,8 @@ public interface CMWorkflowService {
 
 	/**
 	 * 
-	 * @param pkgId package id can be null if new
+	 * @param pkgId
+	 *            package id can be null if new
 	 * @param pkgDefData
 	 * @return uploaded package info
 	 * @throws CMWorkflowException
@@ -32,9 +33,11 @@ public interface CMWorkflowService {
 
 	/**
 	 * Create and start the latest version of a process.
-	 *  
-	 * @param pkgId package id
-	 * @param procDefId workflow process definition id (as defined in the xpdl)
+	 * 
+	 * @param pkgId
+	 *            package id
+	 * @param procDefId
+	 *            workflow process definition id (as defined in the xpdl)
 	 * @return newly created process instance id
 	 * @throws CMWorkflowException
 	 */
@@ -43,19 +46,23 @@ public interface CMWorkflowService {
 	/**
 	 * Create the latest version of a process, sets the variables, starts it.
 	 * 
-	 * @param pkgId package id
-	 * @param procDefId workflow process definition id (as defined in the xpdl)
-	 * @param variables values for variables
+	 * @param pkgId
+	 *            package id
+	 * @param procDefId
+	 *            workflow process definition id (as defined in the xpdl)
+	 * @param variables
+	 *            values for variables
 	 * @return newly created process instance id
 	 * @throws CMWorkflowException
 	 */
-	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, Object> variables) throws CMWorkflowException;
+	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, Object> variables)
+			throws CMWorkflowException;
 
 	/**
 	 * List open process instances by process definition id.
 	 * 
 	 * @param procDefId
-	 * @return 
+	 * @return
 	 * @throws CMWorkflowException
 	 */
 	WSProcessInstInfo[] listOpenProcessInstances(String procDefId) throws CMWorkflowException;
@@ -63,8 +70,9 @@ public interface CMWorkflowService {
 	/**
 	 * Retrieve informations about an open process instance.
 	 * 
-	 * @param procInstId process instance id
-	 * @return 
+	 * @param procInstId
+	 *            process instance id
+	 * @return
 	 * @throws CMWorkflowException
 	 */
 	WSProcessInstInfo getProcessInstance(String procInstId) throws CMWorkflowException;
@@ -94,8 +102,10 @@ public interface CMWorkflowService {
 	/**
 	 * Aborts the specified activity, stopping that flow path.
 	 * 
-	 * @param procInstId process instance id
-	 * @param actInstId activity instance id
+	 * @param procInstId
+	 *            process instance id
+	 * @param actInstId
+	 *            activity instance id
 	 * @throws CMWorkflowException
 	 */
 	void abortActivityInstance(String procInstId, String actInstId) throws CMWorkflowException;
@@ -103,8 +113,10 @@ public interface CMWorkflowService {
 	/**
 	 * Advances the specified activity, returning when the flow has stopped.
 	 * 
-	 * @param procInstId process instance id
-	 * @param actInstId activity instance id
+	 * @param procInstId
+	 *            process instance id
+	 * @param actInstId
+	 *            activity instance id
 	 * @throws CMWorkflowException
 	 */
 	void advanceActivityInstance(String procInstId, String actInstId) throws CMWorkflowException;
@@ -112,7 +124,8 @@ public interface CMWorkflowService {
 	/**
 	 * Aborts the specified process instance
 	 * 
-	 * @param procInstId process instance id
+	 * @param procInstId
+	 *            process instance id
 	 * @throws CMWorkflowException
 	 */
 	void abortProcessInstance(String procInstId) throws CMWorkflowException;

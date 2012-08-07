@@ -11,18 +11,17 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 
 	private static final String WIDGET_NAME = "linkCards";
 
-	private static final String FILTER = "Filter";
-	private static final String CLASS_NAME = "ClassName";
-	private static final String DEFAULT_SELECTION = "DefaultSelection";
-	private static final String READ_ONLY = "NoSelect";
-	private static final String SINGLE_SELECT = "SingleSelect";
+	public static final String FILTER = "Filter";
+	public static final String CLASS_NAME = "ClassName";
+	public static final String DEFAULT_SELECTION = "DefaultSelection";
+	public static final String READ_ONLY = "NoSelect";
+	public static final String SINGLE_SELECT = "SingleSelect";
 	private static final String ALLOW_CARD_EDITING = "AllowCardEditing";
 	private static final String WITH_MAP = "Map";
 	private static final String MAP_LATITUDE = "StartMapWithLatitude";
 	private static final String MAP_LONGITUDE = "StartMapWithLongitude";
 	private static final String MAP_ZOOM = "StartMapWithZoom";
-	private static final String REQUIRED = "Required";
-	private static final String LABEL = "ButtonLabel";
+	public static final String REQUIRED = "Required";
 
 	private final DataAccessLogic dataAccessLogic;
 
@@ -37,8 +36,8 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, Object> valueMap) {
-		LinkCards widget = new LinkCards(dataAccessLogic);
+	protected Widget createWidget(final Map<String, Object> valueMap) {
+		final LinkCards widget = new LinkCards(dataAccessLogic);
 
 		setFilterAndClassName(valueMap, widget);
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
@@ -51,20 +50,18 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
 		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
 		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
-		widget.setTemplates(extractUnmanagedStringParameters(valueMap,
-				FILTER, CLASS_NAME, DEFAULT_SELECTION, READ_ONLY, 
-				SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE,
-				MAP_LONGITUDE, MAP_ZOOM, REQUIRED, LABEL));
+		widget.setTemplates(extractUnmanagedStringParameters(valueMap, FILTER, CLASS_NAME, DEFAULT_SELECTION,
+				READ_ONLY, SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE, MAP_LONGITUDE, MAP_ZOOM,
+				REQUIRED, BUTTON_LABEL));
 
 		return widget;
 	}
 
 	/*
-	 * If the filter is set the given ClassName is ignored
-	 * and is used the filter
+	 * If the filter is set the given ClassName is ignored and is used the
+	 * filter
 	 */
-	private void setFilterAndClassName(Map<String, Object> valueMap,
-			LinkCards widget) {
+	private void setFilterAndClassName(final Map<String, Object> valueMap, final LinkCards widget) {
 		final String filter = readString(valueMap.get(FILTER));
 		if (filter != null) {
 			widget.setFilter(filter);

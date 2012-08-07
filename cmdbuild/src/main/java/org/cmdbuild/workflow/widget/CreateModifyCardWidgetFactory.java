@@ -9,16 +9,18 @@ import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
 
 public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
-	
+
 	private static final String WIDGET_NAME = "createModifyCard";
-	private static final String OBJ_REF = "Reference";
-	private static final String CLASS_NAME = "ClassName";
-	private static final String OBJ_ID = "ObjId";
-	private static final String READONLY = "ReadOnly";
+
+	public static final String OBJ_REF = "Reference";
+	public static final String CLASS_NAME = "ClassName";
+	public static final String OBJ_ID = "ObjId";
+	public static final String READONLY = "ReadOnly";
 
 	private final DataAccessLogic dataAccessLogic;
 
-	public CreateModifyCardWidgetFactory(final TemplateRepository templateRespository, final DataAccessLogic dataAccessLogic) {
+	public CreateModifyCardWidgetFactory(final TemplateRepository templateRespository,
+			final DataAccessLogic dataAccessLogic) {
 		super(templateRespository);
 		this.dataAccessLogic = dataAccessLogic;
 	}
@@ -30,7 +32,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
-		CreateModifyCard widget = new CreateModifyCard(dataAccessLogic);
+		final CreateModifyCard widget = new CreateModifyCard(dataAccessLogic);
 		if (valueMap.containsKey(OBJ_REF)) {
 			configureWidgetFromReference(widget, valueMap);
 		} else {
@@ -41,7 +43,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		return widget;
 	}
 
-	private void configureWidgetFromClassName(CreateModifyCard widget, final Map<String, Object> valueMap) {
+	private void configureWidgetFromClassName(final CreateModifyCard widget, final Map<String, Object> valueMap) {
 		final String className = readString(valueMap.get(CLASS_NAME));
 		Validate.notEmpty(className, CLASS_NAME + " is required");
 
@@ -50,7 +52,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
 	}
 
-	private void configureWidgetFromReference(CreateModifyCard widget, final Map<String, Object> valueMap) {
+	private void configureWidgetFromReference(final CreateModifyCard widget, final Map<String, Object> valueMap) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }

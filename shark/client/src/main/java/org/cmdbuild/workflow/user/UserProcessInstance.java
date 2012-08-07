@@ -14,13 +14,25 @@ import org.cmdbuild.workflow.service.WSProcessInstanceState;
 public interface UserProcessInstance extends CMProcessInstance {
 
 	interface UserProcessInstanceDefinition extends CMProcessInstanceDefinition {
+		@Override
 		UserProcessInstanceDefinition set(String key, Object value);
+
+		@Override
 		UserProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException;
+
+		@Override
 		UserProcessInstanceDefinition setState(WSProcessInstanceState state);
+
+		@Override
 		UserProcessInstanceDefinition setUniqueProcessDefinition(WSProcessDefInfo info);
+
+		@Override
 		UserProcessInstance save();
 	}
 
+	@Override
 	List<UserActivityInstance> getActivities();
+
+	@Override
 	UserActivityInstance getActivityInstance(String activityInstanceId);
 }

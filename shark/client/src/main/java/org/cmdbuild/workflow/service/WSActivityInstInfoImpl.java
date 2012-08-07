@@ -9,7 +9,7 @@ public class WSActivityInstInfoImpl implements WSActivityInstInfo {
 	private WMActivityInstance inner;
 
 	static WSActivityInstInfo newInstance(final WMActivityInstance activityInstance) {
-		WSActivityInstInfoImpl instance = new WSActivityInstInfoImpl();
+		final WSActivityInstInfoImpl instance = new WSActivityInstInfoImpl();
 		instance.inner = activityInstance;
 		return instance;
 	}
@@ -60,13 +60,10 @@ public class WSActivityInstInfoImpl implements WSActivityInstInfo {
 
 	@Override
 	public String toString() {
-	     return new ToStringBuilder(this).
-	    	       append("processInstanceId", getProcessInstanceId()).
-	    	       append("activityDefinitionId", getActivityDefinitionId()).
-	    	       append("activityInstanceId", getActivityInstanceId()).
-	    	       append("activityName", getActivityName()).
-	    	       append("activityDescription", getActivityDescription()).
-	    	       append("participants", getParticipants()).
-	    	       toString();
+		return new ToStringBuilder(this).append("processInstanceId", getProcessInstanceId())
+				.append("activityDefinitionId", getActivityDefinitionId())
+				.append("activityInstanceId", getActivityInstanceId()).append("activityName", getActivityName())
+				.append("activityDescription", getActivityDescription()).append("participants", getParticipants())
+				.toString();
 	}
 }

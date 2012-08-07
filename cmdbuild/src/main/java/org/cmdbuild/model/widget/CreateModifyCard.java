@@ -7,26 +7,42 @@ import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.workflow.CMActivityInstance;
 
-
 public class CreateModifyCard extends Widget {
 
+	public static class Submission {
+		private Object output;
+
+		public Object getOutput() {
+			return output;
+		}
+
+		public void setOutput(final Object output) {
+			this.output = output;
+		}
+	}
+
 	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+
+	private final DataAccessLogic dataAccessLogic;
 
 	private String idcardcqlselector;
 	private String targetClass;
 	private boolean readonly;
-
-	private final DataAccessLogic dataAccessLogic;
-
-	public CreateModifyCard(final DataAccessLogic dataAccessLogic) {
-		this.dataAccessLogic = dataAccessLogic;
-	}
 
 	/**
 	 * The name of the variable where to put the selections of the widget during
 	 * the save operation
 	 */
 	private String outputName;
+
+	public CreateModifyCard(final DataAccessLogic dataAccessLogic) {
+		this.dataAccessLogic = dataAccessLogic;
+	}
+
+	@Override
+	public void accept(final WidgetVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	public String getIdcardcqlselector() {
 		return idcardcqlselector;
@@ -61,18 +77,32 @@ public class CreateModifyCard extends Widget {
 	}
 
 	@Override
-	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
+			throws Exception {
 		if (readonly) {
 			return;
 		}
 		if (outputName != null) {
-			output.put(outputName, outputValue(input));
+			final Submission submission = decodeInput(input);
+			output.put(outputName, outputValue(submission));
 		}
 	}
 
-	private CardReference outputValue(final Object input) {
-		@SuppressWarnings("unchecked") final Map<String, Object> inputMap = (Map<String, Object>) input;
-		final Object createdCardId = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+	private Submission decodeInput(final Object input) {
+		if (input instanceof Submission) {
+			return (Submission) input;
+		} else {
+			@SuppressWarnings("unchecked")
+			final Map<String, Object> inputMap = (Map<String, Object>) input;
+			final Object createdCardId = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final Submission submission = new Submission();
+			submission.setOutput(createdCardId);
+			return submission;
+		}
+	}
+
+	private CardReference outputValue(final Submission submission) {
+		final Object createdCardId = submission.getOutput();
 		final CMCard card = dataAccessLogic.getCard(targetClass, createdCardId);
 		return CardReference.newInstance(card);
 	}

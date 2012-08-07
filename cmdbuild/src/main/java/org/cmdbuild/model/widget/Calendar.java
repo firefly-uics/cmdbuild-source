@@ -1,6 +1,5 @@
 package org.cmdbuild.model.widget;
 
-
 public class Calendar extends Widget {
 
 	private String targetClass;
@@ -9,6 +8,11 @@ public class Calendar extends Widget {
 	private String eventTitle;
 	private String filter;
 	private String defaultDate;
+
+	@Override
+	public void accept(final WidgetVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	public String getTargetClass() {
 		return this.targetClass;
@@ -54,7 +58,8 @@ public class Calendar extends Widget {
 		return defaultDate;
 	}
 
-	public void setDefaultDate(String defaultDate) {
+	public void setDefaultDate(final String defaultDate) {
 		this.defaultDate = defaultDate;
 	}
+
 }

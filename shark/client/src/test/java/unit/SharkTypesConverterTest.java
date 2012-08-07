@@ -23,7 +23,6 @@ import org.cmdbuild.workflow.type.ReferenceType;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-
 public class SharkTypesConverterTest {
 
 	final CMDataView dataView = mock(CMDataView.class);
@@ -44,7 +43,7 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void jodaDateTimesAreConvertedToJavaDates() {
-		long instant = 123456L;
+		final long instant = 123456L;
 		assertConverted(new DateTime(instant), new Date(instant));
 	}
 
@@ -55,15 +54,15 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void lookupsAreConvertedToLookupTypeDTOs() {
-		CMLookup src = mock(CMLookup.class);
-		CMLookupType type = mock(CMLookupType.class);
+		final CMLookup src = mock(CMLookup.class);
+		final CMLookupType type = mock(CMLookupType.class);
 		when(type.getName()).thenReturn("t");
 		when(src.getType()).thenReturn(type);
 		when(src.getId()).thenReturn(42L);
 		when(src.getCode()).thenReturn("c");
 		when(src.getDescription()).thenReturn("d");
-		
-		LookupType dst = LookupType.class.cast(converter.toWorkflowType(src));
+
+		final LookupType dst = LookupType.class.cast(converter.toWorkflowType(src));
 
 		assertThat(dst.getType(), is("t"));
 		assertThat(dst.getId(), is(42));
@@ -73,13 +72,13 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void cardReferencesAreConvertedToReferenceTypeDTOs() {
-		CMClass srcClass = mock(CMClass.class);
+		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
-		CardReference src = CardReference.newInstance(srcClass.getName(), 42L, null);
+		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, null);
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
-		
-		ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(src));
+
+		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(src));
 
 		assertThat(dst.getId(), is(42));
 		assertThat(dst.getIdClass(), is(12));
@@ -88,17 +87,17 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void cardReferenceArraysAreConvertedToReferenceTypeDTOArrays() {
-		CMClass srcClass = mock(CMClass.class);
+		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
-		CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, null);
+		final CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, null);
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
-		CardReference[] src = new CardReference[] { src0 };
+		final CardReference[] src = new CardReference[] { src0 };
 
-		ReferenceType[] dst = ReferenceType[].class.cast(converter.toWorkflowType(src));
+		final ReferenceType[] dst = ReferenceType[].class.cast(converter.toWorkflowType(src));
 
 		assertThat(dst.length, is(src.length));
-		ReferenceType dst0 = dst[0];
+		final ReferenceType dst0 = dst[0];
 		assertThat(dst0.getId(), is(42));
 		assertThat(dst0.getIdClass(), is(12));
 		assertThat(dst0.getDescription(), is(StringUtils.EMPTY));
@@ -106,13 +105,13 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void lookupTypesAreConvertedToInteger() {
-		LookupType src = new LookupType();
+		final LookupType src = new LookupType();
 		src.setType("t");
 		src.setId(42);
 		src.setCode("c");
 		src.setDescription("d");
 
-		Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
+		final Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
 
 		assertThat(dst, is(42));
 
@@ -121,10 +120,10 @@ public class SharkTypesConverterTest {
 
 	@Test
 	public void referenceTypesAreConvertedToInteger() {
-		ReferenceType src = new ReferenceType();
+		final ReferenceType src = new ReferenceType();
 		src.setId(42);
 
-		Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
+		final Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
 		assertThat(dst, is(42));
 
 		assertThat(converter.fromWorkflowType(new ReferenceType()), is(nullValue()));
@@ -134,11 +133,11 @@ public class SharkTypesConverterTest {
 	 * Utils
 	 */
 
-	private void assertNotConverted(Object src) {
+	private void assertNotConverted(final Object src) {
 		assertThat(converter.toWorkflowType(src), is(sameInstance(src)));
 	}
 
-	private void assertConverted(Object src, Object dst) {
+	private void assertConverted(final Object src, final Object dst) {
 		assertThat(converter.toWorkflowType(src), is(dst));
 	}
 

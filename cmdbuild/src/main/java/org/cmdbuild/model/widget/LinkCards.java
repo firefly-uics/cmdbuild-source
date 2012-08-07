@@ -11,6 +11,18 @@ import org.cmdbuild.workflow.CMActivityInstance;
 
 public class LinkCards extends Widget {
 
+	public static class Submission {
+		private List<Object> output;
+
+		public List<Object> getOutput() {
+			return output;
+		}
+
+		public void setOutput(final List<Object> output) {
+			this.output = output;
+		}
+	}
+
 	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
 
 	/**
@@ -84,6 +96,11 @@ public class LinkCards extends Widget {
 
 	public LinkCards(final DataAccessLogic dataAccessLogic) {
 		this.dataAccessLogic = dataAccessLogic;
+	}
+
+	@Override
+	public void accept(final WidgetVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	public String getFilter() {
@@ -191,17 +208,31 @@ public class LinkCards extends Widget {
 	}
 
 	@Override
-	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
+			throws Exception {
 		if (outputName != null) {
-			output.put(outputName, outputValue(input));
+			final Submission submission = decodeInput(input);
+			output.put(outputName, outputValue(submission));
 		}
 	}
 
-	private CardReference[] outputValue(final Object input) {
-		@SuppressWarnings("unchecked") final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
-		final List<Object> selectedCardIds = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+	private Submission decodeInput(final Object input) {
+		if (input instanceof Submission) {
+			return (Submission) input;
+		} else {
+			@SuppressWarnings("unchecked")
+			final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
+			final List<Object> selectedCardIds = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final Submission submission = new Submission();
+			submission.setOutput(selectedCardIds);
+			return submission;
+		}
+	}
+
+	private CardReference[] outputValue(final Submission submission) {
+		final List<Object> selectedCardIds = submission.getOutput();
 		final List<CardReference> selectedCards = new ArrayList<CardReference>(selectedCardIds.size());
-		for (Object cardId : selectedCardIds) {
+		for (final Object cardId : selectedCardIds) {
 			final CMCard card = dataAccessLogic.getCard(className, cardId);
 			final CardReference cardReference = CardReference.newInstance(card);
 			if (cardReference != null) {
@@ -210,4 +241,5 @@ public class LinkCards extends Widget {
 		}
 		return selectedCards.toArray(new CardReference[selectedCards.size()]);
 	}
+
 }

@@ -5,13 +5,14 @@ import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
 import org.cmdbuild.workflow.CMActivityInstance;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
-public abstract class Widget implements CMActivityWidget {
+public abstract class Widget implements CMActivityWidget, WidgetVisitable {
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;
@@ -28,7 +29,8 @@ public abstract class Widget implements CMActivityWidget {
 	}
 
 	@Override
-	public final Object executeAction(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) throws Exception {
+	public final Object executeAction(final String action, final Map<String, Object> params,
+			final Map<String, Object> dsVars) throws Exception {
 		final WidgetAction actionCommand = getActionCommand(action, params, dsVars);
 		if (actionCommand != null) {
 			return actionCommand.execute();
@@ -38,18 +40,21 @@ public abstract class Widget implements CMActivityWidget {
 	}
 
 	/**
-	 * Returns the WidgetAction object for the action by that name. If no
-	 * action matches, then it should return null.
+	 * Returns the WidgetAction object for the action by that name. If no action
+	 * matches, then it should return null.
 	 * 
-	 * @param action (can be null)
+	 * @param action
+	 *            (can be null)
 	 * @return a widget action or null
 	 */
-	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) {
+	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
+			final Map<String, Object> dsVars) {
 		return null;
 	}
 
 	@Override
-	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
+			throws Exception {
 	}
 
 	@Override
@@ -92,7 +97,7 @@ public abstract class Widget implements CMActivityWidget {
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		if (obj != null && obj instanceof Widget) {
 			final Widget other = (Widget) obj;
 			return this.getId().equals(other.getId());
@@ -117,4 +122,5 @@ public abstract class Widget implements CMActivityWidget {
 		final String fullName = this.getClass().getName();
 		return fullName.substring(fullName.lastIndexOf("."));
 	}
+
 }

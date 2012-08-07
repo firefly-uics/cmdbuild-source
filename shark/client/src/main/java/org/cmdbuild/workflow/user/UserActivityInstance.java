@@ -14,5 +14,6 @@ public interface UserActivityInstance extends CMActivityInstance {
 	 */
 	boolean isWritable();
 
+	@Override
 	UserProcessInstance getProcessInstance();
 }

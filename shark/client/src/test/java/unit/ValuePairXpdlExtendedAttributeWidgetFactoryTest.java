@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttribute;
@@ -34,8 +34,8 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 
 	@Test
 	public void createDelegatesCreationToTheSpecificWidgetFactory() {
-		SingleActivityWidgetFactory aFactory = mock(SingleActivityWidgetFactory.class);
-		CMActivityWidget aWidget = addFactoryReturningWidget(aFactory, "A");
+		final SingleActivityWidgetFactory aFactory = mock(SingleActivityWidgetFactory.class);
+		final CMActivityWidget aWidget = addFactoryReturningWidget(aFactory, "A");
 
 		assertNull(createWidget("A", "Serialization"));
 		assertNull(createWidget(null, "Serialization"));
@@ -49,7 +49,7 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 
 	@Test
 	public void widgetSerializationCannotBeNull() {
-		SingleActivityWidgetFactory aFactory = mock(SingleActivityWidgetFactory.class);
+		final SingleActivityWidgetFactory aFactory = mock(SingleActivityWidgetFactory.class);
 		addFactoryReturningWidget(aFactory, "A");
 
 		widgetFactory.addWidgetFactory(aFactory);
@@ -64,7 +64,7 @@ public class ValuePairXpdlExtendedAttributeWidgetFactoryTest {
 	 */
 
 	private CMActivityWidget addFactoryReturningWidget(final SingleActivityWidgetFactory aFactory, final String name) {
-		CMActivityWidget aWidget =  mock(CMActivityWidget.class);
+		final CMActivityWidget aWidget = mock(CMActivityWidget.class);
 		when(aFactory.getWidgetName()).thenReturn(name);
 		when(aFactory.createWidget(anyString(), any(CMValueSet.class))).thenReturn(aWidget);
 		return aWidget;

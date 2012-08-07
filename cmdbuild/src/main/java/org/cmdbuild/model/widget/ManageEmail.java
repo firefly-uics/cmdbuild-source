@@ -27,7 +27,8 @@ public class ManageEmail extends Widget {
 		public String getCondition() {
 			return condition;
 		}
-		public void setCondition(String condition) {
+
+		public void setCondition(final String condition) {
 			this.condition = condition;
 		}
 	}
@@ -46,11 +47,16 @@ public class ManageEmail extends Widget {
 		this.templates = new HashMap<String, String>();
 	}
 
+	@Override
+	public void accept(final WidgetVisitor visitor) {
+		visitor.visit(this);
+	}
+
 	public boolean isReadOnly() {
 		return readOnly;
 	}
 
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(final boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
@@ -70,12 +76,13 @@ public class ManageEmail extends Widget {
 		return templates;
 	}
 
-	public void setTemplates(Map<String, String> templates) {
+	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
 	}
 
 	@Override
-	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
+			throws Exception {
 		if (readOnly) {
 			return;
 		}
@@ -85,7 +92,8 @@ public class ManageEmail extends Widget {
 	}
 
 	private Submission decodeInput(final Object input) {
-		@SuppressWarnings("unchecked") final Map<String, List<?>> inputMap = (Map<String, List<?>>) input;
+		@SuppressWarnings("unchecked")
+		final Map<String, List<?>> inputMap = (Map<String, List<?>>) input;
 		final Submission emails = new Submission();
 		fillEmails(emails.updated, inputMap.get(UPDATED_SUBMISSION_PARAM));
 		fillIds(emails.deleted, inputMap.get(DELETED_SUBMISSION_PARAM));
@@ -111,7 +119,7 @@ public class ManageEmail extends Widget {
 	private Email newEmailInstance(final Map<String, Object> emailMap) {
 		final Email email;
 		if (emailMap.containsKey("id")) {
-			long id = ((Number) emailMap.get("id")).longValue();
+			final long id = ((Number) emailMap.get("id")).longValue();
 			email = new Email(id);
 		} else {
 			email = new Email();
@@ -135,7 +143,7 @@ public class ManageEmail extends Widget {
 		final Long processCardId = activityInstance.getProcessInstance().getCardId();
 		for (final Email email : updatedEmails) {
 			emailLogic.saveEmail(processCardId, email);
-		}		
+		}
 	}
 
 	@Override

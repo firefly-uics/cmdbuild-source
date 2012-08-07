@@ -8,6 +8,7 @@ import java.util.Map;
 public interface CMWorkflowEngine {
 
 	CMProcessClass findProcessClassById(Long id);
+
 	CMProcessClass findProcessClassByName(String name);
 
 	/**
@@ -25,17 +26,18 @@ public interface CMWorkflowEngine {
 	Iterable<? extends CMProcessClass> findAllProcessClasses();
 
 	/**
-	 * Starts a process leaving the activity for the current user and
-	 * returns the created process instance.
+	 * Starts a process leaving the activity for the current user and returns
+	 * the created process instance.
 	 * 
-	 * Of course it has no meaning for a BPS, since a process should have
-	 * no privileged activity to start. We create the process instance,
-	 * start it and terminate every activity that is not the user's own.
+	 * Of course it has no meaning for a BPS, since a process should have no
+	 * privileged activity to start. We create the process instance, start it
+	 * and terminate every activity that is not the user's own.
 	 * 
-	 * In the future we might consider adding a map of initial variables
-	 * to be set before starting the process, but after it is created.
+	 * In the future we might consider adding a map of initial variables to be
+	 * set before starting the process, but after it is created.
 	 * 
-	 * @param type process type
+	 * @param type
+	 *            process type
 	 * @return the only activity instance that is left
 	 * @throws CMWorkflowException
 	 */
@@ -44,31 +46,34 @@ public interface CMWorkflowEngine {
 	/**
 	 * Aborts the process instance.
 	 * 
-	 * @param processInstance process instance
+	 * @param processInstance
+	 *            process instance
 	 * @throws CMWorkflowException
 	 */
 	void abortProcessInstance(CMProcessInstance processInstance) throws CMWorkflowException;
 
 	/**
 	 * Updates the variables of the process instance to which the activity
-	 * instance belongs. Executes the default action of each widget defined
-	 * in the activity instance. It leaves the activity instance in its
-	 * previous state.
+	 * instance belongs. Executes the default action of each widget defined in
+	 * the activity instance. It leaves the activity instance in its previous
+	 * state.
 	 * 
-	 * @param activityInstance activity instance object to update
-	 * @param vars map of values to update
-	 * @param widgetSubmission map of widget ids and submission objects
+	 * @param activityInstance
+	 *            activity instance object to update
+	 * @param vars
+	 *            map of values to update
+	 * @param widgetSubmission
+	 *            map of widget ids and submission objects
 	 * @throws CMWorkflowException
 	 */
-	void updateActivity(
-			CMActivityInstance activityInstance,
-			Map<String, Object> vars,
+	void updateActivity(CMActivityInstance activityInstance, Map<String, Object> vars,
 			Map<String, Object> widgetSubmission) throws CMWorkflowException;
 
 	/**
 	 * Advances an activity.
 	 * 
-	 * @param activityInstance activity instance object to advance
+	 * @param activityInstance
+	 *            activity instance object to advance
 	 * @return the updated process instance as it is after the action
 	 * @throws CMWorkflowException
 	 */

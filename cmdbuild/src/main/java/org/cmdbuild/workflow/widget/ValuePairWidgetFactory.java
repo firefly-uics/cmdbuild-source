@@ -12,7 +12,7 @@ import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.utils.CQLFacadeCompiler;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
 
 /**
@@ -53,12 +53,12 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		return widget;
 	}
 
-	private void setWidgetId(Widget widget, String serialization) {
+	private void setWidgetId(final Widget widget, final String serialization) {
 		final String id = String.format("widget-%x", serialization.hashCode());
 		widget.setId(id);
 	}
 
-	private void setWidgetLabel(Widget widget, Map<String, Object> valueMap) {
+	private void setWidgetLabel(final Widget widget, final Map<String, Object> valueMap) {
 		final String label = (String) valueMap.get(BUTTON_LABEL);
 		if (label != null) {
 			widget.setLabel(label);
@@ -120,7 +120,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	protected abstract Widget createWidget(Map<String, Object> valueMap);
 
-	protected final String readString(Object value) {
+	protected final String readString(final Object value) {
 		if (value instanceof String) {
 			return (String) value;
 		} else if (value != null) {
@@ -130,11 +130,11 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		}
 	}
 
-	protected final boolean readBooleanTrueIfPresent(Object value) {
+	protected final boolean readBooleanTrueIfPresent(final Object value) {
 		return (value != null);
 	}
 
-	protected final boolean readBooleanTrueIfTrue(Object value) {
+	protected final boolean readBooleanTrueIfTrue(final Object value) {
 		if (value instanceof String) {
 			return Boolean.parseBoolean((String) value);
 		} else if (value instanceof Boolean) {
@@ -144,11 +144,11 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		}
 	}
 
-	protected final Integer readInteger(Object value) {
+	protected final Integer readInteger(final Object value) {
 		if (value instanceof String) {
 			try {
 				return Integer.parseInt((String) value);
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				return null;
 			}
 		} else if (value instanceof Integer) {
@@ -160,23 +160,23 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		}
 	}
 
-	protected final String readClassNameFromCQLFilter(Object filter) {
+	protected final String readClassNameFromCQLFilter(final Object filter) {
 		if (filter instanceof String) {
 			try {
-				QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams((String) filter);
+				final QueryImpl q = CQLFacadeCompiler.compileWithTemplateParams((String) filter);
 				return q.getFrom().mainClass().getClassName();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// return null later
 			}
 		}
 		return null;
 	}
 
-	protected final Map<String, Object> extractUnmanagedParameters(Map<String, Object> valueMap,
-			Set<String> managedParameters) {
-		Map<String, Object> out = new HashMap<String, Object>();
+	protected final Map<String, Object> extractUnmanagedParameters(final Map<String, Object> valueMap,
+			final Set<String> managedParameters) {
+		final Map<String, Object> out = new HashMap<String, Object>();
 
-		for (String key : valueMap.keySet()) {
+		for (final String key : valueMap.keySet()) {
 			if (key == null || managedParameters.contains(key)) {
 				continue;
 			}
@@ -186,29 +186,29 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		return out;
 	}
 
-	protected final Map<String, Object> extractUnmanagedParameters(Map<String, Object> valueMap,
-			String... managedParameters) {
-		Set<String> parameters = new HashSet<String>();
-		for (String s : managedParameters) {
+	protected final Map<String, Object> extractUnmanagedParameters(final Map<String, Object> valueMap,
+			final String... managedParameters) {
+		final Set<String> parameters = new HashSet<String>();
+		for (final String s : managedParameters) {
 			parameters.add(s);
 		}
 		return extractUnmanagedParameters(valueMap, parameters);
 	}
 
-	protected final Map<String, String> extractUnmanagedStringParameters(Map<String, Object> valueMap,
-			Set<String> managedParameters) {
+	protected final Map<String, String> extractUnmanagedStringParameters(final Map<String, Object> valueMap,
+			final Set<String> managedParameters) {
 		final Map<String, Object> rawParameters = extractUnmanagedParameters(valueMap, managedParameters);
 		final Map<String, String> stringParameters = new HashMap<String, String>();
-		for (Map.Entry<String, Object> rawEntry : rawParameters.entrySet()) {
+		for (final Map.Entry<String, Object> rawEntry : rawParameters.entrySet()) {
 			stringParameters.put(rawEntry.getKey(), readString(rawEntry.getValue()));
 		}
 		return stringParameters;
 	}
 
-	protected final Map<String, String> extractUnmanagedStringParameters(Map<String, Object> valueMap,
-			String... managedParameters) {
-		Set<String> parameters = new HashSet<String>();
-		for (String s : managedParameters) {
+	protected final Map<String, String> extractUnmanagedStringParameters(final Map<String, Object> valueMap,
+			final String... managedParameters) {
+		final Set<String> parameters = new HashSet<String>();
+		for (final String s : managedParameters) {
 			parameters.add(s);
 		}
 		return extractUnmanagedStringParameters(valueMap, parameters);
