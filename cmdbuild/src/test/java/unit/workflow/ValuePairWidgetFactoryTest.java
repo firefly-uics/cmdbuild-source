@@ -66,20 +66,6 @@ public class ValuePairWidgetFactoryTest {
 	}
 
 	@Test
-	public void valuesAreTrimmed() {
-		factory.createWidget(
-				" A = 42 \n" +
-				" B = 4X \n" +
-				" C = '4X' ",
-				mock(CMValueSet.class)
-			);
-
-		assertThat((Integer)factory.valueMap.get("A"), is(42));
-		assertThat(factory.valueMap.get("B"), is(nullValue()));
-		assertThat((String)factory.valueMap.get("C"), is("4X"));
-	}
-
-	@Test
 	public void noEqualSignIsOutputValue() {
 		factory.createWidget(
 				"A\n",
@@ -105,13 +91,15 @@ public class ValuePairWidgetFactoryTest {
 	public void singleAndDoubleQuotesAreRemoved() {
 		factory.createWidget(
 				"C='XXX'\n" +
-				"D=\"YYY\"\n",
+				"D=\"YYY\"\n" +
+				"Filter='Can be quoted as well'",
 				mock(CMValueSet.class)
 			);
 
-		assertThat(factory.valueMap.size(), is(2));
+		assertThat(factory.valueMap.size(), is(3));
 		assertThat((String)factory.valueMap.get("C"), is("XXX"));
 		assertThat((String)factory.valueMap.get("D"), is("YYY"));
+		assertThat((String)factory.valueMap.get("Filter"), is("Can be quoted as well"));
 	}
 
 	@Test
@@ -158,6 +146,20 @@ public class ValuePairWidgetFactoryTest {
 			);
 
 		assertThat((String)factory.valueMap.get("Param"), is("TemplateValue"));
+	}
+
+	@Test
+	public void valuesAreTrimmed() {
+		factory.createWidget(
+				" A = 42 \n" +
+				" B = 4X \n" +
+				" C = '4X' ",
+				mock(CMValueSet.class)
+			);
+
+		assertThat((Integer)factory.valueMap.get("A"), is(42));
+		assertThat(factory.valueMap.get("B"), is(nullValue()));
+		assertThat((String)factory.valueMap.get("C"), is("4X"));
 	}
 
 	@Test
