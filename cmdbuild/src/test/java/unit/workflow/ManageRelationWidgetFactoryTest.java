@@ -7,15 +7,21 @@ import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.model.widget.ManageRelation;
+import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
+import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 import org.junit.Test;
 
 public class ManageRelationWidgetFactoryTest {
 
+	private final ValuePairWidgetFactory factory;
+
+	public ManageRelationWidgetFactoryTest() {
+		factory = new ManageRelationWidgetFactory(mock(TemplateRepository.class));
+	}
+
 	@Test
 	public void testSource() {
-		final ManageRelationWidgetFactory factory = new ManageRelationWidgetFactory();
-
 		ManageRelation w = (ManageRelation) factory.createWidget(
 			"IsDirect='true'\n",
 			mock(CMValueSet.class)

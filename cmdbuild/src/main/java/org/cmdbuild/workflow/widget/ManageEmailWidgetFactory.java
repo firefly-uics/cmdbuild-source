@@ -10,6 +10,7 @@ import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
@@ -25,7 +26,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
 	private final EmailLogic emailLogic;
 
-	public ManageEmailWidgetFactory(final EmailLogic emailLogic) {
+	public ManageEmailWidgetFactory(final TemplateRepository templateRespository, final EmailLogic emailLogic) {
+		super(templateRespository);
 		this.emailLogic = emailLogic;
 	}
 

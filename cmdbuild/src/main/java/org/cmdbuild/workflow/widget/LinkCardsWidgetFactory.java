@@ -5,6 +5,7 @@ import java.util.Map;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 
 public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 
@@ -25,7 +26,8 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 
 	private final DataAccessLogic dataAccessLogic;
 
-	public LinkCardsWidgetFactory(final DataAccessLogic dataAccessLogic) {
+	public LinkCardsWidgetFactory(final TemplateRepository templateRespository, final DataAccessLogic dataAccessLogic) {
+		super(templateRespository);
 		this.dataAccessLogic = dataAccessLogic;
 	}
 

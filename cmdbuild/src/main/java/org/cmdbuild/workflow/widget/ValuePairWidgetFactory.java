@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
@@ -17,7 +19,6 @@ import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
  * pairs.
  */
 public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFactory {
-
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
 
@@ -34,6 +35,13 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	private static final String DOUBLE_QUOTES = "\"";
 	private static final String CLIENT_PREFIX = "client:";
 	private static final String DB_TEMPLATE_PREFIX = "dbtmpl:";
+
+	private final TemplateRepository templateRespository;
+
+	protected ValuePairWidgetFactory(final TemplateRepository templateRespository) {
+		Validate.notNull(templateRespository);
+		this.templateRespository = templateRespository;
+	}
 
 	@Override
 	public final CMActivityWidget createWidget(final String serialization, final CMValueSet processInstanceVariables) {
@@ -91,7 +99,8 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			// template resolver on the client side
 			return String.format("{%s}", value);
 		} else if (value.startsWith(DB_TEMPLATE_PREFIX)) {
-			return "TODO";
+			final String templateName = value.substring(DB_TEMPLATE_PREFIX.length());
+			return templateRespository.getTemplate(templateName);
 		} else {
 			// Process variables are fetched from the process instance
 			return processInstanceVariables.get(value);

@@ -6,6 +6,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 
 public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	
@@ -17,7 +18,8 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 	private final DataAccessLogic dataAccessLogic;
 
-	public CreateModifyCardWidgetFactory(final DataAccessLogic dataAccessLogic) {
+	public CreateModifyCardWidgetFactory(final TemplateRepository templateRespository, final DataAccessLogic dataAccessLogic) {
+		super(templateRespository);
 		this.dataAccessLogic = dataAccessLogic;
 	}
 

@@ -13,7 +13,7 @@ import org.cmdbuild.services.auth.UserContext;
  * It currently uses the old DAO layer because the new one does not handle
  * simple classes.
  */
-public class DBTemplateService {
+public class DBTemplateService implements TemplateRepository {
 
 	private static final String TEMPLATES_TABLE = "_Templates";
 	private static final String TEMPLATE_NAME = "Name";
@@ -44,6 +44,7 @@ public class DBTemplateService {
 		templates = newTemplates;
 	}
 
+	@Override
 	public String getTemplate(final String name) {
 		return getTemplatesMap().get(name);
 	}

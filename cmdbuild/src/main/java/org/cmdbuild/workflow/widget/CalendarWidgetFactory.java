@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 
 public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 
@@ -14,6 +15,10 @@ public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 	private static final String START_DATE = "EventStartDate";
 	private static final String END_DATE = "EventEndDate";
 	private static final String DEFAULT_DATE = "DefaultDate";
+
+	public CalendarWidgetFactory(final TemplateRepository templateRespository) {
+		super(templateRespository);
+	}
 
 	@Override
 	public String getWidgetName() {
