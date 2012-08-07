@@ -66,6 +66,20 @@ public class ValuePairWidgetFactoryTest {
 	}
 
 	@Test
+	public void valuesAreTrimmed() {
+		factory.createWidget(
+				" A = 42 \n" +
+				" B = 4X \n" +
+				" C = '4X' ",
+				mock(CMValueSet.class)
+			);
+
+		assertThat((Integer)factory.valueMap.get("A"), is(42));
+		assertThat(factory.valueMap.get("B"), is(nullValue()));
+		assertThat((String)factory.valueMap.get("C"), is("4X"));
+	}
+
+	@Test
 	public void noEqualSignIsOutputValue() {
 		factory.createWidget(
 				"A\n",
