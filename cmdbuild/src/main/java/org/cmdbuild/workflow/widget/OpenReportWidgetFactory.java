@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 
 public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 
@@ -31,6 +32,10 @@ public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 		FORCE_CSV,
 		FORCE_PDF
 	};
+
+	public OpenReportWidgetFactory(final TemplateRepository templateRespository) {
+		super(templateRespository);
+	}
 
 	@Override
 	public String getWidgetName() {

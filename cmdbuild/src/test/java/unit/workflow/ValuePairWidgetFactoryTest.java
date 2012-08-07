@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 import org.junit.Test;
@@ -20,6 +21,10 @@ public class ValuePairWidgetFactoryTest {
 
 	private static class FakeWidgetFactory extends ValuePairWidgetFactory {
 		public Map<String, Object> valueMap;
+
+		public FakeWidgetFactory(final TemplateRepository templateRespository) {
+			super(templateRespository);
+		}
 
 		protected Widget createWidget(final Map<String, Object> valueMap) {
 			this.valueMap = valueMap;
@@ -31,9 +36,16 @@ public class ValuePairWidgetFactoryTest {
 		}
 	}
 
+	private final TemplateRepository templateRespository;
+	private final FakeWidgetFactory factory;
+
+	public ValuePairWidgetFactoryTest() {
+		templateRespository = mock(TemplateRepository.class);
+		factory = new FakeWidgetFactory(templateRespository);
+	}
+
 	@Test
 	public void emptyDefinitionHasNoValues() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
 
 		factory.createWidget("", mock(CMValueSet.class));
 
@@ -42,8 +54,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void valuesStartingWithADigitAreConvertedToIntegers() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		factory.createWidget(
 				"A=42\n" +
 				"B=4XXX",
@@ -57,8 +67,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void noEqualSignIsOutputValue() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		factory.createWidget(
 				"A\n",
 				mock(CMValueSet.class)
@@ -70,8 +78,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void emptyAfterEqualSignIsOutputValue() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		factory.createWidget(
 				"B=",
 				mock(CMValueSet.class)
@@ -83,8 +89,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void singleAndDoubleQuotesAreRemoved() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		factory.createWidget(
 				"C='XXX'\n" +
 				"D=\"YYY\"\n",
@@ -98,8 +102,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void clientNamespaceIsTransformedToATemplate() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		factory.createWidget("X=client:Var", mock(CMValueSet.class));
 
 		assertThat(factory.valueMap.size(), is(1));
@@ -112,7 +114,6 @@ public class ValuePairWidgetFactoryTest {
 		when(procInstVars.get("X")).thenReturn("StringVal");
 		when(procInstVars.get("Y")).thenReturn(555);
 
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
 		factory.createWidget(
 				"XP=X\n" +
 				"YP=Y"
@@ -125,8 +126,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void filterKeyAlwaysConsideredString() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		factory.createWidget(
 				"Filter=client:Var",
 				mock(CMValueSet.class)
@@ -135,12 +134,20 @@ public class ValuePairWidgetFactoryTest {
 		assertThat((String)factory.valueMap.get("Filter"), is("client:Var"));
 	}
 
-	// TODO: dbtmpl:
+	@Test
+	public void dbtmplNamespaceFetchesTemplatesFromDatabase() {
+		when(templateRespository.getTemplate("TemplateName")).thenReturn("TemplateValue");
+
+		factory.createWidget(
+				"Param=dbtmpl:TemplateName",
+				mock(CMValueSet.class)
+			);
+
+		assertThat((String)factory.valueMap.get("Param"), is("TemplateValue"));
+	}
 
 	@Test
 	public void setsTheLabelOnEveryWidget() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		CMActivityWidget widget = factory.createWidget(
 				BUTTON_LABEL + "='MyLabel'",
 				mock(CMValueSet.class)
@@ -151,8 +158,6 @@ public class ValuePairWidgetFactoryTest {
 
 	@Test
 	public void computesIdFromDefinitionHash() {
-		final FakeWidgetFactory factory = new FakeWidgetFactory();
-
 		CMActivityWidget widget = factory.createWidget(
 				"SomeDefinitionString",
 				mock(CMValueSet.class)

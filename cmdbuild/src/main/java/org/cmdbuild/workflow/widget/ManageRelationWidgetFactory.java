@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.TemplateRepository;
 
 public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
@@ -14,6 +15,10 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	private final static String CARD_CQL_SELECTOR = "ObjId";
 	private final static String REQUIRED = "Required";
 	private final static String IS_DIRECT = "IsDirect";
+
+	public ManageRelationWidgetFactory(final TemplateRepository templateRespository) {
+		super(templateRespository);
+	}
 
 	@Override
 	public String getWidgetName() {

@@ -1,8 +1,8 @@
 package unit.workflow;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
@@ -10,16 +10,23 @@ import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
+import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
+import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 import org.junit.Test;
 
 public class ManageEmailWidgetFactoryTest {
 
 	private static final EmailLogic UNUSED_EMAIL_LOGIC = null;
 
+	private final ValuePairWidgetFactory factory;
+
+	public ManageEmailWidgetFactoryTest() {
+		factory = new ManageEmailWidgetFactory(mock(TemplateRepository.class), UNUSED_EMAIL_LOGIC);
+	}
+
 	@Test
 	public void singleEmailTemplateDefinition() {
-		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory(UNUSED_EMAIL_LOGIC);
 		final ManageEmail w = (ManageEmail) factory.createWidget(
 			"ToAddresses='to@a.a'\n" +
 			"CCAddresses='cc@a.a'\n" +
@@ -38,7 +45,6 @@ public class ManageEmailWidgetFactoryTest {
 
 	@Test
 	public void moreThanOneEmailTemplateDefinitions() {
-		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory(UNUSED_EMAIL_LOGIC);
 		final ManageEmail w = (ManageEmail) factory.createWidget(
 			"ToAddresses='to@a.a'\n" +
 			"CCAddresses='cc@a.a'\n" +
@@ -79,7 +85,6 @@ public class ManageEmailWidgetFactoryTest {
 
 	@Test
 	public void readAlsoTheTemplates() {
-		final ManageEmailWidgetFactory factory = new ManageEmailWidgetFactory(UNUSED_EMAIL_LOGIC);
 		final ManageEmail w = (ManageEmail) factory.createWidget(
 			"ToAddresses='to@a.a'\n" +
 

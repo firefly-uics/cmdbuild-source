@@ -14,6 +14,8 @@ import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.services.DBService;
+import org.cmdbuild.services.DBTemplateService;
+import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
@@ -82,14 +84,14 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static XpdlExtendedAttributeWidgetFactory newXpdlWidgetFactory() {
 		final ValuePairXpdlExtendedAttributeWidgetFactory factory = new ValuePairXpdlExtendedAttributeWidgetFactory();
 
-		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new OpenAttachmentWidgetFactory());
-		factory.addWidgetFactory(new OpenNoteWidgetFactory());
-		factory.addWidgetFactory(new OpenReportWidgetFactory());
-		factory.addWidgetFactory(new CalendarWidgetFactory());
-		factory.addWidgetFactory(new LinkCardsWidgetFactory(getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new ManageRelationWidgetFactory());
-		factory.addWidgetFactory(new ManageEmailWidgetFactory(getSystemEmailLogic()));
+		factory.addWidgetFactory(new CreateModifyCardWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
+		factory.addWidgetFactory(new OpenAttachmentWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new OpenNoteWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new OpenReportWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new CalendarWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new LinkCardsWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
+		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new ManageEmailWidgetFactory(getTemplateRepository(), getSystemEmailLogic()));
 
 		return factory;
 	}
@@ -159,5 +161,9 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static EmailLogic getSystemEmailLogic() {
 		return getEmailLogic(UserContext.systemContext());
+	}
+
+	private static TemplateRepository getTemplateRepository() {
+		return new DBTemplateService();
 	}
 }
