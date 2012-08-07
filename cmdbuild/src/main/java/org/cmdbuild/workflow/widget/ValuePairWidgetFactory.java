@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -75,12 +76,16 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	private void addPair(final Map<String, Object> valueMap, final String line,
 			final CMValueSet processInstanceVariables) {
 		final String pair[] = line.split(VALUE_SEPARATOR, 2);
-		if (pair.length > 0 && !pair[0].isEmpty()) {
-			final String key = pair[0];
-			if (pair.length == 1 || pair[1].isEmpty()) {
+		if (pair.length > 0) {
+			final String key = pair[0].trim();
+			if (key.isEmpty()) {
+				return;
+			}
+			final String valueString = (pair.length == 1) ? StringUtils.EMPTY : pair[1].trim();
+			if (valueString.isEmpty()) {
 				valueMap.put(OUTPUT_KEY, key);
 			} else {
-				final Object value = interpretValue(key, pair[1], processInstanceVariables);
+				final Object value = interpretValue(key, valueString, processInstanceVariables);
 				valueMap.put(key, value);
 			}
 		}
