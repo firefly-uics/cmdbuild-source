@@ -10,6 +10,8 @@ import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.Constants;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApi;
+import org.cmdbuild.workflow.type.LookupType;
+import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.jxpdl.XMLUtil;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.ExtendedAttribute;
@@ -30,6 +32,9 @@ import org.enhydra.shark.toolagent.AbstractToolAgent;
 public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	private static final String EXTENDED_ATTRIBUTES_PARAM = "ExtendedAttributes";
+
+	private static final String UNKNOWN_DESCRIPTION = "";
+	private static final int UNKNOWN_CLASS_ID = -1;
 
 	public static interface ConditionEvaluator {
 
@@ -201,6 +206,60 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	private WAPI wapi() throws Exception {
 		return Shark.getInstance().getWAPIConnection();
+	}
+
+	protected final Object convertFromProcessValue(Object obj) {
+		if (obj != null) {
+			if (obj instanceof ReferenceType) {
+				final ReferenceType ref = (ReferenceType) obj;
+				if (ref.checkValidity()) {
+					obj = ref.getId();
+				}
+			} else if (obj instanceof LookupType) {
+				final LookupType loo = (LookupType) obj;
+				if (loo.checkValidity()) {
+					obj = loo.getId();
+				}
+			}
+		}
+		return obj;
+	}
+
+	protected final Object convertToProcessValue(final String stringValue, final Class<?> clazz) {
+		if (stringValue == null) {
+			return null;
+		}
+		if (Long.class.equals(clazz)) {
+			return stringToLongOurWay(stringValue);
+		} else if (ReferenceType.class.equals(clazz)) {
+			final Long id = stringToLongOurWay(stringValue);
+			if (id == null) {
+				return new ReferenceType();
+			} else {
+				// TODO fetch the card from Class?
+				return new ReferenceType(id.intValue(), UNKNOWN_CLASS_ID, UNKNOWN_DESCRIPTION);
+			}
+		} else if (LookupType.class.equals(clazz)) {
+			final Long id = stringToLongOurWay(stringValue);
+			if (id == null) {
+				return new LookupType();
+			} else {
+				return workflowApi.schemaApi().selectLookupById(id.intValue());
+			}
+		} else {
+			return stringValue;
+		}
+	}
+
+	private Long stringToLongOurWay(final String stringValue) {
+		if (stringValue == null || stringValue.isEmpty()) {
+			return null;
+		}
+		try {
+			return Long.parseLong(stringValue);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 }
 
