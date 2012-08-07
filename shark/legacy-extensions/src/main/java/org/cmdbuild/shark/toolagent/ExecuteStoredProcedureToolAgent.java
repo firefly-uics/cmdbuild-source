@@ -26,7 +26,8 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 	private Map<String, String> callFunction(final String functionName, final Map<String, Object> input) {
 		final CallFunction callFunction = getFluentApi().callFunction(functionName);
 		for (final Entry<String, Object> entry : input.entrySet()) {
-			callFunction.with(entry.getKey(), entry.getValue());
+			final Object normalizedValue = convertFromProcessValue(entry.getValue());
+			callFunction.with(entry.getKey(), normalizedValue);
 		}
 		final Map<String, String> output = callFunction.execute();
 		return output;
@@ -38,15 +39,6 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 			functionName = getExtendedAttribute(CURSOR_PROCEDURE);
 		}
 		return functionName;
-	}
-
-	private Object convertToProcessValue(final String stringValue, final Class<?> clazz) {
-		// TODO
-		if (clazz.equals(String.class)) {
-			return stringValue;
-		} else {
-			return null;
-		}
 	}
 
 }
