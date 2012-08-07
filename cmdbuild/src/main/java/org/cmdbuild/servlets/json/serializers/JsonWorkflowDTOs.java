@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +80,6 @@ public class JsonWorkflowDTOs {
 			return activityInstance.isWritable();
 		}
 
-		public Iterable<CMActivityWidget> getWidgets() throws CMWorkflowException {
-			return activityInstance.getWidgets();
-		}
 	}
 
 	/*
@@ -109,6 +107,15 @@ public class JsonWorkflowDTOs {
 
 		public Boolean isWritable() {
 			return info.isWritable();
+		}
+
+		public Iterable<CMActivityWidget> getWidgets() {
+			try {
+				return activityInstance.getWidgets();
+			} catch (final CMWorkflowException e) {
+				// TODO Log & warn!
+				return Collections.emptyList();
+			}
 		}
 	}
 
