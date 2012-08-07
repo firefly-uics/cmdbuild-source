@@ -40,19 +40,20 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	@Override
-	public void updateDefinition(CMProcessClass process, DataSource pkgDefData) throws CMWorkflowException {
+	public void updateDefinition(final CMProcessClass process, final DataSource pkgDefData) throws CMWorkflowException {
 		try {
-			byte[] binaryData = IOUtils.toByteArray(pkgDefData.getInputStream());
+			final byte[] binaryData = IOUtils.toByteArray(pkgDefData.getInputStream());
 			synchronized (this) {
 				store.uploadPackage(process.getName(), binaryData);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new CMWorkflowException(e);
-		}		
+		}
 	}
 
 	@Override
-	public final CMActivity getStartActivity(final CMProcessClass process, final String groupName) throws CMWorkflowException {
+	public final CMActivity getStartActivity(final CMProcessClass process, final String groupName)
+			throws CMWorkflowException {
 		final List<CMActivity> startActivities = store.getStartActivities(process.getName());
 		if (groupName == null) {
 			return getStartActivityForAdmin(startActivities);
@@ -62,8 +63,8 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	private CMActivity getStartActivityForNonAdmin(final List<CMActivity> startActivities, final String groupName) {
-		for (CMActivity a : startActivities) {
-			for (ActivityPerformer p : a.getPerformers()) {
+		for (final CMActivity a : startActivities) {
+			for (final ActivityPerformer p : a.getPerformers()) {
 				if (p.isRole(groupName)) {
 					return a;
 				}
@@ -88,10 +89,12 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	@Override
-	public CMActivity getActivity(final CMProcessInstance processInstance, final String activityDefinitionId) throws CMWorkflowException {
+	public CMActivity getActivity(final CMProcessInstance processInstance, final String activityDefinitionId)
+			throws CMWorkflowException {
 		return store.getActivity(processInstance.getUniqueProcessDefinition(), activityDefinitionId);
 	}
 
+	@Override
 	public final String getPackageId(final CMProcessClass process) throws CMWorkflowException {
 		return store.getPackageId(process.getName());
 	}
@@ -101,6 +104,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 		return "Package_" + process.getName().toLowerCase();
 	}
 
+	@Override
 	public final String getProcessDefinitionId(final CMProcessClass process) throws CMWorkflowException {
 		return store.getProcessDefinitionId(process.getName());
 	}
@@ -111,6 +115,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	protected abstract String getMimeType();
+
 	protected abstract String getFileExtension();
 
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.model.widget.WidgetVisitor;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -26,6 +27,11 @@ public class WidgetSerializationTest {
 
 	private static class EmptyWidget extends Widget {
 		public static String TYPE = ".WidgetSerializationTest$EmptyWidget";
+
+		@Override
+		public void accept(final WidgetVisitor visitor) {
+			// nothing to do
+		}
 	}
 
 	@Test

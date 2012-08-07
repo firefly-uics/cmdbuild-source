@@ -20,7 +20,7 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -46,7 +46,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		final String activityInstancePerformer;
 		final String activityDefinitionId;
 
-		public ActivityInstanceImpl(final String activityInstanceId, final String activityInstancePerformer, final String activityDefinitionId) {
+		public ActivityInstanceImpl(final String activityInstanceId, final String activityInstancePerformer,
+				final String activityDefinitionId) {
 			this.activityInstanceId = activityInstanceId;
 			this.activityInstancePerformer = activityInstancePerformer;
 			this.activityDefinitionId = activityDefinitionId;
@@ -93,29 +94,31 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	}
 
 	@SuppressWarnings("serial")
-	protected static final Set<String> processSystemAttributes = new HashSet<String>() {{
-		addAll(cardSystemAttributes);
-		for (final ProcessAttributes a : ProcessAttributes.values()) {
-			add(a.dbColumnName());
+	protected static final Set<String> processSystemAttributes = new HashSet<String>() {
+		{
+			addAll(cardSystemAttributes);
+			for (final ProcessAttributes a : ProcessAttributes.values()) {
+				add(a.dbColumnName());
+			}
 		}
-	}};
+	};
 
 	@SuppressWarnings("serial")
-	private static final Map<String, WSProcessInstanceState> stateCodeToEnumMap = new HashMap<String, WSProcessInstanceState>() {{
-		put(SharkConstants.STATE_OPEN_RUNNING, WSProcessInstanceState.OPEN);
-		put(SharkConstants.STATE_OPEN_NOT_RUNNING_SUSPENDED, WSProcessInstanceState.SUSPENDED);
-		put(SharkConstants.STATE_CLOSED_COMPLETED, WSProcessInstanceState.COMPLETED);
-		put(SharkConstants.STATE_CLOSED_TERMINATED, WSProcessInstanceState.TERMINATED);
-		put(SharkConstants.STATE_CLOSED_ABORTED, WSProcessInstanceState.ABORTED);
-	}};
-
+	private static final Map<String, WSProcessInstanceState> stateCodeToEnumMap = new HashMap<String, WSProcessInstanceState>() {
+		{
+			put(SharkConstants.STATE_OPEN_RUNNING, WSProcessInstanceState.OPEN);
+			put(SharkConstants.STATE_OPEN_NOT_RUNNING_SUSPENDED, WSProcessInstanceState.SUSPENDED);
+			put(SharkConstants.STATE_CLOSED_COMPLETED, WSProcessInstanceState.COMPLETED);
+			put(SharkConstants.STATE_CLOSED_TERMINATED, WSProcessInstanceState.TERMINATED);
+			put(SharkConstants.STATE_CLOSED_ABORTED, WSProcessInstanceState.ABORTED);
+		}
+	};
 
 	private final UserContext userCtx;
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final CMWorkflowService workflowService;
 
-	public ProcessInstanceWrapper(final UserContext userCtx,
-			final ProcessDefinitionManager processDefinitionManager,
+	public ProcessInstanceWrapper(final UserContext userCtx, final ProcessDefinitionManager processDefinitionManager,
 			final ICard process) {
 		super(process);
 		this.userCtx = userCtx;
@@ -123,6 +126,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		this.workflowService = TemporaryObjectsBeforeSpringDI.getWorkflowService();
 	}
 
+	@Override
 	protected boolean isUserAttributeName(final String name) {
 		return !processSystemAttributes.contains(name);
 	}
@@ -171,8 +175,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	}
 
 	@Override
-	public UserActivityInstance getActivityInstance(String activityInstanceId) {
-		for (UserActivityInstance ai: getActivities()) {
+	public UserActivityInstance getActivityInstance(final String activityInstanceId) {
+		for (final UserActivityInstance ai : getActivities()) {
 			if (ai.getId().equals(activityInstanceId)) {
 				return ai;
 			}
@@ -203,14 +207,15 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	}
 
 	@Override
-	public UserProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
+	public UserProcessInstanceDefinition setActivities(final WSActivityInstInfo[] activityInfos)
+			throws CMWorkflowException {
 		removeClosedActivities(activityInfos);
 		addNewActivities(activityInfos);
 		updateCodeWithOneRandomActivityInfo();
 		return this;
 	}
 
-	private void removeClosedActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
+	private void removeClosedActivities(final WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		final Set<String> newActivityInstInfoIds = new HashSet<String>(activityInfos.length);
 		for (final WSActivityInstInfo ai : activityInfos) {
 			newActivityInstInfoIds.add(ai.getActivityInstanceId());
@@ -222,7 +227,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		}
 	}
 
-	private void addNewActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
+	private void addNewActivities(final WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		final Set<String> oldActivityInstanceIds = new HashSet<String>();
 		for (final String aiid : getActivityInstanceIds()) {
 			oldActivityInstanceIds.add(aiid);
@@ -276,7 +281,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	@Override
 	public void removeActivity(final String activityInstanceId) throws CMWorkflowException {
-		int index = ArrayUtils.indexOf(getActivityInstanceIds(), activityInstanceId);
+		final int index = ArrayUtils.indexOf(getActivityInstanceIds(), activityInstanceId);
 		if (index == ArrayUtils.INDEX_NOT_FOUND) {
 			return;
 		}
@@ -291,7 +296,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		updateCodeWithOneRandomActivityInfo();
 	}
 
-	private String extractActivityParticipantGroup(WSActivityInstInfo activityInfo) throws CMWorkflowException {
+	private String extractActivityParticipantGroup(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
 		final CMActivity activity = findActivity(activityInfo.getActivityDefinitionId());
 		final String performerExpression = activity.getFirstRolePerformer().getName();
 		// TODO Check if participant is a role in the xpdl or not!
@@ -327,14 +332,14 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	@Override
 	public WSProcessInstanceState getState() {
-		Lookup flowStatusLookup = card.getAttributeValue(ProcessAttributes.FlowStatus.dbColumnName()).getLookup();
+		final Lookup flowStatusLookup = card.getAttributeValue(ProcessAttributes.FlowStatus.dbColumnName()).getLookup();
 		return getFlowStatusForLookup(flowStatusLookup);
 	}
 
-
 	@Override
 	public WSProcessDefInfo getUniqueProcessDefinition() {
-		final String value = card.getAttributeValue(ProcessAttributes.UniqueProcessDefinition.dbColumnName()).getString();
+		final String value = card.getAttributeValue(ProcessAttributes.UniqueProcessDefinition.dbColumnName())
+				.getString();
 		if (value != null) {
 			final String[] components = value.split("#");
 			if (components.length == 3) {
@@ -346,7 +351,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	@Override
 	public UserProcessInstanceDefinition setUniqueProcessDefinition(final WSProcessDefInfo info) {
-		final String value = String.format("%s#%s#%s", info.getPackageId(), info.getPackageVersion(), info.getProcessDefinitionId());
+		final String value = String.format("%s#%s#%s", info.getPackageId(), info.getPackageVersion(),
+				info.getProcessDefinitionId());
 		card.setValue(ProcessAttributes.UniqueProcessDefinition.dbColumnName(), value);
 		return this;
 	}
@@ -391,10 +397,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		}
 	}
 
-	public static ProcessInstanceWrapper createProcessInstance(
-			final UserContext userCtx,
-			final ProcessDefinitionManager processDefinitionManager,
-			final ProcessType processType,
+	public static ProcessInstanceWrapper createProcessInstance(final UserContext userCtx,
+			final ProcessDefinitionManager processDefinitionManager, final ProcessType processType,
 			final WSProcessInstInfo procInst) {
 		final Process process = processType.cards().create();
 		process.setValue(ProcessAttributes.ProcessInstanceId.dbColumnName(), procInst.getProcessInstanceId());
@@ -408,12 +412,10 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		return wrapper;
 	}
 
-	public static UserProcessInstanceDefinition readProcessInstance(
-			final UserContext userCtx,
-			final ProcessDefinitionManager processDefinitionManager,
-			final ProcessType processType,
+	public static UserProcessInstanceDefinition readProcessInstance(final UserContext userCtx,
+			final ProcessDefinitionManager processDefinitionManager, final ProcessType processType,
 			final CMProcessInstance processInstance) {
-		int cardId = Integer.valueOf(processInstance.getCardId().toString()).intValue();
+		final int cardId = Integer.valueOf(processInstance.getCardId().toString()).intValue();
 		final Process process = processType.cards().get(cardId);
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, process);
 	}

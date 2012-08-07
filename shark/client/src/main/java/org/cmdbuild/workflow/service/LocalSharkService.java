@@ -27,6 +27,7 @@ public class LocalSharkService extends AbstractSharkService {
 		return clientProps;
 	}
 
+	@Override
 	protected WMConnectInfo getConnectionInfo() {
 		return new WMConnectInfo(config.getUsername(), StringUtils.EMPTY, DEFAULT_ENGINE_NAME, DEFAULT_SCOPE);
 	}

@@ -1,7 +1,7 @@
 package org.cmdbuild.workflow.xpdl;
 
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 
 /**
  * Creates an activity widget given its serialization.

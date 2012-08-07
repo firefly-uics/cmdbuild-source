@@ -7,13 +7,12 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
-
+import org.cmdbuild.workflow.CMActivityWidget;
 
 /**
- * Widget factory that creates widgets from a key/value representation
- * as the value of an extended attribute. The type is defined in the
- * extended attribute key.
+ * Widget factory that creates widgets from a key/value representation as the
+ * value of an extended attribute. The type is defined in the extended attribute
+ * key.
  */
 @ThreadSafe
 public class ValuePairXpdlExtendedAttributeWidgetFactory implements XpdlExtendedAttributeWidgetFactory {

@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
 import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
-import org.cmdbuild.services.soap.operation.EWorkflow;
+import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -34,25 +35,23 @@ import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
+import org.cmdbuild.workflow.operation.SharkFacade;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-@WebService(
-		targetNamespace="http://soap.services.cmdbuild.org",
-		endpointInterface="org.cmdbuild.services.soap.Webservices"
-)
+@WebService(targetNamespace = "http://soap.services.cmdbuild.org", endpointInterface = "org.cmdbuild.services.soap.Webservices")
 public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	private ApplicationContext applicationContext;
-	
+
 	@Resource
 	WebServiceContext wsc;
 
 	private UserContext getUserCtx() {
-		MessageContext msgCtx = wsc.getMessageContext();
-		AuthenticationService as = new AuthenticationService();
-		WebserviceUtils utils = new WebserviceUtils();
+		final MessageContext msgCtx = wsc.getMessageContext();
+		final AuthenticationService as = new AuthenticationService();
+		final WebserviceUtils utils = new WebserviceUtils();
 		return as.getWSUserContext(utils.getAuthData(msgCtx));
 	}
 
@@ -61,126 +60,150 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
-	public CardList getCardList(String className, Attribute[] attributeList, Query queryType, Order[] orderType, Integer limit, Integer offset, String fullTextQuery){
-		ECard ecard = new ECard(getUserCtx());
-		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, null, false);
+	@Override
+	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery) {
+		final ECard ecard = new ECard(getUserCtx());
+		return ecard.getCardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, null,
+				false);
 	}
 
-	public Card getCard(String className, Integer cardId, Attribute[] attributeList){
-		ECard ecard = new ECard(getUserCtx());
+	@Override
+	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
+		final ECard ecard = new ECard(getUserCtx());
 		return ecard.getCard(className, cardId, attributeList);
 	}
 
-	public CardList getCardHistory(String className, int cardId, Integer limit, Integer offset){
-		ECard ecard = new ECard(getUserCtx());
+	@Override
+	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
+		final ECard ecard = new ECard(getUserCtx());
 		return ecard.getCardHistory(className, cardId, limit, offset);
 	}
 
-	public int createCard(Card cardType){
-		ECard ecard = new ECard(getUserCtx());
+	@Override
+	public int createCard(final Card cardType) {
+		final ECard ecard = new ECard(getUserCtx());
 		return ecard.createCard(cardType);
 	}
 
-	public boolean updateCard(Card card){
-		ECard ecard = new ECard(getUserCtx());
+	@Override
+	public boolean updateCard(final Card card) {
+		final ECard ecard = new ECard(getUserCtx());
 		return ecard.updateCard(card);
 	}
 
-	public boolean deleteCard(String className, int cardId){
-		ECard ecard = new ECard(getUserCtx());
+	@Override
+	public boolean deleteCard(final String className, final int cardId) {
+		final ECard ecard = new ECard(getUserCtx());
 		return ecard.deleteCard(className, cardId);
 	}
 
-	public int createLookup(Lookup lookup){
-		ELookup elookup = new ELookup(getUserCtx());
+	@Override
+	public int createLookup(final Lookup lookup) {
+		final ELookup elookup = new ELookup(getUserCtx());
 		return elookup.createLookup(lookup);
 	}
 
-	public boolean deleteLookup(int lookupId){
-		ELookup elookup = new ELookup(getUserCtx());
+	@Override
+	public boolean deleteLookup(final int lookupId) {
+		final ELookup elookup = new ELookup(getUserCtx());
 		return elookup.deleteLookup(lookupId);
 	}
 
-	public boolean updateLookup(Lookup lookup){
-		ELookup elookup = new ELookup(getUserCtx());
+	@Override
+	public boolean updateLookup(final Lookup lookup) {
+		final ELookup elookup = new ELookup(getUserCtx());
 		return elookup.updateLookup(lookup);
 	}
 
-	public Lookup getLookupById(int id){
-		ELookup elookup = new ELookup(getUserCtx());
+	@Override
+	public Lookup getLookupById(final int id) {
+		final ELookup elookup = new ELookup(getUserCtx());
 		return elookup.getLookupById(id);
 	}
 
-	public Lookup[] getLookupList(String type, String value, boolean parentList){
-		ELookup elookup = new ELookup(getUserCtx());
+	@Override
+	public Lookup[] getLookupList(final String type, final String value, final boolean parentList) {
+		final ELookup elookup = new ELookup(getUserCtx());
 		return elookup.getLookupList(type, value, parentList);
 	}
 
-	public Lookup[] getLookupListByCode(String type, String code, boolean parentList){
-		ELookup elookup = new ELookup(getUserCtx());
+	@Override
+	public Lookup[] getLookupListByCode(final String type, final String code, final boolean parentList) {
+		final ELookup elookup = new ELookup(getUserCtx());
 		return elookup.getLookupListByCode(type, code, parentList);
 	}
 
-	public boolean createRelation(Relation relation){
-		ERelation erelation = new ERelation(getUserCtx());
+	@Override
+	public boolean createRelation(final Relation relation) {
+		final ERelation erelation = new ERelation(getUserCtx());
 		return erelation.createRelation(relation);
 	}
 
-	public boolean deleteRelation(Relation relation){
-		ERelation erelation = new ERelation(getUserCtx());
+	@Override
+	public boolean deleteRelation(final Relation relation) {
+		final ERelation erelation = new ERelation(getUserCtx());
 		return erelation.deleteRelation(relation);
 	}
 
-	public List<Relation> getRelationList(String domain, String className, int cardId){
-		ERelation erelation = new ERelation(getUserCtx());
+	@Override
+	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
+		final ERelation erelation = new ERelation(getUserCtx());
 		return erelation.getRelationList(domain, className, cardId);
 	}
 
-	public Relation[] getRelationHistory(Relation relation){
-		ERelation erelation = new ERelation(getUserCtx());
+	@Override
+	public Relation[] getRelationHistory(final Relation relation) {
+		final ERelation erelation = new ERelation(getUserCtx());
 		return erelation.getRelationHistory(relation);
 	}
 
-	public Attachment[] getAttachmentList(String className, int cardId){
+	@Override
+	public Attachment[] getAttachmentList(final String className, final int cardId) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(getUserCtx());
 		final List<StoredDocument> storedDocuments = dmsLogic.search(className, cardId);
 		final List<Attachment> attachments = new ArrayList<Attachment>();
-		for (StoredDocument storedDocument : storedDocuments) {
+		for (final StoredDocument storedDocument : storedDocuments) {
 			final Attachment attachment = new Attachment(storedDocument);
 			attachments.add(attachment);
 		}
 		return attachments.toArray(new Attachment[attachments.size()]);
 	}
 
-	public boolean uploadAttachment(String className, int objectid, DataHandler file, String filename, String category,
-			String description) {
+	@Override
+	public boolean uploadAttachment(final String className, final int objectid, final DataHandler file,
+			final String filename, final String category, final String description) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(getUserCtx());
 		try {
 			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
 					description);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
 			Log.SOAP.error(message, e);
 		}
 		return false;
 	}
 
-	public DataHandler downloadAttachment(String className, int objectid, String filename){
+	@Override
+	public DataHandler downloadAttachment(final String className, final int objectid, final String filename) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(getUserCtx());
 		return dmsLogic.download(className, objectid, filename);
 	}
 
-	public boolean deleteAttachment(String className, int cardId, String filename){
+	@Override
+	public boolean deleteAttachment(final String className, final int cardId, final String filename) {
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(getUserCtx());
 		dmsLogic.delete(className, cardId, filename);
 		return true;
 	}
 
-	public boolean updateAttachmentDescription(String className, int cardId, String filename, String description) {
+	@Override
+	public boolean updateAttachmentDescription(final String className, final int cardId, final String filename,
+			final String description) {
 		try {
 			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 			dmsLogic.setUserContext(getUserCtx());
@@ -191,55 +214,91 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 		}
 	}
 
-	public Workflow startWorkflow(Card card, boolean completeTask){
-		EWorkflow workflow = new EWorkflow(getUserCtx());
-		return workflow.startWorkflow(card, completeTask);
+	@Override
+	public Workflow startWorkflow(final Card card, final boolean completeTask) {
+		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
+		return helper.updateProcess(card, completeTask);
 	}
 
-	public boolean updateWorkflow(Card card, boolean completeTask){
-		EWorkflow workflow = new EWorkflow(getUserCtx());
-		return workflow.updateWorkflow(card, completeTask);
+	@Override
+	public boolean updateWorkflow(final Card card, final boolean completeTask) {
+		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
+		helper.updateProcess(card, completeTask);
+		return true;
 	}
 
-	public String getProcessHelp(String classname, Integer cardid){
-		EWorkflow workflow = new EWorkflow(getUserCtx());
-		return workflow.getProcessHelp(classname, cardid);
+	@Override
+	public String getProcessHelp(final String classname, final Integer cardid) {
+		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
+		return helper.getInstructions(classname, cardid);
 	}
 
-	public AttributeSchema[] getAttributeList(String className){
+	@Override
+	public AttributeSchema[] getAttributeList(final String className) {
 		Log.SOAP.info(format("getting attributes schema for class '%s'", className));
 		final ECard op = new ECard(getUserCtx());
 		final AttributeSchema[] attributes = op.getAttributeList(className);
 		return attributes;
 	}
 
-	public AttributeSchema[] getActivityObjects(String className, Integer cardid){
-		EWorkflow op = new EWorkflow(getUserCtx());
-		return op.getActivityObjects(className, cardid);
+	@Override
+	public AttributeSchema[] getActivityObjects(final String className, final Integer cardid) {
+		final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
+		final List<AttributeSchema> attributeSchemaList = helper.getAttributeSchemaList(className, cardid);
+		return attributeSchemaList.toArray(new AttributeSchema[attributeSchemaList.size()]);
 	}
 
-	public MenuSchema getActivityMenuSchema(){
-		EAdministration op = new EAdministration(getUserCtx());
+	@Override
+	public MenuSchema getActivityMenuSchema() {
+		final EAdministration op = new EAdministration(getUserCtx());
 		return op.getProcessMenuSchema();
 	}
 
-	public Reference[] getReference(String className, Query query, Order[] orderType, Integer limit, Integer offset, String fullTextQuery){
-		ECard op = new ECard(getUserCtx());
+	@Override
+	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
+			final Integer limit, final Integer offset, final String fullTextQuery) {
+		final ECard op = new ECard(getUserCtx());
 		return op.getReference(className, query, orderType, limit, offset, fullTextQuery, null);
 	}
 
-	public MenuSchema getCardMenuSchema(){
-		EAdministration op = new EAdministration(getUserCtx());
+	@Override
+	public MenuSchema getCardMenuSchema() {
+		final EAdministration op = new EAdministration(getUserCtx());
 		return op.getClassMenuSchema();
 	}
 
-	public MenuSchema getMenuSchema(){
-		EAdministration op = new EAdministration(getUserCtx());
+	@Override
+	public MenuSchema getMenuSchema() {
+		final EAdministration op = new EAdministration(getUserCtx());
 		return op.getMenuSchema();
 	}
-	
-	public boolean resumeWorkflow(Card card, boolean completeTask){
-		EWorkflow workflow = new EWorkflow(getUserCtx());
-		return workflow.resumeWorkflow(card, completeTask);
+
+	@Override
+	public boolean resumeWorkflow(final Card card, final boolean completeTask) {
+		final String processId = getProcessInstanceId(card);
+		Log.SOAP.debug("Resuming workflow " + processId);
+
+		final SharkFacade management = new SharkFacade(getUserCtx());
+		return management.resumeProcess(processId);
 	}
+
+	private String getProcessInstanceId(final Card card) {
+		final ECard cardOperation = new ECard(getUserCtx());
+		final Attribute[] attributes = new Attribute[] { processCodeAttribute() };
+		final Card actualProcessCard = cardOperation.getCard(card.getClassName(), card.getId(), attributes);
+		final List<Attribute> processAttributeList = actualProcessCard.getAttributeList();
+		String processInstanceId = EMPTY;
+		for (final Attribute attribute : processAttributeList) {
+			if (attribute.getName().equalsIgnoreCase("ProcessCode"))
+				processInstanceId = attribute.getValue();
+		}
+		return processInstanceId;
+	}
+
+	private Attribute processCodeAttribute() {
+		final Attribute processCode = new Attribute();
+		processCode.setName("ProcessCode");
+		return processCode;
+	}
+
 }

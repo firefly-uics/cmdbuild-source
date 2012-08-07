@@ -29,7 +29,7 @@ public abstract class AbstractCommandExecutionWidget extends Widget {
 			this(command, DEAFULT_TIMEOUT_MS);
 		}
 
-		public ExecuteCommandAction(final String command, long timeout) {
+		public ExecuteCommandAction(final String command, final long timeout) {
 			this.command = command;
 			this.timeout = timeout;
 		}
@@ -47,33 +47,36 @@ public abstract class AbstractCommandExecutionWidget extends Widget {
 			});
 			try {
 				return future.get(timeout, TimeUnit.MILLISECONDS);
-			} catch (ExecutionException e) {
+			} catch (final ExecutionException e) {
 				throw e;
-			} catch (TimeoutException e) {
+			} catch (final TimeoutException e) {
 				execService.shutdownNow();
 				throw e;
 			}
 		}
 
-		private String stdOutAsString(Process proc) throws IOException {
-			InputStream is = proc.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			StringBuilder buffer = new StringBuilder();
+		private String stdOutAsString(final Process proc) throws IOException {
+			final InputStream is = proc.getInputStream();
+			final InputStreamReader isr = new InputStreamReader(is);
+			final BufferedReader br = new BufferedReader(isr);
+			final StringBuilder buffer = new StringBuilder();
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				buffer.append(line).append("\n");
 			}
 			return buffer.toString();
 		}
+
 	};
 
 	@Override
-	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) {
+	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
+			final Map<String, Object> dsVars) {
 		final TemplateResolver tr = TemplateResolverImpl.newInstance(params, dsVars);
 		final String command = getCommandLine(tr);
 		return new ExecuteCommandAction(command);
 	}
 
 	protected abstract String getCommandLine(TemplateResolver tr);
+
 }

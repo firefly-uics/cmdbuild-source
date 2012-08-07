@@ -10,9 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ProcessType;
-import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.wrappers.MenuCard;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
@@ -29,23 +29,23 @@ import org.cmdbuild.workflow.WorkflowCache;
 import org.cmdbuild.workflow.operation.ActivityDO;
 
 public class EAdministration {
-	
-	private UserContext userCtx;
 
-	public EAdministration(UserContext userCtx) {
+	private final UserContext userCtx;
+
+	public EAdministration(final UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
-	
-	public MenuSchema getClassMenuSchema()  {
-		TableTree tree =  userCtx.tables().fullTree().displayable();
+
+	public MenuSchema getClassMenuSchema() {
+		final TableTree tree = userCtx.tables().fullTree().displayable();
 		return serializeDefaultTree(tree.exclude(ProcessType.BaseTable).getRootElement(), false, userCtx);
 	}
-	
-	public MenuSchema getProcessMenuSchema()  {
-		TableTree tree = userCtx.processTypes().tree();
+
+	public MenuSchema getProcessMenuSchema() {
+		final TableTree tree = userCtx.processTypes().tree();
 		return serializeDefaultTree(tree.getRootElement(), true, userCtx);
 	}
-	
+
 	public MenuSchema getMenuSchema() {
 		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getId());
 		if (tree.getRootElement().getNumberOfChildren() == 0) {
@@ -54,33 +54,35 @@ public class EAdministration {
 		return serializeTree(tree.getRootElement(), userCtx);
 	}
 
-	private MenuSchema serializeDefaultTree(CNode<ITable> rootElement, boolean isProcess, UserContext userCtx) {
-		MenuSchema schema = new MenuSchema();
+	private MenuSchema serializeDefaultTree(final CNode<ITable> rootElement, final boolean isProcess,
+			final UserContext userCtx) {
+		final MenuSchema schema = new MenuSchema();
 
-		ITable table = rootElement.getData();
+		final ITable table = rootElement.getData();
 		schema.setId(table.getId());
 		schema.setDescription(table.getDescription());
 		schema.setClassname(table.getName());
 		setMenuTypeFromTypeAndChildren(schema, isProcess, table.isSuperClass());
 		schema.setMetadata(serializeMetadata(table, null));
 		addAccessPrivileges(schema, userCtx);
-		Boolean isDefault = checkIsDefault(table, userCtx);
+		final Boolean isDefault = checkIsDefault(table, userCtx);
 		schema.setDefaultToDisplay(isDefault);
-		List<MenuSchema> children = new LinkedList<MenuSchema>();
-		if(rootElement.getNumberOfChildren() > 0) {
-			for(CNode<ITable> child : rootElement.getChildren()) {
-				children.add(serializeDefaultTree(child,isProcess, userCtx));
+		final List<MenuSchema> children = new LinkedList<MenuSchema>();
+		if (rootElement.getNumberOfChildren() > 0) {
+			for (final CNode<ITable> child : rootElement.getChildren()) {
+				children.add(serializeDefaultTree(child, isProcess, userCtx));
 			}
 		}
 		schema.setChildren(children.toArray(new MenuSchema[children.size()]));
 		return schema;
 	}
 
-	private Boolean checkIsDefault(ITable table, UserContext userCtx) {
+	private Boolean checkIsDefault(final ITable table, final UserContext userCtx) {
 		return table.equals(userCtx.getDefaultGroup().getStartingClass());
 	}
 
-	private void setMenuTypeFromTypeAndChildren(MenuSchema schema, boolean isProcess, boolean isSuperclass) {
+	private void setMenuTypeFromTypeAndChildren(final MenuSchema schema, final boolean isProcess,
+			final boolean isSuperclass) {
 		MenuType type;
 		if (isSuperclass) {
 			type = isProcess ? MenuType.PROCESS_SUPERCLASS : MenuType.SUPERCLASS;
@@ -90,21 +92,21 @@ public class EAdministration {
 		schema.setMenuType(type.getType());
 	}
 
-	private static void addAccessPrivileges(MenuSchema menuSchema, UserContext userCtx)  {
-		ITable menuEntryClass = UserContext.systemContext().tables().get(menuSchema.getClassname());
+	private static void addAccessPrivileges(final MenuSchema menuSchema, final UserContext userCtx) {
+		final ITable menuEntryClass = UserContext.systemContext().tables().get(menuSchema.getClassname());
 		menuSchema.setClassname(menuEntryClass.getName());
-		PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
-		if (!PrivilegeType.NONE.equals(privileges)){
+		final PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
+		if (!PrivilegeType.NONE.equals(privileges)) {
 			menuSchema.setPrivilege(privileges.toString());
 		}
 	}
-	
-	public AttributeSchema serialize(IAttribute attribute) {
+
+	public AttributeSchema serialize(final IAttribute attribute) {
 		return serialize(attribute, attribute.getIndex());
 	}
 
-	public AttributeSchema serialize(IAttribute attribute, int client_index) {
-		AttributeSchema schema = new AttributeSchema();
+	public static AttributeSchema serialize(final IAttribute attribute, final int client_index) {
+		final AttributeSchema schema = new AttributeSchema();
 		schema.setIdClass(attribute.getSchema().getId());
 		schema.setName(attribute.getDBName());
 		schema.setDescription(attribute.getDescription());
@@ -120,10 +122,10 @@ public class EAdministration {
 		schema.setFieldmode(attribute.getFieldMode().getMode());
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
-		
+
 		schema.setMetadata(serializeMetadata(attribute));
-		
-		AttributeType atype = attribute.getType();
+
+		final AttributeType atype = attribute.getType();
 		switch (atype) {
 		case LOOKUP:
 			if (attribute.getLookupType() != null)
@@ -143,25 +145,25 @@ public class EAdministration {
 		return schema;
 	}
 
-	private Metadata[] serializeMetadata(IAttribute attribute) {
-		final Metadata[] commonMetadata = serializeMetadata(attribute);		
+	private static Metadata[] serializeMetadata(final IAttribute attribute) {
+		final Metadata[] commonMetadata = serializeMetadata(attribute);
 		final List<Metadata> metadata = new ArrayList<Metadata>(Arrays.asList(commonMetadata));
 		checkAttributeFilter(attribute, metadata);
 		final Metadata[] array = new Metadata[metadata.size()];
 		return metadata.toArray(array);
 	}
 
-	public Metadata[] serializeMetadata(ITable table, ActivityDO activity) {
+	public Metadata[] serializeMetadata(final ITable table, final ActivityDO activity) {
 		final TreeMap<String, Object> metadata = table.getMetadata();
-		List<Metadata> meta = serializeMetadata(metadata);
-		if (activity != null){
+		final List<Metadata> meta = serializeMetadata(metadata);
+		if (activity != null) {
 			addProcessIsStoppable(table, meta);
 			addProcessIsEditable(activity, meta);
 		}
 		return meta.toArray(new Metadata[meta.size()]);
 	}
 
-	public Metadata[] serializeMetadata(BaseSchema baseSchema) {
+	public Metadata[] serializeMetadata(final BaseSchema baseSchema) {
 		return metaMapToArray(baseSchema.getMetadata());
 	}
 
@@ -170,10 +172,10 @@ public class EAdministration {
 		return meta.toArray(new Metadata[meta.size()]);
 	}
 
-	private List<Metadata> serializeMetadata(TreeMap<String, Object> metadata) {
-		List<Metadata> tmpList = new LinkedList<Metadata>();
-		for (String key : metadata.keySet()) {
-			Metadata m = new Metadata();
+	private List<Metadata> serializeMetadata(final TreeMap<String, Object> metadata) {
+		final List<Metadata> tmpList = new LinkedList<Metadata>();
+		for (final String key : metadata.keySet()) {
+			final Metadata m = new Metadata();
 			m.setKey(key);
 			m.setValue(metadata.get(key).toString());
 			tmpList.add(m);
@@ -181,39 +183,39 @@ public class EAdministration {
 		return tmpList;
 	}
 
-	private void addProcessIsStoppable(ITable table, List<Metadata> meta) {
-		boolean isStoppable = table.isUserStoppable();
-		Metadata m = new Metadata();
+	private void addProcessIsStoppable(final ITable table, final List<Metadata> meta) {
+		final boolean isStoppable = table.isUserStoppable();
+		final Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PROCESS_ISSTOPPABLE);
 		m.setValue(String.valueOf(isStoppable));
 		meta.add(m);
 	}
 
-	private void addProcessIsEditable(ActivityDO activity, List<Metadata> tmpList) {
-		Metadata m = new Metadata();
+	private void addProcessIsEditable(final ActivityDO activity, final List<Metadata> tmpList) {
+		final Metadata m = new Metadata();
 		m.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
-		if (activity.isEditable()){
+		if (activity.isEditable()) {
 			m.setValue("write");
 		} else {
 			m.setValue("read");
 		}
-		
+
 		tmpList.add(m);
 	}
 
-	private void checkAttributeFilter(IAttribute attribute, List<Metadata> tmpList) {
+	private static void checkAttributeFilter(final IAttribute attribute, final List<Metadata> tmpList) {
 		final String filter = attribute.getFilter();
-		if (StringUtils.isNotBlank(filter)) {			
-			Metadata m = new Metadata();
+		if (StringUtils.isNotBlank(filter)) {
+			final Metadata m = new Metadata();
 			m.setKey(MetadataService.SYSTEM_TEMPLATE_PREFIX);
 			m.setValue(filter);
 			tmpList.add(m);
-		}		
+		}
 	}
 
-	private MenuSchema serializeTree(CNode<MenuCard> node, UserContext userCtx) {
-		MenuSchema schema = new MenuSchema();
-		MenuCard menu = node.getData();		
+	private MenuSchema serializeTree(final CNode<MenuCard> node, final UserContext userCtx) {
+		final MenuSchema schema = new MenuSchema();
+		final MenuCard menu = node.getData();
 		if (checkIsReport(menu)) {
 			schema.setId(menu.getElementObjId());
 		} else {
@@ -224,16 +226,16 @@ public class EAdministration {
 				schema.setMenuType(MenuCodeType.FOLDER.getCodeType());
 			} else {
 				try {
-					ITable menuEntryClass = userCtx.tables().get(menu.getElementClassId());
-					Boolean isDefault = checkIsDefault(menuEntryClass, userCtx);
+					final ITable menuEntryClass = userCtx.tables().get(menu.getElementClassId());
+					final Boolean isDefault = checkIsDefault(menuEntryClass, userCtx);
 					schema.setDefaultToDisplay(isDefault);
 					schema.setClassname(menuEntryClass.getName());
 					schema.setMetadata(serializeMetadata(menuEntryClass, null));
-					PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
+					final PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
 					if (PrivilegeType.NONE.equals(privileges))
 						return null;
 					schema.setPrivilege(privileges.toString());
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					// Who cares if it fails
 				}
 				schema.setMenuType(menu.getCode().toLowerCase());
@@ -242,26 +244,24 @@ public class EAdministration {
 			schema.setMenuType(MenuCodeType.CLASS.getCodeType());
 		}
 		schema.setDescription(menu.getDescription());
-		
-		
-		List<MenuSchema> children = new LinkedList<MenuSchema>();
-		for (CNode<MenuCard> child : node.getChildren()) {
+
+		final List<MenuSchema> children = new LinkedList<MenuSchema>();
+		for (final CNode<MenuCard> child : node.getChildren()) {
 			MenuSchema childMenuSchema = null;
 			if (MenuType.PROCESS.equals(child.getData().getTypeEnum())) {
-				int cid = child.getData().getElementClassId();
-				String cname = UserContext.systemContext().tables().get(cid).getName();
+				final int cid = child.getData().getElementClassId();
+				final String cname = UserContext.systemContext().tables().get(cid).getName();
 				try {
-					if (WorkflowService.getInstance().isEnabled() &&
-						WorkflowCache.getInstance().hasProcessClass(cname)) {
+					if (WorkflowService.getInstance().isEnabled() && WorkflowCache.getInstance().hasProcessClass(cname)) {
 						childMenuSchema = serializeTree(child, userCtx);
 					}
-				} catch (NullPointerException e) {
+				} catch (final NullPointerException e) {
 					// shark configured but connection failed
 				}
 			} else {
 				childMenuSchema = serializeTree(child, userCtx);
 			}
-			
+
 			if (childMenuSchema != null) { // no privileges
 				children.add(childMenuSchema);
 			}
@@ -270,12 +270,11 @@ public class EAdministration {
 		return schema;
 	}
 
-	private boolean checkIsReport(MenuCard menu) {
-		return (menu.getCode() != null &&
-				(menu.getCode().equals(MenuCodeType.REPORT_CSV.getCodeType())||
-						menu.getCode().equals(MenuCodeType.REPORT_PDF.getCodeType())||
-						menu.getCode().equals(MenuCodeType.REPORT_ODT.getCodeType())||
-						menu.getCode().equals(MenuCodeType.REPORT_XML.getCodeType())));
+	private boolean checkIsReport(final MenuCard menu) {
+		return (menu.getCode() != null && (menu.getCode().equals(MenuCodeType.REPORT_CSV.getCodeType())
+				|| menu.getCode().equals(MenuCodeType.REPORT_PDF.getCodeType())
+				|| menu.getCode().equals(MenuCodeType.REPORT_ODT.getCodeType()) || menu.getCode().equals(
+				MenuCodeType.REPORT_XML.getCodeType())));
 	}
 
 }

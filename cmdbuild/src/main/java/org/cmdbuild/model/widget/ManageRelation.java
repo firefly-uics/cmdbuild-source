@@ -22,72 +22,68 @@ public class ManageRelation extends Widget {
 	private boolean required;
 
 	/*
-	 * to define the EntryType that is
-	 * source for the relation
+	 * to define the EntryType that is source for the relation
 	 */
 	private String source;
 
-	/* 
-	 * #################################
-	 * EnabledFunctions
-	 * ################################# 
-	 * /
-
 	/*
-	 * it is possible to select more than one relations
+	 * ################################# EnabledFunctions
+	 * ################################# /
+	 * 
+	 * /* it is possible to select more than one relations
 	 */
 	private boolean multiSelection;
 
 	/*
 	 * it is possible to select only one relations
 	 * 
-	 * Clearly is a design mistake, what's if multiSelection
-	 * and singleSelection are both true?
+	 * Clearly is a design mistake, what's if multiSelection and singleSelection
+	 * are both true?
 	 */
 	private boolean singleSelection;
 
 	/*
-	 * It is possible create a relation with an
-	 * existing card
+	 * It is possible create a relation with an existing card
 	 */
 	private boolean canCreateRelation;
 
 	/*
-	 * It is possible modify an existing relation
-	 * in the domain
+	 * It is possible modify an existing relation in the domain
 	 */
 	private boolean canModifyARelation;
 
 	/*
-	 * It is possible remove a relation
-	 * in the domain
+	 * It is possible remove a relation in the domain
 	 */
 	private boolean canRemoveARelation;
 
 	/*
-	 * It is possible create a card and
-	 * link it to the card via the given domain
+	 * It is possible create a card and link it to the card via the given domain
 	 */
 	private boolean canCreateAndLinkCard;
 
 	/*
-	 * It is possible modify a card in relation
-	 * with the card for the given domain
+	 * It is possible modify a card in relation with the card for the given
+	 * domain
 	 */
 	private boolean canModifyALinkedCard;
 
 	/*
-	 * It is possible delete a card in relation
-	 * with the card for the given domain
-	 * and the associated relation
+	 * It is possible delete a card in relation with the card for the given
+	 * domain and the associated relation
 	 */
 	private boolean canDeleteALinkedCard;
+
+	@Override
+	public void accept(final WidgetVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	public String getDomainName() {
 		return domainName;
 	}
 
-	public void setDomainName(String domainName) {
+	public void setDomainName(final String domainName) {
 		this.domainName = domainName;
 	}
 
@@ -95,7 +91,7 @@ public class ManageRelation extends Widget {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public void setClassName(final String className) {
 		this.className = className;
 	}
 
@@ -103,7 +99,7 @@ public class ManageRelation extends Widget {
 		return required;
 	}
 
-	public void setRequired(boolean required) {
+	public void setRequired(final boolean required) {
 		this.required = required;
 	}
 
@@ -111,7 +107,7 @@ public class ManageRelation extends Widget {
 		return objId;
 	}
 
-	public void setObjId(String cardCQLSelector) {
+	public void setObjId(final String cardCQLSelector) {
 		this.objId = cardCQLSelector;
 	}
 
@@ -119,7 +115,7 @@ public class ManageRelation extends Widget {
 		return multiSelection;
 	}
 
-	public void setMultiSelection(boolean multiSelection) {
+	public void setMultiSelection(final boolean multiSelection) {
 		this.multiSelection = multiSelection;
 	}
 
@@ -127,7 +123,7 @@ public class ManageRelation extends Widget {
 		return singleSelection;
 	}
 
-	public void setSingleSelection(boolean singleSelection) {
+	public void setSingleSelection(final boolean singleSelection) {
 		this.singleSelection = singleSelection;
 	}
 
@@ -135,7 +131,7 @@ public class ManageRelation extends Widget {
 		return source;
 	}
 
-	public void setSource(String source) {
+	public void setSource(final String source) {
 		this.source = source;
 	}
 
@@ -143,7 +139,7 @@ public class ManageRelation extends Widget {
 		return canCreateRelation;
 	}
 
-	public void setCanCreateRelation(boolean canCreateRelation) {
+	public void setCanCreateRelation(final boolean canCreateRelation) {
 		this.canCreateRelation = canCreateRelation;
 	}
 
@@ -151,7 +147,7 @@ public class ManageRelation extends Widget {
 		return canModifyARelation;
 	}
 
-	public void setCanModifyARelation(boolean canModifyARelation) {
+	public void setCanModifyARelation(final boolean canModifyARelation) {
 		this.canModifyARelation = canModifyARelation;
 	}
 
@@ -159,7 +155,7 @@ public class ManageRelation extends Widget {
 		return canRemoveARelation;
 	}
 
-	public void setCanRemoveARelation(boolean canRemoveARelation) {
+	public void setCanRemoveARelation(final boolean canRemoveARelation) {
 		this.canRemoveARelation = canRemoveARelation;
 	}
 
@@ -167,7 +163,7 @@ public class ManageRelation extends Widget {
 		return canCreateAndLinkCard;
 	}
 
-	public void setCanCreateAndLinkCard(boolean canCreateAndLinkCard) {
+	public void setCanCreateAndLinkCard(final boolean canCreateAndLinkCard) {
 		this.canCreateAndLinkCard = canCreateAndLinkCard;
 	}
 
@@ -175,7 +171,7 @@ public class ManageRelation extends Widget {
 		return canModifyALinkedCard;
 	}
 
-	public void setCanModifyALinkedCard(boolean canModifyALinkedCard) {
+	public void setCanModifyALinkedCard(final boolean canModifyALinkedCard) {
 		this.canModifyALinkedCard = canModifyALinkedCard;
 	}
 
@@ -183,7 +179,7 @@ public class ManageRelation extends Widget {
 		return canDeleteALinkedCard;
 	}
 
-	public void setCanRemoveALinkedCard(boolean canDeleteALinkedCard) {
+	public void setCanRemoveALinkedCard(final boolean canDeleteALinkedCard) {
 		this.canDeleteALinkedCard = canDeleteALinkedCard;
 	}
 

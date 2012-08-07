@@ -16,6 +16,8 @@ import org.cmdbuild.dao.type.IntArray;
 import org.cmdbuild.dao.type.StringArray;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.CardFactory;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.CardForwarder;
@@ -25,71 +27,89 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.UserContext;
 
 public class ReportCard extends CardForwarder {
-	
+
 	public static final String REPORT_CLASS_NAME = "Report";
 	private static final ITable reportClass = UserContext.systemContext().tables().get(REPORT_CLASS_NAME);
 
-	private static final long serialVersionUID = 1L;		
+	private static final long serialVersionUID = 1L;
 
 	// number of subreport elements (administration side)
 	private int subreportsNumber = -1;
-	
+
 	// jasper design created from uploaded file (administration side)
-    private JasperDesign jd = null;
-    
-    // id of the report we're editing, "-1" if it's a new one (administration side)
-    private int originalId = -1;
+	private JasperDesign jd = null;
+
+	// id of the report we're editing, "-1" if it's a new one (administration
+	// side)
+	private int originalId = -1;
 
 	public ReportCard() throws NotFoundException {
 		super(reportClass.cards().create());
 	}
 
-	public ReportCard(ICard card) throws NotFoundException {
+	public ReportCard(final ICard card) throws NotFoundException {
 		super(card);
 	}
 
 	public static List<ReportCard> findAll() throws NotFoundException, ORMException {
-		List<ReportCard> list = new ArrayList<ReportCard>();
-		for(ICard card : UserContext.systemContext().tables().get(REPORT_CLASS_NAME).cards().list())
+		return queryReports(allReportList());
+	}
+
+	public static List<ReportCard> findReportsByType(final ReportType type) throws ORMException {
+		return queryReports(allReportList().filter("Type", AttributeFilterType.EQUALS, type.toString().toLowerCase())
+				.order(CardAttributes.Code.toString(), OrderFilterType.ASC));
+	}
+
+	private static List<ReportCard> queryReports(final CardQuery cardQuery) {
+		final List<ReportCard> list = new ArrayList<ReportCard>();
+		for (final ICard card : cardQuery) {
 			list.add(new ReportCard(card));
-		return list;
-	}	
-	
-	public static List<ReportCard> findReportsByType(ReportType type) throws ORMException {		
-		List<ReportCard> list = new ArrayList<ReportCard>();
-		for(ICard card : UserContext.systemContext().tables()
-				.get(REPORT_CLASS_NAME).cards().list()
-				.filter("Type", AttributeFilterType.EQUALS, type.toString().toLowerCase())
-				.order(CardAttributes.Code.toString(), OrderFilterType.ASC))
-			list.add(new ReportCard(card));
+		}
 		return list;
 	}
-	
-	public static ReportCard findReportById(int id) throws NotFoundException, ORMException {
-		return new ReportCard(UserContext.systemContext().tables().get(REPORT_CLASS_NAME).cards().get(id));
+
+	private static CardQuery allReportList() {
+		return allReports().list();
+	}
+
+	private static CardFactory allReports() {
+		return UserContext.systemContext().tables().get(REPORT_CLASS_NAME).cards();
+	}
+
+	public static ReportCard findReportByTypeAndCode(final ReportType type, final String code) throws ORMException {
+		for (final ReportCard report : findReportsByType(type)) {
+			if (report.getCode().equalsIgnoreCase(code)) {
+				return report;
+			}
+		}
+		return null;
+	}
+
+	public static ReportCard findReportById(final int id) throws NotFoundException, ORMException {
+		return new ReportCard(allReports().get(id));
 	}
 
 	public ReportType getType() {
 		return ReportType.valueOf(getAttributeValue("Type").getString().toUpperCase());
 	}
-	
-	public void setType(ReportType type) {
+
+	public void setType(final ReportType type) {
 		getAttributeValue("Type").setValue(type.toString().toLowerCase());
 	}
-		
-	public String getQuery(){
+
+	public String getQuery() {
 		return getAttributeValue("Query").getString();
-	}	
-	
-	public void setQuery(String value){
+	}
+
+	public void setQuery(final String value) {
 		getAttributeValue("Query").setValue(value);
-	}	
-	
+	}
+
 	public int getOriginalId() {
 		return originalId;
 	}
-	
-	public void setOriginalId(int originalId) {
+
+	public void setOriginalId(final int originalId) {
 		this.originalId = originalId;
 	}
 
@@ -97,50 +117,50 @@ public class ReportCard extends CardForwarder {
 		return jd;
 	}
 
-	public void setJd(JasperDesign jd) {
+	public void setJd(final JasperDesign jd) {
 		this.jd = jd;
 	}
-	
-	public void setSelectedGroups(int[] newvalue) {
+
+	public void setSelectedGroups(final int[] newvalue) {
 		getAttributeValue("Groups").setValue(IntArray.valueOf(newvalue));
 	}
 
-	public int[] getSelectedGroups() {		
+	public int[] getSelectedGroups() {
 		return getAttributeValue("Groups").getIntArrayValue();
 	}
-	
+
 	/**
 	 * Get rich report as byte array
 	 */
 	public byte[] getRichReportBA() {
 		return getAttributeValue("RichReport").getBinary();
 	}
-	
+
 	/**
 	 * Get rich report as JasperReport objects array
 	 */
-	public JasperReport[] getRichReportJRA() throws ClassNotFoundException, IOException {		
+	public JasperReport[] getRichReportJRA() throws ClassNotFoundException, IOException {
 		int parseLength = 0;
 		byte[] singleBin = null;
-		int[] length = getReportLength();
-		JasperReport[] obj = new JasperReport[length.length];		
-		byte[] bin = getRichReportBA();
-		
-		//splits the reports in master and subreports
-		for(int i=0; i<length.length; i++){
+		final int[] length = getReportLength();
+		final JasperReport[] obj = new JasperReport[length.length];
+		final byte[] bin = getRichReportBA();
+
+		// splits the reports in master and subreports
+		for (int i = 0; i < length.length; i++) {
 			singleBin = new byte[length[i]];
-			for(int j=0; j<length[i]; j++){
-				singleBin[j]=bin[parseLength+j];
+			for (int j = 0; j < length[i]; j++) {
+				singleBin[j] = bin[parseLength + j];
 			}
 			parseLength += length[i];
-			if(singleBin!=null&&length[i]>0)
+			if (singleBin != null && length[i] > 0)
 				obj[i] = (JasperReport) fromByte(singleBin);
 		}
-		
+
 		return obj;
 	}
 
-	public void setRichReport(byte[] richReport) {		
+	public void setRichReport(final byte[] richReport) {
 		getAttributeValue("RichReport").setValue(ByteArray.valueOf(richReport));
 	}
 
@@ -148,7 +168,7 @@ public class ReportCard extends CardForwarder {
 		return getAttributeValue("SimpleReport").getBinary();
 	}
 
-	public void setSimpleReport(byte[] simpleReport) {
+	public void setSimpleReport(final byte[] simpleReport) {
 		getAttributeValue("SimpleReport").setValue(ByteArray.valueOf(simpleReport));
 	}
 
@@ -156,7 +176,7 @@ public class ReportCard extends CardForwarder {
 		return getAttributeValue("Wizard").getBinary();
 	}
 
-	public void setWizard(byte[] wizard) {
+	public void setWizard(final byte[] wizard) {
 		getAttributeValue("Wizard").setValue(ByteArray.valueOf(wizard));
 	}
 
@@ -166,34 +186,34 @@ public class ReportCard extends CardForwarder {
 	public byte[] getImagesBA() {
 		return getAttributeValue("Images").getBinary();
 	}
-	
+
 	/**
 	 * Get report images as input stream array
 	 */
 	public InputStream[] getImagesISA() {
-		byte[] binary = getImagesBA();
-		int[] imagesLength = getImagesLength();
+		final byte[] binary = getImagesBA();
+		final int[] imagesLength = getImagesLength();
 		InputStream[] obj = new InputStream[0];
-		if(imagesLength!=null) {
+		if (imagesLength != null) {
 			obj = new InputStream[imagesLength.length];
 			int parseLength = 0;
 			byte[] singleBin = null;
-			
-			//splits the images
-			for(int i=0; i<imagesLength.length; i++) {
+
+			// splits the images
+			for (int i = 0; i < imagesLength.length; i++) {
 				singleBin = new byte[imagesLength[i]];
-				for(int j=0; j<imagesLength[i]; j++) {
-					singleBin[j] = binary[parseLength+j];
+				for (int j = 0; j < imagesLength[i]; j++) {
+					singleBin[j] = binary[parseLength + j];
 				}
 				parseLength += imagesLength[i];
-				if(singleBin!=null && imagesLength[i]>0)
+				if (singleBin != null && imagesLength[i] > 0)
 					obj[i] = new ByteArrayInputStream(singleBin);
 			}
 		}
 		return obj;
 	}
 
-	public void setImages(byte[] images) {
+	public void setImages(final byte[] images) {
 		getAttributeValue("Images").setValue(ByteArray.valueOf(images));
 	}
 
@@ -201,7 +221,7 @@ public class ReportCard extends CardForwarder {
 		return getAttributeValue("ReportLength").getIntArrayValue();
 	}
 
-	public void setReportLength(int[] subLength) {
+	public void setReportLength(final int[] subLength) {
 		getAttributeValue("ReportLength").setValue(IntArray.valueOf(subLength));
 	}
 
@@ -209,19 +229,19 @@ public class ReportCard extends CardForwarder {
 		return getAttributeValue("ImagesLength").getIntArrayValue();
 	}
 
-	public void setImagesLength(int[] imagesLength) {
+	public void setImagesLength(final int[] imagesLength) {
 		getAttributeValue("ImagesLength").setValue(IntArray.valueOf(imagesLength));
 	}
 
 	public String[] getImagesName() {
 		return getAttributeValue("ImagesName").getStringArrayValue();
 	}
-	
-	public void setImagesName(String[] imagesNames) {
+
+	public void setImagesName(final String[] imagesNames) {
 		getAttributeValue("ImagesName").setValue(StringArray.valueOf(imagesNames));
 	}
 
-	public void setSubreportsNumber(int subreportsNumber) {
+	public void setSubreportsNumber(final int subreportsNumber) {
 		this.subreportsNumber = subreportsNumber;
 	}
 
@@ -229,14 +249,14 @@ public class ReportCard extends CardForwarder {
 		return subreportsNumber;
 	}
 
-	public boolean isUserAllowed(UserContext userCtx) {
+	public boolean isUserAllowed(final UserContext userCtx) {
 		boolean allowed = false;
 		if (userCtx.privileges().isAdmin()) {
 			allowed = true;
 		} else {
-			int[] groupsAllowed = this.getSelectedGroups();
-			if (groupsAllowed != null){
-				for (int i = groupsAllowed.length -1; i>=0; --i) {
+			final int[] groupsAllowed = this.getSelectedGroups();
+			if (groupsAllowed != null) {
+				for (int i = groupsAllowed.length - 1; i >= 0; --i) {
 					if (userCtx.belongsTo(groupsAllowed[i])) {
 						allowed = true;
 						break;

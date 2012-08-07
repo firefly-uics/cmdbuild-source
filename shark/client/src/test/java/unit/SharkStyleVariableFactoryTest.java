@@ -13,7 +13,6 @@ import org.cmdbuild.workflow.xpdl.XpdlExtendedAttribute;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
 import org.junit.Test;
 
-
 public class SharkStyleVariableFactoryTest {
 
 	XpdlExtendedAttributeVariableFactory variableFactory = new SharkStyleXpdlExtendedAttributeVariableFactory();
@@ -33,7 +32,8 @@ public class SharkStyleVariableFactoryTest {
 	public void returnsVariableType() {
 		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.VIEW, "Foo").getType(), is(Type.READ_ONLY));
 		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.UPDATE, "Bar").getType(), is(Type.READ_WRITE));
-		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.UPDATEREQUIRED, "Baz").getType(), is(Type.READ_WRITE_REQUIRED));
+		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.UPDATEREQUIRED, "Baz").getType(),
+				is(Type.READ_WRITE_REQUIRED));
 	}
 
 	/*

@@ -7,15 +7,15 @@ public class NullWorkflowEngineListener implements CMWorkflowEngineListener {
 	}
 
 	@Override
-	public void syncProcessStarted(CMProcessClass processClass) {
+	public void syncProcessStarted(final CMProcessClass processClass) {
 	}
 
 	@Override
-	public void syncProcessInstanceNotFound(CMProcessInstance processInstance) {
+	public void syncProcessInstanceNotFound(final CMProcessInstance processInstance) {
 	}
 
 	@Override
-	public void syncProcessInstanceFound(CMProcessInstance processInstance) {
+	public void syncProcessInstanceFound(final CMProcessInstance processInstance) {
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.EmailLogic;
 import org.cmdbuild.logic.EmailLogic.EmailStatus;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -19,7 +19,8 @@ import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 public class JsonWorkflowDTOs {
 
-	private JsonWorkflowDTOs() {}
+	private JsonWorkflowDTOs() {
+	}
 
 	public static class JsonActivityDefinition {
 
@@ -45,7 +46,7 @@ public class JsonWorkflowDTOs {
 			return activity.getVariables();
 		}
 
-		public Iterable<CMActivityWidget> getWidgets() {
+		public Iterable<CMActivityWidget> getWidgets() throws CMWorkflowException {
 			return activity.getWidgets();
 		}
 
@@ -91,7 +92,7 @@ public class JsonWorkflowDTOs {
 		private final UserActivityInstance activityInstance;
 		private final JsonActivityInstanceInfo info;
 
-		public JsonActivityInstance(UserActivityInstance activityInstance) throws CMWorkflowException {
+		public JsonActivityInstance(final UserActivityInstance activityInstance) throws CMWorkflowException {
 			super(activityInstance.getDefinition());
 			this.activityInstance = activityInstance;
 			info = new JsonActivityInstanceInfo(activityInstance);
@@ -101,6 +102,7 @@ public class JsonWorkflowDTOs {
 			return info.getId();
 		}
 
+		@Override
 		public String getPerformerName() {
 			return info.getPerformerName();
 		}
@@ -120,9 +122,9 @@ public class JsonWorkflowDTOs {
 	}
 
 	public static class JsonProcessCard extends AbstractJsonResponseSerializer {
-		private UserProcessInstance processInstance;
+		private final UserProcessInstance processInstance;
 
-		public JsonProcessCard(UserProcessInstance processInstance) {
+		public JsonProcessCard(final UserProcessInstance processInstance) {
 			this.processInstance = processInstance;
 		}
 
@@ -138,9 +140,9 @@ public class JsonWorkflowDTOs {
 			return formatDateTime(processInstance.getEndDate());
 		}
 
-		public Map<String,Object> getValues() {
+		public Map<String, Object> getValues() {
 			final Map<String, Object> output = new HashMap<String, Object>();
-			for (CMAttribute attr : processInstance.getType().getAttributes()) {
+			for (final CMAttribute attr : processInstance.getType().getAttributes()) {
 				final String name = attr.getName();
 				final Object value = javaToJsonValue(attr.getType(), processInstance.get(name));
 
@@ -151,9 +153,9 @@ public class JsonWorkflowDTOs {
 		}
 
 		public List<JsonActivityInstanceInfo> getActivityInstanceInfoList() throws CMWorkflowException {
-			List<JsonActivityInstanceInfo> out = new ArrayList<JsonActivityInstanceInfo>();
+			final List<JsonActivityInstanceInfo> out = new ArrayList<JsonActivityInstanceInfo>();
 
-			for (UserActivityInstance ai: processInstance.getActivities()) {
+			for (final UserActivityInstance ai : processInstance.getActivities()) {
 				out.add(new JsonActivityInstanceInfo(ai));
 			}
 
@@ -176,6 +178,7 @@ public class JsonWorkflowDTOs {
 			return processInstance.getType().getDescription();
 		}
 
+		@Override
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
 			return new JsonAttributeValueVisitor(type, value).valueForJson();
 		}

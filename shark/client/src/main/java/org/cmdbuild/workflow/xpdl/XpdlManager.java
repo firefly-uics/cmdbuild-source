@@ -42,8 +42,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 
 	private final GroupQueryAdapter groupQueryAdapter;
 
-	public XpdlManager(final CMWorkflowService workflowService,
-			final GroupQueryAdapter groupQueryAdapter,
+	public XpdlManager(final CMWorkflowService workflowService, final GroupQueryAdapter groupQueryAdapter,
 			final XpdlProcessDefinitionStore xpdlProcessDefinitionStore) {
 		super(xpdlProcessDefinitionStore);
 		this.groupQueryAdapter = groupQueryAdapter;

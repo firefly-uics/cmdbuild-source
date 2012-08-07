@@ -23,7 +23,7 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		}
 
 		private Map<String, ProcessInfo> createProcessInfoMap(final XpdlDocument xpdl) {
-			Map<String, ProcessInfo> out = new HashMap<String, ProcessInfo>();
+			final Map<String, ProcessInfo> out = new HashMap<String, ProcessInfo>();
 			for (final XpdlProcess xproc : xpdl.findAllProcesses()) {
 				final String className = xproc.getBindToClass();
 				if (className != null) {
@@ -45,7 +45,7 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		}
 
 		@Override
-		public ProcessInfo getProcess(String procDefId) {
+		public ProcessInfo getProcess(final String procDefId) {
 			return processInfoById.get(procDefId);
 		}
 	}
@@ -77,7 +77,7 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		}
 
 		@Override
-		public CMActivity getActivityById(String activityDefinitionId) {
+		public CMActivity getActivityById(final String activityDefinitionId) {
 			final XpdlActivity xact = xproc.getActivity(activityDefinitionId);
 			return new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory);
 		}
@@ -94,6 +94,7 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		this.xpdlWidgetFactory = xpdlwidgetfactory;
 	}
 
+	@Override
 	protected PackageVersionInfo createPackageVersionInfo(final byte[] pkgDef) throws XpdlException {
 		return new XpdlPackageVersionInfo(pkgDef);
 	}

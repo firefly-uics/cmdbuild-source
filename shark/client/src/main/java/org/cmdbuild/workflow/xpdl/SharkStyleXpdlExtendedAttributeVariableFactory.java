@@ -30,7 +30,7 @@ public class SharkStyleXpdlExtendedAttributeVariableFactory implements XpdlExten
 	public static final String VARIABLE_PREFIX = "VariableToProcess_";
 
 	@Override
-	public CMActivityVariableToProcess createVariable(XpdlExtendedAttribute xa) {
+	public CMActivityVariableToProcess createVariable(final XpdlExtendedAttribute xa) {
 		final String key = xa.getKey();
 		final String name = xa.getValue();
 		if (key == null || name == null) {

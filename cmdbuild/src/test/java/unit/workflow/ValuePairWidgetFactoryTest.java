@@ -13,7 +13,8 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.model.widget.WidgetVisitor;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 import org.junit.Test;
 
@@ -28,7 +29,13 @@ public class ValuePairWidgetFactoryTest {
 
 		protected Widget createWidget(final Map<String, Object> valueMap) {
 			this.valueMap = valueMap;
-			return new Widget() {};
+			return new Widget() {
+
+				@Override
+				public void accept(WidgetVisitor visitor) {
+					// nothing to do
+				}
+			};
 		}
 
 		public String getWidgetName() {

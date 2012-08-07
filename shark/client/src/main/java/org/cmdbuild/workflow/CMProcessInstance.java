@@ -11,19 +11,22 @@ public interface CMProcessInstance extends CMCard {
 
 	// FIXME Unlucky name :(
 	interface CMProcessInstanceDefinition extends CMCardDefinition {
+		@Override
 		CMProcessInstanceDefinition set(String key, Object value);
 
 		CMProcessInstanceDefinition setActivities(WSActivityInstInfo[] activityInfos) throws CMWorkflowException;
+
 		void addActivity(WSActivityInstInfo activityInfo) throws CMWorkflowException;
+
 		void removeActivity(String activityInstanceId) throws CMWorkflowException;
 
 		CMProcessInstanceDefinition setState(WSProcessInstanceState state);
 
 		/**
-		 * Updates the 
-		 * Used by service synchronization.
+		 * Updates the Used by service synchronization.
 		 * 
-		 * @param process definition information
+		 * @param process
+		 *            definition information
 		 * @return the {@link CMProcessInstanceDefinition} itself for chaining
 		 */
 		CMProcessInstanceDefinition setUniqueProcessDefinition(WSProcessDefInfo info);
@@ -31,6 +34,7 @@ public interface CMProcessInstance extends CMCard {
 		/**
 		 * Save the process instance if something has changed
 		 */
+		@Override
 		CMProcessInstance save();
 	}
 
@@ -50,6 +54,7 @@ public interface CMProcessInstance extends CMCard {
 	 */
 	String getProcessInstanceId();
 
+	@Override
 	CMProcessClass getType();
 
 	/**
@@ -75,7 +80,7 @@ public interface CMProcessInstance extends CMCard {
 	CMActivityInstance getActivityInstance(String activityInstanceId);
 
 	/**
-	 * Returns an object with the ids to uniquely identify a process definition. 
+	 * Returns an object with the ids to uniquely identify a process definition.
 	 * 
 	 * @return unique process definition informations
 	 */

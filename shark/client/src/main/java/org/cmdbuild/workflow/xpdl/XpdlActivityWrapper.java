@@ -9,6 +9,7 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.workflow.CMActivityWidget;
 
 public class XpdlActivityWrapper implements CMActivity {
 
@@ -48,7 +49,7 @@ public class XpdlActivityWrapper implements CMActivity {
 
 	@Override
 	public List<ActivityPerformer> getPerformers() {
-		List<ActivityPerformer> out = new ArrayList<ActivityPerformer>();
+		final List<ActivityPerformer> out = new ArrayList<ActivityPerformer>();
 		out.add(getFirstRolePerformer());
 		if (isAdminStart()) {
 			out.add(ActivityPerformer.newAdminPerformer());
@@ -84,7 +85,7 @@ public class XpdlActivityWrapper implements CMActivity {
 	@Override
 	public List<CMActivityVariableToProcess> getVariables() {
 		final List<CMActivityVariableToProcess> vars = new ArrayList<CMActivityVariableToProcess>();
-		for (XpdlExtendedAttribute xa : inner.getExtendedAttributes()) {
+		for (final XpdlExtendedAttribute xa : inner.getExtendedAttributes()) {
 			final CMActivityVariableToProcess v = variableFactory.createVariable(xa);
 			if (v != null) {
 				vars.add(v);
@@ -100,8 +101,8 @@ public class XpdlActivityWrapper implements CMActivity {
 
 	@Override
 	public List<CMActivityWidget> getWidgets(final CMValueSet processInstanceVariables) {
-		List<CMActivityWidget> widgets = new ArrayList<CMActivityWidget>();
-		for (XpdlExtendedAttribute xa : inner.getExtendedAttributes()) {
+		final List<CMActivityWidget> widgets = new ArrayList<CMActivityWidget>();
+		for (final XpdlExtendedAttribute xa : inner.getExtendedAttributes()) {
 			final CMActivityWidget w = widgetFactory.createWidget(xa, processInstanceVariables);
 			if (w != null) {
 				widgets.add(w);

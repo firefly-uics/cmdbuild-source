@@ -17,9 +17,9 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 	private class PackageInfo {
 
-		private String id;
+		private final String id;
 		private String currentVersion;
-		private Map<String, PackageVersionInfo> packageVersions = new HashMap<String, PackageVersionInfo>();
+		private final Map<String, PackageVersionInfo> packageVersions = new HashMap<String, PackageVersionInfo>();
 
 		public PackageInfo(final String id, final String currentVersion, final PackageVersionInfo currentVersionInfo) {
 			this.id = id;
@@ -34,7 +34,7 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 			return packageVersions.get(currentVersion);
 		}
 
-		PackageVersionInfo getVersionInfo(String version) {
+		PackageVersionInfo getVersionInfo(final String version) {
 			return packageVersions.get(version);
 		}
 
@@ -50,14 +50,19 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 	protected interface PackageVersionInfo {
 		byte[] getRawDefinition();
+
 		ProcessInfo getProcess(String procDefId);
+
 		Collection<ProcessInfo> getProcesses();
 	}
 
 	protected interface ProcessInfo {
 		String getClassName();
+
 		String getDefinitionId();
+
 		List<CMActivity> getStartActivities();
+
 		CMActivity getActivityById(String activityDefinitionId);
 	}
 
@@ -75,9 +80,9 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 		}
 
 		/**
-		 * Returns the package that contains the process bound to the
-		 * requested class. If more than one, there is no guarantee that
-		 * the returned one was the last one uploaded.
+		 * Returns the package that contains the process bound to the requested
+		 * class. If more than one, there is no guarantee that the returned one
+		 * was the last one uploaded.
 		 * 
 		 * @param className
 		 * @return package information
@@ -105,7 +110,7 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 		}
 
 		private void fetchProcessDefinitions() throws CMWorkflowException {
-			for (final WSPackageDef pkg : workflowService.downloadAllPackages()) { 
+			for (final WSPackageDef pkg : workflowService.downloadAllPackages()) {
 				safeAddCurrentPackageVersion(pkg.getPackageId(), pkg.getPackageVersion(), pkg.getData());
 			}
 		}
@@ -123,15 +128,17 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 			updateMap(packageInfo);
 		}
 
-		public synchronized void addCurrentPackageVersion(final String pkgId, final String pkgVer, final byte[] pkgData) throws CMWorkflowException {
+		public synchronized void addCurrentPackageVersion(final String pkgId, final String pkgVer, final byte[] pkgData)
+				throws CMWorkflowException {
 			checkLoaded();
 			safeAddCurrentPackageVersion(pkgId, pkgVer, pkgData);
 		}
 
-		public synchronized PackageVersionInfo addPackageVersion(final String pkgId, final String pkgVer, final byte[] pkgData) throws CMWorkflowException {
+		public synchronized PackageVersionInfo addPackageVersion(final String pkgId, final String pkgVer,
+				final byte[] pkgData) throws CMWorkflowException {
 			checkLoaded();
 			final PackageVersionInfo versionInfo = createPackageVersionInfo(pkgData);
-			PackageInfo packageInfo = packageIdToPackageInfo.get(pkgId);
+			final PackageInfo packageInfo = packageIdToPackageInfo.get(pkgId);
 			if (packageInfo != null) {
 				packageInfo.addVersion(pkgVer, versionInfo);
 			}
@@ -153,14 +160,14 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 		this.workflowService = workflowService;
 	}
 
-	private LazyClassNameToPackageInfoMap cache = new LazyClassNameToPackageInfoMap();
-
+	private final LazyClassNameToPackageInfoMap cache = new LazyClassNameToPackageInfoMap();
 
 	@Override
 	public List<CMActivity> getStartActivities(final String className) throws CMWorkflowException {
 		final ProcessInfo pi = cache.getProcessInfoByClass(className);
 		if (pi == null) {
-			// it is null when the process was created but the XPDL is not yet uploaded
+			// it is null when the process was created but the XPDL is not yet
+			// uploaded
 			return Collections.<CMActivity> emptyList();
 		} else {
 			return pi.getStartActivities();
@@ -168,7 +175,8 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 	}
 
 	@Override
-	public CMActivity getActivity(final WSProcessDefInfo procDefInfo, final String activityDefinitionId) throws CMWorkflowException {
+	public CMActivity getActivity(final WSProcessDefInfo procDefInfo, final String activityDefinitionId)
+			throws CMWorkflowException {
 		return getProcessInfo(procDefInfo).getActivityById(activityDefinitionId);
 	}
 
@@ -176,7 +184,7 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 	 * Gets cached process info or downloads and caches it.
 	 */
 	public ProcessInfo getProcessInfo(final WSProcessDefInfo procDefInfo) throws CMWorkflowException {
-		PackageInfo pkgInfo = cache.getPackageInfoById(procDefInfo.getPackageId());
+		final PackageInfo pkgInfo = cache.getPackageInfoById(procDefInfo.getPackageId());
 		PackageVersionInfo pkgVerInfo = pkgInfo.getVersionInfo(procDefInfo.getPackageVersion());
 		if (pkgVerInfo == null) {
 			pkgVerInfo = downloadAndCachePackageVersion(procDefInfo.getPackageVersion(), procDefInfo.getPackageId());
@@ -191,9 +199,10 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 	@Override
 	public final String getPackageId(final String className) throws CMWorkflowException {
-		PackageInfo pi = cache.getPackageInfoByClass(className);
+		final PackageInfo pi = cache.getPackageInfoByClass(className);
 		if (pi == null) {
-			// it is null when the process was created but the XPDL is not yet uploaded
+			// it is null when the process was created but the XPDL is not yet
+			// uploaded
 			return null;
 		} else {
 			return pi.getId();
@@ -201,10 +210,11 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 	}
 
 	@Override
-	public String getProcessDefinitionId(String className) throws CMWorkflowException {
+	public String getProcessDefinitionId(final String className) throws CMWorkflowException {
 		final ProcessInfo pi = cache.getProcessInfoByClass(className);
 		if (pi == null) {
-			// it is null when the process was created but the XPDL is not yet uploaded
+			// it is null when the process was created but the XPDL is not yet
+			// uploaded
 			return null;
 		} else {
 			return pi.getDefinitionId();
@@ -213,23 +223,24 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 	@Override
 	public byte[] downloadPackage(final String className, final String pkgVer) throws CMWorkflowException {
-		PackageVersionInfo pvi = cache.getPackageInfoByClass(className).getVersionInfo(pkgVer);
+		final PackageVersionInfo pvi = cache.getPackageInfoByClass(className).getVersionInfo(pkgVer);
 		if (pvi == null) {
 			final String pkgId = getPackageId(className);
 			return downloadAndCachePackageVersion(pkgVer, pkgId).getRawDefinition();
 		} else {
 			return pvi.getRawDefinition();
 		}
-		
+
 	}
 
-	private PackageVersionInfo downloadAndCachePackageVersion(final String pkgVer, final String pkgId) throws CMWorkflowException {
+	private PackageVersionInfo downloadAndCachePackageVersion(final String pkgVer, final String pkgId)
+			throws CMWorkflowException {
 		final byte[] pkgData = workflowService.downloadPackage(pkgId, pkgVer);
 		return cache.addPackageVersion(pkgId, pkgVer, pkgData);
 	}
 
 	@Override
-	public synchronized void uploadPackage(final String className, byte[] pkgData) throws CMWorkflowException {
+	public synchronized void uploadPackage(final String className, final byte[] pkgData) throws CMWorkflowException {
 		final String pkgId = getPackageId(className);
 		final WSPackageDefInfo pkgInfo = workflowService.uploadPackage(pkgId, pkgData);
 		cache.addCurrentPackageVersion(pkgInfo.getPackageId(), pkgInfo.getPackageVersion(), pkgData);

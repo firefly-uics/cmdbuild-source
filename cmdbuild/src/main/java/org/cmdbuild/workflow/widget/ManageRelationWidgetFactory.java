@@ -9,12 +9,13 @@ import org.cmdbuild.services.TemplateRepository;
 public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 	private final static String WIDGET_NAME = "manageRelation";
-	private final static String DOMAIN = "DomainName";
+
+	public final static String DOMAIN = "DomainName";
 	private final static String FUNCTIONS = "EnabledFunctions";
-	private final static String CLASS_NAME = "ClassName";
-	private final static String CARD_CQL_SELECTOR = "ObjId";
-	private final static String REQUIRED = "Required";
-	private final static String IS_DIRECT = "IsDirect";
+	public final static String CLASS_NAME = "ClassName";
+	public final static String CARD_CQL_SELECTOR = "ObjId";
+	public final static String REQUIRED = "Required";
+	public final static String IS_DIRECT = "IsDirect";
 
 	public ManageRelationWidgetFactory(final TemplateRepository templateRespository) {
 		super(templateRespository);
@@ -22,12 +23,12 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 	@Override
 	public String getWidgetName() {
-		return WIDGET_NAME; 
+		return WIDGET_NAME;
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, Object> valueMap) {
-		ManageRelation widget = new ManageRelation();
+	protected Widget createWidget(final Map<String, Object> valueMap) {
+		final ManageRelation widget = new ManageRelation();
 
 		widget.setDomainName(readString(valueMap.get(DOMAIN)));
 		widget.setClassName(readString(valueMap.get(CLASS_NAME)));
@@ -39,14 +40,14 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		return widget;
 	}
 
-	private void setSource(ManageRelation widget, Object isDirect) {
+	private void setSource(final ManageRelation widget, final Object isDirect) {
 		if (isDirect != null) {
 			final String source = readBooleanTrueIfTrue(isDirect) ? "_1" : "_2";
 			widget.setSource(source);
 		}
 	}
 
-	private void setEnabledFunctions(ManageRelation widget, String functions) {
+	private void setEnabledFunctions(final ManageRelation widget, final String functions) {
 		if (functions == null) {
 			return;
 		} else {
@@ -61,12 +62,12 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		}
 	}
 
-	private boolean isEnabled(String functions, int index) {
+	private boolean isEnabled(final String functions, final int index) {
 		boolean enabled = false;
 		try {
-			char c = functions.charAt(index);
+			final char c = functions.charAt(index);
 			enabled = c == '1';
-		} catch (IndexOutOfBoundsException e) {
+		} catch (final IndexOutOfBoundsException e) {
 			// ignore
 		}
 

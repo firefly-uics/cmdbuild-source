@@ -11,7 +11,12 @@ public class Ping extends AbstractCommandExecutionWidget {
 
 	private String address;
 	private int count;
-	private Map<String,String> templates;
+	private Map<String, String> templates;
+
+	@Override
+	public void accept(final WidgetVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	public void setAddress(final String address) {
 		this.address = address;
@@ -21,7 +26,7 @@ public class Ping extends AbstractCommandExecutionWidget {
 		return address;
 	}
 
-	public void setCount(int count) {
+	public void setCount(final int count) {
 		this.count = count;
 	}
 
@@ -29,7 +34,7 @@ public class Ping extends AbstractCommandExecutionWidget {
 		return count;
 	}
 
-	public void setTemplates(Map<String, String> templates) {
+	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
 	}
 
@@ -38,7 +43,8 @@ public class Ping extends AbstractCommandExecutionWidget {
 	}
 
 	@Override
-	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params, final Map<String, Object> dsVars) {
+	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
+			final Map<String, Object> dsVars) {
 		if ("legacytr".equals(action)) {
 			final String address = String.valueOf(params.get("address"));
 			final String command = getPingCommandLine(address);

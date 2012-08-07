@@ -9,7 +9,7 @@ public class WSProcessDefInfoImpl implements WSProcessDefInfo {
 	protected String processDefinitionId;
 
 	static WSProcessDefInfo newInstance(final WMProcessDefinition processDefinition) {
-		WSProcessDefInfoImpl instance = new WSProcessDefInfoImpl();
+		final WSProcessDefInfoImpl instance = new WSProcessDefInfoImpl();
 		instance.packageId = processDefinition.getPackageId();
 		instance.packageVersion = processDefinition.getVersion();
 		instance.processDefinitionId = processDefinition.getId();
@@ -17,7 +17,7 @@ public class WSProcessDefInfoImpl implements WSProcessDefInfo {
 	}
 
 	public static WSProcessDefInfo newInstance(final String pkgId, final String pkgVer, final String procDefId) {
-		WSProcessDefInfoImpl instance = new WSProcessDefInfoImpl();
+		final WSProcessDefInfoImpl instance = new WSProcessDefInfoImpl();
 		instance.packageId = pkgId;
 		instance.packageVersion = pkgVer;
 		instance.processDefinitionId = procDefId;

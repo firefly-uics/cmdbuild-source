@@ -3,8 +3,8 @@ package org.cmdbuild.workflow;
 import javax.activation.DataSource;
 
 /**
- * Handles all the operations on workflow definition files, including
- * template generation, download and upload from/to the workflow engine.
+ * Handles all the operations on workflow definition files, including template
+ * generation, download and upload from/to the workflow engine.
  */
 public interface ProcessDefinitionManager {
 
@@ -18,8 +18,8 @@ public interface ProcessDefinitionManager {
 	DataSource getTemplate(CMProcessClass process) throws CMWorkflowException;
 
 	/**
-	 * Returns the process definition versions available in the repository.
-	 * They can be in use or not.
+	 * Returns the process definition versions available in the repository. They
+	 * can be in use or not.
 	 * 
 	 * @param process
 	 * @return list of process definition versions
@@ -50,7 +50,8 @@ public interface ProcessDefinitionManager {
 	 * customization, since the workflow engine starts every starting activity.
 	 * 
 	 * @param process
-	 * @param name of the group that is going to start the process
+	 * @param name
+	 *            of the group that is going to start the process
 	 * @return activity definition
 	 * @throws CMWorkflowException
 	 */
@@ -59,8 +60,10 @@ public interface ProcessDefinitionManager {
 	/**
 	 * Gets the activity definition by process instance and identifier.
 	 * 
-	 * @param processInstance process instance
-	 * @param activityDefinitionId activity definition id
+	 * @param processInstance
+	 *            process instance
+	 * @param activityDefinitionId
+	 *            activity definition id
 	 * @return activity definition
 	 * @throws CMWorkflowException
 	 */

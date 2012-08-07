@@ -5,8 +5,7 @@ import org.apache.commons.lang.Validate;
 public class ActivityPerformer {
 
 	private enum Type {
-		ROLE,
-		ADMIN // fake performer for our ugly stuff
+		ROLE, ADMIN // fake performer for our ugly stuff
 	}
 
 	private final String name;

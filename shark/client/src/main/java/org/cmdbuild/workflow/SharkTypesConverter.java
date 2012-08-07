@@ -28,7 +28,7 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	@Override
-	public Object toWorkflowType(Object obj) {
+	public Object toWorkflowType(final Object obj) {
 		if (obj instanceof Integer) {
 			return Integer.class.cast(obj).longValue();
 		} else if (obj instanceof DateTime) {
@@ -51,7 +51,7 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	@Override
-	public Object fromWorkflowType(Object obj) {
+	public Object fromWorkflowType(final Object obj) {
 		if (obj instanceof LookupType) {
 			final LookupType lt = LookupType.class.cast(obj);
 			return convertLookup(lt);
@@ -80,7 +80,7 @@ public class SharkTypesConverter implements TypesConverter {
 		}
 	}
 
-	private ReferenceType[] convertReferenceArray(CardReference[] refArray) {
+	private ReferenceType[] convertReferenceArray(final CardReference[] refArray) {
 		final ReferenceType[] rtArray = new ReferenceType[refArray.length];
 		for (int i = 0; i < refArray.length; ++i) {
 			rtArray[i] = convertReference(refArray[i]);
@@ -89,7 +89,7 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	private ReferenceType convertReference(final CardReference ref) {
-		CMClass refClass = dataView.findClassByName(ref.getClassName());
+		final CMClass refClass = dataView.findClassByName(ref.getClassName());
 		final ReferenceType rt = new ReferenceType();
 		rt.setId(objectIdToInt(ref.getId()));
 		rt.setIdClass(objectIdToInt(refClass.getId()));
@@ -106,12 +106,12 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	/**
-	 * Converts an object identifier to the integer representation or -1 if
-	 * it is null (YEAH!)
+	 * Converts an object identifier to the integer representation or -1 if it
+	 * is null (YEAH!)
 	 * 
 	 * @return legacy id standard
 	 */
-	private int objectIdToInt(Long objId) {
+	private int objectIdToInt(final Long objId) {
 		final Integer id = ID_TYPE.convertValue(objId);
 		if (id == null) {
 			return -1;

@@ -9,12 +9,13 @@ import org.cmdbuild.services.TemplateRepository;
 public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 
 	private static final String WIDGET_NAME = "calendar";
-	private static final String TARGET_CLASS = "ClassName";
-	private static final String CQL_FILTER = "Filter";
-	private static final String TITLE = "EventTitle";
-	private static final String START_DATE = "EventStartDate";
-	private static final String END_DATE = "EventEndDate";
-	private static final String DEFAULT_DATE = "DefaultDate";
+
+	public static final String TARGET_CLASS = "ClassName";
+	public static final String CQL_FILTER = "Filter";
+	public static final String TITLE = "EventTitle";
+	public static final String START_DATE = "EventStartDate";
+	public static final String END_DATE = "EventEndDate";
+	public static final String DEFAULT_DATE = "DefaultDate";
 
 	public CalendarWidgetFactory(final TemplateRepository templateRespository) {
 		super(templateRespository);
@@ -26,7 +27,7 @@ public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, Object> valueMap) {
+	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final Calendar widget = new Calendar();
 
 		final String filter = readString(valueMap.get(CQL_FILTER));

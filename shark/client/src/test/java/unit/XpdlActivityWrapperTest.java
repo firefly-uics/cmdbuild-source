@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.workflow.CMActivity.CMActivityWidget;
+import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
@@ -23,10 +23,10 @@ import org.junit.Test;
 
 public class XpdlActivityWrapperTest {
 
-	private XpdlActivity xpdlActivity;
-	private XpdlExtendedAttributeWidgetFactory widgetFactory;
-	private XpdlActivityWrapper wrapper;
-	private XpdlExtendedAttributeVariableFactory variableFactory;
+	private final XpdlActivity xpdlActivity;
+	private final XpdlExtendedAttributeWidgetFactory widgetFactory;
+	private final XpdlActivityWrapper wrapper;
+	private final XpdlExtendedAttributeVariableFactory variableFactory;
 
 	public XpdlActivityWrapperTest() {
 		final XpdlDocument doc = new XpdlDocument("PKG");
@@ -76,7 +76,8 @@ public class XpdlActivityWrapperTest {
 	public void widgetsAreExtracted() {
 		xpdlActivity.addExtendedAttribute("SomeKey", "SomeValue");
 		xpdlActivity.addExtendedAttribute("SomeOtherKey", "SomeOtherValue");
-		when(widgetFactory.createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class))).thenReturn(notNullWidget());
+		when(widgetFactory.createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class))).thenReturn(
+				notNullWidget());
 
 		assertThat(wrapper.getWidgets().size(), is(2));
 		verify(widgetFactory, times(2)).createWidget(any(XpdlExtendedAttribute.class), any(CMValueSet.class));

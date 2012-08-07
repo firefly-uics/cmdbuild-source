@@ -184,7 +184,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 					public byte[] getData() {
 						return data;
 					}
-					
+
 				};
 			}
 		}.execute();
@@ -192,11 +192,12 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	@Override
 	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId) throws CMWorkflowException {
-		return startProcess(pkgId, procDefId, Collections.<String, Object>emptyMap());
+		return startProcess(pkgId, procDefId, Collections.<String, Object> emptyMap());
 	}
 
 	@Override
-	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId, final Map<String, Object> variables) throws CMWorkflowException {
+	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId,
+			final Map<String, Object> variables) throws CMWorkflowException {
 		return new TransactedExecutor<WSProcessInstInfo>() {
 			@Override
 			protected WSProcessInstInfo command() throws Exception {
@@ -235,7 +236,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 					public WSProcessInstanceState getStatus() {
 						return WSProcessInstanceState.OPEN; // Guessed
 					}
-					
+
 				};
 			}
 		}.execute();
@@ -275,8 +276,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return new TransactedExecutor<WSProcessInstInfo[]>() {
 			@Override
 			protected WSProcessInstInfo[] command() throws Exception {
-				final WMProcessInstance[] pis = wapi().listProcessInstances(handle(),
-						openProcessInstances(procDefId), false).getArray();
+				final WMProcessInstance[] pis = wapi().listProcessInstances(handle(), openProcessInstances(procDefId),
+						false).getArray();
 				final WSProcessInstInfo[] out = new WSProcessInstInfo[pis.length];
 				for (int i = 0; i < pis.length; ++i) {
 					out[i] = WSProcessInstInfoImpl.newInstance(pis[i]);
@@ -286,10 +287,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 			private WMFilter openProcessInstances(final String procDefId) throws Exception {
 				final ProcessFilterBuilder fb = shark().getProcessFilterBuilder();
-				return fb.and(handle(),
-						fb.addProcessDefIdEquals(handle(), procDefId),
-						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN)
-					);
+				return fb.and(handle(), fb.addProcessDefIdEquals(handle(), procDefId),
+						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN));
 			}
 		}.execute();
 	}
@@ -336,8 +335,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}.execute();
 	}
 
-	private void setProcessInstanceVariablesNotTransacted(final String procInstId,
-			final Map<String, Object> variables) throws Exception {
+	private void setProcessInstanceVariablesNotTransacted(final String procInstId, final Map<String, Object> variables)
+			throws Exception {
 		for (final String name : variables.keySet()) {
 			final Object nativeValue = variables.get(name);
 			final Object sharkValue = variableConverter.toWorkflowType(nativeValue);
@@ -346,7 +345,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public WSActivityInstInfo[] findOpenActivitiesForProcessInstance(final String procInstId) throws CMWorkflowException {
+	public WSActivityInstInfo[] findOpenActivitiesForProcessInstance(final String procInstId)
+			throws CMWorkflowException {
 		return new TransactedExecutor<WSActivityInstInfo[]>() {
 			@Override
 			protected WSActivityInstInfo[] command() throws Exception {
@@ -361,10 +361,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 			private WMFilter openActivitiesForProcessInstance(final String procInstId) throws Exception {
 				final ActivityFilterBuilder fb = shark().getActivityFilterBuilder();
-				return fb.and(handle(),
-						fb.addProcessIdEquals(handle(), procInstId),
-						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN)
-					);
+				return fb.and(handle(), fb.addProcessIdEquals(handle(), procInstId),
+						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN));
 			}
 		}.execute();
 	}
@@ -385,26 +383,27 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 			private WMFilter openActivitiesForProcess(final String procDefId) throws Exception {
 				final ActivityFilterBuilder fb = shark().getActivityFilterBuilder();
-				return fb.and(handle(),
-						fb.addProcessDefIdEquals(handle(), procDefId),
-						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN)
-					);
+				return fb.and(handle(), fb.addProcessDefIdEquals(handle(), procDefId),
+						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN));
 			}
 		}.execute();
 	}
 
 	@Override
 	public void abortActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
-		// From Shark's FAQ, "terminate [...] tries to follow the next activity(s), [...] abort [...] doesn't."
+		// From Shark's FAQ,
+		// "terminate [...] tries to follow the next activity(s), [...] abort [...] doesn't."
 		changeActivityInstanceStates(procInstId, actInstId, WMActivityInstanceState.CLOSED_ABORTED);
 	}
 
 	@Override
 	public void advanceActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
-		changeActivityInstanceStates(procInstId, actInstId, WMActivityInstanceState.OPEN_RUNNING, WMActivityInstanceState.CLOSED_COMPLETED);
+		changeActivityInstanceStates(procInstId, actInstId, WMActivityInstanceState.OPEN_RUNNING,
+				WMActivityInstanceState.CLOSED_COMPLETED);
 	}
 
-	private void changeActivityInstanceStates(final String procInstId, final String actInstId, final WMActivityInstanceState... states) throws CMWorkflowException {
+	private void changeActivityInstanceStates(final String procInstId, final String actInstId,
+			final WMActivityInstanceState... states) throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
@@ -423,7 +422,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		changeProcessInstanceState(procInstId, WMProcessInstanceState.CLOSED_ABORTED);
 	}
 
-	private void changeProcessInstanceState(final String procInstId, final WMProcessInstanceState state) throws CMWorkflowException {
+	private void changeProcessInstanceState(final String procInstId, final WMProcessInstanceState state)
+			throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {

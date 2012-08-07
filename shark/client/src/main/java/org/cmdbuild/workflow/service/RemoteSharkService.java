@@ -31,14 +31,16 @@ public class RemoteSharkService extends AbstractSharkService {
 
 	public interface Config {
 		String getServerUrl();
+
 		String getUsername();
+
 		String getPassword();
-//		void registerListener(ConfigChangeListener listener);
+		// void registerListener(ConfigChangeListener listener);
 	}
 
-//	public interface ConfigChangeListener {
-//		void nofityConfigChange();
-//	}
+	// public interface ConfigChangeListener {
+	// void nofityConfigChange();
+	// }
 
 	private final Config config;
 
@@ -54,18 +56,20 @@ public class RemoteSharkService extends AbstractSharkService {
 		return clientProps;
 	}
 
+	@Override
 	protected WMConnectInfo getConnectionInfo() {
 		return new WMConnectInfo(config.getUsername(), config.getPassword(), DEFAULT_ENGINE_NAME, DEFAULT_SCOPE);
 	}
 
 	/**
-	 * The Axis client needs to register our custom types.
-	 * It would have been so easy without them!
+	 * The Axis client needs to register our custom types. It would have been so
+	 * easy without them!
 	 */
+	@Override
 	protected WAPI wapi() throws Exception {
 		final WAPI wapi = super.wapi();
 		if (wapi instanceof Stub) {
-			final Stub axisClientStub = (Stub) wapi; 
+			final Stub axisClientStub = (Stub) wapi;
 			registerCustomTypes(axisClientStub);
 		}
 		return wapi;
@@ -73,7 +77,8 @@ public class RemoteSharkService extends AbstractSharkService {
 
 	private void registerCustomTypes(final Stub axisClientStub) {
 		final Service rpcService = axisClientStub._getService();
-		final TypeMapping tm = rpcService.getTypeMappingRegistry().getTypeMapping(org.apache.axis.Constants.URI_SOAP11_ENC);
+		final TypeMapping tm = rpcService.getTypeMappingRegistry().getTypeMapping(
+				org.apache.axis.Constants.URI_SOAP11_ENC);
 
 		// TODO register if needed, and take care of concurrency
 		registerType(tm, org.cmdbuild.workflow.type.LookupType.class);
@@ -83,21 +88,20 @@ public class RemoteSharkService extends AbstractSharkService {
 	/**
 	 * Registers a custom type and the array representation.
 	 * 
-	 * @param tm type mapping
-	 * @param javaType java class to be registered
+	 * @param tm
+	 *            type mapping
+	 * @param javaType
+	 *            java class to be registered
 	 */
 	private void registerType(final TypeMapping tm, final Class<?> javaType) {
 		final QName typeQname = new QName(CMDBUILD_TYPE_NS, javaType.getSimpleName());
-		tm.register(javaType, typeQname, 
-					new BeanSerializerFactory(javaType, typeQname),
-					new BeanDeserializerFactory(javaType, typeQname)
-				);
+		tm.register(javaType, typeQname, new BeanSerializerFactory(javaType, typeQname), new BeanDeserializerFactory(
+				javaType, typeQname));
 
 		final Class<?> javaArrayType = Array.newInstance(javaType, 0).getClass();
 		final QName arrayQname = new QName(CMDBUILD_EJB_NS, ARRAY_NAME_PREFIX + javaType.getSimpleName());
-		tm.register(javaArrayType, arrayQname,
-					new ArraySerializerFactory(typeQname, null), // why null?!
-        			new ArrayDeserializerFactory()
-				);
+		tm.register(javaArrayType, arrayQname, new ArraySerializerFactory(typeQname, null), // why
+																							// null?!
+				new ArrayDeserializerFactory());
 	}
 }
