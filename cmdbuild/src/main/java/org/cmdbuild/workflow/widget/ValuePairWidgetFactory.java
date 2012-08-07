@@ -92,13 +92,14 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	}
 
 	private Object interpretValue(final String key, final String value, final CMValueSet processInstanceVariables) {
-		if (FILTER_KEY.equals(key)) {
+		if (betweenQuotes(value)) {
+			// Quoted values are interpreted as strings
+			return value.substring(1, value.length() - 1);
+		} else if (FILTER_KEY.equals(key)) {
+			// Filter (!) interpreted as a string even if not quoted
 			return value;
 		} else if (Character.isDigit(value.charAt(0))) {
 			return readInteger(value);
-		} else if (betweenQuotes(value)) {
-			// Quoted values and the Filter (!) parameter are interpreted as strings
-			return value.substring(1, value.length() - 1);
 		} else if (value.startsWith(CLIENT_PREFIX)) {
 			// "Client" variables are always interpreted by the
 			// template resolver on the client side
