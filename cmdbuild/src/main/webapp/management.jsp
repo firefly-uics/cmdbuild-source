@@ -41,6 +41,8 @@
 
 			CMDBuild.Runtime.DefaultGroupId = <%= defaultGroup.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= defaultGroup.getName() %>';
+			CMDBuild.Runtime.IsAdministrator = <%= defaultGroup.isAdmin() %>;
+
 <%	if (userCtx.getGroups().size() == 1) { %>
 			CMDBuild.Runtime.LoginGroupId = <%= defaultGroup.getId() %>;
 <%	} %>
