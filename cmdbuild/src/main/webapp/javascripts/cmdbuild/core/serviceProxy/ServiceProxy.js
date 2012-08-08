@@ -537,7 +537,19 @@ CMDBuild.ServiceProxy.group = {
 		});
 	},
 
-	getUIConfiguration: function(groupId, cbs) {
+	getUIConfiguration: function(cbs) {
+		cbs = cbs || {};
+
+		CMDBuild.ServiceProxy.core.doRequest({
+			url: "services/json/schema/modsecurity/getuiconfiguration",
+			method: "GET",
+			success: cbs.success || Ext.emptyFn,
+			failure: cbs.failure || Ext.emptyFn,
+			callback: cbs.callback || Ext.emptyFn
+		});
+	},
+
+	getGroupUIConfiguration: function(groupId, cbs) {
 		cbs = cbs || {};
 
 		CMDBuild.ServiceProxy.core.doRequest({

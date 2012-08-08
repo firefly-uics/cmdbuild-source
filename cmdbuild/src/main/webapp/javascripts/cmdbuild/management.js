@@ -3,16 +3,15 @@
 	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({ // TODO move in common
 			cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
 		}),
-		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),	
+		reportAccordion = new CMDBuild.view.common.report.CMReportAccordion(),
 		classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({ // TODO move in common
 			title: CMDBuild.Translation.administration.modClass.tree_title
 		}),
-		utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({ // TODO move in common
-			title: CMDBuild.Translation.management.modutilities.title
-		}),
+
 		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({ // TODO move in common
 			rootVisible: true
 		}),
+
 		dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion(); // TODO move in common
 
 	Ext.define("CMDBuild.app.Management", {
@@ -26,28 +25,34 @@
 						me.buildComponents();
 					};
 
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
-					success: function(response, options, decoded) {
-						CMDBuild.Config.cmdbuild = decoded.data;
+				// maybe a single request with all the configuration could be better
+				CMDBuild.ServiceProxy.group.getUIConfiguration({
+					success: function(response, options,decoded) {
+						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
-						CMDBuild.ServiceProxy.configuration.readGisConfiguration({
+						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
-								CMDBuild.Config.gis = decoded.data;
-								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+								CMDBuild.Config.cmdbuild = decoded.data;
 
-								CMDBuild.ServiceProxy.configuration.read({
-									success: function(response, options,decoded) {
-										CMDBuild.Config.graph = decoded.data;
+								CMDBuild.ServiceProxy.configuration.readGisConfiguration({
+									success: function(response, options, decoded) {
+										CMDBuild.Config.gis = decoded.data;
+										CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-										CMDBuild.ServiceProxy.configuration.readWFConfiguration({
-											success : function(response, options, decoded) {
-												CMDBuild.Config.workflow = decoded.data;
-											},
-											callback: cb
-										});
+										CMDBuild.ServiceProxy.configuration.read({
+											success: function(response, options,decoded) {
+												CMDBuild.Config.graph = decoded.data;
+
+												CMDBuild.ServiceProxy.configuration.readWFConfiguration({
+													success : function(response, options, decoded) {
+														CMDBuild.Config.workflow = decoded.data;
+													},
+													callback: cb
+												});
+											}
+										},"graph");
 									}
-								},"graph");
-
+								});
 							}
 						});
 					}
@@ -55,7 +60,7 @@
 			},
 
 			buildComponents: function() {
-				var disabled = CMDBuild.Runtime.DisabledModules;
+
 				this.cmAccordions = [
 					this.menuAccordion = menuAccordion
 				];
@@ -80,33 +85,39 @@
 					})
 				];
 
-				if (!disabled[classesAccordion.cmName]) {
+				if (!_CMUIConfiguration.isModuleDisabled(classesAccordion.cmName)) {
 					this.classesAccordion = classesAccordion;
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!disabled[processAccordion.cmName] 
+				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) 
 					&& CMDBuild.Config.workflow.enabled == "true") {
+
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
 
-				if (!disabled[reportAccordion.cmName]) {
+				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
 					this.reportAccordion = reportAccordion;
 					this.cmAccordions.push(this.reportAccordion);
 				}
 
-				this.dashboardsAccordion = dashboardsAccordion;
-				this.cmAccordions.push(this.dashboardsAccordion);
+				if (!_CMUIConfiguration.isModuleDisabled(dashboardsAccordion.cmName)) {
+					this.dashboardsAccordion = dashboardsAccordion;
+					this.cmAccordions.push(this.dashboardsAccordion);
+				}
 
-				this.utilitiesTree = utilitiesTree;
+				this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({ // TODO move in common
+					title: CMDBuild.Translation.management.modutilities.title
+				});
+
 				if (this.utilitiesTree.getRootNode().childNodes.length > 0) {
 					this.cmAccordions.push(this.utilitiesTree);
 				}
 
 				for (var moduleName in this.utilitiesTree.submodules) {
 					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
-					if (!disabled[cmName]) {
+					if (!_CMUIConfiguration.isModuleDisabled(cmName)) {
 						addUtilitySubpanel(cmName, this.cmPanels);
 					}
 				}
@@ -126,9 +137,11 @@
 						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 							new CMDBuild.view.CMMainViewport({
 								cmAccordions: me.cmAccordions,
-								cmPanels: me.cmPanels
+								cmPanels: me.cmPanels,
+								hideAccordions: _CMUIConfiguration.isHideSidePanel()
 							})
 						);
+
 						_CMMainViewportController.selectStartingClass();
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 	
