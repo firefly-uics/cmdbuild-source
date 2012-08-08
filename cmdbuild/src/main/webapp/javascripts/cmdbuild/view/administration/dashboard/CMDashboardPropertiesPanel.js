@@ -50,6 +50,7 @@
 					region: "center",
 					frame : true,
 					border : true,
+					autoScroll: true,
 					items: fields(me)
 				}],
 				buttons: buttons(me)
