@@ -123,14 +123,25 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 		if (startActivity == null) {
 			return null;
 		}
-		final WSProcessInstInfo procInst = workflowService.startProcess(processClass.getPackageId(),
+		final WSProcessInstInfo procInstInfo = workflowService.startProcess(processClass.getPackageId(),
 				processClass.getProcessDefinitionId());
 		final WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(),
-				procInst.getProcessInstanceId());
+				procInstInfo.getProcessInstanceId());
 
-		final UserProcessInstanceDefinition proc = newProcessInstance(processClass, procInst);
+		final UserProcessInstanceDefinition proc = newProcessInstance(processClass, procInstInfo);
 		proc.addActivity(startActInstInfo);
-		return proc.save();
+		final UserProcessInstance procInst = proc.save();
+		fillCardInfoAndProcessInstanceIdOnProcessInstance(procInst);
+		return procInst;
+	}
+
+	private void fillCardInfoAndProcessInstanceIdOnProcessInstance(UserProcessInstance procInst) throws CMWorkflowException {
+		final String procInstId = procInst.getProcessInstanceId();
+		final Map<String, Object> extraVars = new HashMap<String, Object>();
+		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
+		extraVars.put(Constants.PROCESS_CLASSNAME_VARIABLE, procInst.getType().getName());
+		extraVars.put(Constants.PROCESS_INSTANCE_ID_VARIABLE, procInstId);
+		workflowService.setProcessInstanceVariables(procInstId, extraVars);
 	}
 
 	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
