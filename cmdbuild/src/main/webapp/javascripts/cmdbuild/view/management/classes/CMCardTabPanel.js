@@ -7,36 +7,39 @@
 
 		constructor: function() {
 
+			var tabs = CMDBuild.model.CMUIConfigurationModel.cardTabs;
+			var disabledTabs = _CMUIConfiguration.getDisabledCardTabs();
+
 			this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel({
 				title: tr.tabs.card,
 				withToolBar: true,
 				withButtons: true
 			});
 
-			this.cardHistoryPanel = new CMDBuild.view.management.classes.CMCardHistoryTab({
+			this.cardHistoryPanel = isEnabled(disabledTabs, tabs.history) ? new CMDBuild.view.management.classes.CMCardHistoryTab({
 				title: tr.tabs.history,
 				disabled: true
-			});
+			}) : null;
 
-			this.cardNotesPanel = new CMDBuild.view.management.classes.CMCardNotesPanel({
+			this.cardNotesPanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.classes.CMCardNotesPanel({
 				title: tr.tabs.notes,
 				disabled: true
-			});
+			}) : null;
 
-			this.relationsPanel = new CMDBuild.view.management.classes.CMCardRelationsPanel({
+			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
 				title: tr.tabs.relations,
 				disabled: true
-			});
+			}) : null;
 
-			this.mdPanel = new CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail({
+			this.mdPanel = isEnabled(disabledTabs, tabs.details) ? new CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail({
 				title: tr.tabs.detail,
 				disabled: true
-			});
+			}) : null;
 
-			this.attachmentPanel = new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
+			this.attachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
 				title: tr.tabs.attachments,
 				disabled: true
-			});
+			}): null;
 
 			this.callParent(arguments);
 
@@ -111,4 +114,8 @@
 			this.setActiveTab(this.cardPanel);
 		}
 	});
+
+	function isEnabled(disabledTabs, name) {
+		return !Ext.Array.contains(disabledTabs, name);
+	}
 })();

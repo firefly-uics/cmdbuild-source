@@ -128,14 +128,10 @@
 			buildGridController(me, me.view.getGrid());
 			buildRelationsController(me, me.view.getRelationsPanel());
 			buildMapController(me);
-			buildMDController(me);
-			buildNoteController(me);
-
-			me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(me.view.getAttachmentsPanel());
-			me.subControllers.push(me.attachmentsController);
-
-			me.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(me.view.getHistoryPanel());
-			me.subControllers.push(me.cardHistoryPanelController);
+			buildMDController(me, me.view.getMDPanel());
+			buildNoteController(me, me.view.getNotePanel());
+			buildAttachmentsController(me, me.view.getAttachmentsPanel());
+			buildHistoryController(me, me.view.getHistoryPanel());
 		},
 
 		// override
@@ -222,6 +218,9 @@
 	}
 
 	function buildRelationsController(me, view) {
+
+		if (view == null) {return;}
+
 		me.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(view, me);
 		me.mon(me.relationsController, me.relationsController.CMEVENTS.serverOperationSuccess, function() {
 			me.gridController.reload(reselect=true);
@@ -230,8 +229,11 @@
 		me.subControllers.push(me.relationsController);
 	}
 
-	function buildMDController(me) {
-		me.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(me.view.getMDPanel(), me);
+	function buildMDController(me, view) {
+
+		if (view == null) {return;}
+
+		me.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(view, me);
 		me.mon(me.mdController, "empty", function(isVisible) {
 			if (isVisible) {
 				me.view.cardTabPanel.activateFirstTab();
@@ -259,14 +261,33 @@
 		me.cardPanelController.addCardDataProviders(me.mapController);
 	}
 
-	function buildNoteController(me) {
-		me.noteController = new CMDBuild.controller.management.classes.CMNoteController(me.view.getNotePanel());
+	function buildNoteController(me, view) {
+
+		if (view == null) {return;}
+
+		me.noteController = new CMDBuild.controller.management.classes.CMNoteController(view);
 		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function() {
 			if (me.cardHistoryPanelController) {
 				me.cardHistoryPanelController.onCardSelected(me.card);
 			}
 		}, me);
 		me.subControllers.push(me.noteController);
+	}
+
+	function buildAttachmentsController(me, view) {
+
+		if (view == null) {return;}
+
+		me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view);
+		me.subControllers.push(me.attachmentsController);
+	}
+
+	function buildHistoryController(me, view) {
+
+		if (view == null) {return;}
+
+		me.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
+		me.subControllers.push(me.cardHistoryPanelController);
 	}
 
 	function onSelectionWentWrong() {

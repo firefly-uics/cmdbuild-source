@@ -21,15 +21,14 @@
 		buildSubControllers: function() {
 			var me = this;
 
-			me.relationsController = new CMDBuild.controller.management.workflow.CMActivityRelationsController(me.view.getRelationsPanel(), me);
-			me.historyController = new CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController(me.view.getHistoryPanel());
-			me.attachmentsController = new CMDBuild.controller.management.workflow.CMActivityAttachmentsController(me.view.getAttachmentsPanel(), me);
-
-			me.subControllers = [me.relationsController, me.historyController, me.attachmentsController];
+			me.subControllers = [];
 
 			buildActivityPanelController(me);
 			buildGridController(me);
-			buildNoteController(me);
+			buildNoteController(me, me.view.getNotesPanel());
+			buildRelationsController(me, me.view.getRelationsPanel());
+			buildHistoryController(me, me.view.getHistoryPanel());
+			buildAttachmentsController(me.view.getAttachmentsPanel());
 		},
 
 		// wfStateDelegate
@@ -121,8 +120,9 @@
 		me.subControllers.push(me.gridController);
 	}
 
-	function buildNoteController(me) {
-		me.noteController = new CMDBuild.controller.management.workflow.CMNoteController(me.view.getNotesPanel(), me);
+	function buildNoteController(me, view) {
+		if (view == null) { return; }
+		me.noteController = new CMDBuild.controller.management.workflow.CMNoteController(view, me);
 		me.subControllers.push(me.noteController);
 
 		// the history has to know when the notes are changed
@@ -131,6 +131,24 @@
 				me.historyController.onProcessInstanceChange(_CMWFState.getProcessInstance());
 			}
 		}, me);
+	}
+
+	function buildRelationsController(me, view) {
+		if (view == null) { return; }
+		me.relationsController = new CMDBuild.controller.management.workflow.CMActivityRelationsController(view, me);
+		me.subControllers.push(me.relationsController);
+	}
+
+	function buildHistoryController(me, view) {
+		if (view == null) { return; }
+		me.historyController = new CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController(view);
+		me.subControllers.push(me.historyController);
+	}
+
+	function buildAttachmentsController(me, view) {
+		if (view == null) { return; }
+		me.attachmentsController = new CMDBuild.controller.management.workflow.CMActivityAttachmentsController(view, me);
+		me.subControllers.push(me.attachmentsController);
 	}
 
 	function onGridLoad(args) {

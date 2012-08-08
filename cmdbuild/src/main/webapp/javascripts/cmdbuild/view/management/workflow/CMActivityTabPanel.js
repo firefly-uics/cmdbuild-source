@@ -8,29 +8,32 @@
 
 		constructor: function(config) {
 
+			var tabs = CMDBuild.model.CMUIConfigurationModel.processTabs;
+			var disabledTabs = _CMUIConfiguration.getDisabledProcessTabs();
+
 			this.activityTab = new CMDBuild.view.management.workflow.CMActivityPanel({
 				title: CMDBuild.Translation.management.modworkflow.tabs.card,
 				withToolBar: true,
 				withButtons: true
 			});
 
-			this.cardHistoryPanel = new CMDBuild.view.management.workflow.CMActivityHistoryTab({
+			this.cardHistoryPanel = isEnabled(disabledTabs, tabs.history) ? new CMDBuild.view.management.workflow.CMActivityHistoryTab({
 				title: CMDBuild.Translation.management.modworkflow.tabs.history
-			});
+			}) : null;
 
-			this.openNotePanel = new CMDBuild.view.management.common.widgets.CMOpenNotes({
+			this.openNotePanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.common.widgets.CMOpenNotes({
 				title: CMDBuild.Translation.management.modworkflow.tabs.notes
-			});
+			}) : null;
 
-			this.relationsPanel = new CMDBuild.view.management.classes.CMCardRelationsPanel({
+			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
 				title: CMDBuild.Translation.management.modworkflow.tabs.relations,
 				cmWithAddButton: false,
 				cmWithEditRelationIcons: false
-			});
+			}) : null;
 
-			this.openAttachmentPanel = new CMDBuild.view.management.common.widgets.CMOpenAttachment({
+			this.openAttachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.common.widgets.CMOpenAttachment({
 				title: CMDBuild.Translation.management.modworkflow.tabs.attachments
-			});
+			}) : null;
 
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
@@ -86,10 +89,21 @@
 		},
 
 		disableTabs: function() {
-			this.openNotePanel.disable();
-			this.relationsPanel.disable();
-			this.cardHistoryPanel.disable();
-			this.openAttachmentPanel.disable();
+			if (this.openNotePanel != null) {
+				this.openNotePanel.disable();
+			}
+
+			if (this.relationsPanel != null) {
+				this.relationsPanel.disable();
+			}
+
+			if (this.cardHistoryPanel != null) {
+				this.cardHistoryPanel.disable();
+			}
+
+			if (this.openAttachmentPanel != null) {
+				this.openAttachmentPanel.disable();
+			}
 		},
 
 		showActivityPanelIfNeeded: function() {
@@ -100,7 +114,9 @@
 		},
 
 		activateRelationTab: function() {
-			this.acutalPanel.setActiveTab(this.relationsPanel);
+			if (relationsPanel != null) {
+				this.acutalPanel.setActiveTab(this.relationsPanel);
+			}
 		},
 
 		getWidgetButtonsPanel: function() {
@@ -134,11 +150,15 @@
 
 			var managedClasses = {
 				"CMDBuild.view.management.common.widgets.CMOpenAttachment": function(me) {
-					me.openAttachmentPanel.cmActivate();
+					if (me.openAttachmentPanel != null) {
+						me.openAttachmentPanel.cmActivate();
+					}
 				},
 
 				"CMDBuild.view.management.common.widgets.CMOpenNotes": function(me) {
-					me.openNotePanel.cmActivate();
+					if (me.openNotePanel != null) {
+						me.openNotePanel.cmActivate();
+					}
 				}
 			};
 
@@ -171,7 +191,6 @@
 				collapsed: true,
 				animCollapse: false,
 				split: true,
-//				margins: "5 5 5 0",
 				title: CMDBuild.Translation.management.modworkflow.activitydocumentation,
 				html: ""
 			});
@@ -185,4 +204,8 @@
 			}
 		}
 	});
+
+	function isEnabled(disabledTabs, name) {
+		return !Ext.Array.contains(disabledTabs, name);
+	}
 })();
