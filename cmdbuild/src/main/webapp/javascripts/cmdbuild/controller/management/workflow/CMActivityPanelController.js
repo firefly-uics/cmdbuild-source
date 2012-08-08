@@ -382,7 +382,10 @@
 				var processClassId = processInstance.getClassId();
 				if (processClassId) {
 					var processClass = _CMCache.getEntryTypeById(processClassId);
-					if (processClass && !processClass.isUserStoppable()) {
+					var group = _CMCache.getGroupById(CMDBuild.Runtime.LoginGroupId);
+					if (processClass && !processClass.isUserStoppable()
+							&& !CMDBuild.Runtime.IsAdministrator) { // the administrator is always able to abort a process
+
 						me.view.disableStopButton();
 					}
 				}
