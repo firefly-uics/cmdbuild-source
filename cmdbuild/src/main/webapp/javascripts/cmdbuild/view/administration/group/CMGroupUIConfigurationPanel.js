@@ -33,10 +33,12 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUIConfigurationPanel", {
 			wrapWithPanel([chechboxGroup(getpProcessTabToDisable(this), tr.disabled_process_tabs)]),
 			wrapWithPanel([chechboxGroup(getGenericProp(this), tr.other)])
 		];
+
 		this.frame = false;
 		this.border = false;
 		this.cls = "x-panel-body-default-framed";
 		this.bodyCls = 'cmgraypanel';
+		this.autoScroll = true;
 
 		this.callParent(arguments);
 	},
