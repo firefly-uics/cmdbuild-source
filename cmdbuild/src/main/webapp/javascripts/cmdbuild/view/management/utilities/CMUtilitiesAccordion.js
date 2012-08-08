@@ -43,14 +43,20 @@
 
 			var root = this.store.getRootNode();
 			root.removeAll();
-			root.appendChild(structure);
+			if (structure.length > 0) {
+				root.appendChild(structure);
+			}
 		},
 
 		submoduleIsEnabled: function(moduleName) {
 			if (moduleName == 'changePassword' && !CMDBuild.Runtime.CanChangePassword) {
 				return false;
 			} else {
-				return !CMDBuild.Runtime.DisabledModules[moduleName];
+				if (typeof _CMUIConfiguration != "undefined") {
+					return !_CMUIConfiguration.isModuleDisabled(moduleName);
+				} else {
+					return false;
+				}
 			}
 		},
 

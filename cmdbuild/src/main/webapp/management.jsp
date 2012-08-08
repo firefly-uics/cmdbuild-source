@@ -47,20 +47,14 @@
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= userCtx.allowsPasswordLogin() %>;
 
 			CMDBuild.Runtime.CanChangePassword = <%= userCtx.canChangePassword() %>;
-			CMDBuild.Runtime.DisabledModules = {};
 <%
-	String[] disabledModules = new String[0]; //TODO Remove it and use UIConfiguration defaultGroup.getDisabledModules();
-	for (String module : disabledModules) {
-%>
-			CMDBuild.Runtime.DisabledModules["<%= module %>"] = true;
-<%
-	}
 	if (defaultGroup.getStartingClass() != null) {
 %>
 			CMDBuild.Runtime.StartingClassId = <%= defaultGroup.getStartingClass().getId() %>;
 <%
 	}
 %>
+
 		</script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>

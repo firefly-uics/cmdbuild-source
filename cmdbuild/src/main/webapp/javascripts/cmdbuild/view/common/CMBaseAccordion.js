@@ -41,7 +41,7 @@
 			Ext.apply(this, c);
 			this.store = Ext.create('CMDBuild.view.common.CMBaseAccordion.Store');
 
-			this.tree = this._buildTreePanel();;
+			this.tree = this._buildTreePanel();
 
 			Ext.apply(this, {
 				items: [this.tree],
@@ -63,7 +63,7 @@
 			root.removeAll();
 			root.appendChild(treeStructure);
 			this.store.sort();
-			
+
 			this.afterUpdateStore();
 		},
 
@@ -77,9 +77,15 @@
 
 			if (node) {
 				sm.select(node);
-				node.bubble(function() {
-					this.expand();
-				});
+				// the expand fail if the accordion is not really
+				// visible to the user. But I can not know when
+				// a parent of the accordion will be visible, so
+				// skip only the expand to avoid the fail
+				if (this.isVisible(deep=true)) {
+					node.bubble(function() {
+						this.expand();
+					});
+				}
 			} else {
 				_debug("I have not found a node with id " + node);
 			}

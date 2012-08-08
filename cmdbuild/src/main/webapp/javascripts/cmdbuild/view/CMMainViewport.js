@@ -22,6 +22,7 @@
 		cmFirstRender: true,
 		cmPanels: [],
 		cmAccordions: [],
+		hideAccordions: false,
 		controllerType: "MainViewportController",
 		statics: {
 			showSplash: function(target, administration) {
@@ -99,12 +100,14 @@
 
 		initComponent : function() {
 			this.splash = null;
-			this.cmAccordions = Ext.create("Ext.panel.Panel", {
+			this.cmAccordions = new Ext.panel.Panel({
 				padding: "5 0 5 5",
+				margin: this.hideAccordions ? "0 2 0 0" : "0",
 				region: 'west',
 				split: true,
 				collapsible: true, 
 				collapseMode: 'mini',
+				collapsed: this.hideAccordions,
 				preventHeader: true,
 				layout: "accordion",
 				layoutConfig: {
@@ -132,7 +135,7 @@
 				contentEl: "header"
 			});
 
-			this.footer= new Ext.panel.Panel({
+			this.footer = new Ext.panel.Panel({
 				border: true,
 				region: "south",
 				height: 18,

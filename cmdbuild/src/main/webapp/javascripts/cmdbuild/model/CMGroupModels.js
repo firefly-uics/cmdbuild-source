@@ -53,6 +53,24 @@
 
 	Ext.define("CMDBuild.model.CMUIConfigurationModel", {
 		extend: 'Ext.data.Model',
+
+		statics: {
+			cardTabs: {
+				details: "classDetailTab",
+				notes: "classNoteTab",
+				relations: "classRelationTab",
+				history: "classHistoryTab",
+				attachments: "classAttachmentTab"
+			},
+
+			processTabs: {
+				notes: "processNoteTab",
+				relations: "processRelationTab",
+				history: "processHistoryTab",
+				attachments: "processAttachmentTab"
+			}
+		},
+
 		fields: [
 			{name: "disabledModules", type: "auto"},
 			{name: "disabledCardTabs", type: "auto"},
@@ -132,6 +150,22 @@
 
 		setSimpleHistoryModeForProcess: function(simpleHistoryModeForProcess) {
 			return this.set("simpleHistoryModeForProcess", simpleHistoryModeForProcess);
+		},
+
+		/*
+		 * OTHERS
+		 */
+
+		isCardTabDisabled: function(name) {
+			return Ext.Array.contains(this.getDisabledCardTabs(), name);
+		},
+
+		isProcessTabDisabled: function(name) {
+			return Ext.Array.contains(this.getDisabledProcessTabs(), name);
+		},
+
+		isModuleDisabled: function(name) {
+			return Ext.Array.contains(this.getDisabledModules(), name);
 		},
 
 		toString: function() {

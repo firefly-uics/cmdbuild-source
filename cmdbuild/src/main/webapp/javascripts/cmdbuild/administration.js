@@ -9,7 +9,7 @@
 
 		dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
 			cmControllerType : CMDBuild.controller.accordion.CMDashboardAccordionController
-		});
+		}),
 
 		groupsAccordion = new CMDBuild.view.administration.accordion.CMGroupsAccordion({
 			cmControllerType : CMDBuild.controller.accordion.CMGroupAccordionController
@@ -24,22 +24,31 @@
 		processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 			cmControllerType : CMDBuild.controller.accordion.CMProcessAccordionController
 		}),
-		gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion();
+		gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion(),
 		viewNS = CMDBuild.view.administration,
 		controllerNS = CMDBuild.controller;
 
 	Ext.define("CMDBuild.app.Administration", {
 		statics : {
 			init : function() {
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
-					scope : this,
-					success : function(response, options, decoded) {
-						CMDBuild.Config.cmdbuild = decoded.data;
 
-						this.buildComponents();
+				var me = this;
+				// maybe a single request with all the configuration could be better
+				CMDBuild.ServiceProxy.group.getUIConfiguration({
+					success: function(response, options,decoded) {
+						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
+					
+						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+							success : function(response, options, decoded) {
+								CMDBuild.Config.cmdbuild = decoded.data;
+		
+								me.buildComponents();
+							}
+						});
 					}
 				});
 			},
+
 			buildComponents : function() {
 				this.cmPanels = [new Ext.Panel({
 					cls : 'empty_panel x-panel-body'
@@ -113,13 +122,14 @@
 					})
 				];
 
-				this.cmAccordions = [classesAccordion, processAccordion, domainAccordion, dashboardsAccordion, lookupAccordion,
-					reportAccordion, menuAccordion, groupsAccordion, gisAccordion,
+				this.cmAccordions = [classesAccordion, processAccordion, domainAccordion, lookupAccordion,
+					reportAccordion, dashboardsAccordion, menuAccordion, groupsAccordion, gisAccordion,
 					new CMDBuild.view.administration.accordion.CMConfigurationAccordion()];
 
 				CMDBuild.view.CMMainViewport.showSplash( target = undefined, administration = true);
 				this.loadResources();
 			},
+
 			loadResources : function() {
 				var me = this,
 					reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {

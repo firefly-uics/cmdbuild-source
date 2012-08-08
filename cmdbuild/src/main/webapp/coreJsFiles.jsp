@@ -20,7 +20,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/CMDBuildStructure.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>

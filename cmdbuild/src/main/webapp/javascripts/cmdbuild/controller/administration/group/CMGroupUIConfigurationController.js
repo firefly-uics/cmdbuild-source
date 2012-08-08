@@ -39,7 +39,7 @@
 			me.view.loadGroupConfiguration(me.currentUIConfiguration);
 		} else {
 			var gId = me.currentGroup.getId();
-			CMDBuild.ServiceProxy.group.getUIConfiguration(gId, {
+			CMDBuild.ServiceProxy.group.getGroupUIConfiguration(gId, {
 				success: function(operatio, request, response) {
 					me.currentUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(response.response);
 					me.view.loadGroupConfiguration(me.currentUIConfiguration);

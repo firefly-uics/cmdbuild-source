@@ -93,21 +93,25 @@ function getCheckedNames(checkArray) {
 }
 
 function getClassTabToDisable(me) {
+	var tabs = CMDBuild.model.CMUIConfigurationModel.cardTabs;
+
 	return me.classTabToDisableCheks = [
-		getCheck(tabLabels.detail, "classDetailTab"),
-		getCheck(tabLabels.notes, "classNoteTab"),
-		getCheck(tabLabels.relations, "classRelationTab"),
-		getCheck(tabLabels.history, "classHistoryTab"),
-		getCheck(tabLabels.attachments, "classAttachmentTab")
+		getCheck(tabLabels.detail, tabs.details),
+		getCheck(tabLabels.notes, tabs.notes),
+		getCheck(tabLabels.relations, tabs.relations),
+		getCheck(tabLabels.history, tabs.history),
+		getCheck(tabLabels.attachments, tabs.attachments)
 	];
 }
 
 function getpProcessTabToDisable(me) {
+	var tabs = CMDBuild.model.CMUIConfigurationModel.processTabs;
+
 	return me.processTabToDisableCheks = [
-		getCheck(tabLabels.notes, "processNoteTab"),
-		getCheck(tabLabels.relations, "processRelationTab"),
-		getCheck(tabLabels.history, "processHistoryTab"),
-		getCheck(tabLabels.attachments, "processAttachmentTab")
+		getCheck(tabLabels.notes, tabs.notes),
+		getCheck(tabLabels.relations, tabs.relations),
+		getCheck(tabLabels.history, tabs.history),
+		getCheck(tabLabels.attachments, tabs.attachments)
 	];
 }
 
@@ -125,29 +129,65 @@ function getGenericProp(me) {
 
 function getModulesFromStructure(me) {
 	var moduleCkecks = [];
-	var structure = CMDBuild.Structure;
-	for (var tree in structure) {
-		var m = structure[tree];
-		if (m.submodules) {
-			for (var sub in m.submodules) {
+	var structure = {
+		"class": {	
+			title:  CMDBuild.Translation.management.modcard.treetitle
+		},
+		process: {
+			title: CMDBuild.Translation.management.modworkflow.treetitle
+		},
+		report: {
+			title: CMDBuild.Translation.management.modreport.treetitle
+		},
+		dashboard: {
+			title: CMDBuild.Translation.administration.modDashboard.title
+		},
+		utilities: {
+			title: CMDBuild.Translation.management.modutilities.title,
+			submodules: {
+				changePassword: {
+					title: CMDBuild.Translation.management.modutilities.changepassword.title
+				},
+				bulkupdate: {
+					title:CMDBuild.Translation.management.modutilities.bulkupdate.title
+				},
+				importcsv: {
+					title: CMDBuild.Translation.management.modutilities.csv.title
+				},
+				exportcsv: {
+					title: CMDBuild.Translation.management.modutilities.csv.title_export
+				}
+			}
+		}
+	};
+
+	for (var moduleKey in structure) {
+		var module = structure[moduleKey];
+		var title = module.title;
+		var submodules = module.submodules;
+
+		if (submodules) {
+			for (var sub in submodules) {
+				var submodule = module.submodules[sub];
 				moduleCkecks.push(new Ext.ux.form.XCheckbox({
 					fieldLabel: '',
 					labelSeparator: '',
-					boxLabel: m.title+" - "+m.submodules[sub].title,
+					boxLabel: title+" - "+submodule.title,
 					name: sub
 				}));
 			}
 		} else {
-			if (m.title) {
+			if (title) {
 				moduleCkecks.push(new Ext.ux.form.XCheckbox({
 					fieldLabel: '',
 					labelSeparator: '',
-					boxLabel: m.title,
-					name: tree
+					boxLabel: title,
+					name: moduleKey
 				}));
 			}
 		}
 	}
+
 	me.disabledModulesChecks = moduleCkecks;
 	return moduleCkecks;
 }
