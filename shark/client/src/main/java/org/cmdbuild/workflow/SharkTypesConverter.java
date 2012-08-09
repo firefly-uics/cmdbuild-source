@@ -93,13 +93,16 @@ public class SharkTypesConverter implements TypesConverter {
 		final ReferenceType rt = new ReferenceType();
 		rt.setId(objectIdToInt(ref.getId()));
 		rt.setIdClass(objectIdToInt(refClass.getId()));
-		rt.setDescription(NO_DESCRIPTION);
+		rt.setDescription(ref.getDescription());
 		return rt;
 	}
 
-	private Integer convertReference(final ReferenceType ref) {
+	private CardReference convertReference(final ReferenceType ref) {
 		if (ref.checkValidity()) {
-			return ref.getId();
+			final Long cardId = Long.valueOf(ref.getId());
+			final Long classId = Long.valueOf(ref.getIdClass());
+			final String className = dataView.findClassById(classId).getName();
+			return CardReference.newInstance(className, cardId, NO_DESCRIPTION);
 		} else {
 			return null;
 		}

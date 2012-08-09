@@ -3,6 +3,7 @@ package org.cmdbuild.workflow.widget;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.Widget;
@@ -38,6 +39,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		} else {
 			configureWidgetFromClassName(widget, valueMap);
 		}
+		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 
 		return widget;
@@ -45,14 +47,17 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 	private void configureWidgetFromClassName(final CreateModifyCard widget, final Map<String, Object> valueMap) {
 		final String className = readString(valueMap.get(CLASS_NAME));
+		final String cardIdOrCql = readString(valueMap.get(OBJ_ID));
 		Validate.notEmpty(className, CLASS_NAME + " is required");
 
 		widget.setTargetClass(className);
-		widget.setIdcardcqlselector(readString(valueMap.get(OBJ_ID)));
-		widget.setReadonly(readBooleanTrueIfPresent(valueMap.get(READONLY)));
+		widget.setIdcardcqlselector(cardIdOrCql);
 	}
 
 	private void configureWidgetFromReference(final CreateModifyCard widget, final Map<String, Object> valueMap) {
-		throw new UnsupportedOperationException("Not implemented yet");
+		final CardReference objRef = (CardReference) valueMap.get(OBJ_REF);
+
+		widget.setTargetClass(objRef.getClassName());
+		widget.setIdcardcqlselector(objRef.getId().toString());
 	}
 }
