@@ -2,15 +2,26 @@
 	var TITLE_PREFIX = CMDBuild.Translation.management.modcard.title;
 
 	Ext.define("CMDBuild.view.management.classes.CMModCard", {
+
 		extend: "Ext.panel.Panel",
+
+		mixins: {
+			uistatedelegate: "CMDBuild.state.UIStateDelegate"
+		},
+
 		cmName: "class",
 
 		constructor: function() {
 			this.CMEVENTS = {
 				addButtonClick: "cm-addcard-click"
 			};
+
 			this.buildComponents();
 			this.callParent(arguments);
+
+			if (typeof _CMUIState != "undefined") {
+				_CMUIState.addDelegate(this);
+			}
 		},
 
 		initComponent: function() {
@@ -23,25 +34,13 @@
 				layout: "card",
 				activeItem: 0,
 				hideMode: "offsets",
-				border: true,
+				cls: "cmborderbottom",
+				border: false,
 				frame: false,
 				cardGrid: this.cardGrid,
 				theMap: this.theMap,
 				items: this.centralPanelItems,
-				title: " ",
-				tools:[{
-					type:'minimize',
-					scope: this,
-					handler: onToolClick
-				},{
-					type:'maximize',
-					scope: this,
-					handler: onToolClick
-				},{
-					type: "restore",
-					scope: this,
-					handler: onToolClick
-				}],
+				animCollapse: false,
 				showGrid: function() {
 					this.getLayout().setActiveItem(this.cardGrid.id);
 					this.cardGrid.setCmVisible(true);
@@ -56,8 +55,24 @@
 
 			Ext.apply(this, {
 				layout: "border",
-				border: false,
-				items: [this.centralPanel, this.cardTabPanel]
+				border: true,
+				items: [this.centralPanel, this.cardTabPanel],
+				tools:[{
+					type:'minimize',
+					handler: function () {
+						_CMUIState.onlyForm();
+					}
+				},{
+					type:'maximize',
+					handler: function () {
+						_CMUIState.onlyGrid();
+					}
+				},{
+					type: "restore",
+					handler: function () {
+						_CMUIState.fullScreenOff();
+					}
+				}]
 			});
 
 			this.callParent(arguments);
@@ -73,12 +88,48 @@
 			]);
 		},
 
-		updateTitleForEntry: function(entry) {
-			var description = entry.get("text") || entry.get("name");
-			this.centralPanel.setTitle(TITLE_PREFIX+description);
+		minimize: function() {
+			Ext.suspendLayouts();
+
+			this.centralPanel.hide();
+			this.centralPanel.region = "";
+
+			this.cardTabPanel.show();
+			this.cardTabPanel.region = "center";
+
+			Ext.resumeLayouts(true);
 		},
 
-		// private, overridden in subclasses
+		maximize: function() {
+
+			Ext.suspendLayouts();
+
+			this.cardTabPanel.hide();
+			this.cardTabPanel.region = "";
+
+			this.centralPanel.show();
+			this.centralPanel.region = "center";
+
+			Ext.resumeLayouts(true);
+		},
+
+		restore: function() {
+			Ext.suspendLayouts();
+			this.cardTabPanel.show();
+			this.cardTabPanel.region = "south";
+
+			this.centralPanel.show();
+			this.centralPanel.region = "center";
+
+			Ext.resumeLayouts(true);
+		},
+
+		updateTitleForEntry: function(entry) {
+			var description = entry.get("text") || entry.get("name");
+			this.setTitle(TITLE_PREFIX+description);
+		},
+
+		// protected
 		buildComponents: function() {
 			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
 			var tbar = [
@@ -106,6 +157,7 @@
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
 				region: "south",
 				hideMode: "offsets",
+				border: false,
 				split: true,
 				height: gridratio + "%"
 			});
@@ -151,6 +203,19 @@
 			this.cardGrid.openFilterButton.enable();
 			this.cardGrid.clearFilterButton.disable();
 			this.cardGrid.gridSearchField.reset();
+		},
+
+		// as UIStateDelegate
+		onFullScreenChangeToGridOnly: function() {
+			this.maximize();
+		},
+
+		onFullScreenChangeToFormOnly: function() {
+			this.minimize();
+		},
+
+		onFullScreenChangeToOff: function() {
+			this.restore();
 		}
 	});
 
@@ -183,72 +248,6 @@
 		}
 
 	});
-
-	var toolClickCallBack = {
-		// in these functions wait for the layout after a collapse/expand
-		// operation to have the real size of the elements. To do this use
-		// the single listener over the "afterlayout" event
-
-		"minimize": function() {
-			function _minimize() {
-				this.centralPanel.collapse();
-				this.mon(this, "afterlayout", function() {
-					this.cardTabPanel.show();
-					this.cardTabPanel.setHeight(this.startingModuleHeight);
-					this.doLayout();
-				}, this, {single: true});
-	
-				this.doLayout();
-			}
-
-			toolClickCallBack["restore"].call(this, _minimize);
-		},
-
-		"maximize": function() {
-			function _maximize() {
-				this.cardTabPanel.hide();
-	
-				this.mon(this, "afterlayout", function() {
-					this.centralPanel.expand();
-					this.doLayout();
-				}, this, {single: true});
-		
-				this.doLayout();
-			}
-
-			toolClickCallBack["restore"].call(this, _maximize);
-		},
-
-		"restore": function(cb) {
-			this.centralPanel.expand();
-			this.centralPanel.setHeight(this.startingGridHeight);
-			
-			this.mon(this, "afterlayout", function() {
-				this.cardTabPanel.show();
-				this.cardTabPanel.setHeight(this.startingCardTabPanelHeight);
-
-				this.doLayout();
-			}, this, {single: true});
-
-			if (cb) {
-				this.mon(this, "afterlayout", cb, this, {single: true});
-			}
-
-			this.doLayout();
-		}
-	};
-
-	function onToolClick(event, toolEl, panel, tool) {
-		var type = tool.type;
-		if (typeof this.toolsArePressed == "undefined") {
-			this.toolsArePressed = true;
-			this.startingCentralPanelHeight = this.centralPanel.getHeight();
-			this.startingCardTabPanelHeight = this.cardTabPanel.getHeight();
-			this.startingModuleHeight = this.getHeight();
-		}
-
-		toolClickCallBack[type].call(this);
-	} 
 
 	function buildMapButton(tbar) {
 		if (CMDBuild.Config.gis.enabled) {

@@ -132,6 +132,8 @@
 			} else {
 				this.onActivityInstanceChange(activityInstance);
 			}
+
+			_CMUIState.onlyGridIfFullScreen();
 		},
 
 		onAdvanceCardButtonClick: function() {
@@ -319,6 +321,8 @@
 						// right processInstance
 						if (me.isAdvance) {
 							me.idToAdvance = savedCardId;
+						} else {
+							_CMUIState.onlyGridIfFullScreen();
 						}
 					}
 				});

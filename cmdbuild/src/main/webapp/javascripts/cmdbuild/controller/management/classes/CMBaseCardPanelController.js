@@ -20,11 +20,12 @@
 
 			this.CMEVENTS = {
 				cardSaved: "cm-card-saved",
+				abortedModify: "cm-card-modify-abort",
 				editModeDidAcitvate: ev.editModeDidAcitvate,
 				displayModeDidActivate: ev.displayModeDidActivate
 			};
 
-			this.addEvents(this.CMEVENTS.cardSaved, ev.editModeDidAcitvate, ev.displayModeDidActivate);
+			this.addEvents(this.CMEVENTS.cardSaved, this.CMEVENTS.abortedModify, ev.editModeDidAcitvate, ev.displayModeDidActivate);
 			this.relayEvents(this.view, [ev.editModeDidAcitvate, ev.displayModeDidActivate]);
 
 			this.mon(this.view, ev.modifyCardButtonClick, function() { this.onModifyCardClick.apply(this, arguments); }, this);
@@ -118,6 +119,7 @@
 				Id: operation.result.id || me.card.get("Id"),// if is a new card, the id is given by the request
 				IdClass: me.entryType.get("id")
 			};
+
 			me.fireEvent(me.CMEVENTS.cardSaved, cardData);
 		},
 
@@ -127,6 +129,8 @@
 			} else {
 				this.onCardSelected(this.card);
 			}
+
+			this.fireEvent(this.CMEVENTS.abortedModify);
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {

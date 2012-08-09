@@ -124,6 +124,10 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 				this.loadResources();
+
+				if (_CMUIConfiguration.isFullScreenMode()) {
+					_CMUIState.onlyGrid();
+				}
 			},
 
 			loadResources: function() {

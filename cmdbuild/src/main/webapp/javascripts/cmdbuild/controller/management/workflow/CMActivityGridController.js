@@ -112,6 +112,7 @@
 			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
 				this.view.skipNextSelectFirst();
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
+				_CMUIState.onlyGridIfFullScreen();
 			} else {
 				this.callParent(arguments);
 			}

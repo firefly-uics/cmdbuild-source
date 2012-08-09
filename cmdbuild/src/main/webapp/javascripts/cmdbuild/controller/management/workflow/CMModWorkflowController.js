@@ -42,8 +42,8 @@
 				// I could be in a tab different to the first one,
 				// but to edit a new card is necessary to have the editing form.
 				// So I force the view to go on the ActivityTab
-
 				this.view.showActivityPanel();
+				_CMUIState.onlyFormIfFullScreen();
 			}
 		},
 
@@ -79,6 +79,8 @@
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 			_CMWFState.setProcessClassRef(entryType, danglingCard);
 			this.view.updateTitleForEntry(entryType);
+
+			_CMUIState.onlyGridIfFullScreen();
 		},
 
 		// override
@@ -113,6 +115,7 @@
 
 		me.grid.mon(me.gridController, "itemdblclick", function() {
 			me.activityPanelController.onModifyCardClick();
+			_CMUIState.onlyFormIfFullScreen();
 		}, me);
 
 		me.activityPanelController.setDelegate(me.gridController);

@@ -30,26 +30,6 @@
 			this.mon(this.view, ev.cloneCardButtonClick, this.onCloneCardClick, this);
 			this.mon(this.view, ev.printCardButtonClick, this.onPrintCardMenuClick, this);
 			this.mon(this.view, ev.openGraphButtonClick, this.onShowGraphClick, this);
-
-			this.mon(this.view, "activate", function() {
-				if (this.cardToLoadOnActivivate) {
-					this.onCardSelected(this.cardToLoadOnActivivate);
-				}
-			}, this);
-		},
-
-		onCardSelected: function(card) {
-			if (!this.view.formIsVisisble()) {
-				// defer the calls to update the view
-				// because there are several rendering issues
-				// when the view will be activate, do the selection
-				this.cardToLoadOnActivivate = card;
-				return;
-			} else {
-				this.cardToLoadOnActivivate = null;
-			}
-
-			this.callParent(arguments);
 		},
 
 		onRemoveCardClick: function() {
@@ -95,6 +75,13 @@
 			} else {
 				this.callParent(arguments);
 			}
+
+			_CMUIState.onlyGridIfFullScreen();
+		},
+
+		onSaveSuccess: function() {
+			this.callParent(arguments);
+			_CMUIState.onlyGridIfFullScreen();
 		},
 
 		onPrintCardMenuClick: function(format) {

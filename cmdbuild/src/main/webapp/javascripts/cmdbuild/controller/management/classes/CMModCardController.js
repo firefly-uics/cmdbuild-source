@@ -108,7 +108,7 @@
 			}
 		},
 
-		// private, implemented in subclasses
+		// protected
 		buildSubControllers: function() {}
 	});
 
@@ -139,6 +139,8 @@
 			this.view.addCardButton.updateForEntry(entryType);
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
+
+			_CMUIState.onlyGridIfFullScreen();
 		},
 
 		onGridVisible: function onCardGridVisible(visible, selection) {
@@ -211,6 +213,7 @@
 			me.mon(me.gridController, me.gridController.CMEVENTS.load, me.onGridLoad, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.itemdblclick, function() {
 				me.cardPanelController.onModifyCardClick();
+				_CMUIState.onlyFormIfFullScreen();
 			}, me);
 
 			me.subControllers.push(me.gridController);
@@ -298,6 +301,8 @@
 		this.setCard(null);
 		this.callForSubControllers("onAddCardButtonClick", p.classId);
 		this.view.activateFirstTab();
+
+		_CMUIState.onlyFormIfFullScreen();
 	}
 
 	function onCloneCard() {
