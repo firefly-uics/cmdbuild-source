@@ -2,6 +2,7 @@ package org.cmdbuild.dao.attribute;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -32,19 +33,29 @@ public class ReferenceAttribute extends AttributeImpl {
 				referenceValue = null;
 			}
 		} else if (value instanceof Number) {
-			final int intValue = ((Number) value).intValue();
+			final Number intValue = (Number) value;
 			referenceValue = createReference(intValue);
+		} else if (value instanceof CardReference) {
+			final CardReference cardReference = (CardReference) value;
+			referenceValue = createReference(cardReference.getId());
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
 		return referenceValue;
 	}
 
-	private Reference createReference(final int intValue) {
-		if (intValue <= 0) {
+	private Reference createReference(final Number id) {
+		if (id == null) {
 			return null;
 		}
-		return new Reference(getReferenceDirectedDomain(), intValue, null);
+		return createReference(id.intValue());
+	}
+
+	private Reference createReference(final int id) {
+		if (id <= 0) {
+			return null;
+		}
+		return new Reference(getReferenceDirectedDomain(), id, null);
 	}
 
 	@Override

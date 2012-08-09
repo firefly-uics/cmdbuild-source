@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMLookupType;
@@ -75,14 +74,14 @@ public class SharkTypesConverterTest {
 		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
-		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, null);
+		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, "D");
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 
 		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(src));
 
 		assertThat(dst.getId(), is(42));
 		assertThat(dst.getIdClass(), is(12));
-		assertThat(dst.getDescription(), is(StringUtils.EMPTY));
+		assertThat(dst.getDescription(), is("D"));
 	}
 
 	@Test
@@ -90,7 +89,7 @@ public class SharkTypesConverterTest {
 		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
-		final CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, null);
+		final CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, "D");
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 		final CardReference[] src = new CardReference[] { src0 };
 
@@ -100,7 +99,7 @@ public class SharkTypesConverterTest {
 		final ReferenceType dst0 = dst[0];
 		assertThat(dst0.getId(), is(42));
 		assertThat(dst0.getIdClass(), is(12));
-		assertThat(dst0.getDescription(), is(StringUtils.EMPTY));
+		assertThat(dst0.getDescription(), is("D"));
 	}
 
 	@Test
@@ -119,12 +118,18 @@ public class SharkTypesConverterTest {
 	}
 
 	@Test
-	public void referenceTypesAreConvertedToInteger() {
+	public void referenceTypesAreConvertedToCardReferenceWithoutDescription() {
 		final ReferenceType src = new ReferenceType();
+		src.setIdClass(666);
 		src.setId(42);
+		final CMClass srcClass = mock(CMClass.class);
+		when(srcClass.getName()).thenReturn("CN");
+		when(srcClass.getId()).thenReturn(666L);
+		when(dataView.findClassById(666L)).thenReturn(srcClass);
 
-		final Integer dst = Integer.class.cast(converter.fromWorkflowType(src));
-		assertThat(dst, is(42));
+		final CardReference dst = CardReference.class.cast(converter.fromWorkflowType(src));
+		assertThat(dst.getId(), is(42L));
+		assertThat(dst.getClassName(), is("CN"));
 
 		assertThat(converter.fromWorkflowType(new ReferenceType()), is(nullValue()));
 	}
