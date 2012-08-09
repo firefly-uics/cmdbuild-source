@@ -13,33 +13,39 @@
 
 			this.activityTab = new CMDBuild.view.management.workflow.CMActivityPanel({
 				title: CMDBuild.Translation.management.modworkflow.tabs.card,
+				border: false,
 				withToolBar: true,
 				withButtons: true
 			});
 
 			this.cardHistoryPanel = isEnabled(disabledTabs, tabs.history) ? new CMDBuild.view.management.workflow.CMActivityHistoryTab({
-				title: CMDBuild.Translation.management.modworkflow.tabs.history
+				title: CMDBuild.Translation.management.modworkflow.tabs.history,
+				border: false
 			}) : null;
 
 			this.openNotePanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.common.widgets.CMOpenNotes({
-				title: CMDBuild.Translation.management.modworkflow.tabs.notes
+				title: CMDBuild.Translation.management.modworkflow.tabs.notes,
+				border: false
 			}) : null;
 
 			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
 				title: CMDBuild.Translation.management.modworkflow.tabs.relations,
+				border: false,
 				cmWithAddButton: false,
 				cmWithEditRelationIcons: false
 			}) : null;
 
 			this.openAttachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.common.widgets.CMOpenAttachment({
-				title: CMDBuild.Translation.management.modworkflow.tabs.attachments
+				title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
+				border: false,
 			}) : null;
 
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
+				cls: "cmborderright",
 				activeTab: 0,
-				border: true,
 				frame: false,
+				border: false,
 				split: true,
 				items: [
 					this.activityTab,
@@ -60,7 +66,6 @@
 		initComponent : function() {
 			Ext.apply(this,{
 				frame: false,
-				border: false,
 				layout: 'border',
 				items : [this.acutalPanel, this.docPanel]
 			});
@@ -186,11 +191,12 @@
 				hideMode: "offsets",
 				region: "east",
 				frame: true,
-				border: false,
+				border: true,
 				collapsible: true,
 				collapsed: true,
 				animCollapse: false,
 				split: true,
+				margin: "0 5 5 0",
 				title: CMDBuild.Translation.management.modworkflow.activitydocumentation,
 				html: ""
 			});

@@ -10,6 +10,7 @@
 
 <!-- STATES -->
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMWorkflowState.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/state/CMUIState.js"></script>
 
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->

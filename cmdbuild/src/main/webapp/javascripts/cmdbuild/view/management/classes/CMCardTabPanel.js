@@ -12,12 +12,14 @@
 
 			this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel({
 				title: tr.tabs.card,
+				border: false,
 				withToolBar: true,
 				withButtons: true
 			});
 
 			this.cardHistoryPanel = isEnabled(disabledTabs, tabs.history) ? new CMDBuild.view.management.classes.CMCardHistoryTab({
 				title: tr.tabs.history,
+				border: false,
 				disabled: true
 			}) : null;
 
@@ -28,6 +30,7 @@
 
 			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
 				title: tr.tabs.relations,
+				border: false,
 				disabled: true
 			}) : null;
 
