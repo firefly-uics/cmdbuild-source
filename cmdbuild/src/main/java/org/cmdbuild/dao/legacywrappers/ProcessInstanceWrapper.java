@@ -19,6 +19,7 @@ import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessClass;
@@ -36,7 +37,11 @@ import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 import org.enhydra.shark.api.common.SharkConstants;
 
+import bsh.EvalError;
+
 public class ProcessInstanceWrapper extends CardWrapper implements UserProcessInstance, UserProcessInstanceDefinition {
+
+	private static final String UNRESOLVABLE_PARTICIPANT_GROUP = StringUtils.EMPTY;
 
 	private static final String FLOW_STATUS_LOOKUP = "FlowStatus";
 
@@ -298,9 +303,31 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	private String extractActivityParticipantGroup(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
 		final CMActivity activity = findActivity(activityInfo.getActivityDefinitionId());
-		final String performerExpression = activity.getFirstRolePerformer().getName();
-		// TODO Check if participant is a role in the xpdl or not!
-		return performerExpression;
+		final ActivityPerformer performer = activity.getFirstNonAdminPerformer();
+		switch (performer.getType()) {
+		case ROLE:
+			return performer.getValue();
+		case EXPRESSION:
+			try {
+				return evaluatePerformerExpression(performer.getValue());
+			} catch (final Exception e) {
+				// LOG and ignore
+			}
+		}
+		return UNRESOLVABLE_PARTICIPANT_GROUP;
+	}
+
+	/*
+	 * It can be extracted to a strategy, optimized, etc.
+	 */
+	private String evaluatePerformerExpression(final String expression) throws CMWorkflowException, EvalError {
+		final String procInstId = getProcessInstanceId();
+		final Map<String, Object> vars = workflowService.getRawProcessInstanceVariables(procInstId);
+		final bsh.Interpreter interpreter = new bsh.Interpreter();
+		for (final Map.Entry<String, Object> entry : vars.entrySet()) {
+			interpreter.set(entry.getKey(), entry.getValue());
+		}
+		return interpreter.eval(expression).toString();
 	}
 
 	private CMActivity findActivity(final String activityDefinitionId) throws CMWorkflowException {

@@ -50,7 +50,7 @@ public class XpdlActivityWrapper implements CMActivity {
 	@Override
 	public List<ActivityPerformer> getPerformers() {
 		final List<ActivityPerformer> out = new ArrayList<ActivityPerformer>();
-		out.add(getFirstRolePerformer());
+		out.add(getFirstNonAdminPerformer());
 		if (isAdminStart()) {
 			out.add(ActivityPerformer.newAdminPerformer());
 		}
@@ -78,8 +78,13 @@ public class XpdlActivityWrapper implements CMActivity {
 	}
 
 	@Override
-	public ActivityPerformer getFirstRolePerformer() {
-		return ActivityPerformer.newRolePerformer(inner.getFirstPerformer());
+	public ActivityPerformer getFirstNonAdminPerformer() {
+		final String performerString = inner.getFirstPerformer();
+		if (inner.getProcess().hasRoleParticipant(performerString)) {
+			return ActivityPerformer.newRolePerformer(performerString);
+		} else {
+			return ActivityPerformer.newExpressionPerformer(performerString);
+		}
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.cmdbuild.workflow.xpdl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.Activity;
@@ -25,10 +26,20 @@ public class XpdlActivity implements XpdlExtendedAttributesHolder {
 	private final XpdlExtendedAttributes extendedAttributes;
 
 	XpdlActivity(final XpdlProcess process, final Activity activity) {
+		Validate.notNull(process);
+		Validate.notNull(activity);
 		this.doc = process.getDocument();
 		this.process = process;
 		this.inner = activity;
 		this.extendedAttributes = new XpdlActivityExtendedAttributes(this);
+	}
+
+	public XpdlProcess getProcess() {
+		return process;
+	}
+
+	public XpdlDocument getDocument() {
+		return doc;
 	}
 
 	public String getId() {

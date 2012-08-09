@@ -2,10 +2,13 @@ package org.cmdbuild.workflow.xpdl;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
+import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.ActivitySet;
 import org.enhydra.jxpdl.elements.DataField;
+import org.enhydra.jxpdl.elements.Participant;
 import org.enhydra.jxpdl.elements.Transition;
 import org.enhydra.jxpdl.elements.WorkflowProcess;
 
@@ -22,6 +25,8 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 	private final XpdlApplications applications;
 
 	XpdlProcess(final XpdlDocument doc, final WorkflowProcess workflowProcess) {
+		Validate.notNull(doc);
+		Validate.notNull(workflowProcess);
 		this.doc = doc;
 		this.inner = workflowProcess;
 		this.activities = new XpdlProcessActivities(this);
@@ -126,4 +131,18 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 		return applications.createApplication(id);
 	}
 
+	public void addRoleParticipant(final String participantId) {
+		doc.turnReadWrite();
+		Participant p = (Participant) inner.getParticipants().generateNewElement();
+		p.setId(participantId);
+		// Default but better safe than sorry
+		p.getParticipantType().setTypeROLE();
+		inner.getParticipants().add(p);
+	}
+
+	public boolean hasRoleParticipant(final String participantId) {
+		final Participant p = inner.getParticipants().getParticipant(participantId);
+		return (p != null) && (XPDLConstants.PARTICIPANT_TYPE_ROLE.equals(p.getParticipantType().getType()))
+				|| doc.hasRoleParticipant(participantId);
+	}
 }

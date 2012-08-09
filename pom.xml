@@ -10,6 +10,7 @@
 	<url>http://www.cmdbuild.org</url>
 	<properties>
 		<axis.version>1.4</axis.version>
+		<beanshell.version>2.0b4</beanshell.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-validator.version>1.3.1</commons-validator.version>
 		<cxf.version>2.3.7</cxf.version>
@@ -55,6 +56,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.beanshell</groupId>
+				<artifactId>bsh</artifactId>
+				<version>${beanshell.version}</version>
+			</dependency>
+
 			<!-- provided by jcl-over-slf4j -->
 			<dependency>
 				<groupId>commons-logging</groupId>

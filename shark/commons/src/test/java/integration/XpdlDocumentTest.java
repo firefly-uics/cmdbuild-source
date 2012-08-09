@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
@@ -115,6 +117,9 @@ public class XpdlDocumentTest extends AbstractXpdlTest {
 		p = pkg.getParticipant(TEST_SYSTEM_PARTICIPANT_ID);
 		assertThat(p.getId(), is(TEST_SYSTEM_PARTICIPANT_ID));
 		assertThat(p.getParticipantType().getType(), is(XPDLConstants.PARTICIPANT_TYPE_SYSTEM));
+
+		assertTrue(xpdlDocument.hasRoleParticipant(TEST_ROLE_PARTICIPANT_ID));
+		assertFalse(xpdlDocument.hasRoleParticipant(TEST_SYSTEM_PARTICIPANT_ID));
 	}
 
 }

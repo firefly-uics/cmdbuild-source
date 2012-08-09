@@ -38,7 +38,9 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	protected static final String DEFAULT_SCOPE = StringUtils.EMPTY;
 	protected static final String LAST_VERSION = StringUtils.EMPTY;
 
-	private TypesConverter variableConverter;
+	private static final TypesConverter IDENTITY_TYPES_CONVERTER = new IdentityTypesConverter();
+
+	private TypesConverter typesConverter;
 
 	protected abstract class TransactedExecutor<T> {
 		public T execute() throws CMWorkflowException {
@@ -76,7 +78,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	protected AbstractSharkService(final Properties props) {
 		configureSharkInterfaceWrapper(props);
-		variableConverter = new IdentityTypesConverter();
+		typesConverter = IDENTITY_TYPES_CONVERTER;
 	}
 
 	private void configureSharkInterfaceWrapper(final Properties props) {
@@ -94,7 +96,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	public void setVariableConverter(final TypesConverter variableConverter) {
 		Validate.notNull(variableConverter);
-		this.variableConverter = variableConverter;
+		this.typesConverter = variableConverter;
 	}
 
 	@Override
@@ -306,6 +308,15 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	@Override
 	public Map<String, Object> getProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
+		return getProcessInstanceVariables(procInstId, typesConverter);
+	}
+
+	@Override
+	public Map<String, Object> getRawProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
+		return getProcessInstanceVariables(procInstId, IDENTITY_TYPES_CONVERTER);
+	}
+
+	private Map<String, Object> getProcessInstanceVariables(final String procInstId, final TypesConverter variableConverter) throws CMWorkflowException {
 		return new TransactedExecutor<Map<String, Object>>() {
 			@Override
 			protected Map<String, Object> command() throws Exception {
@@ -339,7 +350,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			throws Exception {
 		for (final String name : variables.keySet()) {
 			final Object nativeValue = variables.get(name);
-			final Object sharkValue = variableConverter.toWorkflowType(nativeValue);
+			final Object sharkValue = typesConverter.toWorkflowType(nativeValue);
 			wapi().assignProcessInstanceAttribute(handle(), procInstId, name, sharkValue);
 		}
 	}

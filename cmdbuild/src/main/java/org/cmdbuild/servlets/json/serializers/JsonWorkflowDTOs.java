@@ -31,7 +31,7 @@ public class JsonWorkflowDTOs {
 		}
 
 		public String getPerformerName() {
-			return activity.getFirstRolePerformer().getName();
+			return activity.getFirstNonAdminPerformer().getValue();
 		}
 
 		public String getDescription() {

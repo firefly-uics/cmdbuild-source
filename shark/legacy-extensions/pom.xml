@@ -12,10 +12,6 @@
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Legacy Extensions</name>
 
-	<properties>
-		<beanshell.version>2.0b4</beanshell.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>net.sourceforge.sharkwf</groupId>
@@ -65,7 +61,6 @@
 		<dependency>
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh</artifactId>
-			<version>${beanshell.version}</version>
 		</dependency>
 
 		<dependency>
