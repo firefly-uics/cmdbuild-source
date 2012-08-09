@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static utils.XpdlTestUtils.randomName;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -197,7 +196,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(false));
 		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(0L));
-		assertThat((Date) readVariables.get(A_DATE), is(notNullValue()));
+		assertThat(readVariables.get(A_DATE), is(notNullValue()));
 		assertThat((Double) readVariables.get(A_FLOAT), equalTo(0.0));
 
 		assertThat((ReferenceType) readVariables.get(A_REFERENCE), equalTo(new ReferenceType()));

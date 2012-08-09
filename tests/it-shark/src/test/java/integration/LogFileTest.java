@@ -1,14 +1,14 @@
 package integration;
 
 import static java.lang.String.format;
-import static org.cmdbuild.workflow.LoggerEventManager.ACTIVITY_CLOSED_LOG;
-import static org.cmdbuild.workflow.LoggerEventManager.ACTIVITY_STARTED_LOG;
-import static org.cmdbuild.workflow.LoggerEventManager.PROCESS_CLOSED_LOG;
-import static org.cmdbuild.workflow.LoggerEventManager.PROCESS_STARTED_LOG;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static utils.LoggerEventManager.ACTIVITY_CLOSED_LOG;
+import static utils.LoggerEventManager.ACTIVITY_STARTED_LOG;
+import static utils.LoggerEventManager.PROCESS_CLOSED_LOG;
+import static utils.LoggerEventManager.PROCESS_STARTED_LOG;
 import static utils.XpdlTestUtils.randomName;
 
 import java.io.IOException;

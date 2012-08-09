@@ -1,5 +1,6 @@
-package org.cmdbuild.workflow;
+package utils;
 
+import org.cmdbuild.workflow.SharkEventsDelegator;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class LoggerEventsDelegator extends SharkEventsDelegator {
