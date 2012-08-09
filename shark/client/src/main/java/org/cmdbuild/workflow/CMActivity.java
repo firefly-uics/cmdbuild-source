@@ -24,11 +24,11 @@ public interface CMActivity extends CMActivityWidgetsHolder {
 	List<ActivityPerformer> getPerformers();
 
 	/**
-	 * Returns the first role performer defined for this activity.
+	 * Returns the first non-admin performer defined for this activity.
 	 * 
-	 * @return role performer
+	 * @return role or expression performer
 	 */
-	ActivityPerformer getFirstRolePerformer();
+	ActivityPerformer getFirstNonAdminPerformer();
 
 	/**
 	 * Returns an ordered list of variables to be displayed on the form.

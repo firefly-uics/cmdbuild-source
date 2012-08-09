@@ -70,8 +70,7 @@ public interface CMWorkflowService {
 	/**
 	 * Retrieve informations about an open process instance.
 	 * 
-	 * @param procInstId
-	 *            process instance id
+	 * @param procInstId process instance id
 	 * @return
 	 * @throws CMWorkflowException
 	 */
@@ -79,7 +78,24 @@ public interface CMWorkflowService {
 
 	void setProcessInstanceVariables(String procInstId, Map<String, Object> variables) throws CMWorkflowException;
 
+	/**
+	 * Returns the process instance variables with type conversion.
+	 * 
+	 * @param procInstId process instance id
+	 * @return process instance variables
+	 * @throws CMWorkflowException
+	 */
 	Map<String, Object> getProcessInstanceVariables(String procInstId) throws CMWorkflowException;
+
+	/**
+	 * Returns the process instance variables as they are present in the
+	 * workflow server, with no conversion.
+	 * 
+	 * @param procInstId process instance id
+	 * @return process instance variables
+	 * @throws CMWorkflowException
+	 */
+	Map<String, Object> getRawProcessInstanceVariables(String procInstId) throws CMWorkflowException;
 
 	/**
 	 * Returns a list of open activities for a process instance.

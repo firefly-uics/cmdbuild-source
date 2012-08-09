@@ -109,21 +109,6 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-
-	@JSONExported
-	public JSONObject getSubclasses(
-			JSONObject serializer,
-			@Parameter("ClassId") int classId,
-			ITableFactory tf ) throws JSONException, AuthException {
-		for(ITable table : tf.fullTree().branch(tf.get(classId).getName())) {
-			JSONObject element = new JSONObject();
-			element.put("classId", table.getId());
-			element.put("className", table.getDescription());
-			serializer.append("subclasses", element);
-		}
-		return serializer;
-	}
-
 	@JSONExported
 	public JSONObject getAllClasses(
 			JSONObject serializer,

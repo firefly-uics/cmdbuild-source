@@ -10,6 +10,7 @@ import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.jxpdl.XMLInterface;
 import org.enhydra.jxpdl.XMLInterfaceImpl;
+import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.DataField;
 import org.enhydra.jxpdl.elements.DataTypes;
 import org.enhydra.jxpdl.elements.Package;
@@ -216,9 +217,14 @@ public class XpdlDocument {
 		turnReadWrite();
 		Participant p = (Participant) pkg.getParticipants().generateNewElement();
 		p.setId(participantId);
-		p.getParticipantType().setTypeROLE(); // Default but better safe than
-		// sorry
+		// Default but better safe than sorry
+		p.getParticipantType().setTypeROLE();
 		pkg.getParticipants().add(p);
+	}
+
+	public boolean hasRoleParticipant(final String participantId) {
+		final Participant p = pkg.getParticipants().getParticipant(participantId);
+		return (p != null) && (XPDLConstants.PARTICIPANT_TYPE_ROLE.equals(p.getParticipantType().getType()));
 	}
 
 	public void addSystemParticipant(final String participantId) {

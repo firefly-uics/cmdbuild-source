@@ -2,6 +2,7 @@ package integration;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static utils.XpdlTestUtils.randomName;
@@ -131,4 +132,16 @@ public class XpdlProcessTest extends AbstractXpdlTest {
 		assertThat(startingManualActivities.get(0).getId(), is("NI"));
 	}
 
+
+	@Test
+	public void participantsAreQueriedFromProcessOrDocument() {
+		final XpdlProcess xpdlProcess = xpdlDocument.createProcess(randomName());
+		xpdlDocument.addRoleParticipant("DocumentRole");
+		xpdlDocument.addSystemParticipant("DocumentSystem");
+		xpdlProcess.addRoleParticipant("ProcessRole");
+
+		assertTrue(xpdlProcess.hasRoleParticipant("DocumentRole"));
+		assertTrue(xpdlProcess.hasRoleParticipant("ProcessRole"));
+		assertFalse(xpdlProcess.hasRoleParticipant("DocumentSystem"));
+	}
 }
