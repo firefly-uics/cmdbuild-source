@@ -176,11 +176,11 @@
             },
             ".CreateModifyCard": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "cql": "<em>Card CQL selector</em>",
-                  "readOnly": "<em>Read only</em>"
+                  "target": "Целевой класс",
+                  "cql": "CQL отбор",
+                  "readOnly": "Только чтение"
                },
-               "title": "<em>Create or Modify Card</em>"
+               "title": "Создать или редактировать карточку"
             },
             "commonFields": {
                "active": "Активный",
@@ -194,91 +194,91 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "<em>The chart is not well configured</em>"
+                "wrongConfiguration": "Ошибка в настройке диаграммы"
              },
              "availableCharts": {
-                "gauge": "<em>Gauge</em>",
-                "pie": "<em>Pie</em>",
-                "bar": "<em>Bar</em>",
-                "line": "<em>Line</em>"
+                "gauge": "Индикатор",
+                "pie": "Круговая",
+                "bar": "Гистограмма",
+                "line": "График"
              },
              "buttons": {
-                "add": "<em>Add Chart</em>",
-                "modify": "<em>Modify chart</em>",
-                "remove": "<em>Remove chart</em>",
-                "preview": "<em>Preview</em>"
+                "add": "Создать диаграмму",
+                "modify": "Редактировать диаграмму",
+                "remove": "Удалить диаграмму",
+                "preview": "Предпросмотр"
              },
              "fields": {
-                "active": "<em>Active</em>",
-                "autoload": "<em>Load automatically</em>",
-                "background": "<em>Background color</em>",
-                "categoryFieldset": "<em>Category axis</em>",
-                "chartType": "<em>Chart type</em>",
-                "dataSource": "<em>Data source</em>",
-                "defaultValue": "<em>Default value</em>",
-                "description": "<em>Description</em>",
-                "fieldType": "<em>Field type</em>",
-                "foreground": "<em>Foreground color</em>",
-                "fromClass": "<em>From Class</em>",
-                "labelField": "<em>Label field</em>",
-                "legend": "<em>Show legend</em>",
-                "lookupType": "<em>Lookup type</em>",
-                "max": "<em>Maximum</em>",
-                "min": "<em>Minimum</em>",
-                "name": "<em>Name</em>",
+                "active": "Активно",
+                "autoload": "Загружать автоматически",
+                "background": "Цвет фона",
+                "categoryFieldset": "Ось категорий",
+                "chartType": "Тип диаграммы",
+                "dataSource": "Источник данных",
+                "defaultValue": "Значение по умолчанию",
+                "description": "Описание",
+                "fieldType": "Тип",
+                "foreground": "Цвет",
+                "fromClass": "Из класса",
+                "labelField": "Метка",
+                "legend": "Показывать легенду",
+                "lookupType": "Перечень",
+                "max": "Максимум",
+                "min": "Минимум",
+                "name": "Имя",
                 "orientation": {
-                   "label": "<em>Orientation</em>",
+                   "label": "Положение",
                    "values": {
-                      "horizontal": "<em>Horizontal</em>",
-                      "vertical": "<em>Vertical</em>"
+                      "horizontal": "Горизонтально",
+                      "vertical": "Вертикально"
                    }
                 },
-                "required": "<em>Required</em>",
-                "steps": "<em>Steps</em>",
-                "title": "<em>Title</em>",
-                "valueField": "<em>Value field</em>",
-                "valueFieldset": "<em>Value axis</em>"
+                "required": "Обязательное",
+                "steps": "Количество положений",
+                "title": "Заголовок",
+                "valueField": "Значение",
+                "valueFieldset": "Ось значений"
              },
              "inputTypes": {
-                "BOOLEAN": "<em>Boolean</em>",
-                "DECIMAL": "<em>Decimal</em>",
-                "INTEGER": "<em>Integer</em>",
-                "DOUBLE": "<em>Double</em>",
-                "DATE": "<em>Date</em>",
-                "TIMESTAMP": "<em>Timestamp</em>",
-                "TIME": "<em>Time</em>",
-                "STRING": "<em>String</em>",
-                "TEXT": "<em>Text</em>",
-                "CHAR": "<em>Char</em>",
-                "INET": "<em>Net address</em>"
+                "BOOLEAN": "Булево",
+                "DECIMAL": "Десятичная дробь",
+                "INTEGER": "Целое число",
+                "DOUBLE": "Число двойной точности",
+                "DATE": "Дата",
+                "TIMESTAMP": "Штамп времени",
+                "TIME": "Время",
+                "STRING": "Строка",
+                "TEXT": "Текст",
+                "CHAR": "Символ",
+                "INET": "Сетевой адрес"
              },
-             "title": "<em>Charts</em>",
+             "title": "Диаграммы",
              "typeFieldOptions": {
-                "card" : "<em>Card</em>",
-                "classes" : "<em>Select from all CMDBuild classes</em>",
-                "freeInt" : "<em>Free Integer</em>",
-                "freeString" : "<em>Free String</em>",
-                "group" : "<em>Current group</em>",
-                "lookup" : "<em>Select from a lookup</em>",
-                "user" : "<em>Current user</em>"
+                "card" : "Карточка",
+                "classes" : "Выберите из всех классов CMDBuild",
+                "freeInt" : "Свободное целое число",
+                "freeString" : "Свободная строка",
+                "group" : "Текущая группа",
+                "lookup" : "Выберите из перечня",
+                "user" : "Текущий пользователь"
              }
           },
           "layout": {
-             "add": "<em>Add a column</em>",
-             "remove": "<em>Remove empty columns</em>",
-             "title": "<em>Layout</em>"
+             "add": "Создать колонку",
+             "remove": "Удалить пустые колонки",
+             "title": "Расположение"
           },
           "properties": {
-             "add": "<em>Add Dashboard</em>",
-             "modify": "<em>Modify Dashboard</em>",
-             "remove": "<em>Remove Dashboard</em>",
+             "add": "Создать панель",
+             "modify": "Редактировать панель",
+             "remove": "Удалить панель",
              "fields": {
-                "name": "<em>Name</em>",
-                "description": "<em>Description</em>",
-                "groups": "<em>Available for groups</em>"
+                "name": "Имя",
+                "description": "Описание",
+                "groups": "Доступные группы"
              }
           },
-          "title": "<em>Dashboard</em>"
+          "title": "Панель"
       },
       "modLookup": {
          "add_lookuptype": "Добавить перечень",
@@ -427,7 +427,7 @@
          "available_elements": "Доступные элементы",
          "availabletree": {
             "class": "Классы",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "Панели",
             "processclass": "Процессы",
             "report": "Отчеты",
             "view": "Виды"
@@ -658,7 +658,7 @@
          "add": "Добавить",
          "as": "как",
          "close": "Закрыть",
-         "load": "<em>Load</em>",
+         "load": "Загрузить",
          "modify": "Редактировать",
          "print": "Распечатать",
          "remove": "Удалить",
@@ -706,9 +706,9 @@
       "tbd_body": "Задача выполняется",
       "tbd_title": "Задача выполняется",
       "tooltip": {
-         "editParameters": "<em>Edit the parameters</em>",
-         "reload": "<em>Reload</em>",
-         "showData": "<em>Show data</em>"
+         "editParameters": "Редактировать параметры",
+         "reload": "Обновить",
+         "showData": "Показать данные"
       },
       "tree_names": {
          "class": "Стандартный",
@@ -1164,7 +1164,7 @@
                "subjectfld": "Тема",
                "subjecthdr": "Тема",
                "tofld": "Кому",
-               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
+               "updateTemplateConfirm":"Это действие удалит все неотправленные сообщения",
                "viewicon": "Просмотреть",
                "mailsAreChanged": "Сгенерированные почтовые сообщения изменены.",
                "regenerates": "Повторить генерацию почтовых сообщений."
@@ -1190,7 +1190,7 @@
          "status": "Статус",
          "statuses": {
             "all": "Все",
-            "closed.aborted": "<em>Aborted</em>",
+            "closed.aborted": "Прерванные",
             "closed.completed": "Завершенные",
             "open.not_running.suspended": "Приостановленные",
             "open.running": "Открытые"
