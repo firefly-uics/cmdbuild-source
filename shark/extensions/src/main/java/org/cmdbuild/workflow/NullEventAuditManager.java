@@ -45,21 +45,21 @@ abstract class NullEventAuditManager implements EventAuditManagerInterface {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List listActivityHistoryInfoWhere(final WMSessionHandle shandle, final String sqlWhere, final int startAt,
 			final int limit, final boolean fillVariablesInfo) throws EventAuditException {
 		return null;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List listProcessDefinitionHistoryInfoWhere(final WMSessionHandle shandle, final String factoryName,
 			final boolean countProcessInstances) throws EventAuditException {
 		return null;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List listProcessHistoryInfoWhere(final WMSessionHandle shandle, final String sqlWhere, final int startAt,
 			final int limit, final boolean fillActivitiesInfo, final boolean fillActivitiyVariablesInfo,
 			final boolean fillVariablesInfo) throws EventAuditException {
@@ -133,14 +133,14 @@ abstract class NullEventAuditManager implements EventAuditManagerInterface {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List restoreActivityHistory(final WMSessionHandle shandle, final String procId, final String actId)
 			throws EventAuditException {
 		return null;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public List restoreProcessHistory(final WMSessionHandle shandle, final String procId) throws EventAuditException {
 		return null;
 	}

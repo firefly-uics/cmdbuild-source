@@ -1,7 +1,10 @@
-package org.cmdbuild.workflow;
+package utils;
 
 import static java.lang.String.format;
+import static utils.TestLoggerConstants.LOGGER_CATEGORY;
+import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
+import org.cmdbuild.workflow.CMEventManager;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class LoggerEventManager implements CMEventManager {
@@ -50,7 +53,7 @@ public class LoggerEventManager implements CMEventManager {
 	}
 
 	private void logWithId(final String message, final String id) {
-		cus.info(TestLoggerConstants.UNUSED_SHANDLE, TestLoggerConstants.LOGGER_CATEGORY, format("%s: %s", message, id));
+		cus.info(UNUSED_SHANDLE, LOGGER_CATEGORY, format("%s: %s", message, id));
 	}
 
 }

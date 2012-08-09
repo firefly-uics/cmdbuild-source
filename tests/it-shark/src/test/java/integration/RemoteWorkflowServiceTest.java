@@ -48,23 +48,25 @@ public class RemoteWorkflowServiceTest extends AbstractRemoteSharkServiceTest {
 	}
 
 	/**
-	 * Uses {@ref LookupType} because the service was initialized with
-	 * the {@ref IdentityTypesConverter}.
+	 * Uses {@ref LookupType} because the service was initialized with the
+	 * {@ref IdentityTypesConverter}.
 	 */
 	@Test
 	public void lookupVariablesCanBeSaved() throws CMWorkflowException {
-		XpdlProcess process = xpdlDocument.createProcess(randomName());
+		final XpdlProcess process = xpdlDocument.createProcess(randomName());
 
 		process.createActivity(randomName());
 
 		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
 
 		// TODO CMLookup it should be used!
-		ws.setProcessInstanceVariables(procInstId, new HashMap<String, Object>() {{
+		ws.setProcessInstanceVariables(procInstId, new HashMap<String, Object>() {
+			{
 				put("lookupVar", new LookupType(42, "type", "desc", "code"));
-			}});
+			}
+		});
 
-		LookupType val = (LookupType) ws.getProcessInstanceVariables(procInstId).get("lookupVar");
+		final LookupType val = (LookupType) ws.getProcessInstanceVariables(procInstId).get("lookupVar");
 		assertThat(val.getId(), is(42));
 		assertThat(val.getType(), is("type"));
 		assertThat(val.getDescription(), is("desc"));
@@ -72,23 +74,25 @@ public class RemoteWorkflowServiceTest extends AbstractRemoteSharkServiceTest {
 	}
 
 	/**
-	 * Uses {@ref ReferenceType} because the service was initialized with
-	 * the {@ref IdentityTypesConverter}.
+	 * Uses {@ref ReferenceType} because the service was initialized with the
+	 * {@ref IdentityTypesConverter}.
 	 */
 	@Test
 	public void referenceVariablesCanBeSaved() throws CMWorkflowException {
-		XpdlProcess process = xpdlDocument.createProcess(randomName());
+		final XpdlProcess process = xpdlDocument.createProcess(randomName());
 
 		process.createActivity(randomName());
 
 		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
 
 		// TODO CMLookup it should be used!
-		ws.setProcessInstanceVariables(procInstId, new HashMap<String, Object>() {{
+		ws.setProcessInstanceVariables(procInstId, new HashMap<String, Object>() {
+			{
 				put("referenceVar", new ReferenceType(42, 666, "desc"));
-			}});
+			}
+		});
 
-		ReferenceType val = (ReferenceType) ws.getProcessInstanceVariables(procInstId).get("referenceVar");
+		final ReferenceType val = (ReferenceType) ws.getProcessInstanceVariables(procInstId).get("referenceVar");
 		assertThat(val.getId(), is(42));
 		assertThat(val.getIdClass(), is(666));
 		assertThat(val.getDescription(), is("desc"));
@@ -96,7 +100,7 @@ public class RemoteWorkflowServiceTest extends AbstractRemoteSharkServiceTest {
 
 	@Test
 	public void variablesNotDefinedInTheXpdlCanBeSettedAnyway() throws Exception {
-		XpdlProcess process = xpdlDocument.createProcess(randomName());
+		final XpdlProcess process = xpdlDocument.createProcess(randomName());
 		process.createActivity(randomName());
 
 		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
