@@ -32,7 +32,7 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 			header : this.translation.report,
 			sortable : false,
 			dataIndex : "type",
-			width: this.exportMode ? 50 : 100,
+			width: this.exportMode ? 60 : 110,
 			fixed: true,
 			tdCls: "grid-button",
 			renderer: Ext.Function.bind(loadReportIcons, this),
@@ -103,7 +103,7 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 
 function loadReportIcons(reportType,x,store) {
 	if(reportType=='CUSTOM') {
-		var html ="";
+		var html ='<div class="cmcenter">';
 		if (this.exportMode) {
 			html += '<img qtip="Sql" style="cursor:pointer" class="sql" src="images/icons/ico_sql.png"/>&nbsp;&nbsp;';
 			html += '<img qtip="Zip" style="cursor:pointer" class="zip" src="images/icons/ico_zip.png"/>&nbsp;&nbsp;';
@@ -113,6 +113,7 @@ function loadReportIcons(reportType,x,store) {
 			html += '<img qtip="Rich Text Format" style="cursor:pointer" class="rtf" src="images/icons/ico_rtf.png"/>&nbsp;&nbsp;';
 			html += '<img qtip="Csv" style="cursor:pointer" class="csv" src="images/icons/ico_csv.png"/>&nbsp;&nbsp;';
 		};
+		html += "</div>;"
 		return html;
 	} else {
 		//openoffice

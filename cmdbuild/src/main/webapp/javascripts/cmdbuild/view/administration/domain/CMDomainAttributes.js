@@ -32,7 +32,7 @@
 		},
 		
 		onAddAttributeClick: function() {
-			this.form.onAddAttributeClick();
+			this.form.onAddAttributeClick(params=null, enableAll=true);
 			this.grid.getSelectionModel().deselectAll();
 		}
 	});

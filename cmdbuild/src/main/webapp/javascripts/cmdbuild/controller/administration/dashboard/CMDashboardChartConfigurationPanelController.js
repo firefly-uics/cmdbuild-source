@@ -82,9 +82,7 @@
 			var chartWindow = new CMDBuild.view.management.dashboard.CMChartWindow({
 				chartConfiguration: formData,
 				store: store,
-				title: formData.name,
-				width: "80%",
-				height: "80%"
+				title: formData.name
 			}).show();
 
 			if (chartWindow.chartPortlet) {

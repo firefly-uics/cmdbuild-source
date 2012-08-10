@@ -823,6 +823,9 @@ em {
 	color: #555555;
 }
 
+.cmcenter {
+	text-align: center;
+}
 /*
 .x-form-display-field {
 	padding: 2px 0 0 0 ! important;

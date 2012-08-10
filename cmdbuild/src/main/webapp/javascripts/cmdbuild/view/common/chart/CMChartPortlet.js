@@ -240,7 +240,7 @@
 	});
 
 	Ext.define("CMDBuild.view.management.dashboard.CMChartWindow", {
-		extend: "Ext.window.Window",
+		extend: "CMDBuild.PopupWindow",
 
 		initComponent: function() {
 			this.chartPortlet = new CMDBuild.view.management.dashboard.CMChartPortlet({

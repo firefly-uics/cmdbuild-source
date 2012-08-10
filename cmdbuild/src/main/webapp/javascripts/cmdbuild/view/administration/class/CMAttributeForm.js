@@ -10,7 +10,7 @@
 	};
 
 	function getTableType(classObj) {
-		return tableTypeMap[classObj.get("tableType")]
+		return tableTypeMap[classObj.get("tableType")];
 	}
 
 	function cannotHaveUniqueAttributes(classObj) {
@@ -481,13 +481,15 @@
 			}
 		},
 
-		onAddAttributeClick : function(params) {
+		onAddAttributeClick : function(params, enableAll) {
 			this.reset();
 			this.setDefaultValues();
 			this.hideContextualFields();
 			this.enableModify(all = true);
-			this.attributeUnique.setDisabled(cannotHaveUniqueAttributes(this.classObj));
-			this.attributeNotNull.setDisabled(cannotHaveNotNullAttributes(this.classObj));
+			if (!enableAll) {
+				this.attributeUnique.setDisabled(cannotHaveUniqueAttributes(this.classObj));
+				this.attributeNotNull.setDisabled(cannotHaveNotNullAttributes(this.classObj));
+			}
 		},
 
 		setDefaultValues: function() {
