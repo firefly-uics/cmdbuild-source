@@ -609,6 +609,10 @@ em {
 	background-image: url(../images/icons/flags/sr.png) ! important;
 }
 
+.ux-flag-nl {
+	background-image: url(../images/icons/flags/nl.png) ! important;
+}
+
 /*
  * For Ext.ux.plugins.IconCombo
  */
