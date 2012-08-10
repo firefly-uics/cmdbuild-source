@@ -84,7 +84,7 @@ public class AuthenticationService implements Authenticator {
 			final AuthInfo authInfo = new AuthInfo(authData);
 			final String username = authInfo.getUsername();
 			User user = null;
-			if (!authInfo.isSharkUser()) {
+			if (!authInfo.isPrivilegedServiceUser()) {
 				try {
 					user = UserCard.getUser(username);
 					userCtx = new UserContext(user);

@@ -78,7 +78,7 @@ public class UserCard extends LazyCard implements User {
 	public static User getUser(final AuthInfo authInfo) {
 		final String authusername;
 		final boolean elevatePrivileges;
-		if (authInfo.isSharkUser() && authInfo.hasServiceUser()) {
+		if (authInfo.isPrivilegedServiceUser() && authInfo.hasServiceUser()) {
 			authusername = authInfo.getUsername();
 			elevatePrivileges = true;
 		} else {

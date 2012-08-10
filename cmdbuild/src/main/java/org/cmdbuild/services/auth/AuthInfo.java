@@ -1,5 +1,6 @@
 package org.cmdbuild.services.auth;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +12,6 @@ import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.WorkflowService;
 
 public class AuthInfo {
 
@@ -62,27 +62,25 @@ public class AuthInfo {
 	}
 
 	private boolean isValidServiceUser() {
-		if (isSharkUser()) {
-			return true;
-		}
-		for (final String serviceUser : getServiceUsers()) {
-			if (usernameForAuthentication.equals(serviceUser)) {
-				return true;
-			}
-		}
-		return false;
+		return getServiceUsers().contains(usernameForAuthentication);
 	}
 
-	protected String[] getServiceUsers() {
+	/*
+	 * Overridden for testing purposes
+	 */
+	protected List<String> getServiceUsers() {
 		return AuthProperties.getInstance().getServiceUsers();
 	}
 
-	public boolean isSharkUser() {
-		return getSharkWSUser().equals(usernameForAuthentication);
+	public boolean isPrivilegedServiceUser() {
+		return getPrivilegedServiceUsers().contains(usernameForAuthentication);
 	}
 
-	protected String getSharkWSUser() {
-		return WorkflowService.getInstance().getSharkWSUser();
+	/*
+	 * Overridden for testing purposes
+	 */
+	protected List<String> getPrivilegedServiceUsers() {
+		return AuthProperties.getInstance().getPrivilegedServiceUsers();
 	}
 
 	public void checkOrSetDefaultGroup(final UserContext userCtx) {
