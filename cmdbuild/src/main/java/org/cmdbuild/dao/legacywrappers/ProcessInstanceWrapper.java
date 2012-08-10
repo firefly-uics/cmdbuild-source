@@ -408,6 +408,10 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		default:
 			flowStatusLookupCode = null;
 		}
+		return lookupForFlowStatusCode(flowStatusLookupCode);
+	}
+
+	public static Lookup lookupForFlowStatusCode(final String flowStatusLookupCode) {
 		return CMBackend.INSTANCE.getFirstLookupByCode(FLOW_STATUS_LOOKUP, flowStatusLookupCode);
 	}
 

@@ -17,7 +17,8 @@ import org.cmdbuild.elements.wrappers.MenuCard;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuCodeType;
 import org.cmdbuild.elements.wrappers.MenuCard.MenuType;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
-import org.cmdbuild.services.WorkflowService;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -25,14 +26,15 @@ import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.types.Metadata;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
-import org.cmdbuild.workflow.WorkflowCache;
 
 public class EAdministration {
 
 	private final UserContext userCtx;
+	private final WorkflowLogic workflowLogic;
 
 	public EAdministration(final UserContext userCtx) {
 		this.userCtx = userCtx;
+		this.workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 	}
 
 	public MenuSchema getClassMenuSchema() {
@@ -216,12 +218,8 @@ public class EAdministration {
 			if (MenuType.PROCESS.equals(child.getData().getTypeEnum())) {
 				final int cid = child.getData().getElementClassId();
 				final String cname = UserContext.systemContext().tables().get(cid).getName();
-				try {
-					if (WorkflowService.getInstance().isEnabled() && WorkflowCache.getInstance().hasProcessClass(cname)) {
-						childMenuSchema = serializeTree(child, userCtx);
-					}
-				} catch (final NullPointerException e) {
-					// shark configured but connection failed
+				if (workflowLogic.isProcessUsable(cname)) {
+					childMenuSchema = serializeTree(child, userCtx);
 				}
 			} else {
 				childMenuSchema = serializeTree(child, userCtx);

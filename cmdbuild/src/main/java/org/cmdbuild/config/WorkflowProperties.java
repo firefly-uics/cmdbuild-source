@@ -3,7 +3,6 @@ package org.cmdbuild.config;
 import java.io.IOException;
 
 import org.cmdbuild.services.Settings;
-import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
 
 public class WorkflowProperties extends DefaultProperties implements RemoteSharkService.Config {
@@ -52,6 +51,6 @@ public class WorkflowProperties extends DefaultProperties implements RemoteShark
 	@Override
 	public void store() throws IOException {
 		super.store();
-		WorkflowService.getInstance().configure();
+		// TODO it should notify the workflow service
 	}
 }

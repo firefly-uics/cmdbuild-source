@@ -1,20 +1,23 @@
 package org.cmdbuild.servlets.utils.builder;
 
+import static org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper.lookupForFlowStatus;
+import static org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper.lookupForFlowStatusCode;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.utils.CQLFacadeCompiler;
-import org.cmdbuild.workflow.WorkflowConstants;
+import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
 public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 
@@ -84,17 +87,19 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 		filter.setPrevExecutorsFilter(userCtx);
 	}
 
+	@Legacy("gonna puke... we pass the SHARK string instead of our own!")
 	private void setFlowStatus(CardQuery filter, HttpServletRequest request) {
-		final String flowStatus = request.getParameter(FILTER_FLOW_STATUS_PARAMETER);
-		final Lookup flowStatusLookup = WorkflowService.getInstance().getStatusLookupFor(flowStatus);
+		final String flowStatusCode = request.getParameter(FILTER_FLOW_STATUS_PARAMETER);
+		final Lookup flowStatusLookup = lookupForFlowStatusCode(flowStatusCode);
 		if (flowStatusLookup != null) {
 			filter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, flowStatusLookup.getId());
 		} else {
-			//need to select all the cards, and "clear" the filtering by FlowStatus
+			// this is "all"... we need to select all the cards, and "clear" the filtering by FlowStatus
 			filter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.DIFFERENT,
-				String.valueOf(WorkflowService.getInstance().getStatusLookupFor(WorkflowConstants.StateClosedTerminated).getId()),
-				String.valueOf(WorkflowService.getInstance().getStatusLookupFor(WorkflowConstants.StateClosedAborted).getId())
+				String.valueOf(lookupForFlowStatus(WSProcessInstanceState.TERMINATED).getId()),
+				String.valueOf(lookupForFlowStatus(WSProcessInstanceState.ABORTED).getId())
 			);
 		}
 	}
+
 }

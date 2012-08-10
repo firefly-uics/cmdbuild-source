@@ -22,8 +22,6 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.servlets.resource.OutSimpleXML;
-import org.cmdbuild.workflow.utils.SimpleXMLDoc;
 import org.json.JSONObject;
 
 public class MethodParameterResolver {
@@ -89,18 +87,6 @@ public class MethodParameterResolver {
 					out = "";
 				}
 				return out;
-			}
-			@Override
-			boolean isRequired(Annotation arg0) {
-				return false;
-			}
-		},
-		OUTXML(OutSimpleXML.class){ // REST ONLY
-			@SuppressWarnings("unchecked")
-			@Override
-			Object getObj(Annotation annot, Class arg1, HttpServletRequest arg2) {
-				String rootTagName = ((OutSimpleXML)annot).value();
-				return new SimpleXMLDoc(rootTagName);
 			}
 			@Override
 			boolean isRequired(Annotation arg0) {

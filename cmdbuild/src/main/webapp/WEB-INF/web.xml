@@ -61,23 +61,6 @@
 		<listener-class>org.cmdbuild.listeners.RequestListener</listener-class>
 	</listener>
 
-    <servlet>
-    	<servlet-name>SharkRestEndpoint</servlet-name>
-    	<servlet-class>org.cmdbuild.servlets.RestServlet</servlet-class>
-    	<init-param><param-name>resourcesPackage</param-name><param-value>org.cmdbuild.servlets.resource.shark</param-value></init-param>
-    	<init-param>
-    		<param-name>resources</param-name>
-    		<param-value>EventAudit,StoredProcedureToolAgentExecutor,CmdbuildStruct,SuspendProcess,SharkReportReader,CreateReportToolAgentExecutor</param-value>
-    	</init-param>
-        <init-param><param-name>httpauth-user</param-name><param-value>sharkUGM</param-value></init-param>
-        <init-param><param-name>httpauth-pwd</param-name><param-value>sharkUGM</param-value></init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>SharkRestEndpoint</servlet-name>
-        <url-pattern>/shark/*</url-pattern>
-    </servlet-mapping>
-
 	<servlet>
 		<servlet-name>jsonDispatcher</servlet-name>
 		<servlet-class>org.cmdbuild.servlets.JSONDispatcher</servlet-class>
