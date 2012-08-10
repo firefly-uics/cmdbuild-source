@@ -137,54 +137,65 @@ function canBeBlank(attribute) {
 	return !((attribute.fieldmode == "required") || attribute.isnotnull);
 };
 
+Ext.define("CMDBuild.Management.LookupHiddenField", {
+	extend: "Ext.form.Hidden",
+
+	updateParentsIfLoaded: function() {
+		var value = this.getValue();
+
+		if (value) {
+			value = parseInt(value);
+		}
+
+		if (this.lastCombo) {
+			this.lastCombo.setValueAndUpdateParents(value);
+		}
+	},
+
+	filterByParentId: function(lastComboId) {
+		this.setValueAndFireChange(lastComboId);
+	},
+
+	chainedClear: function() {
+		this.setValueAndFireChange("");
+	},
+
+	// The hidden field is never given the focus, so it never fires the change and blur events,
+	// thus not updating filtered references depending on it
+	setValueAndFireChange: function(newValue) {
+		var oldValue = this.getValue() || "";
+		if (oldValue != newValue) {
+			this.setValue(newValue, true);
+			this.fireEvent('change', this, newValue, oldValue);
+			this.fireEvent('blur', this);
+		}
+	},
+
+	setValue: function(value, dontUpdateParents) {
+		if (value != null 
+				&& typeof value == "object") {
+
+			value = value.id;
+		}
+
+		this.callParent([value]);
+
+		if (!dontUpdateParents) {
+			this.updateParentsIfLoaded();
+		}
+	},
+
+	setParentIdAndFilterStore: Ext.emptyFn
+});
+
 // private
 function buildHiddenField(attribute) {
-	var hiddenField = new Ext.form.Hidden({
+	return new CMDBuild.Management.LookupHiddenField({
 		CMAttribute: attribute,
 		name: attribute.name,
 		allowBlank: canBeBlank(attribute),
-
-		updateParentsIfLoaded: function() {
-			var value = this.getValue();
-			value = parseInt(value);
-			if (this.lastCombo) {
-				this.lastCombo.setValueAndUpdateParents(value);
-			} else {
-				CMDBuild.log.error("Last combo not set");
-			}
-		},
-
-		filterByParentId: function(lastComboId) {
-			this.setValueAndFireChange(lastComboId);
-		},
-
-		chainedClear: function() {
-			this.setValueAndFireChange("");
-		},
-
-		// The hidden field is never given the focus, so it never fires the change and blur events,
-		// thus not updating filtered references depending on it
-		setValueAndFireChange: function(newValue) {
-			var oldValue = this.getValue() || "";
-			if (oldValue != newValue) {
-				this.setValue(newValue, true);
-				this.fireEvent('change', this, newValue, oldValue);
-				this.fireEvent('blur', this);
-			}
-		},
-
-		setParentIdAndFilterStore: Ext.emptyFn
+		value: null
 	});
-
-	hiddenField.setValue = Ext.Function.createSequence(hiddenField.setValue, 
-			function(value, dontUpdateParents) {
-				if (!dontUpdateParents) {
-					hiddenField.updateParentsIfLoaded();
-				}
-			}
-	);
-	
-	return hiddenField;
 };
 
 //private
@@ -193,22 +204,26 @@ var buildFieldSetItems = function(attribute, hiddenField) {
 		fieldSetItems = [],
 		parentField = null,
 		i, len, currentField;
+
 	for (i=0, len=lookupChain.length; i<len; ++i) {
 		var currentLookupType = lookupChain[len-i-1], // reverse order
 			forgedAttribute = forgeAttributeForMultilevelLookup(attribute, currentLookupType),
 			hideLabel = (i != 0);
+
 		currentField = buildSingleLookupField(forgedAttribute, hideLabel);
+		currentField.submitValue = false; // to have only the hidden field value on form submit
 
 		if (parentField) {
 			currentField.parentField = parentField;
 			parentField.childField = currentField;
 		}
+
 		fieldSetItems.push(currentField);
 
 		addEventsToMultilevelLookupCombo(currentField, parentField);
 		parentField = currentField;
 	}
-	
+
 	bindHiddenFieldToLastCombo(hiddenField, currentField);
 
 	for (i=0, len=fieldSetItems.length; i<len; ++i) {
