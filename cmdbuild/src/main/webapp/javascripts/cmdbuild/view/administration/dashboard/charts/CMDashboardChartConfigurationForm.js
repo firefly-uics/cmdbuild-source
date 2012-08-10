@@ -363,6 +363,7 @@
 				"labelField",
 				"categoryAxisField",
 				"categoryAxisLabel",
+				"chartOrientation",
 				"valueAxisFields",
 				"valueAxisLabel"
 			]);
@@ -447,6 +448,9 @@
 			try {
 				this.valueAxesFields.reset();
 				this.valueAxesFields.store.loadData(data);
+				if (data.length > 0) {
+					this.valueAxesFields.setValue(data[0]);
+				}
 			} catch (e) {
 				// I'm not able to understand what crashes
 				// after these operations :.(

@@ -233,7 +233,7 @@
 				});
 			},
 
-			getDataForPreview: function(dataSourceName, params, cb) {
+			getDataForPreview: function(dataSourceName, params, success, callback) {
 				CMDBuild.ServiceProxy.core.doRequest({
 					method: "GET",
 					url: CMDBuild.ServiceProxy.url.Dashboard.getChartDataForPreview,
@@ -242,13 +242,14 @@
 						params: Ext.encode(params)
 					},
 					success: function(operation, configuration, decodedResponse) {
-						if (typeof cb == "function") {
+						if (typeof success == "function") {
 							var response = decodedResponse.response || {};
 							response = response.rows || [];
 
-							cb(response);
+							success(response);
 						}
-					}
+					},
+					callback: callback || Ext.emptyFn
 				});
 			}
 		}

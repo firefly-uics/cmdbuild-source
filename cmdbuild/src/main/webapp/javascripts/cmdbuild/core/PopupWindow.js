@@ -36,23 +36,6 @@ Ext.define("CMDBuild.PopupWindow", {
 		} else {
 			this.autoWidth = false;
 			this.y = 10000;
-	    	var that = this;
-	    	var redraw = function() {
-	    		var newWidth = that.items.get(0).getInnerWidth() + 30;
-	    		var newXPos = (document.body.offsetWidth - newWidth) / 2;
-	    		var height = that.getSize().height;
-	    		var newYPos = (document.body.offsetHeight - height) / 2;
-	    		that.setWidth(newWidth);
-	    		that.setPosition(newXPos, newYPos);
-	    	};
-
-// TODO I do know the why of this code
-
-//			this.on('render', function() {
-//				Ext.Function.createDelayed(function() {
-//					redraw.call(this);
-//				}, 1, this);
-//			});
 		}
 
 		this.callParent(arguments);

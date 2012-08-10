@@ -171,6 +171,7 @@
 		fields: [
 			{name: "id",type: 'string'},
 			{name: "active", type: "boolean"},
+			{name: "attributes", type: "auto"},
 			{name: "cardinality", type: "string"},
 			{name: "nameClass1", type: "string"},
 			{name: "nameClass2", type: "string"},
