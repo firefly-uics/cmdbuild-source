@@ -174,7 +174,7 @@ public class WorkflowEngineWrapper implements ContaminatedWorkflowEngine {
 	}
 
 	@Override
-	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, Object> inputValues,
+	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, ?> inputValues,
 			final Map<String, Object> widgetSubmission) throws CMWorkflowException {
 		final Map<String, Object> nativeValues = new HashMap<String, Object>(inputValues.size());
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();

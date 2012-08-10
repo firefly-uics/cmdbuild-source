@@ -55,7 +55,7 @@ public interface CMWorkflowService {
 	 * @return newly created process instance id
 	 * @throws CMWorkflowException
 	 */
-	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, Object> variables)
+	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, ?> variables)
 			throws CMWorkflowException;
 
 	/**
@@ -76,7 +76,7 @@ public interface CMWorkflowService {
 	 */
 	WSProcessInstInfo getProcessInstance(String procInstId) throws CMWorkflowException;
 
-	void setProcessInstanceVariables(String procInstId, Map<String, Object> variables) throws CMWorkflowException;
+	void setProcessInstanceVariables(String procInstId, Map<String, ?> variables) throws CMWorkflowException;
 
 	/**
 	 * Returns the process instance variables with type conversion.

@@ -66,7 +66,7 @@ public interface CMWorkflowEngine {
 	 *            map of widget ids and submission objects
 	 * @throws CMWorkflowException
 	 */
-	void updateActivity(CMActivityInstance activityInstance, Map<String, Object> vars,
+	void updateActivity(CMActivityInstance activityInstance, Map<String, ?> vars,
 			Map<String, Object> widgetSubmission) throws CMWorkflowException;
 
 	/**

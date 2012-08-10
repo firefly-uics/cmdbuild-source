@@ -136,7 +136,7 @@ public class WorkflowLogic {
 	 * 
 	 * @throws CMWorkflowException
 	 */
-	public UserProcessInstance startProcess(final String processClassName, final Map<String, Object> vars,
+	public UserProcessInstance startProcess(final String processClassName, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final CMProcessClass proc = processFrom(processClassName);
 		return startProcess(proc, vars, widgetSubmission, advance);
@@ -157,19 +157,19 @@ public class WorkflowLogic {
 	 * 
 	 * @throws CMWorkflowException
 	 */
-	public UserProcessInstance startProcess(final Long processClassId, final Map<String, Object> vars,
+	public UserProcessInstance startProcess(final Long processClassId, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final CMProcessClass proc = processFrom(processClassId);
 		return startProcess(proc, vars, widgetSubmission, advance);
 	}
 
-	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, Object> vars,
+	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		return updateOnlyActivity(wfEngine.startProcess(process), vars, widgetSubmission, advance);
 	}
 
 	public UserProcessInstance updateProcess(final String processClassName, final Long processCardId,
-			final String activityInstanceId, final Map<String, Object> vars,
+			final String activityInstanceId, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		return updateProcess( //
 				processInstanceFor(processFrom(processClassName), processCardId), //
@@ -180,7 +180,7 @@ public class WorkflowLogic {
 	}
 
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
-			final String activityInstanceId, final Map<String, Object> vars,
+			final String activityInstanceId, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		return updateProcess( //
 				processInstanceFor(processFrom(processClassId), processCardId), //
@@ -191,7 +191,7 @@ public class WorkflowLogic {
 	}
 
 	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,
-			final String activityInstanceId, final Map<String, Object> vars,
+			final String activityInstanceId, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final UserActivityInstance activityInstance = processInstance.getActivityInstance(activityInstanceId);
 		return updateActivity(activityInstance, vars, widgetSubmission, advance);
@@ -221,7 +221,7 @@ public class WorkflowLogic {
 	 * @return the updated process instance
 	 * @throws CMWorkflowException
 	 */
-	private UserProcessInstance updateOnlyActivity(final UserProcessInstance procInst, final Map<String, Object> vars,
+	private UserProcessInstance updateOnlyActivity(final UserProcessInstance procInst, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final List<UserActivityInstance> activities = procInst.getActivities();
 		if (activities.size() != 1) {
@@ -233,7 +233,7 @@ public class WorkflowLogic {
 	}
 
 	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance,
-			final Map<String, Object> vars, final Map<String, Object> widgetSubmission, final boolean advance)
+			final Map<String, ?> vars, final Map<String, Object> widgetSubmission, final boolean advance)
 			throws CMWorkflowException {
 		wfEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		if (advance) {
