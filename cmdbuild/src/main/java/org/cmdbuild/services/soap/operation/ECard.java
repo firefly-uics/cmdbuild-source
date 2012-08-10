@@ -3,14 +3,15 @@ package org.cmdbuild.services.soap.operation;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
@@ -18,10 +19,10 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
@@ -38,15 +39,18 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.utils.CQLFacadeCompiler;
-import org.cmdbuild.workflow.operation.ActivityDO;
-import org.cmdbuild.workflow.operation.SharkFacade;
+import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance;
 
 /**
  * Effective SOAP Card implementation
  */
 public class ECard {
 
-	private final String ACTIVITY_DESCRIPTION = "ActivityDescription";
+	private final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
+	private final String INVALID_ACTIVITY_DESCRIPTION = StringUtils.EMPTY;
 
 	private final UserContext userCtx;
 
@@ -64,8 +68,7 @@ public class ECard {
 			CardList getOutput() {
 				final CardList cardList = new CardList();
 				for (final ICard card : cards) {
-					final Card wfCard = prepareCard(attributeList, card, activityMap, enableLongDateFormat);
-					wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+					final Card wfCard = prepareCard(attributeList, card, enableLongDateFormat);
 					cardList.addCard(wfCard);
 				}
 				cardList.setTotalRows(count);
@@ -84,8 +87,7 @@ public class ECard {
 			CardListExt getOutput() {
 				final CardListExt cardList = new CardListExt();
 				for (final ICard card : cards) {
-					final CardExt wfCard = prepareCardExt(attributeList, card, activityMap, enableLongDateFormat);
-					wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+					final CardExt wfCard = prepareCardExt(attributeList, card, enableLongDateFormat);
 					cardList.addCard(wfCard);
 				}
 				cardList.setTotalRows(count);
@@ -99,7 +101,6 @@ public class ECard {
 		protected final ITable table;
 		protected final Integer count;
 		protected final List<ICard> cards;
-		protected final Map<Integer, ActivityDO> activityMap;
 
 		public AbstractCardListCommand(final String className, final Attribute[] attributeList, final Query query,
 			final Order[] order, final Integer limit, final Integer offset, final String fullText,
@@ -116,7 +117,6 @@ public class ECard {
 				cards.add(card);
 			}
 			this.count = cardQuery.getTotalRows();
-			this.activityMap = getActivityMapIfNeeded(table, cards, attributeList);
 		}
 	}
 
@@ -124,71 +124,35 @@ public class ECard {
 		return new CardQueryBuilder(userCtx, className, query, cqlQuery);
 	}
 
-	private Map<Integer, ActivityDO> getActivityMapIfNeeded(final ITable table, final List<ICard> cards,
-			final Attribute[] attributeList) {
-		if (attributeList == null) { // Every attribute!
-			return getActivityMap(table, cards);
-		}
-		for (final Attribute a : attributeList) {
-			if (ACTIVITY_DESCRIPTION.equals(a.getName())) {
-				return getActivityMap(table, cards);
-			}
-		}
-		return new HashMap<Integer, ActivityDO>();
-	}
-
-	private Map<Integer, ActivityDO> getActivityMap(final ITable table, final List<ICard> cards) {
-		final SharkFacade sharkFacade = new SharkFacade(userCtx);
-		return sharkFacade.getActivityMap(table, cards);
-	}
-
-	private Card prepareCard(final Attribute[] attributeList, final ICard card,
-			final Map<Integer, ActivityDO> activityMap, boolean enableLongDateFormat) {
+	private Card prepareCard(final Attribute[] attributeList, final ICard card, boolean enableLongDateFormat)  {
 		Card wfCard;
 		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
-		addActivityDecription(card, activityMap.get(card.getId()));
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
 			wfCard = new Card(card, attributeList, cardSerializer);
 		} else {
 			wfCard = new Card(card, cardSerializer);
 		}
+		addExtras(card, wfCard);
 		return wfCard;
 	}
 
 	// FIXME Refactoring with unit tests (it's a total mess!)
-	private CardExt prepareCardExt(final Attribute[] attributeList, final ICard card,
-			final Map<Integer, ActivityDO> activityMap, boolean enableLongDateFormat) {
+	private CardExt prepareCardExt(final Attribute[] attributeList, final ICard card, boolean enableLongDateFormat) {
 		CardExt wfCard;
 		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
-		addActivityDecription(card, activityMap.get(card.getId()));
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
 			wfCard = new CardExt(card, attributeList, cardSerializer);
 		} else {
 			wfCard = new CardExt(card, cardSerializer);
 		}
+		addExtras(card, wfCard);
 		return wfCard;
-	}
-
-	private void addActivityDecription(final ICard card) {
-		if (card.getSchema().isActivity()) {
-			final SharkFacade sharkFacade = new SharkFacade(userCtx);
-			final ActivityDO activityDo = sharkFacade.getActivityList(card);
-			addActivityDecription(card, activityDo);
-		}
-	}
-
-	private void addActivityDecription(final ICard card, final ActivityDO activityDo) {
-		if (activityDo != null) {
-			final String activityDescription = activityDo.getActivityInfo().getActivityDescription();
-			card.setValue(ACTIVITY_DESCRIPTION, activityDescription);
-		}
 	}
 
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
 		Card wfCard;
 		final ITable table = table(className);
 		final ICard card = table.cards().get(cardId);
-		addActivityDecription(card);
 
 		Log.SOAP.debug("Getting card " + cardId + " from " + className);
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
@@ -196,49 +160,76 @@ public class ECard {
 		} else {
 			wfCard = new Card(card);
 		}
-
-		wfCard.setMetadata(addMetadata(userCtx, wfCard, card, table));
+		addExtras(card, wfCard);
 		return wfCard;
 	}
 
-	private List<Metadata> addMetadata(final UserContext userCtx, final Card cardType, final ICard card,
-			final ITable table) {
-		final List<Metadata> metadataList = new LinkedList<Metadata>();
-		if (table.isActivity()) {
-			final EAdministration operation = new EAdministration(userCtx);
-			final SharkFacade sharkFacade = new SharkFacade(userCtx);
-			final ActivityDO activity = sharkFacade.getActivityList(card);
-			operation.serializeMetadata(table, activity);
-			final Metadata processIsEditableMetadata = addIsEditableProcessMetadata(userCtx, card);
-			if (processIsEditableMetadata != null) {
-				metadataList.add(processIsEditableMetadata);
+	private void addExtras(final ICard card, Card wfCard) {
+		if (card.getSchema().isActivity()) {
+			final ProcessDefinitionManager processDefinitionManager = TemporaryObjectsBeforeSpringDI.getProcessDefinitionManager();
+			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(userCtx);
+			final UserProcessInstance processInstance = new ProcessInstanceWrapper(userCtx, processDefinitionManager, card);
+			UserActivityInstance actInst = null;
+			try {
+				actInst = santasLittleHelper.selectActivityInstanceFor(processInstance);
+			} catch (CMWorkflowException e) {
+				actInst = null;
 			}
+			addActivityExtras(actInst, wfCard);
+			addActivityMetadata(actInst, wfCard);
 		} else {
-			final PrivilegeType privileges = userCtx.privileges().getPrivilege(table);
-			final Metadata meta = new Metadata();
-			meta.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
-			meta.setValue(privileges.toString().toLowerCase());
-			metadataList.add(meta);
+			addMetadata(card, wfCard);
 		}
-
-		return metadataList;
 	}
 
-	private Metadata addIsEditableProcessMetadata(final UserContext userCtx, final ICard card) {
-		final SharkFacade sharkFacade = new SharkFacade(userCtx);
-		final ActivityDO activity = sharkFacade.getActivityList(card);
-		if (activity != null) {
-			final Metadata meta = new Metadata();
-			meta.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
-			if (activity.isEditable()) {
-				meta.setValue("write");
-			} else {
-				meta.setValue("read");
+	private void addActivityExtras(final UserActivityInstance actInst, final Card wfCard) {
+		String activityDescription = INVALID_ACTIVITY_DESCRIPTION;
+		if (actInst != null) {
+			try {
+				activityDescription = actInst.getDefinition().getDescription();
+			} catch (CMWorkflowException e) {
+				// keep the placeholder description
 			}
-			return meta;
-		} else {
-			return null;
 		}
+		wfCard.getAttributeList().add(newAttribute(ACTIVITY_DESCRIPTION_ATTRIBUTE, activityDescription));
+	}
+
+	private Attribute newAttribute(String name, String value) {
+		final Attribute attribute = new Attribute();
+		attribute.setName(name);
+		attribute.setValue(value);
+		return attribute;
+	}
+
+	private void addActivityMetadata(final UserActivityInstance actInst, final Card wfCard) {
+		final PrivilegeType privileges;
+		if (actInst != null) {
+			privileges = actInst.isWritable() ? PrivilegeType.WRITE : PrivilegeType.READ;
+		} else {
+			privileges = PrivilegeType.NONE;
+		}
+		addPrivileges(privileges, wfCard);
+	}
+
+	private void addMetadata(final ICard card, final Card wfCard) {
+		final ITable table = card.getSchema();
+		final PrivilegeType privileges = userCtx.privileges().getPrivilege(table);
+		addPrivileges(privileges, wfCard);
+	}
+
+	private void addPrivileges(final PrivilegeType privileges, final Card wfCard) {
+		wfCard.setMetadata(Arrays.asList(newPrivilegeMetadata(privileges)));
+	}
+
+	private Metadata newPrivilegeMetadata(final PrivilegeType privileges) {
+		final Metadata meta = new Metadata();
+		meta.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
+		meta.setValue(privilegeSerialization(privileges));
+		return meta;
+	}
+
+	private String privilegeSerialization(final PrivilegeType privileges) {
+		return privileges.toString().toLowerCase();
 	}
 
 	public CardList getCardHistory(final String className, final int cardId, final Integer limit, Integer offset) {

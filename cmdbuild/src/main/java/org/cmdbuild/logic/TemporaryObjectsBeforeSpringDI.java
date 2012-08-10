@@ -131,6 +131,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		return workflowEngine;
 	}
 
+	public static ProcessDefinitionManager getProcessDefinitionManager() {
+		return processDefinitionManager;
+	}
+
 	public static CMWorkflowService getWorkflowService() {
 		return workflowService;
 	}
