@@ -257,7 +257,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		}
 		try {
 			return Long.parseLong(stringValue);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			return null;
 		}
 	}

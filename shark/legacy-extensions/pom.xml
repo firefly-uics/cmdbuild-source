@@ -12,6 +12,10 @@
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Legacy Extensions</name>
 
+	<properties>
+		<groovy.version>1.8.1</groovy.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.sourceforge.sharkwf</groupId>
@@ -61,6 +65,11 @@
 		<dependency>
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>${groovy.version}</version>
 		</dependency>
 
 		<dependency>
