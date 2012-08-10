@@ -199,7 +199,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	@Override
 	public WSProcessInstInfo startProcess(final String pkgId, final String procDefId,
-			final Map<String, Object> variables) throws CMWorkflowException {
+			final Map<String, ?> variables) throws CMWorkflowException {
 		return new TransactedExecutor<WSProcessInstInfo>() {
 			@Override
 			protected WSProcessInstInfo command() throws Exception {
@@ -335,7 +335,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public void setProcessInstanceVariables(final String procInstId, final Map<String, Object> variables)
+	public void setProcessInstanceVariables(final String procInstId, final Map<String, ?> variables)
 			throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
@@ -346,7 +346,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}.execute();
 	}
 
-	private void setProcessInstanceVariablesNotTransacted(final String procInstId, final Map<String, Object> variables)
+	private void setProcessInstanceVariablesNotTransacted(final String procInstId, final Map<String, ?> variables)
 			throws Exception {
 		for (final String name : variables.keySet()) {
 			final Object nativeValue = variables.get(name);
