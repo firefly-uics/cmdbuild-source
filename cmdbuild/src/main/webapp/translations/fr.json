@@ -34,7 +34,7 @@
             "isnotnull": "Obligatoire",
             "isunique": "Unique",
             "length": "Longueur",
-            "lookup": "Catalogue",
+            "lookup": "Recherche",
             "meta": {
                "add": "Ajouter meta",
                "key": "Clé",
@@ -177,10 +177,10 @@
             ".CreateModifyCard": {
                "fields": {
                   "target": "Class cible",
-                  "cql": "<em>Card CQL selector</em>",
-                  "readOnly": "<em>Read only</em>"
+                  "cql": "Selection Fiche CQL",
+                  "readOnly": "Lecture seule"
                },
-               "title": "<em>Create or Modify Card</em>"
+               "title": "Création et modification d'une Fiche"
             },
             "commonFields": {
                "active": "Active",
@@ -194,129 +194,129 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "<em>The chart is not well configured</em>"
+                "wrongConfiguration": "Le graphique n'est pas correctement configuré"
              },
              "availableCharts": {
-                "gauge": "<em>Gauge</em>",
-                "pie": "<em>Pie</em>",
-                "bar": "<em>Bar</em>",
-                "line": "<em>Line</em>"
+                "gauge": "Jauge",
+                "pie": "Secteur",
+                "bar": "Barre",
+                "line": "Ligne"
              },
              "buttons": {
-                "add": "<em>Add Chart</em>",
-                "modify": "<em>Modify chart</em>",
-                "remove": "<em>Remove chart</em>",
-                "preview": "<em>Preview</em>"
+                "add": "Ajouter un graphique",
+                "modify": "Modifier un graphique",
+                "remove": "Supprimer un graphique",
+                "preview": "Prévisualisation"
              },
              "fields": {
-                "active": "<em>Active</em>",
-                "autoload": "<em>Load automatically</em>",
-                "background": "<em>Background color</em>",
-                "categoryFieldset": "<em>Category axis</em>",
-                "chartType": "<em>Chart type</em>",
-                "dataSource": "<em>Data source</em>",
-                "defaultValue": "<em>Default value</em>",
-                "description": "<em>Description</em>",
-                "fieldType": "<em>Field type</em>",
-                "foreground": "<em>Foreground color</em>",
-                "fromClass": "<em>From Class</em>",
-                "labelField": "<em>Label field</em>",
-                "legend": "<em>Show legend</em>",
-                "lookupType": "<em>Lookup type</em>",
-                "max": "<em>Maximum</em>",
-                "min": "<em>Minimum</em>",
-                "name": "<em>Name</em>",
+                "active": "Actif",
+                "autoload": "Cherger automatiquement",
+                "background": "Couleur de fond",
+                "categoryFieldset": "Catégorie des axes",
+                "chartType": "Graphique type",
+                "dataSource": "Source des données",
+                "defaultValue": "Valeur par défaut",
+                "description": "Déscription",
+                "fieldType": "Type de champ",
+                "foreground": "Couleur de premier plan",
+                "fromClass": "de Class",
+                "labelField": "Nom du champ",
+                "legend": "Affichage légende",
+                "lookupType": "Type de recherche",
+                "max": "Maximum",
+                "min": "Minimum",
+                "name": "Nom",
                 "orientation": {
-                   "label": "<em>Orientation</em>",
+                   "label": "Orientation",
                    "values": {
-                      "horizontal": "<em>Horizontal</em>",
-                      "vertical": "<em>Vertical</em>"
+                      "horizontal": "Horizontal",
+                      "vertical": "Vertical"
                    }
                 },
-                "required": "<em>Required</em>",
-                "steps": "<em>Steps</em>",
-                "title": "<em>Title</em>",
-                "valueField": "<em>Value field</em>",
-                "valueFieldset": "<em>Value axis</em>"
+                "required": "Obligatoire",
+                "steps": "Etapes",
+                "title": "Titre",
+                "valueField": "Valeur du champ",
+                "valueFieldset": "Valeur des axes"
              },
              "inputTypes": {
-                "BOOLEAN": "<em>Boolean</em>",
-                "DECIMAL": "<em>Decimal</em>",
-                "INTEGER": "<em>Integer</em>",
-                "DOUBLE": "<em>Double</em>",
-                "DATE": "<em>Date</em>",
-                "TIMESTAMP": "<em>Timestamp</em>",
-                "TIME": "<em>Time</em>",
-                "STRING": "<em>String</em>",
-                "TEXT": "<em>Text</em>",
-                "CHAR": "<em>Char</em>",
-                "INET": "<em>Net address</em>"
+                "BOOLEAN": "Boolean",
+                "DECIMAL": "Decimal",
+                "INTEGER": "Integer",
+                "DOUBLE": "Double",
+                "DATE": "Date",
+                "TIMESTAMP": "Timestamp",
+                "TIME": "Time",
+                "STRING": "String",
+                "TEXT": "Text",
+                "CHAR": "Char",
+                "INET": "Net address"
              },
-             "title": "<em>Charts</em>",
+             "title": "Graphiques",
              "typeFieldOptions": {
-                "card" : "<em>Card</em>",
-                "classes" : "<em>Select from all CMDBuild classes</em>",
-                "freeInt" : "<em>Free Integer</em>",
-                "freeString" : "<em>Free String</em>",
-                "group" : "<em>Current group</em>",
-                "lookup" : "<em>Select from a lookup</em>",
-                "user" : "<em>Current user</em>"
+                "card" : "Fiche",
+                "classes" : "Selection des classes CMDBuild",
+                "freeInt" : "Nombre entier",
+                "freeString" : "Chaîne de caractères",
+                "group" : "Groupe actuel",
+                "lookup" : "Selectionner à partir d'une recherche",
+                "user" : "Utilisateur actuel"
              }
           },
           "layout": {
-             "add": "<em>Add a column</em>",
-             "remove": "<em>Remove empty columns</em>",
-             "title": "<em>Layout</em>"
+             "add": "Ajouter une colonne",
+             "remove": "Supprimer les colonnes vides",
+             "title": "Modèle"
           },
           "properties": {
-             "add": "<em>Add Dashboard</em>",
-             "modify": "<em>Modify Dashboard</em>",
-             "remove": "<em>Remove Dashboard</em>",
+             "add": "Ajouter un tableau de bord",
+             "modify": "Modifier un tableau de bord",
+             "remove": "Supprimer un tableau de bord",
              "fields": {
-                "name": "<em>Name</em>",
-                "description": "<em>Description</em>",
-                "groups": "<em>Available for groups</em>"
+                "name": "Nom",
+                "description": "Description",
+                "groups": "Valable pour les groupes"
              }
           },
-          "title": "<em>Dashboard</em>"
+          "title": "Tableau de bord"
       },
       "modLookup": {
-         "add_lookuptype": "Ajouter type Catalogue",
+         "add_lookuptype": "Ajouter type recherche",
          "lookupForm": {
             "active": "Active",
             "code": "Code",
             "description": "Description",
-            "disable_lookup": "Désactiver Catalogue",
-            "enable_lookup": "Activer Catalogue",
+            "disable_lookup": "Désactiver recherche",
+            "enable_lookup": "Activer recherche",
             "isdefault": "Defaut",
             "notes": "Notes",
             "parentdescription": "Description Parent",
-            "update_lookup": "Modifier Catalogue"
+            "update_lookup": "Modifier recherche"
          },
          "lookupGrid": {
             "active": "Active",
-            "add_lookup": "Ajouter Catalogue",
+            "add_lookup": "Ajouter recherche",
             "code": "Code",
             "description": "Description",
             "isdefault": "Defaut",
             "notes": "Notes",
             "parentdescription": "Description Parent"
          },
-         "lookupType": "Type Catalogue",
+         "lookupType": "Type recherche",
          "lookupTypeForm": {
             "active": "Active",
-            "delete_lookuptype": "Supprimer Catalogue Type",
+            "delete_lookuptype": "Supprimer recherche Type",
             "description": "Description",
-            "modify_lookuptype": "Modifier Catalogue Type",
+            "modify_lookuptype": "Modifier recherche Type",
             "parent": "Parent",
-            "title": "Gestion des Catalogues"
+            "title": "Gestion des recherches"
          },
-         "lookupTypes": "Catalogues Types",
+         "lookupTypes": "recherches Types",
          "tabs": {
-            "lookuplist": "Liste Catalogue",
+            "lookuplist": "Liste recherche",
             "properties": "Propriétés"
          },
-         "title": "Gestion Catalogue"
+         "title": "Gestion recherche"
       },
       "modWorkflow": {
          "add_process": "Ajouter processus",
@@ -427,7 +427,7 @@
          "available_elements": "Elements disponibles",
          "availabletree": {
             "class": "Class",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "Tableaux de bord",
             "processclass": "Activités",
             "report": "Report",
             "view": "Vues"
@@ -658,7 +658,7 @@
          "add": "Ajouter",
          "as": "Comme",
          "close": "Fermer",
-         "load": "<em>Load</em>",
+         "load": "Charger",
          "modify": "Modifier",
          "print": "Imprimer",
          "remove": "Supprimer",
@@ -687,7 +687,7 @@
          "configuration": "Chargement configuration",
          "domain": "Chargement domaines",
          "group": "Chargement utilisateurs et groupes",
-         "lookup": "Chargement des types de Catalogues",
+         "lookup": "Chargement des types de recherches",
          "menu": "Chargement menus",
          "report": "Chargement Rapports",
          "workflow": "Chargement activités"
@@ -706,9 +706,9 @@
       "tbd_body": "Travail en cours...",
       "tbd_title": "Travail en cours",
       "tooltip": {
-         "editParameters": "<em>Edit the parameters</em>",
-         "reload": "<em>Reload</em>",
-         "showData": "<em>Show data</em>"
+         "editParameters": "Editer les paramètres",
+         "reload": "Recharger",
+         "showData": "Voir les données"
       },
       "tree_names": {
          "class": "Standard",
@@ -800,8 +800,8 @@
          "CQL_COMPILATION_FAILED": "Errur lors de la compilation CQL query",
          "DOMAIN_NOTFOUND": "Domaine {0} non trouvé",
          "ILLEGAL_CRON_EXPRESSION": "Invalide cron expression",
-         "LOOKUP_NOTFOUND": "Catalogue non trouvé pour ce type {0}",
-         "LOOKUP_TYPE_NOTFOUND": "Catalogue type {0} non trouvé",
+         "LOOKUP_NOTFOUND": "recherche non trouvé pour ce type {0}",
+         "LOOKUP_TYPE_NOTFOUND": "recherche type {0} non trouvé",
          "MENU_NOTFOUND": "Menu non trouvé",
          "NOTFOUND": "Non trouvé",
          "ORM_AMBIGUOUS_DIRECTION": "Ne peut déterminer automatiquement la direction de la relation",
@@ -810,7 +810,7 @@
          "ORM_CANT_CREATE_DATABASE": "Ne peut créer la base de données",
          "ORM_CANT_CREATE_USER": "Ne peut pas créer un utilisateur",
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Ne peut supprimer des fiches avec des relations",
-         "ORM_CHANGE_LOOKUPTYPE_ERROR": "Ne peut changer le type de Catalogue",
+         "ORM_CHANGE_LOOKUPTYPE_ERROR": "Ne peut changer le type de recherche",
          "ORM_CONTAINS_DATA": "Ne peut supprimer des classes ou attributs de tables ou domaines contenant des données",
          "ORM_CQL_COMPILATION_FAILED": "Invalide CQL query",
          "ORM_CSV_INVALID_ATTRIBUTES": "Ne peut sauver les fiches : valeurs invalides",
@@ -828,9 +828,9 @@
          "ORM_ERROR_GENERIC_SQL": "Erreur SQL: {0}",
          "ORM_ERROR_GETTING_PK": "Impossible de récupérer la primary key",
          "ORM_ERROR_INCOMPATIBLE_CLASS": "Class incompatible: {0}",
-         "ORM_ERROR_LOOKUP_CREATE": "Ne peut pas créer le Catalogue",
-         "ORM_ERROR_LOOKUP_DELETE": "Ne peut pas supprimer le Catalogue",
-         "ORM_ERROR_LOOKUP_MODIFY": "Ne peut pas modifier le Catalogue",
+         "ORM_ERROR_LOOKUP_CREATE": "Ne peut pas créer le recherche",
+         "ORM_ERROR_LOOKUP_DELETE": "Ne peut pas supprimer le recherche",
+         "ORM_ERROR_LOOKUP_MODIFY": "Ne peut pas modifier le recherche",
          "ORM_ERROR_RELATION_CREATE": "Ne peut pas créer la relation",
          "ORM_ERROR_RELATION_MODIFY": "Ne peut pas modifier la relation",
          "ORM_FILTER_CONFLICT": "Conflit dans la définition du filtre",
@@ -840,7 +840,7 @@
          "ORM_ICONS_FILE_NOT_FOUND": "Fichier non trouvé",
          "ORM_ICONS_UNSUPPORTED_TYPE": "Type de fichier non supporté",
          "ORM_ILLEGAL_NAME_ERROR": "Nom illégal: {0}",
-         "ORM_LOOKUPTYPE_ALREADY_EXISTS": "Il y a déjà un type de Catalogue avec la même description",
+         "ORM_LOOKUPTYPE_ALREADY_EXISTS": "Il y a déjà un type de recherche avec la même description",
          "ORM_MALFORMED_PATCH": "Patch indisponible",
          "ORM_NOT_NULL_VIOLATION": "Violation de la contraite : Not null",
          "ORM_POSTGIS_NOT_FOUND": "PostGIS n'est pas installé",
@@ -861,9 +861,9 @@
          "REPORT_INVALID_PARAMETER_CLASS": "Paramètre invalide trouvé dans la Java class! Operation annulée.",
          "REPORT_INVALID_PARAMETER_CMDBUILD_ATTRIBUTE": "Le nom d'un attribut CMDBuild est invalide! Operation annulée.",
          "REPORT_INVALID_PARAMETER_CMDBUILD_CLASS": "Le nom d'une class CMDBuild est invalide! Operation annulée.",
-         "REPORT_INVALID_PARAMETER_CMDBUILD_LOOKUP": "Le nom d'un Catalogue CMDBuild est invalide! Operation annulée.",
+         "REPORT_INVALID_PARAMETER_CMDBUILD_LOOKUP": "Le nom d'un recherche CMDBuild est invalide! Operation annulée.",
          "REPORT_INVALID_PARAMETER_FORMAT": "Le format du nom du rapport est invalide! Le format doit être: \"name\", \"name.cmdbuildClass.attribute\", \"name.lookup.lookupname\"",
-         "REPORT_INVALID_PARAMETER_LOOKUP_CLASS": "Trouvé une JAVA class invalide Catalogue! Nécessité \"java.lang.Integer\". Operation annulée.",
+         "REPORT_INVALID_PARAMETER_LOOKUP_CLASS": "Trouvé une JAVA class invalide recherche! Nécessité \"java.lang.Integer\". Operation annulée.",
          "REPORT_INVALID_PARAMETER_REFERENCE_CLASS": "Trouvé une référence Java class invalide! Nécessité \"java.lang.Integer\". Operation annulée.",
          "REPORT_INVALID_PARAMETER_VALUE": "Trouvé une valeur d'un paramètre invalide! Opération annulée.",
          "REPORT_INVISIBLE_PARAMETER": "Un rapport paramètré fait référence à un attribut caché! Operation annulée.",
@@ -1103,7 +1103,7 @@
       "modutilities": {
          "bulkupdate": {
          	"title": "Mise à jour multiple",
-            "countMessage": "<em>{0} cards will be modified</em>"
+            "countMessage": "{0} fiches vont être modifiées"
          },
          "changepassword": {
             "newpw": "Nouveau mot de passe",
@@ -1164,7 +1164,7 @@
                "subjectfld": "Sujet",
                "subjecthdr": "Sujet",
                "tofld": "A",
-               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
+               "updateTemplateConfirm":"Cela effacera tous les emails non sélectionnés",
                "viewicon": "Vue",
                "mailsAreChanged":"La génération des emails a changé",
                "regenerates": "Regénerer les e-mails"
@@ -1190,7 +1190,7 @@
          "status": "Status",
          "statuses": {
             "all": "Tout",
-            "closed.aborted": "<em>Aborted</em>",
+            "closed.aborted": "Abandonné",
             "closed.completed": "Terminé",
             "open.not_running.suspended": "Suspendu",
             "open.running": "Ouvrir"
@@ -1224,7 +1224,7 @@
       "wrong_time": "{0} est une valeur invalide. Le bon format est {1}"
    },
    "warnings": {
-      "link_cards_changed_values": "The selection of \"{0}\" has been updated",
+      "link_cards_changed_values": "La séléction de \"{0}\" a été mise à jour",
       "only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
       "popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
       "warning_message": "Attention"
