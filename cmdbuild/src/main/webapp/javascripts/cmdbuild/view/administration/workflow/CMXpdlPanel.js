@@ -18,19 +18,16 @@
 					labelWidth: CMDBuild.LABEL_WIDTH
 				},
 				items: [{
-					xtype: 'textfield',
-					inputType : 'file',
+					xtype: 'filefield',
 					allowBlank: true,
-					width: 300,
-					inputType: 'file',
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name: 'xpdl',
 					fieldLabel: this.translation.xpdl_file
 				},{
-					xtype: 'textfield',
-					inputType: 'file',
+					xtype: 'filefield',
 					name: 'sketch',
 					allowBlank: true,
-					width: 300,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					fieldLabel: this.translation.jpg_file
 				}],
 				buttonAlign: 'center',

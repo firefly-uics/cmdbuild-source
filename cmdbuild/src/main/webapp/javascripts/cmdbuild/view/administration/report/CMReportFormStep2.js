@@ -49,9 +49,9 @@ Ext.define("CMDBuild.view.administration.report.CMReportFormStep2", {
 				var image = refer[i];
 				if (image.name) {
 					this.add({
-						xtype: "textfield",
-						allowBlank: false,
-						inputType : "file",
+						xtype: 'filefield',
+						allowBlank: true,
+						anchor: "100%",
 						fieldLabel: image.name,
 						name: namePrefix+i
 					});

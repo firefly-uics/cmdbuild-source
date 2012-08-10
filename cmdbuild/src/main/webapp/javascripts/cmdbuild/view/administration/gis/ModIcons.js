@@ -67,17 +67,17 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 					xtype:'hidden',
 					name: 'name'
 				},{
-					xtype: 'textfield',
-					inputType : 'file',
+					xtype: 'filefield',
+					allowBlank: true,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					fieldLabel: this.translation.file,
-					name: 'file',
-					widgh: 200
+					name: 'file'
 				}, {
 					xtype: 'textfield',
 					fieldLabel: this.translation.description,
 					name: 'description',
 					allowBlank: false,
-					widgh: 200
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				}]
 			}],
 			buttonAlign: 'center',
