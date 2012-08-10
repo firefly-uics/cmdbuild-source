@@ -108,8 +108,12 @@ public class WorkflowLogicHelper {
 		}
 		return activity;
 	}
-
+	
 	private CMActivity selectActivityFor(final UserProcessInstance processInstance) throws CMWorkflowException {
+		return selectActivityInstanceFor(processInstance).getDefinition();
+	}
+
+	public UserActivityInstance selectActivityInstanceFor(final UserProcessInstance processInstance) throws CMWorkflowException {
 		UserActivityInstance selectedActivityInstance = null;
 		for (final UserActivityInstance activityInstance : processInstance.getActivities()) {
 			if (selectedActivityInstance == null) {
@@ -118,7 +122,7 @@ public class WorkflowLogicHelper {
 				selectedActivityInstance = activityInstance;
 			}
 		}
-		return selectedActivityInstance.getDefinition();
+		return selectedActivityInstance;
 	}
 
 	private boolean isLower(final UserActivityInstance activityInstance1, final UserActivityInstance activityInstance2) {
