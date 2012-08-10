@@ -50,7 +50,6 @@ import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.WorkflowCache;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -360,18 +359,14 @@ public class Serializer {
 		}
 		return jsonDomain;
 	}
-	
-	public static JSONObject serializeTableTree(CNode<ITable> node) throws JSONException {
-		return serializeTableTree(node, false);
-	}
 
-	public static JSONObject serializeTableTree(CNode<ITable> node, boolean onlyConfigured) throws JSONException {
+	public static JSONObject serializeTableTree(CNode<ITable> node) throws JSONException {
 		ITable table = node.getData();
-		JSONObject jsonTableTree = serializeTable(table, onlyConfigured);
+		JSONObject jsonTableTree = serializeTable(table);
 		if (jsonTableTree != null) {
 			if (node.getNumberOfChildren() > 0) {
 				for(CNode<ITable> child : node.getChildren()) {
-					JSONObject jsonChild = serializeTableTree(child, onlyConfigured);
+					JSONObject jsonChild = serializeTableTree(child);
 					if (jsonChild != null) {
 						jsonTableTree.append("children", jsonChild);
 					}
@@ -384,12 +379,8 @@ public class Serializer {
 		return jsonTableTree;
 	}
 
-	public static JSONObject serializeTable(ITable table) throws JSONException {
-		return serializeTable(table, false);
-	}
-
 	public static JSONObject serializeTable(ITable table, UserProcessClass pc) throws JSONException {
-		JSONObject jsonProcess = serializeTable(table, false);
+		JSONObject jsonProcess = serializeTable(table);
 		boolean isStartable = !pc.isSuperclass();
 		if (isStartable) {
 			try {
@@ -405,17 +396,10 @@ public class Serializer {
 		return jsonProcess;
 	}
 
-	public static JSONObject serializeTable(ITable table, boolean onlyConfigured) throws JSONException {
+	public static JSONObject serializeTable(ITable table) throws JSONException {
 		JSONObject jsonTable = new JSONObject();
 		
 		if (table.isActivity()) {
-			if (onlyConfigured && !table.isSuperClass()) {
-				WorkflowCache wfCache = WorkflowCache.getInstance();
-				if (!wfCache.hasProcessClass(table.getName())) {
-					return null;
-				}
-			}
-
 			jsonTable.put("type", "processclass");
 			jsonTable.put("userstoppable", table.isUserStoppable());
 		} else {
