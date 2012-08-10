@@ -125,13 +125,16 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 	private void fireActivityStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea)
 			throws Exception {
 		final String actDefId = sea.getActivityDefinitionId();
+		final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
 		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
 		switch (newState) {
 		case CLOSED_COMPLETED:
 			eventManager.activityClosed(actDefId);
 			break;
 		case OPEN_NOT_RUNNING_NOT_STARTED:
-			eventManager.activityStarted(actDefId);
+			if (oldState == RunningStates.UNKNOWN) {
+				eventManager.activityStarted(actDefId);
+			}
 			break;
 		}
 		final WMEntity en = Shark.getInstance().getAdminMisc()

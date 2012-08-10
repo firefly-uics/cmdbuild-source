@@ -145,4 +145,23 @@ public interface CMWorkflowService {
 	 * @throws CMWorkflowException
 	 */
 	void abortProcessInstance(String procInstId) throws CMWorkflowException;
+
+	/**
+	 * Suspends the specified process instance
+	 * 
+	 * @param procInstId
+	 *            process instance id
+	 * @throws CMWorkflowException
+	 */
+	void suspendProcessInstance(String procInstId) throws CMWorkflowException;
+
+	/**
+	 * Suspends the specified process instance
+	 * 
+	 * @param procInstId
+	 *            process instance id
+	 * @throws CMWorkflowException
+	 */
+	void resumeProcessInstance(String procInstId) throws CMWorkflowException;
+
 }

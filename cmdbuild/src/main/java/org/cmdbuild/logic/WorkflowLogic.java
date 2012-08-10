@@ -243,6 +243,14 @@ public class WorkflowLogic {
 		}
 	}
 
+	public void suspendProcess(final String processClassName, final Long processCardId) throws CMWorkflowException {
+		wfEngine.suspendProcessInstance(processInstanceFor(processFrom(processClassName), processCardId));
+	}
+
+	public void resumeProcess(final String processClassName, final Long processCardId) throws CMWorkflowException {
+		wfEngine.resumeProcessInstance(processInstanceFor(processFrom(processClassName), processCardId));
+	}
+
 	/*
 	 * Administration
 	 */

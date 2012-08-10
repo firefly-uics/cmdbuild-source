@@ -298,4 +298,15 @@ public class WorkflowLogicHelper {
 		throw new RuntimeException(message, e);
 	}
 
+	public void resumeProcess(Card card) throws CMWorkflowException {
+		try {
+			logic.resumeProcess(card.getClassName(), longIdFor(card));
+		} catch (final CMWorkflowException e) {
+			final String message = format("cannot resume process for className '%s' and cardId '%d'",
+					card.getClassName(), card.getId());
+			logger.error(message, e);
+			forwardException(message, e);
+		}
+	}
+
 }

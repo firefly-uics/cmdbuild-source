@@ -1,7 +1,6 @@
 package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
-import org.cmdbuild.workflow.operation.SharkFacade;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -275,30 +273,16 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 
 	@Override
 	public boolean resumeWorkflow(final Card card, final boolean completeTask) {
-		final String processId = getProcessInstanceId(card);
-		Log.SOAP.debug("Resuming workflow " + processId);
-
-		final SharkFacade management = new SharkFacade(getUserCtx());
-		return management.resumeProcess(processId);
-	}
-
-	private String getProcessInstanceId(final Card card) {
-		final ECard cardOperation = new ECard(getUserCtx());
-		final Attribute[] attributes = new Attribute[] { processCodeAttribute() };
-		final Card actualProcessCard = cardOperation.getCard(card.getClassName(), card.getId(), attributes);
-		final List<Attribute> processAttributeList = actualProcessCard.getAttributeList();
-		String processInstanceId = EMPTY;
-		for (final Attribute attribute : processAttributeList) {
-			if (attribute.getName().equalsIgnoreCase("ProcessCode"))
-				processInstanceId = attribute.getValue();
+		if (completeTask) {
+			Log.SOAP.warn("ignoring completeTask parameter because it does not make any sense");
 		}
-		return processInstanceId;
-	}
-
-	private Attribute processCodeAttribute() {
-		final Attribute processCode = new Attribute();
-		processCode.setName("ProcessCode");
-		return processCode;
+		try {
+			final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
+			helper.resumeProcess(card);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 }

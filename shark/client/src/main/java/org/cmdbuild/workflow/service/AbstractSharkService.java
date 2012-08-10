@@ -433,6 +433,16 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		changeProcessInstanceState(procInstId, WMProcessInstanceState.CLOSED_ABORTED);
 	}
 
+	@Override
+	public void suspendProcessInstance(final String procInstId) throws CMWorkflowException {
+		changeProcessInstanceState(procInstId, WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
+	}
+
+	@Override
+	public void resumeProcessInstance(final String procInstId) throws CMWorkflowException {
+		changeProcessInstanceState(procInstId, WMProcessInstanceState.OPEN_RUNNING);
+	}
+
 	private void changeProcessInstanceState(final String procInstId, final WMProcessInstanceState state)
 			throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
