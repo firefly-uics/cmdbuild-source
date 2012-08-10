@@ -2,7 +2,6 @@ package org.cmdbuild.services;
 
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.workflow.WorkflowCache;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CacheManager {
@@ -14,9 +13,6 @@ public class CacheManager {
 		clearDatabaseCache();
 		TranslationService.getInstance().reload();
 		JSONDispatcherService.getInstance().reload();
-		try {
-			WorkflowCache.reload();
-		} catch (Exception e) {};
 	}
 
 	public void clearDatabaseCache() {

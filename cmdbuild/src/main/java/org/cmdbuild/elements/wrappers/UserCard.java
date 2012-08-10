@@ -12,11 +12,10 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
-import org.cmdbuild.services.WorkflowService;
 import org.cmdbuild.services.auth.AuthInfo;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
@@ -93,8 +92,6 @@ public class UserCard extends LazyCard implements User {
 		if (elevatePrivileges) {
 			user = UserImpl.getElevatedPrivilegesUser(login);
 		} else if (UserImpl.SYSTEM_USER_USERNAME.equals(login)) {
-			user = UserImpl.getSystemUser();
-		} else if (WorkflowService.getInstance().getSharkWSUser().equals(login)) {
 			user = UserImpl.getSystemUser();
 		} else {
 			user = getUserCard(login).toUser();

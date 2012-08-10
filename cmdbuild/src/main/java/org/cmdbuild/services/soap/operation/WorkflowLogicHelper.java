@@ -30,7 +30,6 @@ import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.WorkflowVariableType;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
@@ -150,21 +149,16 @@ public class WorkflowLogicHelper {
 	}
 
 	private String visibilityFor(final CMActivityVariableToProcess variable) {
-		final WorkflowVariableType type;
 		switch (variable.getType()) {
 		case READ_ONLY:
-			type = WorkflowVariableType.VIEW;
-			break;
+			return "VIEW";
 		case READ_WRITE:
-			type = WorkflowVariableType.UPDATE;
-			break;
+			return "UPDATE";
 		case READ_WRITE_REQUIRED:
-			type = WorkflowVariableType.REQUIRED;
-			break;
+			return "REQUIRED";
 		default:
 			throw new IllegalArgumentException("missing type mapping");
 		}
-		return type.name();
 	}
 
 	private List<WorkflowWidgetDefinition> workflowWidgetDefinitionsFor(final String className, final Integer cardId)
