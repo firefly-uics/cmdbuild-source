@@ -2,6 +2,7 @@ package unit.auth;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -144,15 +145,15 @@ public class AuthInfoTest {
 	public void setUp() {
 		authInfo = new AuthInfo(context.authData) {
 			@Override
-			protected String[] getServiceUsers() {
-				return new String[] { SERVICE_USER_1, SERVICE_USER_2, SERVICE_USER_3, //
+			protected List<String> getServiceUsers() {
+				return Arrays.asList(SERVICE_USER_1, SERVICE_USER_2, SERVICE_USER_3, //
 						SERVICE_USER_1 + DOMAIN_2LV, SERVICE_USER_2 + DOMAIN_2LV, SERVICE_USER_3 + DOMAIN_2LV,//
-						SERVICE_USER_1 + DOMAIN_3LV, SERVICE_USER_2 + DOMAIN_3LV, SERVICE_USER_3 + DOMAIN_3LV };
+						SERVICE_USER_1 + DOMAIN_3LV, SERVICE_USER_2 + DOMAIN_3LV, SERVICE_USER_3 + DOMAIN_3LV);
 			}
 
 			@Override
-			protected String getSharkWSUser() {
-				return SHARK_USER;
+			protected List<String> getPrivilegedServiceUsers() {
+				return Arrays.asList(SHARK_USER);
 			}
 		};
 	}
@@ -189,8 +190,8 @@ public class AuthInfoTest {
 	}
 
 	@Test
-	public void testIsSharkUser() {
-		Assert.assertEquals(context.toString(), context.isSharkUser, authInfo.isSharkUser());
+	public void testIsPrivilegedServiceUser() {
+		Assert.assertEquals(context.toString(), context.isPrivilegedServiceUser, authInfo.isPrivilegedServiceUser());
 	}
 
 	@Test
@@ -208,17 +209,17 @@ public class AuthInfoTest {
 		public final String authData;
 		public final String username;
 		public final String usernameForAutentication;
-		public final boolean isSharkUser;
+		public final boolean isPrivilegedServiceUser;
 		public final String role;
 		public final boolean isValidServiceUser;
 		public final boolean hasServiceUser;
 
 		public Context(final String authData, final String username, final String usernameForAutentication,
-				final boolean isSharkUser, final String role, final boolean isValidServiceUser, final boolean hasServiceUser) {
+				final boolean isPrivilegedServiceUser, final String role, final boolean isValidServiceUser, final boolean hasServiceUser) {
 			this.authData = authData;
 			this.username = username;
 			this.usernameForAutentication = usernameForAutentication;
-			this.isSharkUser = isSharkUser;
+			this.isPrivilegedServiceUser = isPrivilegedServiceUser;
 			this.role = role;
 			this.isValidServiceUser = isValidServiceUser;
 			this.hasServiceUser = hasServiceUser;
@@ -227,7 +228,7 @@ public class AuthInfoTest {
 		@Override
 		public String toString() {
 			return new ToStringBuilder(this).append("authData", authData).append("username", username).append(
-					"usernameForAutentication", usernameForAutentication).append("isSharkUser", isSharkUser).append("role",
+					"usernameForAutentication", usernameForAutentication).append("isSharkUser", isPrivilegedServiceUser).append("role",
 					role).append("isValidServiceUser", isValidServiceUser).append("hasServiceUser", hasServiceUser)
 					.toString();
 		}

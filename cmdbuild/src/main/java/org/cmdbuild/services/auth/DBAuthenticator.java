@@ -6,9 +6,8 @@ import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.auth.password.NaivePasswordHandler;
 import org.cmdbuild.auth.password.PasswordHandler;
 import org.cmdbuild.elements.wrappers.UserCard;
-import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
-import org.cmdbuild.services.WorkflowService;
+import org.cmdbuild.exception.CMDBException;
 
 public class DBAuthenticator implements Authenticator {
 
@@ -49,9 +48,6 @@ public class DBAuthenticator implements Authenticator {
 	}
 
 	private String getUnencryptedPassword(final AuthInfo authInfo) {
-		if (authInfo.isSharkUser()) {
-			return WorkflowService.getInstance().getSharkWSPassword();
-		}
 		final User user = getUser(authInfo);
 		final PasswordHandler enc = new NaivePasswordHandler();
 		final String encryptedPassword = user.getEncryptedPassword();

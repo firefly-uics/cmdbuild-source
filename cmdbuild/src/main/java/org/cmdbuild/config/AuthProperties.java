@@ -1,6 +1,8 @@
 package org.cmdbuild.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.cmdbuild.auth.CasAuthenticator;
@@ -12,6 +14,7 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	private static final long serialVersionUID = 1L;
 	private static final String MODULE_NAME = "auth";
 	private static final String SERVICE_USERS = "serviceusers";
+	private static final String PRIVILEGED_SERVICE_USERS = "serviceusers.privileged";
 	private static final String FORCE_WS_PASSWORD_DIGEST = "force.ws.password.digest";
 	private static final String HEADER_ATTRIBUTE_NAME = "header.attribute.name";
 	private static final String CAS_SERVER_URL = "cas.server.url";
@@ -33,6 +36,7 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	public AuthProperties() {
 		super();
 		setProperty(SERVICE_USERS, "");
+		setProperty(PRIVILEGED_SERVICE_USERS, "");
 		setProperty(FORCE_WS_PASSWORD_DIGEST, String.valueOf(true));
 		setProperty(AUTH_METHODS, "DBAuthenticator");
 		setProperty(HEADER_ATTRIBUTE_NAME, "username");
@@ -65,11 +69,27 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return (AuthProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
-	public String[] getServiceUsers() {
-		String commaSeparatedUsers = getProperty(SERVICE_USERS);
-		if (commaSeparatedUsers.length() == 0)
-			return new String[0];
-		return commaSeparatedUsers.split(",");
+	public List<String> getServiceUsers() {
+		final String commaSeparatedUsers = getProperty(SERVICE_USERS);
+		if (commaSeparatedUsers.length() == 0) {
+			return Collections.emptyList();
+		} else {
+			final List<String> serviceUsers = new ArrayList<String>();
+			final String[] simpleServiceUsers = commaSeparatedUsers.split(",");
+			serviceUsers.addAll(Arrays.asList(simpleServiceUsers));
+			serviceUsers.addAll(getPrivilegedServiceUsers());
+			return serviceUsers;
+		}
+	}
+
+	public List<String> getPrivilegedServiceUsers() {
+		String commaSeparatedUsers = getProperty(PRIVILEGED_SERVICE_USERS);
+		if (commaSeparatedUsers.length() == 0) {
+			return Collections.emptyList();
+		} else {
+			final String[] privilegedServiceUsers = commaSeparatedUsers.split(",");
+			return Arrays.asList(privilegedServiceUsers);
+		}
 	}
 
 	public boolean getForceWSPasswordDigest() {
