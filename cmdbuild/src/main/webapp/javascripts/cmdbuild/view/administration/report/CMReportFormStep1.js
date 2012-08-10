@@ -17,8 +17,7 @@
 
 		initComponent : function() {
 
-			this.fileField = new Ext.form.TextField({
-				inputType : "file",
+			this.fileField = new Ext.form.field.File({
 				fieldLabel : tr.master_report_jrxml,
 				allowBlank : false,
 				name : 'jrxml'
