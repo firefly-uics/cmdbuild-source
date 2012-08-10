@@ -94,4 +94,20 @@ public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 		verifyNoMoreInteractions(eventManager);
 	}
 
+	@Test
+	public void suspendResume() throws Exception {
+		final XpdlActivity noImplementationActivity = process.createActivity(randomName());
+
+		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		ws.suspendProcessInstance(procInstId);
+		ws.resumeProcessInstance(procInstId);
+
+		final InOrder inOrder = inOrder(eventManager);
+		inOrder.verify(eventManager).processStarted(process.getId());
+		inOrder.verify(eventManager).activityStarted(noImplementationActivity.getId());
+		inOrder.verify(eventManager).processSuspended(process.getId());
+		inOrder.verify(eventManager).processResumed(process.getId());
+		verifyNoMoreInteractions(eventManager);
+	}
+
 }
