@@ -26,7 +26,6 @@ import org.cmdbuild.services.soap.types.Metadata;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
 import org.cmdbuild.workflow.WorkflowCache;
-import org.cmdbuild.workflow.operation.ActivityDO;
 
 public class EAdministration {
 
@@ -63,7 +62,7 @@ public class EAdministration {
 		schema.setDescription(table.getDescription());
 		schema.setClassname(table.getName());
 		setMenuTypeFromTypeAndChildren(schema, isProcess, table.isSuperClass());
-		schema.setMetadata(serializeMetadata(table, null));
+		schema.setMetadata(serializeMetadata(table));
 		addAccessPrivileges(schema, userCtx);
 		final Boolean isDefault = checkIsDefault(table, userCtx);
 		schema.setDefaultToDisplay(isDefault);
@@ -153,22 +152,8 @@ public class EAdministration {
 		return metadata.toArray(array);
 	}
 
-	public Metadata[] serializeMetadata(final ITable table, final ActivityDO activity) {
-		final TreeMap<String, Object> metadata = table.getMetadata();
-		final List<Metadata> meta = serializeMetadata(metadata);
-		if (activity != null) {
-			addProcessIsStoppable(table, meta);
-			addProcessIsEditable(activity, meta);
-		}
-		return meta.toArray(new Metadata[meta.size()]);
-	}
-
-	public Metadata[] serializeMetadata(final BaseSchema baseSchema) {
-		return metaMapToArray(baseSchema.getMetadata());
-	}
-
-	private Metadata[] metaMapToArray(final TreeMap<String, Object> metadata) {
-		final List<Metadata> meta = serializeMetadata(metadata);
+	private Metadata[] serializeMetadata(final BaseSchema baseSchema) {
+		final List<Metadata> meta = serializeMetadata(baseSchema.getMetadata());
 		return meta.toArray(new Metadata[meta.size()]);
 	}
 
@@ -181,26 +166,6 @@ public class EAdministration {
 			tmpList.add(m);
 		}
 		return tmpList;
-	}
-
-	private void addProcessIsStoppable(final ITable table, final List<Metadata> meta) {
-		final boolean isStoppable = table.isUserStoppable();
-		final Metadata m = new Metadata();
-		m.setKey(MetadataService.RUNTIME_PROCESS_ISSTOPPABLE);
-		m.setValue(String.valueOf(isStoppable));
-		meta.add(m);
-	}
-
-	private void addProcessIsEditable(final ActivityDO activity, final List<Metadata> tmpList) {
-		final Metadata m = new Metadata();
-		m.setKey(MetadataService.RUNTIME_PRIVILEGES_KEY);
-		if (activity.isEditable()) {
-			m.setValue("write");
-		} else {
-			m.setValue("read");
-		}
-
-		tmpList.add(m);
 	}
 
 	private static void checkAttributeFilter(final IAttribute attribute, final List<Metadata> tmpList) {
@@ -230,7 +195,7 @@ public class EAdministration {
 					final Boolean isDefault = checkIsDefault(menuEntryClass, userCtx);
 					schema.setDefaultToDisplay(isDefault);
 					schema.setClassname(menuEntryClass.getName());
-					schema.setMetadata(serializeMetadata(menuEntryClass, null));
+					schema.setMetadata(serializeMetadata(menuEntryClass));
 					final PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
 					if (PrivilegeType.NONE.equals(privileges))
 						return null;
