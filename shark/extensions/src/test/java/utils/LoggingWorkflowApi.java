@@ -2,11 +2,13 @@ package utils;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.common.collect.Factory.entry;
+import static org.cmdbuild.common.collect.Factory.linkedHashMapOf;
+import static org.cmdbuild.common.collect.Factory.treeMapOf;
 import static utils.TestLoggerConstants.LOGGER_CATEGORY;
 import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
 import java.io.File;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -338,23 +340,6 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 		}
 
 		return format("%s(%s)", functionName, all);
-	}
-
-	public static Map<String, Object> linkedHashMapOf(final Entry<String, Object>... entries) {
-		final Map<String, Object> all = new LinkedHashMap<String, Object>();
-		for (final Entry<String, Object> entry : entries) {
-			all.put(entry.getKey(), entry.getValue());
-		}
-		return all;
-	}
-
-	public static Entry<String, Object> entry(final String name, final Object value) {
-		return new AbstractMap.SimpleImmutableEntry<String, Object>(name, value);
-	}
-
-	private static Map<String, Object> treeMapOf(final Map<String, Object> map) {
-		final Map<String, Object> treeMap = new TreeMap<String, Object>(map);
-		return treeMap;
 	}
 
 	public static int computedIdForName(final String className) {
