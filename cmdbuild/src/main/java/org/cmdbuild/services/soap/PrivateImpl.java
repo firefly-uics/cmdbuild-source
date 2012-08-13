@@ -394,8 +394,10 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	 */
 	private Object[] convertFunctionInput(final CMFunction function, final Attribute[] wsParams) {
 		final Map<String, String> paramsMap = new HashMap<String, String>();
-		for (final Attribute p : wsParams) {
-			paramsMap.put(p.getName(), p.getValue());
+		if (wsParams != null) {
+			for (final Attribute p : wsParams) {
+				paramsMap.put(p.getName(), p.getValue());
+			}
 		}
 		final List<CMFunctionParameter> functionParams = function.getInputParameters();
 		final List<String> params = new ArrayList<String>(functionParams.size());
