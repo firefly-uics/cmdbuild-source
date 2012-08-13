@@ -2,16 +2,22 @@ package org.cmdbuild.workflow;
 
 public interface CMEventManager {
 
-	void processStarted(String processDefinitionId);
+	interface ProcessInstance {
+		String getProcessDefinitionId();
+		String getProcessInstanceId();
+	}
 
-	void processClosed(String processDefinitionId);
+	interface ActivityInstance extends ProcessInstance {
+		String getActivityDefinitionId();
+		String getActivityInstanceId();
+	}
 
-	void processSuspended(String processDefinitionId);
+	void processStarted(ProcessInstance processInstance);
+	void processClosed(ProcessInstance processInstance);
+	void processSuspended(ProcessInstance processInstance);
+	void processResumed(ProcessInstance processInstance);
 
-	void processResumed(String processDefinitionId);
-
-	void activityStarted(String activityDefinitionId);
-
-	void activityClosed(String activityDefinitionId);
+	void activityStarted(ActivityInstance activityInstance);
+	void activityClosed(ActivityInstance activityInstance);
 
 }

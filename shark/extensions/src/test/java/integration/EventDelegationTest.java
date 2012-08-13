@@ -1,41 +1,30 @@
 package integration;
 
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static utils.EventManagerMatchers.isActivity;
+import static utils.EventManagerMatchers.isProcess;
 import static utils.XpdlTestUtils.randomName;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.workflow.CMEventManager;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
 
 import utils.AbstractLocalSharkServiceTest;
-import utils.MockEventsDelegator;
+
 
 public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 
 	private XpdlProcess process;
-	private CMEventManager eventManager;
 
 	@Before
 	public void createAndUploadPackage() throws Exception {
 		process = xpdlDocument.createProcess(randomName());
-	}
-
-	@Before
-	public void initializeEventManager() {
-		eventManager = MockEventsDelegator.mock;
-	}
-
-	@After
-	public void resetEventManagerMock() {
-		Mockito.reset(eventManager);
 	}
 
 	@Test
@@ -46,10 +35,10 @@ public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 		uploadXpdlAndStartProcess(process);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(process.getId());
-		inOrder.verify(eventManager).activityStarted(activity.getId());
-		inOrder.verify(eventManager).activityClosed(activity.getId());
-		inOrder.verify(eventManager).processClosed(process.getId());
+		inOrder.verify(eventManager).processStarted(argThat(isProcess(process)));
+		inOrder.verify(eventManager).activityStarted(argThat(isActivity(activity)));
+		inOrder.verify(eventManager).activityClosed(argThat(isActivity(activity)));
+		inOrder.verify(eventManager).processClosed(argThat(isProcess(process)));
 		verifyNoMoreInteractions(eventManager);
 	}
 
@@ -64,10 +53,10 @@ public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 		uploadXpdlAndStartProcess(process);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(process.getId());
-		inOrder.verify(eventManager).activityStarted(scriptActivity.getId());
-		inOrder.verify(eventManager).activityClosed(scriptActivity.getId());
-		inOrder.verify(eventManager).activityStarted(noImplActivity.getId());
+		inOrder.verify(eventManager).processStarted(argThat(isProcess(process)));
+		inOrder.verify(eventManager).activityStarted(argThat(isActivity(scriptActivity)));
+		inOrder.verify(eventManager).activityClosed(argThat(isActivity(scriptActivity)));
+		inOrder.verify(eventManager).activityStarted(argThat(isActivity(noImplActivity)));
 		verifyNoMoreInteractions(eventManager);
 	}
 
@@ -83,14 +72,14 @@ public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 		uploadXpdlAndStartProcess(process);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(process.getId());
-		inOrder.verify(eventManager).activityStarted(subflowActivity.getId());
-		inOrder.verify(eventManager).processStarted(subprocess.getId());
-		inOrder.verify(eventManager).activityStarted(scriptActivity.getId());
-		inOrder.verify(eventManager).activityClosed(scriptActivity.getId());
-		inOrder.verify(eventManager).processClosed(subprocess.getId());
-		inOrder.verify(eventManager).activityClosed(subflowActivity.getId());
-		inOrder.verify(eventManager).processClosed(process.getId());
+		inOrder.verify(eventManager).processStarted(argThat(isProcess(process)));
+		inOrder.verify(eventManager).activityStarted(argThat(isActivity(subflowActivity)));
+		inOrder.verify(eventManager).processStarted(argThat(isProcess(subprocess)));
+		inOrder.verify(eventManager).activityStarted(argThat(isActivity(scriptActivity)));
+		inOrder.verify(eventManager).activityClosed(argThat(isActivity(scriptActivity)));
+		inOrder.verify(eventManager).processClosed(argThat(isProcess(subprocess)));
+		inOrder.verify(eventManager).activityClosed(argThat(isActivity(subflowActivity)));
+		inOrder.verify(eventManager).processClosed(argThat(isProcess(process)));
 		verifyNoMoreInteractions(eventManager);
 	}
 
@@ -103,10 +92,10 @@ public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 		ws.resumeProcessInstance(procInstId);
 
 		final InOrder inOrder = inOrder(eventManager);
-		inOrder.verify(eventManager).processStarted(process.getId());
-		inOrder.verify(eventManager).activityStarted(noImplementationActivity.getId());
-		inOrder.verify(eventManager).processSuspended(process.getId());
-		inOrder.verify(eventManager).processResumed(process.getId());
+		inOrder.verify(eventManager).processStarted(argThat(isProcess(process)));
+		inOrder.verify(eventManager).activityStarted(argThat(isActivity(noImplementationActivity)));
+		inOrder.verify(eventManager).processSuspended(argThat(isProcess(process)));
+		inOrder.verify(eventManager).processResumed(argThat(isProcess(process)));
 		verifyNoMoreInteractions(eventManager);
 	}
 

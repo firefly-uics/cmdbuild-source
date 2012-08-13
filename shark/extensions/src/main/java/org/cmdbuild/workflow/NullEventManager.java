@@ -1,32 +1,30 @@
 package org.cmdbuild.workflow;
 
+
 public class NullEventManager implements CMEventManager {
 
 	@Override
-	public void processStarted(final String processDefinitionId) {
+	public void processStarted(final ProcessInstance processInstance) {
 	}
 
 	@Override
-	public void processClosed(final String processDefinitionId) {
+	public void processClosed(final ProcessInstance processInstance) {
 	}
 
 	@Override
-	public void processSuspended(final String processDefinitionId) {
+	public void processSuspended(final ProcessInstance processInstance) {
 	}
 
 	@Override
-	public void processResumed(final String processDefinitionId) {
+	public void processResumed(final ProcessInstance processInstance) {
 	}
 
 	@Override
-	public void activityStarted(final String activityDefinitionId) {
+	public void activityStarted(final ActivityInstance activityInstance) {
 	}
 
 	@Override
-	public void activityClosed(final String activityDefinitionId) {
-	}
-
-	public void noActiveActivities() {
+	public void activityClosed(final ActivityInstance activityInstance) {
 	}
 
 }

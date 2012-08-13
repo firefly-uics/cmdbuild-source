@@ -3,16 +3,42 @@ package org.cmdbuild.workflow;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.annotations.Legacy;
-import org.enhydra.shark.Shark;
-import org.enhydra.shark.api.client.wfmc.wapi.WMFilter;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
-import org.enhydra.shark.api.client.wfservice.WMEntity;
-import org.enhydra.shark.api.client.wfservice.XPDLBrowser;
 import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.api.internal.eventaudit.EventAuditException;
+import org.enhydra.shark.api.internal.eventaudit.EventAuditPersistenceObject;
 import org.enhydra.shark.api.internal.eventaudit.StateEventAuditPersistenceObject;
 
 public class SharkEventsDelegator extends NullEventAuditManager {
+
+	private static class EventAuditPersistenceObjectWrapper implements CMEventManager.ActivityInstance {
+
+		private final EventAuditPersistenceObject eap;
+
+		private EventAuditPersistenceObjectWrapper(final EventAuditPersistenceObject eap) {
+			this.eap = eap;
+		}
+
+		@Override
+		public String getProcessDefinitionId() {
+			return eap.getProcessDefinitionId();
+		}
+
+		@Override
+		public String getProcessInstanceId() {
+			return eap.getProcessId();
+		}
+
+		@Override
+		public String getActivityDefinitionId() {
+			return eap.getActivityDefinitionId();
+		}
+
+		@Override
+		public String getActivityInstanceId() {
+			return eap.getActivityId();
+		}
+	}
 
 	private static enum EventType {
 		PROCESS_STATE_CHANGED(SharkConstants.EVENT_PROCESS_STATE_CHANGED), //
@@ -109,41 +135,46 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 	private void fireProcessStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea) {
 		final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
 		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
-		final String procDefId = sea.getProcessDefinitionId();
 		if (oldState == RunningStates.OPEN_NOT_RUNNING_NOT_STARTED && newState == RunningStates.OPEN_RUNNING) {
-			eventManager.processStarted(procDefId);
+			eventManager.processStarted(processInstanceFor(sea));
 		} else if (newState.isClosed()) {
-			eventManager.processClosed(procDefId);
+			eventManager.processClosed(processInstanceFor(sea));
 		} else if (oldState == RunningStates.OPEN_RUNNING && newState == RunningStates.OPEN_NOT_RUNNING_SUSPENDED) {
-			eventManager.processSuspended(procDefId);
+			eventManager.processSuspended(processInstanceFor(sea));
 		} else if (oldState == RunningStates.OPEN_NOT_RUNNING_SUSPENDED && newState == RunningStates.OPEN_RUNNING) {
-			eventManager.processResumed(procDefId);
+			eventManager.processResumed(processInstanceFor(sea));
 		}
+	}
+
+	private CMEventManager.ProcessInstance processInstanceFor(final EventAuditPersistenceObject eap) {
+		return new EventAuditPersistenceObjectWrapper(eap);
 	}
 
 	@Legacy("State map copied from the old implementation.")
 	private void fireActivityStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea)
 			throws Exception {
-		final String actDefId = sea.getActivityDefinitionId();
 		final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
 		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
 		switch (newState) {
 		case CLOSED_COMPLETED:
-			eventManager.activityClosed(actDefId);
+			eventManager.activityClosed(activityInstanceFor(sea));
 			break;
 		case OPEN_NOT_RUNNING_NOT_STARTED:
 			if (oldState == RunningStates.UNKNOWN) {
-				eventManager.activityStarted(actDefId);
+				eventManager.activityStarted(activityInstanceFor(sea));
 			}
 			break;
 		}
-		final WMEntity en = Shark.getInstance().getAdminMisc()
-				.getActivityDefinitionInfo(shandle, sea.getProcessId(), sea.getActivityId());
-		final WMFilter filter = new WMFilter("Name", WMFilter.EQ, "Performer");
-		filter.setFilterType(XPDLBrowser.SIMPLE_TYPE_XPDL);
-		Shark.getInstance().getXPDLBrowser().listAttributes(shandle, en, filter, false);
-		Shark.getInstance().getWAPIConnection()
-				.listActivityInstanceAttributes(shandle, sea.getProcessId(), sea.getActivityId(), null, false);
+//		final WMEntity en = Shark.getInstance().getAdminMisc()
+//				.getActivityDefinitionInfo(shandle, sea.getProcessId(), sea.getActivityId());
+//		final WMFilter filter = new WMFilter("Name", WMFilter.EQ, "Performer");
+//		filter.setFilterType(XPDLBrowser.SIMPLE_TYPE_XPDL);
+//		Shark.getInstance().getXPDLBrowser().listAttributes(shandle, en, filter, false);
+//		Shark.getInstance().getWAPIConnection()
+//				.listActivityInstanceAttributes(shandle, sea.getProcessId(), sea.getActivityId(), null, false);
 	}
 
+	private CMEventManager.ActivityInstance activityInstanceFor(final EventAuditPersistenceObject eap) {
+		return new EventAuditPersistenceObjectWrapper(eap);
+	}
 }
