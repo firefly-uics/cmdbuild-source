@@ -13,7 +13,10 @@
 		},
 
 		disable: function() {
-			if (this.widgetDefinition && this.widgetDefinition.alwaysenabled) {
+			if ((this.widgetDefinition
+					&& this.widgetDefinition.alwaysenabled)
+					|| _CMUIConfiguration.isProcessWidgetAlwaysEnabled()) {
+
 				return this.enable();
 			} else {
 				return this.callParent(arguments);
