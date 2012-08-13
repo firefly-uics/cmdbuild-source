@@ -1,9 +1,16 @@
 package utils;
 
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static utils.XpdlTestUtils.randomName;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.net.URL;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -12,6 +19,7 @@ import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
+import org.enhydra.jxpdl.elements.Package;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -75,6 +83,27 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	 */
 	protected void upload(final XpdlDocument xpdlDocument) throws XpdlException, CMWorkflowException {
 		ws.uploadPackage(xpdlDocument.getPackageId(), serialize(xpdlDocument));
+	}
+
+	/**
+	 * Uploads an XPDL resource give its name.
+	 * 
+	 * @throws Exception
+	 * @return the uploaded package
+	 */
+	protected Package uploadXpdlResource(final String resourceName) throws Exception {
+		final URL url = ClassLoader.getSystemResource(resourceName);
+		assertThat(url, not(nullValue()));
+
+		final File file = new File(url.toURI());
+		final byte[] data = FileUtils.readFileToByteArray(file);
+
+		final ByteArrayInputStream is = new ByteArrayInputStream(data);
+		final Package pkg = XpdlPackageFactory.readXpdl(is);
+
+		ws.uploadPackage(pkg.getId(), data);
+
+		return pkg;
 	}
 
 	/**

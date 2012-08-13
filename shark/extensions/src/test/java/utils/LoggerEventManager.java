@@ -23,33 +23,33 @@ public class LoggerEventManager implements CMEventManager {
 	}
 
 	@Override
-	public void activityClosed(final String activityDefinitionId) {
-		logWithId(ACTIVITY_CLOSED_LOG, activityDefinitionId);
+	public void activityClosed(final ActivityInstance activityInstance) {
+		logWithId(ACTIVITY_CLOSED_LOG, activityInstance.getActivityDefinitionId());
 	}
 
 	@Override
-	public void activityStarted(final String activityDefinitionId) {
-		logWithId(ACTIVITY_STARTED_LOG, activityDefinitionId);
+	public void activityStarted(final ActivityInstance activityInstance) {
+		logWithId(ACTIVITY_STARTED_LOG, activityInstance.getActivityDefinitionId());
 	}
 
 	@Override
-	public void processClosed(final String processDefinitionId) {
-		logWithId(PROCESS_CLOSED_LOG, processDefinitionId);
+	public void processClosed(final ProcessInstance processInstance) {
+		logWithId(PROCESS_CLOSED_LOG, processInstance.getProcessDefinitionId());
 	}
 
 	@Override
-	public void processResumed(final String processDefinitionId) {
-		logWithId(PROCESS_RESUMED_LOG, processDefinitionId);
+	public void processResumed(final ProcessInstance processInstance) {
+		logWithId(PROCESS_RESUMED_LOG, processInstance.getProcessDefinitionId());
 	}
 
 	@Override
-	public void processStarted(final String processDefinitionId) {
-		logWithId(PROCESS_STARTED_LOG, processDefinitionId);
+	public void processStarted(final ProcessInstance processInstance) {
+		logWithId(PROCESS_STARTED_LOG, processInstance.getProcessDefinitionId());
 	}
 
 	@Override
-	public void processSuspended(final String processDefinitionId) {
-		logWithId(PROCESS_SUSPENDED_LOG, processDefinitionId);
+	public void processSuspended(final ProcessInstance processInstance) {
+		logWithId(PROCESS_SUSPENDED_LOG, processInstance.getProcessDefinitionId());
 	}
 
 	private void logWithId(final String message, final String id) {
