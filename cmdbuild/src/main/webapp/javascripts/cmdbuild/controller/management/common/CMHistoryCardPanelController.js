@@ -52,23 +52,25 @@
 		constructor: function() {
 			this.callParent(arguments);
 			_CMWFState.addDelegate(this);
+
+			this.mon(this.view, "activate", function() {
+				if (!this._loaded) {
+					this.load();
+				}
+			}, this);
 		},
 
 		// wfStateDelegate
 		onProcessInstanceChange: function(processInstance) {
+			this._loaded = false;
+
 			if (processInstance.isNew()) {
 				this.view.disable();
 			} else {
 				this.view.enable();
 			}
 
-			if (!this.view.isVisible()) {
-				this.removeManagedListener(this.view, "activate");
-
-				this.mon(this.view, "activate", function() {
-					this.load();
-				}, this, {single: true});
-			} else {
+			if (this.view.isVisible()) {
 				this.load();
 			}
 		},
@@ -90,6 +92,7 @@
 
 		// override
 		load: function() {
+			this._loaded = true;
 			var processInstance = _CMWFState.getProcessInstance();
 			if (processInstance) {
 				this.view.getStore().load({

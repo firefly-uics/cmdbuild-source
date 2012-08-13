@@ -11,6 +11,10 @@
 			]);
 		},
 
+		isFullVersion: function() {
+			return !_CMUIConfiguration.isSimpleHistoryModeForProcess();
+		},
+
 		getStoreFields: function() {
 			return this.callParent(arguments).concat([
 				"Code"
