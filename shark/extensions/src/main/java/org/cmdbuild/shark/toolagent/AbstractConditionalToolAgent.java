@@ -142,7 +142,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	/**
 	 * Gets the application parameter or null if not present.
-	 * 
+	 *
 	 * @param name
 	 *            parameter name
 	 * @return parameter or null
@@ -176,7 +176,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	/**
 	 * Decodes the XML because Shark 2.3 does not use jxpdl, so it would crash.
-	 * 
+	 *
 	 * @param name
 	 *            extended attribute key
 	 * @return extended attribute value for that key

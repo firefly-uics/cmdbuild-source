@@ -7,10 +7,10 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
 import org.enhydra.shark.toolagent.BshToolAgent;
 
 /**
- * 
+ *
  * Needed only for supporting the toolagent "createReferenceObj" (interpreted by
  * {@link BshToolAgent}).
- * 
+ *
  */
 public class CmdbuildUtils {
 

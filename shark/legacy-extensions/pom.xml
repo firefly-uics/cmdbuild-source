@@ -12,10 +12,6 @@
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Legacy Extensions</name>
 
-	<properties>
-		<groovy.version>1.8.1</groovy.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>net.sourceforge.sharkwf</groupId>
@@ -42,12 +38,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sourceforge.sharkwf</groupId>
-			<artifactId>shark-utilities-wmentity</artifactId>
-			<version>${shark.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-shark-commons</artifactId>
 			<version>${project.version}</version>
@@ -61,15 +51,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-ws-client</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.beanshell</groupId>
-			<artifactId>bsh</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-			<version>${groovy.version}</version>
 		</dependency>
 
 		<dependency>
