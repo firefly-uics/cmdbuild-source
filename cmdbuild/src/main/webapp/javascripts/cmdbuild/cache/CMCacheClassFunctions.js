@@ -103,6 +103,10 @@
 					return e;
 				}
 			}
+
+			CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+					Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, name));
+
 			return null;
 		},
 
