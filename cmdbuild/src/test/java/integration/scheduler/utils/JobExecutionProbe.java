@@ -78,12 +78,12 @@ public abstract class JobExecutionProbe implements Probe {
         };
 	}
 
-	public static JobExecutionProbe jobExecutionCounter(final RecurringTrigger trigger, final int times) {
+	public static JobExecutionProbe jobExecutionCounter(final RecurringTrigger trigger, final int minTimes, final int maxTimes) {
         return new JobExecutionProbe(trigger) {
         	private int totalExecutions = 0;
 
 			public void describeAcceptanceCriteriaTo(Description d) {
-				d.appendText(String.format("job should have been executed %d times", times));
+				d.appendText(String.format("job should have been executed between %d and %d times", minTimes, maxTimes));
 			}
 
 			public void describeFailureTo(Description d) {
@@ -91,7 +91,7 @@ public abstract class JobExecutionProbe implements Probe {
 			}
 
 			public boolean isSatisfied() {
-				return (totalExecutions == times);
+				return (totalExecutions >= minTimes) && (totalExecutions <= maxTimes);
 			}
 
 			public boolean isDone() {
