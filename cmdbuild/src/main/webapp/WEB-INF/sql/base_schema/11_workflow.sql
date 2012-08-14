@@ -16,7 +16,7 @@ CREATE TABLE "Activity"
 (
   "FlowStatus" integer,
   "ProcessCode" text,
-  "UniqueProcessDefinition" text;
+  "UniqueProcessDefinition" text,
   "ActivityInstanceId" varchar[],
   "ActivityDefinitionName" varchar[],
   "NextExecutor" varchar[],
