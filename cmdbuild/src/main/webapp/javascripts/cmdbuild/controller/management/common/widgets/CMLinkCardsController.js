@@ -28,8 +28,7 @@
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			ensureEntryType(this);
-
+			this.targetEntryType = _CMCache.getEntryTypeByName(widgetReader.className(this.widgetConf));
 			this.currentView = STARTING_VIEW;
 			this.templateResolverIsBusy = false; // is busy when load the default selection
 			this.alertIfChangeDefaultSelection = false;
@@ -66,6 +65,10 @@
 
 		// override
 		beforeActiveView: function() {
+			if (this.targetEntryType == null) {
+				return;
+			}
+
 			var classId = this.targetEntryType.getId(),
 				cqlQuery = widgetReader.filter(this.widgetConf);
 
@@ -132,14 +135,6 @@
 			return widgetReader.label(this.widgetConf);
 		}
 	});
-
-	function ensureEntryType(me) {
-		me.targetEntryType = _CMCache.getEntryTypeByName(widgetReader.className(me.widgetConf));
-
-		if (me.targetEntryType == null) {
-			throw {error: "There is no entry type for this widget", widget: me.widgetConf};
-		}
-	}
 
 	// when the linkCard is not busy load the grid
 	function loadTheGridAsSoonAsPossible(me, cqlQuery, classId) {
