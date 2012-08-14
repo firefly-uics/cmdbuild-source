@@ -73,7 +73,7 @@
 				actionsHtml += getImgTag("editcard", "modify.png");
 			}
 
-			if (reader.canRemoveARelation) {
+			if (reader.canDeleteALinkedCard(widget)) {
 				actionsHtml += getImgTag("deletecard", "delete.png");
 			}
 
