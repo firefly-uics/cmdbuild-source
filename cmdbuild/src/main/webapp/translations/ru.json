@@ -1037,6 +1037,7 @@
             "destclass": "Класс",
             "domain": "Связь",
             "end_date": "Конечная дата",
+            "performer": "<em>Activity performer</em>",
             "relation": "Отношение",
             "user": "Пользователь"
          },

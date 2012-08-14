@@ -1037,6 +1037,7 @@
             "destclass": "Klasa",
             "domain": "Domen",
             "end_date": "Datum završetka",
+            "performer": "<em>Activity performer</em>",
             "relation": "Relacije",
             "user": "Korisnik"
          },

@@ -7,7 +7,8 @@
 
 		getGridColumns: function() {
 			return this.callParent(arguments).concat([
-				{header: col_tr.activity_name, width: 40, sortable: false, dataIndex: "Code", flex:1}
+				{header: col_tr.activity_name, width: 40, sortable: false, dataIndex: "Code", flex:1},
+				{header: col_tr.performer, sortable: false, dataIndex: "Executor", flex:1}
 			]);
 		},
 
@@ -17,7 +18,8 @@
 
 		getStoreFields: function() {
 			return this.callParent(arguments).concat([
-				"Code"
+				"Code",
+				"Executor"
 			]);
 		}
 	});

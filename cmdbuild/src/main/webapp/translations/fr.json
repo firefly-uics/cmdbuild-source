@@ -476,7 +476,6 @@
             "add_group": "Ajouter Groupe",
             "availableusers": "Utilisateurs disponibles",
             "delete_group": "Désactiver Groupe",
-            "disabled_modules": "Désactiver caractéristiques",
             "email": "Email",
             "enable_group": "Activer Groupe",
             "group_description": "Description",
@@ -1038,6 +1037,7 @@
             "destclass": "Class",
             "domain": "Lien",
             "end_date": "Date de fin",
+            "performer": "<em>Activity performer</em>",
             "relation": "Relation",
             "user": "Utilisateur"
          },

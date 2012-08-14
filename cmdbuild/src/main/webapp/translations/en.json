@@ -1037,6 +1037,7 @@
             "destclass": "Class",
             "domain": "Domain",
             "end_date": "End date",
+            "performer": "Activity performer",
             "relation": "Relation",
             "user": "User"
          },

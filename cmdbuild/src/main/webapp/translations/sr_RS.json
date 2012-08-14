@@ -280,6 +280,44 @@
           },
           "title": "<em>Dashboard</em>"
       },
+      "modLookup": {
+         "add_lookuptype": "Додај тип у шифарник",
+         "lookupForm": {
+            "active": "Активан",
+            "code": "Код",
+            "description": "Опис",
+            "disable_lookup": "Искључи ставку шифарника",
+            "enable_lookup": "Укључи ставку шифарника",
+            "isdefault": "Подразумевана вредност",
+            "notes": "Напомена",
+            "parentdescription": "Опис родитеља",
+            "update_lookup": "Измени ставку шифарника"
+         },
+         "lookupGrid": {
+            "active": "Активан",
+            "add_lookup": "Додај ставку у шифарник",
+            "code": "Код",
+            "description": "Опис",
+            "isdefault": "Подразумеван",
+            "notes": "Напомена",
+            "parentdescription": "Опис родитеља"
+         },
+         "lookupType": "Тип у шифарнику",
+         "lookupTypeForm": {
+            "active": "Активан",
+            "delete_lookuptype": "Уклони тип из шифарника",
+            "description": "Опис",
+            "modify_lookuptype": "Измени тип у шифарнику",
+            "parent": "Родитељ",
+            "title": "Управљање садржајима шифарника"
+         },
+         "lookupTypes": "Шифарници",
+         "tabs": {
+            "lookuplist": "Листа ставки",
+            "properties": "Обележје"
+         },
+         "title": "Управљање садржајима шифарника"
+      },
       "modWorkflow": {
          "add_process": "Додај процес",
          "attributes_title": "Управљање атрибутима",
@@ -999,6 +1037,7 @@
             "destclass": "Класа",
             "domain": "Домен",
             "end_date": "Датум завршетка",
+            "performer": "<em>Activity performer</em>",
             "relation": "Релације",
             "user": "Корисник"
          },
