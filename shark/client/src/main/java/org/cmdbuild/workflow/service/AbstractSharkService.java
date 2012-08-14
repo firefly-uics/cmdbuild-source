@@ -42,10 +42,16 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	private TypesConverter typesConverter;
 
-	protected abstract class TransactedExecutor<T> {
+	private abstract class TransactedExecutor<T> {
+
+		protected SharkInterface shark;
+		protected WAPI wapi;
+		protected WMSessionHandle handle;
+
 		public T execute() throws CMWorkflowException {
 			try {
 				beginTransaction();
+				handle = initAndConnect();
 				final T result = command();
 				commitTransaction();
 				return result;
@@ -57,6 +63,13 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 		private final void beginTransaction() throws Exception {
 			SharkInterfaceWrapper.getUserTransaction().begin();
+		}
+
+		private final WMSessionHandle initAndConnect() throws Exception {
+			shark = shark();
+			wapi = wapi();
+			final WMConnectInfo wmci = getConnectionInfo();
+			return wapi.connect(wmci);
 		}
 
 		private final void commitTransaction() throws Exception {
@@ -73,8 +86,15 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		protected abstract T command() throws Exception;
 	}
 
-	private volatile SharkInterface shark;
-	private volatile WMSessionHandle shandle;
+	/**
+	 * It should be accessed through the {@see shark()} method only.
+	 */
+	private volatile SharkInterface _shark;
+
+	/**
+	 * It should be accessed through the {@see wapi()} method only.
+	 */
+	private volatile WAPI _wapi;
 
 	protected AbstractSharkService(final Properties props) {
 		configureSharkInterfaceWrapper(props);
@@ -99,12 +119,47 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		this.typesConverter = variableConverter;
 	}
 
+	private WAPI wapi() throws Exception {
+		if (_wapi == null) {
+			synchronized (this) {
+				if (_wapi == null) {
+					_wapi = shark().getWAPIConnection();
+					configureWAPI(_wapi);
+				}
+			}
+		}
+		return _wapi;
+	}
+
+	private SharkInterface shark() throws Exception {
+		if (_shark == null) {
+			synchronized (this) {
+				if (_shark == null) {
+					_shark = SharkInterfaceWrapper.getShark();
+				}
+			}
+		}
+		return _shark;
+	}
+
+	/**
+	 * It can be overridden to add something to the WAPI interface ({@see RemoteSharkService}).
+	 * 
+	 * @throws Exception
+	 */
+	protected void configureWAPI(final WAPI wapi) {
+	}
+
+	abstract protected WMConnectInfo getConnectionInfo();
+
+
+
 	@Override
 	public final String[] getPackageVersions(final String pkgId) throws CMWorkflowException {
 		return new TransactedExecutor<String[]>() {
 			@Override
 			protected String[] command() throws Exception {
-				return shark().getPackageAdministration().getPackageVersions(handle(), pkgId);
+				return shark.getPackageAdministration().getPackageVersions(handle, pkgId);
 			}
 		}.execute();
 	}
@@ -114,12 +169,12 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return new TransactedExecutor<WSPackageDefInfo>() {
 			@Override
 			protected WSPackageDefInfo command() throws Exception {
-				final PackageAdministration pa = shark().getPackageAdministration();
+				final PackageAdministration pa = shark.getPackageAdministration();
 				final WMEntity uploadedPackage;
-				if (pkgId == null || pa.getPackageVersions(handle(), pkgId).length == 0) {
-					uploadedPackage = pa.uploadPackage(handle(), pkgDefData);
+				if (pkgId == null || pa.getPackageVersions(handle, pkgId).length == 0) {
+					uploadedPackage = pa.uploadPackage(handle, pkgDefData);
 				} else {
-					uploadedPackage = pa.updatePackage(handle(), pkgId, pkgDefData);
+					uploadedPackage = pa.updatePackage(handle, pkgId, pkgDefData);
 				}
 				return newWSPackageDefInfo(uploadedPackage.getPkgId(), uploadedPackage.getPkgVer());
 			}
@@ -147,7 +202,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return new TransactedExecutor<byte[]>() {
 			@Override
 			protected byte[] command() throws Exception {
-				return shark().getPackageAdministration().getPackageContent(handle(), pkgId, pkgVer);
+				return shark.getPackageAdministration().getPackageContent(handle, pkgId, pkgVer);
 			}
 		}.execute();
 	}
@@ -157,13 +212,13 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return new TransactedExecutor<WSPackageDef[]>() {
 			@Override
 			protected WSPackageDef[] command() throws Exception {
-				final PackageAdministration pa = shark().getPackageAdministration();
-				final String[] pkgIds = pa.getOpenedPackageIds(handle());
+				final PackageAdministration pa = shark.getPackageAdministration();
+				final String[] pkgIds = pa.getOpenedPackageIds(handle);
 				final WSPackageDef[] out = new WSPackageDef[pkgIds.length];
 				for (int i = 0; i < pkgIds.length; ++i) {
 					final String id = pkgIds[i];
-					final String version = pa.getCurrentPackageVersion(handle(), id);
-					final byte[] data = pa.getPackageContent(handle(), id, version);
+					final String version = pa.getCurrentPackageVersion(handle, id);
+					final byte[] data = pa.getPackageContent(handle, id, version);
 					out[i] = newWSPackageDef(id, version, data);
 				}
 				return out;
@@ -203,11 +258,11 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return new TransactedExecutor<WSProcessInstInfo>() {
 			@Override
 			protected WSProcessInstInfo command() throws Exception {
-				final String uniqueProcDefId = shark().getXPDLBrowser().getUniqueProcessDefinitionName(handle(), pkgId,
+				final String uniqueProcDefId = shark.getXPDLBrowser().getUniqueProcessDefinitionName(handle, pkgId,
 						LAST_VERSION, procDefId);
-				final String procInstId = wapi().createProcessInstance(handle(), uniqueProcDefId, null);
-				setProcessInstanceVariablesNotTransacted(procInstId, variables);
-				final String newProcInstId = wapi().startProcess(handle(), procInstId);
+				final String procInstId = wapi.createProcessInstance(handle, uniqueProcDefId, null);
+				setProcessInstanceVariablesNotTransacted(procInstId, variables, wapi, handle);
+				final String newProcInstId = wapi.startProcess(handle, procInstId);
 				return newWSProcessInstInfo(uniqueProcDefId, newProcInstId);
 			}
 
@@ -244,41 +299,12 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}.execute();
 	}
 
-	private SharkInterface shark() throws Exception {
-		if (shark == null) {
-			synchronized (this) {
-				if (shark == null) {
-					shark = SharkInterfaceWrapper.getShark();
-				}
-			}
-		}
-		return shark;
-	}
-
-	private WMSessionHandle handle() throws Exception {
-		if (shandle == null) {
-			synchronized (this) {
-				if (shandle == null) {
-					final WMConnectInfo wmci = getConnectionInfo();
-					shandle = wapi().connect(wmci);
-				}
-			}
-		}
-		return shandle;
-	}
-
-	abstract protected WMConnectInfo getConnectionInfo();
-
-	protected WAPI wapi() throws Exception {
-		return shark().getWAPIConnection();
-	}
-
 	@Override
 	public WSProcessInstInfo[] listOpenProcessInstances(final String procDefId) throws CMWorkflowException {
 		return new TransactedExecutor<WSProcessInstInfo[]>() {
 			@Override
 			protected WSProcessInstInfo[] command() throws Exception {
-				final WMProcessInstance[] pis = wapi().listProcessInstances(handle(), openProcessInstances(procDefId),
+				final WMProcessInstance[] pis = wapi.listProcessInstances(handle, openProcessInstances(procDefId),
 						false).getArray();
 				final WSProcessInstInfo[] out = new WSProcessInstInfo[pis.length];
 				for (int i = 0; i < pis.length; ++i) {
@@ -288,9 +314,9 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			}
 
 			private WMFilter openProcessInstances(final String procDefId) throws Exception {
-				final ProcessFilterBuilder fb = shark().getProcessFilterBuilder();
-				return fb.and(handle(), fb.addProcessDefIdEquals(handle(), procDefId),
-						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN));
+				final ProcessFilterBuilder fb = shark.getProcessFilterBuilder();
+				return fb.and(handle, fb.addProcessDefIdEquals(handle, procDefId),
+						fb.addStateStartsWith(handle, SharkConstants.STATEPREFIX_OPEN));
 			}
 		}.execute();
 	}
@@ -300,7 +326,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		return new TransactedExecutor<WSProcessInstInfo>() {
 			@Override
 			protected WSProcessInstInfo command() throws Exception {
-				final WMProcessInstance pi = wapi().getProcessInstance(handle(), procInstId);
+				final WMProcessInstance pi = wapi.getProcessInstance(handle, procInstId);
 				return WSProcessInstInfoImpl.newInstance(pi);
 			}
 		}.execute();
@@ -321,7 +347,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			@Override
 			protected Map<String, Object> command() throws Exception {
 				final Map<String, Object> variables = new HashMap<String, Object>();
-				final WMAttributeIterator iterator = wapi().listProcessInstanceAttributes(handle(), procInstId, null,
+				final WMAttributeIterator iterator = wapi.listProcessInstanceAttributes(handle, procInstId, null,
 						false);
 				for (final WMAttribute attribute : iterator.getArray()) {
 					final String name = attribute.getName();
@@ -340,18 +366,19 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
-				setProcessInstanceVariablesNotTransacted(procInstId, variables);
+				setProcessInstanceVariablesNotTransacted(procInstId, variables, wapi, handle);
 				return null;
 			}
 		}.execute();
 	}
 
-	private void setProcessInstanceVariablesNotTransacted(final String procInstId, final Map<String, ?> variables)
+	private void setProcessInstanceVariablesNotTransacted(final String procInstId, final Map<String, ?> variables,
+			final WAPI wapi, final WMSessionHandle handle)
 			throws Exception {
 		for (final String name : variables.keySet()) {
 			final Object nativeValue = variables.get(name);
 			final Object sharkValue = typesConverter.toWorkflowType(nativeValue);
-			wapi().assignProcessInstanceAttribute(handle(), procInstId, name, sharkValue);
+			wapi.assignProcessInstanceAttribute(handle, procInstId, name, sharkValue);
 		}
 	}
 
@@ -362,7 +389,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			@Override
 			protected WSActivityInstInfo[] command() throws Exception {
 				final WMFilter filter = openActivitiesForProcessInstance(procInstId);
-				final WMActivityInstance[] ais = wapi().listActivityInstances(handle(), filter, false).getArray();
+				final WMActivityInstance[] ais = wapi.listActivityInstances(handle, filter, false).getArray();
 				final WSActivityInstInfo[] out = new WSActivityInstInfo[ais.length];
 				for (int i = 0; i < ais.length; ++i) {
 					out[i] = WSActivityInstInfoImpl.newInstance(ais[i]);
@@ -371,9 +398,9 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			}
 
 			private WMFilter openActivitiesForProcessInstance(final String procInstId) throws Exception {
-				final ActivityFilterBuilder fb = shark().getActivityFilterBuilder();
-				return fb.and(handle(), fb.addProcessIdEquals(handle(), procInstId),
-						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN));
+				final ActivityFilterBuilder fb = shark.getActivityFilterBuilder();
+				return fb.and(handle, fb.addProcessIdEquals(handle, procInstId),
+						fb.addStateStartsWith(handle, SharkConstants.STATEPREFIX_OPEN));
 			}
 		}.execute();
 	}
@@ -384,7 +411,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			@Override
 			protected WSActivityInstInfo[] command() throws Exception {
 				final WMFilter filter = openActivitiesForProcess(procDefId);
-				final WMActivityInstance[] ais = wapi().listActivityInstances(handle(), filter, false).getArray();
+				final WMActivityInstance[] ais = wapi.listActivityInstances(handle, filter, false).getArray();
 				final WSActivityInstInfo[] out = new WSActivityInstInfo[ais.length];
 				for (int i = 0; i < ais.length; ++i) {
 					out[i] = WSActivityInstInfoImpl.newInstance(ais[i]);
@@ -393,9 +420,9 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			}
 
 			private WMFilter openActivitiesForProcess(final String procDefId) throws Exception {
-				final ActivityFilterBuilder fb = shark().getActivityFilterBuilder();
-				return fb.and(handle(), fb.addProcessDefIdEquals(handle(), procDefId),
-						fb.addStateStartsWith(handle(), SharkConstants.STATEPREFIX_OPEN));
+				final ActivityFilterBuilder fb = shark.getActivityFilterBuilder();
+				return fb.and(handle, fb.addProcessDefIdEquals(handle, procDefId),
+						fb.addStateStartsWith(handle, SharkConstants.STATEPREFIX_OPEN));
 			}
 		}.execute();
 	}
@@ -418,8 +445,6 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
-				final WAPI wapi = wapi();
-				final WMSessionHandle handle = handle();
 				for (final WMActivityInstanceState state : states) {
 					wapi.changeActivityInstanceState(handle, procInstId, actInstId, state);
 				}
@@ -448,7 +473,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws Exception {
-				wapi().changeProcessInstanceState(handle(), procInstId, state);
+				wapi.changeProcessInstanceState(handle, procInstId, state);
 				return null;
 			}
 		}.execute();

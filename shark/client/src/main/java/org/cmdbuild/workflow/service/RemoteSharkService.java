@@ -66,13 +66,11 @@ public class RemoteSharkService extends AbstractSharkService {
 	 * easy without them!
 	 */
 	@Override
-	protected WAPI wapi() throws Exception {
-		final WAPI wapi = super.wapi();
+	protected void configureWAPI(final WAPI wapi) {
 		if (wapi instanceof Stub) {
 			final Stub axisClientStub = (Stub) wapi;
 			registerCustomTypes(axisClientStub);
 		}
-		return wapi;
 	}
 
 	private void registerCustomTypes(final Stub axisClientStub) {
