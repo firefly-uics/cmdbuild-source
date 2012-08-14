@@ -80,7 +80,7 @@ public class QuartzSchedulerTest {
 	public void quartzExecutesARecurringJob() throws InterruptedException {
 		Job nullJob = createNullJob();
 		JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
-		assertEventually(nullJob, willBeExecuted(everySecond, THREE_TIMES), IN_THREE_SECONDS);
+		assertEventually(nullJob, willBeExecutedApproximately(everySecond, THREE_TIMES), IN_THREE_SECONDS);
 	}
 
 	@Test
@@ -120,7 +120,11 @@ public class QuartzSchedulerTest {
 	}
 
 	private JobExecutionProbe willBeExecuted(JobTrigger trigger, int times) {
-		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger)trigger, times);
+		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger)trigger, times, times);
+	}
+
+	private JobExecutionProbe willBeExecutedApproximately(JobTrigger trigger, int times) {
+		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger)trigger, times, times+1);
 	}
 
 	private void assertEventually(Job job, JobExecutionProbe probe) throws InterruptedException {
