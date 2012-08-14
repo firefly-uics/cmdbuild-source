@@ -1037,6 +1037,7 @@
             "destclass": "Classe",
             "domain": "Dominio",
             "end_date": "Data fine",
+            "performer": "Esecutore attività",
             "relation": "Relazione",
             "user": "Utente"
          },

@@ -1037,6 +1037,7 @@
             "destclass": "クラス",
             "domain": "ドメイン",
             "end_date": "終了日",
+            "performer": "<em>Activity performer</em>",
             "relation": "リレーション",
             "user": "ユーザ"
          },

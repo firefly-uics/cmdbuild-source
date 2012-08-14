@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
@@ -27,6 +28,7 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessType;
@@ -48,6 +50,8 @@ import org.cmdbuild.services.gis.GeoLayer;
 import org.cmdbuild.services.gis.GeoTable;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
+import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
+import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -765,7 +769,7 @@ public class Serializer {
 	}
 
 	public static JSONObject serializeProcessAttributeHistory(ICard card, CardQuery cardQuery) throws JSONException {
-		JsonAttributeHistoryFormatter formatter = new JsonAttributeHistoryFormatter();
+		JsonProcessAttributeHistoryFormatter formatter = new JsonProcessAttributeHistoryFormatter();
 		formatter.addCard(card);
 		for (ICard historyCard: cardQuery) {
 			final String processCode = historyCard.getCode();
@@ -780,7 +784,7 @@ public class Serializer {
 
 	public static void serializeCardAttributeHistory(ICard card, CardQuery cardQuery, final JSONObject jsonOutput)
 			throws JSONException {
-		JsonAttributeHistoryFormatter formatter = new JsonAttributeHistoryFormatter();
+		JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter();
 		formatter.addCard(card);
 		for (ICard historyCard: cardQuery) {
 			formatter.addCard(historyCard);
@@ -789,67 +793,121 @@ public class Serializer {
 		formatter.addJsonHistoryItems(rows);
 	}
 
-	private static class JsonAttributeHistoryFormatter extends JsonHistory {
+	private static class CardHistoryItem implements HistoryItem {
+		protected ICard card;
 
-		public void addCard(final ICard card) {
-			final List<IAttribute> attributes = new LinkedList<IAttribute>();
-			for (IAttribute a : card.getSchema().getAttributes().values()) {
-				if (a.isDisplayable()) {
-					attributes.add(a);
+		public CardHistoryItem(ICard card) {
+			this.card = card;
+		}
+
+		@Override
+		public Long getId() {
+			return Long.valueOf(card.getId());
+		}
+
+		@Override
+		public long getInstant() {
+			return card.getBeginDate().getTime();
+		}
+
+		@Override
+		public Map<String, ValueAndDescription> getAttributes() {
+			final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
+			for (IAttribute attr : card.getSchema().getAttributes().values()) {
+				if (attr.isDisplayable()) {
+					final String name = attr.getName();
+					final String description = attr.getDescription();
+					final Object value = attr.valueToString(card.getValue(name));
+					map.put(name, new ValueAndDescription(value, description));
 				}
 			}
-			addHistoryItem(new HistoryItem() {
+			return map;
+		}
 
-				@Override
-				public Long getId() {
-					return Long.valueOf(card.getId());
-				}
+		@Override
+		public Map<String, Object> getExtraAttributes() {
+			final Map<String, Object> map = new HashMap<String, Object>();
+			map.put("_AttrHist", true);
+			map.put("User", card.getUser());
+			map.put("Code", card.getCode());
+			map.put("BeginDate", card.getAttributeValue("BeginDate").toString());
+			
+			final Date endDateForSorting;
+			if (card.getSchema().getAttributes().containsKey("EndDate")) {
+				final AttributeValue endDateAttrVal = card.getAttributeValue("EndDate");
+				map.put("EndDate", endDateAttrVal.toString());
+				endDateForSorting = endDateAttrVal.getDate();
+			} else {
+				// Skip EndDate if not in history, but add a fake end date for sorting
+				endDateForSorting = new Date();
+			}
+			map.put("_EndDate", endDateForSorting.getTime());
+			return map;
+		}
 
+		@Override
+		public boolean isInOutput() {
+			return true;
+		}
+	}
 
-				@Override
-				public long getInstant() {
-					return card.getBeginDate().getTime();
-				}
+	private static class ProcessHistoryItem extends CardHistoryItem {
+		private ICard previousCard = null;
 
-				@Override
-				public Map<String, ValueAndDescription> getAttributes() {
-					final Map<String, ValueAndDescription> map = new HashMap<String, ValueAndDescription>();
-					for (IAttribute attr : attributes) {
-						final String name = attr.getName();
-						final String description = attr.getDescription();
-						final Object value = attr.valueToString(card.getValue(name));
-						map.put(name, new ValueAndDescription(value, description));
-					}
-					return map;
-				}
+		/**
+		 * 
+		 * @param card the card that you want to extract the history
+		 * @param previousCard the previous card in the cycle, the more recent
+		 */
+		public ProcessHistoryItem(ICard card, ICard previousCard) {
+			super(card);
+			this.previousCard = previousCard;
+		}
 
-				@Override
-				public Map<String, Object> getExtraAttributes() {
-					final Map<String, Object> map = new HashMap<String, Object>();
-					map.put("_AttrHist", true);
-					map.put("User", card.getUser());
-					map.put("Code", card.getCode());
-					map.put("BeginDate", card.getAttributeValue("BeginDate").toString());
-					
-					final Date endDateForSorting;
-					if (card.getSchema().getAttributes().containsKey("EndDate")) {
-						final AttributeValue endDateAttrVal = card.getAttributeValue("EndDate");
-						map.put("EndDate", endDateAttrVal.toString());
-						endDateForSorting = endDateAttrVal.getDate();
+		public Map<String, Object> getExtraAttributes() {
+			final Map<String, Object> map = super.getExtraAttributes();
+
+			// Add the performer
+			if (previousCard != null) {
+				final String[] currentActivities = getActivityInstanceIds(card);
+				final String[] previousActivities = getActivityInstanceIds(previousCard);
+
+				for (int i=0; i<currentActivities.length; ++i) {
+					String id = currentActivities[i];
+					if (ArrayUtils.contains(previousActivities, id)) {
+						continue;
 					} else {
-						// Skip EndDate if not in history, but add a fake end date for sorting
-						endDateForSorting = new Date();
+						final String[] performers = getActivityInstancePerformers(card);
+						map.put("Executor", performers[i]);
+						break;
 					}
-					map.put("_EndDate", endDateForSorting.getTime());
-					return map;
 				}
+			}
 
-				@Override
-				public boolean isInOutput() {
-					return true;
-				}
-				
-			});
+			return map;
+		}
+
+		private String[] getActivityInstanceIds(ICard card) {
+			return card.getAttributeValue(ProcessAttributes.ActivityInstanceId.dbColumnName()).getStringArrayValue();
+		}
+
+		private String[] getActivityInstancePerformers(ICard card) {
+			return card.getAttributeValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName()).getStringArrayValue();
+		}
+	}
+
+	private static class JsonCardAttributeHistoryFormatter extends JsonHistory {
+		public void addCard(final ICard card) {
+			addHistoryItem(new CardHistoryItem(card));
+		}
+	}
+
+	private static class JsonProcessAttributeHistoryFormatter extends JsonHistory {
+		private ICard previousCard = null;
+
+		public void addCard(final ICard card) {
+			addHistoryItem(new ProcessHistoryItem(card, previousCard));
+			previousCard = card;
 		}
 	}
 
