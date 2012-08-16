@@ -165,13 +165,6 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 			}
 			break;
 		}
-//		final WMEntity en = Shark.getInstance().getAdminMisc()
-//				.getActivityDefinitionInfo(shandle, sea.getProcessId(), sea.getActivityId());
-//		final WMFilter filter = new WMFilter("Name", WMFilter.EQ, "Performer");
-//		filter.setFilterType(XPDLBrowser.SIMPLE_TYPE_XPDL);
-//		Shark.getInstance().getXPDLBrowser().listAttributes(shandle, en, filter, false);
-//		Shark.getInstance().getWAPIConnection()
-//				.listActivityInstanceAttributes(shandle, sea.getProcessId(), sea.getActivityId(), null, false);
 	}
 
 	private CMEventManager.ActivityInstance activityInstanceFor(final EventAuditPersistenceObject eap) {

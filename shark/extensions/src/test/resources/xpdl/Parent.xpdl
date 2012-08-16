@@ -64,6 +64,7 @@
                             <xpdl:ActualParameters>
                                 <xpdl:ActualParameter>ParentVariable</xpdl:ActualParameter>
                                 <xpdl:ActualParameter>ParentVariable</xpdl:ActualParameter>
+                                <xpdl:ActualParameter>true</xpdl:ActualParameter>
                             </xpdl:ActualParameters>
                         </xpdl:SubFlow>
                     </xpdl:Implementation>
