@@ -34,7 +34,7 @@ abstract class XpdlActivities {
 	 * 
 	 * @return list of starting activities
 	 */
-	public final List<XpdlActivity> getStartingActivities() {
+	public final List<XpdlActivity> getStartActivities() {
 		doc.turnReadOnly();
 		List<XpdlActivity> startingActivities = new ArrayList<XpdlActivity>();
 		for (final Activity a : startingActivities()) {
@@ -43,13 +43,13 @@ abstract class XpdlActivities {
 		return startingActivities;
 	}
 
-	public final List<XpdlActivity> getStartingManualActivitiesRecursive() {
+	public final List<XpdlActivity> getManualStartActivitiesRecursive() {
 		final List<XpdlActivity> out = new ArrayList<XpdlActivity>();
-		for (XpdlActivity sa : getStartingActivities()) {
+		for (XpdlActivity sa : getStartActivities()) {
 			if (sa.isManualType()) {
 				out.add(sa);
 			} else if (sa.isBlockType()) {
-				out.addAll(sa.getBlockActivitySet().getStartingManualActivitiesRecursive());
+				out.addAll(sa.getBlockActivitySet().getManualStartActivitiesRecursive());
 			} else if (sa.isStartEventType()) {
 				for (final XpdlTransition t : sa.getOutgoingTransitions()) {
 					if (t.hasCondition()) {

@@ -86,24 +86,24 @@ public class XpdlProcessTest extends AbstractXpdlTest {
 	}
 
 	@Test
-	public void startingActivitiesCanBeQueried() {
+	public void startActivitiesCanBeQueried() {
 		final XpdlProcess xpdlProcess = xpdlDocument.createProcess(randomName());
 
-		assertTrue(xpdlProcess.getStartingActivities().isEmpty());
-		assertTrue(xpdlProcess.getStartingManualActivitiesRecursive().isEmpty());
+		assertTrue(xpdlProcess.getStartActivities().isEmpty());
+		assertTrue(xpdlProcess.getManualStartActivitiesRecursive().isEmpty());
 
 		xpdlProcess.createActivity("A1");
 
-		assertThat(xpdlProcess.getStartingActivities().size(), is(1));
-		assertThat(xpdlProcess.getStartingManualActivitiesRecursive().size(), is(1));
+		assertThat(xpdlProcess.getStartActivities().size(), is(1));
+		assertThat(xpdlProcess.getManualStartActivitiesRecursive().size(), is(1));
 
 		final XpdlActivitySet as2 = xpdlProcess.createActivitySet("AS2");
 		as2.createActivity("A2.1");
 		as2.createActivity("A2.2");
 		xpdlProcess.createActivity("A2").setBlockType(as2);
 
-		assertThat(xpdlProcess.getStartingActivities().size(), is(2));
-		assertThat(xpdlProcess.getStartingManualActivitiesRecursive().size(), is(3));
+		assertThat(xpdlProcess.getStartActivities().size(), is(2));
+		assertThat(xpdlProcess.getManualStartActivitiesRecursive().size(), is(3));
 
 		final XpdlActivitySet as23 = xpdlProcess.createActivitySet("AS2.3");
 		as23.createActivity("A2.3.1");
@@ -111,25 +111,25 @@ public class XpdlProcessTest extends AbstractXpdlTest {
 		as23.createActivity("A2.3.3");
 		as2.createActivity("A2.3").setBlockType(as23);
 
-		assertThat(xpdlProcess.getStartingActivities().size(), is(2));
-		assertThat(xpdlProcess.getStartingManualActivitiesRecursive().size(), is(6));
+		assertThat(xpdlProcess.getStartActivities().size(), is(2));
+		assertThat(xpdlProcess.getManualStartActivitiesRecursive().size(), is(6));
 	}
 
 	@Test
-	public void startingActivitiesAreFoundEvenAfterStartEvents() {
+	public void startActivitiesAreFoundEvenAfterStartEvents() {
 		final XpdlProcess xpdlProcess = xpdlDocument.createProcess(randomName());
 		XpdlActivity start = xpdlProcess.createActivity("S");
 		start.setStartEventType();
 		XpdlActivity noImpl = xpdlProcess.createActivity("NI");
 		xpdlProcess.createTransition(start, noImpl);
 
-		List<XpdlActivity> startingActivities = xpdlProcess.getStartingActivities();
-		assertThat(startingActivities.size(), is(1));
-		assertThat(startingActivities.get(0).getId(), is("S"));
+		List<XpdlActivity> startActivities = xpdlProcess.getStartActivities();
+		assertThat(startActivities.size(), is(1));
+		assertThat(startActivities.get(0).getId(), is("S"));
 
-		List<XpdlActivity> startingManualActivities = xpdlProcess.getStartingManualActivitiesRecursive();
-		assertThat(startingManualActivities.size(), is(1));
-		assertThat(startingManualActivities.get(0).getId(), is("NI"));
+		List<XpdlActivity> manualStartActivities = xpdlProcess.getManualStartActivitiesRecursive();
+		assertThat(manualStartActivities.size(), is(1));
+		assertThat(manualStartActivities.get(0).getId(), is("NI"));
 	}
 
 

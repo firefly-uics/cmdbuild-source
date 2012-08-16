@@ -52,9 +52,9 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 	}
 
 	@Override
-	public final CMActivity getStartActivity(final CMProcessClass process, final String groupName)
+	public final CMActivity getManualStartActivity(final CMProcessClass process, final String groupName)
 			throws CMWorkflowException {
-		final List<CMActivity> startActivities = store.getStartActivities(process.getName());
+		final List<CMActivity> startActivities = store.getManualStartActivities(process.getName());
 		if (groupName == null) {
 			return getStartActivityForAdmin(startActivities);
 		} else {

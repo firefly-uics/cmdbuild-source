@@ -8,7 +8,7 @@ import org.cmdbuild.workflow.service.WSProcessDefInfo;
 
 public interface ProcessDefinitionStore {
 
-	List<CMActivity> getStartActivities(String className) throws CMWorkflowException;
+	List<CMActivity> getManualStartActivities(String className) throws CMWorkflowException;
 
 	CMActivity getActivity(WSProcessDefInfo procDefInfo, String activityDefinitionId) throws CMWorkflowException;
 
