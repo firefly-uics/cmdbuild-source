@@ -27,13 +27,13 @@ public class XpdlActivitySet implements XpdlActivityHolder {
 	}
 
 	@Override
-	public List<XpdlActivity> getStartingActivities() {
-		return activities.getStartingActivities();
+	public List<XpdlActivity> getStartActivities() {
+		return activities.getStartActivities();
 	}
 
 	@Override
-	public List<XpdlActivity> getStartingManualActivitiesRecursive() {
-		return activities.getStartingManualActivitiesRecursive();
+	public List<XpdlActivity> getManualStartActivitiesRecursive() {
+		return activities.getManualStartActivitiesRecursive();
 	}
 
 }

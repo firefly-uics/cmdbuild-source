@@ -53,7 +53,7 @@ public class ProcessClassWrapper extends ClassWrapper implements UserProcessClas
 		} else {
 			groupName = userCtx.getWFStartGroup().getName();
 		}
-		return processDefinitionManager.getStartActivity(this, groupName);
+		return processDefinitionManager.getManualStartActivity(this, groupName);
 	}
 
 	@Override

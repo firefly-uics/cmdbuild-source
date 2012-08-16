@@ -55,7 +55,7 @@ public interface ProcessDefinitionManager {
 	 * @return activity definition
 	 * @throws CMWorkflowException
 	 */
-	CMActivity getStartActivity(CMProcessClass process, String groupName) throws CMWorkflowException;
+	CMActivity getManualStartActivity(CMProcessClass process, String groupName) throws CMWorkflowException;
 
 	/**
 	 * Gets the activity definition by process instance and identifier.

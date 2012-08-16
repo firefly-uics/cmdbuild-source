@@ -26,7 +26,7 @@ public interface XpdlActivityHolder {
 	 * 
 	 * @return list of starting activities
 	 */
-	List<XpdlActivity> getStartingActivities();
+	List<XpdlActivity> getStartActivities();
 
-	List<XpdlActivity> getStartingManualActivitiesRecursive();
+	List<XpdlActivity> getManualStartActivitiesRecursive();
 }

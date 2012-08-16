@@ -61,7 +61,7 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 
 		String getDefinitionId();
 
-		List<CMActivity> getStartActivities();
+		List<CMActivity> getManualStartActivities();
 
 		CMActivity getActivityById(String activityDefinitionId);
 	}
@@ -163,14 +163,14 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 	private final LazyClassNameToPackageInfoMap cache = new LazyClassNameToPackageInfoMap();
 
 	@Override
-	public List<CMActivity> getStartActivities(final String className) throws CMWorkflowException {
+	public List<CMActivity> getManualStartActivities(final String className) throws CMWorkflowException {
 		final ProcessInfo pi = cache.getProcessInfoByClass(className);
 		if (pi == null) {
 			// it is null when the process was created but the XPDL is not yet
 			// uploaded
 			return Collections.<CMActivity> emptyList();
 		} else {
-			return pi.getStartActivities();
+			return pi.getManualStartActivities();
 		}
 	}
 

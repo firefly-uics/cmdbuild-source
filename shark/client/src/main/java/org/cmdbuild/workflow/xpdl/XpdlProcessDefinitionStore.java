@@ -68,9 +68,9 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		}
 
 		@Override
-		public List<CMActivity> getStartActivities() {
+		public List<CMActivity> getManualStartActivities() {
 			final List<CMActivity> out = new ArrayList<CMActivity>();
-			for (final XpdlActivity xact : xproc.getStartingActivities()) {
+			for (final XpdlActivity xact : xproc.getManualStartActivitiesRecursive()) {
 				out.add(new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory));
 			}
 			return out;
