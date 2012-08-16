@@ -41,10 +41,6 @@ public class CmdbuildUtils {
 	}
 
 	public CmdbuildTableStruct getStructureFromName(final String name) throws Exception {
-		if (name == null)
-			throw new AssertionError("name is null");
-		if (workflowApi == null)
-			throw new AssertionError("workflowApi is null");
 		final WorkflowApi.ClassInfo classInfo = workflowApi.findClass(name);
 		return tableStructFrom(classInfo);
 	}
