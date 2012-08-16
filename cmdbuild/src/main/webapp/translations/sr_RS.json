@@ -176,11 +176,11 @@
             },
             ".CreateModifyCard": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "cql": "<em>Card CQL selector</em>",
-                  "readOnly": "<em>Read only</em>"
+                  "target": "Циљна класа",
+                  "cql": "CQL селектор картице",
+                  "readOnly": "Само преглед (read-only)"
                },
-               "title": "<em>Create or Modify Card</em>"
+               "title": "Креирај или модификуј картицу"
             },
             "commonFields": {
                "active": "Активан",
@@ -194,91 +194,91 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "<em>The chart is not well configured</em>"
+                "wrongConfiguration": "Графикон није правилно подешен"
              },
             "availableCharts": {
-                "gauge": "<em>Gauge</em>",
-                "pie": "<em>Pie</em>",
-                "bar": "<em>Bar</em>",
-                "line": "<em>Line</em>"
+                "gauge": "Gauge",
+                "pie": "Пита",
+                "bar": "Стубићи",
+                "line": "Линије"
              },
              "buttons": {
-                "add": "<em>Add Chart</em>",
-                "modify": "<em>Modify chart</em>",
-                "remove": "<em>Remove chart</em>",
-                "preview": "<em>Preview</em>"
+                "add": "Додај графикон",
+                "modify": "Модификуј графикон",
+                "remove": "Уклони графикон",
+                "preview": "Преглед"
              },
              "fields": {
-                "active": "<em>Active</em>",
-                "autoload": "<em>Load automatically</em>",
-                "background": "<em>Background color</em>",
-                "categoryFieldset": "<em>Category axis</em>",
-                "chartType": "<em>Chart type</em>",
-                "dataSource": "<em>Data source</em>",
-                "defaultValue": "<em>Default value</em>",
-                "description": "<em>Description</em>",
-                "fieldType": "<em>Field type</em>",
-                "foreground": "<em>Foreground color</em>",
-                "fromClass": "<em>From Class</em>",
-                "labelField": "<em>Label field</em>",
-                "legend": "<em>Show legend</em>",
-                "lookupType": "<em>Lookup type</em>",
-                "max": "<em>Maximum</em>",
-                "min": "<em>Minimum</em>",
-                "name": "<em>Name</em>",
+                "active": "Активан",
+                "autoload": "Учитај аутоматски",
+                "background": "Боја позадине",
+                "categoryFieldset": "Оса категорија",
+                "chartType": "Тип графикона",
+                "dataSource": "Извор података",
+                "defaultValue": "Подразумевана вредност",
+                "description": "Опис",
+                "fieldType": "Тип поља",
+                "foreground": "Боја",
+                "fromClass": "Од класе",
+                "legend": "Show legend",
+				"labelField": "Поље назива",
+                "lookupType": "Шифарнички тип",
+                "max": "Максимум",
+                "min": "Минимум",
+                "name": "Назив",
                 "orientation": {
-                   "label": "<em>Orientation</em>",
+                   "label": "Оријентација",
                    "values": {
-                      "horizontal": "<em>Horizontal</em>",
-                      "vertical": "<em>Vertical</em>"
+                      "horizontal": "Хоризонтална",
+                      "vertical": "Вертикална"
                    }
                 },
-                "required": "<em>Required</em>",
-                "steps": "<em>Steps</em>",
-                "title": "<em>Title</em>",
-                "valueField": "<em>Value field</em>",
-                "valueFieldset": "<em>Value axis</em>"
+                "required": "Обавезно",
+                "steps": "Кораци",
+                "title": "Наслов",
+                "valueField": "поље вредности",
+                "valueFieldset": "Оса вредности"
              },
              "inputTypes": {
-                "BOOLEAN": "<em>Boolean</em>",
-                "DECIMAL": "<em>Decimal</em>",
-                "INTEGER": "<em>Integer</em>",
-                "DOUBLE": "<em>Double</em>",
-                "DATE": "<em>Date</em>",
-                "TIMESTAMP": "<em>Timestamp</em>",
-                "TIME": "<em>Time</em>",
-                "STRING": "<em>String</em>",
-                "TEXT": "<em>Text</em>",
-                "CHAR": "<em>Char</em>",
-                "INET": "<em>Net address</em>"
+                "BOOLEAN": "Логички (Boolean)",
+                "DECIMAL": "Децимални",
+                "INTEGER": "Целобројни",
+                "DOUBLE": "Реални (Double)",
+                "DATE": "Датум",
+                "TIMESTAMP": "Временска одредница (timestamp)",
+                "TIME": "Време",
+                "STRING": "String",
+                "TEXT": "Текст",
+                "CHAR": "Карактер",
+                "INET": "Мрежна адреса"
              },
-             "title": "<em>Charts</em>",
+             "title": "Графикони",
              "typeFieldOptions": {
-                "card" : "<em>Card</em>",
-                "classes" : "<em>Select from all CMDBuild classes</em>",
-                "freeInt" : "<em>Free Integer</em>",
-                "freeString" : "<em>Free String</em>",
-                "group" : "<em>Current group</em>",
-                "lookup" : "<em>Select from a lookup</em>",
-                "user" : "<em>Current user</em>"
+                "card" : "Картица",
+                "classes" : "селектуј из свих CMDBuild класа",
+                "freeInt" : "Слободна целобројна вредност",
+                "freeString" : "Слободан текстуални унос",
+                "group" : "Тренутна група",
+                "lookup" : "Селектуј из шифарника",
+                "user" : "Тренутни корисник"
              }
           },
           "layout": {
-             "add": "<em>Add a column</em>",
-             "remove": "<em>Remove empty columns</em>",
-             "title": "<em>Layout</em>"
+             "add": "Додај колону",
+             "remove": "Уклони празне колоне",
+             "title": "Изглед"
           },
           "properties": {
-             "add": "<em>Add Dashboard</em>",
-             "modify": "<em>Modify Dashboard</em>",
-             "remove": "<em>Remove Dashboard</em>",
+             "add": "Додај контролни панел (dashboard)",
+             "modify": "Измени контролни панел",
+             "remove": "Уклони контролни панел",
              "fields": {
-                "name": "<em>Name</em>",
-                "description": "<em>Description</em>",
-                "groups": "<em>Available for groups</em>"
+                "name": "Назив",
+                "description": "Опис",
+                "groups": "Доступно групама"
              }
           },
-          "title": "<em>Dashboard</em>"
+          "title": "Контролни панел"
       },
       "modLookup": {
          "add_lookuptype": "Додај тип у шифарник",
@@ -427,7 +427,7 @@
          "available_elements": "Доступни елементи",
          "availabletree": {
             "class": "Класе",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "Контролни панели",
             "processclass": "Активности",
             "report": "Извештаји",
             "view": "Погледи"
@@ -505,18 +505,18 @@
          },
          "title": "Корисници и групе",
          "uiconfiguration": {
-            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_class_tabs": "Неактивне картице у модулу класа",
             "disabled_modules": "Неактивни модули",
-            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "disabled_process_tabs": "Неактивне картице у модулу процеса",
             "generic_properties": {
-               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
-               "card_simple_history": "<em>Simple history for cards</em>",
-               "full_screen_navigation": "<em>Full screen navigation</em>",
-               "hide_side_panel": "<em>Hide side panel</em>",
-               "process_simple_history": "<em>Simple history for processes</em>"
+               "always_enabled_widgets": "Процесни додаци увек активни",
+               "card_simple_history": "Поједностављена историја картица",
+               "full_screen_navigation": "Навигација преко целог екрана",
+               "hide_side_panel": "Сакриј бочни панел",
+               "process_simple_history": "Поједностављена историја процеса"
             },
-            "other": "<em>Other options</em>",
-            "title": "<em>UI configuration</em>"
+            "other": "Остале опције",
+            "title": "Конфигурација ИО"
          },
          "user": {
             "add_user": "Додај корисника",
@@ -658,7 +658,7 @@
          "add": "Додај",
          "as": "као",
          "close": "Затвори",
-         "load": "<em>Load</em>",
+         "load": "Учитај",
          "modify": "Измени",
          "print": "Штампај",
          "remove": "Уклони",
@@ -706,9 +706,9 @@
       "tbd_body": "У току је извршавање операције",
       "tbd_title": "У току је извршавање операције",
       "tooltip": {
-         "editParameters": "<em>Edit the parameters</em>",
-         "reload": "<em>Reload</em>",
-         "showData": "<em>Show data</em>"
+         "editParameters": "Измени параметре",
+         "reload": "Поново учитај",
+         "showData": "Прикажи подаци"
       },
       "tree_names": {
          "class": "Стандардне",
@@ -1037,7 +1037,7 @@
             "destclass": "Класа",
             "domain": "Домен",
             "end_date": "Датум завршетка",
-            "performer": "<em>Activity performer</em>",
+            "performer": "Извршилац активности",
             "relation": "Релације",
             "user": "Корисник"
          },
@@ -1165,7 +1165,7 @@
                "subjectfld": "Наслов поруке",
                "subjecthdr": "Наслов поруке",
                "tofld": "Прималац",
-               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
+               "updateTemplateConfirm":"Ово ће обрисати све неиспоручене поруке е-поште.",
                "viewicon": "Прикажи",
                "mailsAreChanged":"Генерисана е-пошта је измењена",
                "regenerates": "Изнова генериши е-пошту"
@@ -1191,7 +1191,7 @@
          "status": " Стање",
          "statuses": {
             "all": "Сва",
-            "closed.aborted": "<em>Aborted</em>",
+            "closed.aborted": "Прекинут",
             "closed.completed": "Завршен",
             "open.not_running.suspended": "Суспендован",
             "open.running": "Активан"
