@@ -24,7 +24,7 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 	}
 
 	private Map<String, String> callFunction(final String functionName, final Map<String, Object> input) {
-		final CallFunction callFunction = getFluentApi().callFunction(functionName);
+		final CallFunction callFunction = getWorkflowApi().callFunction(functionName);
 		for (final Entry<String, Object> entry : input.entrySet()) {
 			final Object normalizedValue = convertFromProcessValue(entry.getValue());
 			callFunction.with(entry.getKey(), normalizedValue);

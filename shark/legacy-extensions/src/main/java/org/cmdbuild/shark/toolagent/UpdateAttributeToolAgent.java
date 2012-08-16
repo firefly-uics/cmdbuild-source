@@ -47,11 +47,11 @@ public class UpdateAttributeToolAgent extends ManageCardToolAgent {
 				cardId = objId.intValue();
 			} else {
 				final ReferenceType objReference = getParameterValue(OBJ_REF);
-				className = getSchemaApi().findClass(objReference.getIdClass()).getName();
+				className = getWorkflowApi().findClass(objReference.getIdClass()).getName();
 				cardId = objReference.getId();
 			}
 		}
-		return getFluentApi().existingCard(className, cardId);
+		return getWorkflowApi().existingCard(className, cardId);
 	}
 
 	@Override

@@ -1,16 +1,17 @@
 package org.cmdbuild.shark.util;
 
 import org.cmdbuild.workflow.ConfigurationHelper;
-import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SchemaApi.ClassInfo;
+import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
+import org.cmdbuild.workflow.api.WorkflowApi;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 import org.enhydra.shark.toolagent.BshToolAgent;
 
 /**
- *
- * Needed only for supporting the toolagent "createReferenceObj" (interpreted by
- * {@link BshToolAgent}).
- *
+ * 
+ * Needed only for supporting the tool agent "createReferenceObj" (interpreted
+ * by {@link BshToolAgent}).
+ * 
  */
 public class CmdbuildUtils {
 
@@ -26,21 +27,25 @@ public class CmdbuildUtils {
 		return instance;
 	}
 
-	private ConfigurationHelper configurationHelper;
-	private SchemaApi schemaApi;
+	private WorkflowApi workflowApi;
 
 	private CmdbuildUtils() {
 	}
 
 	public void configure(final CallbackUtilities cus) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		configurationHelper = new ConfigurationHelper(cus);
-		// TODO SchemaApi will be replaced by FluentApi
-		schemaApi = configurationHelper.newSharkWorkflowApi().schemaApi();
+		final ConfigurationHelper configurationHelper = new ConfigurationHelper(cus);
+		final SharkWorkflowApiFactory factory = configurationHelper.getWorkflowApiFactory();
+		factory.setup(cus);
+		workflowApi = factory.createWorkflowApi();
 	}
 
 	public CmdbuildTableStruct getStructureFromName(final String name) throws Exception {
-		final SchemaApi.ClassInfo classInfo = schemaApi.findClass(name);
+		if (name == null)
+			throw new AssertionError("name is null");
+		if (workflowApi == null)
+			throw new AssertionError("workflowApi is null");
+		final WorkflowApi.ClassInfo classInfo = workflowApi.findClass(name);
 		return tableStructFrom(classInfo);
 	}
 

@@ -17,7 +17,6 @@ import org.mockito.InOrder;
 
 import utils.AbstractLocalSharkServiceTest;
 
-
 public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 
 	private XpdlProcess process;

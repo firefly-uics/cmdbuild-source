@@ -40,10 +40,10 @@ abstract class ManageAttributeToolAgent extends AbstractConditionalToolAgent {
 			cardId = objId.intValue();
 		} else {
 			final ReferenceType objReference = getParameterValue(OBJ_REFERENCE);
-			className = getSchemaApi().findClass(objReference.getIdClass()).getName();
+			className = getWorkflowApi().findClass(objReference.getIdClass()).getName();
 			cardId = objReference.getId();
 		}
-		return getFluentApi().existingCard(className, cardId);
+		return getWorkflowApi().existingCard(className, cardId);
 	}
 
 }

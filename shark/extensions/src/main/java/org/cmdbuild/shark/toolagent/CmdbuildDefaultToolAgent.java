@@ -5,17 +5,28 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.Constants;
+import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
+import org.cmdbuild.workflow.api.WorkflowApi;
 import org.enhydra.jxpdl.XPDLConstants;
+import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
+import org.enhydra.shark.api.client.wfservice.WMEntity;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
+import org.enhydra.shark.api.internal.toolagent.ApplicationBusy;
+import org.enhydra.shark.api.internal.toolagent.ApplicationNotDefined;
+import org.enhydra.shark.api.internal.toolagent.ApplicationNotStarted;
+import org.enhydra.shark.api.internal.toolagent.InvalidProcessInstance;
+import org.enhydra.shark.api.internal.toolagent.InvalidToolAgentHandle;
+import org.enhydra.shark.api.internal.toolagent.InvalidWorkitem;
+import org.enhydra.shark.api.internal.toolagent.ToolAgent;
+import org.enhydra.shark.api.internal.toolagent.ToolAgentGeneralException;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 import org.enhydra.shark.toolagent.DefaultToolAgent;
 
 /**
  * A replacement for {@link DefaultToolAgent} class.
- *
+ * 
  * This implementation:
  * <ul>
  * <li>is needed for Shark 4.4 only</li>
@@ -27,17 +38,15 @@ public class CmdbuildDefaultToolAgent extends OverriddableDefaultToolAgent {
 
 	private static final String TEXT_GROOVY = "text/groovy";
 
-	private FluentApi fluentApi;
+	private SharkWorkflowApiFactory workflowApiFactory;
+
+	private volatile WorkflowApi workflowApi;
 
 	@Override
-	protected void configureOthers(final CallbackUtilities cus) throws Exception {
-		fluentApi = initApi(cus);
-	}
-
-	protected FluentApi initApi(final CallbackUtilities cus) throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException {
+	public void configure(final CallbackUtilities cus) throws Exception {
+		super.configure(cus);
 		final ConfigurationHelper helper = new ConfigurationHelper(cus);
-		return helper.newSharkWorkflowApi().fluentApi();
+		workflowApiFactory = helper.getWorkflowApiFactory();
 	}
 
 	@Override
@@ -50,19 +59,66 @@ public class CmdbuildDefaultToolAgent extends OverriddableDefaultToolAgent {
 	}
 
 	@Override
-	protected AppParameter[] parametersForInvocation(final AppParameter[] parameters) {
+	protected void invoke(final ToolAgent toolAgent, final WMSessionHandle shandle,
+			final WMSessionHandle toolAgentHandle, final WMEntity appInfo, final WMEntity toolInfo,
+			final ApplicationDefinition definition, final String procInstId, final String assId,
+			final AppParameter[] parameters) throws ApplicationNotStarted, ApplicationNotDefined, ApplicationBusy,
+			ToolAgentGeneralException {
+		workflowApiFactory.setup(cus, shandle, procInstId);
+		super.invoke( //
+				toolAgent, //
+				shandle, //
+				toolAgentHandle, //
+				appInfo, //
+				toolInfo, //
+				definition, //
+				procInstId, //
+				assId, //
+				parametersForInvocation(parameters));
+	}
+
+	@Override
+	protected long requestStatus(final ToolAgent toolAgent, final WMSessionHandle shandle,
+			final WMSessionHandle toolAgentHandle, final WMEntity toolInfo, final String procInstId,
+			final String assId, final AppParameter[] parameters) throws ApplicationBusy, InvalidToolAgentHandle,
+			InvalidWorkitem, InvalidProcessInstance, ToolAgentGeneralException {
+		workflowApiFactory.setup(cus, shandle, procInstId);
+		return super.requestStatus(toolAgent, //
+				shandle, //
+				toolAgentHandle, //
+				toolInfo, //
+				procInstId, //
+				assId, //
+				parametersForInvocation(parameters));
+	}
+
+	private AppParameter[] parametersForInvocation(final AppParameter[] parameters) {
 		final List<AppParameter> appParameters = new ArrayList<AppParameter>(asList(parameters));
 		appParameters.add(apiParameter());
 		return appParameters.toArray(new AppParameter[appParameters.size()]);
 	}
 
 	private AppParameter apiParameter() {
+		if (workflowApi == null) {
+			synchronized (this) {
+				if (workflowApi == null) {
+					/*
+					 * TODO add some kind of proxy
+					 * 
+					 * for have the api initialized only when needed (e.g. first
+					 * method called)
+					 */
+
+					workflowApi = workflowApiFactory.createWorkflowApi();
+				}
+			}
+		}
 		return new AppParameter( //
 				Constants.API_VARIABLE, //
 				Constants.API_VARIABLE, //
 				XPDLConstants.FORMAL_PARAMETER_MODE_IN, //
-				fluentApi, //
-				FluentApi.class);
+				workflowApi, //
+				workflowApi.getClass());
 	}
 
 }

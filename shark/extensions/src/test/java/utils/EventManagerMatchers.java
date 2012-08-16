@@ -20,7 +20,7 @@ public class EventManagerMatchers {
 			private ActivityInstance lastMatch;
 
 			@Override
-			public void describeTo(Description arg0) {
+			public void describeTo(final Description arg0) {
 				String.format("expected definition id %s but got %s", activityDefinitionId,
 						lastMatch.getActivityDefinitionId());
 			}
@@ -44,7 +44,7 @@ public class EventManagerMatchers {
 			private ProcessInstance lastMatch;
 
 			@Override
-			public void describeTo(Description arg0) {
+			public void describeTo(final Description arg0) {
 				String.format("expected definition id %s but got %s", processDefinitionId,
 						lastMatch.getProcessDefinitionId());
 			}

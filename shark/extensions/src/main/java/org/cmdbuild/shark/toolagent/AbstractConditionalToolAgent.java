@@ -1,15 +1,15 @@
 package org.cmdbuild.shark.toolagent;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.Constants;
-import org.cmdbuild.workflow.api.SchemaApi;
-import org.cmdbuild.workflow.api.SharkWorkflowApi;
+import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
+import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.jxpdl.XMLUtil;
@@ -33,10 +33,10 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	private static final String EXTENDED_ATTRIBUTES_PARAM = "ExtendedAttributes";
 
-	private static final String UNKNOWN_DESCRIPTION = "";
+	private static final String UNKNOWN_DESCRIPTION = EMPTY;
 	private static final int UNKNOWN_CLASS_ID = -1;
 
-	public static interface ConditionEvaluator {
+	public interface ConditionEvaluator {
 
 		void configure(CallbackUtilities cus) throws Exception;
 
@@ -45,8 +45,9 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	}
 
 	private final ConditionEvaluator conditionEvaluator;
-	private ConfigurationHelper configurationHelper;
-	private SharkWorkflowApi workflowApi;
+
+	private SharkWorkflowApiFactory workflowApiFactory;
+	private volatile WorkflowApi workflowApi;
 
 	public AbstractConditionalToolAgent() {
 		conditionEvaluator = new SharkConditionalEvaluator(this);
@@ -72,14 +73,6 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		return assId;
 	}
 
-	public FluentApi getFluentApi() {
-		return workflowApi.fluentApi();
-	}
-
-	public SchemaApi getSchemaApi() {
-		return workflowApi.schemaApi();
-	}
-
 	public String getId() {
 		return toolInfo.getId();
 	}
@@ -87,9 +80,11 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	@Override
 	public void configure(final CallbackUtilities cus) throws Exception {
 		super.configure(cus);
-		configurationHelper = new ConfigurationHelper(cus);
-		workflowApi = configurationHelper.newSharkWorkflowApi();
+
 		conditionEvaluator.configure(cus);
+
+		final ConfigurationHelper configurationHelper = new ConfigurationHelper(cus);
+		workflowApiFactory = configurationHelper.getWorkflowApiFactory();
 	}
 
 	@Override
@@ -102,6 +97,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		setStatus(APP_STATUS_RUNNING);
 		try {
 			if (conditionEvaluator.evaluate()) {
+				setupWorkflowApi(shandle, procInstId);
 				innerInvoke();
 			}
 			setStatus(APP_STATUS_FINISHED);
@@ -113,6 +109,21 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	protected void setStatus(final long status) {
 		this.status = status;
+	}
+
+	protected void setupWorkflowApi(final WMSessionHandle shandle, final String procInstId) {
+		workflowApiFactory.setup(cus, shandle, procInstId);
+	}
+
+	public WorkflowApi getWorkflowApi() {
+		if (workflowApi == null) {
+			synchronized (this) {
+				if (workflowApi == null) {
+					workflowApi = workflowApiFactory.createWorkflowApi();
+				}
+			}
+		}
+		return workflowApi;
 	}
 
 	protected abstract void innerInvoke() throws Exception;
@@ -142,7 +153,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	/**
 	 * Gets the application parameter or null if not present.
-	 *
+	 * 
 	 * @param name
 	 *            parameter name
 	 * @return parameter or null
@@ -176,7 +187,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	/**
 	 * Decodes the XML because Shark 2.3 does not use jxpdl, so it would crash.
-	 *
+	 * 
 	 * @param name
 	 *            extended attribute key
 	 * @return extended attribute value for that key
@@ -244,7 +255,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 			if (id == null) {
 				return new LookupType();
 			} else {
-				return workflowApi.schemaApi().selectLookupById(id.intValue());
+				return getWorkflowApi().selectLookupById(id.intValue());
 			}
 		} else {
 			return stringValue;

@@ -1,14 +1,10 @@
-package org.cmdbuild.workflow;
+package org.cmdbuild.shark.toolagent;
 
 import org.cmdbuild.shark.util.CmdbuildUtils;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
+import org.enhydra.shark.toolagent.DefaultToolAgent;
 
-/**
- *
- * Needed only for configuring {@link CmdbuildUtils}.
- *
- */
-public class CmdbuildLegacyScriptingManager extends CmdbuildScriptingManager {
+public class CmdbuildLegacyDefaultToolAgent extends DefaultToolAgent {
 
 	@Override
 	public void configure(final CallbackUtilities cus) throws Exception {

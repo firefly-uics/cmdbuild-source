@@ -18,6 +18,9 @@ import org.enhydra.shark.api.internal.toolagent.AppParameter;
 import org.enhydra.shark.api.internal.toolagent.ApplicationBusy;
 import org.enhydra.shark.api.internal.toolagent.ApplicationNotDefined;
 import org.enhydra.shark.api.internal.toolagent.ApplicationNotStarted;
+import org.enhydra.shark.api.internal.toolagent.InvalidProcessInstance;
+import org.enhydra.shark.api.internal.toolagent.InvalidToolAgentHandle;
+import org.enhydra.shark.api.internal.toolagent.InvalidWorkitem;
 import org.enhydra.shark.api.internal.toolagent.ToolAgent;
 import org.enhydra.shark.api.internal.toolagent.ToolAgentGeneralException;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
@@ -36,7 +39,7 @@ public class OverriddableDefaultToolAgent extends AbstractToolAgent {
 
 	private final static String TOOL_AGENT_CLASS_EXT_ATTR_NAME = "ToolAgentClass";
 
-	private static class ApplicationDefinition {
+	protected static class ApplicationDefinition {
 
 		private final String className;
 		private final String name;
@@ -56,11 +59,6 @@ public class OverriddableDefaultToolAgent extends AbstractToolAgent {
 	public void configure(final CallbackUtilities cus) throws Exception {
 		super.configure(cus);
 		configureDefaultToolAgentForStaticMembersOnly(cus);
-		configureOthers(cus);
-	}
-
-	protected void configureOthers(final CallbackUtilities cus) throws Exception {
-		// nothing to do
 	}
 
 	private void configureDefaultToolAgentForStaticMembersOnly(final CallbackUtilities cus) throws Exception {
@@ -86,23 +84,8 @@ public class OverriddableDefaultToolAgent extends AbstractToolAgent {
 			toolAgent.configure(cus);
 
 			final WMSessionHandle toolAgentHandle = toolAgent.connect(this.wmci);
-			final AppParameter[] parametersForInvocation = parametersForInvocation(parameters);
-			toolAgent.invokeApplication( //
-					shandle, //
-					toolAgentHandle.getId(), //
-					appInfo, //
-					toolInfo, //
-					definition.name, procInstId, //
-					assId, //
-					parametersForInvocation, //
-					definition.mode);
-			status = toolAgent.requestAppStatus( //
-					shandle, //
-					toolAgentHandle.getId(), //
-					toolInfo, //
-					procInstId, //
-					assId, //
-					parametersForInvocation);
+			invoke(toolAgent, shandle, toolAgentHandle, appInfo, toolInfo, definition, procInstId, assId, parameters);
+			status = requestStatus(toolAgent, shandle, toolAgentHandle, toolInfo, procInstId, assId, parameters);
 			toolAgent.disconnect(toolAgentHandle);
 		} catch (final ClassNotFoundException e) {
 			final String message = format("application %s terminated incorrectly, cannot find tool agent class",
@@ -171,9 +154,9 @@ public class OverriddableDefaultToolAgent extends AbstractToolAgent {
 
 	/**
 	 * Returns the class name for the specified script type.
-	 *
+	 * 
 	 * @param scriptType
-	 *
+	 * 
 	 * @return the class name for the specified script type, <code>null</code>
 	 *         if there is no available classes that can be associated with the
 	 *         specified script type
@@ -211,8 +194,34 @@ public class OverriddableDefaultToolAgent extends AbstractToolAgent {
 		return toolAgentClass;
 	}
 
-	protected AppParameter[] parametersForInvocation(final AppParameter[] parameters) {
-		return parameters;
+	protected void invoke(final ToolAgent toolAgent, final WMSessionHandle shandle,
+			final WMSessionHandle toolAgentHandle, final WMEntity appInfo, final WMEntity toolInfo,
+			final ApplicationDefinition definition, final String procInstId, final String assId,
+			final AppParameter[] parameters) throws ApplicationNotStarted, ApplicationNotDefined, ApplicationBusy,
+			ToolAgentGeneralException {
+		toolAgent.invokeApplication( //
+				shandle, //
+				toolAgentHandle.getId(), //
+				appInfo, //
+				toolInfo, //
+				definition.name, //
+				procInstId, //
+				assId, //
+				parameters, //
+				definition.mode);
+	}
+
+	protected long requestStatus(final ToolAgent toolAgent, final WMSessionHandle shandle,
+			final WMSessionHandle toolAgentHandle, final WMEntity toolInfo, final String procInstId,
+			final String assId, final AppParameter[] parameters) throws ApplicationBusy, InvalidToolAgentHandle,
+			InvalidWorkitem, InvalidProcessInstance, ToolAgentGeneralException {
+		return toolAgent.requestAppStatus( //
+				shandle, //
+				toolAgentHandle.getId(), //
+				toolInfo, //
+				procInstId, //
+				assId, //
+				parameters);
 	}
 
 }

@@ -11,6 +11,7 @@ public interface SchemaApi {
 	 * Temporary object till we find a decent solution
 	 */
 	class ClassInfo {
+
 		private final String name;
 		private final int id;
 
@@ -43,6 +44,7 @@ public interface SchemaApi {
 			final ClassInfo other = (ClassInfo) obj;
 			return (id == other.id);
 		}
+
 	}
 
 	ClassInfo findClass(String className);

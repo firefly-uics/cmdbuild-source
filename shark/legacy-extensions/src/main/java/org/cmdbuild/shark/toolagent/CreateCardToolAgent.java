@@ -37,7 +37,7 @@ public class CreateCardToolAgent extends ManageCardToolAgent {
 			} else if (parmOut.the_class == ReferenceType.class) {
 				final ReferenceType reference = new ReferenceType();
 				reference.setId(newCardId);
-				reference.setIdClass(getSchemaApi().findClass(classname).getId());
+				reference.setIdClass(getWorkflowApi().findClass(classname).getId());
 				reference.setDescription(description);
 				parmOut.the_value = reference;
 			}
@@ -45,7 +45,7 @@ public class CreateCardToolAgent extends ManageCardToolAgent {
 	}
 
 	private int createCard(final String classname, final Map<String, Object> attributes) {
-		final NewCard newCard = getFluentApi().newCard(classname);
+		final NewCard newCard = getWorkflowApi().newCard(classname);
 		for (final Entry<String, Object> attribute : attributes.entrySet()) {
 			newCard.with(attribute.getKey(), attribute.getValue());
 		}

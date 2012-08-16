@@ -1,6 +1,5 @@
 package org.cmdbuild.workflow;
 
-
 public class NullEventManager implements CMEventManager {
 
 	@Override

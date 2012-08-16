@@ -18,7 +18,7 @@ public class CreateReportToolAgent extends AbstractConditionalToolAgent {
 		final String format = getExtendedAttribute(REPORT_FORMAT);
 		final Map<String, Object> attributes = getInputParameterValues();
 
-		final CreateReport createReport = getFluentApi().createReport(title, format);
+		final CreateReport createReport = getWorkflowApi().createReport(title, format);
 		for (final Entry<String, Object> attributeEntry : attributes.entrySet()) {
 			createReport.with(attributeEntry.getKey(), attributeEntry.getValue());
 		}

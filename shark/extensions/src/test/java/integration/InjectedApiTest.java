@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import utils.AbstractLocalSharkServiceTest;
-import utils.MockSharkWorkflowApi;
+import utils.MockSharkWorkflowApiFactory;
 
 public class InjectedApiTest extends AbstractLocalSharkServiceTest {
 
@@ -41,8 +41,8 @@ public class InjectedApiTest extends AbstractLocalSharkServiceTest {
 		uploadXpdlAndStartProcess(process).getProcessInstanceId();
 		verify(eventManager).activityClosed(argThat(isActivity(scriptActivity)));
 
-		verify(MockSharkWorkflowApi.fluentApiExecutor).create(any(Card.class));
-		verifyNoMoreInteractions(MockSharkWorkflowApi.fluentApiExecutor);
+		verify(MockSharkWorkflowApiFactory.fluentApiExecutor).create(any(Card.class));
+		verifyNoMoreInteractions(MockSharkWorkflowApiFactory.fluentApiExecutor);
 	}
 
 }

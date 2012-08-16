@@ -21,14 +21,14 @@ import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.api.CachedWsSchemaApi;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SchemaApi.ClassInfo;
-import org.cmdbuild.workflow.api.SharkWorkflowApi;
+import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.type.LookupType;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests that the web service implementation of {@link SharkWorkflowApi} calls
- * the SOAP proxy correctly.
+ * Tests that the web service implementation of {@link SharkWorkflowApiFactory}
+ * calls the SOAP proxy correctly.
  */
 public class CachedWsSchemaApiTest {
 

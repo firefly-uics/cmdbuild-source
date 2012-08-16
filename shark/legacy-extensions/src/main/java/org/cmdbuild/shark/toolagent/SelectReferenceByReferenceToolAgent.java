@@ -29,13 +29,13 @@ public class SelectReferenceByReferenceToolAgent extends ManageAttributeToolAgen
 	}
 
 	private Card cardFor(final int id) {
-		return getFluentApi().existingCard(CLASS, id) //
+		return getWorkflowApi().existingCard(CLASS, id) //
 				.fetch();
 	}
 
 	private ReferenceType referenceTypeFor(final Card card) {
 		final String className = card.getClassName();
-		final int idClass = getSchemaApi().findClass(className).getId();
+		final int idClass = getWorkflowApi().findClass(className).getId();
 		return new ReferenceType(card.getId(), idClass, EMPTY);
 	}
 }

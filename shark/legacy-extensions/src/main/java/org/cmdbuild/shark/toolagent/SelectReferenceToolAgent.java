@@ -31,7 +31,7 @@ public class SelectReferenceToolAgent extends AbstractConditionalToolAgent {
 			attributeValue = getParameterValue(ATTRIBUTE_VALUE);
 		}
 
-		final List<Card> cards = getFluentApi() //
+		final List<Card> cards = getWorkflowApi() //
 				.queryClass(className) //
 				.with(attributeName, attributeValue) //
 				.fetch();
