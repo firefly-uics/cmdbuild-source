@@ -18,16 +18,17 @@
 
 		configure: function(c) {
 			this.widgetConf = c.widget;
-			this.activity = c.activityInstance.raw || c.activityInstance.data;
+			var ai = _CMWFState.getActivityInstance();
+			var pi = _CMWFState.getProcessInstance();
 
 			this.readOnly = c.widget.ReadOnly;
 
 			this.setExtraParams({
-				IdClass: _CMWFState.getProcessClassRef().getId(),
-				Id: _CMWFState.getProcessInstance().getId()
+				IdClass: pi.getClassId(),
+				Id: pi.getId()
 			});
 
-			this.writePrivileges = this.activity.priv_write && !this.readOnly;
+			this.writePrivileges = ai.isWritable() && !this.readOnly;
 			this.addAttachmentButton.setDisabled(!this.writePrivileges);
 
 			this.loaded = false;

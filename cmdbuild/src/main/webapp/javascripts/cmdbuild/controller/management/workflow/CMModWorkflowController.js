@@ -28,7 +28,7 @@
 			buildNoteController(me, me.view.getNotesPanel());
 			buildRelationsController(me, me.view.getRelationsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
-			buildAttachmentsController(me.view.getAttachmentsPanel());
+			buildAttachmentsController(me, me.view.getAttachmentsPanel());
 		},
 
 		// wfStateDelegate

@@ -45,11 +45,11 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 			items: [{
 				xtype: 'hidden',
 				name: 'IdClass',
-				value: this.classId
+				value: this.classId || this.IdClass
 			},{
 				xtype: 'hidden',
 				name: 'Id',
-				value: this.cardId
+				value: this.cardId || this.Id
 			}, this.combo,
 			{
 				xtype: 'textfield',

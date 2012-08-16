@@ -193,7 +193,7 @@
 		addControllerClass(commonControllers.CMOpenNoteController);
 
 		// openAttachment
-		addControllerClass(commonControllers.CMAttachmentController);
+		addControllerClass(commonControllers.CMOpenAttachmentController);
 
 		// createModifyCard
 		addControllerClass(commonControllers.CMCreateModifyCardController);
