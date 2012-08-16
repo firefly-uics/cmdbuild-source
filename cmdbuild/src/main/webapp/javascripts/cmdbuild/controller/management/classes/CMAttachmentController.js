@@ -42,16 +42,30 @@
 			}
 		},
 
+		getCardId: function() {
+			if (this.card) {
+				return this.card.get("Id");
+			}
+		},
+
+		getClassId: function() {
+			if (this.card) {
+				return this.card.get("IdClass");
+			}
+		},
+
 		updateView: function(et) {
 			this.updateViewPrivilegesForEntryType(et);
-
-			this.view.setExtraParams({
-				IdClass: this.card.get("IdClass"),
-				Id: this.card.get("Id")
-			});
-
+			this.setViewExtraParams();
 			this.view.reloadCard();
 			this.view.enable();
+		},
+
+		setViewExtraParams: function() {
+			this.view.setExtraParams({
+				IdClass: this.getClassId(),
+				Id: this.getCardId()
+			});
 		},
 
 		disableTheTabBeforeCardSelection: function(entryType) {
@@ -89,9 +103,9 @@
 					CMDBuild.Ajax.request({
 						url : 'services/json/management/modcard/deleteattachment',
 						params : {
-							"IdClass": me.card.get("IdClass"),
-							"Id": me.card.get("Id"),
-							"Filename": record.get("Filename")
+							IdClass: me.getClassId(),
+							Id: me.getCardId(),
+							Filename: record.get("Filename")
 						},
 						method : 'POST',
 						success : function() {
@@ -110,9 +124,9 @@
 
 		onDownloadAttachmentClick: function(record) {
 			var params = {
-				"IdClass": this.card.get("IdClass"),
-				"Id": this.card.get("Id"),
-				"Filename": record.get("Filename")
+				IdClass: this.getClassId(),
+				Id: this.getCardId(),
+				Filename: record.get("Filename")
 			};
 
 			var url = 'services/json/management/modcard/downloadattachment?' + Ext.urlEncode(params);
@@ -121,8 +135,8 @@
 
 		onEditAttachmentClick: function(record) {
 			var editAttachmentWin = new CMDBuild.Management.EditAttachmentWindow({
-				classId: this.card.get("IdClass"),
-				cardId: this.card.get("Id"),
+				classId: this.getClassId(),
+				cardId: this.getCardId(),
 				category: record.get("Category"),
 				filename: record.get("Filename"),
 				description: record.get("Description")
@@ -133,8 +147,8 @@
 
 		onAddAttachmentButtonClick: function() {
 			var addAttachmentWin = new CMDBuild.Management.AddAttachmentWindow({
-				classId: this.card.get("IdClass"),
-				cardId: this.card.get("Id")
+				classId: this.getClassId(),
+				cardId: this.getCardId()
 			}).show();
 
 			this.view.mon(addAttachmentWin, "saved", this.view.reloadCard, this.view);
