@@ -58,6 +58,8 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			} catch (final Exception e) {
 				rollbackTransaction();
 				throw new CMWorkflowException(e);
+			} finally {
+				disconnect();
 			}
 		}
 
@@ -70,6 +72,17 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			wapi = wapi();
 			final WMConnectInfo wmci = getConnectionInfo();
 			return wapi.connect(wmci);
+		}
+
+		private final void disconnect() {
+			if (handle != null) {
+				try {
+					wapi.disconnect(handle);
+				} catch (final Exception e) {
+					// ignore errors on disconnection
+				}
+				handle = null;
+			}
 		}
 
 		private final void commitTransaction() throws Exception {

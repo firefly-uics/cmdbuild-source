@@ -6,22 +6,28 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.inOrder;
+import static utils.EventManagerMatchers.hasActivityDefinitionId;
 import static utils.EventManagerMatchers.hasProcessDefinitionId;
 
 import org.cmdbuild.workflow.CMEventManager.ActivityInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 
 import utils.AbstractLocalSharkServiceTest;
 
+@SuppressWarnings("unchecked")
 public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 
 	private static final String PARENT_VARIABLE = "ParentVariable";
 	private static final String PARENT_PACKAGE = "parent";
 	private static final String PARENT_PROCESS = "Parent";
+	private static final String CHILD_PACKAGE = "child";
+	private static final String CHILD_PROCESS = "Child";
+	private static final String CHILD_INPUT_VARIABLE = "FormalIn";
+	private static final String CHILD_OUTPUT_VARIABLE = "FormalOut";
 
 	private final ArgumentCaptor<ActivityInstance> activityInstanceCaptor = ArgumentCaptor.forClass(ActivityInstance.class);
 
@@ -32,26 +38,55 @@ public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void spawnChildProcess() throws Exception {
-		ws.startProcess(PARENT_PACKAGE, PARENT_PROCESS);
+		final String procInstId = ws.startProcess(PARENT_PACKAGE, PARENT_PROCESS).getProcessInstanceId();
+		final String actInstId = ws.findOpenActivitiesForProcessInstance(procInstId)[0].getActivityInstanceId();
 
-		verify(eventManager).processStarted(argThat(hasProcessDefinitionId(PARENT_PROCESS)));
-		verify(eventManager, atLeastOnce()).activityStarted(activityInstanceCapturer());
+		final InOrder inOrder = inOrder(eventManager);
+		inOrder.verify(eventManager).processStarted(argThat(hasProcessDefinitionId(PARENT_PROCESS)));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ParentStart")));
 
-		final ActivityInstance ai = capturedActivityInstance();
-		final String processInstanceId = ai.getProcessInstanceId();
-
-		ws.setProcessInstanceVariables(processInstanceId, linkedHashMapOf(
+		ws.setProcessInstanceVariables(procInstId, linkedHashMapOf(
 					entry(PARENT_VARIABLE, "Something")
 				));
-		ws.advanceActivityInstance(processInstanceId, ai.getActivityInstanceId());
+		ws.advanceActivityInstance(procInstId, actInstId);
+
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("GiveBirth")));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildStart")));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("CopyInputToOutput")));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildEnd")));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("VerifyVariable")));
 
 		assertThat(
-				ws.getProcessInstanceVariables(processInstanceId).get(PARENT_VARIABLE),
+				ws.getProcessInstanceVariables(procInstId).get(PARENT_VARIABLE),
 				is(equalTo((Object) "Copy of Something"))
 			);
 	}
+
+	@Test
+	public void startChildProcessDirectly() throws Exception {
+		final String procInstId = ws.startProcess(CHILD_PACKAGE, CHILD_PROCESS).getProcessInstanceId();
+		final String actInstId = ws.findOpenActivitiesForProcessInstance(procInstId)[0].getActivityInstanceId();
+
+		final InOrder inOrder = inOrder(eventManager);
+		inOrder.verify(eventManager).processStarted(argThat(hasProcessDefinitionId(CHILD_PROCESS)));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildStart")));
+		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildUserActivity")));
+
+		ws.setProcessInstanceVariables(procInstId, linkedHashMapOf(
+					entry(CHILD_INPUT_VARIABLE, "Something else")
+				));
+		ws.advanceActivityInstance(procInstId, actInstId);
+
+		assertThat(
+				ws.getProcessInstanceVariables(procInstId).get(CHILD_OUTPUT_VARIABLE),
+				is(equalTo((Object) "Copy of Something else"))
+			);
+	}
+
+	/*
+	 * Utils
+	 */
 
 	protected ActivityInstance activityInstanceCapturer() {
 		return activityInstanceCaptor.capture();
