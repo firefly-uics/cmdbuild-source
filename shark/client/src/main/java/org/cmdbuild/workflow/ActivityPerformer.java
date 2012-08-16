@@ -5,7 +5,7 @@ import org.apache.commons.lang.Validate;
 public class ActivityPerformer {
 
 	public enum Type {
-		ROLE, EXPRESSION, ADMIN // fake performer for our ugly stuff
+		ROLE, EXPRESSION, ADMIN, UNKNOWN // fake performer for our ugly stuff
 	}
 
 	private final String value;
@@ -44,5 +44,9 @@ public class ActivityPerformer {
 
 	public static ActivityPerformer newAdminPerformer() {
 		return new ActivityPerformer(Type.ADMIN, null);
+	}
+
+	public static ActivityPerformer newUnknownPerformer() {
+		return new ActivityPerformer(Type.UNKNOWN, null);
 	}
 }

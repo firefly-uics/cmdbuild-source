@@ -80,6 +80,9 @@ public class XpdlActivityWrapper implements CMActivity {
 	@Override
 	public ActivityPerformer getFirstNonAdminPerformer() {
 		final String performerString = inner.getFirstPerformer();
+		if (performerString == null) {
+			return ActivityPerformer.newUnknownPerformer();
+		}
 		if (inner.getProcess().hasRoleParticipant(performerString)) {
 			return ActivityPerformer.newRolePerformer(performerString);
 		} else {

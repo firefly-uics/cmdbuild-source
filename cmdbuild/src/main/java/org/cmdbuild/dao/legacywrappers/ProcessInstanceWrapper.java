@@ -270,18 +270,20 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	public void addActivity(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
 		Validate.notNull(activityInfo);
 		Validate.notNull(activityInfo.getActivityInstanceId());
-		card.setValue(ProcessAttributes.ActivityInstanceId.dbColumnName(),
-				addToBack(getActivityInstanceIds(), activityInfo.getActivityInstanceId()));
-		card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
-				addToBack(getActivityDefinitionIds(), activityInfo.getActivityDefinitionId()));
-
 		final String participantGroup = extractActivityParticipantGroup(activityInfo);
-		card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
-				addToBack(getActivityInstancePerformers(), participantGroup));
-		card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
-				addDistinct(getAllActivityPerformers(), participantGroup));
-
-		updateCodeWithOneRandomActivityInfo();
+		if (participantGroup != UNRESOLVABLE_PARTICIPANT_GROUP) {
+			card.setValue(ProcessAttributes.ActivityInstanceId.dbColumnName(),
+					addToBack(getActivityInstanceIds(), activityInfo.getActivityInstanceId()));
+			card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
+					addToBack(getActivityDefinitionIds(), activityInfo.getActivityDefinitionId()));
+	
+			card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
+					addToBack(getActivityInstancePerformers(), participantGroup));
+			card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
+					addDistinct(getAllActivityPerformers(), participantGroup));
+	
+			updateCodeWithOneRandomActivityInfo();
+		}
 	}
 
 	@Override
