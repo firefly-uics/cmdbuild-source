@@ -27,19 +27,19 @@ public class SelectLookupToolAgent extends AbstractConditionalToolAgent {
 
 	private LookupType selectById() {
 		final Long id = getParameterValue(LOOKUP_ID);
-		return getSchemaApi().selectLookupById(id.intValue());
+		return getWorkflowApi().selectLookupById(id.intValue());
 	}
 
 	private LookupType selectByCode() {
 		final String type = getParameterValue(TYPE);
 		final String code = getParameterValue(CODE);
-		return getSchemaApi().selectLookupByCode(type, code);
+		return getWorkflowApi().selectLookupByCode(type, code);
 	}
 
 	private LookupType selectByDescription() {
 		final String type = getParameterValue(TYPE);
 		final String description = getParameterValue(DESCRIPTION);
-		return getSchemaApi().selectLookupByDescription(type, description);
+		return getWorkflowApi().selectLookupByDescription(type, description);
 	}
 
 	private void setOutput(final LookupType lookup) {

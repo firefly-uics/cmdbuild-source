@@ -25,13 +25,14 @@ import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
-import org.cmdbuild.workflow.api.SchemaApi;
-import org.cmdbuild.workflow.api.SharkWorkflowApi;
+import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
+import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
+import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
-public class LoggingWorkflowApi extends SharkWorkflowApi {
+public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	private static final String NAME_VALUE_SEPARATOR = ": ";
 	private static final String ATTRIBUTES_SEPARATOR = ", ";
@@ -72,18 +73,25 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 				.with(STRING_ATTRIBUTE, STRING_ATTRIBUTE_VALUE);
 	}
 
+	private CallbackUtilities cus;
+
 	@Override
-	public void configure(final CallbackUtilities cus) {
-		super.configure(cus);
+	public void setup(final CallbackUtilities cus) {
+		this.cus = cus;
 	}
 
 	@Override
-	public FluentApi fluentApi() {
-		return new FluentApi(new FluentApiExecutor() {
+	public void setup(final CallbackUtilities cus, final WMSessionHandle shandle, final String procInstId) {
+		this.cus = cus;
+	}
+
+	@Override
+	public WorkflowApi createWorkflowApi() {
+		return new WorkflowApi(new FluentApiExecutor() {
 
 			@Override
 			public CardDescriptor create(final Card card) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						createNewCardLogLine( //
 								card.getClassName(), //
@@ -93,7 +101,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public void update(final Card card) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						updateExistingCardLogLine( //
 								card.getClassName(), //
@@ -108,7 +116,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public Card fetch(final Card card) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						fetchExistingCardLogLine( //
 								card.getClassName(), //
@@ -119,10 +127,10 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public List<Card> fetchCards(final Card card) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						fetchQueryClassLogLine(card.getClassName(), card.getAttributes()));
-				final Card foundCard = fluentApi() //
+				final Card foundCard = createWorkflowApi() //
 						.existingCard(card.getClassName(), FOUND_REFERENCE.getId()) //
 						.withClassId(FOUND_REFERENCE.getIdClass()) //
 						.withDescription(FOUND_REFERENCE.getDescription());
@@ -131,7 +139,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public void create(final Relation relation) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						createRelationLogLine( //
 								relation.getDomainName(), //
@@ -143,7 +151,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public void delete(final Relation relation) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						deleteRelationLogLine( //
 								relation.getDomainName(), //
@@ -155,7 +163,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public List<Relation> fetch(final RelationsQuery query) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						selectRelationsLogLine( //
 								query.getDomainName(), //
@@ -169,7 +177,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public Map<String, String> execute(final Function function) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						callFunctionLogLine(function.getFunctionName(), function.getInputs()));
 				return FAKE_FUNCTION_RESPONSE;
@@ -177,18 +185,13 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public DownloadedReport download(final Report report) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						downloadReportLogLine(report.getTitle(), report.getFormat(), report.getParameters()));
 				return DOWNLOADED_REPORT;
 			}
 
-		});
-	}
-
-	@Override
-	public SchemaApi schemaApi() {
-		return new SchemaApi() {
+		}, null) {
 
 			@Override
 			public ClassInfo findClass(final String className) {
@@ -204,7 +207,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public LookupType selectLookupById(final int id) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						selectLookupByIdLogLine(id));
 				return FOUND_LOOKUP;
@@ -212,7 +215,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public LookupType selectLookupByCode(final String type, final String code) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						selectLookupByCodeLogLine(type, code));
 				return FOUND_LOOKUP;
@@ -220,7 +223,7 @@ public class LoggingWorkflowApi extends SharkWorkflowApi {
 
 			@Override
 			public LookupType selectLookupByDescription(final String type, final String description) {
-				cus().info(UNUSED_SHANDLE, //
+				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						selectLookupByCodeLogLine(type, description));
 				return FOUND_LOOKUP;

@@ -58,7 +58,7 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 		case CREATION: {
 			final CardRef card1 = getCard1();
 			final CardRef card2 = getCard2();
-			getFluentApi().newRelation(domainName) //
+			getWorkflowApi().newRelation(domainName) //
 					.withCard1(card1.className, card1.cardId) //
 					.withCard2(card2.className, card2.cardId) //
 					.create();
@@ -70,7 +70,7 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 		case DELETION: {
 			final CardRef card1 = getCard1();
 			final CardRef card2 = getCard2();
-			getFluentApi().existingRelation(domainName) //
+			getWorkflowApi().existingRelation(domainName) //
 					.withCard1(card1.className, card1.cardId) //
 					.withCard2(card2.className, card2.cardId) //
 					.delete();
@@ -81,7 +81,7 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 
 		case SELECTION: {
 			final CardRef card = getCard();
-			final List<CardDescriptor> descriptors = getFluentApi().queryRelations(card.className, card.cardId) //
+			final List<CardDescriptor> descriptors = getWorkflowApi().queryRelations(card.className, card.cardId) //
 					.withDomain(domainName) //
 					.fetch();
 			final ReferenceType[] referenceTypes = referenceTypeFor(descriptors);
@@ -121,7 +121,7 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 			cardId = objId.intValue();
 		} else {
 			final ReferenceType objReference = getParameterValue(referenceBase + suffix);
-			className = getSchemaApi().findClass(objReference.getIdClass()).getName();
+			className = getWorkflowApi().findClass(objReference.getIdClass()).getName();
 			cardId = objReference.getId();
 		}
 		return new CardRef(className, cardId);
@@ -143,7 +143,7 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 	}
 
 	private int idClassFrom(final CardDescriptor descriptor) {
-		return getSchemaApi().findClass(descriptor.getClassName()).getId();
+		return getWorkflowApi().findClass(descriptor.getClassName()).getId();
 	}
 
 }
