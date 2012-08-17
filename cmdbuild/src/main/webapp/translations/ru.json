@@ -505,18 +505,18 @@
          },
          "title": "Пользователи и группы",
          "uiconfiguration": {
-            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
-            "disabled_modules": "Отключенные функции",
-            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "disabled_class_tabs": "Отключенные закладки в модуле 'Классы'",
+            "disabled_modules": "Отключенные модули",
+            "disabled_process_tabs": "Отключенные закладки в модуле 'Процессы'",
             "generic_properties": {
-               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
-               "card_simple_history": "<em>Simple history for cards</em>",
-               "full_screen_navigation": "<em>Full screen navigation</em>",
-               "hide_side_panel": "<em>Hide side panel</em>",
-               "process_simple_history": "<em>Simple history for processes</em>"
+               "always_enabled_widgets": "Всегда включенные виджеты",
+               "card_simple_history": "Простой формат истории для карточек",
+               "full_screen_navigation": "Полноэкранны режим окна навигации",
+               "hide_side_panel": "Скрыть боковую панель",
+               "process_simple_history": "Простой формат истории для процессов"
             },
-            "other": "<em>Other options</em>",
-            "title": "<em>UI configuration</em>"
+            "other": "Другие настройки",
+            "title": "Конфигурация интерфейса"
          },
          "user": {
             "add_user": "Добавить пользователя",
@@ -1037,7 +1037,7 @@
             "destclass": "Класс",
             "domain": "Связь",
             "end_date": "Конечная дата",
-            "performer": "<em>Activity performer</em>",
+            "performer": "Исполнитель",
             "relation": "Отношение",
             "user": "Пользователь"
          },
