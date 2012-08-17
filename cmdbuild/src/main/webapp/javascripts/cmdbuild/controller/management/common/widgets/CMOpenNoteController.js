@@ -12,12 +12,6 @@
 			_CMWFState.addDelegate(this);
 		},
 
-		// override
-		onEntryTypeSelected: function() { _deprecated(); },
-
-		// override
-		onCardSelected: function(card) { _deprecated();	},
-
 		// override to deny to add a note to a new process
 		disableTheTabBeforeCardSelection: function(processInstance) {
 			if (!processInstance 
@@ -75,6 +69,12 @@
 			}
 		},
 
+		// override
+		// use the process instance
+		onCancelNoteClick: function() {
+			this.onProcessInstanceChange(_CMWFState.getProcessInstance());
+		},
+
 		// wfStateDelegate
 		onProcessClassRefChange: function() {
 			this.view.disable();
@@ -90,6 +90,14 @@
 				this.view.enable();
 			}
 		},
+
+		// override
+		// deprecated
+		onEntryTypeSelected: function() { _deprecated(); },
+
+		// override
+		// deprecated
+		onCardSelected: function(card) { _deprecated();	},
 
 		onActivityInstanceChange: Ext.emptyFn
 	});
@@ -131,6 +139,16 @@
 				this.ownerController.activateFirstTab();
 			} catch (e) {
 				CMDBuild.log.error("Something went wrong displaying the Activity panel");
+			}
+		},
+
+		// override
+		// if set the value to the html field when is disabled
+		// it display null, so set again the value to it the first time that is shown
+		beforeActiveView: function() {
+			if (!this._alreadyOpened) {
+				this.view.loadCard(new CMDBuild.DummyModel(_CMWFState.getProcessInstance().getValues()));
+				this._alreadyOpened = true;
 			}
 		}
 	});

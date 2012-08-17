@@ -39,7 +39,7 @@ Ext.define("CMDBuild.view.management.classes.CMCardNotesPanel", {
 			hideMode: 'offsets',
 			items: [htmlField],
 			setValue: function(v) {
-				htmlField.setValue(v);
+				htmlField.setValue(v || "");
 			},
 			getValue: function() {
 				return htmlField.getValue();
