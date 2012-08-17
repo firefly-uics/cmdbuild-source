@@ -505,18 +505,18 @@
          },
          "title": "Utilisateurs et Groupes",
          "uiconfiguration": {
-            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_class_tabs": "Désactiver les onglets dans les Classes",
             "disabled_modules": "Désactiver caractéristiques",
-            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "disabled_process_tabs": "Désactiver les onglets dans les Processes",
             "generic_properties": {
-               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
-               "card_simple_history": "<em>Simple history for cards</em>",
-               "full_screen_navigation": "<em>Full screen navigation</em>",
-               "hide_side_panel": "<em>Hide side panel</em>",
-               "process_simple_history": "<em>Simple history for processes</em>"
+               "always_enabled_widgets": "Process widgets toujours activés",
+               "card_simple_history": "Historique simple des fiches",
+               "full_screen_navigation": "Grand écran pour navigation",
+               "hide_side_panel": "Masquer le panneau de côté",
+               "process_simple_history": "Historique simple des process"
             },
-            "other": "<em>Other options</em>",
-            "title": "<em>UI configuration</em>"
+            "other": "Autres options",
+            "title": "UI configuration"
          },
          "user": {
             "add_user": "Ajouter Utilisateur",
@@ -1037,7 +1037,7 @@
             "destclass": "Class",
             "domain": "Lien",
             "end_date": "Date de fin",
-            "performer": "<em>Activity performer</em>",
+            "performer": "Performence d'activité",
             "relation": "Relation",
             "user": "Utilisateur"
          },
