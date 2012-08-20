@@ -18,6 +18,8 @@ public interface ProcessDefinitionStore {
 
 	String getProcessDefinitionId(String className) throws CMWorkflowException;
 
+	String getProcessClassName(String processDefinitionId) throws CMWorkflowException;
+
 	byte[] downloadPackage(String className, String pkgVer) throws CMWorkflowException;
 
 	void uploadPackage(String className, byte[] pkgDefData) throws CMWorkflowException;

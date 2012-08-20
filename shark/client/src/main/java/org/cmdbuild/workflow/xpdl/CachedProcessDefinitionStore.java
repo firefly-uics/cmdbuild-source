@@ -73,10 +73,16 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 		private volatile Map<String, PackageInfo> packageIdToPackageInfo = new HashMap<String, PackageInfo>();
 		private volatile Map<String, PackageInfo> classNameToPackageInfo = new HashMap<String, PackageInfo>();
 		private volatile Map<String, ProcessInfo> classNameToProcessInfo = new HashMap<String, ProcessInfo>();
+		private volatile Map<String, ProcessInfo> definitionToProcessInfo = new HashMap<String, ProcessInfo>();
 
 		public ProcessInfo getProcessInfoByClass(final String className) throws CMWorkflowException {
 			checkLoaded();
 			return classNameToProcessInfo.get(className);
+		}
+
+		public ProcessInfo getProcessInfoByDefinition(final String processDefinitionId) throws CMWorkflowException {
+			checkLoaded();
+			return definitionToProcessInfo.get(processDefinitionId);
 		}
 
 		/**
@@ -150,6 +156,7 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 			for (final ProcessInfo procInfo : packageInfo.getCurrentVersionInfo().getProcesses()) {
 				classNameToPackageInfo.put(procInfo.getClassName(), packageInfo);
 				classNameToProcessInfo.put(procInfo.getClassName(), procInfo);
+				definitionToProcessInfo.put(procInfo.getDefinitionId(), procInfo);
 			}
 		}
 	}
@@ -218,6 +225,18 @@ public abstract class CachedProcessDefinitionStore implements ProcessDefinitionS
 			return null;
 		} else {
 			return pi.getDefinitionId();
+		}
+	}
+
+	@Override
+	public String getProcessClassName(final String processDefinitionId) throws CMWorkflowException {
+		final ProcessInfo pi = cache.getProcessInfoByDefinition(processDefinitionId);
+		if (pi == null) {
+			// it is null when the process was created but the XPDL is not yet
+			// uploaded
+			return null;
+		} else {
+			return pi.getClassName();
 		}
 	}
 

@@ -1,9 +1,9 @@
 package utils;
 
-import org.cmdbuild.workflow.SharkEventsDelegator;
+import org.cmdbuild.workflow.DelegatingEventAuditManager;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
-public class LoggerEventsDelegator extends SharkEventsDelegator {
+public class LoggingEventAuditManager extends DelegatingEventAuditManager {
 
 	@Override
 	public void configure(final CallbackUtilities cus) throws Exception {

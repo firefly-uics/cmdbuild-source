@@ -1,7 +1,7 @@
 package utils;
 
-import org.cmdbuild.workflow.CMEventManager.ActivityInstance;
-import org.cmdbuild.workflow.CMEventManager.ProcessInstance;
+import org.cmdbuild.workflow.SimpleEventManager.ActivityInstance;
+import org.cmdbuild.workflow.SimpleEventManager.ProcessInstance;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.hamcrest.Description;

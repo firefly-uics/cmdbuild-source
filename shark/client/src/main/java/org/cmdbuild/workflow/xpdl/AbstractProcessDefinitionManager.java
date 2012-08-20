@@ -109,6 +109,11 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 		return store.getProcessDefinitionId(process.getName());
 	}
 
+	@Override
+	public final String getProcessClassName(final String processDefinitionId) throws CMWorkflowException {
+		return store.getProcessClassName(processDefinitionId);
+	}
+
 	@Legacy("As in 1.x")
 	protected final String getStandardProcessDefinitionId(final CMProcessClass process) {
 		return "Process_" + process.getName().toLowerCase();

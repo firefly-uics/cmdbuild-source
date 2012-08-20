@@ -1,6 +1,6 @@
 package org.cmdbuild.workflow;
 
-public class NullEventManager implements CMEventManager {
+public class NullEventManager implements SimpleEventManager {
 
 	@Override
 	public void processStarted(final ProcessInstance processInstance) {

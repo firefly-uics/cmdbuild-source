@@ -10,7 +10,7 @@ import static org.mockito.Mockito.inOrder;
 import static utils.EventManagerMatchers.hasActivityDefinitionId;
 import static utils.EventManagerMatchers.hasProcessDefinitionId;
 
-import org.cmdbuild.workflow.CMEventManager.ActivityInstance;
+import org.cmdbuild.workflow.SimpleEventManager.ActivityInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
