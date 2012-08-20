@@ -428,7 +428,7 @@
          "availabletree": {
             "class": "Klassen",
             "processclass": "Aktivität",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "Dashboards",
             "report": "Bericht",
             "view": "Sicht"
          },
@@ -476,7 +476,7 @@
             "add_group": "Gruppe hinzufügen",
             "availableusers": "Verfügbare Benutzer",
             "delete_group": "Gruppe sperren",
-            "email": "<em>E-Mail</em>",
+            "email": "E-Mail",
             "enable_group": "Gruppe freigeben",
             "group_description": "Beschreibung",
             "group_name": "Gruppenname",
@@ -505,18 +505,18 @@
          },
          "title": "Benutzer und Gruppen",
          "uiconfiguration": {
-            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_class_tabs": "Gesperrte Tabs im Klassenmodul",
             "disabled_modules": "Gesperrte Funktionalitäten",
-            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "disabled_process_tabs": "Gesperrte Tabs im Prozessmodul",
             "generic_properties": {
-               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
-               "card_simple_history": "<em>Simple history for cards</em>",
-               "full_screen_navigation": "<em>Full screen navigation</em>",
-               "hide_side_panel": "<em>Hide side panel</em>",
-               "process_simple_history": "<em>Simple history for processes</em>"
+               "always_enabled_widgets": "Prozess-Widget immer freigegeben",
+               "card_simple_history": "Einfache Chronik für die Karte",
+               "full_screen_navigation": "Gesamter Bildschirm beim surfen",
+               "hide_side_panel": "Seitentafel ausblenden",
+               "process_simple_history": "Einfache Chronik für die Prozesse"
             },
-            "other": "<em>Other options</em>",
-            "title": "<em>UI configuration</em>"
+            "other": "Weitere Optionen",
+            "title": "UI Konfiguration"
          },
          "user": {
             "add_user": "Benutzer hinzufügen",
@@ -706,9 +706,9 @@
       "tbd_body": "Baustelle",
       "tbd_title": "Baustelle",
       "tooltip": {
-         "editParameters": "<em>Parameter bearbeiten</em>",
-         "reload": "<em>Neu laden</em>",
-         "showData": "<em>Ansicht Datei</em>"
+         "editParameters": "Parameter bearbeiten",
+         "reload": "Neu laden",
+         "showData": "Ansicht Datei"
       },
       "tree_names": {
          "class": "Standard",
@@ -1037,7 +1037,7 @@
             "destclass": "Klasse",
             "domain": "Domain",
             "end_date": "Enddatum",
-            "performer": "<em>Activity performer</em>",
+            "performer": "Ausführende der Aktivität",
             "relation": "Beziehung",
             "user": "Benutzer"
          },
