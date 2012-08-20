@@ -38,7 +38,7 @@
 
 			this.mon(this.view, "empty", function() {
 				this.fireEvent("empty", this.view.isVisible());
-			}, this)
+			}, this);
 
 			this.callBacks = {
 				'action-masterdetail-edit': this.onEditDetailClick,
@@ -81,10 +81,9 @@
 		},
 
 		onEditDetailClick: function(model) {
-			var me = this,
-				w = buildWindow.call(this, {
-					editable: true
-				});
+			var w = buildWindow.call(this, {
+				editable: true
+			});
 
 			w.mon(w, "destroy", function() {
 				this.view.reload();

@@ -38,46 +38,37 @@
     }
 
     function buildReferencePanel(field, subFields) {
-        var subFieldsPanel = new Ext.panel.Panel({
-            bodyCls: "x-panel-body-default-framed",
-            bodyStyle: {
-                padding: "0 0 10px 15px"
-            },
-            hideMode: "offsets",
-            hidden: true,
-            frame: false,
-            items: [subFields]
-        }),
-
-        button = new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
-            subfieldsPanel: subFieldsPanel,
-            margin: "1"
-        });
-
         // If the field has no value the relation attributes must be disabled
         field.mon(field, CHANGE_EVENT, function(combo, val) {
             var disabled = val == "";
-            Ext.Array.forEach(subFields, function (sf) {
-                sf.setDisabled(disabled);
-            });
+            for (var i=0, sf=null; i<subFields.length; ++i) {
+                sf = subFields[i];
+                if (sf) {
+                    sf.setDisabled(disabled);
+                }
+            }
         });
 
-        return new Ext.panel.Panel({
-            frame: false,
-            border: false,
-            bodyCls: "x-panel-body-default-framed",
-            items: [{
-                    xtype:'panel',
-                    bodyCls: "x-panel-body-default-framed",
-                    frame: false,
-                    layout: "hbox",
-                    items: [field, button]
-                },
-                subFieldsPanel
-            ],
-			resolveTemplate: function() {
-				field.resolveTemplate();
-			}
+        var fieldContainer = {
+            xtype : 'container',
+            layout : 'hbox',
+			margin : "0 0 5 0",
+            items : [
+                 new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
+                     subFields: subFields
+                 }),
+                 field
+            ]
+        };
+
+        field.labelWidth -= 20;
+
+        return new Ext.container.Container({
+			margin : "0 0 5 0",
+            items: [fieldContainer].concat(subFields),
+            resolveTemplate: function() {
+                field.resolveTemplate();
+            }
         });
     }
 

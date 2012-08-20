@@ -4,13 +4,6 @@
 
 		constructor: function() {
 			this.callParent(arguments);
-
-			this.mon(this.view, this.view.CMEVENTS.formFilled, function() {
-				if (this.view.hasRelationAttributes) {
-					loadRelationToFillRelationAttributes.call(this);
-				}
-			}, this);
-
 		},
 
 		getRelationsAttribute: function() {
@@ -18,17 +11,31 @@
 				ff = form.getFields(),
 				out = [];
 
-			Ext.Array.forEach(ff.items, function(f) { 
+			for (var i=0, f=null; i<ff.items.length; ++i) {
+				f = ff.items[i];
 				if(f.CMAttribute && f.CMAttribute.cmRelationAttribute) {
 					f.enable();
 					out.push(f);
 				}
-			});
+			}
 
 			return out;
 		},
 
-		// private, could be overridden
+		//override
+		buildSaveParams: function() {
+			var p = this.callParent(arguments);
+
+			if (this.referenceToMaster) {
+				// set the value to the field that was hidden
+				var r = this.referenceToMaster;
+				p[r.name] = r.value;
+			}
+
+			return p;
+		},
+
+		// protected
 		buildParamsToSaveRelation: function(detailData) {
 			var detail = this.view.detail;
 
@@ -47,9 +54,10 @@
 		fillRelationAttributesParams: function(detailData, attributes) {
 			var relationAttributes = this.getRelationsAttribute();
 
-			Ext.Array.forEach(relationAttributes, function(a) {
-				attributes[a.CMAttribute.name] = a.getValue();
-			});
+			for (var i=0, a=null; i<relationAttributes.length; ++i) {
+				a = relationAttributes[i];
+				attributes[a.CMAttribute.attributeName] = a.getValue();
+			}
 
 			return attributes;
 		},
@@ -58,10 +66,14 @@
 		beforeRequest: function(form) {
 			// Disable the fields of the relation attribute
 			// to don't send them with the save request
-			var ff = form.getFields();
-			Ext.Array.forEach(ff.items, function(f) { 
-				f.setDisabled(f.CMAttribute && f.CMAttribute.cmRelationAttribute);
-			});
+			// if there is not a refenrence to to master card
+			if (!this.referenceToMaster) {
+				var ff = form.getFields();
+				for (var i=0, f=null; i<ff.items.length; ++i) {
+					f = ff.items[i];
+					f.setDisabled(f.CMAttribute && f.CMAttribute.cmRelationAttribute);
+				}
+			}
 		},
 
 		//override
@@ -91,25 +103,33 @@
 			var me = this;
 
 			_CMCache.getAttributeList(entryTypeId, function(attributes) {
-				attributes = removeFKOrMasterDeference.call(me.view, attributes);
-				attributes = addDomainAttributesIfNeeded.call(me.view, attributes);
+				attributes = removeFKOrMasterDeference(me, attributes);
+				attributes = addDomainAttributesIfNeeded(me, me.view, attributes);
 
 				me.view.fillForm(attributes, editMode = false);
 				if (cb) {
 					cb();
 				}
 			});
+		},
+
+		// override
+		onCardLoaded: function(me, card) {
+			me.callParent(arguments);
+
+			if (me.view.hasRelationAttributes) {
+				loadRelationToFillRelationAttributes(me);
+			}
 		}
 	});
 
-	function loadRelationToFillRelationAttributes() {
-		var me = this,
-			v = this.view,
+	function loadRelationToFillRelationAttributes(me) {
+		var v = this.view,
 			p = {
-				Id: v.cardId,
-				IdClass: v.classId,
-				domainId: v.detail.get("id"),
-				src : v.detail.getDetailSide()
+				Id: me.card.get("Id"),
+				IdClass: me.entryType.getId(),
+				domainId: me.view.detail.get("id"),
+				src : me.view.detail.getDetailSide()
 			};
 
 		CMDBuild.ServiceProxy.relations.getList({
@@ -138,10 +158,14 @@
 					me.relation = domains[0].relations[0]; // set this for the save request
 					var fields = me.getRelationsAttribute(),
 						attributes = me.relation.rel_attr;
-	
-					Ext.Array.forEach(fields, function(f) {
-						f.setValue(attributes[f.name]);
-					});
+
+					for (var i=0, f=null; i<fields.length; ++i) {
+						f = fields[i];
+						if (f.CMAttribute) {
+							var value = attributes[f.CMAttribute.name] || attributes[f.CMAttribute.attributeName];
+							f.setValue(value);
+						}
+					}
 
 				} catch (e) {
 					me.relation = undefined;
@@ -152,21 +176,21 @@
 	}
 
 	// to remove the reference
-	function removeFKOrMasterDeference(attributes) {
+	function removeFKOrMasterDeference(me, attributes) {
 		var attributesToAdd = [];
 		for (var i = 0; i < attributes.length; i++) {
 			var attribute = attributes[i];
 
 			if (attribute) {
-				if (isTheFKFieldToTarget.call(this, attribute) 
-						|| isTheReferenceOfTheDetail(this, attribute)) {
-					// not to create the relation if the
+				if (isTheFKFieldToTarget(me.view, attribute) 
+						|| isTheReferenceOfTheDetail(me.view, attribute)) {
+					// does not create the relation if the
 					// detail has a reference to the master
 					// used to add a detail
-					if (this.masterData) {
-						this.referenceToMaster = {
+					if (me.view.masterData) {
+						me.referenceToMaster = {
 							name: attribute.name,
-							value: this.masterData.get("Id")
+							value: me.view.masterData.get("Id")
 						};
 					}
 				} else {
@@ -178,28 +202,29 @@
 		return attributesToAdd;
 	}
 
-	function isTheFKFieldToTarget(attribute) {
-		if (attribute && this.fkAttribute) {
-			return attribute.name == this.fkAttribute.name;
+	function isTheFKFieldToTarget(view, attribute) {
+		if (attribute && view.fkAttribute) {
+			return attribute.name == view.fkAttribute.name;
 		}
+
 		return false;
 	};
 
-	function isTheReferenceOfTheDetail(me, attribute) {
-		if (!me.detail) {
+	function isTheReferenceOfTheDetail(view, attribute) {
+		if (!view.detail) {
 			return false;
 		} else {
-			return attribute.idDomain == me.detail.get("id");
+			return attribute.idDomain == view.detail.get("id");
 		}
 	};
 
-	function addDomainAttributesIfNeeded(attributes) {
-		var domainAttributes = this.detail.getAttributes() || [],
+	function addDomainAttributesIfNeeded(me, view, attributes) {
+		var domainAttributes = view.detail.getAttributes() || [],
 			out = [];
 
 		if (domainAttributes.length > 0) {
 
-			this.hasRelationAttributes = true;
+			view.hasRelationAttributes = true;
 
 			var areTheAttributesDividedInTab = false;
 			for (var i=0, l=attributes.length; i<l; ++i) {
@@ -216,24 +241,30 @@
 			if (areTheAttributesDividedInTab) {
 				out = [].concat(attributes);
 			} else {
-				Ext.Array.forEach(attributes, function(a) {
+				for (var i=0, a=null; i<attributes.length; ++i) {
+					a = attributes[i];
 					var dolly = Ext.apply({}, a);
 					dolly.group = CMDBuild.Translation.management.modcard.detail_window.detail_attributes;
 					out.push(dolly);
-				});
+				}
 			}
 
 			// add the attributes of the domain and add to them
 			// a group to have a separated tab in the form
-			Ext.Array.forEach(domainAttributes, function(a) {
+			for (var i=0, a=null; i<domainAttributes.length; ++i) {
+				a = domainAttributes[i];
 				var dolly = Ext.apply({}, a);
 				dolly.group = CMDBuild.Translation.management.modcard.detail_window.relation_attributes;
+				dolly.attributeName = dolly.name; // used to update the relations attributes
+				if (me.referenceToMaster) {
+					dolly.name = "_" + me.referenceToMaster.name + "_" + dolly.name;
+				}
 				// mark these attributes to be able to detect them
 				// when save or load the data. There is the possibility
 				// of a names collision.
 				dolly.cmRelationAttribute = true;
 				out.push(dolly);
-			});
+			}
 		} else {
 			out = [].concat(attributes);
 		}

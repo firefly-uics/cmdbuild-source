@@ -65,61 +65,25 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		name: attribute.name,
 		disabled: false
 	});
-	
+
 	var subFields = getSubFields(attribute, display = true);
 
 	if (subFields.length > 0) {
-		var subFieldsPanel = new Ext.panel.Panel({
-			bodyCls: "x-panel-body-default-framed",
-			bodyStyle: {
-				padding: "0 0 10px 15px"
-			},
-			hideMode: "offsets",
-			hidden: true,
-			frame: false,
-			items: [subFields]
-		}),
-
-		button = new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
-			subfieldsPanel: subFieldsPanel,
-			margin: "1 0 0 5"
-		});
-
-		field.cmSkipAfterLayoutResize = true; //see EditablePanel
-
-		field.setValue = Ext.Function.createSequence(field.setValue, function(v) {
-			var tm = new Ext.util.TextMetrics()
-			if (v) {
-				try {
-					var length = tm.getWidth(v) + "px";
-					field.bodyEl.dom.firstChild.style.width = length;
-					field.bodyEl.dom.style.width = length;
-					var fieldLength = field.labelEl.dom.clientWidth + field.bodyEl.dom.clientWidth;
-					field.setWidth(fieldLength);
-
-					tm.destroy();
-				} catch (e) {
-					
-				}
-				button.show();
-			} else {
-				button.hide();
-			}
-		});
-
-		return new Ext.panel.Panel({
-			frame: false,
-			border: false,
-			bodyCls: "x-panel-body-default-framed",
-			items: [{
-				xtype:'panel',
-				bodyCls: "x-panel-body-default-framed",
-				frame: false,
-				layout: "hbox",
-				items: [field, button]
-			},
-				subFieldsPanel
+		var fieldContainer = {
+			xtype : 'container',
+			layout : 'hbox',
+			items : [
+				new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
+					subFields: subFields
+				}),
+				field
 			]
+		};
+
+		field.labelWidth -= 20;
+
+		return new Ext.container.Container({
+			items: [fieldContainer].concat(subFields)
 		});
 
 	} else {
@@ -127,18 +91,20 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 	}
 };
 
-
 function getSubFields(attribute, display) {
 	var d = _CMCache.getDomainById(attribute.idDomain),
 		fields = [];
 
 	if (d) {
-		Ext.Array.forEach(d.data.attributes || [], function(a, intex, all) {
+		var attrs = d.data.attributes || [];
+		for (var i=0, a=null; i<attrs.length; ++i) {
+			a = attrs[i];
 			if (a.isbasedsp) {
 				var conf = Ext.apply({}, a);
 				conf.name = "_" + attribute.name + "_" + conf.name;
 
 				var f = CMDBuild.Management.FieldManager.getFieldForAttr(conf, display);
+				f.margin = "0 0 0 5";
 				if (f) {
 					// Mark the sub fields with a flag "cmDomainAttribute" because
 					// if a form has one of these fields can know to do a request to
@@ -152,7 +118,7 @@ function getSubFields(attribute, display) {
 					fields.push(f);
 				}
 			}
-		}, this);
+		}
 	}
 
 	return fields;

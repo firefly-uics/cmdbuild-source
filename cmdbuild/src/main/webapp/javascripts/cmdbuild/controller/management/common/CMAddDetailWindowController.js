@@ -7,9 +7,9 @@
 		buildSaveParams: function() {
 			var p = this.callParent(arguments);
 
-			if (this.view.referenceToMaster) {
+			if (this.referenceToMaster) {
 				// set the value to the field that was hidden
-				var r = this.view.referenceToMaster;
+				var r = this.referenceToMaster;
 				p[r.name] = r.value;
 				// Then set the save relation to emptyFn because
 				// the relation is automatically 

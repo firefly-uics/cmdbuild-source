@@ -81,11 +81,15 @@
 	});
 
 	function manageToggleTab(tab) {
-		if (this.pressedTab) {
-			this.pressedTab.removeCls(this.pressedTabCls);
+		try {
+			if (this.pressedTab) {
+				this.pressedTab.removeCls(this.pressedTabCls);
+			}
+			tab.addClass(this.pressedTabCls);
+			this.pressedTab = tab;
+		} catch (e) {
+			// unknown render issues, no time to investigate
 		}
-		tab.addClass(this.pressedTabCls);
-		this.pressedTab = tab;
 	};
 
 	function fixRendereingIssueForIE7() {
