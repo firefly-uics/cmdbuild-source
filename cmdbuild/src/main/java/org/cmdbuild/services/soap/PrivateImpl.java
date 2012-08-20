@@ -56,8 +56,13 @@ import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
+import org.cmdbuild.services.soap.types.WSEvent;
+import org.cmdbuild.services.soap.types.WSProcessStartEvent;
+import org.cmdbuild.services.soap.types.WSProcessUpdateEvent;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
+import org.cmdbuild.workflow.event.WorkflowEvent;
+import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -437,6 +442,32 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 			// TODO Fix for dates using CMAttributeTypeVisitor
 			return value.toString();
 		}
+	}
+
+	/*
+	 * r2.4
+	 */
+
+	@Override
+	public void notify(final WSEvent wsEvent) {
+		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager(); 
+		wsEvent.accept(new WSEvent.Visitor() {
+
+			@Override
+			public void visit(WSProcessStartEvent wsEvent) {
+				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(
+						wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId());
+				eventManager.pushEvent(wsEvent.getSessionId(), event);
+			}
+
+			@Override
+			public void visit(WSProcessUpdateEvent wsEvent) {
+				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(
+						wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId());
+				eventManager.pushEvent(wsEvent.getSessionId(), event);
+			}
+
+		});
 	}
 
 }

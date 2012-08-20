@@ -1,6 +1,6 @@
 package utils;
 
-import org.cmdbuild.workflow.CMEventManager;
+import org.cmdbuild.workflow.SimpleEventManager;
 import org.cmdbuild.workflow.service.LocalSharkService;
 import org.junit.After;
 import org.junit.Before;
@@ -11,7 +11,7 @@ public abstract class AbstractLocalSharkServiceTest extends AbstractWorkflowServ
 
 	private static final String USERNAME = "admin";
 
-	protected CMEventManager eventManager;
+	protected SimpleEventManager eventManager;
 
 	@BeforeClass
 	public static void initWorkflowService() {
@@ -25,7 +25,7 @@ public abstract class AbstractLocalSharkServiceTest extends AbstractWorkflowServ
 
 	@Before
 	public void initializeEventManager() {
-		eventManager = MockEventsDelegator.mock;
+		eventManager = MockEventAuditManager.mock;
 	}
 
 	@After

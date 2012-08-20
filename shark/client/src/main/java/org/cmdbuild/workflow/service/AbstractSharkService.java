@@ -10,6 +10,8 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.IdentityTypesConverter;
 import org.cmdbuild.workflow.TypesConverter;
+import org.cmdbuild.workflow.event.NullWorkflowEventManager;
+import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstanceState;
@@ -39,9 +41,11 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	protected static final String LAST_VERSION = StringUtils.EMPTY;
 
 	private static final TypesConverter IDENTITY_TYPES_CONVERTER = new IdentityTypesConverter();
+	private static final WorkflowEventManager NULL_EVENT_MANAGER = new NullWorkflowEventManager();
 
-	private TypesConverter typesConverter;
-
+	/*
+	 * Transactions should be handled with Spring
+	 */
 	private abstract class TransactedExecutor<T> {
 
 		protected SharkInterface shark;
@@ -54,9 +58,11 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 				handle = initAndConnect();
 				final T result = command();
 				commitTransaction();
+				processEvents();
 				return result;
 			} catch (final Exception e) {
 				rollbackTransaction();
+				purgeEvents();
 				throw new CMWorkflowException(e);
 			} finally {
 				disconnect();
@@ -85,6 +91,14 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			}
 		}
 
+		private void processEvents() throws CMWorkflowException {
+			eventManager.processEvents(handle.getId());
+		}
+
+		private void purgeEvents() {
+			eventManager.purgeEvents(handle.getId());
+		}
+
 		private final void commitTransaction() throws Exception {
 			SharkInterfaceWrapper.getUserTransaction().commit();
 		}
@@ -109,9 +123,13 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	 */
 	private volatile WAPI _wapi;
 
+	private WorkflowEventManager eventManager;
+	private TypesConverter typesConverter;
+
 	protected AbstractSharkService(final Properties props) {
 		configureSharkInterfaceWrapper(props);
 		typesConverter = IDENTITY_TYPES_CONVERTER;
+		eventManager = NULL_EVENT_MANAGER;
 	}
 
 	private void configureSharkInterfaceWrapper(final Properties props) {
@@ -130,6 +148,11 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	public void setVariableConverter(final TypesConverter variableConverter) {
 		Validate.notNull(variableConverter);
 		this.typesConverter = variableConverter;
+	}
+
+	public void setEventManager(final WorkflowEventManager eventManager) {
+		Validate.notNull(eventManager);
+		this.eventManager = eventManager;
 	}
 
 	private WAPI wapi() throws Exception {

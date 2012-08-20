@@ -85,4 +85,14 @@ public interface ProcessDefinitionManager {
 	 */
 	String getProcessDefinitionId(CMProcessClass process) throws CMWorkflowException;
 
+	/**
+	 * Returns the process class name for that process definition id.
+	 * 
+	 * The signature should be changed to return a CMProcessClass.
+	 * 
+	 * @param process definition id
+	 * @return process class name
+	 */
+	String getProcessClassName(String processDefinitionId) throws CMWorkflowException;
+
 }

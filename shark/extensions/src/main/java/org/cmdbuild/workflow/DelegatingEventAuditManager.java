@@ -9,13 +9,15 @@ import org.enhydra.shark.api.internal.eventaudit.EventAuditException;
 import org.enhydra.shark.api.internal.eventaudit.EventAuditPersistenceObject;
 import org.enhydra.shark.api.internal.eventaudit.StateEventAuditPersistenceObject;
 
-public class SharkEventsDelegator extends NullEventAuditManager {
+public class DelegatingEventAuditManager extends NullEventAuditManager {
 
-	private static class EventAuditPersistenceObjectWrapper implements CMEventManager.ActivityInstance {
+	private static class EventAuditPersistenceObjectWrapper implements SimpleEventManager.ActivityInstance {
 
+		private final WMSessionHandle shandle;
 		private final EventAuditPersistenceObject eap;
 
-		private EventAuditPersistenceObjectWrapper(final EventAuditPersistenceObject eap) {
+		private EventAuditPersistenceObjectWrapper(final WMSessionHandle shandle, final EventAuditPersistenceObject eap) {
+			this.shandle = shandle;
 			this.eap = eap;
 		}
 
@@ -37,6 +39,11 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 		@Override
 		public String getActivityInstanceId() {
 			return eap.getActivityId();
+		}
+
+		@Override
+		public int getSessionId() {
+			return shandle.getId();
 		}
 	}
 
@@ -98,17 +105,17 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 
 	}
 
-	private CMEventManager eventManager;
+	private SimpleEventManager eventManager;
 
-	public SharkEventsDelegator() {
+	public DelegatingEventAuditManager() {
 		setEventManager(new NullEventManager());
 	}
 
-	public SharkEventsDelegator(final CMEventManager eventManager) {
+	public DelegatingEventAuditManager(final SimpleEventManager eventManager) {
 		setEventManager(eventManager);
 	}
 
-	public void setEventManager(final CMEventManager eventManager) {
+	public void setEventManager(final SimpleEventManager eventManager) {
 		Validate.notNull(eventManager, "Manager cannot be null");
 		this.eventManager = eventManager;
 	}
@@ -136,18 +143,18 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 		final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
 		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
 		if (oldState == RunningStates.OPEN_NOT_RUNNING_NOT_STARTED && newState == RunningStates.OPEN_RUNNING) {
-			eventManager.processStarted(processInstanceFor(sea));
+			eventManager.processStarted(processInstanceFor(shandle, sea));
 		} else if (newState.isClosed()) {
-			eventManager.processClosed(processInstanceFor(sea));
+			eventManager.processClosed(processInstanceFor(shandle, sea));
 		} else if (oldState == RunningStates.OPEN_RUNNING && newState == RunningStates.OPEN_NOT_RUNNING_SUSPENDED) {
-			eventManager.processSuspended(processInstanceFor(sea));
+			eventManager.processSuspended(processInstanceFor(shandle, sea));
 		} else if (oldState == RunningStates.OPEN_NOT_RUNNING_SUSPENDED && newState == RunningStates.OPEN_RUNNING) {
-			eventManager.processResumed(processInstanceFor(sea));
+			eventManager.processResumed(processInstanceFor(shandle, sea));
 		}
 	}
 
-	private CMEventManager.ProcessInstance processInstanceFor(final EventAuditPersistenceObject eap) {
-		return new EventAuditPersistenceObjectWrapper(eap);
+	private SimpleEventManager.ProcessInstance processInstanceFor(final WMSessionHandle shandle, final EventAuditPersistenceObject eap) {
+		return new EventAuditPersistenceObjectWrapper(shandle, eap);
 	}
 
 	@Legacy("State map copied from the old implementation.")
@@ -157,17 +164,17 @@ public class SharkEventsDelegator extends NullEventAuditManager {
 		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
 		switch (newState) {
 		case CLOSED_COMPLETED:
-			eventManager.activityClosed(activityInstanceFor(sea));
+			eventManager.activityClosed(activityInstanceFor(shandle, sea));
 			break;
 		case OPEN_NOT_RUNNING_NOT_STARTED:
 			if (oldState == RunningStates.UNKNOWN) {
-				eventManager.activityStarted(activityInstanceFor(sea));
+				eventManager.activityStarted(activityInstanceFor(shandle, sea));
 			}
 			break;
 		}
 	}
 
-	private CMEventManager.ActivityInstance activityInstanceFor(final EventAuditPersistenceObject eap) {
-		return new EventAuditPersistenceObjectWrapper(eap);
+	private SimpleEventManager.ActivityInstance activityInstanceFor(final WMSessionHandle shandle, final EventAuditPersistenceObject eap) {
+		return new EventAuditPersistenceObjectWrapper(shandle, eap);
 	}
 }

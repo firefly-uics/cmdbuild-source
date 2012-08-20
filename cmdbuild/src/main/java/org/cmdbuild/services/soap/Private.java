@@ -6,6 +6,7 @@ import javax.activation.DataHandler;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlMimeType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -26,11 +27,16 @@ import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
+import org.cmdbuild.services.soap.types.WSEvent;
 import org.cmdbuild.services.soap.types.Workflow;
 
 @WebService(
 		targetNamespace="http://soap.services.cmdbuild.org"
 )
+@XmlSeeAlso({
+		org.cmdbuild.services.soap.types.WSProcessStartEvent.class,
+		org.cmdbuild.services.soap.types.WSProcessUpdateEvent.class
+})
 public interface Private {
 	public CardList getCardList(
 			@WebParam(name = "className") String className, 
@@ -206,4 +212,16 @@ public interface Private {
 	public Attribute[] callFunction(
 			@WebParam(name = "functionName") String functionName,
 			@WebParam(name = "params") Attribute[] params);
+
+	/*
+	 * r2.4
+	 */
+
+	/**
+	 * Notify CMDBuild of an external event.
+	 * 
+	 * @param event
+	 *            a generic event
+	 */
+	public void notify(@WebParam(name = "event") WSEvent event);
 }

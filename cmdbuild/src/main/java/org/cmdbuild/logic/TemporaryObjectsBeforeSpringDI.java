@@ -24,6 +24,8 @@ import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
+import org.cmdbuild.workflow.WorkflowEventManagerImpl;
+import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
@@ -60,6 +62,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final RemoteSharkService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
 	private static final WorkflowLogger workflowLogger;
+	private static final WorkflowEventManager workflowEventManager;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
@@ -71,6 +74,9 @@ public class TemporaryObjectsBeforeSpringDI {
 		workflowService.setVariableConverter(new SharkTypesConverter(dbDataView));
 
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
+
+		workflowEventManager = new WorkflowEventManagerImpl(workflowService, processDefinitionManager);
+		workflowService.setEventManager(workflowEventManager);
 	}
 
 	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {		
@@ -129,6 +135,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		final ContaminatedWorkflowEngine workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService, processDefinitionManager);
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
+	}
+
+	public static WorkflowEventManager getWorkflowEventManager() {
+		return workflowEventManager;
 	}
 
 	public static ProcessDefinitionManager getProcessDefinitionManager() {
