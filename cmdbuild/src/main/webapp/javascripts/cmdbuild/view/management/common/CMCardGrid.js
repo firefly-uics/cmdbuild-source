@@ -129,7 +129,7 @@
 			return visibleColumns;
 		},
 		
-		//private, can be overridden
+		// protected
 		setColumnsForClass: function(classAttributes) {
 			var columns = this.buildColumnsForAttributes(classAttributes);
 			var s = this.getStoreForFields(columns.fields);
@@ -140,7 +140,7 @@
 			}
 		},
 
-		// private, could be overridden
+		// protected
 		buildColumnsForAttributes: function(classAttributes) {
 			this.classAttributes = classAttributes;
 			var headers = [];

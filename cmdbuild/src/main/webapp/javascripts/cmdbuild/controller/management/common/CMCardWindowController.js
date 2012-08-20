@@ -23,6 +23,8 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		this.callParent([view]);
 		this.onEntryTypeSelected(_CMCache.getEntryTypeById(conf.entryType));
 
+		this.cmEditMode = conf.cmEditMode;
+
 		var me = this;
 		this.mon(me.view, "show", function() {
 			me.loadFields(conf.entryType, function() {
@@ -31,16 +33,7 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 						Id: conf.card,
 						IdClass: conf.entryType
 					}, function(card) {
-						me.card = card;
-						me.view.loadCard(card);
-						if (me.widgetControllerManager) {
-							me.widgetControllerManager.buildControllers(card);
-						}
-						if (conf.cmEditMode) {
-							me.view.editMode();
-						} else {
-							me.view.displayMode();
-						}
+						me.onCardLoaded(me, card);
 					});
 				} else {
 					if (conf.cmEditMode) {
@@ -77,7 +70,7 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		this.view.setTitle(this.entryType.get("text"));
 	},
 
-	// private, overridden in subclasses
+	// protected
 	buildSaveParams: function() {
 		return {
 			IdClass: this.entryType.get("id"),
@@ -85,13 +78,28 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		};
 	},
 
-	// private, overridden in subclasses
+	// protected
 	onSaveSuccess: function(form, action) {
 		CMDBuild.LoadMask.get().hide();
 		_CMCache.onClassContentChanged(this.entryType.get("id"));
 		this.view.destroy();
 	},
 
+	// protected
+	onCardLoaded: function(me, card) {
+		me.card = card;
+		me.view.loadCard(card);
+		if (me.widgetControllerManager) {
+			me.widgetControllerManager.buildControllers(card);
+		}
+		if (me.cmEditMode) {
+			me.view.editMode();
+		} else {
+			me.view.displayMode();
+		}
+	},
+
 	// template to override in subclass
 	beforeRequest: Ext.emptyFn
+
 });

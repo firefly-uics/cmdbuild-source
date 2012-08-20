@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import org.cmdbuild.dao.attribute.DateAttribute;
+import org.cmdbuild.dao.attribute.DateTimeAttribute;
+import org.cmdbuild.dao.attribute.TimeAttribute;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -33,9 +36,9 @@ public abstract class AbstractJsonResponseSerializer {
 	private LookupOperation systemLookupOperation = new LookupOperation(UserContext.systemContext());
 
 	// TODO should be defined in the user session
-	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("dd/MM/yy HH:mm:ss");
-	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormat.forPattern("HH:mm:ss");
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yy");
+	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DateTimeAttribute.JSON_DATETIME_FORMAT);
+	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormat.forPattern(TimeAttribute.JSON_DATETIME_FORMAT);
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(DateAttribute.JSON_DATE_FORMAT);
 
 	protected final String formatDateTime(final DateTime dateTime) {
 		if (dateTime == null) {
