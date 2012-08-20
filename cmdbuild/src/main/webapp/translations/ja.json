@@ -505,18 +505,18 @@
          },
          "title": "ユーザとグループ",
          "uiconfiguration": {
-            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_class_tabs": "クラスモジュールでは無効なタブ",
             "disabled_modules": "無効なモジュール",
-            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "disabled_process_tabs": "プロセスモジュールでは無効なタブ",
             "generic_properties": {
-               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
-               "card_simple_history": "<em>Simple history for cards</em>",
-               "full_screen_navigation": "<em>Full screen navigation</em>",
-               "hide_side_panel": "<em>Hide side panel</em>",
-               "process_simple_history": "<em>Simple history for processes</em>"
+               "always_enabled_widgets": "プロセスのウィジェットは、常に有効",
+               "card_simple_history": "カードの単純な履歴",
+               "full_screen_navigation": "フルスクリーンナビゲーション",
+               "hide_side_panel": "サイドパネルを隠す",
+               "process_simple_history": "プロセスの単純な履歴"
             },
-            "other": "<em>Other options</em>",
-            "title": "<em>UI configuration</em>"
+            "other": "他のオプション",
+            "title": "UIの構成"
          },
          "user": {
             "add_user": "ユーザ追加",
@@ -1037,7 +1037,7 @@
             "destclass": "クラス",
             "domain": "ドメイン",
             "end_date": "終了日",
-            "performer": "<em>Activity performer</em>",
+            "performer": "アクティビティの実施者",
             "relation": "リレーション",
             "user": "ユーザ"
          },
