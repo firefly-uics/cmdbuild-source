@@ -4,7 +4,11 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.workflow.Constants.CURRENT_USER_VARIABLE;
 
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
+import org.cmdbuild.common.mail.MailApi;
+import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.common.mail.NewMail;
 import org.cmdbuild.services.soap.Private;
+import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.CusSoapProxyBuilder;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.Shark;
@@ -14,6 +18,15 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
+
+	private static MailApi NULL_MAIL_API = new MailApi() {
+
+		@Override
+		public NewMail newMail() {
+			throw new UnsupportedOperationException();
+		}
+
+	};
 
 	private static class ProcessData {
 
@@ -48,9 +61,10 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 	@Override
 	public WorkflowApi createWorkflowApi() {
 		final Private proxy = proxy();
-		final WsFluentApiExecutor executor = new WsFluentApiExecutor(proxy);
-		final WorkflowApi workflowApi = new WorkflowApi(executor, proxy);
-		return workflowApi;
+		return new WorkflowApi( //
+				new WsFluentApiExecutor(proxy), //
+				new CachedWsSchemaApi(proxy), //
+				mailApi());
 	}
 
 	private Private proxy() {
@@ -77,6 +91,18 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	private WAPI wapi() throws Exception {
 		return Shark.getInstance().getWAPIConnection();
+	}
+
+	private MailApi mailApi() {
+		try {
+			final ConfigurationHelper helper = new ConfigurationHelper(cus);
+			final MailApi.Configuration mailApiConfiguration = helper.getMailApiConfiguration();
+			final MailApiFactory mailApiFactory = helper.getMailApiFactory();
+			mailApiFactory.setConfiguration(mailApiConfiguration);
+			return mailApiFactory.createMailApi();
+		} catch (final Exception e) {
+			return NULL_MAIL_API;
+		}
 	}
 
 }
