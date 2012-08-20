@@ -9,6 +9,8 @@ import static utils.TestLoggerConstants.LOGGER_CATEGORY;
 import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +27,9 @@ import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
+import org.cmdbuild.common.mail.MailApi;
+import org.cmdbuild.common.mail.NewMail;
+import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.LookupType;
@@ -191,7 +196,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				return DOWNLOADED_REPORT;
 			}
 
-		}, null) {
+		}, new SchemaApi() {
 
 			@Override
 			public ClassInfo findClass(final String className) {
@@ -229,7 +234,82 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				return FOUND_LOOKUP;
 			}
 
-		};
+		}, new MailApi() {
+
+			@Override
+			public NewMail newMail() {
+
+				return new NewMail() {
+
+					private final List<String> froms = new ArrayList<String>();
+					private final List<String> tos = new ArrayList<String>();
+					private final List<String> ccs = new ArrayList<String>();
+					private final List<String> bccs = new ArrayList<String>();
+					private String subject;
+					private String content;
+					private String contentType;
+					private final List<URL> attachments = new ArrayList<URL>();
+
+					@Override
+					public NewMail withFrom(final String from) {
+						this.froms.add(from);
+						return this;
+					}
+
+					@Override
+					public NewMail withTo(final String to) {
+						this.tos.add(to);
+						return null;
+					}
+
+					@Override
+					public NewMail withCc(final String cc) {
+						this.ccs.add(cc);
+						return this;
+					}
+
+					@Override
+					public NewMail withBcc(final String bcc) {
+						this.bccs.add(bcc);
+						return this;
+					}
+
+					@Override
+					public NewMail withSubject(final String subject) {
+						this.subject = subject;
+						return this;
+					}
+
+					@Override
+					public NewMail withContent(final String content) {
+						this.content = content;
+						return this;
+					}
+
+					@Override
+					public NewMail withContentType(final String contentType) {
+						this.contentType = contentType;
+						return this;
+					}
+
+					@Override
+					public NewMail withAttachment(final URL url) {
+						this.attachments.add(url);
+						return this;
+					}
+
+					@Override
+					public void send() {
+						cus.info(UNUSED_SHANDLE, //
+								LOGGER_CATEGORY, //
+								sendMail(froms, tos, ccs, bccs, subject, content, contentType, attachments));
+					}
+
+				};
+
+			}
+
+		});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -328,6 +408,20 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						entry("className2", className2), entry("cardId2", cardId2)));
 	}
 
+	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
+			final List<String> bccs, final String subject, final String content, final String contentType,
+			final List<URL> attachments) {
+		return logLine("sendMail", new StringBuilder() //
+				.append(tos) //
+				.append(ccs) //
+				.append(bccs) //
+				.append(subject) //
+				.append(content) //
+				.append(contentType) //
+				.append(attachments) //
+				.toString());
+	}
+
 	/*
 	 * Utils
 	 */
@@ -342,7 +436,11 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			all.putAll(optional);
 		}
 
-		return format("%s(%s)", functionName, all);
+		return logLine(functionName, all.toString());
+	}
+
+	private static String logLine(final String functionName, final String content) {
+		return format("%s(%s)", functionName, content);
 	}
 
 	public static int computedIdForName(final String className) {
