@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
@@ -87,7 +88,7 @@ public class PatchManager {
 	
 	private ITable createPatchtable() {
 		ITable patchTable = UserContext.systemContext().tables().create();
-		patchTable.setParent("Class");
+		patchTable.setParent(Constants.BASE_CLASS_NAME);
 		patchTable.setSuperClass(false);
 		patchTable.setName(PATCHES_TABLE);
 		patchTable.setMode(Mode.RESERVED.getModeString());

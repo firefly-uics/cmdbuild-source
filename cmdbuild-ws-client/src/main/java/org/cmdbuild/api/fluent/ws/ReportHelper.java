@@ -17,7 +17,6 @@ import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Report;
 import org.cmdbuild.services.soap.ReportParams;
 
-@SuppressWarnings("restriction")
 class ReportHelper extends WsHelper {
 
 	public static final String DEFAULT_TYPE = "custom";

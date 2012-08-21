@@ -92,10 +92,42 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 		final org.cmdbuild.api.fluent.Card card = existingCard.fetch();
 
 		assertThat(card.getClassName(), equalTo(existingCard.getClassName()));
+		assertThat(card.getId(), equalTo(existingCard.getId()));
 		assertThat(card.getAttributes(), hasEntry(CODE_ATTRIBUTE, (Object) CODE_VALUE));
 		assertThat(card.getAttributes(), hasEntry(DESCRIPTION_ATTRIBUTE, (Object) DESCRIPTION_VALUE));
 		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_1, (Object) ATTRIBUTE_1_VALUE));
 		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_2, (Object) ATTRIBUTE_2_VALUE));
+	}
+
+	@Test
+	public void referenceOrLookupAttributeValueIsReturnedAsStringRepresentationOfInteger() throws Exception {
+		final ExistingCard existingCard = api().existingCard(CLASS_NAME, CARD_ID);
+
+		when(proxy().getCard( //
+				eq(existingCard.getClassName()), //
+				eq(existingCard.getId()), //
+				anyListOf(Attribute.class))) //
+				.thenReturn(soapCardWithReference(CLASS_NAME, CARD_ID, ATTRIBUTE_1, ANOTHER_CARD_ID));
+
+		final org.cmdbuild.api.fluent.Card card = existingCard.fetch();
+
+		assertThat(card.getClassName(), equalTo(existingCard.getClassName()));
+		assertThat(card.getId(), equalTo(existingCard.getId()));
+		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_1, (Object) Integer.toString(ANOTHER_CARD_ID)));
+	}
+
+	private Card soapCardWithReference(final String className, final int cardId, final String referenceAttributeName,
+			final int referenceId) {
+		final Card card = new Card();
+		card.setClassName(className);
+		card.setId(CARD_ID);
+		card.getAttributeList().add(new Attribute() {
+			{
+				setName(referenceAttributeName);
+				setCode(Integer.toString(referenceId));
+			}
+		});
+		return card;
 	}
 
 }

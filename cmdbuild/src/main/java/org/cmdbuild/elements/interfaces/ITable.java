@@ -3,13 +3,14 @@ package org.cmdbuild.elements.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.TableImpl.OrderEntry;
 
 public interface ITable extends BaseSchema {
 
-	public static final String BaseTable = "Class";
+	public static final String BaseTable = Constants.BASE_CLASS_NAME;
 
 	public void save();
 	public void delete();

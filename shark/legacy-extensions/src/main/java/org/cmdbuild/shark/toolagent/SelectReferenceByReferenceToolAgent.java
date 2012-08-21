@@ -1,13 +1,6 @@
 package org.cmdbuild.shark.toolagent;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-
-import org.cmdbuild.api.fluent.Card;
-import org.cmdbuild.workflow.type.ReferenceType;
-
 public class SelectReferenceByReferenceToolAgent extends ManageAttributeToolAgent {
-
-	private static final String CLASS = "Class";
 
 	private static final String OUT_REF = "OutRef";
 
@@ -18,9 +11,7 @@ public class SelectReferenceByReferenceToolAgent extends ManageAttributeToolAgen
 
 	@Override
 	protected Object outputValue() {
-		final int referencedId = referencedId();
-		final Card referencedCard = cardFor(referencedId);
-		return referenceTypeFor(referencedCard);
+		return getWorkflowApi().referenceTypeFrom(referencedId());
 	}
 
 	private int referencedId() {
@@ -28,14 +19,4 @@ public class SelectReferenceByReferenceToolAgent extends ManageAttributeToolAgen
 		return referencedId;
 	}
 
-	private Card cardFor(final int id) {
-		return getWorkflowApi().existingCard(CLASS, id) //
-				.fetch();
-	}
-
-	private ReferenceType referenceTypeFor(final Card card) {
-		final String className = card.getClassName();
-		final int idClass = getWorkflowApi().findClass(className).getId();
-		return new ReferenceType(card.getId(), idClass, EMPTY);
-	}
 }
