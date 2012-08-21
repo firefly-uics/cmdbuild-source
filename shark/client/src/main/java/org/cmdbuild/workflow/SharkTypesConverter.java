@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
@@ -101,10 +102,26 @@ public class SharkTypesConverter implements TypesConverter {
 		if (ref.checkValidity()) {
 			final Long cardId = Long.valueOf(ref.getId());
 			final Long classId = Long.valueOf(ref.getIdClass());
-			final String className = dataView.findClassById(classId).getName();
+			final String className = classNameForIdOrBaseClassIfUnknown(classId);
 			return CardReference.newInstance(className, cardId, NO_DESCRIPTION);
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * Thanks to the brilliant use of classId in ReferenceType, restoring
+	 * a database makes it inconsistent because the class Id changes.
+	 * 
+	 * @param classId
+	 * @return actual class name or the base class name
+	 */
+	private String classNameForIdOrBaseClassIfUnknown(final Long classId) {
+		final CMClass clazz = dataView.findClassById(classId);
+		if (clazz != null) {
+			return clazz.getName();
+		} else {
+			return Constants.BASE_CLASS_NAME;
 		}
 	}
 
