@@ -26,7 +26,8 @@ Ext.define('Ext.app.PortalPanel', {
 
         // Implement a Container beforeLayout call from the layout to this Container
         this.layout = {
-            type : 'column'
+            type : 'column',
+            reserveScrollbar: true
         };
         this.callParent();
 
