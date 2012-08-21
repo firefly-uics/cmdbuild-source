@@ -861,6 +861,10 @@ em {
 	overflow: hidden ! important;
 }
 
+.cm-grid-autoheight .x-grid-cell-inner {
+	height: auto ! important;
+}
+
 .x-grid-group-hd .x-grid-cell-inner {
 	height: 30px ! important; /* to override the heigth setted in x-grid-cell-inner*/
 }
