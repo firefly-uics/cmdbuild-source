@@ -19,6 +19,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			region: 'center',
 			frame: false,
 			border: true,
+			bodyCls: 'cm-grid-autoheight',
 			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 			tbar: [this.addButton],
 			sm: new Ext.selection.RowModel(),
