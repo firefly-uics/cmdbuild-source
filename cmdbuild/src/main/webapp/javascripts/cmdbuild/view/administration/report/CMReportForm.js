@@ -31,7 +31,7 @@ Ext.define("CMDBuild.view.administration.report.CMReportForm", {
 				text : CMDBuild.Translation.common.buttons.abort,
 				scope : this
 			})
-		]
+		];
 
 		var LABEL_WIDTH = 240;
 		var FIELD_WIDTH = LABEL_WIDTH + 260;
@@ -66,7 +66,6 @@ Ext.define("CMDBuild.view.administration.report.CMReportForm", {
 			layout: "card",
 			activeItem:0,
 			items : [ this.step1, this.step2],
-			autoScroll : true,
 			buttonAlign: "center",
 			buttons : this.cmButtons
 		});

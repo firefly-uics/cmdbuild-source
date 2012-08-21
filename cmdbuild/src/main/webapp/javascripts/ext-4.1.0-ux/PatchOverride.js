@@ -126,14 +126,14 @@ Ext.override(Ext.menu.Menu, {
  * http://www.sencha.com/forum/showthread.php?137993-4.0.2-only-layout-fit-grid-scrollbar-when-used-does-not-scroll-content/page3
  */
 
-Ext.panel.Table.prototype.originalInitComponent = Ext.panel.Table.prototype.initComponent;
-
-Ext.panel.Table.prototype.initComponent = function() {
-	this.originalInitComponent(arguments);
-	this.mon(this, 'scrollershow', function(scroller) {
-		if (scroller && scroller.scrollEl) {
-			scroller.clearManagedListeners(); 
-			scroller.mon(scroller.scrollEl, 'scroll', scroller.onElScroll, scroller); 
-		}
-	});
-}
+//Ext.panel.Table.prototype.originalInitComponent = Ext.panel.Table.prototype.initComponent;
+//
+//Ext.panel.Table.prototype.initComponent = function() {
+//	this.originalInitComponent(arguments);
+//	this.mon(this, 'scrollershow', function(scroller) {
+//		if (scroller && scroller.scrollEl) {
+//			scroller.clearManagedListeners(); 
+//			scroller.mon(scroller.scrollEl, 'scroll', scroller.onElScroll, scroller); 
+//		}
+//	});
+//}

@@ -354,7 +354,7 @@
 				margin: "0 0 5 5",
 				padding: "5 5 20 5",
 				title : tr.typeProperties,
-				autoScroll : true,
+				overflowY : "auto",
 				defaultType : "textfield",
 				flex: 1,
 				items : [
@@ -502,7 +502,7 @@
 			this.baseProperties = new Ext.form.FieldSet({
 				title : tr.baseProperties,
 				padding: "5 5 20 5",
-				autoScroll : true,
+				overflowY : "auto",
 				defaultType : "textfield",
 				flex: 1,
 				items : [
