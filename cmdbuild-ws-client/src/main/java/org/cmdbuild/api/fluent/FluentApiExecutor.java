@@ -5,6 +5,10 @@ import java.util.Map;
 
 public interface FluentApiExecutor {
 
+	enum AdvanceProcess {
+		YES, NO
+	}
+
 	CardDescriptor create(Card card);
 
 	void update(Card card);
@@ -24,5 +28,7 @@ public interface FluentApiExecutor {
 	Map<String, String> execute(Function function);
 
 	DownloadedReport download(Report report);
+
+	ProcessInstanceDescriptor createProcessInstance(Card processCard, AdvanceProcess advance);
 
 }

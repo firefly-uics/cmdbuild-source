@@ -2,6 +2,7 @@ package org.cmdbuild.api.fluent.ws;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.emptyList;
 import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
 
 import java.io.File;
@@ -20,6 +21,7 @@ import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
+import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
@@ -33,8 +35,8 @@ import org.cmdbuild.services.soap.Order;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.services.soap.ReportParams;
+import org.cmdbuild.services.soap.WorkflowWidgetSubmission;
 
-@SuppressWarnings("restriction")
 public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private static final FluentApiExecutor NULL_NEVER_USED_EXECUTOR = null;
@@ -216,6 +218,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 			attributesMap.put(attribute.getName(), attribute.getValue());
 		}
 		return attributesMap;
+	}
+
+	public ProcessInstanceDescriptor createProcessInstance(final Card processCard, final AdvanceProcess advance) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
+		final boolean advanceProcess = (advance == AdvanceProcess.YES);
+		final List<WorkflowWidgetSubmission> emptyWidgetsSubmission = emptyList();
+		final org.cmdbuild.services.soap.Workflow workflowInfo = proxy.updateWorkflow(soapCard, advanceProcess, emptyWidgetsSubmission);
+		return new ProcessInstanceDescriptor(processCard.getClassName(), workflowInfo.getProcessid(), workflowInfo.getProcessinstanceid());
 	}
 
 	/*

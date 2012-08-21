@@ -52,4 +52,7 @@ public class FluentApi {
 		return new ActiveQueryRelations(this, className, id);
 	}
 
+	public NewProcessInstance newProcessInstance(final String processClassName) {
+		return new NewProcessInstance(this, processClassName);
+	}
 }

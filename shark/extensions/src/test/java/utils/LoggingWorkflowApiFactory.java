@@ -24,6 +24,7 @@ import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
+import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
@@ -43,6 +44,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 	private static final String ATTRIBUTES_SEPARATOR = ", ";
 
 	public static final int CREATED_CARD_ID = 101;
+	public static final String CREATED_PROCESS_INSTANCE_ID = "NEWPI";
 
 	public static final ReferenceType FOUND_REFERENCE = new ReferenceType(CREATED_CARD_ID, 42, "d");
 
@@ -194,6 +196,16 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						LOGGER_CATEGORY, //
 						downloadReportLogLine(report.getTitle(), report.getFormat(), report.getParameters()));
 				return DOWNLOADED_REPORT;
+			}
+
+			@Override
+			public ProcessInstanceDescriptor createProcessInstance(final Card processCard, final AdvanceProcess advance) {
+				cus.info(UNUSED_SHANDLE, //
+						LOGGER_CATEGORY, //
+						createNewProcessInstanceLogLine( //
+								processCard.getClassName(), //
+								processCard.getAttributes()));
+				return new ProcessInstanceDescriptor(processCard.getClassName(), CREATED_CARD_ID, CREATED_PROCESS_INSTANCE_ID);
 			}
 
 		}, new SchemaApi() {
@@ -406,6 +418,13 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				linkedHashMapOf(entry("domainName", domainName), //
 						entry("className1", className1), entry("cardId1", cardId1), //
 						entry("className2", className2), entry("cardId2", cardId2)));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String createNewProcessInstanceLogLine(final String className, final Map<String, Object> attributes) {
+		return logLine("createNewProcessInstance", //
+				linkedHashMapOf(entry("className", className)), //
+				treeMapOf(attributes));
 	}
 
 	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
