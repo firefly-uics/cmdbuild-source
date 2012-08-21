@@ -112,8 +112,8 @@
 		},
 
 		initView: function() {
-			this.view.cleanFields();
 			this.view.disableFields();
+			this.view.cleanFields();
 			this.view.hideOutputFields();
 		},
 

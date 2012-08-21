@@ -176,6 +176,17 @@
 
 			me.baseCls = "cmfieldset";
 			me.title = name + " (" + tr.inputTypes[type] + ")";
+
+			me.listeners = {
+				add: function(myself, theComponent) {
+					me.mon(theComponent, "render", function(c) {
+						if (c instanceof Ext.form.Field && me.typeComboIsdisabled()) {
+							c.disable();
+						}
+					});
+				}
+			};
+
 			me.callParent(arguments);
 
 			me.requiredCheck = new Ext.form.field.Checkbox({
