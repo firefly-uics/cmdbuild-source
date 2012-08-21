@@ -5,11 +5,15 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMLookupType;
@@ -131,7 +135,33 @@ public class SharkTypesConverterTest {
 		assertThat(dst.getId(), is(42L));
 		assertThat(dst.getClassName(), is("CN"));
 
+		verify(dataView, times(1)).findClassById(666L);
+		verifyNoMoreInteractions(dataView);
+	}
+
+	@Test
+	public void illegalReferenceTypesAreConvertedToNull() {
 		assertThat(converter.fromWorkflowType(new ReferenceType()), is(nullValue()));
+
+		verifyNoMoreInteractions(dataView);
+	}
+
+	@Test
+	public void referenceTypesWithIllegalClassIdAreFetchedFromTheDataStore() {
+		final ReferenceType src = new ReferenceType();
+		src.setIdClass(666);
+		src.setId(42);
+		final CMClass srcClass = mock(CMClass.class);
+		when(srcClass.getName()).thenReturn("CN");
+		when(srcClass.getId()).thenReturn(666L);
+		when(dataView.findClassById(666L)).thenReturn(null);
+
+		final CardReference dst = CardReference.class.cast(converter.fromWorkflowType(src));
+		assertThat(dst.getId(), is(42L));
+		assertThat(dst.getClassName(), is(Constants.BASE_CLASS_NAME));
+
+		verify(dataView, times(1)).findClassById(666L);
+		verifyNoMoreInteractions(dataView);
 	}
 
 	/*
