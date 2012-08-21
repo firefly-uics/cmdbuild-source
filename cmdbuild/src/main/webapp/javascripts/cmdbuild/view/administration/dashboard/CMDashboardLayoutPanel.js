@@ -18,7 +18,7 @@
 
 		removeAddedThumbs: function() {
 			var l = this.thumbs.length;
-			while (l>1) {
+			while (l>0) {
 				this.removeLastThumb();
 				l = this.thumbs.length;
 			}
@@ -117,6 +117,9 @@
 							if (me.delegate) {
 								me.delegate.onColumnRender(column);
 							}
+						},
+						afterlayout: function() {
+							me.syncSliderThumbsToColumnsWidth();
 						}
 					}
 				});
@@ -126,21 +129,11 @@
 			}
 
 			me.portal.add(c);
-
-			if (me.portal.items.length > 2) {
-				me.slider.addThumb();
-			}
-
-			this.syncSliderThumbsToColumnsWidth();
 		},
 
 		removeColumn: function(column) {
 			this.portal.remove(column);
 			this.increaseColumnsWidthWithFactor(column.columnWidth);
-
-			if (this.portal.items.length > 1) {
-				this.slider.removeLastThumb();
-			}
 
 			this.syncSliderThumbsToColumnsWidth();
 		},
@@ -199,6 +192,8 @@
 				sum = 0,
 				lengths = [];
 
+			this.slider.removeAddedThumbs();
+
 			this.portal.items.each(function(column) {
 				if (column.el) {
 					sum += column.getWidth();
@@ -207,12 +202,12 @@
 			});
 
 			if (lengths.length == 1) {
-				me.slider.setValue(0, lengths[0]);
+				me.slider.addThumb(this.slider.maxValue);
 			} else {
 				var value = 0;
 				for (var i=0, l=lengths.length -1; i<l; i++) {
 					value += (this.slider.maxValue * lengths[i]) / sum;
-					me.slider.setValue(i, value);
+					me.slider.addThumb(value);
 				}
 			}
 		},
@@ -231,12 +226,16 @@
 			}
 
 			ratios.push(1-sum); // for the last column
+			var columns = this.portal.removeAll(autodestroy = false);
 
-			this.portal.items.each(function(column, index) {
-				column.columnWidth = ratios[index];
-			});
+			for (var i=0, c=null; i<columns.length; ++i) {
+				c = columns[i];
+				c.columnWidth = ratios[i];
+			}
 
-			this.portal.doLayout();
+			Ext.suspendLayouts();
+			this.portal.add(columns);
+			Ext.resumeLayouts(flush=true);
 		},
 
 		getColumnsConfiguration: function() {
