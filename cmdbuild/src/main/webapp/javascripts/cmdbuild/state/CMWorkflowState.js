@@ -173,7 +173,7 @@
 
 			Ext.apply(this, {
 				setProcessClassRef: function(pcr, danglingCard) {
-					if (processClassRef !== pcr || danglingCard) {
+					if (pcr && (processClassRef !== pcr || danglingCard)) {
 						processClassRef = pcr;
 						this.notifyToDelegates("onProcessClassRefChange", [pcr, danglingCard]);
 

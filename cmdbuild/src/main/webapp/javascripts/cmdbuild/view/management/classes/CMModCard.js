@@ -125,7 +125,11 @@
 		},
 
 		updateTitleForEntry: function(entry) {
-			var description = entry.get("text") || entry.get("name");
+			var description = "";
+			if (entry) {
+				description = entry.get("text") || entry.get("name");
+			}
+
 			this.setTitle(TITLE_PREFIX+description);
 		},
 
