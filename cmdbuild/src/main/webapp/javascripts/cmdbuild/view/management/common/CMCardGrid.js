@@ -45,6 +45,11 @@
 				stripeRows: true
 			};
 
+			this.layout = {
+				type: "fit",
+				reserveScrollbar: true
+			};
+
 			this.callParent(arguments);
 			this.on('beforeitemclick', cellclickHandler, this);
 		},

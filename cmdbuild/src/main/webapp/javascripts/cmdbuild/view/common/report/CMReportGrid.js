@@ -7,8 +7,12 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 	filtering : false,
 	reportType : '',
 	exportMode: false,
-	autoScroll: true,
-	
+
+	layout : {
+		type : 'fit',
+		reserveScrollbar : true // There will be a gap even when there's no scrollbar
+	},
+
 	initComponent : function() {
 		this.columns = [{
 			header : "Id",
