@@ -48,7 +48,15 @@ Ext.define('Ext.app.PortalPanel', {
 
         for (i = 0; i < len; i++) {
             item = items[i];
-            item.columnWidth = 1 / len;
+
+            // CMDBUILD patch: I don't want all the column with the same width
+            // who really want it?
+            // old code: 
+            // item.columnWidth = 1 / len;
+            // my code:
+            item.columnWidth = item.columnWidth || 1 / len;
+            // CMDBUild patch *************************************************
+
             last = (i == len-1);
 
             if (!i) { // if (first)
