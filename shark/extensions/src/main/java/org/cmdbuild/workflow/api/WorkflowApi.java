@@ -83,7 +83,7 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 		return referenceTypeFrom(referencedCard);
 	}
 
-	protected int objectToInt(final Object id) {
+	private int objectToInt(final Object id) {
 		final int idAsInt;
 		if (id instanceof String) {
 			idAsInt = Integer.parseInt(String.class.cast(id));
