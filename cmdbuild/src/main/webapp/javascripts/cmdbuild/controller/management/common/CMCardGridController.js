@@ -39,6 +39,9 @@
 
 		onEntryTypeSelected : function(entryType, danglingCard) {
 			this.entryType = entryType;
+
+			if(!entryType) { return; }
+
 			var me = this,
 				afterStoreUpdated;
 
