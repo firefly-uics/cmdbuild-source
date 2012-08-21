@@ -92,11 +92,15 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		}
 
 		private void processEvents() throws CMWorkflowException {
-			eventManager.processEvents(handle.getId());
+			if (handle != null) {
+				eventManager.processEvents(handle.getId());
+			}
 		}
 
 		private void purgeEvents() {
-			eventManager.purgeEvents(handle.getId());
+			if (handle != null) {
+				eventManager.purgeEvents(handle.getId());
+			}
 		}
 
 		private final void commitTransaction() throws Exception {
