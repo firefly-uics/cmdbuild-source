@@ -179,10 +179,24 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 				continue;
 			}
 			final String formalName = p.the_formal_name;
-			final Object value = p.the_value;
-			paramMap.put(formalName, value);
+			final Object rawValue = p.the_value;
+			paramMap.put(formalName, valueOf(rawValue));
 		}
 		return paramMap;
+	}
+
+	private Object valueOf(final Object rawValue) {
+		final Object value;
+		if (rawValue instanceof ReferenceType) {
+			final ReferenceType referenceType = ReferenceType.class.cast(rawValue);
+			value = Long.toString(referenceType.getId());
+		} else if (rawValue instanceof LookupType) {
+			final LookupType lookupType = LookupType.class.cast(rawValue);
+			value = Long.toString(lookupType.getId());
+		} else {
+			value = rawValue;
+		}
+		return value;
 	}
 
 	/**
