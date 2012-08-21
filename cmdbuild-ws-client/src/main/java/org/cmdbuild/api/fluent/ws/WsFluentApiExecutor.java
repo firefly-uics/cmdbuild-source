@@ -3,7 +3,9 @@ package org.cmdbuild.api.fluent.ws;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
+import static org.cmdbuild.api.fluent.ws.WsHelper.convertToWsType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -127,7 +129,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final Filter filter = new Filter();
 		filter.setName(name);
 		filter.setOperator(OPERATOR_EQUALS);
-		filter.getValue().add(WsHelper.convertToWsType(value));
+		filter.getValue().add(convertToWsType(value));
 		return filter;
 	}
 
@@ -144,10 +146,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		for (final Attribute attribute : soapCard.getAttributeList()) {
 			final String attributeName = attribute.getName();
 			if (Constants.CLASS_ID_ATTRIBUTE.equals(attributeName)) {
-				final int classId = Integer.parseInt(attribute.getValue());
+				final int classId = Integer.parseInt(valueOf(attribute));
 				card.withClassId(classId);
 			} else {
-				card.with(attributeName, attribute.getValue());
+				card.with(attributeName, valueOf(attribute));
 			}
 		}
 		return card;
@@ -156,6 +158,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	private ExistingCard existingCardFrom(final org.cmdbuild.services.soap.Card soapCard) {
 		return new FluentApi(NULL_NEVER_USED_EXECUTOR) //
 				.existingCard(soapCard.getClassName(), soapCard.getId());
+	}
+
+	private String valueOf(final Attribute attribute) {
+		return isReferenceOrLookup(attribute) ? attribute.getCode() : attribute.getValue();
+	}
+
+	private boolean isReferenceOrLookup(final Attribute attribute) {
+		return isNotBlank(attribute.getCode());
 	}
 
 	public void create(final Relation relation) {
@@ -215,7 +225,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	private Map<String, String> attributesAsMap(final List<Attribute> attributes) {
 		final Map<String, String> attributesMap = new HashMap<String, String>();
 		for (final Attribute attribute : attributes) {
-			attributesMap.put(attribute.getName(), attribute.getValue());
+			attributesMap.put(attribute.getName(), valueOf(attribute));
 		}
 		return attributesMap;
 	}
@@ -270,7 +280,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	public static Attribute attribute(final String name, final Object value) {
 		final Attribute attribute = new Attribute();
 		attribute.setName(name);
-		attribute.setValue(WsHelper.convertToWsType(value));
+		attribute.setValue(convertToWsType(value));
 		return attribute;
 	}
 

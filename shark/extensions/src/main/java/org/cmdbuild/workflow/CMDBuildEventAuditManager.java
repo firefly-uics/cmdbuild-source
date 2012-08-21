@@ -40,7 +40,7 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 		}
 
 		@Override
-		public void activityStarted(final ActivityInstance activityInstance) { 
+		public void activityStarted(final ActivityInstance activityInstance) {
 			sendProcessUpdateEventIfNoImpl(activityInstance);
 		}
 
@@ -66,7 +66,8 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 			proxy.notify(event);
 		}
 
-		private void fillEventProperties(ProcessInstance processInstance, AbstractWorkflowEvent workflowEvent) {
+		private void fillEventProperties(final ProcessInstance processInstance,
+				final AbstractWorkflowEvent workflowEvent) {
 			workflowEvent.setSessionId(processInstance.getSessionId());
 			workflowEvent.setProcessDefinitionId(processInstance.getProcessDefinitionId());
 			workflowEvent.setProcessInstanceId(processInstance.getProcessInstanceId());

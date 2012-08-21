@@ -100,6 +100,24 @@ public class WorkflowApiTest {
 	}
 
 	@Test
+	public void fetchCardFromBaseClassWhenConvertingFromIdToReferenceType() throws Exception {
+		when(fluentApiExecutor.fetch(any(Card.class)))
+				.thenReturn(cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
+		when(schemaApi.findClass(CLASS_NAME)).thenReturn(newClassInfo(CLASS_NAME, ID_CLASS));
+
+		final ReferenceType referenceType = workflowApi.referenceTypeFrom(CARD_ID);
+
+		assertThat(referenceType.getId(), equalTo(CARD_ID));
+		assertThat(referenceType.getIdClass(), equalTo(ID_CLASS));
+
+		verify(fluentApiExecutor).fetch(any(Card.class));
+		verifyNoMoreInteractions(fluentApiExecutor);
+		verify(schemaApi).findClass(CLASS_NAME);
+		verifyNoMoreInteractions(schemaApi);
+		verifyNoMoreInteractions(mailApi);
+	}
+
+	@Test
 	public void findClassByIdWhenConvertingFromReferenceTypeToCardDescriptor() throws Exception {
 		when(schemaApi.findClass(ID_CLASS)).thenReturn(newClassInfo(CLASS_NAME, ID_CLASS));
 

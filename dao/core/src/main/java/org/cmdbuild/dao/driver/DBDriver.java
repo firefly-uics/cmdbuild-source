@@ -11,8 +11,6 @@ import org.cmdbuild.dao.query.QuerySpecs;
 
 public interface DBDriver {
 
-	static final String BASE_CLASS_NAME = "Class";
-
 	Collection<DBClass> findAllClasses();
 	DBClass findClassById(Long id);
 	DBClass findClassByName(String name);

@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-@SuppressWarnings("restriction")
 public class CreateReportTest extends AbstractWsFluentApiTest {
 
 	private static final String TEMPORARY_FILE_PREFIX = "dummy";

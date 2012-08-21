@@ -1,11 +1,13 @@
 package org.cmdbuild.workflow.api;
 
+import static java.lang.String.format;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.NewMail;
 import org.cmdbuild.workflow.type.LookupType;
@@ -76,6 +78,23 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 		return referenceTypeFrom(cardDescriptor, null);
 	}
 
+	public ReferenceType referenceTypeFrom(final Object id) {
+		final Card referencedCard = existingCard(Constants.BASE_CLASS_NAME, objectToInt(id)).fetch();
+		return referenceTypeFrom(referencedCard);
+	}
+
+	protected int objectToInt(final Object id) {
+		final int idAsInt;
+		if (id instanceof String) {
+			idAsInt = Integer.parseInt(String.class.cast(id));
+		} else if (id instanceof Number) {
+			idAsInt = Number.class.cast(id).intValue();
+		} else {
+			throw new IllegalArgumentException(format("invalid class '%s' for id", id.getClass()));
+		}
+		return idAsInt;
+	}
+
 	private ReferenceType referenceTypeFrom(final CardDescriptor cardDescriptor, final String description) {
 		return new ReferenceType( //
 				cardDescriptor.getId(), //
@@ -85,7 +104,6 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
 	private String descriptionFor(final CardDescriptor cardDescriptor) {
 		return existingCard(cardDescriptor) //
-				.with(DESCRIPTION_ATTRIBUTE, null) //
 				.fetch() //
 				.get(DESCRIPTION_ATTRIBUTE, String.class);
 	}

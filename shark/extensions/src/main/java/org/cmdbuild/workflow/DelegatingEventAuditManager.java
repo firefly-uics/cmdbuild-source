@@ -153,7 +153,8 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		}
 	}
 
-	private SimpleEventManager.ProcessInstance processInstanceFor(final WMSessionHandle shandle, final EventAuditPersistenceObject eap) {
+	private SimpleEventManager.ProcessInstance processInstanceFor(final WMSessionHandle shandle,
+			final EventAuditPersistenceObject eap) {
 		return new EventAuditPersistenceObjectWrapper(shandle, eap);
 	}
 
@@ -174,7 +175,8 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		}
 	}
 
-	private SimpleEventManager.ActivityInstance activityInstanceFor(final WMSessionHandle shandle, final EventAuditPersistenceObject eap) {
+	private SimpleEventManager.ActivityInstance activityInstanceFor(final WMSessionHandle shandle,
+			final EventAuditPersistenceObject eap) {
 		return new EventAuditPersistenceObjectWrapper(shandle, eap);
 	}
 }
