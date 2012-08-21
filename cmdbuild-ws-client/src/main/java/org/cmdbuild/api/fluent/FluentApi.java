@@ -16,6 +16,10 @@ public class FluentApi {
 		return new NewCard(this, className);
 	}
 
+	public ExistingCard existingCard(final CardDescriptor descriptor) {
+		return new ExistingCard(this, descriptor.getClassName(), descriptor.getId());
+	}
+
 	public ExistingCard existingCard(final String className, final int id) {
 		return new ExistingCard(this, className, id);
 	}
@@ -38,6 +42,10 @@ public class FluentApi {
 
 	public CreateReport createReport(final String title, final String format) {
 		return new CreateReport(this, title, format);
+	}
+
+	public ActiveQueryRelations queryRelations(final CardDescriptor descriptor) {
+		return new ActiveQueryRelations(this, descriptor.getClassName(), descriptor.getId());
 	}
 
 	public ActiveQueryRelations queryRelations(final String className, final int id) {
