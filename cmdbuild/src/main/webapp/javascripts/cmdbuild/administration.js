@@ -123,7 +123,7 @@
 				];
 
 				this.cmAccordions = [classesAccordion, processAccordion, domainAccordion, lookupAccordion,
-					reportAccordion, dashboardsAccordion, menuAccordion, groupsAccordion, gisAccordion,
+					dashboardsAccordion, reportAccordion, menuAccordion, groupsAccordion, gisAccordion,
 					new CMDBuild.view.administration.accordion.CMConfigurationAccordion()];
 
 				CMDBuild.view.CMMainViewport.showSplash( target = undefined, administration = true);

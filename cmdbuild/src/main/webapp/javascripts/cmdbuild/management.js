@@ -97,14 +97,14 @@
 					this.cmAccordions.push(this.processAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
-					this.reportAccordion = reportAccordion;
-					this.cmAccordions.push(this.reportAccordion);
-				}
-
 				if (!_CMUIConfiguration.isModuleDisabled(dashboardsAccordion.cmName)) {
 					this.dashboardsAccordion = dashboardsAccordion;
 					this.cmAccordions.push(this.dashboardsAccordion);
+				}
+
+				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
+					this.reportAccordion = reportAccordion;
+					this.cmAccordions.push(this.reportAccordion);
 				}
 
 				this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({ // TODO move in common
