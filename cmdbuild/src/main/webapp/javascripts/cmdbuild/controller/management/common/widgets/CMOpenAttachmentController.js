@@ -77,8 +77,9 @@
 		// wfStateDelegate
 		onProcessInstanceChange: function(processInstance) {
 			this._loaded = false;
+			if (processInstance.isNew() || 
+					this.theModuleIsDisabled()) {
 
-			if (processInstance.isNew()) {
 				this.view.disable();
 			} else {
 				this.updateView();

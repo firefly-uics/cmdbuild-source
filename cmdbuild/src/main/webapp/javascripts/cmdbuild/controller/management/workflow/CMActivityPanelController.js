@@ -47,6 +47,8 @@
 				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 					me.fillFormWidthProcessInstanceData(processInstance);
 				});
+			} else {
+				enableStopButtonIfUserCanUseIt(this, processInstance);
 			}
 		},
 
@@ -79,7 +81,7 @@
 				// fill always the process to trigger the
 				// template resolver of filtered references
 				me.fillFormWidthProcessInstanceData(processInstance);
-				manageEditavility(me, activityInstance, processInstance);
+				manageEditability(me, activityInstance, processInstance);
 			});
 
 			Ext.resumeLayouts();
@@ -360,10 +362,14 @@
 		return valid;
 	}
 
-	function manageEditavility(me, activityInstance, processInstance) {
+	function manageEditability(me, activityInstance, processInstance) {
 
-		if (activityInstance.isNullObject()) {
+		if (!processInstance.isStateOpen()
+				|| activityInstance.isNullObject()
+				|| !activityInstance.isWritable()) {
+
 			me.view.displayModeForNotEditableCard();
+			enableStopButtonIfUserCanUseIt(me, processInstance);
 			return;
 		}
 
@@ -372,30 +378,32 @@
 			return;
 		}
 
-		if (activityInstance.isWritable()) {
-			if (me.isAdvance
-					&& processInstance.getId() == me.idToAdvance) {
+		if (me.isAdvance
+				&& processInstance.getId() == me.idToAdvance) {
 
-				me.view.editMode();
-				me.isAdvance = false;
-				return;
-			} else {
-				me.view.displayMode(enableTbar = true);
+			me.view.editMode();
+			me.isAdvance = false;
+			return;
+		}
 
-				// check if the user can stop this process
-				var processClassId = processInstance.getClassId();
-				if (processClassId) {
-					var processClass = _CMCache.getEntryTypeById(processClassId);
-					var group = _CMCache.getGroupById(CMDBuild.Runtime.LoginGroupId);
-					if (processClass && !processClass.isUserStoppable()
-							&& !CMDBuild.Runtime.IsAdministrator) { // the administrator is always able to abort a process
+		me.view.displayMode(enableTbar = true);
+		enableStopButtonIfUserCanUseIt(me, processInstance);
+	}
 
-						me.view.disableStopButton();
-					}
+	function enableStopButtonIfUserCanUseIt(me, processInstance) {
+		me.view.disableStopButton();
+		var processClassId = processInstance.getClassId();
+		if (processClassId) {
+			var processClass = _CMCache.getEntryTypeById(processClassId);
+			if (processClass) {
+				var theUserCanStopTheProcess = processClass.isUserStoppable() || CMDBuild.Runtime.IsAdministrator;
+				var theProcessIsNotAlreadyTerminated = processInstance.isStateOpen() || processInstance.isStateSuspended();
+
+				if (theUserCanStopTheProcess && theProcessIsNotAlreadyTerminated) {
+					me.view.enableStopButton();
 				}
 			}
-		} else {
-			me.view.displayModeForNotEditableCard();
 		}
 	}
+
 })();

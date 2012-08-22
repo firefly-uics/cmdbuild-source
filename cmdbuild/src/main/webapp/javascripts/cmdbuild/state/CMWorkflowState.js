@@ -148,6 +148,10 @@
 			return this.getFlowStatus() == this.STATE.COMPLETED;
 		},
 
+		isStateSuspended: function() {
+			return this.getFlowStatus() == this.STATE.SUSPENDED;
+		},
+
 		setNotes: function(notes) {
 			this.data.values.Notes = notes;
 		},
