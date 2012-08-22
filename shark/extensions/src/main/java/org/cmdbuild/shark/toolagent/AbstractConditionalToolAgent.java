@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.workflow.ConfigurationHelper;
-import org.cmdbuild.workflow.Constants;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
 import org.cmdbuild.workflow.type.LookupType;
@@ -222,8 +221,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	@SuppressWarnings("unchecked")
 	public <T> T getProcessAttributeValue(final String name) throws Exception {
-		final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(shandle, procInstId,
-				Constants.CURRENT_USER_VARIABLE);
+		final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(shandle, procInstId, name);
 		final Object value = attribute.getValue();
 		return (T) value;
 	}
