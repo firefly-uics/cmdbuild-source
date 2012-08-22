@@ -165,7 +165,8 @@ public class WorkflowLogic {
 
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		return updateOnlyActivity(wfEngine.startProcess(process), vars, widgetSubmission, advance);
+		final UserProcessInstance procInst = wfEngine.startProcess(process);
+		return updateOnlyActivity(procInst, vars, widgetSubmission, advance);
 	}
 
 	public UserProcessInstance updateProcess(final String processClassName, final Long processCardId,

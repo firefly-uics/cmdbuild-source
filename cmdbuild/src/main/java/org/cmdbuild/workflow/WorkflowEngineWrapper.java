@@ -143,6 +143,8 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 			procInstDef.set(key, value);
 			nativeValues.put(key, procInstDef.get(key));
 		}
+		procInstDef.save();
+
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		fillCustomProcessVariables(activityInstance, nativeValues);
 		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), nativeValues);
