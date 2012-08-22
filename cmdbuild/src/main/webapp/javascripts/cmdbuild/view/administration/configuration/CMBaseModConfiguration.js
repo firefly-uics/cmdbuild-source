@@ -17,7 +17,7 @@
 				buttonAlign: "center",
 				buttons: [this.saveButton, this.abortButton],
 				frame: true,
-				autoScroll: true,
+				overflowY: "auto",
 				fieldDefaults: {
 					labelAlign: 'left',
 					labelWidth: CMDBuild.CFG_LABEL_WIDTH,
