@@ -11,7 +11,7 @@
 			this.addEvents(this.CMEVENTS.advanceCardButtonClick);
 			this.relayEvents(this.form, [this.CMEVENTS.advanceCardButtonClick]);
 
-			_CMUtils.forwardMethods(this, this.form, ["disableStopButton", "updateInfo"]);
+			_CMUtils.forwardMethods(this, this.form, ["enableStopButton", "disableStopButton", "updateInfo"]);
 		},
 
 		buildForm: function() {
@@ -88,6 +88,10 @@
 
 		disableStopButton : function() {
 			this.deleteCardButton.disable();
+		},
+
+		enableStopButton : function() {
+			this.deleteCardButton.enable();
 		},
 
 		updateInfo : function(performerName, activityDescription) {

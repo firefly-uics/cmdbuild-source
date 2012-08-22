@@ -30,7 +30,7 @@
 		onCardSelected: function(card) {
 			this.callParent(arguments);
 
-			if (theModuleIsDisabled() || !card) {
+			if (this.theModuleIsDisabled() || !card) {
 				return;
 			}
 
@@ -159,12 +159,12 @@
 			this.mun(this.view, 'beforeitemclick', cellclickHandler, this);
 			this.mun(this.view, "itemdblclick", onItemDoubleclick, this);
 			this.mun(this.view, 'activate', this.view.loadCardAttachments, this.view);
+		},
+
+		theModuleIsDisabled: function() {
+			return CMDBuild.Config.dms.enabled == "false";
 		}
 	});
-
-	function theModuleIsDisabled() {
-		return CMDBuild.Config.dms.enabled == "false";
-	}
 
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) { 
 		var className = event.target.className;
