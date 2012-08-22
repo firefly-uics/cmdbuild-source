@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.workflow.type.ReferenceType;
+import org.enhydra.shark.api.internal.toolagent.AppParameter;
 
 public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 
@@ -32,6 +34,34 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 			}
 			return operation;
 		}
+
+	}
+
+	private static abstract class Executor {
+
+		private boolean exeptionCatched;
+
+		public void execute() throws Exception {
+			try {
+				doExecute();
+			} catch (final Exception e) {
+				exeptionCatched = true;
+				if (throwCatchedExeption()) {
+					throw e;
+				}
+			}
+		}
+
+		protected boolean exeptionCatched() {
+			return exeptionCatched;
+		}
+
+		protected abstract void doExecute();
+
+		protected abstract boolean throwCatchedExeption();
+
+		public abstract Object getReturnValue();
+
 	}
 
 	private static final String SIDE_1 = "1";
@@ -43,60 +73,157 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 	private static final String OBJ_ID_BASE = "ObjId";
 	private static final String OBJ_REFERENCE_BASE = "ObjReference";
 	private static final String REF_BASE = "Ref";
-	private static final String DONE = "Done";
-	private static final String REFARRAY = "RefArray";
-
-	private static final boolean RESULT_ALWAYS_TRUE_OR_THROWS = true;
 
 	@Override
 	protected void innerInvoke() throws Exception {
-		final String domainName = getParameterValue(DOMAIN_NAME);
+		final Executor executor = executorFromToolId();
+		executor.execute();
+		final Object outValue = executor.getReturnValue();
+		for (final AppParameter parmOut : getReturnParameters()) {
+			if (parmOut.the_class == outValue.getClass()) {
+				parmOut.the_value = outValue;
+			}
+		}
+	}
+
+	protected Executor executorFromToolId() {
 		final Operation operation = Operation.from(getId());
-		final String outName;
-		final Object outValue;
+		final String domainName = getParameterValue(DOMAIN_NAME);
+		final Executor executor;
 		switch (operation) {
-		case CREATION: {
-			final CardRef card1 = getCard1();
-			final CardRef card2 = getCard2();
-			getWorkflowApi().newRelation(domainName) //
-					.withCard1(card1.className, card1.cardId) //
-					.withCard2(card2.className, card2.cardId) //
-					.create();
-			outName = DONE;
-			outValue = RESULT_ALWAYS_TRUE_OR_THROWS;
+		case CREATION:
+			executor = creationExecutor(domainName);
 			break;
-		}
 
-		case DELETION: {
-			final CardRef card1 = getCard1();
-			final CardRef card2 = getCard2();
-			getWorkflowApi().existingRelation(domainName) //
-					.withCard1(card1.className, card1.cardId) //
-					.withCard2(card2.className, card2.cardId) //
-					.delete();
-			outName = DONE;
-			outValue = RESULT_ALWAYS_TRUE_OR_THROWS;
+		case DELETION:
+			executor = deletionExecutor(domainName);
 			break;
-		}
 
-		case SELECTION: {
-			final CardRef card = getCard();
-			final List<CardDescriptor> descriptors = getWorkflowApi().queryRelations(card.className, card.cardId) //
-					.withDomain(domainName) //
-					.fetch();
-			final ReferenceType[] referenceTypes = referenceTypeFor(descriptors);
-			outName = REFARRAY;
-			outValue = referenceTypes;
+		case SELECTION:
+			executor = selectionExecutor(domainName);
 			break;
-		}
 
-		default: {
-			final String message = format("illegal operation '%s'", operation);
-			throw new IllegalArgumentException(message);
+		default:
+			executor = illegalExecutor(operation);
 		}
-		}
+		return executor;
+	}
 
-		setParameterValue(outName, outValue);
+	protected Executor creationExecutor(final String domainName) {
+		return new Executor() {
+
+			@Override
+			protected void doExecute() {
+				final CardRef card1 = getCard1();
+				final CardRef card2 = getCard2();
+				getWorkflowApi().newRelation(domainName) //
+						.withCard1(card1.className, card1.cardId) //
+						.withCard2(card2.className, card2.cardId) //
+						.create();
+			}
+
+			@Override
+			protected boolean throwCatchedExeption() {
+				return false;
+			}
+
+			@Override
+			public Object getReturnValue() {
+				return !exeptionCatched();
+			}
+
+		};
+	}
+
+	protected Executor deletionExecutor(final String domainName) {
+		return new Executor() {
+
+			@Override
+			protected void doExecute() {
+				final CardRef card1 = getCard1();
+				final CardRef card2 = getCard2();
+				getWorkflowApi().existingRelation(domainName) //
+						.withCard1(card1.className, card1.cardId) //
+						.withCard2(card2.className, card2.cardId) //
+						.delete();
+			}
+
+			@Override
+			protected boolean throwCatchedExeption() {
+				return false;
+			}
+
+			@Override
+			public Object getReturnValue() {
+				return !exeptionCatched();
+			}
+
+		};
+	}
+
+	protected Executor selectionExecutor(final String domainName) {
+		return new Executor() {
+
+			private ReferenceType[] referenceTypes;
+
+			@Override
+			protected void doExecute() {
+				final CardRef card = getCard();
+				final List<CardDescriptor> descriptors = getWorkflowApi().queryRelations(card.className, card.cardId) //
+						.withDomain(domainName) //
+						.fetch();
+				referenceTypes = referenceTypeFor(descriptors);
+			}
+
+			private ReferenceType[] referenceTypeFor(final List<CardDescriptor> descriptors) {
+				final List<ReferenceType> referenceTypes = new ArrayList<ReferenceType>();
+				for (final CardDescriptor descriptor : descriptors) {
+					referenceTypes.add( //
+							getWorkflowApi().referenceTypeFrom( //
+									cardWithEmptyDescriptionFrom(descriptor)));
+				}
+				return referenceTypes.toArray(new ReferenceType[referenceTypes.size()]);
+			}
+
+			private ExistingCard cardWithEmptyDescriptionFrom(final CardDescriptor descriptor) {
+				// used for avoid to query CMDBuild for card
+				// description
+				return getWorkflowApi().existingCard(descriptor).withDescription(EMPTY);
+			}
+
+			@Override
+			protected boolean throwCatchedExeption() {
+				return true;
+			}
+
+			@Override
+			public Object getReturnValue() {
+				return referenceTypes;
+			}
+
+		};
+	}
+
+	protected Executor illegalExecutor(final Operation operation) {
+		return new Executor() {
+
+			@Override
+			protected void doExecute() {
+				final String message = format("illegal operation '%s'", operation);
+				throw new IllegalArgumentException(message);
+			}
+
+			@Override
+			protected boolean throwCatchedExeption() {
+				return true;
+			}
+
+			@Override
+			public Object getReturnValue() {
+				return null;
+			}
+
+		};
 	}
 
 	private CardRef getCard() {
@@ -125,25 +252,6 @@ public class ManageRelationToolAgent extends AbstractConditionalToolAgent {
 			cardId = objReference.getId();
 		}
 		return new CardRef(className, cardId);
-	}
-
-	private ReferenceType[] referenceTypeFor(final List<CardDescriptor> descriptors) {
-		final List<ReferenceType> referenceTypes = new ArrayList<ReferenceType>();
-		for (final CardDescriptor descriptor : descriptors) {
-			referenceTypes.add(referenceTypeFor(descriptor));
-		}
-		return referenceTypes.toArray(new ReferenceType[referenceTypes.size()]);
-	}
-
-	private ReferenceType referenceTypeFor(final CardDescriptor descriptor) {
-		final int id = descriptor.getId();
-		final int idClass = idClassFrom(descriptor);
-		final String description = EMPTY;
-		return new ReferenceType(id, idClass, description);
-	}
-
-	private int idClassFrom(final CardDescriptor descriptor) {
-		return getWorkflowApi().findClass(descriptor.getClassName()).getId();
 	}
 
 }
