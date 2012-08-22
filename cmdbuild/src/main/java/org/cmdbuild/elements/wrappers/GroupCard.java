@@ -1,5 +1,7 @@
 package org.cmdbuild.elements.wrappers;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,20 +51,20 @@ public class GroupCard extends LazyCard {
 	}
 
 	// Should not be public but this class moved where it is used
-	public GroupCard(ICard card) throws NotFoundException {
+	public GroupCard(final ICard card) throws NotFoundException {
 		super(card);
 	}
 
-	public Group toGroup(boolean defaultGroup) {
-		return new GroupImpl(this.getId(), this.getName(), this.getDescription(),
-				this.isAdmin(), this.getStartingClassOrDefault(), defaultGroup, this.getUIConfiguration());
+	public Group toGroup(final boolean defaultGroup) {
+		return new GroupImpl(this.getId(), this.getName(), this.getDescription(), this.isAdmin(),
+				this.getStartingClassOrDefault(), defaultGroup, this.getUIConfiguration());
 	}
-	
+
 	public String getName() {
 		return getCode();
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		if (isNew()) {
 			setCode(name);
 		} else {
@@ -70,16 +72,16 @@ public class GroupCard extends LazyCard {
 		}
 	}
 
-	public String getEmail(){
+	public String getEmail() {
 		return getAttributeValue(GROUP_ATTRIBUTE_EMAIL).getString();
 	}
 
-	public void setEmail(String email){
+	public void setEmail(final String email) {
 		getAttributeValue(GROUP_ATTRIBUTE_EMAIL).setValue(email);
 	}
 
 	public UIConfiguration getUIConfiguration() {
-		UIConfiguration uiConfiguration = new UIConfiguration();
+		final UIConfiguration uiConfiguration = new UIConfiguration();
 
 		uiConfiguration.setDisabledModules(getStringArrayValue(GROUP_ATTRIBUTE_DISABLEDMODULES));
 		uiConfiguration.setDisabledCardTabs(getStringArrayValue(GROUP_ATTRIBUTE_DISABLEDCARDTABS));
@@ -93,8 +95,8 @@ public class GroupCard extends LazyCard {
 		return uiConfiguration;
 	}
 
-	private String[] getStringArrayValue(String attributeName) {
-		StringArray sa = (StringArray) getValue(attributeName);
+	private String[] getStringArrayValue(final String attributeName) {
+		final StringArray sa = (StringArray) getValue(attributeName);
 		if (sa != null) {
 			return sa.getValue();
 		} else {
@@ -102,8 +104,8 @@ public class GroupCard extends LazyCard {
 		}
 	}
 
-	private boolean getBooleanValue(String attributeName) {
-		Boolean b = (Boolean) getValue(attributeName);
+	private boolean getBooleanValue(final String attributeName) {
+		final Boolean b = (Boolean) getValue(attributeName);
 		if (b != null) {
 			return b.booleanValue();
 		} else {
@@ -126,7 +128,7 @@ public class GroupCard extends LazyCard {
 		setValue(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED, uiConfiguration.isProcessWidgetAlwaysEnabled());
 	}
 
-	public boolean isAdmin(){
+	public boolean isAdmin() {
 		return getAttributeValue(GROUP_ATTRIBUTE_ISADMIN).getBoolean();
 	}
 
@@ -134,54 +136,54 @@ public class GroupCard extends LazyCard {
 	 * returns null on no class set
 	 */
 	public ITable getStartingClassOrDefault() {
-		AttributeValue startingClassValue = getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS);
+		final AttributeValue startingClassValue = getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS);
 		try {
 			if (startingClassValue.isNull() || startingClassValue.getInt() <= 0) {
-				String startingClassName = CmdbuildProperties.getInstance().getStartingClassName();
+				final String startingClassName = CmdbuildProperties.getInstance().getStartingClassName();
 				if (startingClassName != null)
 					return UserContext.systemContext().tables().get(startingClassName);
 			} else {
-				Integer startingClassId = this.getStartingClassId();
+				final Integer startingClassId = this.getStartingClassId();
 				if (startingClassId != null)
 					return UserContext.systemContext().tables().get(startingClassId);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 		return null;
 	}
 
-	public Integer getStartingClassId(){
-		if(!getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS).isNull())
-			return getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS).getInt(); //TODO
+	public Integer getStartingClassId() {
+		if (!getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS).isNull())
+			return getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS).getInt(); // TODO
 		return null;
 	}
 
-	public void setStartingClass(Integer startingClass){
+	public void setStartingClass(final Integer startingClass) {
 		getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS).setValue(startingClass);
 	}
 
-	public void setIsAdmin(Boolean isAdmin){
+	public void setIsAdmin(final Boolean isAdmin) {
 		getAttributeValue(GROUP_ATTRIBUTE_ISADMIN).setValue(isAdmin);
 	}
 
 	public static Iterable<GroupCard> allActive() throws NotFoundException, ORMException {
-		List<GroupCard> list = new LinkedList<GroupCard>();
-		for(ICard card : roleClass.cards().list())
+		final List<GroupCard> list = new LinkedList<GroupCard>();
+		for (final ICard card : roleClass.cards().list())
 			list.add(new GroupCard(card));
 		return list;
 	}
 
 	public static Iterable<GroupCard> all() throws NotFoundException, ORMException {
-		List<GroupCard> list = new LinkedList<GroupCard>();
-		for(ICard card : roleClass.cards().list().ignoreStatus())
+		final List<GroupCard> list = new LinkedList<GroupCard>();
+		for (final ICard card : roleClass.cards().list().ignoreStatus())
 			list.add(new GroupCard(card));
 		return list;
 	}
 
-	public static GroupCard getOrCreate(int groupId) {
+	public static GroupCard getOrCreate(final int groupId) {
 		GroupCard groupCard;
 		if (groupId <= 0) {
-			ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
+			final ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
 			groupCard = new GroupCard(card);
 		} else {
 			groupCard = getOrDie(groupId);
@@ -189,17 +191,18 @@ public class GroupCard extends LazyCard {
 		return groupCard;
 	}
 
-	public static GroupCard getOrDie(int groupId) {
-		ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+	public static GroupCard getOrDie(final int groupId) {
+		final ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list()
+				.ignoreStatus().id(groupId).get();
 		return new GroupCard(card);
 	}
 
-	public static GroupCard getOrNull(String groupName) {
+	public static GroupCard getOrNull(final String groupName) {
 		GroupCard groupCard = null;
-		if (groupName == null || groupName.isEmpty()) {
-			CardQuery groupQuery = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list()
-					.ignoreStatus().filter(GROUP_NAME_ATTRIBUTE, AttributeFilterType.EQUALS, groupName);
-			Iterator<ICard> it = groupQuery.iterator();
+		if (isNotEmpty(groupName)) {
+			final CardQuery groupQuery = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards()
+					.list().ignoreStatus().filter(GROUP_NAME_ATTRIBUTE, AttributeFilterType.EQUALS, groupName);
+			final Iterator<ICard> it = groupQuery.iterator();
 			if (it.hasNext()) {
 				groupCard = new GroupCard(it.next());
 			}
