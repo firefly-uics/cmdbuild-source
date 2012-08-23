@@ -168,7 +168,9 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 	private void fireActivityStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea,
 			final RunningStates oldState, final RunningStates newState) {
 		switch (newState) {
+		case CLOSED_ABORTED:
 		case CLOSED_COMPLETED:
+		case CLOSED_TERMINATED:
 			eventManager.activityClosed(activityInstanceFor(shandle, sea));
 			break;
 		case OPEN_NOT_RUNNING_NOT_STARTED:
