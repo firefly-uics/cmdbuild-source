@@ -42,7 +42,12 @@
 
 		initComponent: function() {
 			this.viewConfig = {
-				stripeRows: true
+				stripeRows: true,
+				// Business role: voluntarily hide the horizontal scroll-bar
+				// because probably no one want it
+				autoScroll: false,
+				overflowX: "hidden",
+				overflowY: "auto"
 			};
 
 			this.layout = {
