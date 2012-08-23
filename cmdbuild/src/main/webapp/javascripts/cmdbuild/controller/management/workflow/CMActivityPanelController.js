@@ -364,17 +364,17 @@
 
 	function manageEditability(me, activityInstance, processInstance) {
 
+		if (activityInstance.isNew()) {
+			me.view.editMode();
+			return;
+		}
+
 		if (!processInstance.isStateOpen()
 				|| activityInstance.isNullObject()
 				|| !activityInstance.isWritable()) {
 
 			me.view.displayModeForNotEditableCard();
 			enableStopButtonIfUserCanUseIt(me, processInstance);
-			return;
-		}
-
-		if (activityInstance.isNew()) {
-			me.view.editMode();
 			return;
 		}
 
