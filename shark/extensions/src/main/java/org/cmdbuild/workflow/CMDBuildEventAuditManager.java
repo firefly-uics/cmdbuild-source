@@ -11,11 +11,11 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
  */
 public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 
-	private class WSNotifier implements SimpleEventManager {
+	static class WSEventNotifier implements SimpleEventManager {
 
 		private final Private proxy;
 
-		private WSNotifier(final Private proxy) {
+		protected WSEventNotifier(final Private proxy) {
 			this.proxy = proxy;
 		}
 
@@ -68,7 +68,8 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 
 		private void fillEventProperties(final ProcessInstance processInstance,
 				final AbstractWorkflowEvent workflowEvent) {
-			workflowEvent.setSessionId(processInstance.getSessionId());
+			final int sessionId = processInstance.getSessionHandle().getId();
+			workflowEvent.setSessionId(sessionId);
 			workflowEvent.setProcessDefinitionId(processInstance.getProcessDefinitionId());
 			workflowEvent.setProcessInstanceId(processInstance.getProcessInstanceId());
 		}
@@ -78,7 +79,7 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 	public void configure(final CallbackUtilities cus) throws Exception {
 		super.configure(cus);
 		final Private proxy = new CusSoapProxyBuilder(cus).build();
-		setEventManager(new WSNotifier(proxy));
+		setEventManager(new WSEventNotifier(proxy));
 	}
 
 }

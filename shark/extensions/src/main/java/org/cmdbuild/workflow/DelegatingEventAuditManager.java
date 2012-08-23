@@ -2,12 +2,12 @@ package org.cmdbuild.workflow;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.common.annotations.Legacy;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.api.internal.eventaudit.EventAuditException;
 import org.enhydra.shark.api.internal.eventaudit.EventAuditPersistenceObject;
 import org.enhydra.shark.api.internal.eventaudit.StateEventAuditPersistenceObject;
+import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public class DelegatingEventAuditManager extends NullEventAuditManager {
 
@@ -42,12 +42,12 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		}
 
 		@Override
-		public int getSessionId() {
-			return shandle.getId();
+		public WMSessionHandle getSessionHandle() {
+			return shandle;
 		}
 	}
 
-	private static enum EventType {
+	private enum EventType {
 		PROCESS_STATE_CHANGED(SharkConstants.EVENT_PROCESS_STATE_CHANGED), //
 		ACTIVITY_STATE_CHANGED(SharkConstants.EVENT_ACTIVITY_STATE_CHANGED), //
 		UNKNOWN(null), //
@@ -72,7 +72,7 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 
 	}
 
-	private static enum RunningStates {
+	protected enum RunningStates {
 		OPEN_RUNNING(SharkConstants.STATE_OPEN_RUNNING), //
 		OPEN_NOT_RUNNING_NOT_STARTED(SharkConstants.STATE_OPEN_NOT_RUNNING_NOT_STARTED), //
 		OPEN_NOT_RUNNING_SUSPENDED(SharkConstants.STATE_OPEN_NOT_RUNNING_SUSPENDED), //
@@ -106,6 +106,7 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 	}
 
 	private SimpleEventManager eventManager;
+	protected CallbackUtilities cus;
 
 	public DelegatingEventAuditManager() {
 		setEventManager(new NullEventManager());
@@ -121,16 +122,24 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 	}
 
 	@Override
+	public void configure(final CallbackUtilities cus) throws Exception {
+		super.configure(cus);
+		this.cus = cus;
+	}
+
+	@Override
 	public void persist(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea)
 			throws EventAuditException {
 		try {
 			final EventType eventType = EventType.fromSharkEventType(sea.getType());
+			final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
+			final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
 			switch (eventType) {
 			case PROCESS_STATE_CHANGED:
-				fireProcessStateChanged(shandle, sea);
+				fireProcessStateChanged(shandle, sea, oldState, newState);
 				break;
 			case ACTIVITY_STATE_CHANGED:
-				fireActivityStateChanged(shandle, sea);
+				fireActivityStateChanged(shandle, sea, oldState, newState);
 				break;
 			}
 		} catch (final Exception e) {
@@ -138,10 +147,8 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		}
 	}
 
-	@Legacy("State map copied from the old implementation. It does not work. We should track EVERY change except for OPEN_NOT_RUNNING_NOT_STARTED.")
-	private void fireProcessStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea) {
-		final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
-		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
+	private void fireProcessStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea,
+			final RunningStates oldState, final RunningStates newState) {
 		if (oldState == RunningStates.OPEN_NOT_RUNNING_NOT_STARTED && newState == RunningStates.OPEN_RUNNING) {
 			eventManager.processStarted(processInstanceFor(shandle, sea));
 		} else if (newState.isClosed()) {
@@ -158,11 +165,8 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		return new EventAuditPersistenceObjectWrapper(shandle, eap);
 	}
 
-	@Legacy("State map copied from the old implementation.")
-	private void fireActivityStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea)
-			throws Exception {
-		final RunningStates oldState = RunningStates.fromSharkRunningState(sea.getOldState());
-		final RunningStates newState = RunningStates.fromSharkRunningState(sea.getNewState());
+	private void fireActivityStateChanged(final WMSessionHandle shandle, final StateEventAuditPersistenceObject sea,
+			final RunningStates oldState, final RunningStates newState) {
 		switch (newState) {
 		case CLOSED_COMPLETED:
 			eventManager.activityClosed(activityInstanceFor(shandle, sea));

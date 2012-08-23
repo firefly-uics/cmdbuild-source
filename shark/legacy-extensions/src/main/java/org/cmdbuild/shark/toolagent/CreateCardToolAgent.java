@@ -18,11 +18,12 @@ public class CreateCardToolAgent extends ManageCardToolAgent {
 	private static final String CREATE_CARD = "createCard";
 	private static final String CREATE_CARD_REF = "createCardRef";
 
-	private static final List<String> NOT_META_TOOLS = asList(CREATE_CARD, CREATE_CARD_REF);
-	private static final List<String> NOT_META_ATTRIBUTES = asList(CLASS_NAME);
-
+	private static final String CLASS_NAME = "ClassName";
 	private static final String CARD_CODE = "CardCode";
 	private static final String CARD_DESCRIPTION = "CardDescription";
+
+	private static final List<String> NOT_META_TOOLS = asList(CREATE_CARD, CREATE_CARD_REF);
+	private static final List<String> NOT_META_ATTRIBUTES = asList(CLASS_NAME);
 
 	@Override
 	protected void innerInvoke() throws Exception {
@@ -44,6 +45,14 @@ public class CreateCardToolAgent extends ManageCardToolAgent {
 		}
 	}
 
+	private final String getClassName() {
+		String className = getExtendedAttribute(CLASS_NAME);
+		if (className == null) {
+			className = getParameterValue(CLASS_NAME);
+		}
+		return className;
+	}
+
 	private int createCard(final String classname, final Map<String, Object> attributes) {
 		final NewCard newCard = getWorkflowApi().newCard(classname);
 		for (final Entry<String, Object> attribute : attributes.entrySet()) {
@@ -60,12 +69,12 @@ public class CreateCardToolAgent extends ManageCardToolAgent {
 	}
 
 	@Override
-	protected List<String> notMetaAttributeNames() {
+	protected List<String> fixedMetaAttributeNames() {
 		return NOT_META_ATTRIBUTES;
 	}
 
 	@Override
-	protected Map<String, Object> getNonMetaAttributes() {
+	protected Map<String, Object> getAttributesForNonMetaInvoke() {
 		final Map<String, Object> attributes = new HashMap<String, Object>();
 		final String code = getParameterValue(CARD_CODE);
 		attributes.put(Constants.CODE_ATTRIBUTE, code);
