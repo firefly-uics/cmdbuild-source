@@ -1,6 +1,4 @@
---
--- Function objects
---
+-- Support for INOUT parameters in custom functions
 
 CREATE OR REPLACE FUNCTION _cm_function_list(
 		OUT function_name text,

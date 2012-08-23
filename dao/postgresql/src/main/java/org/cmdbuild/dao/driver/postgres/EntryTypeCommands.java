@@ -215,7 +215,7 @@ public class EntryTypeCommands {
 	}
 
 	private enum InputOutput {
-		i, o;
+		i, o, io;
 	}
 
 	public List<DBFunction> findAllFunctions() {
@@ -249,6 +249,10 @@ public class EntryTypeCommands {
 		                	case o:
 		                		function.addOutputParameter(name, type);
 		                		break;
+		                	case io:
+		                		function.addInputParameter(name, type);
+		                		function.addOutputParameter(name, type);
+								break;
 		                	}
 		                }
 					}
