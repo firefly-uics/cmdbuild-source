@@ -76,7 +76,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		if (decoded && decoded.warnings && decoded.warnings.length) {
 			for (var i=0; i<decoded.warnings.length; ++i) {
 				var w = decoded.warnings[i];
-				var errorString = CMDBuild.Ajax.formatError(w.reason, w.reason_parameters);
+				var errorString = CMDBuild.Ajax.formatError(w.reason, w.reasonParameters);
 				if (errorString) {
 					CMDBuild.Msg.warn(null, errorString);
 				} else {
@@ -124,7 +124,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 					CMDBuild.LoginWindow.show();
 					return;
 				}
-				var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reason_parameters);
+				var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reasonParameters);
 				if (translatedErrorString) {
 					errorBody.text = translatedErrorString;
 				}

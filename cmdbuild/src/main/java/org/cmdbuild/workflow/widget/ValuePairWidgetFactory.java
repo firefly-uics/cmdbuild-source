@@ -9,6 +9,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.exception.CMDBWorkflowException;
+import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
+import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.utils.CQLFacadeCompiler;
@@ -46,10 +49,18 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 
 	@Override
 	public final CMActivityWidget createWidget(final String serialization, final CMValueSet processInstanceVariables) {
-		final Map<String, Object> valueMap = deserialize(serialization, processInstanceVariables);
-		final Widget widget = createWidget(valueMap);
-		setWidgetId(widget, serialization);
-		setWidgetLabel(widget, valueMap);
+		Widget widget;
+		try {
+			final Map<String, Object> valueMap = deserialize(serialization, processInstanceVariables);
+			widget = createWidget(valueMap);
+			setWidgetId(widget, serialization);
+			setWidgetLabel(widget, valueMap);
+		} catch (Exception e) {
+			widget = null;
+			RequestListener.getCurrentRequest().pushWarning(
+					new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, getWidgetName()));
+		}
+
 		return widget;
 	}
 

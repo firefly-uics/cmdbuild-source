@@ -1,5 +1,12 @@
 package org.cmdbuild.servlets.json.management;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.listeners.RequestListener;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class JsonResponse {
@@ -13,6 +20,19 @@ public class JsonResponse {
 
 	public Object getResponse() {
 		return response;
+	}
+
+	public Object getWarnings() {
+		final List<? extends Throwable> warnings = RequestListener.getCurrentRequest().getWarnings();
+		if (warnings.size() > 0) {
+			final List<JsonException> jsonWarnings = new ArrayList<JsonException>();
+			for (Throwable t: warnings) {
+				jsonWarnings.add(new JsonException(t));
+			}
+			return jsonWarnings;
+		}
+
+		return null;
 	}
 
 	public static JsonResponse success(final Object response) {
@@ -32,6 +52,41 @@ public class JsonResponse {
 		} catch (Exception e) {
 			throw new JsonSerializationException(e);
 		}
+	}
+}
+
+class JsonException {
+	private Throwable exception;
+
+	public JsonException(Throwable exception) {
+		this.exception = exception;
+	}
+
+	public String getReason() {
+		String reason = null;
+		if (exception instanceof CMDBException) {
+			reason = ((CMDBException) exception).getExceptionTypeText();
+		}
+
+		return reason;
+	}
+
+	public String[] getReasonParameters() {
+		String[] parameters = null;
+		if (exception instanceof CMDBException) {
+			parameters = ((CMDBException) exception).getExceptionParameters();
+		}
+
+		return parameters;
+	}
+
+	public String getStackTrace() {
+		final StringWriter sw = new StringWriter();
+		final PrintWriter pw = new PrintWriter(sw, true);
+		exception.printStackTrace(pw);
+		sw.flush();
+
+		return sw.toString();
 	}
 }
 
