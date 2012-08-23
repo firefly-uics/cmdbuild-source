@@ -1,9 +1,11 @@
 package org.cmdbuild.workflow;
 
+import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
+
 public interface SimpleEventManager {
 
 	interface ProcessInstance {
-		int getSessionId();
+		WMSessionHandle getSessionHandle();
 
 		String getProcessDefinitionId();
 

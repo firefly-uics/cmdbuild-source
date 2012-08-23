@@ -12,11 +12,13 @@ import org.cmdbuild.workflow.type.ReferenceType;
 
 public class UpdateAttributeToolAgent extends ManageCardToolAgent {
 
+	private static final String OBJ_ID = "ObjId";
 	private static final String OBJ_REF = "ObjRef";
 
 	private static final String UPDATE_ATTRIBUTE = "updateAttribute";
 	private static final String UPDATE_ATTRIBUTE_REF = "updateAttributeRef";
 
+	private static final String CLASS_NAME = "ClassName";
 	private static final String ATTRIBUTE_NAME = "AttributeName";
 	private static final String ATTRIBUTE_VALUE = "AttributeValue";
 	private static final String DONE = "Done";
@@ -60,12 +62,12 @@ public class UpdateAttributeToolAgent extends ManageCardToolAgent {
 	}
 
 	@Override
-	protected List<String> notMetaAttributeNames() {
+	protected List<String> fixedMetaAttributeNames() {
 		return NOT_META_ATTRIBUTES;
 	}
 
 	@Override
-	protected Map<String, Object> getNonMetaAttributes() {
+	protected Map<String, Object> getAttributesForNonMetaInvoke() {
 		final Map<String, Object> attributes = new HashMap<String, Object>();
 		final String attributeName = getParameterValue(ATTRIBUTE_NAME);
 		final String attributeValue = getParameterValue(ATTRIBUTE_VALUE);

@@ -3,7 +3,9 @@ package org.cmdbuild.shark.toolagent;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.workflow.ConfigurationHelper;
@@ -172,14 +174,22 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	 */
 	protected final Map<String, Object> getInputParameterValues() {
 		final Map<String, Object> paramMap = new HashMap<String, Object>();
+		for (final AppParameter p : getInputParameters()) {
+			paramMap.put(p.the_formal_name, valueOf(p));
+		}
+		return paramMap;
+	}
+
+	protected final List<AppParameter> getInputParameters() {
+		final List<AppParameter> params = new ArrayList<AppParameter>();
 		for (final AppParameter p : parameters) {
 			if (XPDLConstants.FORMAL_PARAMETER_MODE_OUT.equals(p.the_mode)
 					|| EXTENDED_ATTRIBUTES_PARAM.equals(p.the_formal_name)) {
 				continue;
 			}
-			paramMap.put(p.the_formal_name, valueOf(p));
+			params.add(p);
 		}
-		return paramMap;
+		return params;
 	}
 
 	private Object valueOf(final AppParameter parameter) {
@@ -226,7 +236,22 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		return (T) value;
 	}
 
-	private WAPI wapi() throws Exception {
+	protected final boolean getBooleanFromIntegerExtendedAttribute(final String name) {
+		final String value = getExtendedAttribute(name);
+		return value != null && "1".equals(value);
+	}
+
+	protected final boolean getBooleanFromIntegerParameter(final String name) {
+		final AppParameter param = getParameter(name);
+		if (param != null && Number.class.isAssignableFrom(param.the_class)) {
+			final Number value = (Number) param.the_value;
+			return value != null && value.intValue() == 1;
+		} else {
+			return false;
+		}
+	}
+
+	protected final WAPI wapi() throws Exception {
 		return Shark.getInstance().getWAPIConnection();
 	}
 
