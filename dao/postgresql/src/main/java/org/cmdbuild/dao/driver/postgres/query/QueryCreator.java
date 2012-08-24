@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
-import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;

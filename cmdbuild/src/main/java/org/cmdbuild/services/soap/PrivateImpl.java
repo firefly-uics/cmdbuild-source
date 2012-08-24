@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.DashboardLogic.fakeAnyAttribute;
 
@@ -15,8 +16,10 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -61,6 +64,7 @@ import org.cmdbuild.services.soap.types.WSProcessStartEvent;
 import org.cmdbuild.services.soap.types.WSProcessUpdateEvent;
 import org.cmdbuild.services.soap.types.Workflow;
 import org.cmdbuild.services.soap.utils.WebserviceUtils;
+import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.springframework.beans.BeansException;
@@ -430,18 +434,26 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		final Attribute a = new Attribute();
 		final String paramName = functionParam.getName();
 		a.setName(paramName);
+		final CMAttributeType<?> type = functionParam.getType();
 		final Object value = valueSet.get(paramName);
-		a.setValue(nativeValueToWsString(value));
+		a.setValue(nativeValueToWsString(type, value));
 		return a;
 	}
 
-	private String nativeValueToWsString(final Object value) {
-		if (value == null) {
-			return StringUtils.EMPTY;
-		} else {
-			// TODO Fix for dates using CMAttributeTypeVisitor
-			return value.toString();
-		}
+	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
+		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
+
+			@Override
+			public void visit(ReferenceAttributeType attributeType) {
+				throw new UnsupportedOperationException("references not supported");
+			}
+
+			@Override
+			public void visit(LookupAttributeType attributeType) {
+				throw new UnsupportedOperationException("lookups not supported");
+			}
+
+		}.convertValue().toString();
 	}
 
 	/*
@@ -450,20 +462,20 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public void notify(final WSEvent wsEvent) {
-		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager(); 
+		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager();
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
 			public void visit(WSProcessStartEvent wsEvent) {
-				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(
-						wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId());
+				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
+						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
 			}
 
 			@Override
 			public void visit(WSProcessUpdateEvent wsEvent) {
-				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(
-						wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId());
+				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
+						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
 			}
 

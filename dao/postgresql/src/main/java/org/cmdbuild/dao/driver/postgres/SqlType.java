@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType.Meta;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
@@ -20,13 +21,15 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType.Meta;
 
+/**
+ * 
+ * 
+ * Missing DAO types: Lookup, Reference, ForeignKey
+ * Missing SQL types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
+ * Not used: regclass, bytea, _int4, _varchar
+ */
 public enum SqlType {
-
-	// Missing cmdbuild types: Lookup, Reference, ForeignKey
-	// Missing sql types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
-	// Not used: regclass, bytea, _int4, _varchar
 
 	bool(BooleanAttributeType.class),
 	bpchar(CharAttributeType.class),
@@ -34,6 +37,10 @@ public enum SqlType {
 		@Override
 		public Object javaToSqlValue(Object value) {
 			return dateJavaToSqlValue(value);
+		}
+		@Override
+		public Object sqlToJavaValue(Object value) {
+			return dateSqlToJavaValue(value);
 		}
 	},
 	float8(DoubleAttributeType.class),
@@ -83,11 +90,19 @@ public enum SqlType {
 		public Object javaToSqlValue(Object value) {
 			return dateJavaToSqlValue(value);
 		}
+		@Override
+		public Object sqlToJavaValue(Object value) {
+			return dateSqlToJavaValue(value);
+		}
 	},
 	timestamp(DateTimeAttributeType.class) {
 		@Override
 		public Object javaToSqlValue(Object value) {
 			return dateJavaToSqlValue(value);
+		}
+		@Override
+		public Object sqlToJavaValue(Object value) {
+			return dateSqlToJavaValue(value);
 		}
 	},
 	unknown(UndefinedAttributeType.class),
@@ -122,10 +137,17 @@ public enum SqlType {
 		}
 	};
 
-	// TODO Lookup, Reference, etc. need a different handling
-	protected final Class<? extends CMAttributeType<?>> javaTypes[];
+	/**
+	 * DAO attribute types for this SQL type.
+	 * 
+	 * It should have been Class<? extends CMAttributeType<?>> but Java
+	 * forbids array of generic types. 
+	 * 
+	 * TODO Lookup, Reference, etc. need a different handling
+	 */
+	protected final Class<?> javaTypes[];
 
-	private SqlType(final Class<? extends CMAttributeType<?>>... javaTypes) {
+	private SqlType(final Class<?>... javaTypes) {
 		Validate.notEmpty(javaTypes);
 		this.javaTypes = javaTypes;
 	}
@@ -144,8 +166,9 @@ public enum SqlType {
 		return getJavaType(meta).getConstructor(paramTypes).newInstance(constructorParams);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Class<? extends CMAttributeType<?>> getJavaType(CMAttributeType.Meta meta) {
-		return javaTypes[0];
+		return (Class<? extends CMAttributeType<?>>) javaTypes[0];
 	}
 	
 	protected Object[] getConstructorParams(String[] stringParams, CMAttributeType.Meta meta) {
@@ -167,10 +190,25 @@ public enum SqlType {
 
 	private static final Pattern TYPE_PATTERN = Pattern.compile("(\\w+)(\\((\\d+(,\\d+)*)\\))?");
 
+	/**
+	 * Create attribute type from SQL string and no metadata. It is used
+	 * when there are no metadata, like in funcion calls.
+	 * 
+	 * @param sqlTypeString
+	 * @return
+	 */
 	public static CMAttributeType<?> createAttributeType(final String sqlTypeString) {
 		return createAttributeType(sqlTypeString, NO_META);
 	}
 
+	/**
+	 * Create attribute type from SQL string and metadata. It is used for
+	 * class and domain attributes, that have comments to define metadata (sigh).
+	 * 
+	 * @param sqlTypeString
+	 * @param meta
+	 * @return
+	 */
 	public static CMAttributeType<?> createAttributeType(final String sqlTypeString, final CMAttributeType.Meta meta) {
 		try {
 			final Matcher typeMatcher = TYPE_PATTERN.matcher(sqlTypeString);
@@ -185,6 +223,13 @@ public enum SqlType {
 		}
 	}
 
+	/**
+	 * Returns the full SQL type string (with length and such) for a DAO
+	 * attribute type.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	public static String getSqlTypeString(final CMAttributeType<?> type) {
 		final SqlType sqlType = getSqlType(type);
 		final Object[] sqlTypeParams = sqlType.getSqlParams(type);
@@ -199,15 +244,21 @@ public enum SqlType {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the SQL type from a DAO attribute type.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	public static SqlType getSqlType(CMAttributeType<?> type) {
-		for (SqlType t : SqlType.values()) {
-			for (Class<? extends CMAttributeType<?>> javaType : t.javaTypes) {
+		for (final SqlType t : SqlType.values()) {
+			for (Class<?> javaType : t.javaTypes) {
 				if (javaType == type.getClass()) {
 					return t;
 				}
 			}
 		}
-		throw new IllegalArgumentException();
+		return unknown;
 	}
 
 	private static String[] splitParams(final String paramsMatch) {
@@ -227,4 +278,12 @@ public enum SqlType {
 		}
 		return value;
 	}
+
+	protected final Object dateSqlToJavaValue(Object value) {
+		if (value instanceof java.util.Date) {
+			value = new org.joda.time.DateTime(((java.util.Date) value).getTime());
+		}
+		return value;
+	}
+
 }

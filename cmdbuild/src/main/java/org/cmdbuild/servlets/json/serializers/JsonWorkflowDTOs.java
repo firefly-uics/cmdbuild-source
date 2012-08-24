@@ -180,7 +180,7 @@ public class JsonWorkflowDTOs {
 
 		@Override
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
-			return new JsonAttributeValueVisitor(type, value).valueForJson();
+			return new JsonAttributeValueVisitor(type, value).convertValue();
 		}
 	}
 

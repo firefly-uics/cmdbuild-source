@@ -5,14 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import org.cmdbuild.dao.entrytype.attributetype.AbstractDateAttributeType;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public abstract class AbstractDateAttribute extends AttributeImpl {
 
-	public static final String REST_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-	public static final String SOAP_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+	public static final String SOAP_DATETIME_FORMAT = AbstractDateAttributeType.SOAP_DATETIME_FORMAT;
 
 	public AbstractDateAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
 		super(schema, name, meta);
