@@ -32,12 +32,15 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 //		when it return to be shown. So, use this event to eventually adjust the size
 //		when the combo is actually used
 		this.mon(this, "focus", function() {
-			this._growSizeFix();
+			if (this._growSizeFixFail) {
+				this._growSizeFix();
+			}
 		}, this);
 	},
 
 	_growSizeFix: function(added) {
 		if (!this.isVisible(deep = true)) {
+			this._growSizeFixFail = true;
 			return;
 		}
 
@@ -58,6 +61,7 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 		}
 
 		this.setSizeLookingTheGreatestItem();
+		this._growSizeFixFail = false;
 	},
 
 	setGreatestItem: function(item) {
