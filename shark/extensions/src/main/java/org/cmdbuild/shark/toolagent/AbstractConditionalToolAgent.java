@@ -98,8 +98,10 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		setStatus(APP_STATUS_RUNNING);
 		try {
 			if (conditionEvaluator.evaluate()) {
+				notifyParameters("parameters before invocation...", parameters);
 				setupWorkflowApi(shandle, procInstId);
 				innerInvoke();
+				notifyParameters("parameters after invocation...", parameters);
 			}
 			setStatus(APP_STATUS_FINISHED);
 		} catch (final Exception e) {
@@ -110,6 +112,18 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	protected void setStatus(final long status) {
 		this.status = status;
+	}
+
+	private void notifyParameters(final String string, final AppParameter[] parameters) {
+		cus.info(shandle, string);
+		for (final AppParameter parameter : parameters) {
+			cus.info(shandle, formatParameter(parameter));
+		}
+	}
+
+	private String formatParameter(final AppParameter parameter) {
+		return format("parameter '%s' (%s) = '%s'", //
+				parameter.the_formal_name, parameter.the_class.toString(), parameter.the_value.toString());
 	}
 
 	protected void setupWorkflowApi(final WMSessionHandle shandle, final String procInstId) {
