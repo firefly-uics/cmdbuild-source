@@ -13,7 +13,7 @@
 		toString: function() {
 			return Ext.getClassName(this);
 		}
-	})
+	});
 
 	// interface of the view delegate
 	Ext.define("CMDBuild.view.administration.dashboard.CMModDashboardDelegate", {
@@ -96,27 +96,31 @@
 
 		me.getPropertiesPanel = function() {
 			return p;
-		}
+		};
 
 		return p;
 	}
 
 	function chartsConfigurationPanel(me) {
-		var p = Ext.createByAlias('widget.dashboardchartsconfiguration');
+		var p = Ext.createByAlias('widget.dashboardchartsconfiguration', {
+			disabled: true
+		});
 
 		me.getChartsConfigurationPanel = function() {
 			return p;
-		}
+		};
 
 		return p;
 	}
 
 	function layoutConfigurationPanel(me) {
-		var p = Ext.createByAlias('widget.dashboardlayoutconfiguration');
+		var p = Ext.createByAlias('widget.dashboardlayoutconfiguration', {
+			disabled: true
+		});
 
 		me.getLayoutConfigurationPanel = function() {
 			return p;
-		}
+		};
 
 		return p;
 	}

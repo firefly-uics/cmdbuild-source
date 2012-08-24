@@ -151,8 +151,10 @@
 		},
 
 		clearAll: function() {
-			this.portal.removeAll();
-			this.slider.removeAddedThumbs();
+			if (this.rendered) {
+				this.portal.removeAll();
+				this.slider.removeAddedThumbs();
+			}
 		},
 
 		countColumns: function() {
