@@ -50,8 +50,9 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 		}
 
 		private void sendProcessUpdateEventIfNoImpl(final ActivityInstance activityInstance) {
-			// TODO: do it for no implementation activities only
-			sendProcessUpdateEvent(activityInstance);
+			if (activityInstance.isNoImplementationActivity()) {
+				sendProcessUpdateEvent(activityInstance);
+			}
 		}
 
 		private void sendProcessUpdateEvent(final ProcessInstance processInstance) {

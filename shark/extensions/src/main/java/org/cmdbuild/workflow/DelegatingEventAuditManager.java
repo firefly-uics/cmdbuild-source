@@ -2,6 +2,7 @@ package org.cmdbuild.workflow;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.common.SharkConstants;
 import org.enhydra.shark.api.internal.eventaudit.EventAuditException;
@@ -19,6 +20,11 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		private EventAuditPersistenceObjectWrapper(final WMSessionHandle shandle, final EventAuditPersistenceObject eap) {
 			this.shandle = shandle;
 			this.eap = eap;
+		}
+
+		@Override
+		public WMSessionHandle getSessionHandle() {
+			return shandle;
 		}
 
 		@Override
@@ -42,8 +48,8 @@ public class DelegatingEventAuditManager extends NullEventAuditManager {
 		}
 
 		@Override
-		public WMSessionHandle getSessionHandle() {
-			return shandle;
+		public boolean isNoImplementationActivity() {
+			return (eap.getActivityDefinitionType() == XPDLConstants.ACTIVITY_TYPE_NO);
 		}
 	}
 

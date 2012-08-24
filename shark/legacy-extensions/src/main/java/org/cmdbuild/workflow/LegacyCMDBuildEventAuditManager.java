@@ -26,6 +26,12 @@ public class LegacyCMDBuildEventAuditManager extends DelegatingEventAuditManager
 		@Override
 		public void activityStarted(final ActivityInstance activityInstance) {
 			super.activityStarted(activityInstance);
+			if (activityInstance.isNoImplementationActivity()) {
+				suspendProcessInstanceIfRequested(activityInstance);
+			}
+		}
+
+		private void suspendProcessInstanceIfRequested(final ActivityInstance activityInstance) {
 			final String processInstanceId = activityInstance.getProcessInstanceId();
 			if (SelfSuspensionRequestHolder.remove(processInstanceId)) {
 				final WMSessionHandle shandle = activityInstance.getSessionHandle();
