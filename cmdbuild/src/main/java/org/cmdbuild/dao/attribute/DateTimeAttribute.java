@@ -5,13 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public class DateTimeAttribute extends AbstractDateAttribute {
 
-	public static final String JSON_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
-	public static final String LEGACY_JSON_DATETIME_FORMAT = "dd/MM/yy HH:mm:ss";
 	public static final String POSTGRES_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	public DateTimeAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
@@ -31,8 +30,8 @@ public class DateTimeAttribute extends AbstractDateAttribute {
 		} else if (value instanceof Calendar) {
 			dateValue = ((Calendar) value).getTime();
 		} else if (value instanceof String) {
-			dateValue = convertDateString((String) value, LEGACY_JSON_DATETIME_FORMAT, DateAttribute.JSON_DATE_FORMAT,
-					SOAP_DATETIME_FORMAT, REST_DATETIME_FORMAT);
+			dateValue = convertDateString((String) value, Constants.DATETIME_PARSING_PATTERN,
+					SOAP_DATETIME_FORMAT);
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
@@ -46,6 +45,6 @@ public class DateTimeAttribute extends AbstractDateAttribute {
 
 	@Override
 	public String notNullValueToString(final Object value) {
-		return new SimpleDateFormat(JSON_DATETIME_FORMAT).format((Date) value);
+		return new SimpleDateFormat(Constants.DATETIME_PRINTING_PATTERN).format((Date) value);
 	}
 }

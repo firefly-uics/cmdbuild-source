@@ -7,9 +7,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.attribute.AbstractDateAttribute;
-import org.cmdbuild.dao.attribute.DateAttribute;
-import org.cmdbuild.dao.attribute.DateTimeAttribute;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.NotFoundException;
@@ -23,9 +22,9 @@ public class Card {
 			public String serializeNotNull(final AttributeValue attributeValue) {
 				switch (attributeValue.getSchema().getType()) {
 				case DATE:
-					return dateAsString(attributeValue, DateAttribute.LEGACY_JSON_DATE_FORMAT);
+					return dateAsString(attributeValue, Constants.DATE_TWO_DIGIT_YEAR_FORMAT);
 				case TIMESTAMP:
-					return dateAsString(attributeValue, DateTimeAttribute.LEGACY_JSON_DATETIME_FORMAT);
+					return dateAsString(attributeValue, Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT);
 				default:
 					return attributeValue.toString();
 				}

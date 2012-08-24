@@ -53,6 +53,7 @@ public class SimpleFunctionQueryCreatorTest {
 		setFunc.addInputParameter("i1", new IdentityAttributeType());
 		setFunc.addInputParameter("i2", new IdentityAttributeType());
 		setFunc.addInputParameter("i3", new IdentityAttributeType());
+		setFunc.addOutputParameter("o", new IdentityAttributeType());
 		QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc, "12", 34, null), f);
 		querySpecs.addSelectAttribute(attribute(f, "o"));
 

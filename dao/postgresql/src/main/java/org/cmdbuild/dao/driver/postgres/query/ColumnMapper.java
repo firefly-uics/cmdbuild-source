@@ -57,20 +57,13 @@ public class ColumnMapper {
 		}
 
 		/*
-		 * Adds the attribute to every type 
-		 */
-		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index) {
-			addAttribute(attributeName, attributeAlias, index, null);
-		}
-
-		/*
-		 * Adds the attribute to the specified type only 
+		 * Adds the attribute to the specified type
 		 */
 		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index, final CMEntryType type) {
 			final String sqlTypeString = getSqlTypeString(type, attributeName);
 			final SqlType sqlType = getSqlType(type, attributeName);
 			for (CMEntryType currentType : map.keySet()) {
-				final String currentName = (type == null || currentType.equals(type)) ? attributeName : null;
+				final String currentName = (attributeAlias == null || currentType.equals(type)) ? attributeName : null;
 				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlType, sqlTypeString);
 				map.get(currentType).add(eta);
 			}
@@ -182,8 +175,11 @@ public class ColumnMapper {
 			}
 		} else {
 			final String attributeName = qa.getName();
+			// FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but
+			// it does not work if we take them all
+			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next(); // we trust it works
 			final Integer usedIndex = addSelectAttribute(typeAlias, attributeName, null, null);
-			aliasAttributes.addAttribute(attributeName, null, usedIndex);
+			aliasAttributes.addAttribute(attributeName, null, usedIndex, type);
 		}
 	}
 

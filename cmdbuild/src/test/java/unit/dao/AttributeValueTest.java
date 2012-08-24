@@ -1,12 +1,7 @@
 package unit.dao;
 
-import static org.cmdbuild.dao.attribute.AbstractDateAttribute.REST_DATETIME_FORMAT;
 import static org.cmdbuild.dao.attribute.AbstractDateAttribute.SOAP_DATETIME_FORMAT;
-import static org.cmdbuild.dao.attribute.DateAttribute.JSON_DATE_FORMAT;
-import static org.cmdbuild.dao.attribute.DateAttribute.LEGACY_JSON_DATE_FORMAT;
 import static org.cmdbuild.dao.attribute.DateAttribute.POSTGRES_DATE_FORMAT;
-import static org.cmdbuild.dao.attribute.DateTimeAttribute.JSON_DATETIME_FORMAT;
-import static org.cmdbuild.dao.attribute.DateTimeAttribute.LEGACY_JSON_DATETIME_FORMAT;
 import static org.cmdbuild.dao.attribute.DateTimeAttribute.POSTGRES_DATETIME_FORMAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -18,14 +13,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.attribute.BooleanAttribute;
 import org.cmdbuild.dao.attribute.DateAttribute;
 import org.cmdbuild.dao.attribute.DateTimeAttribute;
 import org.cmdbuild.dao.attribute.DecimalAttribute;
 import org.cmdbuild.dao.attribute.DoubleAttribute;
 import org.cmdbuild.dao.attribute.StringAttribute;
-import org.cmdbuild.elements.TableFactoryImpl;
 import org.cmdbuild.elements.AttributeImpl.AttributeDataDefinitionMeta;
+import org.cmdbuild.elements.TableFactoryImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITableFactory;
@@ -152,10 +148,9 @@ public class AttributeValueTest {
 	@Test
 	public void readDateValueFromString() {
 		Date today = today();
-		assertEquals(today, dateAttribute.readValue(dateToString(today, JSON_DATE_FORMAT)));
-		assertEquals(today, dateAttribute.readValue(dateToString(today, LEGACY_JSON_DATE_FORMAT)));
+		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.DATE_FOUR_DIGIT_YEAR_FORMAT)));
+		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.DATE_TWO_DIGIT_YEAR_FORMAT)));
 		assertEquals(today, dateAttribute.readValue(dateToString(today, SOAP_DATETIME_FORMAT)));
-		assertEquals(today, dateAttribute.readValue(dateToString(today, REST_DATETIME_FORMAT)));
 		assertEquals(null, dateAttribute.readValue(""));
 		assertTypeErrorOnRead("not a date", dateAttribute);
 	}
@@ -163,7 +158,7 @@ public class AttributeValueTest {
 	@Test
 	public void serializeDateValue() {
 		Date today = today();
-		assertEquals(dateToString(today, JSON_DATE_FORMAT), dateAttribute.valueToString(today));
+		assertEquals(dateToString(today, Constants.DATE_PRINTING_PATTERN), dateAttribute.valueToString(today));
 		assertEquals("", dateAttribute.valueToString(null));
 	}
 
@@ -208,11 +203,10 @@ public class AttributeValueTest {
 	@Test
 	public void readDateTimeValueFromString() {
 		Date now = nowNotMillis();
-		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, JSON_DATETIME_FORMAT)));
-		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, LEGACY_JSON_DATETIME_FORMAT)));
+		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT)));
+		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT)));
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, SOAP_DATETIME_FORMAT)));
-		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, REST_DATETIME_FORMAT)));
-		assertEquals(today(), dateAttribute.readValue(dateToString(now, JSON_DATE_FORMAT)));
+		assertEquals(today(), dateAttribute.readValue(dateToString(now, Constants.DATE_PARSING_PATTERN)));
 		assertEquals(null, dateTimeAttribute.readValue(""));
 		assertTypeErrorOnRead("not a date", dateTimeAttribute);
 	}
@@ -220,7 +214,7 @@ public class AttributeValueTest {
 	@Test
 	public void serializeDateTimeValue() {
 		Date now = nowNotMillis();
-		assertEquals(dateToString(now, JSON_DATETIME_FORMAT), dateTimeAttribute.valueToString(now));
+		assertEquals(dateToString(now, Constants.DATETIME_PRINTING_PATTERN), dateTimeAttribute.valueToString(now));
 		assertEquals("", dateTimeAttribute.valueToString(null));
 	}
 
