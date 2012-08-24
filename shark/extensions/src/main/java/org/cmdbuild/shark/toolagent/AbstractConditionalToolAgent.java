@@ -2,12 +2,18 @@ package org.cmdbuild.shark.toolagent;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -307,13 +313,19 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 			} else {
 				return getWorkflowApi().selectLookupById(id.intValue());
 			}
+		} else if (Date.class.equals(clazz)) {
+			return stringToDateOurWay(stringValue);
+		} else if (Double.class.equals(clazz)) {
+			return stringToDoubleOurWay(stringValue);
+		} else if (Boolean.class.equals(clazz)) {
+			return Boolean.parseBoolean(stringValue);
 		} else {
 			return stringValue;
 		}
 	}
 
 	private Long stringToLongOurWay(final String stringValue) {
-		if (stringValue == null || stringValue.isEmpty()) {
+		if (isEmpty(stringValue)) {
 			return null;
 		}
 		try {
@@ -322,6 +334,32 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 			return null;
 		}
 	}
+
+	private Date stringToDateOurWay(String stringValue) {
+		if (isEmpty(stringValue)) {
+			return null;
+		}
+		for (final String format : Arrays.asList(Constants.DATE_PARSING_PATTERN, Constants.DATETIME_PARSING_PATTERN,
+				Constants.TIME_PARSING_PATTERN)) {
+			try {
+				return new SimpleDateFormat(format).parse(stringValue);
+			} catch (final ParseException ex) {
+			}
+		}
+		return null;
+	}
+
+	private Double stringToDoubleOurWay(final String stringValue) {
+		if (isEmpty(stringValue)) {
+			return null;
+		}
+		try {
+			return Double.parseDouble(stringValue);
+		} catch (final NumberFormatException e) {
+			return null;
+		}
+	}
+
 }
 
 class CardRef {
