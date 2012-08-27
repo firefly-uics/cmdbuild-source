@@ -3,6 +3,12 @@
 		extend: "Ext.panel.Panel",
 		frame: false,
 		border: false,
+
+		initComponent: function() {
+			this.autoScroll = true;
+			this.callParent(arguments);
+		},
+
 		statics : {
 			WIDGET_NAME: ".Ping"
 		},
@@ -14,7 +20,7 @@
 				bodyCls: "cm-pre",
 				frame: false,
 				border: false
-			})
+			});
 		}
 	});
 })();
