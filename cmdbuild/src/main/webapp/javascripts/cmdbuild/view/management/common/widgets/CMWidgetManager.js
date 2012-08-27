@@ -39,9 +39,7 @@
 		},
 
 		buildWidgetsContainer: function() {
-			return new CMDBuild.view.management.common.widgets.CMWidgetsWindow({
-				autoScroll: true
-			});
+			return new CMDBuild.view.management.common.widgets.CMWidgetsWindow();
 		},
 
 		reset: 	function reset() {
