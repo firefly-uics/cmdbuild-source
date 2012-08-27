@@ -110,8 +110,8 @@ public class SharkTypesConverter implements TypesConverter {
 	}
 
 	/**
-	 * Thanks to the brilliant use of classId in ReferenceType, restoring
-	 * a database makes it inconsistent because the class Id changes.
+	 * Thanks to the brilliant use of classId in ReferenceType, restoring a
+	 * database makes it inconsistent because the class Id changes.
 	 * 
 	 * @param classId
 	 * @return actual class name or the base class name

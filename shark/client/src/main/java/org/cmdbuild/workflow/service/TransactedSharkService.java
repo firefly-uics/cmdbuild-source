@@ -10,7 +10,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
 
 /**
- * Adds transaction management to the {@link AbstractSharkService}. 
+ * Adds transaction management to the {@link AbstractSharkService}.
  * 
  * Transactions should be handled with Spring!
  */
@@ -44,7 +44,7 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 		private final void initAndConnect() throws CMWorkflowException {
 			final WMConnectInfo wmci = getConnectionInfo();
 			try {
-				WMSessionHandle handle = wapi().connect(wmci);
+				final WMSessionHandle handle = wapi().connect(wmci);
 				localHandle.set(handle);
 			} catch (final Exception e) {
 				throw new CMWorkflowException(e);
@@ -83,12 +83,12 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 
 	private final ThreadLocal<WMSessionHandle> localHandle;
 
-
 	protected TransactedSharkService(final Properties props) {
 		super(props);
 		localHandle = new ThreadLocal<WMSessionHandle>();
 	}
 
+	@Override
 	protected WMSessionHandle handle() {
 		return localHandle.get();
 	}
@@ -231,8 +231,7 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 	}
 
 	@Override
-	public void abortProcessInstance(final String procInstId)
-			throws CMWorkflowException {
+	public void abortProcessInstance(final String procInstId) throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws CMWorkflowException {
@@ -243,8 +242,7 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 	}
 
 	@Override
-	public void suspendProcessInstance(final String procInstId)
-			throws CMWorkflowException {
+	public void suspendProcessInstance(final String procInstId) throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws CMWorkflowException {
@@ -255,8 +253,7 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 	}
 
 	@Override
-	public void resumeProcessInstance(final String procInstId)
-			throws CMWorkflowException {
+	public void resumeProcessInstance(final String procInstId) throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws CMWorkflowException {

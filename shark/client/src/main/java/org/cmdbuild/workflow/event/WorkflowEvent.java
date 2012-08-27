@@ -5,13 +5,12 @@ import org.apache.commons.lang.Validate;
 public class WorkflowEvent {
 
 	public enum Type {
-		START,
-		UPDATE
+		START, UPDATE
 	}
 
-	private Type type;
-	private String processDefinitionId;
-	private String processInstanceId;
+	private final Type type;
+	private final String processDefinitionId;
+	private final String processInstanceId;
 
 	private WorkflowEvent(final Type type, final String processDefinitionId, final String processInstanceId) {
 		Validate.notNull(type);
