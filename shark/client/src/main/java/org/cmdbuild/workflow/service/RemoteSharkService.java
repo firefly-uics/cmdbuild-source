@@ -12,13 +12,14 @@ import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.cmdbuild.workflow.service.RemoteSharkServiceConfiguration.ChangeListener;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 
 /**
  * Implementation using remote Shark server
  */
-public class RemoteSharkService extends TransactedSharkService {
+public class RemoteSharkService extends TransactedSharkService implements ChangeListener {
 
 	private static final String CMDBUILD_TYPE_NS = "http://type.workflow.cmdbuild.org";
 
@@ -29,27 +30,20 @@ public class RemoteSharkService extends TransactedSharkService {
 
 	private static final String ARRAY_NAME_PREFIX = "ArrayOf_tns1_";
 
-	public interface Config {
-		String getServerUrl();
+	private final RemoteSharkServiceConfiguration config;
 
-		String getUsername();
-
-		String getPassword();
-		// void registerListener(ConfigChangeListener listener);
+	public RemoteSharkService(final RemoteSharkServiceConfiguration configuration) {
+		super(getClientProperties(configuration));
+		this.config = configuration;
+		this.config.addListener(this);
 	}
 
-	// public interface ConfigChangeListener {
-	// void nofityConfigChange();
-	// }
-
-	private final Config config;
-
-	public RemoteSharkService(final Config config) {
-		super(getClientProperties(config));
-		this.config = config;
+	@Override
+	public void configurationChanged() {
+		reconfigure(getClientProperties(config));
 	}
 
-	private static Properties getClientProperties(final Config config) {
+	private static Properties getClientProperties(final RemoteSharkServiceConfiguration config) {
 		final Properties clientProps = new Properties();
 		clientProps.put("ClientType", "WS");
 		clientProps.put("SharkWSURLPrefix", config.getServerUrl());

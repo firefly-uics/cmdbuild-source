@@ -62,8 +62,7 @@ public interface CMWorkflowService {
 	 * @return newly created process instance id
 	 * @throws CMWorkflowException
 	 */
-	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, ?> variables)
-			throws CMWorkflowException;
+	WSProcessInstInfo startProcess(String pkgId, String procDefId, Map<String, ?> variables) throws CMWorkflowException;
 
 	/**
 	 * List open process instances by process definition id.
@@ -77,7 +76,8 @@ public interface CMWorkflowService {
 	/**
 	 * Retrieve informations about an open process instance.
 	 * 
-	 * @param procInstId process instance id
+	 * @param procInstId
+	 *            process instance id
 	 * @return
 	 * @throws CMWorkflowException
 	 */
@@ -88,7 +88,8 @@ public interface CMWorkflowService {
 	/**
 	 * Returns the process instance variables with type conversion.
 	 * 
-	 * @param procInstId process instance id
+	 * @param procInstId
+	 *            process instance id
 	 * @return process instance variables
 	 * @throws CMWorkflowException
 	 */
@@ -98,7 +99,8 @@ public interface CMWorkflowService {
 	 * Returns the process instance variables as they are present in the
 	 * workflow server, with no conversion.
 	 * 
-	 * @param procInstId process instance id
+	 * @param procInstId
+	 *            process instance id
 	 * @return process instance variables
 	 * @throws CMWorkflowException
 	 */

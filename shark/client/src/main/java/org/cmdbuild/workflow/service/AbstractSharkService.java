@@ -45,14 +45,19 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	/**
 	 * Listener for update operations.
 	 * 
-	 * It's terse but it works for now. 
+	 * It's terse but it works for now.
 	 */
 	public interface UpdateOperationListener {
 		void processInstanceStarted(int sessionId) throws CMWorkflowException;
+
 		void processInstanceAborted(int sessionId) throws CMWorkflowException;
+
 		void processInstanceSuspended(int sessionId) throws CMWorkflowException;
+
 		void processInstanceResumed(int sessionId) throws CMWorkflowException;
+
 		void activityInstanceAborted(int sessionId) throws CMWorkflowException;
+
 		void activityInstanceAdvanced(int sessionId) throws CMWorkflowException;
 
 		void abortedOperation(int sessionId) throws CMWorkflowException;
@@ -83,6 +88,15 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		configureSharkInterfaceWrapper(props);
 		typesConverter = IDENTITY_TYPES_CONVERTER;
 		updateOperationListener = NULL_UPDATE_OPERATION_LISTENER;
+	}
+
+	protected final void reconfigure(final Properties props) {
+		synchronized (this) {
+			configureSharkInterfaceWrapper(props);
+			SharkInterfaceWrapper.killShark();
+			_shark = null;
+			_wapi = null;
+		}
 	}
 
 	private void configureSharkInterfaceWrapper(final Properties props) {
