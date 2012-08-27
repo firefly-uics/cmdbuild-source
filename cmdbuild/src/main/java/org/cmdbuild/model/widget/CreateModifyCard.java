@@ -35,6 +35,11 @@ public class CreateModifyCard extends Widget {
 	 */
 	private String outputName;
 
+	public CreateModifyCard() {
+		super();
+		this.dataAccessLogic = null;
+	}
+
 	public CreateModifyCard(final DataAccessLogic dataAccessLogic) {
 		this.dataAccessLogic = dataAccessLogic;
 	}
@@ -102,6 +107,10 @@ public class CreateModifyCard extends Widget {
 	}
 
 	private CardReference outputValue(final Submission submission) {
+		if (dataAccessLogic == null) {
+			throw new UnsupportedOperationException("It can not be used for cards widget");
+		}
+
 		final Object createdCardId = submission.getOutput();
 		final CMCard card = dataAccessLogic.getCard(targetClass, createdCardId);
 		return CardReference.newInstance(card);
