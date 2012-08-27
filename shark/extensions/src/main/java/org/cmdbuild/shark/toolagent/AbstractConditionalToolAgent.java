@@ -104,10 +104,10 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		setStatus(APP_STATUS_RUNNING);
 		try {
 			if (conditionEvaluator.evaluate()) {
-				notifyParameters("parameters before invocation...", parameters);
+				dumpParameters("parameters before invocation...", parameters);
 				setupWorkflowApi(shandle, procInstId);
 				innerInvoke();
-				notifyParameters("parameters after invocation...", parameters);
+				dumpParameters("parameters after invocation...", parameters);
 			}
 			setStatus(APP_STATUS_FINISHED);
 		} catch (final Exception e) {
@@ -120,16 +120,22 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		this.status = status;
 	}
 
-	private void notifyParameters(final String string, final AppParameter[] parameters) {
-		cus.info(shandle, string);
+	private void dumpParameters(final String string, final AppParameter[] parameters) {
+		cus.debug(shandle, string);
 		for (final AppParameter parameter : parameters) {
-			cus.info(shandle, formatParameter(parameter));
+			cus.debug(shandle, formatParameter(parameter));
 		}
 	}
 
 	private String formatParameter(final AppParameter parameter) {
+		final Object value;
+		if (parameter.the_class.isArray()) {
+			value = Arrays.toString((Object[]) parameter.the_value);
+		} else {
+			value = parameter.the_value;
+		}
 		return format("parameter '%s' (%s) = '%s'", //
-				parameter.the_formal_name, parameter.the_class.toString(), parameter.the_value.toString());
+				parameter.the_formal_name, parameter.the_class, value);
 	}
 
 	protected void setupWorkflowApi(final WMSessionHandle shandle, final String procInstId) {
@@ -335,7 +341,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		}
 	}
 
-	private Date stringToDateOurWay(String stringValue) {
+	private Date stringToDateOurWay(final String stringValue) {
 		if (isEmpty(stringValue)) {
 			return null;
 		}
