@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.transaction.NotSupportedException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.IdentityTypesConverter;
 import org.cmdbuild.workflow.TypesConverter;
+import org.cmdbuild.workflow.event.NullUpdateOperationListener;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstanceState;
@@ -39,11 +42,28 @@ import org.enhydra.shark.utilities.MiscUtilities;
  */
 public abstract class AbstractSharkService implements CMWorkflowService {
 
+	/**
+	 * Listener for update operations.
+	 * 
+	 * It's terse but it works for now. 
+	 */
+	public interface UpdateOperationListener {
+		void processInstanceStarted(int sessionId) throws CMWorkflowException;
+		void processInstanceAborted(int sessionId) throws CMWorkflowException;
+		void processInstanceSuspended(int sessionId) throws CMWorkflowException;
+		void processInstanceResumed(int sessionId) throws CMWorkflowException;
+		void activityInstanceAborted(int sessionId) throws CMWorkflowException;
+		void activityInstanceAdvanced(int sessionId) throws CMWorkflowException;
+
+		void abortedOperation(int sessionId) throws CMWorkflowException;
+	}
+
 	protected static final String DEFAULT_ENGINE_NAME = StringUtils.EMPTY;
 	protected static final String DEFAULT_SCOPE = StringUtils.EMPTY;
 	protected static final String LAST_VERSION = StringUtils.EMPTY;
 
 	private static final TypesConverter IDENTITY_TYPES_CONVERTER = new IdentityTypesConverter();
+	private static final UpdateOperationListener NULL_UPDATE_OPERATION_LISTENER = new NullUpdateOperationListener();
 
 	/**
 	 * It should be accessed through the {@see shark()} method only.
@@ -57,9 +77,12 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	private TypesConverter typesConverter;
 
+	private UpdateOperationListener updateOperationListener;
+
 	protected AbstractSharkService(final Properties props) {
 		configureSharkInterfaceWrapper(props);
 		typesConverter = IDENTITY_TYPES_CONVERTER;
+		updateOperationListener = NULL_UPDATE_OPERATION_LISTENER;
 	}
 
 	private void configureSharkInterfaceWrapper(final Properties props) {
@@ -78,6 +101,11 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	public void setVariableConverter(final TypesConverter variableConverter) {
 		Validate.notNull(variableConverter);
 		this.typesConverter = variableConverter;
+	}
+
+	public void setUpdateOperationListener(final UpdateOperationListener updateOperationListener) {
+		Validate.notNull(updateOperationListener);
+		this.updateOperationListener = updateOperationListener;
 	}
 
 	protected WAPI wapi() throws Exception {
@@ -220,8 +248,10 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			final String procInstId = wapi().createProcessInstance(handle, uniqueProcDefId, null);
 			setProcessInstanceVariables(handle, procInstId, variables);
 			final String newProcInstId = wapi().startProcess(handle, procInstId);
+			updateOperationListener.processInstanceStarted(handle.getId());
 			return newWSProcessInstInfo(uniqueProcDefId, newProcInstId);
 		} catch (final Exception e) {
+			updateOperationListener.abortedOperation(handle.getId());
 			throw new CMWorkflowException(e);
 		}
 	}
@@ -384,11 +414,14 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 
 	@Override
 	public void abortActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
+		final WMSessionHandle handle = handle();
 		try {
 			// From Shark's FAQ,
 			// "terminate [...] tries to follow the next activity(s), [...] abort [...] doesn't."
 			wapi().changeActivityInstanceState(handle(), procInstId, actInstId, WMActivityInstanceState.CLOSED_ABORTED);
+			updateOperationListener.activityInstanceAborted(handle.getId());
 		} catch (final Exception e) {
+			updateOperationListener.abortedOperation(handle.getId());
 			throw new CMWorkflowException(e);
 		}
 	}
@@ -399,31 +432,45 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		try {
 			wapi().changeActivityInstanceState(handle, procInstId, actInstId, WMActivityInstanceState.OPEN_RUNNING);
 			wapi().changeActivityInstanceState(handle, procInstId, actInstId, WMActivityInstanceState.CLOSED_COMPLETED);
+			updateOperationListener.activityInstanceAdvanced(handle.getId());
 		} catch (final Exception e) {
+			updateOperationListener.abortedOperation(handle.getId());
 			throw new CMWorkflowException(e);
 		}
 	}
 
 	@Override
-	public final void abortProcessInstance(final String procInstId) throws CMWorkflowException {
-		changeProcessInstanceState(procInstId, WMProcessInstanceState.CLOSED_ABORTED);
-	}
-
-	@Override
-	public final void suspendProcessInstance(final String procInstId) throws CMWorkflowException {
-		changeProcessInstanceState(procInstId, WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
-	}
-
-	@Override
-	public final void resumeProcessInstance(final String procInstId) throws CMWorkflowException {
-		changeProcessInstanceState(procInstId, WMProcessInstanceState.OPEN_RUNNING);
-	}
-
-	protected void changeProcessInstanceState(final String procInstId, final WMProcessInstanceState newState)
-			throws CMWorkflowException {
+	public void abortProcessInstance(final String procInstId) throws CMWorkflowException {
+		final WMSessionHandle handle = handle();
 		try {
-			wapi().changeProcessInstanceState(handle(), procInstId, newState);
+			wapi().changeProcessInstanceState(handle, procInstId, WMProcessInstanceState.CLOSED_ABORTED);
+			updateOperationListener.processInstanceAborted(handle.getId());
 		} catch (final Exception e) {
+			updateOperationListener.abortedOperation(handle.getId());
+			throw new CMWorkflowException(e);
+		}
+	}
+
+	@Override
+	public void suspendProcessInstance(final String procInstId) throws CMWorkflowException {
+		final WMSessionHandle handle = handle();
+		try {
+			wapi().changeProcessInstanceState(handle, procInstId, WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
+			updateOperationListener.processInstanceSuspended(handle.getId());
+		} catch (final Exception e) {
+			updateOperationListener.abortedOperation(handle.getId());
+			throw new CMWorkflowException(e);
+		}
+	}
+
+	@Override
+	public void resumeProcessInstance(final String procInstId) throws CMWorkflowException {
+		final WMSessionHandle handle = handle();
+		try {
+			wapi().changeProcessInstanceState(handle, procInstId, WMProcessInstanceState.OPEN_RUNNING);
+			updateOperationListener.processInstanceResumed(handle.getId());
+		} catch (final Exception e) {
+			updateOperationListener.abortedOperation(handle.getId());
 			throw new CMWorkflowException(e);
 		}
 	}
