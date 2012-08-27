@@ -3,21 +3,19 @@ package org.cmdbuild.workflow.service;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.Validate;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.TypesConverter;
-import org.cmdbuild.workflow.event.NullWorkflowEventManager;
-import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
-import org.enhydra.shark.api.client.wfmc.wapi.WMProcessInstanceState;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
 
+/**
+ * Adds transaction management to the {@link AbstractSharkService}. 
+ * 
+ * Transactions should be handled with Spring!
+ */
 public abstract class TransactedSharkService extends AbstractSharkService {
 
-	/*
-	 * Transactions should be handled with Spring
-	 */
 	private abstract class TransactedExecutor<T> {
 
 		public T execute() throws CMWorkflowException {
@@ -26,11 +24,9 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 				initAndConnect();
 				final T result = command();
 				commitTransaction();
-				processEvents();
 				return result;
 			} catch (final CMWorkflowException e) {
 				rollbackTransaction();
-				purgeEvents();
 				throw e;
 			} finally {
 				disconnect();
@@ -67,20 +63,6 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 			}
 		}
 
-		private void processEvents() throws CMWorkflowException {
-			final WMSessionHandle handle = localHandle.get();
-			if (handle != null) {
-				eventManager.processEvents(handle().getId());
-			}
-		}
-
-		private void purgeEvents() {
-			final WMSessionHandle handle = localHandle.get();
-			if (handle != null) {
-				eventManager.purgeEvents(handle.getId());
-			}
-		}
-
 		private final void commitTransaction() throws CMWorkflowException {
 			try {
 				SharkInterfaceWrapper.getUserTransaction().commit();
@@ -101,18 +83,10 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 
 	private final ThreadLocal<WMSessionHandle> localHandle;
 
-	private static final WorkflowEventManager NULL_EVENT_MANAGER = new NullWorkflowEventManager();
-	private WorkflowEventManager eventManager;
 
 	protected TransactedSharkService(final Properties props) {
 		super(props);
 		localHandle = new ThreadLocal<WMSessionHandle>();
-		eventManager = NULL_EVENT_MANAGER;
-	}
-
-	public void setEventManager(final WorkflowEventManager eventManager) {
-		Validate.notNull(eventManager);
-		this.eventManager = eventManager;
 	}
 
 	protected WMSessionHandle handle() {
@@ -257,15 +231,38 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 	}
 
 	@Override
-	protected void changeProcessInstanceState(final String procInstId, final WMProcessInstanceState newState)
+	public void abortProcessInstance(final String procInstId)
 			throws CMWorkflowException {
 		new TransactedExecutor<Void>() {
 			@Override
 			protected Void command() throws CMWorkflowException {
-				TransactedSharkService.super.changeProcessInstanceState(procInstId, newState);
+				TransactedSharkService.super.abortProcessInstance(procInstId);
 				return null;
 			}
 		}.execute();
 	}
 
+	@Override
+	public void suspendProcessInstance(final String procInstId)
+			throws CMWorkflowException {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws CMWorkflowException {
+				TransactedSharkService.super.suspendProcessInstance(procInstId);
+				return null;
+			}
+		}.execute();
+	}
+
+	@Override
+	public void resumeProcessInstance(final String procInstId)
+			throws CMWorkflowException {
+		new TransactedExecutor<Void>() {
+			@Override
+			protected Void command() throws CMWorkflowException {
+				TransactedSharkService.super.resumeProcessInstance(procInstId);
+				return null;
+			}
+		}.execute();
+	}
 }

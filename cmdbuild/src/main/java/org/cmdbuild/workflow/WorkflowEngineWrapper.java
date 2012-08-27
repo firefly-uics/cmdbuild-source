@@ -23,6 +23,7 @@ import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -88,9 +89,12 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		}
 		final WSProcessInstInfo procInstInfo = workflowService.startProcess(processClass.getPackageId(),
 				processClass.getProcessDefinitionId());
-		keepOnlyStartingActivityInstance(startActivity.getId(), procInstInfo.getProcessInstanceId());
+		final WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(), procInstInfo.getProcessInstanceId());
 
-		final UserProcessInstance procInst = findProcessInstance(procInstInfo);
+		final UserProcessInstanceDefinition proc = newProcessInstance(processClass, procInstInfo);
+		proc.addActivity(startActInstInfo);
+		final UserProcessInstance procInst = proc.save();
+
 		fillCardInfoAndProcessInstanceIdOnProcessInstance(procInst);
 		return refetchProcessInstance(procInst);
 	}
@@ -104,17 +108,21 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		workflowService.setProcessInstanceVariables(procInstId, extraVars);
 	}
 
-	private void keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
+	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
 			throws CMWorkflowException {
+		WSActivityInstInfo startActInstInfo = null;
 		final WSActivityInstInfo[] ais = workflowService.findOpenActivitiesForProcessInstance(procInstId);
 		for (int i = 0; i < ais.length; ++i) {
 			final WSActivityInstInfo ai = ais[i];
 			final String actDefId = ai.getActivityDefinitionId();
-			if (!startActivityId.equals(actDefId)) {
+			if (startActivityId.equals(actDefId)) {
+				startActInstInfo = ai;
+			} else {
 				final String actInstId = ai.getActivityInstanceId();
 				workflowService.abortActivityInstance(procInstId, actInstId);
 			}
 		}
+		return startActInstInfo;
 	}
 
 	@Override

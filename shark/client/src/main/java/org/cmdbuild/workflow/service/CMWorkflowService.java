@@ -9,6 +9,13 @@ import org.cmdbuild.workflow.CMWorkflowException;
  */
 public interface CMWorkflowService {
 
+	/**
+	 * Retrieves all package versions by package id.
+	 * 
+	 * @param pkgId
+	 * @return all package versions
+	 * @throws CMWorkflowException
+	 */
 	String[] getPackageVersions(String pkgId) throws CMWorkflowException;
 
 	/**

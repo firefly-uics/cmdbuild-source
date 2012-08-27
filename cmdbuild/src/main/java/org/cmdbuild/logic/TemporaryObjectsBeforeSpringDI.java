@@ -23,6 +23,7 @@ import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
+import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
@@ -76,7 +77,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 
 		workflowEventManager = new WorkflowEventManagerImpl(workflowService, processDefinitionManager);
-		workflowService.setEventManager(workflowEventManager);
+		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
 
 	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {		
