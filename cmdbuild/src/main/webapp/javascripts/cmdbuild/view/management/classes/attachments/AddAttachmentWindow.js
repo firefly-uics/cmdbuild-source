@@ -29,8 +29,7 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 			allowBlank: false,
 			forceSelection: true,
 			queryMode: 'local',
-			emptyText: this.translation.select_category,
-			width: 300
+			emptyText: this.translation.select_category
 		});
 
 		this.form = new Ext.form.Panel({
@@ -38,9 +37,8 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 			fileUpload:true,
 			method: 'POST',
 			frame: true,
-			url : 'services/json/management/importcsv/uploadcsv',  
+			url : 'services/json/management/importcsv/uploadcsv',
 			monitorValid: true,
-			labelWidth: 200,
 
 			items: [{
 				xtype: 'hidden',
@@ -52,9 +50,8 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 				value: this.cardId || this.Id
 			}, this.combo,
 			{
-				xtype: 'textfield',
-				inputType : "file",
-				width: 230,
+				xtype: 'filefield',
+				width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
 				fieldLabel: this.translation.load_attachment,
 				allowBlank: false,
 				name: 'File'
@@ -63,7 +60,8 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 				fieldLabel: this.translation.description,
 				name: 'Description',
 				allowBlank: false,
-				width: 300
+				width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
+				anchor: "100%"
 			}]
 		});
 
@@ -73,16 +71,17 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 			autoScroll: true,
 			autoHeight: true,
 			modal: true,
-			layout:'fit',
+			layout:'anchor',
 			frame: false,
 			border: false,
 			buttonAlign: 'center',
 			buttons: [this.confirmBtn, this.abortBtn]
 		});
-		
+
 		if (Ext.isGecko) { // auto width does not work for upload field
-			this.width = 400;
+			this.width = 450;
 		}
+
 		this.callParent(arguments);
 	},
 
