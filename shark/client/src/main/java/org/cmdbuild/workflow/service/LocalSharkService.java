@@ -8,7 +8,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 /**
  * Implementation using remote Shark server
  */
-public class LocalSharkService extends AbstractSharkService {
+public class LocalSharkService extends TransactedSharkService {
 
 	public interface Config {
 		String getUsername();
