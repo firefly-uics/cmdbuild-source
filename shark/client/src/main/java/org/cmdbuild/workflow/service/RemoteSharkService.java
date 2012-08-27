@@ -18,7 +18,7 @@ import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 /**
  * Implementation using remote Shark server
  */
-public class RemoteSharkService extends AbstractSharkService {
+public class RemoteSharkService extends TransactedSharkService {
 
 	private static final String CMDBUILD_TYPE_NS = "http://type.workflow.cmdbuild.org";
 
