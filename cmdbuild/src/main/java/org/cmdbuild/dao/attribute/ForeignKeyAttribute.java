@@ -2,6 +2,7 @@ package org.cmdbuild.dao.attribute;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -25,6 +26,9 @@ public class ForeignKeyAttribute extends AttributeImpl {
 
 	@Override
 	protected ICard convertValue(Object maybeValue) {
+		if (maybeValue instanceof CardReference) {
+			maybeValue = ((CardReference) maybeValue).getId();
+		}
 		try {
 			final Integer intValue = IntegerAttribute.INTEGER_TYPE.convertValue(maybeValue);
 			ICard destCard = null;

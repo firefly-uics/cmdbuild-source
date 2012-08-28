@@ -199,9 +199,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	 */
 	@Override
 	public UserProcessInstanceDefinition set(final String key, final Object value) {
-		if (isUserAttributeName(key)) {
-			card.setValue(key, value);
-		}
+		setOnly(key, value);
 		return this;
 	}
 

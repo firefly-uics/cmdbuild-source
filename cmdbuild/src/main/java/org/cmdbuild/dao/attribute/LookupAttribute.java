@@ -2,6 +2,7 @@ package org.cmdbuild.dao.attribute;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -21,8 +22,11 @@ public class LookupAttribute extends AttributeImpl {
 	@Override
 	protected Object convertValue(Object value) {
 		Lookup lookup;
-		if (value instanceof Integer) {
-			Integer intValue = (Integer) value;
+		if (value instanceof CMLookup) {
+			value = ((CMLookup) value).getId();
+		}
+		if (value instanceof Number) {
+			Integer intValue = ((Number) value).intValue();
 			lookup = backend.getLookup(intValue);
 			if (lookup == null && intValue > 0) {
 				throw ORMExceptionType.ORM_TYPE_ERROR.createException();
