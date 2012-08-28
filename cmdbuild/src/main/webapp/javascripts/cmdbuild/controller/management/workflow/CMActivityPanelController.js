@@ -158,7 +158,7 @@
 				variables = activityInstance.getVariables();
 			}
 
-			_CMCache.getAttributeList(entryTypeId, function(attributes) {
+			function onAttributesLoaded(attributes) {
 
 				if (activityInstance.isNew()
 						|| processInstance.isStateOpen()) {
@@ -174,7 +174,13 @@
 				if (cb) {
 					cb();
 				}
-			});
+			}
+
+			if (entryTypeId) {
+				_CMCache.getAttributeList(entryTypeId, onAttributesLoaded);
+			} else {
+				onAttributesLoaded([]);
+			}
 		},
 
 		fillFormWidthProcessInstanceData: function(processInstance) {
@@ -317,7 +323,7 @@
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
 						var savedCardId = decodedResponse.response.Id;
-						this.delegate.onCardSaved(savedCardId);
+						this.view.displayMode();
 
 						// to enable the editing for the
 						// right processInstance
@@ -326,6 +332,8 @@
 						} else {
 							_CMUIState.onlyGridIfFullScreen();
 						}
+
+						this.delegate.onCardSaved(savedCardId);
 					}
 				});
 			}

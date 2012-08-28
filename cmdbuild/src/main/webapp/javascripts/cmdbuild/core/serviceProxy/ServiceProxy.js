@@ -356,7 +356,7 @@ CMDBuild.ServiceProxy.workflow = {
 
 	getActivityInstance: function(params, conf) {
 		conf.url = 'services/json/workflow/getactivityinstance';
-		conf.method = "POST";
+		conf.method = "GET";
 		conf.params = params;
 		conf.important = true;
 
