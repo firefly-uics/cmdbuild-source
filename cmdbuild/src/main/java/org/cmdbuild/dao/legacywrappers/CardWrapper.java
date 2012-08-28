@@ -167,10 +167,14 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	 */
 	@Override
 	public CMCardDefinition set(final String key, final Object value) {
+		setOnly(key, value);
+		return this;
+	}
+
+	protected final void setOnly(final String key, final Object value) {
 		if (isUserAttributeName(key)) {
 			card.getAttributeValue(key).setValue(value);
 		}
-		return this;
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
 
 public class DateAttribute extends AbstractDateAttribute {
 
@@ -22,19 +21,12 @@ public class DateAttribute extends AbstractDateAttribute {
 		return AttributeType.DATE;
 	}
 
-	@Override
-	protected Object convertValue(final Object value) {
-		Date dateValue;
-		if (value instanceof Date) {
-			dateValue = normalizeToMidnight((Date) value);
-		} else if (value instanceof Calendar) {
-			dateValue = normalizeToMidnight(((Calendar) value).getTime());
-		} else if (value instanceof String) {
-			dateValue = convertDateString((String) value, Constants.DATE_PARSING_PATTERN, SOAP_DATETIME_FORMAT);
-		} else {
-			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-		}
-		return dateValue;
+	protected String getParsingPattern() {
+		return Constants.DATE_PARSING_PATTERN;
+	}
+
+	protected Date normalizeDate(Date date) {
+		return normalizeToMidnight(date);
 	}
 
 	/*
