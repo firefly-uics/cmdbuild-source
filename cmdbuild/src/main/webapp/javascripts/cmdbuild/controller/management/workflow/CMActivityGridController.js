@@ -51,24 +51,26 @@
 		 * Do a request to have the activity data and set it in the _CMWFState
 		 */
 		onActivityInfoSelect: function(activityInfoId) {
-
-			// prevent the selection of the same activity
-			var lastSelection = _CMWFState.getActivityInstance();
-			if (!lastSelection ||
-					lastSelection.getId() == activityInfoId) {
+			var me = this;
+			if (!activityInfoId ||
+					// prevent the selection of the same activity
+					(me.lastActivityInfoId && me.lastActivityInfoId == activityInfoId)) {
 
 				return;
+			} else {
+				me.lastActivityInfoId = null;
 			}
 
-			updateViewSelection(activityInfoId, this);
+			updateViewSelection(activityInfoId, me);
+
 			CMDBuild.ServiceProxy.workflow.getActivityInstance({
-				classId: _CMWFState.getProcessClassRef().getId(),
+				classId: _CMWFState.getProcessInstance().getClassId(),
 				cardId: _CMWFState.getProcessInstance().getId(),
 				activityInstanceId: activityInfoId
 			}, {
-				scope: this,
 				success: function success(response, request, decoded) {
 					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+					me.lastActivityInfoId = activityInfoId;
 					_CMWFState.setActivityInstance(activity);
 				}
 			});
@@ -82,6 +84,7 @@
 					var activities = pi.getActivityInfoList();
 
 					_CMWFState.setProcessInstance(pi);
+					this.lastActivityInfoId = null;
 
 					if (activities.length > 0) {
 						toggleRow(pi, this);
