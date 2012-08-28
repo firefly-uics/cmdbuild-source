@@ -61,6 +61,9 @@ public class JoinCreator extends PartCreator {
 		}
 
 		protected void appendStatusWhere(boolean isHistoryAppend) {
+			if (isHistoryAppend) {
+				return;
+			}
 			sb.append(" WHERE ")
 					.append(quoteIdent(SystemAttributes.Status))
 					.append(OPERATOR_EQ)
