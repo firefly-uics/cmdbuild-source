@@ -23,6 +23,12 @@ public class DBLookup implements CMLookup {
 	}
 
 	@Override
+	public CMLookup getParent() {
+		// TODO
+		return null;
+	}
+
+	@Override
 	public String getCode() {
 		throw new UnsupportedOperationException("Not implemented yet!");
 	}

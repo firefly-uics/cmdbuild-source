@@ -6,8 +6,14 @@ import org.cmdbuild.elements.LookupType;
 public class LookupTypeWrapper implements CMLookupType {
 
 	private final LookupType inner;
+	
+	public static LookupTypeWrapper newInstance(final LookupType lookupType) {
+		if (lookupType == null)
+			return null;
+		return new LookupTypeWrapper(lookupType);
+	}
 
-	public LookupTypeWrapper(final LookupType inner) {
+	private LookupTypeWrapper(final LookupType inner) {
 		this.inner = inner;
 	}
 
@@ -16,5 +22,8 @@ public class LookupTypeWrapper implements CMLookupType {
 		return inner.getType();
 	}
 
-
+	@Override
+	public CMLookupType getParent() {
+		return newInstance(inner.getParentType());
+	}
 }
