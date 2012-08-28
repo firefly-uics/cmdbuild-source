@@ -2,8 +2,10 @@ package org.cmdbuild.logic;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.activation.DataSource;
 
@@ -166,7 +168,30 @@ public class WorkflowLogic {
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final UserProcessInstance procInst = wfEngine.startProcess(process);
-		return updateOnlyActivity(procInst, vars, widgetSubmission, advance);
+		final Map<String, Object> mergedVars = mergeVars(procInst.getValues(), vars);
+		return updateOnlyActivity(procInst, mergedVars, widgetSubmission, advance);
+	}
+
+	/**
+	 * This awful hack is needed because SOMEONE decided that it was a good idea
+	 * to specify default attributes in the database, so old clients did it and
+	 * now we have to deal with it.
+	 * 
+	 * @param databaseValues
+	 *            values as they are in the newly created database row
+	 * @param entrySet
+	 *            values submitted in the form
+	 * @return database values overridden by the submitted ones
+	 */
+	private Map<String, Object> mergeVars(Iterable<Entry<String, Object>> databaseValues, Map<String, ?> submittedValues) {
+		final Map<String, Object> mergedValues = new HashMap<String, Object>();
+		for (Entry<String, ?> e : databaseValues) {
+			mergedValues.put(e.getKey(), e.getValue());
+		}
+		for (Entry<String, ?> e : submittedValues.entrySet()) {
+			mergedValues.put(e.getKey(), e.getValue());
+		}
+		return mergedValues;
 	}
 
 	public UserProcessInstance updateProcess(final String processClassName, final Long processCardId,
