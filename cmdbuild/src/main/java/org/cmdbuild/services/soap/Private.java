@@ -12,6 +12,7 @@ import org.cmdbuild.services.auth.UserInfo;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
+import org.cmdbuild.services.soap.structure.FunctionSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -213,10 +214,6 @@ public interface Private {
 			@WebParam(name = "functionName") String functionName,
 			@WebParam(name = "params") Attribute[] params);
 
-	/*
-	 * r2.4
-	 */
-
 	/**
 	 * Notify CMDBuild of an external event.
 	 * 
@@ -224,4 +221,10 @@ public interface Private {
 	 *            a generic event
 	 */
 	public void notify(@WebParam(name = "event") WSEvent event);
+
+	/**
+	 * Returns available functions list.
+	 */
+	public List<FunctionSchema> getFunctionList();
+	
 }

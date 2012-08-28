@@ -41,9 +41,11 @@ import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
+import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializzer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
+import org.cmdbuild.services.soap.structure.FunctionSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.types.Attachment;
@@ -456,10 +458,6 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		}.convertValue().toString();
 	}
 
-	/*
-	 * r2.4
-	 */
-
 	@Override
 	public void notify(final WSEvent wsEvent) {
 		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager();
@@ -480,6 +478,32 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 			}
 
 		});
+	}
+
+	@Override
+	public List<FunctionSchema> getFunctionList() {
+		final List<FunctionSchema> functionSchemas = new ArrayList<FunctionSchema>();
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
+		for (final CMFunction function : view.findAllFunctions()) {
+			functionSchemas.add(functionSchemaFor(function));
+		}
+		return functionSchemas;
+	}
+
+	private FunctionSchema functionSchemaFor(final CMFunction function) {
+		final FunctionSchema functionSchema = new FunctionSchema();
+		functionSchema.setName(function.getName());
+		functionSchema.setInput(attributeSchemasFrom(function.getInputParameters()));
+		functionSchema.setOutput(attributeSchemasFrom(function.getOutputParameters()));
+		return functionSchema;
+	}
+
+	private List<AttributeSchema> attributeSchemasFrom(final List<CMFunctionParameter> parameters) {
+		final List<AttributeSchema> attributeSchemas = new ArrayList<AttributeSchema>();
+		for (final CMFunction.CMFunctionParameter parameter : parameters) {
+			attributeSchemas.add(AttributeSchemaSerializzer.serialize(parameter));
+		}
+		return attributeSchemas;
 	}
 
 }
