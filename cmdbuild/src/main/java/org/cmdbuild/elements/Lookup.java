@@ -16,7 +16,6 @@ import org.cmdbuild.utils.StringUtils;
 
 public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
-	private static final long serialVersionUID = 1L;
 	private static final String LOOKUP_TABLE_NAME = "LookUp";
 
 	static protected List<String> IGNOREDATTRS = Arrays.asList("User", "BeginDate", "ParentType");
@@ -57,7 +56,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	public String getParentTypeName() {
 		try {
-			return backend.getLookupType(this.getType()).getParentTypeName();
+			return getLookupType().getParentTypeName();
 		} catch (Exception e) {
 			return null;
 		}
@@ -81,6 +80,10 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	public String getType() {
 		return (String) getValue("Type");
+	}
+
+	public LookupType getLookupType() {
+		return backend.getLookupType(getType());
 	}
 
 	public void setType(String type) throws ORMException {

@@ -8,10 +8,10 @@ public class LookupWrapper implements CMLookup {
 
 	private final Lookup inner;
 
-	public static CMLookup newInstance(final Lookup inner) {
-		if (inner == null)
+	public static CMLookup newInstance(final Lookup lookup) {
+		if (lookup == null)
 			return null;
-		return new LookupWrapper(inner);
+		return new LookupWrapper(lookup);
 	}
 
 	private LookupWrapper(final Lookup inner) {
@@ -20,17 +20,17 @@ public class LookupWrapper implements CMLookup {
 
 	@Override
 	public CMLookupType getType() {
-		return new CMLookupType() {
-			@Override
-			public String getName() {
-				return inner.getType();
-			}
-		};
+		return LookupTypeWrapper.newInstance(inner.getLookupType());
 	}
 
 	@Override
 	public Long getId() {
 		return Long.valueOf(inner.getId());
+	}
+
+	@Override
+	public CMLookup getParent() {
+		return newInstance(inner.getParent());
 	}
 
 	@Override

@@ -4,21 +4,23 @@ import org.cmdbuild.dao.entrytype.CMLookupType;
 
 public interface CMLookup {
 
-	public CMLookupType getType();
+	CMLookupType getType();
 
-	public Long getId();
+	Long getId();
+
+	CMLookup getParent();
 
 	/**
 	 * Returns a hopefully unique string identifier.
 	 * 
 	 * @return string identifier
 	 */
-	public String getCode();
+	String getCode();
 
 	/**
 	 * Returns a human-readable string representation.
 	 * 
 	 * @return description
 	 */
-	public String getDescription();
+	String getDescription();
 }

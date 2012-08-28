@@ -22,7 +22,7 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 			convertedValue = new HashMap<String, Object>() {
 				{
 					put("id", lookup.getId());
-					put("description", lookup.getDescription());
+					put("description", getChainedDescription(lookup));
 				}
 			};
 		} else {
@@ -35,4 +35,15 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 		convertedValue = value;
 	}
 
+	private String getChainedDescription(final CMLookup lookup) {
+		String description = lookup.getDescription();
+		final String concatFormat = "%s - %s";
+		CMLookup parent = lookup.getParent();
+		while (parent != null) {
+			description = String.format(concatFormat, parent.getDescription(), description);
+			parent = parent.getParent();
+		}
+
+		return description;
+	}
 }

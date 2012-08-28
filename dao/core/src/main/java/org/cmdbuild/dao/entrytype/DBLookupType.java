@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.entrytype;
 
+
 public class DBLookupType implements CMLookupType {
 
 	final String name;
@@ -11,6 +12,12 @@ public class DBLookupType implements CMLookupType {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public CMLookupType getParent() {
+		// TODO
+		return null;
 	}
 
 }
