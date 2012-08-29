@@ -60,7 +60,12 @@ public class ReferenceAttribute extends AttributeImpl {
 
 	@Override
 	protected String notNullValueToString(Object value) {
-		return ((Reference)value).getDescription();
+		String stringValue = ((Reference)value).getDescription();
+		if (stringValue == null) {
+			stringValue = "";
+		}
+
+		return stringValue;
 	}
 
 	@Override
