@@ -9,8 +9,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 public abstract class AbstractDateAttributeType extends AbstractAttributeType<DateTime> {
 
-	public static final String SOAP_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-
 	@Override
 	protected DateTime convertNotNullValue(Object value) {
 		if (value instanceof String) {

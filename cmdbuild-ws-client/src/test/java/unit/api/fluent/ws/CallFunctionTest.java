@@ -1,7 +1,7 @@
 package unit.api.fluent.ws;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.attribute;
+import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.wsAttribute;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -48,7 +48,7 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 		when(proxy().callFunction( //
 				anyString(), //
 				anyListOf(Attribute.class)) //
-		).thenReturn(asList(attribute(OUT_PARAMETER_1, OUT_PARAMETER_1_VALUE)));
+		).thenReturn(asList(wsAttribute(OUT_PARAMETER_1, OUT_PARAMETER_1_VALUE)));
 
 		callFunction.execute();
 
@@ -65,7 +65,7 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 		when(proxy().callFunction( //
 				anyString(), //
 				anyListOf(Attribute.class)) //
-		).thenReturn(asList(attribute(OUT_PARAMETER_1, OUT_PARAMETER_1_VALUE)));
+		).thenReturn(asList(wsAttribute(OUT_PARAMETER_1, OUT_PARAMETER_1_VALUE)));
 
 		final Map<String, String> outputs = callFunction.execute();
 		assertThat(outputs.size(), equalTo(1));

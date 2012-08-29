@@ -18,7 +18,7 @@ public class DateTimeAttributeType extends AbstractDateAttributeType {
 	protected DateTimeFormatter[] getFormatters() {
 		return new DateTimeFormatter[] {
 			DateTimeFormat.forPattern(Constants.DATETIME_PARSING_PATTERN),
-			DateTimeFormat.forPattern(SOAP_DATETIME_FORMAT)
+			DateTimeFormat.forPattern(Constants.SOAP_ALL_DATES_PARSING_PATTERN)
 		};
 	}
 }

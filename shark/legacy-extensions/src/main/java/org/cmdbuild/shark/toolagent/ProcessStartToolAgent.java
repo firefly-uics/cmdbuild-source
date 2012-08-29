@@ -48,8 +48,8 @@ public class ProcessStartToolAgent extends ManageCardToolAgent {
 	}
 
 	private boolean shouldAdvance() {
-		return getBooleanFromIntegerExtendedAttribute(ADVANCE_PROCESS_1) ||
-				getBooleanFromIntegerExtendedAttribute(ADVANCE_PROCESS_2);
+		return getBooleanFromIntegerExtendedAttribute(ADVANCE_PROCESS_1)
+				|| getBooleanFromIntegerExtendedAttribute(ADVANCE_PROCESS_2);
 	}
 
 	@Override

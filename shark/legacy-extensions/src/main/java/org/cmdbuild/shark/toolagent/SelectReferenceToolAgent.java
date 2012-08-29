@@ -1,8 +1,6 @@
 package org.cmdbuild.shark.toolagent;
 
-import static org.cmdbuild.common.Constants.CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
-import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
 import java.util.List;
 
@@ -49,15 +47,7 @@ public class SelectReferenceToolAgent extends AbstractConditionalToolAgent {
 	}
 
 	private ReferenceType referenceOf(final Card card) {
-		final ReferenceType reference = emptyReference();
-		reference.setId(card.getId());
-		if (card.has(CLASS_ID_ATTRIBUTE)) {
-			reference.setIdClass(card.getClassId());
-		}
-		if (card.has(DESCRIPTION_ATTRIBUTE)) {
-			reference.setDescription(card.getDescription());
-		}
-		return reference;
+		return getWorkflowApi().referenceTypeFrom(card);
 	}
 
 }

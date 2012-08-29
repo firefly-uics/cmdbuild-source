@@ -2,7 +2,6 @@ package org.cmdbuild.api.fluent;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
-import static org.cmdbuild.common.Constants.CLASS_ID_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
@@ -35,10 +34,6 @@ public class Card extends CardDescriptor {
 		return unmodifiableMap(attributes);
 	}
 
-	public Integer getClassId() {
-		return get(CLASS_ID_ATTRIBUTE, Integer.class);
-	}
-
 	public String getCode() {
 		return get(CODE_ATTRIBUTE, String.class);
 	}
@@ -58,10 +53,6 @@ public class Card extends CardDescriptor {
 
 	void set(final String name, final Object value) {
 		attributes.put(name, value);
-	}
-
-	void setClassId(final int classId) {
-		set(CLASS_ID_ATTRIBUTE, classId);
 	}
 
 	void setCode(final String value) {

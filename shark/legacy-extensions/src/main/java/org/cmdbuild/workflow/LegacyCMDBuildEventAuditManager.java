@@ -37,8 +37,11 @@ public class LegacyCMDBuildEventAuditManager extends DelegatingEventAuditManager
 				final WMSessionHandle shandle = activityInstance.getSessionHandle();
 				try {
 					cus.info(shandle, format("Self-suspending process %s", processInstanceId));
-					Shark.getInstance().getWAPIConnection().changeProcessInstanceState(shandle, processInstanceId, WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
-				} catch (Exception e) {
+					Shark.getInstance()
+							.getWAPIConnection()
+							.changeProcessInstanceState(shandle, processInstanceId,
+									WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
+				} catch (final Exception e) {
 					cus.error(shandle, format("Cannot suspend the current process: %s", processInstanceId), e);
 				}
 			}

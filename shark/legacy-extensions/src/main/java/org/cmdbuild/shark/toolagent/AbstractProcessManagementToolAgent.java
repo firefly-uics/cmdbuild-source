@@ -1,14 +1,13 @@
 package org.cmdbuild.shark.toolagent;
+
 import static java.lang.String.format;
 
-import org.cmdbuild.shark.toolagent.AbstractConditionalToolAgent;
 import org.enhydra.shark.Shark;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstanceState;
 import org.enhydra.shark.api.client.wfmc.wapi.WMFilter;
 import org.enhydra.shark.api.common.ActivityFilterBuilder;
 import org.enhydra.shark.api.common.SharkConstants;
-
 
 public abstract class AbstractProcessManagementToolAgent extends AbstractConditionalToolAgent {
 
@@ -22,16 +21,18 @@ public abstract class AbstractProcessManagementToolAgent extends AbstractConditi
 	private void advanceActivity(final WMActivityInstance actInst) throws Exception {
 		if (actInst != null) {
 			if (actInst.getState() != WMActivityInstanceState.OPEN_RUNNING) {
-				wapi().changeActivityInstanceState(shandle, actInst.getProcessInstanceId(), actInst.getId(), WMActivityInstanceState.OPEN_RUNNING);
+				wapi().changeActivityInstanceState(shandle, actInst.getProcessInstanceId(), actInst.getId(),
+						WMActivityInstanceState.OPEN_RUNNING);
 			}
-			wapi().changeActivityInstanceState(shandle, actInst.getProcessInstanceId(), actInst.getId(), WMActivityInstanceState.CLOSED_COMPLETED);
+			wapi().changeActivityInstanceState(shandle, actInst.getProcessInstanceId(), actInst.getId(),
+					WMActivityInstanceState.CLOSED_COMPLETED);
 		}
 	}
 
 	protected final WMActivityInstance getFirstOpenActivityInstance(final String procInstIdToQuery) throws Exception {
 		final WMFilter filter = openActivitiesForProcessInstance(procInstIdToQuery);
 		final WMActivityInstance[] activities = wapi().listActivityInstances(shandle, filter, false).getArray();
-		if (activities.length < 1) { 
+		if (activities.length < 1) {
 			cus.warn(shandle, format("No activities for process %s", procInstIdToQuery));
 			return null;
 		} else {

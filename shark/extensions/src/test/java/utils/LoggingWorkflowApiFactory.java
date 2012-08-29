@@ -2,6 +2,7 @@ package utils;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.collect.Factory.entry;
 import static org.cmdbuild.common.collect.Factory.linkedHashMapOf;
 import static org.cmdbuild.common.collect.Factory.treeMapOf;
@@ -46,15 +47,17 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 	public static final int CREATED_CARD_ID = 101;
 	public static final String CREATED_PROCESS_INSTANCE_ID = "NEWPI";
 
-	public static final ReferenceType FOUND_REFERENCE = new ReferenceType(CREATED_CARD_ID, 42, "d");
-
 	public static final String FOUND_REFERENCE_CLASSNAME = "referenceClassName";
+
+	public static final ReferenceType FOUND_REFERENCE = new ReferenceType(12345,
+			computedIdForName(FOUND_REFERENCE_CLASSNAME), "d");
 
 	public static final LookupType FOUND_LOOKUP = new LookupType(69, "ty", "de", "co");
 
 	public static final Map<String, String> FAKE_FUNCTION_RESPONSE;
 
 	public static final Card FOUND_CARD;
+	private static final Card FOUND_CARD_FOR_REFERENCE;
 	public static final String CLASS_NAME = "FoundClass";
 	public static final int CARD_ID = 42;
 	public static final String INTEGER_ATTRIBUTE = "anInteger";
@@ -78,6 +81,9 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				.existingCard(CLASS_NAME, CARD_ID) //
 				.with(INTEGER_ATTRIBUTE, Integer.toString(INTEGER_ATTRIBUTE_VALUE)) //
 				.with(STRING_ATTRIBUTE, STRING_ATTRIBUTE_VALUE);
+		FOUND_CARD_FOR_REFERENCE = new FluentApi(UNUSED_EXECUTOR) //
+				.existingCard(FOUND_REFERENCE_CLASSNAME, FOUND_REFERENCE.getId()) //
+				.with(DESCRIPTION_ATTRIBUTE, FOUND_REFERENCE.getDescription());
 	}
 
 	private CallbackUtilities cus;
@@ -129,7 +135,11 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								card.getClassName(), //
 								card.getId(), //
 								card.getAttributes()));
-				return FOUND_CARD;
+				if (card.getId() == FOUND_REFERENCE.getId()) {
+					return FOUND_CARD_FOR_REFERENCE;
+				} else {
+					return FOUND_CARD;
+				}
 			}
 
 			@Override
@@ -139,7 +149,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						fetchQueryClassLogLine(card.getClassName(), card.getAttributes()));
 				final Card foundCard = createWorkflowApi() //
 						.existingCard(card.getClassName(), FOUND_REFERENCE.getId()) //
-						.withClassId(FOUND_REFERENCE.getIdClass()) //
 						.withDescription(FOUND_REFERENCE.getDescription());
 				return asList(foundCard);
 			}
@@ -205,7 +214,8 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						createNewProcessInstanceLogLine( //
 								processCard.getClassName(), //
 								processCard.getAttributes()));
-				return new ProcessInstanceDescriptor(processCard.getClassName(), CREATED_CARD_ID, CREATED_PROCESS_INSTANCE_ID);
+				return new ProcessInstanceDescriptor(processCard.getClassName(), CREATED_CARD_ID,
+						CREATED_PROCESS_INSTANCE_ID);
 			}
 
 		}, new SchemaApi() {

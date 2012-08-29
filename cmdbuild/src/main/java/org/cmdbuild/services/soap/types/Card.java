@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.dao.attribute.AbstractDateAttribute;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.NotFoundException;
@@ -37,7 +36,7 @@ public class Card {
 				case DATE:
 				case TIME:
 				case TIMESTAMP:
-					return dateAsString(attributeValue, AbstractDateAttribute.SOAP_DATETIME_FORMAT);
+					return dateAsString(attributeValue, Constants.SOAP_ALL_DATES_PRINTING_PATTERN);
 				default:
 					return attributeValue.toString();
 				}

@@ -29,5 +29,8 @@ public interface Constants {
 	 * would interpret 12 as 0012 instead of 2012!
 	 */
 	String DATE_PARSING_PATTERN = DATE_TWO_DIGIT_YEAR_FORMAT;
-	
+
+	String SOAP_ALL_DATES_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+	String SOAP_ALL_DATES_PRINTING_PATTERN = SOAP_ALL_DATES_FORMAT;
+	String SOAP_ALL_DATES_PARSING_PATTERN = SOAP_ALL_DATES_FORMAT;
 }

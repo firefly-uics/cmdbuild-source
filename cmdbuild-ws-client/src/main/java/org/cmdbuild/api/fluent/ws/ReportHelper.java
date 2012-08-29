@@ -6,10 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 
@@ -17,19 +14,19 @@ import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Report;
 import org.cmdbuild.services.soap.ReportParams;
 
-class ReportHelper extends WsHelper {
+class ReportHelper {
 
 	public static final String DEFAULT_TYPE = "custom";
 	public static final String TEMPORARY_FILE_PREFIX = "report";
 
-	private static final ReportParams EMPTY_PARAMS = new ReportParams();
+	private final Private proxy;
 
 	public ReportHelper(final Private proxy) {
-		super(proxy);
+		this.proxy = proxy;
 	}
 
 	public List<Report> getReports(final String type) {
-		return proxy().getReportList(type, Integer.MAX_VALUE, 0);
+		return proxy.getReportList(type, Integer.MAX_VALUE, 0);
 	}
 
 	public Report getReport(final String type, final String title) {
@@ -43,23 +40,9 @@ class ReportHelper extends WsHelper {
 		throw new IllegalArgumentException(message);
 	}
 
-	public List<ReportParams> compileParams(final Map<String, Object> params) {
-		final List<ReportParams> reportParameters = new ArrayList<ReportParams>();
-		for (final Entry<String, Object> entry : params.entrySet()) {
-			final ReportParams parameter = new ReportParams();
-			parameter.setKey(entry.getKey());
-			parameter.setValue(convertToWsType(entry.getValue()));
-			reportParameters.add(parameter);
-		}
-		if (reportParameters.isEmpty()) {
-			reportParameters.add(EMPTY_PARAMS);
-		}
-		return reportParameters;
-	}
-
 	public DataHandler getDataHandler(final Report report, final String format, final List<ReportParams> reportParams) {
 		final int id = report.getId();
-		return proxy().getReport(id, format, reportParams);
+		return proxy.getReport(id, format, reportParams);
 	}
 
 	public File temporaryFile() {

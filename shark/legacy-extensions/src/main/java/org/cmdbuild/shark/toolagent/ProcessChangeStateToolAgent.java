@@ -40,7 +40,8 @@ public class ProcessChangeStateToolAgent extends AbstractProcessManagementToolAg
 		if (isCurrentProcessInstance(procInstIdToSuspend)) {
 			SelfSuspensionRequestHolder.add(getProcessInstanceId());
 		} else {
-			wapi().changeProcessInstanceState(shandle, procInstIdToSuspend, WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
+			wapi().changeProcessInstanceState(shandle, procInstIdToSuspend,
+					WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED);
 		}
 	}
 
@@ -48,7 +49,6 @@ public class ProcessChangeStateToolAgent extends AbstractProcessManagementToolAg
 		return CURRENT_PROCESS_INSTANCE_ID_MAGIC_VALUE.equals(procInstIdToSuspend)
 				|| getProcessInstanceId().equals(procInstIdToSuspend);
 	}
-
 
 	private StateParam getNewState() throws ToolAgentGeneralException {
 		final String newStateString = getExtendedAttribute(NEW_STATE_EXTENDED_ATTRIBUTE);
