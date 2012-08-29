@@ -15,8 +15,6 @@
 
 		cmStoreUrl: GET_PROCESS_INSTANCE_URL,
 
-		CLASS_COLUMN_DATA_INDEX: "classDescription", // for the header configuration
-
 		constructor: function() {
 
 			this.statusCombo = new  Ext.form.field.ComboBox({
@@ -95,6 +93,16 @@
 		onActivitySelected: function(activityInstanceId) {
 			_debug("Activity selection", activityInstanceId);
 			this.fireEvent("activityInstaceSelect", activityInstanceId);
+		},
+
+		// override
+		buildClassColumn: function() {
+			var cl = this.callParent();
+			cl.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+				return record.get("classDescription");
+			};
+
+			return cl;
 		}
 	});
 

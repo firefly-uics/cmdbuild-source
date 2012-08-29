@@ -4,7 +4,8 @@
 		extend: "Ext.grid.Panel",
 		columns: [],
 
-		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',
+		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',	// for the header configuration
+													// the name is used for the server-side sorting
 
 		extraParams: undefined, // extra params for the store
 		filterCategory: undefined,
@@ -157,13 +158,16 @@
 			var fields = [];
 
 			if (_CMUtils.isSuperclass(this.currentClassId)) {
-				headers.push(buildClassColumn(this));
+				headers.push(this.buildClassColumn());
 			}
 
 			for (var i=0; i<classAttributes.length; i++) {
 				var attribute = classAttributes[i];
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
-				if (header) {
+
+				if (header ||
+						header.dataIndex != CLASS_COLUMN_DATA_INDEX) {
+
 					this.addRendererToHeader(header);
 					// There was a day in which I receved the order to skip the Notes attribute.
 					// Today, the boss told  me to enable the notes. So, I leave the condition
@@ -194,7 +198,7 @@
 
 		// protected
 		addRendererToHeader: function(h) {
-
+			var me = this;
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
 				// Some values (like reference or lookup) are
@@ -288,6 +292,16 @@
 		//protected
 		buildExtraColumns: function() {
 			return [];
+		},
+
+		// protected
+		buildClassColumn: function() {
+			return {
+				header: CMDBuild.Translation.management.modcard.subclass,
+				width: 100,
+				sortable: true,
+				dataIndex: this.CLASS_COLUMN_DATA_INDEX
+			};
 		}
 	});
 
@@ -339,15 +353,6 @@
 		});
 
 		this.bbar = this.pagingBar;
-	}
-
-	function buildClassColumn(me) {
-		return {
-			header: CMDBuild.Translation.management.modcard.subclass,
-			width: 100,
-			sortable: true,
-			dataIndex: me.CLASS_COLUMN_DATA_INDEX
-		};
 	}
 
 	function buildGraphIconColumn(headers) {
