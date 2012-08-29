@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
@@ -29,7 +30,7 @@ public abstract class LegacyWorkflowPersistence {
 	protected final UserContext userCtx;
 	protected final CMWorkflowService workflowService;
 	protected final ProcessDefinitionManager processDefinitionManager;
-	protected final WorkflowTypesConverter workflowVariableConverter;
+	private final WorkflowTypesConverter workflowVariableConverter;
 
 	protected LegacyWorkflowPersistence( //
 			final UserContext userCtx, //
@@ -152,10 +153,17 @@ public abstract class LegacyWorkflowPersistence {
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
 
-	protected final Map<String, Object> toWorkflowValues(final Map<String, Object> nativeValues) {
+	protected final Map<String, Object> toWorkflowValues(final CMProcessClass processClass, final Map<String, Object> nativeValues) {
 		final Map<String, Object> workflowValues = new HashMap<String, Object>();
 		for (Map.Entry<String, Object> nv : nativeValues.entrySet()) {
-			workflowValues.put(nv.getKey(), workflowVariableConverter.toWorkflowType(nv.getValue()));
+			final String attributeName = nv.getKey();
+			CMAttributeType<?> attributeType;
+			try {
+				attributeType = processClass.getAttribute(attributeName).getType();
+			} catch (IllegalArgumentException e) {
+				attributeType = null;
+			}
+			workflowValues.put(attributeName, workflowVariableConverter.toWorkflowType(attributeType, nv.getValue()));
 		}
 		return workflowValues;
 	}

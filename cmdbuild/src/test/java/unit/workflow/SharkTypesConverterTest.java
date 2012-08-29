@@ -17,6 +17,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMLookupType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.workflow.SharkTypesConverter;
@@ -28,12 +29,14 @@ import org.junit.Test;
 
 public class SharkTypesConverterTest {
 
+	static final CMAttributeType<?> NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME = null;
+
 	final CMDataView dataView = mock(CMDataView.class);
 	final WorkflowTypesConverter converter = new SharkTypesConverter(dataView);
 
 	@Test
 	public void returnsTheSameObjectIfConversionNotNeeded() {
-		assertThat(converter.toWorkflowType(null), is(nullValue()));
+		assertThat(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, null), is(nullValue()));
 		assertNotConverted("Fifteen");
 		assertNotConverted(true);
 		assertNotConverted(false);
@@ -65,7 +68,7 @@ public class SharkTypesConverterTest {
 		when(src.getCode()).thenReturn("c");
 		when(src.getDescription()).thenReturn("d");
 
-		final LookupType dst = LookupType.class.cast(converter.toWorkflowType(src));
+		final LookupType dst = LookupType.class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
 
 		assertThat(dst.getType(), is("t"));
 		assertThat(dst.getId(), is(42));
@@ -81,7 +84,7 @@ public class SharkTypesConverterTest {
 		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, "D");
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 
-		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(src));
+		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
 
 		assertThat(dst.getId(), is(42));
 		assertThat(dst.getIdClass(), is(12));
@@ -97,7 +100,7 @@ public class SharkTypesConverterTest {
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 		final CardReference[] src = new CardReference[] { src0 };
 
-		final ReferenceType[] dst = ReferenceType[].class.cast(converter.toWorkflowType(src));
+		final ReferenceType[] dst = ReferenceType[].class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
 
 		assertThat(dst.length, is(src.length));
 		final ReferenceType dst0 = dst[0];
@@ -169,11 +172,11 @@ public class SharkTypesConverterTest {
 	 */
 
 	private void assertNotConverted(final Object src) {
-		assertThat(converter.toWorkflowType(src), is(sameInstance(src)));
+		assertThat(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src), is(sameInstance(src)));
 	}
 
 	private void assertConverted(final Object src, final Object dst) {
-		assertThat(converter.toWorkflowType(src), is(dst));
+		assertThat(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src), is(dst));
 	}
 
 }

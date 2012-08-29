@@ -1,7 +1,9 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
+import org.cmdbuild.dao.reference.CardReference;
 
-public class ForeignKeyAttributeType extends AbstractAttributeType<Object> {
+
+public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference> {
 
 	public ForeignKeyAttributeType() {
 	}
@@ -12,7 +14,7 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<Object> {
 	}
 
 	@Override
-	protected Object convertNotNullValue(Object value) {
+	protected CardReference convertNotNullValue(Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }
