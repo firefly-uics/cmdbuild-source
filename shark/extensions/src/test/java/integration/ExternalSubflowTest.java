@@ -29,7 +29,8 @@ public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 	private static final String CHILD_INPUT_VARIABLE = "FormalIn";
 	private static final String CHILD_OUTPUT_VARIABLE = "FormalOut";
 
-	private final ArgumentCaptor<ActivityInstance> activityInstanceCaptor = ArgumentCaptor.forClass(ActivityInstance.class);
+	private final ArgumentCaptor<ActivityInstance> activityInstanceCaptor = ArgumentCaptor
+			.forClass(ActivityInstance.class);
 
 	@Before
 	public void createAndUploadPackage() throws Exception {
@@ -46,9 +47,7 @@ public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 		inOrder.verify(eventManager).processStarted(argThat(hasProcessDefinitionId(PARENT_PROCESS)));
 		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ParentStart")));
 
-		ws.setProcessInstanceVariables(procInstId, linkedHashMapOf(
-					entry(PARENT_VARIABLE, "Something")
-				));
+		ws.setProcessInstanceVariables(procInstId, linkedHashMapOf(entry(PARENT_VARIABLE, "Something")));
 		ws.advanceActivityInstance(procInstId, actInstId);
 
 		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("GiveBirth")));
@@ -57,10 +56,8 @@ public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildEnd")));
 		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("VerifyVariable")));
 
-		assertThat(
-				ws.getProcessInstanceVariables(procInstId).get(PARENT_VARIABLE),
-				is(equalTo((Object) "Copy of Something"))
-			);
+		assertThat(ws.getProcessInstanceVariables(procInstId).get(PARENT_VARIABLE),
+				is(equalTo((Object) "Copy of Something")));
 	}
 
 	@Test
@@ -73,15 +70,11 @@ public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildStart")));
 		inOrder.verify(eventManager).activityStarted(argThat(hasActivityDefinitionId("ChildUserActivity")));
 
-		ws.setProcessInstanceVariables(procInstId, linkedHashMapOf(
-					entry(CHILD_INPUT_VARIABLE, "Something else")
-				));
+		ws.setProcessInstanceVariables(procInstId, linkedHashMapOf(entry(CHILD_INPUT_VARIABLE, "Something else")));
 		ws.advanceActivityInstance(procInstId, actInstId);
 
-		assertThat(
-				ws.getProcessInstanceVariables(procInstId).get(CHILD_OUTPUT_VARIABLE),
-				is(equalTo((Object) "Copy of Something else"))
-			);
+		assertThat(ws.getProcessInstanceVariables(procInstId).get(CHILD_OUTPUT_VARIABLE),
+				is(equalTo((Object) "Copy of Something else")));
 	}
 
 	/*

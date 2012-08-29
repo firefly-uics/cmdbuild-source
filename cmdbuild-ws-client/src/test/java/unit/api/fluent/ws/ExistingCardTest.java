@@ -1,6 +1,5 @@
 package unit.api.fluent.ws;
 
-import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.soapCardFor;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.allOf;
@@ -14,6 +13,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static utils.matchers.AttributeListMatcher.containsAttribute;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.services.soap.Attribute;
@@ -128,6 +131,33 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 			}
 		});
 		return card;
+	}
+
+	/*
+	 * Utils
+	 */
+
+	private Card soapCardFor(final org.cmdbuild.api.fluent.Card card) {
+		final org.cmdbuild.services.soap.Card soapCard = new org.cmdbuild.services.soap.Card();
+		soapCard.setClassName(card.getClassName());
+		if (card.getId() != null) {
+			soapCard.setId(card.getId());
+		}
+		soapCard.getAttributeList().addAll(attributesFor(card));
+		return soapCard;
+	}
+
+	private List<Attribute> attributesFor(final org.cmdbuild.api.fluent.Card card) {
+		final List<Attribute> attributes = new ArrayList<Attribute>();
+		for (final Entry<String, Object> entry : card.getAttributes().entrySet()) {
+			attributes.add(new Attribute() {
+				{
+					setName(entry.getKey());
+					setValue(entry.getValue().toString());
+				}
+			});
+		}
+		return attributes;
 	}
 
 }

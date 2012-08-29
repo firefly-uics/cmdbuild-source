@@ -1,6 +1,5 @@
 package unit.dao;
 
-import static org.cmdbuild.dao.attribute.AbstractDateAttribute.SOAP_DATETIME_FORMAT;
 import static org.cmdbuild.dao.attribute.DateAttribute.POSTGRES_DATE_FORMAT;
 import static org.cmdbuild.dao.attribute.DateTimeAttribute.POSTGRES_DATETIME_FORMAT;
 import static org.junit.Assert.assertEquals;
@@ -150,7 +149,7 @@ public class AttributeValueTest {
 		Date today = today();
 		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.DATE_FOUR_DIGIT_YEAR_FORMAT)));
 		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.DATE_TWO_DIGIT_YEAR_FORMAT)));
-		assertEquals(today, dateAttribute.readValue(dateToString(today, SOAP_DATETIME_FORMAT)));
+		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.SOAP_ALL_DATES_PRINTING_PATTERN)));
 		assertEquals(null, dateAttribute.readValue(""));
 		assertTypeErrorOnRead("not a date", dateAttribute);
 	}
@@ -205,8 +204,8 @@ public class AttributeValueTest {
 		Date now = nowNotMillis();
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT)));
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT)));
-		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, SOAP_DATETIME_FORMAT)));
-		assertEquals(today(), dateAttribute.readValue(dateToString(now, Constants.DATE_PARSING_PATTERN)));
+		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.SOAP_ALL_DATES_PRINTING_PATTERN)));
+		assertEquals(today(), dateAttribute.readValue(dateToString(now, Constants.DATE_PRINTING_PATTERN)));
 		assertEquals(null, dateTimeAttribute.readValue(""));
 		assertTypeErrorOnRead("not a date", dateTimeAttribute);
 	}

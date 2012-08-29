@@ -24,7 +24,8 @@ import org.junit.Test;
 
 public class NewProcessInstanceTest extends AbstractWsFluentApiTest {
 
-	private static final List<WorkflowWidgetSubmission> EMPTY_WIDGET_SUBMISSION = Arrays.asList(new WorkflowWidgetSubmission[0]);
+	private static final List<WorkflowWidgetSubmission> EMPTY_WIDGET_SUBMISSION = Arrays
+			.asList(new WorkflowWidgetSubmission[0]);
 	private static final org.cmdbuild.services.soap.Workflow PROCESS_INSTANCE_INFO;
 
 	static {

@@ -30,8 +30,8 @@ abstract class ManageCardToolAgent extends AbstractConditionalToolAgent {
 	}
 
 	/**
-	 * Returns the names that have a special meaning, thus are not
-	 * interpreted as meta-tool invocations.
+	 * Returns the names that have a special meaning, thus are not interpreted
+	 * as meta-tool invocations.
 	 * 
 	 * @return application names not interpreted as meta-tool invocations
 	 */

@@ -2,8 +2,8 @@ package utils;
 
 import static org.mockito.Mockito.mock;
 
-import org.cmdbuild.workflow.SimpleEventManager;
 import org.cmdbuild.workflow.DelegatingEventAuditManager;
+import org.cmdbuild.workflow.SimpleEventManager;
 
 public class MockEventAuditManager extends DelegatingEventAuditManager {
 

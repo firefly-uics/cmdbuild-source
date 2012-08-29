@@ -38,7 +38,8 @@ public class FluentApiTest {
 	private static final String PROCESS_INSTANCE_ID = "XYZ";
 
 	private static final CardDescriptor CARD_DESCRIPTOR = new CardDescriptor(CLASS_NAME, CARD_ID);
-	private static final ProcessInstanceDescriptor PROCESS_INSTANCE_DESCRIPTOR = new ProcessInstanceDescriptor(PROCESS_CLASS_NAME, CARD_ID, PROCESS_INSTANCE_ID);
+	private static final ProcessInstanceDescriptor PROCESS_INSTANCE_DESCRIPTOR = new ProcessInstanceDescriptor(
+			PROCESS_CLASS_NAME, CARD_ID, PROCESS_INSTANCE_ID);
 
 	private FluentApiExecutor executor;
 	private FluentApi api;

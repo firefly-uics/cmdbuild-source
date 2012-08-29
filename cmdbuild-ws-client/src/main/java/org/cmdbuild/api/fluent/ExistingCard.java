@@ -6,11 +6,6 @@ public class ExistingCard extends ActiveCard {
 		super(api, className, id);
 	}
 
-	public ExistingCard withClassId(final int classId) {
-		super.setClassId(classId);
-		return this;
-	}
-
 	public ExistingCard withCode(final String value) {
 		super.setCode(value);
 		return this;

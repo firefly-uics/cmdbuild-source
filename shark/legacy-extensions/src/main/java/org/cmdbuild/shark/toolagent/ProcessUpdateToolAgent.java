@@ -2,7 +2,6 @@ package org.cmdbuild.shark.toolagent;
 
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
 
-
 public class ProcessUpdateToolAgent extends AbstractProcessManagementToolAgent {
 
 	protected static final String ADVANCE_PROCESS = "Complete";
