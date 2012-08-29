@@ -63,8 +63,11 @@ public class WorkflowEventManagerImpl extends LegacyWorkflowPersistence implemen
 
 	private SessionEventMap sessionEventMap;
 
-	public WorkflowEventManagerImpl(final CMWorkflowService workflowService, final ProcessDefinitionManager processDefinitionManager) {
-		super(UserContext.systemContext(), workflowService, processDefinitionManager);
+	public WorkflowEventManagerImpl( //
+			final CMWorkflowService workflowService, //
+			final WorkflowTypesConverter variableConverter, //
+			final ProcessDefinitionManager processDefinitionManager) {
+		super(UserContext.systemContext(), workflowService, variableConverter, processDefinitionManager);
 		sessionEventMap = new SessionEventMap();
 	}
 

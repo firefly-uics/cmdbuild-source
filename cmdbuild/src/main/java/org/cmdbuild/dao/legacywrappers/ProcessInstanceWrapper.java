@@ -322,9 +322,9 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	 */
 	private String evaluatePerformerExpression(final String expression) throws CMWorkflowException, EvalError {
 		final String procInstId = getProcessInstanceId();
-		final Map<String, Object> vars = workflowService.getRawProcessInstanceVariables(procInstId);
+		final Map<String, Object> rawWorkflowVars = workflowService.getProcessInstanceVariables(procInstId);
 		final bsh.Interpreter interpreter = new bsh.Interpreter();
-		for (final Map.Entry<String, Object> entry : vars.entrySet()) {
+		for (final Map.Entry<String, Object> entry : rawWorkflowVars.entrySet()) {
 			interpreter.set(entry.getKey(), entry.getValue());
 		}
 		return interpreter.eval(expression).toString();

@@ -23,6 +23,7 @@ import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
+import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
@@ -64,6 +65,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final ProcessDefinitionManager processDefinitionManager;
 	private static final WorkflowLogger workflowLogger;
 	private static final WorkflowEventManager workflowEventManager;
+	private static final WorkflowTypesConverter workflowTypesConverter;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
@@ -72,11 +74,10 @@ public class TemporaryObjectsBeforeSpringDI {
 
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
-		workflowService.setVariableConverter(new SharkTypesConverter(dbDataView));
-
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
+		workflowTypesConverter = new SharkTypesConverter(dbDataView);
+		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter, processDefinitionManager);
 
-		workflowEventManager = new WorkflowEventManagerImpl(workflowService, processDefinitionManager);
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
 
@@ -133,7 +134,8 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static ContaminatedWorkflowEngine getWorkflowEngine(UserContext userCtx) {
-		final ContaminatedWorkflowEngine workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService, processDefinitionManager);
+		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
+				workflowTypesConverter, processDefinitionManager);
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
 	}

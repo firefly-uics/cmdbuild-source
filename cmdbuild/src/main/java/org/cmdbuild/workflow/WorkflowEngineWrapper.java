@@ -39,10 +39,17 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 	private CMWorkflowEngineListener eventListener;
 
-	public WorkflowEngineWrapper(final UserContext userCtx, final CMWorkflowService workflowService,
+	public WorkflowEngineWrapper(final UserContext userCtx,
+			final CMWorkflowService workflowService,
+			final WorkflowTypesConverter variableConverter,
 			final ProcessDefinitionManager processDefinitionManager) {
-		super(userCtx, workflowService, processDefinitionManager);
+		super(userCtx, workflowService, variableConverter, processDefinitionManager);
 		this.eventListener = NULL_EVENT_LISTENER;
+	}
+
+	@Override
+	public void setEventListener(final CMWorkflowEngineListener eventListener) {
+		this.eventListener = eventListener;
 	}
 
 	@Override
@@ -105,7 +112,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
 		extraVars.put(Constants.PROCESS_CLASSNAME_VARIABLE, procInst.getType().getName());
 		extraVars.put(Constants.PROCESS_INSTANCE_ID_VARIABLE, procInstId);
-		workflowService.setProcessInstanceVariables(procInstId, extraVars);
+		workflowService.setProcessInstanceVariables(procInstId, toWorkflowValues(extraVars));
 	}
 
 	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
@@ -143,7 +150,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	@Override
 	public void updateActivity(final CMActivityInstance activityInstance, final Map<String, ?> inputValues,
 			final Map<String, Object> widgetSubmission) throws CMWorkflowException {
-		final Map<String, Object> nativeValues = new HashMap<String, Object>(inputValues.size());
+		final Map<String, Object> nativeValues = new HashMap<String, Object>();
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();
 		final CMProcessInstanceDefinition procInstDef = modifyProcessInstance(procInst); // FIXME
 		for (final String key : inputValues.keySet()) {
@@ -155,7 +162,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		fillCustomProcessVariables(activityInstance, nativeValues);
-		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), nativeValues);
+		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), toWorkflowValues(nativeValues));
 	}
 
 	private void fillCustomProcessVariables(final CMActivityInstance activityInstance,
@@ -290,8 +297,4 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		return super.findProcessInstance(processDefinition, cardId);
 	}
 
-	@Override
-	public void setEventListener(final CMWorkflowEngineListener eventListener) {
-		this.eventListener = eventListener;
-	}
 }

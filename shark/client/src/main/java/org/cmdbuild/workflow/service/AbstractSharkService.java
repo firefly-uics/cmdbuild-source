@@ -10,8 +10,6 @@ import javax.transaction.NotSupportedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.IdentityTypesConverter;
-import org.cmdbuild.workflow.TypesConverter;
 import org.cmdbuild.workflow.event.NullUpdateOperationListener;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
@@ -67,7 +65,6 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	protected static final String DEFAULT_SCOPE = StringUtils.EMPTY;
 	protected static final String LAST_VERSION = StringUtils.EMPTY;
 
-	private static final TypesConverter IDENTITY_TYPES_CONVERTER = new IdentityTypesConverter();
 	private static final UpdateOperationListener NULL_UPDATE_OPERATION_LISTENER = new NullUpdateOperationListener();
 
 	/**
@@ -80,13 +77,10 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	 */
 	private volatile WAPI _wapi;
 
-	private TypesConverter typesConverter;
-
 	private UpdateOperationListener updateOperationListener;
 
 	protected AbstractSharkService(final Properties props) {
 		configureSharkInterfaceWrapper(props);
-		typesConverter = IDENTITY_TYPES_CONVERTER;
 		updateOperationListener = NULL_UPDATE_OPERATION_LISTENER;
 	}
 
@@ -110,11 +104,6 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			// throw java.lang.Exception even when it can't. Take a look at
 			// SharkInterfaceWrapper.setProperty(...) and have a good laugh!
 		}
-	}
-
-	public void setVariableConverter(final TypesConverter variableConverter) {
-		Validate.notNull(variableConverter);
-		this.typesConverter = variableConverter;
 	}
 
 	public void setUpdateOperationListener(final UpdateOperationListener updateOperationListener) {
@@ -334,17 +323,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	@Override
-	public final Map<String, Object> getProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
-		return getProcessInstanceVariables(procInstId, typesConverter);
-	}
-
-	@Override
-	public final Map<String, Object> getRawProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
-		return getProcessInstanceVariables(procInstId, IDENTITY_TYPES_CONVERTER);
-	}
-
-	protected Map<String, Object> getProcessInstanceVariables(final String procInstId,
-			final TypesConverter variableConverter) throws CMWorkflowException {
+	public Map<String, Object> getProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
 		try {
 			final Map<String, Object> variables = new HashMap<String, Object>();
 			final WMAttributeIterator iterator = wapi()
@@ -352,8 +331,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			for (final WMAttribute attribute : iterator.getArray()) {
 				final String name = attribute.getName();
 				final Object value = attribute.getValue();
-				final Object nativeValue = variableConverter.fromWorkflowType(value);
-				variables.put(name, nativeValue);
+				variables.put(name, value);
 			}
 			return variables;
 		} catch (final Exception e) {
@@ -374,8 +352,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	private void setProcessInstanceVariables(final WMSessionHandle handle, final String procInstId,
 			final Map<String, ?> variables) throws Exception {
 		for (final String name : variables.keySet()) {
-			final Object nativeValue = variables.get(name);
-			final Object sharkValue = typesConverter.toWorkflowType(nativeValue);
+			final Object sharkValue = variables.get(name);
 			wapi().assignProcessInstanceAttribute(handle, procInstId, name, sharkValue);
 		}
 	}
