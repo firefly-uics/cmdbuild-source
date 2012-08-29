@@ -169,20 +169,18 @@
 			oversize = domainResponseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
 			src = domainResponseObj.src,
 			domId = domainCachedData.get("id"),
-			node;
-
-		node = {
-			dom_id: domId,
-			label: buildDescriptionForDomainNode(domainResponseObj, domainCachedData),
-
-			src: src,
-			relations_size: domainResponseObj.relations_size,
-
-			expanded: !oversize,
-			leaf: false,
-			children: [],
-			rel_attr_keys: []
-		};
+			node = {
+				dom_id: domId,
+				label: buildDescriptionForDomainNode(domainResponseObj, domainCachedData),
+	
+				src: src,
+				relations_size: domainResponseObj.relations_size,
+	
+				expanded: !oversize,
+				leaf: false,
+				children: [],
+				rel_attr_keys: []
+			};
 
 		if (attributes.length > 0) {
 			this.showAttributesColumn = true;
@@ -235,6 +233,7 @@
 			r.src = src;
 
 			attributesToString = "";
+			node.rel_attr_keys = node.rel_attr_keys || [];
 			for (var j=0; j<node.rel_attr_keys.length; ++j) {
 				key = node.rel_attr_keys[j];
 				val = r.rel_attr[key];
