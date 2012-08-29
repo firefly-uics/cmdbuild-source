@@ -52,7 +52,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(DateTimeAttributeType attributeType) {
 			if (input == null) {
-				output = false;
+				output = null;
 			} else {
 				output = convertDateTime(input);
 			}
@@ -61,7 +61,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(DateAttributeType attributeType) {
 			if (input == null) {
-				output = false;
+				output = null;
 			} else {
 				output = convertDateTime(input);
 			}
@@ -115,12 +115,12 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 		@Override
 		public void visit(LookupAttributeType attributeType) {
-			convertLookup((CMLookup) input);
+			output = convertLookup((CMLookup) input);
 		}
 
 		@Override
 		public void visit(ReferenceAttributeType attributeType) {
-			convertReference((CardReference) input);
+			output = convertReference((CardReference) input);
 		}
 
 		@Override
@@ -144,7 +144,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(TimeAttributeType attributeType) {
 			if (input == null) {
-				output = false;
+				output = null;
 			} else {
 				output = convertDateTime(input);
 			}
