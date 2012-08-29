@@ -22,12 +22,14 @@ public class ConfigurationChangeTest extends AbstractRemoteSharkServiceTest {
 	@Test
 	public void startProcessFailsAfterReconfigurationWithWrongConfiguration() throws Exception {
 		startSimpleProcess();
-		changeConfiguration();
 		try {
+			changeConfiguration();
 			startSimpleProcess();
 			fail();
 		} catch (final CMWorkflowException e) {
 			assertThat(e.getCause().getMessage(), containsString(UnknownHostException.class.getName()));
+		} finally {
+			revertConfiguration();
 		}
 	}
 
@@ -40,6 +42,11 @@ public class ConfigurationChangeTest extends AbstractRemoteSharkServiceTest {
 
 	private void changeConfiguration() {
 		configuration.setServerHost(FAKE_SERVER_HOST);
+		configuration.notifyChange();
+	}
+
+	private void revertConfiguration() {
+		configuration.setServerHost(SERVER_HOST);
 		configuration.notifyChange();
 	}
 
