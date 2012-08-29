@@ -7,9 +7,10 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
+import org.cmdbuild.exception.NotFoundException;
 
 public class ClassWrapper implements CMClass {
 
@@ -53,7 +54,11 @@ public class ClassWrapper implements CMClass {
 
 	@Override
 	public CMAttribute getAttribute(String name) {
-		return new AttributeWrapper(table.getAttribute(name));
+		try {
+			return new AttributeWrapper(table.getAttribute(name));
+		} catch (NotFoundException e) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override

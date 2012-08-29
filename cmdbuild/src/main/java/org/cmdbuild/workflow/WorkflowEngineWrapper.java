@@ -112,7 +112,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
 		extraVars.put(Constants.PROCESS_CLASSNAME_VARIABLE, procInst.getType().getName());
 		extraVars.put(Constants.PROCESS_INSTANCE_ID_VARIABLE, procInstId);
-		workflowService.setProcessInstanceVariables(procInstId, toWorkflowValues(extraVars));
+		workflowService.setProcessInstanceVariables(procInstId, toWorkflowValues(procInst.getType(), extraVars));
 	}
 
 	private WSActivityInstInfo keepOnlyStartingActivityInstance(final String startActivityId, final String procInstId)
@@ -162,7 +162,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		fillCustomProcessVariables(activityInstance, nativeValues);
-		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), toWorkflowValues(nativeValues));
+		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), toWorkflowValues(procInst.getType(), nativeValues));
 	}
 
 	private void fillCustomProcessVariables(final CMActivityInstance activityInstance,

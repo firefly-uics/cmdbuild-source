@@ -13,8 +13,9 @@ import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.Reference;
 import org.cmdbuild.elements.history.TableHistory;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.services.auth.UserContext;
 import org.joda.time.DateTime;
 
@@ -69,8 +70,12 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 
 	@Override
 	public final Object get(String key) {
-		final AttributeValue av = card.getAttributeValue(key);
-		return extractAndConvertValue(av);
+		try {
+			final AttributeValue av = card.getAttributeValue(key);
+			return extractAndConvertValue(av);
+		} catch (NotFoundException e) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	private Object extractAndConvertValue(final AttributeValue av) {
