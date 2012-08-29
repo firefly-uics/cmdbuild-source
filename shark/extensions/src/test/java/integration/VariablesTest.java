@@ -5,12 +5,8 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static utils.EventManagerMatchers.isActivity;
 import static utils.EventManagerMatchers.isProcess;
 import static utils.XpdlTestUtils.randomName;
@@ -18,7 +14,6 @@ import static utils.XpdlTestUtils.randomName;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cmdbuild.workflow.TypesConverter;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
@@ -27,8 +22,6 @@ import org.cmdbuild.workflow.xpdl.XpdlDocument.StandardAndCustomTypes;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import utils.AbstractLocalSharkServiceTest;
 
@@ -100,31 +93,6 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		final Map<String, Object> variables = ws.getProcessInstanceVariables(procInstId);
 
 		assertThat((Long) variables.get(AN_INTEGER), equalTo(2L));
-	}
-
-	@Test
-	public void variablesSettedThenRead() throws Exception {
-		final TypesConverter typesConverter = identityTypesConverterMock();
-
-		ws.setVariableConverter(typesConverter);
-
-		process.createActivity(randomName());
-
-		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
-		verify(eventManager).processStarted(argThat(isProcess(process)));
-
-		final Map<String, Object> settedVariables = new HashMap<String, Object>();
-		settedVariables.put(A_BOOLEAN, true);
-		settedVariables.put(AN_INTEGER, 42);
-		settedVariables.put(A_STRING, "foo");
-		ws.setProcessInstanceVariables(procInstId, settedVariables);
-
-		verify(typesConverter, times(3)).toWorkflowType(anyObject());
-
-		final Map<String, Object> readVariables = ws.getProcessInstanceVariables(procInstId);
-		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(true));
-		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(42L));
-		assertThat((String) readVariables.get(A_STRING), equalTo("foo"));
 	}
 
 	@Test
@@ -201,21 +169,4 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		return reference;
 	}
 
-	private TypesConverter identityTypesConverterMock() {
-		final TypesConverter typesConverter = mock(TypesConverter.class);
-		when(typesConverter.toWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(final InvocationOnMock invocation) throws Throwable {
-				return invocation.getArguments()[0];
-			}
-
-		});
-		when(typesConverter.fromWorkflowType(anyObject())).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(final InvocationOnMock invocation) throws Throwable {
-				return invocation.getArguments()[0];
-			}
-		});
-		return typesConverter;
-	}
 }

@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.cmdbuild.workflow.TypesConverter;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
@@ -165,12 +164,11 @@ public abstract class TransactedSharkService extends AbstractSharkService {
 	}
 
 	@Override
-	public Map<String, Object> getProcessInstanceVariables(final String procInstId,
-			final TypesConverter variableConverter) throws CMWorkflowException {
+	public Map<String, Object> getProcessInstanceVariables(final String procInstId) throws CMWorkflowException {
 		return new TransactedExecutor<Map<String, Object>>() {
 			@Override
 			protected Map<String, Object> command() throws CMWorkflowException {
-				return TransactedSharkService.super.getProcessInstanceVariables(procInstId, variableConverter);
+				return TransactedSharkService.super.getProcessInstanceVariables(procInstId);
 			}
 		}.execute();
 	}

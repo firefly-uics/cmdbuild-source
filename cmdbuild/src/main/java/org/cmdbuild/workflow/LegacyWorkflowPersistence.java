@@ -1,7 +1,9 @@
 package org.cmdbuild.workflow;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.legacywrappers.ProcessClassWrapper;
 import org.cmdbuild.dao.legacywrappers.ProcessInstanceWrapper;
@@ -27,10 +29,17 @@ public abstract class LegacyWorkflowPersistence {
 	protected final UserContext userCtx;
 	protected final CMWorkflowService workflowService;
 	protected final ProcessDefinitionManager processDefinitionManager;
+	protected final WorkflowTypesConverter workflowVariableConverter;
 
-	protected LegacyWorkflowPersistence(final UserContext userCtx, final CMWorkflowService workflowService, final ProcessDefinitionManager processDefinitionManager) {
+	protected LegacyWorkflowPersistence( //
+			final UserContext userCtx, //
+			final CMWorkflowService workflowService, //
+			final WorkflowTypesConverter workflowVariableConverter, //
+			final ProcessDefinitionManager processDefinitionManager) {
+		Validate.notNull(workflowVariableConverter);
 		this.userCtx = userCtx;
 		this.workflowService = workflowService;
+		this.workflowVariableConverter = workflowVariableConverter;
 		this.processDefinitionManager = processDefinitionManager;
 	}
 
@@ -53,11 +62,12 @@ public abstract class LegacyWorkflowPersistence {
 		final UserProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
 
 		if (syncVariables) {
-			final Map<String, Object> vars = workflowService.getProcessInstanceVariables(processInstance
+			final Map<String, Object> workflowValues = workflowService.getProcessInstanceVariables(processInstance
 					.getProcessInstanceId());
+			final Map<String, Object> nativeValues = fromWorkflowValues(workflowValues);
 			for (final CMAttribute a : processInstance.getType().getAttributes()) {
 				final String attributeName = a.getName();
-				final Object newValue = vars.get(attributeName);
+				final Object newValue = nativeValues.get(attributeName);
 				editableProcessInstance.set(attributeName, newValue);
 			}
 		}
@@ -142,4 +152,19 @@ public abstract class LegacyWorkflowPersistence {
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
 
+	protected final Map<String, Object> toWorkflowValues(final Map<String, Object> nativeValues) {
+		final Map<String, Object> workflowValues = new HashMap<String, Object>();
+		for (Map.Entry<String, Object> nv : nativeValues.entrySet()) {
+			workflowValues.put(nv.getKey(), workflowVariableConverter.toWorkflowType(nv.getValue()));
+		}
+		return workflowValues;
+	}
+
+	protected final Map<String, Object> fromWorkflowValues(final Map<String, Object> workflowValues) {
+		final Map<String, Object> nativeValues = new HashMap<String, Object>();
+		for (Map.Entry<String, Object> wv : workflowValues.entrySet()) {
+			nativeValues.put(wv.getKey(), workflowVariableConverter.fromWorkflowType(wv.getValue()));
+		}
+		return nativeValues;
+	}
 }
