@@ -165,8 +165,8 @@
 				var attribute = classAttributes[i];
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-				if (header ||
-						header.dataIndex != CLASS_COLUMN_DATA_INDEX) {
+				if (header &&
+						header.dataIndex != this.CLASS_COLUMN_DATA_INDEX) {
 
 					this.addRendererToHeader(header);
 					// There was a day in which I receved the order to skip the Notes attribute.
