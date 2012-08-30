@@ -6,12 +6,42 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.api.fluent.ws.ClassAttribute;
+import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
+import org.cmdbuild.api.fluent.ws.FunctionInput;
+import org.cmdbuild.api.fluent.ws.FunctionOutput;
+import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
+import org.cmdbuild.services.soap.AttributeSchema;
+import org.cmdbuild.services.soap.FunctionSchema;
 import org.cmdbuild.services.soap.Lookup;
 import org.cmdbuild.services.soap.MenuSchema;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.type.LookupType;
 
 public class CachedWsSchemaApi implements SchemaApi {
+
+	public static interface AttributeInfo {
+
+		String getName();
+
+		WsType getWsType();
+
+	}
+
+	private enum FunctionParameterMode {
+		INPUT("in_"), OUTPUT("out_");
+
+		private final String prefix;
+
+		private FunctionParameterMode(final String prefix) {
+			this.prefix = prefix;
+		}
+
+		public String addPrefixTo(final String name) {
+			return prefix + name;
+		}
+
+	}
 
 	private static final String ANY_DESCRIPTION = null;
 	private static final boolean NO_PARENT_LIST = false;
@@ -21,6 +51,9 @@ public class CachedWsSchemaApi implements SchemaApi {
 	private final Map<String, ClassInfo> classesByName;
 	private final Map<Integer, ClassInfo> classesById;
 
+	private final Map<String, Map<String, AttributeInfo>> attributesByClass;
+	private final Map<String, Map<String, AttributeInfo>> attributesByFunction;
+
 	private final Map<String, List<LookupType>> lookupsByType;
 	private final Map<Integer, LookupType> lookupsById;
 
@@ -28,6 +61,8 @@ public class CachedWsSchemaApi implements SchemaApi {
 		this.proxy = proxy;
 		this.classesByName = new HashMap<String, ClassInfo>();
 		this.classesById = new HashMap<Integer, ClassInfo>();
+		this.attributesByClass = new HashMap<String, Map<String, AttributeInfo>>();
+		this.attributesByFunction = new HashMap<String, Map<String, AttributeInfo>>();
 		this.lookupsByType = new HashMap<String, List<LookupType>>();
 		this.lookupsById = new HashMap<Integer, LookupType>();
 	}
@@ -60,6 +95,94 @@ public class CachedWsSchemaApi implements SchemaApi {
 		for (final MenuSchema subclassSchema : classSchema.getChildren()) {
 			addClassToMapRecursively(subclassSchema);
 		}
+	}
+
+	public synchronized AttributeInfo findAttributeFor(final EntryTypeAttribute entryTypeAttribute) {
+		return new EntryTypeAttribute.Visitor() {
+
+			private AttributeInfo attributeInfo;
+
+			public AttributeInfo attributeInfo() {
+				entryTypeAttribute.accept(this);
+				return attributeInfo;
+			}
+
+			@Override
+			public void visit(ClassAttribute classAttribute) {
+				attributeInfo = findAttributeForClass(classAttribute.getClassName(), classAttribute.getAttributeName());
+			}
+
+			@Override
+			public void visit(FunctionInput functionInput) {
+				attributeInfo = findAttributeForFunction(functionInput.getFunctionName(),
+						functionInput.getAttributeName(), FunctionParameterMode.INPUT);
+			}
+
+			@Override
+			public void visit(FunctionOutput functionOutput) {
+				attributeInfo = findAttributeForFunction(functionOutput.getFunctionName(),
+						functionOutput.getAttributeName(), FunctionParameterMode.OUTPUT);
+			}
+
+		}.attributeInfo();
+	}
+
+	private AttributeInfo findAttributeForClass(final String className, final String attributeName) {
+		if (!attributesByClass.containsKey(className) || !attributesByClass.get(className).containsKey(attributeName)) {
+			updateClassAttributesMap(className);
+		}
+		return attributesByClass.get(className).get(attributeName);
+	}
+
+	private void updateClassAttributesMap(final String className) {
+		final Map<String, AttributeInfo> attributeInfos = new HashMap<String, CachedWsSchemaApi.AttributeInfo>();
+		final List<AttributeSchema> attributeSchemas = proxy.getAttributeList(className);
+		for (final AttributeSchema attributeSchema : attributeSchemas) {
+			attributeInfos.put(attributeSchema.getName(), attributeInfoFrom(attributeSchema));
+		}
+		attributesByClass.put(className, attributeInfos);
+	}
+
+	private AttributeInfo findAttributeForFunction(final String functionName, final String attributeName,
+			final FunctionParameterMode mode) {
+		final String name = mode.addPrefixTo(attributeName);
+		if (!attributesByFunction.containsKey(functionName)
+				|| !attributesByFunction.get(functionName).containsKey(name)) {
+			updateAllFunctionAttributesMap();
+		}
+		return attributesByFunction.get(functionName).get(name);
+	}
+
+	private void updateAllFunctionAttributesMap() {
+		final List<FunctionSchema> functionSchemas = proxy.getFunctionList();
+		for (final FunctionSchema functionSchema : functionSchemas) {
+			final Map<String, AttributeInfo> attributeInfos = new HashMap<String, CachedWsSchemaApi.AttributeInfo>();
+			for (final AttributeSchema attributeSchema : functionSchema.getInput()) {
+				final String name = FunctionParameterMode.INPUT.addPrefixTo(attributeSchema.getName());
+				attributeInfos.put(name, attributeInfoFrom(attributeSchema));
+			}
+			for (final AttributeSchema attributeSchema : functionSchema.getOutput()) {
+				final String name = FunctionParameterMode.OUTPUT.addPrefixTo(attributeSchema.getName());
+				attributeInfos.put(name, attributeInfoFrom(attributeSchema));
+			}
+			attributesByFunction.put(functionSchema.getName(), attributeInfos);
+		}
+	}
+
+	private AttributeInfo attributeInfoFrom(final AttributeSchema attributeSchema) {
+		return new AttributeInfo() {
+
+			@Override
+			public String getName() {
+				return attributeSchema.getName();
+			}
+
+			@Override
+			public WsType getWsType() {
+				return WsType.from(attributeSchema.getType());
+			}
+
+		};
 	}
 
 	@Override

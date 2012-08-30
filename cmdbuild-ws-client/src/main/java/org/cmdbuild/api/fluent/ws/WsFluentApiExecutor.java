@@ -4,6 +4,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.cmdbuild.api.fluent.ws.ClassAttribute.classAttribute;
+import static org.cmdbuild.api.fluent.ws.FunctionInput.functionInput;
+import static org.cmdbuild.api.fluent.ws.FunctionOutput.functionOutput;
 import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
 
 import java.io.File;
@@ -41,14 +44,18 @@ import org.cmdbuild.services.soap.WorkflowWidgetSubmission;
 public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	public enum WsType {
-		UNKNOWN
+		UNKNOWN;
+
+		public static WsType from(final String type) {
+			return UNKNOWN;
+		}
 	}
 
 	public interface EntryTypeConverter {
 
-		String toClientType(String entityTypeName, String attributeName, String wsValue);
+		String toClientType(EntryTypeAttribute entryTypeAttribute, String wsValue);
 
-		String toWsType(String entityTypeName, String attributeName, Object clientValue);
+		String toWsType(EntryTypeAttribute entryTypeAttribute, Object clientValue);
 
 	}
 
@@ -73,11 +80,11 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private static final EntryTypeConverter IDENTITY_ENTRY_TYPE_CONVERTER = new EntryTypeConverter() {
 
-		public String toClientType(final String entityTypeName, final String attributeName, final String wsValue) {
+		public String toClientType(final EntryTypeAttribute entityAttribute, final String wsValue) {
 			return wsValue;
 		}
 
-		public String toWsType(final String entityTypeName, final String attributeName, final Object value) {
+		public String toWsType(final EntryTypeAttribute entityAttribute, final Object value) {
 			return IDENTITY_RAW_TYPE_CONVERTER.toWsType(WsType.UNKNOWN, value);
 		}
 
@@ -93,24 +100,45 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private final Private proxy;
 
-	private EntryTypeConverter cardTypeConverter;
-	private EntryTypeConverter functionTypeConverter;
+	private interface EntityAttributeCreator {
+		EntryTypeAttribute attributeFor(String entryTypeName, String attributeName);
+	}
+
+	private static EntityAttributeCreator cardAttributeCreator = new EntityAttributeCreator() {
+
+		public EntryTypeAttribute attributeFor(String entryTypeName, String attributeName) {
+			return classAttribute(entryTypeName, attributeName);
+		}
+
+	};
+
+	private static EntityAttributeCreator functionInputCreator = new EntityAttributeCreator() {
+
+		public EntryTypeAttribute attributeFor(String entryTypeName, String attributeName) {
+			return functionInput(entryTypeName, attributeName);
+		}
+
+	};
+
+	private static EntityAttributeCreator functionOutputCreator = new EntityAttributeCreator() {
+
+		public EntryTypeAttribute attributeFor(String entryTypeName, String attributeName) {
+			return functionOutput(entryTypeName, attributeName);
+		}
+
+	};
+
+	private EntryTypeConverter entryTypeConverter;
 	private RawTypeConverter rawTypeConverter;
 
 	public WsFluentApiExecutor(final Private proxy) {
 		this.proxy = proxy;
-		this.cardTypeConverter = IDENTITY_ENTRY_TYPE_CONVERTER;
-		this.functionTypeConverter = IDENTITY_ENTRY_TYPE_CONVERTER;
+		this.entryTypeConverter = IDENTITY_ENTRY_TYPE_CONVERTER;
 		this.rawTypeConverter = IDENTITY_RAW_TYPE_CONVERTER;
 	}
 
-	public void setCardTypeConverter(final EntryTypeConverter cardTypeConverter) {
-		this.cardTypeConverter = (cardTypeConverter == null) ? IDENTITY_ENTRY_TYPE_CONVERTER : cardTypeConverter;
-	}
-
-	public void setFunctionTypeConverter(final EntryTypeConverter functionTypeConverter) {
-		this.functionTypeConverter = (functionTypeConverter == null) ? IDENTITY_ENTRY_TYPE_CONVERTER
-				: functionTypeConverter;
+	public void setEntryTypeConverter(final EntryTypeConverter entryTypeConverter) {
+		this.entryTypeConverter = (entryTypeConverter == null) ? IDENTITY_ENTRY_TYPE_CONVERTER : entryTypeConverter;
 	}
 
 	protected void setRawTypeConverter(final RawTypeConverter rawTypeConverter) {
@@ -176,7 +204,8 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	private List<Query> queriesFor(final Card card) {
 		final List<Query> queries = new ArrayList<Query>();
 		for (final String name : card.getAttributeNames()) {
-			final String wsValue = cardTypeConverter.toWsType(card.getClassName(), name, card.get(name));
+			final String wsValue = entryTypeConverter.toWsType(classAttribute(card.getClassName(), name),
+					card.get(name));
 			final Query attributeQuery = new Query() {
 				{
 					setFilter(wsEqualsFilter(name, wsValue));
@@ -208,7 +237,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 			final String wsValue = wsValueFor(attribute);
 			card.with( //
 					attributeName, //
-					cardTypeConverter.toClientType(soapCard.getClassName(), attributeName, wsValue));
+					entryTypeConverter.toClientType(classAttribute(soapCard.getClassName(), attributeName), wsValue));
 		}
 		return card;
 	}
@@ -301,11 +330,11 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	 */
 
 	private List<Attribute> wsInputAttributesFor(final Function function) {
-		return wsAttributesFor(functionTypeConverter, function.getFunctionName(), function.getInputs());
+		return wsAttributesFor(functionInputCreator, function.getFunctionName(), function.getInputs());
 	}
 
 	private Map<String, String> clientAttributesFor(final Function function, final List<Attribute> wsAttributes) {
-		return clientAttributesFor(functionTypeConverter, function.getFunctionName(), wsAttributes);
+		return clientAttributesFor(functionOutputCreator, function.getFunctionName(), wsAttributes);
 	}
 
 	private org.cmdbuild.services.soap.Card soapCardFor(final Card card) {
@@ -319,28 +348,30 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	private List<Attribute> wsAttributesFor(final Card card) {
-		return wsAttributesFor(cardTypeConverter, card.getClassName(), card.getAttributes());
+		return wsAttributesFor(cardAttributeCreator, card.getClassName(), card.getAttributes());
 	}
 
-	private List<Attribute> wsAttributesFor(final EntryTypeConverter typeConverter, final String className,
+	private List<Attribute> wsAttributesFor(final EntityAttributeCreator attributeCreator, final String className,
 			final Map<String, Object> attributes) {
 		final List<Attribute> wsAttributes = new ArrayList<Attribute>(attributes.size());
 		for (final Map.Entry<String, Object> e : attributes.entrySet()) {
-			final String wsValue = typeConverter.toWsType(className, e.getKey(), e.getValue());
+			final String wsValue = entryTypeConverter.toWsType(attributeCreator.attributeFor(className, e.getKey()),
+					e.getValue());
 			wsAttributes.add(wsAttribute(e.getKey(), wsValue));
 		}
 		return wsAttributes;
 	}
 
-	private Map<String, String> clientAttributesFor(final EntryTypeConverter typeConverter, final String entryTypeName,
-			final List<Attribute> wsAttributes) {
+	private Map<String, String> clientAttributesFor(final EntityAttributeCreator attributeCreator,
+			final String entryTypeName, final List<Attribute> wsAttributes) {
 		final Map<String, String> clientAttributes = new HashMap<String, String>();
 		for (final Attribute attribute : wsAttributes) {
 			final String attributeName = attribute.getName();
 			final String wsValue = wsValueFor(attribute);
 			clientAttributes.put( //
 					attributeName, //
-					typeConverter.toClientType(entryTypeName, attributeName, wsValue) //
+					entryTypeConverter.toClientType(attributeCreator.attributeFor(entryTypeName, attributeName),
+							wsValue) //
 					);
 		}
 		return clientAttributes;

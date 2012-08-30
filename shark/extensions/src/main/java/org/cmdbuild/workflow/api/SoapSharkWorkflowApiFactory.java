@@ -64,8 +64,7 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 		final CachedWsSchemaApi schemaApi = new CachedWsSchemaApi(proxy);
 		final WsFluentApiExecutor wsFluentApiExecutor = new WsFluentApiExecutor(proxy) {
 			{
-				setCardTypeConverter(new SharkWsCardTypeConverter(schemaApi));
-				setFunctionTypeConverter(new SharkWsFunctionTypeConverter(schemaApi));
+				setEntryTypeConverter(new SharkWsEntryTypeConverter(schemaApi));
 				setRawTypeConverter(new SharkWsRawTypeConverter());
 			}
 		};
