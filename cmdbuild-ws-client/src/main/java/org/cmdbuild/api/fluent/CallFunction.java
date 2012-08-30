@@ -13,7 +13,7 @@ public class CallFunction extends ActiveFunction {
 		return this;
 	}
 
-	public Map<String, String> execute() {
+	public Map<String, Object> execute() {
 		return getApi().getExecutor().execute(this);
 	}
 

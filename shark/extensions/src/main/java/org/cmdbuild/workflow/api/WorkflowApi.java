@@ -1,12 +1,12 @@
 package org.cmdbuild.workflow.api;
 
 import static java.lang.String.format;
-import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
+import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.NewMail;
@@ -40,6 +40,11 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 	@Override
 	public ClassInfo findClass(final int classId) {
 		return schemaApi.findClass(classId);
+	}
+
+	@Override
+	public AttributeInfo findAttributeFor(final EntryTypeAttribute entryTypeAttribute) {
+		return schemaApi.findAttributeFor(entryTypeAttribute);
 	}
 
 	@Override
@@ -105,7 +110,7 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 	private String descriptionFor(final CardDescriptor cardDescriptor) {
 		return existingCard(cardDescriptor) //
 				.fetch() //
-				.get(DESCRIPTION_ATTRIBUTE, String.class);
+				.getDescription();
 	}
 
 	public CardDescriptor cardDescriptorFrom(final ReferenceType referenceType) {

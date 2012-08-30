@@ -62,13 +62,14 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 	public WorkflowApi createWorkflowApi() {
 		final Private proxy = proxy();
 		final CachedWsSchemaApi schemaApi = new CachedWsSchemaApi(proxy);
-		final WsFluentApiExecutor wsFluentApiExecutor = new WsFluentApiExecutor(proxy) {
-			{
-				setEntryTypeConverter(new SharkWsEntryTypeConverter(schemaApi));
-				setRawTypeConverter(new SharkWsRawTypeConverter());
-			}
-		};
-		return new WorkflowApi(wsFluentApiExecutor, schemaApi, mailApi());
+		final WsFluentApiExecutor wsFluentApiExecutor = new WsFluentApiExecutor(proxy);
+		final WorkflowApi workflowApi = new WorkflowApi(wsFluentApiExecutor, schemaApi, mailApi());
+
+		// FIXME needed for cut-off circular dependency
+		wsFluentApiExecutor.setEntryTypeConverter(new SharkWsEntryTypeConverter(workflowApi));
+		wsFluentApiExecutor.setRawTypeConverter(new SharkWsRawTypeConverter(workflowApi));
+
+		return workflowApi;
 	}
 
 	private Private proxy() {

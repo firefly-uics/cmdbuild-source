@@ -29,6 +29,8 @@ import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
+import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
+import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.NewMail;
 import org.cmdbuild.workflow.api.SchemaApi;
@@ -54,7 +56,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	public static final LookupType FOUND_LOOKUP = new LookupType(69, "ty", "de", "co");
 
-	public static final Map<String, String> FAKE_FUNCTION_RESPONSE;
+	public static final Map<String, Object> FAKE_FUNCTION_RESPONSE;
 
 	public static final Card FOUND_CARD;
 	private static final Card FOUND_CARD_FOR_REFERENCE;
@@ -64,23 +66,25 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 	public static final int INTEGER_ATTRIBUTE_VALUE = 12345;
 	public static final String STRING_ATTRIBUTE = "aString";
 	public static final String STRING_ATTRIBUTE_VALUE = "this is a string";
+	public static final String REFERENCE_ATTRIBUTE = "aReference";
 
 	private static final File DOWNLOADED_REPORT_FILE = new File("/downloaded/report/is/here");
 
 	public static final DownloadedReport DOWNLOADED_REPORT = new DownloadedReport(DOWNLOADED_REPORT_FILE);
 
 	static {
-		FAKE_FUNCTION_RESPONSE = new HashMap<String, String>();
-		FAKE_FUNCTION_RESPONSE.put("IntegerOutput", "1");
+		FAKE_FUNCTION_RESPONSE = new HashMap<String, Object>();
+		FAKE_FUNCTION_RESPONSE.put("IntegerOutput", 1L);
 		FAKE_FUNCTION_RESPONSE.put("StringOutput", "two");
-		FAKE_FUNCTION_RESPONSE.put("ReferenceOutput", String.valueOf(FOUND_REFERENCE.getId()));
-		FAKE_FUNCTION_RESPONSE.put("LookupOutput", String.valueOf(FOUND_LOOKUP.getId()));
+		FAKE_FUNCTION_RESPONSE.put("ReferenceOutput", FOUND_REFERENCE);
+		FAKE_FUNCTION_RESPONSE.put("LookupOutput", FOUND_LOOKUP);
 
 		final FluentApiExecutor UNUSED_EXECUTOR = null;
 		FOUND_CARD = new FluentApi(UNUSED_EXECUTOR) //
 				.existingCard(CLASS_NAME, CARD_ID) //
 				.with(INTEGER_ATTRIBUTE, Integer.toString(INTEGER_ATTRIBUTE_VALUE)) //
-				.with(STRING_ATTRIBUTE, STRING_ATTRIBUTE_VALUE);
+				.with(STRING_ATTRIBUTE, STRING_ATTRIBUTE_VALUE) //
+				.with(REFERENCE_ATTRIBUTE, FOUND_REFERENCE);
 		FOUND_CARD_FOR_REFERENCE = new FluentApi(UNUSED_EXECUTOR) //
 				.existingCard(FOUND_REFERENCE_CLASSNAME, FOUND_REFERENCE.getId()) //
 				.with(DESCRIPTION_ATTRIBUTE, FOUND_REFERENCE.getDescription());
@@ -192,7 +196,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public Map<String, String> execute(final Function function) {
+			public Map<String, Object> execute(final Function function) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						callFunctionLogLine(function.getFunctionName(), function.getInputs()));
@@ -230,6 +234,24 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			public ClassInfo findClass(final int classId) {
 				// Log nothing
 				return new ClassInfo(computedNameForId(classId), classId);
+			}
+
+			@Override
+			public AttributeInfo findAttributeFor(final EntryTypeAttribute entryTypeAttribute) {
+				// Log nothing
+				return new AttributeInfo() {
+
+					@Override
+					public WsType getWsType() {
+						return REFERENCE_ATTRIBUTE.equals(getName()) ? WsType.REFERENCE : WsType.UNKNOWN;
+					}
+
+					@Override
+					public String getName() {
+						return entryTypeAttribute.getAttributeName();
+					}
+
+				};
 			}
 
 			@Override

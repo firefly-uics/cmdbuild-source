@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.api;
 
+import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
+import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
 import org.cmdbuild.workflow.type.LookupType;
 
 /**
@@ -47,9 +49,19 @@ public interface SchemaApi {
 
 	}
 
+	interface AttributeInfo {
+
+		String getName();
+
+		WsType getWsType();
+
+	}
+
 	ClassInfo findClass(String className);
 
 	ClassInfo findClass(int classId);
+
+	AttributeInfo findAttributeFor(EntryTypeAttribute entryTypeAttribute);
 
 	LookupType selectLookupById(int id);
 

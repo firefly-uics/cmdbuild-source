@@ -111,7 +111,7 @@ public class EAdministration {
 		schema.setIdClass(attribute.getSchema().getId());
 		schema.setName(attribute.getDBName());
 		schema.setDescription(attribute.getDescription());
-		schema.setType(attribute.getType().name());
+		schema.setType(attribute.getType().wsName());
 		schema.setBaseDSP(attribute.isBaseDSP());
 		schema.setUnique(attribute.isUnique());
 		schema.setNotnull(attribute.isNotNull());

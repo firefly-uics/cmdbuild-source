@@ -9,9 +9,4 @@ public class SelectAttributeToolAgent extends ManageAttributeToolAgent {
 		return ATTRIBUTE_VALUE;
 	}
 
-	@Override
-	protected Object outputValue() {
-		return attributeValue();
-	}
-
 }

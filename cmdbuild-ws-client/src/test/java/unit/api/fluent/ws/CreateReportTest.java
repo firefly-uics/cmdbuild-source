@@ -73,6 +73,7 @@ public class CreateReportTest extends AbstractWsFluentApiTest {
 
 		final InOrder inOrder = inOrder(proxy());
 		inOrder.verify(proxy()).getReportList("custom", Integer.MAX_VALUE, 0);
+		inOrder.verify(proxy()).getReportParameters(REPORT_ID, REPORT_FORMAT);
 		inOrder.verify(proxy()).getReport(eq(REPORT_ID), eq(REPORT_FORMAT), anyList());
 		verifyNoMoreInteractions(proxy());
 	}

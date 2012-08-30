@@ -25,7 +25,7 @@ public interface FluentApiExecutor {
 
 	List<Relation> fetch(RelationsQuery query);
 
-	Map<String, String> execute(Function function);
+	Map<String, Object> execute(Function function);
 
 	DownloadedReport download(Report report);
 

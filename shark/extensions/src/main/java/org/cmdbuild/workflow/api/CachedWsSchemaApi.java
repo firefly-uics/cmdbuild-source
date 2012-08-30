@@ -20,14 +20,6 @@ import org.cmdbuild.workflow.type.LookupType;
 
 public class CachedWsSchemaApi implements SchemaApi {
 
-	public static interface AttributeInfo {
-
-		String getName();
-
-		WsType getWsType();
-
-	}
-
 	private enum FunctionParameterMode {
 		INPUT("in_"), OUTPUT("out_");
 
@@ -97,6 +89,7 @@ public class CachedWsSchemaApi implements SchemaApi {
 		}
 	}
 
+	@Override
 	public synchronized AttributeInfo findAttributeFor(final EntryTypeAttribute entryTypeAttribute) {
 		return new EntryTypeAttribute.Visitor() {
 
@@ -108,18 +101,18 @@ public class CachedWsSchemaApi implements SchemaApi {
 			}
 
 			@Override
-			public void visit(ClassAttribute classAttribute) {
+			public void visit(final ClassAttribute classAttribute) {
 				attributeInfo = findAttributeForClass(classAttribute.getClassName(), classAttribute.getAttributeName());
 			}
 
 			@Override
-			public void visit(FunctionInput functionInput) {
+			public void visit(final FunctionInput functionInput) {
 				attributeInfo = findAttributeForFunction(functionInput.getFunctionName(),
 						functionInput.getAttributeName(), FunctionParameterMode.INPUT);
 			}
 
 			@Override
-			public void visit(FunctionOutput functionOutput) {
+			public void visit(final FunctionOutput functionOutput) {
 				attributeInfo = findAttributeForFunction(functionOutput.getFunctionName(),
 						functionOutput.getAttributeName(), FunctionParameterMode.OUTPUT);
 			}

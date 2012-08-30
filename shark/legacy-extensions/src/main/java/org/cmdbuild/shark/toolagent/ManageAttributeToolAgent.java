@@ -15,20 +15,17 @@ abstract class ManageAttributeToolAgent extends AbstractConditionalToolAgent {
 
 	@Override
 	protected void innerInvoke() throws Exception {
-		setParameterValue(outputName(), outputValue());
+		setParameterValue(outputName(), attributeValue());
 	}
 
 	protected abstract String outputName();
 
-	protected abstract Object outputValue();
-
-	protected String attributeValue() {
+	protected Object attributeValue() {
 		final String attributeName = getParameterValue(ATTRIBUTE_NAME);
 		final Card card = existingCard()//
 				.withAttribute(attributeName, UNUSED_ATTRIBUTE_VALUE) //
 				.fetch();
-		final String attributeValue = card.get(attributeName, String.class);
-		return attributeValue;
+		return card.get(attributeName);
 	}
 
 	private ExistingCard existingCard() {

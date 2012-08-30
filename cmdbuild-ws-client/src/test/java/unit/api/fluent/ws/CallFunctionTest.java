@@ -67,9 +67,9 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 				anyListOf(Attribute.class)) //
 		).thenReturn(asList(wsAttribute(OUT_PARAMETER_1, OUT_PARAMETER_1_VALUE)));
 
-		final Map<String, String> outputs = callFunction.execute();
+		final Map<String, Object> outputs = callFunction.execute();
 		assertThat(outputs.size(), equalTo(1));
-		assertThat(outputs.get(OUT_PARAMETER_1), equalTo(OUT_PARAMETER_1_VALUE));
+		assertThat(outputs.get(OUT_PARAMETER_1), equalTo((Object) OUT_PARAMETER_1_VALUE));
 	}
 
 }

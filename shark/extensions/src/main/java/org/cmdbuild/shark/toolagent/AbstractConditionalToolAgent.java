@@ -1,19 +1,13 @@
 package org.cmdbuild.shark.toolagent;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -39,9 +33,6 @@ import org.enhydra.shark.toolagent.AbstractToolAgent;
 public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	private static final String EXTENDED_ATTRIBUTES_PARAM = "ExtendedAttributes";
-
-	private static final String UNKNOWN_DESCRIPTION = EMPTY;
-	private static final int UNKNOWN_CLASS_ID = -1;
 
 	public interface ConditionEvaluator {
 
@@ -161,7 +152,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		return (T) value;
 	}
 
-	public <T> void setParameterValue(final String name, final T value) {
+	public void setParameterValue(final String name, final Object value) {
 		getParameter(name).the_value = value;
 	}
 
@@ -201,7 +192,7 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 	protected final Map<String, Object> getInputParameterValues() {
 		final Map<String, Object> paramMap = new HashMap<String, Object>();
 		for (final AppParameter p : getInputParameters()) {
-			paramMap.put(p.the_formal_name, valueOf(p));
+			paramMap.put(p.the_formal_name, p.the_value);
 		}
 		return paramMap;
 	}
@@ -216,21 +207,6 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 			params.add(p);
 		}
 		return params;
-	}
-
-	private Object valueOf(final AppParameter parameter) {
-		final Object rawValue = parameter.the_value;
-		final Object value;
-		if (parameter.the_class == ReferenceType.class) {
-			final ReferenceType referenceType = ReferenceType.class.cast(rawValue);
-			value = Long.toString(referenceType.getId());
-		} else if (parameter.the_class == LookupType.class) {
-			final LookupType lookupType = LookupType.class.cast(rawValue);
-			value = Long.toString(lookupType.getId());
-		} else {
-			value = rawValue;
-		}
-		return value;
 	}
 
 	/**
@@ -296,74 +272,6 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 			}
 		}
 		return obj;
-	}
-
-	protected final Object convertToProcessValue(final String stringValue, final Class<?> clazz) {
-		if (stringValue == null) {
-			return null;
-		}
-		if (Long.class.equals(clazz)) {
-			return stringToLongOurWay(stringValue);
-		} else if (ReferenceType.class.equals(clazz)) {
-			final Long id = stringToLongOurWay(stringValue);
-			if (id == null) {
-				return new ReferenceType();
-			} else {
-				// TODO fetch the card from Class?
-				return new ReferenceType(id.intValue(), UNKNOWN_CLASS_ID, UNKNOWN_DESCRIPTION);
-			}
-		} else if (LookupType.class.equals(clazz)) {
-			final Long id = stringToLongOurWay(stringValue);
-			if (id == null) {
-				return new LookupType();
-			} else {
-				return getWorkflowApi().selectLookupById(id.intValue());
-			}
-		} else if (Date.class.equals(clazz)) {
-			return stringToDateOurWay(stringValue);
-		} else if (Double.class.equals(clazz)) {
-			return stringToDoubleOurWay(stringValue);
-		} else if (Boolean.class.equals(clazz)) {
-			return Boolean.parseBoolean(stringValue);
-		} else {
-			return stringValue;
-		}
-	}
-
-	private Long stringToLongOurWay(final String stringValue) {
-		if (isEmpty(stringValue)) {
-			return null;
-		}
-		try {
-			return Long.parseLong(stringValue);
-		} catch (final NumberFormatException e) {
-			return null;
-		}
-	}
-
-	private Date stringToDateOurWay(final String stringValue) {
-		if (isEmpty(stringValue)) {
-			return null;
-		}
-		for (final String format : Arrays.asList(Constants.DATE_PARSING_PATTERN, Constants.DATETIME_PARSING_PATTERN,
-				Constants.TIME_PARSING_PATTERN)) {
-			try {
-				return new SimpleDateFormat(format).parse(stringValue);
-			} catch (final ParseException ex) {
-			}
-		}
-		return null;
-	}
-
-	private Double stringToDoubleOurWay(final String stringValue) {
-		if (isEmpty(stringValue)) {
-			return null;
-		}
-		try {
-			return Double.parseDouble(stringValue);
-		} catch (final NumberFormatException e) {
-			return null;
-		}
 	}
 
 }
