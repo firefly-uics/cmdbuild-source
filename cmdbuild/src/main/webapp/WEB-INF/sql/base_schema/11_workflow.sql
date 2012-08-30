@@ -15,31 +15,31 @@ INSERT INTO "LookUp" ("IdClass","Code", "Type", "Number", "Description", "IsDefa
 CREATE TABLE "Activity"
 (
   "FlowStatus" integer,
+  "ActivityDefinitionId" character varying[],
   "ProcessCode" text,
+  "NextExecutor" character varying[],
+  "ActivityInstanceId" character varying[],
+  "PrevExecutors" character varying[],
   "UniqueProcessDefinition" text,
-  "ActivityInstanceId" varchar[],
-  "ActivityDefinitionName" varchar[],
-  "NextExecutor" varchar[],
-  "PrevExecutors" varchar[],
   CONSTRAINT "Activity_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
-COMMENT ON TABLE "Activity" IS 'MODE: baseclass|TYPE: class|DESCR: Activity|SUPERCLASS: true|STATUS: active';
+COMMENT ON TABLE "Activity" IS 'MODE: baseclass|TYPE: class|DESCR: Activity|SUPERCLASS: true|MANAGER: activity|STATUS: active';
 COMMENT ON COLUMN "Activity"."Id" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."IdClass" IS 'MODE: reserved|DESCR: Class';
-COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Activity Name|INDEX: 0|BASEDSP: true|STATUS: active';
-COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Activity Name|INDEX: 0||LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: true|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
 COMMENT ON COLUMN "Activity"."Status" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."BeginDate" IS 'MODE: reserved';
 COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Notes';
-COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus|STATUS: active';
+COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
+COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: reserved|DESCR: Activity Definition Ids (for speed)';
 COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
-COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition';
-COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
-COMMENT ON COLUMN "Activity"."ActivityDefinitionName" IS 'MODE: reserved|DESCR: Activity Definition name (for the grid)';
 COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
+COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
 COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
+COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition (for speed)';
 
 CREATE INDEX idx_activity_code
   ON "Activity"
