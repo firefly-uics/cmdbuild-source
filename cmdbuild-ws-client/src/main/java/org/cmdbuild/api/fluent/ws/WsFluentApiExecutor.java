@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 
@@ -30,7 +29,9 @@ import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.Report;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
+import org.cmdbuild.services.soap.AttributeSchema;
 import org.cmdbuild.services.soap.CardList;
 import org.cmdbuild.services.soap.CqlQuery;
 import org.cmdbuild.services.soap.Filter;
@@ -44,16 +45,43 @@ import org.cmdbuild.services.soap.WorkflowWidgetSubmission;
 public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	public enum WsType {
-		UNKNOWN;
 
-		public static WsType from(final String type) {
+		BOOLEAN(Constants.Webservices.BOOLEAN_TYPE_NAME), //
+		CHAR(Constants.Webservices.CHAR_TYPE_NAME), //
+		DATE(Constants.Webservices.DATE_TYPE_NAME), //
+		DECIMAL(Constants.Webservices.DECIMAL_TYPE_NAME), //
+		DOUBLE(Constants.Webservices.DOUBLE_TYPE_NAME), //
+		FOREIGNKEY(Constants.Webservices.FOREIGNKEY_TYPE_NAME), //
+		INET(Constants.Webservices.INET_TYPE_NAME), //
+		INTEGER(Constants.Webservices.INTEGER_TYPE_NAME), //
+		LOOKUP(Constants.Webservices.LOOKUP_TYPE_NAME), //
+		REFERENCE(Constants.Webservices.REFERENCE_TYPE_NAME), //
+		STRING(Constants.Webservices.STRING_TYPE_NAME), //
+		TEXT(Constants.Webservices.TEXT_TYPE_NAME), //
+		TIMESTAMP(Constants.Webservices.TIMESTAMP_TYPE_NAME), //
+		TIME(Constants.Webservices.TIME_TYPE_NAME), //
+		UNKNOWN(Constants.Webservices.UNKNOWN_TYPE_NAME);
+
+		private final String wsTypeName;
+
+		private WsType(final String wsTypeName) {
+			this.wsTypeName = wsTypeName;
+		}
+
+		public static WsType from(final String wsTypeName) {
+			for (final WsType wsType : values()) {
+				if (wsType.wsTypeName.equals(wsTypeName)) {
+					return wsType;
+				}
+			}
 			return UNKNOWN;
 		}
+
 	}
 
 	public interface EntryTypeConverter {
 
-		String toClientType(EntryTypeAttribute entryTypeAttribute, String wsValue);
+		Object toClientType(EntryTypeAttribute entryTypeAttribute, String wsValue);
 
 		String toWsType(EntryTypeAttribute entryTypeAttribute, Object clientValue);
 
@@ -106,7 +134,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private static EntityAttributeCreator cardAttributeCreator = new EntityAttributeCreator() {
 
-		public EntryTypeAttribute attributeFor(String entryTypeName, String attributeName) {
+		public EntryTypeAttribute attributeFor(final String entryTypeName, final String attributeName) {
 			return classAttribute(entryTypeName, attributeName);
 		}
 
@@ -114,7 +142,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private static EntityAttributeCreator functionInputCreator = new EntityAttributeCreator() {
 
-		public EntryTypeAttribute attributeFor(String entryTypeName, String attributeName) {
+		public EntryTypeAttribute attributeFor(final String entryTypeName, final String attributeName) {
 			return functionInput(entryTypeName, attributeName);
 		}
 
@@ -122,7 +150,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 
 	private static EntityAttributeCreator functionOutputCreator = new EntityAttributeCreator() {
 
-		public EntryTypeAttribute attributeFor(String entryTypeName, String attributeName) {
+		public EntryTypeAttribute attributeFor(final String entryTypeName, final String attributeName) {
 			return functionOutput(entryTypeName, attributeName);
 		}
 
@@ -141,7 +169,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		this.entryTypeConverter = (entryTypeConverter == null) ? IDENTITY_ENTRY_TYPE_CONVERTER : entryTypeConverter;
 	}
 
-	protected void setRawTypeConverter(final RawTypeConverter rawTypeConverter) {
+	public void setRawTypeConverter(final RawTypeConverter rawTypeConverter) {
 		this.rawTypeConverter = (rawTypeConverter == null) ? IDENTITY_RAW_TYPE_CONVERTER : rawTypeConverter;
 	}
 
@@ -284,7 +312,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return relation;
 	}
 
-	public Map<String, String> execute(final Function function) {
+	public Map<String, Object> execute(final Function function) {
 		final List<Attribute> outputs = proxy.callFunction( //
 				function.getFunctionName(), //
 				wsInputAttributesFor(function));
@@ -294,19 +322,23 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	public DownloadedReport download(final Report report) {
 		final ReportHelper helper = new ReportHelper(proxy);
 		final org.cmdbuild.services.soap.Report soapReport = helper.getReport(DEFAULT_TYPE, report.getTitle());
-		final List<ReportParams> reportParams = compileParams(report.getParameters());
+		final List<AttributeSchema> paramSchemas = helper.getParamSchemas(soapReport, report.getFormat());
+		final List<ReportParams> reportParams = compileParams(paramSchemas, report.getParameters());
 		final DataHandler dataHandler = helper.getDataHandler(soapReport, report.getFormat(), reportParams);
 		final File file = helper.temporaryFile();
 		helper.saveToFile(dataHandler, file);
 		return new DownloadedReport(file);
 	}
 
-	private List<ReportParams> compileParams(final Map<String, Object> params) {
+	private List<ReportParams> compileParams(final List<AttributeSchema> paramSchemas, final Map<String, Object> params) {
 		final List<ReportParams> reportParameters = new ArrayList<ReportParams>();
-		for (final Entry<String, Object> entry : params.entrySet()) {
+		for (final AttributeSchema attributeSchema : paramSchemas) {
+			final String paramName = attributeSchema.getName();
+			final Object paramValue = params.get(paramName);
+			final WsType wsType = WsType.from(attributeSchema.getType());
 			final ReportParams parameter = new ReportParams();
-			parameter.setKey(entry.getKey());
-			parameter.setValue(rawTypeConverter.toWsType(WsType.UNKNOWN, entry.getValue()));
+			parameter.setKey(paramName);
+			parameter.setValue(rawTypeConverter.toWsType(wsType, paramValue));
 			reportParameters.add(parameter);
 		}
 		if (reportParameters.isEmpty()) {
@@ -333,7 +365,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return wsAttributesFor(functionInputCreator, function.getFunctionName(), function.getInputs());
 	}
 
-	private Map<String, String> clientAttributesFor(final Function function, final List<Attribute> wsAttributes) {
+	private Map<String, Object> clientAttributesFor(final Function function, final List<Attribute> wsAttributes) {
 		return clientAttributesFor(functionOutputCreator, function.getFunctionName(), wsAttributes);
 	}
 
@@ -362,9 +394,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return wsAttributes;
 	}
 
-	private Map<String, String> clientAttributesFor(final EntityAttributeCreator attributeCreator,
+	private Map<String, Object> clientAttributesFor(final EntityAttributeCreator attributeCreator,
 			final String entryTypeName, final List<Attribute> wsAttributes) {
-		final Map<String, String> clientAttributes = new HashMap<String, String>();
+		final Map<String, Object> clientAttributes = new HashMap<String, Object>();
 		for (final Attribute attribute : wsAttributes) {
 			final String attributeName = attribute.getName();
 			final String wsValue = wsValueFor(attribute);

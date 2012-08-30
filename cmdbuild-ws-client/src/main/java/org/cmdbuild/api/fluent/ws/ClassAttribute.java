@@ -5,9 +5,9 @@ public final class ClassAttribute extends EntryTypeAttribute {
 	protected ClassAttribute(final String className, final String attributeName) {
 		super(className, attributeName);
 	}
-	
+
 	@Override
-	public void accept(Visitor visitor) {
+	public void accept(final Visitor visitor) {
 		visitor.visit(this);
 	}
 

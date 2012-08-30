@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -25,6 +24,7 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.joda.time.DateTime;
@@ -43,7 +43,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(BooleanAttributeType attributeType) {
 			if (input == null) {
-				output = false;
+				output = SharkTypeDefaults.defaultBoolean();
 			} else {
 				output = input;
 			}
@@ -52,7 +52,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(DateTimeAttributeType attributeType) {
 			if (input == null) {
-				output = null;
+				output = SharkTypeDefaults.defaultDate();
 			} else {
 				output = convertDateTime(input);
 			}
@@ -61,7 +61,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(DateAttributeType attributeType) {
 			if (input == null) {
-				output = null;
+				output = SharkTypeDefaults.defaultDate();
 			} else {
 				output = convertDateTime(input);
 			}
@@ -70,7 +70,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(DecimalAttributeType attributeType) {
 			if (input == null) {
-				output = 0.0;
+				output = SharkTypeDefaults.defaultDouble();
 			} else {
 				output = BigDecimal.class.cast(input).doubleValue();
 			}
@@ -79,7 +79,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(DoubleAttributeType attributeType) {
 			if (input == null) {
-				output = 0.0;
+				output = SharkTypeDefaults.defaultDouble();
 			} else {
 				output = input;
 			}
@@ -98,7 +98,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(IntegerAttributeType attributeType) {
 			if (input == null) {
-				output = 0;
+				output = SharkTypeDefaults.defaultInteger();
 			} else {
 				output = input;
 			}
@@ -107,9 +107,9 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(IPAddressAttributeType attributeType) {
 			if (input == null) {
-				output = StringUtils.EMPTY;
+				output = SharkTypeDefaults.defaultString();
 			} else {
-				output = input;
+				output = input.toString();
 			}
 		}
 
@@ -126,7 +126,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(StringAttributeType attributeType) {
 			if (input == null) {
-				output = StringUtils.EMPTY;
+				output = SharkTypeDefaults.defaultString();
 			} else {
 				output = input;
 			}
@@ -135,7 +135,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(TextAttributeType attributeType) {
 			if (input == null) {
-				output = StringUtils.EMPTY;
+				output = SharkTypeDefaults.defaultString();
 			} else {
 				output = input;
 			}
@@ -144,7 +144,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		@Override
 		public void visit(TimeAttributeType attributeType) {
 			if (input == null) {
-				output = null;
+				output = SharkTypeDefaults.defaultDate();
 			} else {
 				output = convertDateTime(input);
 			}
@@ -195,8 +195,8 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 
 	/**
 	 * Tries to convert the values that are present only in Shark, so the
-	 * attributeType is null. We can only guess the type when the value is
-	 * not null.
+	 * attributeType is null. We can only guess the type when the value is not
+	 * null.
 	 * 
 	 * @param native value
 	 * @return shark value
@@ -228,14 +228,16 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	}
 
 	private LookupType convertLookup(final CMLookup cml) {
-		final LookupType lt = new LookupType();
 		if (cml != null) {
+			final LookupType lt = new LookupType();
 			lt.setType(cml.getType().getName());
 			lt.setId(objectIdToInt(cml.getId()));
 			lt.setCode(cml.getCode());
 			lt.setDescription(cml.getDescription());
+			return lt;
+		} else {
+			return SharkTypeDefaults.defaultLookup();
 		}
-		return lt;
 	}
 
 	private Integer convertLookup(final LookupType lt) {
@@ -255,14 +257,16 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 	}
 
 	private ReferenceType convertReference(final CardReference ref) {
-		final ReferenceType rt = new ReferenceType();
 		if (ref != null) {
+			final ReferenceType rt = new ReferenceType();
 			final CMClass refClass = dataView.findClassByName(ref.getClassName());
 			rt.setId(objectIdToInt(ref.getId()));
 			rt.setIdClass(objectIdToInt(refClass.getId()));
 			rt.setDescription(ref.getDescription());
+			return rt;
+		} else {
+			return SharkTypeDefaults.defaultReference();
 		}
-		return rt;
 	}
 
 	private CardReference convertReference(final ReferenceType ref) {

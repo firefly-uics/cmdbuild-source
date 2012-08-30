@@ -31,11 +31,11 @@ public class CreateCardToolAgent extends ManageCardToolAgent {
 		final Map<String, Object> attributes = getAttributeMap();
 		final int newCardId = createCard(classname, attributes);
 
-		final String description = String.valueOf(attributes.get(Constants.DESCRIPTION_ATTRIBUTE));
 		for (final AppParameter parmOut : getReturnParameters()) {
 			if (parmOut.the_class == Long.class) {
 				parmOut.the_value = newCardId;
 			} else if (parmOut.the_class == ReferenceType.class) {
+				final String description = (String) attributes.get(Constants.DESCRIPTION_ATTRIBUTE);
 				final ReferenceType reference = new ReferenceType();
 				reference.setId(newCardId);
 				reference.setIdClass(getWorkflowApi().findClass(classname).getId());

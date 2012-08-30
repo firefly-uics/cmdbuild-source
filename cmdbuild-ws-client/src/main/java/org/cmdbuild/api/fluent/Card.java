@@ -47,7 +47,7 @@ public class Card extends CardDescriptor {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T get(final String name, final Class<T> clazz) {
+	private <T> T get(final String name, final Class<T> clazz) {
 		return (T) get(name);
 	}
 

@@ -9,14 +9,4 @@ public class SelectReferenceByReferenceToolAgent extends ManageAttributeToolAgen
 		return OUT_REF;
 	}
 
-	@Override
-	protected Object outputValue() {
-		return getWorkflowApi().referenceTypeFrom(referencedId());
-	}
-
-	private int referencedId() {
-		final int referencedId = Integer.parseInt(attributeValue());
-		return referencedId;
-	}
-
 }

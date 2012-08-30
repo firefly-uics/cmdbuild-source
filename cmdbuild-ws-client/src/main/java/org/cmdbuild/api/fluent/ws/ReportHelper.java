@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
+import org.cmdbuild.services.soap.AttributeSchema;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Report;
 import org.cmdbuild.services.soap.ReportParams;
@@ -38,6 +39,10 @@ class ReportHelper {
 		}
 		final String message = format("missing report for type '%s' and title '%s'", type, title);
 		throw new IllegalArgumentException(message);
+	}
+
+	public List<AttributeSchema> getParamSchemas(final Report report, final String format) {
+		return proxy.getReportParameters(report.getId(), format);
 	}
 
 	public DataHandler getDataHandler(final Report report, final String format, final List<ReportParams> reportParams) {

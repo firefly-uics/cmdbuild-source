@@ -15,21 +15,20 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 	protected void innerInvoke() throws Exception {
 		final String functionName = getFunctionName();
 		final Map<String, Object> input = getInputParameterValues();
-		final Map<String, String> output = callFunction(functionName, input);
+		final Map<String, Object> output = callFunction(functionName, input);
 
 		for (final AppParameter parmOut : getReturnParameters()) {
-			final String stringValue = output.get(parmOut.the_formal_name);
-			parmOut.the_value = convertToProcessValue(stringValue, parmOut.the_class);
+			parmOut.the_value = output.get(parmOut.the_formal_name);
 		}
 	}
 
-	private Map<String, String> callFunction(final String functionName, final Map<String, Object> input) {
+	private Map<String, Object> callFunction(final String functionName, final Map<String, Object> input) {
 		final CallFunction callFunction = getWorkflowApi().callFunction(functionName);
 		for (final Entry<String, Object> entry : input.entrySet()) {
 			final Object normalizedValue = convertFromProcessValue(entry.getValue());
 			callFunction.with(entry.getKey(), normalizedValue);
 		}
-		final Map<String, String> output = callFunction.execute();
+		final Map<String, Object> output = callFunction.execute();
 		return output;
 	}
 
