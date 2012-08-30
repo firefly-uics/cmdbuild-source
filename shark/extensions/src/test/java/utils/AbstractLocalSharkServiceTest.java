@@ -7,9 +7,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
-public abstract class AbstractLocalSharkServiceTest extends AbstractWorkflowServiceTest {
+public abstract class AbstractLocalSharkServiceTest extends AbstractSharkServiceTest {
 
-	private static final String USERNAME = "admin";
+	public static final String USERNAME = "admin";
 
 	protected SimpleEventManager eventManager;
 

@@ -422,6 +422,10 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 		final WMSessionHandle handle = handle();
 		try {
 			wapi().changeActivityInstanceState(handle, procInstId, actInstId, WMActivityInstanceState.OPEN_RUNNING);
+		} catch (final Exception e) {
+			// Ignore: it might be open-running already...
+		}
+		try {
 			wapi().changeActivityInstanceState(handle, procInstId, actInstId, WMActivityInstanceState.CLOSED_COMPLETED);
 			updateOperationListener.activityInstanceAdvanced(handle.getId());
 		} catch (final Exception e) {

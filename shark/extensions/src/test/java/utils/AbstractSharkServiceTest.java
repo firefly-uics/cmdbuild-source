@@ -20,11 +20,13 @@ import org.cmdbuild.workflow.xpdl.XpdlException;
 import org.cmdbuild.workflow.xpdl.XpdlPackageFactory;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.enhydra.jxpdl.elements.Package;
+import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
+import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 
-public class AbstractWorkflowServiceTest implements XpdlTest {
+public class AbstractSharkServiceTest implements XpdlTest {
 
 	protected static AbstractSharkService ws;
 	protected XpdlDocument xpdlDocument;
@@ -40,6 +42,18 @@ public class AbstractWorkflowServiceTest implements XpdlTest {
 	@Override
 	public XpdlDocument getXpdlDocument() {
 		return xpdlDocument;
+	}
+
+	/**
+	 * Returns the WAPI connection to Shark.
+	 * 
+	 * Shark should have been already initialized by the {@link AbstractSharkService}.
+	 * 
+	 * @return Shark WAPI interface
+	 * @throws Exception
+	 */
+	protected final WAPI wapi() throws Exception {
+		return SharkInterfaceWrapper.getShark().getWAPIConnection();
 	}
 
 	/*

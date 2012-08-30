@@ -22,7 +22,7 @@ public class EventDelegationTest extends AbstractLocalSharkServiceTest {
 	private XpdlProcess process;
 
 	@Before
-	public void createAndUploadPackage() throws Exception {
+	public void createBasicProcess() throws Exception {
 		process = xpdlDocument.createProcess(randomName());
 	}
 

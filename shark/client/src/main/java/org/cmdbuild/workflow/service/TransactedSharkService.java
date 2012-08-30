@@ -15,7 +15,7 @@ import org.enhydra.shark.client.utilities.SharkInterfaceWrapper;
  */
 public abstract class TransactedSharkService extends AbstractSharkService {
 
-	private abstract class TransactedExecutor<T> {
+	protected abstract class TransactedExecutor<T> {
 
 		public T execute() throws CMWorkflowException {
 			try {

@@ -23,7 +23,7 @@ public class ActivityQueryTest extends AbstractLocalSharkServiceTest {
 	private XpdlProcess p3;
 
 	@Before
-	public void createAndUploadProcess() {
+	public void createBasicProcess() {
 		p1 = xpdlDocument.createProcess(randomName());
 		p1.createTransition(p1.createActivity("A"), p1.createActivity("B"));
 		p1.createActivity("C").setScriptingType(ScriptLanguage.JAVA, StringUtils.EMPTY);
