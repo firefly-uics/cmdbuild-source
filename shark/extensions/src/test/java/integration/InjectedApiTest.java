@@ -22,7 +22,7 @@ public class InjectedApiTest extends AbstractLocalSharkServiceTest {
 	private XpdlProcess process;
 
 	@Before
-	public void createAndUploadPackage() throws Exception {
+	public void createProcess() throws Exception {
 		process = xpdlDocument.createProcess(randomName());
 	}
 
@@ -38,7 +38,7 @@ public class InjectedApiTest extends AbstractLocalSharkServiceTest {
 
 		process.createTransition(scriptActivity, noImplActivity);
 
-		uploadXpdlAndStartProcess(process).getProcessInstanceId();
+		uploadXpdlAndStartProcess(process);
 		verify(eventManager).activityClosed(argThat(isActivity(scriptActivity)));
 
 		verify(MockSharkWorkflowApiFactory.fluentApiExecutor).create(any(Card.class));

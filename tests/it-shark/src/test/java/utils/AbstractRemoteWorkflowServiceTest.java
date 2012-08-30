@@ -14,7 +14,7 @@ import org.junit.Before;
  * Don't forget to initialize the variable {@code ws} in every subclass.
  * 
  */
-public abstract class AbstractRemoteWorkflowServiceTest extends AbstractWorkflowServiceTest {
+public abstract class AbstractRemoteWorkflowServiceTest extends AbstractSharkServiceTest {
 
 	protected static String USERNAME = "admin";
 	protected static String PASSWORD = "enhydra";

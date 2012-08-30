@@ -33,7 +33,7 @@ public class ExternalSubflowTest extends AbstractLocalSharkServiceTest {
 			.forClass(ActivityInstance.class);
 
 	@Before
-	public void createAndUploadPackage() throws Exception {
+	public void uploadPackages() throws Exception {
 		uploadXpdlResource("xpdl/Child.xpdl");
 		uploadXpdlResource("xpdl/Parent.xpdl");
 	}
