@@ -26,7 +26,7 @@ public abstract class SharkWsTypeConverter {
 		return stringValue;
 	}
 
-	protected String toClientType(final WsType wsType, final String attributeName, final String wsValue) {
+	protected String toClientType(final WsType wsType, final String wsValue) {
 		return wsValue;
 	}
 
