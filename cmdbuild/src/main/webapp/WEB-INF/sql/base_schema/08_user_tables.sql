@@ -33,6 +33,13 @@ CREATE TABLE "Role"
   "startingClass" regclass,
   "Email" varchar(320),
   "DisabledModules" varchar[],
+  "DisabledCardTabs" character varying[],
+  "DisabledProcessTabs" character varying[],
+  "HideSidePanel" boolean DEFAULT false NOT NULL,
+  "FullScreenMode" boolean DEFAULT false NOT NULL,
+  "SimpleHistoryModeForCard" boolean DEFAULT false NOT NULL,
+  "SimpleHistoryModeForProcess" boolean DEFAULT false NOT NULL,
+  "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL,
   CONSTRAINT "Role_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
@@ -49,6 +56,13 @@ COMMENT ON COLUMN "Role"."Administrator" IS 'MODE: read|DESCR: Administrator|IND
 COMMENT ON COLUMN "Role"."startingClass" IS 'MODE: read|DESCR: Starting Class|INDEX: 2|STATUS: active';
 COMMENT ON COLUMN "Role"."Email" IS 'MODE: read|DESCR: Email|INDEX: 5';
 COMMENT ON COLUMN "Role"."DisabledModules" IS 'MODE: read';
+COMMENT ON COLUMN "Role"."DisabledCardTabs" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."DisabledProcessTabs" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."HideSidePanel" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."FullScreenMode"IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."SimpleHistoryModeForCard" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."SimpleHistoryModeForProcess" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: reserved';
 
 ALTER TABLE "Role" ALTER COLUMN "Code" SET NOT NULL;
 
