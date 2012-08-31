@@ -98,9 +98,9 @@ public class LazyCard extends CardForwarder implements Serializable {
 		}
 		if (lazyTable == null) {
 			lazyTable = getSchemaForLoading();
-			if (lazyTable.isSuperClass()) { // It should be done out of this if clause
-				lazyTable = get().getSchema();
-			}
+		}
+		if (lazyTable.isSuperClass()) {
+			lazyTable = get().getSchema();
 		}
 		return lazyTable;
 	}
