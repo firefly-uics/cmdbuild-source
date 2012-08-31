@@ -17,18 +17,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
+import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
-import org.cmdbuild.api.fluent.Function;
+import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.api.fluent.NewCard;
+import org.cmdbuild.api.fluent.NewProcessInstance;
+import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
+import org.cmdbuild.api.fluent.QueryClass;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
-import org.cmdbuild.api.fluent.Report;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
 import org.cmdbuild.common.mail.MailApi;
@@ -76,8 +83,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 		FAKE_FUNCTION_RESPONSE = new HashMap<String, Object>();
 		FAKE_FUNCTION_RESPONSE.put("IntegerOutput", 1L);
 		FAKE_FUNCTION_RESPONSE.put("StringOutput", "two");
-		FAKE_FUNCTION_RESPONSE.put("ReferenceOutput", FOUND_REFERENCE);
-		FAKE_FUNCTION_RESPONSE.put("LookupOutput", FOUND_LOOKUP);
+		FAKE_FUNCTION_RESPONSE.put("ReferenceOutput", FOUND_REFERENCE.getId());
 
 		final FluentApiExecutor UNUSED_EXECUTOR = null;
 		FOUND_CARD = new FluentApi(UNUSED_EXECUTOR) //
@@ -107,7 +113,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 		return new WorkflowApi(new FluentApiExecutor() {
 
 			@Override
-			public CardDescriptor create(final Card card) {
+			public CardDescriptor create(final NewCard card) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						createNewCardLogLine( //
@@ -117,7 +123,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public void update(final Card card) {
+			public void update(final ExistingCard card) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						updateExistingCardLogLine( //
@@ -127,18 +133,18 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public void delete(final Card card) {
+			public void delete(final ExistingCard card) {
 				// TODO Auto-generated method stub
 			}
 
 			@Override
-			public Card fetch(final Card card) {
+			public Card fetch(final ExistingCard card) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						fetchExistingCardLogLine( //
 								card.getClassName(), //
 								card.getId(), //
-								card.getAttributes()));
+								card.getRequestedAttributes()));
 				if (card.getId() == FOUND_REFERENCE.getId()) {
 					return FOUND_CARD_FOR_REFERENCE;
 				} else {
@@ -147,7 +153,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public List<Card> fetchCards(final Card card) {
+			public List<Card> fetchCards(final QueryClass card) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						fetchQueryClassLogLine(card.getClassName(), card.getAttributes()));
@@ -158,7 +164,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public void create(final Relation relation) {
+			public void create(final NewRelation relation) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						createRelationLogLine( //
@@ -170,7 +176,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public void delete(final Relation relation) {
+			public void delete(final ExistingRelation relation) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						deleteRelationLogLine( //
@@ -196,7 +202,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public Map<String, Object> execute(final Function function) {
+			public Map<String, Object> execute(final FunctionCall function) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						callFunctionLogLine(function.getFunctionName(), function.getInputs()));
@@ -204,7 +210,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public DownloadedReport download(final Report report) {
+			public DownloadedReport download(final CreateReport report) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						downloadReportLogLine(report.getTitle(), report.getFormat(), report.getParameters()));
@@ -212,7 +218,8 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 			}
 
 			@Override
-			public ProcessInstanceDescriptor createProcessInstance(final Card processCard, final AdvanceProcess advance) {
+			public ProcessInstanceDescriptor createProcessInstance(final NewProcessInstance processCard,
+					final AdvanceProcess advance) {
 				cus.info(UNUSED_SHANDLE, //
 						LOGGER_CATEGORY, //
 						createNewProcessInstanceLogLine( //
@@ -365,10 +372,14 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	@SuppressWarnings("unchecked")
 	public static String fetchExistingCardLogLine(final String className, final int cardId,
-			final Map<String, Object> attributes) {
+			final Set<String> requestedAttributes) {
+		final Map<String, Object> requestedAttributesMap = new HashMap<String, Object>();
+		for (final String name : requestedAttributes) {
+			requestedAttributesMap.put(name, null);
+		}
 		return logLine("fetchExistingCard", //
 				linkedHashMapOf(entry("className", className), entry("cardId", cardId)), //
-				treeMapOf(attributes));
+				treeMapOf(requestedAttributesMap));
 	}
 
 	@SuppressWarnings("unchecked")

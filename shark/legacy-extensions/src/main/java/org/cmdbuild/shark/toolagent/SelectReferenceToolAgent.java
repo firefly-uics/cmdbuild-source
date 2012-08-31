@@ -5,6 +5,7 @@ import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import java.util.List;
 
 import org.cmdbuild.api.fluent.Card;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.type.ReferenceType;
 
 public class SelectReferenceToolAgent extends AbstractConditionalToolAgent {
@@ -32,6 +33,7 @@ public class SelectReferenceToolAgent extends AbstractConditionalToolAgent {
 		final List<Card> cards = getWorkflowApi() //
 				.queryClass(className) //
 				.with(attributeName, attributeValue) //
+				.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE, attributeName) //
 				.fetch();
 		final ReferenceType referenceType = cards.isEmpty() ? emptyReference() : referenceOf(firstOf(cards));
 

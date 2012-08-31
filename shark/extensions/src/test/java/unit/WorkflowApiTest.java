@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.common.mail.MailApi;
@@ -48,8 +49,8 @@ public class WorkflowApiTest {
 	@Test
 	public void findClassByNameAndExistingCardWhenConvertingFromCardDescriptorToReferenceType() throws Exception {
 		when(schemaApi.findClass(CLASS_NAME)).thenReturn(newClassInfo(CLASS_NAME, ID_CLASS));
-		when(fluentApiExecutor.fetch(any(Card.class)))
-				.thenReturn(cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
+		when(fluentApiExecutor.fetch(any(ExistingCard.class))).thenReturn(
+				cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
 
 		final CardDescriptor cardDescriptor = new CardDescriptor(CLASS_NAME, CARD_ID);
 		final ReferenceType referenceType = workflowApi.referenceTypeFrom(cardDescriptor);
@@ -57,7 +58,7 @@ public class WorkflowApiTest {
 		assertThat(referenceType.getId(), equalTo(CARD_ID));
 		assertThat(referenceType.getIdClass(), equalTo(ID_CLASS));
 
-		verify(fluentApiExecutor).fetch(any(Card.class));
+		verify(fluentApiExecutor).fetch(any(ExistingCard.class));
 		verifyNoMoreInteractions(fluentApiExecutor);
 		verify(schemaApi).findClass(CLASS_NAME);
 		verifyNoMoreInteractions(schemaApi);
@@ -67,8 +68,8 @@ public class WorkflowApiTest {
 	@Test
 	public void findClassByNameAndExistingCardWhenConvertingFromCardWithNoDescriptionToReferenceType() throws Exception {
 		when(schemaApi.findClass(CLASS_NAME)).thenReturn(newClassInfo(CLASS_NAME, ID_CLASS));
-		when(fluentApiExecutor.fetch(any(Card.class)))
-				.thenReturn(cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
+		when(fluentApiExecutor.fetch(any(ExistingCard.class))).thenReturn(
+				cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
 
 		final Card card = cardWithNoDescription(CLASS_NAME, CARD_ID);
 		final ReferenceType referenceType = workflowApi.referenceTypeFrom(card);
@@ -76,7 +77,7 @@ public class WorkflowApiTest {
 		assertThat(referenceType.getId(), equalTo(CARD_ID));
 		assertThat(referenceType.getIdClass(), equalTo(ID_CLASS));
 
-		verify(fluentApiExecutor).fetch(any(Card.class));
+		verify(fluentApiExecutor).fetch(any(ExistingCard.class));
 		verifyNoMoreInteractions(fluentApiExecutor);
 		verify(schemaApi).findClass(CLASS_NAME);
 		verifyNoMoreInteractions(schemaApi);
@@ -101,8 +102,8 @@ public class WorkflowApiTest {
 
 	@Test
 	public void fetchCardFromBaseClassWhenConvertingFromIdToReferenceType() throws Exception {
-		when(fluentApiExecutor.fetch(any(Card.class)))
-				.thenReturn(cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
+		when(fluentApiExecutor.fetch(any(ExistingCard.class))).thenReturn(
+				cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
 		when(schemaApi.findClass(CLASS_NAME)).thenReturn(newClassInfo(CLASS_NAME, ID_CLASS));
 
 		final ReferenceType referenceType = workflowApi.referenceTypeFrom(CARD_ID);
@@ -110,7 +111,7 @@ public class WorkflowApiTest {
 		assertThat(referenceType.getId(), equalTo(CARD_ID));
 		assertThat(referenceType.getIdClass(), equalTo(ID_CLASS));
 
-		verify(fluentApiExecutor).fetch(any(Card.class));
+		verify(fluentApiExecutor).fetch(any(ExistingCard.class));
 		verifyNoMoreInteractions(fluentApiExecutor);
 		verify(schemaApi).findClass(CLASS_NAME);
 		verifyNoMoreInteractions(schemaApi);
@@ -136,8 +137,8 @@ public class WorkflowApiTest {
 	@Test
 	public void findClassByIdAndExistingCardWhenConvertingFromReferenceTypeToCard() throws Exception {
 		when(schemaApi.findClass(ID_CLASS)).thenReturn(newClassInfo(CLASS_NAME, ID_CLASS));
-		when(fluentApiExecutor.fetch(any(Card.class)))
-				.thenReturn(cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
+		when(fluentApiExecutor.fetch(any(ExistingCard.class))).thenReturn(
+				cardWithDescription(CLASS_NAME, CARD_ID, DESCRIPTION));
 
 		final ReferenceType referenceType = new ReferenceType(CARD_ID, ID_CLASS, DESCRIPTION);
 		final Card card = workflowApi.cardFrom(referenceType);
@@ -146,7 +147,7 @@ public class WorkflowApiTest {
 		assertThat(card.getClassName(), equalTo(CLASS_NAME));
 		assertThat(card.getDescription(), equalTo(DESCRIPTION));
 
-		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
+		final ArgumentCaptor<ExistingCard> cardCaptor = ArgumentCaptor.forClass(ExistingCard.class);
 		verify(fluentApiExecutor).fetch(cardCaptor.capture());
 
 		final Card fetchedCard = cardCaptor.getValue();

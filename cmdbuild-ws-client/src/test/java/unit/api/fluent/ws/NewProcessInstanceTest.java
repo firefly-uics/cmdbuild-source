@@ -1,6 +1,5 @@
 package unit.api.fluent.ws;
 
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -40,7 +39,6 @@ public class NewProcessInstanceTest extends AbstractWsFluentApiTest {
 	public void createNewProcessInstance() throws Exception {
 		newProcessInstance = api() //
 				.newProcessInstance(CLASS_NAME) //
-				.withCode(CODE_VALUE) //
 				.withDescription(DESCRIPTION_VALUE) //
 				.with(ATTRIBUTE_1, ATTRIBUTE_1_VALUE) //
 				.withAttribute(ATTRIBUTE_2, ATTRIBUTE_2_VALUE);
@@ -58,7 +56,6 @@ public class NewProcessInstanceTest extends AbstractWsFluentApiTest {
 
 		final Card wsCard = capturedCard();
 		assertThat(wsCard.getClassName(), equalTo(newProcessInstance.getClassName()));
-		assertThat(wsCard.getAttributeList(), containsAttribute(CODE_ATTRIBUTE, CODE_VALUE));
 		assertThat(wsCard.getAttributeList(), containsAttribute(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE));
 		assertThat(wsCard.getAttributeList(), containsAttribute(ATTRIBUTE_1, ATTRIBUTE_1_VALUE));
 		assertThat(wsCard.getAttributeList(), containsAttribute(ATTRIBUTE_2, ATTRIBUTE_2_VALUE));

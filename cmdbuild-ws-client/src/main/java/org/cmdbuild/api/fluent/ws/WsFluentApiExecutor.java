@@ -14,21 +14,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
+import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
+import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
+import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.api.fluent.NewCard;
+import org.cmdbuild.api.fluent.NewProcessInstance;
+import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
+import org.cmdbuild.api.fluent.QueryClass;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
-import org.cmdbuild.api.fluent.Report;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.AttributeSchema;
@@ -173,46 +180,36 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		this.rawTypeConverter = (rawTypeConverter == null) ? IDENTITY_RAW_TYPE_CONVERTER : rawTypeConverter;
 	}
 
-	public CardDescriptor create(final Card card) {
+	public CardDescriptor create(final NewCard card) {
 		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(card);
 		final int id = proxy.createCard(soapCard);
 		return new CardDescriptor(card.getClassName(), id);
 	}
 
-	public void update(final Card card) {
+	public void update(final ExistingCard card) {
 		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(card);
 		soapCard.setId(card.getId());
 		proxy.updateCard(soapCard);
 	}
 
-	public void delete(final Card card) {
+	public void delete(final ExistingCard card) {
 		proxy.deleteCard(card.getClassName(), card.getId());
 	}
 
-	public Card fetch(final Card card) {
+	public Card fetch(final ExistingCard card) {
 		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
 				card.getClassName(), //
 				card.getId(), //
-				hasAttributes(card) ? attributesNameFor(card) : ALL_ATTRIBUTES);
+				hasAttributes(card) ? attributesNameFor(card.getRequestedAttributes()) : ALL_ATTRIBUTES);
 		return cardFor(soapCard);
 	}
 
-	private List<Attribute> attributesNameFor(final Card card) {
-		final List<Attribute> attributeNames = new ArrayList<Attribute>();
-		for (final String attributeName : card.getAttributeNames()) {
-			attributeNames.add(new Attribute() {
-				{
-					setName(attributeName);
-				}
-			});
-		}
-		return attributeNames;
-	}
-
-	public List<Card> fetchCards(final Card card) {
-		final CardList cardList = proxy.getCardList( //
+	public List<Card> fetchCards(final QueryClass card) {
+		final CardList cardList = proxy.getCardList(
+				//
 				card.getClassName(), //
-				ALL_ATTRIBUTES, //
+				card.getRequestedAttributes().isEmpty() ? ALL_ATTRIBUTES : attributesNameFor(card
+						.getRequestedAttributes()), //
 				hasAttributes(card) ? queriedAttributesFor(card) : NO_QUERY, //
 				NO_ORDERING, //
 				NO_LIMIT, //
@@ -220,6 +217,16 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				NO_FULLTEXT, //
 				NO_CQL);
 		return cardsFor(cardList);
+	}
+
+	private List<Attribute> attributesNameFor(final Set<String> names) {
+		final List<Attribute> attributeNames = new ArrayList<Attribute>();
+		for (final String attributeName : names) {
+			final Attribute attribute = new Attribute();
+			attribute.setName(attributeName);
+			attributeNames.add(attribute);
+		}
+		return attributeNames;
 	}
 
 	private Query queriedAttributesFor(final Card card) {
@@ -275,11 +282,11 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				.existingCard(soapCard.getClassName(), soapCard.getId());
 	}
 
-	public void create(final Relation relation) {
+	public void create(final NewRelation relation) {
 		proxy.createRelation(soapRelationFor(relation));
 	}
 
-	public void delete(final Relation relation) {
+	public void delete(final ExistingRelation relation) {
 		proxy.deleteRelation(soapRelationFor(relation));
 	}
 
@@ -312,14 +319,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return relation;
 	}
 
-	public Map<String, Object> execute(final Function function) {
+	public Map<String, Object> execute(final FunctionCall function) {
 		final List<Attribute> outputs = proxy.callFunction( //
 				function.getFunctionName(), //
 				wsInputAttributesFor(function));
 		return unmodifiableMap(clientAttributesFor(function, outputs));
 	}
 
-	public DownloadedReport download(final Report report) {
+	public DownloadedReport download(final CreateReport report) {
 		final ReportHelper helper = new ReportHelper(proxy);
 		final org.cmdbuild.services.soap.Report soapReport = helper.getReport(DEFAULT_TYPE, report.getTitle());
 		final List<AttributeSchema> paramSchemas = helper.getParamSchemas(soapReport, report.getFormat());
@@ -347,7 +354,8 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return reportParameters;
 	}
 
-	public ProcessInstanceDescriptor createProcessInstance(final Card processCard, final AdvanceProcess advance) {
+	public ProcessInstanceDescriptor createProcessInstance(final NewProcessInstance processCard,
+			final AdvanceProcess advance) {
 		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
 		final boolean advanceProcess = (advance == AdvanceProcess.YES);
 		final List<WorkflowWidgetSubmission> emptyWidgetsSubmission = emptyList();

@@ -47,7 +47,8 @@ public class AbstractSharkServiceTest implements XpdlTest {
 	/**
 	 * Returns the WAPI connection to Shark.
 	 * 
-	 * Shark should have been already initialized by the {@link AbstractSharkService}.
+	 * Shark should have been already initialized by the
+	 * {@link AbstractSharkService}.
 	 * 
 	 * @return Shark WAPI interface
 	 * @throws Exception

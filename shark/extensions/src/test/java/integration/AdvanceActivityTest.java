@@ -18,17 +18,19 @@ public class AdvanceActivityTest extends AbstractLocalSharkServiceTest {
 
 	private static class ExtendedLocalSharkService extends LocalSharkService {
 
-		public ExtendedLocalSharkService(Config config) {
+		public ExtendedLocalSharkService(final Config config) {
 			super(config);
 		}
 
-		public void runButDontCloseActivityInstance(final String procInstId, final String actInstId) throws CMWorkflowException {
+		public void runButDontCloseActivityInstance(final String procInstId, final String actInstId)
+				throws CMWorkflowException {
 			new TransactedExecutor<Void>() {
 				@Override
 				protected Void command() throws CMWorkflowException {
 					try {
-						wapi().changeActivityInstanceState(handle(), procInstId, actInstId, WMActivityInstanceState.OPEN_RUNNING);
-					} catch (Exception e) {
+						wapi().changeActivityInstanceState(handle(), procInstId, actInstId,
+								WMActivityInstanceState.OPEN_RUNNING);
+					} catch (final Exception e) {
 						throw new CMWorkflowException(e);
 					}
 					return null;

@@ -11,7 +11,6 @@ abstract class ManageAttributeToolAgent extends AbstractConditionalToolAgent {
 	protected static final String OBJ_REFERENCE = "ObjReference";
 
 	protected static final String ATTRIBUTE_NAME = "AttributeName";
-	private static final Object UNUSED_ATTRIBUTE_VALUE = null;
 
 	@Override
 	protected void innerInvoke() throws Exception {
@@ -23,7 +22,7 @@ abstract class ManageAttributeToolAgent extends AbstractConditionalToolAgent {
 	protected Object attributeValue() {
 		final String attributeName = getParameterValue(ATTRIBUTE_NAME);
 		final Card card = existingCard()//
-				.withAttribute(attributeName, UNUSED_ATTRIBUTE_VALUE) //
+				.limitAttributes(attributeName) //
 				.fetch();
 		return card.get(attributeName);
 	}

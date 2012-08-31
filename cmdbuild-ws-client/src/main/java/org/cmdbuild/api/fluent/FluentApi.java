@@ -36,8 +36,8 @@ public class FluentApi {
 		return new QueryClass(this, className);
 	}
 
-	public CallFunction callFunction(final String functionName) {
-		return new CallFunction(this, functionName);
+	public FunctionCall callFunction(final String functionName) {
+		return new FunctionCall(this, functionName);
 	}
 
 	public CreateReport createReport(final String title, final String format) {

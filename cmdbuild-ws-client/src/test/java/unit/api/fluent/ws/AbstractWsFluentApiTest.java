@@ -21,6 +21,8 @@ public abstract class AbstractWsFluentApiTest {
 
 	protected static final String ATTRIBUTE_1 = "attribute_1";
 	protected static final String ATTRIBUTE_2 = "attribute_2";
+	protected static final String ATTRIBUTE_3 = "attribute_3";
+	protected static final String ATTRIBUTE_4 = "attribute_4";
 	protected static final String MISSING_ATTRIBUTE = "missing_attribute";
 
 	protected static final String CODE_VALUE = randomString();

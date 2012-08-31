@@ -19,12 +19,12 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 
-public class AttributeSchemaSerializzer implements CMAttributeTypeVisitor {
+public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 
 	private AttributeSchema serialized;
 
 	public static AttributeSchema serialize(final CMFunction.CMFunctionParameter functionParameter) {
-		final AttributeSchemaSerializzer serializer = new AttributeSchemaSerializzer();
+		final AttributeSchemaSerializer serializer = new AttributeSchemaSerializer();
 		serializer.serialized = new AttributeSchema();
 		serializer.serialized.setName(functionParameter.getName());
 		functionParameter.getType().accept(serializer);

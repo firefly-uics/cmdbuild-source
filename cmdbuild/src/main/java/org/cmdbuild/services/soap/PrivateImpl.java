@@ -41,7 +41,7 @@ import org.cmdbuild.services.soap.operation.ELookup;
 import org.cmdbuild.services.soap.operation.ERelation;
 import org.cmdbuild.services.soap.operation.EReport;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
-import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializzer;
+import org.cmdbuild.services.soap.serializer.AttributeSchemaSerializer;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
@@ -501,7 +501,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	private List<AttributeSchema> attributeSchemasFrom(final List<CMFunctionParameter> parameters) {
 		final List<AttributeSchema> attributeSchemas = new ArrayList<AttributeSchema>();
 		for (final CMFunction.CMFunctionParameter parameter : parameters) {
-			attributeSchemas.add(AttributeSchemaSerializzer.serialize(parameter));
+			attributeSchemas.add(AttributeSchemaSerializer.serialize(parameter));
 		}
 		return attributeSchemas;
 	}

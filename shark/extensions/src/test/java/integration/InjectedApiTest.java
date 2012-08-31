@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static utils.EventManagerMatchers.isActivity;
 import static utils.XpdlTestUtils.randomName;
 
-import org.cmdbuild.api.fluent.Card;
+import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
@@ -41,7 +41,7 @@ public class InjectedApiTest extends AbstractLocalSharkServiceTest {
 		uploadXpdlAndStartProcess(process);
 		verify(eventManager).activityClosed(argThat(isActivity(scriptActivity)));
 
-		verify(MockSharkWorkflowApiFactory.fluentApiExecutor).create(any(Card.class));
+		verify(MockSharkWorkflowApiFactory.fluentApiExecutor).create(any(NewCard.class));
 		verifyNoMoreInteractions(MockSharkWorkflowApiFactory.fluentApiExecutor);
 	}
 

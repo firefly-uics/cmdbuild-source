@@ -8,19 +8,13 @@ public class NewProcessInstance extends ActiveCard {
 		super(api, className, null);
 	}
 
-	public NewProcessInstance withCode(final String value) {
-		super.setCode(value);
-		return this;
-	}
-
 	public NewProcessInstance withDescription(final String value) {
 		super.setDescription(value);
 		return this;
 	}
 
 	public NewProcessInstance with(final String name, final Object value) {
-		super.set(name, value);
-		return this;
+		return withAttribute(name, value);
 	}
 
 	public NewProcessInstance withAttribute(final String name, final Object value) {
