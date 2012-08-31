@@ -1,11 +1,12 @@
+
 SET standard_conforming_strings = off;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
 
 
-
 CREATE FUNCTION _cm_add_class_cascade_delete_on_relations_trigger(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -16,12 +17,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_class_history_trigger(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -32,12 +33,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_create_card_history_row()
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_class_sanity_check_trigger(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -48,12 +49,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_sanity_check();
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_domain_history_trigger(domainid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -64,12 +65,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_create_relation_history_row()
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_domain_sanity_check_trigger(domainid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -80,12 +81,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_sanity_check();
 	';
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_fk_constraints(fksourceid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	FKTargetId oid := _cm_get_fk_target_table_id(FKSourceId, AttributeName);
@@ -103,12 +104,12 @@ BEGIN
 		PERFORM _cm_add_restrict_trigger(SubTableId, FKSourceId, AttributeName);
 	END LOOP;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_fk_trigger(tableid oid, fksourceid oid, fkattribute text, fktargetid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TriggerVariant text;
@@ -131,12 +132,12 @@ BEGIN
 			');
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_reference_handling(tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	objid integer;
@@ -186,12 +187,12 @@ BEGIN
 	-- Trigger on domain (relation -> reference)
 	PERFORM _cm_add_update_reference_trigger(TableId, AttributeName);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_restrict_trigger(fktargetclassid oid, fkclassid oid, fkattribute text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF FKClassId IS NULL THEN
@@ -209,12 +210,12 @@ BEGIN
 				');
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_simpleclass_sanity_check_trigger(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -225,12 +226,12 @@ BEGIN
 			EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_spherical_mercator() RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	FoundSrid integer;
@@ -240,12 +241,12 @@ BEGIN
 		INSERT INTO "spatial_ref_sys" ("srid","auth_name","auth_srid","srtext","proj4text") VALUES (900913,'spatialreferencing.org',900913,'','+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +units=m +k=1.0 +nadgrids=@null +no_defs');
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_update_reference_trigger(tableid oid, refattribute text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	DomainId oid := _cm_get_reference_domain_id(TableId, RefAttribute);
@@ -269,12 +270,12 @@ BEGIN
 				');
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_add_update_relation_trigger(tableid oid, reftableid oid, refattribute text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	DomainId oid := _cm_get_reference_domain_id(RefTableId, RefAttribute);
@@ -298,12 +299,12 @@ BEGIN
 			');
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_default_to_src(tableid oid, attributename text, newdefault text) RETURNS text
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SQLType text := _cm_get_attribute_sqltype(TableId, AttributeName);
@@ -320,12 +321,12 @@ BEGIN
 		RETURN NewDefault;
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_is_empty(tableid oid, attributename text) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	Out boolean;
@@ -335,30 +336,30 @@ BEGIN
 	    ' AND '|| quote_ident(AttributeName) ||'::text <> '''' LIMIT 1' INTO Out;
 	RETURN Out;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_is_inherited(tableid oid, attributename text) RETURNS boolean
+    LANGUAGE sql
     AS $_$
 	SELECT pg_attribute.attinhcount <> 0
 	FROM pg_attribute
 	WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_attribute_is_local(tableid oid, attributename text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT (attinhcount = 0) FROM pg_attribute WHERE attrelid = $1 AND attname = $2 LIMIT 1;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_attribute_is_notnull(tableid oid, attributename text) RETURNS boolean
+    LANGUAGE sql
     AS $_$
 SELECT pg_attribute.attnotnull OR c.oid IS NOT NULL
 FROM pg_attribute
@@ -366,12 +367,12 @@ LEFT JOIN pg_constraint AS c
 	ON c.conrelid = pg_attribute.attrelid
 	AND c.conname::text = _cm_notnull_constraint_name(pg_attribute.attname::text)
 WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_attribute_is_unique(tableid oid, attributename text) RETURNS boolean
+    LANGUAGE plpgsql STABLE
     AS $$
 DECLARE
 	IsUnique boolean;
@@ -381,46 +382,46 @@ BEGIN
 		WHERE pg_index.indrelid = TableId AND relname = _cm_unique_index_name(TableId, AttributeName);
 	RETURN IsUnique;
 END;
-$$
-    LANGUAGE plpgsql STABLE;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_list(tableid oid) RETURNS SETOF text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT attname::text FROM pg_attribute WHERE attrelid = $1 AND attnum > 0 AND atttypid > 0 ORDER BY attnum;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_attribute_list_cs(classid oid) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT array_to_string(array(
 		SELECT quote_ident(name) FROM _cm_attribute_list($1) AS name
 	),',');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_attribute_notnull_is_check(tableid oid, attributename text) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeComment text := _cm_comment_for_attribute(TableId, AttributeName);
 BEGIN
 	RETURN NOT (
 		_cm_is_simpleclass(TableId)
-		OR _cm_check_comment(_cm_comment_for_table_id(TableId), 'MODE', 'reserved')
+		OR _cm_is_system(TableId)
 		OR _cm_check_comment(_cm_comment_for_attribute(TableId, AttributeName), 'MODE', 'reserved')
 	);
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_root_table_id(tableid oid, attributename text) RETURNS oid
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	CurrentTableId oid := TableId;
@@ -431,12 +432,12 @@ BEGIN
 	END LOOP;
 	RETURN CurrentTableId;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_set_notnull(tableid oid, attributename text, willbenotnull boolean) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -453,12 +454,12 @@ BEGIN
 
 	PERFORM _cm_attribute_set_notnull_unsafe(TableId, AttributeName, WillBeNotNull);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_set_notnull_unsafe(tableid oid, attributename text, willbenotnull boolean) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
     IsCheck boolean := _cm_attribute_notnull_is_check(TableId, AttributeName);
@@ -480,58 +481,66 @@ BEGIN
 		END IF;
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_set_uniqueness(tableid oid, attributename text, attributeunique boolean) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_attribute_is_unique(TableId, AttributeName) <> AttributeUnique THEN
-		IF AttributeUnique AND (_cm_is_simpleclass(TableId) OR _cm_is_superclass(TableId)) THEN
-			RAISE NOTICE 'Superclass or simple class attributes cannot be unique';
+		IF AttributeUnique AND (_cm_is_simpleclass(TableId) OR _cm_is_superclass(TableId)) AND NOT _cm_is_system(TableId) THEN
+			RAISE NOTICE 'User defined superclass or simple class attributes cannot be unique';
 			RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 		END IF;
 
 		PERFORM _cm_attribute_set_uniqueness_unsafe(TableId, AttributeName, AttributeUnique);
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_attribute_set_uniqueness_unsafe(tableid oid, attributename text, attributeunique boolean) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
-	IF AttributeUnique THEN
-		EXECUTE 'CREATE UNIQUE INDEX '||
-			quote_ident(_cm_unique_index_name(TableId, AttributeName)) ||
-			' ON '|| TableId::regclass ||' USING btree (('||
-			' CASE WHEN "Status"::text = ''N''::text THEN NULL'||
-			' ELSE '|| quote_ident(AttributeName) || ' END))';
+	IF _cm_is_simpleclass(TableId) THEN
+		IF AttributeUnique THEN
+			EXECUTE 'ALTER TABLE '|| TableId::regclass ||' ADD UNIQUE ('|| quote_ident(AttributeName) || ')';
+		ELSE
+			EXECUTE 'ALTER TABLE '|| TableId::regclass ||' DROP UNIQUE ('|| quote_ident(AttributeName) || ')';
+		END IF;
 	ELSE
-		EXECUTE 'DROP INDEX '|| _cm_unique_index_id(TableId, AttributeName)::regclass;
+		IF AttributeUnique THEN
+			EXECUTE 'CREATE UNIQUE INDEX '||
+				quote_ident(_cm_unique_index_name(TableId, AttributeName)) ||
+				' ON '|| TableId::regclass ||' USING btree (('||
+				' CASE WHEN "Status"::text = ''N''::text THEN NULL'||
+				' ELSE '|| quote_ident(AttributeName) || ' END))';
+		ELSE
+			EXECUTE 'DROP INDEX '|| _cm_unique_index_id(TableId, AttributeName)::regclass;
+		END IF;
 	END IF;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_cascade(id integer, tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'DELETE FROM '|| TableId::regclass ||
 		' WHERE '||quote_ident(AttributeName)||' = '||Id::text;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_check_attribute_comment_and_type(attributecomment text, sqltype text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SpecialTypeCount integer := 0; 
@@ -558,28 +567,28 @@ BEGIN
 		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_check_comment(classcomment text, key text, value text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT (_cm_read_comment($1, $2) ILIKE $3);
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_check_id_exists(id integer, tableid oid, deletedalso boolean) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_value_exists($1, $2, 'Id', $3);
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_check_value_exists(id integer, tableid oid, attributename text, deletedalso boolean) RETURNS boolean
+    LANGUAGE plpgsql STABLE
     AS $$
 DECLARE
 	Out BOOLEAN := TRUE;
@@ -596,180 +605,180 @@ BEGIN
 	END IF;
 	RETURN Out;
 END
-$$
-    LANGUAGE plpgsql STABLE;
+$$;
 
 
 
 CREATE FUNCTION _cm_class_has_children(tableid oid) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT (COUNT(*) > 0) FROM pg_inherits WHERE inhparent = $1 AND _cm_is_cmobject(inhrelid) LIMIT 1;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_class_has_domains(tableid oid) RETURNS boolean
+    LANGUAGE sql
     AS $_$
 	SELECT (COUNT(*) > 0) FROM _cm_domain_list() AS d
 	WHERE _cm_table_id(_cm_read_comment(_cm_comment_for_cmobject(d), 'CLASS1')) = $1 OR
 		_cm_table_id(_cm_read_comment(_cm_comment_for_cmobject(d), 'CLASS2')) = $1;
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_class_list() RETURNS SETOF oid
+    LANGUAGE sql STABLE
     AS $$
 	SELECT oid FROM pg_class WHERE _cm_is_any_class_comment(_cm_comment_for_cmobject(oid));
-$$
-    LANGUAGE sql STABLE;
+$$;
 
 
 
 CREATE FUNCTION _cm_classfk_name(cmclassname text, attributename text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_cmtable($1) || '_' || $2 || '_fkey';
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_classfk_name(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_cmtable($1) || '_' || $2 || '_fkey';
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_classidx_name(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT 'idx_' || REPLACE(_cm_cmtable_lc($1), '_', '') || '_' || lower($2);
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_classpk_name(cmclassname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_cmtable($1) || '_pkey';
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_cmschema(cmname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT (_cm_split_cmname($1))[1];
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_cmschema(tableid oid) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_namespace.nspname::text FROM pg_class
 	JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
 	WHERE pg_class.oid=$1
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_cmtable(cmname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT (_cm_split_cmname($1))[2];
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_cmtable(tableid oid) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_class.relname::text FROM pg_class	WHERE pg_class.oid=$1
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_cmtable_lc(cmname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT lower(_cm_cmtable($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_cmtable_lc(tableid oid) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT lower(_cm_cmtable($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_comment_for_attribute(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 SELECT description
 FROM pg_description
 JOIN pg_attribute ON pg_description.objoid = pg_attribute.attrelid AND pg_description.objsubid = pg_attribute.attnum
 WHERE attrelid = $1 and attname = $2 LIMIT 1;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_comment_for_class(cmclass text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_comment_for_table_id(_cm_table_id($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_comment_for_cmobject(tableid oid) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT description FROM pg_description
 	WHERE objoid = $1 AND objsubid = 0 AND _cm_read_comment(description, 'TYPE') IS NOT NULL LIMIT 1;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_comment_for_domain(cmdomain text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_comment_for_table_id(_cm_domain_id($1));
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_comment_for_table_id(tableid oid) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT description FROM pg_description WHERE objoid = $1;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_copy_fk_trigger(fromid oid, toid oid) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT _cm_copy_trigger($1, $2, '%_fkey');
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_copy_restrict_trigger(fromid oid, toid oid) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT _cm_copy_trigger($1, $2, '_Constr_%');
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_copy_superclass_attribute_comments(tableid oid, parenttableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeName text;
@@ -780,12 +789,12 @@ BEGIN
 			' IS '|| quote_literal(_cm_comment_for_attribute(ParentTableId, AttributeName));
 	END LOOP;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_copy_trigger(fromid oid, toid oid, triggernamematcher text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TriggerData record;
@@ -812,20 +821,20 @@ BEGIN
 		';
 	END LOOP;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_copy_update_relation_trigger(fromid oid, toid oid) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT _cm_copy_trigger($1, $2, '_UpdRel_%');
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_create_class_history(cmclassname text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -840,24 +849,24 @@ BEGIN
 	';
 	PERFORM _cm_create_index(_cm_history_id(CMClassName), 'CurrentId');
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_create_class_indexes(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_create_index(TableId, 'Code');
 	PERFORM _cm_create_index(TableId, 'Description');
 	PERFORM _cm_create_index(TableId, 'IdClass');
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_create_class_triggers(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_is_superclass(TableId) THEN
@@ -870,12 +879,12 @@ BEGIN
 		PERFORM _cm_add_class_cascade_delete_on_relations_trigger(TableId);
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_create_domain_indexes(domainid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
     Cardinality text := _cm_domain_cardinality(DomainId);
@@ -914,23 +923,23 @@ BEGIN
 		' )';
 	END IF;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_create_domain_triggers(domainid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_add_domain_sanity_check_trigger(DomainId);
 	PERFORM _cm_add_domain_history_trigger(DomainId);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_create_index(tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'CREATE INDEX ' || quote_ident(_cm_classidx_name(TableId, AttributeName)) ||
@@ -941,12 +950,12 @@ EXCEPTION
 		RAISE LOG 'Index for attribute %.% not created because the attribute does not exist',
 			TableId::regclass, quote_ident(AttributeName);
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_create_schema_if_needed(cmname text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_cmschema(CMName) IS NOT NULL THEN
@@ -956,12 +965,12 @@ EXCEPTION
 	WHEN duplicate_schema THEN
 		RETURN;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_delete_local_attributes(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeName text;
@@ -972,12 +981,12 @@ BEGIN
 		END IF;
 	END LOOP;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_delete_relation(username text, domainid oid, cardidcolumn text, cardid integer) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 BEGIN
@@ -985,12 +994,12 @@ BEGIN
 		' SET "Status" = ''N'', "User" = ' || coalesce(quote_literal(UserName),'NULL') ||
 		' WHERE "Status" = ''A'' AND ' || quote_ident(CardIdColumn) || ' = ' || CardId;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_dest_classid_for_domain_attribute(domainid oid, attributename text) RETURNS oid
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_table_id(
 		_cm_read_comment(
@@ -1005,60 +1014,74 @@ CREATE FUNCTION _cm_dest_classid_for_domain_attribute(domainid oid, attributenam
 			END
 		)
 	);
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_dest_reference_classid(domainid oid, refidcolumn text, refid integer) RETURNS oid
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_subclassid(_cm_dest_classid_for_domain_attribute($1, $2), $3)
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
+
+
+
+CREATE FUNCTION _cm_disable_triggers_recursively(superclass regclass) RETURNS void
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+	CurrentClass regclass := $1;
+BEGIN
+	FOR CurrentClass IN SELECT _cm_subtables_and_itself(SuperClass) LOOP
+		EXECUTE 'ALTER TABLE '|| CurrentClass::regclass ||' DISABLE TRIGGER USER';
+	END LOOP;
+END;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_cardinality(domainid oid) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_read_domain_cardinality(_cm_comment_for_table_id($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_cmname(cmdomain text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT coalesce(_cm_cmschema($1)||'.','')||coalesce('Map_'||_cm_cmtable($1),'Map');
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_cmname_lc(cmdomainname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT lower(_cm_domain_cmname($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_dbname(cmdomain text) RETURNS regclass
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname(_cm_domain_cmname($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_dbname_unsafe(cmdomain text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe(_cm_domain_cmname($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_direction(domainid oid) RETURNS boolean
+    LANGUAGE plpgsql STABLE STRICT
     AS $$
 DECLARE
 	Cardinality text := _cm_domain_cardinality(DomainId);
@@ -1071,44 +1094,44 @@ BEGIN
 		RETURN NULL;
 	END IF;
 END
-$$
-    LANGUAGE plpgsql STABLE STRICT;
+$$;
 
 
 
 CREATE FUNCTION _cm_domain_id(cmdomain text) RETURNS oid
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_table_id(_cm_domain_cmname($1));
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domain_list() RETURNS SETOF oid
+    LANGUAGE sql STABLE
     AS $$
 	SELECT oid FROM pg_class WHERE _cm_is_domain_comment(_cm_comment_for_cmobject(oid));
-$$
-    LANGUAGE sql STABLE;
+$$;
 
 
 
 CREATE FUNCTION _cm_domainidx_name(domainid oid, type text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT 'idx_' || _cm_cmtable_lc($1) || '_' || lower($2);
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_domainpk_name(cmdomainname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_classpk_name(_cm_domain_cmname($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_drop_triggers_recursively(tableid oid, triggername text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SubClassId oid;
@@ -1117,50 +1140,119 @@ BEGIN
 		EXECUTE 'DROP TRIGGER IF EXISTS '|| quote_ident(TriggerName) ||' ON '|| SubClassId::regclass;
 	END LOOP;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
+
+
+
+CREATE FUNCTION _cm_enable_triggers_recursively(superclass regclass) RETURNS void
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+	CurrentClass regclass := $1;
+BEGIN
+	FOR CurrentClass IN SELECT _cm_subtables_and_itself(SuperClass) LOOP
+		EXECUTE 'ALTER TABLE '|| CurrentClass::text ||' ENABLE TRIGGER USER';
+	END LOOP;
+END;
+$_$;
+
+
+
+CREATE FUNCTION _cm_function_list(OUT function_name text, OUT function_id oid, OUT arg_io character[], OUT arg_names text[], OUT arg_types text[], OUT returns_set boolean) RETURNS SETOF record
+    LANGUAGE plpgsql STABLE
+    AS $_$
+DECLARE
+	R record;
+	i integer;
+BEGIN
+	FOR R IN
+		SELECT *
+		FROM pg_proc
+		WHERE _cm_comment_for_cmobject(oid) IS NOT NULL
+	LOOP
+		function_name := R.proname::text;
+		function_id := R.oid;
+		returns_set := R.proretset;
+		IF R.proargmodes IS NULL
+		THEN
+			arg_io := '{}'::char[];
+			arg_types := '{}'::text[];
+			arg_names := '{}'::text[];
+			-- add input columns
+			FOR i IN SELECT generate_series(1, array_upper(R.proargtypes,1)) LOOP
+				arg_io := arg_io || 'i'::char;
+				arg_types := arg_types || _cm_get_sqltype_string(R.proargtypes[i], NULL);
+				arg_names := arg_names || COALESCE(R.proargnames[i], '$'||i);
+			END LOOP;
+			-- add single output column
+			arg_io := arg_io || 'o'::char;
+			arg_types := arg_types || _cm_get_sqltype_string(R.prorettype, NULL);
+			arg_names := arg_names || function_name;
+		ELSE
+			-- just normalize existing columns
+			arg_io := R.proargmodes;
+			arg_types := '{}'::text[];
+			arg_names := R.proargnames;
+			FOR i IN SELECT generate_series(1, array_upper(arg_io,1)) LOOP
+				-- normalize table output
+				IF arg_io[i] = 't' THEN
+					arg_io[i] := 'o';
+				ELSIF arg_io[i] = 'b' THEN
+					arg_io[i] := 'io';
+				END IF;
+				arg_types := arg_types || _cm_get_sqltype_string(R.proallargtypes[i], NULL);
+				IF arg_names[i] = '' THEN
+					IF arg_io[i] = 'i' THEN
+						arg_names[i] = '$'||i;
+					ELSE
+						arg_names[i] = 'column'||i;
+					END IF;
+				END IF;
+			END LOOP;
+		END IF;
+		RETURN NEXT;
+	END LOOP;
+
+	RETURN;
+END
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_attribute_default(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT pg_attrdef.adsrc
 		FROM pg_attribute JOIN pg_attrdef ON pg_attrdef.adrelid = pg_attribute.attrelid AND pg_attrdef.adnum = pg_attribute.attnum
 		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_attribute_sqltype(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
-	SELECT pg_type.typname::text || CASE
-				WHEN pg_type.typname IN ('varchar','bpchar') THEN '(' || pg_attribute.atttypmod - 4 || ')'
-				WHEN pg_type.typname = 'numeric' THEN '(' ||
-					pg_attribute.atttypmod / 65536 || ',' ||
-					pg_attribute.atttypmod - pg_attribute.atttypmod / 65536 * 65536 - 4|| ')'
-				ELSE ''
-			END
-		FROM pg_attribute JOIN pg_type ON pg_type.oid = pg_attribute.atttypid
+	SELECT _cm_get_sqltype_string(pg_attribute.atttypid, pg_attribute.atttypmod)
+		FROM pg_attribute
 		WHERE pg_attribute.attrelid = $1 AND pg_attribute.attname = $2;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_domain_reference_target_comment(domaincomment text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT CASE _cm_read_domain_cardinality($1)
 		WHEN '1:N' THEN _cm_read_comment($1, 'CLASS1')
 		WHEN 'N:1' THEN _cm_read_comment($1, 'CLASS2')
 		ELSE NULL
 	END
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_fk_target(tableid oid, attributename text) RETURNS text
+    LANGUAGE plpgsql STABLE STRICT
     AS $$
 DECLARE
 	AttributeComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -1170,28 +1262,28 @@ BEGIN
 		_cm_read_reference_target_comment(AttributeComment)
 	);
 END
-$$
-    LANGUAGE plpgsql STABLE STRICT;
+$$;
 
 
 
 CREATE FUNCTION _cm_get_fk_target_comment(attributecomment text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_read_comment($1, 'FKTARGETCLASS');
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_fk_target_table_id(tableid oid, attributename text) RETURNS oid
+    LANGUAGE plpgsql STABLE STRICT
     AS $_$ BEGIN
 	RETURN _cm_table_id(_cm_get_fk_target($1, $2));
-END $_$
-    LANGUAGE plpgsql STABLE STRICT;
+END $_$;
 
 
 
 CREATE FUNCTION _cm_get_geometry_type(tableid oid, attribute text) RETURNS text
+    LANGUAGE plpgsql STABLE
     AS $_$
 DECLARE
 	GeoType text;
@@ -1207,120 +1299,135 @@ BEGIN
 EXCEPTION WHEN undefined_table THEN
 	RETURN NULL;
 END
-$_$
-    LANGUAGE plpgsql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_lookup_type_comment(attributecomment text) RETURNS text
+    LANGUAGE sql
     AS $_$
 	SELECT _cm_read_comment($1, 'LOOKUP');
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_ref_source_class_domain_attribute(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
 		WHEN TRUE THEN 'IdClass1'
 		WHEN FALSE THEN 'IdClass2'
 		ELSE NULL
 	END;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_ref_source_id_domain_attribute(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
 		WHEN TRUE THEN 'IdObj1'
 		WHEN FALSE THEN 'IdObj2'
 		ELSE NULL
 	END;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_ref_target_id_domain_attribute(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT CASE _cm_domain_direction(_cm_get_reference_domain_id($1, $2))
 		WHEN TRUE THEN 'IdObj2'
 		WHEN FALSE THEN 'IdObj1'
 		ELSE NULL
 	END;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_reference_domain_id(tableid oid, attributename text) RETURNS oid
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_read_reference_domain_id_comment(_cm_comment_for_attribute($1, $2));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
+
+
+
+CREATE FUNCTION _cm_get_sqltype_string(sqltypeid oid, typemod integer) RETURNS text
+    LANGUAGE sql STABLE
+    AS $_$
+	SELECT pg_type.typname::text || COALESCE(
+			CASE
+				WHEN pg_type.typname IN ('varchar','bpchar') THEN '(' || $2 - 4 || ')'
+				WHEN pg_type.typname = 'numeric' THEN '(' ||
+					$2 / 65536 || ',' ||
+					$2 - $2 / 65536 * 65536 - 4|| ')'
+			END, '')
+		FROM pg_type WHERE pg_type.oid = $1;
+$_$;
 
 
 
 CREATE FUNCTION _cm_get_type_comment(classcomment text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_read_comment($1, 'TYPE');
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_history_cmname(cmclass text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT $1 || '_history';
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_history_dbname(cmtable text) RETURNS regclass
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname(_cm_history_cmname($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_history_dbname_unsafe(cmtable text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe(_cm_history_cmname($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_history_id(cmtable text) RETURNS oid
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_id(_cm_history_cmname($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_historyfk_name(cmclassname text, attributename text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_classfk_name(_cm_history_cmname($1), $2);
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_historypk_name(cmclassname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT _cm_classpk_name(_cm_history_cmname($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_insert_relation(username text, domainid oid, cardidcolumn text, cardid integer, refidcolumn text, refid integer, cardclassid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	CardClassIdColumnPart text;
@@ -1367,148 +1474,156 @@ BEGIN
 			')';
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_is_active_comment(classcomment text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'STATUS', 'active');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_any_class(classid oid) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_any_class_comment(_cm_comment_for_table_id($1))
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_any_class_comment(classcomment text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'TYPE', '%class');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_cmobject(tableid oid) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_comment_for_cmobject($1) IS NOT NULL;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_domain_comment(classcomment text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'TYPE', 'domain');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_geometry_type(cmattributetype text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT $1 IN ('POINT','LINESTRING','POLYGON');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_process(classid oid) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT $1 IN (SELECT _cm_subtables_and_itself(_cm_table_id('Activity')));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_process(cmclass text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_process(_cm_table_id($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_reference_comment(attributecomment text) RETURNS boolean
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT COALESCE(_cm_read_reference_domain_comment($1),'') != '';
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_simpleclass(cmclass text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_simpleclass_comment(_cm_comment_for_class($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_simpleclass(classid oid) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_simpleclass_comment(_cm_comment_for_table_id($1))
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_simpleclass_comment(classcomment text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'TYPE', 'simpleclass');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_superclass(cmclass text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_superclass_comment(_cm_comment_for_class($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_superclass(classid oid) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_is_superclass_comment(_cm_comment_for_table_id($1));
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_is_superclass_comment(classcomment text) RETURNS boolean
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_check_comment($1, 'SUPERCLASS', 'true');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
+
+
+
+CREATE FUNCTION _cm_is_system(tableid oid) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $_$
+	SELECT _cm_check_comment(_cm_comment_for_table_id($1), 'MODE', 'reserved')
+$_$;
 
 
 
 CREATE FUNCTION _cm_join_cmname(cmschema name, cmtable name) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT $1 || '.' || $2;
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_legacy_class_is_process(text) RETURNS boolean
+    LANGUAGE sql
     AS $_$
 	SELECT (_cm_legacy_read_comment($1, 'MANAGER') = 'activity');
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_legacy_get_menu_code(boolean, boolean, boolean, boolean) RETURNS character varying
+    LANGUAGE plpgsql
     AS $_$
     DECLARE 
         issuperclass ALIAS FOR $1;
@@ -1525,12 +1640,12 @@ CREATE FUNCTION _cm_legacy_get_menu_code(boolean, boolean, boolean, boolean) RET
 
 	RETURN menucode;
     END;
-$_$
-    LANGUAGE plpgsql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_legacy_get_menu_type(boolean, boolean, boolean, boolean) RETURNS character varying
+    LANGUAGE plpgsql
     AS $_$
     DECLARE 
         issuperclass ALIAS FOR $1;
@@ -1547,44 +1662,44 @@ CREATE FUNCTION _cm_legacy_get_menu_type(boolean, boolean, boolean, boolean) RET
 
 	RETURN menutype;
     END;
-$_$
-    LANGUAGE plpgsql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_legacy_read_comment(text, text) RETURNS character varying
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT COALESCE(_cm_read_comment($1, $2), '');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_new_card_id() RETURNS integer
+    LANGUAGE sql
     AS $$
 	SELECT nextval(('class_seq'::text)::regclass)::integer;
-$$
-    LANGUAGE sql;
+$$;
 
 
 
 CREATE FUNCTION _cm_notnull_constraint_name(attributename text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT '_NotNull_'||$1;
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_parent_id(tableid oid) RETURNS SETOF oid
+    LANGUAGE sql
     AS $_$
 	SELECT COALESCE((SELECT inhparent FROM pg_inherits WHERE inhrelid = $1 AND _cm_is_cmobject(inhparent) LIMIT 1), NULL);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_propagate_superclass_triggers(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	ParentId oid := _cm_parent_id(TableId);
@@ -1593,79 +1708,79 @@ BEGIN
 	PERFORM _cm_copy_update_relation_trigger(ParentId, TableId);
 	PERFORM _cm_copy_fk_trigger(ParentId, TableId);
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_read_comment(comment text, key text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
-	SELECT SUBSTRING($1 FROM E'(?:^|\\|)'||$2||E':[ ]*([^ \\|]+)');
-$_$
-    LANGUAGE sql STABLE STRICT;
+	SELECT TRIM(SUBSTRING($1 FROM E'(?:^|\\|)'||$2||E':[ ]*([^\\|]+)'));
+$_$;
 
 
 
 CREATE FUNCTION _cm_read_domain_cardinality(attributecomment text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_read_comment($1, 'CARDIN');
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_read_reference_domain_comment(attributecomment text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_read_comment($1, 'REFERENCEDOM');
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_read_reference_domain_id_comment(attributecomment text) RETURNS oid
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_domain_id(_cm_read_reference_domain_comment($1));
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_read_reference_target_comment(attributecomment text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_get_domain_reference_target_comment(_cm_comment_for_domain(_cm_read_reference_domain_comment($1)));
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_read_reference_target_id_comment(attributecomment text) RETURNS oid
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT _cm_table_id(_cm_read_reference_target_comment($1));
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_read_reference_type_comment(attributecomment text) RETURNS text
+    LANGUAGE sql STABLE STRICT
     AS $_$
 	SELECT COALESCE(_cm_read_comment($1, 'REFERENCETYPE'),'restrict');
-$_$
-    LANGUAGE sql STABLE STRICT;
+$_$;
 
 
 
 CREATE FUNCTION _cm_remove_attribute_triggers(tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_remove_fk_constraints(TableId, AttributeName);
 	PERFORM _cm_remove_reference_handling(TableId, AttributeName);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_remove_constraint_trigger(fktargetclassid oid, fkclassid oid, fkattribute text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE '
@@ -1673,12 +1788,12 @@ BEGIN
 			' ON ' || FKTargetClassId::regclass || ';
 	';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_remove_fk_constraints(fksourceid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TargetId oid := _cm_get_fk_target_table_id(FKSourceId, AttributeName);
@@ -1697,12 +1812,12 @@ BEGIN
 		PERFORM _cm_remove_constraint_trigger(SubTableId, FKSourceId, AttributeName);
 	END LOOP;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_remove_reference_handling(tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	-- remove UpdRel and UpdRef triggers
@@ -1715,24 +1830,24 @@ BEGIN
 		_cm_update_reference_trigger_name(TableId, AttributeName)
 	);
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_restrict(id integer, tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $_$
 BEGIN
 	IF _cm_check_value_exists($1, $2, $3, FALSE) THEN
 		RAISE EXCEPTION 'CM_RESTRICT_VIOLATION';
 	END IF;
 END;
-$_$
-    LANGUAGE plpgsql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_set_attribute_comment(tableid oid, attributename text, comment text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SubClassId oid;
@@ -1741,12 +1856,12 @@ BEGIN
 		EXECUTE 'COMMENT ON COLUMN '|| SubClassId::regclass ||'.'|| quote_ident(AttributeName) ||' IS '|| quote_literal(Comment);
 	END LOOP;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_set_attribute_default(tableid oid, attributename text, newdefault text, updateexisting boolean) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	CurrentDefaultSrc text := _cm_get_attribute_default(TableId, AttributeName);
@@ -1765,32 +1880,32 @@ BEGIN
 		END IF;
     END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_setnull(id integer, tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'UPDATE '|| TableId::regclass ||
 		' SET '||quote_ident(AttributeName)||' = NULL'||
 		' WHERE '||quote_ident(AttributeName)||' = '||Id::text;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_split_cmname(cmname text) RETURNS text[]
+    LANGUAGE sql IMMUTABLE
     AS $_$
     SELECT regexp_matches($1,E'(?:([^\\.]+)\\.)?([^\\.]+)?');
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_subclassid(superclassid oid, cardid integer) RETURNS oid
+    LANGUAGE plpgsql STABLE STRICT
     AS $$
 DECLARE
 	Out integer;
@@ -1798,46 +1913,46 @@ BEGIN
 	EXECUTE 'SELECT tableoid FROM '||SuperClassId::regclass||' WHERE "Id"='||CardId||' LIMIT 1' INTO Out;
 	RETURN Out;
 END;
-$$
-    LANGUAGE plpgsql STABLE STRICT;
+$$;
 
 
 
 CREATE FUNCTION _cm_subtables_and_itself(tableid oid) RETURNS SETOF oid
+    LANGUAGE sql
     AS $_$
 	SELECT $1 WHERE _cm_is_cmobject($1)
 	UNION
 	SELECT _cm_subtables_and_itself(inhrelid) FROM pg_inherits WHERE inhparent = $1
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION _cm_table_dbname(cmname text) RETURNS regclass
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe($1)::regclass;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_table_dbname_unsafe(cmname text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT coalesce(quote_ident(_cm_cmschema($1))||'.','')||quote_ident(_cm_cmtable($1));
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_table_id(cmname text) RETURNS oid
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT _cm_table_dbname_unsafe($1)::regclass::oid;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_table_is_empty(tableid oid) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	NotFound boolean;
@@ -1846,12 +1961,12 @@ BEGIN
 	EXECUTE 'SELECT (COUNT(*) = 0) FROM '|| TableId::regclass ||' LIMIT 1' INTO NotFound;
 	RETURN NotFound;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_cascade_delete_on_relations() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	RAISE DEBUG 'Trigger % on %', TG_NAME, TG_TABLE_NAME;
@@ -1864,12 +1979,12 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_create_card_history_row() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	-- Does not create the row on logic deletion
@@ -1886,12 +2001,12 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_create_relation_history_row() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	-- Does not create the row on logic deletion
@@ -1907,12 +2022,12 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_fk() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	SourceAttribute text := TG_ARGV[0];
@@ -1936,12 +2051,12 @@ BEGIN
 
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_restrict() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TableId oid := TG_ARGV[0]::regclass::oid;
@@ -1953,23 +2068,23 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_row_or_statement(tgtype smallint) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT CASE $1 & cast(1 as int2)
          WHEN 0 THEN 'STATEMENT'
          ELSE 'ROW'
        END;
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_trigger_sanity_check() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF (TG_OP='UPDATE') THEN
@@ -2003,12 +2118,12 @@ BEGIN
 	NEW."BeginDate" = now();
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_sanity_check_simple() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF (TG_OP='UPDATE') THEN
@@ -2023,12 +2138,12 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_update_reference() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeName text := TG_ARGV[0];
@@ -2067,12 +2182,12 @@ BEGIN
 
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_update_relation() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	AttributeName text := TG_ARGV[0];
@@ -2104,12 +2219,12 @@ BEGIN
 	END IF;
 	RETURN NEW;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_trigger_when(tgtype smallint) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT CASE $1 & cast(2 as int2)
          WHEN 0 THEN 'AFTER'
@@ -2124,32 +2239,32 @@ CREATE FUNCTION _cm_trigger_when(tgtype smallint) RETURNS text
          WHEN 24 THEN 'UPDATE OR DELETE'
          WHEN 12 THEN 'INSERT OR DELETE'
        END;
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_unique_index_id(tableid oid, attributename text) RETURNS oid
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT (
 		quote_ident(_cm_cmschema($1))
 		||'.'||
 		quote_ident(_cm_unique_index_name($1, $2))
 	)::regclass::oid;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_unique_index_name(tableid oid, attributename text) RETURNS text
+    LANGUAGE sql STABLE
     AS $_$
 	SELECT '_Unique_'|| _cm_cmtable($1) ||'_'|| $2;
-$_$
-    LANGUAGE sql STABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_update_reference(tableid oid, attributename text, cardid integer, referenceid integer) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	EXECUTE 'UPDATE ' || TableId::regclass ||
@@ -2157,20 +2272,20 @@ BEGIN
 		' WHERE "Status"=''A'' AND "Id" = ' || CardId::text ||
 		' AND coalesce(' || quote_ident(AttributeName) || ', 0) <> ' || coalesce(ReferenceId, 0)::text;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_update_reference_trigger_name(reftableid oid, refattribute text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT '_UpdRef_'|| _cm_cmtable($1) ||'_'|| $2;
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_update_relation(username text, domainid oid, cardidcolumn text, cardid integer, refidcolumn text, refid integer) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	RefClassUpdatePart text;
@@ -2189,20 +2304,20 @@ BEGIN
 		' WHERE "Status"=''A'' AND ' || quote_ident(CardIdColumn) || ' = ' || CardId ||
 			' AND ' || quote_ident(RefIdColumn) || ' <> ' || RefId;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION _cm_update_relation_trigger_name(reftableid oid, refattribute text) RETURNS text
+    LANGUAGE sql IMMUTABLE
     AS $_$
 	SELECT '_UpdRel_'|| _cm_cmtable($1) ||'_'|| $2;
-$_$
-    LANGUAGE sql IMMUTABLE;
+$_$;
 
 
 
 CREATE FUNCTION _cm_zero_rownum_sequence() RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	temp BIGINT;
@@ -2211,12 +2326,29 @@ BEGIN
 EXCEPTION WHEN undefined_table THEN
 	CREATE TEMPORARY SEQUENCE rownum MINVALUE 0 START 1;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
+
+
+
+CREATE FUNCTION _cmf_class_description(cid oid) RETURNS character varying
+    LANGUAGE sql STABLE
+    AS $_$
+    SELECT _cm_read_comment(_cm_comment_for_table_id($1), 'DESCR');
+$_$;
+
+
+
+CREATE FUNCTION _cmf_is_displayable(cid oid) RETURNS boolean
+    LANGUAGE sql STABLE
+    AS $_$
+    SELECT _cm_read_comment(_cm_comment_for_table_id($1), 'MODE') IN
+('write','read','baseclass');
+$_$;
 
 
 
 CREATE FUNCTION cm_create_attribute(tableid oid, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM _cm_check_attribute_comment_and_type(AttributeComment, SQLType);
@@ -2239,12 +2371,12 @@ BEGIN
     PERFORM _cm_add_fk_constraints(TableId, AttributeName);
 	PERFORM _cm_add_reference_handling(TableId, AttributeName);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_create_class(cmclass text, parentid oid, classcomment text) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	IsSimpleClass boolean := _cm_is_simpleclass_comment(ClassComment);
@@ -2315,28 +2447,28 @@ BEGIN
 
 	RETURN TableId::integer;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_create_class(cmclass text, cmparentclass text, classcomment text) RETURNS integer
+    LANGUAGE sql
     AS $_$
 	SELECT cm_create_class($1, _cm_table_id($2), $3);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_create_class_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_create_attribute(_cm_table_id($1), $2, $3, $4, $5, $6, $7);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_create_domain(cmdomain text, domaincomment text) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	DomainId oid;
@@ -2365,20 +2497,20 @@ BEGIN
 
 	RETURN DomainId;
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_create_domain_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_create_attribute(_cm_domain_id($1), $2, $3, $4, $5, $6, $7);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_delete_attribute(tableid oid, attributename text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	GeoType text := _cm_get_geometry_type(TableId, AttributeName);
@@ -2399,12 +2531,12 @@ BEGIN
 		EXECUTE 'ALTER TABLE '|| TableId::regclass ||' DROP COLUMN '|| quote_ident(AttributeName) ||' CASCADE';
 	END IF;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_delete_class(tableid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_class_has_domains(TableId) THEN
@@ -2420,28 +2552,28 @@ BEGIN
 	-- Cascade for the history table
 	EXECUTE 'DROP TABLE '|| TableId::regclass ||' CASCADE';
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_delete_class(cmclass text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_class(_cm_table_id($1));
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_delete_class_attribute(cmclass text, attributename text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_attribute(_cm_table_id($1), $2);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_delete_domain(domainid oid) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF NOT _cm_table_is_empty(DomainId) THEN
@@ -2452,28 +2584,28 @@ BEGIN
 
 	EXECUTE 'DROP TABLE '|| DomainId::regclass ||' CASCADE';
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_delete_domain(cmdomain text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_domain(_cm_domain_id($1));
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_delete_domain_attribute(cmclass text, attributename text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_attribute(_cm_domain_id($1), $2);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_modify_attribute(tableid oid, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, newcomment text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_attribute(TableId, AttributeName);
@@ -2501,12 +2633,12 @@ BEGIN
 	PERFORM _cm_set_attribute_default(TableId, AttributeName, AttributeDefault, FALSE);
 	PERFORM _cm_set_attribute_comment(TableId, AttributeName, NewComment);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_modify_class(tableid oid, newcomment text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_table_id(TableId);
@@ -2519,28 +2651,28 @@ BEGIN
 
 	EXECUTE 'COMMENT ON TABLE ' || TableId::regclass || ' IS ' || quote_literal(NewComment);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_modify_class(cmclass text, newcomment text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_class(_cm_table_id($1), $2);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_modify_class_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_attribute(_cm_table_id($1), $2, $3, $4, $5, $6, $7);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_modify_domain(domainid oid, newcomment text) RETURNS void
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_table_id(DomainId);
@@ -2556,50 +2688,142 @@ BEGIN
 	-- Check that the cardinality does not change
 	EXECUTE 'COMMENT ON TABLE '|| DomainId::regclass || ' IS '|| quote_literal(NewComment);
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION cm_modify_domain(cmdomain text, domaincomment text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_domain(_cm_domain_id($1), $2);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION cm_modify_domain_attribute(cmclass text, attributename text, sqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_modify_attribute(_cm_domain_id($1), $2, $3, $4, $5, $6, $7);
-$_$
-    LANGUAGE sql;
+$_$;
+
+
+
+CREATE FUNCTION cmf_active_asset_for_brand(OUT "Brand" character varying, OUT "Number" integer) RETURNS SETOF record
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY EXECUTE
+        'SELECT coalesce("LookUp"."Description", ''N.D.'')::character varying AS "Brand", COUNT(*)::integer AS "CardCount"' ||
+        '    FROM "Asset" ' ||
+				'    LEFT OUTER JOIN "LookUp" on "LookUp"."Id" = "Asset"."Brand" and "LookUp"."Status" = ''A'' ' ||
+        '    WHERE "Asset"."Status" = ''A'' ' ||
+        '    GROUP BY "LookUp"."Description"' ||
+        '    ORDER BY case when coalesce("LookUp"."Description", ''N.D.'') = ''N.D.'' then ''zz'' else "LookUp"."Description" end';
+END
+$$;
+
+
+
+COMMENT ON FUNCTION cmf_active_asset_for_brand(OUT "Brand" character varying, OUT "Number" integer) IS 'TYPE: function';
+
+
+
+CREATE FUNCTION cmf_active_cards_for_class("ClassName" character varying, OUT "Class" character varying, OUT "Number" integer) RETURNS SETOF record
+    LANGUAGE plpgsql
+    AS $_$
+BEGIN
+RETURN QUERY EXECUTE
+'SELECT _cmf_class_description("IdClass") AS "ClassDescription", COUNT(*)::integer
+AS "CardCount"' ||
+' FROM ' || quote_ident($1) ||
+' WHERE "Status" = ' || quote_literal('A') ||
+' AND _cmf_is_displayable("IdClass")' ||
+' AND "IdClass" not IN (SELECT _cm_subtables_and_itself(_cm_table_id(' ||
+quote_literal('Activity') || ')))'
+' GROUP BY "IdClass"' ||
+' ORDER BY "ClassDescription"';
+END
+$_$;
+
+
+
+COMMENT ON FUNCTION cmf_active_cards_for_class("ClassName" character varying, OUT "Class" character varying, OUT "Number" integer) IS 'TYPE: function';
+
+
+
+CREATE FUNCTION cmf_count_active_cards("ClassName" character varying, OUT "Count" integer) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+EXECUTE 'SELECT count(*) FROM ' || quote_ident("ClassName") || ' WHERE "Status" = ' ||
+quote_literal('A') INTO "Count";
+END
+$$;
+
+
+
+COMMENT ON FUNCTION cmf_count_active_cards("ClassName" character varying, OUT "Count" integer) IS 'TYPE: function';
+
+
+
+CREATE FUNCTION cmf_open_rfc_for_status(OUT "Status" character varying, OUT "Number" integer) RETURNS SETOF record
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY EXECUTE
+        'SELECT coalesce("LookUp"."Description", ''N.D.'')::character varying AS "Status", COUNT(*)::integer AS "CardCount"' ||
+        '    FROM "RequestForChange" ' ||
+				'    LEFT OUTER JOIN "LookUp" on "LookUp"."Id" = "RequestForChange"."RFCStatus" and "LookUp"."Status" = ''A'' ' ||
+        '    WHERE "RequestForChange"."Status" = ''A'' ' ||
+        '    GROUP BY "LookUp"."Description"' ||
+        '    ORDER BY case when coalesce("LookUp"."Description", ''N.D.'') = ''N.D.'' then ''zz'' else "LookUp"."Description" end';
+END
+$$;
+
+
+
+COMMENT ON FUNCTION cmf_open_rfc_for_status(OUT "Status" character varying, OUT "Number" integer) IS 'TYPE: function';
+
+
+
+CREATE FUNCTION "cmwf_getRFCNumber"(OUT "RFCNumber" integer) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	select into "RFCNumber" coalesce(max("RequestNumber")+1,0) from "RequestForChange" where "Status"='A';
+END
+$$;
+
+
+
+COMMENT ON FUNCTION "cmwf_getRFCNumber"(OUT "RFCNumber" integer) IS 'TYPE: function';
 
 
 
 CREATE FUNCTION set_data_employee() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
   BEGIN
     NEW."Description" = coalesce(NEW."Surname", '') || ' ' || coalesce(NEW."Name", '');
     RETURN NEW;
   END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION set_data_suppliercontact() RETURNS trigger
+    LANGUAGE plpgsql
     AS $$
   BEGIN
     NEW."Description" = coalesce(NEW."Surname", '') || ' ' || coalesce(NEW."Name", '');
     RETURN NEW;
   END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_attribute_create(cmclass character varying, attributename character varying, denormalizedsqltype character varying, attributedefault character varying, attributenotnull boolean, attributeunique boolean, attributecomment character varying, attributereference character varying, attributereferencedomain character varying, attributereferencetype character varying, attributereferenceisdirect boolean) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 DECLARE
     AttributeIndex integer;
@@ -2632,23 +2856,23 @@ BEGIN
 		END INTO AttributeIndex;
     RETURN AttributeIndex;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_attribute_delete(cmclass character varying, attributename character varying) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	PERFORM cm_delete_class_attribute(CMClass, AttributeName);
 	RETURN TRUE;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_attribute_modify(cmclass text, attributename text, attributenewname text, denormalizedsqltype text, attributedefault text, attributenotnull boolean, attributeunique boolean, attributecomment text) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 DECLARE
     SQLType varchar;
@@ -2667,12 +2891,12 @@ BEGIN
 		AttributeDefault, AttributeNotNull, AttributeUnique, AttributeComment);
 	RETURN TRUE;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_class_create(classname character varying, parentclass character varying, issuperclass boolean, classcomment character varying) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	-- consistency checks for wrong signatures
@@ -2682,20 +2906,20 @@ BEGIN
 
 	RETURN cm_create_class(ClassName, ParentClass, ClassComment);
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_class_delete(cmclass character varying) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_class($1);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION system_class_modify(classid integer, newclassname character varying, newissuperclass boolean, newclasscomment character varying) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 BEGIN
 	IF _cm_cmtable(ClassId) <> NewClassName
@@ -2707,12 +2931,12 @@ BEGIN
 	PERFORM cm_modify_class(ClassId::oid, NewClassComment);
 	RETURN TRUE;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_domain_create(cmdomain text, domainclass1 text, domainclass2 text, domaincomment text) RETURNS integer
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	TableName text := _cm_domain_cmname(CMDomain);
@@ -2723,20 +2947,20 @@ BEGIN
 
 	RETURN cm_create_domain(CMDomain, DomainComment);
 END
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 
 CREATE FUNCTION system_domain_delete(cmdomain text) RETURNS void
+    LANGUAGE sql
     AS $_$
 	SELECT cm_delete_domain($1);
-$_$
-    LANGUAGE sql;
+$_$;
 
 
 
 CREATE FUNCTION system_domain_modify(domainid oid, domainname text, domainclass1 text, domainclass2 text, newcomment text) RETURNS boolean
+    LANGUAGE plpgsql
     AS $$
 DECLARE
 	OldComment text := _cm_comment_for_table_id(DomainId);
@@ -2753,8 +2977,7 @@ BEGIN
 
 	RETURN TRUE;
 END;
-$$
-    LANGUAGE plpgsql;
+$$;
 
 
 SET default_tablespace = '';
@@ -2813,12 +3036,12 @@ COMMENT ON COLUMN "Class"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
 
 CREATE TABLE "Activity" (
     "FlowStatus" integer,
-    "Priority" integer,
-    "ActivityDefinitionId" character varying(200),
-    "ProcessCode" character varying(200),
-    "IsQuickAccept" boolean DEFAULT false NOT NULL,
-    "ActivityDescription" text,
-    "NextExecutor" character varying(200)
+    "ActivityDefinitionId" character varying[],
+    "ProcessCode" text,
+    "NextExecutor" character varying[],
+    "ActivityInstanceId" character varying[],
+    "PrevExecutors" character varying[],
+    "UniqueProcessDefinition" text
 )
 INHERITS ("Class");
 
@@ -2860,31 +3083,31 @@ COMMENT ON COLUMN "Activity"."Notes" IS 'MODE: read|DESCR: Annotazioni';
 
 
 
-COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Stato attività|INDEX: 2|LOOKUP: FlowStatus|REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
+COMMENT ON COLUMN "Activity"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
 
 
 
-COMMENT ON COLUMN "Activity"."Priority" IS 'MODE: reserved|INDEX: -1';
+COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: reserved|DESCR: Activity Definition Ids (for speed)';
 
 
 
-COMMENT ON COLUMN "Activity"."ActivityDefinitionId" IS 'MODE: reserved';
+COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
 
 
 
-COMMENT ON COLUMN "Activity"."ProcessCode" IS 'MODE: reserved';
+COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
 
 
 
-COMMENT ON COLUMN "Activity"."IsQuickAccept" IS 'MODE: reserved';
+COMMENT ON COLUMN "Activity"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
 
 
 
-COMMENT ON COLUMN "Activity"."ActivityDescription" IS 'MODE: write|DESCR: Descrizione Attività|INDEX: 4|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|COLOR: #FFFFFF|FONTCOLOR: #000000|LINEAFTER: false|CLASSORDER: |STATUS: active';
+COMMENT ON COLUMN "Activity"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
 
 
 
-COMMENT ON COLUMN "Activity"."NextExecutor" IS 'MODE: reserved';
+COMMENT ON COLUMN "Activity"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition (for speed)';
 
 
 
@@ -2899,7 +3122,8 @@ CREATE TABLE "Asset" (
     "Room" integer,
     "Assignee" integer,
     "TechnicalReference" integer,
-    "Workplace" integer
+    "Workplace" integer,
+    "AcceptanceNotes" text
 )
 INHERITS ("Class");
 
@@ -2985,6 +3209,10 @@ COMMENT ON COLUMN "Asset"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Wo
 
 
 
+COMMENT ON COLUMN "Asset"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 CREATE TABLE "Building" (
     "Address" character varying(100),
     "ZIP" character varying(5),
@@ -3059,7 +3287,8 @@ CREATE TABLE "Computer" (
     "RAM" integer,
     "CPUNumber" integer,
     "CPUSpeed" numeric(5,3),
-    "HDSize" integer
+    "HDSize" integer,
+    "IPAddress" inet
 )
 INHERITS ("Asset");
 
@@ -3145,6 +3374,10 @@ COMMENT ON COLUMN "Computer"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR:
 
 
 
+COMMENT ON COLUMN "Computer"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 COMMENT ON COLUMN "Computer"."RAM" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: RAM|FIELDMODE: write|GROUP: Technical data|INDEX: 15|MODE: write|STATUS: active';
 
 
@@ -3158,6 +3391,10 @@ COMMENT ON COLUMN "Computer"."CPUSpeed" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: 
 
 
 COMMENT ON COLUMN "Computer"."HDSize" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Harddisk total size (GB)|FIELDMODE: write|GROUP: Technical data|INDEX: 18|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Computer"."IPAddress" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: IPAddress|FIELDMODE: write|GROUP: Technical data|INDEX: 19|MODE: write|STATUS: active';
 
 
 
@@ -3613,6 +3850,10 @@ COMMENT ON COLUMN "License"."TechnicalReference" IS 'BASEDSP: true|CLASSORDER: 0
 
 
 COMMENT ON COLUMN "License"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Workplace|FIELDMODE: write|GROUP: General data|INDEX: 14|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: WorkplaceComposition|REFERENCETYPE: restrict|STATUS: active';
+
+
+
+COMMENT ON COLUMN "License"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
 
 
 
@@ -4229,60 +4470,174 @@ INHERITS ("Map_OfficeRoom");
 
 
 
-CREATE TABLE "Map_Responsible" (
+CREATE TABLE "Map_RFCChangeManager" (
 )
 INHERITS ("Map");
 
 
 
-COMMENT ON TABLE "Map_Responsible" IS 'CARDIN: 1:N|CLASS1: Employee|CLASS2: Office|DESCRDIR: responsible of|DESCRINV: directed by|LABEL: Responsible|MASTERDETAIL: false|MODE: write|OPENEDROWS: 0|STATUS: active|TYPE: domain';
+COMMENT ON TABLE "Map_RFCChangeManager" IS 'CARDIN: N:1|CLASS1: RequestForChange|CLASS2: Employee|DESCRDIR: has change manager|DESCRINV: change manager for|LABEL: RFCChangeManager|MASTERDETAIL: false|MODE: write|OPENEDROWS: 0|STATUS: active|TYPE: domain';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."IdDomain" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."IdDomain" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."IdClass1" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."IdClass1" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."IdObj1" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."IdObj1" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."IdClass2" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."IdClass2" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."IdObj2" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."IdObj2" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."Status" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."Status" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."User" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."User" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."BeginDate" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."BeginDate" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."EndDate" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."EndDate" IS 'MODE: reserved';
 
 
 
-COMMENT ON COLUMN "Map_Responsible"."Id" IS 'MODE: reserved';
+COMMENT ON COLUMN "Map_RFCChangeManager"."Id" IS 'MODE: reserved';
 
 
 
-CREATE TABLE "Map_Responsible_history" (
+CREATE TABLE "Map_RFCChangeManager_history" (
     "EndDate" timestamp without time zone DEFAULT now() NOT NULL
 )
-INHERITS ("Map_Responsible");
+INHERITS ("Map_RFCChangeManager");
+
+
+
+CREATE TABLE "Map_RFCExecutor" (
+)
+INHERITS ("Map");
+
+
+
+COMMENT ON TABLE "Map_RFCExecutor" IS 'CARDIN: N:1|CLASS1: RequestForChange|CLASS2: Employee|DESCRDIR: Executed by|DESCRINV: Perform|LABEL: RFC Executor|MASTERDETAIL: false|MODE: write|OPENEDROWS: 0|STATUS: active|TYPE: domain';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."IdDomain" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."IdClass1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."IdObj1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."IdClass2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."IdObj2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."EndDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCExecutor"."Id" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "Map_RFCExecutor_history" (
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("Map_RFCExecutor");
+
+
+
+CREATE TABLE "Map_RFCRequester" (
+)
+INHERITS ("Map");
+
+
+
+COMMENT ON TABLE "Map_RFCRequester" IS 'CARDIN: N:1|CLASS1: RequestForChange|CLASS2: Employee|DESCRDIR: Requested by|DESCRINV: Requests|LABEL: RFC Requester|MASTERDETAIL: false|MODE: write|OPENEDROWS: 0|STATUS: active|TYPE: domain';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."IdDomain" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."IdClass1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."IdObj1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."IdClass2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."IdObj2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."EndDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_RFCRequester"."Id" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "Map_RFCRequester_history" (
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("Map_RFCRequester");
 
 
 
@@ -4454,6 +4809,63 @@ CREATE TABLE "Map_RoomWorkplace_history" (
     "EndDate" timestamp without time zone DEFAULT now() NOT NULL
 )
 INHERITS ("Map_RoomWorkplace");
+
+
+
+CREATE TABLE "Map_Supervisor" (
+)
+INHERITS ("Map");
+
+
+
+COMMENT ON TABLE "Map_Supervisor" IS 'CARDIN: 1:N|CLASS1: Employee|CLASS2: Office|DESCRDIR: supervisor of|DESCRINV: has supervisor|LABEL: Supervisor|MASTERDETAIL: false|MODE: write|OPENEDROWS: 0|STATUS: active|TYPE: domain';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."IdDomain" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."IdClass1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."IdObj1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."IdClass2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."IdObj2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."EndDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_Supervisor"."Id" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "Map_Supervisor_history" (
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("Map_Supervisor");
 
 
 
@@ -4965,6 +5377,10 @@ COMMENT ON COLUMN "Monitor"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: 
 
 
 
+COMMENT ON COLUMN "Monitor"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 COMMENT ON COLUMN "Monitor"."Type" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Type|FIELDMODE: write|GROUP: Technical data|INDEX: 15|LOOKUP: Monitor type|MODE: write|STATUS: active';
 
 
@@ -5067,6 +5483,10 @@ COMMENT ON COLUMN "NetworkDevice"."TechnicalReference" IS 'BASEDSP: true|CLASSOR
 
 
 COMMENT ON COLUMN "NetworkDevice"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Workplace|FIELDMODE: write|GROUP: General data|INDEX: 14|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: WorkplaceComposition|REFERENCETYPE: restrict|STATUS: active';
+
+
+
+COMMENT ON COLUMN "NetworkDevice"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
 
 
 
@@ -5232,6 +5652,10 @@ COMMENT ON COLUMN "Notebook"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR:
 
 
 
+COMMENT ON COLUMN "Notebook"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 COMMENT ON COLUMN "Notebook"."RAM" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: RAM|FIELDMODE: write|GROUP: Technical data|INDEX: 15|MODE: write|STATUS: active';
 
 
@@ -5245,6 +5669,10 @@ COMMENT ON COLUMN "Notebook"."CPUSpeed" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: 
 
 
 COMMENT ON COLUMN "Notebook"."HDSize" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Harddisk total size (GB)|FIELDMODE: write|GROUP: Technical data|INDEX: 18|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Notebook"."IPAddress" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: IPAddress|FIELDMODE: write|GROUP: Technical data|INDEX: 19|MODE: write|STATUS: active';
 
 
 
@@ -5262,7 +5690,7 @@ INHERITS ("Notebook");
 
 CREATE TABLE "Office" (
     "ShortDescription" character varying(100),
-    "Responsible" integer
+    "Supervisor" integer
 )
 INHERITS ("Class");
 
@@ -5308,7 +5736,7 @@ COMMENT ON COLUMN "Office"."ShortDescription" IS 'BASEDSP: true|CLASSORDER: 0|DE
 
 
 
-COMMENT ON COLUMN "Office"."Responsible" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Responsible|FIELDMODE: write|GROUP: |INDEX: 5|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: Responsible|REFERENCETYPE: restrict|STATUS: active';
+COMMENT ON COLUMN "Office"."Supervisor" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Supervisor|FIELDMODE: write|GROUP: |INDEX: 5|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: Supervisor|REFERENCETYPE: restrict|STATUS: active';
 
 
 
@@ -5364,47 +5792,51 @@ COMMENT ON COLUMN "PC"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
 
 
 
-COMMENT ON COLUMN "PC"."SerialNumber" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Serialnumber|FIELDMODE: write|GROUP: General data|INDEX: 4|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."SerialNumber" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Serialnumber|FIELDMODE: write|GROUP: General data|INDEX: 3|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."Supplier" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Supplier|FIELDMODE: write|GROUP: Administrative data|INDEX: 5|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: SupplierAsset|REFERENCETYPE: restrict|STATUS: active';
+COMMENT ON COLUMN "PC"."Supplier" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Supplier|FIELDMODE: write|GROUP: Administrative data|INDEX: 4|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: SupplierAsset|REFERENCETYPE: restrict|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."PurchaseDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Purchase date|FIELDMODE: write|GROUP: Administrative data|INDEX: 6|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."PurchaseDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Purchase date|FIELDMODE: write|GROUP: Administrative data|INDEX: 5|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."AcceptanceDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance date|FIELDMODE: write|GROUP: Administrative data|INDEX: 7|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."AcceptanceDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance date|FIELDMODE: write|GROUP: Administrative data|INDEX: 6|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."FinalCost" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Final cost|FIELDMODE: write|GROUP: Administrative data|INDEX: 8|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."FinalCost" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Final cost|FIELDMODE: write|GROUP: Administrative data|INDEX: 7|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."Brand" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Brand|FIELDMODE: write|GROUP: Technical data|INDEX: 9|LOOKUP: Brand|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."Brand" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Brand|FIELDMODE: write|GROUP: Technical data|INDEX: 8|LOOKUP: Brand|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."Model" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Model|FIELDMODE: write|GROUP: Technical data|INDEX: 10|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."Model" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Model|FIELDMODE: write|GROUP: Technical data|INDEX: 9|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."Room" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Room|FIELDMODE: write|GROUP: General data|INDEX: 11|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: RoomAsset|REFERENCETYPE: restrict|STATUS: active';
+COMMENT ON COLUMN "PC"."Room" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Room|FIELDMODE: write|GROUP: General data|INDEX: 10|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: RoomAsset|REFERENCETYPE: restrict|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."Assignee" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Assignee|FIELDMODE: write|GROUP: General data|INDEX: 12|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: AssetAssignee|REFERENCETYPE: restrict|STATUS: active';
+COMMENT ON COLUMN "PC"."Assignee" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Assignee|FIELDMODE: write|GROUP: General data|INDEX: 11|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: AssetAssignee|REFERENCETYPE: restrict|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."TechnicalReference" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Technical reference|FIELDMODE: write|GROUP: Technical data|INDEX: 13|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: AssetReference|REFERENCETYPE: restrict|STATUS: active';
+COMMENT ON COLUMN "PC"."TechnicalReference" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Technical reference|FIELDMODE: write|GROUP: Technical data|INDEX: 12|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: AssetReference|REFERENCETYPE: restrict|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Workplace|FIELDMODE: write|GROUP: General data|INDEX: 14|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: WorkplaceComposition|REFERENCETYPE: restrict|STATUS: active';
+COMMENT ON COLUMN "PC"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Workplace|FIELDMODE: write|GROUP: General data|INDEX: 13|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: WorkplaceComposition|REFERENCETYPE: restrict|STATUS: active';
+
+
+
+COMMENT ON COLUMN "PC"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 14|MODE: write|STATUS: active';
 
 
 
@@ -5424,11 +5856,15 @@ COMMENT ON COLUMN "PC"."HDSize" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Harddisk
 
 
 
-COMMENT ON COLUMN "PC"."SoundCard" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Sound card|FIELDMODE: write|GROUP: Technical data|INDEX: 19|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."IPAddress" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: IPAddress|FIELDMODE: write|GROUP: Technical data|INDEX: 19|MODE: write|STATUS: active';
 
 
 
-COMMENT ON COLUMN "PC"."VideoCard" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Video card|FIELDMODE: write|GROUP: Technical data|INDEX: 20|MODE: write|STATUS: active';
+COMMENT ON COLUMN "PC"."SoundCard" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Sound card|FIELDMODE: write|GROUP: Technical data|INDEX: 20|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "PC"."VideoCard" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Video card|FIELDMODE: write|GROUP: Technical data|INDEX: 21|MODE: write|STATUS: active';
 
 
 
@@ -5580,6 +6016,10 @@ COMMENT ON COLUMN "Printer"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: 
 
 
 
+COMMENT ON COLUMN "Printer"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 COMMENT ON COLUMN "Printer"."Type" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Type|FIELDMODE: write|GROUP: Technical data|INDEX: 15|LOOKUP: Printer type|MODE: write|STATUS: active';
 
 
@@ -5689,6 +6129,10 @@ COMMENT ON COLUMN "Rack"."TechnicalReference" IS 'BASEDSP: true|CLASSORDER: 0|DE
 
 
 COMMENT ON COLUMN "Rack"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Workplace|FIELDMODE: write|GROUP: General data|INDEX: 14|MODE: write|REFERENCEDIRECT: false|REFERENCEDOM: WorkplaceComposition|REFERENCETYPE: restrict|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Rack"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
 
 
 
@@ -5802,12 +6246,202 @@ COMMENT ON COLUMN "Report"."ImagesName" IS 'MODE: reserved';
 
 
 
+CREATE TABLE "RequestForChange" (
+    "Requester" integer,
+    "RFCStartDate" timestamp without time zone,
+    "RequestNumber" integer,
+    "RFCStatus" integer,
+    "RFCDescription" text,
+    "Category" integer,
+    "FormalEvaluation" integer,
+    "RFCPriority" integer,
+    "ImpactAnalysisRequest" boolean,
+    "CostAnalysisRequest" boolean,
+    "RiskAnalysisRequest" boolean,
+    "ImpactAnalysisResult" text,
+    "CostAnalysisResult" text,
+    "RiskAnalysisResult" text,
+    "Decision" integer,
+    "PlannedActions" text,
+    "ExecutionStartDate" timestamp without time zone,
+    "ActionsPerformed" text,
+    "ExecutionEndDate" timestamp without time zone,
+    "FinalResult" integer,
+    "RFCEndDate" timestamp without time zone
+)
+INHERITS ("Activity");
+
+
+
+COMMENT ON TABLE "RequestForChange" IS 'DESCR: Request for change|MODE: write|STATUS: active|SUPERCLASS: false|TYPE: class|USERSTOPPABLE: false';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."IdClass" IS 'MODE: reserved|DESCR: Classe';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0||LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: true|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Notes" IS 'MODE: read|DESCR: Annotazioni';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."FlowStatus" IS 'MODE: read|DESCR: Process Status|INDEX: 2|LOOKUP: FlowStatus';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ActivityDefinitionId" IS 'MODE: reserved|DESCR: Activity Definition Ids (for speed)';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ProcessCode" IS 'MODE: reserved|DESCR: Process Instance Id';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."NextExecutor" IS 'MODE: reserved|DESCR: Activity Instance performers';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ActivityInstanceId" IS 'MODE: reserved|DESCR: Activity Instance Ids';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."PrevExecutors" IS 'MODE: reserved|DESCR: Process Instance performers up to now';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."UniqueProcessDefinition" IS 'MODE: reserved|DESCR: Unique Process Definition (for speed)';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Requester" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Requester|FIELDMODE: write|INDEX: 24|MODE: write|REFERENCEDIRECT: true|REFERENCEDOM: RFCRequester|REFERENCETYPE: restrict|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RFCStartDate" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Start date|FIELDMODE: write|INDEX: 5|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RequestNumber" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Request number|FIELDMODE: write|INDEX: 4|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RFCStatus" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Status|FIELDMODE: write|INDEX: 6|LOOKUP: RFC status|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RFCDescription" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Description|EDITORTYPE: HTML|FIELDMODE: write|INDEX: 7|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Category" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Category|FIELDMODE: write|INDEX: 8|LOOKUP: RFC Category|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."FormalEvaluation" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Formal evaluation|FIELDMODE: write|INDEX: 9|LOOKUP: RFC formal evaluation|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RFCPriority" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Priority|FIELDMODE: write|INDEX: 25|LOOKUP: RFC priority|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ImpactAnalysisRequest" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Impact analysis request|FIELDMODE: write|INDEX: 11|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."CostAnalysisRequest" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Cost analysis request|FIELDMODE: write|INDEX: 12|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RiskAnalysisRequest" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Risk analysis request|FIELDMODE: write|INDEX: 13|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ImpactAnalysisResult" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Impact analysis result|EDITORTYPE: HTML|FIELDMODE: write|INDEX: 14|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."CostAnalysisResult" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Cost analysis result|EDITORTYPE: HTML|FIELDMODE: write|INDEX: 15|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RiskAnalysisResult" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Risk analysis result|EDITORTYPE: HTML|FIELDMODE: write|INDEX: 16|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."Decision" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Decision|FIELDMODE: write|INDEX: 17|LOOKUP: RFC decision|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."PlannedActions" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Planned actions|EDITORTYPE: HTML|FIELDMODE: write|INDEX: 18|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ExecutionStartDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Execution start date|FIELDMODE: write|INDEX: 19|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ActionsPerformed" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Actions performed|EDITORTYPE: HTML|FIELDMODE: write|INDEX: 20|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."ExecutionEndDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Execution end date|FIELDMODE: write|INDEX: 21|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."FinalResult" IS 'BASEDSP: true|CLASSORDER: 0|DESCR: Final result|FIELDMODE: write|INDEX: 22|LOOKUP: RFC final result|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "RequestForChange"."RFCEndDate" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: End date|FIELDMODE: write|INDEX: 23|MODE: write|STATUS: active';
+
+
+
+CREATE TABLE "RequestForChange_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("RequestForChange");
+
+
+
 CREATE TABLE "Role" (
     "Code" character varying(100) NOT NULL,
     "Administrator" boolean,
     "startingClass" regclass,
     "Email" character varying(320),
-    "DisabledModules" character varying[]
+    "DisabledModules" character varying[],
+    "DisabledCardTabs" character varying[],
+    "DisabledProcessTabs" character varying[],
+    "HideSidePanel" boolean DEFAULT false NOT NULL,
+    "FullScreenMode" boolean DEFAULT false NOT NULL,
+    "SimpleHistoryModeForCard" boolean DEFAULT false NOT NULL,
+    "SimpleHistoryModeForProcess" boolean DEFAULT false NOT NULL,
+    "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL
 )
 INHERITS ("Class");
 
@@ -5862,6 +6496,34 @@ COMMENT ON COLUMN "Role"."Email" IS 'MODE: read|DESCR: Email|INDEX: 5';
 
 
 COMMENT ON COLUMN "Role"."DisabledModules" IS 'MODE: read';
+
+
+
+COMMENT ON COLUMN "Role"."DisabledCardTabs" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Role"."DisabledProcessTabs" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Role"."HideSidePanel" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Role"."FullScreenMode" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Role"."SimpleHistoryModeForCard" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Role"."SimpleHistoryModeForProcess" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: reserved';
 
 
 
@@ -6083,6 +6745,10 @@ COMMENT ON COLUMN "Server"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: W
 
 
 
+COMMENT ON COLUMN "Server"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 COMMENT ON COLUMN "Server"."RAM" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: RAM|FIELDMODE: write|GROUP: Technical data|INDEX: 15|MODE: write|STATUS: active';
 
 
@@ -6096,6 +6762,10 @@ COMMENT ON COLUMN "Server"."CPUSpeed" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Sp
 
 
 COMMENT ON COLUMN "Server"."HDSize" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Harddisk total size (GB)|FIELDMODE: write|GROUP: Technical data|INDEX: 18|MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Server"."IPAddress" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: IPAddress|FIELDMODE: write|GROUP: Technical data|INDEX: 19|MODE: write|STATUS: active';
 
 
 
@@ -6372,6 +7042,10 @@ COMMENT ON COLUMN "UPS"."Workplace" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Work
 
 
 
+COMMENT ON COLUMN "UPS"."AcceptanceNotes" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Acceptance notes|EDITORTYPE: HTML|FIELDMODE: write|GROUP: Administrative data|INDEX: 15|MODE: write|STATUS: active';
+
+
+
 COMMENT ON COLUMN "UPS"."Power" IS 'BASEDSP: false|CLASSORDER: 0|DESCR: Power (W)|FIELDMODE: write|GROUP: Technical data|INDEX: 15|MODE: write|STATUS: active';
 
 
@@ -6393,7 +7067,7 @@ INHERITS ("Class");
 
 
 
-COMMENT ON TABLE "User" IS 'MODE: reserved|TYPE: class|DESCR: Utenti|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "User" IS 'MODE: write|TYPE: class|DESCR: Utenti|SUPERCLASS: false|MANAGER: class|STATUS: active';
 
 
 
@@ -6496,7 +7170,71 @@ INHERITS ("Workplace");
 
 
 
+CREATE TABLE "_Dashboards" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Definition" text NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_Dashboards" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
+
+
+
+COMMENT ON COLUMN "_Dashboards"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Dashboards"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Dashboards"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Dashboards"."Definition" IS 'MODE: write|STATUS: active';
+
+
+
+CREATE TABLE "_Templates" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Name" text NOT NULL,
+    "Template" text NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_Templates" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
+
+
+
+COMMENT ON COLUMN "_Templates"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Templates"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Templates"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Templates"."Name" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Templates"."Template" IS 'MODE: write|STATUS: active';
+
+
+
 CREATE SEQUENCE class_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -6508,7 +7246,7 @@ COMMENT ON SEQUENCE class_seq IS 'Sequence for autoincrement class';
 
 
 
-SELECT pg_catalog.setval('class_seq', 820, true);
+SELECT pg_catalog.setval('class_seq', 1264, true);
 
 
 
@@ -6538,12 +7276,12 @@ CREATE VIEW system_treecatalog AS
 
 
 CREATE VIEW system_availablemenuitems AS
-    (((SELECT DISTINCT (system_classcatalog.classid)::regclass AS "IdClass", _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Code", _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text) AS "Description", CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <> ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END AS "IdElementClass", 0 AS "IdElementObj", "Role"."Id" AS "IdGroup", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Type" FROM ((system_classcatalog JOIN "Role" ON (("Role"."Status" = 'A'::bpchar))) LEFT JOIN system_treecatalog ON ((system_treecatalog.childid = system_classcatalog.classid))) WHERE (((NOT (system_classcatalog.classid IN (SELECT ("Menu"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" WHERE (((("Menu"."Code")::text <> ALL (ARRAY['folder'::text, 'report'::text, 'view'::text, 'Folder'::text, 'Report'::text, 'View'::text])) AND ("Menu"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu"."IdGroup"))))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('STATUS'::character varying)::text))::text = 'active'::text)) ORDER BY (system_classcatalog.classid)::regclass, _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text), CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <> ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END, 0::integer, "Role"."Id", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false)) UNION SELECT "AllReport"."IdClass", "AllReport"."Code", "AllReport"."Description", "AllReport"."IdClass" AS "IdElementClass", "AllReport"."IdElementObj", "AllReport"."RoleId" AS "IdGroup", "AllReport"."Type" FROM ((SELECT ((_cm_legacy_get_menu_type(false, false, true, false))::text || (ARRAY['pdf'::text, 'csv'::text, 'pdf'::text, 'csv'::text, 'xml'::text, 'odt'::text])[i.i]) AS "Code", "Report"."Id" AS "IdElementObj", "Report"."IdClass", "Report"."Code" AS "Description", "Report"."Type", "Role"."Id" AS "RoleId" FROM generate_series(1, 6) i(i), ("Report" JOIN "Role" ON (("Role"."Status" = 'A'::bpchar))) WHERE ((("Report"."Status")::text = 'A'::text) AND (((i.i + 1) / 2) = CASE WHEN (("Report"."Type")::text = 'normal'::text) THEN 1 WHEN (("Report"."Type")::text = 'custom'::text) THEN 2 WHEN (("Report"."Type")::text = 'openoffice'::text) THEN 3 ELSE 0 END))) "AllReport" LEFT JOIN "Menu" ON ((((("AllReport"."IdElementObj" = "Menu"."IdElementObj") AND ("Menu"."Status" = 'A'::bpchar)) AND ("AllReport"."RoleId" = "Menu"."IdGroup")) AND ("AllReport"."Code" = ("Menu"."Code")::text)))) WHERE ("Menu"."Code" IS NULL)) UNION (SELECT DISTINCT (system_classcatalog.classid)::regclass AS "IdClass", _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Code", _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text) AS "Description", CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <> ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND (0 = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END AS "IdElementClass", 0 AS "IdElementObj", 0 AS "IdGroup", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Type" FROM (system_classcatalog LEFT JOIN system_treecatalog ON ((system_treecatalog.childid = system_classcatalog.classid))) WHERE (((NOT (system_classcatalog.classid IN (SELECT ("Menu"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" WHERE (((("Menu"."Code")::text <> ALL (ARRAY['folder'::text, 'report'::text, 'view'::text, 'Folder'::text, 'Report'::text, 'View'::text])) AND ("Menu"."Status" = 'A'::bpchar)) AND (0 = "Menu"."IdGroup"))))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('STATUS'::character varying)::text))::text = 'active'::text)) ORDER BY (system_classcatalog.classid)::regclass, _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text), CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <> ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND (0 = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END, 0::integer, _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), 0::integer)) UNION SELECT "AllReport"."IdClass", "AllReport"."Code", "AllReport"."Description", "AllReport"."IdClass" AS "IdElementClass", "AllReport"."IdElementObj", 0 AS "IdGroup", "AllReport"."Type" FROM ((SELECT ((_cm_legacy_get_menu_type(false, false, true, false))::text || (ARRAY['pdf'::text, 'csv'::text, 'pdf'::text, 'csv'::text, 'xml'::text, 'odt'::text])[i.i]) AS "Code", "Report"."Id" AS "IdElementObj", "Report"."IdClass", "Report"."Code" AS "Description", "Report"."Type" FROM generate_series(1, 6) i(i), "Report" WHERE ((("Report"."Status")::text = 'A'::text) AND (((i.i + 1) / 2) = CASE WHEN (("Report"."Type")::text = 'normal'::text) THEN 1 WHEN (("Report"."Type")::text = 'custom'::text) THEN 2 WHEN (("Report"."Type")::text = 'openoffice'::text) THEN 3 ELSE 0 END))) "AllReport" LEFT JOIN "Menu" ON ((((("AllReport"."IdElementObj" = "Menu"."IdElementObj") AND ("Menu"."Status" = 'A'::bpchar)) AND (0 = "Menu"."IdGroup")) AND ("AllReport"."Code" = ("Menu"."Code")::text)))) WHERE ("Menu"."Code" IS NULL);
+    (((SELECT DISTINCT (system_classcatalog.classid)::regclass AS "IdClass", _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Code", _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text) AS "Description", CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END AS "IdElementClass", 0 AS "IdElementObj", "Role"."Id" AS "IdGroup", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Type" FROM ((system_classcatalog JOIN "Role" ON (("Role"."Status" = 'A'::bpchar))) LEFT JOIN system_treecatalog ON ((system_treecatalog.childid = system_classcatalog.classid))) WHERE (((NOT (system_classcatalog.classid IN (SELECT ("Menu"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" WHERE (((("Menu"."Code")::text <>  ALL (ARRAY['folder'::text, 'report'::text, 'view'::text, 'Folder'::text, 'Report'::text, 'View'::text])) AND ("Menu"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu"."IdGroup"))))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('STATUS'::character varying)::text))::text = 'active'::text)) ORDER BY (system_classcatalog.classid)::regclass, _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text), CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND ("Role"."Id" = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END, 0::integer, "Role"."Id", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false)) UNION SELECT "AllReport"."IdClass", "AllReport"."Code", "AllReport"."Description", "AllReport"."IdClass" AS "IdElementClass", "AllReport"."IdElementObj", "AllReport"."RoleId" AS "IdGroup", "AllReport"."Type" FROM ((SELECT ((_cm_legacy_get_menu_type(false, false, true, false))::text || (ARRAY['pdf'::text, 'csv'::text, 'pdf'::text, 'csv'::text, 'xml'::text, 'odt'::text])[i.i]) AS "Code", "Report"."Id" AS "IdElementObj", "Report"."IdClass", "Report"."Code" AS "Description", "Report"."Type", "Role"."Id" AS "RoleId" FROM generate_series(1, 6) i(i), ("Report" JOIN "Role" ON (("Role"."Status" = 'A'::bpchar))) WHERE ((("Report"."Status")::text = 'A'::text) AND (((i.i + 1) / 2) = CASE WHEN (("Report"."Type")::text = 'normal'::text) THEN 1 WHEN (("Report"."Type")::text = 'custom'::text) THEN 2 WHEN (("Report"."Type")::text = 'openoffice'::text) THEN 3 ELSE 0 END))) "AllReport" LEFT JOIN "Menu" ON ((((("AllReport"."IdElementObj" = "Menu"."IdElementObj") AND ("Menu"."Status" = 'A'::bpchar)) AND ("AllReport"."RoleId" = "Menu"."IdGroup")) AND ("AllReport"."Code" = ("Menu"."Code")::text)))) WHERE ("Menu"."Code" IS NULL)) UNION (SELECT DISTINCT (system_classcatalog.classid)::regclass AS "IdClass", _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Code", _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text) AS "Description", CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND (0 = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END AS "IdElementClass", 0 AS "IdElementObj", 0 AS "IdGroup", _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false) AS "Type" FROM (system_classcatalog LEFT JOIN system_treecatalog ON ((system_treecatalog.childid = system_classcatalog.classid))) WHERE (((NOT (system_classcatalog.classid IN (SELECT ("Menu"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" WHERE (((("Menu"."Code")::text <>  ALL (ARRAY['folder'::text, 'report'::text, 'view'::text, 'Folder'::text, 'Report'::text, 'View'::text])) AND ("Menu"."Status" = 'A'::bpchar)) AND (0 = "Menu"."IdGroup"))))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('STATUS'::character varying)::text))::text = 'active'::text)) ORDER BY (system_classcatalog.classid)::regclass, _cm_legacy_get_menu_type(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false), _cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('DESCR'::character varying)::text), CASE WHEN (((_cm_legacy_read_comment(((system_treecatalog.childcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text])) AND (NOT (((system_treecatalog.childid)::regclass)::oid IN (SELECT ("Menu1"."IdElementClass")::integer AS "IdElementClass" FROM "Menu" "Menu1" WHERE (((("Menu1"."Code")::text <>  ALL (ARRAY[('folder'::character varying)::text, ('report'::character varying)::text, ('view'::character varying)::text, ('Folder'::character varying)::text, ('Report'::character varying)::text, ('View'::character varying)::text])) AND ("Menu1"."Status" = 'A'::bpchar)) AND (0 = "Menu1"."IdGroup")))))) THEN (system_treecatalog.childid)::regclass ELSE NULL::regclass END, 0::integer, _cm_legacy_get_menu_code(_cm_is_superclass_comment(((system_treecatalog.childcomment)::character varying)::text), _cm_legacy_class_is_process(((system_classcatalog.classcomment)::character varying)::text), false, false))) UNION SELECT "AllReport"."IdClass", "AllReport"."Code", "AllReport"."Description", "AllReport"."IdClass" AS "IdElementClass", "AllReport"."IdElementObj", 0 AS "IdGroup", "AllReport"."Type" FROM ((SELECT ((_cm_legacy_get_menu_type(false, false, true, false))::text || (ARRAY['pdf'::text, 'csv'::text, 'pdf'::text, 'csv'::text, 'xml'::text, 'odt'::text])[i.i]) AS "Code", "Report"."Id" AS "IdElementObj", "Report"."IdClass", "Report"."Code" AS "Description", "Report"."Type" FROM generate_series(1, 6) i(i), "Report" WHERE ((("Report"."Status")::text = 'A'::text) AND (((i.i + 1) / 2) = CASE WHEN (("Report"."Type")::text = 'normal'::text) THEN 1 WHEN (("Report"."Type")::text = 'custom'::text) THEN 2 WHEN (("Report"."Type")::text = 'openoffice'::text) THEN 3 ELSE 0 END))) "AllReport" LEFT JOIN "Menu" ON ((((("AllReport"."IdElementObj" = "Menu"."IdElementObj") AND ("Menu"."Status" = 'A'::bpchar)) AND (0 = "Menu"."IdGroup")) AND ("AllReport"."Code" = ("Menu"."Code")::text)))) WHERE ("Menu"."Code" IS NULL);
 
 
 
 CREATE VIEW system_privilegescatalog AS
-    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"', '', '', 'A', 'admin', now() AS now, NULL::unknown AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-' FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
+    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"', '', '', 'A', 'admin', now() AS now, NULL::unknown AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-' FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
 
 
 
@@ -6646,6 +7384,29 @@ INSERT INTO "Grant" VALUES (699, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-
 INSERT INTO "Grant" VALUES (700, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:15.638', NULL, 677, '"Server"', 'w');
 INSERT INTO "Grant" VALUES (701, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:23.485', NULL, 677, '"UPS"', 'w');
 INSERT INTO "Grant" VALUES (702, '"Grant"', NULL, NULL, 'A', 'system', '2011-08-23 22:46:24.318', NULL, 677, '"Workplace"', 'r');
+INSERT INTO "Grant" VALUES (1136, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:01.026', NULL, 942, '"Asset"', 'w');
+INSERT INTO "Grant" VALUES (1137, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:01.694', NULL, 942, '"Building"', 'w');
+INSERT INTO "Grant" VALUES (1138, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:02.165', NULL, 942, '"Computer"', 'w');
+INSERT INTO "Grant" VALUES (1139, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:02.597', NULL, 942, '"Employee"', 'w');
+INSERT INTO "Grant" VALUES (1140, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:03.198', NULL, 942, '"Floor"', 'w');
+INSERT INTO "Grant" VALUES (1141, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:03.653', NULL, 942, '"Invoice"', 'w');
+INSERT INTO "Grant" VALUES (1142, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:04.068', NULL, 942, '"License"', 'w');
+INSERT INTO "Grant" VALUES (1143, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:04.484', NULL, 942, '"Monitor"', 'w');
+INSERT INTO "Grant" VALUES (1144, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:04.919', NULL, 942, '"NetworkDevice"', 'w');
+INSERT INTO "Grant" VALUES (1145, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:05.292', NULL, 942, '"NetworkPoint"', 'w');
+INSERT INTO "Grant" VALUES (1146, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:05.645', NULL, 942, '"Notebook"', 'w');
+INSERT INTO "Grant" VALUES (1147, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:06.348', NULL, 942, '"Office"', 'w');
+INSERT INTO "Grant" VALUES (1148, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:06.764', NULL, 942, '"PC"', 'w');
+INSERT INTO "Grant" VALUES (1149, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:07.308', NULL, 942, '"Printer"', 'w');
+INSERT INTO "Grant" VALUES (1150, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:07.733', NULL, 942, '"Rack"', 'w');
+INSERT INTO "Grant" VALUES (1151, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:08.182', NULL, 942, '"RequestForChange"', 'w');
+INSERT INTO "Grant" VALUES (1152, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:08.581', NULL, 942, '"Room"', 'w');
+INSERT INTO "Grant" VALUES (1153, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:08.98', NULL, 942, '"Server"', 'w');
+INSERT INTO "Grant" VALUES (1154, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:09.356', NULL, 942, '"Supplier"', 'w');
+INSERT INTO "Grant" VALUES (1155, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:10.191', NULL, 942, '"SupplierContact"', 'w');
+INSERT INTO "Grant" VALUES (1156, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:10.524', NULL, 942, '"UPS"', 'w');
+INSERT INTO "Grant" VALUES (1157, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:11.228', NULL, 942, '"User"', 'w');
+INSERT INTO "Grant" VALUES (1158, '"Grant"', NULL, NULL, 'A', 'system', '2012-08-24 11:02:11.525', NULL, 942, '"Workplace"', 'w');
 
 
 
@@ -6686,7 +7447,7 @@ INSERT INTO "LookUp" VALUES (137, '"LookUp"', '', 'Cisco', 'A', NULL, '2011-07-2
 INSERT INTO "LookUp" VALUES (138, '"LookUp"', '', 'Acer', 'A', NULL, '2011-07-24 23:07:09.511', '', 'Brand', NULL, NULL, 5, false);
 INSERT INTO "LookUp" VALUES (139, '"LookUp"', '', 'Canon', 'A', NULL, '2011-07-24 23:07:16.833', '', 'Brand', NULL, NULL, 6, false);
 INSERT INTO "LookUp" VALUES (140, '"LookUp"', '', 'Epson', 'A', NULL, '2011-07-24 23:07:26.466', '', 'Brand', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (141, '"LookUp"', '', 'Microsoft', 'A', NULL, '2011-07-24 23:08:28.50', '', 'Brand', NULL, NULL, 8, false);
+INSERT INTO "LookUp" VALUES (141, '"LookUp"', '', 'Microsoft', 'A', NULL, '2011-07-24 23:08:28.5', '', 'Brand', NULL, NULL, 8, false);
 INSERT INTO "LookUp" VALUES (30, '"LookUp"', '', 'In use', 'A', NULL, '2011-07-22 17:18:01.123', '', 'Asset state', NULL, NULL, 1, false);
 INSERT INTO "LookUp" VALUES (142, '"LookUp"', '', 'To repair', 'A', NULL, '2011-07-24 23:11:03.069', '', 'Asset state', NULL, NULL, 2, false);
 INSERT INTO "LookUp" VALUES (143, '"LookUp"', '', 'Scrapped', 'A', NULL, '2011-07-24 23:11:29.004', '', 'Asset state', NULL, NULL, 3, false);
@@ -6762,6 +7523,29 @@ INSERT INTO "LookUp" VALUES (493, '"LookUp"', NULL, 'Magenta', 'A', NULL, '2011-
 INSERT INTO "LookUp" VALUES (392, '"LookUp"', '1', 'LCD', 'A', NULL, '2011-08-10 14:49:35.013', NULL, 'Monitor type', NULL, NULL, 1, false);
 INSERT INTO "LookUp" VALUES (703, '"LookUp"', NULL, 'Document', 'A', NULL, '2011-08-23 23:01:52.029', NULL, 'AlfrescoCategory', NULL, NULL, 1, false);
 INSERT INTO "LookUp" VALUES (704, '"LookUp"', NULL, 'Image', 'A', NULL, '2011-08-23 23:02:08.292', NULL, 'AlfrescoCategory', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (917, '"LookUp"', 'REC_RFC', 'Registered', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (920, '"LookUp"', 'REQ_EXE', 'Execution requested', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (921, '"LookUp"', 'IN_EXE', 'Implementation', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (922, '"LookUp"', 'OUT_EXE', 'Performed', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (923, '"LookUp"', 'CLOSED', 'Closed', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (924, '"LookUp"', 'FPC', 'Formatting PC', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (925, '"LookUp"', 'ISE', 'External software installation', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (926, '"LookUp"', 'ARI', 'Internet access', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (927, '"LookUp"', 'MIR', 'Modify IP address', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 4, false);
+INSERT INTO "LookUp" VALUES (928, '"LookUp"', 'NU_ERP', 'Create new ERP user', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 5, false);
+INSERT INTO "LookUp" VALUES (929, '"LookUp"', 'NU_CRM', 'Create new CRM user', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 6, false);
+INSERT INTO "LookUp" VALUES (930, '"LookUp"', 'NA', 'Not applicable', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC Category', NULL, NULL, 7, false);
+INSERT INTO "LookUp" VALUES (931, '"LookUp"', 'HI', 'High', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC priority', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (932, '"LookUp"', 'MID', 'Medium', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC priority', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (933, '"LookUp"', 'LOW', 'Low', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC priority', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (934, '"LookUp"', 'ACCEPTED', 'Accepted', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC formal evaluation', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (935, '"LookUp"', 'REJECTED', 'Rejected', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC formal evaluation', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (936, '"LookUp"', 'APPROVED', 'Approved', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC decision', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (937, '"LookUp"', 'NOT_APPROVED', 'Not approved', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC decision', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (938, '"LookUp"', 'POSITIVE', 'Positive', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC final result', NULL, NULL, 1, false);
+INSERT INTO "LookUp" VALUES (939, '"LookUp"', 'NEGATIVE', 'Negative', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC final result', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (918, '"LookUp"', 'REQ_DOC', 'Analysis requested', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 2, false);
+INSERT INTO "LookUp" VALUES (919, '"LookUp"', 'PRE_DOC', 'Analysis in progress', 'A', NULL, '2012-08-24 10:22:41.248', NULL, 'RFC status', NULL, NULL, 3, false);
 
 
 
@@ -6882,18 +7666,30 @@ INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room
 INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 242, 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 246);
 INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 248, 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 252);
 INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 266, 'A', 'admin', '2011-07-25 00:01:52.818', NULL, 270);
-INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'A', 'admin', '2011-09-02 11:53:26.90', NULL, 264);
+INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'A', 'admin', '2011-09-02 11:53:26.9', NULL, 264);
 INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 272, 'A', 'admin', '2011-09-02 11:54:54.974', NULL, 276);
 INSERT INTO "Map_OfficeRoom" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 254, 'A', 'admin', '2011-09-02 11:56:58.957', NULL, 258);
 
 
 
-INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 260, 'U', 'admin', '2011-07-25 00:01:29.684', '2011-09-02 11:53:26.90', 264);
-INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'U', 'admin', '2011-09-02 11:53:26.90', '2011-09-02 11:53:26.90', 264);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 260, 'U', 'admin', '2011-07-25 00:01:29.684', '2011-09-02 11:53:26.9', 264);
+INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 260, 'U', 'admin', '2011-09-02 11:53:26.9', '2011-09-02 11:53:26.9', 264);
 INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 112, '"Room"', 272, 'U', 'admin', '2011-07-25 00:02:19.16', '2011-09-02 11:54:54.974', 276);
 INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 272, 'U', 'admin', '2011-09-02 11:54:54.974', '2011-09-02 11:54:54.974', 276);
 INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 108, '"Room"', 254, 'U', 'admin', '2011-07-25 00:00:42.222', '2011-09-02 11:56:58.957', 258);
 INSERT INTO "Map_OfficeRoom_history" VALUES ('"Map_OfficeRoom"', '"Office"', 110, '"Room"', 254, 'U', 'admin', '2011-09-02 11:56:58.957', '2011-09-02 11:56:58.957', 258);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6934,14 +7730,22 @@ INSERT INTO "Map_RoomAsset" VALUES ('"Map_RoomAsset"', '"Room"', 104, '"NetworkD
 
 
 
+
+
+
+
+
+
 INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 714, '"PC"', 526, 'N', 'admin', '2011-08-29 13:07:08.776', NULL, 717);
-INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"PC"', 526, 'A', 'admin', '2011-08-29 13:27:49.732', NULL, 725);
 INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"NetworkDevice"', 747, 'A', 'admin', '2011-09-02 12:06:33.699', NULL, 751);
 INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"NetworkDevice"', 755, 'A', 'admin', '2011-09-02 12:08:39.585', NULL, 759);
+INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"PC"', 526, 'N', 'admin', '2012-08-25 12:39:36.099', NULL, 725);
+INSERT INTO "Map_SupplierAsset" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"PC"', 526, 'A', 'admin', '2012-08-25 12:41:15.881', NULL, 1254);
 
 
 
 INSERT INTO "Map_SupplierAsset_history" VALUES ('"Map_SupplierAsset"', '"Supplier"', 714, '"PC"', 526, 'U', 'admin', '2011-08-29 13:03:27.919', '2011-08-29 13:07:08.776', 717);
+INSERT INTO "Map_SupplierAsset_history" VALUES ('"Map_SupplierAsset"', '"Supplier"', 723, '"PC"', 526, 'U', 'admin', '2011-08-29 13:27:49.732', '2012-08-25 12:39:36.099', 725);
 
 
 
@@ -6960,6 +7764,7 @@ INSERT INTO "Map_SupplierAsset_history" VALUES ('"Map_SupplierAsset"', '"Supplie
 INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 13, '"Role"', 14, 'A', 'system', '2011-03-16 11:15:37.266624', NULL, 16, NULL);
 INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 678, '"Role"', 677, 'A', 'admin', '2011-08-23 22:41:46.419', NULL, 681, NULL);
 INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 679, '"Role"', 677, 'A', 'admin', '2011-08-23 22:41:46.632', NULL, 683, NULL);
+INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 943, '"Role"', 942, 'A', 'admin', '2012-08-24 10:22:41.248', NULL, 945, NULL);
 
 
 
@@ -7048,33 +7853,124 @@ INSERT INTO "Menu" VALUES (475, '"Menu"', 'class', 'NetworkDevice', 'N', 'system
 INSERT INTO "Menu" VALUES (477, '"Menu"', 'class', 'Rack', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"Rack"', 0, 0, 0, 'class');
 INSERT INTO "Menu" VALUES (479, '"Menu"', 'class', 'UPS', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"UPS"', 0, 0, 0, 'class');
 INSERT INTO "Menu" VALUES (481, '"Menu"', 'class', 'License', 'N', 'system', '2011-08-23 18:30:52.77', NULL, 459, '"License"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (624, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 0, 0, 'folder');
-INSERT INTO "Menu" VALUES (626, '"Menu"', 'class', 'Employee', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Employee"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (628, '"Menu"', 'class', 'Office', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Office"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (630, '"Menu"', 'class', 'Workplace', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Workplace"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (632, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 1, 0, 'folder');
-INSERT INTO "Menu" VALUES (634, '"Menu"', 'class', 'Supplier', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Supplier"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (636, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"SupplierContact"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (638, '"Menu"', 'class', 'Invoice', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Invoice"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (640, '"Menu"', 'folder', 'Locations', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 2, 0, 'folder');
-INSERT INTO "Menu" VALUES (642, '"Menu"', 'class', 'Building', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Building"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (644, '"Menu"', 'class', 'Room', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Room"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (646, '"Menu"', 'class', 'Floor', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Floor"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (648, '"Menu"', 'class', 'Network point', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"NetworkPoint"', 0, 3, 0, 'class');
-INSERT INTO "Menu" VALUES (650, '"Menu"', 'folder', 'Assets', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 3, 0, 'folder');
-INSERT INTO "Menu" VALUES (652, '"Menu"', 'class', 'Asset', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Asset"', 0, 0, 0, 'class');
-INSERT INTO "Menu" VALUES (654, '"Menu"', 'class', 'Computer', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Computer"', 0, 1, 0, 'class');
-INSERT INTO "Menu" VALUES (656, '"Menu"', 'class', 'PC', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"PC"', 0, 2, 0, 'class');
-INSERT INTO "Menu" VALUES (658, '"Menu"', 'class', 'Notebook', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Notebook"', 0, 3, 0, 'class');
-INSERT INTO "Menu" VALUES (660, '"Menu"', 'class', 'Server', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Server"', 0, 4, 0, 'class');
-INSERT INTO "Menu" VALUES (662, '"Menu"', 'class', 'Monitor', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Monitor"', 0, 5, 0, 'class');
-INSERT INTO "Menu" VALUES (664, '"Menu"', 'class', 'Printer', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Printer"', 0, 6, 0, 'class');
-INSERT INTO "Menu" VALUES (666, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"NetworkDevice"', 0, 7, 0, 'class');
-INSERT INTO "Menu" VALUES (668, '"Menu"', 'class', 'Rack', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Rack"', 0, 8, 0, 'class');
-INSERT INTO "Menu" VALUES (670, '"Menu"', 'class', 'UPS', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"UPS"', 0, 9, 0, 'class');
-INSERT INTO "Menu" VALUES (672, '"Menu"', 'class', 'License', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"License"', 0, 10, 0, 'class');
-INSERT INTO "Menu" VALUES (674, '"Menu"', 'folder', 'Report', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 4, 0, 'folder');
-INSERT INTO "Menu" VALUES (676, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2012-01-31 11:29:35.93578', NULL, 674, '"Report"', 597, 0, 0, 'custom');
+INSERT INTO "Menu" VALUES (624, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (626, '"Menu"', 'class', 'Employee', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 624, '"Employee"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (628, '"Menu"', 'class', 'Office', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 624, '"Office"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (630, '"Menu"', 'class', 'Workplace', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 624, '"Workplace"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (632, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 1, 0, 'folder');
+INSERT INTO "Menu" VALUES (634, '"Menu"', 'class', 'Supplier', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 632, '"Supplier"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (636, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 632, '"SupplierContact"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (638, '"Menu"', 'class', 'Invoice', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 632, '"Invoice"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (640, '"Menu"', 'folder', 'Locations', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 2, 0, 'folder');
+INSERT INTO "Menu" VALUES (642, '"Menu"', 'class', 'Building', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"Building"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (644, '"Menu"', 'class', 'Room', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"Room"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (646, '"Menu"', 'class', 'Floor', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"Floor"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (648, '"Menu"', 'class', 'Network point', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 640, '"NetworkPoint"', 0, 3, 0, 'class');
+INSERT INTO "Menu" VALUES (650, '"Menu"', 'folder', 'Assets', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 3, 0, 'folder');
+INSERT INTO "Menu" VALUES (652, '"Menu"', 'class', 'Asset', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Asset"', 0, 0, 0, 'class');
+INSERT INTO "Menu" VALUES (654, '"Menu"', 'class', 'Computer', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Computer"', 0, 1, 0, 'class');
+INSERT INTO "Menu" VALUES (656, '"Menu"', 'class', 'PC', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"PC"', 0, 2, 0, 'class');
+INSERT INTO "Menu" VALUES (658, '"Menu"', 'class', 'Notebook', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Notebook"', 0, 3, 0, 'class');
+INSERT INTO "Menu" VALUES (660, '"Menu"', 'class', 'Server', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Server"', 0, 4, 0, 'class');
+INSERT INTO "Menu" VALUES (662, '"Menu"', 'class', 'Monitor', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Monitor"', 0, 5, 0, 'class');
+INSERT INTO "Menu" VALUES (664, '"Menu"', 'class', 'Printer', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Printer"', 0, 6, 0, 'class');
+INSERT INTO "Menu" VALUES (666, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"NetworkDevice"', 0, 7, 0, 'class');
+INSERT INTO "Menu" VALUES (668, '"Menu"', 'class', 'Rack', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"Rack"', 0, 8, 0, 'class');
+INSERT INTO "Menu" VALUES (670, '"Menu"', 'class', 'UPS', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"UPS"', 0, 9, 0, 'class');
+INSERT INTO "Menu" VALUES (672, '"Menu"', 'class', 'License', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 650, '"License"', 0, 10, 0, 'class');
+INSERT INTO "Menu" VALUES (674, '"Menu"', 'folder', 'Report', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 0, NULL, 0, 4, 0, 'folder');
+INSERT INTO "Menu" VALUES (676, '"Menu"', 'reportpdf', 'Location list with assets', 'N', 'system', '2012-08-23 22:20:01.394', NULL, 674, '"Report"', 597, 0, 0, 'custom');
+INSERT INTO "Menu" VALUES (860, '"Menu"', 'folder', 'Dashboard', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (862, '"Menu"', 'dashboard', 'Item situation', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 860, '831', 0, 1, 0, 'dashboard');
+INSERT INTO "Menu" VALUES (864, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 2, 0, 'folder');
+INSERT INTO "Menu" VALUES (866, '"Menu"', 'class', 'Employee', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 864, '"Employee"', 0, 3, 0, 'class');
+INSERT INTO "Menu" VALUES (868, '"Menu"', 'class', 'Office', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 864, '"Office"', 0, 4, 0, 'class');
+INSERT INTO "Menu" VALUES (870, '"Menu"', 'class', 'Workplace', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 864, '"Workplace"', 0, 5, 0, 'class');
+INSERT INTO "Menu" VALUES (872, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 6, 0, 'folder');
+INSERT INTO "Menu" VALUES (874, '"Menu"', 'class', 'Supplier', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 872, '"Supplier"', 0, 7, 0, 'class');
+INSERT INTO "Menu" VALUES (876, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 872, '"SupplierContact"', 0, 8, 0, 'class');
+INSERT INTO "Menu" VALUES (878, '"Menu"', 'class', 'Invoice', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 872, '"Invoice"', 0, 9, 0, 'class');
+INSERT INTO "Menu" VALUES (880, '"Menu"', 'folder', 'Locations', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 10, 0, 'folder');
+INSERT INTO "Menu" VALUES (882, '"Menu"', 'class', 'Building', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"Building"', 0, 11, 0, 'class');
+INSERT INTO "Menu" VALUES (884, '"Menu"', 'class', 'Room', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"Room"', 0, 12, 0, 'class');
+INSERT INTO "Menu" VALUES (886, '"Menu"', 'class', 'Floor', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"Floor"', 0, 13, 0, 'class');
+INSERT INTO "Menu" VALUES (888, '"Menu"', 'class', 'Network point', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 880, '"NetworkPoint"', 0, 14, 0, 'class');
+INSERT INTO "Menu" VALUES (890, '"Menu"', 'folder', 'Assets', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 15, 0, 'folder');
+INSERT INTO "Menu" VALUES (892, '"Menu"', 'class', 'Asset', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Asset"', 0, 16, 0, 'class');
+INSERT INTO "Menu" VALUES (894, '"Menu"', 'class', 'Computer', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Computer"', 0, 17, 0, 'class');
+INSERT INTO "Menu" VALUES (896, '"Menu"', 'class', 'PC', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"PC"', 0, 18, 0, 'class');
+INSERT INTO "Menu" VALUES (898, '"Menu"', 'class', 'Notebook', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Notebook"', 0, 19, 0, 'class');
+INSERT INTO "Menu" VALUES (900, '"Menu"', 'class', 'Server', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Server"', 0, 20, 0, 'class');
+INSERT INTO "Menu" VALUES (902, '"Menu"', 'class', 'Monitor', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Monitor"', 0, 21, 0, 'class');
+INSERT INTO "Menu" VALUES (904, '"Menu"', 'class', 'Printer', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Printer"', 0, 22, 0, 'class');
+INSERT INTO "Menu" VALUES (906, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"NetworkDevice"', 0, 23, 0, 'class');
+INSERT INTO "Menu" VALUES (908, '"Menu"', 'class', 'Rack', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"Rack"', 0, 24, 0, 'class');
+INSERT INTO "Menu" VALUES (910, '"Menu"', 'class', 'UPS', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"UPS"', 0, 25, 0, 'class');
+INSERT INTO "Menu" VALUES (912, '"Menu"', 'class', 'License', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 890, '"License"', 0, 26, 0, 'class');
+INSERT INTO "Menu" VALUES (914, '"Menu"', 'folder', 'Report', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 0, NULL, 0, 27, 0, 'folder');
+INSERT INTO "Menu" VALUES (916, '"Menu"', 'reportpdf', 'Location list with assets', 'N', 'system', '2012-08-24 10:28:10.449', NULL, 914, '"Report"', 597, 28, 0, 'custom');
+INSERT INTO "Menu" VALUES (977, '"Menu"', 'folder', 'Dashboard', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 0, 0, 'folder');
+INSERT INTO "Menu" VALUES (979, '"Menu"', 'dashboard', 'Item situation', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 977, '831', 0, 1, 0, 'dashboard');
+INSERT INTO "Menu" VALUES (981, '"Menu"', 'dashboard', 'RfC situation', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 977, '946', 0, 2, 0, 'dashboard');
+INSERT INTO "Menu" VALUES (983, '"Menu"', 'folder', 'Basic archives', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 3, 0, 'folder');
+INSERT INTO "Menu" VALUES (985, '"Menu"', 'class', 'Employee', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 983, '"Employee"', 0, 4, 0, 'class');
+INSERT INTO "Menu" VALUES (987, '"Menu"', 'class', 'Office', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 983, '"Office"', 0, 5, 0, 'class');
+INSERT INTO "Menu" VALUES (989, '"Menu"', 'class', 'Workplace', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 983, '"Workplace"', 0, 6, 0, 'class');
+INSERT INTO "Menu" VALUES (991, '"Menu"', 'folder', 'Purchases', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 7, 0, 'folder');
+INSERT INTO "Menu" VALUES (993, '"Menu"', 'class', 'Supplier', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 991, '"Supplier"', 0, 8, 0, 'class');
+INSERT INTO "Menu" VALUES (995, '"Menu"', 'class', 'SupplierContact', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 991, '"SupplierContact"', 0, 9, 0, 'class');
+INSERT INTO "Menu" VALUES (997, '"Menu"', 'class', 'Invoice', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 991, '"Invoice"', 0, 10, 0, 'class');
+INSERT INTO "Menu" VALUES (999, '"Menu"', 'folder', 'Locations', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 11, 0, 'folder');
+INSERT INTO "Menu" VALUES (1001, '"Menu"', 'class', 'Building', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"Building"', 0, 12, 0, 'class');
+INSERT INTO "Menu" VALUES (1003, '"Menu"', 'class', 'Room', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"Room"', 0, 13, 0, 'class');
+INSERT INTO "Menu" VALUES (1005, '"Menu"', 'class', 'Floor', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"Floor"', 0, 14, 0, 'class');
+INSERT INTO "Menu" VALUES (1007, '"Menu"', 'class', 'Network point', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 999, '"NetworkPoint"', 0, 15, 0, 'class');
+INSERT INTO "Menu" VALUES (1009, '"Menu"', 'folder', 'Assets', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 16, 0, 'folder');
+INSERT INTO "Menu" VALUES (1011, '"Menu"', 'class', 'Asset', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Asset"', 0, 17, 0, 'class');
+INSERT INTO "Menu" VALUES (1013, '"Menu"', 'class', 'Computer', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Computer"', 0, 18, 0, 'class');
+INSERT INTO "Menu" VALUES (1015, '"Menu"', 'class', 'PC', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"PC"', 0, 19, 0, 'class');
+INSERT INTO "Menu" VALUES (1017, '"Menu"', 'class', 'Notebook', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Notebook"', 0, 20, 0, 'class');
+INSERT INTO "Menu" VALUES (1019, '"Menu"', 'class', 'Server', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Server"', 0, 21, 0, 'class');
+INSERT INTO "Menu" VALUES (1021, '"Menu"', 'class', 'Monitor', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Monitor"', 0, 22, 0, 'class');
+INSERT INTO "Menu" VALUES (1023, '"Menu"', 'class', 'Printer', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Printer"', 0, 23, 0, 'class');
+INSERT INTO "Menu" VALUES (1025, '"Menu"', 'class', 'NetworkDevice', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"NetworkDevice"', 0, 24, 0, 'class');
+INSERT INTO "Menu" VALUES (1027, '"Menu"', 'class', 'Rack', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"Rack"', 0, 25, 0, 'class');
+INSERT INTO "Menu" VALUES (1029, '"Menu"', 'class', 'UPS', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"UPS"', 0, 26, 0, 'class');
+INSERT INTO "Menu" VALUES (1031, '"Menu"', 'class', 'License', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1009, '"License"', 0, 27, 0, 'class');
+INSERT INTO "Menu" VALUES (1033, '"Menu"', 'folder', 'Report', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 0, NULL, 0, 28, 0, 'folder');
+INSERT INTO "Menu" VALUES (1035, '"Menu"', 'reportpdf', 'Location list with assets', 'N', 'system', '2012-08-24 10:28:45.296', NULL, 1033, '"Report"', 597, 29, 0, 'custom');
+INSERT INTO "Menu" VALUES (1067, '"Menu"', 'folder', 'Dashboard', 'A', 'system', '2012-08-24 10:28:45.462', NULL, 0, NULL, 0, 30, 0, 'folder');
+INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dashboard', 'Item situation', 'A', 'system', '2012-08-24 10:28:45.464', NULL, 1067, '831', 0, 31, 0, 'dashboard');
+INSERT INTO "Menu" VALUES (1071, '"Menu"', 'dashboard', 'RfC situation', 'A', 'system', '2012-08-24 10:28:45.466', NULL, 1067, '946', 0, 32, 0, 'dashboard');
+INSERT INTO "Menu" VALUES (1073, '"Menu"', 'folder', 'Basic archives', 'A', 'system', '2012-08-24 10:28:45.467', NULL, 0, NULL, 0, 33, 0, 'folder');
+INSERT INTO "Menu" VALUES (1075, '"Menu"', 'class', 'Employee', 'A', 'system', '2012-08-24 10:28:45.469', NULL, 1073, '"Employee"', 0, 34, 0, 'class');
+INSERT INTO "Menu" VALUES (1077, '"Menu"', 'class', 'Office', 'A', 'system', '2012-08-24 10:28:45.47', NULL, 1073, '"Office"', 0, 35, 0, 'class');
+INSERT INTO "Menu" VALUES (1079, '"Menu"', 'class', 'Workplace', 'A', 'system', '2012-08-24 10:28:45.472', NULL, 1073, '"Workplace"', 0, 36, 0, 'class');
+INSERT INTO "Menu" VALUES (1081, '"Menu"', 'folder', 'Purchases', 'A', 'system', '2012-08-24 10:28:45.473', NULL, 0, NULL, 0, 37, 0, 'folder');
+INSERT INTO "Menu" VALUES (1083, '"Menu"', 'class', 'Supplier', 'A', 'system', '2012-08-24 10:28:45.475', NULL, 1081, '"Supplier"', 0, 38, 0, 'class');
+INSERT INTO "Menu" VALUES (1085, '"Menu"', 'class', 'SupplierContact', 'A', 'system', '2012-08-24 10:28:45.476', NULL, 1081, '"SupplierContact"', 0, 39, 0, 'class');
+INSERT INTO "Menu" VALUES (1087, '"Menu"', 'class', 'Invoice', 'A', 'system', '2012-08-24 10:28:45.479', NULL, 1081, '"Invoice"', 0, 40, 0, 'class');
+INSERT INTO "Menu" VALUES (1089, '"Menu"', 'folder', 'Locations', 'A', 'system', '2012-08-24 10:28:45.481', NULL, 0, NULL, 0, 41, 0, 'folder');
+INSERT INTO "Menu" VALUES (1091, '"Menu"', 'class', 'Building', 'A', 'system', '2012-08-24 10:28:45.483', NULL, 1089, '"Building"', 0, 42, 0, 'class');
+INSERT INTO "Menu" VALUES (1093, '"Menu"', 'class', 'Room', 'A', 'system', '2012-08-24 10:28:45.485', NULL, 1089, '"Room"', 0, 43, 0, 'class');
+INSERT INTO "Menu" VALUES (1095, '"Menu"', 'class', 'Floor', 'A', 'system', '2012-08-24 10:28:45.487', NULL, 1089, '"Floor"', 0, 44, 0, 'class');
+INSERT INTO "Menu" VALUES (1097, '"Menu"', 'class', 'Network point', 'A', 'system', '2012-08-24 10:28:45.489', NULL, 1089, '"NetworkPoint"', 0, 45, 0, 'class');
+INSERT INTO "Menu" VALUES (1099, '"Menu"', 'folder', 'Assets', 'A', 'system', '2012-08-24 10:28:45.492', NULL, 0, NULL, 0, 46, 0, 'folder');
+INSERT INTO "Menu" VALUES (1101, '"Menu"', 'class', 'Asset', 'A', 'system', '2012-08-24 10:28:45.493', NULL, 1099, '"Asset"', 0, 47, 0, 'class');
+INSERT INTO "Menu" VALUES (1103, '"Menu"', 'class', 'Computer', 'A', 'system', '2012-08-24 10:28:45.495', NULL, 1099, '"Computer"', 0, 48, 0, 'class');
+INSERT INTO "Menu" VALUES (1105, '"Menu"', 'class', 'PC', 'A', 'system', '2012-08-24 10:28:45.499', NULL, 1099, '"PC"', 0, 49, 0, 'class');
+INSERT INTO "Menu" VALUES (1107, '"Menu"', 'class', 'Notebook', 'A', 'system', '2012-08-24 10:28:45.501', NULL, 1099, '"Notebook"', 0, 50, 0, 'class');
+INSERT INTO "Menu" VALUES (1109, '"Menu"', 'class', 'Server', 'A', 'system', '2012-08-24 10:28:45.503', NULL, 1099, '"Server"', 0, 51, 0, 'class');
+INSERT INTO "Menu" VALUES (1111, '"Menu"', 'class', 'Monitor', 'A', 'system', '2012-08-24 10:28:45.504', NULL, 1099, '"Monitor"', 0, 52, 0, 'class');
+INSERT INTO "Menu" VALUES (1113, '"Menu"', 'class', 'Printer', 'A', 'system', '2012-08-24 10:28:45.506', NULL, 1099, '"Printer"', 0, 53, 0, 'class');
+INSERT INTO "Menu" VALUES (1115, '"Menu"', 'class', 'NetworkDevice', 'A', 'system', '2012-08-24 10:28:45.508', NULL, 1099, '"NetworkDevice"', 0, 54, 0, 'class');
+INSERT INTO "Menu" VALUES (1117, '"Menu"', 'class', 'Rack', 'A', 'system', '2012-08-24 10:28:45.51', NULL, 1099, '"Rack"', 0, 55, 0, 'class');
+INSERT INTO "Menu" VALUES (1119, '"Menu"', 'class', 'UPS', 'A', 'system', '2012-08-24 10:28:45.511', NULL, 1099, '"UPS"', 0, 56, 0, 'class');
+INSERT INTO "Menu" VALUES (1121, '"Menu"', 'class', 'License', 'A', 'system', '2012-08-24 10:28:45.513', NULL, 1099, '"License"', 0, 57, 0, 'class');
+INSERT INTO "Menu" VALUES (1123, '"Menu"', 'folder', 'Report', 'A', 'system', '2012-08-24 10:28:45.515', NULL, 0, NULL, 0, 58, 0, 'folder');
+INSERT INTO "Menu" VALUES (1125, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'system', '2012-08-24 10:28:45.518', NULL, 1123, '"Report"', 597, 59, 0, 'custom');
+INSERT INTO "Menu" VALUES (1127, '"Menu"', 'folder', 'Workflow', 'A', 'system', '2012-08-24 10:28:45.519', NULL, 0, NULL, 0, 60, 0, 'folder');
+INSERT INTO "Menu" VALUES (1129, '"Menu"', 'processclass', 'Request for change', 'A', 'system', '2012-08-24 10:28:45.521', NULL, 1127, '"RequestForChange"', 0, 61, 0, 'processclass');
 
 
 
@@ -7098,7 +7994,7 @@ INSERT INTO "Menu_history" VALUES (337, '"Menu"', 'class', 'Employee', 'U', 'sys
 INSERT INTO "Menu_history" VALUES (338, '"Menu"', 'class', 'Office', 'U', 'system', '2011-08-10 12:40:08.895', NULL, 296, '"Office"', 0, 0, 0, 'class', 300, '2011-08-10 12:54:25.886');
 INSERT INTO "Menu_history" VALUES (339, '"Menu"', 'class', 'Workplace', 'U', 'system', '2011-08-10 12:40:08.896', NULL, 296, '"Workplace"', 0, 0, 0, 'class', 302, '2011-08-10 12:54:25.886');
 INSERT INTO "Menu_history" VALUES (340, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2011-08-10 12:40:08.899', NULL, 0, NULL, 0, 0, 0, 'folder', 304, '2011-08-10 12:54:25.886');
-INSERT INTO "Menu_history" VALUES (341, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:40:08.90', NULL, 304, '"Supplier"', 0, 0, 0, 'class', 306, '2011-08-10 12:54:25.886');
+INSERT INTO "Menu_history" VALUES (341, '"Menu"', 'class', 'Supplier', 'U', 'system', '2011-08-10 12:40:08.9', NULL, 304, '"Supplier"', 0, 0, 0, 'class', 306, '2011-08-10 12:54:25.886');
 INSERT INTO "Menu_history" VALUES (342, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2011-08-10 12:40:08.902', NULL, 304, '"SupplierContact"', 0, 0, 0, 'class', 308, '2011-08-10 12:54:25.886');
 INSERT INTO "Menu_history" VALUES (343, '"Menu"', 'class', 'Invoice', 'U', 'system', '2011-08-10 12:40:08.903', NULL, 304, '"Invoice"', 0, 0, 0, 'class', 310, '2011-08-10 12:54:25.886');
 INSERT INTO "Menu_history" VALUES (344, '"Menu"', 'folder', 'Locations', 'U', 'system', '2011-08-10 12:40:08.905', NULL, 0, NULL, 0, 0, 0, 'folder', 312, '2011-08-10 12:54:25.886');
@@ -7181,6 +8077,92 @@ INSERT INTO "Menu_history" VALUES (813, '"Menu"', 'class', 'UPS', 'U', 'system',
 INSERT INTO "Menu_history" VALUES (814, '"Menu"', 'class', 'License', 'U', 'system', '2011-08-23 18:30:53.219', NULL, 650, '"License"', 0, 0, 0, 'class', 672, '2012-01-31 11:29:35.93578');
 INSERT INTO "Menu_history" VALUES (815, '"Menu"', 'folder', 'Report', 'U', 'system', '2011-08-23 18:30:53.221', NULL, 0, NULL, 0, 0, 0, 'folder', 674, '2012-01-31 11:29:35.93578');
 INSERT INTO "Menu_history" VALUES (816, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2011-08-23 18:30:53.223', NULL, 674, '"Report"', 597, 0, 0, 'custom', 676, '2012-01-31 11:29:35.93578');
+INSERT INTO "Menu_history" VALUES (832, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 0, 0, 'folder', 624, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (833, '"Menu"', 'class', 'Employee', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Employee"', 0, 0, 0, 'class', 626, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (834, '"Menu"', 'class', 'Office', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Office"', 0, 1, 0, 'class', 628, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (835, '"Menu"', 'class', 'Workplace', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 624, '"Workplace"', 0, 2, 0, 'class', 630, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (836, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 1, 0, 'folder', 632, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (837, '"Menu"', 'class', 'Supplier', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Supplier"', 0, 0, 0, 'class', 634, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (838, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"SupplierContact"', 0, 1, 0, 'class', 636, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (839, '"Menu"', 'class', 'Invoice', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 632, '"Invoice"', 0, 2, 0, 'class', 638, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (840, '"Menu"', 'folder', 'Locations', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 2, 0, 'folder', 640, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (841, '"Menu"', 'class', 'Building', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Building"', 0, 0, 0, 'class', 642, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (842, '"Menu"', 'class', 'Room', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Room"', 0, 1, 0, 'class', 644, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (843, '"Menu"', 'class', 'Floor', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"Floor"', 0, 2, 0, 'class', 646, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (844, '"Menu"', 'class', 'Network point', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 640, '"NetworkPoint"', 0, 3, 0, 'class', 648, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (845, '"Menu"', 'folder', 'Assets', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 3, 0, 'folder', 650, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (846, '"Menu"', 'class', 'Asset', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Asset"', 0, 0, 0, 'class', 652, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (847, '"Menu"', 'class', 'Computer', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Computer"', 0, 1, 0, 'class', 654, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (848, '"Menu"', 'class', 'PC', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"PC"', 0, 2, 0, 'class', 656, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (849, '"Menu"', 'class', 'Notebook', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Notebook"', 0, 3, 0, 'class', 658, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (850, '"Menu"', 'class', 'Server', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Server"', 0, 4, 0, 'class', 660, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (851, '"Menu"', 'class', 'Monitor', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Monitor"', 0, 5, 0, 'class', 662, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (852, '"Menu"', 'class', 'Printer', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Printer"', 0, 6, 0, 'class', 664, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (853, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"NetworkDevice"', 0, 7, 0, 'class', 666, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (854, '"Menu"', 'class', 'Rack', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"Rack"', 0, 8, 0, 'class', 668, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (855, '"Menu"', 'class', 'UPS', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"UPS"', 0, 9, 0, 'class', 670, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (856, '"Menu"', 'class', 'License', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 650, '"License"', 0, 10, 0, 'class', 672, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (857, '"Menu"', 'folder', 'Report', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 0, NULL, 0, 4, 0, 'folder', 674, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (858, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2012-01-31 11:29:35.93578', NULL, 674, '"Report"', 597, 0, 0, 'custom', 676, '2012-08-23 22:20:01.394');
+INSERT INTO "Menu_history" VALUES (947, '"Menu"', 'folder', 'Dashboard', 'U', 'system', '2012-08-23 22:20:01.732', NULL, 0, NULL, 0, 0, 0, 'folder', 860, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (948, '"Menu"', 'dashboard', 'Item situation', 'U', 'system', '2012-08-23 22:20:01.735', NULL, 860, '831', 0, 1, 0, 'dashboard', 862, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (949, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2012-08-23 22:20:01.736', NULL, 0, NULL, 0, 2, 0, 'folder', 864, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (950, '"Menu"', 'class', 'Employee', 'U', 'system', '2012-08-23 22:20:01.738', NULL, 864, '"Employee"', 0, 3, 0, 'class', 866, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (951, '"Menu"', 'class', 'Office', 'U', 'system', '2012-08-23 22:20:01.74', NULL, 864, '"Office"', 0, 4, 0, 'class', 868, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (952, '"Menu"', 'class', 'Workplace', 'U', 'system', '2012-08-23 22:20:01.744', NULL, 864, '"Workplace"', 0, 5, 0, 'class', 870, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (953, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2012-08-23 22:20:01.745', NULL, 0, NULL, 0, 6, 0, 'folder', 872, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (954, '"Menu"', 'class', 'Supplier', 'U', 'system', '2012-08-23 22:20:01.747', NULL, 872, '"Supplier"', 0, 7, 0, 'class', 874, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (955, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2012-08-23 22:20:01.748', NULL, 872, '"SupplierContact"', 0, 8, 0, 'class', 876, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (956, '"Menu"', 'class', 'Invoice', 'U', 'system', '2012-08-23 22:20:01.75', NULL, 872, '"Invoice"', 0, 9, 0, 'class', 878, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (957, '"Menu"', 'folder', 'Locations', 'U', 'system', '2012-08-23 22:20:01.751', NULL, 0, NULL, 0, 10, 0, 'folder', 880, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (958, '"Menu"', 'class', 'Building', 'U', 'system', '2012-08-23 22:20:01.754', NULL, 880, '"Building"', 0, 11, 0, 'class', 882, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (959, '"Menu"', 'class', 'Room', 'U', 'system', '2012-08-23 22:20:01.756', NULL, 880, '"Room"', 0, 12, 0, 'class', 884, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (960, '"Menu"', 'class', 'Floor', 'U', 'system', '2012-08-23 22:20:01.758', NULL, 880, '"Floor"', 0, 13, 0, 'class', 886, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (961, '"Menu"', 'class', 'Network point', 'U', 'system', '2012-08-23 22:20:01.76', NULL, 880, '"NetworkPoint"', 0, 14, 0, 'class', 888, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (962, '"Menu"', 'folder', 'Assets', 'U', 'system', '2012-08-23 22:20:01.763', NULL, 0, NULL, 0, 15, 0, 'folder', 890, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (963, '"Menu"', 'class', 'Asset', 'U', 'system', '2012-08-23 22:20:01.765', NULL, 890, '"Asset"', 0, 16, 0, 'class', 892, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (964, '"Menu"', 'class', 'Computer', 'U', 'system', '2012-08-23 22:20:01.767', NULL, 890, '"Computer"', 0, 17, 0, 'class', 894, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (965, '"Menu"', 'class', 'PC', 'U', 'system', '2012-08-23 22:20:01.768', NULL, 890, '"PC"', 0, 18, 0, 'class', 896, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (966, '"Menu"', 'class', 'Notebook', 'U', 'system', '2012-08-23 22:20:01.771', NULL, 890, '"Notebook"', 0, 19, 0, 'class', 898, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (967, '"Menu"', 'class', 'Server', 'U', 'system', '2012-08-23 22:20:01.773', NULL, 890, '"Server"', 0, 20, 0, 'class', 900, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (968, '"Menu"', 'class', 'Monitor', 'U', 'system', '2012-08-23 22:20:01.777', NULL, 890, '"Monitor"', 0, 21, 0, 'class', 902, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (969, '"Menu"', 'class', 'Printer', 'U', 'system', '2012-08-23 22:20:01.779', NULL, 890, '"Printer"', 0, 22, 0, 'class', 904, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (970, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2012-08-23 22:20:01.781', NULL, 890, '"NetworkDevice"', 0, 23, 0, 'class', 906, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (971, '"Menu"', 'class', 'Rack', 'U', 'system', '2012-08-23 22:20:01.782', NULL, 890, '"Rack"', 0, 24, 0, 'class', 908, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (972, '"Menu"', 'class', 'UPS', 'U', 'system', '2012-08-23 22:20:01.784', NULL, 890, '"UPS"', 0, 25, 0, 'class', 910, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (973, '"Menu"', 'class', 'License', 'U', 'system', '2012-08-23 22:20:01.788', NULL, 890, '"License"', 0, 26, 0, 'class', 912, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (974, '"Menu"', 'folder', 'Report', 'U', 'system', '2012-08-23 22:20:01.789', NULL, 0, NULL, 0, 27, 0, 'folder', 914, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (975, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2012-08-23 22:20:01.791', NULL, 914, '"Report"', 597, 28, 0, 'custom', 916, '2012-08-24 10:28:10.449');
+INSERT INTO "Menu_history" VALUES (1036, '"Menu"', 'folder', 'Dashboard', 'U', 'system', '2012-08-24 10:28:10.861', NULL, 0, NULL, 0, 0, 0, 'folder', 977, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1037, '"Menu"', 'dashboard', 'Item situation', 'U', 'system', '2012-08-24 10:28:10.863', NULL, 977, '831', 0, 1, 0, 'dashboard', 979, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1038, '"Menu"', 'dashboard', 'RfC situation', 'U', 'system', '2012-08-24 10:28:10.865', NULL, 977, '946', 0, 2, 0, 'dashboard', 981, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1039, '"Menu"', 'folder', 'Basic archives', 'U', 'system', '2012-08-24 10:28:10.866', NULL, 0, NULL, 0, 3, 0, 'folder', 983, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1040, '"Menu"', 'class', 'Employee', 'U', 'system', '2012-08-24 10:28:10.869', NULL, 983, '"Employee"', 0, 4, 0, 'class', 985, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1041, '"Menu"', 'class', 'Office', 'U', 'system', '2012-08-24 10:28:10.87', NULL, 983, '"Office"', 0, 5, 0, 'class', 987, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1042, '"Menu"', 'class', 'Workplace', 'U', 'system', '2012-08-24 10:28:10.872', NULL, 983, '"Workplace"', 0, 6, 0, 'class', 989, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1043, '"Menu"', 'folder', 'Purchases', 'U', 'system', '2012-08-24 10:28:10.876', NULL, 0, NULL, 0, 7, 0, 'folder', 991, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1044, '"Menu"', 'class', 'Supplier', 'U', 'system', '2012-08-24 10:28:10.878', NULL, 991, '"Supplier"', 0, 8, 0, 'class', 993, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1045, '"Menu"', 'class', 'SupplierContact', 'U', 'system', '2012-08-24 10:28:10.879', NULL, 991, '"SupplierContact"', 0, 9, 0, 'class', 995, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1046, '"Menu"', 'class', 'Invoice', 'U', 'system', '2012-08-24 10:28:10.881', NULL, 991, '"Invoice"', 0, 10, 0, 'class', 997, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1047, '"Menu"', 'folder', 'Locations', 'U', 'system', '2012-08-24 10:28:10.883', NULL, 0, NULL, 0, 11, 0, 'folder', 999, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1048, '"Menu"', 'class', 'Building', 'U', 'system', '2012-08-24 10:28:10.886', NULL, 999, '"Building"', 0, 12, 0, 'class', 1001, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1049, '"Menu"', 'class', 'Room', 'U', 'system', '2012-08-24 10:28:10.888', NULL, 999, '"Room"', 0, 13, 0, 'class', 1003, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1050, '"Menu"', 'class', 'Floor', 'U', 'system', '2012-08-24 10:28:10.89', NULL, 999, '"Floor"', 0, 14, 0, 'class', 1005, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1051, '"Menu"', 'class', 'Network point', 'U', 'system', '2012-08-24 10:28:10.892', NULL, 999, '"NetworkPoint"', 0, 15, 0, 'class', 1007, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1052, '"Menu"', 'folder', 'Assets', 'U', 'system', '2012-08-24 10:28:10.894', NULL, 0, NULL, 0, 16, 0, 'folder', 1009, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1053, '"Menu"', 'class', 'Asset', 'U', 'system', '2012-08-24 10:28:10.896', NULL, 1009, '"Asset"', 0, 17, 0, 'class', 1011, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1054, '"Menu"', 'class', 'Computer', 'U', 'system', '2012-08-24 10:28:10.898', NULL, 1009, '"Computer"', 0, 18, 0, 'class', 1013, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1055, '"Menu"', 'class', 'PC', 'U', 'system', '2012-08-24 10:28:10.9', NULL, 1009, '"PC"', 0, 19, 0, 'class', 1015, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1056, '"Menu"', 'class', 'Notebook', 'U', 'system', '2012-08-24 10:28:10.902', NULL, 1009, '"Notebook"', 0, 20, 0, 'class', 1017, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1057, '"Menu"', 'class', 'Server', 'U', 'system', '2012-08-24 10:28:10.903', NULL, 1009, '"Server"', 0, 21, 0, 'class', 1019, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1058, '"Menu"', 'class', 'Monitor', 'U', 'system', '2012-08-24 10:28:10.905', NULL, 1009, '"Monitor"', 0, 22, 0, 'class', 1021, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1059, '"Menu"', 'class', 'Printer', 'U', 'system', '2012-08-24 10:28:10.907', NULL, 1009, '"Printer"', 0, 23, 0, 'class', 1023, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1060, '"Menu"', 'class', 'NetworkDevice', 'U', 'system', '2012-08-24 10:28:10.909', NULL, 1009, '"NetworkDevice"', 0, 24, 0, 'class', 1025, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1061, '"Menu"', 'class', 'Rack', 'U', 'system', '2012-08-24 10:28:10.911', NULL, 1009, '"Rack"', 0, 25, 0, 'class', 1027, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1062, '"Menu"', 'class', 'UPS', 'U', 'system', '2012-08-24 10:28:10.913', NULL, 1009, '"UPS"', 0, 26, 0, 'class', 1029, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1063, '"Menu"', 'class', 'License', 'U', 'system', '2012-08-24 10:28:10.915', NULL, 1009, '"License"', 0, 27, 0, 'class', 1031, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1064, '"Menu"', 'folder', 'Report', 'U', 'system', '2012-08-24 10:28:10.918', NULL, 0, NULL, 0, 28, 0, 'folder', 1033, '2012-08-24 10:28:45.296');
+INSERT INTO "Menu_history" VALUES (1065, '"Menu"', 'reportpdf', 'Location list with assets', 'U', 'system', '2012-08-24 10:28:10.919', NULL, 1033, '"Report"', 597, 29, 0, 'custom', 1035, '2012-08-24 10:28:45.296');
 
 
 
@@ -7194,6 +8176,7 @@ INSERT INTO "Metadata" VALUES (497, '"Metadata"', 'gis.Detail_Supplier_Location'
 INSERT INTO "Metadata" VALUES (499, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'N', 'system', '2011-09-19 16:59:28.659447', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}');
 INSERT INTO "Metadata" VALUES (501, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'N', 'system', '2011-09-19 16:59:28.659447', 'Supplier');
 INSERT INTO "Metadata" VALUES (503, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'N', 'system', '2011-09-19 16:59:28.659447', '0');
+INSERT INTO "Metadata" VALUES (1249, '"Metadata"', 'PC', 'system.widgets', 'A', 'system', '2012-08-25 12:20:02.957', '[{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"},{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}]');
 
 
 
@@ -7207,31 +8190,32 @@ INSERT INTO "Metadata_history" VALUES (786, '"Metadata"', 'gis.Detail_Supplier_L
 INSERT INTO "Metadata_history" VALUES (787, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.style', 'U', 'system', '2011-08-23 15:39:20.948', '{"strokeDashstyle":"solid","fillColor":"#CCFFFF","externalGraphic":"upload/images/gis/Supplier.jpg","pointRadius":10,"strokeColor":"#CCFFCC","strokeWidth":1}', 499, '2011-09-19 16:59:28.659447');
 INSERT INTO "Metadata_history" VALUES (788, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.visibility', 'U', 'system', '2011-08-23 15:39:20.948', 'Supplier', 501, '2011-09-19 16:59:28.659447');
 INSERT INTO "Metadata_history" VALUES (789, '"Metadata"', 'gis.Detail_Supplier_Location', 'system.gis.index', 'U', 'system', '2011-08-23 15:39:20.948', '0', 503, '2011-09-19 16:59:28.659447');
+INSERT INTO "Metadata_history" VALUES (1251, '"Metadata"', 'PC', 'system.widgets', 'U', 'system', '2012-08-25 12:16:36.281', '[{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"}]', 1249, '2012-08-25 12:20:02.957');
 
 
 
-INSERT INTO "Monitor" VALUES (550, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'A', 'admin', '2011-08-23 17:34:12.416', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, 134, NULL, NULL, 392, NULL);
-INSERT INTO "Monitor" VALUES (555, '"Monitor"', 'MON0002', 'Acer - B243WCydr', 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 'PRT576', NULL, NULL, NULL, NULL, 138, 'B243WCydr', 272, 128, NULL, NULL, 392, 330);
-INSERT INTO "Monitor" VALUES (561, '"Monitor"', 'MON0003', 'Acer - V193HQb', 'A', 'admin', '2011-08-23 17:36:00.497', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'V193HQb', 242, 130, NULL, NULL, 392, NULL);
-INSERT INTO "Monitor" VALUES (573, '"Monitor"', 'MON0004', 'Epson - W1934S-BN', 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 'KR57667', NULL, NULL, NULL, NULL, 140, 'W1934S-BN', 272, 132, NULL, NULL, 393, 330);
-INSERT INTO "Monitor" VALUES (567, '"Monitor"', 'MON0007', 'Hp - V220', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'SR6576', NULL, NULL, '2011-09-06', NULL, 135, 'V220', 230, 118, NULL, NULL, 392, 330);
+INSERT INTO "Monitor" VALUES (550, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'A', 'admin', '2011-08-23 17:34:12.416', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, 134, NULL, NULL, NULL, 392, NULL);
+INSERT INTO "Monitor" VALUES (555, '"Monitor"', 'MON0002', 'Acer - B243WCydr', 'A', 'admin', '2011-08-23 17:35:03.944', NULL, 'PRT576', NULL, NULL, NULL, NULL, 138, 'B243WCydr', 272, 128, NULL, NULL, NULL, 392, 330);
+INSERT INTO "Monitor" VALUES (561, '"Monitor"', 'MON0003', 'Acer - V193HQb', 'A', 'admin', '2011-08-23 17:36:00.497', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'V193HQb', 242, 130, NULL, NULL, NULL, 392, NULL);
+INSERT INTO "Monitor" VALUES (573, '"Monitor"', 'MON0004', 'Epson - W1934S-BN', 'A', 'admin', '2011-08-23 17:37:57.173', NULL, 'KR57667', NULL, NULL, NULL, NULL, 140, 'W1934S-BN', 272, 132, NULL, NULL, NULL, 393, 330);
+INSERT INTO "Monitor" VALUES (567, '"Monitor"', 'MON0007', 'Hp - V220', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'SR6576', NULL, NULL, '2011-09-06', NULL, 135, 'V220', 230, 118, NULL, NULL, NULL, 392, 330);
 
 
 
-INSERT INTO "Monitor_history" VALUES (551, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'U', 'admin', '2011-08-23 17:34:02.111', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, NULL, NULL, NULL, 392, NULL, 550, '2011-08-23 17:34:12.416');
-INSERT INTO "Monitor_history" VALUES (774, '"Monitor"', 'MON0007', 'Hp - V220', 'U', 'admin', '2011-08-23 17:36:50.525', NULL, 'SR6576', NULL, NULL, NULL, NULL, 135, 'V220', 230, 118, NULL, NULL, 392, 330, 567, '2011-09-07 11:59:52.223');
+INSERT INTO "Monitor_history" VALUES (551, '"Monitor"', 'MON0001', 'Acer - AL1716 ', 'U', 'admin', '2011-08-23 17:34:02.111', NULL, NULL, NULL, NULL, NULL, NULL, 138, 'AL1716 ', NULL, NULL, NULL, NULL, NULL, 392, NULL, 550, '2011-08-23 17:34:12.416');
+INSERT INTO "Monitor_history" VALUES (774, '"Monitor"', 'MON0007', 'Hp - V220', 'U', 'admin', '2011-08-23 17:36:50.525', NULL, 'SR6576', NULL, NULL, NULL, NULL, 135, 'V220', 230, 118, NULL, NULL, NULL, 392, 330, 567, '2011-09-07 11:59:52.223');
 
 
 
-INSERT INTO "NetworkDevice" VALUES (747, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750 S.N. YRTU87', 'A', 'admin', '2011-09-02 12:07:44.126', NULL, 'YRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL);
-INSERT INTO "NetworkDevice" VALUES (755, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'A', 'admin', '2011-09-02 12:15:10.417', NULL, 'YFGE87', 723, '2011-07-04', '2011-09-13', NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL);
+INSERT INTO "NetworkDevice" VALUES (747, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750 S.N. YRTU87', 'A', 'admin', '2011-09-02 12:07:44.126', NULL, 'YRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, NULL, 409, 32, NULL);
+INSERT INTO "NetworkDevice" VALUES (755, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'A', 'admin', '2011-09-02 12:15:10.417', NULL, 'YFGE87', 723, '2011-07-04', '2011-09-13', NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, NULL, 409, 32, NULL);
 
 
 
-INSERT INTO "NetworkDevice_history" VALUES (752, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:06:33.699', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-14', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:04.477');
-INSERT INTO "NetworkDevice_history" VALUES (753, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:07:04.477', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:44.126');
-INSERT INTO "NetworkDevice_history" VALUES (762, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:08:39.585', NULL, 'YFGE87', 723, NULL, NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:14:44.964');
-INSERT INTO "NetworkDevice_history" VALUES (763, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:14:44.964', NULL, 'YFGE87', 723, '2011-07-04', NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:15:10.417');
+INSERT INTO "NetworkDevice_history" VALUES (752, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:06:33.699', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-14', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:04.477');
+INSERT INTO "NetworkDevice_history" VALUES (753, '"NetworkDevice"', 'ND0654', 'Switch Panel CISCO Catalyst 3750', 'U', 'admin', '2011-09-02 12:07:04.477', NULL, 'SNYRTU87', 723, '2011-05-08', '2011-06-06', NULL, 137, 'Catalyst 3750', 200, NULL, NULL, NULL, NULL, 409, 32, NULL, 747, '2011-09-02 12:07:44.126');
+INSERT INTO "NetworkDevice_history" VALUES (762, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:08:39.585', NULL, 'YFGE87', 723, NULL, NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:14:44.964');
+INSERT INTO "NetworkDevice_history" VALUES (763, '"NetworkDevice"', 'ND0685', 'Switch Panel CISCO Catalyst 3750 S.N. YFGE87', 'U', 'admin', '2011-09-02 12:14:44.964', NULL, 'YFGE87', 723, '2011-07-04', NULL, NULL, 137, 'Catalyst 3750', 104, NULL, NULL, NULL, NULL, 409, 32, NULL, 755, '2011-09-02 12:15:10.417');
 
 
 
@@ -7259,37 +8243,46 @@ INSERT INTO "Office_history" VALUES (170, '"Office"', 'OFF01', 'Office 01 - Head
 
 
 
-INSERT INTO "PC" VALUES (534, '"PC"', 'PC0002', 'Intel Pentium P4', 'A', 'admin', '2011-08-23 17:29:52.21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Pentium P4', 104, 128, 134, NULL, 1, 2, NULL, NULL, NULL, NULL);
-INSERT INTO "PC" VALUES (542, '"PC"', 'PC0004', 'Sony Vajo F', 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 'TY747687', NULL, NULL, NULL, NULL, 136, 'Vajo F', 272, 130, 116, NULL, 8, 4, NULL, 2, NULL, NULL);
-INSERT INTO "PC" VALUES (518, '"PC"', 'PC0001', 'Acer - Netbook D250', 'A', 'admin', '2011-08-23 23:46:34.587', NULL, '43434', NULL, '2011-04-03', NULL, NULL, 138, 'D250', 236, 120, 116, NULL, 4, 2, NULL, 1, NULL, NULL);
-INSERT INTO "PC" VALUES (526, '"PC"', 'PC0003', 'Hp - A6316', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, NULL, 723, NULL, '2011-09-06', NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "PC" VALUES (534, '"PC"', 'PC0002', 'Intel Pentium P4', 'A', 'admin', '2011-08-23 17:29:52.21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Pentium P4', 104, 128, 134, NULL, NULL, 1, 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "PC" VALUES (542, '"PC"', 'PC0004', 'Sony Vajo F', 'A', 'admin', '2011-08-23 17:32:51.564', NULL, 'TY747687', NULL, NULL, NULL, NULL, 136, 'Vajo F', 272, 130, 116, NULL, NULL, 8, 4, NULL, 2, NULL, NULL, NULL);
+INSERT INTO "PC" VALUES (518, '"PC"', 'PC0001', 'Acer - Netbook D250', 'A', 'admin', '2012-08-25 12:17:41.034', NULL, '43434', NULL, '2011-04-03', NULL, NULL, 138, 'D250', 236, 120, 116, NULL, NULL, 4, 2, NULL, 1, '127.0.0.1', NULL, NULL);
+INSERT INTO "PC" VALUES (526, '"PC"', 'PC0003', 'Hp - A6316', 'A', 'admin', '2012-08-25 12:41:15.881', NULL, NULL, 723, NULL, '2011-09-06', NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 
 
-INSERT INTO "PC_history" VALUES (710, '"PC"', 'PC0001', 'Acer - Netbook D250', 'U', 'admin', '2011-08-23 17:26:13.647', NULL, '43434', NULL, NULL, NULL, NULL, 138, 'D250', 236, 120, 116, NULL, 4, 2, NULL, 1, NULL, NULL, 518, '2011-08-23 23:46:34.587');
-INSERT INTO "PC_history" VALUES (718, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-23 17:28:42.292', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:03:27.919');
-INSERT INTO "PC_history" VALUES (719, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:03:27.919', NULL, NULL, 714, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:07:08.776');
-INSERT INTO "PC_history" VALUES (726, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:07:08.776', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:27:49.732');
-INSERT INTO "PC_history" VALUES (776, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:27:49.732', NULL, NULL, 723, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-09-07 11:59:52.223');
+INSERT INTO "PC_history" VALUES (710, '"PC"', 'PC0001', 'Acer - Netbook D250', 'U', 'admin', '2011-08-23 17:26:13.647', NULL, '43434', NULL, NULL, NULL, NULL, 138, 'D250', 236, 120, 116, NULL, NULL, 4, 2, NULL, 1, NULL, NULL, NULL, 518, '2011-08-23 23:46:34.587');
+INSERT INTO "PC_history" VALUES (718, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-23 17:28:42.292', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:03:27.919');
+INSERT INTO "PC_history" VALUES (719, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:03:27.919', NULL, NULL, 714, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:07:08.776');
+INSERT INTO "PC_history" VALUES (726, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:07:08.776', NULL, NULL, NULL, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-08-29 13:27:49.732');
+INSERT INTO "PC_history" VALUES (776, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-08-29 13:27:49.732', NULL, NULL, 723, NULL, NULL, NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2011-09-07 11:59:52.223');
+INSERT INTO "PC_history" VALUES (1250, '"PC"', 'PC0001', 'Acer - Netbook D250', 'U', 'admin', '2011-08-23 23:46:34.587', NULL, '43434', NULL, '2011-04-03', NULL, NULL, 138, 'D250', 236, 120, 116, NULL, NULL, 4, 2, NULL, 1, NULL, NULL, NULL, 518, '2012-08-25 12:17:41.034');
+INSERT INTO "PC_history" VALUES (1252, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2011-09-07 11:59:52.223', NULL, NULL, 723, NULL, '2011-09-06', NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2012-08-25 12:39:36.099');
+INSERT INTO "PC_history" VALUES (1255, '"PC"', 'PC0003', 'Hp - A6316', 'U', 'admin', '2012-08-25 12:39:36.099', NULL, NULL, NULL, NULL, '2011-09-06', NULL, 135, 'A6316', 248, 126, 116, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 526, '2012-08-25 12:41:15.881');
 
 
 
 INSERT INTO "Patch" VALUES (773, '"Patch"', '1.3.1-05', 'Create database', 'A', 'system', '2011-09-05 12:01:42.544', NULL);
 INSERT INTO "Patch" VALUES (818, '"Patch"', '1.4.0-01', 'Reorders tree nodes that were not properly ordered when saving them', 'A', 'system', '2012-01-31 11:29:35.93578', NULL);
 INSERT INTO "Patch" VALUES (820, '"Patch"', '1.4.0-02', 'Fixes reference values filling on attribute creation', 'A', 'system', '2012-01-31 11:29:36.004394', NULL);
+INSERT INTO "Patch" VALUES (822, '"Patch"', '1.5.0-01', 'Creates DB templates table', 'A', 'system', '2012-08-23 21:55:23.55', NULL);
+INSERT INTO "Patch" VALUES (824, '"Patch"', '2.0.0-01', 'Dashboard base functions', 'A', 'system', '2012-08-23 21:55:23.713', NULL);
+INSERT INTO "Patch" VALUES (826, '"Patch"', '2.0.0-02', 'Alter workflow tables', 'A', 'system', '2012-08-23 21:55:23.773', NULL);
+INSERT INTO "Patch" VALUES (828, '"Patch"', '2.0.0-03', 'Add UI profile attributes', 'A', 'system', '2012-08-23 21:55:23.92', NULL);
+INSERT INTO "Patch" VALUES (830, '"Patch"', '2.0.0-04', 'A few Dashboard Functions', 'A', 'system', '2012-08-23 21:55:23.973', NULL);
+INSERT INTO "Patch" VALUES (1264, '"Patch"', '2.0.0-05', 'Support for INOUT parameters in custom functions', 'A', 'system', '2012-08-30 16:14:58.493242', NULL);
 
 
 
 
 
 
-INSERT INTO "Printer" VALUES (579, '"Printer"', 'PRT0001', 'Canon - IX5000', 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 'YT687', NULL, NULL, NULL, NULL, 139, 'IX5000', 242, 130, NULL, NULL, 399, 395, true, NULL);
-INSERT INTO "Printer" VALUES (585, '"Printer"', 'PRT0002', 'Epson - ELP 6200L', 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 'RTD575', NULL, NULL, NULL, NULL, 140, 'ELP 6200L', 212, 120, NULL, NULL, 399, 395, false, NULL);
-INSERT INTO "Printer" VALUES (591, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'YU6874', NULL, NULL, '2011-09-06', NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, 399, NULL, false, NULL);
+INSERT INTO "Printer" VALUES (579, '"Printer"', 'PRT0001', 'Canon - IX5000', 'A', 'admin', '2011-08-23 17:38:55.033', NULL, 'YT687', NULL, NULL, NULL, NULL, 139, 'IX5000', 242, 130, NULL, NULL, NULL, 399, 395, true, NULL);
+INSERT INTO "Printer" VALUES (585, '"Printer"', 'PRT0002', 'Epson - ELP 6200L', 'A', 'admin', '2011-08-23 17:39:42.706', NULL, 'RTD575', NULL, NULL, NULL, NULL, 140, 'ELP 6200L', 212, 120, NULL, NULL, NULL, 399, 395, false, NULL);
+INSERT INTO "Printer" VALUES (591, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'A', 'admin', '2011-09-07 11:59:52.223', NULL, 'YU6874', NULL, NULL, '2011-09-06', NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, NULL, 399, NULL, false, NULL);
 
 
 
-INSERT INTO "Printer_history" VALUES (775, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'U', 'admin', '2011-08-23 17:40:48.481', NULL, 'YU6874', NULL, NULL, NULL, NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, 399, NULL, false, NULL, 591, '2011-09-07 11:59:52.223');
+INSERT INTO "Printer_history" VALUES (775, '"Printer"', 'PRT0003', 'HP DesignJet Z2100', 'U', 'admin', '2011-08-23 17:40:48.481', NULL, 'YU6874', NULL, NULL, NULL, NULL, 135, 'DesignJet Z2100', 266, 122, NULL, NULL, NULL, 399, NULL, false, NULL, 591, '2011-09-07 11:59:52.223');
 
 
 
@@ -7319,8 +8312,17 @@ ORDER BY "Room"."Code"', '\\254\\355\\000\\005sr\\000(net.sf.jasperreports.engin
 
 
 
-INSERT INTO "Role" VALUES (14, '"Role"', 'SuperUser', 'SuperUser', 'A', 'system', '2011-03-16 11:15:37.240985', NULL, true, NULL, NULL, NULL);
-INSERT INTO "Role" VALUES (677, '"Role"', 'Helpdesk', 'Helpdesk', 'A', 'admin', '2011-08-23 22:31:24.685', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}');
+
+
+
+
+
+
+INSERT INTO "Role" VALUES (677, '"Role"', 'Helpdesk', 'Helpdesk', 'A', 'admin', '2011-08-23 22:31:24.685', NULL, false, '"Asset"', 'helpdesk@cmdbuild.org', '{bulkupdate,importcsv,exportcsv}', NULL, NULL, false, false, false, false, false);
+INSERT INTO "Role" VALUES (940, '"Role"', 'ChangeManager', 'Change manager', 'A', 'system', '2012-08-24 10:22:41.248', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false);
+INSERT INTO "Role" VALUES (941, '"Role"', 'Specialist', 'Specialist', 'A', 'system', '2012-08-24 10:22:41.248', NULL, false, '-', NULL, NULL, NULL, NULL, false, false, false, false, false);
+INSERT INTO "Role" VALUES (942, '"Role"', 'Services', 'Services', 'A', 'system', '2012-08-24 10:22:41.248', NULL, true, '-', NULL, NULL, NULL, NULL, false, false, false, false, false);
+INSERT INTO "Role" VALUES (14, '"Role"', 'SuperUser', 'SuperUser', 'A', 'system', '2011-03-16 11:15:37.240985', NULL, true, NULL, NULL, '{}', '{}', '{}', false, false, false, false, false);
 
 
 
@@ -7335,7 +8337,7 @@ INSERT INTO "Room" VALUES (230, '"Room"', 'B102002', 'Office Building A - Floor 
 INSERT INTO "Room" VALUES (236, '"Room"', 'B103001', 'Office Building A - Floor 3 - Room 001', 'A', 'admin', '2011-07-24 23:59:12.074', NULL, 92, 154, 128.00, 112);
 INSERT INTO "Room" VALUES (242, '"Room"', 'B201001', 'Office Building B - Floor 1 - Room 001', 'A', 'admin', '2011-07-24 23:59:40.137', NULL, 96, 27, 18.00, 108);
 INSERT INTO "Room" VALUES (248, '"Room"', 'B201002', 'Office Building B - Floor 1 - Room 002', 'A', 'admin', '2011-07-25 00:00:13.196', NULL, 96, 27, 18.00, 108);
-INSERT INTO "Room" VALUES (260, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'A', 'admin', '2011-09-02 11:53:26.90', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 108);
+INSERT INTO "Room" VALUES (260, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'A', 'admin', '2011-09-02 11:53:26.9', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 108);
 INSERT INTO "Room" VALUES (254, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'A', 'admin', '2011-09-02 11:56:58.957', NULL, 96, 156, 18.00, 110);
 INSERT INTO "Room" VALUES (266, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'A', 'admin', '2011-08-30 16:22:46.448', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the building C</span><span class="hps">.<br>
   <br>
@@ -7418,6 +8420,7 @@ Scheduled dates:<br>
 </span></span>
 <ul><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">start date: 15/10/2001</span></span></li><li><span id="result_box" class="short_text" lang="en"><span class="hps">temporary</span> <span class="hps">use end </span></span><span id="result_box" class="short_text" lang="en"><span class="hps">date: 15/05/2012</span></span></li></ul>
 ', 100, 27, 24.00, 112, 266, '2011-08-30 16:21:48.929');
+INSERT INTO "Room_history" VALUES (745, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-08-30 16:36:35.379', NULL, 96, 156, 18.00, 108, 254, '2011-09-02 11:56:58.957');
 INSERT INTO "Room_history" VALUES (734, '"Room"', 'B202002', 'Office Building B - Floor 2 - Room 002', 'U', 'admin', '2011-08-30 16:21:48.929', '​<span id="result_box" class="short_text" lang="en"><span class="hps">The room is</span> <b><font color="#ff0000"><span class="hps"></span></font><font color="#ff0000"><span class="hps">temporary</span></font><font color="#ff0000"> </font></b><span class="hps">used by Administration, </span></span><span id="result_box" class="" lang="en"><span class="hps">pending the conclusion</span> <span class="hps">of works</span> <span class="hps">in the buildingb </span><span class="hps">ruruhf3 ir3hfg 3ihf ir3hf i3h .<br>
   <br>
 Scheduled dates:<br>
@@ -7447,7 +8450,7 @@ INSERT INTO "Room_history" VALUES (739, '"Room"', 'B202001', 'Office Building B 
 INSERT INTO "Room_history" VALUES (740, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:23:44.308', 'The room is <span style="color: rgb(255, 0, 0);">temporary </span>used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-08-30 16:24:10.851');
 INSERT INTO "Room_history" VALUES (741, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-07-25 00:00:42.222', NULL, 96, 27, 18.00, 108, 254, '2011-08-30 16:36:35.379');
 INSERT INTO "Room_history" VALUES (742, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-08-30 16:24:10.851', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 24.00, 112, 260, '2011-09-02 11:53:03.347');
-INSERT INTO "Room_history" VALUES (743, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-09-02 11:53:03.347', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 112, 260, '2011-09-02 11:53:26.90');
+INSERT INTO "Room_history" VALUES (743, '"Room"', 'B202001', 'Office Building B - Floor 2 - Room 001', 'U', 'admin', '2011-09-02 11:53:03.347', 'The room is temporary used by Administration, pending the conclusion of works in the building C.<br><br>Scheduled dates:<br><br>&nbsp;&nbsp;&nbsp; * temporary use start date: 15/10/2001<br>&nbsp;&nbsp;&nbsp; * temporary use end date: 15/05/2012<br>', 100, 27, 26.00, 112, 260, '2011-09-02 11:53:26.9');
 INSERT INTO "Room_history" VALUES (744, '"Room"', 'B202003', 'Office Building B - Floor 2 - Room 003', 'U', 'admin', '2011-08-30 16:21:22.461', '​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4<span style="color: rgb(255, 0, 0);">gh ouregou</span>regireh goreh goreg oeufg orehg oureòg yu5y uy5 u 5yu 5yu yj yu5 5yu 5yu u5yu 5 u<br><ul><li>hore goireò gierhg ierò girehg iregh iregh ireg iregie ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh o</li><li>uregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg ir</li><li>egie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
@@ -7465,7 +8468,6 @@ oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ​httrgh 4t h4tp h4otj t4ojh 4toh4rgh or4gh ouregouregireh goreh goreg 
 oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
  ', 100, 27, 24.00, 112, 272, '2011-09-02 11:54:54.974');
-INSERT INTO "Room_history" VALUES (745, '"Room"', 'B201003', 'Office Building B - Floor 1 - Room 003', 'U', 'admin', '2011-08-30 16:36:35.379', NULL, 96, 156, 18.00, 108, 254, '2011-09-02 11:56:58.957');
 
 
 
@@ -7510,11 +8512,20 @@ INSERT INTO "Supplier_history" VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U',
 
 
 INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2011-03-16 11:15:37.221385', NULL, 'admin', 'DQdKW32Mlms=', NULL);
-INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2011-08-23 22:36:40.224', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@cmdbuild.org');
-INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2011-08-23 22:37:48.154', NULL, 'mdavis', 'Nlg70IVc7/U=', 'davis.michael@cmdbuild.org');
+INSERT INTO "User" VALUES (943, '"User"', NULL, 'workflow', 'A', 'admin', '2012-08-24 10:22:41.248', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL);
+INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2011-08-23 22:36:40.224', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@gmail.com');
+INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2011-08-23 22:37:48.154', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@gmail.com');
 
 
 
+
+
+
+
+
+
+INSERT INTO "_Dashboards" VALUES (831, 'system', '2012-08-23 22:04:26.088', '{"name":"Item situation","description":"Item situation","charts":{"6172e925-4aa7-4734-a112-2dd9e33863a9":{"name":"Total number of item","description":"Total number of item","dataSourceName":"cmf_count_active_cards","type":"gauge","singleSeriesField":"Count","fgcolor":"#99CC00","bgcolor":"#C0C0C0","active":true,"autoLoad":true,"legend":false,"height":0,"maximum":50,"minimum":0,"steps":5,"dataSourceParameters":[{"name":"ClassName","type":"STRING","fieldType":"classes","defaultValue":"Asset","required":false}]},"98b4927d-6a8e-49c5-8051-b64109aeee8b":{"name":"Number of items by item brand","description":"Number of items by item brand","dataSourceName":"cmf_active_asset_for_brand","type":"pie","singleSeriesField":"Number","labelField":"Brand","active":true,"autoLoad":true,"legend":true,"height":0,"maximum":0,"minimum":0,"steps":0},"3b6bb717-b9e4-402f-b188-1d8e81135adf":{"name":"Number of items by item type","description":"Number of items by item type","dataSourceName":"cmf_active_cards_for_class","type":"bar","categoryAxisField":"Class","categoryAxisLabel":"Asset type","valueAxisLabel":"Number","chartOrientation":"vertical","active":true,"autoLoad":true,"legend":true,"height":0,"maximum":0,"minimum":0,"steps":0,"dataSourceParameters":[{"name":"ClassName","type":"STRING","fieldType":"classes","defaultValue":"Asset","required":false}],"valueAxisFields":["Number"]}},"columns":[{"width":0.3,"charts":["6172e925-4aa7-4734-a112-2dd9e33863a9"]},{"width":0.36721992,"charts":["98b4927d-6a8e-49c5-8051-b64109aeee8b"]},{"width":0.3327801,"charts":["3b6bb717-b9e4-402f-b188-1d8e81135adf"]}],"groups":["SuperUser","Helpdesk"]}');
+INSERT INTO "_Dashboards" VALUES (946, 'system', '2012-08-24 10:25:56.862', '{"name":"RfC situation","description":"RfC situation","charts":{"07706c7e-b4cc-4873-b112-9f2a6a2b0f2f":{"name":"Open RfC by status","description":"Open RfC by status","dataSourceName":"cmf_open_rfc_for_status","type":"pie","singleSeriesField":"Number","labelField":"Status","active":true,"autoLoad":true,"legend":false,"height":0,"maximum":0,"minimum":0,"steps":0}},"groups":["SuperUser","Helpdesk","ChangeManager","Specialist"]}');
 
 
 
@@ -7691,13 +8702,33 @@ ALTER TABLE ONLY "Map_OfficeRoom"
 
 
 
-ALTER TABLE ONLY "Map_Responsible_history"
-    ADD CONSTRAINT "Map_Responsible_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
+ALTER TABLE ONLY "Map_RFCChangeManager_history"
+    ADD CONSTRAINT "Map_RFCChangeManager_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
 
 
 
-ALTER TABLE ONLY "Map_Responsible"
-    ADD CONSTRAINT "Map_Responsible_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
+ALTER TABLE ONLY "Map_RFCChangeManager"
+    ADD CONSTRAINT "Map_RFCChangeManager_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
+
+
+
+ALTER TABLE ONLY "Map_RFCExecutor_history"
+    ADD CONSTRAINT "Map_RFCExecutor_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
+
+
+
+ALTER TABLE ONLY "Map_RFCExecutor"
+    ADD CONSTRAINT "Map_RFCExecutor_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
+
+
+
+ALTER TABLE ONLY "Map_RFCRequester_history"
+    ADD CONSTRAINT "Map_RFCRequester_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
+
+
+
+ALTER TABLE ONLY "Map_RFCRequester"
+    ADD CONSTRAINT "Map_RFCRequester_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
 
 
 
@@ -7728,6 +8759,16 @@ ALTER TABLE ONLY "Map_RoomWorkplace_history"
 
 ALTER TABLE ONLY "Map_RoomWorkplace"
     ADD CONSTRAINT "Map_RoomWorkplace_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
+
+
+
+ALTER TABLE ONLY "Map_Supervisor_history"
+    ADD CONSTRAINT "Map_Supervisor_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
+
+
+
+ALTER TABLE ONLY "Map_Supervisor"
+    ADD CONSTRAINT "Map_Supervisor_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
 
 
 
@@ -7901,6 +8942,16 @@ ALTER TABLE ONLY "Report"
 
 
 
+ALTER TABLE ONLY "RequestForChange_history"
+    ADD CONSTRAINT "RequestForChange_history_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "RequestForChange"
+    ADD CONSTRAINT "RequestForChange_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "Role"
     ADD CONSTRAINT "Role_pkey" PRIMARY KEY ("Id");
 
@@ -7981,6 +9032,21 @@ ALTER TABLE ONLY "Workplace"
 
 
 
+ALTER TABLE ONLY "_Dashboards"
+    ADD CONSTRAINT "_Dashboards_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Templates"
+    ADD CONSTRAINT "_Templates_Name_key" UNIQUE ("Name");
+
+
+
+ALTER TABLE ONLY "_Templates"
+    ADD CONSTRAINT "_Templates_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "Role"
     ADD CONSTRAINT unique_role_code UNIQUE ("Code");
 
@@ -8047,6 +9113,10 @@ CREATE INDEX idx_computer_description ON "Computer" USING btree ("Description");
 
 
 CREATE INDEX idx_computer_idclass ON "Computer" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_dashboards_begindate ON "_Dashboards" USING btree ("BeginDate");
 
 
 
@@ -8206,11 +9276,27 @@ CREATE UNIQUE INDEX idx_map_officeroom_uniqueright ON "Map_OfficeRoom" USING btr
 
 
 
-CREATE UNIQUE INDEX idx_map_responsible_activerows ON "Map_Responsible" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
+CREATE UNIQUE INDEX idx_map_rfcchangemanager_activerows ON "Map_RFCChangeManager" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
 
-CREATE UNIQUE INDEX idx_map_responsible_uniqueright ON "Map_Responsible" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass2" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj2" ELSE NULL::integer END));
+CREATE UNIQUE INDEX idx_map_rfcchangemanager_uniqueleft ON "Map_RFCChangeManager" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass1" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj1" ELSE NULL::integer END));
+
+
+
+CREATE UNIQUE INDEX idx_map_rfcexecutor_activerows ON "Map_RFCExecutor" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
+
+
+
+CREATE UNIQUE INDEX idx_map_rfcexecutor_uniqueleft ON "Map_RFCExecutor" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass1" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj1" ELSE NULL::integer END));
+
+
+
+CREATE UNIQUE INDEX idx_map_rfcrequester_activerows ON "Map_RFCRequester" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
+
+
+
+CREATE UNIQUE INDEX idx_map_rfcrequester_uniqueleft ON "Map_RFCRequester" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass1" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj1" ELSE NULL::integer END));
 
 
 
@@ -8235,6 +9321,14 @@ CREATE UNIQUE INDEX idx_map_roomworkplace_activerows ON "Map_RoomWorkplace" USIN
 
 
 CREATE UNIQUE INDEX idx_map_roomworkplace_uniqueright ON "Map_RoomWorkplace" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass2" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj2" ELSE NULL::integer END));
+
+
+
+CREATE UNIQUE INDEX idx_map_supervisor_activerows ON "Map_Supervisor" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
+
+
+
+CREATE UNIQUE INDEX idx_map_supervisor_uniqueright ON "Map_Supervisor" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass2" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj2" ELSE NULL::integer END));
 
 
 
@@ -8374,15 +9468,39 @@ CREATE INDEX idx_mapofficeroom_idobj2 ON "Map_OfficeRoom" USING btree ("IdObj2")
 
 
 
-CREATE INDEX idx_mapresponsible_iddomain ON "Map_Responsible" USING btree ("IdDomain");
+CREATE INDEX idx_maprfcchangemanager_iddomain ON "Map_RFCChangeManager" USING btree ("IdDomain");
 
 
 
-CREATE INDEX idx_mapresponsible_idobj1 ON "Map_Responsible" USING btree ("IdObj1");
+CREATE INDEX idx_maprfcchangemanager_idobj1 ON "Map_RFCChangeManager" USING btree ("IdObj1");
 
 
 
-CREATE INDEX idx_mapresponsible_idobj2 ON "Map_Responsible" USING btree ("IdObj2");
+CREATE INDEX idx_maprfcchangemanager_idobj2 ON "Map_RFCChangeManager" USING btree ("IdObj2");
+
+
+
+CREATE INDEX idx_maprfcexecutor_iddomain ON "Map_RFCExecutor" USING btree ("IdDomain");
+
+
+
+CREATE INDEX idx_maprfcexecutor_idobj1 ON "Map_RFCExecutor" USING btree ("IdObj1");
+
+
+
+CREATE INDEX idx_maprfcexecutor_idobj2 ON "Map_RFCExecutor" USING btree ("IdObj2");
+
+
+
+CREATE INDEX idx_maprfcrequester_iddomain ON "Map_RFCRequester" USING btree ("IdDomain");
+
+
+
+CREATE INDEX idx_maprfcrequester_idobj1 ON "Map_RFCRequester" USING btree ("IdObj1");
+
+
+
+CREATE INDEX idx_maprfcrequester_idobj2 ON "Map_RFCRequester" USING btree ("IdObj2");
 
 
 
@@ -8419,6 +9537,18 @@ CREATE INDEX idx_maproomworkplace_idobj1 ON "Map_RoomWorkplace" USING btree ("Id
 
 
 CREATE INDEX idx_maproomworkplace_idobj2 ON "Map_RoomWorkplace" USING btree ("IdObj2");
+
+
+
+CREATE INDEX idx_mapsupervisor_iddomain ON "Map_Supervisor" USING btree ("IdDomain");
+
+
+
+CREATE INDEX idx_mapsupervisor_idobj1 ON "Map_Supervisor" USING btree ("IdObj1");
+
+
+
+CREATE INDEX idx_mapsupervisor_idobj2 ON "Map_Supervisor" USING btree ("IdObj2");
 
 
 
@@ -8658,6 +9788,22 @@ CREATE INDEX idx_rackhistory_currentid ON "Rack_history" USING btree ("CurrentId
 
 
 
+CREATE INDEX idx_requestforchange_code ON "RequestForChange" USING btree ("Code");
+
+
+
+CREATE INDEX idx_requestforchange_description ON "RequestForChange" USING btree ("Description");
+
+
+
+CREATE INDEX idx_requestforchange_idclass ON "RequestForChange" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_requestforchangehistory_currentid ON "RequestForChange_history" USING btree ("CurrentId");
+
+
+
 CREATE INDEX idx_room_code ON "Room" USING btree ("Code");
 
 
@@ -8735,6 +9881,10 @@ CREATE INDEX idx_suppliercontacthistory_currentid ON "SupplierContact_history" U
 
 
 CREATE INDEX idx_supplierhistory_currentid ON "Supplier_history" USING btree ("CurrentId");
+
+
+
+CREATE INDEX idx_templates_begindate ON "_Templates" USING btree ("BeginDate");
 
 
 
@@ -9190,10 +10340,17 @@ CREATE TRIGGER "NetworkPoint_Room_fkey"
 
 
 
-CREATE TRIGGER "Office_Responsible_fkey"
+CREATE TRIGGER "Office_Supervisor_fkey"
     BEFORE INSERT OR UPDATE ON "Office"
     FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_fk('Responsible', '"Employee"', '');
+    EXECUTE PROCEDURE _cm_trigger_fk('Supervisor', '"Employee"', '');
+
+
+
+CREATE TRIGGER "RequestForChange_Requester_fkey"
+    BEFORE INSERT OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Requester', '"Employee"', '');
 
 
 
@@ -9393,6 +10550,13 @@ CREATE TRIGGER "_CascadeDeleteOnRelations"
 
 
 
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+
+
+
 CREATE TRIGGER "_Constr_Asset_Assignee"
     BEFORE DELETE OR UPDATE ON "Employee"
     FOR EACH ROW
@@ -9435,6 +10599,13 @@ CREATE TRIGGER "_Constr_Email_Activity"
 
 
 
+CREATE TRIGGER "_Constr_Email_Activity"
+    BEFORE DELETE OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
+
+
+
 CREATE TRIGGER "_Constr_Employee_Office"
     BEFORE DELETE OR UPDATE ON "Office"
     FOR EACH ROW
@@ -9463,10 +10634,17 @@ CREATE TRIGGER "_Constr_NetworkPoint_Room"
 
 
 
-CREATE TRIGGER "_Constr_Office_Responsible"
+CREATE TRIGGER "_Constr_Office_Supervisor"
     BEFORE DELETE OR UPDATE ON "Employee"
     FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_restrict('"Office"', 'Responsible');
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Office"', 'Supervisor');
+
+
+
+CREATE TRIGGER "_Constr_RequestForChange_Requester"
+    BEFORE DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"RequestForChange"', 'Requester');
 
 
 
@@ -9558,13 +10736,6 @@ CREATE TRIGGER "_CreateHistoryRow"
     AFTER DELETE OR UPDATE ON "Office"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
-
-
-
-CREATE TRIGGER "_CreateHistoryRow"
-    AFTER DELETE OR UPDATE ON "Map_Responsible"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
@@ -9785,6 +10956,41 @@ CREATE TRIGGER "_CreateHistoryRow"
 
 
 
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RFCChangeManager"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RFCExecutor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RFCRequester"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_Supervisor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+
+
+
 CREATE TRIGGER "_SanityCheck"
     BEFORE INSERT OR DELETE OR UPDATE ON "Menu"
     FOR EACH ROW
@@ -9843,13 +11049,6 @@ CREATE TRIGGER "_SanityCheck"
 
 CREATE TRIGGER "_SanityCheck"
     BEFORE INSERT OR DELETE OR UPDATE ON "Office"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check();
-
-
-
-CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "Map_Responsible"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
@@ -10072,6 +11271,55 @@ CREATE TRIGGER "_SanityCheck"
 
 
 
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Templates"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Dashboards"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCChangeManager"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCExecutor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCRequester"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_Supervisor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
 CREATE TRIGGER "_UpdRef_Asset_Assignee"
     AFTER INSERT OR UPDATE ON "Map_AssetAssignee"
     FOR EACH ROW
@@ -10142,10 +11390,17 @@ CREATE TRIGGER "_UpdRef_NetworkPoint_Room"
 
 
 
-CREATE TRIGGER "_UpdRef_Office_Responsible"
-    AFTER INSERT OR UPDATE ON "Map_Responsible"
+CREATE TRIGGER "_UpdRef_Office_Supervisor"
+    AFTER INSERT OR UPDATE ON "Map_Supervisor"
     FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_reference('Responsible', '"Office"', 'IdObj2', 'IdObj1');
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Supervisor', '"Office"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRef_RequestForChange_Requester"
+    AFTER INSERT OR UPDATE ON "Map_RFCRequester"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Requester', '"RequestForChange"', 'IdObj1', 'IdObj2');
 
 
 
@@ -10597,10 +11852,17 @@ CREATE TRIGGER "_UpdRel_NetworkPoint_Room"
 
 
 
-CREATE TRIGGER "_UpdRel_Office_Responsible"
+CREATE TRIGGER "_UpdRel_Office_Supervisor"
     AFTER INSERT OR UPDATE ON "Office"
     FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_update_relation('Responsible', '"Map_Responsible"', 'IdObj2', 'IdObj1');
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supervisor', '"Map_Supervisor"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_RequestForChange_Requester"
+    AFTER INSERT OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Requester', '"Map_RFCRequester"', 'IdObj1', 'IdObj2');
 
 
 
@@ -10731,6 +11993,11 @@ ALTER TABLE ONLY "Rack_history"
 
 
 
+ALTER TABLE ONLY "RequestForChange_history"
+    ADD CONSTRAINT "RequestForChange_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "RequestForChange"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
+
 ALTER TABLE ONLY "Room_history"
     ADD CONSTRAINT "Room_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "Room"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
 
@@ -10763,5 +12030,7 @@ ALTER TABLE ONLY "UPS_history"
 
 ALTER TABLE ONLY "Workplace_history"
     ADD CONSTRAINT "Workplace_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "Workplace"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
 
 
