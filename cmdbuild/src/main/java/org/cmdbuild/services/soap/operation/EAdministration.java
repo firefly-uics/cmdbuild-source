@@ -1,8 +1,6 @@
 package org.cmdbuild.services.soap.operation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -68,7 +66,7 @@ public class EAdministration {
 		addAccessPrivileges(schema, userCtx);
 		final Boolean isDefault = checkIsDefault(table, userCtx);
 		schema.setDefaultToDisplay(isDefault);
-		final List<MenuSchema> children = new LinkedList<MenuSchema>();
+		final List<MenuSchema> children = new ArrayList<MenuSchema>();
 		if (rootElement.getNumberOfChildren() > 0) {
 			for (final CNode<ITable> child : rootElement.getChildren()) {
 				children.add(serializeDefaultTree(child, isProcess, userCtx));
@@ -147,11 +145,9 @@ public class EAdministration {
 	}
 
 	private static Metadata[] serializeMetadata(final IAttribute attribute) {
-		final Metadata[] commonMetadata = serializeMetadata(attribute);
-		final List<Metadata> metadata = new ArrayList<Metadata>(Arrays.asList(commonMetadata));
-		checkAttributeFilter(attribute, metadata);
-		final Metadata[] array = new Metadata[metadata.size()];
-		return metadata.toArray(array);
+		final List<Metadata> metadata = serializeMetadata(attribute.getMetadata());
+		addAttributeFilterMetadata(attribute, metadata);
+		return metadata.toArray(new Metadata[metadata.size()]);
 	}
 
 	private Metadata[] serializeMetadata(final BaseSchema baseSchema) {
@@ -159,8 +155,8 @@ public class EAdministration {
 		return meta.toArray(new Metadata[meta.size()]);
 	}
 
-	private List<Metadata> serializeMetadata(final TreeMap<String, Object> metadata) {
-		final List<Metadata> tmpList = new LinkedList<Metadata>();
+	private static List<Metadata> serializeMetadata(final TreeMap<String, Object> metadata) {
+		final List<Metadata> tmpList = new ArrayList<Metadata>();
 		for (final String key : metadata.keySet()) {
 			final Metadata m = new Metadata();
 			m.setKey(key);
@@ -170,7 +166,7 @@ public class EAdministration {
 		return tmpList;
 	}
 
-	private static void checkAttributeFilter(final IAttribute attribute, final List<Metadata> tmpList) {
+	private static void addAttributeFilterMetadata(final IAttribute attribute, final List<Metadata> tmpList) {
 		final String filter = attribute.getFilter();
 		if (StringUtils.isNotBlank(filter)) {
 			final Metadata m = new Metadata();
@@ -212,7 +208,7 @@ public class EAdministration {
 		}
 		schema.setDescription(menu.getDescription());
 
-		final List<MenuSchema> children = new LinkedList<MenuSchema>();
+		final List<MenuSchema> children = new ArrayList<MenuSchema>();
 		for (final CNode<MenuCard> child : node.getChildren()) {
 			MenuSchema childMenuSchema = null;
 			if (MenuType.PROCESS.equals(child.getData().getTypeEnum())) {
