@@ -3,7 +3,8 @@ package org.cmdbuild.shark.toolagent;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.api.fluent.CallFunction;
+import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
 
 public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgent {
@@ -18,12 +19,20 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 		final Map<String, Object> output = callFunction(functionName, input);
 
 		for (final AppParameter parmOut : getReturnParameters()) {
-			parmOut.the_value = output.get(parmOut.the_formal_name);
+			Object outputValue = output.get(parmOut.the_formal_name);
+			if (parmOut.the_class == ReferenceType.class) {
+				/*
+				 * functions never return ReferenceTypes: they need to be
+				 * automatically fetched
+				 */
+				outputValue = getWorkflowApi().referenceTypeFrom(outputValue);
+			}
+			parmOut.the_value = outputValue;
 		}
 	}
 
 	private Map<String, Object> callFunction(final String functionName, final Map<String, Object> input) {
-		final CallFunction callFunction = getWorkflowApi().callFunction(functionName);
+		final FunctionCall callFunction = getWorkflowApi().callFunction(functionName);
 		for (final Entry<String, Object> entry : input.entrySet()) {
 			final Object normalizedValue = convertFromProcessValue(entry.getValue());
 			callFunction.with(entry.getKey(), normalizedValue);
