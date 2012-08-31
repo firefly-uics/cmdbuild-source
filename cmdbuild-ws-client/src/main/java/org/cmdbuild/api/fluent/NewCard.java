@@ -17,8 +17,7 @@ public class NewCard extends ActiveCard {
 	}
 
 	public NewCard with(final String name, final Object value) {
-		super.set(name, value);
-		return this;
+		return withAttribute(name, value);
 	}
 
 	public NewCard withAttribute(final String name, final Object value) {

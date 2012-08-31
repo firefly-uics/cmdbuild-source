@@ -16,7 +16,7 @@ import static utils.matchers.AttributeListMatcher.containsAttribute;
 
 import java.util.Map;
 
-import org.cmdbuild.api.fluent.CallFunction;
+import org.cmdbuild.api.fluent.FunctionCall;
 import org.cmdbuild.services.soap.Attribute;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 	private static final String OUT_PARAMETER_1 = "baz";
 	private static final String OUT_PARAMETER_1_VALUE = randomString();
 
-	private CallFunction callFunction;
+	private FunctionCall callFunction;
 
 	@Before
 	public void createExistingCard() throws Exception {

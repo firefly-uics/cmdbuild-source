@@ -84,7 +84,9 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 	}
 
 	public ReferenceType referenceTypeFrom(final Object id) {
-		final Card referencedCard = existingCard(Constants.BASE_CLASS_NAME, objectToInt(id)).fetch();
+		final Card referencedCard = existingCard(Constants.BASE_CLASS_NAME, objectToInt(id)) //
+				.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE) //
+				.fetch();
 		return referenceTypeFrom(referencedCard);
 	}
 
@@ -109,6 +111,7 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
 	private String descriptionFor(final CardDescriptor cardDescriptor) {
 		return existingCard(cardDescriptor) //
+				.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE) //
 				.fetch() //
 				.getDescription();
 	}

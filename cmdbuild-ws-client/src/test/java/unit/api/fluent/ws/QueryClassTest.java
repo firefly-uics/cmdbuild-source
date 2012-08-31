@@ -2,6 +2,7 @@ package unit.api.fluent.ws;
 
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -9,11 +10,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static utils.matchers.AttributeListMatcher.containsAttribute;
 import static utils.matchers.QueryEqualFilterMatcher.containsFilter;
 
 import java.util.List;
@@ -39,10 +42,12 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 				.withCode(CODE_VALUE) //
 				.withDescription(DESCRIPTION_VALUE) //
 				.with(ATTRIBUTE_1, ATTRIBUTE_1_VALUE) //
-				.withAttribute(ATTRIBUTE_2, ATTRIBUTE_2_VALUE);
+				.withAttribute(ATTRIBUTE_2, ATTRIBUTE_2_VALUE) //
+				.limitAttributes(CODE_ATTRIBUTE, DESCRIPTION_ATTRIBUTE, ATTRIBUTE_1, ATTRIBUTE_2);
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void parametersPassedToProxyWhenFetchingClass() throws Exception {
 		when(proxy().getCardList( //
 				eq(queryClass.getClassName()), //
@@ -59,7 +64,11 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 		verify(proxy()).getCardList( //
 				eq(queryClass.getClassName()), //
-				anyListOf(Attribute.class), //
+				argThat(allOf( //
+						containsAttribute(CODE_ATTRIBUTE), //
+						containsAttribute(DESCRIPTION_ATTRIBUTE), //
+						containsAttribute(ATTRIBUTE_1), //
+						containsAttribute(ATTRIBUTE_2))), //
 				queryCapturer(), //
 				anyListOf(Order.class), //
 				eq(0), //

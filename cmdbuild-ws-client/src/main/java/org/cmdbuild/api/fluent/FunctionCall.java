@@ -2,13 +2,13 @@ package org.cmdbuild.api.fluent;
 
 import java.util.Map;
 
-public class CallFunction extends ActiveFunction {
+public class FunctionCall extends ActiveFunction {
 
-	CallFunction(final FluentApi api, final String functionName) {
+	FunctionCall(final FluentApi api, final String functionName) {
 		super(api, functionName);
 	}
 
-	public CallFunction with(final String name, final Object value) {
+	public FunctionCall with(final String name, final Object value) {
 		super.set(name, value);
 		return this;
 	}

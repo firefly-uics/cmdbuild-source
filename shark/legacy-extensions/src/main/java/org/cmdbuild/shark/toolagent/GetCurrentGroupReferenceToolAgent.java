@@ -15,9 +15,9 @@ public class GetCurrentGroupReferenceToolAgent extends AbstractConditionalToolAg
 	/**
 	 * Set all reference output attributes with the current group reference.
 	 * 
-	 * It should have been just GroupRef but in VERY old process definitions
-	 * the output parameter was GroupName so, what the hell, we don't care
-	 * about the parameter name as long as it is a reference. Good boy!
+	 * It should have been just GroupRef but in VERY old process definitions the
+	 * output parameter was GroupName so, what the hell, we don't care about the
+	 * parameter name as long as it is a reference. Good boy!
 	 * 
 	 * @param groupReference
 	 */

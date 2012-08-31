@@ -9,26 +9,26 @@ public interface FluentApiExecutor {
 		YES, NO
 	}
 
-	CardDescriptor create(Card card);
+	CardDescriptor create(NewCard card);
 
-	void update(Card card);
+	void update(ExistingCard card);
 
-	void delete(Card card);
+	void delete(ExistingCard card);
 
-	Card fetch(Card card);
+	Card fetch(ExistingCard card);
 
-	List<Card> fetchCards(Card card);
+	List<Card> fetchCards(QueryClass card);
 
-	void create(Relation relation);
+	void create(NewRelation relation);
 
-	void delete(Relation relation);
+	void delete(ExistingRelation relation);
 
 	List<Relation> fetch(RelationsQuery query);
 
-	Map<String, Object> execute(Function function);
+	Map<String, Object> execute(FunctionCall function);
 
-	DownloadedReport download(Report report);
+	DownloadedReport download(CreateReport report);
 
-	ProcessInstanceDescriptor createProcessInstance(Card processCard, AdvanceProcess advance);
+	ProcessInstanceDescriptor createProcessInstance(NewProcessInstance processCard, AdvanceProcess advance);
 
 }

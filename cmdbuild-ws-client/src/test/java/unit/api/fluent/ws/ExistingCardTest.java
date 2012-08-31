@@ -35,7 +35,8 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 				.withCode(CODE_VALUE) //
 				.withDescription(DESCRIPTION_VALUE) //
 				.with(ATTRIBUTE_1, ATTRIBUTE_1_VALUE) //
-				.withAttribute(ATTRIBUTE_2, ATTRIBUTE_2_VALUE);
+				.withAttribute(ATTRIBUTE_2, ATTRIBUTE_2_VALUE) //
+				.limitAttributes(ATTRIBUTE_3, ATTRIBUTE_4);
 	}
 
 	@Test
@@ -77,10 +78,8 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
 				argThat(allOf( //
-						containsAttribute(CODE_ATTRIBUTE), //
-						containsAttribute(DESCRIPTION_ATTRIBUTE), //
-						containsAttribute(ATTRIBUTE_1), //
-						containsAttribute(ATTRIBUTE_2))));
+						containsAttribute(ATTRIBUTE_3), //
+						containsAttribute(ATTRIBUTE_4))));
 		verifyNoMoreInteractions(proxy());
 	}
 
@@ -104,6 +103,8 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 	@Test
 	public void referenceOrLookupAttributeValueIsReturnedAsStringRepresentationOfInteger() throws Exception {
+		// FIXME test with mock type converter
+
 		final ExistingCard existingCard = api().existingCard(CLASS_NAME, CARD_ID);
 
 		when(proxy().getCard( //

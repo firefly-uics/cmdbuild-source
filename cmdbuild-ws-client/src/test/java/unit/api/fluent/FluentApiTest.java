@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.api.fluent.ActiveQueryRelations;
-import org.cmdbuild.api.fluent.CallFunction;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.ExistingCard;
@@ -17,6 +16,7 @@ import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.FluentApiExecutor.AdvanceProcess;
+import org.cmdbuild.api.fluent.FunctionCall;
 import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewProcessInstance;
 import org.cmdbuild.api.fluent.NewRelation;
@@ -127,7 +127,7 @@ public class FluentApiTest {
 
 	@Test
 	public void executorCalledWhenExecutingFunctionCall() {
-		final CallFunction functionCall = api.callFunction(FUNCTION_NAME);
+		final FunctionCall functionCall = api.callFunction(FUNCTION_NAME);
 		functionCall.execute();
 
 		verify(executor).execute(functionCall);
