@@ -4,9 +4,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.internal.toolagent.AppParameter;
 
+/**
+ * Executes a function.
+ * 
+ * {@link ReferenceType} and {@link LookupType} are converted to integers and
+ * {@link ReferenceType} are converted from integers.
+ * 
+ */
 public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgent {
 
 	private final String PROCEDURE = "Procedure";
@@ -34,7 +42,7 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 	private Map<String, Object> callFunction(final String functionName, final Map<String, Object> input) {
 		final FunctionCall callFunction = getWorkflowApi().callFunction(functionName);
 		for (final Entry<String, Object> entry : input.entrySet()) {
-			final Object normalizedValue = convertFromProcessValue(entry.getValue());
+			final Object normalizedValue = convertReferenceAndLookupToIntegers(entry.getValue());
 			callFunction.with(entry.getKey(), normalizedValue);
 		}
 		final Map<String, Object> output = callFunction.execute();
@@ -49,4 +57,20 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 		return functionName;
 	}
 
+	protected final Object convertReferenceAndLookupToIntegers(Object obj) {
+		if (obj != null) {
+			if (obj instanceof ReferenceType) {
+				final ReferenceType ref = (ReferenceType) obj;
+				if (ref.checkValidity()) {
+					obj = Long.valueOf(ref.getId());
+				}
+			} else if (obj instanceof LookupType) {
+				final LookupType loo = (LookupType) obj;
+				if (loo.checkValidity()) {
+					obj = Long.valueOf(loo.getId());
+				}
+			}
+		}
+		return obj;
+	}
 }
