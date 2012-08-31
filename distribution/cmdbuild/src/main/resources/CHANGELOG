@@ -1,3 +1,49 @@
+CMDBuild 2.0.0 (released 2012/08/31)
+
+
+NEW MAJOR FEATURES
+
+ * Rewrite of the workflow module for with support for Shark 4.4
+
+ * Dashbard definition with report charts
+
+
+NEW FEATURES
+
+ * Simplified navigation
+As a Generic User
+I want a full screen visualization
+So that I can see the whole grid
+
+ * Configure UI by group
+As an Administrator
+I want to configure some UI behaviours and aspects
+So that I can reduce the possibility of a user group
+
+ * Simplified History tab
+As a Generic User
+I want a simple history visualization
+So that I can consult it more quickly
+
+ * Update Extjs to 4.1
+
+
+FIXES
+
+ * It is not possible export a csv for reference to a card without description
+
+ * PostGis 2.0 does not work
+
+ * Open card from ManageRelation Widget not displayed
+
+ * Wrong label for foreignkey on master-detail tab
+
+ * Ugly scrollbars on browser zoom
+
+
+
+
+
 CMDBuild 1.5.4 (released 2012/05/11)
 
 

@@ -1,62 +1,30 @@
-Configure shark/conf/Shark.conf changing the following line
+Configure shark/conf/Shark.conf changing the section at the end of the file
+named "CMDBuild Custom Components Settings":
 
-  DatabaseManager.ConfigurationDir=${shark_webapp}/conf/dods
+ * "org.cmdbuild.ws.url" should be the root URL of CMDBuild
+ * "org.cmdbuild.ws.username" and "org.cmdbuild.ws.password" should refer to
+   an existing user in the "serviceusers.privileged" of CMDBuild's auth.conf
 
-where ${shark_webapp} is the shark folder you've just copied.
+In shark/META-INF/context.xml change the name of the database, using the name
+of the CMDBuild database (ex. url="jdbc:postgresql://localhost/${cmdbuild}"
+should be changed to url="jdbc:postgresql://localhost/cmdbuild" for a
+database named "cmdbuild" in a local PostgreSQL installation).
 
-Change 
+Please note that Shark uses the same db of CMDBuild, storing its data inside
+the "shark" schema. If you want to restore an empty schema you can run
+${cmdbuild_home}/WEB-INF/sql/shark_schema/02_shark_emptydb.sql
 
-CMDBuild.WS.ExtSync.EndPoint=http://${serverip}:${serverport}/${cmdbuild_webapp}/services/soap/ExternalSync
-CMDBuild.WS.EndPoint=http://${serverip}:${serverport}/${cmdbuild_webapp}/services/soap/Webservices
-CMDBuild.EndPoint=http://${serverip}:${serverport}/${cmdbuild_webapp}/shark/
+The user of shark in postgres is created by CMDBuild with the following sql
+(${cmdbuild_home}/WEB-INF/sql/shark_schema/01_shark_user.sql)
 
-to refer to CMDBuild's URL 
+	CREATE ROLE shark LOGIN
+		ENCRYPTED PASSWORD 'md5088dfc423ab6e29229aeed8eea5ad290'
+		NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
+		ALTER ROLE shark SET search_path=pg_default,shark; 
 
-Ex. 
+Please note that the last line is absolutely needed when using Shark on
+CMDBuild's database.
 
-${serverip}:${serverport}/${cmdbuild_webapp} could be something like "localhost:8080/cmdbuild/"
-
-and so we could write
-
-   CMDBuild.WS.ExtSync.EndPoint=http://localhost:8080/cmdbuild/services/soap/ExternalSync
-   CMDBuild.WS.EndPoint=http://localhost:8080/cmdbuild/services/soap/Webservices
-   CMDBuild.EndPoint=http://localhost:8080/cmdbuild/shark/
-
-
-In shark/META-INF/context.xml change the name of the database, putting the name of cmdbuild database.
-
-Ex.
-
-   url="jdbc:postgresql://localhost/${cmdbuild}" 
-
-   url="jdbc:postgresql://localhost/cmdbuild"
-
-
-Note: 	Actually shark uses the same db of CMDBuild, storing its data inside schema "shark".
-	If you want to restore an empty schema you can run ${cmdbuild_home}/WEB-INF/sql/shark_schema/02_shark_emptydb.sql
-	
-	The user of shark in postgres is created by cmdbuild with the following sql (${cmdbuild_home}/WEB-INF/sql/shark_schema/01_shark_user.sql)
-
-		CREATE ROLE shark LOGIN
-			ENCRYPTED PASSWORD 'md5088dfc423ab6e29229aeed8eea5ad290'
-			NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
-			ALTER ROLE shark SET search_path=pg_default,shark; 
-
-		Please note that the last line is absolutely needed when using shark on CMDBuild db.
-
-When Shark is up and running, configure cmdbuild workflow inside Administration module or edit cmdbuild/WEB-INF/conf/workflow.conf putting the correct address of the Shark web services.
-
-#is the workflow enabled?
-enabled=true
-
-#where is the sharkWebServices shark application
-endpoint=http://${serverip}:${serverport}/${cmdbuild_webapp}
-
-Ex.
-endpoint=http://localhost:8181/shark
-
-Restart Tomcat.
-
-
-Now CMDBuild is configured ready to run workflow.
+When Shark is up and running, configure the workflow module in the
+Administration area.
 
