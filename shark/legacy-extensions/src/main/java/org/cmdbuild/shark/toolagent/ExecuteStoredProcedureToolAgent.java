@@ -61,11 +61,15 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 				final ReferenceType ref = (ReferenceType) obj;
 				if (ref.checkValidity()) {
 					obj = Long.valueOf(ref.getId());
+				} else {
+					return null;
 				}
 			} else if (obj instanceof LookupType) {
 				final LookupType loo = (LookupType) obj;
 				if (loo.checkValidity()) {
 					obj = Long.valueOf(loo.getId());
+				} else {
+					return null;
 				}
 			}
 		}

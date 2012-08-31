@@ -42,10 +42,20 @@ public abstract class SharkWsTypeConverter {
 
 		case FOREIGNKEY:
 		case REFERENCE:
-			return Integer.toString(((ReferenceType) value).getId());
+			final ReferenceType reference = (ReferenceType) value;
+			if (reference.checkValidity()) {
+				return Integer.toString(reference.getId());
+			} else {
+				return EMPTY;
+			}
 
 		case LOOKUP:
-			return Integer.toString(((LookupType) value).getId());
+			final LookupType lookup = (LookupType) value;
+			if (lookup.checkValidity()) {
+				return Integer.toString(lookup.getId());
+			} else {
+				return EMPTY;
+			}
 
 		default:
 			return value.toString();
