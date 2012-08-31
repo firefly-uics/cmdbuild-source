@@ -10,6 +10,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import net.jcip.annotations.GuardedBy;
+
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -24,7 +26,9 @@ public class DBService {
 	protected final DataSource datasource;
 	private ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
 
-	private static DBService instance;
+	@GuardedBy("syncObject")
+	private static volatile DBService instance;
+	private static final Object syncObject = new Object();
 
 	private DBService() {
 		datasource = configureDatasource();
@@ -34,8 +38,13 @@ public class DBService {
 	 * public for DatabaseHelper tests
 	 */
 	public static DBService getInstance() {
-		if (instance == null)
-			instance = new DBService();
+		if (instance == null) {
+			synchronized (syncObject) {
+				if (instance == null) {
+					instance = new DBService();
+				}
+			}
+		}
 		return instance;
 	}
 
@@ -131,22 +140,40 @@ public class DBService {
 			return "undefined";
 		}
 	}
-	
-	public static boolean isPostGISConfigured() {
+
+	private static String postgisVersion;
+
+	public static String getPostGISVersion() {
+		if (postgisVersion == null) {
+			synchronized (syncObject) {
+				if (postgisVersion == null) {
+					postgisVersion = fetchPostGISVersion();
+				}
+			}
+		}
+
+		return postgisVersion;
+	}
+
+	public static String fetchPostGISVersion() {
 		try {
 			Connection c = getConnection();
 			Statement s = c.createStatement(); 
 			ResultSet r = s.executeQuery("select postgis_lib_version()");
-		    if (r.next()) {
-		    	String postgisVersion = r.getString(1);
-		    	Log.SQL.info("PostGIS version is " + postgisVersion);
-		    	return true;
-		    }		    
+			if (r.next()) {
+				final String postgisVersion = r.getString(1);
+				Log.SQL.info("PostGIS version is " + postgisVersion);
+				return postgisVersion;
+			}
 		} catch (SQLException ex) {
 			Log.SQL.error("PostGIS is not installed", ex);
-			return false;
 		}
-		return false;
+
+		return null;
+	}
+
+	public static boolean isPostGISConfigured() {
+		return getPostGISVersion() != null;
 	}
 
 	/*
