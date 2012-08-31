@@ -93,26 +93,46 @@ public class CachedWsSchemaApi implements SchemaApi {
 	public synchronized AttributeInfo findAttributeFor(final EntryTypeAttribute entryTypeAttribute) {
 		return new EntryTypeAttribute.Visitor() {
 
+			private String entryName;
 			private AttributeInfo attributeInfo;
 
 			public AttributeInfo attributeInfo() {
 				entryTypeAttribute.accept(this);
-				return attributeInfo;
+				return (attributeInfo == null) ? unknownAttributeInfo(entryName) : attributeInfo;
+			}
+
+			private AttributeInfo unknownAttributeInfo(final String entryName) {
+				return new AttributeInfo() {
+
+					@Override
+					public String getName() {
+						return entryName;
+					}
+
+					@Override
+					public WsType getWsType() {
+						return WsType.UNKNOWN;
+					}
+
+				};
 			}
 
 			@Override
 			public void visit(final ClassAttribute classAttribute) {
+				entryName = classAttribute.getClassName();
 				attributeInfo = findAttributeForClass(classAttribute.getClassName(), classAttribute.getAttributeName());
 			}
 
 			@Override
 			public void visit(final FunctionInput functionInput) {
+				entryName = functionInput.getFunctionName();
 				attributeInfo = findAttributeForFunction(functionInput.getFunctionName(),
 						functionInput.getAttributeName(), FunctionParameterMode.INPUT);
 			}
 
 			@Override
 			public void visit(final FunctionOutput functionOutput) {
+				entryName = functionOutput.getFunctionName();
 				attributeInfo = findAttributeForFunction(functionOutput.getFunctionName(),
 						functionOutput.getAttributeName(), FunctionParameterMode.OUTPUT);
 			}
