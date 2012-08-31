@@ -25,7 +25,9 @@ import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.LegacyWorkflowPersistence;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
+import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
@@ -89,7 +91,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 				@Override
 				protected Map<String, Object> load() {
 					try {
-						return workflowService.getProcessInstanceVariables(getProcessInstanceId());
+						final Map<String, Object> workflowRawTypes = workflowService.getProcessInstanceVariables(getProcessInstanceId());
+						return LegacyWorkflowPersistence.toWorkflowValues(ProcessInstanceWrapper.this.getType(), workflowRawTypes, workflowTypesConverter);
 					} catch (final CMWorkflowException exception) {
 						throw new IllegalStateException("Process server unreachable", exception);
 					}
@@ -122,6 +125,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	private final UserContext userCtx;
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final CMWorkflowService workflowService;
+	private final WorkflowTypesConverter workflowTypesConverter;
 
 	public ProcessInstanceWrapper(final UserContext userCtx, final ProcessDefinitionManager processDefinitionManager,
 			final ICard process) {
@@ -129,6 +133,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		this.userCtx = userCtx;
 		this.processDefinitionManager = processDefinitionManager;
 		this.workflowService = TemporaryObjectsBeforeSpringDI.getWorkflowService();
+		this.workflowTypesConverter = TemporaryObjectsBeforeSpringDI.getWorkflowTypesConverter(); 
 	}
 
 	@Override

@@ -152,6 +152,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		return workflowService;
 	}
 
+	public static WorkflowTypesConverter getWorkflowTypesConverter() {
+		return workflowTypesConverter;
+	}
+
 	public static class SimplifiedUserContext {
 		private UserContext userContext;
 

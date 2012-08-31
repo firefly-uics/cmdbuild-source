@@ -154,6 +154,13 @@ public abstract class LegacyWorkflowPersistence {
 	}
 
 	protected final Map<String, Object> toWorkflowValues(final CMProcessClass processClass, final Map<String, Object> nativeValues) {
+		return toWorkflowValues(processClass, nativeValues, workflowVariableConverter);
+	}
+
+	/*
+	 * FIXME AWFUL pre-release hack
+	 */
+	public static final Map<String, Object> toWorkflowValues(final CMProcessClass processClass, final Map<String, Object> nativeValues, final WorkflowTypesConverter workflowVariableConverter) {
 		final Map<String, Object> workflowValues = new HashMap<String, Object>();
 		for (Map.Entry<String, Object> nv : nativeValues.entrySet()) {
 			final String attributeName = nv.getKey();
