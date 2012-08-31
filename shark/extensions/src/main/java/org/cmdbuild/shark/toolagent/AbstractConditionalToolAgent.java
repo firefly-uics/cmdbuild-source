@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -109,10 +110,10 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 		this.status = status;
 	}
 
-	private void dumpParameters(final String string, final AppParameter[] parameters) {
-		cus.debug(shandle, string);
+	private void dumpParameters(final String message, final AppParameter[] parameters) {
+		cus.debug(shandle, Logging.LOGGER_NAME, message);
 		for (final AppParameter parameter : parameters) {
-			cus.debug(shandle, formatParameter(parameter));
+			cus.debug(shandle, Logging.LOGGER_NAME, formatParameter(parameter));
 		}
 	}
 
