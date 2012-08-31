@@ -200,17 +200,15 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
 				card.getClassName(), //
 				card.getId(), //
-				hasAttributes(card) ? attributesNameFor(card.getRequestedAttributes()) : ALL_ATTRIBUTES);
+				requestedAttributesFor(card.getRequestedAttributes()));
 		return cardFor(soapCard);
 	}
 
 	public List<Card> fetchCards(final QueryClass card) {
-		final CardList cardList = proxy.getCardList(
-				//
+		final CardList cardList = proxy.getCardList( //
 				card.getClassName(), //
-				card.getRequestedAttributes().isEmpty() ? ALL_ATTRIBUTES : attributesNameFor(card
-						.getRequestedAttributes()), //
-				hasAttributes(card) ? queriedAttributesFor(card) : NO_QUERY, //
+				requestedAttributesFor(card.getRequestedAttributes()), //
+				queriedAttributesFor(card), //
 				NO_ORDERING, //
 				NO_LIMIT, //
 				OFFSET_BEGINNING, //
@@ -219,21 +217,29 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return cardsFor(cardList);
 	}
 
-	private List<Attribute> attributesNameFor(final Set<String> names) {
-		final List<Attribute> attributeNames = new ArrayList<Attribute>();
-		for (final String attributeName : names) {
-			final Attribute attribute = new Attribute();
-			attribute.setName(attributeName);
-			attributeNames.add(attribute);
+	private List<Attribute> requestedAttributesFor(final Set<String> names) {
+		if (names.isEmpty()) {
+			return ALL_ATTRIBUTES;
+		} else {
+			final List<Attribute> attributeNames = new ArrayList<Attribute>();
+			for (final String attributeName : names) {
+				final Attribute attribute = new Attribute();
+				attribute.setName(attributeName);
+				attributeNames.add(attribute);
+			}
+			return attributeNames;
 		}
-		return attributeNames;
 	}
 
 	private Query queriedAttributesFor(final Card card) {
-		final FilterOperator filterOperator = new FilterOperator();
-		filterOperator.setOperator(OPERATOR_AND);
-		filterOperator.getSubquery().addAll(queriesFor(card));
-		return queryFor(filterOperator);
+		if (card.getAttributes().isEmpty()) {
+			return NO_QUERY;
+		} else {
+			final FilterOperator filterOperator = new FilterOperator();
+			filterOperator.setOperator(OPERATOR_AND);
+			filterOperator.getSubquery().addAll(queriesFor(card));
+			return queryFor(filterOperator);
+		}
 	}
 
 	private List<Query> queriesFor(final Card card) {
@@ -415,10 +421,6 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 					);
 		}
 		return clientAttributes;
-	}
-
-	private boolean hasAttributes(final Card card) {
-		return !card.getAttributes().isEmpty();
 	}
 
 	/*
