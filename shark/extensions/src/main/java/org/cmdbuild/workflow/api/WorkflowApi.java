@@ -49,7 +49,11 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
 	@Override
 	public LookupType selectLookupById(final int id) {
-		return schemaApi.selectLookupById(id);
+		if (id <= 0) {
+			return new LookupType();
+		} else {
+			return schemaApi.selectLookupById(id);
+		}
 	}
 
 	@Override
@@ -83,11 +87,16 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 		return referenceTypeFrom(cardDescriptor, null);
 	}
 
-	public ReferenceType referenceTypeFrom(final Object id) {
-		final Card referencedCard = existingCard(Constants.BASE_CLASS_NAME, objectToInt(id)) //
-				.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE) //
-				.fetch();
-		return referenceTypeFrom(referencedCard);
+	public ReferenceType referenceTypeFrom(final Object idAsObject) {
+		final int id = objectToInt(idAsObject);
+		if (id <= 0) {
+			return new ReferenceType();
+		} else {
+			final Card referencedCard = existingCard(Constants.BASE_CLASS_NAME, id) //
+					.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE) //
+					.fetch();
+			return referenceTypeFrom(referencedCard);
+		}
 	}
 
 	private int objectToInt(final Object id) {
