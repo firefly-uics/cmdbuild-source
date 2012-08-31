@@ -11,8 +11,7 @@ import org.enhydra.shark.api.internal.toolagent.AppParameter;
 /**
  * Executes a function.
  * 
- * {@link ReferenceType} and {@link LookupType} are converted to integers and
- * {@link ReferenceType} are converted from integers.
+ * {@link ReferenceType} and {@link LookupType} are converted to and from integers.
  * 
  */
 public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgent {
@@ -29,11 +28,10 @@ public class ExecuteStoredProcedureToolAgent extends AbstractConditionalToolAgen
 		for (final AppParameter parmOut : getReturnParameters()) {
 			Object outputValue = output.get(parmOut.the_formal_name);
 			if (parmOut.the_class == ReferenceType.class) {
-				/*
-				 * functions never return ReferenceTypes: they need to be
-				 * automatically fetched
-				 */
 				outputValue = getWorkflowApi().referenceTypeFrom(outputValue);
+			} else if (parmOut.the_class == LookupType.class) {
+				Number lookupId = (Number) outputValue;
+				outputValue = getWorkflowApi().selectLookupById(lookupId.intValue());
 			}
 			parmOut.the_value = outputValue;
 		}
