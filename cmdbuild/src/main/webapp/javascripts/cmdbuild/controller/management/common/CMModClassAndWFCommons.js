@@ -1,0 +1,1 @@
+Ext.define("CMDBuild.controller.management.common.CMModClassAndWFCommons", {});
