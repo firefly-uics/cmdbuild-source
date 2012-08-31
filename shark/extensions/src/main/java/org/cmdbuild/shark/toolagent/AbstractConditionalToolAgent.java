@@ -11,8 +11,6 @@ import java.util.Map;
 import org.cmdbuild.workflow.ConfigurationHelper;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
-import org.cmdbuild.workflow.type.LookupType;
-import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.jxpdl.XMLUtil;
 import org.enhydra.jxpdl.XPDLConstants;
 import org.enhydra.jxpdl.elements.ExtendedAttribute;
@@ -255,23 +253,6 @@ public abstract class AbstractConditionalToolAgent extends AbstractToolAgent {
 
 	protected final WAPI wapi() throws Exception {
 		return Shark.getInstance().getWAPIConnection();
-	}
-
-	protected final Object convertFromProcessValue(Object obj) {
-		if (obj != null) {
-			if (obj instanceof ReferenceType) {
-				final ReferenceType ref = (ReferenceType) obj;
-				if (ref.checkValidity()) {
-					obj = ref.getId();
-				}
-			} else if (obj instanceof LookupType) {
-				final LookupType loo = (LookupType) obj;
-				if (loo.checkValidity()) {
-					obj = loo.getId();
-				}
-			}
-		}
-		return obj;
 	}
 
 }
