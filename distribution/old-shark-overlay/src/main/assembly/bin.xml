@@ -6,14 +6,16 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>${project.groupId}:cmdbuild-shark-server:war</include>
+				<include>${project.groupId}:old-shark-server:war</include>
 			</includes>
+			<outputDirectory></outputDirectory>
+			<unpack>true</unpack>
+			<unpackOptions>
+				<includes>
+					<include>WEB-INF/lib/cmdbuild-*.jar</include>
+					<include>conf/Shark.conf</include>
+				</includes>
+			</unpackOptions>
 		</dependencySet>
 	</dependencySets>
-	<fileSets>
-		<fileSet>
-			<directory>${project.basedir}/src/main/resources</directory>
-			<outputDirectory>/</outputDirectory>
-		</fileSet>
-	</fileSets>
 </assembly>

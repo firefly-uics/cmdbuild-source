@@ -6,7 +6,7 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>${project.groupId}:cmdbuild-shark-server:war</include>
+				<include>${project.groupId}:old-shark-server:war</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>
