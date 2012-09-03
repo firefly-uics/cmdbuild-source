@@ -18,6 +18,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-distribution-old-shark-overlay</artifactId>
+			<version>${project.version}</version>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-distribution-shark-overlay</artifactId>
 			<version>${project.version}</version>
 			<type>zip</type>
@@ -43,4 +49,3 @@
 		</plugins>
 	</build>
 </project>
-

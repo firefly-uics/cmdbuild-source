@@ -11,6 +11,8 @@
 
 	<modules>
 		<module>cmdbuild</module>
+		<module>old-shark</module>
+		<module>old-shark-overlay</module>
 		<module>shark</module>
 		<module>shark-overlay</module>
 	</modules>
