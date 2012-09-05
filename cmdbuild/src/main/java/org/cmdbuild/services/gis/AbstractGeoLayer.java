@@ -9,7 +9,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 
 public abstract class AbstractGeoLayer implements GeoLayer {
 
-	private static final int DEFAULT_INDEX = -1;
+	private static final int DEFAULT_INDEX = 0;
 	private static final int DEFAULT_MIN_ZOOM = 0;
 	private static final int DEFAULT_MAX_ZOOM = 25;
 	private static final String EMPTY_VISIBILITY = null;
