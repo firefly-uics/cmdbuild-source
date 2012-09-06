@@ -1,8 +1,5 @@
 CMDBuild.Management.MapBuilder = (function() {
 
-	// To avoid the pink tails on image load error
-	OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
-
 	var bounds = new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
 		geojson_format = new OpenLayers.Format.GeoJSON(),
 		projection = new OpenLayers.Projection("EPSG:900913"),
@@ -53,15 +50,22 @@ CMDBuild.Management.MapBuilder = (function() {
 
 	function addBaseLayers(map) {
 		var DEFAULT_MIN_ZOOM = 0,
-			DEFAULT_MAX_ZOOM = 24,
+			DEFAULT_MAX_ZOOM = 18,
 			gisConfig = CMDBuild.Config.gis;
 
 		if (gisConfig.osm && gisConfig.osm == "on") {
 			var osm = new OpenLayers.Layer.OSM("Open Street Map", null, {
-				numZoomLevels: 25
+				numZoomLevels: 25,
+				cmdb_minZoom: gisConfig.osm_minzoom || DEFAULT_MIN_ZOOM,
+				cmdb_maxZoom: gisConfig.osm_maxzoom || DEFAULT_MAX_ZOOM,
+				setVisibilityByZoom: function(zoom) {
+					var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
+					var isInRange = (zoom >= this.cmdb_minZoom && zoom <= max);
+
+					this.setVisibility(isInRange);
+				}
 			});
-			osm.cmdbuildMinZoom = gisConfig.osm_minzoom || DEFAULT_MIN_ZOOM;
-			osm.cmdbuildMaxZoom = gisConfig.osm_maxzoom || DEFAULT_MAX_ZOOM;
+			
 			map.addLayers([osm]);
 		}
 
@@ -72,8 +76,15 @@ CMDBuild.Management.MapBuilder = (function() {
 					sphericalMercator: true
 				}
 			);
-			googleLayer.cmdbuildMinZoom = gisConfig.google_minzoom || DEFAULT_MIN_ZOOM;
-			googleLayer.cmdbuildMaxZoom = gisConfig.google_maxzoom || DEFAULT_MAX_ZOOM;
+
+			googleLayer.cmdb_minZoom = gisConfig.google_minzoom || DEFAULT_MIN_ZOOM;
+			googleLayer.cmdb_maxZoom = gisConfig.google_maxzoom || DEFAULT_MAX_ZOOM;
+			googleLayer.setVisibilityByZoom = function(zoom) {
+				var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
+				var isInRange = (zoom >= this.cmdb_minZoom && zoom <= max);
+
+				this.setVisibility(isInRange);
+			};
 			map.addLayers([googleLayer]);
 		}
 
@@ -84,11 +95,20 @@ CMDBuild.Management.MapBuilder = (function() {
 					sphericalMercator: true
 				}
 			);
-			yahooLayer.cmdbuildMinZoom = gisConfig.yahoo_minzoom || DEFAULT_MIN_ZOOM;
-			yahooLayer.cmdbuildMaxZoom = gisConfig.yahoo_maxzoom || DEFAULT_MAX_ZOOM;
+			yahooLayer.cmdb_minZoom = gisConfig.yahoo_minzoom || DEFAULT_MIN_ZOOM;
+			yahooLayer.cmdb_maxZoom = gisConfig.yahoo_maxzoom || DEFAULT_MAX_ZOOM;
+			yahooLayer.setVisibilityByZoom = function(zoom) {
+				var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
+				var isInRange = (zoom >= this.cmdb_minZoom && zoom <= max);
+
+				this.setVisibility(isInRange);
+			};
 			map.addLayers([yahooLayer]);
 		}
 
+		// could not build a map without a base layer
+		// if there are no layers in the configuration
+		// ad a fake one.
 		if (map.layers.length == 0) {
 			var fakeBaseLayer = new OpenLayers.Layer.Vector("", {
 				displayInLayerSwitcher: false,

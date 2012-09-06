@@ -124,7 +124,7 @@
 	function createSliderField(serviceName, fieldName, translationName) {
 		return new Ext.form.SliderField({
 		    minValue: 0,
-		    maxValue: 25,
+		    maxValue: 18,
 		    value: 0,
 		    width: 300,
 		    name: serviceName+"_"+fieldName,
