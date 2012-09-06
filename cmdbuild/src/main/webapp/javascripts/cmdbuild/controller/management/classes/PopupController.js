@@ -8,11 +8,6 @@
 			this.highlightOnly = true;
 			this.renderIntent = "temporary";
 			this.overFeature = onFeatureOver;
-			
-			this.outFeature = function(f) {
-				f.CM_over = false;
-				f.layer.map.removeAllPopups();
-			};
 
 			CMDBuild.Management.CMSelectFeatureController.prototype.initialize.apply(this, [layers, options]);
 		}
@@ -58,14 +53,17 @@
 			var centeroid = g.getCentroid();
 
 			if (f.layer) {
-				f.layer.map.addPopup(new OpenLayers.Popup.FramedCloud(
-					"cloud_"+f.id, 
-					new OpenLayers.LonLat(centeroid.x, centeroid.y),
-					null,
-					buildPopupContent(f),
-					null,
-					closeButton = false
-				), exlusive=true);
+				var popup = new OpenLayers.Popup.FramedCloud(
+						"cloud_"+f.id, 
+						new OpenLayers.LonLat(centeroid.x, centeroid.y), // TODO detect mouse position
+						null,
+						buildPopupContent(f),
+						null,
+						closeButton = true
+					);
+				popup.minSize = new OpenLayers.Size(50, 200);
+				popup.panMapIfOutOfView = false;
+				f.layer.map.addPopup(popup, exlusive=true);
 			}
 		}
 	}
