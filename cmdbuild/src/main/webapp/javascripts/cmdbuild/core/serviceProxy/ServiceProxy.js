@@ -414,7 +414,10 @@ CMDBuild.ServiceProxy.lookup = {
 				direction : "ASC"
 			}],
 			autoLoad : true,
-			pageSize: 0 // Disable paging
+
+			// Disable paging
+			defaultPageSize: 0,
+			pageSize: 0 
 		});
 
 		return s;
