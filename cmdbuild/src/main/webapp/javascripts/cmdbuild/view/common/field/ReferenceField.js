@@ -107,14 +107,13 @@
         },
 
 		getErrors : function(rawValue) {
-			if (this.templateResolver) {
+			if (this.templateResolver && this.store) {
 				var value = this.getValue();
-				if (value
-						&& this.store.find(this.valueField,
-								value) == -1) {
+				if (value && this.store.find(this.valueField, value) == -1) {
 					return [ CMDBuild.Translation.errors.reference_invalid ];
 				}
 			}
+
 			return this.callParent(arguments);
 		},
 
