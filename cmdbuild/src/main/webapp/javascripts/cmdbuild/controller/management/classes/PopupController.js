@@ -83,7 +83,10 @@
 		for (var i=0, l=attributes.length; i<l; ++i) {
 			var at = attributes[i];
 			if (at.isbasedsp) {
-				var attrValue = card[at.name+"_value"] || card[at.name] || "-";
+				var attrValue = card[at.name] || "-";
+				if (typeof attrValue == "object") {
+					attrValue = attrValue.description;
+				}
 				items += Ext.String.format(itemTemplate, at.description, attrValue);
 			}
 		}
