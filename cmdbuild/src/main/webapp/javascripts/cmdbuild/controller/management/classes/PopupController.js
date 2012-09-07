@@ -8,6 +8,12 @@
 			this.highlightOnly = true;
 			this.renderIntent = "temporary";
 			this.overFeature = onFeatureOver;
+			
+			// to not show the popup after the delay
+			// if the mouse is not on the feature
+			this.outFeature = function(f) {
+				f.CM_over = false;
+			};
 
 			CMDBuild.Management.CMSelectFeatureController.prototype.initialize.apply(this, [layers, options]);
 		}
@@ -42,7 +48,7 @@
 		}
 
 		// defer the call to deny a pop-up explosion ;) 
-		Ext.Function.createDelayed(showInfoBaloon, 250, this, arguments)();
+		Ext.Function.createDelayed(showInfoBaloon, 1000, this, arguments)();
 		return true;
 	}
 

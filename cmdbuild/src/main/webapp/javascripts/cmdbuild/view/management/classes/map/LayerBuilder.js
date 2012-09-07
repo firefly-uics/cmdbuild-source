@@ -63,13 +63,21 @@
 	function buildCmdbLayer(geoAttribute, classId, editLayer) {
 		var layerDescription = geoAttribute.description;
 
-		if (!editLayer) {
-			// the layer belongs to another class
-			var masterClass = _CMCache.getEntryTypeById(geoAttribute.masterTableId);
-			if (masterClass) {
-				layerDescription = masterClass.get("text") + " - " + layerDescription;
-			}
+		/*
+		 * At first, we want prefix the class name only for
+		 * the layer that does not belong to the actual class
+		 * Now we want to prefix it to all. To remember this
+		 * decision, comment the condition to skip the
+		 * owned layers 
+		 */
+		// if (!editLayer) {
+
+		var masterClass = _CMCache.getEntryTypeById(geoAttribute.masterTableId);
+		if (masterClass) {
+			layerDescription = masterClass.get("text") + " - " + layerDescription;
 		}
+
+		// }
 
 		var layer = new CMDBuild.Management.CMMap.MapLayer(layerDescription, {
 			targetClassId: getIdClassForRequest(geoAttribute, classId),

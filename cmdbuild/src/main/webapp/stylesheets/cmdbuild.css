@@ -702,13 +702,28 @@ em {
 	padding: 0.3em;
 }
 
+/*** Open layer overrides ***/
+
+.olControlLayerSwitcher {
+    width: auto !important;
+}
+
 .olControlLayerSwitcher .layersDiv {
     background-color: #00488B !important;
+}
+
+.olControlLayerSwitcher .labelSpan {
+	padding-left: 0.5em;
+	padding-bottom: 0.5em;
+	line-height: 1.2em;
+	font-size: 1.1em
 }
 
 .olControlLayerSwitcher div span {
 	background-color: #00488B !important;
 }
+
+/*******************************/
 
 .importcsv-empty-cell {
 	background-color: #DDD;
