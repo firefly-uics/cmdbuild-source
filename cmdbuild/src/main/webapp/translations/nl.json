@@ -197,7 +197,7 @@
                 "wrongConfiguration": "De grafiek is niet goed geconfigureerd"
              },
              "availableCharts": {
-                "gauge": "<em>Gauge</em>",
+                "gauge": "Meter",
                 "pie": "Cirkel",
                 "bar": "Staaf",
                 "line": "Lijn"
