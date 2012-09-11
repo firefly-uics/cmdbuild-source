@@ -168,11 +168,11 @@
             },
             ".CreateModifyCard": {
                "fields": {
-                  "target": "<em>Target Class</em>",
-                  "cql": "<em>Card CQL selector</em>",
-                  "readOnly": "<em>Read only</em>"
+                  "target": "Classe Alvo",
+                  "cql": "Seletor CQL de Cartão",
+                  "readOnly": "Somente Leitura"
                },
-               "title": "<em>Create or Modify Card</em>"
+               "title": "Criar ou Modificar Cartão"
             },
             ".Ping": {
                "fields": {
@@ -194,91 +194,91 @@
       "modDashboard": {
           "charts": {
              "alert": {
-                "wrongConfiguration": "<em>The chart is not well configured</em>"
+                "wrongConfiguration": "O gráfico não está corretamente configurado"
              },
             "availableCharts": {
-                "gauge": "<em>Gauge</em>",
-                "pie": "<em>Pie</em>",
-                "bar": "<em>Bar</em>",
-                "line": "<em>Line</em>"
+                "gauge": "Controle",
+                "pie": "Torta",
+                "bar": "Barra",
+                "line": "Linha"
              },
              "buttons": {
-                "add": "<em>Add Chart</em>",
-                "modify": "<em>Modify chart</em>",
-                "remove": "<em>Remove chart</em>",
-                "preview": "<em>Preview</em>"
+                "add": "Adicione Gráfico",
+                "modify": "Modifique Gráfico",
+                "remove": "Remova Gráfico",
+                "preview": "Visualização Prévia"
              },
              "fields": {
-                "active": "<em>Active</em>",
-                "autoload": "<em>Load automatically</em>",
-                "background": "<em>Background color</em>",
-                "categoryFieldset": "<em>Category axis</em>",
-                "chartType": "<em>Chart type</em>",
-                "dataSource": "<em>Data source</em>",
-                "defaultValue": "<em>Default value</em>",
-                "description": "<em>Description</em>",
-                "fieldType": "<em>Field type</em>",
-                "foreground": "<em>Foreground color</em>",
-                "fromClass": "<em>From Class</em>",
-                "labelField": "<em>Label field</em>",
-                "legend": "<em>Show legend</em>",
-                "lookupType": "<em>Lookup type</em>",
-                "max": "<em>Maximum</em>",
-                "min": "<em>Minimum</em>",
-                "name": "<em>Name</em>",
+                "active": "Ativo",
+                "autoload": "Automaticamente Carregado",
+                "background": "Cor de Fundo",
+                "categoryFieldset": "Eixo das Categorias",
+                "chartType": "Tipo de Gráfico",
+                "dataSource": "Origem dos Dados",
+                "defaultValue": "Valor Padrão",
+                "description": "Descrição",
+                "fieldType": "Tipo do Campo",
+                "foreground": "Cor de Frente",
+                "fromClass": "A partir da Classe",
+                "labelField": "Campo Label",
+                "legend": "Mostrar Legenda",
+                "lookupType": "Tipo Procura",
+                "max": "Máximo",
+                "min": "Mínimo",
+                "name": "Nome",
                 "orientation": {
-                   "label": "<em>Orientation</em>",
+                   "label": "Orientação",
                    "values": {
-                      "horizontal": "<em>Horizontal</em>",
-                      "vertical": "<em>Vertical</em>"
+                      "horizontal": "Horizontal",
+                      "vertical": "Vertical"
                    }
                 },
-                "required": "<em>Required</em>",
-                "steps": "<em>Steps</em>",
-                "title": "<em>Title</em>",
-                "valueField": "<em>Value field</em>",
-                "valueFieldset": "<em>Value axis</em>"
+                "required": "Exigido",
+                "steps": "Passos",
+                "title": "Título",
+                "valueField": "Campo Valor",
+                "valueFieldset": "Eixo Valor"
              },
              "inputTypes": {
-                "BOOLEAN": "<em>Boolean</em>",
-                "DECIMAL": "<em>Decimal</em>",
-                "INTEGER": "<em>Integer</em>",
-                "DOUBLE": "<em>Double</em>",
-                "DATE": "<em>Date</em>",
-                "TIMESTAMP": "<em>Timestamp</em>",
-                "TIME": "<em>Time</em>",
-                "STRING": "<em>String</em>",
-                "TEXT": "<em>Text</em>",
-                "CHAR": "<em>Char</em>",
-                "INET": "<em>Net address</em>"
+                "BOOLEAN": "Boleano",
+                "DECIMAL": "Decimal",
+                "INTEGER": "Inteiro",
+                "DOUBLE": "Double",
+                "DATE": "Data",
+                "TIMESTAMP": "Data do Carimbo",
+                "TIME": "Tempo",
+                "STRING": "String",
+                "TEXT": "Texto",
+                "CHAR": "Caractere",
+                "INET": "Endereço da Rede"
              },
-             "title": "<em>Charts</em>",
+             "title": "Gráficos",
              "typeFieldOptions": {
-                "card" : "<em>Card</em>",
-                "classes" : "<em>Select from all CMDBuild classes</em>",
-                "freeInt" : "<em>Free Integer</em>",
-                "freeString" : "<em>Free String</em>",
-                "group" : "<em>Current group</em>",
-                "lookup" : "<em>Select from a lookup</em>",
-                "user" : "<em>Current user</em>"
+                "card" : "Cartão",
+                "classes" : "Selecione a partir de todas as classes CMDBuild",
+                "freeInt" : "Inteiro Livre",
+                "freeString" : "String Livre",
+                "group" : "Grupo Atual",
+                "lookup" : "Selecione a partir de uma procura",
+                "user" : "Usuário Atual"
              }
           },
           "layout": {
-             "add": "<em>Add a column</em>",
-             "remove": "<em>Remove empty columns</em>",
-             "title": "<em>Layout</em>"
+             "add": "Adicione uma coluna",
+             "remove": "Remova Colunas Vazias",
+             "title": "Layout"
           },
           "properties": {
-             "add": "<em>Add Dashboard</em>",
-             "modify": "<em>Modify Dashboard</em>",
-             "remove": "<em>Remove Dashboard</em>",
+             "add": "Adicione Dashboard",
+             "modify": "Modificar Dashboard",
+             "remove": "Remover Dashboard",
              "fields": {
-                "name": "<em>Name</em>",
-                "description": "<em>Description</em>",
-                "groups": "<em>Available for groups</em>"
+                "name": "Nome",
+                "description": "Descrição",
+                "groups": "Disponível para Grupos"
              }
           },
-          "title": "<em>Dashboard</em>"
+          "title": "Dashboard"
       },
       "modLookup": {
          "add_lookuptype": "Adicionar tipo Pesquisa",
@@ -427,7 +427,7 @@
          "available_elements": "Elementos Disponíveis",
          "availabletree": {
             "class": "Classes",
-            "dashboard": "<em>Dashboards</em>",
+            "dashboard": "Dashboards",
             "processclass": "Atividades",
             "report": "Relatórios",
             "view": "Visualizações"
@@ -505,18 +505,18 @@
          },
          "title": "Usuários e Grupos",
          "uiconfiguration": {
-            "disabled_class_tabs": "<em>Disabled tabs in Classes module</em>",
+            "disabled_class_tabs": "Abas desabilitadas no módulo Classe",
             "disabled_modules": "Funcionalidades desabilitadas",
-            "disabled_process_tabs": "<em>Disabled tabs in Processes module</em>",
+            "disabled_process_tabs": "Abas desabilitadas no módulo Processo",
             "generic_properties": {
-               "always_enabled_widgets": "<em>Process widgets always enabled</em>",
-               "card_simple_history": "<em>Simple history for cards</em>",
-               "full_screen_navigation": "<em>Full screen navigation</em>",
-               "hide_side_panel": "<em>Hide side panel</em>",
-               "process_simple_history": "<em>Simple history for processes</em>"
+               "always_enabled_widgets": "Widgets de Processo sempre habilitados",
+               "card_simple_history": "Histórico Simples para Cartões",
+               "full_screen_navigation": "Navegação Tela Cheia",
+               "hide_side_panel": "Esconder Painel Lateral",
+               "process_simple_history": "Histório Simples para processos"
             },
-            "other": "<em>Other options</em>",
-            "title": "<em>UI configuration</em>"
+            "other": "Outras Opções",
+            "title": "Configuração UI"
          },
          "user": {
             "add_user": "Adicionar Usuário",
@@ -658,7 +658,7 @@
          "add": "Adicionar",
          "as": "como",
          "close": "Fechar",
-         "load": "<em>Load</em>",
+         "load": "Carregar",
          "modify": "Modificar",
          "print": "Imprimir",
          "remove": "Remover",
@@ -706,9 +706,9 @@
       "tbd_body": "Trabalho em Progresso",
       "tbd_title": "Trabalho em Progresso",
       "tooltip": {
-         "editParameters": "<em>Edit the parameters</em>",
-         "reload": "<em>Reload</em>",
-         "showData": "<em>Show data</em>"
+         "editParameters": "Editar os parâmetros",
+         "reload": "Recarregar",
+         "showData": "Mostrar Dados"
       },
       "tree_names": {
          "class": "Padrão",
@@ -1037,7 +1037,7 @@
             "destclass": "Classe",
             "domain": "Domínio",
             "end_date": "Data de Términio",
-            "performer": "<em>Activity performer</em>",
+            "performer": "Executante da Atividade",
             "relation": "Relacionamento",
             "user": "Usuário"
          },
@@ -1104,7 +1104,7 @@
       "modutilities": {
          "bulkupdate": {
             "title": "Atualização Múltiplas",
-            "countMessage": "<em>{0} cards will be modified</em>"
+            "countMessage": "{0} cartões serão modificados"
          },
          "changepassword": {
             "newpw": "Senha Nova",
@@ -1165,7 +1165,7 @@
                "subjectfld": "Assunto",
                "subjecthdr": "Assunto",
                "tofld": "Para",
-               "updateTemplateConfirm":"<em>This will delete all the unsent emails.</em>",
+               "updateTemplateConfirm":"Isto irá remover todos os e-mails não enviados.",
                "viewicon": "Visualizar",
                "mailsAreChanged": "Os e-mails gerados foram alterados",
                "regenerates": "Regenerar os e-mails"
@@ -1191,7 +1191,7 @@
          "status": "Estado",
          "statuses": {
             "all": "Todos",
-            "closed.aborted": "<em>Aborted</em>",
+            "closed.aborted": "Abortado",
             "closed.completed": "Completado",
             "open.not_running.suspended": "Suspenso",
             "open.running": "Abrir"
