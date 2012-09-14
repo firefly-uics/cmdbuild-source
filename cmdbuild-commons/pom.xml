@@ -10,14 +10,12 @@
 	<artifactId>cmdbuild-commons</artifactId>
 	<name>CMDBuild Commons</name>
 	<properties>
-		<guava.version>r09</guava.version>
 		<greenmail.version>1.3</greenmail.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
