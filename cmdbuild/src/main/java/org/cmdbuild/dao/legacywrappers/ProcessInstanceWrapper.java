@@ -313,13 +313,20 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		case ROLE:
 			return performer.getValue();
 		case EXPRESSION:
-			final String maybeParticipantGroup = activityInfo.getParticipants()[0];
 			final String expression = performer.getValue();
-			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-					expression);
-			final Set<String> names = evaluator.getNames();
-			if (names.contains(maybeParticipantGroup)) {
-				return maybeParticipantGroup;
+			final Set<String> names = evaluatorFor(expression).getNames();
+			if (activityInfo.getParticipants().length == 0) {
+				/*
+				 * an arbitrary expression in a non-starting activity, so should
+				 * be a single name
+				 */
+				Validate.isTrue(names.size() == 1, "invalid expression");
+				return names.iterator().next();
+			} else {
+				final String maybeParticipantGroup = activityInfo.getParticipants()[0];
+				if (names.contains(maybeParticipantGroup)) {
+					return maybeParticipantGroup;
+				}
 			}
 		}
 		return UNRESOLVABLE_PARTICIPANT_GROUP;
@@ -327,6 +334,13 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 
 	private CMActivity findActivity(final String activityDefinitionId) throws CMWorkflowException {
 		return processDefinitionManager.getActivity(this, activityDefinitionId);
+	}
+
+	private ActivityPerformerExpressionEvaluator evaluatorFor(final String expression) throws CMWorkflowException {
+		final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(expression);
+		final Map<String, Object> rawWorkflowVars = workflowService.getProcessInstanceVariables(getProcessInstanceId());
+		evaluator.setVariables(rawWorkflowVars);
+		return evaluator;
 	}
 
 	private String[] addToBack(final String[] original, final String element) {
