@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.0.1</version>
+		<version>2.0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild</artifactId>
@@ -59,6 +59,11 @@
 			<version>${shark.version}</version>
 		</dependency>
 		<!-- -->
+
+		<dependency> <!-- To resolve expression performers -->
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -360,10 +365,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
 		</dependency>
 
 		<dependency>
