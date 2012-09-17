@@ -1,6 +1,6 @@
 {
    "description": "English",
-   "release": "2.0-dev",
+   "release": "2.0 (17/09/2012)",
    "administration": {
       "description": "Administration module",
       "modClass": {
