@@ -11,7 +11,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.AuthenticationService;

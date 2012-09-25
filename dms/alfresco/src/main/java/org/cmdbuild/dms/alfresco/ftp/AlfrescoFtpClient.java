@@ -8,23 +8,24 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.cmdbuild.common.utils.TempDataSource;
+import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.exception.ConnectionException;
 import org.cmdbuild.dms.exception.FtpOperationException;
 import org.cmdbuild.dms.exception.InvalidLoginException;
-import org.cmdbuild.dms.properties.DmsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class AlfrescoFtpClient implements FtpClient {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private final DmsProperties properties;
+	private final DmsConfiguration configuration;
 
-	public AlfrescoFtpClient(final DmsProperties properties) {
-		this.properties = properties;
+	public AlfrescoFtpClient(final DmsConfiguration configuration) {
+		this.configuration = configuration;
 	}
 
 	private static FTPClient createFtpClient() {
@@ -33,13 +34,14 @@ class AlfrescoFtpClient implements FtpClient {
 		return ftpClient;
 	}
 
+	@Override
 	public void delete(final String filename, final List<String> path) throws ConnectionException,
 			InvalidLoginException, FtpOperationException {
 		final FTPClient ftp = createFtpClient();
 		try {
-			connect(ftp, properties.getFtpHost(), properties.getFtpPort());
-			login(ftp, properties.getAlfrescoUser(), properties.getAlfrescoPassword());
-			changeDirectory(ftp, properties.getRepositoryFSPath());
+			connect(ftp, configuration.getFtpHost(), configuration.getFtpPort());
+			login(ftp, configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
+			changeDirectory(ftp, configuration.getRepositoryFSPath());
 			changeDirectory(ftp, path, false);
 			delete(ftp, filename);
 			logout(ftp);
@@ -48,13 +50,14 @@ class AlfrescoFtpClient implements FtpClient {
 		}
 	}
 
+	@Override
 	public DataHandler download(final String filename, final List<String> path) throws ConnectionException,
 			InvalidLoginException, FtpOperationException {
 		final FTPClient ftp = createFtpClient();
 		try {
-			connect(ftp, properties.getFtpHost(), properties.getFtpPort());
-			login(ftp, properties.getAlfrescoUser(), properties.getAlfrescoPassword());
-			changeDirectory(ftp, properties.getRepositoryFSPath());
+			connect(ftp, configuration.getFtpHost(), configuration.getFtpPort());
+			login(ftp, configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
+			changeDirectory(ftp, configuration.getRepositoryFSPath());
 			changeDirectory(ftp, path, false);
 			final DataHandler dataHandler = download(ftp, filename);
 			logout(ftp);
@@ -64,13 +67,14 @@ class AlfrescoFtpClient implements FtpClient {
 		}
 	}
 
+	@Override
 	public void upload(final String filename, final InputStream is, final List<String> path)
 			throws ConnectionException, InvalidLoginException, FtpOperationException {
 		final FTPClient ftp = createFtpClient();
 		try {
-			connect(ftp, properties.getFtpHost(), properties.getFtpPort());
-			login(ftp, properties.getAlfrescoUser(), properties.getAlfrescoPassword());
-			changeDirectory(ftp, properties.getRepositoryFSPath());
+			connect(ftp, configuration.getFtpHost(), configuration.getFtpPort());
+			login(ftp, configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
+			changeDirectory(ftp, configuration.getRepositoryFSPath());
 			changeDirectory(ftp, path, true);
 			upload(ftp, filename, is);
 			logout(ftp);
@@ -179,7 +183,7 @@ class AlfrescoFtpClient implements FtpClient {
 		 * close the stream and the ftp connection.
 		 */
 		try {
-			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 			final DataSource dataSource = TempDataSource.create(filename);
 			final OutputStream os = dataSource.getOutputStream();
 			if (ftpClient.retrieveFile(filename, os)) {
@@ -204,7 +208,7 @@ class AlfrescoFtpClient implements FtpClient {
 	private void upload(final FTPClient ftpClient, final String filename, final InputStream is)
 			throws FtpOperationException {
 		try {
-			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 			if (!ftpClient.storeFile(filename, is)) {
 				final String message = String.format("error uploading file '%s'", filename);
 				throw new FtpOperationException(message);

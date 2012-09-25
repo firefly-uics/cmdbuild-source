@@ -1,22 +1,20 @@
-package org.cmdbuild.dms.documents;
+package org.cmdbuild.dms;
 
 import java.util.Date;
 
 public class StoredDocument {
 
-	private static final long serialVersionUID = 1L;
+	private String name;
+	private String uuid;
+	private String description;
+	private String version;
+	private String author;
+	private Date created;
+	private Date modified;
+	private String category;
+	private Iterable<MetadataGroup> metadataGroups;
 
-	private String name; //
-	private String uuid; //
-	private String description; //
-	private String version; //
-	private String author; //
-
-	private Date created; //
-	private Date modified; //
-	private String category; // this must be in the defined category lookup
-
-	private String path; //
+	private String path;
 
 	public String getAuthor() {
 		return author;
@@ -88,6 +86,14 @@ public class StoredDocument {
 
 	public void setModified(final Date modified) {
 		this.modified = modified;
+	}
+
+	public Iterable<MetadataGroup> getMetadataGroups() {
+		return metadataGroups;
+	}
+
+	public void setMetadataGroups(final Iterable<MetadataGroup> metadataGroups) {
+		this.metadataGroups = metadataGroups;
 	}
 
 	/*

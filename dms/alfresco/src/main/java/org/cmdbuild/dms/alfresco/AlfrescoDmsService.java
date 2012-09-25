@@ -1,45 +1,120 @@
 package org.cmdbuild.dms.alfresco;
 
+import static java.lang.String.format;
+
+import java.util.Arrays;
 import java.util.List;
 
 import javax.activation.DataHandler;
 
 import org.cmdbuild.dms.BaseDmsService;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DocumentDelete;
+import org.cmdbuild.dms.DocumentDownload;
+import org.cmdbuild.dms.DocumentSearch;
+import org.cmdbuild.dms.DocumentTypeDefinition;
+import org.cmdbuild.dms.DocumentUpdate;
+import org.cmdbuild.dms.StorableDocument;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.alfresco.ftp.AlfrescoFtpService;
-import org.cmdbuild.dms.alfresco.webservice.AlfrescoWebserviceService;
-import org.cmdbuild.dms.documents.DocumentDelete;
-import org.cmdbuild.dms.documents.DocumentDownload;
-import org.cmdbuild.dms.documents.DocumentSearch;
-import org.cmdbuild.dms.documents.DocumentUpdate;
-import org.cmdbuild.dms.documents.StorableDocument;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.alfresco.webservice.AlfrescoWsService;
 import org.cmdbuild.dms.exception.DmsException;
+import org.cmdbuild.dms.exception.WebserviceException;
 
 public class AlfrescoDmsService extends BaseDmsService {
 
+	private AlfrescoFtpService ftpService;
+	private AlfrescoWsService wsService;
+
+	@Override
+	public void setConfiguration(final DmsConfiguration configuration) {
+		super.setConfiguration(configuration);
+		ftpService = new AlfrescoFtpService(configuration);
+		wsService = new AlfrescoWsService(configuration);
+	}
+
+	@Override
+	public Iterable<DocumentTypeDefinition> getTypeDefinitions() {
+		return wsService.getDocumentTypeDefinitions();
+	}
+
+	@Override
 	public void delete(final DocumentDelete document) throws DmsException {
-		final AlfrescoInnerDmsService dmsService = new AlfrescoFtpService(this);
-		dmsService.delete(document);
+		ftpService.delete(document);
 	}
 
+	@Override
 	public DataHandler download(final DocumentDownload document) throws DmsException {
-		final AlfrescoInnerDmsService dmsService = new AlfrescoFtpService(this);
-		return dmsService.download(document);
+		return ftpService.download(document);
 	}
 
+	@Override
 	public List<StoredDocument> search(final DocumentSearch document) {
-		final AlfrescoInnerDmsService dmsService = new AlfrescoWebserviceService(this);
-		return dmsService.search(document);
+		return wsService.search(document);
 	}
 
+	@Override
 	public void updateDescription(final DocumentUpdate document) throws DmsException {
-		final AlfrescoInnerDmsService dmsService = new AlfrescoWebserviceService(this);
-		dmsService.updateDescription(document);
+		wsService.updateDescription(document);
 	}
 
+	@Override
 	public void upload(final StorableDocument document) throws DmsException {
-		final AlfrescoInnerDmsService dmsService = new AlfrescoFtpService(this);
-		dmsService.upload(document);
+		ftpService.upload(document);
+		waitForSomeTimeBetweenFtpAndWebserviceOperations();
+		try {
+			wsService.updateCategory(document);
+			wsService.updateProperties(document);
+		} catch (final Exception e) {
+			final String message = format("error updating metadata for file '%s' at path '%s'", //
+					document.getFileName(), Arrays.toString(document.getPath().toArray()));
+			logger.error(message, e);
+			ftpService.delete(documentDeleteFrom(document));
+			throw new WebserviceException(e);
+		}
+	}
+
+	/**
+	 * This is very ugly! Old tests shows some problems if Webservice operations
+	 * follows immediately FTP operations, so this delay was introduced.
+	 */
+	private void waitForSomeTimeBetweenFtpAndWebserviceOperations() {
+		try {
+			Thread.sleep(1000);
+		} catch (final InterruptedException e) {
+			logger.warn("should never happen... so why?", e);
+		}
+	}
+
+	private DocumentDelete documentDeleteFrom(final StorableDocument document) {
+		return new DocumentDelete() {
+
+			@Override
+			public List<String> getPath() {
+				return document.getPath();
+			}
+
+			@Override
+			public String getClassName() {
+				return document.getClassName();
+			}
+
+			@Override
+			public int getCardId() {
+				return document.getCardId();
+			}
+
+			@Override
+			public String getFileName() {
+				return document.getFileName();
+			}
+
+		};
+	}
+
+	@Override
+	public void clearCache() {
+		wsService.clearCache();
 	}
 
 }

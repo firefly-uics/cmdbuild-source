@@ -1,7 +1,7 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
 import org.alfresco.webservice.repository.QueryResult;
-import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.RepositoryServiceSoapPort;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.Query;
 import org.alfresco.webservice.types.Reference;
@@ -29,7 +29,7 @@ class GetCategoryCommand extends AbstractSearchCommand<Reference> {
 	public void execute() {
 		Validate.isTrue(StringUtils.isNotBlank(category), "invalid category '%s'", category);
 		try {
-			final RepositoryServiceSoapBindingStub repository = WebServiceFactory.getRepositoryService();
+			final RepositoryServiceSoapPort repository = WebServiceFactory.getRepositoryService();
 			final QueryResult queryResult = repository.query(STORE, queryFor(category), true);
 			final ResultSetRow resultSetRow = queryResult.getResultSet().getRows(0);
 			final NamedValue[] namedValues = resultSetRow.getColumns();
@@ -56,11 +56,6 @@ class GetCategoryCommand extends AbstractSearchCommand<Reference> {
 	@Override
 	public boolean isSuccessfull() {
 		return (getResult() != NULL_REFERENCE);
-	}
-
-	@Override
-	public boolean hasResult() {
-		return true;
 	}
 
 }

@@ -111,7 +111,7 @@ function buildStore() {
 		model: "CMAttachmentModel",
 		proxy: {
 			type: 'ajax',
-			url: 'services/json/management/modcard/getattachmentlist',
+			url: 'services/json/attachments/getattachmentlist',
 			reader: {
 				type: 'json',
 				root: 'rows'

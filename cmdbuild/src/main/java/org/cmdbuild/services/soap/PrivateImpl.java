@@ -26,7 +26,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;

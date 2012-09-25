@@ -9,7 +9,7 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AlfrescoSession {
+class AlfrescoSession {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private final String username;

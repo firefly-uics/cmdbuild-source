@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
@@ -60,6 +60,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Serializer {
+
+	// TODO use constants
+	private static final SimpleDateFormat ATTACHMENT_DATE_FOMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	public static final String AVAILABLE_CLASS = "availableclass";
 	public static final String AVAILABLE_PROCESS_CLASS = "availableprocessclass";
@@ -188,12 +191,13 @@ public class Serializer {
 		JSONObject serializer = new JSONObject();
 		try {
 			serializer.put("Category", attachment.getCategory());
-			serializer.put("CreationDate", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(attachment.getCreated()));
-			serializer.put("ModificationDate", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(attachment.getModified()));
+			serializer.put("CreationDate", ATTACHMENT_DATE_FOMAT.format(attachment.getCreated()));
+			serializer.put("ModificationDate", ATTACHMENT_DATE_FOMAT.format(attachment.getModified()));
 			serializer.put("Author", attachment.getAuthor());
 			serializer.put("Version", attachment.getVersion());
 			serializer.put("Filename", attachment.getName());
 			serializer.put("Description", attachment.getDescription());
+			// TODO serialize metadata
 		} catch(JSONException e){
 			Log.JSONRPC.error("Error serializing attachment", e);
 		}

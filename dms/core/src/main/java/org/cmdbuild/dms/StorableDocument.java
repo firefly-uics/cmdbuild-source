@@ -1,4 +1,4 @@
-package org.cmdbuild.dms.documents;
+package org.cmdbuild.dms;
 
 import java.io.InputStream;
 
@@ -13,5 +13,7 @@ public interface StorableDocument extends Document {
 	String getCategory();
 
 	String getDescription();
+
+	Iterable<MetadataGroup> getMetadataGroups();
 
 }
