@@ -101,7 +101,7 @@
 					var me = this;
 					CMDBuild.LoadMask.get().show();
 					CMDBuild.Ajax.request({
-						url : 'services/json/management/modcard/deleteattachment',
+						url : 'services/json/attachments/deleteattachment',
 						params : {
 							IdClass: me.getClassId(),
 							Id: me.getCardId(),
@@ -129,7 +129,7 @@
 				Filename: record.get("Filename")
 			};
 
-			var url = 'services/json/management/modcard/downloadattachment?' + Ext.urlEncode(params);
+			var url = 'services/json/attachments/downloadattachment?' + Ext.urlEncode(params);
 			window.open(url, "_blank");
 		},
 

@@ -1,6 +1,6 @@
 package utils;
 
-import static org.hamcrest.text.StringContains.containsString;
+import static org.hamcrest.Matchers.containsString;
 
 import org.hamcrest.Matcher;
 

@@ -1,4 +1,4 @@
-package org.cmdbuild.dms.documents;
+package org.cmdbuild.dms;
 
 public interface DocumentDelete extends Document {
 

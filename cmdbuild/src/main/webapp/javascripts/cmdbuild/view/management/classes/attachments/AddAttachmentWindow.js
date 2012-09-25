@@ -89,7 +89,7 @@ Ext.define("CMDBuild.Management.AddAttachmentWindow", {
 		CMDBuild.LoadMask.get().show();
 		this.form.getForm().submit({
 			method: 'POST',
-			url: 'services/json/management/modcard/uploadattachment',
+			url: 'services/json/attachments/uploadattachment',
 			scope: this,
 			success: function() {
 				// Defer the call because Alfresco is not responsive

@@ -3,26 +3,30 @@ package org.cmdbuild.logic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.activation.DataHandler;
 
 import org.apache.log4j.Logger;
 import org.cmdbuild.config.DmsProperties;
+import org.cmdbuild.dms.DefaultDocumentFactory;
 import org.cmdbuild.dms.DmsService;
-import org.cmdbuild.dms.documents.DefaultDocumentFactory;
-import org.cmdbuild.dms.documents.DocumentDelete;
-import org.cmdbuild.dms.documents.DocumentDownload;
-import org.cmdbuild.dms.documents.DocumentFactory;
-import org.cmdbuild.dms.documents.DocumentSearch;
-import org.cmdbuild.dms.documents.DocumentUpdate;
-import org.cmdbuild.dms.documents.StorableDocument;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.DocumentDelete;
+import org.cmdbuild.dms.DocumentDownload;
+import org.cmdbuild.dms.DocumentFactory;
+import org.cmdbuild.dms.DocumentSearch;
+import org.cmdbuild.dms.DocumentTypeDefinition;
+import org.cmdbuild.dms.DocumentUpdate;
+import org.cmdbuild.dms.MetadataGroupDefinition;
+import org.cmdbuild.dms.StorableDocument;
+import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
@@ -35,8 +39,9 @@ public class DmsLogic {
 	private UserContext userContext;
 
 	public DmsLogic(final DmsService service) {
+		logger.info("creating new dms logic...");
 		this.service = service;
-		service.setProperties(DmsProperties.getInstance());
+		service.setConfiguration(DmsProperties.getInstance());
 	}
 
 	public UserContext getUserContext() {
@@ -47,14 +52,49 @@ public class DmsLogic {
 		this.userContext = userContext;
 	}
 
-	private DocumentFactory createDocumentFactory(final String className) {
-		final Collection<String> path = userContext.tables().tree().path(className);
-		return new DefaultDocumentFactory(path);
+	/**
+	 * Gets the lookup type that represents attachment categories.
+	 * 
+	 * @return the name of the lookup type that represents attachment
+	 *         categories.
+	 */
+	public String getCategoryLookupType() {
+		return service.getConfiguration().getCmdbuildCategory();
 	}
 
-	private void assureWritePrivilege(final String className) {
-		final ITable schema = userContext.tables().get(className);
-		userContext.privileges().assureWritePrivilege(schema);
+	/**
+	 * Gets the {@link DocumentTypeDefinition} associated with the specified
+	 * category.
+	 * 
+	 * @param category
+	 *            is the {@code Code} of the {@link Lookup}.
+	 * 
+	 * @return the {@link DocumentTypeDefinition} for the specified category.
+	 */
+	public DocumentTypeDefinition getCategoryDefinition(final String category) {
+		for (final DocumentTypeDefinition typeDefinition : service.getTypeDefinitions()) {
+			if (typeDefinition.getName().equals(category)) {
+				return typeDefinition;
+			}
+		}
+		return typeDefinitinWithNoMetadata(category);
+	}
+
+	// TODO put in an abstract factory
+	private DocumentTypeDefinition typeDefinitinWithNoMetadata(final String type) {
+		return new DocumentTypeDefinition() {
+
+			@Override
+			public String getName() {
+				return type;
+			}
+
+			@Override
+			public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
+				return Collections.emptyList();
+			}
+
+		};
 	}
 
 	public List<StoredDocument> search(final String className, final int cardId) {
@@ -120,6 +160,20 @@ public class DmsLogic {
 			logger.error(message, e);
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
+	}
+
+	private DocumentFactory createDocumentFactory(final String className) {
+		final Collection<String> path = userContext.tables().tree().path(className);
+		return new DefaultDocumentFactory(path);
+	}
+
+	private void assureWritePrivilege(final String className) {
+		final ITable schema = userContext.tables().get(className);
+		userContext.privileges().assureWritePrivilege(schema);
+	}
+
+	public void clearCache() {
+		service.clearCache();
 	}
 
 }
