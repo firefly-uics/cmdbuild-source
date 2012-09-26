@@ -87,6 +87,18 @@ public class Attachments {
 			return metadataDefinition.getName();
 		}
 
+		public String getType() {
+			return metadataDefinition.getType().getId();
+		}
+
+		public String getDescription() {
+			return metadataDefinition.getDescription();
+		}
+
+		public boolean isMandatory() {
+			return metadataDefinition.isMandatory();
+		}
+
 		public static JsonMetadataDefinition from(final MetadataDefinition metadataDefinition) {
 			return new JsonMetadataDefinition(metadataDefinition);
 		}

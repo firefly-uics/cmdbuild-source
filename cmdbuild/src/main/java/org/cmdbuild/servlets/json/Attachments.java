@@ -39,7 +39,7 @@ public class Attachments extends JSONBase {
 		final List<Lookup> lookups = lookupOperation.getLookupList(categoryLookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
 		for (final Lookup lookup : activeOnly(lookups)) {
-			final DocumentTypeDefinition categoryDefinition = dmsLogic.getCategoryDefinition(lookup.getCode());
+			final DocumentTypeDefinition categoryDefinition = dmsLogic.getCategoryDefinition(lookup.getDescription());
 			jsonCategories.add(JsonCategoryDefinition.from(lookup, categoryDefinition));
 		}
 		return JsonResponse.success(JsonAttachmentsContext.from(jsonCategories));

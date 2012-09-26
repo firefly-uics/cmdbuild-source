@@ -14,9 +14,12 @@ import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
+import org.cmdbuild.dms.MetadataAutocompletion;
+import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.alfresco.ftp.AlfrescoFtpService;
+import org.cmdbuild.dms.alfresco.utils.XmlAutocompletionReader;
 import org.cmdbuild.dms.alfresco.webservice.AlfrescoWsService;
 import org.cmdbuild.dms.exception.DmsException;
 import org.cmdbuild.dms.exception.WebserviceException;
@@ -110,6 +113,13 @@ public class AlfrescoDmsService extends BaseDmsService {
 			}
 
 		};
+	}
+
+	@Override
+	public AutocompletionRules getAutoCompletionRules() {
+		final String content = getConfiguration().getMetadataAutocompletionFileContent();
+		final MetadataAutocompletion.Reader reader = new XmlAutocompletionReader(content);
+		return reader.read();
 	}
 
 	@Override

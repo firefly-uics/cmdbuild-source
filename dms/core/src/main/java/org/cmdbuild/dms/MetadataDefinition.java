@@ -4,7 +4,7 @@ public interface MetadataDefinition {
 
 	String getName();
 
-	String getType();
+	MetadataType getType();
 
 	String getDescription();
 

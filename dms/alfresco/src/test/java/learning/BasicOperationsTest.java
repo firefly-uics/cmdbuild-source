@@ -13,6 +13,8 @@ import org.junit.Test;
 
 public class BasicOperationsTest extends AbstractAlfrescoTest {
 
+	private static final String CATEGORY_WITH_SPACES = "Category with spaces";
+
 	@Test
 	public void fileUploadedAndDeleted() throws Exception {
 		assertTrue(storedDocuments().isEmpty());
@@ -42,6 +44,16 @@ public class BasicOperationsTest extends AbstractAlfrescoTest {
 	@Test(expected = DmsException.class)
 	public void deleteMissingFileThrowsExeption() throws Exception {
 		delete(tempFile().getName());
+	}
+
+	@Test
+	public void categoryWithSpacesAreAllowed() throws Exception {
+		assertTrue(storedDocuments().isEmpty());
+		upload(tempFile(), CATEGORY_WITH_SPACES);
+		assertThat(storedDocuments(), hasSize(1));
+
+		final StoredDocument storedDocument = storedDocuments().get(0);
+		assertThat(storedDocument.getCategory(), equalTo(CATEGORY_WITH_SPACES));
 	}
 
 }

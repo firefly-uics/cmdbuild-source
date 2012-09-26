@@ -24,6 +24,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
+import org.cmdbuild.dms.MetadataType;
 import org.cmdbuild.dms.alfresco.utils.CustomModelParser;
 
 import com.google.common.base.Predicate;
@@ -58,6 +59,47 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 
 	private static class AspectProperty implements MetadataDefinition {
 
+		private static final String TEXT_ID = "text";
+		private static final String INT_ID = "int";
+		private static final String LONG_ID = "long";
+		private static final String FLOAT_ID = "float";
+		private static final String DATE_ID = "date";
+		private static final String DATETIME_ID = "datetime";
+		private static final String BOOLEAN_ID = "boolean";
+
+		private static enum AlfrescoMetadataType {
+
+			TEXT(TEXT_ID, MetadataType.TEXT), //
+			INT(INT_ID, MetadataType.INTEGER), //
+			LONG(LONG_ID, MetadataType.INTEGER), //
+			FLOAT(FLOAT_ID, MetadataType.FLOAT), //
+			DATE(DATE_ID, MetadataType.DATE), //
+			DATETIME(DATETIME_ID, MetadataType.DATETIME), //
+			BOOLEAN(BOOLEAN_ID, MetadataType.BOOLEAN);
+
+			private final String id;
+			private final MetadataType metadataType;
+
+			private AlfrescoMetadataType(final String alfrescoId, final MetadataType metadataType) {
+				this.id = alfrescoId;
+				this.metadataType = metadataType;
+			}
+
+			public MetadataType getMetadataType() {
+				return metadataType;
+			}
+
+			public static AlfrescoMetadataType of(final String alfrescoId) {
+				for (final AlfrescoMetadataType element : values()) {
+					if (element.id.equals(alfrescoId)) {
+						return element;
+					}
+				}
+				return TEXT;
+			}
+
+		}
+
 		private final PropertyDefinition propertyDefinition;
 
 		private AspectProperty(final PropertyDefinition propertyDefinition) {
@@ -66,7 +108,7 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 
 		@Override
 		public String getName() {
-			return stripValueFromNamespace(propertyDefinition.getName());
+			return removeNamespace(propertyDefinition.getName());
 		}
 
 		@Override
@@ -75,8 +117,9 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 		}
 
 		@Override
-		public String getType() {
-			return stripValueFromNamespace(propertyDefinition.getDataType());
+		public MetadataType getType() {
+			final String alfrescoId = removeNamespace(propertyDefinition.getDataType());
+			return AlfrescoMetadataType.of(alfrescoId).getMetadataType();
 		}
 
 		@Override
@@ -115,7 +158,7 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 					.toString();
 		}
 
-		private String stripValueFromNamespace(final String name) {
+		private String removeNamespace(final String name) {
 			return name.replaceAll(ANYTHING_BETWEEN_CURLY_BRACERS, EMPTY);
 		}
 

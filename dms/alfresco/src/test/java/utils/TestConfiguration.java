@@ -24,7 +24,8 @@ public class TestConfiguration implements DmsConfiguration {
 
 	private static final String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
 	private static final String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
-	private static final String ALFRESCO_CUSTOM_MODEL_FILE_NAME = "cmdbuildCustomModel.xml";
+	private static final String ALFRESCO_CUSTOM_MODEL_FILENAME = "cmdbuildCustomModel.xml";
+	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadataAutocompletion.xml";
 
 	@Override
 	public String getFtpHost() {
@@ -83,17 +84,29 @@ public class TestConfiguration implements DmsConfiguration {
 
 	@Override
 	public String getAlfrescoCustomModelFileName() {
-		return ALFRESCO_CUSTOM_MODEL_FILE_NAME;
+		return ALFRESCO_CUSTOM_MODEL_FILENAME;
 	}
 
 	@Override
 	public String getAlfrescoCustomModelFileContent() {
+		return contentOf(getAlfrescoCustomModelFileName());
+	}
+
+	@Override
+	public String getMetadataAutocompletionFileName() {
+		return METADATA_AUTOCOMPLETION_FILENAME;
+	}
+
+	@Override
+	public String getMetadataAutocompletionFileContent() {
+		return contentOf(getMetadataAutocompletionFileName());
+	}
+
+	private String contentOf(final String filename) {
 		try {
-			final String filename = getAlfrescoCustomModelFileName();
-			final File customModuleFile = new File(ClassLoader.getSystemResource(filename).toURI());
-			if (customModuleFile.exists()) {
-				final String content = FileUtils.readFileToString(customModuleFile);
-				return content;
+			final File file = new File(ClassLoader.getSystemResource(filename).toURI());
+			if (file.exists()) {
+				return FileUtils.readFileToString(file);
 			} else {
 				return EMPTY;
 			}
