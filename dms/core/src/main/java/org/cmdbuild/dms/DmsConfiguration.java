@@ -34,6 +34,10 @@ public interface DmsConfiguration {
 
 	String getAlfrescoCustomModelFileContent();
 
+	String getMetadataAutocompletionFileName();
+
+	String getMetadataAutocompletionFileContent();
+
 	/*
 	 * Utilities
 	 */

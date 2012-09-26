@@ -3,13 +3,11 @@ package learning;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +25,6 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.dms.exception.DmsException;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 import utils.TestConfiguration;
 
@@ -55,19 +52,25 @@ public class AbstractAlfrescoTest {
 	private static final String SAMPLE_CONTENT = "sample content for uploaded file";
 	private static final String TEMPORARY_FILE_PREFIX = "tmp";
 
-	private static DmsService dmsService;
-	private static DocumentFactory documentFactory;
-
-	@BeforeClass
-	public static void setUp() throws Exception {
-		dmsService = new AlfrescoDmsService();
-		dmsService.setConfiguration(new TestConfiguration());
-
-		documentFactory = new DefaultDocumentFactory(PATH);
-	}
+	private static DocumentFactory documentFactory = new DefaultDocumentFactory(PATH);
+	private DmsService dmsService;
 
 	@Before
-	public void documentsLocationMustBeEmpty() throws Exception {
+	public void setUp() throws Exception {
+		createDmsService();
+		emptyDocumentLocation();
+	}
+
+	private void createDmsService() {
+		dmsService = new AlfrescoDmsService();
+		dmsService.setConfiguration(configuration());
+	}
+
+	protected DmsConfiguration configuration() {
+		return new TestConfiguration();
+	}
+
+	private void emptyDocumentLocation() throws Exception {
 		final List<StoredDocument> storedDocuments = storedDocuments();
 		for (final StoredDocument document : storedDocuments) {
 			delete(document.getName());
@@ -79,10 +82,6 @@ public class AbstractAlfrescoTest {
 	 * Utilities
 	 */
 
-	protected static DmsConfiguration configuration() {
-		return dmsService.getConfiguration();
-	}
-
 	protected static File tempFile() throws IOException {
 		final File file = File.createTempFile(TEMPORARY_FILE_PREFIX, null);
 		file.deleteOnExit();
@@ -90,53 +89,59 @@ public class AbstractAlfrescoTest {
 		return file;
 	}
 
-	protected static List<StoredDocument> storedDocuments() {
+	protected List<StoredDocument> storedDocuments() {
 		return dmsService.search(testDocuments());
 	}
 
-	protected static void upload(final File file) throws DmsException {
+	protected void upload(final File file) throws DmsException, FileNotFoundException {
 		dmsService.upload(storableDocumentFrom(file));
 	}
 
-	protected static void upload(final File file, final List<MetadataGroup> metadataGroups) throws DmsException {
+	protected void upload(final File file, final String category) throws DmsException, FileNotFoundException {
+		dmsService.upload(storableDocumentFrom(file, category));
+	}
+
+	protected void upload(final File file, final List<MetadataGroup> metadataGroups) throws DmsException,
+			FileNotFoundException {
 		dmsService.upload(storableDocumentFrom(file, metadataGroups));
 	}
 
-	protected static void delete(final String name) throws DmsException {
+	protected void delete(final String name) throws DmsException {
 		dmsService.delete(documentDeleteFrom(name));
 	}
 
-	private static DocumentDelete documentDeleteFrom(final String name) {
+	private DocumentDelete documentDeleteFrom(final String name) {
 		return documentFactory.createDocumentDelete(CLASS, CARD_ID, name);
 	}
 
-	private static DocumentSearch testDocuments() {
+	private DocumentSearch testDocuments() {
 		return documentFactory.createDocumentSearch(CLASS, CARD_ID);
 	}
 
-	private static StorableDocument storableDocumentFrom(final File file) {
+	private StorableDocument storableDocumentFrom(final File file) throws FileNotFoundException {
 		return storableDocumentFrom(file, Collections.<MetadataGroup> emptyList());
 	}
 
-	private static StorableDocument storableDocumentFrom(final File file, final Iterable<MetadataGroup> metadataGroups) {
+	private StorableDocument storableDocumentFrom(final File file, final String category) throws FileNotFoundException {
+		return storableDocumentFrom(file, category, Collections.<MetadataGroup> emptyList());
+	}
+
+	private StorableDocument storableDocumentFrom(final File file, final Iterable<MetadataGroup> metadataGroups)
+			throws FileNotFoundException {
+		return storableDocumentFrom(file, CATEGORY, metadataGroups);
+	}
+
+	private StorableDocument storableDocumentFrom(final File file, final String category,
+			final Iterable<MetadataGroup> metadataGroups) throws FileNotFoundException {
 		return documentFactory.createStorableDocument( //
 				AUTHOR, //
 				CLASS, //
 				CARD_ID, //
-				inputStream(file), //
+				new FileInputStream(file), //
 				file.getName(), //
-				CATEGORY, //
+				category, //
 				DESCRIPTION, //
 				metadataGroups);
-	}
-
-	private static InputStream inputStream(final File file) {
-		try {
-			return new FileInputStream(file);
-		} catch (final FileNotFoundException e) {
-			fail();
-			return null;
-		}
 	}
 
 }

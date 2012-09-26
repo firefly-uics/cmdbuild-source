@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
+import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.exception.DmsException;
 
 public class ForwardingDmsService implements DmsService {
@@ -52,6 +53,11 @@ public class ForwardingDmsService implements DmsService {
 	@Override
 	public void updateDescription(final DocumentUpdate document) throws DmsException {
 		dmsService.updateDescription(document);
+	}
+
+	@Override
+	public AutocompletionRules getAutoCompletionRules() {
+		return dmsService.getAutoCompletionRules();
 	}
 
 	@Override

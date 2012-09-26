@@ -9,7 +9,8 @@
 
 	<imports>
 		<!-- Import Alfresco Dictionary Definitions -->
-		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 	</imports>
@@ -18,7 +19,7 @@
 	<namespaces>
 		<namespace uri="org.cmdbuild.dms.alfresco" prefix="cmdbuild" />
 	</namespaces>
-	
+
 	<constraints>
 		<constraint name="cmdbuild:constraints" type="LIST">
 			<parameter name="allowedValues">
@@ -32,6 +33,7 @@
 	</constraints>
 
 	<types>
+		<!-- dummy tests -->
 		<type name="cmdbuild:SuperType">
 			<title>CMDBuild SuperType</title>
 			<parent>cm:content</parent>
@@ -51,6 +53,8 @@
 				<aspect>cmdbuild:baz</aspect>
 			</mandatory-aspects>
 		</type>
+
+		<!-- more realistic tests -->
 		<type name="cmdbuild:Document">
 			<title>A generic document</title>
 			<mandatory-aspects>
@@ -61,12 +65,13 @@
 		<type name="cmdbuild:Image">
 			<title>An image</title>
 			<mandatory-aspects>
-				<aspect>cmdbuild:size</aspect>
+				<aspect>cmdbuild:displayable</aspect>
 			</mandatory-aspects>
 		</type>
 	</types>
 
 	<aspects>
+		<!-- dummy tests -->
 		<aspect name="cmdbuild:SuperAspect">
 			<title>CMDBuild SuperAspect</title>
 		</aspect>
@@ -135,6 +140,8 @@
 				</property>
 			</properties>
 		</aspect>
+
+		<!-- more realistic tests -->
 		<aspect name="cmdbuild:text">
 			<title>Text</title>
 			<properties>
@@ -145,6 +152,11 @@
 				<property name="cmdbuild:words">
 					<title>Number of words</title>
 					<type>d:int</type>
+				</property>
+				<property name="cmdbuild:language">
+					<title>Language</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
 				</property>
 			</properties>
 		</aspect>
@@ -157,8 +169,8 @@
 				</property>
 			</properties>
 		</aspect>
-		<aspect name="cmdbuild:size">
-			<title>Size</title>
+		<aspect name="cmdbuild:displayable">
+			<title>Displayable</title>
 			<properties>
 				<property name="cmdbuild:width">
 					<title>Width</title>

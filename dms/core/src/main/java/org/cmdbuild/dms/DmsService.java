@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
+import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.exception.DmsException;
 
 public interface DmsService {
@@ -81,6 +82,13 @@ public interface DmsService {
 	 * @throws DmsException
 	 */
 	void updateDescription(DocumentUpdate document) throws DmsException;
+
+	/**
+	 * Gets the autocompletion rules.
+	 * 
+	 * return the autocompletion rules.
+	 */
+	AutocompletionRules getAutoCompletionRules();
 
 	/**
 	 * Clears cache (if supported).

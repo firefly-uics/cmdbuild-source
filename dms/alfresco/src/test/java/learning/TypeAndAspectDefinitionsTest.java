@@ -21,10 +21,10 @@ import org.alfresco.webservice.util.AuthenticationUtils;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.cmdbuild.dms.DmsConfiguration;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
@@ -37,16 +37,18 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 
 	private static DictionaryServiceSoapPort dictionaryService;
 
-	@BeforeClass
-	public static void createDictionaryService() throws Exception {
-		final String address = configuration().getServerURL();
+	@Before
+	public void createDictionaryService() throws Exception {
+		final DmsConfiguration configuration = configuration();
+		final String address = configuration.getServerURL();
 		WebServiceFactory.setEndpointAddress(address);
 		dictionaryService = WebServiceFactory.getDictionaryService();
 	}
 
 	@Before
 	public void startSession() throws Exception {
-		AuthenticationUtils.startSession(configuration().getAlfrescoUser(), configuration().getAlfrescoPassword());
+		final DmsConfiguration configuration = configuration();
+		AuthenticationUtils.startSession(configuration.getAlfrescoUser(), configuration.getAlfrescoPassword());
 	}
 
 	@After

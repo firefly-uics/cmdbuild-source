@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -28,6 +29,7 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
@@ -137,6 +139,7 @@ public class ModClass extends JSONBase {
 			}
 
 			final JSONObject jsonTable = Serializer.serializeTable(table);
+			Serializer.addAttachmentsData(jsonTable, table, applicationContext.getBean(DmsLogic.class));
 			serializer.append("classes", jsonTable);
 		}
 

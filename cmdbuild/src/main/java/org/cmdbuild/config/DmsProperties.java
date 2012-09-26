@@ -37,9 +37,10 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	private static final String DELAY = "delay";
 	private static final String ALFRESCO_CUSTOM_URI = "alfresco.custom.uri";
 	private static final String ALFRESCO_CUSTOM_PREFIX = "alfresco.custom.prefix";
-	private static final String ALFRESCO_CUSTOM_MODEL_FILE_NAME = "alfresco.custom.model.filename";
+	private static final String ALFRESCO_CUSTOM_MODEL_FILENAME = "alfresco.custom.model.filename";
+	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadata.autocompletion.filename";
 
-	private interface Default {
+	public interface Default {
 
 		String ENABLED = Boolean.FALSE.toString();
 		String SERVER_URL = "http://localhost:8181/alfresco/api";
@@ -56,6 +57,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
 		String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
 		String ALFRESCO_CUSTOM_MODULE_FILE_NAME = "cmdbuildCustomModel.xml";
+		String METADATA_AUTOCOMPLETION_FILENAME = "metadataAutocompletion.xml";
 
 	}
 
@@ -75,7 +77,8 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		setProperty(DELAY, Default.DELAY);
 		setProperty(ALFRESCO_CUSTOM_URI, Default.ALFRESCO_CUSTOM_URI);
 		setProperty(ALFRESCO_CUSTOM_PREFIX, Default.ALFRESCO_CUSTOM_PREFIX);
-		setProperty(ALFRESCO_CUSTOM_MODEL_FILE_NAME, Default.ALFRESCO_CUSTOM_MODULE_FILE_NAME);
+		setProperty(ALFRESCO_CUSTOM_MODEL_FILENAME, Default.ALFRESCO_CUSTOM_MODULE_FILE_NAME);
+		setProperty(METADATA_AUTOCOMPLETION_FILENAME, Default.METADATA_AUTOCOMPLETION_FILENAME);
 	}
 
 	public static DmsProperties getInstance() {
@@ -180,20 +183,33 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 
 	@Override
 	public String getAlfrescoCustomModelFileName() {
-		return getProperty(ALFRESCO_CUSTOM_MODEL_FILE_NAME);
+		return getProperty(ALFRESCO_CUSTOM_MODEL_FILENAME);
 	}
 
 	@Override
 	public String getAlfrescoCustomModelFileContent() {
-		final String filename = getAlfrescoCustomModelFileName();
+		return getContent(getAlfrescoCustomModelFileName());
+	}
+
+	@Override
+	public String getMetadataAutocompletionFileName() {
+		return getProperty(METADATA_AUTOCOMPLETION_FILENAME);
+	}
+
+	@Override
+	public String getMetadataAutocompletionFileContent() {
+		return getContent(getMetadataAutocompletionFileName());
+	}
+
+	private String getContent(final String filename) {
 		final File configurationPath = getPath();
-		final File customModuleFile = new File(configurationPath, filename);
-		if (customModuleFile.exists()) {
+		final File file = new File(configurationPath, filename);
+		if (file.exists()) {
 			try {
-				final String content = FileUtils.readFileToString(customModuleFile);
+				final String content = FileUtils.readFileToString(file);
 				return content;
 			} catch (final IOException e) {
-				final String message = format("error reading file '%s'", customModuleFile);
+				final String message = format("error reading file '%s'", file);
 				Log.DMS.error(message, e);
 				return EMPTY;
 			}

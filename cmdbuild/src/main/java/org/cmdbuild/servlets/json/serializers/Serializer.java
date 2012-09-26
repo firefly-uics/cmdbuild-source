@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
@@ -43,6 +44,7 @@ import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeatureType;
@@ -923,4 +925,27 @@ public class Serializer {
 		out.put("WorkItemId", ai.getWorkItemId());
 		return out;
 	}
+	
+	public static void addAttachmentsData(final JSONObject jsonTable, ITable table, DmsLogic dmsLogic)
+			throws JSONException {
+		if (!DmsProperties.getInstance().isEnabled()) {
+			return;
+		}
+		final Map<String, Map<String, String>> rulesByGroup = dmsLogic.getAutoCompletionRulesByClass(table.getName());
+
+		final JSONArray jsonGroups = new JSONArray();
+		for (final String groupName : rulesByGroup.keySet()) {
+			final JSONObject jsonGroup = new JSONObject();
+			jsonGroup.put("name", groupName);
+			jsonGroup.put("metadata", rulesByGroup.get(groupName));
+			jsonGroups.put(jsonGroup);
+		}
+
+		final JSONObject jsonAutocompletion = new JSONObject();
+		jsonAutocompletion.put("autocompletion", jsonGroups);
+
+		final JSONObject jsonMeta = (JSONObject) jsonTable.get("meta");
+		jsonMeta.put("attachments", jsonAutocompletion);
+	}
+	
 }

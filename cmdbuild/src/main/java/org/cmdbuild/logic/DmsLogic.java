@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -18,6 +19,7 @@ import org.cmdbuild.dms.DocumentFactory;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
+import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
@@ -30,6 +32,8 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+
+import com.google.common.collect.Maps;
 
 public class DmsLogic {
 
@@ -78,6 +82,32 @@ public class DmsLogic {
 			}
 		}
 		return typeDefinitinWithNoMetadata(category);
+	}
+
+	/**
+	 * Gets the autocompletion rules for the specified class.
+	 * 
+	 * @param classname
+	 *            the name of the class.
+	 * 
+	 * @return maps of metadata names and values grouped by metadata group.
+	 */
+	public Map<String, Map<String, String>> getAutoCompletionRulesByClass(final String classname) {
+		final Map<String, Map<String, String>> rulesByClassname = Maps.newHashMap();
+		final AutocompletionRules rules = service.getAutoCompletionRules();
+		for (final String groupName : rules.getMetadataGroupNames()) {
+			rulesByClassname.put(groupName, Maps.<String, String> newHashMap());
+			for (final String metadataName : rules.getMetadataNamesForGroup(groupName)) {
+				final Map<String, String> valuesByClassname = rules
+						.getRulesForGroupAndMetadata(groupName, metadataName);
+				for (final String _classname : valuesByClassname.keySet()) {
+					if (_classname.equals(classname)) {
+						rulesByClassname.get(groupName).put(metadataName, valuesByClassname.get(_classname));
+					}
+				}
+			}
+		}
+		return rulesByClassname;
 	}
 
 	// TODO put in an abstract factory
