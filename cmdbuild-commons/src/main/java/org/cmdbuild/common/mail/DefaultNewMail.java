@@ -62,6 +62,7 @@ class DefaultNewMail implements NewMail {
 	private String body;
 	private String contentType;
 	private final Set<URL> attachments;
+	private boolean asynchronous;
 
 	private Message message;
 
@@ -129,20 +130,46 @@ class DefaultNewMail implements NewMail {
 	}
 
 	@Override
+	public NewMail withAsynchronousSend(boolean asynchronous) {
+		this.asynchronous = asynchronous;
+		return this;
+	}
+
+	@Override
 	public void send() {
-		try {
-			final Session session = createSession();
-			message = messageFrom(session);
-			setFrom();
-			addRecipients();
-			setSubject();
-			setSentDate();
-			setBody();
-			send(session);
-		} catch (final MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		final Runnable job = sendJob();
+		if (asynchronous) {
+			runInAnotherThread(job);
+		} else {
+			job.run();
 		}
+	}
+
+	private Runnable sendJob() {
+		return new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					final Session session = createSession();
+					message = messageFrom(session);
+					setFrom();
+					addRecipients();
+					setSubject();
+					setSentDate();
+					setBody();
+					send(session);
+				} catch (final MessagingException e) {
+					// TODO log somewhere
+				}
+			}
+
+		};
+
+	}
+
+	private void runInAnotherThread(final Runnable job) {
+		new Thread(job).start();
 	}
 
 	private Session createSession() {

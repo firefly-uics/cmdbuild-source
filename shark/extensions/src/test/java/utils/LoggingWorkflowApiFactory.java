@@ -300,6 +300,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					private String content;
 					private String contentType;
 					private final List<URL> attachments = new ArrayList<URL>();
+					private boolean asynchronous;
 
 					@Override
 					public NewMail withFrom(final String from) {
@@ -350,10 +351,18 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					}
 
 					@Override
+					public NewMail withAsynchronousSend(boolean asynchronous) {
+						this.asynchronous = asynchronous;
+						return this;
+					}
+
+					@Override
 					public void send() {
-						cus.info(UNUSED_SHANDLE, //
+						cus.info(
+								UNUSED_SHANDLE, //
 								LOGGER_CATEGORY, //
-								sendMail(froms, tos, ccs, bccs, subject, content, contentType, attachments));
+								sendMail(froms, tos, ccs, bccs, subject, content, contentType, attachments,
+										asynchronous));
 					}
 
 				};
@@ -472,7 +481,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
 			final List<String> bccs, final String subject, final String content, final String contentType,
-			final List<URL> attachments) {
+			final List<URL> attachments, final boolean asynchronous) {
 		return logLine("sendMail", new StringBuilder() //
 				.append(tos) //
 				.append(ccs) //
@@ -481,6 +490,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				.append(content) //
 				.append(contentType) //
 				.append(attachments) //
+				.append(asynchronous) //
 				.toString());
 	}
 
