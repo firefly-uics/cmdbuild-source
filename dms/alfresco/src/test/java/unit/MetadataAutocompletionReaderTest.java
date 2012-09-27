@@ -1,4 +1,4 @@
-package unitNotWorking;
+package unit;
 
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItems;

@@ -52,6 +52,7 @@ public class CachedDmsServiceTest {
 		cachedDmsService.getTypeDefinitions();
 
 		verify(mockedDmsService, times(2)).getTypeDefinitions();
+		verify(mockedDmsService).clearCache();
 		verifyNoMoreInteractions(mockedDmsService);
 	}
 

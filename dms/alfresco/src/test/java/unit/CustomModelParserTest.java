@@ -1,6 +1,9 @@
-package unitNotWorking;
+package unit;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
@@ -40,7 +43,7 @@ public class CustomModelParserTest {
 		assertThat(aspectsByType.get("aType"), hasItem("foo"));
 		assertThat(aspectsByType.get("aType"), hasItem("bar"));
 		assertThat(aspectsByType.get("anotherType"), hasItem("baz"));
-		assertThat(aspectsByType.get("Document"), hasItem("text"));
+		assertThat(aspectsByType.get("Document"), hasItems("documentStatistics", "taggable", "summary"));
 		assertThat(aspectsByType.get("Document"), hasItem("summary"));
 		assertThat(aspectsByType.get("Image"), hasItem("displayable"));
 	}

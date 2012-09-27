@@ -99,6 +99,14 @@ public class Attachments {
 			return metadataDefinition.isMandatory();
 		}
 
+		public boolean isList() {
+			return metadataDefinition.isList();
+		}
+
+		public Iterable<String> getValues() {
+			return metadataDefinition.getListValues();
+		}
+
 		public static JsonMetadataDefinition from(final MetadataDefinition metadataDefinition) {
 			return new JsonMetadataDefinition(metadataDefinition);
 		}

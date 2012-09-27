@@ -24,12 +24,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class CustomModelParser {
 
 	private static final String TYPE_NAMES_EXPRESSION = "/model/types/type/@name";
 	private static final String ASPECT_NAMES_FOR_TYPE_EXPRESSION_FORMAT = "/model/types/type[@name='%s']/mandatory-aspects/aspect";
+	private static final String CONSTRAINT_NAMES_EXPRESSION = "/model/constraints/constraint/@name";
+	private static final String CONSTRAINT_VALUES_FOR_CONSTRAINT_NAME_EXPRESSION_FORMAT = "/model/constraints/constraint[@name='%s']/parameter[@name='allowedValues']/list/value";
 	private static final String PREFIX_NAME_SEPARATOR = ":";
 
 	private final String content;
@@ -53,40 +56,60 @@ public class CustomModelParser {
 	private Map<String, List<String>> unsafeAspectsByType() throws Exception {
 		final Map<String, List<String>> aspectsByType = Maps.newHashMap();
 		parseContent();
-		for (final String typeName : typeNames()) {
-			aspectsByType.put(typeName, aspectsForType(typeName));
+		for (final String typeName : nodeValuesFrom(typeNamesExpression())) {
+			aspectsByType.put(typeName, nodeContentsFrom(aspectNamesForTypeExpression(addPrefixToName(typeName))));
 		}
 		return aspectsByType;
+	}
+
+	public Map<String, List<String>> getConstraintsByMetadata() {
+		try {
+			return unsafeConstraintsByName();
+		} catch (final Exception e) {
+			// TODO log
+			return Collections.emptyMap();
+		}
+	}
+
+	private Map<String, List<String>> unsafeConstraintsByName() throws Exception {
+		final Map<String, List<String>> constraintsByName = Maps.newHashMap();
+		parseContent();
+		for (final String constraintName : nodeValuesFrom(constraintNamesExpression())) {
+			constraintsByName.put(constraintName,
+					nodeContentsFrom(constraintValuesForConstraintNameExpression(addPrefixToName(constraintName))));
+		}
+		return constraintsByName;
+	}
+
+	private List<String> nodeValuesFrom(final String expression) throws XPathExpressionException {
+		final List<String> values = Lists.newArrayList();
+		final NodeList nodeList = evaluateAsNodeList(expression);
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			final String nodeValue = nodeList.item(i).getNodeValue();
+			values.add(stripPrefixFromName(nodeValue));
+		}
+		return values;
+	}
+
+	private List<String> nodeContentsFrom(final String expression) throws XPathExpressionException {
+		final List<String> values = new ArrayList<String>();
+		final NodeList nodeList = evaluateAsNodeList(expression);
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			final String nodeValue = nodeList.item(i).getTextContent();
+			values.add(stripPrefixFromName(nodeValue));
+		}
+		return values;
+	}
+
+	private NodeList evaluateAsNodeList(final String expression) throws XPathExpressionException {
+		final XPathExpression xpathExpression = compileExpression(expression);
+		return (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
 	}
 
 	private void parseContent() throws ParserConfigurationException, SAXException, IOException {
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder builder = factory.newDocumentBuilder();
 		document = builder.parse(new InputSource(new StringReader(content)));
-	}
-
-	private List<String> typeNames() throws XPathExpressionException {
-		final List<String> typeNames = new ArrayList<String>();
-		final XPathExpression expression = compileExpression(typeNamesExpression());
-		final Object result = expression.evaluate(document, XPathConstants.NODESET);
-		final NodeList typeNamesResults = (NodeList) result;
-		for (int i = 0; i < typeNamesResults.getLength(); i++) {
-			final String nodeValue = typeNamesResults.item(i).getNodeValue();
-			typeNames.add(stripPrefixFromName(nodeValue));
-		}
-		return typeNames;
-	}
-
-	private List<String> aspectsForType(final String typeName) throws XPathExpressionException {
-		final List<String> aspectNames = new ArrayList<String>();
-		final XPathExpression expression = compileExpression(aspectNamesForTypeExpression(addPrefixToName(typeName)));
-		final Object result = expression.evaluate(document, XPathConstants.NODESET);
-		final NodeList typeNamesResults = (NodeList) result;
-		for (int i = 0; i < typeNamesResults.getLength(); i++) {
-			final String nodeValue = typeNamesResults.item(i).getTextContent();
-			aspectNames.add(stripPrefixFromName(nodeValue));
-		}
-		return aspectNames;
 	}
 
 	private String stripPrefixFromName(final String name) {
@@ -110,6 +133,14 @@ public class CustomModelParser {
 
 	private static String aspectNamesForTypeExpression(final String typeName) {
 		return format(ASPECT_NAMES_FOR_TYPE_EXPRESSION_FORMAT, typeName);
+	}
+
+	private static String constraintNamesExpression() {
+		return CONSTRAINT_NAMES_EXPRESSION;
+	}
+
+	private static String constraintValuesForConstraintNameExpression(final String constraintName) {
+		return format(CONSTRAINT_VALUES_FOR_CONSTRAINT_NAME_EXPRESSION_FORMAT, constraintName);
 	}
 
 }
