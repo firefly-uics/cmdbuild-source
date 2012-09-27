@@ -1,6 +1,6 @@
-package unit;
+package unitNotWorking;
 
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
@@ -42,7 +42,13 @@ public class CustomModelParserTest {
 		assertThat(aspectsByType.get("anotherType"), hasItem("baz"));
 		assertThat(aspectsByType.get("Document"), hasItem("text"));
 		assertThat(aspectsByType.get("Document"), hasItem("summary"));
-		assertThat(aspectsByType.get("Image"), hasItem("size"));
+		assertThat(aspectsByType.get("Image"), hasItem("displayable"));
+	}
+
+	@Test
+	public void readConstraints() throws Exception {
+		final Map<String, List<String>> constraintsByType = customModelParser.getConstraintsByMetadata();
+		assertThat(constraintsByType, hasEntry(equalTo("bazTextWithContraints"), hasItems("foo", "bar", "baz")));
 	}
 
 }
