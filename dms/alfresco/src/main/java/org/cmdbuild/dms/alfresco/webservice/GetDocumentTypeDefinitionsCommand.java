@@ -101,9 +101,11 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 		}
 
 		private final PropertyDefinition propertyDefinition;
+		private final List<String> constraints;
 
-		private AspectProperty(final PropertyDefinition propertyDefinition) {
+		private AspectProperty(final PropertyDefinition propertyDefinition, final List<String> constraints) {
 			this.propertyDefinition = propertyDefinition;
+			this.constraints = constraints;
 		}
 
 		@Override
@@ -118,8 +120,12 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 
 		@Override
 		public MetadataType getType() {
-			final String alfrescoId = removeNamespace(propertyDefinition.getDataType());
-			return AlfrescoMetadataType.of(alfrescoId).getMetadataType();
+			if (isList()) {
+				return MetadataType.LIST;
+			} else {
+				final String alfrescoId = removeNamespace(propertyDefinition.getDataType());
+				return AlfrescoMetadataType.of(alfrescoId).getMetadataType();
+			}
 		}
 
 		@Override
@@ -127,8 +133,18 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 			return propertyDefinition.isMandatory();
 		}
 
-		public static MetadataDefinition of(final PropertyDefinition propertyDefinitions) {
-			return new AspectProperty(propertyDefinitions);
+		@Override
+		public boolean isList() {
+			return !constraints.isEmpty();
+		}
+
+		@Override
+		public Iterable<String> getListValues() {
+			return constraints;
+		}
+
+		public static MetadataDefinition of(final PropertyDefinition propertyDefinitions, final List<String> constraints) {
+			return new AspectProperty(propertyDefinitions, constraints);
 		}
 
 		@Override
@@ -167,9 +183,12 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 	private static class AspectDefinition implements MetadataGroupDefinition {
 
 		private final ClassDefinition classDefinition;
+		private final Map<String, List<String>> constraintsByMetadata;
 
-		private AspectDefinition(final ClassDefinition classDefinition) {
+		private AspectDefinition(final ClassDefinition classDefinition,
+				final Map<String, List<String>> constraintsByMetadata) {
 			this.classDefinition = classDefinition;
+			this.constraintsByMetadata = constraintsByMetadata;
 		}
 
 		@Override
@@ -177,15 +196,11 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 			return strip(classDefinition.getName());
 		}
 
-		private String strip(final String name) {
-			return name.replaceAll(ANYTHING_BETWEEN_CURLY_BRACERS, EMPTY);
-		}
-
 		@Override
 		public Iterable<MetadataDefinition> getMetadataDefinitions() {
 			final List<MetadataDefinition> metadataDefinitions = Lists.newArrayList();
 			for (final PropertyDefinition propertyDefinition : allPropertyDefinitions()) {
-				metadataDefinitions.add(AspectProperty.of(propertyDefinition));
+				metadataDefinitions.add(AspectProperty.of(propertyDefinition, constraintsOf(propertyDefinition)));
 			}
 			return metadataDefinitions;
 		}
@@ -197,6 +212,15 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 			final PropertyDefinition[] propertyDefinitions = classDefinition.getProperties();
 			return (propertyDefinitions == null) ? Collections.<PropertyDefinition> emptyList()
 					: asList(propertyDefinitions);
+		}
+
+		private List<String> constraintsOf(final PropertyDefinition propertyDefinition) {
+			final List<String> values = constraintsByMetadata.get(strip(propertyDefinition.getName()));
+			return (values == null) ? Collections.<String> emptyList() : values;
+		}
+
+		private String strip(final String name) {
+			return name.replaceAll(ANYTHING_BETWEEN_CURLY_BRACERS, EMPTY);
 		}
 
 		@Override
@@ -225,8 +249,9 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 					.toString();
 		}
 
-		public static MetadataGroupDefinition of(final ClassDefinition classDefinition) {
-			return new AspectDefinition(classDefinition);
+		public static MetadataGroupDefinition of(final ClassDefinition classDefinition,
+				final Map<String, List<String>> constraintsByMetadata) {
+			return new AspectDefinition(classDefinition, constraintsByMetadata);
 		}
 
 	}
@@ -270,6 +295,8 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 	private String uri;
 	private String prefix;
 	private String content;
+
+	private CustomModelParser customModelParser;
 
 	public GetDocumentTypeDefinitionsCommand() {
 		dictionaryService = WebServiceFactory.getDictionaryService();
@@ -324,9 +351,11 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 
 	private Map<String, MetadataGroupDefinition> aspectDefinitions() throws RemoteException, DictionaryFault {
 		final Map<String, MetadataGroupDefinition> aspectDefinitions = Maps.newHashMap();
+		final Map<String, List<String>> constraintsByMetadata = constraintsByMetadata();
 		for (final ClassDefinition classDefinition : cmdbuildClassDefinitions()) {
 			if (classDefinition.isIsAspect()) {
-				final MetadataGroupDefinition aspectDefinition = AspectDefinition.of(classDefinition);
+				final MetadataGroupDefinition aspectDefinition = AspectDefinition.of(classDefinition,
+						constraintsByMetadata);
 				aspectDefinitions.put(aspectDefinition.getName(), aspectDefinition);
 			} else /* is custom content type */{
 				// we don't need this kind of informations
@@ -351,7 +380,18 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 	}
 
 	private Map<String, List<String>> aspectNamesByType() {
-		return new CustomModelParser(content, prefix).getAspectsByType();
+		return customModelParser().getAspectsByType();
+	}
+
+	private Map<String, List<String>> constraintsByMetadata() {
+		return customModelParser().getConstraintsByMetadata();
+	}
+
+	private CustomModelParser customModelParser() {
+		if (customModelParser == null) {
+			customModelParser = new CustomModelParser(content, prefix);
+		}
+		return customModelParser;
 	}
 
 }

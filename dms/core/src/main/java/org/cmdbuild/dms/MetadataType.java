@@ -8,6 +8,7 @@ public enum MetadataType {
 	DATE("DATE"), //
 	DATETIME("TIMESTAMP"), //
 	BOOLEAN("BOOLEAN"), //
+	LIST("LIST"), //
 	;
 
 	private final String id;

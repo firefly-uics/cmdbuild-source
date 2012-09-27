@@ -9,8 +9,7 @@
 
 	<imports>
 		<!-- Import Alfresco Dictionary Definitions -->
-		<import uri="http://www.alfresco.org/model/dictionary/1.0"
-			prefix="d" />
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
 		<!-- Import Alfresco Content Domain Model Definitions -->
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 	</imports>
@@ -21,12 +20,21 @@
 	</namespaces>
 
 	<constraints>
-		<constraint name="cmdbuild:constraints" type="LIST">
+		<constraint name="cmdbuild:bazTextWithContraints" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>foo</value>
 					<value>bar</value>
 					<value>baz</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="cmdbuild:imageFormat" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>bmp</value>
+					<value>jpg</value>
+					<value>raw</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -58,7 +66,8 @@
 		<type name="cmdbuild:Document">
 			<title>A generic document</title>
 			<mandatory-aspects>
-				<aspect>cmdbuild:text</aspect>
+				<aspect>cmdbuild:documentStatistics</aspect>
+				<aspect>cmdbuild:taggable</aspect>
 				<aspect>cmdbuild:summary</aspect>
 			</mandatory-aspects>
 		</type>
@@ -66,6 +75,9 @@
 			<title>An image</title>
 			<mandatory-aspects>
 				<aspect>cmdbuild:displayable</aspect>
+				<aspect>cmdbuild:taggable</aspect>
+				<aspect>cmdbuild:imageFormat</aspect>
+				<aspect>cmdbuild:creationDateTime</aspect>
 			</mandatory-aspects>
 		</type>
 	</types>
@@ -135,28 +147,23 @@
 					<title>text with constraints</title>
 					<type>d:text</type>
 					<constraints>
-						<constraint ref="cmdbuild:constraints" />
+						<constraint ref="cmdbuild:bazTextWithContraints" />
 					</constraints>
 				</property>
 			</properties>
 		</aspect>
 
 		<!-- more realistic tests -->
-		<aspect name="cmdbuild:text">
-			<title>Text</title>
+		<aspect name="cmdbuild:documentStatistics">
+			<title>Document Statistics</title>
 			<properties>
 				<property name="cmdbuild:characters">
 					<title>Number of characters</title>
-					<type>d:int</type>
+					<type>d:long</type>
 				</property>
 				<property name="cmdbuild:words">
 					<title>Number of words</title>
-					<type>d:int</type>
-				</property>
-				<property name="cmdbuild:language">
-					<title>Language</title>
-					<type>d:text</type>
-					<mandatory>true</mandatory>
+					<type>d:long</type>
 				</property>
 			</properties>
 		</aspect>
@@ -174,15 +181,50 @@
 			<properties>
 				<property name="cmdbuild:width">
 					<title>Width</title>
-					<type>d:int</type>
+					<type>d:long</type>
 				</property>
 				<property name="cmdbuild:height">
 					<title>Height</title>
 					<type>d:int</type>
 				</property>
+				<property name="cmdbuild:sizeRatio">
+					<title>Size Ratio (width/height)</title>
+					<type>d:float</type>
+				</property>
+			</properties>
+		</aspect>
+		<aspect name="cmdbuild:imageFormat">
+			<title>Image format</title>
+			<properties>
+				<property name="cmdbuild:imageFormat">
+					<title>Format</title>
+					<type>d:text</type>
+				</property>
 				<property name="cmdbuild:colored">
 					<title>Colored</title>
 					<type>d:boolean</type>
+				</property>
+			</properties>
+		</aspect>
+		<aspect name="cmdbuild:taggable">
+			<title>Tags</title>
+			<properties>
+				<property name="cmdbuild:tags">
+					<title>Tags</title>
+					<type>d:text</type>
+				</property>
+			</properties>
+		</aspect>
+		<aspect name="cmdbuild:creationDateTime">
+			<title>Creation date/time</title>
+			<properties>
+				<property name="cmdbuild:creationDate">
+					<title>Creation date</title>
+					<type>d:date</type>
+				</property>
+				<property name="cmdbuild:creationDateTime">
+					<title>Creation date/time</title>
+					<type>d:datetime</type>
 				</property>
 			</properties>
 		</aspect>

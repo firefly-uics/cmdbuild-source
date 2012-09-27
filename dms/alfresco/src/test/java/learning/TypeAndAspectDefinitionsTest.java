@@ -76,8 +76,8 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 		assertThat(classDefinitions, hasClassDefinitionWithName("bar"));
 		assertThat(classDefinitions, hasClassDefinitionWithName("baz"));
 		assertThat(classDefinitions, hasClassDefinitionWithName("summary"));
-		assertThat(classDefinitions, hasClassDefinitionWithName("text"));
-		assertThat(classDefinitions, hasClassDefinitionWithName("size"));
+		assertThat(classDefinitions, hasClassDefinitionWithName("documentStatistics"));
+		assertThat(classDefinitions, hasClassDefinitionWithName("displayable"));
 	}
 
 	@Test

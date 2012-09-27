@@ -63,7 +63,7 @@ public class UploadWithMetadataTest extends AbstractAlfrescoTest {
 
 	}
 
-	private static final String TEXT_GROUP_NAME = "text";
+	private static final String TEXT_GROUP_NAME = "documentStatistics";
 	private static final String CHARACTERS_NAME = "characters";
 	private static final String WORDS_NAME = "words";
 	private static final String CHARACTERS_VALUE = "12345";

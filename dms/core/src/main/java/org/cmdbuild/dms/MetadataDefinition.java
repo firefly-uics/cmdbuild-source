@@ -10,4 +10,8 @@ public interface MetadataDefinition {
 
 	boolean isMandatory();
 
+	boolean isList();
+
+	Iterable<String> getListValues();
+
 }
