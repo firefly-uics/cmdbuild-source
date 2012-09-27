@@ -44,12 +44,10 @@
 		<dependency>
 			<groupId>axis</groupId>
 			<artifactId>axis</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxrpc-api</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
