@@ -42,7 +42,7 @@ public interface DocumentFactory {
 			int cardId, //
 			String filename, //
 			String description);
-	
+
 	DocumentUpdate createDocumentUpdate( //
 			String className, //
 			int cardId, //

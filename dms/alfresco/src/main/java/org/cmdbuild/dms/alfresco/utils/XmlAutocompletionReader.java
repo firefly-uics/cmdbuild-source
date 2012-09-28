@@ -19,13 +19,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.MetadataAutocompletion.Reader;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
-public class XmlAutocompletionReader implements Reader {
+public class XmlAutocompletionReader implements Reader, LoggingSupport {
 
 	private static final AutocompletionRules NULL_AUTOCOMPLETION_RULES = new AutocompletionRules() {
 
@@ -55,9 +56,10 @@ public class XmlAutocompletionReader implements Reader {
 	@Override
 	public AutocompletionRules read() {
 		try {
+			logger.warn("parsing autocompletion rules");
 			return unsafeParse();
 		} catch (final Exception e) {
-			// TODO log
+			logger.warn("error parsing content, retuning null-object", e);
 			return NULL_AUTOCOMPLETION_RULES;
 		}
 	}

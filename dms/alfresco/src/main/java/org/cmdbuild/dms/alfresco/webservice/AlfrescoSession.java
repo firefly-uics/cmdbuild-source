@@ -6,12 +6,10 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import org.alfresco.webservice.authentication.AuthenticationFault;
 import org.alfresco.webservice.util.AuthenticationUtils;
 import org.apache.commons.lang.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 
-class AlfrescoSession {
+class AlfrescoSession implements LoggingSupport {
 
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	private final String username;
 	private final String password;
 	private boolean started;
@@ -24,22 +22,26 @@ class AlfrescoSession {
 	}
 
 	public synchronized void start() {
+		logger.info("starting ws session");
 		final String ticket = AuthenticationUtils.getTicket();
 		if (ticket == null) {
 			try {
 				AuthenticationUtils.startSession(username, password);
 				started = true;
+				logger.debug("session successfully started");
 			} catch (final AuthenticationFault e) {
 				logger.warn("error while connecting to Alfresco", e);
 				started = false;
 			}
 		} else {
+			logger.info("session already started");
 			started = true;
 		}
 	}
 
 	public synchronized void end() {
 		if (started) {
+			logger.info("ending ws session");
 			AuthenticationUtils.endSession();
 			started = false;
 		}

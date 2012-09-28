@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.Settings;
 

@@ -31,13 +31,13 @@ import utils.TestConfiguration;
 /**
  * Base class for all tests that connects to a local (running) instance of
  * Alfresco.
- * 
+ *
  * The file {@literal xmdbuildModel.xml} (within resources) must be copied in
  * the extensions directory of Alfresco before starting it.
- * 
+ *
  * @see {@link TestConfiguration} for an overview of the settings of the
  *      Alfresco instance.
- * 
+ *
  * @see {@link BaseWebServiceSystemTest} for tests that use an embedded instance
  *      of Alfresco (we cannot use it because we need to set a custom model).
  */

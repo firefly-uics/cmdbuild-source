@@ -2,13 +2,13 @@ package org.cmdbuild.dms.alfresco;
 
 import static java.lang.String.format;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.activation.DataHandler;
 
 import org.cmdbuild.dms.BaseDmsService;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
@@ -24,7 +24,7 @@ import org.cmdbuild.dms.alfresco.webservice.AlfrescoWsService;
 import org.cmdbuild.dms.exception.DmsException;
 import org.cmdbuild.dms.exception.WebserviceException;
 
-public class AlfrescoDmsService extends BaseDmsService {
+public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport {
 
 	private AlfrescoFtpService ftpService;
 	private AlfrescoWsService wsService;
@@ -32,6 +32,8 @@ public class AlfrescoDmsService extends BaseDmsService {
 	@Override
 	public void setConfiguration(final DmsConfiguration configuration) {
 		super.setConfiguration(configuration);
+
+		logger.info("initializing Alfresco inner services for ftp/ws");
 		ftpService = new AlfrescoFtpService(configuration);
 		wsService = new AlfrescoWsService(configuration);
 	}
@@ -57,7 +59,7 @@ public class AlfrescoDmsService extends BaseDmsService {
 	}
 
 	@Override
-	public void updateDescription(final DocumentUpdate document) throws DmsException {
+	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsException {
 		wsService.updateDescription(document);
 	}
 
@@ -70,7 +72,7 @@ public class AlfrescoDmsService extends BaseDmsService {
 			wsService.updateProperties(document);
 		} catch (final Exception e) {
 			final String message = format("error updating metadata for file '%s' at path '%s'", //
-					document.getFileName(), Arrays.toString(document.getPath().toArray()));
+					document.getFileName(), document.getPath());
 			logger.error(message, e);
 			ftpService.delete(documentDeleteFrom(document));
 			throw new WebserviceException(e);

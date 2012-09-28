@@ -135,9 +135,11 @@ public class DmsLogic {
 	}
 
 	public void upload(final String author, final String className, final int cardId, final InputStream inputStream,
-			final String fileName, final String category, final String description,Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
+			final String fileName, final String category, final String description,
+			Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
 		final StorableDocument document = createDocumentFactory(className) //
-				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description, metadataGroups);
+				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
+						metadataGroups);
 		assureWritePrivilege(className);
 		try {
 			service.upload(document);
@@ -178,15 +180,15 @@ public class DmsLogic {
 		}
 	}
 
-	public void updateDescription(final String className, final int cardId, final String filename,
-			final String description,Iterable<MetadataGroup> metadataGroups) {
+	public void updateDescriptionAndMetadata(final String className, final int cardId, final String filename,
+			final String description, Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
-				.createDocumentUpdate(className, cardId, filename, description,metadataGroups);
+				.createDocumentUpdate(className, cardId, filename, description, metadataGroups);
 		assureWritePrivilege(className);
 		try {
-			service.updateDescription(document);
+			service.updateDescriptionAndMetadata(document);
 		} catch (final Exception e) {
-			final String message = String.format("error updating description to file '%s' for card '%s' with id '%d'", //
+			final String message = String.format("error updating file '%s' for card '%s' with id '%d'", //
 					filename, className, cardId);
 			logger.error(message, e);
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();

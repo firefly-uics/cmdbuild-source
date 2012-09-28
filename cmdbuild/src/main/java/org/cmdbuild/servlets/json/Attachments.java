@@ -118,9 +118,8 @@ public class Attachments extends JSONBase {
 			final ICard card) throws JSONException, CMDBException, IOException {
 
 		/*
-		 * At the first level there are the metadataGroups
-		 * For each metadataGroups, there is another map whith
-		 * the values for the group
+		 * At the first level there are the metadataGroups For each
+		 * metadataGroups, there is another map with the values for the group
 		 */
 		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
@@ -129,29 +128,29 @@ public class Attachments extends JSONBase {
 				removeFilePath(file.getName()), category, description, metadataGroupFrom(metadataValues));
 	}
 
-	private Iterable<MetadataGroup> metadataGroupFrom(
-			final Map<String, Object> metadataValues) {
+	private Iterable<MetadataGroup> metadataGroupFrom(final Map<String, Object> metadataValues) {
 		final List<MetadataGroup> groups = Lists.newArrayList();
- 		for (final String name: metadataValues.keySet()){
- 			groups.add(new MetadataGroup() {
-				
+		for (final String name : metadataValues.keySet()) {
+			groups.add(new MetadataGroup() {
+
 				@Override
 				public String getName() {
 					return name;
 				}
-				
+
 				@Override
 				public Iterable<Metadata> getMetadata() {
-					final List<Metadata> metadata= Lists.newArrayList();
-					final Map<String, Object > metadataMap = (Map<String, Object>)metadataValues.get(name);
-					for (final String metadataName : metadataMap.keySet()){
+					final List<Metadata> metadata = Lists.newArrayList();
+					final Map<String, Object> metadataMap = (Map<String, Object>) metadataValues.get(name);
+					for (final String metadataName : metadataMap.keySet()) {
 						metadata.add(new Metadata() {
-							
+
 							@Override
 							public String getValue() {
-								return StringUtils.defaultIfEmpty(metadataMap.get(metadataName).toString(), StringUtils.EMPTY);
+								return StringUtils.defaultIfEmpty(metadataMap.get(metadataName).toString(),
+										StringUtils.EMPTY);
 							}
-							
+
 							@Override
 							public String getName() {
 								return metadataName;
@@ -161,7 +160,7 @@ public class Attachments extends JSONBase {
 					return metadata;
 				}
 			});
- 		}
+		}
 		return groups;
 	}
 
@@ -175,14 +174,14 @@ public class Attachments extends JSONBase {
 			final ICard card) throws JSONException, CMDBException, IOException {
 
 		/*
-		 * At the first level there are the metadataGroups
-		 * For each metadataGroups, there is another map whith
-		 * the values for the group
+		 * At the first level there are the metadataGroups For each
+		 * metadataGroups, there is another map whith the values for the group
 		 */
 		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(userCtx);
-		dmsLogic.updateDescription(card.getSchema().getName(), card.getId(), filename, description, metadataGroupFrom(metadataValues));
+		dmsLogic.updateDescriptionAndMetadata(card.getSchema().getName(), card.getId(), filename, description,
+				metadataGroupFrom(metadataValues));
 		return serializer;
 	}
 
@@ -205,6 +204,5 @@ public class Attachments extends JSONBase {
 		dmsLogic.delete(card.getSchema().getName(), card.getId(), filename);
 		return serializer;
 	}
-
 
 }
