@@ -19,6 +19,7 @@ import org.cmdbuild.dms.DocumentFactory;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
+import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
@@ -134,9 +135,9 @@ public class DmsLogic {
 	}
 
 	public void upload(final String author, final String className, final int cardId, final InputStream inputStream,
-			final String fileName, final String category, final String description) throws IOException, CMDBException {
+			final String fileName, final String category, final String description,Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
 		final StorableDocument document = createDocumentFactory(className) //
-				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description);
+				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description, metadataGroups);
 		assureWritePrivilege(className);
 		try {
 			service.upload(document);
@@ -178,9 +179,9 @@ public class DmsLogic {
 	}
 
 	public void updateDescription(final String className, final int cardId, final String filename,
-			final String description) {
+			final String description,Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
-				.createDocumentUpdate(className, cardId, filename, description);
+				.createDocumentUpdate(className, cardId, filename, description,metadataGroups);
 		assureWritePrivilege(className);
 		try {
 			service.updateDescription(document);

@@ -82,8 +82,7 @@
 <!-- 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/masterDetails/CMDetailWindow.js"></script>	 -->
 
 		<!-- ATTACHMENTS -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/AddAttachmentWindow.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/EditAttachmentWindow.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMEditAttachmentWindow.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script> <!-- TODO: mone in commons file -->

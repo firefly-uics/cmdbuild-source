@@ -27,7 +27,7 @@ public class Attachments {
 		}
 
 		public String getName() {
-			return lookup.getCode();
+			return lookup.getDescription(); // TODO a day, use the code
 		}
 
 		public String getDescription() {
