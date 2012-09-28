@@ -1,5 +1,62 @@
 (function() {
 
+	Ext.define("CMDBuild.view.management.CMEditAttachmentWindow", {
+		extend: "Ext.window.Window",
+
+		translation: CMDBuild.Translation.management.modcard.add_attachment_window,
+
+		delegate: undefined, // set on creation
+		attachmentRecord: undefined, // could be set on creation
+
+		initComponent: function() {
+			buildComponent(this);
+			fillFields(this);
+			this.callParent(arguments);
+
+			updateTitle(this);
+		},
+
+		updateMetadataFieldsForCategory: function(category) {
+
+			this.metadataContainer.removeAll();
+			this.metadataContainer.hide();
+			this.center();
+
+			if (Ext.isArray(category)) {
+				category = category[0];
+			}
+
+			if (!category) {
+				return;
+			}
+
+			// if set by a user selection of the combo, category is a record
+			// otherwise category is a string
+			var categoryName = (typeof category == "string") ? category : category.get("name");
+
+			if (categoryName) {
+				var categoryModel = _CMCache.getAttachmentCategoryWithName(categoryName);
+				if (categoryModel) {
+					var metadataByGroups = categoryModel.getMetadataGroups();
+					for (var i=0, group=null; i<metadataByGroups.length; ++i) {
+						var fields = getFieldsForMetadataGroup(metadataByGroups[i], this.attachmentRecord);
+						if (fields 
+								&& Ext.isArray(fields)
+								&& fields.length > 0) {
+							this.metadataContainer.add(fields);
+							this.metadataContainer.show();
+							this.center();
+						}
+					}
+				}
+			}
+		},
+
+		getMetadataValues: function() {
+			return this.metadataContainer.getMetadataValues();
+		}
+	});
+
 	Ext.define("CMDBuild.view.management.CMEditAttachmentWindowDelegate", {
 		/*
 		 * called when click on the confirm button of the attachment window
@@ -32,68 +89,12 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.management.CMEditAttachmentWindow", {
-		extend: "Ext.window.Window",
-
-		translation: CMDBuild.Translation.management.modcard.add_attachment_window,
-
-		delegate: undefined, // set on creation
-		attachmentRecord: undefined, // could be set on creation
-
-		initComponent: function() {
-			buildComponent(this);
-			fillFields(this);
-
-			this.callParent(arguments);
-		},
-
-		updateMetadataFieldsForCategory: function(category) {
-
-			this.metadataContainer.removeAll();
-			this.metadataContainer.hide();
-			this.center();
-
-			if (Ext.isArray(category)) {
-				category = category[0];
-			}
-
-			if (!category) {
-				return;
-			}
-
-			// if set by a user selection of the combo, category is a record
-			// otherwise category is a string
-			var categoryName = (typeof category == "string") ? category : category.get("name");
-
-			if (categoryName) {
-				var categoryModel = _CMCache.getAttachmentCategoryWithName(categoryName);
-				if (categoryModel) {
-					var metadataByGroups = categoryModel.getMetadataGroups();
-					for (var i=0, group=null; i<metadataByGroups.length; ++i) {
-						var fields = getFieldsForMetadataGroup(metadataByGroups[i]);
-						if (fields 
-								&& Ext.isArray(fields)
-								&& fields.length > 0) {
-							this.metadataContainer.add(fields);
-							this.metadataContainer.show();
-							this.center();
-						}
-					}
-				}
-			}
-		},
-
-		getMetadataValues: function() {
-			return this.metadataContainer.getMetadataValues();
-		}
-	});
-
 	/*
 	 * Take a CMDBuild.model.CMMetadataGroup as input
 	 * and return an array of Ext.form.field derived
 	 * from the metadataDefinitions in the input
 	 */
-	function getFieldsForMetadataGroup(metadataGroup) {
+	function getFieldsForMetadataGroup(metadataGroup, attachmentRecord) {
 		if (!metadataGroup) {
 			return null;
 		}
@@ -107,9 +108,21 @@
 			var field = CMDBuild.Management.FieldManager.getFieldForAttr(
 				adaptMetadataDefinitionForFieldManager(definition)
 			);
+
 			if (field) {
-				field.cmMetadataGroupName = metadataGroup.getName();
+				field.cmMetadataGroupName = groupName;
 				field.submitValue = false;
+
+				// if is editing an attachment
+				// retrieve the current value
+				// of the metadata
+				if (attachmentRecord) {
+					var metadata = attachmentRecord.getMetadataByGroupAndName(groupName, field.name);
+					if (metadata != null) {
+						field.setValue(metadata);
+					}
+				}
+
 				fields.push(field);
 			}
 		}
@@ -130,14 +143,7 @@
 			type: definition.type
 		};
 
-		if (definition.type == "STRING" 
-			|| definition.type == "TEXT") {
-
-			adapted.len = 1000; // TODO there are only text in alfresco?
-		};
-
 		if (definition.type == "DECIMAL") {
-
 			// Unbound the decimal digits
 			adapted.scale = undefined;
 			adapted.precision = undefined;
@@ -222,11 +228,19 @@
 			})
 		];
 
-		if (Ext.isGecko) { // auto width does not work for upload field
+		// auto width does not work for upload field
+		if (Ext.isGecko) {
 			me.width = 450;
 		}
 	}
 
+	/*
+	 * If there is the attachment record
+	 * we are editing an existing attachment.
+	 * Fill the category, filename and description.
+	 * Disable the category and filename, because
+	 * that fields can not be changed. 
+	 */
 	function fillFields(me) {
 		if (!me.attachmentRecord) {
 			return;
@@ -249,6 +263,25 @@
 			if (description) {
 				description.setValue(me.attachmentRecord.get("Description"));
 			}
+		}
+	}
+
+	/*
+	 * If there is the attachment record
+	 * we are editing an existing attachment.
+	 * Notify this to the user changing
+	 * the title of the window and showing the
+	 * file name
+	 */
+	function updateTitle(me) {
+		if (!me.attachmentRecord) {
+			return;
+		}
+		var title = CMDBuild.Translation.management.modcard.edit_attachment;
+		var fileName = me.attachmentRecord.getFileName();
+
+		if (fileName) {
+			me.setTitle(Ext.String.format("{0}: {1}",title, fileName));
 		}
 	}
 })();

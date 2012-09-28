@@ -122,4 +122,60 @@
 			return this.get(METADATA_DEFINITIONS);
 		}
 	});
+
+	// For the Attachment grid
+	// This object is then passed to the
+	// CMEditAttachementWindow to
+	// retrieve the attachment info
+	Ext.define("CMDBuild.model.CMAttachment", {
+		extend: "Ext.data.Model",
+
+		fields : [{
+			name : 'CreationDate',
+			type : 'date',
+			dateFormat : 'd/m/Y H:i:s'
+		}, {
+			name : 'ModificationDate',
+			type : 'date',
+			dateFormat : 'd/m/Y H:i:s'
+		}, {
+			name : 'Metadata',
+			type : 'auto'
+		}, 
+		'Category','Author', 'Version',
+		'Filename', 'Description', 'Fake'],
+
+		getFileName: function() {
+			return this.get("Filename");
+		},
+
+		/*
+		 * returns the map of metadata grouped
+		 * by METADATA_GROUPS
+		 */
+		getMetadata: function() {
+			return this.get('Metadata') || null;
+		},
+
+		/*
+		 * search in the metadata map (if present)
+		 * a metadata looking at first for the
+		 * METADATA_GROUPS, and then for the metaDataName
+		 * 
+		 * returns null if something is not defined
+		 */
+		getMetadataByGroupAndName: function(categoryName, metaDataName) {
+			var meta = this.getMetadata();
+			if (meta == null) {
+				return null;
+			}
+
+			var category = meta[categoryName];
+			if (category) {
+				return category[metaDataName] || null;
+			} else {
+				return null;
+			}
+		}
+	});
 })();

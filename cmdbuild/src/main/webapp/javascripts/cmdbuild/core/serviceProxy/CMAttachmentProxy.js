@@ -19,8 +19,5 @@
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		}
-
-		// TODO: save
-		// TODO: modify
 	};
 })();

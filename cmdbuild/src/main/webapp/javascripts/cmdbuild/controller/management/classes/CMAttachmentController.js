@@ -32,11 +32,13 @@
 					// Defer the call because Alfresco is not responsive
 					Ext.Function.createDelayed(function deferredCall() {
 						me.ownerController.view.reloadCard();
+						attachmentWindow.unmask();
 						attachmentWindow.close();
 						CMDBuild.LoadMask.get().hide();
 					}, CMDBuild.Config.dms.delay, this)();
 				},
 				failure: function () {
+					attachmentWindow.unmask();
 					CMDBuild.LoadMask.get().hide();
 				}
 			});
@@ -214,6 +216,7 @@
 
 			if (this.confirmStrategy) {
 				CMDBuild.LoadMask.get().show();
+				attachmentWindow.mask();
 				this.confirmStrategy.doRequest(attachmentWindow);
 			}
 		}
