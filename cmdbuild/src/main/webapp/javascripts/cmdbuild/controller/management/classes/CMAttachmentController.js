@@ -2,8 +2,69 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
+	Ext.define("CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy", {
+		ownerController: undefined,
+		constructor: function(ownerController) {
+			if (!ownerController) {
+				throw "Owner controller is needed";
+			}
+
+			this.ownerController = ownerController;
+		},
+
+		forgeRequestParams: function(attachmentWindow) {
+			return {
+				IdClass: this.ownerController.getClassId(),
+				Id: this.ownerController.getCardId(),
+				Metadata: Ext.encode(attachmentWindow.getMetadataValues())
+			};
+		},
+
+		doRequest: function(attachmentWindow) {
+			var form = attachmentWindow.form.getForm();
+			var me = this;
+			form.submit({
+				method: 'POST',
+				url: me.url,
+				scope: me,
+				params: me.forgeRequestParams(attachmentWindow),
+				success: function() {
+					// Defer the call because Alfresco is not responsive
+					Ext.Function.createDelayed(function deferredCall() {
+						me.ownerController.view.reloadCard();
+						attachmentWindow.close();
+						CMDBuild.LoadMask.get().hide();
+					}, CMDBuild.Config.dms.delay, this)();
+				},
+				failure: function () {
+					CMDBuild.LoadMask.get().hide();
+				}
+			});
+		}
+	});
+
+	Ext.define("CMDBuild.controller.management.classes.attachments.AddAttachmentStrategy", {
+		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
+		url: 'services/json/attachments/uploadattachment'
+	});
+
+	Ext.define("CMDBuild.controller.management.classes.attachments.ModifyAttachmentStrategy", {
+		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
+		url: 'services/json/attachments/modifyattachment',
+		forgeRequestParams: function(attachmentWindow) {
+			var out = this.callParent(arguments);
+			out["Filename"] = attachmentWindow.attachmentRecord.get("Filename");
+
+			return out;
+		}
+	});
+
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+
+		mixins: {
+			attachmentWindowDelegate: "CMDBuild.view.management.CMEditAttachmentWindowDelegate"
+		},
 
 		constructor: function() {
 			this.callParent(arguments);
@@ -13,6 +74,8 @@
 				'action-attachment-edit': this.onEditAttachmentClick,
 				'action-attachment-download': this.onDownloadAttachmentClick
 			};
+
+			this.confirmStrategy = null;
 
 			this.mon(this.view.addAttachmentButton, "click", this.onAddAttachmentButtonClick, this);
 			this.mon(this.view, 'beforeitemclick', cellclickHandler, this);
@@ -91,67 +154,42 @@
 		},
 
 		onDeleteAttachmentClick: function(record) {
-			Ext.Msg.confirm( tr.delete_attachment, tr.delete_attachment_confirm,
-				function(btn) {
+			var me = this;
 
+			Ext.Msg.confirm(tr.delete_attachment, tr.delete_attachment_confirm,
+				function(btn) {
 					if (btn != 'yes') {
 						return;
 					}
-
-					var me = this;
-					CMDBuild.LoadMask.get().show();
-					CMDBuild.Ajax.request({
-						url : 'services/json/attachments/deleteattachment',
-						params : {
-							IdClass: me.getClassId(),
-							Id: me.getCardId(),
-							Filename: record.get("Filename")
-						},
-						method : 'POST',
-						success : function() {
-							// Defer the call because Alfresco is not responsive
-							function deferredCall() {
-								CMDBuild.LoadMask.get().hide();
-								me.view.reloadCard();
-							};
-
-							Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, me)();
-						}
-				 	});
-
+					doDeleteRequst(me, record);
 		 		}, this);
 		},
 
 		onDownloadAttachmentClick: function(record) {
-			var params = {
+			CMDBuild.ServiceProxy.attachment.download({
 				IdClass: this.getClassId(),
 				Id: this.getCardId(),
 				Filename: record.get("Filename")
-			};
-
-			var url = 'services/json/attachments/downloadattachment?' + Ext.urlEncode(params);
-			window.open(url, "_blank");
+			});
 		},
 
 		onEditAttachmentClick: function(record) {
-			var editAttachmentWin = new CMDBuild.Management.EditAttachmentWindow({
-				classId: this.getClassId(),
-				cardId: this.getCardId(),
-				category: record.get("Category"),
-				filename: record.get("Filename"),
-				description: record.get("Description")
+			var editAttachmentWin = new CMDBuild.view.management.CMEditAttachmentWindow({
+				attachmentRecord: record,
+				delegate: this
 			}).show();
 
-			editAttachmentWin.on("saved", this.view.reloadCard, this.view);
+			this.confirmStrategy = new CMDBuild.controller.management.classes
+				.attachments.ModifyAttachmentStrategy(this);
 		},
 
 		onAddAttachmentButtonClick: function() {
-			var addAttachmentWin = new CMDBuild.Management.AddAttachmentWindow({
-				classId: this.getClassId(),
-				cardId: this.getCardId()
+			var addAttachmentWin = new CMDBuild.view.management.CMEditAttachmentWindow({
+				delegate: this
 			}).show();
 
-			this.view.mon(addAttachmentWin, "saved", this.view.reloadCard, this.view);
+			this.confirmStrategy = new CMDBuild.controller.management.classes
+				.attachments.AddAttachmentStrategy(this);
 		},
 
 		destroy: function() {
@@ -163,6 +201,21 @@
 
 		theModuleIsDisabled: function() {
 			return CMDBuild.Config.dms.enabled == "false";
+		},
+
+		// as attachment window delegate
+
+		onConfirmButtonClick: function(attachmentWindow) {
+			var form = attachmentWindow.form.getForm();
+
+			if (!form.isValid()) {
+				return;
+			}
+
+			if (this.confirmStrategy) {
+				CMDBuild.LoadMask.get().show();
+				this.confirmStrategy.doRequest(attachmentWindow);
+			}
 		}
 	});
 
@@ -172,9 +225,32 @@
 		if (this.callBacks[className]) {
 			this.callBacks[className].call(this, model);
 		}
-	}
+	};
 
 	function onItemDoubleclick(grid, model, html, index, e, options) {
 		this.onDownloadAttachmentClick(model);
+	};
+
+	function doDeleteRequst(me, record) {
+		CMDBuild.LoadMask.get().show();
+		CMDBuild.ServiceProxy.attachment.remove({
+			params : {
+				IdClass: me.getClassId(),
+				Id: me.getCardId(),
+				Filename: record.get("Filename")
+			},
+			success : function() {
+				// Defer the call because Alfresco is not responsive
+				function deferredCall() {
+					CMDBuild.LoadMask.get().hide();
+					me.view.reloadCard();
+				};
+
+				Ext.Function.createDelayed(deferredCall, CMDBuild.Config.dms.delay, me)();
+			},
+			failure: function() {
+				CMDBuild.LoadMask.get().hide();
+			}
+		});
 	}
 })();

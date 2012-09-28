@@ -6,4 +6,6 @@ public interface DocumentUpdate extends Document {
 
 	String getDescription();
 
+	Iterable<MetadataGroup> getMetadataGroups();
+
 }

@@ -199,7 +199,7 @@ public class Serializer {
 			serializer.put("Version", attachment.getVersion());
 			serializer.put("Filename", attachment.getName());
 			serializer.put("Description", attachment.getDescription());
-			// TODO serialize metadata
+			serializer.put("Metadata", attachment.getMetadataGroups());
 		} catch(JSONException e){
 			Log.JSONRPC.error("Error serializing attachment", e);
 		}

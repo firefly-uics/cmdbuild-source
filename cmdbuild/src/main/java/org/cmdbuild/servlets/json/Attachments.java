@@ -5,11 +5,15 @@ import static com.google.common.collect.Collections2.filter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dms.DocumentTypeDefinition;
+import org.cmdbuild.dms.Metadata;
+import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -22,6 +26,7 @@ import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +35,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 public class Attachments extends JSONBase {
+
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	@JSONExported
 	public JsonResponse getAttachmentsContext(final UserContext userCtx) {
@@ -107,12 +114,76 @@ public class Attachments extends JSONBase {
 			@Parameter("File") final FileItem file, //
 			@Parameter("Category") final String category, //
 			@Parameter("Description") final String description, //
-			// TODO add Json for metadata
+			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
+
+		/*
+		 * At the first level there are the metadataGroups
+		 * For each metadataGroups, there is another map whith
+		 * the values for the group
+		 */
+		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(userCtx);
 		dmsLogic.upload(userCtx.getUsername(), card.getSchema().getName(), card.getId(), file.getInputStream(),
-				removeFilePath(file.getName()), category, description);
+				removeFilePath(file.getName()), category, description, metadataGroupFrom(metadataValues));
+	}
+
+	private Iterable<MetadataGroup> metadataGroupFrom(
+			final Map<String, Object> metadataValues) {
+		final List<MetadataGroup> groups = Lists.newArrayList();
+ 		for (final String name: metadataValues.keySet()){
+ 			groups.add(new MetadataGroup() {
+				
+				@Override
+				public String getName() {
+					return name;
+				}
+				
+				@Override
+				public Iterable<Metadata> getMetadata() {
+					final List<Metadata> metadata= Lists.newArrayList();
+					final Map<String, Object > metadataMap = (Map<String, Object>)metadataValues.get(name);
+					for (final String metadataName : metadataMap.keySet()){
+						metadata.add(new Metadata() {
+							
+							@Override
+							public String getValue() {
+								return StringUtils.defaultIfEmpty(metadataMap.get(metadataName).toString(), StringUtils.EMPTY);
+							}
+							
+							@Override
+							public String getName() {
+								return metadataName;
+							}
+						});
+					}
+					return metadata;
+				}
+			});
+ 		}
+		return groups;
+	}
+
+	@JSONExported
+	public JSONObject modifyAttachment( //
+			final JSONObject serializer, //
+			final UserContext userCtx, //
+			@Parameter("Filename") final String filename, //
+			@Parameter("Description") final String description, //
+			@Parameter("Metadata") final String jsonMetadataValues, //
+			final ICard card) throws JSONException, CMDBException, IOException {
+
+		/*
+		 * At the first level there are the metadataGroups
+		 * For each metadataGroups, there is another map whith
+		 * the values for the group
+		 */
+		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		dmsLogic.updateDescription(card.getSchema().getName(), card.getId(), filename, description, metadataGroupFrom(metadataValues));
+		return serializer;
 	}
 
 	// Needed by Internet Explorer that uploads the file with full path
@@ -135,18 +206,5 @@ public class Attachments extends JSONBase {
 		return serializer;
 	}
 
-	@JSONExported
-	public JSONObject modifyAttachment( //
-			final JSONObject serializer, //
-			final UserContext userCtx, //
-			@Parameter("Filename") final String filename, //
-			@Parameter("Description") final String description, //
-			// TODO add Json for metadata
-			final ICard card) throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		dmsLogic.updateDescription(card.getSchema().getName(), card.getId(), filename, description);
-		return serializer;
-	}
 
 }

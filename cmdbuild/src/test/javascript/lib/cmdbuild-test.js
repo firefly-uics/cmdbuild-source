@@ -197,7 +197,7 @@
 		}
 	};
 
-/******
+///******
 
 	//override describe to allow the run of a set of tests
 
@@ -222,7 +222,10 @@
 //			'CMChartPieTypeStrategy',
 //			'CMChartGaugeTypeStrategy',
 //			'CMDashboardModel',
-//			'CMWorkflowState'
+//			'CMWorkflowState',
+			'CMAttachmentCategoryModel',
+			'CMMetadataGroup',
+			'CMCacheAttachmentCategoryFunction'
 		];
 
 		if (Ext.Array.contains(focusSpecs, description)) {
@@ -230,6 +233,6 @@
 		}
 	};
 
-*******/
+//*******/
 
 })();

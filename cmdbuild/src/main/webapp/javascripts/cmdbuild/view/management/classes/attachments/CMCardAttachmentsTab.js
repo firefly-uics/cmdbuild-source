@@ -66,7 +66,9 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 		if (this.loaded) {
 			return;
 		}
+
 		this.getStore().load();
+
 		this.loaded = true;
 	},
 
@@ -101,7 +103,7 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 		this.disable();
 	},
 	
-	onCardSelected: function(card) { _deprecated()
+	onCardSelected: function(card) { _deprecated();
 		this.updateWritePrivileges(card.raw.priv_write);
 	}
 });
