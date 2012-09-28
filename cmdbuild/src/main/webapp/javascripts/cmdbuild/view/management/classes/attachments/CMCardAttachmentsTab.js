@@ -2,15 +2,6 @@
 
 var tr = CMDBuild.Translation.management.modcard;
 
-Ext.define("CMAttachmentModel", {
-	extend: "Ext.data.Model",
-
-	fields: ['Category',
-		{name:'CreationDate', type:'date', dateFormat:'d/m/Y H:i:s'},
-		{name:'ModificationDate', type:'date', dateFormat:'d/m/Y H:i:s'},
-		'Author','Version','Filename','Description','Fake']
-});
-
 Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel", {
 	extend: "Ext.grid.Panel",
 	translation : CMDBuild.Translation.management.modcard,
@@ -102,7 +93,7 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 	onAddCardButtonClick: function() { _deprecated();
 		this.disable();
 	},
-	
+
 	onCardSelected: function(card) { _deprecated();
 		this.updateWritePrivileges(card.raw.priv_write);
 	}
@@ -110,7 +101,7 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 
 function buildStore() {
 	var s =  new Ext.data.Store({
-		model: "CMAttachmentModel",
+		model: "CMDBuild.model.CMAttachment",
 		proxy: {
 			type: 'ajax',
 			url: 'services/json/attachments/getattachmentlist',
