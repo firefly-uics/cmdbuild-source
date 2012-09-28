@@ -11,16 +11,13 @@ import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.SingleDocumentSearch;
 import org.cmdbuild.dms.exception.FileNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-class AlfrescoWebserviceClient {
-
-	private static final Logger logger = LoggerFactory.getLogger(AlfrescoWebserviceClient.class);
+class AlfrescoWebserviceClient implements LoggingSupport {
 
 	private static Map<String, AlfrescoWebserviceClient> cache = new WeakHashMap<String, AlfrescoWebserviceClient>();
 
@@ -54,6 +51,7 @@ class AlfrescoWebserviceClient {
 		final AlfrescoSession session = new AlfrescoSession(username, password);
 		session.start();
 		if (session.isStarted()) {
+			logger.debug("executing command '{}'", command.getClass());
 			command.execute();
 		} else {
 			logger.warn("session could not be started");
@@ -143,12 +141,10 @@ class AlfrescoWebserviceClient {
 
 }
 
-abstract class AlfrescoWebserviceCommand<T> {
+abstract class AlfrescoWebserviceCommand<T> implements LoggingSupport {
 
 	public static final String DEFAULT_STORE_ADDRESS = "SpacesStore";
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, DEFAULT_STORE_ADDRESS);
-
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private T result;
 

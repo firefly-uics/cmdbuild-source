@@ -11,10 +11,14 @@
 		<constructor-arg ref="cachedDmsService" />
 	</bean>
 
-	<bean id="cachedDmsService" class="org.cmdbuild.dms.CachedDmsService" >
-		<constructor-arg ref="dmsService" />
+	<bean id="cachedDmsService" class="org.cmdbuild.dms.CachedDmsService">
+		<constructor-arg ref="loggedDmsService" />
 	</bean>
 
-	<bean id="dmsService" class="org.cmdbuild.dms.alfresco.AlfrescoDmsService" />
+	<bean id="loggedDmsService" class="org.cmdbuild.dms.LoggedDmsService">
+		<constructor-arg ref="alfrescoDmsService" />
+	</bean>
+
+	<bean id="alfrescoDmsService" class="org.cmdbuild.dms.alfresco.AlfrescoDmsService" />
 
 </beans>

@@ -144,10 +144,10 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 	/**
 	 * Builds the {@link ClassPredicate} for getting all subclasses of the
 	 * specified element (type or aspect).
-	 * 
+	 *
 	 * @param name
 	 *            the name of the element (without prefix).
-	 * 
+	 *
 	 * @return the {@link ClassPredicate} usable for getting all subclasses of
 	 *         the specified element.
 	 */
@@ -160,10 +160,10 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 
 	/**
 	 * Builds the element name completed with the expected prefix.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the element (without prefix).
-	 * 
+	 *
 	 * @return the full element name (e.g. "prefix:name").
 	 */
 	private String nameWithPrefixFor(final String name) {
@@ -173,10 +173,10 @@ public class TypeAndAspectDefinitionsTest extends AbstractAlfrescoTest {
 	/**
 	 * Builds the name of an element as returned in
 	 * {@link java.lang.instrument.ClassDefinition}.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the element.
-	 * 
+	 *
 	 * @return the full name of the element if the format "{uri}name".
 	 */
 	private String nameWithUriFor(final String name) {

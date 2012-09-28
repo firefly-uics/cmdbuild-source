@@ -13,15 +13,13 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.exception.ConnectionException;
 import org.cmdbuild.dms.exception.FtpOperationException;
 import org.cmdbuild.dms.exception.InvalidLoginException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-class AlfrescoFtpClient implements FtpClient {
+class AlfrescoFtpClient implements FtpClient, LoggingSupport {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final DmsConfiguration configuration;
 
 	public AlfrescoFtpClient(final DmsConfiguration configuration) {
@@ -29,6 +27,7 @@ class AlfrescoFtpClient implements FtpClient {
 	}
 
 	private static FTPClient createFtpClient() {
+		logger.info("creating ftp client");
 		final FTPClient ftpClient = new FTPClient();
 		ftpClient.setAutodetectUTF8(true);
 		return ftpClient;
@@ -85,6 +84,7 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void connect(final FTPClient ftpClient, final String host, final String port) throws ConnectionException {
 		try {
+			logger.info("connecting to '{}:{}'", host, port);
 			ftpClient.connect(host, Integer.parseInt(port));
 			final int reply = ftpClient.getReplyCode();
 			if (!FTPReply.isPositiveCompletion(reply)) {
@@ -100,6 +100,7 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void disconnect(final FTPClient ftpClient) {
 		try {
+			logger.info("disconnecting");
 			ftpClient.disconnect();
 		} catch (final IOException e) {
 			logger.warn("error disconnecting", e);
@@ -109,6 +110,8 @@ class AlfrescoFtpClient implements FtpClient {
 	private void login(final FTPClient ftpClient, final String username, final String password)
 			throws InvalidLoginException {
 		try {
+			logger.info("logging in with username '{}'", username);
+			logger.debug("... and password '{}'", password);
 			if (!ftpClient.login(username, password)) {
 				throw InvalidLoginException.newInstance(username, password);
 			}
@@ -119,6 +122,7 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void logout(final FTPClient ftpClient) {
 		try {
+			logger.info("logging out");
 			ftpClient.logout();
 		} catch (final IOException e) {
 			logger.warn("error logging out", e);
@@ -127,10 +131,12 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void changeDirectory(final FTPClient ftpClient, final List<String> dirs, final boolean create)
 			throws FtpOperationException {
+		logger.info("changing directory to '{}'", dirs);
 		for (final String dir : dirs) {
 			try {
 				changeDirectory(ftpClient, dir);
 			} catch (final FtpOperationException e) {
+				logger.warn("error changing directory", e);
 				if (create) {
 					makeDirectory(ftpClient, dir);
 					changeDirectory(ftpClient, dir);
@@ -143,6 +149,7 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void changeDirectory(final FTPClient ftpClient, final String dir) throws FtpOperationException {
 		try {
+			logger.info("changing directory to '{}'", dir);
 			if (!ftpClient.changeWorkingDirectory(dir)) {
 				final String message = String.format("error changing working directory to '%s'", dir);
 				throw new FtpOperationException(message);
@@ -154,6 +161,7 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void makeDirectory(final FTPClient ftpClient, final String dir) throws FtpOperationException {
 		try {
+			logger.info("creating directory '{}'", dir);
 			if (!ftpClient.makeDirectory(dir)) {
 				final String message = String.format("error creating directory '%s'", dir);
 				throw new FtpOperationException(message);
@@ -165,6 +173,7 @@ class AlfrescoFtpClient implements FtpClient {
 
 	private void delete(final FTPClient ftpClient, final String filename) throws FtpOperationException {
 		try {
+			logger.info("deleting file '{}'", filename);
 			if (!ftpClient.deleteFile(filename)) {
 				final String message = String.format("error deleting file '%s'", filename);
 				throw new FtpOperationException(message);

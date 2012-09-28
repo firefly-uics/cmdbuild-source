@@ -6,6 +6,7 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
@@ -14,12 +15,8 @@ import org.cmdbuild.dms.DocumentUpdate;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class AlfrescoInnerService {
-
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
+public abstract class AlfrescoInnerService implements LoggingSupport {
 
 	protected final DmsConfiguration configuration;
 

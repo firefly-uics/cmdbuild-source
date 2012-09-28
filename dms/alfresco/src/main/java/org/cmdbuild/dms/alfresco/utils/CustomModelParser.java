@@ -19,6 +19,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -27,7 +28,7 @@ import org.xml.sax.SAXException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class CustomModelParser {
+public class CustomModelParser implements LoggingSupport {
 
 	private static final String TYPE_NAMES_EXPRESSION = "/model/types/type/@name";
 	private static final String ASPECT_NAMES_FOR_TYPE_EXPRESSION_FORMAT = "/model/types/type[@name='%s']/mandatory-aspects/aspect";
@@ -46,9 +47,10 @@ public class CustomModelParser {
 
 	public Map<String, List<String>> getAspectsByType() {
 		try {
+			logger.info("getting all aspects grouped by type");
 			return unsafeAspectsByType();
 		} catch (final Exception e) {
-			// TODO log
+			logger.warn("error getting parsing data, returning and empty map", e);
 			return Collections.emptyMap();
 		}
 	}
@@ -64,9 +66,10 @@ public class CustomModelParser {
 
 	public Map<String, List<String>> getConstraintsByMetadata() {
 		try {
+			logger.info("getting all constraints grouped by metadata");
 			return unsafeConstraintsByName();
 		} catch (final Exception e) {
-			// TODO log
+			logger.warn("error getting parsing data, returning and empty map", e);
 			return Collections.emptyMap();
 		}
 	}
@@ -82,6 +85,7 @@ public class CustomModelParser {
 	}
 
 	private List<String> nodeValuesFrom(final String expression) throws XPathExpressionException {
+		logger.debug("getting node values using expression '{}'", expression);
 		final List<String> values = Lists.newArrayList();
 		final NodeList nodeList = evaluateAsNodeList(expression);
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -92,6 +96,7 @@ public class CustomModelParser {
 	}
 
 	private List<String> nodeContentsFrom(final String expression) throws XPathExpressionException {
+		logger.debug("getting node contents using expression '{}'", expression);
 		final List<String> values = new ArrayList<String>();
 		final NodeList nodeList = evaluateAsNodeList(expression);
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -107,20 +112,24 @@ public class CustomModelParser {
 	}
 
 	private void parseContent() throws ParserConfigurationException, SAXException, IOException {
+		logger.debug("parsing content", content);
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder builder = factory.newDocumentBuilder();
 		document = builder.parse(new InputSource(new StringReader(content)));
 	}
 
 	private String stripPrefixFromName(final String name) {
+		logger.debug("stripping prefix '{}' from name '{}'", prefix, name);
 		return name.replaceAll(format("%s%s", prefix, PREFIX_NAME_SEPARATOR), EMPTY);
 	}
 
 	private String addPrefixToName(final String name) {
+		logger.debug("adding prefix '{}' to name '{}'", prefix, name);
 		return format("%s%s%s", prefix, PREFIX_NAME_SEPARATOR, name);
 	}
 
 	private static XPathExpression compileExpression(final String expression) throws XPathExpressionException {
+		logger.debug("compiling expression", expression);
 		final XPathFactory xFactory = XPathFactory.newInstance();
 		final XPath xpath = xFactory.newXPath();
 		final XPathExpression typeNamesExpression = xpath.compile(expression);

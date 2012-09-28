@@ -14,6 +14,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.cmdbuild.config.DmsProperties;
+import org.cmdbuild.dms.Metadata;
+import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
@@ -199,13 +201,24 @@ public class Serializer {
 			serializer.put("Version", attachment.getVersion());
 			serializer.put("Filename", attachment.getName());
 			serializer.put("Description", attachment.getDescription());
-			serializer.put("Metadata", attachment.getMetadataGroups());
-		} catch(JSONException e){
+			serializer.put("Metadata", serialize(attachment.getMetadataGroups()));
+		} catch (JSONException e) {
 			Log.JSONRPC.error("Error serializing attachment", e);
 		}
 		return serializer;
 	}
 
+	private static JSONObject serialize(final Iterable<MetadataGroup> metadataGroups) throws JSONException {
+		final JSONObject jsonMetadata = new JSONObject();
+		for (final MetadataGroup metadataGroup : metadataGroups) {
+			final JSONObject jsonAllMetadata = new JSONObject();
+			for (final Metadata metadata : metadataGroup.getMetadata()) {
+				jsonAllMetadata.put(metadata.getName(), metadata.getValue());
+			}
+			jsonMetadata.put(metadataGroup.getName(), jsonAllMetadata);
+		}
+		return jsonMetadata;
+	}
 	public static JSONObject serializeLookup(Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
 	}

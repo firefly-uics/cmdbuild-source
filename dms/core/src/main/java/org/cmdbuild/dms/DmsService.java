@@ -6,12 +6,24 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.exception.DmsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface DmsService {
 
+	public interface LoggingSupport {
+
+		/*
+		 * should be better to use dms service class name, but for backward
+		 * compatibility...
+		 */
+		Logger logger = LoggerFactory.getLogger("dms");
+
+	}
+
 	/**
 	 * Gets the {@link DmsConfiguration}.
-	 * 
+	 *
 	 * @return the actual {@link DmsConfiguration}.
 	 */
 	DmsConfiguration getConfiguration();
@@ -23,27 +35,27 @@ public interface DmsService {
 
 	/**
 	 * Gets all {@link DocumentTypeDefinition}s.
-	 * 
+	 *
 	 * @return all {@link DocumentTypeDefinition}s.
 	 */
 	Iterable<DocumentTypeDefinition> getTypeDefinitions();
 
 	/**
 	 * Search for all documents matching the specified query.
-	 * 
+	 *
 	 * @param document
 	 *            the document query parameters.
-	 * 
+	 *
 	 * @return the list found documents (never null).
 	 */
 	List<StoredDocument> search(DocumentSearch document);
 
 	/**
 	 * Upload the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be upload.
-	 * 
+	 *
 	 * @throws DmsException
 	 *             if something goes wrong.
 	 */
@@ -51,12 +63,12 @@ public interface DmsService {
 
 	/**
 	 * Downloads the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be downloaded.
-	 * 
+	 *
 	 * @return the {@link DataHandler} associated with the document.
-	 * 
+	 *
 	 * @throws DmsException
 	 *             if something goes wrong.
 	 */
@@ -64,10 +76,10 @@ public interface DmsService {
 
 	/**
 	 * Deletes the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be deleted.
-	 * 
+	 *
 	 * @throws DmsException
 	 *             if something goes wrong.
 	 */
@@ -75,18 +87,18 @@ public interface DmsService {
 
 	/**
 	 * Updates the description of an existing document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be updated.
-	 * 
+	 *
 	 * @throws DmsException
 	 */
-	void updateDescription(DocumentUpdate document) throws DmsException;
+	void updateDescriptionAndMetadata(DocumentUpdate document) throws DmsException;
 
 	/**
-	 * Gets the autocompletion rules.
-	 * 
-	 * return the autocompletion rules.
+	 * Gets the auto-completion rules.
+	 *
+	 * return the auto-completion rules.
 	 */
 	AutocompletionRules getAutoCompletionRules();
 

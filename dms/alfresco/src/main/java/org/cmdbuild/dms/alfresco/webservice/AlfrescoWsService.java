@@ -21,6 +21,7 @@ import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
+import org.cmdbuild.dms.DocumentWithMetadata;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroup;
@@ -38,7 +39,6 @@ import com.google.common.collect.Maps;
 
 public class AlfrescoWsService extends AlfrescoInnerService {
 
-	private static final Map<String, Map<String, String>> NO_ASPECTS_PROPERTIES = Collections.emptyMap();
 	private static final Map<String, String> NO_ASPECT_PROPERTIES = Collections.emptyMap();
 
 	private final String qnamePrefixForCustomAspects = createQNameString(configuration.getAlfrescoCustomUri(), EMPTY);
@@ -123,8 +123,8 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		}
 		return documentTypeDefinitionWithNoMetadata(type);
 	}
-
 	// TODO put in an abstract factory
+
 	private DocumentTypeDefinition documentTypeDefinitionWithNoMetadata(final String type) {
 		return new DocumentTypeDefinition() {
 
@@ -211,9 +211,10 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		for (final StoredDocument storedDocument : storedDocuments) {
 			if (storedDocument.getName().equals(document.getFileName())) {
 				final String uuid = storedDocument.getUuid();
-				final Properties updatableProperties = new Properties();
-				updatableProperties.setProperty(PROP_DESCRIPTION, document.getDescription());
-				final boolean updated = wsClient.update(uuid, updatableProperties, NO_ASPECTS_PROPERTIES);
+				final boolean updated = wsClient.update( //
+						uuid, //
+						updatableProperties(document), //
+						additionalAspectProperties(document));
 				if (!updated) {
 					throw new WebserviceException();
 				}
@@ -221,36 +222,54 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		}
 	}
 
+	private static Properties updatableProperties(final DocumentUpdate document) {
+		final Properties properties = new Properties();
+		properties.setProperty(PROP_DESCRIPTION, document.getDescription());
+		return properties;
+	}
+
 	@Override
-	public void updateProperties(final StorableDocument storableDocument) throws DmsException {
+	public void updateProperties(final StorableDocument document) throws DmsException {
 		final AlfrescoWebserviceClient wsClient = wsClient();
-		final String uuid = getUuid(storableDocument);
+		final String uuid = getUuid(document);
 		final boolean updated = wsClient.update( //
 				uuid, //
-				updatableProperties(storableDocument), //
-				aspectsProperties(storableDocument));
+				updatableProperties(document), //
+				aspectsProperties(document));
 		if (!updated) {
 			final String message = String.format("error updating file '%s' for card '%s' with class '%s'",
-					storableDocument.getFileName(), storableDocument.getCardId(), storableDocument.getClassName());
+					document.getFileName(), document.getCardId(), document.getClassName());
 			logger.error(message);
 		}
 	}
 
-	private static Properties updatableProperties(final StorableDocument storableDocument) {
+	private static Properties updatableProperties(final StorableDocument document) {
 		final Properties properties = new Properties();
-		properties.setProperty(PROP_TITLE, storableDocument.getFileName());
-		properties.setProperty(PROP_DESCRIPTION, storableDocument.getDescription());
-		properties.setProperty(AlfrescoConstant.AUTHOR.getName(), storableDocument.getAuthor());
+		properties.setProperty(PROP_TITLE, document.getFileName());
+		properties.setProperty(PROP_DESCRIPTION, document.getDescription());
+		properties.setProperty(AlfrescoConstant.AUTHOR.getName(), document.getAuthor());
 		return properties;
 	}
 
-	private Map<String, Map<String, String>> aspectsProperties(final StorableDocument storableDocument) {
+	private Map<String, Map<String, String>> aspectsProperties(final StorableDocument document) {
 		final Map<String, Map<String, String>> aspectsProperties = Maps.newHashMap();
-		aspectsProperties.put(ASPECT_VERSIONABLE, NO_ASPECT_PROPERTIES);
-		for (final MetadataGroup metadataGroup : storableDocument.getMetadataGroups()) {
-			aspectsProperties.put(aspectNameFrom(metadataGroup), aspectPropertiesFrom(metadataGroup));
-		}
+		aspectsProperties.putAll(defaultAspectProperties());
+		aspectsProperties.putAll(additionalAspectProperties(document));
 		return aspectsProperties;
+	}
+
+	private Map<String, Map<String, String>> defaultAspectProperties() {
+		final Map<String, Map<String, String>> defaultAspectProperties = Maps.newHashMap();
+		defaultAspectProperties.put(ASPECT_VERSIONABLE, NO_ASPECT_PROPERTIES);
+		return defaultAspectProperties;
+	}
+
+	private Map<String, Map<String, String>> additionalAspectProperties(final DocumentWithMetadata document) {
+		final Map<String, Map<String, String>> additionalAspectProperties = Maps.newHashMap();
+		for (final MetadataGroup metadataGroup : document.getMetadataGroups()) {
+			additionalAspectProperties.put(aspectNameFrom(metadataGroup), aspectPropertiesFrom(metadataGroup));
+		}
+		return additionalAspectProperties;
 	}
 
 	private String aspectNameFrom(final MetadataGroup metadataGroup) {
@@ -270,53 +289,53 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 	}
 
 	@Override
-	public void updateCategory(final StorableDocument storableDocument) throws DmsException {
+	public void updateCategory(final StorableDocument document) throws DmsException {
 		final AlfrescoWebserviceClient wsClient = wsClient();
-		Reference categoryReference = wsClient.getCategoryReference(storableDocument.getCategory());
+		Reference categoryReference = wsClient.getCategoryReference(document.getCategory());
 		if (categoryReference == null) {
-			final boolean categoryCreated = wsClient.createCategory(storableDocument.getCategory());
+			final boolean categoryCreated = wsClient.createCategory(document.getCategory());
 			if (!categoryCreated) {
-				final String message = String.format("error creating category '%s'", storableDocument.getCategory());
+				final String message = String.format("error creating category '%s'", document.getCategory());
 				throw new WebserviceException(message);
 			}
-			categoryReference = wsClient.getCategoryReference(storableDocument.getCategory());
+			categoryReference = wsClient.getCategoryReference(document.getCategory());
 			if (categoryReference == null) {
-				final String message = String.format("error getting new category '%s'", storableDocument.getCategory());
+				final String message = String.format("error getting new category '%s'", document.getCategory());
 				throw new WebserviceException(message);
 			}
 		}
-		final String uuid = getUuid(storableDocument);
+		final String uuid = getUuid(document);
 		wsClient.applyCategory(categoryReference, uuid);
 	}
 
-	private String getUuid(final StorableDocument storableDocument) throws DmsException {
+	private String getUuid(final StorableDocument document) throws DmsException {
 		final AlfrescoWebserviceClient wsClient = wsClient();
-		final ResultSetRow resultSetRow = wsClient.search(singleDocumentSearchFrom(storableDocument));
+		final ResultSetRow resultSetRow = wsClient.search(singleDocumentSearchFrom(document));
 		final String uuid = resultSetRow.getNode().getId();
 		return uuid;
 	}
 
-	private static SingleDocumentSearch singleDocumentSearchFrom(final StorableDocument storableDocument) {
+	private static SingleDocumentSearch singleDocumentSearchFrom(final StorableDocument document) {
 		return new SingleDocumentSearch() {
 
 			@Override
 			public String getClassName() {
-				return storableDocument.getClassName();
+				return document.getClassName();
 			}
 
 			@Override
 			public int getCardId() {
-				return storableDocument.getCardId();
+				return document.getCardId();
 			}
 
 			@Override
 			public List<String> getPath() {
-				return storableDocument.getPath();
+				return document.getPath();
 			}
 
 			@Override
 			public String getFileName() {
-				return storableDocument.getFileName();
+				return document.getFileName();
 			}
 
 		};
@@ -326,8 +345,8 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 	public Iterable<DocumentTypeDefinition> getDocumentTypeDefinitions() {
 		synchronized (this) {
 			if (cachedDocumentTypeDefinitions == null) {
-				final AlfrescoWebserviceClient wsClient = wsClient();
-				cachedDocumentTypeDefinitions = wsClient.getDocumentTypeDefinitions();
+				logger.info("intializing internal cache for document type definitions");
+				cachedDocumentTypeDefinitions = wsClient().getDocumentTypeDefinitions();
 			}
 		}
 		return cachedDocumentTypeDefinitions;
@@ -341,6 +360,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 	}
 
 	private AlfrescoWebserviceClient wsClient() {
+		logger.info("creating ws client");
 		return AlfrescoWebserviceClient.getInstance(configuration);
 	}
 

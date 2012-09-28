@@ -1,8 +1,9 @@
 package org.cmdbuild.dms;
 
+import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 
-public class CachedDmsService extends ForwardingDmsService {
+public class CachedDmsService extends ForwardingDmsService implements LoggingSupport {
 
 	private final DmsService dmsService;
 
@@ -18,6 +19,7 @@ public class CachedDmsService extends ForwardingDmsService {
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() {
 		synchronized (this) {
 			if (cachedDocumentTypeDefinitions == null) {
+				logger.info("intializing cache for document type definitions");
 				cachedDocumentTypeDefinitions = super.getTypeDefinitions();
 			}
 			return cachedDocumentTypeDefinitions;
@@ -28,6 +30,7 @@ public class CachedDmsService extends ForwardingDmsService {
 	public AutocompletionRules getAutoCompletionRules() {
 		synchronized (this) {
 			if (cachedAutocompletionRules == null) {
+				logger.info("intializing cache for autocompletion rules");
 				cachedAutocompletionRules = super.getAutoCompletionRules();
 			}
 			return cachedAutocompletionRules;
@@ -37,6 +40,8 @@ public class CachedDmsService extends ForwardingDmsService {
 	@Override
 	public void clearCache() {
 		synchronized (this) {
+			logger.info("clearing cache");
+
 			/*
 			 * it's so bad to store a reference to the real DMS service, but
 			 * actually we need to do it because Alfresco DMS service uses an
