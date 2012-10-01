@@ -14,10 +14,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static utils.matchers.AttributeListMatcher.containsAttribute;
 
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.api.fluent.FunctionCall;
 import org.cmdbuild.services.soap.Attribute;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,10 +56,13 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 
 		verify(proxy()).callFunction( //
 				eq(callFunction.getFunctionName()), //
-				argThat(allOf( //
-						containsAttribute(IN_PARAMETER_1, IN_PARAMETER_1_VALUE), //
-						containsAttribute(IN_PARAMETER_2, IN_PARAMETER_2_VALUE))));
+				all(containsAttribute(IN_PARAMETER_1, IN_PARAMETER_1_VALUE), //
+						containsAttribute(IN_PARAMETER_2, IN_PARAMETER_2_VALUE)));
 		verifyNoMoreInteractions(proxy());
+	}
+
+	private List<Attribute> all(final Matcher<List<Attribute>>... matchers) {
+		return argThat(allOf(matchers));
 	}
 
 	@Test

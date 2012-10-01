@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -77,10 +78,13 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 		verify(proxy()).getCard( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
-				argThat(allOf( //
-						containsAttribute(ATTRIBUTE_3), //
-						containsAttribute(ATTRIBUTE_4))));
+				all(containsAttribute(ATTRIBUTE_3), //
+						containsAttribute(ATTRIBUTE_4)));
 		verifyNoMoreInteractions(proxy());
+	}
+
+	private List<Attribute> all(final Matcher<List<Attribute>>... matchers) {
+		return argThat(allOf(matchers));
 	}
 
 	@Test
