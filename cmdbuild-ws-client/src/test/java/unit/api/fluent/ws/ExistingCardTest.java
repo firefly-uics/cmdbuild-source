@@ -2,12 +2,10 @@ package unit.api.fluent.ws;
 
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -21,13 +19,20 @@ import java.util.Map.Entry;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 	private ExistingCard existingCard;
+
+	@Captor
+	private ArgumentCaptor<List<Attribute>> attributeListCaptor;
 
 	@Before
 	public void createExistingCard() throws Exception {
@@ -65,7 +70,6 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void parametersPassedToProxyWhenFetchingExistingCard() throws Exception {
 		when(proxy().getCard( //
 				eq(existingCard.getClassName()), //
@@ -78,13 +82,13 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 		verify(proxy()).getCard( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
-				all(containsAttribute(ATTRIBUTE_3), //
-						containsAttribute(ATTRIBUTE_4)));
-		verifyNoMoreInteractions(proxy());
-	}
+				attributeListCaptor.capture());
 
-	private List<Attribute> all(final Matcher<List<Attribute>>... matchers) {
-		return argThat(allOf(matchers));
+		final List<Attribute> attributes = attributeListCaptor.getValue();
+		assertThat(attributes, containsAttribute(ATTRIBUTE_3));
+		assertThat(attributes, containsAttribute(ATTRIBUTE_4));
+
+		verifyNoMoreInteractions(proxy());
 	}
 
 	@Test
