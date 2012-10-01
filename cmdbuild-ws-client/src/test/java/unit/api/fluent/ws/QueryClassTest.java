@@ -29,6 +29,7 @@ import org.cmdbuild.services.soap.CqlQuery;
 import org.cmdbuild.services.soap.FilterOperator;
 import org.cmdbuild.services.soap.Order;
 import org.cmdbuild.services.soap.Query;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,11 +65,10 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 		verify(proxy()).getCardList( //
 				eq(queryClass.getClassName()), //
-				argThat(allOf( //
-						containsAttribute(CODE_ATTRIBUTE), //
+				all(containsAttribute(CODE_ATTRIBUTE), //
 						containsAttribute(DESCRIPTION_ATTRIBUTE), //
 						containsAttribute(ATTRIBUTE_1), //
-						containsAttribute(ATTRIBUTE_2))), //
+						containsAttribute(ATTRIBUTE_2)), //
 				queryCapturer(), //
 				anyListOf(Order.class), //
 				eq(0), //
@@ -90,6 +90,10 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 		assertThat(queries, containsFilter(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE));
 		assertThat(queries, containsFilter(ATTRIBUTE_1, ATTRIBUTE_1_VALUE));
 		assertThat(queries, containsFilter(ATTRIBUTE_2, ATTRIBUTE_2_VALUE));
+	}
+
+	private List<Attribute> all(final Matcher<List<Attribute>>... matchers) {
+		return argThat(allOf(matchers));
 	}
 
 	@Test
