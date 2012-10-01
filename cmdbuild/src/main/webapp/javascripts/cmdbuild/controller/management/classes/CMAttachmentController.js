@@ -55,6 +55,7 @@
 		url: 'services/json/attachments/modifyattachment',
 		forgeRequestParams: function(attachmentWindow) {
 			var out = this.callParent(arguments);
+			out["Category"] = attachmentWindow.attachmentRecord.get("Category");
 			out["Filename"] = attachmentWindow.attachmentRecord.get("Filename");
 
 			return out;

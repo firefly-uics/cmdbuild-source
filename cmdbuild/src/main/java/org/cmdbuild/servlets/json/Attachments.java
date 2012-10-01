@@ -13,7 +13,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.Metadata;
+import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroup;
+import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -124,44 +126,25 @@ public class Attachments extends JSONBase {
 		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(userCtx);
-		dmsLogic.upload(userCtx.getUsername(), card.getSchema().getName(), card.getId(), file.getInputStream(),
-				removeFilePath(file.getName()), category, description, metadataGroupFrom(metadataValues));
+		dmsLogic.upload( //
+				userCtx.getUsername(), //
+				card.getSchema().getName(), //
+				card.getId(), //
+				file.getInputStream(), //
+				removeFilePath(file.getName()), //
+				category, //
+				description, //
+				metadataGroupsFrom(dmsLogic.getCategoryDefinition(category), metadataValues));
 	}
 
-	private Iterable<MetadataGroup> metadataGroupFrom(final Map<String, Object> metadataValues) {
-		final List<MetadataGroup> groups = Lists.newArrayList();
-		for (final String name : metadataValues.keySet()) {
-			groups.add(new MetadataGroup() {
-
-				@Override
-				public String getName() {
-					return name;
-				}
-
-				@Override
-				public Iterable<Metadata> getMetadata() {
-					final List<Metadata> metadata = Lists.newArrayList();
-					final Map<String, Object> metadataMap = (Map<String, Object>) metadataValues.get(name);
-					for (final String metadataName : metadataMap.keySet()) {
-						metadata.add(new Metadata() {
-
-							@Override
-							public String getValue() {
-								return StringUtils.defaultIfEmpty(metadataMap.get(metadataName).toString(),
-										StringUtils.EMPTY);
-							}
-
-							@Override
-							public String getName() {
-								return metadataName;
-							}
-						});
-					}
-					return metadata;
-				}
-			});
-		}
-		return groups;
+	/**
+	 * Needed by Internet Explorer that uploads the file with full path
+	 */
+	private String removeFilePath(final String name) {
+		final int backslashIndex = name.lastIndexOf("\\");
+		final int slashIndex = name.lastIndexOf("/");
+		final int fileNameIndex = Math.max(slashIndex, backslashIndex) + 1;
+		return name.substring(fileNameIndex);
 	}
 
 	@JSONExported
@@ -169,6 +152,7 @@ public class Attachments extends JSONBase {
 			final JSONObject serializer, //
 			final UserContext userCtx, //
 			@Parameter("Filename") final String filename, //
+			@Parameter("Category") final String category, //
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
@@ -180,17 +164,59 @@ public class Attachments extends JSONBase {
 		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
 		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 		dmsLogic.setUserContext(userCtx);
-		dmsLogic.updateDescriptionAndMetadata(card.getSchema().getName(), card.getId(), filename, description,
-				metadataGroupFrom(metadataValues));
+		dmsLogic.updateDescriptionAndMetadata( //
+				card.getSchema().getName(), //
+				card.getId(), //
+				filename, //
+				description, //
+				metadataGroupsFrom(dmsLogic.getCategoryDefinition(category), metadataValues));
 		return serializer;
 	}
 
-	// Needed by Internet Explorer that uploads the file with full path
-	private String removeFilePath(final String name) {
-		final int backslashIndex = name.lastIndexOf("\\");
-		final int slashIndex = name.lastIndexOf("/");
-		final int fileNameIndex = Math.max(slashIndex, backslashIndex) + 1;
-		return name.substring(fileNameIndex);
+	private List<MetadataGroup> metadataGroupsFrom(final DocumentTypeDefinition documentTypeDefinition,
+			final Map<String, Object> metadataValues) {
+		final List<MetadataGroup> metadataGroups = Lists.newArrayList();
+		for (final MetadataGroupDefinition metadataGroupDefinition : documentTypeDefinition
+				.getMetadataGroupDefinitions()) {
+			final String groupMame = metadataGroupDefinition.getName();
+			final Map<String, Object> allMetadataMap = (Map<String, Object>) metadataValues.get(groupMame);
+			if (allMetadataMap == null) {
+				continue;
+			}
+
+			metadataGroups.add(new MetadataGroup() {
+
+				@Override
+				public String getName() {
+					return groupMame;
+				}
+
+				@Override
+				public Iterable<Metadata> getMetadata() {
+					final List<Metadata> metadata = Lists.newArrayList();
+					for (final MetadataDefinition metadataDefinition : metadataGroupDefinition.getMetadataDefinitions()) {
+						final String metadataName = metadataDefinition.getName();
+						final Object rawValue = allMetadataMap.get(metadataName);
+						metadata.add(new Metadata() {
+
+							@Override
+							public String getName() {
+								return metadataName;
+							}
+
+							@Override
+							public String getValue() {
+								return (rawValue == null) ? StringUtils.EMPTY : rawValue.toString();
+							}
+
+						});
+					}
+					return metadata;
+				}
+			});
+
+		}
+		return metadataGroups;
 	}
 
 	@JSONExported

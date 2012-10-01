@@ -9,7 +9,9 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.replace;
 import static org.apache.commons.lang.StringUtils.startsWith;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +19,7 @@ import java.util.Properties;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.types.ResultSetRow;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -26,6 +29,7 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
+import org.cmdbuild.dms.MetadataType;
 import org.cmdbuild.dms.SingleDocumentSearch;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
@@ -33,11 +37,18 @@ import org.cmdbuild.dms.alfresco.AlfrescoInnerService;
 import org.cmdbuild.dms.alfresco.StoredDocumentComparator;
 import org.cmdbuild.dms.exception.DmsException;
 import org.cmdbuild.dms.exception.WebserviceException;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class AlfrescoWsService extends AlfrescoInnerService {
+
+	private static final SimpleDateFormat CMDBUILD_FORMATTER = new SimpleDateFormat(
+			Constants.SOAP_ALL_DATES_PARSING_PATTERN);
+	private static final DateTimeFormatter ALFRESCO_FORMATTER = ISODateTimeFormat.dateTime();
 
 	private static final Map<String, String> NO_ASPECT_PROPERTIES = Collections.emptyMap();
 
@@ -106,7 +117,8 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 								metadataList = Lists.newArrayList();
 								metadataListByGroup.put(group, metadataList);
 							}
-							metadataList.add(metadata(propertyName, namedValue.getValue()));
+							metadataList.add(metadata(propertyName,
+									convertFromAlfrescoValue(metadataDefinition.getType(), namedValue.getValue())));
 						}
 					}
 				}
@@ -123,6 +135,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		}
 		return documentTypeDefinitionWithNoMetadata(type);
 	}
+
 	// TODO put in an abstract factory
 
 	private DocumentTypeDefinition documentTypeDefinitionWithNoMetadata(final String type) {
@@ -279,9 +292,66 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 	private Map<String, String> aspectPropertiesFrom(final MetadataGroup metadataGroup) {
 		final Map<String, String> properties = Maps.newHashMap();
 		for (final Metadata metadata : metadataGroup.getMetadata()) {
-			properties.put(propertyNameFrom(metadata), metadata.getValue());
+			final MetadataType type = metadataTypeFor(metadataGroup, metadata);
+			properties.put(propertyNameFrom(metadata), convertToAlfrescoValue(type, metadata.getValue()));
 		}
 		return properties;
+	}
+
+	private MetadataType metadataTypeFor(final MetadataGroup metadataGroup, final Metadata metadata) {
+		for (final DocumentTypeDefinition documentTypeDefinition : getDocumentTypeDefinitions()) {
+			for (final MetadataGroupDefinition metadataGroupDefinition : documentTypeDefinition
+					.getMetadataGroupDefinitions()) {
+				if (metadataGroupDefinition.getName().equals(metadataGroup.getName())) {
+					for (final MetadataDefinition metadataDefinition : metadataGroupDefinition.getMetadataDefinitions()) {
+						if (metadataDefinition.getName().equals(metadata.getName())) {
+							return metadataDefinition.getType();
+						}
+					}
+				}
+			}
+		}
+		return MetadataType.TEXT;
+	}
+
+	private String convertToAlfrescoValue(final MetadataType type, final String value) {
+		try {
+			final String alfrescoValue;
+			switch (type) {
+			case DATE:
+			case DATETIME: {
+				final Date date = CMDBUILD_FORMATTER.parse(value);
+				alfrescoValue = ALFRESCO_FORMATTER.print(date.getTime());
+				break;
+			}
+			default: {
+				alfrescoValue = value;
+			}
+			}
+			return alfrescoValue;
+		} catch (final Exception e) {
+			return EMPTY;
+		}
+	}
+
+	private String convertFromAlfrescoValue(final MetadataType type, final String alfrescoValue) {
+		try {
+			final String value;
+			switch (type) {
+			case DATE:
+			case DATETIME: {
+				final DateTime dateTime = ALFRESCO_FORMATTER.parseDateTime(alfrescoValue);
+				value = CMDBUILD_FORMATTER.format(dateTime.toDate());
+				break;
+			}
+			default: {
+				value = alfrescoValue;
+			}
+			}
+			return value;
+		} catch (final Exception e) {
+			return EMPTY;
+		}
 	}
 
 	private String propertyNameFrom(final Metadata metadata) {
