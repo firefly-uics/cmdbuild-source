@@ -19,8 +19,8 @@ import org.cmdbuild.dms.DocumentFactory;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
-import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
+import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
@@ -77,7 +77,7 @@ public class DmsLogic {
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 */
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
-		for (final DocumentTypeDefinition typeDefinition : service.getTypeDefinitions()) {
+		for (final DocumentTypeDefinition typeDefinition : getCategoryDefinitions()) {
 			if (typeDefinition.getName().equals(category)) {
 				return typeDefinition;
 			}
@@ -86,7 +86,16 @@ public class DmsLogic {
 	}
 
 	/**
-	 * Gets the autocompletion rules for the specified class.
+	 * Gets all {@link DocumentTypeDefinition}s.
+	 * 
+	 * @return the all {@link DocumentTypeDefinition}s.
+	 */
+	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() {
+		return service.getTypeDefinitions();
+	}
+
+	/**
+	 * Gets the auto-completion rules for the specified class.
 	 * 
 	 * @param classname
 	 *            the name of the class.
@@ -136,7 +145,7 @@ public class DmsLogic {
 
 	public void upload(final String author, final String className, final int cardId, final InputStream inputStream,
 			final String fileName, final String category, final String description,
-			Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
+			final Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
 		final StorableDocument document = createDocumentFactory(className) //
 				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
 						metadataGroups);
@@ -181,7 +190,7 @@ public class DmsLogic {
 	}
 
 	public void updateDescriptionAndMetadata(final String className, final int cardId, final String filename,
-			final String description, Iterable<MetadataGroup> metadataGroups) {
+			final String description, final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
 				.createDocumentUpdate(className, cardId, filename, description, metadataGroups);
 		assureWritePrivilege(className);
