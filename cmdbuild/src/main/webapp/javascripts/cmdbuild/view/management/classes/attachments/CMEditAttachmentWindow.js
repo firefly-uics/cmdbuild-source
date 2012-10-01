@@ -39,12 +39,12 @@
 				if (categoryModel) {
 					var metadataByGroups = categoryModel.getMetadataGroups();
 					for (var i=0, group=null; i<metadataByGroups.length; ++i) {
-						var fields = getFieldsForMetadataGroup(metadataByGroups[i], this.attachmentRecord);
+						var fields = getFieldsForMetadataGroup(metadataByGroups[i], this.metadataValues);
 						if (fields 
 								&& Ext.isArray(fields)
 								&& fields.length > 0) {
-							this.metadataContainer.add(fields);
 							this.metadataContainer.show();
+							this.metadataContainer.add(fields);
 							this.center();
 						}
 					}
@@ -94,7 +94,7 @@
 	 * and return an array of Ext.form.field derived
 	 * from the metadataDefinitions in the input
 	 */
-	function getFieldsForMetadataGroup(metadataGroup, attachmentRecord) {
+	function getFieldsForMetadataGroup(metadataGroup, metadataValues) {
 		if (!metadataGroup) {
 			return null;
 		}
@@ -113,13 +113,17 @@
 				field.cmMetadataGroupName = groupName;
 				field.submitValue = false;
 
-				// if is editing an attachment
-				// retrieve the current value
-				// of the metadata
-				if (attachmentRecord) {
-					var metadata = attachmentRecord.getMetadataByGroupAndName(groupName, field.name);
-					if (metadata != null) {
-						field.setValue(metadata);
+				// if present some values
+				// for the metadata set it
+				// this could happen if there are
+				// autocompletion rules or if
+				// we are editing an existing attachment
+				if (metadataValues
+						&& metadataValues[groupName]) {
+
+					var value = metadataValues[groupName][field.name];
+					if (value) {
+						field.setValue(value);
 					}
 				}
 
@@ -147,6 +151,10 @@
 			// Unbound the decimal digits
 			adapted.scale = undefined;
 			adapted.precision = undefined;
+		}
+
+		if (definition.type == "LIST") {
+			adapted.values = definition.values;
 		}
 
 		return adapted;

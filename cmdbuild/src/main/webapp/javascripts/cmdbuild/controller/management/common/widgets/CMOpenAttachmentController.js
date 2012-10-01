@@ -59,8 +59,13 @@
 		},
 
 		// override
+		getCard: function() {
+			return _CMWFState.getProcessInstance() || null;
+		},
+
+		// override
 		getCardId: function() {
-			var pi = _CMWFState.getProcessInstance();
+			var pi = this.getCard();
 			if (pi) {
 				return pi.getId();
 			}

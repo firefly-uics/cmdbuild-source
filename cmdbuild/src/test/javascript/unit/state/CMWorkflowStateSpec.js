@@ -64,7 +64,7 @@
 			state.setProcessClassRef(processClassRef);
 
 			expect(state.getProcessClassRef()).toBe(processClassRef);
-			expect(a.onProcessClassRefChange).toHaveBeenCalledWith(processClassRef);
+			expect(a.onProcessClassRefChange).toHaveBeenCalledWith(processClassRef, dangling=undefined);
 
 			a.onProcessClassRefChange.reset();
 

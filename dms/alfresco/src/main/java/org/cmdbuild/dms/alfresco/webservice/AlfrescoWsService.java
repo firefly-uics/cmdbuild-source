@@ -46,8 +46,15 @@ import com.google.common.collect.Maps;
 
 public class AlfrescoWsService extends AlfrescoInnerService {
 
-	private static final SimpleDateFormat CMDBUILD_FORMATTER = new SimpleDateFormat(
+	private static final SimpleDateFormat CMDBUILD_DATETIME_PARSING_FORMATTER = new SimpleDateFormat(
 			Constants.SOAP_ALL_DATES_PARSING_PATTERN);
+
+	private static final SimpleDateFormat CMDBUILD_DATETIME_PRINTING_FORMATTER = new SimpleDateFormat(
+			Constants.DATETIME_PRINTING_PATTERN);
+
+	private static final SimpleDateFormat CMDBUILD_DATE_PRINTING_FORMATTER = new SimpleDateFormat(
+			Constants.DATE_PRINTING_PATTERN);
+
 	private static final DateTimeFormatter ALFRESCO_FORMATTER = ISODateTimeFormat.dateTime();
 
 	private static final Map<String, String> NO_ASPECT_PROPERTIES = Collections.emptyMap();
@@ -320,7 +327,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			switch (type) {
 			case DATE:
 			case DATETIME: {
-				final Date date = CMDBUILD_FORMATTER.parse(value);
+				final Date date = CMDBUILD_DATETIME_PARSING_FORMATTER.parse(value);
 				alfrescoValue = ALFRESCO_FORMATTER.print(date.getTime());
 				break;
 			}
@@ -338,10 +345,14 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 		try {
 			final String value;
 			switch (type) {
-			case DATE:
+			case DATE: {
+				final DateTime dateTime = ALFRESCO_FORMATTER.parseDateTime(alfrescoValue);
+				value = CMDBUILD_DATE_PRINTING_FORMATTER.format(dateTime.toDate());
+				break;
+			}
 			case DATETIME: {
 				final DateTime dateTime = ALFRESCO_FORMATTER.parseDateTime(alfrescoValue);
-				value = CMDBUILD_FORMATTER.format(dateTime.toDate());
+				value = CMDBUILD_DATETIME_PRINTING_FORMATTER.format(dateTime.toDate());
 				break;
 			}
 			default: {
