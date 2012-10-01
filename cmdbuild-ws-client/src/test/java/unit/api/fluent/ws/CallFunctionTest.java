@@ -2,12 +2,10 @@ package unit.api.fluent.ws;
 
 import static java.util.Arrays.asList;
 import static org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.wsAttribute;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -19,10 +17,14 @@ import java.util.Map;
 
 import org.cmdbuild.api.fluent.FunctionCall;
 import org.cmdbuild.services.soap.Attribute;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CallFunctionTest extends AbstractWsFluentApiTest {
 
 	private static final String FUNCTION_NAME = "function";
@@ -33,6 +35,9 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 	private static final String IN_PARAMETER_2_VALUE = randomString();
 	private static final String OUT_PARAMETER_1 = "baz";
 	private static final String OUT_PARAMETER_1_VALUE = randomString();
+
+	@Captor
+	private ArgumentCaptor<List<Attribute>> attributeListCaptor;
 
 	private FunctionCall callFunction;
 
@@ -45,7 +50,6 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void parametersPassedToProxyWhenExecutingCallableFunction() throws Exception {
 		when(proxy().callFunction( //
 				anyString(), //
@@ -56,13 +60,13 @@ public class CallFunctionTest extends AbstractWsFluentApiTest {
 
 		verify(proxy()).callFunction( //
 				eq(callFunction.getFunctionName()), //
-				all(containsAttribute(IN_PARAMETER_1, IN_PARAMETER_1_VALUE), //
-						containsAttribute(IN_PARAMETER_2, IN_PARAMETER_2_VALUE)));
-		verifyNoMoreInteractions(proxy());
-	}
+				attributeListCaptor.capture());
 
-	private List<Attribute> all(final Matcher<List<Attribute>>... matchers) {
-		return argThat(allOf(matchers));
+		final List<Attribute> attributes = attributeListCaptor.getValue();
+		assertThat(attributes, containsAttribute(IN_PARAMETER_1, IN_PARAMETER_1_VALUE));
+		assertThat(attributes, containsAttribute(IN_PARAMETER_2, IN_PARAMETER_2_VALUE));
+
+		verifyNoMoreInteractions(proxy());
 	}
 
 	@Test

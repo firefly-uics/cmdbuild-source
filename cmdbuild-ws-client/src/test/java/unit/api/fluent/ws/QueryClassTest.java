@@ -2,7 +2,6 @@ package unit.api.fluent.ws;
 
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -10,7 +9,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
@@ -29,11 +27,18 @@ import org.cmdbuild.services.soap.CqlQuery;
 import org.cmdbuild.services.soap.FilterOperator;
 import org.cmdbuild.services.soap.Order;
 import org.cmdbuild.services.soap.Query;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class QueryClassTest extends AbstractWsFluentApiTest {
+
+	@Captor
+	private ArgumentCaptor<List<Attribute>> attributeListCaptor;
 
 	private QueryClass queryClass;
 
@@ -48,7 +53,6 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void parametersPassedToProxyWhenFetchingClass() throws Exception {
 		when(proxy().getCardList( //
 				eq(queryClass.getClassName()), //
@@ -65,10 +69,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 		verify(proxy()).getCardList( //
 				eq(queryClass.getClassName()), //
-				all(containsAttribute(CODE_ATTRIBUTE), //
-						containsAttribute(DESCRIPTION_ATTRIBUTE), //
-						containsAttribute(ATTRIBUTE_1), //
-						containsAttribute(ATTRIBUTE_2)), //
+				attributeListCaptor.capture(), //
 				queryCapturer(), //
 				anyListOf(Order.class), //
 				eq(0), //
@@ -76,6 +77,12 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 				isNull(String.class), //
 				isNull(CqlQuery.class));
 		verifyNoMoreInteractions(proxy());
+
+		final List<Attribute> attributes = attributeListCaptor.getValue();
+		assertThat(attributes, containsAttribute(CODE_ATTRIBUTE));
+		assertThat(attributes, containsAttribute(DESCRIPTION_ATTRIBUTE));
+		assertThat(attributes, containsAttribute(ATTRIBUTE_1));
+		assertThat(attributes, containsAttribute(ATTRIBUTE_2));
 
 		final Query query = capturedQuery();
 		assertThat(query.getFilter(), equalTo(null));
@@ -90,10 +97,6 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 		assertThat(queries, containsFilter(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE));
 		assertThat(queries, containsFilter(ATTRIBUTE_1, ATTRIBUTE_1_VALUE));
 		assertThat(queries, containsFilter(ATTRIBUTE_2, ATTRIBUTE_2_VALUE));
-	}
-
-	private List<Attribute> all(final Matcher<List<Attribute>>... matchers) {
-		return argThat(allOf(matchers));
 	}
 
 	@Test
