@@ -946,12 +946,9 @@ public class Serializer {
 		}
 		final Map<String, Map<String, String>> rulesByGroup = dmsLogic.getAutoCompletionRulesByClass(table.getName());
 
-		final JSONArray jsonGroups = new JSONArray();
+		final JSONObject jsonGroups = new JSONObject();
 		for (final String groupName : rulesByGroup.keySet()) {
-			final JSONObject jsonGroup = new JSONObject();
-			jsonGroup.put("name", groupName);
-			jsonGroup.put("metadata", rulesByGroup.get(groupName));
-			jsonGroups.put(jsonGroup);
+			jsonGroups.put(groupName, rulesByGroup.get(groupName));
 		}
 
 		final JSONObject jsonAutocompletion = new JSONObject();

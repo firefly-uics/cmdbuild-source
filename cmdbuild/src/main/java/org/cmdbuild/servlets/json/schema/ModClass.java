@@ -152,7 +152,9 @@ public class ModClass extends JSONBase {
 			} else {
 				ITable table = processTables.get(pc.getName());
 				if (table != null) {
-					serializer.append("classes", Serializer.serializeTable(table, pc));
+					final JSONObject jsonTable = Serializer.serializeTable(table, pc);
+					Serializer.addAttachmentsData(jsonTable, table, applicationContext.getBean(DmsLogic.class));
+					serializer.append("classes", jsonTable);
 				}
 			}
 		}
