@@ -289,10 +289,6 @@
 			<url>http://cukes.info/maven</url>
 		</repository>
 		<repository>
-			<id>servebox</id>
-			<url>http://maven.servebox.org/repository</url>
-		</repository>
-		<repository>
 			<id>restlet</id>
 			<url>http://maven.restlet.org</url>
 		</repository>
