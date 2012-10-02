@@ -2,6 +2,7 @@ package org.cmdbuild.dms.alfresco.utils;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -31,6 +32,7 @@ import com.google.common.collect.Maps;
 public class CustomModelParser implements LoggingSupport {
 
 	private static final String TYPE_NAMES_EXPRESSION = "/model/types/type/@name";
+	private static final String TYPE_TITLE_EXPRESSION = "/model/types/type[@name='%s']/title/text()";
 	private static final String ASPECT_NAMES_FOR_TYPE_EXPRESSION_FORMAT = "/model/types/type[@name='%s']/mandatory-aspects/aspect";
 	private static final String CONSTRAINT_NAMES_EXPRESSION = "/model/constraints/constraint/@name";
 	private static final String CONSTRAINT_VALUES_FOR_CONSTRAINT_NAME_EXPRESSION_FORMAT = "/model/constraints/constraint[@name='%s']/parameter[@name='allowedValues']/list/value";
@@ -45,9 +47,14 @@ public class CustomModelParser implements LoggingSupport {
 		this.prefix = prefix;
 	}
 
+	/**
+	 * Gets aspects grouped by type's title.
+	 * 
+	 * @return the aspect names grouped by type's title.
+	 */
 	public Map<String, List<String>> getAspectsByType() {
 		try {
-			logger.info("getting all aspects grouped by type");
+			logger.info("getting all aspects grouped by type (title)");
 			return unsafeAspectsByType();
 		} catch (final Exception e) {
 			logger.warn("error getting parsing data, returning and empty map", e);
@@ -58,8 +65,11 @@ public class CustomModelParser implements LoggingSupport {
 	private Map<String, List<String>> unsafeAspectsByType() throws Exception {
 		final Map<String, List<String>> aspectsByType = Maps.newHashMap();
 		parseContent();
-		for (final String typeName : nodeValuesFrom(typeNamesExpression())) {
-			aspectsByType.put(typeName, nodeContentsFrom(aspectNamesForTypeExpression(addPrefixToName(typeName))));
+		for (final String typeName : nodeContentsFrom(typeNamesExpression())) {
+			final String typeTitle = evaluateAsString(typeTitlesExpression(addPrefixToName(typeName)));
+			if (isNotEmpty(typeTitle)) {
+				aspectsByType.put(typeTitle, nodeContentsFrom(aspectNamesForTypeExpression(addPrefixToName(typeName))));
+			}
 		}
 		return aspectsByType;
 	}
@@ -111,6 +121,11 @@ public class CustomModelParser implements LoggingSupport {
 		return (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
 	}
 
+	private String evaluateAsString(final String expression) throws XPathExpressionException {
+		final XPathExpression xpathExpression = compileExpression(expression);
+		return (String) xpathExpression.evaluate(document, XPathConstants.STRING);
+	}
+
 	private void parseContent() throws ParserConfigurationException, SAXException, IOException {
 		logger.debug("parsing content", content);
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -138,6 +153,10 @@ public class CustomModelParser implements LoggingSupport {
 
 	private static String typeNamesExpression() {
 		return TYPE_NAMES_EXPRESSION;
+	}
+
+	private static String typeTitlesExpression(final String typeName) {
+		return format(TYPE_TITLE_EXPRESSION, typeName);
 	}
 
 	private static String aspectNamesForTypeExpression(final String typeName) {

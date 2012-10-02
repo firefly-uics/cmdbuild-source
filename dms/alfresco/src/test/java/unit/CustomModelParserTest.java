@@ -34,18 +34,18 @@ public class CustomModelParserTest {
 		final Map<String, List<String>> aspectsByType = customModelParser.getAspectsByType();
 
 		final Collection<String> types = aspectsByType.keySet();
-		assertThat(types, hasItem("SuperType"));
-		assertThat(types, hasItem("aType"));
-		assertThat(types, hasItem("anotherType"));
-		assertThat(types, hasItem("Document"));
-		assertThat(types, hasItem("Image"));
+		assertThat(types, hasItem("CMDBuild SuperType"));
+		assertThat(types, hasItem("A type"));
+		assertThat(types, hasItem("Another type"));
+		assertThat(types, hasItem("A generic document"));
+		assertThat(types, hasItem("An image"));
 
-		assertThat(aspectsByType.get("aType"), hasItem("foo"));
-		assertThat(aspectsByType.get("aType"), hasItem("bar"));
-		assertThat(aspectsByType.get("anotherType"), hasItem("baz"));
-		assertThat(aspectsByType.get("Document"), hasItems("documentStatistics", "taggable", "summary"));
-		assertThat(aspectsByType.get("Document"), hasItem("summary"));
-		assertThat(aspectsByType.get("Image"), hasItem("displayable"));
+		assertThat(aspectsByType.get("A type"), hasItem("foo"));
+		assertThat(aspectsByType.get("A type"), hasItem("bar"));
+		assertThat(aspectsByType.get("Another type"), hasItem("baz"));
+		assertThat(aspectsByType.get("A generic document"), hasItems("documentStatistics", "taggable", "summary"));
+		assertThat(aspectsByType.get("A generic document"), hasItem("summary"));
+		assertThat(aspectsByType.get("An image"), hasItem("displayable"));
 	}
 
 	@Test

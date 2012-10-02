@@ -279,7 +279,6 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 
 		public void setName(final String name) {
 			this.name = name;
-
 		}
 
 		public void add(final MetadataGroupDefinition metadataGroupDefinition) {
