@@ -168,7 +168,7 @@
 			</properties>
 		</aspect>
 		<aspect name="cmdbuild:summary">
-			<title>Text</title>
+			<title>Summarizable</title>
 			<properties>
 				<property name="cmdbuild:summary">
 					<title>Summary</title>
