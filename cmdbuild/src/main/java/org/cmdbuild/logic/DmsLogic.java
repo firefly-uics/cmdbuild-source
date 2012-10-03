@@ -11,7 +11,9 @@ import javax.activation.DataHandler;
 
 import org.apache.log4j.Logger;
 import org.cmdbuild.config.DmsProperties;
+import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefaultDocumentFactory;
+import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
@@ -21,16 +23,13 @@ import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.MetadataGroup;
-import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
-import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
+import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 
@@ -41,12 +40,15 @@ public class DmsLogic {
 	private static Logger logger = Log.DMS;
 
 	private final DmsService service;
+	private final DefinitionsFactory definitionsFactory;
 	private UserContext userContext;
 
 	public DmsLogic(final DmsService service) {
 		logger.info("creating new dms logic...");
 		this.service = service;
 		service.setConfiguration(DmsProperties.getInstance());
+
+		definitionsFactory = new DefaultDefinitionsFactory();
 	}
 
 	public UserContext getUserContext() {
@@ -75,22 +77,30 @@ public class DmsLogic {
 	 *            is the {@code Code} of the {@link Lookup}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
+	 * 
+	 * @throws {@link DmsException} if cannot read definitions.
 	 */
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
-		for (final DocumentTypeDefinition typeDefinition : getCategoryDefinitions()) {
-			if (typeDefinition.getName().equals(category)) {
-				return typeDefinition;
+		try {
+			for (final DocumentTypeDefinition typeDefinition : getCategoryDefinitions()) {
+				if (typeDefinition.getName().equals(category)) {
+					return typeDefinition;
+				}
 			}
+			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
+		} catch (final DmsError e) {
+			throw DmsException.Type.DMS_DOCUMENT_TYPE_DEFINITION_ERROR.createException(category);
 		}
-		return typeDefinitinWithNoMetadata(category);
 	}
 
 	/**
 	 * Gets all {@link DocumentTypeDefinition}s.
 	 * 
 	 * @return the all {@link DocumentTypeDefinition}s.
+	 * 
+	 * @throws DmsError
 	 */
-	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() {
+	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() throws DmsError {
 		return service.getTypeDefinitions();
 	}
 
@@ -101,46 +111,41 @@ public class DmsLogic {
 	 *            the name of the class.
 	 * 
 	 * @return maps of metadata names and values grouped by metadata group.
+	 * 
+	 * @throws DmsError
 	 */
-	public Map<String, Map<String, String>> getAutoCompletionRulesByClass(final String classname) {
-		final Map<String, Map<String, String>> rulesByClassname = Maps.newHashMap();
-		final AutocompletionRules rules = service.getAutoCompletionRules();
-		for (final String groupName : rules.getMetadataGroupNames()) {
-			rulesByClassname.put(groupName, Maps.<String, String> newHashMap());
-			for (final String metadataName : rules.getMetadataNamesForGroup(groupName)) {
-				final Map<String, String> valuesByClassname = rules
-						.getRulesForGroupAndMetadata(groupName, metadataName);
-				for (final String _classname : valuesByClassname.keySet()) {
-					if (_classname.equals(classname)) {
-						rulesByClassname.get(groupName).put(metadataName, valuesByClassname.get(_classname));
+	public Map<String, Map<String, String>> getAutoCompletionRulesByClass(final String classname) throws DmsException {
+		try {
+			final Map<String, Map<String, String>> rulesByClassname = Maps.newHashMap();
+			final AutocompletionRules rules = service.getAutoCompletionRules();
+			for (final String groupName : rules.getMetadataGroupNames()) {
+				rulesByClassname.put(groupName, Maps.<String, String> newHashMap());
+				for (final String metadataName : rules.getMetadataNamesForGroup(groupName)) {
+					final Map<String, String> valuesByClassname = rules.getRulesForGroupAndMetadata(groupName,
+							metadataName);
+					for (final String _classname : valuesByClassname.keySet()) {
+						if (_classname.equals(classname)) {
+							rulesByClassname.get(groupName).put(metadataName, valuesByClassname.get(_classname));
+						}
 					}
 				}
 			}
+			return rulesByClassname;
+		} catch (final DmsError e) {
+			throw DmsException.Type.DMS_AUTOCOMPLETION_RULES_ERROR.createException(classname);
 		}
-		return rulesByClassname;
-	}
-
-	// TODO put in an abstract factory
-	private DocumentTypeDefinition typeDefinitinWithNoMetadata(final String type) {
-		return new DocumentTypeDefinition() {
-
-			@Override
-			public String getName() {
-				return type;
-			}
-
-			@Override
-			public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-				return Collections.emptyList();
-			}
-
-		};
 	}
 
 	public List<StoredDocument> search(final String className, final int cardId) {
-		final DocumentSearch document = createDocumentFactory(className) //
-				.createDocumentSearch(className, cardId);
-		return service.search(document);
+		try {
+			final DocumentSearch document = createDocumentFactory(className) //
+					.createDocumentSearch(className, cardId);
+			return service.search(document);
+		} catch (final DmsError e) {
+			logger.warn(e);
+			// TODO
+			return Collections.emptyList();
+		}
 	}
 
 	public void upload(final String author, final String className, final int cardId, final InputStream inputStream,
@@ -156,7 +161,7 @@ public class DmsLogic {
 			final String message = String.format("error uploading file '%s' to card '%s' with id '%d'", //
 					fileName, className, cardId);
 			logger.error(message, e);
-			throw ORMException.ORMExceptionType.ORM_ATTACHMENT_UPLOAD_FAILED.createException();
+			throw DmsException.Type.DMS_ATTACHMENT_UPLOAD_ERROR.createException();
 		}
 	}
 
@@ -170,12 +175,12 @@ public class DmsLogic {
 			final String message = String.format("error downloading file '%s' for card '%s' with id '%d'", //
 					fileName, className, cardId);
 			logger.error(message, e);
-			throw NotFoundExceptionType.ATTACHMENT_NOTFOUND
+			throw DmsException.Type.DMS_ATTACHMENT_NOTFOUND
 					.createException(fileName, className, String.valueOf(cardId));
 		}
 	}
 
-	public void delete(final String className, final int cardId, final String fileName) throws NotFoundException {
+	public void delete(final String className, final int cardId, final String fileName) throws DmsException {
 		final DocumentDelete document = createDocumentFactory(className) //
 				.createDocumentDelete(className, cardId, fileName);
 		assureWritePrivilege(className);
@@ -185,7 +190,7 @@ public class DmsLogic {
 			final String message = String.format("error deleting file '%s' for card '%s' with id '%d'", //
 					fileName, className, cardId);
 			logger.error(message, e);
-			throw ORMException.ORMExceptionType.ORM_ATTACHMENT_DELETE_FAILED.createException();
+			throw DmsException.Type.DMS_ATTACHMENT_DELETE_ERROR.createException();
 		}
 	}
 
@@ -200,7 +205,7 @@ public class DmsLogic {
 			final String message = String.format("error updating file '%s' for card '%s' with id '%d'", //
 					filename, className, cardId);
 			logger.error(message, e);
-			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
+			throw DmsException.Type.DMS_UPDATE_ERROR.createException();
 		}
 	}
 

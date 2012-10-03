@@ -158,13 +158,12 @@ public class DefaultDocumentFactory implements DocumentFactory {
 	@Override
 	public DocumentUpdate createDocumentUpdate(final String className, final int cardId, final String filename,
 			final String description) {
-		return createDocumentUpdate(className, cardId, filename, description, Collections.<MetadataGroup>emptyList());
+		return createDocumentUpdate(className, cardId, filename, description, Collections.<MetadataGroup> emptyList());
 	}
 
 	@Override
-	public DocumentUpdate createDocumentUpdate(final String className, final int cardId,
-			final String filename, final String description,
-			final Iterable<MetadataGroup> metadataGroups) {
+	public DocumentUpdate createDocumentUpdate(final String className, final int cardId, final String filename,
+			final String description, final Iterable<MetadataGroup> metadataGroups) {
 		return new DocumentUpdate() {
 
 			@Override

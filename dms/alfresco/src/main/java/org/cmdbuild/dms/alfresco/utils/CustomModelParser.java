@@ -7,7 +7,6 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -51,14 +50,16 @@ public class CustomModelParser implements LoggingSupport {
 	 * Gets aspects grouped by type's title.
 	 * 
 	 * @return the aspect names grouped by type's title.
+	 * 
+	 * @throws @{@link RuntimeException}
 	 */
 	public Map<String, List<String>> getAspectsByType() {
 		try {
 			logger.info("getting all aspects grouped by type (title)");
 			return unsafeAspectsByType();
 		} catch (final Exception e) {
-			logger.warn("error getting parsing data, returning and empty map", e);
-			return Collections.emptyMap();
+			logger.error("error getting parsing data, returning and empty map", e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -74,13 +75,20 @@ public class CustomModelParser implements LoggingSupport {
 		return aspectsByType;
 	}
 
+	/**
+	 * Gets constraints grouped by name.
+	 * 
+	 * @return the constraint values grouped by constraint name.
+	 * 
+	 * @throws @{@link RuntimeException}
+	 */
 	public Map<String, List<String>> getConstraintsByMetadata() {
 		try {
 			logger.info("getting all constraints grouped by metadata");
 			return unsafeConstraintsByName();
 		} catch (final Exception e) {
-			logger.warn("error getting parsing data, returning and empty map", e);
-			return Collections.emptyMap();
+			logger.error("error getting parsing data, returning and empty map", e);
+			throw new RuntimeException(e);
 		}
 	}
 

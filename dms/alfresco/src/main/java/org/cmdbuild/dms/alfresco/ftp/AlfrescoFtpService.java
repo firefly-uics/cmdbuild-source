@@ -7,7 +7,7 @@ import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.alfresco.AlfrescoInnerService;
-import org.cmdbuild.dms.exception.DmsException;
+import org.cmdbuild.dms.exception.DmsError;
 
 public class AlfrescoFtpService extends AlfrescoInnerService {
 
@@ -16,7 +16,7 @@ public class AlfrescoFtpService extends AlfrescoInnerService {
 	}
 
 	@Override
-	public void delete(final DocumentDelete document) throws DmsException {
+	public void delete(final DocumentDelete document) throws DmsError {
 		ftpClient().delete( //
 				document.getFileName(), //
 				document.getPath() //
@@ -24,7 +24,7 @@ public class AlfrescoFtpService extends AlfrescoInnerService {
 	}
 
 	@Override
-	public DataHandler download(final DocumentDownload document) throws DmsException {
+	public DataHandler download(final DocumentDownload document) throws DmsError {
 		return ftpClient().download( //
 				document.getFileName(), //
 				document.getPath() //
@@ -32,7 +32,7 @@ public class AlfrescoFtpService extends AlfrescoInnerService {
 	}
 
 	@Override
-	public void upload(final StorableDocument document) throws DmsException {
+	public void upload(final StorableDocument document) throws DmsError {
 		ftpClient().upload( //
 				document.getFileName(), //
 				document.getInputStream(), //

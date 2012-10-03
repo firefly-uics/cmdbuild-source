@@ -23,7 +23,7 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
-import org.cmdbuild.dms.exception.DmsException;
+import org.cmdbuild.dms.exception.DmsError;
 import org.junit.Before;
 
 import utils.TestConfiguration;
@@ -31,13 +31,13 @@ import utils.TestConfiguration;
 /**
  * Base class for all tests that connects to a local (running) instance of
  * Alfresco.
- *
+ * 
  * The file {@literal xmdbuildModel.xml} (within resources) must be copied in
  * the extensions directory of Alfresco before starting it.
- *
+ * 
  * @see {@link TestConfiguration} for an overview of the settings of the
  *      Alfresco instance.
- *
+ * 
  * @see {@link BaseWebServiceSystemTest} for tests that use an embedded instance
  *      of Alfresco (we cannot use it because we need to set a custom model).
  */
@@ -89,24 +89,24 @@ public class AbstractAlfrescoTest {
 		return file;
 	}
 
-	protected List<StoredDocument> storedDocuments() {
+	protected List<StoredDocument> storedDocuments() throws Exception {
 		return dmsService.search(testDocuments());
 	}
 
-	protected void upload(final File file) throws DmsException, FileNotFoundException {
+	protected void upload(final File file) throws DmsError, FileNotFoundException {
 		dmsService.upload(storableDocumentFrom(file));
 	}
 
-	protected void upload(final File file, final String category) throws DmsException, FileNotFoundException {
+	protected void upload(final File file, final String category) throws DmsError, FileNotFoundException {
 		dmsService.upload(storableDocumentFrom(file, category));
 	}
 
-	protected void upload(final File file, final List<MetadataGroup> metadataGroups) throws DmsException,
+	protected void upload(final File file, final List<MetadataGroup> metadataGroups) throws DmsError,
 			FileNotFoundException {
 		dmsService.upload(storableDocumentFrom(file, metadataGroups));
 	}
 
-	protected void delete(final String name) throws DmsException {
+	protected void delete(final String name) throws DmsError {
 		dmsService.delete(documentDeleteFrom(name));
 	}
 

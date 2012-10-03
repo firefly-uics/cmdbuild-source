@@ -131,7 +131,7 @@ public class UploadWithMetadataTest extends AbstractAlfrescoTest {
 		};
 	}
 
-	private Iterable<MetadataGroup> readedTestMetadata() {
+	private Iterable<MetadataGroup> readedTestMetadata() throws Exception {
 		final StoredDocument storedDocument = storedDocuments().get(0);
 		return storedDocument.getMetadataGroups();
 	}

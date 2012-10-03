@@ -20,6 +20,11 @@ public class MetadataAutocompletion {
 
 	public interface Reader {
 
+		/**
+		 * Reads the auto-completion rules.
+		 * 
+		 * @throws {@link RuntimeException}
+		 */
 		public AutocompletionRules read();
 
 	}

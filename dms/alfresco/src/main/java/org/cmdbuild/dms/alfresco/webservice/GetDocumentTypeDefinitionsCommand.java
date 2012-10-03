@@ -3,6 +3,7 @@ package org.cmdbuild.dms.alfresco.webservice;
 import static com.google.common.collect.Collections2.filter;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.startsWith;
 
 import java.rmi.RemoteException;
@@ -344,7 +345,7 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 
 			setResult(result);
 		} catch (final Exception e) {
-			logger.error("error getting class definitions", e);
+			logger.error("error getting document type definitions", e);
 		}
 	}
 
@@ -379,11 +380,23 @@ class GetDocumentTypeDefinitionsCommand extends AlfrescoWebserviceCommand<Map<St
 	}
 
 	private Map<String, List<String>> aspectNamesByType() {
-		return customModelParser().getAspectsByType();
+		final Map<String, List<String>> aspectNamesByType;
+		if (isNotBlank(content)) {
+			aspectNamesByType = customModelParser().getAspectsByType();
+		} else {
+			aspectNamesByType = Collections.emptyMap();
+		}
+		return aspectNamesByType;
 	}
 
 	private Map<String, List<String>> constraintsByMetadata() {
-		return customModelParser().getConstraintsByMetadata();
+		final Map<String, List<String>> constraintsByMetadata;
+		if (isNotBlank(content)) {
+			constraintsByMetadata = customModelParser().getConstraintsByMetadata();
+		} else {
+			constraintsByMetadata = Collections.emptyMap();
+		}
+		return constraintsByMetadata;
 	}
 
 	private CustomModelParser customModelParser() {

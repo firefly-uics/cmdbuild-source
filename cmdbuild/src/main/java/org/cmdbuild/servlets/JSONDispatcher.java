@@ -368,7 +368,7 @@ public class JSONDispatcher extends HttpServlet {
 		if (e instanceof CMDBException) {
 			CMDBException ce = (CMDBException) e;
 			exceptionJson.put("reason", ce.getExceptionTypeText());
-			exceptionJson.put("reason_parameters", JSONDispatcher.serializeExceptionParameters(ce.getExceptionParameters()));
+			exceptionJson.put("reasonParameters", JSONDispatcher.serializeExceptionParameters(ce.getExceptionParameters()));
 		}
 		addStackTrace(exceptionJson, e);
 		return exceptionJson;
