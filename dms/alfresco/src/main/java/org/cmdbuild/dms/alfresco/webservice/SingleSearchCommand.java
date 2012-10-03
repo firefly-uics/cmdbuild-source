@@ -3,7 +3,7 @@ package org.cmdbuild.dms.alfresco.webservice;
 import java.util.List;
 
 import org.alfresco.webservice.repository.QueryResult;
-import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.RepositoryServiceSoapPort;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.Node;
 import org.alfresco.webservice.types.Predicate;
@@ -14,7 +14,7 @@ import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dms.documents.SingleDocumentSearch;
+import org.cmdbuild.dms.SingleDocumentSearch;
 
 class SingleSearchCommand extends AbstractSearchCommand<ResultSetRow> {
 
@@ -51,7 +51,7 @@ class SingleSearchCommand extends AbstractSearchCommand<ResultSetRow> {
 
 			final Predicate predicate = new Predicate(new Reference[] { reference }, null, null);
 
-			final RepositoryServiceSoapBindingStub repository = WebServiceFactory.getRepositoryService();
+			final RepositoryServiceSoapPort repository = WebServiceFactory.getRepositoryService();
 			final Node[] nodes = repository.get(predicate);
 
 			final Query query = new Query();
@@ -84,11 +84,6 @@ class SingleSearchCommand extends AbstractSearchCommand<ResultSetRow> {
 	@Override
 	public boolean isSuccessfull() {
 		return (getResult() != NULL_RESULT_SET_ROW);
-	}
-
-	@Override
-	public boolean hasResult() {
-		return true;
 	}
 
 	private static String statement(final Node node) {

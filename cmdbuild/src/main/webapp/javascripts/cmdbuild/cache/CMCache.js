@@ -15,7 +15,8 @@
 			groups: "CMDBUild.cache.CMCacheGroupsFunctions",
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
 			reports: "CMDBUild.cache.CMCacheReportFunctions",
-			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions"
+			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
+			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions"
 		},
 
 		constructor: function() {

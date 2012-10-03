@@ -1,7 +1,7 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
 import org.alfresco.webservice.repository.QueryResult;
-import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.RepositoryServiceSoapPort;
 import org.alfresco.webservice.types.CML;
 import org.alfresco.webservice.types.CMLCreate;
 import org.alfresco.webservice.types.NamedValue;
@@ -15,7 +15,7 @@ import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
-public class CreateCategoryCommand extends AlfrescoWebserviceCommand<Boolean> {
+class CreateCategoryCommand extends AlfrescoWebserviceCommand<Boolean> {
 
 	private String categoryRoot;
 	private String category;
@@ -37,7 +37,7 @@ public class CreateCategoryCommand extends AlfrescoWebserviceCommand<Boolean> {
 		Validate.isTrue(StringUtils.isNotBlank(categoryRoot), "invalid category root '%s'", categoryRoot);
 		Validate.isTrue(StringUtils.isNotBlank(category), "invalid category '%s'", category);
 		try {
-			final RepositoryServiceSoapBindingStub repository = WebServiceFactory.getRepositoryService();
+			final RepositoryServiceSoapPort repository = WebServiceFactory.getRepositoryService();
 
 			final Query query = query(categoryRoot);
 			final QueryResult queryResult = repository.query(STORE, query, true);
@@ -85,11 +85,6 @@ public class CreateCategoryCommand extends AlfrescoWebserviceCommand<Boolean> {
 	@Override
 	public boolean isSuccessfull() {
 		return getResult();
-	}
-
-	@Override
-	public boolean hasResult() {
-		return true;
 	}
 
 }

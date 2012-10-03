@@ -131,6 +131,9 @@
 			},
 
 			loadResources: function() {
+
+				_CMCache.syncAttachmentCategories();
+
 				var me = this,
 					reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
 						hideIfEmpty(processAccordion);

@@ -5,19 +5,14 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.dms.exception.ConnectionException;
-import org.cmdbuild.dms.exception.FtpOperationException;
-import org.cmdbuild.dms.exception.InvalidLoginException;
+import org.cmdbuild.dms.exception.DmsError;
 
 interface FtpClient {
 
-	void upload(String filename, InputStream is, List<String> path) throws ConnectionException, InvalidLoginException,
-			FtpOperationException;
+	void upload(String filename, InputStream is, List<String> path) throws DmsError;
 
-	void delete(String filename, List<String> path) throws ConnectionException, InvalidLoginException,
-			FtpOperationException;
+	void delete(String filename, List<String> path) throws DmsError;
 
-	DataHandler download(String filename, List<String> path) throws ConnectionException, InvalidLoginException,
-			FtpOperationException;
+	DataHandler download(String filename, List<String> path) throws DmsError;
 
 }

@@ -4,29 +4,117 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.dms.documents.DocumentDelete;
-import org.cmdbuild.dms.documents.DocumentDownload;
-import org.cmdbuild.dms.documents.DocumentSearch;
-import org.cmdbuild.dms.documents.DocumentUpdate;
-import org.cmdbuild.dms.documents.StorableDocument;
-import org.cmdbuild.dms.documents.StoredDocument;
-import org.cmdbuild.dms.exception.DmsException;
-import org.cmdbuild.dms.properties.DmsProperties;
+import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
+import org.cmdbuild.dms.exception.DmsError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface DmsService {
 
-	DmsProperties getProperties();
+	public interface LoggingSupport {
 
-	void setProperties(DmsProperties dmsProperties);
+		/*
+		 * should be better to use dms service class name, but for backward
+		 * compatibility...
+		 */
+		Logger logger = LoggerFactory.getLogger("dms");
 
-	List<StoredDocument> search(DocumentSearch document);
+	}
 
-	void upload(StorableDocument document) throws DmsException;
+	/**
+	 * Gets the {@link DmsConfiguration}.
+	 * 
+	 * @return the actual {@link DmsConfiguration}.
+	 */
+	DmsConfiguration getConfiguration();
 
-	DataHandler download(DocumentDownload document) throws DmsException;
+	/**
+	 * Sets the {@link DmsConfiguration}.
+	 */
+	void setConfiguration(DmsConfiguration configuration);
 
-	void delete(DocumentDelete document) throws DmsException;
+	/**
+	 * Gets all {@link DocumentTypeDefinition}s.
+	 * 
+	 * @return all {@link DocumentTypeDefinition}s.
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError;
 
-	void updateDescription(DocumentUpdate document) throws DmsException;
+	/**
+	 * Search for all documents matching the specified query.
+	 * 
+	 * @param document
+	 *            the document query parameters.
+	 * 
+	 * @return the list found documents (never null).
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	List<StoredDocument> search(DocumentSearch document) throws DmsError;
+
+	/**
+	 * Upload the specified document.
+	 * 
+	 * @param document
+	 *            the definition for the document that needs to be upload.
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void upload(StorableDocument document) throws DmsError;
+
+	/**
+	 * Downloads the specified document.
+	 * 
+	 * @param document
+	 *            the definition for the document that needs to be downloaded.
+	 * 
+	 * @return the {@link DataHandler} associated with the document.
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	DataHandler download(DocumentDownload document) throws DmsError;
+
+	/**
+	 * Deletes the specified document.
+	 * 
+	 * @param document
+	 *            the definition for the document that needs to be deleted.
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void delete(DocumentDelete document) throws DmsError;
+
+	/**
+	 * Updates the description of an existing document.
+	 * 
+	 * @param document
+	 *            the definition for the document that needs to be updated.
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	void updateDescriptionAndMetadata(DocumentUpdate document) throws DmsError;
+
+	/**
+	 * Gets the auto-completion rules.
+	 * 
+	 * @return the auto-completion rules.
+	 * 
+	 * @throws DmsError
+	 *             if something goes wrong.
+	 */
+	AutocompletionRules getAutoCompletionRules() throws DmsError;
+
+	/**
+	 * Clears cache (if supported).
+	 */
+	public void clearCache();
 
 }

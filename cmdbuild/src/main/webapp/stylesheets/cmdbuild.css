@@ -935,3 +935,14 @@ em {
 {
 	color: #666;
 }
+
+/* Attachemnt window */
+
+.cm_attachement_metadata_container
+{
+	border-top-style: solid ! important;
+	border-top-width: 1px ! important;
+	border-top-color: #99BBE8 ! important;
+	padding-top: 0.5em;
+	margin-top: 0.5em;
+}

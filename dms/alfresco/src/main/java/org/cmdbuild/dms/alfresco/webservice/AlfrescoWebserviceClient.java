@@ -10,37 +10,35 @@ import org.alfresco.webservice.types.Store;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dms.documents.DocumentSearch;
-import org.cmdbuild.dms.documents.SingleDocumentSearch;
-import org.cmdbuild.dms.exception.FileNotFoundException;
-import org.cmdbuild.dms.properties.DmsProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsService.LoggingSupport;
+import org.cmdbuild.dms.DocumentSearch;
+import org.cmdbuild.dms.DocumentTypeDefinition;
+import org.cmdbuild.dms.SingleDocumentSearch;
+import org.cmdbuild.dms.exception.DmsError;
 
-public class AlfrescoWebserviceClient {
-
-	private static final Logger logger = LoggerFactory.getLogger(AlfrescoWebserviceClient.class);
+class AlfrescoWebserviceClient implements LoggingSupport {
 
 	private static Map<String, AlfrescoWebserviceClient> cache = new WeakHashMap<String, AlfrescoWebserviceClient>();
 
-	private final DmsProperties properties;
+	private final DmsConfiguration configuration;
 
-	private AlfrescoWebserviceClient(final DmsProperties properties) {
-		Validate.notNull(properties, "null properties");
-		this.properties = properties;
+	private AlfrescoWebserviceClient(final DmsConfiguration configuration) {
+		Validate.notNull(configuration, "null configuration");
+		this.configuration = configuration;
 
-		final String address = properties.getServerURL();
+		final String address = configuration.getServerURL();
 		WebServiceFactory.setEndpointAddress(address);
 	}
 
-	public static AlfrescoWebserviceClient getInstance(final DmsProperties properties) {
-		Validate.notNull(properties, "null dms properties");
+	public static AlfrescoWebserviceClient getInstance(final DmsConfiguration configuration) {
+		Validate.notNull(configuration, "null configuration");
 		synchronized (cache) {
-			final String address = properties.getServerURL();
+			final String address = configuration.getServerURL();
 			AlfrescoWebserviceClient client = cache.get(address);
 			if (client == null) {
 				logger.info(String.format("creating new webservice client for address '%s'", address));
-				client = new AlfrescoWebserviceClient(properties);
+				client = new AlfrescoWebserviceClient(configuration);
 				cache.put(address, client);
 			}
 			return client;
@@ -48,11 +46,12 @@ public class AlfrescoWebserviceClient {
 	}
 
 	private void executeWhithinSession(final AlfrescoWebserviceCommand<?> command) {
-		final String username = properties.getAlfrescoUser();
-		final String password = properties.getAlfrescoPassword();
+		final String username = configuration.getAlfrescoUser();
+		final String password = configuration.getAlfrescoPassword();
 		final AlfrescoSession session = new AlfrescoSession(username, password);
 		session.start();
 		if (session.isStarted()) {
+			logger.debug("executing command '{}'", command.getClass());
 			command.execute();
 		} else {
 			logger.warn("session could not be started");
@@ -60,7 +59,7 @@ public class AlfrescoWebserviceClient {
 		session.end();
 	}
 
-	private static String baseSearchPath(final DmsProperties properties) {
+	private static String baseSearchPath(final DmsConfiguration properties) {
 		return new StringBuilder() //
 				.append(properties.getRepositoryWSPath()) //
 				.append(properties.getRepositoryApp()) //
@@ -70,20 +69,20 @@ public class AlfrescoWebserviceClient {
 	public ResultSetRow[] search(final DocumentSearch search) {
 		final SearchCommand command = new SearchCommand();
 		command.setDocumentSearch(search);
-		command.setBaseSearchPath(baseSearchPath(properties));
+		command.setBaseSearchPath(baseSearchPath(configuration));
 		executeWhithinSession(command);
 		return command.getResult();
 	}
 
-	public ResultSetRow search(final SingleDocumentSearch search) throws FileNotFoundException {
+	public ResultSetRow search(final SingleDocumentSearch search) throws DmsError {
 		final SingleSearchCommand command = new SingleSearchCommand();
 		command.setDocumentSearch(search);
-		command.setBaseSearchPath(baseSearchPath(properties));
+		command.setBaseSearchPath(baseSearchPath(configuration));
 		executeWhithinSession(command);
 		if (command.isSuccessfull()) {
 			return command.getResult();
 		}
-		throw FileNotFoundException.newInstance(search.getFileName(), search.getClassName(), search.getCardId());
+		throw DmsError.fileNotFound(search.getFileName(), search.getClassName(), search.getCardId());
 	}
 
 	public ResultSetRow searchRow(final String uuid) {
@@ -93,12 +92,13 @@ public class AlfrescoWebserviceClient {
 		return command.getResult();
 	}
 
-	public String searchUuid(final SingleDocumentSearch search) throws FileNotFoundException {
+	public String searchUuid(final SingleDocumentSearch search) throws DmsError {
 		final ResultSetRow resultSetRow = search(search);
 		return resultSetRow.getNode().getId();
 	}
 
-	public boolean update(final String uuid, final Properties updateProperties, final Properties aspectsProperties) {
+	public boolean update(final String uuid, final Properties updateProperties,
+			final Map<String, Map<String, String>> aspectsProperties) {
 		final UpdateCommand command = new UpdateCommand();
 		command.setUuid(uuid);
 		command.setUpdateProperties(updateProperties);
@@ -116,7 +116,7 @@ public class AlfrescoWebserviceClient {
 
 	public boolean createCategory(final String category) {
 		final CreateCategoryCommand command = new CreateCategoryCommand();
-		command.setCategoryRoot(properties.getCmdbuildCategory());
+		command.setCategoryRoot(configuration.getCmdbuildCategory());
 		command.setCategory(category);
 		executeWhithinSession(command);
 		return command.getResult();
@@ -130,22 +130,30 @@ public class AlfrescoWebserviceClient {
 		return command.getResult();
 	}
 
+	public Iterable<DocumentTypeDefinition> getDocumentTypeDefinitions() throws DmsError {
+		final GetDocumentTypeDefinitionsCommand command = new GetDocumentTypeDefinitionsCommand();
+		command.setUri(configuration.getAlfrescoCustomUri());
+		command.setPrefix(configuration.getAlfrescoCustomPrefix());
+		command.setCustomModelContent(configuration.getAlfrescoCustomModelFileContent());
+		executeWhithinSession(command);
+		if (command.isSuccessfull()) {
+			return command.getResult().values();
+		}
+		throw DmsError.wsOperationError("error reading document type definitions");
+	}
+
 }
 
-abstract class AlfrescoWebserviceCommand<T> {
+abstract class AlfrescoWebserviceCommand<T> implements LoggingSupport {
 
 	public static final String DEFAULT_STORE_ADDRESS = "SpacesStore";
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, DEFAULT_STORE_ADDRESS);
-
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private T result;
 
 	public abstract void execute();
 
 	public abstract boolean isSuccessfull();
-
-	public abstract boolean hasResult();
 
 	public T getResult() {
 		return result;

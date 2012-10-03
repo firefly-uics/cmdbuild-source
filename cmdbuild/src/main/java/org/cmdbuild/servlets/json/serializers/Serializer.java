@@ -13,7 +13,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.config.DmsProperties;
+import org.cmdbuild.dms.Metadata;
+import org.cmdbuild.dms.MetadataGroup;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
@@ -28,9 +31,9 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
@@ -41,8 +44,11 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.elements.wrappers.UserCard;
+import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeatureType;
@@ -60,6 +66,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Serializer {
+
+	// TODO use constants
+	private static final SimpleDateFormat ATTACHMENT_DATE_FOMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	public static final String AVAILABLE_CLASS = "availableclass";
 	public static final String AVAILABLE_PROCESS_CLASS = "availableprocessclass";
@@ -188,18 +197,30 @@ public class Serializer {
 		JSONObject serializer = new JSONObject();
 		try {
 			serializer.put("Category", attachment.getCategory());
-			serializer.put("CreationDate", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(attachment.getCreated()));
-			serializer.put("ModificationDate", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(attachment.getModified()));
+			serializer.put("CreationDate", ATTACHMENT_DATE_FOMAT.format(attachment.getCreated()));
+			serializer.put("ModificationDate", ATTACHMENT_DATE_FOMAT.format(attachment.getModified()));
 			serializer.put("Author", attachment.getAuthor());
 			serializer.put("Version", attachment.getVersion());
 			serializer.put("Filename", attachment.getName());
 			serializer.put("Description", attachment.getDescription());
-		} catch(JSONException e){
+			serializer.put("Metadata", serialize(attachment.getMetadataGroups()));
+		} catch (JSONException e) {
 			Log.JSONRPC.error("Error serializing attachment", e);
 		}
 		return serializer;
 	}
 
+	private static JSONObject serialize(final Iterable<MetadataGroup> metadataGroups) throws JSONException {
+		final JSONObject jsonMetadata = new JSONObject();
+		for (final MetadataGroup metadataGroup : metadataGroups) {
+			final JSONObject jsonAllMetadata = new JSONObject();
+			for (final Metadata metadata : metadataGroup.getMetadata()) {
+				jsonAllMetadata.put(metadata.getName(), metadata.getValue());
+			}
+			jsonMetadata.put(metadataGroup.getName(), jsonAllMetadata);
+		}
+		return jsonMetadata;
+	}
 	public static JSONObject serializeLookup(Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
 	}
@@ -919,4 +940,33 @@ public class Serializer {
 		out.put("WorkItemId", ai.getWorkItemId());
 		return out;
 	}
+	
+	public static void addAttachmentsData(final JSONObject jsonTable, ITable table, DmsLogic dmsLogic)
+			throws JSONException {
+		if (!DmsProperties.getInstance().isEnabled()) {
+			return;
+		}
+		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(table, dmsLogic);
+
+		final JSONObject jsonGroups = new JSONObject();
+		for (final String groupName : rulesByGroup.keySet()) {
+			jsonGroups.put(groupName, rulesByGroup.get(groupName));
+		}
+
+		final JSONObject jsonAutocompletion = new JSONObject();
+		jsonAutocompletion.put("autocompletion", jsonGroups);
+
+		final JSONObject jsonMeta = (JSONObject) jsonTable.get("meta");
+		jsonMeta.put("attachments", jsonAutocompletion);
+	}
+
+	private static Map<String, Map<String, String>> rulesByGroup(ITable table, DmsLogic dmsLogic) {
+		try {
+			return dmsLogic.getAutoCompletionRulesByClass(table.getName());
+		} catch (final DmsException e) {
+			RequestListener.getCurrentRequest().pushWarning(e);
+			return Collections.emptyMap();
+		}
+	}
+	
 }
