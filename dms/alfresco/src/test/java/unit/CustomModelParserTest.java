@@ -37,15 +37,15 @@ public class CustomModelParserTest {
 		assertThat(types, hasItem("CMDBuild SuperType"));
 		assertThat(types, hasItem("A type"));
 		assertThat(types, hasItem("Another type"));
-		assertThat(types, hasItem("A generic document"));
-		assertThat(types, hasItem("An image"));
+		assertThat(types, hasItem("Document"));
+		assertThat(types, hasItem("Image"));
 
 		assertThat(aspectsByType.get("A type"), hasItem("foo"));
 		assertThat(aspectsByType.get("A type"), hasItem("bar"));
 		assertThat(aspectsByType.get("Another type"), hasItem("baz"));
-		assertThat(aspectsByType.get("A generic document"), hasItems("documentStatistics", "taggable", "summary"));
-		assertThat(aspectsByType.get("A generic document"), hasItem("summary"));
-		assertThat(aspectsByType.get("An image"), hasItem("displayable"));
+		assertThat(aspectsByType.get("Document"), hasItems("documentStatistics", "taggable", "summary"));
+		assertThat(aspectsByType.get("Document"), hasItem("summary"));
+		assertThat(aspectsByType.get("Image"), hasItem("displayable"));
 	}
 
 	@Test
