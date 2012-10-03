@@ -163,9 +163,57 @@
 					return;
 				}
 			}
+		},
+
+		// Attachment metadata management
+
+		/*
+		 * In the meta could be a map called attachments.
+		 * Here are stored the rules to autocomplete the
+		 * attachments metadata. The aspected structure is:
+		 * ...
+		 * meta: {
+		 * 		...
+		 * 		attachments: {
+		 * 			...
+		 * 			autocompletion: {
+		 * 				groupName: {
+		 * 					metadataName: rule,
+		 * 					metadataName: rule,
+		 * 					....
+		 * 				},
+		 * 				groupName: {
+		 * 					...
+		 *				}
+		 * 			}
+		 * 		}
+		 * }
+		 */
+		getAttachmentAutocompletion: function() {
+			var meta = this.get("meta");
+			var out = {};
+			if (meta
+					&& meta.attachments) {
+
+				out = meta.attachments.autocompletion || {};
+			}
+
+			return out;
+		},
+
+		getAttachmentCopletionRuleByGropAndMetadataName: function(groupName, metaDataName) {
+			var rulesByGroup = this.getAttachmentAutocompletion();
+			var groupRules = rulesByGroup[groupName];
+			var rule = null;
+
+			if (groupRules) {
+				rule = groupRules[metaDataName] || null;
+			}
+
+			return rule;
 		}
 	});
-	
+
 	Ext.define("CMDBuild.cache.CMDomainModel", {
 		extend: 'Ext.data.Model',
 		fields: [

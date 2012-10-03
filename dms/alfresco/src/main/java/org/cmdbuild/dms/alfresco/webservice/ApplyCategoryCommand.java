@@ -56,9 +56,4 @@ class ApplyCategoryCommand extends AbstractSearchCommand<Boolean> {
 		return getResult();
 	}
 
-	@Override
-	public boolean hasResult() {
-		return true;
-	}
-
 }

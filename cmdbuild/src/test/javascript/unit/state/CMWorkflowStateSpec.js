@@ -62,7 +62,7 @@
 			spyOn(a, 'onProcessClassRefChange');
 
 			state.addDelegate(a);
-			state.setProcessClassRef(processClassRef,danglingCard);
+			state.setProcessClassRef(processClassRef, danglingCard);
 
 			expect(state.getProcessClassRef()).toBe(processClassRef);
 			expect(a.onProcessClassRefChange).toHaveBeenCalledWith(processClassRef,danglingCard);

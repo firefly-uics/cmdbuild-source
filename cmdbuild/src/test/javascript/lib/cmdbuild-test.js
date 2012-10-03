@@ -222,7 +222,11 @@
 //			'CMChartPieTypeStrategy',
 //			'CMChartGaugeTypeStrategy',
 //			'CMDashboardModel',
-//			'CMWorkflowState'
+//			'CMWorkflowState',
+//			'CMAttachmentCategoryModel',
+//			'CMMetadataGroup',
+//			'CMCacheAttachmentCategoryFunction',
+//			'CMEntryTypeModel'
 		];
 
 		if (Ext.Array.contains(focusSpecs, description)) {

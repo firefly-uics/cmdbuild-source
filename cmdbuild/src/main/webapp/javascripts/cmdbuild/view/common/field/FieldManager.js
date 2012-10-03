@@ -12,8 +12,9 @@
 		FOREIGNKEY: new CMDBuild.WidgetBuilders.ForeignKeyAttribute(),
 		STRING: new CMDBuild.WidgetBuilders.StringAttribute(),
 		TEXT: new CMDBuild.WidgetBuilders.TextAttribute(),
-		CHAR: new CMDBuild.WidgetBuilders.CharAttribute(),			
-		INET: new CMDBuild.WidgetBuilders.IPAddressAttribute()
+		CHAR: new CMDBuild.WidgetBuilders.CharAttribute(),
+		INET: new CMDBuild.WidgetBuilders.IPAddressAttribute(),
+		LIST: new CMDBuild.WidgetBuilders.CustomListAttribute()
 	};
 
 	function attributeTypeIsNotHandled(attribute) {

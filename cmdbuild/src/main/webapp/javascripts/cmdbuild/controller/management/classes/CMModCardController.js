@@ -281,7 +281,7 @@
 
 		if (view == null) {return;}
 
-		me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view);
+		me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view, me);
 		me.subControllers.push(me.attachmentsController);
 	}
 
