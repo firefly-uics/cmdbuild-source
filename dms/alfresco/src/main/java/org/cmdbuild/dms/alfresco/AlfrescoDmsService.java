@@ -1,8 +1,11 @@
 package org.cmdbuild.dms.alfresco;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -21,10 +24,28 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.alfresco.ftp.AlfrescoFtpService;
 import org.cmdbuild.dms.alfresco.utils.XmlAutocompletionReader;
 import org.cmdbuild.dms.alfresco.webservice.AlfrescoWsService;
-import org.cmdbuild.dms.exception.DmsException;
-import org.cmdbuild.dms.exception.WebserviceException;
+import org.cmdbuild.dms.exception.DmsError;
 
 public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport {
+
+	private static final AutocompletionRules NULL_AUTOCOMPLETION_RULES = new AutocompletionRules() {
+
+		@Override
+		public Iterable<String> getMetadataGroupNames() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public Iterable<String> getMetadataNamesForGroup(final String groupName) {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public Map<String, String> getRulesForGroupAndMetadata(final String groupName, final String metadataName) {
+			return Collections.emptyMap();
+		}
+
+	};
 
 	private AlfrescoFtpService ftpService;
 	private AlfrescoWsService wsService;
@@ -39,32 +60,32 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 	}
 
 	@Override
-	public Iterable<DocumentTypeDefinition> getTypeDefinitions() {
+	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
 		return wsService.getDocumentTypeDefinitions();
 	}
 
 	@Override
-	public void delete(final DocumentDelete document) throws DmsException {
+	public void delete(final DocumentDelete document) throws DmsError {
 		ftpService.delete(document);
 	}
 
 	@Override
-	public DataHandler download(final DocumentDownload document) throws DmsException {
+	public DataHandler download(final DocumentDownload document) throws DmsError {
 		return ftpService.download(document);
 	}
 
 	@Override
-	public List<StoredDocument> search(final DocumentSearch document) {
+	public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
 		return wsService.search(document);
 	}
 
 	@Override
-	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsException {
+	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsError {
 		wsService.updateDescription(document);
 	}
 
 	@Override
-	public void upload(final StorableDocument document) throws DmsException {
+	public void upload(final StorableDocument document) throws DmsError {
 		ftpService.upload(document);
 		waitForSomeTimeBetweenFtpAndWebserviceOperations();
 		try {
@@ -75,7 +96,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 					document.getFileName(), document.getPath());
 			logger.error(message, e);
 			ftpService.delete(documentDeleteFrom(document));
-			throw new WebserviceException(e);
+			throw DmsError.forward(e);
 		}
 	}
 
@@ -118,10 +139,20 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 	}
 
 	@Override
-	public AutocompletionRules getAutoCompletionRules() {
-		final String content = getConfiguration().getMetadataAutocompletionFileContent();
-		final MetadataAutocompletion.Reader reader = new XmlAutocompletionReader(content);
-		return reader.read();
+	public AutocompletionRules getAutoCompletionRules() throws DmsError {
+		try {
+			final String content = getConfiguration().getMetadataAutocompletionFileContent();
+			final AutocompletionRules autocompletionRules;
+			if (isNotBlank(content)) {
+				final MetadataAutocompletion.Reader reader = new XmlAutocompletionReader(content);
+				autocompletionRules = reader.read();
+			} else {
+				autocompletionRules = NULL_AUTOCOMPLETION_RULES;
+			}
+			return autocompletionRules;
+		} catch (final Exception e) {
+			throw DmsError.forward(e);
+		}
 	}
 
 	@Override

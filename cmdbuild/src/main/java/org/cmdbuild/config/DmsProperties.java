@@ -9,7 +9,6 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.Settings;
 
@@ -189,7 +188,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 
 	@Override
 	public String getAlfrescoCustomModelFileContent() {
-		return getContent(getAlfrescoCustomModelFileName());
+		return contentOf(getAlfrescoCustomModelFileName());
 	}
 
 	@Override
@@ -199,10 +198,10 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 
 	@Override
 	public String getMetadataAutocompletionFileContent() {
-		return getContent(getMetadataAutocompletionFileName());
+		return contentOf(getMetadataAutocompletionFileName());
 	}
 
-	private String getContent(final String filename) {
+	private String contentOf(final String filename) {
 		final File configurationPath = getPath();
 		final File file = new File(configurationPath, filename);
 		if (file.exists()) {

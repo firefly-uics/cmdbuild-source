@@ -28,25 +28,6 @@ import com.google.common.collect.Maps;
 
 public class XmlAutocompletionReader implements Reader, LoggingSupport {
 
-	private static final AutocompletionRules NULL_AUTOCOMPLETION_RULES = new AutocompletionRules() {
-
-		@Override
-		public Iterable<String> getMetadataGroupNames() {
-			return Collections.emptyList();
-		}
-
-		@Override
-		public Iterable<String> getMetadataNamesForGroup(final String groupName) {
-			return Collections.emptyList();
-		}
-
-		@Override
-		public Map<String, String> getRulesForGroupAndMetadata(final String groupName, final String metadataName) {
-			return Collections.emptyMap();
-		}
-
-	};
-
 	private final String content;
 
 	public XmlAutocompletionReader(final String content) {
@@ -57,16 +38,12 @@ public class XmlAutocompletionReader implements Reader, LoggingSupport {
 	public AutocompletionRules read() {
 		try {
 			logger.warn("parsing autocompletion rules");
-			return unsafeParse();
+			final Autocompletion data = parseAutocompletion();
+			return toAutocompletionRules(data);
 		} catch (final Exception e) {
-			logger.warn("error parsing content, retuning null-object", e);
-			return NULL_AUTOCOMPLETION_RULES;
+			logger.warn("error parsing content", e);
+			throw new RuntimeException(e);
 		}
-	}
-
-	private AutocompletionRules unsafeParse() throws JAXBException {
-		final Autocompletion data = parseAutocompletion();
-		return toAutocompletionRules(data);
 	}
 
 	private Autocompletion parseAutocompletion() throws JAXBException {

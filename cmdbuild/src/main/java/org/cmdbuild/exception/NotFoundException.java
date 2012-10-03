@@ -14,7 +14,6 @@ public class NotFoundException extends CMDBException {
 		CARD_NOTFOUND,            // class desc
 		LOOKUP_NOTFOUND,          // lookup name
 		MENU_NOTFOUND,
-		ATTACHMENT_NOTFOUND,      // class name, card id, attachment name
 		PRIVILEGE_NOTFOUND,       // group id, class id
 		PRIVILEGE_GROUP_NOTFOUND, // group id
 		PARAMETER_CLASS_UNAVAILABLE,

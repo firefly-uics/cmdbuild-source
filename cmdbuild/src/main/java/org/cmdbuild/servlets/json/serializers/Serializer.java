@@ -31,9 +31,9 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.IRelation.RelationAttributes;
-import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
+import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.elements.utils.CountedValue;
 import org.cmdbuild.elements.wrappers.GroupCard;
@@ -44,7 +44,9 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.elements.wrappers.UserCard;
+import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.Group;
@@ -944,7 +946,7 @@ public class Serializer {
 		if (!DmsProperties.getInstance().isEnabled()) {
 			return;
 		}
-		final Map<String, Map<String, String>> rulesByGroup = dmsLogic.getAutoCompletionRulesByClass(table.getName());
+		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(table, dmsLogic);
 
 		final JSONObject jsonGroups = new JSONObject();
 		for (final String groupName : rulesByGroup.keySet()) {
@@ -956,6 +958,15 @@ public class Serializer {
 
 		final JSONObject jsonMeta = (JSONObject) jsonTable.get("meta");
 		jsonMeta.put("attachments", jsonAutocompletion);
+	}
+
+	private static Map<String, Map<String, String>> rulesByGroup(ITable table, DmsLogic dmsLogic) {
+		try {
+			return dmsLogic.getAutoCompletionRulesByClass(table.getName());
+		} catch (final DmsException e) {
+			RequestListener.getCurrentRequest().pushWarning(e);
+			return Collections.emptyMap();
+		}
 	}
 	
 }

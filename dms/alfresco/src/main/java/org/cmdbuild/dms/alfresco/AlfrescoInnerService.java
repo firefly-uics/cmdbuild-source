@@ -14,7 +14,7 @@ import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.dms.exception.DmsException;
+import org.cmdbuild.dms.exception.DmsError;
 
 public abstract class AlfrescoInnerService implements LoggingSupport {
 
@@ -25,35 +25,35 @@ public abstract class AlfrescoInnerService implements LoggingSupport {
 		this.configuration = configuration;
 	}
 
-	public void delete(final DocumentDelete document) throws DmsException {
+	public void delete(final DocumentDelete document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public DataHandler download(final DocumentDownload document) throws DmsException {
+	public DataHandler download(final DocumentDownload document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public List<StoredDocument> search(final DocumentSearch document) {
+	public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public void updateDescription(final DocumentUpdate document) throws DmsException {
+	public void updateDescription(final DocumentUpdate document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public void upload(final StorableDocument document) throws DmsException {
+	public void upload(final StorableDocument document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public void updateProperties(final StorableDocument document) throws DmsException {
+	public void updateProperties(final StorableDocument document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public void updateCategory(final StorableDocument document) throws DmsException {
+	public void updateCategory(final StorableDocument document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterable<DocumentTypeDefinition> getDocumentTypeDefinitions() {
+	public Iterable<DocumentTypeDefinition> getDocumentTypeDefinitions() throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 

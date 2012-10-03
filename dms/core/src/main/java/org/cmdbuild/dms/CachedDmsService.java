@@ -2,6 +2,7 @@ package org.cmdbuild.dms;
 
 import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
+import org.cmdbuild.dms.exception.DmsError;
 
 public class CachedDmsService extends ForwardingDmsService implements LoggingSupport {
 
@@ -16,7 +17,7 @@ public class CachedDmsService extends ForwardingDmsService implements LoggingSup
 	}
 
 	@Override
-	public Iterable<DocumentTypeDefinition> getTypeDefinitions() {
+	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
 		synchronized (this) {
 			if (cachedDocumentTypeDefinitions == null) {
 				logger.info("intializing cache for document type definitions");
@@ -27,7 +28,7 @@ public class CachedDmsService extends ForwardingDmsService implements LoggingSup
 	}
 
 	@Override
-	public AutocompletionRules getAutoCompletionRules() {
+	public AutocompletionRules getAutoCompletionRules() throws DmsError {
 		synchronized (this) {
 			if (cachedAutocompletionRules == null) {
 				logger.info("intializing cache for autocompletion rules");

@@ -11,6 +11,8 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.dms.DefaultDefinitionsFactory;
+import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataDefinition;
@@ -20,6 +22,8 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.DmsException;
+import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
@@ -28,6 +32,8 @@ import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +46,12 @@ public class Attachments extends JSONBase {
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
+	private final DefinitionsFactory definitionsFactory;
+
+	public Attachments() {
+		definitionsFactory = new DefaultDefinitionsFactory();
+	}
+
 	@JSONExported
 	public JsonResponse getAttachmentsContext(final UserContext userCtx) {
 		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
@@ -48,36 +60,10 @@ public class Attachments extends JSONBase {
 		final List<Lookup> lookups = lookupOperation.getLookupList(categoryLookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
 		for (final Lookup lookup : activeOnly(lookups)) {
-			final DocumentTypeDefinition categoryDefinition = dmsLogic.getCategoryDefinition(lookup.getDescription());
+			final DocumentTypeDefinition categoryDefinition = categoryDefinition(dmsLogic, lookup.getDescription());
 			jsonCategories.add(JsonCategoryDefinition.from(lookup, categoryDefinition));
 		}
 		return JsonResponse.success(JsonAttachmentsContext.from(jsonCategories));
-	}
-
-	private final Collection<Lookup> activeOnly(final List<Lookup> lookups) {
-		return filter(lookups, activeLookups());
-	}
-
-	private Predicate<? super Lookup> activeLookups() {
-		return new Predicate<Lookup>() {
-
-			@Override
-			public boolean apply(final Lookup input) {
-				return input.getStatus().isActive();
-			}
-
-		};
-	}
-
-	private DmsLogic dmsLogicFor(final UserContext userCtx) {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		return dmsLogic;
-	}
-
-	private LookupOperation lookupOperationFor(final UserContext userCtx) {
-		final LookupOperation lookupOperation = new LookupOperation(userCtx);
-		return lookupOperation;
 	}
 
 	/*
@@ -89,8 +75,7 @@ public class Attachments extends JSONBase {
 			final JSONObject serializer, //
 			final UserContext userCtx, //
 			final ICard card) throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
+		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
 		final List<StoredDocument> attachments = dmsLogic.search(card.getSchema().getName(), card.getId());
 		final JSONArray rows = new JSONArray();
 		for (final StoredDocument attachment : attachments) {
@@ -105,8 +90,7 @@ public class Attachments extends JSONBase {
 			final UserContext userCtx, //
 			@Parameter("Filename") final String filename, //
 			final ICard card) throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
+		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
 		return dmsLogic.download(card.getSchema().getName(), card.getId(), filename);
 	}
 
@@ -118,14 +102,8 @@ public class Attachments extends JSONBase {
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
-
-		/*
-		 * At the first level there are the metadataGroups For each
-		 * metadataGroups, there is another map with the values for the group
-		 */
-		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
+		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
+		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
 		dmsLogic.upload( //
 				userCtx.getUsername(), //
 				card.getSchema().getName(), //
@@ -134,7 +112,7 @@ public class Attachments extends JSONBase {
 				removeFilePath(file.getName()), //
 				category, //
 				description, //
-				metadataGroupsFrom(dmsLogic.getCategoryDefinition(category), metadataValues));
+				metadataGroupsFrom(categoryDefinition(dmsLogic, category), metadataValues));
 	}
 
 	/**
@@ -156,30 +134,24 @@ public class Attachments extends JSONBase {
 			@Parameter("Description") final String description, //
 			@Parameter("Metadata") final String jsonMetadataValues, //
 			final ICard card) throws JSONException, CMDBException, IOException {
-
-		/*
-		 * At the first level there are the metadataGroups For each
-		 * metadataGroups, there is another map whith the values for the group
-		 */
-		final Map<String, Object> metadataValues = mapper.readValue(jsonMetadataValues, Map.class);
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
+		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
+		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
 		dmsLogic.updateDescriptionAndMetadata( //
 				card.getSchema().getName(), //
 				card.getId(), //
 				filename, //
 				description, //
-				metadataGroupsFrom(dmsLogic.getCategoryDefinition(category), metadataValues));
+				metadataGroupsFrom(categoryDefinition(dmsLogic, category), metadataValues));
 		return serializer;
 	}
 
 	private List<MetadataGroup> metadataGroupsFrom(final DocumentTypeDefinition documentTypeDefinition,
-			final Map<String, Object> metadataValues) {
+			final Map<String, Map<String, Object>> metadataValues) {
 		final List<MetadataGroup> metadataGroups = Lists.newArrayList();
 		for (final MetadataGroupDefinition metadataGroupDefinition : documentTypeDefinition
 				.getMetadataGroupDefinitions()) {
 			final String groupMame = metadataGroupDefinition.getName();
-			final Map<String, Object> allMetadataMap = (Map<String, Object>) metadataValues.get(groupMame);
+			final Map<String, Object> allMetadataMap = metadataValues.get(groupMame);
 			if (allMetadataMap == null) {
 				continue;
 			}
@@ -225,10 +197,58 @@ public class Attachments extends JSONBase {
 			final UserContext userCtx, //
 			@Parameter("Filename") final String filename, //
 			final ICard card) throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
+		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
 		dmsLogic.delete(card.getSchema().getName(), card.getId(), filename);
 		return serializer;
+	}
+
+	/*
+	 * Utilities
+	 */
+
+	private DmsLogic dmsLogicFor(final UserContext userCtx) {
+		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		dmsLogic.setUserContext(userCtx);
+		return dmsLogic;
+	}
+
+	private LookupOperation lookupOperationFor(final UserContext userCtx) {
+		final LookupOperation lookupOperation = new LookupOperation(userCtx);
+		return lookupOperation;
+	}
+
+	private final Collection<Lookup> activeOnly(final List<Lookup> lookups) {
+		return filter(lookups, activeLookups());
+	}
+
+	private Predicate<? super Lookup> activeLookups() {
+		return new Predicate<Lookup>() {
+
+			@Override
+			public boolean apply(final Lookup input) {
+				return input.getStatus().isActive();
+			}
+
+		};
+	}
+
+	/**
+	 * At the first level there are the metadataGroups For each metadataGroups,
+	 * there is another map with the values for the group
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Map<String, Object>> metadataValuesFromJson(final String jsonMetadataValues)
+			throws IOException, JsonParseException, JsonMappingException {
+		return mapper.readValue(jsonMetadataValues, Map.class);
+	}
+
+	private DocumentTypeDefinition categoryDefinition(final DmsLogic dmsLogic, final String category) {
+		try {
+			return dmsLogic.getCategoryDefinition(category);
+		} catch (final DmsException e) {
+			RequestListener.getCurrentRequest().pushWarning(e);
+			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
+		}
 	}
 
 }

@@ -15,7 +15,7 @@ import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.SingleDocumentSearch;
-import org.cmdbuild.dms.exception.FileNotFoundException;
+import org.cmdbuild.dms.exception.DmsError;
 
 class AlfrescoWebserviceClient implements LoggingSupport {
 
@@ -74,7 +74,7 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		return command.getResult();
 	}
 
-	public ResultSetRow search(final SingleDocumentSearch search) throws FileNotFoundException {
+	public ResultSetRow search(final SingleDocumentSearch search) throws DmsError {
 		final SingleSearchCommand command = new SingleSearchCommand();
 		command.setDocumentSearch(search);
 		command.setBaseSearchPath(baseSearchPath(configuration));
@@ -82,7 +82,7 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		if (command.isSuccessfull()) {
 			return command.getResult();
 		}
-		throw FileNotFoundException.newInstance(search.getFileName(), search.getClassName(), search.getCardId());
+		throw DmsError.fileNotFound(search.getFileName(), search.getClassName(), search.getCardId());
 	}
 
 	public ResultSetRow searchRow(final String uuid) {
@@ -92,7 +92,7 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		return command.getResult();
 	}
 
-	public String searchUuid(final SingleDocumentSearch search) throws FileNotFoundException {
+	public String searchUuid(final SingleDocumentSearch search) throws DmsError {
 		final ResultSetRow resultSetRow = search(search);
 		return resultSetRow.getNode().getId();
 	}
@@ -130,13 +130,16 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		return command.getResult();
 	}
 
-	public Iterable<DocumentTypeDefinition> getDocumentTypeDefinitions() {
+	public Iterable<DocumentTypeDefinition> getDocumentTypeDefinitions() throws DmsError {
 		final GetDocumentTypeDefinitionsCommand command = new GetDocumentTypeDefinitionsCommand();
 		command.setUri(configuration.getAlfrescoCustomUri());
 		command.setPrefix(configuration.getAlfrescoCustomPrefix());
 		command.setCustomModelContent(configuration.getAlfrescoCustomModelFileContent());
 		executeWhithinSession(command);
-		return command.getResult().values();
+		if (command.isSuccessfull()) {
+			return command.getResult().values();
+		}
+		throw DmsError.wsOperationError("error reading document type definitions");
 	}
 
 }

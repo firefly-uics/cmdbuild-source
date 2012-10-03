@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.dms.exception.DmsException;
+import org.cmdbuild.dms.exception.DmsError;
 import org.junit.Test;
 
 public class BasicOperationsTest extends AbstractAlfrescoTest {
@@ -41,7 +41,7 @@ public class BasicOperationsTest extends AbstractAlfrescoTest {
 		assertTrue(storedDocuments().isEmpty());
 	}
 
-	@Test(expected = DmsException.class)
+	@Test(expected = DmsError.class)
 	public void deleteMissingFileThrowsExeption() throws Exception {
 		delete(tempFile().getName());
 	}
