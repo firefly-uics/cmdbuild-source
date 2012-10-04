@@ -37,7 +37,7 @@
 
 			this.openAttachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.common.widgets.CMOpenAttachment({
 				title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
-				border: false,
+				border: false
 			}) : null;
 
 			this.acutalPanel = new Ext.tab.Panel({
