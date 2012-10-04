@@ -1,4 +1,4 @@
-Ext.define("CMDBuild.Management.MapPanel", {
+Ext.define("CMDBuild.view.management.map.CMMapPanel", {
 	extend: "Ext.panel.Panel",
 
 	lon: undefined,
@@ -27,6 +27,10 @@ Ext.define("CMDBuild.Management.MapPanel", {
 
 		this.getMap = function() {
 			return map;
+		};
+
+		this.updateSize = function() {
+			map.updateSize();
 		};
 
 		this.editingWindow = new CMDBuild.Management.MapEditingWindow({
