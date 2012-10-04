@@ -25,37 +25,36 @@ import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 /**
  * 
  * 
- * Missing DAO types: Lookup, Reference, ForeignKey
- * Missing SQL types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
- * Not used: regclass, bytea, _int4, _varchar
+ * Missing DAO types: Lookup, Reference, ForeignKey Missing SQL types: POINT,
+ * LINESTRING, POLYGON (use sqlToJavaValue) Not used: regclass, bytea, _int4,
+ * _varchar
  */
 public enum SqlType {
 
-	bool(BooleanAttributeType.class),
-	bpchar(CharAttributeType.class),
-	date(DateAttributeType.class) {
+	bool(BooleanAttributeType.class), bpchar(CharAttributeType.class), date(DateAttributeType.class) {
 		@Override
-		public Object javaToSqlValue(Object value) {
+		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
 		}
+
 		@Override
-		public Object sqlToJavaValue(Object value) {
+		public Object sqlToJavaValue(final Object value) {
 			return dateSqlToJavaValue(value);
 		}
 	},
-	float8(DoubleAttributeType.class),
-	inet(IPAddressAttributeType.class),
-	int4(IntegerAttributeType.class, LookupAttributeType.class) {
+	float8(DoubleAttributeType.class), inet(IPAddressAttributeType.class), int4(IntegerAttributeType.class,
+			LookupAttributeType.class) {
 		@Override
-		protected Class<? extends CMAttributeType<?>> getJavaType(CMAttributeType.Meta meta) {
+		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
 			if (meta.isLookup()) {
 				return LookupAttributeType.class;
 			} else {
 				return IntegerAttributeType.class;
 			}
 		}
+
 		@Override
-		protected Object[] getConstructorParams(String[] stringParams, CMAttributeType.Meta meta) {
+		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (meta.isLookup()) {
 				final Object[] params = new Object[1];
 				params[0] = meta.getLookupType();
@@ -67,13 +66,14 @@ public enum SqlType {
 	},
 	numeric(DecimalAttributeType.class) { // precision and scale
 		@Override
-		protected Object[] getConstructorParams(String[] stringParams, CMAttributeType.Meta meta) {
+		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (stringParams.length == 2) {
 				return new Object[] { Integer.valueOf(stringParams[0]), Integer.valueOf(stringParams[1]) };
 			} else {
 				return super.getConstructorParams(stringParams, meta);
 			}
 		}
+
 		@Override
 		protected Object[] getSqlParams(final CMAttributeType<?> type) {
 			final DecimalAttributeType decimalType = (DecimalAttributeType) type;
@@ -84,37 +84,38 @@ public enum SqlType {
 			}
 		}
 	},
-	text(TextAttributeType.class),
-	time(TimeAttributeType.class) {
+	text(TextAttributeType.class), time(TimeAttributeType.class) {
 		@Override
-		public Object javaToSqlValue(Object value) {
+		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
 		}
+
 		@Override
-		public Object sqlToJavaValue(Object value) {
+		public Object sqlToJavaValue(final Object value) {
 			return dateSqlToJavaValue(value);
 		}
 	},
 	timestamp(DateTimeAttributeType.class) {
 		@Override
-		public Object javaToSqlValue(Object value) {
+		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
 		}
+
 		@Override
-		public Object sqlToJavaValue(Object value) {
+		public Object sqlToJavaValue(final Object value) {
 			return dateSqlToJavaValue(value);
 		}
 	},
-	unknown(UndefinedAttributeType.class),
-	varchar(StringAttributeType.class) { // length
+	unknown(UndefinedAttributeType.class), varchar(StringAttributeType.class) { // length
 		@Override
-		protected Object[] getConstructorParams(String[] stringParams, CMAttributeType.Meta meta) {
+		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (stringParams.length == 1) {
 				return new Object[] { Integer.valueOf(stringParams[0]) };
 			} else {
 				return super.getConstructorParams(stringParams, meta);
 			}
 		}
+
 		@Override
 		protected Object[] getSqlParams(final CMAttributeType<?> type) {
 			final StringAttributeType stringType = (StringAttributeType) type;
@@ -131,6 +132,7 @@ public enum SqlType {
 		public boolean isLookup() {
 			return false;
 		}
+
 		@Override
 		public String getLookupType() {
 			return null;
@@ -140,8 +142,8 @@ public enum SqlType {
 	/**
 	 * DAO attribute types for this SQL type.
 	 * 
-	 * It should have been Class<? extends CMAttributeType<?>> but Java
-	 * forbids array of generic types. 
+	 * It should have been Class<? extends CMAttributeType<?>> but Java forbids
+	 * array of generic types.
 	 * 
 	 * TODO Lookup, Reference, etc. need a different handling
 	 */
@@ -152,32 +154,34 @@ public enum SqlType {
 		this.javaTypes = javaTypes;
 	}
 
-	public Object javaToSqlValue(Object value) {
+	public Object javaToSqlValue(final Object value) {
 		return value;
 	}
 
-	public Object sqlToJavaValue(Object value) {
+	public Object sqlToJavaValue(final Object value) {
 		return value;
 	}
 
-	final CMAttributeType<?> createAttributeType(String[] stringParams, CMAttributeType.Meta meta) throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	final CMAttributeType<?> createAttributeType(final String[] stringParams, final CMAttributeType.Meta meta)
+			throws IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
 		final Object[] constructorParams = getConstructorParams(stringParams, meta);
 		final Class<?>[] paramTypes = getParamTypes(constructorParams);
 		return getJavaType(meta).getConstructor(paramTypes).newInstance(constructorParams);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Class<? extends CMAttributeType<?>> getJavaType(CMAttributeType.Meta meta) {
+	protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
 		return (Class<? extends CMAttributeType<?>>) javaTypes[0];
 	}
-	
-	protected Object[] getConstructorParams(String[] stringParams, CMAttributeType.Meta meta) {
+
+	protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 		return new Object[0];
 	}
 
-	private final Class<?>[] getParamTypes(Object[] constructorParams) {
+	private final Class<?>[] getParamTypes(final Object[] constructorParams) {
 		final Class<?>[] paramTypes = new Class<?>[constructorParams.length];
-		for (int i=0; i<constructorParams.length; ++i) {
+		for (int i = 0; i < constructorParams.length; ++i) {
 			paramTypes[i] = constructorParams[i].getClass();
 		}
 		return paramTypes;
@@ -187,12 +191,11 @@ public enum SqlType {
 		return null;
 	}
 
-
 	private static final Pattern TYPE_PATTERN = Pattern.compile("(\\w+)(\\((\\d+(,\\d+)*)\\))?");
 
 	/**
-	 * Create attribute type from SQL string and no metadata. It is used
-	 * when there are no metadata, like in funcion calls.
+	 * Create attribute type from SQL string and no metadata. It is used when
+	 * there are no metadata, like in funcion calls.
 	 * 
 	 * @param sqlTypeString
 	 * @return
@@ -202,8 +205,8 @@ public enum SqlType {
 	}
 
 	/**
-	 * Create attribute type from SQL string and metadata. It is used for
-	 * class and domain attributes, that have comments to define metadata (sigh).
+	 * Create attribute type from SQL string and metadata. It is used for class
+	 * and domain attributes, that have comments to define metadata (sigh).
 	 * 
 	 * @param sqlTypeString
 	 * @param meta
@@ -218,7 +221,7 @@ public enum SqlType {
 			final SqlType type = SqlType.valueOf(typeMatcher.group(1));
 			final String[] params = splitParams(typeMatcher.group(3));
 			return type.createAttributeType(params, meta);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			return new UndefinedAttributeType();
 		}
 	}
@@ -236,8 +239,8 @@ public enum SqlType {
 		return buildSqlTypeString(sqlType, sqlTypeParams);
 	}
 
-	private static String buildSqlTypeString(SqlType sqlType, Object[] sqlTypeParams) {
-		StringBuilder sb = new StringBuilder(sqlType.name());
+	private static String buildSqlTypeString(final SqlType sqlType, final Object[] sqlTypeParams) {
+		final StringBuilder sb = new StringBuilder(sqlType.name());
 		if (sqlTypeParams != null) {
 			sb.append("(").append(StringUtils.join(sqlTypeParams, ",")).append(")");
 		}
@@ -250,9 +253,9 @@ public enum SqlType {
 	 * @param type
 	 * @return
 	 */
-	public static SqlType getSqlType(CMAttributeType<?> type) {
+	public static SqlType getSqlType(final CMAttributeType<?> type) {
 		for (final SqlType t : SqlType.values()) {
-			for (Class<?> javaType : t.javaTypes) {
+			for (final Class<?> javaType : t.javaTypes) {
 				if (javaType == type.getClass()) {
 					return t;
 				}
