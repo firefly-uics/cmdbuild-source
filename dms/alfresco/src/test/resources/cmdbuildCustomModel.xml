@@ -199,6 +199,9 @@
 				<property name="cmdbuild:imageFormat">
 					<title>Format</title>
 					<type>d:text</type>
+					<constraints>
+						<constraint ref="cmdbuild:imageFormat"/>
+					</constraints>
 				</property>
 				<property name="cmdbuild:colored">
 					<title>Colored</title>

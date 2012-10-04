@@ -82,9 +82,11 @@ public class DmsLogic {
 	 */
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
 		try {
-			for (final DocumentTypeDefinition typeDefinition : getCategoryDefinitions()) {
-				if (typeDefinition.getName().equals(category)) {
-					return typeDefinition;
+			if (DmsProperties.getInstance().isEnabled()) {
+				for (final DocumentTypeDefinition typeDefinition : getCategoryDefinitions()) {
+					if (typeDefinition.getName().equals(category)) {
+						return typeDefinition;
+					}
 				}
 			}
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
@@ -117,15 +119,17 @@ public class DmsLogic {
 	public Map<String, Map<String, String>> getAutoCompletionRulesByClass(final String classname) throws DmsException {
 		try {
 			final Map<String, Map<String, String>> rulesByClassname = Maps.newHashMap();
-			final AutocompletionRules rules = service.getAutoCompletionRules();
-			for (final String groupName : rules.getMetadataGroupNames()) {
-				rulesByClassname.put(groupName, Maps.<String, String> newHashMap());
-				for (final String metadataName : rules.getMetadataNamesForGroup(groupName)) {
-					final Map<String, String> valuesByClassname = rules.getRulesForGroupAndMetadata(groupName,
-							metadataName);
-					for (final String _classname : valuesByClassname.keySet()) {
-						if (_classname.equals(classname)) {
-							rulesByClassname.get(groupName).put(metadataName, valuesByClassname.get(_classname));
+			if (DmsProperties.getInstance().isEnabled()) {
+				final AutocompletionRules rules = service.getAutoCompletionRules();
+				for (final String groupName : rules.getMetadataGroupNames()) {
+					rulesByClassname.put(groupName, Maps.<String, String> newHashMap());
+					for (final String metadataName : rules.getMetadataNamesForGroup(groupName)) {
+						final Map<String, String> valuesByClassname = rules.getRulesForGroupAndMetadata(groupName,
+								metadataName);
+						for (final String _classname : valuesByClassname.keySet()) {
+							if (_classname.equals(classname)) {
+								rulesByClassname.get(groupName).put(metadataName, valuesByClassname.get(_classname));
+							}
 						}
 					}
 				}
