@@ -3,7 +3,7 @@
 		extend: "CMDBuild.view.management.classes.CMCardRelationsPanel",
 
 		statics: {
-			WIDGET_NAME: ".ManageRelation",
+			WIDGET_NAME: ".ManageRelation"
 		},
 
 		// used by the controller to identify the
