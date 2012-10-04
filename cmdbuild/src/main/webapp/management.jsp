@@ -83,7 +83,7 @@
 			}
 		%>
 
-		<script type="text/javascript" src="javascripts/OpenLayers/OpenLayers.js"></script>
+		<script type="text/javascript" src="javascripts/OpenLayers-2.12/OpenLayers.js"></script>
 
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMap.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMSelectFeatureController.js"></script>
