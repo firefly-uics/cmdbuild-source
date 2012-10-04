@@ -52,6 +52,7 @@
 
 		it ('set the processClassRef', function() {
 			var a = new CMDBuild.state.CMWorkflowStateDelegate();
+			var danglingCard = null;
 			var processClassRef = {
 				name: "I'm the ref",
 				getId: function() { return 34;},
@@ -61,10 +62,10 @@
 			spyOn(a, 'onProcessClassRefChange');
 
 			state.addDelegate(a);
-			state.setProcessClassRef(processClassRef);
+			state.setProcessClassRef(processClassRef, danglingCard);
 
 			expect(state.getProcessClassRef()).toBe(processClassRef);
-			expect(a.onProcessClassRefChange).toHaveBeenCalledWith(processClassRef);
+			expect(a.onProcessClassRefChange).toHaveBeenCalledWith(processClassRef,danglingCard);
 
 			a.onProcessClassRefChange.reset();
 

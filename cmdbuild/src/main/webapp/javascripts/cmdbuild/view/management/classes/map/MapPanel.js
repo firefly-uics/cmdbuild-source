@@ -6,10 +6,8 @@ Ext.define("CMDBuild.Management.MapPanel", {
 	initialZoomLevel: undefined,
 
 	initComponent : function() {
-		Ext.apply(this, {
-			hideMode: "offsets"
-		});
-
+		this.hideMode = "offsets";
+		this.cmAlreadyDisplayed = false;
 		this.cmVisible = false;
 		this.callParent(arguments);
 	},
@@ -62,6 +60,12 @@ Ext.define("CMDBuild.Management.MapPanel", {
 	setCmVisible: function(visible) {
 		this.cmVisible = visible;
 		this.fireEvent("cmVisible", visible);
+		
+		if (!this.cmAlreadyDisplayed) {
+			var m = this.getMap();
+			m.setCenter(m.center, m.zoom);
+			this.cmAlreadyDisplayed = true;
+		}
 	},
 
 	editMode: function() {

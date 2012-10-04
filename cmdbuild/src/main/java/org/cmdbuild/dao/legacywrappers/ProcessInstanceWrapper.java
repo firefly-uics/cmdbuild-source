@@ -20,6 +20,8 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.ActivityPerformer;
+import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
+import org.cmdbuild.workflow.BshActivityPerformerExpressionEvaluator;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMProcessClass;
@@ -38,8 +40,6 @@ import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 import org.enhydra.shark.api.common.SharkConstants;
-
-import bsh.EvalError;
 
 public class ProcessInstanceWrapper extends CardWrapper implements UserProcessInstance, UserProcessInstanceDefinition {
 
@@ -133,7 +133,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		this.userCtx = userCtx;
 		this.processDefinitionManager = processDefinitionManager;
 		this.workflowService = TemporaryObjectsBeforeSpringDI.getWorkflowService();
-		this.workflowTypesConverter = TemporaryObjectsBeforeSpringDI.getWorkflowTypesConverter(); 
+		this.workflowTypesConverter = TemporaryObjectsBeforeSpringDI.getWorkflowTypesConverter();
 	}
 
 	@Override
@@ -279,12 +279,12 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 					addToBack(getActivityInstanceIds(), activityInfo.getActivityInstanceId()));
 			card.setValue(ProcessAttributes.ActivityDefinitionId.dbColumnName(),
 					addToBack(getActivityDefinitionIds(), activityInfo.getActivityDefinitionId()));
-	
+
 			card.setValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName(),
 					addToBack(getActivityInstancePerformers(), participantGroup));
 			card.setValue(ProcessAttributes.AllActivityPerformers.dbColumnName(),
 					addDistinct(getAllActivityPerformers(), participantGroup));
-	
+
 			updateCodeWithOneRandomActivityInfo();
 		}
 	}
@@ -313,30 +313,34 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		case ROLE:
 			return performer.getValue();
 		case EXPRESSION:
-			try {
-				return evaluatePerformerExpression(performer.getValue());
-			} catch (final Exception e) {
-				// LOG and ignore
+			final String expression = performer.getValue();
+			final Set<String> names = evaluatorFor(expression).getNames();
+			if (activityInfo.getParticipants().length == 0) {
+				/*
+				 * an arbitrary expression in a non-starting activity, so should
+				 * be a single name
+				 */
+				Validate.isTrue(names.size() == 1, "invalid expression");
+				return names.iterator().next();
+			} else {
+				final String maybeParticipantGroup = activityInfo.getParticipants()[0];
+				if (names.contains(maybeParticipantGroup)) {
+					return maybeParticipantGroup;
+				}
 			}
 		}
 		return UNRESOLVABLE_PARTICIPANT_GROUP;
 	}
 
-	/*
-	 * It can be extracted to a strategy, optimized, etc.
-	 */
-	private String evaluatePerformerExpression(final String expression) throws CMWorkflowException, EvalError {
-		final String procInstId = getProcessInstanceId();
-		final Map<String, Object> rawWorkflowVars = workflowService.getProcessInstanceVariables(procInstId);
-		final bsh.Interpreter interpreter = new bsh.Interpreter();
-		for (final Map.Entry<String, Object> entry : rawWorkflowVars.entrySet()) {
-			interpreter.set(entry.getKey(), entry.getValue());
-		}
-		return interpreter.eval(expression).toString();
-	}
-
 	private CMActivity findActivity(final String activityDefinitionId) throws CMWorkflowException {
 		return processDefinitionManager.getActivity(this, activityDefinitionId);
+	}
+
+	private ActivityPerformerExpressionEvaluator evaluatorFor(final String expression) throws CMWorkflowException {
+		final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(expression);
+		final Map<String, Object> rawWorkflowVars = workflowService.getProcessInstanceVariables(getProcessInstanceId());
+		evaluator.setVariables(rawWorkflowVars);
+		return evaluator;
 	}
 
 	private String[] addToBack(final String[] original, final String element) {

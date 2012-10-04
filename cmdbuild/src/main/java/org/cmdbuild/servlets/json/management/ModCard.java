@@ -1,36 +1,32 @@
 package org.cmdbuild.servlets.json.management;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
 
-import javax.activation.DataHandler;
-
-import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.entry.CMLookup;
-import org.cmdbuild.dms.documents.StoredDocument;
 import org.cmdbuild.elements.DirectedDomain;
-import org.cmdbuild.elements.Lookup;
-import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
+import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.elements.TableImpl.OrderEntry;
+import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.filters.AbstractFilter;
 import org.cmdbuild.elements.filters.AttributeFilter;
-import org.cmdbuild.elements.filters.CompositeFilter;
-import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
+import org.cmdbuild.elements.filters.FilterOperator;
 import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
+import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -39,19 +35,17 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.RelationFactory;
-import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
+import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DataAccessLogic;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
+import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
@@ -75,16 +69,13 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(
-			JSONObject serializer,
-			@Parameter("limit") int limit,
-			@Parameter("start") int offset,
+	public JSONObject getCardList(JSONObject serializer, @Parameter("limit") int limit, @Parameter("start") int offset,
 			@Parameter(value = "sort", required = false) JSONArray sorters,
 			@Parameter(value = "query", required = false) String fullTextQuery,
 			@Parameter(value = "writeonly", required = false) boolean writeonly,
-			// Don't clone it or getCardPosition does not work, unless sort and query are set somewhere else
-			CardQuery cardQuery,
-			UserContext userContext) throws JSONException, CMDBException {
+			// Don't clone it or getCardPosition does not work, unless sort and
+			// query are set somewhere else
+			CardQuery cardQuery, UserContext userContext) throws JSONException, CMDBException {
 
 		temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
 		JSONArray rows = new JSONArray();
@@ -144,8 +135,7 @@ public class ModCard extends JSONBase {
 		CardQuery masterQuery = tf.get(masterIdClass).cards().list().id(masterIdCard);
 
 		ITable destinationTable = directedDomain.getDestTable();
-		CardQuery detailQuery = destinationTable.cards().list()
-				.cardInRelation(invertedDomain, masterQuery);
+		CardQuery detailQuery = destinationTable.cards().list().cardInRelation(invertedDomain, masterQuery);
 
 		if (fullTextQuery != null) {
 			detailQuery.fullText(fullTextQuery.trim());
@@ -188,10 +178,7 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCard(
-			ICard card,
-			UserContext userCtx,
-			@Parameter("IdClass") int requestedIdClass,
+	public JSONObject getCard(ICard card, UserContext userCtx, @Parameter("IdClass") int requestedIdClass,
 			JSONObject serializer) throws JSONException {
 		card = fetchRealCardForSuperclasses(card, requestedIdClass);
 		serializer.put("card", Serializer.serializeCardWithPrivileges(card, false));
@@ -212,8 +199,8 @@ public class ModCard extends JSONBase {
 	}
 
 	/*
-	 * FIXME This is an awful piece of code, but is only temporarily
-	 * needed till it can be fixed by the new DAO in the next release 
+	 * FIXME This is an awful piece of code, but is only temporarily needed till
+	 * it can be fixed by the new DAO in the next release
 	 */
 	private void addReferenceAttributes(ICard card, UserContext userCtx, JSONObject serializer) throws JSONException {
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
@@ -249,11 +236,11 @@ public class ModCard extends JSONBase {
 					final String lookupDescription = CMBackend.INSTANCE.getLookup(lookupId).toString();
 
 					jsonRef.put(name, lookupId);
-					jsonRef.put(name+"_value", lookupDescription);
+					jsonRef.put(name + "_value", lookupDescription);
 				} else {
 					if (value instanceof DateTime) {
 						value = new Date(((DateTime) value).getMillis());
-					} 
+					}
 					final String stringValue = domain.getAttribute(name).valueToString(value);
 					jsonRef.put(name, stringValue);
 				}
@@ -445,11 +432,9 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public JSONObject getCardPosition(
-			@Parameter(value="retryWithoutFilter", required=false) boolean retryWithoutFilter,
-			JSONObject serializer,
-			ICard card,
-			final CardQuery currentCardQuery,
-			UserContext userCtx) throws JSONException {
+			@Parameter(value = "retryWithoutFilter", required = false) boolean retryWithoutFilter,
+			JSONObject serializer, ICard card, final CardQuery currentCardQuery, UserContext userCtx)
+			throws JSONException {
 		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
 
 		final Lookup flowStatusLookup;
@@ -466,7 +451,8 @@ public class ModCard extends JSONBase {
 			// Not found in the current filter. Try without it.
 			cardQuery.reset();
 			if (flowStatusLookup != null) {
-				cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, flowStatusLookup.getId());
+				cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS,
+						flowStatusLookup.getId());
 			}
 			position = queryPosition(card, cardQuery);
 			serializer.put("notFoundInFilter", true);
@@ -528,11 +514,8 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject updateCard(
-			ICard card,
-			Map<String, String> attributes,
-			UserContext userCtx,
-			JSONObject serializer) throws JSONException {
+	public JSONObject updateCard(ICard card, Map<String, String> attributes, UserContext userCtx, JSONObject serializer)
+			throws JSONException {
 		setCardAttributes(card, attributes, false);
 		boolean created = card.isNew();
 		card.save();
@@ -564,9 +547,8 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "selections", required = false) String[] cardsToUpdate,
 			@Parameter(value = "fullTextQuery", required = false) String fullTextQuery,
 			@Parameter("isInverted") boolean isInverted,
-			@Parameter(value="confirmed", required=false) boolean updateConfirmed,
-			CardQuery cardQuery, ITableFactory tf) throws JSONException,
-			CMDBException {
+			@Parameter(value = "confirmed", required = false) boolean updateConfirmed, CardQuery cardQuery,
+			ITableFactory tf) throws JSONException, CMDBException {
 		final JSONObject out = new JSONObject();
 
 		cardQuery = (CardQuery) cardQuery.clone();
@@ -586,7 +568,10 @@ public class ModCard extends JSONBase {
 		cardQuery.clearOrder().subset(0, 0);
 
 		if (updateConfirmed) {
-			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged card as a template
+			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged
+																		// card
+																		// as a
+																		// template
 			setCardAttributes(card, attributes, true);
 			cardQuery.update(card);
 		} else {
@@ -599,8 +584,10 @@ public class ModCard extends JSONBase {
 
 	private List<ICard> buildCardListToBulkUpdate(String[] cardsToUpdate, ITableFactory tf) {
 		List<ICard> cardsList = new LinkedList<ICard>();
-		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first element is an empty string
-										// the array is empty
+		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first
+																// element is an
+																// empty string
+			// the array is empty
 			for (String cardIdAndClass : cardsToUpdate) {
 				ICard cardToUpdate = stringToCard(tf, cardIdAndClass);
 				cardsList.add(cardToUpdate);
@@ -625,7 +612,8 @@ public class ModCard extends JSONBase {
 		}
 	}
 
-	public static void fillReferenceAttributes(ICard card, Map<String, String> attributes, RelationFactory relationFactory) {
+	public static void fillReferenceAttributes(ICard card, Map<String, String> attributes,
+			RelationFactory relationFactory) {
 		for (IAttribute attribute : card.getSchema().getAttributes().values()) {
 			final DirectedDomain dd = attribute.getReferenceDirectedDomain();
 			if (dd == null || !attribute.isDisplayable()) {
@@ -646,7 +634,7 @@ public class ModCard extends JSONBase {
 				referenceRelation = relationFactory.get(dd.getDomain(), refDstCard, card);
 			}
 			if (fillSingleReferenceAttributes(referenceName, referenceRelation, attributes)) {
-				referenceRelation.save();				
+				referenceRelation.save();
 			}
 		}
 	}
@@ -684,11 +672,8 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCardHistory(
-			ICard card,
-			ITableFactory tf,
-			RelationFactory rf,
-			UserContext userCtx) throws JSONException, CMDBException {
+	public JSONObject getCardHistory(ICard card, ITableFactory tf, RelationFactory rf, UserContext userCtx)
+			throws JSONException, CMDBException {
 		if (card.getSchema().isActivity()) {
 			return getProcessHistory(new JSONObject(), card, tf);
 		}
@@ -838,82 +823,18 @@ public class ModCard extends JSONBase {
 		}
 	}
 
-	/*
-	 * Attachments
-	 */
-
 	@JSONExported
-	public JSONObject getAttachmentList(JSONObject serializer, UserContext userCtx, ICard card) throws JSONException,
-			CMDBException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		final List<StoredDocument> attachments = dmsLogic.search(card.getSchema().getName(), card.getId());
-		JSONArray rows = new JSONArray();
-		for (StoredDocument attachment : attachments) {
-			rows.put(Serializer.serializeAttachment(attachment));
-		}
-		serializer.put("rows", rows);
-		return serializer;
-	}
-
-	@JSONExported
-	public DataHandler downloadAttachment(UserContext userCtx, @Parameter("Filename") String filename, ICard card)
-			throws JSONException, CMDBException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		return dmsLogic.download(card.getSchema().getName(), card.getId(), filename);
-	}
-
-	@JSONExported
-	public void uploadAttachment(UserContext userCtx, @Parameter("File") FileItem file,
-			@Parameter("Category") String category, @Parameter("Description") String description, ICard card)
-			throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		dmsLogic.upload(userCtx.getUsername(), card.getSchema().getName(), card.getId(), file.getInputStream(),
-				removeFilePath(file.getName()), category, description);
-	}
-
-	// Needed by Internet Explorer that uploads the file with full path
-	private String removeFilePath(String name) {
-		int backslashIndex = name.lastIndexOf("\\");
-		int slashIndex = name.lastIndexOf("/");
-		int fileNameIndex = Math.max(slashIndex, backslashIndex) + 1;
-		return name.substring(fileNameIndex);
-	}
-
-	@JSONExported
-	public JSONObject deleteAttachment(JSONObject serializer, UserContext userCtx,
-			@Parameter("Filename") String filename, ICard card) throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		dmsLogic.delete(card.getSchema().getName(), card.getId(), filename);
-		return serializer;
-	}
-
-	@JSONExported
-	public JSONObject modifyAttachment(JSONObject serializer, UserContext userCtx,
-			@Parameter("Filename") String filename, @Parameter("Description") String description, ICard card)
-			throws JSONException, CMDBException, IOException {
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
-		dmsLogic.setUserContext(userCtx);
-		dmsLogic.updateDescription(card.getSchema().getName(), card.getId(), filename, description);
-		return serializer;
-	}
-
-	@JSONExported
-	public JsonResponse callWidget(
-			final ICard card,
-			@Parameter("widgetId") final String widgetId,
-			@Parameter(required=false, value="action") final String action,
-			@Parameter(required=false, value="params") final String jsonParams) throws Exception {
+	public JsonResponse callWidget(final ICard card, @Parameter("widgetId") final String widgetId,
+			@Parameter(required = false, value = "action") final String action,
+			@Parameter(required = false, value = "params") final String jsonParams) throws Exception {
 
 		final ObjectMapper mapper = new ObjectMapper();
 		final Map<String, Object> params;
 		if (jsonParams == null) {
 			params = new HashMap<String, Object>();
 		} else {
-			params = new ObjectMapper().readValue(jsonParams, mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			params = new ObjectMapper().readValue(jsonParams,
+					mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
 		}
 
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(card.getSchema());

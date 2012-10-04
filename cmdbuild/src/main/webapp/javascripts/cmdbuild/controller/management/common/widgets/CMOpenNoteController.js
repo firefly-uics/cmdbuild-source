@@ -4,7 +4,7 @@
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
 
 		mixins: {
-			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate",
+			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
 
 		constructor: function() {

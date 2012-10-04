@@ -3,14 +3,14 @@ package org.cmdbuild.dms.alfresco.webservice;
 import java.util.List;
 
 import org.alfresco.webservice.repository.QueryResult;
-import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.RepositoryServiceSoapPort;
 import org.alfresco.webservice.types.Query;
 import org.alfresco.webservice.types.ResultSet;
 import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.dms.documents.DocumentSearch;
+import org.cmdbuild.dms.DocumentSearch;
 
 class SearchCommand extends AbstractSearchCommand<ResultSetRow[]> {
 
@@ -43,7 +43,7 @@ class SearchCommand extends AbstractSearchCommand<ResultSetRow[]> {
 			final String statement = statement(search, baseSearchPath);
 			query.setStatement(statement);
 
-			final RepositoryServiceSoapBindingStub repository = WebServiceFactory.getRepositoryService();
+			final RepositoryServiceSoapPort repository = WebServiceFactory.getRepositoryService();
 			final QueryResult result = repository.query(STORE, query, false);
 
 			final ResultSet resultSet = result.getResultSet();
@@ -57,11 +57,6 @@ class SearchCommand extends AbstractSearchCommand<ResultSetRow[]> {
 
 	@Override
 	public boolean isSuccessfull() {
-		return true;
-	}
-
-	@Override
-	public boolean hasResult() {
 		return true;
 	}
 

@@ -76,7 +76,18 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	findFormField: function(varName) {
 
-		function findCriteria(f) {
+		/*
+		 * Look also into the DisplayFields
+		 */
+		function lookForFieldName(f) {
+			return f.name == varName; 
+		}
+
+		/*
+		 * usually only the editable fields
+		 * has a CMAttribute associated
+		 */
+		function lookForCMAttributeName(f) {
 			if (!f.CMAttribute) {
 				return false;
 			} else {
@@ -84,7 +95,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			}
 		}
 
-		var field = this.getBasicForm().getFields().findBy(findCriteria);
+		var fields = this.getBasicForm().getFields();
+		var field = fields.findBy(lookForCMAttributeName) || fields.findBy(lookForFieldName);
 
 		return field;
 	},

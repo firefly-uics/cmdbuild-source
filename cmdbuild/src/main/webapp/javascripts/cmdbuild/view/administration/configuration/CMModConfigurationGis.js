@@ -15,10 +15,12 @@
 			},{
 				xtype: 'numberfield',
 				name:'center.lat',
+				decimalPrecision: 6,
 				fieldLabel: tr.center_lat
 			},{
 				xtype: 'numberfield',
 				name:'center.lon',
+				decimalPrecision: 6,
 				fieldLabel: tr.center_lon
 			},{
 				xtype: 'numberfield',

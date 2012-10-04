@@ -25,13 +25,19 @@ public class JsonWorkflowDTOs {
 	public static class JsonActivityDefinition {
 
 		private final CMActivity activity;
+		private final String performer;
 
 		public JsonActivityDefinition(final CMActivity activity) {
+			this(activity, activity.getFirstNonAdminPerformer().getValue());
+		}
+
+		public JsonActivityDefinition(final CMActivity activity, final String performer) {
 			this.activity = activity;
+			this.performer = performer;
 		}
 
 		public String getPerformerName() {
-			return activity.getFirstNonAdminPerformer().getValue();
+			return performer;
 		}
 
 		public String getDescription() {
@@ -50,9 +56,6 @@ public class JsonWorkflowDTOs {
 			return activity.getWidgets();
 		}
 
-		public static JsonActivityDefinition fromActivityDefinition(final CMActivity ad) {
-			return new JsonActivityDefinition(ad);
-		}
 	}
 
 	/*
@@ -88,7 +91,6 @@ public class JsonWorkflowDTOs {
 	 */
 	public static class JsonActivityInstance extends JsonActivityDefinition {
 
-		@SuppressWarnings("unused")
 		private final UserActivityInstance activityInstance;
 		private final JsonActivityInstanceInfo info;
 
@@ -111,6 +113,7 @@ public class JsonWorkflowDTOs {
 			return info.isWritable();
 		}
 
+		@Override
 		public Iterable<CMActivityWidget> getWidgets() {
 			try {
 				return activityInstance.getWidgets();

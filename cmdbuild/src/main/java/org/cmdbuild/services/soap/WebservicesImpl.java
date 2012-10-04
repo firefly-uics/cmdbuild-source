@@ -3,6 +3,7 @@ package org.cmdbuild.services.soap;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -11,7 +12,8 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.MetadataGroup;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.AuthenticationService;
@@ -40,6 +42,8 @@ import org.springframework.context.ApplicationContextAware;
 
 @WebService(targetNamespace = "http://soap.services.cmdbuild.org", endpointInterface = "org.cmdbuild.services.soap.Webservices")
 public class WebservicesImpl implements Webservices, ApplicationContextAware {
+
+	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
 	private ApplicationContext applicationContext;
 
@@ -176,7 +180,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 		dmsLogic.setUserContext(getUserCtx());
 		try {
 			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
-					description);
+					description, METADATA_NOT_SUPPORTED);
 		} catch (final Exception e) {
 			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
 			Log.SOAP.error(message, e);
@@ -205,7 +209,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 		try {
 			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 			dmsLogic.setUserContext(getUserCtx());
-			dmsLogic.updateDescription(className, cardId, filename, description);
+			dmsLogic.updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
 			return true;
 		} catch (final Exception e) {
 			return false;

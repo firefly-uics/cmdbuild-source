@@ -57,7 +57,7 @@ public class UserAttribute implements CMAttribute {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return inner.equals(obj);
 	}
 

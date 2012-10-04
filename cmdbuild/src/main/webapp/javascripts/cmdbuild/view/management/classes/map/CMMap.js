@@ -34,7 +34,9 @@
 			var layers = this.cmdbLayers;
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
-				layer.refreshStrategies();
+				if (typeof layer.refreshStrategies == "function") {
+					layer.refreshStrategies();
+				}
 			}
 		},
 

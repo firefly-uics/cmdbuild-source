@@ -183,20 +183,21 @@ public class WorkflowLogic {
 	 *            values submitted in the form
 	 * @return database values overridden by the submitted ones
 	 */
-	private Map<String, Object> mergeVars(Iterable<Entry<String, Object>> databaseValues, Map<String, ?> submittedValues) {
+	private Map<String, Object> mergeVars(final Iterable<Entry<String, Object>> databaseValues,
+			final Map<String, ?> submittedValues) {
 		final Map<String, Object> mergedValues = new HashMap<String, Object>();
-		for (Entry<String, ?> e : databaseValues) {
+		for (final Entry<String, ?> e : databaseValues) {
 			mergedValues.put(e.getKey(), e.getValue());
 		}
-		for (Entry<String, ?> e : submittedValues.entrySet()) {
+		for (final Entry<String, ?> e : submittedValues.entrySet()) {
 			mergedValues.put(e.getKey(), e.getValue());
 		}
 		return mergedValues;
 	}
 
 	public UserProcessInstance updateProcess(final String processClassName, final Long processCardId,
-			final String activityInstanceId, final Map<String, ?> vars,
-			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
+			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
+			final boolean advance) throws CMWorkflowException {
 		return updateProcess( //
 				processInstanceFor(processFrom(processClassName), processCardId), //
 				activityInstanceId, //
@@ -206,8 +207,8 @@ public class WorkflowLogic {
 	}
 
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
-			final String activityInstanceId, final Map<String, ?> vars,
-			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
+			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
+			final boolean advance) throws CMWorkflowException {
 		return updateProcess( //
 				processInstanceFor(processFrom(processClassId), processCardId), //
 				activityInstanceId, //
@@ -217,8 +218,8 @@ public class WorkflowLogic {
 	}
 
 	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,
-			final String activityInstanceId, final Map<String, ?> vars,
-			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
+			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
+			final boolean advance) throws CMWorkflowException {
 		final UserActivityInstance activityInstance = processInstance.getActivityInstance(activityInstanceId);
 		return updateActivity(activityInstance, vars, widgetSubmission, advance);
 	}
@@ -258,9 +259,8 @@ public class WorkflowLogic {
 		return updateActivity(firstActInst, vars, widgetSubmission, advance);
 	}
 
-	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance,
-			final Map<String, ?> vars, final Map<String, Object> widgetSubmission, final boolean advance)
-			throws CMWorkflowException {
+	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance, final Map<String, ?> vars,
+			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		wfEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		if (advance) {
 			return wfEngine.advanceActivity(activityInstance);
