@@ -25,7 +25,6 @@
 				border: false,
 				cls: "x-panel-body-default-framed cmbordertop",
 				bodyCls: 'cmgraypanel',
-				autoScroll: true,
 				tbar : buildTBarTools.call(this),
 				items : items.call(this),
 				layout: "border",
@@ -156,11 +155,6 @@
 
 	function buildTBarTools() {
 		this.cmTBar = [
-			this.deleteButton = new Ext.button.Button({
-				text: tr_geoserver.delete_layer,
-				iconCls: 'delete'
-			}),
-
 			this.modifyButton = new Ext.Button({
 				text: tr_geoserver.modify_layer,
 				iconCls: "modify",
@@ -168,6 +162,10 @@
 				handler: function() {
 					this.enableModify();
 				}
+			}),
+			this.deleteButton = new Ext.button.Button({
+				text: tr_geoserver.delete_layer,
+				iconCls: 'delete'
 			})
 		];
 

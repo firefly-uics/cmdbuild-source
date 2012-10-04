@@ -2,6 +2,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
 
 <!--CHACHE -->
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
@@ -10,6 +11,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!--  THE OTHERS -->
@@ -53,6 +55,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/ForeignKeyAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/StringAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/CharAttribute.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/CustomListAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TextAttribute.js"></script>
 
 <!-- CUSTOM FIELDS -->
@@ -78,6 +81,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMIconProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMWidgetConfigurationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMDashboardProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMAttachmentProxy.js"></script>
 
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>

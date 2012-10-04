@@ -22,7 +22,7 @@
 
 			this.form = new CMDBuild.Administration.GeoServerForm({
 				height: "50%",
-				autoScroll: true,
+				autoScroll: false,
 				frame: true,
 				border: true,
 				region: "south",

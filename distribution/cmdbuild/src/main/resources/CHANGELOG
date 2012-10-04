@@ -1,3 +1,25 @@
+CMDBuild 2.0.1 (released 2012/09/17)
+
+
+NEW FEATURES
+
+ * Updated Dutch and Portuguese tranlations
+
+
+FIXES
+
+ * Is not possible to set more than 2 decimal in map center longitude and latitude
+
+ * Map popup does not display lookup and reference attribute values
+
+ * Map issues/enhancements
+
+ * Lookup does not load more than 25 items
+
+
+
+
+
 CMDBuild 2.0.0 (released 2012/08/31)
 
 

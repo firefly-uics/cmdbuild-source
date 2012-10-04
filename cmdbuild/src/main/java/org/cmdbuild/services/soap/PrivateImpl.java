@@ -6,6 +6,7 @@ import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.DashboardLogic.fakeAnyAttribute;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,8 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.MetadataGroup;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -75,6 +77,8 @@ import org.springframework.context.ApplicationContextAware;
 
 @WebService(endpointInterface = "org.cmdbuild.services.soap.Private", targetNamespace = "http://soap.services.cmdbuild.org")
 public class PrivateImpl implements Private, ApplicationContextAware {
+
+	private static final List<MetadataGroup> METADATA_NOT_SUPPORTED = Collections.emptyList();
 
 	private ApplicationContext applicationContext;
 
@@ -211,7 +215,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		dmsLogic.setUserContext(getUserCtx());
 		try {
 			dmsLogic.upload(getUserCtx().getUsername(), className, objectid, file.getInputStream(), filename, category,
-					description);
+					description, METADATA_NOT_SUPPORTED);
 		} catch (final Exception e) {
 			final String message = String.format("error uploading file '%s' in '%s'", filename, className);
 			Log.SOAP.error(message, e);
@@ -240,7 +244,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		try {
 			final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
 			dmsLogic.setUserContext(getUserCtx());
-			dmsLogic.updateDescription(className, cardId, filename, description);
+			dmsLogic.updateDescriptionAndMetadata(className, cardId, filename, description, METADATA_NOT_SUPPORTED);
 			return true;
 		} catch (final Exception e) {
 			return false;

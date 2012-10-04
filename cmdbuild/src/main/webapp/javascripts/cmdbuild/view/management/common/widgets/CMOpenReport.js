@@ -41,6 +41,7 @@
 			});
 	
 			this.formPanel = new Ext.FormPanel({
+				timeout : CMDBuild.Config.defaultTimeout * 1000,
 				monitorValid : true,
 				autoScroll : true,
 				frame : false,

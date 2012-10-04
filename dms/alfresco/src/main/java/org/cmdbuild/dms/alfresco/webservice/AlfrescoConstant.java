@@ -1,14 +1,16 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
 import org.apache.commons.lang.ArrayUtils;
-import org.cmdbuild.dms.documents.StoredDocument;
+import org.cmdbuild.dms.StoredDocument;
 
-public enum AlfrescoConstant {
+enum AlfrescoConstant {
 
-	NULL("") {
+	NULL(EMPTY) {
 		@Override
 		public void setInBean(final StoredDocument storedDocument, final NamedValue namedValue,
 				final AlfrescoWebserviceClient client) {
@@ -107,9 +109,9 @@ public enum AlfrescoConstant {
 		return this.name.equals(name);
 	}
 
-	public static AlfrescoConstant fromName(final String name) {
+	public static AlfrescoConstant from(final NamedValue namedValue) {
 		for (final AlfrescoConstant ac : AlfrescoConstant.values()) {
-			if (ac.isName(name))
+			if (ac.isName(namedValue.getName()))
 				return ac;
 		}
 		return NULL;

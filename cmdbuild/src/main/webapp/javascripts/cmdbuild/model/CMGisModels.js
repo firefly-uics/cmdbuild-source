@@ -15,7 +15,7 @@
 			{name: 'minZoom', type: 'string'},
 			{name: 'style', type: 'string'},
 			{name: 'description', type: 'string'},
-			{name: 'index', type: 'string'},
+			{name: 'index', type: 'number'},
 			{name: 'name', type: 'string'},
 			{name: 'type', type: 'string'},
 			{name: "masterTableId", type: "string"},

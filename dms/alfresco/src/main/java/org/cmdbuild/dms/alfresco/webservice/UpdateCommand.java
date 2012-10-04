@@ -1,50 +1,31 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
+import static org.alfresco.webservice.util.Utils.createNamedValue;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.RepositoryServiceSoapPort;
 import org.alfresco.webservice.types.CML;
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.CMLUpdate;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.Predicate;
 import org.alfresco.webservice.types.Reference;
-import org.alfresco.webservice.util.Utils;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+
+import com.google.common.collect.Lists;
 
 class UpdateCommand extends AlfrescoWebserviceCommand<Boolean> {
 
 	private String uuid;
 	private Properties updateProperties;
-	private Properties aspectsProperties;
-
-	private static CMLUpdate cmlUpdate(final Predicate predicate, final Properties properties) {
-		final CMLUpdate update = new CMLUpdate();
-		update.setWhere(predicate);
-		final List<NamedValue> namedValues = new ArrayList<NamedValue>();
-		for (final String name : properties.stringPropertyNames()) {
-			final String value = properties.getProperty(name, EMPTY);
-			namedValues.add(Utils.createNamedValue(name, value));
-		}
-		update.setProperty(namedValues.toArray(new NamedValue[namedValues.size()]));
-		return update;
-	}
-
-	private static CMLAddAspect[] aspects(final Predicate predicate, final Properties properties) {
-		final List<CMLAddAspect> aspects = new ArrayList<CMLAddAspect>();
-		for (final String name : properties.stringPropertyNames()) {
-			final String value = properties.getProperty(name, EMPTY);
-			final CMLAddAspect aspect = new CMLAddAspect(name, null, predicate, value);
-			aspects.add(aspect);
-		}
-		return aspects.toArray(new CMLAddAspect[aspects.size()]);
-	}
+	private Map<String, Map<String, String>> aspectsProperties;
 
 	public void setUuid(final String uuid) {
 		this.uuid = uuid;
@@ -54,8 +35,14 @@ class UpdateCommand extends AlfrescoWebserviceCommand<Boolean> {
 		this.updateProperties = update;
 	}
 
-	public void setAspectsProperties(final Properties aspects) {
-		this.aspectsProperties = aspects;
+	public void setAspectsProperties(final Map<String, Map<String, String>> aspectsProperties) {
+		this.aspectsProperties = aspectsProperties;
+	}
+
+	@Override
+	public boolean isSuccessfull() {
+		final Boolean result = getResult();
+		return (result == null) ? false : result.booleanValue();
 	}
 
 	@Override
@@ -78,7 +65,7 @@ class UpdateCommand extends AlfrescoWebserviceCommand<Boolean> {
 		cml.setAddAspect(aspects);
 
 		try {
-			final RepositoryServiceSoapBindingStub repository = WebServiceFactory.getRepositoryService();
+			final RepositoryServiceSoapPort repository = WebServiceFactory.getRepositoryService();
 			repository.update(cml);
 			setResult(true);
 		} catch (final Exception e) {
@@ -88,15 +75,44 @@ class UpdateCommand extends AlfrescoWebserviceCommand<Boolean> {
 		}
 	}
 
-	@Override
-	public boolean isSuccessfull() {
-		final Boolean result = getResult();
-		return (result == null) ? false : result.booleanValue();
+	private static CMLUpdate cmlUpdate(final Predicate predicate, final Properties properties) {
+		final CMLUpdate update = new CMLUpdate();
+		update.setWhere(predicate);
+		final List<NamedValue> namedValues = new ArrayList<NamedValue>();
+		for (final String name : properties.stringPropertyNames()) {
+			final String value = properties.getProperty(name, EMPTY);
+			namedValues.add(createNamedValue(name, value));
+		}
+		update.setProperty(namedValues.toArray(new NamedValue[namedValues.size()]));
+		return update;
 	}
 
-	@Override
-	public boolean hasResult() {
-		return true;
+	private static CMLAddAspect[] aspects(final Predicate predicate,
+			final Map<String, Map<String, String>> aspectsProperties) {
+		final List<CMLAddAspect> aspects = new ArrayList<CMLAddAspect>();
+		for (final String name : aspectsProperties.keySet()) {
+			final Map<String, String> properties = aspectsProperties.get(name);
+			final CMLAddAspect aspect = aspectFrom(name, properties);
+			aspect.setWhere(predicate);
+			aspects.add(aspect);
+		}
+		return aspects.toArray(new CMLAddAspect[aspects.size()]);
+	}
+
+	private static CMLAddAspect aspectFrom(final String aspect, final Map<String, String> properties) {
+		final CMLAddAspect cmlAddAspect = new CMLAddAspect();
+		cmlAddAspect.setAspect(aspect);
+		cmlAddAspect.setProperty(namedValuesFrom(properties));
+		return cmlAddAspect;
+	}
+
+	private static NamedValue[] namedValuesFrom(final Map<String, String> properties) {
+		final List<NamedValue> namedValues = Lists.newArrayList();
+		for (final String name : properties.keySet()) {
+			final String value = properties.get(name);
+			namedValues.add(createNamedValue(name, value));
+		}
+		return namedValues.toArray(new NamedValue[namedValues.size()]);
 	}
 
 }

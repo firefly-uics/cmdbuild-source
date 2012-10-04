@@ -12,6 +12,7 @@ import org.cmdbuild.dao.Metadata;
 public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
 	public static class EntryTypeMetadata extends Metadata {
+
 		protected static final String BASE_NS = "system.entrytype.";
 
 		public static final String DESCRIPTION = BASE_NS + "description";
@@ -27,11 +28,13 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 		}
 
 		final boolean isActive() {
-			return Boolean.parseBoolean(get(ACTIVE));
+			final String value = get(ACTIVE);
+			return Boolean.parseBoolean((value == null) ? Boolean.TRUE.toString() : value);
 		}
 
 		final boolean isSystem() {
-			return "reserved".equals(get(MODE)); // FIXME Use an enum and limit the valid values
+			// FIXME Use an enum and limit the valid values
+			return "reserved".equals(get(MODE));
 		}
 	}
 
@@ -48,7 +51,7 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
 	private Map<String, DBAttribute> initAttributesByName(final List<DBAttribute> ac) {
 		final Map<String, DBAttribute> am = new HashMap<String, DBAttribute>();
-		for (DBAttribute a : ac) {
+		for (final DBAttribute a : ac) {
 			a.owner = this;
 			am.put(a.getName(), a);
 		}

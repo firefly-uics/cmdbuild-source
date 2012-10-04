@@ -9,9 +9,10 @@
 			this.renderIntent = "temporary";
 			this.overFeature = onFeatureOver;
 			
+			// to not show the popup after the delay
+			// if the mouse is not on the feature
 			this.outFeature = function(f) {
 				f.CM_over = false;
-				f.layer.map.removeAllPopups();
 			};
 
 			CMDBuild.Management.CMSelectFeatureController.prototype.initialize.apply(this, [layers, options]);
@@ -47,7 +48,7 @@
 		}
 
 		// defer the call to deny a pop-up explosion ;) 
-		Ext.Function.createDelayed(showInfoBaloon, 250, this, arguments)();
+		Ext.Function.createDelayed(showInfoBaloon, 1000, this, arguments)();
 		return true;
 	}
 
@@ -58,14 +59,17 @@
 			var centeroid = g.getCentroid();
 
 			if (f.layer) {
-				f.layer.map.addPopup(new OpenLayers.Popup.FramedCloud(
-					"cloud_"+f.id, 
-					new OpenLayers.LonLat(centeroid.x, centeroid.y),
-					null,
-					buildPopupContent(f),
-					null,
-					closeButton = false
-				), exlusive=true);
+				var popup = new OpenLayers.Popup.FramedCloud(
+						"cloud_"+f.id, 
+						new OpenLayers.LonLat(centeroid.x, centeroid.y), // TODO detect mouse position
+						null,
+						buildPopupContent(f),
+						null,
+						closeButton = true
+					);
+				popup.minSize = new OpenLayers.Size(50, 200);
+				popup.panMapIfOutOfView = false;
+				f.layer.map.addPopup(popup, exlusive=true);
 			}
 		}
 	}
@@ -83,7 +87,10 @@
 		for (var i=0, l=attributes.length; i<l; ++i) {
 			var at = attributes[i];
 			if (at.isbasedsp) {
-				var attrValue = card[at.name+"_value"] || card[at.name] || "-";
+				var attrValue = card[at.name] || "-";
+				if (typeof attrValue == "object") {
+					attrValue = attrValue.description;
+				}
 				items += Ext.String.format(itemTemplate, at.description, attrValue);
 			}
 		}

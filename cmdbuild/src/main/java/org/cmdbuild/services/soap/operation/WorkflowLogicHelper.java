@@ -184,7 +184,6 @@ public class WorkflowLogicHelper {
 			if (isNewProcess(card)) {
 				final CMActivity activity = startActivityFor(card.getClassName());
 				final List<CMActivityWidget> activityWidgets = activity.getWidgets();
-				activity.getWidgets();
 				processInstance = logic.startProcess( //
 						card.getClassName(), //
 						variablesFor(card), //

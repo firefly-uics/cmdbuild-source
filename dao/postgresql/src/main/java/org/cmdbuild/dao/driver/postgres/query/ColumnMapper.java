@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
@@ -25,8 +26,8 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 
 /**
  * Holds the information about which attribute to query for every alias and
- * entry type of that alias. Also it is used to keep a mapping between the
- * alias attributes and the position in the select clause.
+ * entry type of that alias. Also it is used to keep a mapping between the alias
+ * attributes and the position in the select clause.
  */
 public class ColumnMapper {
 
@@ -37,7 +38,8 @@ public class ColumnMapper {
 		public final SqlType sqlType;
 		public final String sqlTypeString;
 
-		private EntryTypeAttribute(final String name, final Alias alias, final Integer index, final SqlType sqlType, final String sqlTypeString) {
+		private EntryTypeAttribute(final String name, final Alias alias, final Integer index, final SqlType sqlType,
+				final String sqlTypeString) {
 			this.name = name;
 			this.alias = alias;
 			this.index = index;
@@ -51,7 +53,7 @@ public class ColumnMapper {
 
 		private AliasAttributes(final Iterable<? extends CMEntryType> types) {
 			map = new HashMap<CMEntryType, List<EntryTypeAttribute>>();
-			for (CMEntryType t : types) {
+			for (final CMEntryType t : types) {
 				map.put(t, new ArrayList<EntryTypeAttribute>());
 			}
 		}
@@ -59,32 +61,41 @@ public class ColumnMapper {
 		/*
 		 * Adds the attribute to the specified type
 		 */
-		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index, final CMEntryType type) {
+		void addAttribute(final String attributeName, final Alias attributeAlias, final Integer index,
+				final CMEntryType type) {
 			final String sqlTypeString = getSqlTypeString(type, attributeName);
 			final SqlType sqlType = getSqlType(type, attributeName);
-			for (CMEntryType currentType : map.keySet()) {
+			for (final CMEntryType currentType : map.keySet()) {
 				final String currentName = (attributeAlias == null || currentType.equals(type)) ? attributeName : null;
-				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlType, sqlTypeString);
+				final EntryTypeAttribute eta = new EntryTypeAttribute(currentName, attributeAlias, index, sqlType,
+						sqlTypeString);
 				map.get(currentType).add(eta);
 			}
 		}
 
-		private SqlType getSqlType(CMEntryType type, String attributeName) {
-			if (type != null) {
-				final CMAttributeType<?> attributeType = type.getAttribute(attributeName).getType();
-				return SqlType.getSqlType(attributeType);
-			} else {
-				return SqlType.unknown;
-			}
+		private SqlType getSqlType(final CMEntryType type, final String attributeName) {
+			final CMAttributeType<?> attributeType = safeAttributeTypeFor(type, attributeName);
+			return SqlType.getSqlType(attributeType);
 		}
 
-		private String getSqlTypeString(CMEntryType type, String attributeName) {
+		private String getSqlTypeString(final CMEntryType type, final String attributeName) {
+			final CMAttributeType<?> attributeType = safeAttributeTypeFor(type, attributeName);
+			return SqlType.getSqlTypeString(attributeType);
+		}
+
+		private CMAttributeType<?> safeAttributeTypeFor(final CMEntryType type, final String attributeName) {
+			final CMAttributeType<?> attributeType;
 			if (type != null) {
-				final CMAttributeType<?> attributeType = type.getAttribute(attributeName).getType();
-				return SqlType.getSqlTypeString(attributeType);
+				final CMAttribute attribute = type.getAttribute(attributeName);
+				if (attribute != null) {
+					attributeType = attribute.getType();
+				} else {
+					attributeType = new UndefinedAttributeType();
+				}
 			} else {
-				return SqlType.unknown.name();
+				attributeType = new UndefinedAttributeType();
 			}
+			return attributeType;
 		}
 
 		Iterable<EntryTypeAttribute> getAttributes(final CMEntryType type) {
@@ -116,9 +127,9 @@ public class ColumnMapper {
 		}
 	}
 
-	private AliasStore cardSourceAliases = new AliasStore();
-	private AliasStore functionCallAliases = new AliasStore();
-	private AliasStore domainAliases = new AliasStore();
+	private final AliasStore cardSourceAliases = new AliasStore();
+	private final AliasStore functionCallAliases = new AliasStore();
+	private final AliasStore domainAliases = new AliasStore();
 
 	private Integer currentIndex;
 	private final List<String> selectAttributes;
@@ -134,14 +145,14 @@ public class ColumnMapper {
 	}
 
 	void addFunctionCallAlias(final Alias alias, final CMFunctionCall functioncallAlias) {
-		List<CMFunctionCall> i = new ArrayList<CMFunctionCall>(1);
+		final List<CMFunctionCall> i = new ArrayList<CMFunctionCall>(1);
 		i.add(functioncallAlias);
 		functionCallAliases.addAlias(alias, i);
 	}
 
 	void addDomainAlias(final Alias alias, final Set<QueryDomain> aliasQueryDomains) {
-		Set<CMDomain> aliasDomains = new HashSet<CMDomain>();
-		for (QueryDomain qd : aliasQueryDomains) {
+		final Set<CMDomain> aliasDomains = new HashSet<CMDomain>();
+		for (final QueryDomain qd : aliasQueryDomains) {
 			aliasDomains.add(qd.getDomain());
 		}
 		domainAliases.addAlias(alias, aliasDomains);
@@ -163,10 +174,10 @@ public class ColumnMapper {
 	void addAttribute(final QueryAliasAttribute qa) {
 		final Alias typeAlias = qa.getEntryTypeAlias();
 
-		AliasAttributes aliasAttributes = getAliasAttributes(typeAlias);
+		final AliasAttributes aliasAttributes = getAliasAttributes(typeAlias);
 		if (qa instanceof AnyAttribute) {
-			for (CMEntryType type : aliasAttributes.getEntryTypes()) {
-				for (CMAttribute attr : type.getAttributes()) {
+			for (final CMEntryType type : aliasAttributes.getEntryTypes()) {
+				for (final CMAttribute attr : type.getAttributes()) {
 					final String attributeName = attr.getName();
 					final String attributeAlias = String.format("%s#%s", type.getName(), attributeName);
 					final Integer usedIndex = addSelectAttribute(typeAlias, attributeAlias, null, null);
@@ -177,13 +188,17 @@ public class ColumnMapper {
 			final String attributeName = qa.getName();
 			// FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but
 			// it does not work if we take them all
-			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next(); // we trust it works
+			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next(); // we
+																						// trust
+																						// it
+																						// works
 			final Integer usedIndex = addSelectAttribute(typeAlias, attributeName, null, null);
 			aliasAttributes.addAttribute(attributeName, null, usedIndex, type);
 		}
 	}
 
-	private Integer addSelectAttribute(final Alias typeAlias, final String attributeName, final String cast, final Alias attributeAlias) {
+	private Integer addSelectAttribute(final Alias typeAlias, final String attributeName, final String cast,
+			final Alias attributeAlias) {
 		final StringBuffer sb = new StringBuffer(Utils.quoteAttribute(typeAlias, attributeName));
 		if (cast != null) {
 			sb.append(cast);
@@ -199,13 +214,13 @@ public class ColumnMapper {
 		return getAliasAttributes(typeAlias).getAttributes(type);
 	}
 
-	private void fillAliases(QuerySpecs query) {
+	private void fillAliases(final QuerySpecs query) {
 		final CMEntryType from = query.getFromType();
 		// FIXME: Use a visitor!
 		if (from instanceof CMClass) {
 			final CMClass fromClass = (CMClass) from;
 			addClassAlias(query.getFromAlias(), fromClass.getLeaves());
-			for (JoinClause jc : query.getJoins()) {
+			for (final JoinClause jc : query.getJoins()) {
 				addDomainAlias(jc.getDomainAlias(), jc.getQueryDomains());
 				addClassAlias(jc.getTargetAlias(), jc.getTargets());
 			}
@@ -216,7 +231,8 @@ public class ColumnMapper {
 	}
 
 	public void addSystemSelectAttribute(final Alias typeAlias, final Const.SystemAttributes systemAttribute) {
-		addSelectAttribute(typeAlias, systemAttribute.getDBName(), systemAttribute.getCastSuffix(), Alias.as(Utils.getSystemAttributeAlias(typeAlias, systemAttribute)));
+		addSelectAttribute(typeAlias, systemAttribute.getDBName(), systemAttribute.getCastSuffix(),
+				Alias.as(Utils.getSystemAttributeAlias(typeAlias, systemAttribute)));
 	}
 
 	public void addUserSelectAttribute(final QueryAliasAttribute a) {

@@ -39,10 +39,8 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 	private CMWorkflowEngineListener eventListener;
 
-	public WorkflowEngineWrapper(final UserContext userCtx,
-			final CMWorkflowService workflowService,
-			final WorkflowTypesConverter variableConverter,
-			final ProcessDefinitionManager processDefinitionManager) {
+	public WorkflowEngineWrapper(final UserContext userCtx, final CMWorkflowService workflowService,
+			final WorkflowTypesConverter variableConverter, final ProcessDefinitionManager processDefinitionManager) {
 		super(userCtx, workflowService, variableConverter, processDefinitionManager);
 		this.eventListener = NULL_EVENT_LISTENER;
 	}
@@ -96,17 +94,57 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 		}
 		final WSProcessInstInfo procInstInfo = workflowService.startProcess(processClass.getPackageId(),
 				processClass.getProcessDefinitionId());
-		final WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(), procInstInfo.getProcessInstanceId());
+		final WSActivityInstInfo startActInstInfo = keepOnlyStartingActivityInstance(startActivity.getId(),
+				procInstInfo.getProcessInstanceId());
 
 		final UserProcessInstanceDefinition proc = newProcessInstance(processClass, procInstInfo);
-		proc.addActivity(startActInstInfo);
+		final String group = userCtx.getDefaultGroup().getName();
+		proc.addActivity(activityWithSpecificParticipant(startActInstInfo, group));
 		final UserProcessInstance procInst = proc.save();
 
 		fillCardInfoAndProcessInstanceIdOnProcessInstance(procInst);
 		return refetchProcessInstance(procInst);
 	}
 
-	private void fillCardInfoAndProcessInstanceIdOnProcessInstance(UserProcessInstance procInst) throws CMWorkflowException {
+	private WSActivityInstInfo activityWithSpecificParticipant(final WSActivityInstInfo wsActivityInstInfo,
+			final String participant) {
+		return new WSActivityInstInfo() {
+
+			@Override
+			public String getProcessInstanceId() {
+				return wsActivityInstInfo.getProcessInstanceId();
+			}
+
+			@Override
+			public String[] getParticipants() {
+				return new String[] { participant };
+			}
+
+			@Override
+			public String getActivityName() {
+				return wsActivityInstInfo.getActivityName();
+			}
+
+			@Override
+			public String getActivityInstanceId() {
+				return wsActivityInstInfo.getActivityInstanceId();
+			}
+
+			@Override
+			public String getActivityDescription() {
+				return wsActivityInstInfo.getActivityDescription();
+			}
+
+			@Override
+			public String getActivityDefinitionId() {
+				return wsActivityInstInfo.getActivityDefinitionId();
+			}
+
+		};
+	}
+
+	private void fillCardInfoAndProcessInstanceIdOnProcessInstance(final UserProcessInstance procInst)
+			throws CMWorkflowException {
 		final String procInstId = procInst.getProcessInstanceId();
 		final Map<String, Object> extraVars = new HashMap<String, Object>();
 		extraVars.put(Constants.PROCESS_CARD_ID_VARIABLE, procInst.getCardId());
@@ -162,7 +200,8 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		fillCustomProcessVariables(activityInstance, nativeValues);
-		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(), toWorkflowValues(procInst.getType(), nativeValues));
+		workflowService.setProcessInstanceVariables(procInst.getProcessInstanceId(),
+				toWorkflowValues(procInst.getType(), nativeValues));
 	}
 
 	private void fillCustomProcessVariables(final CMActivityInstance activityInstance,
@@ -289,8 +328,6 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) {
 		modifyProcessInstance(processInstance).setState(WSProcessInstanceState.UNSUPPORTED).save();
 	}
-
-
 
 	@Override
 	public UserProcessInstance findProcessInstance(final CMProcessClass processDefinition, final Long cardId) {

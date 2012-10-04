@@ -1,6 +1,6 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
-import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.RepositoryServiceSoapPort;
 import org.alfresco.webservice.types.Node;
 import org.alfresco.webservice.types.Predicate;
 import org.alfresco.webservice.types.Reference;
@@ -28,7 +28,7 @@ class UuidSearchCommand extends AbstractSearchCommand<ResultSetRow> {
 		Validate.isTrue(StringUtils.isNotBlank(uuid), "invalid category root '%s'", uuid);
 		setResult(NULL_RESULT_SET_ROW);
 		try {
-			final RepositoryServiceSoapBindingStub repository = WebServiceFactory.getRepositoryService();
+			final RepositoryServiceSoapPort repository = WebServiceFactory.getRepositoryService();
 
 			final Reference reference = new Reference();
 			reference.setStore(STORE);
@@ -48,11 +48,6 @@ class UuidSearchCommand extends AbstractSearchCommand<ResultSetRow> {
 	@Override
 	public boolean isSuccessfull() {
 		return (getResult() != NULL_RESULT_SET_ROW);
-	}
-
-	@Override
-	public boolean hasResult() {
-		return true;
 	}
 
 }

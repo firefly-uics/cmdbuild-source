@@ -69,7 +69,7 @@
 					beforedrop: Ext.emptyFn,
 					drop : this.beforeRowMove
 				}
-			}
+			};
 			this.callParent(arguments);
 		},
 		
@@ -89,6 +89,7 @@
 	function buildCheckColumn() {
 		var column = new Ext.ux.CheckColumn( {
 			header: tr_geo.visibility,
+			sortable: false,
 			dataIndex: "isvisible",
 			cmReadOnly: this.cmCheckColumnReadOnly
 		});

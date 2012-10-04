@@ -2,6 +2,7 @@ package org.cmdbuild.workflow.xpdl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
@@ -9,6 +10,8 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.io.IOUtils;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.workflow.ActivityPerformer;
+import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
+import org.cmdbuild.workflow.BshActivityPerformerExpressionEvaluator;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
@@ -67,6 +70,14 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 			for (final ActivityPerformer p : a.getPerformers()) {
 				if (p.isRole(groupName)) {
 					return a;
+				} else if (p.isExpression()) {
+					final String expression = p.getValue();
+					final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
+							expression);
+					final Set<String> names = evaluator.getNames();
+					if (names.contains(groupName)) {
+						return a;
+					}
 				}
 			}
 		}

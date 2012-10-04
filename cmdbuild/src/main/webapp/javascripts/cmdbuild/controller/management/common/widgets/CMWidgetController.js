@@ -6,7 +6,8 @@
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWidgetController", {
 
 		statics: {
-			WIDGET_NAME: ""
+			WIDGET_NAME: "",
+			getTemplateResolverServerVars: getTemplateResolverServerVarsFromModel
 		},
 
 		constructor: function(view, ownerController, widgetConf, clientForm, card) {
@@ -63,36 +64,44 @@
 		},
 
 		getTemplateResolverServerVars: function() {
-			var out = {};
-
-			if (this.card) {
-				if (Ext.getClassName(this.card) == "CMDBuild.model.CMActivityInstance") {
-					// Retrieve the process instance because it stores
-					// the data. this.card has only the varibles to show in this step
-					// (is the activity instance)
-					var pi = _CMWFState.getProcessInstance();
-					if (pi) {
-						// The processes use a new serialization.
-						// Add backward compatibility attributes
-						// to the card values
-						out = Ext.apply({
-							"Id": pi.get("Id"),
-							"IdClass": pi.get("IdClass"),
-							"IdClass_value": pi.get("IdClass_value")
-						}, pi.getValues());
-					}
-				} else {
-					out = this.card.raw || this.card.data;
-				}
-			}
-
-			_debug("Server vars", out);
-
-			return out;
+			return getTemplateResolverServerVarsFromModel(this.card);
 		},
 
 		beforeActiveView: Ext.emptyFn,
 		destroy: Ext.emptyFn,
 		onEditMode: Ext.emptyFn
 	});
+
+	function getTemplateResolverServerVarsFromModel(model) {
+		var out = {};
+
+		if (model) {
+			var pi = null;
+			if (Ext.getClassName(model) == "CMDBuild.model.CMActivityInstance") {
+				// Retrieve the process instance because it stores
+				// the data. this.card has only the varibles to show in this step
+				// (is the activity instance)
+				pi = _CMWFState.getProcessInstance();
+			} else if (Ext.getClassName(model) == "CMDBuild.model.CMProcessInstance") {
+				pi = model;
+			}
+
+			if (pi != null) {
+				// The processes use a new serialization.
+				// Add backward compatibility attributes
+				// to the card values
+				out = Ext.apply({
+					"Id": pi.get("Id"),
+					"IdClass": pi.get("IdClass"),
+					"IdClass_value": pi.get("IdClass_value")
+				}, pi.getValues());
+			} else {
+				out = model.raw || model.data;
+			}
+		}
+
+		_debug("Server vars", out);
+
+		return out;
+	}
 })();
