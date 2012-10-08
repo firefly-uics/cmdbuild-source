@@ -8,12 +8,12 @@ public class FromPartCreator extends PartCreator {
 	public FromPartCreator(final QuerySpecs query) {
 		super();
 		sb.append("FROM ");
-		if (query.getFromType().holdsHistory()) {
-			sb.append("ONLY ");
-		}
-		sb.append(quoteType(query.getFromType()))
-			.append(" AS ")
-			.append(Utils.quoteAlias(query.getFromAlias()));
+		/*
+		 * TODO check if this is really needed
+		 * 
+		 * if (query.getFromType().holdsHistory()) { sb.append("ONLY "); }
+		 */
+		sb.append(quoteType(query.getFromType())).append(" AS ").append(Utils.quoteAlias(query.getFromAlias()));
 	}
 
 }
