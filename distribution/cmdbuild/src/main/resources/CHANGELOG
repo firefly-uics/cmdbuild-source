@@ -1,3 +1,25 @@
+CMDBuild 2.0.2 (released 2012/10/08)
+
+
+NEW FEATURES
+
+ * Metadata management for attachments
+
+
+FIXES
+
+ * No relations showed in ManageRelations widget when specifying a supeclass
+
+ * Could not display the management module with IE7 (and newest if in compatibility mode)
+
+ * NullPointerException while listing relations (in relative tab) with an unprivileged group
+
+ * Report timeout if printed from Widget
+
+
+
+
+
 CMDBuild 2.0.1 (released 2012/09/17)
 
 
