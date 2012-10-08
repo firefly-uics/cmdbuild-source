@@ -74,7 +74,7 @@ public class QueryCreator {
 
 	private void appendFrom() {
 		final ClassAlias from = query.getDBFrom();
-		sb.append(" FROM ONLY ").append(Utils.quoteType(from.getType())).append(" AS ").append(Utils.quoteAlias(from.getAlias()));
+		sb.append(" FROM ").append(Utils.quoteType(from.getType())).append(" AS ").append(Utils.quoteAlias(from.getAlias()));
 	}
 
 	private void appendJoin() {
