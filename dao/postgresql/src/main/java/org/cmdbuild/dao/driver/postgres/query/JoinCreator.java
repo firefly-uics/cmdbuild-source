@@ -56,7 +56,13 @@ public class JoinCreator extends PartCreator {
 			sb.append("SELECT ");
 			appendSystemAttributes(type, isHistoryAppend, first);
 			appendUserAttributes(type, first);
-			sb.append(" FROM ONLY ").append(quotedTableName);
+			sb.append(" FROM ")
+			/*
+			 * TODO check if this is really needed
+			 * 
+			 * .append("ONLY ")
+			 */
+			.append(quotedTableName);
 			appendStatusWhere(isHistoryAppend);
 		}
 
