@@ -3,7 +3,7 @@ CMDBuild.Management.MapBuilder = (function() {
 	var bounds = new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
 		geojson_format = new OpenLayers.Format.GeoJSON(),
 		projection = new OpenLayers.Projection("EPSG:900913"),
-		displayProjection = new OpenLayers.Projection("EPSG:4326");	
+		displayProjection = new OpenLayers.Projection("EPSG:4326");
 
 	function buildMap(divId) {
 		var options = {
@@ -14,6 +14,7 @@ CMDBuild.Management.MapBuilder = (function() {
 			maxResolution: 156543.0339,
 			maxExtent: bounds,
 			div: divId,
+			initBaseLayers: initBaseLayers,
 			eventListeners: {
 				"zoomend": function(event) {
 					/*
@@ -33,25 +34,25 @@ CMDBuild.Management.MapBuilder = (function() {
 			}
 		};
 
-		var map = new CMDBuild.Management.CMMap(options),
-			layerSwitcher = new OpenLayers.Control.LayerSwitcher(),
-			mouseControl = new CMDBuild.Management.CMZoomAndMousePositionControl({
-				zoomLabel : CMDBuild.Translation.management.modcard.gis.zoom,
-				positionLabel : CMDBuild.Translation.management.modcard.gis.position
-			});
+		var map = new CMDBuild.Management.CMMap(options);
 
-		map.addControl(layerSwitcher);
-		map.addControl(mouseControl);
+//		map.addControl(new OpenLayers.Control.LayerSwitcher());
 
-		addBaseLayers(map);
+		map.addControl(new CMDBuild.Management.CMZoomAndMousePositionControl({
+			zoomLabel : CMDBuild.Translation.management.modcard.gis.zoom,
+			positionLabel : CMDBuild.Translation.management.modcard.gis.position
+		}));
+
+		addFakeLayer(map);
 
 		return map;
 	};
 
-	function addBaseLayers(map) {
+	function initBaseLayers() {
 		var DEFAULT_MIN_ZOOM = 0,
 			DEFAULT_MAX_ZOOM = 18,
-			gisConfig = CMDBuild.Config.gis;
+			gisConfig = CMDBuild.Config.gis,
+			map = this;
 
 		if (gisConfig.osm && gisConfig.osm == "on") {
 			var osm = new OpenLayers.Layer.OSM("Open Street Map", null, {
@@ -65,8 +66,10 @@ CMDBuild.Management.MapBuilder = (function() {
 					this.setVisibility(isInRange);
 				}
 			});
-			
+
+			osm.CMDBuildLayer = true;
 			map.addLayers([osm]);
+			map.setBaseLayer(osm);
 		}
 
 		if (gisConfig.google && gisConfig.google == "on") {
@@ -85,7 +88,9 @@ CMDBuild.Management.MapBuilder = (function() {
 
 				this.setVisibility(isInRange);
 			};
+			googleLayer.CMDBuildLayer = true;
 			map.addLayers([googleLayer]);
+			map.setBaseLayer(googleLayer);
 		}
 
 		if (gisConfig.yahoo && gisConfig.yahoo == "on") {
@@ -103,20 +108,27 @@ CMDBuild.Management.MapBuilder = (function() {
 
 				this.setVisibility(isInRange);
 			};
+			yahooLayer.CMDBuildLayer = true;
 			map.addLayers([yahooLayer]);
+			map.setBaseLayer(yahooLayer);
 		}
 
 		// could not build a map without a base layer
 		// if there are no layers in the configuration
 		// ad a fake one.
 		if (map.layers.length == 0) {
-			var fakeBaseLayer = new OpenLayers.Layer.Vector("", {
-				displayInLayerSwitcher: false,
-				isBaseLayer: true
-			});
-			map.addLayers([fakeBaseLayer]);
+			addFakeLayer(map);
 		}
 	};
+
+	function addFakeLayer(map) {
+		var fakeBaseLayer = new OpenLayers.Layer.Vector("", {
+			displayInLayerSwitcher: false,
+			isBaseLayer: true
+		});
+
+		map.addLayers([fakeBaseLayer]);
+	}
 
 	return {
 		buildMap: buildMap

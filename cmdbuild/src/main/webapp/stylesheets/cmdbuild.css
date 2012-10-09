@@ -946,3 +946,9 @@ em {
 	padding-top: 0.5em;
 	margin-top: 0.5em;
 }
+
+/* Other */
+
+.cmdbuild-nodisplay {
+	display: none !important;
+}

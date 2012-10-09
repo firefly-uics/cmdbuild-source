@@ -43,7 +43,7 @@
 				return null;
 			}
 
-			if (isItMineOrOfMyAncestors(geoAttribute, classId) 
+			if (isItMineOrOfMyAncestors(geoAttribute, classId)
 					&& withEditLayer) {
 				// add the edit layer only for the layer
 				// defined for the current class or for an ancestor

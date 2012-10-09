@@ -68,7 +68,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-management.js"></script>
 -->
 
-			 <%	
+<%
 		GisProperties g =  GisProperties.getInstance();
 		if (g.isEnabled()) {
 			if (g.isServiceOn(GisProperties.GOOGLE)) {
@@ -81,23 +81,12 @@
 				<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
 				<%
 			}
-		%>
+%>
 
-		<script type="text/javascript" src="javascripts/OpenLayers-2.12/OpenLayers.js"></script>
+			<%@ include file="gisJsFiles.jsp"%>
 
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMap.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMSelectFeatureController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMZoomAndMousePositionControl.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapLayer.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/LayerBuilder.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/GeoUtility.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapEditingWindow.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapBuilder.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapPanel.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/PopupController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMMapController.js"></script>
-
-		<%}%>
+<%		}
+%>
 
 		<script type="text/javascript">
 			Ext.onReady(function() {

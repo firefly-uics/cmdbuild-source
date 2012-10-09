@@ -1,42 +1,34 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.common.CMCardDataProvider", {
-		constructor: function(target, dataName) {
-			if (target) {
-				this.target = target;
-			} else {
-				throw "You have to pass aterget to the CMCardDataProvider";
-			}
-
-			var me = this.target;
-			if (typeof dataName == "string") {
-				me.getCardDataName = function() {
-					return dataName;
-				}
-			} else {
-				throw "You have to set a cmCardDataName for the CMCardDataProvider " + me.$className;
-			}
-
-			if (typeof me.getCardData != "function") {
-				me.getCardData = function() {
-					throw "You have to implement the getCardData method in " + me.$className;
-				}
-			}
-
-			return target;
-		}
-	});
 
 	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
 
+		extend: "CMDBuild.controller.management.classes.CMCardDataProvider",
+
 		mixins: {
-			observable: "Ext.util.Observable"
+			observable: "Ext.util.Observable",
+			mapDelegate: "CMDBuild.view.management.map.CMMapPanelDelegate",
+			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindow",
+			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate"
 		},
+
+		cardDataName: "geoAttributes", // CMCardDataProvider member, to say the name to use for given data
 
 		constructor: function(mapPanel, ownerController) {
 			var me = this;
 
 			if (mapPanel && ownerController) {
 				this.mapPanel = mapPanel;
+				this.mapPanel.addDelegate(this);
+				this.mapPanel.editingWindow.addDelegate(this);
+
+				// set the switcher controller as a map delegate
+				var layerSwitcher = this.mapPanel.getLayerSwitcherPanel();
+				var layerSwitcherController = new CMDBuild.controller.management.classes
+						.CMMapLayerSwitcherController(layerSwitcher, this.mapPanel.getMap());
+				this.mapPanel.addDelegate(layerSwitcherController);
+
+				// set me as a delegate of the switcher
+				layerSwitcher.addDelegate(this);
 
 				this.ownerController = ownerController;
 				this.cmIsInEditing = false;
@@ -55,13 +47,6 @@
 				this.mapPanel.getMap().addControl(this.selectControl);
 				this.selectControl.activate();
 
-				this.popupControl = new CMDBuild.Management.PopupController();
-				this.mapPanel.getMap().addControl(this.popupControl);
-				this.popupControl.activate();
-
-				registerMapEventListeners.call(this);
-
-				return new CMDBuild.controller.management.common.CMCardDataProvider(this, "geoAttributes");
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
 			}
@@ -74,10 +59,7 @@
 
 		onFeatureSelect: function(feature) {
 			var prop = feature.attributes,
-				layer = feature.layer,
-				me = this;
-
-			layer.map.removeAllPopups();
+				layer = feature.layer;
 
 			if (!layer.editLayer) {
 				// the feature selected is not
@@ -136,19 +118,6 @@
 			CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
 		},
 
-		activateEditControls: function(editLayer) {
-			deactivateEditControls.call(this);
-
-			this.currentEditLayer = editLayer;
-			this.activateTransformConrol(editLayer.id);
-
-			var editFeature = editLayer.features[0];
-
-			if (editFeature) {
-				setTransformControlFeature.call(this, editLayer.id, editFeature);
-				editLayer.drawFeature(editFeature, "select");
-			}
-		},
 
 		activateTransformConrol: function(layerId) {
 			activateControl.call(this, layerId, "transform");
@@ -203,9 +172,29 @@
 		onEntryTypeSelected: onEntryTypeSelected,
 		getCardData: getCardData,
 
-		// FIXME: for compatibility
-		onEntryTypeSelect: onEntryTypeSelected,
-		getValues: getCardData
+		/* As mapDelegate *********/
+
+		onLayerAdded: onLayerAdded,
+		onLayerRemoved: onLayerRemoved,
+		onMapPanelVisibilityChanged: onVisibilityChanged,
+
+		/* As editingWindowDelegate *********/
+
+		addFeatureButtonHasBeenToggled: onAddFeatureButtonToggle,
+		removeFeatureButtonHasBeenClicked: onRemoveFeatureButtonClick,
+		geoAttributeMenuItemHasBeenClicked: activateEditControls,
+
+		/* As layerSwitcherDelegate *********/
+
+		onLayerCheckChange: function(node, checked) {
+			var map = this.mapPanel.getMap();
+			if (map) {
+				var layer = map.getLayersBy("id", node.layerId);
+				if (layer.length > 0) {
+					layer[0].setVisibility(checked);
+				}
+			}
+		}
 	});
 
 	function getCardData() {
@@ -222,7 +211,7 @@
 		// if update the map on show and there is a card selected
 		var lastCard = this.ownerController.getCard();
 		if (lastCard) {
-			// this.currentCardId = lastCard.get("Id");
+
 			this.onCardSelected(lastCard);
 			this.centerMapOnFeature(lastCard.data);
 		} else {
@@ -232,67 +221,25 @@
 		this.updateMap(et);
 	}
 
-	function registerMapEventListeners() {
-		this.mon(this.mapPanel, "addlayer", onLayerAdded, this);
-		this.mon(this.mapPanel, "removelayer",onLayerRemoved,this);
-		this.mon(this.mapPanel, "addFeatureButtonToogle", onAddFeatureButtonToggle, this);
-		this.mon(this.mapPanel, "onRemoveFeatureButtonClick", onRemoveFeatureButtonClick, this);
-		this.mon(this.mapPanel, "cmGeoAttrMenuClicked", this.activateEditControls, this);
-		this.mon(this.mapPanel, "cmVisible", onCmVisible, this);
-
-		// TODO remove the reference to the relatedFormPanel and listen the event in super controller
-		// this.relatedFormPanel.mon(this.relatedFormPanel, "cmeditmode", this.editMode, this);
-		// this.relatedFormPanel.mon(this.relatedFormPanel, "cmdisplaymode", this.displayMode, this);
-	}
-
-	function onLayerAdded(params) {
-		var layer = params.layer,
-			me = this;
+	function onLayerAdded(map, params) {
+		var layer = params.layer;
 
 		if (layer == null || !layer.CM_Layer) {
 			return;
 		}
 
 		buildEditControls.call(this, layer);
-
-		if (layer.CM_EditLayer) {
-			layer.events.on({
-				"beforefeatureadded": onEditableLayerBeforeAdd,
-				"scope": me
-			});
-		} else {
-			this.popupControl.addLayer(layer);
-			layer.events.on({
-				"featureadded": onCmdbLayerBeforeAdd,
-				"scope": me
-			});
-		}
-
 		this.selectControl.addLayer(layer);
 	}
 
-	function onLayerRemoved(params) {
-		var layer = params.layer,
-			me = this;
+	function onLayerRemoved(map, params) {
+		var layer = params.layer;
 
 		if (layer == null || !layer.CM_Layer) {
 			return;
 		}
 
 		destroyEditControls.call(this, layer);
-
-		if (layer.CM_EditLayer) {
-			layer.events.un({
-				"beforefeatureadded": onEditableLayerBeforeAdd,
-				"scope": me
-			});
-		} else {
-			this.popupControl.addLayer(layer);
-			layer.events.un({
-				"featureadded": onCmdbLayerBeforeAdd,
-				"scope": me
-			});
-		}
 		this.selectControl.removeLayer(layer);
 	}
 
@@ -317,6 +264,20 @@
 			}
 		}
 		return true;
+	}
+
+	function activateEditControls(editLayer) {
+		deactivateEditControls.call(this);
+
+		this.currentEditLayer = editLayer;
+		this.activateTransformConrol(editLayer.id);
+
+		var editFeature = editLayer.features[0];
+
+		if (editFeature) {
+			setTransformControlFeature.call(this, editLayer.id, editFeature);
+			editLayer.drawFeature(editFeature, "select");
+		}
 	}
 
 	function onCmdbLayerBeforeAdd(o) {
@@ -346,7 +307,7 @@
 		}
 	}
 
-	function onCmVisible(visible) {
+	function onVisibilityChanged(map, visible) {
 		if (visible) {
 			var lastClass = this.ownerController.getEntryType(),
 				lastCard = this.ownerController.getCard();
