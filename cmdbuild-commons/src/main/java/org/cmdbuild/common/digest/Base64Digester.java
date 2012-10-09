@@ -1,4 +1,4 @@
-package org.cmdbuild.auth.password;
+package org.cmdbuild.common.digest;
 
 import java.security.GeneralSecurityException;
 import java.security.spec.AlgorithmParameterSpec;
@@ -14,6 +14,7 @@ import javax.crypto.spec.PBEParameterSpec;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * will be changed, at least to support a variable salt.
  */
 @ThreadSafe
-public class NaivePasswordHandler implements PasswordHandler {
+public class Base64Digester implements Digester {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -97,5 +98,15 @@ public class NaivePasswordHandler implements PasswordHandler {
 			logger.error("Error decrypting", e);
 		}
 		return null;
+	}
+	
+	@Override
+	public boolean isReversible() {
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "BASE64";
 	}
 }

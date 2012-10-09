@@ -32,12 +32,12 @@ public class DashboardDefinitionTest {
 		try {
 			dashboard.addChart(chartId, chart);
 			fail("Cannot use the same Id twice");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardDefinition.errors.duplicateChartIdForDashboard(chartId, dashboard.getName());
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardDefinition.errors.duplicateChartIdForDashboard(chartId,
+					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 	}
-
 
 	@Test
 	public void getChart() {
@@ -47,8 +47,9 @@ public class DashboardDefinitionTest {
 		try {
 			dashboard.getChart(chartId);
 			fail("Cannot retrieve a chart from an empty dashboard");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId, dashboard.getName());
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
+					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -67,8 +68,9 @@ public class DashboardDefinitionTest {
 		try {
 			dashboard.modifyChart(chartId, null);
 			fail("Can not modify a chart that is not in the dashboard");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId, dashboard.getName());
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
+					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -77,8 +79,8 @@ public class DashboardDefinitionTest {
 		try {
 			dashboard.modifyChart(chartId, null);
 			fail("Can not modify a chart that is not in the dashboard");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardDefinition.errors.nullChart(dashboard.getName());
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardDefinition.errors.nullChart(dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -94,13 +96,14 @@ public class DashboardDefinitionTest {
 		try {
 			dashboard.popChart(chartId);
 			fail("Cannot remove a chart if you have not add it to the dashboard");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId, dashboard.getName());
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
+					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
 		dashboard.addChart(chartId, chart);
-		ChartDefinition poppedChart = dashboard.popChart(chartId);
+		final ChartDefinition poppedChart = dashboard.popChart(chartId);
 
 		assertEquals(chart, poppedChart);
 	}
@@ -118,8 +121,8 @@ public class DashboardDefinitionTest {
 		try {
 			dashboard.addColumn(column);
 			fail("Cannot add a column with a reference to a chart that is not in the dashboard");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardDefinition.errors.wrongChartInColumn(chartId, dashboard.getName());
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardDefinition.errors.wrongChartInColumn(chartId, dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -134,7 +137,7 @@ public class DashboardDefinitionTest {
 		final DashboardDefinition dashboard = new DashboardDefinition();
 		final DashboardColumn column1 = new DashboardColumn();
 		final DashboardColumn column2 = new DashboardColumn();
-		final ArrayList<DashboardColumn>columns = new ArrayList<DashboardColumn>();
+		final ArrayList<DashboardColumn> columns = new ArrayList<DashboardColumn>();
 		final String chart1Id = "aChart";
 		final String chart2Id = "aSecondChart";
 
@@ -144,8 +147,8 @@ public class DashboardDefinitionTest {
 		columns.add(column2);
 
 		/*
-		 * set the columns also without check on the charts in
-		 * the dashboard to allow the json decoding
+		 * set the columns also without check on the charts in the dashboard to
+		 * allow the json decoding
 		 */
 		dashboard.setColumns(columns);
 
@@ -157,7 +160,7 @@ public class DashboardDefinitionTest {
 		final DashboardDefinition dashboard = new DashboardDefinition();
 		final DashboardColumn column1 = new DashboardColumn();
 		final DashboardColumn column2 = new DashboardColumn();
-		final ArrayList<DashboardColumn>columns = new ArrayList<DashboardColumn>();
+		final ArrayList<DashboardColumn> columns = new ArrayList<DashboardColumn>();
 		final String chart1Id = "aChart";
 		final String chart2Id = "aSecondChart";
 
