@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.DashboardLogic.fakeAnyAttribute;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.cmdbuild.common.digest.Digester;
+import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -450,12 +453,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
 
 			@Override
-			public void visit(ReferenceAttributeType attributeType) {
+			public void visit(final ReferenceAttributeType attributeType) {
 				throw new UnsupportedOperationException("references not supported");
 			}
 
 			@Override
-			public void visit(LookupAttributeType attributeType) {
+			public void visit(final LookupAttributeType attributeType) {
 				throw new UnsupportedOperationException("lookups not supported");
 			}
 
@@ -468,14 +471,14 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
-			public void visit(WSProcessStartEvent wsEvent) {
+			public void visit(final WSProcessStartEvent wsEvent) {
 				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
 			}
 
 			@Override
-			public void visit(WSProcessUpdateEvent wsEvent) {
+			public void visit(final WSProcessUpdateEvent wsEvent) {
 				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
@@ -508,6 +511,22 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 			attributeSchemas.add(AttributeSchemaSerializer.serialize(parameter));
 		}
 		return attributeSchemas;
+	}
+
+	@Override
+	public String generateDigest(final String plainText, final String digestAlgorithm) throws NoSuchAlgorithmException {
+		if (digestAlgorithm == null) {
+			Log.SOAP.error("The digest algorithm is null");
+			throw new IllegalArgumentException(
+					"Both the argument must not be null. Specify the text to be encrypted and a valid digest algorithm");
+		}
+		if (plainText == null) {
+			return null;
+		}
+		final Digester digester = DigesterFactory.createDigester(digestAlgorithm);
+		Log.SOAP.info("Generating digest with algorithm " + digester + " ("
+				+ (digester.isReversible() ? "reversible" : "irreversible") + ")");
+		return digester.encrypt(plainText);
 	}
 
 }
