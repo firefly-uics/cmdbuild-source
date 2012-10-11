@@ -16,7 +16,7 @@ public class ConfigurationHelper {
 	private static final String CMDBUILD_MAIL_API_CLASSNAME_PROPERTY = "org.cmdbuild.mail.api.classname";
 
 	private static final String MAIL_DEBUG = "DefaultMailMessageHandler.debug";
-	private static final String MAIL_USE_SSL = "DefaultMailMessageHandler.SMTP_UseSSL";
+	private static final String MAIL_USE_SSL = "DefaultMailMessageHandler.use_SSL";
 	private static final String MAIL_SMTP_SERVER = "DefaultMailMessageHandler.SMTPMailServer";
 	private static final String MAIL_SMTP_PORT = "DefaultMailMessageHandler.SMTPPortNo";
 	private static final String MAIL_STARTTLS = "DefaultMailMessageHandler.starttls";
