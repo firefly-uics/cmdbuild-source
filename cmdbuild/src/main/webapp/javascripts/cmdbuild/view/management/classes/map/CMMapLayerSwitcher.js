@@ -28,6 +28,11 @@
 
 		initComponent: function() {
 			this.rootVisible = false;
+			this.useArrows = true;
+			this.frame = false;
+			this.border = false;
+			this.bodyBorder = false;
+
 			this.store = new Ext.create('Ext.data.TreeStore', {
 				root : {
 					expanded : true,
@@ -51,9 +56,6 @@
 				}
 			},
 
-			this.frame = false;
-			this.border = false;
-			this.bodyBorder = false;
 			this.callParent(arguments);
 		},
 

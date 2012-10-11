@@ -34,6 +34,31 @@
 							success: function(response, options, decoded) {
 								CMDBuild.Config.cmdbuild = decoded.data;
 
+								// TODO do request
+
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {
+									className: "Building",
+									children: [{
+										className: "Floor",
+										domainName: "BuildingFloor",
+										direct: true,
+										children: [{
+											className: "Room",
+											domainName: "FloorRoom",
+											direct: true,
+											children: [{
+												className: "Asset",
+												domainName: "RoomAsset",
+												direct: true
+											}, {
+												className: "Workplace",
+												domainName: "RoomWorkplace",
+												direct: true
+											}]
+										}]
+									}]
+								};
+
 								CMDBuild.ServiceProxy.configuration.readGisConfiguration({
 									success: function(response, options, decoded) {
 										CMDBuild.Config.gis = decoded.data;

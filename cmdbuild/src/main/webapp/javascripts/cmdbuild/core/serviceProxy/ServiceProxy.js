@@ -31,12 +31,26 @@ CMDBuild.ServiceProxy = {
 	// TODO duplicate in card section, remove this
 	getCardList: function(p) {
 		CMDBuild.Ajax.request( {
-		    url: "services/json/management/modcard/getcardlist",
-		    method: "GET",
-		    params: p.params,
-		    success: p.success,
-	        failure: p.failure,
-	        callback: p.callback
+			url: "services/json/management/modcard/getcardlist",
+			method: "GET",
+			params: p.params,
+			success: p.success,
+			failure: p.failure,
+			callback: p.callback
+		});
+	},
+
+	getCardBasicInfoList: function(className, success, cb, scope) {
+		CMDBuild.ServiceProxy.core.doRequest({
+			method: "GET",
+			url: "services/json/management/modcard/getcardlistshort",
+			params: {
+				ClassName: className,
+				NoFilter: true
+			},
+			success: success,
+			callback: cb,
+			scope: scope
 		});
 	},
 

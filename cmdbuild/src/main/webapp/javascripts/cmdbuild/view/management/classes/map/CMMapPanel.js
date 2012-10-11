@@ -74,37 +74,34 @@
 				border: false
 			});
 
-			this.browsingPanel = new Ext.panel.Panel({
-				width: 200,
+			this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
+				title: "@@ Browse",
 				frame: false,
-				border: false,
-				layout: "border",
-				region: "east",
-				cls: "cmborderleft",
-				split: true,
-				collapsible: true, 
-				collapseMode: 'mini',
-				header: false,
-				items: [{
+				border: false
+			});
+
+			this.layout = "border";
+			this.items = [
+				this.actualMapPanel,
+				{
 					xtype: "tabpanel",
-					region: "center",
+					region: "east",
+					cls: "cmborderleft",
+					width: 200,
+					split: true,
+					collapsible: true, 
+					collapseMode: 'mini',
+					header: false,
 					frame: false,
 					border: false,
 					plain: true,
 					activeItem: 0,
 					padding: "2 0 0 0",
 					items: [
-						this.layerSwitcher, {
-						title: "@@ Browsing",
-						frame: false,
-						border: false
-					}]
-				}]
-			});
-
-			this.layout = "border";
-			this.items = [
-				this.actualMapPanel, this.browsingPanel
+						this.layerSwitcher,
+						this.cardBrowser
+					]
+				}
 			];
 
 			this.callParent(arguments);
@@ -141,6 +138,10 @@
 
 		getLayerSwitcherPanel: function() {
 			return this.layerSwitcher;
+		},
+
+		getCardBrowserPanel: function() {
+			return this.cardBrowser;
 		}
 	});
 
