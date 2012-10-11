@@ -1,5 +1,4 @@
 (function() {
-
 	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
 
 		extend: "CMDBuild.controller.management.classes.CMCardDataProvider",
@@ -8,7 +7,8 @@
 			observable: "Ext.util.Observable",
 			mapDelegate: "CMDBuild.view.management.map.CMMapPanelDelegate",
 			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindow",
-			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate"
+			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate",
+			cardBrowserDelegate: "CMDBuild.view.management.CMCardBrowserTreeDelegate"
 		},
 
 		cardDataName: "geoAttributes", // CMCardDataProvider member, to say the name to use for given data
@@ -29,6 +29,12 @@
 
 				// set me as a delegate of the switcher
 				layerSwitcher.addDelegate(this);
+
+				// set me as a delegate of the cardBrowser
+				var cardBrowser = this.mapPanel.getCardBrowserPanel();
+				cardBrowser.addDelegate(this);
+
+				cardBrowser.addDelegate(new CMDBuild.controller.management.classes.CMCardBrowserTreeController(cardBrowser));
 
 				this.ownerController = ownerController;
 				this.cmIsInEditing = false;
@@ -194,6 +200,12 @@
 					layer[0].setVisibility(checked);
 				}
 			}
+		},
+
+		/* As cardBrowserDelegate *********/
+
+		onCardBrowserTreeCheckChange: function(node, checked) {
+			_debug("onCardBrowserTreeCheckChange", node, checked);
 		}
 	});
 

@@ -2,12 +2,14 @@
 
 	var classes = {},
 		processes = {},
+		mapIdAndName = {},
 		geoAttributesSotores = {},
 		superclassesStore = getFakeStore(),
 		superProcessStore = getFakeStore(),
 		classStore = getFakeStore(),
 		classesAndProcessesStore = getFakeStore();
 
+	
 	Ext.define("CMDBUild.cache.CMCacheClassFunctions", {
 
 		getClasses: function() {
@@ -86,9 +88,9 @@
 				p = this.getProcessById(id);
 			
 			if (c) {
-				return c
+				return c;
 			} else if (p) {
-				return p
+				return p;
 			} else {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
 						Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, id));
@@ -108,6 +110,19 @@
 					Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, name));
 
 			return null;
+		},
+
+		getEntryTypeNameById: function(id) {
+			if (typeof mapIdAndName[id] == "undefined") {
+				var et = this.getEntryTypeById(id);
+				if (et) {
+					mapIdAndName[id] = et.get("name");
+				} else {
+					mapIdAndName[id] = "";
+				}
+			}
+
+			return mapIdAndName[id];
 		},
 
 		getSuperclassesAsStore: function() {

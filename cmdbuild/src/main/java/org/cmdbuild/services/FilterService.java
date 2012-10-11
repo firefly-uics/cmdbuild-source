@@ -17,17 +17,16 @@ public class FilterService {
 	public static CardQuery getFilter(int classId, String categoryOrNull, String subcategoryOrNull) {
 		String category = getFilterCategory(categoryOrNull);
 		String subcategory = getFilterSubcategory(subcategoryOrNull);
-		CardQuery filter = getCurrentFilter(category, subcategory);
-		if (filter == null) {
-			filter = createAndPutFilter(classId, category, subcategory);
-		} else {
-			if (filter.getTable().getId() != classId) {
-				clearFilters(category, subcategory);
-				filter = createAndPutFilter(classId, category, subcategory);
-			}
-		}
-		return filter;
+		return createFilterIfNull(classId, category, subcategory);
 	}
+
+
+	public static CardQuery getFilter(String className, String categoryOrNull, String subcategoryOrNull) {
+		String category = getFilterCategory(categoryOrNull);
+		String subcategory = getFilterSubcategory(subcategoryOrNull);
+		return createFilterIfNull(className, category, subcategory);
+	}
+
 
 	public static void clearFilters(String categoryOrNull, String subcategoryOrNull) {
 		String category = getFilterSubcategory(categoryOrNull);
@@ -39,6 +38,34 @@ public class FilterService {
 		} else {
 			clearFilterSubcategory(category, subcategory);
 		}
+	}
+
+	private static CardQuery createFilterIfNull(int classId, String category,
+			String subcategory) {
+		CardQuery filter = getCurrentFilter(category, subcategory);
+		if (filter == null) {
+			filter = createAndPutFilter(classId, category, subcategory);
+		} else {
+			if (filter.getTable().getId() != classId) {
+				clearFilters(category, subcategory);
+				filter = createAndPutFilter(classId, category, subcategory);
+			}
+		}
+		return filter;
+	}
+	
+	private static CardQuery createFilterIfNull(String className,
+			String category, String subcategory) {
+		CardQuery filter = getCurrentFilter(category, subcategory);
+		if (filter == null) {
+			filter = createAndPutFilter(className, category, subcategory);
+		} else {
+			if (filter.getTable().getName() != className) {
+				clearFilters(category, subcategory);
+				filter = createAndPutFilter(className, category, subcategory);
+			}
+		}
+		return filter;
 	}
 
 	private static void clearAllFilters() {
@@ -63,24 +90,46 @@ public class FilterService {
 		return filterMap.get(category+subcategory);
 	}
 
+	// createAndPutFilter
+
 	private static CardQuery createAndPutFilter(int classId, String category,
 			String subcategory) throws NotFoundException {
+		return createAndPutFilter(createFilter(classId), category, subcategory);
+	}
+
+	private static CardQuery createAndPutFilter(String className, String category,
+			String subcategory) throws NotFoundException {
+		return createAndPutFilter(createFilter(className), category, subcategory);
+	}
+
+	private static CardQuery createAndPutFilter(CardQuery filter, String category,
+			String subcategory) throws NotFoundException {
 		Map<String, CardQuery> filterMap = getfilterMap();
-		CardQuery filter = createFilter(classId);
 		filterMap.put(category+subcategory, filter);
 		return filter;
 	}
 
+	// createFilter
+
 	private static CardQuery createFilter(int classId) throws NotFoundException {
-		CardQuery filter;
 		UserContext userCtx = new SessionVars().getCurrentUserContext();
 		ITable table = userCtx.tables().get(classId);
-		filter = table.cards().list();
+		return createFilter(table);
+	}
+
+	private static CardQuery createFilter(String className) throws NotFoundException {
+		UserContext userCtx = new SessionVars().getCurrentUserContext();
+		ITable table = userCtx.tables().get(className);
+		return createFilter(table);
+	}
+
+	private static CardQuery createFilter(ITable table) {
+		CardQuery filter = table.cards().list();
 		// TODO: Use the default Class filter if present when implemented		
 		for (OrderEntry sortEntry : table.getOrdering()) {
 			filter.order(sortEntry.getAttributeName(), sortEntry.getOrderDirection());
 		}
-		
+
 		return filter;
 	}
 
@@ -126,4 +175,5 @@ public class FilterService {
 			subcategory = FilterService.DEFAULT_FILTER_SUBCATEGORY;
 		return subcategory;
 	}
+
 }
