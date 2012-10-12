@@ -20,12 +20,15 @@
 				this.mapPanel = mapPanel;
 				this.mapPanel.addDelegate(this);
 				this.mapPanel.editingWindow.addDelegate(this);
+				this.ownerController = ownerController;
+				this.cmIsInEditing = false;
 
 				// set the switcher controller as a map delegate
 				var layerSwitcher = this.mapPanel.getLayerSwitcherPanel();
-				var layerSwitcherController = new CMDBuild.controller.management.classes
-						.CMMapLayerSwitcherController(layerSwitcher, this.mapPanel.getMap());
-				this.mapPanel.addDelegate(layerSwitcherController);
+				this.mapPanel.addDelegate(
+						new CMDBuild.controller.management.classes
+							.CMMapLayerSwitcherController(layerSwitcher,
+								this.mapPanel.getMap()));
 
 				// set me as a delegate of the switcher
 				layerSwitcher.addDelegate(this);
@@ -33,13 +36,11 @@
 				// set me as a delegate of the cardBrowser
 				var cardBrowser = this.mapPanel.getCardBrowserPanel();
 				cardBrowser.addDelegate(this);
+				// init the cardBrowserDataSource
+				new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardBrowser);
 
-				cardBrowser.addDelegate(new CMDBuild.controller.management.classes.CMCardBrowserTreeController(cardBrowser));
-
-				this.ownerController = ownerController;
-				this.cmIsInEditing = false;
+				// initialize editing control
 				this.editingControls = {};
-
 				this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
 					hover: false,
 					renderIntent: "default",
@@ -49,7 +50,6 @@
 						}
 					}
 				});
-
 				this.mapPanel.getMap().addControl(this.selectControl);
 				this.selectControl.activate();
 
@@ -123,7 +123,6 @@
 
 			CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
 		},
-
 
 		activateTransformConrol: function(layerId) {
 			activateControl.call(this, layerId, "transform");
@@ -204,10 +203,62 @@
 
 		/* As cardBrowserDelegate *********/
 
-		onCardBrowserTreeCheckChange: function(node, checked) {
-			_debug("onCardBrowserTreeCheckChange", node, checked);
+		// Hide or show the feature[s] for the node
+		// from the map.
+		// If the node is a folder and is expanded, the action
+		// is targeted only over the node. Otherwise, do the
+		// action over all the branch that start with the
+		// passed node. So, if the node was never opened,
+		// there aren't the info to show/hide the features.
+		// For this reason, act like an expand, loading the
+		// branch at all, and then show/hide the features.
+
+		onCardBrowserTreeCheckChange: function(tree, node, checked) {
+			setFeatureVisibilityForAllBranch(tree, this.mapPanel.getMap(), node, checked, false);
+		},
+
+		onCardBrowserTreeItemExpand: function(tree, node) {
+			tree.dataSource.loadChildren(node);
 		}
 	});
+
+	function setFeatureVisibilityForAllBranch(tree, map, node, checked, forceChildren) {
+		setCardFeaturesVisibility(map, node, checked);
+
+		if (forceChildren || !node.isExpanded()) {
+			if (node.didChildrenLoaded()) {
+				var children = node.childNodes || [];
+				setChildrenFeaturesVisibility(tree, map, checked, children, true);
+			} else {
+				tree.dataSource.loadChildren(node, function(children) {
+					setChildrenFeaturesVisibility(tree, map, checked, children, true);
+				});
+			}
+		}
+	}
+
+	function setCardFeaturesVisibility(map, node, visibility) {
+		var className = node.getCMDBuildClassName();
+		var cardId = node.getCardId();
+		var layers = map.getLayersByTargetClassName(className);
+
+		for (var i=0, layer=null; i<layers.length; ++i) {
+			layer = layers[i];
+			if (visibility) {
+				layer.showFeatureWithCardId(cardId);
+			} else {
+				layer.hideFeatureWithCardId(cardId);
+			}
+		}
+	}
+
+	function setChildrenFeaturesVisibility(tree, map, checked, children, forceChildren) {
+		for (var i=0, child=null; i<children.length; ++i) {
+			child = children[i];
+			child.set("checked", checked);
+			setFeatureVisibilityForAllBranch(tree, map, child, checked, forceChildren);
+		}
+	}
 
 	function getCardData() {
 		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());

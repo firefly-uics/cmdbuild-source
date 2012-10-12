@@ -122,7 +122,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardBrowserTreeController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardBrowserTreeDataSource.js"></script>
 
 		<!-- they are not common but the widget need them -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMBaseCardPanelController.js"></script>

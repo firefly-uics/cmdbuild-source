@@ -5,8 +5,19 @@
 /**
  * @class CMDBuild.Management.CMDBuildMap.MapLayer
  */
+
 CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
+
 	initialize: function(name, options) {
+		// Set the google projection
+		this.projection = new OpenLayers.Projection("EPSG:900913"),
+
+		// CMDBuild stuff
+		this.editLayer = undefined,
+		this.geoAttribute = undefined,
+		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
+		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
+		this.hiddenFeature = {};
 
 		this.styleMap = new OpenLayers.StyleMap({
 			"default": Ext.decode(options.geoAttribute.style),
@@ -32,32 +43,24 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			})
 		];
 
-		this.refreshFeatures = function() {
-			var bboxStrategie = this.strategies[0];
-			if (bboxStrategie.invalidBounds()) {
-				bboxStrategie.calculateBounds();
-			}
-			bboxStrategie.triggerRead();
-		};
-
-		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
-		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
-
 		OpenLayers.Layer.Vector.prototype.initialize.apply(this, arguments);
 	},
-	projection: new OpenLayers.Projection("EPSG:900913"),
 
-	// CMDBuild stuff
-	editLayer: undefined,
-	geoAttribute: undefined,
+	refreshFeatures: function() {
+		var bboxStrategie = this.strategies[0];
+		if (bboxStrategie.invalidBounds()) {
+			bboxStrategie.calculateBounds();
+		}
+		bboxStrategie.triggerRead();
+	},
 
 	activateStrategies: function(activate) {
-		for (var strategy in this.strategies) {
-			strategy = this.strategies[strategy];
+		for (var i=0, strategy=null; i < this.strategies.length; ++i) {
+			strategy = this.strategies[i];
 
 			if (activate) {
 				strategy.activate();
-				if (strategy.refresh) {
+				if (typeof strategy.refresh == "function") {
 					strategy.refresh();
 				}
 			} else {
@@ -67,8 +70,8 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 	},
 
 	refreshStrategies: function() {
-		for (var strategy in this.strategies) {
-			strategy = this.strategies[strategy];
+		for (var i=0, strategy=null; i<this.strategies.length; ++i) {
+			strategy = this.strategies[i];
 			if (strategy.refresh) {
 				strategy.force = true;
 				strategy.refresh();
@@ -96,10 +99,8 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 
 	clearSelection: function() {
 		if (this.lastSelection) {
-			var dolly = this.lastSelection.clone();
-			dolly.cmForceAdd = true; // see onCmdbLayerBeforeAdd in CMMapController
-
-			this.addFeatures( [ dolly ]);
+			// restore the feature that was selected
+			this.addFeatures( [this.lastSelection.clone()]);
 			this.lastSelection = undefined;
 		}
 
@@ -108,15 +109,32 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		}
 	},
 
-	getFeatureByMasterCard: function(masterCard) {
+	getFeatureByMasterCard: function(masterCardId) {
 		var features = this.features;
-		for ( var i = 0, l = features.length; i < l; ++i) {
+		for (var i=0, l = features.length; i < l; ++i) {
 			var f = features[i];
-			if (f.attributes.master_card == masterCard) {
+			if (f.attributes.master_card == masterCardId) {
 				return f;
 			}
 		}
 		return null;
+	},
+
+	hideFeatureWithCardId: function(masterCardId) {
+		var f = this.getFeatureByMasterCard(masterCardId);
+		if (f) {
+			this.hiddenFeature[masterCardId] = f.clone();
+			this.removeFeatures([f]);
+		}
+	},
+
+	showFeatureWithCardId: function(masterCardId) {
+		var f = this.hiddenFeature[masterCardId];
+		if (f) {
+			this.addFeatures([f.clone()]);
+
+			delete this.hiddenFeature[masterCardId];
+		}
 	},
 
 	getEditedGeometry: function() {
@@ -125,12 +143,6 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			return f[0].geometry;
 		} catch (Error) {
 			return null;
-		}
-	},
-
-	reselectLastSelection: function() {
-		if (this.lastSelection) {
-			this.selectFeature(this.lastSelection);
 		}
 	}
 });

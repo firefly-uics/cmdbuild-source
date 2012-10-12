@@ -15,7 +15,6 @@
 		getFeatureByMasterCard : Ext.emptyFn,
 		clearSelection : Ext.emptyFn,
 		getEditedGeometry : Ext.emptyFn,
-		reselectLastSelection : Ext.emptyFn,
 		refreshFeatures : Ext.emptyFn,
 		setVisibilityByZoom : (function(zoom) {
 			var isInRange = (zoom >= this.cmdb_minZoom && zoom <= this.cmdb_maxZoom);
