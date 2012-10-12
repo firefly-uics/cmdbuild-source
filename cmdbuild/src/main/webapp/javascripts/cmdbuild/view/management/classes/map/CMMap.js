@@ -6,8 +6,8 @@
 		cmdbLayers: [], //array with the layers added
 
 		update: function(entryType, withEditLayer) {
-			removeCmdbLayers.call(this);
-			addCmdbLayers.call(this, entryType, withEditLayer);
+			removeCmdbLayers(this);
+			addCmdbLayers(this, entryType, withEditLayer);
 		},
 
 		getEditableLayers: function() {
@@ -89,6 +89,22 @@
 			}
 		},
 
+		getLayersByTargetClassName: function(targetClassName) {
+			var layers = [];
+			for (var i=0, layer=null; i<this.cmdbLayers.length; ++i) {
+				layer = this.cmdbLayers[i];
+				
+				if (layer.geoAttribute 
+						// TODO or an ancestor?
+						&& layer.geoAttribute.masterTableName == targetClassName) {
+
+					layers.push(layer);
+				}
+			}
+
+			return layers;
+		},
+
 		getEditedGeometries: function() {
 			var mapOfFeatures = {};
 			var layers = this.cmdbLayers;
@@ -111,36 +127,23 @@
 			for (var i=0, l=layers.length; i<l; ++i) {
 				layers[i].refreshFeatures();
 			}
-		},
-
-		reselectLastSelection: function() {
-			var layers = this.cmdbLayers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].reselectLastSelection();
-			}
-		},
-
-		removeAllPopups: function() {
-			var popups = this.popups;
-			for (var i=0, l=popups.length; i<l; i++) {
-				this.removePopup(popups[i]);
-			}
 		}
 	});
 
 	// subroutine of the update method
-	function removeCmdbLayers() {
-		if (this.cmdbLayers) {
-			var layer = this.cmdbLayers.pop();
+	function removeCmdbLayers(me) {
+		if (me.cmdbLayers) {
+			var layer = me.cmdbLayers.pop();
 			while (layer) {
-				this.removeLayer(layer);
+				me.removeLayer(layer);
 				if (layer.editLayer) {
-					this.removeLayer(layer.editLayer);
+					me.removeLayer(layer.editLayer);
 				}
-				layer = this.cmdbLayers.pop();
+				delete layer;
+				layer = me.cmdbLayers.pop();
 			}
 		}
-		this.cmdbLayers = [];
+		me.cmdbLayers = [];
 	};
 
 	function orderAttributesByIndex(geoAttributes) {
@@ -153,28 +156,27 @@
 	};
 
 	// subroutine of the update method
-	function addCmdbLayers(entryType, withEditLayer) {
+	function addCmdbLayers(me, entryType, withEditLayer) {
 		var geoAttributes = entryType.getGeoAttrs() || [];
 		var orderedAttrs = orderAttributesByIndex(geoAttributes);
 
 		for (var i = orderedAttrs.length; i>=0; i--) {
 			// add the related layer to the map
-			var attr = orderedAttrs[i];
-			var newLayer = CMDBuild.Management.CMMap.LayerBuilder.buildLayer({
-				classId: entryType.get("id"),
-				geoAttribute: attr,
-				withEditLayer: withEditLayer
-			});
-
-			addLayerToMap.call(this, newLayer);
+			addLayerToMap.call(me, // 
+					CMDBuild.Management.CMMap.LayerBuilder.buildLayer({
+						classId : entryType.getId(),
+						geoAttribute : orderedAttrs[i],
+						withEditLayer : withEditLayer
+					})
+				);
 		}
 
 		// add the editable layers to the map after
 		// the cmdb layers to see them over all
-		for (var i=0, l=this.cmdbLayers.length; i<l; ++i) {
-			var layer = this.cmdbLayers[i];
+		for (var i=0, l=me.cmdbLayers.length; i<l; ++i) {
+			var layer = me.cmdbLayers[i];
 			if (layer.editLayer) {
-				this.addLayers([layer.editLayer]);
+				me.addLayers([layer.editLayer]);
 			}
 		}
 	};

@@ -1,4 +1,45 @@
 (function() {
+
+	Ext.define('CMDBuild.model.CMCardBrowserNodeModel', {
+		extend : 'Ext.data.Model',
+		fields : [{
+			name : 'text', type : 'string'
+		}, {
+			name : 'visible', type : 'boolean'
+		}, {
+			name : 'cardId', type : 'int'
+		}, {
+			name : 'className', type : 'string'
+		}, {
+			name : 'classId', type : 'int'
+		}, {
+			name: 'expansibleDomains', type: 'auto'
+		}, {
+			name: 'childrenLoaded', type: 'boolean'
+		}],
+
+		getCardId: function() {
+			return this.get("cardId");
+		},
+
+		getCMDBuildClassName: function() {
+			return this.get("className");
+		},
+
+		getExpansibleDomains: function() {
+			return this.get("expansibleDomains") || [];
+		},
+
+		didChildrenLoaded: function() {
+			return this.get("childrenLoaded");
+		},
+
+		addLoadedChildren: function(child) {
+			this.set("childrenLoaded", true);
+			return this.appendChild(child);
+		}
+	});
+
 	Ext.define("CMDBuild.view.management.CMCardBrowserTreeDelegate", {
 		/**
 		 * 
@@ -16,40 +57,6 @@
 		onCardBrowserTreeItemExpand: Ext.emptyFn
 	});
 
-	Ext.define('CMDBuild.model.CMCardBrowserNodeModel', {
-		extend : 'Ext.data.Model',
-		fields : [{
-			name : 'text',
-			type : 'string'
-		}, {
-			name : 'visible',
-			type : 'boolean'
-		}, {
-			name : 'cardId',
-			type : 'int'
-		}, {
-			name : 'className',
-			type : 'string'
-		}, {
-			name : 'classId',
-			type : 'int'
-		}, {
-			name: 'expansibleDomains',
-			type: 'auto'
-		}],
-
-		getCardId: function() {
-			return this.get("cardId");
-		},
-
-		getClassName: function() {
-			return this.get("className");
-		},
-
-		getExpansibleDomains: function() {
-			return this.get("expansibleDomains") || [];
-		}
-	});
 
 	Ext.define("CMDBuild.view.management.CMCardBrowserTree", {
 		extend: "Ext.tree.Panel",
@@ -58,10 +65,11 @@
 			delegable: "CMDBuild.core.CMDelegable"
 		},
 
-		constructor: function() {
+		constructor: function(ds) {
 			this.mixins.delegable.constructor.call(this,
 				"CMDBuild.view.management.CMCardBrowserTreeDelegate");
 
+			this.dataSource = ds || null;
 			this.callParent(arguments);
 		},
 
@@ -87,28 +95,18 @@
 					this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked]);
 				},
 
-				beforeitemexpand: function(node) {
-					if (node._alreadyExpanded) {
-						return;
-					}
-
-					node.removeAll();
-					node._alreadyExpanded = true;
-				},
-
 				afteritemexpand: function(node) {
-					if (node._alreadyLoaded) {
-						return;
-					}
-
-					node.removeAll();
-					node._alreadyLoaded = true;
 					this.callDelegates("onCardBrowserTreeItemExpand", [this, node]);
 				},
+
 				scope: this
 			},
 
 			this.callParent(arguments);
+		},
+
+		setDataSource: function(ds) {
+			this.dataSource = ds;
 		}
 	});
 })();
