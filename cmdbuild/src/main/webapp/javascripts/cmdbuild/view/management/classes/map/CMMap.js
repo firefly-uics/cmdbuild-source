@@ -1,4 +1,5 @@
 (function() {
+
 	/**
 	 * @class CMDBuild.Management.CMDBuildMap
 	 */
@@ -122,10 +123,11 @@
 			return mapOfFeatures;
 		},
 
-		refreshFeatures: function() {
-			var layers = this.cmdbLayers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].refreshFeatures();
+		// called by the layers when a feature is added
+
+		featureWasAdded: function(feature) {
+			if (this.delegate) {
+				this.delegate.featureWasAdded(feature);
 			}
 		}
 	});
@@ -167,7 +169,7 @@
 						classId : entryType.getId(),
 						geoAttribute : orderedAttrs[i],
 						withEditLayer : withEditLayer
-					})
+					}, me)
 				);
 		}
 

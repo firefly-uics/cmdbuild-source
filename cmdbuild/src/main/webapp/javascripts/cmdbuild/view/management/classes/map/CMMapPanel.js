@@ -87,7 +87,7 @@
 					xtype: "tabpanel",
 					region: "east",
 					cls: "cmborderleft",
-					width: 200,
+					width: "25%",
 					split: true,
 					collapsible: true, 
 					collapseMode: 'mini',

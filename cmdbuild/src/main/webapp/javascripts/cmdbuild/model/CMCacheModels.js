@@ -211,6 +211,10 @@
 			}
 
 			return rule;
+		},
+
+		toString: function() {
+			return this.get("name");
 		}
 	});
 

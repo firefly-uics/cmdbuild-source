@@ -46,14 +46,6 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		OpenLayers.Layer.Vector.prototype.initialize.apply(this, arguments);
 	},
 
-	refreshFeatures: function() {
-		var bboxStrategie = this.strategies[0];
-		if (bboxStrategie.invalidBounds()) {
-			bboxStrategie.calculateBounds();
-		}
-		bboxStrategie.triggerRead();
-	},
-
 	activateStrategies: function(activate) {
 		for (var i=0, strategy=null; i < this.strategies.length; ++i) {
 			strategy = this.strategies[i];

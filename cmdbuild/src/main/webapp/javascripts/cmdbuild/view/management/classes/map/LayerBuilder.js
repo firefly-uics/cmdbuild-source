@@ -31,7 +31,7 @@
     	 * 	withEditLayer: boolean to say if we want a editLayer or not 
     	 * }
     	 */
-		buildLayer: function(config) {
+		buildLayer: function(config, map) {
 			var classId = config.classId,
 				geoAttribute = config.geoAttribute,
 				withEditLayer = config.withEditLayer,
@@ -50,7 +50,7 @@
 			}
 
 			if (geoAttribute.masterTableId) {
-				layer = buildCmdbLayer(geoAttribute, classId, editLayer);
+				layer = buildCmdbLayer(geoAttribute, classId, editLayer, map);
 			} else {
 				layer = buildGeoserverLayer(geoAttribute);
 			}
@@ -59,7 +59,7 @@
 		}
 	};
 
-	function buildCmdbLayer(geoAttribute, classId, editLayer) {
+	function buildCmdbLayer(geoAttribute, classId, editLayer, map) {
 		var layerDescription = geoAttribute.description;
 
 		/*
@@ -69,6 +69,7 @@
 		 * decision, comment the condition to skip the
 		 * owned layers 
 		 */
+
 		// if (!editLayer) {
 
 		var masterClass = _CMCache.getEntryTypeById(geoAttribute.masterTableId);
@@ -81,7 +82,28 @@
 		var layer = new CMDBuild.Management.CMMap.MapLayer(layerDescription, {
 			targetClassId: getIdClassForRequest(geoAttribute, classId),
 			geoAttribute: geoAttribute,
-			editLayer: editLayer
+			editLayer: editLayer,
+			eventListeners: {
+				/*
+				 * Select a feature if, when added to the map, refers
+				 * to the current card
+				 * 
+				 * 
+				 * p.feature, the OpenLayers.Feature added
+				 * p.object, the layer that fires the event
+				 * p.type, the event type
+				 * p.element, the HTML element of the layer
+				 */
+				featureadded: function(p) {
+
+					var feature = p.feature;
+					if (!feature) {
+						return;
+					}
+
+					map.featureWasAdded(feature);
+				}
+			}
 		});
 
 		return Ext.applyIf(layer, new AbstractLayer());

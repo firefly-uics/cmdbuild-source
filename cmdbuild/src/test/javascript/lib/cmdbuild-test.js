@@ -227,7 +227,8 @@
 //			'CMMetadataGroup',
 //			'CMCacheAttachmentCategoryFunction',
 //			'CMEntryTypeModel',
-			'CMDelegable'
+//			'CMDelegable',
+			'CMCardModuleState'
 		];
 
 		if (Ext.Array.contains(focusSpecs, description)) {

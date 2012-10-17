@@ -61,7 +61,7 @@
 						card = cards[i];
 						card.expansibleDomains = me.configuration.children || [];
 
-						targetNode.appendChild({
+						me.cardBrowserTree.addChildToNode(targetNode, {
 							text: card.Description,
 							className: card.IdClass_value,
 							classId: card.IdClass,
@@ -71,7 +71,6 @@
 							expanded: false,
 							checked: true
 						});
-
 					}
 				}
 			);
@@ -81,15 +80,15 @@
 		},
 
 		loadBranch: function(node) {
-			loadChildren(node, true);
+			loadChildren(this, node, true);
 		},
 
 		loadChildren: function(node, cb) {
-			loadChildren(node, false, cb);
+			loadChildren(this, node, false, cb);
 		}
 	});
 
-	function loadChildren(node, deeply, cb) {
+	function loadChildren(me, node, deeply, cb) {
 		if (node.didChildrenLoaded()) {
 			return;
 		}
@@ -100,7 +99,7 @@
 
 		for (var i=0, domain=null; i<domains.length; ++i) {
 			domain = domains[i];
-			loadDomainChildrenForNode(node, domain, deeply, function(domainChildren) {
+			loadDomainChildrenForNode(me, node, domain, deeply, function(domainChildren) {
 				totalChildren = totalChildren.concat(domainChildren);
 				if (typeof cb == "function" 
 					&& ++steps == domains.length) {
@@ -111,7 +110,7 @@
 		}
 	}
 
-	function loadDomainChildrenForNode(node, domain, deeply, cb) {
+	function loadDomainChildrenForNode(me, node, domain, deeply, cb) {
 		var cachedDomain = _CMCache.getDomainByName(domain.domainName);
 
 		if (!cachedDomain) {
@@ -126,20 +125,22 @@
 				src: domain.direct ? "_1" : "2"
 			},
 			success: function(operation, options, response) {
-
 				var relations = [];
+				var children = [];
+
 				if (response.domains.length > 0) {
 					relations = response.domains[0].relations || [];
 				}
 
-				var children = [];
 				for (var j=0, rel = null, l=relations.length; j<l; ++j) {
 					rel = relations[j];
-					var newChild = node.addLoadedChildren(adaptRelationListResponseToNode(rel, domain));
+					var newChild = me.cardBrowserTree.addLoadedChildren(node,
+							adaptRelationListResponseToNode(rel, domain));
+
 					children.push(newChild);
 
 					if (deeply) {
-						loadChildren(newChild, deeply);
+						loadChildren(me, newChild, deeply);
 					}
 				}
 
