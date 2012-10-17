@@ -679,4 +679,9 @@ public abstract class AttributeImpl extends BaseSchemaImpl implements IAttribute
 	public void setEditorType(String editorType) {
 		this.editorType = editorType;
 	}
+
+	public String getPrivilegeId() {
+		// Not needed by the system right now
+		return String.format("Attribute:%d", getId());
+	}
 }

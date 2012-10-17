@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
@@ -140,6 +141,11 @@ public interface JsonDashboardDTO {
 			@Override
 			public void visit(DoubleAttributeType attributeType) {
 				typeName = AttributeType.DOUBLE.toString();
+			}
+			
+			@Override
+			public void visit(EntryTypeAttributeType attributeType) {
+				typeName = AttributeType.REGCLASS.toString();
 			}
 
 			@Override

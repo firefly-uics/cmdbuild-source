@@ -24,22 +24,20 @@ public abstract class DBTypeObject implements CMTypeObject {
 		return name;
 	}
 
-	/*
-	 * Object overrides
-	 */
-
 	@Override
 	public int hashCode() {
 		return id.hashCode();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof CMEntryType == false)
-			return false;
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		CMEntryType other = (CMEntryType) obj;
+		}
+		if (obj instanceof CMEntryType == false) {
+			return false;
+		}
+		final CMEntryType other = CMEntryType.class.cast(obj);
 		return this.id.equals(other.getId());
 	}
 
@@ -47,4 +45,5 @@ public abstract class DBTypeObject implements CMTypeObject {
 	public String toString() {
 		return name;
 	}
+
 }

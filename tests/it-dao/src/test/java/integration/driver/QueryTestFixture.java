@@ -61,17 +61,17 @@ public class QueryTestFixture {
 	 */
 
 	protected DBCard insertCard(final DBClass c, final String key, final Object value) {
-		return DBCard.create(driver, c).set(key, value).save();
+		return DBCard.newInstance(driver, c).set(key, value).save();
 	}
 
 	protected void insertCards(final DBClass c, final int quantity) {
 		for (long i = 0; i < quantity; ++i) {
-			DBCard.create(driver, c).set(ATTRIBUTE_1, String.valueOf(i)).save();
+			DBCard.newInstance(driver, c).set(ATTRIBUTE_1, String.valueOf(i)).save();
 		}
 	}
 
 	protected DBRelation insertRelation(DBDomain d, DBCard c1, DBCard c2) {
-		return DBRelation.create(driver, d).setCard1(c1).setCard2(c2).save();
+		return DBRelation.newInstance(driver, d).setCard1(c1).setCard2(c2).save();
 	}
 
 	protected void deleteCard(DBCard c) {
@@ -85,4 +85,5 @@ public class QueryTestFixture {
 	protected void deleteEntry(DBEntry e) {
 		driver.delete(e);
 	}
+
 }

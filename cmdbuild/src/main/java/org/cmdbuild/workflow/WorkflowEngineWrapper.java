@@ -16,7 +16,6 @@ import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.workflow.CMProcessInstance.CMProcessInstanceDefinition;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -190,7 +189,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 			final Map<String, Object> widgetSubmission) throws CMWorkflowException {
 		final Map<String, Object> nativeValues = new HashMap<String, Object>();
 		final CMProcessInstance procInst = activityInstance.getProcessInstance();
-		final CMProcessInstanceDefinition procInstDef = modifyProcessInstance(procInst); // FIXME
+		final ProcessInstanceWrapper procInstDef = modifyProcessInstance(procInst); // FIXME
 		for (final String key : inputValues.keySet()) {
 			final Object value = inputValues.get(key);
 			procInstDef.set(key, value);

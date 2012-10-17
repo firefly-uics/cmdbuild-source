@@ -18,9 +18,9 @@
 		onViewOnFront: function(menu) {
 			if (menu) {
 				this.currentMenu = menu;
-				this.currentMenuId = menu.get("id");
-				this.loadMenuTree(this.currentMenuId);
-				this.loadAvailableItemsTree(this.currentMenuId);
+				this.currentMenuName = menu.get("name");
+				this.loadMenuTree();
+				this.loadAvailableItemsTree();
 			}
 		},
 
@@ -46,7 +46,7 @@
 				method : 'GET',
 				url : params.url,
 				params: {
-					group: this.currentMenuId
+					group: this.currentMenuName
 				},
 				scope: this,
 				success : function(response, options, decoded) {
@@ -59,16 +59,16 @@
 			});
 		}
 	});
-	
+
 	function onSaveButtonClick() {
 		var nodesToSend = getNodesToSend(this.menutree.getRootNode());
 		doSaveRequest.call(this, nodesToSend);
 	}
-	
+
 	function onAbortButtonClick() {
 		this.onViewOnFront(this.currentMenu);
 	}
-	
+
 	function onDeleteButtonClick() {
 		Ext.Msg.show({
 			title : CMDBuild.Translation.warnings.warning_message,
@@ -79,10 +79,10 @@
 				if (button == "yes") {
 					deleteMenu.call(this);
 				}
-			}	
+			}
 		});
 	}
-	
+
 	function onAddFolderFieldClick(v) {
 		this.menutree.getRootNode().appendChild({
 			text : v,
@@ -92,7 +92,7 @@
 			leaf : false
 		});
 	}
-	
+
 	function processTree (itemsMap, tree, sort) {
 		var nodesMap = {};
 		var out = [];
@@ -153,14 +153,14 @@
 			method : 'POST',
 			url : 'services/json/schema/modmenu/deletemenu',
 			params : {
-				group : this.currentMenuId
+				group : this.currentMenuName
 			},
 			waitTitle : CMDBuild.Translation.common.wait_title,
 			waitMsg : CMDBuild.Translation.common.wait_msg,
 			scope : this,
 			callback: function() {
-				this.loadMenuTree(this.currentMenuId);
-				this.loadAvailableItemsTree(this.currentMenuId);
+				this.loadMenuTree();
+				this.loadAvailableItemsTree();
 			}
 		});
 	}
@@ -202,14 +202,14 @@
 			method : 'POST',
 			url : 'services/json/schema/modmenu/savemenu',
 			params : {
-				group : this.currentMenuId,
+				group : this.currentMenuName,
 				menuItems : Ext.JSON.encode(nodesToSend)
-			},			
+			},
 			scope : this,
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
-				this.loadMenuTree(this.currentMenuId);
-				this.loadAvailableItemsTree(this.currentMenuId);
+				this.loadMenuTree();
+				this.loadAvailableItemsTree();
 			}
 		});
 	}

@@ -9,27 +9,28 @@ import org.cmdbuild.dao.function.DBFunction;
 
 public abstract class CachingDriver implements DBDriver {
 
-	private class TypeObjectStore<T extends CMTypeObject> {
-		final Collection<T> collection;
+	private static class TypeObjectStore<T extends CMTypeObject> {
 
-		TypeObjectStore(Collection<T> collection) {
-			this.collection = collection;
+		private final Collection<T> entries;
+
+		private TypeObjectStore(final Collection<T> entries) {
+			this.entries = entries;
 		}
 
-		Collection<T> getCollection() {
-			return collection;
+		public Collection<T> getCollection() {
+			return entries;
 		}
 
-		void add(T newEntryType) {
-			collection.add(newEntryType);
+		public void add(final T entry) {
+			entries.add(entry);
 		}
 
-		void remove(T entry) {
-			collection.remove(entry);
+		public void remove(final T entry) {
+			entries.remove(entry);
 		}
 
-		T getByName(final String name) {
-			for (T e : collection) {
+		public T getByName(final String name) {
+			for (final T e : entries) {
 				if (e.getName().equals(name)) {
 					return e;
 				}
@@ -37,14 +38,15 @@ public abstract class CachingDriver implements DBDriver {
 			return null;
 		}
 
-		T getById(final Long id) {
-			for (T e : collection) {
+		public T getById(final Long id) {
+			for (final T e : entries) {
 				if (e.getId().equals(id)) {
 					return e;
 				}
 			}
 			return null;
 		}
+
 	}
 
 	private volatile TypeObjectStore<DBClass> allClassesStore;
@@ -93,10 +95,10 @@ public abstract class CachingDriver implements DBDriver {
 	protected abstract void deleteClassNoCache(final DBClass dbClass);
 
 	@Override
-	public final DBClass findClassById(Long id) {
+	public final DBClass findClassById(final Long id) {
 		try {
 			return getAllClassesStore().getById(id);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 	}
@@ -168,7 +170,8 @@ public abstract class CachingDriver implements DBDriver {
 			synchronized (this) {
 				refForSafeClearCache = allFunctionsStore;
 				if (allFunctionsStore == null) {
-					this.allFunctionsStore = refForSafeClearCache = new TypeObjectStore<DBFunction>(findAllFunctionsNoCache());
+					this.allFunctionsStore = refForSafeClearCache = new TypeObjectStore<DBFunction>(
+							findAllFunctionsNoCache());
 				}
 			}
 		}

@@ -380,4 +380,10 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	public void setUserStoppable(boolean userStoppable) {
 		this.userStoppable = userStoppable;
 	}
+
+	@Override
+	public String getPrivilegeId() {
+		// Should match the new DAO implementation!
+		return String.format("Class:%d", getId());
+	}
 }

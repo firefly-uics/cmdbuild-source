@@ -1,6 +1,5 @@
 package org.cmdbuild.servlets.json.schema;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,85 +22,42 @@ import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardObjectMapper;
-import org.cmdbuild.model.profile.UIConfiguration;
-import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
 import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
-import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ModSecurity extends JSONBase {
 
-	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
-
 	@JSONExported
-	public String getGroupList(JSONObject serializer) throws JSONException,
-			AuthException, ORMException {
-
-		Iterable<GroupCard> list = GroupCard.all();
-		JSONArray groups = new JSONArray();
-		for (GroupCard groupCard : list) {
-			JSONObject jsonGroup = Serializer.serializeGroupCard(groupCard);
-			groups.put(jsonGroup);
-		}
-		serializer.put("groups", groups);
-		return serializer.toString();
+	public String getGroupList(JSONObject serializer) throws JSONException {
+//		Iterable<GroupCard> list = GroupCard.all();
+//		JSONArray groups = new JSONArray();
+//		for (GroupCard groupCard : list) {
+//			JSONObject jsonGroup = Serializer.serializeGroupCard(groupCard);
+//			groups.put(jsonGroup);
+//		}
+//		serializer.put("groups", groups);
+//		return serializer.toString();
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
-
-	@JSONExported
-	public JsonResponse getUIConfiguration(
-			UserContext userCtx) throws JSONException, AuthException, ORMException {
-
-		return JsonResponse.success(userCtx.getDefaultGroup().getUIConfiguration());
-	}
-
-	@Admin
-	@JSONExported
-	public JsonResponse getGroupUIConfiguration(
-			@Parameter("id") int groupId,
-			UserContext userCtx) throws JSONException, AuthException, ORMException {
-
-		GroupCard group = GroupCard.getOrDie(groupId);
-		return JsonResponse.success(group.getUIConfiguration());
-	}
-
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public void saveGroupUIConfiguration(
-			@Parameter("id") int groupId,
-			@Parameter("uiConfiguration") String jsonUIConfiguration,
-			UserContext userCtx
-		) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
-
-		final GroupCard group = GroupCard.getOrDie(groupId);
-		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
-
-		group.setUIConfiguration(uiConfiguration);
-		group.save();
-	}
-
+	
 	@JSONExported
 	public JSONObject getPrivilegeList(
 			JSONObject serializer,
 			ITableFactory tf,
 			@Parameter("groupId") int groupId
-			) throws JSONException, AuthException {
-			Iterable<PrivilegeCard> privilegeList = PrivilegeCard.forGroup(groupId);
-			serializer.put("rows", Serializer.serializePrivilegeList(privilegeList, tf));
-	
-		return serializer;
+			) throws JSONException {
+//		Iterable<PrivilegeCard> privilegeList = PrivilegeCard.forGroup(groupId);
+//		serializer.put("rows", Serializer.serializePrivilegeList(privilegeList, tf));
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 	
 	@JSONExported
@@ -109,10 +65,10 @@ public class ModSecurity extends JSONBase {
 			JSONObject serializer,
 			ITableFactory tf
 			) throws JSONException, AuthException {
-			Iterable<ICard> userList=tf.get(UserCard.USER_CLASS_NAME).cards().list().filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,ElementStatus.UPDATED.value()).order("Username",OrderFilterType.ASC).ignoreStatus();
-			serializer.put("rows", Serializer.serializeUserList(userList));
-	
-		return serializer;
+//		Iterable<ICard> userList=tf.get(UserCard.USER_CLASS_NAME).cards().list().filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,ElementStatus.UPDATED.value()).order("Username",OrderFilterType.ASC).ignoreStatus();
+//		serializer.put("rows", Serializer.serializeUserList(userList));
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 
 	@JSONExported
@@ -120,13 +76,14 @@ public class ModSecurity extends JSONBase {
 			JSONObject serializer,
 			@Parameter("userid") int userId
 		) throws JSONException {
-		Iterable<Group> groupList = AuthenticationFacade.getGroupListForUser(userId);
-		JSONArray jsonGroupList = new JSONArray();
-		for (Group g : groupList) {
-			jsonGroupList.put(Serializer.serializeGroup(g));
-		}
-		serializer.put("result", jsonGroupList);
-		return serializer;
+//		Iterable<Group> groupList = AuthenticationFacade.getGroupListForUser(userId);
+//		JSONArray jsonGroupList = new JSONArray();
+//		for (Group g : groupList) {
+//			jsonGroupList.put(Serializer.serializeGroup(g));
+//		}
+//		serializer.put("result", jsonGroupList);
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 
 	@Admin
@@ -136,31 +93,32 @@ public class ModSecurity extends JSONBase {
 			@Parameter("alreadyAssociated") boolean associated,
 			JSONObject serializer,
 			ITableFactory tf) throws JSONException {
-		Iterable<UserCard> userList;
-
-		final Iterable<UserCard> associatedUserList = AuthenticationFacade.getUserList(groupId);
-		if (associated) {
-			userList = associatedUserList;
-		} else {
-			// FIXME
-			// userList contains duplicate users! But distinct on ("User"."Id") is not
-			// supported yet. To eliminate duplicate users, we use an awful HashMap.
-			Set<Integer> associatedUserIds = new HashSet<Integer>();
-			for (UserCard associatedUserCard : associatedUserList) {
-				associatedUserIds.add(associatedUserCard.getId());
-			}
-
-			final HashMap<Integer, UserCard> unassociatedUserMap = new HashMap<Integer, UserCard>();
-			for (UserCard userCard : UserCard.allByUsername()) {
-				if (!associatedUserIds.contains(userCard.getId())) {
-					unassociatedUserMap.put(userCard.getId(), userCard);
-				}
-			}
-			userList = unassociatedUserMap.values();
-		}
-
-		serializer.put("users", Serializer.serializeUserList(userList));
-		return serializer;
+//		Iterable<UserCard> userList;
+//
+//		final Iterable<UserCard> associatedUserList = AuthenticationFacade.getUserList(groupId);
+//		if (associated) {
+//			userList = associatedUserList;
+//		} else {
+//			// FIXME
+//			// userList contains duplicate users! But distinct on ("User"."Id") is not
+//			// supported yet. To eliminate duplicate users, we use an awful HashMap.
+//			Set<Integer> associatedUserIds = new HashSet<Integer>();
+//			for (UserCard associatedUserCard : associatedUserList) {
+//				associatedUserIds.add(associatedUserCard.getId());
+//			}
+//
+//			final HashMap<Integer, UserCard> unassociatedUserMap = new HashMap<Integer, UserCard>();
+//			for (UserCard userCard : UserCard.allByUsername()) {
+//				if (!associatedUserIds.contains(userCard.getId())) {
+//					unassociatedUserMap.put(userCard.getId(), userCard);
+//				}
+//			}
+//			userList = unassociatedUserMap.values();			
+//		}
+//
+//		serializer.put("users", Serializer.serializeUserList(userList));
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 	
 	@JSONExported
@@ -168,7 +126,8 @@ public class ModSecurity extends JSONBase {
 		UserContext userCtx,
 		@Parameter("newpassword") String newPassword,
 		@Parameter("oldpassword") String oldPassword) {
-		userCtx.changePassword(oldPassword, newPassword);
+//		userCtx.changePassword(oldPassword, newPassword);
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -177,18 +136,18 @@ public class ModSecurity extends JSONBase {
 			@Parameter("groupId") int groupId,
 			@Parameter("classid") int grantedClassId,
 			@Parameter("privilege_mode") String privilegeMode, ITableFactory tf)
-			throws JSONException, AuthException {
-
-		PrivilegeCard privilege = PrivilegeCard.get(groupId, grantedClassId);
-
-		if (privilegeMode.equals("write_privilege"))
-			privilege.setMode(PrivilegeType.WRITE);
-		else if (privilegeMode.equals("read_privilege"))
-			privilege.setMode(PrivilegeType.READ);
-		else
-			privilege.setMode(PrivilegeType.NONE);
-
-		privilege.save();
+			throws JSONException {
+//		PrivilegeCard privilege = PrivilegeCard.get(groupId, grantedClassId);
+//
+//		if (privilegeMode.equals("write_privilege"))
+//			privilege.setMode(PrivilegeType.WRITE);
+//		else if (privilegeMode.equals("read_privilege"))
+//			privilege.setMode(PrivilegeType.READ);
+//		else
+//			privilege.setMode(PrivilegeType.NONE);
+//
+//		privilege.save();
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 	
 	@Admin(AdminAccess.DEMOSAFE)
@@ -204,42 +163,43 @@ public class ModSecurity extends JSONBase {
 			@Parameter("isactive") boolean isActive,
 			@Parameter("defaultgroup") int defaultGroupId,
 			ITableFactory tf
-		) throws JSONException, AuthException {
-		ICard card = null;
-		if (userId==-1) {
-			CardQuery cardQuery = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,ElementStatus.UPDATED.value()).filter("Username", AttributeFilterType.EQUALS,username);
-			if (cardQuery.iterator().hasNext())
-				throw ORMExceptionType.ORM_DUPLICATE_USER.createException();
-			else
-				card= tf.get(UserCard.USER_CLASS_NAME).cards().create();		
-		} else {
-			card= tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
-		}
-		UserCard user = new UserCard(card);
-		if (username != null) {
-			user.setUsername(username);
-		}
-		if (description != null) {
-			user.setDescription(description);
-		}
-		if (email != null) {
-			user.setEmail(email);
-		}
-		if (password !=null && !password.equals("")) {
-			user.setUnencryptedPassword(password);
-		}
-		if (isActive) {
-			user.setStatus(ElementStatus.ACTIVE);
-		} else {
-			user.setStatus(ElementStatus.INACTIVE_USER);
-		}
-		user.save();
-
-		AuthenticationFacade.setDefaultGroupForUser(user.getId(), defaultGroupId);
-
-		serializer.put("rows", Serializer.serializeUser(user));
-
-		return serializer;
+		) throws JSONException {
+//		ICard card = null;
+//		if (userId==-1) {
+//			CardQuery cardQuery = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,ElementStatus.UPDATED.value()).filter("Username", AttributeFilterType.EQUALS,username);
+//			if (cardQuery.iterator().hasNext())
+//				throw ORMExceptionType.ORM_DUPLICATE_USER.createException();
+//			else
+//				card= tf.get(UserCard.USER_CLASS_NAME).cards().create();		
+//		} else {
+//			card= tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
+//		}
+//		UserCard user = new UserCard(card);
+//		if (username != null) {
+//			user.setUsername(username);
+//		}
+//		if (description != null) {
+//			user.setDescription(description);
+//		}
+//		if (email != null) {
+//			user.setEmail(email);
+//		}
+//		if (password !=null && !password.equals("")) {
+//			user.setUnencryptedPassword(password);
+//		}
+//		if (isActive) {
+//			user.setStatus(ElementStatus.ACTIVE);
+//		} else {
+//			user.setStatus(ElementStatus.INACTIVE_USER);
+//		}
+//		user.save();
+//
+//		AuthenticationFacade.setDefaultGroupForUser(user.getId(), defaultGroupId);
+//
+//		serializer.put("rows", Serializer.serializeUser(user));
+//
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 	
 	@Admin(AdminAccess.DEMOSAFE)
@@ -249,20 +209,20 @@ public class ModSecurity extends JSONBase {
 			@Parameter("userid") int userId,
 			@Parameter("disable") boolean disable,
 			ITableFactory tf
-		) throws JSONException, AuthException {
-		
-		ICard card = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
-		
-		UserCard user = new UserCard(card);
-		if (disable) {
-			user.setStatus(ElementStatus.INACTIVE_USER);
-		} else {
-			user.setStatus(ElementStatus.ACTIVE);
-		}
-		user.save();
-		
-		serializer.put("rows", Serializer.serializeUser(user));
-		return serializer;
+		) throws JSONException {
+//		ICard card = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
+//		
+//		UserCard user = new UserCard(card);
+//		if (disable) {
+//			user.setStatus(ElementStatus.INACTIVE_USER);
+//		} else {
+//			user.setStatus(ElementStatus.ACTIVE);
+//		}
+//		user.save();
+//		
+//		serializer.put("rows", Serializer.serializeUser(user));
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -277,27 +237,29 @@ public class ModSecurity extends JSONBase {
 			@Parameter("isActive") boolean isActive,
 			@Parameter("isAdministrator") boolean isAdministrator,
 			@Parameter(value="users", required=false) String users,
+			@Parameter(value="disabledModules", required=false) String[] disabledModules,
 			UserContext userCtx
 		) throws JSONException, AuthException {
-		GroupCard group = GroupCard.getOrCreate(groupId);
-		if (name != null) {
-			group.setName(name);
-		}
-		group.setDescription(description);
-		if (email != null) {
-			group.setEmail(email);
-		}
-		group.setIsAdmin(isAdministrator);
-		group.setStartingClass(startingClass);
-		if (isActive) {
-			group.setStatus(ElementStatus.ACTIVE);
-		} else {
-			group.setStatus(ElementStatus.INACTIVE);
-		}
-
-		group.save();
-		serializer.put("group", Serializer.serializeGroupCard(group));
-		return serializer;
+//		GroupCard group = GroupCard.get(groupId, userCtx);
+//		if (name != null) {
+//			group.setName(name);
+//		}
+//		group.setDescription(description);
+//		if (email != null) {
+//			group.setEmail(email);
+//		}
+//		group.setIsAdmin(isAdministrator);
+//		group.setStartingClass(startingClass);
+//		if (isActive) {
+//			group.setStatus(ElementStatus.ACTIVE);
+//		} else {
+//			group.setStatus(ElementStatus.INACTIVE);
+//		}
+//		group.setDisabledModules(disabledModules);
+//		group.save();
+//		serializer.put("group", Serializer.serializeGroupCard(group));
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -306,35 +268,36 @@ public class ModSecurity extends JSONBase {
 			@Parameter(value="users", required=false) String users,
 			@Parameter("groupId") int groupId,
 			UserContext userCtx) {
-		final GroupCard group = GroupCard.getOrCreate(groupId);
-		final IDomain userGroupDomain = userCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
-
-		final List<UserCard> oldUserList = AuthenticationFacade.getUserList(groupId);
-		final List<String> newUserIdList = new ArrayList<String>();
-		if (users != null && !users.equals("")) {
-			StringTokenizer tokenizer = new StringTokenizer(users, ",");
-			while (tokenizer.hasMoreTokens()) {
-				newUserIdList.add(tokenizer.nextToken());
-			}
-		}
-
-		for (UserCard user : oldUserList) {
-			String userId = ((Integer) user.getId()).toString();
-			if (newUserIdList.contains(userId)) {
-				newUserIdList.remove(userId);
-			} else {
-				IRelation relation = userCtx.relations().get(userGroupDomain, user, group);
-				relation.delete();
-			}
-		}
-
-		//newUserIdList contains only the IDs of new group's users		
-		for (String userId : newUserIdList) {
-			ICard userCard = userCtx.tables().get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(Integer.parseInt(userId)).get();
-			UserCard user = new UserCard(userCard);
-			IRelation relation = userCtx.relations().create(userGroupDomain, user, group);
-			relation.save();
-		}
+//		final GroupCard group = GroupCard.get(groupId, userCtx);
+//		final IDomain userGroupDomain = userCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
+//
+//		final List<UserCard> oldUserList = AuthenticationFacade.getUserList(groupId);
+//		final List<String> newUserIdList = new ArrayList<String>();
+//		if (users != null && !users.equals("")) {
+//			StringTokenizer tokenizer = new StringTokenizer(users, ",");
+//			while (tokenizer.hasMoreTokens()) {
+//				newUserIdList.add(tokenizer.nextToken());
+//			}
+//		}
+//
+//		for (UserCard user : oldUserList) {
+//			String userId = ((Integer) user.getId()).toString();
+//			if (newUserIdList.contains(userId)) {
+//				newUserIdList.remove(userId);
+//			} else {
+//				IRelation relation = userCtx.relations().get(userGroupDomain, user, group);
+//				relation.delete();
+//			}
+//		}
+//
+//		//newUserIdList contains only the IDs of new group's users		
+//		for (String userId : newUserIdList) {
+//			ICard userCard = userCtx.tables().get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(Integer.parseInt(userId)).get();
+//			UserCard user = new UserCard(userCard);
+//			IRelation relation = userCtx.relations().create(userGroupDomain, user, group);
+//			relation.save();
+//		}
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 	
 	@Admin(AdminAccess.DEMOSAFE)
@@ -344,20 +307,21 @@ public class ModSecurity extends JSONBase {
 			@Parameter("isActive") boolean isActive,
 			@Parameter("groupId") int groupId,
 			ITableFactory tf
-		) throws JSONException, AuthException {
-		ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
-		GroupCard group = new GroupCard(card);
-		setGroupStatus(group, isActive);
-		group.save();
-		serializer.put("group", Serializer.serializeGroupCard(group));
-		return serializer;
+		) throws JSONException {
+//		ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+//		GroupCard group = new GroupCard(card);
+//		setGroupStatus(group, isActive);
+//		group.save();
+//		serializer.put("group", Serializer.serializeGroupCard(group));
+//		return serializer;
+		throw new UnsupportedOperationException("Temporary disabled");
 	}
 	
-	private void setGroupStatus(GroupCard group, boolean isActive) {
-		if (isActive) {
-			group.setStatus(ElementStatus.ACTIVE);
-		} else {
-			group.setStatus(ElementStatus.INACTIVE);
-		}	
-	}
+//	private void setGroupStatus(GroupCard group, boolean isActive) {
+//		if (isActive) {
+//			group.setStatus(ElementStatus.ACTIVE);
+//		} else {
+//			group.setStatus(ElementStatus.INACTIVE);
+//		}
+//	}
 }

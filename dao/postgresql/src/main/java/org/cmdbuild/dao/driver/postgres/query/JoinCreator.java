@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.cmdbuild.dao.driver.postgres.Const;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -21,7 +21,38 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 
 public class JoinCreator extends PartCreator {
 
-	private abstract class UnionCreator<T> { // TODO: use CMEntryType instead of <T>
+	private enum DataQueryType {
+
+		HISTORIC {
+			@Override
+			String quoteTypeName(CMEntryType type) {
+				return Utils.quoteTypeHistory(type);
+			}
+
+			@Override
+			String quotedEndDateAttribute() {
+				return quoteIdent(SystemAttributes.EndDate);
+			}
+		},
+		CURRENT {
+			@Override
+			String quoteTypeName(CMEntryType type) {
+				return Utils.quoteType(type);
+			}
+
+			@Override
+			String quotedEndDateAttribute() {
+				return "NULL";
+			}
+		};
+
+		abstract String quoteTypeName(final CMEntryType type);
+
+		abstract String quotedEndDateAttribute();
+
+	}
+
+	private abstract class UnionCreator<T> {
 
 		private final Iterable<T> typeSet;
 		protected final Alias typeAlias;
@@ -38,23 +69,22 @@ public class JoinCreator extends PartCreator {
 			boolean first = true;
 			for (T type : typeSet) {
 				if (includeHistoryTable) {
-					appendTableSelect(type, true, first);
+					appendTableSelect(type, DataQueryType.HISTORIC, first);
 					first = false;
 				}
-				appendTableSelect(type, false, first);
+				appendTableSelect(type, DataQueryType.CURRENT, first);
 				first = false;
 			}
 			sb.append(")");
 		}
 
-		private void appendTableSelect(T type, boolean isHistoryAppend, boolean first) {
-			final CMEntryType entryType = getEntryType(type);
-			final String quotedTableName = isHistoryAppend ? Utils.quoteTypeHistory(entryType) : Utils.quoteType(entryType);
+		private void appendTableSelect(T type, DataQueryType dataQueryType, boolean first) {
+			final String quotedTableName = dataQueryType.quoteTypeName(getEntryType(type));
 			if (!first) {
 				sb.append(" UNION ALL ");
 			}
 			sb.append("SELECT ");
-			appendSystemAttributes(type, isHistoryAppend, first);
+			appendSystemAttributes(type, dataQueryType, first);
 			appendUserAttributes(type, first);
 			sb.append(" FROM ")
 			/*
@@ -63,20 +93,17 @@ public class JoinCreator extends PartCreator {
 			 * .append("ONLY ")
 			 */
 			.append(quotedTableName);
-			appendStatusWhere(isHistoryAppend);
+			appendStatusWhere(dataQueryType);
 		}
 
-		protected void appendStatusWhere(boolean isHistoryAppend) {
-			if (isHistoryAppend) {
-				return;
+		protected void appendStatusWhere(final DataQueryType dataQueryType) {
+			if (dataQueryType == DataQueryType.CURRENT) {
+				sb.append(" WHERE ").append(quoteIdent(SystemAttributes.Status)).append(OPERATOR_EQ)
+						.append(param(STATUS_ACTIVE_VALUE));
 			}
-			sb.append(" WHERE ")
-					.append(quoteIdent(SystemAttributes.Status))
-					.append(OPERATOR_EQ)
-					.append(param(STATUS_ACTIVE_VALUE));
 		}
 
-		abstract void appendSystemAttributes(T type, boolean isHistoryAppend, boolean first);
+		abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
 
 		void appendUserAttributes(T type, final boolean first) {
 			final CMEntryType entryType = getEntryType(type);
@@ -90,11 +117,12 @@ public class JoinCreator extends PartCreator {
 				}
 				if (first) {
 					if (nullValue) {
+						// Null values need an explicit cast
 						sb.append("::").append(eta.sqlTypeString);
 					}
 					if (eta.alias != null) {
 						sb.append(" AS ").append(quoteIdent(eta.alias.getName()));
-					}					
+					}
 				}
 			}
 		}
@@ -138,23 +166,24 @@ public class JoinCreator extends PartCreator {
 		final boolean includeHistoryTable = j.isDomainHistory();
 		new UnionCreator<QueryDomain>(j.getQueryDomains(), j.getDomainAlias(), includeHistoryTable) {
 			@Override
-			void appendSystemAttributes(final QueryDomain queryDomain, final boolean isHistoryAppend, final boolean first) {
-				final String endDateField = isHistoryAppend ? quoteIdent(SystemAttributes.EndDate) : "NULL";
-				sb.append(quoteIdent(SystemAttributes.Id)).append(",")
-					.append(quoteIdent(SystemAttributes.DomainId)).append(",");
-				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()), quoteIdent(SystemAttributes.DomainQuerySource), first).append(",");
+			void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
+					final boolean first) {
+				final String endDateField = dataQueryType.quotedEndDateAttribute();
+				sb.append(quoteIdent(SystemAttributes.Id)).append(",").append(quoteIdent(SystemAttributes.DomainId))
+						.append(",");
+				appendColumnAndAliasIfFirst(param(queryDomain.getQuerySource()),
+						quoteIdent(SystemAttributes.DomainQuerySource), first).append(",");
 				if (queryDomain.getDirection()) {
 					sb.append(quoteIdent(SystemAttributes.DomainId1)).append(",")
-						.append(quoteIdent(SystemAttributes.DomainId2));
+							.append(quoteIdent(SystemAttributes.DomainId2));
 				} else {
 					appendColumnAndAliasIfFirst(quoteIdent(SystemAttributes.DomainId2),
 							quoteIdent(SystemAttributes.DomainId1), first).append(",");
 					appendColumnAndAliasIfFirst(quoteIdent(SystemAttributes.DomainId1),
 							quoteIdent(SystemAttributes.DomainId2), first);
 				}
-				sb.append(",")
-					.append(quoteIdent(SystemAttributes.User)).append(",")
-					.append(quoteIdent(SystemAttributes.BeginDate)).append(",");
+				sb.append(",").append(quoteIdent(SystemAttributes.User)).append(",")
+						.append(quoteIdent(SystemAttributes.BeginDate)).append(",");
 				appendColumnAndAliasIfFirst(endDateField, quoteIdent(SystemAttributes.EndDate), first);
 			}
 
@@ -178,11 +207,11 @@ public class JoinCreator extends PartCreator {
 		final boolean includeHistoryTable = false;
 		new UnionCreator<CMClass>(j.getTargets(), j.getTargetAlias(), includeHistoryTable) {
 			@Override
-			void appendSystemAttributes(final CMClass type, final boolean isHistoryAppend, final boolean first) {
+			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
 				sb.append(quoteIdent(SystemAttributes.Id)).append(",").append(quoteIdent(SystemAttributes.ClassId))
-						.append(",").append(quoteIdent(SystemAttributes.User))
-						.append(",").append(quoteIdent(SystemAttributes.BeginDate))
-						.append(", NULL AS ").append(quoteIdent(SystemAttributes.EndDate));
+						.append(",").append(quoteIdent(SystemAttributes.User)).append(",")
+						.append(quoteIdent(SystemAttributes.BeginDate)).append(", NULL AS ")
+						.append(quoteIdent(SystemAttributes.EndDate));
 			}
 
 			@Override
@@ -191,9 +220,9 @@ public class JoinCreator extends PartCreator {
 			}
 
 			@Override
-			protected void appendStatusWhere(boolean isHistoryAppend) {
+			protected void appendStatusWhere(final DataQueryType dataQueryType) {
 				if (includeStatusCheck) {
-					super.appendStatusWhere(isHistoryAppend);
+					super.appendStatusWhere(dataQueryType);
 				}
 			}
 		}.append();

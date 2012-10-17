@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -9,6 +8,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
@@ -18,11 +18,12 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.reference.CMReference;
 import org.cmdbuild.elements.Lookup;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
+import static org.joda.time.format.DateTimeFormat.*;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,9 +35,9 @@ public abstract class AbstractJsonResponseSerializer {
 	private LookupOperation systemLookupOperation = new LookupOperation(UserContext.systemContext());
 
 	// TODO should be defined in the user session
-	public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(Constants.DATETIME_PRINTING_PATTERN);
-	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormat.forPattern(Constants.TIME_PRINTING_PATTERN);
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(Constants.DATE_PRINTING_PATTERN);
+	public static final DateTimeFormatter DATE_TIME_FORMATTER = forPattern(Constants.DATETIME_PRINTING_PATTERN);
+	public static final DateTimeFormatter TIME_FORMATTER = forPattern(Constants.TIME_PRINTING_PATTERN);
+	public static final DateTimeFormatter DATE_FORMATTER = forPattern(Constants.DATE_PRINTING_PATTERN);
 
 	protected final String formatDateTime(final DateTime dateTime) {
 		if (dateTime == null) {
@@ -53,6 +54,15 @@ public abstract class AbstractJsonResponseSerializer {
 			@Override
 			public void visit(BooleanAttributeType attributeType) {
 				valueForJson = value;
+			}
+
+			@Override
+			public void visit(EntryTypeAttributeType attributeType) {
+				if (value instanceof CMReference) {
+					valueForJson = ((CMReference) value).getId();
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override
@@ -101,9 +111,10 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(LookupAttributeType attributeType) {
-				if (value instanceof CMLookup) {
-					final CMLookup lookup = (CMLookup) value;
-					final Lookup oldLookup = systemLookupOperation.getLookupById(lookup.getId().intValue());
+				if (value instanceof CMReference) {
+					// FIXME
+					final Object id = ((CMReference) value).getId();
+					final Lookup oldLookup = systemLookupOperation.getLookupById((Integer) id);
 					try {
 						valueForJson = idAndDescription(Long.valueOf(oldLookup.getId()), oldLookup.getDescription());
 					} catch (JSONException e) {
@@ -116,7 +127,11 @@ public abstract class AbstractJsonResponseSerializer {
 
 			@Override
 			public void visit(ReferenceAttributeType attributeType) {
-				valueForJson = value;
+				if (value instanceof CMReference) {
+					valueForJson = ((CMReference) value).getId();
+				} else {
+					valueForJson = value;
+				}
 			}
 
 			@Override

@@ -52,7 +52,7 @@
 	%>
 			CMDBuild.Runtime.Username = '<%= user.getName() %>';
 			CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(userCtx.getGroups()) %>;
-	<% } %>	
+	<% } %>
 
 		Ext.onReady(function() {
 			CMDBuild.LoginPanel.buildAfterRequest();

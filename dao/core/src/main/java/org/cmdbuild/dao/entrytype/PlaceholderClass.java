@@ -5,6 +5,10 @@ import java.util.Set;
 
 public abstract class PlaceholderClass extends PlaceholderEntryType implements CMClass {
 
+    public final void accept(CMEntryTypeVisitor visitor) {
+        visitor.visit(this);
+    }
+
 	@Override
 	public String getName() {
 		throw new UnsupportedOperationException();
@@ -36,12 +40,17 @@ public abstract class PlaceholderClass extends PlaceholderEntryType implements C
 	}
 
 	@Override
-    public final void accept(CMEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	public boolean holdsHistory() {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
-	public boolean holdsHistory() {
+	public String getCodeAttributeName() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
 		throw new UnsupportedOperationException();
 	}
 }

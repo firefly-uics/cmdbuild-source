@@ -10,9 +10,9 @@
 		<constructor-arg>
 			<bean class="org.postgresql.ds.PGSimpleDataSource">
 				<property name="serverName" value="localhost" />
-				<property name="portNumber" value="10083" />
-				<property name="user" value="test" />
-				<property name="password" value="test" />
+				<property name="portNumber" value="5432" />
+				<property name="user" value="postgres" />
+				<property name="password" value="postgres" />
 				<property name="databaseName" value="cmdbuild-test" />
 			</bean>
 		</constructor-arg>

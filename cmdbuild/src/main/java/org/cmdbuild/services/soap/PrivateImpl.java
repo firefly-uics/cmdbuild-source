@@ -17,8 +17,10 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
@@ -32,7 +34,7 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.services.auth.AuthenticationService;
+import org.cmdbuild.services.auth.AuthenticatedUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
@@ -67,7 +69,6 @@ import org.cmdbuild.services.soap.types.WSEvent;
 import org.cmdbuild.services.soap.types.WSProcessStartEvent;
 import org.cmdbuild.services.soap.types.WSProcessUpdateEvent;
 import org.cmdbuild.services.soap.types.Workflow;
-import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
@@ -86,10 +87,10 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	WebServiceContext wsc;
 
 	private UserContext getUserCtx() {
+		// FIXME
 		final MessageContext msgCtx = wsc.getMessageContext();
 		final AuthenticationService as = new AuthenticationService();
-		final WebserviceUtils utils = new WebserviceUtils();
-		return as.getWSUserContext(utils.getAuthData(msgCtx));
+		return new AuthenticatedUserWrapper(as.getAuthenticatedUser());
 	}
 
 	@Override
@@ -450,13 +451,18 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
 
 			@Override
-			public void visit(ReferenceAttributeType attributeType) {
-				throw new UnsupportedOperationException("references not supported");
+			public void visit(EntryTypeAttributeType attributeType) {
+				throw new UnsupportedOperationException("regclasses not supported");
 			}
 
 			@Override
-			public void visit(LookupAttributeType attributeType) {
+			public void visit(final LookupAttributeType attributeType) {
 				throw new UnsupportedOperationException("lookups not supported");
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				throw new UnsupportedOperationException("references not supported");
 			}
 
 		}.convertValue().toString();
@@ -468,14 +474,14 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
-			public void visit(WSProcessStartEvent wsEvent) {
+			public void visit(final WSProcessStartEvent wsEvent) {
 				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
 			}
 
 			@Override
-			public void visit(WSProcessUpdateEvent wsEvent) {
+			public void visit(final WSProcessUpdateEvent wsEvent) {
 				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);

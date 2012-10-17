@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.meta.MetadataMap;
 
-public interface BaseSchema {
+public interface BaseSchema extends CMPrivilegedObject {
 	public enum CMTableType {
 	 	CLASS("class"),
 		SIMPLECLASS("simpleclass"),

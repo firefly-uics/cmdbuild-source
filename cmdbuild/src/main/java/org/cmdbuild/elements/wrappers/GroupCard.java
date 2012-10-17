@@ -32,7 +32,7 @@ public class GroupCard extends LazyCard {
 
 	public static final String GROUP_ATTRIBUTE_EMAIL = "Email";
 	public static final String GROUP_ATTRIBUTE_ISADMIN = "Administrator";
-	public static final String GROUP_ATTRIBUTE_STARTINGCLASS = "startingClass";
+	public static final String GROUP_ATTRIBUTE_STARTINGCLASS = "StartingClass";
 
 	// UIConfiguration
 	public static final String GROUP_ATTRIBUTE_DISABLEDMODULES = "DisabledModules";

@@ -5,11 +5,24 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
+/**
+ * Represents a single attribute in a query.
+ * 
+ * For example: "TableName"."AttributeName"
+ */
 public class QueryAliasAttribute implements QueryAttribute {
 
 	private final String name;
 	private final Alias entryType;
 
+	/**
+	 * Creates a new {@link QueryAliasAttribute}.
+	 * 
+	 * @param entryType
+	 *            is the alias of the entry type (e.g. the table of a database).
+	 * @param name
+	 *            if the name of the attribute.
+	 */
 	protected QueryAliasAttribute(final Alias entryType, final String name) {
 		this.entryType = entryType;
 		this.name = name;
@@ -41,16 +54,25 @@ public class QueryAliasAttribute implements QueryAttribute {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(this.entryType).append(this.name).hashCode();
+		return new HashCodeBuilder() //
+				.append(entryType) //
+				.append(name) //
+				.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof QueryAliasAttribute == false)
-			return false;
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		QueryAliasAttribute other = (QueryAliasAttribute) obj;
-		return new EqualsBuilder().append(this.entryType, other.entryType).append(this.name, other.name).isEquals();
+		}
+		if (obj instanceof QueryAliasAttribute == false) {
+			return false;
+		}
+		final QueryAliasAttribute other = QueryAliasAttribute.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(entryType, other.entryType) //
+				.append(name, other.name) //
+				.isEquals();
 	}
+
 }

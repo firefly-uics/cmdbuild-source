@@ -91,7 +91,8 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 				@Override
 				protected Map<String, Object> load() {
 					try {
-						final Map<String, Object> workflowRawTypes = workflowService.getProcessInstanceVariables(getProcessInstanceId());
+						final Map<String, Object> workflowRawTypes = workflowService
+								.getProcessInstanceVariables(getProcessInstanceId());
 						return LegacyWorkflowPersistence.fromWorkflowValues(workflowRawTypes, workflowTypesConverter);
 					} catch (final CMWorkflowException exception) {
 						throw new IllegalStateException("Process server unreachable", exception);
@@ -452,7 +453,7 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 		return wrapper;
 	}
 
-	public static UserProcessInstanceDefinition readProcessInstance(final UserContext userCtx,
+	public static ProcessInstanceWrapper readProcessInstance(final UserContext userCtx,
 			final ProcessDefinitionManager processDefinitionManager, final ProcessType processType,
 			final CMProcessInstance processInstance) {
 		final int cardId = Integer.valueOf(processInstance.getCardId().toString()).intValue();

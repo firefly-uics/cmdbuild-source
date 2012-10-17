@@ -1,9 +1,19 @@
 package org.cmdbuild.auth;
 
-import org.cmdbuild.auth.user.AuthenticatedUser;
-
 public interface UserStore {
 
+	/**
+	 * Returns the authenticated user from the session. It muts always be a
+	 * valid (not null) user: "Use Null Objects, Luke!"
+	 * 
+	 * @return the authenticated user for this request
+	 */
 	AuthenticatedUser getUser();
+
+	/**
+	 * Sets the authenticated user in this session.
+	 * 
+	 * @param user
+	 */
 	void setUser(AuthenticatedUser user);
 }

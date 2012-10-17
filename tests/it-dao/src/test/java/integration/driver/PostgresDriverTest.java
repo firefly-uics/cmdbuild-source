@@ -1,0 +1,68 @@
+package integration.driver;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+
+import java.util.Collection;
+
+import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entrytype.DBAttribute;
+import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.reference.CMReference;
+import org.junit.Ignore;
+import org.junit.Test;
+
+/**
+ * Tests specific to the legacy PostgreSQL driver
+ */
+public class PostgresDriverTest extends DriverFixture {
+
+	private final static String CLASSNAME_CONTAINING_REGCLASS = "Menu";
+	private final static String TEXT_MANDATORY_ATTRIBUTE = "Type";
+	private final static String REGCLASS_ATTRIBUTE = "IdElementClass";
+
+	public PostgresDriverTest() {
+		super("pg_driver");
+	}
+
+	@Test
+	public void theBaseClassIsAlwaysThere() {
+		/*
+		 * There are a dozen classes in the empty database...
+		 * 
+		 * At least this comes in handy for the tests!
+		 */
+		final Collection<DBClass> allClasses = driver.findAllClasses();
+		assertThat(allClasses, is(not(empty())));
+		assertThat(names(allClasses), hasItem(Constants.BASE_CLASS_NAME));
+	}
+
+	@Ignore("until we are able to add a non-reserved regclass attribute")
+	@Test
+	public void regclassAttributesAreReadFromTheDatabase() {
+		final DBClass classWithRegClassAttribute = driver.findClassByName(CLASSNAME_CONTAINING_REGCLASS);
+		for (final DBAttribute attribute : classWithRegClassAttribute.getAllAttributes()) {
+			System.out.println(attribute.getName() + " " + attribute.getType());
+		}
+		DBCard.newInstance(driver, classWithRegClassAttribute) //
+				.set(TEXT_MANDATORY_ATTRIBUTE, "Anything not null") //
+				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
+				.save();
+
+		final CMQueryRow row = new QuerySpecsBuilder(view) //
+				.select(REGCLASS_ATTRIBUTE) //
+				.from(classWithRegClassAttribute) //
+				.run().getOnlyRow();
+
+		final CMReference reference = (CMReference) row.getCard(classWithRegClassAttribute).get(REGCLASS_ATTRIBUTE);
+
+		assertThat(reference.getId(), is(classWithRegClassAttribute.getId()));
+	}
+
+}

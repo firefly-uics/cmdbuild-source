@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(value = Parameterized.class)
-public class JoinQueryTest extends QueryTestFixture {
+public class JoinQueryTest extends DriverFixture {
 
 	private DBClass SRC;
 	private DBClass DST;
@@ -53,20 +53,20 @@ public class JoinQueryTest extends QueryTestFixture {
 	@Test
 	public void joinWithOneTargetClassOnly() {
 		// given
-		final DBCard src1 = insertCard(SRC, ATTRIBUTE_1, "SRC1");
-		final DBCard dst1 = insertCard(DST1, ATTRIBUTE_1, DST1_ATTR1);
-		final DBCard dst2 = insertCard(DST2, ATTRIBUTE_1, DST2_ATTR1);
+		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
+		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
+		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
 
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(view)
 				.select(
-					attribute(SRC, ATTRIBUTE_2),
-					"DST."+ATTRIBUTE_1)
+					descriptionAttribute(SRC),
+					codeAttribute(DST))
 				.from(SRC)
 				.join(DST1, as("DST"), over(DOM))
-				.where(attribute(SRC, ID_ATTRIBUTE), Operator.EQUALS, src1.getId())
+				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId())
 				.run();
 
 		// then
@@ -75,7 +75,7 @@ public class JoinQueryTest extends QueryTestFixture {
 		final CMQueryRow firstRow = result.iterator().next();
 		assertThat(firstRow.getCard(SRC).getId(), is(src1.getId()));
 		assertThat(firstRow.getCard(DST).getId(), is(dst1.getId()));
-		assertThat(firstRow.getCard(DST).get(ATTRIBUTE_1), is(DST1_ATTR1));
+		assertThat(firstRow.getCard(DST).getCode(), is(DST1_ATTR1));
 		//assertThat(firstRow.getRelation(DOM).getId(), is(not(nullValue())));
 	}
 
@@ -83,24 +83,24 @@ public class JoinQueryTest extends QueryTestFixture {
 	@Test
 	public void joinDoesNotCountDeletedRelationsAndCards() {
 		// given
-		final DBCard src1 = insertCard(SRC, ATTRIBUTE_1, "SRC1");
+		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
 
-		final DBCard dst1 = insertCard(DST1, ATTRIBUTE_1, DST1_ATTR1);
+		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
 		final DBRelation rel1 = insertRelation(DOM, src1, dst1);
 		deleteRelation(rel1);
 
-		final DBCard dst2 = insertCard(DST2, ATTRIBUTE_1, DST2_ATTR1);
+		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst2);
 		deleteCard(dst2);
 
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(
-				attribute(SRC, ATTRIBUTE_2),
-				"DST."+ATTRIBUTE_1)
+				descriptionAttribute(SRC),
+				codeAttribute(DST))
 			.from(SRC)
 			.join(anyClass(), as("DST"), over(DOM))
-			.where(attribute(SRC, ID_ATTRIBUTE), Operator.EQUALS, src1.getId())
+			.where(keyAttribute(SRC), Operator.EQUALS, src1.getId())
 			.run();
 
 		// then
@@ -110,9 +110,9 @@ public class JoinQueryTest extends QueryTestFixture {
 	@Test
 	public void joinWithAnyClassAndAnyDomain() {
 		// given
-		final DBCard src1 = insertCard(SRC, ATTRIBUTE_1, "SRC1");
-		final DBCard dst1 = insertCard(DST1, ATTRIBUTE_1, DST1_ATTR1);
-		final DBCard dst2 = insertCard(DST2, ATTRIBUTE_1, DST2_ATTR1);
+		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
+		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
+		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
 		final DBDomain DOM2 = driver.createDomain("DOM2", DST2, SRC);
@@ -124,12 +124,12 @@ public class JoinQueryTest extends QueryTestFixture {
 		// when
 		final CMQueryResult result = new QuerySpecsBuilder(view)
 			.select(
-				attribute(SRC, ATTRIBUTE_1),
+				codeAttribute(SRC),
 				anyAttribute(DOM_ALIAS),
-				attribute(DST_ALIAS, ATTRIBUTE_1))
+				attribute(DST_ALIAS, DST.getCodeAttributeName()))
 			.from(SRC)
 			.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS)))
-			.where(attribute(SRC, ID_ATTRIBUTE), Operator.EQUALS, src1.getId())
+			.where(keyAttribute(SRC), Operator.EQUALS, src1.getId())
 			.run();
 
 		// then
