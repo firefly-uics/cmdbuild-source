@@ -8,19 +8,24 @@
 			mapDelegate: "CMDBuild.view.management.map.CMMapPanelDelegate",
 			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindow",
 			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate",
-			cardBrowserDelegate: "CMDBuild.view.management.CMCardBrowserTreeDelegate"
+			cardBrowserDelegate: "CMDBuild.view.management.CMCardBrowserTreeDelegate",
+			cardStateDelegate: "CMDBuild.state.CMCardModuleStateDelegate"
 		},
 
 		cardDataName: "geoAttributes", // CMCardDataProvider member, to say the name to use for given data
 
-		constructor: function(mapPanel, ownerController) {
+		constructor: function(mapPanel) {
 			var me = this;
 
-			if (mapPanel && ownerController) {
+			if (mapPanel) {
 				this.mapPanel = mapPanel;
 				this.mapPanel.addDelegate(this);
 				this.mapPanel.editingWindow.addDelegate(this);
-				this.ownerController = ownerController;
+
+				// set me as delegate of the OpenLayers.Map (pimped in CMMap)
+				this.map = mapPanel.getMap();
+				this.map.delegate = this;
+
 				this.cmIsInEditing = false;
 
 				// set the switcher controller as a map delegate
@@ -36,8 +41,6 @@
 				// set me as a delegate of the cardBrowser
 				var cardBrowser = this.mapPanel.getCardBrowserPanel();
 				cardBrowser.addDelegate(this);
-				// init the cardBrowserDataSource
-				new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardBrowser);
 
 				// initialize editing control
 				this.editingControls = {};
@@ -50,9 +53,12 @@
 						}
 					}
 				});
+
 				this.mapPanel.getMap().addControl(this.selectControl);
 				this.selectControl.activate();
 
+				// add me to the CMCardModuleStateDelegates
+				_CMCardModuleState.addDelegate(this);
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
 			}
@@ -73,18 +79,19 @@
 				return;
 			}
 
-			this.ownerController.onCardSelected(card = {
+			_CMCardModuleState.setCard({
 				Id: prop.master_card,
 				IdClass: prop.master_class
 			});
-
-			this.onCardSelected(prop.master_card);
 		},
 
+		/*
+		 * card could be either a String (the id of the card) or a Ext.model.Model
+		 */
 		onCardSelected: function(card) {
 			if (!this.mapPanel.cmVisible) {
 				return;
-				// the selection is defered when the map is shown
+				// the selection is deferred when the map is shown
 			}
 
 			var id = card;
@@ -101,6 +108,9 @@
 					layers[i].selectFeatureByMasterCard(this.currentCardId);
 				}
 			}
+
+			// to sync the cardBrowserPanelSelection
+			this.mapPanel.getCardBrowserPanel().selectCardSilently(card);
 		},
 
 		onAddCardButtonClick: function() {
@@ -148,17 +158,24 @@
 		},
 
 		onCardSaved: function(c) {
+			/*
+			 * Normally after the save, the main controller
+			 * say to the grid to reload it, and select the
+			 * new card. If the map is visible on save, this
+			 * could not be done, so say to this controller
+			 * to refresh the features loaded, and set the
+			 * new card as selected
+			 */
 			if (this.mapPanel.cmVisible) {
-				this.mapPanel.getMap().refreshStrategies();
-				if (typeof this.currentCardId == "undefined") {
-					// the card is new, alert the owner to buble the selection event
-					this.ownerController.onCardSelected(card = {
-						Id: c.Id,
-						IdClass: c.IdClass
-					});
-				};
+				var me = this;
 
-				this.onCardSelected(c.Id);
+				_CMCardModuleState.setCard({
+					Id: c.Id,
+					IdClass: c.IdClass
+				}, function(card) {
+					me.mapPanel.getMap().clearSelection();
+					me.mapPanel.getMap().refreshStrategies();
+				});
 			}
 		},
 
@@ -219,6 +236,51 @@
 
 		onCardBrowserTreeItemExpand: function(tree, node) {
 			tree.dataSource.loadChildren(node);
+		},
+
+		onCardBrowserTreeCardSelected: function(cardBaseInfo) {
+			_CMMainViewportController.openCard(cardBaseInfo);
+		},
+
+		onCardBrowserTreeItemAdded: function(tree, targetNode, newNode) {
+			var card = _CMCardModuleState.card;
+			if (newNode.isBindingCard(card)) {
+				this.mapPanel.getCardBrowserPanel().selectNodeSilently(newNode);
+			}
+		},
+
+		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {
+			// init the cardBrowserDataSource
+			if (activationCount == 1) {
+				new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardBrowserTree);
+			}
+		},
+
+		/* As CMCardModuleStateDelegate ***************/
+
+		onEntryTypeDidChange: function(state, entryType, danglingCard) {
+			this.onEntryTypeSelected(entryType, danglingCard);
+		},
+
+		onCardDidChange: function(state, card) {
+			this.onCardSelected(card);
+		},
+
+		/* As CMMap delegate ****************/
+
+		featureWasAdded: function(feature) {
+
+			if (feature.data) {
+				var data = feature.data;
+				var currentClassId = _CMCardModuleState.entryType ? _CMCardModuleState.entryType.getId() : null;
+				var currentCardId = _CMCardModuleState.card ? _CMCardModuleState.card.get("Id") : null;
+
+				if (data.master_card == currentCardId
+						&& data.master_class == currentClassId) {
+
+					feature.layer.selectFeature(feature);
+				}
+			}
 		}
 	});
 
@@ -264,24 +326,30 @@
 		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
 	};
 
-	function onEntryTypeSelected(et) {
+	function onEntryTypeSelected(et, danglingCard) {
 		if (!et 
 				|| !this.mapPanel.cmVisible) {
 			return;
 		}
 
-		this.currentClassId = et.get("id");
-		// if update the map on show and there is a card selected
-		var lastCard = this.ownerController.getCard();
-		if (lastCard) {
-
-			this.onCardSelected(lastCard);
-			this.centerMapOnFeature(lastCard.data);
-		} else {
-			this.currentCardId = undefined;
+		var newEntryTypeId = et.get("id");
+		if (this.currentClassId != newEntryTypeId) {
+			this.currentClassId = newEntryTypeId;
+			this.updateMap(et);
 		}
 
-		this.updateMap(et);
+		if (danglingCard) {
+			_CMCardModuleState.setCard(danglingCard);
+		} else {
+			// check for card selected when update
+			// the map on show
+			var lastCard = _CMCardModuleState.card;
+			if (lastCard) {
+				this.centerMapOnFeature(lastCard.data);
+			} else {
+				this.currentCardId = undefined;
+			}
+		}
 	}
 
 	function onLayerAdded(map, params) {
@@ -372,8 +440,8 @@
 
 	function onVisibilityChanged(map, visible) {
 		if (visible) {
-			var lastClass = this.ownerController.getEntryType(),
-				lastCard = this.ownerController.getCard();
+			var lastClass = _CMCardModuleState.entryType,
+				lastCard = _CMCardModuleState.card;
 
 			if (lastClass 
 				&& this.currentClassId != lastClass.get("id")) {

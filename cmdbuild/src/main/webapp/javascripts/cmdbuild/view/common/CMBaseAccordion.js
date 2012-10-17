@@ -207,9 +207,7 @@
 		buildTreeStructure: function() {
 			_debug("CMBaseAccordion.buildTreeStructure Unimplemented method");
 		},
-		
-		afterUpdateStore: function() {
-			_debug("CMBaseAccordion.afterUpdateStore Unimplemented method");
-		}
+
+		afterUpdateStore: function() {}
 	});
 })();

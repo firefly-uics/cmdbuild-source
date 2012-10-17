@@ -33,7 +33,7 @@ CMDBuild.Management.CMSelectFeatureController = OpenLayers.Class(OpenLayers.Cont
 		this.setLayer(layers);
 	},
 
-	selectFeaturesByCardId: function(cardId) {
+	selectFeaturesByCardId: function(cardId) { _deprecated();
 		for (var i=0, l=this.map.cmdbLayers.length; i<l; i++) {
 			var layer = this.map.cmdbLayers[i];
 			if (layer) {

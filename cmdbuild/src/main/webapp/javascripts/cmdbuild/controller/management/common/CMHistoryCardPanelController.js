@@ -75,21 +75,6 @@
 			}
 		},
 
-		// deprecated
-		onEntryTypeSelected: function(entryType) { _deprecated();
-			this.callParent(arguments);
-		},
-
-		// deprecated
-		onCardSelected: function(card) { _deprecated();
-			if (card._cmNew) {
-				this.card = card;
-				this.view.disable();
-			} else {
-				this.callParent(arguments);
-			}
-		},
-
 		// override
 		load: function() {
 			this._loaded = true;
@@ -102,6 +87,11 @@
 					}
 				});
 			}
-		}
+		},
+
+		// override
+		buildCardModuleStateDelegate: Ext.emptyFn,
+		onEntryTypeSelected: Ext.emptyFn,
+		onCardSelected: Ext.emptyFn
 	});
 })();
