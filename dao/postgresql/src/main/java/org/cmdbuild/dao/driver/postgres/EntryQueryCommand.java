@@ -62,7 +62,7 @@ public class EntryQueryCommand {
 		@Override
 		public void processRow(final ResultSet rs) throws SQLException {
 			final int rowNum = result.getAndIncrementTotalSize();
-			if (rowNum >= start && rowNum < end) {
+			if (start <= rowNum && rowNum < end) {
 				final DBQueryRow row = new DBQueryRow();
 				createBasicCards(rs, row);
 				createBasicRelations(rs, row);
@@ -75,7 +75,8 @@ public class EntryQueryCommand {
 			for (Alias a : columnMapper.getFunctionCallAliases()) {
 				final DBFunctionCallOutput out = new DBFunctionCallOutput();
 				final CMEntryType hackSinceAFunctionCanAppearOnlyInTheFromClause = querySpecs.getFromType();
-				for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(a, hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
+				for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(a,
+						hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
 					final Object sqlValue = rs.getObject(eta.index);
 					out.set(eta.name, eta.sqlType.sqlToJavaValue(sqlValue));
 				}
@@ -89,12 +90,18 @@ public class EntryQueryCommand {
 				final Long id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
 				final Long classId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.ClassId));
 				final DBClass realClass = driver.findClassById(classId);
-				final DBCard card = DBCard.create(driver, realClass, id);
+				final DBCard card = DBCard.newInstance(driver, realClass, id);
 
 				card.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
 				card.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
-				// TODO It's not supported yet because the FROM class has no such column
-				//card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a, SystemAttributes.EndDate)));
+				/*
+				 * TODO not supported yet
+				 * 
+				 * the FROM class has no such column
+				 * 
+				 * card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a,
+				 * SystemAttributes.EndDate)));
+				 */
 
 				addUserAttributes(a, card, rs);
 
@@ -106,9 +113,10 @@ public class EntryQueryCommand {
 			for (Alias a : columnMapper.getDomainAliases()) {
 				final Long id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
 				final Long domainId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainId));
-				final String querySource = rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainQuerySource));
+				final String querySource = rs.getString(Utils.getSystemAttributeAlias(a,
+						SystemAttributes.DomainQuerySource));
 				final DBDomain realDomain = driver.findDomainById(domainId);
-				final DBRelation relation = DBRelation.create(driver, realDomain, id);
+				final DBRelation relation = DBRelation.newInstance(driver, realDomain, id);
 
 				relation.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
 				relation.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
@@ -117,7 +125,7 @@ public class EntryQueryCommand {
 
 				addUserAttributes(a, relation, rs);
 
-				final QueryRelation queryRelation = QueryRelation.create(relation, querySource);
+				final QueryRelation queryRelation = QueryRelation.newInstance(relation, querySource);
 				row.setRelation(a, queryRelation);
 			}
 		}
@@ -131,11 +139,14 @@ public class EntryQueryCommand {
 			}
 		}
 
-		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs) throws SQLException {
+		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs)
+				throws SQLException {
 			for (EntryTypeAttribute a : columnMapper.getEntryTypeAttributes(typeAlias, entry.getType())) {
-				if (a.name != null) { // Not belonging to this entry type
+				if (a.name != null) {
 					final Object sqlValue = rs.getObject(a.index);
 					entry.setOnly(a.name, a.sqlType.sqlToJavaValue(sqlValue));
+				} else {
+					// skipping, not belonging to this entry type
 				}
 			}
 		}

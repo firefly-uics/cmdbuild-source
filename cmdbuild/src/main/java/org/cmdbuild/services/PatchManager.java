@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;

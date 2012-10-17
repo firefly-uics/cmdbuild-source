@@ -3,7 +3,7 @@ package org.cmdbuild.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.auth.CMAccessControlManager;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.driver.CachingDriver;
@@ -16,18 +16,19 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.TemplateRepository;
-import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.Group;
+import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
-import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
+import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
+import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
@@ -61,7 +62,7 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static final CachingDriver driver;
 	private static final DBDataView dbDataView;
-	private static final RemoteSharkService workflowService;
+	private static final AbstractSharkService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
 	private static final WorkflowLogger workflowLogger;
 	private static final WorkflowEventManager workflowEventManager;
@@ -81,7 +82,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
 
-	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {		
+	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {
 		return new XpdlProcessDefinitionStore(workflowService, newXpdlVariableFactory(), newXpdlWidgetFactory());
 	}
 
@@ -113,8 +114,8 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static CMDataView getUserContextView(UserContext userCtx) {
-		final CMAccessControlManager acm = new AccessControlManagerWrapper(userCtx.privileges());
-		return new UserDataView(dbDataView, acm);
+		final OperationUser user = new OperationUserWrapper(userCtx);
+		return new UserDataView(new DBDataView(driver), user);
 	}
 
 	public static CMDataView getSystemView() {
@@ -187,4 +188,5 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static TemplateRepository getTemplateRepository() {
 		return new DBTemplateService();
 	}
+
 }

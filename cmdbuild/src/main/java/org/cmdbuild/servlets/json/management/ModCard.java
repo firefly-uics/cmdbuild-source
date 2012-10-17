@@ -43,7 +43,6 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -69,13 +68,16 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(JSONObject serializer, @Parameter("limit") int limit, @Parameter("start") int offset,
+	public JSONObject getCardList(
+			JSONObject serializer,
+			@Parameter("limit") int limit,
+			@Parameter("start") int offset,
 			@Parameter(value = "sort", required = false) JSONArray sorters,
 			@Parameter(value = "query", required = false) String fullTextQuery,
 			@Parameter(value = "writeonly", required = false) boolean writeonly,
-			// Don't clone it or getCardPosition does not work, unless sort and
-			// query are set somewhere else
-			CardQuery cardQuery, UserContext userContext) throws JSONException, CMDBException {
+			// Don't clone it or getCardPosition does not work, unless sort and query are set somewhere else
+			CardQuery cardQuery,
+			UserContext userContext) throws JSONException, CMDBException {
 
 		temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
 		JSONArray rows = new JSONArray();
@@ -178,7 +180,10 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCard(ICard card, UserContext userCtx, @Parameter("IdClass") int requestedIdClass,
+	public JSONObject getCard(
+			ICard card,
+			UserContext userCtx,
+			@Parameter("IdClass") int requestedIdClass,
 			JSONObject serializer) throws JSONException {
 		card = fetchRealCardForSuperclasses(card, requestedIdClass);
 		serializer.put("card", Serializer.serializeCardWithPrivileges(card, false));
@@ -199,11 +204,11 @@ public class ModCard extends JSONBase {
 	}
 
 	/*
-	 * FIXME This is an awful piece of code, but is only temporarily needed till
-	 * it can be fixed by the new DAO in the next release
+	 * FIXME This is an awful piece of code, but is only temporarily
+	 * needed till it can be fixed by the new DAO in the next release 
 	 */
 	private void addReferenceAttributes(ICard card, UserContext userCtx, JSONObject serializer) throws JSONException {
-		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 
 		final JSONObject jsonRefAttr = new JSONObject();
@@ -433,8 +438,10 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	public JSONObject getCardPosition(
 			@Parameter(value = "retryWithoutFilter", required = false) boolean retryWithoutFilter,
-			JSONObject serializer, ICard card, final CardQuery currentCardQuery, UserContext userCtx)
-			throws JSONException {
+			JSONObject serializer,
+			ICard card,
+			final CardQuery currentCardQuery,
+			UserContext userCtx) throws JSONException {
 		final CardQuery cardQuery = (CardQuery) currentCardQuery.clone();
 
 		final Lookup flowStatusLookup;
@@ -451,8 +458,7 @@ public class ModCard extends JSONBase {
 			// Not found in the current filter. Try without it.
 			cardQuery.reset();
 			if (flowStatusLookup != null) {
-				cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS,
-						flowStatusLookup.getId());
+				cardQuery.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, flowStatusLookup.getId());
 			}
 			position = queryPosition(card, cardQuery);
 			serializer.put("notFoundInFilter", true);
@@ -514,8 +520,11 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject updateCard(ICard card, Map<String, String> attributes, UserContext userCtx, JSONObject serializer)
-			throws JSONException {
+	public JSONObject updateCard(
+			ICard card,
+			Map<String, String> attributes,
+			UserContext userCtx,
+			JSONObject serializer) throws JSONException {
 		setCardAttributes(card, attributes, false);
 		boolean created = card.isNew();
 		card.save();
@@ -547,8 +556,9 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "selections", required = false) String[] cardsToUpdate,
 			@Parameter(value = "fullTextQuery", required = false) String fullTextQuery,
 			@Parameter("isInverted") boolean isInverted,
-			@Parameter(value = "confirmed", required = false) boolean updateConfirmed, CardQuery cardQuery,
-			ITableFactory tf) throws JSONException, CMDBException {
+			@Parameter(value = "confirmed", required = false) boolean updateConfirmed,
+			CardQuery cardQuery, ITableFactory tf) throws JSONException,
+			CMDBException {
 		final JSONObject out = new JSONObject();
 
 		cardQuery = (CardQuery) cardQuery.clone();
@@ -568,10 +578,7 @@ public class ModCard extends JSONBase {
 		cardQuery.clearOrder().subset(0, 0);
 
 		if (updateConfirmed) {
-			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged
-																		// card
-																		// as a
-																		// template
+			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged card as a template
 			setCardAttributes(card, attributes, true);
 			cardQuery.update(card);
 		} else {
@@ -584,10 +591,8 @@ public class ModCard extends JSONBase {
 
 	private List<ICard> buildCardListToBulkUpdate(String[] cardsToUpdate, ITableFactory tf) {
 		List<ICard> cardsList = new LinkedList<ICard>();
-		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first
-																// element is an
-																// empty string
-			// the array is empty
+		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first element is an empty string
+										// the array is empty
 			for (String cardIdAndClass : cardsToUpdate) {
 				ICard cardToUpdate = stringToCard(tf, cardIdAndClass);
 				cardsList.add(cardToUpdate);
@@ -612,8 +617,7 @@ public class ModCard extends JSONBase {
 		}
 	}
 
-	public static void fillReferenceAttributes(ICard card, Map<String, String> attributes,
-			RelationFactory relationFactory) {
+	public static void fillReferenceAttributes(ICard card, Map<String, String> attributes, RelationFactory relationFactory) {
 		for (IAttribute attribute : card.getSchema().getAttributes().values()) {
 			final DirectedDomain dd = attribute.getReferenceDirectedDomain();
 			if (dd == null || !attribute.isDisplayable()) {
@@ -672,13 +676,16 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCardHistory(ICard card, ITableFactory tf, RelationFactory rf, UserContext userCtx)
-			throws JSONException, CMDBException {
+	public JSONObject getCardHistory(
+			ICard card,
+			ITableFactory tf,
+			RelationFactory rf,
+			UserContext userCtx) throws JSONException, CMDBException {
 		if (card.getSchema().isActivity()) {
 			return getProcessHistory(new JSONObject(), card, tf);
 		}
 
-		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final GetRelationHistoryResponse out = dataAccesslogic.getRelationHistory(src);
 		final JSONObject jsonOutput = new JsonGetRelationHistoryResponse(out).toJson();
@@ -708,7 +715,7 @@ public class ModCard extends JSONBase {
 			@Parameter(value = "domainlimit", required = false) int domainlimit,
 			@Parameter(value = "domainId", required = false) Long domainId,
 			@Parameter(value = "src", required = false) String querySource) throws JSONException {
-		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
+		final DataAccessLogic dataAccesslogic = applicationContext.getBean(DataAccessLogic.class);
 		final Card src = new Card(card.getSchema().getId(), card.getId());
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationList(src, dom);
@@ -824,7 +831,9 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JsonResponse callWidget(final ICard card, @Parameter("widgetId") final String widgetId,
+	public JsonResponse callWidget(
+			final ICard card,
+			@Parameter("widgetId") final String widgetId,
 			@Parameter(required = false, value = "action") final String action,
 			@Parameter(required = false, value = "params") final String jsonParams) throws Exception {
 
@@ -833,8 +842,7 @@ public class ModCard extends JSONBase {
 		if (jsonParams == null) {
 			params = new HashMap<String, Object>();
 		} else {
-			params = new ObjectMapper().readValue(jsonParams,
-					mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			params = new ObjectMapper().readValue(jsonParams, mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
 		}
 
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(card.getSchema());

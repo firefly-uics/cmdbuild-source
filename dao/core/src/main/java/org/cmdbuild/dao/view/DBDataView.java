@@ -2,7 +2,6 @@ package org.cmdbuild.dao.view;
 
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -14,6 +13,8 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+
+import com.google.common.collect.Lists;
 
 public class DBDataView extends QueryExecutorDataView {
 
@@ -55,7 +56,7 @@ public class DBDataView extends QueryExecutorDataView {
 
 	@Override
 	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
-		List<DBDomain> domainsForClass = new ArrayList<DBDomain>();
+		final List<DBDomain> domainsForClass = Lists.newArrayList();
 		for (DBDomain d : findDomains()) {
 			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
 				domainsForClass.add(d);
@@ -87,7 +88,7 @@ public class DBDataView extends QueryExecutorDataView {
 	@Override
 	public DBCard newCard(CMClass type) {
 		final DBClass dbType = findClassById(type.getId());
-		return DBCard.create(driver, dbType);
+		return DBCard.newInstance(driver, dbType);
 	}
 
 	@Override
@@ -99,4 +100,5 @@ public class DBDataView extends QueryExecutorDataView {
 	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
 		return driver.query(querySpecs);
 	}
+
 }

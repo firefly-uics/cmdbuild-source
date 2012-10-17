@@ -40,4 +40,5 @@ public class EmptyQuerySpecs implements QuerySpecs {
 	public Long getLimit() {
 		throw new UnsupportedOperationException();
 	}
+
 }

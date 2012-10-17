@@ -3,7 +3,6 @@ package org.cmdbuild.dao.view.user;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 
-import org.cmdbuild.auth.CMAccessControlManager;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -16,31 +15,32 @@ import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
 public class UserDataView extends QueryExecutorDataView {
 
 	private final DBDataView view;
-	private final CMAccessControlManager acm;
+	private final OperationUser user;
 
-	public UserDataView(final DBDataView view, final CMAccessControlManager acm) {
+	public UserDataView(final DBDataView view, final OperationUser user) {
 		this.view = view;
-		this.acm = acm;
+		this.user = user;
 	}
 
-	public CMAccessControlManager getAccessControlManager() {
-		return acm;
+	public OperationUser getOperationUser() {
+		return user;
 	}
 
 	@Override
 	public UserClass findClassById(Long id) {
-		return UserClass.create(this, view.findClassById(id));
+		return UserClass.newInstance(this, view.findClassById(id));
 	}
 
 	@Override
 	public UserClass findClassByName(String name) {
-		return UserClass.create(this, view.findClassByName(name));
+		return UserClass.newInstance(this, view.findClassByName(name));
 	}
 
 	/**
@@ -66,12 +66,12 @@ public class UserDataView extends QueryExecutorDataView {
 
 	@Override
 	public UserDomain findDomainById(Long id) {
-		return UserDomain.create(this, view.findDomainById(id));
+		return UserDomain.newInstance(this, view.findDomainById(id));
 	}
 
 	@Override
 	public UserDomain findDomainByName(String name) {
-		return UserDomain.create(this, view.findDomainByName(name));
+		return UserDomain.newInstance(this, view.findDomainByName(name));
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class UserDataView extends QueryExecutorDataView {
 		return filterNotNull(map(source, new Mapper<DBClass, UserClass>() {
 			@Override
 			public UserClass map(DBClass o) {
-				return UserClass.create(UserDataView.this, o);
+				return UserClass.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
@@ -156,7 +156,7 @@ public class UserDataView extends QueryExecutorDataView {
 		return filterNotNull(map(source, new Mapper<DBDomain, UserDomain>() {
 			@Override
 			public UserDomain map(DBDomain o) {
-				return UserDomain.create(UserDataView.this, o);
+				return UserDomain.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
@@ -165,7 +165,7 @@ public class UserDataView extends QueryExecutorDataView {
 		return filterNotNull(map(source, new Mapper<DBAttribute, UserAttribute>() {
 			@Override
 			public UserAttribute map(DBAttribute o) {
-				return UserAttribute.create(UserDataView.this, o);
+				return UserAttribute.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
@@ -176,12 +176,12 @@ public class UserDataView extends QueryExecutorDataView {
 
 			@Override
 			public void visit(DBClass type) {
-				proxy = UserClass.create(UserDataView.this, type);
+				proxy = UserClass.newInstance(UserDataView.this, type);
 			}
 
 			@Override
 			public void visit(DBDomain type) {
-				proxy = UserDomain.create(UserDataView.this, type);
+				proxy = UserDomain.newInstance(UserDataView.this, type);
 			}
 
 			UserEntryType proxy() {

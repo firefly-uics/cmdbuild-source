@@ -16,7 +16,9 @@ import org.cmdbuild.dao.query.QuerySpecs;
 public class GenericRollbackDriver implements DBDriver {
 
 	private interface Undoable {
+
 		public void undo();
+
 	}
 
 	private abstract class Command<T> implements Undoable {
@@ -25,11 +27,14 @@ public class GenericRollbackDriver implements DBDriver {
 			undoLog.add(this);
 			return out;
 		}
+
 		public void undo() {
 			undoCommand();
 			undoLog.remove(this);
 		}
+
 		protected abstract T execCommand();
+
 		protected abstract void undoCommand();
 	}
 
@@ -58,12 +63,12 @@ public class GenericRollbackDriver implements DBDriver {
 			return newClass;
 		}
 	}
-	
+
 	private class CreateDomain extends Command<DBDomain> {
 		private final String name;
 		private final DBClass class1;
 		private final DBClass class2;
-		
+
 		private DBDomain newDomain;
 
 		private CreateDomain(final String name, final DBClass class1, final DBClass class2) {
@@ -134,7 +139,8 @@ public class GenericRollbackDriver implements DBDriver {
 					}
 				}
 			}
-			throw new UnsupportedOperationException("Unsupported deletion of a class that has not been created in the test");
+			throw new UnsupportedOperationException(
+					"Unsupported deletion of a class that has not been created in the test");
 		}
 	}
 
@@ -255,4 +261,5 @@ public class GenericRollbackDriver implements DBDriver {
 	public CMQueryResult query(QuerySpecs query) {
 		return innerDriver.query(query);
 	}
+
 }

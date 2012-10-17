@@ -3,17 +3,45 @@ package org.cmdbuild.dao.entry;
 import org.cmdbuild.dao.entrytype.CMClass;
 
 /**
- * Immutable card
+ * Immutable card.
  */
 public interface CMCard extends CMEntry {
-	
+
+	/**
+	 * {@link CMCard} mutator object.
+	 */
 	interface CMCardDefinition extends CMEntryDefinition {
+
 		CMCardDefinition set(String key, Object value);
-		/**
-		 * Save the card if something has changed
-		 */
+
+		CMCardDefinition setCode(Object value);
+
+		CMCardDefinition setDescription(Object value);
+
 		CMCard save();
+
 	}
 
 	CMClass getType();
+
+	/**
+	 * Returns the value of the "Code" attribute.
+	 * 
+	 * @return the value of the attribute.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if attribute is not present.
+	 */
+	Object getCode();
+
+	/**
+	 * Returns the value of the "Description" attribute.
+	 * 
+	 * @return the value of the attribute.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if attribute is not present.
+	 */
+	Object getDescription();
+
 }

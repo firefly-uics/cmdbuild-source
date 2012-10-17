@@ -64,4 +64,6 @@ public class DomainForwarder implements IDomain {
 
 	public CMTableType getTableType() { return d.getTableType(); }
 	public void setTableType(CMTableType type) { d.setTableType(type); }
+
+	public String getPrivilegeId() { return d.getPrivilegeId(); }
 }

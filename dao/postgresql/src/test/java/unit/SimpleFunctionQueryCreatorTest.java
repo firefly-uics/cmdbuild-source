@@ -45,7 +45,7 @@ public class SimpleFunctionQueryCreatorTest {
 		querySpecs.addSelectAttribute(attribute(f, "o1"));
 
 		String sql = new QueryCreator(querySpecs).getQuery();
-		assertThat(sql, is("SELECT f.o2,f.o1 FROM func() AS f  ")); // Extra spaces
+		assertThat(sql, is("SELECT f.o2,f.o1 FROM func() AS f"));
 	}
 
 	@Test
@@ -58,9 +58,9 @@ public class SimpleFunctionQueryCreatorTest {
 		querySpecs.addSelectAttribute(attribute(f, "o"));
 
 		QueryCreator queryCreator = new QueryCreator(querySpecs);
-		assertThat(queryCreator.getQuery(), is("SELECT f.o FROM func(?,?,?) AS f  ")); // Extra spaces
-		assertThat(queryCreator.getParams()[0], is((Object)"12"));
-		assertThat(queryCreator.getParams()[1], is((Object)34));
+		assertThat(queryCreator.getQuery(), is("SELECT f.o FROM func(?,?,?) AS f"));
+		assertThat(queryCreator.getParams()[0], is((Object) "12"));
+		assertThat(queryCreator.getParams()[1], is((Object) 34));
 		assertThat(queryCreator.getParams()[2], is(nullValue()));
 	}
 }

@@ -2,7 +2,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import org.cmdbuild.dao.reference.CardReference;
 
-
 public class ReferenceAttributeType extends AbstractAttributeType<CardReference> {
 
 	public ReferenceAttributeType() {
@@ -17,4 +16,5 @@ public class ReferenceAttributeType extends AbstractAttributeType<CardReference>
 	protected CardReference convertNotNullValue(Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
+
 }

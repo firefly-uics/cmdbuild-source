@@ -4,6 +4,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 public class GeometryAttributeType extends AbstractAttributeType<Object> {
 
 	public GeometryAttributeType() {
+		// Geometry type needs to be provided
 	}
 
 	@Override

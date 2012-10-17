@@ -25,6 +25,7 @@ import org.cmdbuild.elements.report.ReportFactoryTemplateSchema;
 import org.cmdbuild.elements.report.ReportParameter;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
+import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
@@ -48,7 +49,7 @@ public class ModReport extends JSONBase {
 	public String menuTree(Map<String, String> params) throws JSONException, AuthException {
 		JSONArray serializer = new JSONArray();
 		JSONObject item;
-		
+
 		item = new JSONObject();
 		item.put("id", "Jasper");
 		item.put("text", getTraslation("administration.modreport.importJRFormStep1.menuTitle"));
@@ -60,7 +61,7 @@ public class ModReport extends JSONBase {
 
 		return serializer.toString();
 	}
-	
+
 	@JSONExported
 	public JSONObject printSchema(
 			JSONObject serializer,
@@ -71,7 +72,7 @@ public class ModReport extends JSONBase {
 		new SessionVars().setReportFactory(rfts);
 		return serializer;
 	}
-	
+
 	@JSONExported
 	public JSONObject printClassSchema(
 			JSONObject serializer,
@@ -81,18 +82,32 @@ public class ModReport extends JSONBase {
 		ReportFactoryTemplateSchema rfts = new ReportFactoryTemplateSchema(ReportExtension.valueOf(format.toUpperCase()), iTable);
 		rfts.fillReport();
 		new SessionVars().setReportFactory(rfts);
-		return serializer;		
+		return serializer;
 	}
-	
+
+	@Admin
+	@JSONExported
+	public JSONObject getGroups(Map<String, String> params) throws JSONException {
+		JSONObject serializer = new JSONObject();
+       	for (GroupCard group : GroupCard.allActive()) {
+			JSONObject jsonGroup = new JSONObject();
+			jsonGroup.put("name", group.getName());
+			jsonGroup.put("description", group.getDescription());
+			serializer.append("rows", jsonGroup);
+		}
+       	return serializer;
+	}
+
+	@Admin
 	@JSONExported
 	public JSONObject analyzeJasperReport(
 			JSONObject serializer,
 			@Parameter("name") String name,
 			@Parameter("description") String description,
-			@Parameter("groups") String groups, 
+			@Parameter("groups") String groups,
 			@Parameter("reportId") int reportId,
 			@Parameter(value="jrxml", required=false) FileItem file) throws JSONException, NotFoundException {
-		
+
 		resetSession();
 		ReportCard newReport = new ReportCard();
 		setReportSimpleAttributes(name, description, groups, reportId, newReport);
@@ -100,6 +115,7 @@ public class ModReport extends JSONBase {
 			setReportImagesAndSubReports(serializer, file, newReport);
 		} else {
 			// to say at the interface to not display the second step
+			// NdPaolo: shouldn't it be obvious if there are no images or subreports?
 			serializer.put("skipSecondStep", true);
 		}
 		new SessionVars().setNewReport(newReport);
@@ -110,11 +126,11 @@ public class ModReport extends JSONBase {
 			FileItem file, ReportCard newReport) throws JSONException {
 		String[] imagesNames = null;
 		int subreportsNumber=0;
-		
+
 		JasperDesign jd = loadJasperDesign(file);
 		checkJasperDesignParameters(jd);
 		List<JRDesignImage> designImages = ReportFactory.getImages(jd);
-		
+
 		if(ReportFactory.checkDuplicateImages(designImages)) { // check duplicates
 			serializer.put("duplicateimages", true);
 			serializer.put("images", "");
@@ -123,7 +139,7 @@ public class ModReport extends JSONBase {
 			imagesNames = manageImages(serializer, designImages);
 			subreportsNumber = manageSubReports(serializer, jd);
 		}
-		
+
 		newReport.setImagesName(imagesNames);
 		newReport.setSubreportsNumber(subreportsNumber);
 		newReport.setJd(jd);
@@ -131,7 +147,7 @@ public class ModReport extends JSONBase {
 
 	private void setReportSimpleAttributes(String name, String description,
 			String groups, int reportId, ReportCard newReport) {
-		int[] selectedGroups = parseSelectedGroup(groups);
+		String[] selectedGroups = parseSelectedGroup(groups);
 		newReport.setOriginalId(reportId);
 		newReport.setCode(name);
 		newReport.setDescription(description);
@@ -148,7 +164,7 @@ public class ModReport extends JSONBase {
 		for(JRSubreport subreport : subreports) {
 			String subreportName = ReportFactory.getSubreportName(subreport);
 			subreportsNumber++;
-			
+
 			// client
 			jsonObject = new JSONObject();
 			jsonObject.put("name", subreportName);
@@ -166,30 +182,26 @@ public class ModReport extends JSONBase {
 		String[] imagesNames;
 		jsonArray = new JSONArray();
 		imagesNames = new String[designImages.size()];
-		for(int i=0; i<designImages.size(); i++) {			
+		for(int i=0; i<designImages.size(); i++) {
 			String imageFilename = ReportFactory.getImageFileName(designImages.get(i));
 			imagesNames[i]=imageFilename;
-			
+
 			// client
 			jsonObject = new JSONObject();
 			jsonObject.put("name", imageFilename);
-			jsonArray.put(jsonObject);			
+			jsonArray.put(jsonObject);
 		}
 		serializer.put("images", jsonArray);
 		ReportFactory.prepareDesignImagesForUpload(designImages); // update expressions in design
 		return imagesNames;
 	}
 
-	private int[] parseSelectedGroup(String groups) {
-		int[] selectedGroups = {};
-		if(groups!=null && !groups.equals("")) {
-			int numGroups = groups.split(",").length;
-			selectedGroups = new int[numGroups];
-			for(int i=0; i<numGroups;i++) {
-				selectedGroups[i] = Integer.parseInt(groups.split(",")[i]);
-			}
+	private String[] parseSelectedGroup(String groups) {
+		if (groups!=null && !groups.equals("")) {
+			return groups.split(",");
+		} else {
+			return new String[0];
 		}
-		return selectedGroups;
 	}
 
 	private void checkJasperDesignParameters(JasperDesign jd) {
@@ -208,7 +220,7 @@ public class ModReport extends JSONBase {
 			throw ReportExceptionType.REPORT_INVALID_FILE.createException();
 		}
 		return jd;
-	}		
+	}
 
 	@Admin
 	@JSONExported
@@ -225,17 +237,17 @@ public class ModReport extends JSONBase {
 		resetSession();
 		return serializer;
 	}
-	
-	
+
+
 	@Admin
 	@JSONExported
 	public JSONObject saveJasperReport(JSONObject serializer) {
 		ReportCard newReport = new SessionVars().getNewReport();
 		saveReport(newReport);
-		
+
 		return serializer;
 	}
-	
+
 	private void saveReport(ReportCard newReport) {
 		try {
 			if (newReport.getOriginalId() < 0) {
@@ -254,25 +266,25 @@ public class ModReport extends JSONBase {
 	private void importSubreportsAndImages(List<FileItem> files,
 			ReportCard newReport) {
 		try {
-			
+
 			/*
 			 * TODO check images and subreport files
 			 * - check all elements of "files" param (ie: files.get(i).isFormField() )
 			 * - compare filename requested and filename uploaded
-			 *  
-			 */					
-			
+			 *
+			 */
+
 			// get IMAGES
 			int nImages = newReport.getImagesName().length;
 
 			// imageByte contains the stream of imagesFiles[]
 			byte[][] imageByte = new byte[nImages][];
 			// lengthImageByte contains the lengths of all imageByte[]
-			int lengthImagesByte[] = new int[nImages];						
-			
-			for(int i=0; i<nImages; i++) {				
-				//loading the image file and putting it in imageByte			
-				imageByte[i] = files.get(i).get();				
+			int lengthImagesByte[] = new int[nImages];
+
+			for(int i=0; i<nImages; i++) {
+				//loading the image file and putting it in imageByte
+				imageByte[i] = files.get(i).get();
 			}
 
 			// get REPORTS
@@ -295,20 +307,20 @@ public class ModReport extends JSONBase {
 				if(imageByte[i]==null)
 					fileNotUploaded = true;
 			}
-			
+
 			for(int i=1; i<nReports; i++){ // must start at 1 because 0 is master report
 				if(reportByte[i]==null)
 					fileNotUploaded = true;
 			}
 
 			if(!fileNotUploaded) {
-								
+
 				// IMAGES
 				for (int i = 0; i < nImages; i++) {
 					lengthImagesByte[i] = imageByte[i].length;
 				}
 
-				int totByte = 0; // total n. of bytes needed to store all images 
+				int totByte = 0; // total n. of bytes needed to store all images
 				for (int i = 0; i < nImages; i++) {
 					totByte += lengthImagesByte[i];
 				}
@@ -385,10 +397,10 @@ public class ModReport extends JSONBase {
 			throw ReportExceptionType.REPORT_NOCLASS_ERROR.createException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Reset session, last "import report" operation
-	 * 
+	 *
 	 * @param serializer
 	 * @return
 	 * @throws JSONException

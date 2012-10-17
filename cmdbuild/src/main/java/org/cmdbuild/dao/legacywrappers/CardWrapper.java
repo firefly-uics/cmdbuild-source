@@ -23,6 +23,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+/**
+ * Wrapper for {@link ICard}.
+ */
 public class CardWrapper implements CMCard, CMCardDefinition {
 
 	protected static final Set<String> cardSystemAttributes;
@@ -46,6 +49,16 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	@Override
 	public final Long getId() {
 		return Long.valueOf(card.getId());
+	}
+
+	@Override
+	public Object getCode() {
+		return card.getCode();
+	}
+
+	@Override
+	public Object getDescription() {
+		return card.getDescription();
 	}
 
 	@Override
@@ -180,6 +193,18 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 		if (isUserAttributeName(key)) {
 			card.getAttributeValue(key).setValue(value);
 		}
+	}
+
+	@Override
+	public CMCardDefinition setCode(Object value) {
+		card.setCode((String) value);
+		return this;
+	}
+
+	@Override
+	public CMCardDefinition setDescription(Object value) {
+		card.setDescription((String) value);
+		return this;
 	}
 
 	@Override

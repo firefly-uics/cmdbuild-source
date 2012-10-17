@@ -3,12 +3,12 @@
 --
 
 SELECT cm_create_class('Menu', 'Class', 'MODE: reserved|TYPE: class|DESCR: Menu|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('Menu', 'IdParent', 'integer', '0', false, false, 'MODE: reserved|DESCR: Parent Item, 0 means no parent');
-SELECT cm_create_class_attribute('Menu', 'IdElementClass', 'regclass', null, false, false, 'MODE: reserved|DESCR: Class connect to this item');
-SELECT cm_create_class_attribute('Menu', 'IdElementObj', 'integer', '0', true, false, 'MODE: reserved|DESCR: Object connected to this item, 0 means no object');
-SELECT cm_create_class_attribute('Menu', 'Number', 'integer', '0', true, false, 'MODE: reserved|DESCR: Ordering');
-SELECT cm_create_class_attribute('Menu', 'IdGroup', 'integer', '0', true, false, 'MODE: reserved|DESCR: Group owner of this item, 0 means default group');
-SELECT cm_create_class_attribute('Menu', 'Type', 'varchar (70)', '', true, false, 'MODE: reserved|DESCR: Group owner of this item, 0 means default group');
+SELECT cm_create_class_attribute('Menu', 'IdParent', 'integer', '0', false, false, 'MODE: read|DESCR: Parent Item, 0 means no parent');
+SELECT cm_create_class_attribute('Menu', 'IdElementClass', 'regclass', null, false, false, 'MODE: read|DESCR: Class connect to this item');
+SELECT cm_create_class_attribute('Menu', 'IdElementObj', 'integer', '0', true, false, 'MODE: read|DESCR: Object connected to this item, 0 means no object');
+SELECT cm_create_class_attribute('Menu', 'Number', 'integer', '0', true, false, 'MODE: read|DESCR: Ordering');
+SELECT cm_create_class_attribute('Menu', 'GroupName', 'text', '0', true, false, 'MODE: read');
+SELECT cm_create_class_attribute('Menu', 'Type', 'varchar (70)', '', true, false, 'MODE: read');
 
 CREATE TABLE "Report"
 (
@@ -27,12 +27,13 @@ CREATE TABLE "Report"
   "ImagesLength" integer[],
   "ReportLength" integer[],
   "IdClass" regclass,
-  "Groups" integer[],
+  "Groups" varchar[],
   "ImagesName" varchar[],
   CONSTRAINT "Report_pkey" PRIMARY KEY ("Id")
 );
 COMMENT ON TABLE "Report" IS 'MODE: reserved|TYPE: class|DESCR: Report|SUPERCLASS: false|STATUS: active';
 COMMENT ON COLUMN "Report"."Id" IS 'MODE: reserved';
+COMMENT ON COLUMN "Report"."IdClass" IS 'MODE: reserved';
 COMMENT ON COLUMN "Report"."Code" IS 'MODE: read|DESCR: Code';
 COMMENT ON COLUMN "Report"."Description" IS 'MODE: read|DESCR: Description';
 COMMENT ON COLUMN "Report"."Status" IS 'MODE: reserved';
@@ -40,15 +41,14 @@ COMMENT ON COLUMN "Report"."User" IS 'MODE: reserved';
 COMMENT ON COLUMN "Report"."BeginDate" IS 'MODE: reserved';
 COMMENT ON COLUMN "Report"."Type" IS 'MODE: read|DESCR: Type';
 COMMENT ON COLUMN "Report"."Query" IS 'MODE: read|DESCR: Query';
-COMMENT ON COLUMN "Report"."SimpleReport" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."RichReport" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."Wizard" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."Images" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."ImagesLength" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."ReportLength" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."IdClass" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."Groups" IS 'MODE: reserved';
-COMMENT ON COLUMN "Report"."ImagesName" IS 'MODE: reserved';
+COMMENT ON COLUMN "Report"."SimpleReport" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."RichReport" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."Wizard" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."Images" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."ImagesLength" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."ReportLength" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."Groups" IS 'MODE: read';
+COMMENT ON COLUMN "Report"."ImagesName" IS 'MODE: read';
 
 CREATE UNIQUE INDEX "Report_unique_code"
   ON "Report"

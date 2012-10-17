@@ -9,6 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class DBClass extends DBEntryType implements CMClass {
 
 	public static class ClassMetadata extends EntryTypeMetadata {
+
 		public static final String SUPERCLASS = BASE_NS + "superclass";
 
 		final boolean isSuperclass() {
@@ -18,6 +19,7 @@ public class DBClass extends DBEntryType implements CMClass {
 		final void setSuperclass(final boolean superclass) {
 			put(SUPERCLASS, Boolean.toString(superclass));
 		}
+
 	}
 
 	private final ClassMetadata meta;
@@ -35,14 +37,13 @@ public class DBClass extends DBEntryType implements CMClass {
 		this(name, id, new ClassMetadata(), attributes);
 	}
 
-	@Override
-    public void accept(CMEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
-    public void accept(DBEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(DBEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	protected final ClassMetadata meta() {
 		return meta;
@@ -106,11 +107,24 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public boolean isSuperclass() {
-		return meta().isSuperclass(); 
+		return meta().isSuperclass();
+	}
+
+	@Override
+	public String getCodeAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Code";
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Description";
 	}
 
 	@Override
 	public boolean holdsHistory() {
 		return true; // Simple classes do not
 	}
+
 }

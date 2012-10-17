@@ -12,6 +12,11 @@ public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 		// TODO Get the lookup type
 		this.lookupType = new DBLookupType(lookupTypeName);
 	}
+	
+	// FIXME really needed?
+	public String getLookupTypeName() {
+		return lookupType.getName();
+	}
 
 	@Override
 	public void accept(CMAttributeTypeVisitor visitor) {
@@ -28,4 +33,5 @@ public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 			throw new IllegalArgumentException();
 		}
 	}
+
 }

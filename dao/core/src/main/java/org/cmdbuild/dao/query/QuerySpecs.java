@@ -11,10 +11,17 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 public interface QuerySpecs {
 
 	CMEntryType getFromType();
+
 	Alias getFromAlias();
+
 	List<JoinClause> getJoins();
+
 	Iterable<QueryAliasAttribute> getAttributes();
+
 	WhereClause getWhereClause();
+
 	Long getOffset();
+
 	Long getLimit();
+
 }

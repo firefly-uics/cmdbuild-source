@@ -1,17 +1,21 @@
 package unit;
 
-import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.auth.ClientRequestAuthenticator;
-import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
-import org.cmdbuild.auth.CasAuthenticator;
-import org.cmdbuild.auth.CasAuthenticator.CasService;
-import org.cmdbuild.auth.CasAuthenticator.Configuration;
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import org.junit.Ignore;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.auth.CasAuthenticator;
+import org.cmdbuild.auth.ClientRequestAuthenticator;
+import org.cmdbuild.auth.CasAuthenticator.CasService;
+import org.cmdbuild.auth.CasAuthenticator.Configuration;
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CasAuthenticatorTest {
@@ -23,6 +27,7 @@ public class CasAuthenticatorTest {
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void casConfigurationCannotBeNull() {
+		@SuppressWarnings("unused")
 		CasAuthenticator authenticator = new CasAuthenticator((Configuration) null);
 	}
 
@@ -65,7 +70,7 @@ public class CasAuthenticatorTest {
 
 		when(request.getParameter(CasAuthenticator.SKIP_SSO_PARAM)).thenReturn(StringUtils.EMPTY);
 
-		ClientRequestAuthenticator.Response response = authenticator.authenticate(request);
+		authenticator.authenticate(request);
 
 		verify(casService, only()).getUsernameFromTicket(any(ClientRequest.class));
 	}

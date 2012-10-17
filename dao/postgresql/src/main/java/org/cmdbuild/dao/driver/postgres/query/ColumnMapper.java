@@ -32,6 +32,7 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 public class ColumnMapper {
 
 	public static class EntryTypeAttribute {
+
 		public final String name;
 		public final Alias alias;
 		public final Integer index;
@@ -46,6 +47,12 @@ public class ColumnMapper {
 			this.sqlType = sqlType;
 			this.sqlTypeString = sqlTypeString;
 		}
+
+		@Override
+		public String toString() {
+			return String.format("[%s,%s,%s]", name, alias, sqlType);
+		}
+
 	}
 
 	private static class AliasAttributes {
@@ -105,6 +112,11 @@ public class ColumnMapper {
 		Iterable<CMEntryType> getEntryTypes() {
 			return map.keySet();
 		}
+
+		@Override
+		public String toString() {
+			return map.toString();
+		}
 	}
 
 	private static class AliasStore {
@@ -124,6 +136,11 @@ public class ColumnMapper {
 
 		Set<Alias> getAliases() {
 			return map.keySet();
+		}
+
+		@Override
+		public String toString() {
+			return map.toString();
 		}
 	}
 
@@ -254,4 +271,11 @@ public class ColumnMapper {
 	public Set<Alias> getFunctionCallAliases() {
 		return functionCallAliases.getAliases();
 	}
+
+	@Override
+	public String toString() {
+		return String.format("[Classes=%s,Domains=%s,Functions=%s]", cardSourceAliases, domainAliases,
+				functionCallAliases);
+	}
+
 }

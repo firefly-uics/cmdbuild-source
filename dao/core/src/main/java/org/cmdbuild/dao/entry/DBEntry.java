@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 
 public abstract class DBEntry implements CMValueSet {
 
-	final DBDriver driver;
+	private final DBDriver driver;
 
 	private final DBEntryType type;
 	private Long id;
@@ -59,18 +59,18 @@ public abstract class DBEntry implements CMValueSet {
 	}
 
 	/*
-	 * The returned value should be immutable, but it is not a real problem:
-	 * the CMEntry interface does not allow a card to be saved, and even with
-	 * that, Object would have to be casted to a mutable value. After all,
-	 * reflection can do anything, so there is no point in being over-strict.
+	 * The returned value should be immutable, but it is not a real problem: the
+	 * CMEntry interface does not allow a card to be saved, and even with that,
+	 * Object would have to be casted to a mutable value. After all, reflection
+	 * can do anything, so there is no point in being over-strict.
 	 */
 	public final Object get(final String key) {
 		if (!values.containsKey(key)) {
-			if (type.getAttribute(key) != null && !isNew()) {
+			if ((type.getAttribute(key) != null) && !isNew()) {
 				// TODO It was lazy loaded: load the remaining values
 				throw new UnsupportedOperationException("Not implemented");
 			} else {
-				throw new IllegalArgumentException();
+				throw newAttributeInexistent(key);
 			}
 		}
 		return values.get(key);
@@ -86,7 +86,7 @@ public abstract class DBEntry implements CMValueSet {
 
 	public final void setOnly(final String key, final Object value) {
 		if (type.getAttribute(key) == null) {
-			throw new IllegalArgumentException();
+			throw newAttributeInexistent(key);
 		}
 		values.put(key, toNative(key, value));
 	}
@@ -98,4 +98,10 @@ public abstract class DBEntry implements CMValueSet {
 	protected void saveOnly() {
 		id = driver.create(this);
 	}
+
+	private RuntimeException newAttributeInexistent(final String key) {
+		final String message = String.format("Attribute '%s.%s' does not exist", type.getName(), key);
+		return new IllegalArgumentException(message);
+	}
+
 }

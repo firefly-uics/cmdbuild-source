@@ -12,4 +12,5 @@ public interface WorkflowTypesConverter {
 	Object toWorkflowType(CMAttributeType<?> attributeType, Object obj);
 
 	Object fromWorkflowType(Object obj);
+
 }

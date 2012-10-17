@@ -46,9 +46,9 @@ public class EAdministration {
 	}
 
 	public MenuSchema getMenuSchema() {
-		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getId());
+		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getName());
 		if (tree.getRootElement().getNumberOfChildren() == 0) {
-			tree = MenuCard.loadTreeForGroup(0);
+			tree = MenuCard.loadTreeForGroup(MenuCard.DEFAULT_GROUP);
 		}
 		return serializeTree(tree.getRootElement(), userCtx);
 	}

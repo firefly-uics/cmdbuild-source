@@ -170,4 +170,11 @@ public class FunctionCall implements CMFunctionCall {
 	public boolean holdsHistory() {
 		return false;
 	}
+	
+	@Override
+	public String getKeyAttributeName() {
+		// TODO really needed here? considering that there is no sense for functions
+		return null;
+	}
+	
 }

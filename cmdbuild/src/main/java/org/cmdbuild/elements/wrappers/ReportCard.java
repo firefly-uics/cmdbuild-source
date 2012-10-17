@@ -31,16 +31,20 @@ public class ReportCard extends CardForwarder {
 	public static final String REPORT_CLASS_NAME = "Report";
 	private static final ITable reportClass = UserContext.systemContext().tables().get(REPORT_CLASS_NAME);
 
-	private static final long serialVersionUID = 1L;
-
-	// number of subreport elements (administration side)
+	/**
+	 * number of subreport elements (administration side)
+	 */
 	private int subreportsNumber = -1;
 
-	// jasper design created from uploaded file (administration side)
+	/**
+	 * jasper design created from uploaded file (administration side)
+	 */
 	private JasperDesign jd = null;
 
-	// id of the report we're editing, "-1" if it's a new one (administration
-	// side)
+	/**
+	 * id of the report we're editing, "-1" if it's a new one (administration
+	 * side)
+	 */
 	private int originalId = -1;
 
 	public ReportCard() throws NotFoundException {
@@ -121,12 +125,12 @@ public class ReportCard extends CardForwarder {
 		this.jd = jd;
 	}
 
-	public void setSelectedGroups(final int[] newvalue) {
-		getAttributeValue("Groups").setValue(IntArray.valueOf(newvalue));
+	public void setSelectedGroups(String[] newvalue) {
+		getAttributeValue("Groups").setValue(newvalue);
 	}
 
-	public int[] getSelectedGroups() {
-		return getAttributeValue("Groups").getIntArrayValue();
+	public String[] getSelectedGroups() {
+		return getAttributeValue("Groups").getStringArrayValue();
 	}
 
 	/**
@@ -254,7 +258,7 @@ public class ReportCard extends CardForwarder {
 		if (userCtx.privileges().isAdmin()) {
 			allowed = true;
 		} else {
-			final int[] groupsAllowed = this.getSelectedGroups();
+			final String[] groupsAllowed = this.getSelectedGroups();
 			if (groupsAllowed != null) {
 				for (int i = groupsAllowed.length - 1; i >= 0; --i) {
 					if (userCtx.belongsTo(groupsAllowed[i])) {

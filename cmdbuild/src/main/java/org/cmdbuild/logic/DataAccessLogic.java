@@ -12,15 +12,20 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.auth.UserContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Business Logic Layer for Data Access
  */
+@Component
 public class DataAccessLogic {
 
 	private final CMDataView view;
 
-	public DataAccessLogic(final CMDataView view) {
+	@Autowired
+	public DataAccessLogic(@Qualifier("user") final CMDataView view) {
 		this.view = view;
 	}
 
@@ -55,4 +60,5 @@ public class DataAccessLogic {
 		}
 		**************************************************************** */
 	}
+
 }

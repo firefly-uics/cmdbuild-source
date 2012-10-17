@@ -1,11 +1,6 @@
 package org.cmdbuild.dao.reference;
 
-
 public class EntryTypeReference extends AbstractReference {
-
-	public static EntryTypeReference newInstance(final Long id) {
-		return new EntryTypeReference(id);
-	}
 
 	private EntryTypeReference(final Long id) {
 		super(id);
@@ -15,4 +10,9 @@ public class EntryTypeReference extends AbstractReference {
 	public void accept(CMReferenceVisitor visitor) {
 		visitor.visit(this);
 	}
+
+	public static EntryTypeReference newInstance(final Long id) {
+		return new EntryTypeReference(id);
+	}
+
 }

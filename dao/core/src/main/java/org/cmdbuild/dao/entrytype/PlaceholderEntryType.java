@@ -38,7 +38,13 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public final String getPrivilegeId() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getKeyAttributeName() {
 		throw new UnsupportedOperationException();
 	}
 }

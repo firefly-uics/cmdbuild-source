@@ -67,7 +67,7 @@
 			<div id="msg-ct">
 				<div id="msg">
 					<div id="msg-inner">
-						<p><tr:translation key="common.user"/>: <strong><%= user %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
+						<p><tr:translation key="common.user"/>: <strong><%= user.getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
 						<p id="msg-inner-hidden">
 							<tr:translation key="common.group"/>: <strong><%= defaultGroup.getDescription() %></strong> |
 							<a href="management.jsp"><tr:translation key="management.description"/></a>
