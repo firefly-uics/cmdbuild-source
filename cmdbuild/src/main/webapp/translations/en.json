@@ -815,7 +815,7 @@
          "ORM_CANT_DELETE_CARD_WITH_RELATION": "Can't delete cards having relations",
          "ORM_CHANGE_LOOKUPTYPE_ERROR": "Can't change the lookup type",
          "ORM_CONTAINS_DATA": "Couldn't drop classes or attributes of tables or domain containing records",
-         "ORM_CQL_COMPILATION_FAILED": "Invaliud CQL query",
+         "ORM_CQL_COMPILATION_FAILED": "Invalid CQL query",
          "ORM_CSV_INVALID_ATTRIBUTES": "Can't save the cards: invalid values found",
          "ORM_DATABASE_CONNECTION_ERROR": "Database connection error, try to reset the connection parameters",
          "ORM_DBNOTCONFIGURED": "Database not configured",
