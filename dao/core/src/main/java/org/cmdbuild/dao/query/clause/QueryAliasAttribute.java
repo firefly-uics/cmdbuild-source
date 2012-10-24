@@ -23,7 +23,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 	 * @param entryType
 	 *            is the alias of the entry type (e.g. the table of a database).
 	 * @param name
-	 *            if the name of the attribute.
+	 *            is the name of the attribute.
 	 */
 	protected QueryAliasAttribute(final Alias entryType, final String name) {
 		this.entryType = entryType;

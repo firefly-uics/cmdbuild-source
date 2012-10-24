@@ -3,11 +3,12 @@ package integration.driver;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
-import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator.EQUALS;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
+import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
@@ -164,17 +165,68 @@ public class SimpleQueryTest extends DriverFixture {
 	@Test
 	public void singleWhereClause() {
 		final DBClass newClass = driver.createClass(uniqueUUID(), null);
-		insertCards(newClass, 5);
-		final Object cardAttributeToFind = "3";
+		final int NUMBER_OF_INSERTED_CARDS = 5;
+		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
+		final Object codeValueToFind = "" + (NUMBER_OF_INSERTED_CARDS - 1);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		final CMQueryRow row = new QuerySpecsBuilder(view) //
 				.select(codeAttributeName) //
 				.from(newClass) //
-				.where(attribute(canonicalAlias(newClass), codeAttributeName), EQUALS, cardAttributeToFind) //
+				.where(attribute(newClass, codeAttributeName), EQUALS, codeValueToFind) //
 				.run().getOnlyRow();
 
-		assertThat(row.getCard(newClass).get(codeAttributeName), equalTo(cardAttributeToFind));
+		assertThat(row.getCard(newClass).get(codeAttributeName), equalTo(codeValueToFind));
+	}
+
+	@Test
+	public void simpleQueryWithoutWhereClause() {
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+
+		final int NUMBER_OF_INSERTED_CARDS = 5;
+		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
+		final String codeAttributeName = newClass.getCodeAttributeName();
+
+		final CMQueryResult result = new QuerySpecsBuilder(view) //
+				.select(codeAttributeName) //
+				.from(newClass) //
+				.run();
+
+		assertThat(result.size(), equalTo(NUMBER_OF_INSERTED_CARDS));
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() {
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+
+		final int NUMBER_OF_INSERTED_CARDS = 5;
+		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
+		final String codeAttributeName = newClass.getCodeAttributeName();
+
+		new QuerySpecsBuilder(view) //
+				.select(codeAttributeName) //
+				.from(newClass) //
+				.run().getOnlyRow();
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+
+		final String codeAttributeName = newClass.getCodeAttributeName();
+		new QuerySpecsBuilder(view) //
+				.select(codeAttributeName) //
+				.from(newClass) //
+				.run().getOnlyRow();
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void malformedQueryShouldThrowException() {
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final String codeAttributeName = newClass.getCodeAttributeName();
+		new QuerySpecsBuilder(view) //
+				.select(codeAttributeName) //
+				.run();
 	}
 
 }

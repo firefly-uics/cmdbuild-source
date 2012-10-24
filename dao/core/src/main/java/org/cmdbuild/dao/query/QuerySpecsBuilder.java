@@ -175,7 +175,7 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	private QuerySpecs build() {
+	public QuerySpecs build() {
 		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias());
 
 		for (final JoinClause jc : joinClauses) {

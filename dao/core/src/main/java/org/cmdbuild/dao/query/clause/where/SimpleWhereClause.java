@@ -5,7 +5,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 public class SimpleWhereClause implements WhereClause {
 
 	public enum Operator {
-		EQUALS;
+		EQUALS, LESS_THAN, GREATHER_THAN;
 	}
 
 	private final QueryAliasAttribute attribute;

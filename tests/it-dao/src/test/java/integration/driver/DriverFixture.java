@@ -89,7 +89,16 @@ public abstract class DriverFixture {
 
 	protected void insertCards(final DBClass c, final int quantity) {
 		for (long i = 0; i < quantity; ++i) {
-			DBCard.newInstance(driver, c).setCode(String.valueOf(i)).save();
+			insertCardWithCode(c, String.valueOf(i));
+		}
+	}
+
+	protected void insertCardsWithCodeAndDescription(final DBClass c, final int quantity) {
+		for (long i = 0; i < quantity; ++i) {
+			DBCard.newInstance(driver, c) //
+					.setCode(String.valueOf(i)) //
+					.setDescription(String.valueOf(i)) //
+					.save();
 		}
 	}
 

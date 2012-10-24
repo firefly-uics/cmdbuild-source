@@ -190,5 +190,5 @@ public class QueryCreatorTest {
 
 	private String sqlQuoteIdent(final String ident) {
 		return String.format("\"%s\"", sqlEscape(ident));
-	}
+	}	
 }

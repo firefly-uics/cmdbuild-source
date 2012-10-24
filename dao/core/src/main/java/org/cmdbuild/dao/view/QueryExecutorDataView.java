@@ -10,7 +10,12 @@ public abstract class QueryExecutorDataView implements CMDataView {
 
 	@Override
 	public final QuerySpecsBuilder select(final Object... attrDef) {
-		return new QuerySpecsBuilder(this).select(attrDef);
+		return new QuerySpecsBuilder(this) //
+				.select(attrDef);
+	}
+
+	public final CMQueryResult executeQuery(final QuerySpecsBuilder querySpecsBuilder) {
+		return executeNonEmptyQuery(querySpecsBuilder.build());
 	}
 
 	public final CMQueryResult executeQuery(final QuerySpecs querySpecs) {
@@ -32,4 +37,5 @@ public abstract class QueryExecutorDataView implements CMDataView {
 	 * @return the query result
 	 */
 	public abstract CMQueryResult executeNonEmptyQuery(QuerySpecs querySpecs);
+
 }

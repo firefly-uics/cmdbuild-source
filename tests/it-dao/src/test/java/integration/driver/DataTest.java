@@ -20,24 +20,34 @@ public class DataTest extends DriverFixture {
 	}
 
 	private static final String A_CLASS_NAME = uniqueUUID();
+	private static final String A_SUPERCLASS_NAME = uniqueUUID();
 
-	protected static final String ATTRIBUTE_1 = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
-	protected static final String ATTRIBUTE_2 = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
+	protected static final String CODE_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
+	protected static final String DESCRIPTION_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 
-	private static final Object ATTRIBUTE_1_VALUE = "foo";
-	private static final Object ATTRIBUTE_2_VALUE = "bar";
+	private static final Object CODE_VALUE = "foo";
+	private static final Object DESCRIPTION_VALUE = "bar";
 
 	@Test
 	public void cardsCanBeAdded() {
 		final DBClass newClass = driver.createClass(A_CLASS_NAME, null);
 		final CMCard newCard = DBCard.newInstance(driver, newClass) //
-				.set(ATTRIBUTE_1, ATTRIBUTE_1_VALUE) //
-				.set(ATTRIBUTE_2, ATTRIBUTE_2_VALUE) //
+				.set(CODE_ATTRIBUTE, CODE_VALUE) //
+				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();
 
 		assertThat(newCard.getId(), is(notNullValue()));
-		assertThat(newCard.get(ATTRIBUTE_1), equalTo(ATTRIBUTE_1_VALUE));
-		assertThat(newCard.get(ATTRIBUTE_2), equalTo(ATTRIBUTE_2_VALUE));
+		assertThat(newCard.get(CODE_ATTRIBUTE), equalTo(CODE_VALUE));
+		assertThat(newCard.get(DESCRIPTION_ATTRIBUTE), equalTo(DESCRIPTION_VALUE));
+	}
+
+	@Test(expected = Exception.class)
+	public void cardsCannotBeAddedInSuperclass() {
+		final DBClass newClass = driver.createSuperClass(A_SUPERCLASS_NAME, null);
+		final CMCard newCard = DBCard.newInstance(driver, newClass) //
+				.set(CODE_ATTRIBUTE, CODE_VALUE) //
+				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
+				.save();
 	}
 
 }
