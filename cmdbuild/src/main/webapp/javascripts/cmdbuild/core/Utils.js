@@ -200,6 +200,34 @@ CMDBuild.Utils = (function() {
 			return out;
 		},
 
+		grid: {
+			getPageSize: function getPageSize() {
+				var pageSize;
+				try {
+					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+				} catch (e) {
+					pageSize = 20;
+				}
+
+				return pageSize;
+			},
+
+			getPageNumber: function getPageNumber(cardPosition) {
+				var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+					pageNumber = 1;
+
+				if (cardPosition == 0) {
+					return pageNumber;
+				}
+
+				if (cardPosition) {
+					pageNumber = parseInt(cardPosition) / pageSize;
+				}
+
+				return pageNumber + 1;
+			}
+		},
+
 		PollingFunction: function(conf) {
 			var DEFAULT_DELAY = 500,
 				DEFAULT_MAX_TIMES = 60;

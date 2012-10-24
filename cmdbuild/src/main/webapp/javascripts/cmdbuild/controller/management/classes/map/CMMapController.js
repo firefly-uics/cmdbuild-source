@@ -9,7 +9,8 @@
 			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindow",
 			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate",
 			cardBrowserDelegate: "CMDBuild.view.management.CMCardBrowserTreeDelegate",
-			cardStateDelegate: "CMDBuild.state.CMCardModuleStateDelegate"
+			cardStateDelegate: "CMDBuild.state.CMCardModuleStateDelegate",
+			miniCardGridDelegate: "CMDBuild.view.management.CMMiniCardGridDelegate"
 		},
 
 		cardDataName: "geoAttributes", // CMCardDataProvider member, to say the name to use for given data
@@ -39,8 +40,19 @@
 				layerSwitcher.addDelegate(this);
 
 				// set me as a delegate of the cardBrowser
-				var cardBrowser = this.mapPanel.getCardBrowserPanel();
-				cardBrowser.addDelegate(this);
+				var cardbrowserPanel = this.mapPanel.getCardBrowserPanel();
+				if (cardbrowserPanel) {
+					cardbrowserPanel.addDelegate(this);
+				}
+
+				// set me as delegate of the mini card grid
+				this.mapPanel.getMiniCardGrid().addDelegate(this);
+
+				// init the miniCardGridWindowController
+				this.miniCardGridWindowController = new CMDBuild.controller
+					.management.CMMiniCardGridWindowFeaturesController();
+
+				buildLongPressController(me);
 
 				// initialize editing control
 				this.editingControls = {};
@@ -56,6 +68,7 @@
 
 				this.mapPanel.getMap().addControl(this.selectControl);
 				this.selectControl.activate();
+
 
 				// add me to the CMCardModuleStateDelegates
 				_CMCardModuleState.addDelegate(this);
@@ -110,7 +123,13 @@
 			}
 
 			// to sync the cardBrowserPanelSelection
-			this.mapPanel.getCardBrowserPanel().selectCardSilently(card);
+			if (this.mapPanel.getCardBrowserPanel()) {
+				this.mapPanel.getCardBrowserPanel().selectCardSilently(card);
+			}
+
+			// to sync the miniCardGrid
+			// TODO ensure that the grid is on the right page
+			this.mapPanel.getMiniCardGrid().selectCardSilently(card);
 		},
 
 		onAddCardButtonClick: function() {
@@ -244,7 +263,8 @@
 
 		onCardBrowserTreeItemAdded: function(tree, targetNode, newNode) {
 			var card = _CMCardModuleState.card;
-			if (newNode.isBindingCard(card)) {
+			if (this.mapPanel.getCardBrowserPanel() 
+					&& newNode.isBindingCard(card)) {
 				this.mapPanel.getCardBrowserPanel().selectNodeSilently(newNode);
 			}
 		},
@@ -269,7 +289,6 @@
 		/* As CMMap delegate ****************/
 
 		featureWasAdded: function(feature) {
-
 			if (feature.data) {
 				var data = feature.data;
 				var currentClassId = _CMCardModuleState.entryType ? _CMCardModuleState.entryType.getId() : null;
@@ -281,8 +300,85 @@
 					feature.layer.selectFeature(feature);
 				}
 			}
+		},
+
+		/* As miniCardGridDelegate ************/
+
+		miniCardGridDidActivate: loadMiniCardGridStore,
+		miniCardGridWantOpenCard: function(grid, card) {
+			_CMCardModuleState.setCard(card);
 		}
 	});
+
+	function buildLongPressController(me) {
+		var map = me.map;
+		var longPressControl = new OpenLayers.Control.LongPress({
+			onLongPress: function(e) {
+				var lonlat = map.getLonLatFromPixel(e.xy);
+				var features = map.getFeaturesInLonLat(lonlat);
+
+				// no features no window
+				if (features.length == 0) {
+					return;
+				}
+
+				me.miniCardGridWindowController.setFeatures(features);
+				if (me.miniCardGridWindow) {
+					me.miniCardGridWindow.close();
+				}
+
+				me.miniCardGridWindow = new CMDBuild.view.management.CMMiniCardGridWindow({
+					width: me.mapPanel.getWidth() / 100 * 40,
+					height: me.mapPanel.getHeight() / 100 * 80,
+					x: e.xy.x,
+					y: e.xy.y,
+					dataSource: me.miniCardGridWindowController.getDataSource()
+				});
+
+				me.miniCardGridWindowController.bindMiniCardGridWindow(me.miniCardGridWindow);
+				me.miniCardGridWindow.show();
+			}
+		});
+
+		map.addControl(longPressControl);
+		longPressControl.activate();
+	}
+
+	function loadMiniCardGridStore(grid) {
+		if (!grid.isVisible()) {
+			return;
+		}
+
+		var ds = grid.getDataSource();
+		var currentIdClass = _CMCardModuleState.entryType.getId();
+
+		if (!ds || ds.getLastEntryTypeIdLoaded() == currentIdClass) {
+			return;
+		}
+
+		ds.loadStoreForEntryTypeId(currentIdClass, //
+			function(records, operation, success) {
+				var currentCard = _CMCardModuleState.card;
+				if (!currentCard) {
+					return;
+				}
+
+				for (var i=0, r=null; i<records.length; ++i) {
+					r = records[i];
+					if (r && r.get("Id") == currentCard.get("Id")
+							&& r.get("IdClass") == currentCard.get("IdClass")) {
+
+						grid.selectRecordSilently(r);
+					}
+				}
+			}
+		);
+	}
+
+	function updateMiniCardGridTitle(entryType, grid) {
+		var prefix = CMDBuild.Translation.management.modcard.title;
+		grid.setTitle(prefix + entryType.get("name"));
+	}
 
 	function setFeatureVisibilityForAllBranch(tree, map, node, checked, forceChildren) {
 		setCardFeaturesVisibility(map, node, checked);
@@ -336,6 +432,10 @@
 		if (this.currentClassId != newEntryTypeId) {
 			this.currentClassId = newEntryTypeId;
 			this.updateMap(et);
+
+			var miniCardGrid = this.mapPanel.getMiniCardGrid();
+			loadMiniCardGridStore(miniCardGrid);
+			updateMiniCardGridTitle(et, miniCardGrid);
 		}
 
 		if (danglingCard) {
@@ -452,7 +552,7 @@
 						&& (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {
 
 					this.centerMapOnFeature(lastCard.data);
-					this.onCardSelected(lastCard.get("Id"));
+					this.onCardSelected(lastCard);
 				}
 			}
 

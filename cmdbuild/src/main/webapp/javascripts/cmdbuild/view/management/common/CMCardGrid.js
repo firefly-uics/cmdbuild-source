@@ -273,7 +273,7 @@
 					extraParams: this.getStoreExtraParams()
 				},
 				autoLoad: false
-			});;
+			});
 		},
 
 		//protected

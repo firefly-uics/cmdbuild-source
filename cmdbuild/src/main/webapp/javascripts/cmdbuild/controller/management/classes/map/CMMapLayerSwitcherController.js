@@ -45,7 +45,7 @@
 	function getLayerFromMapParams(params) {
 		if (!params
 				|| !params.layer
-				|| !params.layer.CMDBuildLayer) {
+				|| !(params.layer.CMDBuildLayer || params.layer.CM_geoserverLayer)) {
 
 			return null;
 		} else {

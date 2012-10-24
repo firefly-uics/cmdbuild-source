@@ -47,6 +47,29 @@
 				me.onEntryTypeSelected(entryType, danglingCard);
 			};
 
+			sd.onCardDidChange = function(state, card) {
+				if (!card) {
+					return;
+				}
+
+				var currentSelection = me.gridSM.getSelection();
+				if (Ext.isArray(currentSelection)
+						&& currentSelection.length>0) {
+
+					currentSelection = currentSelection[0];
+				}
+
+				var id = currentSelection.get("Id");
+				if (id && id == card.get("Id")) {
+					return;
+				} else {
+					me.openCard({
+						Id: card.get("Id"),
+						IdClass: card.get("IdClass")
+					});
+				}
+			};
+
 			_CMCardModuleState.addDelegate(sd);
 		},
 
@@ -126,14 +149,9 @@
 		},
 
 		onCardSelected: function(sm, selection) {
-			var me = this;
 			if (Ext.isArray(selection)) {
 				if (selection.length > 0) {
-
 					_CMCardModuleState.setCard(selection[0]);
-
-					// TODO remove the event now managed by the state
-					// me.fireEvent(me.CMEVENTS.cardSelected, selection[0]);
 				}
 			}
 		},
@@ -197,21 +215,6 @@
 			});
 		},
 
-		getPageNumber: function getPageNumber(cardPosition) {
-			var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-				pageNumber = 1;
-	
-			if (cardPosition == 0) {
-				return pageNumber;
-			}
-	
-			if (cardPosition) {
-				pageNumber = parseInt(cardPosition) / pageSize;
-			}
-	
-			return pageNumber + 1;
-		},
-
 		reload: function(reselect) {
 			this.view.reload(reselect);
 		},
@@ -241,8 +244,8 @@
 		var view = me.view;
 		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
-				var	pageNumber = getPageNumber(position),
-					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+				var	pageNumber = _CMUtils.grid.getPageNumber(position),
+					pageSize = _CMUtils.grid.getPageSize(),
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
@@ -251,27 +254,11 @@
 							me.gridSM.select(relativeIndex);
 						} catch (e) {
 							view.fireEvent("cmWrongSelection");
-							_debug("I was not able to select the record at " + relativeIndex);
-							_trace();
+							_trace("I was not able to select the record at " + relativeIndex);
 						}
 					}
 				});
 			}
 		});
-	}
-
-	function getPageNumber(cardPosition) {
-		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-			pageNumber = 1;
-
-		if (cardPosition == 0) {
-			return pageNumber;
-		}
-
-		if (cardPosition) {
-			pageNumber = parseInt(cardPosition) / pageSize;
-		}
-
-		return pageNumber + 1;
 	}
 })();

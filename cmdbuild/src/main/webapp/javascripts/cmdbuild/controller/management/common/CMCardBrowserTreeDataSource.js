@@ -93,6 +93,7 @@
 			return;
 		}
 
+		node.set("loading", true);
 		var domains = node.getExpansibleDomains();
 		var totalChildren = [];
 		var steps = 0;
@@ -101,6 +102,7 @@
 			domain = domains[i];
 			loadDomainChildrenForNode(me, node, domain, deeply, function(domainChildren) {
 				totalChildren = totalChildren.concat(domainChildren);
+				node.set("loading", false);
 				if (typeof cb == "function" 
 					&& ++steps == domains.length) {
 

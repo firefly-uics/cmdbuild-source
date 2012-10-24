@@ -1028,6 +1028,7 @@
          "edit_relation": "リレーションを編集",
          "gis": {
             "geo_attributes": "地理的属性",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "位置",
             "zoom": "ズーム"
          },

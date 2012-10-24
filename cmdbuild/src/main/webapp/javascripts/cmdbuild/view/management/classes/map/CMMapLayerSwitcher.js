@@ -2,6 +2,7 @@
 
 	var EXTERNAL_LAYERS_FOLDER_NAME = "cm_external_layers_folder";
 	var CMDBUILD_LAYERS_FOLDER_NAME = "cm_cmdbuild_layers_folder";
+	var GEOSERVER_LAYERS_FOLDER_NAME = "cm_geoserver_layers_folder";
 
 	Ext.define("CMDBuild.view.management.map.CMMapLayerSwitcherDelegate", {
 		/**
@@ -34,15 +35,20 @@
 			this.bodyBorder = false;
 
 			this.store = new Ext.create('Ext.data.TreeStore', {
+				fields: [{
+					name: "folderName", type: "string"
+				}, {
+					name: "text", type: "string"
+				}],
 				root : {
 					expanded : true,
 					children : [{
-						text: "@@ Livelli CMDBuild",
+						text: CMDBuild.Translation.administration.modClass.tabs.geo_attributes,
 						leaf: false,
 						expanded: true,
 						folderName: CMDBUILD_LAYERS_FOLDER_NAME
 					}, {
-						text: "@@ Servizi esterni",
+						text: CMDBuild.Translation.administration.modcartography.external_services.title,
 						leaf: false,
 						expanded: true,
 						folderName: EXTERNAL_LAYERS_FOLDER_NAME
@@ -50,11 +56,9 @@
 				}
 			});
 
-			this.listeners = {
-				checkchange: function(node, checked) {
+			this.mon(this, "checkchange", function(node, checked) {
 					this.callDelegates("onLayerCheckChange", [node, checked]);
-				}
-			},
+				}, this);
 
 			this.callParent(arguments);
 		},
@@ -65,10 +69,7 @@
 		 */
 		addLayerItem: function(layer) {
 			if (layer.displayInLayerSwitcher) {
-				var root = this.getRootNode();
-				var targetFolder = layer.isBaseLayer ?
-						folderNodeByName(root, EXTERNAL_LAYERS_FOLDER_NAME) :
-							folderNodeByName(root, CMDBUILD_LAYERS_FOLDER_NAME);
+				var targetFolder = retrieveTargetFolder(layer, this.getRootNode());
 
 				try {
 
@@ -126,13 +127,39 @@
 		}
 	});
 
+	function retrieveTargetFolder(layer, root) {
+		var targetFolder = null;
+
+		if (layer.isBaseLayer) {
+			targetFolder = folderNodeByName(root, EXTERNAL_LAYERS_FOLDER_NAME);
+		} else if (layer.CM_geoserverLayer) {
+			targetFolder = retrieveGeoserverFolder(root);
+		} else {
+			targetFolder = folderNodeByName(root, CMDBUILD_LAYERS_FOLDER_NAME);
+		}
+
+		return targetFolder;
+	}
+
+	function retrieveGeoserverFolder(root) {
+		var extarnalServicesFolder = folderNodeByName(root, EXTERNAL_LAYERS_FOLDER_NAME);
+		var geoserverFolder = folderNodeByName(extarnalServicesFolder, GEOSERVER_LAYERS_FOLDER_NAME);
+
+		if (!geoserverFolder) {
+			geoserverFolder = extarnalServicesFolder.appendChild({
+				text: CMDBuild.Translation.administration.modcartography.geoserver.title,
+				leaf: false,
+				expanded: true,
+				folderName: GEOSERVER_LAYERS_FOLDER_NAME
+			});
+		}
+
+		return geoserverFolder;
+	}
+
 	function folderNodeByName(root, folderName) {
 		return root.findChildBy(function(child) {
-			if (child.raw) {
-				return child.raw.folderName == folderName;
-			} else {
-				return false;
-			}
+			return child.get("folderName") == folderName;
 		}, null, true);
 	}
 })();
