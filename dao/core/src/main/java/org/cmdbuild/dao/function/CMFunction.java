@@ -9,10 +9,12 @@ public interface CMFunction extends CMTypeObject {
 
 	interface CMFunctionParameter {
 		String getName();
+
 		CMAttributeType<?> getType();
 	}
 
 	List<CMFunctionParameter> getInputParameters();
+
 	List<CMFunctionParameter> getOutputParameters();
 
 	boolean returnsSet();

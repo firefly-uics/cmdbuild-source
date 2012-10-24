@@ -57,7 +57,7 @@ public class QueryCreatorTest {
 	public void systemAttributesAreAlwaysReturned() {
 		qs = new QuerySpecsDouble(c, new ClassAlias(c, as("ac")));
 
-		String query = new QueryCreator(qs).getQuery();
+		final String query = new QueryCreator(qs).getQuery();
 
 		assertThat(
 				query,
@@ -79,7 +79,7 @@ public class QueryCreatorTest {
 		qs = new QuerySpecsDouble(c, new ClassAlias(c, as("ac")));
 		qs.addSelectAttribute(anyAttribute("ac"));
 
-		String query = new QueryCreator(qs).getQuery();
+		final String query = new QueryCreator(qs).getQuery();
 
 		assertThat(query,
 				is("SELECT "
@@ -105,7 +105,7 @@ public class QueryCreatorTest {
 		qs = new QuerySpecsDouble(c, new ClassAlias(b, as("ab")));
 		qs.addSelectAttribute(anyAttribute("ab"));
 
-		String query = new QueryCreator(qs).getQuery();
+		final String query = new QueryCreator(qs).getQuery();
 
 		assertThat(query,
 				is("SELECT "
@@ -123,7 +123,7 @@ public class QueryCreatorTest {
 	public void superclassesAreQueriedWithASubquery() {
 		qs = new QuerySpecsDouble(c, new ClassAlias(sc, as("asc")));
 
-		String query = new QueryCreator(qs).getQuery();
+		final String query = new QueryCreator(qs).getQuery();
 
 		assertThat(
 				query,

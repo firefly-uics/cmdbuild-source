@@ -22,12 +22,14 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	private abstract class Command<T> implements Undoable {
+
 		public T exec() {
 			final T out = execCommand();
 			undoLog.add(this);
 			return out;
 		}
 
+		@Override
 		public void undo() {
 			undoCommand();
 			undoLog.remove(this);
@@ -39,18 +41,27 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	private class CreateClass extends Command<DBClass> {
+
 		private final String name;
 		private final DBClass parent;
+		private final boolean isSuperClass;
+
 		private DBClass newClass;
 
-		private CreateClass(final String name, final DBClass parent) {
+		private CreateClass(final String name, final DBClass parent, final boolean isSuperClass) {
 			this.name = name;
 			this.parent = parent;
+			this.isSuperClass = isSuperClass;
 		}
 
 		@Override
 		protected DBClass execCommand() {
-			newClass = innerDriver.createClass(name, parent);
+			if (isSuperClass) {
+				newClass = innerDriver.createSuperClass(name, parent);
+			} else {
+				newClass = innerDriver.createClass(name, parent);
+
+			}
 			return newClass;
 		}
 
@@ -62,24 +73,22 @@ public class GenericRollbackDriver implements DBDriver {
 		public DBClass getCreatedClass() {
 			return newClass;
 		}
+
 	}
 
 	private class CreateDomain extends Command<DBDomain> {
-		private final String name;
-		private final DBClass class1;
-		private final DBClass class2;
+
+		private final DomainDefinition domainDefinition;
 
 		private DBDomain newDomain;
 
-		private CreateDomain(final String name, final DBClass class1, final DBClass class2) {
-			this.name = name;
-			this.class1 = class1;
-			this.class2 = class2;
+		private CreateDomain(final DomainDefinition domainDefinition) {
+			this.domainDefinition = domainDefinition;
 		}
 
 		@Override
 		protected DBDomain execCommand() {
-			newDomain = innerDriver.createDomain(name, class1, class2);
+			newDomain = innerDriver.createDomain(domainDefinition);
 			return newDomain;
 		}
 
@@ -93,7 +102,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		private final DBEntry entry;
 
-		public CreateEntry(DBEntry entry) {
+		public CreateEntry(final DBEntry entry) {
 			this.entry = entry;
 		}
 
@@ -117,7 +126,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		private final DBClass classToDelete;
 
-		public DeleteClass(DBClass c) {
+		public DeleteClass(final DBClass c) {
 			this.classToDelete = c;
 		}
 
@@ -130,7 +139,7 @@ public class GenericRollbackDriver implements DBDriver {
 		@Override
 		public void undoCommand() {
 			// Remove the
-			for (Undoable undoableCommand : undoLog) {
+			for (final Undoable undoableCommand : undoLog) {
 				if (undoableCommand instanceof CreateClass) {
 					final CreateClass createClassCommand = (CreateClass) undoableCommand;
 					if (createClassCommand.getCreatedClass().equals(classToDelete)) {
@@ -148,7 +157,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		private final DBDomain domainToDelete;
 
-		public DeleteDomain(DBDomain d) {
+		public DeleteDomain(final DBDomain d) {
 			this.domainToDelete = d;
 		}
 
@@ -168,12 +177,16 @@ public class GenericRollbackDriver implements DBDriver {
 	 * Driver interface
 	 */
 
-	private final Deque<Undoable> undoLog;
 	private final DBDriver innerDriver;
+	private final Deque<Undoable> undoLog;
 
 	public GenericRollbackDriver(final DBDriver driver) {
 		this.innerDriver = driver;
 		this.undoLog = new ArrayDeque<Undoable>();
+	}
+
+	public DBDriver getInnerDriver() {
+		return innerDriver;
 	}
 
 	public void rollback() {
@@ -189,7 +202,12 @@ public class GenericRollbackDriver implements DBDriver {
 
 	@Override
 	public DBClass createClass(final String name, final DBClass parent) {
-		return new CreateClass(name, parent).exec();
+		return new CreateClass(name, parent, false).exec();
+	}
+
+	@Override
+	public DBClass createSuperClass(final String name, final DBClass parent) {
+		return new CreateClass(name, parent, true).exec();
 	}
 
 	@Override
@@ -213,12 +231,12 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBDomain createDomain(String name, DBClass class1, DBClass class2) {
-		return new CreateDomain(name, class1, class2).exec();
+	public DBDomain createDomain(final DomainDefinition domainDefinition) {
+		return new CreateDomain(domainDefinition).exec();
 	}
 
 	@Override
-	public void deleteDomain(DBDomain dbDomain) {
+	public void deleteDomain(final DBDomain dbDomain) {
 		new DeleteDomain(dbDomain).exec();
 	}
 
@@ -243,22 +261,22 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public Long create(DBEntry entry) {
+	public Long create(final DBEntry entry) {
 		return new CreateEntry(entry).exec();
 	}
 
 	@Override
-	public void update(DBEntry entry) {
+	public void update(final DBEntry entry) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void delete(DBEntry entry) {
+	public void delete(final DBEntry entry) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public CMQueryResult query(QuerySpecs query) {
+	public CMQueryResult query(final QuerySpecs query) {
 		return innerDriver.query(query);
 	}
 

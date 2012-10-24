@@ -2,6 +2,8 @@ package integration.driver;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
@@ -25,30 +27,49 @@ public class StructureTest extends DriverFixture {
 	}
 
 	@Test
-	public void noClassesShouldBeDefinedAsDefault() {
+	public void noTestClassesShouldBeDefinedAsDefault() {
 		final Collection<DBClass> allClasses = driver.findAllClasses();
-		assertThat(names(allClasses), not(hasItem(A_NEW_CLASS_NAME)));
-		assertThat(names(allClasses), not(hasItem(A_NEW_SUPERCLASS_NAME)));
-		assertThat(names(allClasses), not(hasItem(A_NEW_SUBCLASS_NAME)));
-		assertThat(names(allClasses), not(hasItem(ANOTHER_NEW_SUBCLASS_NAME)));
+		assertThat(namesOf(allClasses), not(hasItem(A_NEW_CLASS_NAME)));
+		assertThat(namesOf(allClasses), not(hasItem(A_NEW_SUPERCLASS_NAME)));
+		assertThat(namesOf(allClasses), not(hasItem(A_NEW_SUBCLASS_NAME)));
+		assertThat(namesOf(allClasses), not(hasItem(ANOTHER_NEW_SUBCLASS_NAME)));
 	}
 
 	@Test
 	public void singleClassCanBeAdded() {
 		final int actualClassesCount = driver.findAllClasses().size();
 
-		final DBClass newClass = driver.createClass(A_NEW_CLASS_NAME, null);
+		DBClass newClass = driver.createClass(A_NEW_CLASS_NAME, null);
 
 		assertThat(newClass.getName(), equalTo(A_NEW_CLASS_NAME));
 
 		final Collection<DBClass> allClasses = driver.findAllClasses();
 		assertThat(allClasses.size(), equalTo(actualClassesCount + 1));
-		assertThat(names(allClasses), hasItem(A_NEW_CLASS_NAME));
+		assertThat(namesOf(allClasses), hasItem(A_NEW_CLASS_NAME));
+
+		newClass = driver.findClassByName(A_NEW_CLASS_NAME);
+		assertThat(newClass, not(is(nullValue())));
+	}
+
+	@Test
+	public void singleSuperClassCanBeAdded() {
+		DBClass newClass = driver.createSuperClass(A_NEW_CLASS_NAME, null);
+
+		assertThat(newClass.getName(), equalTo(A_NEW_CLASS_NAME));
+		assertThat(newClass.isSuperclass(), is(true));
+
+		final Collection<DBClass> allClasses = driver.findAllClasses();
+		assertThat(namesOf(allClasses), hasItem(A_NEW_CLASS_NAME));
+
+		newClass = driver.findClassByName(A_NEW_CLASS_NAME);
+		assertThat(newClass, not(is(nullValue())));
+		assertThat(newClass.getName(), equalTo(A_NEW_CLASS_NAME));
+		assertThat(newClass.isSuperclass(), is(true));
 	}
 
 	@Test
 	public void classesCanBeCreatedHierarchically() {
-		DBClass superClass = driver.createClass(A_NEW_SUPERCLASS_NAME, null);
+		DBClass superClass = driver.createSuperClass(A_NEW_SUPERCLASS_NAME, null);
 		DBClass subClassA = driver.createClass(A_NEW_SUBCLASS_NAME, superClass);
 		DBClass subClassB = driver.createClass(ANOTHER_NEW_SUBCLASS_NAME, superClass);
 
@@ -62,29 +83,29 @@ public class StructureTest extends DriverFixture {
 		assertThatHierarchyIsCorrect(superClass, subClassA, subClassB);
 	}
 
-	private void assertThatHierarchyIsCorrect(DBClass superClass, DBClass subClassA, DBClass subClassB) {
-		assertThat(names(superClass.getChildren()), hasItem(A_NEW_SUBCLASS_NAME));
-		assertThat(names(superClass.getChildren()), hasItem(ANOTHER_NEW_SUBCLASS_NAME));
+	private void assertThatHierarchyIsCorrect(final DBClass superClass, final DBClass subClassA, final DBClass subClassB) {
+		assertThat(superClass.isSuperclass(), is(true));
+		assertThat(superClass.isAncestorOf(subClassA), is(true));
+		assertThat(superClass.isAncestorOf(subClassB), is(true));
+		assertThat(namesOf(superClass.getChildren()), hasItem(A_NEW_SUBCLASS_NAME));
+		assertThat(namesOf(superClass.getChildren()), hasItem(ANOTHER_NEW_SUBCLASS_NAME));
 		assertThat(subClassA.getParent().getName(), equalTo(A_NEW_SUPERCLASS_NAME));
 		assertThat(subClassB.getParent().getName(), equalTo(A_NEW_SUPERCLASS_NAME));
 	}
 
 	@Test
 	public void classDeletionUpdatesTheHierarchy() {
-		// given
 		DBClass superClass = driver.createClass(A_NEW_SUPERCLASS_NAME, null);
 		final DBClass subClass = driver.createClass(A_NEW_SUBCLASS_NAME, superClass);
 
-		// when
 		driver.deleteClass(subClass);
 
-		// then
-		assertThat(names(superClass.getChildren()), not(hasItem(A_NEW_SUPERCLASS_NAME)));
+		assertThat(namesOf(superClass.getChildren()), not(hasItem(A_NEW_SUPERCLASS_NAME)));
 		// assertThat(subClass.getId(), is(nullValue()));
 
 		// reload classes
 		superClass = driver.findClassById(superClass.getId());
-		assertThat(names(superClass.getChildren()), not(hasItem(A_NEW_SUPERCLASS_NAME)));
+		assertThat(namesOf(superClass.getChildren()), not(hasItem(A_NEW_SUPERCLASS_NAME)));
 	}
 
 }

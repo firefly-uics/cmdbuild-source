@@ -44,12 +44,14 @@ public class Alias {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Alias == false)
-			return false;
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		Alias other = (Alias) obj;
+		}
+		if (obj instanceof Alias == false) {
+			return false;
+		}
+		final Alias other = (Alias) obj;
 		return this.name.equals(other.name);
 	}
 
@@ -57,4 +59,5 @@ public class Alias {
 	public String toString() {
 		return name;
 	}
+
 }

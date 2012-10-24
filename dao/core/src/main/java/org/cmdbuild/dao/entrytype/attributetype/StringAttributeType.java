@@ -2,7 +2,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import org.apache.commons.lang.Validate;
 
-
 public class StringAttributeType extends TextAttributeType {
 
 	public final Integer length;
@@ -17,12 +16,12 @@ public class StringAttributeType extends TextAttributeType {
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected boolean stringLimitExceeded(String stringValue) {
+	protected boolean stringLimitExceeded(final String stringValue) {
 		return (length != null && stringValue.length() > length);
 	}
 }

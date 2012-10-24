@@ -17,6 +17,7 @@ public interface CMEntry {
 
 		CMEntryDefinition set(String key, Object value);
 
+		// TODO check if this is really needed
 		CMEntry save();
 
 	}

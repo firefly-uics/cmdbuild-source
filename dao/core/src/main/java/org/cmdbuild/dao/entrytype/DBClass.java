@@ -24,7 +24,7 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	private final ClassMetadata meta;
 	private DBClass parent;
-	private Set<DBClass> children;
+	private final Set<DBClass> children;
 
 	public DBClass(final String name, final Long id, final ClassMetadata meta, final List<DBAttribute> attributes) {
 		super(name, id, attributes);
@@ -37,22 +37,27 @@ public class DBClass extends DBEntryType implements CMClass {
 		this(name, id, new ClassMetadata(), attributes);
 	}
 
-	public void accept(CMEntryTypeVisitor visitor) {
+	@Override
+	public void accept(final CMEntryTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
-	public void accept(DBEntryTypeVisitor visitor) {
+	@Override
+	public void accept(final DBEntryTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
+	@Override
 	protected final ClassMetadata meta() {
 		return meta;
 	}
 
+	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
 
+	@Override
 	public final String getPrivilegeId() {
 		return String.format("Class:%d", getId());
 	}
@@ -81,14 +86,14 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public Iterable<DBClass> getLeaves() {
-		Set<DBClass> leaves = new HashSet<DBClass>();
+		final Set<DBClass> leaves = new HashSet<DBClass>();
 		addLeaves(leaves, this);
 		return leaves;
 	}
 
 	private void addLeaves(final Set<DBClass> leaves, final DBClass currentClass) {
 		if (currentClass.isSuperclass()) {
-			for (DBClass subclass : currentClass.getChildren()) {
+			for (final DBClass subclass : currentClass.getChildren()) {
 				addLeaves(leaves, subclass);
 			}
 		} else {
@@ -96,6 +101,7 @@ public class DBClass extends DBEntryType implements CMClass {
 		}
 	}
 
+	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
 		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
 			if (parent.equals(this)) {

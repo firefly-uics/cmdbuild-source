@@ -1,14 +1,15 @@
 package integration.driver;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import org.cmdbuild.dao.driver.DBDriver.DomainDefinition;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -29,8 +30,10 @@ public class JoinQueryTest extends DriverFixture {
 
 	private DBClass SRC;
 	private DBClass DST;
+
 	private DBClass DST1;
 	private DBClass DST2;
+
 	private DBDomain DOM;
 
 	private static final Object DST1_ATTR1 = "DST1";
@@ -40,46 +43,45 @@ public class JoinQueryTest extends DriverFixture {
 		super(driverBeanName);
 	}
 
-	// TODO: create the structure for all the tests and roll it back at the end (needs checkpoints)
+	// TODO: create the structure for all the tests and roll it back at the end
+	// (needs checkpoints)
 	@Before
 	public void createDomainStructure() {
-		SRC = driver.createClass("SRC", null);
-		DST = driver.createClass("DST", null);
-		DST1 = driver.createClass("DST1", DST);
-		DST2 = driver.createClass("DST2", DST);
-		DOM = driver.createDomain("DOM", SRC, DST);
+		SRC = driver.createClass(uniqueUUID(), null);
+		DST = driver.createSuperClass(uniqueUUID(), null);
+		DST1 = driver.createClass(uniqueUUID(), DST);
+		DST2 = driver.createClass(uniqueUUID(), DST);
+		DOM = driver.createDomain(nnDomain(uniqueUUID(), SRC, DST));
 	}
 
 	@Test
 	public void joinWithOneTargetClassOnly() {
-		// given
 		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
 		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
 		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
 
-		// when
-		final CMQueryResult result = new QuerySpecsBuilder(view)
-				.select(
-					descriptionAttribute(SRC),
-					codeAttribute(DST))
-				.from(SRC)
-				.join(DST1, as("DST"), over(DOM))
-				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId())
+		final Alias DST_ALIAS = Alias.as("DST");
+
+		final CMQueryResult result = new QuerySpecsBuilder(view) //
+				.select(descriptionAttribute(SRC), codeAttribute(DST_ALIAS, DST1)) //
+				.from(SRC) //
+				.join(DST1, as(DST_ALIAS), over(DOM)) //
+				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId()) //
 				.run();
 
-		// then
 		assertThat(result.size(), is(1));
 
 		final CMQueryRow firstRow = result.iterator().next();
 		assertThat(firstRow.getCard(SRC).getId(), is(src1.getId()));
-		assertThat(firstRow.getCard(DST).getId(), is(dst1.getId()));
-		assertThat(firstRow.getCard(DST).getCode(), is(DST1_ATTR1));
-		//assertThat(firstRow.getRelation(DOM).getId(), is(not(nullValue())));
+		assertThat(firstRow.getCard(DST_ALIAS).getId(), is(dst1.getId()));
+		assertThat(firstRow.getCard(DST_ALIAS).getCode(), is(DST1_ATTR1));
+		// assertThat(firstRow.getRelation(DOM).getId(), is(not(nullValue())));
 	}
 
-	@Ignore // needs the delete operation to be implemented
+	@Ignore
+	// needs the delete operation to be implemented
 	@Test
 	public void joinDoesNotCountDeletedRelationsAndCards() {
 		// given
@@ -94,14 +96,12 @@ public class JoinQueryTest extends DriverFixture {
 		deleteCard(dst2);
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(view)
-			.select(
-				descriptionAttribute(SRC),
-				codeAttribute(DST))
-			.from(SRC)
-			.join(anyClass(), as("DST"), over(DOM))
-			.where(keyAttribute(SRC), Operator.EQUALS, src1.getId())
-			.run();
+		final CMQueryResult result = new QuerySpecsBuilder(view) //
+				.select(descriptionAttribute(SRC), codeAttribute(DST)) //
+				.from(SRC) //
+				.join(anyClass(), as("DST"), over(DOM)) //
+				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId()) //
+				.run();
 
 		// then
 		assertThat(result.size(), is(0));
@@ -109,31 +109,65 @@ public class JoinQueryTest extends DriverFixture {
 
 	@Test
 	public void joinWithAnyClassAndAnyDomain() {
-		// given
 		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
 		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
 		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = driver.createDomain("DOM2", DST2, SRC);
+		final DBDomain DOM2 = driver.createDomain(nnDomain(uniqueUUID(), DST2, SRC));
 		insertRelation(DOM2, dst2, src1);
 
 		final Alias DOM_ALIAS = Alias.as("DOM");
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		// when
-		final CMQueryResult result = new QuerySpecsBuilder(view)
-			.select(
-				codeAttribute(SRC),
-				anyAttribute(DOM_ALIAS),
-				attribute(DST_ALIAS, DST.getCodeAttributeName()))
-			.from(SRC)
-			.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS)))
-			.where(keyAttribute(SRC), Operator.EQUALS, src1.getId())
-			.run();
+		final CMQueryResult result = new QuerySpecsBuilder(view) //
+				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //
+				.from(SRC) //
+				.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS))) //
+				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId()) //
+				.run();
 
-		// then
 		assertThat(result.size(), is(3));
+	}
+
+	/*
+	 * Utilities
+	 */
+
+	private static DomainDefinition nnDomain(final String string, final DBClass class1, final DBClass class2) {
+		return new DomainDefinition() {
+
+			@Override
+			public String getName() {
+				return string;
+			}
+
+			@Override
+			public String getDirectDescription() {
+				return EMPTY;
+			}
+
+			@Override
+			public String getInverseDescription() {
+				return EMPTY;
+			}
+
+			@Override
+			public DBClass getClass1() {
+				return class1;
+			}
+
+			@Override
+			public DBClass getClass2() {
+				return class2;
+			}
+
+			@Override
+			public String getCardinality() {
+				return "N:N";
+			}
+
+		};
 	}
 
 }

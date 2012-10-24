@@ -1,6 +1,8 @@
 package integration.driver;
 
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator.EQUALS;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,27 +15,24 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
-import org.junit.Before;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import com.google.common.collect.Iterables;
+
 @RunWith(value = Parameterized.class)
 public class SimpleQueryTest extends DriverFixture {
-
-	private DBClass newClass;
 
 	public SimpleQueryTest(final String driverBeanName) {
 		super(driverBeanName);
 	}
 
-	@Before
-	public void createNewClass() {
-		newClass = driver.createClass(uniqueUUID(), null);
-	}
-
 	@Test
 	public void simpleSubclassQuery() {
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
 
@@ -63,24 +62,78 @@ public class SimpleQueryTest extends DriverFixture {
 	}
 
 	@Test
+	public void simpleSubclassQueryForAnyAttribute() {
+		final int TOTAL = 5;
+
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		insertCards(newClass, TOTAL);
+
+		final Alias classAlias = as("foo");
+
+		final CMQueryResult result = new QuerySpecsBuilder(view) //
+				.select(anyAttribute(classAlias)) //
+				.from(newClass, as(classAlias)) //
+				.run();
+
+		assertThat(result.size(), equalTo(TOTAL));
+		assertThat(result.totalSize(), equalTo(TOTAL));
+
+		final CMQueryRow[] rows = Iterables.toArray(result, CMQueryRow.class);
+		for (int i = 0; i < TOTAL; i++) {
+			final CMQueryRow row = rows[i];
+			final CMCard cmCard = row.getCard(classAlias);
+			assertThat(cmCard.getCode(), equalTo((Object) Integer.toString(i)));
+		}
+	}
+
+	@Test
 	public void simpleSuperclassQuery() {
-		final DBClass root = newClass;
-		final DBClass superNotRoot = driver.createClass(uniqueUUID(), root);
+		final Alias rootAlias = as("root");
+
+		final DBClass root = driver.createSuperClass(uniqueUUID(), null);
+		final DBClass superNotRoot = driver.createSuperClass(uniqueUUID(), root);
 		final DBClass leafOfSuperNotRoot = driver.createClass(uniqueUUID(), superNotRoot);
 		final DBClass leafOfRoot = driver.createClass(uniqueUUID(), root);
 		final DBClass anotherLeafOfRoot = driver.createClass(uniqueUUID(), root);
-		insertCardWithCode(leafOfSuperNotRoot, "foo");
-		insertCardWithCode(leafOfRoot, "bar");
-		insertCardWithCode(anotherLeafOfRoot, "baz");
+		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
+		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
+		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
 
 		final CMQueryResult result = new QuerySpecsBuilder(view) //
 				.select(root.getCodeAttributeName()) //
-				.from(root) //
+				.from(root, rootAlias) //
 				.run();
 
 		assertThat(result.size(), equalTo(3));
-		for (CMQueryRow row : result) {
-			final CMCard c = row.getCard(root);
+		for (final CMQueryRow row : result) {
+			final CMCard c = row.getCard(rootAlias);
+			// the value was intentionally set to the class name
+			final String expectedClassName = (String) c.getCode();
+			assertThat(c.getType().getName(), equalTo(expectedClassName));
+		}
+	}
+
+	@Test
+	public void simpleSuperclassQueryForAnyAttribute() {
+		final Alias rootAlias = as("root");
+
+		final DBClass root = driver.createSuperClass(uniqueUUID(), null);
+		final DBClass superNotRoot = driver.createSuperClass(uniqueUUID(), root);
+		final DBClass leafOfSuperNotRoot = driver.createClass(uniqueUUID(), superNotRoot);
+		final DBClass leafOfRoot = driver.createClass(uniqueUUID(), root);
+		final DBClass anotherLeafOfRoot = driver.createClass(uniqueUUID(), root);
+		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
+		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
+		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
+
+		final CMQueryResult result = new QuerySpecsBuilder(view) //
+				.select(anyAttribute(rootAlias)) //
+				.from(root, rootAlias) //
+				.run();
+
+		assertThat(result.size(), equalTo(3));
+		for (final CMQueryRow row : result) {
+			final CMCard c = row.getCard(rootAlias);
 			// the value was intentionally set to the class name
 			final String expectedClassName = (String) c.getCode();
 			assertThat(c.getType().getName(), equalTo(expectedClassName));
@@ -92,6 +145,8 @@ public class SimpleQueryTest extends DriverFixture {
 		final int TOTAL_SIZE = 10;
 		final int OFFSET = 5;
 		final int LIMIT = 3;
+
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
 
 		insertCards(newClass, TOTAL_SIZE);
 
@@ -108,6 +163,7 @@ public class SimpleQueryTest extends DriverFixture {
 
 	@Test
 	public void singleWhereClause() {
+		final DBClass newClass = driver.createClass(uniqueUUID(), null);
 		insertCards(newClass, 5);
 		final Object cardAttributeToFind = "3";
 		final String codeAttributeName = newClass.getCodeAttributeName();

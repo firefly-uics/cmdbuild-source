@@ -12,16 +12,19 @@ public interface CMCard extends CMEntry {
 	 */
 	interface CMCardDefinition extends CMEntryDefinition {
 
+		@Override
 		CMCardDefinition set(String key, Object value);
 
 		CMCardDefinition setCode(Object value);
 
 		CMCardDefinition setDescription(Object value);
 
+		@Override
 		CMCard save();
 
 	}
 
+	@Override
 	CMClass getType();
 
 	/**

@@ -11,7 +11,7 @@ public class DomainHistory extends PlaceholderDomain {
 		this.domain = domain;
 	}
 
-	public static CMDomain history(CMDomain domain) {
+	public static CMDomain history(final CMDomain domain) {
 		return new DomainHistory(domain);
 	}
 

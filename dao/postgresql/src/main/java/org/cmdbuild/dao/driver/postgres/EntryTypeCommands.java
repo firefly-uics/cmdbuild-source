@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.driver.postgres.Utils.tableNameToDomainName;
 
 import java.sql.ResultSet;
@@ -11,7 +13,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.Utils.CommentMapper;
+import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -20,6 +24,7 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -68,17 +73,11 @@ public class EntryTypeCommands {
 			final Long id = rs.getLong("table_id");
 			final String name = rs.getString("table_name");
 			final Long parentId = (Long) rs.getObject("parent_id");
-			final List<DBAttribute> attributes = findEntryTypeAttributes(id);
+			final List<DBAttribute> attributes = userEntryTypeAttributesFor(id);
 			final String comment = rs.getString("table_comment");
 			final ClassMetadata meta = classCommentToMetadata(comment);
 			final DBClass dbClass = new DBClass(name, id, meta, attributes);
 			classMap.put(id, new ClassAndParent(dbClass, parentId));
-		}
-
-		private ClassMetadata classCommentToMetadata(final String comment) {
-			final ClassMetadata meta = new ClassMetadata();
-			extractCommentToMetadata(comment, meta, Utils.CLASS_COMMENT_MAPPER);
-			return meta;
 		}
 
 		public List<DBClass> getResult() {
@@ -100,17 +99,30 @@ public class EntryTypeCommands {
 	}
 
 	public DBClass createClass(final String name, final DBClass parent) {
+		return createClass(name, parent, false);
+	}
+
+	public DBClass createSuperClass(final String name, final DBClass parent) {
+		return createClass(name, parent, true);
+	}
+
+	private DBClass createClass(final String name, final DBClass parent, final boolean isSuperclass) {
 		final String parentName = (parent != null) ? parent.getName() : null;
-		final long id = jdbcTemplate.queryForInt("SELECT cm_create_class(?, ?, ?)", new Object[] { name, parentName,
-				createClassComment(name) });
-		final List<DBAttribute> attributes = findEntryTypeAttributes(id);
-		final DBClass newClass = new DBClass(name, id, attributes);
+		final String classComment = createClassComment(name, isSuperclass);
+		final long id = jdbcTemplate.queryForInt( //
+				"SELECT cm_create_class(?, ?, ?)", //
+				new Object[] { name, parentName, classComment });
+		final DBClass newClass = new DBClass( //
+				name, //
+				id, //
+				classCommentToMetadata(classComment), //
+				userEntryTypeAttributesFor(id));
 		newClass.setParent(parent);
 		return newClass;
 	}
 
-	private String createClassComment(final String name) {
-		return String.format("DESCR: %s|MODE: write|STATUS: active|SUPERCLASS: false|TYPE: class", name);
+	private String createClassComment(final String name, final boolean isSuperclass) {
+		return format("DESCR: %s|MODE: write|STATUS: active|SUPERCLASS: %s|TYPE: class", name, isSuperclass);
 	}
 
 	public void deleteClass(final DBClass dbClass) {
@@ -123,56 +135,62 @@ public class EntryTypeCommands {
 	 */
 
 	public List<DBDomain> findAllDomains(final PostgresDriver driver) {
+		// Exclude Map since we don't need it anymore!
 		final List<DBDomain> domainList = jdbcTemplate.query(
-				// Exclude Map since we don't need it anymore!
-				"SELECT domain_id, _cm_cmtable(domain_id) AS domain_name,"
-						+ " _cm_comment_for_table_id(domain_id) AS domain_comment"
-						+ " FROM _cm_domain_list() AS domain_id WHERE domain_id <> '\"Map\"'::regclass",
+				"SELECT domain_id, _cm_cmtable(domain_id) AS domain_name, _cm_comment_for_table_id(domain_id) AS domain_comment" //
+						+ " FROM _cm_domain_list() AS domain_id" //
+						+ " WHERE domain_id <> '\"Map\"'::regclass", //
 				new RowMapper<DBDomain>() {
 					@Override
 					public DBDomain mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 						final Long id = rs.getLong("domain_id");
 						final String name = tableNameToDomainName(rs.getString("domain_name"));
-						final List<DBAttribute> attributes = findEntryTypeAttributes(id);
+						final List<DBAttribute> attributes = userEntryTypeAttributesFor(id);
 						final String comment = rs.getString("domain_comment");
 						final DomainMetadata meta = domainCommentToMetadata(comment);
-						final DBDomain domain = new DBDomain(name, id, meta, attributes);
-
-						// FIXME we should handle this in another way
 						final DBClass class1 = driver.findClassByName(meta.get(DomainMetadata.CLASS_1));
-						domain.setClass1(class1);
 						final DBClass class2 = driver.findClassByName(meta.get(DomainMetadata.CLASS_2));
-						domain.setClass2(class2);
+						final DBDomain domain = DBDomain.newDomain() //
+								.withName(name) //
+								.withId(id) //
+								.withAllMetadata(meta) //
+								.withAllAttributes(attributes) //
+								.withClass1(class1) //
+								.withClass2(class2) //
+								.build();
 						return domain;
 					}
 				});
 		return domainList;
 	}
 
-	private DomainMetadata domainCommentToMetadata(final String comment) {
-		final DomainMetadata meta = new DomainMetadata();
-		extractCommentToMetadata(comment, meta, Utils.DOMAIN_COMMENT_MAPPER);
-		return meta;
+	public DBDomain createDomain(final DBDriver.DomainDefinition domainDefinition) {
+		final String domainComment = domainCommentFrom(domainDefinition);
+		final long id = jdbcTemplate.queryForInt("SELECT cm_create_domain(?, ?)", //
+				new Object[] { domainDefinition.getName(), domainComment });
+		return DBDomain.newDomain() //
+				.withName(domainDefinition.getName()) //
+				.withId(id) //
+				.withAllAttributes(userEntryTypeAttributesFor(id)) //
+				// FIXME looks ugly!
+				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(), null)) //
+				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(), null)) //
+				.withAllMetadata(domainCommentToMetadata(domainComment)) //
+				.withClass1(domainDefinition.getClass1()) //
+				.withClass2(domainDefinition.getClass2()) //
+				.build();
 	}
 
-	public DBDomain createDomain(final String name, final DBClass class1, final DBClass class2) {
-		final long id = jdbcTemplate.queryForInt("SELECT cm_create_domain(?, ?)", new Object[] { name,
-				createDomainComment(name, class1, class2) });
-		final List<DBAttribute> attributes = findEntryTypeAttributes(id);
-		final DBDomain newDomain = new DBDomain(name, id, attributes); // FIXME
-																		// DomainMetadata
-																		// is
-																		// not
-																		// set!
-		newDomain.setClass1(class1);
-		newDomain.setClass2(class2);
-		return newDomain;
-	}
-
-	private String createDomainComment(final String name, final DBClass class1, final DBClass class2) {
-		return String
-				.format("LABEL: %s|DESCRDIR: |DESCRINV: |MODE: reserved|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: N:N",
-						name, class1.getName(), class2.getName());
+	private String domainCommentFrom(final DBDriver.DomainDefinition domainDefinition) {
+		// TODO handle more that two classes
+		return format(
+				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: reserved|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s", //
+				domainDefinition.getName(), //
+				domainDefinition.getDirectDescription(), //
+				domainDefinition.getInverseDescription(), //
+				domainDefinition.getClass1().getName(), //
+				domainDefinition.getClass2().getName(), //
+				domainDefinition.getCardinality());
 	}
 
 	public void deleteDomain(final DBDomain dbDomain) {
@@ -183,15 +201,23 @@ public class EntryTypeCommands {
 	 * Attributes
 	 */
 
-	private List<DBAttribute> findEntryTypeAttributes(final long entryTypeId) {
+	/**
+	 * Returns user-only entry type attributes (so, not {@code reserved}
+	 * attributes).
+	 * 
+	 * @param entryTypeId
+	 *            is the id of he entry type (e.g. {@link DBClass},
+	 *            {@link DBDomain}).
+	 * 
+	 * @return a list of user attributes.
+	 */
+	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
+		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate
-				.query(
-				// Note: Sort the attributes in the query
-				"SELECT A.name, _cm_comment_for_attribute(A.cid, A.name) AS comment,"
-						+ " _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type"
-						+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A"
-						+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'"
-						+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int",
+				.query("SELECT A.name, _cm_comment_for_attribute(A.cid, A.name) AS comment, _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
+						+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
+						+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
+						+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
 						new Object[] { entryTypeId }, new RowMapper<DBAttribute>() {
 							@Override
 							public DBAttribute mapRow(final ResultSet rs, final int rowNum) throws SQLException {
@@ -206,7 +232,7 @@ public class EntryTypeCommands {
 		return entityTypeAttributes;
 	}
 
-	private AttributeMetadata attributeCommentToMetadata(final String comment) {
+	private static AttributeMetadata attributeCommentToMetadata(final String comment) {
 		final AttributeMetadata meta = new AttributeMetadata();
 		extractCommentToMetadata(comment, meta, Utils.ATTRIBUTE_COMMENT_MAPPER);
 		return meta;
@@ -262,8 +288,21 @@ public class EntryTypeCommands {
 	 * Utils
 	 */
 
-	private void extractCommentToMetadata(final String comment, final EntryTypeMetadata meta, final CommentMapper mapper) {
-		if (comment != null && !comment.trim().isEmpty()) {
+	private static ClassMetadata classCommentToMetadata(final String comment) {
+		final ClassMetadata meta = new ClassMetadata();
+		extractCommentToMetadata(comment, meta, Utils.CLASS_COMMENT_MAPPER);
+		return meta;
+	}
+
+	private static DomainMetadata domainCommentToMetadata(final String comment) {
+		final DomainMetadata meta = new DomainMetadata();
+		extractCommentToMetadata(comment, meta, Utils.DOMAIN_COMMENT_MAPPER);
+		return meta;
+	}
+
+	private static void extractCommentToMetadata(final String comment, final EntryTypeMetadata meta,
+			final CommentMapper mapper) {
+		if (isNotBlank(comment)) {
 			final Matcher commentMatcher = COMMENT_PATTERN.matcher(comment);
 			while (commentMatcher.find()) {
 				final String commentKey = commentMatcher.group(2);
@@ -276,4 +315,5 @@ public class EntryTypeCommands {
 			}
 		}
 	}
+
 }

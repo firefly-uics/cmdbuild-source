@@ -12,8 +12,9 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
  */
 public interface CMDataView {
 
-//	CMClassDefinition newClass(String name);
+	// CMClassDefinition newClass(String name);
 	CMClass findClassById(Long id);
+
 	CMClass findClassByName(String name);
 
 	/**
@@ -31,6 +32,7 @@ public interface CMDataView {
 	Iterable<? extends CMClass> findAllClasses();
 
 	CMDomain findDomainById(Long id);
+
 	CMDomain findDomainByName(String name);
 
 	/**
@@ -43,7 +45,8 @@ public interface CMDataView {
 	/**
 	 * Returns the active domains for a class
 	 * 
-	 * @param type the class i'm requesting the domains for
+	 * @param type
+	 *            the class i'm requesting the domains for
 	 * 
 	 * @return active domains for that class
 	 */
@@ -67,12 +70,13 @@ public interface CMDataView {
 	Iterable<? extends CMFunction> findAllFunctions();
 
 	/**
-	 * Returns an empty card to be modified and saved. 
+	 * Returns an empty card to be modified and saved.
 	 * 
 	 * Note: it does not create a card in the data store until
 	 * {@link CMCardDefinition#save()} is called on the resulting object.
 	 * 
-	 * @param type class for the card
+	 * @param type
+	 *            class for the card
 	 * 
 	 * @return an empty modifiable card
 	 */
@@ -84,7 +88,8 @@ public interface CMDataView {
 	 * Note: the changes are not saved in the data store until
 	 * {@link CMCardDefinition#save()} is called on the resulting object.
 	 * 
-	 * @param card immutable card to be modified
+	 * @param card
+	 *            immutable card to be modified
 	 * 
 	 * @return a modifiable card from the immutable card
 	 */
@@ -93,7 +98,8 @@ public interface CMDataView {
 	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
 	 * 
-	 * @param attrDef select parameters
+	 * @param attrDef
+	 *            select parameters
 	 * @return the builder for a new query
 	 */
 	QuerySpecsBuilder select(Object... attrDef);

@@ -21,7 +21,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * 20th century driver working with triggers, thus needing a lot more Java hacks
  * 
- * "If all you have is SQL, everything looks like a trigger" A. Maslow (readapted)
+ * "If all you have is SQL, everything looks like a trigger" A. Maslow
+ * (readapted)
  */
 public class PostgresDriver extends CachingDriver implements SelfVersioningDBDriver {
 
@@ -46,6 +47,11 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 	}
 
 	@Override
+	protected DBClass createSuperClassNoCache(final String name, final DBClass superClass) {
+		return new EntryTypeCommands(jdbcTemplate).createSuperClass(name, superClass);
+	}
+
+	@Override
 	protected void deleteClassNoCache(final DBClass dbClass) {
 		new EntryTypeCommands(jdbcTemplate).deleteClass(dbClass);
 	}
@@ -56,8 +62,8 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 	}
 
 	@Override
-	protected DBDomain createDomainNoCache(final String name, final DBClass class1, final DBClass class2) {
-		return new EntryTypeCommands(jdbcTemplate).createDomain(name, class1, class2);
+	protected DBDomain createDomainNoCache(final DomainDefinition domainDefinition) {
+		return new EntryTypeCommands(jdbcTemplate).createDomain(domainDefinition);
 	}
 
 	@Override
@@ -80,12 +86,12 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 	}
 
 	@Override
-	public void update(DBEntry entry) {
+	public void update(final DBEntry entry) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
-	public void delete(DBEntry entry) {
+	public void delete(final DBEntry entry) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -99,7 +105,7 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 	 */
 
 	@Override
-	public void clearEntryType(DBEntryType type) {
+	public void clearEntryType(final DBEntryType type) {
 		// truncate all subclasses as well
 		jdbcTemplate.execute("TRUNCATE TABLE " + quoteType(type) + " CASCADE");
 	}

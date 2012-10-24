@@ -27,7 +27,7 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	}
 
 	@Override
-	public CMCardDefinition setCode(Object value) {
+	public CMCardDefinition setCode(final Object value) {
 		return set(getType().getCodeAttributeName(), value);
 	}
 
@@ -37,7 +37,7 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	}
 
 	@Override
-	public CMCardDefinition setDescription(Object value) {
+	public CMCardDefinition setDescription(final Object value) {
 		return set(getType().getDescriptionAttributeName(), value);
 	}
 

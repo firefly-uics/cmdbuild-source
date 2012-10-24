@@ -30,16 +30,16 @@ public class QuotingTest {
 
 	@Test
 	public void functionCallsAreQuoted() {
-		List<Object> params = new ArrayList<Object>();
-		DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
+		final List<Object> params = new ArrayList<Object>();
+		final DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
 		assertThat(Utils.quoteType(call(func), params), is("func()"));
 
 		func.addInputParameter("i1", new IntegerAttributeType());
 		func.addInputParameter("i2", new StringAttributeType());
 		func.addInputParameter("i3", new IntegerAttributeType());
 		assertThat(Utils.quoteType(call(func, 42, "s", "24"), params), is("func(?,?,?)"));
-		assertThat(params.get(0), is((Object)42));
-		assertThat(params.get(1), is((Object)"s"));
-		assertThat(params.get(2), is((Object)24));
+		assertThat(params.get(0), is((Object) 42));
+		assertThat(params.get(1), is((Object) "s"));
+		assertThat(params.get(2), is((Object) 24));
 	}
 }

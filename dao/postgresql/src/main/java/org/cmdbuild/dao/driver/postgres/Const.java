@@ -5,30 +5,24 @@ public interface Const {
 	 * FIXME We should use generic identifiers as _Code instead of Code directly
 	 */
 
-	@Deprecated static final String CODE_ATTRIBUTE = SystemAttributes.Code.getDBName();
-	@Deprecated static final String DESCRIPTION_ATTRIBUTE = SystemAttributes.Description.getDBName();
-	@Deprecated static final String ID_ATTRIBUTE = SystemAttributes.Id.getDBName();
+	@Deprecated
+	static final String CODE_ATTRIBUTE = SystemAttributes.Code.getDBName();
+	@Deprecated
+	static final String DESCRIPTION_ATTRIBUTE = SystemAttributes.Description.getDBName();
+	@Deprecated
+	static final String ID_ATTRIBUTE = SystemAttributes.Id.getDBName();
 
 	/*
 	 * Constants
 	 */
 
 	enum SystemAttributes {
-		Id("Id"),
-		ClassId("IdClass", SqlType.regclass.sqlCast()),
-		DomainId("IdDomain", SqlType.regclass.sqlCast()),
-		DomainId1("IdObj1"),
-		DomainId2("IdObj2"),
-		Code("Code"),
-		Description("Description"),
-		BeginDate("BeginDate"),
-		EndDate("EndDate"),
-		User("User"),
-		Status("Status"),
+		Id("Id"), ClassId("IdClass", SqlType.regclass.sqlCast()), ClassId1("IdClass1", SqlType.regclass.sqlCast()), ClassId2(
+				"IdClass2", SqlType.regclass.sqlCast()), DomainId("IdDomain", SqlType.regclass.sqlCast()), DomainId1(
+				"IdObj1"), DomainId2("IdObj2"), Code("Code"), Description("Description"), BeginDate("BeginDate"), EndDate(
+				"EndDate"), User("User"), Status("Status"),
 		// Fake attributes
-		DomainQuerySource("_Src"),
-		DomainQueryTargetId("_DstId"),
-		;
+		DomainQuerySource("_Src"), DomainQueryTargetId("_DstId"), ;
 
 		final String dbName;
 		final String castSuffix;
