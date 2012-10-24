@@ -69,10 +69,12 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(JSONObject serializer, @Parameter("limit") int limit, @Parameter("start") int offset,
-			@Parameter(value = "sort", required = false) JSONArray sorters,
-			@Parameter(value = "query", required = false) String fullTextQuery,
-			@Parameter(value = "writeonly", required = false) boolean writeonly,
+	public JSONObject getCardList(JSONObject serializer, //
+			@Parameter("limit") int limit, //
+			@Parameter("start") int offset, //
+			@Parameter(value = "sort", required = false) JSONArray sorters, //
+			@Parameter(value = "query", required = false) String fullTextQuery, //
+			@Parameter(value = "writeonly", required = false) boolean writeonly, //
 			// Don't clone it or getCardPosition does not work, unless sort and
 			// query are set somewhere else
 			CardQuery cardQuery, UserContext userContext) throws JSONException, CMDBException {
@@ -93,6 +95,60 @@ public class ModCard extends JSONBase {
 		serializer.put("rows", rows);
 		serializer.put("results", cardQuery.getTotalRows());
 		return serializer;
+	}
+
+	@JSONExported
+	public JSONObject getCardListShort( //
+			JSONObject serializer, //
+			CardQuery cardQueryTemplate, //
+			@Parameter("limit") int limit, //
+			@Parameter("start") int offset, //
+			@Parameter("Id") int cardId, //
+			@Parameter(value = "query", required = false) String fullTextQuery, //
+			@Parameter(value = "sort", required = false) JSONArray sorters, //
+			@Parameter(value="attributes", required=false) JSONArray attributes) throws JSONException, CMDBException {
+
+		CardQuery cardQuery = applyAttributesConfiguration(cardQueryTemplate, attributes);
+		if (sorters != null && sorters.length() > 0) {
+			applySortToCardQuery(sorters, cardQuery);
+		} else {
+			cardQuery.order(ICard.CardAttributes.Description.toString(), OrderFilterType.ASC);
+		}
+
+		cardQuery.fullText(fullTextQuery);
+
+		if (cardId > 0) {
+			cardQuery.id(cardId);
+		}
+
+		JSONArray rows = new JSONArray();
+		for (ICard card : cardQuery.subset(offset, limit).count()) {
+			rows.put(Serializer.serializeCardNormalized(card));
+		}
+
+		serializer.put("rows", rows);
+
+		if (cardQuery.needsCount()) {
+			serializer.put("results", cardQuery.getTotalRows());
+		}
+
+		return serializer;
+	}
+
+	private CardQuery applyAttributesConfiguration(CardQuery cardQueryTemplate, //
+			JSONArray attributes) throws JSONException {
+
+		String[] shortAttrList = {"Id", "Description"};
+
+		// Use the passed attributes if present
+		if (attributes != null) {
+			shortAttrList = new String[attributes.length()];
+			for (int i=0; i<attributes.length(); ++i) {
+				shortAttrList[i] = attributes.getString(i);
+			}
+		}
+
+		return ((CardQuery) cardQueryTemplate.clone()).attributes(shortAttrList);
 	}
 
 	public static void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery) throws JSONException {
@@ -408,26 +464,6 @@ public class ModCard extends JSONBase {
 					directedDomain.toString());
 			cardQuery.cardInRelation(directedDomain, relationFilter);
 		}
-	}
-
-	@JSONExported
-	public JSONObject getCardListShort(JSONObject serializer, @Parameter("limit") int limit,
-			@Parameter("Id") int cardId, CardQuery cardQueryTemplate) throws JSONException, CMDBException {
-		final String[] shortAttrList = { "Id", "Description" };
-		CardQuery cardQuery = ((CardQuery) cardQueryTemplate.clone()).attributes(shortAttrList).order(
-				ICard.CardAttributes.Description.toString(), OrderFilterType.ASC);
-		if (limit > 0)
-			cardQuery.limit(limit).count();
-		if (cardId > 0)
-			cardQuery.id(cardId);
-		JSONArray rows = new JSONArray();
-		for (ICard card : cardQuery) {
-			rows.put(Serializer.serializeCardNormalized(card));
-		}
-		serializer.put("rows", rows);
-		if (cardQuery.needsCount())
-			serializer.put("results", cardQuery.getTotalRows());
-		return serializer;
 	}
 
 	@JSONExported

@@ -1028,6 +1028,7 @@
          "edit_relation": "Редактировать связь",
          "gis": {
             "geo_attributes": "Географические атрибуты",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Положение",
             "zoom": "Масштаб"
          },

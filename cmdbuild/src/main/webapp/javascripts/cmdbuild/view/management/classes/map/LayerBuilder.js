@@ -149,6 +149,7 @@
 
 		layer.CMDBuildLayer = false;
 		layer.CM_Layer = false;
+		layer.CM_geoserverLayer = true;
 		return layer;
 	};
 

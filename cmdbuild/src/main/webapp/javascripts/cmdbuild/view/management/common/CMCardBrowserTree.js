@@ -45,7 +45,9 @@
 
 		isBindingCard: function(card) {
 			var out = false;
-			if (card) {
+			if (card 
+					&& typeof card == "object") {
+
 				out = this.getCardId() == card.get("Id")
 					&& this.getCMDBuildClassId() == card.get("IdClass");
 			}
@@ -114,22 +116,24 @@
 			this.frame = false;
 			this.border = false;
 			this.bodyBorder = false;
+			this.hideHeaders = true;
 
 			this.activationCount = 0;
 
 			var me = this;
 			this.columns = [{
 				xtype : 'treecolumn',
-				text : '@@ Card Description',
 				flex : 2,
-				sortable : true,
-				dataIndex : 'text'
+				sortable : false,
+				dataIndex : 'text',
+				menuDisabled : true,
 			}, {
 				width : 40,
 				menuDisabled : true,
 				xtype : 'actioncolumn',
-				tooltip : '@@ Select this card',
+				tooltip : CMDBuild.Translation.management.modcard.open_relation,
 				align : 'center',
+				sortable : false,
 				icon : 'images/icons/bullet_go.png',
 				handler : function(grid, rowIndex, colIndex, actionItem,
 						event, record, row) {
@@ -155,29 +159,24 @@
 				}
 			});
 
-			this.listeners = {
-
-				afteritemexpand: function(node) {
-					this.callDelegates("onCardBrowserTreeItemExpand", [this, node]);
-				},
-
-				// Force to not select via UI
-				beforeselect: function() {
-					return false;
-				},
-
-				checkchange: function(node, checked) {
-					this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked]);
-				},
-
-				activate: function(treePanel) {
-					this.callDelegates("onCardBrowserTreeActivate", [this, ++this.activationCount]);
-				},
-
-				scope: this
-			},
-
 			this.callParent(arguments);
+
+			this.mon(this, "afteritemexpand", function(node) {
+				this.callDelegates("onCardBrowserTreeItemExpand", [this, node]);
+			}, this);
+
+			// Force to not select via UI
+			this.mon(this, "beforeselect", function() {
+				return false;
+			}, this);
+
+			this.mon(this, "checkchange", function(node, checked) {
+				this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked]);
+			}, this);
+
+			this.mon(this, "activate", function(treePanel) {
+				this.callDelegates("onCardBrowserTreeActivate", [this, ++this.activationCount]);
+			}, this);
 		},
 
 		setDataSource: function(ds) {
@@ -224,6 +223,16 @@
 			if (targetNode && childNode) {
 				node = targetNode.appendChild(childNode);
 
+				// Sort silently have no effect to the
+				// interface. So if the node is expanded
+				// fire the event to sync the interface,
+				// otherwise, do it silently to cause no
+				// change to the interface. In detail, it
+				// shows the child also if the parent is
+				// collapsed
+				var silently = !node.isExpanded();
+				var recursive = false;
+
 				targetNode.sort( function(a, b) {
 					var textA = a.get("text");
 					var textB = b.get("text");
@@ -234,7 +243,7 @@
 						return -1;
 					}
 					return 0;
-				});
+				}, recursive, silently);
 
 				this.callDelegates("onCardBrowserTreeItemAdded", [this, targetNode, node]);
 			}

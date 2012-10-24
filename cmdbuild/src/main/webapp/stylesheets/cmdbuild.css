@@ -334,8 +334,13 @@ em {
 .edit_form {
 	background-image: url(../images/icons/application_form_edit.png) !important;
 }
+
 .find {
 	background-image: url(../images/icons/find.png) !important;
+}
+
+.search {
+	background-image: url(../images/icons/search.gif) !important;	
 }
 
 .clear_find {
@@ -945,6 +950,12 @@ em {
 	border-top-color: #99BBE8 ! important;
 	padding-top: 0.5em;
 	margin-top: 0.5em;
+}
+
+/* Detailed Mini CardGrid Window*/
+.cm_detailed_mini_card_grid_window_detail
+{
+	padding: 5px;"
 }
 
 /* Other */

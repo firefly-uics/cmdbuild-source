@@ -71,6 +71,21 @@
 			return null;
 		},
 
+		getFeaturesInLonLat: function(lonlat) {
+			var layers = this.cmdbLayers;
+			var features = [];
+			for (var i=0, l=this.layers.length; i<l; ++i) {
+				var layer = layers[i];
+				if (layer 
+						&& typeof layer.getFeaturesInLonLat == "function") {
+
+					features = features.concat(layer.getFeaturesInLonLat(lonlat));
+				}
+			}
+
+			return features;
+		},
+
 		clearSelection: function() {
 			var layers = this.cmdbLayers;
 			for (var i=0, l=this.layers.length; i<l; ++i) {
@@ -148,7 +163,7 @@
 		me.cmdbLayers = [];
 	};
 
-	function orderAttributesByIndex(geoAttributes) {
+	function sortAttributesByIndex(geoAttributes) {
 		var out = [];
 		for (var i=0, l=geoAttributes.length; i<l; ++i) {
 			var attr = geoAttributes[i];
@@ -160,7 +175,9 @@
 	// subroutine of the update method
 	function addCmdbLayers(me, entryType, withEditLayer) {
 		var geoAttributes = entryType.getGeoAttrs() || [];
-		var orderedAttrs = orderAttributesByIndex(geoAttributes);
+		
+		// TODO the sorting does not work
+		var orderedAttrs = sortAttributesByIndex(geoAttributes);
 
 		for (var i = orderedAttrs.length; i>=0; i--) {
 			// add the related layer to the map

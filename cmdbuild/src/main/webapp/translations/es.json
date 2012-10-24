@@ -1028,6 +1028,7 @@
          "edit_relation": "Modificar relación",
          "gis": {
             "geo_attributes": "Atributos geográficos",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Posición",
             "zoom": "Zoom"
          },

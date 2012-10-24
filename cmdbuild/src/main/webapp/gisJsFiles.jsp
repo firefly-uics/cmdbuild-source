@@ -14,4 +14,5 @@
 
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/map/PopupController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/map/CMMapLayerSwitcherController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/map/CMMiniCardGridWindowFeaturesController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/map/CMMapController.js"></script>

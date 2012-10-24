@@ -491,7 +491,7 @@
          "groups": "Groups",
          "privilege": {
             "add_privilege": "Add Privilege",
-            "classname": " Classname",
+            "classname": " Class name",
             "delete_privilege": "Delete Privilege",
             "modify_privilege": "Modify Privilege",
             "none_privilege": "None ",
@@ -1028,6 +1028,7 @@
          "edit_relation": "Edit relation",
          "gis": {
             "geo_attributes": "Geographical attributes",
+            "gisNavigation": "GIS Navigation",
             "position": "Position",
             "zoom": "Zoom"
          },

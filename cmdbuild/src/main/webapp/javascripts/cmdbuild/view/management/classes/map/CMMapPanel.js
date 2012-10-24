@@ -64,21 +64,39 @@
 				listeners: {
 					render: function() {
 						initMap(me);
+					},
+					resize: function() {
+						me.getMap().updateSize();
 					}
 				}
 			});
 
+			var tabs = [];
+
 			this.layerSwitcher = new CMDBuild.view.management.map.CMMapLayerSwitcher({
-				title: "@@ Layers",
+				title: CMDBuild.Translation.administration.modClass.layers,
+				frame: false,
+				border: false
+			});
+			tabs.push(this.layerSwitcher);
+
+			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration) {
+				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
+					title: CMDBuild.Translation.management.modcard.gis.gisNavigation,
+					frame: false,
+					border: false
+				});
+
+				tabs.push(this.cardBrowser);
+			}
+
+			this.miniCardGrid = new CMDBuild.view.management.CMMiniCardGrid({
+				title: CMDBuild.Translation.management.modcard.title,
 				frame: false,
 				border: false
 			});
 
-			this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
-				title: "@@ Browse",
-				frame: false,
-				border: false
-			});
+			tabs.push(this.miniCardGrid);
 
 			this.layout = "border";
 			this.items = [
@@ -97,10 +115,7 @@
 					plain: true,
 					activeItem: 0,
 					padding: "2 0 0 0",
-					items: [
-						this.layerSwitcher,
-						this.cardBrowser
-					]
+					items: tabs
 				}
 			];
 
@@ -142,6 +157,10 @@
 
 		getCardBrowserPanel: function() {
 			return this.cardBrowser;
+		},
+
+		getMiniCardGrid: function() {
+			return this.miniCardGrid;
 		}
 	});
 

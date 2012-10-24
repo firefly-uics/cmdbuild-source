@@ -1028,6 +1028,7 @@
          "edit_relation": "Измени релацију",
          "gis": {
             "geo_attributes": "Географски атрибути",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Позиција",
             "zoom": "Увећање"
          },

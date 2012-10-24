@@ -112,6 +112,26 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		return null;
 	},
 
+	getFeaturesInLonLat: function(lonlat) {
+		var features = this.features;
+		var out = [];
+
+		if (lonlat) {
+			var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+			for (var i=0, f=null, g=null; i < features.length; ++i) {
+				f = features[i];
+				g = f.geometry;
+				if (typeof g.intersects == "function"
+					&& g.intersects(point)) {
+
+					out.push(f.clone());
+				}
+			}
+		}
+
+		return out;
+	},
+
 	hideFeatureWithCardId: function(masterCardId) {
 		var f = this.getFeatureByMasterCard(masterCardId);
 		if (f) {
