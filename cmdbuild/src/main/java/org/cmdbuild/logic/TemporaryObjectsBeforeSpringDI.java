@@ -7,6 +7,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.driver.CachingDriver;
+import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -70,14 +71,15 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
-		driver = new PostgresDriver(datasource);
+		driver = new DefaultCachingDriver(new PostgresDriver(datasource));
 		dbDataView = new DBDataView(driver);
 
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 		workflowTypesConverter = new SharkTypesConverter(dbDataView);
-		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter, processDefinitionManager);
+		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter,
+				processDefinitionManager);
 
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
@@ -110,7 +112,8 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DashboardLogic getDashboardLogic(UserContext userCtx) {
-		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(userCtx));
+		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(
+				userCtx));
 	}
 
 	public static CMDataView getUserContextView(UserContext userCtx) {
