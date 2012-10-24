@@ -2,12 +2,12 @@ package org.cmdbuild.dao.entrytype;
 
 import java.util.Set;
 
-
 public abstract class PlaceholderClass extends PlaceholderEntryType implements CMClass {
 
-    public final void accept(CMEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	@Override
+	public final void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	@Override
 	public String getName() {
@@ -25,7 +25,7 @@ public abstract class PlaceholderClass extends PlaceholderEntryType implements C
 	}
 
 	@Override
-	public boolean isAncestorOf(CMClass cmClass) {
+	public boolean isAncestorOf(final CMClass cmClass) {
 		throw new UnsupportedOperationException();
 	}
 

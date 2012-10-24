@@ -21,7 +21,7 @@ public class ObjectWiringTest {
 		final List<DBAttribute> attributes = new ArrayList<DBAttribute>();
 		attributes.add(a);
 		final CMEntryType et = new DBClass("A", 42L, attributes);
-		
+
 		assertThat(a.getOwner(), is(et));
 	}
 }

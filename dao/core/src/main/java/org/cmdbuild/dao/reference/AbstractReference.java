@@ -2,7 +2,7 @@ package org.cmdbuild.dao.reference;
 
 public abstract class AbstractReference implements CMReference {
 
-	private Long id;
+	private final Long id;
 
 	protected AbstractReference(final Long id) {
 		this.id = id;

@@ -1,20 +1,21 @@
 package org.cmdbuild.dao.entry;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Maps;
+
 public abstract class DBEntry implements CMValueSet {
 
 	private final DBDriver driver;
 
 	private final DBEntryType type;
-	private Long id;
 	private final Map<String, Object> values;
 
+	private Long id;
 	private String user;
 	private DateTime beginDate;
 	private DateTime endDate;
@@ -22,8 +23,8 @@ public abstract class DBEntry implements CMValueSet {
 	protected DBEntry(final DBDriver driver, final DBEntryType type, final Long id) {
 		this.driver = driver;
 		this.type = type;
+		this.values = Maps.newHashMap();
 		this.id = id;
-		this.values = new HashMap<String, Object>();
 	}
 
 	public DBEntryType getType() {
@@ -64,6 +65,7 @@ public abstract class DBEntry implements CMValueSet {
 	 * Object would have to be casted to a mutable value. After all, reflection
 	 * can do anything, so there is no point in being over-strict.
 	 */
+	@Override
 	public final Object get(final String key) {
 		if (!values.containsKey(key)) {
 			if ((type.getAttribute(key) != null) && !isNew()) {
@@ -80,6 +82,7 @@ public abstract class DBEntry implements CMValueSet {
 		return (id == null);
 	}
 
+	@Override
 	public Iterable<Map.Entry<String, Object>> getValues() {
 		return values.entrySet();
 	}

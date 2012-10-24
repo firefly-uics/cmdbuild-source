@@ -9,7 +9,13 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
+import com.google.common.collect.Iterables;
+
 public class QueryCreator {
+
+	private static final String SELECT = "SELECT ";
+	private static final String SELECT_ATTRIBUTES_SEPARATOR = ",";
+	private static final String PARTS_SEPARATOR = " ";
 
 	private final StringBuilder sb;
 	private final QuerySpecs query;
@@ -32,42 +38,42 @@ public class QueryCreator {
 	}
 
 	private void appendSelect() {
-		sb.append("SELECT ").append(quoteAttributes(query.getAttributes()));
+		sb.append(SELECT).append(quoteAttributes(query.getAttributes()));
 	}
 
 	private String quoteAttributes(final Iterable<QueryAliasAttribute> attributes) {
-		addUserSelectAttributes(attributes);
-		addSystemSelectAttributes(attributes);
-		return StringUtils.join(columnMapper.getSelectAttributes(), ",");
-	}
+		columnMapper.addAllUserAttributesForSelect(attributes);
 
-	private void addUserSelectAttributes(final Iterable<QueryAliasAttribute> attributes) {
-		for (QueryAliasAttribute a : attributes) {
-			columnMapper.addUserSelectAttribute(a);
-		}
-	}
-
-	private void addSystemSelectAttributes(final Iterable<QueryAliasAttribute> attributes) {
-		// FIXME! Anyway tableoid can't be used because of the history table UNLESS
-		// WE USE A SELECT FOR THE FROM ALSO (that fixes the EndDate problem also)
-
-		for (Alias a : columnMapper.getClassAliases()) {
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.ClassId);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.Id);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.User);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.BeginDate);
-			// The from clause does not have an EndDate value
-			//columnMapper.addSystemSelectAttribute(getSelectString(a, SystemAttributes.EndDate));
+		/*
+		 * FIXME
+		 * 
+		 * Anyway tableoid can't be used because of the history table UNLESS WE
+		 * USE A SELECT FOR THE FROM ALSO (that fixes the EndDate problem also)
+		 */
+		for (final Alias alias : columnMapper.getClassAliases()) {
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.ClassId);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.Id);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.User);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.BeginDate);
+			/*
+			 * The from clause does not have an EndDate value
+			 * columnMapper.addSystemSelectAttribute(getSelectString(a,
+			 * SystemAttributes.EndDate));
+			 */
 		}
 
-		for (Alias a : columnMapper.getDomainAliases()) {
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.DomainId);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.DomainQuerySource);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.Id);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.User);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.BeginDate);
-			columnMapper.addSystemSelectAttribute(a, SystemAttributes.EndDate);
+		for (final Alias alias : columnMapper.getDomainAliases()) {
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.DomainId);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.DomainQuerySource);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.Id);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.User);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.BeginDate);
+			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.EndDate);
 		}
+
+		return StringUtils.join( //
+				Iterables.toArray(columnMapper.getAttributeExpressionsForSelect(), String.class), //
+				SELECT_ATTRIBUTES_SEPARATOR);
 	}
 
 	private void appendFrom() {
@@ -88,7 +94,7 @@ public class QueryCreator {
 	private void appendPart(final PartCreator partCreator) {
 		final String part = partCreator.getPart();
 		if (StringUtils.isNotEmpty(part)) {
-			sb.append(" ").append(part);
+			sb.append(PARTS_SEPARATOR).append(part);
 			params.addAll(partCreator.getParams());
 		}
 	}
@@ -104,4 +110,5 @@ public class QueryCreator {
 	public ColumnMapper getColumnMapper() {
 		return columnMapper;
 	}
+
 }

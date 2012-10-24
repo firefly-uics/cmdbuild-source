@@ -9,10 +9,12 @@ public class DBAttribute implements CMAttribute {
 	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
 
+		@Override
 		public final boolean isLookup() {
 			return (getLookupType() != null);
 		}
 
+		@Override
 		public final String getLookupType() {
 			final String lookupTypeName = get(LOOKUP_TYPE);
 			if (lookupTypeName == null || lookupTypeName.trim().isEmpty()) {

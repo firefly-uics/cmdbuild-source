@@ -19,7 +19,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		query.getWhereClause().accept(this);
 		// FIXME: append the status IF NOT a history query
 		if (query.getFromType().holdsHistory()) {
-			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), OPERATOR_EQ, STATUS_ACTIVE_VALUE));
+			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), OPERATOR_EQ,
+					STATUS_ACTIVE_VALUE));
 		}
 	}
 
@@ -40,7 +41,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 	@Override
 	public void visit(final SimpleWhereClause whereClause) {
-		append(attributeFilter(whereClause.getAttribute(), OPERATOR_EQ, whereClause.getValue())); // FIXME OPERATOR
+		append(attributeFilter(whereClause.getAttribute(), OPERATOR_EQ, whereClause.getValue())); // FIXME
+																									// OPERATOR
 	}
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String operator, final Object value) {

@@ -13,7 +13,7 @@ public interface Deactivable {
 		private static final IsActivePredicate INSTANCE = new IsActivePredicate();
 
 		@Override
-		public boolean apply(Deactivable input) {
+		public boolean apply(final Deactivable input) {
 			return input.isActive();
 		}
 
@@ -21,8 +21,10 @@ public interface Deactivable {
 			return INSTANCE;
 		}
 
-		public static <T extends Deactivable> Iterable<T> filterActive(Iterable<T> unfiltered) {
+		public static <T extends Deactivable> Iterable<T> filterActive(final Iterable<T> unfiltered) {
 			return filter(unfiltered, thatAreActive());
 		}
+
 	}
+
 }

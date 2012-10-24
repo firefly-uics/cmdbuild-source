@@ -13,8 +13,8 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
+import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -35,17 +35,17 @@ public class CardManagementTest {
 		// given
 		final String attrName = "A";
 		final Object attrValue = "Some text";
-		final DBAttribute classAttributes[] = { new DBAttribute(attrName, new TextAttributeType(), new AttributeMetadata()) };
+		final DBAttribute classAttributes[] = { new DBAttribute(attrName, new TextAttributeType(),
+				new AttributeMetadata()) };
 		final Long classKey = Long.valueOf(777L);
 		final Long cardKey = Long.valueOf(42L);
-		given(driver.findClassById(classKey)).willReturn(new DBClass("C", classKey, new DBClass.ClassMetadata(), Arrays.asList(classAttributes)));
+		given(driver.findClassById(classKey)).willReturn(
+				new DBClass("C", classKey, new DBClass.ClassMetadata(), Arrays.asList(classAttributes)));
 		given(driver.create(any(DBEntry.class))).willReturn(cardKey);
 
 		// when
-		CMClass type = view.findClassById(classKey);
-		CMCard card = view.newCard(type)
-			.set(attrName, attrValue)
-			.save();
+		final CMClass type = view.findClassById(classKey);
+		final CMCard card = view.newCard(type).set(attrName, attrValue).save();
 
 		// then
 		assertThat(card.getId(), is(cardKey));

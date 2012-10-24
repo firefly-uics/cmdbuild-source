@@ -39,4 +39,5 @@ public interface CMEntryType extends Deactivable, CMPrivilegedObject {
 	CMAttribute getAttribute(String name);
 
 	String getKeyAttributeName();
+
 }

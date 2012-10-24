@@ -14,7 +14,7 @@ public class LookupReference extends AbstractReference {
 	}
 
 	@Override
-	public void accept(CMReferenceVisitor visitor) {
+	public void accept(final CMReferenceVisitor visitor) {
 		visitor.visit(this);
 	}
 

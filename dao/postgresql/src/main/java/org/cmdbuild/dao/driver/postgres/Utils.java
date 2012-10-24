@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver.postgres;
 
 import static com.google.common.base.CharMatcher.DIGIT;
 import static com.google.common.base.CharMatcher.inRange;
+import static java.lang.String.format;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 
 import java.util.ArrayList;
@@ -25,19 +26,26 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+public class Utils {
 
-public abstract class Utils {
+	private Utils() {
+		// prevents instantiation
+	}
 
 	/*
 	 * Comment <-> meta
 	 */
 
 	private interface CommentValueConverter {
+
 		String getMetaValueFromComment(String commentValue);
+
 		String getCommentValueFromMeta(String metaValue);
+
 	}
 
 	static class CommentMapper {
+
 		private final BiMap<String, String> translationTable = HashBiMap.create();
 		private final Map<String, CommentValueConverter> valueConverterTable = new HashMap<String, CommentValueConverter>();
 
@@ -69,30 +77,39 @@ public abstract class Utils {
 			translationTable.put(commentName, metaName);
 		}
 
-		protected void define(final String commentName, final String metaName, final CommentValueConverter valueConverter) {
+		protected void define(final String commentName, final String metaName,
+				final CommentValueConverter valueConverter) {
 			translationTable.put(commentName, metaName);
 			if (valueConverter != null) {
 				valueConverterTable.put(commentName, valueConverter);
 			}
 		}
+
 	}
 
 	static class EntryTypeCommentMapper extends CommentMapper {
 		{
 			define("STATUS", EntryTypeMetadata.ACTIVE, new CommentValueConverter() {
-				@Override public String getMetaValueFromComment(String commentValue) {
+				@Override
+				public String getMetaValueFromComment(final String commentValue) {
 					// Set to active by default for backward compatibility
-					return "noactive".equalsIgnoreCase(commentValue) ? Boolean.FALSE.toString() : Boolean.TRUE.toString();
+					return "noactive".equalsIgnoreCase(commentValue) ? Boolean.FALSE.toString() : Boolean.TRUE
+							.toString();
 				}
-				@Override public String getCommentValueFromMeta(String metaValue) {
+
+				@Override
+				public String getCommentValueFromMeta(final String metaValue) {
 					return Boolean.parseBoolean(metaValue) ? "active" : "noactive";
 				}
 			});
 			define("MODE", EntryTypeMetadata.MODE, new CommentValueConverter() {
-				@Override public String getMetaValueFromComment(String commentValue) {
+				@Override
+				public String getMetaValueFromComment(final String commentValue) {
 					return commentValue.toLowerCase().trim();
 				}
-				@Override public String getCommentValueFromMeta(String metaValue) {
+
+				@Override
+				public String getCommentValueFromMeta(final String metaValue) {
 					return metaValue;
 				}
 			});
@@ -108,10 +125,14 @@ public abstract class Utils {
 
 	static final CommentMapper DOMAIN_COMMENT_MAPPER = new EntryTypeCommentMapper() {
 		{
-			define("LABEL", EntryTypeMetadata.DESCRIPTION); // Excellent name choice!
+			// Excellent name choice!
+			define("LABEL", EntryTypeMetadata.DESCRIPTION);
 			define("CLASS1", DomainMetadata.CLASS_1);
 			define("CLASS2", DomainMetadata.CLASS_2);
-			// The descriptions should be the attribute descriptions to support n-ary domains
+			/*
+			 * The descriptions should be the attribute descriptions to support
+			 * n-ary domains
+			 */
 			define("DESCRDIR", DomainMetadata.DESCRIPTION_1);
 			define("DESCRINV", DomainMetadata.DESCRIPTION_2);
 		}
@@ -132,7 +153,7 @@ public abstract class Utils {
 		if (inRange('a', 'z').or(DIGIT).matchesAllOf(name)) {
 			return name;
 		} else {
-			return String.format("\"%s\"", name.replace("\"", "\"\""));
+			return format("\"%s\"", name.replace("\"", "\"\""));
 		}
 	}
 
@@ -145,7 +166,7 @@ public abstract class Utils {
 		String quotedTypeName;
 		List<Object> queryParams;
 
-		public String quote(final CMEntryType type,  final List<Object> queryParams) {
+		public String quote(final CMEntryType type, final List<Object> queryParams) {
 			this.queryParams = queryParams;
 			type.accept(this);
 			return quotedTypeName;
@@ -163,10 +184,8 @@ public abstract class Utils {
 
 		@Override
 		public void visit(final CMFunctionCall functionCall) {
-			quotedTypeName = String.format("%s(%s)",
-					quoteIdent(functionCall.getFunction().getName()),
-					functionParams(functionCall)
-				);
+			quotedTypeName = format("%s(%s)", quoteIdent(functionCall.getFunction().getName()),
+					functionParams(functionCall));
 		}
 
 		private String functionParams(final CMFunctionCall functionCall) {
@@ -174,7 +193,7 @@ public abstract class Utils {
 			return genQuestionMarks(functionCall.getParams().size());
 		}
 
-		private String genQuestionMarks(int length) {
+		private String genQuestionMarks(final int length) {
 			final StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < length; ++i) {
 				if (i > 0) {
@@ -191,7 +210,8 @@ public abstract class Utils {
 		return new TypeQuoter().quote(type, queryParams);
 	}
 
-	@Deprecated // but first the other one needs to be fixed
+	@Deprecated
+	// but first the other one needs to be fixed
 	public static String quoteType(final CMEntryType type) {
 		final List<Object> queryParams = new ArrayList<Object>(0);
 		return new TypeQuoter().quote(type, queryParams);
@@ -246,10 +266,23 @@ public abstract class Utils {
 	}
 
 	public static String quoteAttribute(final Alias tableAlias, final String name) {
-		return String.format("%s.%s", Utils.quoteAlias(tableAlias), Utils.quoteIdent(name));
+		return format("%s.%s", Utils.quoteAlias(tableAlias), Utils.quoteIdent(name));
 	}
 
-	public static String getSystemAttributeAlias(final Alias entityTypeAlias, final SystemAttributes sa) {
-		return String.format("_%s_%s", entityTypeAlias.getName(), sa.name());
+	public static Alias aliasForSystemAttribute(final Alias entityTypeAlias, final SystemAttributes sa) {
+		return Alias.as(nameForSystemAttribute(entityTypeAlias, sa));
 	}
+
+	public static String nameForSystemAttribute(final Alias entityTypeAlias, final SystemAttributes sa) {
+		return format("_%s_%s", entityTypeAlias.getName(), sa.name());
+	}
+
+	public static Alias aliasForUserAttribute(final Alias entityTypeAlias, final String name) {
+		return Alias.as(nameForUserAttribute(entityTypeAlias, name));
+	}
+
+	public static String nameForUserAttribute(final Alias entityTypeAlias, final String name) {
+		return format("%s#%s", entityTypeAlias.getName(), name);
+	}
+
 }

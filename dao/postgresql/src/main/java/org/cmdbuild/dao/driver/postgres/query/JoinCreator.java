@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.cmdbuild.dao.driver.postgres.Const;
-import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -25,7 +25,7 @@ public class JoinCreator extends PartCreator {
 
 		HISTORIC {
 			@Override
-			String quoteTypeName(CMEntryType type) {
+			String quoteTypeName(final CMEntryType type) {
 				return Utils.quoteTypeHistory(type);
 			}
 
@@ -36,7 +36,7 @@ public class JoinCreator extends PartCreator {
 		},
 		CURRENT {
 			@Override
-			String quoteTypeName(CMEntryType type) {
+			String quoteTypeName(final CMEntryType type) {
 				return Utils.quoteType(type);
 			}
 
@@ -56,7 +56,7 @@ public class JoinCreator extends PartCreator {
 
 		private final Iterable<T> typeSet;
 		protected final Alias typeAlias;
-		private boolean includeHistoryTable;
+		private final boolean includeHistoryTable;
 
 		UnionCreator(final Set<T> typeSet, final Alias typeAlias, final boolean includeHistoryTable) {
 			this.typeSet = typeSet;
@@ -67,7 +67,7 @@ public class JoinCreator extends PartCreator {
 		public void append() {
 			sb.append("(");
 			boolean first = true;
-			for (T type : typeSet) {
+			for (final T type : typeSet) {
 				if (includeHistoryTable) {
 					appendTableSelect(type, DataQueryType.HISTORIC, first);
 					first = false;
@@ -78,7 +78,7 @@ public class JoinCreator extends PartCreator {
 			sb.append(")");
 		}
 
-		private void appendTableSelect(T type, DataQueryType dataQueryType, boolean first) {
+		private void appendTableSelect(final T type, final DataQueryType dataQueryType, final boolean first) {
 			final String quotedTableName = dataQueryType.quoteTypeName(getEntryType(type));
 			if (!first) {
 				sb.append(" UNION ALL ");
@@ -105,9 +105,9 @@ public class JoinCreator extends PartCreator {
 
 		abstract void appendSystemAttributes(T type, final DataQueryType dataQueryType, boolean first);
 
-		void appendUserAttributes(T type, final boolean first) {
+		void appendUserAttributes(final T type, final boolean first) {
 			final CMEntryType entryType = getEntryType(type);
-			for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(typeAlias, entryType)) {
+			for (final EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(typeAlias, entryType)) {
 				final boolean nullValue = (eta.name == null);
 				sb.append(",");
 				if (nullValue) {
@@ -142,7 +142,7 @@ public class JoinCreator extends PartCreator {
 	public JoinCreator(final Alias fromAlias, final List<JoinClause> joins, final ColumnMapper columnMapper) {
 		this.fromAlias = fromAlias;
 		this.columnMapper = columnMapper;
-		for (JoinClause j : joins) {
+		for (final JoinClause j : joins) {
 			appendJoinWithDomainAndTarget(j);
 		}
 	}

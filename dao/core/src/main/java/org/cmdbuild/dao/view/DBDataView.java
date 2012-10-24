@@ -25,12 +25,12 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBClass findClassById(Long id) {
+	public DBClass findClassById(final Long id) {
 		return driver.findClassById(id);
 	}
 
 	@Override
-	public DBClass findClassByName(String name) {
+	public DBClass findClassByName(final String name) {
 		return driver.findClassByName(name);
 	}
 
@@ -57,7 +57,7 @@ public class DBDataView extends QueryExecutorDataView {
 	@Override
 	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
 		final List<DBDomain> domainsForClass = Lists.newArrayList();
-		for (DBDomain d : findDomains()) {
+		for (final DBDomain d : findDomains()) {
 			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
 				domainsForClass.add(d);
 			}
@@ -66,12 +66,12 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBDomain findDomainById(Long id) {
+	public DBDomain findDomainById(final Long id) {
 		return driver.findDomainById(id);
 	}
 
 	@Override
-	public DBDomain findDomainByName(String name) {
+	public DBDomain findDomainByName(final String name) {
 		return driver.findDomainByName(name);
 	}
 
@@ -86,13 +86,13 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBCard newCard(CMClass type) {
+	public DBCard newCard(final CMClass type) {
 		final DBClass dbType = findClassById(type.getId());
 		return DBCard.newInstance(driver, dbType);
 	}
 
 	@Override
-	public DBCard modifyCard(CMCard type) {
+	public DBCard modifyCard(final CMCard type) {
 		throw new UnsupportedOperationException();
 	}
 

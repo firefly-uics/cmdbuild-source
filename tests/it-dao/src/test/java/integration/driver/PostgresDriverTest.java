@@ -40,7 +40,7 @@ public class PostgresDriverTest extends DriverFixture {
 		 */
 		final Collection<DBClass> allClasses = driver.findAllClasses();
 		assertThat(allClasses, is(not(empty())));
-		assertThat(names(allClasses), hasItem(Constants.BASE_CLASS_NAME));
+		assertThat(namesOf(allClasses), hasItem(Constants.BASE_CLASS_NAME));
 	}
 
 	@Ignore("until we are able to add a non-reserved regclass attribute")

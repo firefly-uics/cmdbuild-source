@@ -12,19 +12,19 @@ public class LookupAttributeType extends AbstractAttributeType<CMLookup> {
 		// TODO Get the lookup type
 		this.lookupType = new DBLookupType(lookupTypeName);
 	}
-	
+
 	// FIXME really needed?
 	public String getLookupTypeName() {
 		return lookupType.getName();
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected CMLookup convertNotNullValue(Object value) {
+	protected CMLookup convertNotNullValue(final Object value) {
 		// TODO Get the lookup
 		if (value instanceof Number) {
 			final Number number = (Number) value;

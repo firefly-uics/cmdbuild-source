@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.cmdbuild.dao.driver.CachingDriver;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.entry.DBCard;
@@ -16,6 +17,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.DBDataView;
 import org.junit.After;
 import org.junit.runners.Parameterized.Parameters;
@@ -63,6 +65,10 @@ public abstract class DriverFixture {
 	@After
 	public void rollback() {
 		driver.rollback();
+		final DBDriver innerDriver = driver.getInnerDriver();
+		if (innerDriver instanceof CachingDriver) {
+			CachingDriver.class.cast(innerDriver).clearCache();
+		}
 	}
 
 	/*
@@ -88,7 +94,10 @@ public abstract class DriverFixture {
 	}
 
 	protected DBRelation insertRelation(final DBDomain d, final DBCard c1, final DBCard c2) {
-		return DBRelation.newInstance(driver, d).setCard1(c1).setCard2(c2).save();
+		return DBRelation.newInstance(driver, d) //
+				.setCard1(c1) //
+				.setCard2(c2) //
+				.save();
 	}
 
 	protected void deleteCard(final DBCard c) {
@@ -103,7 +112,7 @@ public abstract class DriverFixture {
 		driver.delete(e);
 	}
 
-	protected Iterable<String> names(final Iterable<? extends CMEntryType> entityTypes) {
+	protected Iterable<String> namesOf(final Iterable<? extends CMEntryType> entityTypes) {
 		return Iterables.transform(entityTypes, new Function<CMEntryType, String>() {
 
 			@Override
@@ -122,8 +131,12 @@ public abstract class DriverFixture {
 		return attribute(c, c.getCodeAttributeName());
 	}
 
+	protected QueryAliasAttribute codeAttribute(final Alias alias, final CMClass c) {
+		return attribute(alias, c.getCodeAttributeName());
+	}
+
 	protected QueryAliasAttribute descriptionAttribute(final CMClass c) {
-		return attribute(c, c.getKeyAttributeName());
+		return attribute(c, c.getDescriptionAttributeName());
 	}
 
 }

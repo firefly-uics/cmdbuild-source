@@ -3,6 +3,7 @@ package org.cmdbuild.dao.view.user;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -15,7 +16,6 @@ import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
@@ -34,12 +34,12 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserClass findClassById(Long id) {
+	public UserClass findClassById(final Long id) {
 		return UserClass.newInstance(this, view.findClassById(id));
 	}
 
 	@Override
-	public UserClass findClassByName(String name) {
+	public UserClass findClassByName(final String name) {
 		return UserClass.newInstance(this, view.findClassByName(name));
 	}
 
@@ -65,12 +65,12 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserDomain findDomainById(Long id) {
+	public UserDomain findDomainById(final Long id) {
 		return UserDomain.newInstance(this, view.findDomainById(id));
 	}
 
 	@Override
-	public UserDomain findDomainByName(String name) {
+	public UserDomain findDomainByName(final String name) {
 		return UserDomain.newInstance(this, view.findDomainByName(name));
 	}
 
@@ -94,7 +94,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 * @return active domains for that class
 	 */
 	@Override
-	public Iterable<UserDomain> findDomainsFor(CMClass type) {
+	public Iterable<UserDomain> findDomainsFor(final CMClass type) {
 		return proxyDomains(view.findDomainsFor(type));
 	}
 
@@ -123,13 +123,13 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMCardDefinition newCard(CMClass type) {
+	public CMCardDefinition newCard(final CMClass type) {
 		// TODO
 		return view.newCard(type);
 	}
 
 	@Override
-	public CMCardDefinition modifyCard(CMCard card) {
+	public CMCardDefinition modifyCard(final CMCard card) {
 		// TODO
 		return view.modifyCard(card);
 	}
@@ -143,28 +143,28 @@ public class UserDataView extends QueryExecutorDataView {
 	 * Proxy helpers
 	 */
 
-	Iterable<UserClass> proxyClasses(Iterable<DBClass> source) {
+	Iterable<UserClass> proxyClasses(final Iterable<DBClass> source) {
 		return filterNotNull(map(source, new Mapper<DBClass, UserClass>() {
 			@Override
-			public UserClass map(DBClass o) {
+			public UserClass map(final DBClass o) {
 				return UserClass.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
 
-	Iterable<UserDomain> proxyDomains(Iterable<DBDomain> source) {
+	Iterable<UserDomain> proxyDomains(final Iterable<DBDomain> source) {
 		return filterNotNull(map(source, new Mapper<DBDomain, UserDomain>() {
 			@Override
-			public UserDomain map(DBDomain o) {
+			public UserDomain map(final DBDomain o) {
 				return UserDomain.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
 
-	Iterable<UserAttribute> proxyAttributes(Iterable<DBAttribute> source) {
+	Iterable<UserAttribute> proxyAttributes(final Iterable<DBAttribute> source) {
 		return filterNotNull(map(source, new Mapper<DBAttribute, UserAttribute>() {
 			@Override
-			public UserAttribute map(DBAttribute o) {
+			public UserAttribute map(final DBAttribute o) {
 				return UserAttribute.newInstance(UserDataView.this, o);
 			}
 		}));
@@ -175,12 +175,12 @@ public class UserDataView extends QueryExecutorDataView {
 			UserEntryType proxy;
 
 			@Override
-			public void visit(DBClass type) {
+			public void visit(final DBClass type) {
 				proxy = UserClass.newInstance(UserDataView.this, type);
 			}
 
 			@Override
-			public void visit(DBDomain type) {
+			public void visit(final DBDomain type) {
 				proxy = UserDomain.newInstance(UserDataView.this, type);
 			}
 

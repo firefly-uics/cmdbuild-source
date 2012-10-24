@@ -6,11 +6,10 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 
-
 public abstract class AbstractDateAttributeType extends AbstractAttributeType<DateTime> {
 
 	@Override
-	protected DateTime convertNotNullValue(Object value) {
+	protected DateTime convertNotNullValue(final Object value) {
 		if (value instanceof String) {
 			return convertDateString((String) value);
 		} else if (value instanceof java.util.Date) {
@@ -35,7 +34,7 @@ public abstract class AbstractDateAttributeType extends AbstractAttributeType<Da
 		for (final DateTimeFormatter formatter : getFormatters()) {
 			try {
 				return formatter.parseDateTime(stringValue);
-			} catch (IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				// try the next one
 			}
 		}

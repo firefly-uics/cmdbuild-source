@@ -47,7 +47,7 @@ public class UserClass extends UserEntryType implements CMClass {
 	}
 
 	@Override
-	public boolean isAncestorOf(CMClass cmClass) {
+	public boolean isAncestorOf(final CMClass cmClass) {
 		// Is there any way to protect this?
 		return inner.isAncestorOf(cmClass);
 	}

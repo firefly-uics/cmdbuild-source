@@ -58,13 +58,13 @@ public enum SqlType {
 	 */
 	geometry(GeometryAttributeType.class) {
 		@Override
-		public Object javaToSqlValue(Object value) {
+		public Object javaToSqlValue(final Object value) {
 			// TODO
 			throw new UnsupportedOperationException("Not implemented yet");
 		}
 
 		@Override
-		public Object sqlToJavaValue(Object value) {
+		public Object sqlToJavaValue(final Object value) {
 			// TODO
 			throw new UnsupportedOperationException("Not implemented yet");
 		}
@@ -120,6 +120,7 @@ public enum SqlType {
 	 * Used by some system tables
 	 */
 	regclass(EntryTypeAttributeType.class) {
+		@Override
 		public String sqlCast() {
 			return "oid";
 		}

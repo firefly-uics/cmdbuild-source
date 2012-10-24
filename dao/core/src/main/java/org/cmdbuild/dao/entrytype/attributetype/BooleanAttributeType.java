@@ -1,23 +1,22 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-
 public class BooleanAttributeType extends AbstractAttributeType<Boolean> {
 
 	public BooleanAttributeType() {
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected Boolean convertNotNullValue(Object value) {
+	protected Boolean convertNotNullValue(final Object value) {
 		final Boolean booleanValue;
 		if (value instanceof Boolean) {
 			booleanValue = (Boolean) value;
 		} else if (value instanceof String) {
-			String stringValue = (String) value;
+			final String stringValue = (String) value;
 			if (stringValue.isEmpty()) {
 				booleanValue = null;
 			} else {

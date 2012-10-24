@@ -25,8 +25,8 @@ public abstract class QueryExecutorDataView implements CMDataView {
 	 * Executes a non-empty query returning its result
 	 * 
 	 * Note: the {@link QuerySpecs} object can be created only by the
-	 * {@link QuerySpecsBuilder}, so it is safe to assume that it will not
-	 * be invoked on a view different from the one it was created for.
+	 * {@link QuerySpecsBuilder}, so it is safe to assume that it will not be
+	 * invoked on a view different from the one it was created for.
 	 * 
 	 * @param querySpecs
 	 * @return the query result

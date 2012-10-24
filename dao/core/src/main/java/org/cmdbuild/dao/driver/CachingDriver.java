@@ -6,8 +6,9 @@ import org.cmdbuild.dao.CMTypeObject;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.function.DBFunction;
+import org.cmdbuild.dao.logging.LoggingSupport;
 
-public abstract class CachingDriver implements DBDriver {
+public abstract class CachingDriver implements DBDriver, LoggingSupport {
 
 	private static class TypeObjectStore<T extends CMTypeObject> {
 
@@ -82,7 +83,18 @@ public abstract class CachingDriver implements DBDriver {
 		return c;
 	}
 
+	@Override
+	public final DBClass createSuperClass(final String name, final DBClass parent) {
+		final DBClass c = createSuperClassNoCache(name, parent);
+		if (allClassesStore != null) {
+			allClassesStore.add(c);
+		}
+		return c;
+	}
+
 	protected abstract DBClass createClassNoCache(final String name, final DBClass parent);
+
+	protected abstract DBClass createSuperClassNoCache(final String name, final DBClass parent);
 
 	@Override
 	public final void deleteClass(final DBClass dbClass) {
@@ -96,11 +108,14 @@ public abstract class CachingDriver implements DBDriver {
 
 	@Override
 	public final DBClass findClassById(final Long id) {
+		DBClass dbClass = null;
 		try {
-			return getAllClassesStore().getById(id);
+			dbClass = getAllClassesStore().getById(id);
+			logger.debug("class name for '{}' is '{}'", id, dbClass.getName());
 		} catch (final Exception e) {
-			return null;
+			logger.warn("no class found for id '{}'", id);
 		}
+		return dbClass;
 	}
 
 	@Override
@@ -129,15 +144,15 @@ public abstract class CachingDriver implements DBDriver {
 	protected abstract Collection<DBDomain> findAllDomainsNoCache();
 
 	@Override
-	public DBDomain createDomain(final String name, final DBClass class1, final DBClass class2) {
-		final DBDomain d = createDomainNoCache(name, class1, class2);
+	public DBDomain createDomain(final DomainDefinition domainDefinition) {
+		final DBDomain d = createDomainNoCache(domainDefinition);
 		if (allDomainsStore != null) {
 			allDomainsStore.add(d);
 		}
 		return d;
 	}
 
-	protected abstract DBDomain createDomainNoCache(final String name, final DBClass class1, final DBClass class2);
+	protected abstract DBDomain createDomainNoCache(final DomainDefinition domainDefinition);
 
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {

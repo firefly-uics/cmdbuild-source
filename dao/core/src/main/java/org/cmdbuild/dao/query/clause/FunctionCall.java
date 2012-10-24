@@ -50,7 +50,7 @@ public class FunctionCall implements CMFunctionCall {
 				public String getDescription() {
 					return input.getName();
 				}
-				
+
 			};
 		}
 	};
@@ -66,7 +66,7 @@ public class FunctionCall implements CMFunctionCall {
 		this.params = normalizeFunctionParams(function, params);
 	}
 
-	private List<Object> normalizeFunctionParams(CMFunction function, List<Object> values) {
+	private List<Object> normalizeFunctionParams(final CMFunction function, final List<Object> values) {
 		final List<Object> actualParamsNormalized = new ArrayList<Object>(values.size());
 		final Iterator<CMFunctionParameter> formalParams = function.getInputParameters().iterator();
 		final Iterator<Object> actualParams = values.iterator();
@@ -99,7 +99,8 @@ public class FunctionCall implements CMFunctionCall {
 		return new FunctionCall(function, actualParameters);
 	}
 
-	private static List<Object> buildActualParametersList(final List<CMFunctionParameter> formalParameters, final Map<String, Object> actualParametersMap) {
+	private static List<Object> buildActualParametersList(final List<CMFunctionParameter> formalParameters,
+			final Map<String, Object> actualParametersMap) {
 		final List<Object> actualParameters = new ArrayList<Object>(formalParameters.size());
 		for (final CMFunctionParameter fp : formalParameters) {
 			final Object ap = actualParametersMap.get(fp.getName());
@@ -170,11 +171,12 @@ public class FunctionCall implements CMFunctionCall {
 	public boolean holdsHistory() {
 		return false;
 	}
-	
+
 	@Override
 	public String getKeyAttributeName() {
-		// TODO really needed here? considering that there is no sense for functions
+		// TODO really needed here? considering that there is no sense for
+		// functions
 		return null;
 	}
-	
+
 }

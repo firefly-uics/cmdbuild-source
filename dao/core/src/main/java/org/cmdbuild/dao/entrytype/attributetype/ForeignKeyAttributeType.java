@@ -9,12 +9,12 @@ public class ForeignKeyAttributeType extends AbstractAttributeType<CardReference
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	public CardReference convertNotNullValue(Object value) {
+	public CardReference convertNotNullValue(final Object value) {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 }
