@@ -17,6 +17,7 @@ public interface CMQueryResult extends Iterable<CMQueryRow> {
 	 * Returns the first and only row in the result.
 	 * 
 	 * @return the first and only row in the result
+	 * 
 	 * @throws NoSuchElementException
 	 *             if there is no unique element
 	 */
