@@ -3,11 +3,10 @@ package org.cmdbuild.dao.driver.postgres;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteType;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.cmdbuild.dao.driver.CachingDriver;
+import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -24,7 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * "If all you have is SQL, everything looks like a trigger" A. Maslow
  * (readapted)
  */
-public class PostgresDriver extends CachingDriver implements SelfVersioningDBDriver {
+public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDBDriver {
 
 	private final JdbcTemplate jdbcTemplate;
 
@@ -32,53 +31,45 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
 
-	/*
-	 * CachingDriver abstract methods
-	 */
-
 	@Override
-	protected List<DBClass> findAllClassesNoCache() {
+	public Collection<DBClass> findAllClasses() {
 		return new EntryTypeCommands(jdbcTemplate).findAllClasses();
 	}
 
 	@Override
-	protected DBClass createClassNoCache(final String name, final DBClass superClass) {
-		return new EntryTypeCommands(jdbcTemplate).createClass(name, superClass);
+	public DBClass createClass(final String name, final DBClass parent) {
+		return new EntryTypeCommands(jdbcTemplate).createClass(name, parent);
 	}
 
 	@Override
-	protected DBClass createSuperClassNoCache(final String name, final DBClass superClass) {
-		return new EntryTypeCommands(jdbcTemplate).createSuperClass(name, superClass);
+	public DBClass createSuperClass(final String name, final DBClass parent) {
+		return new EntryTypeCommands(jdbcTemplate).createSuperClass(name, parent);
 	}
 
 	@Override
-	protected void deleteClassNoCache(final DBClass dbClass) {
+	public void deleteClass(final DBClass dbClass) {
 		new EntryTypeCommands(jdbcTemplate).deleteClass(dbClass);
 	}
 
 	@Override
-	protected Collection<DBDomain> findAllDomainsNoCache() {
+	public Collection<DBDomain> findAllDomains() {
 		return new EntryTypeCommands(jdbcTemplate).findAllDomains(this);
 	}
 
 	@Override
-	protected DBDomain createDomainNoCache(final DomainDefinition domainDefinition) {
+	public DBDomain createDomain(final DomainDefinition domainDefinition) {
 		return new EntryTypeCommands(jdbcTemplate).createDomain(domainDefinition);
 	}
 
 	@Override
-	protected void deleteDomainNoCache(final DBDomain dbDomain) {
+	public void deleteDomain(final DBDomain dbDomain) {
 		new EntryTypeCommands(jdbcTemplate).deleteDomain(dbDomain);
 	}
 
 	@Override
-	protected List<DBFunction> findAllFunctionsNoCache() {
+	public Collection<DBFunction> findAllFunctions() {
 		return new EntryTypeCommands(jdbcTemplate).findAllFunctions();
 	}
-
-	/*
-	 * DBDriver
-	 */
 
 	@Override
 	public Long create(final DBEntry entry) {
@@ -100,13 +91,10 @@ public class PostgresDriver extends CachingDriver implements SelfVersioningDBDri
 		return new EntryQueryCommand(this, jdbcTemplate, query).run();
 	}
 
-	/*
-	 * SelfVersioningDBDriver
-	 */
-
 	@Override
 	public void clearEntryType(final DBEntryType type) {
 		// truncate all subclasses as well
 		jdbcTemplate.execute("TRUNCATE TABLE " + quoteType(type) + " CASCADE");
 	}
+
 }

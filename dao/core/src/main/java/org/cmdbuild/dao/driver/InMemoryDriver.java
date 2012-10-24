@@ -13,7 +13,7 @@ import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
-public class InMemoryDriver extends CachingDriver {
+public class InMemoryDriver extends AbstractDBDriver {
 
 	private final AtomicLong idGenerator = new AtomicLong(42);
 
@@ -27,19 +27,13 @@ public class InMemoryDriver extends CachingDriver {
 		allFunctions = new ArrayList<DBFunction>();
 	}
 
-	/*
-	 * CachingDriver Classes
-	 */
-
 	@Override
-	protected Collection<DBClass> findAllClassesNoCache() {
-		// Note: The store has to be cloned, otherwise it could be changed by
-		// other components
+	public Collection<DBClass> findAllClasses() {
 		return new ArrayList<DBClass>(allClasses);
 	}
 
 	@Override
-	public DBClass createClassNoCache(final String name, final DBClass parent) {
+	public DBClass createClass(final String name, final DBClass parent) {
 		final DBClass newClass = new DBClass(name, idGenerator.getAndIncrement(), new ArrayList<DBAttribute>(0));
 		newClass.setParent(parent);
 		allClasses.add(newClass);
@@ -47,7 +41,7 @@ public class InMemoryDriver extends CachingDriver {
 	}
 
 	@Override
-	public DBClass createSuperClassNoCache(final String name, final DBClass parent) {
+	public DBClass createSuperClass(final String name, final DBClass parent) {
 		final ClassMetadata classMetadata = new ClassMetadata();
 		classMetadata.put(ClassMetadata.SUPERCLASS, Boolean.valueOf(true).toString());
 		final DBClass newClass = new DBClass(name, idGenerator.getAndIncrement(), classMetadata,
@@ -58,24 +52,18 @@ public class InMemoryDriver extends CachingDriver {
 	}
 
 	@Override
-	public void deleteClassNoCache(final DBClass dbClass) {
+	public void deleteClass(final DBClass dbClass) {
 		allClasses.remove(dbClass);
 		dbClass.setParent(null);
 	}
 
-	/*
-	 * CachingDriver Domains
-	 */
-
 	@Override
-	protected Collection<DBDomain> findAllDomainsNoCache() {
-		// Note: The store has to be cloned, otherwise it could be changed by
-		// other components
+	public Collection<DBDomain> findAllDomains() {
 		return new ArrayList<DBDomain>(allDomains);
 	}
 
 	@Override
-	protected DBDomain createDomainNoCache(final DomainDefinition domainDefinition) {
+	public DBDomain createDomain(final DomainDefinition domainDefinition) {
 		final DBDomain newDomain = DBDomain.newDomain() //
 				.withName(domainDefinition.getName()) //
 				.withId(idGenerator.getAndIncrement()) //
@@ -87,22 +75,14 @@ public class InMemoryDriver extends CachingDriver {
 	}
 
 	@Override
-	protected void deleteDomainNoCache(final DBDomain dbDomain) {
+	public void deleteDomain(final DBDomain dbDomain) {
 		allDomains.remove(dbDomain);
 	}
 
-	/*
-	 * CachingDriver Functions
-	 */
-
 	@Override
-	public Collection<DBFunction> findAllFunctionsNoCache() {
+	public Collection<DBFunction> findAllFunctions() {
 		return new ArrayList<DBFunction>(allFunctions);
 	}
-
-	/*
-	 * DBDriver
-	 */
 
 	@Override
 	public Long create(final DBEntry entry) {
@@ -123,4 +103,5 @@ public class InMemoryDriver extends CachingDriver {
 	public CMQueryResult query(final QuerySpecs query) {
 		throw new UnsupportedOperationException();
 	}
+
 }
