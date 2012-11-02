@@ -8,5 +8,10 @@ public class SelectAttributeToolAgent extends ManageAttributeToolAgent {
 	protected String outputName() {
 		return ATTRIBUTE_VALUE;
 	}
+	
+	@Override
+	protected Object attributeValue() {
+		return super.attributeValue().toString();
+	}
 
 }
