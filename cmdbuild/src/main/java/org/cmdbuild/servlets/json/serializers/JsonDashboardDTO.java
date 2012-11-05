@@ -26,6 +26,7 @@ import org.cmdbuild.model.dashboard.DashboardDefinition;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public interface JsonDashboardDTO {
 
@@ -48,7 +49,7 @@ public interface JsonDashboardDTO {
 
 		public JsonDashboardListResponse(final Map<Long, DashboardDefinition> dashboards, final Iterable<? extends CMFunction> dataSources) {
 			this.dashboards = dashboards;
-			this.dataSources = Iterables.transform(dataSources, dataSourceConverter);
+			this.dataSources = Lists.newArrayList(Iterables.transform(dataSources, dataSourceConverter));
 		}
 
 		public Map<Long, DashboardDefinition> getDashboards() {
