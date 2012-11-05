@@ -4,7 +4,6 @@ import static com.google.common.base.CharMatcher.DIGIT;
 import static com.google.common.base.CharMatcher.inRange;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
@@ -142,11 +142,11 @@ public abstract class Utils {
 
 	static class TypeQuoter implements CMEntryTypeVisitor {
 
-		String quotedTypeName;
-		List<Object> queryParams;
+		private ParamAdder paramAdder;
+		private String quotedTypeName;
 
-		public String quote(final CMEntryType type,  final List<Object> queryParams) {
-			this.queryParams = queryParams;
+		public String quote(final CMEntryType type,  final ParamAdder paramAdder) {
+			this.paramAdder = paramAdder;
 			type.accept(this);
 			return quotedTypeName;
 		}
@@ -170,7 +170,15 @@ public abstract class Utils {
 		}
 
 		private String functionParams(final CMFunctionCall functionCall) {
-			queryParams.addAll(functionCall.getParams());
+			final List<CMFunction.CMFunctionParameter> functionParameters = functionCall.getFunction()
+					.getInputParameters();
+			final List<Object> params = functionCall.getParams();
+			for (int i = 0; i < functionParameters.size(); i++) {
+				final CMFunction.CMFunctionParameter functionParameter = functionParameters.get(i);
+				final Object param = params.get(i);
+				final SqlType sqlType = SqlType.getSqlType(functionParameter.getType());
+				paramAdder.add(sqlType.javaToSqlValue(param));
+			}
 			return genQuestionMarks(functionCall.getParams().size());
 		}
 
@@ -185,16 +193,28 @@ public abstract class Utils {
 			return sb.toString();
 		}
 	}
-
-	// TODO: params are needed for functions but they should not be passed here
-	public static String quoteType(final CMEntryType type, final List<Object> queryParams) {
-		return new TypeQuoter().quote(type, queryParams);
+	
+	// TODO should not use this trick for add parameters to the part creator
+	public static interface ParamAdder {
+		public void add(Object value);
 	}
 
-	@Deprecated // but first the other one needs to be fixed
+	// TODO: params adder is needed for functions... should be done in another way
+	public static String quoteType(final CMEntryType type, final ParamAdder paramAdder) {
+		return new TypeQuoter().quote(type, paramAdder);
+	}
+
+	/**
+	 * @deprecated But first the other one needs to be fixed!
+	 */
+	@Deprecated
 	public static String quoteType(final CMEntryType type) {
-		final List<Object> queryParams = new ArrayList<Object>(0);
-		return new TypeQuoter().quote(type, queryParams);
+		return new TypeQuoter().quote(type, new ParamAdder() {
+			@Override
+			public void add(final Object value) {
+				// nothing to do
+			}
+		});
 	}
 
 	static class EntryTypeHistoryQuoter implements CMEntryTypeVisitor {
