@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Utils;
-import org.cmdbuild.dao.driver.postgres.Utils.ParamAdder;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
@@ -31,24 +30,14 @@ public class QuotingTest {
 
 	@Test
 	public void functionCallsAreQuoted() {
-		final List<Object> params = new ArrayList<Object>();
+		List<Object> params = new ArrayList<Object>();
 		DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
-		assertThat(Utils.quoteType(call(func), new ParamAdder() {			
-			@Override
-			public void add(final Object value) {
-				params.add(value);
-			}
-		}), is("func()"));
+		assertThat(Utils.quoteType(call(func), params), is("func()"));
 
 		func.addInputParameter("i1", new IntegerAttributeType());
 		func.addInputParameter("i2", new StringAttributeType());
 		func.addInputParameter("i3", new IntegerAttributeType());
-		assertThat(Utils.quoteType(call(func, 42, "s", "24"), new ParamAdder() {			
-			@Override
-			public void add(Object value) {
-				params.add(value);
-			}
-		}), is("func(?,?,?)"));
+		assertThat(Utils.quoteType(call(func, 42, "s", "24"), params), is("func(?,?,?)"));
 		assertThat(params.get(0), is((Object)42));
 		assertThat(params.get(1), is((Object)"s"));
 		assertThat(params.get(2), is((Object)24));
