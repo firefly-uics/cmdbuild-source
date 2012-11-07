@@ -119,14 +119,33 @@
 			this.hideHeaders = true;
 
 			this.activationCount = 0;
-
 			var me = this;
+			var SHOW_ICON = 'images/icons/bullet_go.png';
+			var HIDE_ICON = 'images/icons/cancel.png';
+
 			this.columns = [{
 				xtype : 'treecolumn',
 				flex : 2,
 				sortable : false,
 				dataIndex : 'text',
 				menuDisabled : true,
+			}, {
+				xtype : 'actioncolumn',
+				width : 40,
+				menuDisabled : true,
+				dataIndex : 'visible',
+				tooltip : "@@ show/hide this feature only",
+				align : 'center',
+				sortable : false,
+				icon : SHOW_ICON,
+				handler : function(grid, rowIndex, colIndex,
+						actionItem, event, record, row) {
+
+					var value = record.get("visible");
+					this.icon = value ? HIDE_ICON : SHOW_ICON;
+					record.set("visible", !value);
+					record.commit();
+				}
 			}, {
 				width : 40,
 				menuDisabled : true,

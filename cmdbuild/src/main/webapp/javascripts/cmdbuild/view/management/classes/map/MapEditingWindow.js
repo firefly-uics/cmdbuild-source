@@ -6,7 +6,7 @@
 		"POLYGON": "mapFeaturePolygon"
 	};
 
-	Ext.define("CMDBuild.view.management.map.CMMapEditingToolsWindow", {
+	Ext.define("CMDBuild.view.management.map.CMMapEditingToolsWindowDelegate", {
 		addFeatureButtonHasBeenToggled: Ext.emptyFn,
 		removeFeatureButtonHasBeenClicked: Ext.emptyFn,
 		geoAttributeMenuItemHasBeenClicked: Ext.emptyFn
@@ -24,8 +24,10 @@
 	 */
 	Ext.define("CMDBuild.view.management.map.CMMapEditingToolsWindow", {
 		extend: "Ext.Window",
+
 		editingControls: {},
-		toMove: true, //to initialize the position of the window the first time that be shown	
+		layers: {},
+
 		translation: CMDBuild.Translation,
 
 		mixins: {
@@ -37,7 +39,7 @@
 		},
 
 		constructor: function() {
-			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.map.CMMapEditingToolsWindow");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.map.CMMapEditingToolsWindowDelegate");
 			this.callParent(arguments);
 		},
 
@@ -49,9 +51,9 @@
 			this.frame = false;
 
 			this.layout = {
-				type : 'hbox',
-				padding : '2',
-				align : 'stretch'
+				type: 'hbox',
+				padding: '2',
+				align: 'stretch'
 			};
 
 			this.geoAttrMenuButton = new Ext.Button({
@@ -101,6 +103,7 @@
 		},
 
 		show: function() {
+			_debug("EDITING WINDOW: layers count", this.geoAttrMenuButton.menu.items.length);
 			if (this.geoAttrMenuButton.menu.items.length > 0) {
 
 				this.callParent(arguments);
@@ -112,23 +115,25 @@
 
 			}
 		},
-	
-		update: function(layers) {
-			this.geoAttrMenuButton.menu.removeAll(true);
 
-			for (var i=0, len=layers.length; i<len; i++) {
-				var l = layers[i];
-				if (l.editLayer) {
-					this.geoAttrMenuButton.menu.add({
-						iconCls: ICON_CLS[l.geoAttribute.type],
-						text: l.geoAttribute.description,
-						editLayer: l.editLayer,
-						geoType: l.geoAttribute.type,
+		addLayer: function(layer) {
+			if (layer) {
+				if (!this.layers[layer.name]) {
+					this.layers[layer.name] = this.geoAttrMenuButton.menu.add({
+						iconCls: ICON_CLS[layer.geoAttribute.type],
+						text: layer.geoAttribute.description,
+						editLayer: layer.editLayer,
+						geoType: layer.geoAttribute.type,
 						scope: this,
 						handler: onAddMenuitemSelect
 					});
 				}
 			}
+		},
+
+		removeAllLayerBinding: function() {
+			this.geoAttrMenuButton.menu.removeAll(true);
+			this.layers = {};
 		}
 	});
 

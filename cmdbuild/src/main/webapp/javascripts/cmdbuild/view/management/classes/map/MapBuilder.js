@@ -1,62 +1,6 @@
-OpenLayers.Handler.LongPress = OpenLayers.Class(OpenLayers.Handler.Click, {
-
-	longPressTime: 500, // milliseconds
-
-	// add the time-stamp to the info
-	getEventInfo : function(evt) {
-		var out = OpenLayers.Handler.Click.prototype.getEventInfo.apply(this, arguments);
-		out.timeStamp = new Date().getTime();
-
-		return out;
-	},
-
-	mousedown: function(evt) {
-
-		var me = this;
-		me._longPress = true;
-
-		window.setTimeout(
-			function() {
-				if (!me.down 
-						|| !me._longPress
-						|| !me.passesTolerance(evt)) {
-					return;
-				}
-
-				me.callback('longpress', [evt]);
-			},
-			me.longPressTime
-		);
-
-		return OpenLayers.Handler.Click.prototype.mousedown.apply(this, arguments);
-	},
-
-	mouseup: function(evt) {
-		this._longPress = false;
-		return OpenLayers.Handler.Click.prototype.mouseup.apply(this, arguments);
-	}
-});
-
-OpenLayers.Control.LongPress = OpenLayers.Class(OpenLayers.Control, {
-	initialize : function(options) {
-		this.handlerOptions = OpenLayers.Util.extend({},
-				this.defaultHandlerOptions);
-
-		OpenLayers.Control.prototype.initialize.apply(this, arguments);
-
-		this.handler = new OpenLayers.Handler.LongPress(this, {
-			'longpress' : this.onLongPress
-		}, this.handlerOptions);
-	},
-
-	// implement it on creation
-	onLongPress: function(e) {}
-});
-
 CMDBuild.Management.MapBuilder = (function() {
 
 	var bounds = new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
-		geojson_format = new OpenLayers.Format.GeoJSON(),
 		projection = new OpenLayers.Projection("EPSG:900913"),
 		displayProjection = new OpenLayers.Projection("EPSG:4326");
 
@@ -69,24 +13,7 @@ CMDBuild.Management.MapBuilder = (function() {
 			maxResolution: 156543.0339,
 			maxExtent: bounds,
 			div: divId,
-			initBaseLayers: initBaseLayers,
-			eventListeners: {
-				"zoomend": function(event) {
-					/*
-					 * Manage the visibility of
-					 * the features
-					 */
-					var map = event.object;
-					var layers = map.layers;
-					var currentZoom = map.getZoom();
-					for (var i=0, l=layers.length; i<l; ++i) {
-						var layer = layers[i];
-						if (layer.setVisibilityByZoom) {
-							layer.setVisibilityByZoom(currentZoom);
-						}
-					}
-				}
-			}
+			initBaseLayers: initBaseLayers
 		};
 
 		var map = new CMDBuild.Management.CMMap(options);
@@ -122,7 +49,6 @@ CMDBuild.Management.MapBuilder = (function() {
 				}
 			});
 
-			osm.CMDBuildLayer = true;
 			map.addLayers([osm]);
 			map.setBaseLayer(osm);
 		}
@@ -143,7 +69,7 @@ CMDBuild.Management.MapBuilder = (function() {
 
 				this.setVisibility(isInRange);
 			};
-			googleLayer.CMDBuildLayer = true;
+
 			map.addLayers([googleLayer]);
 			map.setBaseLayer(googleLayer);
 		}
@@ -163,7 +89,7 @@ CMDBuild.Management.MapBuilder = (function() {
 
 				this.setVisibility(isInRange);
 			};
-			yahooLayer.CMDBuildLayer = true;
+
 			map.addLayers([yahooLayer]);
 			map.setBaseLayer(yahooLayer);
 		}

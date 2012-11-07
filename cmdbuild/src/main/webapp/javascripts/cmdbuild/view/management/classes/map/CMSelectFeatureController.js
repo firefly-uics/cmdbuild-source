@@ -50,6 +50,14 @@ CMDBuild.Management.CMSelectFeatureController = OpenLayers.Class(OpenLayers.Cont
 
 		var layers = this.layers;
 
+		// skip if have already this layer
+		for (var i=0, l=layers.length; i<l; ++i) {
+			var currentLayer = layers[i];
+			if (layer.id == currentLayer.id) {
+				return;
+			}
+		}
+
 		layers.push(layer);
 		this.setLayer(layers);
 	},
@@ -68,17 +76,5 @@ CMDBuild.Management.CMSelectFeatureController = OpenLayers.Class(OpenLayers.Cont
 		}
 
 		this.setLayer(layers);
-	},
-
-	selectFeaturesByCardId: function(cardId) { _deprecated();
-		for (var i=0, l=this.map.cmdbLayers.length; i<l; i++) {
-			var layer = this.map.cmdbLayers[i];
-			if (layer) {
-				var f = layer.getFeatureByMasterCard(cardId);
-				if (f) {
-					this.select(f);
-				}
-			}
-		}
 	}
 });
