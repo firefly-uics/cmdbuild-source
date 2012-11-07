@@ -6,6 +6,22 @@
  * @class CMDBuild.Management.CMDBuildMap.MapLayer
  */
 
+CMDBuild.PatchedBBOX = OpenLayers.Class(OpenLayers.Strategy.BBOX, {
+	/*
+	 * This method is called after a request,
+	 * there are problems when remove the layer from the map...
+	 * it seems that the strategy does not realize that the
+	 * layer is now null
+	 * 
+	 * (...and I deactivate the strategy before remove the layer...)
+	 */
+	merge: function(resp) {
+		if (this.layer) {
+			return OpenLayers.Strategy.BBOX.prototype.merge.apply(this, arguments);
+		}
+	}
+});
+
 CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 
 	initialize: function(name, options) {
@@ -35,7 +51,7 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		});
 
 		this.strategies = [
-			new OpenLayers.Strategy.BBOX({
+			new CMDBuild.PatchedBBOX({
 				autoActivate: true
 			}),
 			new OpenLayers.Strategy.Refresh({
@@ -68,6 +84,15 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 				strategy.force = true;
 				strategy.refresh();
 				strategy.force = false;
+			}
+		}
+	},
+
+	destroyStrategies: function() {
+		for (var i=0, strategy=null; i<this.strategies.length; ++i) {
+			strategy = this.strategies[i];
+			if (strategy) {
+				strategy.destroy();
 			}
 		}
 	},

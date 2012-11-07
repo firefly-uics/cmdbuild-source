@@ -6,7 +6,7 @@
 		mixins: {
 			observable: "Ext.util.Observable",
 			mapDelegate: "CMDBuild.view.management.map.CMMapPanelDelegate",
-			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindow",
+			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindowDelegate",
 			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate",
 			cardBrowserDelegate: "CMDBuild.view.management.CMCardBrowserTreeDelegate",
 			cardStateDelegate: "CMDBuild.state.CMCardModuleStateDelegate",
@@ -33,8 +33,7 @@
 				var layerSwitcher = this.mapPanel.getLayerSwitcherPanel();
 				this.mapPanel.addDelegate(
 						new CMDBuild.controller.management.classes
-							.CMMapLayerSwitcherController(layerSwitcher,
-								this.mapPanel.getMap()));
+							.CMMapLayerSwitcherController(layerSwitcher, this.map));
 
 				// set me as a delegate of the switcher
 				layerSwitcher.addDelegate(this);
@@ -52,8 +51,6 @@
 				this.miniCardGridWindowController = new CMDBuild.controller
 					.management.CMMiniCardGridWindowFeaturesController();
 
-				buildLongPressController(me);
-
 				// initialize editing control
 				this.editingControls = {};
 				this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
@@ -66,20 +63,33 @@
 					}
 				});
 
-				this.mapPanel.getMap().addControl(this.selectControl);
+				this.map.addControl(this.selectControl);
 				this.selectControl.activate();
 
+				// build long press controller
+				buildLongPressController(this);
 
 				// add me to the CMCardModuleStateDelegates
 				_CMCardModuleState.addDelegate(this);
+
+				this.mapState = new CMDBuild.state.CMMapState(this);
+				this.map.events.register("zoomend", this, onZoomEnd);
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
 			}
 		},
 
 		updateMap: function(entryType) {
+			// at first clear the panel calling the updateMap method;
 			this.mapPanel.updateMap(entryType);
-			this.mapPanel.getMap().activateStrategies(true);
+
+			// then do something build new layers
+			var geoAttributes = entryType.getGeoAttrs() || [];
+			// TODO the sorting does not work
+			var orderedAttrs = sortAttributesByIndex(geoAttributes);
+			this.mapState.update(orderedAttrs, this.map.getZoom());
+			this.map.activateStrategies(true);
+
 		},
 
 		onFeatureSelect: function(feature) {
@@ -114,7 +124,7 @@
 
 			if (id != this.currentCardId) {
 				this.currentCardId = id;
-				var layers = this.mapPanel.getMap().cmdbLayers;
+				var layers = this.mapPanel.getMap().getCmdbLayers();
 
 				for (var i=0, l=layers.length; i<l; ++i) {
 					layers[i].clearSelection();
@@ -241,16 +251,16 @@
 
 		// Hide or show the feature[s] for the node
 		// from the map.
-		// If the node is a folder and is expanded, the action
-		// is targeted only over the node. Otherwise, do the
-		// action over all the branch that start with the
-		// passed node. So, if the node was never opened,
+		// the action has effect over all the branch that start with the
+		// passed node.
+		// So, if the node was never opened,
 		// there aren't the info to show/hide the features.
 		// For this reason, act like an expand, loading the
 		// branch at all, and then show/hide the features.
 
 		onCardBrowserTreeCheckChange: function(tree, node, checked) {
-			setFeatureVisibilityForAllBranch(tree, this.mapPanel.getMap(), node, checked, false);
+			var forceChildren = true;
+			setFeatureVisibilityForAllBranch(tree, this.mapPanel.getMap(), node, checked, forceChildren);
 		},
 
 		onCardBrowserTreeItemExpand: function(tree, node) {
@@ -307,8 +317,30 @@
 		miniCardGridDidActivate: loadMiniCardGridStore,
 		miniCardGridWantOpenCard: function(grid, card) {
 			_CMCardModuleState.setCard(card);
+		},
+
+		// As CMDBuild.state.CMMapStateDelegate
+
+		geoAttributeUsageChanged: function(geoAttribute) {
+			if (!geoAttribute.isUsed()) {
+				removeLayerForGeoAttribute(this.map, geoAttribute, this);
+			} else {
+				addLayerForGeoAttribute(this.map, geoAttribute, this);
+			}
+		},
+
+		geoAttributeZoomValidityChanged: function(geoAttribute) {
+			if (!geoAttribute.isZoomValid()) {
+				removeLayerForGeoAttribute(this.map, geoAttribute, this);
+			} else {
+				addLayerForGeoAttribute(this.map, geoAttribute, this);
+			}
 		}
 	});
+
+	function onZoomEnd() {
+		this.mapState.updateForZoom(this.map.getZoom());
+	};
 
 	function buildLongPressController(me) {
 		var map = me.map;
@@ -403,9 +435,13 @@
 		for (var i=0, layer=null; i<layers.length; ++i) {
 			layer = layers[i];
 			if (visibility) {
-				layer.showFeatureWithCardId(cardId);
+				if (typeof layer.showFeatureWithCardId == "function") {
+					layer.showFeatureWithCardId(cardId);
+				}
 			} else {
-				layer.hideFeatureWithCardId(cardId);
+				if (typeof layer.hideFeatureWithCardId == "function") {
+					layer.hideFeatureWithCardId(cardId);
+				}
 			}
 		}
 	}
@@ -501,15 +537,23 @@
 		deactivateEditControls.call(this);
 
 		this.currentEditLayer = editLayer;
-		this.activateTransformConrol(editLayer.id);
+		this.activateTransformConrol(editLayer.name);
 
 		var editFeature = editLayer.features[0];
 
 		if (editFeature) {
-			setTransformControlFeature.call(this, editLayer.id, editFeature);
+			setTransformControlFeature.call(this, editLayer.name, editFeature);
 			editLayer.drawFeature(editFeature, "select");
 		}
 	}
+
+	function deactivateEditControls() {
+		for (var layer in this.editingControls) {
+			for (var control in this.editingControls[layer]) {
+				this.editingControls[layer][control].deactivate();
+			}
+		}
+	};
 
 	function onCmdbLayerBeforeAdd(o) {
 		var layer = o.object,
@@ -570,27 +614,39 @@
 
 	function buildEditControls(layer) {
 		if (layer.editLayer) {
+			if (this.editingControls[layer.editLayer.name]) {
+				return;
+			}
+
+			_debug("BUILD EDIT CONTROL", layer.editLayer.id, layer.editLayer.name);
+
 			var geoAttribute = layer.geoAttribute,
 				creation = buildCreationControl(geoAttribute.type, layer.editLayer),
 				transform = buildTransformControl(layer.editLayer);
 
-			this.mapPanel.getMap().addControls([creation, transform]);
-			this.editingControls[layer.editLayer.id] = {
+			this.map.addControls([creation, transform]);
+			this.editingControls[layer.editLayer.name] = {
 				creation: creation,
 				transform: transform
 			};
+
+			this.mapPanel.addLayerToEditingWindow(layer);
 		}
 	}
 
 	function destroyEditControls(layer) {
 		if (layer.editLayer) {
-			var id = layer.editLayer.id;
-			for (var control in this.editingControls[id]) {
-				this.mapPanel.getMap().removeControl(this.editingControls[id][control]);
-				delete this.editingControls[id][control];
+			if (this.mapState.isAUsedGeoAttribute(layer.geoAttribute)) {
+				return;
 			}
 
-			delete this.editingControls[id];
+			var name = layer.editLayer.name;
+			for (var control in this.editingControls[name]) {
+				this.mapPanel.getMap().removeControl(this.editingControls[name][control]);
+				delete this.editingControls[name][control];
+			}
+
+			delete this.editingControls[name];
 		}
 	};
 
@@ -611,17 +667,10 @@
 	};
 
 	function deactivateControl(layerId, controlName) {
+		_debug("DEACTIVATE", layerId, controlName);
 		var l = this.editingControls[layerId];
 		if (l[controlName]) {
 			l[controlName].deactivate();
-		}
-	};
-
-	function deactivateEditControls() {
-		for (var layer in this.editingControls) {
-			for (var control in this.editingControls[layer]) {
-				this.editingControls[layer][control].deactivate();
-			}
 		}
 	};
 
@@ -646,5 +695,116 @@
 			}
 		};
 		return controlBuilders[type](layer);
+	};
+
+	function buildLongPressController(me) {
+		var map = me.map;
+		var longPressControl = new OpenLayers.Control.LongPress({
+			onLongPress : function(e) {
+				var lonlat = map.getLonLatFromPixel(e.xy);
+				var features = map.getFeaturesInLonLat(lonlat);
+
+				// no features no window
+				if (features.length == 0) {
+					return;
+				}
+
+				me.miniCardGridWindowController.setFeatures(features);
+				if (me.miniCardGridWindow) {
+					me.miniCardGridWindow.close();
+				}
+
+				me.miniCardGridWindow = new CMDBuild.view.management.CMMiniCardGridWindow({
+					width : me.mapPanel.getWidth() / 100 * 40,
+					height : me.mapPanel.getHeight() / 100 * 80,
+					x : e.xy.x,
+					y : e.xy.y,
+					dataSource : me.miniCardGridWindowController.getDataSource()
+				});
+
+				me.miniCardGridWindowController.bindMiniCardGridWindow(me.miniCardGridWindow);
+				me.miniCardGridWindow.show();
+			}
+		});
+
+		map.addControl(longPressControl);
+		longPressControl.activate();
+	}
+
+	//////***************************************************************** /////
+
+	function removeLayerForGeoAttribute(map, geoAttribute, me) {
+		var l = getLayerByGeoAttribute(map, geoAttribute);
+		if (l) {
+			if (!geoAttribute.isUsed() 
+					&& l.editLayer) {
+
+				map.removeLayer(l.editLayer);
+			}
+
+			l.events.unregister("visibilitychanged", me, onLayerVisibilityChange);
+			l.destroyStrategies();
+			map.removeLayer(l);
+		}
+	}
+
+	function addLayerForGeoAttribute(map, geoAttribute, me) {
+		if (!geoAttribute.isZoomValid()) {
+			return;
+		}
+
+		addLayerToMap(map, // 
+			CMDBuild.Management.CMMap.LayerBuilder.buildLayer({
+				classId : _CMCardModuleState.entryType.get("id"),
+				geoAttribute : geoAttribute.getValues(),
+				withEditLayer : true
+			}, map), //
+			me
+		);
+	}
+
+	function addLayerToMap(map, layer, me) {
+		if (layer) {
+			layer.events.register("visibilitychanged", me, onLayerVisibilityChange);
+			me.mapState.addLayer(layer, map.getZoom());
+			map.addLayers([layer]);
+
+			if (layer.editLayer) {
+				var el = map.getLayerByName(layer.editLayer.name);
+				if (!el) {
+					map.addLayers([layer.editLayer]);
+				}
+			}
+		}
+	};
+
+	function getLayerByGeoAttribute(me, geoAttribute) {
+		for (var i=0, l=me.layers.length; i<l; ++i) {
+			var layer = me.layers[i];
+			if (!layer.geoAttribute 
+					|| layer.CM_EditLayer) {
+				continue;
+			} else if (CMDBuild.state.GeoAttributeState.getKey(layer.geoAttribute)
+					== geoAttribute.getKey()) {
+				return layer;
+			}
+		}
+
+		return null;
+	}
+
+	function onLayerVisibilityChange(param) {
+		var layer = param.object;
+		this.mapState.updateLayerVisibility(layer, this.map.getZoom());
+	};
+
+	function sortAttributesByIndex(geoAttributes) {
+		var out = [];
+		for (var i=0, l=geoAttributes.length; i<l; ++i) {
+			var attr = geoAttributes[i];
+			out[attr.index] = attr;
+		}
+
+		return out;
 	};
 })();

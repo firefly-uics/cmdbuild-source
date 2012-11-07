@@ -15,11 +15,7 @@
 		getFeatureByMasterCard : Ext.emptyFn,
 		clearSelection : Ext.emptyFn,
 		getEditedGeometry : Ext.emptyFn,
-		refreshFeatures : Ext.emptyFn,
-		setVisibilityByZoom : (function(zoom) {
-			var isInRange = (zoom >= this.cmdb_minZoom && zoom <= this.cmdb_maxZoom);
-			this.setVisibility(isInRange);
-		})
+		refreshFeatures : Ext.emptyFn
 	};
 
 	CMDBuild.Management.CMMap.LayerBuilder = {
@@ -46,7 +42,7 @@
 					&& withEditLayer) {
 				// add the edit layer only for the layer
 				// defined for the current class or for an ancestor
-				editLayer = buildEditLayer(geoAttribute);
+				editLayer = buildEditLayer(geoAttribute, map);
 			}
 
 			if (geoAttribute.masterTableId) {
@@ -109,19 +105,25 @@
 		return Ext.applyIf(layer, new AbstractLayer());
 	};
 
-	function buildEditLayer(geoAttribute) {
+	function buildEditLayer(geoAttribute, map) {
 		// the edit layer is used to manage the single insert.
-		// maybe it's possible to do the same using the cmdblayer only, 
-		// and a "edit mode" in which consider the single insert
-		var editLayer = new OpenLayers.Layer.Vector(geoAttribute.description+'-Edit', {
-			projection: new OpenLayers.Projection("EPSG:900913"),
-			displayInLayerSwitcher: false,
+		// ask to the map if has already an editLayer for this geoAttribute,
+		// if not, build a new layer for it.
+		var name = CMDBuild.state.GeoAttributeState.getKey(geoAttribute)+'-Edit';
 
-			// cmdb stuff
-			geoAttribute: geoAttribute,
-			CM_EditLayer: true,
-			CM_Layer: true
-		});
+		var editLayer = map.getLayerByName(name);
+
+		if (!editLayer) {
+			editLayer = new OpenLayers.Layer.Vector(name, {
+				projection: new OpenLayers.Projection("EPSG:900913"),
+				displayInLayerSwitcher: false,
+				
+				// cmdb stuff
+				geoAttribute: geoAttribute,
+				CM_EditLayer: true,
+				CM_Layer: true
+			});
+		}
 
 		return editLayer;
 	};

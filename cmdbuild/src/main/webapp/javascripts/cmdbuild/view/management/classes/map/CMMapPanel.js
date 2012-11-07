@@ -147,8 +147,11 @@
 		},
 	
 		updateMap: function(entryType) {
-			this.getMap().update(entryType, withEditLayer=true);
-			this.editingWindow.update(this.getMap().cmdbLayers || []);
+			this.editingWindow.removeAllLayerBinding();
+		},
+
+		addLayerToEditingWindow: function(layer) {
+			this.editingWindow.addLayer(layer);
 		},
 
 		getLayerSwitcherPanel: function() {
@@ -166,7 +169,7 @@
 
 	function initMap(me) {
 		var map = CMDBuild.Management.MapBuilder.buildMap(me.actualMapPanel.body.dom.id);
-
+		_CMMap = map;
 		map.events.on({
 			"addlayer": function(params) {
 				me.callDelegates("onLayerAdded", [me, params]);
