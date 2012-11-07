@@ -1096,7 +1096,7 @@
          "delete_report": "Supprimer Rapport",
          "modify_report": "Editer rapport",
          "reportForm": {
-            "description": "Desciption",
+            "description": "Description",
             "name": "Nom",
             "report": "Rapport"
          },
