@@ -20,31 +20,28 @@ public class ManageRelationWidgetFactoryTest {
 		factory = new ManageRelationWidgetFactory(mock(TemplateRepository.class));
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void missingClassNameThrowsException() throws Exception {
+		factory.createWidget("IsDirect='true'\n", mock(CMValueSet.class));
+	}
+
 	@Test
 	public void testSource() {
-		ManageRelation w = (ManageRelation) factory.createWidget(
-			"IsDirect='true'\n",
-			mock(CMValueSet.class)
-		);
+		ManageRelation w = createFrom("ClassName='foo'\nIsDirect='true'\n");
 		assertThat(w.getSource(), is("_1"));
 
-		w = (ManageRelation) factory.createWidget(
-			"IsDirect='false'\n",
-			mock(CMValueSet.class)
-		);
+		w = createFrom("ClassName='foo'\nIsDirect='false'\n");
 		assertThat(w.getSource(), is("_2"));
 
-		w = (ManageRelation) factory.createWidget(
-			"IsDirect='asdf asd'\n",
-			mock(CMValueSet.class)
-		);
+		w = createFrom("ClassName='foo'\nIsDirect='asdf asd'\n");
 		assertThat(w.getSource(), is("_2"));
 
-		w = (ManageRelation) factory.createWidget(
-			"",
-			mock(CMValueSet.class)
-		);
+		w = createFrom("ClassName='foo'\n");
 		assertThat(w.getSource(), is(nullValue()));
+	}
+
+	private ManageRelation createFrom(final String serialization) {
+		return (ManageRelation) factory.createWidget(serialization, mock(CMValueSet.class));
 	}
 
 }
