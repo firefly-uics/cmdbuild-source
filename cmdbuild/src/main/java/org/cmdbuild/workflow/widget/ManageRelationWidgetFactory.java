@@ -2,6 +2,8 @@ package org.cmdbuild.workflow.widget;
 
 import java.util.Map;
 
+import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
@@ -14,6 +16,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	private final static String FUNCTIONS = "EnabledFunctions";
 	public final static String CLASS_NAME = "ClassName";
 	public final static String CARD_CQL_SELECTOR = "ObjId";
+	public static final String OBJ_REF = "ObjRef";
 	public final static String REQUIRED = "Required";
 	public final static String IS_DIRECT = "IsDirect";
 
@@ -31,8 +34,11 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		final ManageRelation widget = new ManageRelation();
 
 		widget.setDomainName(readString(valueMap.get(DOMAIN)));
-		widget.setClassName(readString(valueMap.get(CLASS_NAME)));
-		widget.setObjId(readString(valueMap.get(CARD_CQL_SELECTOR)));
+		if (valueMap.containsKey(OBJ_REF)) {
+			configureWidgetFromReference(widget, valueMap);
+		} else {
+			configureWidgetFromClassName(widget, valueMap);
+		}
 		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
 		setSource(widget, valueMap.get(IS_DIRECT));
 		setEnabledFunctions(widget, readString(valueMap.get(FUNCTIONS)));
@@ -72,5 +78,21 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		}
 
 		return enabled;
+	}
+	
+	private void configureWidgetFromClassName(final ManageRelation widget, final Map<String, Object> valueMap) {
+		final String className = readString(valueMap.get(CLASS_NAME));
+		final String cardIdOrCql = readString(valueMap.get(CARD_CQL_SELECTOR));
+		Validate.notEmpty(className, CLASS_NAME + " is required");
+
+		widget.setClassName(className);
+		widget.setObjId(cardIdOrCql);
+	}
+
+	private void configureWidgetFromReference(final ManageRelation widget, final Map<String, Object> valueMap) {
+		final CardReference objRef = (CardReference) valueMap.get(OBJ_REF);
+
+		widget.setClassName(readString(objRef.getClassName()));
+		widget.setObjId(readString(objRef.getId().toString()));
 	}
 }
