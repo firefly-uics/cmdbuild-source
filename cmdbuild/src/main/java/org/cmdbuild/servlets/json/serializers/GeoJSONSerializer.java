@@ -20,6 +20,7 @@ public class GeoJSONSerializer {
 		JSONObject jsonGeometry = serialize(feature.getGeometry());
 		JSONObject properties = new JSONObject();
 		properties.put("master_class", feature.getMasterCard().getSchema().getId());
+		properties.put("master_className", feature.getMasterCard().getSchema().getName());
 		properties.put("master_card", feature.getMasterCard().getId());
 		return getNewFeature(jsonGeometry, properties);
 	}

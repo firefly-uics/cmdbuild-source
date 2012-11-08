@@ -67,7 +67,6 @@
 		};
 
 		this.setUsed = function(used) {
-			_debug(this.getKey() + " is used: " + used);
 			_used = used;
 		};
 
@@ -95,6 +94,12 @@
 	CMDBuild.state.CMGeoAttributeCatalog = function() {
 		var _geoAttributes = {};
 
+		/**
+		 * 
+		 * @param {Object} values
+		 * @param {int} zoom Used to init the visibility of the GeoAttributeState if this is not already created
+		 * @returns
+		 */
 		this.getGeoAttributeWithValues = function getGeoAttributeWithValues(values, zoom) {
 			if (!values) {
 				return;
@@ -144,35 +149,71 @@
 
 			return used;
 		};
+
+		this.isGeoAttributeVisibleToUser = function isGeoAttributeVisibleToUser(values) {
+			var ga = this.getGeoAttributeWithValues(values);
+			return ga.isUserVisible();
+		};
 	};
 
-	/** @class LayersVisibilityState */
+	CMDBuild.state.CMFeatureVisibilityCatalog = function() {
+		var _classes = {};
+
+		this.setVisibilityForCard = function(className, cardId, visibility) {
+			var storedFeaturesInfo = getStoredInfoForClassName(className);
+			storedFeaturesInfo[cardId] = visibility;
+		};
+
+		this.isFeatureVisible = function(className, cardId) {
+			var storedFeaturesInfo = getStoredInfoForClassName(className);
+			var visible = null;
+			if (storedFeaturesInfo) {
+				if (typeof storedFeaturesInfo[cardId] != "undefined") {
+					visible = storedFeaturesInfo[cardId];
+				}
+			}
+
+			return visible;
+		};
+
+		function getStoredInfoForClassName(className) {
+			if (typeof _classes[className] == "undefined") {
+				_classes[className] = {};
+			}
+
+			return _classes[className];
+		}
+	};
+
+	/** @class CMMapStateDelegate */
 	CMDBuild.state.CMMapStateDelegate = function() {
 		this.geoAttributeUsageChanged = function(geoAttribute){};
 		this.geoAttributeZoomValidityChanged = function(geoAttribute){};
 	};
 
-	/** @class LayersVisibilityState */
+	/** @class CMMapState */
 	CMDBuild.state.CMMapState = function(delegate) {
 		/**
-		 * @memberOf LayersVisibilityState
+		 * @memberOf CMMapState
 		 * @private
 		 */
-		this.catalog = new CMDBuild.state.CMGeoAttributeCatalog();
+		this.geoAttributeCatalog = new CMDBuild.state.CMGeoAttributeCatalog();
+
+		this.featureVisibilityCatalog = new CMDBuild.state.CMFeatureVisibilityCatalog();
 
 		/**
-		 * @memberOf LayersVisibilityState
+		 * @memberOf CMMapState
 		 * @private
 		 */
 		this.delegate = delegate;
 
 		/**
-		 * @memberOf LayersVisibilityState
+		 * @memberOf CMMapState
 		 * @param {CMDBuild.Management.CMMap.MapLayer}
 		 * layer the layer to add
 		 */
 		this.addLayer = function(layer, zoom) {
-			var geoAttribute = this.catalog.getGeoAttributeWithValues(layer.geoAttribute, zoom);
+			var geoAttribute = this.geoAttributeCatalog.getGeoAttributeWithValues(layer.geoAttribute, zoom);
 			if (!geoAttribute) {
 				return;
 			}
@@ -181,11 +222,12 @@
 		};
 
 		/**
-		 * @memberOf LayersVisibilityState
-		 * @param {CMDBuild.Management.CMMap.MapLayer} layer The layer to add
+		 * @memberOf CMMapState
+		 * @param {CMDBuild.Management.CMMap.MapLayer} layer The layer to update
+		 * @param {int} zoom the current map zoom level 
 		 */
 		this.updateLayerVisibility = function(layer, zoom) {
-			var geoAttribute = this.catalog.getGeoAttributeWithValues(layer.geoAttribute, zoom);
+			var geoAttribute = this.geoAttributeCatalog.getGeoAttributeWithValues(layer.geoAttribute, zoom);
 			if (!geoAttribute) {
 				return;
 			}
@@ -194,13 +236,13 @@
 		};
 
 		/**
-		 * @memberOf LayersVisibilityState
+		 * @memberOf CMMapState
 		 * @param {array of object} geoAttributes The attributes to activate
 		 */
 		this.update = function(geoAttributes, zoom) {
-			this.catalog.reset(this.delegate);
+			this.geoAttributeCatalog.reset(this.delegate);
 			for (var i=0, l=geoAttributes.length; i<l; ++i) {
-				var ga = this.catalog.getGeoAttributeWithValues(geoAttributes[i], zoom);
+				var ga = this.geoAttributeCatalog.getGeoAttributeWithValues(geoAttributes[i], zoom);
 				if (ga) {
 					ga.setUsed(true);
 					if (this.delegate) {
@@ -211,7 +253,7 @@
 		};
 
 		this.updateForZoom = function(zoom) {
-			var usedGeoAttributes = this.catalog.getUsedGeoAttributes();
+			var usedGeoAttributes = this.geoAttributeCatalog.getUsedGeoAttributes();
 			for (var i=0, l=usedGeoAttributes.length; i<l; ++i) {
 				var ga = usedGeoAttributes[i];
 				var isNowZoomValid = CMDBuild.state.GeoAttributeState.isZoomValid(ga.getValues(), zoom);
@@ -225,7 +267,24 @@
 		};
 
 		this.isAUsedGeoAttribute = function isAUsedGeoAttribute(values) {
-			return this.catalog.isAUsedGeoAttribute(values);
+			return this.geoAttributeCatalog.isAUsedGeoAttribute(values);
+		};
+
+		this.isGeoAttributeVisibleToUser = function isGeoAttributeVisibleToUser(values) {
+			var visible = this.geoAttributeCatalog.isGeoAttributeVisibleToUser(values);
+			_debug("Layer visibile ?", values, visible);
+			return visible;
+		};
+
+		this.setFeatureVisisbility = function(className, cardId, visible) {
+			this.featureVisibilityCatalog.setVisibilityForCard(className, cardId, visible);
+			if (this.delegate) {
+				this.delegate.featureVisibilityChanged(className, cardId, visible);
+			}
+		};
+
+		this.isFeatureVisible = function(className, cardId) {
+			return this.featureVisibilityCatalog.isFeatureVisible(className, cardId);
 		};
 	};
 

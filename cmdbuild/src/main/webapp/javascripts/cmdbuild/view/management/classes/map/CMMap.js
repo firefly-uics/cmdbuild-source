@@ -119,6 +119,21 @@
 			return layers;
 		},
 
+		getGeoServerLayerByName: function(layerName) {
+			for (var i=0, layer=null; i<this.layers.length; ++i) {
+				layer = this.layers[i];
+				if (!layer.CM_geoserverLayer) {
+					continue;
+				}
+
+				if (layer.geoAttribute.name == layerName) {
+					return layer;
+				}
+			}
+
+			return null;
+		},
+
 		getEditedGeometries: function() {
 			var mapOfFeatures = {};
 			var layers = this.layers;

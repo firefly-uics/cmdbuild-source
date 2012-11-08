@@ -22,25 +22,28 @@
 
 		onLayerAdded: function(map, params) {
 			var layer = getLayerFromMapParams(params);
-			var me = this;
 
 			if (layer != null) {
 				this.layerSwitcerView.addLayerItem(layer);
-				layer.events.register("visibilitychanged", layer, function() {
-					me.layerSwitcerView.setItemCheckByLayerId(layer.id, layer.getVisibility());
-				});
+				layer.events.register("visibilitychanged", this, visibilityChanged);
 			}
 		},
 
 		onLayerRemoved: function(map, params) {
 			var layer = getLayerFromMapParams(params);
 			if (layer != null) {
+				layer.events.unregister("visibilitychanged", this, visibilityChanged);
 				this.layerSwitcerView.removeLayerItem(layer);
 			}
 		},
 
 		onMapPanelVisibilityChanged: Ext.emptyFn
 	});
+
+	function visibilityChanged(param) {
+		var layer = param.object;
+		this.layerSwitcerView.setItemCheckByLayerId(layer.id, layer.getVisibility());
+	}
 
 	function getLayerFromMapParams(params) {
 		if (!params
