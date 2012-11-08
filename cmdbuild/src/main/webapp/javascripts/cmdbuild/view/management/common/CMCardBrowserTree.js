@@ -2,21 +2,28 @@
 
 	Ext.define('CMDBuild.model.CMCardBrowserNodeModel', {
 		extend : 'Ext.data.Model',
-		fields : [{
-			name : 'text', type : 'string'
+		fields : [ {
+			name : 'text',
+			type : 'string'
 		}, {
-			name : 'visible', type : 'boolean'
+			name : 'visible',
+			type : 'boolean'
 		}, {
-			name : 'cardId', type : 'int'
+			name : 'cardId',
+			type : 'string' // cardId or the name of a geoserver layer
 		}, {
-			name : 'className', type : 'string'
+			name : 'className',
+			type : 'string'
 		}, {
-			name : 'classId', type : 'int'
+			name : 'classId',
+			type : 'int'
 		}, {
-			name: 'expansibleDomains', type: 'auto'
+			name : 'expansibleDomains',
+			type : 'auto'
 		}, {
-			name: 'childrenLoaded', type: 'boolean'
-		}],
+			name : 'childrenLoaded',
+			type : 'boolean'
+		} ],
 
 		getCardId: function() {
 			return this.get("cardId");
@@ -62,6 +69,7 @@
 		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The tree who call the method
 		 * @param {Ext.data.NodeInterface} node The node which has changed his check
 		 * @param {Boolean} checked the state of the check
+		 * @param {Boolean} deeply if propagate the check for all the branch
 		 */
 		onCardBrowserTreeCheckChange: Ext.emptyFn,
 
@@ -137,14 +145,21 @@
 				tooltip : "@@ show/hide this feature only",
 				align : 'center',
 				sortable : false,
-				icon : SHOW_ICON,
+				icon : HIDE_ICON,
+
+				hidden: true,
+
 				handler : function(grid, rowIndex, colIndex,
 						actionItem, event, record, row) {
 
 					var value = record.get("visible");
-					this.icon = value ? HIDE_ICON : SHOW_ICON;
+					this.icon = value ? SHOW_ICON : HIDE_ICON;
 					record.set("visible", !value);
 					record.commit();
+
+					var deeply = false;
+					_debug("SINGLE VISIBILITY", value);
+					me.callDelegates("onCardBrowserTreeCheckChange", [me, record, value, deeply]);
 				}
 			}, {
 				width : 40,
@@ -181,6 +196,9 @@
 			this.callParent(arguments);
 
 			this.mon(this, "afteritemexpand", function(node) {
+				if (node.sortingWasDeferred) {
+					this.sortChildren(node);
+				}
 				this.callDelegates("onCardBrowserTreeItemExpand", [this, node]);
 			}, this);
 
@@ -190,7 +208,8 @@
 			}, this);
 
 			this.mon(this, "checkchange", function(node, checked) {
-				this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked]);
+				var deeply = true;
+				this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked, deeply]);
 			}, this);
 
 			this.mon(this, "activate", function(treePanel) {
@@ -241,40 +260,66 @@
 
 			if (targetNode && childNode) {
 				node = targetNode.appendChild(childNode);
-
-				// Sort silently have no effect to the
-				// interface. So if the node is expanded
-				// fire the event to sync the interface,
-				// otherwise, do it silently to cause no
-				// change to the interface. In detail, it
-				// shows the child also if the parent is
-				// collapsed
-				var silently = !node.isExpanded();
-				var recursive = false;
-
-				targetNode.sort( function(a, b) {
-					var textA = a.get("text");
-					var textB = b.get("text");
-
-					if (textA > textB) {
-						return 1;
-					} else if (textA < textB) {
-						return -1;
-					}
-					return 0;
-				}, recursive, silently);
-
+				this.sortChildren(targetNode);
 				this.callDelegates("onCardBrowserTreeItemAdded", [this, targetNode, node]);
 			}
 
 			return node;
 		},
 
+		sortChildren: function(node) {
+			// Sort silently have no effect to the
+			// interface. So if the node is expanded
+			// fire the event to sync the interface,
+			// otherwise, do it silently to cause no
+			// change to the interface. In detail, it
+			// shows the child also if the parent is
+			// collapsed
+			var silently = false;
+			var recursive = false;
+			if (node.isExpanded()) {
+				node.sort(sortNodeCriteria, recursive, silently);
+				node.sortingWasDeferred = false;
+			} else {
+				node.sortingWasDeferred = true;
+			}
+		},
+
 		addLoadedChildren: function(targetNode, child) {
 			targetNode.set("childrenLoaded", true);
 			return this.addChildToNode(targetNode, child);
+		},
+
+		udpateCheckForLayer: function(layer) {
+			var store = this.store,
+				scope = null,
+				deep = true,
+				node = null;
+
+			var root = this.store.getRootNode();
+			if (root) {
+				 node = root.findChildBy(function(node) {
+					return node.data.cardId == layer.geoAttribute.name;
+				}, scope, deep);
+
+				if (node) {
+					node.set("checked", layer.getVisibility());
+				}
+			}
 		}
 	});
+
+	function sortNodeCriteria(a, b) {
+		var textA = a.get("text");
+		var textB = b.get("text");
+
+		if (textA > textB) {
+			return 1;
+		} else if (textA < textB) {
+			return -1;
+		}
+		return 0;
+	}
 
 	function deselectAllSilently(me) {
 		try {

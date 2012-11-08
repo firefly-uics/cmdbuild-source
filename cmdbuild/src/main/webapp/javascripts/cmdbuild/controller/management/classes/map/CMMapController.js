@@ -6,9 +6,9 @@
 		mixins: {
 			observable: "Ext.util.Observable",
 			mapDelegate: "CMDBuild.view.management.map.CMMapPanelDelegate",
-			editingWindowDelegate: "CMDBuild.view.management.map.CMMapEditingToolsWindowDelegate",
+			editingWindowDelegate: "CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate",
 			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate",
-			cardBrowserDelegate: "CMDBuild.view.management.CMCardBrowserTreeDelegate",
+			cardBrowserDelegate: "CMDBuild.controller.management.classes.map.CMCardBrowserDelegate",
 			cardStateDelegate: "CMDBuild.state.CMCardModuleStateDelegate",
 			miniCardGridDelegate: "CMDBuild.view.management.CMMiniCardGridDelegate"
 		},
@@ -21,7 +21,6 @@
 			if (mapPanel) {
 				this.mapPanel = mapPanel;
 				this.mapPanel.addDelegate(this);
-				this.mapPanel.editingWindow.addDelegate(this);
 
 				// set me as delegate of the OpenLayers.Map (pimped in CMMap)
 				this.map = mapPanel.getMap();
@@ -41,7 +40,7 @@
 				// set me as a delegate of the cardBrowser
 				var cardbrowserPanel = this.mapPanel.getCardBrowserPanel();
 				if (cardbrowserPanel) {
-					cardbrowserPanel.addDelegate(this);
+					cardbrowserPanel.addDelegate(new CMDBuild.controller.management.classes.map.CMCardBrowserDelegate(this));
 				}
 
 				// set me as delegate of the mini card grid
@@ -52,7 +51,8 @@
 					.management.CMMiniCardGridWindowFeaturesController();
 
 				// initialize editing control
-				this.editingControls = {};
+				this.editingWindowDelegate = new CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate(this);
+				this.mapPanel.editingWindow.addDelegate(this.editingWindowDelegate);
 				this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
 					hover: false,
 					renderIntent: "default",
@@ -87,6 +87,7 @@
 			var geoAttributes = entryType.getGeoAttrs() || [];
 			// TODO the sorting does not work
 			var orderedAttrs = sortAttributesByIndex(geoAttributes);
+			_debug("Sorted attributes", orderedAttrs);
 			this.mapState.update(orderedAttrs, this.map.getZoom());
 			this.map.activateStrategies(true);
 
@@ -163,10 +164,6 @@
 			CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
 		},
 
-		activateTransformConrol: function(layerId) {
-			activateControl.call(this, layerId, "transform");
-		},
-
 		editMode: function() {
 			this.cmIsInEditing = true;
 
@@ -181,7 +178,7 @@
 
 			if (this.mapPanel.cmVisible) {
 				this.mapPanel.displayMode();
-				deactivateEditControls.call(this);
+				this.editingWindowDelegate.deactivateEditControls();
 				this.activateSelectControl();
 			}
 		},
@@ -229,12 +226,6 @@
 		onLayerRemoved: onLayerRemoved,
 		onMapPanelVisibilityChanged: onVisibilityChanged,
 
-		/* As editingWindowDelegate *********/
-
-		addFeatureButtonHasBeenToggled: onAddFeatureButtonToggle,
-		removeFeatureButtonHasBeenClicked: onRemoveFeatureButtonClick,
-		geoAttributeMenuItemHasBeenClicked: activateEditControls,
-
 		/* As layerSwitcherDelegate *********/
 
 		onLayerCheckChange: function(node, checked) {
@@ -244,45 +235,6 @@
 				if (layer.length > 0) {
 					layer[0].setVisibility(checked);
 				}
-			}
-		},
-
-		/* As cardBrowserDelegate *********/
-
-		// Hide or show the feature[s] for the node
-		// from the map.
-		// the action has effect over all the branch that start with the
-		// passed node.
-		// So, if the node was never opened,
-		// there aren't the info to show/hide the features.
-		// For this reason, act like an expand, loading the
-		// branch at all, and then show/hide the features.
-
-		onCardBrowserTreeCheckChange: function(tree, node, checked) {
-			var forceChildren = true;
-			setFeatureVisibilityForAllBranch(tree, this.mapPanel.getMap(), node, checked, forceChildren);
-		},
-
-		onCardBrowserTreeItemExpand: function(tree, node) {
-			tree.dataSource.loadChildren(node);
-		},
-
-		onCardBrowserTreeCardSelected: function(cardBaseInfo) {
-			_CMMainViewportController.openCard(cardBaseInfo);
-		},
-
-		onCardBrowserTreeItemAdded: function(tree, targetNode, newNode) {
-			var card = _CMCardModuleState.card;
-			if (this.mapPanel.getCardBrowserPanel() 
-					&& newNode.isBindingCard(card)) {
-				this.mapPanel.getCardBrowserPanel().selectNodeSilently(newNode);
-			}
-		},
-
-		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {
-			// init the cardBrowserDataSource
-			if (activationCount == 1) {
-				new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardBrowserTree);
 			}
 		},
 
@@ -335,11 +287,37 @@
 			} else {
 				addLayerForGeoAttribute(this.map, geoAttribute, this);
 			}
+		},
+
+		featureVisibilityChanged: function(className, cardId, visible) {
+			var layers = this.map.getLayersByTargetClassName(className);
+
+			for (var i=0, layer=null; i<layers.length; ++i) {
+				layer = layers[i];
+				if (visible) {
+					if (typeof layer.showFeatureWithCardId == "function") {
+						layer.showFeatureWithCardId(cardId);
+					}
+				} else {
+					if (typeof layer.hideFeatureWithCardId == "function") {
+						layer.hideFeatureWithCardId(cardId);
+					}
+				}
+			}
 		}
 	});
 
 	function onZoomEnd() {
-		this.mapState.updateForZoom(this.map.getZoom());
+		var zoom = this.map.getZoom();
+		this.mapState.updateForZoom(zoom);
+
+		var baseLayers = this.map.getLayersBy("isBaseLayer", true);
+		for (var i=0, l=baseLayers.length; i<l; ++i) {
+			var layer = baseLayers[i];
+			if (layer && typeof layer.setVisibilityByZoom == "function") {
+				layer.setVisibilityByZoom(zoom);
+			}
+		}
 	};
 
 	function buildLongPressController(me) {
@@ -412,48 +390,6 @@
 		grid.setTitle(prefix + entryType.get("name"));
 	}
 
-	function setFeatureVisibilityForAllBranch(tree, map, node, checked, forceChildren) {
-		setCardFeaturesVisibility(map, node, checked);
-
-		if (forceChildren || !node.isExpanded()) {
-			if (node.didChildrenLoaded()) {
-				var children = node.childNodes || [];
-				setChildrenFeaturesVisibility(tree, map, checked, children, true);
-			} else {
-				tree.dataSource.loadChildren(node, function(children) {
-					setChildrenFeaturesVisibility(tree, map, checked, children, true);
-				});
-			}
-		}
-	}
-
-	function setCardFeaturesVisibility(map, node, visibility) {
-		var className = node.getCMDBuildClassName();
-		var cardId = node.getCardId();
-		var layers = map.getLayersByTargetClassName(className);
-
-		for (var i=0, layer=null; i<layers.length; ++i) {
-			layer = layers[i];
-			if (visibility) {
-				if (typeof layer.showFeatureWithCardId == "function") {
-					layer.showFeatureWithCardId(cardId);
-				}
-			} else {
-				if (typeof layer.hideFeatureWithCardId == "function") {
-					layer.hideFeatureWithCardId(cardId);
-				}
-			}
-		}
-	}
-
-	function setChildrenFeaturesVisibility(tree, map, checked, children, forceChildren) {
-		for (var i=0, child=null; i<children.length; ++i) {
-			child = children[i];
-			child.set("checked", checked);
-			setFeatureVisibilityForAllBranch(tree, map, child, checked, forceChildren);
-		}
-	}
-
 	function getCardData() {
 		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
 	};
@@ -490,70 +426,70 @@
 
 	function onLayerAdded(map, params) {
 		var layer = params.layer;
+		var me = this;
 
 		if (layer == null || !layer.CM_Layer) {
 			return;
 		}
 
-		buildEditControls.call(this, layer);
+		this.editingWindowDelegate.buildEditControls(layer);
 		this.selectControl.addLayer(layer);
+
+		layer.events.on({
+			"beforefeatureadded": beforefeatureadded,
+			"scope": me
+		});
 	}
 
 	function onLayerRemoved(map, params) {
 		var layer = params.layer;
+		var me = this;
 
 		if (layer == null || !layer.CM_Layer) {
 			return;
 		}
 
-		destroyEditControls.call(this, layer);
+		this.editingWindowDelegate.destroyEditControls(layer);
 		this.selectControl.removeLayer(layer);
+
+		layer.events.un({
+			"beforefeatureadded": beforefeatureadded,
+			"scope": me
+		});
 	}
 
-	function onEditableLayerBeforeAdd(o) {
+	function beforefeatureadded(o) {
 		var layer = o.object;
 
-		if (layer.features.length > 0) {
-			var currentFeature = layer.features[0];
-			if (o.feature.attributes.master_card) {
-				// add a feature in edit layer
-				// because was selected by the user
-				if (currentFeature.attributes.master_card == o.feature.attributes.master_card) {
-					return false; // forbid the add
+		if (layer.CM_EditLayer) {
+			if (layer.features.length > 0) {
+				var currentFeature = layer.features[0];
+				if (o.feature.attributes.master_card) {
+					// add a feature in edit layer
+					// because was selected by the user
+					if (currentFeature.attributes.master_card == o.feature.attributes.master_card) {
+						return false; // forbid the add
+					} else {
+						layer.removeFeatures([currentFeature]);
+					}
 				} else {
-					layer.removeFeatures([currentFeature]);
+					// is added in editing mode
+					// and want only one feature
+					layer.removeAllFeatures();
+					return true;
 				}
-			} else {
-				// is added in editing mode
-				// and want only one feature
-				layer.removeAllFeatures();
-				return true;
+			}
+		} else {
+			var data = o.feature.data;
+
+			if (this.mapState.isFeatureVisible(data.master_className, data.master_card) === false) { // could be also null, or undefined
+				layer.hideFeatureWithCardId(data.master_card, o.feature);
+				return false;
 			}
 		}
+
 		return true;
 	}
-
-	function activateEditControls(editLayer) {
-		deactivateEditControls.call(this);
-
-		this.currentEditLayer = editLayer;
-		this.activateTransformConrol(editLayer.name);
-
-		var editFeature = editLayer.features[0];
-
-		if (editFeature) {
-			setTransformControlFeature.call(this, editLayer.name, editFeature);
-			editLayer.drawFeature(editFeature, "select");
-		}
-	}
-
-	function deactivateEditControls() {
-		for (var layer in this.editingControls) {
-			for (var control in this.editingControls[layer]) {
-				this.editingControls[layer][control].deactivate();
-			}
-		}
-	};
 
 	function onCmdbLayerBeforeAdd(o) {
 		var layer = o.object,
@@ -563,22 +499,6 @@
 				&& this.currentCardId == feature.data.master_card) {
 
 			layer.selectFeature(feature);
-		}
-	}
-
-	function onAddFeatureButtonToggle(toggled) {
-		if (toggled) {
-			activateControl.call(this, this.currentEditLayer.id, "creation");
-			deactivateControl.call(this, this.currentEditLayer.id, "transform");
-		} else {
-			deactivateControl.call(this, this.currentEditLayer.id, "creation");
-			activateControl.call(this, this.currentEditLayer.id, "transform");
-		}
-	}
-
-	function onRemoveFeatureButtonClick() {
-		if (this.currentEditLayer) {
-			this.currentEditLayer.removeAllFeatures();
 		}
 	}
 
@@ -611,91 +531,6 @@
 			}
 		}
 	}
-
-	function buildEditControls(layer) {
-		if (layer.editLayer) {
-			if (this.editingControls[layer.editLayer.name]) {
-				return;
-			}
-
-			_debug("BUILD EDIT CONTROL", layer.editLayer.id, layer.editLayer.name);
-
-			var geoAttribute = layer.geoAttribute,
-				creation = buildCreationControl(geoAttribute.type, layer.editLayer),
-				transform = buildTransformControl(layer.editLayer);
-
-			this.map.addControls([creation, transform]);
-			this.editingControls[layer.editLayer.name] = {
-				creation: creation,
-				transform: transform
-			};
-
-			this.mapPanel.addLayerToEditingWindow(layer);
-		}
-	}
-
-	function destroyEditControls(layer) {
-		if (layer.editLayer) {
-			if (this.mapState.isAUsedGeoAttribute(layer.geoAttribute)) {
-				return;
-			}
-
-			var name = layer.editLayer.name;
-			for (var control in this.editingControls[name]) {
-				this.mapPanel.getMap().removeControl(this.editingControls[name][control]);
-				delete this.editingControls[name][control];
-			}
-
-			delete this.editingControls[name];
-		}
-	};
-
-	function activateControl(layerId, controlName) {
-		var l = this.editingControls[layerId];
-		if (l[controlName]) {
-			l[controlName].activate();
-		}
-	};
-
-	function setTransformControlFeature(layerId, feature) {
-		if (feature) {
-			var l = this.editingControls[layerId];
-			if (l["transform"]) {
-				l["transform"].selectFeature(feature);
-			}
-		}
-	};
-
-	function deactivateControl(layerId, controlName) {
-		_debug("DEACTIVATE", layerId, controlName);
-		var l = this.editingControls[layerId];
-		if (l[controlName]) {
-			l[controlName].deactivate();
-		}
-	};
-
-	function buildTransformControl(layer) { 
-		var c = new OpenLayers.Control.ModifyFeature(layer);
-		c.mode = OpenLayers.Control.ModifyFeature.DRAG
-		|= OpenLayers.Control.ModifyFeature.ROTATE
-		|= OpenLayers.Control.ModifyFeature.RESIZE;
-		return c;
-	};
-
-	function buildCreationControl(type, layer) {
-		var controlBuilders = {
-			POINT: function(layer) {
-				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Point);
-			},
-			POLYGON: function(layer) {
-				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Polygon);
-			},
-			LINESTRING: function(layer) {
-				return new OpenLayers.Control.DrawFeature(layer, OpenLayers.Handler.Path);
-			}
-		};
-		return controlBuilders[type](layer);
-	};
 
 	function buildLongPressController(me) {
 		var map = me.map;
@@ -796,15 +631,25 @@
 	function onLayerVisibilityChange(param) {
 		var layer = param.object;
 		this.mapState.updateLayerVisibility(layer, this.map.getZoom());
+
+		var cardBrowserPanel = this.mapPanel.getCardBrowserPanel();
+		if (layer.CM_geoserverLayer && cardBrowserPanel) {
+			cardBrowserPanel.udpateCheckForLayer(layer);
+		}
 	};
 
 	function sortAttributesByIndex(geoAttributes) {
-		var out = [];
+		var cmdbuildLayers = [];
+		var geoserverLayers = [];
 		for (var i=0, l=geoAttributes.length; i<l; ++i) {
 			var attr = geoAttributes[i];
-			out[attr.index] = attr;
+			if (attr.masterTableId) {
+				cmdbuildLayers[attr.index] = attr;
+			} else {
+				geoserverLayers[attr.index] = attr;
+			}
 		}
 
-		return out;
+		return cmdbuildLayers.concat(geoserverLayers);
 	};
 })();

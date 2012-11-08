@@ -10,6 +10,7 @@
 		CMDBuildLayer : true,
 		CM_Layer : true,
 		activateStrategies : Ext.emptyFn,
+		destroyStrategies : Ext.emptyFn,
 		selectFeatureByMasterCard : Ext.emptyFn,
 		selectFeature : Ext.emptyFn,
 		getFeatureByMasterCard : Ext.emptyFn,

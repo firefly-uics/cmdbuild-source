@@ -157,8 +157,10 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		return out;
 	},
 
-	hideFeatureWithCardId: function(masterCardId) {
-		var f = this.getFeatureByMasterCard(masterCardId);
+	// the feature to hide could be passed when the
+	// layer load the feature remotely
+	hideFeatureWithCardId: function(masterCardId, feature) {
+		var f = feature || this.getFeatureByMasterCard(masterCardId);
 		if (f) {
 			this.hiddenFeature[masterCardId] = f.clone();
 			this.removeFeatures([f]);

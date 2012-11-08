@@ -37,26 +37,44 @@
 								// TODO do request
 
 								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {
-									className: "Building",
-									children: [{
-										className: "Floor",
-										domainName: "BuildingFloor",
-										direct: true,
+									root: {
+										className: "Building",
 										children: [{
-											className: "Room",
-											domainName: "FloorRoom",
+											className: "Floor",
+											domainName: "BuildingFloor",
 											direct: true,
 											children: [{
-												className: "Asset",
-												domainName: "RoomAsset",
-												direct: true
-											}, {
-												className: "Workplace",
-												domainName: "RoomWorkplace",
-												direct: true
+												className: "Room",
+												domainName: "FloorRoom",
+												direct: true,
+												children: [{
+													className: "Asset",
+													domainName: "RoomAsset",
+													direct: true
+												}, {
+													className: "Workplace",
+													domainName: "RoomWorkplace",
+													direct: true
+												}]
 											}]
 										}]
-									}]
+									},
+									geoServerLayersMapping: {
+										"Floor": {
+											"83": {
+												name: "Bastogi-PA",
+												description: "Bastogi - Piano Ammezzato"
+											},
+											"87": {
+												name: "Bastogi-P1",
+												description: "Bastogi - Piano Primo"
+											},
+											"92": {
+												name: "Bastogi-PT",
+												description: "Bastogi - Piano Terra"
+											}
+										}
+									}
 								};
 
 								CMDBuild.ServiceProxy.configuration.readGisConfiguration({

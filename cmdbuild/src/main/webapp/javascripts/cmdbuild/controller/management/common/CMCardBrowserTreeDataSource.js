@@ -1,9 +1,11 @@
 (function() {
+	var GEOSERVER = "GeoServer";
 
 	Ext.define("CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource", {
-		constructor: function(cardBrowserTree) {
+		GEOSERVER: GEOSERVER,
+		constructor: function(cardBrowserTree, mapState) {
 			this.cardBrowserTree = cardBrowserTree;
-
+			this.mapState = mapState;
 			/*
 			 * The configuration has a tree like representation
 			 * of a domain chain. Start with a root node
@@ -54,23 +56,13 @@
 			// asking the cards according to the 
 			// root of the configuration
 			CMDBuild.ServiceProxy.getCardBasicInfoList(
-				me.configuration.className, //
+				me.configuration.root.className, //
 				function successGetCardBasicInfoList(operation, options, response) {
 					var cards = response.rows;
 					for (var i=0, card=null, l=cards.length; i<l; ++i) {
 						card = cards[i];
-						card.expansibleDomains = me.configuration.children || [];
-
-						me.cardBrowserTree.addChildToNode(targetNode, {
-							text: card.Description,
-							className: card.IdClass_value,
-							classId: card.IdClass,
-							cardId: card.Id,
-							expansibleDomains: card.expansibleDomains,
-							leaf: card.expansibleDomains.length == 0,
-							expanded: false,
-							checked: true
-						});
+						card.expansibleDomains = me.configuration.root.children || [];
+						me.cardBrowserTree.addChildToNode(targetNode, adaptCardToNode(card, me));
 					}
 				}
 			);
@@ -80,16 +72,19 @@
 		},
 
 		loadBranch: function(node) {
-			loadChildren(this, node, true);
+			var deeply = true;
+			loadChildren(this, node, deeply);
 		},
 
 		loadChildren: function(node, cb) {
-			loadChildren(this, node, false, cb);
+			var deeply = false;
+			loadChildren(this, node, deeply, cb);
 		}
 	});
 
 	function loadChildren(me, node, deeply, cb) {
-		if (node.didChildrenLoaded()) {
+
+		if (node.didChildrenLoaded() || node.get("loading")) {
 			return;
 		}
 
@@ -98,20 +93,22 @@
 			return;
 		}
 
-		var totalChildren = [];
+		var totalChildren = node.childNodes || [];
 		var steps = 0;
 		node.set("loading", true);
 		for (var i=0, domain=null; i<domains.length; ++i) {
 			domain = domains[i];
-			loadDomainChildrenForNode(me, node, domain, deeply, function(domainChildren) {
-				totalChildren = totalChildren.concat(domainChildren);
-				node.set("loading", false);
-				if (typeof cb == "function" 
-					&& ++steps == domains.length) {
-
-					cb(totalChildren);
+			loadDomainChildrenForNode(me, node, domain, deeply, //
+				function(domainChildren) {
+					totalChildren = totalChildren.concat(domainChildren);
+					node.set("loading", false);
+					if (++steps == domains.length
+							&&typeof cb == "function") {
+	
+						cb(totalChildren);
+					}
 				}
-			});
+			);
 		}
 	}
 
@@ -140,7 +137,7 @@
 				for (var j=0, rel = null, l=relations.length; j<l; ++j) {
 					rel = relations[j];
 					var newChild = me.cardBrowserTree.addLoadedChildren(node,
-							adaptRelationListResponseToNode(rel, domain));
+							adaptRelationListResponseToNode(rel, domain, me));
 
 					children.push(newChild);
 
@@ -156,9 +153,24 @@
 		});
 	}
 
-	function adaptRelationListResponseToNode(rel, domain) {
+	function adaptCardToNode(card, me) {
+		var nodeConf = {
+			text: card.Description,
+			className: card.IdClass_value,
+			classId: card.IdClass,
+			cardId: card.Id,
+			expansibleDomains: card.expansibleDomains,
+			leaf: card.expansibleDomains.length == 0,
+			expanded: false,
+			checked: true
+		};
+
+		return addGeoserverLayerIfConfigured(nodeConf, me);
+	}
+
+	function adaptRelationListResponseToNode(rel, domain, me) {
 		var subDomains = domain.children || [];
-		return {
+		var nodeConf = {
 			text: rel.dst_desc || rel.dst_code,
 			className: _CMCache.getEntryTypeNameById(rel.dst_cid),
 			classId: rel.dst_cid,
@@ -168,5 +180,30 @@
 			expanded: false,
 			checked: true
 		};
+
+		return addGeoserverLayerIfConfigured(nodeConf, me);
+	}
+
+	function addGeoserverLayerIfConfigured(nodeConfiguration, me) {
+		var mapping = me.configuration.geoServerLayersMapping;
+		if (mapping) {
+			var layerPerClass = mapping[nodeConfiguration.className];
+			if (layerPerClass) {
+				var layerPerCard = layerPerClass[nodeConfiguration.cardId];
+				if (layerPerCard) {
+					nodeConfiguration.children = [{
+						text: layerPerCard.description,
+						cardId: layerPerCard.name,
+						className: GEOSERVER,
+						leaf: true,
+						checked: me.mapState.isGeoAttributeVisibleToUser({
+							name: layerPerCard.name
+						})
+					}];
+				}
+			}
+		}
+
+		return nodeConfiguration;
 	}
 })();

@@ -18,7 +18,7 @@ CMDBuild.Management.MapBuilder = (function() {
 
 		var map = new CMDBuild.Management.CMMap(options);
 
-//		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
 
 		map.addControl(new CMDBuild.Management.CMZoomAndMousePositionControl({
 			zoomLabel : CMDBuild.Translation.management.modcard.gis.zoom,
