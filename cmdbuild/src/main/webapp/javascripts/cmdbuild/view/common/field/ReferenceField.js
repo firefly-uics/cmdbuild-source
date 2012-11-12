@@ -120,8 +120,8 @@
 		setValue : function(v) {
         	v = this.extractIdIfValueIsObject(v);
 
-			if (this.store.isOneTime // is one time seems that has a CQL filter
-					|| this.ensureToHaveTheValueInStore(v) !== false) {
+			if (this.ensureToHaveTheValueInStore(v) !== false
+					|| this.store.isOneTime) {// is one time seems that has a CQL filter
 
 				this.callParent([v]);
 			}
