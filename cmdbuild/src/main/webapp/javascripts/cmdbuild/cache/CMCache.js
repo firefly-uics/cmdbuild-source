@@ -111,7 +111,7 @@
 					field: 'Description',
 					direction: 'ASC' 
 				},
-				autoLoad : true
+				autoLoad : !isOneTime
 			});
 		},
 		
