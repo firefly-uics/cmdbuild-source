@@ -52,11 +52,17 @@
 				return;
 			}
 
+			var rootName = me.configuration.root.className;
+			var rootDescription = me.configuration.root.description || me.configuration.root.className;
+
+			// change the label of the root node
+//			targetNode.set("text", rootDescription);
+
 			// fill the first level of tree nodes
 			// asking the cards according to the 
 			// root of the configuration
 			CMDBuild.ServiceProxy.getCardBasicInfoList(
-				me.configuration.root.className, //
+				rootName, //
 				function successGetCardBasicInfoList(operation, options, response) {
 					var cards = response.rows;
 					for (var i=0, card=null, l=cards.length; i<l; ++i) {

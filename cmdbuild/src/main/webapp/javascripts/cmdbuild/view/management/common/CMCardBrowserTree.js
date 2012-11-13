@@ -118,7 +118,7 @@
 
 		initComponent: function() {
 			this.useArrows = true;
-			this.rootVisible = false;
+			this.rootVisible = true;
 			this.multiSelect = false;
 			this.folderSort = false;
 			this.frame = false;
@@ -189,6 +189,8 @@
 				model : "CMDBuild.model.CMCardBrowserNodeModel",
 				root : {
 					expanded : true,
+					checked: true,
+					text: me.rootText,
 					children : []
 				}
 			});
@@ -209,7 +211,16 @@
 
 			this.mon(this, "checkchange", function(node, checked) {
 				var deeply = true;
-				this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked, deeply]);
+				if (!node.isRoot()) {
+					this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked, deeply]);
+				} else {
+					for (var i=0, l=node.childNodes.length; i<l; ++i) {
+						var c = node.childNodes[i];
+						c.set("checked", checked);
+						// the set method does not trigger the checkchange event, so call the delegate by hand
+						this.callDelegates("onCardBrowserTreeCheckChange", [this, c, checked, deeply]);
+					}
+				}
 			}, this);
 
 			this.mon(this, "activate", function(treePanel) {

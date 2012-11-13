@@ -39,6 +39,7 @@
 								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {
 									root: {
 										className: "Building",
+										classDescription: "Palazzo",
 										children: [{
 											className: "Floor",
 											domainName: "BuildingFloor",

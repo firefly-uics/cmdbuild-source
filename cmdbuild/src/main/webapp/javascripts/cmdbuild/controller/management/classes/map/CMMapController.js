@@ -8,7 +8,6 @@
 			mapDelegate: "CMDBuild.view.management.map.CMMapPanelDelegate",
 			editingWindowDelegate: "CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate",
 			layerSwitcherDelegate: "CMDBuild.view.management.map.CMMapLayerSwitcherDelegate",
-			cardBrowserDelegate: "CMDBuild.controller.management.classes.map.CMCardBrowserDelegate",
 			cardStateDelegate: "CMDBuild.state.CMCardModuleStateDelegate",
 			miniCardGridDelegate: "CMDBuild.view.management.CMMiniCardGridDelegate"
 		},
