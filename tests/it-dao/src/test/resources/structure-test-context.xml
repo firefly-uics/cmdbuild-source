@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+	">
+
+	<bean id="pg_driver" class="org.cmdbuild.dao.driver.postgres.PostgresDriver">
+		<constructor-arg>
+			<bean class="org.postgresql.ds.PGSimpleDataSource">
+				<property name="serverName" value="localhost" />
+				<property name="portNumber" value="5432" />
+				<property name="user" value="postgres" />
+				<property name="password" value="postgres" />
+				<property name="databaseName" value="test" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="mem_driver" class="org.cmdbuild.dao.driver.InMemoryDriver" />
+
+</beans>
