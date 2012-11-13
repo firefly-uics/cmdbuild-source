@@ -22,19 +22,6 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-
-	<context-param>
-		<param-name>modules</param-name>
-		<param-value>database,cmdbuild,dms,workflow,email,graph,gis,auth</param-value>
-	</context-param>
-	<context-param>
-		<param-name>moduleLoaders</param-name>
-		<param-value>ParameterTransformerInit</param-value>
-	</context-param>
-	<listener id="cmdbuildInit">
-		<listener-class>org.cmdbuild.plugins.CMDBInitListener</listener-class>
-	</listener>
-
 	<filter>
 		<filter-name>TranslationFilter</filter-name>
 		<filter-class>org.cmdbuild.filters.TranslationFilter</filter-class>

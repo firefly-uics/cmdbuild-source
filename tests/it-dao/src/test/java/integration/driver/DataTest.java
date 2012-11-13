@@ -9,15 +9,10 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-@RunWith(value = Parameterized.class)
-public class DataTest extends DriverFixture {
+import utils.IntegrationTestBase;
 
-	public DataTest(final String driverBeanName) {
-		super(driverBeanName);
-	}
+public class DataTest extends IntegrationTestBase {
 
 	private static final String A_CLASS_NAME = uniqueUUID();
 	private static final String A_SUPERCLASS_NAME = uniqueUUID();
@@ -30,8 +25,8 @@ public class DataTest extends DriverFixture {
 
 	@Test
 	public void cardsCanBeAdded() {
-		final DBClass newClass = driver.createClass(A_CLASS_NAME, null);
-		final CMCard newCard = DBCard.newInstance(driver, newClass) //
+		final DBClass newClass = rollbackDriver.createClass(A_CLASS_NAME, null);
+		final CMCard newCard = DBCard.newInstance(rollbackDriver, newClass) //
 				.set(CODE_ATTRIBUTE, CODE_VALUE) //
 				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();
@@ -43,8 +38,8 @@ public class DataTest extends DriverFixture {
 
 	@Test(expected = Exception.class)
 	public void cardsCannotBeAddedInSuperclass() {
-		final DBClass newClass = driver.createSuperClass(A_SUPERCLASS_NAME, null);
-		final CMCard newCard = DBCard.newInstance(driver, newClass) //
+		final DBClass newClass = rollbackDriver.createSuperClass(A_SUPERCLASS_NAME, null);
+		final CMCard newCard = DBCard.newInstance(rollbackDriver, newClass) //
 				.set(CODE_ATTRIBUTE, CODE_VALUE) //
 				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();

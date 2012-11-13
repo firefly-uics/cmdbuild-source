@@ -13,7 +13,7 @@
 				<property name="portNumber" value="5432" />
 				<property name="user" value="postgres" />
 				<property name="password" value="postgres" />
-				<property name="databaseName" value="cmdbuild-test" />
+				<property name="databaseName" value="test" />
 			</bean>
 		</constructor-arg>
 	</bean>

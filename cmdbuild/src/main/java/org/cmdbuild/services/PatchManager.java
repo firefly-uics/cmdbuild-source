@@ -14,11 +14,11 @@ import java.util.regex.Pattern;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
 import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
+import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -57,37 +57,36 @@ public class PatchManager {
 	}
 
 	private Patch lastAvaiablePatch;
-	
+
 	private PatchManager() {
-		String lastAppliedPatch = getLastAppliedPatch();
+		final String lastAppliedPatch = getLastAppliedPatch();
 		setAvaiblePatches(lastAppliedPatch);
 	}
 
 	private String getLastAppliedPatch() {
 		try {
-			String code = getPatchTable().cards().list()
-			.order("Code", OrderFilterType.DESC)
-			.limit(1).get().getCode();
+			final String code = getPatchTable().cards().list().order("Code", OrderFilterType.DESC).limit(1).get()
+					.getCode();
 			return code;
-		} catch (NotFoundException e){
-			//return an empty string to allow the setAvailablePatches to
-			//take all the patches in the list
+		} catch (final NotFoundException e) {
+			// return an empty string to allow the setAvailablePatches to
+			// take all the patches in the list
 			return "";
 		}
 	}
-	
+
 	private ITable getPatchTable() {
 		ITable patchTable;
 		try {
 			patchTable = UserContext.systemContext().tables().get(PATCHES_TABLE);
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			patchTable = createPatchtable();
 		}
 		return patchTable;
 	}
-	
+
 	private ITable createPatchtable() {
-		ITable patchTable = UserContext.systemContext().tables().create();
+		final ITable patchTable = UserContext.systemContext().tables().create();
 		patchTable.setParent(Constants.BASE_CLASS_NAME);
 		patchTable.setSuperClass(false);
 		patchTable.setName(PATCHES_TABLE);
@@ -96,45 +95,45 @@ public class PatchManager {
 		patchTable.save();
 		return patchTable;
 	}
-	
-	private void setAvaiblePatches(String lastAppliedPatch) {
-		File patchesFolder = new File(PATH);
+
+	private void setAvaiblePatches(final String lastAppliedPatch) {
+		final File patchesFolder = new File(PATH);
 		this.availablePatch = new LinkedList<Patch>();
-		FilenameFilter filenameFilter = PatternFilenameFilter.build(PATCH_PATTERN);
-		String[] patchesName = patchesFolder.list(filenameFilter);
+		final FilenameFilter filenameFilter = PatternFilenameFilter.build(PATCH_PATTERN);
+		final String[] patchesName = patchesFolder.list(filenameFilter);
 		java.util.Arrays.sort(patchesName, 0, patchesName.length);
 		setLastPatch(patchesName);
-		for (String patchName: patchesName) {
+		for (final String patchName : patchesName) {
 			try {
-				Patch patch = new Patch(patchName);
+				final Patch patch = new Patch(patchName);
 				if (lastAppliedPatch.compareTo(patch.getVersion()) < 0)
 					this.availablePatch.add(patch);
-			} catch (ORMException e) {
+			} catch (final ORMException e) {
 				this.availablePatch = null;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				this.availablePatch = null;
 			}
 		}
-	} 
-	
-	private void setLastPatch(String[] patchesName) {
+	}
+
+	private void setLastPatch(final String[] patchesName) {
 		if (patchesName.length > 0) {
-			String patchName = patchesName[patchesName.length -1];
+			final String patchName = patchesName[patchesName.length - 1];
 			try {
 				this.lastAvaiablePatch = new Patch(patchName, true);
-			} catch (ORMException e) {
+			} catch (final ORMException e) {
 				this.lastAvaiablePatch = null;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				this.lastAvaiablePatch = null;
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void applyPatchList() throws SQLException {
-		LinkedList<Patch> currentPatch = (LinkedList<Patch>) this.availablePatch.clone();
+		final LinkedList<Patch> currentPatch = (LinkedList<Patch>) this.availablePatch.clone();
 		try {
-			for (Patch patch: currentPatch) {
+			for (final Patch patch : currentPatch) {
 				applyPatch(patch);
 			}
 		} finally {
@@ -142,26 +141,32 @@ public class PatchManager {
 		}
 	}
 
-	private void applyPatch(Patch patch) throws SQLException, ORMException {
-		Connection con = DBService.getConnection();
-		Statement stm = con.createStatement();
+	// TODO use Spring's JdbcTemplate sooner or later
+	private void applyPatch(final Patch patch) throws SQLException, ORMException {
+		final Connection con = DBService.getConnection();
+		final Statement stm = con.createStatement();
 		con.setAutoCommit(false);
 		try {
 			stm.execute(FileUtils.getContents(patch.getFilePath()));
 			createPatchCard(patch);
 			this.availablePatch.remove(patch);
 			con.commit();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			con.rollback();
 			Log.SQL.error(String.format("Failed to apply patch %s", patch.getVersion()), e);
 			throw ORMExceptionType.ORM_SQL_PATCH.createException();
 		} finally {
-			stm.close();
+			try {
+				stm.close();
+			} catch (final Exception e) {
+				// we need to catch it because we need to close connection
+			}
+			con.close();
 		}
 	}
-	
-	private void createPatchCard(Patch patch) {
-		ICard cardPatch = getPatchTable().cards().create();
+
+	private void createPatchCard(final Patch patch) {
+		final ICard cardPatch = getPatchTable().cards().create();
 		cardPatch.setCode(patch.getVersion());
 		cardPatch.setDescription(patch.getDescription());
 		cardPatch.setStatus(ElementStatus.ACTIVE);
@@ -171,40 +176,41 @@ public class PatchManager {
 	public LinkedList<Patch> getAvaiblePatch() {
 		if (this.availablePatch != null)
 			return this.availablePatch;
-		else throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
+		else
+			throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 	}
 
 	public boolean isUpdated() {
-		 return (this.availablePatch != null && this.availablePatch.isEmpty());
+		return (this.availablePatch != null && this.availablePatch.isEmpty());
 	}
-	
-	//used in DatabaseConfigurator to set updated a new Database
+
+	// used in DatabaseConfigurator to set updated a new Database
 	public void createLastPatch() {
-		if (this.lastAvaiablePatch != null ) {
+		if (this.lastAvaiablePatch != null) {
 			createPatchCard(this.lastAvaiablePatch);
 			this.availablePatch.clear();
 		}
 	}
-	
+
 	public class Patch {
-		private String version;
+		private final String version;
 		private String description;
 		private String filePath;
 
-		protected Patch(String fileName) throws ORMException, IOException {			
+		protected Patch(final String fileName) throws ORMException, IOException {
 			this(fileName, false);
 		}
 
-		protected Patch(String fileName, boolean fake) throws ORMException, IOException {			
+		protected Patch(final String fileName, final boolean fake) throws ORMException, IOException {
 			this.version = extractVersion(fileName);
 			if (fake) {
 				description = "Create database";
 				filePath = "";
-			} else {				
-				this.filePath = PATH + File.separatorChar +fileName;
-				File patchFile = new File(filePath);
-				BufferedReader input =  new BufferedReader(new FileReader(patchFile));
-				String firstLine = input.readLine();
+			} else {
+				this.filePath = PATH + File.separatorChar + fileName;
+				final File patchFile = new File(filePath);
+				final BufferedReader input = new BufferedReader(new FileReader(patchFile));
+				final String firstLine = input.readLine();
 				if (firstLine == null) {
 					throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 				}
@@ -215,31 +221,30 @@ public class PatchManager {
 		public String getVersion() {
 			return version;
 		}
-		
+
 		public String getDescription() {
 			return description;
 		}
-		
+
 		public String getFilePath() {
 			return filePath;
 		}
-		
-		private String extractDescription(String description) throws ORMException {
-			Pattern extractDescriptionPattern = Pattern.compile("--\\W*(.+)");
-			Matcher descriptionParts = extractDescriptionPattern.matcher(description);
+
+		private String extractDescription(final String description) throws ORMException {
+			final Pattern extractDescriptionPattern = Pattern.compile("--\\W*(.+)");
+			final Matcher descriptionParts = extractDescriptionPattern.matcher(description);
 			if (!descriptionParts.lookingAt()) {
 				throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 			}
 			return descriptionParts.group(1);
 		}
-		
-		private String extractVersion(String fileName) throws ORMException {
-			Pattern testFileNameSintax = Pattern.compile("(\\d\\.\\d\\.\\d-\\d{2})\\.sql");
-			Matcher fileNameParts = testFileNameSintax.matcher(fileName);
-			if(!fileNameParts.lookingAt())
+
+		private String extractVersion(final String fileName) throws ORMException {
+			final Pattern testFileNameSintax = Pattern.compile("(\\d\\.\\d\\.\\d-\\d{2})\\.sql");
+			final Matcher fileNameParts = testFileNameSintax.matcher(fileName);
+			if (!fileNameParts.lookingAt())
 				throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 			return fileNameParts.group(1);
 		}
 	}
 }
-

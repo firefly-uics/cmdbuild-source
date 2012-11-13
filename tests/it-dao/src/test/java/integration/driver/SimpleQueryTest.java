@@ -18,26 +18,21 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+
+import utils.IntegrationTestBase;
 
 import com.google.common.collect.Iterables;
 
-@RunWith(value = Parameterized.class)
-public class SimpleQueryTest extends DriverFixture {
-
-	public SimpleQueryTest(final String driverBeanName) {
-		super(driverBeanName);
-	}
+public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void simpleSubclassQuery() {
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
 
-		DBCard.newInstance(driver, newClass) //
+		DBCard.newInstance(rollbackDriver, newClass) //
 				.setCode(attr1Value) //
 				.setDescription(attr2Value) //
 				.save();
@@ -66,7 +61,7 @@ public class SimpleQueryTest extends DriverFixture {
 	public void simpleSubclassQueryForAnyAttribute() {
 		final int TOTAL = 5;
 
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 		insertCards(newClass, TOTAL);
 
 		final Alias classAlias = as("foo");
@@ -91,11 +86,11 @@ public class SimpleQueryTest extends DriverFixture {
 	public void simpleSuperclassQuery() {
 		final Alias rootAlias = as("root");
 
-		final DBClass root = driver.createSuperClass(uniqueUUID(), null);
-		final DBClass superNotRoot = driver.createSuperClass(uniqueUUID(), root);
-		final DBClass leafOfSuperNotRoot = driver.createClass(uniqueUUID(), superNotRoot);
-		final DBClass leafOfRoot = driver.createClass(uniqueUUID(), root);
-		final DBClass anotherLeafOfRoot = driver.createClass(uniqueUUID(), root);
+		final DBClass root = rollbackDriver.createSuperClass(uniqueUUID(), null);
+		final DBClass superNotRoot = rollbackDriver.createSuperClass(uniqueUUID(), root);
+		final DBClass leafOfSuperNotRoot = rollbackDriver.createClass(uniqueUUID(), superNotRoot);
+		final DBClass leafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
+		final DBClass anotherLeafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
 		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
 		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
 		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
@@ -118,11 +113,11 @@ public class SimpleQueryTest extends DriverFixture {
 	public void simpleSuperclassQueryForAnyAttribute() {
 		final Alias rootAlias = as("root");
 
-		final DBClass root = driver.createSuperClass(uniqueUUID(), null);
-		final DBClass superNotRoot = driver.createSuperClass(uniqueUUID(), root);
-		final DBClass leafOfSuperNotRoot = driver.createClass(uniqueUUID(), superNotRoot);
-		final DBClass leafOfRoot = driver.createClass(uniqueUUID(), root);
-		final DBClass anotherLeafOfRoot = driver.createClass(uniqueUUID(), root);
+		final DBClass root = rollbackDriver.createSuperClass(uniqueUUID(), null);
+		final DBClass superNotRoot = rollbackDriver.createSuperClass(uniqueUUID(), root);
+		final DBClass leafOfSuperNotRoot = rollbackDriver.createClass(uniqueUUID(), superNotRoot);
+		final DBClass leafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
+		final DBClass anotherLeafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
 		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
 		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
 		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
@@ -147,7 +142,7 @@ public class SimpleQueryTest extends DriverFixture {
 		final int OFFSET = 5;
 		final int LIMIT = 3;
 
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 
 		insertCards(newClass, TOTAL_SIZE);
 
@@ -164,7 +159,7 @@ public class SimpleQueryTest extends DriverFixture {
 
 	@Test
 	public void singleWhereClause() {
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
 		final Object codeValueToFind = "" + (NUMBER_OF_INSERTED_CARDS - 1);
@@ -181,7 +176,7 @@ public class SimpleQueryTest extends DriverFixture {
 
 	@Test
 	public void simpleQueryWithoutWhereClause() {
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
@@ -197,7 +192,7 @@ public class SimpleQueryTest extends DriverFixture {
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() {
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
@@ -211,7 +206,7 @@ public class SimpleQueryTest extends DriverFixture {
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 
 		final String codeAttributeName = newClass.getCodeAttributeName();
 		new QuerySpecsBuilder(view) //
@@ -222,7 +217,7 @@ public class SimpleQueryTest extends DriverFixture {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void malformedQueryShouldThrowException() {
-		final DBClass newClass = driver.createClass(uniqueUUID(), null);
+		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 		new QuerySpecsBuilder(view) //
 				.select(codeAttributeName) //

@@ -18,13 +18,13 @@ public class QueryCreator {
 	private static final String PARTS_SEPARATOR = " ";
 
 	private final StringBuilder sb;
-	private final QuerySpecs query;
+	private final QuerySpecs querySpecs;
 	private final List<Object> params;
 	private final ColumnMapper columnMapper;
 
 	public QueryCreator(final QuerySpecs query) {
 		this.sb = new StringBuilder();
-		this.query = query;
+		this.querySpecs = query;
 		this.columnMapper = new ColumnMapper(query);
 		this.params = new ArrayList<Object>();
 		buildQuery();
@@ -38,7 +38,7 @@ public class QueryCreator {
 	}
 
 	private void appendSelect() {
-		sb.append(SELECT).append(quoteAttributes(query.getAttributes()));
+		sb.append(SELECT).append(quoteAttributes(querySpecs.getAttributes()));
 	}
 
 	private String quoteAttributes(final Iterable<QueryAliasAttribute> attributes) {
@@ -77,17 +77,17 @@ public class QueryCreator {
 	}
 
 	private void appendFrom() {
-		final PartCreator fromPartCreator = new FromPartCreator(query);
+		final PartCreator fromPartCreator = new FromPartCreator(querySpecs);
 		appendPart(fromPartCreator);
 	}
 
 	private void appendJoin() {
-		final PartCreator joinCreator = new JoinCreator(query.getFromAlias(), query.getJoins(), columnMapper);
+		final PartCreator joinCreator = new JoinCreator(querySpecs.getFromAlias(), querySpecs.getJoins(), columnMapper);
 		appendPart(joinCreator);
 	}
 
 	private void appendWhere() {
-		final PartCreator wherePartCreator = new WherePartCreator(query);
+		final PartCreator wherePartCreator = new WherePartCreator(querySpecs);
 		appendPart(wherePartCreator);
 	}
 

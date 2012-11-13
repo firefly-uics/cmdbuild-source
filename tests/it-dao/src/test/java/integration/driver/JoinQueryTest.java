@@ -22,11 +22,10 @@ import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-@RunWith(value = Parameterized.class)
-public class JoinQueryTest extends DriverFixture {
+import utils.IntegrationTestBase;
+
+public class JoinQueryTest extends IntegrationTestBase {
 
 	private DBClass SRC;
 	private DBClass DST;
@@ -39,19 +38,15 @@ public class JoinQueryTest extends DriverFixture {
 	private static final Object DST1_ATTR1 = "DST1";
 	private static final Object DST2_ATTR1 = "DST2";
 
-	public JoinQueryTest(final String driverBeanName) {
-		super(driverBeanName);
-	}
-
 	// TODO: create the structure for all the tests and roll it back at the end
 	// (needs checkpoints)
 	@Before
 	public void createDomainStructure() {
-		SRC = driver.createClass(uniqueUUID(), null);
-		DST = driver.createSuperClass(uniqueUUID(), null);
-		DST1 = driver.createClass(uniqueUUID(), DST);
-		DST2 = driver.createClass(uniqueUUID(), DST);
-		DOM = driver.createDomain(nnDomain(uniqueUUID(), SRC, DST));
+		SRC = rollbackDriver.createClass(uniqueUUID(), null);
+		DST = rollbackDriver.createSuperClass(uniqueUUID(), null);
+		DST1 = rollbackDriver.createClass(uniqueUUID(), DST);
+		DST2 = rollbackDriver.createClass(uniqueUUID(), DST);
+		DOM = rollbackDriver.createDomain(nnDomain(uniqueUUID(), SRC, DST));
 	}
 
 	@Test
@@ -114,7 +109,7 @@ public class JoinQueryTest extends DriverFixture {
 		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = driver.createDomain(nnDomain(uniqueUUID(), DST2, SRC));
+		final DBDomain DOM2 = rollbackDriver.createDomain(nnDomain(uniqueUUID(), DST2, SRC));
 		insertRelation(DOM2, dst2, src1);
 
 		final Alias DOM_ALIAS = Alias.as("DOM");

@@ -1,13 +1,12 @@
-package integration.driver;
+package utils;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.UUID;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -19,11 +18,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.DBDataView;
 import org.junit.After;
-import org.junit.runners.Parameterized.Parameters;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import utils.GenericRollbackDriver;
+import org.junit.BeforeClass;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -33,37 +28,29 @@ import com.google.common.collect.Iterables;
  * run the tests on every database driver. Otherwise a driver must be specified
  * in the (empty) constructor.
  */
-public abstract class DriverFixture {
+public abstract class IntegrationTestBase {
 
-	protected static ApplicationContext context;
-
-	static {
-		context = new ClassPathXmlApplicationContext("structure-test-context.xml");
-	}
-
-	@Parameters
-	public static Collection<Object[]> data() {
-		final Collection<Object[]> params = new ArrayList<Object[]>();
-		// TODO specify a generic JDBC driver
-		for (final String name : context.getBeanNamesForType(PostgresDriver.class)) {
-			final Object[] o = { name };
-			params.add(o);
-		}
-		return params;
-	}
-
-	protected final GenericRollbackDriver driver;
+	protected final GenericRollbackDriver rollbackDriver;
 	protected final DBDataView view;
 
-	protected DriverFixture(final String driverBeanName) {
-		final DBDriver driverToBeTested = context.getBean(driverBeanName, DBDriver.class);
-		this.driver = new GenericRollbackDriver(driverToBeTested);
-		this.view = new DBDataView(driver);
+	protected IntegrationTestBase() {
+		final DBDriver pgDriver = DBInitializer.getDBDriver();
+		this.rollbackDriver = new GenericRollbackDriver(pgDriver);
+		this.view = new DBDataView(rollbackDriver);
+	}
+
+	@BeforeClass
+	public static void init() {
+		try {
+			DBInitializer.initDatabase();
+		} catch (final ConfigurationException e) {
+			fail("Exception while reading database configuration properties file");
+		}
 	}
 
 	@After
 	public void rollback() {
-		driver.rollback();
+		rollbackDriver.rollback();
 	}
 
 	/*
@@ -79,7 +66,7 @@ public abstract class DriverFixture {
 	}
 
 	protected DBCard insertCard(final DBClass c, final String key, final Object value) {
-		return DBCard.newInstance(driver, c).set(key, value).save();
+		return DBCard.newInstance(rollbackDriver, c).set(key, value).save();
 	}
 
 	protected void insertCards(final DBClass c, final int quantity) {
@@ -90,7 +77,7 @@ public abstract class DriverFixture {
 
 	protected void insertCardsWithCodeAndDescription(final DBClass c, final int quantity) {
 		for (long i = 0; i < quantity; ++i) {
-			DBCard.newInstance(driver, c) //
+			DBCard.newInstance(rollbackDriver, c) //
 					.setCode(String.valueOf(i)) //
 					.setDescription(String.valueOf(i)) //
 					.save();
@@ -98,7 +85,7 @@ public abstract class DriverFixture {
 	}
 
 	protected DBRelation insertRelation(final DBDomain d, final DBCard c1, final DBCard c2) {
-		return DBRelation.newInstance(driver, d) //
+		return DBRelation.newInstance(rollbackDriver, d) //
 				.setCard1(c1) //
 				.setCard2(c2) //
 				.save();
@@ -113,7 +100,7 @@ public abstract class DriverFixture {
 	}
 
 	protected void deleteEntry(final DBEntry e) {
-		driver.delete(e);
+		rollbackDriver.delete(e);
 	}
 
 	protected Iterable<String> namesOf(final Iterable<? extends CMEntryType> entityTypes) {

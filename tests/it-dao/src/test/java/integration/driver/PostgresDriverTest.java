@@ -18,18 +18,16 @@ import org.cmdbuild.dao.reference.CMReference;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import utils.IntegrationTestBase;
+
 /**
  * Tests specific to the legacy PostgreSQL driver
  */
-public class PostgresDriverTest extends DriverFixture {
+public class PostgresDriverTest extends IntegrationTestBase {
 
 	private final static String CLASSNAME_CONTAINING_REGCLASS = "Menu";
 	private final static String TEXT_MANDATORY_ATTRIBUTE = "Type";
 	private final static String REGCLASS_ATTRIBUTE = "IdElementClass";
-
-	public PostgresDriverTest() {
-		super("pg_driver");
-	}
 
 	@Test
 	public void theBaseClassIsAlwaysThere() {
@@ -38,7 +36,7 @@ public class PostgresDriverTest extends DriverFixture {
 		 * 
 		 * At least this comes in handy for the tests!
 		 */
-		final Collection<DBClass> allClasses = driver.findAllClasses();
+		final Collection<DBClass> allClasses = rollbackDriver.findAllClasses();
 		assertThat(allClasses, is(not(empty())));
 		assertThat(namesOf(allClasses), hasItem(Constants.BASE_CLASS_NAME));
 	}
@@ -46,11 +44,11 @@ public class PostgresDriverTest extends DriverFixture {
 	@Ignore("until we are able to add a non-reserved regclass attribute")
 	@Test
 	public void regclassAttributesAreReadFromTheDatabase() {
-		final DBClass classWithRegClassAttribute = driver.findClassByName(CLASSNAME_CONTAINING_REGCLASS);
+		final DBClass classWithRegClassAttribute = rollbackDriver.findClassByName(CLASSNAME_CONTAINING_REGCLASS);
 		for (final DBAttribute attribute : classWithRegClassAttribute.getAllAttributes()) {
 			System.out.println(attribute.getName() + " " + attribute.getType());
 		}
-		DBCard.newInstance(driver, classWithRegClassAttribute) //
+		DBCard.newInstance(rollbackDriver, classWithRegClassAttribute) //
 				.set(TEXT_MANDATORY_ATTRIBUTE, "Anything not null") //
 				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
 				.save();
