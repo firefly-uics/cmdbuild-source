@@ -46,19 +46,19 @@
 						text: CMDBuild.Translation.administration.modClass.tabs.geo_attributes,
 						leaf: false,
 						expanded: true,
-						folderName: CMDBUILD_LAYERS_FOLDER_NAME
+						folderName: CMDBUILD_LAYERS_FOLDER_NAME,
+						checked: true
 					}, {
 						text: CMDBuild.Translation.administration.modcartography.external_services.title,
 						leaf: false,
 						expanded: true,
-						folderName: EXTERNAL_LAYERS_FOLDER_NAME
+						folderName: EXTERNAL_LAYERS_FOLDER_NAME,
+						checked: true
 					}]
 				}
 			});
 
-			this.mon(this, "checkchange", function(node, checked) {
-					this.callDelegates("onLayerCheckChange", [node, checked]);
-				}, this);
+			this.mon(this, "checkchange", notifyToDelegateTheCheckChange, this);
 
 			this.callParent(arguments);
 		},
@@ -127,6 +127,30 @@
 		}
 	});
 
+	function notifyToDelegateTheCheckChange(node, checked) {
+		if (node.isLeaf()) {
+			this.callDelegates("onLayerCheckChange", [node, checked]);
+		} else {
+			notifyChackChangeForAllBranch(this, node, checked);
+		}
+	}
+
+	function notifyChackChangeForAllBranch(me, node, checked) {
+		if (!node) {
+			return;
+		}
+
+		node.set("checked", checked);
+		if (node.isLeaf()) {
+			me.callDelegates("onLayerCheckChange", [node, checked]);
+		} else {
+			for (var i=0, l=node.childNodes.length; i<l; ++i) {
+				var child = node.childNodes[i];
+				notifyChackChangeForAllBranch(me, child, checked);
+			}
+		}
+	}
+
 	function retrieveTargetFolder(layer, root) {
 		var targetFolder = null;
 
@@ -150,7 +174,8 @@
 				text: CMDBuild.Translation.administration.modcartography.geoserver.title,
 				leaf: false,
 				expanded: true,
-				folderName: GEOSERVER_LAYERS_FOLDER_NAME
+				folderName: GEOSERVER_LAYERS_FOLDER_NAME,
+				checked: true
 			});
 		}
 

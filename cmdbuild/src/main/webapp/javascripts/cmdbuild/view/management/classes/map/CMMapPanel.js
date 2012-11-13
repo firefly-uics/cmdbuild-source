@@ -81,10 +81,13 @@
 			tabs.push(this.layerSwitcher);
 
 			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
+				var root = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root;
+
 				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
 					title: CMDBuild.Translation.management.modcard.gis.gisNavigation,
 					frame: false,
-					border: false
+					border: false,
+					rootText: root.classDescription || root.className
 				});
 
 				tabs.push(this.cardBrowser);
