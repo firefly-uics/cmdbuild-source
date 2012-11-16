@@ -1,23 +1,41 @@
 package unit.auth;
 
-import com.google.common.collect.Sets;
 import static org.cmdbuild.auth.AuthenticatedUserImpl.ANONYMOUS_USER;
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
-import org.cmdbuild.auth.*;
-import org.cmdbuild.auth.AuthenticationService.ClientAuthenticatorResponse;
-import org.cmdbuild.auth.user.*;
-import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
-import org.cmdbuild.auth.AuthenticationService.Configuration;
-import org.cmdbuild.auth.ClientRequestAuthenticator.Response;
+import org.cmdbuild.auth.AuthenticatedUser;
+import org.cmdbuild.auth.AuthenticatedUserImpl;
+import org.cmdbuild.auth.ClientRequestAuthenticator;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
+import org.cmdbuild.auth.ClientRequestAuthenticator.Response;
+import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService.ClientAuthenticatorResponse;
+import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
+import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.Login;
+import org.cmdbuild.auth.PasswordAuthenticator;
+import org.cmdbuild.auth.UserFetcher;
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.user.CMUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import com.google.common.collect.Sets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationServiceTest {
@@ -27,11 +45,16 @@ public class AuthenticationServiceTest {
 	private static final String PASSWORD = "cleartext password";
 	private static final String WRONG_PASSWORD = "wrong password";
 
-	@Mock private PasswordAuthenticator passwordAuthenticatorMock;
-	@Mock private ClientRequestAuthenticator clientRequestAuthenticatorMock;
-	@Mock private UserFetcher userFectcherMock;
-	@Mock private UserStore userStoreMock;
-	@Mock private CMUser user;
+	@Mock
+	private PasswordAuthenticator passwordAuthenticatorMock;
+	@Mock
+	private ClientRequestAuthenticator clientRequestAuthenticatorMock;
+	@Mock
+	private UserFetcher userFectcherMock;
+	@Mock
+	private UserStore userStoreMock;
+	@Mock
+	private CMUser user;
 
 	/*
 	 * Constructor and setters
@@ -39,48 +62,48 @@ public class AuthenticationServiceTest {
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void configurationMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService(null);
+		final DefaultAuthenticationService as = new DefaultAuthenticationService(null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void passwordAuthenticatorsMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService();
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		as.setPasswordAuthenticators((PasswordAuthenticator[]) null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void passwordAuthenticatorsMustHaveNotNullElements() {
-		AuthenticationService as = new AuthenticationService();
-		as.setPasswordAuthenticators(new PasswordAuthenticator[]{null});
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
+		as.setPasswordAuthenticators(new PasswordAuthenticator[] { null });
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void clientRequestAuthenticatorsMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService();
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		as.setClientRequestAuthenticators((ClientRequestAuthenticator[]) null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void clientRequestAuthenticatorsMustHaveNotNullElements() {
-		AuthenticationService as = new AuthenticationService();
-		as.setClientRequestAuthenticators(new ClientRequestAuthenticator[]{null});
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
+		as.setClientRequestAuthenticators(new ClientRequestAuthenticator[] { null });
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userFetchersMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService();
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		as.setUserFetchers((UserFetcher[]) null);
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userFetchersMustHaveNotNullElements() {
-		AuthenticationService as = new AuthenticationService();
-		as.setUserFetchers(new UserFetcher[]{null});
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
+		as.setUserFetchers(new UserFetcher[] { null });
 	}
 
 	@Test(expected = java.lang.IllegalArgumentException.class)
 	public void userStoreMustBeNotNull() {
-		AuthenticationService as = new AuthenticationService();
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		as.setUserStore(null);
 	}
 
@@ -90,7 +113,7 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordAuthReturnsAnonymousUserIfNoAuthenticatorIsDefined() {
-		AuthenticationService as = emptyAuthenticatorService();
+		final DefaultAuthenticationService as = emptyAuthenticatorService();
 
 		assertThat(as.authenticate(LOGIN, PASSWORD), is(anonymousUser()));
 		assertThat(as.authenticate(LOGIN, WRONG_PASSWORD), is(anonymousUser()));
@@ -99,7 +122,7 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordAuthReturnsAnonymousUserOnAuthFailure() {
-		AuthenticationService as = mockedAuthenticatorService();
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
 
 		when(passwordAuthenticatorMock.checkPassword(LOGIN, PASSWORD)).thenReturn(Boolean.TRUE);
 
@@ -115,11 +138,11 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordAuthReturnsAnonymousUserOnUserFetchFailure() {
-		AuthenticationService as = mockedAuthenticatorService();
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
 
 		when(passwordAuthenticatorMock.checkPassword(LOGIN, PASSWORD)).thenReturn(Boolean.TRUE);
 
-		AuthenticatedUser authUser = as.authenticate(LOGIN, PASSWORD);
+		final AuthenticatedUser authUser = as.authenticate(LOGIN, PASSWORD);
 		assertThat(authUser, is(anonymousUser()));
 
 		verify(passwordAuthenticatorMock, only()).checkPassword(any(Login.class), anyString());
@@ -129,12 +152,12 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordAuthReturnsAnAuthenticatedUserOnSuccess() {
-		AuthenticationService as = mockedAuthenticatorService();
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
 
 		when(passwordAuthenticatorMock.checkPassword(LOGIN, PASSWORD)).thenReturn(Boolean.TRUE);
 		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
 
-		AuthenticatedUser authUser = as.authenticate(LOGIN, PASSWORD);
+		final AuthenticatedUser authUser = as.authenticate(LOGIN, PASSWORD);
 		assertThat(authUser, is(not(anonymousUser())));
 
 		verify(passwordAuthenticatorMock, times(1)).checkPassword(LOGIN, PASSWORD);
@@ -148,8 +171,8 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordCallbackAuthDoesNothingIfNoAuthenticatorIsDefined() {
-		AuthenticationService as = emptyAuthenticatorService();
-		PasswordCallback pwc = mock(PasswordCallback.class);
+		final DefaultAuthenticationService as = emptyAuthenticatorService();
+		final PasswordCallback pwc = mock(PasswordCallback.class);
 
 		as.authenticate(LOGIN, pwc);
 
@@ -159,8 +182,8 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordCallbackAuthDoesNotSetCallbackObjectPasswordOnAuthFailure() {
-		AuthenticationService as = mockedAuthenticatorService();
-		PasswordCallback pwc = mock(PasswordCallback.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final PasswordCallback pwc = mock(PasswordCallback.class);
 
 		as.authenticate(WRONG_LOGIN, pwc);
 
@@ -172,8 +195,8 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordCallbackAuthDoesNotSetCallbackObjectPasswordOnFetchFailure() {
-		AuthenticationService as = mockedAuthenticatorService();
-		PasswordCallback pwc = mock(PasswordCallback.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final PasswordCallback pwc = mock(PasswordCallback.class);
 
 		when(passwordAuthenticatorMock.fetchUnencryptedPassword(LOGIN)).thenReturn(PASSWORD);
 
@@ -187,8 +210,8 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void passwordCallbackAuthSetsCallbackObjectPasswordOnSuccess() {
-		AuthenticationService as = mockedAuthenticatorService();
-		PasswordCallback pwc = mock(PasswordCallback.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final PasswordCallback pwc = mock(PasswordCallback.class);
 
 		when(passwordAuthenticatorMock.fetchUnencryptedPassword(LOGIN)).thenReturn(PASSWORD);
 		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
@@ -208,10 +231,10 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void clientRequestAuthReturnsAnonymousUserIfNoAuthenticatorIsDefined() {
-		AuthenticationService as = emptyAuthenticatorService();
-		ClientRequest request = mock(ClientRequest.class);
+		final DefaultAuthenticationService as = emptyAuthenticatorService();
+		final ClientRequest request = mock(ClientRequest.class);
 
-		ClientAuthenticatorResponse authResponse = as.authenticate(request);
+		final ClientAuthenticatorResponse authResponse = as.authenticate(request);
 		assertThat(authResponse.getUser(), is(anonymousUser()));
 
 		verify(request, never()).getHeader(anyString());
@@ -221,12 +244,12 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void clientRequestAuthReturnsAnonymousUserOnAuthFailure() {
-		AuthenticationService as = mockedAuthenticatorService();
-		ClientRequest request = mock(ClientRequest.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final ClientRequest request = mock(ClientRequest.class);
 
 		when(clientRequestAuthenticatorMock.authenticate(request)).thenReturn(null);
 
-		ClientAuthenticatorResponse authResponse = as.authenticate(request);
+		final ClientAuthenticatorResponse authResponse = as.authenticate(request);
 		assertThat(authResponse.getUser(), is(anonymousUser()));
 
 		verify(clientRequestAuthenticatorMock, only()).authenticate(request);
@@ -236,12 +259,12 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void clientRequestAuthReturnsAnonymousUserOnUserFetchFailure() {
-		AuthenticationService as = mockedAuthenticatorService();
-		ClientRequest request = mock(ClientRequest.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final ClientRequest request = mock(ClientRequest.class);
 
 		when(clientRequestAuthenticatorMock.authenticate(request)).thenReturn(Response.newLoginResponse(LOGIN));
 
-		ClientAuthenticatorResponse authResponse = as.authenticate(request);
+		final ClientAuthenticatorResponse authResponse = as.authenticate(request);
 		assertThat(authResponse.getUser(), is(anonymousUser()));
 
 		verify(clientRequestAuthenticatorMock, only()).authenticate(request);
@@ -251,13 +274,13 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void clientRequestAuthReturnsAnAuthenticatedUserOnSuccess() {
-		AuthenticationService as = mockedAuthenticatorService();
-		ClientRequest request = mock(ClientRequest.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final ClientRequest request = mock(ClientRequest.class);
 
 		when(clientRequestAuthenticatorMock.authenticate(request)).thenReturn(Response.newLoginResponse(LOGIN));
 		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
 
-		ClientAuthenticatorResponse authResponse = as.authenticate(request);
+		final ClientAuthenticatorResponse authResponse = as.authenticate(request);
 		assertThat(authResponse.getUser(), is(not(anonymousUser())));
 
 		verify(clientRequestAuthenticatorMock, only()).authenticate(request);
@@ -267,13 +290,14 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void clientRequestAuthCopiesTheAuthenticatorRedirectUrl() {
-		AuthenticationService as = mockedAuthenticatorService();
-		ClientRequest request = mock(ClientRequest.class);
-		String redirectUrl = "http://www.example.com/";
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final ClientRequest request = mock(ClientRequest.class);
+		final String redirectUrl = "http://www.example.com/";
 
-		when(clientRequestAuthenticatorMock.authenticate(request)).thenReturn(Response.newRedirectResponse(redirectUrl));
+		when(clientRequestAuthenticatorMock.authenticate(request))
+				.thenReturn(Response.newRedirectResponse(redirectUrl));
 
-		ClientAuthenticatorResponse authResponse = as.authenticate(request);
+		final ClientAuthenticatorResponse authResponse = as.authenticate(request);
 		assertThat(authResponse.getRedirectUrl(), is(redirectUrl));
 	}
 
@@ -283,13 +307,13 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void configurationFiltersPasswordAuthenticators() {
-		PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class, withSettings().name("b"));
+		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class, withSettings().name("b"));
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 
-		Configuration conf = mock(Configuration.class);
+		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
 
-		AuthenticationService as = new AuthenticationService(conf);
+		final DefaultAuthenticationService as = new DefaultAuthenticationService(conf);
 		as.setPasswordAuthenticators(passwordAuthenticatorMock, namedAuthenticatorMock);
 		as.authenticate(LOGIN, PASSWORD);
 
@@ -299,13 +323,13 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void configurationFiltersPasswordCallbackAuthenticators() {
-		PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class, withSettings().name("b"));
+		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class, withSettings().name("b"));
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 
-		Configuration conf = mock(Configuration.class);
+		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
 
-		AuthenticationService as = new AuthenticationService(conf);
+		final DefaultAuthenticationService as = new DefaultAuthenticationService(conf);
 		as.setPasswordAuthenticators(passwordAuthenticatorMock, namedAuthenticatorMock);
 		as.authenticate(LOGIN, mock(PasswordCallback.class));
 
@@ -315,13 +339,13 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void configurationFiltersClientRequestAuthenticators() {
-		Configuration conf = mock(Configuration.class);
+		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
 
-		ClientRequestAuthenticator namedAuthenticatorMock = mock(ClientRequestAuthenticator.class);
+		final ClientRequestAuthenticator namedAuthenticatorMock = mock(ClientRequestAuthenticator.class);
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 
-		AuthenticationService as = new AuthenticationService(conf);
+		final DefaultAuthenticationService as = new DefaultAuthenticationService(conf);
 		as.setClientRequestAuthenticators(clientRequestAuthenticatorMock, namedAuthenticatorMock);
 		as.authenticate(mock(ClientRequest.class));
 
@@ -331,11 +355,11 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void serviceUsersCannotUseLoginPasswordAuthentication() {
-		Configuration conf = mock(Configuration.class);
+		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(null);
 		when(conf.getServiceUsers()).thenReturn(Sets.newHashSet(LOGIN.getValue()));
 
-		AuthenticationService as = new AuthenticationService(conf);
+		final DefaultAuthenticationService as = new DefaultAuthenticationService(conf);
 		as.setPasswordAuthenticators(passwordAuthenticatorMock);
 
 		as.authenticate(LOGIN, PASSWORD);
@@ -351,11 +375,11 @@ public class AuthenticationServiceTest {
 
 	@Test
 	public void impersonateIsAllowedOnlyToAdministratorsAndServiceUsers() {
-		Configuration conf = mock(Configuration.class);
+		final Configuration conf = mock(Configuration.class);
 		when(conf.getServiceUsers()).thenReturn(Sets.newHashSet("service"));
-		AuthenticationService as = mockedAuthenticatorService(conf);
+		final DefaultAuthenticationService as = mockedAuthenticatorService(conf);
 
-		AuthenticatedUser authUserMock = mock(AuthenticatedUser.class);
+		final AuthenticatedUser authUserMock = mock(AuthenticatedUser.class);
 		when(userStoreMock.getUser()).thenReturn(authUserMock);
 		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
 
@@ -370,15 +394,15 @@ public class AuthenticationServiceTest {
 		try {
 			as.impersonate(LOGIN);
 			fail("Should have thrown");
-		} catch (UnsupportedOperationException e) {
+		} catch (final UnsupportedOperationException e) {
 			// Should throw
 		}
 	}
 
 	@Test
 	public void anExistingUserCanBeImpersonated() {
-		AuthenticationService as = mockedAuthenticatorService();
-		AuthenticatedUser authUserMock = mock(AuthenticatedUser.class);
+		final DefaultAuthenticationService as = mockedAuthenticatorService();
+		final AuthenticatedUser authUserMock = mock(AuthenticatedUser.class);
 		when(authUserMock.hasAdministratorPrivileges()).thenReturn(true);
 		when(userStoreMock.getUser()).thenReturn(authUserMock);
 		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
@@ -392,25 +416,25 @@ public class AuthenticationServiceTest {
 	 * Utility methods
 	 */
 
-	private AuthenticationService emptyAuthenticatorService() {
-		AuthenticationService as = new AuthenticationService();
+	private DefaultAuthenticationService emptyAuthenticatorService() {
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		as.setUserStore(userStoreMock);
 		return as;
 	}
 
-	private AuthenticationService mockedAuthenticatorService(final Configuration conf) {
-		AuthenticationService as = new AuthenticationService(conf);
+	private DefaultAuthenticationService mockedAuthenticatorService(final Configuration conf) {
+		final DefaultAuthenticationService as = new DefaultAuthenticationService(conf);
 		setupMockedAuthenticationService(as);
 		return as;
 	}
 
-	private AuthenticationService mockedAuthenticatorService() {
-		AuthenticationService as = new AuthenticationService();
+	private DefaultAuthenticationService mockedAuthenticatorService() {
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		setupMockedAuthenticationService(as);
 		return as;
 	}
 
-	private void setupMockedAuthenticationService(final AuthenticationService as) {
+	private void setupMockedAuthenticationService(final DefaultAuthenticationService as) {
 		as.setPasswordAuthenticators(passwordAuthenticatorMock);
 		as.setClientRequestAuthenticators(clientRequestAuthenticatorMock);
 		as.setUserFetchers(userFectcherMock);
@@ -418,6 +442,6 @@ public class AuthenticationServiceTest {
 	}
 
 	private AuthenticatedUser anonymousUser() {
-		return (AuthenticatedUser) ANONYMOUS_USER;
+		return ANONYMOUS_USER;
 	}
 }

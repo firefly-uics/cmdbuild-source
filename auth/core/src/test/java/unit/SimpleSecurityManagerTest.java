@@ -74,7 +74,7 @@ public class SimpleSecurityManagerTest {
 	}
 
 	@Test
-	public void onjectPrivilegesAreRegisteredOnThatObject() {
+	public void objectPrivilegesAreRegisteredOnThatObject() {
 		builder.withPrivilege(IMPLIED, DUMMY_PRIV_OBJECT);
 		SimpleSecurityManager ssm = builder.build();
 

@@ -11,9 +11,9 @@ import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.DBFixture;
 
-public class QueryCreatorTest extends IntegrationTestBase {
+public class QueryCreatorTest extends DBFixture {
 
 	private DBClass newClass;
 
@@ -27,7 +27,7 @@ public class QueryCreatorTest extends IntegrationTestBase {
 		// given
 		final String codeAttributeName = newClass.getCodeAttributeName();
 		final String CLASS_ALIAS = "root";
-		final QuerySpecs querySpecs = new QuerySpecsBuilder(view).select(codeAttributeName)
+		final QuerySpecs querySpecs = new QuerySpecsBuilder(dbView).select(codeAttributeName)
 				.from(newClass, as(CLASS_ALIAS)).build();
 
 		// when

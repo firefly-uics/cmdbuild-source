@@ -1,10 +1,10 @@
 package org.cmdbuild.services.auth;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
-import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
 /**
@@ -12,7 +12,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
  */
 public class OperationUserWrapper implements OperationUser {
 
-	private final static UserContext systemContext = UserContext.systemContext(); 
+	private final static UserContext systemContext = UserContext.systemContext();
 	final UserContext userCtx;
 
 	public OperationUserWrapper(final UserContext userCtx) {
@@ -30,7 +30,7 @@ public class OperationUserWrapper implements OperationUser {
 	}
 
 	@Override
-	public boolean hasReadAccess(CMPrivilegedObject privilegedObject) {
+	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
 		if (privilegedObject instanceof CMEntryType) {
 			final CMEntryType type = (CMEntryType) privilegedObject;
 			if (type instanceof CMClass) {
@@ -43,7 +43,7 @@ public class OperationUserWrapper implements OperationUser {
 	}
 
 	@Override
-	public boolean hasWriteAccess(CMPrivilegedObject privilegedObject) {
+	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
 		if (privilegedObject instanceof CMEntryType) {
 			final CMEntryType type = (CMEntryType) privilegedObject;
 			if (type instanceof CMClass) {
@@ -66,12 +66,12 @@ public class OperationUserWrapper implements OperationUser {
 	}
 
 	@Override
-	public boolean hasPrivilege(CMPrivilege privilege) {
+	public boolean hasPrivilege(final CMPrivilege privilege) {
 		return userCtx.privileges().isAdmin();
 	}
 
 	@Override
-	public boolean hasPrivilege(CMPrivilege requested, CMPrivilegedObject privilegedObject) {
+	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
 		if (requested == DefaultPrivileges.READ) {
 			return hasReadAccess(privilegedObject);
 		}

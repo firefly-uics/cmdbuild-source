@@ -21,7 +21,7 @@ import org.cmdbuild.services.auth.UserContext;
 public class SessionVars implements UserStore {
 
 	private static final String AUTH_KEY = "auth";
-	private static final String LANGUAGE_KEY = "language";	
+	private static final String LANGUAGE_KEY = "language";
 	private static final String FILTER_MAP_KEY = "filters";
 	private static final String REPORTFACTORY_KEY = "ReportFactorySessionObj";
 	private static final String NEWREPORT_KEY = "newReport";
@@ -38,7 +38,7 @@ public class SessionVars implements UserStore {
 	}
 
 	@Override
-	public void setUser(AuthenticatedUser user) {
+	public void setUser(final AuthenticatedUser user) {
 		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
 	}
 
@@ -48,7 +48,7 @@ public class SessionVars implements UserStore {
 		if (authUser.getId() == null) { // Anonymous User
 			return null;
 		} else {
-			return new AuthenticatedUserWrapper(getUser());
+			return new AuthenticatedUserWrapper(authUser);
 		}
 	}
 
@@ -57,7 +57,7 @@ public class SessionVars implements UserStore {
 		return (Map<String, CardQuery>) RequestListener.getCurrentSessionObject(FILTER_MAP_KEY);
 	}
 
-	public void setFilterMap(Map<String, CardQuery> filterMap) {
+	public void setFilterMap(final Map<String, CardQuery> filterMap) {
 		RequestListener.setCurrentSessionObject(FILTER_MAP_KEY, filterMap);
 	}
 
@@ -70,7 +70,7 @@ public class SessionVars implements UserStore {
 		return language;
 	}
 
-	public void setLanguage(String language) {
+	public void setLanguage(final String language) {
 		RequestListener.setCurrentSessionObject(LANGUAGE_KEY, language);
 	}
 
@@ -78,7 +78,7 @@ public class SessionVars implements UserStore {
 		return (ReportFactory) RequestListener.getCurrentSessionObject(REPORTFACTORY_KEY);
 	}
 
-	public void setReportFactory(ReportFactory value) {
+	public void setReportFactory(final ReportFactory value) {
 		RequestListener.setCurrentSessionObject(REPORTFACTORY_KEY, value);
 	}
 
@@ -90,7 +90,7 @@ public class SessionVars implements UserStore {
 		return (ReportCard) RequestListener.getCurrentSessionObject(NEWREPORT_KEY);
 	}
 
-	public void setNewReport(ReportCard newReport) {
+	public void setNewReport(final ReportCard newReport) {
 		RequestListener.setCurrentSessionObject(NEWREPORT_KEY, newReport);
 	}
 
@@ -102,7 +102,7 @@ public class SessionVars implements UserStore {
 		return (CSVData) RequestListener.getCurrentSessionObject(CSVDATA_KEY);
 	}
 
-	public void setCsvData(CSVData value) {
+	public void setCsvData(final CSVData value) {
 		RequestListener.setCurrentSessionObject(CSVDATA_KEY, value);
 	}
 }

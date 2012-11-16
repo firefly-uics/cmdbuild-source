@@ -86,7 +86,7 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	protected AuthenticatedUserImpl(final CMUser user) {
 		Validate.notNull(user);
 		if (user instanceof AuthenticatedUserImpl) {
-			this.inner = ((AuthenticatedUserImpl)user).inner;
+			this.inner = ((AuthenticatedUserImpl) user).inner;
 		} else {
 			this.inner = user;
 		}
@@ -104,7 +104,7 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 
 	private CMGroup getTheFirstAndOnlyGroup(final CMUser user) {
 		CMGroup firstGroup = null;
-		Iterator<CMGroup> groups = user.getGroups().iterator();
+		final Iterator<CMGroup> groups = user.getGroups().iterator();
 		if (groups.hasNext()) {
 			firstGroup = groups.next();
 			if (groups.hasNext()) {
@@ -164,7 +164,6 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 		return getGroup(user, user.getDefaultGroupName());
 	}
 
-
 	// TODO: change after impersonate
 	protected CMGroup getPreferredGroup() {
 		return preferredGroup;
@@ -180,10 +179,10 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	}
 
 	private InspectableSecurityManager mergeGroupPrivileges(final CMUser user, final GroupFilter filter) {
-		SimpleSecurityManager.SimpleSecurityManagerBuilder builder = SimpleSecurityManager.newInstanceBuilder();
-		for (final CMGroup g : user.getGroups()) {
-			if (filter.matches(g)) {
-				builder.withPrivileges(g.getAllPrivileges());
+		final SimpleSecurityManager.SimpleSecurityManagerBuilder builder = SimpleSecurityManager.newInstanceBuilder();
+		for (final CMGroup group : user.getGroups()) {
+			if (filter.matches(group)) {
+				builder.withPrivileges(group.getAllPrivileges());
 			}
 		}
 		return builder.build();
@@ -192,7 +191,7 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	private GroupFilter filterName(final String name) {
 		return new GroupFilter() {
 			@Override
-			public boolean matches(CMGroup group) {
+			public boolean matches(final CMGroup group) {
 				return group.getName().equals(name);
 			}
 		};
@@ -201,7 +200,7 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	private GroupFilter everyGroup() {
 		return new GroupFilter() {
 			@Override
-			public boolean matches(CMGroup group) {
+			public boolean matches(final CMGroup group) {
 				return true;
 			}
 		};
@@ -213,13 +212,14 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	}
 
 	/**
-	 * Impersonates another user, if possible. This method should be called
-	 * by the AuthenticationService.
-	 *
-	 * @param user user to impersonate
+	 * Impersonates another user, if possible. This method should be called by
+	 * the AuthenticationService.
+	 * 
+	 * @param user
+	 *            user to impersonate
 	 */
 	@Override
-	public void impersonate(CMUser user) {
+	public void impersonate(final CMUser user) {
 		throw new IllegalArgumentException();
 	}
 
@@ -274,12 +274,12 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	 */
 
 	@Override
-	public boolean hasReadAccess(CMPrivilegedObject privilegedObject) {
+	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
 		return getSecurityManager().hasReadAccess(privilegedObject);
 	}
 
 	@Override
-	public boolean hasWriteAccess(CMPrivilegedObject privilegedObject) {
+	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
 		return getSecurityManager().hasWriteAccess(privilegedObject);
 	}
 
@@ -294,12 +294,12 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	}
 
 	@Override
-	public boolean hasPrivilege(CMPrivilege privilege) {
+	public boolean hasPrivilege(final CMPrivilege privilege) {
 		return getSecurityManager().hasPrivilege(privilege);
 	}
 
 	@Override
-	public boolean hasPrivilege(CMPrivilege requested, CMPrivilegedObject privilegedObject) {
+	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
 		return getSecurityManager().hasPrivilege(requested, privilegedObject);
 	}
 

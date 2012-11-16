@@ -1,5 +1,6 @@
 package utils;
 
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -13,21 +14,20 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.elements.database.DatabaseConfigurator;
 import org.cmdbuild.services.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DBInitializer {
 
-	private static final String DB_HOST = "host";
-	private static final String DB_PORT = "port";
-	private static final String DB_SUPER_USER = "super.user";
-	private static final String DB_SUPER_PASSWORD = "super.password";
-	private static final String DB_USER = "user";
-	private static final String DB_PASSWORD = "password";
-	private static String DB_NAME = "db.name";
 	private static DatabaseConfigurator dbConfigurator;
 	private static PostgresDriver pgDriver;
+	private static Logger logger = LoggerFactory.getLogger("test");
 
 	public static void initDatabase() throws ConfigurationException {
-		final Configuration conf = new PropertiesConfiguration("database.properties");
+		logger.debug("Initializing database...");
+		final URL configurationUrl = DBInitializer.class.getClassLoader().getResource("database.properties");
+		logger.debug("Database properties configuration file path: " + configurationUrl);
+		final Configuration conf = new PropertiesConfiguration(configurationUrl.getFile());
 		final String webRoot = SystemUtils.USER_DIR.concat("/../../cmdbuild/src/main/webapp/WEB-INF/sql/");
 		Settings.getInstance().setRootPath(SystemUtils.USER_DIR.concat("/../../cmdbuild/src/main/webapp/"));
 		dbConfigurator = new DatabaseConfigurator(new DatabaseConfigurator.Configuration() {
@@ -119,6 +119,10 @@ public class DBInitializer {
 
 	public static DBDriver getDBDriver() {
 		return pgDriver;
+	}
+
+	public static DataSource getSystemDataSource() {
+		return dbConfigurator.systemDataSource();
 	}
 
 }

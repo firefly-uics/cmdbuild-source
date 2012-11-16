@@ -10,9 +10,9 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.DBFixture;
 
-public class DataTest extends IntegrationTestBase {
+public class DataTest extends DBFixture {
 
 	private static final String A_CLASS_NAME = uniqueUUID();
 	private static final String A_SUPERCLASS_NAME = uniqueUUID();

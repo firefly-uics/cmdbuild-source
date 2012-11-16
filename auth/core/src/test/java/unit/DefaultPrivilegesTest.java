@@ -26,4 +26,17 @@ public class DefaultPrivilegesTest {
 		assertTrue(DefaultPrivileges.GOD.implies(DefaultPrivileges.WRITE));
 		assertTrue(DefaultPrivileges.GOD.implies(new SimplePrivilege()));
 	}
+	
+	@Test
+	public void databaseDesignerIsIndependent() {
+		assertTrue(DefaultPrivileges.DATABASE_DESIGNER.implies(DefaultPrivileges.DATABASE_DESIGNER));
+	}
+	
+	@Test
+	public void administratorIsIndependent() {
+		assertTrue(DefaultPrivileges.ADMINISTRATOR.implies(DefaultPrivileges.ADMINISTRATOR));
+		assertFalse(DefaultPrivileges.ADMINISTRATOR.implies(DefaultPrivileges.DATABASE_DESIGNER));
+		assertFalse(DefaultPrivileges.ADMINISTRATOR.implies(DefaultPrivileges.READ));
+		assertFalse(DefaultPrivileges.ADMINISTRATOR.implies(DefaultPrivileges.WRITE));
+	}
 }

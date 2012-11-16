@@ -3,7 +3,7 @@ package org.cmdbuild.services.json.controller;
 import java.util.Set;
 
 import org.cmdbuild.auth.AuthenticatedUser;
-import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -20,21 +20,22 @@ public class AuthenticationController extends ExceptionHandlingController {
 
 	public interface GroupMinimalInfo {
 		String getName();
+
 		String getDescription();
 	}
 
-	private AuthenticationService authService;
+	private final DefaultAuthenticationService authService;
 
 	@Autowired
-	public AuthenticationController(final AuthenticationService authService) {
+	public AuthenticationController(final DefaultAuthenticationService authService) {
 		this.authService = authService;
 	}
 
 	@RequestMapping(value = "/login")
-	public @ResponseBody JsonResponse login(
-			@RequestParam(required=false, value="username") final String username,
-			@RequestParam(required=false, value="password") final String password,
-			@RequestParam(required=false, value="role") final String groupName) {
+	public @ResponseBody
+	JsonResponse login(@RequestParam(required = false, value = "username") final String username,
+			@RequestParam(required = false, value = "password") final String password,
+			@RequestParam(required = false, value = "role") final String groupName) {
 		final AuthenticatedUser user = authenticateIfValidCredentials(username, password);
 		if (user.isAnonymous()) {
 			return failureWrongCredentials();

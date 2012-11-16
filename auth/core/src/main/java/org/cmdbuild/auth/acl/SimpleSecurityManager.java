@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.common.Builder;
 
@@ -41,19 +42,19 @@ public class SimpleSecurityManager extends AbstractSecurityManager implements In
 			mergePrivilege(privilege, grantedPrivileges);
 		}
 
-		private List<CMPrivilege> getOrCreatePrivilegeList(final String privId) {
+		private List<CMPrivilege> getOrCreatePrivilegeList(final String privilegeId) {
 			final List<CMPrivilege> grantedPrivileges;
-			if (objectPrivileges.containsKey(privId)) {
-				grantedPrivileges = objectPrivileges.get(privId);
+			if (objectPrivileges.containsKey(privilegeId)) {
+				grantedPrivileges = objectPrivileges.get(privilegeId);
 			} else {
 				grantedPrivileges = new ArrayList<CMPrivilege>(1);
-				objectPrivileges.put(privId, grantedPrivileges);
+				objectPrivileges.put(privilegeId, grantedPrivileges);
 			}
 			return grantedPrivileges;
 		}
 
 		private void mergePrivilege(final CMPrivilege newPrivilege, final List<CMPrivilege> grantedPrivileges) {
-						final Iterator<CMPrivilege> iter = grantedPrivileges.iterator();
+			final Iterator<CMPrivilege> iter = grantedPrivileges.iterator();
 			while (iter.hasNext()) {
 				final CMPrivilege oldPrivilege = iter.next();
 				if (oldPrivilege.implies(newPrivilege)) {
@@ -96,8 +97,8 @@ public class SimpleSecurityManager extends AbstractSecurityManager implements In
 	}
 
 	@Override
-	protected final boolean hasPrivilege(final CMPrivilege requested, final String privId) {
-		final List<CMPrivilege> grantedPrivileges = objectPrivileges.get(privId);
+	protected final boolean hasPrivilege(final CMPrivilege requested, final String privilegeId) {
+		final List<CMPrivilege> grantedPrivileges = objectPrivileges.get(privilegeId);
 		if (grantedPrivileges != null) {
 			for (final CMPrivilege granted : grantedPrivileges) {
 				if (granted.implies(requested)) {

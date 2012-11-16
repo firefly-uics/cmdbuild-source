@@ -12,8 +12,9 @@ import org.cmdbuild.servlets.utils.builder.AbstractParameterBuilder;
 
 public class DomainFactoryParameter extends AbstractParameterBuilder<DomainFactory> {
 
-	public DomainFactory build(HttpServletRequest r) throws AuthException, ORMException, NotFoundException {
-		UserContext userCtx = new SessionVars().getCurrentUserContext();
+	@Override
+	public DomainFactory build(final HttpServletRequest r) throws AuthException, ORMException, NotFoundException {
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
 		return userCtx.domains();
 	}
 }

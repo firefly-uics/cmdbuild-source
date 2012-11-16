@@ -13,8 +13,8 @@ import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.services.PatchManager;
-import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.utils.FileUtils;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -309,7 +309,7 @@ public class DatabaseConfigurator {
 			role.setDescription("SuperUser");
 			role.save();
 			final UserContext systemCtx = UserContext.systemContext();
-			final IDomain userRoleDomain = systemCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
+			final IDomain userRoleDomain = systemCtx.domains().get(AuthenticationLogic.USER_GROUP_DOMAIN_NAME);
 			final IRelation relation = systemCtx.relations().create(userRoleDomain, user, role);
 			relation.save();
 		}

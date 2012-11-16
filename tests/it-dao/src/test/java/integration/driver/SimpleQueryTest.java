@@ -19,11 +19,11 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.DBFixture;
 
 import com.google.common.collect.Iterables;
 
-public class SimpleQueryTest extends IntegrationTestBase {
+public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleSubclassQuery() {
@@ -37,7 +37,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.setDescription(attr2Value) //
 				.save();
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
 				.run();
@@ -66,7 +66,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		final Alias classAlias = as("foo");
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(anyAttribute(classAlias)) //
 				.from(newClass, as(classAlias)) //
 				.run();
@@ -95,7 +95,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
 		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(root.getCodeAttributeName()) //
 				.from(root, rootAlias) //
 				.run();
@@ -122,7 +122,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
 		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(anyAttribute(rootAlias)) //
 				.from(root, rootAlias) //
 				.run();
@@ -146,7 +146,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		insertCards(newClass, TOTAL_SIZE);
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
 				.offset(OFFSET) //
@@ -165,7 +165,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final Object codeValueToFind = "" + (NUMBER_OF_INSERTED_CARDS - 1);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
-		final CMQueryRow row = new QuerySpecsBuilder(view) //
+		final CMQueryRow row = new QuerySpecsBuilder(dbView) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.where(attribute(newClass, codeAttributeName), EQUALS, codeValueToFind) //
@@ -182,7 +182,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.run();
@@ -198,7 +198,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
-		new QuerySpecsBuilder(view) //
+		new QuerySpecsBuilder(dbView) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.run().getOnlyRow();
@@ -209,7 +209,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 
 		final String codeAttributeName = newClass.getCodeAttributeName();
-		new QuerySpecsBuilder(view) //
+		new QuerySpecsBuilder(dbView) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.run().getOnlyRow();
@@ -219,7 +219,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	public void malformedQueryShouldThrowException() {
 		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
 		final String codeAttributeName = newClass.getCodeAttributeName();
-		new QuerySpecsBuilder(view) //
+		new QuerySpecsBuilder(dbView) //
 				.select(codeAttributeName) //
 				.run();
 	}

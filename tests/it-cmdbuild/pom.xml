@@ -7,26 +7,12 @@
 		<version>2.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>it-dao</artifactId>
-	<name>CMDBuild DAO Integration Tests</name>
+	<artifactId>it-cmdbuild</artifactId>
+	<name>CMDBuild Integration Tests</name>
 	<description>
-		Integration tests between components from different DAO
-		projects, including testing for every database driver. 
+		Integration tests for CMDBuild using a read database driver. 
 	</description>
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-dao-postgresql</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-auth-default</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- needed for DatabaseConfigurator only, DON'T USE IT FOR OTHER CLASSES -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild</artifactId>
@@ -35,8 +21,28 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>it-dao</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -44,11 +50,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -60,22 +61,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>utils/**</include>
-								<include>database.properties</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -19,6 +19,11 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 	}
 
 	@Override
+	protected final CMClass roleClass() {
+		return view.findClassByName("Role");
+	}
+
+	@Override
 	protected final String userEmailAttribute() {
 		return "Email";
 	}
