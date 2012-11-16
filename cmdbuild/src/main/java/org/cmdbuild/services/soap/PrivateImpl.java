@@ -17,7 +17,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
@@ -89,7 +89,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	private UserContext getUserCtx() {
 		// FIXME
 		final MessageContext msgCtx = wsc.getMessageContext();
-		final AuthenticationService as = new AuthenticationService();
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		return new AuthenticatedUserWrapper(as.getAuthenticatedUser());
 	}
 
@@ -451,7 +451,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
 
 			@Override
-			public void visit(EntryTypeAttributeType attributeType) {
+			public void visit(final EntryTypeAttributeType attributeType) {
 				throw new UnsupportedOperationException("regclasses not supported");
 			}
 

@@ -18,12 +18,12 @@ import org.cmdbuild.dao.reference.CMReference;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.DBFixture;
 
 /**
  * Tests specific to the legacy PostgreSQL driver
  */
-public class PostgresDriverTest extends IntegrationTestBase {
+public class PostgresDriverTest extends DBFixture {
 
 	private final static String CLASSNAME_CONTAINING_REGCLASS = "Menu";
 	private final static String TEXT_MANDATORY_ATTRIBUTE = "Type";
@@ -53,7 +53,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
 				.save();
 
-		final CMQueryRow row = new QuerySpecsBuilder(view) //
+		final CMQueryRow row = new QuerySpecsBuilder(dbView) //
 				.select(REGCLASS_ATTRIBUTE) //
 				.from(classWithRegClassAttribute) //
 				.run().getOnlyRow();

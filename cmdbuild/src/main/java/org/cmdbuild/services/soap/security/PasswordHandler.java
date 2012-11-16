@@ -8,9 +8,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.auth.AuthenticatedUser;
-import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.Login;
-import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
 import org.cmdbuild.config.AuthProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,13 +43,13 @@ public class PasswordHandler implements CallbackHandler {
 			return false;
 		}
 	}
-	
-	@Autowired
-	AuthenticationService as;
 
-	public void handle(Callback[] callbacks) throws IOException,
-			UnsupportedCallbackException {
-		for (Callback callback : callbacks) {
+	@Autowired
+	DefaultAuthenticationService as;
+
+	@Override
+	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+		for (final Callback callback : callbacks) {
 			if (callback instanceof WSPasswordCallback) {
 				final AuthenticatedUser user;
 				final WSPasswordCallback pwcb = (WSPasswordCallback) callback;

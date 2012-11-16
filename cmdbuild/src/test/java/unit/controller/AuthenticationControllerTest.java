@@ -17,7 +17,7 @@ import static utils.controller.SuccessResponseMatcher.successResponse;
 import java.util.HashSet;
 
 import org.cmdbuild.auth.AuthenticatedUser;
-import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -35,18 +35,18 @@ public class AuthenticationControllerTest {
 	private static final String NO_GROUP = null;
 
 	private final AuthenticatedUser authUser;
-	private final AuthenticationService authService;
+	private final DefaultAuthenticationService authService;
 	private final AuthenticationController controller;
 
 	public AuthenticationControllerTest() {
 		authUser = mock(AuthenticatedUser.class);
-		authService = mock(AuthenticationService.class);
+		authService = mock(DefaultAuthenticationService.class);
 		controller = new AuthenticationController(authService);
 	}
 
 	@Test
 	public void credentialsArePassedToTheAuthenticationService() {
-		ArgumentCaptor<Login> loginCaptor = ArgumentCaptor.forClass(Login.class);
+		final ArgumentCaptor<Login> loginCaptor = ArgumentCaptor.forClass(Login.class);
 		when(authService.authenticate(any(Login.class), anyString())).thenReturn(authUser);
 
 		controller.login(USERNAME, PASSWORD, NO_GROUP);
@@ -72,7 +72,7 @@ public class AuthenticationControllerTest {
 		when(authService.authenticate(any(Login.class), anyString())).thenReturn(authUser);
 		when(authUser.isAnonymous()).thenReturn(true);
 
-		JsonResponse response = controller.login(USERNAME, WRONG_PASSWORD, NO_GROUP);
+		final JsonResponse response = controller.login(USERNAME, WRONG_PASSWORD, NO_GROUP);
 
 		assertThat(response, is(failureResponse(AuthExceptionType.AUTH_LOGIN_WRONG.toString())));
 	}
@@ -83,7 +83,7 @@ public class AuthenticationControllerTest {
 		when(authUser.isAnonymous()).thenReturn(false);
 		when(authUser.isValid()).thenReturn(true);
 
-		JsonResponse response = controller.login(USERNAME, PASSWORD, NO_GROUP);
+		final JsonResponse response = controller.login(USERNAME, PASSWORD, NO_GROUP);
 
 		assertThat(response, successResponse());
 	}
@@ -115,7 +115,7 @@ public class AuthenticationControllerTest {
 		when(authUser.isValid()).thenReturn(false);
 		when(authUser.getGroups()).thenReturn(new HashSet<CMGroup>());
 
-		JsonResponse response = controller.login(null, null, null);
+		final JsonResponse response = controller.login(null, null, null);
 
 		assertThat(response, is(failureResponse(AuthExceptionType.AUTH_MULTIPLE_GROUPS.toString())));
 	}

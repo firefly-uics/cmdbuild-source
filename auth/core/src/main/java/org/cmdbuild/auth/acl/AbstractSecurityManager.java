@@ -23,25 +23,25 @@ public abstract class AbstractSecurityManager implements CMSecurityManager {
 	}
 
 	@Override
-	public final boolean hasPrivilege(CMPrivilege privilege) {
+	public final boolean hasPrivilege(final CMPrivilege privilege) {
 		return hasPrivilege(privilege, GLOBAL_PRIVILEGE_ID);
 	}
 
 	@Override
-	public boolean hasReadAccess(CMPrivilegedObject privilegedObject) {
+	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
 		return hasPrivilege(DefaultPrivileges.READ, privilegedObject);
 	}
 
 	@Override
-	public boolean hasWriteAccess(CMPrivilegedObject privilegedObject) {
+	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
 		return hasPrivilege(DefaultPrivileges.WRITE, privilegedObject);
 	}
 
 	@Override
 	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
-		return hasPrivilege(requested, GLOBAL_PRIVILEGE_ID) ||
-				hasPrivilege(requested, privilegedObject.getPrivilegeId());
+		return hasPrivilege(requested, GLOBAL_PRIVILEGE_ID)
+				|| hasPrivilege(requested, privilegedObject.getPrivilegeId());
 	}
 
-	protected abstract boolean hasPrivilege(final CMPrivilege requested, final String privId);
+	protected abstract boolean hasPrivilege(final CMPrivilege requested, final String privilegeId);
 }

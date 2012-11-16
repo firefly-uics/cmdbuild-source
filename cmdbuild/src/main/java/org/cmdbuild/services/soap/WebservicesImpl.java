@@ -12,7 +12,7 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
@@ -53,7 +53,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 	private UserContext getUserCtx() {
 		// FIXME
 		final MessageContext msgCtx = wsc.getMessageContext();
-		final AuthenticationService as = new AuthenticationService();
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
 		return new AuthenticatedUserWrapper(as.getAuthenticatedUser());
 	}
 
@@ -284,7 +284,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 			final WorkflowLogicHelper helper = new WorkflowLogicHelper(getUserCtx());
 			helper.resumeProcess(card);
 			return true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return false;
 		}
 	}

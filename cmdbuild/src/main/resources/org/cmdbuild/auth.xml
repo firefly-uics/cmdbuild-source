@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	">
 
-	<bean id="authConf"
-		class="org.cmdbuild.config.AuthProperties"
+	<bean id="authConf" class="org.cmdbuild.config.AuthProperties"
 		factory-method="getInstance" />
 
 	<bean id="dbAuthenticator" class="org.cmdbuild.auth.LegacyDBAuthenticator">
@@ -23,36 +22,40 @@
 		<constructor-arg ref="authConf" />
 	</bean>
 
-<!-- Note: it can't be scope="session" because it's injected in the
-	AuthenticationService once, and it can't contain session beans
-	<bean id="sessionStore" class="org.cmdbuild.???" />
--->
-	<bean id="sessionStore" class="org.cmdbuild.services.SessionVars"/>
+	<!-- Note: it can't be scope="session" because it's injected in the AuthenticationService 
+		once, and it can't contain session beans <bean id="sessionStore" class="org.cmdbuild.???" 
+		/> -->
+	<bean id="sessionStore" class="org.cmdbuild.services.SessionVars" />
 
-<!-- TODO: how?
-	<bean id="authenticatedUser" ... scope="session" />
--->
-	<bean id="authenticatedUser"
-		factory-bean="sessionStore"
+	<!-- TODO: how? <bean id="authenticatedUser" ... scope="session" /> -->
+	<bean id="authenticatedUser" factory-bean="sessionStore"
 		factory-method="getUser" />
 
-	<bean id="authService" class="org.cmdbuild.auth.AuthenticationService" scope="singleton">
+
+
+	<bean id="authFacade" class="org.cmdbuild.services.auth.AuthenticationFacade"
+		scope="singleton">
+		<constructor-arg ref="authService" />
+	</bean>
+
+	<bean id="authService" class="org.cmdbuild.auth.DefaultAuthenticationService"
+		scope="singleton">
 		<constructor-arg ref="authConf" />
 		<property name="passwordAuthenticators">
 			<list>
-				<ref bean="dbAuthenticator"/>
+				<ref bean="dbAuthenticator" />
 				<!-- ref bean="ldapAuthenticator"/ -->
 			</list>
 		</property>
 		<property name="clientRequestAuthenticators">
 			<list>
-				<ref bean="headerAuthenticator"/>
-				<ref bean="casAuthenticator"/>
+				<ref bean="headerAuthenticator" />
+				<ref bean="casAuthenticator" />
 			</list>
 		</property>
 		<property name="userFetchers">
 			<list>
-				<ref bean="dbAuthenticator"/>
+				<ref bean="dbAuthenticator" />
 				<!-- ref bean="domainUserFetcher"/ -->
 			</list>
 		</property>

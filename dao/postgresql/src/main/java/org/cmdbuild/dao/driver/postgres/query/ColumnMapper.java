@@ -264,21 +264,28 @@ public class ColumnMapper implements LoggingSupport {
 					 * 
 					 * happens if querying for any attribute over a superclass
 					 */
-					final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName, null, attributeAlias);
+					final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName, sqlCastFor(attribute),
+							attributeAlias);
 					aliasAttributes.addAttribute(attributeName, attributeAlias, usedIndex, type);
 				}
 			}
 		} else {
 			final String attributeName = qa.getName();
-			// FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but
-			// it does not work if we take them all
-			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next(); // we
-																						// trust
-																						// it
-																						// works
-			final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName, null, null);
+			/*
+			 * FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but it
+			 * does not work if we take them all
+			 * 
+			 * we trust it works
+			 */
+			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next();
+			final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName,
+					sqlCastFor(type.getAttribute(attributeName)), null);
 			aliasAttributes.addAttribute(attributeName, null, usedIndex, type);
 		}
+	}
+
+	private String sqlCastFor(final CMAttribute attribute) {
+		return SqlType.getSqlType(attribute.getType()).sqlCast();
 	}
 
 	private AliasAttributes aliasAttributesFor(final Alias alias) {
@@ -301,6 +308,9 @@ public class ColumnMapper implements LoggingSupport {
 			final Alias attributeAlias) {
 		final StringBuffer sb = new StringBuffer(quoteAttribute(typeAlias, attributeName));
 		if (cast != null) {
+			if (cast.equalsIgnoreCase("oid")) {
+				sb.append("::");
+			}
 			sb.append(cast);
 		}
 		if (attributeAlias != null) {

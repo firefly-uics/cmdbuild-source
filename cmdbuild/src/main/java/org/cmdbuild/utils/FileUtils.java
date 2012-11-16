@@ -1,55 +1,29 @@
 package org.cmdbuild.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * @deprecated use Apache Commons instead.
+ */
+@Deprecated
 public class FileUtils {
 
-	public static String getContents(String file) {
-		File aFile = new File(file);
-
-		StringBuilder contents = new StringBuilder();
+	/**
+	 * @deprecated use Apache Commons instead.
+	 */
+	@Deprecated
+	public static String getContents(final String file) {
+		final File aFile = new File(file);
 
 		try {
-			BufferedReader input =  new BufferedReader(new FileReader(aFile));
-			try {
-				String line = null;
-				while (( line = input.readLine()) != null){
-					contents.append(line);
-					contents.append(System.getProperty("line.separator"));
-				}
-			}
-			finally {
-				input.close();
-			}
+			return org.apache.commons.io.FileUtils.readFileToString(aFile);
+		} catch (final IOException ex) {
+			// TODO log me please!
+			return StringUtils.EMPTY;
 		}
-		catch (IOException ex){
-			ex.printStackTrace();
-		}
+	}
 
-		return contents.toString();
-	}
-	
-	public static String getContents(InputStream is) {
-		StringBuffer sbuf = new StringBuffer();
-		BufferedReader bufread = new BufferedReader(new InputStreamReader(is));
-		
-		try{
-			try{
-				String line = null;
-				while ((line=bufread.readLine()) != null){
-					sbuf.append(line);
-					sbuf.append(System.getProperty("line.separator"));
-				}
-			} finally {
-				bufread.close();
-			}
-		} catch(IOException ex){ex.printStackTrace();}
-		
-		return sbuf.toString();
-	}
 }

@@ -19,11 +19,11 @@ public class RequestListener implements ServletRequestListener {
 		HttpServletRequest request;
 		List<CMDBException> warnings = new LinkedList<CMDBException>();
 
-		private CMDBContext(HttpServletRequest request) {
+		private CMDBContext(final HttpServletRequest request) {
 			this.request = request;
 		}
 
-		public void pushWarning(CMDBException w) {
+		public void pushWarning(final CMDBException w) {
 			warnings.add(w);
 		}
 
@@ -36,14 +36,14 @@ public class RequestListener implements ServletRequestListener {
 		}
 	}
 
-	static private ThreadLocal<CMDBContext> requestContext = new ThreadLocal<CMDBContext>();
+	private static ThreadLocal<CMDBContext> requestContext = new ThreadLocal<CMDBContext>();
 
-	static public CMDBContext getCurrentRequest() {
+	public static CMDBContext getCurrentRequest() {
 		return requestContext.get();
 	}
 
-	static public Object getCurrentSessionObject(String name) {
-		HttpSession session = getOrCreateSession();
+	public static Object getCurrentSessionObject(final String name) {
+		final HttpSession session = getOrCreateSession();
 		if (session != null) {
 			return session.getAttribute(name);
 		} else {
@@ -51,22 +51,22 @@ public class RequestListener implements ServletRequestListener {
 		}
 	}
 
-	static public void setCurrentSessionObject(String name, Object value) {
-		HttpSession session = getOrCreateSession();
+	public static void setCurrentSessionObject(final String name, final Object value) {
+		final HttpSession session = getOrCreateSession();
 		if (session != null) {
 			session.setAttribute(name, value);
 		}
 	}
 
-	static public void removeCurrentSessionObject(String name) {
-		HttpSession session = getOrCreateSession();
+	public static void removeCurrentSessionObject(final String name) {
+		final HttpSession session = getOrCreateSession();
 		if (session != null) {
 			session.removeAttribute(name);
 		}
 	}
 
 	private static HttpSession getOrCreateSession() {
-		CMDBContext ctx = getCurrentRequest();
+		final CMDBContext ctx = getCurrentRequest();
 		HttpSession session = null;
 		if (ctx != null) {
 			ctx.getRequest().getSession(false);
@@ -78,22 +78,24 @@ public class RequestListener implements ServletRequestListener {
 		return session;
 	}
 
-	private static void initSession(HttpSession session) {
-		int sessionTimeout = CmdbuildProperties.getInstance().getSessionTimoutOrZero();
+	private static void initSession(final HttpSession session) {
+		final int sessionTimeout = CmdbuildProperties.getInstance().getSessionTimoutOrZero();
 		if (sessionTimeout > 0) {
 			session.setMaxInactiveInterval(sessionTimeout);
 		}
 	}
 
-	public void requestInitialized(ServletRequestEvent sre) {
-		ServletRequest req = sre.getServletRequest();
+	@Override
+	public void requestInitialized(final ServletRequestEvent sre) {
+		final ServletRequest req = sre.getServletRequest();
 		if (req instanceof HttpServletRequest) {
-			CMDBContext currentRequestContext = new CMDBContext((HttpServletRequest) req);
+			final CMDBContext currentRequestContext = new CMDBContext((HttpServletRequest) req);
 			requestContext.set(currentRequestContext);
 		}
 	}
 
-	public void requestDestroyed(ServletRequestEvent sre) {
+	@Override
+	public void requestDestroyed(final ServletRequestEvent sre) {
 		DBService.releaseConnection();
 		requestContext.remove();
 	}

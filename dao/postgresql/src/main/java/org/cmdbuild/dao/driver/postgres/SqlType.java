@@ -23,6 +23,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.dao.reference.EntryTypeReference;
 
 /**
  * Missing DAO types: Lookup, Reference, ForeignKey
@@ -124,6 +125,13 @@ public enum SqlType {
 		public String sqlCast() {
 			return "oid";
 		}
+
+		@Override
+		public Object sqlToJavaValue(final Object value) {
+			final Long classId = (Long) value;
+			return EntryTypeReference.newInstance(classId);
+		}
+
 	}, //
 	text(TextAttributeType.class) {
 	// nothing to implement, just for keep ordered

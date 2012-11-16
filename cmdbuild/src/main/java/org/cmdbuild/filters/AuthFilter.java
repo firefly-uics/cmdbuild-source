@@ -14,25 +14,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.cmdbuild.auth.AuthenticatedUser;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.services.auth.AuthenticationFacade;
-import org.cmdbuild.services.auth.UserContext;
 
 public class AuthFilter implements Filter {
 
 	public static final String LOGIN_URL = "index.jsp";
 
-	public void init(FilterConfig filterConfig) throws ServletException {
+	@Override
+	public void init(final FilterConfig filterConfig) throws ServletException {
 	}
 
+	@Override
 	public void destroy() {
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain filterChain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+	@Override
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
+			throws IOException, ServletException {
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		try {
-			String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 			final AuthenticatedUser user = new SessionVars().getUser();
 			if (isRootPage(uri)) {
 				redirectToLogin(httpResponse);
@@ -47,33 +48,30 @@ public class AuthFilter implements Filter {
 				}
 			}
 			filterChain.doFilter(request, response);
-		} catch (RedirectException re) {
+		} catch (final RedirectException re) {
 			re.sendRedirect(httpResponse);
 		}
 	}
 
-	private void redirectToManagement(HttpServletResponse response) throws IOException, RedirectException {
+	private void redirectToManagement(final HttpServletResponse response) throws IOException, RedirectException {
 		throw new RedirectException("management.jsp");
 	}
 
-	private void redirectToLogin(HttpServletResponse response) throws IOException, RedirectException {
+	private void redirectToLogin(final HttpServletResponse response) throws IOException, RedirectException {
 		throw new RedirectException(LOGIN_URL);
 	}
 
-	private boolean isRootPage(String uri) {
+	private boolean isRootPage(final String uri) {
 		return uri.equals("/");
 	}
 
-	private boolean isLoginPage(String uri) {
-		return uri.equals("/"+LOGIN_URL);
+	private boolean isLoginPage(final String uri) {
+		return uri.equals("/" + LOGIN_URL);
 	}
 
-    protected boolean isProtectedPage(String uri){
-		boolean isException = uri.startsWith("/services/") ||
-			uri.startsWith("/shark/") ||
-			uri.startsWith("/cmdbuildrest/") ||
-			uri.matches("^(.*)(css|js|png|jpg|gif)$") ||
-			isLoginPage(uri);
+	protected boolean isProtectedPage(final String uri) {
+		final boolean isException = uri.startsWith("/services/") || uri.startsWith("/shark/")
+				|| uri.startsWith("/cmdbuildrest/") || uri.matches("^(.*)(css|js|png|jpg|gif)$") || isLoginPage(uri);
 		return !isException;
-    }
+	}
 }

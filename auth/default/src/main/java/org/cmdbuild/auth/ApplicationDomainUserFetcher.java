@@ -4,7 +4,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 
-
 /**
  * Fetches users from the application domain (for 3lv authentication)
  */
@@ -46,6 +45,11 @@ public class ApplicationDomainUserFetcher extends DBUserFetcher {
 
 	@Override
 	protected CMDomain userGroupDomain() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected CMClass roleClass() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

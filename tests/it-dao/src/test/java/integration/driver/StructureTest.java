@@ -12,16 +12,18 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 import java.util.List;
 
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.DBFixture;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class StructureTest extends IntegrationTestBase {
+public class StructureTest extends DBFixture {
 
 	private static final String A_NEW_CLASS_NAME = uniqueUUID();
 	private static final String A_NEW_SUPERCLASS_NAME = uniqueUUID();
@@ -213,6 +215,14 @@ public class StructureTest extends IntegrationTestBase {
 		// then
 		assertThat(superClass.isSuperclass(), is(equalTo(true)));
 		assertThat(leafClass.isSuperclass(), is(equalTo(false)));
+	}
+
+	@Ignore
+	@Test
+	public void reservedAttributeAreNotFetched() {
+		final DBClass grants = rollbackDriver.findClassByName("Grant");
+		final CMAttribute att = grants.getAttribute("IdGrantedClass");
+		assertThat(att, is(equalTo(null)));
 	}
 
 }

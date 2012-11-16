@@ -14,7 +14,7 @@ public class UserImpl implements CMUser {
 		private Long id;
 		private String name;
 		private String description;
-		private Set<CMGroup> groups;
+		private final Set<CMGroup> groups;
 
 		private UserImplBuilder() {
 			this.groups = new HashSet<CMGroup>();
@@ -35,7 +35,7 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
-		public UserImplBuilder withGroup(CMGroup group) {
+		public UserImplBuilder withGroup(final CMGroup group) {
 			this.groups.add(group);
 			return this;
 		}
@@ -88,7 +88,8 @@ public class UserImpl implements CMUser {
 
 	@Override
 	public String getDefaultGroupName() {
-		// TODO
+		// TODO: see also the correspondent method of the AuthenticationFacade
+		// class
 		return null;
 	}
 

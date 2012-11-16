@@ -23,9 +23,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
+import utils.DBFixture;
 
-public class JoinQueryTest extends IntegrationTestBase {
+public class JoinQueryTest extends DBFixture {
 
 	private DBClass SRC;
 	private DBClass DST;
@@ -38,8 +38,6 @@ public class JoinQueryTest extends IntegrationTestBase {
 	private static final Object DST1_ATTR1 = "DST1";
 	private static final Object DST2_ATTR1 = "DST2";
 
-	// TODO: create the structure for all the tests and roll it back at the end
-	// (needs checkpoints)
 	@Before
 	public void createDomainStructure() {
 		SRC = rollbackDriver.createClass(uniqueUUID(), null);
@@ -59,7 +57,7 @@ public class JoinQueryTest extends IntegrationTestBase {
 
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(descriptionAttribute(SRC), codeAttribute(DST_ALIAS, DST1)) //
 				.from(SRC) //
 				.join(DST1, as(DST_ALIAS), over(DOM)) //
@@ -91,7 +89,7 @@ public class JoinQueryTest extends IntegrationTestBase {
 		deleteCard(dst2);
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(descriptionAttribute(SRC), codeAttribute(DST)) //
 				.from(SRC) //
 				.join(anyClass(), as("DST"), over(DOM)) //
@@ -115,7 +113,7 @@ public class JoinQueryTest extends IntegrationTestBase {
 		final Alias DOM_ALIAS = Alias.as("DOM");
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		final CMQueryResult result = new QuerySpecsBuilder(view) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
 				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //
 				.from(SRC) //
 				.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS))) //

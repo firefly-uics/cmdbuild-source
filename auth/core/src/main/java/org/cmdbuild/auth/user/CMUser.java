@@ -1,14 +1,15 @@
 package org.cmdbuild.auth.user;
 
 import java.util.Set;
+
 import org.cmdbuild.auth.acl.CMGroup;
 
 public interface CMUser {
 
 	/**
-	 * This identifier will be useful in the refactoring of the old messy
-	 * code. It should be removed when it is not needed, and the name should
-	 * always be used instead.
+	 * This identifier will be useful in the refactoring of the old messy code.
+	 * It should be removed when it is not needed, and the name should always be
+	 * used instead.
 	 * 
 	 * @return unique identifier
 	 */
@@ -21,6 +22,12 @@ public interface CMUser {
 	String getName();
 
 	String getDescription();
+
+	/**
+	 * Returns a set of groups to which the user belongs
+	 * 
+	 * @return
+	 */
 	Set<CMGroup> getGroups();
 
 	/**

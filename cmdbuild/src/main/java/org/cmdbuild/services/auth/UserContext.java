@@ -9,6 +9,8 @@ import org.cmdbuild.elements.interfaces.RelationFactory;
 
 public abstract class UserContext {
 
+	public static UserContext systemContext = SystemContext.getInstance();
+
 	public abstract User getUser();
 
 	public abstract String getRequestedUsername();
@@ -49,7 +51,8 @@ public abstract class UserContext {
 
 	public abstract boolean allowsPasswordLogin();
 
+	@Deprecated
 	public static UserContext systemContext() {
-		return SystemContext.getInstance();
+		return systemContext;
 	}
 }
