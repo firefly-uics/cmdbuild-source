@@ -205,7 +205,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	public List<Card> fetchCards(final QueryClass card) {
-		final CardList cardList = proxy.getCardList( //
+		final CardList cardList = proxy.getCardListWithLongDateFormat( //
 				card.getClassName(), //
 				requestedAttributesFor(card.getRequestedAttributes()), //
 				queriedAttributesFor(card), //
