@@ -419,6 +419,9 @@
             "title": "Ikonen-Steuerung"
          },
          "layermanager": {"title": "Ordnung der Ebenen"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Übergangsstelle"},

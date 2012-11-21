@@ -34,50 +34,6 @@
 							success: function(response, options, decoded) {
 								CMDBuild.Config.cmdbuild = decoded.data;
 
-								// TODO do request
-
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {
-									root: {
-										className: "Building",
-										classDescription: "Palazzo",
-										children: [{
-											className: "Floor",
-											domainName: "BuildingFloor",
-											direct: true,
-											children: [{
-												className: "Room",
-												domainName: "FloorRoom",
-												direct: true,
-												children: [{
-													className: "Asset",
-													domainName: "RoomAsset",
-													direct: true
-												}, {
-													className: "Workplace",
-													domainName: "RoomWorkplace",
-													direct: true
-												}]
-											}]
-										}]
-									},
-									geoServerLayersMapping: {
-										"Floor": {
-											"83": {
-												name: "Bastogi-PA",
-												description: "Bastogi - Piano Ammezzato"
-											},
-											"87": {
-												name: "Bastogi-P1",
-												description: "Bastogi - Piano Primo"
-											},
-											"92": {
-												name: "Bastogi-PT",
-												description: "Bastogi - Piano Terra"
-											}
-										}
-									}
-								};
-
 								CMDBuild.ServiceProxy.configuration.readGisConfiguration({
 									success: function(response, options, decoded) {
 										CMDBuild.Config.gis = decoded.data;
@@ -90,8 +46,32 @@
 												CMDBuild.ServiceProxy.configuration.readWFConfiguration({
 													success : function(response, options, decoded) {
 														CMDBuild.Config.workflow = decoded.data;
-													},
-													callback: cb
+
+														CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+														CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+															success: function(operation, config, response) {
+																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+
+																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = {
+																	"Floor": {
+																		"83": {
+																			name: "Bastogi-PA",
+																			description: "Bastogi - Piano Ammezzato"
+																		},
+																		"87": {
+																			name: "Bastogi-P1",
+																			description: "Bastogi - Piano Primo"
+																		},
+																		"92": {
+																			name: "Bastogi-PT",
+																			description: "Bastogi - Piano Terra"
+																		}
+																	}
+																};
+															},
+															callback: cb
+														});
+													}
 												});
 											}
 										},"graph");

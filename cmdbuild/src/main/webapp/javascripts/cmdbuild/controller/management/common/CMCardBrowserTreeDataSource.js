@@ -46,28 +46,29 @@
 			this.configuration = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration;
 
 			var me = this;
-			var targetNode = me.cardBrowserTree.getRootNode();
+			var rootDescription = me.configuration.root.targetClassDescription;
+			var targetNode = me.cardBrowserTree.setRootNode({
+				expanded : true,
+				checked: true,
+				text: rootDescription,
+				children : []
+			});
 
 			if (!targetNode) {
 				return;
 			}
 
-			var rootName = me.configuration.root.className;
-			var rootDescription = me.configuration.root.description || me.configuration.root.className;
-
-			// change the label of the root node
-//			targetNode.set("text", rootDescription);
-
 			// fill the first level of tree nodes
 			// asking the cards according to the 
 			// root of the configuration
+			var rootName = me.configuration.root.targetClassName;
 			CMDBuild.ServiceProxy.getCardBasicInfoList(
 				rootName, //
 				function successGetCardBasicInfoList(operation, options, response) {
 					var cards = response.rows;
 					for (var i=0, card=null, l=cards.length; i<l; ++i) {
 						card = cards[i];
-						card.expansibleDomains = me.configuration.root.children || [];
+						card.expansibleDomains = me.configuration.root.childNodes || [];
 						me.cardBrowserTree.addChildToNode(targetNode, adaptCardToNode(card, me));
 					}
 				}
@@ -130,7 +131,7 @@
 				Id: node.getCardId(),
 				ClassName: node.getCMDBuildClassName(),
 				domainId: cachedDomain.getId(),
-				src: domain.direct ? "_1" : "2"
+				src: domain.direct ? "_1" : "_2"
 			},
 			success: function(operation, options, response) {
 				var relations = [];
@@ -175,7 +176,7 @@
 	}
 
 	function adaptRelationListResponseToNode(rel, domain, me) {
-		var subDomains = domain.children || [];
+		var subDomains = domain.childNodes || [];
 		var nodeConf = {
 			text: rel.dst_desc || rel.dst_code,
 			className: _CMCache.getEntryTypeNameById(rel.dst_cid),

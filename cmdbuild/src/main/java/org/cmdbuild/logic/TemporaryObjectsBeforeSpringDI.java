@@ -112,6 +112,14 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(userCtx));
 	}
 
+	public static GISLogic getGISLogic(UserContext userCtx) {
+		return new GISLogic(userCtx);
+	}
+
+	public static GISLogic getGISLogic() {
+		return new GISLogic();
+	}
+
 	public static CMDataView getUserContextView(UserContext userCtx) {
 		final CMAccessControlManager acm = new AccessControlManagerWrapper(userCtx.privileges());
 		return new UserDataView(dbDataView, acm);

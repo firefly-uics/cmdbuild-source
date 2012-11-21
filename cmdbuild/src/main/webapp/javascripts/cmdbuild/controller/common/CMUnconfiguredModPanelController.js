@@ -3,7 +3,7 @@
 		extend: "CMDBuild.controller.CMBasePanelController",
 		
 		onViewOnFront: function() {
-			this.view.update(arguments[0]);
+			this.view.update("<div>" + arguments[0] + "</div>");
 		}
 	});
 })();

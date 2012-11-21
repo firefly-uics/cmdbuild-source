@@ -419,6 +419,9 @@
             "title": "Manage Icons"
          },
          "layermanager": {"title": "Layers order"},
+         "navigationTree": {
+            "title": "GIS navigation"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Connectors"},

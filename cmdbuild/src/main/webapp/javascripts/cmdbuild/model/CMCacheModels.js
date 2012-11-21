@@ -266,6 +266,27 @@
 			} else {
 				return this.data.createPrivileges;
 			}
+		},
+
+		getSourceClassId: function() {
+			return this.get("idClass1");
+		},
+
+		getDestinationClassId: function() {
+			return this.get("idClass2");
+		},
+
+		getNSideIdInManyRelation: function() {
+			var cardinality = this.get("cardinality");
+			if (cardinality == "1:N") {
+				return this.getDestinationClassId();
+			}
+
+			if (cardinality == "N:1") {
+				return this.getSourceClassId();
+			}
+
+			return null;
 		}
 	});
 

@@ -145,8 +145,14 @@ CMDBuild.Utils = (function() {
 		},
 
 		getAncestorsId: function(entryTypeId) {
-			var et = _CMCache.getEntryTypeById(entryTypeId),
-				out = [];
+			var et = null;
+			var out = [];
+
+			if (Ext.getClassName(entryTypeId) == "CMDBuild.cache.CMEntryTypeModel") {
+				et = entryTypeId;
+			} else {				
+				et = _CMCache.getEntryTypeById(entryTypeId);
+			}
 
 			while (et.get("parent") != "") {
 				out.push(et.get("id"));

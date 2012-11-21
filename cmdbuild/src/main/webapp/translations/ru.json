@@ -419,6 +419,9 @@
             "title": "Значки"
          },
          "layermanager": {"title": "Порядок слоев"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "ГИС"
       },
       "modconnectors": {"title": "Соединители"},
