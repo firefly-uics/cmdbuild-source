@@ -20,7 +20,7 @@ import org.joda.time.DateTime;
  * The API is still a work in progress.
  */
 @Legacy("Legacy implementation")
-public class EmailLogic {
+public class EmailLogic implements Logic {
 
 	public enum EmailStatus {
 		New,

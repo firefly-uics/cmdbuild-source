@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.cmdbuild.dao.driver.postgres.Const;
 import org.cmdbuild.dao.driver.postgres.SqlType;
+import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -19,7 +20,6 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;

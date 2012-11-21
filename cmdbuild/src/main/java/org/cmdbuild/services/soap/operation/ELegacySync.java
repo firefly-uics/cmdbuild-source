@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.syncscheduler.ConnectorJob;
@@ -120,7 +121,7 @@ public class ELegacySync {
 			try {
 				job.setAction(Action.getAction(action));
 			} catch (Exception e) {
-				Log.SOAP.error(e);
+				Log.SOAP.error("error setting action", e);
 			} 
 				
 		}

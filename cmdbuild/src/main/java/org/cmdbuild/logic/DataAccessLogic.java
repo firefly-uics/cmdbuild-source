@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  * Business Logic Layer for Data Access
  */
 @Component
-public class DataAccessLogic {
+public class DataAccessLogic implements Logic {
 
 	private final CMDataView view;
 

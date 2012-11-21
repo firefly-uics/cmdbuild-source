@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.apache.log4j.Logger;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefaultDocumentFactory;
@@ -32,10 +31,11 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
 
-public class DmsLogic {
+public class DmsLogic implements Logic {
 
 	private static Logger logger = Log.DMS;
 
@@ -146,7 +146,7 @@ public class DmsLogic {
 					.createDocumentSearch(className, cardId);
 			return service.search(document);
 		} catch (final DmsError e) {
-			logger.warn(e);
+			logger.warn("cannot get stored documents", e);
 			// TODO
 			return Collections.emptyList();
 		}

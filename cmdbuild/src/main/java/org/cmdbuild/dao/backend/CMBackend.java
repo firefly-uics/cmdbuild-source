@@ -42,7 +42,7 @@ public abstract class CMBackend {
 			Class<CMBackend> backendClass = (Class<CMBackend>) Class.forName(classname);
 			INSTANCE = backendClass.getConstructor().newInstance();
 		} catch (Exception e) {
-			Log.PERSISTENCE.fatal("Cannot instantiate the database backend " + classname, e);
+			Log.PERSISTENCE.error("Cannot instantiate the database backend " + classname, e);
 		}
 	}
 

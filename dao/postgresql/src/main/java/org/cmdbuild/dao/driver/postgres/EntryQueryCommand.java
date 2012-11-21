@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
@@ -17,7 +18,6 @@ import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.DBQueryResult;
 import org.cmdbuild.dao.query.DBQueryRow;
