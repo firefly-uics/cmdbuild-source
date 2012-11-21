@@ -54,7 +54,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 	@Test
 	public void parametersPassedToProxyWhenFetchingClass() throws Exception {
-		when(proxy().getCardList( //
+		when(proxy().getCardListWithLongDateFormat( //
 				eq(queryClass.getClassName()), //
 				anyListOf(Attribute.class), //
 				any(Query.class), //
@@ -67,7 +67,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 		queryClass.fetch();
 
-		verify(proxy()).getCardList( //
+		verify(proxy()).getCardListWithLongDateFormat( //
 				eq(queryClass.getClassName()), //
 				attributeListCaptor.capture(), //
 				queryCapturer(), //
@@ -101,7 +101,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 	@Test
 	public void soapCardIsConvertedToFluentApiCardWhenFetchingClass() throws Exception {
-		when(proxy().getCardList( //
+		when(proxy().getCardListWithLongDateFormat( //
 				eq(queryClass.getClassName()), //
 				anyListOf(Attribute.class), //
 				any(Query.class), //
@@ -120,7 +120,7 @@ public class QueryClassTest extends AbstractWsFluentApiTest {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void descriptorsListObtainedWhenFetchingClassIsUnmodifiable() throws Exception {
-		when(proxy().getCardList( //
+		when(proxy().getCardListWithLongDateFormat( //
 				eq(queryClass.getClassName()), //
 				anyListOf(Attribute.class), //
 				any(Query.class), //
