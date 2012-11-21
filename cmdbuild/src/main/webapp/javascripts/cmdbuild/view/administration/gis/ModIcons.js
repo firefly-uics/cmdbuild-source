@@ -5,12 +5,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	translation: CMDBuild.Translation.administration.modcartography.icons,
 	buttonsTr: CMDBuild.Translation.common.buttons,
 
-	urls: {
-		modify: "services/json/gis/updateiconcard",
-		add: "services/json/gis/createiconcard",
-		remove: "services/json/gis/deleteiconcard"
-	},
-
 	initComponent : function() {
 		this.buildUIButtons();
 		
@@ -42,7 +36,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			}]
 		});
 		this.iconsGrid.getSelectionModel().on("select", this.onRowSelect , this);
-		
+
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,
 			fileUpload: true,
@@ -84,16 +78,14 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			buttonAlign: 'center',
 			buttons: [this.saveButton,this.abortButton]
 		});
-		
-		Ext.apply(this, {
-			frame: false,
-			border: true,
-			layout: 'border',
-			items: [this.iconsGrid, this.uploadForm]
-		});
-		
+
+		this.frame = false;
+		this.border = true;
+		this.layout = 'border';
+		this.items = [this.iconsGrid, this.uploadForm];
+
 		this.callParent(arguments);
-		
+
 		this.on('show', function() {
 			var sm = this.iconsGrid.getSelectionModel();
 			var store = this.iconsGrid.getStore();
@@ -107,31 +99,31 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 			this.uploadForm.setFieldsDisabled();
 		}, this);
-		
+
 		this.iconsGrid.getStore().on('load', function(store, records, options) {
 			if (records.length == 0) {
 				this.modifyButton.disable();
 				this.removeButton.disable();
 			}
 		}, this);
-  	},
-  	
-  	//private
-  	renderIcon: function(value, cell, record) {
-  		var path = record.data.path + "?" + Math.floor(Math.random()*100); //to force the reload
-  		return "<img src=\"" + path + "\" alt=\"" + record.data.name + "\" class=\"icon-grid-image\"/>";
-  	},
+	},
 
-  	//private
-  	buildUIButtons: function() {
-  		this.addButton = new Ext.Button({
-	    	text: this.buttonsTr.add,
-	    	iconCls: 'add',
-	    	scope: this,
-	    	handler: this.onAddClick
-	    });
-  		
-  		this.saveButton = new Ext.Button({
+	//private
+	renderIcon: function(value, cell, record) {
+		var path = record.data.path + "?" + Math.floor(Math.random()*100); //to force the reload
+		return "<img src=\"" + path + "\" alt=\"" + record.data.name + "\" class=\"icon-grid-image\"/>";
+	},
+
+	//private
+	buildUIButtons: function() {
+		this.addButton = new Ext.Button({
+			text: this.buttonsTr.add,
+			iconCls: 'add',
+			scope: this,
+			handler: this.onAddClick
+		});
+
+		this.saveButton = new Ext.Button({
 			text: this.buttonsTr.save,
 			scope: this,
 			disabled: true,
@@ -224,22 +216,23 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		//the save status is set only when click to add
   		//button or modify button. It's used to choose the url of
   		//the save request
-  		var url = this.urls[this.uploadForm.saveStatus];
+
 		if (form.isValid()) {
 			CMDBuild.LoadMask.get().show();
-			form.submit({
-				method: 'POST',
-				url: url,
+			var config = {
 				scope: this,
 				success: function(form, action) {
-				_CMEventBus.publish("cmdg-icons-reload", {
-						publisher: this
-					});
 					this.iconsGrid.store.load();
 				},
 				failure: this.requestFailure,
 				callback: this.requestCallback
-			});
+			};
+
+			if (this.uploadForm.saveStatus == "add") {
+				CMDBuild.ServiceProxy.Icons.upload(form, config);
+			} else {
+				CMDBuild.ServiceProxy.Icons.update(form, config);
+			}
 		}
   	},
 
@@ -255,18 +248,13 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	  		if (selectedRow && selectedRow.length > 0) {
 	  			var selectedData = selectedRow[0];
 	  			CMDBuild.LoadMask.get().show();
-				CMDBuild.Ajax.request({
+	  			CMDBuild.ServiceProxy.Icons.remove({
 					scope : this,
 					important: true,
-					url: this.urls.remove,
 					params : {
 						"name": selectedData.get("name")
 					},
-					method : 'POST',
 					success: function(form, action) {
-						_CMEventBus.publish("cmdg-icons-reload", {
-							publisher: this
-						});
 						this.iconsGrid.store.load();
 					},
 					failure: this.requestFailure,
@@ -274,12 +262,13 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		  	 	});
 	  		}
   		};
+
   		Ext.Msg.confirm(title, msg, doRequest, this);
   	},
 
   	//private
   	requestFailure: this.onAbort,
-  	
+
   	//private  	
   	requestCallback: function() {
   		CMDBuild.LoadMask.get().hide();

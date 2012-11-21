@@ -290,7 +290,12 @@ em {
 
 .cmdbuild_unconfigured_modpanel {
 	text-align: center;
-	padding-top: 30px; 
+	vertical-align: middle;
+}
+
+.cmdbuild_unconfigured_modpanel * {
+	color: #AAA;
+	font-size: 1.8em;
 }
 
 /* ICONS */
@@ -707,27 +712,6 @@ em {
 	padding: 0.3em;
 }
 
-/*** Open layer overrides ***/
-
-.olControlLayerSwitcher {
-    width: auto !important;
-}
-
-.olControlLayerSwitcher .layersDiv {
-    background-color: #00488B !important;
-}
-
-.olControlLayerSwitcher .labelSpan {
-	padding-left: 0.5em;
-	padding-bottom: 0.5em;
-	line-height: 1.2em;
-	font-size: 1.1em
-}
-
-.olControlLayerSwitcher div span {
-	background-color: #00488B !important;
-}
-
 /*******************************/
 
 .importcsv-empty-cell {
@@ -846,15 +830,7 @@ em {
 .cmcenter {
 	text-align: center;
 }
-/*
-.x-form-display-field {
-	padding: 2px 0 0 0 ! important;
-	line-height: 1.3em ! important;
-	color: #222 ! important;
-	opacity: 1 ! important;
-	max-width: 400px ! important;
-}
-*/
+
 .empty_panel {
 	background: url("../images/emptyPageBg.png");
 	background-position: bottom right;
@@ -955,7 +931,36 @@ em {
 /* Detailed Mini CardGrid Window*/
 .cm_detailed_mini_card_grid_window_detail
 {
-	padding: 5px;"
+/* 	padding: 5px;" */
+}
+
+
+/* CMDBuild.IconsCombo*/
+
+.cm-icon-list-item,
+.cm-icon-list li,
+.cm-icon-list-item-label,
+.cm-icon-list-item-img
+{
+	float: left;
+}
+
+.cm-icon-list-item,
+.cm-icon-list li
+{
+	clear: left;
+	width: 100%
+}
+
+.cm-icon-list-item-label
+{
+	padding: 0.5em 0.5em 0.5em 0;
+	line-height: 1.5em;
+}
+
+.cm-icon-list-item-img
+{
+	margin: 0.5em;
 }
 
 /* Other */

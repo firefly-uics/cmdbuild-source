@@ -419,6 +419,9 @@
             "title": "Beheer Iconen"
          },
          "layermanager": {"title": "Laag volgorde"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Connectoren"},

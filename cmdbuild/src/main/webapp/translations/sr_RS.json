@@ -419,6 +419,9 @@
             "title": "Управљање иконама"
          },
          "layermanager": {"title": "Редослед слојева"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "ГИС"
       },
       "modconnectors": {"title": "Везни програми"},

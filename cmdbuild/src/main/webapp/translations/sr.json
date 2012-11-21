@@ -419,6 +419,9 @@
             "title": "Upravljanje ikonama"
          },
          "layermanager": {"title": "Redosled slojeva"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Vezni programi"},

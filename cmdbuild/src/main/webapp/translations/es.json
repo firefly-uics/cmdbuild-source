@@ -419,6 +419,9 @@
             "title": "Gestión Iconos"
          },
          "layermanager": {"title": "Orden niveles"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Conectores"},

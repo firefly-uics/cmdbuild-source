@@ -78,6 +78,9 @@
 						cmControllerType : controllerNS.administration.lookup.CMModLookupController
 					}),
 					new CMDBuild.Administration.ModIcons(),
+					new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
+						cmControllerType : controllerNS.administration.gis.CMModGISNavigationConfigurationController
+					}),
 					new CMDBuild.Administration.ModExternalServices(),
 					new CMDBuild.view.administration.gis.CMModGeoServer({
 						cmControllerType : controllerNS.administration.gis.CMModGeoServerController

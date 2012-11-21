@@ -24,6 +24,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
@@ -74,11 +75,13 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/form/IconsCombo.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMAdministrationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMConfigurationProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMGISProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMIconProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMWidgetConfigurationProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMDashboardProxy.js"></script>

@@ -419,6 +419,9 @@
             "title": "アイコン管理"
          },
          "layermanager": {"title": "レイヤ順序"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "コネクタ"},
