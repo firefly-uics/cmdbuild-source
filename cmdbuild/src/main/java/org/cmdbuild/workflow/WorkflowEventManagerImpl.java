@@ -1,10 +1,13 @@
 package org.cmdbuild.workflow;
 
+import static java.lang.String.format;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
@@ -78,6 +81,7 @@ public class WorkflowEventManagerImpl extends LegacyWorkflowPersistence implemen
 
 	@Override
 	public synchronized void processEvents(final int sessionId) throws CMWorkflowException {
+		Log.WORKFLOW.info(format("processing events for session '%s'", sessionId));
 		for (WorkflowEvent event : sessionEventMap.pullEvents(sessionId)) {
 			final WSProcessInstInfo procInstInfo = workflowService.getProcessInstance(event.getProcessInstanceId());
 			final CMProcessInstance processInstance = findOrCreateProcessInstance(event, procInstInfo);

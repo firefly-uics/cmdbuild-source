@@ -467,11 +467,14 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public void notify(final WSEvent wsEvent) {
+		Log.SOAP.info("event received");
 		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager();
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
 			public void visit(final WSProcessStartEvent wsEvent) {
+				Log.SOAP.info(format("event for process start: %d / %s / %s", //
+						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
@@ -479,6 +482,8 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 			@Override
 			public void visit(final WSProcessUpdateEvent wsEvent) {
+				Log.SOAP.info(format("event for process update: %d / %s / %s", //
+						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);

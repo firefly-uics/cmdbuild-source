@@ -19,8 +19,8 @@ public class LegacyCMDBuildEventAuditManager extends DelegatingEventAuditManager
 
 	class WSEventNotifierAndSelfSuspensionHandler extends WSEventNotifier {
 
-		protected WSEventNotifierAndSelfSuspensionHandler(final Private proxy) {
-			super(proxy);
+		protected WSEventNotifierAndSelfSuspensionHandler(final Private proxy, final CallbackUtilities cus) {
+			super(proxy, cus);
 		}
 
 		@Override
@@ -52,6 +52,6 @@ public class LegacyCMDBuildEventAuditManager extends DelegatingEventAuditManager
 	public void configure(final CallbackUtilities cus) throws Exception {
 		super.configure(cus);
 		final Private proxy = new CusSoapProxyBuilder(cus).build();
-		setEventManager(new WSEventNotifierAndSelfSuspensionHandler(proxy));
+		setEventManager(new WSEventNotifierAndSelfSuspensionHandler(proxy, cus));
 	}
 }
