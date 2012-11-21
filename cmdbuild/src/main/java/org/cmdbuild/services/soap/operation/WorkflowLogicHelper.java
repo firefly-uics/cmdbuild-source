@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -33,6 +32,7 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
+import org.slf4j.Logger;
 
 import com.google.common.base.Predicate;
 

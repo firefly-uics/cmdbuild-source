@@ -5,6 +5,6 @@ import org.slf4j.LoggerFactory;
 
 public interface LoggingSupport {
 
-	Logger logger = LoggerFactory.getLogger("sql");
+	Logger logger = LoggerFactory.getLogger("persist");
 
 }

@@ -226,7 +226,7 @@ public class MenuCard extends CardForwarder {
 			Iterable<ICard> list = getGroupMenuItems(groupName);
 			return buildTree(list);
 		} catch (NotFoundException e) {
-			Log.PERSISTENCE.fatal("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
+			Log.PERSISTENCE.error("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
 			return null;
 		}
 	}
@@ -238,7 +238,7 @@ public class MenuCard extends CardForwarder {
 					.filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName).ignoreStatus();
 			return buildAvailableItemsTree(list, tf);
 		} catch (NotFoundException e) {
-			Log.PERSISTENCE.fatal("View " + AvailableMenuItemsView.AvailableMenuView + " does not exist !!!", e);
+			Log.PERSISTENCE.error("View " + AvailableMenuItemsView.AvailableMenuView + " does not exist !!!", e);
 			return null;
 		}
 	}
@@ -278,7 +278,7 @@ public class MenuCard extends CardForwarder {
 			Iterable<ICard> list = getGroupMenuItems(groupName);
 			return buildMenuCardList(list);
 		} catch (NotFoundException e) {
-			Log.PERSISTENCE.fatal("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
+			Log.PERSISTENCE.error("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
 			return null;
 		}
 	}

@@ -61,14 +61,11 @@ public class EReport {
 			}
 			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
 		} catch (SQLException e) {
-			Log.SOAP.error("SQL error in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("SQL error in report", e);
 		} catch (IOException e) {
-			Log.SOAP.error("Error reading report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Error reading report", e);
 		} catch (ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Cannot find class in report", e);
 		}
 		return null;
 	}
@@ -97,14 +94,11 @@ public class EReport {
 			reportFactory.sendReportToStream(outputStream);
 			return new DataHandler(dataSource);
 		} catch (SQLException e) {
-			Log.SOAP.error("SQL error in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("SQL error in report", e);
 		} catch (IOException e) {
-			Log.SOAP.error("Error reading report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Error reading report", e);
 		} catch (ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Cannot find class in report", e);
 		} catch (Exception e) {
 			Log.SOAP.error("Error getting report", e);
 		}
