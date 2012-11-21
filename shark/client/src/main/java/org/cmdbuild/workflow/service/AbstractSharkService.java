@@ -469,4 +469,17 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 			throw new CMWorkflowException(e);
 		}
 	}
+
+	@Override
+	public void deleteProcessInstance(final String procInstId) throws CMWorkflowException {
+		final WMSessionHandle handle = handle();
+		try {
+			final ProcessFilterBuilder fb = shark().getProcessFilterBuilder();
+			final WMFilter filter = fb.addIdEquals(handle, procInstId);
+			shark().getExecutionAdministration().deleteProcessesWithFiltering(handle, filter);
+		} catch (final Exception e) {
+			throw new CMWorkflowException(e);
+		}
+	}
+
 }
