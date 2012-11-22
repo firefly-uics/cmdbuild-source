@@ -163,6 +163,15 @@ public class ECard {
 		addExtras(card, wfCard);
 		return wfCard;
 	}
+	
+	public CardExt getCardExt(final String className, final Integer cardId, final Attribute[] attributeList, boolean enableLongDateFormat) {
+
+		final ITable table = table(className);
+		final ICard card = table.cards().get(cardId);
+		
+		return prepareCardExt(attributeList, card, enableLongDateFormat);
+	}
+
 
 	private void addExtras(final ICard card, Card wfCard) {
 		if (card.getSchema().isActivity()) {
