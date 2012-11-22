@@ -197,7 +197,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	public Card fetch(final ExistingCard card) {
-		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
+		final org.cmdbuild.services.soap.Card soapCard = proxy.getCardWithLongDateFormat( //
 				card.getClassName(), //
 				card.getId(), //
 				requestedAttributesFor(card.getRequestedAttributes()));

@@ -20,6 +20,7 @@ import org.cmdbuild.services.soap.types.Attachment;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
+import org.cmdbuild.services.soap.types.CardExt;
 import org.cmdbuild.services.soap.types.CardList;
 import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Lookup;
@@ -188,5 +189,9 @@ public interface Private {
 	 */
 	public String generateDigest(@WebParam(name = "plainText") String plainText,
 			@WebParam(name = "digestAlgorithm") String digestAlgorithm) throws NoSuchAlgorithmException;
+
+	CardExt getCardWithLongDateFormat(@WebParam(name = "className") String className, @WebParam(name = "cardId") Integer cardId,
+			@WebParam(name = "attributeList") Attribute[] attributeList);
+	
 
 }

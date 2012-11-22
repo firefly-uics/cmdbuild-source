@@ -57,6 +57,7 @@ import org.cmdbuild.services.soap.types.Attachment;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
+import org.cmdbuild.services.soap.types.CardExt;
 import org.cmdbuild.services.soap.types.CardList;
 import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Lookup;
@@ -382,6 +383,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
+		Log.SOAP.info(format("calling function '%s' with parameters: %s", functionName, params));
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
 		final CMFunction function = view.findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
@@ -532,6 +534,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		Log.SOAP.info("Generating digest with algorithm " + digester + " ("
 				+ (digester.isReversible() ? "reversible" : "irreversible") + ")");
 		return digester.encrypt(plainText);
+	}
+	
+	@Override
+	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId, final Attribute[] attributeList) {
+		final ECard ecard = new ECard(getUserCtx());
+		return ecard.getCardExt(className, cardId, attributeList, true);
 	}
 
 }
