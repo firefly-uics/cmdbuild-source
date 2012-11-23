@@ -111,8 +111,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		final ECard ecard = new ECard(getUserCtx());
-		return ecard.getCard(className, cardId, attributeList);
+		return getCard(className, cardId, attributeList, false);
 	}
 
 	@Override
@@ -538,8 +537,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	
 	@Override
 	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId, final Attribute[] attributeList) {
+		return getCard(className, cardId, attributeList, true);
+	}
+	
+	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList, final boolean enableLongDateFormat) {
 		final ECard ecard = new ECard(getUserCtx());
-		return ecard.getCardExt(className, cardId, attributeList, true);
+		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
 
 }
