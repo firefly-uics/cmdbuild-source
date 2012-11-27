@@ -1,13 +1,14 @@
 package org.cmdbuild.auth.acl;
 
+import java.util.List;
 import java.util.Set;
 
-public interface CMGroup extends PrivilegeSet {
+public interface CMGroup {
 
 	/**
-	 * This identifier will be useful in the refactoring of the old messy
-	 * code. It should be removed when it is not needed, and the name should
-	 * always be used instead.
+	 * This identifier will be useful in the refactoring of the old messy code.
+	 * It should be removed when it is not needed, and the name should always be
+	 * used instead.
 	 * 
 	 * @return unique identifier
 	 */
@@ -32,15 +33,20 @@ public interface CMGroup extends PrivilegeSet {
 	Set<String> getDisabledModules();
 
 	/**
-	 * Returns the class name that should be selected on the UI load 
+	 * Returns the class name that should be selected on the UI load
 	 * 
 	 * @return class id or null
 	 */
 	Long getStartingClassId();
 
 	/**
+	 * Returns a list of all privileges for a group
+	 */
+	List<PrivilegePair> getAllPrivileges();
+
+	/**
 	 * Two CMGroups are equal if their name is equal
-	 *
+	 * 
 	 * @param obj
 	 * @return if the two groups are equal
 	 */

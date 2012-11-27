@@ -1,17 +1,20 @@
 package org.cmdbuild.services;
 
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
+
 import java.util.Map;
 
-import org.cmdbuild.auth.AuthenticatedUser;
-import org.cmdbuild.auth.AuthenticatedUserImpl;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.csv.CSVData;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.listeners.RequestListener;
-import org.cmdbuild.services.auth.AuthenticatedUserWrapper;
+import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 
 /*
@@ -27,29 +30,29 @@ public class SessionVars implements UserStore {
 	private static final String NEWREPORT_KEY = "newReport";
 	private static final String CSVDATA_KEY = "csvdata";
 
-	@Override
-	public AuthenticatedUser getUser() {
-		AuthenticatedUser authUser = (AuthenticatedUser) RequestListener.getCurrentSessionObject(AUTH_KEY);
-		if (authUser == null) {
-			authUser = AuthenticatedUserImpl.newInstance(null);
-			setUser(authUser);
-		}
-		return authUser;
-	}
-
-	@Override
-	public void setUser(final AuthenticatedUser user) {
-		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
-	}
-
 	@Deprecated
 	public UserContext getCurrentUserContext() {
-		final AuthenticatedUser authUser = getUser();
-		if (authUser.getId() == null) { // Anonymous User
+		final OperationUser operationUser = getUser();
+		if (operationUser.getAuthenticatedUser().isAnonymous()) {
 			return null;
 		} else {
-			return new AuthenticatedUserWrapper(authUser);
+			return new OperationUserWrapper(operationUser);
 		}
+	}
+
+	@Override
+	public OperationUser getUser() {
+		OperationUser operationUser = (OperationUser) RequestListener.getCurrentSessionObject(AUTH_KEY);
+		if (operationUser == null) {
+			operationUser = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(), new NullGroup());
+			setUser(operationUser);
+		}
+		return operationUser;
+	}
+
+	@Override
+	public void setUser(final OperationUser user) {
+		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
 	}
 
 	@SuppressWarnings("unchecked")

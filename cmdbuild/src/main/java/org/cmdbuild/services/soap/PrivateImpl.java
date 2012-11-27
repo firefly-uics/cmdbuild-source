@@ -34,7 +34,7 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.services.auth.AuthenticatedUserWrapper;
+import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
@@ -90,7 +90,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		// FIXME
 		final MessageContext msgCtx = wsc.getMessageContext();
 		final DefaultAuthenticationService as = new DefaultAuthenticationService();
-		return new AuthenticatedUserWrapper(as.getAuthenticatedUser());
+		return new OperationUserWrapper(as.getOperationUser());
 	}
 
 	@Override

@@ -31,6 +31,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
@@ -214,12 +215,12 @@ public class DmsLogic implements Logic {
 	}
 
 	private DocumentFactory createDocumentFactory(final String className) {
-		final Collection<String> path = userContext.tables().tree().path(className);
+		final Collection<String> path = UserOperations.from(userContext).tables().tree().path(className);
 		return new DefaultDocumentFactory(path);
 	}
 
 	private void assureWritePrivilege(final String className) {
-		final ITable schema = userContext.tables().get(className);
+		final ITable schema = UserOperations.from(userContext).tables().get(className);
 		userContext.privileges().assureWritePrivilege(schema);
 	}
 

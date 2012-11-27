@@ -1,15 +1,12 @@
 package org.cmdbuild.servlets.json;
 
-import java.util.Collection;
-
-import org.cmdbuild.auth.AuthenticatedUser;
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
+import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.auth.LoginDTO.LoginDTOBuilder;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.services.auth.AuthenticatedUserWrapper;
-import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,65 +16,42 @@ public class Login extends JSONBase {
 
 	@JSONExported
 	@Unauthorized
-	public JSONObject login(JSONObject serializer, UserContext userCtx,
-			@Parameter(value = "username", required = false) String username,
-			@Parameter(value = "password", required = false) String password, @Parameter("role") int groupId)
-			throws JSONException {
+	public JSONObject login(final JSONObject serializer, //
+			@Parameter(value = "username", required = false) final String loginString, //
+			@Parameter(value = "password", required = false) final String password, //
+			@Parameter("role") final String groupName) throws JSONException {
 
-		final AuthenticationLogic authenticationFacade = applicationContext.getBean(AuthenticationLogic.class);
-		AuthenticatedUser authenticatedUser = null;
+		final AuthenticationLogic authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		final LoginDTOBuilder builder = LoginDTO.newInstanceBuilder();
+		final LoginDTO loginDTO = builder.withLoginString(loginString)//
+				.withPassword(password)//
+				.withGroupName(groupName)//
+				.withUserStore(new SessionVars()).build();
+		final Response response = authLogic.login(loginDTO);
+		return serializeResponse(response, serializer);
+	}
+
+	private JSONObject serializeResponse(final Response response, final JSONObject serializer) {
 		try {
-			if (userCtx == null) {
-				if (username == null || password == null) {
-					throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
-				}
-				authenticatedUser = authenticationFacade.login(username, password);
-				if (authenticatedUser.isAnonymous()) {
-					throw AuthExceptionType.AUTH_WRONG_PASSWORD.createException();
-				}
-				userCtx = new AuthenticatedUserWrapper(authenticatedUser);
-				/*
-				 * FIXME: temporary solution.. if I don't do this, the next time
-				 * the userCtx parameter will be null. The
-				 * getCurrentUserContext() ---> OLD DAO calls should be deleted
-				 * and changed with getUser() ---> NEW DAO (SessionVars class)
-				 */
+			serializer.put("success", response.isSuccess());
+			if (response.getReason() != null) {
+				serializer.put("reason", response.getReason());
 			}
-
-			boolean userBelongsToMultipleGroups = groupId > 0;
-			if (userBelongsToMultipleGroups) {
-				String preferredGroupName = retrieveUserGroupNameFromGroupId(authenticatedUser, groupId);
-				authenticatedUser.selectGroup(preferredGroupName);
+			if (response.getGroups() != null) {
+				serializer.put("groups", serializeGroupsForLogin(response.getGroups()));
 			}
-
-			new SessionVars().setUser(authenticatedUser);
-		} catch (AuthException e) {
-			serializer.put("success", false);
-			if (e.getExceptionType() == AuthException.AuthExceptionType.AUTH_MULTIPLE_GROUPS) {
-				serializer.put("reason", e.getExceptionTypeText());
-				serializer.put("groups", serializeGroupForLogin(authenticatedUser.getGroups()));
-			} else {
-				throw e;
-			}
+		} catch (final JSONException e) {
+			Log.JSONRPC.error("Error serializing login response", e);
 		}
 		return serializer;
 	}
 
-	private String retrieveUserGroupNameFromGroupId(AuthenticatedUser user, Integer groupId) {
-		for (CMGroup group : user.getGroups()) {
-			if (group.getId().equals(Long.valueOf(groupId))) {
-				return group.getName();
-			}
-		}
-		return null;
-	}
-
 	// Used by index.jsp
-	private static JSONArray serializeGroupForLogin(Collection<CMGroup> groups) throws JSONException {
-		JSONArray jsonGroups = new JSONArray();
-		for (CMGroup group : groups) {
-			JSONObject jsonGroup = new JSONObject();
-			jsonGroup.put("name", group.getId());
+	private static JSONArray serializeGroupsForLogin(final Iterable<CMGroup> groups) throws JSONException {
+		final JSONArray jsonGroups = new JSONArray();
+		for (final CMGroup group : groups) {
+			final JSONObject jsonGroup = new JSONObject();
+			jsonGroup.put("name", group.getName());
 			jsonGroup.put("description", group.getDescription());
 			jsonGroups.put(jsonGroup);
 		}

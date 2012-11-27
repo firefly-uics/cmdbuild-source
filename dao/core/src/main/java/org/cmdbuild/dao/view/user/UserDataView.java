@@ -21,11 +21,13 @@ import org.cmdbuild.dao.view.QueryExecutorDataView;
 
 public class UserDataView extends QueryExecutorDataView {
 
-	private final DBDataView view;
+	private final DBDataView dbView;
 	private final OperationUser user;
 
+	// TODO: replace the OperationUser parameter with the PrivilegeContext
+	// one...
 	public UserDataView(final DBDataView view, final OperationUser user) {
-		this.view = view;
+		this.dbView = view;
 		this.user = user;
 	}
 
@@ -35,12 +37,12 @@ public class UserDataView extends QueryExecutorDataView {
 
 	@Override
 	public UserClass findClassById(final Long id) {
-		return UserClass.newInstance(this, view.findClassById(id));
+		return UserClass.newInstance(this, dbView.findClassById(id));
 	}
 
 	@Override
 	public UserClass findClassByName(final String name) {
-		return UserClass.newInstance(this, view.findClassByName(name));
+		return UserClass.newInstance(this, dbView.findClassByName(name));
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserClass> findClasses() {
-		return proxyClasses(view.findClasses());
+		return proxyClasses(dbView.findClasses());
 	}
 
 	/**
@@ -61,17 +63,17 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserClass> findAllClasses() {
-		return proxyClasses(view.findAllClasses());
+		return proxyClasses(dbView.findAllClasses());
 	}
 
 	@Override
 	public UserDomain findDomainById(final Long id) {
-		return UserDomain.newInstance(this, view.findDomainById(id));
+		return UserDomain.newInstance(this, dbView.findDomainById(id));
 	}
 
 	@Override
 	public UserDomain findDomainByName(final String name) {
-		return UserDomain.newInstance(this, view.findDomainByName(name));
+		return UserDomain.newInstance(this, dbView.findDomainByName(name));
 	}
 
 	/**
@@ -81,7 +83,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findDomains() {
-		return proxyDomains(view.findDomains());
+		return proxyDomains(dbView.findDomains());
 	}
 
 	/**
@@ -95,7 +97,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findDomainsFor(final CMClass type) {
-		return proxyDomains(view.findDomainsFor(type));
+		return proxyDomains(dbView.findDomainsFor(type));
 	}
 
 	/**
@@ -106,12 +108,12 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findAllDomains() {
-		return proxyDomains(view.findAllDomains());
+		return proxyDomains(dbView.findAllDomains());
 	}
 
 	@Override
 	public CMFunction findFunctionByName(final String name) {
-		return view.findFunctionByName(name);
+		return dbView.findFunctionByName(name);
 	}
 
 	/**
@@ -119,24 +121,24 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<? extends CMFunction> findAllFunctions() {
-		return view.findAllFunctions();
+		return dbView.findAllFunctions();
 	}
 
 	@Override
 	public CMCardDefinition newCard(final CMClass type) {
 		// TODO
-		return view.newCard(type);
+		return dbView.newCard(type);
 	}
 
 	@Override
 	public CMCardDefinition modifyCard(final CMCard card) {
 		// TODO
-		return view.modifyCard(card);
+		return dbView.modifyCard(card);
 	}
 
 	@Override
 	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
-		return view.executeNonEmptyQuery(querySpecs);
+		return dbView.executeNonEmptyQuery(querySpecs);
 	}
 
 	/*

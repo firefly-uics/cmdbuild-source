@@ -5,7 +5,9 @@ import java.util.List;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.DefaultAuthenticationService.ClientAuthenticatorResponse;
 import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 
 public interface AuthenticationService {
 
@@ -57,7 +59,7 @@ public interface AuthenticationService {
 	 * @param login
 	 * @return the authenticated user
 	 */
-	public AuthenticatedUser impersonate(final Login login);
+	public OperationUser impersonate(final Login login);
 
 	/**
 	 * Get the currently authenticated user. It can be anonymous but it will
@@ -65,10 +67,25 @@ public interface AuthenticationService {
 	 * 
 	 * @return the authenticated user
 	 */
-	public AuthenticatedUser getAuthenticatedUser();
+	public OperationUser getOperationUser();
 
 	public List<CMUser> fetchUsersByGroupId(Long groupId);
 
+	/**
+	 * Given a user identifier, it returns the user with that id
+	 * 
+	 * @param userId
+	 * @return the user with id = userId, null if there is no user with that id
+	 */
 	public CMUser fetchUserById(Long userId);
+
+	/**
+	 * Given a username, it returns the user with that username
+	 * 
+	 * @param username
+	 * @return the user with the provided username, null if there is no user
+	 *         with that username
+	 */
+	public CMUser fetchUserByUsername(String username);
 
 }

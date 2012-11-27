@@ -1,6 +1,6 @@
 package org.cmdbuild.auth;
 
-import static org.cmdbuild.auth.AuthenticatedUserImpl.ANONYMOUS_USER;
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 import java.util.List;
 import java.util.Set;
@@ -9,7 +9,10 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.AuthenticatedUserImpl;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -65,22 +68,23 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	private interface FetchCallback {
 
-		void foundUser(AuthenticatedUserImpl authUser);
+		void foundUser(AuthenticatedUser authUser);
 	}
 
 	private static final UserStore DUMB_STORE = new UserStore() {
 
 		@Override
-		public AuthenticatedUser getUser() {
+		public OperationUser getUser() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setUser(final AuthenticatedUser user) {
+		public void setUser(final OperationUser user) {
 			throw new UnsupportedOperationException();
 		}
 	};
 
+	// FIXME: maybe the userStore is no more used... remove it (?)
 	private PasswordAuthenticator[] passwordAuthenticators;
 	private ClientRequestAuthenticator[] clientRequestAuthenticators;
 	private UserFetcher[] userFetchers;
@@ -169,10 +173,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				return fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
-					public void foundUser(final AuthenticatedUserImpl authUser) {
+					public void foundUser(final AuthenticatedUser authUser) {
 						final PasswordChanger passwordChanger = passwordAuthenticator.getPasswordChanger(login);
 						authUser.setPasswordChanger(passwordChanger);
-						userStore.setUser(authUser);
 					}
 				});
 			}
@@ -191,10 +194,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				return fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
-					public void foundUser(final AuthenticatedUserImpl authUser) {
+					public void foundUser(final AuthenticatedUser authUser) {
 						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
 						authUser.setPasswordChanger(passwordChanger);
-						userStore.setUser(authUser);
 						passwordCallback.setPassword(pass);
 					}
 				});
@@ -213,8 +215,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			if (response != null) {
 				final AuthenticatedUser authUser = fetchAuthenticatedUser(response.getLogin(), new FetchCallback() {
 					@Override
-					public void foundUser(final AuthenticatedUserImpl authUser) {
-						userStore.setUser(authUser);
+					public void foundUser(final AuthenticatedUser authUser) {
+						// empty for now
 					}
 				});
 				return new ClientAuthenticatorResponse(authUser, response.getRedirectUrl());
@@ -224,23 +226,23 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public AuthenticatedUser impersonate(final Login login) {
-		final AuthenticatedUser authUser = userStore.getUser();
-		if (authUser.hasAdministratorPrivileges() || isServiceUser(authUser)) {
+	public OperationUser impersonate(final Login login) {
+		final OperationUser operationUser = userStore.getUser();
+		if (operationUser.hasAdministratorPrivileges() || isServiceUser(operationUser.getAuthenticatedUser())) {
 			final CMUser user = fetchUser(login);
-			authUser.impersonate(user);
-			return authUser;
+			operationUser.impersonate(user);
+			return operationUser;
 		}
-		throw new UnsupportedOperationException();
+		return operationUser;
 	}
 
 	@Override
-	public AuthenticatedUser getAuthenticatedUser() {
+	public OperationUser getOperationUser() {
 		return userStore.getUser();
 	}
 
 	private AuthenticatedUser fetchAuthenticatedUser(final Login login, final FetchCallback callback) {
-		AuthenticatedUserImpl authUser = ANONYMOUS_USER;
+		AuthenticatedUser authUser = ANONYMOUS_USER;
 		final CMUser user = fetchUser(login);
 		if (user != null) {
 			authUser = AuthenticatedUserImpl.newInstance(user);
@@ -282,6 +284,12 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			}
 		}
 		return user;
+	}
+
+	@Override
+	public CMUser fetchUserByUsername(final String username) {
+		final Login login = Login.newInstance(username);
+		return fetchUser(login);
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.cmdbuild.auth.acl;
+package org.cmdbuild.auth.context;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,15 +7,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.acl.CMPrivilege;
+import org.cmdbuild.auth.acl.CMPrivilegedObject;
+import org.cmdbuild.auth.acl.DefaultPrivileges;
+import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.common.Builder;
 
-public class SimpleSecurityManager extends AbstractSecurityManager implements InspectableSecurityManager {
+public class DefaultPrivilegeContext implements PrivilegeContext {
 
-	public static class SimpleSecurityManagerBuilder implements Builder<SimpleSecurityManager> {
+	public static class DefaultPrivilegeContextBuilder implements Builder<DefaultPrivilegeContext> {
 
 		private final Map<String, List<CMPrivilege>> objectPrivileges;
 
-		private SimpleSecurityManagerBuilder() {
+		private DefaultPrivilegeContextBuilder() {
 			objectPrivileges = new HashMap<String, List<CMPrivilege>>();
 		}
 
@@ -27,7 +32,7 @@ public class SimpleSecurityManager extends AbstractSecurityManager implements In
 
 		public void withPrivilege(final CMPrivilege privilege) {
 			Validate.notNull(privilege);
-			addPrivilege(privilege, GLOBAL_PRIVILEGE_ID);
+			addPrivilege(privilege, DefaultPrivileges.GLOBAL_PRIVILEGE_ID);
 		}
 
 		public void withPrivileges(final Iterable<PrivilegePair> privileges) {
@@ -69,35 +74,58 @@ public class SimpleSecurityManager extends AbstractSecurityManager implements In
 		}
 
 		@Override
-		public SimpleSecurityManager build() {
-			return new SimpleSecurityManager(this);
+		public DefaultPrivilegeContext build() {
+			return new DefaultPrivilegeContext(this);
 		}
+
+		public Map<String, List<CMPrivilege>> getObjectPrivileges() {
+			return objectPrivileges;
+		}
+
+	}
+
+	public static DefaultPrivilegeContextBuilder newBuilderInstance() {
+		return new DefaultPrivilegeContextBuilder();
 	}
 
 	private final Map<String, List<CMPrivilege>> objectPrivileges;
 
-	public static SimpleSecurityManagerBuilder newInstanceBuilder() {
-		return new SimpleSecurityManagerBuilder();
-	}
-
-	private SimpleSecurityManager(final SimpleSecurityManagerBuilder builder) {
-		this.objectPrivileges = builder.objectPrivileges;
+	private DefaultPrivilegeContext(final DefaultPrivilegeContextBuilder builder) {
+		this.objectPrivileges = builder.getObjectPrivileges();
 	}
 
 	@Override
-	public List<PrivilegePair> getAllPrivileges() {
-		final List<PrivilegePair> allPrivileges = new ArrayList<PrivilegePair>();
-		for (final Map.Entry<String, List<CMPrivilege>> entry : objectPrivileges.entrySet()) {
-			for (final CMPrivilege priv : entry.getValue()) {
-				final PrivilegePair privPair = new PrivilegePair(entry.getKey(), priv);
-				allPrivileges.add(privPair);
-			}
-		}
-		return allPrivileges;
+	public boolean hasAdministratorPrivileges() {
+		return hasPrivilege(DefaultPrivileges.ADMINISTRATOR);
 	}
 
 	@Override
-	protected final boolean hasPrivilege(final CMPrivilege requested, final String privilegeId) {
+	public boolean hasDatabaseDesignerPrivileges() {
+		return hasPrivilege(DefaultPrivileges.DATABASE_DESIGNER);
+	}
+
+	@Override
+	public boolean hasPrivilege(final CMPrivilege privilege) {
+		return hasPrivilege(privilege, DefaultPrivileges.GLOBAL_PRIVILEGE_ID);
+	}
+
+	@Override
+	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
+		return hasPrivilege(DefaultPrivileges.READ, privilegedObject);
+	}
+
+	@Override
+	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
+		return hasPrivilege(DefaultPrivileges.WRITE, privilegedObject);
+	}
+
+	@Override
+	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
+		return hasPrivilege(requested, DefaultPrivileges.GLOBAL_PRIVILEGE_ID)
+				|| hasPrivilege(requested, privilegedObject.getPrivilegeId());
+	}
+
+	private final boolean hasPrivilege(final CMPrivilege requested, final String privilegeId) {
 		final List<CMPrivilege> grantedPrivileges = objectPrivileges.get(privilegeId);
 		if (grantedPrivileges != null) {
 			for (final CMPrivilege granted : grantedPrivileges) {
@@ -115,4 +143,16 @@ public class SimpleSecurityManager extends AbstractSecurityManager implements In
 	public List<CMPrivilege> getPrivilegesFor(final CMPrivilegedObject object) {
 		return objectPrivileges.get(object.getPrivilegeId());
 	}
+
+	public List<PrivilegePair> getAllPrivileges() {
+		final List<PrivilegePair> allPrivileges = new ArrayList<PrivilegePair>();
+		for (final Map.Entry<String, List<CMPrivilege>> entry : objectPrivileges.entrySet()) {
+			for (final CMPrivilege priv : entry.getValue()) {
+				final PrivilegePair privPair = new PrivilegePair(entry.getKey(), priv);
+				allPrivileges.add(privPair);
+			}
+		}
+		return allPrivileges;
+	}
+
 }

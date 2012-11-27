@@ -20,7 +20,7 @@ import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.GroupImpl;
 import org.cmdbuild.auth.acl.GroupImpl.GroupImplBuilder;
-import org.cmdbuild.auth.acl.PrivilegeSet.PrivilegePair;
+import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;

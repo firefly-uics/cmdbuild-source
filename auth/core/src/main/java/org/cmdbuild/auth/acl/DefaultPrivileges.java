@@ -8,7 +8,7 @@ public class DefaultPrivileges {
 	public static class SimplePrivilege implements CMPrivilege {
 
 		@Override
-		public boolean implies(CMPrivilege privilege) {
+		public boolean implies(final CMPrivilege privilege) {
 			return privilege == this;
 		}
 	};
@@ -24,19 +24,19 @@ public class DefaultPrivileges {
 	public static final CMPrivilege WRITE = new SimplePrivilege() {
 
 		@Override
-		public boolean implies(CMPrivilege privilege) {
+		public boolean implies(final CMPrivilege privilege) {
 			return super.implies(privilege) || privilege == READ;
 		}
 	};
 
 	/**
-	 * God privilege is used because people belonging to an
-	 * administration group are granted full privileges.
+	 * God privilege is used because people belonging to an administration group
+	 * are granted full privileges.
 	 */
 	public static final CMPrivilege GOD = new CMPrivilege() {
 
 		@Override
-		public boolean implies(CMPrivilege privilege) {
+		public boolean implies(final CMPrivilege privilege) {
 			return true;
 		}
 	};
@@ -47,8 +47,10 @@ public class DefaultPrivileges {
 	public static final CMPrivilege DATABASE_DESIGNER = new SimplePrivilege();
 
 	/**
-	 * Administrators are those users that can change the system
-	 * configuration, manage users, groups, their menus and ACLs.
+	 * Administrators are those users that can change the system configuration,
+	 * manage users, groups, their menus and ACLs.
 	 */
 	public static final CMPrivilege ADMINISTRATOR = new SimplePrivilege();
+
+	public static final String GLOBAL_PRIVILEGE_ID = null;
 }

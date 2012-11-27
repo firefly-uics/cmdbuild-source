@@ -4,39 +4,53 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.cmdbuild.elements.DomainFactoryImpl;
-import org.cmdbuild.elements.ProcessTypeFactoryImpl;
-import org.cmdbuild.elements.RelationFactoryImpl;
-import org.cmdbuild.elements.TableFactoryImpl;
-import org.cmdbuild.elements.interfaces.BaseSchema;
-import org.cmdbuild.elements.interfaces.DomainFactory;
-import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.elements.interfaces.ProcessTypeFactory;
-import org.cmdbuild.elements.interfaces.RelationFactory;
+import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 
 public class SystemContext extends UserContext {
 
 	private class SystemPrivilegeManager implements PrivilegeManager {
 
-		@Override public void assureAdminPrivilege() {}
-		@Override public void assureCreatePrivilege(ITable table) {}
-		@Override public void assureCreatePrivilege(IDomain domain) {}
-		@Override public void assureReadPrivilege(ITable table) {}
-		@Override public void assureReadPrivilege(IDomain domain) {}
-		@Override public void assureWritePrivilege(ITable table) {}
-		@Override public void assureWritePrivilege(IDomain domain) {}
-		@Override public PrivilegeType getPrivilege(BaseSchema schema) { return PrivilegeType.WRITE; }
-		@Override public boolean hasCreatePrivilege(ITable table) { return true; }
-		@Override public boolean hasCreatePrivilege(IDomain domain) { return true; }
-		@Override public boolean hasReadPrivilege(ITable table) { return true; }
-		@Override public boolean hasReadPrivilege(IDomain domain) { return true; }
-		@Override public boolean hasReadPrivilege(BaseSchema schema) { return true; }
-		@Override public boolean hasWritePrivilege(ITable table) { return true; }
-		@Override public boolean hasWritePrivilege(IDomain domain) { return true; }
-		@Override public boolean isAdmin() { return true; }
+		@Override
+		public void assureAdminPrivilege() {
+		}
+
+		@Override
+		public void assureCreatePrivilege(final CMPrivilegedObject domain) {
+		}
+
+		@Override
+		public void assureReadPrivilege(final CMPrivilegedObject domain) {
+		}
+
+		@Override
+		public void assureWritePrivilege(final CMPrivilegedObject domain) {
+		}
+
+		@Override
+		public PrivilegeType getPrivilege(final CMPrivilegedObject schema) {
+			return PrivilegeType.WRITE;
+		}
+
+		@Override
+		public boolean hasCreatePrivilege(final CMPrivilegedObject domain) {
+			return true;
+		}
+
+		@Override
+		public boolean hasReadPrivilege(final CMPrivilegedObject domain) {
+			return true;
+		}
+
+		@Override
+		public boolean hasWritePrivilege(final CMPrivilegedObject domain) {
+			return true;
+		}
+
+		@Override
+		public boolean isAdmin() {
+			return true;
+		}
 	}
 
 	private static SystemContext INSTANCE = new SystemContext();
@@ -49,7 +63,7 @@ public class SystemContext extends UserContext {
 	}
 
 	@Override
-	public boolean belongsTo(String groupName) {
+	public boolean belongsTo(final String groupName) {
 		return false;
 	}
 
@@ -64,7 +78,7 @@ public class SystemContext extends UserContext {
 	}
 
 	@Override
-	public void changePassword(String oldPassword, String newPassword) {
+	public void changePassword(final String oldPassword, final String newPassword) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -75,7 +89,7 @@ public class SystemContext extends UserContext {
 
 	@Override
 	public Collection<Group> getGroups() {
-		List<Group> groups = new ArrayList<Group>(1);
+		final List<Group> groups = new ArrayList<Group>(1);
 		groups.add(GroupImpl.getSystemGroup());
 		return groups;
 	}
@@ -120,23 +134,4 @@ public class SystemContext extends UserContext {
 		return new SystemPrivilegeManager();
 	}
 
-	@Override
-	public ProcessTypeFactory processTypes() {
-		return new ProcessTypeFactoryImpl(this);
-	}
-
-	@Override
-	public RelationFactory relations() {
-		return new RelationFactoryImpl(this);
-	}
-
-	@Override
-	public ITableFactory tables() {
-		return new TableFactoryImpl(this);
-	}
-
-	@Override
-	public DomainFactory domains() {
-		return new DomainFactoryImpl(this);
-	}
 }

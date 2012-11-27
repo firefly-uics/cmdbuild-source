@@ -19,6 +19,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class UserCard extends LazyCard implements User {
 
@@ -29,7 +30,8 @@ public class UserCard extends LazyCard implements User {
 	private static final String ATTRIBUTE_EMAIL = "Email";
 
 	public static final String USER_CLASS_NAME = "User";
-	private static final ITable userClass = UserContext.systemContext().tables().get(USER_CLASS_NAME);
+	private static final ITable userClass = UserOperations.from(UserContext.systemContext()).tables()
+			.get(USER_CLASS_NAME);
 
 	public UserCard() throws NotFoundException {
 		super(userClass.cards().create());
@@ -44,6 +46,7 @@ public class UserCard extends LazyCard implements User {
 		return new UserImpl(this.getId(), this.getName(), this.getDescription(), this.getEncryptedPassword());
 	}
 
+	@Override
 	public String getName() {
 		return getAttributeValue(ATTRIBUTE_USERNAME).getString();
 	}
@@ -60,6 +63,7 @@ public class UserCard extends LazyCard implements User {
 		getAttributeValue(ATTRIBUTE_EMAIL).setValue(email);
 	}
 
+	@Override
 	public String getEncryptedPassword() {
 		return getAttributeValue(ATTRIBUTE_PASSWORD).getString();
 	}
@@ -108,9 +112,11 @@ public class UserCard extends LazyCard implements User {
 
 	public static Iterable<UserCard> allByUsername() throws NotFoundException, ORMException {
 		final List<UserCard> list = new LinkedList<UserCard>();
-		final Iterable<ICard> query = userClass.cards().list().filter(ICard.CardAttributes.Status.name(),
-				AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value()).order("Username", OrderFilterType.ASC)
-				.ignoreStatus();
+		final Iterable<ICard> query = userClass
+				.cards()
+				.list()
+				.filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,
+						ElementStatus.UPDATED.value()).order("Username", OrderFilterType.ASC).ignoreStatus();
 		for (final ICard card : query) {
 			list.add(new UserCard(card));
 		}

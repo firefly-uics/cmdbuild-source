@@ -1,22 +1,27 @@
 package integration.logic.auth;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.cmdbuild.auth.AuthenticatedUser;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
+import org.cmdbuild.logic.auth.LoginDTO;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,27 +42,26 @@ public class AuthenticationLogicTest extends DBFixture {
 	private DBCard groupA;
 	private DBCard groupB;
 	private DBCard groupC;
+	private UserStore DUMB_STORE;
 
 	@Before
 	public void setUp() {
 		final AuthenticationService service = new DefaultAuthenticationService();
 		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbView);
-		service.setUserStore(new UserStore() {
-
-			@Override
-			public void setUser(final AuthenticatedUser user) {
-				// mock
-			}
-
-			@Override
-			public AuthenticatedUser getUser() {
-				// mock
-				return null;
-			}
-		});
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
 		authLogic = new AuthenticationLogic(service);
+		DUMB_STORE = new UserStore() {
+
+			@Override
+			public OperationUser getUser() {
+				return null;
+			}
+
+			@Override
+			public void setUser(final OperationUser user) {
+			}
+		};
 
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
@@ -70,64 +74,90 @@ public class AuthenticationLogicTest extends DBFixture {
 		groupB = insertRoleWithCode("group B");
 		groupC = insertRoleWithCode("group C");
 
+		buildNnRelation();
 	}
 
+	// TODO: riscrivere i test con i vari casi:
+	/**
+	 * 1) l'utente fornisce credenziali errate 2) credenziali giuste e
+	 * appartiene a un gruppo 3) credenziali giuste e appartiene a + gruppi ma
+	 * default group 4) credenziali giuste e appartiene a + gruppi ma non
+	 * default group 5) integration test con privilege manager (in un altro file
+	 * di test...)
+	 */
 	@Test
 	public void shouldAuthenticateUserWithValidUsernameAndPassword() {
 		// given
-		buildNnRelation();
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString(ADMIN_USERNAME) //
+				.withPassword(ADMIN_PASSWORD) //
+				.withGroupName((String) groupA.getCode()) //
+				.withUserStore(DUMB_STORE).build();
 
 		// when
-		final AuthenticatedUser authUser = authLogic.login(ADMIN_USERNAME, ADMIN_PASSWORD);
+		final Response response = authLogic.login(loginDTO);
 
 		// then
-		assertUserIsSuccessfullyAuthenticated(authUser);
+		assertUserIsSuccessfullyAuthenticated(response);
+	}
+
+	private void assertUserIsSuccessfullyAuthenticated(final Response response) {
+		assertTrue(response.isSuccess());
+		assertThat(response.getGroups(), is(nullValue()));
+		assertThat(response.getReason(), is(nullValue()));
 	}
 
 	@Test
 	public void shouldAuthenticateUserWithValidEmailAndPassword() {
 		// given
-		buildNnRelation();
-
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString(ADMIN_EMAIL) //
+				.withPassword(ADMIN_PASSWORD) //
+				.withGroupName((String) groupA.getCode()) //
+				.withUserStore(DUMB_STORE).build();
 		// when
-		final AuthenticatedUser authUser = authLogic.login(ADMIN_EMAIL, ADMIN_PASSWORD);
+		final Response response = authLogic.login(loginDTO);
 
 		// then
-		assertUserIsSuccessfullyAuthenticated(authUser);
-	}
-
-	private void assertUserIsSuccessfullyAuthenticated(final AuthenticatedUser authUser) {
-		assertNotNull(authUser.getId());
+		assertUserIsSuccessfullyAuthenticated(response);
 	}
 
 	@Test
 	public void shouldNotAuthenticateUserWithWrongPassword() {
 		// given
-		buildNnRelation();
-
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString(ADMIN_USERNAME) //
+				.withPassword(WRONG_ADMIN_PASSWORD) //
+				.withGroupName((String) groupA.getCode()) //
+				.withUserStore(DUMB_STORE).build();
 		// when
-		final AuthenticatedUser authUser = authLogic.login(ADMIN_USERNAME, WRONG_ADMIN_PASSWORD);
+		final Response response = authLogic.login(loginDTO);
 
 		// then
-		assertTrue(authUser.isAnonymous());
+		assertFalse(response.isSuccess());
+		assertThat(response.getGroups(), is(nullValue()));
+		assertThat(response.getReason(), is(not(nullValue())));
 	}
 
 	@Test
 	public void shouldNotAuthenticateUserWithWrongUsername() {
 		// given
-		buildNnRelation();
-
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString("wrong_admin_username") //
+				.withPassword(ADMIN_PASSWORD) //
+				.withGroupName((String) groupA.getCode()) //
+				.withUserStore(DUMB_STORE).build();
 		// when
-		final AuthenticatedUser authUser = authLogic.login("fake_username", WRONG_ADMIN_PASSWORD);
+		final Response response = authLogic.login(loginDTO);
 
 		// then
-		assertTrue(authUser.isAnonymous());
+		assertFalse(response.isSuccess());
+		assertThat(response.getGroups(), is(nullValue()));
+		assertThat(response.getReason(), is(not(nullValue())));
 	}
 
 	@Test
 	public void shouldRetrieveAllGroupsForAUser() {
-		// given
-		buildNnRelation();
 
 		// when
 		final Iterable<CMGroup> groups = authLogic.getGroupsFromUserId(adminCard.getId());
@@ -157,8 +187,6 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	@Test
 	public void shouldRetrieveAllUsersForNonEmptyGroup() {
-		// given
-		buildNnRelation();
 
 		// when
 		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupA.getId());
@@ -180,8 +208,6 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	@Test
 	public void shouldRetrieveNoUserForEmptyGroup() {
-		// given
-		buildNnRelation();
 
 		// when
 		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupC.getId());

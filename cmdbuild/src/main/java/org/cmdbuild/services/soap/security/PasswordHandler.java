@@ -7,10 +7,10 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.ws.security.WSPasswordCallback;
-import org.cmdbuild.auth.AuthenticatedUser;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.Login;
+import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.config.AuthProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
