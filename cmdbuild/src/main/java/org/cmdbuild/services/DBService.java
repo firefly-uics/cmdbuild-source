@@ -1,6 +1,5 @@
 package org.cmdbuild.services;
 
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +17,7 @@ import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.postgresql.ds.PGSimpleDataSource;
-
+import org.springframework.jdbc.datasource.AbstractDataSource;
 
 public class DBService {
 
@@ -109,13 +108,12 @@ public class DBService {
 		}
 	}
 
-	public static Connection getConnection(String host, int port, String user,
-			String password) throws SQLException {
+	public static Connection getConnection(String host, int port, String user, String password) throws SQLException {
 		return getConnection(host, port, user, password, MANAGEMENT_DATABASE);
 	}
 
-	public static Connection getConnection(String host, int port, String user,
-			String password, final String database) throws SQLException {
+	public static Connection getConnection(String host, int port, String user, String password, final String database)
+			throws SQLException {
 		final PGSimpleDataSource ds = new PGSimpleDataSource();
 		ds.setServerName(host);
 		ds.setPortNumber(port);
@@ -128,7 +126,8 @@ public class DBService {
 	// TODO: Move it to the driver implementation
 	public static String getDriverVersion() {
 		try {
-			// Needs to read it from the current classpath, thus we can't use the field reference directly!
+			// Needs to read it from the current classpath, thus we can't use
+			// the field reference directly!
 			final int major = DRIVER_CLASS.getField("MAJORVERSION").getInt(null);
 			final int minor = DRIVER_CLASS.getField("MINORVERSION").getInt(null);
 			final int build = org.postgresql.util.PSQLDriverVersion.class.getField("buildNumber").getInt(null);
@@ -155,7 +154,7 @@ public class DBService {
 	public static String fetchPostGISVersion() {
 		try {
 			Connection c = getConnection();
-			Statement s = c.createStatement(); 
+			Statement s = c.createStatement();
 			ResultSet r = s.executeQuery("select postgis_lib_version()");
 			if (r.next()) {
 				final String postgisVersion = r.getString(1);
@@ -181,24 +180,13 @@ public class DBService {
 	}
 }
 
-class LazyConfDataSource implements DataSource {
+class LazyConfDataSource extends AbstractDataSource {
 
 	private final BasicDataSource ds;
 	private Boolean configured = new Boolean(false);
 
-	LazyConfDataSource(BasicDataSource ds) {
+	LazyConfDataSource(final BasicDataSource ds) {
 		this.ds = ds;
-	}
-
-	private DataSource configureDatasource() {
-		DatabaseProperties dp = DatabaseProperties.getInstance();
-		if (!dp.isConfigured()) {
-			throw new IllegalStateException("Database connection not configured");
-		}
-		ds.setUrl(dp.getDatabaseUrl());
-		ds.setUsername(dp.getDatabaseUser());
-		ds.setPassword(dp.getDatabasePassword());
-		return ds;
 	}
 
 	@Override
@@ -218,34 +206,15 @@ class LazyConfDataSource implements DataSource {
 		return ds.getConnection(username, password);
 	}
 
-	@Override
-	public PrintWriter getLogWriter() throws SQLException {
-		return ds.getLogWriter();
-	}
-
-	@Override
-	public int getLoginTimeout() throws SQLException {
-		return ds.getLoginTimeout();
-	}
-
-	@Override
-	public void setLogWriter(PrintWriter out) throws SQLException {
-		ds.setLogWriter(out);
-	}
-
-	@Override
-	public void setLoginTimeout(int seconds) throws SQLException {
-		ds.setLoginTimeout(seconds);
-	}
-
-	@Override
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return ds.isWrapperFor(iface);
-	}
-
-	@Override
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return ds.unwrap(iface);
+	private DataSource configureDatasource() {
+		DatabaseProperties dp = DatabaseProperties.getInstance();
+		if (!dp.isConfigured()) {
+			throw new IllegalStateException("Database connection not configured");
+		}
+		ds.setUrl(dp.getDatabaseUrl());
+		ds.setUsername(dp.getDatabaseUser());
+		ds.setPassword(dp.getDatabasePassword());
+		return ds;
 	}
 
 }
