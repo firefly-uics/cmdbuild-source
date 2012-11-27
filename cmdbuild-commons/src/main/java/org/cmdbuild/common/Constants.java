@@ -3,6 +3,7 @@ package org.cmdbuild.common;
 public interface Constants {
 
 	String BASE_CLASS_NAME = "Class";
+	String BASE_PROCESS_CLASS_NAME = "Activity";
 
 	String CODE_ATTRIBUTE = "Code";
 	String DESCRIPTION_ATTRIBUTE = "Description";

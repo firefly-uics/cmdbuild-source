@@ -46,8 +46,8 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>dbcp</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

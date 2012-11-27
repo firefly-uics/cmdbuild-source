@@ -1,5 +1,6 @@
 package org.cmdbuild.services;
 
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,12 +13,12 @@ import javax.sql.DataSource;
 
 import net.jcip.annotations.GuardedBy;
 
+import org.apache.commons.lang.Validate;
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.jdbc.datasource.AbstractDataSource;
 
 public class DBService {
 
@@ -180,13 +181,24 @@ public class DBService {
 	}
 }
 
-class LazyConfDataSource extends AbstractDataSource {
+class LazyConfDataSource implements DataSource {
 
 	private final BasicDataSource ds;
 	private Boolean configured = new Boolean(false);
 
-	LazyConfDataSource(final BasicDataSource ds) {
+	LazyConfDataSource(BasicDataSource ds) {
 		this.ds = ds;
+	}
+
+	private DataSource configureDatasource() {
+		DatabaseProperties dp = DatabaseProperties.getInstance();
+		if (!dp.isConfigured()) {
+			throw new IllegalStateException("Database connection not configured");
+		}
+		ds.setUrl(dp.getDatabaseUrl());
+		ds.setUsername(dp.getDatabaseUser());
+		ds.setPassword(dp.getDatabasePassword());
+		return ds;
 	}
 
 	@Override
@@ -206,15 +218,38 @@ class LazyConfDataSource extends AbstractDataSource {
 		return ds.getConnection(username, password);
 	}
 
-	private DataSource configureDatasource() {
-		DatabaseProperties dp = DatabaseProperties.getInstance();
-		if (!dp.isConfigured()) {
-			throw new IllegalStateException("Database connection not configured");
+	@Override
+	public PrintWriter getLogWriter() throws SQLException {
+		return ds.getLogWriter();
+	}
+
+	@Override
+	public int getLoginTimeout() throws SQLException {
+		return ds.getLoginTimeout();
+	}
+
+	@Override
+	public void setLogWriter(PrintWriter out) throws SQLException {
+		ds.setLogWriter(out);
+	}
+
+	@Override
+	public void setLoginTimeout(int seconds) throws SQLException {
+		ds.setLoginTimeout(seconds);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T unwrap(Class<T> iface) throws SQLException {
+		Validate.notNull(iface, "Interface argument must not be null");
+		if (!DataSource.class.equals(iface)) {
+			throw new SQLException("DataSource of type [" + getClass().getName()
+					+ "] can only be unwrapped as [javax.sql.DataSource], not as [" + iface.getName());
 		}
-		ds.setUrl(dp.getDatabaseUrl());
-		ds.setUsername(dp.getDatabaseUser());
-		ds.setPassword(dp.getDatabasePassword());
-		return ds;
+		return (T) this;
+	}
+
+	public boolean isWrapperFor(Class<?> iface) throws SQLException {
+		return DataSource.class.equals(iface);
 	}
 
 }

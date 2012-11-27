@@ -27,17 +27,17 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleSubclassQuery() {
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
 
-		DBCard.newInstance(rollbackDriver, newClass) //
+		DBCard.newInstance(dbDriver(), newClass) //
 				.setCode(attr1Value) //
 				.setDescription(attr2Value) //
 				.save();
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
 				.run();
@@ -61,12 +61,12 @@ public class SimpleQueryTest extends DBFixture {
 	public void simpleSubclassQueryForAnyAttribute() {
 		final int TOTAL = 5;
 
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 		insertCards(newClass, TOTAL);
 
 		final Alias classAlias = as("foo");
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(anyAttribute(classAlias)) //
 				.from(newClass, as(classAlias)) //
 				.run();
@@ -86,16 +86,16 @@ public class SimpleQueryTest extends DBFixture {
 	public void simpleSuperclassQuery() {
 		final Alias rootAlias = as("root");
 
-		final DBClass root = rollbackDriver.createSuperClass(uniqueUUID(), null);
-		final DBClass superNotRoot = rollbackDriver.createSuperClass(uniqueUUID(), root);
-		final DBClass leafOfSuperNotRoot = rollbackDriver.createClass(uniqueUUID(), superNotRoot);
-		final DBClass leafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
-		final DBClass anotherLeafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
+		final DBClass root = dbDriver().createClass(newSuperClass(uniqueUUID(), null));
+		final DBClass superNotRoot = dbDriver().createClass(newSuperClass(uniqueUUID(), root));
+		final DBClass leafOfSuperNotRoot = dbDriver().createClass(newClass(uniqueUUID(), superNotRoot));
+		final DBClass leafOfRoot = dbDriver().createClass(newClass(uniqueUUID(), root));
+		final DBClass anotherLeafOfRoot = dbDriver().createClass(newClass(uniqueUUID(), root));
 		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
 		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
 		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(root.getCodeAttributeName()) //
 				.from(root, rootAlias) //
 				.run();
@@ -113,16 +113,16 @@ public class SimpleQueryTest extends DBFixture {
 	public void simpleSuperclassQueryForAnyAttribute() {
 		final Alias rootAlias = as("root");
 
-		final DBClass root = rollbackDriver.createSuperClass(uniqueUUID(), null);
-		final DBClass superNotRoot = rollbackDriver.createSuperClass(uniqueUUID(), root);
-		final DBClass leafOfSuperNotRoot = rollbackDriver.createClass(uniqueUUID(), superNotRoot);
-		final DBClass leafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
-		final DBClass anotherLeafOfRoot = rollbackDriver.createClass(uniqueUUID(), root);
+		final DBClass root = dbDriver().createClass(newSuperClass(uniqueUUID(), null));
+		final DBClass superNotRoot = dbDriver().createClass(newSuperClass(uniqueUUID(), root));
+		final DBClass leafOfSuperNotRoot = dbDriver().createClass(newClass(uniqueUUID(), superNotRoot));
+		final DBClass leafOfRoot = dbDriver().createClass(newClass(uniqueUUID(), root));
+		final DBClass anotherLeafOfRoot = dbDriver().createClass(newClass(uniqueUUID(), root));
 		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
 		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
 		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(anyAttribute(rootAlias)) //
 				.from(root, rootAlias) //
 				.run();
@@ -142,11 +142,11 @@ public class SimpleQueryTest extends DBFixture {
 		final int OFFSET = 5;
 		final int LIMIT = 3;
 
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 
 		insertCards(newClass, TOTAL_SIZE);
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
 				.offset(OFFSET) //
@@ -159,13 +159,13 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void singleWhereClause() {
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
 		final Object codeValueToFind = "" + (NUMBER_OF_INSERTED_CARDS - 1);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
-		final CMQueryRow row = new QuerySpecsBuilder(dbView) //
+		final CMQueryRow row = new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.where(attribute(newClass, codeAttributeName), EQUALS, codeValueToFind) //
@@ -176,13 +176,13 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleQueryWithoutWhereClause() {
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.run();
@@ -192,13 +192,13 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() {
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
-		new QuerySpecsBuilder(dbView) //
+		new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.run().getOnlyRow();
@@ -206,10 +206,10 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 
 		final String codeAttributeName = newClass.getCodeAttributeName();
-		new QuerySpecsBuilder(dbView) //
+		new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.run().getOnlyRow();
@@ -217,9 +217,9 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void malformedQueryShouldThrowException() {
-		final DBClass newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		final DBClass newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 		final String codeAttributeName = newClass.getCodeAttributeName();
-		new QuerySpecsBuilder(dbView) //
+		new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttributeName) //
 				.run();
 	}

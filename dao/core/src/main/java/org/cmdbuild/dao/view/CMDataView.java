@@ -2,6 +2,7 @@ package org.cmdbuild.dao.view;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.function.CMFunction;
@@ -12,7 +13,6 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
  */
 public interface CMDataView {
 
-	// CMClassDefinition newClass(String name);
 	CMClass findClassById(Long id);
 
 	CMClass findClassByName(String name);
@@ -30,6 +30,14 @@ public interface CMDataView {
 	 * @return all classes (active and inactive)
 	 */
 	Iterable<? extends CMClass> findAllClasses();
+
+	CMClass createClass(CMClassDefinition definition);
+
+	CMClass updateClass(CMClassDefinition definition);
+
+	CMAttribute createAttribute(CMAttributeDefinition definition);
+
+	CMAttribute updateAttribute(CMAttributeDefinition definition);
 
 	CMDomain findDomainById(Long id);
 
@@ -103,4 +111,5 @@ public interface CMDataView {
 	 * @return the builder for a new query
 	 */
 	QuerySpecsBuilder select(Object... attrDef);
+
 }

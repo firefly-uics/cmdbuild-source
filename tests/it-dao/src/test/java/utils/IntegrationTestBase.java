@@ -1,8 +1,5 @@
 package utils;
 
-import static org.junit.Assert.fail;
-
-import org.apache.commons.configuration.ConfigurationException;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
 import org.junit.After;
@@ -13,23 +10,28 @@ import org.junit.BeforeClass;
  */
 public abstract class IntegrationTestBase {
 
-	protected final GenericRollbackDriver rollbackDriver;
-	protected final DBDataView dbView;
+	private static final DBInitializer dbInitializer = new DBInitializer();
+
+	private final GenericRollbackDriver rollbackDriver;
+	private final DBDataView dbView;
 
 	protected IntegrationTestBase() {
-		final DBDriver pgDriver = DBInitializer.getDBDriver();
+		final DBDriver pgDriver = dbInitializer.getDriver();
 		this.rollbackDriver = new GenericRollbackDriver(pgDriver);
 		this.dbView = new DBDataView(rollbackDriver);
 	}
 
+	public DBDriver dbDriver() {
+		return rollbackDriver;
+	}
+
+	public DBDataView dbDataView() {
+		return dbView;
+	}
+
 	@BeforeClass
-	public static void init() {
-		try {
-			DBInitializer.initDatabase();
-		} catch (final ConfigurationException e) {
-			e.printStackTrace();
-			fail();
-		}
+	public static void initialize() {
+		dbInitializer.initialize();
 	}
 
 	@After

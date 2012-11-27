@@ -35,7 +35,7 @@ public class StructureTest extends DBFixture {
 
 	@Test
 	public void noTestClassesShouldBeDefinedAsDefault() {
-		final Collection<DBClass> allClasses = rollbackDriver.findAllClasses();
+		final Collection<DBClass> allClasses = dbDriver().findAllClasses();
 		assertThat(namesOf(allClasses), not(hasItem(A_NEW_CLASS_NAME)));
 		assertThat(namesOf(allClasses), not(hasItem(A_NEW_SUPERCLASS_NAME)));
 		assertThat(namesOf(allClasses), not(hasItem(A_NEW_SUBCLASS_NAME)));
@@ -44,31 +44,31 @@ public class StructureTest extends DBFixture {
 
 	@Test
 	public void singleClassCanBeAdded() {
-		final int actualClassesCount = rollbackDriver.findAllClasses().size();
+		final int actualClassesCount = dbDriver().findAllClasses().size();
 
-		DBClass newClass = rollbackDriver.createClass(A_NEW_CLASS_NAME, null);
+		DBClass newClass = dbDriver().createClass(newClass(A_NEW_CLASS_NAME, null));
 
 		assertThat(newClass.getName(), equalTo(A_NEW_CLASS_NAME));
 
-		final Collection<DBClass> allClasses = rollbackDriver.findAllClasses();
+		final Collection<DBClass> allClasses = dbDriver().findAllClasses();
 		assertThat(allClasses.size(), equalTo(actualClassesCount + 1));
 		assertThat(namesOf(allClasses), hasItem(A_NEW_CLASS_NAME));
 
-		newClass = rollbackDriver.findClassByName(A_NEW_CLASS_NAME);
+		newClass = dbDriver().findClassByName(A_NEW_CLASS_NAME);
 		assertThat(newClass, not(is(nullValue())));
 	}
 
 	@Test
 	public void singleSuperClassCanBeAdded() {
-		DBClass newClass = rollbackDriver.createSuperClass(A_NEW_CLASS_NAME, null);
+		DBClass newClass = dbDriver().createClass(newSuperClass(A_NEW_CLASS_NAME, null));
 
 		assertThat(newClass.getName(), equalTo(A_NEW_CLASS_NAME));
 		assertThat(newClass.isSuperclass(), is(true));
 
-		final Collection<DBClass> allClasses = rollbackDriver.findAllClasses();
+		final Collection<DBClass> allClasses = dbDriver().findAllClasses();
 		assertThat(namesOf(allClasses), hasItem(A_NEW_CLASS_NAME));
 
-		newClass = rollbackDriver.findClassByName(A_NEW_CLASS_NAME);
+		newClass = dbDriver().findClassByName(A_NEW_CLASS_NAME);
 		assertThat(newClass, not(is(nullValue())));
 		assertThat(newClass.getName(), equalTo(A_NEW_CLASS_NAME));
 		assertThat(newClass.isSuperclass(), is(true));
@@ -76,16 +76,16 @@ public class StructureTest extends DBFixture {
 
 	@Test
 	public void classesCanBeCreatedHierarchically() {
-		DBClass superClass = rollbackDriver.createSuperClass(A_NEW_SUPERCLASS_NAME, null);
-		DBClass subClassA = rollbackDriver.createClass(A_NEW_SUBCLASS_NAME, superClass);
-		DBClass subClassB = rollbackDriver.createClass(ANOTHER_NEW_SUBCLASS_NAME, superClass);
+		DBClass superClass = dbDriver().createClass(newSuperClass(A_NEW_SUPERCLASS_NAME, null));
+		DBClass subClassA = dbDriver().createClass(newClass(A_NEW_SUBCLASS_NAME, superClass));
+		DBClass subClassB = dbDriver().createClass(newClass(ANOTHER_NEW_SUBCLASS_NAME, superClass));
 
 		assertThatHierarchyIsCorrect(superClass, subClassA, subClassB);
 
 		// reload classes
-		superClass = rollbackDriver.findClassById(superClass.getId());
-		subClassA = rollbackDriver.findClassById(subClassA.getId());
-		subClassB = rollbackDriver.findClassById(subClassB.getId());
+		superClass = dbDriver().findClassById(superClass.getId());
+		subClassA = dbDriver().findClassById(subClassA.getId());
+		subClassB = dbDriver().findClassById(subClassB.getId());
 
 		assertThatHierarchyIsCorrect(superClass, subClassA, subClassB);
 	}
@@ -102,35 +102,35 @@ public class StructureTest extends DBFixture {
 
 	@Test
 	public void classDeletionUpdatesTheHierarchy() {
-		DBClass superClass = rollbackDriver.createClass(A_NEW_SUPERCLASS_NAME, null);
-		final DBClass subClass = rollbackDriver.createClass(A_NEW_SUBCLASS_NAME, superClass);
+		DBClass superClass = dbDriver().createClass(newClass(A_NEW_SUPERCLASS_NAME, null));
+		final DBClass subClass = dbDriver().createClass(newClass(A_NEW_SUBCLASS_NAME, superClass));
 
-		rollbackDriver.deleteClass(subClass);
+		dbDriver().deleteClass(subClass);
 
 		assertThat(namesOf(superClass.getChildren()), not(hasItem(A_NEW_SUPERCLASS_NAME)));
 		// assertThat(subClass.getId(), is(nullValue()));
 
 		// reload classes
-		superClass = rollbackDriver.findClassById(superClass.getId());
+		superClass = dbDriver().findClassById(superClass.getId());
 		assertThat(namesOf(superClass.getChildren()), not(hasItem(A_NEW_SUPERCLASS_NAME)));
 	}
 
 	@Test(expected = Exception.class)
 	public void shouldThrowExceptionCreatingClassesWithSameName() {
-		rollbackDriver.createClass(A_NEW_CLASS_NAME, null);
-		rollbackDriver.createClass(A_NEW_CLASS_NAME, null);
+		dbDriver().createClass(newClass(A_NEW_CLASS_NAME, null));
+		dbDriver().createClass(newClass(A_NEW_CLASS_NAME, null));
 	}
 
 	@Test
 	public void shouldReturnNullIfNotExistingAttribute() {
-		final DBClass newClass = rollbackDriver.createClass(A_NEW_CLASS_NAME, null);
+		final DBClass newClass = dbDriver().createClass(newClass(A_NEW_CLASS_NAME, null));
 		final DBAttribute attribute = newClass.getAttribute(NOT_EXISTING_ATTRIBUTE);
 		assertThat(attribute, nullValue());
 	}
 
 	@Test
 	public void shouldRetrieveAllDefaultUserAttributes() {
-		final DBClass newClass = rollbackDriver.createClass(A_NEW_CLASS_NAME, null);
+		final DBClass newClass = dbDriver().createClass(newClass(A_NEW_CLASS_NAME, null));
 		final DBAttribute codeAttribute = newClass.getAttribute("Code");
 		final DBAttribute descriptionAttribute = newClass.getAttribute("Description");
 		final DBAttribute notesAttribute = newClass.getAttribute("Notes");
@@ -142,11 +142,11 @@ public class StructureTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllLeavesClassesFromRoot() {
 		// given
-		final DBClass superClass = rollbackDriver.createSuperClass(A_NEW_SUPERCLASS_NAME, null);
-		final DBClass subClassA = rollbackDriver.createSuperClass(A_NEW_SUBCLASS_NAME, superClass);
-		final DBClass subClassB = rollbackDriver.createSuperClass(ANOTHER_NEW_SUBCLASS_NAME, superClass);
-		final DBClass leafA = rollbackDriver.createClass(LEAF_CLASS_NAME, subClassA);
-		final DBClass leafB = rollbackDriver.createClass(ANOTHER_LEAF_CLASS_NAME, subClassA);
+		final DBClass superClass = dbDriver().createClass(newSuperClass(A_NEW_SUPERCLASS_NAME, null));
+		final DBClass subClassA = dbDriver().createClass(newSuperClass(A_NEW_SUBCLASS_NAME, superClass));
+		final DBClass subClassB = dbDriver().createClass(newSuperClass(ANOTHER_NEW_SUBCLASS_NAME, superClass));
+		final DBClass leafA = dbDriver().createClass(newClass(LEAF_CLASS_NAME, subClassA));
+		final DBClass leafB = dbDriver().createClass(newClass(ANOTHER_LEAF_CLASS_NAME, subClassA));
 
 		// when
 		final Iterable<DBClass> items = superClass.getLeaves();
@@ -161,11 +161,11 @@ public class StructureTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllLeavesClassesFromGenericSuperclass() {
 		// given
-		final DBClass superClass = rollbackDriver.createClass(A_NEW_SUPERCLASS_NAME, null);
-		final DBClass subClassA = rollbackDriver.createSuperClass(A_NEW_SUBCLASS_NAME, superClass);
-		final DBClass subClassB = rollbackDriver.createSuperClass(ANOTHER_NEW_SUBCLASS_NAME, superClass);
-		final DBClass leafA = rollbackDriver.createClass(LEAF_CLASS_NAME, subClassA);
-		final DBClass leafB = rollbackDriver.createClass(ANOTHER_LEAF_CLASS_NAME, subClassA);
+		final DBClass superClass = dbDriver().createClass(newClass(A_NEW_SUPERCLASS_NAME, null));
+		final DBClass subClassA = dbDriver().createClass(newSuperClass(A_NEW_SUBCLASS_NAME, superClass));
+		final DBClass subClassB = dbDriver().createClass(newSuperClass(ANOTHER_NEW_SUBCLASS_NAME, superClass));
+		final DBClass leafA = dbDriver().createClass(newClass(LEAF_CLASS_NAME, subClassA));
+		final DBClass leafB = dbDriver().createClass(newClass(ANOTHER_LEAF_CLASS_NAME, subClassA));
 
 		// when
 		final Iterable<DBClass> items = subClassA.getLeaves();
@@ -180,7 +180,7 @@ public class StructureTest extends DBFixture {
 	@Test
 	public void superClassShouldNotBeALeaf() {
 		// given
-		final DBClass superClass = rollbackDriver.createSuperClass(A_NEW_SUPERCLASS_NAME, null);
+		final DBClass superClass = dbDriver().createClass(newSuperClass(A_NEW_SUPERCLASS_NAME, null));
 
 		// when
 		final Iterable<DBClass> items = superClass.getLeaves();
@@ -194,7 +194,7 @@ public class StructureTest extends DBFixture {
 	@Test
 	public void simpleClassShouldBeALeaf() {
 		// given
-		final DBClass simpleClass = rollbackDriver.createClass(LEAF_CLASS_NAME, null);
+		final DBClass simpleClass = dbDriver().createClass(newClass(LEAF_CLASS_NAME, null));
 
 		// when
 		final Iterable<DBClass> items = simpleClass.getLeaves();
@@ -209,8 +209,8 @@ public class StructureTest extends DBFixture {
 	@Test
 	public void shouldReturnTrueIfSuperclass() {
 		// given
-		final DBClass superClass = rollbackDriver.createSuperClass(A_NEW_SUPERCLASS_NAME, null);
-		final DBClass leafClass = rollbackDriver.createClass(LEAF_CLASS_NAME, superClass);
+		final DBClass superClass = dbDriver().createClass(newSuperClass(A_NEW_SUPERCLASS_NAME, null));
+		final DBClass leafClass = dbDriver().createClass(newClass(LEAF_CLASS_NAME, superClass));
 
 		// then
 		assertThat(superClass.isSuperclass(), is(equalTo(true)));
@@ -220,7 +220,7 @@ public class StructureTest extends DBFixture {
 	@Ignore
 	@Test
 	public void reservedAttributeAreNotFetched() {
-		final DBClass grants = rollbackDriver.findClassByName("Grant");
+		final DBClass grants = dbDriver().findClassByName("Grant");
 		final CMAttribute att = grants.getAttribute("IdGrantedClass");
 		assertThat(att, is(equalTo(null)));
 	}

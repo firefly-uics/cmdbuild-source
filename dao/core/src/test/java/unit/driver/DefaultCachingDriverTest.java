@@ -10,6 +10,7 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,12 +40,14 @@ public class DefaultCachingDriverTest {
 
 	@Test
 	public void noNeedToFetchClassesAfterCreation() {
+		final DBClassDefinition classDefinition = mock(DBClassDefinition.class);
+
 		cachingDriver.findAllClasses();
-		cachingDriver.createClass("foo", null);
+		cachingDriver.createClass(classDefinition);
 		cachingDriver.findAllClasses();
 
 		verify(mockedDriver, times(1)).findAllClasses();
-		verify(mockedDriver, times(1)).createClass("foo", null);
+		verify(mockedDriver, times(1)).createClass(classDefinition);
 		verifyNoMoreInteractions(mockedDriver);
 	}
 

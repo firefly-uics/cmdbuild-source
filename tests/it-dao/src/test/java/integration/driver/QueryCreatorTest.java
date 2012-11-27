@@ -19,7 +19,7 @@ public class QueryCreatorTest extends DBFixture {
 
 	@Before
 	public void createNewClass() {
-		newClass = rollbackDriver.createClass(uniqueUUID(), null);
+		newClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 	}
 
 	@Test
@@ -27,7 +27,7 @@ public class QueryCreatorTest extends DBFixture {
 		// given
 		final String codeAttributeName = newClass.getCodeAttributeName();
 		final String CLASS_ALIAS = "root";
-		final QuerySpecs querySpecs = new QuerySpecsBuilder(dbView).select(codeAttributeName)
+		final QuerySpecs querySpecs = new QuerySpecsBuilder(dbDataView()).select(codeAttributeName)
 				.from(newClass, as(CLASS_ALIAS)).build();
 
 		// when

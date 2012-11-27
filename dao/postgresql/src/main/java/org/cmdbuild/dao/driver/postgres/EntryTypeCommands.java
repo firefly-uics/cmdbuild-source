@@ -14,23 +14,42 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.postgres.Utils.CommentMapper;
+import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
+import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
+import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
-public class EntryTypeCommands {
+public class EntryTypeCommands implements LoggingSupport {
 
 	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9]+): ([^|]*))*");
 
@@ -45,6 +64,7 @@ public class EntryTypeCommands {
 	 */
 
 	public List<DBClass> findAllClasses() {
+		logger.info("getting all classes");
 		final ClassTreeBuilder rch = new ClassTreeBuilder();
 		jdbcTemplate
 				.query("SELECT table_id, _cm_cmtable(table_id) AS table_name, _cm_parent_id(table_id) AS parent_id,"
@@ -98,36 +118,194 @@ public class EntryTypeCommands {
 		}
 	}
 
-	public DBClass createClass(final String name, final DBClass parent) {
-		return createClass(name, parent, false);
-	}
-
-	public DBClass createSuperClass(final String name, final DBClass parent) {
-		return createClass(name, parent, true);
-	}
-
-	private DBClass createClass(final String name, final DBClass parent, final boolean isSuperclass) {
+	public DBClass createClass(final DBClassDefinition definition) {
+		logger.info("creating new class '{}'", definition.getName());
+		final CMClass parent = definition.getParent();
 		final String parentName = (parent != null) ? parent.getName() : null;
-		final String classComment = createClassComment(name, isSuperclass);
+		final String classComment = commentFrom(definition);
 		final long id = jdbcTemplate.queryForInt( //
 				"SELECT cm_create_class(?, ?, ?)", //
-				new Object[] { name, parentName, classComment });
+				new Object[] { definition.getName(), parentName, classComment });
 		final DBClass newClass = new DBClass( //
-				name, //
+				definition.getName(), //
 				id, //
 				classCommentToMetadata(classComment), //
 				userEntryTypeAttributesFor(id));
-		newClass.setParent(parent);
+		newClass.setParent(definition.getParent());
 		return newClass;
 	}
 
-	private String createClassComment(final String name, final boolean isSuperclass) {
-		return format("DESCR: %s|MODE: write|STATUS: active|SUPERCLASS: %s|TYPE: class", name, isSuperclass);
+	public DBClass updateClass(final DBClassDefinition definition) {
+		logger.info("updating existing class '{}'", definition.getName());
+		final String comment = commentFrom(definition);
+		jdbcTemplate.queryForObject( //
+				"SELECT cm_modify_class(?, ?)", //
+				Object.class, //
+				new Object[] { definition.getName(), comment });
+		final DBClass updatedClass = new DBClass( //
+				definition.getName(), //
+				definition.getId(), //
+				classCommentToMetadata(comment), //
+				userEntryTypeAttributesFor(definition.getId()));
+		updatedClass.setParent(definition.getParent());
+		return updatedClass;
+	}
+
+	private String commentFrom(final DBClassDefinition definition) {
+		return format("DESCR: %s|MODE: write|STATUS: %s|SUPERCLASS: %b|TYPE: %s", //
+				definition.getDescription(), //
+				statusFrom(definition.isActive()), //
+				definition.isSuperClass(), //
+				typeFrom(definition.isHoldingHistory()));
+	}
+
+	private String statusFrom(final boolean active) {
+		return active ? EntryTypeCommentMapper.STATUS_ACTIVE : EntryTypeCommentMapper.STATUS_NOACTIVE;
+	}
+
+	private String typeFrom(final boolean isHoldingHistory) {
+		return CommentMappers.CLASS_COMMENT_MAPPER.getCommentValueFromMeta("TYPE", //
+				Boolean.valueOf(isHoldingHistory).toString());
 	}
 
 	public void deleteClass(final DBClass dbClass) {
 		jdbcTemplate.queryForObject("SELECT cm_delete_class(?)", Object.class, new Object[] { dbClass.getName() });
 		dbClass.setParent(null);
+	}
+
+	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
+		logger.info("creating new attribute '{}'", definition.getName());
+		final DBEntryType owner = definition.getOwner();
+		final String comment = commentFrom(definition);
+		jdbcTemplate.queryForObject( //
+				"SELECT cm_create_attribute(?,?,?,?,?,?,?)", //
+				Object.class, //
+				new Object[] { //
+				owner.getId(), //
+						definition.getName(), //
+						SqlType.getSqlTypeString(definition.getType()), //
+						definition.getDefaultValue(), //
+						definition.isMandatory(), //
+						definition.isUnique(), //
+						comment //
+				});
+		final DBAttribute newAttribute = new DBAttribute( //
+				definition.getName(), //
+				definition.getType(), //
+				attributeCommentToMetadata(comment));
+		owner.addAttribute(newAttribute);
+		return newAttribute;
+	}
+
+	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
+		logger.info("modifying existing attribute '{}'", definition.getName());
+		final DBEntryType owner = definition.getOwner();
+		final String comment = commentFrom(definition);
+		jdbcTemplate.queryForObject( //
+				"SELECT cm_modify_attribute(?,?,?,?,?,?,?)", //
+				Object.class, //
+				new Object[] { //
+				owner.getId(), //
+						definition.getName(), //
+						SqlType.getSqlTypeString(definition.getType()), //
+						definition.getDefaultValue(), //
+						definition.isMandatory(), //
+						definition.isUnique(), //
+						comment //
+				});
+		final DBAttribute newAttribute = new DBAttribute( //
+				definition.getName(), //
+				definition.getType(), //
+				attributeCommentToMetadata(comment));
+		owner.addAttribute(newAttribute);
+		return newAttribute;
+	}
+
+	private String commentFrom(final DBAttributeDefinition definition) {
+		return new CMAttributeTypeVisitor() {
+
+			private final StringBuilder builder = new StringBuilder();
+
+			@Override
+			public void visit(final BooleanAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final EntryTypeAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DateTimeAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DateAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DecimalAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DoubleAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final ForeignKeyAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final GeometryAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final IntegerAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final IPAddressAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final LookupAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final StringAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final TextAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final TimeAttributeType attributeType) {
+			}
+
+			private void append(final String key, final String value) {
+				if (builder.length() > 0) {
+					builder.append("|");
+				}
+				builder.append(format("%s: %s", key, value));
+			}
+
+			public String build(final DBAttributeDefinition definition) {
+				definition.getType().accept(this);
+				append("BASEDSP", Boolean.toString(definition.isDisplayableInList()));
+				append("DESCR", definition.getDescription());
+				append("MODE", "read");
+				append("NOTNULL", Boolean.toString(definition.isMandatory()));
+				append("STATUS", definition.isActive() ? "active" : "noactive");
+				append("UNIQUE", Boolean.toString(definition.isUnique()));
+				return builder.toString();
+			}
+
+		} //
+		.build(definition);
 	}
 
 	/*
@@ -232,12 +410,6 @@ public class EntryTypeCommands {
 		return entityTypeAttributes;
 	}
 
-	private static AttributeMetadata attributeCommentToMetadata(final String comment) {
-		final AttributeMetadata meta = new AttributeMetadata();
-		extractCommentToMetadata(comment, meta, Utils.ATTRIBUTE_COMMENT_MAPPER);
-		return meta;
-	}
-
 	private enum InputOutput {
 		i, o, io;
 	}
@@ -290,13 +462,19 @@ public class EntryTypeCommands {
 
 	private static ClassMetadata classCommentToMetadata(final String comment) {
 		final ClassMetadata meta = new ClassMetadata();
-		extractCommentToMetadata(comment, meta, Utils.CLASS_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, CommentMappers.CLASS_COMMENT_MAPPER);
+		return meta;
+	}
+
+	private static AttributeMetadata attributeCommentToMetadata(final String comment) {
+		final AttributeMetadata meta = new AttributeMetadata();
+		extractCommentToMetadata(comment, meta, CommentMappers.ATTRIBUTE_COMMENT_MAPPER);
 		return meta;
 	}
 
 	private static DomainMetadata domainCommentToMetadata(final String comment) {
 		final DomainMetadata meta = new DomainMetadata();
-		extractCommentToMetadata(comment, meta, Utils.DOMAIN_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, CommentMappers.DOMAIN_COMMENT_MAPPER);
 		return meta;
 	}
 

@@ -17,6 +17,7 @@ public interface CMAttributeType<T> {
 	 * Valid metadata for a value type
 	 */
 	interface Meta {
+
 		/**
 		 * Returns if metadatas define it as a lookup attribute.
 		 * 
@@ -25,13 +26,22 @@ public interface CMAttributeType<T> {
 		boolean isLookup();
 
 		/**
-		 * Raturns the name of the lookup type for this attribute type. If it is
+		 * Returns the name of the lookup type for this attribute type. If it is
 		 * not a lookup attribute, it can return either null or an empty string
 		 * (yes, it is quite horrible).
 		 * 
 		 * @return name of the lookup type
 		 */
 		String getLookupType();
+
+		/**
+		 * The attributes can be showed in the list/grid.
+		 * 
+		 * @return {@code true} if the attribute can be showed, {@code false}
+		 *         otherwise.
+		 */
+		boolean isDisplayableInList();
+
 	}
 
 	/**

@@ -36,7 +36,7 @@ public class PostgresDriverTest extends DBFixture {
 		 * 
 		 * At least this comes in handy for the tests!
 		 */
-		final Collection<DBClass> allClasses = rollbackDriver.findAllClasses();
+		final Collection<DBClass> allClasses = dbDriver().findAllClasses();
 		assertThat(allClasses, is(not(empty())));
 		assertThat(namesOf(allClasses), hasItem(Constants.BASE_CLASS_NAME));
 	}
@@ -44,16 +44,16 @@ public class PostgresDriverTest extends DBFixture {
 	@Ignore("until we are able to add a non-reserved regclass attribute")
 	@Test
 	public void regclassAttributesAreReadFromTheDatabase() {
-		final DBClass classWithRegClassAttribute = rollbackDriver.findClassByName(CLASSNAME_CONTAINING_REGCLASS);
+		final DBClass classWithRegClassAttribute = dbDriver().findClassByName(CLASSNAME_CONTAINING_REGCLASS);
 		for (final DBAttribute attribute : classWithRegClassAttribute.getAllAttributes()) {
 			System.out.println(attribute.getName() + " " + attribute.getType());
 		}
-		DBCard.newInstance(rollbackDriver, classWithRegClassAttribute) //
+		DBCard.newInstance(dbDriver(), classWithRegClassAttribute) //
 				.set(TEXT_MANDATORY_ATTRIBUTE, "Anything not null") //
 				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
 				.save();
 
-		final CMQueryRow row = new QuerySpecsBuilder(dbView) //
+		final CMQueryRow row = new QuerySpecsBuilder(dbDataView()) //
 				.select(REGCLASS_ATTRIBUTE) //
 				.from(classWithRegClassAttribute) //
 				.run().getOnlyRow();

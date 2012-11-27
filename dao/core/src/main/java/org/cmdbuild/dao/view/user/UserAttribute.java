@@ -47,6 +47,21 @@ public class UserAttribute implements CMAttribute {
 		return inner.getDescription();
 	}
 
+	@Override
+	public boolean isDisplayableInList() {
+		return inner.isDisplayableInList();
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return inner.isMandatory();
+	}
+
+	@Override
+	public boolean isUnique() {
+		return inner.isUnique();
+	}
+
 	/*
 	 * Object overrides
 	 */

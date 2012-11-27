@@ -8,8 +8,12 @@ import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -17,6 +21,20 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import com.google.common.collect.Lists;
 
 public class DBDataView extends QueryExecutorDataView {
+
+	public static interface DBClassDefinition extends CMClassDefinition {
+
+		@Override
+		public DBClass getParent();
+
+	}
+
+	public static interface DBAttributeDefinition extends CMAttributeDefinition {
+
+		@Override
+		DBEntryType getOwner();
+
+	}
 
 	private final DBDriver driver;
 
@@ -42,6 +60,131 @@ public class DBDataView extends QueryExecutorDataView {
 	@Override
 	public Iterable<DBClass> findAllClasses() {
 		return driver.findAllClasses();
+	}
+
+	@Override
+	public DBClass createClass(final CMClassDefinition definition) {
+		return driver.createClass(adaptDefinition(definition));
+	}
+
+	@Override
+	public DBClass updateClass(final CMClassDefinition definition) {
+		return driver.updateClass(adaptDefinition(definition));
+	}
+
+	private DBClassDefinition adaptDefinition(final CMClassDefinition definition) {
+		return new DBClassDefinition() {
+
+			@Override
+			public Long getId() {
+				return definition.getId();
+			}
+
+			@Override
+			public String getName() {
+				return definition.getName();
+			}
+
+			@Override
+			public String getDescription() {
+				return definition.getDescription();
+			}
+
+			@Override
+			public DBClass getParent() {
+				return cmToDbClass(definition.getParent());
+			}
+
+			@Override
+			public boolean isSuperClass() {
+				return definition.isSuperClass();
+			}
+
+			@Override
+			public boolean isActive() {
+				return definition.isActive();
+			}
+
+			@Override
+			public boolean isHoldingHistory() {
+				return definition.isHoldingHistory();
+			}
+
+		};
+	}
+
+	@Override
+	public DBAttribute createAttribute(final CMAttributeDefinition definition) {
+		return driver.createAttribute(adaptDefinition(definition));
+	}
+	
+	@Override
+	public DBAttribute updateAttribute(final CMAttributeDefinition definition) {
+		return driver.updateAttribute(adaptDefinition(definition));
+	}
+
+	private DBAttributeDefinition adaptDefinition(final CMAttributeDefinition definition) {
+		return new DBAttributeDefinition() {
+
+			@Override
+			public String getName() {
+				return definition.getName();
+			}
+
+			@Override
+			public DBClass getOwner() {
+				return cmToDbClass(definition.getOwner());
+			}
+
+			@Override
+			public CMAttributeType<?> getType() {
+				return definition.getType();
+			}
+			
+			@Override
+			public String getDescription() {
+				return definition.getDescription();
+			}
+
+			@Override
+			public String getDefaultValue() {
+				return definition.getDefaultValue();
+			}
+
+			@Override
+			public boolean isDisplayableInList() {
+				return definition.isDisplayableInList();
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return definition.isMandatory();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return definition.isUnique();
+			}
+
+			@Override
+			public boolean isActive() {
+				return definition.isActive();
+			}
+
+		};
+	}
+
+	private DBClass cmToDbClass(final CMEntryType entryType) {
+		final DBClass dbClass;
+		if (entryType == null) {
+			dbClass = null;
+		} else if (entryType instanceof DBClass) {
+			dbClass = DBClass.class.cast(entryType);
+		} else {
+			dbClass = findClassByName(entryType.getName());
+			assert dbClass != null;
+		}
+		return dbClass;
 	}
 
 	@Override

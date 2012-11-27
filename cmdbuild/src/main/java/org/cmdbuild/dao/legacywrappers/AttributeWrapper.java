@@ -79,10 +79,29 @@ public class AttributeWrapper implements CMAttribute {
 		case TIME:
 			newDaoType = new TimeAttributeType();
 			break;
-		default: // REGCLASS, POINT, LINESTRING, POLYGON, BINARY, INTARRAY, STRINGARRAY
+		default:
+			/*
+			 * REGCLASS, POINT, LINESTRING, POLYGON, BINARY, INTARRAY,
+			 * STRINGARRAY
+			 */
 			newDaoType = new UndefinedAttributeType();
 		}
 		return newDaoType;
+	}
+
+	@Override
+	public boolean isDisplayableInList() {
+		return attribute.isBaseDSP();
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return attribute.isNotNull();
+	}
+
+	@Override
+	public boolean isUnique() {
+		return attribute.isUnique();
 	}
 
 }
