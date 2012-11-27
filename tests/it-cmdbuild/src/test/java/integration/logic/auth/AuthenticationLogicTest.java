@@ -52,14 +52,17 @@ public class AuthenticationLogicTest extends DBFixture {
 		service.setUserFetchers(dbAuthenticator);
 		authLogic = new AuthenticationLogic(service);
 		DUMB_STORE = new UserStore() {
+			
+			OperationUser operationUser;
 
 			@Override
 			public OperationUser getUser() {
-				return null;
+				return operationUser;
 			}
 
 			@Override
 			public void setUser(final OperationUser user) {
+				this.operationUser = user;
 			}
 		};
 
@@ -86,7 +89,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	 * di test...)
 	 */
 	@Test
-	public void shouldAuthenticateUserWithValidUsernameAndPassword() {
+	public void shouldAuthenticateUserWithValidUsernameAndPasswordAndGroupSelected() {
 		// given
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
 				.withLoginString(ADMIN_USERNAME) //
@@ -99,6 +102,7 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
+		//TODO: check in the UserStore if the user has been successfully stored
 	}
 
 	private void assertUserIsSuccessfullyAuthenticated(final Response response) {
@@ -108,7 +112,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 
 	@Test
-	public void shouldAuthenticateUserWithValidEmailAndPassword() {
+	public void shouldAuthenticateUserWithValidEmailAndPasswordAndGroupSelected() {
 		// given
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
 				.withLoginString(ADMIN_EMAIL) //
@@ -120,6 +124,22 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
+		//TODO: check in the UserStore if the user has been successfully stored
+	}
+	
+	@Test
+	public void userShouldSelectAGroupIfHeBelongsToMultipleGroupsAndNoDefault() {
+		//TODO: implement
+	}
+	
+	@Test
+	public void operationUserIsStoredIfHeHasDefaultGroup() {
+		//TODO: implement
+	}
+	
+	@Test
+	public void operationUserIsStoredIfHeBelongsToOnlyOneGroup() {
+		//TODO: implement
 	}
 
 	@Test
@@ -158,7 +178,6 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	@Test
 	public void shouldRetrieveAllGroupsForAUser() {
-
 		// when
 		final Iterable<CMGroup> groups = authLogic.getGroupsFromUserId(adminCard.getId());
 
@@ -187,7 +206,6 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	@Test
 	public void shouldRetrieveAllUsersForNonEmptyGroup() {
-
 		// when
 		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupA.getId());
 		int actualNumberOfUsers = 0;
@@ -208,7 +226,6 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	@Test
 	public void shouldRetrieveNoUserForEmptyGroup() {
-
 		// when
 		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupC.getId());
 
