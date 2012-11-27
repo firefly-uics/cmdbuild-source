@@ -10,6 +10,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class LazyCard extends CardForwarder implements Serializable {
 
@@ -21,9 +22,11 @@ public class LazyCard extends CardForwarder implements Serializable {
 
 	/**
 	 * With this constructor the behaviour is that of a CardForwarder
-	 * @param c Card to be wrapped
+	 * 
+	 * @param c
+	 *            Card to be wrapped
 	 */
-	public LazyCard(ICard c) {
+	public LazyCard(final ICard c) {
 		super(c);
 		this.lazyTable = null;
 	}
@@ -34,12 +37,12 @@ public class LazyCard extends CardForwarder implements Serializable {
 	 * @param classId
 	 * @param id
 	 */
-	public LazyCard(ITable table, int id) {
+	public LazyCard(final ITable table, final int id) {
 		this.lazyTable = table;
 		this.cardId = id;
 	}
 
-	public LazyCard(int classId, int id) {
+	public LazyCard(final int classId, final int id) {
 		this.classId = classId;
 		this.cardId = id;
 	}
@@ -47,13 +50,14 @@ public class LazyCard extends CardForwarder implements Serializable {
 	/**
 	 * Used to access the real object
 	 */
+	@Override
 	protected ICard get() {
 		if (c == null) {
-			ITable superClass = getSchemaForLoading();
+			final ITable superClass = getSchemaForLoading();
 			Log.PERSISTENCE.debug("Lazy loaded card requested: " + superClass.getId() + ", " + getId());
 			try {
 				c = superClass.cards().list().id(getId()).get();
-			} catch (NotFoundException e) {
+			} catch (final NotFoundException e) {
 				Log.PERSISTENCE.error("Cannot lazy load card: " + superClass.getId() + ", " + getId());
 				throw e;
 			}
@@ -68,15 +72,17 @@ public class LazyCard extends CardForwarder implements Serializable {
 		if (lazyTable != null)
 			return lazyTable;
 		else
-			return UserContext.systemContext().tables().get(classId);
+			return UserOperations.from(UserContext.systemContext()).tables().get(classId);
 	}
 
+	@Override
 	public int getId() {
 		if (c != null)
 			return c.getId();
 		return cardId;
 	}
 
+	@Override
 	public int getIdClass() {
 		if (c != null)
 			return c.getIdClass();
@@ -90,6 +96,7 @@ public class LazyCard extends CardForwarder implements Serializable {
 		return getSchema().getId(); // it might be a superclass
 	}
 
+	@Override
 	public ITable getSchema() {
 		if (c != null)
 			return c.getSchema();
@@ -105,28 +112,30 @@ public class LazyCard extends CardForwarder implements Serializable {
 		return lazyTable;
 	}
 
-	public boolean equals(Object o) {
+	@Override
+	public boolean equals(final Object o) {
 		if (o instanceof ICard) {
-			ICard c = (ICard) o;
+			final ICard c = (ICard) o;
 			return (classId == c.getIdClass() && cardId == c.getId());
 		}
 		return false;
 	};
 
+	@Override
 	public int hashCode() {
-		return String.valueOf(getIdClass()).hashCode()+String.valueOf(getId()).hashCode();
+		return String.valueOf(getIdClass()).hashCode() + String.valueOf(getId()).hashCode();
 	}
 
 	/**
 	 * Serialization
 	 */
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
+	private void writeObject(final ObjectOutputStream out) throws IOException {
 		out.writeInt(getIdClass());
 		out.writeInt(getId());
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
 		this.classId = in.readInt();
 		this.cardId = in.readInt();
 	}

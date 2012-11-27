@@ -6,6 +6,7 @@ import java.util.Map;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 /**
  * Monostate holding the templates defined in the database.
@@ -19,7 +20,8 @@ public class DBTemplateService implements TemplateRepository {
 	private static final String TEMPLATE_NAME = "Name";
 	private static final String TEMPLATE_DEFINITION = "Template";
 
-	private static volatile Map<String, String> templates; // Access through getTemplates()
+	private static volatile Map<String, String> templates; // Access through
+															// getTemplates()
 	private static final Object templatesLock = new Object();
 
 	private Map<String, String> getTemplatesMap() {
@@ -34,9 +36,9 @@ public class DBTemplateService implements TemplateRepository {
 	}
 
 	private void initTemplates() {
-		Map<String, String> newTemplates = new HashMap<String, String>();
-		final ITable templatesTable = UserContext.systemContext().tables().get(TEMPLATES_TABLE);
-		for (ICard templateCard : templatesTable.cards().list()) {
+		final Map<String, String> newTemplates = new HashMap<String, String>();
+		final ITable templatesTable = UserOperations.from(UserContext.systemContext()).tables().get(TEMPLATES_TABLE);
+		for (final ICard templateCard : templatesTable.cards().list()) {
 			final String name = templateCard.getAttributeValue(TEMPLATE_NAME).getString();
 			final String definition = templateCard.getAttributeValue(TEMPLATE_DEFINITION).getString();
 			newTemplates.put(name, definition);

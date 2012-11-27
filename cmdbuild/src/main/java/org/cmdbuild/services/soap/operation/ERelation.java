@@ -10,52 +10,49 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.types.Relation;
 
 public class ERelation {
 
-	private UserContext userCtx;
+	private final UserContext userCtx;
 
-	public ERelation(UserContext userCtx) {
+	public ERelation(final UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
 
-	public boolean deleteRelation(Relation relation) {
+	public boolean deleteRelation(final Relation relation) {
 
-		Log.SOAP.debug("I'm going to delete relation between "
-				+ relation.getCard1Id() + " (classname: "
-				+ relation.getClass1Name() + ") and cardId "
-				+ relation.getCard2Id() + "(classname: "
+		Log.SOAP.debug("I'm going to delete relation between " + relation.getCard1Id() + " (classname: "
+				+ relation.getClass1Name() + ") and cardId " + relation.getCard2Id() + "(classname: "
 				+ relation.getClass2Name() + ")");
-		ICard card1 = userCtx.tables().get(relation.getClass1Name()).cards()
+		final ICard card1 = UserOperations.from(userCtx).tables().get(relation.getClass1Name()).cards()
 				.get(relation.getCard1Id());
-		ICard card2 = userCtx.tables().get(relation.getClass2Name()).cards()
+		final ICard card2 = UserOperations.from(userCtx).tables().get(relation.getClass2Name()).cards()
 				.get(relation.getCard2Id());
-		IDomain idomain = userCtx.domains().get(relation.getDomainName());
+		final IDomain idomain = UserOperations.from(userCtx).domains().get(relation.getDomainName());
 		Log.SOAP.debug("Relation domain " + idomain.getDescription());
-		IRelation irelation = userCtx.relations().get(idomain, card1, card2);
+		final IRelation irelation = UserOperations.from(userCtx).relations().get(idomain, card1, card2);
 
 		irelation.delete();
 		return true;
 
 	}
 
-	public boolean createRelation(Relation relation) {
+	public boolean createRelation(final Relation relation) {
 
 		/*
 		 * THIS IS A NO-NO!!! the "relation" object doesn't have, obvioulsy, an
 		 * IRelation instance! btw. it's not supposed to EXIST yet!
 		 */
-		Log.SOAP.debug("I'm going to create relation between "
-				+ relation.getClass1Name() + ":" + relation.getCard1Id()
-				+ " and " + relation.getClass2Name() + ":"
-				+ relation.getCard2Id());
-		ICard card1 = userCtx.tables().get(relation.getClass1Name()).cards()
+		Log.SOAP.debug("I'm going to create relation between " + relation.getClass1Name() + ":" + relation.getCard1Id()
+				+ " and " + relation.getClass2Name() + ":" + relation.getCard2Id());
+		final ICard card1 = UserOperations.from(userCtx).tables().get(relation.getClass1Name()).cards()
 				.get(relation.getCard1Id());
-		ICard card2 = userCtx.tables().get(relation.getClass2Name()).cards()
+		final ICard card2 = UserOperations.from(userCtx).tables().get(relation.getClass2Name()).cards()
 				.get(relation.getCard2Id());
-		IDomain idomain = userCtx.domains().get(relation.getDomainName());
-		IRelation irelation = userCtx.relations().create(idomain, card1, card2);
+		final IDomain idomain = UserOperations.from(userCtx).domains().get(relation.getDomainName());
+		final IRelation irelation = UserOperations.from(userCtx).relations().create(idomain, card1, card2);
 		Log.SOAP.debug("Relation domain " + idomain.getDescription());
 		irelation.setCard1(card1);
 		irelation.setCard2(card2);
@@ -66,22 +63,22 @@ public class ERelation {
 		return true;
 	}
 
-	public List<Relation> getRelationList(String domainName, String className, int cardId) {
-		final IDomain domain = userCtx.domains().get(domainName);
+	public List<Relation> getRelationList(final String domainName, final String className, final int cardId) {
+		final IDomain domain = UserOperations.from(userCtx).domains().get(domainName);
 
 		Iterable<IRelation> query;
 		if (className != null && !className.isEmpty() && cardId > 0) {
-			Log.SOAP.debug("Getting " + className + " relations for domain "
-					+ domainName);
-			final ICard card = userCtx.tables().get(className).cards().get(cardId);
-			query = userCtx.relations().list(card).domain(domain);
+			Log.SOAP.debug("Getting " + className + " relations for domain " + domainName);
+			final ICard card = UserOperations.from(userCtx).tables().get(className).cards().get(cardId);
+			query = UserOperations.from(userCtx).relations().list(card).domain(domain);
 		} else {
 			Log.SOAP.debug("Getting all relation for domain " + domainName);
-			query = userCtx.relations().list().domain(DirectedDomain.create(domain, DomainDirection.D));
+			query = UserOperations.from(userCtx).relations().list()
+					.domain(DirectedDomain.create(domain, DomainDirection.D));
 		}
 
 		final List<Relation> list = new LinkedList<Relation>();
-		for (IRelation r : query) {
+		for (final IRelation r : query) {
 			list.add(new Relation(r));
 		}
 		return list;
@@ -89,14 +86,15 @@ public class ERelation {
 	}
 
 	public Relation[] getRelationHistory(final Relation relation) {
-		Log.SOAP.debug(String.format("Getting relation history for card (%d, %s)", relation.getCard1Id(), relation
-				.getClass1Name()));
+		Log.SOAP.debug(String.format("Getting relation history for card (%d, %s)", relation.getCard1Id(),
+				relation.getClass1Name()));
 		if (relation.getCard2Id() > 0 || relation.getClass2Name() != null || relation.getDomainName() != null) {
 			throw new UnsupportedOperationException("You fool!");
 		}
-		final ICard card1 = userCtx.tables().get(relation.getClass1Name()).cards().get(relation.getCard1Id());
+		final ICard card1 = UserOperations.from(userCtx).tables().get(relation.getClass1Name()).cards()
+				.get(relation.getCard1Id());
 		final List<Relation> list = new LinkedList<Relation>();
-		for (IRelation r : userCtx.relations().list(card1).history()) {
+		for (final IRelation r : UserOperations.from(userCtx).relations().list(card1).history()) {
 			list.add(new Relation(r));
 		}
 		final Relation[] relationlist = list.toArray(new Relation[list.size()]);

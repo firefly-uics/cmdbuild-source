@@ -24,6 +24,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.FileUtils;
 import org.cmdbuild.utils.PatternFilenameFilter;
 
@@ -78,7 +79,7 @@ public class PatchManager {
 	private ITable getPatchTable() {
 		ITable patchTable;
 		try {
-			patchTable = UserContext.systemContext().tables().get(PATCHES_TABLE);
+			patchTable = UserOperations.from(UserContext.systemContext()).tables().get(PATCHES_TABLE);
 		} catch (final NotFoundException e) {
 			patchTable = createPatchtable();
 		}
@@ -86,7 +87,7 @@ public class PatchManager {
 	}
 
 	private ITable createPatchtable() {
-		final ITable patchTable = UserContext.systemContext().tables().create();
+		final ITable patchTable = UserOperations.from(UserContext.systemContext()).tables().create();
 		patchTable.setParent(Constants.BASE_CLASS_NAME);
 		patchTable.setSuperClass(false);
 		patchTable.setName(PATCHES_TABLE);

@@ -16,6 +16,7 @@ import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
@@ -30,8 +31,9 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 	public static final String FILTER_CLASSID = "IdClass";
 	public static final String FILTER_CQLQUERY = "CQL";
 
-	public CardQuery build(HttpServletRequest request) {
-		String cqlQuery = parameter(String.class, FILTER_CQLQUERY, request);
+	@Override
+	public CardQuery build(final HttpServletRequest request) {
+		final String cqlQuery = parameter(String.class, FILTER_CQLQUERY, request);
 		if (cqlQuery != null && !(cqlQuery.trim().length() == 0)) {
 			return cqlBuild(cqlQuery, request);
 		} else {
@@ -39,30 +41,30 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 		}
 	}
 
-	private CardQuery cqlBuild(String cqlQuery, HttpServletRequest request) {
-		Map<String, Object> cqlParams = getCqlParamteres(request);
+	private CardQuery cqlBuild(final String cqlQuery, final HttpServletRequest request) {
+		final Map<String, Object> cqlParams = getCqlParamteres(request);
 		return CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery, cqlParams);
 	}
 
-	private static Map<String, Object> getCqlParamteres(HttpServletRequest req) {
-		Map<String, Object> out = new HashMap<String, Object>();
-		for (Object oKey : req.getParameterMap().keySet()) {
-			String k = (String) oKey;
-			String v = req.getParameter(k);
+	private static Map<String, Object> getCqlParamteres(final HttpServletRequest req) {
+		final Map<String, Object> out = new HashMap<String, Object>();
+		for (final Object oKey : req.getParameterMap().keySet()) {
+			final String k = (String) oKey;
+			final String v = req.getParameter(k);
 			out.put(k, v);
 		}
 		return out;
 	}
 
-	private CardQuery filterServiceBuild(HttpServletRequest request) {
+	private CardQuery filterServiceBuild(final HttpServletRequest request) {
 		CardQuery filter;
 		final int classId = parameter(Integer.class, FILTER_CLASSID, request);
 		final UserContext userCtx = new SessionVars().getCurrentUserContext();
 		if (request.getParameterMap().containsKey(NO_FILTER_PARAMETER)) {
-			filter = userCtx.tables().get(classId).cards().list();
+			filter = UserOperations.from(userCtx).tables().get(classId).cards().list();
 		} else {
-			String filterCategory = parameter(String.class, FILTER_CATEGORY_PARAMETER, request);
-			String filterSubcategory = parameter(String.class, FILTER_SUBCATEGORY_PARAMETER, request);
+			final String filterCategory = parameter(String.class, FILTER_CATEGORY_PARAMETER, request);
+			final String filterSubcategory = parameter(String.class, FILTER_SUBCATEGORY_PARAMETER, request);
 			handleForceFilterReset(request, filterCategory, filterSubcategory);
 			filter = FilterService.getFilter(classId, filterCategory, filterSubcategory);
 		}
@@ -71,34 +73,36 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 			setWorkflowParameters(filter, request, userCtx);
 		}
 
-		return filter;//.clone();
+		return filter;// .clone();
 	}
 
-	private void handleForceFilterReset(HttpServletRequest request, 
-			String filterCategory, String filterSubcategory) { 
-			boolean resetFilter = parameter(Boolean.class, FILTER_FORCE_RESET_PARAMETER, request); 
-			if (resetFilter) { 
-				FilterService.clearFilters(filterCategory, filterSubcategory); 
-			} 
+	private void handleForceFilterReset(final HttpServletRequest request, final String filterCategory,
+			final String filterSubcategory) {
+		final boolean resetFilter = parameter(Boolean.class, FILTER_FORCE_RESET_PARAMETER, request);
+		if (resetFilter) {
+			FilterService.clearFilters(filterCategory, filterSubcategory);
+		}
 	}
 
-	private void setWorkflowParameters(CardQuery filter, HttpServletRequest request, UserContext userCtx) {
+	private void setWorkflowParameters(final CardQuery filter, final HttpServletRequest request,
+			final UserContext userCtx) {
 		setFlowStatus(filter, request);
 		filter.setPrevExecutorsFilter(userCtx);
 	}
 
 	@Legacy("gonna puke... we pass the SHARK string instead of our own!")
-	private void setFlowStatus(CardQuery filter, HttpServletRequest request) {
+	private void setFlowStatus(final CardQuery filter, final HttpServletRequest request) {
 		final String flowStatusCode = request.getParameter(FILTER_FLOW_STATUS_PARAMETER);
 		final Lookup flowStatusLookup = lookupForFlowStatusCode(flowStatusCode);
 		if (flowStatusLookup != null) {
-			filter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS, flowStatusLookup.getId());
+			filter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.EQUALS,
+					flowStatusLookup.getId());
 		} else {
-			// this is "all"... we need to select all the cards, and "clear" the filtering by FlowStatus
+			// this is "all"... we need to select all the cards, and "clear" the
+			// filtering by FlowStatus
 			filter.filterUpdate(ProcessAttributes.FlowStatus.toString(), AttributeFilterType.DIFFERENT,
-				String.valueOf(lookupForFlowStatus(WSProcessInstanceState.TERMINATED).getId()),
-				String.valueOf(lookupForFlowStatus(WSProcessInstanceState.ABORTED).getId())
-			);
+					String.valueOf(lookupForFlowStatus(WSProcessInstanceState.TERMINATED).getId()),
+					String.valueOf(lookupForFlowStatus(WSProcessInstanceState.ABORTED).getId()));
 		}
 	}
 

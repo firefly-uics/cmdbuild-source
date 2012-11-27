@@ -12,6 +12,7 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.StringUtils;
 
 public class Lookup extends AbstractElementImpl implements ObjectWithId {
@@ -24,26 +25,24 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		this.schema = getLookupTable();
 	}
 
-	public Lookup(Lookup lookup) throws NotFoundException {
+	public Lookup(final Lookup lookup) throws NotFoundException {
 		this.schema = getLookupTable();
 		setAttributeValueMap(lookup.getAttributeValueMap());
 	}
 
 	private ITable getLookupTable() {
-		return UserContext.systemContext().tables().get(LOOKUP_TABLE_NAME);
+		return UserOperations.from(UserContext.systemContext()).tables().get(LOOKUP_TABLE_NAME);
 	}
 
 	public Integer getParentId() {
 		return (Integer) getValue("ParentId");
 	}
 
-	public void setParentId(Integer id) throws ORMException {
-		String parentType = this.getParentTypeName();
-		Lookup parent = backend.getLookup(id);
-		if ((parent != null)
-				&& (parentType != null)
-				&& parentType.equals(backend.getLookupType(this.getParentTypeName())
-						.getType())) {
+	public void setParentId(final Integer id) throws ORMException {
+		final String parentType = this.getParentTypeName();
+		final Lookup parent = backend.getLookup(id);
+		if ((parent != null) && (parentType != null)
+				&& parentType.equals(backend.getLookupType(this.getParentTypeName()).getType())) {
 			setValue("ParentId", id);
 		} else {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
@@ -57,7 +56,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 	public String getParentTypeName() {
 		try {
 			return getLookupType().getParentTypeName();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 	}
@@ -66,7 +65,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		return (String) getValue("Description");
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		setValue("Description", description);
 	}
 
@@ -74,7 +73,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		return (String) getValue("Notes");
 	}
 
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		setValue("Notes", notes);
 	}
 
@@ -86,15 +85,14 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		return backend.getLookupType(getType());
 	}
 
-	public void setType(String type) throws ORMException {
+	public void setType(final String type) throws ORMException {
 		// can't change lookup type
-		String actType = (String)getValue("Type");
+		final String actType = (String) getValue("Type");
 		if (!this.isNew() && !(type.equals(actType))) {
 			throw ORMExceptionType.ORM_CHANGE_LOOKUPTYPE_ERROR.createException();
 		}
 		// if the parent id is set, type cannot be changed
-		if (this.getAttributeValueMap().containsKey("ParentId")
-				&& !this.getType().equals(type)) {
+		if (this.getAttributeValueMap().containsKey("ParentId") && !this.getType().equals(type)) {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
 		// the type must exist
@@ -107,7 +105,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		return (Integer) getValue("Number");
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(final Integer number) {
 		setValue("Number", number);
 	}
 
@@ -115,7 +113,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		return (String) getValue("Code");
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		setValue("Code", code);
 	}
 
@@ -123,27 +121,28 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 		return (Boolean) getValue("IsDefault");
 	}
 
-	public void setIsDefault(Boolean isDefault) {
+	public void setIsDefault(final Boolean isDefault) {
 		setValue("IsDefault", isDefault);
 	}
 
-	public boolean equals(Object o) {
+	@Override
+	public boolean equals(final Object o) {
 		if (o instanceof Lookup)
 			return this.getId() == ((Lookup) o).getId();
 		return false;
 	}
 
 	@Override
-	public void setValue(String name, Object value) {
+	public void setValue(final String name, final Object value) {
 		if (!IGNOREDATTRS.contains(name)) {
 			super.setValue(name, value);
 		}
 	}
 
 	@Override
-	public void setAttributeValueMap(Map<String, AttributeValue> values) {
+	public void setAttributeValueMap(final Map<String, AttributeValue> values) {
 		super.setAttributeValueMap(values);
-		for (String attrName : IGNOREDATTRS) {
+		for (final String attrName : IGNOREDATTRS) {
 			if (this.values.containsKey(attrName))
 				this.values.remove(attrName);
 		}
@@ -151,17 +150,17 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	@Override
 	public Map<String, AttributeValue> getAttributeValueMap() {
-		Map<String, AttributeValue> values = super.getAttributeValueMap();
+		final Map<String, AttributeValue> values = super.getAttributeValueMap();
 		try {
 			if (values.containsKey("ParentId")) {
-				AttributeValue parentType = new AttributeValue(schema.getAttribute("ParentType"));
+				final AttributeValue parentType = new AttributeValue(schema.getAttribute("ParentType"));
 				if (!("".equals(getParentTypeName()))) {
 					parentType.setValue(getParentTypeName());
 					parentType.setChanged(values.get("ParentId").isChanged());
 					values.put("ParentType", parentType);
 				}
 			}
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			// Should not happen, but in case values is not changed
 		}
 		return values;
@@ -169,7 +168,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	@Override
 	public void save() throws ORMException {
-		setDefaultValueIfPresent(CardAttributes.ClassId.toString(), (Integer)schema.getId());
+		setDefaultValueIfPresent(CardAttributes.ClassId.toString(), schema.getId());
 		setDefaultValueIfPresent("IsDefault", Boolean.FALSE);
 		setDefaultValueIfPresent("Number", Integer.valueOf(0));
 		if (values.containsKey("ParentType") && "".equals(getParentTypeName())) {
@@ -186,7 +185,7 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 
 	@Override
 	protected int create() throws ORMException {
-		int id = backend.createLookup(this);
+		final int id = backend.createLookup(this);
 		return id;
 	}
 
@@ -194,18 +193,19 @@ public class Lookup extends AbstractElementImpl implements ObjectWithId {
 	 * Tree methods
 	 */
 
+	@Override
 	public String toString() {
-		List<String> list = new LinkedList<String>();
+		final List<String> list = new LinkedList<String>();
 		buildHierarchyList(list, this);
 		return StringUtils.join(list, " - ");
 	}
 
-	private void buildHierarchyList(List<String> list, Lookup lookup) {
-		String description = lookup.getDescription();
+	private void buildHierarchyList(final List<String> list, final Lookup lookup) {
+		final String description = lookup.getDescription();
 		if (description != null && description.length() > 0) {
 			list.add(0, description);
 		}
-		Lookup parentLookup = lookup.getParent();
+		final Lookup parentLookup = lookup.getParent();
 		if (parentLookup != null) {
 			buildHierarchyList(list, parentLookup);
 		}

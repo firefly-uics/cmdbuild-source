@@ -25,11 +25,13 @@ import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class ReportCard extends CardForwarder {
 
 	public static final String REPORT_CLASS_NAME = "Report";
-	private static final ITable reportClass = UserContext.systemContext().tables().get(REPORT_CLASS_NAME);
+	private static final ITable reportClass = UserOperations.from(UserContext.systemContext()).tables()
+			.get(REPORT_CLASS_NAME);
 
 	/**
 	 * number of subreport elements (administration side)
@@ -77,7 +79,7 @@ public class ReportCard extends CardForwarder {
 	}
 
 	private static CardFactory allReports() {
-		return UserContext.systemContext().tables().get(REPORT_CLASS_NAME).cards();
+		return UserOperations.from(UserContext.systemContext()).tables().get(REPORT_CLASS_NAME).cards();
 	}
 
 	public static ReportCard findReportByTypeAndCode(final ReportType type, final String code) throws ORMException {
@@ -125,7 +127,7 @@ public class ReportCard extends CardForwarder {
 		this.jd = jd;
 	}
 
-	public void setSelectedGroups(String[] newvalue) {
+	public void setSelectedGroups(final String[] newvalue) {
 		getAttributeValue("Groups").setValue(newvalue);
 	}
 

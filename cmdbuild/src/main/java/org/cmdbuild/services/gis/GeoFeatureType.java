@@ -6,16 +6,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cmdbuild.elements.AttributeImpl;
-import org.cmdbuild.elements.interfaces.IAttribute;
-import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
+import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
+import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataMap;
 import org.cmdbuild.services.meta.MetadataService;
-
 
 public class GeoFeatureType extends AbstractGeoLayer {
 
@@ -46,18 +46,16 @@ public class GeoFeatureType extends AbstractGeoLayer {
 	}
 
 	public enum GeoType {
-		POINT(AttributeType.POINT),
-		LINESTRING(AttributeType.LINESTRING),
-		POLYGON(AttributeType.POLYGON);
+		POINT(AttributeType.POINT), LINESTRING(AttributeType.LINESTRING), POLYGON(AttributeType.POLYGON);
 
 		private final AttributeType attributeType;
 
-		private GeoType(AttributeType attributeType) {
+		private GeoType(final AttributeType attributeType) {
 			this.attributeType = attributeType;
 		}
 
-		public static GeoType valueOf(AttributeType attributeType) {
-			for (GeoType gt : GeoType.values()) {
+		public static GeoType valueOf(final AttributeType attributeType) {
+			for (final GeoType gt : GeoType.values()) {
 				if (gt.attributeType.equals(attributeType)) {
 					return gt;
 				}
@@ -70,20 +68,19 @@ public class GeoFeatureType extends AbstractGeoLayer {
 		}
 	}
 
-	private ITable geoAttributeTable;
+	private final ITable geoAttributeTable;
 
 	private String style;
 
-
-	private GeoFeatureType(ITable geoAttributeTable, String name) {
+	private GeoFeatureType(final ITable geoAttributeTable, final String name) {
 		super(name);
 		this.geoAttributeTable = geoAttributeTable;
 		loadMeta();
 	}
 
-	public static GeoFeatureType fromGeoTable(ITable geoAttributeTable) {
+	public static GeoFeatureType fromGeoTable(final ITable geoAttributeTable) {
 		GeoFeatureType geoFeatureType;
-		String geoFeatureName = getGeoFeatureFromTable(geoAttributeTable);
+		final String geoFeatureName = getGeoFeatureFromTable(geoAttributeTable);
 		if (geoFeatureName != null) {
 			geoFeatureType = new GeoFeatureType(geoAttributeTable, geoFeatureName);
 		} else {
@@ -92,9 +89,9 @@ public class GeoFeatureType extends AbstractGeoLayer {
 		return geoFeatureType;
 	}
 
-	private static String getGeoFeatureFromTable(ITable geoAttributeTable) {
+	private static String getGeoFeatureFromTable(final ITable geoAttributeTable) {
 		String geoFeatureName;
-		Matcher geoNameMatcher = GEO_TABLE_NAME_MATCHER.matcher(geoAttributeTable.getName());
+		final Matcher geoNameMatcher = GEO_TABLE_NAME_MATCHER.matcher(geoAttributeTable.getName());
 		if (geoNameMatcher.matches()) {
 			geoFeatureName = geoNameMatcher.group(2);
 		} else {
@@ -104,9 +101,9 @@ public class GeoFeatureType extends AbstractGeoLayer {
 	}
 
 	public static List<GeoFeatureType> list() {
-		List<GeoFeatureType> gftList = new ArrayList<GeoFeatureType>();
-		for (ITable t : UserContext.systemContext().tables().list(CMTableType.SIMPLECLASS)) {
-			GeoFeatureType gft = fromGeoTable(t);
+		final List<GeoFeatureType> gftList = new ArrayList<GeoFeatureType>();
+		for (final ITable t : UserOperations.from(UserContext.systemContext()).tables().list(CMTableType.SIMPLECLASS)) {
+			final GeoFeatureType gft = fromGeoTable(t);
 			if (gft != null) {
 				gftList.add(gft);
 			}
@@ -114,42 +111,48 @@ public class GeoFeatureType extends AbstractGeoLayer {
 		return gftList;
 	}
 
-	public static GeoFeatureType create(ITable masterTable, String name, String description, GeoType geoType, int minZoom, int maxZoom, String style, int position) {
-		ITable geoAttributeTable = createGeoAttributeTable(masterTable, name, description, geoType, minZoom, maxZoom, style);
-		GeoFeatureType geoFeatureType = fromGeoTable(geoAttributeTable);
+	public static GeoFeatureType create(final ITable masterTable, final String name, final String description,
+			final GeoType geoType, final int minZoom, final int maxZoom, final String style, final int position) {
+		final ITable geoAttributeTable = createGeoAttributeTable(masterTable, name, description, geoType, minZoom,
+				maxZoom, style);
+		final GeoFeatureType geoFeatureType = fromGeoTable(geoAttributeTable);
 		geoFeatureType.setMinZoom(minZoom);
 		geoFeatureType.setMaxZoom(maxZoom);
 		geoFeatureType.setStyle(style);
 		geoFeatureType.setIndex(position);
-		for (ITable t : masterTable.treeBranch()) {
+		for (final ITable t : masterTable.treeBranch()) {
 			geoFeatureType.setVisibility(t, true);
 		}
 		geoFeatureType.saveMeta();
 		return geoFeatureType;
 	}
 
-	private static ITable createGeoAttributeTable(ITable masterTable, String name, String description, GeoType geoType, int minZoom, int maxZoom, String style) {
-		ITable geoAttributeTable = UserContext.systemContext().tables().create();
+	private static ITable createGeoAttributeTable(final ITable masterTable, final String name,
+			final String description, final GeoType geoType, final int minZoom, final int maxZoom, final String style) {
+		final ITable geoAttributeTable = UserOperations.from(UserContext.systemContext()).tables().create();
 		geoAttributeTable.setTableType(CMTableType.SIMPLECLASS);
 		geoAttributeTable.setMode(Mode.RESERVED.toString());
 		geoAttributeTable.setName(String.format(GEO_TABLE_NAME_FORMAT, masterTable.getName(), name));
 		geoAttributeTable.setDescription(description);
 		geoAttributeTable.save();
-		IAttribute masterAttribute = AttributeImpl.create(geoAttributeTable, MASTER_ATTRIBUTE, AttributeType.FOREIGNKEY);
+		final IAttribute masterAttribute = AttributeImpl.create(geoAttributeTable, MASTER_ATTRIBUTE,
+				AttributeType.FOREIGNKEY);
 		masterAttribute.setFKTargetClass(masterTable.getName());
 		masterAttribute.setMode(Mode.RESERVED.toString());
 		masterAttribute.save();
-		IAttribute geometryAttribute = AttributeImpl.create(geoAttributeTable, GEOMETRY_ATTRIBUTE, geoType.getAttributeType());
+		final IAttribute geometryAttribute = AttributeImpl.create(geoAttributeTable, GEOMETRY_ATTRIBUTE,
+				geoType.getAttributeType());
 		geometryAttribute.setMode(Mode.RESERVED.toString());
 		geometryAttribute.save();
 		return geoAttributeTable;
 	}
 
+	@Override
 	public String getDescription() {
 		return geoAttributeTable.getDescription();
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.geoAttributeTable.setDescription(description);
 	}
 
@@ -157,6 +160,7 @@ public class GeoFeatureType extends AbstractGeoLayer {
 		return geoAttributeTable.getAttribute(MASTER_ATTRIBUTE).getFKTargetClass();
 	}
 
+	@Override
 	public String getTypeName() {
 		return geoAttributeTable.getAttribute(GEOMETRY_ATTRIBUTE).getType().toString();
 	}
@@ -165,7 +169,7 @@ public class GeoFeatureType extends AbstractGeoLayer {
 		return style;
 	}
 
-	public void setStyle(String style) {
+	public void setStyle(final String style) {
 		if (style == null) {
 			this.style = "{}";
 		} else {
@@ -191,9 +195,9 @@ public class GeoFeatureType extends AbstractGeoLayer {
 	}
 
 	private void loadMeta() {
-		MetadataMap meta = MetadataService.getMetadata(geoAttributeTable);
-		setMinZoom((String)meta.get(GIS_META_MINZOOM));
-		setMaxZoom((String)meta.get(GIS_META_MAXZOOM));
+		final MetadataMap meta = MetadataService.getMetadata(geoAttributeTable);
+		setMinZoom((String) meta.get(GIS_META_MINZOOM));
+		setMaxZoom((String) meta.get(GIS_META_MAXZOOM));
 		setStyle((String) meta.get(GIS_META_STYLE));
 		setVisibility((String) meta.get(GIS_META_VISIBILITY));
 		setIndex((String) meta.get(GIS_META_INDEX));
@@ -206,19 +210,20 @@ public class GeoFeatureType extends AbstractGeoLayer {
 		MetadataService.updateMetadata(geoAttributeTable, GIS_META_VISIBILITY, getVisibilityAsString());
 		MetadataService.updateMetadata(geoAttributeTable, GIS_META_INDEX, String.valueOf(getIndex()));
 	}
-	
+
 	public boolean isActive() {
 		return getMasterTable().getStatus().isActive();
 	}
 
-	public void create(ICard card, String value) {
-		ICard geoCard = getGeoAttributeTable().cards().create();
+	public void create(final ICard card, final String value) {
+		final ICard geoCard = getGeoAttributeTable().cards().create();
 		geoCard.setValue(MASTER_ATTRIBUTE, card.getId());
 		geoCard.setValue(GEOMETRY_ATTRIBUTE, value);
 		geoCard.save();
 	}
 
-	public boolean isLocal(ITable table) {
+	@Override
+	public boolean isLocal(final ITable table) {
 		return getMasterTable().treeBranch().contains(table);
 	}
 

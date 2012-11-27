@@ -1,19 +1,21 @@
 package org.cmdbuild.auth;
 
+import org.cmdbuild.auth.user.OperationUser;
+
 public interface UserStore {
 
 	/**
-	 * Returns the authenticated user from the session. It must always be a
-	 * valid (not null) user: "Use Null Objects, Luke!"
+	 * Returns the operation user from the session. It must always be a valid
+	 * (not null) user: "Use Null Objects, Luke!"
 	 * 
-	 * @return the authenticated user for this request
+	 * @return the operation user for this request
 	 */
-	AuthenticatedUser getUser();
+	OperationUser getUser();
 
 	/**
-	 * Sets the authenticated user in this session.
+	 * Sets the operation user in this session.
 	 * 
 	 * @param user
 	 */
-	void setUser(AuthenticatedUser user);
+	void setUser(OperationUser user);
 }

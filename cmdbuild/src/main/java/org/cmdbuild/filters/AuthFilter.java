@@ -11,7 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cmdbuild.auth.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.services.SessionVars;
 
@@ -34,7 +34,7 @@ public class AuthFilter implements Filter {
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
-			final AuthenticatedUser user = new SessionVars().getUser();
+			final OperationUser user = new SessionVars().getUser();
 			if (isRootPage(uri)) {
 				redirectToLogin(httpResponse);
 			}

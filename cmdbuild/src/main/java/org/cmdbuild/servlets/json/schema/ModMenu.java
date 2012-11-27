@@ -18,6 +18,7 @@ import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -112,8 +113,8 @@ public class ModMenu extends JSONBase {
 		} else {
 			menuItem.setCode(MenuCard.getCodeValueOf(type).getCodeType());
 			if (menuItem.isReport()) {
-				menuItem.setElementClassId(UserContext.systemContext().tables().get(ReportCard.REPORT_CLASS_NAME)
-						.getId());
+				menuItem.setElementClassId(UserOperations.from(UserContext.systemContext()).tables()
+						.get(ReportCard.REPORT_CLASS_NAME).getId());
 				menuItem.setElementObjId(jsonItem.getInt("objid"));
 				final String subtype = jsonItem.getString("subtype");
 				if (subtype != null && !subtype.equals("")) {

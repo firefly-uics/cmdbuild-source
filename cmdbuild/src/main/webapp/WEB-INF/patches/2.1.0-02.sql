@@ -19,6 +19,9 @@ BEGIN
 		ON "Grant"
 		FOR EACH ROW
 		EXECUTE PROCEDURE _cm_trigger_sanity_check();
+		
+	ALTER TABLE "User" 
+		ADD CONSTRAINT username_unique UNIQUE ("Username");
 END
 $$ LANGUAGE PLPGSQL;
 

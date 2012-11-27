@@ -1,83 +1,275 @@
 package org.cmdbuild.services.auth;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
+import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.elements.interfaces.ITable;
+import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.model.profile.UIConfiguration;
 
-/**
- * Wrapper for the OperationUser on top of the legacy UserContext
- */
-public class OperationUserWrapper implements OperationUser {
+public class OperationUserWrapper extends UserContext {
 
-	private final static UserContext systemContext = UserContext.systemContext();
-	final UserContext userCtx;
+	private class PrivilegeManagerWrap implements PrivilegeManager {
 
-	public OperationUserWrapper(final UserContext userCtx) {
-		this.userCtx = userCtx;
-	}
-
-	@Override
-	public String getOperationUsername() {
-		return userCtx.getRequestedUsername();
-	}
-
-	@Override
-	public String getPreferredGroupName() {
-		return userCtx.getDefaultGroup().getName();
-	}
-
-	@Override
-	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
-		if (privilegedObject instanceof CMEntryType) {
-			final CMEntryType type = (CMEntryType) privilegedObject;
-			if (type instanceof CMClass) {
-				return userCtx.privileges().hasReadPrivilege(systemContext.tables().get(type.getName()));
+		@Override
+		public PrivilegeType getPrivilege(final CMPrivilegedObject schema) {
+			if (hasWritePrivilege(schema)) {
+				return PrivilegeType.WRITE;
+			} else if (hasReadPrivilege(schema)) {
+				return PrivilegeType.READ;
 			} else {
-				return userCtx.privileges().hasReadPrivilege(systemContext.domains().get(type.getName()));
+				return PrivilegeType.NONE;
 			}
 		}
-		return false;
-	}
 
-	@Override
-	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
-		if (privilegedObject instanceof CMEntryType) {
-			final CMEntryType type = (CMEntryType) privilegedObject;
-			if (type instanceof CMClass) {
-				return userCtx.privileges().hasWritePrivilege(systemContext.tables().get(type.getName()));
-			} else {
-				return userCtx.privileges().hasWritePrivilege(systemContext.domains().get(type.getName()));
+		@Override
+		public boolean hasReadPrivilege(final CMPrivilegedObject table) {
+			return user.hasPrivilege(DefaultPrivileges.READ, table);
+		}
+
+		@Override
+		public boolean hasWritePrivilege(final CMPrivilegedObject table) {
+			return user.hasPrivilege(DefaultPrivileges.WRITE, table);
+		}
+
+		@Override
+		public void assureReadPrivilege(final CMPrivilegedObject table) {
+			assurePrivilege(DefaultPrivileges.READ, table);
+		}
+
+		@Override
+		public void assureWritePrivilege(final CMPrivilegedObject table) {
+			assurePrivilege(DefaultPrivileges.WRITE, table);
+		}
+
+		private void assurePrivilege(final CMPrivilege requested, final CMPrivilegedObject table) {
+			if (!user.hasPrivilege(requested, table)) {
+				throw AuthExceptionType.AUTH_CLASS_NOT_AUTHORIZED.createException(table.getPrivilegeId());
 			}
 		}
-		return false;
-	}
 
-	@Override
-	public boolean hasAdministratorPrivileges() {
-		return userCtx.privileges().isAdmin();
-	}
-
-	@Override
-	public boolean hasDatabaseDesignerPrivileges() {
-		return userCtx.privileges().isAdmin();
-	}
-
-	@Override
-	public boolean hasPrivilege(final CMPrivilege privilege) {
-		return userCtx.privileges().isAdmin();
-	}
-
-	@Override
-	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
-		if (requested == DefaultPrivileges.READ) {
-			return hasReadAccess(privilegedObject);
+		@Override
+		public void assureCreatePrivilege(final CMPrivilegedObject table) {
+			if (!hasCreatePrivilege(table)) {
+				throw AuthExceptionType.AUTH_CLASS_NOT_AUTHORIZED.createException(table.getPrivilegeId());
+			}
 		}
-		if (requested == DefaultPrivileges.WRITE) {
-			return hasWriteAccess(privilegedObject);
+
+		@Override
+		public boolean hasCreatePrivilege(final CMPrivilegedObject domain) {
+			return hasWritePrivilege(domain);
 		}
-		return userCtx.privileges().isAdmin();
+
+		@Override
+		public boolean isAdmin() {
+			return user.hasAdministratorPrivileges();
+		}
+
+		@Override
+		public void assureAdminPrivilege() {
+			if (!isAdmin())
+				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+	}
+
+	private final OperationUser user;
+
+	public OperationUserWrapper(final OperationUser user) {
+		this.user = user;
+	}
+
+	@Override
+	public boolean belongsTo(final String groupName) {
+		return getCMGroupByName(groupName) != null;
+	}
+
+	@Override
+	public boolean canChangePassword() {
+		return user.getAuthenticatedUser().canChangePassword();
+	}
+
+	@Override
+	public boolean allowsPasswordLogin() {
+		return user.getAuthenticatedUser().canChangePassword(); // Not really
+	}
+
+	@Override
+	public void changePassword(final String oldPassword, final String newPassword) {
+		user.getAuthenticatedUser().changePassword(oldPassword, newPassword);
+	}
+
+	@Override
+	public Group getDefaultGroup() {
+		return getGroupByName(user.getPreferredGroup().getName());
+	}
+
+	@Override
+	public Collection<Group> getGroups() {
+		final Collection<CMGroup> cmGroups = user.getAuthenticatedUser().getGroups();
+		final List<Group> groups = new ArrayList<Group>(cmGroups.size());
+		for (final CMGroup cmg : cmGroups) {
+			final Group g = groupFromCMGroup(cmg);
+			groups.add(g);
+		}
+		return groups;
+	}
+
+	@Override
+	public String getRequestedUsername() {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
+	public User getUser() {
+		return new User() {
+
+			@Override
+			public String getDescription() {
+				return user.getAuthenticatedUser().getDescription();
+			}
+
+			@Override
+			public String getEncryptedPassword() {
+				throw new UnsupportedOperationException("Should never be called!");
+			}
+
+			@Override
+			public int getId() {
+				final Long id = user.getAuthenticatedUser().getId();
+				if (id == null) {
+					return 0;
+				} else {
+					return id.intValue();
+				}
+			}
+
+			@Override
+			public String getName() {
+				return user.getAuthenticatedUser().getName();
+			}
+		};
+	}
+
+	@Override
+	public UserType getUserType() {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
+	public String getUsername() {
+		return user.getAuthenticatedUser().getName();
+	}
+
+	@Override
+	public Group getWFStartGroup() {
+		return this.getDefaultGroup();
+	}
+
+	@Override
+	public boolean hasDefaultGroup() {
+		return (user.getAuthenticatedUser().getDefaultGroupName() != null);
+	}
+
+	@Override
+	public boolean isGuest() {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
+
+	@Override
+	public PrivilegeManager privileges() {
+		return new PrivilegeManagerWrap();
+	}
+
+	/*
+	 * Utils and conversion
+	 */
+
+	private Group getGroupByName(final String groupName) {
+		return groupFromCMGroup(getCMGroupByName(groupName));
+	}
+
+	private Group groupFromCMGroup(final CMGroup group) {
+		if (group == null) {
+			return null;
+		}
+		final Group g = new Group() {
+
+			@Override
+			public String getDescription() {
+				return group.getDescription();
+			}
+
+			@Override
+			public UIConfiguration getUIConfiguration() {
+				final UIConfiguration uiConfiguration = new UIConfiguration();
+				uiConfiguration.setDisabledModules(disabledModules());
+				return uiConfiguration;
+			}
+
+			private String[] disabledModules() {
+				final Set<String> dm = group.getDisabledModules();
+				return dm.toArray(new String[dm.size()]);
+			}
+
+			@Override
+			public int getId() {
+				final Long id = user.getAuthenticatedUser().getId();
+				if (id == null) {
+					return 0;
+				} else {
+					return id.intValue();
+				}
+			}
+
+			@Override
+			public String getName() {
+				return group.getName();
+			}
+
+			@Override
+			public ITable getStartingClass() {
+				// TODO... implements this
+				// final Long scid = cmg.getStartingClassId();
+				// if (scid != null) {
+				// return tables().get(scid.intValue());
+				// }
+				return null;
+			}
+
+			@Override
+			public boolean isAdmin() {
+				for (final PrivilegePair pp : group.getAllPrivileges()) {
+					pp.privilege.implies(DefaultPrivileges.GOD);
+				}
+				return false;
+			}
+
+			@Override
+			public boolean isDefault() {
+				throw new UnsupportedOperationException("Not implemented yet");
+			}
+		};
+		return g;
+	}
+
+	private CMGroup getCMGroupByName(final String groupName) {
+		if (groupName == null) {
+			return null;
+		}
+		for (final CMGroup group : user.getAuthenticatedUser().getGroups()) {
+			if (groupName.equals(group.getName())) {
+				return group;
+			}
+		}
+		return null;
 	}
 }

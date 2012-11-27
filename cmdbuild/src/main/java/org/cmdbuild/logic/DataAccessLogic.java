@@ -12,6 +12,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -40,25 +41,25 @@ public class DataAccessLogic implements Logic {
 	@Legacy("IMPORTANT! FIX THE NEW DAO AND FIX BECAUSE IT USES THE SYSTEM USER!")
 	public CMCard getCard(final String className, final Object cardId) {
 		try {
-			int id = Integer.parseInt(cardId.toString()); // very expensive but almost never called
-			final ICard card = UserContext.systemContext().tables().get(className).cards().get(id);
+			final int id = Integer.parseInt(cardId.toString()); // very
+																// expensive but
+																// almost never
+																// called
+			final ICard card = UserOperations.from(UserContext.systemContext()).tables().get(className).cards().get(id);
 			return new CardWrapper(card);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
-		/* The new DAO layer does not query subclasses! ****************
-		final CMClass cardType = view.findClassByName(className);
-		final CMQueryResult result = view.select(
-				attribute(cardType, Constants.DESCRIPTION_ATTRIBUTE))
-			.from(cardType)
-			.where(attribute(cardType, Constants.ID_ATTRIBUTE), Operator.EQUALS, cardId)
-			.run();
-		if (result.isEmpty()) {
-			return null;
-		} else {
-			return result.iterator().next().getCard(cardType);
-		}
-		**************************************************************** */
+		/*
+		 * The new DAO layer does not query subclasses! **************** final
+		 * CMClass cardType = view.findClassByName(className); final
+		 * CMQueryResult result = view.select( attribute(cardType,
+		 * Constants.DESCRIPTION_ATTRIBUTE)) .from(cardType)
+		 * .where(attribute(cardType, Constants.ID_ATTRIBUTE), Operator.EQUALS,
+		 * cardId) .run(); if (result.isEmpty()) { return null; } else { return
+		 * result.iterator().next().getCard(cardType); }
+		 * ***************************************************************
+		 */
 	}
 
 }

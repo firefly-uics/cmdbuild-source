@@ -17,7 +17,7 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.services.auth.AuthenticatedUserWrapper;
+import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.soap.operation.EAdministration;
 import org.cmdbuild.services.soap.operation.ECard;
@@ -54,7 +54,7 @@ public class WebservicesImpl implements Webservices, ApplicationContextAware {
 		// FIXME
 		final MessageContext msgCtx = wsc.getMessageContext();
 		final DefaultAuthenticationService as = new DefaultAuthenticationService();
-		return new AuthenticatedUserWrapper(as.getAuthenticatedUser());
+		return new OperationUserWrapper(as.getOperationUser());
 	}
 
 	@Override

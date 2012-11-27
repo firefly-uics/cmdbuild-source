@@ -17,6 +17,7 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.tree.CNode;
 import org.cmdbuild.utils.tree.CTree;
 
@@ -34,7 +35,8 @@ public class MenuCard extends CardForwarder {
 	public static final String INDEX_ATTR = "Number";
 
 	public static final String MENU_CLASS_NAME = "Menu";
-	private static final ITable menuClass = UserContext.systemContext().tables().get(MENU_CLASS_NAME);
+	private static final ITable menuClass = UserOperations.from(UserContext.systemContext()).tables()
+			.get(MENU_CLASS_NAME);
 
 	public enum MenuCodeType {
 		FOLDER("folder"), SYSTEM_FOLDER("system_folder"), CLASS("class"), PROCESS("processclass"), REPORT_PDF(
@@ -43,7 +45,7 @@ public class MenuCard extends CardForwarder {
 
 		private String ctype;
 
-		MenuCodeType(String type) {
+		MenuCodeType(final String type) {
 			this.ctype = type;
 		}
 
@@ -57,7 +59,7 @@ public class MenuCard extends CardForwarder {
 				.toString().toLowerCase());
 		private String extension;
 
-		AllowedReportExtension(String extension) {
+		AllowedReportExtension(final String extension) {
 			this.extension = extension;
 		}
 
@@ -73,7 +75,7 @@ public class MenuCard extends CardForwarder {
 
 		private String type;
 
-		MenuType(String type) {
+		MenuType(final String type) {
 			this.type = type;
 		}
 
@@ -82,30 +84,30 @@ public class MenuCard extends CardForwarder {
 		}
 	}
 
-	public static MenuCodeType getCodeValueOf(String type) {
-		MenuCodeType[] mtypes = MenuCodeType.values();
+	public static MenuCodeType getCodeValueOf(final String type) {
+		final MenuCodeType[] mtypes = MenuCodeType.values();
 		try {
-			for (MenuCodeType mt : mtypes) {
+			for (final MenuCodeType mt : mtypes) {
 				if (mt.getCodeType().equals(type)) {
 					return MenuCodeType.valueOf(mt.toString());
 				}
 			}
 			return MenuCodeType.CLASS;
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			return MenuCodeType.CLASS;
 		}
 	}
 
-	public static MenuType getTypeValueOf(String type) {
-		MenuType[] mtypes = MenuType.values();
+	public static MenuType getTypeValueOf(final String type) {
+		final MenuType[] mtypes = MenuType.values();
 		try {
-			for (MenuType mt : mtypes) {
+			for (final MenuType mt : mtypes) {
 				if (mt.getType().equals(type)) {
 					return MenuType.valueOf(mt.toString());
 				}
 			}
 			return MenuType.CLASS;
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			return MenuType.CLASS;
 		}
 	}
@@ -114,7 +116,7 @@ public class MenuCard extends CardForwarder {
 		super(menuClass.cards().create());
 	}
 
-	private MenuCard(ICard card) throws NotFoundException {
+	private MenuCard(final ICard card) throws NotFoundException {
 		super(card);
 	}
 
@@ -129,7 +131,7 @@ public class MenuCard extends CardForwarder {
 		return getTypeValueOf(getType());
 	}
 
-	public void setType(String type) {
+	public void setType(final String type) {
 		getAttributeValue(TYPE_ATTR).setValue(type);
 	}
 
@@ -140,7 +142,7 @@ public class MenuCard extends CardForwarder {
 			return 0;
 	}
 
-	public void setParentId(Integer id) {
+	public void setParentId(final Integer id) {
 		getAttributeValue(PARENT_ID_ATTR).setValue(id);
 	}
 
@@ -148,7 +150,7 @@ public class MenuCard extends CardForwarder {
 		return getAttributeValue(GROUP_NAME_ATTR).getString();
 	}
 
-	public void setGroupName(String name) {
+	public void setGroupName(final String name) {
 		getAttributeValue(GROUP_NAME_ATTR).setValue(name);
 	}
 
@@ -159,7 +161,7 @@ public class MenuCard extends CardForwarder {
 			return 0;
 	}
 
-	public void setElementClassId(Integer id) {
+	public void setElementClassId(final Integer id) {
 		getAttributeValue(ELEMENT_CLASS_ID_ATTR).setValue(id);
 	}
 
@@ -170,7 +172,7 @@ public class MenuCard extends CardForwarder {
 			return 0;
 	}
 
-	public void setElementObjId(Integer id) {
+	public void setElementObjId(final Integer id) {
 		getAttributeValue(ELEMENT_OBJECT_ID_ATTR).setValue(id);
 	}
 
@@ -181,7 +183,7 @@ public class MenuCard extends CardForwarder {
 			return 0;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(final Integer number) {
 		getAttributeValue(INDEX_ATTR).setValue(number);
 	}
 
@@ -193,21 +195,21 @@ public class MenuCard extends CardForwarder {
 						MenuCodeType.REPORT_XML.getCodeType()));
 	}
 
-	public static void saveTree(CTree<MenuCard> tree) throws ORMException {
+	public static void saveTree(final CTree<MenuCard> tree) throws ORMException {
 		deleteTree(tree.getRootElement().getData().getGroupName());
 		saveAllItems(tree.getRootElement().getChildren(), 0);
 	}
 
 	public static void deleteTree(final String groupName) throws ORMException {
-		ICard template = menuClass.cards().create();
+		final ICard template = menuClass.cards().create();
 		template.setStatus(ElementStatus.INACTIVE);
 		menuClass.cards().list().filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName).update(template);
 	}
 
-	public static void saveAllItems(List<CNode<MenuCard>> childrenList, int parentId) {
+	public static void saveAllItems(final List<CNode<MenuCard>> childrenList, final int parentId) {
 		int pnum = 0;
-		for (CNode<MenuCard> child : childrenList) {
-			MenuCard menu = child.getData();
+		for (final CNode<MenuCard> child : childrenList) {
+			final MenuCard menu = child.getData();
 			int childId = 0;
 			if (menu != null) {
 				menu.setParentId(parentId);
@@ -223,46 +225,46 @@ public class MenuCard extends CardForwarder {
 
 	public static CTree<MenuCard> loadTreeForGroup(final String groupName) throws ORMException {
 		try {
-			Iterable<ICard> list = getGroupMenuItems(groupName);
+			final Iterable<ICard> list = getGroupMenuItems(groupName);
 			return buildTree(list);
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			Log.PERSISTENCE.error("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
 			return null;
 		}
 	}
 
-	public static CTree<MenuCard> loadAvailableItemsTreeForGroup(String groupName, ITableFactory tf)
+	public static CTree<MenuCard> loadAvailableItemsTreeForGroup(final String groupName, final ITableFactory tf)
 			throws ORMException {
 		try {
-			Iterable<ICard> list = new AvailableMenuItemsView().cards().list()
+			final Iterable<ICard> list = new AvailableMenuItemsView().cards().list()
 					.filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName).ignoreStatus();
 			return buildAvailableItemsTree(list, tf);
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			Log.PERSISTENCE.error("View " + AvailableMenuItemsView.AvailableMenuView + " does not exist !!!", e);
 			return null;
 		}
 	}
 
-	private static CTree<MenuCard> buildTree(Iterable<ICard> list) throws NotFoundException {
+	private static CTree<MenuCard> buildTree(final Iterable<ICard> list) throws NotFoundException {
 		// prepare hash
-		TreeMap<Integer, CNode<MenuCard>> tempHash = new TreeMap<Integer, CNode<MenuCard>>();
-		for (ICard card : list) {
-			CNode<MenuCard> node = new CNode<MenuCard>();
-			MenuCard menu = new MenuCard(card);
+		final TreeMap<Integer, CNode<MenuCard>> tempHash = new TreeMap<Integer, CNode<MenuCard>>();
+		for (final ICard card : list) {
+			final CNode<MenuCard> node = new CNode<MenuCard>();
+			final MenuCard menu = new MenuCard(card);
 			node.setData(menu);
 			tempHash.put(card.getId(), node);
 		}
 
 		// build tree
-		MenuCard root = new MenuCard();
-		CNode<MenuCard> rootNode = new CNode<MenuCard>();
+		final MenuCard root = new MenuCard();
+		final CNode<MenuCard> rootNode = new CNode<MenuCard>();
 		rootNode.setData(root);
-		CTree<MenuCard> tree = new CTree<MenuCard>();
+		final CTree<MenuCard> tree = new CTree<MenuCard>();
 		tree.setRootElement(rootNode);
 
-		for (CNode<MenuCard> childNode : tempHash.values()) {
+		for (final CNode<MenuCard> childNode : tempHash.values()) {
 			CNode<MenuCard> parentNode = null;
-			int parentId = childNode.getData().getParentId();
+			final int parentId = childNode.getData().getParentId();
 			if (tempHash.containsKey(parentId))
 				parentNode = tempHash.get(parentId);
 			if (parentNode == null)
@@ -275,40 +277,40 @@ public class MenuCard extends CardForwarder {
 
 	public static Iterable<MenuCard> loadListForGroup(final String groupName) {
 		try {
-			Iterable<ICard> list = getGroupMenuItems(groupName);
+			final Iterable<ICard> list = getGroupMenuItems(groupName);
 			return buildMenuCardList(list);
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			Log.PERSISTENCE.error("Table " + MENU_CLASS_NAME + " does not exist !!!", e);
 			return null;
 		}
 	}
 
 	private static Iterable<ICard> getGroupMenuItems(final String groupName) {
-		Iterable<ICard> list = UserContext.systemContext().tables().get(MENU_CLASS_NAME).cards().list()
-				.filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName)
+		final Iterable<ICard> list = UserOperations.from(UserContext.systemContext()).tables().get(MENU_CLASS_NAME)
+				.cards().list().filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName)
 				.order(PARENT_ID_ATTR, OrderFilterType.ASC).order(INDEX_ATTR, OrderFilterType.ASC);
 		return list;
 	}
 
-	private static Iterable<MenuCard> buildMenuCardList(Iterable<ICard> list) throws NotFoundException {
-		List<MenuCard> menuCardList = new ArrayList<MenuCard>();
-		for (ICard card : list) {
+	private static Iterable<MenuCard> buildMenuCardList(final Iterable<ICard> list) throws NotFoundException {
+		final List<MenuCard> menuCardList = new ArrayList<MenuCard>();
+		for (final ICard card : list) {
 			menuCardList.add(new MenuCard(card));
 		}
 		return menuCardList;
 	}
 
-	private static CTree<MenuCard> buildAvailableItemsTree(Iterable<ICard> list, ITableFactory tf)
+	private static CTree<MenuCard> buildAvailableItemsTree(final Iterable<ICard> list, final ITableFactory tf)
 			throws NotFoundException {
 		// prepare hash
-		HashMap<String, CNode<MenuCard>> classMap = new HashMap<String, CNode<MenuCard>>();
-		HashMap<String, CNode<MenuCard>> processMap = new HashMap<String, CNode<MenuCard>>();
-		HashMap<String, CNode<MenuCard>> viewMap = new HashMap<String, CNode<MenuCard>>();
-		HashMap<String, CNode<MenuCard>> reportMap = new HashMap<String, CNode<MenuCard>>();
+		final HashMap<String, CNode<MenuCard>> classMap = new HashMap<String, CNode<MenuCard>>();
+		final HashMap<String, CNode<MenuCard>> processMap = new HashMap<String, CNode<MenuCard>>();
+		final HashMap<String, CNode<MenuCard>> viewMap = new HashMap<String, CNode<MenuCard>>();
+		final HashMap<String, CNode<MenuCard>> reportMap = new HashMap<String, CNode<MenuCard>>();
 
-		for (ICard item : list) {
-			CNode<MenuCard> node = new CNode<MenuCard>();
-			MenuCard menu = new MenuCard(item);
+		for (final ICard item : list) {
+			final CNode<MenuCard> node = new CNode<MenuCard>();
+			final MenuCard menu = new MenuCard(item);
 			node.setData(menu);
 			switch (getCodeValueOf(menu.getCode())) {
 			case CLASS:
@@ -339,36 +341,36 @@ public class MenuCard extends CardForwarder {
 		}
 
 		// build tree
-		MenuCard root = new MenuCard();
-		CNode<MenuCard> rootNode = new CNode<MenuCard>();
+		final MenuCard root = new MenuCard();
+		final CNode<MenuCard> rootNode = new CNode<MenuCard>();
 		rootNode.setData(root);
 
-		MenuCard classes = new MenuCard();
+		final MenuCard classes = new MenuCard();
 		classes.setDescription(MenuType.CLASS.getType());
 		classes.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		classes.setType(MenuType.FOLDER.getType());
-		CNode<MenuCard> classesNode = new CNode<MenuCard>();
+		final CNode<MenuCard> classesNode = new CNode<MenuCard>();
 		classesNode.setData(classes);
 
-		MenuCard processes = new MenuCard();
+		final MenuCard processes = new MenuCard();
 		processes.setDescription(MenuType.PROCESS.getType());
 		processes.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		processes.setType(MenuType.FOLDER.getType());
-		CNode<MenuCard> processesNode = new CNode<MenuCard>();
+		final CNode<MenuCard> processesNode = new CNode<MenuCard>();
 		processesNode.setData(processes);
 
-		MenuCard reports = new MenuCard();
+		final MenuCard reports = new MenuCard();
 		reports.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		reports.setType(MenuType.FOLDER.getType());
 		reports.setDescription("report");
-		CNode<MenuCard> reportsNode = new CNode<MenuCard>();
+		final CNode<MenuCard> reportsNode = new CNode<MenuCard>();
 		reportsNode.setData(reports);
 
-		MenuCard views = new MenuCard();
+		final MenuCard views = new MenuCard();
 		views.setCode(MenuCodeType.SYSTEM_FOLDER.getCodeType());
 		views.setType(MenuType.FOLDER.getType());
 		views.setDescription(MenuType.VIEW.getType());
-		CNode<MenuCard> viewsNode = new CNode<MenuCard>();
+		final CNode<MenuCard> viewsNode = new CNode<MenuCard>();
 		viewsNode.setData(views);
 
 		rootNode.addChild(classesNode);
@@ -376,19 +378,19 @@ public class MenuCard extends CardForwarder {
 		rootNode.addChild(reportsNode);
 		rootNode.addChild(viewsNode);
 
-		for (CNode<MenuCard> childNode : classMap.values()) {
+		for (final CNode<MenuCard> childNode : classMap.values()) {
 			classesNode.addChild(childNode);
 		}
-		for (CNode<MenuCard> childNode : processMap.values()) {
+		for (final CNode<MenuCard> childNode : processMap.values()) {
 			processesNode.addChild(childNode);
 		}
-		for (CNode<MenuCard> childNode : reportMap.values()) {
+		for (final CNode<MenuCard> childNode : reportMap.values()) {
 			reportsNode.addChild(childNode);
 		}
-		for (CNode<MenuCard> childNode : viewMap.values()) {
+		for (final CNode<MenuCard> childNode : viewMap.values()) {
 			viewsNode.addChild(childNode);
 		}
-		CTree<MenuCard> tree = new CTree<MenuCard>();
+		final CTree<MenuCard> tree = new CTree<MenuCard>();
 		tree.setRootElement(rootNode);
 		return tree;
 	}

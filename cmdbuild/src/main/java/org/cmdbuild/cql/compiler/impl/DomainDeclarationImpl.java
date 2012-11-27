@@ -9,99 +9,110 @@ import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 @SuppressWarnings("unchecked")
-public class DomainDeclarationImpl extends CQLElementImpl implements
-		DomainDeclaration {
+public class DomainDeclarationImpl extends CQLElementImpl implements DomainDeclaration {
 	String as;
 	DomainDirection direction;
-	
+
 	int id = -1;
 	String name;
-	
+
 	DomainDeclarationImpl subDomain = null;
-	
+
 	@Override
-	public boolean equals(Object obj) {
-		if(obj == null)
+	public boolean equals(final Object obj) {
+		if (obj == null)
 			return false;
-		if(!(obj instanceof DomainDeclarationImpl))
+		if (!(obj instanceof DomainDeclarationImpl))
 			return false;
-		DomainDeclarationImpl o = (DomainDeclarationImpl)obj;
-		if(direction != o.direction)
+		final DomainDeclarationImpl o = (DomainDeclarationImpl) obj;
+		if (direction != o.direction)
 			return false;
-		if(name != null){
-			if(!name.equals(o.name))
+		if (name != null) {
+			if (!name.equals(o.name))
 				return false;
-		} else if(o.name != null)
+		} else if (o.name != null)
 			return false;
-		if(id != o.id)
+		if (id != o.id)
 			return false;
-		if(as != null){
-			if(!as.equals(o.as))
+		if (as != null) {
+			if (!as.equals(o.as))
 				return false;
-		}else if(o.as != null)
+		} else if (o.as != null)
 			return false;
-		if(subDomain != null) {
-			if(!subDomain.equals(o.subDomain))
+		if (subDomain != null) {
+			if (!subDomain.equals(o.subDomain))
 				return false;
-		}else if(o.subDomain != null)
+		} else if (o.subDomain != null)
 			return false;
-		
+
 		return true;
 	}
 
+	@Override
 	public String getAs() {
 		return as;
 	}
 
+	@Override
 	public DomainDirection getDirection() {
 		return direction;
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public DomainDeclarationImpl getSubdomain() {
 		return subDomain;
 	}
 
-	public DomainDeclarationImpl searchDomain(String nameOrRef) {
-		if(this.name != null && this.name.equals(nameOrRef)) {
+	@Override
+	public DomainDeclarationImpl searchDomain(final String nameOrRef) {
+		if (this.name != null && this.name.equals(nameOrRef)) {
 			return this;
 		}
-		if(this.as != null && this.as.equals(nameOrRef)) {
+		if (this.as != null && this.as.equals(nameOrRef)) {
 			return this;
 		}
-		if(this.subDomain != null) {
+		if (this.subDomain != null) {
 			return this.subDomain.searchDomain(nameOrRef);
 		}
 		return null;
 	}
 
-	public void setAs(String domainAs) {
+	@Override
+	public void setAs(final String domainAs) {
 		this.as = domainAs;
 	}
 
-	public void setDirection(DomainDirection direction) {
+	@Override
+	public void setDirection(final DomainDirection direction) {
 		this.direction = direction;
 	}
 
-	public void setId(int domainId) {
+	@Override
+	public void setId(final int domainId) {
 		this.id = domainId;
 	}
 
-	public void setName(String domainName) {
+	@Override
+	public void setName(final String domainName) {
 		this.name = domainName;
 	}
 
-	public void setSubdomain(DomainDeclaration subdomain) {
-		this.subDomain = (DomainDeclarationImpl)subdomain;
+	@Override
+	public void setSubdomain(final DomainDeclaration subdomain) {
+		this.subDomain = (DomainDeclarationImpl) subdomain;
 	}
 
 	private IDomain getIDomain(UserContext userCtx) {
@@ -109,13 +120,13 @@ public class DomainDeclarationImpl extends CQLElementImpl implements
 			userCtx = UserContext.systemContext();
 		}
 		if (this.id > 0) {
-			return userCtx.domains().get(id);
+			return UserOperations.from(userCtx).domains().get(id);
 		} else {
-			return userCtx.domains().get(name);
+			return UserOperations.from(userCtx).domains().get(name);
 		}
 	}
 
-	public ITable getStartClassTable(UserContext userCtx) {
+	public ITable getStartClassTable(final UserContext userCtx) {
 		return getClassTable(true, userCtx);
 	}
 
@@ -123,42 +134,42 @@ public class DomainDeclarationImpl extends CQLElementImpl implements
 		return getClassTable(false, null);
 	}
 
-	public ITable getEndClassTable(UserContext userCtx) {
+	public ITable getEndClassTable(final UserContext userCtx) {
 		return getClassTable(false, userCtx);
 	}
 
-	protected ITable getClassTable(boolean start, UserContext userCtx) {
-		IDomain domain = getIDomain(userCtx);
+	protected ITable getClassTable(final boolean start, final UserContext userCtx) {
+		final IDomain domain = getIDomain(userCtx);
 		ITable t = null;
-		if(this.parent instanceof ClassDeclarationImpl) {
-			ClassDeclarationImpl p = parentAs();
+		if (this.parent instanceof ClassDeclarationImpl) {
+			final ClassDeclarationImpl p = parentAs();
 			t = p.getClassTable(userCtx);
 		} else {
-			DomainDeclarationImpl p = parentAs();
+			final DomainDeclarationImpl p = parentAs();
 			t = p.getEndClassTable(userCtx);
 		}
-		
-		TableTree tree = TableImpl.tree();
-		if( !tree.branch(domain.getClass1().getName()).contains(t.getId()) &&
-			!tree.branch(domain.getClass2().getName()).contains(t.getId())) {
+
+		final TableTree tree = TableImpl.tree();
+		if (!tree.branch(domain.getClass1().getName()).contains(t.getId())
+				&& !tree.branch(domain.getClass2().getName()).contains(t.getId())) {
 			throw new RuntimeException("Table " + t.getName() + " not found for domain " + domain.getName());
 		}
-		
-		if(start) {
+
+		if (start) {
 			return t;
 		}
-		switch(direction) {
+		switch (direction) {
 		case INVERSE:
 			return domain.getClass1();
 		default:
 			try {
-				if(domain.getDirectionFrom(t)) {
+				if (domain.getDirectionFrom(t)) {
 					return domain.getClass2();
 				} else {
 					return domain.getClass1();
 				}
-			} catch(ORMException exc) {
-				if(ORMException.ORMExceptionType.ORM_AMBIGUOUS_DIRECTION == exc.getExceptionType()) {
+			} catch (final ORMException exc) {
+				if (ORMException.ORMExceptionType.ORM_AMBIGUOUS_DIRECTION == exc.getExceptionType()) {
 					return domain.getClass2();
 				}
 				throw exc;
@@ -166,31 +177,32 @@ public class DomainDeclarationImpl extends CQLElementImpl implements
 		}
 
 	}
-	public DirectedDomain getDirectedDomain(UserContext userCtx) {
+
+	public DirectedDomain getDirectedDomain(final UserContext userCtx) {
 		DirectedDomain out = null;
-		if(DomainDirection.INVERSE == direction) {
-			out = DirectedDomain.create(getIDomain(userCtx),DirectedDomain.DomainDirection.I);
+		if (DomainDirection.INVERSE == direction) {
+			out = DirectedDomain.create(getIDomain(userCtx), DirectedDomain.DomainDirection.I);
 		} else {
-			IDomain domain = getIDomain(userCtx);
+			final IDomain domain = getIDomain(userCtx);
 			ITable t = null;
-			if(this.parent instanceof ClassDeclarationImpl) {
-				ClassDeclarationImpl p = parentAs();
+			if (this.parent instanceof ClassDeclarationImpl) {
+				final ClassDeclarationImpl p = parentAs();
 				t = p.getClassTable(userCtx);
 			} else {
-				DomainDeclarationImpl p = parentAs();
+				final DomainDeclarationImpl p = parentAs();
 				t = p.getEndClassTable(userCtx);
 			}
-			
-			TableTree tree = TableImpl.tree();
-			if( !tree.branch(domain.getClass1().getName()).contains(t.getId()) &&
-				!tree.branch(domain.getClass2().getName()).contains(t.getId())) {
+
+			final TableTree tree = TableImpl.tree();
+			if (!tree.branch(domain.getClass1().getName()).contains(t.getId())
+					&& !tree.branch(domain.getClass2().getName()).contains(t.getId())) {
 				throw new RuntimeException("Table " + t.getName() + " not found for domain " + domain.getName());
 			}
 			try {
-				boolean isdirect = domain.getDirectionFrom(t);
+				final boolean isdirect = domain.getDirectionFrom(t);
 				out = DirectedDomain.create(domain, isdirect);
-			} catch(ORMException exc) {
-				if(ORMException.ORMExceptionType.ORM_AMBIGUOUS_DIRECTION == exc.getExceptionType()) {
+			} catch (final ORMException exc) {
+				if (ORMException.ORMExceptionType.ORM_AMBIGUOUS_DIRECTION == exc.getExceptionType()) {
 					out = DirectedDomain.create(domain, true);
 				}
 				throw exc;
@@ -200,9 +212,10 @@ public class DomainDeclarationImpl extends CQLElementImpl implements
 	}
 
 	public void check() {
-		if(FactoryImpl.CmdbuildCheck) {
-			getEndClassTable(); //this check the existence of the domain and that the tables are consistent
-			if(subDomain != null) {
+		if (FactoryImpl.CmdbuildCheck) {
+			getEndClassTable(); // this check the existence of the domain and
+								// that the tables are consistent
+			if (subDomain != null) {
 				subDomain.check();
 			}
 		}

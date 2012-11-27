@@ -16,6 +16,7 @@ import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -75,14 +76,15 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 
 	@Override
 	public Iterable<UserProcessClass> findAllProcessClasses() {
-		return Iterables.transform(userCtx.processTypes().list(), new Function<ProcessType, UserProcessClass>() {
+		return Iterables.transform(UserOperations.from(userCtx).processTypes().list(),
+				new Function<ProcessType, UserProcessClass>() {
 
-			@Override
-			public UserProcessClass apply(final ProcessType input) {
-				return wrap(input);
-			}
+					@Override
+					public UserProcessClass apply(final ProcessType input) {
+						return wrap(input);
+					}
 
-		});
+				});
 	}
 
 	@Override
@@ -260,7 +262,7 @@ public class WorkflowEngineWrapper extends LegacyWorkflowPersistence implements 
 	public void sync() throws CMWorkflowException {
 		eventListener.syncStarted();
 		userCtx.privileges().assureAdminPrivilege();
-		for (final ProcessType processType : userCtx.processTypes().list()) {
+		for (final ProcessType processType : UserOperations.from(userCtx).processTypes().list()) {
 			if (processType.isSuperClass())
 				continue;
 			syncProcess(processType);

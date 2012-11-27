@@ -3,7 +3,7 @@ package org.cmdbuild.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dao.driver.CachingDriver;
@@ -16,9 +16,9 @@ import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.services.auth.Group;
-import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
@@ -53,8 +53,8 @@ public class TemporaryObjectsBeforeSpringDI {
 	static XpdlManager.GroupQueryAdapter gca = new XpdlManager.GroupQueryAdapter() {
 		@Override
 		public String[] getAllGroupNames() {
-			List<String> names = new ArrayList<String>();
-			for (GroupCard groupCard : GroupCard.all()) {
+			final List<String> names = new ArrayList<String>();
+			for (final GroupCard groupCard : GroupCard.all()) {
 				names.add(groupCard.getName());
 			}
 			return names.toArray(new String[names.size()]);
@@ -63,6 +63,7 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	private static final CachingDriver driver;
 	private static final DBDataView dbDataView;
+	private static final DefaultPrivilegeContextFactory privilegeCtxFactory;
 	private static final AbstractSharkService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
 	private static final WorkflowLogger workflowLogger;
@@ -73,6 +74,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new DefaultCachingDriver(new PostgresDriver(datasource));
 		dbDataView = new DBDataView(driver);
+		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
 
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
@@ -111,21 +113,24 @@ public class TemporaryObjectsBeforeSpringDI {
 		return driver;
 	}
 
-	public static DashboardLogic getDashboardLogic(UserContext userCtx) {
+	public static DefaultPrivilegeContextFactory getPrivilegeContextFactory() {
+		return privilegeCtxFactory;
+	}
+
+	public static DashboardLogic getDashboardLogic(final UserContext userCtx) {
 		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(
 				userCtx));
 	}
 
-	public static CMDataView getUserContextView(UserContext userCtx) {
-		final OperationUser user = new OperationUserWrapper(userCtx);
-		return new UserDataView(new DBDataView(driver), user);
+	public static CMDataView getUserContextView(final UserContext userCtx) {
+		return new UserDataView(new DBDataView(driver), new SessionVars().getUser());
 	}
 
 	public static CMDataView getSystemView() {
 		return dbDataView;
 	}
 
-	public static DataAccessLogic getDataAccessLogic(UserContext userCtx) {
+	public static DataAccessLogic getDataAccessLogic(final UserContext userCtx) {
 		return new DataAccessLogic(getUserContextView(userCtx));
 	}
 
@@ -133,11 +138,11 @@ public class TemporaryObjectsBeforeSpringDI {
 		return new DataAccessLogic(getSystemView());
 	}
 
-	public static WorkflowLogic getWorkflowLogic(UserContext userCtx) {
+	public static WorkflowLogic getWorkflowLogic(final UserContext userCtx) {
 		return new WorkflowLogic(getWorkflowEngine(userCtx));
 	}
 
-	public static ContaminatedWorkflowEngine getWorkflowEngine(UserContext userCtx) {
+	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
 		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
 				workflowTypesConverter, processDefinitionManager);
 		workflowEngine.setEventListener(workflowLogger);
@@ -161,15 +166,15 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static class SimplifiedUserContext {
-		private UserContext userContext;
+		private final UserContext userContext;
 
-		public SimplifiedUserContext(UserContext userContext) {
+		public SimplifiedUserContext(final UserContext userContext) {
 			this.userContext = userContext;
 		}
 
 		public List<String> getGroupNames() {
-			List<String> groupNames = new ArrayList<String>();
-			for (Group g : userContext.getGroups()) {
+			final List<String> groupNames = new ArrayList<String>();
+			for (final Group g : userContext.getGroups()) {
 				groupNames.add(g.getName());
 			}
 			return groupNames;

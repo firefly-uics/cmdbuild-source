@@ -8,15 +8,16 @@ import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class FilterService {
 
 	public static final String DEFAULT_FILTER_CATEGORY = "";
 	public static final String DEFAULT_FILTER_SUBCATEGORY = "";
 
-	public static CardQuery getFilter(int classId, String categoryOrNull, String subcategoryOrNull) {
-		String category = getFilterCategory(categoryOrNull);
-		String subcategory = getFilterSubcategory(subcategoryOrNull);
+	public static CardQuery getFilter(final int classId, final String categoryOrNull, final String subcategoryOrNull) {
+		final String category = getFilterCategory(categoryOrNull);
+		final String subcategory = getFilterSubcategory(subcategoryOrNull);
 		CardQuery filter = getCurrentFilter(category, subcategory);
 		if (filter == null) {
 			filter = createAndPutFilter(classId, category, subcategory);
@@ -29,9 +30,9 @@ public class FilterService {
 		return filter;
 	}
 
-	public static void clearFilters(String categoryOrNull, String subcategoryOrNull) {
-		String category = getFilterSubcategory(categoryOrNull);
-		String subcategory = getFilterCategory(subcategoryOrNull);
+	public static void clearFilters(final String categoryOrNull, final String subcategoryOrNull) {
+		final String category = getFilterSubcategory(categoryOrNull);
+		final String subcategory = getFilterCategory(subcategoryOrNull);
 		if (isDefaultCategory(category)) {
 			clearAllFilters();
 		} else if (isDefaultSubcategory(subcategory)) {
@@ -45,42 +46,42 @@ public class FilterService {
 		createAndBindFilterMap();
 	}
 
-	private static void clearFilterCategory(String category) {
-		Map<String, CardQuery> filterMap = getfilterMap();
-		for (String filterKey : filterMap.keySet()) {
+	private static void clearFilterCategory(final String category) {
+		final Map<String, CardQuery> filterMap = getfilterMap();
+		for (final String filterKey : filterMap.keySet()) {
 			if (filterKey.startsWith(category))
 				filterMap.remove(filterKey);
 		}
 	}
 
-	private static void clearFilterSubcategory(String category, String subcategory) {
-		Map<String, CardQuery> filterMap = getfilterMap();
-		filterMap.remove(category+subcategory);
+	private static void clearFilterSubcategory(final String category, final String subcategory) {
+		final Map<String, CardQuery> filterMap = getfilterMap();
+		filterMap.remove(category + subcategory);
 	}
 
-	private static CardQuery getCurrentFilter(String category, String subcategory) {
-		Map<String, CardQuery> filterMap = getfilterMap();
-		return filterMap.get(category+subcategory);
+	private static CardQuery getCurrentFilter(final String category, final String subcategory) {
+		final Map<String, CardQuery> filterMap = getfilterMap();
+		return filterMap.get(category + subcategory);
 	}
 
-	private static CardQuery createAndPutFilter(int classId, String category,
-			String subcategory) throws NotFoundException {
-		Map<String, CardQuery> filterMap = getfilterMap();
-		CardQuery filter = createFilter(classId);
-		filterMap.put(category+subcategory, filter);
+	private static CardQuery createAndPutFilter(final int classId, final String category, final String subcategory)
+			throws NotFoundException {
+		final Map<String, CardQuery> filterMap = getfilterMap();
+		final CardQuery filter = createFilter(classId);
+		filterMap.put(category + subcategory, filter);
 		return filter;
 	}
 
-	private static CardQuery createFilter(int classId) throws NotFoundException {
+	private static CardQuery createFilter(final int classId) throws NotFoundException {
 		CardQuery filter;
-		UserContext userCtx = new SessionVars().getCurrentUserContext();
-		ITable table = userCtx.tables().get(classId);
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
+		final ITable table = UserOperations.from(userCtx).tables().get(classId);
 		filter = table.cards().list();
-		// TODO: Use the default Class filter if present when implemented		
-		for (OrderEntry sortEntry : table.getOrdering()) {
+		// TODO: Use the default Class filter if present when implemented
+		for (final OrderEntry sortEntry : table.getOrdering()) {
 			filter.order(sortEntry.getAttributeName(), sortEntry.getOrderDirection());
 		}
-		
+
 		return filter;
 	}
 
@@ -97,16 +98,16 @@ public class FilterService {
 	}
 
 	private static Map<String, CardQuery> createAndBindFilterMap() {
-		Map<String, CardQuery> filterMap = new ConcurrentHashMap<String, CardQuery>();
+		final Map<String, CardQuery> filterMap = new ConcurrentHashMap<String, CardQuery>();
 		new SessionVars().setFilterMap(filterMap);
 		return filterMap;
 	}
 
-	private static boolean isDefaultCategory(String category) {
+	private static boolean isDefaultCategory(final String category) {
 		return DEFAULT_FILTER_CATEGORY.equals(category);
 	}
 
-	private static boolean isDefaultSubcategory(String subcategory) {
+	private static boolean isDefaultSubcategory(final String subcategory) {
 		return DEFAULT_FILTER_SUBCATEGORY.equals(subcategory);
 	}
 
@@ -116,9 +117,9 @@ public class FilterService {
 	 * @return The requested filter category or default
 	 */
 	private static String getFilterCategory(String category) {
-	    if (category == null)
-		category = FilterService.DEFAULT_FILTER_CATEGORY;
-	    return category;
+		if (category == null)
+			category = FilterService.DEFAULT_FILTER_CATEGORY;
+		return category;
 	}
 
 	private static String getFilterSubcategory(String subcategory) {
