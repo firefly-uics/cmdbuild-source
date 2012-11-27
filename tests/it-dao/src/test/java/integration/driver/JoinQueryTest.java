@@ -40,11 +40,11 @@ public class JoinQueryTest extends DBFixture {
 
 	@Before
 	public void createDomainStructure() {
-		SRC = rollbackDriver.createClass(uniqueUUID(), null);
-		DST = rollbackDriver.createSuperClass(uniqueUUID(), null);
-		DST1 = rollbackDriver.createClass(uniqueUUID(), DST);
-		DST2 = rollbackDriver.createClass(uniqueUUID(), DST);
-		DOM = rollbackDriver.createDomain(nnDomain(uniqueUUID(), SRC, DST));
+		SRC = dbDriver().createClass(newClass(uniqueUUID(), null));
+		DST = dbDriver().createClass(newSuperClass(uniqueUUID(), null));
+		DST1 = dbDriver().createClass(newClass(uniqueUUID(), DST));
+		DST2 = dbDriver().createClass(newClass(uniqueUUID(), DST));
+		DOM = dbDriver().createDomain(nnDomain(uniqueUUID(), SRC, DST));
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class JoinQueryTest extends DBFixture {
 
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(descriptionAttribute(SRC), codeAttribute(DST_ALIAS, DST1)) //
 				.from(SRC) //
 				.join(DST1, as(DST_ALIAS), over(DOM)) //
@@ -89,7 +89,7 @@ public class JoinQueryTest extends DBFixture {
 		deleteCard(dst2);
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(descriptionAttribute(SRC), codeAttribute(DST)) //
 				.from(SRC) //
 				.join(anyClass(), as("DST"), over(DOM)) //
@@ -107,13 +107,13 @@ public class JoinQueryTest extends DBFixture {
 		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = rollbackDriver.createDomain(nnDomain(uniqueUUID(), DST2, SRC));
+		final DBDomain DOM2 = dbDriver().createDomain(nnDomain(uniqueUUID(), DST2, SRC));
 		insertRelation(DOM2, dst2, src1);
 
 		final Alias DOM_ALIAS = Alias.as("DOM");
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbView) //
+		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //
 				.from(SRC) //
 				.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS))) //

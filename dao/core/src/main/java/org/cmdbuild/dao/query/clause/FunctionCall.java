@@ -50,6 +50,21 @@ public class FunctionCall implements CMFunctionCall {
 				public String getDescription() {
 					return input.getName();
 				}
+				
+				@Override
+				public boolean isDisplayableInList() {
+					return true;
+				}
+				
+				@Override
+				public boolean isMandatory() {
+					return false;
+				}
+				
+				@Override
+				public boolean isUnique() {
+					return false;
+				}
 
 			};
 		}

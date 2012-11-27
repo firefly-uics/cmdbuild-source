@@ -5,12 +5,16 @@ import java.util.Collection;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.CMTypeObject;
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.view.CMAttributeDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 
 public class DefaultCachingDriver extends AbstractDBDriver implements CachingDriver, LoggingSupport {
 
@@ -58,6 +62,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 			synchronized (this) {
 				refForSafeClearCache = allClassesStore;
 				if (allClassesStore == null) {
+					logger.info("classes cache is empty, creating it");
 					this.allClassesStore = refForSafeClearCache = new TypeObjectStore<DBClass>(inner.findAllClasses());
 				}
 			}
@@ -66,8 +71,8 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	}
 
 	@Override
-	public final DBClass createClass(final String name, final DBClass parent) {
-		final DBClass c = inner.createClass(name, parent);
+	public DBClass createClass(final DBClassDefinition definition) {
+		final DBClass c = inner.createClass(definition);
 		if (allClassesStore != null) {
 			allClassesStore.add(c);
 		}
@@ -75,8 +80,8 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	}
 
 	@Override
-	public final DBClass createSuperClass(final String name, final DBClass parent) {
-		final DBClass c = inner.createSuperClass(name, parent);
+	public DBClass updateClass(final DBClassDefinition definition) {
+		final DBClass c = inner.updateClass(definition);
 		if (allClassesStore != null) {
 			allClassesStore.add(c);
 		}
@@ -92,6 +97,16 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	}
 
 	@Override
+	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
+		return inner.createAttribute(definition);
+	}
+	
+	@Override
+	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
+		return inner.updateAttribute(definition);
+	}
+
+	@Override
 	public final Collection<DBDomain> findAllDomains() {
 		return getAllDomainsStore().getCollection();
 	}
@@ -102,6 +117,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 			synchronized (this) {
 				refForSafeClearCache = allDomainsStore;
 				if (allDomainsStore == null) {
+					logger.info("domains cache is empty, creating it");
 					this.allDomainsStore = refForSafeClearCache = new TypeObjectStore<DBDomain>(inner.findAllDomains());
 				}
 			}
@@ -137,6 +153,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 			synchronized (this) {
 				refForSafeClearCache = allFunctionsStore;
 				if (allFunctionsStore == null) {
+					logger.info("functions cache is empty, creating it");
 					this.allFunctionsStore = refForSafeClearCache = new TypeObjectStore<DBFunction>(
 							inner.findAllFunctions());
 				}
@@ -168,6 +185,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	@Override
 	public void clearCache() {
 		synchronized (this) {
+			logger.info("clearing all cache");
 			clearClassesCache();
 			clearDomainsCache();
 			clearFunctionsCache();
@@ -177,6 +195,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	@Override
 	public void clearClassesCache() {
 		synchronized (this) {
+			logger.info("clearing classes cache");
 			allClassesStore = null;
 		}
 	}
@@ -184,6 +203,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	@Override
 	public void clearDomainsCache() {
 		synchronized (this) {
+			logger.info("clearing domains cache");
 			allDomainsStore = null;
 		}
 	}
@@ -191,6 +211,7 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	@Override
 	public void clearFunctionsCache() {
 		synchronized (this) {
+			logger.info("clearing functions cache");
 			allFunctionsStore = null;
 		}
 	}

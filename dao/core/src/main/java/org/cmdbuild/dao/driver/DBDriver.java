@@ -3,11 +3,14 @@ package org.cmdbuild.dao.driver;
 import java.util.Collection;
 
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 
 /**
  * Interface for a generic database driver.
@@ -58,28 +61,46 @@ public interface DBDriver {
 	DBClass findClassByName(String name);
 
 	/**
-	 * Creates a new class with the specified name.
+	 * Creates a new class.
 	 * 
-	 * @param name
-	 *            is the name of the new class.
-	 * @param parent
-	 *            is the parent of the new class, {@code null} if missing.
+	 * @param definition
+	 *            contains the definition needed for creating the new class.
 	 * 
-	 * @return the created {@link DBClass}.
+	 * @return the created class.
 	 */
-	DBClass createClass(String name, DBClass parent);
+	DBClass createClass(DBClassDefinition definition);
 
 	/**
-	 * Creates a new superclass with the specified name.
+	 * Updated an existing class.
 	 * 
-	 * @param name
-	 *            is the name of the new superclass.
-	 * @param parent
-	 *            is the parent of the new superclass, {@code null} if missing.
+	 * @param definition
+	 *            contains the definition needed for updating the existing
+	 *            class.
 	 * 
-	 * @return the created {@link DBClass}.
+	 * @return the created class.
 	 */
-	DBClass createSuperClass(String name, DBClass parent);
+	DBClass updateClass(DBClassDefinition definition);
+
+	/**
+	 * Creates a new attribute.
+	 * 
+	 * @param definition
+	 *            contains the definition needed for creating the new attribute.
+	 * 
+	 * @return the created attribute.
+	 */
+	DBAttribute createAttribute(DBAttributeDefinition definition);
+
+	/**
+	 * Updates an existing attribute.
+	 * 
+	 * @param definition
+	 *            contains the definition needed for updating the existing
+	 *            attribute.
+	 * 
+	 * @return the created attribute.
+	 */
+	DBAttribute updateAttribute(DBAttributeDefinition adaptDefinition);
 
 	void deleteClass(DBClass dbClass);
 

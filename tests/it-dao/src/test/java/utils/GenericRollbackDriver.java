@@ -7,11 +7,16 @@ import java.util.Deque;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 
 public class GenericRollbackDriver implements DBDriver {
 
@@ -42,84 +47,100 @@ public class GenericRollbackDriver implements DBDriver {
 
 	private class CreateClass extends Command<DBClass> {
 
-		private final String name;
-		private final DBClass parent;
-		private final boolean isSuperClass;
+		private final DBClassDefinition definition;
 
-		private DBClass newClass;
+		private DBClass createdClass;
 
-		private CreateClass(final String name, final DBClass parent, final boolean isSuperClass) {
-			this.name = name;
-			this.parent = parent;
-			this.isSuperClass = isSuperClass;
+		private CreateClass(final DBClassDefinition definition) {
+			this.definition = definition;
 		}
 
 		@Override
 		protected DBClass execCommand() {
-			if (isSuperClass) {
-				newClass = innerDriver.createSuperClass(name, parent);
-			} else {
-				newClass = innerDriver.createClass(name, parent);
-
-			}
-			return newClass;
+			createdClass = innerDriver.createClass(definition);
+			return createdClass;
 		}
 
 		@Override
 		public void undoCommand() {
-			innerDriver.deleteClass(newClass);
+			innerDriver.deleteClass(createdClass);
 		}
 
 		public DBClass getCreatedClass() {
-			return newClass;
+			return createdClass;
 		}
 
 	}
 
-	private class CreateDomain extends Command<DBDomain> {
+	private class UpdateClass extends Command<DBClass> {
 
-		private final DomainDefinition domainDefinition;
+		private final DBClassDefinition definition;
 
-		private DBDomain newDomain;
+		private DBClassDefinition previousDefinition;
+		private DBClass updatedClass;
 
-		private CreateDomain(final DomainDefinition domainDefinition) {
-			this.domainDefinition = domainDefinition;
+		private UpdateClass(final DBClassDefinition definition) {
+			this.definition = definition;
 		}
 
 		@Override
-		protected DBDomain execCommand() {
-			newDomain = innerDriver.createDomain(domainDefinition);
-			return newDomain;
+		protected DBClass execCommand() {
+			storePreviousData();
+			updatedClass = innerDriver.updateClass(definition);
+			return updatedClass;
+		}
+
+		private void storePreviousData() {
+			final DBClass existingClass = innerDriver.findClassByName(definition.getName());
+			previousDefinition = new DBClassDefinition() {
+
+				@Override
+				public Long getId() {
+					return existingClass.getId();
+				}
+
+				@Override
+				public String getName() {
+					return existingClass.getName();
+				}
+
+				@Override
+				public String getDescription() {
+					return existingClass.getDescription();
+				}
+
+				@Override
+				public DBClass getParent() {
+					return existingClass.getParent();
+				}
+
+				@Override
+				public boolean isSuperClass() {
+					return existingClass.isSuperclass();
+				}
+
+				@Override
+				public boolean isHoldingHistory() {
+					return existingClass.holdsHistory();
+				}
+
+				@Override
+				public boolean isActive() {
+					return existingClass.isActive();
+				}
+
+			};
 		}
 
 		@Override
 		public void undoCommand() {
-			innerDriver.deleteDomain(newDomain);
-		}
-	}
-
-	private class CreateEntry extends Command<Long> {
-
-		private final DBEntry entry;
-
-		public CreateEntry(final DBEntry entry) {
-			this.entry = entry;
+			innerDriver.updateClass(previousDefinition);
 		}
 
-		@Override
-		protected Long execCommand() {
-			return innerDriver.create(entry);
+		public DBClass getUpdatedClass() {
+			return updatedClass;
 		}
 
-		@Override
-		public void undoCommand() {
-			if (innerDriver instanceof SelfVersioningDBDriver) {
-				final SelfVersioningDBDriver svd = (SelfVersioningDBDriver) innerDriver;
-				svd.clearEntryType(entry.getType());
-			} else {
-				throw new UnsupportedOperationException();
-			}
-		}
 	}
 
 	private class DeleteClass extends Command<Void> {
@@ -153,6 +174,139 @@ public class GenericRollbackDriver implements DBDriver {
 		}
 	}
 
+	private class CreateAttribute extends Command<DBAttribute> {
+
+		private final DBAttributeDefinition definition;
+
+		private DBAttribute createdAttribute;
+
+		private CreateAttribute(final DBAttributeDefinition definition) {
+			this.definition = definition;
+		}
+
+		@Override
+		protected DBAttribute execCommand() {
+			createdAttribute = innerDriver.createAttribute(definition);
+			return createdAttribute;
+		}
+
+		@Override
+		public void undoCommand() {
+			// TODO
+			// innerDriver.deleteAttribute(createdAttribute);
+		}
+
+		public DBAttribute getCreatedAttribute() {
+			return createdAttribute;
+		}
+
+	}
+
+	private class UpdateAttribute extends Command<DBAttribute> {
+
+		private final DBAttributeDefinition definition;
+
+		private DBAttributeDefinition previousDefinition;
+		private DBAttribute updatedAttribute;
+
+		private UpdateAttribute(final DBAttributeDefinition definition) {
+			this.definition = definition;
+		}
+
+		@Override
+		protected DBAttribute execCommand() {
+			storePreviousData();
+			updatedAttribute = innerDriver.updateAttribute(definition);
+			return updatedAttribute;
+		}
+
+		private void storePreviousData() {
+			final DBClass existingClass = innerDriver.findClassByName(definition.getOwner().getName());
+			final DBAttribute existingAttribute = existingClass.getAttribute(definition.getName());
+			previousDefinition = new DBAttributeDefinition() {
+
+				@Override
+				public String getName() {
+					return existingAttribute.getName();
+				}
+
+				@Override
+				public DBEntryType getOwner() {
+					return existingAttribute.getOwner();
+				}
+
+				@Override
+				public CMAttributeType<?> getType() {
+					return existingAttribute.getType();
+				}
+
+				@Override
+				public String getDescription() {
+					return existingAttribute.getDescription();
+				}
+
+				@Override
+				public String getDefaultValue() {
+					// TODO
+					return null;
+				}
+
+				@Override
+				public boolean isDisplayableInList() {
+					return existingAttribute.isDisplayableInList();
+				}
+
+				@Override
+				public boolean isMandatory() {
+					return existingAttribute.isMandatory();
+				}
+
+				@Override
+				public boolean isUnique() {
+					return existingAttribute.isUnique();
+				}
+
+				@Override
+				public boolean isActive() {
+					return existingAttribute.isActive();
+				}
+
+			};
+		}
+
+		@Override
+		public void undoCommand() {
+			innerDriver.updateAttribute(previousDefinition);
+		}
+
+		public DBAttribute getUpdatedAttribute() {
+			return updatedAttribute;
+		}
+
+	}
+
+	private class CreateDomain extends Command<DBDomain> {
+
+		private final DomainDefinition domainDefinition;
+
+		private DBDomain newDomain;
+
+		private CreateDomain(final DomainDefinition domainDefinition) {
+			this.domainDefinition = domainDefinition;
+		}
+
+		@Override
+		protected DBDomain execCommand() {
+			newDomain = innerDriver.createDomain(domainDefinition);
+			return newDomain;
+		}
+
+		@Override
+		public void undoCommand() {
+			innerDriver.deleteDomain(newDomain);
+		}
+	}
+
 	private class DeleteDomain extends Command<Void> {
 
 		private final DBDomain domainToDelete;
@@ -170,6 +324,30 @@ public class GenericRollbackDriver implements DBDriver {
 		@Override
 		protected void undoCommand() {
 			throw new UnsupportedOperationException("Not implemented");
+		}
+	}
+
+	private class CreateEntry extends Command<Long> {
+
+		private final DBEntry entry;
+
+		public CreateEntry(final DBEntry entry) {
+			this.entry = entry;
+		}
+
+		@Override
+		protected Long execCommand() {
+			return innerDriver.create(entry);
+		}
+
+		@Override
+		public void undoCommand() {
+			if (innerDriver instanceof SelfVersioningDBDriver) {
+				final SelfVersioningDBDriver svd = (SelfVersioningDBDriver) innerDriver;
+				svd.clearEntryType(entry.getType());
+			} else {
+				throw new UnsupportedOperationException();
+			}
 		}
 	}
 
@@ -201,13 +379,23 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBClass createClass(final String name, final DBClass parent) {
-		return new CreateClass(name, parent, false).exec();
+	public DBClass findClassById(final Long id) {
+		return innerDriver.findClassById(id);
 	}
 
 	@Override
-	public DBClass createSuperClass(final String name, final DBClass parent) {
-		return new CreateClass(name, parent, true).exec();
+	public DBClass findClassByName(final String name) {
+		return innerDriver.findClassByName(name);
+	}
+
+	@Override
+	public DBClass createClass(final DBClassDefinition definition) {
+		return new CreateClass(definition).exec();
+	}
+
+	@Override
+	public DBClass updateClass(final DBClassDefinition definition) {
+		return new UpdateClass(definition).exec();
 	}
 
 	@Override
@@ -216,13 +404,13 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBClass findClassById(final Long id) {
-		return innerDriver.findClassById(id);
+	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
+		return new CreateAttribute(definition).exec();
 	}
 
 	@Override
-	public DBClass findClassByName(final String name) {
-		return innerDriver.findClassByName(name);
+	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
+		return new UpdateAttribute(definition).exec();
 	}
 
 	@Override

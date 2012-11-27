@@ -30,7 +30,7 @@ import utils.DBFixture;
 public class AuthenticationLogicTest extends DBFixture {
 
 	private static final String ADMIN_USERNAME = "admin";
-	private static final String ADMIN_EMAIL = ADMIN_USERNAME + "@tecnoteca.com";
+	private static final String ADMIN_EMAIL = ADMIN_USERNAME + "@example.com";
 	private static final String ADMIN_PASSWORD = "admin";
 	private static final String WRONG_ADMIN_PASSWORD = "wrong_password";
 	private static final String SIMPLE_USERNAME = "simple_user";
@@ -47,12 +47,12 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Before
 	public void setUp() {
 		final AuthenticationService service = new DefaultAuthenticationService();
-		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbView);
+		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
 		authLogic = new AuthenticationLogic(service);
 		DUMB_STORE = new UserStore() {
-			
+
 			OperationUser operationUser;
 
 			@Override
@@ -102,7 +102,7 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
-		//TODO: check in the UserStore if the user has been successfully stored
+		// TODO: check in the UserStore if the user has been successfully stored
 	}
 
 	private void assertUserIsSuccessfullyAuthenticated(final Response response) {
@@ -124,22 +124,22 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
-		//TODO: check in the UserStore if the user has been successfully stored
+		// TODO: check in the UserStore if the user has been successfully stored
 	}
-	
+
 	@Test
 	public void userShouldSelectAGroupIfHeBelongsToMultipleGroupsAndNoDefault() {
-		//TODO: implement
+		// TODO: implement
 	}
-	
+
 	@Test
 	public void operationUserIsStoredIfHeHasDefaultGroup() {
-		//TODO: implement
+		// TODO: implement
 	}
-	
+
 	@Test
 	public void operationUserIsStoredIfHeBelongsToOnlyOneGroup() {
-		//TODO: implement
+		// TODO: implement
 	}
 
 	@Test

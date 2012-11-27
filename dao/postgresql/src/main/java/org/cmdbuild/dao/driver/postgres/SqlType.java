@@ -186,6 +186,7 @@ public enum SqlType {
 	;
 
 	private static final CMAttributeType.Meta NO_META = new Meta() {
+
 		@Override
 		public boolean isLookup() {
 			return false;
@@ -195,6 +196,12 @@ public enum SqlType {
 		public String getLookupType() {
 			return null;
 		}
+
+		@Override
+		public boolean isDisplayableInList() {
+			return false;
+		}
+
 	};
 
 	/**

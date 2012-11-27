@@ -7,7 +7,11 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 public class DBAttribute implements CMAttribute {
 
 	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
+
+		public static final String BASEDSP = BASE_NS + "basedsp";
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
+		public static final String MANDATORY = BASE_NS + "mandatory";
+		public static final String UNIQUE = BASE_NS + "unique";
 
 		@Override
 		public final boolean isLookup() {
@@ -23,6 +27,19 @@ public class DBAttribute implements CMAttribute {
 				return lookupTypeName;
 			}
 		}
+
+		public boolean isDisplayableInList() {
+			return Boolean.parseBoolean(get(BASEDSP));
+		}
+
+		public boolean isMandatory() {
+			return Boolean.parseBoolean(get(MANDATORY));
+		}
+
+		public boolean isUnique() {
+			return Boolean.parseBoolean(get(UNIQUE));
+		}
+
 	}
 
 	DBEntryType owner; // Set by the entry type when attached
@@ -34,7 +51,7 @@ public class DBAttribute implements CMAttribute {
 
 	public DBAttribute(final String name, final CMAttributeType<?> type, final AttributeMetadata meta) {
 		Validate.notEmpty(name);
-		this.owner = null; // Use a null object?
+		this.owner = null; // TODO Use a null object?
 		this.name = name;
 		this.type = type;
 		this.meta = meta;
@@ -63,6 +80,21 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public boolean isActive() {
 		return meta.isActive();
+	}
+
+	@Override
+	public boolean isDisplayableInList() {
+		return meta.isDisplayableInList();
+	}
+	
+	@Override
+	public boolean isMandatory() {
+		return meta.isMandatory();
+	}
+	
+	@Override
+	public boolean isUnique() {
+		return meta.isUnique();
 	}
 
 	/*

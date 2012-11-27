@@ -2,12 +2,13 @@ package org.cmdbuild.dao.entrytype;
 
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.DBTypeObject;
 import org.cmdbuild.dao.Metadata;
+
+import com.google.common.collect.Maps;
 
 public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
@@ -15,9 +16,10 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
 		protected static final String BASE_NS = "system.entrytype.";
 
-		public static final String DESCRIPTION = BASE_NS + "description";
 		public static final String ACTIVE = BASE_NS + "active";
+		public static final String DESCRIPTION = BASE_NS + "description";
 		public static final String MODE = BASE_NS + "mode";
+		public static final String HOLD_HISTORY = BASE_NS + "history";
 
 		final String getDescription() {
 			return get(DESCRIPTION);
@@ -44,19 +46,11 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 	protected DBEntryType(final String name, final Long id, final List<DBAttribute> attributes) {
 		super(name, id);
 		this.attributes = attributes;
-		this.attributesByName = initAttributesByName(attributes);
+		this.attributesByName = Maps.newHashMap();
+		addAllAttributes(attributes);
 	}
 
 	public abstract void accept(DBEntryTypeVisitor visitor);
-
-	private Map<String, DBAttribute> initAttributesByName(final List<DBAttribute> ac) {
-		final Map<String, DBAttribute> am = new HashMap<String, DBAttribute>();
-		for (final DBAttribute a : ac) {
-			a.owner = this;
-			am.put(a.getName(), a);
-		}
-		return am;
-	}
 
 	protected abstract EntryTypeMetadata meta();
 
@@ -92,6 +86,17 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 	@Override
 	public DBAttribute getAttribute(final String name) {
 		return attributesByName.get(name);
+	}
+
+	public void addAttribute(final DBAttribute attribute) {
+		attribute.owner = this;
+		attributesByName.put(attribute.getName(), attribute);
+	}
+
+	private void addAllAttributes(final List<DBAttribute> attributes) {
+		for (final DBAttribute attribute : attributes) {
+			addAttribute(attribute);
+		}
 	}
 
 	@Override

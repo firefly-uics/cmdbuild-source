@@ -7,6 +7,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -16,6 +17,8 @@ import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.view.CMAttributeDefinition;
+import org.cmdbuild.dao.view.CMClassDefinition;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
@@ -24,8 +27,6 @@ public class UserDataView extends QueryExecutorDataView {
 	private final DBDataView dbView;
 	private final OperationUser user;
 
-	// TODO: replace the OperationUser parameter with the PrivilegeContext
-	// one...
 	public UserDataView(final DBDataView view, final OperationUser user) {
 		this.dbView = view;
 		this.user = user;
@@ -64,6 +65,26 @@ public class UserDataView extends QueryExecutorDataView {
 	@Override
 	public Iterable<UserClass> findAllClasses() {
 		return proxyClasses(dbView.findAllClasses());
+	}
+
+	@Override
+	public CMClass createClass(final CMClassDefinition definition) {
+		return UserClass.newInstance(this, dbView.createClass(definition));
+	}
+
+	@Override
+	public CMClass updateClass(CMClassDefinition definition) {
+		return UserClass.newInstance(this, dbView.updateClass(definition));
+	}
+
+	@Override
+	public CMAttribute createAttribute(CMAttributeDefinition definition) {
+		return UserAttribute.newInstance(this, dbView.createAttribute(definition));
+	}
+
+	@Override
+	public CMAttribute updateAttribute(final CMAttributeDefinition definition) {
+		return UserAttribute.newInstance(this, dbView.updateAttribute(definition));
 	}
 
 	@Override

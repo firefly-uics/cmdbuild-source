@@ -1,10 +1,11 @@
 package org.cmdbuild.dao.entrytype;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.common.collect.Sets;
 
 public class DBClass extends DBEntryType implements CMClass {
 
@@ -12,12 +13,20 @@ public class DBClass extends DBEntryType implements CMClass {
 
 		public static final String SUPERCLASS = BASE_NS + "superclass";
 
-		final boolean isSuperclass() {
+		public final boolean isSuperclass() {
 			return Boolean.parseBoolean(get(SUPERCLASS));
 		}
 
-		final void setSuperclass(final boolean superclass) {
+		public final void setSuperclass(final boolean superclass) {
 			put(SUPERCLASS, Boolean.toString(superclass));
+		}
+
+		public final boolean holdsHistory() {
+			return Boolean.parseBoolean(get(HOLD_HISTORY));
+		}
+
+		public final void setHoldsHistory(final boolean holdsHistory) {
+			put(HOLD_HISTORY, Boolean.toString(holdsHistory));
 		}
 
 	}
@@ -29,7 +38,7 @@ public class DBClass extends DBEntryType implements CMClass {
 	public DBClass(final String name, final Long id, final ClassMetadata meta, final List<DBAttribute> attributes) {
 		super(name, id, attributes);
 		this.meta = meta;
-		children = new HashSet<DBClass>();
+		children = Sets.newHashSet();
 	}
 
 	@Deprecated
@@ -86,7 +95,7 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public Iterable<DBClass> getLeaves() {
-		final Set<DBClass> leaves = new HashSet<DBClass>();
+		final Set<DBClass> leaves = Sets.newHashSet();
 		addLeaves(leaves, this);
 		return leaves;
 	}
@@ -130,7 +139,7 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public boolean holdsHistory() {
-		return true; // Simple classes do not
+		return meta().holdsHistory();
 	}
 
 }

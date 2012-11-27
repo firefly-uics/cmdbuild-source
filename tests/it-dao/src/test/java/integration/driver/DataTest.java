@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -25,8 +26,9 @@ public class DataTest extends DBFixture {
 
 	@Test
 	public void cardsCanBeAdded() {
-		final DBClass newClass = rollbackDriver.createClass(A_CLASS_NAME, null);
-		final CMCard newCard = DBCard.newInstance(rollbackDriver, newClass) //
+		final DBClass parent = dbDriver().findClassByName(Constants.BASE_CLASS_NAME);
+		final DBClass newClass = dbDriver().createClass(newClass(A_CLASS_NAME, parent));
+		final CMCard newCard = DBCard.newInstance(dbDriver(), newClass) //
 				.set(CODE_ATTRIBUTE, CODE_VALUE) //
 				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();
@@ -38,8 +40,8 @@ public class DataTest extends DBFixture {
 
 	@Test(expected = Exception.class)
 	public void cardsCannotBeAddedInSuperclass() {
-		final DBClass newClass = rollbackDriver.createSuperClass(A_SUPERCLASS_NAME, null);
-		final CMCard newCard = DBCard.newInstance(rollbackDriver, newClass) //
+		final DBClass newClass = dbDriver().createClass(newSuperClass(A_SUPERCLASS_NAME, null));
+		DBCard.newInstance(dbDriver(), newClass) //
 				.set(CODE_ATTRIBUTE, CODE_VALUE) //
 				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();

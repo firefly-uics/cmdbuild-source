@@ -30,4 +30,5 @@ public interface CMClass extends CMEntryType {
 	 * @return the name of the attribute containing the card description
 	 */
 	String getDescriptionAttributeName();
+
 }
