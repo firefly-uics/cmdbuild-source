@@ -81,11 +81,11 @@ public interface JsonDashboardDTO {
 		}
 
 		public Iterable<JsonDataSourceParameter> getInput() {
-			return Iterables.transform(inner.getInputParameters(), parameterConverter);
+			return Lists.newArrayList(Iterables.transform(inner.getInputParameters(), parameterConverter));
 		}
 
 		public Iterable<JsonDataSourceParameter> getOutput() {
-			return Iterables.transform(inner.getOutputParameters(), parameterConverter);
+			return Lists.newArrayList(Iterables.transform(inner.getOutputParameters(), parameterConverter));
 		}
 	}
 
