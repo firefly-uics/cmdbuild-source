@@ -5,7 +5,7 @@
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
 			this.callParent(arguments);
-			
+
 			this.view.on("show", function() {
 				this.layersGrid.onModShow(this.firstShow);
 				this.firstShow = false;
@@ -29,6 +29,8 @@
 				_CMMainViewportController.bringTofrontPanelByCmName("notconfiguredpanel", msg);
 				return false;
 			}
+
+			this.view.layersGrid.selectFirstIfUnselected();
 		}
 	});
 
@@ -40,7 +42,7 @@
 
 	function onLayerSelect(view, selection) {
 		if (selection[0]) {
-			this.lastSelection = selection[0]
+			this.lastSelection = selection[0];
 			this.view.form.onLayerSelect(this.lastSelection);
 		}
 	}
@@ -61,6 +63,7 @@
 			},
 			scope: this,
 			success: function() {
+				_CMCache.onGeoAttributeSaved();
 				this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
 			},
 			failure: function() {
@@ -83,18 +86,25 @@
 	}
 
 	function onDeleteButtonClick() {
-		CMDBuild.LoadMask.get().show();
-
-		CMDBuild.ServiceProxy.geoServer.deleteLayer({
-			params: {
-				name: this.view.form.getName()
-			},
-			scopre: this,
-			success: function() {
-				this.view.layersGrid.loadStoreAndSelectLayerWithName();
-			},
-			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+		var me = this;
+		Ext.Msg.show({
+			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {
+					CMDBuild.LoadMask.get().show();
+					var layerName = me.view.form.getName();
+					CMDBuild.ServiceProxy.geoServer.deleteLayer({
+						params: {
+							name: layerName
+						},
+						callback: function() {
+							_CMCache.onGeoAttributeDeleted("_Geoserver", layerName);
+							me.view.layersGrid.loadStoreAndSelectLayerWithName();
+							CMDBuild.LoadMask.get().hide();
+						}
+					});
+				}
 			}
 		});
 	};

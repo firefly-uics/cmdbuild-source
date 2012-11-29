@@ -1,12 +1,12 @@
 (function() {
-	var tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties,
-		tr_geoserver = CMDBuild.Translation.administration.modcartography.geoserver,
-		tr = CMDBuild.Translation.administration.modClass.geo_attributes,
-		TYPES = {
-			geotiff: "GEOTIFF",
-			worldimage: "WORLDIMAGE",
-			shpe: "SHAPE"
-		};
+	var tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties;
+	var tr_geoserver = CMDBuild.Translation.administration.modcartography.geoserver;
+	var tr = CMDBuild.Translation.administration.modClass.geo_attributes;
+	var TYPES = {
+		geotiff: "GEOTIFF",
+		worldimage: "WORLDIMAGE",
+		shpe: "SHAPE"
+	};
 
 	Ext.define("CMDBuild.Administration.GeoServerForm", {
 		extend: "Ext.form.Panel",
@@ -17,23 +17,21 @@
 		hideMode: "offsets",
 		fileUpload: true,
 		plugins: [new CMDBuild.FormPlugin(), new CMDBuild.CallbackPlugin()],
-		frame: true,
 
 		initComponent: function() {
-			Ext.apply(this, {
-				frame: false,
-				border: false,
-				cls: "x-panel-body-default-framed cmbordertop",
-				bodyCls: 'cmgraypanel',
-				tbar : buildTBarTools.call(this),
-				items : items.call(this),
-				layout: "border",
-				buttonAlign : "center",
-				buttons : buildButtons.call(this)
-			});
+			this.frame = false;
+			this.border = false;
+			this.cls = "x-panel-body-default-framed cmbordertop";
+			this.bodyCls = 'cmgraypanel';
+			this.layout = "border";
+			this.buttonAlign = "center";
+			this.tbar = buildTBarTools(this);
+			this.items = items(this);
+			this.buttons = buildButtons(this);
 
 			this.callParent(arguments);
 			this.setFieldsDisabled();
+
 			this.on("clientvalidation", function(formPanel, valid ) {
 				this.saveButton.setDisabled(!valid);
 			}, this);
@@ -55,13 +53,14 @@
 
 	});
 
-	function items() {
+	function items(me) {
 		var name = new Ext.form.TextField({
 			fieldLabel : tr_attribute.name,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : "name",
 			allowBlank : false,
+			vtype : "alphanum",
 			cmImmutable: true
 		});
 
@@ -127,10 +126,10 @@
 		});
 
 		name.on("change", function(fieldname, newValue, oldValue) {
-			this.autoComplete(description, newValue, oldValue);
-		}, this);
+			me.autoComplete(description, newValue, oldValue);
+		}, me);
 
-		this.getName = function() {
+		me.getName = function() {
 			return name.getValue();
 		};
 
@@ -144,31 +143,30 @@
 		};
 	};
 
-	function buildButtons() {
-		this.cmButtons = [
-			this.saveButton = new CMDBuild.buttons.SaveButton(),
-			this.abortButton = new CMDBuild.buttons.AbortButton()
+	function buildButtons(me) {
+		me.cmButtons = [
+			me.saveButton = new CMDBuild.buttons.SaveButton(),
+			me.abortButton = new CMDBuild.buttons.AbortButton()
 		];
 
-		return this.cmButtons;
+		return me.cmButtons;
 	};
 
-	function buildTBarTools() {
-		this.cmTBar = [
-			this.modifyButton = new Ext.Button({
+	function buildTBarTools(me) {
+		me.cmTBar = [
+			me.modifyButton = new Ext.Button({
 				text: tr_geoserver.modify_layer,
 				iconCls: "modify",
-				scope: this,
 				handler: function() {
-					this.enableModify();
+					me.enableModify();
 				}
 			}),
-			this.deleteButton = new Ext.button.Button({
+			me.deleteButton = new Ext.button.Button({
 				text: tr_geoserver.delete_layer,
 				iconCls: 'delete'
 			})
 		];
 
-		return this.cmTBar;
+		return me.cmTBar;
 	};
 })();

@@ -6,7 +6,7 @@
 	var WORKSPACE_FIELD = "workspace";
 	var ADMIN_USER_FIELD = "admin_user";
 	var ADMIN_PASSWORD_FIELD = { name: "admin_password", inputType: 'password' };
-	
+
 	var services = {
 		google: {
 			serviceName: "google",
@@ -27,11 +27,11 @@
 	  		serviceFields: [URL_FIELD, WORKSPACE_FIELD, ADMIN_USER_FIELD, ADMIN_PASSWORD_FIELD]	   		  		
        }
 	};
-	
+
 	Ext.define("CMDBuild.Administration.ModExternalServices", {
 		extend: "Ext.form.Panel",
 		cmName: "gis-external-services",
-		
+
 		constructor: function() {
 			this.saveButton = new Ext.Button({
 				text: CMDBuild.Translation.common.buttons.save,
@@ -41,18 +41,18 @@
 					var values = this.getValues();
 					CMDBuild.ServiceProxy.configuration.save({
 						params: values,
-						failure: function() {
-							alert("failure");
-						},
 						success: function() {
-							CMDBuild.Config.gis = Ext.apply(values);
-							// TODO remove: is used to reload the layerorder grid
-							_CMEventBus.publish("cmdb-geoservices-config-changed");
+							new CMDBuild.Msg.success();
+							try {
+								CMDBuild.Config.gis.geoserver = values.geoserver;
+							} catch (e) {
+								// The configuration object could be undefined 
+							}
 						}
 					}, name="gis");
 				}
 			});
-			
+
 			this.layout = "border";
 
 			this.frame = true;
@@ -72,8 +72,9 @@
 					}
 					return items;
 				})()
-			})
-			this.items = [this.cmWrapper]
+			});
+
+			this.items = [this.cmWrapper];
 			this.callParent(arguments);
 		},
 
@@ -84,13 +85,13 @@
 
 		getValues: function() {
 			var values = {};
-			var fieldset = this.cmWrapper.items.each(function(item) {
+			this.cmWrapper.items.each(function(item) {
 				if (typeof item.serviceName == "string") {
 					if (item.collapsed) {
 						values[item.serviceName] = "off";
 					} else {
 						values[item.serviceName] = "on";
-						
+
 						item.cascade(function(subItem) {
 							if (typeof subItem.getValue == "function") {
 								values[subItem.name] = subItem.getValue();
@@ -99,15 +100,15 @@
 					}
 				}
 			});
-			
+
 			return values;
 		}
 	});
-	
+
 	function createServiceField(serviceName, fieldSpec) {
 		var fieldName = fieldSpec.name || fieldSpec;
 		var fieldInputType = fieldSpec.inputType || 'text';
-		
+
 		return new Ext.form.field.Text({
 			name: serviceName+"_"+fieldName,
 			fieldLabel: tr[fieldName],
@@ -139,7 +140,7 @@
 	function collapseFieldsets(formPanel, data) {
 		function collapseFieldset(serviceName) {
 			if (data[serviceName] == "off") {
-				var fieldset = formPanel.items.each(function(item) {
+				formPanel.items.each(function(item) {
 					if (item.serviceName == serviceName) {
 						item.collapse();
 					}

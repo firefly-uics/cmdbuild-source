@@ -72,6 +72,7 @@
 				_CMCardModuleState.addDelegate(this);
 
 				this.mapState = new CMDBuild.state.CMMapState(this);
+				_CMMapState = this.mapState;
 				this.map.events.register("zoomend", this, onZoomEnd);
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
@@ -79,17 +80,17 @@
 		},
 
 		updateMap: function(entryType) {
+			var me = this;
 			// at first clear the panel calling the updateMap method;
 			this.mapPanel.updateMap(entryType);
-
 			// then do something build new layers
-			var geoAttributes = entryType.getGeoAttrs() || [];
-			// TODO the sorting does not work
-			var orderedAttrs = sortAttributesByIndex(geoAttributes);
-			_debug("Sorted attributes", orderedAttrs);
-			this.mapState.update(orderedAttrs, this.map.getZoom());
-			this.map.activateStrategies(true);
-
+			_CMCache.getVisibleLayersForEntryTypeName(entryType.get("name"), function(layers) {
+				// TODO the sorting does not work
+				var orderedAttrs = sortAttributesByIndex(layers);
+				_debug("Sorted attributes", orderedAttrs);
+				me.mapState.update(orderedAttrs, me.map.getZoom());
+				me.map.activateStrategies(true);
+			});
 		},
 
 		onFeatureSelect: function(feature) {

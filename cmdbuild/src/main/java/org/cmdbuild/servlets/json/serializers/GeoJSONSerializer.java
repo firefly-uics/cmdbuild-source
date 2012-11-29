@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import java.util.List;
+
+import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,7 +130,33 @@ public class GeoJSONSerializer {
 		geometry.put("geometries", geometries);
 		return geometry;
 	}
-	
+
+	public static JSONArray serializeGeoLayers(List<LayerMetadata> geoLayers)
+			throws JSONException {
+		JSONArray jsonLayers = new JSONArray();
+		for (LayerMetadata geoLayer: geoLayers) {
+			jsonLayers.put(serializeGeoLayer(geoLayer));
+		}
+
+		return jsonLayers;
+	}
+
+	public static JSONObject serializeGeoLayer(LayerMetadata geoLayer) throws JSONException {
+		JSONObject jsonGeoLayer = new JSONObject();
+		jsonGeoLayer.put("name", geoLayer.getName());
+		jsonGeoLayer.put("description", geoLayer.getDescription());
+		jsonGeoLayer.put("type", geoLayer.getType());
+		jsonGeoLayer.put("maxZoom", geoLayer.getMaximumzoom());
+		jsonGeoLayer.put("minZoom", geoLayer.getMinimumZoom());
+		jsonGeoLayer.put("index", geoLayer.getIndex());
+		jsonGeoLayer.put("style", geoLayer.getMapStyle());
+		jsonGeoLayer.put("visibility", geoLayer.getVisibility());
+		jsonGeoLayer.put("fullName", geoLayer.getFullName());
+		jsonGeoLayer.put("masterTableName", geoLayer.getMasterTableName());
+		jsonGeoLayer.put("geoServerName", geoLayer.getGeoServerName());
+		return jsonGeoLayer;
+	}
+
 	private JSONArray getJSONPointCoordinates(Point p) throws JSONException {
 		JSONArray coordinates = new JSONArray();
 		coordinates.put(p.getX()).put(p.getY());

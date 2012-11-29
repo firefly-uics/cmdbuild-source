@@ -1,46 +1,15 @@
 package org.cmdbuild.services.gis.geoserver;
 
-import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.services.gis.AbstractGeoLayer;
+import org.cmdbuild.model.gis.LayerMetadata;
 
-public class GeoServerLayer extends AbstractGeoLayer {
+public class GeoServerLayer extends LayerMetadata {
 
-	public static final String DESCRIPTION_META = "cmdbuild.description";
-	public static final String INDEX_META = "cmdbuild.index";
-	public static final String MIN_ZOOM_META = "cmdbuild.minZoom";
-	public static final String MAX_ZOOM_META = "cmdbuild.maxZoom";
-	public static final String VISIBILITY_META = "cmdbuild.visibility";
+	private String storeName;
 
-	private final String storeName;
-	private String description;
-
-	public GeoServerLayer(String name, String description, String dsName) {
-		super(name);
-		this.storeName = dsName;
-		if (description == null || description.isEmpty()) {
-			this.description = name;
-		} else {
-			this.description = description;
-		}
-	}
-
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(final String description) {
-		this.description = description;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	@Override
-	public boolean isLocal(ITable table) {
-		return false;
+	public GeoServerLayer(String name, String storeName) {
+		super();
+		this.setName(name);
+		this.storeName = storeName;
 	}
 
 	public String getStoreName() {
@@ -51,9 +20,4 @@ public class GeoServerLayer extends AbstractGeoLayer {
 		return getStoreName() + "/" + getName();
 	}
 
-	// FIXME Horrible
-	@Override
-	public String getTypeName() {
-		return new GeoServerService().getStoreTypeName(getStoreName());
-	}
 }

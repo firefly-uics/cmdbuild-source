@@ -1,10 +1,6 @@
 (function() {
-	var CLASS_GROUP = "class",
-		PROCESS_GROUP = "processclass",
-		tr = CMDBuild.Translation,
-		constants = CMDBuild.Constants;
-
-		var dashboardClassesProcessStore = null;
+	var constants = CMDBuild.Constants;
+	var dashboardClassesProcessStore = null;
 
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
@@ -16,7 +12,8 @@
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
 			reports: "CMDBUild.cache.CMCacheReportFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
-			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions"
+			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
+			gis: "CMDBUild.cache.CMCacheGisFunctions"
 		},
 
 		constructor: function() {
@@ -59,7 +56,7 @@
 				}
 			});
 		},
-		
+
 		getReferenceStore: function(reference) {
 			var referencedIdClass = reference.referencedIdClass;
 			var fieldFilter = false;

@@ -8,7 +8,7 @@
 		frame: false,
 		border: false,
 
-		store: CMDBuild.ServiceProxy.getAllLayerStore(),
+		store: _CMCache.getLayersStore(),
 
 		// custom stuff
 		withCheckToHideLayer: false,
@@ -85,7 +85,7 @@
 		 */
 		onVisibilityChecked: function(cell, recordIndex, checked) {}
 	});
-	
+
 	function buildCheckColumn() {
 		var column = new Ext.ux.CheckColumn( {
 			header: tr_geo.visibility,

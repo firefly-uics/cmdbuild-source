@@ -12,6 +12,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGISFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!--  THE OTHERS -->

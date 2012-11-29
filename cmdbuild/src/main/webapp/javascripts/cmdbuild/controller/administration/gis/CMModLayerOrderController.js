@@ -20,17 +20,16 @@
 		dropPosition: dropPosition
 	}*/
 	function onRowMoved(p) {
-		var oldIndex = getOldIndex(p.data),
-			newIndex = getNewIndex(p.dropRec, p.dropPosition);
+		var oldIndex = getOldIndex(p.data);
+		var newIndex = getNewIndex(p.dropRec);
+		var me = this;
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.saveLayerOrder({
 			oldIndex: oldIndex,
 			newIndex: newIndex,
-			failure: function() {
-				this.view.getStore().reload();
-			},
 			callback: function() {
+				me.view.getStore().load(); // load always to sync the index
 				CMDBuild.LoadMask.get().hide();
 			}
 		});
@@ -39,7 +38,7 @@
 	function getOldIndex(data) {
 		var oldIndex = -1;
 		try {
-			oldIndex = data.records[0].data.index
+			oldIndex = data.records[0].data.index;
 		} catch (e) {
 			CMDBuild.log.Error("Can not get the old index");
 		}
@@ -48,11 +47,6 @@
 	}
 
 	function getNewIndex(dropRec, dropPosition) {
-		var index = dropRec.data.index;
-		if (dropPosition == "after") {
-			return parseInt(index) + 1;
-		} else {
-			return parseInt(index);
-		}
+		return dropRec.data.index;
 	}
 })();

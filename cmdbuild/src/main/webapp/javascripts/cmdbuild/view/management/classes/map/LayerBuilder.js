@@ -1,8 +1,9 @@
 (function() {
-	var WMS_IMAGE_FORMAT = 'image/png',
-		GOESERVER_SERVICE_TYPE = "wms",
-		DEFAULT_MIN_ZOOM = 0,
-		DEFAULT_MAX_ZOOM = 25;
+	var WMS_IMAGE_FORMAT = 'image/png';
+	var GOESERVER_SERVICE_TYPE = "wms";
+	var GEOSERVER = "_Geoserver";
+	var DEFAULT_MIN_ZOOM = 0;
+	var DEFAULT_MAX_ZOOM = 25;
 
 	function AbstractLayer() {};
 
@@ -35,7 +36,7 @@
 				editLayer = null,
 				layer = null;
 
-			if (!geoAttribute || !geoAttribute.isvisible) {
+			if (!geoAttribute) {
 				return null;
 			}
 
@@ -46,7 +47,7 @@
 				editLayer = buildEditLayer(geoAttribute, map);
 			}
 
-			if (geoAttribute.masterTableId) {
+			if (geoAttribute.masterTableName != GEOSERVER) {
 				layer = buildCmdbLayer(geoAttribute, classId, editLayer, map);
 			} else {
 				layer = buildGeoserverLayer(geoAttribute);
@@ -69,7 +70,7 @@
 
 		// if (!editLayer) {
 
-		var masterClass = _CMCache.getEntryTypeById(geoAttribute.masterTableId);
+		var masterClass = _CMCache.getEntryTypeByName(geoAttribute.masterTableName);
 		if (masterClass) {
 			layerDescription = masterClass.get("text") + " - " + layerDescription;
 		}
@@ -77,7 +78,7 @@
 		// }
 
 		var layer = new CMDBuild.Management.CMMap.MapLayer(layerDescription, {
-			targetClassId: getIdClassForRequest(geoAttribute, classId),
+			targetClassName: getClassNameForRequest(geoAttribute, classId),
 			geoAttribute: geoAttribute,
 			editLayer: editLayer,
 			eventListeners: {
@@ -118,7 +119,6 @@
 			editLayer = new OpenLayers.Layer.Vector(name, {
 				projection: new OpenLayers.Projection("EPSG:900913"),
 				displayInLayerSwitcher: false,
-				
 				// cmdb stuff
 				geoAttribute: geoAttribute,
 				CM_EditLayer: true,
@@ -134,14 +134,14 @@
 			geoserver_url = CMDBuild.Config.gis.geoserver_url;
 
 		var layer = new OpenLayers.Layer.WMS(geoAttribute.description,
-				geoserver_url + "/" + GOESERVER_SERVICE_TYPE, {
-					layers : geoserver_ws + ":" + geoAttribute.name,
-					format : WMS_IMAGE_FORMAT,
-					transparent : true
-				}, {
-					singleTile : true,
-					ratio : 1
-				});
+			geoserver_url + "/" + GOESERVER_SERVICE_TYPE, {
+				layers : geoserver_ws + ":" + geoAttribute.geoServerName,
+				format : WMS_IMAGE_FORMAT,
+				transparent : true
+			}, {
+				singleTile : true,
+				ratio : 1
+			});
 
 		layer.cmdb_minZoom = geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
 		layer.cmdb_maxZoom = geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
@@ -162,8 +162,8 @@
 		var table = _CMCache.getEntryTypeById(tableId);
 
 		while (table) {
-			if (attr.masterTableId == table.get("id")) {
-				return true;
+			if (attr.masterTableName == table.get("name")) {
+				return table;
 			} else {
 				var parentId = table.get("parent");
 				if (parentId) {
@@ -177,12 +177,13 @@
 		return false;
 	};
 
-	function getIdClassForRequest(geoAttribute, tableId) {
-		if (isItMineOrOfMyAncestors(geoAttribute, tableId)) {
-			return tableId;
+	function getClassNameForRequest(geoAttribute, tableId) {
+		var table = isItMineOrOfMyAncestors(geoAttribute, tableId);
+		if (table) {
+			return table.get("name");
 		} else {
-			return geoAttribute.masterTableId;
+			return geoAttribute.masterTableName;
 		}
 	};
-	
+
 })();

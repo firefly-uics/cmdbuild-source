@@ -28,21 +28,11 @@ CMDBuild.ServiceProxy.getGeoCardList = function(classId, success, failure, callb
 };
 
 CMDBuild.ServiceProxy.saveLayerVisibility = function(p) {
-	CMDBuild.Ajax.request({
-		scope : this,
-		important: true,
-		url : 'services/json/gis/setlayervisibility',
-		params : {
-			"idClass": p.classId,
-			"master": p.master,
-			"featureTypeName": p.featureTypeName,
-			"visible": p.checked
-		},
-		method: 'POST',
-		success: p.success || Ext.emptyFn,
-		failure: p.failure || Ext.emptyFn,
-		callback: p.callback || Ext.emptyFn
-	});
+	p.method = "POST";
+	p.url = 'services/json/gis/setlayervisibility';
+	p.important = true;
+
+	CMDBuild.Ajax.request(p);
 };
 
 CMDBuild.ServiceProxy.saveLayerOrder = function(p) {
@@ -61,38 +51,6 @@ CMDBuild.ServiceProxy.saveLayerOrder = function(p) {
 	});
 };
 
-// store builders
-
-/**
- * @param classId (optional) adds visibility on the specified class
- */ 
-CMDBuild.ServiceProxy.getAllLayerStore = function() {
-	var layerStore =  new Ext.data.Store({
-		model: "GISLayerModel",
-		proxy: {
-			type: "ajax",
-			url: "services/json/gis/getalllayers",
-			reader: {
-				type: "json",
-				root: "layers"
-			}
-		},
-		autoLoad: false,
-		sorters: {
-			property: 'index',
-			direction: 'ASC'
-		}
-	});
-
-	var reload = function() {
-		this.load();
-	};
-
-	_CMEventBus.subscribe("cmdb-geoservices-config-changed", reload, layerStore);
-
-	return layerStore;
-};
-
 CMDBuild.ServiceProxy.geoAttribute = {
 	remove: function(p) {
 		p.method = "POST";
@@ -107,12 +65,12 @@ CMDBuild.ServiceProxy.geoAttribute = {
 		
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
-	
+
 	modify: function(p) {
 		p.method = "POST";
 		p.url = 'services/json/gis/modifygeoattribute';
 		p.important = true;
-		
+
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 };
@@ -177,6 +135,13 @@ CMDBuild.ServiceProxy.gis = {
 	removeGisTreeNavigation: function(config) {
 		config.method = "POST";
 		config.url = "services/json/gis/removegistreenavigation";
+
+		CMDBuild.Ajax.request(config);
+	},
+
+	getAllLayers: function(config) {
+		config.method = "GET";
+		config.url = "services/json/gis/getalllayers";
 
 		CMDBuild.Ajax.request(config);
 	}
