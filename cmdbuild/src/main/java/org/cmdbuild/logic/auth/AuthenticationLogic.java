@@ -82,7 +82,7 @@ public class AuthenticationLogic {
 			} else if (authUser.getGroups().size() == 1) {
 				privilegeCtx = buildPrivilegeContext(guessedGroup);
 			} else { // the user has a default group
-				final CMGroup[] groupsArray = (CMGroup[]) authUser.getGroups().toArray();
+				final CMGroup[] groupsArray = authUser.getGroups().toArray(new CMGroup[authUser.getGroups().size()]);
 				privilegeCtx = buildPrivilegeContext(groupsArray);
 			}
 			final OperationUser operationUser = new OperationUser(authUser, privilegeCtx, guessedGroup);

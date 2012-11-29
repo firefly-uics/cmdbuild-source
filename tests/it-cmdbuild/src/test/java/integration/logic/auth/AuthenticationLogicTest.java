@@ -1,5 +1,6 @@
 package integration.logic.auth;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -19,6 +20,7 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
@@ -35,13 +37,16 @@ public class AuthenticationLogicTest extends DBFixture {
 	private static final String WRONG_ADMIN_PASSWORD = "wrong_password";
 	private static final String SIMPLE_USERNAME = "simple_user";
 	private static final String SIMPLE_PASSWORD = "simple_password";
+	private static final String USER_DEFAULT_GROUP = "userdef";
+	private static final String PASSWORD_DEFAULT_GROUP = "userdef_password";
 
 	private AuthenticationLogic authLogic;
-	private DBCard adminCard;
-	private DBCard userCard;
+	private DBCard admin;
+	private DBCard simpleUser;
+	private DBCard userWithDefaultGroup;
 	private DBCard groupA;
 	private DBCard groupB;
-	private DBCard groupC;
+	private DBCard emptyGroup;
 	private UserStore DUMB_STORE;
 
 	@Before
@@ -53,7 +58,7 @@ public class AuthenticationLogicTest extends DBFixture {
 		authLogic = new AuthenticationLogic(service);
 		DUMB_STORE = new UserStore() {
 
-			OperationUser operationUser;
+			OperationUser operationUser = null;
 
 			@Override
 			public OperationUser getUser() {
@@ -70,24 +75,28 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 
 	private void populateDatabaseWithUsersGroupsAndPrivileges() {
-		adminCard = insertUserWithUsernameAndPassword(ADMIN_USERNAME, ADMIN_PASSWORD);
-		userCard = insertUserWithUsernameAndPassword(SIMPLE_USERNAME, SIMPLE_PASSWORD);
+		admin = insertUserWithUsernameAndPassword(ADMIN_USERNAME, ADMIN_PASSWORD);
+		simpleUser = insertUserWithUsernameAndPassword(SIMPLE_USERNAME, SIMPLE_PASSWORD);
+		userWithDefaultGroup = insertUserWithUsernameAndPassword(USER_DEFAULT_GROUP, PASSWORD_DEFAULT_GROUP);
 
 		groupA = insertRoleWithCode("group A");
 		groupB = insertRoleWithCode("group B");
-		groupC = insertRoleWithCode("group C");
+		emptyGroup = insertRoleWithCode("group C");
 
-		buildNnRelation();
+		createUserRoleBinding();
 	}
 
-	// TODO: riscrivere i test con i vari casi:
 	/**
-	 * 1) l'utente fornisce credenziali errate 2) credenziali giuste e
-	 * appartiene a un gruppo 3) credenziali giuste e appartiene a + gruppi ma
-	 * default group 4) credenziali giuste e appartiene a + gruppi ma non
-	 * default group 5) integration test con privilege manager (in un altro file
-	 * di test...)
+	 * A user belongs to multiple groups and a group contains more than one user
 	 */
+	private void createUserRoleBinding() {
+		insertBindingBetweenUserAndRole(admin, groupA);
+		insertBindingBetweenUserAndRole(admin, groupB);
+		insertBindingBetweenUserAndRole(simpleUser, groupB);
+		insertBindingBetweenUserAndRole(userWithDefaultGroup, groupA);
+		insertBindingBetweenUserAndRole(userWithDefaultGroup, groupB, true);
+	}
+
 	@Test
 	public void shouldAuthenticateUserWithValidUsernameAndPasswordAndGroupSelected() {
 		// given
@@ -102,13 +111,17 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
-		// TODO: check in the UserStore if the user has been successfully stored
+		assertOperationUserIsStoredInUserStore();
 	}
 
 	private void assertUserIsSuccessfullyAuthenticated(final Response response) {
 		assertTrue(response.isSuccess());
 		assertThat(response.getGroups(), is(nullValue()));
 		assertThat(response.getReason(), is(nullValue()));
+	}
+
+	private void assertOperationUserIsStoredInUserStore() {
+		assertThat(DUMB_STORE.getUser(), is(not(nullValue())));
 	}
 
 	@Test
@@ -124,22 +137,65 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
-		// TODO: check in the UserStore if the user has been successfully stored
+		assertOperationUserIsStoredInUserStore();
 	}
 
 	@Test
-	public void userShouldSelectAGroupIfHeBelongsToMultipleGroupsAndNoDefault() {
-		// TODO: implement
+	public void userShouldSelectAGroupIfBelongsToMultipleGroupsAndNoDefault() {
+		// given
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString(ADMIN_USERNAME) //
+				.withPassword(ADMIN_PASSWORD) //
+				.withUserStore(DUMB_STORE) //
+				.build();
+
+		// when
+		final Response response = authLogic.login(loginDTO);
+
+		// then
+		assertFalse(response.isSuccess());
+		assertThat(response.getReason(),
+				is(equalTo(AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException().toString())));
+		assertThat(response.getGroups(), is(not(nullValue())));
+		assertOperationUserIsNotStoredInUserStore();
+	}
+
+	private void assertOperationUserIsNotStoredInUserStore() {
+		assertThat(DUMB_STORE.getUser(), is(nullValue()));
 	}
 
 	@Test
-	public void operationUserIsStoredIfHeHasDefaultGroup() {
-		// TODO: implement
+	public void userShouldNotSelectAGroupIfHasDefaultGroup() {
+		// given
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString(USER_DEFAULT_GROUP) //
+				.withPassword(PASSWORD_DEFAULT_GROUP) //
+				.withUserStore(DUMB_STORE) //
+				.build();
+
+		// when
+		final Response response = authLogic.login(loginDTO);
+
+		// then
+		assertTrue(response.isSuccess());
+		assertOperationUserIsStoredInUserStore();
 	}
 
 	@Test
-	public void operationUserIsStoredIfHeBelongsToOnlyOneGroup() {
-		// TODO: implement
+	public void userShouldNotSelectAGroupIfBelongsToOnlyOneGroup() {
+		// given
+		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
+				.withLoginString(SIMPLE_USERNAME) //
+				.withPassword(SIMPLE_PASSWORD) //
+				.withUserStore(DUMB_STORE) //
+				.build();
+
+		// when
+		final Response response = authLogic.login(loginDTO);
+
+		// then
+		assertTrue(response.isSuccess());
+		assertOperationUserIsStoredInUserStore();
 	}
 
 	@Test
@@ -150,13 +206,15 @@ public class AuthenticationLogicTest extends DBFixture {
 				.withPassword(WRONG_ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
 				.withUserStore(DUMB_STORE).build();
+
 		// when
 		final Response response = authLogic.login(loginDTO);
 
 		// then
 		assertFalse(response.isSuccess());
 		assertThat(response.getGroups(), is(nullValue()));
-		assertThat(response.getReason(), is(not(nullValue())));
+		assertThat(response.getReason(), is(equalTo(AuthExceptionType.AUTH_LOGIN_WRONG.createException().toString())));
+		assertOperationUserIsNotStoredInUserStore();
 	}
 
 	@Test
@@ -174,30 +232,22 @@ public class AuthenticationLogicTest extends DBFixture {
 		assertFalse(response.isSuccess());
 		assertThat(response.getGroups(), is(nullValue()));
 		assertThat(response.getReason(), is(not(nullValue())));
+		assertOperationUserIsNotStoredInUserStore();
 	}
 
 	@Test
 	public void shouldRetrieveAllGroupsForAUser() {
 		// when
-		final Iterable<CMGroup> groups = authLogic.getGroupsFromUserId(adminCard.getId());
+		final Iterable<CMGroup> groups = authLogic.getGroupsFromUserId(admin.getId());
 
 		// then
 		int numberOfGroups = 0;
 		for (final CMGroup group : groups) {
 			numberOfGroups++;
 			final Long groupId = group.getId();
-			assertThat(groupIdsForUserId(adminCard.getId()), hasItem(groupId));
+			assertThat(groupIdsForUserId(admin.getId()), hasItem(groupId));
 		}
-		assertEquals(numberOfGroups, groupIdsForUserId(adminCard.getId()).size());
-	}
-
-	/**
-	 * A user belongs to multiple groups and a group contains more than one user
-	 */
-	private void buildNnRelation() {
-		insertBindingBetweenUserAndRole(adminCard, groupA);
-		insertBindingBetweenUserAndRole(adminCard, groupB);
-		insertBindingBetweenUserAndRole(userCard, groupB);
+		assertEquals(numberOfGroups, groupIdsForUserId(admin.getId()).size());
 	}
 
 	private List<Long> groupIdsForUserId(final Long userId) {
@@ -227,7 +277,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveNoUserForEmptyGroup() {
 		// when
-		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupC.getId());
+		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(emptyGroup.getId());
 
 		// then
 		assertEquals(users.iterator().hasNext(), false);
