@@ -64,7 +64,7 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		}
 
 		public DBDomainBuilder withAllAttributes(final List<DBAttribute> attributes) {
-			attributes.addAll(attributes);
+			this.attributes.addAll(attributes);
 			return this;
 		}
 

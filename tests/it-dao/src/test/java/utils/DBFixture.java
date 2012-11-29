@@ -38,6 +38,7 @@ public abstract class DBFixture extends IntegrationTestBase {
 	protected static final String USERNAME_ATTRIBUTE = "Username";
 	protected static final String PASSWORD_ATTRIBUTE = "Password";
 	protected static final String EMAIL_ATTRIBUTE = "Email";
+	protected static final String DEFAULT_GROUP_ATTRIBUTE = "DefaultGroup";
 	protected static final PasswordHandler digester = new NaivePasswordHandler();
 	protected List<Long> insertedGroupIds = Lists.newArrayList();
 	protected List<Long> insertedUserIds = Lists.newArrayList();
@@ -121,7 +122,7 @@ public abstract class DBFixture extends IntegrationTestBase {
 		final DBCard user = DBCard.newInstance(dbDriver(), users);
 		final DBCard insertedUser = user.set(USERNAME_ATTRIBUTE, username) //
 				.set(PASSWORD_ATTRIBUTE, digester.encrypt(password)) //
-				.set(EMAIL_ATTRIBUTE, username + "@tecnoteca.com").save();
+				.set(EMAIL_ATTRIBUTE, username + "@example.com").save();
 		insertedUserIds.add(insertedUser.getId());
 		return insertedUser;
 	}
@@ -139,6 +140,23 @@ public abstract class DBFixture extends IntegrationTestBase {
 		final DBRelation relation = DBRelation.newInstance(dbDriver(), userRoleDomain);
 		relation.setCard1(user);
 		relation.setCard2(role);
+
+		List<Long> groupIds = userIdToGroupIds.get(user.getId());
+		if (groupIds == null) {
+			groupIds = Lists.newArrayList();
+		}
+		groupIds.add(role.getId());
+		userIdToGroupIds.put(user.getId(), groupIds);
+
+		return relation.save();
+	}
+
+	protected DBRelation insertBindingBetweenUserAndRole(final DBCard user, final DBCard role, final boolean isDefault) {
+		final DBDomain userRoleDomain = dbDriver().findDomainByName(USER_ROLE_DOMAIN);
+		final DBRelation relation = DBRelation.newInstance(dbDriver(), userRoleDomain);
+		relation.setCard1(user);
+		relation.setCard2(role);
+		relation.set(DEFAULT_GROUP_ATTRIBUTE, isDefault);
 
 		List<Long> groupIds = userIdToGroupIds.get(user.getId());
 		if (groupIds == null) {

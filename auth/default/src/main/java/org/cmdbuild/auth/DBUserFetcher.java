@@ -25,6 +25,7 @@ import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.auth.user.UserImpl.UserImplBuilder;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -93,12 +94,14 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	private CMUser buildUserFromCard(final CMCard userCard) {
 		final Long userId = userCard.getId();
-		final String userName = userCard.get(userNameAttribute()).toString();
+		final String username = userCard.get(userNameAttribute()).toString();
 		final Object userDescription = userCard.get(userDescriptionAttribute());
+		final String defaultGroupName = fetchDefaultGroupName(username);
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder() //
 				.withId(userId) //
-				.withName(userName) //
-				.withDescription(userDescription != null ? userDescription.toString() : "");
+				.withName(username) //
+				.withDescription(userDescription != null ? userDescription.toString() : "") //
+				.withDefaultGroupName(defaultGroupName);
 
 		final Map<Long, CMGroup> allGroups = getAllGroups();
 		for (final Object groupId : fetchGroupIdsForUser(userCard.getId())) {
@@ -107,6 +110,29 @@ public abstract class DBUserFetcher implements UserFetcher {
 		}
 
 		return userBuilder.build();
+	}
+
+	private String fetchDefaultGroupName(final String username) {
+		final CMQueryResult result = view
+				.select(attribute(userClass(), "Username"), attribute(userGroupDomain(), "DefaultGroup"),
+						attribute(roleClass(), roleClass().getCodeAttributeName())) //
+				.from(userClass()) //
+				.join(roleClass(), over(userGroupDomain())) //
+				.where(attribute(userClass(), "Username"), Operator.EQUALS, username) //
+				.run();
+
+		String defaultGroupName = null;
+		for (final CMQueryRow row : result) {
+			final CMCard group = row.getCard(roleClass());
+			final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();
+			final String groupName = (String) group.getCode();
+			final Object isDefaultGroup = relation.get("DefaultGroup");
+			if (isDefaultGroup != null)
+				if ((Boolean) isDefaultGroup) {
+					defaultGroupName = groupName;
+				}
+		}
+		return defaultGroupName;
 	}
 
 	protected final CMCard fetchUserCard(final Login login) throws NoSuchElementException {

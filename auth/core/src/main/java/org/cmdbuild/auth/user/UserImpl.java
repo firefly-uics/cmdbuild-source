@@ -15,6 +15,7 @@ public class UserImpl implements CMUser {
 		private String name;
 		private String description;
 		private final Set<CMGroup> groups;
+		private String defaultGroupName;
 
 		private UserImplBuilder() {
 			this.groups = new HashSet<CMGroup>();
@@ -45,6 +46,11 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
+		public UserImplBuilder withDefaultGroupName(final String defaultGroupName) {
+			this.defaultGroupName = defaultGroupName;
+			return this;
+		}
+
 		@Override
 		public UserImpl build() {
 			Validate.notNull(name);
@@ -58,12 +64,14 @@ public class UserImpl implements CMUser {
 	private final String name;
 	private final String description;
 	private final Set<CMGroup> groups;
+	private final String defaultGroupName;
 
 	private UserImpl(final UserImplBuilder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
 		this.groups = builder.groups;
+		this.defaultGroupName = builder.defaultGroupName;
 	}
 
 	@Override
@@ -88,9 +96,7 @@ public class UserImpl implements CMUser {
 
 	@Override
 	public String getDefaultGroupName() {
-		// TODO: see also the correspondent method of the AuthenticationFacade
-		// class
-		return null;
+		return defaultGroupName;
 	}
 
 	public static UserImplBuilder newInstanceBuilder() {
