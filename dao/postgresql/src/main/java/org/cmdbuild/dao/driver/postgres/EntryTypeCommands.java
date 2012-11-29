@@ -18,12 +18,12 @@ import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
+import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
+import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
+import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -219,6 +219,15 @@ public class EntryTypeCommands implements LoggingSupport {
 				attributeCommentToMetadata(comment));
 		owner.addAttribute(newAttribute);
 		return newAttribute;
+	}
+
+	public void deleteAttribute(final DBAttribute attribute) {
+		logger.info("deleting existing attribute '{}'", attribute.getName());
+		final DBEntryType owner = attribute.getOwner();
+		jdbcTemplate.queryForObject( //
+				"SELECT cm_delete_attribute(?,?)", //
+				Object.class, //
+				new Object[] { owner.getId(), attribute.getName() });
 	}
 
 	private String commentFrom(final DBAttributeDefinition definition) {

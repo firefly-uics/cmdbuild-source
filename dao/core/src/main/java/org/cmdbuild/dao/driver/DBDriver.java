@@ -102,6 +102,14 @@ public interface DBDriver {
 	 */
 	DBAttribute updateAttribute(DBAttributeDefinition adaptDefinition);
 
+	/**
+	 * Delete an existing attribute.
+	 * 
+	 * @param dbAttribute
+	 *            the existing attribute.
+	 */
+	void deleteAttribute(DBAttribute dbAttribute);
+
 	void deleteClass(DBClass dbClass);
 
 	Collection<DBDomain> findAllDomains();

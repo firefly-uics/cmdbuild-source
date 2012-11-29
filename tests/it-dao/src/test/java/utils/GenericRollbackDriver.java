@@ -156,7 +156,6 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
-			// Remove the
 			for (final Undoable undoableCommand : undoLog) {
 				if (undoableCommand instanceof CreateClass) {
 					final CreateClass createClassCommand = (CreateClass) undoableCommand;
@@ -189,8 +188,11 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
-			// TODO
-			// innerDriver.deleteAttribute(createdAttribute);
+			innerDriver.deleteAttribute(createdAttribute);
+		}
+
+		public DBAttribute getCreatedAttribute() {
+			return createdAttribute;
 		}
 
 	}
@@ -263,7 +265,7 @@ public class GenericRollbackDriver implements DBDriver {
 				public boolean isActive() {
 					return existingAttribute.isActive();
 				}
-				
+
 				@Override
 				public Mode getMode() {
 					return existingAttribute.getMode();
@@ -275,6 +277,80 @@ public class GenericRollbackDriver implements DBDriver {
 		@Override
 		public void undoCommand() {
 			innerDriver.updateAttribute(previousDefinition);
+		}
+
+	}
+
+	private class DeleteAttribute extends Command<Void> {
+
+		private final DBAttribute dbAttribute;
+
+		public DeleteAttribute(final DBAttribute dbAttribute) {
+			this.dbAttribute = dbAttribute;
+		}
+
+		@Override
+		protected Void execCommand() {
+			innerDriver.deleteAttribute(dbAttribute);
+			return null;
+		}
+
+		@Override
+		public void undoCommand() {
+			innerDriver.createAttribute(new DBAttributeDefinition() {
+
+				@Override
+				public String getName() {
+					return dbAttribute.getName();
+				}
+
+				@Override
+				public DBEntryType getOwner() {
+					return dbAttribute.getOwner();
+				}
+
+				@Override
+				public CMAttributeType<?> getType() {
+					return dbAttribute.getType();
+				}
+
+				@Override
+				public String getDescription() {
+					return dbAttribute.getDescription();
+				}
+
+				@Override
+				public String getDefaultValue() {
+					// TODO
+					return null;
+				}
+
+				@Override
+				public boolean isDisplayableInList() {
+					return dbAttribute.isDisplayableInList();
+				}
+
+				@Override
+				public boolean isMandatory() {
+					return dbAttribute.isMandatory();
+				}
+
+				@Override
+				public boolean isUnique() {
+					return dbAttribute.isUnique();
+				}
+
+				@Override
+				public boolean isActive() {
+					return dbAttribute.isActive();
+				}
+
+				@Override
+				public Mode getMode() {
+					return dbAttribute.getMode();
+				}
+
+			});
 		}
 
 	}
@@ -405,6 +481,11 @@ public class GenericRollbackDriver implements DBDriver {
 	@Override
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		return new UpdateAttribute(definition).exec();
+	}
+
+	@Override
+	public void deleteAttribute(final DBAttribute dbAttribute) {
+		new DeleteAttribute(dbAttribute).exec();
 	}
 
 	@Override

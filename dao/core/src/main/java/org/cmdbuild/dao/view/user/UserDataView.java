@@ -73,18 +73,23 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMClass updateClass(CMClassDefinition definition) {
+	public CMClass updateClass(final CMClassDefinition definition) {
 		return UserClass.newInstance(this, dbView.updateClass(definition));
 	}
 
 	@Override
-	public CMAttribute createAttribute(CMAttributeDefinition definition) {
+	public CMAttribute createAttribute(final CMAttributeDefinition definition) {
 		return UserAttribute.newInstance(this, dbView.createAttribute(definition));
 	}
 
 	@Override
 	public CMAttribute updateAttribute(final CMAttributeDefinition definition) {
 		return UserAttribute.newInstance(this, dbView.updateAttribute(definition));
+	}
+
+	@Override
+	public void deleteAttribute(final CMAttribute attribute) {
+		dbView.deleteAttribute(attribute);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * 20th century driver working with triggers, thus needing a lot more Java hacks
- *
+ * 
  * "If all you have is SQL, everything looks like a trigger" A. Maslow
  * (readapted)
  */
@@ -62,6 +62,11 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 	@Override
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		return doToTypes().updateAttribute(definition);
+	}
+
+	@Override
+	public void deleteAttribute(final DBAttribute attribute) {
+		doToTypes().deleteAttribute(attribute);
 	}
 
 	@Override

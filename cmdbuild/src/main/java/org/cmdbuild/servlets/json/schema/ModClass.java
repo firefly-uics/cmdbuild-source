@@ -376,7 +376,6 @@ public class ModClass extends JSONBase {
 			BaseSchema table, //
 			UserContext userCtx //
 	) throws JSONException, CMDBException {
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final AttributeDTO attributeDTO = AttributeDTO.newAttributeDTO() //
 				.withName(name) //
 				.withOwner(Long.valueOf(table.getId())) //
@@ -400,6 +399,7 @@ public class ModClass extends JSONBase {
 //			@Parameter(value = "meta", required = false) JSONObject meta, //
 //			@Parameter(value = "editorType", required = false) String editorType, //
 				.build();
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final DataDefinitionLogic ddl = new DataDefinitionLogic(dataView);
 		final CMAttribute cmAttribute = ddl.createOrUpdateAttribute(attributeDTO);
 		JSONObject result = Serializer.serialize(cmAttribute);
@@ -436,20 +436,18 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject deleteAttribute(
-			JSONObject serializer,
-			@Parameter("name") String attributeName,
-			BaseSchema table) throws JSONException {
-		IAttribute attribute = table.getAttribute(attributeName);
-		try {
-			attribute.delete();
-		} catch (ORMException e) {
-			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
-				attribute.setStatus(SchemaStatus.NOTACTIVE);
-				attribute.save();
-			}
-			throw e;
-		}
+	public JSONObject deleteAttribute( //
+			JSONObject serializer, //
+			@Parameter("name") String attributeName, //
+			BaseSchema table //
+	) throws JSONException {
+		final AttributeDTO attributeDTO = AttributeDTO.newAttributeDTO() //
+				.withName(attributeName) //
+				.withOwner(Long.valueOf(table.getId())) //
+				.build();
+		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
+		final DataDefinitionLogic ddl = new DataDefinitionLogic(dataView);
+		ddl.deleteOrDeactiveAttribute(attributeDTO);
 		return serializer;
 	}
 

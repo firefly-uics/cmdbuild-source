@@ -41,12 +41,12 @@ public class ClassDTO {
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsSuperClass(boolean isSupeClass) {
+		public ClassDTOBuilder thatIsSuperClass(final boolean isSupeClass) {
 			this.isSuperClass = isSupeClass;
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsProcess(boolean isProcess) {
+		public ClassDTOBuilder thatIsProcess(final boolean isProcess) {
 			this.isProcess = isProcess;
 			return this;
 		}

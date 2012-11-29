@@ -8,11 +8,12 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMAttribute.*;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
@@ -504,6 +505,39 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// then
 		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.READ));
 		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).getMode(), equalTo(Mode.HIDDEN));
+	}
+
+	@Test
+	public void deletingUnexistingAttributeDoesNothing() throws Exception {
+		// given
+		// nothing
+
+		// when
+		dataDefinitionLogic().deleteOrDeactiveAttribute(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
+
+		// then
+		// nothing happens, but at least no errors
+	}
+
+	@Test
+	public void deletingExistingAttributeWithNoData() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdateAttribute( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		dataDefinitionLogic().deleteOrDeactiveAttribute(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
+
+		// then
+		assertThat(dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));
+	}
+
+	@Ignore
+	@Test
+	public void deletingExistingAttributeWithDataSetsTheAttributeAsNoActiveAndThrowsException() throws Exception {
+		fail("TODO");
 	}
 
 }

@@ -12,7 +12,6 @@ import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 
@@ -100,10 +99,15 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
 		return inner.createAttribute(definition);
 	}
-	
+
 	@Override
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		return inner.updateAttribute(definition);
+	}
+
+	@Override
+	public void deleteAttribute(final DBAttribute dbAttribute) {
+		inner.deleteAttribute(dbAttribute);
 	}
 
 	@Override

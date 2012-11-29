@@ -7,13 +7,14 @@ import java.util.List;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -171,7 +172,7 @@ public class DBDataView extends QueryExecutorDataView {
 			public boolean isActive() {
 				return definition.isActive();
 			}
-			
+
 			@Override
 			public Mode getMode() {
 				return definition.getMode();
@@ -191,6 +192,25 @@ public class DBDataView extends QueryExecutorDataView {
 			assert dbClass != null;
 		}
 		return dbClass;
+	}
+
+	@Override
+	public void deleteAttribute(final CMAttribute attribute) {
+		driver.deleteAttribute(cmToDbAttribute(attribute));
+	}
+
+	private DBAttribute cmToDbAttribute(final CMAttribute attribute) {
+		final DBAttribute dbAttribute;
+		if (attribute == null) {
+			dbAttribute = null;
+		} else if (attribute instanceof DBClass) {
+			dbAttribute = DBAttribute.class.cast(attribute);
+		} else {
+			final DBClass owner = cmToDbClass(findClassByName(attribute.getOwner().getName()));
+			dbAttribute = owner.getAttribute(attribute.getName());
+			assert dbAttribute != null;
+		}
+		return dbAttribute;
 	}
 
 	@Override

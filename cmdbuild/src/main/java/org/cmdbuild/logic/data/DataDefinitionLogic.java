@@ -1,13 +1,15 @@
 package org.cmdbuild.logic.data;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.CMClassDefinition;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,14 +33,12 @@ public class DataDefinitionLogic implements Logic {
 	public CMClass createOrUpdateClass(final ClassDTO classDTO) {
 		logger.info("creating or updating class: {}", classDTO);
 
-		// TODO check here privileges
 		final CMClass existingClass = view.findClassByName(classDTO.getName());
 
 		final Long parentId = classDTO.getParentId();
 		final CMClass parentClass = (parentId == null) ? NO_PARENT : view.findClassById(parentId.longValue());
 
 		final CMClass createdOrUpdatedClass;
-		// FIXME how be sure that is data view is a system data view
 		if (existingClass == null) {
 			logger.info("class not already created, creating a new one");
 			createdOrUpdatedClass = view.createClass(definitionForNew(classDTO, parentClass));
@@ -134,12 +134,10 @@ public class DataDefinitionLogic implements Logic {
 	public CMAttribute createOrUpdateAttribute(final AttributeDTO attributeDTO) {
 		logger.info("creating or updating attribute: {}", attributeDTO.toString());
 
-		// TODO check here privileges
 		final CMClass owner = view.findClassById(attributeDTO.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attributeDTO.getName());
 
 		final CMAttribute createdOrUpdatedAttribute;
-		// FIXME how be sure that is data view is a system data view
 		if (existingAttribute == null) {
 			logger.info("attribute not already created, creating a new one");
 			createdOrUpdatedAttribute = view.createAttribute(definitionForNew(attributeDTO, owner));
@@ -148,6 +146,27 @@ public class DataDefinitionLogic implements Logic {
 			createdOrUpdatedAttribute = view.updateAttribute(definitionForExisting(attributeDTO, existingAttribute));
 		}
 		return createdOrUpdatedAttribute;
+	}
+
+	public void deleteOrDeactiveAttribute(final AttributeDTO attributeDTO) {
+		logger.info("deleting attribute: {}", attributeDTO.toString());
+		final CMClass owner = view.findClassById(attributeDTO.getOwner());
+		final CMAttribute attribute = owner.getAttribute(attributeDTO.getName());
+		if (attribute == null) {
+			logger.warn("attribute '{}' not found", attributeDTO.getName());
+			return;
+		}
+		try {
+			logger.warn("deleting existing attribute '{}'", attributeDTO.getName());
+			view.deleteAttribute(attribute);
+		} catch (final ORMException e) {
+			logger.error("error deleting attribute", e);
+			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
+				logger.warn("attribute contains data");
+				view.updateAttribute(unactive(attribute));
+			}
+			throw e;
+		}
 	}
 
 	private CMAttributeDefinition definitionForNew(final AttributeDTO attributeDTO, final CMEntryType owner) {
@@ -197,7 +216,7 @@ public class DataDefinitionLogic implements Logic {
 			public boolean isActive() {
 				return attributeDTO.isActive();
 			}
-			
+
 			@Override
 			public Mode getMode() {
 				return attributeDTO.getMode();
@@ -255,10 +274,67 @@ public class DataDefinitionLogic implements Logic {
 			public boolean isActive() {
 				return attributeDTO.isActive();
 			}
-			
+
 			@Override
 			public Mode getMode() {
 				return attributeDTO.getMode();
+			}
+
+		};
+	}
+
+	private CMAttributeDefinition unactive(final CMAttribute existingAttribute) {
+		return new CMAttributeDefinition() {
+
+			@Override
+			public String getName() {
+				return existingAttribute.getName();
+			}
+
+			@Override
+			public CMEntryType getOwner() {
+				return existingAttribute.getOwner();
+			}
+
+			@Override
+			public CMAttributeType<?> getType() {
+				return existingAttribute.getType();
+			}
+
+			@Override
+			public String getDescription() {
+				return existingAttribute.getDescription();
+			}
+
+			@Override
+			public String getDefaultValue() {
+				// TODO
+				return null;
+			}
+
+			@Override
+			public boolean isDisplayableInList() {
+				return existingAttribute.isDisplayableInList();
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return existingAttribute.isMandatory();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return existingAttribute.isUnique();
+			}
+
+			@Override
+			public boolean isActive() {
+				return false;
+			}
+
+			@Override
+			public Mode getMode() {
+				return existingAttribute.getMode();
 			}
 
 		};

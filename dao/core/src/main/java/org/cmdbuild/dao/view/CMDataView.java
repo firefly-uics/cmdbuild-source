@@ -39,6 +39,8 @@ public interface CMDataView {
 
 	CMAttribute updateAttribute(CMAttributeDefinition definition);
 
+	void deleteAttribute(CMAttribute attribute);
+
 	CMDomain findDomainById(Long id);
 
 	CMDomain findDomainByName(String name);
