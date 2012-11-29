@@ -238,7 +238,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllGroupsForAUser() {
 		// when
-		final Iterable<CMGroup> groups = authLogic.getGroupsFromUserId(admin.getId());
+		final Iterable<CMGroup> groups = authLogic.getGroupsForUserWithId(admin.getId());
 
 		// then
 		int numberOfGroups = 0;
@@ -257,7 +257,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllUsersForNonEmptyGroup() {
 		// when
-		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupA.getId());
+		final Iterable<CMUser> users = authLogic.getUsersForGroupWithId(groupA.getId());
 		int actualNumberOfUsers = 0;
 		for (final CMUser user : users) {
 			actualNumberOfUsers++;
@@ -277,7 +277,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveNoUserForEmptyGroup() {
 		// when
-		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(emptyGroup.getId());
+		final Iterable<CMUser> users = authLogic.getUsersForGroupWithId(emptyGroup.getId());
 
 		// then
 		assertEquals(users.iterator().hasNext(), false);
