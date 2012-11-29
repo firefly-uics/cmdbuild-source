@@ -2,12 +2,11 @@ package org.cmdbuild.services.gis.geoserver;
 
 import org.restlet.data.MediaType;
 
-
 public class GeoServerStore {
 
 	public static enum StoreType {
-		DATA_STORE("dataStore","featureType"),
-		COVERAGE_STORE("coverageStore","coverage");
+		DATA_STORE("dataStore", "featureType"),
+		COVERAGE_STORE("coverageStore", "coverage");
 
 		private final String name;
 		private final String subelementName;
@@ -27,16 +26,17 @@ public class GeoServerStore {
 	}
 
 	public static enum StoreDataType {
-		SHAPE(      StoreType.DATA_STORE,     "Shapefile",         "shp", MediaType.APPLICATION_ZIP ),
-		WORLDIMAGE( StoreType.COVERAGE_STORE, "WorldImage", "worldimage", MediaType.APPLICATION_ZIP ),
-		GEOTIFF(    StoreType.COVERAGE_STORE, "GeoTIFF",    "geotiff",    MediaType.IMAGE_TIFF      );
+		SHAPE(StoreType.DATA_STORE, "Shapefile", "shp", MediaType.APPLICATION_ZIP),
+		WORLDIMAGE(StoreType.COVERAGE_STORE, "WorldImage", "worldimage", MediaType.APPLICATION_ZIP),
+		GEOTIFF(StoreType.COVERAGE_STORE,"GeoTIFF", "geotiff", MediaType.IMAGE_TIFF);
 
 		private final StoreType storeType;
 		private final String subtype;
 		private final String uploadFileExtension;
 		private final MediaType mime;
 
-		private StoreDataType(StoreType storeType, String subtype, String uploadFileExtension, MediaType mime) {
+		private StoreDataType(StoreType storeType, String subtype,
+				String uploadFileExtension, MediaType mime) {
 			this.storeType = storeType;
 			this.subtype = subtype;
 			this.uploadFileExtension = uploadFileExtension;
@@ -45,6 +45,10 @@ public class GeoServerStore {
 
 		public String getUploadFileExtension() {
 			return uploadFileExtension;
+		}
+
+		public StoreType getStoreType() {
+			return storeType;
 		}
 
 		public String getStoreTypeName() {

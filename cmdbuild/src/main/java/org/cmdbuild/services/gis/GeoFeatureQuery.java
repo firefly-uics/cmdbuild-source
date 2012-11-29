@@ -2,23 +2,25 @@ package org.cmdbuild.services.gis;
 
 import java.util.Iterator;
 
-import org.cmdbuild.elements.filters.BBoxFilter;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
+import org.cmdbuild.elements.filters.BBoxFilter;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
+import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.model.gis.LayerMetadata;
+import org.cmdbuild.services.auth.UserContext;
 
 public class GeoFeatureQuery implements Iterable<GeoFeature> {
 
-	private GeoFeatureType geoFeatureType;
+	private LayerMetadata layerMetadata;
 	private String bbox;
 	private Integer masterId;
 	private ITable onlyFrom;
 
-	public GeoFeatureQuery(GeoFeatureType geoFeatureType) {
-		this.geoFeatureType = geoFeatureType;
+	public GeoFeatureQuery(LayerMetadata layerMetadata) {
+		this.layerMetadata = layerMetadata;
 	}
 
 	public GeoFeatureQuery bbox(String bbox) {
@@ -32,9 +34,10 @@ public class GeoFeatureQuery implements Iterable<GeoFeature> {
 	}
 
 	public GeoFeatureQuery onlyFrom(ITable table) {
-		if (!geoFeatureType.getMasterTable().equals(table)) {
+		if (!layerMetadata.getMasterTableName().equals(table.getName())) {
 			onlyFrom = table;
 		}
+
 		return this;
 	}
 
@@ -54,7 +57,7 @@ public class GeoFeatureQuery implements Iterable<GeoFeature> {
 		@Override
 		public GeoFeature next() {
 			ICard geoCard = geoCardIterator.next();
-			return new GeoFeature(geoCard, GeoFeatureQuery.this.geoFeatureType);
+			return new GeoFeature(geoCard);
 		}
 
 		@Override
@@ -65,24 +68,28 @@ public class GeoFeatureQuery implements Iterable<GeoFeature> {
 
 	@Override
 	public Iterator<GeoFeature> iterator() {
-		CardQuery geoCardQuery = geoFeatureType.getGeoAttributeTable().cards().list().ignoreStatus();
+		ITable geoAttributeTable = UserContext.systemContext().tables().get(layerMetadata.getFullName());
+		CardQuery geoCardQuery = geoAttributeTable.cards().list();
 		if (bbox != null) {
-			geoCardQuery.filter(new BBoxFilter(geoFeatureType.getGeoAttributeTable().getAttribute(GeoFeatureType.GEOMETRY_ATTRIBUTE), bbox));
+			geoCardQuery.filter(new BBoxFilter(geoAttributeTable.getAttribute(GeoFeatureLayer.GEOMETRY_ATTRIBUTE), bbox));
 		}
+
 		if (masterId != null) {
-			geoCardQuery.filter(GeoFeatureType.MASTER_ATTRIBUTE, AttributeFilterType.EQUALS, String.valueOf(masterId));
+			geoCardQuery.filter(GeoFeatureLayer.MASTER_ATTRIBUTE, AttributeFilterType.EQUALS, String.valueOf(masterId));
 		}
+
 		if (onlyFrom != null) {
 			final CardQuery q = onlyFrom.cards().list().attributes(CardAttributes.Id.toString());
-			geoCardQuery.filter(GeoFeatureType.MASTER_ATTRIBUTE, q);
+			geoCardQuery.filter(GeoFeatureLayer.MASTER_ATTRIBUTE, q);
 		}
+
 		return new FeatureQueryIterator(geoCardQuery);
 	}
 
 	public GeoFeature get() {
 		Iterator<GeoFeature> i = iterator();
 		if (!i.hasNext()) {
-			throw NotFoundExceptionType.CARD_NOTFOUND.createException(geoFeatureType.getName());
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException(layerMetadata.getName());
 		}
 		return i.next();
 	}

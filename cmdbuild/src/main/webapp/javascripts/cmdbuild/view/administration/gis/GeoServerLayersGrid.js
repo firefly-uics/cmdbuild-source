@@ -1,10 +1,10 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modClass.attributeProperties;
 	var tr_geo = CMDBuild.Translation.administration.modClass.geo_attributes;
-	
+
 	Ext.define("CMDBuild.Administration.GeoServerLayerGrid", {
 		extend: "Ext.grid.Panel",
-		
+
 		region: 'center',
 		frame: false,
 		border: false,
@@ -61,15 +61,29 @@
 			this.store.load();
 		},
 
+		selectFirstIfUnselected: function() {
+			var sm = this.getSelectionModel();
+			if (!sm.hasSelection()) {
+				this.selectFirst();
+			}
+		},
+
+		selectFirst: function() {
+			var sm = this.getSelectionModel();
+			if (this.store.count() != 0) {
+				sm.select(0);
+			}
+		},
+
 		loadStoreAndSelectLayerWithName: function(name) {
+			var me = this;
 			this.store.load({
-				scope : this,
 				callback: function(records, operation, success) {
-					var toSelect = this.store.find("name", name);
+					var toSelect = me.store.find("name", name);
 					if (toSelect >= 0) {
-						this.getSelectionModel().select(toSelect);
-					} else if (records.length > 0) {
-						this.getSelectionModel().select(0);
+						me.getSelectionModel().select(toSelect);
+					} else {
+						me.selectFirst();
 					}
 				}
 			});

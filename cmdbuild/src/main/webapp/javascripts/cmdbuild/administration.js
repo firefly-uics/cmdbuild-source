@@ -25,7 +25,6 @@
 			cmControllerType : CMDBuild.controller.accordion.CMProcessAccordionController
 		}),
 		gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion(),
-		viewNS = CMDBuild.view.administration,
 		controllerNS = CMDBuild.controller;
 
 	Ext.define("CMDBuild.app.Administration", {

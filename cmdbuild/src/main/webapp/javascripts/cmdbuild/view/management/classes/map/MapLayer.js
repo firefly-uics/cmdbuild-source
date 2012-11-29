@@ -44,7 +44,7 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		this.protocol = new OpenLayers.Protocol.HTTP({
 			url: 'services/json/gis/getgeocardlist',
 			params: {
-				idClass: options.targetClassId,
+				className: options.targetClassName,
 				attribute: options.geoAttribute.name
 			},
 			format: new OpenLayers.Format.GeoJSON()

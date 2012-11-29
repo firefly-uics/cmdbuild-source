@@ -41,6 +41,7 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -49,7 +50,6 @@ import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
@@ -551,31 +551,21 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public JSONObject updateCard(ICard card, Map<String, String> attributes, UserContext userCtx, JSONObject serializer)
-			throws JSONException {
+			throws JSONException, Exception {
+
 		setCardAttributes(card, attributes, false);
 		boolean created = card.isNew();
 		card.save();
 		fillReferenceAttributes(card, attributes, userCtx.relations());
-		setCardGeoFeatures(card, attributes);
+
+		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
+		gisLogic.updateFeatures(card, attributes);
+
 		if (created) {
 			serializer.put("id", card.getId());
 		}
-		return serializer;
-	}
 
-	private void setCardGeoFeatures(ICard card, Map<String, String> attributes) throws JSONException {
-		String geoAttributesJsonString = attributes.get("geoAttributes");
-		if (geoAttributesJsonString != null) {
-			GeoCard geoCard = new GeoCard(card);
-			final JSONObject geoAttributesObject = new JSONObject(geoAttributesJsonString);
-			final String[] geoAttributesName = JSONObject.getNames(geoAttributesObject);
-			if (geoAttributesName != null) {
-				for (String name : geoAttributesName) {
-					final String value = geoAttributesObject.getString(name);
-					geoCard.setGeoFeatureValue(name, value);
-				}
-			}
-		}
+		return serializer;
 	}
 
 	@JSONExported
