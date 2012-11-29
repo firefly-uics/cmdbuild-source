@@ -65,6 +65,11 @@ public class FunctionCall implements CMFunctionCall {
 				public boolean isUnique() {
 					return false;
 				}
+				
+				@Override
+				public Mode getMode() {
+					return Mode.WRITE;
+				}
 
 			};
 		}

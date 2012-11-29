@@ -14,9 +14,11 @@ public abstract class AbstractAttributeType<T> implements CMAttributeType<T> {
 	/**
 	 * Casts a value that is assumed not to be null to the native type.
 	 * 
-	 * @param not
-	 *            null value of any type
-	 * @return value of the native type
+	 * @param value
+	 *            not null value of any type.
+	 * 
+	 * @return the value of the native type.
 	 */
 	protected abstract T convertNotNullValue(Object value);
+
 }

@@ -20,7 +20,7 @@ public interface CMAttributeTypeVisitor {
 
 	void visit(IntegerAttributeType attributeType);
 
-	void visit(IPAddressAttributeType attributeType);
+	void visit(IpAddressAttributeType attributeType);
 
 	void visit(LookupAttributeType attributeType);
 

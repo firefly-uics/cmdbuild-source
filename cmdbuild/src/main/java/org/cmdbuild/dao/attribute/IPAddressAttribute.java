@@ -3,12 +3,12 @@ package org.cmdbuild.dao.attribute;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 
 public class IPAddressAttribute extends DaoWrapperAttribute {
 
-	private static CMAttributeType<?> IP_TYPE = new IPAddressAttributeType();
+	private static CMAttributeType<?> IP_TYPE = new IpAddressAttributeType();
 
 	public IPAddressAttribute(BaseSchema schema, String name, Map<String, String> meta) {
 		super(schema, name, meta);

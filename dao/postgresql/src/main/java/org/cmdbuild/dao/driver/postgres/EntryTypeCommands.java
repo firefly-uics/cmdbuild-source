@@ -18,12 +18,12 @@ import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
+import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
+import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -35,8 +35,8 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -263,11 +263,12 @@ public class EntryTypeCommands implements LoggingSupport {
 			}
 
 			@Override
-			public void visit(final IPAddressAttributeType attributeType) {
+			public void visit(final IpAddressAttributeType attributeType) {
 			}
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
+				append("LOOKUP", attributeType.getLookupTypeName());
 			}
 
 			@Override
@@ -297,7 +298,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getType().accept(this);
 				append("BASEDSP", Boolean.toString(definition.isDisplayableInList()));
 				append("DESCR", definition.getDescription());
-				append("MODE", "read");
+				append("MODE", definition.getMode().toString().toLowerCase());
 				append("NOTNULL", Boolean.toString(definition.isMandatory()));
 				append("STATUS", definition.isActive() ? "active" : "noactive");
 				append("UNIQUE", Boolean.toString(definition.isUnique()));
