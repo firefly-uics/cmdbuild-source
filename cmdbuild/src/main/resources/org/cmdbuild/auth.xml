@@ -33,7 +33,7 @@
 
 
 
-	<bean id="authFacade" class="org.cmdbuild.services.auth.AuthenticationFacade"
+	<bean id="authLogic" class="org.cmdbuild.logic.auth.AuthenticationLogic"
 		scope="singleton">
 		<constructor-arg ref="authService" />
 	</bean>

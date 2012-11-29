@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.auth;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,15 +27,15 @@ public class AuthenticationLogic {
 
 		private boolean success = false;
 		private String reason = null;
-		private Iterable<CMGroup> groups = null;
+		private Collection<CMGroup> groups = null;
 
-		private Response(final boolean success, final String reason, final Iterable<CMGroup> groups) {
+		private Response(final boolean success, final String reason, final Collection<CMGroup> groups) {
 			this.success = success;
 			this.reason = reason;
 			this.groups = groups;
 		}
 
-		public static Response newInstance(final boolean success, final String reason, final Iterable<CMGroup> groups) {
+		public static Response newInstance(final boolean success, final String reason, final Collection<CMGroup> groups) {
 			return new Response(success, reason, groups);
 		}
 
@@ -46,7 +47,7 @@ public class AuthenticationLogic {
 			return reason;
 		}
 
-		public Iterable<CMGroup> getGroups() {
+		public Collection<CMGroup> getGroups() {
 			return groups;
 		}
 
@@ -139,16 +140,16 @@ public class AuthenticationLogic {
 		return Response.newInstance(true, null, null);
 	}
 
-	public List<CMUser> getUsersFromGroupId(final Long groupId) {
+	public List<CMUser> getUsersForGroupWithId(final Long groupId) {
 		return authService.fetchUsersByGroupId(groupId);
 	}
 
-	public Iterable<CMGroup> getGroupsFromUserId(final Long userId) {
+	public Iterable<CMGroup> getGroupsForUserWithId(final Long userId) {
 		final CMUser user = authService.fetchUserById(userId);
 		return user.getGroups();
 	}
 
-	public Iterable<CMGroup> getGroupsFromUsername(final String loginString) {
+	public Iterable<CMGroup> getGroupsForUserWithUsername(final String loginString) {
 		final CMUser user = authService.fetchUserByUsername(loginString);
 		return user.getGroups();
 	}
