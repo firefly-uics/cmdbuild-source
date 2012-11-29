@@ -13,6 +13,7 @@ import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -117,7 +118,7 @@ public class DBDataView extends QueryExecutorDataView {
 	public DBAttribute createAttribute(final CMAttributeDefinition definition) {
 		return driver.createAttribute(adaptDefinition(definition));
 	}
-	
+
 	@Override
 	public DBAttribute updateAttribute(final CMAttributeDefinition definition) {
 		return driver.updateAttribute(adaptDefinition(definition));
@@ -140,7 +141,7 @@ public class DBDataView extends QueryExecutorDataView {
 			public CMAttributeType<?> getType() {
 				return definition.getType();
 			}
-			
+
 			@Override
 			public String getDescription() {
 				return definition.getDescription();
@@ -169,6 +170,11 @@ public class DBDataView extends QueryExecutorDataView {
 			@Override
 			public boolean isActive() {
 				return definition.isActive();
+			}
+			
+			@Override
+			public Mode getMode() {
+				return definition.getMode();
 			}
 
 		};

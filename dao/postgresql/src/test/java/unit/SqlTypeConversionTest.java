@@ -17,8 +17,8 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -81,7 +81,7 @@ public class SqlTypeConversionTest {
 	@Test
 	public void supportsIPAddressAttributes() {
 		final CMAttributeType<?> type = SqlType.createAttributeType("inet", NO_META);
-		assertThat(type, instanceOf(IPAddressAttributeType.class));
+		assertThat(type, instanceOf(IpAddressAttributeType.class));
 		assertThat(SqlType.getSqlType(type), is(SqlType.inet));
 		assertThat(SqlType.getSqlTypeString(type), is(equalTo("inet")));
 	}

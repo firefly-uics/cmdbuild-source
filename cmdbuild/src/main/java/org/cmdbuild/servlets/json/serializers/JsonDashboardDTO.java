@@ -13,8 +13,8 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -107,7 +107,8 @@ public interface JsonDashboardDTO {
 			return type;
 		}
 
-		private static class TypeConverter implements CMAttributeTypeVisitor {
+		// TODO move away
+		public static class TypeConverter implements CMAttributeTypeVisitor {
 			private String typeName;
 
 			public TypeConverter(CMAttributeType<?> type) {
@@ -164,7 +165,7 @@ public interface JsonDashboardDTO {
 			}
 
 			@Override
-			public void visit(IPAddressAttributeType attributeType) {
+			public void visit(IpAddressAttributeType attributeType) {
 				typeName = AttributeType.INET.toString();
 			}
 

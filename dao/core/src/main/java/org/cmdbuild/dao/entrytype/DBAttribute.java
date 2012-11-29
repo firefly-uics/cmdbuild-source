@@ -40,6 +40,19 @@ public class DBAttribute implements CMAttribute {
 			return Boolean.parseBoolean(get(UNIQUE));
 		}
 
+		public Mode getMode() {
+			// TODO do it better... and remember that tests are our friends!
+			final Mode fieldMode;
+			final String mode = get(MODE);
+			if ("hidden".equals(mode)) {
+				fieldMode = Mode.HIDDEN;
+			} else if ("read".equals(mode)) {
+				fieldMode = Mode.READ;
+			} else {
+				fieldMode = Mode.WRITE;
+			}
+			return fieldMode;
+		}
 	}
 
 	DBEntryType owner; // Set by the entry type when attached
@@ -86,15 +99,20 @@ public class DBAttribute implements CMAttribute {
 	public boolean isDisplayableInList() {
 		return meta.isDisplayableInList();
 	}
-	
+
 	@Override
 	public boolean isMandatory() {
 		return meta.isMandatory();
 	}
-	
+
 	@Override
 	public boolean isUnique() {
 		return meta.isUnique();
+	}
+
+	@Override
+	public Mode getMode() {
+		return meta.getMode();
 	}
 
 	/*

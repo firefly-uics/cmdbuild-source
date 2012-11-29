@@ -12,6 +12,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute.*;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
@@ -19,8 +20,9 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -201,7 +203,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute, is(notNullValue(CMAttribute.class)));
 		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
 		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
-		assertThat(attribute.getType(), instanceOf(IPAddressAttributeType.class));
+		assertThat(attribute.getType(), instanceOf(IpAddressAttributeType.class));
 	}
 
 	@Test
@@ -228,10 +230,26 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		fail("TODO");
 	}
 
-	@Ignore
 	@Test
 	public void lookupAttributeCreatedAndReaded() throws Exception {
-		fail("TODO");
+		// given
+		dataDefinitionLogic().createOrUpdateAttribute( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("LOOKUP") //
+						.withLookupType("AlfrescoCategory")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(LookupAttributeType.class));
+
+		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
+		assertThat(lookupAttributeType.getLookupTypeName(), equalTo("AlfrescoCategory"));
 	}
 
 	@Ignore
@@ -413,7 +431,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void onlyDescriptionAndStatusesCanBeChangedForAllAttributes() throws Exception {
+	public void onlyDescriptionStatusesAndModeCanBeChangedForAllAttributes() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdateAttribute( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -449,6 +467,43 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsWritableAsDefault() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdateAttribute( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.WRITE));
+	}
+
+	@Test
+	public void newlyCreatedAttributeCanBeReadOnlyOrHidden() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdateAttribute( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withMode(Mode.READ)));
+		dataDefinitionLogic().createOrUpdateAttribute( //
+				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withMode(Mode.HIDDEN)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.READ));
+		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).getMode(), equalTo(Mode.HIDDEN));
 	}
 
 }

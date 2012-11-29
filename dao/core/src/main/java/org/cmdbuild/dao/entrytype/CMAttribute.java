@@ -4,6 +4,15 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 
 public interface CMAttribute extends Deactivable {
 
+	/**
+	 * How the attribute is showed (or not) in the form.
+	 */
+	enum Mode {
+		WRITE, //
+		READ, //
+		HIDDEN, //
+	}
+
 	CMEntryType getOwner();
 
 	CMAttributeType<?> getType();
@@ -34,5 +43,12 @@ public interface CMAttribute extends Deactivable {
 	 *         otherwise.
 	 */
 	boolean isUnique();
+	
+	/**
+	 * Returns how the field is showed (or not) in the form.
+	 * 
+	 * @return the {@link Mode}.
+	 */
+	Mode getMode();
 
 }

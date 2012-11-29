@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
@@ -18,8 +19,9 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -47,7 +49,7 @@ public class AttributeDTO {
 			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
 				return new DateAttributeType();
 			}
-		}, //
+		}, // fieldModes.get(text);
 		DECIMAL {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
@@ -72,7 +74,7 @@ public class AttributeDTO {
 		INET {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
-				return new IPAddressAttributeType();
+				return new IpAddressAttributeType();
 			}
 		}, //
 		INTEGER {
@@ -84,8 +86,8 @@ public class AttributeDTO {
 		LOOKUP {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
-				// TODO Auto-generated method stub
-				return null;
+				final String lookupType = attributeDTOBuilder.lookupType;
+				return new LookupAttributeType(lookupType);
 			}
 		}, //
 		REFERENCE {
@@ -146,8 +148,11 @@ public class AttributeDTO {
 
 		ACTIVE, //
 		DISPLAYABLE_IN_LIST, //
+		HIDDEN, //
 		NULL_VALUES_ALLOWED, //
+		READ_ONLY, //
 		UNIQUE_VALUES, //
+		WRITABLE, //
 
 	}
 
@@ -163,6 +168,8 @@ public class AttributeDTO {
 		private Integer precision;
 		private Integer scale;
 		private Integer length;
+		private String lookupType;
+		private Mode mode = Mode.WRITE;
 		private final Set<Condition> conditions;
 
 		private AttributeDTOBuilder() {
@@ -243,6 +250,16 @@ public class AttributeDTO {
 			return this;
 		}
 
+		public AttributeDTOBuilder withLookupType(final String lookupType) {
+			this.lookupType = lookupType;
+			return this;
+		}
+
+		public AttributeDTOBuilder withMode(final Mode mode) {
+			this.mode = mode;
+			return this;
+		}
+
 		@Override
 		public AttributeDTO build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
@@ -250,7 +267,6 @@ public class AttributeDTO {
 			Validate.isTrue(owner > 0, "invalid owner");
 			description = defaultIfBlank(description, name);
 			calculateType();
-//			Validate.isTrue(!(type instanceof UndefinedAttributeType), "undefined type");
 			return new AttributeDTO(this);
 		}
 
@@ -270,6 +286,7 @@ public class AttributeDTO {
 	private final String group;
 	private final CMAttributeType<?> type;
 	private final String defaultValue;
+	private final Mode mode;
 	private final Set<Condition> conditions;
 
 	private final String toString;
@@ -281,6 +298,7 @@ public class AttributeDTO {
 		this.group = builder.group;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
+		this.mode = builder.mode;
 		this.conditions = builder.conditions;
 
 		this.toString = ToStringBuilder.reflectionToString(this);
@@ -329,6 +347,10 @@ public class AttributeDTO {
 
 	public boolean isActive() {
 		return conditions.contains(Condition.ACTIVE);
+	}
+
+	public Mode getMode() {
+		return mode;
 	}
 
 }

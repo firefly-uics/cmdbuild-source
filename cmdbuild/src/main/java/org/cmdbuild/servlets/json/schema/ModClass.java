@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.TableTree;
@@ -17,7 +18,6 @@ import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
-import org.cmdbuild.elements.interfaces.IAttribute.FieldMode;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
@@ -150,8 +150,7 @@ public class ModClass extends JSONBase {
 
 		// add the processes
 		for (UserProcessClass pc: processClasses) {
-			if (active && !pc.isUsable() 
-					&& !pc.isSuperclass()) { // serialize always the superclasses
+			if (active && !pc.isUsable() && !pc.isSuperclass()) { // serialize always the superclasses
 
 				continue;
 			} else {
@@ -258,10 +257,10 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public JSONObject getFieldModes(
 			JSONObject serializer ) throws JSONException, AuthException {
-		for(FieldMode type : FieldMode.values()) {
+		for(final JsonModeMapper fieldModeMapper : JsonModeMapper.values()) {
 			JSONObject jo = new JSONObject();
-			jo.put("fieldmode_value", getTraslation("administration.modClass.attributeProperties.field_"+type.toString().toLowerCase()));
-			jo.put("fieldmode",type.getMode());
+			jo.put("fieldmode_value", getTraslation("administration.modClass.attributeProperties.field_" + fieldModeMapper.text));
+			jo.put("fieldmode", fieldModeMapper.text);
 			serializer.append("modes", jo);
 		}
 		return serializer;
@@ -314,6 +313,42 @@ public class ModClass extends JSONBase {
 		}
 		return serializer;
 	}
+	
+	// TODO move away
+	public enum JsonModeMapper {
+
+		WRITE("write", Mode.WRITE), //
+		READ("read", Mode.READ), //
+		HIDDEN("hidden", Mode.HIDDEN), //
+		;
+
+		private final String text;
+		private final Mode mode;
+
+		private JsonModeMapper(final String text, final Mode mode) {
+			this.text = text;
+			this.mode = mode;
+		}
+
+		public static Mode modeFrom(final String text) {
+			for (final JsonModeMapper mapper : values()) {
+				if (mapper.text.equals(text)) {
+					return mapper.mode;
+				}
+			}
+			return Mode.WRITE;
+		}
+		
+		public static String textFrom(final Mode mode) {
+			for (final JsonModeMapper mapper : values()) {
+				if (mapper.mode.equals(mode)) {
+					return mapper.text;
+				}
+			}
+			return WRITE.text;
+		}
+
+	}
 
 	// TODO AUTHORIZATION ON ATTRIBUTES IS NEVER CHECKED!
 	@JSONExported
@@ -348,96 +383,28 @@ public class ModClass extends JSONBase {
 				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
+				.withLength(length) //
+				.withPrecision(precision) //
+				.withScale(scale) //
+				.withLookupType(lookupType) //
 				// ...
 				.withDefaultValue(defaultValue) //
+				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
 				.thatIsDisplayableInList(isBaseDSP) //
 				.thatIsMandatory(isNotNull) //
 				.thatIsUnique(isUnique) //
 				.thatIsActive(isActive) //
-				
-//			@Parameter(value = "defaultvalue", required = false) String defaultValue, //
-//			@Parameter("isbasedsp") boolean isBaseDSP, //
-//			@Parameter("isnotnull") boolean isNotNull, //
-//			@Parameter("isunique") boolean isUnique, //
-//			@Parameter("isactive") boolean isActive, //
-//			@Parameter("fieldmode") String fieldMode, //
-//			@Parameter(value = "len", required = false) int length, //
-//			@Parameter(value = "precision", required = false) int precision, //
-//			@Parameter(value = "scale", required = false) int scale, //
-//			@Parameter(value = "lookup", required = false) String lookupType, //
 //			@Parameter(value = "idDomain", required = false) int domainId, //
 //			@Parameter(value = "fieldFilter", required = false) String fieldFilter, //
 //			@Parameter(value = "fkDestination", required = false) int fkDestinationId, //
 //			@Parameter(value = "meta", required = false) JSONObject meta, //
 //			@Parameter(value = "editorType", required = false) String editorType, //
-				
 				.build();
 		final DataDefinitionLogic ddl = new DataDefinitionLogic(dataView);
 		final CMAttribute cmAttribute = ddl.createOrUpdateAttribute(attributeDTO);
 		JSONObject result = Serializer.serialize(cmAttribute);
 		serializer.put("attribute", result);
 		return serializer;
-//		IAttribute attribute;
-//		try {
-//			attribute = table.getAttribute(name);
-//			if (!attribute.getMode().isCustom()) {
-//				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-//			}
-//		} catch (NotFoundException e) {
-//			attribute = AttributeImpl.create(table, name, AttributeType.valueOf(attributeTypeString));
-//		}
-//		if (description.length() == 0) {
-//			description = name;
-//		}
-//		attribute.setDescription(description);
-//		attribute.setDefaultValue(defaultValue);
-//		attribute.setBaseDSP(isBaseDSP);
-//		attribute.setNotNull(isNotNull);
-//		attribute.setUnique(isUnique);
-//		attribute.setFieldMode(fieldMode);
-//		attribute.setGroup(group);
-//		if (editorType != null && editorType.length() > 0) {
-//			attribute.setEditorType(editorType);
-//		}
-//		if (length > 0) {
-//			attribute.setLength(length);
-//		}
-//		if (precision > 0) {
-//			attribute.setPrecision(precision);
-//		}
-//		if (scale > 0) {
-//			attribute.setScale(scale);
-//		}
-//		attribute.setStatus(SchemaStatus.fromBoolean(isActive));
-//
-//		if (attributeTypeString.equals(AttributeType.REFERENCE.toString())) {
-//			if (domainId > 0) {
-//				attribute.setReferenceDomain(domainId);
-//				IDomain domain= userCtx.domains().get(domainId);
-//				boolean isdirect=false;
-//				String cardinality=domain.getCardinality();
-//				if (cardinality.equals(IDomain.CARDINALITY_N1))
-//					isdirect = true;
-//				else if (cardinality.equals(IDomain.CARDINALITY_1N))
-//					isdirect = false;
-//				attribute.setIsReferenceDirect(isdirect);
-//			}
-//			attribute.setFilterSafe(fieldFilter);
-//		} else if (attributeTypeString.equals(AttributeType.LOOKUP.toString())) {
-//			if (lookupType != null) {
-//				attribute.setLookupType(lookupType);
-//			}
-//		} else if (fkDestinationId > 0 && attributeTypeString.equals(AttributeType.FOREIGNKEY.toString())) {
-//			if (fkDestinationId > 0) {
-//				attribute.setFKTargetClass(userCtx.tables().get(fkDestinationId).getName());
-//			}
-//		}
-//		attribute.save();
-//		if (meta != null) {
-//			manageMetaData(meta, attribute, table);
-//		}
-//		serializer.put("attribute", Serializer.serializeAttribute(attribute));
-//		return serializer;
 	}
 
 	enum MetaStatus {

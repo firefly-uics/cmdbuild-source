@@ -3,6 +3,7 @@ package org.cmdbuild.logic.data;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.CMClassDefinition;
@@ -196,6 +197,11 @@ public class DataDefinitionLogic implements Logic {
 			public boolean isActive() {
 				return attributeDTO.isActive();
 			}
+			
+			@Override
+			public Mode getMode() {
+				return attributeDTO.getMode();
+			}
 
 		};
 	}
@@ -248,6 +254,11 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public boolean isActive() {
 				return attributeDTO.isActive();
+			}
+			
+			@Override
+			public Mode getMode() {
+				return attributeDTO.getMode();
 			}
 
 		};

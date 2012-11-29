@@ -16,8 +16,7 @@ abstract class EntryTypeCommentMapper extends CommentMapper {
 			@Override
 			public String getMetaValueFromComment(final String commentValue) {
 				// Set to active by default for backward compatibility
-				return STATUS_NOACTIVE.equalsIgnoreCase(commentValue) ? Boolean.FALSE.toString() : Boolean.TRUE
-						.toString();
+				return Boolean.valueOf(!STATUS_NOACTIVE.equalsIgnoreCase(commentValue)).toString();
 			}
 
 			@Override

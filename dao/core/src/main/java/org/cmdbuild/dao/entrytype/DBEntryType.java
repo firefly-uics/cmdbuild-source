@@ -38,6 +38,7 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 			// FIXME Use an enum and limit the valid values
 			return "reserved".equals(get(MODE));
 		}
+
 	}
 
 	private final Map<String, DBAttribute> attributesByName;

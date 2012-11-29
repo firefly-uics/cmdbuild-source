@@ -1,9 +1,12 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.function.CMFunction;
+
 /**
  * Visitable type object to be used across the entire DAO layer. The primary use
- * is in CMAttribute, but CMFunction uses it as well and the reports should use
- * it as soon as they are refactored.
+ * is in {@link CMClass}, but {@link CMFunction} uses it as well and the reports
+ * should use it as soon as they are refactored.
  * 
  * TODO: Rename it to CMValueType. NdPaolo: I haven't done it yet because it
  * might affect the DAO feature branch.
@@ -21,7 +24,7 @@ public interface CMAttributeType<T> {
 		/**
 		 * Returns if metadatas define it as a lookup attribute.
 		 * 
-		 * @return if it is a lookup
+		 * @return {@code true} if it is a lookup, {@code false} otherwise.
 		 */
 		boolean isLookup();
 
@@ -30,17 +33,9 @@ public interface CMAttributeType<T> {
 		 * not a lookup attribute, it can return either null or an empty string
 		 * (yes, it is quite horrible).
 		 * 
-		 * @return name of the lookup type
+		 * @return the name of the lookup type
 		 */
 		String getLookupType();
-
-		/**
-		 * The attributes can be showed in the list/grid.
-		 * 
-		 * @return {@code true} if the attribute can be showed, {@code false}
-		 *         otherwise.
-		 */
-		boolean isDisplayableInList();
 
 	}
 
@@ -48,10 +43,11 @@ public interface CMAttributeType<T> {
 	 * Casts a value that can be null to the native type.
 	 * 
 	 * @param value
-	 *            of any type
-	 * @return value of the native type
+	 *            of any type.
+	 * @return value of the native type.
 	 */
 	T convertValue(Object value);
 
 	void accept(CMAttributeTypeVisitor visitor);
+
 }

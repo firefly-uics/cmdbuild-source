@@ -16,8 +16,8 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
@@ -70,7 +70,7 @@ public enum SqlType {
 			throw new UnsupportedOperationException("Not implemented yet");
 		}
 	}, //
-	inet(IPAddressAttributeType.class) {
+	inet(IpAddressAttributeType.class) {
 	// nothing to implement, just for keep ordered
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class) {
@@ -195,11 +195,6 @@ public enum SqlType {
 		@Override
 		public String getLookupType() {
 			return null;
-		}
-
-		@Override
-		public boolean isDisplayableInList() {
-			return false;
 		}
 
 	};

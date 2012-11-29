@@ -60,6 +60,7 @@ import org.cmdbuild.services.gis.GeoLayer;
 import org.cmdbuild.services.gis.GeoTable;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
+import org.cmdbuild.servlets.json.schema.ModClass.JsonModeMapper;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
 import org.cmdbuild.utils.tree.CNode;
@@ -298,10 +299,10 @@ public class Serializer {
 		jattr.put("idClass", attribute.getOwner().getId());
 		jattr.put("name", attribute.getName());
 		jattr.put("description", attribute.getDescription());
-//		jattr.put("type", attribute.getType());
-//		jattr.put("isbasedsp", attribute.isBaseDSP());
-//		jattr.put("isunique", attribute.isUnique());
-//		jattr.put("isnotnull", attribute.isNotNull());
+		jattr.put("type", new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
+		jattr.put("isbasedsp", attribute.isDisplayableInList());
+		jattr.put("isunique", attribute.isUnique());
+		jattr.put("isnotnull", attribute.isMandatory());
 //		jattr.put("inherited", !attribute.isLocal());
 //		jattr.put("index", attribute.getIndex());
 //		jattr.put("group", attribute.getGroup());
@@ -325,7 +326,7 @@ public class Serializer {
 //		jattr.put("scale", attribute.getScale());
 //		jattr.put("defaultvalue", attribute.getDefaultValue());
 		jattr.put("isactive", attribute.isActive());
-//		jattr.put("fieldmode", attribute.getFieldMode().getMode());
+		jattr.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
 //		jattr.put("editorType", attribute.getEditorType());
 //		switch (attribute.getType()) {
 //		case LOOKUP:

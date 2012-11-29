@@ -2,13 +2,14 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import java.util.regex.Pattern;
 
+
 // TODO Change to CMAttributeType<InetAddress>
-public class IPAddressAttributeType extends AbstractAttributeType<String> {
+public class IpAddressAttributeType extends AbstractAttributeType<String> {
 
 	private static final Pattern IPV4REGEX = Pattern
 			.compile("^0*([1-9]?\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.0*([1-9]?\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.0*([1-9]?\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.0*([1-9]?\\d|1\\d\\d|2[0-4]\\d|25[0-5])$");
 
-	public IPAddressAttributeType() {
+	public IpAddressAttributeType() {
 	}
 
 	@Override

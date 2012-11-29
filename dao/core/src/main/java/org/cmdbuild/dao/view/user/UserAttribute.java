@@ -61,6 +61,11 @@ public class UserAttribute implements CMAttribute {
 	public boolean isUnique() {
 		return inner.isUnique();
 	}
+	
+	@Override
+	public Mode getMode() {
+		return inner.getMode();
+	}
 
 	/*
 	 * Object overrides

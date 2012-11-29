@@ -7,6 +7,7 @@ import java.util.Deque;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -137,10 +138,6 @@ public class GenericRollbackDriver implements DBDriver {
 			innerDriver.updateClass(previousDefinition);
 		}
 
-		public DBClass getUpdatedClass() {
-			return updatedClass;
-		}
-
 	}
 
 	private class DeleteClass extends Command<Void> {
@@ -194,10 +191,6 @@ public class GenericRollbackDriver implements DBDriver {
 		public void undoCommand() {
 			// TODO
 			// innerDriver.deleteAttribute(createdAttribute);
-		}
-
-		public DBAttribute getCreatedAttribute() {
-			return createdAttribute;
 		}
 
 	}
@@ -270,6 +263,11 @@ public class GenericRollbackDriver implements DBDriver {
 				public boolean isActive() {
 					return existingAttribute.isActive();
 				}
+				
+				@Override
+				public Mode getMode() {
+					return existingAttribute.getMode();
+				}
 
 			};
 		}
@@ -277,10 +275,6 @@ public class GenericRollbackDriver implements DBDriver {
 		@Override
 		public void undoCommand() {
 			innerDriver.updateAttribute(previousDefinition);
-		}
-
-		public DBAttribute getUpdatedAttribute() {
-			return updatedAttribute;
 		}
 
 	}

@@ -14,8 +14,8 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -188,7 +188,7 @@ public class AttributeDTOTest {
 
 	@Test
 	public void ipAddressAttributesDoesNotRequireParameters() throws Exception {
-		assertThat(a(newValidAttribute().withType("INET")).getType(), instanceOf(IPAddressAttributeType.class));
+		assertThat(a(newValidAttribute().withType("INET")).getType(), instanceOf(IpAddressAttributeType.class));
 	}
 
 	@Test
