@@ -35,6 +35,8 @@ public interface CMDataView {
 
 	CMClass updateClass(CMClassDefinition definition);
 
+	void deleteClass(CMClass cmClass);
+
 	CMAttribute createAttribute(CMAttributeDefinition definition);
 
 	CMAttribute updateAttribute(CMAttributeDefinition definition);

@@ -4,8 +4,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ClassDefinitionTest extends DataDefinitionLogicTest {
@@ -131,6 +133,36 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedClass.getParent().getName(), equalTo(parent.getName()));
 		assertThat(updatedClass.getDescription(), equalTo(DESCRIPTION));
 		assertThat(updatedClass.isActive(), equalTo(false));
+	}
+
+	@Test
+	public void deletingUnexistingClassDoesNothing() throws Exception {
+		// given
+		// nothing
+
+		// when
+		dataDefinitionLogic().deleteOrDeactivateClass(a(newClass(CLASS_NAME)));
+
+		// then
+		// nothing happens, but at least no errors
+	}
+
+	@Test
+	public void deletingExistingClassWithNoData() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdateClass(a(newClass(CLASS_NAME)));
+
+		// when
+		dataDefinitionLogic().deleteOrDeactivateClass(a(newClass(CLASS_NAME)));
+
+		// then
+		assertThat(dataView().findClassByName(CLASS_NAME), is(nullValue()));
+	}
+
+	@Ignore
+	@Test
+	public void deletingExistingClassWithDataSetsTheClassAsNoActiveAndThrowsException() throws Exception {
+		fail("TODO");
 	}
 
 }

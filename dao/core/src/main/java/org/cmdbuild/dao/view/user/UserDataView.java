@@ -78,6 +78,11 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
+	public void deleteClass(final CMClass cmClass) {
+		dbView.deleteClass(cmClass);
+	}
+
+	@Override
 	public CMAttribute createAttribute(final CMAttributeDefinition definition) {
 		return UserAttribute.newInstance(this, dbView.createAttribute(definition));
 	}

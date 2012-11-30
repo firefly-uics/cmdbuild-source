@@ -131,6 +131,27 @@ public class DataDefinitionLogic implements Logic {
 		};
 	}
 
+	public void deleteOrDeactivateClass(final ClassDTO classDTO) {
+		logger.info("deleting class: {}", classDTO.toString());
+		final CMClass existingClass = view.findClassByName(classDTO.getName());
+		if (existingClass == null) {
+			logger.warn("class '{}' not found", classDTO.getName());
+			return;
+		}
+		try {
+			logger.warn("deleting existing class '{}'", classDTO.getName());
+			view.deleteClass(existingClass);
+		} catch (final ORMException e) {
+			logger.error("error deleting class", e);
+			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
+				logger.warn("class contains data");
+				view.updateClass(unactive(existingClass));
+			}
+			throw e;
+		}
+
+	}
+
 	public CMAttribute createOrUpdateAttribute(final AttributeDTO attributeDTO) {
 		logger.info("creating or updating attribute: {}", attributeDTO.toString());
 
@@ -148,7 +169,7 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdatedAttribute;
 	}
 
-	public void deleteOrDeactiveAttribute(final AttributeDTO attributeDTO) {
+	public void deleteOrDeactivateAttribute(final AttributeDTO attributeDTO) {
 		logger.info("deleting attribute: {}", attributeDTO.toString());
 		final CMClass owner = view.findClassById(attributeDTO.getOwner());
 		final CMAttribute attribute = owner.getAttribute(attributeDTO.getName());
@@ -278,6 +299,47 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public Mode getMode() {
 				return attributeDTO.getMode();
+			}
+
+		};
+	}
+
+	private CMClassDefinition unactive(final CMClass existingClass) {
+		return new CMClassDefinition() {
+
+			@Override
+			public Long getId() {
+				return existingClass.getId();
+			}
+
+			@Override
+			public String getName() {
+				return existingClass.getName();
+			}
+
+			@Override
+			public String getDescription() {
+				return existingClass.getDescription();
+			}
+
+			@Override
+			public CMClass getParent() {
+				return existingClass.getParent();
+			}
+
+			@Override
+			public boolean isSuperClass() {
+				return existingClass.isSuperclass();
+			}
+
+			@Override
+			public boolean isHoldingHistory() {
+				return existingClass.holdsHistory();
+			}
+
+			@Override
+			public boolean isActive() {
+				return false;
 			}
 
 		};

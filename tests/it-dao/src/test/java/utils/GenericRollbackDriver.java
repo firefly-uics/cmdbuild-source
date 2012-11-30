@@ -191,10 +191,6 @@ public class GenericRollbackDriver implements DBDriver {
 			innerDriver.deleteAttribute(createdAttribute);
 		}
 
-		public DBAttribute getCreatedAttribute() {
-			return createdAttribute;
-		}
-
 	}
 
 	private class UpdateAttribute extends Command<DBAttribute> {

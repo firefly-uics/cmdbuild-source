@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>test-main</artifactId>
 	<packaging>pom</packaging>
-	<name>CMDBuild Integration Tests</name>
+	<name>CMDBuild Integration Tests Container</name>
 	<description>
 		These projects contain tests that need a complex setup to run, and
 		perhaps also external running services like database servers.

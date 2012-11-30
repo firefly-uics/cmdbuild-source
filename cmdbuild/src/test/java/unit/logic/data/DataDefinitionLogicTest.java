@@ -79,7 +79,7 @@ public class DataDefinitionLogicTest {
 				.thenReturn(existingClass);
 
 		// when
-		dataDefinitionLogic.deleteOrDeactiveAttribute( //
+		dataDefinitionLogic.deleteOrDeactivateAttribute( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(existingClass.getId())));
 

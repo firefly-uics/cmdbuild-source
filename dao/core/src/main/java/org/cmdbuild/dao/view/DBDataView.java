@@ -74,6 +74,11 @@ public class DBDataView extends QueryExecutorDataView {
 		return driver.updateClass(adaptDefinition(definition));
 	}
 
+	@Override
+	public void deleteClass(final CMClass cmClass) {
+		driver.deleteClass(cmToDbClass(cmClass));
+	}
+
 	private DBClassDefinition adaptDefinition(final CMClassDefinition definition) {
 		return new DBClassDefinition() {
 
