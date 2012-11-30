@@ -14,6 +14,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.WorkflowLogger;
+import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
 import org.cmdbuild.services.SessionVars;
@@ -132,6 +133,10 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static DataAccessLogic getDataAccessLogic(final UserContext userCtx) {
 		return new DataAccessLogic(getUserContextView(userCtx));
+	}
+	
+	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userCtx) {
+		return new DataDefinitionLogic(getUserContextView(userCtx));
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {

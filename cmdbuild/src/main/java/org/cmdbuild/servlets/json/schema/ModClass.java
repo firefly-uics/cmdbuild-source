@@ -25,7 +25,6 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
@@ -256,6 +255,7 @@ public class ModClass extends JSONBase {
 
 	@JSONExported
 	public JSONObject saveTable( //
+			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter(value = "name", required = false) final String name, //
 			@Parameter("description") final String description, //
@@ -279,7 +279,7 @@ public class ModClass extends JSONBase {
 				.thatIsHoldingHistory(isSimpleTable) //
 				.thatIsActive(isActive) //
 				.build();
-		final DataDefinitionLogic ddl = new DataDefinitionLogic(dataView);
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
 		final CMClass cmClass = ddl.createOrUpdateClass(classDTO);
 		final JSONObject result = Serializer.serialize(cmClass);
 		serializer.put("table", result);
@@ -287,16 +287,15 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject deleteTable(final JSONObject serializer, final ITable table) throws JSONException, CMDBException {
-		try {
-			table.delete();
-		} catch (final ORMException e) {
-			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
-				table.setStatus(SchemaStatus.NOTACTIVE);
-				table.save();
-			}
-			throw e;
-		}
+	public JSONObject deleteTable( //
+			final UserContext userContext, //
+			final JSONObject serializer, //
+			final ITable table) throws JSONException, CMDBException {
+		final ClassDTO classDTO = ClassDTO.newClassDTO() //
+				.withName(table.getName()) //
+				.build();
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+		ddl.deleteOrDeactivateClass(classDTO);
 		return serializer;
 	}
 
@@ -339,6 +338,7 @@ public class ModClass extends JSONBase {
 	// TODO AUTHORIZATION ON ATTRIBUTES IS NEVER CHECKED!
 	@JSONExported
 	public JSONObject saveAttribute( //
+			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter(value = "name", required = false) final String name, //
 			@Parameter(value = "type", required = false) final String attributeTypeString, //
@@ -390,8 +390,7 @@ public class ModClass extends JSONBase {
 				// @Parameter(value = "editorType", required = false) String
 				// editorType, //
 				.build();
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final DataDefinitionLogic ddl = new DataDefinitionLogic(dataView);
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
 		final CMAttribute cmAttribute = ddl.createOrUpdateAttribute(attributeDTO);
 		final JSONObject result = Serializer.serialize(cmAttribute);
 		serializer.put("attribute", result);
@@ -425,6 +424,7 @@ public class ModClass extends JSONBase {
 
 	@JSONExported
 	public JSONObject deleteAttribute( //
+			final UserContext userContext, //
 			final JSONObject serializer, //
 			@Parameter("name") final String attributeName, //
 			final BaseSchema table //
@@ -433,8 +433,7 @@ public class ModClass extends JSONBase {
 				.withName(attributeName) //
 				.withOwner(Long.valueOf(table.getId())) //
 				.build();
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final DataDefinitionLogic ddl = new DataDefinitionLogic(dataView);
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
 		ddl.deleteOrDeactivateAttribute(attributeDTO);
 		return serializer;
 	}
