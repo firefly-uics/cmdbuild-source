@@ -16,8 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Login extends JSONBase {
-	
-	private final AuthenticationLogic authLogic = applicationContext.getBean(AuthenticationLogic.class);
 
 	@JSONExported
 	@Unauthorized
@@ -26,6 +24,7 @@ public class Login extends JSONBase {
 			@Parameter(value = "password", required = false) final String password, //
 			@Parameter(value = "role", required = false) final String groupName) throws JSONException {
 
+		AuthenticationLogic authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final LoginDTOBuilder builder = LoginDTO.newInstanceBuilder();
 		final LoginDTO loginDTO = builder.withLoginString(loginString)//
 				.withPassword(password)//
@@ -60,12 +59,11 @@ public class Login extends JSONBase {
 		}
 		return jsonGroups;
 	}
-	
-	
+
 	// Used by index.jsp
 	public static JSONArray serializeGroupForLogin(Collection<Group> groups) throws JSONException {
-		JSONArray jsonGroups = new JSONArray(); 
-		for(Group group : groups) {
+		JSONArray jsonGroups = new JSONArray();
+		for (Group group : groups) {
 			JSONObject jsonGroup = new JSONObject();
 			jsonGroup.put("name", group.getId());
 			jsonGroup.put("description", group.getDescription());
@@ -73,6 +71,5 @@ public class Login extends JSONBase {
 		}
 		return jsonGroups;
 	}
-	
 
 }

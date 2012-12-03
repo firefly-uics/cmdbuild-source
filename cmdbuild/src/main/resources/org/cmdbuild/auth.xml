@@ -26,6 +26,10 @@
 		once, and it can't contain session beans <bean id="sessionStore" class="org.cmdbuild.???" 
 		/> -->
 	<bean id="sessionStore" class="org.cmdbuild.services.SessionVars" />
+	
+	<bean id="dbGroupFetcher" class="org.cmdbuild.auth.DBGroupFetcher">
+		<constructor-arg ref="dbDataView"/>
+	</bean>
 
 	<!-- TODO: how? <bean id="authenticatedUser" ... scope="session" /> -->
 	<bean id="authenticatedUser" factory-bean="sessionStore"
@@ -59,6 +63,7 @@
 				<!-- ref bean="domainUserFetcher"/ -->
 			</list>
 		</property>
+		<property name="groupFetcher" ref="dbGroupFetcher"/>
 		<property name="userStore" ref="sessionStore" />
 	</bean>
 
