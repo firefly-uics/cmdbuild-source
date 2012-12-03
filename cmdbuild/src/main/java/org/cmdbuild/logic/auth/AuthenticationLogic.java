@@ -16,6 +16,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 
 /**
@@ -153,6 +154,14 @@ public class AuthenticationLogic {
 		final CMUser user = authService.fetchUserByUsername(loginString);
 		return user.getGroups();
 	}
+	
+	public CMUser getUserWithId(Long userId) {
+		return authService.fetchUserById(userId);
+	}
+	
+	public Iterable<CMGroup> getAllGroups() {
+		return authService.fetchAllGroups();
+	}
 
 	// private static Iterable<IRelation> getGroupRelationsForUser(final int
 	// userId) {
@@ -200,10 +209,13 @@ public class AuthenticationLogic {
 	// }
 	// }
 
+	//FIXME: method not implemented correctly...fix it
 	public static boolean isLoggedIn(final HttpServletRequest request) throws RedirectException {
 
-		// AuthenticatedUser authUser = new SessionVars().getUser();
-		// if (authUser.isAnonymous() || )
+		 OperationUser operationUser = new SessionVars().getUser();
+		 if (operationUser != null && operationUser.getAuthenticatedUser().isAnonymous()) {
+			 return false;
+		 }
 
 		// TODO: see in the history what did headerAuth method do....
 
@@ -218,7 +230,7 @@ public class AuthenticationLogic {
 		// return (userCtx != null || doAutoLogin());
 		// return new SessionVars().getUser().isValid(); // isAnonymous +
 		// doAutoLogin
-		return false;
+		return true;
 	}
 
 	public static void assureAdmin(final HttpServletRequest request, final AdminAccess adminAccess) {
@@ -233,7 +245,7 @@ public class AuthenticationLogic {
 		// !demoModeAdmin.equals(userCtx.getUsername()))
 		// throw AuthExceptionType.AUTH_DEMO_MODE.createException();
 		// }
-		throw new UnsupportedOperationException("Working on it!");
+//		throw new UnsupportedOperationException("Working on it!");
 	}
 
 	private static boolean doAutoLogin() {

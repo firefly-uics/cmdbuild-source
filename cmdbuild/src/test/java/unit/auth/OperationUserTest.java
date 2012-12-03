@@ -47,12 +47,12 @@ public class OperationUserTest {
 
 		};
 
-		g1 = GroupImpl.newInstanceBuilder().withName("g1") //
+		g1 = GroupImpl.newInstance().withName("g1") //
 				.withPrivilege(new PrivilegePair(po1, DefaultPrivileges.READ)) //
 				.withPrivilege(new PrivilegePair(new SimplePrivilege())) //
 				.build();
 
-		g2 = GroupImpl.newInstanceBuilder().withName("g2") //
+		g2 = GroupImpl.newInstance().withName("g2") //
 				.withPrivilege(new PrivilegePair(po1, DefaultPrivileges.WRITE)) //
 				.withPrivilege(new PrivilegePair(new SimplePrivilege())) //
 				.build();
