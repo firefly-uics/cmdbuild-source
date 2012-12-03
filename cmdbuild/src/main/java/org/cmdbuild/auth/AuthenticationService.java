@@ -5,6 +5,7 @@ import java.util.List;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.DefaultAuthenticationService.ClientAuthenticatorResponse;
 import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -16,6 +17,8 @@ public interface AuthenticationService {
 	public void setClientRequestAuthenticators(final ClientRequestAuthenticator... clientRequestAuthenticators);
 
 	public void setUserFetchers(final UserFetcher... userFetchers);
+	
+	public void setGroupFetcher(final GroupFetcher groupFetcher);
 
 	public void setUserStore(final UserStore userStore);
 
@@ -87,5 +90,11 @@ public interface AuthenticationService {
 	 *         with that username
 	 */
 	public CMUser fetchUserByUsername(String username);
+	
+	/**
+	 * 
+	 * @return a collection of all groups stored in the database
+	 */
+	public Iterable<CMGroup> fetchAllGroups();
 
 }

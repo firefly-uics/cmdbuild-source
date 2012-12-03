@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -92,28 +94,33 @@ public class Serializer {
 		return serializeCard(card, printReserved, true, false);
 	}
 
-	private static JSONObject serializeCard(ICard card,
-			boolean printReserved, boolean printPrivileges, boolean normalize) {
+	private static JSONObject serializeCard(ICard card, boolean printReserved, boolean printPrivileges,
+			boolean normalize) {
 		JSONObject jsoncard = new JSONObject();
 		try {
-			for(String attributeName : card.getAttributeValueMap().keySet()) {
+			for (String attributeName : card.getAttributeValueMap().keySet()) {
 				AttributeValue value = card.getAttributeValue(attributeName);
-				if(value != null) {
+				if (value != null) {
 					IAttribute attribute = value.getSchema();
-					if (!printReserved && attribute.getMode().equals(Mode.RESERVED) &&
-							!(attributeName.equals(ICard.CardAttributes.Id.toString()) ||
-								!attribute.getStatus().isActive() || // skip inactive attributes
-								attributeName.equals(ICard.CardAttributes.Notes.toString()) // Notes is reserved!
+					if (!printReserved
+							&& attribute.getMode().equals(Mode.RESERVED)
+							&& !(attributeName.equals(ICard.CardAttributes.Id.toString())
+									|| !attribute.getStatus().isActive() || // skip
+																			// inactive
+																			// attributes
+							attributeName.equals(ICard.CardAttributes.Notes.toString()) // Notes
+																						// is
+																						// reserved!
 							))
 						continue;
 					Integer id = value.getId();
 					String valueString = value.toString();
 					if (normalize) {
-						valueString = valueString.replace("\n", " "); 
+						valueString = valueString.replace("\n", " ");
 					}
 					if (id != null) {
-//						jsoncard.put(attributeName, id);
-//						jsoncard.put(attributeName+"_value", valueString);
+						// jsoncard.put(attributeName, id);
+						// jsoncard.put(attributeName+"_value", valueString);
 						JSONObject a = new JSONObject();
 						a.put("id", id);
 						a.put("description", valueString);
@@ -123,12 +130,13 @@ public class Serializer {
 					}
 				}
 			}
-			jsoncard.put(ICard.CardAttributes.ClassId.toString(), card.getSchema().getId()); // put classId
-			jsoncard.put(ICard.CardAttributes.ClassId.toString()+"_value", card.getSchema().getDescription());
+			jsoncard.put(ICard.CardAttributes.ClassId.toString(), card.getSchema().getId()); // put
+																								// classId
+			jsoncard.put(ICard.CardAttributes.ClassId.toString() + "_value", card.getSchema().getDescription());
 			if (printPrivileges) {
 				addMetadataAndAccessPrivileges(jsoncard, card.getSchema());
 			}
-		} catch(JSONException e){
+		} catch (JSONException e) {
 			Log.JSONRPC.error("Error serializing card", e);
 		}
 		return jsoncard;
@@ -184,7 +192,7 @@ public class Serializer {
 				serializer.put("CardCode", destCard.getCode());
 				serializer.put("CardDescription", destCard.getDescription());
 			}
-		} catch(JSONException e){
+		} catch (JSONException e) {
 			Log.JSONRPC.error("Error serializing relation", e);
 		}
 		return serializer;
@@ -226,13 +234,14 @@ public class Serializer {
 		}
 		return jsonMetadata;
 	}
+
 	public static JSONObject serializeLookup(Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
 	}
 
 	public static JSONObject serializeLookup(Lookup lookup, boolean shortForm) throws JSONException {
 		JSONObject serializer = null;
-		if(lookup!=null) {
+		if (lookup != null) {
 			serializer = new JSONObject();
 			serializer.put("Id", lookup.getId());
 			serializer.put("Description", lookup.getDescription());
@@ -247,7 +256,7 @@ public class Serializer {
 			}
 
 			Lookup parent = lookup.getParent();
-			if(parent!=null) {
+			if (parent != null) {
 				serializer.put("ParentId", parent.getId());
 				if (!shortForm) {
 					serializer.put("ParentDescription", parent.getDescription());
@@ -262,13 +271,14 @@ public class Serializer {
 		JSONObject row = new JSONObject();
 		row.put("description", lookupType.getType());
 		row.put("parent", lookupType.getParentTypeName());
-		row.put("orig_type", lookupType.getType()); //used if someone want to modify the type name
+		row.put("orig_type", lookupType.getType()); // used if someone want to
+													// modify the type name
 		return row;
 	}
-	
+
 	public static JSONObject serializeLookupParent(Lookup lookup) throws JSONException {
 		JSONObject serializer = null;
-		if (lookup!=null) {
+		if (lookup != null) {
 			serializer = new JSONObject();
 			serializer.put("ParentId", lookup.getId());
 			serializer.put("ParentDescription", lookup.getDescription());
@@ -282,7 +292,7 @@ public class Serializer {
 		serializer.put("text", lookupType.getType());
 		serializer.put("type", "lookuptype");
 		serializer.put("selectable", true);
-		
+
 		if (lookupType.getParentTypeName() != null) {
 			serializer.put("parent", lookupType.getParentTypeName());
 		}
@@ -292,7 +302,7 @@ public class Serializer {
 	/*
 	 * Administration
 	 */
-	
+
 	public static JSONObject serialize(final CMAttribute attribute) throws JSONException {
 		JSONObject jattr = new JSONObject();
 		// TODO
@@ -303,59 +313,59 @@ public class Serializer {
 		jattr.put("isbasedsp", attribute.isDisplayableInList());
 		jattr.put("isunique", attribute.isUnique());
 		jattr.put("isnotnull", attribute.isMandatory());
-//		jattr.put("inherited", !attribute.isLocal());
-//		jattr.put("index", attribute.getIndex());
-//		jattr.put("group", attribute.getGroup());
-//
-//		int absoluteClassOrder = attribute.getClassOrder();
-//		int classOrderSign;
-//		if (absoluteClassOrder == 0) {
-//			classOrderSign = 0;
-//			// to manage the sorting in the AttributeGridForSorting
-//			absoluteClassOrder = 10000;
-//		} else if (absoluteClassOrder > 0) {
-//			classOrderSign = 1;
-//		} else {
-//			classOrderSign = -1;
-//			absoluteClassOrder *= -1;
-//		}
-//		jattr.put("classOrderSign", classOrderSign);
-//		jattr.put("absoluteClassOrder", absoluteClassOrder);
-//		jattr.put("len", attribute.getLength());
-//		jattr.put("precision", attribute.getPrecision());
-//		jattr.put("scale", attribute.getScale());
-//		jattr.put("defaultvalue", attribute.getDefaultValue());
+		// jattr.put("inherited", !attribute.isLocal());
+		// jattr.put("index", attribute.getIndex());
+		// jattr.put("group", attribute.getGroup());
+		//
+		// int absoluteClassOrder = attribute.getClassOrder();
+		// int classOrderSign;
+		// if (absoluteClassOrder == 0) {
+		// classOrderSign = 0;
+		// // to manage the sorting in the AttributeGridForSorting
+		// absoluteClassOrder = 10000;
+		// } else if (absoluteClassOrder > 0) {
+		// classOrderSign = 1;
+		// } else {
+		// classOrderSign = -1;
+		// absoluteClassOrder *= -1;
+		// }
+		// jattr.put("classOrderSign", classOrderSign);
+		// jattr.put("absoluteClassOrder", absoluteClassOrder);
+		// jattr.put("len", attribute.getLength());
+		// jattr.put("precision", attribute.getPrecision());
+		// jattr.put("scale", attribute.getScale());
+		// jattr.put("defaultvalue", attribute.getDefaultValue());
 		jattr.put("isactive", attribute.isActive());
 		jattr.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
-//		jattr.put("editorType", attribute.getEditorType());
-//		switch (attribute.getType()) {
-//		case LOOKUP:
-//			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
-//			LookupType lt = attribute.getLookupType();
-//			JSONArray lookupChain = new JSONArray();
-//			while (lt != null) {
-//				if (lookupChain.length() == 0) {
-//					jattr.put("lookup", lt.getType());
-//				}
-//				lookupChain.put(lt.getType());
-//				lt = lt.getParentType();
-//			}
-//			jattr.put("lookupchain", lookupChain);
-//			break;
-//		case REFERENCE:
-//			ITable reftable = attribute.getReferenceTarget();
-//			jattr.put("referencedClassName", reftable.getName());
-//			jattr.put("referencedIdClass", reftable.getId());
-//			jattr.put("fieldFilter", attribute.getFilter());
-//			jattr.put("domainDirection", attribute.isReferenceDirect());
-//			jattr.put("idDomain", attribute.getReferenceDomain().getId());
-//			break;
-//
-//		case FOREIGNKEY:
-//			jattr.put("fkDestination", attribute.getFKTargetClass().getId());
-//			break;
-//		}
-//		addMetadata(jattr, attribute);
+		// jattr.put("editorType", attribute.getEditorType());
+		// switch (attribute.getType()) {
+		// case LOOKUP:
+		// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
+		// LookupType lt = attribute.getLookupType();
+		// JSONArray lookupChain = new JSONArray();
+		// while (lt != null) {
+		// if (lookupChain.length() == 0) {
+		// jattr.put("lookup", lt.getType());
+		// }
+		// lookupChain.put(lt.getType());
+		// lt = lt.getParentType();
+		// }
+		// jattr.put("lookupchain", lookupChain);
+		// break;
+		// case REFERENCE:
+		// ITable reftable = attribute.getReferenceTarget();
+		// jattr.put("referencedClassName", reftable.getName());
+		// jattr.put("referencedIdClass", reftable.getId());
+		// jattr.put("fieldFilter", attribute.getFilter());
+		// jattr.put("domainDirection", attribute.isReferenceDirect());
+		// jattr.put("idDomain", attribute.getReferenceDomain().getId());
+		// break;
+		//
+		// case FOREIGNKEY:
+		// jattr.put("fkDestination", attribute.getFKTargetClass().getId());
+		// break;
+		// }
+		// addMetadata(jattr, attribute);
 		return jattr;
 	}
 
@@ -450,7 +460,7 @@ public class Serializer {
 		addMetadataAndAccessPrivileges(jsonobj, domain);
 		return jsonobj;
 	}
-	
+
 	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
 		JSONObject jsonDomain = serializeDomain(domain, false);
 		if (table != null) {
@@ -464,15 +474,18 @@ public class Serializer {
 		JSONObject jsonTableTree = serializeTable(table);
 		if (jsonTableTree != null) {
 			if (node.getNumberOfChildren() > 0) {
-				for(CNode<ITable> child : node.getChildren()) {
+				for (CNode<ITable> child : node.getChildren()) {
 					JSONObject jsonChild = serializeTableTree(child);
 					if (jsonChild != null) {
 						jsonTableTree.append("children", jsonChild);
 					}
 				}
 			}
-			
-			boolean hasChildren = jsonTableTree.has("children"); // children might be without xpdl
+
+			boolean hasChildren = jsonTableTree.has("children"); // children
+																	// might be
+																	// without
+																	// xpdl
 			jsonTableTree.put("leaf", !hasChildren);
 		}
 		return jsonTableTree;
@@ -490,11 +503,12 @@ public class Serializer {
 		}
 
 		// add this to look in the XPDL if the current user has
-		// the privileges to start the process and ignore the table privileges (priv_create)
+		// the privileges to start the process and ignore the table privileges
+		// (priv_create)
 		jsonProcess.put("startable", isStartable);
 		return jsonProcess;
 	}
-	
+
 	public static JSONObject serialize(CMClass cmClass) throws JSONException {
 		JSONObject jsonTable = new JSONObject();
 
@@ -524,19 +538,19 @@ public class Serializer {
 	}
 
 	/**
-	 *  @deprecated use  serialize(CMClass) instead.
+	 * @deprecated use serialize(CMClass) instead.
 	 */
 	@Deprecated
 	public static JSONObject serializeTable(ITable table) throws JSONException {
 		JSONObject jsonTable = new JSONObject();
-		
+
 		if (table.isActivity()) {
 			jsonTable.put("type", "processclass");
 			jsonTable.put("userstoppable", table.isUserStoppable());
 		} else {
 			jsonTable.put("type", "class");
 		}
-		
+
 		jsonTable.put("id", table.getId());
 		jsonTable.put("name", table.getName());
 		jsonTable.put("text", table.getDescription());
@@ -554,17 +568,17 @@ public class Serializer {
 		} else {
 			jsonTable.put("selectable", true);
 		}
-		
+
 		addMetadataAndAccessPrivileges(jsonTable, table);
 		addGeoFeatureTypes(jsonTable, table);
 		addParent(table, jsonTable);
 		return jsonTable;
 	}
-	
+
 	private static void addGeoFeatureTypes(JSONObject jsonTable, ITable table) throws JSONException {
 		JSONArray jsonFeatureTypes = new JSONArray();
 		GeoTable geoMasterClass = new GeoTable(table);
-		for (GeoLayer layer: geoMasterClass.getVisibleOrOwnLayers()) {
+		for (GeoLayer layer : geoMasterClass.getVisibleOrOwnLayers()) {
 			jsonFeatureTypes.put(serializeGeoLayer(layer, table));
 		}
 		JSONObject jsonMeta = (JSONObject) jsonTable.get("meta");
@@ -578,7 +592,7 @@ public class Serializer {
 	public static JSONArray serializeGeoLayers(List<? extends GeoLayer> geoLayers, ITable tableForVisibility)
 			throws JSONException {
 		JSONArray jsonLayers = new JSONArray();
-		for (GeoLayer geoLayer: geoLayers) {
+		for (GeoLayer geoLayer : geoLayers) {
 			jsonLayers.put(serializeGeoLayer(geoLayer, tableForVisibility));
 		}
 		return jsonLayers;
@@ -607,7 +621,7 @@ public class Serializer {
 		}
 		return jsonGeoLayer;
 	}
-	
+
 	// FIXME really needed in this way?
 	private static void addParent(final CMClass target, final JSONObject jsonTable) throws JSONException {
 		final boolean isSimpleClass = target.holdsHistory();
@@ -619,7 +633,7 @@ public class Serializer {
 	}
 
 	/**
-	 *  @deprecated use  addParent(CMClass, JSONObject) instead.
+	 * @deprecated use addParent(CMClass, JSONObject) instead.
 	 */
 	@Deprecated
 	private static void addParent(ITable table, JSONObject jsonTable) throws JSONException {
@@ -631,9 +645,7 @@ public class Serializer {
 			// If the table has no parent
 		}
 	}
-	
-	
-	
+
 	private static void addMetadataAndAccessPrivileges(JSONObject serializer, BaseSchema schema) throws JSONException {
 		addMetadata(serializer, schema);
 		addAccessPrivileges(serializer, schema);
@@ -647,7 +659,7 @@ public class Serializer {
 		}
 		serializer.put("meta", jsonMetadata);
 	}
-	
+
 	private static void addAccessPrivileges(JSONObject serializer, BaseSchema schema) throws JSONException {
 		Object privileges = schema.getMetadata().get(MetadataService.RUNTIME_PRIVILEGES_KEY);
 		if (privileges != null) {
@@ -663,7 +675,7 @@ public class Serializer {
 
 	public static JSONArray buildJsonAvaiableMenuItems() throws JSONException {
 		JSONArray jsonAvaiableItems = new JSONArray();
-		
+
 		JSONObject jsonClassesFolder = new JSONObject();
 		JSONObject jsonReportsFolder = new JSONObject();
 		JSONObject jsonProcessFolder = new JSONObject();
@@ -673,7 +685,7 @@ public class Serializer {
 		jsonClassesFolder.put("id", AVAILABLE_CLASS);
 		jsonClassesFolder.put("iconCls", "cmdbuild-tree-folder-icon");
 		jsonClassesFolder.put("cmIndex", 1);
-		
+
 		jsonProcessFolder.put("text", "processclass");
 		jsonProcessFolder.put("id", AVAILABLE_PROCESS_CLASS);
 		jsonProcessFolder.put("iconCls", "cmdbuild-tree-folder-icon");
@@ -693,10 +705,10 @@ public class Serializer {
 		jsonAvaiableItems.put(jsonClassesFolder);
 		jsonAvaiableItems.put(jsonProcessFolder);
 		jsonAvaiableItems.put(jsonDashboardsFolder);
-		
+
 		return jsonAvaiableItems;
 	}
-	
+
 	public static JSONObject serializeReportForMenu(ReportCard report, String type) throws JSONException {
 		JSONObject jsonReport = new JSONObject();
 		jsonReport.put("text", report.getDescription());
@@ -705,12 +717,11 @@ public class Serializer {
 		jsonReport.put("type", type);
 		jsonReport.put("subtype", report.getType().toString().toLowerCase());
 		jsonReport.put("objid", report.getId());
-		jsonReport.put("id", report.getId()+type);
+		jsonReport.put("id", report.getId() + type);
 		jsonReport.put("leaf", true);
 		return jsonReport;
 	}
-	
-	
+
 	public static JSONObject serializeExtentedProperties(ITable table) throws JSONException {
 		JSONObject serializer = new JSONObject();
 		Map<String, Object> xp = table.getMetadata();
@@ -719,12 +730,11 @@ public class Serializer {
 		}
 		return serializer;
 	}
-	
-	public static JSONArray serializeAttributeList(
-			BaseSchema table, boolean active) throws JSONException {
+
+	public static JSONArray serializeAttributeList(BaseSchema table, boolean active) throws JSONException {
 		List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
 		JSONArray attributeList = new JSONArray();
-		for(IAttribute attribute : sortedAttributes){
+		for (IAttribute attribute : sortedAttributes) {
 			if (attribute.getMode().equals(Mode.RESERVED))
 				continue;
 			if (active && !attribute.getStatus().isActive())
@@ -733,10 +743,10 @@ public class Serializer {
 		}
 		return attributeList;
 	}
-	
+
 	/*
-	 * we sort attributes on the class order and index number
-	 * because Ext.JS DOES NOT ALLOW IT. Thanks Jack!
+	 * we sort attributes on the class order and index number because Ext.JS
+	 * DOES NOT ALLOW IT. Thanks Jack!
 	 */
 	private static List<IAttribute> sortAttributes(Collection<IAttribute> attributeCollection) {
 		List<IAttribute> sortedAttributes = new LinkedList<IAttribute>();
@@ -767,25 +777,48 @@ public class Serializer {
 		jsonGroup.put("type", "group");
 		return jsonGroup;
 	}
+	
+	public static JSONObject serializeGroup(CMGroup group) throws JSONException {
+		JSONObject jsonGroup = new JSONObject();
+		jsonGroup.put("id", group.getId());
+		jsonGroup.put("name", group.getName());
+		jsonGroup.put("description", group.getDescription());
+		jsonGroup.put("email", group.getEmail());
+		jsonGroup.put("isAdministrator", group.isAdmin());
+		jsonGroup.put("startingClass", group.getStartingClassId());
+		jsonGroup.put("isActive", group.isActive());
+		jsonGroup.put("text", group.getDescription());
+		jsonGroup.put("selectable", true);
+		jsonGroup.put("type", "group");
+		return jsonGroup;
+	}
 
-	public static JSONObject serializeGroup(Group group) throws JSONException {
-		JSONObject row = new JSONObject();
-		row.put("id", group.getId());
-		row.put("description", group.getDescription());
-		row.put("isdefault", group.isDefault());
-		return row;
+	public static JSONArray serializeGroupsForUser(CMUser user) throws JSONException {
+		JSONArray jsonGroupList = new JSONArray();
+		for (CMGroup group : user.getGroups()) {
+			JSONObject row = new JSONObject();
+			row.put("id", group.getId());
+			row.put("description", group.getDescription());
+			if (user.getDefaultGroupName().equalsIgnoreCase(group.getName())) {
+				row.put("isdefault", true);
+			} else {
+				row.put("isdefault", false);
+			}
+			jsonGroupList.put(row);
+		}
+		return jsonGroupList;
 	}
 
 	public static JSONArray serializeGroupList(boolean onlyActive, String type) throws JSONException {
 		JSONArray jsonGroups = new JSONArray();
 		Iterable<GroupCard> list = new LinkedList<GroupCard>();
-		
+
 		if (onlyActive) {
 			list = GroupCard.allActive();
 		} else {
 			list = GroupCard.all();
 		}
-		
+
 		for (GroupCard group : list) {
 			JSONObject jsonGroup = new JSONObject();
 			jsonGroup.put("id", group.getId());
@@ -793,37 +826,39 @@ public class Serializer {
 			jsonGroup.put("leaf", true);
 			jsonGroup.put("selectable", true);
 			jsonGroup.put("type", type);
-			
+
 			jsonGroups.put(jsonGroup);
 		}
 		return jsonGroups;
 	}
-	
+
 	public static JSONObject serializePrivilege(PrivilegeCard privilege, ITableFactory tf) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put("groupId", privilege.getGroupId());
 		if (privilege.getMode().equals(PrivilegeType.WRITE)) {
-			row.put("privilege_mode",  "write_privilege");
-			row.put("write_privilege",  true);
+			row.put("privilege_mode", "write_privilege");
+			row.put("write_privilege", true);
 		} else if (privilege.getMode().equals(PrivilegeType.READ)) {
 			row.put("privilege_mode", "read_privilege");
-			row.put("read_privilege",  true);
+			row.put("read_privilege", true);
 		} else {
 			row.put("privilege_mode", "none_privilege");
-			row.put("none_privilege",  true);
+			row.put("none_privilege", true);
 		}
 		row.put("classname", tf.get(privilege.getGrantedClassId()).getDescription());
 		row.put("classid", tf.get(privilege.getGrantedClassId()).getId());
 		return row;
 	}
-	
-	public static JSONArray serializePrivilegeList(Iterable<PrivilegeCard> privileges, ITableFactory tf) throws JSONException {
+
+	public static JSONArray serializePrivilegeList(Iterable<PrivilegeCard> privileges, ITableFactory tf)
+			throws JSONException {
 		JSONArray privilegeList = new JSONArray();
-		for(PrivilegeCard privilege : privileges){
+		for (PrivilegeCard privilege : privileges) {
 			try {
 				privilegeList.put(Serializer.serializePrivilege(privilege, tf));
 			} catch (NotFoundException e) {
-				Log.PERSISTENCE.warn("Class OID not found ("+privilege.getGrantedClassId()+") while searching for grant for group "+privilege.getGroupId());
+				Log.PERSISTENCE.warn("Class OID not found (" + privilege.getGrantedClassId()
+						+ ") while searching for grant for group " + privilege.getGroupId());
 			}
 		}
 		return privilegeList;
@@ -838,22 +873,23 @@ public class Serializer {
 		row.put("isactive", user.getStatus().isActive());
 		return row;
 	}
-	
+
 	public static <T extends ICard> JSONArray serializeUserList(Iterable<T> users) throws JSONException {
 		JSONArray userList = new JSONArray();
-		for(ICard ucard : users){
+		for (ICard ucard : users) {
 			userList.put(Serializer.serializeUser(new UserCard(ucard)));
 		}
 		return userList;
 	}
-	
-	public static JSONArray serializeMenuList(Iterable<MenuCard> menuList, UserContext userCtx, Set<Integer> availableReports) throws JSONException {
+
+	public static JSONArray serializeMenuList(Iterable<MenuCard> menuList, UserContext userCtx,
+			Set<Integer> availableReports) throws JSONException {
 		JSONArray jsonMenuList = new JSONArray();
-		
-		for (MenuCard menu: menuList) {
+
+		for (MenuCard menu : menuList) {
 			boolean isFolder = true;
 			JSONObject jsonMenu = new JSONObject();
-			
+
 			if (menu.getCode() != null) {
 				isFolder = menu.getCode().equals(MenuCodeType.FOLDER.getCodeType());
 				if (menu.isReport()) {
@@ -887,18 +923,22 @@ public class Serializer {
 			if (menu.isReport()) {
 				jsonMenu.put("objid", menu.getElementObjId());
 			}
-			
-			if (menu.getElementClassId()!=0) {
+
+			if (menu.getElementClassId() != 0) {
 				if (menu.isReport()) {
-					jsonMenu.put("id", menu.getElementObjId()+menu.getCode()); //must be unique - and for report ElementClassId is always "Report" and there are two ElementObjId for each report
+					/**
+					 * must be unique - and for report ElementClassId is always
+					 * "Report" and there are two ElementObjId for each report
+					 */
+					jsonMenu.put("id", menu.getElementObjId() + menu.getCode());
 				} else {
 					jsonMenu.put("id", menu.getElementClassId());
 				}
 			}
-			if (!jsonMenu.has("id")) { //this should be for folders
+			if (!jsonMenu.has("id")) { // this should be for folders
 				jsonMenu.put("id", menu.getId());
 			}
-			
+
 			if (menu.getParentId() > 0) {
 				jsonMenu.put("parent", menu.getParentId());
 			}
@@ -908,14 +948,14 @@ public class Serializer {
 			jsonMenu.put("selectable", !isFolder);
 			jsonMenuList.put(jsonMenu);
 		}
-		
+
 		return jsonMenuList;
 	}
 
 	public static JSONObject serializeProcessAttributeHistory(ICard card, CardQuery cardQuery) throws JSONException {
 		JsonProcessAttributeHistoryFormatter formatter = new JsonProcessAttributeHistoryFormatter();
 		formatter.addCard(card);
-		for (ICard historyCard: cardQuery) {
+		for (ICard historyCard : cardQuery) {
 			final String processCode = historyCard.getCode();
 			if (processCode != null && processCode.length() != 0) {
 				formatter.addCard(historyCard);
@@ -930,7 +970,7 @@ public class Serializer {
 			throws JSONException {
 		JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter();
 		formatter.addCard(card);
-		for (ICard historyCard: cardQuery) {
+		for (ICard historyCard : cardQuery) {
 			formatter.addCard(historyCard);
 		}
 		final JSONArray rows = jsonOutput.getJSONArray("rows");
@@ -975,14 +1015,15 @@ public class Serializer {
 			map.put("User", card.getUser());
 			map.put("Code", card.getCode());
 			map.put("BeginDate", card.getAttributeValue("BeginDate").toString());
-			
+
 			final Date endDateForSorting;
 			if (card.getSchema().getAttributes().containsKey("EndDate")) {
 				final AttributeValue endDateAttrVal = card.getAttributeValue("EndDate");
 				map.put("EndDate", endDateAttrVal.toString());
 				endDateForSorting = endDateAttrVal.getDate();
 			} else {
-				// Skip EndDate if not in history, but add a fake end date for sorting
+				// Skip EndDate if not in history, but add a fake end date for
+				// sorting
 				endDateForSorting = new Date();
 			}
 			map.put("_EndDate", endDateForSorting.getTime());
@@ -1000,8 +1041,10 @@ public class Serializer {
 
 		/**
 		 * 
-		 * @param card the card that you want to extract the history
-		 * @param previousCard the previous card in the cycle, the more recent
+		 * @param card
+		 *            the card that you want to extract the history
+		 * @param previousCard
+		 *            the previous card in the cycle, the more recent
 		 */
 		public ProcessHistoryItem(ICard card, ICard previousCard) {
 			super(card);
@@ -1016,7 +1059,7 @@ public class Serializer {
 				final String[] currentActivities = getActivityInstanceIds(card);
 				final String[] previousActivities = getActivityInstanceIds(previousCard);
 
-				for (int i=0; i<currentActivities.length; ++i) {
+				for (int i = 0; i < currentActivities.length; ++i) {
 					String id = currentActivities[i];
 					if (ArrayUtils.contains(previousActivities, id)) {
 						continue;
@@ -1036,7 +1079,8 @@ public class Serializer {
 		}
 
 		private String[] getActivityInstancePerformers(ICard card) {
-			return card.getAttributeValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName()).getStringArrayValue();
+			return card.getAttributeValue(ProcessAttributes.CurrentActivityPerformers.dbColumnName())
+					.getStringArrayValue();
 		}
 	}
 
@@ -1063,7 +1107,7 @@ public class Serializer {
 		out.put("WorkItemId", ai.getWorkItemId());
 		return out;
 	}
-	
+
 	public static void addAttachmentsData(final JSONObject jsonTable, ITable table, DmsLogic dmsLogic)
 			throws JSONException {
 		if (!DmsProperties.getInstance().isEnabled()) {
@@ -1091,5 +1135,5 @@ public class Serializer {
 			return Collections.emptyMap();
 		}
 	}
-	
+
 }
