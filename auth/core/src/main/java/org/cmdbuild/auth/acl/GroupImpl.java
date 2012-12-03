@@ -15,9 +15,12 @@ public class GroupImpl implements CMGroup {
 		private Long id;
 		private String name;
 		private String description;
+		private String email;
 		private List<PrivilegePair> privileges;
 		private Set<String> disabledModules;
 		private Long startingClassId;
+		private boolean isActive = true;
+		private boolean isAdmin = false;
 
 		private GroupImplBuilder() {
 			privileges = new ArrayList<PrivilegePair>();
@@ -36,6 +39,11 @@ public class GroupImpl implements CMGroup {
 
 		public GroupImplBuilder withDescription(final String description) {
 			this.description = description;
+			return this;
+		}
+		
+		public GroupImplBuilder withEmail(final String email) {
+			this.email = email;
 			return this;
 		}
 
@@ -58,6 +66,18 @@ public class GroupImpl implements CMGroup {
 			this.startingClassId = classId;
 			return this;
 		}
+		
+		public GroupImplBuilder active(final boolean isActive) {
+			this.isActive = isActive;
+			return this;
+		}
+		
+		public GroupImplBuilder administrator(final boolean isAdmin) {
+			this.isAdmin = isAdmin;
+			return this;
+		}
+		
+		
 
 		@Override
 		public GroupImpl build() {
@@ -72,17 +92,23 @@ public class GroupImpl implements CMGroup {
 	private final Long id;
 	private final String name;
 	private final String description;
+	private String email;
 	private final List<PrivilegePair> privileges;
 	private final Set<String> disabledModules;
 	private final Long startingClassId;
+	private boolean isActive = true;
+	private boolean isAdmin = false;
 
 	private GroupImpl(final GroupImplBuilder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
+		this.email = builder.email;
 		this.privileges = builder.privileges;
 		this.disabledModules = builder.disabledModules;
 		this.startingClassId = builder.startingClassId;
+		this.isActive = builder.isActive;
+		this.isAdmin = builder.isAdmin;
 	}
 
 	@Override
@@ -115,7 +141,22 @@ public class GroupImpl implements CMGroup {
 		return this.startingClassId;
 	}
 
-	public static GroupImplBuilder newInstanceBuilder() {
+	@Override
+	public String getEmail() {
+		return email;
+	}
+	
+	@Override
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+	
+	@Override
+	public boolean isActive() {
+		return isActive;
+	}
+	
+	public static GroupImplBuilder newInstance() {
 		return new GroupImplBuilder();
 	}
 
@@ -140,4 +181,5 @@ public class GroupImpl implements CMGroup {
 	public String toString() {
 		return String.format("[Group %s]", this.getName());
 	}
+
 }

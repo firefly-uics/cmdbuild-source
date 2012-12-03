@@ -9,6 +9,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
+import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.AuthenticatedUserImpl;
 import org.cmdbuild.auth.user.CMUser;
@@ -84,10 +85,10 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		}
 	};
 
-	// FIXME: maybe the userStore is no more used... remove it (?)
 	private PasswordAuthenticator[] passwordAuthenticators;
 	private ClientRequestAuthenticator[] clientRequestAuthenticators;
 	private UserFetcher[] userFetchers;
+	private GroupFetcher groupFetcher;
 	private UserStore userStore;
 
 	private final Set<String> serviceUsers;
@@ -135,6 +136,12 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public void setUserFetchers(final UserFetcher... userFetchers) {
 		Validate.noNullElements(userFetchers);
 		this.userFetchers = userFetchers;
+	}
+	
+	@Override
+	public void setGroupFetcher(final GroupFetcher groupFetcher) {
+		Validate.notNull(groupFetcher);
+		this.groupFetcher = groupFetcher;
 	}
 
 	@Override
@@ -290,6 +297,11 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public CMUser fetchUserByUsername(final String username) {
 		final Login login = Login.newInstance(username);
 		return fetchUser(login);
+	}
+	
+	@Override
+	public Iterable<CMGroup> fetchAllGroups() {
+		return groupFetcher.fetchAllGroups();
 	}
 
 }

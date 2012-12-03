@@ -21,7 +21,25 @@ public interface CMGroup {
 	String getName();
 
 	String getDescription();
+	
+	/**
+	 * 
+	 * @return the email address associated to this group
+	 */
+	String getEmail();
 
+	/**
+	 * 
+	 * @return true if this group is an administration group, false otherwise
+	 */
+	boolean isAdmin();
+	
+	/**
+	 * 
+	 * @return true if the group has the 'active' status, false otherwise
+	 */
+	boolean isActive();
+	
 	/**
 	 * Returns a set of disabled modules for this group.
 	 * 

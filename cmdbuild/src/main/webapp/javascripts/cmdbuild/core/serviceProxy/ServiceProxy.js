@@ -18,7 +18,7 @@ CMDBuild.ServiceProxy = {
 	doLogin : function(p) {
 		CMDBuild.Ajax.request( {
 			important: true,
-			url: "services/jsonng/auth/login",
+			url: "services/json/login/login",
 			method: "POST",
 			params: p.params,
 			success: p.success || Ext.emptyFn,

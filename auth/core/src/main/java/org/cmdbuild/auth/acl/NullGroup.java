@@ -42,7 +42,23 @@ public class NullGroup implements CMGroup {
 	}
 
 	@Override
+	public String getEmail() {
+		return "";
+	}
+	
+	@Override
+	public boolean isAdmin() {
+		return false;
+	}
+	
+	@Override
+	public boolean isActive() {
+		return false;
+	}
+	
+	@Override
 	public String toString() {
 		return String.format("[Group %s]", this.getName());
 	}
+
 }

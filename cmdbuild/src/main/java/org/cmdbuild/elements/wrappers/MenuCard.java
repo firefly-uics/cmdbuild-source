@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
+import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
@@ -285,6 +286,7 @@ public class MenuCard extends CardForwarder {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private static Iterable<ICard> getGroupMenuItems(final String groupName) {
 		final Iterable<ICard> list = UserOperations.from(UserContext.systemContext()).tables().get(MENU_CLASS_NAME)
 				.cards().list().filter(GROUP_NAME_ATTR, AttributeFilterType.EQUALS, groupName)
