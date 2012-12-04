@@ -3,18 +3,18 @@ package org.cmdbuild.services.gis.geoserver.commands;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.cmdbuild.services.gis.geoserver.GeoServerLayer;
+import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.utils.Command;
 import org.dom4j.Document;
 import org.dom4j.XPath;
 
-public class GetLayer extends AbstractGeoCommand implements Command<GeoServerLayer> {
+public class GetLayer extends AbstractGeoCommand implements Command<LayerMetadata> {
 
 	private final String name;
 
 	private static final Pattern storeNamePattern = java.util.regex.Pattern.compile("/([^/]+)/(featuretype|coverage)s/[^/]+$");
 
-	public static GeoServerLayer exec(final String name) {
+	public static LayerMetadata exec(final String name) {
 		return new GetLayer(name).run();
 	}
 
@@ -24,11 +24,13 @@ public class GetLayer extends AbstractGeoCommand implements Command<GeoServerLay
 	}
 
 	@Override
-	public GeoServerLayer run() {
+	public LayerMetadata run() {
 		final String url = String.format("%s/rest/layers/%s", getGeoServerURL(), name);
 		final Document xmlLayer = get(url);
 		final String dataStoreName = extractDataStoreName(xmlLayer);
-		return new GeoServerLayer(name, dataStoreName);
+		LayerMetadata lm = new LayerMetadata(name);
+		lm.setStoreName(dataStoreName);
+		return lm;
 	}
 
 	private String extractDataStoreName(final Document xmlLayer) {

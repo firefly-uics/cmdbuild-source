@@ -15,6 +15,7 @@ import org.cmdbuild.services.auth.UserContext;
 
 public class DBLayerMetadataStore {
 	private enum Attributes {
+		CARDS_BINDING("CardsBinding"),
 		DESCRIPTION("Description"),
 		FULL_NAME("FullName"),
 		GEO_SERVER_NAME("GeoServerName"),
@@ -53,8 +54,9 @@ public class DBLayerMetadataStore {
 		c.setValue(Attributes.INDEX.getName(), getMaxIndex() + 1);
 		c.setValue(Attributes.VISIBILITY.getName(), layer.getVisibilityAsString());
 		c.setValue(Attributes.GEO_SERVER_NAME.getName(), layer.getGeoServerName());
-
+		c.setValue(Attributes.CARDS_BINDING.getName(), layer.getCardBindingAsString());
 		c.save();
+
 		return cardToLayerMetadata(c);
 	}
 
@@ -69,6 +71,7 @@ public class DBLayerMetadataStore {
 		c.setValue(Attributes.MINIMUM_ZOOM.getName(), changes.getMinimumZoom());
 		c.setValue(Attributes.MAXIMUM_ZOOM.getName(), changes.getMaximumzoom());
 		c.setValue(Attributes.MAP_STYLE.getName(), changes.getMapStyle());
+		c.setValue(Attributes.CARDS_BINDING.getName(), changes.getCardBindingAsString());
 		c.save();
 
 		return cardToLayerMetadata(c);
@@ -132,6 +135,7 @@ public class DBLayerMetadataStore {
 		layer.setType((String) card.getValue(Attributes.TYPE.getName()));
 		layer.setVisibilityFromString((String) card.getValue(Attributes.VISIBILITY.getName()));
 		layer.setGeoServerName((String) card.getValue(Attributes.GEO_SERVER_NAME.getName()));
+		layer.setCardBindingFromString((String) card.getValue(Attributes.CARDS_BINDING.getName()));
 
 		return layer;
 	}
@@ -145,7 +149,6 @@ public class DBLayerMetadataStore {
 			Log.PERSISTENCE.debug("The layer " + fullName + " was not found");
 			throw ORMExceptionType.ORM_ERROR_CARD_SELECT.createException();
 		}
-
 	}
 
 	private Integer getMaxIndex() {
@@ -160,5 +163,4 @@ public class DBLayerMetadataStore {
 
 		return max;
 	}
-
 }

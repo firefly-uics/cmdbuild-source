@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.IconsCombo", {
-	extend: "Ext.form.field.ComboBox",
+	extend: "CMDBuild.field.ErasableCombo",
 	initComponent: function() {
 		this.triggerConfig = {
 			tag: 'span',

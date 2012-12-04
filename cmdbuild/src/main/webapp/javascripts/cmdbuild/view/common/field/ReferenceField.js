@@ -5,8 +5,9 @@
 
     Ext.define("CMDBuild.Management.ReferenceField", {
         statics: {
-            build: function(attribute, subFields) {
+            build: function(attribute, subFields, extraFieldConf) {
                 var templateResolver;
+                var extraFieldConf = extraFieldConf || {};
 
                 if (attribute.fieldFilter) { // is using a template
                     var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, "system.template.");
@@ -19,10 +20,10 @@
                     });
                 }
 
-                var field = Ext.create("CMDBuild.Management.ReferenceField.Field", {
+                var field = Ext.create("CMDBuild.Management.ReferenceField.Field", Ext.apply(extraFieldConf,{
                     attribute: attribute,
                     templateResolver: templateResolver
-                });
+                }));
 
                 if (subFields && subFields.length > 0) {
                     return buildReferencePanel(field, subFields);
@@ -118,6 +119,10 @@
 		},
 
 		setValue : function(v) {
+			if (!this.store) {
+				return;
+			}
+
         	v = this.extractIdIfValueIsObject(v);
 
 			if (this.store.isOneTime // is one time seems that has a CQL filter

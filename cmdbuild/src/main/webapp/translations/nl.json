@@ -101,6 +101,7 @@
             "parent_not_found": "Bovenliggende klas bestaat niet"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Ikoon",
             "fillColor": "Vulling kleur",
             "fillOpacity": "Vul dekking",

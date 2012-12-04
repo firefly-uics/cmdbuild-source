@@ -145,6 +145,8 @@
 
 		layer.cmdb_minZoom = geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
 		layer.cmdb_maxZoom = geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
+		layer.cmdb_index = geoAttribute.index;
+
 		layer.geoAttribute = geoAttribute;
 		layer.editLayer = undefined;
 

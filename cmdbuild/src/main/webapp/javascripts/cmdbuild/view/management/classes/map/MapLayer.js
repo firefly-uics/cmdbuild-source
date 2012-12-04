@@ -1,7 +1,7 @@
 (function() {
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
-
+	var DEFAULT_POINT_DISTANCE_TOLLERANCE = 8; // the default radius of a point
 /**
  * @class CMDBuild.Management.CMDBuildMap.MapLayer
  */
@@ -33,10 +33,12 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		this.geoAttribute = undefined,
 		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
 		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
-		this.hiddenFeature = {};
+		this.cmdb_index = options.geoAttribute.index;
 
+		this.hiddenFeature = {};
+		this._defaultStyleConfiguration = Ext.decode(options.geoAttribute.style);
 		this.styleMap = new OpenLayers.StyleMap({
-			"default": Ext.decode(options.geoAttribute.style),
+			"default": this._defaultStyleConfiguration,
 			"select": new OpenLayers.Style(OpenLayers.Feature.Vector.style["default"]),
 			"temporary": Ext.decode(options.geoAttribute.style)
 		});
@@ -146,7 +148,14 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			for (var i=0, f=null, g=null; i < features.length; ++i) {
 				f = features[i];
 				g = f.geometry;
-				if (typeof g.intersects == "function"
+				if (g.CLASS_NAME == "OpenLayers.Geometry.Point") {
+
+					var distance = g.distanceTo(point)/this.getResolution();
+					var tollerance = this._defaultStyleConfiguration.pointRadius || DEFAULT_POINT_DISTANCE_TOLLERANCE;
+					if (distance < tollerance) {
+						out.push(f.clone());
+					}
+				} else if (typeof g.intersects == "function"
 					&& g.intersects(point)) {
 
 					out.push(f.clone());

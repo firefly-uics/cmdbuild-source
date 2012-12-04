@@ -101,6 +101,7 @@
             "parent_not_found": "No existe clase de la cual heredar"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Cards Binding</em>",
             "externalGraphic": "Icono",
             "fillColor": "Color relleno",
             "fillOpacity": "Opacidad relleno",

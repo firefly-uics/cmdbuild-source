@@ -19,11 +19,8 @@
 		plugins: [new CMDBuild.FormPlugin(), new CMDBuild.CallbackPlugin()],
 
 		initComponent: function() {
-			this.frame = false;
-			this.border = false;
 			this.cls = "x-panel-body-default-framed cmbordertop";
 			this.bodyCls = 'cmgraypanel';
-			this.layout = "border";
 			this.buttonAlign = "center";
 			this.tbar = buildTBarTools(this);
 			this.items = items(this);
@@ -32,15 +29,12 @@
 			this.callParent(arguments);
 			this.setFieldsDisabled();
 
-			this.on("clientvalidation", function(formPanel, valid ) {
-				this.saveButton.setDisabled(!valid);
-			}, this);
-
 			this.disableModify();
 		},
 
 		onAddLayer: function() {
 			this.lastSelection = undefined;
+			this.setCardBinding([]);
 			this.getForm().reset();
 			this.enableModify(all = true);
 		},
@@ -48,21 +42,201 @@
 		onLayerSelect: function(layerModel) {
 			this.lastSelection = layerModel;
 			this.getForm().loadRecord(layerModel);
+			this.setCardBinding(layerModel.getCardBinding());
 			this.disableModify(enableTBar = true);
 		}
 
 	});
 
+	Ext.define("CMDBuild.Administration.GeoServerForm.BindCardFieldset", {
+		extend: "Ext.form.FieldSet",
+
+		initComponent: function() {
+			var me = this;
+			this.border = false;
+			this.cls = "cmbordertop";
+			this.style = {
+				"border-color": "#D0D0D0"
+			};
+
+			this.margin = "5px 0 0 0";
+
+			this.layout = {
+				type : 'vbox',
+				align : 'stretch'
+			};
+
+			this.defaults = {
+				padding : "5px 0 0 0"
+			};
+
+			this.baseItem = new CMDBuild.Administration.GeoServerForm.BindCardFieldsetItem({
+				delegate: me,
+				first: true
+			});
+
+			this.items = [this.baseItem];
+			this.callParent(arguments);
+		},
+
+		getValue: function() {
+			var out = [];
+			this.items.each(function(item){
+				out.push(item.getValue());
+			});
+			return out;
+		},
+
+		setValue: function(cardBinding) {
+			this.removeItems();
+
+			var values = [].concat(cardBinding);
+			var v = values.pop();
+			var first = true;
+
+			while (v) {
+				if (first) {
+					this.baseItem.setValue(v);
+					first = false;
+				} else {
+					var item = this.bindCardPanelPlusButtonClick();
+					item.setValue(v);
+				}
+
+				v = values.pop();
+			}
+		},
+
+		removeItems: function() {
+			var me = this;
+			this.items.each(function(item){
+				if (!item.first) {
+					me.remove(item);
+				}
+			});
+		},
+
+		bindCardPanelPlusButtonClick: function() {
+			return this.add(new CMDBuild.Administration.GeoServerForm.BindCardFieldsetItem({
+				delegate: this,
+				isFirst: false
+			}));
+		},
+
+		bindCardPanelRemoveButtonClick: function(item) {
+			this.remove(item);
+		}
+	});
+
+	Ext.define("CMDBuild.Administration.GeoServerForm.BindCardFieldsetItem", {
+		extend: "Ext.container.Container",
+
+		delegate: null, // pass it on creation
+		isFirst: true,
+
+		initComponent: function() {
+			var me = this;
+
+			this.classCombo =  new CMDBuild.field.ErasableCombo({
+				fieldLabel: me.isFirst ? tr.card_binding : " ",
+				labelSeparator: me.isFirst ? ":" : "",
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField : 'name',
+				displayField : 'description',
+				editable: false,
+				store : _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				queryMode: 'local',
+				margin: "0 5px 0 0",
+				listeners: {
+					change: function(combo, newValue) {
+						me.remove(me.cardCombo);
+						delete me.cardCombo;
+						if (newValue) {
+							me.cardCombo = CMDBuild.Management.ReferenceField.build({
+								referencedClassName: newValue,
+								isnotnull: true
+							}, null, {margin: "0 5px 0 0"});
+							
+							me.insert(1, me.cardCombo);
+						}
+					},
+					enable: function() {
+						me.items.each(function(item) {
+							if (Ext.getClassName(item) == "Ext.button.Button") {
+								item.enable();
+								item.show();
+							}
+						});
+					},
+					disable: function() {
+						me.items.each(function(item) {
+							if (Ext.getClassName(item) == "Ext.button.Button") {
+								item.disable();
+								item.hide();
+							}
+						});
+					}
+				}
+			});
+
+			var plusButton = new Ext.button.Button({
+				iconCls: "add",
+				handler: function() {
+					me.delegate.bindCardPanelPlusButtonClick();
+				}
+			});
+
+			this.items = [this.classCombo, this.cardCombo, plusButton];
+
+			if (!this.isFirst) {
+				this.items.push(new Ext.button.Button({
+					iconCls: "delete",
+					padding: "4px 0 0 4px",
+					handler: function() {
+						me.delegate.bindCardPanelRemoveButtonClick(me);
+					}
+				}));
+			}
+
+			this.layout = "hbox";
+
+			this.callParent(arguments);
+		},
+
+		getValue: function() {
+			return {
+				className: this.classCombo.getValue(),
+				idCard: this.cardCombo.getValue()
+			};
+		},
+
+		setValue: function(v) {
+			this.classCombo.setValue(v.className);
+			this.cardCombo.setValue(parseInt(v.idCard));
+		}
+	});
+
 	function items(me) {
+		// TODO: a custom vtype to deny
+		// white spaces. GEOServer does not like them
 		var name = new Ext.form.TextField({
 			fieldLabel : tr_attribute.name,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : "name",
 			allowBlank : false,
-			vtype : "alphanum",
-			cmImmutable: true
+			cmImmutable: true,
+			disabled: true
 		});
+
+		name.on("change", function(fieldname, newValue, oldValue) {
+			me.autoComplete(description, newValue, oldValue);
+		}, me);
+
+		me.getName = function() {
+			return name.getValue();
+		};
 
 		var types = new Ext.form.ComboBox({
 			store : new Ext.data.SimpleStore( {
@@ -81,7 +255,8 @@
 			hiddenName : "type",
 			queryMode : "local",
 			triggerAction: "all",
-			cmImmutable: true
+			cmImmutable: true,
+			disabled: true
 		});
 
 		var minZoom = new Ext.form.SliderField({
@@ -90,7 +265,8 @@
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			minValue : 0,
 			maxValue : 25,
-			name : "minZoom"
+			name : "minZoom",
+			disabled: true
 		});
 
 		var maxZoom = new Ext.form.SliderField({
@@ -100,12 +276,14 @@
 			minValue : 0,
 			maxValue : 25,
 			value : 25,
-			name : "maxZoom"
+			name : "maxZoom",
+			disabled: true
 		});
 
 		var range = new CMDBuild.RangeSlidersFieldSet( {
 			maxSliderField: maxZoom,
-			minSliderField: minZoom
+			minSliderField: minZoom,
+			disabled: true
 		});
 
 		var description = new Ext.form.TextField({
@@ -114,7 +292,8 @@
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name : "description",
-			allowBlank : false
+			allowBlank : false,
+			disabled: true
 		});
 
 		var file = new Ext.form.TextField({
@@ -122,25 +301,23 @@
 			fieldLabel: tr_geoserver.file,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			name: "file",
-			form: this
+			form: this,
+			disabled: true
 		});
 
-		name.on("change", function(fieldname, newValue, oldValue) {
-			me.autoComplete(description, newValue, oldValue);
-		}, me);
+		var bindToCardFieldset = new CMDBuild.Administration.GeoServerForm.BindCardFieldset({
+			padding: "5px 0 0 0",
+		});
 
-		me.getName = function() {
-			return name.getValue();
+		me.getCardsBinding = function() {
+			return bindToCardFieldset.getValue();
 		};
 
-		return {
-			xtype: "panel",
-			frame: true,
-			border: true,
-			region: "center",
-			autoScroll: true,
-			items: [name, description, file, types, range]
+		me.setCardBinding = function(cardBinding) {
+			bindToCardFieldset.setValue(cardBinding);
 		};
+
+		return [name, description, file, types, range, bindToCardFieldset];
 	};
 
 	function buildButtons(me) {

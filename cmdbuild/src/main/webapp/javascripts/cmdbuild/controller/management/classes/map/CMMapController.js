@@ -87,7 +87,6 @@
 			_CMCache.getVisibleLayersForEntryTypeName(entryType.get("name"), function(layers) {
 				// TODO the sorting does not work
 				var orderedAttrs = sortAttributesByIndex(layers);
-				_debug("Sorted attributes", orderedAttrs);
 				me.mapState.update(orderedAttrs, me.map.getZoom());
 				me.map.activateStrategies(true);
 			});
@@ -141,6 +140,10 @@
 			// to sync the miniCardGrid
 			// TODO ensure that the grid is on the right page
 			this.mapPanel.getMiniCardGrid().selectCardSilently(card);
+
+			if (card) {
+				this.centerMapOnFeature(card.data);
+			}
 		},
 
 		onAddCardButtonClick: function() {
@@ -150,6 +153,10 @@
 		},
 
 		centerMapOnFeature: function(params) {
+			if (params == null) {
+				return;
+			}
+
 			var me = this;
 
 			function onSuccess(resp, req, feature) {
@@ -161,7 +168,16 @@
 				}
 			};
 
-			CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
+			_CMCache.getLayersForEntryTypeName(params.IdClass_value, function(layers) {
+				if (layers.length > 0) {
+					var layer = layers[0];
+					if (me.map.getZoom() < layer.minZoom ) {
+						me.map.setCenter(me.map.getCenter(), layer.minZoom);
+					}
+					CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
+				}
+			});
+
 		},
 
 		editMode: function() {
@@ -532,40 +548,6 @@
 		}
 	}
 
-	function buildLongPressController(me) {
-		var map = me.map;
-		var longPressControl = new OpenLayers.Control.LongPress({
-			onLongPress : function(e) {
-				var lonlat = map.getLonLatFromPixel(e.xy);
-				var features = map.getFeaturesInLonLat(lonlat);
-
-				// no features no window
-				if (features.length == 0) {
-					return;
-				}
-
-				me.miniCardGridWindowController.setFeatures(features);
-				if (me.miniCardGridWindow) {
-					me.miniCardGridWindow.close();
-				}
-
-				me.miniCardGridWindow = new CMDBuild.view.management.CMMiniCardGridWindow({
-					width : me.mapPanel.getWidth() / 100 * 40,
-					height : me.mapPanel.getHeight() / 100 * 80,
-					x : e.xy.x,
-					y : e.xy.y,
-					dataSource : me.miniCardGridWindowController.getDataSource()
-				});
-
-				me.miniCardGridWindowController.bindMiniCardGridWindow(me.miniCardGridWindow);
-				me.miniCardGridWindow.show();
-			}
-		});
-
-		map.addControl(longPressControl);
-		longPressControl.activate();
-	}
-
 	//////***************************************************************** /////
 
 	function removeLayerForGeoAttribute(map, geoAttribute, me) {
@@ -579,6 +561,8 @@
 
 			l.events.unregister("visibilitychanged", me, onLayerVisibilityChange);
 			l.destroyStrategies();
+			l.clearSelection();
+
 			map.removeLayer(l);
 		}
 	}
@@ -602,7 +586,11 @@
 		if (layer) {
 			layer.events.register("visibilitychanged", me, onLayerVisibilityChange);
 			me.mapState.addLayer(layer, map.getZoom());
-			map.addLayers([layer]);
+			map.addLayer(layer);
+
+			if (typeof layer.cmdb_index != "undefined") {
+				map.setLayerIndex(layer, layer.cmdb_index);
+			}
 
 			if (layer.editLayer) {
 				var el = map.getLayerByName(layer.editLayer.name);

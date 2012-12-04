@@ -1,8 +1,12 @@
 package org.cmdbuild.logic;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.config.GisProperties;
@@ -54,7 +58,7 @@ public class GISLogic {
 			int minimumZoom, int maximumZoom, String style) throws Exception {
 		ensureGisIsEnabled();
 
-		return modifyLayerMetadata(targetTable.getName(), name, description, minimumZoom, maximumZoom, style);
+		return modifyLayerMetadata(targetTable.getName(), name, description, minimumZoom, maximumZoom, style, null);
 	}
 
 	public void deleteGeoAttribute(String masterTableName, String name) throws Exception {
@@ -144,11 +148,11 @@ public class GISLogic {
 		layerMetadataStore.createLayer(layerMetaData);
 	}
 
-	public void modifyGeoServerLayer(String name, String description, int maximumZoom, int minimumZoom, FileItem file) throws Exception {
+	public void modifyGeoServerLayer(String name, String description, int maximumZoom, int minimumZoom, FileItem file, Set<String> cardBinding) throws Exception {
 		ensureGisIsEnabled();
 		ensureGeoServerIsEnabled();
 
-		LayerMetadata layerMetadata = modifyLayerMetadata(GEOSERVER, name, description, minimumZoom, maximumZoom, null);
+		LayerMetadata layerMetadata = modifyLayerMetadata(GEOSERVER, name, description, minimumZoom, maximumZoom, null, cardBinding);
 
 		if (file != null && file.getSize() > 0) {
 			geoServerService.modifyStoreData(layerMetadata, file.getInputStream());
@@ -169,6 +173,31 @@ public class GISLogic {
 		ensureGisIsEnabled();
 
 		return layerMetadataStore.list(GEOSERVER);
+	}
+
+	public Map<String, ClassMapping> getGeoServerLayerMapping() throws Exception {
+		final List<LayerMetadata> geoServerLayers = getGeoServerLayers();
+		final Map<String, ClassMapping> mapping = new HashMap<String, ClassMapping>();
+
+		for (LayerMetadata layer:geoServerLayers) {
+			for (String bindedCard:layer.getCardBinding()) {
+				String[] cardInfo = bindedCard.split("_"); // A cardInfo is ClassName_CardId
+				String className = cardInfo[0];
+				String cardId = cardInfo[1];
+
+				ClassMapping classMapping;
+				if (mapping.containsKey(className)) {
+					classMapping = mapping.get(className);
+				} else {
+					classMapping = new ClassMapping();
+					mapping.put(className, classMapping);
+				}
+
+				classMapping.addCardMapping(cardId, new CardMapping(layer.getName(), layer.getDescription()));
+			}
+		}
+
+		return mapping;
 	}
 
 	/* Common layers methods */
@@ -244,7 +273,7 @@ public class GISLogic {
 	}
 
 	private LayerMetadata modifyLayerMetadata(String targetTableName, String name, String description,
-			int minimumZoom, int maximumZoom, String style) {
+			int minimumZoom, int maximumZoom, String style, Set<String> cardBinding) {
 
 		String fullName = fullName(targetTableName, name);
 		LayerMetadata changes = new LayerMetadata();
@@ -252,6 +281,7 @@ public class GISLogic {
 		changes.setMinimumZoom(minimumZoom);
 		changes.setMaximumzoom(maximumZoom);
 		changes.setMapStyle(style);
+		changes.setCardBinding(cardBinding);
 
 		return layerMetadataStore.updateLayer(fullName, changes);
 	}
@@ -283,5 +313,43 @@ public class GISLogic {
 	private String fullName(String masterTableName, String name) {
 		String fullName = String.format(GEO_TABLE_NAME_FORMAT, masterTableName, name);
 		return fullName;
+	}
+
+	public class ClassMapping {
+		private final Map<String, CardMapping> map;
+
+		public ClassMapping() {
+			map = new HashMap<String, CardMapping>();
+		}
+
+		public void addCardMapping(String cardId, CardMapping mapping) {
+			map.put(cardId, mapping);
+		}
+
+		public Set<String> cards() {
+			return map.keySet();
+		}
+
+		public CardMapping get(String cardId) {
+			return map.get(cardId);
+		}
+	}
+
+	public class CardMapping {
+		private final String name;
+		private final String description;
+
+		public CardMapping(String name, String description) {
+			this.name = name;
+			this.description = description;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDesription() {
+			return description;
+		}
 	}
 }

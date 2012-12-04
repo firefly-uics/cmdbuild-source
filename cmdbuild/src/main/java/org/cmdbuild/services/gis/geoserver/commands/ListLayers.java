@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.cmdbuild.services.gis.geoserver.GeoServerLayer;
+import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.utils.Command;
 import org.dom4j.Node;
 
-public class ListLayers extends AbstractGeoCommand implements Command<List<GeoServerLayer>> {
+public class ListLayers extends AbstractGeoCommand implements Command<List<LayerMetadata>> {
 
 	/**
 	 * if there is a store name, the command return only the layers of that store
 	 */
 	private String storeName;
 
-	public static List<GeoServerLayer> exec() {
+	public static List<LayerMetadata> exec() {
 		return new ListLayers().run();
 	}
 
-	public static List<GeoServerLayer> exec(String storeName) {
+	public static List<LayerMetadata> exec(String storeName) {
 		return new ListLayers(storeName).run();
 	}
 
@@ -33,15 +33,15 @@ public class ListLayers extends AbstractGeoCommand implements Command<List<GeoSe
 	}
 
 	@Override
-	public List<GeoServerLayer> run() {
-		List<GeoServerLayer> layers = new ArrayList<GeoServerLayer>();
+	public List<LayerMetadata> run() {
+		List<LayerMetadata> layers = new ArrayList<LayerMetadata>();
 
 		final String url = String.format("%s/rest/layers", getGeoServerURL());
 
 		List<?> layerList = get(url).selectNodes("//layers/layer");
 		for (Iterator<?> iter = layerList.iterator(); iter.hasNext(); ) {
 			String layerName = ((Node) iter.next()).valueOf("name");
-			GeoServerLayer layer = GetLayer.exec(layerName);
+			LayerMetadata layer = GetLayer.exec(layerName);
 			if (this.storeName != null 
 					&& this.storeName.equals(layer.getStoreName())) {
 				layers.add(layer);

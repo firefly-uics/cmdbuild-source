@@ -21,6 +21,16 @@
 		/**
 		 * 
 		 * @param {CMDBuild.view.management.map.CMMapPanel} mapPanel The map panel which has removed the layer
+		 * @param {Object} params Information about the layer
+		 * @param {OpenLayers.Layer} params.layer The OpenLayer layer which is removed
+		 * @param {OpenLayers.Layer} params.property The layer property that is changed,
+		 * one of [name, order, opacity, params, visibility or attribution]
+		 */
+		onLayerChanged: Ext.emptyFn,
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.map.CMMapPanel} mapPanel The map panel which has removed the layer
 		 * @param {boolean} visible If the map is now visible or not
 		 */
 		onMapPanelVisibilityChanged: Ext.emptyFn
@@ -174,11 +184,14 @@
 		var map = CMDBuild.Management.MapBuilder.buildMap(me.actualMapPanel.body.dom.id);
 		_CMMap = map;
 		map.events.on({
-			"addlayer": function(params) {
+			addlayer: function(params) {
 				me.callDelegates("onLayerAdded", [me, params]);
 			},
-			"removelayer": function(params) {
+			removelayer: function(params) {
 				me.callDelegates("onLayerRemoved", [me, params]);
+			},
+			changelayer: function(params) {
+				me.callDelegates("onLayerChanged", [me, params]);
 			},
 			scope: me
 		});

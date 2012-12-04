@@ -1,7 +1,9 @@
 package org.cmdbuild.servlets.json;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -14,7 +16,6 @@ import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;
-import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +37,7 @@ public class Gis extends JSONBase {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		final LayerMetadata layerMetaData= new LayerMetadata(name, description, type, minimumZoom,
-				maximumzoom, 0, mapStyle.toString(), null, null);
+				maximumzoom, 0, mapStyle.toString(), null);
 		layerMetaData.addVisibility(table.getName());
 		logic.createGeoAttribute(table, layerMetaData);
 	}
@@ -159,12 +160,14 @@ public class Gis extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getGISTreeNavigation() throws JSONException {
+	public JSONObject getGISTreeNavigation() throws Exception {
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		DomainTreeNode root = logic.getGisTreeNavigation();
 		JSONObject response = new JSONObject();
 		if (root != null) {
 			response.put("root", DomainTreeNodeJSONMapper.serialize(root));
+			response.put("geoServerLayersMapping",
+				GeoJSONSerializer.serialize(logic.getGeoServerLayerMapping()));
 		}
 
 		return response;
@@ -179,14 +182,16 @@ public class Gis extends JSONBase {
 	public void addGeoServerLayer(
 			@Parameter("name") String name,
 			@Parameter("description") String description,
+			@Parameter("cardBinding") JSONArray cardBindingString,
 			@Parameter("type") String type,
 			@Parameter("minZoom") int minimumZoom,
 			@Parameter("maxZoom") int maximumzoom,
 			@Parameter(value="file", required=true) FileItem file) throws IOException, Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		final LayerMetadata layerMetaData= new LayerMetadata(name, description, type, minimumZoom, maximumzoom, 0, null, null, null);
-
+		final LayerMetadata layerMetaData = new LayerMetadata(name, description, type, minimumZoom, maximumzoom,
+				0, null, null);
+		layerMetaData.setCardBinding(fromJsonToSet(cardBindingString));
 		logic.createGeoServerLayer(layerMetaData, file);
 	}
 
@@ -196,12 +201,13 @@ public class Gis extends JSONBase {
 	public void modifyGeoServerLayer(
 			@Parameter("name") String name,
 			@Parameter("description") String description,
-			@Parameter(required=false, value="file") FileItem file,
+			@Parameter("cardBinding") JSONArray cardBindingString,
 			@Parameter("minZoom") int minimumZoom,
-			@Parameter("maxZoom") int maximumZoom) throws Exception {
+			@Parameter("maxZoom") int maximumZoom,
+			@Parameter(required=false, value="file") FileItem file) throws Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		logic.modifyGeoServerLayer(name, description, maximumZoom, minimumZoom, file);
+		logic.modifyGeoServerLayer(name, description, maximumZoom, minimumZoom, file, fromJsonToSet(cardBindingString));
 	}
 
 	@Transacted
@@ -221,5 +227,14 @@ public class Gis extends JSONBase {
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		serializer.put("layers", GeoJSONSerializer.serializeGeoLayers(logic.getGeoServerLayers()));
 		return serializer;
+	}
+
+	private Set<String> fromJsonToSet(JSONArray json) throws JSONException {
+		HashSet<String> out = new HashSet<String>();
+		for (int i=0, l=json.length(); i<l; ++i) {
+			JSONObject jsonCardBinding = (JSONObject) json.get(i);
+			out.add(jsonCardBinding.getString("className") + "_" + jsonCardBinding.getString("idCard"));
+		}
+		return out;
 	}
 }
