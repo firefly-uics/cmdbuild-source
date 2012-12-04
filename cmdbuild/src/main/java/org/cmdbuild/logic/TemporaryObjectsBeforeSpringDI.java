@@ -98,7 +98,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		factory.addWidgetFactory(new OpenReportWidgetFactory(getTemplateRepository()));
 		factory.addWidgetFactory(new CalendarWidgetFactory(getTemplateRepository()));
 		factory.addWidgetFactory(new LinkCardsWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
-		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository()));
+		factory.addWidgetFactory(new ManageRelationWidgetFactory(getTemplateRepository(), getSystemDataAccessLogic()));
 		factory.addWidgetFactory(new ManageEmailWidgetFactory(getTemplateRepository(), getSystemEmailLogic()));
 
 		return factory;
