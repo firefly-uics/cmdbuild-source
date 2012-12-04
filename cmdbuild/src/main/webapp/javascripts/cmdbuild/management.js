@@ -51,23 +51,7 @@
 														CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
 															success: function(operation, config, response) {
 																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
-
-																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = {
-																	"Floor": {
-																		"83": {
-																			name: "Bastogi-PA",
-																			description: "Bastogi - Piano Ammezzato"
-																		},
-																		"87": {
-																			name: "Bastogi-P1",
-																			description: "Bastogi - Piano Primo"
-																		},
-																		"92": {
-																			name: "Bastogi-PT",
-																			description: "Bastogi - Piano Terra"
-																		}
-																	}
-																};
+																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
 															},
 															callback: cb
 														});

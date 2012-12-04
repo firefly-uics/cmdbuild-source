@@ -101,6 +101,7 @@
             "parent_not_found": "Es gibt keine Superklasse"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Cards Binding</em>",
             "externalGraphic": "Ikone",
             "fillColor": "Füllfarbe",
             "fillOpacity": "Füllopazität",

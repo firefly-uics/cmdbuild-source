@@ -1,9 +1,15 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.cmdbuild.logic.GISLogic.CardMapping;
+import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.GeoFeature;
+import org.codehaus.jackson.annotate.JsonManagedReference;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,7 +160,23 @@ public class GeoJSONSerializer {
 		jsonGeoLayer.put("fullName", geoLayer.getFullName());
 		jsonGeoLayer.put("masterTableName", geoLayer.getMasterTableName());
 		jsonGeoLayer.put("geoServerName", geoLayer.getGeoServerName());
+		jsonGeoLayer.put("cardBinding", serializeCardBinding(geoLayer.getCardBinding()));
+
 		return jsonGeoLayer;
+	}
+
+	private static JSONArray serializeCardBinding(Set<String> cardBinding) throws JSONException {
+		final JSONArray out = new JSONArray();
+		for (String item:cardBinding) {
+			final JSONObject jsonItem = new JSONObject();
+			String[] splittedItem = item.split("_");
+			jsonItem.put("className", splittedItem[0]);
+			jsonItem.put("idCard", splittedItem[1]);
+
+			out.put(jsonItem);
+		}
+
+		return out;
 	}
 
 	private JSONArray getJSONPointCoordinates(Point p) throws JSONException {
@@ -162,7 +184,7 @@ public class GeoJSONSerializer {
 		coordinates.put(p.getX()).put(p.getY());
 		return coordinates;
 	}
-	
+
 	private JSONArray getJSONLineCoordinates(LineString l) throws JSONException {
 		JSONArray coordinates = new JSONArray();
 		Point[] points = l.getPoints();
@@ -180,9 +202,31 @@ public class GeoJSONSerializer {
 	private JSONArray getJSONPolygonCoorditanes(Polygon polygon) throws JSONException {
 		JSONArray rings = new JSONArray();
 		int i; LinearRing ring;
-		for(i=0, ring=polygon.getRing(i); ring != null; ring=polygon.getRing(++i)) {				
+		for(i=0, ring=polygon.getRing(i); ring != null; ring=polygon.getRing(++i)) {
 			rings.put(getJSONRingCoordinates(ring));
 		}
 		return rings;
+	}
+
+	public static JSONObject serialize(
+			Map<String, ClassMapping> geoServerLayerMapping) throws JSONException {
+
+		JSONObject out = new JSONObject();
+		for (String className: geoServerLayerMapping.keySet()) {
+			ClassMapping classMapping = geoServerLayerMapping.get(className);
+			JSONObject jsonClassMapping = new JSONObject();
+			for (String cardId:classMapping.cards()) {
+				CardMapping cardMapping = classMapping.get(cardId);
+				JSONObject jsonCardMapping = new JSONObject();
+				jsonCardMapping.put("name", cardMapping.getName());
+				jsonCardMapping.put("description", cardMapping.getDesription());
+
+				jsonClassMapping.put(cardId, jsonCardMapping);
+			}
+
+			out.put(className, jsonClassMapping);
+		}
+
+		return out;
 	}
 }

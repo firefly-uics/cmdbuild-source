@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.model.gis.LayerMetadata;
-import org.cmdbuild.services.gis.geoserver.GeoServerLayer;
 import org.cmdbuild.services.gis.geoserver.GeoServerService;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore.StoreDataType;
@@ -56,13 +55,13 @@ public class GeoServerTest {
 	public void aLayerIsAddedWithEveryDataStore() throws FileNotFoundException {
 		assertTrue(service.getStores().isEmpty());
 		assertTrue(service.getLayers().isEmpty());
-		LayerMetadata l = new LayerMetadata(LAYER_1, LAYER_1_DESCRIPTION, StoreDataType.SHAPE.toString(), LAYER_1_MINZOOM, LAYER_1_MAXZOOM, LAYER_1_POSITION, null, null, null);
+		LayerMetadata l = new LayerMetadata(LAYER_1, LAYER_1_DESCRIPTION, StoreDataType.SHAPE.toString(), LAYER_1_MINZOOM, LAYER_1_MAXZOOM, LAYER_1_POSITION, null, null);
 		service.createStoreAndLayer(l, shapeInputStream());
 
 		List<GeoServerStore> dataStores = service.getStores();
 		assertThat(dataStores.size(), is(1));
 		assertThat(dataStores.get(0).getName(), is(LAYER_1));
-		List<GeoServerLayer> layers = service.getLayers();
+		List<LayerMetadata> layers = service.getLayers();
 		assertThat(layers.size(), is(1));
 		assertThat(layers.get(0).getName(), is(LAYER_1_FEATURE));
 		assertThat(layers.get(0).getDescription(), is(LAYER_1_DESCRIPTION));
@@ -71,7 +70,7 @@ public class GeoServerTest {
 		assertThat(layers.get(0).getMaximumzoom(), is(LAYER_1_MAXZOOM));
 		assertThat(layers.get(0).getIndex(), is(LAYER_1_POSITION));
 
-		LayerMetadata l2 = new LayerMetadata(LAYER_2, "", StoreDataType.WORLDIMAGE.toString(), 0, 0, 0, null, null, null);
+		LayerMetadata l2 = new LayerMetadata(LAYER_2, "", StoreDataType.WORLDIMAGE.toString(), 0, 0, 0, null, null);
 		service.createStoreAndLayer(l2, worldImageInputStream());
 
 		assertThat(service.getStores().size(), is(2));

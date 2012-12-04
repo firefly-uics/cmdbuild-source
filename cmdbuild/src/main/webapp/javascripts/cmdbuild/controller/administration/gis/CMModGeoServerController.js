@@ -48,32 +48,34 @@
 	}
 
 	function onSaveButtonClick() {
-		CMDBuild.LoadMask.get().show();
-		var url = this.lastSelection ?
-				CMDBuild.ServiceProxy.geoServer.modifyUrl:
-				CMDBuild.ServiceProxy.geoServer.addUrl,
-			nameToSelect = this.view.form.getName(),
-			form = this.view.form.getForm();
+		var url = this.lastSelection ? CMDBuild.ServiceProxy.geoServer.modifyUrl:CMDBuild.ServiceProxy.geoServer.addUrl;
+		var nameToSelect = this.view.form.getName();
+		var cardBinding = this.view.form.getCardsBinding();
+		var form = this.view.form.getForm();
 
-		form.submit({
-			method: 'POST',
-			url: url,
-			params: {
-				name: nameToSelect
-			},
-			scope: this,
-			success: function() {
-				_CMCache.onGeoAttributeSaved();
-				this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
-			},
-			failure: function() {
-				_debug("Failed to add or modify a Geoserver Layer", arguments);	
-			},
-			callback: function() {
-				this.view.form.disableModify();
-				CMDBuild.LoadMask.get().hide();
-			}
-		});
+		if (form.isValid()) {
+			CMDBuild.LoadMask.get().show();
+			form.submit({
+				method: 'POST',
+				url: url,
+				params: {
+					name: nameToSelect,
+					cardBinding: Ext.encode(cardBinding)
+				},
+				scope: this,
+				success: function() {
+					_CMCache.onGeoAttributeSaved();
+					this.view.form.disableModify();
+					this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
+				},
+				failure: function() {
+					_debug("Failed to add or modify a Geoserver Layer", arguments);	
+				},
+				callback: function() {
+					CMDBuild.LoadMask.get().hide();
+				}
+			});
+		}
 	};
 
 	function onAbortButtonClick() {

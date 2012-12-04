@@ -196,6 +196,7 @@
 		if (mapping) {
 			var layerPerClass = mapping[nodeConfiguration.className];
 			if (layerPerClass) {
+				// TODO: More than one GeoServer layer per card
 				var layerPerCard = layerPerClass[nodeConfiguration.cardId];
 				if (layerPerCard) {
 					nodeConfiguration.children = [{

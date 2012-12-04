@@ -37,6 +37,12 @@
 			}
 		},
 
+		onLayerChanged: function(mapPanel, params) {
+			if (params.property == "order") {
+				this.layerSwitcerView.updateSorting();
+			}
+		},
+
 		onMapPanelVisibilityChanged: Ext.emptyFn
 	});
 

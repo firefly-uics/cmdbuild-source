@@ -101,6 +101,7 @@
             "parent_not_found": "Класс-родитель не существует"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Значок",
             "fillColor": "Цвет заливки",
             "fillOpacity": "Прозрачность заливки",

@@ -4,6 +4,9 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
 
+<!-- SELECTION -->
+<script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
+
 <!--CHACHE -->
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
@@ -94,9 +97,14 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
+
+<!-- TODO: remove from management -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortletForm.js"></script>

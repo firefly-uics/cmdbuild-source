@@ -101,6 +101,7 @@
             "parent_not_found": "La classe da cui ereditare non esiste"
          }},
          "geo_attributes": {
+            "card_binding": "Associa a Schede",
             "externalGraphic": "Icona",
             "fillColor": "Colore riempimento",
             "fillOpacity": "Opacità riempimento",

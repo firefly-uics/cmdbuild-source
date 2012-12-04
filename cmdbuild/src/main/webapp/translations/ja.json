@@ -101,6 +101,7 @@
             "parent_not_found": "親クラスは存在していません"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "アイコン",
             "fillColor": "着色",
             "fillOpacity": "不透明化",

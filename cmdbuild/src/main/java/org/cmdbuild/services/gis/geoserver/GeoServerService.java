@@ -21,7 +21,7 @@ public class GeoServerService {
 		return ListStores.exec();
 	}
 
-	public List<GeoServerLayer> getLayers() {
+	public List<LayerMetadata> getLayers() {
 		return ListLayers.exec();
 	}
 
@@ -48,8 +48,8 @@ public class GeoServerService {
 		try {
 			// Delete the layer first because the store
 			// must be empty to be deleted
-			List<GeoServerLayer> storeLayers = ListLayers.exec(store.getName());
-			for (GeoServerLayer geoServerLayer: storeLayers) {
+			List<LayerMetadata> storeLayers = ListLayers.exec(store.getName());
+			for (LayerMetadata geoServerLayer: storeLayers) {
 				DeleteLayer.exec(geoServerLayer);
 				DeleteFeatureTypeOrCoverage.exec(geoServerLayer, store);
 			}

@@ -101,6 +101,7 @@
             "parent_not_found": "Klasa od koje pokušavate izvršiti nasleđivanje ne postoji"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Ikona",
             "fillColor": "Boja površine",
             "fillOpacity": "Providnost površine",

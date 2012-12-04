@@ -1,19 +1,19 @@
 package org.cmdbuild.services.gis.geoserver.commands;
 
-import org.cmdbuild.services.gis.geoserver.GeoServerLayer;
+import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore;
 import org.cmdbuild.utils.Command;
 
 public class DeleteFeatureTypeOrCoverage extends AbstractGeoCommand implements Command<Void> {
 
-	private final GeoServerLayer layer;
+	private final LayerMetadata layer;
 	private final GeoServerStore store;
 
-	public static Void exec(final GeoServerLayer layer, final GeoServerStore store) {
+	public static Void exec(final LayerMetadata layer, final GeoServerStore store) {
 		return new DeleteFeatureTypeOrCoverage(layer, store).run();
 	}
 
-	private DeleteFeatureTypeOrCoverage(final GeoServerLayer layer, final GeoServerStore store) {
+	private DeleteFeatureTypeOrCoverage(final LayerMetadata layer, final GeoServerStore store) {
 		super();
 		this.layer = layer;
 		this.store = store;

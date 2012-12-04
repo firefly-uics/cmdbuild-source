@@ -9,17 +9,41 @@ import com.google.common.base.Joiner;
 public class LayerMetadata {
 	private static final String TARGET_TABLE_PREFIX = "gis.Detail_";
 	public static final String TARGET_TABLE_FORMAT = TARGET_TABLE_PREFIX + "%s";
-	private String name, fullName, description, mapStyle, type, geoServerName;
+	private String name, fullName, description, mapStyle, type;
 	private Integer index, minimumZoom, maximumzoom;
 	private Set<String> visibility;
 
+	/**
+	 * The name of the store that GEOServer
+	 * has created to hosts the layer
+	 */
+	private String storeName;
+
+	/**
+	 * The name that geoServer return as layer name (Is the name of the files
+	 * within the .zip file)
+	 */
+	private String geoServerName;
+
+	/**
+	 * Is a configuration string with that form
+	 * ClassName_CardId,ClassName2_CardId2,...
+	 * Used to bind show the layer near to the binded
+	 * cards in the GISNavigationTree
+	 */
+	private Set<String> cardBinding;
+
 	public LayerMetadata() {
-		this(null, null, null, 0, 0, 0, null, null, null);
+		this(null, null, null, 0, 0, 0, null, null);
+	}
+
+	public LayerMetadata(String name) {
+		this(name, null, null, 0, 0, 0, null, null);
 	}
 
 	public LayerMetadata(String name, String description, String type,
 			Integer minimumZoom, Integer maximumzoom, Integer index,
-			String mapStyle, Set<String> visibility, String geoServerName) {
+			String mapStyle, Set<String> visibility) {
 
 		this.description = description;
 		this.index = index;
@@ -28,8 +52,8 @@ public class LayerMetadata {
 		this.mapStyle = mapStyle;
 		this.name = name;
 		this.type = type;
-		this.geoServerName = null;
 		this.setVisibility(visibility);
+		this.setCardBinding(new HashSet<String>());
 	}
 
 	public String getName() {
@@ -38,14 +62,6 @@ public class LayerMetadata {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getGeoServerName() {
-		return geoServerName;
-	}
-
-	public void setGeoServerName(String geoServerName) {
-		this.geoServerName = geoServerName;
 	}
 
 	public String getFullName() {
@@ -149,5 +165,54 @@ public class LayerMetadata {
 		String fullName = getFullName();
 		String name = getName();
 		return fullName.substring(TARGET_TABLE_PREFIX.length(), fullName.length()-(name.length()+1));
+	}
+
+	public String setStoreName(String storeName) {
+		return this.storeName = storeName;
+	}
+
+	public String getStoreName() {
+		return storeName;
+	}
+
+	public String toString() {
+		return getStoreName() + "/" + getName();
+	}
+
+	public String getGeoServerName() {
+		return geoServerName;
+	}
+
+	public void setGeoServerName(String geoServerName) {
+		this.geoServerName = geoServerName;
+	}
+
+	public Set<String> getCardBinding() {
+		return cardBinding;
+	}
+
+	public Object getCardBindingAsString() {
+		return Joiner.on(",").join(getCardBinding());
+	}
+
+	public void setCardBinding(Set<String> cardBinding) {
+		if (cardBinding == null) {
+			this.cardBinding = new HashSet<String>();
+		} else {
+			this.cardBinding = cardBinding;
+		}
+	}
+
+	public void setCardBindingFromString(String cardBinding) {
+		if (cardBinding != null) {
+			String[] items = cardBinding.split("\\s*,\\s*");
+			this.cardBinding = new HashSet<String>(Arrays.asList(items));
+		} else {
+			this.cardBinding = new HashSet<String>();
+		}
+	}
+
+	public void addCardToBinding(String card) {
+		this.cardBinding.add(card);
 	}
 }

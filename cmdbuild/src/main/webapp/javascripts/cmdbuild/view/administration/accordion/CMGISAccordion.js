@@ -14,10 +14,6 @@
 			var root = this.store.getRootNode();
 			root.removeAll();
 			root.appendChild([{
-				text: tr.navigationTree.title,
-				leaf: true,
-				cmName: "gis-filter-configuration"
-			}, {
 				text: tr.icons.title,
 				leaf: true,
 				cmName: "gis-icons"
@@ -33,6 +29,10 @@
 				text: tr.geoserver.title,
 				leaf: true,
 				cmName: "gis-geoserver"
+			}, {
+				text: tr.navigationTree.title,
+				leaf: true,
+				cmName: "gis-filter-configuration"
 			}]);
 		}
 	});

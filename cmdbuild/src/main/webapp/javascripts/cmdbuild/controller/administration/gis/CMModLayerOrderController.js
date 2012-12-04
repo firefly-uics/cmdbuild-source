@@ -29,8 +29,8 @@
 			oldIndex: oldIndex,
 			newIndex: newIndex,
 			callback: function() {
-				me.view.getStore().load(); // load always to sync the index
 				CMDBuild.LoadMask.get().hide();
+				_CMCache.onGeoAttributeSaved(); // load always to sync the index
 			}
 		});
 	}

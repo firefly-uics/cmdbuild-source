@@ -101,6 +101,7 @@
             "parent_not_found": "Classe pai não existe"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Ícone",
             "fillColor": "Cor de preenchimento",
             "fillOpacity": "Opacidade do Preenchimento",

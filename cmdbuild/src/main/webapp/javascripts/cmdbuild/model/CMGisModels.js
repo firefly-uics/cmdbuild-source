@@ -22,6 +22,7 @@
 			{name: "masterTableId", type: "string"},
 			{name: "masterTableName", type: "string"},
 			{name: "visibility", type: "auto"},
+			{name: "cardBinding", type: "auto"},
 			{name: "geoServerName", type: "string"}
 		],
 
@@ -43,6 +44,10 @@
 
 		getVisibility: function() {
 			return this.get("visibility") || [];
+		},
+
+		getCardBinding: function() {
+			return this.get("cardBinding");
 		},
 
 		setVisibilityForTableName: function(tableName, visibility) {

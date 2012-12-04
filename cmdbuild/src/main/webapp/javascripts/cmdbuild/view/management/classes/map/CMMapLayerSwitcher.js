@@ -84,6 +84,7 @@
 					// has no effect. There is no time to
 					// investigate... do it in the ugly way ;)
 					child.layerId = layer.id;
+					child.layerIndex = layer.cmdb_index;
 				} catch (e) {
 					_debug("Fail to add layer", layer);
 				}
@@ -124,6 +125,26 @@
 			return this.getRootNode().findChildBy(function(child) {
 				return child.layerId == layerId;
 			}, null, true);
+		},
+
+		updateSorting: function() {
+			var root = this.getRootNode();
+			if (root && root.childNodes) {
+				for (var i=0, l=root.childNodes.length; i<l; ++i) {
+					var node = root.childNodes[i];
+					if (node) {
+						node.sort(function(a, b) {
+							if (a.layerIndex == b.layerIndex) {
+								return 0;
+							} else if (a.layerIndex > b.layerIndex){
+								return 1;
+							} else {
+								return -1;
+							}
+						}, true);
+					}
+				}
+			}
 		}
 	});
 

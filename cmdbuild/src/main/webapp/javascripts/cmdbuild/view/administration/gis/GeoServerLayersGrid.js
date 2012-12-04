@@ -9,10 +9,10 @@
 		frame: false,
 		border: false,
 		loadMask: true,
-		store: CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore(),
-		sm: new Ext.selection.RowModel(),
 
 		initComponent: function() {
+			this.sm = new Ext.selection.RowModel();
+			this.store = CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore();
 			this.columns = [{
 				header: tr.name,
 				hideable: true,
@@ -49,7 +49,7 @@
 				dataIndex: "maxZoom",
 				flex: 1
 			}];
-			
+
 			this.callParent(arguments);
 		},
 
@@ -68,9 +68,16 @@
 			}
 		},
 
-		selectFirst: function() {
-			var sm = this.getSelectionModel();
-			if (this.store.count() != 0) {
+		selectFirst: function(attempts) {
+			var attempts = attempts || 10;
+			var me = this;
+			if (this.store.isLoading()) {
+				Ext.Function.createDelayed(me.selectFirst, 500, me, [--attempts])();
+				return;
+			}
+
+			if (this.store.count() != 0) 
+				var sm = this.getSelectionModel();{
 				sm.select(0);
 			}
 		},

@@ -3,7 +3,7 @@ package org.cmdbuild.services.gis.geoserver.commands;
 import java.io.InputStream;
 import java.util.List;
 
-import org.cmdbuild.services.gis.geoserver.GeoServerLayer;
+import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore;
 import org.cmdbuild.services.gis.geoserver.GeoServerStore.StoreDataType;
 import org.cmdbuild.utils.Command;
@@ -29,10 +29,10 @@ public class CreateModifyDataStore extends AbstractGeoCommand implements Command
 		final String url = String.format("%s/rest/workspaces/%s/%ss/%s/file.%s",
 				getGeoServerURL(), getGeoServerWorkspace(), type.getStoreTypeName().toLowerCase(), store.getName(), type.getUploadFileExtension());
 		put(data, url, type.getMime());
-		List<GeoServerLayer> storeLayers = ListLayers.exec(store.getName());
+		List<LayerMetadata> storeLayers = ListLayers.exec(store.getName());
 
 		if (storeLayers.size() > 0) {
-			GeoServerLayer l = storeLayers.get(0);
+			LayerMetadata l = storeLayers.get(0);
 			return l.getName();
 		}
 
