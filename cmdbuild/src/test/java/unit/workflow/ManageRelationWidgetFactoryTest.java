@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
@@ -17,7 +18,7 @@ public class ManageRelationWidgetFactoryTest {
 	private final ValuePairWidgetFactory factory;
 
 	public ManageRelationWidgetFactoryTest() {
-		factory = new ManageRelationWidgetFactory(mock(TemplateRepository.class));
+		factory = new ManageRelationWidgetFactory(mock(TemplateRepository.class), mock(DataAccessLogic.class));
 	}
 
 	@Test(expected = NullPointerException.class)
