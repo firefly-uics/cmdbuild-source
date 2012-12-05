@@ -14,6 +14,8 @@ public class UserImpl implements CMUser {
 		private Long id;
 		private String name;
 		private String description;
+		private String email;
+		private boolean isActive;
 		private final Set<CMGroup> groups;
 		private String defaultGroupName;
 
@@ -46,6 +48,16 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
+		public UserImplBuilder withEmail(final String email) {
+			this.email = email;
+			return this;
+		}
+
+		public UserImplBuilder setActive(final boolean isActive) {
+			this.isActive = isActive;
+			return this;
+		}
+
 		public UserImplBuilder withDefaultGroupName(final String defaultGroupName) {
 			this.defaultGroupName = defaultGroupName;
 			return this;
@@ -63,6 +75,8 @@ public class UserImpl implements CMUser {
 	private final Long id;
 	private final String name;
 	private final String description;
+	private final String email;
+	private final boolean isActive;
 	private final Set<CMGroup> groups;
 	private final String defaultGroupName;
 
@@ -70,6 +84,8 @@ public class UserImpl implements CMUser {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
+		this.email = builder.email;
+		this.isActive = builder.isActive;
 		this.groups = builder.groups;
 		this.defaultGroupName = builder.defaultGroupName;
 	}
@@ -97,6 +113,16 @@ public class UserImpl implements CMUser {
 	@Override
 	public String getDefaultGroupName() {
 		return defaultGroupName;
+	}
+
+	@Override
+	public String getEmail() {
+		return email;
+	}
+
+	@Override
+	public boolean isActive() {
+		return isActive;
 	}
 
 	public static UserImplBuilder newInstanceBuilder() {

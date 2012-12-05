@@ -88,19 +88,21 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final Long userId = userCard.getId();
 		final String username = userCard.get(userNameAttribute()).toString();
 		final Object userDescription = userCard.get(userDescriptionAttribute());
+//		final Object email = userCard.get("Email");
 		final String defaultGroupName = fetchDefaultGroupNameForUser(username);
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder() //
 				.withId(userId) //
 				.withName(username) //
 				.withDescription(userDescription != null ? userDescription.toString() : "") //
-				.withDefaultGroupName(defaultGroupName);
+				.withDefaultGroupName(defaultGroupName); //
+//				.withEmail(email != null ? email.toString() : "");
 
 		final Map<Long, CMGroup> allGroups = getAllGroups();
 		for (final Object groupId : fetchGroupIdsForUser(userCard.getId())) {
 			final CMGroup group = allGroups.get(groupId);
 			userBuilder.withGroup(group);
 		}
-
+		userBuilder.setActive(true); //FIXME: when get method of DBEntry is fixed
 		return userBuilder.build();
 	}
 
@@ -170,6 +172,20 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return groupIds;
 	}
 
+	@Override
+	public List<CMUser> fetchAllUsers() {
+		final CMQueryResult result = view.select(anyAttribute(userClass())) //
+				.from(userClass()) //
+				.run();
+		final List<CMUser> allUsers = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			final CMCard userCard = row.getCard(userClass());
+			final CMUser user = buildUserFromCard(userCard);
+			allUsers.add(user);
+		}
+		return allUsers;
+	}
+
 	/*
 	 * Methods to shade class and attribute names. They should be detected by
 	 * metadatas, but for now we stick to what the DBA has decided.
@@ -188,6 +204,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected abstract String userPasswordAttribute();
 
 	protected abstract String userIdAttribute();
+	
+	protected abstract String activeAttribute();
 
 	protected abstract CMDomain userGroupDomain();
 

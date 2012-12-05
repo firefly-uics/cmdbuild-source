@@ -1,11 +1,11 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
-import static org.cmdbuild.dao.driver.postgres.Const.STATUS_ACTIVE_VALUE;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
@@ -20,7 +20,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		// FIXME: append the status IF NOT a history query
 		if (query.getFromType().holdsHistory()) {
 			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), OPERATOR_EQ,
-					STATUS_ACTIVE_VALUE));
+					CardStatus.ACTIVE.value()));
 		}
 	}
 

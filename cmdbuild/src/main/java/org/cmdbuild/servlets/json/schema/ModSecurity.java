@@ -1,22 +1,16 @@
 package org.cmdbuild.servlets.json.schema;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.UserImpl;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.ICard;
-import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard;
@@ -26,13 +20,11 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardObjectMapper;
+import org.cmdbuild.logic.auth.UserDTO;
+import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
-import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -44,6 +36,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Lists;
 
 public class ModSecurity extends JSONBase {
 
@@ -68,7 +62,7 @@ public class ModSecurity extends JSONBase {
 		return JsonResponse.success(userCtx.getDefaultGroup().getUIConfiguration());
 	}
 
-	// @Admin
+	@Admin
 	@JSONExported
 	public JsonResponse getGroupUIConfiguration(@Parameter("id") int groupId, UserContext userCtx)
 			throws JSONException, AuthException, ORMException {
@@ -113,7 +107,8 @@ public class ModSecurity extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getUserGroupList(JSONObject serializer, @Parameter(value = "userid") Long userId) throws JSONException {
+	public JSONObject getUserGroupList(JSONObject serializer, @Parameter(value = "userid") Long userId)
+			throws JSONException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		CMUser user = authLogic.getUserWithId(userId);
 		JSONArray jsonGroupList = Serializer.serializeGroupsForUser(user);
@@ -123,38 +118,21 @@ public class ModSecurity extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject getGroupUserList(@Parameter("groupId") int groupId,
-			@Parameter("alreadyAssociated") boolean associated, JSONObject serializer, ITableFactory tf)
-			throws JSONException {
-		// Iterable<UserCard> userList;
-		//
-		// final Iterable<UserCard> associatedUserList =
-		// authLogic.getUserList(groupId);
-		// if (associated) {
-		// userList = associatedUserList;
-		// } else {
-		// // FIXME
-		// // userList contains duplicate users! But distinct on ("User"."Id")
-		// is not
-		// // supported yet. To eliminate duplicate users, we use an awful
-		// HashMap.
-		// Set<Integer> associatedUserIds = new HashSet<Integer>();
-		// for (UserCard associatedUserCard : associatedUserList) {
-		// associatedUserIds.add(associatedUserCard.getId());
-		// }
-		//
-		// final HashMap<Integer, UserCard> unassociatedUserMap = new
-		// HashMap<Integer, UserCard>();
-		// for (UserCard userCard : UserCard.allByUsername()) {
-		// if (!associatedUserIds.contains(userCard.getId())) {
-		// unassociatedUserMap.put(userCard.getId(), userCard);
-		// }
-		// }
-		// userList = unassociatedUserMap.values();
-		// }
-		//
-		// serializer.put("users", Serializer.serializeUserList(userList));
-		return serializer;
+	public JSONObject getGroupUserList(@Parameter("groupId") Long groupId,
+			@Parameter("alreadyAssociated") boolean associated, JSONObject serializer) throws JSONException {
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		List<CMUser> associatedUsers = authLogic.getUsersForGroupWithId(groupId);
+		if (!associated) {
+			List<CMUser> allUsers = authLogic.getAllUsers();
+			List<CMUser> notAssociatedUsers = Lists.newArrayList();
+			for (CMUser user : allUsers) {
+				if (!associatedUsers.contains(user)) {
+					notAssociatedUsers.add(user);
+				}
+			}
+			return serializer.put("users", Serializer.serializeCMUserList(notAssociatedUsers));
+		}
+		return serializer.put("users", Serializer.serializeCMUserList(associatedUsers));
 	}
 
 	@JSONExported
@@ -164,7 +142,7 @@ public class ModSecurity extends JSONBase {
 		 * TODO: implement this method (implement the "modifyCard" method of
 		 * DbDataView class) and don't use UserCtx
 		 */
-		// userCtx.changePassword(oldPassword, newPassword);
+		userCtx.changePassword(oldPassword, newPassword);
 	}
 
 	@Admin(AdminAccess.DEMOSAFE)
@@ -188,52 +166,34 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@Transacted
 	@JSONExported
-	public JSONObject saveUser(JSONObject serializer, @Parameter("userid") int userId,
+	public JSONObject saveUser(JSONObject serializer, @Parameter("userid") Long userId,
 			@Parameter(value = "description", required = false) String description,
 			@Parameter(value = "username", required = false) String username,
 			@Parameter(value = "password", required = false) String password,
 			@Parameter(value = "email", required = false) String email, @Parameter("isactive") boolean isActive,
-			@Parameter("defaultgroup") int defaultGroupId, ITableFactory tf) throws JSONException, AuthException {
-		ICard card = null;
-		if (userId == -1) {
-			CardQuery cardQuery = tf
-					.get(UserCard.USER_CLASS_NAME)
-					.cards()
-					.list()
-					.ignoreStatus()
-					.filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,
-							ElementStatus.UPDATED.value()).filter("Username", AttributeFilterType.EQUALS, username);
-			if (cardQuery.iterator().hasNext())
-				throw ORMExceptionType.ORM_DUPLICATE_USER.createException();
-			else
-				card = tf.get(UserCard.USER_CLASS_NAME).cards().create();
+			@Parameter("defaultgroup") Long defaultGroupId) throws JSONException, AuthException {
+
+		/**
+		 * Note: if userId == -1, create a new user, otherwise modify it
+		 */
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		boolean newUser = userId == -1;
+		CMUser createdOrUpdatedUser = null;
+		UserDTOBuilder userDTOBuilder = UserDTO.newInstance() //
+				.withDescription(description) //
+				.withUsername(username) //
+				.withPassword(password) //
+				.withEmail(email) //
+				.withDefaultGroupId(defaultGroupId) //
+				.setActive(isActive);
+		if (newUser) {
+			UserDTO userDTO = userDTOBuilder.build();
+			createdOrUpdatedUser = authLogic.createUser(userDTO);
 		} else {
-			card = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
+			UserDTO userDTO = userDTOBuilder.withUserId(userId).build();
+			createdOrUpdatedUser = authLogic.updateUser(userDTO);
 		}
-		UserCard user = new UserCard(card);
-		if (username != null) {
-			user.setUsername(username);
-		}
-		if (description != null) {
-			user.setDescription(description);
-		}
-		if (email != null) {
-			user.setEmail(email);
-		}
-		if (password != null && !password.equals("")) {
-			user.setUnencryptedPassword(password);
-		}
-		if (isActive) {
-			user.setStatus(ElementStatus.ACTIVE);
-		} else {
-			user.setStatus(ElementStatus.INACTIVE_USER);
-		}
-		user.save();
-
-		authLogic.setDefaultGroupForUser(user.getId(), defaultGroupId);
-
-		serializer.put("rows", Serializer.serializeUser(user));
-
+		serializer.put("rows", Serializer.serializeCMUser(createdOrUpdatedUser));
 		return serializer;
 	}
 
@@ -329,20 +289,10 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JSONObject enableDisableGroup(JSONObject serializer, @Parameter("isActive") boolean isActive,
-			@Parameter("groupId") int groupId, ITableFactory tf) throws JSONException, AuthException {
-		ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
-		GroupCard group = new GroupCard(card);
-		setGroupStatus(group, isActive);
-		group.save();
-		serializer.put("group", Serializer.serializeGroupCard(group));
+			@Parameter("groupId") int groupId) throws JSONException, AuthException {
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		CMGroup group = authLogic.changeGroupStatusTo(Long.valueOf(groupId), isActive);
+		serializer.put("group", Serializer.serializeGroup(group));
 		return serializer;
-	}
-
-	private void setGroupStatus(GroupCard group, boolean isActive) {
-		if (isActive) {
-			group.setStatus(ElementStatus.ACTIVE);
-		} else {
-			group.setStatus(ElementStatus.INACTIVE);
-		}
 	}
 }

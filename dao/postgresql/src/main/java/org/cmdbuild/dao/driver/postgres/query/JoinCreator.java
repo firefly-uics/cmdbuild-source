@@ -1,7 +1,6 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
-import static org.cmdbuild.dao.driver.postgres.Const.STATUS_ACTIVE_VALUE;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
@@ -9,9 +8,10 @@ import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
 import java.util.List;
 import java.util.Set;
 
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -99,7 +99,7 @@ public class JoinCreator extends PartCreator {
 		protected void appendStatusWhere(final DataQueryType dataQueryType) {
 			if (dataQueryType == DataQueryType.CURRENT) {
 				sb.append(" WHERE ").append(quoteIdent(SystemAttributes.Status)).append(OPERATOR_EQ)
-						.append(param(STATUS_ACTIVE_VALUE));
+						.append(param(CardStatus.ACTIVE.value()));
 			}
 		}
 

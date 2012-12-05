@@ -7,6 +7,7 @@ CREATE TABLE "User"
   "Username" varchar(40) NOT NULL,
   "Password" varchar(40),
   "Email" varchar(320),
+  "Active" boolean DEFAULT true NOT NULL,
   CONSTRAINT "User_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
@@ -22,6 +23,7 @@ COMMENT ON COLUMN "User"."Notes" IS 'MODE: read|DESCR: Notes';
 COMMENT ON COLUMN "User"."Username" IS 'MODE: read|DESCR: Username|INDEX: 1|BASEDSP: true|STATUS: active';
 COMMENT ON COLUMN "User"."Password" IS 'MODE: read|DESCR: Password|INDEX: 2|BASEDSP: false|STATUS: active';
 COMMENT ON COLUMN "User"."Email" IS 'MODE: read|DESCR: Email|INDEX: 5';
+COMMENT ON COLUMN "User"."Active" IS 'MODE: read';
 
 ---------------------------------------------
 -- Role
@@ -40,6 +42,7 @@ CREATE TABLE "Role"
   "SimpleHistoryModeForCard" boolean DEFAULT false NOT NULL,
   "SimpleHistoryModeForProcess" boolean DEFAULT false NOT NULL,
   "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL,
+  "Active" boolean DEFAULT true NOT NULL,
   CONSTRAINT "Role_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
@@ -63,6 +66,7 @@ COMMENT ON COLUMN "Role"."FullScreenMode"IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."SimpleHistoryModeForCard" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."SimpleHistoryModeForProcess" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."Active" IS 'MODE: read';
 
 ALTER TABLE "Role" ALTER COLUMN "Code" SET NOT NULL;
 

@@ -38,6 +38,18 @@ public interface CMUser {
 	 * @return default group name or null if not set
 	 */
 	String getDefaultGroupName();
+	
+	/**
+	 * 
+	 * @return the email address of the user
+	 */
+	String getEmail();
+	
+	/**
+	 * 
+	 * @return true if the user is active, false otherwise
+	 */
+	boolean isActive();
 
 	/**
 	 * Two CMUsers are equal if their name is equal

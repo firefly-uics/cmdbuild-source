@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -18,6 +19,7 @@ import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
@@ -26,6 +28,7 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.DBFixture;
@@ -286,7 +289,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 	
 	@Test
-	public void shouldRetrieveTheUserFromId() {
+	public void shouldRetrieveUserFromId() {
 		//given
 		Long expectedId = admin.getId();
 		
@@ -308,6 +311,35 @@ public class AuthenticationLogicTest extends DBFixture {
 			numberOfGroups++;
 		}
 		assertEquals(numberOfGroups, 3);
+	}
+	
+	@Test
+	public void shouldRetrieveExistentGroupFromId() {
+		//when
+		CMGroup retrievedGroup = authLogic.getGroupWithId(groupA.getId());
+		
+		//then
+		assertNotNull(retrievedGroup);
+		assertEquals(groupA.getId(), retrievedGroup.getId());
+	}
+	
+	@Test
+	public void shouldRetrieveNullGroupIfNonExistentId() {
+		//when
+		CMGroup retrievedGroup = authLogic.getGroupWithId(-1L);
+		
+		//then
+		assertNotNull(retrievedGroup);
+		assertTrue(retrievedGroup instanceof NullGroup);
+	}
+	
+	@Ignore("Until the update of a card is not implemented...")
+	@Test
+	public void shouldChangeStatusToGroup() {
+		//when
+		CMGroup updatedGroup = authLogic.changeGroupStatusTo(groupA.getId(), true);
+		
+		//TODO: complete this test
 	}
 
 }
