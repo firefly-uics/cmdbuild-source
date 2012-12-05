@@ -9,6 +9,7 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.auth.UserDTO;
 
 public interface AuthenticationService {
 
@@ -17,7 +18,7 @@ public interface AuthenticationService {
 	public void setClientRequestAuthenticators(final ClientRequestAuthenticator... clientRequestAuthenticators);
 
 	public void setUserFetchers(final UserFetcher... userFetchers);
-	
+
 	public void setGroupFetcher(final GroupFetcher groupFetcher);
 
 	public void setUserStore(final UserStore userStore);
@@ -90,11 +91,56 @@ public interface AuthenticationService {
 	 *         with that username
 	 */
 	public CMUser fetchUserByUsername(String username);
-	
+
+	/**
+	 * Creates a new user in the database
+	 * 
+	 * @param userDTO
+	 *            a DTO that contains some details about new user (username,
+	 *            password, active flag, email ...)
+	 * @return
+	 */
+	public CMUser createUser(UserDTO userDTO);
+
+	/**
+	 * Updates an existent user in the database
+	 * 
+	 * @param userDTO
+	 *            a DTO that contains some details about the user that will be
+	 *            updated (username, password, active flag, email ...)
+	 * @return
+	 */
+	public CMUser updateUser(UserDTO userDTO);
+
 	/**
 	 * 
 	 * @return a collection of all groups stored in the database
 	 */
 	public Iterable<CMGroup> fetchAllGroups();
+	
+	/**
+	 * 
+	 * @return a collection of all users stored in the database
+	 */
+	public List<CMUser> fetchAllUsers();
+
+	/**
+	 * Retrieves a group with the specified id
+	 * 
+	 * @param groupId
+	 *            the id of the group that will be retrieved
+	 * @return
+	 */
+	public CMGroup fetchGroupWithId(Long groupId);
+
+	/**
+	 * It changes the status of the role with id = groupId
+	 * 
+	 * @param groupId
+	 *            the id of the group whose state will be changed
+	 * @param isActive
+	 * @return
+	 */
+	public CMGroup changeGroupStatusTo(Long groupId, boolean isActive);
 
 }

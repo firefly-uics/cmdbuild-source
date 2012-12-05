@@ -53,4 +53,14 @@ public class AnonymousUser implements AuthenticatedUser {
 		return false;
 	}
 
+	@Override
+	public String getEmail() {
+		return null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return false;
+	}
+
 }

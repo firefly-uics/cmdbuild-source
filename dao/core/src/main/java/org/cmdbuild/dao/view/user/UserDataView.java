@@ -163,7 +163,8 @@ public class UserDataView extends QueryExecutorDataView {
 
 	@Override
 	public CMCardDefinition modifyCard(final CMCard card) {
-		// TODO
+		// TODO: check privileges.....
+		//user.hasWriteAccess(card.getType());
 		return dbView.modifyCard(card);
 	}
 

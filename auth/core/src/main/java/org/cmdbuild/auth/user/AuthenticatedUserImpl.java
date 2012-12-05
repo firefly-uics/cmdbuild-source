@@ -78,4 +78,14 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 		return inner.getDefaultGroupName();
 	}
 
+	@Override
+	public String getEmail() {
+		return inner.getEmail();
+	}
+
+	@Override
+	public boolean isActive() {
+		return inner.isActive();
+	}
+
 }

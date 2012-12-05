@@ -20,5 +20,20 @@ public interface GroupFetcher {
 	 *         group object
 	 */
 	Map<Long, CMGroup> fetchAllGroupIdToGroup();
+	
+	/**
+	 * Retrieves the group with the specified id.
+	 * @param groupId
+	 * @return the CMGroup if it exists, a NullGroup otherwise
+	 */
+	CMGroup fetchGroupWithId(Long groupId);
+	
+	/**
+	 * Changes the status to the group with the specified id
+	 * @param groupId
+	 * @param isActive
+	 * @return
+	 */
+	CMGroup changeGroupStatusTo(Long groupId, boolean isActive);
 
 }

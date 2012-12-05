@@ -1,8 +1,12 @@
 package org.cmdbuild.auth;
 
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.join.Over.over;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -10,10 +14,26 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.password.NaivePasswordHandler;
+import org.cmdbuild.auth.password.PasswordHandler;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.AuthenticatedUserImpl;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.*;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.auth.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -90,6 +110,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private UserFetcher[] userFetchers;
 	private GroupFetcher groupFetcher;
 	private UserStore userStore;
+	private CMDataView view;
 
 	private final Set<String> serviceUsers;
 	private final Set<String> authenticatorNames;
@@ -118,6 +139,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
 		userFetchers = new UserFetcher[0];
 		userStore = DUMB_STORE;
+		view = TemporaryObjectsBeforeSpringDI.getSystemView();
 	}
 
 	@Override
@@ -137,7 +159,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		Validate.noNullElements(userFetchers);
 		this.userFetchers = userFetchers;
 	}
-	
+
 	@Override
 	public void setGroupFetcher(final GroupFetcher groupFetcher) {
 		Validate.notNull(groupFetcher);
@@ -248,6 +270,12 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		return userStore.getUser();
 	}
 
+	@Override
+	public CMUser fetchUserByUsername(final String username) {
+		final Login login = Login.newInstance(username);
+		return fetchUser(login);
+	}
+
 	private AuthenticatedUser fetchAuthenticatedUser(final Login login, final FetchCallback callback) {
 		AuthenticatedUser authUser = ANONYMOUS_USER;
 		final CMUser user = fetchUser(login);
@@ -294,14 +322,121 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public CMUser fetchUserByUsername(final String username) {
-		final Login login = Login.newInstance(username);
-		return fetchUser(login);
+	public CMUser createUser(UserDTO userDTO) {
+		PasswordHandler passwordHandler = new NaivePasswordHandler();
+		CMCardDefinition newUserCard = view.newCard(userClass());
+		newUserCard.set("Description", userDTO.getDescription());
+		newUserCard.set("Username", userDTO.getUsername());
+		newUserCard.set("Password", passwordHandler.encrypt(userDTO.getPassword()));
+		newUserCard.set("Email", userDTO.getEmail());
+		newUserCard.set("Active", userDTO.isActive());
+		CMCard createdUserCard = newUserCard.save();
+		return fetchUserById(createdUserCard.getId());
 	}
-	
+
+	@Override
+	public CMUser updateUser(UserDTO userDTO) {
+		// the username cannot be updated
+		CMCard userCard = fetchUserCardWithUserId(userDTO.getUserId());
+		CMCardDefinition cardToBeUpdated = view.modifyCard(userCard);
+		cardToBeUpdated.set("Active", userDTO.isActive()) //
+				.set("Description", userDTO.getDescription()) //
+				.set("Email", userDTO.getEmail()) //
+				.save();
+		if (userDTO.getDefaultGroupId() != null || userDTO.getDefaultGroupId() != 0) {
+			DBRelation defaultGroupRelation = fetchRelationForDefaultGroup(userDTO.getUserId());
+			if (defaultGroupRelation != null) {
+				defaultGroupRelation.set("DefaultGroup", false).save();
+			}
+			setDefaultGroupToUser(userDTO.getUserId(), userDTO.getDefaultGroupId());
+		}
+		return fetchUserById(userDTO.getUserId());
+	}
+
+	private CMCard fetchUserCardWithUserId(final Long userId) throws NoSuchElementException {
+		final Alias userClassAlias = Alias.canonicalAlias(userClass());
+		final CMQueryRow userRow = view.select(attribute(userClassAlias, "Username"), //
+				attribute(userClassAlias, "Description"), //
+				attribute(userClassAlias, "Password")) //
+				.from(userClass(), as(userClassAlias)) //
+				.where(attribute(userClassAlias, "Id"), Operator.EQUALS, userId).run().getOnlyRow();
+		final CMCard userCard = userRow.getCard(userClassAlias);
+		return userCard;
+	}
+
+	/**
+	 * @return null if the user does not have a default group
+	 */
+	private DBRelation fetchRelationForDefaultGroup(final Long userId) {
+		List<DBRelation> relations = fetchRelationsForUserWithId(userId);
+		for (final DBRelation relation : relations) {
+			final Object isDefaultGroup = relation.get("DefaultGroup");
+			if (isDefaultGroup != null)
+				if ((Boolean) isDefaultGroup) {
+					return (DBRelation) relation;
+				}
+		}
+		return null;
+	}
+
+	private List<DBRelation> fetchRelationsForUserWithId(Long userId) {
+		final CMQueryResult result = view
+				.select(attribute(userClass(), "Username"), anyAttribute(userGroupDomain()),
+						attribute(roleClass(), roleClass().getCodeAttributeName())) //
+				.from(userClass()) //
+				.join(roleClass(), over(userGroupDomain())) //
+				.where(attribute(userClass(), "Id"), Operator.EQUALS, userId) //
+				.run();
+		List<DBRelation> relations = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			final DBRelation relation = row.getRelation(userGroupDomain()).getRelation();
+			relations.add(relation);
+		}
+		return relations;
+	}
+
+	private void setDefaultGroupToUser(Long userId, Long defaultGroupId) {
+		List<DBRelation> relations = fetchRelationsForUserWithId(userId);
+		for (final DBRelation relation : relations) {
+			if (relation.getCard2().getId().equals(defaultGroupId)) {
+				relation.set("DefaultGroup", true).save();
+			}
+		}
+	}
+
 	@Override
 	public Iterable<CMGroup> fetchAllGroups() {
 		return groupFetcher.fetchAllGroups();
+	}
+
+	@Override
+	public List<CMUser> fetchAllUsers() {
+		for (final UserFetcher uf : userFetchers) {
+			return uf.fetchAllUsers();
+		}
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public CMGroup fetchGroupWithId(Long groupId) {
+		return groupFetcher.fetchGroupWithId(groupId);
+	}
+
+	@Override
+	public CMGroup changeGroupStatusTo(Long groupId, boolean isActive) {
+		return groupFetcher.changeGroupStatusTo(groupId, isActive);
+	}
+
+	private CMClass userClass() {
+		return view.findClassByName("User");
+	}
+
+	private CMClass roleClass() {
+		return view.findClassByName("Role");
+	}
+
+	private CMDomain userGroupDomain() {
+		return view.findDomainByName("UserRole");
 	}
 
 }
