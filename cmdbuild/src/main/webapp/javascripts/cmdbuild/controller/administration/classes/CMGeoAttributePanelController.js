@@ -41,40 +41,44 @@
 		}
 
 	});
-	
+
 	function onSelectionChanged(selection) {
 		if (selection.selected.length > 0) {
 			this.currentAttribute = selection.selected.items[0];
 			this.form.onAttributeSelected(this.currentAttribute);
 		}
 	}
-	
+
 	function onSaveButtonFormClick() {
 		var nonValid = this.form.getNonValidFields();
 		if (nonValid.length > 0) {
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
+
 		this.form.enableModify(all = true);
 		CMDBuild.LoadMask.get().show();
-		var p = {
+
+		var attributeConfig = this.form.getData();
+		attributeConfig.style = Ext.encode(this.form.getStyle());
+
+		var me = this;
+		var params = {
 			name: this.form.name.getValue(),
-			callback: callback,
-			params: Ext.apply(this.form.getData(), {
-				style: Ext.encode(this.form.getStyle()),
+			params: Ext.apply(attributeConfig, {
 				idClass: this.currentClassId
-			})
+			}),
+			callback: callback,
+			success: function(a, b, decoded) {
+				_CMCache.onGeoAttributeSaved();
+				me.view.grid.refreshStore(me.currentClassId, attributeConfig.name);
+			}
 		};
 
-		p.success = Ext.bind(function(a, b, decoded) {
-			_CMCache.onGeoAttributeSaved(this.currentClassId, decoded.geoAttribute);
-			this.grid.selectAttribute(decoded.geoAttribute);
-		}, this);
-
 		if (this.currentAttribute != null) {
-			CMDBuild.ServiceProxy.geoAttribute.modify(p);
+			CMDBuild.ServiceProxy.geoAttribute.modify(params);
 		} else {
-			CMDBuild.ServiceProxy.geoAttribute.save(p);
+			CMDBuild.ServiceProxy.geoAttribute.save(params);
 		}
 	}
 
@@ -86,7 +90,7 @@
 			this.form.reset();
 		}
 	}
-	
+
 	function onCancelButtonFormClick() {
 		Ext.Msg.show({
 			title: CMDBuild.Translation.management.findfilter.msg.attention,
@@ -100,21 +104,23 @@
 			}
 		});
 	}
-	
+
 	function deleteAttribute() {
 		var me = this;
+		var params = {
+			"masterTableName": me.currentAttribute.getMasterTableName(),
+			"name": me.currentAttribute.get("name")
+		};
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.geoAttribute.remove({
-			params : {
-				"idClass": me.currentClassId,
-				"name": me.currentAttribute.get("name")
-			},
+			params: params, 
 			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {
-				_CMCache.onGeoAttributeDeleted(me.currentClassId, me.currentAttribute.data);
+				_CMCache.onGeoAttributeDeleted(params.masterTableName, params.name);
+				me.view.onClassSelected(me.currentClassId);
 			},
 			callback: callback
-		})
+		});
 	}
 
 	function onModifyButtonFormClick() {

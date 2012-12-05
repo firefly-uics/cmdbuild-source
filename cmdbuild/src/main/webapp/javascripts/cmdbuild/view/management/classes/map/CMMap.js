@@ -3,15 +3,9 @@
 	 * @class CMDBuild.Management.CMDBuildMap
 	 */
 	CMDBuild.Management.CMMap = OpenLayers.Class(OpenLayers.Map, {
-		cmdbLayers: [], //array with the layers added
-
-		update: function(entryType, withEditLayer) {
-			removeCmdbLayers.call(this);
-			addCmdbLayers.call(this, entryType, withEditLayer);
-		},
 
 		getEditableLayers: function() {
-			var layers = this.cmdbLayers;
+			var layers = this.layers;
 			var editLayers = [];
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
@@ -23,15 +17,18 @@
 		},
 
 		activateStrategies: function(acvitate) {
-			var layers = this.cmdbLayers;
+			var layers = this.layers;
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
-				layer.activateStrategies(acvitate);
+
+				if (typeof layer.activateStrategies == "function") {
+					layer.activateStrategies(acvitate);
+				}
 			}
 		},
 
 		refreshStrategies: function() {
-			var layers = this.cmdbLayers;
+			var layers = this.layers;
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
 				if (typeof layer.refreshStrategies == "function") {
@@ -57,7 +54,7 @@
 		},
 
 		getFeatureByMasterCard: function(id) {
-			var layers = this.cmdbLayers;
+			var layers = this.layers;
 			for (var i=0, l=this.layers.length; i<l; ++i) {
 				var layer = layers[i];
 				if (layer) {
@@ -70,11 +67,28 @@
 			return null;
 		},
 
-		clearSelection: function() {
-			var layers = this.cmdbLayers;
+		getFeaturesInLonLat: function(lonlat) {
+			var layers = this.layers;
+			var features = [];
 			for (var i=0, l=this.layers.length; i<l; ++i) {
 				var layer = layers[i];
-				if (layer) {
+				if (layer 
+						&& typeof layer.getFeaturesInLonLat == "function") {
+
+					features = features.concat(layer.getFeaturesInLonLat(lonlat));
+				}
+			}
+
+			return features;
+		},
+
+		clearSelection: function() {
+			var layers = this.layers;
+			for (var i=0, l=this.layers.length; i<l; ++i) {
+				var layer = layers[i];
+				if (layer 
+						&& typeof clearSelection == "function") {
+
 					layer.clearSelection();
 				}
 			}
@@ -89,9 +103,40 @@
 			}
 		},
 
+		getLayersByTargetClassName: function(targetClassName) {
+			var layers = [];
+			for (var i=0, layer=null; i<this.layers.length; ++i) {
+				layer = this.layers[i];
+
+				if (layer.geoAttribute 
+						// TODO or an ancestor?
+						&& layer.geoAttribute.masterTableName == targetClassName) {
+
+					layers.push(layer);
+				}
+			}
+
+			return layers;
+		},
+
+		getGeoServerLayerByName: function(layerName) {
+			for (var i=0, layer=null; i<this.layers.length; ++i) {
+				layer = this.layers[i];
+				if (!layer.CM_geoserverLayer) {
+					continue;
+				}
+
+				if (layer.geoAttribute.name == layerName) {
+					return layer;
+				}
+			}
+
+			return null;
+		},
+
 		getEditedGeometries: function() {
 			var mapOfFeatures = {};
-			var layers = this.cmdbLayers;
+			var layers = this.layers;
 			for (var i=0, l=layers.length; i<l; ++i) {
 				var layer = layers[i];
 				if (layer.editLayer) {
@@ -106,85 +151,28 @@
 			return mapOfFeatures;
 		},
 
-		refreshFeatures: function() {
-			var layers = this.cmdbLayers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].refreshFeatures();
+		getCmdbLayers: function() {
+			var out = [];
+			for (var i=0, l=this.layers.length; i<l; ++i) {
+				var layer = this.layers[i];
+				if (layer 
+						&& layer.geoAttribute
+						&& !layer.CM_EditLayer
+						&& !layer.CM_geoserverLayer) {
+
+					out.push(layer);
+				}
 			}
+
+			return out;
 		},
 
-		reselectLastSelection: function() {
-			var layers = this.cmdbLayers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				layers[i].reselectLastSelection();
-			}
-		},
+		// called by the layers when a feature is added
 
-		removeAllPopups: function() {
-			var popups = this.popups;
-			for (var i=0, l=popups.length; i<l; i++) {
-				this.removePopup(popups[i]);
+		featureWasAdded: function(feature) {
+			if (this.delegate) {
+				this.delegate.featureWasAdded(feature);
 			}
 		}
 	});
-
-	// subroutine of the update method
-	function removeCmdbLayers() {
-		if (this.cmdbLayers) {
-			var layer = this.cmdbLayers.pop();
-			while (layer) {
-				this.removeLayer(layer);
-				if (layer.editLayer) {
-					this.removeLayer(layer.editLayer);
-				}
-				layer = this.cmdbLayers.pop();
-			}
-		}
-		this.cmdbLayers = [];
-	};
-
-	function orderAttributesByIndex(geoAttributes) {
-		var out = [];
-		for (var i=0, l=geoAttributes.length; i<l; ++i) {
-			var attr = geoAttributes[i];
-			out[attr.index] = attr;
-		}
-		return out;
-	};
-
-	// subroutine of the update method
-	function addCmdbLayers(entryType, withEditLayer) {
-		var geoAttributes = entryType.getGeoAttrs() || [];
-		var orderedAttrs = orderAttributesByIndex(geoAttributes);
-
-		for (var i = orderedAttrs.length; i>=0; i--) {
-			// add the related layer to the map
-			var attr = orderedAttrs[i];
-			var newLayer = CMDBuild.Management.CMMap.LayerBuilder.buildLayer({
-				classId: entryType.get("id"),
-				geoAttribute: attr,
-				withEditLayer: withEditLayer
-			});
-
-			addLayerToMap.call(this, newLayer);
-		}
-
-		// add the editable layers to the map after
-		// the cmdb layers to see them over all
-		for (var i=0, l=this.cmdbLayers.length; i<l; ++i) {
-			var layer = this.cmdbLayers[i];
-			if (layer.editLayer) {
-				this.addLayers([layer.editLayer]);
-			}
-		}
-	};
-
-	function addLayerToMap(layer) {
-		if (layer) {
-			this.cmdbLayers.push(layer);
-			layer.setVisibilityByZoom(this.getZoom());
-			this.addLayers([layer]);
-		}
-	};
-	
 })();

@@ -23,10 +23,10 @@ import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
-import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
 import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
+import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
@@ -110,6 +110,10 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	public static DashboardLogic getDashboardLogic(UserContext userCtx) {
 		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(userCtx));
+	}
+
+	public static GISLogic getGISLogic() {
+		return new GISLogic();
 	}
 
 	public static CMDataView getUserContextView(UserContext userCtx) {

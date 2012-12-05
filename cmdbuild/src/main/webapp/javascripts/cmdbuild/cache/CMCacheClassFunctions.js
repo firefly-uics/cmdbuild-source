@@ -2,12 +2,13 @@
 
 	var classes = {},
 		processes = {},
-		geoAttributesSotores = {},
+		mapIdAndName = {},
 		superclassesStore = getFakeStore(),
 		superProcessStore = getFakeStore(),
 		classStore = getFakeStore(),
 		classesAndProcessesStore = getFakeStore();
 
+	
 	Ext.define("CMDBUild.cache.CMCacheClassFunctions", {
 
 		getClasses: function() {
@@ -86,9 +87,9 @@
 				p = this.getProcessById(id);
 			
 			if (c) {
-				return c
+				return c;
 			} else if (p) {
-				return p
+				return p;
 			} else {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
 						Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, id));
@@ -108,6 +109,19 @@
 					Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, name));
 
 			return null;
+		},
+
+		getEntryTypeNameById: function(id) {
+			if (typeof mapIdAndName[id] == "undefined") {
+				var et = this.getEntryTypeById(id);
+				if (et) {
+					mapIdAndName[id] = et.get("name");
+				} else {
+					mapIdAndName[id] = "";
+				}
+			}
+
+			return mapIdAndName[id];
 		},
 
 		getSuperclassesAsStore: function() {
@@ -136,7 +150,7 @@
 
 			return classStore;
 		},
-		
+
 		getClassesAndProcessesStore: function() {
 			if (classesAndProcessesStore.cmFake) {
 				classesAndProcessesStore = buildClassesAndProcessesStore();
@@ -144,14 +158,6 @@
 			}
 
 			return classesAndProcessesStore;
-		},
-
-		getGeoAttributesStoreForClass: function(classId) {
-			if (!geoAttributesSotores[classId]) {
-				geoAttributesSotores[classId] = buildGeoAttributesStoreForClass(classId);
-			}
-
-			return geoAttributesSotores[classId];
 		},
 
 		getClassRootId: function() {
@@ -192,41 +198,6 @@
 			callCmFillForStores();
 			
 			this.fireEvent("cm_process_deleted", idClass);
-		},
-
-		onGeoAttributeSaved: function(idClass, geoAttribute) {
-			var owner = _CMCache.getEntryTypeById(idClass);
-			owner.createOrUpdateGeoAttr(geoAttribute);
-			_CMCache.getGeoAttributesStoreForClass(idClass).cmFill();
-
-			function iterateOverEntryTypes(entryTypes) {
-				for (var et in entryTypes) {
-					et = entryTypes[et];
-					if (et.updateGeoAttr(geoAttribute)) {
-						_CMCache.getGeoAttributesStoreForClass(et.data.id).cmFill();
-					}
-				}
-			}
-			iterateOverEntryTypes(classes);
-//			iterateOverEntryTypes(processes); // remove comment when the process can have geo-attributes (never! hahah)
-		},
-
-		onGeoAttributeDeleted: function(idClass, geoAttribute) {
-			function iterateOverEntryTypes(entryTypes) {
-				for (var et in entryTypes) {
-					et = entryTypes[et];
-					if (et.deleteGeoAttr(geoAttribute)) {
-						_CMCache.getGeoAttributesStoreForClass(et.data.id).cmFill();
-					}
-				}
-			}
-			iterateOverEntryTypes(classes);
-//			iterateOverEntryTypes(processes); // remove comment when the process can have geo-attributes (never! hahah)
-		},
-
-		onGeoAttributeVisibilityChanged: function(idClass, geoAttribute, isVisible) {
-			var owner = _CMCache.getEntryTypeById(idClass);
-			owner.createOrUpdateGeoAttr(geoAttribute);
 		},
 
 		onWidgetSaved: function(idClass, widget) {

@@ -101,6 +101,7 @@
             "parent_not_found": "No existe clase de la cual heredar"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Cards Binding</em>",
             "externalGraphic": "Icono",
             "fillColor": "Color relleno",
             "fillOpacity": "Opacidad relleno",
@@ -419,6 +420,9 @@
             "title": "Gestión Iconos"
          },
          "layermanager": {"title": "Orden niveles"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Conectores"},
@@ -1028,6 +1032,7 @@
          "edit_relation": "Modificar relación",
          "gis": {
             "geo_attributes": "Atributos geográficos",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Posición",
             "zoom": "Zoom"
          },

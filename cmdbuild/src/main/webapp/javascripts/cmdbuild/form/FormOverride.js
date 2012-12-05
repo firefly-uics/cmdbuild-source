@@ -105,6 +105,26 @@ Ext.override( Ext.form.FieldSet, {
 	}
 });
 
+Ext.override(Ext.form.field.ComboBox, {
+	// Currently disable only the field body,
+	// It seems to be corrected in next Extjs release
+	disable : function(silent) {
+		var me = this;
+		Ext.form.field.Base.prototype.disable.call(this, arguments);
+		try {
+			me.triggerEl.fadeOut();
+		} catch (e) {}
+	},
+
+	enable : function(silent) {
+		var me = this;
+		Ext.form.field.Base.prototype.enable.call(this, arguments);
+		try {
+			me.triggerEl.fadeIn();
+		} catch (e) {}
+	}
+});
+
 function setFieldsEnabledForLegacyCode(enableAll) {
 	this.cascade(function(item) {
 	if (item && (item instanceof Ext.form.Field)

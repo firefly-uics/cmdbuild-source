@@ -1,18 +1,18 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modClass.attributeProperties;
 	var tr_geo = CMDBuild.Translation.administration.modClass.geo_attributes;
-	
+
 	Ext.define("CMDBuild.Administration.GeoServerLayerGrid", {
 		extend: "Ext.grid.Panel",
-		
+
 		region: 'center',
 		frame: false,
 		border: false,
 		loadMask: true,
-		store: CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore(),
-		sm: new Ext.selection.RowModel(),
 
 		initComponent: function() {
+			this.sm = new Ext.selection.RowModel();
+			this.store = CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore();
 			this.columns = [{
 				header: tr.name,
 				hideable: true,
@@ -49,7 +49,7 @@
 				dataIndex: "maxZoom",
 				flex: 1
 			}];
-			
+
 			this.callParent(arguments);
 		},
 
@@ -61,15 +61,36 @@
 			this.store.load();
 		},
 
+		selectFirstIfUnselected: function() {
+			var sm = this.getSelectionModel();
+			if (!sm.hasSelection()) {
+				this.selectFirst();
+			}
+		},
+
+		selectFirst: function(attempts) {
+			var attempts = attempts || 10;
+			var me = this;
+			if (this.store.isLoading()) {
+				Ext.Function.createDelayed(me.selectFirst, 500, me, [--attempts])();
+				return;
+			}
+
+			if (this.store.count() != 0) 
+				var sm = this.getSelectionModel();{
+				sm.select(0);
+			}
+		},
+
 		loadStoreAndSelectLayerWithName: function(name) {
+			var me = this;
 			this.store.load({
-				scope : this,
 				callback: function(records, operation, success) {
-					var toSelect = this.store.find("name", name);
+					var toSelect = me.store.find("name", name);
 					if (toSelect >= 0) {
-						this.getSelectionModel().select(toSelect);
-					} else if (records.length > 0) {
-						this.getSelectionModel().select(0);
+						me.getSelectionModel().select(toSelect);
+					} else {
+						me.selectFirst();
 					}
 				}
 			});

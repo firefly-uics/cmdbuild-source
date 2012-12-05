@@ -1,15 +1,44 @@
 (function() {
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
-
+	var DEFAULT_POINT_DISTANCE_TOLLERANCE = 8; // the default radius of a point
 /**
  * @class CMDBuild.Management.CMDBuildMap.MapLayer
  */
-CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
-	initialize: function(name, options) {
 
+CMDBuild.PatchedBBOX = OpenLayers.Class(OpenLayers.Strategy.BBOX, {
+	/*
+	 * This method is called after a request,
+	 * there are problems when remove the layer from the map...
+	 * it seems that the strategy does not realize that the
+	 * layer is now null
+	 * 
+	 * (...and I deactivate the strategy before remove the layer...)
+	 */
+	merge: function(resp) {
+		if (this.layer) {
+			return OpenLayers.Strategy.BBOX.prototype.merge.apply(this, arguments);
+		}
+	}
+});
+
+CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
+
+	initialize: function(name, options) {
+		// Set the google projection
+		this.projection = new OpenLayers.Projection("EPSG:900913"),
+
+		// CMDBuild stuff
+		this.editLayer = undefined,
+		this.geoAttribute = undefined,
+		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
+		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
+		this.cmdb_index = options.geoAttribute.index;
+
+		this.hiddenFeature = {};
+		this._defaultStyleConfiguration = Ext.decode(options.geoAttribute.style);
 		this.styleMap = new OpenLayers.StyleMap({
-			"default": Ext.decode(options.geoAttribute.style),
+			"default": this._defaultStyleConfiguration,
 			"select": new OpenLayers.Style(OpenLayers.Feature.Vector.style["default"]),
 			"temporary": Ext.decode(options.geoAttribute.style)
 		});
@@ -17,14 +46,14 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		this.protocol = new OpenLayers.Protocol.HTTP({
 			url: 'services/json/gis/getgeocardlist',
 			params: {
-				idClass: options.targetClassId,
+				className: options.targetClassName,
 				attribute: options.geoAttribute.name
 			},
 			format: new OpenLayers.Format.GeoJSON()
 		});
 
 		this.strategies = [
-			new OpenLayers.Strategy.BBOX({
+			new CMDBuild.PatchedBBOX({
 				autoActivate: true
 			}),
 			new OpenLayers.Strategy.Refresh({
@@ -32,32 +61,16 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			})
 		];
 
-		this.refreshFeatures = function() {
-			var bboxStrategie = this.strategies[0];
-			if (bboxStrategie.invalidBounds()) {
-				bboxStrategie.calculateBounds();
-			}
-			bboxStrategie.triggerRead();
-		};
-
-		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
-		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
-
 		OpenLayers.Layer.Vector.prototype.initialize.apply(this, arguments);
 	},
-	projection: new OpenLayers.Projection("EPSG:900913"),
-
-	// CMDBuild stuff
-	editLayer: undefined,
-	geoAttribute: undefined,
 
 	activateStrategies: function(activate) {
-		for (var strategy in this.strategies) {
-			strategy = this.strategies[strategy];
+		for (var i=0, strategy=null; i < this.strategies.length; ++i) {
+			strategy = this.strategies[i];
 
 			if (activate) {
 				strategy.activate();
-				if (strategy.refresh) {
+				if (typeof strategy.refresh == "function") {
 					strategy.refresh();
 				}
 			} else {
@@ -67,12 +80,21 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 	},
 
 	refreshStrategies: function() {
-		for (var strategy in this.strategies) {
-			strategy = this.strategies[strategy];
+		for (var i=0, strategy=null; i<this.strategies.length; ++i) {
+			strategy = this.strategies[i];
 			if (strategy.refresh) {
 				strategy.force = true;
 				strategy.refresh();
 				strategy.force = false;
+			}
+		}
+	},
+
+	destroyStrategies: function() {
+		for (var i=0, strategy=null; i<this.strategies.length; ++i) {
+			strategy = this.strategies[i];
+			if (strategy) {
+				strategy.destroy();
 			}
 		}
 	},
@@ -96,10 +118,8 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 
 	clearSelection: function() {
 		if (this.lastSelection) {
-			var dolly = this.lastSelection.clone();
-			dolly.cmForceAdd = true; // see onCmdbLayerBeforeAdd in CMMapController
-
-			this.addFeatures( [ dolly ]);
+			// restore the feature that was selected
+			this.addFeatures( [this.lastSelection.clone()]);
 			this.lastSelection = undefined;
 		}
 
@@ -108,15 +128,61 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		}
 	},
 
-	getFeatureByMasterCard: function(masterCard) {
+	getFeatureByMasterCard: function(masterCardId) {
 		var features = this.features;
-		for ( var i = 0, l = features.length; i < l; ++i) {
+		for (var i=0, l = features.length; i < l; ++i) {
 			var f = features[i];
-			if (f.attributes.master_card == masterCard) {
+			if (f.attributes.master_card == masterCardId) {
 				return f;
 			}
 		}
 		return null;
+	},
+
+	getFeaturesInLonLat: function(lonlat) {
+		var features = this.features;
+		var out = [];
+
+		if (lonlat) {
+			var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+			for (var i=0, f=null, g=null; i < features.length; ++i) {
+				f = features[i];
+				g = f.geometry;
+				if (g.CLASS_NAME == "OpenLayers.Geometry.Point") {
+
+					var distance = g.distanceTo(point)/this.getResolution();
+					var tollerance = this._defaultStyleConfiguration.pointRadius || DEFAULT_POINT_DISTANCE_TOLLERANCE;
+					if (distance < tollerance) {
+						out.push(f.clone());
+					}
+				} else if (typeof g.intersects == "function"
+					&& g.intersects(point)) {
+
+					out.push(f.clone());
+				}
+			}
+		}
+
+		return out;
+	},
+
+	// the feature to hide could be passed when the
+	// layer load the feature remotely
+	hideFeatureWithCardId: function(masterCardId, feature) {
+		var f = feature || this.getFeatureByMasterCard(masterCardId);
+		if (f) {
+			this.hiddenFeature[masterCardId] = f.clone();
+			this.removeFeatures([f]);
+		}
+	},
+
+	showFeatureWithCardId: function(masterCardId) {
+		var f = this.hiddenFeature[masterCardId];
+		if (f) {
+			this.addFeatures([f.clone()]);
+
+			delete this.hiddenFeature[masterCardId];
+		}
 	},
 
 	getEditedGeometry: function() {
@@ -125,12 +191,6 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 			return f[0].geometry;
 		} catch (Error) {
 			return null;
-		}
-	},
-
-	reselectLastSelection: function() {
-		if (this.lastSelection) {
-			this.selectFeature(this.lastSelection);
 		}
 	}
 });

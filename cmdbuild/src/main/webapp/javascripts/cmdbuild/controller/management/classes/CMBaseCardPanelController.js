@@ -249,6 +249,25 @@
 		}
 	});
 
+	Ext.define("CMDBuild.controller.management.classes.CMCardDataProvider", {
+		/*
+		 * Extending this class you have to
+		 * get a value to the cardDataName attribute
+		 */
+		cardDataName: null,
+
+		getCardDataName: function() {
+			return this.cardDataName;
+		},
+
+		/*
+		 * Implement it on subclasses
+		 */
+		getCardData: function() {
+			throw "You have to implement the getCardData method in " + this.$className;
+		}
+	});
+
 	function buildWidgetControllers(card) {
 		if (this.widgetControllerManager) {
 			this.widgetControllerManager.buildControllers(card);

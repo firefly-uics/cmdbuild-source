@@ -11,10 +11,10 @@ import net.jcip.annotations.NotThreadSafe;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.CardQuery;
+import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.services.auth.UserContext;
 
 // FIXME: it's not enough to synchronize the update

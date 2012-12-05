@@ -101,6 +101,7 @@
             "parent_not_found": "Klasa od koje pokušavate izvršiti nasleđivanje ne postoji"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Ikona",
             "fillColor": "Boja površine",
             "fillOpacity": "Providnost površine",
@@ -419,6 +420,9 @@
             "title": "Upravljanje ikonama"
          },
          "layermanager": {"title": "Redosled slojeva"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Vezni programi"},
@@ -1028,6 +1032,7 @@
          "edit_relation": "Izmeni relaciju",
          "gis": {
             "geo_attributes": "Geografski atributi",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Pozicija",
             "zoom": "Uvećanje"
          },

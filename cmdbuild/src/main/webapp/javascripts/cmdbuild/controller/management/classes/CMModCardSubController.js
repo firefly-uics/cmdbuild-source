@@ -13,6 +13,8 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		this.superController = supercontroller;
 		this.card = null;
 		this.entryType = null;
+
+		this.buildCardModuleStateDelegate();
 	},
 
 	onEntryTypeSelected : function(entryType) {
@@ -38,5 +40,21 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		if (this.view) {
 			this.view.disable();
 		}
+	},
+
+	buildCardModuleStateDelegate: function() {
+		var me = this;
+
+		this.cardStateDelegate = new CMDBuild.state.CMCardModuleStateDelegate();
+
+		this.cardStateDelegate.onEntryTypeDidChange = function(state, entryType) {
+			me.onEntryTypeSelected(entryType);
+		};
+
+		this.cardStateDelegate.onCardDidChange = function(state, card) {
+			me.onCardSelected(card);
+		};
+
+		_CMCardModuleState.addDelegate(this.cardStateDelegate);
 	}
 });

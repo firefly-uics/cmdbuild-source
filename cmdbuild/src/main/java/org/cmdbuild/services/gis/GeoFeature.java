@@ -5,25 +5,19 @@ import org.postgis.Geometry;
 
 public class GeoFeature {
 
-	final GeoFeatureType type;
 	final ICard geoCard;
 
-	public GeoFeature(ICard geoCard, GeoFeatureType type) {
+	public GeoFeature(ICard geoCard) {
 		super();
 		this.geoCard = geoCard;
-		this.type = type;
-	}
-
-	public GeoFeatureType getType() {
-		return type;
 	}
 
 	public Geometry getGeometry() {
-		return (Geometry) geoCard.getValue(GeoFeatureType.GEOMETRY_ATTRIBUTE);
+		return (Geometry) geoCard.getValue(GeoFeatureLayer.GEOMETRY_ATTRIBUTE);
 	}
 
 	public ICard getMasterCard() {
-		return (ICard) geoCard.getValue(GeoFeatureType.MASTER_ATTRIBUTE);
+		return (ICard) geoCard.getValue(GeoFeatureLayer.MASTER_ATTRIBUTE);
 	}
 
 	public void delete() {
@@ -31,7 +25,7 @@ public class GeoFeature {
 	}
 
 	public void setValue(String value) {
-		geoCard.setValue(GeoFeatureType.GEOMETRY_ATTRIBUTE, value);
+		geoCard.setValue(GeoFeatureLayer.GEOMETRY_ATTRIBUTE, value);
 		geoCard.save();
 	}
 }

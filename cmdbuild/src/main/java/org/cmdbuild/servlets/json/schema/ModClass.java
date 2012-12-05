@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -30,6 +29,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
@@ -118,6 +118,7 @@ public class ModClass extends JSONBase {
 			UserContext userCtx) throws JSONException, AuthException, CMWorkflowException {
 
 		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
+		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		final Iterable<ITable> allTables = userCtx.tables().list();
 		final Iterable<UserProcessClass> processClasses = workflowLogic.findAllProcessClasses();
 		final HashMap<String, ITable> processTables = new HashMap<String, ITable>();
