@@ -544,5 +544,11 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		final ECard ecard = new ECard(getUserCtx());
 		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
+	
+	@Override
+	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
+		final EReport report = new EReport(getUserCtx());
+		return report.getReport(reportId, extension, params);
+	}
 
 }

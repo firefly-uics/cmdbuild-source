@@ -193,5 +193,14 @@ public interface Private {
 	CardExt getCardWithLongDateFormat(@WebParam(name = "className") String className, @WebParam(name = "cardId") Integer cardId,
 			@WebParam(name = "attributeList") Attribute[] attributeList);
 	
+	/*
+	 * r2.4
+	 */
+
+	@XmlMimeType("application/octet-stream")
+	public DataHandler getBuiltInReport( //
+			@WebParam(name = "id") String reportId, //
+			@WebParam(name = "extension") String extension, //
+			@WebParam(name = "params") ReportParams[] params);
 
 }

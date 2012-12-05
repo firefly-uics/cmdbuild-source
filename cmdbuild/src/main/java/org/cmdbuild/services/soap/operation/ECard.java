@@ -362,11 +362,14 @@ public class ECard {
 
 	private static class CardQueryBuilder {
 
+		private final GuestFilter guestFilter;
+
 		private final ITable table;
 		private CardQuery cardQuery;
 
 		public CardQueryBuilder(final UserContext userCtx, final String className, final Query query,
 				final CQLQuery cqlQuery) {
+			this.guestFilter = new GuestFilter(userCtx);
 			if (cqlQuery != null) {
 				final HashMap<String, Object> cqlParameters = serializeCQLParameters(cqlQuery.getParameters());
 				cardQuery = CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery.getCqlQuery(), cqlParameters);
@@ -437,43 +440,12 @@ public class ECard {
 		}
 
 		private CardQuery applyFilters(final UserContext userCtx, final CardQuery cardQuery) {
-			CardQuery filteredCardQuery = guestFilter(cardQuery, userCtx);
+			CardQuery filteredCardQuery = guestFilter.apply(cardQuery);
 			if (filteredCardQuery == null) {
 				cardQuery.setPrevExecutorsFilter(userCtx);
 				filteredCardQuery = cardQuery;
 			}
 			return filteredCardQuery;
-		}
-
-		private CardQuery guestFilter(final CardQuery cardQuery, final UserContext userCtx) {
-			if (userCtx.isGuest()) {
-				for (final IAttribute attribute : cardQuery.getTable().getAttributes().values()) {
-					final TreeMap<String, Object> metadata = attribute.getMetadata();
-					String targetAttributeName = null;
-					if (metadata.get("org.cmdbuild.portlet.user.id") != null) {
-						final String metadataValue = metadata.get("org.cmdbuild.portlet.user.id").toString();
-						targetAttributeName = checkMetadataValue(targetAttributeName, metadataValue);
-					}
-					if (targetAttributeName != null) {
-						final CardQuery filteredCardQuery = (CardQuery) cardQuery.clone();
-						final ITable userTable = attribute.getReferenceTarget();
-						final CardQuery userQuery = userTable.cards().list().filter(targetAttributeName,
-								AttributeFilterType.EQUALS, userCtx.getRequestedUsername());
-						filteredCardQuery.cardInRelation(attribute.getReferenceDirectedDomain(), userQuery);
-						return filteredCardQuery;
-					}
-				}
-			}
-			return null;
-		}
-
-		private String checkMetadataValue(String targetAttributeName, final String metadataValue) {
-			if (metadataValue != null && !metadataValue.equals("") && metadataValue.contains(".")) {
-				targetAttributeName = metadataValue.split("\\.")[1];
-			} else {
-				targetAttributeName = null;
-			}
-			return targetAttributeName;
 		}
 
 	}
