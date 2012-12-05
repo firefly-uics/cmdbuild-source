@@ -248,9 +248,6 @@
 			_CMWFState.addDelegate(this);
 		},
 
-		onEntryTypeSelected: function() {_deprecated();},
-		onCardSelected: function(card) {_deprecated();},
-
 		// override
 		updateForProcessInstance: function(pi) {
 			var classId = pi.getClassId();
@@ -316,7 +313,12 @@
 			}
 		},
 
-		onActivityInstanceChange: Ext.emptyFn
+		onActivityInstanceChange: Ext.emptyFn,
+
+		// override
+		buildCardModuleStateDelegate: Ext.emptyFn,
+		onEntryTypeSelected: Ext.emptyFn,
+		onCardSelected: Ext.emptyFn
 	});
 
 	function modelToCardInfo(model) {

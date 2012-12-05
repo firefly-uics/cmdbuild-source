@@ -35,8 +35,8 @@
 
 		isActive: function() {
 			if (this.ownerCt.getActiveTab) {
-				return this.ownerCt.getActiveTab().id == this.id
+				return this.ownerCt.getActiveTab().id == this.id;
 			}
 		}
-	})
+	});
 })();

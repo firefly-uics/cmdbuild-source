@@ -28,6 +28,7 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 	public static final String FILTER_FLOW_STATUS_PARAMETER = "state";
 
 	public static final String FILTER_CLASSID = "IdClass";
+	public static final String FILTER_CLASS_NAME = "ClassName";
 	public static final String FILTER_CQLQUERY = "CQL";
 
 	public CardQuery build(HttpServletRequest request) {
@@ -55,8 +56,20 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 	}
 
 	private CardQuery filterServiceBuild(HttpServletRequest request) {
-		CardQuery filter;
 		final int classId = parameter(Integer.class, FILTER_CLASSID, request);
+		final String className = parameter(String.class, FILTER_CLASS_NAME, request);
+
+		if (className != null) {
+			return buildFilter(request, className);
+		} else {
+			return buildFilter(request, classId);
+		}
+	}
+
+	// buildFilter
+	
+	private CardQuery buildFilter(HttpServletRequest request, final int classId) {
+		CardQuery filter;
 		final UserContext userCtx = new SessionVars().getCurrentUserContext();
 		if (request.getParameterMap().containsKey(NO_FILTER_PARAMETER)) {
 			filter = userCtx.tables().get(classId).cards().list();
@@ -71,7 +84,30 @@ public class CardQueryParameter extends AbstractParameterBuilder<CardQuery> {
 			setWorkflowParameters(filter, request, userCtx);
 		}
 
-		return filter;//.clone();
+		return buildFilter(request, filter, userCtx);//.clone();
+	}
+
+	private CardQuery buildFilter(HttpServletRequest request, final String className) {
+		CardQuery filter;
+		final UserContext userCtx = new SessionVars().getCurrentUserContext();
+		if (request.getParameterMap().containsKey(NO_FILTER_PARAMETER)) {
+			filter = userCtx.tables().get(className).cards().list();
+		} else {
+			String filterCategory = parameter(String.class, FILTER_CATEGORY_PARAMETER, request);
+			String filterSubcategory = parameter(String.class, FILTER_SUBCATEGORY_PARAMETER, request);
+			handleForceFilterReset(request, filterCategory, filterSubcategory);
+			filter = FilterService.getFilter(className, filterCategory, filterSubcategory);
+		}
+
+		return buildFilter(request, filter, userCtx);//.clone();
+	}
+
+	private CardQuery buildFilter(HttpServletRequest request, CardQuery filter, UserContext userCtx) {
+		if (filter.getTable().isActivity()) {
+			setWorkflowParameters(filter, request, userCtx);
+		}
+
+		return filter;
 	}
 
 	private void handleForceFilterReset(HttpServletRequest request, 

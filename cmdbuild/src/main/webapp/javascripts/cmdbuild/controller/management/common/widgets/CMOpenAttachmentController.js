@@ -89,7 +89,12 @@
 			} else {
 				this.updateView();
 			}
-		}
+		},
+
+		// override
+		buildCardModuleStateDelegate: Ext.emptyFn,
+		onEntryTypeSelected: Ext.emptyFn,
+		onCardSelected: Ext.emptyFn
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenAttachmentController", {
