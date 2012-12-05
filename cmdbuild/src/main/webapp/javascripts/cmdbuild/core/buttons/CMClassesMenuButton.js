@@ -28,8 +28,10 @@
 
 			this.mon(this, "render", function() {
 				var entryTypes = _CMCache.getEntryTypes();
-				for (var key in entryTypes) {
-					var entryType = entryTypes[key];
+				var keys = Ext.Object.getKeys(entryTypes);
+				keys = Ext.Array.sort(keys)
+				for (var i=0, l=keys.length; i<l; ++i) {
+					var entryType = entryTypes[keys[i]];
 					if (entryType 
 							&& !entryType.isProcess()
 							&& entryType.get("name") != "Class") { // ugly condition

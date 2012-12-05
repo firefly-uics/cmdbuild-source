@@ -649,13 +649,9 @@ em {
 	padding-left: 24px ! important;
 }
 
-/*
-.x-combo-list {
-	z-index: 40000
-}
-*/
 
 /*Map toolbar icons*/
+
 .mapToolbarPan {
 	background-image: url(../images/icons/map/pan.png) !important;
 }
@@ -706,10 +702,17 @@ em {
 	padding-left: 0.4em;
 }
 
+/* OpenLayer overrid */
+
 .olControlMousePosition {
 	font-size: 1em;
 	font-weight: bold;
 	padding: 0.3em;
+}
+
+.olControlScaleLine {
+	left: 0.3em !important;
+	bottom: 0.3em !important;
 }
 
 /*******************************/
