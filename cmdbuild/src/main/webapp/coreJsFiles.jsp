@@ -102,6 +102,7 @@
 
 <!-- TODO: remove from management -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/Attributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>

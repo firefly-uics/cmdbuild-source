@@ -1,16 +1,19 @@
 Ext.define("CMDBuild.Management.CardListWindow", {
 	extend: "CMDBuild.PopupWindow",
 
+	ClassName: undefined, // passed at instantiation
 	idClass: undefined, // passed at instantiation
 	filterType: undefined, // passed at instantiation
+	readOnly: undefined, // passed at instantiation
 	selModel: undefined, // if undefined is used the default selType
 	selType: 'rowmodel', // to allow the opportunity to pass a selection model to the grid
 	multiSelect: false,
 	extraParams: {},
+	gridConfig: {}, // passed at instantiation
 
 	initComponent: function() {
-		if (typeof this.idClass == "undefined") {
-			return;
+		if (typeof this.idClass == "undefined" && typeof this.ClassName == "undefined") {
+			throw "There are no Class Id or Class Name to load";
 		}
 
 		this.filterButton = new Ext.Button({
@@ -20,7 +23,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			scope: this
 		});
 
-		var gridConfig = {
+		var gridConfig = Ext.apply(this.gridConfig, {
 			filterCategory: this.filterType || this.id,
 			filterSubcategory: this.id,
 			cmAdvancedFilter: false,
@@ -31,7 +34,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 			selType: this.selType,
 			multiSelect: this.multiSelect,
 			CQL: this.extraParams
-		};
+		});
 
 		if (typeof this.selModel == "undefined") {
 			gridConfig["selType"] = this.selType;
@@ -43,7 +46,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 		this.filter = new CMDBuild.Management.Attributes({
 			attributeList: {}, 
-			IdClass: this.idClass, 
+			IdClass: this.getIdClass(),
 			windowSize: this.windowSize,
 			filterButton: this.filterButton,
 			title: CMDBuild.Translation.management.findfilter.filter,
@@ -70,24 +73,27 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 	show: function() {
 		this.callParent(arguments);
-		this.grid.updateStoreForClassId(this.idClass);
-		this.filter.updateMenuForClassId(this.idClass);
+		var id = this.getIdClass();
+		this.grid.updateStoreForClassId(id);
+		this.filter.updateMenuForClassId(id);
+
 		return this;
 	},
 
-	// private, to override in subclass
+	// protected
 	setItems: function() {
-		this.addCardButton = this.buildAddButton();
-		Ext.apply(this, {
-			tbar: [this.addCardButton],
-			items: [this.tabPanel]
-		});
+		this.items = [this.tabPanel]
+
+		if (!this.readOnly) {
+			this.addCardButton = this.buildAddButton();
+			this.tbar = [this.addCardButton];
+		}
 	},
 
 	onFilterButtonClick: function() {
 		var params = this.filter.getForm().getValues();
-
-		params['IdClass'] =  this.idClass;
+		
+		params['IdClass'] =  this.getIdClass();
 		params['FilterCategory'] = this.filterType;
 		params['FilterSubcategory'] = this.id;
 
@@ -111,9 +117,9 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 	buildAddButton: function() {
 		var addCardButton = new CMDBuild.AddCardMenuButton();
-		var entry = _CMCache.getClassById(this.idClass) || _CMCache.getProcessById(this.idClass);
-		addCardButton.updateForEntry(entry);
+		var entry = _CMCache.getEntryTypeById(this.getIdClass());
 
+		addCardButton.updateForEntry(entry);
 		addCardButton.on("cmClick", function buildTheAddWindow(p) {
 			var w = new CMDBuild.view.management.common.CMCardWindow({
 				withButtons: true,
@@ -135,7 +141,20 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 		return addCardButton;
 	},
-	
+
+	getIdClass: function() {
+		if (this.idClass) {
+			return this.idClass;
+		} else {
+			var et = _CMCache.getEntryTypeByName(this.ClassName);
+			if (et) {
+				return et.getId();
+			}
+		}
+
+		throw "No class info for " + Ext.getClassName(this);
+	},
+
 	onSelectionChange: Ext.emptyFn,
 	onGridDoubleClick: Ext.emptyFn
 });
