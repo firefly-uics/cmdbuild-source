@@ -290,7 +290,12 @@ em {
 
 .cmdbuild_unconfigured_modpanel {
 	text-align: center;
-	padding-top: 30px; 
+	vertical-align: middle;
+}
+
+.cmdbuild_unconfigured_modpanel * {
+	color: #AAA;
+	font-size: 1.8em;
 }
 
 /* ICONS */
@@ -334,8 +339,13 @@ em {
 .edit_form {
 	background-image: url(../images/icons/application_form_edit.png) !important;
 }
+
 .find {
 	background-image: url(../images/icons/find.png) !important;
+}
+
+.search {
+	background-image: url(../images/icons/search.gif) !important;	
 }
 
 .clear_find {
@@ -639,13 +649,9 @@ em {
 	padding-left: 24px ! important;
 }
 
-/*
-.x-combo-list {
-	z-index: 40000
-}
-*/
 
 /*Map toolbar icons*/
+
 .mapToolbarPan {
 	background-image: url(../images/icons/map/pan.png) !important;
 }
@@ -696,31 +702,17 @@ em {
 	padding-left: 0.4em;
 }
 
+/* OpenLayer overrid */
+
 .olControlMousePosition {
 	font-size: 1em;
 	font-weight: bold;
 	padding: 0.3em;
 }
 
-/*** Open layer overrides ***/
-
-.olControlLayerSwitcher {
-    width: auto !important;
-}
-
-.olControlLayerSwitcher .layersDiv {
-    background-color: #00488B !important;
-}
-
-.olControlLayerSwitcher .labelSpan {
-	padding-left: 0.5em;
-	padding-bottom: 0.5em;
-	line-height: 1.2em;
-	font-size: 1.1em
-}
-
-.olControlLayerSwitcher div span {
-	background-color: #00488B !important;
+.olControlScaleLine {
+	left: 0.3em !important;
+	bottom: 0.3em !important;
 }
 
 /*******************************/
@@ -841,15 +833,7 @@ em {
 .cmcenter {
 	text-align: center;
 }
-/*
-.x-form-display-field {
-	padding: 2px 0 0 0 ! important;
-	line-height: 1.3em ! important;
-	color: #222 ! important;
-	opacity: 1 ! important;
-	max-width: 400px ! important;
-}
-*/
+
 .empty_panel {
 	background: url("../images/emptyPageBg.png");
 	background-position: bottom right;
@@ -945,4 +929,45 @@ em {
 	border-top-color: #99BBE8 ! important;
 	padding-top: 0.5em;
 	margin-top: 0.5em;
+}
+
+/* Detailed Mini CardGrid Window*/
+.cm_detailed_mini_card_grid_window_detail
+{
+/* 	padding: 5px;" */
+}
+
+
+/* CMDBuild.IconsCombo*/
+
+.cm-icon-list-item,
+.cm-icon-list li,
+.cm-icon-list-item-label,
+.cm-icon-list-item-img
+{
+	float: left;
+}
+
+.cm-icon-list-item,
+.cm-icon-list li
+{
+	clear: left;
+	width: 100%
+}
+
+.cm-icon-list-item-label
+{
+	padding: 0.5em 0.5em 0.5em 0;
+	line-height: 1.5em;
+}
+
+.cm-icon-list-item-img
+{
+	margin: 0.5em;
+}
+
+/* Other */
+
+.cmdbuild-nodisplay {
+	display: none !important;
 }

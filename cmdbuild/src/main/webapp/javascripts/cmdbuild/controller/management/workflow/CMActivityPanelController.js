@@ -199,14 +199,13 @@
 			CMDBuild.Management.showGraphWindow(classId, cardId);
 		},
 
+		// TODO: Needs some refactoring
 		// override
 		doFormSubmit: Ext.emptyFn,
 		onSaveSuccess: Ext.emptyFn,
-
-		// override
-		// deprecated
-		onEntryTypeSelected: function(entryType) { _deprecated(); },
-		onCardSelected: function(card) {_deprecated(); }
+		onEntryTypeSelected: Ext.emptyFn,
+		onCardSelected: Ext.emptyFn,
+		buildCardModuleStateDelegate: Ext.emptyFn
 	});
 
 	function deleteActivity() {

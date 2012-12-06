@@ -43,6 +43,21 @@ public class CustomFilesStore {
 		}
 	}
 
+	public void rename(String filePath, String newFilePath) {
+		File theFile = new File(absoluteRootDirectory + filePath);
+		if (theFile.exists()) {
+			String extension = getExtension(theFile.getName());
+			if (!"".equals(extension)) {
+				newFilePath = newFilePath + extension;
+			}
+
+			File newFile = newFile(absoluteRootDirectory + newFilePath);
+			theFile.renameTo(newFile);
+		} else {
+			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
+		}
+	}
+
 	public void save(FileItem file, String filePath) throws IOException {
 		save(file.getInputStream(), filePath);
 	}
@@ -51,12 +66,7 @@ public class CustomFilesStore {
 		String destinationPath = absoluteRootDirectory+filePath;
 		FileOutputStream outputStream = null;
 		try {
-			File destinationFile = new File(destinationPath);
-			
-			if (destinationFile.exists()) {
-				throw ORMExceptionType.ORM_ICONS_FILE_ALREADY_EXISTS.createException(destinationFile.getName());
-			}
-			
+			File destinationFile = newFile(destinationPath);
 			File dir = destinationFile.getParentFile();
 			dir.mkdirs();
 			
@@ -78,6 +88,15 @@ public class CustomFilesStore {
 				outputStream.close();
 			}
 		}
+	}
+
+	private File newFile(String destinationPath) {
+		File destinationFile = new File(destinationPath);
+		
+		if (destinationFile.exists()) {
+			throw ORMExceptionType.ORM_ICONS_FILE_ALREADY_EXISTS.createException(destinationFile.getName());
+		}
+		return destinationFile;
 	}
 	
 	public String getRelativeRootDirectory() {

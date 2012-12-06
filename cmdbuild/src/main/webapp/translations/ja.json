@@ -101,6 +101,7 @@
             "parent_not_found": "親クラスは存在していません"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "アイコン",
             "fillColor": "着色",
             "fillOpacity": "不透明化",
@@ -419,6 +420,9 @@
             "title": "アイコン管理"
          },
          "layermanager": {"title": "レイヤ順序"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "コネクタ"},
@@ -1028,6 +1032,7 @@
          "edit_relation": "リレーションを編集",
          "gis": {
             "geo_attributes": "地理的属性",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "位置",
             "zoom": "ズーム"
          },

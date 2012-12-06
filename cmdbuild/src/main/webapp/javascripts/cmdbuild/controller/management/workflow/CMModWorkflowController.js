@@ -81,10 +81,7 @@
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
-		},
-
-		// override
-		onEntryTypeChanged: function(entryType) { _deprecated(); }
+		}
 	});
 
 	function isStateOpen(card) {

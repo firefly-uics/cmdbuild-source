@@ -1,10 +1,6 @@
 (function() {
-	var CLASS_GROUP = "class",
-		PROCESS_GROUP = "processclass",
-		tr = CMDBuild.Translation,
-		constants = CMDBuild.Constants;
-
-		var dashboardClassesProcessStore = null;
+	var constants = CMDBuild.Constants;
+	var dashboardClassesProcessStore = null;
 
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
@@ -16,7 +12,8 @@
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
 			reports: "CMDBUild.cache.CMCacheReportFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
-			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions"
+			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
+			gis: "CMDBUild.cache.CMCacheGisFunctions"
 		},
 
 		constructor: function() {
@@ -59,27 +56,32 @@
 				}
 			});
 		},
-		
+
 		getReferenceStore: function(reference) {
-			var referencedIdClass = reference.referencedIdClass;
+			var key = reference.referencedClassName || reference.referencedIdClass;
 			var fieldFilter = false;
+			var oneTimeStore = null;
+
 			if (reference.fieldFilter) {
 				//build a non cached store with the filter active
-				var oneTimeStore = this.buildReferenceStore(reference);
+				oneTimeStore = this.buildReferenceStore(reference);
 				//set the fieldFilter to false and save the current value
 				//of the fieldFilter to allow the building of a full store
 				fieldFilter = reference.fieldFilter;
 				reference.fieldFilter = false;
 			}
+
 			//build a not filtered store and cache it
-			if (!this.mapOfReferenceStore[referencedIdClass]) {		
-				this.mapOfReferenceStore[referencedIdClass] = this.buildReferenceStore(reference);
+			if (!this.mapOfReferenceStore[key]) {		
+				this.mapOfReferenceStore[key] = this.buildReferenceStore(reference);
 			}
+
 			//restore the fieldFilter
 			if (fieldFilter) {
 				reference.fieldFilter = fieldFilter;
 			}
-			return oneTimeStore || this.mapOfReferenceStore[referencedIdClass];
+
+			return oneTimeStore || this.mapOfReferenceStore[key];
 		},
 		
 		getReferenceStoreById: function(id) {
@@ -91,7 +93,7 @@
 			var baseParams = this.buildParamsForReferenceRequest(reference),
 				isOneTime = baseParams.CQL ? true : false,
 				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
-			
+
 			return new Ext.data.JsonStore({
 				model : "CMDBuild.cache.CMReferenceStoreModel",
 				isOneTime: isOneTime,
@@ -117,9 +119,12 @@
 		
 		//private
 		buildParamsForReferenceRequest: function(reference) {
-			var baseParams = {
+			var baseParams = reference.referencedClassName ? {
+				ClassName: reference.referencedClassName
+			} : {
 				IdClass: reference.referencedIdClass
 			};
+
 			if (reference.fieldFilter) {
 				baseParams.CQL = reference.fieldFilter;
 			} else {

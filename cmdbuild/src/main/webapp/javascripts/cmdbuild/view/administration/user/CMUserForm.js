@@ -66,7 +66,7 @@
 			});
 
 			this.defaultGroupStore = new Ext.data.JsonStore( {
-				autoLoad : true,
+				autoLoad : false,
 				model : "CMDBuild.cache.CMGroupModelForCombo",
 				proxy : {
 					type : 'ajax',

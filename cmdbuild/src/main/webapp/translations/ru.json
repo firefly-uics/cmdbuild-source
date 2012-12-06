@@ -101,6 +101,7 @@
             "parent_not_found": "Класс-родитель не существует"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Значок",
             "fillColor": "Цвет заливки",
             "fillOpacity": "Прозрачность заливки",
@@ -419,6 +420,9 @@
             "title": "Значки"
          },
          "layermanager": {"title": "Порядок слоев"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "ГИС"
       },
       "modconnectors": {"title": "Соединители"},
@@ -1028,6 +1032,7 @@
          "edit_relation": "Редактировать связь",
          "gis": {
             "geo_attributes": "Географические атрибуты",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Положение",
             "zoom": "Масштаб"
          },

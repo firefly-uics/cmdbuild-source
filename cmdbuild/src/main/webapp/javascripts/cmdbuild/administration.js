@@ -25,7 +25,6 @@
 			cmControllerType : CMDBuild.controller.accordion.CMProcessAccordionController
 		}),
 		gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion(),
-		viewNS = CMDBuild.view.administration,
 		controllerNS = CMDBuild.controller;
 
 	Ext.define("CMDBuild.app.Administration", {
@@ -78,6 +77,9 @@
 						cmControllerType : controllerNS.administration.lookup.CMModLookupController
 					}),
 					new CMDBuild.Administration.ModIcons(),
+					new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
+						cmControllerType : controllerNS.administration.gis.CMModGISNavigationConfigurationController
+					}),
 					new CMDBuild.Administration.ModExternalServices(),
 					new CMDBuild.view.administration.gis.CMModGeoServer({
 						cmControllerType : controllerNS.administration.gis.CMModGeoServerController

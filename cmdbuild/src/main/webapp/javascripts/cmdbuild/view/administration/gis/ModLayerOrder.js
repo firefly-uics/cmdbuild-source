@@ -6,10 +6,7 @@
 		cmName: "gis-layers-order",
 		title: CMDBuild.Translation.administration.modcartography.layermanager.title,
 		initComponent: function() {
-			Ext.apply(this, {
-				border: true
-			});
-			
+			this.border = true;
 			this.callParent(arguments);
 		},
 

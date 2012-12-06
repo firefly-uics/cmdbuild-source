@@ -1,4 +1,3 @@
-
 (function() {
 	Ext.define("CMDBuild.controller.management.workflow.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
@@ -91,15 +90,12 @@
 			}
 		},
 
-		// override
-		// deprecated
-		onEntryTypeSelected: function() { _deprecated(); },
+		onActivityInstanceChange: Ext.emptyFn,
 
 		// override
-		// deprecated
-		onCardSelected: function(card) { _deprecated();	},
-
-		onActivityInstanceChange: Ext.emptyFn
+		buildCardModuleStateDelegate: Ext.emptyFn,
+		onEntryTypeSelected: Ext.emptyFn,
+		onCardSelected: Ext.emptyFn
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenNoteController", {

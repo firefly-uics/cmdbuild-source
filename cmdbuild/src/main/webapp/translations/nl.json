@@ -101,6 +101,7 @@
             "parent_not_found": "Bovenliggende klas bestaat niet"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Card Binding</em>",
             "externalGraphic": "Ikoon",
             "fillColor": "Vulling kleur",
             "fillOpacity": "Vul dekking",
@@ -419,6 +420,9 @@
             "title": "Beheer Iconen"
          },
          "layermanager": {"title": "Laag volgorde"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Connectoren"},
@@ -1028,6 +1032,7 @@
          "edit_relation": "Aanpassen relatie",
          "gis": {
             "geo_attributes": "Geografische attributen",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Positie",
             "zoom": "Zoom"
          },
