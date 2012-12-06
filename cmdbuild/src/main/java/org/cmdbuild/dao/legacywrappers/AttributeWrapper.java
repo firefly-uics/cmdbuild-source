@@ -146,5 +146,10 @@ public class AttributeWrapper implements CMAttribute {
 	public String getDefaultValue() {
 		return attribute.getDefaultValue();
 	}
+	
+	@Override
+	public String getGroup() {
+		return attribute.getGroup();
+	}
 
 }

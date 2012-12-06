@@ -72,4 +72,11 @@ public interface CMAttribute extends Deactivable {
 	 */
 	String getDefaultValue();
 
+	/**
+	 * Returns the group of the attribute.
+	 * 
+	 * @return the group of the attribute.
+	 */
+	String getGroup();
+
 }

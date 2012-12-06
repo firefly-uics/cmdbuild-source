@@ -89,7 +89,7 @@ public class JoinCreator extends PartCreator {
 			sb.append(" FROM ")
 			/*
 			 * TODO check if this is really needed
-			 *
+			 * 
 			 * .append("ONLY ")
 			 */
 			.append(quotedTableName);

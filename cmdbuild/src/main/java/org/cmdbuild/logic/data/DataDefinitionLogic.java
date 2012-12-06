@@ -261,6 +261,11 @@ public class DataDefinitionLogic implements Logic {
 				return attribute.getIndex();
 			}
 
+			@Override
+			public String getGroup() {
+				return attribute.getGroup();
+			}
+
 		};
 	}
 
@@ -322,6 +327,11 @@ public class DataDefinitionLogic implements Logic {
 				return existingAttribute.getIndex();
 			}
 
+			@Override
+			public String getGroup() {
+				return attribute.getGroup();
+			}
+
 		};
 	}
 
@@ -381,6 +391,11 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public int getIndex() {
 				return attribute.getIndex();
+			}
+
+			@Override
+			public String getGroup() {
+				return existingAttribute.getGroup();
 			}
 
 		};
@@ -483,6 +498,11 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public int getIndex() {
 				return existingAttribute.getIndex();
+			}
+
+			@Override
+			public String getGroup() {
+				return existingAttribute.getGroup();
 			}
 
 		};

@@ -307,6 +307,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getType().accept(this);
 				append("BASEDSP", Boolean.toString(definition.isDisplayableInList()));
 				append("DESCR", definition.getDescription());
+				append("GROUP", definition.getGroup());
 				append("INDEX", Integer.toString(definition.getIndex()));
 				append("MODE", definition.getMode().toString().toLowerCase());
 				append("NOTNULL", Boolean.toString(definition.isMandatory()));
@@ -393,11 +394,11 @@ public class EntryTypeCommands implements LoggingSupport {
 	/**
 	 * Returns user-only entry type attributes (so, not {@code reserved}
 	 * attributes).
-	 *
+	 * 
 	 * @param entryTypeId
 	 *            is the id of he entry type (e.g. {@link DBClass},
 	 *            {@link DBDomain}).
-	 *
+	 * 
 	 * @return a list of user attributes.
 	 */
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {

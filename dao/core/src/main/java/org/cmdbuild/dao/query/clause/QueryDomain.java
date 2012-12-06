@@ -119,10 +119,12 @@ public class QueryDomain {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj instanceof QueryDomain == false)
+		if (obj instanceof QueryDomain == false) {
 			return false;
-		if (this == obj)
+		}
+		if (this == obj) {
 			return true;
+		}
 		final QueryDomain other = (QueryDomain) obj;
 		return new EqualsBuilder().append(this.domain, other.domain).append(this.querySource, other.querySource)
 				.isEquals();

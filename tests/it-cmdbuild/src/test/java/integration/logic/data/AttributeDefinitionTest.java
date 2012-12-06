@@ -43,6 +43,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	private static final String DESCRIPTION = "attribute's description";
 
+	private static final String GROUP = "sample group";
+
 	private CMClass testClass;
 
 	@Before
@@ -608,6 +610,22 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 		// then
 		assertThat(attribute.getIndex(), equalTo(-1));
+	}
+
+	@Test
+	public void attributesCanBeGrouped() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withGroup(GROUP)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getGroup(), equalTo(GROUP));
 	}
 
 	@Test
