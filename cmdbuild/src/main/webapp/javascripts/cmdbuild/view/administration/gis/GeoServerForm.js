@@ -156,8 +156,16 @@
 							me.cardCombo = CMDBuild.Management.ReferenceField.build({
 								referencedClassName: newValue,
 								isnotnull: true
-							}, null, {margin: "0 5px 0 0"});
-							
+							}, null, {
+								margin: "0 5px 0 0",
+								gridExtraConfig: {
+									cmAdvancedFilter: false,
+									cmAddGraphColumn: false,
+									cmAddPrintButton: false
+								},
+								searchWindowReadOnly: true
+							});
+
 							me.insert(1, me.cardCombo);
 						}
 					},

@@ -26,7 +26,7 @@ Ext.define("CMDBuild.Management.Attributes", {
 
 		if (this.filterButton) {
 			tbar.push('->');
-			tbar.push(this.filterButton)
+			tbar.push(this.filterButton);
 			this.resetFilterButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.findfilter.clear_filter,
 				iconCls: "delete"
@@ -34,34 +34,32 @@ Ext.define("CMDBuild.Management.Attributes", {
 			tbar.push(this.resetFilterButton);
 		}
 
-		// TODO this panel is not needed, remove id
-		this.fieldsPanel = new Ext.Panel( {
-			frame : false,
-			border : false,
-			bodyCls: "x-panel-default-framed",
-			autoScroll : true,
-			region : 'center'
-		});
+		this.bodyCls = "x-panel-default-framed";
 
-		this.fieldsPanel.add( {
+		this.layout = {
+			type: 'vbox',
+			align: 'stretch'
+		};
+
+		this.defaults = {
+			padding: "5px 5px 0 5px"
+		};
+
+		this.tbar = tbar;
+		this.items = [{
 			xtype : 'hidden',
 			name : 'IdClass',
 			value : this.IdClass
-		});
+		}];
 
-		Ext.apply(this, {
-			layout: 'border',
-			tbar: tbar,
-			items: [this.fieldsPanel],
-			listeners: {
-				added: function(me) {
-					// needed because the zIndexParent is not set
-					// for the menu, because when created is not owned
-					// in a floating element
-					me.menu.registerWithOwnerCt();
-				}
+		this.listeners = {
+			added: function(me) {
+				// needed because the zIndexParent is not set
+				// for the menu, because when created is not owned
+				// in a floating element
+				me.menu.registerWithOwnerCt();
 			}
-		});
+		};
 
 		this.callParent(arguments);
 	},
@@ -69,7 +67,7 @@ Ext.define("CMDBuild.Management.Attributes", {
 	updateMenuForClassId: function(classId) {
 		this.currentClassId = classId;
 		_CMCache.getAttributeList(classId, Ext.bind(function(attributes) {
-			this.attributeList = attributes
+			this.attributeList = attributes;
 			this.fillMenu();
 		}, this));
 	},
@@ -91,13 +89,17 @@ Ext.define("CMDBuild.Management.Attributes", {
 		//hide the "or" of the current field
 		field.getOrPanel().hide();
 		var category = attribute.name;
-
+		Ext.suspendLayouts();
 		if (typeof this.fieldsetCategory[category] == "undefined" ) {
 			this.fieldsetCategory[category] = new Ext.form.FieldSet({
-				title: attribute.description
+				title: attribute.description,
+				border: false,
+				defaults: {
+					padding: "5px 0 0 0"
+				}
 			});
 
-			this.fieldsPanel.add(this.fieldsetCategory[category]);
+			this.add(this.fieldsetCategory[category]);
 		} else {
 			//show the or of the last field
 			this.fieldsetCategory[category].items.last().getOrPanel().show();
@@ -108,7 +110,7 @@ Ext.define("CMDBuild.Management.Attributes", {
 		}, this);
 
 		this.fieldsetCategory[category].add(field);
-		this.fieldsPanel.doLayout();
+		Ext.resumeLayouts();
 	},
 
 	addFieldSet : function(field, attribute) {
@@ -137,7 +139,7 @@ Ext.define("CMDBuild.Management.Attributes", {
 
 		if (this.fieldsetCategory[category].items.length == 0) {
 			// the removed field was the last, so the fieldset is now empty
-			this.fieldsPanel.remove(this.fieldsetCategory[category]);
+			this.remove(this.fieldsetCategory[category]);
 			delete this.fieldsetCategory[category];
 		} else {
 			this.fieldsetCategory[category].items.getLast().getOrPanel().hide();
@@ -145,7 +147,13 @@ Ext.define("CMDBuild.Management.Attributes", {
 	},
 
 	removeAllFieldsets: function() {
-		this.fieldsPanel.removeAll();
+		this.removeAll();
+		this.add({
+			xtype : 'hidden',
+			name : 'IdClass',
+			value : this.IdClass
+		});
+
 		this.fieldsetCategory = {};
 	},
 
