@@ -26,7 +26,9 @@ public interface CMAttributeDefinition {
 	boolean isUnique();
 
 	boolean isActive();
-	
+
 	Mode getMode();
+
+	int getIndex();
 
 }

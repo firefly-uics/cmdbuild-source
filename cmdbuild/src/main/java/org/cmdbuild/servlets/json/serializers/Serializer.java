@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -17,6 +18,22 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -69,6 +86,8 @@ import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Maps;
 
 public class Serializer {
 
@@ -292,71 +311,143 @@ public class Serializer {
 	/*
 	 * Administration
 	 */
-	
+
 	public static JSONObject serialize(final CMAttribute attribute) throws JSONException {
-		JSONObject jattr = new JSONObject();
-		// TODO
-		jattr.put("idClass", attribute.getOwner().getId());
-		jattr.put("name", attribute.getName());
-		jattr.put("description", attribute.getDescription());
-		jattr.put("type", new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
-		jattr.put("isbasedsp", attribute.isDisplayableInList());
-		jattr.put("isunique", attribute.isUnique());
-		jattr.put("isnotnull", attribute.isMandatory());
-		jattr.put("inherited", attribute.isInherited());
-//		jattr.put("index", attribute.getIndex());
-//		jattr.put("group", attribute.getGroup());
-//
-//		int absoluteClassOrder = attribute.getClassOrder();
-//		int classOrderSign;
-//		if (absoluteClassOrder == 0) {
-//			classOrderSign = 0;
-//			// to manage the sorting in the AttributeGridForSorting
-//			absoluteClassOrder = 10000;
-//		} else if (absoluteClassOrder > 0) {
-//			classOrderSign = 1;
-//		} else {
-//			classOrderSign = -1;
-//			absoluteClassOrder *= -1;
-//		}
-//		jattr.put("classOrderSign", classOrderSign);
-//		jattr.put("absoluteClassOrder", absoluteClassOrder);
-//		jattr.put("len", attribute.getLength());
-//		jattr.put("precision", attribute.getPrecision());
-//		jattr.put("scale", attribute.getScale());
-//		jattr.put("defaultvalue", attribute.getDefaultValue());
-		jattr.put("isactive", attribute.isActive());
-		jattr.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
-//		jattr.put("editorType", attribute.getEditorType());
-//		switch (attribute.getType()) {
-//		case LOOKUP:
-//			// NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
-//			LookupType lt = attribute.getLookupType();
-//			JSONArray lookupChain = new JSONArray();
-//			while (lt != null) {
-//				if (lookupChain.length() == 0) {
-//					jattr.put("lookup", lt.getType());
-//				}
-//				lookupChain.put(lt.getType());
-//				lt = lt.getParentType();
-//			}
-//			jattr.put("lookupchain", lookupChain);
-//			break;
-//		case REFERENCE:
-//			ITable reftable = attribute.getReferenceTarget();
-//			jattr.put("referencedClassName", reftable.getName());
-//			jattr.put("referencedIdClass", reftable.getId());
-//			jattr.put("fieldFilter", attribute.getFilter());
-//			jattr.put("domainDirection", attribute.isReferenceDirect());
-//			jattr.put("idDomain", attribute.getReferenceDomain().getId());
-//			break;
-//
-//		case FOREIGNKEY:
-//			jattr.put("fkDestination", attribute.getFKTargetClass().getId());
-//			break;
-//		}
-//		addMetadata(jattr, attribute);
-		return jattr;
+		final JSONObject jsonObject = new JSONObject();
+
+		final Map<String, Object> attributes = new CMAttributeTypeVisitor() {
+
+			private Map<String, Object> attributes = Maps.newHashMap();
+
+			@Override
+			public void visit(final BooleanAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final EntryTypeAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DateTimeAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DateAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DecimalAttributeType attributeType) {
+				attributes.put("precision", attributeType.precision);
+				attributes.put("scale", attributeType.scale);
+			}
+
+			@Override
+			public void visit(final DoubleAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final ForeignKeyAttributeType attributeType) {
+				// jattr.put("fkDestination",
+				// attribute.getFKTargetClass().getId());
+			}
+
+			@Override
+			public void visit(final GeometryAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final IntegerAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final IpAddressAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final LookupAttributeType attributeType) {
+				// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
+				// LookupType lt = attribute.getLookupType();
+				// JSONArray lookupChain = new JSONArray();
+				// while (lt != null) {
+				// if (lookupChain.length() == 0) {
+				// jattr.put("lookup", lt.getType());
+				// }
+				// lookupChain.put(lt.getType());
+				// lt = lt.getParentType();
+				// }
+				// jattr.put("lookupchain", lookupChain);
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				// ITable reftable = attribute.getReferenceTarget();
+				// jattr.put("referencedClassName", reftable.getName());
+				// jattr.put("referencedIdClass", reftable.getId());
+				// jattr.put("fieldFilter", attribute.getFilter());
+				// jattr.put("domainDirection", attribute.isReferenceDirect());
+				// jattr.put("idDomain",
+				// attribute.getReferenceDomain().getId());
+			}
+
+			@Override
+			public void visit(final StringAttributeType attributeType) {
+				attributes.put("len", attributeType.length);
+			}
+
+			@Override
+			public void visit(final TextAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final TimeAttributeType attributeType) {
+			}
+
+			public Map<String, Object> fill(final CMAttribute attribute) {
+				// type specific
+				attribute.getType().accept(this);
+
+				// commons
+				attributes.put("idClass", attribute.getOwner().getId());
+				attributes.put("name", attribute.getName());
+				attributes.put("description", attribute.getDescription());
+				attributes.put("type",
+						new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
+				attributes.put("isbasedsp", attribute.isDisplayableInList());
+				attributes.put("isunique", attribute.isUnique());
+				attributes.put("isnotnull", attribute.isMandatory());
+				attributes.put("inherited", attribute.isInherited());
+				attributes.put("isactive", attribute.isActive());
+				attributes.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
+				attributes.put("index", attribute.getIndex());
+				attributes.put("defaultvalue", attribute.getDefaultValue());
+				// jattr.put("editorType", attribute.getEditorType());
+				// addMetadata(jattr, attribute);
+
+				// TODO
+				// jattr.put("group", attribute.getGroup());
+				//
+				// int absoluteClassOrder = attribute.getClassOrder();
+				// int classOrderSign;
+				// if (absoluteClassOrder == 0) {
+				// classOrderSign = 0;
+				// // to manage the sorting in the AttributeGridForSorting
+				// absoluteClassOrder = 10000;
+				// } else if (absoluteClassOrder > 0) {
+				// classOrderSign = 1;
+				// } else {
+				// classOrderSign = -1;
+				// absoluteClassOrder *= -1;
+				// }
+				// jattr.put("classOrderSign", classOrderSign);
+				// jattr.put("absoluteClassOrder", absoluteClassOrder);
+				return attributes;
+			}
+
+		}.fill(attribute);
+		for (final Entry<String, Object> entry : attributes.entrySet()) {
+			jsonObject.put(entry.getKey(), entry.getValue());
+		}
+		return jsonObject;
 	}
 
 	/**

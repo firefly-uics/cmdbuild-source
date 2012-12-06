@@ -10,7 +10,7 @@ public class FromPartCreator extends PartCreator {
 		sb.append("FROM ");
 		/*
 		 * TODO check if this is really needed
-		 * 
+		 *
 		 * if (query.getFromType().holdsHistory()) { sb.append("ONLY "); }
 		 */
 		sb.append(quoteType(query.getFromType())).append(" AS ").append(Utils.quoteAlias(query.getFromAlias()));

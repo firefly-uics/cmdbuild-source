@@ -136,5 +136,15 @@ public class AttributeWrapper implements CMAttribute {
 			return Mode.WRITE;
 		}
 	}
+	
+	@Override
+	public int getIndex() {
+		return attribute.getIndex();
+	}
+	
+	@Override
+	public String getDefaultValue() {
+		return attribute.getDefaultValue();
+	}
 
 }

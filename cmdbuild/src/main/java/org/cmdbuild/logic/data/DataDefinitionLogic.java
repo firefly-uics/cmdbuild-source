@@ -192,6 +192,17 @@ public class DataDefinitionLogic implements Logic {
 		}
 	}
 
+	public void reorder(final Attribute attribute) {
+		logger.info("reordering attribute: {}", attribute.toString());
+		final CMClass owner = view.findClassById(attribute.getOwner());
+		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
+		if (existingAttribute == null) {
+			logger.warn("attribute '{}' not found", attribute.getName());
+			return;
+		}
+		view.updateAttribute(definitionForReordering(attribute, existingAttribute));
+	}
+
 	private CMAttributeDefinition definitionForNew(final Attribute attribute, final CMEntryType owner) {
 		return new CMAttributeDefinition() {
 
@@ -245,6 +256,11 @@ public class DataDefinitionLogic implements Logic {
 				return attribute.getMode();
 			}
 
+			@Override
+			public int getIndex() {
+				return attribute.getIndex();
+			}
+
 		};
 	}
 
@@ -273,8 +289,7 @@ public class DataDefinitionLogic implements Logic {
 
 			@Override
 			public String getDefaultValue() {
-				// TODO
-				return null;
+				return existingAttribute.getDefaultValue();
 			}
 
 			@Override
@@ -300,6 +315,72 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public Mode getMode() {
 				return attribute.getMode();
+			}
+
+			@Override
+			public int getIndex() {
+				return existingAttribute.getIndex();
+			}
+
+		};
+	}
+
+	private CMAttributeDefinition definitionForReordering(final Attribute attribute, final CMAttribute existingAttribute) {
+		return new CMAttributeDefinition() {
+
+			@Override
+			public String getName() {
+				return existingAttribute.getName();
+			}
+
+			@Override
+			public CMEntryType getOwner() {
+				return existingAttribute.getOwner();
+			}
+
+			@Override
+			public CMAttributeType<?> getType() {
+				return existingAttribute.getType();
+			}
+
+			@Override
+			public String getDescription() {
+				return existingAttribute.getDescription();
+			}
+
+			@Override
+			public String getDefaultValue() {
+				return existingAttribute.getDefaultValue();
+			}
+
+			@Override
+			public boolean isDisplayableInList() {
+				return existingAttribute.isDisplayableInList();
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return existingAttribute.isMandatory();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return existingAttribute.isUnique();
+			}
+
+			@Override
+			public boolean isActive() {
+				return existingAttribute.isActive();
+			}
+
+			@Override
+			public Mode getMode() {
+				return existingAttribute.getMode();
+			}
+
+			@Override
+			public int getIndex() {
+				return attribute.getIndex();
 			}
 
 		};
@@ -371,8 +452,7 @@ public class DataDefinitionLogic implements Logic {
 
 			@Override
 			public String getDefaultValue() {
-				// TODO
-				return null;
+				return existingAttribute.getDefaultValue();
 			}
 
 			@Override
@@ -398,6 +478,11 @@ public class DataDefinitionLogic implements Logic {
 			@Override
 			public Mode getMode() {
 				return existingAttribute.getMode();
+			}
+
+			@Override
+			public int getIndex() {
+				return existingAttribute.getIndex();
 			}
 
 		};
