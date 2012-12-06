@@ -6,11 +6,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.logic.data.ClassDTO;
-import org.cmdbuild.logic.data.ClassDTO.ClassDTOBuilder;
+import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.Class.ClassBuilder;
 import org.junit.Test;
 
-public class ClassDTOTest {
+public class ClassTest {
 
 	private static final String NAME = "foo";
 	private static final String DESCRIPTION = "foo's description";
@@ -137,16 +137,16 @@ public class ClassDTOTest {
 	 * Utilities
 	 */
 
-	private static ClassDTO a(final ClassDTOBuilder classDTOBuilder) {
-		return classDTOBuilder.build();
+	private static Class a(final ClassBuilder classBuilder) {
+		return classBuilder.build();
 	}
 
-	private ClassDTOBuilder newValidClass() {
+	private ClassBuilder newValidClass() {
 		return newClassWithNoNameSpecified().withName(NAME);
 	}
 
-	private ClassDTOBuilder newClassWithNoNameSpecified() {
-		return ClassDTO.newClassDTO();
+	private ClassBuilder newClassWithNoNameSpecified() {
+		return Class.newClass();
 	}
 
 }

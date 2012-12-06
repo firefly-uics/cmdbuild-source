@@ -30,9 +30,9 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.logic.data.AttributeDTO;
-import org.cmdbuild.logic.data.ClassDTO;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
@@ -269,7 +269,7 @@ public class ModClass extends JSONBase {
 		// TODO define "simpletable" elsewhere
 		final boolean isSimpleTable = "simpletable".equals(tableType);
 		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		final ClassDTO classDTO = ClassDTO.newClassDTO() //
+		final Class clazz = Class.newClass() //
 				.withName(name) //
 				.withDescription(description) //
 				.withParent(isSimpleTable ? SIMPLE_TABLE_HAVE_NO_PARENT : idParent) //
@@ -280,7 +280,7 @@ public class ModClass extends JSONBase {
 				.thatIsActive(isActive) //
 				.build();
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		final CMClass cmClass = ddl.createOrUpdateClass(classDTO);
+		final CMClass cmClass = ddl.createOrUpdate(clazz);
 		final JSONObject result = Serializer.serialize(cmClass);
 		serializer.put("table", result);
 		return serializer;
@@ -291,11 +291,11 @@ public class ModClass extends JSONBase {
 			final UserContext userContext, //
 			final JSONObject serializer, //
 			final ITable table) throws JSONException, CMDBException {
-		final ClassDTO classDTO = ClassDTO.newClassDTO() //
+		final Class clazz = Class.newClass() //
 				.withName(table.getName()) //
 				.build();
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		ddl.deleteOrDeactivateClass(classDTO);
+		ddl.deleteOrDeactivate(clazz);
 		return serializer;
 	}
 
@@ -359,10 +359,9 @@ public class ModClass extends JSONBase {
 			@Parameter(value = "group", required = false) final String group, //
 			@Parameter(value = "meta", required = false) final JSONObject meta, //
 			@Parameter(value = "editorType", required = false) final String editorType, //
-			final BaseSchema table, //
-			final UserContext userCtx //
+			final BaseSchema table //
 	) throws JSONException, CMDBException {
-		final AttributeDTO attributeDTO = AttributeDTO.newAttributeDTO() //
+		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
 				.withOwner(Long.valueOf(table.getId())) //
 				.withDescription(description) //
@@ -391,7 +390,7 @@ public class ModClass extends JSONBase {
 				// editorType, //
 				.build();
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		final CMAttribute cmAttribute = ddl.createOrUpdateAttribute(attributeDTO);
+		final CMAttribute cmAttribute = ddl.createOrUpdate(attribute);
 		final JSONObject result = Serializer.serialize(cmAttribute);
 		serializer.put("attribute", result);
 		return serializer;
@@ -429,12 +428,12 @@ public class ModClass extends JSONBase {
 			@Parameter("name") final String attributeName, //
 			final BaseSchema table //
 	) throws JSONException {
-		final AttributeDTO attributeDTO = AttributeDTO.newAttributeDTO() //
+		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
 				.withOwner(Long.valueOf(table.getId())) //
 				.build();
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		ddl.deleteOrDeactivateAttribute(attributeDTO);
+		ddl.deleteOrDeactivate(attribute);
 		return serializer;
 	}
 

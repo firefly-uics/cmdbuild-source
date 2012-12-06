@@ -303,7 +303,7 @@ public class Serializer {
 		jattr.put("isbasedsp", attribute.isDisplayableInList());
 		jattr.put("isunique", attribute.isUnique());
 		jattr.put("isnotnull", attribute.isMandatory());
-//		jattr.put("inherited", !attribute.isLocal());
+		jattr.put("inherited", attribute.isInherited());
 //		jattr.put("index", attribute.getIndex());
 //		jattr.put("group", attribute.getGroup());
 //

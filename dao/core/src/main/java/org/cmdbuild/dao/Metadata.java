@@ -18,5 +18,10 @@ public class Metadata {
 	public void put(final String key, final String value) {
 		metaMap.put(key, value);
 	}
+	
+	@Override
+	public String toString() {
+		return metaMap.toString();
+	}
 
 }

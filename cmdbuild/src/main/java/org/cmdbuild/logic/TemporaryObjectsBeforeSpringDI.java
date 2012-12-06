@@ -118,12 +118,12 @@ public class TemporaryObjectsBeforeSpringDI {
 		return privilegeCtxFactory;
 	}
 
-	public static DashboardLogic getDashboardLogic(final UserContext userCtx) {
-		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(
-				userCtx));
+	public static DashboardLogic getDashboardLogic(final UserContext userContext) {
+		return new DashboardLogic(getUserContextView(userContext), new DBDashboardStore(), new SimplifiedUserContext(
+				userContext));
 	}
 
-	public static CMDataView getUserContextView(final UserContext userCtx) {
+	public static CMDataView getUserContextView(final UserContext userContext) {
 		return new UserDataView(new DBDataView(driver), new SessionVars().getUser());
 	}
 
@@ -131,24 +131,24 @@ public class TemporaryObjectsBeforeSpringDI {
 		return dbDataView;
 	}
 
-	public static DataAccessLogic getDataAccessLogic(final UserContext userCtx) {
-		return new DataAccessLogic(getUserContextView(userCtx));
+	public static DataAccessLogic getDataAccessLogic(final UserContext userContext) {
+		return new DataAccessLogic(getUserContextView(userContext));
 	}
 	
-	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userCtx) {
-		return new DataDefinitionLogic(getUserContextView(userCtx));
+	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userContext) {
+		return new DataDefinitionLogic(getUserContextView(userContext));
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
 		return new DataAccessLogic(getSystemView());
 	}
 
-	public static WorkflowLogic getWorkflowLogic(final UserContext userCtx) {
-		return new WorkflowLogic(getWorkflowEngine(userCtx));
+	public static WorkflowLogic getWorkflowLogic(final UserContext userContext) {
+		return new WorkflowLogic(getWorkflowEngine(userContext));
 	}
 
-	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userCtx) {
-		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
+	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userContext) {
+		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userContext, workflowService,
 				workflowTypesConverter, processDefinitionManager);
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;

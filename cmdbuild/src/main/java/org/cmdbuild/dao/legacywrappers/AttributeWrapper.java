@@ -44,6 +44,11 @@ public class AttributeWrapper implements CMAttribute {
 	}
 
 	@Override
+	public boolean isInherited() {
+		return !attribute.isLocal();
+	}
+
+	@Override
 	public boolean isActive() {
 		return attribute.getStatus().isActive();
 	}

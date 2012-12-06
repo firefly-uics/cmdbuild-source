@@ -11,11 +11,11 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMClassDefinition;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.AttributeDTO;
-import org.cmdbuild.logic.data.AttributeDTO.AttributeDTOBuilder;
-import org.cmdbuild.logic.data.ClassDTO;
-import org.cmdbuild.logic.data.ClassDTO.ClassDTOBuilder;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.Attribute.AttributeBuilder;
+import org.cmdbuild.model.data.Class.ClassBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class DataDefinitionLogicTest {
 				.thenReturn(createdClass);
 
 		// when
-		final CMClass returnedClass = dataDefinitionLogic.createOrUpdateClass(a(newClass(CLASS_NAME)));
+		final CMClass returnedClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// then
 		assertThat(returnedClass.getName(), equalTo(createdClass.getName()));
@@ -61,7 +61,7 @@ public class DataDefinitionLogicTest {
 				.thenReturn(existingClass);
 
 		// when
-		dataDefinitionLogic.createOrUpdateClass(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// then
 		verify(dataView).findClassByName(CLASS_NAME);
@@ -79,7 +79,7 @@ public class DataDefinitionLogicTest {
 				.thenReturn(existingClass);
 
 		// when
-		dataDefinitionLogic.deleteOrDeactivateAttribute( //
+		dataDefinitionLogic.deleteOrDeactivate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(existingClass.getId())));
 
@@ -98,22 +98,22 @@ public class DataDefinitionLogicTest {
 		return mockClass;
 	}
 
-	private ClassDTOBuilder newClass(final String name) {
-		return ClassDTO.newClassDTO() //
+	private ClassBuilder newClass(final String name) {
+		return Class.newClass() //
 				.withName(name);
 	}
 
-	private AttributeDTOBuilder newAttribute(final String name) {
-		return AttributeDTO.newAttributeDTO() //
+	private AttributeBuilder newAttribute(final String name) {
+		return Attribute.newAttribute() //
 				.withName(name);
 	}
 
-	private static ClassDTO a(final ClassDTOBuilder classDTO) {
-		return classDTO.build();
+	private static Class a(final ClassBuilder classBuilder) {
+		return classBuilder.build();
 	}
 
-	private static AttributeDTO a(final AttributeDTOBuilder attributeDTO) {
-		return attributeDTO.build();
+	private static Attribute a(final AttributeBuilder attributeBuilder) {
+		return attributeBuilder.build();
 	}
 
 }

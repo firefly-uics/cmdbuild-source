@@ -9,6 +9,7 @@ public class DBAttribute implements CMAttribute {
 	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
 
 		public static final String BASEDSP = BASE_NS + "basedsp";
+		public static final String INHERITED = BASE_NS + "inherited";
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
 		public static final String MANDATORY = BASE_NS + "mandatory";
 		public static final String UNIQUE = BASE_NS + "unique";
@@ -53,6 +54,11 @@ public class DBAttribute implements CMAttribute {
 			}
 			return fieldMode;
 		}
+
+		public boolean isInherited() {
+			return Boolean.parseBoolean(get(INHERITED));
+		}
+
 	}
 
 	DBEntryType owner; // Set by the entry type when attached
@@ -88,6 +94,11 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public String getDescription() {
 		return meta.getDescription();
+	}
+
+	@Override
+	public boolean isInherited() {
+		return meta.isInherited();
 	}
 
 	@Override

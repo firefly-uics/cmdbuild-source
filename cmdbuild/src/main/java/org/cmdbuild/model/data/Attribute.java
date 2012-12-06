@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.data;
+package org.cmdbuild.model.data;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
@@ -28,109 +28,109 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.logger.Log;
 
-public class AttributeDTO {
+public class Attribute {
 
 	private static enum AttributeTypeBuilder {
 
 		BOOLEAN {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new BooleanAttributeType();
 			}
 		}, //
 		CHAR {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new CharAttributeType();
 			}
 		}, //
 		DATE {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new DateAttributeType();
 			}
 		}, // fieldModes.get(text);
 		DECIMAL {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
-				final Integer precision = attributeDTOBuilder.precision;
-				final Integer scale = attributeDTOBuilder.scale;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+				final Integer precision = attributeBuilder.precision;
+				final Integer scale = attributeBuilder.scale;
 				return new DecimalAttributeType(precision, scale);
 			}
 		}, //
 		DOUBLE {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new DoubleAttributeType();
 			}
 		}, //
 		FOREIGNKEY {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 		}, //
 		INET {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new IpAddressAttributeType();
 			}
 		}, //
 		INTEGER {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new IntegerAttributeType();
 			}
 		}, //
 		LOOKUP {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
-				final String lookupType = attributeDTOBuilder.lookupType;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+				final String lookupType = attributeBuilder.lookupType;
 				return new LookupAttributeType(lookupType);
 			}
 		}, //
 		REFERENCE {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 		}, //
 		STRING {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
-				final Integer length = attributeDTOBuilder.length;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+				final Integer length = attributeBuilder.length;
 				return new StringAttributeType(length);
 			}
 		}, //
 		TIME {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new TimeAttributeType();
 			}
 		}, //
 		TIMESTAMP {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new DateTimeAttributeType();
 			}
 		}, //
 		TEXT {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new TextAttributeType();
 			}
 		}, //
 
 		UNDEFINED {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeDTOBuilder attributeDTOBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
 				return new UndefinedAttributeType();
 			}
 		}; //
 
-		public abstract CMAttributeType<?> buildFrom(AttributeDTOBuilder attributeDTOBuilder);
+		public abstract CMAttributeType<?> buildFrom(AttributeBuilder attributeBuilder);
 
 		public static AttributeTypeBuilder from(final String name) {
 			for (final AttributeTypeBuilder attributeType : values()) {
@@ -156,7 +156,7 @@ public class AttributeDTO {
 
 	}
 
-	public static class AttributeDTOBuilder implements Builder<AttributeDTO> {
+	public static class AttributeBuilder implements Builder<Attribute> {
 
 		private String name;
 		private Long owner;
@@ -172,52 +172,52 @@ public class AttributeDTO {
 		private Mode mode = Mode.WRITE;
 		private final Set<Condition> conditions;
 
-		private AttributeDTOBuilder() {
+		private AttributeBuilder() {
 			// use factory method
 			conditions = EnumSet.of(Condition.ACTIVE);
 		}
 
-		public AttributeDTOBuilder withName(final String name) {
+		public AttributeBuilder withName(final String name) {
 			this.name = trim(name);
 			return this;
 		}
 
-		public AttributeDTOBuilder withOwner(final Long owner) {
+		public AttributeBuilder withOwner(final Long owner) {
 			this.owner = owner;
 			return this;
 		}
 
-		public AttributeDTOBuilder withDescription(final String description) {
+		public AttributeBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
 		}
 
-		public AttributeDTOBuilder withGroup(final String group) {
+		public AttributeBuilder withGroup(final String group) {
 			this.group = group;
 			return this;
 		}
 
-		public AttributeDTOBuilder withDefaultValue(final String defaultValue) {
+		public AttributeBuilder withDefaultValue(final String defaultValue) {
 			this.defaultValue = defaultValue;
 			return this;
 		}
 
-		public AttributeDTOBuilder thatIsDisplayableInList(final boolean isDisplayableInList) {
+		public AttributeBuilder thatIsDisplayableInList(final boolean isDisplayableInList) {
 			addOrRemoveCondition(Condition.DISPLAYABLE_IN_LIST, isDisplayableInList);
 			return this;
 		}
 
-		public AttributeDTOBuilder thatIsMandatory(final boolean allowsNullValues) {
+		public AttributeBuilder thatIsMandatory(final boolean allowsNullValues) {
 			addOrRemoveCondition(Condition.NULL_VALUES_ALLOWED, allowsNullValues);
 			return this;
 		}
 
-		public AttributeDTOBuilder thatIsUnique(final boolean thatIsUnique) {
+		public AttributeBuilder thatIsUnique(final boolean thatIsUnique) {
 			addOrRemoveCondition(Condition.UNIQUE_VALUES, thatIsUnique);
 			return this;
 		}
 
-		public AttributeDTOBuilder thatIsActive(final boolean isActive) {
+		public AttributeBuilder thatIsActive(final boolean isActive) {
 			addOrRemoveCondition(Condition.ACTIVE, isActive);
 			return this;
 		}
@@ -230,44 +230,44 @@ public class AttributeDTO {
 			}
 		}
 
-		public AttributeDTOBuilder withType(final String type) {
+		public AttributeBuilder withType(final String type) {
 			this.typeName = type;
 			return this;
 		}
 
-		public AttributeDTOBuilder withPrecision(final Integer precision) {
+		public AttributeBuilder withPrecision(final Integer precision) {
 			this.precision = precision;
 			return this;
 		}
 
-		public AttributeDTOBuilder withScale(final Integer scale) {
+		public AttributeBuilder withScale(final Integer scale) {
 			this.scale = scale;
 			return this;
 		}
 
-		public AttributeDTOBuilder withLength(final Integer length) {
+		public AttributeBuilder withLength(final Integer length) {
 			this.length = length;
 			return this;
 		}
 
-		public AttributeDTOBuilder withLookupType(final String lookupType) {
+		public AttributeBuilder withLookupType(final String lookupType) {
 			this.lookupType = lookupType;
 			return this;
 		}
 
-		public AttributeDTOBuilder withMode(final Mode mode) {
+		public AttributeBuilder withMode(final Mode mode) {
 			this.mode = mode;
 			return this;
 		}
 
 		@Override
-		public AttributeDTO build() {
+		public Attribute build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
 			Validate.notNull(owner, "missing owner");
 			Validate.isTrue(owner > 0, "invalid owner");
 			description = defaultIfBlank(description, name);
 			calculateType();
-			return new AttributeDTO(this);
+			return new Attribute(this);
 		}
 
 		private void calculateType() {
@@ -276,8 +276,8 @@ public class AttributeDTO {
 
 	}
 
-	public static AttributeDTOBuilder newAttributeDTO() {
-		return new AttributeDTOBuilder();
+	public static AttributeBuilder newAttribute() {
+		return new AttributeBuilder();
 	}
 
 	private final String name;
@@ -291,7 +291,7 @@ public class AttributeDTO {
 
 	private final String toString;
 
-	private AttributeDTO(final AttributeDTOBuilder builder) {
+	private Attribute(final AttributeBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.owner = builder.owner;

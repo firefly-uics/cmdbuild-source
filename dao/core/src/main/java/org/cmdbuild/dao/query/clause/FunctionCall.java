@@ -27,11 +27,6 @@ public class FunctionCall implements CMFunctionCall {
 			return new CMAttribute() {
 
 				@Override
-				public boolean isActive() {
-					return true;
-				}
-
-				@Override
 				public CMEntryType getOwner() {
 					return FunctionCall.this;
 				}
@@ -50,22 +45,32 @@ public class FunctionCall implements CMFunctionCall {
 				public String getDescription() {
 					return input.getName();
 				}
-				
+
+				@Override
+				public boolean isInherited() {
+					return false;
+				}
+
+				@Override
+				public boolean isActive() {
+					return true;
+				}
+
 				@Override
 				public boolean isDisplayableInList() {
 					return true;
 				}
-				
+
 				@Override
 				public boolean isMandatory() {
 					return false;
 				}
-				
+
 				@Override
 				public boolean isUnique() {
 					return false;
 				}
-				
+
 				@Override
 				public Mode getMode() {
 					return Mode.WRITE;
