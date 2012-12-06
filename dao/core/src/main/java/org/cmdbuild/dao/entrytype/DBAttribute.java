@@ -9,6 +9,8 @@ public class DBAttribute implements CMAttribute {
 	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
 
 		public static final String BASEDSP = BASE_NS + "basedsp";
+		public static final String DEFAULT = BASE_NS + "default";
+		public static final String INDEX = BASE_NS + "index";
 		public static final String INHERITED = BASE_NS + "inherited";
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
 		public static final String MANDATORY = BASE_NS + "mandatory";
@@ -57,6 +59,14 @@ public class DBAttribute implements CMAttribute {
 
 		public boolean isInherited() {
 			return Boolean.parseBoolean(get(INHERITED));
+		}
+
+		public int getIndex() {
+			return Integer.parseInt(get(INDEX));
+		}
+
+		public String getDefaultValue() {
+			return get(DEFAULT);
 		}
 
 	}
@@ -126,6 +136,16 @@ public class DBAttribute implements CMAttribute {
 		return meta.getMode();
 	}
 
+	@Override
+	public int getIndex() {
+		return meta.getIndex();
+	}
+	
+	@Override
+	public String getDefaultValue() {
+		return meta.getDefaultValue();
+	}
+
 	/*
 	 * Object overrides
 	 */
@@ -134,4 +154,5 @@ public class DBAttribute implements CMAttribute {
 	public String toString() {
 		return String.format("%s.%s", owner, name);
 	}
+
 }

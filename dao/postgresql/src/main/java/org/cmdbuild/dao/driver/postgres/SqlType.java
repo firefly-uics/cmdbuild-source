@@ -27,9 +27,9 @@ import org.cmdbuild.dao.reference.EntryTypeReference;
 
 /**
  * Missing DAO types: Lookup, Reference, ForeignKey
- * 
+ *
  * Missing SQL types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
- * 
+ *
  * Not used: regclass, bytea, _int4, _varchar
  */
 public enum SqlType {
@@ -201,10 +201,10 @@ public enum SqlType {
 
 	/**
 	 * DAO attribute types for this SQL type.
-	 * 
+	 *
 	 * It should have been Class<? extends CMAttributeType<?>> but Java forbids
 	 * array of generic types.
-	 * 
+	 *
 	 * TODO Lookup, Reference, etc. need a different handling
 	 */
 	protected final Class<?> javaTypes[];
@@ -260,7 +260,7 @@ public enum SqlType {
 	/**
 	 * Create attribute type from SQL string and no metadata. It is used when
 	 * there are no metadata, like in funcion calls.
-	 * 
+	 *
 	 * @param sqlTypeString
 	 * @return
 	 */
@@ -271,7 +271,7 @@ public enum SqlType {
 	/**
 	 * Create attribute type from SQL string and metadata. It is used for class
 	 * and domain attributes, that have comments to define metadata (sigh).
-	 * 
+	 *
 	 * @param sqlTypeString
 	 * @param meta
 	 * @return
@@ -293,7 +293,7 @@ public enum SqlType {
 	/**
 	 * Returns the full SQL type string (with length and such) for a DAO
 	 * attribute type.
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -313,7 +313,7 @@ public enum SqlType {
 
 	/**
 	 * Gets the SQL type from a DAO attribute type.
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */

@@ -307,6 +307,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getType().accept(this);
 				append("BASEDSP", Boolean.toString(definition.isDisplayableInList()));
 				append("DESCR", definition.getDescription());
+				append("INDEX", Integer.toString(definition.getIndex()));
 				append("MODE", definition.getMode().toString().toLowerCase());
 				append("NOTNULL", Boolean.toString(definition.isMandatory()));
 				append("STATUS", definition.isActive() ? "active" : "noactive");

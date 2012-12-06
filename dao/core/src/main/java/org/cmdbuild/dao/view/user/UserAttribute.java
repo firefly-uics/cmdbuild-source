@@ -72,6 +72,16 @@ public class UserAttribute implements CMAttribute {
 		return inner.getMode();
 	}
 
+	@Override
+	public int getIndex() {
+		return inner.getIndex();
+	}
+	
+	@Override
+	public String getDefaultValue() {
+		return inner.getDefaultValue();
+	}
+
 	/*
 	 * Object overrides
 	 */

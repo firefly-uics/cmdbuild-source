@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.query.clause;
 
 import static com.google.common.collect.Iterables.transform;
+import static org.apache.commons.lang.StringUtils.EMPTY;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,16 @@ public class FunctionCall implements CMFunctionCall {
 				@Override
 				public Mode getMode() {
 					return Mode.WRITE;
+				}
+				
+				@Override
+				public int getIndex() {
+					return 0;
+				}
+				
+				@Override
+				public String getDefaultValue() {
+					return EMPTY;
 				}
 
 			};

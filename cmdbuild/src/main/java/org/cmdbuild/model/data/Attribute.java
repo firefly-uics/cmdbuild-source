@@ -170,6 +170,7 @@ public class Attribute {
 		private Integer length;
 		private String lookupType;
 		private Mode mode = Mode.WRITE;
+		private int index = -1;
 		private final Set<Condition> conditions;
 
 		private AttributeBuilder() {
@@ -260,6 +261,11 @@ public class Attribute {
 			return this;
 		}
 
+		public AttributeBuilder withIndex(final int index) {
+			this.index = index;
+			return this;
+		}
+
 		@Override
 		public Attribute build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
@@ -287,6 +293,7 @@ public class Attribute {
 	private final CMAttributeType<?> type;
 	private final String defaultValue;
 	private final Mode mode;
+	private final int index;
 	private final Set<Condition> conditions;
 
 	private final String toString;
@@ -299,6 +306,7 @@ public class Attribute {
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
 		this.mode = builder.mode;
+		this.index = builder.index;
 		this.conditions = builder.conditions;
 
 		this.toString = ToStringBuilder.reflectionToString(this);
@@ -351,6 +359,10 @@ public class Attribute {
 
 	public Mode getMode() {
 		return mode;
+	}
+
+	public int getIndex() {
+		return index;
 	}
 
 }

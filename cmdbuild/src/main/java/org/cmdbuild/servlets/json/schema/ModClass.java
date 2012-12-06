@@ -51,6 +51,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.collect.Lists;
+
 public class ModClass extends JSONBase {
 
 	private static final Long SIMPLE_TABLE_HAVE_NO_PARENT = null;
@@ -438,22 +440,26 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject reorderAttribute(final JSONObject serializer,
-			@Parameter("attributes") final String jsonAttributeList, final BaseSchema baseSchema) throws JSONException,
-			CMDBException {
+	public JSONObject reorderAttribute( //
+			final UserContext userContext, //
+			final JSONObject serializer, //
+			@Parameter("attributes") final String jsonAttributeList, //
+			final BaseSchema baseSchema //
+	) throws JSONException, CMDBException {
+		final List<Attribute> attributes = Lists.newArrayList();
+		final long classId = baseSchema.getId();
 		final JSONArray attributeList = new JSONArray(jsonAttributeList);
-		final Map<String, Integer> attributePositions = new HashMap<String, Integer>();
 		for (int i = 0; i < attributeList.length(); ++i) {
 			final JSONObject jattr = attributeList.getJSONObject(i);
-			final String attrName = jattr.getString("name");
-			final int attrIdx = jattr.getInt("idx");
-			attributePositions.put(attrName, attrIdx);
+			attributes.add(Attribute.newAttribute()
+					.withOwner(classId) //
+					.withName(jattr.getString("name")) //
+					.withIndex(jattr.getInt("idx"))
+					.build());
 		}
-		for (final String name : attributePositions.keySet()) {
-			final int index = attributePositions.get(name);
-			final IAttribute attribute = baseSchema.getAttribute(name);
-			attribute.setIndex(index);
-			attribute.save();
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+		for (final Attribute attribute: attributes) {
+			ddl.reorder(attribute);
 		}
 		return serializer;
 	}

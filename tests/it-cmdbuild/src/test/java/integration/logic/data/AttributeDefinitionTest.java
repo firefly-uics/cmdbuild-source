@@ -479,6 +479,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.isDisplayableInList(), equalTo(false));
 		assertThat(attribute.isMandatory(), equalTo(false));
 		assertThat(attribute.isUnique(), equalTo(false));
+		assertThat(attribute.getIndex(), equalTo(-1));
 
 		// but...
 
@@ -490,7 +491,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 						.thatIsActive(false) //
 						.thatIsDisplayableInList(true) //
 						.thatIsMandatory(true) //
-						.thatIsUnique(true)));
+						.thatIsUnique(true) //
+						.withIndex(10)));
 		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
@@ -499,6 +501,45 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
+		assertThat(updatedAttribute.getIndex(), equalTo(-1)); // index is not
+																// changed
+	}
+
+	@Test
+	public void indexMustBeChangedWithSpecificMethod() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getDescription(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.isActive(), equalTo(true));
+		assertThat(attribute.isDisplayableInList(), equalTo(false));
+		assertThat(attribute.isMandatory(), equalTo(false));
+		assertThat(attribute.isUnique(), equalTo(false));
+		assertThat(attribute.getIndex(), equalTo(-1));
+
+		// but...
+
+		// when
+		dataDefinitionLogic().reorder( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withDescription(DESCRIPTION) //
+						.thatIsActive(false) //
+						.thatIsDisplayableInList(true) //
+						.thatIsMandatory(true) //
+						.thatIsUnique(true) //
+						.withIndex(10)));
+		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(updatedAttribute.getIndex(), equalTo(10));
 	}
 
 	@Test
@@ -552,6 +593,21 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 		// then
 		assertThat(attribute.isInherited(), equalTo(false));
+	}
+
+	@Test
+	public void newlyCreatedAttributesHaveDefaultNegativeIndex() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getIndex(), equalTo(-1));
 	}
 
 	@Test
