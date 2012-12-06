@@ -213,8 +213,7 @@
 		}, this);
 		
 		this.styleFieldsMap = {
-			// TODO the template to show the icon
-			externalGraphic: new Ext.form.ComboBox({
+			externalGraphic: new CMDBuild.IconsCombo({
 				store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 				name: "externalGraphic",
 				hiddenName: "externalGraphic",

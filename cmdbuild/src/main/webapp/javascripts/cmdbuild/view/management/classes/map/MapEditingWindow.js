@@ -6,8 +6,14 @@
 		"POLYGON": "mapFeaturePolygon"
 	};
 
+	Ext.define("CMDBuild.view.management.map.CMMapEditingToolsWindowDelegate", {
+		addFeatureButtonHasBeenToggled: Ext.emptyFn,
+		removeFeatureButtonHasBeenClicked: Ext.emptyFn,
+		geoAttributeMenuItemHasBeenClicked: Ext.emptyFn
+	});
+
 	/**
-	 * @class CMDBuild.Management.MapEditingWindow
+	 * @class CMDBuild.view.management.map.MapEditingWindow
 	 * @extends Ext.Window
 	 * 
 	 * This window looks like an external toolbar (Photoshop style)
@@ -15,66 +21,90 @@
 	 * for a specific geometry type
 	 * 
 	 * The window can be shown only if the owner panel is visible
-	 */	
-	Ext.define("CMDBuild.Management.MapEditingWindow", {
+	 */
+	Ext.define("CMDBuild.view.management.map.CMMapEditingToolsWindow", {
 		extend: "Ext.Window",
+
 		editingControls: {},
-		toMove: true, //to initialize the position of the window the first time that be shown	
+		layers: {},
+
 		translation: CMDBuild.Translation,
-		/**
-		 * configuration options
-		 */
-		map: undefined,
+
+		mixins: {
+			delegable: "CMDBuild.core.CMDelegable"
+		},
 
 		owner: {
 			getPosition: function() { return [0,0]; }
 		},
 
+		constructor: function() {
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.map.CMMapEditingToolsWindowDelegate");
+			this.callParent(arguments);
+		},
+
 		initComponent: function() {
-			var geoAttrMenu = new Ext.menu.Menu({
-				items: []
+
+			this.closable = false;
+			this.hideBorders = true;
+			this.resizable = false;
+			this.frame = false;
+
+			this.layout = {
+				type: 'hbox',
+				padding: '2',
+				align: 'stretch'
+			};
+
+			this.geoAttrMenuButton = new Ext.Button({
+				text: this.translation.management.modcard.gis.geo_attributes,
+				menu: new Ext.menu.Menu({
+					items: []
+				})
 			});
 
-			this.cmButtons = [
-				this.geoAttrMenuButton = new Ext.Button({
-					text: this.translation.management.modcard.gis.geo_attributes,
-					menu: geoAttrMenu
-				}),
+			this.addButton = new Ext.Button({
+				text: this.translation.common.buttons.add,
+				creationControl: undefined,
+				iconCls: 'add',
+				enableToggle: true,
+				allowDepress: true,
+				disabled: true,
+				scope: this,
+				toggleHandler: function(button, state) {
+					this.callDelegates("addFeatureButtonHasBeenToggled", state);
+				}
+			});
 
-				this.addButton = new Ext.Button({
-					text: this.translation.common.buttons.add,
-					creationControl: undefined,
-					iconCls: 'add',
-					enableToggle: true,
-					allowDepress: true,
-					disabled: true,
-					scope: this
-				}),
-
-				this.removeButton = new Ext.Button({
-					text: this.translation.common.buttons.remove,
-					iconCls: 'delete',
-					scope: this,
-					disabled: true
-				})
-			];
-
-			Ext.apply(this, {
-				overlapHeader: true,
-				width: 300,
-				closable: false,
-				hideBorders: true,
-				resizable: false,
-				tbar: [this.geoAttrMenuButton, this.addButton, this.removeButton],
-				layout: "hbox"
+			this.removeButton = new Ext.Button({
+				text: this.translation.common.buttons.remove,
+				iconCls: 'delete',
+				scope: this,
+				disabled: true,
+				handler: function() {
+					this.callDelegates("removeFeatureButtonHasBeenClicked");
+				}
 			});
 
 			this.callParent(arguments);
 		},
 
+		// add the buttons on render
+		// to allow the window to resize it
+		// automatically
+		onRender: function() {
+			this.callParent(arguments);
+
+			this.add([
+				this.geoAttrMenuButton,
+				this.addButton,
+				this.removeButton
+			]);
+		},
+
 		show: function() {
-			if (this.owner && this.owner.isVisible() 
-					&& this.geoAttrMenuButton.menu.items.length > 0) {
+			_debug("EDITING WINDOW: layers count", this.geoAttrMenuButton.menu.items.length);
+			if (this.geoAttrMenuButton.menu.items.length > 0) {
 
 				this.callParent(arguments);
 
@@ -83,59 +113,38 @@
 					onAddMenuitemSelect.call(this, firstItemOfMenu);
 				}
 
-				moveToContainerOrigin.call(this);
-				this.header.setHeight(0);
 			}
 		},
-	
-		update: function() {
-			this.geoAttrMenuButton.menu.removeAll(true);
-			var layers = this.map.cmdbLayers || [];
-			for (var i=0, len=layers.length; i<len; i++) {
-				var l = layers[i];
-				if (l.editLayer) {
-					this.geoAttrMenuButton.menu.add({
-						iconCls: ICON_CLS[l.geoAttribute.type],
-						text: l.geoAttribute.description,
-						editLayer: l.editLayer,
-						geoType: l.geoAttribute.type,
+
+		addLayer: function(layer) {
+			if (layer) {
+				if (!this.layers[layer.name]) {
+					this.layers[layer.name] = this.geoAttrMenuButton.menu.add({
+						iconCls: ICON_CLS[layer.geoAttribute.type],
+						text: layer.geoAttribute.description,
+						editLayer: layer.editLayer,
+						geoType: layer.geoAttribute.type,
 						scope: this,
 						handler: onAddMenuitemSelect
 					});
 				}
 			}
+		},
+
+		removeAllLayerBinding: function() {
+			this.geoAttrMenuButton.menu.removeAll(true);
+			this.layers = {};
 		}
 	});
 
-	function syncSize() {
-		var size = 20;
-		Ext.Array.each(this.cmButtons, function(button) {
-			size += button.getWidth();
-		});
-
-		this.setWidth(size);
-	};
-
 	function onAddMenuitemSelect(item) {
-//		this.map.controller.activateEditControls(item.editLayer);
 		this.geoAttrMenuButton.setText(item.text);
 		this.geoAttrMenuButton.setIconCls(item.iconCls);
 		this.addButton.enable();
 		this.addButton.toggle(false);
 		this.removeButton.enable();
 
-		syncSize.call(this);
-		this.fireEvent("cmGeoAttrMenuClicked", item.editLayer);
-	};
-
-	function moveToContainerOrigin() {
-		if (this.toMove) {
-			var ownerPosition = this.owner.getPosition();
-			var newX = ownerPosition[0]+30;
-			var newY = ownerPosition[1]+18;
-			this.setPosition(newX, newY);
-			this.toMove = false;
-		}
+		this.callDelegates("geoAttributeMenuItemHasBeenClicked", item.editLayer);
 	};
 
 })();

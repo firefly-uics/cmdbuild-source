@@ -11,6 +11,7 @@
 <!-- STATES -->
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMWorkflowState.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMUIState.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/state/CMCardModuleState.js"></script>
 
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
@@ -18,10 +19,14 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/graph/GraphWindow.js"></script>
 
 <!-- MODELS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMLinkCardsModel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMLinkCardsModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
+
+<!-- DATASOURCES -->
+<script type="text/javascript" src="javascripts/cmdbuild/data/CMMiniCardGridBaseDataSource.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/data/CMDetailedCardDataSource.js"></script>
 
 <!-- VIEWS -->
 
@@ -30,11 +35,14 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMSideTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMMiniCardGrid.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMMiniCardGridWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardListWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMNoteWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMAttachmentsWindow.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardBrowserTree.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetManager.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardForm.js"></script>
 
@@ -121,6 +129,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardGridController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardBrowserTreeDataSource.js"></script>
 
 		<!-- they are not common but the widget need them -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMBaseCardPanelController.js"></script>

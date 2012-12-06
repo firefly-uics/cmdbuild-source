@@ -129,11 +129,13 @@
 				var col = columns[i];
 				if (!col.hidden && col.dataIndex != "Id") { // The graph column has dataIndex Id
 					var columnName = col.dataIndex;
-					var index = columnName.lastIndexOf("_value");
-					if (index >= 0) {
-						columnName = columnName.slice(0,index);
+					if (columnName) {
+						var index = columnName.lastIndexOf("_value");
+						if (index >= 0) {
+							columnName = columnName.slice(0,index);
+						}
+						visibleColumns.push(columnName);
 					}
-					visibleColumns.push(columnName);
 				}
 			};
 
@@ -271,7 +273,7 @@
 					extraParams: this.getStoreExtraParams()
 				},
 				autoLoad: false
-			});;
+			});
 		},
 
 		//protected

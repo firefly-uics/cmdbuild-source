@@ -20,26 +20,36 @@
 	CMDBuild.CFG_MEDIUM_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 150;
 
 	// global object with runtime configuration
-	CMDBuild.Config = {}
-	
+	CMDBuild.Config = {};
+
 	CMDBuild.log = log4javascript.getLogger();
 	CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
-	
+
 	// convenience methods to debug
 	_debug = function() {
-		var prefix = "Debug";
+		var prefix = "DEBUG";
 		if (typeof arguments[0] == "string") { 
-			prefix += ": " + arguments[0];
+			arguments[0] = prefix + ": " + arguments[0];
 		}
-		CMDBuild.log.debug(prefix, arguments);
+
+		CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 	};
-	
+
+	_warning = function() {
+		var prefix = "WARNING";
+		if (typeof arguments[0] == "string") { 
+			arguments[0] = prefix + ": " + arguments[0];
+		}
+
+		CMDBuild.log.warn.apply(CMDBuild.log, arguments);
+	};
+
 	_trace = function() {
-		_debug(arguments);
+		_debug("TRACE", arguments);
 		if (console) {
 			console.trace();
 		}
-	}
+	};
 
 	_deprecated = function() {
 		var name = "", className = "";
@@ -50,8 +60,9 @@
 		} catch (e) {
 			_debug("DEPRECATED", _trace());
 		}
+
 		_debug("DEPRECATED: " + className + "." + name);
-	}
+	};
 
 	// TODO: Read from real configuration
 	CMDBuild.Config.defaultTimeout = 90;

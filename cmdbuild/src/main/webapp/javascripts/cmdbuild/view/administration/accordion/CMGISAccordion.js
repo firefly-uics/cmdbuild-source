@@ -14,26 +14,26 @@
 			var root = this.store.getRootNode();
 			root.removeAll();
 			root.appendChild([{
-					text: tr.icons.title,
-					leaf : true,
-					cmName: "gis-icons"
-				},
-				{
-					text: tr.external_services.title,
-					leaf : true,
-					cmName: "gis-external-services"
-				},
-				{
-					text: tr.layermanager.title,
-					leaf : true,
-					cmName: "gis-layers-order"
-				},
-				{
-					text: tr.geoserver.title,
-					leaf : true,
-					cmName: "gis-geoserver"
-				}
-			]);
+				text: tr.icons.title,
+				leaf: true,
+				cmName: "gis-icons"
+			}, {
+				text: tr.external_services.title,
+				leaf: true,
+				cmName: "gis-external-services"
+			}, {
+				text: tr.layermanager.title,
+				leaf: true,
+				cmName: "gis-layers-order"
+			}, {
+				text: tr.geoserver.title,
+				leaf: true,
+				cmName: "gis-geoserver"
+			}, {
+				text: tr.navigationTree.title,
+				leaf: true,
+				cmName: "gis-filter-configuration"
+			}]);
 		}
 	});
 

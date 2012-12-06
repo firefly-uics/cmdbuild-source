@@ -1,45 +1,40 @@
 (function() {
 	Ext.define("CMDBuild.RangeSlidersFieldSet", {
-		extend: "Ext.panel.Panel",
-		
+		extend: "Ext.container.Container",
+
 		maxSliderField: undefined,
 		minSliderField: undefined,
-		
-		constructor: function() {
-			this.callParent(arguments);
-		},
-		
+
 		initComponent: function() {
 			if (!this.maxSliderField) {
 				throw new Error("You must assign a maxSliderField to the RangeSliderFieldset");
 			}
+
 			if (!this.minSliderField) {
 				throw new Error("You must assign a minSliderField to the RangeSliderFieldset");
 			}
-			
-			Ext.apply(this, {
-				items : [this.minSliderField,this.maxSliderField],
-				border : false,
-				frame : false
-			});
-			
+
+
+			this.items = [this.minSliderField,this.maxSliderField];
+
 			this.callParent(arguments);
+
 			handleDisableEvent(this);
 			handleMaxSliderEvents(this);
 			handleMinSliderEvents(this);
 		},
-		
+
 		disable: function() {
 			this.maxSliderField.disable();
 			this.minSliderField.disable();
 		},
-		
+
 		enable: function() {
 			this.maxSliderField.enable();
 			this.minSliderField.enable();
 		}
 	});
-	
+
 	function handleMaxSliderEvents(rangeSlider) {
 		rangeSlider.maxSliderField.on("dragstart", function(slider, event) {
 			slider.startDragValue = slider.getValue();
