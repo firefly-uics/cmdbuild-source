@@ -47,6 +47,11 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 	protected final String userIdAttribute() {
 		return "Id";
 	}
+	
+	@Override
+	protected String activeAttribute() {
+		return "Active";
+	}
 
 	@Override
 	protected CMDomain userGroupDomain() {
