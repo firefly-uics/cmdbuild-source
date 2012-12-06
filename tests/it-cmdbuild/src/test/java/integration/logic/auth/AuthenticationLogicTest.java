@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -13,10 +14,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DBGroupFetcher;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
@@ -25,6 +28,7 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.DBFixture;
@@ -47,7 +51,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	private DBCard groupA;
 	private DBCard groupB;
 	private DBCard emptyGroup;
-	private UserStore DUMB_STORE;
+	private UserStore IN_MEMORY_STORE;
 
 	@Before
 	public void setUp() {
@@ -55,8 +59,9 @@ public class AuthenticationLogicTest extends DBFixture {
 		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
+		service.setGroupFetcher(new DBGroupFetcher(dbDataView()));
 		authLogic = new AuthenticationLogic(service);
-		DUMB_STORE = new UserStore() {
+		IN_MEMORY_STORE = new UserStore() {
 
 			OperationUser operationUser = null;
 
@@ -104,7 +109,7 @@ public class AuthenticationLogicTest extends DBFixture {
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(DUMB_STORE).build();
+				.withUserStore(IN_MEMORY_STORE).build();
 
 		// when
 		final Response response = authLogic.login(loginDTO);
@@ -121,7 +126,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 
 	private void assertOperationUserIsStoredInUserStore() {
-		assertThat(DUMB_STORE.getUser(), is(not(nullValue())));
+		assertThat(IN_MEMORY_STORE.getUser(), is(not(nullValue())));
 	}
 
 	@Test
@@ -131,7 +136,7 @@ public class AuthenticationLogicTest extends DBFixture {
 				.withLoginString(ADMIN_EMAIL) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(DUMB_STORE).build();
+				.withUserStore(IN_MEMORY_STORE).build();
 		// when
 		final Response response = authLogic.login(loginDTO);
 
@@ -146,7 +151,7 @@ public class AuthenticationLogicTest extends DBFixture {
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(ADMIN_PASSWORD) //
-				.withUserStore(DUMB_STORE) //
+				.withUserStore(IN_MEMORY_STORE) //
 				.build();
 
 		// when
@@ -161,7 +166,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 
 	private void assertOperationUserIsNotStoredInUserStore() {
-		assertThat(DUMB_STORE.getUser(), is(nullValue()));
+		assertThat(IN_MEMORY_STORE.getUser(), is(nullValue()));
 	}
 
 	@Test
@@ -170,7 +175,7 @@ public class AuthenticationLogicTest extends DBFixture {
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
 				.withLoginString(USER_DEFAULT_GROUP) //
 				.withPassword(PASSWORD_DEFAULT_GROUP) //
-				.withUserStore(DUMB_STORE) //
+				.withUserStore(IN_MEMORY_STORE) //
 				.build();
 
 		// when
@@ -187,7 +192,7 @@ public class AuthenticationLogicTest extends DBFixture {
 		final LoginDTO loginDTO = LoginDTO.newInstanceBuilder() //
 				.withLoginString(SIMPLE_USERNAME) //
 				.withPassword(SIMPLE_PASSWORD) //
-				.withUserStore(DUMB_STORE) //
+				.withUserStore(IN_MEMORY_STORE) //
 				.build();
 
 		// when
@@ -205,7 +210,7 @@ public class AuthenticationLogicTest extends DBFixture {
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(WRONG_ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(DUMB_STORE).build();
+				.withUserStore(IN_MEMORY_STORE).build();
 
 		// when
 		final Response response = authLogic.login(loginDTO);
@@ -224,7 +229,7 @@ public class AuthenticationLogicTest extends DBFixture {
 				.withLoginString("wrong_admin_username") //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(DUMB_STORE).build();
+				.withUserStore(IN_MEMORY_STORE).build();
 		// when
 		final Response response = authLogic.login(loginDTO);
 
@@ -238,7 +243,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllGroupsForAUser() {
 		// when
-		final Iterable<CMGroup> groups = authLogic.getGroupsFromUserId(admin.getId());
+		final Iterable<CMGroup> groups = authLogic.getGroupsForUserWithId(admin.getId());
 
 		// then
 		int numberOfGroups = 0;
@@ -257,7 +262,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllUsersForNonEmptyGroup() {
 		// when
-		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(groupA.getId());
+		final Iterable<CMUser> users = authLogic.getUsersForGroupWithId(groupA.getId());
 		int actualNumberOfUsers = 0;
 		for (final CMUser user : users) {
 			actualNumberOfUsers++;
@@ -277,10 +282,64 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveNoUserForEmptyGroup() {
 		// when
-		final Iterable<CMUser> users = authLogic.getUsersFromGroupId(emptyGroup.getId());
+		final Iterable<CMUser> users = authLogic.getUsersForGroupWithId(emptyGroup.getId());
 
 		// then
 		assertEquals(users.iterator().hasNext(), false);
+	}
+	
+	@Test
+	public void shouldRetrieveUserFromId() {
+		//given
+		Long expectedId = admin.getId();
+		
+		//when
+		CMUser retrievedUser = authLogic.getUserWithId(expectedId);
+		
+		//then
+		assertEquals(expectedId, retrievedUser.getId());
+	}
+	
+	@Test
+	public void shouldRetrieveAllGroups() {
+		//when
+		Iterable<CMGroup> allGroups = authLogic.getAllGroups();
+		
+		//then
+		int numberOfGroups = 0;
+		for (CMGroup group : allGroups) {
+			numberOfGroups++;
+		}
+		assertEquals(numberOfGroups, 3);
+	}
+	
+	@Test
+	public void shouldRetrieveExistentGroupFromId() {
+		//when
+		CMGroup retrievedGroup = authLogic.getGroupWithId(groupA.getId());
+		
+		//then
+		assertNotNull(retrievedGroup);
+		assertEquals(groupA.getId(), retrievedGroup.getId());
+	}
+	
+	@Test
+	public void shouldRetrieveNullGroupIfNonExistentId() {
+		//when
+		CMGroup retrievedGroup = authLogic.getGroupWithId(-1L);
+		
+		//then
+		assertNotNull(retrievedGroup);
+		assertTrue(retrievedGroup instanceof NullGroup);
+	}
+	
+	@Ignore("Until the update of a card is not implemented...")
+	@Test
+	public void shouldChangeStatusToGroup() {
+		//when
+		CMGroup updatedGroup = authLogic.changeGroupStatusTo(groupA.getId(), true);
+		
+		//TODO: complete this test
 	}
 
 }

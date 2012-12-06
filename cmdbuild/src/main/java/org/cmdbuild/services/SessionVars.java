@@ -34,7 +34,7 @@ public class SessionVars implements UserStore {
 	public UserContext getCurrentUserContext() {
 		final OperationUser operationUser = getUser();
 		if (operationUser.getAuthenticatedUser().isAnonymous()) {
-			return null;
+			return null; //check if it is better to return a not-null object
 		} else {
 			return new OperationUserWrapper(operationUser);
 		}

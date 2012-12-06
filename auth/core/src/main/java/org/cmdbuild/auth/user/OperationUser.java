@@ -4,6 +4,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.CMPrivilege;
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 
 public class OperationUser {
@@ -39,7 +40,7 @@ public class OperationUser {
 	 * @return
 	 */
 	public boolean isValid() {
-		return getPreferredGroup() != null;
+		return !(getPreferredGroup() instanceof NullGroup);
 	}
 
 	public AuthenticatedUser getAuthenticatedUser() {
