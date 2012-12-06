@@ -61,6 +61,10 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 		final CardQuery filteredCardQuery;
 		if (table.isActivity()) {
 			filteredCardQuery = guestFilter.apply(unfilteredCardQuery);
+			if (filteredCardQuery == null) {
+				unfilteredCardQuery.setPrevExecutorsFilter(userContext);
+			}
+
 		} else {
 			filteredCardQuery = unfilteredCardQuery;
 		}
