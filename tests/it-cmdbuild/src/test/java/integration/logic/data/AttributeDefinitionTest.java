@@ -1,0 +1,590 @@
+package integration.logic.data;
+
+import static integration.logic.data.AttributesMatcher.hasAttributeWithName;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+public class AttributeDefinitionTest extends DataDefinitionLogicTest {
+
+	private static final String CLASS_NAME = "foo";
+	private static final String ANOTHER_CLASS_NAME = "bar";
+
+	private static final String ATTRIBUTE_NAME = "bar";
+	private static final String ANOTHER_ATTRIBUTE_NAME = "baz";
+
+	private static final String TYPE_THAT_DOES_NOT_REQUIRE_PARAMS = "BOOLEAN";
+
+	private static final String DESCRIPTION = "attribute's description";
+
+	private CMClass testClass;
+
+	@Before
+	public void createDefaultTest() throws Exception {
+		testClass = dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
+	}
+
+	@Test
+	public void codeAndDescriptionAreDefaultAttributes() throws Exception {
+		// given
+
+		// when
+		final Iterable<? extends CMAttribute> attributes = testClass.getAllAttributes();
+
+		// then
+		assertThat(attributes, hasAttributeWithName(CODE_ATTRIBUTE));
+		assertThat(attributes, hasAttributeWithName(DESCRIPTION_ATTRIBUTE));
+		assertThat(attributes, not(hasAttributeWithName("SurelyMissing")));
+	}
+
+	@Test
+	public void codeAndDescriptionAreNotInheritedInClassesWithoutParent() throws Exception {
+		// given
+
+		// when
+		final CMAttribute code = dataView().findClassByName(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
+		final CMAttribute description = dataView().findClassByName(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
+
+		// then
+		assertThat(code.isInherited(), equalTo(false));
+		assertThat(description.isInherited(), equalTo(false));
+	}
+
+	@Test
+	public void codeAndDescriptionAreInheritedInSubclasses() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newClass(ANOTHER_CLASS_NAME).withParent(testClass.getId())));
+
+		// when
+		final CMClass anotherClass = dataView().findClassByName(ANOTHER_CLASS_NAME);
+		final CMAttribute code = anotherClass.getAttribute(CODE_ATTRIBUTE);
+		final CMAttribute description = anotherClass.getAttribute(DESCRIPTION_ATTRIBUTE);
+
+		// then
+		assertThat(code.isInherited(), equalTo(true));
+		assertThat(description.isInherited(), equalTo(true));
+	}
+
+	@Test
+	public void codeAttributeIsActiveAsDefault() throws Exception {
+		// given
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
+
+		// then
+		assertThat(attribute.getName(), equalTo(CODE_ATTRIBUTE));
+		assertThat(attribute.getDescription(), equalTo(CODE_ATTRIBUTE));
+		assertThat(attribute.isActive(), equalTo(true));
+	}
+
+	@Test
+	public void descriptionAttributeIsActiveAsDefault() throws Exception {
+		// given
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
+
+		// then
+		assertThat(attribute.getName(), equalTo(DESCRIPTION_ATTRIBUTE));
+		assertThat(attribute.getDescription(), equalTo(DESCRIPTION_ATTRIBUTE));
+		assertThat(attribute.isActive(), equalTo(true));
+	}
+
+	@Test
+	public void booleanAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("BOOLEAN")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(BooleanAttributeType.class));
+	}
+
+	@Test
+	public void charAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("CHAR")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(CharAttributeType.class));
+	}
+
+	@Test
+	public void dateAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("DATE")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(DateAttributeType.class));
+	}
+
+	@Test
+	public void decimalAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("DECIMAL") //
+						.withPrecision(5) //
+						.withScale(2)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(DecimalAttributeType.class));
+
+		final DecimalAttributeType decimalAttributeType = (DecimalAttributeType) attribute.getType();
+		assertThat(decimalAttributeType.scale, equalTo(2));
+		assertThat(decimalAttributeType.precision, equalTo(5));
+	}
+
+	@Test
+	public void doubleAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("DOUBLE")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(DoubleAttributeType.class));
+	}
+
+	@Ignore
+	@Test
+	public void foreignKeyAttributeCreatedAndReaded() throws Exception {
+		fail("TODO");
+	}
+
+	@Test
+	public void ipAddressAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("INET")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(IpAddressAttributeType.class));
+	}
+
+	@Test
+	public void integerAddressAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("INTEGER")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(IntegerAttributeType.class));
+	}
+
+	@Ignore
+	@Test
+	public void linestringAttributeCreatedAndReaded() throws Exception {
+		fail("TODO");
+	}
+
+	@Test
+	public void lookupAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("LOOKUP") //
+						.withLookupType("AlfrescoCategory")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(LookupAttributeType.class));
+
+		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
+		assertThat(lookupAttributeType.getLookupTypeName(), equalTo("AlfrescoCategory"));
+	}
+
+	@Ignore
+	@Test
+	public void pointAttributeCreatedAndReaded() throws Exception {
+		fail("TODO");
+	}
+
+	@Ignore
+	@Test
+	public void polygonAttributeCreatedAndReaded() throws Exception {
+		fail("TODO");
+	}
+
+	@Ignore
+	@Test
+	public void referenceAttributeCreatedAndReaded() throws Exception {
+		fail("TODO");
+	}
+
+	@Test
+	public void stringAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("STRING") //
+						.withLength(42)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(StringAttributeType.class));
+
+		final StringAttributeType decimalAttributeType = (StringAttributeType) attribute.getType();
+		assertThat(decimalAttributeType.length, equalTo(42));
+	}
+
+	@Test
+	public void timeAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("TIME")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(TimeAttributeType.class));
+	}
+
+	@Test
+	public void timestampAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("TIMESTAMP")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(DateTimeAttributeType.class));
+	}
+
+	@Test
+	public void textAttributeCreatedAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("TEXT")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(TextAttributeType.class));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsActiveAsDefault() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.thatIsActive(false)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isActive(), equalTo(true));
+		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).isActive(), equalTo(false));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsNotDisplayableInListAsDefault() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.thatIsDisplayableInList(true)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isDisplayableInList(), equalTo(false));
+		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).isDisplayableInList(), equalTo(true));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsNotMandatoryAsDefault() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.thatIsMandatory(true)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isMandatory(), equalTo(false));
+		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).isMandatory(), equalTo(true));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsNotUniqueAsDefault() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.thatIsUnique(true)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).isUnique(), equalTo(false));
+		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).isUnique(), equalTo(true));
+	}
+
+	@Test
+	public void onlyDescriptionStatusesAndModeCanBeChangedForAllAttributes() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getDescription(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.isActive(), equalTo(true));
+		assertThat(attribute.isDisplayableInList(), equalTo(false));
+		assertThat(attribute.isMandatory(), equalTo(false));
+		assertThat(attribute.isUnique(), equalTo(false));
+
+		// but...
+
+		// when
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withDescription(DESCRIPTION) //
+						.thatIsActive(false) //
+						.thatIsDisplayableInList(true) //
+						.thatIsMandatory(true) //
+						.thatIsUnique(true)));
+		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(updatedAttribute.getDescription(), equalTo(DESCRIPTION));
+		assertThat(updatedAttribute.isActive(), equalTo(false));
+		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
+		assertThat(updatedAttribute.isMandatory(), equalTo(true));
+		assertThat(updatedAttribute.isUnique(), equalTo(true));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsWritableAsDefault() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.WRITE));
+	}
+
+	@Test
+	public void newlyCreatedAttributeCanBeReadOnlyOrHidden() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withMode(Mode.READ)));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withMode(Mode.HIDDEN)));
+
+		// when
+		final CMClass _class = dataView().findClassByName(CLASS_NAME);
+
+		// then
+		assertThat(_class.getAttribute(ATTRIBUTE_NAME).getMode(), equalTo(Mode.READ));
+		assertThat(_class.getAttribute(ANOTHER_ATTRIBUTE_NAME).getMode(), equalTo(Mode.HIDDEN));
+	}
+
+	@Test
+	public void newlyCreatedAttributeIsNotInherited() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withMode(Mode.READ)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.isInherited(), equalTo(false));
+	}
+
+	@Test
+	public void deletingUnexistingAttributeDoesNothing() throws Exception {
+		// given
+		// nothing
+
+		// when
+		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
+
+		// then
+		// nothing happens, but at least no errors
+	}
+
+	@Test
+	public void deletingExistingAttributeWithNoData() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
+
+		// then
+		assertThat(dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));
+	}
+
+	@Ignore
+	@Test
+	public void deletingExistingAttributeWithDataSetsTheAttributeAsNoActiveAndThrowsException() throws Exception {
+		fail("TODO");
+	}
+
+}
