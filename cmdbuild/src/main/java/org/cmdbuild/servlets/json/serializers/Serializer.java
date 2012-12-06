@@ -763,23 +763,7 @@ public class Serializer {
 		return sortedAttributes;
 	}
 
-	//TODO: delete this method when old dao will be updated with new dao
-	public static JSONObject serializeGroupCard(GroupCard groupCard) throws JSONException {
-		JSONObject jsonGroup = new JSONObject();
-		jsonGroup.put("id", groupCard.getId());
-		jsonGroup.put("name", groupCard.getName());
-		jsonGroup.put("description", groupCard.getDescription());
-		jsonGroup.put("email", groupCard.getEmail());
-		jsonGroup.put("isAdministrator", groupCard.isAdmin());
-		jsonGroup.put("startingClass", groupCard.getStartingClassId());
-		jsonGroup.put("isActive", groupCard.getStatus().isActive());
-		jsonGroup.put("text", groupCard.getDescription());
-		jsonGroup.put("selectable", true);
-		jsonGroup.put("type", "group");
-		return jsonGroup;
-	}
-	
-	public static JSONObject serializeGroup(CMGroup group) throws JSONException {
+	public static JSONObject serializeCMGroup(CMGroup group) throws JSONException {
 		JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", group.getId());
 		jsonGroup.put("name", group.getName());
@@ -852,12 +836,13 @@ public class Serializer {
 		return row;
 	}
 
-	public static JSONArray serializePrivilegeList(Iterable<PrivilegeCard> privileges, ITableFactory tf)
+	//TODO: remove with new dao...
+	public static JSONArray serializePrivilegeList(Iterable<PrivilegeCard> privileges)
 			throws JSONException {
 		JSONArray privilegeList = new JSONArray();
 		for (PrivilegeCard privilege : privileges) {
 			try {
-				privilegeList.put(Serializer.serializePrivilege(privilege, tf));
+//				privilegeList.put(Serializer.serializePrivilege(privilege, tf));
 			} catch (NotFoundException e) {
 				Log.PERSISTENCE.warn("Class OID not found (" + privilege.getGrantedClassId()
 						+ ") while searching for grant for group " + privilege.getGroupId());
@@ -866,17 +851,6 @@ public class Serializer {
 		return privilegeList;
 	}
 
-	//TODO: delete this method when old dao will be updated with new dao
-	public static JSONObject serializeUser(UserCard user) throws JSONException {
-		JSONObject row = new JSONObject();
-		row.put("userid", user.getId());
-		row.put("username", user.getName());
-		row.put("description", user.getDescription());
-		row.put("email", user.getEmail());
-		row.put("isactive", user.getStatus().isActive());
-		return row;
-	}
-	
 	public static JSONObject serializeCMUser(CMUser user) throws JSONException {
 		JSONObject row = new JSONObject();
 		row.put("userid", user.getId());
@@ -885,15 +859,6 @@ public class Serializer {
 		row.put("email", user.getEmail());
 		row.put("isactive", user.isActive());
 		return row;
-	}
-
-	//TODO: delete it when old dao will be replaced by new dao
-	public static <T extends ICard> JSONArray serializeUserList(Iterable<T> users) throws JSONException {
-		JSONArray userList = new JSONArray();
-		for (ICard ucard : users) {
-			userList.put(Serializer.serializeUser(new UserCard(ucard)));
-		}
-		return userList;
 	}
 	
 	public static JSONArray serializeCMUserList(List<CMUser> users) throws JSONException {

@@ -8,13 +8,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class NullGroup implements CMGroup {
-	
+
 	private Long nonExistentGroupId;
 
 	public NullGroup() {
 	}
-	
-	public NullGroup(Long groupId) {
+
+	public NullGroup(final Long groupId) {
 		this.nonExistentGroupId = groupId;
 	}
 
@@ -52,17 +52,17 @@ public class NullGroup implements CMGroup {
 	public String getEmail() {
 		return "";
 	}
-	
+
 	@Override
 	public boolean isAdmin() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isActive() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("[Group %s]", this.getName());

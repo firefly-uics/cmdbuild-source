@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
@@ -17,14 +18,19 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.exception.RedirectException;
+import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.auth.GroupDTO.GroupDTOCreationValidator;
+import org.cmdbuild.logic.auth.GroupDTO.GroupDTOUpdateValidator;
+import org.cmdbuild.logic.auth.UserDTO.UserDTOCreationValidator;
+import org.cmdbuild.logic.auth.UserDTO.UserDTOUpdateValidator;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 
 /**
  * Facade class for all the authentication operations
  */
-public class AuthenticationLogic {
+public class AuthenticationLogic implements Logic {
 
 	public static class Response {
 
@@ -68,11 +74,13 @@ public class AuthenticationLogic {
 	}
 
 	public Response login(final LoginDTO loginDTO) {
+		logger.info("Trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
 		final Login login = Login.newInstance(loginDTO.getLoginString());
 		final AuthenticatedUser authUser = authService.authenticate(login, loginDTO.getPassword());
 
 		final boolean userNotAuthenticated = authUser.isAnonymous();
 		if (userNotAuthenticated) {
+			logger.error("Login failed");
 			return Response.newInstance(false, AuthExceptionType.AUTH_LOGIN_WRONG.createException().toString(), null);
 		}
 
@@ -81,6 +89,7 @@ public class AuthenticationLogic {
 		if (groupName == null) {
 			final CMGroup guessedGroup = guessPreferredGroup(authUser);
 			if (guessedGroup == null) {
+				logger.error("The user does not have a default group and belongs to multiple groups");
 				return Response.newInstance(false, AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException().toString(),
 						authUser.getGroups());
 			} else if (authUser.getGroups().size() == 1) {
@@ -157,11 +166,15 @@ public class AuthenticationLogic {
 		return user.getGroups();
 	}
 
-	public CMUser getUserWithId(Long userId) {
+	public CMUser getUserWithId(final Long userId) {
 		return authService.fetchUserById(userId);
 	}
 
-	public CMUser createUser(UserDTO userDTO) {
+	public CMUser createUser(final UserDTO userDTO) {
+		final ModelValidator<UserDTO> validator = new UserDTOCreationValidator();
+		if (!validator.validate(userDTO)) {
+			throw ORMExceptionType.ORM_CANT_CREATE_USER.createException();
+		}
 		if (!existsUserWithUsername(userDTO.getUsername())) {
 			return authService.createUser(userDTO);
 		} else {
@@ -169,41 +182,86 @@ public class AuthenticationLogic {
 		}
 	}
 
-	private boolean existsUserWithUsername(String username) {
+	private boolean existsUserWithUsername(final String username) {
 		try {
 			authService.fetchUserByUsername(username);
 			return true;
-		} catch (NoSuchElementException ex) {
+		} catch (final NoSuchElementException ex) {
 			return false;
 		}
 	}
 
-	public CMUser updateUser(UserDTO userDTO) {
-		CMUser updatedUser = authService.updateUser(userDTO);
+	public CMUser updateUser(final UserDTO userDTO) {
+		final ModelValidator<UserDTO> validator = new UserDTOUpdateValidator();
+		if (!validator.validate(userDTO)) {
+			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
+		}
+		final CMUser updatedUser = authService.updateUser(userDTO);
 		return updatedUser;
 	}
 
-	public CMGroup getGroupWithId(Long groupId) {
+	public CMGroup getGroupWithId(final Long groupId) {
 		return authService.fetchGroupWithId(groupId);
 	}
 
-	public CMGroup changeGroupStatusTo(Long groupId, boolean isActive) {
+	public CMGroup changeGroupStatusTo(final Long groupId, final boolean isActive) {
 		return authService.changeGroupStatusTo(groupId, isActive);
 	}
 
 	public Iterable<CMGroup> getAllGroups() {
 		return authService.fetchAllGroups();
 	}
-	
+
 	public List<CMUser> getAllUsers() {
 		return authService.fetchAllUsers();
 	}
 
-	// FIXME: method not implemented correctly...fix it
+	public CMUser enableUserWithId(final Long userId) {
+		return authService.enableUserWithId(userId);
+	}
+
+	public CMUser disableUserWithId(final Long userId) {
+		return authService.disableUserWithId(userId);
+	}
+
+	public CMGroup createGroup(final GroupDTO groupDTO) {
+		final ModelValidator<GroupDTO> validator = new GroupDTOCreationValidator();
+		if (!validator.validate(groupDTO)) {
+			throw ORMExceptionType.ORM_CANT_CREATE_GROUP.createException();
+		}
+		final String groupName = groupDTO.getName();
+		if (!existsGroupWithName(groupName)) {
+			return authService.createGroup(groupDTO);
+		} else {
+			throw ORMExceptionType.ORM_DUPLICATE_GROUP.createException();
+		}
+	}
+
+	private boolean existsGroupWithName(final String groupName) {
+		final CMGroup group = authService.fetchGroupWithName(groupName);
+		if (group instanceof NullGroup) {
+			return false;
+		}
+		return true;
+	}
+
+	public CMGroup updateGroup(final GroupDTO groupDTO) {
+		final ModelValidator<GroupDTO> validator = new GroupDTOUpdateValidator();
+		if (!validator.validate(groupDTO)) {
+			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
+		}
+		final CMGroup updatedGroup = authService.updateGroup(groupDTO);
+		return updatedGroup;
+	}
+
+	// FIXME: method not implemented correctly (headerAuth? autoLogin?)...fix it
 	public static boolean isLoggedIn(final HttpServletRequest request) throws RedirectException {
 
-		OperationUser operationUser = new SessionVars().getUser();
-		if (operationUser != null && operationUser.getAuthenticatedUser().isAnonymous()) {
+		final OperationUser operationUser = new SessionVars().getUser();
+		if (operationUser == null) {
+			return false;
+		}
+		if (operationUser.getAuthenticatedUser().isAnonymous()) {
 			return false;
 		}
 
@@ -220,7 +278,7 @@ public class AuthenticationLogic {
 		// return (userCtx != null || doAutoLogin());
 		// return new SessionVars().getUser().isValid(); // isAnonymous +
 		// doAutoLogin
-		return true;
+		return operationUser.isValid();
 	}
 
 	public static void assureAdmin(final HttpServletRequest request, final AdminAccess adminAccess) {

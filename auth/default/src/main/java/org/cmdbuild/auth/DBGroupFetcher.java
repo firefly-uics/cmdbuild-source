@@ -1,6 +1,7 @@
 package org.cmdbuild.auth;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 
 import java.util.ArrayList;
@@ -24,12 +25,10 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.*;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +45,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		this.view = view;
 	}
 
+	@Override
 	public Map<Long, CMGroup> fetchAllGroupIdToGroup() {
 		final Map<Long, CMGroup> groupCards = new HashMap<Long, CMGroup>();
 		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
@@ -53,7 +53,7 @@ public class DBGroupFetcher implements GroupFetcher {
 				.from(groupClass(), as(groupClassAlias)).run();
 		for (final CMQueryRow row : groupRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
-			CMGroup group = buildCMGroupFromGroupCard(groupCard);
+			final CMGroup group = buildCMGroupFromGroupCard(groupCard);
 			groupCards.put(groupCard.getId(), group);
 		}
 		return groupCards;
@@ -117,45 +117,64 @@ public class DBGroupFetcher implements GroupFetcher {
 
 	@Override
 	public Iterable<CMGroup> fetchAllGroups() {
-		Map<Long, CMGroup> groupIdToGroup = fetchAllGroupIdToGroup();
+		final Map<Long, CMGroup> groupIdToGroup = fetchAllGroupIdToGroup();
 		return groupIdToGroup.values();
 	}
 
 	@Override
-	public CMGroup fetchGroupWithId(Long groupId) {
+	public CMGroup fetchGroupWithId(final Long groupId) {
 		try {
-			CMCard groupCard = fetchGroupCardFromId(groupId);
+			final CMCard groupCard = fetchGroupCardFromId(groupId);
 			return buildCMGroupFromGroupCard(groupCard);
-		} catch (NoSuchElementException ex) {
+		} catch (final NoSuchElementException ex) {
 			return new NullGroup(groupId);
 		}
 	}
 
-	// FIXME: modify this method when the update card feature will be available
 	@Override
-	public CMGroup changeGroupStatusTo(Long groupId, boolean isActive) {
-		CMCard groupCard = fetchGroupCardFromId(groupId);
-		CMCardDefinition modifiableCard = view.modifyCard(groupCard);
+	public CMGroup fetchGroupWithName(final String groupName) {
+		try {
+			final CMCard groupCard = fetchGroupCardFromName(groupName);
+			return buildCMGroupFromGroupCard(groupCard);
+		} catch (final NoSuchElementException ex) {
+			return new NullGroup();
+		}
+	}
+
+	@Override
+	public CMGroup changeGroupStatusTo(final Long groupId, final boolean isActive) {
+		final CMCard groupCard = fetchGroupCardFromId(groupId);
+		final CMCardDefinition modifiableCard = view.modifyCard(groupCard);
 		if (isActive) {
 			modifiableCard.set("Active", CardStatus.ACTIVE.value());
 		} else {
 			modifiableCard.set("Active", CardStatus.INACTIVE.value());
 		}
-		CMCard modifiedGroupCard = modifiableCard.save();
+		final CMCard modifiedGroupCard = modifiableCard.save();
 		return buildCMGroupFromGroupCard(modifiedGroupCard);
 	}
 
-	private CMCard fetchGroupCardFromId(Long groupId) {
+	private CMCard fetchGroupCardFromId(final Long groupId) {
 		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
-		CMQueryRow row = view.select(anyAttribute(groupClass())) //
+		final CMQueryRow row = view.select(anyAttribute(groupClass())) //
 				.from(groupClass(), as(groupClassAlias)) //
 				.where(attribute(groupClass(), "Id"), Operator.EQUALS, groupId) //
 				.run().getOnlyRow();
-		CMCard groupCard = row.getCard(groupClassAlias);
+		final CMCard groupCard = row.getCard(groupClassAlias);
 		return groupCard;
 	}
 
-	private CMGroup buildCMGroupFromGroupCard(CMCard groupCard) {
+	private CMCard fetchGroupCardFromName(final String groupName) {
+		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
+		final CMQueryRow row = view.select(anyAttribute(groupClass())) //
+				.from(groupClass(), as(groupClassAlias)) //
+				.where(attribute(groupClass(), "Code"), Operator.EQUALS, groupName) //
+				.run().getOnlyRow();
+		final CMCard groupCard = row.getCard(groupClassAlias);
+		return groupCard;
+	}
+
+	private CMGroup buildCMGroupFromGroupCard(final CMCard groupCard) {
 		final Map<Object, List<PrivilegePair>> allPrivileges = fetchAllPrivileges();
 		final Long groupId = groupCard.getId();
 		final Object groupDescription = groupCard.get(groupDescriptionAttribute());
@@ -175,7 +194,7 @@ public class DBGroupFetcher implements GroupFetcher {
 		if (classReference != null) {
 			groupBuilder.withStartingClassId(classReference.getId());
 		}
-		Object emailAddress = groupCard.get(groupEmailAttribute());
+		final Object emailAddress = groupCard.get(groupEmailAttribute());
 		groupBuilder.withEmail(emailAddress != null ? emailAddress.toString() : null);
 		groupBuilder.active(true);
 		groupBuilder.administrator(groupIsGod);
