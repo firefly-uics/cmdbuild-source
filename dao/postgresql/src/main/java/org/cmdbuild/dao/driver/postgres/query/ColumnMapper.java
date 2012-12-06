@@ -261,7 +261,7 @@ public class ColumnMapper implements LoggingSupport {
 					final Alias attributeAlias = aliasForUserAttribute(typeAlias, attributeName);
 					/*
 					 * TODO don't add attributes if already added
-					 *
+					 * 
 					 * happens if querying for any attribute over a superclass
 					 */
 					final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName, sqlCastFor(attribute),
@@ -274,7 +274,7 @@ public class ColumnMapper implements LoggingSupport {
 			/*
 			 * FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but it
 			 * does not work if we take them all
-			 *
+			 * 
 			 * we trust it works
 			 */
 			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next();

@@ -76,10 +76,15 @@ public class UserAttribute implements CMAttribute {
 	public int getIndex() {
 		return inner.getIndex();
 	}
-	
+
 	@Override
 	public String getDefaultValue() {
 		return inner.getDefaultValue();
+	}
+
+	@Override
+	public String getGroup() {
+		return inner.getGroup();
 	}
 
 	/*

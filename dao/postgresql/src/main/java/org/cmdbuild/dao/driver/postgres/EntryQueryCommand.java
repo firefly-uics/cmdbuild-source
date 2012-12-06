@@ -108,9 +108,9 @@ class EntryQueryCommand implements LoggingSupport {
 				card.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.BeginDate)));
 				/*
 				 * TODO not supported yet
-				 *
+				 * 
 				 * the FROM class has no such column
-				 *
+				 * 
 				 * card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a,
 				 * SystemAttributes.EndDate)));
 				 */

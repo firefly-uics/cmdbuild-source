@@ -1,8 +1,8 @@
 package org.cmdbuild.dao.view;
 
+import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 
 /**
  * Attribute definition used for creating or updating attributes.
@@ -30,5 +30,7 @@ public interface CMAttributeDefinition {
 	Mode getMode();
 
 	int getIndex();
+
+	String getGroup();
 
 }

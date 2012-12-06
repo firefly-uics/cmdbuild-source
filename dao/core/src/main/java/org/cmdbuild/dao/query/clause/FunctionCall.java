@@ -76,14 +76,19 @@ public class FunctionCall implements CMFunctionCall {
 				public Mode getMode() {
 					return Mode.WRITE;
 				}
-				
+
 				@Override
 				public int getIndex() {
 					return 0;
 				}
-				
+
 				@Override
 				public String getDefaultValue() {
+					return EMPTY;
+				}
+
+				@Override
+				public String getGroup() {
 					return EMPTY;
 				}
 

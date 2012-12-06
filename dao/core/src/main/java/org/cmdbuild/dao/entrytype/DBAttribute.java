@@ -10,6 +10,7 @@ public class DBAttribute implements CMAttribute {
 
 		public static final String BASEDSP = BASE_NS + "basedsp";
 		public static final String DEFAULT = BASE_NS + "default";
+		public static final String GROUP = BASE_NS + "group";
 		public static final String INDEX = BASE_NS + "index";
 		public static final String INHERITED = BASE_NS + "inherited";
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
@@ -67,6 +68,10 @@ public class DBAttribute implements CMAttribute {
 
 		public String getDefaultValue() {
 			return get(DEFAULT);
+		}
+
+		public String getGroup() {
+			return get(GROUP);
 		}
 
 	}
@@ -140,10 +145,15 @@ public class DBAttribute implements CMAttribute {
 	public int getIndex() {
 		return meta.getIndex();
 	}
-	
+
 	@Override
 	public String getDefaultValue() {
 		return meta.getDefaultValue();
+	}
+
+	@Override
+	public String getGroup() {
+		return meta.getGroup();
 	}
 
 	/*

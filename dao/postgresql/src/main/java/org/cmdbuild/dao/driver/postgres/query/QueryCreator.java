@@ -46,7 +46,7 @@ public class QueryCreator {
 
 		/*
 		 * FIXME
-		 *
+		 * 
 		 * Anyway tableoid can't be used because of the history table UNLESS WE
 		 * USE A SELECT FOR THE FROM ALSO (that fixes the EndDate problem also)
 		 */
