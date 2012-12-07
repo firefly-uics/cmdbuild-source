@@ -763,7 +763,7 @@ public class Serializer {
 		return sortedAttributes;
 	}
 
-	public static JSONObject serializeCMGroup(CMGroup group) throws JSONException {
+	public static JSONObject serialize(CMGroup group) throws JSONException {
 		JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", group.getId());
 		jsonGroup.put("name", group.getName());
@@ -851,7 +851,7 @@ public class Serializer {
 		return privilegeList;
 	}
 
-	public static JSONObject serializeCMUser(CMUser user) throws JSONException {
+	public static JSONObject serialize(CMUser user) throws JSONException {
 		JSONObject row = new JSONObject();
 		row.put("userid", user.getId());
 		row.put("username", user.getName());
@@ -861,10 +861,10 @@ public class Serializer {
 		return row;
 	}
 	
-	public static JSONArray serializeCMUserList(List<CMUser> users) throws JSONException {
+	public static JSONArray serializeUsers(List<CMUser> users) throws JSONException {
 		JSONArray userList = new JSONArray();
 		for (CMUser user : users) {
-			userList.put(Serializer.serializeCMUser(user));
+			userList.put(Serializer.serialize(user));
 		}
 		return userList;
 	}

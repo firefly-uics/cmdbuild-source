@@ -46,7 +46,7 @@ public class ModSecurity extends JSONBase {
 		final Iterable<CMGroup> allGroups = authLogic.getAllGroups();
 		final JSONArray groups = new JSONArray();
 		for (final CMGroup group : allGroups) {
-			final JSONObject jsonGroup = Serializer.serializeCMGroup(group);
+			final JSONObject jsonGroup = Serializer.serialize(group);
 			groups.put(jsonGroup);
 		}
 		serializer.put("groups", groups);
@@ -97,7 +97,7 @@ public class ModSecurity extends JSONBase {
 	public JSONObject getUserList(final JSONObject serializer) throws JSONException, AuthException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final List<CMUser> usersList = authLogic.getAllUsers();
-		serializer.put("rows", Serializer.serializeCMUserList(usersList));
+		serializer.put("rows", Serializer.serializeUsers(usersList));
 		return serializer;
 	}
 
@@ -129,9 +129,9 @@ public class ModSecurity extends JSONBase {
 					notAssociatedUsers.add(user);
 				}
 			}
-			return serializer.put("users", Serializer.serializeCMUserList(notAssociatedUsers));
+			return serializer.put("users", Serializer.serializeUsers(notAssociatedUsers));
 		}
-		return serializer.put("users", Serializer.serializeCMUserList(associatedUsers));
+		return serializer.put("users", Serializer.serializeUsers(associatedUsers));
 	}
 
 	@JSONExported
@@ -186,7 +186,7 @@ public class ModSecurity extends JSONBase {
 			final UserDTO userDTO = userDTOBuilder.withUserId(userId).build();
 			createdOrUpdatedUser = authLogic.updateUser(userDTO);
 		}
-		serializer.put("rows", Serializer.serializeCMUser(createdOrUpdatedUser));
+		serializer.put("rows", Serializer.serialize(createdOrUpdatedUser));
 		return serializer;
 	}
 
@@ -201,7 +201,7 @@ public class ModSecurity extends JSONBase {
 		} else {
 			user = authLogic.enableUserWithId(userId);
 		}
-		serializer.put("rows", Serializer.serializeCMUser(user));
+		serializer.put("rows", Serializer.serialize(user));
 		return serializer;
 	}
 
@@ -231,7 +231,7 @@ public class ModSecurity extends JSONBase {
 			final GroupDTO groupDTO = builder.withGroupId(groupId).build();
 			createdOrUpdatedGroup = authLogic.updateGroup(groupDTO);
 		}
-		serializer.put("group", Serializer.serializeCMGroup(createdOrUpdatedGroup));
+		serializer.put("group", Serializer.serialize(createdOrUpdatedGroup));
 		return serializer;
 	}
 
@@ -282,7 +282,7 @@ public class ModSecurity extends JSONBase {
 			@Parameter("groupId") final int groupId) throws JSONException, AuthException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final CMGroup group = authLogic.changeGroupStatusTo(Long.valueOf(groupId), isActive);
-		serializer.put("group", Serializer.serializeCMGroup(group));
+		serializer.put("group", Serializer.serialize(group));
 		return serializer;
 	}
 }
