@@ -1,5 +1,5 @@
 package org.cmdbuild.dao.entrytype;
-
+import static org.apache.commons.lang.StringUtils.*;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -9,6 +9,7 @@ public class DBAttribute implements CMAttribute {
 	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
 
 		public static final String BASEDSP = BASE_NS + "basedsp";
+		public static final String CLASSORDER = BASE_NS + "classorder";
 		public static final String DEFAULT = BASE_NS + "default";
 		public static final String GROUP = BASE_NS + "group";
 		public static final String INDEX = BASE_NS + "index";
@@ -63,7 +64,7 @@ public class DBAttribute implements CMAttribute {
 		}
 
 		public int getIndex() {
-			return Integer.parseInt(get(INDEX));
+			return Integer.parseInt(defaultIfBlank(get(INDEX), "-1"));
 		}
 
 		public String getDefaultValue() {
@@ -72,6 +73,10 @@ public class DBAttribute implements CMAttribute {
 
 		public String getGroup() {
 			return get(GROUP);
+		}
+
+		public int getClassOrder() {
+			return Integer.parseInt(defaultIfBlank(get(CLASSORDER),"0"));
 		}
 
 	}
@@ -154,6 +159,11 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public String getGroup() {
 		return meta.getGroup();
+	}
+
+	@Override
+	public int getClassOrder() {
+		return meta.getClassOrder();
 	}
 
 	/*

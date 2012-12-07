@@ -33,6 +33,7 @@ import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
@@ -51,6 +52,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 public class ModClass extends JSONBase {
@@ -205,23 +208,21 @@ public class ModClass extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject saveOrderCriteria(@Parameter(value = "records") final JSONObject orderCriteria,
-			final JSONObject serializer, final ITable table) throws JSONException, AuthException {
-		final Map<String, IAttribute> attributes = table.getAttributes();
-		for (final String keyAttr : attributes.keySet()) {
-			final IAttribute attribute = attributes.get(keyAttr);
-			final String attrName = attribute.getName();
-			Log.PERSISTENCE.debug(attrName);
-			if (attribute.isReserved())
-				continue;
-			if (orderCriteria.has(attrName)) {
-				attribute.setClassOrder(orderCriteria.getInt(attrName));
-				attribute.save();
-			} else {
-				attribute.setClassOrder(0);
-				attribute.save();
-			}
+	public JSONObject saveOrderCriteria( //
+			final UserContext userContext, //
+			@Parameter(value = "records") final JSONObject orderCriteria, //
+			final JSONObject serializer, //
+			final ITable table //
+	) throws JSONException, AuthException {
+		final List<ClassOrder> classOrders = Lists.newArrayList();
+		@SuppressWarnings("rawtypes")
+		final Iterator keysIterator = orderCriteria.keys();
+		while (keysIterator.hasNext()) {
+			final String key = (String) keysIterator.next();
+			classOrders.add(ClassOrder.from(key, orderCriteria.getInt(key)));
 		}
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+		ddl.changeClassOrders(table.getDBName(), classOrders);
 		return serializer;
 	}
 
@@ -447,14 +448,13 @@ public class ModClass extends JSONBase {
 			final BaseSchema baseSchema //
 	) throws JSONException, CMDBException {
 		final List<Attribute> attributes = Lists.newArrayList();
-		final long classId = baseSchema.getId();
-		final JSONArray attributeList = new JSONArray(jsonAttributeList);
-		for (int i = 0; i < attributeList.length(); ++i) {
-			final JSONObject jattr = attributeList.getJSONObject(i);
+		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
+		for (int i = 0; i < jsonAttributes.length(); i++) {
+			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
 			attributes.add(Attribute.newAttribute()
-					.withOwner(classId) //
-					.withName(jattr.getString("name")) //
-					.withIndex(jattr.getInt("idx"))
+					.withOwner(Long.valueOf(baseSchema.getId())) //
+					.withName(jsonAttribute.getString("name")) //
+					.withIndex(jsonAttribute.getInt("idx"))
 					.build());
 		}
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);

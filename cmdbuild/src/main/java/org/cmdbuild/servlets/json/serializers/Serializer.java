@@ -71,7 +71,6 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.gis.GeoFeatureType;
@@ -211,7 +210,7 @@ public class Serializer {
 				serializer.put("CardCode", destCard.getCode());
 				serializer.put("CardDescription", destCard.getDescription());
 			}
-		} catch(JSONException e){
+		} catch (JSONException e) {
 			Log.JSONRPC.error("Error serializing relation", e);
 		}
 		return serializer;
@@ -253,13 +252,14 @@ public class Serializer {
 		}
 		return jsonMetadata;
 	}
+
 	public static JSONObject serializeLookup(Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
 	}
 
 	public static JSONObject serializeLookup(Lookup lookup, boolean shortForm) throws JSONException {
 		JSONObject serializer = null;
-		if(lookup!=null) {
+		if (lookup != null) {
 			serializer = new JSONObject();
 			serializer.put("Id", lookup.getId());
 			serializer.put("Description", lookup.getDescription());
@@ -274,7 +274,7 @@ public class Serializer {
 			}
 
 			Lookup parent = lookup.getParent();
-			if(parent!=null) {
+			if (parent != null) {
 				serializer.put("ParentId", parent.getId());
 				if (!shortForm) {
 					serializer.put("ParentDescription", parent.getDescription());
@@ -429,26 +429,24 @@ public class Serializer {
 				attributes.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
 				attributes.put("index", attribute.getIndex());
 				attributes.put("defaultvalue", attribute.getDefaultValue());
+				attributes.put("group", attribute.getGroup());
 				// jattr.put("editorType", attribute.getEditorType());
 				// addMetadata(jattr, attribute);
 
-				// TODO
-				// jattr.put("group", attribute.getGroup());
-				//
-				// int absoluteClassOrder = attribute.getClassOrder();
-				// int classOrderSign;
-				// if (absoluteClassOrder == 0) {
-				// classOrderSign = 0;
-				// // to manage the sorting in the AttributeGridForSorting
-				// absoluteClassOrder = 10000;
-				// } else if (absoluteClassOrder > 0) {
-				// classOrderSign = 1;
-				// } else {
-				// classOrderSign = -1;
-				// absoluteClassOrder *= -1;
-				// }
-				// jattr.put("classOrderSign", classOrderSign);
-				// jattr.put("absoluteClassOrder", absoluteClassOrder);
+				int absoluteClassOrder = attribute.getClassOrder();
+				int classOrderSign;
+				if (absoluteClassOrder == 0) {
+					classOrderSign = 0;
+					// to manage the sorting in the AttributeGridForSorting
+					absoluteClassOrder = 10000;
+				} else if (absoluteClassOrder > 0) {
+					classOrderSign = 1;
+				} else {
+					classOrderSign = -1;
+					absoluteClassOrder *= -1;
+				}
+				attributes.put("classOrderSign", classOrderSign);
+				attributes.put("absoluteClassOrder", absoluteClassOrder);
 				return attributes;
 			}
 
@@ -853,7 +851,7 @@ public class Serializer {
 		return sortedAttributes;
 	}
 
-	//TODO: delete this method when old dao will be updated with new dao
+	// TODO: delete this method when old dao will be updated with new dao
 	public static JSONObject serializeGroupCard(GroupCard groupCard) throws JSONException {
 		JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", groupCard.getId());
@@ -868,7 +866,7 @@ public class Serializer {
 		jsonGroup.put("type", "group");
 		return jsonGroup;
 	}
-	
+
 	public static JSONObject serializeGroup(CMGroup group) throws JSONException {
 		JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", group.getId());
@@ -890,7 +888,7 @@ public class Serializer {
 			JSONObject row = new JSONObject();
 			row.put("id", group.getId());
 			row.put("description", group.getDescription());
-			String userDefaultGroupName = user.getDefaultGroupName(); 
+			String userDefaultGroupName = user.getDefaultGroupName();
 			if (userDefaultGroupName != null && userDefaultGroupName.equalsIgnoreCase(group.getName())) {
 				row.put("isdefault", true);
 			} else {
@@ -956,7 +954,7 @@ public class Serializer {
 		return privilegeList;
 	}
 
-	//TODO: delete this method when old dao will be updated with new dao
+	// TODO: delete this method when old dao will be updated with new dao
 	public static JSONObject serializeUser(UserCard user) throws JSONException {
 		JSONObject row = new JSONObject();
 		row.put("userid", user.getId());
@@ -966,7 +964,7 @@ public class Serializer {
 		row.put("isactive", user.getStatus().isActive());
 		return row;
 	}
-	
+
 	public static JSONObject serializeCMUser(CMUser user) throws JSONException {
 		JSONObject row = new JSONObject();
 		row.put("userid", user.getId());
@@ -977,7 +975,7 @@ public class Serializer {
 		return row;
 	}
 
-	//TODO: delete it when old dao will be replaced by new dao
+	// TODO: delete it when old dao will be replaced by new dao
 	public static <T extends ICard> JSONArray serializeUserList(Iterable<T> users) throws JSONException {
 		JSONArray userList = new JSONArray();
 		for (ICard ucard : users) {
@@ -985,7 +983,7 @@ public class Serializer {
 		}
 		return userList;
 	}
-	
+
 	public static JSONArray serializeCMUserList(List<CMUser> users) throws JSONException {
 		JSONArray userList = new JSONArray();
 		for (CMUser user : users) {

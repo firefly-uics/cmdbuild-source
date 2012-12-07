@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -287,59 +287,59 @@ public class AuthenticationLogicTest extends DBFixture {
 		// then
 		assertEquals(users.iterator().hasNext(), false);
 	}
-	
+
 	@Test
 	public void shouldRetrieveUserFromId() {
-		//given
-		Long expectedId = admin.getId();
-		
-		//when
-		CMUser retrievedUser = authLogic.getUserWithId(expectedId);
-		
-		//then
+		// given
+		final Long expectedId = admin.getId();
+
+		// when
+		final CMUser retrievedUser = authLogic.getUserWithId(expectedId);
+
+		// then
 		assertEquals(expectedId, retrievedUser.getId());
 	}
-	
+
 	@Test
 	public void shouldRetrieveAllGroups() {
-		//when
-		Iterable<CMGroup> allGroups = authLogic.getAllGroups();
-		
-		//then
+		// when
+		final Iterable<CMGroup> allGroups = authLogic.getAllGroups();
+
+		// then
 		int numberOfGroups = 0;
-		for (CMGroup group : allGroups) {
+		for (final CMGroup group : allGroups) {
 			numberOfGroups++;
 		}
 		assertEquals(numberOfGroups, 3);
 	}
-	
+
 	@Test
 	public void shouldRetrieveExistentGroupFromId() {
-		//when
-		CMGroup retrievedGroup = authLogic.getGroupWithId(groupA.getId());
-		
-		//then
+		// when
+		final CMGroup retrievedGroup = authLogic.getGroupWithId(groupA.getId());
+
+		// then
 		assertNotNull(retrievedGroup);
 		assertEquals(groupA.getId(), retrievedGroup.getId());
 	}
-	
+
 	@Test
 	public void shouldRetrieveNullGroupIfNonExistentId() {
-		//when
-		CMGroup retrievedGroup = authLogic.getGroupWithId(-1L);
-		
-		//then
+		// when
+		final CMGroup retrievedGroup = authLogic.getGroupWithId(-1L);
+
+		// then
 		assertNotNull(retrievedGroup);
 		assertTrue(retrievedGroup instanceof NullGroup);
 	}
-	
+
 	@Ignore("Until the update of a card is not implemented...")
 	@Test
 	public void shouldChangeStatusToGroup() {
-		//when
-		CMGroup updatedGroup = authLogic.changeGroupStatusTo(groupA.getId(), true);
-		
-		//TODO: complete this test
+		// when
+		final CMGroup updatedGroup = authLogic.changeGroupStatusTo(groupA.getId(), true);
+
+		// TODO: complete this test
 	}
 
 }

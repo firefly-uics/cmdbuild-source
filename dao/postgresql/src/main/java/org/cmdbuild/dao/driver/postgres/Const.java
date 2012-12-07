@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.driver.postgres;
 
-
-
 public interface Const {
 	/*
 	 * FIXME We should use generic identifiers as _Code instead of Code directly
@@ -46,7 +44,7 @@ public interface Const {
 			return castSuffix;
 		}
 	}
-	
+
 	static final Object NULL = "NULL";
 
 	static final String OPERATOR_EQ = "=";
