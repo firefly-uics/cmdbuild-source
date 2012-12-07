@@ -1,11 +1,11 @@
 package integration.logic.data;
 
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.AttributeDTO;
-import org.cmdbuild.logic.data.AttributeDTO.AttributeDTOBuilder;
-import org.cmdbuild.logic.data.ClassDTO;
-import org.cmdbuild.logic.data.ClassDTO.ClassDTOBuilder;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Attribute.AttributeBuilder;
+import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.Class.ClassBuilder;
 import org.junit.Before;
 
 import utils.IntegrationTestBase;
@@ -32,21 +32,21 @@ public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 	 * Utilities
 	 */
 
-	protected static ClassDTO a(final ClassDTOBuilder classDTO) {
-		return classDTO.build();
+	protected static Class a(final ClassBuilder classBuilder) {
+		return classBuilder.build();
 	}
 
-	protected static ClassDTOBuilder newClass(final String name) {
-		return ClassDTO.newClassDTO() //
+	protected static ClassBuilder newClass(final String name) {
+		return Class.newClass() //
 				.withName(name);
 	}
 
-	protected static AttributeDTO a(final AttributeDTOBuilder attributeDTO) {
-		return attributeDTO.build();
+	protected static Attribute a(final AttributeBuilder attributeBuilder) {
+		return attributeBuilder.build();
 	}
 
-	protected static AttributeDTOBuilder newAttribute(final String name) {
-		return AttributeDTO.newAttributeDTO() //
+	protected static AttributeBuilder newAttribute(final String name) {
+		return Attribute.newAttribute() //
 				.withName(name);
 	}
 

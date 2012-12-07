@@ -22,6 +22,13 @@ public interface CMAttribute extends Deactivable {
 	String getDescription();
 
 	/**
+	 * Attributes can be inherited.
+	 * 
+	 * @return {@code true} if attribute is inherited, {@code false} otherwise.
+	 */
+	boolean isInherited();
+
+	/**
 	 * Attributes can be showed in the list/grid.
 	 * 
 	 * @return {@code true} if attribute can be showed, {@code false} otherwise.
@@ -43,12 +50,33 @@ public interface CMAttribute extends Deactivable {
 	 *         otherwise.
 	 */
 	boolean isUnique();
-	
+
 	/**
 	 * Returns how the field is showed (or not) in the form.
 	 * 
 	 * @return the {@link Mode}.
 	 */
 	Mode getMode();
+
+	/**
+	 * Returns the index of the attribute.
+	 * 
+	 * @return the index of the attribute.
+	 */
+	int getIndex();
+
+	/**
+	 * Returns the default value of the attribute.
+	 * 
+	 * @return the default value of the attribute.
+	 */
+	String getDefaultValue();
+
+	/**
+	 * Returns the group of the attribute.
+	 * 
+	 * @return the group of the attribute.
+	 */
+	String getGroup();
 
 }

@@ -20,11 +20,11 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.cmdbuild.logic.data.AttributeDTO;
-import org.cmdbuild.logic.data.AttributeDTO.AttributeDTOBuilder;
+import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Attribute.AttributeBuilder;
 import org.junit.Test;
 
-public class AttributeDTOTest {
+public class AttributeTest {
 
 	private static final String NAME = "foo";
 	private static final String BLANK = " \t";
@@ -87,7 +87,7 @@ public class AttributeDTOTest {
 
 	@Test
 	public void nameOwnerAndTypeAreRequiredAtributes() {
-		final AttributeDTO attribute = a(newEmptyAttribute() //
+		final Attribute attribute = a(newEmptyAttribute() //
 				.withName(NAME) //
 				.withOwner(OWNER) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS));
@@ -237,19 +237,19 @@ public class AttributeDTOTest {
 	 * Utilities
 	 */
 
-	private static AttributeDTO a(final AttributeDTOBuilder attributeDTOBuilder) {
-		return attributeDTOBuilder.build();
+	private static Attribute a(final AttributeBuilder attributeBuilder) {
+		return attributeBuilder.build();
 	}
 
-	private AttributeDTOBuilder newValidAttribute() {
+	private AttributeBuilder newValidAttribute() {
 		return newEmptyAttribute() //
 				.withOwner(OWNER) //
 				.withName(NAME) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS);
 	}
 
-	private AttributeDTOBuilder newEmptyAttribute() {
-		return AttributeDTO.newAttributeDTO();
+	private AttributeBuilder newEmptyAttribute() {
+		return Attribute.newAttribute();
 	}
 
 }

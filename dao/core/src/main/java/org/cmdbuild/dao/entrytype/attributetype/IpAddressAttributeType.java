@@ -2,7 +2,6 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import java.util.regex.Pattern;
 
-
 // TODO Change to CMAttributeType<InetAddress>
 public class IpAddressAttributeType extends AbstractAttributeType<String> {
 

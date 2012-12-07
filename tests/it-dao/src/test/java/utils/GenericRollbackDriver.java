@@ -266,6 +266,16 @@ public class GenericRollbackDriver implements DBDriver {
 				public Mode getMode() {
 					return existingAttribute.getMode();
 				}
+				
+				@Override
+				public int getIndex() {
+					return existingAttribute.getIndex();
+				}
+				
+				@Override
+				public String getGroup() {
+					return existingAttribute.getGroup();
+				}
 
 			};
 		}
@@ -317,8 +327,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 				@Override
 				public String getDefaultValue() {
-					// TODO
-					return null;
+					return dbAttribute.getDefaultValue();
 				}
 
 				@Override
@@ -344,6 +353,16 @@ public class GenericRollbackDriver implements DBDriver {
 				@Override
 				public Mode getMode() {
 					return dbAttribute.getMode();
+				}
+				
+				@Override
+				public int getIndex() {
+					return dbAttribute.getIndex();
+				}
+				
+				@Override
+				public String getGroup() {
+					return dbAttribute.getGroup();
 				}
 
 			});

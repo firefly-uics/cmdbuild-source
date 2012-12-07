@@ -23,11 +23,6 @@ public class UserAttribute implements CMAttribute {
 	}
 
 	@Override
-	public boolean isActive() {
-		return inner.isActive();
-	}
-
-	@Override
 	public UserEntryType getOwner() {
 		return view.proxy(inner.getOwner());
 	}
@@ -48,6 +43,16 @@ public class UserAttribute implements CMAttribute {
 	}
 
 	@Override
+	public boolean isInherited() {
+		return inner.isInherited();
+	}
+
+	@Override
+	public boolean isActive() {
+		return inner.isActive();
+	}
+
+	@Override
 	public boolean isDisplayableInList() {
 		return inner.isDisplayableInList();
 	}
@@ -61,10 +66,25 @@ public class UserAttribute implements CMAttribute {
 	public boolean isUnique() {
 		return inner.isUnique();
 	}
-	
+
 	@Override
 	public Mode getMode() {
 		return inner.getMode();
+	}
+
+	@Override
+	public int getIndex() {
+		return inner.getIndex();
+	}
+
+	@Override
+	public String getDefaultValue() {
+		return inner.getDefaultValue();
+	}
+
+	@Override
+	public String getGroup() {
+		return inner.getGroup();
 	}
 
 	/*

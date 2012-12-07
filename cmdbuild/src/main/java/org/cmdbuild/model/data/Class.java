@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.data;
+package org.cmdbuild.model.data;
 
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -9,9 +9,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 
-public class ClassDTO {
+public class Class {
 
-	public static class ClassDTOBuilder implements Builder<ClassDTO> {
+	public static class ClassBuilder implements Builder<Class> {
 
 		private String name;
 		private String description;
@@ -22,62 +22,62 @@ public class ClassDTO {
 		private boolean isHoldingHistory = true;
 		private boolean isActive = true;
 
-		private ClassDTOBuilder() {
+		private ClassBuilder() {
 			// use factory method
 		}
 
-		public ClassDTOBuilder withName(final String name) {
+		public ClassBuilder withName(final String name) {
 			this.name = trim(name);
 			return this;
 		}
 
-		public ClassDTOBuilder withDescription(final String description) {
+		public ClassBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
 		}
 
-		public ClassDTOBuilder withParent(final Long parentId) {
+		public ClassBuilder withParent(final Long parentId) {
 			this.parentId = parentId;
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsSuperClass(final boolean isSupeClass) {
+		public ClassBuilder thatIsSuperClass(final boolean isSupeClass) {
 			this.isSuperClass = isSupeClass;
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsProcess(final boolean isProcess) {
+		public ClassBuilder thatIsProcess(final boolean isProcess) {
 			this.isProcess = isProcess;
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsUserStoppable(final boolean isUserStoppable) {
+		public ClassBuilder thatIsUserStoppable(final boolean isUserStoppable) {
 			this.isUserStoppable = isUserStoppable;
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsHoldingHistory(final boolean isHoldingHistory) {
+		public ClassBuilder thatIsHoldingHistory(final boolean isHoldingHistory) {
 			this.isHoldingHistory = isHoldingHistory;
 			return this;
 		}
 
-		public ClassDTOBuilder thatIsActive(final boolean isActive) {
+		public ClassBuilder thatIsActive(final boolean isActive) {
 			this.isActive = isActive;
 			return this;
 		}
 
 		@Override
-		public ClassDTO build() {
+		public Class build() {
 			Validate.isTrue(isNotBlank(name));
 			description = defaultIfBlank(description, name);
 			Validate.isTrue(parentId == null || parentId > 0);
-			return new ClassDTO(this);
+			return new Class(this);
 		}
 
 	}
 
-	public static ClassDTOBuilder newClassDTO() {
-		return new ClassDTOBuilder();
+	public static ClassBuilder newClass() {
+		return new ClassBuilder();
 	}
 
 	private final String name;
@@ -91,7 +91,7 @@ public class ClassDTO {
 
 	private final String toString;
 
-	private ClassDTO(final ClassDTOBuilder builder) {
+	private Class(final ClassBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.parentId = builder.parentId;

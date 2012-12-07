@@ -19,7 +19,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createStandardClassHasSomeDefauls() {
 		// given
-		dataDefinitionLogic().createOrUpdateClass(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// when
 		final CMClass createdClass = dataView().findClassByName(CLASS_NAME);
@@ -36,7 +36,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createClassWithNoDescription() {
 		// given
-		dataDefinitionLogic().createOrUpdateClass( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME)));
 
 		// when
@@ -49,7 +49,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createClassWithDescriptionDifferentFromName() {
 		// given
-		dataDefinitionLogic().createOrUpdateClass( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME).withDescription(DESCRIPTION)));
 
 		// when
@@ -62,7 +62,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createNonActiveClass() {
 		// given
-		dataDefinitionLogic().createOrUpdateClass( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME).thatIsActive(false)));
 
 		// when
@@ -75,7 +75,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createClassWithNoParent() {
 		// given
-		dataDefinitionLogic().createOrUpdateClass( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME)));
 
 		// when
@@ -88,8 +88,8 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createClassWithParent() {
 		// given
-		final CMClass parent = dataDefinitionLogic().createOrUpdateClass(a(newClass(SUPER_CLASS_NAME)));
-		dataDefinitionLogic().createOrUpdateClass( //
+		final CMClass parent = dataDefinitionLogic().createOrUpdate(a(newClass(SUPER_CLASS_NAME)));
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME).withParent(parent.getId())));
 
 		// when
@@ -102,7 +102,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createClassWithNoHistoryAndNoParentAKASimpleClass() {
 		// given
-		dataDefinitionLogic().createOrUpdateClass( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME).thatIsHoldingHistory(false)));
 
 		// when
@@ -116,10 +116,10 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void onlyDescriptionAndActiveConditionCanBeChangedDuringUpdate() {
 		// given
-		final CMClass parent = dataDefinitionLogic().createOrUpdateClass(a(newClass(SUPER_CLASS_NAME)));
-		dataDefinitionLogic().createOrUpdateClass( //
+		final CMClass parent = dataDefinitionLogic().createOrUpdate(a(newClass(SUPER_CLASS_NAME)));
+		dataDefinitionLogic().createOrUpdate( //
 				a(newClass(CLASS_NAME).withParent(parent.getId())));
-		dataDefinitionLogic().createOrUpdateClass(a(newClass(CLASS_NAME) //
+		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME) //
 				.withDescription(DESCRIPTION) //
 				.withParent(null) //
 				.thatIsHoldingHistory(false) //
@@ -141,7 +141,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 		// nothing
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivateClass(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic().deleteOrDeactivate(a(newClass(CLASS_NAME)));
 
 		// then
 		// nothing happens, but at least no errors
@@ -150,10 +150,10 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void deletingExistingClassWithNoData() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateClass(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivateClass(a(newClass(CLASS_NAME)));
+		dataDefinitionLogic().deleteOrDeactivate(a(newClass(CLASS_NAME)));
 
 		// then
 		assertThat(dataView().findClassByName(CLASS_NAME), is(nullValue()));

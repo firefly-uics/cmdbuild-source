@@ -44,6 +44,11 @@ public class AttributeWrapper implements CMAttribute {
 	}
 
 	@Override
+	public boolean isInherited() {
+		return !attribute.isLocal();
+	}
+
+	@Override
 	public boolean isActive() {
 		return attribute.getStatus().isActive();
 	}
@@ -130,6 +135,21 @@ public class AttributeWrapper implements CMAttribute {
 		default:
 			return Mode.WRITE;
 		}
+	}
+	
+	@Override
+	public int getIndex() {
+		return attribute.getIndex();
+	}
+	
+	@Override
+	public String getDefaultValue() {
+		return attribute.getDefaultValue();
+	}
+	
+	@Override
+	public String getGroup() {
+		return attribute.getGroup();
 	}
 
 }

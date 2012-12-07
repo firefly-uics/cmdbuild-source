@@ -34,6 +34,8 @@ import org.junit.Test;
 public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	private static final String CLASS_NAME = "foo";
+	private static final String ANOTHER_CLASS_NAME = "bar";
+
 	private static final String ATTRIBUTE_NAME = "bar";
 	private static final String ANOTHER_ATTRIBUTE_NAME = "baz";
 
@@ -41,11 +43,13 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 	private static final String DESCRIPTION = "attribute's description";
 
+	private static final String GROUP = "sample group";
+
 	private CMClass testClass;
 
 	@Before
 	public void createDefaultTest() throws Exception {
-		testClass = dataDefinitionLogic().createOrUpdateClass(a(newClass(CLASS_NAME)));
+		testClass = dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
 	}
 
 	@Test
@@ -59,6 +63,35 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attributes, hasAttributeWithName(CODE_ATTRIBUTE));
 		assertThat(attributes, hasAttributeWithName(DESCRIPTION_ATTRIBUTE));
 		assertThat(attributes, not(hasAttributeWithName("SurelyMissing")));
+	}
+
+	@Test
+	public void codeAndDescriptionAreNotInheritedInClassesWithoutParent() throws Exception {
+		// given
+
+		// when
+		final CMAttribute code = dataView().findClassByName(CLASS_NAME).getAttribute(CODE_ATTRIBUTE);
+		final CMAttribute description = dataView().findClassByName(CLASS_NAME).getAttribute(DESCRIPTION_ATTRIBUTE);
+
+		// then
+		assertThat(code.isInherited(), equalTo(false));
+		assertThat(description.isInherited(), equalTo(false));
+	}
+
+	@Test
+	public void codeAndDescriptionAreInheritedInSubclasses() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newClass(ANOTHER_CLASS_NAME).withParent(testClass.getId())));
+
+		// when
+		final CMClass anotherClass = dataView().findClassByName(ANOTHER_CLASS_NAME);
+		final CMAttribute code = anotherClass.getAttribute(CODE_ATTRIBUTE);
+		final CMAttribute description = anotherClass.getAttribute(DESCRIPTION_ATTRIBUTE);
+
+		// then
+		assertThat(code.isInherited(), equalTo(true));
+		assertThat(description.isInherited(), equalTo(true));
 	}
 
 	@Test
@@ -90,7 +123,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void booleanAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("BOOLEAN")));
@@ -108,7 +141,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void charAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("CHAR")));
@@ -126,7 +159,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void dateAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("DATE")));
@@ -144,7 +177,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void decimalAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("DECIMAL") //
@@ -168,7 +201,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void doubleAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("DOUBLE")));
@@ -192,7 +225,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void ipAddressAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("INET")));
@@ -210,7 +243,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void integerAddressAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("INTEGER")));
@@ -234,7 +267,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void lookupAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("LOOKUP") //
@@ -274,7 +307,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void stringAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("STRING") //
@@ -296,7 +329,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void timeAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("TIME")));
@@ -314,7 +347,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void timestampAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("TIMESTAMP")));
@@ -332,7 +365,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void textAttributeCreatedAndReaded() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType("TEXT")));
@@ -350,11 +383,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void newlyCreatedAttributeIsActiveAsDefault() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
@@ -371,11 +404,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void newlyCreatedAttributeIsNotDisplayableInListAsDefault() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
@@ -392,11 +425,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void newlyCreatedAttributeIsNotMandatoryAsDefault() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
@@ -413,11 +446,11 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void newlyCreatedAttributeIsNotUniqueAsDefault() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
@@ -434,7 +467,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void onlyDescriptionStatusesAndModeCanBeChangedForAllAttributes() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
@@ -448,18 +481,20 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.isDisplayableInList(), equalTo(false));
 		assertThat(attribute.isMandatory(), equalTo(false));
 		assertThat(attribute.isUnique(), equalTo(false));
+		assertThat(attribute.getIndex(), equalTo(-1));
 
 		// but...
 
 		// when
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withDescription(DESCRIPTION) //
 						.thatIsActive(false) //
 						.thatIsDisplayableInList(true) //
 						.thatIsMandatory(true) //
-						.thatIsUnique(true)));
+						.thatIsUnique(true) //
+						.withIndex(10)));
 		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
 
 		// then
@@ -468,12 +503,51 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
+		assertThat(updatedAttribute.getIndex(), equalTo(-1)); // index is not
+																// changed
+	}
+
+	@Test
+	public void indexMustBeChangedWithSpecificMethod() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getDescription(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.isActive(), equalTo(true));
+		assertThat(attribute.isDisplayableInList(), equalTo(false));
+		assertThat(attribute.isMandatory(), equalTo(false));
+		assertThat(attribute.isUnique(), equalTo(false));
+		assertThat(attribute.getIndex(), equalTo(-1));
+
+		// but...
+
+		// when
+		dataDefinitionLogic().reorder( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withDescription(DESCRIPTION) //
+						.thatIsActive(false) //
+						.thatIsDisplayableInList(true) //
+						.thatIsMandatory(true) //
+						.thatIsUnique(true) //
+						.withIndex(10)));
+		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(updatedAttribute.getIndex(), equalTo(10));
 	}
 
 	@Test
 	public void newlyCreatedAttributeIsWritableAsDefault() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
@@ -488,12 +562,12 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void newlyCreatedAttributeCanBeReadOnlyOrHidden() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
 						.withMode(Mode.READ)));
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ANOTHER_ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
@@ -508,12 +582,59 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
+	public void newlyCreatedAttributeIsNotInherited() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withMode(Mode.READ)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.isInherited(), equalTo(false));
+	}
+
+	@Test
+	public void newlyCreatedAttributesHaveDefaultNegativeIndex() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getIndex(), equalTo(-1));
+	}
+
+	@Test
+	public void attributesCanBeGrouped() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS) //
+						.withGroup(GROUP)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getGroup(), equalTo(GROUP));
+	}
+
+	@Test
 	public void deletingUnexistingAttributeDoesNothing() throws Exception {
 		// given
 		// nothing
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivateAttribute(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
+		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
 
 		// then
 		// nothing happens, but at least no errors
@@ -522,13 +643,13 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void deletingExistingAttributeWithNoData() throws Exception {
 		// given
-		dataDefinitionLogic().createOrUpdateAttribute( //
+		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
 						.withOwner(testClass.getId()) //
 						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
 
 		// when
-		dataDefinitionLogic().deleteOrDeactivateAttribute(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
+		dataDefinitionLogic().deleteOrDeactivate(a(newAttribute(ATTRIBUTE_NAME).withOwner(testClass.getId())));
 
 		// then
 		assertThat(dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME), is(nullValue()));

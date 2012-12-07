@@ -307,6 +307,8 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getType().accept(this);
 				append("BASEDSP", Boolean.toString(definition.isDisplayableInList()));
 				append("DESCR", definition.getDescription());
+				append("GROUP", definition.getGroup());
+				append("INDEX", Integer.toString(definition.getIndex()));
 				append("MODE", definition.getMode().toString().toLowerCase());
 				append("NOTNULL", Boolean.toString(definition.isMandatory()));
 				append("STATUS", definition.isActive() ? "active" : "noactive");
@@ -400,9 +402,10 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * @return a list of user attributes.
 	 */
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
+		logger.debug("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
 		final List<DBAttribute> entityTypeAttributes = jdbcTemplate
-				.query("SELECT A.name, _cm_comment_for_attribute(A.cid, A.name) AS comment, _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
+				.query("SELECT A.name, _cm_comment_for_attribute(A.cid, A.name) AS comment, _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type, _cm_attribute_is_inherited(A.cid, name) AS inherited" //
 						+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
 						+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
 						+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
@@ -412,6 +415,7 @@ public class EntryTypeCommands implements LoggingSupport {
 								final String name = rs.getString("name");
 								final String comment = rs.getString("comment");
 								final AttributeMetadata meta = attributeCommentToMetadata(comment);
+								meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
 								final CMAttributeType<?> type = SqlType.createAttributeType(rs.getString("sql_type"),
 										meta);
 								return new DBAttribute(name, type, meta);
