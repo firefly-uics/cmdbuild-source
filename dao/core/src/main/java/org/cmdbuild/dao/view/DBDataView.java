@@ -193,6 +193,11 @@ public class DBDataView extends QueryExecutorDataView {
 				return definition.getGroup();
 			}
 
+			@Override
+			public int getClassOrder() {
+				return definition.getClassOrder();
+			}
+
 		};
 	}
 

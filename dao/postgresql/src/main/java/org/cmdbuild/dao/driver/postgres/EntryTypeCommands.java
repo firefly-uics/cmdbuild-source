@@ -277,7 +277,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				append("LOOKUP", attributeType.getLookupTypeName());
+				append(DBAttribute.AttributeMetadata.LOOKUP_TYPE, attributeType.getLookupTypeName());
 			}
 
 			@Override
@@ -297,22 +297,25 @@ public class EntryTypeCommands implements LoggingSupport {
 			}
 
 			private void append(final String key, final String value) {
+				final CommentMapper commentMapper = CommentMappers.ATTRIBUTE_COMMENT_MAPPER;
+				final String commentKey = commentMapper.getCommentNameFromMeta(key);
 				if (builder.length() > 0) {
 					builder.append("|");
 				}
-				builder.append(format("%s: %s", key, value));
+				builder.append(format("%s: %s", commentKey, value));
 			}
 
 			public String build(final DBAttributeDefinition definition) {
 				definition.getType().accept(this);
-				append("BASEDSP", Boolean.toString(definition.isDisplayableInList()));
-				append("DESCR", definition.getDescription());
-				append("GROUP", definition.getGroup());
-				append("INDEX", Integer.toString(definition.getIndex()));
-				append("MODE", definition.getMode().toString().toLowerCase());
-				append("NOTNULL", Boolean.toString(definition.isMandatory()));
-				append("STATUS", definition.isActive() ? "active" : "noactive");
-				append("UNIQUE", Boolean.toString(definition.isUnique()));
+				append(EntryTypeMetadata.ACTIVE, definition.isActive() ? "active" : "noactive");
+				append(DBAttribute.AttributeMetadata.BASEDSP, Boolean.toString(definition.isDisplayableInList()));
+				append(DBAttribute.AttributeMetadata.CLASSORDER, Integer.toString(definition.getClassOrder()));
+				append(EntryTypeMetadata.DESCRIPTION, definition.getDescription());
+				append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
+				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
+				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
+				append(DBAttribute.AttributeMetadata.MANDATORY, Boolean.toString(definition.isMandatory()));
+				append(DBAttribute.AttributeMetadata.UNIQUE, Boolean.toString(definition.isUnique()));
 				return builder.toString();
 			}
 

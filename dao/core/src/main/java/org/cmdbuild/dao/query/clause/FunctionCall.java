@@ -92,6 +92,11 @@ public class FunctionCall implements CMFunctionCall {
 					return EMPTY;
 				}
 
+				@Override
+				public int getClassOrder() {
+					return 0;
+				}
+
 			};
 		}
 	};

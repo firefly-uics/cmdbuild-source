@@ -171,6 +171,7 @@ public class Attribute {
 		private String lookupType;
 		private Mode mode = Mode.WRITE;
 		private int index = -1;
+		private int classOrder = 0;
 		private final Set<Condition> conditions;
 
 		private AttributeBuilder() {
@@ -266,6 +267,11 @@ public class Attribute {
 			return this;
 		}
 
+		public AttributeBuilder withClassOrder(final int classOrder) {
+			this.classOrder = classOrder;
+			return this;
+		}
+
 		@Override
 		public Attribute build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
@@ -294,6 +300,7 @@ public class Attribute {
 	private final String defaultValue;
 	private final Mode mode;
 	private final int index;
+	private final int classOrder;
 	private final Set<Condition> conditions;
 
 	private final String toString;
@@ -307,6 +314,7 @@ public class Attribute {
 		this.defaultValue = builder.defaultValue;
 		this.mode = builder.mode;
 		this.index = builder.index;
+		this.classOrder = builder.classOrder;
 		this.conditions = builder.conditions;
 
 		this.toString = ToStringBuilder.reflectionToString(this);
@@ -363,6 +371,10 @@ public class Attribute {
 
 	public int getIndex() {
 		return index;
+	}
+
+	public int getClassOrder() {
+		return classOrder;
 	}
 
 }
