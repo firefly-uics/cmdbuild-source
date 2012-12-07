@@ -9,6 +9,7 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 
 public interface AuthenticationService {
@@ -113,11 +114,31 @@ public interface AuthenticationService {
 	public CMUser updateUser(UserDTO userDTO);
 
 	/**
+	 * Creates a new group in the database
+	 * 
+	 * @param groupDTO
+	 *            a DTO that contains some details about new user (name, active
+	 *            flag, email ...)
+	 * @return
+	 */
+	public CMGroup createGroup(GroupDTO groupDTO);
+
+	/**
+	 * Updates an existent group in the database
+	 * 
+	 * @param groupDTO
+	 *            a DTO that contains some details about the group that will be
+	 *            updated (name, active flag, email, groupId ...)
+	 * @return
+	 */
+	public CMGroup updateGroup(GroupDTO groupDTO);
+
+	/**
 	 * 
 	 * @return a collection of all groups stored in the database
 	 */
 	public Iterable<CMGroup> fetchAllGroups();
-	
+
 	/**
 	 * 
 	 * @return a collection of all users stored in the database
@@ -132,6 +153,33 @@ public interface AuthenticationService {
 	 * @return
 	 */
 	public CMGroup fetchGroupWithId(Long groupId);
+
+	/**
+	 * Retrieves a group with the specified name
+	 * 
+	 * @param groupName
+	 *            the name of the group that will be retrieved
+	 * @return
+	 */
+	public CMGroup fetchGroupWithName(String groupName);
+
+	/**
+	 * Enable the user with the current user id. If already enabled it does
+	 * nothing
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public CMUser enableUserWithId(Long userId);
+
+	/**
+	 * Disable the user with the current user id. If already disabled it does
+	 * nothing
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public CMUser disableUserWithId(Long userId);
 
 	/**
 	 * It changes the status of the role with id = groupId

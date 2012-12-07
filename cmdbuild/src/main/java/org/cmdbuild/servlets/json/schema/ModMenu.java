@@ -150,11 +150,11 @@ public class ModMenu extends JSONBase {
 		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(userCtx.getDefaultGroup().getName());
 		// if there isn't any menu associated to the user's group, get the
 		// default menu
-		if (!menuList.iterator().hasNext()) {
+		if (menuList != null && !menuList.iterator().hasNext()) {
 			menuList = MenuCard.loadListForGroup(MenuCard.DEFAULT_GROUP);
 		}
 
-		if (menuList.iterator().hasNext()) {
+		if (menuList != null && menuList.iterator().hasNext()) {
 			try {
 				response = Serializer.serializeMenuList(menuList, userCtx, getAvailableReportId(userCtx));
 			} catch (final NullPointerException e) {

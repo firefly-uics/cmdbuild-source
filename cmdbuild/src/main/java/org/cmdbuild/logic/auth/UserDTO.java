@@ -11,59 +11,79 @@ public class UserDTO {
 		private String username;
 		private String password;
 		private String email;
-		private Boolean isActive = false;
+		private Boolean isActive;
 		private Long defaultGroupId;
 
-		
-		public UserDTOBuilder withUserId(Long userId) {
+		public UserDTOBuilder withUserId(final Long userId) {
 			this.userId = userId;
 			return this;
 		}
-		
-		public UserDTOBuilder withDescription(String description) {
+
+		public UserDTOBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
 		}
-		
-		public UserDTOBuilder withUsername(String username) {
+
+		public UserDTOBuilder withUsername(final String username) {
 			this.username = username;
 			return this;
 		}
-		
-		public UserDTOBuilder withPassword(String password) {
+
+		public UserDTOBuilder withPassword(final String password) {
 			this.password = password;
 			return this;
 		}
-		public UserDTOBuilder withEmail(String email) {
+
+		public UserDTOBuilder withEmail(final String email) {
 			this.email = email;
 			return this;
 		}
-		
-		public UserDTOBuilder setActive(Boolean isActive) {
+
+		public UserDTOBuilder setActive(final Boolean isActive) {
 			this.isActive = isActive;
 			return this;
 		}
-		
-		public UserDTOBuilder withDefaultGroupId(Long defaultGroupId) {
+
+		public UserDTOBuilder withDefaultGroupId(final Long defaultGroupId) {
 			this.defaultGroupId = defaultGroupId;
 			return this;
 		}
-		
+
 		@Override
 		public UserDTO build() {
 			return new UserDTO(this);
 		}
 	}
 
-	private Long userId;
-	private String description;
-	private String username;
-	private String password;
-	private String email;
-	private Boolean isActive;
-	private Long defaultGroupId;
+	public static class UserDTOCreationValidator implements ModelValidator<UserDTO> {
+		@Override
+		public boolean validate(final UserDTO userDTO) {
+			if (userDTO.getUserId() != null || userDTO.getUsername() == null || userDTO.getPassword() == null) {
+				return false;
+			}
+			return true;
+		}
+	}
 
-	private UserDTO(UserDTOBuilder builder) {
+	public static class UserDTOUpdateValidator implements ModelValidator<UserDTO> {
+		@Override
+		public boolean validate(final UserDTO userDTO) {
+			if (userDTO.getUserId() == null) {
+				return false;
+			}
+			return true;
+		}
+	}
+
+	private final Long userId;
+	private final String description;
+	private final String username;
+	private final String password;
+	private final String email;
+	private final Boolean isActive;
+	private final Long defaultGroupId;
+
+	private UserDTO(final UserDTOBuilder builder) {
 		this.userId = builder.userId;
 		this.description = builder.description;
 		this.username = builder.username;
@@ -104,5 +124,5 @@ public class UserDTO {
 	public Long getDefaultGroupId() {
 		return defaultGroupId;
 	}
-	
+
 }

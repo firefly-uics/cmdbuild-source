@@ -70,7 +70,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
   },
   
   loadStore: function() {
-  	if (this.currentGroup) {
+  	if (this.currentGroup 
+  			&& this.currentGroup > 0) {
   		this.getStore().load({
   			params: {
   				groupId: this.currentGroup
