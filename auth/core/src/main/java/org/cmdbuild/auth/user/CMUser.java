@@ -2,8 +2,6 @@ package org.cmdbuild.auth.user;
 
 import java.util.Set;
 
-import org.cmdbuild.auth.acl.CMGroup;
-
 public interface CMUser {
 
 	/**
@@ -28,7 +26,7 @@ public interface CMUser {
 	 * 
 	 * @return
 	 */
-	Set<CMGroup> getGroups();
+	Set<String> getGroupNames();
 
 	/**
 	 * Returns the name of the default group for this user, used to try and
@@ -38,13 +36,13 @@ public interface CMUser {
 	 * @return default group name or null if not set
 	 */
 	String getDefaultGroupName();
-	
+
 	/**
 	 * 
 	 * @return the email address of the user
 	 */
 	String getEmail();
-	
+
 	/**
 	 * 
 	 * @return true if the user is active, false otherwise

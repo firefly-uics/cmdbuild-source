@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
-import org.cmdbuild.auth.acl.CMGroup;
 
 public class AuthenticatedUserImpl implements AuthenticatedUser {
 
@@ -69,8 +68,8 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	}
 
 	@Override
-	public Set<CMGroup> getGroups() {
-		return inner.getGroups();
+	public Set<String> getGroupNames() {
+		return inner.getGroupNames();
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
-import org.cmdbuild.auth.acl.CMGroup;
 
 public class AnonymousUser implements AuthenticatedUser {
 
@@ -24,7 +23,7 @@ public class AnonymousUser implements AuthenticatedUser {
 	}
 
 	@Override
-	public Set<CMGroup> getGroups() {
+	public Set<String> getGroupNames() {
 		return Collections.emptySet();
 	}
 

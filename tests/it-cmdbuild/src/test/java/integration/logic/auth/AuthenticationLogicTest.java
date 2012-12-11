@@ -1,13 +1,12 @@
 package integration.logic.auth;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -28,7 +27,6 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.DBFixture;
@@ -121,7 +119,7 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	private void assertUserIsSuccessfullyAuthenticated(final Response response) {
 		assertTrue(response.isSuccess());
-		assertThat(response.getGroups(), is(nullValue()));
+		assertThat(response.getGroupsInfo(), is(nullValue()));
 		assertThat(response.getReason(), is(nullValue()));
 	}
 
@@ -161,7 +159,7 @@ public class AuthenticationLogicTest extends DBFixture {
 		assertFalse(response.isSuccess());
 		assertThat(response.getReason(),
 				is(equalTo(AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException().toString())));
-		assertThat(response.getGroups(), is(not(nullValue())));
+		assertThat(response.getGroupsInfo(), is(not(nullValue())));
 		assertOperationUserIsNotStoredInUserStore();
 	}
 
@@ -217,7 +215,7 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertFalse(response.isSuccess());
-		assertThat(response.getGroups(), is(nullValue()));
+		assertThat(response.getGroupsInfo(), is(nullValue()));
 		assertThat(response.getReason(), is(equalTo(AuthExceptionType.AUTH_LOGIN_WRONG.createException().toString())));
 		assertOperationUserIsNotStoredInUserStore();
 	}
@@ -235,7 +233,7 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		assertFalse(response.isSuccess());
-		assertThat(response.getGroups(), is(nullValue()));
+		assertThat(response.getGroupsInfo(), is(nullValue()));
 		assertThat(response.getReason(), is(not(nullValue())));
 		assertOperationUserIsNotStoredInUserStore();
 	}
@@ -243,14 +241,12 @@ public class AuthenticationLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllGroupsForAUser() {
 		// when
-		final Iterable<CMGroup> groups = authLogic.getGroupsForUserWithId(admin.getId());
+		final Iterable<String> groupNames = authLogic.getGroupNamesForUserWithId(admin.getId());
 
 		// then
 		int numberOfGroups = 0;
-		for (final CMGroup group : groups) {
+		for (final String groupName : groupNames) {
 			numberOfGroups++;
-			final Long groupId = group.getId();
-			assertThat(groupIdsForUserId(admin.getId()), hasItem(groupId));
 		}
 		assertEquals(numberOfGroups, groupIdsForUserId(admin.getId()).size());
 	}
@@ -287,59 +283,50 @@ public class AuthenticationLogicTest extends DBFixture {
 		// then
 		assertEquals(users.iterator().hasNext(), false);
 	}
-	
+
 	@Test
 	public void shouldRetrieveUserFromId() {
-		//given
-		Long expectedId = admin.getId();
-		
-		//when
-		CMUser retrievedUser = authLogic.getUserWithId(expectedId);
-		
-		//then
+		// given
+		final Long expectedId = admin.getId();
+
+		// when
+		final CMUser retrievedUser = authLogic.getUserWithId(expectedId);
+
+		// then
 		assertEquals(expectedId, retrievedUser.getId());
 	}
-	
+
 	@Test
 	public void shouldRetrieveAllGroups() {
-		//when
-		Iterable<CMGroup> allGroups = authLogic.getAllGroups();
-		
-		//then
+		// when
+		final Iterable<CMGroup> allGroups = authLogic.getAllGroups();
+
+		// then
 		int numberOfGroups = 0;
-		for (CMGroup group : allGroups) {
+		for (final CMGroup group : allGroups) {
 			numberOfGroups++;
 		}
 		assertEquals(numberOfGroups, 3);
 	}
-	
+
 	@Test
 	public void shouldRetrieveExistentGroupFromId() {
-		//when
-		CMGroup retrievedGroup = authLogic.getGroupWithId(groupA.getId());
-		
-		//then
+		// when
+		final CMGroup retrievedGroup = authLogic.getGroupWithId(groupA.getId());
+
+		// then
 		assertNotNull(retrievedGroup);
 		assertEquals(groupA.getId(), retrievedGroup.getId());
 	}
-	
+
 	@Test
 	public void shouldRetrieveNullGroupIfNonExistentId() {
-		//when
-		CMGroup retrievedGroup = authLogic.getGroupWithId(-1L);
-		
-		//then
+		// when
+		final CMGroup retrievedGroup = authLogic.getGroupWithId(-1L);
+
+		// then
 		assertNotNull(retrievedGroup);
 		assertTrue(retrievedGroup instanceof NullGroup);
-	}
-	
-	@Ignore("Until the update of a card is not implemented...")
-	@Test
-	public void shouldChangeStatusToGroup() {
-		//when
-		CMGroup updatedGroup = authLogic.changeGroupStatusTo(groupA.getId(), true);
-		
-		//TODO: complete this test
 	}
 
 }

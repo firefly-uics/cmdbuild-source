@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 
 import com.google.common.base.Function;
@@ -34,6 +35,7 @@ public abstract class DBFixture extends IntegrationTestBase {
 
 	protected static final String USER_CLASS = "User";
 	protected static final String ROLE_CLASS = "Role";
+	protected static final String GRANT_CLASS = "Grant";
 	protected static final String USER_ROLE_DOMAIN = "UserRole";
 	protected static final String USERNAME_ATTRIBUTE = "Username";
 	protected static final String PASSWORD_ATTRIBUTE = "Password";
@@ -133,6 +135,16 @@ public abstract class DBFixture extends IntegrationTestBase {
 		final DBCard insertedGroup = (DBCard) group.setCode(code).save();
 		insertedGroupIds.add(insertedGroup.getId());
 		return insertedGroup;
+	}
+
+	protected DBCard insertPrivilege(final Long roleId, final EntryTypeReference className, final String mode) {
+		final DBClass grantClass = dbDriver().findClassByName(GRANT_CLASS);
+		final DBCard privilege = DBCard.newInstance(dbDriver(), grantClass);
+		final DBCard insertedGrant = privilege.set("IdRole", roleId) //
+				.set("IdGrantedClass", className) //
+				.set("Mode", mode) //
+				.save();
+		return insertedGrant;
 	}
 
 	protected DBRelation insertBindingBetweenUserAndRole(final DBCard user, final DBCard role) {

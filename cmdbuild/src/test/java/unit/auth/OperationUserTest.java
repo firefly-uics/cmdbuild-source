@@ -125,7 +125,7 @@ public class OperationUserTest {
 	@Test
 	public void canSelectAnExistingGroup() {
 		// given
-		when(mockAuthUser.getGroups()).thenReturn(groupSet(g1, g2));
+		when(mockAuthUser.getGroupNames()).thenReturn(groupSet(g1.getName(), g2.getName()));
 		final OperationUser operationUser = new OperationUser(mockAuthUser, mockPrivilegeCtx, mockGroup);
 
 		// when
@@ -149,9 +149,9 @@ public class OperationUserTest {
 	 * Utility methods
 	 */
 
-	private Set<CMGroup> groupSet(final CMGroup... groupArray) {
-		final Set<CMGroup> groups = new HashSet<CMGroup>();
-		for (final CMGroup g : groupArray) {
+	private Set<String> groupSet(final String... groupNames) {
+		final Set<String> groups = new HashSet<String>();
+		for (final String g : groupNames) {
 			groups.add(g);
 		}
 		return groups;

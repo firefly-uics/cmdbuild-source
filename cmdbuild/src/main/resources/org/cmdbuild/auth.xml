@@ -66,5 +66,5 @@
 		<property name="groupFetcher" ref="dbGroupFetcher"/>
 		<property name="userStore" ref="sessionStore" />
 	</bean>
-
+	
 </beans>

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.common.Builder;
 
 public class UserImpl implements CMUser {
@@ -16,11 +15,11 @@ public class UserImpl implements CMUser {
 		private String description;
 		private String email;
 		private boolean isActive;
-		private final Set<CMGroup> groups;
+		private final Set<String> groupNames;
 		private String defaultGroupName;
 
 		private UserImplBuilder() {
-			this.groups = new HashSet<CMGroup>();
+			this.groupNames = new HashSet<String>();
 		}
 
 		public UserImplBuilder withId(final Long id) {
@@ -38,13 +37,13 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
-		public UserImplBuilder withGroup(final CMGroup group) {
-			this.groups.add(group);
+		public UserImplBuilder withGroupName(final String groupName) {
+			this.groupNames.add(groupName);
 			return this;
 		}
 
-		public UserImplBuilder withGroups(final Set<CMGroup> groups) {
-			this.groups.addAll(groups);
+		public UserImplBuilder withGroupNames(final Set<String> groupNames) {
+			this.groupNames.addAll(groupNames);
 			return this;
 		}
 
@@ -67,7 +66,7 @@ public class UserImpl implements CMUser {
 		public UserImpl build() {
 			Validate.notNull(name);
 			Validate.notNull(description);
-			Validate.noNullElements(groups);
+			Validate.noNullElements(groupNames);
 			return new UserImpl(this);
 		}
 	}
@@ -77,7 +76,7 @@ public class UserImpl implements CMUser {
 	private final String description;
 	private final String email;
 	private final boolean isActive;
-	private final Set<CMGroup> groups;
+	private final Set<String> groupNames;
 	private final String defaultGroupName;
 
 	private UserImpl(final UserImplBuilder builder) {
@@ -86,7 +85,7 @@ public class UserImpl implements CMUser {
 		this.description = builder.description;
 		this.email = builder.email;
 		this.isActive = builder.isActive;
-		this.groups = builder.groups;
+		this.groupNames = builder.groupNames;
 		this.defaultGroupName = builder.defaultGroupName;
 	}
 
@@ -106,8 +105,8 @@ public class UserImpl implements CMUser {
 	}
 
 	@Override
-	public Set<CMGroup> getGroups() {
-		return this.groups;
+	public Set<String> getGroupNames() {
+		return this.groupNames;
 	}
 
 	@Override

@@ -14,6 +14,8 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.model.profile.UIConfiguration;
 
 public class OperationUserWrapper extends UserContext {
@@ -82,9 +84,12 @@ public class OperationUserWrapper extends UserContext {
 	}
 
 	private final OperationUser user;
+	private final AuthenticationLogic authLogic;
+	private Group cachedGroup;
 
 	public OperationUserWrapper(final OperationUser user) {
 		this.user = user;
+		this.authLogic = TemporaryObjectsBeforeSpringDI.getAuthenticationLogic();
 	}
 
 	@Override
@@ -109,15 +114,18 @@ public class OperationUserWrapper extends UserContext {
 
 	@Override
 	public Group getDefaultGroup() {
-		return getGroupByName(user.getPreferredGroup().getName());
+		if (cachedGroup == null) {
+			cachedGroup = getGroupByName(user.getPreferredGroup().getName());
+		}
+		return cachedGroup;
 	}
 
 	@Override
 	public Collection<Group> getGroups() {
-		final Collection<CMGroup> cmGroups = user.getAuthenticatedUser().getGroups();
-		final List<Group> groups = new ArrayList<Group>(cmGroups.size());
-		for (final CMGroup cmg : cmGroups) {
-			final Group g = groupFromCMGroup(cmg);
+		final Collection<String> groupNames = user.getAuthenticatedUser().getGroupNames();
+		final List<Group> groups = new ArrayList<Group>(groupNames.size());
+		for (final String groupName : groupNames) {
+			final Group g = groupFromCMGroup(authLogic.getGroupWithName(groupName));
 			groups.add(g);
 		}
 		return groups;
@@ -265,9 +273,10 @@ public class OperationUserWrapper extends UserContext {
 		if (groupName == null) {
 			return null;
 		}
-		for (final CMGroup group : user.getAuthenticatedUser().getGroups()) {
-			if (groupName.equals(group.getName())) {
-				return group;
+		for (final String name : user.getAuthenticatedUser().getGroupNames()) {
+			if (name.equals(groupName)) {
+				// ugly but necessary for now...
+				return authLogic.getGroupWithName(name);
 			}
 		}
 		return null;
