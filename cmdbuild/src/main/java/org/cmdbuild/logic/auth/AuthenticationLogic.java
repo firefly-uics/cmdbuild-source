@@ -1,9 +1,12 @@
 package org.cmdbuild.logic.auth;
 
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +18,10 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.exception.RedirectException;
@@ -27,6 +34,8 @@ import org.cmdbuild.logic.auth.UserDTO.UserDTOUpdateValidator;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 
+import com.google.common.collect.Lists;
+
 /**
  * Facade class for all the authentication operations
  */
@@ -36,15 +45,16 @@ public class AuthenticationLogic implements Logic {
 
 		private boolean success = false;
 		private String reason = null;
-		private Collection<CMGroup> groups = null;
+		private Collection<GroupInfo> groups = null;
 
-		private Response(final boolean success, final String reason, final Collection<CMGroup> groups) {
+		private Response(final boolean success, final String reason, final Collection<GroupInfo> groups) {
 			this.success = success;
 			this.reason = reason;
 			this.groups = groups;
 		}
 
-		public static Response newInstance(final boolean success, final String reason, final Collection<CMGroup> groups) {
+		public static Response newInstance(final boolean success, final String reason,
+				final Collection<GroupInfo> groups) {
 			return new Response(success, reason, groups);
 		}
 
@@ -56,10 +66,37 @@ public class AuthenticationLogic implements Logic {
 			return reason;
 		}
 
-		public Collection<CMGroup> getGroups() {
+		public Collection<GroupInfo> getGroupsInfo() {
 			return groups;
 		}
 
+	}
+
+	/**
+	 * A simple bean that contains informations for login menu (group list)
+	 */
+	public static class GroupInfo {
+		private final Long id;
+		private final String name;
+		private final String description;
+
+		private GroupInfo(final Long id, final String name, final String description) {
+			this.id = id;
+			this.name = name;
+			this.description = description;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public Long getId() {
+			return id;
+		}
 	}
 
 	public static final String USER_GROUP_DOMAIN_NAME = "UserRole";
@@ -90,12 +127,22 @@ public class AuthenticationLogic implements Logic {
 			final CMGroup guessedGroup = guessPreferredGroup(authUser);
 			if (guessedGroup == null) {
 				logger.error("The user does not have a default group and belongs to multiple groups");
+				final List<GroupInfo> groupsForLogin = Lists.newArrayList();
+				for (final String name : authUser.getGroupNames()) {
+					groupsForLogin.add(getGroupInfoForGroup(name));
+				}
 				return Response.newInstance(false, AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException().toString(),
-						authUser.getGroups());
-			} else if (authUser.getGroups().size() == 1) {
+						groupsForLogin);
+			} else if (authUser.getGroupNames().size() == 1) {
 				privilegeCtx = buildPrivilegeContext(guessedGroup);
 			} else { // the user has a default group
-				final CMGroup[] groupsArray = authUser.getGroups().toArray(new CMGroup[authUser.getGroups().size()]);
+				final Set<String> groupNames = authUser.getGroupNames();
+				final CMGroup[] groupsArray = new CMGroup[groupNames.size()];
+				int i = 0;
+				for (final String name : groupNames) {
+					groupsArray[i] = getGroupWithName(name);
+					i++;
+				}
 				privilegeCtx = buildPrivilegeContext(groupsArray);
 			}
 			final OperationUser operationUser = new OperationUser(authUser, privilegeCtx, guessedGroup);
@@ -103,7 +150,7 @@ public class AuthenticationLogic implements Logic {
 			return buildSuccessfulResponse();
 		} else {
 			final String selectedGroupName = groupName;
-			final CMGroup selectedGroup = getGroup(authUser, selectedGroupName);
+			final CMGroup selectedGroup = getGroupWithName(selectedGroupName);
 			privilegeCtx = buildPrivilegeContext(selectedGroup);
 			final OperationUser operationUser = new OperationUser(authUser, privilegeCtx, selectedGroup);
 			loginDTO.getUserStore().setUser(operationUser);
@@ -112,36 +159,27 @@ public class AuthenticationLogic implements Logic {
 	}
 
 	private CMGroup guessPreferredGroup(final CMUser user) {
-		CMGroup guessedGroup = getDefaultGroup(user);
-		if (guessedGroup == null) {
-			guessedGroup = getTheFirstAndOnlyGroup(user);
+		String guessedGroupName = user.getDefaultGroupName();
+		if (guessedGroupName == null) {
+			guessedGroupName = getTheFirstAndOnlyGroupName(user);
 		}
-		return guessedGroup;
-	}
 
-	private CMGroup getDefaultGroup(final CMUser user) {
-		return getGroup(user, user.getDefaultGroupName());
-	}
-
-	private CMGroup getGroup(final CMUser user, final String groupName) {
-		for (final CMGroup g : user.getGroups()) {
-			if (g.getName().equals(groupName)) {
-				return g;
-			}
+		if (guessedGroupName != null) {
+			return getGroupWithName(guessedGroupName);
 		}
 		return null;
 	}
 
-	private CMGroup getTheFirstAndOnlyGroup(final CMUser user) {
-		CMGroup firstGroup = null;
-		final Iterator<CMGroup> groups = user.getGroups().iterator();
-		if (groups.hasNext()) {
-			firstGroup = groups.next();
-			if (groups.hasNext()) {
-				firstGroup = null;
+	private String getTheFirstAndOnlyGroupName(final CMUser user) {
+		String firstGroupName = null;
+		final Iterator<String> groupNames = user.getGroupNames().iterator();
+		if (groupNames.hasNext()) {
+			firstGroupName = groupNames.next();
+			if (groupNames.hasNext()) {
+				firstGroupName = null;
 			}
 		}
-		return firstGroup;
+		return firstGroupName;
 	}
 
 	private PrivilegeContext buildPrivilegeContext(final CMGroup... groups) {
@@ -152,18 +190,31 @@ public class AuthenticationLogic implements Logic {
 		return Response.newInstance(true, null, null);
 	}
 
+	public GroupInfo getGroupInfoForGroup(final String groupName) {
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+		final CMClass roleClass = view.findClassByName("Role");
+		final CMQueryRow row = view.select(attribute(roleClass, "Description")) //
+				.from(roleClass) //
+				.where(attribute(roleClass, "Code"), Operator.EQUALS, groupName) //
+				.run().getOnlyRow();
+		final String description = (String) row.getCard(roleClass).get("Description");
+		final Long roleId = row.getCard(roleClass).getId();
+		final GroupInfo groupInfo = new GroupInfo(roleId, groupName, description);
+		return groupInfo;
+	}
+
 	public List<CMUser> getUsersForGroupWithId(final Long groupId) {
 		return authService.fetchUsersByGroupId(groupId);
 	}
 
-	public Iterable<CMGroup> getGroupsForUserWithId(final Long userId) {
+	public Iterable<String> getGroupNamesForUserWithId(final Long userId) {
 		final CMUser user = authService.fetchUserById(userId);
-		return user.getGroups();
+		return user.getGroupNames();
 	}
 
-	public Iterable<CMGroup> getGroupsForUserWithUsername(final String loginString) {
+	public Iterable<String> getGroupNamesForUserWithUsername(final String loginString) {
 		final CMUser user = authService.fetchUserByUsername(loginString);
-		return user.getGroups();
+		return user.getGroupNames();
 	}
 
 	public CMUser getUserWithId(final Long userId) {
@@ -202,6 +253,10 @@ public class AuthenticationLogic implements Logic {
 
 	public CMGroup getGroupWithId(final Long groupId) {
 		return authService.fetchGroupWithId(groupId);
+	}
+
+	public CMGroup getGroupWithName(final String groupName) {
+		return authService.fetchGroupWithName(groupName);
 	}
 
 	public CMGroup changeGroupStatusTo(final Long groupId, final boolean isActive) {

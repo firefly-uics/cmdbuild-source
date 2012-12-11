@@ -16,9 +16,16 @@ public abstract class IntegrationTestBase {
 	private final DBDataView dbView;
 
 	protected IntegrationTestBase() {
-		final DBDriver pgDriver = dbInitializer.getDriver();
+		final DBDriver pgDriver = createDriver();
 		this.rollbackDriver = new GenericRollbackDriver(pgDriver);
 		this.dbView = new DBDataView(rollbackDriver);
+	}
+
+	/**
+	 * Override if you need to add a caching driver
+	 */
+	protected DBDriver createDriver() {
+		return dbInitializer.getDriver();
 	}
 
 	public DBDriver dbDriver() {

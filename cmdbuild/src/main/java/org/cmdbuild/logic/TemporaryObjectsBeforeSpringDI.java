@@ -3,6 +3,10 @@ package org.cmdbuild.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DBGroupFetcher;
+import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
@@ -14,6 +18,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.WorkflowLogger;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
@@ -70,13 +75,14 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static final WorkflowLogger workflowLogger;
 	private static final WorkflowEventManager workflowEventManager;
 	private static final WorkflowTypesConverter workflowTypesConverter;
+	private static final AuthenticationLogic authLogic;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
 		driver = new DefaultCachingDriver(new PostgresDriver(datasource));
 		dbDataView = new DBDataView(driver);
 		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
-
+		authLogic = instantiateAuthenticationLogic();
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
@@ -85,6 +91,17 @@ public class TemporaryObjectsBeforeSpringDI {
 				processDefinitionManager);
 
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
+	}
+
+	private static AuthenticationLogic instantiateAuthenticationLogic() {
+		final AuthenticationService authService = new DefaultAuthenticationService();
+		authService.setUserStore(new SessionVars());
+		authService.setGroupFetcher(new DBGroupFetcher(dbDataView));
+		final LegacyDBAuthenticator authenticator = new LegacyDBAuthenticator(dbDataView);
+		authService.setPasswordAuthenticators(authenticator);
+		authService.setUserFetchers(authenticator);
+		final AuthenticationLogic authLogic = new AuthenticationLogic(authService);
+		return authLogic;
 	}
 
 	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {
@@ -118,6 +135,10 @@ public class TemporaryObjectsBeforeSpringDI {
 		return privilegeCtxFactory;
 	}
 
+	public static AuthenticationLogic getAuthenticationLogic() {
+		return authLogic;
+	}
+
 	public static DashboardLogic getDashboardLogic(final UserContext userContext) {
 		return new DashboardLogic(getUserContextView(userContext), new DBDashboardStore(), new SimplifiedUserContext(
 				userContext));
@@ -134,7 +155,7 @@ public class TemporaryObjectsBeforeSpringDI {
 	public static DataAccessLogic getDataAccessLogic(final UserContext userContext) {
 		return new DataAccessLogic(getUserContextView(userContext));
 	}
-	
+
 	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userContext) {
 		return new DataDefinitionLogic(getUserContextView(userContext));
 	}

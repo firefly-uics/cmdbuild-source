@@ -11,12 +11,15 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOBuilder;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
-import org.cmdbuild.logic.privileges.PrivilegesLogic;
+import org.cmdbuild.logic.privileges.SecurityLogic;
+import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
 import org.cmdbuild.services.auth.UserContext;
@@ -38,7 +41,7 @@ public class ModSecurity extends JSONBase {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 	private AuthenticationLogic authLogic;
-	private PrivilegesLogic privilegesLogic;
+	private SecurityLogic privilegesLogic;
 
 	@JSONExported
 	public String getGroupList(final JSONObject serializer) throws JSONException, AuthException, ORMException {
@@ -83,13 +86,9 @@ public class ModSecurity extends JSONBase {
 	@JSONExported
 	public JSONObject getPrivilegeList(final JSONObject serializer, @Parameter("groupId") final Long groupId)
 			throws JSONException, AuthException {
-		// TODO: use new dao
-		// privilegesLogic = applicationContext.getBean(PrivilegesLogic.class);
-		// //TODO: modify the spring xml file
-		// List<PrivilegePair> privilegeList = PrivilegeCard.forGroup(groupId);
-		// serializer.put("rows",
-		// Serializer.serializePrivilegeList(privilegeList, tf));
-		final int i = 0;
+		privilegesLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
+		final List<PrivilegeInfo> groupPrivileges = privilegesLogic.getPrivilegesForGroup(groupId);
+		serializer.put("row", Serializer.serializePrivilegeList(groupPrivileges));
 		return serializer;
 	}
 
@@ -106,7 +105,11 @@ public class ModSecurity extends JSONBase {
 			throws JSONException {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final CMUser user = authLogic.getUserWithId(userId);
-		final JSONArray jsonGroupList = Serializer.serializeGroupsForUser(user);
+		final List<GroupInfo> groupsForLogin = Lists.newArrayList();
+		for (final String name : user.getGroupNames()) {
+			groupsForLogin.add(authLogic.getGroupInfoForGroup(name));
+		}
+		final JSONArray jsonGroupList = Serializer.serializeGroupsForUser(user, groupsForLogin);
 		serializer.put("result", jsonGroupList);
 		return serializer;
 	}
@@ -115,10 +118,6 @@ public class ModSecurity extends JSONBase {
 	@JSONExported
 	public JSONObject getGroupUserList(@Parameter("groupId") final Long groupId,
 			@Parameter("alreadyAssociated") final boolean associated, final JSONObject serializer) throws JSONException {
-		/**
-		 * TODO: improve performances: CMUser method getGroups must return a
-		 * list of strings of group names
-		 */
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
 		final List<CMUser> associatedUsers = authLogic.getUsersForGroupWithId(groupId);
 		if (!associated) {

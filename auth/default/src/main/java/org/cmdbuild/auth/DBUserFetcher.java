@@ -38,7 +38,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	protected final CMDataView view;
-	private final GroupFetcher groupFetcher;
 
 	@GuardedBy("allGroupsCacheLock")
 	private static volatile Map<Long, CMGroup> allGroupsCache = null;
@@ -47,7 +46,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected DBUserFetcher(final CMDataView view) {
 		Validate.notNull(view);
 		this.view = view;
-		groupFetcher = new DBGroupFetcher(view);
 	}
 
 	@Override
@@ -85,24 +83,22 @@ public abstract class DBUserFetcher implements UserFetcher {
 	}
 
 	private CMUser buildUserFromCard(final CMCard userCard) {
+		// FIXME: improve performances...
 		final Long userId = userCard.getId();
 		final String username = userCard.get(userNameAttribute()).toString();
 		final Object userDescription = userCard.get(userDescriptionAttribute());
-//		final Object email = userCard.get("Email");
 		final String defaultGroupName = fetchDefaultGroupNameForUser(username);
 		final UserImplBuilder userBuilder = UserImpl.newInstanceBuilder() //
 				.withId(userId) //
 				.withName(username) //
 				.withDescription(userDescription != null ? userDescription.toString() : "") //
 				.withDefaultGroupName(defaultGroupName); //
-//				.withEmail(email != null ? email.toString() : "");
 
-		final Map<Long, CMGroup> allGroups = getAllGroups();
-		for (final Object groupId : fetchGroupIdsForUser(userCard.getId())) {
-			final CMGroup group = allGroups.get(groupId);
-			userBuilder.withGroup(group);
+		final List<String> userGroups = fetchGroupNamesForUser(userId);
+		for (final String groupName : userGroups) {
+			userBuilder.withGroupName(groupName);
 		}
-		userBuilder.setActive(true); //FIXME: when get method of DBEntry is fixed
+		userBuilder.setActive(true);
 		return userBuilder.build();
 	}
 
@@ -121,10 +117,11 @@ public abstract class DBUserFetcher implements UserFetcher {
 			final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();
 			final String groupName = (String) group.getCode();
 			final Object isDefaultGroup = relation.get("DefaultGroup");
-			if (isDefaultGroup != null)
+			if (isDefaultGroup != null) {
 				if ((Boolean) isDefaultGroup) {
 					defaultGroupName = groupName;
 				}
+			}
 		}
 		return defaultGroupName;
 	}
@@ -145,31 +142,31 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return userCard;
 	}
 
-	private Map<Long, CMGroup> getAllGroups() {
-		// TODO why cache?
-		// if (allGroupsCache == null) {
-		// synchronized (allGroupsCacheLock) {
-		// if (allGroupsCache == null) {
-		// allGroupsCache = fetchAllGroups();
-		// }
-		// }
-		// }
-		// return allGroupsCache;
-		return groupFetcher.fetchAllGroupIdToGroup();
-	}
+	// private List<String> getAllGroupNames() {
+	// TODO why cache?
+	// if (allGroupsCache == null) {
+	// synchronized (allGroupsCacheLock) {
+	// if (allGroupsCache == null) {
+	// allGroupsCache = fetchAllGroups();
+	// }
+	// }
+	// }
+	// return allGroupsCache;
+	// return groupFetcher.fetchAllGroupIdToGroup();
+	// }
 
-	private List<Object> fetchGroupIdsForUser(final Object userId) {
-		final List<Object> groupIds = new ArrayList<Object>();
-		final Alias groupClassAlias = Alias.canonicalAlias(groupClass());
+	private List<String> fetchGroupNamesForUser(final Long userId) {
+		final List<String> groupNames = new ArrayList<String>();
+		final Alias groupClassAlias = Alias.canonicalAlias(roleClass());
 		final Alias userClassAlias = Alias.canonicalAlias(userClass());
-		final CMQueryResult userGroupsRows = view.select(anyAttribute(groupClassAlias)).from(groupClass())
+		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")).from(roleClass())
 				.join(userClass(), as(userClassAlias), over(userGroupDomain()))
 				.where(attribute(userClass(), userIdAttribute()), Operator.EQUALS, userId).run();
 		for (final CMQueryRow row : userGroupsRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
-			groupIds.add(groupCard.getId());
+			groupNames.add((String) groupCard.getCode());
 		}
-		return groupIds;
+		return groupNames;
 	}
 
 	@Override
@@ -204,7 +201,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	protected abstract String userPasswordAttribute();
 
 	protected abstract String userIdAttribute();
-	
+
 	protected abstract String activeAttribute();
 
 	protected abstract CMDomain userGroupDomain();
@@ -218,10 +215,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 		default:
 			throw new IllegalArgumentException("Unsupported login type");
 		}
-	}
-
-	private CMClass groupClass() {
-		return view.findClassByName("Role");
 	}
 
 }
