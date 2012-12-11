@@ -26,7 +26,7 @@ public class QuartzSchedulerTest {
 
 	private static final int ONCE = 1;
 	private static final int THREE_TIMES = 3;
-	private static final long IN_THREE_SECONDS = (3-1)*1000L;
+	private static final long IN_THREE_SECONDS = (3 - 1) * 1000L;
 	private static final String EVERY_SECOND_CRON_EXPR = "0/1 * * * * ?";
 
 	private SchedulerService scheduler;
@@ -41,52 +41,52 @@ public class QuartzSchedulerTest {
 		scheduler.stop();
 	}
 
-	@Test(expected=SchedulerException.class)
+	@Test(expected = SchedulerException.class)
 	public void quartzForbidsAddingTheSameJobTwice() throws InterruptedException {
-		Job nullJob = createNullJob();
-		JobTrigger trigger = new OneTimeTrigger(new Date());
+		final Job nullJob = createNullJob();
+		final JobTrigger trigger = new OneTimeTrigger(new Date());
 		scheduler.addJob(nullJob, trigger);
 		scheduler.addJob(nullJob, trigger);
 	}
 
 	@Test()
 	public void quartzAllowsRemovalOfUnexistentJob() throws InterruptedException {
-		Job nullJob = createNullJob();
+		final Job nullJob = createNullJob();
 		scheduler.removeJob(nullJob);
 	}
 
 	@Test
 	public void quartzExecutesAnImmediateJob() throws InterruptedException {
-		Job nullJob = createNullJob();
-		JobTrigger immediately = new OneTimeTrigger(new Date());
+		final Job nullJob = createNullJob();
+		final JobTrigger immediately = new OneTimeTrigger(new Date());
 		assertEventually(nullJob, willBeExecuted(immediately));
 	}
 
 	@Test
 	public void quartzExecutesADeferredJob() throws InterruptedException {
-		Job nullJob = createNullJob();
-		JobTrigger timeout = new OneTimeTrigger(afterMillis(POLLING_INTERVAL/2));
+		final Job nullJob = createNullJob();
+		final JobTrigger timeout = new OneTimeTrigger(afterMillis(POLLING_INTERVAL / 2));
 		assertEventually(nullJob, willBeExecutedAfter(timeout));
 	}
 
 	@Test
 	public void quartzCanHandleMultipleJobs() {
-		JobTrigger timeout = new OneTimeTrigger(farFarAway());
+		final JobTrigger timeout = new OneTimeTrigger(farFarAway());
 		scheduler.addJob(createNullJob(), timeout);
 		scheduler.addJob(createNullJob(), timeout);
 	}
 
 	@Test
 	public void quartzExecutesARecurringJob() throws InterruptedException {
-		Job nullJob = createNullJob();
-		JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
+		final Job nullJob = createNullJob();
+		final JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
 		assertEventually(nullJob, willBeExecutedApproximately(everySecond, THREE_TIMES), IN_THREE_SECONDS);
 	}
 
 	@Test
 	public void quartzRemovesARecurringJob() throws InterruptedException {
-		Job nullJob = createSelfRemovingJob();
-		JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
+		final Job nullJob = createSelfRemovingJob();
+		final JobTrigger everySecond = new RecurringTrigger(EVERY_SECOND_CRON_EXPR);
 		assertEventually(nullJob, willBeExecuted(everySecond, ONCE), IN_THREE_SECONDS);
 	}
 
@@ -102,36 +102,37 @@ public class QuartzSchedulerTest {
 		return new SelfRemovingJob(scheduler);
 	}
 
-	public static Date afterMillis(long millis) {
-		Date now = new Date();
-		return new Date(now.getTime()+millis);
+	public static Date afterMillis(final long millis) {
+		final Date now = new Date();
+		return new Date(now.getTime() + millis);
 	}
 
 	private Date farFarAway() {
 		return afterMillis(1000000L);
 	}
 
-	private JobExecutionProbe willBeExecuted(JobTrigger trigger) {
+	private JobExecutionProbe willBeExecuted(final JobTrigger trigger) {
 		return JobExecutionProbe.jobWasExecuted(trigger);
 	}
 
-	private JobExecutionProbe willBeExecutedAfter(JobTrigger timeout) {
+	private JobExecutionProbe willBeExecutedAfter(final JobTrigger timeout) {
 		return JobExecutionProbe.jobWasExecutedAfter((OneTimeTrigger) timeout);
 	}
 
-	private JobExecutionProbe willBeExecuted(JobTrigger trigger, int times) {
-		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger)trigger, times, times);
+	private JobExecutionProbe willBeExecuted(final JobTrigger trigger, final int times) {
+		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger) trigger, times, times);
 	}
 
-	private JobExecutionProbe willBeExecutedApproximately(JobTrigger trigger, int times) {
-		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger)trigger, times, times+1);
+	private JobExecutionProbe willBeExecutedApproximately(final JobTrigger trigger, final int times) {
+		return JobExecutionProbe.jobExecutionCounter((RecurringTrigger) trigger, times, times + 1);
 	}
 
-	private void assertEventually(Job job, JobExecutionProbe probe) throws InterruptedException {
+	private void assertEventually(final Job job, final JobExecutionProbe probe) throws InterruptedException {
 		assertEventually(job, probe, POLLING_TIMEOUT);
 	}
 
-	private void assertEventually(Job job, JobExecutionProbe probe, long timeout) throws InterruptedException {
+	private void assertEventually(final Job job, final JobExecutionProbe probe, final long timeout)
+			throws InterruptedException {
 		probe.setJob((ExecutionListenerJob) job);
 		scheduler.addJob(job, probe.getTrigger());
 		scheduler.start();

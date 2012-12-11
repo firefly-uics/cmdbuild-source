@@ -14,6 +14,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 
 public class DefaultCachingDriver extends AbstractDBDriver implements CachingDriver, LoggingSupport {
 
@@ -130,8 +131,17 @@ public class DefaultCachingDriver extends AbstractDBDriver implements CachingDri
 	}
 
 	@Override
-	public DBDomain createDomain(final DomainDefinition domainDefinition) {
-		final DBDomain d = inner.createDomain(domainDefinition);
+	public DBDomain createDomain(final DBDomainDefinition definition) {
+		final DBDomain d = inner.createDomain(definition);
+		if (allDomainsStore != null) {
+			allDomainsStore.add(d);
+		}
+		return d;
+	}
+
+	@Override
+	public DBDomain updateDomain(final DBDomainDefinition definition) {
+		final DBDomain d = inner.updateDomain(definition);
 		if (allDomainsStore != null) {
 			allDomainsStore.add(d);
 		}

@@ -22,28 +22,16 @@ public class ManageRelationWidgetFactoryTest {
 
 	@Test
 	public void testSource() {
-		ManageRelation w = (ManageRelation) factory.createWidget(
-			"IsDirect='true'\n",
-			mock(CMValueSet.class)
-		);
+		ManageRelation w = (ManageRelation) factory.createWidget("IsDirect='true'\n", mock(CMValueSet.class));
 		assertThat(w.getSource(), is("_1"));
 
-		w = (ManageRelation) factory.createWidget(
-			"IsDirect='false'\n",
-			mock(CMValueSet.class)
-		);
+		w = (ManageRelation) factory.createWidget("IsDirect='false'\n", mock(CMValueSet.class));
 		assertThat(w.getSource(), is("_2"));
 
-		w = (ManageRelation) factory.createWidget(
-			"IsDirect='asdf asd'\n",
-			mock(CMValueSet.class)
-		);
+		w = (ManageRelation) factory.createWidget("IsDirect='asdf asd'\n", mock(CMValueSet.class));
 		assertThat(w.getSource(), is("_2"));
 
-		w = (ManageRelation) factory.createWidget(
-			"",
-			mock(CMValueSet.class)
-		);
+		w = (ManageRelation) factory.createWidget("", mock(CMValueSet.class));
 		assertThat(w.getSource(), is(nullValue()));
 	}
 

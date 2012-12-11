@@ -1,6 +1,7 @@
 package integration.logic.data;
 
 import static integration.logic.data.AttributesMatcher.hasAttributeWithName;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,6 +28,7 @@ import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.model.data.ClassOrder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -508,43 +510,6 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void indexMustBeChangedWithSpecificMethod() throws Exception {
-		// given
-		dataDefinitionLogic().createOrUpdate( //
-				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getId()) //
-						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
-
-		// when
-		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
-
-		// then
-		assertThat(attribute.getDescription(), equalTo(ATTRIBUTE_NAME));
-		assertThat(attribute.isActive(), equalTo(true));
-		assertThat(attribute.isDisplayableInList(), equalTo(false));
-		assertThat(attribute.isMandatory(), equalTo(false));
-		assertThat(attribute.isUnique(), equalTo(false));
-		assertThat(attribute.getIndex(), equalTo(-1));
-
-		// but...
-
-		// when
-		dataDefinitionLogic().reorder( //
-				a(newAttribute(ATTRIBUTE_NAME) //
-						.withOwner(testClass.getId()) //
-						.withDescription(DESCRIPTION) //
-						.thatIsActive(false) //
-						.thatIsDisplayableInList(true) //
-						.thatIsMandatory(true) //
-						.thatIsUnique(true) //
-						.withIndex(10)));
-		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
-
-		// then
-		assertThat(updatedAttribute.getIndex(), equalTo(10));
-	}
-
-	@Test
 	public void newlyCreatedAttributeIsWritableAsDefault() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
@@ -598,7 +563,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void newlyCreatedAttributesHaveDefaultNegativeIndex() throws Exception {
+	public void newlyCreatedAttributesHaveDefaultNegativeIndexThatCanBeChangedWithSpecificMethod() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
@@ -610,6 +575,45 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 
 		// then
 		assertThat(attribute.getIndex(), equalTo(-1));
+
+		// but...
+
+		// when
+		dataDefinitionLogic().reorder( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withDescription(DESCRIPTION) //
+						.withIndex(42)));
+		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(updatedAttribute.getIndex(), equalTo(42));
+	}
+
+	@Test
+	public void newlyCreatedAttributesHaveDefaultZeroClassOrderThatCanBeChangedWithSpecificMethod() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS)));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute.getClassOrder(), equalTo(0));
+
+		// but...
+
+		// when
+		dataDefinitionLogic().changeClassOrders( //
+				testClass.getName(), //
+				asList(ClassOrder.from(ATTRIBUTE_NAME, 42)));
+		final CMAttribute updatedAttribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(updatedAttribute.getClassOrder(), equalTo(42));
 	}
 
 	@Test

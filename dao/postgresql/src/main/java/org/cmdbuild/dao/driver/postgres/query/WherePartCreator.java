@@ -4,8 +4,8 @@ import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import org.cmdbuild.dao.CardStatus;
-import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;

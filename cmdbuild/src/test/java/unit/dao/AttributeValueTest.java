@@ -30,68 +30,71 @@ import org.cmdbuild.services.auth.UserContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 public class AttributeValueTest {
 
 	private static IAttribute booleanAttribute;
 	private static IAttribute dateAttribute;
 	private static IAttribute dateTimeAttribute;
-	//private static IAttribute charAttribute;
+	// private static IAttribute charAttribute;
 	private static IAttribute decimalAttribute;
 	private static IAttribute doubleAttribute;
-	//private static IAttribute foreignKeyAttribute;
-	//private static IAttribute geometryAttribute;
-	//private static IAttribute ipAddressAttribute;
-	//private static IAttribute lookupAttribute;
-	//private static IAttribute referenceAttribute;
+	// private static IAttribute foreignKeyAttribute;
+	// private static IAttribute geometryAttribute;
+	// private static IAttribute ipAddressAttribute;
+	// private static IAttribute lookupAttribute;
+	// private static IAttribute referenceAttribute;
 	private static IAttribute stringAttribute;
-	//private static IAttribute textAttribute;
-	//private static IAttribute timeAttribute;
+	// private static IAttribute textAttribute;
+	// private static IAttribute timeAttribute;
 
 	private static Map<String, String> NO_META = new HashMap<String, String>();
 
 	@BeforeClass
 	public static void createAttributes() {
-		ITableFactory tf = new TableFactoryImpl(UserContext.systemContext());
-		BaseSchema cmClass = tf.create();
+		final ITableFactory tf = new TableFactoryImpl(UserContext.systemContext());
+		final BaseSchema cmClass = tf.create();
 		booleanAttribute = new BooleanAttribute(cmClass, "Boolean", NO_META);
-		//charAttribute = new CharAttribute(cmClass, "Char");
+		// charAttribute = new CharAttribute(cmClass, "Char");
 		dateAttribute = new DateAttribute(cmClass, "Date", NO_META);
 		dateTimeAttribute = new DateTimeAttribute(cmClass, "DateTime", NO_META);
 		decimalAttribute = new DecimalAttribute(cmClass, "Decimal", doubleMeta(10, 5));
 		doubleAttribute = new DoubleAttribute(cmClass, "Double", NO_META);
-		//foreignKeyAttribute = new ForeignKeyAttribute(cmClass, "ForeignKey");
-		//geometryAttribute = new GeometryAttribute(cmClass, "Geometry");
-		//ipAddressAttribute = new IPAddressAttribute(cmClass, "IPAddress");
-		//lookupAttribute = new LookupAttribute(cmClass, "Lookup");
-		//referenceAttribute = new ReferenceAttribute(cmClass, "Reference");
+		// foreignKeyAttribute = new ForeignKeyAttribute(cmClass, "ForeignKey");
+		// geometryAttribute = new GeometryAttribute(cmClass, "Geometry");
+		// ipAddressAttribute = new IPAddressAttribute(cmClass, "IPAddress");
+		// lookupAttribute = new LookupAttribute(cmClass, "Lookup");
+		// referenceAttribute = new ReferenceAttribute(cmClass, "Reference");
 		stringAttribute = new StringAttribute(cmClass, "String", stringMeta(200));
-		//textAttribute = new TextAttribute(cmClass, "Text");
-		//timeAttribute = new TimeAttribute(cmClass, "Time");
+		// textAttribute = new TextAttribute(cmClass, "Text");
+		// timeAttribute = new TimeAttribute(cmClass, "Time");
 	}
 
 	@SuppressWarnings("serial")
 	private static Map<String, String> doubleMeta(final int precision, final int scale) {
-		return new HashMap<String, String>() {{
-			put(AttributeDataDefinitionMeta.PRECISION.name(), Integer.toString(precision));
-			put(AttributeDataDefinitionMeta.SCALE.name(), Integer.toString(scale));
-		}};
+		return new HashMap<String, String>() {
+			{
+				put(AttributeDataDefinitionMeta.PRECISION.name(), Integer.toString(precision));
+				put(AttributeDataDefinitionMeta.SCALE.name(), Integer.toString(scale));
+			}
+		};
 	}
 
 	@SuppressWarnings("serial")
 	private static Map<String, String> stringMeta(final int length) {
-		return new HashMap<String, String>() {{
-			put(AttributeDataDefinitionMeta.LENGTH.name(), Integer.toString(length));
-		}};
+		return new HashMap<String, String>() {
+			{
+				put(AttributeDataDefinitionMeta.LENGTH.name(), Integer.toString(length));
+			}
+		};
 	}
 
-	private void assertTypeErrorOnRead(Object value, IAttribute attribute) {
+	private void assertTypeErrorOnRead(final Object value, final IAttribute attribute) {
 		try {
 			attribute.readValue(value);
 			fail("Wrong value did not throw any exception");
-		} catch (ORMException e) {
+		} catch (final ORMException e) {
 			assertEquals(ORMExceptionType.ORM_TYPE_ERROR, e.getExceptionType());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail("Wrong value did not throw a type error exception");
 		}
 	}
@@ -146,7 +149,7 @@ public class AttributeValueTest {
 
 	@Test
 	public void readDateValueFromString() {
-		Date today = today();
+		final Date today = today();
 		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.DATE_FOUR_DIGIT_YEAR_FORMAT)));
 		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.DATE_TWO_DIGIT_YEAR_FORMAT)));
 		assertEquals(today, dateAttribute.readValue(dateToString(today, Constants.SOAP_ALL_DATES_PRINTING_PATTERN)));
@@ -156,30 +159,30 @@ public class AttributeValueTest {
 
 	@Test
 	public void serializeDateValue() {
-		Date today = today();
+		final Date today = today();
 		assertEquals(dateToString(today, Constants.DATE_PRINTING_PATTERN), dateAttribute.valueToString(today));
 		assertEquals("", dateAttribute.valueToString(null));
 	}
 
 	@Test
 	public void databaseFormatDateValue() {
-		Date today = today();
-		assertEquals("'"+dateToString(today, POSTGRES_DATE_FORMAT)+"'", dateAttribute.valueToDBFormat(today));
+		final Date today = today();
+		assertEquals("'" + dateToString(today, POSTGRES_DATE_FORMAT) + "'", dateAttribute.valueToDBFormat(today));
 		assertEquals("NULL", dateAttribute.valueToDBFormat(null));
 	}
 
-	private String dateToString(Date date, String format) {
+	private String dateToString(final Date date, final String format) {
 		return new SimpleDateFormat(format).format(date);
 	}
 
 	private Date todayNotMidnight() {
-		Calendar defaultCalendar = Calendar.getInstance();
+		final Calendar defaultCalendar = Calendar.getInstance();
 		defaultCalendar.set(Calendar.SECOND, 42);
 		return defaultCalendar.getTime();
 	}
 
 	private Date today() {
-		Calendar defaultCalendar = Calendar.getInstance();
+		final Calendar defaultCalendar = Calendar.getInstance();
 		defaultCalendar.set(Calendar.HOUR_OF_DAY, 0);
 		defaultCalendar.set(Calendar.MINUTE, 0);
 		defaultCalendar.set(Calendar.SECOND, 0);
@@ -193,7 +196,7 @@ public class AttributeValueTest {
 
 	@Test
 	public void readDateTimeValueFromObject() {
-		Date now = nowNotMillis();
+		final Date now = nowNotMillis();
 		assertEquals(now, dateTimeAttribute.readValue(now));
 		assertEquals(null, dateTimeAttribute.readValue(null));
 		assertTypeErrorOnRead(Integer.valueOf(0), dateTimeAttribute);
@@ -201,7 +204,7 @@ public class AttributeValueTest {
 
 	@Test
 	public void readDateTimeValueFromString() {
-		Date now = nowNotMillis();
+		final Date now = nowNotMillis();
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT)));
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT)));
 		assertEquals(now, dateTimeAttribute.readValue(dateToString(now, Constants.SOAP_ALL_DATES_PRINTING_PATTERN)));
@@ -212,20 +215,20 @@ public class AttributeValueTest {
 
 	@Test
 	public void serializeDateTimeValue() {
-		Date now = nowNotMillis();
+		final Date now = nowNotMillis();
 		assertEquals(dateToString(now, Constants.DATETIME_PRINTING_PATTERN), dateTimeAttribute.valueToString(now));
 		assertEquals("", dateTimeAttribute.valueToString(null));
 	}
 
 	@Test
 	public void databaseFormatDateTimeValue() {
-		Date now = nowNotMillis();
-		assertEquals("'"+dateToString(now, POSTGRES_DATETIME_FORMAT)+"'", dateTimeAttribute.valueToDBFormat(now));
+		final Date now = nowNotMillis();
+		assertEquals("'" + dateToString(now, POSTGRES_DATETIME_FORMAT) + "'", dateTimeAttribute.valueToDBFormat(now));
 		assertEquals("NULL", dateTimeAttribute.valueToDBFormat(null));
 	}
 
 	private Date nowNotMillis() {
-		Calendar defaultCalendar = Calendar.getInstance();
+		final Calendar defaultCalendar = Calendar.getInstance();
 		defaultCalendar.set(Calendar.MILLISECOND, 0);
 		return defaultCalendar.getTime();
 	}
@@ -236,9 +239,9 @@ public class AttributeValueTest {
 
 	@Test
 	public void readDecimalValueFromObject() {
-		BigDecimal decimalValue = new BigDecimal("0.42");
+		final BigDecimal decimalValue = new BigDecimal("0.42");
 		assertEquals(decimalValue, decimalAttribute.readValue(decimalValue));
-		Double doubleValue = new Double("0.42");
+		final Double doubleValue = new Double("0.42");
 		assertEquals(new BigDecimal(doubleValue), decimalAttribute.readValue(doubleValue));
 		assertEquals(null, decimalAttribute.readValue(null));
 		assertTypeErrorOnRead(Integer.valueOf(0), decimalAttribute);

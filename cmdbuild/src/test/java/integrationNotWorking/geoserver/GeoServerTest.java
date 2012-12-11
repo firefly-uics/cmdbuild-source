@@ -21,7 +21,7 @@ import org.junit.Test;
 @Ignore
 public class GeoServerTest {
 
-	private GeoServerService service = new GeoServerService();
+	private final GeoServerService service = new GeoServerService();
 
 	private static final String LAYER_1 = "Layer1";
 	private static final String LAYER_1_FEATURE = "empty";
@@ -30,7 +30,7 @@ public class GeoServerTest {
 	private static final int LAYER_1_POSITION = 0;
 	private static final String LAYER_1_DESCRIPTION = "d";
 	private static final String LAYER_2 = "Layer2";
-//	private static final String LAYER_3 = "Layer3";
+	// private static final String LAYER_3 = "Layer3";
 
 	private static final String RESOURCE_PATH = "integration/geoserver/";
 
@@ -44,7 +44,7 @@ public class GeoServerTest {
 
 	@After
 	public void cleanWorkspace() {
-		for (GeoServerStore s : service.getStores()) {
+		for (final GeoServerStore s : service.getStores()) {
 			service.deleteStore(s.getName());
 		}
 	}
@@ -54,13 +54,13 @@ public class GeoServerTest {
 		assertTrue(service.getStores().isEmpty());
 		assertTrue(service.getLayers().isEmpty());
 
-		service.createStore(LAYER_1, StoreDataType.SHAPE.toString(), shapeInputStream(),
-				LAYER_1_MINZOOM, LAYER_1_MAXZOOM, LAYER_1_POSITION, LAYER_1_DESCRIPTION);
+		service.createStore(LAYER_1, StoreDataType.SHAPE.toString(), shapeInputStream(), LAYER_1_MINZOOM,
+				LAYER_1_MAXZOOM, LAYER_1_POSITION, LAYER_1_DESCRIPTION);
 
-		List<GeoServerStore> dataStores = service.getStores();
+		final List<GeoServerStore> dataStores = service.getStores();
 		assertThat(dataStores.size(), is(1));
 		assertThat(dataStores.get(0).getName(), is(LAYER_1));
-		List<GeoServerLayer> layers = service.getLayers();
+		final List<GeoServerLayer> layers = service.getLayers();
 		assertThat(layers.size(), is(1));
 		assertThat(layers.get(0).getName(), is(LAYER_1_FEATURE));
 		assertThat(layers.get(0).getDescription(), is(LAYER_1_DESCRIPTION));
@@ -73,24 +73,23 @@ public class GeoServerTest {
 
 		assertThat(service.getStores().size(), is(2));
 		assertThat(service.getLayers().size(), is(2));
-// Disabled because it's not a complete GeoTiff
-//		service.createStore(new GeoStore(LAYER_3, DataStoreType.GEOTIFF), geoTiffInputStream());
-//		assertThat(service.getStores().size(), is(3));
-//		assertThat(service.getLayers().size(), is(3));
+		// Disabled because it's not a complete GeoTiff
+		// service.createStore(new GeoStore(LAYER_3, DataStoreType.GEOTIFF),
+		// geoTiffInputStream());
+		// assertThat(service.getStores().size(), is(3));
+		// assertThat(service.getLayers().size(), is(3));
 	}
 
-//	private InputStream geoTiffInputStream() {
-//		return Thread.currentThread().getContextClassLoader()
-//			.getResourceAsStream(RESOURCE_PATH+"geotiff.tif");
-//	}
+	// private InputStream geoTiffInputStream() {
+	// return Thread.currentThread().getContextClassLoader()
+	// .getResourceAsStream(RESOURCE_PATH+"geotiff.tif");
+	// }
 
 	private InputStream shapeInputStream() {
-		return Thread.currentThread().getContextClassLoader()
-			.getResourceAsStream(RESOURCE_PATH+"shape.zip");
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(RESOURCE_PATH + "shape.zip");
 	}
 
 	private InputStream worldImageInputStream() {
-		return Thread.currentThread().getContextClassLoader()
-			.getResourceAsStream(RESOURCE_PATH+"worldimage.zip");
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(RESOURCE_PATH + "worldimage.zip");
 	}
 }

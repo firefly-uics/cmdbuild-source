@@ -1,6 +1,5 @@
 package unit.logic;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -22,6 +21,7 @@ public class DashboardLogicTest {
 	private static DashboardLogic logic;
 	private static DashboardStore store;
 	private static SimplifiedUserContext userCOntext;
+
 	@Before
 	public void setUp() {
 		userCOntext = mock(SimplifiedUserContext.class);
@@ -36,22 +36,24 @@ public class DashboardLogicTest {
 
 		when(store.add(dd)).thenReturn(new Long(11));
 
-		Long newDashboardId = logic.add(dd);
+		final Long newDashboardId = logic.add(dd);
 
 		verify(store).add(dd);
 		assertEquals(new Long(11), newDashboardId);
 
 		final DashboardDefinition dd2 = new DashboardDefinition();
-		dd2.setColumns(new ArrayList<DashboardColumn>() {{
-			add(new DashboardColumn());
-			add(new DashboardColumn());
-		}});
+		dd2.setColumns(new ArrayList<DashboardColumn>() {
+			{
+				add(new DashboardColumn());
+				add(new DashboardColumn());
+			}
+		});
 
 		try {
 			logic.add(dd2);
 			fail("Could not add a dashboard with columns");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardLogic.errors.initDashboardWithColumns();
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardLogic.errors.initDashboardWithColumns();
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -61,8 +63,8 @@ public class DashboardLogicTest {
 		try {
 			logic.add(dd3);
 			fail("Could not add a dashboard with charts");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardLogic.errors.initDashboardWithColumns();
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardLogic.errors.initDashboardWithColumns();
 			assertEquals(expectedMsg, e.getMessage());
 		}
 	}
@@ -73,13 +75,19 @@ public class DashboardLogicTest {
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 		final Long dashboardId = new Long(123);
 		final String name = "name", description = "description";
-		final ArrayList<String> groups = new ArrayList<String>(){{ add("a group"); }};
+		final ArrayList<String> groups = new ArrayList<String>() {
+			{
+				add("a group");
+			}
+		};
 
-		final DashboardDefinition changes = new DashboardDefinition() {{
-			setName(name);
-			setDescription(description);
-			setGroups(groups);
-		}};
+		final DashboardDefinition changes = new DashboardDefinition() {
+			{
+				setName(name);
+				setDescription(description);
+				setGroups(groups);
+			}
+		};
 
 		when(store.get(dashboardId)).thenReturn(dashboard);
 
@@ -95,8 +103,8 @@ public class DashboardLogicTest {
 		try {
 			logic.modifyBaseProperties(dashboardId, changes);
 			fail("could not modify a dashboard if it is not stored");
-		} catch (IllegalArgumentException e) {
-			String expectedMsg = DashboardLogic.errors.undefinedDashboard(dashboardId);
+		} catch (final IllegalArgumentException e) {
+			final String expectedMsg = DashboardLogic.errors.undefinedDashboard(dashboardId);
 			assertEquals(expectedMsg, e.getMessage());
 		}
 	}
@@ -119,12 +127,12 @@ public class DashboardLogicTest {
 	@Test
 	public void addChart() {
 		final Long dashboardId = new Long(11);
-		final ChartDefinition chart= new ChartDefinition();
+		final ChartDefinition chart = new ChartDefinition();
 		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
 
 		when(store.get(dashboardId)).thenReturn(dashboard);
 
-		String chartId = logic.addChart(dashboardId, chart);
+		final String chartId = logic.addChart(dashboardId, chart);
 
 		verify(store).get(dashboardId);
 		verify(dashboard).addChart(chartId, chart);

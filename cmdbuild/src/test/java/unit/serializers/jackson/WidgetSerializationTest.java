@@ -36,7 +36,7 @@ public class WidgetSerializationTest {
 
 	@Test
 	public void widgetsAreCreatedActiveWithEmptyLabel() {
-		Widget w = new EmptyWidget();
+		final Widget w = new EmptyWidget();
 		assertEquals(StringUtils.EMPTY, w.getLabel());
 		assertTrue(w.isActive());
 	}
@@ -47,12 +47,12 @@ public class WidgetSerializationTest {
 		final String ID = "f81d4fae-7dec-11d0-a765-00a0c91e6bf6";
 		final String LABEL = "Do Something Awesome";
 
-		Widget w = new EmptyWidget();
+		final Widget w = new EmptyWidget();
 		w.setId(ID);
 		w.setLabel(LABEL);
 		w.setActive(false);
 
-		String jw = mapper.writeValueAsString(w);
+		final String jw = mapper.writeValueAsString(w);
 		assertThat(jw, containsPair("type", EmptyWidget.TYPE));
 		assertThat(jw, containsPair("id", ID));
 		assertThat(jw, containsPair("label", LABEL));
@@ -61,10 +61,10 @@ public class WidgetSerializationTest {
 
 	@Test
 	public void widgetListSerializationContansType() throws JsonParseException, JsonMappingException, IOException {
-		List<Widget> wl = new ArrayList<Widget>();
+		final List<Widget> wl = new ArrayList<Widget>();
 		wl.add(new EmptyWidget());
 
-		String jw = mapper.writeValueAsString(wl);
+		final String jw = mapper.writeValueAsString(wl);
 		assertThat(jw, containsPair("type", EmptyWidget.TYPE));
 	}
 
@@ -77,9 +77,9 @@ public class WidgetSerializationTest {
 		PRESET.put("K2", "V2");
 		final String jw = createOpenReportJson(CODE, FORMAT, PRESET);
 
-		Widget w = mapper.readValue(jw, Widget.class);
+		final Widget w = mapper.readValue(jw, Widget.class);
 		assertEquals(OpenReport.class, w.getClass());
-		OpenReport orw = (OpenReport) w;
+		final OpenReport orw = (OpenReport) w;
 		assertEquals(FORMAT, orw.getForceFormat());
 		assertEquals(CODE, orw.getReportCode());
 		assertEquals(PRESET, orw.getPreset());
@@ -89,7 +89,7 @@ public class WidgetSerializationTest {
 
 	private String createOpenReportJson(final String CODE, final String FORMAT, final Map<String, Object> PRESET)
 			throws IOException, JsonGenerationException, JsonMappingException {
-		OpenReport w = new OpenReport();
+		final OpenReport w = new OpenReport();
 		w.setForceFormat(FORMAT);
 		w.setReportCode(CODE);
 		w.setPreset(PRESET);

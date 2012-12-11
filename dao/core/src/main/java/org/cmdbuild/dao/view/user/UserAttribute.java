@@ -87,6 +87,11 @@ public class UserAttribute implements CMAttribute {
 		return inner.getGroup();
 	}
 
+	@Override
+	public int getClassOrder() {
+		return inner.getClassOrder();
+	}
+
 	/*
 	 * Object overrides
 	 */

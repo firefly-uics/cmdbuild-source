@@ -9,7 +9,6 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.dao.driver.DBDriver.DomainDefinition;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -19,6 +18,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -127,8 +127,13 @@ public class JoinQueryTest extends DBFixture {
 	 * Utilities
 	 */
 
-	private static DomainDefinition nnDomain(final String string, final DBClass class1, final DBClass class2) {
-		return new DomainDefinition() {
+	private static DBDomainDefinition nnDomain(final String string, final DBClass class1, final DBClass class2) {
+		return new DBDomainDefinition() {
+
+			@Override
+			public Long getId() {
+				return null;
+			}
 
 			@Override
 			public String getName() {
@@ -158,6 +163,16 @@ public class JoinQueryTest extends DBFixture {
 			@Override
 			public String getCardinality() {
 				return "N:N";
+			}
+
+			@Override
+			public boolean isMasterDetail() {
+				return false;
+			}
+
+			@Override
+			public String getMasterDetailDescription() {
+				return EMPTY;
 			}
 
 		};
