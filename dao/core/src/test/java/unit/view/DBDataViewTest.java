@@ -231,8 +231,12 @@ public class DBDataViewTest {
 	private DBClass aClass(final String className, final Long id, final boolean active) {
 		final ClassMetadata classMetadata = new ClassMetadata();
 		classMetadata.put(EntryTypeMetadata.ACTIVE, Boolean.valueOf(active).toString());
-
-		return new DBClass(className, id, classMetadata, Collections.<DBAttribute> emptyList());
+		return DBClass.newClass() //
+				.withName(className) //
+				.withId(id) //
+				.withAllMetadata(classMetadata) //
+				.withAllAttributes(Collections.<DBAttribute> emptyList()) //
+				.build();
 	}
 
 	private int sizeOf(final Iterable<?> iterable) {

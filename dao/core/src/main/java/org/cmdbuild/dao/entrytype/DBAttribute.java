@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entrytype;
-import static org.apache.commons.lang.StringUtils.*;
+
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -76,7 +78,7 @@ public class DBAttribute implements CMAttribute {
 		}
 
 		public int getClassOrder() {
-			return Integer.parseInt(defaultIfBlank(get(CLASSORDER),"0"));
+			return Integer.parseInt(defaultIfBlank(get(CLASSORDER), "0"));
 		}
 
 	}

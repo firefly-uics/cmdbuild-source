@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -138,7 +139,7 @@ public class Attribute {
 					return attributeType;
 				}
 			}
-			Log.CMDBUILD.warn(format("cannot find attribute type for name '%s'", name));
+			Log.CMDBUILD.warn(format("cannot find attribute type for name '%s', attribute is undefined", name));
 			return UNDEFINED;
 		}
 
@@ -303,8 +304,6 @@ public class Attribute {
 	private final int classOrder;
 	private final Set<Condition> conditions;
 
-	private final String toString;
-
 	private Attribute(final AttributeBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
@@ -316,13 +315,6 @@ public class Attribute {
 		this.index = builder.index;
 		this.classOrder = builder.classOrder;
 		this.conditions = builder.conditions;
-
-		this.toString = ToStringBuilder.reflectionToString(this);
-	}
-
-	@Override
-	public String toString() {
-		return toString;
 	}
 
 	public String getName() {
@@ -375,6 +367,11 @@ public class Attribute {
 
 	public int getClassOrder() {
 		return classOrder;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

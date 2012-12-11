@@ -78,7 +78,7 @@ public interface CMAttribute extends Deactivable {
 	 * @return the group of the attribute.
 	 */
 	String getGroup();
-	
+
 	/**
 	 * Returns the class order of the attribute.
 	 * 

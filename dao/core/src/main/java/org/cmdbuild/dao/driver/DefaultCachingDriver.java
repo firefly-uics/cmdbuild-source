@@ -1,6 +1,10 @@
 package org.cmdbuild.dao.driver;
 
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
+
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.CMTypeObject;
@@ -16,26 +20,33 @@ import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 
+import com.google.common.base.Function;
+
 public class DefaultCachingDriver extends AbstractDBDriver implements CachingDriver, LoggingSupport {
 
 	private static class TypeObjectStore<T extends CMTypeObject> {
 
-		private final Collection<T> entries;
+		private final Map<String, T> entries;
 
 		private TypeObjectStore(final Collection<T> entries) {
-			this.entries = entries;
+			this.entries = newHashMap(uniqueIndex(entries, new Function<T, String>() {
+				@Override
+				public String apply(final T input) {
+					return input.getName();
+				};
+			}));
 		}
 
 		public Collection<T> getCollection() {
-			return entries;
+			return entries.values();
 		}
 
 		public void add(final T entry) {
-			entries.add(entry);
+			entries.put(entry.getName(), entry);
 		}
 
 		public void remove(final T entry) {
-			entries.remove(entry);
+			entries.remove(entry.getName());
 		}
 
 	}

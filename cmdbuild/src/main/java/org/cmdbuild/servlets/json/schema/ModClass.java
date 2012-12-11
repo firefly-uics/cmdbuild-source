@@ -11,11 +11,9 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
-import org.cmdbuild.elements.interfaces.BaseSchema.SchemaStatus;
 import org.cmdbuild.elements.interfaces.DomainFactory;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
@@ -26,7 +24,6 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -277,7 +274,7 @@ public class ModClass extends JSONBase {
 				.thatIsSuperClass(isSuperClass) //
 				.thatIsProcess(isProcess) //
 				.thatIsUserStoppable(isProcessUserStoppable) //
-				.thatIsHoldingHistory(isSimpleTable) //
+				.thatIsHoldingHistory(!isSimpleTable) //
 				.thatIsActive(isActive) //
 				.build();
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
