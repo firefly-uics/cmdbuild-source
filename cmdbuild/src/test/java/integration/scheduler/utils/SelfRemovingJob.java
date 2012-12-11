@@ -4,9 +4,9 @@ import org.cmdbuild.services.scheduler.SchedulerService;
 
 public class SelfRemovingJob extends ExecutionListenerJob {
 
-	private SchedulerService scheduler;
+	private final SchedulerService scheduler;
 
-	public SelfRemovingJob(SchedulerService scheduler) {
+	public SelfRemovingJob(final SchedulerService scheduler) {
 		this.scheduler = scheduler;
 	}
 

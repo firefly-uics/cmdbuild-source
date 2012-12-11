@@ -11,27 +11,12 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 
 /**
  * Interface for a generic database driver.
  */
 public interface DBDriver {
-
-	interface DomainDefinition {
-
-		String getName();
-
-		DBClass getClass1();
-
-		DBClass getClass2();
-
-		String getDirectDescription();
-
-		String getInverseDescription();
-
-		String getCardinality();
-
-	}
 
 	/**
 	 * Finds all available classes.
@@ -122,8 +107,9 @@ public interface DBDriver {
 
 	DBFunction findFunctionByName(String name);
 
-	// TODO Allow more than two classes
-	DBDomain createDomain(DomainDefinition domainDefinition);
+	DBDomain createDomain(DBDomainDefinition domainDefinition);
+
+	DBDomain updateDomain(DBDomainDefinition domainDefinition);
 
 	void deleteDomain(DBDomain dbDomain);
 

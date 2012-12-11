@@ -1,22 +1,24 @@
 package utils.async;
 
 public class Timeout {
-    private final long endTime;
+	private final long endTime;
 
-    public Timeout(long duration) {
-        this.endTime = System.currentTimeMillis() + duration;
-    }
+	public Timeout(final long duration) {
+		this.endTime = System.currentTimeMillis() + duration;
+	}
 
-    public boolean hasTimedOut() {
-        return timeRemaining() <= 0;
-    }
+	public boolean hasTimedOut() {
+		return timeRemaining() <= 0;
+	}
 
-    public void waitOn(Object lock) throws InterruptedException {
-        long waitTime = timeRemaining();
-        if (waitTime > 0) lock.wait(waitTime);
-    }
+	public void waitOn(final Object lock) throws InterruptedException {
+		final long waitTime = timeRemaining();
+		if (waitTime > 0) {
+			lock.wait(waitTime);
+		}
+	}
 
-    private long timeRemaining() {
-        return endTime - System.currentTimeMillis();
-    }
+	private long timeRemaining() {
+		return endTime - System.currentTimeMillis();
+	}
 }

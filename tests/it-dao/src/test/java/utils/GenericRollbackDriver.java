@@ -18,6 +18,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 
 public class GenericRollbackDriver implements DBDriver {
 
@@ -381,11 +382,11 @@ public class GenericRollbackDriver implements DBDriver {
 
 	private class CreateDomain extends Command<DBDomain> {
 
-		private final DomainDefinition domainDefinition;
+		private final DBDomainDefinition domainDefinition;
 
 		private DBDomain newDomain;
 
-		private CreateDomain(final DomainDefinition domainDefinition) {
+		private CreateDomain(final DBDomainDefinition domainDefinition) {
 			this.domainDefinition = domainDefinition;
 		}
 
@@ -399,6 +400,88 @@ public class GenericRollbackDriver implements DBDriver {
 		public void undoCommand() {
 			innerDriver.deleteDomain(newDomain);
 		}
+
+		public DBDomain getCreatedDomain() {
+			return newDomain;
+		}
+
+	}
+
+	private class UpdateDomain extends Command<DBDomain> {
+
+		private final DBDomainDefinition definition;
+
+		private DBDomainDefinition previousDefinition;
+		private DBDomain updatedDomain;
+
+		private UpdateDomain(final DBDomainDefinition definition) {
+			this.definition = definition;
+		}
+
+		@Override
+		protected DBDomain execCommand() {
+			storePreviousData();
+			updatedDomain = innerDriver.updateDomain(definition);
+			return updatedDomain;
+		}
+
+		private void storePreviousData() {
+			final DBDomain existingDomain = innerDriver.findDomainByName(definition.getName());
+			previousDefinition = new DBDomainDefinition() {
+
+				@Override
+				public Long getId() {
+					return existingDomain.getId();
+				}
+
+				@Override
+				public String getName() {
+					return existingDomain.getName();
+				}
+
+				@Override
+				public DBClass getClass1() {
+					return existingDomain.getClass1();
+				}
+
+				@Override
+				public DBClass getClass2() {
+					return existingDomain.getClass2();
+				}
+
+				@Override
+				public String getDirectDescription() {
+					return existingDomain.getDescription1();
+				}
+
+				@Override
+				public String getInverseDescription() {
+					return existingDomain.getDescription2();
+				}
+
+				@Override
+				public String getCardinality() {
+					return existingDomain.getCardinality();
+				}
+
+				@Override
+				public boolean isMasterDetail() {
+					return existingDomain.isMasterDetail();
+				}
+
+				@Override
+				public String getMasterDetailDescription() {
+					return existingDomain.getMasterDetailDescription();
+				}
+
+			};
+		}
+
+		@Override
+		public void undoCommand() {
+			innerDriver.updateDomain(previousDefinition);
+		}
+
 	}
 
 	private class DeleteDomain extends Command<Void> {
@@ -417,7 +500,17 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		protected void undoCommand() {
-			throw new UnsupportedOperationException("Not implemented");
+			for (final Undoable undoableCommand : undoLog) {
+				if (undoableCommand instanceof CreateDomain) {
+					final CreateDomain createDomainCommand = (CreateDomain) undoableCommand;
+					if (createDomainCommand.getCreatedDomain().equals(domainToDelete)) {
+						undoLog.remove(createDomainCommand);
+						return;
+					}
+				}
+			}
+			throw new UnsupportedOperationException(
+					"Unsupported deletion of a class that has not been created in the test");
 		}
 	}
 
@@ -518,8 +611,13 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public DBDomain createDomain(final DomainDefinition domainDefinition) {
-		return new CreateDomain(domainDefinition).exec();
+	public DBDomain createDomain(final DBDomainDefinition definition) {
+		return new CreateDomain(definition).exec();
+	}
+
+	@Override
+	public DBDomain updateDomain(final DBDomainDefinition definition) {
+		return new UpdateDomain(definition).exec();
 	}
 
 	@Override

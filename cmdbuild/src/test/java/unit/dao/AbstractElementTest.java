@@ -22,17 +22,34 @@ public class AbstractElementTest {
 	static {
 		FAKE_INT_ATTRIBUTE_NAME = "Fake";
 		FAKE_SCHEMA = new BaseSchemaImpl() {
-			
-			protected boolean isNew() { return false; }
-			public void readDataDefinitionMeta(Map<String, String> dataDefinitionMeta) {};
-			public Map<String, String> genDataDefinitionMeta() { return null; }
+
+			@Override
+			protected boolean isNew() {
+				return false;
+			}
+
+			@Override
+			public void readDataDefinitionMeta(final Map<String, String> dataDefinitionMeta) {
+			};
+
+			@Override
+			public Map<String, String> genDataDefinitionMeta() {
+				return null;
+			}
+
+			@Override
 			protected Map<String, IAttribute> loadAttributes() {
 				final Map<String, IAttribute> attrs = new HashMap<String, IAttribute>();
 				attrs.put("Id", AttributeImpl.create(this, "Id", AttributeType.INTEGER));
-				attrs.put(FAKE_INT_ATTRIBUTE_NAME, AttributeImpl.create(this, FAKE_INT_ATTRIBUTE_NAME, AttributeType.INTEGER));
+				attrs.put(FAKE_INT_ATTRIBUTE_NAME,
+						AttributeImpl.create(this, FAKE_INT_ATTRIBUTE_NAME, AttributeType.INTEGER));
 				return attrs;
 			}
-			public String getPrivilegeId() { return null; }
+
+			@Override
+			public String getPrivilegeId() {
+				return null;
+			}
 		};
 	}
 
@@ -65,7 +82,7 @@ public class AbstractElementTest {
 
 	@Test
 	public void saveDoesNotSaveIfNothingChanged() {
-		AbstractElementTestDouble element = new AbstractElementTestDouble();
+		final AbstractElementTestDouble element = new AbstractElementTestDouble();
 
 		element.setValue(FAKE_INT_ATTRIBUTE_NAME, 2);
 		element.save();
@@ -82,7 +99,7 @@ public class AbstractElementTest {
 
 	@Test
 	public void forceSaveAlwaysSaves() {
-		AbstractElementTestDouble element = new AbstractElementTestDouble();
+		final AbstractElementTestDouble element = new AbstractElementTestDouble();
 
 		element.setValue(FAKE_INT_ATTRIBUTE_NAME, 2);
 		element.forceSave();

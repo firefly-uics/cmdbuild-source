@@ -14,7 +14,7 @@ public class ParameterMapEngineTest {
 
 	@Test
 	public void evaluatesToNullIfParameterNotPresent() {
-		ParameterMapEngine engine = new ParameterMapEngine(new HashMap<String, Object>());
+		final ParameterMapEngine engine = new ParameterMapEngine(new HashMap<String, Object>());
 		assertThat(engine.eval("Any Name"), is(nullValue()));
 	}
 
@@ -28,9 +28,11 @@ public class ParameterMapEngineTest {
 
 	private void assertIdentityEvaluation(final Object value) {
 		final String name = "parameter";
-		ParameterMapEngine engine = new ParameterMapEngine(new HashMap<String, Object>() {{
-			put(name, value);
-		}});
+		final ParameterMapEngine engine = new ParameterMapEngine(new HashMap<String, Object>() {
+			{
+				put(name, value);
+			}
+		});
 		assertThat(engine.eval(name), is(value));
 	}
 }

@@ -1,4 +1,4 @@
-package unit.logic.data;
+package unit.model.data;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.equalTo;

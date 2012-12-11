@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data;
 
+import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
@@ -11,13 +12,18 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.ClassOrder;
+import org.cmdbuild.model.data.Domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -153,6 +159,67 @@ public class DataDefinitionLogic implements Logic {
 
 	private int valueOrDefaultIfNull(final ClassOrder classOrder) {
 		return (classOrder == null) ? 0 : classOrder.value;
+	}
+
+	public CMDomain createOrUpdate(final Domain domain) {
+		logger.info("creating or updating domain '{}'", domain);
+
+		final CMDomain existing = view.findDomainByName(domain.getName());
+
+		final CMDomain createdOrUpdated;
+		if (existing == null) {
+			logger.info("domain not already created, creating a new one");
+			final CMClass class1 = view.findClassById(domain.getIdClass1());
+			final CMClass class2 = view.findClassById(domain.getIdClass2());
+			createdOrUpdated = view.createDomain(definitionForNew(domain, class1, class2));
+		} else {
+			logger.info("domain already created, updating existing one");
+			createdOrUpdated = view.updateDomain(definitionForExisting(domain, existing));
+		}
+		return createdOrUpdated;
+	}
+
+	public void deleteDomainByName(final String name) {
+		logger.info("deleting domain '{}'", name);
+
+		final CMDomain domain = view.findDomainByName(name);
+		if (domain == null) {
+			logger.warn("domain '{}' not found", name);
+		} else {
+			final boolean hasReference;
+			final String cardinality = domain.getCardinality();
+			if (asList(IDomain.CARDINALITY_11, IDomain.CARDINALITY_1N).contains(cardinality)) {
+				final CMClass table = domain.getClass2();
+				hasReference = searchReference(table, domain);
+			} else if (asList(IDomain.CARDINALITY_11, IDomain.CARDINALITY_N1).contains(cardinality)) {
+				final CMClass table = domain.getClass1();
+				hasReference = searchReference(table, domain);
+			} else {
+				hasReference = false;
+			}
+
+			if (hasReference) {
+				throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
+			} else {
+				view.deleteDomain(domain);
+			}
+		}
+	}
+
+	private static boolean searchReference(final CMClass table, final CMDomain domain) {
+		for (final CMAttribute attribute : table.getAllAttributes()) {
+			final CMAttributeType<?> attributeType = attribute.getType();
+			if (attributeType instanceof ReferenceAttributeType) {
+				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
+				// TODO need to implement reference type
+				// final IDomain attributeDom = attribute.getReferenceDomain();
+				// if (attributeDom != null &&
+				// (attributeDom.getName()).equals(domain.getName())) {
+				// return true;
+				// }
+			}
+		}
+		return false;
 	}
 
 }

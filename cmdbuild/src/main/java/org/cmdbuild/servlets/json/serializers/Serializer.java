@@ -20,6 +20,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
@@ -89,6 +90,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 
 public class Serializer {
 
@@ -216,8 +218,10 @@ public class Serializer {
 		return serializer;
 	}
 
+	/**
+	 * @deprecated This is awful: a Table should know it is in a tree!
+	 */
 	private static String getClassType(String className) {
-		// TODO This is awful: a Table should know it is in a tree!
 		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className))
 			return "processclass";
 		else
@@ -527,6 +531,9 @@ public class Serializer {
 		return jattr;
 	}
 
+	/**
+	 * @deprecated use serialize(CMDomain) instead.
+	 */
 	public static JSONObject serializeDomain(IDomain domain, boolean activeOnly) throws JSONException {
 		JSONObject jsonobj = new JSONObject();
 		jsonobj.put("idDomain", domain.getId());
@@ -547,6 +554,29 @@ public class Serializer {
 		jsonobj.put("attributes", serializeAttributeList(domain, activeOnly));
 		addMetadataAndAccessPrivileges(jsonobj, domain);
 		return jsonobj;
+	}
+
+	public static JSONObject serialize(final CMDomain domain, final boolean activeOnly) throws JSONException {
+		final JSONObject jsonDomain = new JSONObject();
+		jsonDomain.put("idDomain", domain.getId());
+		jsonDomain.put("name", domain.getName());
+		jsonDomain.put("origName", domain.getName());
+		jsonDomain.put("description", domain.getDescription());
+		jsonDomain.put("descrdir", domain.getDescription1());
+		jsonDomain.put("descrinv", domain.getDescription2());
+		jsonDomain.put("class1", domain.getClass1().getName());
+		jsonDomain.put("class1id", domain.getClass1().getId());
+		jsonDomain.put("class2", domain.getClass2().getName());
+		jsonDomain.put("class2id", domain.getClass2().getId());
+		jsonDomain.put("md", domain.isMasterDetail());
+		jsonDomain.put("md_label", domain.getMasterDetailDescription());
+		jsonDomain.put("classType", getClassType(domain.getName()));
+		jsonDomain.put("active", domain.isActive());
+		jsonDomain.put("cardinality", domain.getCardinality());
+		jsonDomain.put("attributes", serialize(domain.getAllAttributes(), activeOnly));
+		// TODO complete
+		// addMetadataAndAccessPrivileges(jsonDomain, domain);
+		return jsonDomain;
 	}
 
 	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
@@ -600,14 +630,13 @@ public class Serializer {
 	public static JSONObject serialize(CMClass cmClass) throws JSONException {
 		JSONObject jsonTable = new JSONObject();
 
+		jsonTable.put("type", getClassType(cmClass.getName()));
 		// TODO complete
 		// if (table.isActivity()) {
-		// jsonTable.put("type", "processclass");
 		// jsonTable.put("userstoppable", table.isUserStoppable());
 		// } else {
 		// jsonTable.put("type", "class");
 		// }
-		jsonTable.put("type", "class");
 
 		jsonTable.put("id", cmClass.getId());
 		jsonTable.put("name", cmClass.getName());
@@ -819,6 +848,40 @@ public class Serializer {
 		return serializer;
 	}
 
+	public static JSONArray serialize(final Iterable<? extends CMAttribute> attributes, boolean active)
+			throws JSONException {
+		final JSONArray attributeList = new JSONArray();
+		for (final CMAttribute attribute : sortAttributes(attributes)) {
+			if (active && !attribute.isActive()) {
+				continue;
+			}
+			attributeList.put(serialize(attribute));
+		}
+		return attributeList;
+	}
+
+	/**
+	 * we sort attributes on the class order and index number because Ext.JS
+	 * DOES NOT ALLOW IT. Thanks Jack!
+	 */
+	private static Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> attributes) {
+		return new Ordering<CMAttribute>() {
+
+			@Override
+			public int compare(final CMAttribute left, final CMAttribute right) {
+				if (left.getClassOrder() == right.getClassOrder()) {
+					return (left.getIndex() - right.getIndex());
+				} else {
+					return (left.getClassOrder() - right.getClassOrder());
+				}
+			}
+
+		}.immutableSortedCopy(attributes);
+	}
+
+	/**
+	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
+	 */
 	public static JSONArray serializeAttributeList(BaseSchema table, boolean active) throws JSONException {
 		List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
 		JSONArray attributeList = new JSONArray();

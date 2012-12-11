@@ -9,11 +9,12 @@ import org.hamcrest.TypeSafeMatcher;
 public class SuccessResponseMatcher extends TypeSafeMatcher<JsonResponse> {
 
 	@Override
-	public boolean matchesSafely(JsonResponse response) {
+	public boolean matchesSafely(final JsonResponse response) {
 		return response.isSuccess();
 	}
 
-	public void describeTo(Description description) {
+	@Override
+	public void describeTo(final Description description) {
 		description.appendText("is not a success");
 	}
 

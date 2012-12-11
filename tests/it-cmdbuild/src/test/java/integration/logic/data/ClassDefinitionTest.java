@@ -17,7 +17,7 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	private static final String DESCRIPTION = "description of foo";
 
 	@Test
-	public void createStandardClassHasSomeDefauls() {
+	public void createStandardClassHasSomeDefaults() {
 		// given
 		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));
 

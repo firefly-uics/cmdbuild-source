@@ -11,6 +11,7 @@ import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -101,7 +102,7 @@ public class DefaultCachingDriverTest {
 
 	@Test
 	public void noNeedToFetchDomainsAfterCreation() {
-		final DBDriver.DomainDefinition domain = mock(DBDriver.DomainDefinition.class);
+		final DBDomainDefinition domain = mock(DBDomainDefinition.class);
 
 		cachingDriver.findAllDomains();
 		cachingDriver.createDomain(domain);

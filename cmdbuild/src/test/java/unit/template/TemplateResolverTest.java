@@ -15,17 +15,17 @@ public class TemplateResolverTest {
 
 	@Test
 	public void aSimpleStringIsKeptAsItIs() {
-		String template = "A simple string";
-		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().build();
+		final String template = "A simple string";
+		final TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().build();
 		assertThat(tr.simpleEval(template), is(template));
 	}
 
 	@Test
 	public void inexistentEngineIsExpandedWithNull() {
-		TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
+		final TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
 		when(engine.eval(anyString())).thenReturn(null);
 
-		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().build();
+		final TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().build();
 
 		assertThat(tr.simpleEval("{e1:param}"), is(String.valueOf((Object) null)));
 	}
@@ -42,24 +42,22 @@ public class TemplateResolverTest {
 	}
 
 	private void assertSingleParamIsItsStringRepresentation(final Object value) {
-		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
-			.withEngine(engineWithParam("param", value), "e1")
-			.build();
+		final TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
+				.withEngine(engineWithParam("param", value), "e1").build();
 
 		assertThat(tr.simpleEval("{e1:param}"), is(String.valueOf(value)));
 	}
 
 	@Test
 	public void leadingPartsAreKeptIntact() {
-		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
-			.withEngine(engineWithParam("param", 42), "e1")
-			.build();
+		final TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
+				.withEngine(engineWithParam("param", 42), "e1").build();
 
 		assertThat(tr.simpleEval("XXX{e1:param}"), is(String.format("XXX%s", 42)));
 	}
 
 	private TemplateResolverEngine engineWithParam(final String name, final Object value) {
-		TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
+		final TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
 		when(engine.eval(name)).thenReturn(value);
 		return engine;
 	}
@@ -67,16 +65,13 @@ public class TemplateResolverTest {
 	@Test
 	public void moreThanOneParameterIsExpanded() {
 		final Object value1 = 42, value2 = "st";
-		TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
+		final TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
 		when(engine.eval("param1")).thenReturn(value1);
 		when(engine.eval("param2")).thenReturn(value2);
 
-		TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder()
-			.withEngine(engine, "e1")
-			.build();
+		final TemplateResolver tr = TemplateResolverImpl.newInstanceBuilder().withEngine(engine, "e1").build();
 
-		assertThat(tr.simpleEval("XXX{e1:param1}YYY{e1:param2}ZZZ"), is(
-				String.format("XXX%sYYY%sZZZ", value1, value2)));
+		assertThat(tr.simpleEval("XXX{e1:param1}YYY{e1:param2}ZZZ"), is(String.format("XXX%sYYY%sZZZ", value1, value2)));
 	}
 
 }
