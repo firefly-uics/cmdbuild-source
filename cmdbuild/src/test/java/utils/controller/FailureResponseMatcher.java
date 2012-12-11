@@ -15,24 +15,24 @@ public class FailureResponseMatcher extends TypeSafeMatcher<JsonResponse> {
 
 	private String errorDescription = StringUtils.EMPTY;
 
-	private FailureResponseMatcher(String failureCode) {
+	private FailureResponseMatcher(final String failureCode) {
 		this.expectedReason = failureCode;
 	}
 
 	@Override
-	public boolean matchesSafely(JsonResponse response) {
+	public boolean matchesSafely(final JsonResponse response) {
 		if (response.isSuccess()) {
 			errorDescription = "is not a failure";
 			return false;
 		}
 		if (response instanceof JsonFailureResponse) {
-			JsonFailureResponse failureResponse = (JsonFailureResponse) response;
-			JsonError errors[] = failureResponse.getErrors();
+			final JsonFailureResponse failureResponse = (JsonFailureResponse) response;
+			final JsonError errors[] = failureResponse.getErrors();
 			if (errors.length != 1) {
 				errorDescription = "contains more than one error condition";
 				return false;
 			}
-			final String reason = errors[0].getReason(); 
+			final String reason = errors[0].getReason();
 			if (!expectedReason.equals(reason)) {
 				errorDescription = String.format("is '%s' instead of ''", reason, expectedReason);
 				return false;
@@ -43,7 +43,8 @@ public class FailureResponseMatcher extends TypeSafeMatcher<JsonResponse> {
 		}
 	}
 
-	public void describeTo(Description description) {
+	@Override
+	public void describeTo(final Description description) {
 		description.appendText(errorDescription);
 	}
 

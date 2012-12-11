@@ -1,4 +1,4 @@
-package unit.logic.data;
+package unit.model.data;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,27 +23,27 @@ public class ClassTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void missingNameThowsException() {
-		a(newClassWithNoNameSpecified());
+		a(newClass());
 	}
 
 	@Test
-	public void nameIsTheOnlyRequiredAtribute() {
+	public void nameIsTheOnlyRequiredAttribute() {
 		assertThat(a(newValidClass()).getName(), equalTo(NAME));
 	}
 
 	@Test
 	public void nameIsTrimmed() {
-		assertThat(a(newClassWithNoNameSpecified().withName(NAME_WITH_BLANKS)).getName(), equalTo(NAME));
+		assertThat(a(newClass().withName(NAME_WITH_BLANKS)).getName(), equalTo(NAME));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void nameCannotBeEmpty() {
-		a(newClassWithNoNameSpecified().withName(EMPTY));
+		a(newClass().withName(EMPTY));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void nameCannotBeBlank() {
-		a(newClassWithNoNameSpecified().withName(BLANK));
+		a(newClass().withName(BLANK));
 	}
 
 	@Test
@@ -142,10 +142,10 @@ public class ClassTest {
 	}
 
 	private ClassBuilder newValidClass() {
-		return newClassWithNoNameSpecified().withName(NAME);
+		return newClass().withName(NAME);
 	}
 
-	private ClassBuilder newClassWithNoNameSpecified() {
+	private ClassBuilder newClass() {
 		return Class.newClass();
 	}
 

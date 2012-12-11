@@ -18,6 +18,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -75,8 +76,13 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 	}
 
 	@Override
-	public DBDomain createDomain(final DomainDefinition domainDefinition) {
-		return doToTypes().createDomain(domainDefinition);
+	public DBDomain createDomain(final DBDomainDefinition definition) {
+		return doToTypes().createDomain(definition);
+	}
+
+	@Override
+	public DBDomain updateDomain(final DBDomainDefinition definition) {
+		return doToTypes().updateDomain(definition);
 	}
 
 	@Override

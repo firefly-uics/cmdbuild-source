@@ -48,6 +48,9 @@ class CommentMappers {
 			 */
 			define("DESCRDIR", DomainMetadata.DESCRIPTION_1);
 			define("DESCRINV", DomainMetadata.DESCRIPTION_2);
+			define("CARDIN", DomainMetadata.CARDINALITY);
+			define("MASTERDETAIL", DomainMetadata.MASTERDETAIL);
+			define("MDLABEL", DomainMetadata.MASTERDETAIL_DESCRIPTION);
 		}
 	};
 
@@ -55,6 +58,7 @@ class CommentMappers {
 		{
 			define(DESCR, EntryTypeMetadata.DESCRIPTION);
 			define("BASEDSP", AttributeMetadata.BASEDSP);
+			define("CLASSORDER", AttributeMetadata.CLASSORDER);
 			define("GROUP", AttributeMetadata.GROUP);
 			define("INDEX", AttributeMetadata.INDEX);
 			define("LOOKUP", AttributeMetadata.LOOKUP_TYPE);

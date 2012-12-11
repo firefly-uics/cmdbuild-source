@@ -20,6 +20,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
@@ -88,6 +89,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 
 public class Serializer {
 
@@ -215,7 +217,10 @@ public class Serializer {
 		return serializer;
 	}
 
-	private static String getClassType(final String className) {
+	/**
+	 * @deprecated This is awful: a Table should know it is in a tree!
+	 */
+	private static String getClassType(String className) {
 		// TODO This is awful: a Table should know it is in a tree!
 		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className))
 			return "processclass";
@@ -428,26 +433,24 @@ public class Serializer {
 				attributes.put("fieldmode", JsonModeMapper.textFrom(attribute.getMode()));
 				attributes.put("index", attribute.getIndex());
 				attributes.put("defaultvalue", attribute.getDefaultValue());
+				attributes.put("group", attribute.getGroup());
 				// jattr.put("editorType", attribute.getEditorType());
 				// addMetadata(jattr, attribute);
 
-				// TODO
-				// jattr.put("group", attribute.getGroup());
-				//
-				// int absoluteClassOrder = attribute.getClassOrder();
-				// int classOrderSign;
-				// if (absoluteClassOrder == 0) {
-				// classOrderSign = 0;
-				// // to manage the sorting in the AttributeGridForSorting
-				// absoluteClassOrder = 10000;
-				// } else if (absoluteClassOrder > 0) {
-				// classOrderSign = 1;
-				// } else {
-				// classOrderSign = -1;
-				// absoluteClassOrder *= -1;
-				// }
-				// jattr.put("classOrderSign", classOrderSign);
-				// jattr.put("absoluteClassOrder", absoluteClassOrder);
+				int absoluteClassOrder = attribute.getClassOrder();
+				int classOrderSign;
+				if (absoluteClassOrder == 0) {
+					classOrderSign = 0;
+					// to manage the sorting in the AttributeGridForSorting
+					absoluteClassOrder = 10000;
+				} else if (absoluteClassOrder > 0) {
+					classOrderSign = 1;
+				} else {
+					classOrderSign = -1;
+					absoluteClassOrder *= -1;
+				}
+				attributes.put("classOrderSign", classOrderSign);
+				attributes.put("absoluteClassOrder", absoluteClassOrder);
 				return attributes;
 			}
 
@@ -528,8 +531,11 @@ public class Serializer {
 		return jattr;
 	}
 
-	public static JSONObject serializeDomain(final IDomain domain, final boolean activeOnly) throws JSONException {
-		final JSONObject jsonobj = new JSONObject();
+	/**
+	 * @deprecated use serialize(CMDomain) instead.
+	 */
+	public static JSONObject serializeDomain(IDomain domain, boolean activeOnly) throws JSONException {
+		JSONObject jsonobj = new JSONObject();
 		jsonobj.put("idDomain", domain.getId());
 		jsonobj.put("name", domain.getName());
 		jsonobj.put("origName", domain.getName());
@@ -550,8 +556,31 @@ public class Serializer {
 		return jsonobj;
 	}
 
-	public static JSONObject serializeDomain(final IDomain domain, final ITable table) throws JSONException {
-		final JSONObject jsonDomain = serializeDomain(domain, false);
+	public static JSONObject serialize(final CMDomain domain, final boolean activeOnly) throws JSONException {
+		final JSONObject jsonDomain = new JSONObject();
+		jsonDomain.put("idDomain", domain.getId());
+		jsonDomain.put("name", domain.getName());
+		jsonDomain.put("origName", domain.getName());
+		jsonDomain.put("description", domain.getDescription());
+		jsonDomain.put("descrdir", domain.getDescription1());
+		jsonDomain.put("descrinv", domain.getDescription2());
+		jsonDomain.put("class1", domain.getClass1().getName());
+		jsonDomain.put("class1id", domain.getClass1().getId());
+		jsonDomain.put("class2", domain.getClass2().getName());
+		jsonDomain.put("class2id", domain.getClass2().getId());
+		jsonDomain.put("md", domain.isMasterDetail());
+		jsonDomain.put("md_label", domain.getMasterDetailDescription());
+		jsonDomain.put("classType", getClassType(domain.getName()));
+		jsonDomain.put("active", domain.isActive());
+		jsonDomain.put("cardinality", domain.getCardinality());
+		jsonDomain.put("attributes", serialize(domain.getAllAttributes(), activeOnly));
+		// TODO complete
+		// addMetadataAndAccessPrivileges(jsonDomain, domain);
+		return jsonDomain;
+	}
+
+	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
+		JSONObject jsonDomain = serializeDomain(domain, false);
 		if (table != null) {
 			jsonDomain.put("inherited", !domain.isLocal(table));
 		}
@@ -598,17 +627,16 @@ public class Serializer {
 		return jsonProcess;
 	}
 
-	public static JSONObject serialize(final CMClass cmClass) throws JSONException {
-		final JSONObject jsonTable = new JSONObject();
+	public static JSONObject serialize(CMClass cmClass) throws JSONException {
+		JSONObject jsonTable = new JSONObject();
 
+		jsonTable.put("type", getClassType(cmClass.getName()));
 		// TODO complete
 		// if (table.isActivity()) {
-		// jsonTable.put("type", "processclass");
 		// jsonTable.put("userstoppable", table.isUserStoppable());
 		// } else {
 		// jsonTable.put("type", "class");
 		// }
-		jsonTable.put("type", "class");
 
 		jsonTable.put("id", cmClass.getId());
 		jsonTable.put("name", cmClass.getName());
@@ -823,10 +851,44 @@ public class Serializer {
 		return serializer;
 	}
 
-	public static JSONArray serializeAttributeList(final BaseSchema table, final boolean active) throws JSONException {
-		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
+	public static JSONArray serialize(final Iterable<? extends CMAttribute> attributes, boolean active)
+			throws JSONException {
 		final JSONArray attributeList = new JSONArray();
-		for (final IAttribute attribute : sortedAttributes) {
+		for (final CMAttribute attribute : sortAttributes(attributes)) {
+			if (active && !attribute.isActive()) {
+				continue;
+			}
+			attributeList.put(serialize(attribute));
+		}
+		return attributeList;
+	}
+
+	/**
+	 * we sort attributes on the class order and index number because Ext.JS
+	 * DOES NOT ALLOW IT. Thanks Jack!
+	 */
+	private static Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> attributes) {
+		return new Ordering<CMAttribute>() {
+
+			@Override
+			public int compare(final CMAttribute left, final CMAttribute right) {
+				if (left.getClassOrder() == right.getClassOrder()) {
+					return (left.getIndex() - right.getIndex());
+				} else {
+					return (left.getClassOrder() - right.getClassOrder());
+				}
+			}
+
+		}.immutableSortedCopy(attributes);
+	}
+
+	/**
+	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
+	 */
+	public static JSONArray serializeAttributeList(BaseSchema table, boolean active) throws JSONException {
+		List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
+		JSONArray attributeList = new JSONArray();
+		for (IAttribute attribute : sortedAttributes) {
 			if (attribute.getMode().equals(Mode.RESERVED))
 				continue;
 			if (active && !attribute.getStatus().isActive())
@@ -856,6 +918,22 @@ public class Serializer {
 		return sortedAttributes;
 	}
 
+	// TODO: delete this method when old dao will be updated with new dao
+	public static JSONObject serializeGroupCard(GroupCard groupCard) throws JSONException {
+		JSONObject jsonGroup = new JSONObject();
+		jsonGroup.put("id", groupCard.getId());
+		jsonGroup.put("name", groupCard.getName());
+		jsonGroup.put("description", groupCard.getDescription());
+		jsonGroup.put("email", groupCard.getEmail());
+		jsonGroup.put("isAdministrator", groupCard.isAdmin());
+		jsonGroup.put("startingClass", groupCard.getStartingClassId());
+		jsonGroup.put("isActive", groupCard.getStatus().isActive());
+		jsonGroup.put("text", groupCard.getDescription());
+		jsonGroup.put("selectable", true);
+		jsonGroup.put("type", "group");
+		return jsonGroup;
+	}
+
 	public static JSONObject serialize(final CMGroup group) throws JSONException {
 		final JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", group.getId());
@@ -878,8 +956,8 @@ public class Serializer {
 			final JSONObject row = new JSONObject();
 			row.put("id", group.getId());
 			row.put("description", group.getDescription());
-			final String userDefaultGroupName = user.getDefaultGroupName();
-			if (userDefaultGroupName != null && userDefaultGroupName.equals(group.getName())) {
+			String userDefaultGroupName = user.getDefaultGroupName();
+			if (userDefaultGroupName != null && userDefaultGroupName.equalsIgnoreCase(group.getName())) {
 				row.put("isdefault", true);
 			} else {
 				row.put("isdefault", false);

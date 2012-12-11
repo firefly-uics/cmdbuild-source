@@ -28,6 +28,21 @@ public abstract class PlaceholderDomain extends PlaceholderEntryType implements 
 	}
 
 	@Override
+	public String getCardinality() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isMasterDetail() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public boolean holdsHistory() {
 		throw new UnsupportedOperationException();
 	}

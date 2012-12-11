@@ -10,25 +10,32 @@ public class DBDomain extends DBEntryType implements CMDomain {
 
 	public static class DomainMetadata extends EntryTypeMetadata {
 
+		public static final String CARDINALITY = BASE_NS + "cardinality";
 		public static final String CLASS_1 = BASE_NS + "class1";
 		public static final String CLASS_2 = BASE_NS + "class2";
 		public static final String DESCRIPTION_1 = BASE_NS + "description1";
 		public static final String DESCRIPTION_2 = BASE_NS + "description2";
+		public static final String MASTERDETAIL = BASE_NS + "masterdetail";
+		public static final String MASTERDETAIL_DESCRIPTION = BASE_NS + "masterdetail.label";
 
-		String getDescription1() {
+		public String getDescription1() {
 			return get(DESCRIPTION_1);
 		}
 
-		void setDescription1(final String description) {
-			put(DESCRIPTION_1, description);
-		}
-
-		String getDescription2() {
+		public String getDescription2() {
 			return get(DESCRIPTION_2);
 		}
 
-		void setDescription2(final String description) {
-			put(DESCRIPTION_2, description);
+		public String getCardinality() {
+			return get(CARDINALITY);
+		}
+
+		public boolean isMasterDetail() {
+			return Boolean.parseBoolean(get(MASTERDETAIL));
+		}
+
+		public String getMasterDetailDescription() {
+			return get(MASTERDETAIL_DESCRIPTION);
 		}
 
 	}
@@ -90,6 +97,10 @@ public class DBDomain extends DBEntryType implements CMDomain {
 			return new DBDomain(this);
 		}
 
+	}
+
+	public static DBDomainBuilder newDomain() {
+		return new DBDomainBuilder();
 	}
 
 	private final DomainMetadata metadata;
@@ -158,26 +169,29 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		return meta().getDescription1();
 	}
 
-	public void setDescription1(final String description1) {
-		meta().setDescription1(description1);
-	}
-
 	@Override
 	public String getDescription2() {
 		return meta().getDescription2();
 	}
 
-	public void setDescription2(final String description2) {
-		meta().setDescription2(description2);
+	@Override
+	public String getCardinality() {
+		return meta().getCardinality();
+	}
+
+	@Override
+	public boolean isMasterDetail() {
+		return meta().isMasterDetail();
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
+		return meta().getMasterDetailDescription();
 	}
 
 	@Override
 	public boolean holdsHistory() {
 		return true;
-	}
-
-	public static DBDomainBuilder newDomain() {
-		return new DBDomainBuilder();
 	}
 
 }

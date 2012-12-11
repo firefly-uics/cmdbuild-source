@@ -1,21 +1,35 @@
 package org.cmdbuild.logic.data;
 
+import static java.util.Arrays.asList;
+import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
+import static org.cmdbuild.logic.data.Utils.definitionForExisting;
+import static org.cmdbuild.logic.data.Utils.definitionForNew;
+import static org.cmdbuild.logic.data.Utils.definitionForReordering;
+import static org.cmdbuild.logic.data.Utils.unactive;
+
+import java.util.List;
+import java.util.Map;
+
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.view.CMAttributeDefinition;
-import org.cmdbuild.dao.view.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.ClassOrder;
+import org.cmdbuild.model.data.Domain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 /**
  * Business Logic Layer for data definition.
@@ -33,7 +47,7 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	public CMClass createOrUpdate(final Class clazz) {
-		logger.info("creating or updating class: {}", clazz);
+		logger.info("creating or updating class '{}'", clazz);
 
 		final CMClass existingClass = view.findClassByName(clazz.getName());
 
@@ -51,90 +65,8 @@ public class DataDefinitionLogic implements Logic {
 		return createdOrUpdatedClass;
 	}
 
-	private CMClassDefinition definitionForNew(final Class clazz, final CMClass parentClass) {
-		return new CMClassDefinition() {
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public String getName() {
-				return clazz.getName();
-			}
-
-			@Override
-			public String getDescription() {
-				return clazz.getDescription();
-			}
-
-			@Override
-			public CMClass getParent() {
-				return parentClass;
-			}
-
-			@Override
-			public boolean isSuperClass() {
-				return clazz.isSuperClass();
-			}
-
-			@Override
-			public boolean isHoldingHistory() {
-				return clazz.isHoldingHistory();
-			}
-
-			@Override
-			public boolean isActive() {
-				return clazz.isActive();
-			}
-
-		};
-	}
-
-	private CMClassDefinition definitionForExisting(final Class clazz, final CMClass existingClass) {
-		return new CMClassDefinition() {
-
-			@Override
-			public Long getId() {
-				return existingClass.getId();
-			}
-
-			@Override
-			public String getName() {
-				return existingClass.getName();
-			}
-
-			@Override
-			public String getDescription() {
-				return clazz.getDescription();
-			}
-
-			@Override
-			public CMClass getParent() {
-				return existingClass.getParent();
-			}
-
-			@Override
-			public boolean isSuperClass() {
-				return existingClass.isSuperclass();
-			}
-
-			@Override
-			public boolean isHoldingHistory() {
-				return existingClass.holdsHistory();
-			}
-
-			@Override
-			public boolean isActive() {
-				return clazz.isActive();
-			}
-
-		};
-	}
-
 	public void deleteOrDeactivate(final Class clazz) {
-		logger.info("deleting class: {}", clazz.toString());
+		logger.info("deleting class '{}'", clazz.toString());
 		final CMClass existingClass = view.findClassByName(clazz.getName());
 		if (existingClass == null) {
 			logger.warn("class '{}' not found", clazz.getName());
@@ -155,7 +87,7 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	public CMAttribute createOrUpdate(final Attribute attribute) {
-		logger.info("creating or updating attribute: {}", attribute.toString());
+		logger.info("creating or updating attribute '{}'", attribute.toString());
 
 		final CMClass owner = view.findClassById(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
@@ -172,7 +104,7 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	public void deleteOrDeactivate(final Attribute attribute) {
-		logger.info("deleting attribute: {}", attribute.toString());
+		logger.info("deleting attribute '{}'", attribute.toString());
 		final CMClass owner = view.findClassById(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
@@ -193,7 +125,7 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	public void reorder(final Attribute attribute) {
-		logger.info("reordering attribute: {}", attribute.toString());
+		logger.info("reordering attribute '{}'", attribute.toString());
 		final CMClass owner = view.findClassById(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
@@ -203,309 +135,91 @@ public class DataDefinitionLogic implements Logic {
 		view.updateAttribute(definitionForReordering(attribute, existingAttribute));
 	}
 
-	private CMAttributeDefinition definitionForNew(final Attribute attribute, final CMEntryType owner) {
-		return new CMAttributeDefinition() {
+	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
+		logger.info("changing classorder for class '{}'", className);
 
-			@Override
-			public String getName() {
-				return attribute.getName();
-			}
+		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders,
+				new Function<ClassOrder, String>() {
+					@Override
+					public String apply(final ClassOrder input) {
+						return input.attributeName;
+					}
+				});
 
-			@Override
-			public CMEntryType getOwner() {
-				return owner;
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return attribute.getType();
-			}
-
-			@Override
-			public String getDescription() {
-				return attribute.getDescription();
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return attribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return attribute.isDisplayableInList();
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return attribute.isMandatory();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return attribute.isUnique();
-			}
-
-			@Override
-			public boolean isActive() {
-				return attribute.isActive();
-			}
-
-			@Override
-			public Mode getMode() {
-				return attribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return attribute.getIndex();
-			}
-
-			@Override
-			public String getGroup() {
-				return attribute.getGroup();
-			}
-
-		};
+		final CMClass owner = view.findClassByName(className);
+		for (final CMAttribute attribute : owner.getAllAttributes()) {
+			view.updateAttribute(definitionForClassOrdering(Attribute.newAttribute() //
+					.withOwner(owner.getId()) //
+					.withName(attribute.getName()) //
+					.withClassOrder(valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))) //
+					.build(), //
+					attribute));
+		}
 	}
 
-	private CMAttributeDefinition definitionForExisting(final Attribute attribute, final CMAttribute existingAttribute) {
-		return new CMAttributeDefinition() {
-
-			@Override
-			public String getName() {
-				return existingAttribute.getName();
-			}
-
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
-			}
-
-			@Override
-			public String getDescription() {
-				return attribute.getDescription();
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return attribute.isDisplayableInList();
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return attribute.isMandatory();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return attribute.isUnique();
-			}
-
-			@Override
-			public boolean isActive() {
-				return attribute.isActive();
-			}
-
-			@Override
-			public Mode getMode() {
-				return attribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return existingAttribute.getIndex();
-			}
-
-			@Override
-			public String getGroup() {
-				return attribute.getGroup();
-			}
-
-		};
+	private int valueOrDefaultIfNull(final ClassOrder classOrder) {
+		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	private CMAttributeDefinition definitionForReordering(final Attribute attribute, final CMAttribute existingAttribute) {
-		return new CMAttributeDefinition() {
+	public CMDomain createOrUpdate(final Domain domain) {
+		logger.info("creating or updating domain '{}'", domain);
 
-			@Override
-			public String getName() {
-				return existingAttribute.getName();
-			}
+		final CMDomain existing = view.findDomainByName(domain.getName());
 
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
-			}
-
-			@Override
-			public String getDescription() {
-				return existingAttribute.getDescription();
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return existingAttribute.isDisplayableInList();
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return existingAttribute.isMandatory();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return existingAttribute.isUnique();
-			}
-
-			@Override
-			public boolean isActive() {
-				return existingAttribute.isActive();
-			}
-
-			@Override
-			public Mode getMode() {
-				return existingAttribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return attribute.getIndex();
-			}
-
-			@Override
-			public String getGroup() {
-				return existingAttribute.getGroup();
-			}
-
-		};
+		final CMDomain createdOrUpdated;
+		if (existing == null) {
+			logger.info("domain not already created, creating a new one");
+			final CMClass class1 = view.findClassById(domain.getIdClass1());
+			final CMClass class2 = view.findClassById(domain.getIdClass2());
+			createdOrUpdated = view.createDomain(definitionForNew(domain, class1, class2));
+		} else {
+			logger.info("domain already created, updating existing one");
+			createdOrUpdated = view.updateDomain(definitionForExisting(domain, existing));
+		}
+		return createdOrUpdated;
 	}
 
-	private CMClassDefinition unactive(final CMClass existingClass) {
-		return new CMClassDefinition() {
+	public void deleteDomainByName(final String name) {
+		logger.info("deleting domain '{}'", name);
 
-			@Override
-			public Long getId() {
-				return existingClass.getId();
+		final CMDomain domain = view.findDomainByName(name);
+		if (domain == null) {
+			logger.warn("domain '{}' not found", name);
+		} else {
+			final boolean hasReference;
+			final String cardinality = domain.getCardinality();
+			if (asList(IDomain.CARDINALITY_11, IDomain.CARDINALITY_1N).contains(cardinality)) {
+				final CMClass table = domain.getClass2();
+				hasReference = searchReference(table, domain);
+			} else if (asList(IDomain.CARDINALITY_11, IDomain.CARDINALITY_N1).contains(cardinality)) {
+				final CMClass table = domain.getClass1();
+				hasReference = searchReference(table, domain);
+			} else {
+				hasReference = false;
 			}
 
-			@Override
-			public String getName() {
-				return existingClass.getName();
+			if (hasReference) {
+				throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
+			} else {
+				view.deleteDomain(domain);
 			}
-
-			@Override
-			public String getDescription() {
-				return existingClass.getDescription();
-			}
-
-			@Override
-			public CMClass getParent() {
-				return existingClass.getParent();
-			}
-
-			@Override
-			public boolean isSuperClass() {
-				return existingClass.isSuperclass();
-			}
-
-			@Override
-			public boolean isHoldingHistory() {
-				return existingClass.holdsHistory();
-			}
-
-			@Override
-			public boolean isActive() {
-				return false;
-			}
-
-		};
+		}
 	}
 
-	private CMAttributeDefinition unactive(final CMAttribute existingAttribute) {
-		return new CMAttributeDefinition() {
-
-			@Override
-			public String getName() {
-				return existingAttribute.getName();
+	private static boolean searchReference(final CMClass table, final CMDomain domain) {
+		for (final CMAttribute attribute : table.getAllAttributes()) {
+			final CMAttributeType<?> attributeType = attribute.getType();
+			if (attributeType instanceof ReferenceAttributeType) {
+				final ReferenceAttributeType referenceAttributeType = ReferenceAttributeType.class.cast(attributeType);
+				// TODO need to implement reference type
+				// final IDomain attributeDom = attribute.getReferenceDomain();
+				// if (attributeDom != null &&
+				// (attributeDom.getName()).equals(domain.getName())) {
+				// return true;
+				// }
 			}
-
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
-			}
-
-			@Override
-			public String getDescription() {
-				return existingAttribute.getDescription();
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return existingAttribute.isDisplayableInList();
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return existingAttribute.isMandatory();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return existingAttribute.isUnique();
-			}
-
-			@Override
-			public boolean isActive() {
-				return false;
-			}
-
-			@Override
-			public Mode getMode() {
-				return existingAttribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return existingAttribute.getIndex();
-			}
-
-			@Override
-			public String getGroup() {
-				return existingAttribute.getGroup();
-			}
-
-		};
+		}
+		return false;
 	}
 
 }

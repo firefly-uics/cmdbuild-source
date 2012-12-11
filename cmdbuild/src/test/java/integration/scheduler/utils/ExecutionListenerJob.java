@@ -21,11 +21,13 @@ public class ExecutionListenerJob implements Job {
 		return totalExecutions;
 	}
 
+	@Override
 	public void execute() {
 		lastExecutionTime = new Date();
 		++totalExecutions;
 	}
 
+	@Override
 	public String getName() {
 		return String.valueOf(this.hashCode());
 	}

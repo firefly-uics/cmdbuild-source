@@ -54,6 +54,21 @@ public class UserDomain extends UserEntryType implements CMDomain {
 	}
 
 	@Override
+	public String getCardinality() {
+		return inner().getCardinality();
+	}
+
+	@Override
+	public boolean isMasterDetail() {
+		return inner().isMasterDetail();
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
+		return inner().getMasterDetailDescription();
+	}
+
+	@Override
 	public boolean holdsHistory() {
 		return inner().holdsHistory();
 	}

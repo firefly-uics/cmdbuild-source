@@ -4,7 +4,9 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
@@ -71,6 +73,12 @@ public interface CMDataView {
 	 * @return all domains (active and inactive)
 	 */
 	Iterable<? extends CMDomain> findAllDomains();
+
+	CMDomain createDomain(CMDomainDefinition definition);
+
+	CMDomain updateDomain(CMDomainDefinition definition);
+
+	void deleteDomain(CMDomain domain);
 
 	CMFunction findFunctionByName(String name);
 

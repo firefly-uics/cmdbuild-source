@@ -8,7 +8,7 @@ public class DomainInfo {
 	String class2;
 	String cardinality;
 
-	public DomainInfo(String name, String class1Name, String class2Name, String cardinality) {
+	public DomainInfo(final String name, final String class1Name, final String class2Name, final String cardinality) {
 		this.name = name;
 		this.class1 = class1Name;
 		this.class2 = class2Name;
@@ -23,7 +23,7 @@ public class DomainInfo {
 		if (name == null || name.isEmpty()) {
 			return "Map";
 		} else {
-			return "Map_"+name;
+			return "Map_" + name;
 		}
 	}
 

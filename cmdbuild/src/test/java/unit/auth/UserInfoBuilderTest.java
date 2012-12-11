@@ -60,7 +60,7 @@ public class UserInfoBuilderTest {
 	public void nullUserGroupsThrowsException() throws Exception {
 		valid.setUserGroups(null).build();
 	}
-	
+
 	@Test
 	public void groupCanBeAddedAfterThatAnUnmodifiableCollectionCanBeSetted() throws Exception {
 		final Set<UserGroup> unmodifiable = unmodifiableSet(aUserGroups(aUserGroup("group", "group")));
