@@ -10,6 +10,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.TableTree;
 import org.cmdbuild.elements.interfaces.BaseSchema;
@@ -26,7 +27,6 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -34,6 +34,7 @@ import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.ClassOrder;
+import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
@@ -52,8 +53,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 public class ModClass extends JSONBase {
@@ -271,7 +270,6 @@ public class ModClass extends JSONBase {
 	) throws JSONException, CMDBException {
 		// TODO define "simpletable" elsewhere
 		final boolean isSimpleTable = "simpletable".equals(tableType);
-		final CMDataView dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final Class clazz = Class.newClass() //
 				.withName(name) //
 				.withDescription(description) //
@@ -466,67 +464,45 @@ public class ModClass extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject saveDomain(final IDomain domain, final JSONObject serializer,
-			@Parameter(value = "name", required = false) final String domainName,
-			@Parameter(value = "idClass1", required = false) final int classId1,
-			@Parameter(value = "idClass2", required = false) final int classId2,
-			@Parameter("description") final String description,
-			@Parameter(value = "cardinality", required = false) final String cardinality,
-			@Parameter("descr_1") final String descriptionDirect,
-			@Parameter("descr_2") final String descriptionInverse,
-			@Parameter("isMasterDetail") final boolean isMasterDetail,
-			@Parameter(value = "md_label", required = false) final String mdLabel,
-			@Parameter("active") final boolean isActive) throws JSONException, AuthException, NotFoundException {
-		if (domain.isNew()) {
-			domain.setClass1(UserOperations.from(UserContext.systemContext()).tables().get(classId1));
-			domain.setClass2(UserOperations.from(UserContext.systemContext()).tables().get(classId2));
-			domain.setName(domainName);
-			if (cardinality != null && !cardinality.equals("")) {
-				domain.setCardinality(cardinality);
-			}
-		}
-		domain.setDescription(description);
-		domain.setDescriptionDirect(descriptionDirect);
-		domain.setDescriptionInverse(descriptionInverse);
-		domain.setMasterDetail(isMasterDetail);
-		domain.setMDLabel(mdLabel);
-		domain.setStatus(SchemaStatus.fromBoolean(isActive));
-		domain.save();
-
-		serializer.put("domain", Serializer.serializeDomain(domain, false));
+	public JSONObject saveDomain( //
+			final UserContext userContext, //
+			final JSONObject serializer, //
+			@Parameter(value = "name", required = false) final String domainName, //
+			@Parameter(value = "idClass1", required = false) final int classId1, //
+			@Parameter(value = "idClass2", required = false) final int classId2, //
+			@Parameter("description") final String description, //
+			@Parameter(value = "cardinality", required = false) final String cardinality, //
+			@Parameter("descr_1") final String descriptionDirect, //
+			@Parameter("descr_2") final String descriptionInverse, //
+			@Parameter("isMasterDetail") final boolean isMasterDetail, //
+			@Parameter(value = "md_label", required = false) final String mdLabel, //
+			@Parameter("active") final boolean isActive //
+	) throws JSONException, AuthException, NotFoundException {
+		final Domain domain = Domain.newDomain() //
+				.withName(domainName) //
+				.withIdClass1(classId1) //
+				.withIdClass2(classId2) //
+				.withDescription(description) //
+				.withCardinality(cardinality) //
+				.withDirectDescription(descriptionDirect) //
+				.withInverseDescription(descriptionInverse) //
+				.thatIsMasterDetail(isMasterDetail) //
+				.withMasterDetailDescription(mdLabel) //
+				.thatIsActive(isActive) //
+				.build();
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+		final CMDomain createdOrUpdated = ddl.createOrUpdate(domain);
+		serializer.put("domain", Serializer.serialize(createdOrUpdated, false));
 		return serializer;
 	}
 
 	@JSONExported
-	public void deleteDomain(final IDomain domain) throws JSONException {
-
-		boolean hasReference = false;
-		final String cardinality = domain.getCardinality();
-		if (cardinality.equals(IDomain.CARDINALITY_11) || cardinality.equals(IDomain.CARDINALITY_1N)) {
-			final ITable table = domain.getClass2();
-			hasReference = searchReference(table, domain);
-		}
-		if (!hasReference && (cardinality.equals(IDomain.CARDINALITY_11) || cardinality.equals(IDomain.CARDINALITY_N1))) {
-			final ITable table = domain.getClass1();
-			hasReference = searchReference(table, domain);
-		}
-		if (hasReference) {
-			throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
-		} else {
-			domain.delete();
-		}
-	}
-
-	private static boolean searchReference(final ITable table, final IDomain domain) {
-		final Map<String, IAttribute> attributes = table.getAttributes();
-		for (final String attrName : attributes.keySet()) {
-			final IAttribute attribute = attributes.get(attrName);
-			final IDomain attributeDom = attribute.getReferenceDomain();
-			if (attributeDom != null && (attributeDom.getName()).equals(domain.getName())) {
-				return true;
-			}
-		}
-		return false;
+	public void deleteDomain( //
+			final UserContext userContext, //
+			final IDomain domain //
+	) throws JSONException {
+		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+		ddl.deleteDomainByName(domain.getName());
 	}
 
 	@Admin

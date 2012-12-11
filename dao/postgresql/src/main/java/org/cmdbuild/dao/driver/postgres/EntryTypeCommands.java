@@ -1,6 +1,8 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.driver.postgres.Utils.tableNameToDomainName;
 
@@ -13,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -45,6 +46,7 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -357,33 +359,54 @@ public class EntryTypeCommands implements LoggingSupport {
 		return domainList;
 	}
 
-	public DBDomain createDomain(final DBDriver.DomainDefinition domainDefinition) {
-		final String domainComment = domainCommentFrom(domainDefinition);
+	public DBDomain createDomain(final DBDomainDefinition definition) {
+		logger.info("creating new domain '{}'", definition.getName());
+		final String domainComment = commentFrom(definition);
 		final long id = jdbcTemplate.queryForInt("SELECT cm_create_domain(?, ?)", //
-				new Object[] { domainDefinition.getName(), domainComment });
+				new Object[] { definition.getName(), domainComment });
 		return DBDomain.newDomain() //
-				.withName(domainDefinition.getName()) //
+				.withName(definition.getName()) //
 				.withId(id) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
 				// FIXME looks ugly!
 				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(), null)) //
 				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(), null)) //
 				.withAllMetadata(domainCommentToMetadata(domainComment)) //
-				.withClass1(domainDefinition.getClass1()) //
-				.withClass2(domainDefinition.getClass2()) //
+				.withClass1(definition.getClass1()) //
+				.withClass2(definition.getClass2()) //
 				.build();
 	}
 
-	private String domainCommentFrom(final DBDriver.DomainDefinition domainDefinition) {
+	public DBDomain updateDomain(final DBDomainDefinition definition) {
+		logger.info("updating existing domain '{}'", definition.getName());
+		final String domainComment = commentFrom(definition);
+		// TODO
+		final long id = definition.getId();
+		return DBDomain.newDomain() //
+				.withName(definition.getName()) //
+				.withId(id) //
+				.withAllAttributes(userEntryTypeAttributesFor(id)) //
+				// FIXME looks ugly!
+				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(), null)) //
+				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(), null)) //
+				.withAllMetadata(domainCommentToMetadata(domainComment)) //
+				.withClass1(definition.getClass1()) //
+				.withClass2(definition.getClass2()) //
+				.build();
+	}
+
+	private String commentFrom(final DBDomainDefinition definition) {
 		// TODO handle more that two classes
 		return format(
-				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: reserved|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s", //
-				domainDefinition.getName(), //
-				domainDefinition.getDirectDescription(), //
-				domainDefinition.getInverseDescription(), //
-				domainDefinition.getClass1().getName(), //
-				domainDefinition.getClass2().getName(), //
-				domainDefinition.getCardinality());
+				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: reserved|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
+				definition.getName(), //
+				defaultIfBlank(definition.getDirectDescription(), EMPTY), //
+				defaultIfBlank(definition.getInverseDescription(), EMPTY), //
+				definition.getClass1().getName(), //
+				definition.getClass2().getName(), //
+				defaultIfBlank(definition.getCardinality(), "N:N"), //
+				Boolean.toString(definition.isMasterDetail()), //
+				defaultIfBlank(definition.getMasterDetailDescription(), EMPTY));
 	}
 
 	public void deleteDomain(final DBDomain dbDomain) {

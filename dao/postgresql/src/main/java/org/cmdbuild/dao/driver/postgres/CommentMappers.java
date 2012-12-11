@@ -48,6 +48,9 @@ class CommentMappers {
 			 */
 			define("DESCRDIR", DomainMetadata.DESCRIPTION_1);
 			define("DESCRINV", DomainMetadata.DESCRIPTION_2);
+			define("CARDIN", DomainMetadata.CARDINALITY);
+			define("MASTERDETAIL", DomainMetadata.MASTERDETAIL);
+			define("MDLABEL", DomainMetadata.MASTERDETAIL_DESCRIPTION);
 		}
 	};
 

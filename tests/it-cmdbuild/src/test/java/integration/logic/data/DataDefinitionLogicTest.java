@@ -6,6 +6,8 @@ import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
 import org.cmdbuild.model.data.Class;
 import org.cmdbuild.model.data.Class.ClassBuilder;
+import org.cmdbuild.model.data.Domain;
+import org.cmdbuild.model.data.Domain.DomainBuilder;
 import org.junit.Before;
 
 import utils.IntegrationTestBase;
@@ -32,20 +34,28 @@ public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 	 * Utilities
 	 */
 
-	protected static Class a(final ClassBuilder classBuilder) {
+	protected Class a(final ClassBuilder classBuilder) {
 		return classBuilder.build();
 	}
 
-	protected static ClassBuilder newClass(final String name) {
+	protected Domain a(final DomainBuilder domainBuilder) {
+		return domainBuilder.build();
+	}
+
+	protected ClassBuilder newClass(final String name) {
 		return Class.newClass() //
 				.withName(name);
 	}
 
-	protected static Attribute a(final AttributeBuilder attributeBuilder) {
+	protected DomainBuilder newDomain() {
+		return Domain.newDomain();
+	}
+
+	protected Attribute a(final AttributeBuilder attributeBuilder) {
 		return attributeBuilder.build();
 	}
 
-	protected static AttributeBuilder newAttribute(final String name) {
+	protected AttributeBuilder newAttribute(final String name) {
 		return Attribute.newAttribute() //
 				.withName(name);
 	}

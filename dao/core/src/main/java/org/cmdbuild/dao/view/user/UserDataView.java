@@ -9,6 +9,9 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -18,7 +21,6 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
-import org.cmdbuild.dao.view.CMClassDefinition;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
@@ -68,27 +70,27 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMClass createClass(final CMClassDefinition definition) {
+	public UserClass createClass(final CMClassDefinition definition) {
 		return UserClass.newInstance(this, dbView.createClass(definition));
 	}
 
 	@Override
-	public CMClass updateClass(final CMClassDefinition definition) {
+	public UserClass updateClass(final CMClassDefinition definition) {
 		return UserClass.newInstance(this, dbView.updateClass(definition));
 	}
 
 	@Override
-	public void deleteClass(final CMClass cmClass) {
-		dbView.deleteClass(cmClass);
+	public void deleteClass(final CMClass clazz) {
+		dbView.deleteClass(clazz);
 	}
 
 	@Override
-	public CMAttribute createAttribute(final CMAttributeDefinition definition) {
+	public UserAttribute createAttribute(final CMAttributeDefinition definition) {
 		return UserAttribute.newInstance(this, dbView.createAttribute(definition));
 	}
 
 	@Override
-	public CMAttribute updateAttribute(final CMAttributeDefinition definition) {
+	public UserAttribute updateAttribute(final CMAttributeDefinition definition) {
 		return UserAttribute.newInstance(this, dbView.updateAttribute(definition));
 	}
 
@@ -143,6 +145,21 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
+	public UserDomain createDomain(final CMDomainDefinition definition) {
+		return UserDomain.newInstance(this, dbView.createDomain(definition));
+	}
+
+	@Override
+	public UserDomain updateDomain(final CMDomainDefinition definition) {
+		return UserDomain.newInstance(this, dbView.updateDomain(definition));
+	}
+
+	@Override
+	public void deleteDomain(final CMDomain domain) {
+		dbView.deleteDomain(domain);
+	}
+
+	@Override
 	public CMFunction findFunctionByName(final String name) {
 		return dbView.findFunctionByName(name);
 	}
@@ -164,7 +181,7 @@ public class UserDataView extends QueryExecutorDataView {
 	@Override
 	public CMCardDefinition modifyCard(final CMCard card) {
 		// TODO: check privileges.....
-		//user.hasWriteAccess(card.getType());
+		// user.hasWriteAccess(card.getType());
 		return dbView.modifyCard(card);
 	}
 

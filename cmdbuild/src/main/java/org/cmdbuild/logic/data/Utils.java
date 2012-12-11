@@ -3,12 +3,15 @@ package org.cmdbuild.logic.data;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
-import org.cmdbuild.dao.view.CMClassDefinition;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
+import org.cmdbuild.model.data.Domain;
 
 class Utils {
 
@@ -492,6 +495,108 @@ class Utils {
 			@Override
 			public int getClassOrder() {
 				return existingAttribute.getClassOrder();
+			}
+
+		};
+	}
+
+	public static CMDomainDefinition definitionForNew(final Domain domain, final CMClass class1, final CMClass class2) {
+		return new CMDomainDefinition() {
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public String getName() {
+				return domain.getName();
+			}
+
+			@Override
+			public CMClass getClass1() {
+				return class1;
+			}
+
+			@Override
+			public CMClass getClass2() {
+				return class2;
+			}
+
+			@Override
+			public String getDirectDescription() {
+				return domain.getDirectDescription();
+			}
+
+			@Override
+			public String getInverseDescription() {
+				return domain.getInverseDescription();
+			}
+
+			@Override
+			public String getCardinality() {
+				return domain.getCardinality();
+			}
+
+			@Override
+			public boolean isMasterDetail() {
+				return domain.isMasterDetail();
+			}
+
+			@Override
+			public String getMasterDetailDescription() {
+				return domain.getMasterDetailDescription();
+			}
+
+		};
+	}
+
+	public static CMDomainDefinition definitionForExisting(final Domain domain, final CMDomain existing) {
+		return new CMDomainDefinition() {
+
+			@Override
+			public Long getId() {
+				return existing.getId();
+			}
+
+			@Override
+			public String getName() {
+				return existing.getName();
+			}
+
+			@Override
+			public CMClass getClass1() {
+				return existing.getClass1();
+			}
+
+			@Override
+			public CMClass getClass2() {
+				return existing.getClass2();
+			}
+
+			@Override
+			public String getDirectDescription() {
+				return domain.getDirectDescription();
+			}
+
+			@Override
+			public String getInverseDescription() {
+				return domain.getInverseDescription();
+			}
+
+			@Override
+			public String getCardinality() {
+				return existing.getCardinality();
+			}
+
+			@Override
+			public boolean isMasterDetail() {
+				return existing.isMasterDetail();
+			}
+
+			@Override
+			public String getMasterDetailDescription() {
+				return domain.getMasterDetailDescription();
 			}
 
 		};

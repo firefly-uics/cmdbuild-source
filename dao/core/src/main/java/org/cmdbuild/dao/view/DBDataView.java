@@ -10,6 +10,9 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -35,6 +38,16 @@ public class DBDataView extends QueryExecutorDataView {
 
 		@Override
 		DBEntryType getOwner();
+
+	}
+
+	public static interface DBDomainDefinition extends CMDomainDefinition {
+
+		@Override
+		public DBClass getClass1();
+
+		@Override
+		public DBClass getClass2();
 
 	}
 
@@ -201,36 +214,9 @@ public class DBDataView extends QueryExecutorDataView {
 		};
 	}
 
-	private DBClass cmToDbClass(final CMEntryType entryType) {
-		final DBClass dbClass;
-		if (entryType == null) {
-			dbClass = null;
-		} else if (entryType instanceof DBClass) {
-			dbClass = DBClass.class.cast(entryType);
-		} else {
-			dbClass = findClassByName(entryType.getName());
-			assert dbClass != null;
-		}
-		return dbClass;
-	}
-
 	@Override
 	public void deleteAttribute(final CMAttribute attribute) {
 		driver.deleteAttribute(cmToDbAttribute(attribute));
-	}
-
-	private DBAttribute cmToDbAttribute(final CMAttribute attribute) {
-		final DBAttribute dbAttribute;
-		if (attribute == null) {
-			dbAttribute = null;
-		} else if (attribute instanceof DBClass) {
-			dbAttribute = DBAttribute.class.cast(attribute);
-		} else {
-			final DBClass owner = cmToDbClass(findClassByName(attribute.getOwner().getName()));
-			dbAttribute = owner.getAttribute(attribute.getName());
-			assert dbAttribute != null;
-		}
-		return dbAttribute;
 	}
 
 	@Override
@@ -265,6 +251,72 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
+	public DBDomain createDomain(final CMDomainDefinition definition) {
+		return driver.createDomain(adaptDefinition(definition));
+	}
+
+	@Override
+	public DBDomain updateDomain(final CMDomainDefinition definition) {
+		return driver.updateDomain(adaptDefinition(definition));
+	}
+
+	@Override
+	public void deleteDomain(final CMDomain domain) {
+		driver.deleteDomain(cmToDbDomain(domain));
+	}
+
+	private DBDomainDefinition adaptDefinition(final CMDomainDefinition definition) {
+		return new DBDomainDefinition() {
+
+			@Override
+			public Long getId() {
+				return definition.getId();
+			}
+
+			@Override
+			public String getName() {
+				return definition.getName();
+			}
+
+			@Override
+			public DBClass getClass1() {
+				return cmToDbClass(definition.getClass1());
+			}
+
+			@Override
+			public DBClass getClass2() {
+				return cmToDbClass(definition.getClass2());
+			}
+
+			@Override
+			public String getDirectDescription() {
+				return definition.getDirectDescription();
+			}
+
+			@Override
+			public String getInverseDescription() {
+				return definition.getInverseDescription();
+			}
+
+			@Override
+			public String getCardinality() {
+				return definition.getCardinality();
+			}
+
+			@Override
+			public boolean isMasterDetail() {
+				return definition.isMasterDetail();
+			}
+
+			@Override
+			public String getMasterDetailDescription() {
+				return definition.getMasterDetailDescription();
+			}
+
+		};
+	}
+
+	@Override
 	public Iterable<? extends CMFunction> findAllFunctions() {
 		return driver.findAllFunctions();
 	}
@@ -288,6 +340,46 @@ public class DBDataView extends QueryExecutorDataView {
 	@Override
 	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
 		return driver.query(querySpecs);
+	}
+
+	private DBClass cmToDbClass(final CMEntryType entryType) {
+		final DBClass dbClass;
+		if (entryType == null) {
+			dbClass = null;
+		} else if (entryType instanceof DBClass) {
+			dbClass = DBClass.class.cast(entryType);
+		} else {
+			dbClass = findClassByName(entryType.getName());
+			assert dbClass != null;
+		}
+		return dbClass;
+	}
+
+	private DBAttribute cmToDbAttribute(final CMAttribute attribute) {
+		final DBAttribute dbAttribute;
+		if (attribute == null) {
+			dbAttribute = null;
+		} else if (attribute instanceof DBClass) {
+			dbAttribute = DBAttribute.class.cast(attribute);
+		} else {
+			final DBClass owner = cmToDbClass(findClassByName(attribute.getOwner().getName()));
+			dbAttribute = owner.getAttribute(attribute.getName());
+			assert dbAttribute != null;
+		}
+		return dbAttribute;
+	}
+
+	private DBDomain cmToDbDomain(final CMEntryType entryType) {
+		final DBDomain dbDomain;
+		if (entryType == null) {
+			dbDomain = null;
+		} else if (entryType instanceof DBClass) {
+			dbDomain = DBDomain.class.cast(entryType);
+		} else {
+			dbDomain = findDomainByName(entryType.getName());
+			assert dbDomain != null;
+		}
+		return dbDomain;
 	}
 
 }
