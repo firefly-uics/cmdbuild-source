@@ -39,8 +39,12 @@ public class CardManagementTest {
 				new AttributeMetadata()) };
 		final Long classKey = Long.valueOf(777L);
 		final Long cardKey = Long.valueOf(42L);
-		given(driver.findClassById(classKey)).willReturn(
-				new DBClass("C", classKey, new DBClass.ClassMetadata(), Arrays.asList(classAttributes)));
+		given(driver.findClassById(classKey)).willReturn(DBClass.newClass() //
+				.withName("C") //
+				.withId(classKey) //
+				.withAllMetadata(new DBClass.ClassMetadata()) //
+				.withAllAttributes(Arrays.asList(classAttributes)) //
+				.build());
 		given(driver.create(any(DBEntry.class))).willReturn(cardKey);
 
 		// when

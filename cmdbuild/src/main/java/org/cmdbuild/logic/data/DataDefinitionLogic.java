@@ -136,7 +136,7 @@ public class DataDefinitionLogic implements Logic {
 	}
 
 	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
-		logger.info("changing classorder for class '{}'", className);
+		logger.info("changing classorders '{}' for class '{}'", classOrders, className);
 
 		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders,
 				new Function<ClassOrder, String>() {

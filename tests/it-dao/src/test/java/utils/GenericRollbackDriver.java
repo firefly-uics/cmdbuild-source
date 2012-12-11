@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Deque;
 
 import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -529,12 +528,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
-			if (innerDriver instanceof SelfVersioningDBDriver) {
-				final SelfVersioningDBDriver svd = (SelfVersioningDBDriver) innerDriver;
-				svd.clearEntryType(entry.getType());
-			} else {
-				throw new UnsupportedOperationException();
-			}
+			innerDriver.delete(entry);
 		}
 	}
 
