@@ -117,9 +117,8 @@ public class ModClass extends JSONBase {
 			@Parameter(value = "active", required = false) final boolean active, final UserContext userCtx)
 			throws JSONException, AuthException, CMWorkflowException {
 
-		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
-		final Iterable<UserProcessClass> processClasses = workflowLogic.findAllProcessClasses();
+		final Iterable<UserProcessClass> processClasses = workflowLogic(userCtx).findAllProcessClasses();
 		final HashMap<String, ITable> processTables = new HashMap<String, ITable>();
 
 		for (final ITable table : allTables) {
@@ -167,11 +166,10 @@ public class ModClass extends JSONBase {
 	public JSONObject getAllDomains(final JSONObject serializer,
 			@Parameter(value = "active", required = false) final boolean activeOnly, final UserContext userCtx)
 			throws JSONException, AuthException {
-		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();
 		final JSONArray jsonDomains = new JSONArray();
 		for (final IDomain domain : allDomains) {
-			if (domain.getMode().isCustom() && (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic))) {
+			if (domain.getMode().isCustom() && (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic(userCtx)))) {
 				jsonDomains.put(Serializer.serializeDomain(domain, activeOnly));
 			}
 		}
@@ -217,8 +215,7 @@ public class ModClass extends JSONBase {
 			final String key = (String) keysIterator.next();
 			classOrders.add(ClassOrder.from(key, orderCriteria.getInt(key)));
 		}
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		ddl.changeClassOrders(table.getDBName(), classOrders);
+		dataDefinitionLogic(userContext).changeClassOrders(table.getDBName(), classOrders);
 		return serializer;
 	}
 
@@ -277,12 +274,13 @@ public class ModClass extends JSONBase {
 				.thatIsHoldingHistory(!isSimpleTable) //
 				.thatIsActive(isActive) //
 				.build();
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		final CMClass cmClass = ddl.createOrUpdate(clazz);
+		final CMClass cmClass = dataDefinitionLogic(userContext).createOrUpdate(clazz);
 		final JSONObject result = Serializer.serialize(cmClass);
 		serializer.put("table", result);
 		return serializer;
 	}
+
+	
 
 	@JSONExported
 	public JSONObject deleteTable( //
@@ -292,8 +290,7 @@ public class ModClass extends JSONBase {
 		final Class clazz = Class.newClass() //
 				.withName(table.getName()) //
 				.build();
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		ddl.deleteOrDeactivate(clazz);
+		dataDefinitionLogic(userContext).deleteOrDeactivate(clazz);
 		return serializer;
 	}
 
@@ -387,8 +384,7 @@ public class ModClass extends JSONBase {
 				// @Parameter(value = "editorType", required = false) String
 				// editorType, //
 				.build();
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		final CMAttribute cmAttribute = ddl.createOrUpdate(attribute);
+		final CMAttribute cmAttribute = dataDefinitionLogic(userContext).createOrUpdate(attribute);
 		final JSONObject result = Serializer.serialize(cmAttribute);
 		serializer.put("attribute", result);
 		return serializer;
@@ -430,8 +426,7 @@ public class ModClass extends JSONBase {
 				.withName(attributeName) //
 				.withOwner(Long.valueOf(table.getId())) //
 				.build();
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		ddl.deleteOrDeactivate(attribute);
+		dataDefinitionLogic(userContext).deleteOrDeactivate(attribute);
 		return serializer;
 	}
 
@@ -452,9 +447,8 @@ public class ModClass extends JSONBase {
 					.withIndex(jsonAttribute.getInt("idx"))
 					.build());
 		}
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
 		for (final Attribute attribute: attributes) {
-			ddl.reorder(attribute);
+			dataDefinitionLogic(userContext).reorder(attribute);
 		}
 		return serializer;
 	}
@@ -487,8 +481,7 @@ public class ModClass extends JSONBase {
 				.withMasterDetailDescription(mdLabel) //
 				.thatIsActive(isActive) //
 				.build();
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		final CMDomain createdOrUpdated = ddl.createOrUpdate(domain);
+		final CMDomain createdOrUpdated = dataDefinitionLogic(userContext).createOrUpdate(domain);
 		serializer.put("domain", Serializer.serialize(createdOrUpdated, false));
 		return serializer;
 	}
@@ -498,8 +491,7 @@ public class ModClass extends JSONBase {
 			final UserContext userContext, //
 			final IDomain domain //
 	) throws JSONException {
-		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
-		ddl.deleteDomainByName(domain.getName());
+		dataDefinitionLogic(userContext).deleteDomainByName(domain.getName());
 	}
 
 	@Admin
@@ -558,14 +550,13 @@ public class ModClass extends JSONBase {
 	@JSONExported
 	public JsonResponse getAllWidgets(@Parameter(value = "active", required = false) final boolean active,
 			final UserContext userCtx) {
-		final WorkflowLogic workflowLogic = TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userCtx);
 		final Iterable<ITable> allTables = UserOperations.from(userCtx).tables().list();
 		final Map<String, List<Widget>> allWidgets = new HashMap<String, List<Widget>>();
 		for (final ITable table : allTables) {
 			if (!table.getMode().isDisplayable()) {
 				continue;
 			}
-			if (active && !isActive(table, workflowLogic)) {
+			if (active && !isActive(table, workflowLogic(userCtx))) {
 				continue;
 			}
 			final List<Widget> widgetList = new DBClassWidgetStore(table).getWidgets();
@@ -599,4 +590,13 @@ public class ModClass extends JSONBase {
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
 		classWidgets.removeWidget(widgetId);
 	}
+	
+	private DataDefinitionLogic dataDefinitionLogic(final UserContext userContext) {
+		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
+	}
+
+	private WorkflowLogic workflowLogic(final UserContext userContext) {
+		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userContext);
+	}
+	
 }

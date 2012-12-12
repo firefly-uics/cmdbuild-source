@@ -394,7 +394,9 @@ public class EntryTypeCommands implements LoggingSupport {
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
 		logger.info("updating existing domain '{}'", definition.getName());
 		final String domainComment = commentFrom(definition);
-		// TODO
+		jdbcTemplate.queryForObject("SELECT cm_modify_domain(?, ?)", //
+				Object.class, //
+				new Object[] { definition.getName(), domainComment });
 		final long id = definition.getId();
 		return DBDomain.newDomain() //
 				.withName(definition.getName()) //
