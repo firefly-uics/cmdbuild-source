@@ -6,6 +6,7 @@ import static org.apache.commons.lang.StringUtils.trim;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 
 public class Domain {
@@ -114,7 +115,7 @@ public class Domain {
 		this.masterDetail = builder.masterDetail;
 		this.masterDetailDescription = builder.masterDetailDescription;
 
-		this.toString = ToStringBuilder.reflectionToString(this);
+		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	public String getName() {
