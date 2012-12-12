@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -98,7 +100,12 @@ public class EntryTypeCommands implements LoggingSupport {
 			final List<DBAttribute> attributes = userEntryTypeAttributesFor(id);
 			final String comment = rs.getString("table_comment");
 			final ClassMetadata meta = classCommentToMetadata(comment);
-			final DBClass dbClass = new DBClass(name, id, meta, attributes);
+			final DBClass dbClass = DBClass.newClass() //
+					.withName(name) //
+					.withId(id) //
+					.withAllMetadata(meta) //
+					.withAllAttributes(attributes) //
+					.build();
 			classMap.put(id, new ClassAndParent(dbClass, parentId));
 		}
 
@@ -128,11 +135,12 @@ public class EntryTypeCommands implements LoggingSupport {
 		final long id = jdbcTemplate.queryForInt( //
 				"SELECT cm_create_class(?, ?, ?)", //
 				new Object[] { definition.getName(), parentName, classComment });
-		final DBClass newClass = new DBClass( //
-				definition.getName(), //
-				id, //
-				classCommentToMetadata(classComment), //
-				userEntryTypeAttributesFor(id));
+		final DBClass newClass = DBClass.newClass() //
+				.withName(definition.getName()) //
+				.withId(id) //
+				.withAllMetadata(classCommentToMetadata(classComment)) //
+				.withAllAttributes(userEntryTypeAttributesFor(id)) //
+				.build();
 		newClass.setParent(definition.getParent());
 		return newClass;
 	}
@@ -144,11 +152,12 @@ public class EntryTypeCommands implements LoggingSupport {
 				"SELECT cm_modify_class(?, ?)", //
 				Object.class, //
 				new Object[] { definition.getName(), comment });
-		final DBClass updatedClass = new DBClass( //
-				definition.getName(), //
-				definition.getId(), //
-				classCommentToMetadata(comment), //
-				userEntryTypeAttributesFor(definition.getId()));
+		final DBClass updatedClass = DBClass.newClass() //
+				.withName(definition.getName()) //
+				.withId(definition.getId()) //
+				.withAllMetadata(classCommentToMetadata(comment)) //
+				.withAllAttributes(userEntryTypeAttributesFor(definition.getId())) //
+				.build();
 		updatedClass.setParent(definition.getParent());
 		return updatedClass;
 	}
@@ -219,6 +228,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getName(), //
 				definition.getType(), //
 				attributeCommentToMetadata(comment));
+		logger.info("assigning updated attribute to owner '{}'", owner.getName());
 		owner.addAttribute(newAttribute);
 		return newAttribute;
 	}
@@ -230,6 +240,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				"SELECT cm_delete_attribute(?,?)", //
 				Object.class, //
 				new Object[] { owner.getId(), attribute.getName() });
+		attribute.getOwner().removeAttribute(attribute);
 	}
 
 	private String commentFrom(final DBAttributeDefinition definition) {
@@ -329,7 +340,9 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * Domains
 	 */
 
-	public List<DBDomain> findAllDomains(final PostgresDriver driver) {
+	public List<DBDomain> findAllDomains(final DBDriver driver) {
+		// needed for limit the amount of findAllClasses of the driver
+		final DBDriver innerDriver = new DefaultCachingDriver(driver);
 		// Exclude Map since we don't need it anymore!
 		final List<DBDomain> domainList = jdbcTemplate.query(
 				"SELECT domain_id, _cm_cmtable(domain_id) AS domain_name, _cm_comment_for_table_id(domain_id) AS domain_comment" //
@@ -343,8 +356,9 @@ public class EntryTypeCommands implements LoggingSupport {
 						final List<DBAttribute> attributes = userEntryTypeAttributesFor(id);
 						final String comment = rs.getString("domain_comment");
 						final DomainMetadata meta = domainCommentToMetadata(comment);
-						final DBClass class1 = driver.findClassByName(meta.get(DomainMetadata.CLASS_1));
-						final DBClass class2 = driver.findClassByName(meta.get(DomainMetadata.CLASS_2));
+						// FIXME we should handle this in another way
+						final DBClass class1 = innerDriver.findClassByName(meta.get(DomainMetadata.CLASS_1));
+						final DBClass class2 = innerDriver.findClassByName(meta.get(DomainMetadata.CLASS_2));
 						final DBDomain domain = DBDomain.newDomain() //
 								.withName(name) //
 								.withId(id) //

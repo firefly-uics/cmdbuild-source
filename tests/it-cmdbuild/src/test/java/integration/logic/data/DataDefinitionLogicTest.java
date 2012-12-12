@@ -1,5 +1,7 @@
 package integration.logic.data;
 
+import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
@@ -15,6 +17,11 @@ import utils.IntegrationTestBase;
 public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 
 	private DataDefinitionLogic dataDefinitionLogic;
+
+	@Override
+	protected DBDriver createDriver() {
+		return new DefaultCachingDriver(super.createDriver());
+	}
 
 	@Before
 	public void createDataDefinitionLogic() throws Exception {

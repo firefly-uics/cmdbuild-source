@@ -6,6 +6,7 @@ import static org.apache.commons.lang.StringUtils.trim;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 
@@ -89,8 +90,6 @@ public class Class {
 	private final boolean isUserStoppable;
 	private final boolean isActive;
 
-	private final String toString;
-
 	private Class(final ClassBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
@@ -100,8 +99,6 @@ public class Class {
 		this.isUserStoppable = builder.isUserStoppable;
 		this.isHoldingHistory = builder.isHoldingHistory;
 		this.isActive = builder.isActive;
-
-		this.toString = ToStringBuilder.reflectionToString(this);
 	}
 
 	public String getName() {
@@ -152,7 +149,7 @@ public class Class {
 
 	@Override
 	public String toString() {
-		return toString;
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

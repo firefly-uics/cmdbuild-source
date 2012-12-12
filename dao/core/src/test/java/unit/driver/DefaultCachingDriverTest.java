@@ -2,7 +2,7 @@ package unit.driver;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.cmdbuild.dao.driver.CachingDriver;
@@ -42,6 +42,10 @@ public class DefaultCachingDriverTest {
 	@Test
 	public void noNeedToFetchClassesAfterCreation() {
 		final DBClassDefinition classDefinition = mock(DBClassDefinition.class);
+		when(mockedDriver.createClass(classDefinition)) //
+				.thenReturn(DBClass.newClass() //
+						.withName("foo") //
+						.build());
 
 		cachingDriver.findAllClasses();
 		cachingDriver.createClass(classDefinition);
@@ -103,6 +107,10 @@ public class DefaultCachingDriverTest {
 	@Test
 	public void noNeedToFetchDomainsAfterCreation() {
 		final DBDomainDefinition domain = mock(DBDomainDefinition.class);
+		when(mockedDriver.createDomain(domain)) //
+				.thenReturn(DBDomain.newDomain() //
+						.withName("foo") //
+						.build());
 
 		cachingDriver.findAllDomains();
 		cachingDriver.createDomain(domain);
