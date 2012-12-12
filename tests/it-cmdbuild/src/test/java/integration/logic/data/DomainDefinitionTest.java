@@ -146,6 +146,22 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
+	public void descriptionsCanBeChanged() {
+		// given
+		dataDefinitionLogic().createOrUpdate(a(newDomain()));
+		dataDefinitionLogic().createOrUpdate(a(newDomain() //
+				.withDirectDescription("foo") //
+				.withInverseDescription("bar")));
+
+		// when
+		final CMDomain domain = dataView().findDomainByName(DOMAIN_NAME);
+
+		// then
+		assertThat(domain.getDescription1(), equalTo("foo"));
+		assertThat(domain.getDescription2(), equalTo("bar"));
+	}
+
+	@Test
 	public void domainCreatedAndDeleted() {
 		// given
 		dataDefinitionLogic().createOrUpdate(a(newDomain()));
@@ -165,7 +181,8 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Override
 	protected DomainBuilder newDomain() {
 		return super.newDomain() //
-				.withName(DOMAIN_NAME).withIdClass1(class1.getId()) //
+				.withName(DOMAIN_NAME) //
+				.withIdClass1(class1.getId()) //
 				.withIdClass2(class2.getId());
 	}
 
