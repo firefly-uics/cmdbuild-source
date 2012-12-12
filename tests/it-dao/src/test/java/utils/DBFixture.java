@@ -137,11 +137,11 @@ public abstract class DBFixture extends IntegrationTestBase {
 		return insertedGroup;
 	}
 
-	protected DBCard insertPrivilege(final Long roleId, final EntryTypeReference className, final String mode) {
+	protected DBCard insertPrivilege(final Long roleId, final DBClass clazz, final String mode) {
 		final DBClass grantClass = dbDriver().findClassByName(GRANT_CLASS);
 		final DBCard privilege = DBCard.newInstance(dbDriver(), grantClass);
 		final DBCard insertedGrant = privilege.set("IdRole", roleId) //
-				.set("IdGrantedClass", className) //
+				.set("IdGrantedClass", EntryTypeReference.newInstance(clazz.getId())) //
 				.set("Mode", mode) //
 				.save();
 		return insertedGrant;

@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
@@ -57,12 +59,42 @@ public class SecurityLogic implements Logic {
 		public String getPrivilegeId() {
 			return privilegedObject.getPrivilegeId();
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+			result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+			result = prime * result + ((privilegedObject == null) ? 0 : privilegedObject.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			PrivilegeInfo other = (PrivilegeInfo) obj;
+			if (this.mode.equals(other.mode) //
+					&& this.groupId.equals(other.getGroupId()) //
+					&& this.getPrivilegeObjectId().equals(other.getPrivilegeObjectId())) {
+				return true;
+			}
+			return false;
+		}
+
 	}
 
 	private final CMDataView view;
+	private final CMClass grantClass;
 
 	public SecurityLogic(final CMDataView view) {
 		this.view = view;
+		this.grantClass = view.findClassByName("Grant");
 	}
 
 	public List<PrivilegeInfo> getPrivilegesForGroup(final Long groupId) {
@@ -83,6 +115,37 @@ public class SecurityLogic implements Logic {
 			privileges.add(pi);
 		}
 		return privileges;
+	}
+
+	public void savePrivilege(PrivilegeInfo privilegeInfo) {
+		// FIXME: add an "and" condition to where clause ("IdGrantedClass"...)
+		CMQueryResult result = view.select(AnyAttribute.anyAttribute(grantClass)) //
+				.from(grantClass) //
+				.where(attribute(grantClass, "IdRole"), Operator.EQUALS, privilegeInfo.getGroupId()) //
+				.run();
+
+		for (CMQueryRow row : result) {
+			CMCard grantCard = row.getCard(grantClass);
+			EntryTypeReference etr = (EntryTypeReference) grantCard.get("IdGrantedClass");
+			if (etr.getId().equals(privilegeInfo.getPrivilegeObjectId())) {
+				updateModeForGrantCard(grantCard, privilegeInfo.getMode());
+				return;
+			}
+		}
+		createGrantCard(privilegeInfo);
+	}
+
+	private void updateModeForGrantCard(CMCard grantCard, String mode) {
+		CMCardDefinition modifiableGrant = view.modifyCard(grantCard);
+		modifiableGrant.set("Mode", mode).save();
+	}
+
+	private void createGrantCard(PrivilegeInfo privilegeInfo) {
+		CMCardDefinition grantCardToBeCreated = view.newCard(grantClass);
+		grantCardToBeCreated.set("IdRole", privilegeInfo.getGroupId()) //
+				.set("IdGrantedClass", privilegeInfo.getPrivilegeObjectId()) //
+				.set("Mode", privilegeInfo.getMode()) //
+				.save();
 	}
 
 }

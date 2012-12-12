@@ -2,6 +2,7 @@ package org.cmdbuild.logic;
 
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.legacywrappers.CardWrapper;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -36,6 +37,10 @@ public class DataAccessLogic implements Logic {
 
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
 		return new GetRelationHistory(view).exec(srcCard);
+	}
+	
+	public CMClass findClassById(Long classId) {
+		return view.findClassById(classId);
 	}
 
 	@Legacy("IMPORTANT! FIX THE NEW DAO AND FIX BECAUSE IT USES THE SYSTEM USER!")

@@ -1,6 +1,7 @@
 package integration.logic.security;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -9,10 +10,10 @@ import java.util.List;
 
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.DBFixture;
@@ -66,7 +67,7 @@ public class SecurityLogicTest extends DBFixture {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 		final DBCard privilegeCard = insertPrivilege(groupA.getId(),
-				EntryTypeReference.newInstance(createdClass.getId()), "w");
+				createdClass, "w");
 
 		// when
 		final List<PrivilegeInfo> privileges = securityLogic.getPrivilegesForGroup(groupA.getId());
@@ -77,6 +78,39 @@ public class SecurityLogicTest extends DBFixture {
 		assertThat(privilege.getPrivilegeObjectId(), is(equalTo(createdClass.getId())));
 		assertThat(privilege.getGroupId(), is(equalTo(groupA.getId())));
 		assertThat(privilege.mode, is(equalTo("w")));
+	}
+	
+	@Test
+	public void shouldCreatePrivilegeForExistingClass() {
+		// given
+		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
+		int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+		
+		//when
+		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass, "r");
+		securityLogic.savePrivilege(privilegeInfo);
+		
+		//then
+		List<PrivilegeInfo> groupPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId());
+		assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
+		assertThat(groupPrivileges, hasItem(privilegeInfo));
+	}
+	
+	@Ignore("Because the update card method is not yet implemented")
+	@Test
+	public void shoulUpdateExistentPrivilege() {
+		// given
+		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
+		insertPrivilege(groupA.getId(), createdClass, "-");
+		int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+		
+		//when
+		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass, "r");
+		securityLogic.savePrivilege(privilegeInfo);
+		
+		//then
+		int numberOfActualPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+		assertEquals(numberOfExistentPrivileges, numberOfActualPrivileges);
 	}
 
 }

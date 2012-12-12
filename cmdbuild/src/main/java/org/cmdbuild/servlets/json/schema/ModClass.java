@@ -277,7 +277,7 @@ public class ModClass extends JSONBase {
 				.thatIsSuperClass(isSuperClass) //
 				.thatIsProcess(isProcess) //
 				.thatIsUserStoppable(isProcessUserStoppable) //
-				.thatIsHoldingHistory(isSimpleTable) //
+				.thatIsHoldingHistory(!isSimpleTable) //
 				.thatIsActive(isActive) //
 				.build();
 		final DataDefinitionLogic ddl = TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);

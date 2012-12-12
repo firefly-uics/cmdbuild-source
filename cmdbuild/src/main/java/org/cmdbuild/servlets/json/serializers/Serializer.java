@@ -993,10 +993,10 @@ public class Serializer {
 	public static JSONObject serializePrivilege(final PrivilegeInfo privilege) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put("groupId", privilege.getGroupId());
-		if (privilege.mode.equals(PrivilegeType.WRITE)) {
+		if (privilege.mode.equals("w")) {
 			row.put("privilege_mode", "write_privilege");
 			row.put("write_privilege", true);
-		} else if (privilege.mode.equals(PrivilegeType.READ)) {
+		} else if (privilege.mode.equals("r")) {
 			row.put("privilege_mode", "read_privilege");
 			row.put("read_privilege", true);
 		} else {
