@@ -22,6 +22,10 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	public static DBRelation newInstance(final DBDriver driver, final DBDomain type, final Long id) {
 		return new DBRelation(driver, type, id);
 	}
+	
+	public static DBRelation newInstance(final DBDriver driver, final DBRelation existentRelation) {
+		return new DBRelation(driver, existentRelation.getType(), existentRelation.getId());
+	}
 
 	private DBRelation(final DBDriver driver, final DBDomain type, final Long id) {
 		super(driver, type, id);
@@ -69,6 +73,22 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	public DBRelation save() {
 		saveOnly();
 		return this;
+	}
+
+	@Override
+	public CMRelation create() {
+		return save();
+	}
+
+	@Override
+	public CMRelation update() {
+		super.updateOnly();
+		return this;
+	}
+
+	@Override
+	public void delete() {
+		super.delete();
 	}
 
 }

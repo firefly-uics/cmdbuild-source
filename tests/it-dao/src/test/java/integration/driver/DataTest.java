@@ -46,5 +46,4 @@ public class DataTest extends DBFixture {
 				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();
 	}
-
 }

@@ -19,9 +19,12 @@ public interface CMRelation extends CMEntry {
 		@Override
 		CMRelationDefinition set(String key, Object value);
 
-		@Override
-		CMRelation save();
-
+		CMRelation create();
+		
+		CMRelation update();
+		
+		void delete();
+		
 	}
 
 	@Override

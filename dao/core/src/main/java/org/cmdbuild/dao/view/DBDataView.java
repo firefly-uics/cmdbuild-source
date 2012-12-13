@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -380,6 +383,21 @@ public class DBDataView extends QueryExecutorDataView {
 			assert dbDomain != null;
 		}
 		return dbDomain;
+	}
+
+	@Override
+	public CMRelationDefinition newRelation(CMDomain domain) {
+		DBDomain dom = driver.findDomainById(domain.getId());
+		return DBRelation.newInstance(driver, dom);
+	}
+
+	@Override
+	public CMRelationDefinition modifyRelation(CMRelation relation) {
+		if (relation instanceof DBRelation) {
+			DBRelation dbRelation = (DBRelation)relation;
+			return DBRelation.newInstance(driver, dbRelation);
+		}
+		throw new IllegalArgumentException();
 	}
 
 }

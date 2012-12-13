@@ -172,11 +172,10 @@ Ext.define("CMDBuild.LoginPanel", {
 			},
 			failure : function(response, options, decoded) {
 				CMDBuild.LoadMask.get().hide();
-				if (decoded && decoded.errors && decoded.errors[0] &&
-						decoded.errors[0].reason == 'AUTH_MULTIPLE_GROUPS') {
+				if (decoded && decoded.reason == 'AUTH_MULTIPLE_GROUPS') {
 					// multiple groups for this user
 					// TODO Disable user/pass on multiple groups
-					this.enableRoles(decoded.response);
+					this.enableRoles(decoded.groups);
 					return false;
 				} else {
 					decoded.stacktrace = undefined; //to not show the detail link in the error pop-up

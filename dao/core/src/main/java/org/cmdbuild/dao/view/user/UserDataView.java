@@ -7,6 +7,8 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
@@ -27,15 +29,15 @@ import org.cmdbuild.dao.view.QueryExecutorDataView;
 public class UserDataView extends QueryExecutorDataView {
 
 	private final DBDataView dbView;
-	private final OperationUser user;
+	private final OperationUser operationUser;
 
 	public UserDataView(final DBDataView view, final OperationUser user) {
 		this.dbView = view;
-		this.user = user;
+		this.operationUser = user;
 	}
 
 	public OperationUser getOperationUser() {
-		return user;
+		return operationUser;
 	}
 
 	@Override
@@ -240,5 +242,17 @@ public class UserDataView extends QueryExecutorDataView {
 				return proxy;
 			}
 		}.proxy();
+	}
+
+	@Override
+	public CMRelationDefinition newRelation(CMDomain domain) {
+		// TODO check privileges
+		return dbView.newRelation(domain);
+	}
+
+	@Override
+	public CMRelationDefinition modifyRelation(CMRelation relation) {
+		// TODO check privileges
+		return dbView.modifyRelation(relation);
 	}
 }

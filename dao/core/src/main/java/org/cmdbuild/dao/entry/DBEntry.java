@@ -101,6 +101,14 @@ public abstract class DBEntry implements CMValueSet {
 	protected void saveOnly() {
 		id = driver.create(this);
 	}
+	
+	protected void delete() {
+		driver.delete(this);
+	}
+	
+	protected void updateOnly() {
+		driver.update(this);
+	}
 
 	private RuntimeException newAttributeInexistent(final String key) {
 		final String message = String.format("Attribute '%s.%s' does not exist", type.getName(), key);
