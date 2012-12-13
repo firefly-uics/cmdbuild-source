@@ -2,6 +2,8 @@ package org.cmdbuild.dao.view;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
@@ -114,7 +116,13 @@ public interface CMDataView {
 	 * @return a modifiable card from the immutable card
 	 */
 	CMCardDefinition modifyCard(CMCard card);
-
+	
+	CMRelationDefinition newRelation(CMDomain domain);
+	
+	CMRelationDefinition modifyRelation(CMRelation relation);
+	
+	
+	
 	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
 	 * 

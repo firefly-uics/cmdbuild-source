@@ -75,6 +75,8 @@ public interface AuthenticationService {
 	public OperationUser getOperationUser();
 
 	public List<CMUser> fetchUsersByGroupId(Long groupId);
+	
+	public List<Long> fetchUserIdsByGroupId(Long groupId);
 
 	/**
 	 * Given a user identifier, it returns the user with that id

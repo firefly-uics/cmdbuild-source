@@ -45,7 +45,6 @@ public class ModSecurity extends JSONBase {
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 	private AuthenticationLogic authLogic;
 	private SecurityLogic securityLogic;
-	
 
 	@JSONExported
 	public String getGroupList(final JSONObject serializer) throws JSONException, AuthException, ORMException {
@@ -67,8 +66,8 @@ public class ModSecurity extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JsonResponse getGroupUIConfiguration(@Parameter("id") final int groupId, final UserContext userCtx)
-			throws JSONException, AuthException, ORMException {
+	public JsonResponse getGroupUIConfiguration(@Parameter("id") final int groupId) throws JSONException,
+			AuthException, ORMException {
 
 		final GroupCard group = GroupCard.getOrDie(groupId);
 		return JsonResponse.success(group.getUIConfiguration());
@@ -77,8 +76,8 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUIConfiguration(@Parameter("id") final int groupId,
-			@Parameter("uiConfiguration") final String jsonUIConfiguration, final UserContext userCtx)
-			throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
+			@Parameter("uiConfiguration") final String jsonUIConfiguration) throws JSONException, AuthException,
+			JsonParseException, JsonMappingException, IOException {
 
 		final GroupCard group = GroupCard.getOrDie(groupId);
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
@@ -146,18 +145,17 @@ public class ModSecurity extends JSONBase {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void savePrivilege(final JSONObject serializer, @Parameter("groupId") final Long groupId,
-			@Parameter("classid") final Long grantedClassId, @Parameter("privilege_mode") final String privilegeMode) throws JSONException, AuthException {
+			@Parameter("classid") final Long grantedClassId, @Parameter("privilege_mode") final String privilegeMode)
+			throws JSONException, AuthException {
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
 		DataAccessLogic dal = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		CMClass grantedClass = dal.findClassById(grantedClassId);
 		String mode = null;
 		if (privilegeMode.equals("write_privilege")) {
 			mode = "w";
-		}
-		else if (privilegeMode.equals("read_privilege")) {
+		} else if (privilegeMode.equals("read_privilege")) {
 			mode = "r";
-		}
-		else {
+		} else {
 			mode = "-";
 		}
 		securityLogic.savePrivilege(new PrivilegeInfo(groupId, grantedClass, mode));
@@ -237,7 +235,7 @@ public class ModSecurity extends JSONBase {
 		serializer.put("group", Serializer.serialize(createdOrUpdatedGroup));
 		return serializer;
 	}
-	
+
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JSONObject enableDisableGroup(final JSONObject serializer, @Parameter("isActive") final boolean isActive,
@@ -248,10 +246,36 @@ public class ModSecurity extends JSONBase {
 		return serializer;
 	}
 
+	/**
+	 * 
+	 * @param users
+	 *            a String of comma separeted user identifiers. These are the id
+	 *            of the users that belong to the group with id = groupId
+	 * @param groupId
+	 */
+	@Transacted
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUserList(@Parameter(value = "users", required = false) final String users,
-			@Parameter("groupId") final int groupId, final UserContext userCtx) {
+			@Parameter("groupId") final Long groupId, final UserContext userCtx) {
+		authLogic = applicationContext.getBean(AuthenticationLogic.class);
+		List<Long> newUserIds = Lists.newArrayList();
+		String[] splittedUserIds = users.split(",");
+		for (String userId : splittedUserIds) {
+			newUserIds.add(Long.valueOf(userId));
+		}
+		List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
+		for (Long userId : newUserIds) {
+			if (!oldUserIds.contains(userId)) {
+				authLogic.addUserToGroup(userId, groupId);
+			}
+		}
+		for (Long userId : oldUserIds) {
+			if (!newUserIds.contains(userId)) {
+				authLogic.removeUserFromGroup(userId, groupId);
+			}
+		}
+
 		// final GroupCard group = GroupCard.getOrCreate(groupId);
 		// final IDomain userGroupDomain =
 		// UserOperations.from(UserContext.systemContext()).domains().get(authLogic.USER_GROUP_DOMAIN_NAME);

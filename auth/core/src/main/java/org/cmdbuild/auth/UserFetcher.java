@@ -10,6 +10,8 @@ public interface UserFetcher {
 
 	List<CMUser> fetchUsersFromGroupId(Long groupId);
 
+	List<Long> fetchUserIdsFromGroupId(Long groupId);
+
 	CMUser fetchUserById(Long userId);
 	
 	List<CMUser> fetchAllUsers();

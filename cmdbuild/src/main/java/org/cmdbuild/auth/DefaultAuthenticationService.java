@@ -308,6 +308,18 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		}
 		return users;
 	}
+	
+	@Override
+	public List<Long> fetchUserIdsByGroupId(Long groupId) {
+		List<Long> users = Lists.newArrayList();
+		for (final UserFetcher userFetcher : userFetchers) {
+			users = userFetcher.fetchUserIdsFromGroupId(groupId);
+			if (!users.isEmpty()) {
+				break;
+			}
+		}
+		return users;
+	}
 
 	@Override
 	public CMUser fetchUserById(final Long userId) {

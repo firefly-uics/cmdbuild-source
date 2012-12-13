@@ -81,6 +81,22 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return usersForSpecifiedGroup;
 
 	}
+	@Override
+	public List<Long> fetchUserIdsFromGroupId(final Long groupId) {
+		final CMQueryResult result = view.select(anyAttribute(userClass())) //
+				.from(userClass()) //
+				.join(roleClass(), over(userGroupDomain())) //
+				.where(attribute(roleClass(), roleClass().getKeyAttributeName()), Operator.EQUALS, groupId) //
+				.run();
+		
+		final List<Long> userIdsForSpecifiedGroup = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			final CMCard userCard = row.getCard(userClass());
+			userIdsForSpecifiedGroup.add(userCard.getId());
+		}
+		return userIdsForSpecifiedGroup;
+		
+	}
 
 	private CMUser buildUserFromCard(final CMCard userCard) {
 		// FIXME: improve performances...
