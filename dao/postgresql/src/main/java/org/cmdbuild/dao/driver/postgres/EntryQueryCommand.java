@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper;
@@ -30,11 +31,11 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 
 class EntryQueryCommand implements LoggingSupport {
 
-	private final PostgresDriver driver;
+	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
 	private final QuerySpecs querySpecs;
 
-	EntryQueryCommand(final PostgresDriver driver, final JdbcTemplate jdbcTemplate, final QuerySpecs querySpecs) {
+	EntryQueryCommand(final DBDriver driver, final JdbcTemplate jdbcTemplate, final QuerySpecs querySpecs) {
 		this.driver = driver;
 		this.jdbcTemplate = jdbcTemplate;
 		this.querySpecs = querySpecs;

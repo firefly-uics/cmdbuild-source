@@ -33,9 +33,24 @@ public interface CMAttributeType<T> {
 		 * not a lookup attribute, it can return either null or an empty string
 		 * (yes, it is quite horrible).
 		 * 
-		 * @return the name of the lookup type
+		 * @return the name of the lookup type.
 		 */
 		String getLookupType();
+
+		/**
+		 * Returns if metadatas define it as a reference attribute.
+		 * 
+		 * @return {@code true} if it is a reference, {@code false} otherwise.
+		 */
+		boolean isReference();
+
+		/**
+		 * Returns the name of the domain for this attribute type. If it is not
+		 * a lookup attribute, it can return either null or an empty string.
+		 * 
+		 * @return the name of the domain.
+		 */
+		String getDomain();
 
 	}
 

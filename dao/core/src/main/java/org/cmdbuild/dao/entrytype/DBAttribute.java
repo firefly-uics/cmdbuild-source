@@ -10,6 +10,8 @@ public class DBAttribute implements CMAttribute {
 
 	public static class AttributeMetadata extends EntryTypeMetadata implements CMAttributeType.Meta {
 
+		public static final String REFERENCE_NS = "reference.";
+
 		public static final String BASEDSP = BASE_NS + "basedsp";
 		public static final String CLASSORDER = BASE_NS + "classorder";
 		public static final String DEFAULT = BASE_NS + "default";
@@ -18,21 +20,32 @@ public class DBAttribute implements CMAttribute {
 		public static final String INHERITED = BASE_NS + "inherited";
 		public static final String LOOKUP_TYPE = BASE_NS + "lookuptype";
 		public static final String MANDATORY = BASE_NS + "mandatory";
+		public static final String REFERENCE_DIRECT = BASE_NS + REFERENCE_NS + "direct";
+		public static final String REFERENCE_DOMAIN = BASE_NS + REFERENCE_NS + "domain";
+		public static final String REFERENCE_TYPE = BASE_NS + REFERENCE_NS + "type";
 		public static final String UNIQUE = BASE_NS + "unique";
+
+		private static final String NOT_LOOKUP_TYPE = null;
+		private static final String NOT_REFERENCE_TYPE = null;
 
 		@Override
 		public final boolean isLookup() {
-			return (getLookupType() != null);
+			return getLookupType() != NOT_LOOKUP_TYPE;
 		}
 
 		@Override
 		public final String getLookupType() {
-			final String lookupTypeName = get(LOOKUP_TYPE);
-			if (lookupTypeName == null || lookupTypeName.trim().isEmpty()) {
-				return null;
-			} else {
-				return lookupTypeName;
-			}
+			return defaultIfBlank(get(LOOKUP_TYPE), NOT_LOOKUP_TYPE);
+		}
+
+		@Override
+		public boolean isReference() {
+			return getDomain() != NOT_REFERENCE_TYPE;
+		}
+
+		@Override
+		public String getDomain() {
+			return defaultIfBlank(get(REFERENCE_DOMAIN), NOT_REFERENCE_TYPE);
 		}
 
 		public boolean isDisplayableInList() {

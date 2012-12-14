@@ -23,6 +23,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -35,103 +36,103 @@ public class Attribute {
 
 		BOOLEAN {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new BooleanAttributeType();
 			}
 		}, //
 		CHAR {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new CharAttributeType();
 			}
 		}, //
 		DATE {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new DateAttributeType();
 			}
-		}, // fieldModes.get(text);
+		},
 		DECIMAL {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
-				final Integer precision = attributeBuilder.precision;
-				final Integer scale = attributeBuilder.scale;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
+				final Integer precision = builder.precision;
+				final Integer scale = builder.scale;
 				return new DecimalAttributeType(precision, scale);
 			}
 		}, //
 		DOUBLE {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new DoubleAttributeType();
 			}
 		}, //
 		FOREIGNKEY {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 		}, //
 		INET {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new IpAddressAttributeType();
 			}
 		}, //
 		INTEGER {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new IntegerAttributeType();
 			}
 		}, //
 		LOOKUP {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
-				final String lookupType = attributeBuilder.lookupType;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
+				final String lookupType = builder.lookupType;
 				return new LookupAttributeType(lookupType);
 			}
 		}, //
 		REFERENCE {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
-				// TODO Auto-generated method stub
-				return null;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
+				final String domain = builder.domain;
+				return new ReferenceAttributeType(domain);
 			}
 		}, //
 		STRING {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
-				final Integer length = attributeBuilder.length;
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
+				final Integer length = builder.length;
 				return new StringAttributeType(length);
 			}
 		}, //
 		TIME {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new TimeAttributeType();
 			}
 		}, //
 		TIMESTAMP {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new DateTimeAttributeType();
 			}
 		}, //
 		TEXT {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new TextAttributeType();
 			}
 		}, //
 
 		UNDEFINED {
 			@Override
-			public CMAttributeType<?> buildFrom(final AttributeBuilder attributeBuilder) {
+			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
 				return new UndefinedAttributeType();
 			}
 		}; //
 
-		public abstract CMAttributeType<?> buildFrom(AttributeBuilder attributeBuilder);
+		public abstract CMAttributeType<?> buildFrom(AttributeBuilder builder);
 
 		public static AttributeTypeBuilder from(final String name) {
 			for (final AttributeTypeBuilder attributeType : values()) {
@@ -173,11 +174,26 @@ public class Attribute {
 		private Mode mode = Mode.WRITE;
 		private int index = -1;
 		private int classOrder = 0;
+		private String domain;
 		private final Set<Condition> conditions;
 
 		private AttributeBuilder() {
 			// use factory method
 			conditions = EnumSet.of(Condition.ACTIVE);
+		}
+
+		@Override
+		public Attribute build() {
+			Validate.isTrue(isNotBlank(name), "invalid name");
+			Validate.notNull(owner, "missing owner");
+			Validate.isTrue(owner > 0, "invalid owner");
+			description = defaultIfBlank(description, name);
+			calculateType();
+			return new Attribute(this);
+		}
+
+		private void calculateType() {
+			type = AttributeTypeBuilder.from(typeName).buildFrom(this);
 		}
 
 		public AttributeBuilder withName(final String name) {
@@ -273,18 +289,9 @@ public class Attribute {
 			return this;
 		}
 
-		@Override
-		public Attribute build() {
-			Validate.isTrue(isNotBlank(name), "invalid name");
-			Validate.notNull(owner, "missing owner");
-			Validate.isTrue(owner > 0, "invalid owner");
-			description = defaultIfBlank(description, name);
-			calculateType();
-			return new Attribute(this);
-		}
-
-		private void calculateType() {
-			type = AttributeTypeBuilder.from(typeName).buildFrom(this);
+		public AttributeBuilder withDomain(final String domain) {
+			this.domain = domain;
+			return this;
 		}
 
 	}

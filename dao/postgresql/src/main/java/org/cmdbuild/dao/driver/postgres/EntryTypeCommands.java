@@ -4,6 +4,8 @@ import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.cmdbuild.dao.driver.postgres.SqlType.createAttributeType;
+import static org.cmdbuild.dao.driver.postgres.SqlType.getSqlTypeString;
 import static org.cmdbuild.dao.driver.postgres.Utils.tableNameToDomainName;
 
 import java.sql.ResultSet;
@@ -16,10 +18,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cmdbuild.dao.driver.DBDriver;
-import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -57,9 +59,11 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9]+): ([^|]*))*");
 
+	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
 
-	EntryTypeCommands(final JdbcTemplate jdbcTemplate) {
+	EntryTypeCommands(final DBDriver driver, final JdbcTemplate jdbcTemplate) {
+		this.driver = driver;
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
@@ -194,7 +198,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				new Object[] { //
 				owner.getId(), //
 						definition.getName(), //
-						SqlType.getSqlTypeString(definition.getType()), //
+						getSqlTypeString(definition.getType()), //
 						definition.getDefaultValue(), //
 						definition.isMandatory(), //
 						definition.isUnique(), //
@@ -218,7 +222,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				new Object[] { //
 				owner.getId(), //
 						definition.getName(), //
-						SqlType.getSqlTypeString(definition.getType()), //
+						getSqlTypeString(definition.getType()), //
 						definition.getDefaultValue(), //
 						definition.isMandatory(), //
 						definition.isUnique(), //
@@ -295,6 +299,15 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final ReferenceAttributeType attributeType) {
+				final CMDomain domain = driver.findDomainByName(attributeType.domain);
+				append(DBAttribute.AttributeMetadata.REFERENCE_DIRECT, "false"); // TODO
+																					// really
+																					// needed?
+				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, domain.getName());
+				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict"); // TODO
+																					// really
+																					// needed?
+
 			}
 
 			@Override
@@ -340,9 +353,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	 * Domains
 	 */
 
-	public List<DBDomain> findAllDomains(final DBDriver driver) {
-		// needed for limit the amount of findAllClasses of the driver
-		final DBDriver innerDriver = new DefaultCachingDriver(driver);
+	public List<DBDomain> findAllDomains() {
 		// Exclude Map since we don't need it anymore!
 		final List<DBDomain> domainList = jdbcTemplate.query(
 				"SELECT domain_id, _cm_cmtable(domain_id) AS domain_name, _cm_comment_for_table_id(domain_id) AS domain_comment" //
@@ -357,8 +368,8 @@ public class EntryTypeCommands implements LoggingSupport {
 						final String comment = rs.getString("domain_comment");
 						final DomainMetadata meta = domainCommentToMetadata(comment);
 						// FIXME we should handle this in another way
-						final DBClass class1 = innerDriver.findClassByName(meta.get(DomainMetadata.CLASS_1));
-						final DBClass class2 = innerDriver.findClassByName(meta.get(DomainMetadata.CLASS_2));
+						final DBClass class1 = driver.findClassByName(meta.get(DomainMetadata.CLASS_1));
+						final DBClass class2 = driver.findClassByName(meta.get(DomainMetadata.CLASS_2));
 						final DBDomain domain = DBDomain.newDomain() //
 								.withName(name) //
 								.withId(id) //
@@ -383,8 +394,10 @@ public class EntryTypeCommands implements LoggingSupport {
 				.withId(id) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
 				// FIXME looks ugly!
-				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(), null)) //
-				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(), null)) //
+				// .withAttribute(new DBAttribute(DBRelation._1, new
+				// ReferenceAttributeType(id), null)) //
+				// .withAttribute(new DBAttribute(DBRelation._2, new
+				// ReferenceAttributeType(id), null)) //
 				.withAllMetadata(domainCommentToMetadata(domainComment)) //
 				.withClass1(definition.getClass1()) //
 				.withClass2(definition.getClass2()) //
@@ -403,8 +416,8 @@ public class EntryTypeCommands implements LoggingSupport {
 				.withId(id) //
 				.withAllAttributes(userEntryTypeAttributesFor(id)) //
 				// FIXME looks ugly!
-				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(), null)) //
-				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(), null)) //
+				.withAttribute(new DBAttribute(DBRelation._1, new ReferenceAttributeType(definition.getName()), null)) //
+				.withAttribute(new DBAttribute(DBRelation._2, new ReferenceAttributeType(definition.getName()), null)) //
 				.withAllMetadata(domainCommentToMetadata(domainComment)) //
 				.withClass1(definition.getClass1()) //
 				.withClass2(definition.getClass2()) //
@@ -458,8 +471,7 @@ public class EntryTypeCommands implements LoggingSupport {
 								final String comment = rs.getString("comment");
 								final AttributeMetadata meta = attributeCommentToMetadata(comment);
 								meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
-								final CMAttributeType<?> type = SqlType.createAttributeType(rs.getString("sql_type"),
-										meta);
+								final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
 								return new DBAttribute(name, type, meta);
 							}
 						});
@@ -492,7 +504,7 @@ public class EntryTypeCommands implements LoggingSupport {
 						}
 						for (int i = 0; i < argIo.length; ++i) {
 							final String name = argNames[i];
-							final CMAttributeType<?> type = SqlType.createAttributeType(argTypes[i]);
+							final CMAttributeType<?> type = createAttributeType(argTypes[i]);
 							final InputOutput io = InputOutput.valueOf(argIo[i]);
 							switch (io) {
 							case i:

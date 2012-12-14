@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -73,11 +74,13 @@ public enum SqlType {
 	inet(IpAddressAttributeType.class) {
 	// nothing to implement, just for keep ordered
 	}, //
-	int4(IntegerAttributeType.class, LookupAttributeType.class) {
+	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class) {
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
 			if (meta.isLookup()) {
 				return LookupAttributeType.class;
+			} else if (meta.isReference()) {
+				return ReferenceAttributeType.class;
 			} else {
 				return IntegerAttributeType.class;
 			}
@@ -88,6 +91,10 @@ public enum SqlType {
 			if (meta.isLookup()) {
 				final Object[] params = new Object[1];
 				params[0] = meta.getLookupType();
+				return params;
+			} else if (meta.isReference()) {
+				final Object[] params = new Object[1];
+				params[0] = meta.getDomain();
 				return params;
 			} else {
 				return super.getConstructorParams(stringParams, meta);
@@ -194,6 +201,16 @@ public enum SqlType {
 
 		@Override
 		public String getLookupType() {
+			return null;
+		}
+
+		@Override
+		public boolean isReference() {
+			return false;
+		}
+
+		@Override
+		public String getDomain() {
 			return null;
 		}
 

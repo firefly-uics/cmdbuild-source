@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.sql.DataSource;
 
 import org.cmdbuild.dao.driver.AbstractDBDriver;
+import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -72,7 +73,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Collection<DBDomain> findAllDomains() {
-		return doToTypes().findAllDomains(this);
+		return doToTypes().findAllDomains();
 	}
 
 	@Override
@@ -88,10 +89,6 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {
 		doToTypes().deleteDomain(dbDomain);
-	}
-
-	private EntryTypeCommands doToTypes() {
-		return new EntryTypeCommands(jdbcTemplate);
 	}
 
 	@Override
@@ -116,7 +113,21 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public CMQueryResult query(final QuerySpecs query) {
-		return new EntryQueryCommand(this, jdbcTemplate, query).run();
+		return new EntryQueryCommand(cachingDriverForThis(), jdbcTemplate, query).run();
+	}
+
+	private EntryTypeCommands doToTypes() {
+		return new EntryTypeCommands(cachingDriverForThis(), jdbcTemplate);
+	}
+
+	/**
+	 * Needed for limit the amount of findAll* calls executed within the
+	 * commands.
+	 * 
+	 * @return a {@link DefaultCachingDriver} instance for this.
+	 */
+	private DefaultCachingDriver cachingDriverForThis() {
+		return new DefaultCachingDriver(this);
 	}
 
 	@Override

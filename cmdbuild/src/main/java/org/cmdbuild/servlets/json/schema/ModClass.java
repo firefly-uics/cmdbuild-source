@@ -366,6 +366,7 @@ public class ModClass extends JSONBase {
 				.withPrecision(precision) //
 				.withScale(scale) //
 				.withLookupType(lookupType) //
+				//.withDomain(Long.valueOf(domainId)) // FIXME needs name
 				// ...
 				.withDefaultValue(defaultValue) //
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
@@ -373,8 +374,6 @@ public class ModClass extends JSONBase {
 				.thatIsMandatory(isNotNull) //
 				.thatIsUnique(isUnique) //
 				.thatIsActive(isActive) //
-				// @Parameter(value = "idDomain", required = false) int
-				// domainId, //
 				// @Parameter(value = "fieldFilter", required = false) String
 				// fieldFilter, //
 				// @Parameter(value = "fkDestination", required = false) int
