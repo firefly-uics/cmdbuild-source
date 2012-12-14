@@ -559,7 +559,9 @@ public class ModCard extends JSONBase {
 		fillReferenceAttributes(card, attributes, userCtx.relations());
 
 		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		gisLogic.updateFeatures(card, attributes);
+		if (gisLogic.isGisEnabled()) {
+			gisLogic.updateFeatures(card, attributes);
+		}
 
 		if (created) {
 			serializer.put("id", card.getId());
