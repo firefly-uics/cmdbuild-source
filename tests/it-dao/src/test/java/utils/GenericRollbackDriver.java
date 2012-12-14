@@ -281,6 +281,11 @@ public class GenericRollbackDriver implements DBDriver {
 					return existingAttribute.getClassOrder();
 				}
 
+				@Override
+				public String getEditorType() {
+					return existingAttribute.getEditorType();
+				}
+
 			};
 		}
 
@@ -372,6 +377,11 @@ public class GenericRollbackDriver implements DBDriver {
 				@Override
 				public int getClassOrder() {
 					return dbAttribute.getClassOrder();
+				}
+
+				@Override
+				public String getEditorType() {
+					return dbAttribute.getEditorType();
 				}
 
 			});

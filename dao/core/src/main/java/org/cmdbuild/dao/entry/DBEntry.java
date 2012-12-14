@@ -101,11 +101,11 @@ public abstract class DBEntry implements CMValueSet {
 	protected void saveOnly() {
 		id = driver.create(this);
 	}
-	
+
 	protected void delete() {
 		driver.delete(this);
 	}
-	
+
 	protected void updateOnly() {
 		driver.update(this);
 	}

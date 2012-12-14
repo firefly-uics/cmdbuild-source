@@ -116,13 +116,11 @@ public interface CMDataView {
 	 * @return a modifiable card from the immutable card
 	 */
 	CMCardDefinition modifyCard(CMCard card);
-	
+
 	CMRelationDefinition newRelation(CMDomain domain);
-	
+
 	CMRelationDefinition modifyRelation(CMRelation relation);
-	
-	
-	
+
 	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
 	 * 

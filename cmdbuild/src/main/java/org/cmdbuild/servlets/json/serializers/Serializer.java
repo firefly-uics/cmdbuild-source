@@ -409,6 +409,7 @@ public class Serializer {
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
+				attributes.put("editorType", attribute.getEditorType());
 			}
 
 			@Override
@@ -434,7 +435,6 @@ public class Serializer {
 				attributes.put("index", attribute.getIndex());
 				attributes.put("defaultvalue", attribute.getDefaultValue());
 				attributes.put("group", attribute.getGroup());
-				// jattr.put("editorType", attribute.getEditorType());
 				// addMetadata(jattr, attribute);
 
 				int absoluteClassOrder = attribute.getClassOrder();

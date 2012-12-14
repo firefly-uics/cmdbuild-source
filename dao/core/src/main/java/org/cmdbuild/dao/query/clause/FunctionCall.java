@@ -97,6 +97,11 @@ public class FunctionCall implements CMFunctionCall {
 					return 0;
 				}
 
+				@Override
+				public String getEditorType() {
+					return EMPTY;
+				}
+
 			};
 		}
 	};

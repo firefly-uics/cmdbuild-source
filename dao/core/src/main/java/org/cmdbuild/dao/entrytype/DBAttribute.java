@@ -15,6 +15,7 @@ public class DBAttribute implements CMAttribute {
 		public static final String BASEDSP = BASE_NS + "basedsp";
 		public static final String CLASSORDER = BASE_NS + "classorder";
 		public static final String DEFAULT = BASE_NS + "default";
+		public static final String EDITOR_TYPE = BASE_NS + "editor.type";
 		public static final String GROUP = BASE_NS + "group";
 		public static final String INDEX = BASE_NS + "index";
 		public static final String INHERITED = BASE_NS + "inherited";
@@ -92,6 +93,10 @@ public class DBAttribute implements CMAttribute {
 
 		public int getClassOrder() {
 			return Integer.parseInt(defaultIfBlank(get(CLASSORDER), "0"));
+		}
+
+		public String getEditorType() {
+			return get(EDITOR_TYPE);
 		}
 
 	}
@@ -179,6 +184,11 @@ public class DBAttribute implements CMAttribute {
 	@Override
 	public int getClassOrder() {
 		return meta.getClassOrder();
+	}
+
+	@Override
+	public String getEditorType() {
+		return meta.getEditorType();
 	}
 
 	/*

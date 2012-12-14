@@ -156,5 +156,10 @@ public class AttributeWrapper implements CMAttribute {
 	public int getClassOrder() {
 		return attribute.getClassOrder();
 	}
+	
+	@Override
+	public String getEditorType() {
+		return attribute.getEditorType();
+	}
 
 }

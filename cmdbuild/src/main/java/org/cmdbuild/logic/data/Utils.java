@@ -210,6 +210,11 @@ class Utils {
 				return attribute.getClassOrder();
 			}
 
+			@Override
+			public String getEditorType() {
+				return attribute.getEditorType();
+			}
+
 		};
 	}
 
@@ -280,6 +285,11 @@ class Utils {
 			@Override
 			public int getClassOrder() {
 				return existingAttribute.getClassOrder();
+			}
+
+			@Override
+			public String getEditorType() {
+				return existingAttribute.getEditorType();
 			}
 
 		};
@@ -354,6 +364,11 @@ class Utils {
 				return existingAttribute.getClassOrder();
 			}
 
+			@Override
+			public String getEditorType() {
+				return existingAttribute.getEditorType();
+			}
+
 		};
 	}
 
@@ -426,6 +441,11 @@ class Utils {
 				return attribute.getClassOrder();
 			}
 
+			@Override
+			public String getEditorType() {
+				return existingAttribute.getEditorType();
+			}
+
 		};
 	}
 
@@ -495,6 +515,11 @@ class Utils {
 			@Override
 			public int getClassOrder() {
 				return existingAttribute.getClassOrder();
+			}
+
+			@Override
+			public String getEditorType() {
+				return existingAttribute.getEditorType();
 			}
 
 		};

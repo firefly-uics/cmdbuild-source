@@ -92,6 +92,11 @@ public class UserAttribute implements CMAttribute {
 		return inner.getClassOrder();
 	}
 
+	@Override
+	public String getEditorType() {
+		return inner.getEditorType();
+	}
+
 	/*
 	 * Object overrides
 	 */

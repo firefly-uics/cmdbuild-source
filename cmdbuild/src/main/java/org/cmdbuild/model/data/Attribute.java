@@ -175,6 +175,7 @@ public class Attribute {
 		private int index = -1;
 		private int classOrder = 0;
 		private String domain;
+		private String editorType;
 		private final Set<Condition> conditions;
 
 		private AttributeBuilder() {
@@ -294,6 +295,11 @@ public class Attribute {
 			return this;
 		}
 
+		public AttributeBuilder withEditorType(final String editorType) {
+			this.editorType = editorType;
+			return this;
+		}
+
 	}
 
 	public static AttributeBuilder newAttribute() {
@@ -309,6 +315,7 @@ public class Attribute {
 	private final Mode mode;
 	private final int index;
 	private final int classOrder;
+	private final String editorType;
 	private final Set<Condition> conditions;
 
 	private Attribute(final AttributeBuilder builder) {
@@ -321,6 +328,7 @@ public class Attribute {
 		this.mode = builder.mode;
 		this.index = builder.index;
 		this.classOrder = builder.classOrder;
+		this.editorType = builder.editorType;
 		this.conditions = builder.conditions;
 	}
 
@@ -374,6 +382,10 @@ public class Attribute {
 
 	public int getClassOrder() {
 		return classOrder;
+	}
+
+	public String getEditorType() {
+		return editorType;
 	}
 
 	@Override
