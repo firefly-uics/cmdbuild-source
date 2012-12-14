@@ -1,9 +1,9 @@
 package org.cmdbuild.dao.driver.postgres;
 
-import static com.google.common.base.CharMatcher.DIGIT;
-import static com.google.common.base.CharMatcher.inRange;
 import static java.lang.String.format;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
+import static com.google.common.base.CharMatcher.DIGIT;
+import static com.google.common.base.CharMatcher.inRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,10 @@ public class Utils {
 	}
 
 	public static String quoteIdent(final String name) {
-		if (inRange('a', 'z').or(DIGIT).matchesAllOf(name)) {
-			return name;
-		} else {
+		 if (inRange('a', 'z').or(DIGIT).matchesAllOf(name)) {
+		 return name;
+		 } else
+		{
 			return format("\"%s\"", name.replace("\"", "\"\""));
 		}
 	}

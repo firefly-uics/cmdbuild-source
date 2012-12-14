@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.SystemUtils;
 import org.cmdbuild.config.DatabaseProperties;
+import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.elements.database.DatabaseConfigurator;
@@ -92,7 +93,7 @@ public class DBInitializer implements LoggingSupport {
 
 		};
 		dbConfigurator = new DatabaseConfigurator(dbConfiguration);
-		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource());
+		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(), new DefaultTypeObjectCache());
 	}
 
 	private Properties readDatabaseProperties() {
