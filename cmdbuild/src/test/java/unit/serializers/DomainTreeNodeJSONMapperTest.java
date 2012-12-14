@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.cmdbuild.model.DomainTreeNode;
+import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +18,7 @@ public class DomainTreeNodeJSONMapperTest {
 	public void serializeSingleNode() throws JSONException {
 		DomainTreeNode treeNode = buildDummyTreeNode(new Long(1));
 
-		JSONObject jsonNode = DomainTreeNodeJSONMapper.serialize(treeNode);
+		JSONObject jsonNode = DomainTreeNodeJSONMapper.serialize(treeNode, true);
 		assertEquals(true, jsonNode.get("direct"));
 		assertEquals("TargetClassName", jsonNode.get("targetClassName"));
 		assertEquals("TargetClassDescription", jsonNode.get("targetClassDescription"));
@@ -40,7 +40,7 @@ public class DomainTreeNodeJSONMapperTest {
 		root.addChildNode(anotherChild);
 		anotherChild.addChildNode(aGrandson);
 
-		JSONObject jsonRoot = DomainTreeNodeJSONMapper.serialize(root);
+		JSONObject jsonRoot = DomainTreeNodeJSONMapper.serialize(root, true);
 
 		JSONArray jsonChildNodes = (JSONArray) jsonRoot.get("childNodes");
 		assertEquals(2, jsonChildNodes.length());

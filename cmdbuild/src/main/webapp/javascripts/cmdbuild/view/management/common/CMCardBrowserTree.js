@@ -2,6 +2,7 @@
 
 	Ext.define('CMDBuild.model.CMCardBrowserNodeModel', {
 		extend : 'Ext.data.Model',
+		idProperty: "cardId",
 		fields : [ {
 			name : 'text',
 			type : 'string'
@@ -17,13 +18,7 @@
 		}, {
 			name : 'classId',
 			type : 'int'
-		}, {
-			name : 'expansibleDomains',
-			type : 'auto'
-		}, {
-			name : 'childrenLoaded',
-			type : 'boolean'
-		} ],
+		}],
 
 		getCardId: function() {
 			return this.get("cardId");
@@ -45,11 +40,6 @@
 			return this.get("childrenLoaded");
 		},
 
-		addLoadedChildren: function(child) {
-			this.set("childrenLoaded", true);
-			return this.appendChild(child);
-		},
-
 		isBindingCard: function(card) {
 			var out = false;
 			if (card 
@@ -60,6 +50,23 @@
 			}
 
 			return out;
+		},
+
+		setChecked: function(checked) {
+			this.set("checked", checked);
+		},
+
+		isChecked: function() {
+			return this.get("checked");
+		},
+
+		checkAncestors: function(cb) {
+			var node = this;
+			while (node) {
+				node.setChecked(true);
+				cb(node);
+				node = node.parentNode;
+			}
 		}
 	});
 
@@ -87,18 +94,16 @@
 		onCardBrowserTreeCardSelected: Ext.emptyFn,
 
 		/**
-		 * Called after a new node is added
-		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The tree who call the method
-		 * @param {Ext.data.NodeInterface} targetNode The node that receive the new child
-		 * @param {Ext.data.NodeInterface} childNode The inserted node
-		 */
-		onCardBrowserTreeItemAdded: Ext.emptyFn,
-
-		/**
 		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The activated panel
 		 * @param {integer} activationCount The number of times the panel was activated
 		 */
-		onCardBrowserTreeActivate: Ext.empfyFn
+		onCardBrowserTreeActivate: Ext.empfyFn,
+
+		/**
+		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The activated panel
+		 * @param {Ext.data.NodeInterface} node The node that was added 
+		 */
+		onCardBrowserTreeNodeAppend: Ext.emptyFn
 	});
 
 	Ext.define("CMDBuild.view.management.CMCardBrowserTree", {
@@ -131,12 +136,19 @@
 			var SHOW_ICON = 'images/icons/bullet_go.png';
 			var HIDE_ICON = 'images/icons/cancel.png';
 
+			this.tbar = ['->', {
+				iconCls: "arrow_refresh",
+				handler: function() {
+					me.dataSource.refresh();
+				}
+			}];
+
 			this.columns = [{
 				xtype : 'treecolumn',
 				flex : 2,
 				sortable : false,
 				dataIndex : 'text',
-				menuDisabled : true,
+				menuDisabled : true
 			}, {
 				xtype : 'actioncolumn',
 				width : 40,
@@ -198,9 +210,6 @@
 			this.callParent(arguments);
 
 			this.mon(this, "afteritemexpand", function(node) {
-				if (node.sortingWasDeferred) {
-					this.sortChildren(node);
-				}
 				this.callDelegates("onCardBrowserTreeItemExpand", [this, node]);
 			}, this);
 
@@ -214,8 +223,9 @@
 				if (!node.isRoot()) {
 					this.callDelegates("onCardBrowserTreeCheckChange", [this, node, checked, deeply]);
 				} else {
-					for (var i=0, l=node.childNodes.length; i<l; ++i) {
-						var c = node.childNodes[i];
+					var children = node.childNodes || node.childrent || [];
+					for (var i=0, l=children.length; i<l; ++i) {
+						var c = children[i];
 						c.set("checked", checked);
 						// the set method does not trigger the checkchange event, so call the delegate by hand
 						this.callDelegates("onCardBrowserTreeCheckChange", [this, c, checked, deeply]);
@@ -225,6 +235,15 @@
 
 			this.mon(this, "activate", function(treePanel) {
 				this.callDelegates("onCardBrowserTreeActivate", [this, ++this.activationCount]);
+			}, this);
+
+			this.mon(this, "beforeitemappend", function(tree, node) {
+				// sync the check state firing the checkchange event
+				var deeply = false;
+				this.callDelegates("onCardBrowserTreeCheckChange", [this, node, node.get("checked"), deeply]);
+
+				// notify the append
+				this.callDelegates("onCardBrowserTreeNodeAppend", [this, node]);
 			}, this);
 		},
 
@@ -266,39 +285,51 @@
 			}
 		},
 
-		addChildToNode: function(targetNode, childNode) {
-			var node = null;
-
-			if (targetNode && childNode) {
-				node = targetNode.appendChild(childNode);
-				this.sortChildren(targetNode);
-				this.callDelegates("onCardBrowserTreeItemAdded", [this, targetNode, node]);
+		checkCardNodeAncestors: function(card) {
+			if (!card) {
+				return;
 			}
 
-			return node;
-		},
+			var r = this.getRootNode();
+			var me = this;
+			if (r) {
+				var node = r.findChildBy(function(child) {
+						return child.isBindingCard(card);
+					}, null, true);
 
-		sortChildren: function(node) {
-			// Sort silently have no effect to the
-			// interface. So if the node is expanded
-			// fire the event to sync the interface,
-			// otherwise, do it silently to cause no
-			// change to the interface. In detail, it
-			// shows the child also if the parent is
-			// collapsed
-			var silently = false;
-			var recursive = false;
-			if (node.isExpanded()) {
-				node.sort(sortNodeCriteria, recursive, silently);
-				node.sortingWasDeferred = false;
-			} else {
-				node.sortingWasDeferred = true;
+				if (node) {
+					// pass a function called for each node checked
+					// that call the delegate method to notify the checked
+					// Is necessary because the set of the node does not
+					// fire the checkchange event
+					node.checkAncestors(function(n) {
+						var deeply = false;
+						me.callDelegates("onCardBrowserTreeCheckChange", [me, n, n.isChecked(), deeply]);
+					});
+				}
 			}
 		},
 
-		addLoadedChildren: function(targetNode, child) {
-			targetNode.set("childrenLoaded", true);
-			return this.addChildToNode(targetNode, child);
+		selectCardNodePath: function(card) {
+			if (!card) {
+				return;
+			}
+
+			var r = this.getRootNode();
+			var me = this;
+			if (r) {
+				var node = r.findChildBy(function(child) {
+						return child.isBindingCard(card);
+					}, null, true);
+
+				var cb = Ext.Function.createDelayed(function() {
+					me.selectNodeSilently(node);
+				}, 500);
+
+				if (node) {
+					me.selectPath(node.getPath(), null, null, cb);
+				}
+			}
 		},
 
 		udpateCheckForLayer: function(layer) {
@@ -307,7 +338,7 @@
 				deep = true,
 				node = null;
 
-			var root = this.store.getRootNode();
+			var root = store.getRootNode();
 			if (root) {
 				 node = root.findChildBy(function(node) {
 					return node.data.cardId == layer.geoAttribute.name;
@@ -319,18 +350,6 @@
 			}
 		}
 	});
-
-	function sortNodeCriteria(a, b) {
-		var textA = a.get("text");
-		var textB = b.get("text");
-
-		if (textA > textB) {
-			return 1;
-		} else if (textA < textB) {
-			return -1;
-		}
-		return 0;
-	}
 
 	function deselectAllSilently(me) {
 		try {

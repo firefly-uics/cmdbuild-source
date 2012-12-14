@@ -9,10 +9,12 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
+import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.model.DomainTreeNode;
+import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
+import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;
@@ -165,11 +167,21 @@ public class Gis extends JSONBase {
 		DomainTreeNode root = logic.getGisTreeNavigation();
 		JSONObject response = new JSONObject();
 		if (root != null) {
-			response.put("root", DomainTreeNodeJSONMapper.serialize(root));
+			response.put("root", DomainTreeNodeJSONMapper.serialize(root, true));
 			response.put("geoServerLayersMapping",
 				GeoJSONSerializer.serialize(logic.getGeoServerLayerMapping()));
 		}
 
+		return response;
+	}
+
+	@JSONExported
+	public JSONObject expandDomainTree(UserContext userCtx) throws JSONException {
+		final JSONObject response = new JSONObject();
+		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
+		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
+
+		response.put("root", new JSONObject(logic.expandDomainTree(dataAccesslogic)));
 		return response;
 	}
 

@@ -119,7 +119,7 @@ CMDBuild.ServiceProxy.geoServer = {
 
 CMDBuild.ServiceProxy.gis = {
 	getGisTreeNavigation: function(config) {
-		config.method = "POST";
+		config.method = "GET";
 		config.url = "services/json/gis/getgistreenavigation";
 
 		CMDBuild.Ajax.request(config);
@@ -135,6 +135,14 @@ CMDBuild.ServiceProxy.gis = {
 	removeGisTreeNavigation: function(config) {
 		config.method = "POST";
 		config.url = "services/json/gis/removegistreenavigation";
+
+		CMDBuild.Ajax.request(config);
+	},
+
+	expandDomainTree: function(config) {
+		config.method = "GET";
+		config.url = "services/json/gis/expanddomaintree";
+		config.timeout = 300000;
 
 		CMDBuild.Ajax.request(config);
 	},

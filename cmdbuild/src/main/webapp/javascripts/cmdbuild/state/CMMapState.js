@@ -201,6 +201,8 @@
 
 		this.featureVisibilityCatalog = new CMDBuild.state.CMFeatureVisibilityCatalog();
 
+		this.geoServerLayersVisibility = {};
+
 		/**
 		 * @memberOf CMMapState
 		 * @private
@@ -286,6 +288,14 @@
 		this.isFeatureVisible = function(className, cardId) {
 			return this.featureVisibilityCatalog.isFeatureVisible(className, cardId);
 		};
+
+		this.setGeoServerLayerVisibility = function(layerName, visible) {
+			this.geoServerLayersVisibility[layerName] = visible;
+		};
+
+		this.isGeoServerLayerVisible = function(layerName) {
+			return this.geoServerLayersVisibility[layerName];
+		}
 	};
 
 })();

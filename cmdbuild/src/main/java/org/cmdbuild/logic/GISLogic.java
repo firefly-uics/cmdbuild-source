@@ -1,15 +1,14 @@
 package org.cmdbuild.logic;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.config.GisProperties;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
@@ -18,7 +17,10 @@ import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.model.DomainTreeNode;
+import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
+import org.cmdbuild.model.domainTree.DomainTreeCardNode;
+import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.gis.GeoFeature;
@@ -249,6 +251,117 @@ public class GISLogic {
 		return domainTreeStore.getDomainTree(DOMAIN_TREE_TYPE);
 	}
 
+	public DomainTreeCardNode expandDomainTree(DataAccessLogic dataAccesslogic) {
+		final Map<String, Long> domainIds = getDomainIds(dataAccesslogic);
+		final Map<Long, DomainTreeCardNode> nodes = new HashMap<Long, DomainTreeCardNode>();
+
+		DomainTreeNode root = this.getGisTreeNavigation();
+		DomainTreeCardNode rootCardNode = new DomainTreeCardNode();
+
+		if (root != null) {
+			rootCardNode.setText(root.getTargetClassDescription());
+			rootCardNode.setExpanded(true);
+			rootCardNode.setLeaf(false);
+
+			nodes.put(rootCardNode.getCardId(), rootCardNode);
+
+			final ITable table = UserContext.systemContext().tables().get(root.getTargetClassName());
+
+			for (ICard card:table.cards().list()) {
+				DomainTreeCardNode node = new DomainTreeCardNode();
+				node.setText(card.getDescription());
+				node.setClassName(card.getSchema().getName());
+				node.setClassId(new Long(card.getSchema().getId()));
+				node.setCardId(new Long(card.getId()));
+				node.setLeaf(false);
+
+				rootCardNode.addChild(node);
+				nodes.put(node.getCardId(), node);
+			}
+
+			fetchRelationsByDomain(dataAccesslogic, domainIds, root, nodes);
+			rootCardNode.sortByText();
+			setDefaultCheck(nodes);
+		}
+
+		return rootCardNode;
+	}
+
+	// the default check is that:
+	// identify the base nodes, AKA the nodes created expanding the base domain
+	// this nodes represents the base level, and we want that only the first child
+	// of a siblings group was checked. Also all the ancestors of this node must be checked
+	private void setDefaultCheck(Map<Long, DomainTreeCardNode> nodes) {
+		Map<Object, DomainTreeCardNode> visitedNodes = new HashMap<Object, DomainTreeCardNode>();
+
+		for (DomainTreeCardNode node:nodes.values()) {
+			if (node.isBaseNode()) {
+				DomainTreeCardNode parent = node.parent();
+				if (parent != null 
+						&& !visitedNodes.containsKey(parent.getCardId())) {
+
+					parent.getChildren().get(0).setChecked(true, true, true);
+					visitedNodes.put(parent.getCardId(), parent);
+				}
+			}
+		}
+	}
+
+	private void fetchRelationsByDomain(
+			final DataAccessLogic dataAccesslogic,
+			final Map<String, Long> domainIds,
+			final DomainTreeNode root,
+			final Map<Long, DomainTreeCardNode> nodes) {
+
+		final Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain = new HashMap<Object, Map<Object, List<RelationInfo>>>();
+
+		for (DomainTreeNode domainTreeNode: root.getChildNodes()) {
+			Long domainId = domainIds.get(domainTreeNode.getDomainName());
+			String querySource = domainTreeNode.isDirect() ? "_1" : "_2";
+			DomainWithSource dom = DomainWithSource.create(domainId, querySource);
+			Map<Object, List<RelationInfo>> relations = dataAccesslogic.relationsBySource(root.getTargetClassName(), dom);
+			relationsByDomain.put(domainId, relations);
+			boolean leaf = domainTreeNode.getChildNodes().size() == 0;
+			boolean baseNode = domainTreeNode.isBaseNode();
+			fillNodes(nodes, relationsByDomain, leaf, baseNode);
+			fetchRelationsByDomain(dataAccesslogic, domainIds, domainTreeNode, nodes);
+		}
+	}
+
+	private void fillNodes(Map<Long, DomainTreeCardNode> nodes,
+		Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain,
+		boolean leaf,
+		boolean baseNode) {
+
+		for (Map<Object, List<RelationInfo>> relationsBySource: relationsByDomain.values()) {
+			for (Object sourceCardId:relationsBySource.keySet()) {
+				DomainTreeCardNode parent = nodes.get(sourceCardId);
+
+				if (parent == null) {
+					continue;
+				}
+
+				for (RelationInfo ri:relationsBySource.get(sourceCardId)) {
+					DomainTreeCardNode child = new DomainTreeCardNode();
+					String text = ri.getTargetDescription();
+					if (text == null || text.equals("")) {
+						text = ri.getTargetCode();
+					}
+
+					child.setText(text);
+					child.setCardId((Long)ri.getTargetId());
+					child.setClassId((Long)ri.getTargetType().getId());
+					child.setClassName(ri.getTargetType().getName());
+					child.setLeaf(leaf);
+					child.setBaseNode(baseNode);
+
+					parent.addChild(child);
+					nodes.put(child.getCardId(), child);
+				}
+			}
+		}
+	}
+
 	/* private methods */
 
 	private static ITable createGeoAttributeTable(ITable masterTable, LayerMetadata layerMetadata) {
@@ -313,6 +426,16 @@ public class GISLogic {
 	private String fullName(String masterTableName, String name) {
 		String fullName = String.format(GEO_TABLE_NAME_FORMAT, masterTableName, name);
 		return fullName;
+	}
+
+	private Map<String, Long> getDomainIds(DataAccessLogic dataAccessLogic) {
+		final Map<String, Long> domainIds = new HashMap<String, Long>();
+
+		for(CMDomain d:dataAccessLogic.findAllDomains()) {
+			domainIds.put(d.getName(), new Long(d.getId()));
+		}
+
+		return domainIds;
 	}
 
 	public class ClassMapping {

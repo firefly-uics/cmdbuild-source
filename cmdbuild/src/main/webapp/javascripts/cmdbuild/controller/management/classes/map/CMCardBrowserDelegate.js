@@ -28,27 +28,21 @@
 			}
 		},
 
-		onCardBrowserTreeItemExpand: function(tree, node) {
-			tree.dataSource.loadChildren(node);
-		},
+		onCardBrowserTreeItemExpand: function(tree, node) {},
 
 		onCardBrowserTreeCardSelected: function(cardBaseInfo) {
-			_CMMainViewportController.openCard(cardBaseInfo);
-		},
-
-		onCardBrowserTreeItemAdded: function(tree, targetNode, newNode) {
-			var card = _CMCardModuleState.card;
-			var cardBrowserPanel = this.master.mapPanel.getCardBrowserPanel();
-			if (cardBrowserPanel
-					&& newNode.isBindingCard(card)) {
-				cardBrowserPanel.selectNodeSilently(newNode);
+			if (cardBaseInfo.IdClass > 0) {
+				_CMMainViewportController.openCard(cardBaseInfo);
 			}
 		},
 
-		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {
-			// init the cardBrowserDataSource
-			if (activationCount == 1) {
-				new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardBrowserTree, this.master.mapState);
+		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {},
+
+		onCardBrowserTreeNodeAppend: function(cardBrowserTree, node) {
+			if (cardBrowserTree
+					&& node.isBindingCard(_CMCardModuleState.card)) {
+
+				cardBrowserTree.selectNodeSilently(node);
 			}
 		}
 	});
@@ -60,14 +54,8 @@
 			return;
 		}
 
-		if (node.didChildrenLoaded()) {
-			var children = node.childNodes || [];
-			setChildrenFeaturesVisibility(tree, master, checked, children, true);
-		} else {
-			tree.dataSource.loadChildren(node, function(children) {
-				setChildrenFeaturesVisibility(tree, master, checked, children, true);
-			});
-		}
+		var children = node.childNodes || node.children || [];
+		setChildrenFeaturesVisibility(tree, master, checked, children, true);
 	}
 
 	function setCardFeaturesVisibility(tree, master, node, visibility) {
@@ -89,7 +77,9 @@
 	}
 
 	function setGeoserverLayerVisibility(master, node, checked) {
-		var l = master.map.getGeoServerLayerByName(node.data.cardId);
+		var layerName = node.data.cardId;
+		master.mapState.setGeoServerLayerVisibility(layerName, checked);
+		var l = master.map.getGeoServerLayerByName(layerName);
 		if (l) {
 			l.setVisibility(checked);
 		}

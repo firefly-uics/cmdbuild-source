@@ -27,6 +27,10 @@
 
 				this.cmIsInEditing = false;
 
+				// init the map state
+				this.mapState = new CMDBuild.state.CMMapState(this);
+				_CMMapState = this.mapState;
+
 				// set the switcher controller as a map delegate
 				var layerSwitcher = this.mapPanel.getLayerSwitcherPanel();
 				this.mapPanel.addDelegate(
@@ -39,6 +43,7 @@
 				// set me as a delegate of the cardBrowser
 				var cardbrowserPanel = this.mapPanel.getCardBrowserPanel();
 				if (cardbrowserPanel) {
+					new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardbrowserPanel, this.mapState);
 					cardbrowserPanel.addDelegate(new CMDBuild.controller.management.classes.map.CMCardBrowserDelegate(this));
 				}
 
@@ -71,8 +76,6 @@
 				// add me to the CMCardModuleStateDelegates
 				_CMCardModuleState.addDelegate(this);
 
-				this.mapState = new CMDBuild.state.CMMapState(this);
-				_CMMapState = this.mapState;
 				this.map.events.register("zoomend", this, onZoomEnd);
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
@@ -85,7 +88,6 @@
 			this.mapPanel.updateMap(entryType);
 			// then do something build new layers
 			_CMCache.getVisibleLayersForEntryTypeName(entryType.get("name"), function(layers) {
-				// TODO the sorting does not work
 				var orderedAttrs = sortAttributesByIndex(layers);
 				me.mapState.update(orderedAttrs, me.map.getZoom());
 				me.map.activateStrategies(true);
@@ -134,7 +136,8 @@
 
 			// to sync the cardBrowserPanelSelection
 			if (this.mapPanel.getCardBrowserPanel()) {
-				this.mapPanel.getCardBrowserPanel().selectCardSilently(card);
+				this.mapPanel.getCardBrowserPanel().checkCardNodeAncestors(card);
+				this.mapPanel.getCardBrowserPanel().selectCardNodePath(card);
 			}
 
 			// to sync the miniCardGrid
@@ -172,6 +175,8 @@
 				if (layers.length > 0) {
 					var layer = layers[0];
 					if (me.map.getZoom() < layer.minZoom ) {
+						// change the zoom to the minimum to
+						// show the feature
 						me.map.setCenter(me.map.getCenter(), layer.minZoom);
 					}
 					CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
@@ -324,15 +329,28 @@
 	});
 
 	function onZoomEnd() {
-		var zoom = this.map.getZoom();
+		var map = this.map;
+		var zoom = map.getZoom();
 		this.mapState.updateForZoom(zoom);
 
-		var baseLayers = this.map.getLayersBy("isBaseLayer", true);
+		var baseLayers = map.cmBaseLayers;
+		var haveABaseLayer = false;
 		for (var i=0, l=baseLayers.length; i<l; ++i) {
 			var layer = baseLayers[i];
-			if (layer && typeof layer.setVisibilityByZoom == "function") {
-				layer.setVisibilityByZoom(zoom);
+
+			if (!layer || typeof layer.isInZoomRange != "function") {
+				continue;
 			}
+
+			if (layer.isInZoomRange(zoom)) {
+				map.setBaseLayer(layer);
+				haveABaseLayer = true;
+				break;
+			}
+		}
+
+		if (!haveABaseLayer) {
+			map.setBaseLayer(map.cmFakeBaseLayer);
 		}
 	};
 
@@ -411,8 +429,7 @@
 	};
 
 	function onEntryTypeSelected(et, danglingCard) {
-		if (!et 
-				|| !this.mapPanel.cmVisible) {
+		if (!et || !this.mapPanel.cmVisible) {
 			return;
 		}
 
@@ -433,7 +450,7 @@
 			// the map on show
 			var lastCard = _CMCardModuleState.card;
 			if (lastCard) {
-				this.centerMapOnFeature(lastCard.data);
+				this.onCardSelected(lastCard);
 			} else {
 				this.currentCardId = undefined;
 			}
@@ -444,17 +461,23 @@
 		var layer = params.layer;
 		var me = this;
 
-		if (layer == null || !layer.CM_Layer) {
+		if (layer == null) {
 			return;
 		}
 
-		this.editingWindowDelegate.buildEditControls(layer);
-		this.selectControl.addLayer(layer);
+		if (layer.CM_geoserverLayer) {
+			layer.setVisibility(this.mapState.isGeoServerLayerVisible(layer.name));
+		}
 
-		layer.events.on({
-			"beforefeatureadded": beforefeatureadded,
-			"scope": me
-		});
+		if (layer.CM_Layer) {
+			this.editingWindowDelegate.buildEditControls(layer);
+			this.selectControl.addLayer(layer);
+
+			layer.events.on({
+				"beforefeatureadded": beforefeatureadded,
+				"scope": me
+			});
+		}
 	}
 
 	function onLayerRemoved(map, params) {
@@ -498,9 +521,11 @@
 		} else {
 			var data = o.feature.data;
 
-			if (this.mapState.isFeatureVisible(data.master_className, data.master_card) === false) { // could be also null, or undefined
-				layer.hideFeatureWithCardId(data.master_card, o.feature);
-				return false;
+			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration) {
+				if (!this.mapState.isFeatureVisible(data.master_className, data.master_card)) { // could be also null, or undefined
+					layer.hideFeatureWithCardId(data.master_card, o.feature);
+					return false;
+				}
 			}
 		}
 

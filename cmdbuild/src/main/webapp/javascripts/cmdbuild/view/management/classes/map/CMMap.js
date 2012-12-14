@@ -38,12 +38,16 @@
 		},
 
 		centerOnGeometry: function(geometry) {
+			// The geometry function getCentroid()
+			// give us some problems...
+			// So, take the first point of the geometry (a point return an array with
+			// only itself) to center the map.
 			try {
 				var geom = CMDBuild.GeoUtils.readGeoJSON(geometry.geometry);
-				var center = geom.getCentroid();
-				var lonLat = new OpenLayers.LonLat(center.x, center.y);
-				this.setCenter(lonLat);
-				this.activateStrategies(true);
+				var aPoint = a = geom.getVertices()[0];
+				var center = new OpenLayers.LonLat(aPoint.x, aPoint.y);
+				this.setCenter(center, this.getZoom());
+//				this.activateStrategies(true);
 			} catch (Error) {
 				_debug("Map: centerOnGeometry - Error");
 				/*
