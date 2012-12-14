@@ -6,8 +6,8 @@ import java.util.Collection;
 
 import javax.sql.DataSource;
 
+import org.cmdbuild.dao.TypeObjectCache;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
-import org.cmdbuild.dao.driver.DefaultCachingDriver;
 import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -32,28 +32,39 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	private final JdbcTemplate jdbcTemplate;
 
-	public PostgresDriver(final DataSource datasource) {
+	public PostgresDriver(final DataSource datasource, final TypeObjectCache typeObjectCache) {
+		super(typeObjectCache);
 		this.jdbcTemplate = new JdbcTemplate(datasource);
 	}
 
 	@Override
 	public Collection<DBClass> findAllClasses() {
-		return doToTypes().findAllClasses();
+		// FIXME: improve performances
+		final Collection<DBClass> fetchedClasses = doToTypes().findAllClasses();
+		for (final DBClass dbClass : fetchedClasses) {
+			cache.add(dbClass);
+		}
+		return fetchedClasses;
 	}
 
 	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
-		return doToTypes().createClass(definition);
+		final DBClass createdClass = doToTypes().createClass(definition);
+		cache.add(createdClass);
+		return createdClass;
 	}
 
 	@Override
 	public DBClass updateClass(final DBClassDefinition definition) {
-		return doToTypes().updateClass(definition);
+		final DBClass updatedClass = doToTypes().updateClass(definition);
+		cache.add(updatedClass);
+		return updatedClass;
 	}
 
 	@Override
 	public void deleteClass(final DBClass dbClass) {
 		doToTypes().deleteClass(dbClass);
+		cache.remove(dbClass);
 	}
 
 	@Override
@@ -73,27 +84,46 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Collection<DBDomain> findAllDomains() {
-		return doToTypes().findAllDomains();
+		// FIXME: improve performances
+		final Collection<DBDomain> fetchedDomains = doToTypes().findAllDomains();
+		for (final DBDomain dbDomain : fetchedDomains) {
+			cache.add(dbDomain);
+		}
+		return fetchedDomains;
 	}
 
 	@Override
 	public DBDomain createDomain(final DBDomainDefinition definition) {
-		return doToTypes().createDomain(definition);
+		final DBDomain createdDomain = doToTypes().createDomain(definition);
+		cache.add(createdDomain);
+		return createdDomain;
 	}
 
 	@Override
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
-		return doToTypes().updateDomain(definition);
+		final DBDomain updatedDomain = doToTypes().updateDomain(definition);
+		cache.add(updatedDomain);
+		return updatedDomain;
 	}
 
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {
 		doToTypes().deleteDomain(dbDomain);
+		cache.remove(dbDomain);
+	}
+
+	private EntryTypeCommands doToTypes() {
+		return new EntryTypeCommands(this, jdbcTemplate);
 	}
 
 	@Override
 	public Collection<DBFunction> findAllFunctions() {
-		return doToTypes().findAllFunctions();
+		// FIXME: improve performances
+		final Collection<DBFunction> fetchedFunctions = doToTypes().findAllFunctions();
+		for (final DBFunction dbFunction : fetchedFunctions) {
+			cache.add(dbFunction);
+		}
+		return fetchedFunctions;
 	}
 
 	@Override
@@ -113,21 +143,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public CMQueryResult query(final QuerySpecs query) {
-		return new EntryQueryCommand(cachingDriverForThis(), jdbcTemplate, query).run();
-	}
-
-	private EntryTypeCommands doToTypes() {
-		return new EntryTypeCommands(cachingDriverForThis(), jdbcTemplate);
-	}
-
-	/**
-	 * Needed for limit the amount of findAll* calls executed within the
-	 * commands.
-	 * 
-	 * @return a {@link DefaultCachingDriver} instance for this.
-	 */
-	private DefaultCachingDriver cachingDriverForThis() {
-		return new DefaultCachingDriver(this);
+		return new EntryQueryCommand(this, jdbcTemplate, query).run();
 	}
 
 	@Override

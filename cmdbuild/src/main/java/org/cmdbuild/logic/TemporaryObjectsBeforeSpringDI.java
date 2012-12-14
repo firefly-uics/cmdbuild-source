@@ -10,8 +10,7 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
-import org.cmdbuild.dao.driver.CachingDriver;
-import org.cmdbuild.dao.driver.DefaultCachingDriver;
+import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -67,7 +66,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		}
 	};
 
-	private static final CachingDriver driver;
+	private static final PostgresDriver driver;
 	private static final DBDataView dbDataView;
 	private static final DefaultPrivilegeContextFactory privilegeCtxFactory;
 	private static final AbstractSharkService workflowService;
@@ -79,7 +78,7 @@ public class TemporaryObjectsBeforeSpringDI {
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
-		driver = new DefaultCachingDriver(new PostgresDriver(datasource));
+		driver = new PostgresDriver(datasource, new DefaultTypeObjectCache());
 		dbDataView = new DBDataView(driver);
 		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
 		authLogic = instantiateAuthenticationLogic();
@@ -127,7 +126,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		return factory;
 	}
 
-	public static CachingDriver getDriver() {
+	public static PostgresDriver getDriver() {
 		return driver;
 	}
 

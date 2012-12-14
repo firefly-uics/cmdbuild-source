@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.auth;
 
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.*;
-import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 
 import java.util.Collection;
@@ -23,13 +23,10 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
-import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.*;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
@@ -323,52 +320,53 @@ public class AuthenticationLogic implements Logic {
 		return updatedGroup;
 	}
 
-	public void addUserToGroup(Long userId, Long groupId) {
-		CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+	public void addUserToGroup(final Long userId, final Long groupId) {
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomainByName("UserRole");
-		CMRelationDefinition relationDefinition = view.newRelation(userRoleDomain);
+		final CMRelationDefinition relationDefinition = view.newRelation(userRoleDomain);
 		relationDefinition.setCard1(fetchUserCardWithId(userId));
 		relationDefinition.setCard2(fetchRoleCardWithId(groupId));
 		relationDefinition.save();
 	}
 
-	private CMCard fetchUserCardWithId(Long userId) {
-		CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		CMClass userClass = view.findClassByName("User");
-		CMQueryRow userRow = view.select(anyAttribute(userClass)) //
+	private CMCard fetchUserCardWithId(final Long userId) {
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+		final CMClass userClass = view.findClassByName("User");
+		final CMQueryRow userRow = view.select(anyAttribute(userClass)) //
 				.from(userClass) //
 				.where(QueryAliasAttribute.attribute(userClass, "Id"), Operator.EQUALS, userId) //
 				.run().getOnlyRow();
 		return userRow.getCard(userClass);
 	}
 
-	private CMCard fetchRoleCardWithId(Long groupId) {
-		CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
-		CMClass roleClass = view.findClassByName("Role");
-		CMQueryRow groupRow = view.select(anyAttribute(roleClass)) //
+	private CMCard fetchRoleCardWithId(final Long groupId) {
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+		final CMClass roleClass = view.findClassByName("Role");
+		final CMQueryRow groupRow = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(QueryAliasAttribute.attribute(roleClass, "Id"), Operator.EQUALS, groupId) //
 				.run().getOnlyRow();
 		return groupRow.getCard(roleClass);
 	}
 
-	public void removeUserFromGroup(Long userId, Long groupId) {
-		CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
+	public void removeUserFromGroup(final Long userId, final Long groupId) {
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomainByName("UserRole");
-		CMClass roleClass = view.findClassByName("Role");
-		CMClass userClass = view.findClassByName("User");
+		final CMClass roleClass = view.findClassByName("Role");
+		final CMClass userClass = view.findClassByName("User");
 
-		// FIXME: improve performances when multiple conditions in where clause (and userRole id = groupId)
-		CMQueryResult result = view.select(attribute(userClass, "Username")) //
+		// FIXME: improve performances when multiple conditions in where clause
+		// (and userRole id = groupId)
+		final CMQueryResult result = view.select(attribute(userClass, "Username")) //
 				.from(userClass) //
 				.join(roleClass, over(userRoleDomain)) //
 				.where(attribute(userClass, "Id"), Operator.EQUALS, userId) //
 				.run();
-		for (CMQueryRow row : result) {
-			CMCard roleCard = row.getCard(roleClass);
+		for (final CMQueryRow row : result) {
+			final CMCard roleCard = row.getCard(roleClass);
 			if (roleCard.getId().equals(groupId)) {
-				CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
-				CMRelationDefinition relationDefinition = view.modifyRelation(relationToBeRemoved);
+				final CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
+				final CMRelationDefinition relationDefinition = view.modifyRelation(relationToBeRemoved);
 				relationDefinition.delete();
 				break;
 			}
