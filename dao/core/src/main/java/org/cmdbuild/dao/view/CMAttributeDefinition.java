@@ -32,7 +32,9 @@ public interface CMAttributeDefinition {
 	int getIndex();
 
 	String getGroup();
-	
+
 	int getClassOrder();
+
+	String getEditorType();
 
 }

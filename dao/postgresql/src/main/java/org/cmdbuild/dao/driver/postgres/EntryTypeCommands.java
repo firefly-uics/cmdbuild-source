@@ -316,6 +316,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
+				append(DBAttribute.AttributeMetadata.EDITOR_TYPE, definition.getEditorType());
 			}
 
 			@Override

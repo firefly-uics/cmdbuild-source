@@ -440,6 +440,26 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
+	public void textAttributeCreatedWithHtmlEditorAndReaded() throws Exception {
+		// given
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("TEXT") //
+						.withEditorType("HTML")));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(TextAttributeType.class));
+		assertThat(attribute.getEditorType(), equalTo("HTML"));
+	}
+
+	@Test
 	public void newlyCreatedAttributeIsActiveAsDefault() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate( //

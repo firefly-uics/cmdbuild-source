@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.entrytype;
 
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 
 public interface CMAttribute extends Deactivable {
 
@@ -85,5 +86,12 @@ public interface CMAttribute extends Deactivable {
 	 * @return the class order of the attribute.
 	 */
 	int getClassOrder();
+
+	/**
+	 * Returns the editor that must be used for {@link TextAttributeType}.
+	 * 
+	 * @return "HTML" if the editor is HTML, something else if not.
+	 */
+	String getEditorType();
 
 }

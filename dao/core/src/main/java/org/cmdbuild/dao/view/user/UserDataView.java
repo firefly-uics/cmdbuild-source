@@ -245,13 +245,13 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMRelationDefinition newRelation(CMDomain domain) {
+	public CMRelationDefinition newRelation(final CMDomain domain) {
 		// TODO check privileges
 		return dbView.newRelation(domain);
 	}
 
 	@Override
-	public CMRelationDefinition modifyRelation(CMRelation relation) {
+	public CMRelationDefinition modifyRelation(final CMRelation relation) {
 		// TODO check privileges
 		return dbView.modifyRelation(relation);
 	}

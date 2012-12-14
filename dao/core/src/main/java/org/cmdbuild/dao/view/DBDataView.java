@@ -214,6 +214,11 @@ public class DBDataView extends QueryExecutorDataView {
 				return definition.getClassOrder();
 			}
 
+			@Override
+			public String getEditorType() {
+				return definition.getEditorType();
+			}
+
 		};
 	}
 
@@ -386,15 +391,15 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMRelationDefinition newRelation(CMDomain domain) {
-		DBDomain dom = driver.findDomainById(domain.getId());
+	public CMRelationDefinition newRelation(final CMDomain domain) {
+		final DBDomain dom = driver.findDomainById(domain.getId());
 		return DBRelation.newInstance(driver, dom);
 	}
 
 	@Override
-	public CMRelationDefinition modifyRelation(CMRelation relation) {
+	public CMRelationDefinition modifyRelation(final CMRelation relation) {
 		if (relation instanceof DBRelation) {
-			DBRelation dbRelation = (DBRelation)relation;
+			final DBRelation dbRelation = (DBRelation) relation;
 			return DBRelation.newInstance(driver, dbRelation);
 		}
 		throw new IllegalArgumentException();

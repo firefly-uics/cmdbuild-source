@@ -22,7 +22,7 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	public static DBRelation newInstance(final DBDriver driver, final DBDomain type, final Long id) {
 		return new DBRelation(driver, type, id);
 	}
-	
+
 	public static DBRelation newInstance(final DBDriver driver, final DBRelation existentRelation) {
 		return new DBRelation(driver, existentRelation.getType(), existentRelation.getId());
 	}

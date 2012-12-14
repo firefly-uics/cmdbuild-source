@@ -370,6 +370,7 @@ public class ModClass extends JSONBase {
 				// ...
 				.withDefaultValue(defaultValue) //
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
+				.withEditorType(editorType) //
 				.thatIsDisplayableInList(isBaseDSP) //
 				.thatIsMandatory(isNotNull) //
 				.thatIsUnique(isUnique) //
@@ -379,9 +380,6 @@ public class ModClass extends JSONBase {
 				// @Parameter(value = "fkDestination", required = false) int
 				// fkDestinationId, //
 				// @Parameter(value = "meta", required = false) JSONObject meta,
-				// //
-				// @Parameter(value = "editorType", required = false) String
-				// editorType, //
 				.build();
 		final CMAttribute cmAttribute = dataDefinitionLogic(userContext).createOrUpdate(attribute);
 		final JSONObject result = Serializer.serialize(cmAttribute);
