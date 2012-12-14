@@ -4,7 +4,10 @@ import org.cmdbuild.dao.reference.CardReference;
 
 public class ReferenceAttributeType extends AbstractAttributeType<CardReference> {
 
-	public ReferenceAttributeType() {
+	public final String domain;
+
+	public ReferenceAttributeType(final String domain) {
+		this.domain = domain;
 	}
 
 	@Override

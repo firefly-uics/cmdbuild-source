@@ -66,8 +66,7 @@ public class SecurityLogicTest extends DBFixture {
 	public void shouldRetrieveAllPrivilegesForGroup() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
-		final DBCard privilegeCard = insertPrivilege(groupA.getId(),
-				createdClass, "w");
+		final DBCard privilegeCard = insertPrivilege(groupA.getId(), createdClass, "w");
 
 		// when
 		final List<PrivilegeInfo> privileges = securityLogic.getPrivilegesForGroup(groupA.getId());
@@ -79,37 +78,37 @@ public class SecurityLogicTest extends DBFixture {
 		assertThat(privilege.getGroupId(), is(equalTo(groupA.getId())));
 		assertThat(privilege.mode, is(equalTo("w")));
 	}
-	
+
 	@Test
 	public void shouldCreatePrivilegeForExistingClass() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
-		int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
-		
-		//when
+		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+
+		// when
 		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass, "r");
 		securityLogic.savePrivilege(privilegeInfo);
-		
-		//then
-		List<PrivilegeInfo> groupPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId());
+
+		// then
+		final List<PrivilegeInfo> groupPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId());
 		assertEquals(groupPrivileges.size(), numberOfExistentPrivileges + 1);
 		assertThat(groupPrivileges, hasItem(privilegeInfo));
 	}
-	
+
 	@Ignore("Because the update card method is not yet implemented")
 	@Test
 	public void shoulUpdateExistentPrivilege() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
 		insertPrivilege(groupA.getId(), createdClass, "-");
-		int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
-		
-		//when
+		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+
+		// when
 		final PrivilegeInfo privilegeInfo = new PrivilegeInfo(groupA.getId(), createdClass, "r");
 		securityLogic.savePrivilege(privilegeInfo);
-		
-		//then
-		int numberOfActualPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
+
+		// then
+		final int numberOfActualPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
 		assertEquals(numberOfExistentPrivileges, numberOfActualPrivileges);
 	}
 

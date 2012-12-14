@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
@@ -25,6 +26,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
@@ -300,10 +302,65 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		fail("TODO");
 	}
 
-	@Ignore
 	@Test
 	public void referenceAttributeCreatedAndReaded() throws Exception {
-		fail("TODO");
+		// given
+		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
+		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain() //
+				.withName("domain") //
+				.withIdClass1(testClass.getId()) //
+				.withIdClass2(anotherClass.getId()) //
+				.withCardinality("N:1") //
+				));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("REFERENCE") //
+						.withDomain(domain.getName())));
+
+		// when
+		final CMAttribute attribute = dataView().findClassByName(CLASS_NAME).getAttribute(ATTRIBUTE_NAME);
+
+		// then
+		assertThat(attribute, is(notNullValue(CMAttribute.class)));
+		assertThat(attribute.getName(), equalTo(ATTRIBUTE_NAME));
+		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
+		assertThat(attribute.getType(), instanceOf(ReferenceAttributeType.class));
+
+		final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attribute.getType();
+		assertThat(referenceAttributeType.domain, equalTo(domain.getName()));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotCreateReferenceForDomainWithCardinality_1_1() throws Exception {
+		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
+		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain() //
+				.withName("domain") //
+				.withIdClass1(testClass.getId()) //
+				.withIdClass2(anotherClass.getId()) //
+				.withCardinality("1:1") //
+				));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("REFERENCE") //
+						.withDomain(domain.getName())));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotCreateReferenceForDomainWithCardinality_N_N() throws Exception {
+		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
+		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain() //
+				.withName("domain") //
+				.withIdClass1(testClass.getId()) //
+				.withIdClass2(anotherClass.getId()) //
+				.withCardinality("N:N") //
+				));
+		dataDefinitionLogic().createOrUpdate( //
+				a(newAttribute(ATTRIBUTE_NAME) //
+						.withOwner(testClass.getId()) //
+						.withType("REFERENCE") //
+						.withDomain(domain.getName())));
 	}
 
 	@Test
@@ -324,8 +381,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(attribute.getOwner().getName(), equalTo(CLASS_NAME));
 		assertThat(attribute.getType(), instanceOf(StringAttributeType.class));
 
-		final StringAttributeType decimalAttributeType = (StringAttributeType) attribute.getType();
-		assertThat(decimalAttributeType.length, equalTo(42));
+		final StringAttributeType stringAttributeType = (StringAttributeType) attribute.getType();
+		assertThat(stringAttributeType.length, equalTo(42));
 	}
 
 	@Test

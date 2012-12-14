@@ -7,14 +7,31 @@ import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
 import static org.cmdbuild.logic.data.Utils.unactive;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.exception.ORMException;
@@ -95,12 +112,87 @@ public class DataDefinitionLogic implements Logic {
 		final CMAttribute createdOrUpdatedAttribute;
 		if (existingAttribute == null) {
 			logger.info("attribute not already created, creating a new one");
+			validate(attribute);
 			createdOrUpdatedAttribute = view.createAttribute(definitionForNew(attribute, owner));
 		} else {
 			logger.info("attribute already created, updating existing one");
 			createdOrUpdatedAttribute = view.updateAttribute(definitionForExisting(attribute, existingAttribute));
 		}
 		return createdOrUpdatedAttribute;
+	}
+
+	private void validate(final Attribute attribute) {
+		new CMAttributeTypeVisitor() {
+
+			@Override
+			public void visit(final BooleanAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final EntryTypeAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DateTimeAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DateAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DecimalAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final DoubleAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final ForeignKeyAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final GeometryAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final IntegerAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final IpAddressAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final LookupAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				final CMDomain domain = view.findDomainByName(attributeType.domain);
+				// TODO do it better, maybe using an enum for define cardinality
+				Validate.isTrue(Arrays.asList("1:N", "N:1").contains(domain.getCardinality()));
+			}
+
+			@Override
+			public void visit(final StringAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final TextAttributeType attributeType) {
+			}
+
+			@Override
+			public void visit(final TimeAttributeType attributeType) {
+			}
+
+			public void validate(final Attribute attribute) {
+				attribute.getType().accept(this);
+			}
+
+		} //
+		.validate(attribute);
 	}
 
 	public void deleteOrDeactivate(final Attribute attribute) {

@@ -85,7 +85,7 @@ public class AttributeWrapper implements CMAttribute {
 			newDaoType = new TextAttributeType();
 			break;
 		case REFERENCE:
-			newDaoType = new ReferenceAttributeType();
+			newDaoType = new ReferenceAttributeType(attribute.getReferenceDomain().getName());
 			break;
 		case FOREIGNKEY:
 			newDaoType = new ForeignKeyAttributeType();
