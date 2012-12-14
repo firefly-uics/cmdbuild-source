@@ -139,9 +139,10 @@
 							cmAccordions : me.cmAccordions,
 							cmPanels : me.cmPanels
 						}));
-						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-						_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
+
 						CMDBuild.view.CMMainViewport.hideSplash();
+						_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
+						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 					});
 
 				CMDBuild.ServiceProxy.lookup.readAllTypes({

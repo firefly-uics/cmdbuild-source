@@ -92,10 +92,12 @@
 
 	ns.CMMainViewportController.prototype.setInstanceName = function(name) {
 		var hdInstanceName = Ext.get('instance_name');
-		if (hdInstanceName 
-				&& hdInstanceName.dom) {
-
-			hdInstanceName.dom.innerHTML = name;
+		if (hdInstanceName) {
+			try {
+				hdInstanceName.setHTML(name);
+			} catch (e) {
+				// Sometimes Explorer does not like it...
+			}
 		}
 	};
 

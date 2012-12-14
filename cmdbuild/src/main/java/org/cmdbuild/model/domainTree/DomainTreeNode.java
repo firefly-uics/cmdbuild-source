@@ -1,4 +1,4 @@
-package org.cmdbuild.model;
+package org.cmdbuild.model.domainTree;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 public class DomainTreeNode {
 	private String targetClassName, targetClassDescription, domainName, Type;
 	private Long idParent, idGroup, id;
-	private Boolean direct;
+	private boolean direct, baseNode;
 	private List<DomainTreeNode> childNodes;
 
 	public DomainTreeNode() {
@@ -69,12 +69,20 @@ public class DomainTreeNode {
 		this.idGroup = idGroup;
 	}
 
-	public Boolean isDirect() {
+	public boolean isDirect() {
 		return direct;
 	}
 
-	public void setDirect(Boolean direct) {
+	public void setDirect(boolean direct) {
 		this.direct = direct;
+	}
+
+	public boolean isBaseNode() {
+		return baseNode;
+	}
+
+	public void setBaseNode(boolean baseNode) {
+		this.baseNode = baseNode;
 	}
 
 	public List<DomainTreeNode> getChildNodes() {
@@ -88,4 +96,5 @@ public class DomainTreeNode {
 	public void addChildNode(DomainTreeNode childNode) {
 		childNodes.add(childNode);
 	}
+
 }

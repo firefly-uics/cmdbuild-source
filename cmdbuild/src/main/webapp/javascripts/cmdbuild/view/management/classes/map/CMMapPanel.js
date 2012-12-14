@@ -83,6 +83,19 @@
 
 			var tabs = [];
 
+			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
+				var root = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root;
+				
+				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
+					title: CMDBuild.Translation.management.modcard.gis.gisNavigation,
+					frame: false,
+					border: false,
+					rootText: root.classDescription || root.className
+				});
+				
+				tabs.push(this.cardBrowser);
+			}
+
 			this.layerSwitcher = new CMDBuild.view.management.map.CMMapLayerSwitcher({
 				title: CMDBuild.Translation.administration.modClass.layers,
 				frame: false,
@@ -90,25 +103,11 @@
 			});
 			tabs.push(this.layerSwitcher);
 
-			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
-				var root = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root;
-
-				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
-					title: CMDBuild.Translation.management.modcard.gis.gisNavigation,
-					frame: false,
-					border: false,
-					rootText: root.classDescription || root.className
-				});
-
-				tabs.push(this.cardBrowser);
-			}
-
 			this.miniCardGrid = new CMDBuild.view.management.CMMiniCardGrid({
 				title: CMDBuild.Translation.management.modcard.title,
 				frame: false,
 				border: false
 			});
-
 			tabs.push(this.miniCardGrid);
 
 			this.layout = "border";

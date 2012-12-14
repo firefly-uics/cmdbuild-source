@@ -9,6 +9,7 @@ BEGIN
 	PERFORM cm_create_class_attribute('_DomainTreeNavigation', 'Type', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_DomainTreeNavigation', 'DomainName', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_DomainTreeNavigation', 'Direct', 'boolean', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+	PERFORM cm_create_class_attribute('_DomainTreeNavigation', 'BaseNode', 'boolean', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassName', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 	PERFORM cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassDescription', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 END

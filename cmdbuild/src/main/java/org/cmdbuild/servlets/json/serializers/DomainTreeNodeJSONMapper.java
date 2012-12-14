@@ -1,13 +1,15 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import org.cmdbuild.model.DomainTreeNode;
+import java.util.List;
+
+import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DomainTreeNodeJSONMapper {
 
-	private static final String 
+	public static final String 
 		CHILD_NODES = "childNodes",
 		DIRECT = "direct",
 		DOMAIN_NAME = "domainName",
@@ -21,7 +23,7 @@ public class DomainTreeNodeJSONMapper {
 	public static DomainTreeNode deserialize(JSONObject jsonTreeNode) throws JSONException {
 		DomainTreeNode treeNode = new DomainTreeNode();
 
-		treeNode.setDirect(readBooleanOrNull(jsonTreeNode, DIRECT));
+		treeNode.setDirect(readBooleanOrFalse(jsonTreeNode, DIRECT));
 		treeNode.setTargetClassName(readStringOrNull(jsonTreeNode, TARGET_CLASS_NAME));
 		treeNode.setTargetClassDescription(readStringOrNull(jsonTreeNode, TARGET_CLASS_DESCRIPTION));
 		treeNode.setDomainName(readStringOrNull(jsonTreeNode,DOMAIN_NAME));
@@ -43,7 +45,7 @@ public class DomainTreeNodeJSONMapper {
 		return treeNode;
 	}
 
-	public static JSONObject serialize(DomainTreeNode treeNode) throws JSONException {
+	public static JSONObject serialize(DomainTreeNode treeNode, Boolean deeply) throws JSONException {
 		JSONObject jsonTreeNode = new JSONObject();
 
 		jsonTreeNode.put(DIRECT, treeNode.isDirect());
@@ -55,21 +57,27 @@ public class DomainTreeNodeJSONMapper {
 		jsonTreeNode.put(ID_PARENT, treeNode.getIdParent());
 		jsonTreeNode.put(ID_GROUP, treeNode.getIdGroup());
 
-		JSONArray jsonChildNodes = new JSONArray();
-		for (DomainTreeNode child: treeNode.getChildNodes()) {
-			jsonChildNodes.put(serialize(child));
+		if (deeply) {
+			jsonTreeNode.put(CHILD_NODES, serialize(treeNode.getChildNodes(), deeply));
 		}
-
-		jsonTreeNode.put(CHILD_NODES, jsonChildNodes);
 
 		return jsonTreeNode;
 	}
 
-	private static Boolean readBooleanOrNull(JSONObject src, String key) throws JSONException {
+	public static JSONArray serialize(List<DomainTreeNode> nodes, Boolean deeply) throws JSONException {
+		JSONArray jsonChildNodes = new JSONArray();
+		for (DomainTreeNode child:nodes) {
+			jsonChildNodes.put(serialize(child, deeply));
+		}
+
+		return jsonChildNodes;
+	}
+
+	private static Boolean readBooleanOrFalse(JSONObject src, String key) throws JSONException {
 		if (src.has(key)) {
 			return src.getBoolean(key);
 		} else {
-			return null;
+			return false;
 		}
 	}
 

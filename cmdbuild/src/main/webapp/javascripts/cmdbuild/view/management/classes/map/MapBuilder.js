@@ -17,8 +17,9 @@ CMDBuild.Management.MapBuilder = (function() {
 		};
 
 		var map = new CMDBuild.Management.CMMap(options);
+		map.cmBaseLayers = [];
 
-		map.addControl(new OpenLayers.Control.LayerSwitcher());
+//		map.addControl(new OpenLayers.Control.LayerSwitcher());
 		map.addControl(new OpenLayers.Control.ScaleLine());
 
 		map.addControl(new CMDBuild.Management.CMZoomAndMousePositionControl({
@@ -37,23 +38,29 @@ CMDBuild.Management.MapBuilder = (function() {
 			gisConfig = CMDBuild.Config.gis,
 			map = this;
 
+		// add OSM if configured
 		if (gisConfig.osm && gisConfig.osm == "on") {
 			var osm = new OpenLayers.Layer.OSM("Open Street Map", null, {
 				numZoomLevels: 25,
 				cmdb_minZoom: gisConfig.osm_minzoom || DEFAULT_MIN_ZOOM,
 				cmdb_maxZoom: gisConfig.osm_maxzoom || DEFAULT_MAX_ZOOM,
-				setVisibilityByZoom: function(zoom) {
-					var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
-					var isInRange = (zoom >= this.cmdb_minZoom && zoom <= max);
 
-					this.setVisibility(isInRange);
+				isInZoomRange: function(zoom) {
+					var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
+					return (zoom >= this.cmdb_minZoom && zoom <= max);
+				},
+
+				setVisibilityByZoom: function(zoom) {
+					this.setVisibility(this.isInZoomRange(zoom));
 				}
 			});
 
 			map.addLayers([osm]);
+			map.cmBaseLayers.push(osm);
 			map.setBaseLayer(osm);
 		}
 
+		// add GOOGLE if configured
 		if (gisConfig.google && gisConfig.google == "on") {
 			var googleLayer = new OpenLayers.Layer.Google(
 				"Google",
@@ -75,6 +82,7 @@ CMDBuild.Management.MapBuilder = (function() {
 			map.setBaseLayer(googleLayer);
 		}
 
+		// add YAHOO if configured
 		if (gisConfig.yahoo && gisConfig.yahoo == "on") {
 			var yahooLayer = new OpenLayers.Layer.Yahoo(
 				"Yahoo",
@@ -95,20 +103,18 @@ CMDBuild.Management.MapBuilder = (function() {
 			map.setBaseLayer(yahooLayer);
 		}
 
-		// could not build a map without a base layer
-		// if there are no layers in the configuration
-		// ad a fake one.
-		if (map.layers.length == 0) {
-			addFakeLayer(map);
-		}
 	};
 
 	function addFakeLayer(map) {
+		// add a fake base layer to set as base layer
+		// when the real base layers are out of range.
+		// Without this, the continue to ask the tails 
 		var fakeBaseLayer = new OpenLayers.Layer.Vector("", {
 			displayInLayerSwitcher: false,
 			isBaseLayer: true
 		});
 
+		map.cmFakeBaseLayer = fakeBaseLayer;
 		map.addLayers([fakeBaseLayer]);
 	}
 

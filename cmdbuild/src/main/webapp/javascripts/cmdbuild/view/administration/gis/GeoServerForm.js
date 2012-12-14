@@ -314,7 +314,7 @@
 		});
 
 		var bindToCardFieldset = new CMDBuild.Administration.GeoServerForm.BindCardFieldset({
-			padding: "5px 0 0 0",
+			padding: "5px 0 0 0"
 		});
 
 		me.getCardsBinding = function() {

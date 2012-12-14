@@ -7,18 +7,19 @@ import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.model.DomainTreeNode;
+import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.services.auth.UserContext;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
-		TARGET_CLASS_NAME("TargetClassName"),
-		TARGET_CLASS_DESCRIPTION("TargetClassDescription"),
+		BASE_NODE("BaseNode"),
 		DIRECT("Direct"),
 		DOMAIN_NAME("DomainName"),
-		TYPE("Type"),
 		ID_GROUP("IdGroup"),
-		ID_PARENT("IdParent");
+		ID_PARENT("IdParent"),
+		TARGET_CLASS_DESCRIPTION("TargetClassDescription"),
+		TARGET_CLASS_NAME("TargetClassName"),
+		TYPE("Type");
 
 		private String name;
 
@@ -88,6 +89,7 @@ public class DBDomainTreeStore {
 		c.setValue(Attributes.ID_PARENT.getName(), root.getIdParent());
 		c.setValue(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName());
 		c.setValue(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription());
+		c.setValue(Attributes.BASE_NODE.getName(), root.isBaseNode());
 		c.save();
 
 		Long id = Long.valueOf(c.getId());
@@ -100,13 +102,14 @@ public class DBDomainTreeStore {
 	private DomainTreeNode cardToDomainTreeNode(ICard card) {
 		DomainTreeNode domainTreeNode = new DomainTreeNode();
 		domainTreeNode.setId(safeLongCast(card.getId()));
-		domainTreeNode.setDirect((Boolean)card.getValue(Attributes.DIRECT.getName()));
+		domainTreeNode.setDirect(booleanCast(card.getValue(Attributes.DIRECT.getName())));
 		domainTreeNode.setDomainName((String)card.getValue(Attributes.DOMAIN_NAME.getName()));
 		domainTreeNode.setType((String)card.getValue(Attributes.TYPE.getName()));
 		domainTreeNode.setIdGroup(safeLongCast(card.getValue(Attributes.ID_GROUP.getName())));
 		domainTreeNode.setIdParent(safeLongCast(card.getValue(Attributes.ID_PARENT.getName())));
 		domainTreeNode.setTargetClassDescription((String)card.getValue(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
 		domainTreeNode.setTargetClassName(((String)card.getValue(Attributes.TARGET_CLASS_NAME.getName())));
+		domainTreeNode.setBaseNode((booleanCast(card.getValue(Attributes.BASE_NODE.getName()))));
 
 		return domainTreeNode;
 	}
@@ -119,6 +122,14 @@ public class DBDomainTreeStore {
 			return null;
 		} else {
 			return new Long((Integer) o);
+		}
+	}
+
+	private boolean booleanCast(Object o) {
+		if (o == null) {
+			return false;
+		} else {
+			return (Boolean) o;
 		}
 	}
 }

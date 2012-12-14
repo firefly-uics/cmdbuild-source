@@ -13,7 +13,7 @@
 							delegateClassName
 					);
 				}
-			},
+			}
 		},
 
 		/**
