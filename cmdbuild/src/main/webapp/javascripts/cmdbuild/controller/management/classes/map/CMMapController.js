@@ -521,7 +521,7 @@
 		} else {
 			var data = o.feature.data;
 
-			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration) {
+			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
 				if (!this.mapState.isFeatureVisible(data.master_className, data.master_card)) { // could be also null, or undefined
 					layer.hideFeatureWithCardId(data.master_card, o.feature);
 					return false;

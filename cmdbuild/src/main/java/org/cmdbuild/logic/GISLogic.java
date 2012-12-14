@@ -48,6 +48,10 @@ public class GISLogic {
 
 	/* Geo attributes */
 
+	public boolean isGisEnabled() {
+		return GisProperties.getInstance().isEnabled();
+	}
+
 	public LayerMetadata createGeoAttribute(ITable master, LayerMetadata layerMetaData) throws Exception {
 		ensureGisIsEnabled();
 		ITable geometryTable = createGeoAttributeTable(master, layerMetaData);
@@ -400,8 +404,8 @@ public class GISLogic {
 	}
 
 	private void ensureGisIsEnabled() throws Exception {
-		if (!GisProperties.getInstance().isEnabled()) {
-			throw new Exception("GEOServer is non enabled");
+		if (!isGisEnabled()) {
+			throw new Exception("GIS Module is non enabled");
 		}
 	}
 

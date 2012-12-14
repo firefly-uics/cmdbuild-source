@@ -212,6 +212,11 @@ public class GeoJSONSerializer {
 			Map<String, ClassMapping> geoServerLayerMapping) throws JSONException {
 
 		JSONObject out = new JSONObject();
+
+		if (geoServerLayerMapping == null) {
+			return out;
+		}
+
 		for (String className: geoServerLayerMapping.keySet()) {
 			ClassMapping classMapping = geoServerLayerMapping.get(className);
 			JSONObject jsonClassMapping = new JSONObject();

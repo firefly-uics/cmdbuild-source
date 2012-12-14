@@ -47,6 +47,9 @@ public class DomainTreeNodeJSONMapper {
 
 	public static JSONObject serialize(DomainTreeNode treeNode, Boolean deeply) throws JSONException {
 		JSONObject jsonTreeNode = new JSONObject();
+		if (treeNode == null) {
+			return jsonTreeNode;
+		}
 
 		jsonTreeNode.put(DIRECT, treeNode.isDirect());
 		jsonTreeNode.put(TARGET_CLASS_NAME, treeNode.getTargetClassName());

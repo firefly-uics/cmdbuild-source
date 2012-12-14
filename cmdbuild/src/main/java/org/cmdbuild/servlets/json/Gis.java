@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -11,6 +12,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.GISLogic;
+import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
@@ -164,12 +166,19 @@ public class Gis extends JSONBase {
 	@JSONExported
 	public JSONObject getGISTreeNavigation() throws Exception {
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		DomainTreeNode root = logic.getGisTreeNavigation();
+		DomainTreeNode root = null;
+		Map<String, ClassMapping> geoServerLayerMapping = null;
+		if (logic.isGisEnabled()) {
+			root = logic.getGisTreeNavigation();
+			geoServerLayerMapping = logic.getGeoServerLayerMapping();
+		}
+
 		JSONObject response = new JSONObject();
 		if (root != null) {
 			response.put("root", DomainTreeNodeJSONMapper.serialize(root, true));
-			response.put("geoServerLayersMapping",
-				GeoJSONSerializer.serialize(logic.getGeoServerLayerMapping()));
+		}
+		if (geoServerLayerMapping != null) {
+			response.put("geoServerLayersMapping", GeoJSONSerializer.serialize(geoServerLayerMapping));
 		}
 
 		return response;
