@@ -492,20 +492,15 @@ public class ModClass extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject getDomainList(@Parameter("WithSuperclasses") final boolean withSuperclasses, //
-			@Parameter(value = "idClass", required = false) final Long classId, //
+	public JSONObject getDomainList(@Parameter(value = "idClass") final Long classId, //
 			final JSONObject serializer) throws JSONException {
 		final JSONArray rows = new JSONArray();
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final List<CMDomain> allDomains = dataAccesslogic.findDomainsForClassWithId(classId);
-		for (final CMDomain domain : allDomains) {
-			rows.put(Serializer.serialize(domain));
+		final List<CMDomain> domainsForSpecifiedClass = dataAccesslogic.findDomainsForClassWithId(classId);
+		for (final CMDomain domain : domainsForSpecifiedClass) {
+			rows.put(Serializer.serialize(domain, classId));
 		}
 		serializer.put("rows", rows);
-		// if (withSuperclasses) {
-		// serializer.put("superclasses",
-		// tf.fullTree().idPath(table.getName()));
-		// }
 		return serializer;
 	}
 

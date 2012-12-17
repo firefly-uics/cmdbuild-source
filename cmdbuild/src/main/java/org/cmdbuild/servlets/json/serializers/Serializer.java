@@ -581,21 +581,23 @@ public class Serializer {
 		return jsonDomain;
 	}
 
-	/**
-	 * @deprecated use serialize(CMDomain) instead.
-	 */
-	@Deprecated
-	public static JSONObject serializeDomain(final IDomain domain, final ITable table) throws JSONException {
-		final JSONObject jsonDomain = serializeDomain(domain, false);
-		if (table != null) {
-			jsonDomain.put("inherited", !domain.isLocal(table));
-		}
+	public static JSONObject serialize(final CMDomain domain, final Long classId) throws JSONException {
+		final JSONObject jsonDomain = serialize(domain, false);
+		jsonDomain.put("inherited", !isDomainDefinedForClass(domain, classId));
 		return jsonDomain;
 	}
 
-	public static JSONObject serialize(final CMDomain domain) throws JSONException {
-		final JSONObject jsonDomain = serialize(domain, false);
-		return jsonDomain;
+	/**
+	 * @return true if the domain is defined for the class with provided
+	 *         classId, false otherwise (it is defined for a superclass)
+	 */
+	private static boolean isDomainDefinedForClass(final CMDomain domain, final Long classId) {
+		final CMClass class1 = domain.getClass1();
+		final CMClass class2 = domain.getClass2();
+		if (!class1.getId().equals(classId) && !class2.getId().equals(classId)) {
+			return false;
+		}
+		return true;
 	}
 
 	public static JSONObject serializeTableTree(final CNode<ITable> node) throws JSONException {
