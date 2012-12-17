@@ -117,8 +117,24 @@ public interface CMDataView {
 	 */
 	CMCardDefinition modifyCard(CMCard card);
 
+	/**
+	 * Method that returns a mutable relation object. This object is a new
+	 * relation which will be created and stored in the database
+	 * 
+	 * @param domain
+	 *            the domain which the relation will belong to
+	 * @return a mutable object
+	 */
 	CMRelationDefinition newRelation(CMDomain domain);
 
+	/**
+	 * Method that returns a mutable relation object. This object is an object
+	 * representing a relation which already exists in the database
+	 * 
+	 * @param domain
+	 *            the domain which the relation belongs to
+	 * @return a mutable object
+	 */
 	CMRelationDefinition modifyRelation(CMRelation relation);
 
 	/**
