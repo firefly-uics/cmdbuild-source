@@ -129,6 +129,7 @@
 		}
 
 		node.set("checked", true);
+		node.set("baseNode", nodeConf.baseNode); // I don't know why it does not check it automatically...
 		node.commit();
 
 		var l = nodeConf.childNodes.length;

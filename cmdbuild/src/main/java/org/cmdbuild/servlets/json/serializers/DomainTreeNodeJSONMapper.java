@@ -10,6 +10,7 @@ import org.json.JSONObject;
 public class DomainTreeNodeJSONMapper {
 
 	public static final String 
+		BASE_NODE = "baseNode",
 		CHILD_NODES = "childNodes",
 		DIRECT = "direct",
 		DOMAIN_NAME = "domainName",
@@ -23,6 +24,7 @@ public class DomainTreeNodeJSONMapper {
 	public static DomainTreeNode deserialize(JSONObject jsonTreeNode) throws JSONException {
 		DomainTreeNode treeNode = new DomainTreeNode();
 
+		treeNode.setBaseNode(readBooleanOrFalse(jsonTreeNode, BASE_NODE));
 		treeNode.setDirect(readBooleanOrFalse(jsonTreeNode, DIRECT));
 		treeNode.setTargetClassName(readStringOrNull(jsonTreeNode, TARGET_CLASS_NAME));
 		treeNode.setTargetClassDescription(readStringOrNull(jsonTreeNode, TARGET_CLASS_DESCRIPTION));
@@ -51,6 +53,7 @@ public class DomainTreeNodeJSONMapper {
 			return jsonTreeNode;
 		}
 
+		jsonTreeNode.put(BASE_NODE, treeNode.isBaseNode());
 		jsonTreeNode.put(DIRECT, treeNode.isDirect());
 		jsonTreeNode.put(TARGET_CLASS_NAME, treeNode.getTargetClassName());
 		jsonTreeNode.put(TARGET_CLASS_DESCRIPTION, treeNode.getTargetClassDescription());
