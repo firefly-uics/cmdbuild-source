@@ -31,6 +31,7 @@
 			this.classesMenu = new CMDBuild.core.buttons.CMClassesMenuButton({
 				text: DEFAULT_MENU_TEXT
 			});
+
 			this.classesMenu.addDelegate(this);
 
 			this.saveButton = new Ext.button.Button({
@@ -151,6 +152,9 @@
 		},{
 			name: "entryType",
 			type: "auto"
+		},{
+			name: "baseNode",
+			type: "boolean"
 		}],
 
 		getDomain: function() {
@@ -226,6 +230,20 @@
 				}
 			});
 
+			this.columns = [{
+				xtype: 'checkcolumn',
+				dataIndex: 'baseNode',
+				text: CMDBuild.Translation.administration.setup.graph.baseLevel,
+				width: 100,
+				sortable: false,
+				cmExclusive: true
+			}, {
+				xtype: 'treecolumn',
+				dataIndex: 'text',
+				flex: 5,
+				sortable: false
+			}];
+
 			this.callParent(arguments);
 		},
 
@@ -300,6 +318,7 @@
 			targetClassDescription: et.get("text"),
 			domainName: d.get("name"),
 			direct: d.get("cardinality") == "1:N",
+			baseNode: node.get("baseNode"),
 			childNodes: serializeChildNodesForStructure(node.childNodes)
 		};
 	}
