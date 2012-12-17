@@ -1,8 +1,11 @@
 package org.cmdbuild.logic;
 
+import java.util.List;
+
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.legacywrappers.CardWrapper;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -17,6 +20,8 @@ import org.cmdbuild.services.auth.UserOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
 
 /**
  * Business Logic Layer for Data Access
@@ -38,8 +43,8 @@ public class DataAccessLogic implements Logic {
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
 		return new GetRelationHistory(view).exec(srcCard);
 	}
-	
-	public CMClass findClassById(Long classId) {
+
+	public CMClass findClassById(final Long classId) {
 		return view.findClassById(classId);
 	}
 
@@ -47,9 +52,9 @@ public class DataAccessLogic implements Logic {
 	public CMCard getCard(final String className, final Object cardId) {
 		try {
 			final int id = Integer.parseInt(cardId.toString()); // very
-																// expensive but
-																// almost never
-																// called
+			// expensive but
+			// almost never
+			// called
 			final ICard card = UserOperations.from(UserContext.systemContext()).tables().get(className).cards().get(id);
 			return new CardWrapper(card);
 		} catch (final Exception e) {
@@ -65,6 +70,22 @@ public class DataAccessLogic implements Logic {
 		 * result.iterator().next().getCard(cardType); }
 		 * ***************************************************************
 		 */
+	}
+
+	/**
+	 * Retrieves all domains in which the class with id = classId is involved
+	 * (both direct and inverse relation)
+	 * 
+	 * @param classId
+	 *            the class involved in the relation
+	 * @return a list of all domains defined for the class
+	 */
+	public List<CMDomain> findDomainsForClassWithId(final Long classId) {
+		final CMClass fetchedClass = view.findClassById(classId);
+		if (fetchedClass == null) {
+			return Lists.newArrayList();
+		}
+		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
 	}
 
 }

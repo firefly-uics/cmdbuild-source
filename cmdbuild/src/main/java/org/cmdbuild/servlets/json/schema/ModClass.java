@@ -24,6 +24,7 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
@@ -144,9 +145,9 @@ public class ModClass extends JSONBase {
 		// add the processes
 		for (final UserProcessClass pc : processClasses) {
 			if (active && !pc.isUsable() && !pc.isSuperclass()) { // serialize
-																	// always
-																	// the
-																	// superclasses
+				// always
+				// the
+				// superclasses
 
 				continue;
 			} else {
@@ -169,7 +170,8 @@ public class ModClass extends JSONBase {
 		final Iterable<IDomain> allDomains = UserOperations.from(userCtx).domains().list();
 		final JSONArray jsonDomains = new JSONArray();
 		for (final IDomain domain : allDomains) {
-			if (domain.getMode().isCustom() && (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic(userCtx)))) {
+			if (domain.getMode().isCustom()
+					&& (!activeOnly || isActiveWithActiveClasses(domain, workflowLogic(userCtx)))) {
 				jsonDomains.put(Serializer.serializeDomain(domain, activeOnly));
 			}
 		}
@@ -280,8 +282,6 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
-	
-
 	@JSONExported
 	public JSONObject deleteTable( //
 			final UserContext userContext, //
@@ -354,11 +354,12 @@ public class ModClass extends JSONBase {
 			@Parameter(value = "group", required = false) final String group, //
 			@Parameter(value = "meta", required = false) final JSONObject meta, //
 			@Parameter(value = "editorType", required = false) final String editorType, //
+			@Parameter(value = "tableId") final Long tableId, //
 			final BaseSchema table //
 	) throws JSONException, CMDBException {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(Long.valueOf(table.getId())) //
+				.withOwner(tableId) //
 				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
@@ -366,7 +367,7 @@ public class ModClass extends JSONBase {
 				.withPrecision(precision) //
 				.withScale(scale) //
 				.withLookupType(lookupType) //
-				//.withDomain(Long.valueOf(domainId)) // FIXME needs name
+				// .withDomain(Long.valueOf(domainId)) // FIXME needs name
 				// ...
 				.withDefaultValue(defaultValue) //
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
@@ -438,13 +439,11 @@ public class ModClass extends JSONBase {
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
-			attributes.add(Attribute.newAttribute()
-					.withOwner(Long.valueOf(baseSchema.getId())) //
+			attributes.add(Attribute.newAttribute().withOwner(Long.valueOf(baseSchema.getId())) //
 					.withName(jsonAttribute.getString("name")) //
-					.withIndex(jsonAttribute.getInt("idx"))
-					.build());
+					.withIndex(jsonAttribute.getInt("idx")).build());
 		}
-		for (final Attribute attribute: attributes) {
+		for (final Attribute attribute : attributes) {
 			dataDefinitionLogic(userContext).reorder(attribute);
 		}
 		return serializer;
@@ -493,19 +492,20 @@ public class ModClass extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject getDomainList(@Parameter("WithSuperclasses") final boolean withSuperclasses,
-			final JSONObject serializer, final ITable table, final DomainFactory df, final ITableFactory tf)
-			throws JSONException {
+	public JSONObject getDomainList(@Parameter("WithSuperclasses") final boolean withSuperclasses, //
+			@Parameter(value = "idClass", required = false) final Long classId, //
+			final JSONObject serializer) throws JSONException {
 		final JSONArray rows = new JSONArray();
-		for (final IDomain domain : df.list(table).inherited()) {
-			if (domain.getMode().isDisplayable()) {
-				rows.put(Serializer.serializeDomain(domain, table));
-			}
+		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final List<CMDomain> allDomains = dataAccesslogic.findDomainsForClassWithId(classId);
+		for (final CMDomain domain : allDomains) {
+			rows.put(Serializer.serialize(domain));
 		}
 		serializer.put("rows", rows);
-		if (withSuperclasses) {
-			serializer.put("superclasses", tf.fullTree().idPath(table.getName()));
-		}
+		// if (withSuperclasses) {
+		// serializer.put("superclasses",
+		// tf.fullTree().idPath(table.getName()));
+		// }
 		return serializer;
 	}
 
@@ -587,7 +587,7 @@ public class ModClass extends JSONBase {
 		final DBClassWidgetStore classWidgets = new DBClassWidgetStore(table);
 		classWidgets.removeWidget(widgetId);
 	}
-	
+
 	private DataDefinitionLogic dataDefinitionLogic(final UserContext userContext) {
 		return TemporaryObjectsBeforeSpringDI.getDataDefinitionLogic(userContext);
 	}
@@ -595,5 +595,5 @@ public class ModClass extends JSONBase {
 	private WorkflowLogic workflowLogic(final UserContext userContext) {
 		return TemporaryObjectsBeforeSpringDI.getWorkflowLogic(userContext);
 	}
-	
+
 }

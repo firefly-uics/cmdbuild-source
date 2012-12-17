@@ -22,6 +22,7 @@ public class Domain {
 		private String cardinality;
 		private boolean masterDetail;
 		private String masterDetailDescription;
+		private boolean active;
 
 		private DomainBuilder() {
 			// use factory method
@@ -73,8 +74,8 @@ public class Domain {
 		}
 
 		public DomainBuilder thatIsActive(final boolean isActive) {
-			// TODO Auto-generated method stub
-			return null;
+			this.active = isActive;
+			return this;
 		}
 
 		@Override
@@ -97,6 +98,7 @@ public class Domain {
 	private final String cardinality;
 	private final boolean masterDetail;
 	private final String masterDetailDescription;
+	private final boolean active;
 
 	private final String toString;
 
@@ -114,6 +116,7 @@ public class Domain {
 		this.cardinality = builder.cardinality;
 		this.masterDetail = builder.masterDetail;
 		this.masterDetailDescription = builder.masterDetailDescription;
+		this.active = builder.active;
 
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
@@ -152,6 +155,10 @@ public class Domain {
 
 	public String getMasterDetailDescription() {
 		return masterDetailDescription;
+	}
+
+	public boolean isActive() {
+		return active;
 	}
 
 	@Override
