@@ -39,7 +39,6 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Collection<DBClass> findAllClasses() {
-		// FIXME: improve performances
 		final Collection<DBClass> fetchedClasses = doToTypes().findAllClasses();
 		for (final DBClass dbClass : fetchedClasses) {
 			cache.add(dbClass);
@@ -84,7 +83,6 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Collection<DBDomain> findAllDomains() {
-		// FIXME: improve performances
 		final Collection<DBDomain> fetchedDomains = doToTypes().findAllDomains();
 		for (final DBDomain dbDomain : fetchedDomains) {
 			cache.add(dbDomain);

@@ -147,7 +147,8 @@ public class ModMenu extends JSONBase {
 	) throws JSONException, AuthException, NotFoundException, ORMException {
 		JSONArray response = null;
 		// get the menu associated to the user's group
-		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(userCtx.getDefaultGroup().getName());
+		final String defaultGroupName = userCtx.getDefaultGroup().getName();
+		Iterable<MenuCard> menuList = MenuCard.loadListForGroup(defaultGroupName);
 		// if there isn't any menu associated to the user's group, get the
 		// default menu
 		if (menuList != null && !menuList.iterator().hasNext()) {

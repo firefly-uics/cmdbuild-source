@@ -103,6 +103,10 @@ public class DataDefinitionLogic implements Logic {
 
 	}
 
+	/*
+	 * FIXME: method used also to create or update a domain... (in that case
+	 * findDomainById....create new method?)
+	 */
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
 

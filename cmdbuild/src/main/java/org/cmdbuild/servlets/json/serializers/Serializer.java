@@ -220,7 +220,8 @@ public class Serializer {
 	/**
 	 * @deprecated This is awful: a Table should know it is in a tree!
 	 */
-	private static String getClassType(String className) {
+	@Deprecated
+	private static String getClassType(final String className) {
 		// TODO This is awful: a Table should know it is in a tree!
 		if (TableImpl.tree().branch(ProcessType.BaseTable).contains(className))
 			return "processclass";
@@ -534,8 +535,9 @@ public class Serializer {
 	/**
 	 * @deprecated use serialize(CMDomain) instead.
 	 */
-	public static JSONObject serializeDomain(IDomain domain, boolean activeOnly) throws JSONException {
-		JSONObject jsonobj = new JSONObject();
+	@Deprecated
+	public static JSONObject serializeDomain(final IDomain domain, final boolean activeOnly) throws JSONException {
+		final JSONObject jsonobj = new JSONObject();
 		jsonobj.put("idDomain", domain.getId());
 		jsonobj.put("name", domain.getName());
 		jsonobj.put("origName", domain.getName());
@@ -579,11 +581,20 @@ public class Serializer {
 		return jsonDomain;
 	}
 
-	public static JSONObject serializeDomain(IDomain domain, ITable table) throws JSONException {
-		JSONObject jsonDomain = serializeDomain(domain, false);
+	/**
+	 * @deprecated use serialize(CMDomain) instead.
+	 */
+	@Deprecated
+	public static JSONObject serializeDomain(final IDomain domain, final ITable table) throws JSONException {
+		final JSONObject jsonDomain = serializeDomain(domain, false);
 		if (table != null) {
 			jsonDomain.put("inherited", !domain.isLocal(table));
 		}
+		return jsonDomain;
+	}
+
+	public static JSONObject serialize(final CMDomain domain) throws JSONException {
+		final JSONObject jsonDomain = serialize(domain, false);
 		return jsonDomain;
 	}
 
@@ -627,8 +638,8 @@ public class Serializer {
 		return jsonProcess;
 	}
 
-	public static JSONObject serialize(CMClass cmClass) throws JSONException {
-		JSONObject jsonTable = new JSONObject();
+	public static JSONObject serialize(final CMClass cmClass) throws JSONException {
+		final JSONObject jsonTable = new JSONObject();
 
 		jsonTable.put("type", getClassType(cmClass.getName()));
 		// TODO complete
@@ -851,7 +862,7 @@ public class Serializer {
 		return serializer;
 	}
 
-	public static JSONArray serialize(final Iterable<? extends CMAttribute> attributes, boolean active)
+	public static JSONArray serialize(final Iterable<? extends CMAttribute> attributes, final boolean active)
 			throws JSONException {
 		final JSONArray attributeList = new JSONArray();
 		for (final CMAttribute attribute : sortAttributes(attributes)) {
@@ -885,10 +896,11 @@ public class Serializer {
 	/**
 	 * @deprecated use serialize(Iterable<CMAttribute>, boolean) instead.
 	 */
-	public static JSONArray serializeAttributeList(BaseSchema table, boolean active) throws JSONException {
-		List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
-		JSONArray attributeList = new JSONArray();
-		for (IAttribute attribute : sortedAttributes) {
+	@Deprecated
+	public static JSONArray serializeAttributeList(final BaseSchema table, final boolean active) throws JSONException {
+		final List<IAttribute> sortedAttributes = sortAttributes(table.getAttributes().values());
+		final JSONArray attributeList = new JSONArray();
+		for (final IAttribute attribute : sortedAttributes) {
 			if (attribute.getMode().equals(Mode.RESERVED))
 				continue;
 			if (active && !attribute.getStatus().isActive())
@@ -919,8 +931,8 @@ public class Serializer {
 	}
 
 	// TODO: delete this method when old dao will be updated with new dao
-	public static JSONObject serializeGroupCard(GroupCard groupCard) throws JSONException {
-		JSONObject jsonGroup = new JSONObject();
+	public static JSONObject serializeGroupCard(final GroupCard groupCard) throws JSONException {
+		final JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", groupCard.getId());
 		jsonGroup.put("name", groupCard.getName());
 		jsonGroup.put("description", groupCard.getDescription());
@@ -956,7 +968,7 @@ public class Serializer {
 			final JSONObject row = new JSONObject();
 			row.put("id", group.getId());
 			row.put("description", group.getDescription());
-			String userDefaultGroupName = user.getDefaultGroupName();
+			final String userDefaultGroupName = user.getDefaultGroupName();
 			if (userDefaultGroupName != null && userDefaultGroupName.equalsIgnoreCase(group.getName())) {
 				row.put("isdefault", true);
 			} else {
