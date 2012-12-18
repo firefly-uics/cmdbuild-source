@@ -25,9 +25,11 @@
 		hideAccordions: false,
 		controllerType: "MainViewportController",
 		statics: {
-			showSplash: function(target, administration) {
-				var txt = "";
-				
+			showSplash: function(forCredit, administration) {
+				var txt = forCredit ? credits : splashText;
+				var opacity = forCredit ? 0.6: 1;
+				var target = Ext.getBody();
+
 				if (target) {
 					if (!this.creditWin) {
 						this.creditWin = new Ext.window.Window({
@@ -37,17 +39,23 @@
 						});
 					}
 
-					this.theMask = target.getEl().mask();
-					this.theMask.fadeIn({
-						duration: 400,
-						opacity: 0.8
-					});
+					if (!typeof target.mask == "function") {
+						target = target.getEl();
+					}
 
-					this.theMask.on("click", function() {
-						CMDBuild.view.CMMainViewport.hideSplash();
-					});
+					this.theMask = target.mask();
+					if (this.theMask) {
+						this.theMask.show();
+						this.theMask.fadeIn({
+							duration: 0,
+							opacity: opacity
+						});
 
-					txt = credits;
+						this.theMask.on("click", function() {
+							CMDBuild.view.CMMainViewport.hideSplash();
+						});
+					}
+
 					this.theWin = this.creditWin;
 
 				} else {
@@ -60,10 +68,9 @@
 						});
 					}
 
-					txt = splashText;
 					this.theWin = this.splash;
 				}
-				
+
 				if (!this.imageCls) {
 					this.imageCls = "splashScreen_image" + (administration ? "_administration" : "");
 				}
@@ -78,7 +85,7 @@
 
 				if (this.theMask) {
 					this.theMask.fadeOut({
-						remove: true
+						duration: 1000
 					});
 				}
 
@@ -87,7 +94,7 @@
 				}
 
 				// show the header and the footer, that are initially hidden
-				var hiddenCls = "cm_no_display"
+				var hiddenCls = "cm_no_display";
 				var divs = Ext.DomQuery.select("div[class="+hiddenCls+"]");
 				for (var i=0, l=divs.length; i<l; ++i) {
 					var e = new Ext.Element(divs[i]);
@@ -146,11 +153,23 @@
 			this.border = false;
 			
 			this.callParent(arguments);
-            
-            var creditsLink = Ext.get('cmdbuild_credits_link');
-            creditsLink.on('click', function(e) {
-                CMDBuild.view.CMMainViewport.showSplash(this);
-            }, this);
+
+			var creditsLink = Ext.get('cmdbuild_credits_link');
+			creditsLink.on('click', function(e) {
+				CMDBuild.view.CMMainViewport.showSplash(true, false);
+			}, this);
+		},
+
+		addAccordion: function(a) {
+			Ext.suspendLayouts();
+			this.cmAccordions.add(a);
+			Ext.resumeLayouts();
+		},
+
+		addPanel: function(p) {
+			Ext.suspendLayouts();
+			this.cmPanels.add(p);
+			Ext.resumeLayouts();
 		},
 
 		/*
@@ -162,7 +181,8 @@
 			if (typeof fn == "undefined") {
 				throw "CMMainViewport.foreachAccordion must have a function as parameter";
 			}
-			this.cmAccordions.items.each(fn, scope)
+
+			this.cmAccordions.items.each(fn, scope);
 		},
 		/*
 		 * Take a function as parameter
@@ -173,7 +193,7 @@
 			if (typeof fn == "undefined") {
 				throw "CMMainViewport.foreachPanel must have a function as parameter";
 			}
-			this.cmPanels.items.each(fn, scope)
+			this.cmPanels.items.each(fn, scope);
 		},
 		/*
 		 * Search in the cmPanels the given name
@@ -182,7 +202,7 @@
 		bringTofrontPanelByCmName: function(cmName, params, silent) {
 			Ext.suspendLayouts();
 			var p = this.findModuleByCMName(cmName),
-				activatePanel;
+				activatePanel = null;
 
 			if (p) {
 				activatePanel = (typeof p.beforeBringToFront != "function" || p.beforeBringToFront(params) !== false);
@@ -195,6 +215,7 @@
 			}
 			Ext.resumeLayouts();
 			this.doLayout();
+
 			return activatePanel;
 		},
 
@@ -226,7 +247,7 @@
 			var a = this.findAccordionByCMName(cmName);
 			a.enable();
 		},
-		
+
 		getExpansedAccordion: function() {
 			return this.cmAccordions.items.findBy(function(accordion) {
 				return (!accordion.collapsed);

@@ -22,9 +22,8 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
+import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
 import org.cmdbuild.services.auth.AuthenticationFacade;
@@ -279,6 +278,16 @@ public class ModSecurity extends JSONBase {
 			@Parameter(value="users", required=false) String users,
 			UserContext userCtx
 		) throws JSONException, AuthException {
+
+		// The CloudAdmin could not modify or create groups with administrator
+		// privileges if not its own group
+		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()
+				&& isAdministrator
+				&& groupId != userCtx.getDefaultGroup().getId()) {
+
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+
 		GroupCard group = GroupCard.getOrCreate(groupId);
 		if (name != null) {
 			group.setName(name);
@@ -308,9 +317,16 @@ public class ModSecurity extends JSONBase {
 			UserContext userCtx) {
 		final GroupCard group = GroupCard.getOrCreate(groupId);
 		final IDomain userGroupDomain = userCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
-
 		final List<UserCard> oldUserList = AuthenticationFacade.getUserList(groupId);
 		final List<String> newUserIdList = new ArrayList<String>();
+
+		// The CloudAdmin could not change the users of other Admin groups
+		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()) {
+			if (group.isAdmin() && group.getId() != userCtx.getDefaultGroup().getId()) {
+				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+			}
+		}
+
 		if (users != null && !users.equals("")) {
 			StringTokenizer tokenizer = new StringTokenizer(users, ",");
 			while (tokenizer.hasMoreTokens()) {
@@ -343,16 +359,28 @@ public class ModSecurity extends JSONBase {
 			JSONObject serializer,
 			@Parameter("isActive") boolean isActive,
 			@Parameter("groupId") int groupId,
-			ITableFactory tf
+			ITableFactory tf,
+			UserContext userCtx
 		) throws JSONException, AuthException {
+
 		ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
 		GroupCard group = new GroupCard(card);
+
+		// The CloudAdmin could not disable/enalbe groups with administrator
+		// privileges if not its own group
+		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()
+				&& group.isAdmin()
+				&& groupId != userCtx.getDefaultGroup().getId()) {
+
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+
 		setGroupStatus(group, isActive);
 		group.save();
 		serializer.put("group", Serializer.serializeGroupCard(group));
 		return serializer;
 	}
-	
+
 	private void setGroupStatus(GroupCard group, boolean isActive) {
 		if (isActive) {
 			group.setStatus(ElementStatus.ACTIVE);
