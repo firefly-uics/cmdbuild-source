@@ -171,7 +171,9 @@
 				}
 			};
 
-			_CMCache.getLayersForEntryTypeName(params.IdClass_value, function(layers) {
+			var entryTypeId = params.IdClass;
+			var entryType = _CMCache.getEntryTypeById(entryTypeId);
+			_CMCache.getLayersForEntryTypeName(entryType.getName(), function(layers) {
 				if (layers.length > 0) {
 					var layer = layers[0];
 					if (me.map.getZoom() < layer.minZoom ) {

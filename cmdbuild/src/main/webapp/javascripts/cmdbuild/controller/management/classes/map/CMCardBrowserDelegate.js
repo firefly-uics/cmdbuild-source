@@ -19,7 +19,6 @@
 		// there aren't the info to show/hide the features.
 		// For this reason, act like an expand, loading the
 		// branch at all, and then show/hide the features.
-
 		onCardBrowserTreeCheckChange: function(tree, node, checked, deeply) {
 			if (deeply) {
 				setFeatureVisibilityForAllBranch(tree, this.master, node, checked);
@@ -28,7 +27,6 @@
 			}
 		},
 
-		onCardBrowserTreeItemExpand: function(tree, node) {},
 
 		onCardBrowserTreeCardSelected: function(cardBaseInfo) {
 			if (cardBaseInfo.IdClass > 0) {
@@ -36,15 +34,20 @@
 			}
 		},
 
-		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {},
 
 		onCardBrowserTreeNodeAppend: function(cardBrowserTree, node) {
 			if (cardBrowserTree
-					&& node.isBindingCard(_CMCardModuleState.card)) {
-
-				cardBrowserTree.selectNodeSilently(node);
+					&& node.getCMDBuildClassName() == cardBrowserTree.dataSource.GEOSERVER
+					&& node.parentNode != null) {
+				// add a reference to the geoServer node to be
+				// able to check this node when check its parent
+				// see setCardFeaturesVisibility
+				node.parentNode.cmGeoServerNode = node;
 			}
-		}
+		},
+
+		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {},
+		onCardBrowserTreeItemExpand: function(tree, node) {}
 	});
 
 	function setFeatureVisibilityForAllBranch(tree, master, node, checked) {
@@ -66,12 +69,17 @@
 		} else {
 			setGeoserverLayerVisibility(master, node, visibility);
 		}
+
+		if (node.cmGeoServerNode) {
+			node.cmGeoServerNode.setChecked(visibility); // to sync the UI
+			setGeoserverLayerVisibility(master, node.cmGeoServerNode, visibility);
+		}
 	}
 
 	function setChildrenFeaturesVisibility(tree, master, checked, children) {
 		for (var i=0, child=null; i<children.length; ++i) {
 			child = children[i];
-			child.set("checked", checked);
+			child.setChecked(checked);
 			setFeatureVisibilityForAllBranch(tree, master, child, checked);
 		}
 	}
