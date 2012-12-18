@@ -329,7 +329,7 @@ $$ LANGUAGE SQL STABLE RETURNS NULL ON NULL INPUT;
  * @return reference constraint type (defaults to restrict)
  */
 CREATE OR REPLACE FUNCTION _cm_read_reference_type_comment(AttributeComment text) RETURNS text AS $$
-	SELECT COALESCE(_cm_read_comment($1, 'REFERENCETYPE'),'restrict');
+	SELECT COALESCE(NULLIF(_cm_read_comment($1, 'REFERENCETYPE'), ''), 'restrict');
 $$ LANGUAGE SQL STABLE RETURNS NULL ON NULL INPUT;
 
 CREATE OR REPLACE FUNCTION _cm_get_fk_target_comment(AttributeComment text) RETURNS text AS $$

@@ -581,9 +581,9 @@ CREATE OR REPLACE FUNCTION cm_modify_attribute(
 DECLARE
 	OldComment text := _cm_comment_for_attribute(TableId, AttributeName);
 BEGIN
-	IF _cm_read_reference_domain_comment(OldComment) IS DISTINCT FROM _cm_read_reference_domain_comment(NewComment)
+	IF COALESCE(_cm_read_reference_domain_comment(OldComment), '') IS DISTINCT FROM COALESCE(_cm_read_reference_domain_comment(NewComment), '')
 		OR  _cm_read_reference_type_comment(OldComment) IS DISTINCT FROM _cm_read_reference_type_comment(NewComment)
-		OR  _cm_get_fk_target_comment(OldComment) IS DISTINCT FROM _cm_get_fk_target_comment(NewComment)
+		OR  COALESCE(_cm_get_fk_target_comment(OldComment), '') IS DISTINCT FROM COALESCE(_cm_get_fk_target_comment(NewComment), '')
 	THEN
 		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;

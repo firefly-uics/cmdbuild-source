@@ -1763,7 +1763,7 @@ $_$;
 CREATE FUNCTION _cm_read_reference_type_comment(attributecomment text) RETURNS text
     LANGUAGE sql STABLE STRICT
     AS $_$
-	SELECT COALESCE(_cm_read_comment($1, 'REFERENCETYPE'),'restrict');
+	SELECT COALESCE(NULLIF(_cm_read_comment($1, 'REFERENCETYPE'), ''), 'restrict');
 $_$;
 
 
@@ -2610,9 +2610,9 @@ CREATE FUNCTION cm_modify_attribute(tableid oid, attributename text, sqltype tex
 DECLARE
 	OldComment text := _cm_comment_for_attribute(TableId, AttributeName);
 BEGIN
-	IF _cm_read_reference_domain_comment(OldComment) IS DISTINCT FROM _cm_read_reference_domain_comment(NewComment)
+	IF COALESCE(_cm_read_reference_domain_comment(OldComment), '') IS DISTINCT FROM COALESCE(_cm_read_reference_domain_comment(NewComment), '')
 		OR  _cm_read_reference_type_comment(OldComment) IS DISTINCT FROM _cm_read_reference_type_comment(NewComment)
-		OR  _cm_get_fk_target_comment(OldComment) IS DISTINCT FROM _cm_get_fk_target_comment(NewComment)
+		OR  COALESCE(_cm_get_fk_target_comment(OldComment), '') IS DISTINCT FROM COALESCE(_cm_get_fk_target_comment(NewComment), '')
 	THEN
 		RAISE EXCEPTION 'CM_FORBIDDEN_OPERATION';
 	END IF;
@@ -3059,11 +3059,11 @@ COMMENT ON COLUMN "Activity"."IdClass" IS 'MODE: reserved|DESCR: Classe';
 
 
 
-COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0||LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
 
 
 
-COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Descrizione|INDEX: 1|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: true|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
+COMMENT ON COLUMN "Activity"."Description" IS 'MODE: read|DESCR: Descrizione|INDEX: 1|DATEEXPIRE: false|BASEDSP: true|STATUS: active';
 
 
 
@@ -6285,11 +6285,11 @@ COMMENT ON COLUMN "RequestForChange"."IdClass" IS 'MODE: reserved|DESCR: Classe'
 
 
 
-COMMENT ON COLUMN "RequestForChange"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0||LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: false|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
+COMMENT ON COLUMN "RequestForChange"."Code" IS 'MODE: read|DESCR: Nome Attività|INDEX: 0|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
 
 
 
-COMMENT ON COLUMN "RequestForChange"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|LOOKUP: |REFERENCEDOM: |REFERENCETYPE: |REFERENCEDIRECT: true|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
+COMMENT ON COLUMN "RequestForChange"."Description" IS 'MODE: read|DESCR: Description|INDEX: 1|DATEEXPIRE: false|BASEDSP: false|STATUS: active';
 
 
 
