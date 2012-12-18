@@ -27,6 +27,8 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final String ALFRESCO_CUSTOM_MODEL_FILENAME = "cmdbuildCustomModel.xml";
 	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadataAutocompletion.xml";
 
+	private static final long DELAY = 1000L;
+
 	@Override
 	public String getFtpHost() {
 		return FTP_HOST;
@@ -114,5 +116,10 @@ public class TestConfiguration implements DmsConfiguration {
 			return EMPTY;
 		}
 	};
+
+	@Override
+	public long getDelayBetweenFtpAndWebserviceOperations() {
+		return DELAY;
+	}
 
 }

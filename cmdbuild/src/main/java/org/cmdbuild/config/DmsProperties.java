@@ -217,5 +217,10 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 			return EMPTY;
 		}
 	}
+	
+	@Override
+	public long getDelayBetweenFtpAndWebserviceOperations() {
+		return Long.valueOf(getProperty(DELAY));
+	}
 
 }

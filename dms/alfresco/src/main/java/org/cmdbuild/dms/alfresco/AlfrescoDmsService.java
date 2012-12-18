@@ -106,7 +106,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 	 */
 	private void waitForSomeTimeBetweenFtpAndWebserviceOperations() {
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(getConfiguration().getDelayBetweenFtpAndWebserviceOperations());
 		} catch (final InterruptedException e) {
 			logger.warn("should never happen... so why?", e);
 		}
