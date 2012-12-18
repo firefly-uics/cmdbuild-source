@@ -18,6 +18,11 @@
 		}, {
 			name : 'classId',
 			type : 'int'
+		}, {
+			// to identify the exclusive nodes that
+			// represent the base for the vertical overlap
+			name: 'baseNode',
+			type: 'boolean'
 		}],
 
 		getCardId: function() {
@@ -60,14 +65,35 @@
 			return this.get("checked");
 		},
 
+		isBaseNode: function() {
+			return this.get("baseNode");
+		},
+
 		checkAncestors: function(cb) {
 			var node = this;
 			while (node) {
-				node.setChecked(true);
+				if (node.isBaseNode()) {
+					node.setExclusiveCheck(cb);
+				} else {
+					node.setChecked(true);
+				}
 				cb(node);
 				node = node.parentNode;
 			}
-		}
+		},
+
+		setExclusiveCheck: function(cb) {
+			if (this.parentNode) {
+				var siblings = this.parentNode.childNodes || this.parentNode.children || [];
+				for (var i=0, l=siblings.length; i<l; ++i) {
+					var node = siblings[i];
+					node.setChecked(false);
+					cb(node);
+				}
+			}
+
+			this.setChecked(true);
+		},
 	});
 
 	Ext.define("CMDBuild.view.management.CMCardBrowserTreeDelegate", {
@@ -237,7 +263,7 @@
 				this.callDelegates("onCardBrowserTreeActivate", [this, ++this.activationCount]);
 			}, this);
 
-			this.mon(this, "beforeitemappend", function(tree, node) {
+			this.mon(this, "itemappend", function(tree, node) {
 				// sync the check state firing the checkchange event
 				var deeply = false;
 				this.callDelegates("onCardBrowserTreeCheckChange", [this, node, node.get("checked"), deeply]);
@@ -303,7 +329,7 @@
 					// Is necessary because the set of the node does not
 					// fire the checkchange event
 					node.checkAncestors(function(n) {
-						var deeply = false;
+						var deeply = n.isBaseNode();
 						me.callDelegates("onCardBrowserTreeCheckChange", [me, n, n.isChecked(), deeply]);
 					});
 				}

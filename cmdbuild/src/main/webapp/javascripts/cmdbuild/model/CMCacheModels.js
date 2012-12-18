@@ -90,6 +90,10 @@
 			}
 		},
 
+		getName: function() {
+			return this.get("name");
+		},
+
 		// Attachment metadata management
 
 		/*
