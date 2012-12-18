@@ -131,6 +131,7 @@
 				}
 
 				CMDBuild.view.CMMainViewport.showSplash();
+
 				this.loadResources();
 
 				if (_CMUIConfiguration.isFullScreenMode()) {
