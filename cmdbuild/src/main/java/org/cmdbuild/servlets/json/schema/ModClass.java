@@ -196,10 +196,29 @@ public class ModClass extends JSONBase {
 		return true;
 	}
 
+	// @JSONExported
+	// public JSONObject getAttributeList(@Parameter(value = "active", required
+	// = false) final boolean active,
+	// final JSONObject serializer, final ITable table) throws JSONException,
+	// AuthException {
+	// //TODO: retrieve here the list of attributes for the class with specific
+	// id...
+	// serializer.put("rows", Serializer.serializeAttributeList(table, active));
+	// return serializer;
+	// }
+
 	@JSONExported
-	public JSONObject getAttributeList(@Parameter(value = "active", required = false) final boolean active,
-			final JSONObject serializer, final ITable table) throws JSONException, AuthException {
-		serializer.put("rows", Serializer.serializeAttributeList(table, active));
+	public JSONObject getAttributeList(@Parameter(value = "active", required = false) final boolean onlyActive, //
+			@Parameter(value = "idClass") final Long classId, //
+			final JSONObject serializer) throws JSONException, AuthException {
+		Iterable<? extends CMAttribute> attributesForClass;
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		if (onlyActive) {
+			attributesForClass = dataLogic.findClassById(classId).getAttributes();
+		} else {
+			attributesForClass = dataLogic.findClassById(classId).getAllAttributes();
+		}
+		serializer.put("rows", Serializer.serialize(attributesForClass, onlyActive));
 		return serializer;
 	}
 
