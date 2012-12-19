@@ -7,8 +7,11 @@ import java.util.List;
 
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationHelper {
 
@@ -66,6 +69,11 @@ public class ConfigurationHelper {
 			@Override
 			public boolean isDebug() {
 				return Boolean.valueOf(cus.getProperty(MAIL_DEBUG));
+			}
+			
+			@Override
+			public Logger getLogger() {
+				return LoggerFactory.getLogger(Logging.LOGGER_NAME);
 			}
 
 			@Override
