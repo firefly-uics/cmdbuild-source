@@ -338,7 +338,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final List<AttributeSchema> paramSchemas = helper.getParamSchemas(soapReport, report.getFormat());
 		final List<ReportParams> reportParams = compileParams(paramSchemas, report.getParameters());
 		final DataHandler dataHandler = helper.getDataHandler(soapReport, report.getFormat(), reportParams);
-		final File file = helper.temporaryFile();
+		final File file = helper.temporaryFile(report.getTitle(), report.getFormat());
 		helper.saveToFile(dataHandler, file);
 		return new DownloadedReport(file);
 	}

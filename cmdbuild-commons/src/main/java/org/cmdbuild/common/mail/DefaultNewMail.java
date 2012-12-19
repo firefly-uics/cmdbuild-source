@@ -286,8 +286,15 @@ class DefaultNewMail implements NewMail {
 		final BodyPart bodyPart = new MimeBodyPart();
 		final DataSource source = new URLDataSource(file);
 		bodyPart.setDataHandler(new DataHandler(source));
-		bodyPart.setFileName(file.getPath());
+		bodyPart.setFileName(getFileName(file.getFile()));		
 		return bodyPart;
+	}
+	
+	private String getFileName(String name){
+        String[] dirs=name.split("/");
+        if(dirs.length>0)
+                name=dirs[dirs.length-1];
+        return name;
 	}
 
 	private void send(final Session session) throws MessagingException {
