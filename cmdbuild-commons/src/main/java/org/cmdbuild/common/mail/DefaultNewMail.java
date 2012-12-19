@@ -22,6 +22,7 @@ import static org.cmdbuild.common.mail.JavaxMailConstants.TRUE;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,12 +50,14 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.cmdbuild.common.mail.MailApi.OutputConfiguration;
+import org.slf4j.Logger;
 
 class DefaultNewMail implements NewMail {
 
 	private static final PasswordAuthenticator NO_AUTENTICATION = null;
 
 	private final OutputConfiguration configuration;
+	private final Logger logger;
 
 	private final List<String> froms;
 	private final Map<RecipientType, Set<String>> recipients;
@@ -68,6 +71,7 @@ class DefaultNewMail implements NewMail {
 
 	public DefaultNewMail(final OutputConfiguration configuration) {
 		this.configuration = configuration;
+		this.logger = configuration.getLogger();
 
 		this.froms = new ArrayList<String>();
 
@@ -89,20 +93,28 @@ class DefaultNewMail implements NewMail {
 
 	@Override
 	public NewMail withTo(final String to) {
-		recipients.get(RecipientType.TO).add(to);
+		addRecipient(RecipientType.TO, to);
 		return this;
 	}
 
 	@Override
 	public NewMail withCc(final String cc) {
-		recipients.get(RecipientType.CC).add(cc);
+		addRecipient(RecipientType.CC, cc);
 		return this;
 	}
 
 	@Override
 	public NewMail withBcc(final String bcc) {
-		recipients.get(RecipientType.BCC).add(bcc);
+		addRecipient(RecipientType.BCC, bcc);
 		return this;
+	}
+
+	private void addRecipient(final RecipientType type, final String recipient) {
+		if (isBlank(recipient)) {
+			logger.info("invalid recipient {} '{}', will not be added", type.getClass().getSimpleName(), recipient);
+		} else {
+			recipients.get(type).add(recipient);
+		}
 	}
 
 	@Override
@@ -130,7 +142,7 @@ class DefaultNewMail implements NewMail {
 	}
 
 	@Override
-	public NewMail withAsynchronousSend(boolean asynchronous) {
+	public NewMail withAsynchronousSend(final boolean asynchronous) {
 		this.asynchronous = asynchronous;
 		return this;
 	}
@@ -160,12 +172,10 @@ class DefaultNewMail implements NewMail {
 					setBody();
 					send(session);
 				} catch (final MessagingException e) {
-					// TODO log somewhere
+					configuration.getLogger().error("error sending mail", e);
 				}
 			}
-
 		};
-
 	}
 
 	private void runInAnotherThread(final Runnable job) {
@@ -241,26 +251,24 @@ class DefaultNewMail implements NewMail {
 	}
 
 	private void setSentDate() throws MessagingException {
-		message.setSentDate(GregorianCalendar.getInstance().getTime());
+		message.setSentDate(Calendar.getInstance().getTime());
 	}
 
 	private void setBody() throws MessagingException {
-		final Part textPart;
-		if (hasAttachments()) {
-			textPart = new MimeBodyPart();
-			final Multipart multipart = new MimeMultipart();
-			multipart.addBodyPart((BodyPart) textPart);
-			addAttachmentBodyParts(multipart);
-			message.setContent(multipart);
+		final Part part;
+		if ((isBlank(contentType) || CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) && !hasAttachments()) {
+			part = message;
+			part.setText(body);
 		} else {
-			textPart = message;
+			final Multipart mp = new MimeMultipart("alternative");
+			part = new MimeBodyPart();
+			part.setContent(body, contentType);
+			mp.addBodyPart((MimeBodyPart) part);
+			if (hasAttachments())
+				addAttachmentBodyParts(mp);
+			message.setContent(mp);
 		}
 
-		if (isBlank(contentType) || CONTENT_TYPE_TEXT_PLAIN.equals(contentType)) {
-			textPart.setText(body);
-		} else {
-			textPart.setContent(body, contentType);
-		}
 	}
 
 	private boolean hasAttachments() {
