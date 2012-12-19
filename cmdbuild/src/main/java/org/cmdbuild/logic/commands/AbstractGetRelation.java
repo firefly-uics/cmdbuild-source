@@ -5,6 +5,8 @@ import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Map;
 
@@ -17,7 +19,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.joda.time.DateTime;
@@ -40,13 +41,9 @@ public class AbstractGetRelation {
 
 	protected QuerySpecsBuilder getRelationQuery(final Card src, final CMDomain domain) {
 		final CMClass srcCardType = getCardType(src);
-		return view
-			.select(
-				anyAttribute(DOM_ALIAS),
-				attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
-			.from(srcCardType)
-			.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
-			.where(attribute(srcCardType, ID), Operator.EQUALS, src.cardId);
+		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
+				.from(srcCardType).join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
+				.where(condition(attribute(srcCardType, ID), eq(src.cardId)));
 	}
 
 	protected CMClass getCardType(final Card src) {
@@ -54,8 +51,6 @@ public class AbstractGetRelation {
 		Validate.notNull(type);
 		return type;
 	}
-
-
 
 	public static class RelationInfo {
 

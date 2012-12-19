@@ -17,6 +17,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import utils.DBFixture;
+import utils.UserRolePrivilegeFixture;
 
 public class SecurityLogicTest extends DBFixture {
 
@@ -27,6 +28,8 @@ public class SecurityLogicTest extends DBFixture {
 	private static final String USER_DEFAULT_GROUP = "userdef";
 	private static final String PASSWORD_DEFAULT_GROUP = "userdef_password";
 
+	private UserRolePrivilegeFixture fixture;
+
 	private DBCard admin;
 	private DBCard simpleUser;
 	private DBCard userWithDefaultGroup;
@@ -36,17 +39,19 @@ public class SecurityLogicTest extends DBFixture {
 
 	@Before
 	public void setUp() {
+		fixture = new UserRolePrivilegeFixture(dbDriver());
+		
 		securityLogic = new SecurityLogic(dbDataView());
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
 
 	private void populateDatabaseWithUsersGroupsAndPrivileges() {
-		admin = insertUserWithUsernameAndPassword(ADMIN_USERNAME, ADMIN_PASSWORD);
-		simpleUser = insertUserWithUsernameAndPassword(SIMPLE_USERNAME, SIMPLE_PASSWORD);
-		userWithDefaultGroup = insertUserWithUsernameAndPassword(USER_DEFAULT_GROUP, PASSWORD_DEFAULT_GROUP);
+		admin = fixture.insertUserWithUsernameAndPassword(ADMIN_USERNAME, ADMIN_PASSWORD);
+		simpleUser = fixture.insertUserWithUsernameAndPassword(SIMPLE_USERNAME, SIMPLE_PASSWORD);
+		userWithDefaultGroup = fixture.insertUserWithUsernameAndPassword(USER_DEFAULT_GROUP, PASSWORD_DEFAULT_GROUP);
 
-		groupA = insertRoleWithCode("group A");
-		groupB = insertRoleWithCode("group B");
+		groupA = fixture.insertRoleWithCode("group A");
+		groupB = fixture.insertRoleWithCode("group B");
 
 		createUserRoleBinding();
 	}
@@ -55,18 +60,18 @@ public class SecurityLogicTest extends DBFixture {
 	 * A user belongs to multiple groups and a group contains more than one user
 	 */
 	private void createUserRoleBinding() {
-		insertBindingBetweenUserAndRole(admin, groupA);
-		insertBindingBetweenUserAndRole(admin, groupB);
-		insertBindingBetweenUserAndRole(simpleUser, groupB);
-		insertBindingBetweenUserAndRole(userWithDefaultGroup, groupA);
-		insertBindingBetweenUserAndRole(userWithDefaultGroup, groupB, true);
+		fixture.insertBindingBetweenUserAndRole(admin, groupA);
+		fixture.insertBindingBetweenUserAndRole(admin, groupB);
+		fixture.insertBindingBetweenUserAndRole(simpleUser, groupB);
+		fixture.insertBindingBetweenUserAndRole(userWithDefaultGroup, groupA);
+		fixture.insertBindingBetweenUserAndRole(userWithDefaultGroup, groupB, true);
 	}
 
 	@Test
 	public void shouldRetrieveAllPrivilegesForGroup() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
-		final DBCard privilegeCard = insertPrivilege(groupA.getId(), createdClass, "w");
+		final DBCard privilegeCard = fixture.insertPrivilege(groupA.getId(), createdClass, "w");
 
 		// when
 		final List<PrivilegeInfo> privileges = securityLogic.getPrivilegesForGroup(groupA.getId());
@@ -100,7 +105,7 @@ public class SecurityLogicTest extends DBFixture {
 	public void shoulUpdateExistentPrivilege() {
 		// given
 		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
-		insertPrivilege(groupA.getId(), createdClass, "-");
+		fixture.insertPrivilege(groupA.getId(), createdClass, "-");
 		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
 
 		// when

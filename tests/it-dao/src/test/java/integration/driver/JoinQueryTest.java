@@ -6,6 +6,8 @@ import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -17,7 +19,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -61,7 +62,7 @@ public class JoinQueryTest extends DBFixture {
 				.select(descriptionAttribute(SRC), codeAttribute(DST_ALIAS, DST1)) //
 				.from(SRC) //
 				.join(DST1, as(DST_ALIAS), over(DOM)) //
-				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId()) //
+				.where(condition(keyAttribute(SRC), eq(src1.getId()))) //
 				.run();
 
 		assertThat(result.size(), is(1));
@@ -93,7 +94,7 @@ public class JoinQueryTest extends DBFixture {
 				.select(descriptionAttribute(SRC), codeAttribute(DST)) //
 				.from(SRC) //
 				.join(anyClass(), as("DST"), over(DOM)) //
-				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId()) //
+				.where(condition(keyAttribute(SRC), eq(src1.getId()))) //
 				.run();
 
 		// then
@@ -117,7 +118,7 @@ public class JoinQueryTest extends DBFixture {
 				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //
 				.from(SRC) //
 				.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS))) //
-				.where(keyAttribute(SRC), Operator.EQUALS, src1.getId()) //
+				.where(condition(keyAttribute(SRC), eq(src1.getId()))) //
 				.run();
 
 		assertThat(result.size(), is(3));
