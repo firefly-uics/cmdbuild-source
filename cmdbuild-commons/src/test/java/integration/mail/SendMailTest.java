@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
@@ -186,7 +187,8 @@ public class SendMailTest extends AbstractSendMailTest {
 				.withContent(PLAIN_TEXT_CONTENT) //
 				.withContentType(MIME_TEXT_HTML));
 
-		assertThat(firstReceivedMessage().getContentType(), startsWith(MIME_TEXT_HTML));
+		assertThat(((MimeMultipart) firstReceivedMessage().getContent()).getBodyPart(0).getContentType(),
+				startsWith(MIME_TEXT_HTML));
 	}
 
 	private URL newAttachmentFileFromContent(final String content) throws IOException {
