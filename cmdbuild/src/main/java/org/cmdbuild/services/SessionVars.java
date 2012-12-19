@@ -2,15 +2,12 @@ package org.cmdbuild.services;
 
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
-import java.util.Map;
-
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.csv.CSVData;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.listeners.RequestListener;
@@ -25,7 +22,6 @@ public class SessionVars implements UserStore {
 
 	private static final String AUTH_KEY = "auth";
 	private static final String LANGUAGE_KEY = "language";
-	private static final String FILTER_MAP_KEY = "filters";
 	private static final String REPORTFACTORY_KEY = "ReportFactorySessionObj";
 	private static final String NEWREPORT_KEY = "newReport";
 	private static final String CSVDATA_KEY = "csvdata";
@@ -34,7 +30,7 @@ public class SessionVars implements UserStore {
 	public UserContext getCurrentUserContext() {
 		final OperationUser operationUser = getUser();
 		if (operationUser.getAuthenticatedUser().isAnonymous()) {
-			return null; //check if it is better to return a not-null object
+			return null; // check if it is better to return a not-null object
 		} else {
 			return new OperationUserWrapper(operationUser);
 		}
@@ -53,15 +49,6 @@ public class SessionVars implements UserStore {
 	@Override
 	public void setUser(final OperationUser user) {
 		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
-	}
-
-	@SuppressWarnings("unchecked")
-	public Map<String, CardQuery> getFilterMap() {
-		return (Map<String, CardQuery>) RequestListener.getCurrentSessionObject(FILTER_MAP_KEY);
-	}
-
-	public void setFilterMap(final Map<String, CardQuery> filterMap) {
-		RequestListener.setCurrentSessionObject(FILTER_MAP_KEY, filterMap);
 	}
 
 	public String getLanguage() {
