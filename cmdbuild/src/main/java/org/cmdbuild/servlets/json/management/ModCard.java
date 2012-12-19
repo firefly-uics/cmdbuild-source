@@ -23,7 +23,6 @@ import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.CompositeFilter;
 import org.cmdbuild.elements.filters.CompositeFilter.CompositeFilterItem;
 import org.cmdbuild.elements.filters.FilterOperator;
-import org.cmdbuild.elements.filters.FilterOperator.OperatorType;
 import org.cmdbuild.elements.filters.OrderFilter;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.BaseSchema.Mode;
@@ -46,7 +45,6 @@ import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.gis.GeoCard;
@@ -58,8 +56,6 @@ import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.OverrideKeys;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.cmdbuild.servlets.utils.builder.CardQueryParameter;
-import org.cmdbuild.utils.CQLFacadeCompiler;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -267,149 +263,6 @@ public class ModCard extends JSONBase {
 			}
 		}
 		return reference;
-	}
-
-	@JSONExported
-	public void resetCardFilter(
-			@Parameter(value = CardQueryParameter.FILTER_CATEGORY_PARAMETER, required = false) final String categoryOrNull,
-			@Parameter(value = CardQueryParameter.FILTER_SUBCATEGORY_PARAMETER, required = false) final String subcategoryOrNull)
-			throws JSONException, CMDBException {
-		FilterService.clearFilters(categoryOrNull, subcategoryOrNull);
-	}
-
-	@JSONExported
-	public JSONObject setCardFilter(
-			final JSONObject serializer,
-			final Map<String, String> requestParams,
-			@Parameter(CardQueryParameter.FILTER_CLASSID) final int classId,
-			@Parameter(value = "cql", required = false) final String cqlQuery,
-			@Parameter(value = CardQueryParameter.FILTER_CATEGORY_PARAMETER, required = false) final String categoryOrNull,
-			@Parameter(value = CardQueryParameter.FILTER_SUBCATEGORY_PARAMETER, required = false) final String subcategoryOrNull,
-			@Parameter(value = "checkedRecords", required = false) final JSONObject cardInRelation,
-			final ITableFactory tf, final DomainFactory df) throws JSONException, CMDBException {
-		final CardQuery cardFilter = FilterService.getFilter(classId, categoryOrNull, subcategoryOrNull);
-		cardFilter.reset();
-		if (cqlQuery != null && cqlQuery.trim().length() > 0) {
-			final Map<String, Object> reqPrms = new HashMap<String, Object>();
-			reqPrms.putAll(requestParams);
-			CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cardFilter, cqlQuery, -1, -1, reqPrms);
-		} else {
-			addAttributeFilter(cardFilter, requestParams);
-			addRelationFilter(cardFilter, cardInRelation, tf, df);
-		}
-		return serializer;
-	}
-
-	private void addAttributeFilter(final CardQuery cardFilter, final Map<String, String> requestParams) {
-		// Builds a map of attribute name, suffix list
-		final Map<String, List<String>> attributeMap = buildFilterAttributesMap(requestParams);
-		// attribute filter
-		for (final String attributeName : attributeMap.keySet()) {
-			final IAttribute attribute = cardFilter.getTable().getAttribute(attributeName);
-			final List<AbstractFilter> filterList = new LinkedList<AbstractFilter>();
-			for (final String suffix : attributeMap.get(attributeName)) {
-				filterList.add(buildFilterForAttribute(attribute, suffix, requestParams));
-			}
-			if (filterList.isEmpty()) {
-				cardFilter.filter(filterList.iterator().next());
-			} else {
-				cardFilter.filter(new FilterOperator(OperatorType.OR, filterList));
-			}
-		}
-	}
-
-	private Map<String, List<String>> buildFilterAttributesMap(final Map<String, String> requestParams) {
-		final Map<String, List<String>> attributeMap = new HashMap<String, List<String>>();
-		for (final String requestParamName : requestParams.keySet()) {
-			if (requestParamName.endsWith("_ftype")) {
-				if (requestParams.get(requestParamName).length() == 0)
-					continue;
-				// requestAttributeName is the requestParams without the
-				// "_ftype" substring
-				final String requestAttributeName = requestParamName.substring(0, requestParamName.length() - 6);
-				// attributeName is the requestAttributeNames without the
-				// generatedId
-				final int suffixPosition = requestAttributeName.lastIndexOf("_");
-				final String attributeName = requestAttributeName.substring(0, suffixPosition);
-				final String attributeSuffix = requestAttributeName.substring(suffixPosition);
-				if (attributeMap.containsKey(attributeName)) {
-					attributeMap.get(attributeName).add(attributeSuffix);
-				} else {
-					final List<String> newList = new LinkedList<String>();
-					newList.add(attributeSuffix);
-					attributeMap.put(attributeName, newList);
-				}
-			}
-		}
-		return attributeMap;
-	}
-
-	private AbstractFilter buildFilterForAttribute(final IAttribute attribute, final String suffix,
-			final Map<String, String> requestParams) {
-		final String attributeName = attribute.getName();
-		final String fullAttributeName = attributeName + suffix;
-		final String ftype = requestParams.get(fullAttributeName + "_ftype");
-		if (ftype.equals("null"))
-			return new AttributeFilter(attribute, AttributeFilterType.NULL);
-		if (ftype.equals("notnull"))
-			return new AttributeFilter(attribute, AttributeFilterType.NOTNULL);
-		if (ftype.equals("between")) {
-			final List<AbstractFilter> subFilters = new LinkedList<AbstractFilter>();
-			subFilters.add(new AttributeFilter(attribute, AttributeFilterType.MAJOR, requestParams
-					.get(fullAttributeName)));
-			subFilters.add(new AttributeFilter(attribute, AttributeFilterType.MINOR, requestParams
-					.get(fullAttributeName + "_end")));
-			return new FilterOperator(OperatorType.AND, subFilters);
-		}
-		return new AttributeFilter(attribute, AttributeFilterType.valueOf(ftype.toUpperCase()),
-				requestParams.get(fullAttributeName));
-	}
-
-	private void addRelationFilter(final CardQuery cardFilter, final JSONObject cardInRelation, final ITableFactory tf,
-			final DomainFactory df) throws JSONException {
-		if (cardInRelation != null) {
-			final JSONArray domains = cardInRelation.names();
-			if (domains != null) {
-				for (int i = 0; i < domains.length(); ++i) {
-					final String domainDirectionString = domains.getString(i);
-					final DirectedDomain directedDomain = stringToDirectedDomain(df, domainDirectionString);
-					try {
-						final JSONObject cardObject = cardInRelation.getJSONObject(domainDirectionString);
-						setFileterForCard(cardObject, directedDomain, cardFilter, tf);
-
-					} catch (final JSONException e) {
-						final int destClassId = cardInRelation.getInt(domainDirectionString);
-						cardFilter.cardNotInRelation(directedDomain, tf.get(destClassId));
-					}
-				}
-			}
-		}
-	}
-
-	private void setFileterForCard(final JSONObject cardObject, final DirectedDomain directedDomain,
-			final CardQuery cardQuery, final ITableFactory tf) throws JSONException {
-		// THIS IS AWFUL
-		final String type = cardObject.getString("type");
-		if (type.equals("cards")) {
-			final List<ICard> destCards = new LinkedList<ICard>();
-			final JSONArray cardArray = cardObject.getJSONArray("cards");
-			for (int j = 0; j < cardArray.length(); ++j) {
-				final ICard destCard = stringToCard(tf, cardArray.getString(j));
-				destCards.add(destCard);
-			}
-			final CardQuery destQuery = directedDomain.getDestTable().cards().list();
-			destQuery.cards(destCards);
-			cardQuery.cardInRelation(directedDomain, destQuery);
-		} else if (type.equals("notRel")) {
-			final int destinationClass = cardObject.getInt("destinationClass");
-			final ITable destination = tf.get(destinationClass);
-			cardQuery.cardNotInRelation(directedDomain, destination);
-		} else {
-			final int destinationClass = cardObject.getInt("destinationClass");
-			final CardQuery relationFilter = FilterService.getFilter(destinationClass, "domaincardlistfilter",
-					directedDomain.toString());
-			cardQuery.cardInRelation(directedDomain, relationFilter);
-		}
 	}
 
 	@JSONExported

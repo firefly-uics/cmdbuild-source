@@ -8,7 +8,6 @@
 <%@ page import="org.cmdbuild.services.auth.UserContext"%>
 <%@ page import="org.cmdbuild.services.auth.Group"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
-<%@ page import="org.cmdbuild.services.FilterService"%>
 <%@ page import="org.cmdbuild.config.GisProperties"%>
 
 <%
@@ -17,7 +16,6 @@
 	UserContext userCtx = sessionVars.getCurrentUserContext();
 	User user = userCtx.getUser();
 	Group defaultGroup = userCtx.getDefaultGroup();
-	FilterService.clearFilters(null, null);
 	String extVersion = "4.1.0";
 %>
 
