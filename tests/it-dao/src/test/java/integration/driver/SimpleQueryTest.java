@@ -3,7 +3,8 @@ package integration.driver;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator.EQUALS;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -168,7 +169,7 @@ public class SimpleQueryTest extends DBFixture {
 		final CMQueryRow row = new QuerySpecsBuilder(dbDataView()) //
 				.select(codeAttributeName) //
 				.from(newClass) //
-				.where(attribute(newClass, codeAttributeName), EQUALS, codeValueToFind) //
+				.where(condition(attribute(newClass, codeAttributeName), eq(codeValueToFind))) //
 				.run().getOnlyRow();
 
 		assertThat(row.getCard(newClass).get(codeAttributeName), equalTo(codeValueToFind));

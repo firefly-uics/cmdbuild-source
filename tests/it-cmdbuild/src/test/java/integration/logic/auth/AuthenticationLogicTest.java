@@ -29,9 +29,11 @@ import org.cmdbuild.logic.auth.LoginDTO;
 import org.junit.Before;
 import org.junit.Test;
 
+import utils.IntegrationTestBase;
+import utils.UserRolePrivilegeFixture;
 import utils.DBFixture;
 
-public class AuthenticationLogicTest extends DBFixture {
+public class AuthenticationLogicTest extends IntegrationTestBase {
 
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_EMAIL = ADMIN_USERNAME + "@example.com";
@@ -41,6 +43,8 @@ public class AuthenticationLogicTest extends DBFixture {
 	private static final String SIMPLE_PASSWORD = "simple_password";
 	private static final String USER_DEFAULT_GROUP = "userdef";
 	private static final String PASSWORD_DEFAULT_GROUP = "userdef_password";
+
+	private UserRolePrivilegeFixture fixture;
 
 	private AuthenticationLogic authLogic;
 	private DBCard admin;
@@ -53,6 +57,8 @@ public class AuthenticationLogicTest extends DBFixture {
 
 	@Before
 	public void setUp() {
+		fixture = new UserRolePrivilegeFixture(dbDriver());
+
 		final AuthenticationService service = new DefaultAuthenticationService();
 		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
@@ -78,13 +84,13 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 
 	private void populateDatabaseWithUsersGroupsAndPrivileges() {
-		admin = insertUserWithUsernameAndPassword(ADMIN_USERNAME, ADMIN_PASSWORD);
-		simpleUser = insertUserWithUsernameAndPassword(SIMPLE_USERNAME, SIMPLE_PASSWORD);
-		userWithDefaultGroup = insertUserWithUsernameAndPassword(USER_DEFAULT_GROUP, PASSWORD_DEFAULT_GROUP);
+		admin = fixture.insertUserWithUsernameAndPassword(ADMIN_USERNAME, ADMIN_PASSWORD);
+		simpleUser = fixture.insertUserWithUsernameAndPassword(SIMPLE_USERNAME, SIMPLE_PASSWORD);
+		userWithDefaultGroup = fixture.insertUserWithUsernameAndPassword(USER_DEFAULT_GROUP, PASSWORD_DEFAULT_GROUP);
 
-		groupA = insertRoleWithCode("group A");
-		groupB = insertRoleWithCode("group B");
-		emptyGroup = insertRoleWithCode("group C");
+		groupA = fixture.insertRoleWithCode("group A");
+		groupB = fixture.insertRoleWithCode("group B");
+		emptyGroup = fixture.insertRoleWithCode("group C");
 
 		createUserRoleBinding();
 	}
@@ -93,11 +99,11 @@ public class AuthenticationLogicTest extends DBFixture {
 	 * A user belongs to multiple groups and a group contains more than one user
 	 */
 	private void createUserRoleBinding() {
-		insertBindingBetweenUserAndRole(admin, groupA);
-		insertBindingBetweenUserAndRole(admin, groupB);
-		insertBindingBetweenUserAndRole(simpleUser, groupB);
-		insertBindingBetweenUserAndRole(userWithDefaultGroup, groupA);
-		insertBindingBetweenUserAndRole(userWithDefaultGroup, groupB, true);
+		fixture.insertBindingBetweenUserAndRole(admin, groupA);
+		fixture.insertBindingBetweenUserAndRole(admin, groupB);
+		fixture.insertBindingBetweenUserAndRole(simpleUser, groupB);
+		fixture.insertBindingBetweenUserAndRole(userWithDefaultGroup, groupA);
+		fixture.insertBindingBetweenUserAndRole(userWithDefaultGroup, groupB, true);
 	}
 
 	@Test
@@ -252,7 +258,7 @@ public class AuthenticationLogicTest extends DBFixture {
 	}
 
 	private List<Long> groupIdsForUserId(final Long userId) {
-		return userIdToGroupIds.get(userId);
+		return fixture.userIdToGroupIds().get(userId);
 	}
 
 	@Test
@@ -266,8 +272,8 @@ public class AuthenticationLogicTest extends DBFixture {
 
 		// then
 		int usersThatActuallyBelongToGroup = 0;
-		for (final Long userId : userIdToGroupIds.keySet()) {
-			final List<Long> groupIds = userIdToGroupIds.get(userId);
+		for (final Long userId : fixture.userIdToGroupIds().keySet()) {
+			final List<Long> groupIds = fixture.userIdToGroupIds().get(userId);
 			if (groupIds.contains(groupA.getId())) {
 				usersThatActuallyBelongToGroup++;
 			}

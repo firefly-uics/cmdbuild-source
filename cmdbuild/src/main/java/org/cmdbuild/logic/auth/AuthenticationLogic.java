@@ -3,6 +3,8 @@ package org.cmdbuild.logic.auth;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,7 +30,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -202,7 +203,7 @@ public class AuthenticationLogic implements Logic {
 		final CMClass roleClass = view.findClassByName("Role");
 		final CMQueryRow row = view.select(attribute(roleClass, "Description")) //
 				.from(roleClass) //
-				.where(attribute(roleClass, "Code"), Operator.EQUALS, groupName) //
+				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //
 				.run().getOnlyRow();
 		final String description = (String) row.getCard(roleClass).get("Description");
 		final Long roleId = row.getCard(roleClass).getId();
@@ -334,7 +335,7 @@ public class AuthenticationLogic implements Logic {
 		final CMClass userClass = view.findClassByName("User");
 		final CMQueryRow userRow = view.select(anyAttribute(userClass)) //
 				.from(userClass) //
-				.where(QueryAliasAttribute.attribute(userClass, "Id"), Operator.EQUALS, userId) //
+				.where(condition(QueryAliasAttribute.attribute(userClass, "Id"), eq(userId))) //
 				.run().getOnlyRow();
 		return userRow.getCard(userClass);
 	}
@@ -344,7 +345,7 @@ public class AuthenticationLogic implements Logic {
 		final CMClass roleClass = view.findClassByName("Role");
 		final CMQueryRow groupRow = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
-				.where(QueryAliasAttribute.attribute(roleClass, "Id"), Operator.EQUALS, groupId) //
+				.where(condition(QueryAliasAttribute.attribute(roleClass, "Id"), eq(groupId))) //
 				.run().getOnlyRow();
 		return groupRow.getCard(roleClass);
 	}
@@ -360,7 +361,7 @@ public class AuthenticationLogic implements Logic {
 		final CMQueryResult result = view.select(attribute(userClass, "Username")) //
 				.from(userClass) //
 				.join(roleClass, over(userRoleDomain)) //
-				.where(attribute(userClass, "Id"), Operator.EQUALS, userId) //
+				.where(condition(attribute(userClass, "Id"), eq(userId))) //
 				.run();
 		for (final CMQueryRow row : result) {
 			final CMCard roleCard = row.getCard(roleClass);

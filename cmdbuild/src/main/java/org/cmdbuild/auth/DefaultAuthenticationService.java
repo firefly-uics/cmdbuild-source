@@ -5,6 +5,8 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,7 +31,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.GroupDTO;
@@ -308,9 +309,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		}
 		return users;
 	}
-	
+
 	@Override
-	public List<Long> fetchUserIdsByGroupId(Long groupId) {
+	public List<Long> fetchUserIdsByGroupId(final Long groupId) {
 		List<Long> users = Lists.newArrayList();
 		for (final UserFetcher userFetcher : userFetchers) {
 			users = userFetcher.fetchUserIdsFromGroupId(groupId);
@@ -376,7 +377,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				attribute(userClassAlias, "Description"), //
 				attribute(userClassAlias, "Password")) //
 				.from(userClass(), as(userClassAlias)) //
-				.where(attribute(userClassAlias, "Id"), Operator.EQUALS, userId).run().getOnlyRow();
+				.where(condition(attribute(userClassAlias, "Id"), eq(userId))) //
+				.run().getOnlyRow();
 		final CMCard userCard = userRow.getCard(userClassAlias);
 		return userCard;
 	}
@@ -402,7 +404,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 						attribute(roleClass(), roleClass().getCodeAttributeName())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
-				.where(attribute(userClass(), "Id"), Operator.EQUALS, userId) //
+				.where(condition(attribute(userClass(), "Id"), eq(userId))) //
 				.run();
 		final List<DBRelation> relations = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
@@ -501,7 +503,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final Alias groupClassAlias = Alias.canonicalAlias(roleClass());
 		final CMQueryRow userRow = view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass(), as(groupClassAlias)) //
-				.where(attribute(groupClassAlias, "Id"), Operator.EQUALS, groupId).run().getOnlyRow();
+				.where(condition(attribute(groupClassAlias, "Id"), eq(groupId))) //
+				.run().getOnlyRow();
 		final CMCard groupCard = userRow.getCard(groupClassAlias);
 		return groupCard;
 	}

@@ -4,6 +4,8 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.view.CMDataView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 	public CMUser fetchUserById(final Long userId) {
 		final CMQueryRow row = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
-				.where(attribute(userClass(), userClass().getKeyAttributeName()), Operator.EQUALS, userId) //
+				.where(condition(attribute(userClass(), userClass().getKeyAttributeName()), eq(userId))) //
 				.run() //
 				.getOnlyRow();
 		return buildUserFromCard(row.getCard(userClass()));
@@ -69,7 +70,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final CMQueryResult result = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
-				.where(attribute(roleClass(), roleClass().getKeyAttributeName()), Operator.EQUALS, groupId) //
+				.where(condition(attribute(roleClass(), roleClass().getKeyAttributeName()), eq(groupId))) //
 				.run();
 
 		final List<CMUser> usersForSpecifiedGroup = Lists.newArrayList();
@@ -81,21 +82,22 @@ public abstract class DBUserFetcher implements UserFetcher {
 		return usersForSpecifiedGroup;
 
 	}
+
 	@Override
 	public List<Long> fetchUserIdsFromGroupId(final Long groupId) {
 		final CMQueryResult result = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
-				.where(attribute(roleClass(), roleClass().getKeyAttributeName()), Operator.EQUALS, groupId) //
+				.where(condition(attribute(roleClass(), roleClass().getKeyAttributeName()), eq(groupId))) //
 				.run();
-		
+
 		final List<Long> userIdsForSpecifiedGroup = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMCard userCard = row.getCard(userClass());
 			userIdsForSpecifiedGroup.add(userCard.getId());
 		}
 		return userIdsForSpecifiedGroup;
-		
+
 	}
 
 	private CMUser buildUserFromCard(final CMCard userCard) {
@@ -124,7 +126,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 						attribute(roleClass(), roleClass().getCodeAttributeName())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
-				.where(attribute(userClass(), "Username"), Operator.EQUALS, username) //
+				.where(condition(attribute(userClass(), "Username"), eq(username))) //
 				.run();
 
 		String defaultGroupName = null;
@@ -148,12 +150,10 @@ public abstract class DBUserFetcher implements UserFetcher {
 				.select(
 				// FIXME: anyAttribute()
 				attribute(userClassAlias, userNameAttribute()), attribute(userClassAlias, userDescriptionAttribute()),
-						attribute(userClassAlias, userPasswordAttribute()))
-				//
-				.from(userClass(), as(userClassAlias))
-				//
-				.where(attribute(userClassAlias, loginAttributeName(login)), Operator.EQUALS, login.getValue()).run()
-				.getOnlyRow();
+						attribute(userClassAlias, userPasswordAttribute())) //
+				.from(userClass(), as(userClassAlias)) //
+				.where(condition(attribute(userClassAlias, loginAttributeName(login)), eq(login.getValue()))) //
+				.run().getOnlyRow();
 		final CMCard userCard = userRow.getCard(userClassAlias);
 		return userCard;
 	}
@@ -177,7 +177,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final Alias userClassAlias = Alias.canonicalAlias(userClass());
 		final CMQueryResult userGroupsRows = view.select(attribute(groupClassAlias, "Code")).from(roleClass())
 				.join(userClass(), as(userClassAlias), over(userGroupDomain()))
-				.where(attribute(userClass(), userIdAttribute()), Operator.EQUALS, userId).run();
+				.where(condition(attribute(userClass(), userIdAttribute()), eq(userId))) //
+				.run();
 		for (final CMQueryRow row : userGroupsRows) {
 			final CMCard groupCard = row.getCard(groupClassAlias);
 			groupNames.add((String) groupCard.getCode());

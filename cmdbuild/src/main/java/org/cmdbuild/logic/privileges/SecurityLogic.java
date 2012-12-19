@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.privileges;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.List;
 
@@ -11,7 +13,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.reference.EntryTypeReference;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
@@ -71,14 +72,14 @@ public class SecurityLogic implements Logic {
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(final Object obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			PrivilegeInfo other = (PrivilegeInfo) obj;
+			final PrivilegeInfo other = (PrivilegeInfo) obj;
 			if (this.mode.equals(other.mode) //
 					&& this.groupId.equals(other.getGroupId()) //
 					&& this.getPrivilegeObjectId().equals(other.getPrivilegeObjectId())) {
@@ -105,7 +106,8 @@ public class SecurityLogic implements Logic {
 				attribute(grantClass, "IdGrantedClass"), //
 				attribute(grantClass, "Mode")) //
 				.from(grantClass) //
-				.where(attribute(grantClass, "IdRole"), Operator.EQUALS, groupId).run();
+				.where(condition(attribute(grantClass, "IdRole"), eq(groupId))) //
+				.run();
 		for (final CMQueryRow row : result) {
 			final CMCard grantCard = row.getCard(grantClass);
 			final EntryTypeReference entryTypeReference = (EntryTypeReference) grantCard.get("IdGrantedClass");
@@ -117,16 +119,16 @@ public class SecurityLogic implements Logic {
 		return privileges;
 	}
 
-	public void savePrivilege(PrivilegeInfo privilegeInfo) {
+	public void savePrivilege(final PrivilegeInfo privilegeInfo) {
 		// FIXME: add an "and" condition to where clause ("IdGrantedClass"...)
-		CMQueryResult result = view.select(AnyAttribute.anyAttribute(grantClass)) //
+		final CMQueryResult result = view.select(AnyAttribute.anyAttribute(grantClass)) //
 				.from(grantClass) //
-				.where(attribute(grantClass, "IdRole"), Operator.EQUALS, privilegeInfo.getGroupId()) //
+				.where(condition(attribute(grantClass, "IdRole"), eq(privilegeInfo.getGroupId()))) //
 				.run();
 
-		for (CMQueryRow row : result) {
-			CMCard grantCard = row.getCard(grantClass);
-			EntryTypeReference etr = (EntryTypeReference) grantCard.get("IdGrantedClass");
+		for (final CMQueryRow row : result) {
+			final CMCard grantCard = row.getCard(grantClass);
+			final EntryTypeReference etr = (EntryTypeReference) grantCard.get("IdGrantedClass");
 			if (etr.getId().equals(privilegeInfo.getPrivilegeObjectId())) {
 				updateModeForGrantCard(grantCard, privilegeInfo.getMode());
 				return;
@@ -135,13 +137,13 @@ public class SecurityLogic implements Logic {
 		createGrantCard(privilegeInfo);
 	}
 
-	private void updateModeForGrantCard(CMCard grantCard, String mode) {
-		CMCardDefinition modifiableGrant = view.modifyCard(grantCard);
+	private void updateModeForGrantCard(final CMCard grantCard, final String mode) {
+		final CMCardDefinition modifiableGrant = view.modifyCard(grantCard);
 		modifiableGrant.set("Mode", mode).save();
 	}
 
-	private void createGrantCard(PrivilegeInfo privilegeInfo) {
-		CMCardDefinition grantCardToBeCreated = view.newCard(grantClass);
+	private void createGrantCard(final PrivilegeInfo privilegeInfo) {
+		final CMCardDefinition grantCardToBeCreated = view.newCard(grantClass);
 		grantCardToBeCreated.set("IdRole", privilegeInfo.getGroupId()) //
 				.set("IdGrantedClass", privilegeInfo.getPrivilegeObjectId()) //
 				.set("Mode", privilegeInfo.getMode()) //

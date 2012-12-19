@@ -136,7 +136,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public void delete(final DBEntry entry) {
-		throw new UnsupportedOperationException("Not implemented");
+		clearEntryType(entry.getType()); // FIXME
 	}
 
 	@Override

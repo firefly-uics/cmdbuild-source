@@ -1,4 +1,4 @@
-package integration.driver;
+package integration.driver.postgres.query;
 
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.junit.Assert.assertThat;
