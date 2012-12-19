@@ -50,9 +50,12 @@ class ReportHelper {
 		return proxy.getReport(id, format, reportParams);
 	}
 
-	public File temporaryFile() {
+	public File temporaryFile(String name, String format) {
 		try {
-			final File file = File.createTempFile(TEMPORARY_FILE_PREFIX, null);
+			if(!format.isEmpty()){
+				format="."+format;
+			}
+			final File file = File.createTempFile(name, format);
 			file.deleteOnExit();
 			return file;
 		} catch (final IOException e) {
