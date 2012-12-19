@@ -52,6 +52,10 @@
 					return;
 				}
 
+				if (!me.view.isVisible(deep)) {
+					return;
+				}
+
 				var currentSelection = me.gridSM.getSelection();
 				if (Ext.isArray(currentSelection)
 						&& currentSelection.length>0) {
@@ -161,6 +165,15 @@
 		},
 
 		onGridIsVisible: function(visible) {
+			if (visible) {
+				if (_CMCardModuleState.card) {
+					this.openCard({
+						Id: _CMCardModuleState.card.get("Id"),
+						IdClass: _CMCardModuleState.card.get("IdClass")
+					});
+				}
+			}
+
 			var selection = this.gridSM.getSelection();
 			this.fireEvent(this.CMEVENTS.gridVisible, visible, selection);
 		},
