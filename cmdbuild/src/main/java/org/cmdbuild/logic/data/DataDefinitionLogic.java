@@ -15,6 +15,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -110,7 +111,7 @@ public class DataDefinitionLogic implements Logic {
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
 
-		final CMClass owner = view.findClassById(attribute.getOwner());
+		final CMEntryType owner = getOwnerById(attribute.getOwner());
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 
 		final CMAttribute createdOrUpdatedAttribute;
@@ -123,6 +124,28 @@ public class DataDefinitionLogic implements Logic {
 			createdOrUpdatedAttribute = view.updateAttribute(definitionForExisting(attribute, existingAttribute));
 		}
 		return createdOrUpdatedAttribute;
+	}
+
+	private CMEntryType getOwnerById(final Long id) {
+		logger.debug("getting entry type with id '{}'", id);
+		CMEntryType entryType;
+
+		// try with classes
+		entryType = view.findClassById(id);
+		if (entryType != null) {
+			logger.debug("id '{}' is for class '{}'", id, entryType.getName());
+			return entryType;
+		}
+
+		// try with domains
+		entryType = view.findDomainById(id);
+		if (entryType != null) {
+			logger.debug("id '{}' is for domain '{}'", id, entryType.getName());
+			return entryType;
+		}
+
+		logger.warn("id '{}' not found", id);
+		throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 	}
 
 	private void validate(final Attribute attribute) {

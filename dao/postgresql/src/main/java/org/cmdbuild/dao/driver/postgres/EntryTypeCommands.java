@@ -429,7 +429,7 @@ public class EntryTypeCommands implements LoggingSupport {
 		// TODO handle more that two classes
 		return format(
 				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: reserved|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
-				definition.getName(), //
+				definition.getDescription(), //
 				defaultIfBlank(definition.getDirectDescription(), EMPTY), //
 				defaultIfBlank(definition.getInverseDescription(), EMPTY), //
 				definition.getClass1().getName(), //

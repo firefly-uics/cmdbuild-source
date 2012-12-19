@@ -274,7 +274,7 @@ public class ModClass extends JSONBase {
 	public JSONObject saveTable( //
 			final UserContext userContext, //
 			final JSONObject serializer, //
-			@Parameter(value = "name", required = false) final String name, //
+			@Parameter("name") final String name, //
 			@Parameter("description") final String description, //
 			@Parameter(value = "inherits", required = false) final int idParent, //
 			@Parameter(value = "superclass", required = false) final boolean isSuperClass, //
@@ -288,10 +288,10 @@ public class ModClass extends JSONBase {
 		final Class clazz = Class.newClass() //
 				.withName(name) //
 				.withDescription(description) //
-				.withParent(isSimpleTable ? SIMPLE_TABLE_HAVE_NO_PARENT : idParent) //
-				.thatIsSuperClass(isSuperClass) //
-				.thatIsProcess(isProcess) //
-				.thatIsUserStoppable(isProcessUserStoppable) //
+				.withParent(isSimpleTable ? SIMPLE_TABLE_HAVE_NO_PARENT : Long.valueOf(idParent)) //
+				.thatIsSuperClass(isSimpleTable ? false : isSuperClass) //
+				.thatIsProcess(isSimpleTable ? false : isProcess) //
+				.thatIsUserStoppable(isSimpleTable ? false : isProcessUserStoppable) //
 				.thatIsHoldingHistory(!isSimpleTable) //
 				.thatIsActive(isActive) //
 				.build();
