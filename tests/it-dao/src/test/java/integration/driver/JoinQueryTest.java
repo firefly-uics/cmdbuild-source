@@ -160,6 +160,11 @@ public class JoinQueryTest extends DBFixture {
 			public DBClass getClass2() {
 				return class2;
 			}
+			
+			@Override
+			public String getDescription() {
+				return EMPTY;
+			}
 
 			@Override
 			public String getCardinality() {

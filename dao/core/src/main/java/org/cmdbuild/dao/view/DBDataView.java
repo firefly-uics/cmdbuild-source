@@ -28,6 +28,8 @@ import org.cmdbuild.dao.query.QuerySpecs;
 
 import com.google.common.collect.Lists;
 
+import static java.lang.String.*;
+
 public class DBDataView extends QueryExecutorDataView {
 
 	public static interface DBClassDefinition extends CMClassDefinition {
@@ -155,8 +157,8 @@ public class DBDataView extends QueryExecutorDataView {
 			}
 
 			@Override
-			public DBClass getOwner() {
-				return cmToDbClass(definition.getOwner());
+			public DBEntryType getOwner() {
+				return cmToDbEntryType(definition.getOwner());
 			}
 
 			@Override
@@ -297,6 +299,11 @@ public class DBDataView extends QueryExecutorDataView {
 			}
 
 			@Override
+			public String getDescription() {
+				return definition.getDescription();
+			}
+			
+			@Override
 			public String getDirectDescription() {
 				return definition.getDirectDescription();
 			}
@@ -350,6 +357,29 @@ public class DBDataView extends QueryExecutorDataView {
 		return driver.query(querySpecs);
 	}
 
+	private DBAttribute cmToDbAttribute(final CMAttribute attribute) {
+		final DBAttribute dbAttribute;
+		if (attribute == null) {
+			dbAttribute = null;
+		} else if (attribute instanceof DBClass) {
+			dbAttribute = DBAttribute.class.cast(attribute);
+		} else {
+			final DBEntryType owner = cmToDbEntryType(attribute.getOwner());
+			dbAttribute = owner.getAttribute(attribute.getName());
+			assert dbAttribute != null;
+		}
+		return dbAttribute;
+	}
+
+	private DBEntryType cmToDbEntryType(final CMEntryType entryType) {
+		if (entryType instanceof CMClass) {
+			return cmToDbClass(entryType);
+		} else if (entryType instanceof CMDomain) {
+			return cmToDbDomain(entryType);
+		}
+		throw new IllegalArgumentException(format("unexpected type '%s'", entryType.getClass()));
+	}
+
 	private DBClass cmToDbClass(final CMEntryType entryType) {
 		final DBClass dbClass;
 		if (entryType == null) {
@@ -363,25 +393,11 @@ public class DBDataView extends QueryExecutorDataView {
 		return dbClass;
 	}
 
-	private DBAttribute cmToDbAttribute(final CMAttribute attribute) {
-		final DBAttribute dbAttribute;
-		if (attribute == null) {
-			dbAttribute = null;
-		} else if (attribute instanceof DBClass) {
-			dbAttribute = DBAttribute.class.cast(attribute);
-		} else {
-			final DBClass owner = cmToDbClass(findClassByName(attribute.getOwner().getName()));
-			dbAttribute = owner.getAttribute(attribute.getName());
-			assert dbAttribute != null;
-		}
-		return dbAttribute;
-	}
-
 	private DBDomain cmToDbDomain(final CMEntryType entryType) {
 		final DBDomain dbDomain;
 		if (entryType == null) {
 			dbDomain = null;
-		} else if (entryType instanceof DBClass) {
+		} else if (entryType instanceof DBDomain) {
 			dbDomain = DBDomain.class.cast(entryType);
 		} else {
 			dbDomain = findDomainByName(entryType.getName());

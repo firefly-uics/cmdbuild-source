@@ -457,6 +457,11 @@ public class GenericRollbackDriver implements DBDriver {
 				public DBClass getClass2() {
 					return existingDomain.getClass2();
 				}
+				
+				@Override
+				public String getDescription() {
+					return existingDomain.getDescription();
+				}
 
 				@Override
 				public String getDirectDescription() {
