@@ -12,24 +12,30 @@ public abstract class IntegrationTestBase {
 
 	private static final DBInitializer dbInitializer = new DBInitializer();
 
-	private final GenericRollbackDriver rollbackDriver;
+	private final DBDriver testDriver;
 	private final DBDataView dbView;
 
 	protected IntegrationTestBase() {
-		final DBDriver pgDriver = createDriver();
-		this.rollbackDriver = new GenericRollbackDriver(pgDriver);
-		this.dbView = new DBDataView(rollbackDriver);
+		this.testDriver = createTestDriver();
+		this.dbView = new DBDataView(testDriver);
 	}
 
 	/**
-	 * Override if you need to add a caching driver
+	 * Override if you need to decorate the default.
 	 */
-	protected DBDriver createDriver() {
+	protected DBDriver createBaseDriver() {
 		return dbInitializer.getDriver();
 	}
 
+	/**
+	 * Override if you don't need/want the rollback driver.
+	 */
+	protected DBDriver createTestDriver() {
+		return new GenericRollbackDriver(createBaseDriver());
+	}
+
 	public DBDriver dbDriver() {
-		return rollbackDriver;
+		return testDriver;
 	}
 
 	public DBDataView dbDataView() {
@@ -43,7 +49,9 @@ public abstract class IntegrationTestBase {
 
 	@After
 	public void rollback() {
-		rollbackDriver.rollback();
+		if (testDriver instanceof GenericRollbackDriver) {
+			GenericRollbackDriver.class.cast(testDriver).rollback();
+		}
 	}
 
 }

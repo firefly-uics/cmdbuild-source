@@ -8,6 +8,8 @@ public interface CMDomain extends CMEntryType {
 
 		CMClass getClass2();
 
+		String getDescription();
+
 		String getDirectDescription();
 
 		String getInverseDescription();
