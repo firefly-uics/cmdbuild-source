@@ -46,7 +46,8 @@
 		},
 
 		buildSaveParams: function() {
-			var params = this.view.getData();
+			var withDisabled = true;
+			var params = this.view.getData(withDisabled);
 			if (this.selection != null) {
 				params.idClass = this.selection.get("id");
 			}

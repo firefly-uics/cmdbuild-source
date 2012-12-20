@@ -33,12 +33,12 @@ public class UserRolePrivilegeFixture {
 
 	private final DBDriver driver;
 
-	public UserRolePrivilegeFixture(DBDriver driver) {
+	public UserRolePrivilegeFixture(final DBDriver driver) {
 		this.driver = driver;
 	}
 
 	public DBCard insertUserWithUsernameAndPassword(final String username, final String password) {
-		final DBClass users = driver.findClassByName(USER_CLASS);
+		final DBClass users = getUserClass();
 		final DBCard user = DBCard.newInstance(driver, users);
 		final DBCard insertedUser = user.set(USERNAME_ATTRIBUTE, username) //
 				.set(PASSWORD_ATTRIBUTE, digester.encrypt(password)) //
@@ -48,7 +48,7 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBCard insertRoleWithCode(final String code) {
-		final DBClass roles = driver.findClassByName(ROLE_CLASS);
+		final DBClass roles = getRoleClass();
 		final DBCard group = DBCard.newInstance(driver, roles);
 		final DBCard insertedGroup = (DBCard) group.setCode(code).save();
 		insertedGroupIds.add(insertedGroup.getId());
@@ -66,7 +66,7 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBRelation insertBindingBetweenUserAndRole(final DBCard user, final DBCard role) {
-		final DBDomain userRoleDomain = driver.findDomainByName(USER_ROLE_DOMAIN);
+		final DBDomain userRoleDomain = getUserRoleDomain();
 		final DBRelation relation = DBRelation.newInstance(driver, userRoleDomain);
 		relation.setCard1(user);
 		relation.setCard2(role);
@@ -100,6 +100,18 @@ public class UserRolePrivilegeFixture {
 
 	public Map<Long, List<Long>> userIdToGroupIds() {
 		return userIdToGroupIds;
+	}
+
+	public DBClass getUserClass() {
+		return driver.findClassByName(USER_CLASS);
+	}
+
+	public DBClass getRoleClass() {
+		return driver.findClassByName(ROLE_CLASS);
+	}
+
+	public DBDomain getUserRoleDomain() {
+		return driver.findDomainByName(USER_ROLE_DOMAIN);
 	}
 
 }

@@ -1,6 +1,6 @@
 package integration.logic.auth;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -26,12 +26,12 @@ import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
 import utils.UserRolePrivilegeFixture;
-import utils.DBFixture;
 
 public class AuthenticationLogicTest extends IntegrationTestBase {
 
@@ -93,6 +93,13 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		emptyGroup = fixture.insertRoleWithCode("group C");
 
 		createUserRoleBinding();
+	}
+
+	@After
+	public void clearSystemTables() throws Exception {
+		dbDataView().clear(fixture.getUserRoleDomain());
+		dbDataView().clear(fixture.getRoleClass());
+		dbDataView().clear(fixture.getUserClass());
 	}
 
 	/**
@@ -163,8 +170,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 
 		// then
 		assertFalse(response.isSuccess());
-		assertThat(response.getReason(),
-				is(equalTo(AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException().toString())));
+		assertThat(response.getReason(), containsString(AuthExceptionType.AUTH_MULTIPLE_GROUPS.name()));
 		assertThat(response.getGroupsInfo(), is(not(nullValue())));
 		assertOperationUserIsNotStoredInUserStore();
 	}
@@ -222,7 +228,7 @@ public class AuthenticationLogicTest extends IntegrationTestBase {
 		// then
 		assertFalse(response.isSuccess());
 		assertThat(response.getGroupsInfo(), is(nullValue()));
-		assertThat(response.getReason(), is(equalTo(AuthExceptionType.AUTH_LOGIN_WRONG.createException().toString())));
+		assertThat(response.getReason(), containsString(AuthExceptionType.AUTH_LOGIN_WRONG.name()));
 		assertOperationUserIsNotStoredInUserStore();
 	}
 

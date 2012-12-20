@@ -1,4 +1,4 @@
-package integration.driver;
+package integration.dao.driver.postgres;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;

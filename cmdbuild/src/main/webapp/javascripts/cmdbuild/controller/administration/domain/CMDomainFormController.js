@@ -25,7 +25,8 @@
 
 		if (invalidFields.length == 0) {
 			CMDBuild.LoadMask.get().show();
-			var data = this.view.getData();
+			var withDisabled = true;
+			var data = this.view.getData(withDisabled);
 			if (this.currentDomain == null) {
 				data.id = -1;
 			} else {

@@ -6,6 +6,7 @@ import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -118,6 +119,8 @@ public interface DBDriver {
 	void update(DBEntry entry);
 
 	void delete(DBEntry entry);
+
+	void clear(DBEntryType type);
 
 	CMQueryResult query(QuerySpecs query);
 

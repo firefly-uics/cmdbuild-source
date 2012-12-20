@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 
 import org.cmdbuild.dao.TypeObjectCache;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
-import org.cmdbuild.dao.driver.SelfVersioningDBDriver;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -28,7 +27,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * "If all you have is SQL, everything looks like a trigger" A. Maslow
  * (readapted)
  */
-public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDBDriver {
+public class PostgresDriver extends AbstractDBDriver {
 
 	private final JdbcTemplate jdbcTemplate;
 
@@ -39,6 +38,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Collection<DBClass> findAllClasses() {
+		logger.info("reading all classes");
 		final Collection<DBClass> fetchedClasses = doToTypes().findAllClasses();
 		for (final DBClass dbClass : fetchedClasses) {
 			cache.add(dbClass);
@@ -48,6 +48,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public DBClass createClass(final DBClassDefinition definition) {
+		logger.info("creating class '{}'", definition.getName());
 		final DBClass createdClass = doToTypes().createClass(definition);
 		cache.add(createdClass);
 		return createdClass;
@@ -55,6 +56,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public DBClass updateClass(final DBClassDefinition definition) {
+		logger.info("updating class '{}'", definition.getName());
 		final DBClass updatedClass = doToTypes().updateClass(definition);
 		cache.add(updatedClass);
 		return updatedClass;
@@ -62,27 +64,32 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public void deleteClass(final DBClass dbClass) {
+		logger.info("deleting class '{}'", dbClass.getName());
 		doToTypes().deleteClass(dbClass);
 		cache.remove(dbClass);
 	}
 
 	@Override
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
+		logger.info("creating attribute '{}'", definition.getName());
 		return doToTypes().createAttribute(definition);
 	}
 
 	@Override
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
+		logger.info("updating attribute '{}'", definition.getName());
 		return doToTypes().updateAttribute(definition);
 	}
 
 	@Override
 	public void deleteAttribute(final DBAttribute attribute) {
+		logger.info("deleting attribute '{}'", attribute.getName());
 		doToTypes().deleteAttribute(attribute);
 	}
 
 	@Override
 	public Collection<DBDomain> findAllDomains() {
+		logger.info("reading all domains");
 		final Collection<DBDomain> fetchedDomains = doToTypes().findAllDomains();
 		for (final DBDomain dbDomain : fetchedDomains) {
 			cache.add(dbDomain);
@@ -92,6 +99,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public DBDomain createDomain(final DBDomainDefinition definition) {
+		logger.info("creating domain '{}'", definition.getName());
 		final DBDomain createdDomain = doToTypes().createDomain(definition);
 		cache.add(createdDomain);
 		return createdDomain;
@@ -99,6 +107,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
+		logger.info("updating domain '{}'", definition.getName());
 		final DBDomain updatedDomain = doToTypes().updateDomain(definition);
 		cache.add(updatedDomain);
 		return updatedDomain;
@@ -106,6 +115,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public void deleteDomain(final DBDomain dbDomain) {
+		logger.info("deleting domain '{}'", dbDomain.getName());
 		doToTypes().deleteDomain(dbDomain);
 		cache.remove(dbDomain);
 	}
@@ -116,6 +126,7 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Collection<DBFunction> findAllFunctions() {
+		logger.info("reading all functions");
 		// FIXME: improve performances
 		final Collection<DBFunction> fetchedFunctions = doToTypes().findAllFunctions();
 		for (final DBFunction dbFunction : fetchedFunctions) {
@@ -126,28 +137,32 @@ public class PostgresDriver extends AbstractDBDriver implements SelfVersioningDB
 
 	@Override
 	public Long create(final DBEntry entry) {
+		logger.info("creating entry for type '{}'", entry.getType().getName());
 		return new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
 	}
 
 	@Override
 	public void update(final DBEntry entry) {
+		logger.info("updating entry with id '{}' for type '{}'", entry.getId(), entry.getType().getName());
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
 	@Override
 	public void delete(final DBEntry entry) {
-		clearEntryType(entry.getType()); // FIXME
+		logger.info("deleting entry with id '{}' for type '{}'", entry.getId(), entry.getType().getName());
+		clear(entry.getType()); // FIXME
+	}
+
+	@Override
+	public void clear(final DBEntryType type) {
+		logger.info("clearing type '{}'", type.getName());
+		// truncate all subclasses as well
+		jdbcTemplate.execute("TRUNCATE TABLE " + quoteType(type) + " CASCADE");
 	}
 
 	@Override
 	public CMQueryResult query(final QuerySpecs query) {
 		return new EntryQueryCommand(this, jdbcTemplate, query).run();
-	}
-
-	@Override
-	public void clearEntryType(final DBEntryType type) {
-		// truncate all subclasses as well
-		jdbcTemplate.execute("TRUNCATE TABLE " + quoteType(type) + " CASCADE");
 	}
 
 }
