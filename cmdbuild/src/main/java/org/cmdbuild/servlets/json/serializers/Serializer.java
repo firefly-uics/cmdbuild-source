@@ -587,7 +587,9 @@ public class Serializer {
 		jsonGroup.put("description", groupCard.getDescription());
 		jsonGroup.put("email", groupCard.getEmail());
 		jsonGroup.put("isAdministrator", groupCard.isAdmin());
-		jsonGroup.put("startingClass", groupCard.getStartingClassId());
+		if (groupCard.getStartingClassId() > 0) {
+			jsonGroup.put("startingClass", groupCard.getStartingClassId());
+		}
 		jsonGroup.put("isActive", groupCard.getStatus().isActive());
 		jsonGroup.put("text", groupCard.getDescription());
 		jsonGroup.put("selectable", true);
