@@ -8,4 +8,14 @@ public interface OperatorAndValueVisitor {
 
 	void visit(LessThanOperatorAndValue operatorAndValue);
 
+	void visit(ContainsOperatorAndValue operatorAndValue);
+
+	void visit(BeginsWithOperatorAndValue operatorAndValue);
+
+	void visit(EndsWithOperatorAndValue operatorAndValue);
+
+	void visit(NullOperatorAndValue operatorAndValue);
+
+	void visit(InOperatorAndValue operatorAndValue);
+
 }

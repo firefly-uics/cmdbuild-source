@@ -2,7 +2,10 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LIKE;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LT;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_NULL;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import java.util.List;
@@ -13,11 +16,16 @@ import org.cmdbuild.dao.driver.postgres.Utils;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
+import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.GreatherThanOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.NotWhereClause;
+import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -77,6 +85,33 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 				append(attributeFilter(whereClause.getAttribute(), OPERATOR_LT, operatorAndValue.getValue()));
 			}
 
+			@Override
+			public void visit(final ContainsOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), OPERATOR_LIKE, "%" + operatorAndValue.getValue()
+						+ "%"));
+			}
+
+			@Override
+			public void visit(final BeginsWithOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), OPERATOR_LIKE, operatorAndValue.getValue() + "%"));
+			}
+
+			@Override
+			public void visit(final EndsWithOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), OPERATOR_LIKE, "%" + operatorAndValue.getValue()));
+			}
+
+			@Override
+			public void visit(final NullOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), OPERATOR_NULL, operatorAndValue.getValue()));
+			}
+
+			@Override
+			public void visit(final InOperatorAndValue operatorAndValue) {
+				final List<Object> inValues = operatorAndValue.getValue();
+				append(attributeFilter(whereClause.getAttribute(), OPERATOR_IN, inValues));
+			}
+
 		});
 	}
 
@@ -124,7 +159,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String operator, final Object value) {
 		final String lhs = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-		return String.format("%s%s%s", lhs, operator, param(value));
+		return String.format("%s %s %s", lhs, operator, value != null ? param(value) : "");
 	}
 
 }

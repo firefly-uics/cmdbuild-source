@@ -2,10 +2,15 @@ package integration.driver;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
+import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
+import static org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue.endsWith;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.GreatherThanOperatorAndValue.gt;
+import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
+import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
@@ -187,6 +192,9 @@ public class WhereQueryTest extends DBFixture {
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
 	}
 
+	/**
+	 * GREATHER THAN
+	 */
 	@Test
 	public void whereClausesWithGreatherThanOperatorWork() {
 		// given
@@ -210,6 +218,9 @@ public class WhereQueryTest extends DBFixture {
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
 	}
 
+	/**
+	 * LESS THAN
+	 */
 	@Test
 	public void whereClausesWithLessThanOperatorWork() {
 		// given
@@ -227,6 +238,266 @@ public class WhereQueryTest extends DBFixture {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), lt("e"))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
+	}
+
+	/**
+	 * CONTAINS
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseDescriptionContainsAValue() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("description_for_foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(condition(descriptionAttribute(clazz), contains("PTioN"))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
+	}
+
+	/**
+	 * DOES NOT CONTAIN
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseDescriptionDoesNotContainAValue() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("description_for_foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(not(condition(descriptionAttribute(clazz), contains("PTioN")))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
+	}
+
+	/**
+	 * BEGINS WITH
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseDescriptionBeginsWithAValue() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("description_for_foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(condition(descriptionAttribute(clazz), beginsWith("dESc"))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
+	}
+
+	/**
+	 * DOES NOT BEGIN WITH
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseDescriptionDoesNotBeginWithAValue() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("description_for_foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(not(condition(descriptionAttribute(clazz), beginsWith("dESc")))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
+	}
+
+	/**
+	 * ENDS WITH
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseDescriptionEndsWithAValue() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("description_for_foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(condition(descriptionAttribute(clazz), endsWith("_fOo"))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
+	}
+
+	/**
+	 * DOES NOT END WITH
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseDescriptionDoesNotEndWithAValue() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("description_for_foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(not(condition(descriptionAttribute(clazz), endsWith("_FOO")))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
+	}
+
+	/**
+	 * IS NULL
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseCodeIsNull() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode(null) //
+				.setDescription("foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(condition(codeAttribute(clazz), isNull())) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getDescription(), equalTo("foo"));
+	}
+
+	/**
+	 * IS NOT NULL
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseCodeIsNotNull() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode(null) //
+				.setDescription("foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(not(condition(codeAttribute(clazz), isNull()))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getDescription(), equalTo("bar"));
+	}
+
+	/**
+	 * IN
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseCodeIsContainedInASetOfValues() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(condition(codeAttribute(clazz), in("foo", "loo", "moo", "poo"))) //
+				.run().getOnlyRow();
+
+		// then
+		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
+	}
+
+	/**
+	 * NOT IN
+	 */
+	@Test
+	public void shouldRetrieveCardsWhoseCodeIsNotContainedInASetOfValues() {
+		// given
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("foo") //
+				.setDescription("foo") //
+				.save();
+		DBCard.newInstance(dbDriver(), clazz) //
+				.setCode("bar") //
+				.setDescription("bar") //
+				.save();
+
+		// when
+		final CMQueryRow row = dbDataView() //
+				.select(anyAttribute(clazz)) //
+				.from(clazz) //
+				.where(not(condition(codeAttribute(clazz), in("foo", "loo", "goo", "poo")))) //
 				.run().getOnlyRow();
 
 		// then
