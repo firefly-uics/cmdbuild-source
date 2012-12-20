@@ -8,6 +8,7 @@
 			{name: "isAdministrator", type: "boolean"},
 			{name: "disabledModules", type: "auto"},
 			{name: "name", type: "string"},
+			{name: "email", type: "string"},
 			{name: "text", type: "string"},
 			{name: "startingClass", type: "string"}
 		],
