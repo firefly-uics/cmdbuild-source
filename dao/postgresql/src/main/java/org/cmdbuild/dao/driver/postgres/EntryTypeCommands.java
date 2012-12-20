@@ -72,7 +72,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	 */
 
 	public List<DBClass> findAllClasses() {
-		logger.info("getting all classes");
 		final ClassTreeBuilder rch = new ClassTreeBuilder();
 		jdbcTemplate
 				.query("SELECT table_id, _cm_cmtable(table_id) AS table_name, _cm_parent_id(table_id) AS parent_id,"
@@ -132,7 +131,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBClass createClass(final DBClassDefinition definition) {
-		logger.info("creating new class '{}'", definition.getName());
 		final CMClass parent = definition.getParent();
 		final String parentName = (parent != null) ? parent.getName() : null;
 		final String classComment = commentFrom(definition);
@@ -150,7 +148,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBClass updateClass(final DBClassDefinition definition) {
-		logger.info("updating existing class '{}'", definition.getName());
 		final String comment = commentFrom(definition);
 		jdbcTemplate.queryForObject( //
 				"SELECT cm_modify_class(?, ?)", //
@@ -189,7 +186,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
-		logger.info("creating new attribute '{}'", definition.getName());
 		final DBEntryType owner = definition.getOwner();
 		final String comment = commentFrom(definition);
 		jdbcTemplate.queryForObject( //
@@ -213,7 +209,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
-		logger.info("modifying existing attribute '{}'", definition.getName());
 		final DBEntryType owner = definition.getOwner();
 		final String comment = commentFrom(definition);
 		jdbcTemplate.queryForObject( //
@@ -238,7 +233,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public void deleteAttribute(final DBAttribute attribute) {
-		logger.info("deleting existing attribute '{}'", attribute.getName());
 		final DBEntryType owner = attribute.getOwner();
 		jdbcTemplate.queryForObject( //
 				"SELECT cm_delete_attribute(?,?)", //
@@ -386,7 +380,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBDomain createDomain(final DBDomainDefinition definition) {
-		logger.info("creating new domain '{}'", definition.getName());
 		final String domainComment = commentFrom(definition);
 		final long id = jdbcTemplate.queryForInt("SELECT cm_create_domain(?, ?)", //
 				new Object[] { definition.getName(), domainComment });
@@ -406,7 +399,6 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	public DBDomain updateDomain(final DBDomainDefinition definition) {
-		logger.info("updating existing domain '{}'", definition.getName());
 		final String domainComment = commentFrom(definition);
 		jdbcTemplate.queryForObject("SELECT cm_modify_domain(?, ?)", //
 				Object.class, //

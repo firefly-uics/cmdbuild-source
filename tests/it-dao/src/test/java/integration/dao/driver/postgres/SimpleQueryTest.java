@@ -1,4 +1,4 @@
-package integration.driver;
+package integration.dao.driver.postgres;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;

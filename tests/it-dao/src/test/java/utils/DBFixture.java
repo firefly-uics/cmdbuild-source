@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
+import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -100,20 +101,28 @@ public abstract class DBFixture extends IntegrationTestBase {
 	}
 
 	protected DBClassDefinition newClass(final String name, final DBClass parent) {
-		final DBClassDefinition classDefinition = mock(DBClassDefinition.class);
-		when(classDefinition.getName()).thenReturn(name);
-		when(classDefinition.getParent()).thenReturn(parent);
-		when(classDefinition.isHoldingHistory()).thenReturn(true);
-		return classDefinition;
+		final DBClassDefinition definition = mock(DBClassDefinition.class);
+		when(definition.getName()).thenReturn(name);
+		when(definition.getParent()).thenReturn(parent);
+		when(definition.isHoldingHistory()).thenReturn(true);
+		return definition;
 	}
 
 	protected DBClassDefinition newSuperClass(final String name, final DBClass parent) {
-		final DBClassDefinition classDefinition = mock(DBClassDefinition.class);
-		when(classDefinition.getName()).thenReturn(name);
-		when(classDefinition.getParent()).thenReturn(parent);
-		when(classDefinition.isSuperClass()).thenReturn(true);
-		when(classDefinition.isHoldingHistory()).thenReturn(true);
-		return classDefinition;
+		final DBClassDefinition definition = mock(DBClassDefinition.class);
+		when(definition.getName()).thenReturn(name);
+		when(definition.getParent()).thenReturn(parent);
+		when(definition.isSuperClass()).thenReturn(true);
+		when(definition.isHoldingHistory()).thenReturn(true);
+		return definition;
+	}
+
+	protected DBDomainDefinition newDomain(final String name, final DBClass class1, final DBClass class2) {
+		final DBDomainDefinition definition = mock(DBDomainDefinition.class);
+		when(definition.getName()).thenReturn(name);
+		when(definition.getClass1()).thenReturn(class1);
+		when(definition.getClass2()).thenReturn(class2);
+		return definition;
 	}
 
 }
