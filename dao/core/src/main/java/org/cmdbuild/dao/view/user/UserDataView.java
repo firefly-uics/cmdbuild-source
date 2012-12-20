@@ -255,4 +255,10 @@ public class UserDataView extends QueryExecutorDataView {
 		// TODO check privileges
 		return dbView.modifyRelation(relation);
 	}
+
+	@Override
+	public void clear(final DBEntryType type) {
+		dbView.clear(type);
+	}
+
 }

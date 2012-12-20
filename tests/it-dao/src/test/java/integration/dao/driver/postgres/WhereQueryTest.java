@@ -1,4 +1,4 @@
-package integration.driver;
+package integration.dao.driver.postgres;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -14,7 +14,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Iterator;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -37,10 +36,10 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void singleCardRespectingSimpleCondition() throws Exception {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("baz") //
 				.save();
 
@@ -60,11 +59,11 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void singleCardRespectingBothConditions() throws Exception {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("bar") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("baz") //
 				.save();
@@ -88,13 +87,13 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void moreCardsRespectingOrConditions() throws Exception {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("bar") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("baz") //
 				.setDescription("baz") //
 				.save();
@@ -118,10 +117,10 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void singleCardRespectingNotCondition() throws Exception {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("bar") //
 				.save();
 
@@ -140,11 +139,11 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void noResultWithMoreThanTwoAndConditions() throws Exception {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -166,11 +165,11 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void singleResultWithCompositeConditions() throws Exception {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -190,11 +189,11 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void whereClausesWithGreatherThanOperatorWork() {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -213,11 +212,11 @@ public class WhereQueryTest extends DBFixture {
 	@Test
 	public void whereClausesWithLessThanOperatorWork() {
 		// given
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		DBCard.newInstance(dbDriver(), clazz) //
+		dbDataView().newCard(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();

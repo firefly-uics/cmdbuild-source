@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.view;
 
+import static java.lang.String.format;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 
 import java.util.List;
@@ -27,8 +28,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 
 import com.google.common.collect.Lists;
-
-import static java.lang.String.*;
 
 public class DBDataView extends QueryExecutorDataView {
 
@@ -302,7 +301,7 @@ public class DBDataView extends QueryExecutorDataView {
 			public String getDescription() {
 				return definition.getDescription();
 			}
-			
+
 			@Override
 			public String getDirectDescription() {
 				return definition.getDirectDescription();
@@ -419,6 +418,11 @@ public class DBDataView extends QueryExecutorDataView {
 			return DBRelation.newInstance(driver, dbRelation);
 		}
 		throw new IllegalArgumentException();
+	}
+
+	@Override
+	public void clear(final DBEntryType type) {
+		driver.clear(type);
 	}
 
 }

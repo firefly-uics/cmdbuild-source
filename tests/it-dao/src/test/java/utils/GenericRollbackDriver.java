@@ -457,7 +457,7 @@ public class GenericRollbackDriver implements DBDriver {
 				public DBClass getClass2() {
 					return existingDomain.getClass2();
 				}
-				
+
 				@Override
 				public String getDescription() {
 					return existingDomain.getDescription();
@@ -672,6 +672,11 @@ public class GenericRollbackDriver implements DBDriver {
 	@Override
 	public CMQueryResult query(final QuerySpecs query) {
 		return innerDriver.query(query);
+	}
+
+	@Override
+	public void clear(final DBEntryType type) {
+		innerDriver.clear(type);
 	}
 
 }

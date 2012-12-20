@@ -1,4 +1,4 @@
-package integration.driver;
+package integration.dao.driver.postgres;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -160,7 +160,7 @@ public class JoinQueryTest extends DBFixture {
 			public DBClass getClass2() {
 				return class2;
 			}
-			
+
 			@Override
 			public String getDescription() {
 				return EMPTY;
