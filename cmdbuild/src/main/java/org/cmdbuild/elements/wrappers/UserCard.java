@@ -3,8 +3,8 @@ package org.cmdbuild.elements.wrappers;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cmdbuild.auth.password.NaivePasswordHandler;
-import org.cmdbuild.auth.password.PasswordHandler;
+import org.cmdbuild.common.digest.Base64Digester;
+import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.filters.OrderFilter.OrderFilterType;
 import org.cmdbuild.elements.interfaces.CardFactory;
@@ -45,6 +45,7 @@ public class UserCard extends LazyCard implements User {
 		return new UserImpl(this.getId(), this.getName(), this.getDescription(), this.getEncryptedPassword());
 	}
 
+	@Override
 	public String getName() {
 		return getAttributeValue(ATTRIBUTE_USERNAME).getString();
 	}
@@ -61,13 +62,14 @@ public class UserCard extends LazyCard implements User {
 		getAttributeValue(ATTRIBUTE_EMAIL).setValue(email);
 	}
 
+	@Override
 	public String getEncryptedPassword() {
 		return getAttributeValue(ATTRIBUTE_PASSWORD).getString();
 	}
 
 	public void setUnencryptedPassword(final String password) {
-		final PasswordHandler sd = new NaivePasswordHandler();
-		getAttributeValue(ATTRIBUTE_PASSWORD).setValue(sd.encrypt(password));
+		final Digester digester = new Base64Digester();
+		getAttributeValue(ATTRIBUTE_PASSWORD).setValue(digester.encrypt(password));
 	}
 
 	public static User getUser(final String login) {
@@ -122,9 +124,11 @@ public class UserCard extends LazyCard implements User {
 
 	public static Iterable<UserCard> allByUsername() throws NotFoundException, ORMException {
 		final List<UserCard> list = new LinkedList<UserCard>();
-		final Iterable<ICard> query = userClass.cards().list().filter(ICard.CardAttributes.Status.name(),
-				AttributeFilterType.DIFFERENT, ElementStatus.UPDATED.value()).order("Username", OrderFilterType.ASC)
-				.ignoreStatus();
+		final Iterable<ICard> query = userClass
+				.cards()
+				.list()
+				.filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,
+						ElementStatus.UPDATED.value()).order("Username", OrderFilterType.ASC).ignoreStatus();
 		for (final ICard card : query) {
 			list.add(new UserCard(card));
 		}

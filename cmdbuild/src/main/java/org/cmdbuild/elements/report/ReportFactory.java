@@ -70,6 +70,8 @@ public abstract class ReportFactory {
 	
 	/** get report extension */
 	public abstract ReportExtension getReportExtension();
+	
+	public abstract JasperPrint fillReport() throws Exception;
 
 	protected JasperPrint fillReport(JasperReport report, Map<String, Object> jasperFillManagerParameters) throws Exception { 
 		jasperFillManagerParameters.put(JRParameter.REPORT_LOCALE, getSystemLocale());

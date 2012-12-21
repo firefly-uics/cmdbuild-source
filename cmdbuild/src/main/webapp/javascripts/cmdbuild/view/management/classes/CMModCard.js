@@ -48,6 +48,11 @@
 				},
 				showMap: function() {
 					this.getLayout().setActiveItem(this.theMap.id);
+					// update the size of the map because
+					// it is not able to detect the change of its
+					// container div.
+					this.theMap.updateSize();
+
 					this.theMap.setCmVisible(true);
 					this.cardGrid.setCmVisible(false);
 				}
@@ -289,7 +294,7 @@
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
 
-			this.theMap = new CMDBuild.Management.MapPanel({
+			this.theMap = new CMDBuild.view.management.map.CMMapPanel({
 				tbar: [this.mapAddCardButton,'->', this.showGridButton],
 				frame: false,
 				border: false

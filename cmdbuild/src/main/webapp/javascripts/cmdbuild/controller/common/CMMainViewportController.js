@@ -8,26 +8,12 @@
 		this.accordionControllers = {};
 		this.panelControllers = {};
 
-		this.viewport.foreachAccordion(function(accordion) {
-			if (typeof accordion.cmControllerType == "function") {
-				this.accordionControllers[accordion.cmName] = new accordion.cmControllerType(accordion);
-			} else {
-				this.accordionControllers[accordion.cmName] = new ns.accordion.CMBaseAccordionController(accordion);
-			}
+		this.viewport.foreachAccordion(function (accordion) {
+			buildAccordionController(this, accordion);
 		}, this);
 
 		this.viewport.foreachPanel(function(panel) {
-			if (typeof panel.cmControllerType == "function") {
-				// We start to use the cmcreate factory method to have the possibility
-				// to ignet the subcontrollers in tests
-				if (typeof panel.cmControllerType.cmcreate == "function") {
-					this.panelControllers[panel.cmName] = new panel.cmControllerType.cmcreate(panel);
-				} else {
-					this.panelControllers[panel.cmName] = new panel.cmControllerType(panel);
-				}
-			} else {
-				this.panelControllers[panel.cmName] = new ns.CMBasePanelController(panel);
-			}
+			buildPanelController(this, panel);
 		}, this);
 
 		// the danglig card is used to open a card
@@ -92,11 +78,12 @@
 
 	ns.CMMainViewportController.prototype.setInstanceName = function(name) {
 		var hdInstanceName = Ext.get('instance_name');
-		if (hdInstanceName 
-				&& hdInstanceName.dom
-				&& hdInstanceName.dom.innerHTML) {
-
-			hdInstanceName.dom.innerHTML = name;
+		if (hdInstanceName) {
+			try {
+				hdInstanceName.setHTML(name);
+			} catch (e) {
+				// Sometimes Explorer does not like it...
+			}
 		}
 	};
 
@@ -127,6 +114,36 @@
 		}
 	};
 
+	ns.CMMainViewportController.prototype.addAccordion = function(a) {
+		if (a) {
+			if (!Ext.isArray(a)) {
+				a = [a];
+			}
+
+			for (var i=0, l=a.length; i<l; ++i) {
+				var accordion = a[i];
+				if (accordion != null) {
+					this.viewport.addAccordion(accordion);
+					buildAccordionController(this, accordion);
+				}
+			}
+		}
+	};
+
+	ns.CMMainViewportController.prototype.addPanel = function(p) {
+		if (p) {
+			this.viewport.addPanel(p);
+
+			if (!Ext.isArray(p)) {
+				p = [p];
+			}
+
+			for (var i=0, l=p.length; i<l; ++i) {
+				buildPanelController(this, p[i]);
+			}
+		}
+	};
+
 	/*
 	 * p = {
 			Id: the id of the card
@@ -153,4 +170,25 @@
 		}
 	};
 
+	function buildAccordionController(me, accordion) {
+		if (typeof accordion.cmControllerType == "function") {
+			me.accordionControllers[accordion.cmName] = new accordion.cmControllerType(accordion);
+		} else {
+			me.accordionControllers[accordion.cmName] = new ns.accordion.CMBaseAccordionController(accordion);
+		}
+	}
+
+	function buildPanelController(me, panel) {
+		if (typeof panel.cmControllerType == "function") {
+			// We start to use the cmcreate factory method to have the possibility
+			// to inject the sub-controllers in tests
+			if (typeof panel.cmControllerType.cmcreate == "function") {
+				me.panelControllers[panel.cmName] = new panel.cmControllerType.cmcreate(panel);
+			} else {
+				me.panelControllers[panel.cmName] = new panel.cmControllerType(panel);
+			}
+		} else {
+			me.panelControllers[panel.cmName] = new ns.CMBasePanelController(panel);
+		}
+	}
 })();

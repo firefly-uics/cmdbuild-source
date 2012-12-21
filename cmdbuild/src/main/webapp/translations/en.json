@@ -101,6 +101,7 @@
             "parent_not_found": "Parent class does not exists"
          }},
          "geo_attributes": {
+            "card_binding":"Cards Binding",
             "externalGraphic": "Icon",
             "fillColor": "Fill color",
             "fillOpacity": "Fill opacity",
@@ -419,6 +420,9 @@
             "title": "Manage Icons"
          },
          "layermanager": {"title": "Layers order"},
+         "navigationTree": {
+            "title": "GIS navigation"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Connectors"},
@@ -491,7 +495,7 @@
          "groups": "Groups",
          "privilege": {
             "add_privilege": "Add Privilege",
-            "classname": " Classname",
+            "classname": " Class name",
             "delete_privilege": "Delete Privilege",
             "modify_privilege": "Modify Privilege",
             "none_privilege": "None ",
@@ -1028,6 +1032,7 @@
          "edit_relation": "Edit relation",
          "gis": {
             "geo_attributes": "Geographical attributes",
+            "gisNavigation": "GIS Navigation",
             "position": "Position",
             "zoom": "Zoom"
          },
@@ -1096,7 +1101,7 @@
          "delete_report": "Delete report",
          "modify_report": "Edit report",
          "reportForm": {
-            "description": "Desciption",
+            "description": "Description",
             "name": "Name",
             "report": "Report"
          },

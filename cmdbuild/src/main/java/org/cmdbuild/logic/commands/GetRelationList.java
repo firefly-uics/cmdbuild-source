@@ -3,11 +3,14 @@ package org.cmdbuild.logic.commands;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -21,6 +24,40 @@ public class GetRelationList extends AbstractGetRelation {
 
 	public GetRelationList(final CMDataView view) {
 		super(view);
+	}
+
+	/**
+	 * @param domainWithSource The domain to list grouped by source
+	 * @return The relations of this domain grouped by the id of the source card
+	 */
+	public Map<Object, List<RelationInfo>> list(final String sourceTypeName, final DomainWithSource domainWithSource) {
+		final CMDomain domain = getQueryDomain(domainWithSource);
+		final CMClass sourceType = view.findClassByName(sourceTypeName);
+		final CMQueryResult relations = getRelationQuery(sourceType, domain).run();
+
+		return fillMap(relations, sourceType);
+	}
+
+	private Map<Object, List<RelationInfo>> fillMap(CMQueryResult relationList, CMClass sourceType) {
+		final Map<Object, List<RelationInfo>> result = new HashMap<Object, List<RelationInfo>>();
+		for (CMQueryRow row : relationList) {
+			final CMCard src = row.getCard(sourceType);
+			final CMCard dst = row.getCard(DST_ALIAS);
+			final QueryRelation rel = row.getRelation(DOM_ALIAS);
+			final RelationInfo relInfo = new RelationInfo(rel, dst);
+
+			List<RelationInfo> relations;
+			if (!result.containsKey(src.getId())) {
+				relations = new ArrayList<RelationInfo>();
+				result.put(src.getId(), relations);
+			} else {
+				relations = result.get(src.getId());
+			}
+
+			relations.add(relInfo);
+		}
+
+		return result;
 	}
 
 	public GetRelationListResponse exec(final Card src, final DomainWithSource domainWithSource) {

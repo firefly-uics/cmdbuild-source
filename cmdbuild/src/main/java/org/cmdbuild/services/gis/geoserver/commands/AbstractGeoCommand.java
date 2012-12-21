@@ -9,6 +9,7 @@ import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.cmdbuild.logger.Log;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.MediaType;
 import org.restlet.representation.InputRepresentation;
@@ -33,6 +34,7 @@ public abstract class AbstractGeoCommand {
 	protected final void put(InputStream data, String url, MediaType mime) {
 		ClientResource cr = createClient(url);
 		Representation input = new InputRepresentation(data, mime);
+		Log.REST.debug("PUT REQUEST " + url);
 		cr.put(input);
 	}
 
@@ -41,6 +43,7 @@ public abstract class AbstractGeoCommand {
 		try {
 			ClientResource cr = createClient(url);
 			StringWriter sw = new StringWriter();
+			Log.REST.debug("GET REQUEST " + url);
 			cr.get(MediaType.TEXT_XML).write(sw);
 			response = DocumentHelper.parseText(sw.toString());
 		} catch (Exception e) {
@@ -51,6 +54,7 @@ public abstract class AbstractGeoCommand {
 
 	protected final void delete(String url) {
 		ClientResource cr = createClient(url);
+		Log.REST.debug("DELETE REQUEST " + url);
 		cr.delete();
 	}
 

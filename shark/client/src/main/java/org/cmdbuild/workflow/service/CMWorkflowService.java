@@ -162,4 +162,13 @@ public interface CMWorkflowService {
 	 */
 	void resumeProcessInstance(String procInstId) throws CMWorkflowException;
 
+	/**
+	 * Deletes the specified process instance
+	 * 
+	 * @param procInstId
+	 *            process instance id
+	 * @throws CMWorkflowException
+	 */
+	void deleteProcessInstance(String procInstId) throws CMWorkflowException;
+
 }

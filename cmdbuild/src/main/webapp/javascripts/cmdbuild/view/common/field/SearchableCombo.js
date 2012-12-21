@@ -7,12 +7,14 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
     trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',    
     trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
+    gridExtraConfig: {}, // use it to pass some configuration to the grid window
+    searchWindowReadOnly: false, // if read only, there isn't the add card button on the window
 
 	initComponent : function(){
 		this.labelAlign = "right",
 		this.callParent(arguments);
     },
-    
+
     onTrigger1Click: function() {
     	//business rule: if the store has more record than the configuration limit
     	//we want open the search window
@@ -31,7 +33,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
         	}
     	};
     },
-    
+
 	onTrigger2Click: function() {
 		if (!this.disabled) {
 			reset.call(this);
@@ -58,7 +60,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 			CMDBuild.Management.FieldManager.loadAttributes(this.store.baseParams.IdClass, callback);	
 		}
 	},
-	
+
 	buildSearchWindow: function(attributeList, storeParams) {
 		// TODO Filters should be handled differently
 		// NdPaolo: I don't know why the NoFilter was set in the first place
@@ -66,13 +68,15 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		delete extraParams.NoFilter;
 
 		new CMDBuild.Management.ReferenceSearchWindow({
-			idClass: this.store.baseParams.IdClass,
+			ClassName: this.store.baseParams.ClassName,
 			filterType: 'reference',
 			selModel: new CMDBuild.selection.CMMultiPageSelectionModel({
 				mode: "SINGLE",
 				idProperty: "Id" // required to identify the records for the data and not the id of ext
 			}),
-			extraParams: extraParams
+			extraParams: extraParams,
+			gridConfig: this.gridExtraConfig || {},
+			readOnly: this.searchWindowReadOnly
 		}).show().on('cmdbuild-referencewindow-selected', function(record) {
 			this.addToStoreIfNotInIt(record);
 			this.focus(); // to allow the "change" event that occurs on blur

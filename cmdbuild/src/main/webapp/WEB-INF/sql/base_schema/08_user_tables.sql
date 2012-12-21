@@ -40,6 +40,7 @@ CREATE TABLE "Role"
   "SimpleHistoryModeForCard" boolean DEFAULT false NOT NULL,
   "SimpleHistoryModeForProcess" boolean DEFAULT false NOT NULL,
   "ProcessWidgetAlwaysEnabled" boolean DEFAULT false NOT NULL,
+  "CloudAdmin" boolean DEFAULT FALSE NOT NULL,
   CONSTRAINT "Role_pkey" PRIMARY KEY ("Id")
 )
 INHERITS ("Class");
@@ -63,6 +64,7 @@ COMMENT ON COLUMN "Role"."FullScreenMode"IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."SimpleHistoryModeForCard" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."SimpleHistoryModeForProcess" IS 'MODE: reserved';
 COMMENT ON COLUMN "Role"."ProcessWidgetAlwaysEnabled" IS 'MODE: reserved';
+COMMENT ON COLUMN "Role"."CloudAdmin" IS 'MODE: reserved';
 
 ALTER TABLE "Role" ALTER COLUMN "Code" SET NOT NULL;
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
@@ -19,6 +20,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private final Alias fromAlias;
 	private final List<JoinClause> joinClauses;
 	private final List<QueryAliasAttribute> attributes;
+	private final List<OrderByClause> orderByClauses;
 	private Long offset;
 	private Long limit;
 	private WhereClause whereClause;
@@ -28,6 +30,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.fromAlias = fromAlias;
 		joinClauses = new ArrayList<JoinClause>();
 		attributes = new ArrayList<QueryAliasAttribute>();
+		orderByClauses = new ArrayList<OrderByClause>();
 		offset = null;
 		limit = null;
 		whereClause = new EmptyWhereClause();
@@ -51,6 +54,14 @@ public class QuerySpecsImpl implements QuerySpecs {
 
 	public Iterable<QueryAliasAttribute> getAttributes() {
 		return this.attributes;
+	}
+
+	public void addOrderByClause(OrderByClause orderByClause) {
+		this.orderByClauses.add(orderByClause);
+	}
+
+	public List<OrderByClause> getOrderByClauses() {
+		return orderByClauses;
 	}
 
 	public void addSelectAttribute(final QueryAliasAttribute attribute) {

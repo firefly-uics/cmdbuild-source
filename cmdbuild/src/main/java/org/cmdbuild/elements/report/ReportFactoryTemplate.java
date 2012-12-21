@@ -37,9 +37,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	
 	public abstract JasperDesign getJasperDesign();
 
-	/**
-	 * Fill report 
-	 */
+	@Override
 	public JasperPrint fillReport() throws Exception {
 		JasperReport newjr = JasperCompileManager.compileReport(getJasperDesign());		
 		super.fillReport(newjr,jasperFillManagerParameters);

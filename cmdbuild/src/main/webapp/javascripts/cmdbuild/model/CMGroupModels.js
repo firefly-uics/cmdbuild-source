@@ -8,6 +8,7 @@
 			{name: "isAdministrator", type: "boolean"},
 			{name: "disabledModules", type: "auto"},
 			{name: "name", type: "string"},
+			{name: "email", type: "string"},
 			{name: "text", type: "string"},
 			{name: "startingClass", type: "string"}
 		],
@@ -79,7 +80,8 @@
 			{name: "hideSidePanel", type: "boolean"},
 			{name: "processWidgetAlwaysEnabled", type: "boolean"},
 			{name: "simpleHistoryModeForCard", type: "boolean"},
-			{name: "simpleHistoryModeForProcess", type: "boolean"}
+			{name: "simpleHistoryModeForProcess", type: "boolean"},
+			{name: "cloudAdmin", type: "boolean"}
 		],
 
 		/*
@@ -115,6 +117,10 @@
 
 		isSimpleHistoryModeForProcess: function() {
 			return this.get("simpleHistoryModeForProcess") || false;
+		},
+
+		isCloudAdmin: function() {
+			return this.get("cloudAdmin") || false;
 		},
 
 		/*

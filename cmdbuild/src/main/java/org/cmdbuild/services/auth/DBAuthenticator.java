@@ -3,8 +3,8 @@ package org.cmdbuild.services.auth;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ws.security.WSPasswordCallback;
-import org.cmdbuild.auth.password.NaivePasswordHandler;
-import org.cmdbuild.auth.password.PasswordHandler;
+import org.cmdbuild.common.digest.Base64Digester;
+import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
@@ -27,9 +27,9 @@ public class DBAuthenticator implements Authenticator {
 	}
 
 	private boolean passwordMatch(final User user, final String unencryptedPassword) {
-		final PasswordHandler se = new NaivePasswordHandler();
-		final String encpass = se.encrypt(unencryptedPassword);
-		return user.getEncryptedPassword().equals(encpass);
+		final Digester digester = new Base64Digester();
+		final String encryptedPassword = digester.encrypt(unencryptedPassword);
+		return user.getEncryptedPassword().equals(encryptedPassword);
 	}
 
 	@Override
@@ -49,9 +49,9 @@ public class DBAuthenticator implements Authenticator {
 
 	private String getUnencryptedPassword(final AuthInfo authInfo) {
 		final User user = getUser(authInfo);
-		final PasswordHandler enc = new NaivePasswordHandler();
+		final Digester digester = new Base64Digester();
 		final String encryptedPassword = user.getEncryptedPassword();
-		final String unencryptedPassword = enc.decrypt(encryptedPassword);
+		final String unencryptedPassword = digester.decrypt(encryptedPassword);
 		return unencryptedPassword;
 	}
 
@@ -65,7 +65,7 @@ public class DBAuthenticator implements Authenticator {
 
 	private boolean checkPassword(final WSPasswordCallback pwcb, final String unencryptedPassword) {
 		final String messagePassword = pwcb.getPassword();
-		return (messagePassword.equals(unencryptedPassword));
+		return messagePassword.equals(unencryptedPassword);
 	}
 
 	private boolean isDigested(final WSPasswordCallback pwcb) {

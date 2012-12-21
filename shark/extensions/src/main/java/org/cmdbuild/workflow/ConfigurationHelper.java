@@ -7,8 +7,11 @@ import java.util.List;
 
 import org.cmdbuild.common.mail.MailApi;
 import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationHelper {
 
@@ -16,7 +19,7 @@ public class ConfigurationHelper {
 	private static final String CMDBUILD_MAIL_API_CLASSNAME_PROPERTY = "org.cmdbuild.mail.api.classname";
 
 	private static final String MAIL_DEBUG = "DefaultMailMessageHandler.debug";
-	private static final String MAIL_USE_SSL = "DefaultMailMessageHandler.SMTP_UseSSL";
+	private static final String MAIL_USE_SSL = "DefaultMailMessageHandler.useSSL";
 	private static final String MAIL_SMTP_SERVER = "DefaultMailMessageHandler.SMTPMailServer";
 	private static final String MAIL_SMTP_PORT = "DefaultMailMessageHandler.SMTPPortNo";
 	private static final String MAIL_STARTTLS = "DefaultMailMessageHandler.starttls";
@@ -66,6 +69,11 @@ public class ConfigurationHelper {
 			@Override
 			public boolean isDebug() {
 				return Boolean.valueOf(cus.getProperty(MAIL_DEBUG));
+			}
+			
+			@Override
+			public Logger getLogger() {
+				return LoggerFactory.getLogger(Logging.LOGGER_NAME);
 			}
 
 			@Override

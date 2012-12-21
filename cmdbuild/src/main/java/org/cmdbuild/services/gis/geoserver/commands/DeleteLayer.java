@@ -1,17 +1,17 @@
 package org.cmdbuild.services.gis.geoserver.commands;
 
-import org.cmdbuild.services.gis.GeoLayer;
+import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.utils.Command;
 
 public class DeleteLayer extends AbstractGeoCommand implements Command<Void> {
 
-	private final GeoLayer layer;
+	private final LayerMetadata layer;
 
-	public static Void exec(final GeoLayer layer) {
+	public static Void exec(final LayerMetadata layer) {
 		return new DeleteLayer(layer).run();
 	}
 
-	private DeleteLayer(final GeoLayer layer) {
+	private DeleteLayer(final LayerMetadata layer) {
 		super();
 		this.layer = layer;
 	}

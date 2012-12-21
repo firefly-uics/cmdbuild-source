@@ -15,6 +15,7 @@ import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
@@ -49,13 +50,21 @@ public class AbstractGetRelation {
 			.where(attribute(srcCardType, ID), Operator.EQUALS, src.cardId);
 	}
 
+	protected QuerySpecsBuilder getRelationQuery(final CMClass sourceType, final CMDomain domain) {
+		return view
+			.select(
+				anyAttribute(DOM_ALIAS),
+				attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
+			.from(sourceType)
+			.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
+			.orderBy(attribute(DST_ALIAS, DESCRIPTION), OrderByClause.Direction.ASC);
+	}
+
 	protected CMClass getCardType(final Card src) {
 		final CMClass type = view.findClassById(src.classId);
 		Validate.notNull(type);
 		return type;
 	}
-
-
 
 	public static class RelationInfo {
 

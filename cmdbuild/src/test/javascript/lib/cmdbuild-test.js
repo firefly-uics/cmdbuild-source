@@ -197,7 +197,7 @@
 		}
 	};
 
-/******
+// /******
 
 	//override describe to allow the run of a set of tests
 
@@ -215,7 +215,7 @@
 //			'CMDashboardChartConfigurationPanelController',
 //			'CMDashboardChartConfigurationGridController',
 //			'CMDashboardChartConfigurationGridSpec',
-//			CMDashboardChartConfigurationDataSourcePanel',
+//			'CMDashboardChartConfigurationDataSourcePanel',
 //			'_DataSourceInputFildSet'
 //			'CMDashboardChartConfigurationForm',
 //			'CMChartBarTypeStrategy',
@@ -226,7 +226,9 @@
 //			'CMAttachmentCategoryModel',
 //			'CMMetadataGroup',
 //			'CMCacheAttachmentCategoryFunction',
-//			'CMEntryTypeModel'
+//			'CMEntryTypeModel',
+//			'CMDelegable',
+			'CMCardModuleState'
 		];
 
 		if (Ext.Array.contains(focusSpecs, description)) {
@@ -234,6 +236,7 @@
 		}
 	};
 
-*******/
+// *******/
 
+	
 })();

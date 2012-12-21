@@ -193,7 +193,7 @@ public class WorkflowLogicHelper {
 				processInstance = logic.getProcessInstance( //
 						card.getClassName(), //
 						longIdFor(card));
-				final CMActivity selectedActivity = selectActivityFor(processInstance);
+				final UserActivityInstance selectedActivity = selectActivityInstanceFor(processInstance);
 				final List<CMActivityWidget> activityWidgets = selectedActivity.getWidgets();
 				logic.updateProcess( //
 						card.getClassName(), //

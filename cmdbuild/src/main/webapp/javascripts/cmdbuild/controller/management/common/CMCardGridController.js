@@ -6,9 +6,9 @@
 		},
 
 		constructor: function(view, supercontroller) {
-			
+
 			this.mixins.observable.constructor.call(this, arguments);
-			
+
 			if (typeof view == "undefined") {
 				throw ("OOO snap, you have not passed a view to me");
 			} else {
@@ -35,12 +35,56 @@
 			this.mon(this.view, "cmWrongSelection", this.onWrongSelection, this);
 			this.mon(this.view, "cmVisible", this.onGridIsVisible, this);
 			this.mon(this.view.printGridMenu, "click", this.onPrintGridMenuClick, this);
+
+			this.stateDelegate = this.buildStateDelegate();
+		},
+
+		buildStateDelegate: function() {
+			var sd = new CMDBuild.state.CMCardModuleStateDelegate();
+			var me = this;
+
+			sd.onEntryTypeDidChange = function(state, entryType, danglingCard) {
+				me.onEntryTypeSelected(entryType, danglingCard);
+			};
+
+			sd.onCardDidChange = function(state, card) {
+				if (!card) {
+					return;
+				}
+
+				if (!me.view.isVisible(deep)) {
+					return;
+				}
+
+				var currentSelection = me.gridSM.getSelection();
+				if (Ext.isArray(currentSelection)
+						&& currentSelection.length>0) {
+
+					currentSelection = currentSelection[0];
+				}
+
+				var id = currentSelection.get("Id");
+				if (id && id == card.get("Id")) {
+					return;
+				} else {
+					me.openCard({
+						Id: card.get("Id"),
+						IdClass: card.get("IdClass")
+					});
+				}
+			};
+
+			_CMCardModuleState.addDelegate(sd);
+		},
+
+		getEntryType: function() {
+			return _CMCardModuleState.entryType;
 		},
 
 		onEntryTypeSelected : function(entryType, danglingCard) {
-			this.entryType = entryType;
-
-			if(!entryType) { return; }
+			if(!entryType) {
+				return;
+			}
 
 			var me = this,
 				afterStoreUpdated;
@@ -66,7 +110,7 @@
 				};
 			}
 
-			me.view.updateStoreForClassId(me.entryType.get("id"), {
+			me.view.updateStoreForClassId(me.getEntryType().get("id"), {
 				cb: afterStoreUpdated
 			});
 
@@ -92,7 +136,7 @@
 				url: 'services/json/management/modreport/printcurrentview',
 				params: {
 					FilterCategory: me.view.filterCategory,
-					IdClass: me.entryType.get("id"),
+					IdClass: me.getEntryType().get("id"),
 					type: format,
 					columns: Ext.JSON.encode(columns)
 				},
@@ -109,10 +153,9 @@
 		},
 
 		onCardSelected: function(sm, selection) {
-			var me = this;
 			if (Ext.isArray(selection)) {
 				if (selection.length > 0) {
-					me.fireEvent(me.CMEVENTS.cardSelected, selection[0]);
+					_CMCardModuleState.setCard(selection[0]);
 				}
 			}
 		},
@@ -122,6 +165,15 @@
 		},
 
 		onGridIsVisible: function(visible) {
+			if (visible) {
+				if (_CMCardModuleState.card) {
+					this.openCard({
+						Id: _CMCardModuleState.card.get("Id"),
+						IdClass: _CMCardModuleState.card.get("IdClass")
+					});
+				}
+			}
+
 			var selection = this.gridSM.getSelection();
 			this.fireEvent(this.CMEVENTS.gridVisible, visible, selection);
 		},
@@ -176,21 +228,6 @@
 			});
 		},
 
-		getPageNumber: function getPageNumber(cardPosition) {
-			var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-				pageNumber = 1;
-	
-			if (cardPosition == 0) {
-				return pageNumber;
-			}
-	
-			if (cardPosition) {
-				pageNumber = parseInt(cardPosition) / pageSize;
-			}
-	
-			return pageNumber + 1;
-		},
-
 		reload: function(reselect) {
 			this.view.reload(reselect);
 		},
@@ -220,8 +257,8 @@
 		var view = me.view;
 		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
-				var	pageNumber = getPageNumber(position),
-					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+				var	pageNumber = _CMUtils.grid.getPageNumber(position),
+					pageSize = _CMUtils.grid.getPageSize(),
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
@@ -230,27 +267,11 @@
 							me.gridSM.select(relativeIndex);
 						} catch (e) {
 							view.fireEvent("cmWrongSelection");
-							_debug("I was not able to select the record at " + relativeIndex);
-							_trace();
+							_trace("I was not able to select the record at " + relativeIndex);
 						}
 					}
 				});
 			}
 		});
-	}
-
-	function getPageNumber(cardPosition) {
-		var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
-			pageNumber = 1;
-
-		if (cardPosition == 0) {
-			return pageNumber;
-		}
-
-		if (cardPosition) {
-			pageNumber = parseInt(cardPosition) / pageSize;
-		}
-
-		return pageNumber + 1;
 	}
 })();

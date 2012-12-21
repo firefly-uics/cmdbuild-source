@@ -17,6 +17,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
+import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -91,6 +93,7 @@ public class QuerySpecsBuilder {
 
 	private List<QueryAttribute> attributes;
 	private List<JoinClause> joinClauses;
+	private List<OrderByClause> orderByClauses;
 	private WhereClause whereClause;
 	private Long offset;
 	private Long limit;
@@ -105,6 +108,7 @@ public class QuerySpecsBuilder {
 		select();
 		from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
 		joinClauses = new ArrayList<JoinClause>();
+		orderByClauses = new ArrayList<OrderByClause>();
 		whereClause = new EmptyWhereClause();
 	}
 
@@ -176,6 +180,20 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
+	public QuerySpecsBuilder orderBy(Object attribute, Direction direction) {
+		QueryAttribute queryAttribute;
+		if (attribute instanceof QueryAttribute) {
+			queryAttribute = (QueryAttribute) attribute;
+		} else if (attribute instanceof String) {
+			queryAttribute = new NamedAttribute((String) attribute);
+		} else {
+			throw new IllegalArgumentException();
+		}
+
+		orderByClauses.add(new OrderByClause(queryAttribute, direction));
+		return this;
+	}
+
 	private QuerySpecs build() {
 		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias());
 
@@ -202,6 +220,9 @@ public class QuerySpecsBuilder {
 		qs.setWhereClause(whereClause);
 		qs.setOffset(offset);
 		qs.setLimit(limit);
+		for (OrderByClause orderByClause:orderByClauses) {
+			qs.addOrderByClause(orderByClause);
+		}
 		return qs;
 	}
 

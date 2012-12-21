@@ -36,7 +36,8 @@ public class ReportFactoryDB extends ReportFactory {
 		reportCard = ReportCard.findReportById(reportId);
 		this.reportExtension = reportExtension;
 	}
-		
+	
+	@Override
 	public JasperPrint fillReport() throws Exception {
 		
 		JasperReport[] jra = reportCard.getRichReportJRA();

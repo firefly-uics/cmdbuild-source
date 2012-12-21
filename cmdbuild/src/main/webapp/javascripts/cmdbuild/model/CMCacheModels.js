@@ -66,81 +66,6 @@
 			return this.get("type") == "processclass";
 		},
 
-		deleteGeoAttr: function(a) {
-			var attrs = this.getGeoAttrs(),
-				next;
-
-			for (var i=0, l=attrs.length; i<l; ++i) {
-				next = attrs[i];
-				if (next && next.name == a.name && next.masterTableName == a.masterTableName) {
-					delete attrs[i];
-					return true;
-				}
-			}
-
-			return false;
-		},
-
-		createOrUpdateGeoAttr: function(a) {
-			if (!this.updateGeoAttr(a)) {
-				this.data.meta.geoAttributes.push(a);
-			}
-		},
-
-		updateGeoAttr: function(a) {
-			var attrs = this.getGeoAttrs(),
-				next;
-
-			for (var i=0, l=attrs.length; i<l; ++i) {
-				next = attrs[i];
-				if (next && next.name == a.name && next.masterTableName == a.masterTableName) {
-					this.data.meta.geoAttributes[i] = a;
-					return true;
-				}
-			}
-
-			return false;
-		},
-
-		getGeoAttrs: function() {
-			var a = [];
-			try {
-				a = this.data.meta.geoAttributes;
-			} catch (e) {
-				_debug("Something went wrong: CMDBuild.cache.CMEntryTypeModel " + this.data.text + " getGeoAttrs");
-			}
-			return a;
-		},
-
-		getMyGeoAttrs: function() {
-			var attrs = this.getGeoAttrs(),
-				anchestors = _CMUtils.getAncestorsId(this.data.id),
-				out = [];
-
-			for (var a in attrs) {
-				a = attrs[a];
-				if (Ext.Array.contains(anchestors, a.masterTableId+"")) { // TODO fix the need to cast as string, the model save it as string
-					out.push(a);
-				}
-			}
-
-			return out;
-		},
-
-		getVisibleGeoAttrs: function() {
-			var attrs = this.getGeoAttrs(),
-			out = [];
-
-			for (var a in attrs) {
-				a = attrs[a];
-				if (a.isvisible) {
-					out.push(a);
-				}
-			}
-
-			return out;
-		},
-
 		setWidgets: function(widgets) {
 			this._widgets = widgets || [];
 		},
@@ -163,6 +88,10 @@
 					return;
 				}
 			}
+		},
+
+		getName: function() {
+			return this.get("name");
 		},
 
 		// Attachment metadata management
@@ -211,6 +140,10 @@
 			}
 
 			return rule;
+		},
+
+		toString: function() {
+			return this.get("name");
 		}
 	});
 
@@ -262,6 +195,27 @@
 			} else {
 				return this.data.createPrivileges;
 			}
+		},
+
+		getSourceClassId: function() {
+			return this.get("idClass1");
+		},
+
+		getDestinationClassId: function() {
+			return this.get("idClass2");
+		},
+
+		getNSideIdInManyRelation: function() {
+			var cardinality = this.get("cardinality");
+			if (cardinality == "1:N") {
+				return this.getDestinationClassId();
+			}
+
+			if (cardinality == "N:1") {
+				return this.getSourceClassId();
+			}
+
+			return null;
 		}
 	});
 

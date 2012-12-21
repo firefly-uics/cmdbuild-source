@@ -1,8 +1,9 @@
 (function() {
-	var WMS_IMAGE_FORMAT = 'image/png',
-		GOESERVER_SERVICE_TYPE = "wms",
-		DEFAULT_MIN_ZOOM = 0,
-		DEFAULT_MAX_ZOOM = 25;
+	var WMS_IMAGE_FORMAT = 'image/png';
+	var GOESERVER_SERVICE_TYPE = "wms";
+	var GEOSERVER = "_Geoserver";
+	var DEFAULT_MIN_ZOOM = 0;
+	var DEFAULT_MAX_ZOOM = 25;
 
 	function AbstractLayer() {};
 
@@ -10,17 +11,13 @@
 		CMDBuildLayer : true,
 		CM_Layer : true,
 		activateStrategies : Ext.emptyFn,
+		destroyStrategies : Ext.emptyFn,
 		selectFeatureByMasterCard : Ext.emptyFn,
 		selectFeature : Ext.emptyFn,
 		getFeatureByMasterCard : Ext.emptyFn,
 		clearSelection : Ext.emptyFn,
 		getEditedGeometry : Ext.emptyFn,
-		reselectLastSelection : Ext.emptyFn,
-		refreshFeatures : Ext.emptyFn,
-		setVisibilityByZoom : (function(zoom) {
-			var isInRange = (zoom >= this.cmdb_minZoom && zoom <= this.cmdb_maxZoom);
-			this.setVisibility(isInRange);
-		})
+		refreshFeatures : Ext.emptyFn
 	};
 
 	CMDBuild.Management.CMMap.LayerBuilder = {
@@ -32,26 +29,26 @@
     	 * 	withEditLayer: boolean to say if we want a editLayer or not 
     	 * }
     	 */
-		buildLayer: function(config) {
+		buildLayer: function(config, map) {
 			var classId = config.classId,
 				geoAttribute = config.geoAttribute,
 				withEditLayer = config.withEditLayer,
 				editLayer = null,
 				layer = null;
 
-			if (!geoAttribute || !geoAttribute.isvisible) {
+			if (!geoAttribute) {
 				return null;
 			}
 
-			if (isItMineOrOfMyAncestors(geoAttribute, classId) 
+			if (isItMineOrOfMyAncestors(geoAttribute, classId)
 					&& withEditLayer) {
 				// add the edit layer only for the layer
 				// defined for the current class or for an ancestor
-				editLayer = buildEditLayer(geoAttribute);
+				editLayer = buildEditLayer(geoAttribute, map);
 			}
 
-			if (geoAttribute.masterTableId) {
-				layer = buildCmdbLayer(geoAttribute, classId, editLayer);
+			if (geoAttribute.masterTableName != GEOSERVER) {
+				layer = buildCmdbLayer(geoAttribute, classId, editLayer, map);
 			} else {
 				layer = buildGeoserverLayer(geoAttribute);
 			}
@@ -60,7 +57,7 @@
 		}
 	};
 
-	function buildCmdbLayer(geoAttribute, classId, editLayer) {
+	function buildCmdbLayer(geoAttribute, classId, editLayer, map) {
 		var layerDescription = geoAttribute.description;
 
 		/*
@@ -70,9 +67,10 @@
 		 * decision, comment the condition to skip the
 		 * owned layers 
 		 */
+
 		// if (!editLayer) {
 
-		var masterClass = _CMCache.getEntryTypeById(geoAttribute.masterTableId);
+		var masterClass = _CMCache.getEntryTypeByName(geoAttribute.masterTableName);
 		if (masterClass) {
 			layerDescription = masterClass.get("text") + " - " + layerDescription;
 		}
@@ -80,27 +78,53 @@
 		// }
 
 		var layer = new CMDBuild.Management.CMMap.MapLayer(layerDescription, {
-			targetClassId: getIdClassForRequest(geoAttribute, classId),
+			targetClassName: getClassNameForRequest(geoAttribute, classId),
 			geoAttribute: geoAttribute,
-			editLayer: editLayer
+			editLayer: editLayer,
+			eventListeners: {
+				/*
+				 * Select a feature if, when added to the map, refers
+				 * to the current card
+				 * 
+				 * 
+				 * p.feature, the OpenLayers.Feature added
+				 * p.object, the layer that fires the event
+				 * p.type, the event type
+				 * p.element, the HTML element of the layer
+				 */
+				featureadded: function(p) {
+
+					var feature = p.feature;
+					if (!feature) {
+						return;
+					}
+
+					map.featureWasAdded(feature);
+				}
+			}
 		});
 
 		return Ext.applyIf(layer, new AbstractLayer());
 	};
 
-	function buildEditLayer(geoAttribute) {
+	function buildEditLayer(geoAttribute, map) {
 		// the edit layer is used to manage the single insert.
-		// maybe it's possible to do the same using the cmdblayer only, 
-		// and a "edit mode" in which consider the single insert
-		var editLayer = new OpenLayers.Layer.Vector(geoAttribute.description+'-Edit', {
-			projection: new OpenLayers.Projection("EPSG:900913"),
-			displayInLayerSwitcher: false,
+		// ask to the map if has already an editLayer for this geoAttribute,
+		// if not, build a new layer for it.
+		var name = CMDBuild.state.GeoAttributeState.getKey(geoAttribute)+'-Edit';
 
-			// cmdb stuff
-			geoAttribute: geoAttribute,
-			CM_EditLayer: true,
-			CM_Layer: true
-		});
+		var editLayer = map.getLayerByName(name);
+
+		if (!editLayer) {
+			editLayer = new OpenLayers.Layer.Vector(name, {
+				projection: new OpenLayers.Projection("EPSG:900913"),
+				displayInLayerSwitcher: false,
+				// cmdb stuff
+				geoAttribute: geoAttribute,
+				CM_EditLayer: true,
+				CM_Layer: true
+			});
+		}
 
 		return editLayer;
 	};
@@ -110,17 +134,19 @@
 			geoserver_url = CMDBuild.Config.gis.geoserver_url;
 
 		var layer = new OpenLayers.Layer.WMS(geoAttribute.description,
-				geoserver_url + "/" + GOESERVER_SERVICE_TYPE, {
-					layers : geoserver_ws + ":" + geoAttribute.name,
-					format : WMS_IMAGE_FORMAT,
-					transparent : true
-				}, {
-					singleTile : true,
-					ratio : 1
-				});
+			geoserver_url + "/" + GOESERVER_SERVICE_TYPE, {
+				layers : geoserver_ws + ":" + geoAttribute.geoServerName,
+				format : WMS_IMAGE_FORMAT,
+				transparent : true
+			}, {
+				singleTile : true,
+				ratio : 1
+			});
 
 		layer.cmdb_minZoom = geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
 		layer.cmdb_maxZoom = geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
+		layer.cmdb_index = geoAttribute.index;
+
 		layer.geoAttribute = geoAttribute;
 		layer.editLayer = undefined;
 
@@ -128,6 +154,7 @@
 
 		layer.CMDBuildLayer = false;
 		layer.CM_Layer = false;
+		layer.CM_geoserverLayer = true;
 		return layer;
 	};
 
@@ -137,8 +164,8 @@
 		var table = _CMCache.getEntryTypeById(tableId);
 
 		while (table) {
-			if (attr.masterTableId == table.get("id")) {
-				return true;
+			if (attr.masterTableName == table.get("name")) {
+				return table;
 			} else {
 				var parentId = table.get("parent");
 				if (parentId) {
@@ -152,12 +179,13 @@
 		return false;
 	};
 
-	function getIdClassForRequest(geoAttribute, tableId) {
-		if (isItMineOrOfMyAncestors(geoAttribute, tableId)) {
-			return tableId;
+	function getClassNameForRequest(geoAttribute, tableId) {
+		var table = isItMineOrOfMyAncestors(geoAttribute, tableId);
+		if (table) {
+			return table.get("name");
 		} else {
-			return geoAttribute.masterTableId;
+			return geoAttribute.masterTableName;
 		}
 	};
-	
+
 })();
