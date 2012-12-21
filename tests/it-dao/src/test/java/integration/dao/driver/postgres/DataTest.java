@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -15,8 +16,8 @@ import utils.DBFixture;
 
 public class DataTest extends DBFixture {
 
-	private static final String A_CLASS_NAME = uniqueUUID();
-	private static final String A_SUPERCLASS_NAME = uniqueUUID();
+	private static final String A_CLASS_NAME = "foo";
+	private static final String A_SUPERCLASS_NAME = "bar";
 
 	protected static final String CODE_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
 	protected static final String DESCRIPTION_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
@@ -46,4 +47,5 @@ public class DataTest extends DBFixture {
 				.set(DESCRIPTION_ATTRIBUTE, DESCRIPTION_VALUE) //
 				.save();
 	}
+
 }

@@ -64,6 +64,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
+			innerDriver.clear(createdClass);
 			innerDriver.deleteClass(createdClass);
 		}
 
@@ -407,6 +408,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
+			innerDriver.clear(newDomain);
 			innerDriver.deleteDomain(newDomain);
 		}
 
@@ -666,7 +668,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 	@Override
 	public void delete(final DBEntry entry) {
-		throw new UnsupportedOperationException();
+		innerDriver.delete(entry);
 	}
 
 	@Override
