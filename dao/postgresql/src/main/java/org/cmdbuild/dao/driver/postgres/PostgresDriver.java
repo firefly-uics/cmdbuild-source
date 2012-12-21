@@ -150,7 +150,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public void delete(final DBEntry entry) {
 		logger.info("deleting entry with id '{}' for type '{}'", entry.getId(), entry.getType().getName());
-		clear(entry.getType()); // FIXME
+		new EntryDeleteCommand(jdbcTemplate, entry).execute();
 	}
 
 	@Override

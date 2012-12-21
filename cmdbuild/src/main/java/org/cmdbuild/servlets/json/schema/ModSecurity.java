@@ -6,10 +6,7 @@ import java.util.List;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.wrappers.GroupCard;
-import org.cmdbuild.elements.wrappers.PrivilegeCard;
-import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.DataAccessLogic;
@@ -24,7 +21,6 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
-import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
@@ -148,8 +144,8 @@ public class ModSecurity extends JSONBase {
 			@Parameter("classid") final Long grantedClassId, @Parameter("privilege_mode") final String privilegeMode)
 			throws JSONException, AuthException {
 		securityLogic = new SecurityLogic(TemporaryObjectsBeforeSpringDI.getSystemView());
-		DataAccessLogic dal = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		CMClass grantedClass = dal.findClassById(grantedClassId);
+		final DataAccessLogic dal = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
+		final CMClass grantedClass = dal.findClassById(grantedClassId);
 		String mode = null;
 		if (privilegeMode.equals("write_privilege")) {
 			mode = "w";
@@ -224,7 +220,8 @@ public class ModSecurity extends JSONBase {
 				.withDescription(description) //
 				.withAdminFlag(isAdministrator) //
 				.withEmail(email) //
-				.withStartingClassId(startingClass); //
+				.withStartingClassId(startingClass) //
+				.setActive(isActive);
 		if (newGroup) {
 			final GroupDTO groupDTO = builder.build();
 			createdOrUpdatedGroup = authLogic.createGroup(groupDTO);
@@ -259,57 +256,23 @@ public class ModSecurity extends JSONBase {
 	public void saveGroupUserList(@Parameter(value = "users", required = false) final String users,
 			@Parameter("groupId") final Long groupId, final UserContext userCtx) {
 		authLogic = applicationContext.getBean(AuthenticationLogic.class);
-		List<Long> newUserIds = Lists.newArrayList();
-		String[] splittedUserIds = users.split(",");
-		for (String userId : splittedUserIds) {
-			newUserIds.add(Long.valueOf(userId));
+		final List<Long> newUserIds = Lists.newArrayList();
+		if (!users.isEmpty()) {
+			final String[] splittedUserIds = users.split(",");
+			for (final String userId : splittedUserIds) {
+				newUserIds.add(Long.valueOf(userId));
+			}
 		}
-		List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
-		for (Long userId : newUserIds) {
+		final List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
+		for (final Long userId : newUserIds) {
 			if (!oldUserIds.contains(userId)) {
 				authLogic.addUserToGroup(userId, groupId);
 			}
 		}
-		for (Long userId : oldUserIds) {
+		for (final Long userId : oldUserIds) {
 			if (!newUserIds.contains(userId)) {
 				authLogic.removeUserFromGroup(userId, groupId);
 			}
 		}
-
-		// final GroupCard group = GroupCard.getOrCreate(groupId);
-		// final IDomain userGroupDomain =
-		// UserOperations.from(UserContext.systemContext()).domains().get(authLogic.USER_GROUP_DOMAIN_NAME);
-		//
-		// final List<UserCard> oldUserList = authLogic.getUserList(groupId);
-		// final List<String> newUserIdList = new ArrayList<String>();
-		// if (users != null && !users.equals("")) {
-		// StringTokenizer tokenizer = new StringTokenizer(users, ",");
-		// while (tokenizer.hasMoreTokens()) {
-		// newUserIdList.add(tokenizer.nextToken());
-		// }
-		// }
-		//
-		// for (UserCard user : oldUserList) {
-		// String userId = ((Integer) user.getId()).toString();
-		// if (newUserIdList.contains(userId)) {
-		// newUserIdList.remove(userId);
-		// } else {
-		// IRelation relation =
-		// UserOperations.from(UserContext.systemContext()).relations().get(userGroupDomain,
-		// user, group);
-		// relation.delete();
-		// }
-		// }
-		//
-		// //newUserIdList contains only the IDs of new group's users
-		// for (String userId : newUserIdList) {
-		// ICard userCard =
-		// UserOperations.from(UserContext.systemContext()).tables().get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(Integer.parseInt(userId)).get();
-		// UserCard user = new UserCard(userCard);
-		// IRelation relation =
-		// UserOperations.from(UserContext.systemContext()).relations().create(userGroupDomain,
-		// user, group);
-		// relation.save();
-		// }
 	}
 }

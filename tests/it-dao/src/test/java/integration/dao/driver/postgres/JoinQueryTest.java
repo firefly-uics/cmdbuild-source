@@ -74,8 +74,7 @@ public class JoinQueryTest extends DBFixture {
 		// assertThat(firstRow.getRelation(DOM).getId(), is(not(nullValue())));
 	}
 
-	@Ignore
-	// needs the delete operation to be implemented
+	@Ignore("needs the delete operation to be implemented")
 	@Test
 	public void joinDoesNotCountDeletedRelationsAndCards() {
 		// given

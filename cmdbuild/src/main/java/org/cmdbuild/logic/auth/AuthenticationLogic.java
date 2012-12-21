@@ -3,6 +3,7 @@ package org.cmdbuild.logic.auth;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
+import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
@@ -27,7 +28,6 @@ import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.view.CMDataView;
@@ -356,25 +356,19 @@ public class AuthenticationLogic implements Logic {
 		final CMClass roleClass = view.findClassByName("Role");
 		final CMClass userClass = view.findClassByName("User");
 
-		// FIXME: improve performances when multiple conditions in where clause
-		// (and userRole id = groupId)
-		final CMQueryResult result = view.select(attribute(userClass, "Username")) //
+		final CMQueryRow row = view.select(attribute(userClass, "Username")) //
 				.from(userClass) //
 				.join(roleClass, over(userRoleDomain)) //
-				.where(condition(attribute(userClass, "Id"), eq(userId))) //
-				.run();
-		for (final CMQueryRow row : result) {
-			final CMCard roleCard = row.getCard(roleClass);
-			if (roleCard.getId().equals(groupId)) {
-				final CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
-				final CMRelationDefinition relationDefinition = view.modifyRelation(relationToBeRemoved);
-				relationDefinition.delete();
-				break;
-			}
-		}
+				.where(and(condition(attribute(userClass, "Id"), eq(userId)), //
+						condition(attribute(roleClass, "Id"), eq(groupId)))) //
+				.run().getOnlyRow();
+
+		final CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
+		final CMRelationDefinition relationDefinition = view.modifyRelation(relationToBeRemoved);
+		relationDefinition.delete();
 	}
 
-	// FIXME: method not implemented correctly (headerAuth? autoLogin?)...fix it
+	// FIXME: method maybe not implemented correctly (headerAuth? autoLogin?)
 	public static boolean isLoggedIn(final HttpServletRequest request) throws RedirectException {
 
 		final OperationUser operationUser = new SessionVars().getUser();

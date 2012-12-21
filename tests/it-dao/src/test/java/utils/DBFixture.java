@@ -9,12 +9,17 @@ import java.util.UUID;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 
@@ -108,6 +113,13 @@ public abstract class DBFixture extends IntegrationTestBase {
 		return definition;
 	}
 
+	protected DBClassDefinition newSimpleClass(final String name) {
+		final DBClassDefinition definition = mock(DBClassDefinition.class);
+		when(definition.getName()).thenReturn(name);
+		when(definition.isHoldingHistory()).thenReturn(false);
+		return definition;
+	}
+
 	protected DBClassDefinition newSuperClass(final String name, final DBClass parent) {
 		final DBClassDefinition definition = mock(DBClassDefinition.class);
 		when(definition.getName()).thenReturn(name);
@@ -122,6 +134,16 @@ public abstract class DBFixture extends IntegrationTestBase {
 		when(definition.getName()).thenReturn(name);
 		when(definition.getClass1()).thenReturn(class1);
 		when(definition.getClass2()).thenReturn(class2);
+		return definition;
+	}
+
+	protected DBAttributeDefinition newTextAttribute(final String name, final DBEntryType owner) {
+		final DBAttributeDefinition definition = mock(DBAttributeDefinition.class);
+		when(definition.getName()).thenReturn(name);
+		when(definition.getOwner()).thenReturn(owner);
+		when(definition.getMode()).thenReturn(CMAttribute.Mode.WRITE);
+		when(definition.isActive()).thenReturn(true);
+		when(definition.getType()).thenReturn((CMAttributeType) new TextAttributeType());
 		return definition;
 	}
 

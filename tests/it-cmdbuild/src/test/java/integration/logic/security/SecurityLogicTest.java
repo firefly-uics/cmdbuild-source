@@ -67,6 +67,7 @@ public class SecurityLogicTest extends DBFixture {
 		fixture.insertBindingBetweenUserAndRole(userWithDefaultGroup, groupB, true);
 	}
 
+	@Ignore("The Grant class table does not have a history, hence the cm_delete_card does not work")
 	@Test
 	public void shouldRetrieveAllPrivilegesForGroup() {
 		// given
@@ -84,6 +85,7 @@ public class SecurityLogicTest extends DBFixture {
 		assertThat(privilege.mode, is(equalTo("w")));
 	}
 
+	@Ignore("The Grant class table does not have a history, hence the cm_delete_card does not work")
 	@Test
 	public void shouldCreatePrivilegeForExistingClass() {
 		// given
