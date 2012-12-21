@@ -3,6 +3,7 @@ package org.cmdbuild.dao.legacywrappers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -309,9 +310,11 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 	private String extractActivityParticipantGroup(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
 		final CMActivity activity = findActivity(activityInfo.getActivityDefinitionId());
 		final ActivityPerformer performer = activity.getFirstNonAdminPerformer();
+		final String group;
 		switch (performer.getType()) {
 		case ROLE:
-			return performer.getValue();
+			group = performer.getValue();
+			break;
 		case EXPRESSION:
 			final String expression = performer.getValue();
 			final Set<String> names = evaluatorFor(expression).getNames();
@@ -320,16 +323,17 @@ public class ProcessInstanceWrapper extends CardWrapper implements UserProcessIn
 				 * an arbitrary expression in a non-starting activity, so should
 				 * be a single name
 				 */
-				Validate.isTrue(names.size() == 1, "invalid expression");
-				return names.iterator().next();
+				final Iterator<String> namesItr = names.iterator();
+				group = namesItr.hasNext() ? namesItr.next() : UNRESOLVABLE_PARTICIPANT_GROUP;
 			} else {
 				final String maybeParticipantGroup = activityInfo.getParticipants()[0];
-				if (names.contains(maybeParticipantGroup)) {
-					return maybeParticipantGroup;
-				}
+				group = names.contains(maybeParticipantGroup) ? maybeParticipantGroup : UNRESOLVABLE_PARTICIPANT_GROUP;
 			}
+			break;
+		default:
+			group = UNRESOLVABLE_PARTICIPANT_GROUP;
 		}
-		return UNRESOLVABLE_PARTICIPANT_GROUP;
+		return group;
 	}
 
 	private CMActivity findActivity(final String activityDefinitionId) throws CMWorkflowException {
