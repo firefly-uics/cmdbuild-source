@@ -91,6 +91,10 @@ public class AttributeValue implements Serializable {
 	public boolean isNull(){
 		return value == null;
 	}
+	
+	public boolean isNotNull(){
+		return value != null;
+	}
 
 	/**
 	 * Returns the id for lookup and reference types
