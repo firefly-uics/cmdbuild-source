@@ -45,7 +45,7 @@
 					&& processInstance.isStateCompleted()) {
 
 				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
-					me.fillFormWidthProcessInstanceData(processInstance);
+					me.fillFormWithProcessInstanceData(processInstance);
 				});
 			} else {
 				enableStopButtonIfUserCanUseIt(this, processInstance);
@@ -80,7 +80,7 @@
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 				// fill always the process to trigger the
 				// template resolver of filtered references
-				me.fillFormWidthProcessInstanceData(processInstance);
+				me.fillFormWithProcessInstanceData(processInstance);
 				manageEditability(me, activityInstance, processInstance);
 			});
 
@@ -183,7 +183,7 @@
 			}
 		},
 
-		fillFormWidthProcessInstanceData: function(processInstance) {
+		fillFormWithProcessInstanceData: function(processInstance) {
 			if (processInstance != null) {
 				this.view.loadCard(processInstance.asDummyModel());
 				this.view.displayModeForNotEditableCard();
@@ -199,14 +199,13 @@
 			CMDBuild.Management.showGraphWindow(classId, cardId);
 		},
 
+		// TODO: Needs some refactoring
 		// override
 		doFormSubmit: Ext.emptyFn,
 		onSaveSuccess: Ext.emptyFn,
-
-		// override
-		// deprecated
-		onEntryTypeSelected: function(entryType) { _deprecated(); },
-		onCardSelected: function(card) {_deprecated(); }
+		onEntryTypeSelected: Ext.emptyFn,
+		onCardSelected: Ext.emptyFn,
+		buildCardModuleStateDelegate: Ext.emptyFn
 	});
 
 	function deleteActivity() {

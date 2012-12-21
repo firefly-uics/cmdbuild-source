@@ -145,8 +145,14 @@ CMDBuild.Utils = (function() {
 		},
 
 		getAncestorsId: function(entryTypeId) {
-			var et = _CMCache.getEntryTypeById(entryTypeId),
-				out = [];
+			var et = null;
+			var out = [];
+
+			if (Ext.getClassName(entryTypeId) == "CMDBuild.cache.CMEntryTypeModel") {
+				et = entryTypeId;
+			} else {				
+				et = _CMCache.getEntryTypeById(entryTypeId);
+			}
 
 			while (et.get("parent") != "") {
 				out.push(et.get("id"));
@@ -198,6 +204,34 @@ CMDBuild.Utils = (function() {
 			}
 	
 			return out;
+		},
+
+		grid: {
+			getPageSize: function getPageSize() {
+				var pageSize;
+				try {
+					pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+				} catch (e) {
+					pageSize = 20;
+				}
+
+				return pageSize;
+			},
+
+			getPageNumber: function getPageNumber(cardPosition) {
+				var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit),
+					pageNumber = 1;
+
+				if (cardPosition == 0) {
+					return pageNumber;
+				}
+
+				if (cardPosition) {
+					pageNumber = parseInt(cardPosition) / pageSize;
+				}
+
+				return pageNumber + 1;
+			}
 		},
 
 		PollingFunction: function(conf) {

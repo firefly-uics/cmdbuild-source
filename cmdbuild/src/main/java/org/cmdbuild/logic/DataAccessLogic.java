@@ -1,12 +1,17 @@
 package org.cmdbuild.logic;
 
+import java.util.List;
+import java.util.Map;
+
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.legacywrappers.CardWrapper;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
@@ -24,12 +29,20 @@ public class DataAccessLogic {
 		this.view = view;
 	}
 
+	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
+		return new GetRelationList(view).list(sourceTypeName, dom);
+	}
+
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
 		return new GetRelationList(view).exec(srcCard, dom);
 	}
 
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
 		return new GetRelationHistory(view).exec(srcCard);
+	}
+
+	public Iterable<? extends CMDomain> findAllDomains() {
+		return this.view.findAllDomains();
 	}
 
 	@Legacy("IMPORTANT! FIX THE NEW DAO AND FIX BECAUSE IT USES THE SYSTEM USER!")

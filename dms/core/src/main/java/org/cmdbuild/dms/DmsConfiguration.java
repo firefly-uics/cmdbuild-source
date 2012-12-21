@@ -38,6 +38,8 @@ public interface DmsConfiguration {
 
 	String getMetadataAutocompletionFileContent();
 
+	long getDelayBetweenFtpAndWebserviceOperations();
+
 	/*
 	 * Utilities
 	 */

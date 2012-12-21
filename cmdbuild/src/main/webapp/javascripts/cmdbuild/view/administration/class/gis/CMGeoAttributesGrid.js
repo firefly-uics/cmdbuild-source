@@ -1,36 +1,37 @@
 (function() {
 	
-	var tr_attributes = CMDBuild.Translation.administration.modClass.attributeProperties,
-		columns = [{
-			header: tr_attributes.type,
-			sortable: true,
-			dataIndex: 'type',
-			flex: 1
-		},{
-			header: tr_attributes.name,
-			sortable: true,
-			dataIndex: 'name',
-			flex: 1
-		},{
-			header: tr_attributes.description,
-			sortable: true,
-			dataIndex: 'description',
-			flex: 1
-		}];
-	
+	var tr_attributes = CMDBuild.Translation.administration.modClass.attributeProperties;
+
+	var columns = [{
+		header: tr_attributes.type,
+		sortable: true,
+		dataIndex: 'type',
+		flex: 1
+	},{
+		header: tr_attributes.name,
+		sortable: true,
+		dataIndex: 'name',
+		flex: 1
+	},{
+		header: tr_attributes.description,
+		sortable: true,
+		dataIndex: 'description',
+		flex: 1
+	}];
+
 	Ext.define("CMDBuild.view.administration.classes.CMGeoAttributesGrid", {
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
-		
+
 		initComponent: function() {
 			this.callParent(arguments);
 
-			this.on("render", 
-				Ext.Function.createDelayed(function() {
+			this.on("render", function() {
 					if (this.danglingStore) {
 						this.reconfigure(this.danglingStore, this.columns);
 					}
-				}, 500),this, {single: true}
-			);
+				}, this, {
+					single: true
+				});
 		},
 
 		// override
@@ -47,23 +48,24 @@
 
 		//override
 		buildTBar: function() {
-			this.tbar = [this.addAttributeButton]
+			this.tbar = [this.addAttributeButton];
 		},
 
 		// override
-		refreshStore: function(idClass, indexAttributeToSelectAfter) {
-			var store = _CMCache.getGeoAttributesStoreForClass(idClass);
-			if (this.rendered) {
-				this.reconfigure(store, columns);
-			} else {
-				this.danglingStore = store;
-			}
+		refreshStore: function(idClass, nameOfAttributeToSelect) {
+			var et = _CMCache.getEntryTypeById(idClass);
+			var me = this;
+
+			_CMCache.getLayersForEntryTypeName(et.get("name"), function(layers) {
+				me.store.loadData(layers);
+				me.selectAttributeByName(nameOfAttributeToSelect);
+			});
 		},
 
-		selectAttribute: function(geoAttribute) {
+		selectAttributeByName: function(geoAttributeName) {
 			var sm = this.getSelectionModel();
-			if (geoAttribute.name) {
-				var r = this.store.findRecord("name", geoAttribute.name);
+			if (geoAttributeName) {
+				var r = this.store.findRecord("name", geoAttributeName);
 				if (r) {
 					sm.select(r);
 				}

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
@@ -29,6 +30,7 @@ public class QueryCreator {
 		appendFrom();
 		appendJoin();
 		appendWhere();
+		appendOrderBy();
 	}
 
 	private void appendSelect() {
@@ -88,6 +90,24 @@ public class QueryCreator {
 	private void appendPart(final PartCreator partCreator) {
 		sb.append(" ").append(partCreator.getPart());
 		params.addAll(partCreator.getParams());
+	}
+
+	private void appendOrderBy() {
+		if (query.getOrderByClauses().isEmpty()) {
+			return;
+		}
+
+		boolean first = true;
+		sb.append(" ").append("ORDER BY ");
+		for (OrderByClause orderByClause:query.getOrderByClauses()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+
+			sb.append("\"" + orderByClause.getAttribute().getName() + "\"").append(" ").append(orderByClause.getDirection()).append(" ");
+		}
 	}
 
 	public String getQuery() {

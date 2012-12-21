@@ -41,6 +41,7 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
@@ -49,7 +50,6 @@ import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.FilterService;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.gis.GeoCard;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
@@ -69,10 +69,12 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(JSONObject serializer, @Parameter("limit") int limit, @Parameter("start") int offset,
-			@Parameter(value = "sort", required = false) JSONArray sorters,
-			@Parameter(value = "query", required = false) String fullTextQuery,
-			@Parameter(value = "writeonly", required = false) boolean writeonly,
+	public JSONObject getCardList(JSONObject serializer, //
+			@Parameter("limit") int limit, //
+			@Parameter("start") int offset, //
+			@Parameter(value = "sort", required = false) JSONArray sorters, //
+			@Parameter(value = "query", required = false) String fullTextQuery, //
+			@Parameter(value = "writeonly", required = false) boolean writeonly, //
 			// Don't clone it or getCardPosition does not work, unless sort and
 			// query are set somewhere else
 			CardQuery cardQuery, UserContext userContext) throws JSONException, CMDBException {
@@ -93,6 +95,60 @@ public class ModCard extends JSONBase {
 		serializer.put("rows", rows);
 		serializer.put("results", cardQuery.getTotalRows());
 		return serializer;
+	}
+
+	@JSONExported
+	public JSONObject getCardListShort( //
+			JSONObject serializer, //
+			CardQuery cardQueryTemplate, //
+			@Parameter("limit") int limit, //
+			@Parameter("start") int offset, //
+			@Parameter("Id") int cardId, //
+			@Parameter(value = "query", required = false) String fullTextQuery, //
+			@Parameter(value = "sort", required = false) JSONArray sorters, //
+			@Parameter(value="attributes", required=false) JSONArray attributes) throws JSONException, CMDBException {
+
+		CardQuery cardQuery = applyAttributesConfiguration(cardQueryTemplate, attributes);
+		if (sorters != null && sorters.length() > 0) {
+			applySortToCardQuery(sorters, cardQuery);
+		} else {
+			cardQuery.order(ICard.CardAttributes.Description.toString(), OrderFilterType.ASC);
+		}
+
+		cardQuery.fullText(fullTextQuery);
+
+		if (cardId > 0) {
+			cardQuery.id(cardId);
+		}
+
+		JSONArray rows = new JSONArray();
+		for (ICard card : cardQuery.subset(offset, limit).count()) {
+			rows.put(Serializer.serializeCardNormalized(card));
+		}
+
+		serializer.put("rows", rows);
+
+		if (cardQuery.needsCount()) {
+			serializer.put("results", cardQuery.getTotalRows());
+		}
+
+		return serializer;
+	}
+
+	private CardQuery applyAttributesConfiguration(CardQuery cardQueryTemplate, //
+			JSONArray attributes) throws JSONException {
+
+		String[] shortAttrList = {"Id", "Description"};
+
+		// Use the passed attributes if present
+		if (attributes != null) {
+			shortAttrList = new String[attributes.length()];
+			for (int i=0; i<attributes.length(); ++i) {
+				shortAttrList[i] = attributes.getString(i);
+			}
+		}
+
+		return ((CardQuery) cardQueryTemplate.clone()).attributes(shortAttrList);
 	}
 
 	public static void applySortToCardQuery(JSONArray sorters, CardQuery cardQuery) throws JSONException {
@@ -411,26 +467,6 @@ public class ModCard extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject getCardListShort(JSONObject serializer, @Parameter("limit") int limit,
-			@Parameter("Id") int cardId, CardQuery cardQueryTemplate) throws JSONException, CMDBException {
-		final String[] shortAttrList = { "Id", "Description" };
-		CardQuery cardQuery = ((CardQuery) cardQueryTemplate.clone()).attributes(shortAttrList).order(
-				ICard.CardAttributes.Description.toString(), OrderFilterType.ASC);
-		if (limit > 0)
-			cardQuery.limit(limit).count();
-		if (cardId > 0)
-			cardQuery.id(cardId);
-		JSONArray rows = new JSONArray();
-		for (ICard card : cardQuery) {
-			rows.put(Serializer.serializeCardNormalized(card));
-		}
-		serializer.put("rows", rows);
-		if (cardQuery.needsCount())
-			serializer.put("results", cardQuery.getTotalRows());
-		return serializer;
-	}
-
-	@JSONExported
 	public JSONObject getCardPosition(
 			@Parameter(value = "retryWithoutFilter", required = false) boolean retryWithoutFilter,
 			JSONObject serializer, ICard card, final CardQuery currentCardQuery, UserContext userCtx)
@@ -515,31 +551,23 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public JSONObject updateCard(ICard card, Map<String, String> attributes, UserContext userCtx, JSONObject serializer)
-			throws JSONException {
+			throws JSONException, Exception {
+
 		setCardAttributes(card, attributes, false);
 		boolean created = card.isNew();
 		card.save();
 		fillReferenceAttributes(card, attributes, userCtx.relations());
-		setCardGeoFeatures(card, attributes);
+
+		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
+		if (gisLogic.isGisEnabled()) {
+			gisLogic.updateFeatures(card, attributes);
+		}
+
 		if (created) {
 			serializer.put("id", card.getId());
 		}
-		return serializer;
-	}
 
-	private void setCardGeoFeatures(ICard card, Map<String, String> attributes) throws JSONException {
-		String geoAttributesJsonString = attributes.get("geoAttributes");
-		if (geoAttributesJsonString != null) {
-			GeoCard geoCard = new GeoCard(card);
-			final JSONObject geoAttributesObject = new JSONObject(geoAttributesJsonString);
-			final String[] geoAttributesName = JSONObject.getNames(geoAttributesObject);
-			if (geoAttributesName != null) {
-				for (String name : geoAttributesName) {
-					final String value = geoAttributesObject.getString(name);
-					geoCard.setGeoFeatureValue(name, value);
-				}
-			}
-		}
+		return serializer;
 	}
 
 	@JSONExported

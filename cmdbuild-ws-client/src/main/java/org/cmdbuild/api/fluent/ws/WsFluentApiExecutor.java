@@ -197,7 +197,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	public Card fetch(final ExistingCard card) {
-		final org.cmdbuild.services.soap.Card soapCard = proxy.getCard( //
+		final org.cmdbuild.services.soap.Card soapCard = proxy.getCardWithLongDateFormat( //
 				card.getClassName(), //
 				card.getId(), //
 				requestedAttributesFor(card.getRequestedAttributes()));
@@ -205,7 +205,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	public List<Card> fetchCards(final QueryClass card) {
-		final CardList cardList = proxy.getCardList( //
+		final CardList cardList = proxy.getCardListWithLongDateFormat( //
 				card.getClassName(), //
 				requestedAttributesFor(card.getRequestedAttributes()), //
 				queriedAttributesFor(card), //
@@ -338,7 +338,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		final List<AttributeSchema> paramSchemas = helper.getParamSchemas(soapReport, report.getFormat());
 		final List<ReportParams> reportParams = compileParams(paramSchemas, report.getParameters());
 		final DataHandler dataHandler = helper.getDataHandler(soapReport, report.getFormat(), reportParams);
-		final File file = helper.temporaryFile();
+		final File file = helper.temporaryFile(report.getTitle(), report.getFormat());
 		helper.saveToFile(dataHandler, file);
 		return new DownloadedReport(file);
 	}

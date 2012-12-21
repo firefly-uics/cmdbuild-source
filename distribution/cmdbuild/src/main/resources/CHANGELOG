@@ -1,3 +1,55 @@
+CMDBuild 2.0.3 (released 2012/12/21)
+
+
+NEW FEATURES
+
+ * Define domain tree structure
+
+
+FIXES
+
+ * Shark could not send mail using SSL
+
+ * SelectAttributeToolAgent returns integer values instead of string
+
+ * Cannot advance processes using SOAP web services
+
+ * Error when passing dates to CMDBuild SQL functions
+
+ * Missing datasources for Dashboard's charts
+
+ * manageRelation widget not handling object reference parameter
+
+ * Filtered reference issues
+
+ * IllegalArgumentException while fetching card from FluentApi
+
+ * Process variables are not updated when setted within a task script that is the last activity of the process
+
+ * manageRelation doesn't handle selected cards
+
+ * GIS navigation tree configuration: sort the class menu
+
+ * There is impossible to open the reference search window
+
+ * Display field ignore the line break characters
+
+ * Error saving a card (GEO server not enabled)
+
+ * Cannot sort activity attributes
+
+ * Alfresco delay parameter has no effect
+
+ * Files attached to fluent api emails
+
+ * Group email is not visible in administration module
+
+ * Illegal expression when the activity has ho assigned participants
+
+
+
+
+
 CMDBuild 2.0.2 (released 2012/10/08)
 
 

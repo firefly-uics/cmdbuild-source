@@ -51,9 +51,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.gis.GeoFeatureType;
-import org.cmdbuild.services.gis.GeoLayer;
-import org.cmdbuild.services.gis.GeoTable;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.servlets.json.management.ActivityIdentifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
@@ -423,14 +420,14 @@ public class Serializer {
 
 	public static JSONObject serializeTable(ITable table) throws JSONException {
 		JSONObject jsonTable = new JSONObject();
-		
+
 		if (table.isActivity()) {
 			jsonTable.put("type", "processclass");
 			jsonTable.put("userstoppable", table.isUserStoppable());
 		} else {
 			jsonTable.put("type", "class");
 		}
-		
+
 		jsonTable.put("id", table.getId());
 		jsonTable.put("name", table.getName());
 		jsonTable.put("text", table.getDescription());
@@ -450,56 +447,8 @@ public class Serializer {
 		}
 		
 		addMetadataAndAccessPrivileges(jsonTable, table);
-		addGeoFeatureTypes(jsonTable, table);
 		addParent(table, jsonTable);
 		return jsonTable;
-	}
-	
-	private static void addGeoFeatureTypes(JSONObject jsonTable, ITable table) throws JSONException {
-		JSONArray jsonFeatureTypes = new JSONArray();
-		GeoTable geoMasterClass = new GeoTable(table);
-		for (GeoLayer layer: geoMasterClass.getVisibleOrOwnLayers()) {
-			jsonFeatureTypes.put(serializeGeoLayer(layer, table));
-		}
-		JSONObject jsonMeta = (JSONObject) jsonTable.get("meta");
-		jsonMeta.put("geoAttributes", jsonFeatureTypes);
-	}
-
-	public static JSONArray serializeGeoLayers(List<? extends GeoLayer> geoLayers) throws JSONException {
-		return serializeGeoLayers(geoLayers, null);
-	}
-
-	public static JSONArray serializeGeoLayers(List<? extends GeoLayer> geoLayers, ITable tableForVisibility)
-			throws JSONException {
-		JSONArray jsonLayers = new JSONArray();
-		for (GeoLayer geoLayer: geoLayers) {
-			jsonLayers.put(serializeGeoLayer(geoLayer, tableForVisibility));
-		}
-		return jsonLayers;
-	}
-
-	public static JSONObject serializeGeoLayer(GeoLayer geoLayer) throws JSONException {
-		return serializeGeoLayer(geoLayer, null);
-	}
-
-	public static JSONObject serializeGeoLayer(GeoLayer geoLayer, ITable tableForVisibility) throws JSONException {
-		JSONObject jsonGeoLayer = new JSONObject();
-		jsonGeoLayer.put("name", geoLayer.getName());
-		jsonGeoLayer.put("description", geoLayer.getDescription());
-		jsonGeoLayer.put("type", geoLayer.getTypeName());
-		jsonGeoLayer.put("maxZoom", geoLayer.getMaxZoom());
-		jsonGeoLayer.put("minZoom", geoLayer.getMinZoom());
-		jsonGeoLayer.put("index", geoLayer.getIndex());
-		if (tableForVisibility != null) {
-			jsonGeoLayer.put("isvisible", geoLayer.isVisible(tableForVisibility));
-		}
-		if (geoLayer instanceof GeoFeatureType) {
-			GeoFeatureType featureType = (GeoFeatureType) geoLayer;
-			jsonGeoLayer.put("style", featureType.getStyle());
-			jsonGeoLayer.put("masterTableId", featureType.getMasterTable().getId());
-			jsonGeoLayer.put("masterTableName", featureType.getMasterTable().getName());
-		}
-		return jsonGeoLayer;
 	}
 
 	private static void addParent(ITable table, JSONObject jsonTable) throws JSONException {
@@ -511,7 +460,7 @@ public class Serializer {
 			// If the table has no parent
 		}
 	}
-	
+
 	private static void addMetadataAndAccessPrivileges(JSONObject serializer, BaseSchema schema) throws JSONException {
 		addMetadata(serializer, schema);
 		addAccessPrivileges(serializer, schema);
@@ -525,7 +474,7 @@ public class Serializer {
 		}
 		serializer.put("meta", jsonMetadata);
 	}
-	
+
 	private static void addAccessPrivileges(JSONObject serializer, BaseSchema schema) throws JSONException {
 		Object privileges = schema.getMetadata().get(MetadataService.RUNTIME_PRIVILEGES_KEY);
 		if (privileges != null) {
@@ -541,7 +490,7 @@ public class Serializer {
 
 	public static JSONArray buildJsonAvaiableMenuItems() throws JSONException {
 		JSONArray jsonAvaiableItems = new JSONArray();
-		
+
 		JSONObject jsonClassesFolder = new JSONObject();
 		JSONObject jsonReportsFolder = new JSONObject();
 		JSONObject jsonProcessFolder = new JSONObject();
@@ -638,7 +587,9 @@ public class Serializer {
 		jsonGroup.put("description", groupCard.getDescription());
 		jsonGroup.put("email", groupCard.getEmail());
 		jsonGroup.put("isAdministrator", groupCard.isAdmin());
-		jsonGroup.put("startingClass", groupCard.getStartingClassId());
+		if (groupCard.hasStartingClassId()) {
+			jsonGroup.put("startingClass", groupCard.getStartingClassId());
+		}
 		jsonGroup.put("isActive", groupCard.getStatus().isActive());
 		jsonGroup.put("text", groupCard.getDescription());
 		jsonGroup.put("selectable", true);

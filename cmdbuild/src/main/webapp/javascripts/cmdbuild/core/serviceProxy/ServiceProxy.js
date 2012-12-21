@@ -31,41 +31,26 @@ CMDBuild.ServiceProxy = {
 	// TODO duplicate in card section, remove this
 	getCardList: function(p) {
 		CMDBuild.Ajax.request( {
-		    url: "services/json/management/modcard/getcardlist",
-		    method: "GET",
-		    params: p.params,
-		    success: p.success,
-	        failure: p.failure,
-	        callback: p.callback
+			url: "services/json/management/modcard/getcardlist",
+			method: "GET",
+			params: p.params,
+			success: p.success,
+			failure: p.failure,
+			callback: p.callback
 		});
 	},
 
-	getFeature: function(classId, cardId, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			url: 'services/json/gis/getfeature',
-	        params: {
-	            "IdClass": classId,
-	            "Id": cardId
-	        },
-	        method: 'GET',
-	        success: success,
-	        failure: failure,
-	        callback: callback
-		});
-	},
-	
-	getGeoCardList: function(classId, success, failure, callback) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url : 'services/json/gis/getgeocardlist',
-			params : {
-				"idClass": classId		
+	getCardBasicInfoList: function(className, success, cb, scope) {
+		CMDBuild.ServiceProxy.core.doRequest({
+			method: "GET",
+			url: "services/json/management/modcard/getcardlistshort",
+			params: {
+				ClassName: className,
+				NoFilter: true
 			},
-			method: 'GET',
 			success: success,
-			failure: failure,
-			callback: callback
+			callback: cb,
+			scope: scope
 		});
 	},
 	
@@ -75,74 +60,6 @@ CMDBuild.ServiceProxy = {
 			method : 'GET'
 		}, option);
 		CMDBuild.Ajax.request(conf);
-	},
-
-	saveLayerVisibility: function(p) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url : 'services/json/gis/setlayervisibility',
-			params : {
-				"idClass": p.classId,
-				"master": p.master,
-				"featureTypeName": p.featureTypeName,
-				"visible": p.checked
-			},
-			method: 'POST',
-			success: p.success || Ext.emptyFn,
-			failure: p.failure || Ext.emptyFn,
-			callback: p.callback || Ext.emptyFn
-		});
-	},
-	
-	saveLayerOrder: function(p) {
-		CMDBuild.Ajax.request({
-			scope : this,
-			important: true,
-			url: 'services/json/gis/setlayersorder',
-			params: {
-				"oldIndex": p.oldIndex,
-				"newIndex": p.newIndex
-			},
-			method: 'POST',
-			success: p.success || Ext.emptyFn,
-			failure: p.failure || Ext.emptyFn,
-			callback: p.callback || Ext.emptyFn
-		});
-	},
-	// store builders
-
-	/**
-	 * @param classId (optional) adds visibility on the specified class
-	 */ 
-	getAllLayerStore: function() {
-		var layerStore =  new Ext.data.Store({
-			model: "GISLayerModel",
-			proxy: {
-				type: "ajax",
-				url: "services/json/gis/getalllayers",
-				reader: {
-					type: "json",
-					root: "layers"
-				}
-			},
-			autoLoad: false,
-			sorters: {
-				property: 'index',
-				direction: 'ASC'
-			}
-		});
-
-		var reload = function() {
-			this.load();
-		};
-
-		_CMEventBus.subscribe("cmdb-new-geoattr", reload, layerStore);
-		_CMEventBus.subscribe("cmdb-modify-geoattr", reload, layerStore);
-		_CMEventBus.subscribe("cmdb-delete-geoattr", reload, layerStore);
-		_CMEventBus.subscribe("cmdb-geoservices-config-changed", reload, layerStore);
-		_CMEventBus.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
-		return layerStore;
 	},
 	
 	LOOKUP_FIELDS: LOOKUP_FIELDS
@@ -183,72 +100,6 @@ CMDBuild.ServiceProxy.core = {
 			callback: p.callback || Ext.emptyFn,
 			important: p.important
 		});
-	}
-};
-
-CMDBuild.ServiceProxy.geoAttribute = {
-	remove: function(p) {
-		p.method = "POST";
-		p.url = 'services/json/gis/deletegeoattribute';
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-	
-	save: function(p) {
-		p.method = "POST";
-		p.url = 'services/json/gis/addgeoattribute';
-		p.important = true;
-		
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	},
-	
-	modify: function(p) {
-		p.method = "POST";
-		p.url = 'services/json/gis/modifygeoattribute';
-		p.important = true;
-		
-		CMDBuild.ServiceProxy.core.doRequest(p);
-	}
-};
-
-CMDBuild.ServiceProxy.geoServer = {
-	addUrl: "services/json/gis/addgeoserverlayer",
-	modifyUrl: "services/json/gis/modifygeoserverlayer",
-	
-	getGeoServerLayerStore: function() {
-		var layerStore =  new Ext.data.Store({
-			model: "GISLayerModel",
-			proxy: {
-				type: 'ajax',
-				url: 'services/json/gis/getgeoserverlayers',
-				reader: {
-					type: 'json',
-					root: 'layers'
-				}
-			},
-			sorters: [{
-				property: 'index',
-				direction: 'ASC'
-			}]
-		});
-		
-		var reload = function(o) {
-			if (o) {
-				this.nameToSelect = o.nameToSelect;
-			}
-			this.reload();
-		};
-		
-		_CMEventBus.subscribe("cmdb-modified-geoserverlayers", reload, layerStore);
-		
-		return layerStore;
-	},
-	
-	deleteLayer: function(p) {
-		p.method = "POST";
-		p.url = "services/json/gis/deletegeoserverlayer";
-		p.important = true;
-		
-		CMDBuild.Ajax.request(p);
 	}
 };
 

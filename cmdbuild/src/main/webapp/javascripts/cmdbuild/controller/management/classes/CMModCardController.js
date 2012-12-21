@@ -14,9 +14,10 @@
 
 		onViewOnFront: function(entryType) {
 			if (entryType) {
-				var newEntryId = entryType.get("id"),
-					dc = _CMMainViewportController.getDanglingCard(),
-					entryIdChanged = this.entryType ? (this.entryType.get("id") != newEntryId) : true;
+				var currentEntryType = _CMCardModuleState.entryType;
+				var newEntryId = entryType.get("id");
+				var dc = _CMMainViewportController.getDanglingCard();
+				var entryIdChanged = currentEntryType ? (currentEntryType.get("id") != newEntryId) : true;
 
 				// if there is a danglingCard do the same things that happen
 				// when select a new entryType, the cardGridController is able to
@@ -28,32 +29,13 @@
 		},
 
 		onCardSelected: function onCardSelected(card) {
-			if (card.data) {
-				this.setCard(card);
-			} else {
-				// it was not selected by the grid, so retrieve remotely the
-				// card info and do the regular selection.
-				// TODO probably used only by the mapController
-				CMDBuild.ServiceProxy.card.get({
-					params: card,
-					scope: this,
-					success: function(a,b, response) {
-						var raw = response.card;
-						if (raw) {
-							var c = new CMDBuild.DummyModel(response.card);
-							c.raw = raw;
-							this.onCardSelected(c);
-						}
-					}
-				});
-			}
+			this.setCard(card);
 		},
 
 		setEntryType: function(entryTypeId, dc) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
-			this.onEntryTypeChanged(this.entryType);
-			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc]);
+//			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc]);
 
 			if (dc != null) {
 				if (dc.activateFirstTab) {
@@ -77,16 +59,12 @@
 
 		setCard: function(card) {
 			this.card = card;
-			this.onCardChanged(card);
+//			this.onCardChanged(card);
 		},
 
 		getCard: function() {
 			return this.card;
 		},
-
-		// private, called from setEntryType. Implement different
-		// behaviours in subclasses
-		onEntryTypeChanged: function(entryType) {},
 
 		// private, called from setCard. Implement different
 		// behaviours in subclasses
@@ -134,12 +112,21 @@
 			buildHistoryController(me, me.view.getHistoryPanel());
 		},
 
-		// override
-		onEntryTypeChanged: function(entryType) {
+		// override: bind the CMCardModuleState
+		setEntryType: function(entryTypeId, dc) {
+			var entryType = _CMCache.getEntryTypeById(entryTypeId);
+
 			this.view.addCardButton.updateForEntry(entryType);
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
 
+			if (dc != null) {
+				if (dc.activateFirstTab) {
+					this.view.activateFirstTab();
+				}
+			}
+
+			_CMCardModuleState.setEntryType(entryType, dc);
 			_CMUIState.onlyGridIfFullScreen();
 		},
 
@@ -173,21 +160,19 @@
 		if (cardPanel) {
 			me.cardPanelController = new CMDBuild.controller.management.classes.CMCardPanelController(cardPanel, me, widgetControllerManager);
 			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cardRemoved,
-					function(idCard, idClass) {
-
-				me.gridController.onCardDeleted();
-				me.view.reset(me.entryType.get("id")); // TODO change to notify the sub-controllers
-
-				_CMCache.onClassContentChanged(idClass);
-			});
+				function(idCard, idClass) {
+					var et = _CMCardModuleState.entryType;
+					me.gridController.onCardDeleted();
+					me.view.reset(et.get("id")); // TODO change to notify the sub-controllers
+					_CMCache.onClassContentChanged(idClass);
+				});
 
 			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cardSaved,
-					function(cardData) {
-
-				me.gridController.onCardSaved(cardData);
-				me.mapController.onCardSaved(cardData);
-
-				_CMCache.onClassContentChanged(me.entryType.get("id"));
+				function(cardData) {
+					var et = _CMCardModuleState.entryType;
+					me.gridController.onCardSaved(cardData);
+					me.mapController.onCardSaved(cardData);
+					_CMCache.onClassContentChanged(et.get("id"));
 			});
 
 			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.editModeDidAcitvate, function() {
@@ -294,7 +279,7 @@
 	}
 
 	function onSelectionWentWrong() {
-		this.view.cardTabPanel.reset(this.entryType.get("id"));
+		this.view.cardTabPanel.reset(_CMCardModuleState.entryType.get("id"));
 	}
 
 	function onAddCardButtonClick(p) {

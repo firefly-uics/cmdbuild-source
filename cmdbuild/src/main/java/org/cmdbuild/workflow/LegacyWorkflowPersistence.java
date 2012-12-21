@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow;
 
+import static java.lang.String.format;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.Process;
 import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
@@ -56,34 +59,37 @@ public abstract class LegacyWorkflowPersistence {
 
 	private UserProcessInstance syncProcessStateActivitiesAndMaybeVariables(final CMProcessInstance processInstance,
 			final WSProcessInstInfo processInstanceInfo, final boolean syncVariables) throws CMWorkflowException {
-		if (processInstanceInfo == null) {
-			return completeProcess(processInstance);
-		}
-
+		Log.WORKFLOW.info("synchronizing process state, activities and (maybe) variables");
 		final UserProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
-
 		if (syncVariables) {
+			Log.WORKFLOW.info("synchronizing variables");
 			final Map<String, Object> workflowValues = workflowService.getProcessInstanceVariables(processInstance
 					.getProcessInstanceId());
 			final Map<String, Object> nativeValues = fromWorkflowValues(workflowValues);
 			for (final CMAttribute a : processInstance.getType().getAttributes()) {
 				final String attributeName = a.getName();
 				final Object newValue = nativeValues.get(attributeName);
+				Log.WORKFLOW.debug(format("synchronizing variable '%s' with value '%s'", attributeName, newValue));
 				editableProcessInstance.set(attributeName, newValue);
 			}
 		}
-		editableProcessInstance.setState(processInstanceInfo.getStatus());
-		editableProcessInstance.setUniqueProcessDefinition(processInstanceInfo);
-		final WSActivityInstInfo[] activities = workflowService.findOpenActivitiesForProcessInstance(processInstance
-				.getProcessInstanceId());
-		editableProcessInstance.setActivities(activities);
-		return editableProcessInstance.save();
-	}
-
-	private UserProcessInstance completeProcess(final CMProcessInstance processInstance) throws CMWorkflowException {
-		final UserProcessInstanceDefinition editableProcessInstance = modifyProcessInstance(processInstance);
-		editableProcessInstance.setState(WSProcessInstanceState.COMPLETED);
-		editableProcessInstance.setActivities(new WSActivityInstInfo[0]);
+		if (processInstanceInfo == null) {
+			Log.WORKFLOW
+					.warn("process instance info is null, setting process as completed (should never happen, but who knows...");
+			editableProcessInstance.setState(WSProcessInstanceState.COMPLETED);
+			editableProcessInstance.setActivities(new WSActivityInstInfo[0]);
+		} else {
+			editableProcessInstance.setUniqueProcessDefinition(processInstanceInfo);
+			final WSActivityInstInfo[] activities = workflowService
+					.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
+			editableProcessInstance.setActivities(activities);
+			final WSProcessInstanceState actualState = processInstanceInfo.getStatus();
+			editableProcessInstance.setState(actualState);
+			if (actualState == WSProcessInstanceState.COMPLETED) {
+				Log.WORKFLOW.info("process is completed, delete if from workflow service");
+				workflowService.deleteProcessInstance(processInstanceInfo.getProcessInstanceId());
+			}
+		}
 		return editableProcessInstance.save();
 	}
 

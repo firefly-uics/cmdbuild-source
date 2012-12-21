@@ -12,14 +12,9 @@ Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
 			scope : this
 		});
 
-		this.addCardButton = this.buildAddButton();
+		this.buttonAlign = "center";
+		this.buttons = [this.saveButton];
 
-		Ext.apply(this, {
-			tbar: [this.addCardButton],
-			buttonAlign: "center",
-			buttons: [this.saveButton]
-		});
-		
 		this.callParent(arguments);
 	},
 
@@ -36,7 +31,7 @@ Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
 
 	// override
 	onGridDoubleClick: function() {
-		this.onSave()
+		this.onSave();
 	},
 
 	// private

@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.Card;
+import org.cmdbuild.services.soap.CardExt;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,7 +72,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 	@Test
 	public void parametersPassedToProxyWhenFetchingExistingCard() throws Exception {
-		when(proxy().getCard( //
+		when(proxy().getCardWithLongDateFormat( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
 				anyListOf(Attribute.class))) //
@@ -79,7 +80,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 		existingCard.fetch();
 
-		verify(proxy()).getCard( //
+		verify(proxy()).getCardWithLongDateFormat( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
 				attributeListCaptor.capture());
@@ -93,7 +94,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 	@Test
 	public void soapCardIsConvertedToFluentApiCardWhenFetchingExistingCard() throws Exception {
-		when(proxy().getCard( //
+		when(proxy().getCardWithLongDateFormat( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
 				anyListOf(Attribute.class))) //
@@ -115,7 +116,7 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 
 		final ExistingCard existingCard = api().existingCard(CLASS_NAME, CARD_ID);
 
-		when(proxy().getCard( //
+		when(proxy().getCardWithLongDateFormat( //
 				eq(existingCard.getClassName()), //
 				eq(existingCard.getId()), //
 				anyListOf(Attribute.class))) //
@@ -128,9 +129,9 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 		assertThat(card.getAttributes(), hasEntry(ATTRIBUTE_1, (Object) Integer.toString(ANOTHER_CARD_ID)));
 	}
 
-	private Card soapCardWithReference(final String className, final int cardId, final String referenceAttributeName,
+	private CardExt soapCardWithReference(final String className, final int cardId, final String referenceAttributeName,
 			final int referenceId) {
-		final Card card = new Card();
+		final CardExt card = new CardExt();
 		card.setClassName(className);
 		card.setId(CARD_ID);
 		card.getAttributeList().add(new Attribute() {
@@ -146,8 +147,8 @@ public class ExistingCardTest extends AbstractWsFluentApiTest {
 	 * Utils
 	 */
 
-	private Card soapCardFor(final org.cmdbuild.api.fluent.Card card) {
-		final org.cmdbuild.services.soap.Card soapCard = new org.cmdbuild.services.soap.Card();
+	private CardExt soapCardFor(final org.cmdbuild.api.fluent.Card card) {
+		final org.cmdbuild.services.soap.CardExt soapCard = new org.cmdbuild.services.soap.CardExt();
 		soapCard.setClassName(card.getClassName());
 		if (card.getId() != null) {
 			soapCard.setId(card.getId());

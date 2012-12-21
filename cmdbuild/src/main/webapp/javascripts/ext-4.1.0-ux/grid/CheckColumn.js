@@ -30,7 +30,6 @@ Ext.define('Ext.ux.CheckColumn', {
     extend: 'Ext.grid.column.Column',
     alias: 'widget.checkcolumn',
 
-    cmReadOnly: false, // if true it is not possible check it, but is used only to show data
     constructor: function() {
         this.addEvents(
             /**
@@ -80,3 +79,81 @@ Ext.define('Ext.ux.CheckColumn', {
         return '<div class="' + cls.join(' ') + '">&#160;</div>';
     }
 });
+
+
+Ext.override(Ext.ux.CheckColumn,{
+
+	/*
+	 * Add a flag to have a read-only column
+	 * */
+	cmReadOnly: false,
+
+	/*
+	 * Add a flag to have configure the column as exclusive check
+	 * */
+	cmExclusive: false,
+
+	/*
+	 * Manage the read-only flag cmReadOnly
+	 * Manage the exclusivity flag cmExclusive
+	 * Manage a TreeStore, not supported from the overridden class
+	 * */
+	processEvent : function(type, view, cell, recordIndex, cellIndex, e, node) {
+		var store = view.panel.store;
+		var dataIndex = this.dataIndex;
+		var record;
+		var checked;
+
+		if (this.cmReadOnly === true) {
+			return;
+		}
+
+		if (type == 'mousedown'
+				|| (type == 'keydown' && (e.getKey() == e.ENTER
+				|| e.getKey() == e.SPACE))) {
+
+			if (Ext.getClassName(store) == "Ext.data.TreeStore") {
+				record = node;
+			} else {
+				record = view.panel.store.getAt(recordIndex);
+			}
+
+			checked = !record.get(dataIndex);
+
+			if (checked && this.cmExclusive) {
+				uncheckAll(store, dataIndex);
+			}
+
+			record.set(dataIndex, checked);
+			record.commit();
+
+			this.fireEvent('checkchange', this, recordIndex, checked);
+			return false; // cancel selection.
+		} else {
+			return this.callParent(arguments);
+		}
+	}
+});
+
+function uncheckAll(store, dataIndex) {
+	if (Ext.getClassName(store) == "Ext.data.TreeStore") {
+		uncheckTree(store.getRootNode(), dataIndex);
+	} else {
+		store.each(function(item) {
+			item.set(dataIndex, false);
+			item.commit();
+		});
+	}
+}
+
+function uncheckTree(root, dataIndex) {
+	if (root) {
+		root.set(dataIndex, false);
+		root.commit();
+	}
+
+	var children = root.childNodes || root.children || [];
+	for (var i=0, l=children.length; i<l; ++i) {
+		uncheckTree(children[i], dataIndex);
+	}
+}

@@ -18,6 +18,11 @@ public class DeleteStore extends AbstractGeoCommand implements Command<Void> {
 
 	@Override
 	public Void run() {
+		// TODO: the documentation of GeoServer REST say that could be
+		// a parameter (recurse) to remove the store and all its content
+		// actually it does not work
+		//
+		// http://geoserver.org/display/GEOS/GSIP+58+-+RESTConfig+API+Improvements 
 		final String url = String.format("%s/rest/workspaces/%s/%ss/%s",
 				getGeoServerURL(), getGeoServerWorkspace(), store.getStoreType().toLowerCase(), store.getName());
 		delete(url);

@@ -12,6 +12,7 @@ public class UIConfiguration {
 	private boolean simpleHistoryModeForCard;
 	private boolean simpleHistoryModeForProcess;
 	private boolean processWidgetAlwaysEnabled;
+	private boolean cloudAdmin;
 
 	public UIConfiguration() {
 		this.disabledModules = new String[0];
@@ -96,7 +97,7 @@ public class UIConfiguration {
 
 	/**
 	 * set if the UI must be in full screen mode
-	 * @param fullScreanMode
+	 * @param fullScreenMode
 	 */
 	public void setFullScreenMode(boolean fullScreeMode) {
 		this.fullScreenMode = fullScreeMode;
@@ -150,5 +151,25 @@ public class UIConfiguration {
 	 */
 	public void setProcessWidgetAlwaysEnabled(boolean processWidgetAlwaysEnabled) {
 		this.processWidgetAlwaysEnabled = processWidgetAlwaysEnabled;
+	}
+
+	/**
+	 * 
+	 * @return if the administration UI must be configured for a Cloud administrator.
+	 * This kind of user has a subset of administration tools. It can work on: groups,
+	 * users, menu, lookups and reports
+	 */
+	public boolean isCloudAdmin() {
+		return cloudAdmin;
+	}
+
+	/**
+	 * set if the administration UI must be configured for a Cloud administrator.
+	 * This kind of user has a subset of administration tools. It can work on: groups,
+	 * users, menu, lookups and reports
+	 * @param cloudAdmin
+	 */
+	public void setCloudAdmin(boolean cloudAdmin) {
+		this.cloudAdmin = cloudAdmin;
 	}
 }

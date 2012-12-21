@@ -46,8 +46,16 @@
 												CMDBuild.ServiceProxy.configuration.readWFConfiguration({
 													success : function(response, options, decoded) {
 														CMDBuild.Config.workflow = decoded.data;
-													},
-													callback: cb
+
+														CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+														CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+															success: function(operation, config, response) {
+																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
+															},
+															callback: cb
+														});
+													}
 												});
 											}
 										},"graph");
@@ -123,6 +131,7 @@
 				}
 
 				CMDBuild.view.CMMainViewport.showSplash();
+
 				this.loadResources();
 
 				if (_CMUIConfiguration.isFullScreenMode()) {
@@ -151,7 +160,7 @@
 
 						_CMMainViewportController.selectStartingClass();
 						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
-	
+						
 						CMDBuild.view.CMMainViewport.hideSplash();
 					});
 

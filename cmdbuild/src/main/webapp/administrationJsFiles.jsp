@@ -47,6 +47,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerLayersGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/CMModGeoServer.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModGISNavigationConfiguration.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
@@ -126,6 +127,7 @@
 
 <!-- CONTROLLERS -->
 	<!-- GIS -->
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
 	

@@ -101,6 +101,7 @@
             "parent_not_found": "Es gibt keine Superklasse"
          }},
          "geo_attributes": {
+            "card_binding": "<em>Cards Binding</em>",
             "externalGraphic": "Ikone",
             "fillColor": "Füllfarbe",
             "fillOpacity": "Füllopazität",
@@ -419,6 +420,9 @@
             "title": "Ikonen-Steuerung"
          },
          "layermanager": {"title": "Ordnung der Ebenen"},
+         "navigationTree": {
+            "title": "<em>GIS navigation</em>"
+         },
          "title": "GIS"
       },
       "modconnectors": {"title": "Übergangsstelle"},
@@ -1028,6 +1032,7 @@
          "edit_relation": "Beziehung bearbeiten",
          "gis": {
             "geo_attributes": "Geographische Attribute",
+            "gisNavigation": "<em>GIS Navigation</em>",
             "position": "Position",
             "zoom": "Zoom"
          },

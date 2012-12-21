@@ -3,6 +3,7 @@ package org.cmdbuild.dao.query;
 import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
@@ -38,6 +39,11 @@ public class EmptyQuerySpecs implements QuerySpecs {
 	}
 
 	public Long getLimit() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<OrderByClause> getOrderByClauses() {
 		throw new UnsupportedOperationException();
 	}
 }

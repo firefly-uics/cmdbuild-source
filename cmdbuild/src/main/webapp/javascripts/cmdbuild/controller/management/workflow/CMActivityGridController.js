@@ -5,7 +5,6 @@
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
 
 		mixins: {
-			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate",
 			activityPanelControllerDelegate: "CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate"
 		},
 
@@ -21,7 +20,24 @@
 			this.mon(this.view.addCardButton, "cmClick", this.onAddCardButtonClick, this);
 			this.mon(this.view, "activityInstaceSelect", this.onActivityInfoSelect, this);
 
-			_CMWFState.addDelegate(this);
+			
+		},
+
+		// override
+		buildStateDelegate: function() {
+			var sd = new CMDBuild.state.CMWorkflowStateDelegate();
+			var me = this;
+
+			sd.onProcessClassRefChange = function(entryType, danglingCard) {
+				me.onEntryTypeSelected(entryType, danglingCard);
+			};
+
+			_CMWFState.addDelegate(sd);
+		},
+
+		// override
+		getEntryType: function() {
+			return _CMWFState.getProcessClassRef();
 		},
 
 		onAddCardButtonClick: function(p) {
@@ -121,12 +137,7 @@
 			}
 		},
 
-		// wfStateDelegate
-		onProcessClassRefChange : function(entryType, danglingCard) {
-			// FIXME: for compatibility, remove when switch to a state obj also on ModCard
-			this.onEntryTypeSelected(entryType, danglingCard);
-		},
-
+		// override
 		onEntryTypeSelected: function(entryType, danglingCard) {
 			this.callParent(arguments);
 			this.view.addCardButton.updateForEntry(entryType);
@@ -138,7 +149,7 @@
 				Id: cardId,
 				// use the id class of the grid to use the right filter
 				// when look for the position
-				IdClass: this.entryType.get("id")
+				IdClass: this.getEntryType().get("id")
 			});
 		}
 	});

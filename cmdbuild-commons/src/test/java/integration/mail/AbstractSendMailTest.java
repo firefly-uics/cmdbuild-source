@@ -15,6 +15,8 @@ import org.cmdbuild.common.mail.MailApiFactory;
 import org.cmdbuild.common.mail.NewMail;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -92,6 +94,11 @@ public abstract class AbstractSendMailTest {
 			@Override
 			public boolean isDebug() {
 				return true;
+			}
+			
+			@Override
+			public Logger getLogger() {
+				return LoggerFactory.getLogger("TEST");
 			}
 
 			@Override

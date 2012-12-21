@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.DashboardLogic.fakeAnyAttribute;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.cmdbuild.common.digest.Digester;
+import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
@@ -54,6 +57,7 @@ import org.cmdbuild.services.soap.types.Attachment;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.CQLQuery;
 import org.cmdbuild.services.soap.types.Card;
+import org.cmdbuild.services.soap.types.CardExt;
 import org.cmdbuild.services.soap.types.CardList;
 import org.cmdbuild.services.soap.types.CardListExt;
 import org.cmdbuild.services.soap.types.Lookup;
@@ -107,8 +111,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public Card getCard(final String className, final Integer cardId, final Attribute[] attributeList) {
-		final ECard ecard = new ECard(getUserCtx());
-		return ecard.getCard(className, cardId, attributeList);
+		return getCard(className, cardId, attributeList, false);
 	}
 
 	@Override
@@ -379,6 +382,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
+		Log.SOAP.info(format("calling function '%s' with parameters: %s", functionName, params));
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
 		final CMFunction function = view.findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
@@ -450,12 +454,12 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
 
 			@Override
-			public void visit(ReferenceAttributeType attributeType) {
+			public void visit(final ReferenceAttributeType attributeType) {
 				throw new UnsupportedOperationException("references not supported");
 			}
 
 			@Override
-			public void visit(LookupAttributeType attributeType) {
+			public void visit(final LookupAttributeType attributeType) {
 				throw new UnsupportedOperationException("lookups not supported");
 			}
 
@@ -464,18 +468,23 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 
 	@Override
 	public void notify(final WSEvent wsEvent) {
+		Log.SOAP.info("event received");
 		final WorkflowEventManager eventManager = TemporaryObjectsBeforeSpringDI.getWorkflowEventManager();
 		wsEvent.accept(new WSEvent.Visitor() {
 
 			@Override
-			public void visit(WSProcessStartEvent wsEvent) {
+			public void visit(final WSProcessStartEvent wsEvent) {
+				Log.SOAP.info(format("event for process start: %d / %s / %s", //
+						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessStartEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
 			}
 
 			@Override
-			public void visit(WSProcessUpdateEvent wsEvent) {
+			public void visit(final WSProcessUpdateEvent wsEvent) {
+				Log.SOAP.info(format("event for process update: %d / %s / %s", //
+						wsEvent.getSessionId(), wsEvent.getProcessDefinitionId(), wsEvent.getProcessInstanceId()));
 				final WorkflowEvent event = WorkflowEvent.newProcessUpdateEvent(wsEvent.getProcessDefinitionId(),
 						wsEvent.getProcessInstanceId());
 				eventManager.pushEvent(wsEvent.getSessionId(), event);
@@ -508,6 +517,38 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 			attributeSchemas.add(AttributeSchemaSerializer.serialize(parameter));
 		}
 		return attributeSchemas;
+	}
+
+	@Override
+	public String generateDigest(final String plainText, final String digestAlgorithm) throws NoSuchAlgorithmException {
+		if (digestAlgorithm == null) {
+			Log.SOAP.error("The digest algorithm is null");
+			throw new IllegalArgumentException(
+					"Both the argument must not be null. Specify the text to be encrypted and a valid digest algorithm");
+		}
+		if (plainText == null) {
+			return null;
+		}
+		final Digester digester = DigesterFactory.createDigester(digestAlgorithm);
+		Log.SOAP.info("Generating digest with algorithm " + digester + " ("
+				+ (digester.isReversible() ? "reversible" : "irreversible") + ")");
+		return digester.encrypt(plainText);
+	}
+	
+	@Override
+	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId, final Attribute[] attributeList) {
+		return getCard(className, cardId, attributeList, true);
+	}
+	
+	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList, final boolean enableLongDateFormat) {
+		final ECard ecard = new ECard(getUserCtx());
+		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
+	}
+	
+	@Override
+	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
+		final EReport report = new EReport(getUserCtx());
+		return report.getReport(reportId, extension, params);
 	}
 
 }
