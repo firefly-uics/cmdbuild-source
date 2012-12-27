@@ -1,4 +1,4 @@
-package integration.dao.driver.postgres;
+package integration.dao;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
