@@ -1,6 +1,5 @@
-package integration.dao.driver.postgres;
+package integration.dao;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
@@ -17,9 +16,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -41,11 +38,11 @@ public class JoinQueryTest extends DBFixture {
 
 	@Before
 	public void createDomainStructure() {
-		SRC = dbDriver().createClass(newClass(uniqueUUID(), null));
-		DST = dbDriver().createClass(newSuperClass(uniqueUUID(), null));
-		DST1 = dbDriver().createClass(newClass(uniqueUUID(), DST));
-		DST2 = dbDriver().createClass(newClass(uniqueUUID(), DST));
-		DOM = dbDriver().createDomain(nnDomain(uniqueUUID(), SRC, DST));
+		SRC = dbDataView().createClass(newClass(uniqueUUID(), null));
+		DST = dbDataView().createClass(newSuperClass(uniqueUUID(), null));
+		DST1 = dbDataView().createClass(newClass(uniqueUUID(), DST));
+		DST2 = dbDataView().createClass(newClass(uniqueUUID(), DST));
+		DOM = dbDataView().createDomain(newDomain(uniqueUUID(), SRC, DST));
 	}
 
 	@Test
@@ -58,7 +55,7 @@ public class JoinQueryTest extends DBFixture {
 
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
+		final CMQueryResult result = dbDataView() //
 				.select(descriptionAttribute(SRC), codeAttribute(DST_ALIAS, DST1)) //
 				.from(SRC) //
 				.join(DST1, as(DST_ALIAS), over(DOM)) //
@@ -89,7 +86,7 @@ public class JoinQueryTest extends DBFixture {
 		deleteCard(dst2);
 
 		// when
-		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
+		final CMQueryResult result = dbDataView() //
 				.select(descriptionAttribute(SRC), codeAttribute(DST)) //
 				.from(SRC) //
 				.join(anyClass(), as("DST"), over(DOM)) //
@@ -107,13 +104,13 @@ public class JoinQueryTest extends DBFixture {
 		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = dbDriver().createDomain(nnDomain(uniqueUUID(), DST2, SRC));
+		final DBDomain DOM2 = dbDriver().createDomain(newDomain(uniqueUUID(), DST2, SRC));
 		insertRelation(DOM2, dst2, src1);
 
 		final Alias DOM_ALIAS = Alias.as("DOM");
 		final Alias DST_ALIAS = Alias.as("DST");
 
-		final CMQueryResult result = new QuerySpecsBuilder(dbDataView()) //
+		final CMQueryResult result = dbDataView() //
 				.select(codeAttribute(SRC), anyAttribute(DOM_ALIAS), codeAttribute(DST_ALIAS, DST)) //
 				.from(SRC) //
 				.join(anyClass(), as(DST_ALIAS), over(anyDomain(), as(DOM_ALIAS))) //
@@ -121,66 +118,6 @@ public class JoinQueryTest extends DBFixture {
 				.run();
 
 		assertThat(result.size(), is(3));
-	}
-
-	/*
-	 * Utilities
-	 */
-
-	private static DBDomainDefinition nnDomain(final String string, final DBClass class1, final DBClass class2) {
-		return new DBDomainDefinition() {
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public String getName() {
-				return string;
-			}
-
-			@Override
-			public String getDirectDescription() {
-				return EMPTY;
-			}
-
-			@Override
-			public String getInverseDescription() {
-				return EMPTY;
-			}
-
-			@Override
-			public DBClass getClass1() {
-				return class1;
-			}
-
-			@Override
-			public DBClass getClass2() {
-				return class2;
-			}
-
-			@Override
-			public String getDescription() {
-				return EMPTY;
-			}
-
-			@Override
-			public String getCardinality() {
-				return "N:N";
-			}
-
-			@Override
-			public boolean isMasterDetail() {
-				return false;
-			}
-
-			@Override
-			public String getMasterDetailDescription() {
-				return EMPTY;
-			}
-
-		};
 	}
 
 }

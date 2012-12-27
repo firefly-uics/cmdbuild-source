@@ -41,7 +41,7 @@ public abstract class DBFixture extends IntegrationTestBase {
 	}
 
 	protected DBCard insertCard(final DBClass c, final String key, final Object value) {
-		return DBCard.newInstance(dbDriver(), c).set(key, value).save();
+		return dbDataView().newCard(c).set(key, value).save();
 	}
 
 	protected void insertCards(final DBClass c, final int quantity) {
@@ -52,7 +52,7 @@ public abstract class DBFixture extends IntegrationTestBase {
 
 	protected void insertCardsWithCodeAndDescription(final DBClass c, final int quantity) {
 		for (long i = 0; i < quantity; ++i) {
-			DBCard.newInstance(dbDriver(), c) //
+			dbDataView().newCard(c) //
 					.setCode(String.valueOf(i)) //
 					.setDescription(String.valueOf(i)) //
 					.save();
@@ -60,7 +60,7 @@ public abstract class DBFixture extends IntegrationTestBase {
 	}
 
 	protected DBRelation insertRelation(final DBDomain d, final DBCard c1, final DBCard c2) {
-		return DBRelation.newInstance(dbDriver(), d) //
+		return (DBRelation) dbDataView().newRelation(d) //
 				.setCard1(c1) //
 				.setCard2(c2) //
 				.save();
