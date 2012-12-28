@@ -4,7 +4,7 @@ public interface OperatorAndValueVisitor {
 
 	void visit(EqualsOperatorAndValue operatorAndValue);
 
-	void visit(GreatherThanOperatorAndValue operatorAndValue);
+	void visit(GreaterThanOperatorAndValue operatorAndValue);
 
 	void visit(LessThanOperatorAndValue operatorAndValue);
 

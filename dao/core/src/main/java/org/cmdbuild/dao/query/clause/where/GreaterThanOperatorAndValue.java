@@ -1,10 +1,10 @@
 package org.cmdbuild.dao.query.clause.where;
 
-public class GreatherThanOperatorAndValue implements OperatorAndValue {
+public class GreaterThanOperatorAndValue implements OperatorAndValue {
 
 	private final Object value;
 
-	private GreatherThanOperatorAndValue(final Object value) {
+	private GreaterThanOperatorAndValue(final Object value) {
 		this.value = value;
 	}
 
@@ -18,7 +18,7 @@ public class GreatherThanOperatorAndValue implements OperatorAndValue {
 	}
 
 	public static OperatorAndValue gt(final Object value) {
-		return new GreatherThanOperatorAndValue(value);
+		return new GreaterThanOperatorAndValue(value);
 	}
 
 }

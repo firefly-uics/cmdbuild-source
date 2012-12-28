@@ -21,7 +21,7 @@ import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
-import org.cmdbuild.dao.query.clause.where.GreatherThanOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.NotWhereClause;
@@ -76,7 +76,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 			@Override
-			public void visit(final GreatherThanOperatorAndValue operatorAndValue) {
+			public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), OPERATOR_GT, operatorAndValue.getValue()));
 			}
 
