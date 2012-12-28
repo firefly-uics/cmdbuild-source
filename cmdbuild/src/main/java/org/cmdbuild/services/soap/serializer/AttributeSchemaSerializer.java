@@ -1,15 +1,19 @@
 package org.cmdbuild.services.soap.serializer;
 
+import static java.lang.String.format;
+
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -61,6 +65,11 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 	public void visit(final DoubleAttributeType attributeType) {
 		setType(AttributeType.DOUBLE);
 	}
+	
+	@Override
+	public void visit(final EntryTypeAttributeType attributeType) {
+		throwIllegalType(attributeType);
+	}
 
 	@Override
 	public void visit(final ForeignKeyAttributeType attributeType) {
@@ -69,7 +78,7 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 
 	@Override
 	public void visit(final GeometryAttributeType attributeType) {
-		throw new IllegalArgumentException("geometries not supported yet");
+		throwIllegalType(attributeType);
 	}
 
 	@Override
@@ -78,18 +87,18 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 	}
 
 	@Override
-	public void visit(final IPAddressAttributeType attributeType) {
+	public void visit(final IpAddressAttributeType attributeType) {
 		setType(AttributeType.INET);
 	}
 
 	@Override
 	public void visit(final LookupAttributeType attributeType) {
-		throw new IllegalArgumentException("lookups not supported yet");
+		throwIllegalType(attributeType);
 	}
 
 	@Override
 	public void visit(final ReferenceAttributeType attributeType) {
-		throw new IllegalArgumentException("references not supported yet");
+		throwIllegalType(attributeType);
 	}
 
 	@Override
@@ -112,6 +121,11 @@ public class AttributeSchemaSerializer implements CMAttributeTypeVisitor {
 
 	private void setType(final AttributeType attributeType) {
 		serialized.setType(attributeType.name());
+	}
+	
+	private void throwIllegalType(final CMAttributeType<?> attributeType) {
+		final String message = format("'%s' not supported", attributeType.getClass());
+		throw new IllegalArgumentException(message);
 	}
 
 }

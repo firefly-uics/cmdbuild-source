@@ -147,8 +147,7 @@ public class EmailService {
 			msg.setContent(mp);
 			Transport.send(msg);
 		} catch (Exception e) {
-			Log.EMAIL.error("Can't send email: " + e.getMessage());
-			Log.EMAIL.debug(e);
+			Log.EMAIL.error("Can't send email: " + e.getMessage(), e);
 			throw WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException();
 		}
 	}

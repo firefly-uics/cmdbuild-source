@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static java.lang.String.format;
+import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 import static com.google.common.base.CharMatcher.DIGIT;
 import static com.google.common.base.CharMatcher.inRange;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
@@ -26,107 +28,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 
-public abstract class Utils {
+public class Utils {
 
-	/*
-	 * Comment <-> meta
-	 */
-
-	private interface CommentValueConverter {
-		String getMetaValueFromComment(String commentValue);
-		String getCommentValueFromMeta(String metaValue);
+	private Utils() {
+		// prevents instantiation
 	}
-
-	static class CommentMapper {
-		private final BiMap<String, String> translationTable = HashBiMap.create();
-		private final Map<String, CommentValueConverter> valueConverterTable = new HashMap<String, CommentValueConverter>();
-
-		public String getMetaNameFromComment(final String commentName) {
-			return translationTable.get(commentName);
-		}
-
-		public String getCommentNameFromMeta(final String metaName) {
-			return translationTable.inverse().get(metaName);
-		}
-
-		public String getMetaValueFromComment(final String commentName, final String commentValue) {
-			if (valueConverterTable.containsKey(commentName)) {
-				return valueConverterTable.get(commentName).getMetaValueFromComment(commentValue);
-			} else {
-				return commentValue;
-			}
-		}
-
-		public String getCommentValueFromMeta(final String commentName, final String metaValue) {
-			if (valueConverterTable.containsKey(commentName)) {
-				return valueConverterTable.get(commentName).getCommentValueFromMeta(metaValue);
-			} else {
-				return metaValue;
-			}
-		}
-
-		protected void define(final String commentName, final String metaName) {
-			translationTable.put(commentName, metaName);
-		}
-
-		protected void define(final String commentName, final String metaName, final CommentValueConverter valueConverter) {
-			translationTable.put(commentName, metaName);
-			if (valueConverter != null) {
-				valueConverterTable.put(commentName, valueConverter);
-			}
-		}
-	}
-
-	static class EntryTypeCommentMapper extends CommentMapper {
-		{
-			define("STATUS", EntryTypeMetadata.ACTIVE, new CommentValueConverter() {
-				@Override public String getMetaValueFromComment(String commentValue) {
-					// Set to active by default for backward compatibility
-					return "noactive".equalsIgnoreCase(commentValue) ? Boolean.FALSE.toString() : Boolean.TRUE.toString();
-				}
-				@Override public String getCommentValueFromMeta(String metaValue) {
-					return Boolean.parseBoolean(metaValue) ? "active" : "noactive";
-				}
-			});
-			define("MODE", EntryTypeMetadata.MODE, new CommentValueConverter() {
-				@Override public String getMetaValueFromComment(String commentValue) {
-					return commentValue.toLowerCase().trim();
-				}
-				@Override public String getCommentValueFromMeta(String metaValue) {
-					return metaValue;
-				}
-			});
-		}
-	}
-
-	static final CommentMapper CLASS_COMMENT_MAPPER = new EntryTypeCommentMapper() {
-		{
-			define("DESCR", EntryTypeMetadata.DESCRIPTION);
-			define("SUPERCLASS", ClassMetadata.SUPERCLASS);
-		}
-	};
-
-	static final CommentMapper DOMAIN_COMMENT_MAPPER = new EntryTypeCommentMapper() {
-		{
-			define("LABEL", EntryTypeMetadata.DESCRIPTION); // Excellent name choice!
-			define("CLASS1", DomainMetadata.CLASS_1);
-			define("CLASS2", DomainMetadata.CLASS_2);
-			// The descriptions should be the attribute descriptions to support n-ary domains
-			define("DESCRDIR", DomainMetadata.DESCRIPTION_1);
-			define("DESCRINV", DomainMetadata.DESCRIPTION_2);
-		}
-	};
-
-	static final CommentMapper ATTRIBUTE_COMMENT_MAPPER = new EntryTypeCommentMapper() {
-		{
-			define("DESCR", EntryTypeMetadata.DESCRIPTION);
-			define("LOOKUP", AttributeMetadata.LOOKUP_TYPE);
-		}
-	};
-
-	/*
-	 * Utility functions
-	 */
 
 	public static String quoteIdent(final String name) {
 		if (inRange('a', 'z').or(DIGIT).matchesAllOf(name)) {
@@ -163,10 +69,8 @@ public abstract class Utils {
 
 		@Override
 		public void visit(final CMFunctionCall functionCall) {
-			quotedTypeName = String.format("%s(%s)",
-					quoteIdent(functionCall.getFunction().getName()),
-					functionParams(functionCall)
-				);
+			quotedTypeName = format("%s(%s)", quoteIdent(functionCall.getFunction().getName()),
+					functionParams(functionCall));
 		}
 
 		private String functionParams(final CMFunctionCall functionCall) {
@@ -182,7 +86,7 @@ public abstract class Utils {
 			return genQuestionMarks(functionCall.getParams().size());
 		}
 
-		private String genQuestionMarks(int length) {
+		private String genQuestionMarks(final int length) {
 			final StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < length; ++i) {
 				if (i > 0) {
@@ -266,10 +170,23 @@ public abstract class Utils {
 	}
 
 	public static String quoteAttribute(final Alias tableAlias, final String name) {
-		return String.format("%s.%s", Utils.quoteAlias(tableAlias), Utils.quoteIdent(name));
+		return format("%s.%s", Utils.quoteAlias(tableAlias), Utils.quoteIdent(name));
 	}
 
-	public static String getSystemAttributeAlias(final Alias entityTypeAlias, final SystemAttributes sa) {
-		return String.format("_%s_%s", entityTypeAlias.getName(), sa.name());
+	public static Alias aliasForSystemAttribute(final Alias entityTypeAlias, final SystemAttributes sa) {
+		return Alias.as(nameForSystemAttribute(entityTypeAlias, sa));
 	}
+
+	public static String nameForSystemAttribute(final Alias entityTypeAlias, final SystemAttributes sa) {
+		return format("_%s_%s", entityTypeAlias.getName(), sa.name());
+	}
+
+	public static Alias aliasForUserAttribute(final Alias entityTypeAlias, final String name) {
+		return Alias.as(nameForUserAttribute(entityTypeAlias, name));
+	}
+
+	public static String nameForUserAttribute(final Alias entityTypeAlias, final String name) {
+		return format("%s#%s", entityTypeAlias.getName(), name);
+	}
+
 }

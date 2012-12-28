@@ -16,12 +16,13 @@ import javax.activation.DataHandler;
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
@@ -35,7 +36,7 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.services.auth.AuthenticationService;
+import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserContextToUserInfo;
 import org.cmdbuild.services.auth.UserInfo;
@@ -71,7 +72,6 @@ import org.cmdbuild.services.soap.types.WSEvent;
 import org.cmdbuild.services.soap.types.WSProcessStartEvent;
 import org.cmdbuild.services.soap.types.WSProcessUpdateEvent;
 import org.cmdbuild.services.soap.types.Workflow;
-import org.cmdbuild.services.soap.utils.WebserviceUtils;
 import org.cmdbuild.servlets.json.serializers.AbstractAttributeValueVisitor;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
@@ -90,10 +90,9 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	WebServiceContext wsc;
 
 	private UserContext getUserCtx() {
-		final MessageContext msgCtx = wsc.getMessageContext();
-		final AuthenticationService as = new AuthenticationService();
-		final WebserviceUtils utils = new WebserviceUtils();
-		return as.getWSUserContext(utils.getAuthData(msgCtx));
+		// FIXME
+		final DefaultAuthenticationService as = new DefaultAuthenticationService();
+		return new OperationUserWrapper(as.getOperationUser());
 	}
 
 	@Override
@@ -454,13 +453,18 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
 
 			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				throw new UnsupportedOperationException("references not supported");
+			public void visit(final EntryTypeAttributeType attributeType) {
+				throw new UnsupportedOperationException("regclasses not supported");
 			}
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
 				throw new UnsupportedOperationException("lookups not supported");
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				throw new UnsupportedOperationException("references not supported");
 			}
 
 		}.convertValue().toString();

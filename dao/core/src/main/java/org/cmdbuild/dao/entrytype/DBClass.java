@@ -1,57 +1,116 @@
 package org.cmdbuild.dao.entrytype;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.common.Builder;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class DBClass extends DBEntryType implements CMClass {
 
 	public static class ClassMetadata extends EntryTypeMetadata {
+
 		public static final String SUPERCLASS = BASE_NS + "superclass";
 
-		final boolean isSuperclass() {
+		public final boolean isSuperclass() {
 			return Boolean.parseBoolean(get(SUPERCLASS));
 		}
 
-		final void setSuperclass(final boolean superclass) {
+		public final void setSuperclass(final boolean superclass) {
 			put(SUPERCLASS, Boolean.toString(superclass));
 		}
+
+		public final boolean holdsHistory() {
+			return Boolean.parseBoolean(get(HOLD_HISTORY));
+		}
+
+		public final void setHoldsHistory(final boolean holdsHistory) {
+			put(HOLD_HISTORY, Boolean.toString(holdsHistory));
+		}
+
+	}
+
+	public static class DBClassBuilder implements Builder<DBClass> {
+
+		private final List<DBAttribute> attributes;
+
+		private String name;
+		private Long id;
+		private ClassMetadata metadata;
+		private final Set<DBClass> children;
+
+		private DBClassBuilder() {
+			metadata = new ClassMetadata();
+			attributes = Lists.newArrayList();
+			children = Sets.newHashSet();
+		}
+
+		public DBClassBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public DBClassBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public DBClassBuilder withAllMetadata(final ClassMetadata metadata) {
+			this.metadata = metadata;
+			return this;
+		}
+
+		public DBClassBuilder withAllAttributes(final List<DBAttribute> attributes) {
+			this.attributes.addAll(attributes);
+			return this;
+		}
+
+		@Override
+		public DBClass build() {
+			return new DBClass(this);
+		}
+
+	}
+
+	public static DBClassBuilder newClass() {
+		return new DBClassBuilder();
 	}
 
 	private final ClassMetadata meta;
 	private DBClass parent;
-	private Set<DBClass> children;
+	private final Set<DBClass> children;
 
-	public DBClass(final String name, final Long id, final ClassMetadata meta, final List<DBAttribute> attributes) {
-		super(name, id, attributes);
-		this.meta = meta;
-		children = new HashSet<DBClass>();
-	}
-
-	@Deprecated
-	public DBClass(final String name, final Long id, final List<DBAttribute> attributes) {
-		this(name, id, new ClassMetadata(), attributes);
+	private DBClass(final DBClassBuilder builder) {
+		super(builder.name, builder.id, builder.attributes);
+		this.meta = builder.metadata;
+		this.children = builder.children;
 	}
 
 	@Override
-    public void accept(CMEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	public void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
-    public void accept(DBEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	@Override
+	public void accept(final DBEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
+	@Override
 	protected final ClassMetadata meta() {
 		return meta;
 	}
 
+	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
+	@Override
 	public final String getPrivilegeId() {
 		return String.format("Class:%d", getId());
 	}
@@ -80,14 +139,14 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public Iterable<DBClass> getLeaves() {
-		Set<DBClass> leaves = new HashSet<DBClass>();
+		final Set<DBClass> leaves = Sets.newHashSet();
 		addLeaves(leaves, this);
 		return leaves;
 	}
 
 	private void addLeaves(final Set<DBClass> leaves, final DBClass currentClass) {
 		if (currentClass.isSuperclass()) {
-			for (DBClass subclass : currentClass.getChildren()) {
+			for (final DBClass subclass : currentClass.getChildren()) {
 				addLeaves(leaves, subclass);
 			}
 		} else {
@@ -95,6 +154,7 @@ public class DBClass extends DBEntryType implements CMClass {
 		}
 	}
 
+	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
 		for (CMClass parent = cmClass; parent != null; parent = parent.getParent()) {
 			if (parent.equals(this)) {
@@ -106,11 +166,24 @@ public class DBClass extends DBEntryType implements CMClass {
 
 	@Override
 	public boolean isSuperclass() {
-		return meta().isSuperclass(); 
+		return meta().isSuperclass();
+	}
+
+	@Override
+	public String getCodeAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Code";
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		// TODO Mark it in the metadata!
+		return "Description";
 	}
 
 	@Override
 	public boolean holdsHistory() {
-		return true; // Simple classes do not
+		return meta().holdsHistory();
 	}
+
 }

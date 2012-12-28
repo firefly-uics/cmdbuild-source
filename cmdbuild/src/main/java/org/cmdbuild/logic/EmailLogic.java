@@ -11,6 +11,7 @@ import org.cmdbuild.elements.wrappers.EmailCard;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.email.EmailService;
 import org.joda.time.DateTime;
 
@@ -20,18 +21,14 @@ import org.joda.time.DateTime;
  * The API is still a work in progress.
  */
 @Legacy("Legacy implementation")
-public class EmailLogic {
+public class EmailLogic implements Logic {
 
 	public enum EmailStatus {
-		New,
-		Received,
-		Draft,
-		Outgoing,
-		Sent
+		New, Received, Draft, Outgoing, Sent
 	}
 
 	public static class Email extends AbstractEmail {
-		private Long id;
+		private final Long id;
 		private String fromAddress;
 		private DateTime date;
 		private EmailStatus status;
@@ -40,7 +37,7 @@ public class EmailLogic {
 			this.id = null;
 		}
 
-		public Email(long id) {
+		public Email(final long id) {
 			this.id = id;
 		}
 
@@ -83,7 +80,7 @@ public class EmailLogic {
 			return toAddresses;
 		}
 
-		public void setToAddresses(String toAddresses) {
+		public void setToAddresses(final String toAddresses) {
 			this.toAddresses = toAddresses;
 		}
 
@@ -91,7 +88,7 @@ public class EmailLogic {
 			return ccAddresses;
 		}
 
-		public void setCcAddresses(String ccAddresses) {
+		public void setCcAddresses(final String ccAddresses) {
 			this.ccAddresses = ccAddresses;
 		}
 
@@ -99,7 +96,7 @@ public class EmailLogic {
 			return subject;
 		}
 
-		public void setSubject(String subject) {
+		public void setSubject(final String subject) {
 			this.subject = subject;
 		}
 
@@ -107,7 +104,7 @@ public class EmailLogic {
 			return content;
 		}
 
-		public void setContent(String content) {
+		public void setContent(final String content) {
 			this.content = content;
 		}
 	}
@@ -121,15 +118,15 @@ public class EmailLogic {
 	public void retrieveEmails() {
 		try {
 			EmailService.syncEmail();
-		} catch (CMDBException e) {
+		} catch (final CMDBException e) {
 			RequestListener.getCurrentRequest().pushWarning(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException("Error rietrieving emails", e);
 		}
 	}
 
 	public Iterable<Email> getEmails(final Long processCardId) {
-		List<Email> emails = new ArrayList<Email>();
+		final List<Email> emails = new ArrayList<Email>();
 		final ICard processCard = fetchProcessCard(processCardId);
 		for (final ICard card : EmailCard.list(processCard)) {
 			final EmailCard emailCard = new EmailCard(card);
@@ -140,7 +137,8 @@ public class EmailLogic {
 	}
 
 	private ICard fetchProcessCard(final Long processCardId) {
-		final ICard processCard = userContext.tables().get(ProcessType.BaseTable).cards().get(processCardId.intValue());
+		final ICard processCard = UserOperations.from(userContext).tables().get(ProcessType.BaseTable).cards()
+				.get(processCardId.intValue());
 		return processCard;
 	}
 

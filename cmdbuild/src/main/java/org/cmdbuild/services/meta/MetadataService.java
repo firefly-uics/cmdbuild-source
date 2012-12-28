@@ -16,6 +16,7 @@ import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 // FIXME: it's not enough to synchronize the update
 @NotThreadSafe
@@ -36,7 +37,8 @@ public class MetadataService {
 	public static final String METADATA_KEY_ATTRIBUTE = ICard.CardAttributes.Description.toString();
 	public static final String METADATA_VALUE_ATTRIBUTE = ICard.CardAttributes.Notes.toString();
 
-	private static final ITable metadataClass = UserContext.systemContext().tables().get(METADATA_CLASS_NAME);
+	private static final ITable metadataClass = UserOperations.from(UserContext.systemContext()).tables()
+			.get(METADATA_CLASS_NAME);
 
 	private static final Map<String, MetadataMap> metaMapCache = new HashMap<String, MetadataMap>();
 
@@ -44,16 +46,16 @@ public class MetadataService {
 		return getMetadata(EMPTY, false);
 	}
 
-	public static Object getMetadata(final BaseSchema schema, String name) {
+	public static Object getMetadata(final BaseSchema schema, final String name) {
 		return getMetadata(schema).get(name);
 	}
 
-	public static MetadataMap getMetadata(BaseSchema schema) {
-		String schemaFullName = getSchemaFullName(schema);
+	public static MetadataMap getMetadata(final BaseSchema schema) {
+		final String schemaFullName = getSchemaFullName(schema);
 		return getMetadata(schemaFullName, true);
 	}
 
-	private static MetadataMap getMetadata(String schemaFullName, boolean cacheResults) {
+	private static MetadataMap getMetadata(final String schemaFullName, final boolean cacheResults) {
 		MetadataMap metaMap = metaMapCache.get(schemaFullName);
 		if (metaMap == null) {
 			metaMap = loadMetaMap(schemaFullName);
@@ -64,36 +66,36 @@ public class MetadataService {
 		return metaMap;
 	}
 
-	private static MetadataMap loadMetaMap(String schemaFullName) {
-		MetadataMap metaMap = new MetadataMap();
+	private static MetadataMap loadMetaMap(final String schemaFullName) {
+		final MetadataMap metaMap = new MetadataMap();
 		if (!METADATA_FULL_NAME.equals(schemaFullName)) { // skip metadata class
-			CardQuery cardQuery = metadataClass.cards().list().attributes(METADATA_KEY_ATTRIBUTE,
-					METADATA_VALUE_ATTRIBUTE);
+			CardQuery cardQuery = metadataClass.cards().list()
+					.attributes(METADATA_KEY_ATTRIBUTE, METADATA_VALUE_ATTRIBUTE);
 			if (isNotBlank(schemaFullName)) {
 				cardQuery = cardQuery.filter(METADATA_SCHEMA_ATTRIBUTE, AttributeFilterType.EQUALS, schemaFullName);
 			}
-			for (ICard metadataCard : cardQuery) {
-				String key = (String) metadataCard.getValue(METADATA_KEY_ATTRIBUTE);
-				String value = (String) metadataCard.getValue(METADATA_VALUE_ATTRIBUTE);
+			for (final ICard metadataCard : cardQuery) {
+				final String key = (String) metadataCard.getValue(METADATA_KEY_ATTRIBUTE);
+				final String value = (String) metadataCard.getValue(METADATA_VALUE_ATTRIBUTE);
 				metaMap.put(key, value);
 			}
 		}
 		return metaMap;
 	}
 
-	public static String getSchemaFullName(BaseSchema schema) {
+	public static String getSchemaFullName(final BaseSchema schema) {
 		if (schema instanceof IAttribute) {
-			IAttribute attr = (IAttribute) schema;
+			final IAttribute attr = (IAttribute) schema;
 			return String.format("%s.%s", attr.getSchema().getName(), attr.getName());
 		} else {
 			return schema.getName();
 		}
 	}
 
-	public static synchronized void updateMetadata(BaseSchema schema, String name, String newValue) {
-		String schemaFullName = getSchemaFullName(schema);
-		MetadataMap metaMap = getMetadata(schemaFullName, true);
-		String oldValue = (String) metaMap.get(name);
+	public static synchronized void updateMetadata(final BaseSchema schema, final String name, final String newValue) {
+		final String schemaFullName = getSchemaFullName(schema);
+		final MetadataMap metaMap = getMetadata(schemaFullName, true);
+		final String oldValue = (String) metaMap.get(name);
 
 		if (newValue != null) {
 			if (!newValue.equals(oldValue)) {
@@ -115,22 +117,23 @@ public class MetadataService {
 		}
 	}
 
-	private static ICard createMetaCard(String schemaFullName, String name) {
-		ICard metaCard = metadataClass.cards().create();
+	private static ICard createMetaCard(final String schemaFullName, final String name) {
+		final ICard metaCard = metadataClass.cards().create();
 		metaCard.setValue(METADATA_SCHEMA_ATTRIBUTE, schemaFullName);
 		metaCard.setValue(METADATA_KEY_ATTRIBUTE, name);
 		return metaCard;
 	}
 
-	private static ICard getMetaCard(String schemaFullName, String name) {
-		ICard metaCard = metadataClass.cards().list().filter(METADATA_SCHEMA_ATTRIBUTE, AttributeFilterType.EQUALS,
-				schemaFullName).filter(METADATA_KEY_ATTRIBUTE, AttributeFilterType.EQUALS, name).get(false);
+	private static ICard getMetaCard(final String schemaFullName, final String name) {
+		final ICard metaCard = metadataClass.cards().list()
+				.filter(METADATA_SCHEMA_ATTRIBUTE, AttributeFilterType.EQUALS, schemaFullName)
+				.filter(METADATA_KEY_ATTRIBUTE, AttributeFilterType.EQUALS, name).get(false);
 		return metaCard;
 	}
 
-	public static void deleteMetadata(BaseSchema schema, String name) {
-		String schemaFullName = getSchemaFullName(schema);
-		MetadataMap metaMap = getMetadata(schemaFullName, true);
+	public static void deleteMetadata(final BaseSchema schema, final String name) {
+		final String schemaFullName = getSchemaFullName(schema);
+		final MetadataMap metaMap = getMetadata(schemaFullName, true);
 		getMetaCard(schemaFullName, name).delete();
 		metaMap.remove(name);
 	}
@@ -138,19 +141,19 @@ public class MetadataService {
 	/*
 	 * Delete all metadata for schema
 	 */
-	public static void deleteMetadata(BaseSchema schema) {
-		String schemaFullName = getSchemaFullName(schema);
+	public static void deleteMetadata(final BaseSchema schema) {
+		final String schemaFullName = getSchemaFullName(schema);
 		getDeleteMetaTemplate();
 		metadataClass.cards().list().filter(METADATA_SCHEMA_ATTRIBUTE, AttributeFilterType.EQUALS, schemaFullName)
 				.update(getDeleteMetaTemplate());
-		for (IAttribute attribute : schema.getAttributes().values()) {
+		for (final IAttribute attribute : schema.getAttributes().values()) {
 			deleteMetadata(attribute);
 		}
 		metaMapCache.remove(schemaFullName);
 	}
 
 	private static ICard getDeleteMetaTemplate() {
-		ICard deleteMetaTemplate = metadataClass.cards().create();
+		final ICard deleteMetaTemplate = metadataClass.cards().create();
 		deleteMetaTemplate.setStatus(ElementStatus.INACTIVE);
 		return deleteMetaTemplate;
 	}

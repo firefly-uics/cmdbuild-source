@@ -62,8 +62,8 @@ public class JoinClause {
 
 		private Alias targetAlias;
 		private Alias domainAlias;
-		private Set<CMClass> targets;
-		private Set<QueryDomain> queryDomains;
+		private final Set<CMClass> targets;
+		private final Set<QueryDomain> queryDomains;
 		private boolean domainHistory;
 
 		public Builder(final CMDataView view, final CMClass source) {
@@ -115,7 +115,7 @@ public class JoinClause {
 		}
 
 		private void addAllDomains() {
-			for (CMDomain domain : view.findDomainsFor(source)) {
+			for (final CMDomain domain : view.findDomainsFor(source)) {
 				addDomain(domain);
 			}
 		}
@@ -132,13 +132,13 @@ public class JoinClause {
 		}
 
 		private void addAnyTarget() {
-			for (QueryDomain qd : queryDomains) {
+			for (final QueryDomain qd : queryDomains) {
 				addTargetLeaves(qd.getTargetClass());
 			}
 		}
 
-		private void addTarget(CMClass target) {
-			for (QueryDomain qd : queryDomains) {
+		private void addTarget(final CMClass target) {
+			for (final QueryDomain qd : queryDomains) {
 				if (qd.getTargetClass().isAncestorOf(target)) {
 					addTargetLeaves(target);
 				}
@@ -146,7 +146,7 @@ public class JoinClause {
 		}
 
 		private void addTargetLeaves(final CMClass targetDomainClass) {
-			for (CMClass leaf : targetDomainClass.getLeaves()) {
+			for (final CMClass leaf : targetDomainClass.getLeaves()) {
 				targets.add(leaf);
 			}
 		}

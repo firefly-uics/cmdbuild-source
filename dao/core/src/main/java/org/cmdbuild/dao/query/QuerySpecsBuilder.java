@@ -25,8 +25,6 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
-import org.cmdbuild.dao.query.clause.where.SimpleWhereClause.Operator;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
@@ -35,7 +33,7 @@ public class QuerySpecsBuilder {
 
 	private class AliasLibrary {
 
-		private Set<Alias> aliasSet;
+		private final Set<Alias> aliasSet;
 		private CMEntryType fromType;
 		private Alias fromAlias;
 
@@ -75,9 +73,9 @@ public class QuerySpecsBuilder {
 		}
 
 		public void checkAlias(final Alias alias) {
-			 if (!aliasSet.contains(alias)) {
-				 throw new NoSuchElementException("Alias "+ alias + " was not found");
-			 }
+			if (!aliasSet.contains(alias)) {
+				throw new NoSuchElementException("Alias " + alias + " was not found");
+			}
 		}
 
 		public Alias getDefaultAlias() {
@@ -92,13 +90,13 @@ public class QuerySpecsBuilder {
 	private static final Alias DEFAULT_ANYCLASS_ALIAS = Alias.as("_*");
 
 	private List<QueryAttribute> attributes;
-	private List<JoinClause> joinClauses;
-	private List<OrderByClause> orderByClauses;
+	private final List<JoinClause> joinClauses;
+	private final List<OrderByClause> orderByClauses;
 	private WhereClause whereClause;
 	private Long offset;
 	private Long limit;
 
-	private AliasLibrary aliases;
+	private final AliasLibrary aliases;
 
 	private final QueryExecutorDataView view;
 
@@ -114,11 +112,11 @@ public class QuerySpecsBuilder {
 
 	public QuerySpecsBuilder select(final Object... attrDef) {
 		this.attributes = new ArrayList<QueryAttribute>(attrDef.length);
-		for (Object a : attrDef) {
+		for (final Object a : attrDef) {
 			if (a instanceof QueryAttribute) {
-				attributes.add((QueryAttribute)a);
+				attributes.add((QueryAttribute) a);
 			} else if (a instanceof String) {
-				attributes.add(new NamedAttribute((String)a));
+				attributes.add(new NamedAttribute((String) a));
 			} else {
 				throw new IllegalArgumentException();
 			}
@@ -148,25 +146,15 @@ public class QuerySpecsBuilder {
 			throw new IllegalStateException("No from clause specified or not a class");
 		}
 		final JoinClause join = new JoinClause.Builder(view, fromClass)
-			.domain(overClause.getDomain(), overClause.getAlias())
-			.target(joinClass, joinClassAlias)
-			.build();
+				.domain(overClause.getDomain(), overClause.getAlias()).target(joinClass, joinClassAlias).build();
 		joinClauses.add(join);
 		aliases.addAlias(joinClassAlias);
 		aliases.addAlias(overClause.getAlias());
 		return this;
 	}
 
-	/*
-	 * TODO: This should handle the more generic cases of "expression operator expression"
-	 */
-	public QuerySpecsBuilder where(final QueryAliasAttribute attribute, final Operator operator, final Object value) {
-		if (whereClause instanceof EmptyWhereClause) {
-			aliases.checkAlias(attribute.getEntryTypeAlias());
-			whereClause = new SimpleWhereClause(attribute, operator, value);
-		} else {
-			throw new UnsupportedOperationException("Only one single where expression is supported at this time");
-		}
+	public QuerySpecsBuilder where(final WhereClause clause) {
+		whereClause = (clause == null) ? new EmptyWhereClause() : clause;
 		return this;
 	}
 
@@ -194,16 +182,16 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	private QuerySpecs build() {
+	public QuerySpecs build() {
 		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias());
 
-		for (JoinClause jc : joinClauses) {
+		for (final JoinClause jc : joinClauses) {
 			if (jc.getTargets().isEmpty()) {
 				return new EmptyQuerySpecs();
 			}
 			qs.addJoin(jc);
 		}
-		for (QueryAttribute qa : attributes) {
+		for (final QueryAttribute qa : attributes) {
 			QueryAliasAttribute attribute;
 			// FIXME: Implement it with a QueryAttribute visitor
 			if (qa instanceof NamedAttribute) {
@@ -226,7 +214,7 @@ public class QuerySpecsBuilder {
 		return qs;
 	}
 
-	private Alias aliasForNamedAttribute(NamedAttribute na) {
+	private Alias aliasForNamedAttribute(final NamedAttribute na) {
 		final String aliasName = na.getEntryTypeAliasName();
 		if (aliasName == null) {
 			return aliases.getDefaultAlias();
@@ -243,12 +231,13 @@ public class QuerySpecsBuilder {
 	 * Object
 	 */
 
+	@Override
 	public String toString() {
 		return super.toString(); // TODO
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return EqualsBuilder.reflectionEquals(this, obj);
 	}
 

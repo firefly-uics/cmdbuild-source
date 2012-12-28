@@ -2,9 +2,9 @@ package org.cmdbuild.elements.database;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
+
+import javax.sql.DataSource;
 
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.elements.interfaces.IDomain;
@@ -13,20 +13,52 @@ import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.elements.wrappers.UserCard;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.DBService;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.services.PatchManager;
-import org.cmdbuild.services.Settings;
-import org.cmdbuild.services.auth.AuthenticationFacade;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.utils.FileUtils;
+import org.postgresql.ds.PGSimpleDataSource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class DatabaseConfigurator {
 
-	public static final String EXISTING_DBTYPE = "existing";
+	public interface Configuration {
+
+		String getHost();
+
+		int getPort();
+
+		String getUser();
+
+		String getPassword();
+
+		String getDatabaseName();
+
+		String getDatabaseType();
+
+		boolean useLimitedUser();
+
+		String getLimitedUser();
+
+		String getLimitedUserPassword();
+
+		boolean useSharkSchema();
+
+		String getSqlPath();
+
+	}
+
+	private static final String POSTGRES_SUPER_DATABASE = "postgres";
+	private static final String SQL_STATE_FOR_ALREADY_PRESENT_ELEMENT = "42710";
+
+	private static final String EXISTING_DBTYPE = "existing";
+	// TODO make it private
 	public static final String EMPTY_DBTYPE = "empty";
-	static final String SHARK_PASSWORD = "shark";
-	static final String SHARK_USERNAME = "shark";
-	static final String SHARK_SCHEMA = "shark";
+	private static final String SHARK_PASSWORD = "shark";
+	private static final String SHARK_USERNAME = "shark";
+	private static final String SHARK_SCHEMA = "shark";
 
 	private static String CREATE_LANGUAGE = "CREATE LANGUAGE plpgsql";
 	private static String CREATE_DATABASE = "CREATE DATABASE \"%s\" ENCODING = 'UTF8'";
@@ -34,142 +66,68 @@ public class DatabaseConfigurator {
 	private static String CREATE_SCHEMA = "CREATE SCHEMA %s";
 	private static String ALTER_DATABASE_OWNER = "ALTER DATABASE \"%s\" OWNER TO \"%s\"";
 	private static String GRANT_SCHEMA_PRIVILEGES = "GRANT ALL ON SCHEMA \"%s\" TO \"%s\"";
-	private static String ALTER_ROLE_PATH = "ALTER ROLE \"%s\" SET search_path=%s"; 
-
-	Connection superConnection;
-	Connection systemConnection;
-	Connection sharkConnection;
-
-	private String dbType;
-	private String dbName;
-	private String host;
-	private int port;
-	private boolean createSharkSchema;
-	private String user;
-	private String password;
-	private boolean createLimitedUser;
-	private String limitedUser;
-	private String limitedPassword;
+	private static String ALTER_ROLE_PATH = "ALTER ROLE \"%s\" SET search_path=%s";
 
 	private final String baseSqlPath;
 	private final String sampleSqlPath;
 	private final String sharkSqlPath;
 
-	/*
-	 * Setters
-	 */
+	private final Configuration configuration;
 
-	public DatabaseConfigurator() {
-		super();
-		String sqlPath = Settings.getInstance().getRootPath() +
-			"WEB-INF" + File.separator + "sql" + File.separator;
-		baseSqlPath = sqlPath + "base_schema" + File.separator;
-		sampleSqlPath = sqlPath + "sample_schemas" + File.separator;
-		sharkSqlPath = sqlPath + "shark_schema" + File.separator;
+	public DatabaseConfigurator(final Configuration configuration) {
+		this.configuration = configuration;
+		baseSqlPath = configuration.getSqlPath() + "base_schema" + File.separator;
+		sampleSqlPath = configuration.getSqlPath() + "sample_schemas" + File.separator;
+		sharkSqlPath = configuration.getSqlPath() + "shark_schema" + File.separator;
 	}
 
-	public void setDbType(String dbType) {
-		this.dbType = dbType;
+	public DataSource superDataSource() {
+		final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+		dataSource.setServerName(configuration.getHost());
+		dataSource.setPortNumber(configuration.getPort());
+		dataSource.setUser(configuration.getUser());
+		dataSource.setPassword(configuration.getPassword());
+		dataSource.setDatabaseName(POSTGRES_SUPER_DATABASE);
+		return dataSource;
 	}
 
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
+	public DataSource systemDataSource() {
+		final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+		dataSource.setServerName(configuration.getHost());
+		dataSource.setPortNumber(configuration.getPort());
+		dataSource.setUser(getSystemUser());
+		dataSource.setPassword(getSystemPassword());
+		dataSource.setDatabaseName(configuration.getDatabaseName());
+		return dataSource;
 	}
 
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public void setCreateSharkSchema(boolean createSharkSchema) {
-		this.createSharkSchema = createSharkSchema;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setCreateLimitedUser(boolean createLimitedUser) {
-		this.createLimitedUser = createLimitedUser;
-	}
-
-	public void setLimitedUser(String limitedUser) {
-		this.limitedUser = limitedUser;
-	}
-
-	public void setLimitedPassword(String limitedPassword) {
-		this.limitedPassword = limitedPassword;
-	}
-
-	/*
-	 * Handle connections
-	 */
-
-	private Connection getSuperConnection() throws SQLException {
-		if (superConnection == null)
-			superConnection = DBService.getConnection(host, port, user, password);
-		return superConnection;
-	}
-
-	private Connection getSystemConnection() throws SQLException {
-		if (systemConnection == null) {
-			systemConnection = DBService.getConnection(host, port, getSystemUser(), getSystemPassword(), dbName);
-		}
-		return systemConnection;
+	private DataSource sharkDataSource() {
+		final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+		dataSource.setServerName(configuration.getHost());
+		dataSource.setPortNumber(configuration.getPort());
+		dataSource.setUser(SHARK_USERNAME);
+		dataSource.setPassword(SHARK_PASSWORD);
+		dataSource.setDatabaseName(configuration.getDatabaseName());
+		return dataSource;
 	}
 
 	private boolean needsLimitedUser() {
-		return (limitedUser != null) && (limitedPassword != null);
+		return (configuration.getLimitedUser() != null) && (configuration.getLimitedUserPassword() != null);
 	}
 
 	private String getSystemUser() {
-		if (needsLimitedUser())
-			return limitedUser;
-		else
-			return user;
+		if (needsLimitedUser()) {
+			return configuration.getLimitedUser();
+		} else {
+			return configuration.getUser();
+		}
 	}
 
 	private String getSystemPassword() {
-		if (needsLimitedUser())
-			return limitedPassword;
-		else
-			return password;
-	}
-
-	private Connection getSharkConnection() throws SQLException {
-		if (sharkConnection == null)
-			sharkConnection = DBService.getConnection(host, port, SHARK_USERNAME, SHARK_PASSWORD, dbName);
-		return sharkConnection;
-	}
-
-	private void closeOpenedConnections() {
-		if (superConnection != null) {
-			try {
-				superConnection.close();
-			} catch (SQLException e) {
-				Log.SQL.error("Error closing super connection: " + e.getMessage());
-			}
-		}
-		if (systemConnection != null) {
-			try {
-				systemConnection.close();
-			} catch (SQLException e) {
-				Log.SQL.error("Error closing system connection: " + e.getMessage());
-			}
-		}
-		if (sharkConnection != null) {
-			try {
-				sharkConnection.close();
-			} catch (SQLException e) {
-				Log.SQL.error("Error closing Shark connection: " + e.getMessage());
-			}
+		if (needsLimitedUser()) {
+			return configuration.getLimitedUserPassword();
+		} else {
+			return configuration.getPassword();
 		}
 	}
 
@@ -185,7 +143,7 @@ public class DatabaseConfigurator {
 		configure(false);
 	}
 
-	private void configure(boolean saveSettings) {
+	private void configure(final boolean saveSettings) {
 		try {
 			prepareConfiguration();
 			createDatabaseIfNeeded();
@@ -194,63 +152,49 @@ public class DatabaseConfigurator {
 			if (saveSettings) {
 				saveConfiguration();
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			clearConfiguration();
-			if (e instanceof SQLException) {
-				throw ORMExceptionType.ORM_ERROR_GENERIC_SQL.createException(e.getMessage());
-			} else {
-				throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
-			}
-		} finally {
-			closeOpenedConnections();
+			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
 	}
 
 	private void addLastPatchIfEmptyDb() {
-		if (EMPTY_DBTYPE.equals(dbType)) {
+		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
 			PatchManager.getInstance().createLastPatch();
 		}
 	}
-	
-	private void createDatabaseIfNeeded() throws SQLException {
-		if (!EXISTING_DBTYPE.equals(dbType)) {
-			createDatabase(dbName);
+
+	private void createDatabaseIfNeeded() {
+		if (!EXISTING_DBTYPE.equals(configuration.getDatabaseType())) {
+			createDatabase(configuration.getDatabaseName());
 		}
 	}
 
-	private void createDatabase(String name) throws SQLException {
+	private void createDatabase(final String name) {
 		Log.OTHER.info("Creating database");
-		Statement stm = getSuperConnection().createStatement();
-		try {
-			stm.execute(String.format(CREATE_DATABASE, escapeSchemaName(name)));
-		} finally {
-			stm.close();
-		}
+		new JdbcTemplate(superDataSource()).execute(String.format(CREATE_DATABASE, escapeSchemaName(name)));
 	}
 
-	private void createPLSQLLanguage() throws SQLException {
+	private void createPLSQLLanguage() {
 		Log.OTHER.info("Creating PL/SQL language");
-		Statement stm = getSystemConnection().createStatement();
-		try { 
-			stm.execute(CREATE_LANGUAGE);
-		} catch(SQLException e){
-			Log.SQL.warn("Cannot create PL/SQL language. Present already?");
-		} finally {
-			stm.close();
+		try {
+			new JdbcTemplate(superDataSource()).execute(CREATE_LANGUAGE);
+		} catch (final DataAccessException e) {
+			forwardIfNotAlreadyPresentElement(e);
 		}
 	}
 
-	private void fillDatabaseIfNeeded() throws SQLException {
-		if (!EXISTING_DBTYPE.equals(dbType)) {
+	private void fillDatabaseIfNeeded() {
+		if (!EXISTING_DBTYPE.equals(configuration.getDatabaseType())) {
 			createSystemRoleIfNeeded();
 			alterDatabaseOwnerIfNeeded();
 			createPLSQLLanguage();
-			if (EMPTY_DBTYPE.equals(dbType)) {
+			if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
 				createCmdbuildStructure();
 			} else {
 				restoreSampleDB();
 			}
-			if (createSharkSchema) {
+			if (configuration.useSharkSchema()) {
 				createSharkRole();
 				createSchema(SHARK_SCHEMA);
 				grantSchemaPrivileges(SHARK_SCHEMA, SHARK_USERNAME);
@@ -259,166 +203,145 @@ public class DatabaseConfigurator {
 		}
 	}
 
-	private void alterDatabaseOwnerIfNeeded() throws SQLException {
+	private void alterDatabaseOwnerIfNeeded() {
 		if (needsLimitedUser())
-			alterDatabaseOwner(dbName, getSystemUser());
+			alterDatabaseOwner(configuration.getDatabaseName(), getSystemUser());
 	}
 
-	private void restoreSampleDB() throws SQLException {
+	private void restoreSampleDB() {
 		Log.OTHER.info("Restoring demo structure");
-		Statement stm = getSystemConnection().createStatement();
-		try {
-			stm.execute(FileUtils.getContents(sampleSqlPath + dbType + "_schema.sql"));
-		} finally {
-			stm.close();
-		}
+		new JdbcTemplate(superDataSource()).execute(FileUtils.getContents(sampleSqlPath
+				+ configuration.getDatabaseType() + "_schema.sql"));
 	}
 
-	private void createSharkTables() throws SQLException {
+	private void createSharkTables() {
 		Log.OTHER.info("Creating shark tables");
-		Statement stm = getSharkConnection().createStatement();
-		try {
-			stm.execute(FileUtils.getContents(sharkSqlPath + "02_shark_emptydb.sql"));
-		} finally {
-			stm.close();
-		}
+		new JdbcTemplate(sharkDataSource()).execute(FileUtils.getContents(sharkSqlPath + "02_shark_emptydb.sql"));
 	}
 
-	private void createSchema(String schema) throws SQLException {
-		Log.OTHER.info("Creating schema " + schema);
-		Statement stm = getSystemConnection().createStatement();
-		try {
-			stm.execute(String.format(CREATE_SCHEMA, escapeSchemaName(schema)));
-		} finally {
-			stm.close();
-		}
+	private void createSchema(final String schema) {
+		new JdbcTemplate(systemDataSource()).execute(String.format(CREATE_SCHEMA, escapeSchemaName(schema)));
 	}
 
-	private void createCmdbuildStructure() throws SQLException {
+	private void createCmdbuildStructure() {
 		Log.OTHER.info("Creating CMDBuild structure");
-		Statement stm = getSystemConnection().createStatement();
-		try {
-			stm.execute(FileUtils.getContents(baseSqlPath + "01_system_functions_base.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "02_system_functions_class.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "03_system_functions_attribute.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "04_system_functions_domain.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "05_base_tables.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "06_system_views_base.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "07_support_tables.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "08_user_tables.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "09_system_views_extras.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "10_system_functions_extras.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "11_workflow.sql"));
-			stm.execute(FileUtils.getContents(baseSqlPath + "12_tecnoteca_extras.sql"));
-		} finally {
-			stm.close();
-		}
+		final JdbcTemplate jdbcTemplate = new JdbcTemplate(systemDataSource());
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "01_system_functions_base.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "02_system_functions_class.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "03_system_functions_attribute.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "04_system_functions_domain.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "05_base_tables.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "06_system_views_base.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "07_support_tables.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "08_user_tables.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "09_system_views_extras.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "10_system_functions_extras.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "11_workflow.sql"));
+		jdbcTemplate.execute(FileUtils.getContents(baseSqlPath + "12_tecnoteca_extras.sql"));
 	}
 
-	private void createSystemRoleIfNeeded() throws SQLException {
-		if (createLimitedUser)
-			createRole(limitedUser, limitedPassword);
+	private void createSystemRoleIfNeeded() {
+		if (configuration.useLimitedUser())
+			createRole(configuration.getLimitedUser(), configuration.getLimitedUserPassword());
 	}
 
-	private void alterDatabaseOwner(String database, String role) throws SQLException {
+	private void alterDatabaseOwner(final String database, final String role) {
 		Log.OTHER.info("Changing database ownership");
-		Statement stm = getSuperConnection().createStatement();
-		try {
-			stm.execute(String.format(ALTER_DATABASE_OWNER,
-					escapeSchemaName(database),
-					escapeSchemaName(role)));
-		} finally {
-			stm.close();
-		}
+		new JdbcTemplate(superDataSource()).execute(String.format(ALTER_DATABASE_OWNER, escapeSchemaName(database),
+				escapeSchemaName(role)));
 	}
 
-	private void grantSchemaPrivileges(String schema, String role) throws SQLException {
+	private void grantSchemaPrivileges(final String schema, final String role) {
 		Log.OTHER.info("Granting schema privileges");
-		Statement stm = getSystemConnection().createStatement();
-		try {
-			stm.execute(String.format(GRANT_SCHEMA_PRIVILEGES,
-					escapeSchemaName(schema),
-					escapeSchemaName(role)));
-		} finally {
-			stm.close();
-		}
+		new JdbcTemplate(systemDataSource()).execute(String.format(GRANT_SCHEMA_PRIVILEGES, escapeSchemaName(schema),
+				escapeSchemaName(role)));
 	}
 
-	private void createRole(String roleName, String rolePassword) throws SQLException {
+	private void createRole(final String roleName, final String rolePassword) {
 		Log.OTHER.info("Creating role " + roleName);
-		Statement stm = getSuperConnection().createStatement();
-		try {
-			stm.execute(String.format(CREATE_ROLE, escapeSchemaName(roleName), escapeValue(rolePassword)));
-		} finally {
-			stm.close();
-		}
+		new JdbcTemplate(superDataSource()).execute(String.format(CREATE_ROLE, escapeSchemaName(roleName),
+				escapeValue(rolePassword)));
 	}
 
-	private void createSharkRole() throws SQLException {
+	private void createSharkRole() {
 		Log.OTHER.info("Creating shark role");
-		Statement stm = getSuperConnection().createStatement();
 		try {
-			stm.execute(String.format(CREATE_ROLE, SHARK_USERNAME, SHARK_PASSWORD));
-			stm.execute(String.format(ALTER_ROLE_PATH, SHARK_USERNAME, "pg_default,shark"));
-		} catch (SQLException e) {
-			// We don't care if the user shark already exists
-			if (!"42710".equals(e.getSQLState()))
-				throw e;
-		} finally {
-			stm.close();
+			final JdbcTemplate jdbcTemplate = new JdbcTemplate(superDataSource());
+			jdbcTemplate.execute(String.format(CREATE_ROLE, SHARK_USERNAME, SHARK_PASSWORD));
+			jdbcTemplate.execute(String.format(ALTER_ROLE_PATH, SHARK_USERNAME, "pg_default,shark"));
+		} catch (final DataAccessException e) {
+			forwardIfNotAlreadyPresentElement(e);
 		}
 	}
 
 	private void prepareConfiguration() throws IOException {
-	    DatabaseProperties dp = DatabaseProperties.getInstance();
-	    dp.setDatabaseUrl(String.format("jdbc:postgresql://%1$s:%2$s/%3$s", host, port, dbName));
-	    dp.setDatabaseUser(getSystemUser());
-	    dp.setDatabasePassword(getSystemPassword());
+		final DatabaseProperties dp = DatabaseProperties.getInstance();
+		dp.setDatabaseUrl(String.format("jdbc:postgresql://%1$s:%2$s/%3$s", configuration.getHost(),
+				configuration.getPort(), configuration.getDatabaseName()));
+		dp.setDatabaseUser(getSystemUser());
+		dp.setDatabasePassword(getSystemPassword());
 	}
 
 	private void saveConfiguration() throws IOException {
 		Log.OTHER.info("Saving configuration");
-	    DatabaseProperties dp = DatabaseProperties.getInstance();
-	    dp.store();
+		final DatabaseProperties dp = DatabaseProperties.getInstance();
+		dp.store();
 	}
 
 	private void clearConfiguration() {
-		DatabaseProperties dp = DatabaseProperties.getInstance();
+		final DatabaseProperties dp = DatabaseProperties.getInstance();
 		dp.clearConfiguration();
 	}
 
 	/*
-	 * NOTE: It MUST be called after the database has been configured, otherwise it will fail
+	 * NOTE: It MUST be called after the database has been configured, otherwise
+	 * it will fail
 	 */
-	public void createAdministratorIfNeeded(String adminUser, String adminPassword) {
-		if (EMPTY_DBTYPE.equals(dbType)) {
-			UserCard user = new UserCard();
+	public void createAdministratorIfNeeded(final String adminUser, final String adminPassword) {
+		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
+			final UserCard user = new UserCard();
 			user.setUsername(adminUser);
 			user.setUnencryptedPassword(adminPassword);
 			user.setDescription("Administrator");
 			user.save();
-			GroupCard role = new GroupCard();
+			final GroupCard role = new GroupCard();
 			role.setIsAdmin(true);
 			role.setName("SuperUser");
 			role.setDescription("SuperUser");
 			role.save();
-			UserContext systemCtx = UserContext.systemContext();
-			IDomain userRoleDomain = systemCtx.domains().get(AuthenticationFacade.USER_GROUP_DOMAIN_NAME);
-			IRelation relation = systemCtx.relations().create(userRoleDomain, user, role);
+			final UserContext systemCtx = UserContext.systemContext();
+			final IDomain userRoleDomain = UserOperations.from(systemCtx).domains().get(AuthenticationLogic.USER_GROUP_DOMAIN_NAME);
+			final IRelation relation = UserOperations.from(systemCtx).relations().create(userRoleDomain, user, role);
 			relation.save();
 		}
-    }
+	}
 
 	/*
 	 * We don't know what could go wrong if this is allowed
 	 */
-	private String escapeSchemaName(String name) {
-		if (name.indexOf('"') >= 0)
+	private String escapeSchemaName(final String name) {
+		if (name.indexOf('"') >= 0) {
 			throw ORMExceptionType.ORM_ILLEGAL_NAME_ERROR.createException(name);
+		}
 		return name;
 	}
 
-	private String escapeValue(String value) {
+	private String escapeValue(final String value) {
 		return value.replaceAll("'", "''");
 	}
+
+	private void forwardIfNotAlreadyPresentElement(final DataAccessException e) {
+		final Throwable cause = e.getCause();
+		if (cause instanceof SQLException) {
+			final String sqlState = SQLException.class.cast(cause).getSQLState();
+			if (!SQL_STATE_FOR_ALREADY_PRESENT_ELEMENT.equals(sqlState)) {
+				throw e;
+			} else {
+				// TODO log
+			}
+		} else {
+			throw e;
+		}
+	}
+
 }

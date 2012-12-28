@@ -2,8 +2,14 @@ package org.cmdbuild.dao.view;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
+import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 
@@ -12,8 +18,8 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
  */
 public interface CMDataView {
 
-//	CMClassDefinition newClass(String name);
 	CMClass findClassById(Long id);
+
 	CMClass findClassByName(String name);
 
 	/**
@@ -30,7 +36,20 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMClass> findAllClasses();
 
+	CMClass createClass(CMClassDefinition definition);
+
+	CMClass updateClass(CMClassDefinition definition);
+
+	void deleteClass(CMClass cmClass);
+
+	CMAttribute createAttribute(CMAttributeDefinition definition);
+
+	CMAttribute updateAttribute(CMAttributeDefinition definition);
+
+	void deleteAttribute(CMAttribute attribute);
+
 	CMDomain findDomainById(Long id);
+
 	CMDomain findDomainByName(String name);
 
 	/**
@@ -43,7 +62,8 @@ public interface CMDataView {
 	/**
 	 * Returns the active domains for a class
 	 * 
-	 * @param type the class i'm requesting the domains for
+	 * @param type
+	 *            the class i'm requesting the domains for
 	 * 
 	 * @return active domains for that class
 	 */
@@ -57,6 +77,12 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMDomain> findAllDomains();
 
+	CMDomain createDomain(CMDomainDefinition definition);
+
+	CMDomain updateDomain(CMDomainDefinition definition);
+
+	void deleteDomain(CMDomain domain);
+
 	CMFunction findFunctionByName(String name);
 
 	/**
@@ -67,12 +93,13 @@ public interface CMDataView {
 	Iterable<? extends CMFunction> findAllFunctions();
 
 	/**
-	 * Returns an empty card to be modified and saved. 
+	 * Returns an empty card to be modified and saved.
 	 * 
 	 * Note: it does not create a card in the data store until
 	 * {@link CMCardDefinition#save()} is called on the resulting object.
 	 * 
-	 * @param type class for the card
+	 * @param type
+	 *            class for the card
 	 * 
 	 * @return an empty modifiable card
 	 */
@@ -84,17 +111,48 @@ public interface CMDataView {
 	 * Note: the changes are not saved in the data store until
 	 * {@link CMCardDefinition#save()} is called on the resulting object.
 	 * 
-	 * @param card immutable card to be modified
+	 * @param card
+	 *            immutable card to be modified
 	 * 
 	 * @return a modifiable card from the immutable card
 	 */
 	CMCardDefinition modifyCard(CMCard card);
 
 	/**
+	 * Method that returns a mutable relation object. This object is a new
+	 * relation which will be created and stored in the database
+	 * 
+	 * @param domain
+	 *            the domain which the relation will belong to
+	 * @return a mutable object
+	 */
+	CMRelationDefinition newRelation(CMDomain domain);
+
+	/**
+	 * Method that returns a mutable relation object. This object is an object
+	 * representing a relation which already exists in the database
+	 * 
+	 * @param domain
+	 *            the domain which the relation belongs to
+	 * @return a mutable object
+	 */
+	CMRelationDefinition modifyRelation(CMRelation relation);
+
+	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
 	 * 
-	 * @param attrDef select parameters
+	 * @param attrDef
+	 *            select parameters
 	 * @return the builder for a new query
 	 */
 	QuerySpecsBuilder select(Object... attrDef);
+
+	/**
+	 * Clears all the contents for the specified type.
+	 * 
+	 * @param type
+	 *            is the type that is to be cleared.
+	 */
+	void clear(DBEntryType type);
+
 }

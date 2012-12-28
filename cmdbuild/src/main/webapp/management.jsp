@@ -8,7 +8,6 @@
 <%@ page import="org.cmdbuild.services.auth.UserContext"%>
 <%@ page import="org.cmdbuild.services.auth.Group"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
-<%@ page import="org.cmdbuild.services.FilterService"%>
 <%@ page import="org.cmdbuild.config.GisProperties"%>
 
 <%
@@ -17,7 +16,6 @@
 	UserContext userCtx = sessionVars.getCurrentUserContext();
 	User user = userCtx.getUser();
 	Group defaultGroup = userCtx.getDefaultGroup();
-	FilterService.clearFilters(null, null);
 	String extVersion = "4.1.0";
 %>
 
@@ -106,7 +104,7 @@
 			<div id="msg-ct" class="msg-blue">
 				<div id="msg">
 					<div id="msg-inner">
-						<p><tr:translation key="common.user"/>: <strong><%= user %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
+						<p><tr:translation key="common.user"/>: <strong><%= user.getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
 						<p id="msg-inner-hidden">
 							<tr:translation key="common.group"/>: <strong><%= defaultGroup.getDescription() %></strong>
 							<% if (userCtx.privileges().isAdmin()) { %>

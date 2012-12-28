@@ -3,7 +3,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 public abstract class AbstractAttributeType<T> implements CMAttributeType<T> {
 
 	@Override
-	public final T convertValue(Object value) {
+	public final T convertValue(final Object value) {
 		if (value == null) {
 			return null;
 		} else {
@@ -14,8 +14,11 @@ public abstract class AbstractAttributeType<T> implements CMAttributeType<T> {
 	/**
 	 * Casts a value that is assumed not to be null to the native type.
 	 * 
-	 * @param not null value of any type
-	 * @return value of the native type
+	 * @param value
+	 *            not null value of any type.
+	 * 
+	 * @return the value of the native type.
 	 */
 	protected abstract T convertNotNullValue(Object value);
+
 }

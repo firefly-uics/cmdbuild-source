@@ -23,6 +23,7 @@ import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.GroupImpl;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class GroupCard extends LazyCard {
 
@@ -47,7 +48,8 @@ public class GroupCard extends LazyCard {
 	public static final String GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED = "ProcessWidgetAlwaysEnabled";
 	public static final String GROUP_ATTRIBUTE_CLOUD_ADMIN = "CloudAdmin";
 
-	private static final ITable roleClass = UserContext.systemContext().tables().get(GROUP_CLASS_NAME);
+	private static final ITable roleClass = UserOperations.from(UserContext.systemContext()).tables()
+			.get(GROUP_CLASS_NAME);
 
 	public GroupCard() throws NotFoundException {
 		super(roleClass.cards().create());
@@ -150,11 +152,11 @@ public class GroupCard extends LazyCard {
 		try {
 			if (hasStartingClassId()) {
 				final Integer startingClassId = getStartingClassId();
-				return UserContext.systemContext().tables().get(startingClassId);
+				return UserOperations.from(UserContext.systemContext()).tables().get(startingClassId);
 			} else {
 				final String startingClassName = CmdbuildProperties.getInstance().getStartingClassName();
 				if (startingClassName != null) {
-					return UserContext.systemContext().tables().get(startingClassName);
+					return UserOperations.from(UserContext.systemContext()).tables().get(startingClassName);
 				}
 			}
 		} catch (final Exception e) {
@@ -198,7 +200,8 @@ public class GroupCard extends LazyCard {
 	public static GroupCard getOrCreate(final int groupId) {
 		GroupCard groupCard;
 		if (groupId <= 0) {
-			final ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().create();
+			final ICard card = UserOperations.from(UserContext.systemContext()).tables()
+					.get(GroupCard.GROUP_CLASS_NAME).cards().create();
 			groupCard = new GroupCard(card);
 		} else {
 			groupCard = getOrDie(groupId);
@@ -207,16 +210,17 @@ public class GroupCard extends LazyCard {
 	}
 
 	public static GroupCard getOrDie(final int groupId) {
-		final ICard card = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards().list()
-				.ignoreStatus().id(groupId).get();
+		final ICard card = UserOperations.from(UserContext.systemContext()).tables().get(GroupCard.GROUP_CLASS_NAME)
+				.cards().list().ignoreStatus().id(groupId).get();
 		return new GroupCard(card);
 	}
 
 	public static GroupCard getOrNull(final String groupName) {
 		GroupCard groupCard = null;
 		if (isNotEmpty(groupName)) {
-			final CardQuery groupQuery = UserContext.systemContext().tables().get(GroupCard.GROUP_CLASS_NAME).cards()
-					.list().ignoreStatus().filter(GROUP_NAME_ATTRIBUTE, AttributeFilterType.EQUALS, groupName);
+			final CardQuery groupQuery = UserOperations.from(UserContext.systemContext()).tables()
+					.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus()
+					.filter(GROUP_NAME_ATTRIBUTE, AttributeFilterType.EQUALS, groupName);
 			final Iterator<ICard> it = groupQuery.iterator();
 			if (it.hasNext()) {
 				groupCard = new GroupCard(it.next());

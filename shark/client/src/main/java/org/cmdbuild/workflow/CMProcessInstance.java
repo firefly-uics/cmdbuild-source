@@ -7,10 +7,16 @@ import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
+/**
+ * Immutable process instance.
+ */
 public interface CMProcessInstance extends CMCard {
 
-	// FIXME Unlucky name :(
+	/**
+	 * {@link CMProcessInstance} mutator object. FIXME Unlucky name :(
+	 */
 	interface CMProcessInstanceDefinition extends CMCardDefinition {
+
 		@Override
 		CMProcessInstanceDefinition set(String key, Object value);
 
@@ -36,6 +42,7 @@ public interface CMProcessInstance extends CMCard {
 		 */
 		@Override
 		CMProcessInstance save();
+
 	}
 
 	/**
@@ -85,4 +92,5 @@ public interface CMProcessInstance extends CMCard {
 	 * @return unique process definition informations
 	 */
 	WSProcessDefInfo getUniqueProcessDefinition();
+
 }

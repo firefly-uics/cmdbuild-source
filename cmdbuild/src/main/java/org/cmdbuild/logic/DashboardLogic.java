@@ -24,9 +24,9 @@ import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
 import org.cmdbuild.services.store.DashboardStore;
 
 /**
- * Business Logic Layer for Data Access
+ * Business Logic Layer for Dashboards
  */
-public class DashboardLogic {
+public class DashboardLogic implements Logic {
 
 	public static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
 

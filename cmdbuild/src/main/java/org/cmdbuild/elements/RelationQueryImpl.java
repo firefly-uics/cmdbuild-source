@@ -28,11 +28,12 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class RelationQueryImpl implements RelationQuery {
 
-	private Set<ICard> cards;
-	private Set<DirectedDomain> domains;
+	private final Set<ICard> cards;
+	private final Set<DirectedDomain> domains;
 	private boolean history;
 	private boolean straightened;
 	private boolean domainCounted;
@@ -41,7 +42,7 @@ public class RelationQueryImpl implements RelationQuery {
 	private LimitFilter limit;
 	private boolean orderedByDomain;
 
-	public RelationQueryImpl(ICard card) {
+	public RelationQueryImpl(final ICard card) {
 		this();
 		this.cards.add(card);
 	}
@@ -56,26 +57,31 @@ public class RelationQueryImpl implements RelationQuery {
 		this.fullCards = false;
 	}
 
+	@Override
 	public RelationQuery history() {
 		this.history = true;
 		return this;
 	}
 
+	@Override
 	public RelationQuery straightened() {
 		this.straightened = true;
 		return this;
 	}
 
-	public RelationQuery card(ICard card) {
+	@Override
+	public RelationQuery card(final ICard card) {
 		this.cards.add(card);
 		return this;
 	}
 
-	public RelationQuery domain(DirectedDomain directedDomain) {
+	@Override
+	public RelationQuery domain(final DirectedDomain directedDomain) {
 		return domain(directedDomain, false);
 	}
 
-	public RelationQuery domain(DirectedDomain directedDomain, boolean fullCards) {
+	@Override
+	public RelationQuery domain(final DirectedDomain directedDomain, final boolean fullCards) {
 		if (fullCards) {
 			if (!this.domains.isEmpty()) {
 				throw ORMExceptionType.ORM_FULLCARDS_MULTIPLEDOMAINS.createException();
@@ -86,37 +92,44 @@ public class RelationQueryImpl implements RelationQuery {
 		return this;
 	}
 
-	public RelationQuery domain(IDomain domain) {
+	@Override
+	public RelationQuery domain(final IDomain domain) {
 		this.domains.add(DirectedDomain.create(domain, DomainDirection.D));
 		this.domains.add(DirectedDomain.create(domain, DomainDirection.I));
 		return this;
 	}
 
-	public RelationQuery domainLimit(int domainLimit) {
+	@Override
+	public RelationQuery domainLimit(final int domainLimit) {
 		this.domainLimit = domainLimit;
 		this.domainCounted = true;
 		return this;
 	}
 
+	@Override
 	public RelationQuery orderByDomain() {
 		this.orderedByDomain = true;
 		return this;
 	}
-	
-	public RelationQuery subset(int offset, int limit) {
+
+	@Override
+	public RelationQuery subset(final int offset, final int limit) {
 		if (offset >= 0 && limit > 0)
 			this.limit = new LimitFilter(offset, limit);
 		return this;
 	};
 
+	@Override
 	public Set<ICard> getCards() {
 		return cards;
 	}
 
+	@Override
 	public Set<DirectedDomain> getDomains() {
 		return domains;
 	}
-	
+
+	@Override
 	public DirectedDomain getFullCardsDomain() {
 		if (isFullCards())
 			return domains.iterator().next();
@@ -124,106 +137,118 @@ public class RelationQueryImpl implements RelationQuery {
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 	}
 
+	@Override
 	public boolean isHistory() {
 		return history;
 	}
 
+	@Override
 	public boolean isDomainCounted() {
 		return domainCounted;
 	}
 
+	@Override
 	public int getDomainLimit() {
 		return domainLimit;
 	}
 
+	@Override
 	public boolean isStraightened() {
 		return straightened;
 	}
 
+	@Override
 	public boolean isDomainLimited() {
 		return (domainLimit != 0);
 	}
 
+	@Override
 	public boolean isOrderedByDomain() {
 		return orderedByDomain;
 	}
 
+	@Override
 	public LimitFilter getLimit() {
 		return this.limit;
 	}
 
+	@Override
 	public boolean isFullCards() {
 		return fullCards;
 	}
 
+	@Override
 	public Iterator<IRelation> iterator() {
 		return getIterable().iterator();
 	}
 
+	@Override
 	public Iterable<IRelation> getIterable() {
 		this.domainCounted = false;
 		return new NotCountedIterable(this);
 	}
 
+	@Override
 	public Iterable<CountedValue<IRelation>> getCountedIterable() {
 		this.domainCounted = true;
 		return new CountedIterable(this);
 	}
 
-	private ICard buildDestCard(ResultSet rs, QueryComponents queryComponents) throws SQLException {
-		ICard destCard = new CardImpl(rs.getInt("idclass2"));
+	private ICard buildDestCard(final ResultSet rs, final QueryComponents queryComponents) throws SQLException {
+		final ICard destCard = new CardImpl(rs.getInt("idclass2"));
 		if (isFullCards()) {
 			buildFullDestCard(destCard, rs, queryComponents);
 		} else {
-			buildBasicDestCard(destCard, rs);				
+			buildBasicDestCard(destCard, rs);
 		}
 		return destCard;
 	}
 
-	private void buildFullDestCard(ICard destCard, ResultSet rs, QueryComponents queryComponents) throws SQLException {
-		ITable destinationClass = this.getFullCardsDomain().getDestTable();
-		Map<String, QueryAttributeDescriptor> queryMapping = queryComponents.getQueryMapping();
-		for (String attributeName: destinationClass.getAttributes().keySet()) {
-			QueryAttributeDescriptor qad = queryMapping.get(attributeName);
+	private void buildFullDestCard(final ICard destCard, final ResultSet rs, final QueryComponents queryComponents)
+			throws SQLException {
+		final ITable destinationClass = this.getFullCardsDomain().getDestTable();
+		final Map<String, QueryAttributeDescriptor> queryMapping = queryComponents.getQueryMapping();
+		for (final String attributeName : destinationClass.getAttributes().keySet()) {
+			final QueryAttributeDescriptor qad = queryMapping.get(attributeName);
 			Log.SQL.trace("Setting value for attribute " + attributeName);
 			destCard.setValue(attributeName, rs, qad);
 		}
 	}
 
-	private void buildBasicDestCard(ICard destCard, ResultSet rs) throws SQLException {
+	private void buildBasicDestCard(final ICard destCard, final ResultSet rs) throws SQLException {
 		destCard.setValue("Id", rs.getObject("idobj2"));
 		destCard.setValue("Code", rs.getObject("fieldcode"));
 		destCard.setValue("Description", rs.getObject("fielddescription"));
 	}
 
 	private abstract class BaseIterable<T> implements Iterable<T> {
-		private boolean straightened;
-		private List<T> list = new LinkedList<T>();
-		private RelationQuery relationQuery;
+		private final boolean straightened;
+		private final List<T> list = new LinkedList<T>();
+		private final RelationQuery relationQuery;
 
-		BaseIterable(RelationQuery relationQuery) {
+		BaseIterable(final RelationQuery relationQuery) {
 			this.relationQuery = relationQuery;
 			this.straightened = relationQuery.isStraightened();
 			executeQuery();
 		}
 
 		private void executeQuery() {
-			Connection con = DBService.getConnection();
+			final Connection con = DBService.getConnection();
 			Statement stm = null;
-			ResultSet rs = null; 
-			RelationQueryBuilder qb = new RelationQueryBuilder();
-			String query = qb.buildSelectQuery(relationQuery);
+			ResultSet rs = null;
+			final RelationQueryBuilder qb = new RelationQueryBuilder();
+			final String query = qb.buildSelectQuery(relationQuery);
 			try {
 				stm = con.createStatement();
 				rs = stm.executeQuery(query);
-				while(rs.next()) {
+				while (rs.next()) {
 					try {
 						list.add(createElement(rs, qb));
-					} catch (NotFoundException e) {
+					} catch (final NotFoundException e) {
 						Log.PERSISTENCE.debug("Relation domain not found", e);
 					}
 				}
-			} catch (SQLException ex) {
+			} catch (final SQLException ex) {
 				Log.PERSISTENCE.error("Errors finding card relations", ex);
 			} finally {
 				DBService.close(rs, stm);
@@ -232,19 +257,20 @@ public class RelationQueryImpl implements RelationQuery {
 
 		abstract T createElement(ResultSet rs, RelationQueryBuilder qb) throws SQLException;
 
-		protected IRelation createRelation(ResultSet rs, RelationQueryBuilder qb) throws SQLException {
+		protected IRelation createRelation(final ResultSet rs, final RelationQueryBuilder qb) throws SQLException {
 			IRelation relation;
-			IDomain domain = UserContext.systemContext().domains().get(rs.getInt("iddomain"));
-			ICard srcCard = new LazyCard(rs.getInt("idclass1"), rs.getInt("idobj1"));
+			final IDomain domain = UserOperations.from(UserContext.systemContext()).domains()
+					.get(rs.getInt("iddomain"));
+			final ICard srcCard = new LazyCard(rs.getInt("idclass1"), rs.getInt("idobj1"));
 			ICard destCard;
 			try {
-				destCard = buildDestCard(rs, qb.getQueryComponents());							
-			} catch (NotFoundException e) {
+				destCard = buildDestCard(rs, qb.getQueryComponents());
+			} catch (final NotFoundException e) {
 				destCard = null;
 			}
-			Integer id = rs.getInt("id");
-			boolean isDirect = rs.getBoolean("direct");
-			boolean reversedRelation = straightened && !isDirect;
+			final Integer id = rs.getInt("id");
+			final boolean isDirect = rs.getBoolean("direct");
+			final boolean reversedRelation = straightened && !isDirect;
 			if (!straightened && !isDirect) {
 				relation = new RelationImpl(id, domain, destCard, srcCard, reversedRelation);
 			} else {
@@ -261,6 +287,7 @@ public class RelationQueryImpl implements RelationQuery {
 			return relation;
 		}
 
+		@Override
 		public Iterator<T> iterator() {
 			return list.iterator();
 		}
@@ -268,23 +295,25 @@ public class RelationQueryImpl implements RelationQuery {
 
 	public class NotCountedIterable extends BaseIterable<IRelation> {
 
-		NotCountedIterable(RelationQuery relationQuery) {
+		NotCountedIterable(final RelationQuery relationQuery) {
 			super(relationQuery);
 		}
 
-		IRelation createElement(ResultSet rs, RelationQueryBuilder qb) throws SQLException {
+		@Override
+		IRelation createElement(final ResultSet rs, final RelationQueryBuilder qb) throws SQLException {
 			return createRelation(rs, qb);
 		}
 	}
 
 	public class CountedIterable extends BaseIterable<CountedValue<IRelation>> {
 
-		CountedIterable(RelationQuery relationQuery) {
+		CountedIterable(final RelationQuery relationQuery) {
 			super(relationQuery);
 		}
 
-		CountedValue<IRelation> createElement(ResultSet rs, RelationQueryBuilder qb) throws SQLException {
-			IRelation relation = createRelation(rs, qb);
+		@Override
+		CountedValue<IRelation> createElement(final ResultSet rs, final RelationQueryBuilder qb) throws SQLException {
+			final IRelation relation = createRelation(rs, qb);
 			return new CountedValue<IRelation>(rs.getInt("count"), relation);
 		}
 	}

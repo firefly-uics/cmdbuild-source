@@ -1,9 +1,12 @@
 package org.cmdbuild.workflow;
 
+import static java.lang.String.format;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
+import static org.apache.commons.lang.StringUtils.*;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -13,10 +16,11 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -24,7 +28,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.joda.time.DateTime;
@@ -86,13 +89,18 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
+		public void visit(EntryTypeAttributeType attributeType) {
+			throwIllegalType(attributeType);
+		}
+
+		@Override
 		public void visit(ForeignKeyAttributeType attributeType) {
-			throw new IllegalArgumentException("Can't send a geometry type to Shark!");
+			throwIllegalType(attributeType);
 		}
 
 		@Override
 		public void visit(GeometryAttributeType attributeType) {
-			throw new IllegalArgumentException("Can't send a geometry type to Shark!");
+			throwIllegalType(attributeType);
 		}
 
 		@Override
@@ -105,7 +113,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		}
 
 		@Override
-		public void visit(IPAddressAttributeType attributeType) {
+		public void visit(IpAddressAttributeType attributeType) {
 			if (input == null) {
 				output = SharkTypeDefaults.defaultString();
 			} else {
@@ -149,10 +157,16 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 				output = convertDateTime(input);
 			}
 		}
+
+		private void throwIllegalType(CMAttributeType<?> attributeType) {
+			final String message = format("cannot send a '%s' to Shark", attributeType.getClass());
+			throw new IllegalArgumentException(message);
+		}
+
 	}
 
 	private final IntegerAttributeType ID_TYPE = new IntegerAttributeType();
-	private final String NO_DESCRIPTION = StringUtils.EMPTY;
+	private final String NO_DESCRIPTION = EMPTY;
 
 	/**
 	 * It's needed to convert class names to legacy ids... argh!

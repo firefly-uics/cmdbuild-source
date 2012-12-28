@@ -26,20 +26,18 @@ public class DBRelationTest extends DBDataFixture {
 	private static final String C1 = "C1";
 	private static final String C2 = "C2";
 
-	private DomainInfo D;
+	private final DomainInfo D;
 
-	public DBRelationTest(DomainInfo domainInfo) {
+	public DBRelationTest(final DomainInfo domainInfo) {
 		D = domainInfo;
 	}
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] {
-			{ new DomainInfo("D_11", C1, C2, IDomain.CARDINALITY_11) },
-			{ new DomainInfo("D_N1", C1, C2, IDomain.CARDINALITY_N1) },
-			{ new DomainInfo("D_1N", C1, C2, IDomain.CARDINALITY_1N) },
-			{ new DomainInfo("D_NN", C1, C2, IDomain.CARDINALITY_NN) }
-		});
+		return Arrays.asList(new Object[][] { { new DomainInfo("D_11", C1, C2, IDomain.CARDINALITY_11) },
+				{ new DomainInfo("D_N1", C1, C2, IDomain.CARDINALITY_N1) },
+				{ new DomainInfo("D_1N", C1, C2, IDomain.CARDINALITY_1N) },
+				{ new DomainInfo("D_NN", C1, C2, IDomain.CARDINALITY_NN) } });
 	}
 
 	@Before
@@ -69,7 +67,9 @@ public class DBRelationTest extends DBDataFixture {
 		try {
 			insertRelation(D, C1, c1, C2, c2);
 			fail("Duplicate relation created without errors!");
-		} catch(SQLException e) {};
+		} catch (final SQLException e) {
+		}
+		;
 	}
 
 }

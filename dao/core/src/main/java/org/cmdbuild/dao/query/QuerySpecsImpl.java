@@ -25,7 +25,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private Long limit;
 	private WhereClause whereClause;
 
-	public QuerySpecsImpl(final CMEntryType fromType, final  Alias fromAlias) {
+	public QuerySpecsImpl(final CMEntryType fromType, final Alias fromAlias) {
 		this.fromType = fromType;
 		this.fromAlias = fromAlias;
 		joinClauses = new ArrayList<JoinClause>();
@@ -36,10 +36,12 @@ public class QuerySpecsImpl implements QuerySpecs {
 		whereClause = new EmptyWhereClause();
 	}
 
+	@Override
 	public CMEntryType getFromType() {
 		return fromType;
 	}
 
+	@Override
 	public Alias getFromAlias() {
 		return fromAlias;
 	}
@@ -48,10 +50,12 @@ public class QuerySpecsImpl implements QuerySpecs {
 		joinClauses.add(jc);
 	}
 
+	@Override
 	public List<JoinClause> getJoins() {
 		return joinClauses;
 	}
 
+	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {
 		return this.attributes;
 	}
@@ -72,6 +76,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.whereClause = whereClause;
 	}
 
+	@Override
 	public WhereClause getWhereClause() {
 		return whereClause;
 	}
@@ -80,6 +85,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.offset = offset;
 	}
 
+	@Override
 	public Long getOffset() {
 		return offset;
 	}
@@ -88,6 +94,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.limit = limit;
 	}
 
+	@Override
 	public Long getLimit() {
 		return limit;
 	}

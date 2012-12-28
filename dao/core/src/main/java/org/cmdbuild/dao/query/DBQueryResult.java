@@ -3,10 +3,14 @@ package org.cmdbuild.dao.query;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import net.jcip.annotations.NotThreadSafe;
 
 /*
  * Mutable classes used by the driver implementations
  */
+@NotThreadSafe
 public class DBQueryResult implements CMQueryResult {
 
 	Collection<CMQueryRow> rows;
@@ -43,5 +47,15 @@ public class DBQueryResult implements CMQueryResult {
 	@Override
 	public int totalSize() {
 		return totalSize;
+	}
+
+	@Override
+	public CMQueryRow getOnlyRow() throws NoSuchElementException {
+		final Iterator<CMQueryRow> i = iterator();
+		final CMQueryRow row = i.next();
+		if (i.hasNext()) {
+			throw new NoSuchElementException("More than one row returned");
+		}
+		return row;
 	}
 }

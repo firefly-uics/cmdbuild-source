@@ -31,7 +31,7 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 		public CMAttributeType<?> getType() {
 			return type;
 		}
-		
+
 	}
 
 	private final List<CMFunctionParameter> inputParameters;
@@ -40,7 +40,7 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 	private final List<CMFunctionParameter> unmodifiableInputParameters;
 	private final List<CMFunctionParameter> unmodifiableOutputParameters;
 
-	private boolean returnsSet;
+	private final boolean returnsSet;
 
 	public DBFunction(final String name, final Long id, final boolean returnsSet) {
 		super(name, id);
@@ -66,11 +66,11 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 		return unmodifiableOutputParameters;
 	}
 
-	public void addInputParameter(String name, final CMAttributeType<?> type) {
+	public void addInputParameter(final String name, final CMAttributeType<?> type) {
 		inputParameters.add(new DBFunctionParameter(name, type));
 	}
 
-	public void addOutputParameter(String name, final CMAttributeType<?> type) {
+	public void addOutputParameter(final String name, final CMAttributeType<?> type) {
 		outputParameters.add(new DBFunctionParameter(name, type));
 	}
 

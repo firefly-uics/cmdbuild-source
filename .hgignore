@@ -9,3 +9,4 @@ target
 META-INF/MANIFEST.MF
 DatabaseManager.log
 
+alfresco.log

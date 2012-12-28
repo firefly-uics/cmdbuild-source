@@ -20,6 +20,7 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 
 public class TableImpl extends BaseSchemaImpl implements ITable {
@@ -29,44 +30,44 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	public enum TableDataDefinitionMeta {
 		MODE {
 			@Override
-			public void setValue(ITable table, String value) {
+			public void setValue(final ITable table, final String value) {
 				table.setMode(value);
 			}
 
 			@Override
-			public String getValue(ITable table) {
+			public String getValue(final ITable table) {
 				return table.getMode().getModeString();
 			}
 		},
 		DESCR {
 			@Override
-			public void setValue(ITable table, String value) {
+			public void setValue(final ITable table, final String value) {
 				table.setDescription(value);
 			}
 
 			@Override
-			public String getValue(ITable table) {
+			public String getValue(final ITable table) {
 				return table.getDescription();
 			}
 		},
 		STATUS {
 			@Override
-			public void setValue(ITable table, String value) {
+			public void setValue(final ITable table, final String value) {
 				table.setStatus(SchemaStatus.fromStatusString(value));
 			}
 
 			@Override
-			public String getValue(ITable table) {
+			public String getValue(final ITable table) {
 				return table.getStatus().commentString();
 			}
 		},
 		TYPE {
 			@Override
-			public void setValue(ITable table, String value) {
+			public void setValue(final ITable table, final String value) {
 				CMTableType type;
 				try {
 					type = CMTableType.fromMetaValue(value);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					type = CMTableType.CLASS;
 					Log.PERSISTENCE.warn(String.format("Wrong type (%s) for table %s, using %s", value,
 							table.getName(), type));
@@ -75,44 +76,44 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 			}
 
 			@Override
-			public String getValue(ITable table) {
+			public String getValue(final ITable table) {
 				return table.getTableType().toMetaValue();
 			}
 		},
 		SUPERCLASS {
 			@Override
-			public void setValue(ITable table, String value) {
+			public void setValue(final ITable table, final String value) {
 				table.setSuperClass(Boolean.parseBoolean(value));
 			}
 
 			@Override
-			public String getValue(ITable table) {
+			public String getValue(final ITable table) {
 				return Boolean.toString(table.isSuperClass());
 			}
 		},
 		USERSTOPPABLE {
 			@Override
-			public void setValue(ITable table, String value) {
+			public void setValue(final ITable table, final String value) {
 				table.setUserStoppable(Boolean.parseBoolean(value));
 			}
 
 			@Override
-			public String getValue(ITable table) {
+			public String getValue(final ITable table) {
 				return Boolean.toString(table.isUserStoppable());
 			}
 		},
 		MANAGER;
 
-		public String getValue(ITable table) {
+		public String getValue(final ITable table) {
 			return null;
 		}
 
-		public void setValue(ITable table, String value) {
+		public void setValue(final ITable table, final String value) {
 			Log.PERSISTENCE.info(String.format("Found legacy meta-attribute %s for table %s", name(), table.getName()));
 		}
 
-		static TableDataDefinitionMeta caseInsensitiveValueOf(String name) {
-			for (TableDataDefinitionMeta item : TableDataDefinitionMeta.values()) {
+		static TableDataDefinitionMeta caseInsensitiveValueOf(final String name) {
+			for (final TableDataDefinitionMeta item : TableDataDefinitionMeta.values()) {
 				// it is okay to throw null pointer exception if name is null
 				if (name.equalsIgnoreCase(item.name())) {
 					return item;
@@ -134,28 +135,29 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		status = SchemaStatus.ACTIVE;
 	}
 
-	public TableImpl(String name, String comment, int oid) {
+	public TableImpl(final String name, final String comment, final int oid) {
 		super();
 		this.oid = oid;
 		setName(name);
 		readDataDefinitionMeta(backend.parseComment(comment));
 	}
 
-	public boolean equals(Object o) {
+	@Override
+	public boolean equals(final Object o) {
 		if (o instanceof ITable)
 			return ((ITable) o).getName().equals(name);
 		return false;
 	}
 
 	@Override
-	public void readDataDefinitionMeta(Map<String, String> dataDefinitionMeta) {
-		for (Entry<String, String> entry : dataDefinitionMeta.entrySet()) {
-			String name = entry.getKey();
-			String value = entry.getValue();
+	public void readDataDefinitionMeta(final Map<String, String> dataDefinitionMeta) {
+		for (final Entry<String, String> entry : dataDefinitionMeta.entrySet()) {
+			final String name = entry.getKey();
+			final String value = entry.getValue();
 			TableDataDefinitionMeta ddm = null;
 			try {
 				ddm = TableDataDefinitionMeta.valueOf(name);
-			} catch (IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				Log.PERSISTENCE.warn(String.format("Meta-attribute %s not valid for table %s", name, this.getName()));
 			}
 			if (ddm != null) {
@@ -166,9 +168,9 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 
 	@Override
 	public Map<String, String> genDataDefinitionMeta() {
-		Map<String, String> dataDefinitionMeta = new TreeMap<String, String>();
-		for (TableDataDefinitionMeta meta : TableDataDefinitionMeta.values()) {
-			String value = meta.getValue(this);
+		final Map<String, String> dataDefinitionMeta = new TreeMap<String, String>();
+		for (final TableDataDefinitionMeta meta : TableDataDefinitionMeta.values()) {
+			final String value = meta.getValue(this);
 			if (value != null) {
 				dataDefinitionMeta.put(meta.name(), value);
 			}
@@ -176,6 +178,7 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		return dataDefinitionMeta;
 	}
 
+	@Override
 	public void save() throws ORMException {
 		if (isNew()) {
 			oid = backend.createTable(this);
@@ -184,15 +187,18 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		}
 	}
 
+	@Override
 	public void delete() {
 		backend.deleteTable(this);
 		MetadataService.deleteMetadata(this);
 	}
 
+	@Override
 	public boolean isNew() {
 		return (oid <= 0);
 	}
 
+	@Override
 	public void setTableType(CMTableType type) {
 		if (type != CMTableType.CLASS && type != CMTableType.SIMPLECLASS) {
 			type = CMTableType.CLASS;
@@ -202,59 +208,72 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		super.setTableType(type);
 	}
 
-	public void setDescription(String description) {
+	@Override
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	public void setSuperClass(boolean isSuperClass) {
+	@Override
+	public void setSuperClass(final boolean isSuperClass) {
 		this.isSuperClass = isSuperClass;
 	}
 
+	@Override
 	public boolean isSuperClass() {
 		return isSuperClass;
 	}
 
+	@Override
 	public ITable getParent() {
 		return parent;
 	}
 
-	public void setParent(String parent) throws NotFoundException {
-		this.parent = UserContext.systemContext().tables().get(parent);
+	@Override
+	public void setParent(final String parent) throws NotFoundException {
+		this.parent = UserOperations.from(UserContext.systemContext()).tables().get(parent);
 	}
 
-	public void setParent(Integer parent) throws NotFoundException {
-		this.parent = UserContext.systemContext().tables().get(parent);
+	@Override
+	public void setParent(final Integer parent) throws NotFoundException {
+		this.parent = UserOperations.from(UserContext.systemContext()).tables().get(parent);
 	}
 
-	public void setParent(ITable parent) {
+	@Override
+	public void setParent(final ITable parent) {
 		this.parent = parent;
 	}
 
+	@Override
 	public String toString() {
 		return getDescription();
 	}
 
+	@Override
 	public CardFactory cards() {
 		return new CardFactoryImpl(this, UserContext.systemContext());
 	}
 
+	@Override
 	public TableTree treeBranch() {
 		return TableImpl.tree().branch(this.getName());
 	}
 
+	@Override
 	public ArrayList<ITable> getChildren() {
-		TableTree branch = treeBranch();
-		ArrayList<ITable> children = new ArrayList<ITable>();
-		for (ITable child : branch) {
+		final TableTree branch = treeBranch();
+		final ArrayList<ITable> children = new ArrayList<ITable>();
+		for (final ITable child : branch) {
 			children.add(child);
 		}
 		return children;
 	}
 
+	@Override
 	public boolean hasChild() {
 		return treeBranch().getLeaves().isEmpty();
 	}
@@ -263,14 +282,14 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	 * TODO Implement a real table tree
 	 */
 	public static TableTree tree() {
-		return UserContext.systemContext().tables().tree();
+		return UserOperations.from(UserContext.systemContext()).tables().tree();
 	}
 
 	public class OrderEntry {
-		private String attributeName;
-		private OrderFilterType orderDirection;
+		private final String attributeName;
+		private final OrderFilterType orderDirection;
 
-		private OrderEntry(String attributeName, OrderFilterType orderDirection) {
+		private OrderEntry(final String attributeName, final OrderFilterType orderDirection) {
 			this.attributeName = attributeName;
 			this.orderDirection = orderDirection;
 		}
@@ -284,9 +303,10 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		}
 	}
 
+	@Override
 	public List<OrderEntry> getOrdering() {
-		List<OrderEntry> orderingList = new LinkedList<OrderEntry>();
-		List<IAttribute> sortedAttributes = getAttributesSortedByClassOrder();
+		final List<OrderEntry> orderingList = new LinkedList<OrderEntry>();
+		final List<IAttribute> sortedAttributes = getAttributesSortedByClassOrder();
 		OrderEntry orderEntry = null;
 
 		if (sortedAttributes.isEmpty()) {
@@ -299,9 +319,9 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 				orderingList.add(orderEntry);
 			}
 		} else {
-			for (IAttribute attr : sortedAttributes) {
-				OrderFilterType orderType = attr.getClassOrder() > 0 ? OrderFilterType.ASC : OrderFilterType.DESC;
-				OrderEntry descriptionOrder = new OrderEntry(attr.getName(), orderType);
+			for (final IAttribute attr : sortedAttributes) {
+				final OrderFilterType orderType = attr.getClassOrder() > 0 ? OrderFilterType.ASC : OrderFilterType.DESC;
+				final OrderEntry descriptionOrder = new OrderEntry(attr.getName(), orderType);
 				orderingList.add(descriptionOrder);
 			}
 		}
@@ -309,9 +329,9 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	private List<IAttribute> getAttributesSortedByClassOrder() {
-		Collection<IAttribute> attributes = getAttributes().values();
-		List<IAttribute> attributesForOrdering = new LinkedList<IAttribute>();
-		for (IAttribute attr : attributes) {
+		final Collection<IAttribute> attributes = getAttributes().values();
+		final List<IAttribute> attributesForOrdering = new LinkedList<IAttribute>();
+		for (final IAttribute attr : attributes) {
 			if (attr.getClassOrder() != 0)
 				attributesForOrdering.add(attr);
 		}
@@ -320,9 +340,10 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	private class ClassOrderComparator implements Comparator<IAttribute> {
-		public int compare(IAttribute a1, IAttribute a2) {
-			int classOrder1 = a1.getClassOrder();
-			int classOrder2 = a2.getClassOrder();
+		@Override
+		public int compare(final IAttribute a1, final IAttribute a2) {
+			final int classOrder1 = a1.getClassOrder();
+			final int classOrder2 = a2.getClassOrder();
 
 			if (classOrder1 > classOrder2)
 				return 1;
@@ -333,27 +354,33 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		}
 	}
 
+	@Override
 	public boolean isActivity() {
-		return UserContext.systemContext().tables().fullTree().branch(ProcessType.BaseTable).contains(this.getName());
+		return UserOperations.from(UserContext.systemContext()).tables().fullTree().branch(ProcessType.BaseTable)
+				.contains(this.getName());
 	}
 
+	@Override
 	public boolean isTheTableClass() {
 		return ITable.BaseTable.equals(getName());
 	}
 
+	@Override
 	public boolean isTheTableActivity() {
 		return ProcessType.BaseTable.equals(getName());
 	}
 
+	@Override
 	public boolean isAllowedOnTrees() {
 		return getMode().isCustom() || isActivity();
 	}
 
 	@Override
 	public Iterable<IAttribute> fkDetails() {
-		List<IAttribute> fkDetails = new ArrayList<IAttribute>();
-		for (ITable simpleClass : UserContext.systemContext().tables().list(CMTableType.SIMPLECLASS)) {
-			for (IAttribute attribute : simpleClass.getAttributes().values()) {
+		final List<IAttribute> fkDetails = new ArrayList<IAttribute>();
+		for (final ITable simpleClass : UserOperations.from(UserContext.systemContext()).tables()
+				.list(CMTableType.SIMPLECLASS)) {
+			for (final IAttribute attribute : simpleClass.getAttributes().values()) {
 				if (isTargetOfFK(attribute)) {
 					fkDetails.add(attribute);
 				}
@@ -362,7 +389,7 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 		return fkDetails;
 	}
 
-	private boolean isTargetOfFK(IAttribute attribute) {
+	private boolean isTargetOfFK(final IAttribute attribute) {
 		final ITable targetClass = attribute.getFKTargetClass();
 		if (targetClass != null) {
 			return targetClass.treeBranch().contains(this.getId());
@@ -377,7 +404,13 @@ public class TableImpl extends BaseSchemaImpl implements ITable {
 	}
 
 	@Override
-	public void setUserStoppable(boolean userStoppable) {
+	public void setUserStoppable(final boolean userStoppable) {
 		this.userStoppable = userStoppable;
+	}
+
+	@Override
+	public String getPrivilegeId() {
+		// Should match the new DAO implementation!
+		return String.format("Class:%d", getId());
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.axis.AxisFault;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.Lookup;
@@ -22,6 +23,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.operation.management.LookupOperation;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.dom4j.Element;
 
 public class ConnectorJob implements Runnable {
@@ -37,23 +39,23 @@ public class ConnectorJob implements Runnable {
 	private String domainName; // name of the domain between master and detail
 	private DomainDirected domainDirection;
 	private boolean isShared; // relation 1:N -> 1 detail : N master
-	private List<String> sharedIds; //the "id" used to search for the details
+	private List<String> sharedIds; // the "id" used to search for the details
 	private Element elementCard;
-	private int jobNumber;
+	private final int jobNumber;
 	private static int jobNumberCounter = 0;
 
 	public ConnectorJob() {
 		jobNumber = ++jobNumberCounter;
 	}
 
-	private Map<String, String> referenceToMaster = new HashMap<String, String>();
+	private final Map<String, String> referenceToMaster = new HashMap<String, String>();
 
 	public enum Action {
 		CREATE("create"), UPDATE("update"), DELETE("delete");
 
 		private final String action;
 
-		Action(String action) {
+		Action(final String action) {
 			this.action = action;
 		}
 
@@ -61,7 +63,7 @@ public class ConnectorJob implements Runnable {
 			return action;
 		}
 
-		public static Action getAction(String action) throws Exception {
+		public static Action getAction(final String action) throws Exception {
 			if (Action.CREATE.getAction().equals(action)) {
 				return Action.CREATE;
 			} else {
@@ -80,7 +82,7 @@ public class ConnectorJob implements Runnable {
 
 		private final String direction;
 
-		DomainDirected(String direction) {
+		DomainDirected(final String direction) {
 			this.direction = direction;
 		}
 
@@ -88,7 +90,7 @@ public class ConnectorJob implements Runnable {
 			return this.direction;
 		}
 
-		public static DomainDirected getDirection(String action) {
+		public static DomainDirected getDirection(final String action) {
 
 			if (DomainDirected.DIRECTED.getDirection().equals(action))
 				return DomainDirected.DIRECTED;
@@ -97,20 +99,21 @@ public class ConnectorJob implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		try {
 			if (action != null) {
 				switch (action) {
 				case CREATE:
-					Log.SOAP.info("ExternalSync - create job started ["+ jobNumber + "]");
+					Log.SOAP.info("ExternalSync - create job started [" + jobNumber + "]");
 					create();
 					break;
 				case DELETE:
-					Log.SOAP.info("ExternalSync - delete job started ["+ jobNumber + "]");
+					Log.SOAP.info("ExternalSync - delete job started [" + jobNumber + "]");
 					delete();
 					break;
 				case UPDATE:
-					Log.SOAP.info("ExternalSync - update job started ["+ jobNumber + "]");
+					Log.SOAP.info("ExternalSync - update job started [" + jobNumber + "]");
 					update();
 					break;
 				default:
@@ -120,61 +123,61 @@ public class ConnectorJob implements Runnable {
 				Log.SOAP.info("External Sync - running the current process has failed, try to star the next job");
 				throw new Exception("No action selected");
 			}
-		} catch (Exception e) {
-			Log.SOAP.info("External Sync - running the current process has failed, try to start the next job "+ e);
+		} catch (final Exception e) {
+			Log.SOAP.info("External Sync - running the current process has failed, try to start the next job " + e);
 		}
 	}
 
 	/** GETTER / SETTER **/
-	public void setIsMaster(boolean isMaster) {
+	public void setIsMaster(final boolean isMaster) {
 		this.isMaster = isMaster;
 	}
 
-	public void setMasterClassName(String name) {
+	public void setMasterClassName(final String name) {
 		this.masterClassName = name;
 	}
 
-	public void setMasterCardId(int id) {
+	public void setMasterCardId(final int id) {
 		this.masterCardId = id;
 	}
 
-	public void setDetailClassName(String name) {
+	public void setDetailClassName(final String name) {
 		this.detailClassName = name;
 	}
 
-	public void setDetailCardId(int id) {
+	public void setDetailCardId(final int id) {
 		this.detailCardId = id;
 	}
 
-	public void setElementCard(Element element) {
+	public void setElementCard(final Element element) {
 		this.elementCard = element;
 	}
 
-	public void setDomainName(String name) {
+	public void setDomainName(final String name) {
 		this.domainName = name;
 	}
 
-	public void setDomainDirection(String name) {
+	public void setDomainDirection(final String name) {
 		this.domainName = name;
 	}
 
-	public void setAction(Action action) {
+	public void setAction(final Action action) {
 		this.action = action;
 	}
 
-	public void setDomainDirection(DomainDirected domainDirection) {
+	public void setDomainDirection(final DomainDirected domainDirection) {
 		this.domainDirection = domainDirection;
 	}
-	
-	public void setIsShared(boolean isShared) {
+
+	public void setIsShared(final boolean isShared) {
 		this.isShared = isShared;
 	}
 
-	public void setDetailIdentifiers(List<String> identifiers) {
+	public void setDetailIdentifiers(final List<String> identifiers) {
 		this.sharedIds = identifiers;
 	}
-	
-	public void setUserContext(UserContext userCtx) {
+
+	public void setUserContext(final UserContext userCtx) {
 		this.userCtx = userCtx;
 	}
 
@@ -188,7 +191,7 @@ public class ConnectorJob implements Runnable {
 		} else {
 			if (this.masterCardId > 0) {
 				if (detailHasReferenceToMaster()) {
-					String referenceName = referenceToMaster.get(detailClassName);
+					final String referenceName = referenceToMaster.get(detailClassName);
 					detailCardId = createCard(referenceName);
 				} else {
 					detailCardId = createCard();
@@ -214,7 +217,7 @@ public class ConnectorJob implements Runnable {
 				if ((!this.isShared) || (this.isShared && isLastSharedDetail())) {
 					deleteCard();
 					Log.SOAP.info("ExternalSync - deleting card ");
-				}else{
+				} else {
 					Log.SOAP.info("ExternalSync - card detail is shared and has other relations - cannot delete! ");
 				}
 				if (!detailHasReferenceToMaster())
@@ -225,19 +228,20 @@ public class ConnectorJob implements Runnable {
 	}
 
 	private boolean isLastSharedDetail() {
-		ICard cardDetail = userCtx.tables().get(detailClassName).cards().get(detailCardId);
-		IDomain domain = userCtx.domains().get(domainName);
+		final ICard cardDetail = UserOperations.from(userCtx).tables().get(detailClassName).cards().get(detailCardId);
+		final IDomain domain = UserOperations.from(userCtx).domains().get(domainName);
 
-		boolean boolDomainDirection = DomainDirected.DIRECTED.getDirection().equals(this.domainDirection);
-		DirectedDomain directedDomain = DirectedDomain.create(domain, boolDomainDirection);
-		
+		final boolean boolDomainDirection = DomainDirected.DIRECTED.getDirection().equals(this.domainDirection);
+		final DirectedDomain directedDomain = DirectedDomain.create(domain, boolDomainDirection);
+
 		boolean detailHasRelations = false;
-		Iterator<IRelation> iteratorRel = userCtx.relations().list(cardDetail).domain(directedDomain).iterator();
-		if(iteratorRel.hasNext()){
+		final Iterator<IRelation> iteratorRel = UserOperations.from(userCtx).relations().list(cardDetail)
+				.domain(directedDomain).iterator();
+		if (iteratorRel.hasNext()) {
 			iteratorRel.next();
-			detailHasRelations=iteratorRel.hasNext();
+			detailHasRelations = iteratorRel.hasNext();
 		}
-		return ! detailHasRelations;
+		return !detailHasRelations;
 	}
 
 	/**********************
@@ -246,47 +250,48 @@ public class ConnectorJob implements Runnable {
 	private int createCard() {
 		return createCard("");
 	}
-	
-	private int createCard(String referenceName) {
-		
-		if(this.isShared){
-			//searching for an existent object
-			ITable detailClass = userCtx.tables().get(this.detailClassName);
-			CardQuery cardList=detailClass.cards().list();
-			
-			for(String attributeName : this.sharedIds){
-				String attributeValue=searchAttributeValue(attributeName); 
+
+	private int createCard(final String referenceName) {
+
+		if (this.isShared) {
+			// searching for an existent object
+			final ITable detailClass = UserOperations.from(userCtx).tables().get(this.detailClassName);
+			final CardQuery cardList = detailClass.cards().list();
+
+			for (final String attributeName : this.sharedIds) {
+				final String attributeValue = searchAttributeValue(attributeName);
 				cardList.filter(attributeName, AttributeFilterType.EQUALS, attributeValue);
 			}
-			if(cardList!=null){
+			if (cardList != null) {
 				cardList.limit(1);
-				Iterator<ICard> cardIterator = cardList.iterator();
+				final Iterator<ICard> cardIterator = cardList.iterator();
 
-				//detail exists
+				// detail exists
 				if (cardIterator.hasNext()) {
-					ICard card = cardIterator.next();
+					final ICard card = cardIterator.next();
 					return card.getId();
 				}
 			}
 		}
-		//detail does not exist, must be inserted
-		Log.SOAP.info("ExternalSync - insert a new card [class:"+ this.detailClassName + "]");
+		// detail does not exist, must be inserted
+		Log.SOAP.info("ExternalSync - insert a new card [class:" + this.detailClassName + "]");
 		try {
-			ICard card = getNewCard();
-			if(!referenceName.equals("")){
-				Log.SOAP.info("ExternalSync - the card [class:"+this.detailClassName + "] has a reference to the card-master");
+			final ICard card = getNewCard();
+			if (!referenceName.equals("")) {
+				Log.SOAP.info("ExternalSync - the card [class:" + this.detailClassName
+						+ "] has a reference to the card-master");
 				card.setValue(referenceName, String.valueOf(this.masterCardId));
 			}
 			card.save();
 			return card.getId();
-		} catch (CMDBException e) {
+		} catch (final CMDBException e) {
 			Log.SOAP.error("ExternalSync - exception raised while creating a new card", e);
 		}
 		return 0;
 	}
 
 	private ICard getNewCard() {
-		ICard card = userCtx.tables().get(this.detailClassName).cards().create();
+		final ICard card = UserOperations.from(userCtx).tables().get(this.detailClassName).cards().create();
 		setCardFields(card);
 		return card;
 	}
@@ -297,22 +302,28 @@ public class ConnectorJob implements Runnable {
 	 * values to insert
 	 */
 	private void updateCard() {
-		Log.SOAP.info("ExternalSync - update card [id:" + this.detailCardId+ " classname: " + this.detailClassName + "]");
+		Log.SOAP.info("ExternalSync - update card [id:" + this.detailCardId + " classname: " + this.detailClassName
+				+ "]");
 		try {
-			ITable table = userCtx.tables().get(this.detailClassName);
+			final ITable table = UserOperations.from(userCtx).tables().get(this.detailClassName);
 
 			if (this.detailCardId > 0) {
-				ICard card = table.cards().get(this.detailCardId);
-				Log.SOAP.info("ExternalSync - set card fields [id:"+ this.detailCardId + " classname: "+this.detailClassName + "]");
+				final ICard card = table.cards().get(this.detailCardId);
+				Log.SOAP.info("ExternalSync - set card fields [id:" + this.detailCardId + " classname: "
+						+ this.detailClassName + "]");
 				setCardFields(card);
-				Log.SOAP.info("ExternalSync - end set card fields [id:"+ this.detailCardId + " classname: "+ this.detailClassName + "]");
+				Log.SOAP.info("ExternalSync - end set card fields [id:" + this.detailCardId + " classname: "
+						+ this.detailClassName + "]");
 				card.save();
-				Log.SOAP.info("ExternalSync - end save card [id:"+ this.detailCardId + " classname: "+ this.detailClassName + "]");
+				Log.SOAP.info("ExternalSync - end save card [id:" + this.detailCardId + " classname: "
+						+ this.detailClassName + "]");
 			} else {
-				Log.SOAP.warn("ExternalSync - required an update of card with cardId "+ this.detailCardId+ " (classname "+ this.detailClassName + ")");
+				Log.SOAP.warn("ExternalSync - required an update of card with cardId " + this.detailCardId
+						+ " (classname " + this.detailClassName + ")");
 			}
-		} catch (CMDBException e) {
-			Log.SOAP.error("ExternalSync - exception raised while updating card [id:"+ this.detailCardId + " classname: "+ this.detailClassName + "]", e);
+		} catch (final CMDBException e) {
+			Log.SOAP.error("ExternalSync - exception raised while updating card [id:" + this.detailCardId
+					+ " classname: " + this.detailClassName + "]", e);
 		}
 	}
 
@@ -322,15 +333,15 @@ public class ConnectorJob implements Runnable {
 	 * values to insert
 	 */
 	private int deleteCard() {
-		Log.SOAP.info("ExternalSync - delete card [id:" + this.detailCardId + " classname: " + this.detailClassName + "]");
+		Log.SOAP.info("ExternalSync - delete card [id:" + this.detailCardId + " classname: " + this.detailClassName
+				+ "]");
 		try {
-			ICard card = userCtx.tables().get(this.detailClassName).cards().get(this.detailCardId);
+			final ICard card = UserOperations.from(userCtx).tables().get(this.detailClassName).cards()
+					.get(this.detailCardId);
 			card.delete();
-		} catch (CMDBException e) {
-			Log.SOAP.error(
-					"ExternalSync - exception raised while deleting card [id:"
-							+ this.detailCardId + " classname: "
-							+ this.detailClassName + "]", e);
+		} catch (final CMDBException e) {
+			Log.SOAP.error("ExternalSync - exception raised while deleting card [id:" + this.detailCardId
+					+ " classname: " + this.detailClassName + "]", e);
 		}
 		return 0;
 	}
@@ -342,32 +353,32 @@ public class ConnectorJob implements Runnable {
 	 *            the xml Element containg the data to create/modify
 	 */
 	@SuppressWarnings(value = { "unchecked" })
-	private void setCardFields(ICard card) {
-		Iterator<Element> attributeIterator = elementCard.elementIterator();
+	private void setCardFields(final ICard card) {
+		final Iterator<Element> attributeIterator = elementCard.elementIterator();
 		while (attributeIterator.hasNext()) {
-			Element cardAttribute = (Element) attributeIterator.next();
-			String attributeName = cardAttribute.getName();
-			String attributeValue = cardAttribute.getText();
+			final Element cardAttribute = attributeIterator.next();
+			final String attributeName = cardAttribute.getName();
+			final String attributeValue = cardAttribute.getText();
 
-			IAttribute attribute = card.getSchema().getAttribute(attributeName);
+			final IAttribute attribute = card.getSchema().getAttribute(attributeName);
 
 			// check if the attribute is a lookup
 			if (attribute.getLookupType() != null) {
-				setLookupAttribute(attribute, card, attributeName,
-						attributeValue);
+				setLookupAttribute(attribute, card, attributeName, attributeValue);
 			}
 			// it isn't a lookup
 			else {
 				// check if the attribute is a reference
-				IDomain idomain = attribute.getReferenceDomain();
+				final IDomain idomain = attribute.getReferenceDomain();
 				if (idomain != null) {
 					setReferenceAttribute(card, attribute, attributeValue);
 				}
 				// it isn't a reference
 				else
-					try{
+					try {
 						card.getAttributeValue(attributeName).setValue(attributeValue);
-					}catch (ORMException e){}
+					} catch (final ORMException e) {
+					}
 			}
 		}
 	}
@@ -378,78 +389,75 @@ public class ConnectorJob implements Runnable {
 
 	private void createRelation() {
 
-		Log.SOAP.info("ExternalSync - create new relation between "
-				+ "card [id:" + this.masterCardId + " classname: "
-				+ this.masterClassName + "] and " + "card [id:" + detailCardId
-				+ " classname: " + detailClassName + "] " + "on domain: "
-				+ domainName);
+		Log.SOAP.info("ExternalSync - create new relation between " + "card [id:" + this.masterCardId + " classname: "
+				+ this.masterClassName + "] and " + "card [id:" + detailCardId + " classname: " + detailClassName
+				+ "] " + "on domain: " + domainName);
 		try {
-		
-			ICard cardMaster = userCtx.tables().get(this.masterClassName).cards().get(this.masterCardId);
-			ICard cardDetail = userCtx.tables().get(detailClassName).cards().get(detailCardId);
-			IDomain idomain = userCtx.domains().get(domainName);
+
+			final ICard cardMaster = UserOperations.from(userCtx).tables().get(this.masterClassName).cards()
+					.get(this.masterCardId);
+			final ICard cardDetail = UserOperations.from(userCtx).tables().get(detailClassName).cards()
+					.get(detailCardId);
+			final IDomain idomain = UserOperations.from(userCtx).domains().get(domainName);
 
 			IRelation irelation;
 
 			if (DomainDirected.DIRECTED.equals(this.domainDirection)) {
-				Log.SOAP.info("ExternalSync - Relation class1: "
-						+ this.masterClassName + "(id1: " + this.masterCardId
-						+ ") class2: " + this.detailClassName + "(id2: "
-						+ this.detailCardId + ")");
-				irelation = userCtx.relations().create(idomain, cardMaster, cardDetail);
+				Log.SOAP.info("ExternalSync - Relation class1: " + this.masterClassName + "(id1: " + this.masterCardId
+						+ ") class2: " + this.detailClassName + "(id2: " + this.detailCardId + ")");
+				irelation = UserOperations.from(userCtx).relations().create(idomain, cardMaster, cardDetail);
 			} else {
-				Log.SOAP.info("ExternalSync - Relation class1: "
-						+ this.detailClassName + "(id1: " + this.detailCardId
-						+ ") class2: " + this.masterClassName + "(id2: "
-						+ this.masterCardId + ")");
-				irelation = userCtx.relations().create(idomain, cardDetail, cardMaster);
+				Log.SOAP.info("ExternalSync - Relation class1: " + this.detailClassName + "(id1: " + this.detailCardId
+						+ ") class2: " + this.masterClassName + "(id2: " + this.masterCardId + ")");
+				irelation = UserOperations.from(userCtx).relations().create(idomain, cardDetail, cardMaster);
 			}
 			irelation.setSchema(idomain);
 			irelation.save();
-		} catch (CMDBException e) {
-			Log.SOAP.error("ExternalSync - exception raised while creating a new relation",e);
+		} catch (final CMDBException e) {
+			Log.SOAP.error("ExternalSync - exception raised while creating a new relation", e);
 			Log.SOAP.debug("Exception parameters" + e.getExceptionParameters());
 		}
 	}
 
 	private void deleteRelation() {
 
-		Log.SOAP.info("ExternalSync - deleting relation between " + "card [id:"
-				+ this.masterCardId + " classname: " + this.masterClassName
-				+ "] and " + "card [id:" + detailCardId + " classname: "
-				+ this.detailClassName + "] " + "on domain: " + domainName);
+		Log.SOAP.info("ExternalSync - deleting relation between " + "card [id:" + this.masterCardId + " classname: "
+				+ this.masterClassName + "] and " + "card [id:" + detailCardId + " classname: " + this.detailClassName
+				+ "] " + "on domain: " + domainName);
 		try {
 
-			ICard cardMaster = userCtx.tables().get(this.masterClassName).cards().get(this.masterCardId);
-			ICard cardDetail = userCtx.tables().get(detailClassName).cards().get(detailCardId);
-			IDomain idomain = userCtx.domains().get(domainName);
+			final ICard cardMaster = UserOperations.from(userCtx).tables().get(this.masterClassName).cards()
+					.get(this.masterCardId);
+			final ICard cardDetail = UserOperations.from(userCtx).tables().get(detailClassName).cards()
+					.get(detailCardId);
+			final IDomain idomain = UserOperations.from(userCtx).domains().get(domainName);
 
 			IRelation irelation;
 			if (DomainDirected.DIRECTED.getDirection().equals(this.domainDirection.getDirection())) {
-				irelation = userCtx.relations().get(idomain, cardMaster, cardDetail);
+				irelation = UserOperations.from(userCtx).relations().get(idomain, cardMaster, cardDetail);
 			} else {
-				irelation = userCtx.relations().get(idomain, cardDetail, cardMaster);
+				irelation = UserOperations.from(userCtx).relations().get(idomain, cardDetail, cardMaster);
 			}
 			irelation.delete();
 
-		} catch (CMDBException e) {
-			Log.SOAP.error("ExternalSync - exception raised while creating a new relation",e);
+		} catch (final CMDBException e) {
+			Log.SOAP.error("ExternalSync - exception raised while creating a new relation", e);
 		}
 	}
 
 	private boolean detailHasReferenceToMaster() {
 
 		if (referenceToMaster.containsKey(this.detailClassName)) {
-			String referenceName = referenceToMaster.get(this.detailClassName);
+			final String referenceName = referenceToMaster.get(this.detailClassName);
 			return referenceName != null && !referenceName.equals("");
 		} else {
-			ITable table = userCtx.tables().get(this.detailClassName);
+			final ITable table = UserOperations.from(userCtx).tables().get(this.detailClassName);
 
-			Map<String, IAttribute> attributes = table.getAttributes();
-			Set<String> attributeNames = attributes.keySet();
-			for (String attrName : attributeNames) {
-				IAttribute attribute = attributes.get(attrName);
-				IDomain domain = attribute.getReferenceDomain();
+			final Map<String, IAttribute> attributes = table.getAttributes();
+			final Set<String> attributeNames = attributes.keySet();
+			for (final String attrName : attributeNames) {
+				final IAttribute attribute = attributes.get(attrName);
+				final IDomain domain = attribute.getReferenceDomain();
 				if (domain != null && domainName.equals(domain.getName())) {
 					referenceToMaster.put(this.detailClassName, attrName);
 					return true;
@@ -460,72 +468,70 @@ public class ConnectorJob implements Runnable {
 		}
 	}
 
-	private void setReferenceAttribute(ICard card, IAttribute cardAttribute,String attributeValue) {
-		String attributeName = cardAttribute.getName();
-		AttributeValue  av = card.getAttributeValue(attributeName);
+	private void setReferenceAttribute(final ICard card, final IAttribute cardAttribute, final String attributeValue) {
+		final String attributeName = cardAttribute.getName();
+		final AttributeValue av = card.getAttributeValue(attributeName);
 
 		if (attributeValue.equals("")) {
 			av.setValue(null);
 		} else {
-			ITable referencedClass = userCtx.tables().get(cardAttribute.getReferenceTarget().getName());
+			final ITable referencedClass = UserOperations.from(userCtx).tables()
+					.get(cardAttribute.getReferenceTarget().getName());
 
-			String referencedAttributeName = "Description";
-			CardQuery referencedCardList = referencedClass.cards().list().filter(referencedAttributeName, AttributeFilterType.EQUALS, attributeValue).limit(1);
-		    
-			Iterator<ICard> cardIterator = referencedCardList.iterator();
+			final String referencedAttributeName = "Description";
+			final CardQuery referencedCardList = referencedClass.cards().list()
+					.filter(referencedAttributeName, AttributeFilterType.EQUALS, attributeValue).limit(1);
+
+			final Iterator<ICard> cardIterator = referencedCardList.iterator();
 			if (cardIterator.hasNext()) {
-				ICard referencedCard = cardIterator.next();
-				av.setValue(new Reference(av.getSchema().getReferenceDirectedDomain(), referencedCard.getId(),referencedCard.getDescription()));
+				final ICard referencedCard = cardIterator.next();
+				av.setValue(new Reference(av.getSchema().getReferenceDirectedDomain(), referencedCard.getId(),
+						referencedCard.getDescription()));
 			} else {
 				Log.SOAP.error("ExternalSync - Reference not inserted - No cards found having "
-								+ referencedClass.getName()
-								+ "."
-								+ referencedAttributeName
-								+ ": "
-								+ attributeValue);
+						+ referencedClass.getName() + "." + referencedAttributeName + ": " + attributeValue);
 			}
 		}
 	}
 
-	private void setLookupAttribute(IAttribute attribute, ICard card,
-			String attributeName, String attributeValue) {
-		
-		if(attributeValue==null || attributeValue.length()<=0){
-			Log.SOAP.error("ExternalSync - Setting a null lookup value in: "+attributeName);
+	private void setLookupAttribute(final IAttribute attribute, final ICard card, final String attributeName,
+			final String attributeValue) {
+
+		if (attributeValue == null || attributeValue.length() <= 0) {
+			Log.SOAP.error("ExternalSync - Setting a null lookup value in: " + attributeName);
 			card.getAttributeValue(attributeName).setValue(null);
 			return;
 		}
-			
-		
-		String lookupType = attribute.getLookupType().getType();
-		LookupOperation lo = new LookupOperation(userCtx);
-		Iterable<Lookup> lookupList = lo.getLookupList(lookupType);
+
+		final String lookupType = attribute.getLookupType().getType();
+		final LookupOperation lo = new LookupOperation(userCtx);
+		final Iterable<Lookup> lookupList = lo.getLookupList(lookupType);
 
 		Lookup lookup = null;
-		
-		for (Lookup l : lookupList) {
+
+		for (final Lookup l : lookupList) {
 			if (attributeValue.equals(l.getDescription())) {
-				lookup=l;
+				lookup = l;
 				break;
 			}
 		}
-		
+
 		if (lookup == null) {
 			lookup = new Lookup();
 			lookup.setType(lookupType);
 			lookup.setDescription(attributeValue);
 			lookup.save();
 		}
-		
+
 		card.getAttributeValue(attributeName).setValue(lookup);
 	}
-	
+
 	@SuppressWarnings(value = { "unchecked" })
-	private String searchAttributeValue(String attributeName){
-		Iterator<Element> attributeIterator = elementCard.elementIterator();
+	private String searchAttributeValue(final String attributeName) {
+		final Iterator<Element> attributeIterator = elementCard.elementIterator();
 		while (attributeIterator.hasNext()) {
-			Element cardAttribute = (Element) attributeIterator.next();
-			if(cardAttribute.getName().equals(attributeName)){
+			final Element cardAttribute = attributeIterator.next();
+			if (cardAttribute.getName().equals(attributeName)) {
 				return cardAttribute.getText();
 			}
 		}

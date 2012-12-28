@@ -1,5 +1,6 @@
 package org.cmdbuild.services;
 
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,16 +13,18 @@ import javax.sql.DataSource;
 
 import net.jcip.annotations.GuardedBy;
 
+import org.apache.commons.lang.Validate;
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.postgresql.ds.PGSimpleDataSource;
 
-
 public class DBService {
 
 	private static final String DATASOURCE_NAME = "jdbc/cmdbuild";
+	private static final Class<?> DRIVER_CLASS = org.postgresql.Driver.class;
+	private static final String MANAGEMENT_DATABASE = "postgres";
 
 	protected final DataSource datasource;
 	private ThreadLocal<Connection> connection = new ThreadLocal<Connection>();
@@ -31,7 +34,20 @@ public class DBService {
 	private static final Object syncObject = new Object();
 
 	private DBService() {
-		datasource = configureDatasource();
+		datasource = new LazyConfDataSource(newDataSource());
+	}
+
+	private BasicDataSource newDataSource() {
+		BasicDataSource ds;
+		try {
+			InitialContext ictx = new InitialContext();
+			Context ctx = (Context) ictx.lookup("java:/comp/env");
+			ds = (BasicDataSource) ctx.lookup(DATASOURCE_NAME);
+		} catch (NamingException e) {
+			ds = new BasicDataSource();
+		}
+		ds.setDriverClassName(DRIVER_CLASS.getCanonicalName());
+		return ds;
 	}
 
 	/*
@@ -48,26 +64,6 @@ public class DBService {
 		return instance;
 	}
 
-	private DataSource configureDatasource() {
-		DatabaseProperties dp = DatabaseProperties.getInstance();
-		if (!dp.isConfigured()) {
-			throw ORMExceptionType.ORM_DBNOTCONFIGURED.createException();
-		}
-		BasicDataSource ds;
-		try {
-			InitialContext ictx = new InitialContext();
-			Context ctx = (Context) ictx.lookup("java:/comp/env");
-			ds = (BasicDataSource) ctx.lookup(DATASOURCE_NAME);
-		} catch (NamingException e) {
-			ds = new BasicDataSource();
-		}
-		ds.setDriverClassName("org.postgresql.Driver");
-		ds.setUrl(dp.getDatabaseUrl());
-		ds.setUsername(dp.getDatabaseUser());
-		ds.setPassword(dp.getDatabasePassword());
-		return ds;
-	}
-
 	public static Connection getConnection() {
 		DBService instance = DBService.getInstance();
 		Connection con = instance.connection.get();
@@ -78,6 +74,9 @@ public class DBService {
 			} catch (SQLException e) {
 				Log.PERSISTENCE.error("Error trying to get database connection", e);
 				throw ORMExceptionType.ORM_DATABASE_CONNECTION_ERROR.createException();
+			} catch (IllegalStateException e) {
+				Log.PERSISTENCE.error("Error trying to get database connection", e);
+				throw ORMExceptionType.ORM_DBNOTCONFIGURED.createException();
 			}
 		}
 		return con;
@@ -110,14 +109,13 @@ public class DBService {
 		}
 	}
 
-	public static Connection getConnection(String host, int port, String user,
-			String password) throws SQLException {
-		return getConnection(host, port, user, password, "postgres");
+	public static Connection getConnection(String host, int port, String user, String password) throws SQLException {
+		return getConnection(host, port, user, password, MANAGEMENT_DATABASE);
 	}
 
-	public static Connection getConnection(String host, int port, String user,
-			String password, String database) throws SQLException {
-		PGSimpleDataSource ds = new PGSimpleDataSource();
+	public static Connection getConnection(String host, int port, String user, String password, final String database)
+			throws SQLException {
+		final PGSimpleDataSource ds = new PGSimpleDataSource();
 		ds.setServerName(host);
 		ds.setPortNumber(port);
 		ds.setDatabaseName(database);
@@ -126,15 +124,14 @@ public class DBService {
 		return ds.getConnection();
 	}
 
+	// TODO: Move it to the driver implementation
 	public static String getDriverVersion() {
 		try {
-			Class<?> driver = Class.forName("org.postgresql.Driver");
-			int major = driver.getField("MAJORVERSION").getInt(null);
-			int minor = driver.getField("MINORVERSION").getInt(null);
-
-			Class<?> driverVersion = Class.forName("org.postgresql.util.PSQLDriverVersion");
-			int build = driverVersion.getField("buildNumber").getInt(null);
-			
+			// Needs to read it from the current classpath, thus we can't use
+			// the field reference directly!
+			final int major = DRIVER_CLASS.getField("MAJORVERSION").getInt(null);
+			final int minor = DRIVER_CLASS.getField("MINORVERSION").getInt(null);
+			final int build = org.postgresql.util.PSQLDriverVersion.class.getField("buildNumber").getInt(null);
 			return String.format("%d.%d-%d", major, minor, build);
 		} catch (Exception e) {
 			return "undefined";
@@ -158,7 +155,7 @@ public class DBService {
 	public static String fetchPostGISVersion() {
 		try {
 			Connection c = getConnection();
-			Statement s = c.createStatement(); 
+			Statement s = c.createStatement();
 			ResultSet r = s.executeQuery("select postgis_lib_version()");
 			if (r.next()) {
 				final String postgisVersion = r.getString(1);
@@ -182,4 +179,77 @@ public class DBService {
 	public DataSource getDataSource() {
 		return this.datasource;
 	}
+}
+
+class LazyConfDataSource implements DataSource {
+
+	private final BasicDataSource ds;
+	private Boolean configured = new Boolean(false);
+
+	LazyConfDataSource(BasicDataSource ds) {
+		this.ds = ds;
+	}
+
+	private DataSource configureDatasource() {
+		DatabaseProperties dp = DatabaseProperties.getInstance();
+		if (!dp.isConfigured()) {
+			throw new IllegalStateException("Database connection not configured");
+		}
+		ds.setUrl(dp.getDatabaseUrl());
+		ds.setUsername(dp.getDatabaseUser());
+		ds.setPassword(dp.getDatabasePassword());
+		return ds;
+	}
+
+	@Override
+	public Connection getConnection() throws SQLException {
+		if (!configured.booleanValue()) {
+			synchronized (configured) {
+				if (!configured.booleanValue()) {
+					configureDatasource();
+				}
+			}
+		}
+		return ds.getConnection();
+	}
+
+	@Override
+	public Connection getConnection(String username, String password) throws SQLException {
+		return ds.getConnection(username, password);
+	}
+
+	@Override
+	public PrintWriter getLogWriter() throws SQLException {
+		return ds.getLogWriter();
+	}
+
+	@Override
+	public int getLoginTimeout() throws SQLException {
+		return ds.getLoginTimeout();
+	}
+
+	@Override
+	public void setLogWriter(PrintWriter out) throws SQLException {
+		ds.setLogWriter(out);
+	}
+
+	@Override
+	public void setLoginTimeout(int seconds) throws SQLException {
+		ds.setLoginTimeout(seconds);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T unwrap(Class<T> iface) throws SQLException {
+		Validate.notNull(iface, "Interface argument must not be null");
+		if (!DataSource.class.equals(iface)) {
+			throw new SQLException("DataSource of type [" + getClass().getName()
+					+ "] can only be unwrapped as [javax.sql.DataSource], not as [" + iface.getName());
+		}
+		return (T) this;
+	}
+
+	public boolean isWrapperFor(Class<?> iface) throws SQLException {
+		return DataSource.class.equals(iface);
+	}
+
 }

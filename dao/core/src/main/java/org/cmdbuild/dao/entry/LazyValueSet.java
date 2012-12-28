@@ -22,9 +22,9 @@ public abstract class LazyValueSet implements CMValueSet {
 	public Iterable<Entry<String, Object>> getValues() {
 		return getValueMap().entrySet();
 	}
-	
+
 	@Override
-	public Object get(String key) {
+	public Object get(final String key) {
 		return getValueMap().get(key);
 	}
 

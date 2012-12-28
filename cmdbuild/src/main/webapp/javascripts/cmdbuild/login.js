@@ -56,10 +56,10 @@ Ext.define("CMDBuild.LoginPanel", {
 			name : 'role',
 			hiddenName: 'role',
 			valueField : 'name',
-			displayField : 'value',
+			displayField : 'description',
 			queryMode : 'local',
 			store: new Ext.data.Store({
-				fields : ['name', 'value']
+				fields : ['name', 'description']
 			}),
 			listeners: enterKeyListener,
 			scope: this

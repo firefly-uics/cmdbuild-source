@@ -53,14 +53,19 @@ public abstract class UserEntryType implements CMEntryType {
 	}
 
 	@Override
-	public UserAttribute getAttribute(String name) {
-		return UserAttribute.create(view, inner().getAttribute(name));
+	public UserAttribute getAttribute(final String name) {
+		return UserAttribute.newInstance(view, inner().getAttribute(name));
 	}
 
 	@Override
-    public final void accept(final CMEntryTypeVisitor visitor) {
-    	inner().accept(visitor);
-    }
+	public String getKeyAttributeName() {
+		return inner().getKeyAttributeName();
+	}
+
+	@Override
+	public final void accept(final CMEntryTypeVisitor visitor) {
+		inner().accept(visitor);
+	}
 
 	/*
 	 * Object overrides
@@ -72,7 +77,7 @@ public abstract class UserEntryType implements CMEntryType {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return inner().equals(obj);
 	}
 
@@ -82,6 +87,7 @@ public abstract class UserEntryType implements CMEntryType {
 		return inner().toString();
 	}
 
+	@Override
 	public final String getPrivilegeId() {
 		return inner().getPrivilegeId();
 	}

@@ -1,8 +1,9 @@
 package unit.workflow;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -81,14 +82,16 @@ public class SharkTypesConverterTest {
 		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
-		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, "D");
+
 		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
 
-		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
+		final CardReference src = CardReference.newInstance(srcClass.getName(), 42L, EMPTY);
+		final ReferenceType dst = ReferenceType.class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME,
+				src));
 
 		assertThat(dst.getId(), is(42));
 		assertThat(dst.getIdClass(), is(12));
-		assertThat(dst.getDescription(), is("D"));
+		assertThat(dst.getDescription(), is(""));
 	}
 
 	@Test
@@ -96,17 +99,19 @@ public class SharkTypesConverterTest {
 		final CMClass srcClass = mock(CMClass.class);
 		when(srcClass.getName()).thenReturn("CN");
 		when(srcClass.getId()).thenReturn(12L);
-		final CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, "D");
-		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
-		final CardReference[] src = new CardReference[] { src0 };
 
-		final ReferenceType[] dst = ReferenceType[].class.cast(converter.toWorkflowType(NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
+		when(dataView.findClassByName(srcClass.getName())).thenReturn(srcClass);
+
+		final CardReference src0 = CardReference.newInstance(srcClass.getName(), 42L, EMPTY);
+		final CardReference[] src = new CardReference[] { src0 };
+		final ReferenceType[] dst = ReferenceType[].class.cast(converter.toWorkflowType(
+				NO_ATTRIBUTE_TYPE_PLEASE_FIX_ME, src));
 
 		assertThat(dst.length, is(src.length));
 		final ReferenceType dst0 = dst[0];
 		assertThat(dst0.getId(), is(42));
 		assertThat(dst0.getIdClass(), is(12));
-		assertThat(dst0.getDescription(), is("D"));
+		assertThat(dst0.getDescription(), is(""));
 	}
 
 	@Test

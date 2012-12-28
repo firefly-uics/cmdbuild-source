@@ -32,7 +32,7 @@ public class QuotingTest {
 	@Test
 	public void functionCallsAreQuoted() {
 		final List<Object> params = new ArrayList<Object>();
-		DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
+		final DBFunction func = new DBFunction("func", USELESS_FUNCTION_ID, true);
 		assertThat(Utils.quoteType(call(func), new ParamAdder() {			
 			@Override
 			public void add(final Object value) {
@@ -49,8 +49,8 @@ public class QuotingTest {
 				params.add(value);
 			}
 		}), is("func(?,?,?)"));
-		assertThat(params.get(0), is((Object)42));
-		assertThat(params.get(1), is((Object)"s"));
-		assertThat(params.get(2), is((Object)24));
+		assertThat(params.get(0), is((Object) 42));
+		assertThat(params.get(1), is((Object) "s"));
+		assertThat(params.get(2), is((Object) 24));
 	}
 }

@@ -22,12 +22,12 @@ public class SimpleFunctionQueryCreatorTest {
 	private static class IdentityAttributeType implements CMAttributeType<Object> {
 
 		@Override
-		public Object convertValue(Object value) {
+		public Object convertValue(final Object value) {
 			return value;
 		}
 
 		@Override
-		public void accept(CMAttributeTypeVisitor visitor) {
+		public void accept(final CMAttributeTypeVisitor visitor) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -40,12 +40,12 @@ public class SimpleFunctionQueryCreatorTest {
 	public void withAttributeListAndNoParameters() {
 		setFunc.addOutputParameter("o1", new UndefinedAttributeType());
 		setFunc.addOutputParameter("o2", new UndefinedAttributeType());
-		QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc), f);
+		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc), f);
 		querySpecs.addSelectAttribute(attribute(f, "o2"));
 		querySpecs.addSelectAttribute(attribute(f, "o1"));
 
-		String sql = new QueryCreator(querySpecs).getQuery();
-		assertThat(sql, is("SELECT f.o2,f.o1 FROM func() AS f  ")); // Extra spaces
+		final String sql = new QueryCreator(querySpecs).getQuery();
+		assertThat(sql, is("SELECT f.o2,f.o1 FROM func() AS f"));
 	}
 
 	@Test
@@ -54,13 +54,13 @@ public class SimpleFunctionQueryCreatorTest {
 		setFunc.addInputParameter("i2", new IdentityAttributeType());
 		setFunc.addInputParameter("i3", new IdentityAttributeType());
 		setFunc.addOutputParameter("o", new IdentityAttributeType());
-		QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc, "12", 34, null), f);
+		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc, "12", 34, null), f);
 		querySpecs.addSelectAttribute(attribute(f, "o"));
 
-		QueryCreator queryCreator = new QueryCreator(querySpecs);
-		assertThat(queryCreator.getQuery(), is("SELECT f.o FROM func(?,?,?) AS f  ")); // Extra spaces
-		assertThat(queryCreator.getParams()[0], is((Object)"12"));
-		assertThat(queryCreator.getParams()[1], is((Object)34));
+		final QueryCreator queryCreator = new QueryCreator(querySpecs);
+		assertThat(queryCreator.getQuery(), is("SELECT f.o FROM func(?,?,?) AS f"));
+		assertThat(queryCreator.getParams()[0], is((Object) "12"));
+		assertThat(queryCreator.getParams()[1], is((Object) 34));
 		assertThat(queryCreator.getParams()[2], is(nullValue()));
 	}
 }

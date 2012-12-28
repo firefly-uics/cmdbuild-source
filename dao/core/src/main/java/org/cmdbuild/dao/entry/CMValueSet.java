@@ -8,5 +8,7 @@ import java.util.Map;
 public interface CMValueSet {
 
 	public Object get(final String key);
+
 	public Iterable<Map.Entry<String, Object>> getValues();
+
 }

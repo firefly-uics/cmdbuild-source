@@ -1,13 +1,8 @@
 package org.cmdbuild.dao.reference;
 
-
 public class LookupReference extends AbstractReference {
 
 	private final String lookupTypeName;
-
-	public static LookupReference newInstance(final String lookupTypeName, final Long lookupId) {
-		return new LookupReference(lookupTypeName, lookupId);
-	}
 
 	private LookupReference(final String typeName, final Long id) {
 		super(id);
@@ -19,7 +14,12 @@ public class LookupReference extends AbstractReference {
 	}
 
 	@Override
-	public void accept(CMReferenceVisitor visitor) {
+	public void accept(final CMReferenceVisitor visitor) {
 		visitor.visit(this);
 	}
+
+	public static LookupReference newInstance(final String lookupTypeName, final Long lookupId) {
+		return new LookupReference(lookupTypeName, lookupId);
+	}
+
 }

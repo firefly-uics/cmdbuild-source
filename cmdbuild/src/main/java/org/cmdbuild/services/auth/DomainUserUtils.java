@@ -67,7 +67,7 @@ public class DomainUserUtils {
 
 			final String loginAttribute = login.contains("@") ? email : username;
 
-			final ITable userTable = UserContext.systemContext().tables().get(table);
+			final ITable userTable = UserOperations.from(UserContext.systemContext()).tables().get(table);
 			final CardQuery cardQuery = userTable.cards().list() //
 					.filter(loginAttribute, AttributeFilterType.EQUALS, login);
 
@@ -75,10 +75,12 @@ public class DomainUserUtils {
 
 			return new DomainUserQuery() {
 
+				@Override
 				public ICard getCard() {
 					return card;
 				}
 
+				@Override
 				public boolean isFound() {
 					return true;
 				}
@@ -87,10 +89,12 @@ public class DomainUserUtils {
 		} catch (final Exception e) {
 			return new DomainUserQuery() {
 
+				@Override
 				public boolean isFound() {
 					return false;
 				}
 
+				@Override
 				public ICard getCard() {
 					return null;
 				}

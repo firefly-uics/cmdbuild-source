@@ -43,7 +43,6 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Level;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.DBService;
@@ -52,10 +51,7 @@ public abstract class ReportFactory {
 
 	private JasperReport jasperReport;
 	protected JasperPrint jasperPrint;
-	
-	/** Log level for jrxml backup (if error occurs) */
-	private final Level logLevelForJRXMLBackup = Level.DEBUG;
-	
+
 	/** Parameter name (replacement) for images name */
 	public static final String PARAM_IMAGE = "IMAGE";
 	
@@ -80,7 +76,7 @@ public abstract class ReportFactory {
 		try {
 			jasperPrint = JasperFillManager.fillReport(report, jasperFillManagerParameters, DBService.getConnection());
 		} catch (Exception exception) {
-			if(Log.REPORT.getLevel() == logLevelForJRXMLBackup)
+			if(Log.REPORT.isDebugEnabled())
 				saveJRXMLTmpFile(report);
 			throw exception;
 		}
@@ -122,7 +118,7 @@ public abstract class ReportFactory {
 				try {
 					exporter.exportReport();
 				} catch (Exception exception) {
-					if(Log.REPORT.getLevel() == logLevelForJRXMLBackup)
+					if(Log.REPORT.isDebugEnabled())
 						saveJRXMLTmpFile(jasperReport);
 					throw exception;
 				}				

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.Validate;
 
-
 public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 
 	public final Integer precision;
@@ -23,17 +22,17 @@ public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected BigDecimal convertNotNullValue(Object value) {
+	protected BigDecimal convertNotNullValue(final Object value) {
 		BigDecimal decimalValue;
 		if (value instanceof BigDecimal) {
 			decimalValue = (BigDecimal) value;
 		} else if (value instanceof String) {
-			String stringValue = (String) value;
+			final String stringValue = (String) value;
 			if (stringValue.isEmpty()) {
 				decimalValue = null;
 			} else {

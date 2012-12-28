@@ -22,6 +22,21 @@ public class PartCreator {
 
 	// TODO Handle CMDBuild and Geographic types conversion
 	protected final String param(final Object o) {
+		if (o instanceof List) {
+			final List<Object> l = (List<Object>) o;
+			final StringBuilder sb = new StringBuilder("(");
+			int i = 1;
+			for (final Object value : l) {
+				sb.append("?");
+				if (i < l.size()) {
+					sb.append(",");
+					i++;
+				}
+				params.add(value);
+			}
+			sb.append(")");
+			return sb.toString();
+		}
 		params.add(o);
 		return "?";
 	}

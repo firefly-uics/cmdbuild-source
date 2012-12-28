@@ -166,6 +166,10 @@ public class SendMailTest extends AbstractSendMailTest {
 				.withContent(PLAIN_TEXT_CONTENT) //
 				.withAttachment(attachment));
 
+		final MimeMessage receivedMessage = firstReceivedMessage();
+		final MimeMultipart mimeMultipart = (MimeMultipart) receivedMessage.getContent();
+		assertThat(receivedMessage.getSubject(), equalTo(SUBJECT));
+		assertThat(getBody(mimeMultipart.getBodyPart(0)), equalTo(PLAIN_TEXT_CONTENT));
 		assertThat(receivedAttachmentContent(), equalTo(ATTACHMENT_CONTENT));
 	}
 

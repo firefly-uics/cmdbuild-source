@@ -10,6 +10,7 @@ import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactoryTemplateList;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 import com.google.common.collect.Lists;
 
@@ -82,7 +83,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	private ITable table() {
 		final String className = properties.get(CLASSNAME_PROPERTY);
-		final ITable table = userContext.tables().get(className);
+		final ITable table = UserOperations.from(userContext).tables().get(className);
 		return table;
 	}
 

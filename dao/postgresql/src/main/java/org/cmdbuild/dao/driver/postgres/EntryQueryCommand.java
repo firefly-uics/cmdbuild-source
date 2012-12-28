@@ -1,9 +1,14 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
+import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper;
 import org.cmdbuild.dao.driver.postgres.query.ColumnMapper.EntryTypeAttribute;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
@@ -24,22 +29,27 @@ import org.joda.time.DateTime;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-public class EntryQueryCommand {
+class EntryQueryCommand implements LoggingSupport {
 
-	private final PostgresDriver driver;
+	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
 	private final QuerySpecs querySpecs;
 
-	EntryQueryCommand(final PostgresDriver driver, final JdbcTemplate jdbcTemplate, final QuerySpecs querySpecs) {
+	EntryQueryCommand(final DBDriver driver, final JdbcTemplate jdbcTemplate, final QuerySpecs querySpecs) {
 		this.driver = driver;
 		this.jdbcTemplate = jdbcTemplate;
 		this.querySpecs = querySpecs;
 	}
 
 	public CMQueryResult run() {
+		logger.debug("executing query from '{}'", QuerySpecs.class);
 		final QueryCreator qc = new QueryCreator(querySpecs);
+		final String query = qc.getQuery();
+		final Object[] params = qc.getParams();
 		final ResultFiller rch = new ResultFiller(qc.getColumnMapper());
-		jdbcTemplate.query(qc.getQuery(), qc.getParams(), rch);
+		logger.debug("query: {}", query);
+		logger.debug("params: {}", Arrays.asList(params));
+		jdbcTemplate.query(query, params, rch);
 		return rch.getResult();
 	}
 
@@ -52,7 +62,7 @@ public class EntryQueryCommand {
 
 		final DBQueryResult result;
 
-		private ResultFiller(final ColumnMapper columnMapper) {
+		public ResultFiller(final ColumnMapper columnMapper) {
 			this.columnMapper = columnMapper;
 			result = new DBQueryResult();
 			start = (querySpecs.getOffset() != null) ? querySpecs.getOffset() : 0;
@@ -62,7 +72,7 @@ public class EntryQueryCommand {
 		@Override
 		public void processRow(final ResultSet rs) throws SQLException {
 			final int rowNum = result.getAndIncrementTotalSize();
-			if (rowNum >= start && rowNum < end) {
+			if (start <= rowNum && rowNum < end) {
 				final DBQueryRow row = new DBQueryRow();
 				createBasicCards(rs, row);
 				createBasicRelations(rs, row);
@@ -72,10 +82,11 @@ public class EntryQueryCommand {
 		}
 
 		private void createFunctionCallOutput(final ResultSet rs, final DBQueryRow row) throws SQLException {
-			for (Alias a : columnMapper.getFunctionCallAliases()) {
+			for (final Alias a : columnMapper.getFunctionCallAliases()) {
 				final DBFunctionCallOutput out = new DBFunctionCallOutput();
 				final CMEntryType hackSinceAFunctionCanAppearOnlyInTheFromClause = querySpecs.getFromType();
-				for (EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(a, hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
+				for (final EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(a,
+						hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
 					final Object sqlValue = rs.getObject(eta.index);
 					out.set(eta.name, eta.sqlType.sqlToJavaValue(sqlValue));
 				}
@@ -84,41 +95,51 @@ public class EntryQueryCommand {
 		}
 
 		private void createBasicCards(final ResultSet rs, final DBQueryRow row) throws SQLException {
-			for (Alias a : columnMapper.getClassAliases()) {
+			logger.debug("creating cards");
+			for (final Alias alias : columnMapper.getClassAliases()) {
+				logger.debug("creating card for alias '{}'", alias);
 				// Always extract a Long for the Id even if it's integer
-				final Long id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
-				final Long classId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.ClassId));
+				final Long id = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.Id));
+				final Long classId = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.ClassId));
 				final DBClass realClass = driver.findClassById(classId);
-				final DBCard card = DBCard.create(driver, realClass, id);
+				logger.debug("real class for id '{}' is '{}'", classId, realClass.getName());
+				final DBCard card = DBCard.newInstance(driver, realClass, id);
 
-				card.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
-				card.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
-				// TODO It's not supported yet because the FROM class has no such column
-				//card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a, SystemAttributes.EndDate)));
+				card.setUser(rs.getString(nameForSystemAttribute(alias, SystemAttributes.User)));
+				card.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.BeginDate)));
+				/*
+				 * TODO not supported yet
+				 * 
+				 * the FROM class has no such column
+				 * 
+				 * card.setEndDate(getDateTime(rs, Utils.getAttributeAlias(a,
+				 * SystemAttributes.EndDate)));
+				 */
 
-				addUserAttributes(a, card, rs);
+				addUserAttributes(alias, card, rs);
 
-				row.setCard(a, card);
+				row.setCard(alias, card);
 			}
 		}
 
 		private void createBasicRelations(final ResultSet rs, final DBQueryRow row) throws SQLException {
-			for (Alias a : columnMapper.getDomainAliases()) {
-				final Long id = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.Id));
-				final Long domainId = rs.getLong(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainId));
-				final String querySource = rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.DomainQuerySource));
+			for (final Alias alias : columnMapper.getDomainAliases()) {
+				final Long id = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.Id));
+				final Long domainId = rs.getLong(nameForSystemAttribute(alias, SystemAttributes.DomainId));
+				final String querySource = rs.getString(nameForSystemAttribute(alias,
+						SystemAttributes.DomainQuerySource));
 				final DBDomain realDomain = driver.findDomainById(domainId);
-				final DBRelation relation = DBRelation.create(driver, realDomain, id);
+				final DBRelation relation = DBRelation.newInstance(driver, realDomain, id);
 
-				relation.setUser(rs.getString(Utils.getSystemAttributeAlias(a, SystemAttributes.User)));
-				relation.setBeginDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.BeginDate)));
-				relation.setEndDate(getDateTime(rs, Utils.getSystemAttributeAlias(a, SystemAttributes.EndDate)));
+				relation.setUser(rs.getString(nameForSystemAttribute(alias, SystemAttributes.User)));
+				relation.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.BeginDate)));
+				relation.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, SystemAttributes.EndDate)));
 				// TODO Add card1 and card2 from the cards already extracted!
 
-				addUserAttributes(a, relation, rs);
+				addUserAttributes(alias, relation, rs);
 
-				final QueryRelation queryRelation = QueryRelation.create(relation, querySource);
-				row.setRelation(a, queryRelation);
+				final QueryRelation queryRelation = QueryRelation.newInstance(relation, querySource);
+				row.setRelation(alias, queryRelation);
 			}
 		}
 
@@ -131,17 +152,23 @@ public class EntryQueryCommand {
 			}
 		}
 
-		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs) throws SQLException {
-			for (EntryTypeAttribute a : columnMapper.getEntryTypeAttributes(typeAlias, entry.getType())) {
-				if (a.name != null) { // Not belonging to this entry type
-					final Object sqlValue = rs.getObject(a.index);
-					entry.setOnly(a.name, a.sqlType.sqlToJavaValue(sqlValue));
+		private void addUserAttributes(final Alias typeAlias, final DBEntry entry, final ResultSet rs)
+				throws SQLException {
+			logger.debug("adding user attributes for entry of type '{}' with alias '{}'", //
+					entry.getType().getName(), typeAlias);
+			for (final EntryTypeAttribute attribute : columnMapper.getEntryTypeAttributes(typeAlias, entry.getType())) {
+				if (attribute.name != null) {
+					final Object sqlValue = rs.getObject(attribute.index);
+					entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(sqlValue));
+				} else {
+					// skipping, not belonging to this entry type
 				}
 			}
 		}
 
-		CMQueryResult getResult() {
+		private CMQueryResult getResult() {
 			return result;
 		}
 	}
+
 }

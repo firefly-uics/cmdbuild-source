@@ -1,18 +1,17 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-
 public class TextAttributeType extends AbstractAttributeType<String> {
 
 	public TextAttributeType() {
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected String convertNotNullValue(Object value) {
+	protected String convertNotNullValue(final Object value) {
 		if (!(value instanceof String)) {
 			throw new IllegalArgumentException();
 		}

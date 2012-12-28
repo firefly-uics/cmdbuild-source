@@ -1,6 +1,5 @@
 package org.cmdbuild.dao.entrytype;
 
-
 public abstract class PlaceholderEntryType implements CMEntryType {
 
 	@Override
@@ -24,7 +23,7 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 	}
 
 	@Override
-	public DBAttribute getAttribute(String name) {
+	public DBAttribute getAttribute(final String name) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -38,7 +37,13 @@ public abstract class PlaceholderEntryType implements CMEntryType {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public final String getPrivilegeId() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getKeyAttributeName() {
 		throw new UnsupportedOperationException();
 	}
 }

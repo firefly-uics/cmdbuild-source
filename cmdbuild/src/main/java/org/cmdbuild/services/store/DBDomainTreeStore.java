@@ -9,6 +9,7 @@ import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
@@ -33,7 +34,7 @@ public class DBDomainTreeStore {
 	}
 
 	private static final String TABLE_NAME = "_DomainTreeNavigation";
-	private static final ITable table = UserContext.systemContext()
+	private static final ITable table = UserOperations.from(UserContext.systemContext())
 			.tables().get(TABLE_NAME);
 
 	public void createOrReplaceTree(final String treeType, final DomainTreeNode root) {

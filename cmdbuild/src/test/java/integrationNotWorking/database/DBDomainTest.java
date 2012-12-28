@@ -19,44 +19,47 @@ public class DBDomainTest extends DBDataFixture {
 	protected static final String anotherClass = "AnotherClass";
 	protected static final String aDomain = "ADomain";
 
-	@Ignore // TODO: MAKE IT PASS!
+	@Ignore
+	// TODO: MAKE IT PASS!
 	@Test
 	public void domainCreationShouldBeConsistent() throws SQLException {
 		try {
-			createInconsistentDBDomain(aClass, "_"+anotherClass);
+			createInconsistentDBDomain(aClass, "_" + anotherClass);
 			fail();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			assertThat(e, hasType(CMSqlException.CM_FORBIDDEN_OPERATION));
 		}
 		rollbackTransaction();
 		try {
-			createInconsistentDBDomain("_"+aClass, anotherClass);
+			createInconsistentDBDomain("_" + aClass, anotherClass);
 			fail();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			assertThat(e, hasType(CMSqlException.CM_FORBIDDEN_OPERATION));
 		}
 	}
 
-	private void createInconsistentDBDomain(String commentClass1Name, String commentClass2Name) throws SQLException {
+	private void createInconsistentDBDomain(final String commentClass1Name, final String commentClass2Name)
+			throws SQLException {
 		createDBClass(aClass);
 		createDBClass(anotherClass);
-		DomainInfo domain = new DomainInfo(aDomain, aClass, anotherClass, IDomain.CARDINALITY_11);
-		String domainComment = createDomainComment(domain.getName()+" Description",
-				commentClass1Name, commentClass2Name, domain.getCardinality());
+		final DomainInfo domain = new DomainInfo(aDomain, aClass, anotherClass, IDomain.CARDINALITY_11);
+		final String domainComment = createDomainComment(domain.getName() + " Description", commentClass1Name,
+				commentClass2Name, domain.getCardinality());
 		createDBDomainWithComment(domain, domainComment);
 	}
 
 	@Ignore
 	@Test
 	public void relationsWorkOn11Domains() throws SQLException {
-//		createRelationDBFixure(IDomain.CARDINALITY_11);		
-//		int card1Id = insertCardRow(aClassName, DESCRIPTION_NULL);
-//		int card2Id = insertCardRow(anotherClassName, DESCRIPTION_NULL);
-//		TODO TEST CREATE RELATION WITH NOT EXISTENT CARDS
+		// createRelationDBFixure(IDomain.CARDINALITY_11);
+		// int card1Id = insertCardRow(aClassName, DESCRIPTION_NULL);
+		// int card2Id = insertCardRow(anotherClassName, DESCRIPTION_NULL);
+		// TODO TEST CREATE RELATION WITH NOT EXISTENT CARDS
 	}
 
-//	private void createRelationDBFixure(String cardinality) throws SQLException {
-//		createDBClass(anotherClassName, ITable.BaseTable);
-//		createDBDomain(aDomainName, aClassName, anotherClassName, cardinality);
-//	}
+	// private void createRelationDBFixure(String cardinality) throws
+	// SQLException {
+	// createDBClass(anotherClassName, ITable.BaseTable);
+	// createDBDomain(aDomainName, aClassName, anotherClassName, cardinality);
+	// }
 }

@@ -16,15 +16,15 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 /*
  * Note: Mutable classes because it is supposed to be used by driver
  *       implementations.
- * 
+ *
  * TODO Consider named attributes not bounded to a class or a domain to
  *      allow functions or aliases for other attributes
  */
 public class DBQueryRow implements CMQueryRow {
 
-	Map<Alias, DBCard> cards;
-	Map<Alias, QueryRelation> relations;
-	Map<Alias, DBFunctionCallOutput> other;
+	private final Map<Alias, DBCard> cards;
+	private final Map<Alias, QueryRelation> relations;
+	private final Map<Alias, DBFunctionCallOutput> other;
 
 	// Should we have a reference to the QuerySpecs?
 	public DBQueryRow() {
@@ -55,7 +55,7 @@ public class DBQueryRow implements CMQueryRow {
 		} else if (relations.containsKey(alias)) {
 			return relations.get(alias).getRelation();
 		} else {
-			throw new IllegalArgumentException("No alias " + alias);
+			throw missingAlias(alias);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class DBQueryRow implements CMQueryRow {
 		if (cards.containsKey(alias)) {
 			return cards.get(alias);
 		} else {
-			throw new IllegalArgumentException("No alias " + alias);
+			throw missingAlias(alias);
 		}
 	}
 
@@ -78,12 +78,12 @@ public class DBQueryRow implements CMQueryRow {
 		if (relations.containsKey(alias)) {
 			return relations.get(alias);
 		} else {
-			throw new IllegalArgumentException("No alias " + alias);
+			throw missingAlias(alias);
 		}
 	}
 
 	@Override
-	public QueryRelation getRelation(CMDomain type) {
+	public QueryRelation getRelation(final CMDomain type) {
 		return getRelation(Alias.canonicalAlias(type));
 	}
 
@@ -95,4 +95,9 @@ public class DBQueryRow implements CMQueryRow {
 			return getEntry(alias);
 		}
 	}
+
+	private RuntimeException missingAlias(final Alias alias) {
+		return new IllegalArgumentException("missing alias " + alias);
+	}
+
 }

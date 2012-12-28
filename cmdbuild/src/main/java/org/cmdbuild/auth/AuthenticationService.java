@@ -1,135 +1,196 @@
 package org.cmdbuild.auth;
 
-import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.AuthenticatedUser;
-import org.apache.commons.lang.Validate;
+import java.util.List;
+
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.cmdbuild.auth.DefaultAuthenticationService.ClientAuthenticatorResponse;
+import org.cmdbuild.auth.DefaultAuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.auth.GroupDTO;
+import org.cmdbuild.logic.auth.UserDTO;
 
-import static org.cmdbuild.auth.user.AnonymousUser.ANONYMOUS_USER;
+public interface AuthenticationService {
 
-@Component
-public class AuthenticationService {
+	public void setPasswordAuthenticators(final PasswordAuthenticator... passwordAuthenticators);
 
-	public static class ClientAuthenticatorResponse {
-		private final AuthenticatedUser user;
-		private final String redirectUrl;
+	public void setClientRequestAuthenticators(final ClientRequestAuthenticator... clientRequestAuthenticators);
 
-		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(ANONYMOUS_USER, null);
+	public void setUserFetchers(final UserFetcher... userFetchers);
 
-		private ClientAuthenticatorResponse(final AuthenticatedUser user, final String redirectUrl) {
-			Validate.notNull(user);
-			this.user = user;
-			this.redirectUrl = redirectUrl;
-		}
+	public void setGroupFetcher(final GroupFetcher groupFetcher);
 
-		public final AuthenticatedUser getUser() {
-			return user;
-		}
+	public void setUserStore(final UserStore userStore);
 
-		public final String getRedirectUrl() {
-			return redirectUrl;
-		}
-		}
+	/**
+	 * Actively checks the user credentials and returns the authenticated user
+	 * on success.
+	 * 
+	 * @param login
+	 * @param password
+	 *            unencrypted password
+	 * @return the user that was authenticated
+	 */
+	public AuthenticatedUser authenticate(final Login login, final String password);
 
-	public interface PasswordCallback {
+	/**
+	 * Extracts the unencrypted password for the user and sets it in the
+	 * 
+	 * @param passwordCallback
+	 *            for further processing.
+	 * 
+	 * @param login
+	 * @param passwordCallback
+	 *            object where to set the unencrypted password
+	 * @return the user to be authenticated as if the authentication succeeded
+	 */
+	public AuthenticatedUser authenticate(final Login login, final PasswordCallback passwordCallback);
 
-		void setPassword(String password);
-	}
+	/**
+	 * Tries to authenticate the user with a ClientRequestAuthenticator
+	 * 
+	 * @param request
+	 *            object representing a client request
+	 * @return response object with the authenticated user or a redirect URL
+	 */
+	public ClientAuthenticatorResponse authenticate(final ClientRequest request);
 
-	private interface FetchCallback {
+	/**
+	 * Impersonate another user if the currently authenticated user has the
+	 * right privileges.
+	 * 
+	 * @param login
+	 * @return the authenticated user
+	 */
+	public OperationUser impersonate(final Login login);
 
-		void foundUser(AuthenticatedUser authUser);
-	}
+	/**
+	 * Get the currently authenticated user. It can be anonymous but it will
+	 * never be null.
+	 * 
+	 * @return the authenticated user
+	 */
+	public OperationUser getOperationUser();
 
-	private final PasswordAuthenticator[] passwordAuthenticators;
-	private final ClientRequestAuthenticator[] clientRequestAuthenticators;
-	private final UserFetcher[] userFetchers;
-	private final UserStore userStore;
+	public List<CMUser> fetchUsersByGroupId(Long groupId);
+	
+	public List<Long> fetchUserIdsByGroupId(Long groupId);
 
-	// TODO: Too many parameters
-	@Autowired
-	public AuthenticationService(
-			final PasswordAuthenticator[] passwordAuthenticators,
-			final ClientRequestAuthenticator[] clientRequestAuthenticators,
-			final UserFetcher[] userFetchers,
-			final UserStore userStore) {
-		Validate.noNullElements(passwordAuthenticators);
-		Validate.noNullElements(clientRequestAuthenticators);
-		Validate.noNullElements(userFetchers);
-		Validate.notNull(userStore);
-		this.passwordAuthenticators = passwordAuthenticators;
-		this.clientRequestAuthenticators = clientRequestAuthenticators;
-		this.userFetchers = userFetchers;
-		this.userStore = userStore;
-	}
+	/**
+	 * Given a user identifier, it returns the user with that id
+	 * 
+	 * @param userId
+	 * @return the user with id = userId, null if there is no user with that id
+	 */
+	public CMUser fetchUserById(Long userId);
 
-	public AuthenticatedUser authenticate(final Login login, final String password) {
-		for (PasswordAuthenticator pa : passwordAuthenticators) {
-			if (pa.checkPassword(login, password)) {
-				return fetchUser(login, new FetchCallback() {
+	/**
+	 * Given a username, it returns the user with that username
+	 * 
+	 * @param username
+	 * @return the user with the provided username, null if there is no user
+	 *         with that username
+	 */
+	public CMUser fetchUserByUsername(String username);
 
-					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
-						userStore.setUser(authUser);
-					}
-				});
-			}
-		}
-		return ANONYMOUS_USER;
-	}
+	/**
+	 * Creates a new user in the database
+	 * 
+	 * @param userDTO
+	 *            a DTO that contains some details about new user (username,
+	 *            password, active flag, email ...)
+	 * @return
+	 */
+	public CMUser createUser(UserDTO userDTO);
 
-	public void authenticate(final Login login, final PasswordCallback passwordCallback) {
-		for (PasswordAuthenticator pa : passwordAuthenticators) {
-			final String pass = pa.fetchUnencryptedPassword(login);
-			if (pass != null) {
-				fetchUser(login, new FetchCallback() {
+	/**
+	 * Updates an existent user in the database
+	 * 
+	 * @param userDTO
+	 *            a DTO that contains some details about the user that will be
+	 *            updated (username, password, active flag, email ...)
+	 * @return
+	 */
+	public CMUser updateUser(UserDTO userDTO);
 
-					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
-						userStore.setUser(authUser);
-						passwordCallback.setPassword(pass);
-					}
-				});
-			}
-		}
-	}
+	/**
+	 * Creates a new group in the database
+	 * 
+	 * @param groupDTO
+	 *            a DTO that contains some details about new user (name, active
+	 *            flag, email ...)
+	 * @return
+	 */
+	public CMGroup createGroup(GroupDTO groupDTO);
 
-	public ClientAuthenticatorResponse authenticate(final ClientRequest request) {
-		for (ClientRequestAuthenticator cra : clientRequestAuthenticators) {
-			ClientRequestAuthenticator.Response response = cra.authenticate(request);
-			if (response != null) {
-				final AuthenticatedUser authUser = fetchUser(response.getLogin(), new FetchCallback() {
-					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
-						userStore.setUser(authUser);
-					}
-				});
-				return new ClientAuthenticatorResponse(authUser, response.getRedirectUrl());
-			}
-		}
-		return ClientAuthenticatorResponse.EMTPY_RESPONSE;
-	}
+	/**
+	 * Updates an existent group in the database
+	 * 
+	 * @param groupDTO
+	 *            a DTO that contains some details about the group that will be
+	 *            updated (name, active flag, email, groupId ...)
+	 * @return
+	 */
+	public CMGroup updateGroup(GroupDTO groupDTO);
 
-	public AuthenticatedUser impersonate(final Login login) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
+	/**
+	 * 
+	 * @return a collection of all groups stored in the database
+	 */
+	public Iterable<CMGroup> fetchAllGroups();
 
+	/**
+	 * 
+	 * @return a collection of all users stored in the database
+	 */
+	public List<CMUser> fetchAllUsers();
 
+	/**
+	 * Retrieves a group with the specified id
+	 * 
+	 * @param groupId
+	 *            the id of the group that will be retrieved
+	 * @return
+	 */
+	public CMGroup fetchGroupWithId(Long groupId);
 
-	private AuthenticatedUser fetchUser(final Login login, final FetchCallback callback) {
-		AuthenticatedUser authUser = ANONYMOUS_USER;
-		if (login != null) {
-			for (UserFetcher uf : userFetchers) {
-				final CMUser user = uf.fetchUser(login);
-				if (user != null) {
-					authUser = AuthenticatedUser.newInstance(user);
-					callback.foundUser(authUser);
-					break;
-				}
-			}
-		}
-		return authUser;
-	}
+	/**
+	 * Retrieves a group with the specified name
+	 * 
+	 * @param groupName
+	 *            the name of the group that will be retrieved
+	 * @return
+	 */
+	public CMGroup fetchGroupWithName(String groupName);
+
+	/**
+	 * Enable the user with the current user id. If already enabled it does
+	 * nothing
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public CMUser enableUserWithId(Long userId);
+
+	/**
+	 * Disable the user with the current user id. If already disabled it does
+	 * nothing
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public CMUser disableUserWithId(Long userId);
+
+	/**
+	 * It changes the status of the role with id = groupId
+	 * 
+	 * @param groupId
+	 *            the id of the group whose state will be changed
+	 * @param isActive
+	 * @return
+	 */
+	public CMGroup changeGroupStatusTo(Long groupId, boolean isActive);
+
 }

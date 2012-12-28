@@ -17,12 +17,16 @@ import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+/**
+ * Wrapper for {@link ICard}.
+ */
 public class CardWrapper implements CMCard, CMCardDefinition {
 
 	protected static final Set<String> cardSystemAttributes;
@@ -49,6 +53,16 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	}
 
 	@Override
+	public Object getCode() {
+		return card.getCode();
+	}
+
+	@Override
+	public Object getDescription() {
+		return card.getDescription();
+	}
+
+	@Override
 	public final String getUser() {
 		return card.getUser();
 	}
@@ -69,11 +83,11 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	}
 
 	@Override
-	public final Object get(String key) {
+	public final Object get(final String key) {
 		try {
 			final AttributeValue av = card.getAttributeValue(key);
 			return extractAndConvertValue(av);
-		} catch (NotFoundException e) {
+		} catch (final NotFoundException e) {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -99,7 +113,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 	}
 
 	private CardReference toCardReference(final Reference ref) {
-		final ITable table = UserContext.systemContext().tables().get(ref.getClassId());
+		final ITable table = UserOperations.from(UserContext.systemContext()).tables().get(ref.getClassId());
 		final Long cardId = Long.valueOf(ref.getId());
 		return CardReference.newInstance(table.getName(), cardId, ref.getDescription());
 	}
@@ -131,7 +145,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 							}
 
 							@Override
-							public Object setValue(Object value) {
+							public Object setValue(final Object value) {
 								final Object oldValue = getValue();
 								card.setValue(getKey(), value);
 								return oldValue;
@@ -147,7 +161,7 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 		return Iterables.filter(card.getAttributeValueMap().entrySet(), new Predicate<Entry<String, AttributeValue>>() {
 
 			@Override
-			public boolean apply(Entry<String, AttributeValue> input) {
+			public boolean apply(final Entry<String, AttributeValue> input) {
 				return isUserAttributeName(input.getKey());
 			}
 
@@ -180,6 +194,18 @@ public class CardWrapper implements CMCard, CMCardDefinition {
 		if (isUserAttributeName(key)) {
 			card.getAttributeValue(key).setValue(value);
 		}
+	}
+
+	@Override
+	public CMCardDefinition setCode(final Object value) {
+		card.setCode((String) value);
+		return this;
+	}
+
+	@Override
+	public CMCardDefinition setDescription(final Object value) {
+		card.setDescription((String) value);
+		return this;
 	}
 
 	@Override

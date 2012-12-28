@@ -1,26 +1,26 @@
 package org.cmdbuild.dao.view.user;
 
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBDomain;
-import org.cmdbuild.auth.CMAccessControlManager;
 
 public class UserDomain extends UserEntryType implements CMDomain {
 
 	private final DBDomain inner;
 
-	static UserDomain create(final UserDataView view, final DBDomain inner) {
-		if (isUserAccessible(view.getAccessControlManager(), inner)) {
+	static UserDomain newInstance(final UserDataView view, final DBDomain inner) {
+		final OperationUser user = view.getOperationUser();
+		if (isUserAccessible(user, inner)) {
 			return new UserDomain(view, inner);
 		} else {
 			return null;
 		}
 	}
 
-	public static boolean isUserAccessible(final CMAccessControlManager acm, final DBDomain inner) {
-		return inner != null && acm.hasReadAccess(inner)
-				&& (inner.isActive() || acm.hasDatabaseDesignerPrivileges())
-				&& UserClass.isUserAccessible(acm, inner.getClass1())
-				&& UserClass.isUserAccessible(acm, inner.getClass2());
+	public static boolean isUserAccessible(final OperationUser user, final DBDomain inner) {
+		return inner != null && user.hasReadAccess(inner) && (inner.isActive() || user.hasDatabaseDesignerPrivileges())
+				&& UserClass.isUserAccessible(user, inner.getClass1())
+				&& UserClass.isUserAccessible(user, inner.getClass2());
 	}
 
 	private UserDomain(final UserDataView view, final DBDomain inner) {
@@ -28,18 +28,19 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		this.inner = inner;
 	}
 
+	@Override
 	protected final DBDomain inner() {
 		return inner;
 	}
 
 	@Override
 	public UserClass getClass1() {
-		return UserClass.create(view, inner().getClass1());
+		return UserClass.newInstance(view, inner().getClass1());
 	}
 
 	@Override
 	public UserClass getClass2() {
-		return UserClass.create(view, inner().getClass2());
+		return UserClass.newInstance(view, inner().getClass2());
 	}
 
 	@Override
@@ -52,6 +53,20 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		return inner().getDescription2();
 	}
 
+	@Override
+	public String getCardinality() {
+		return inner().getCardinality();
+	}
+
+	@Override
+	public boolean isMasterDetail() {
+		return inner().isMasterDetail();
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
+		return inner().getMasterDetailDescription();
+	}
 
 	@Override
 	public boolean holdsHistory() {

@@ -1,12 +1,28 @@
 package unit.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.cmdbuild.dao.attribute.*;
+import org.cmdbuild.dao.attribute.BinaryAttribute;
+import org.cmdbuild.dao.attribute.BooleanAttribute;
+import org.cmdbuild.dao.attribute.CharAttribute;
+import org.cmdbuild.dao.attribute.DateAttribute;
+import org.cmdbuild.dao.attribute.DateTimeAttribute;
+import org.cmdbuild.dao.attribute.DecimalAttribute;
+import org.cmdbuild.dao.attribute.DoubleAttribute;
+import org.cmdbuild.dao.attribute.ForeignKeyAttribute;
+import org.cmdbuild.dao.attribute.IPAddressAttribute;
+import org.cmdbuild.dao.attribute.IntArrayAttribute;
+import org.cmdbuild.dao.attribute.IntegerAttribute;
+import org.cmdbuild.dao.attribute.LookupAttribute;
+import org.cmdbuild.dao.attribute.ReferenceAttribute;
+import org.cmdbuild.dao.attribute.RegclassAttribute;
+import org.cmdbuild.dao.attribute.StringArrayAttribute;
+import org.cmdbuild.dao.attribute.StringAttribute;
+import org.cmdbuild.dao.attribute.TextAttribute;
+import org.cmdbuild.dao.attribute.TimeAttribute;
 import org.cmdbuild.elements.AttributeImpl;
 import org.cmdbuild.elements.interfaces.IAttribute.AttributeType;
 import org.junit.Test;
-
 
 public class AttributeCreationTest {
 
@@ -32,7 +48,7 @@ public class AttributeCreationTest {
 		assertEquals(DateTimeAttribute.class, createdClassFor(AttributeType.TIMESTAMP));
 	}
 
-	private Object createdClassFor(AttributeType type) {
+	private Object createdClassFor(final AttributeType type) {
 		return AttributeImpl.create(null, null, type, null).getClass();
 	}
 

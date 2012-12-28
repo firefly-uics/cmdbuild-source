@@ -9,11 +9,15 @@ import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
 /**
- * Process instance used by a user
+ * Process instance used by a user.
  */
 public interface UserProcessInstance extends CMProcessInstance {
 
+	/**
+	 * {@link UserProcessInstance} mutator object.
+	 */
 	interface UserProcessInstanceDefinition extends CMProcessInstanceDefinition {
+
 		@Override
 		UserProcessInstanceDefinition set(String key, Object value);
 
@@ -28,6 +32,7 @@ public interface UserProcessInstance extends CMProcessInstance {
 
 		@Override
 		UserProcessInstance save();
+
 	}
 
 	@Override
@@ -35,4 +40,5 @@ public interface UserProcessInstance extends CMProcessInstance {
 
 	@Override
 	UserActivityInstance getActivityInstance(String activityInstanceId);
+
 }

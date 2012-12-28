@@ -14,10 +14,11 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -46,7 +47,6 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 			final XpdlProcessDefinitionStore xpdlProcessDefinitionStore) {
 		super(xpdlProcessDefinitionStore);
 		this.groupQueryAdapter = groupQueryAdapter;
-
 	}
 
 	@Override
@@ -159,6 +159,11 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		}
 
 		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			xpdlType = null;
+		}
+
+		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.REFERENCE;
 		}
@@ -174,7 +179,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		}
 
 		@Override
-		public void visit(final IPAddressAttributeType attributeType) {
+		public void visit(final IpAddressAttributeType attributeType) {
 			xpdlType = XpdlDocument.StandardAndCustomTypes.STRING;
 		}
 

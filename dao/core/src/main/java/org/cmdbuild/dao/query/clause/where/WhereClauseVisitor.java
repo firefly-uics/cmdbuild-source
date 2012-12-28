@@ -2,6 +2,14 @@ package org.cmdbuild.dao.query.clause.where;
 
 public interface WhereClauseVisitor {
 
-	public void visit(final SimpleWhereClause whereClause);
-	public void visit(final EmptyWhereClause whereClause);
+	void visit(NotWhereClause whereClause);
+
+	void visit(SimpleWhereClause whereClause);
+
+	void visit(AndWhereClause whereClause);
+
+	void visit(OrWhereClause whereClause);
+
+	void visit(EmptyWhereClause whereClause);
+
 }

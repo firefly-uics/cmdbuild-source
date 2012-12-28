@@ -16,10 +16,10 @@ import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.services.auth.AuthInfo;
 import org.cmdbuild.services.auth.User;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserImpl;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class UserCard extends LazyCard implements User {
 
@@ -30,7 +30,8 @@ public class UserCard extends LazyCard implements User {
 	private static final String ATTRIBUTE_EMAIL = "Email";
 
 	public static final String USER_CLASS_NAME = "User";
-	private static final ITable userClass = UserContext.systemContext().tables().get(USER_CLASS_NAME);
+	private static final ITable userClass = UserOperations.from(UserContext.systemContext()).tables()
+			.get(USER_CLASS_NAME);
 
 	public UserCard() throws NotFoundException {
 		super(userClass.cards().create());
@@ -74,19 +75,6 @@ public class UserCard extends LazyCard implements User {
 
 	public static User getUser(final String login) {
 		return getUser(login, false);
-	}
-
-	public static User getUser(final AuthInfo authInfo) {
-		final String authusername;
-		final boolean elevatePrivileges;
-		if (authInfo.isPrivilegedServiceUser() && authInfo.hasServiceUser()) {
-			authusername = authInfo.getUsername();
-			elevatePrivileges = true;
-		} else {
-			authusername = authInfo.getUsernameForAuthentication();
-			elevatePrivileges = false;
-		}
-		return getUser(authusername, elevatePrivileges);
 	}
 
 	public static User getUser(final String login, final boolean elevatePrivileges) {
