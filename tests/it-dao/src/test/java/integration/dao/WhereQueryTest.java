@@ -6,7 +6,7 @@ import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beg
 import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
 import static org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue.endsWith;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.GreatherThanOperatorAndValue.gt;
+import static org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue.gt;
 import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;

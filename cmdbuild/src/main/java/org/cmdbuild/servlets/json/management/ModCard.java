@@ -66,29 +66,32 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(final JSONObject serializer, @Parameter("limit") final int limit,
-			@Parameter("start") final int offset, @Parameter(value = "sort", required = false) final JSONArray sorters,
-			@Parameter(value = "query", required = false) final String fullTextQuery,
-			@Parameter(value = "writeonly", required = false) final boolean writeonly,
-			// Don't clone it or getCardPosition does not work, unless sort and
-			// query are set somewhere else
-			final CardQuery cardQuery, final UserContext userContext) throws JSONException, CMDBException {
+	public JSONObject getCardList(final JSONObject serializer, 
+			@Parameter(value = "className") final String className, //
+			@Parameter("limit") final int limit, //
+			@Parameter("start") final int offset, //
+			@Parameter(value = "sort", required = false) final JSONArray sorters, //
+			@Parameter(value = "filter") final JSONObject filter) throws JSONException, CMDBException {
 
-		temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
-		final JSONArray rows = new JSONArray();
-		if (writeonly) {
-			removeReadOnlySubclasses(cardQuery, userContext);
-		}
-
-		cardQuery.fullText(fullTextQuery);
-
-		applySortToCardQuery(sorters, cardQuery);
-
-		for (final ICard card : cardQuery.subset(offset, limit).count()) {
-			rows.put(Serializer.serializeCardWithPrivileges(card, false));
-		}
-		serializer.put("rows", rows);
-		serializer.put("results", cardQuery.getTotalRows());
+		
+		//TODO: implement it!!!!!!!!!!!!!!!!!!!!
+		
+		
+//		temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
+//		final JSONArray rows = new JSONArray();
+//		if (writeonly) {
+//			removeReadOnlySubclasses(cardQuery, userContext);
+//		}
+//
+//		cardQuery.fullText(fullTextQuery);
+//
+//		applySortToCardQuery(sorters, cardQuery);
+//
+//		for (final ICard card : cardQuery.subset(offset, limit).count()) {
+//			rows.put(Serializer.serializeCardWithPrivileges(card, false));
+//		}
+//		serializer.put("rows", rows);
+//		serializer.put("results", cardQuery.getTotalRows());
 		return serializer;
 	}
 

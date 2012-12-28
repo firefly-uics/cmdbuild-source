@@ -558,6 +558,7 @@ public class ModClass extends JSONBase {
 	 * Widget Definition
 	 */
 
+	//FIXME: why success false? fix it
 	@JSONExported
 	public JsonResponse getAllWidgets(@Parameter(value = "active", required = false) final boolean active,
 			final UserContext userCtx) {
