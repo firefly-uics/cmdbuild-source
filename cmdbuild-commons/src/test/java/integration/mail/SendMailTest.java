@@ -18,7 +18,6 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
