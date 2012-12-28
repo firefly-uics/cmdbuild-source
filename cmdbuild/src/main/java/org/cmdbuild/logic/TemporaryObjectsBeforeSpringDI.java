@@ -10,6 +10,7 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
+import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
@@ -66,7 +67,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		}
 	};
 
-	private static final PostgresDriver driver;
+	private static final AbstractDBDriver driver;
 	private static final DBDataView dbDataView;
 	private static final DefaultPrivilegeContextFactory privilegeCtxFactory;
 	private static final AbstractSharkService workflowService;
@@ -126,7 +127,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		return factory;
 	}
 
-	public static PostgresDriver getDriver() {
+	public static AbstractDBDriver getDriver() {
 		return driver;
 	}
 
