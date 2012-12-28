@@ -23,7 +23,6 @@ import static org.cmdbuild.common.mail.JavaxMailConstants.TRUE;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -175,6 +174,7 @@ class DefaultNewMail implements NewMail {
 					configuration.getLogger().error("error sending mail", e);
 				}
 			}
+
 		};
 	}
 
