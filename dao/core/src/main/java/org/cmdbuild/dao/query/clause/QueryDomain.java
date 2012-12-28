@@ -6,12 +6,14 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 
 /**
- * Adds to the CMDomain the information about the attribute used as a source in the query.
+ * Adds to the CMDomain the information about the attribute used as a source in
+ * the query.
  */
 public class QueryDomain {
 
 	/**
-	 * Domains are between two classes only, but we want to design it for domains between more than two classes
+	 * Domains are between two classes only, but we want to design it for
+	 * domains between more than two classes
 	 */
 	public enum Source {
 		_1 {
@@ -58,8 +60,11 @@ public class QueryDomain {
 		};
 
 		public abstract boolean getDirection();
+
 		public abstract String getDomainDescription(CMDomain domain);
+
 		public abstract CMClass getSourceClass(final CMDomain domain);
+
 		public abstract CMClass getTargetClass(final CMDomain domain);
 	}
 
@@ -94,6 +99,7 @@ public class QueryDomain {
 	/**
 	 * @deprecated Use {@link getQuerySource()} instead
 	 */
+	@Deprecated
 	public boolean getDirection() {
 		return querySource.getDirection();
 	}
@@ -112,12 +118,15 @@ public class QueryDomain {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof QueryDomain == false)
+	public boolean equals(final Object obj) {
+		if (obj instanceof QueryDomain == false) {
 			return false;
-		if (this == obj)
+		}
+		if (this == obj) {
 			return true;
-		QueryDomain other = (QueryDomain) obj;
-		return new EqualsBuilder().append(this.domain, other.domain).append(this.querySource, other.querySource).isEquals();
+		}
+		final QueryDomain other = (QueryDomain) obj;
+		return new EqualsBuilder().append(this.domain, other.domain).append(this.querySource, other.querySource)
+				.isEquals();
 	}
 }

@@ -6,7 +6,7 @@ import org.hamcrest.Matcher;
 
 public abstract class JsonMatchers {
 
-	public static Matcher<String> containsPair(String key, Object value) {
+	public static Matcher<String> containsPair(final String key, final Object value) {
 		String valueString;
 		if (value == null) {
 			valueString = "null";
@@ -18,15 +18,15 @@ public abstract class JsonMatchers {
 		return containsString(String.format("\"%s\":%s", key, valueString));
 	}
 
-	public static Matcher<String> containsKey(String key) {
+	public static Matcher<String> containsKey(final String key) {
 		return containsString(String.format("\"%s\":", key));
 	}
 
-	public static Matcher<String> containsArrayWithKey(String array, String key) {
+	public static Matcher<String> containsArrayWithKey(final String array, final String key) {
 		return containsString(String.format("\"%s\":%s", key, array));
 	}
 
-	public static Matcher<String> containsObjectWithKey(String object, String key) {
+	public static Matcher<String> containsObjectWithKey(final String object, final String key) {
 		return containsString(String.format("\"%s\":%s", key, object));
 	}
 }

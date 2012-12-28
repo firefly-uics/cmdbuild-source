@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.legacywrappers.CardWrapper;
 import org.cmdbuild.dao.view.CMDataView;
@@ -17,15 +18,23 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
 
 /**
  * Business Logic Layer for Data Access
  */
-public class DataAccessLogic {
+@Component
+public class DataAccessLogic implements Logic {
 
 	private final CMDataView view;
 
-	public DataAccessLogic(final CMDataView view) {
+	@Autowired
+	public DataAccessLogic(@Qualifier("user") final CMDataView view) {
 		this.view = view;
 	}
 
@@ -41,6 +50,10 @@ public class DataAccessLogic {
 		return new GetRelationHistory(view).exec(srcCard);
 	}
 
+	public CMClass findClassById(final Long classId) {
+		return view.findClassById(classId);
+	}
+
 	public Iterable<? extends CMDomain> findAllDomains() {
 		return this.view.findAllDomains();
 	}
@@ -48,10 +61,10 @@ public class DataAccessLogic {
 	@Legacy("IMPORTANT! FIX THE NEW DAO AND FIX BECAUSE IT USES THE SYSTEM USER!")
 	public CMCard getCard(final String className, final Object cardId) {
 		try {
-			int id = Integer.parseInt(cardId.toString()); // very expensive but almost never called
-			final ICard card = UserContext.systemContext().tables().get(className).cards().get(id);
+			final int id = Integer.parseInt(cardId.toString()); // very expensive but almost never called
+			final ICard card = UserOperations.from(UserContext.systemContext()).tables().get(className).cards().get(id);
 			return new CardWrapper(card);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 		/* The new DAO layer does not query subclasses! ****************
@@ -68,4 +81,21 @@ public class DataAccessLogic {
 		}
 		**************************************************************** */
 	}
+
+	/**
+	 * Retrieves all domains in which the class with id = classId is involved
+	 * (both direct and inverse relation)
+	 * 
+	 * @param classId
+	 *            the class involved in the relation
+	 * @return a list of all domains defined for the class
+	 */
+	public List<CMDomain> findDomainsForClassWithId(final Long classId) {
+		final CMClass fetchedClass = view.findClassById(classId);
+		if (fetchedClass == null) {
+			return Lists.newArrayList();
+		}
+		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
+	}
+
 }

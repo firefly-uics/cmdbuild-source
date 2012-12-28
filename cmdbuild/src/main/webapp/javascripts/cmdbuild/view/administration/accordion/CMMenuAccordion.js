@@ -33,7 +33,7 @@
 
 		onGroupAdded: function(group) {
 			// register a one-time event, because the
-			// updateStore of a collapsed accordion cause 
+			// updateStore of a collapsed accordion cause
 			// a lot of layout problems
 			this.on("expand",
 				function() {
@@ -49,10 +49,11 @@
 			);
 		}
 	});
-	
+
 	function buildNodeConf(g) {
 		return {
 			id: g.get("id"),
+			name: g.get("name"),
 			text: g.get("text"),
 			leaf: true,
 			cmName: "menu",

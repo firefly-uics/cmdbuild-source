@@ -17,6 +17,7 @@ import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;

@@ -8,14 +8,15 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class DBDashboardStore implements DashboardStore {
 
 	private static final String DASHBOARD_TABLE = "_Dashboards";
 	private static final String DEFINITION_ATTRIBUTE = "Definition";
-	private static final ITable dashboardsTable = UserContext.systemContext()
-			.tables().get(DASHBOARD_TABLE);
+	private static final ITable dashboardsTable = UserOperations.from(UserContext.systemContext()).tables()
+			.get(DASHBOARD_TABLE);
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
 	private static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
 
@@ -36,8 +37,8 @@ public class DBDashboardStore implements DashboardStore {
 
 	@Override
 	public Map<Long, DashboardDefinition> list() {
-		Map<Long, DashboardDefinition> out = new HashMap<Long, DashboardDefinition>();
-		for (ICard c : dashboardsTable.cards().list()) {
+		final Map<Long, DashboardDefinition> out = new HashMap<Long, DashboardDefinition>();
+		for (final ICard c : dashboardsTable.cards().list()) {
 			out.put(Long.valueOf(c.getId()), cardToDashboardDefinition(c));
 		}
 		return out;
@@ -60,25 +61,24 @@ public class DBDashboardStore implements DashboardStore {
 		try {
 			final String serializedDefinition = c.getAttributeValue(DEFINITION_ATTRIBUTE).getString();
 			return mapper.readValue(serializedDefinition, DashboardDefinition.class);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IllegalArgumentException(errors.decodingError());
 		}
 	}
 
-	private String serializeDashboard(final DashboardDefinition dashboard) throws IllegalArgumentException{
+	private String serializeDashboard(final DashboardDefinition dashboard) throws IllegalArgumentException {
 		try {
 			final String serializedDefinition = mapper.writeValueAsString(dashboard);
 			return serializedDefinition;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IllegalArgumentException(errors.encodingError());
 		}
 	}
 
-	/* 
-	 * to avoid an useless errors hierarchy
-	 * define this object that build the errors messages
-	 * These are used also in the tests to ensure
-	 * that a right message is provided by the exception
+	/*
+	 * to avoid an useless errors hierarchy define this object that build the
+	 * errors messages These are used also in the tests to ensure that a right
+	 * message is provided by the exception
 	 */
 	public static class ErrorMessageBuilder {
 
@@ -89,5 +89,5 @@ public class DBDashboardStore implements DashboardStore {
 		public String encodingError() {
 			return "There ware some problems while trying to encode the dashboard";
 		}
- 	}
+	}
 }

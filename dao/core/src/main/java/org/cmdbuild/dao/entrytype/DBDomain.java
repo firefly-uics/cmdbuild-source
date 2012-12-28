@@ -2,64 +2,148 @@ package org.cmdbuild.dao.entrytype;
 
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.cmdbuild.common.Builder;
+
+import com.google.common.collect.Lists;
 
 public class DBDomain extends DBEntryType implements CMDomain {
 
 	public static class DomainMetadata extends EntryTypeMetadata {
+
+		public static final String CARDINALITY = BASE_NS + "cardinality";
 		public static final String CLASS_1 = BASE_NS + "class1";
 		public static final String CLASS_2 = BASE_NS + "class2";
 		public static final String DESCRIPTION_1 = BASE_NS + "description1";
 		public static final String DESCRIPTION_2 = BASE_NS + "description2";
+		public static final String MASTERDETAIL = BASE_NS + "masterdetail";
+		public static final String MASTERDETAIL_DESCRIPTION = BASE_NS + "masterdetail.label";
 
-		final String getDescription1() {
+		public String getDescription1() {
 			return get(DESCRIPTION_1);
 		}
 
-		final void setDescription1(final String description1) {
-			put(DESCRIPTION_1, description1);
-		}
-
-		final String getDescription2() {
+		public String getDescription2() {
 			return get(DESCRIPTION_2);
 		}
 
-		final void setDescription2(final String description2) {
-			put(DESCRIPTION_2, description2);
+		public String getCardinality() {
+			return get(CARDINALITY);
 		}
+
+		public boolean isMasterDetail() {
+			return Boolean.parseBoolean(get(MASTERDETAIL));
+		}
+
+		public String getMasterDetailDescription() {
+			return get(MASTERDETAIL_DESCRIPTION);
+		}
+
 	}
 
-	private final DomainMetadata meta;
-	@Deprecated private DBClass class1;
-	@Deprecated private DBClass class2;
+	public static class DBDomainBuilder implements Builder<DBDomain> {
 
-	public DBDomain(final String name, final Long id, final DomainMetadata meta, final List<DBAttribute> attributes) {
-		super(name, id, attributes);
-		this.meta = meta;
+		private final List<DBAttribute> attributes;
+
+		private String name;
+		private Long id;
+		private DomainMetadata metadata;
+		private DBClass class1;
+		private DBClass class2;
+
+		private DBDomainBuilder() {
+			metadata = new DomainMetadata();
+			attributes = Lists.newArrayList();
+		}
+
+		public DBDomainBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public DBDomainBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public DBDomainBuilder withAllMetadata(final DomainMetadata metadata) {
+			this.metadata = metadata;
+			return this;
+		}
+
+		public DBDomainBuilder withAllAttributes(final List<DBAttribute> attributes) {
+			this.attributes.addAll(attributes);
+			return this;
+		}
+
+		public DBDomainBuilder withAttribute(final DBAttribute attribute) {
+			this.attributes.add(attribute);
+			return this;
+		}
+
+		@Deprecated
+		public DBDomainBuilder withClass1(final DBClass dbClass) {
+			this.class1 = dbClass;
+			return this;
+		}
+
+		@Deprecated
+		public DBDomainBuilder withClass2(final DBClass dbClass) {
+			this.class2 = dbClass;
+			return this;
+		}
+
+		@Override
+		public DBDomain build() {
+			return new DBDomain(this);
+		}
+
 	}
+
+	public static DBDomainBuilder newDomain() {
+		return new DBDomainBuilder();
+	}
+
+	private final DomainMetadata metadata;
 
 	@Deprecated
-	public DBDomain(final String name, final Long id, final List<DBAttribute> attributes) {
-		this(name, id, new DomainMetadata(), attributes);
+	private final DBClass class1;
+	@Deprecated
+	private final DBClass class2;
+
+	private DBDomain(final DBDomainBuilder builder) {
+		super(builder.name, builder.id, builder.attributes);
+		this.metadata = builder.metadata;
+		this.class1 = builder.class1;
+		this.class2 = builder.class2;
 	}
 
-    public void accept(CMEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	// @Deprecated
+	// public DBDomain(final String name, final Long id, final List<DBAttribute>
+	// attributes) {
+	// this(name, id, new DomainMetadata(), attributes);
+	// }
 
-    public void accept(DBEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	@Override
+	public void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
+	@Override
+	public void accept(final DBEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
 	protected final DomainMetadata meta() {
-		return meta;
+		return metadata;
 	}
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return String.format("[Domain %s]", getName());
 	}
 
+	@Override
 	public final String getPrivilegeId() {
 		return String.format("Domain:%d", getId());
 	}
@@ -72,10 +156,6 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		return class1;
 	}
 
-	public void setClass1(final DBClass class1) {
-		this.class1 = class1;
-	}
-
 	@Override
 	public DBClass getClass2() {
 		if (class2 == null) {
@@ -84,17 +164,9 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		return class2;
 	}
 
-	public void setClass2(final DBClass class2) {
-		this.class2 = class2;
-	}
-
 	@Override
 	public String getDescription1() {
 		return meta().getDescription1();
-	}
-
-	public void setDescription1(String description1) {
-		meta().setDescription1(description1);
 	}
 
 	@Override
@@ -102,12 +174,24 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		return meta().getDescription2();
 	}
 
-	public void setDescription2(String description2) {
-		meta().setDescription2(description2);
+	@Override
+	public String getCardinality() {
+		return meta().getCardinality();
+	}
+
+	@Override
+	public boolean isMasterDetail() {
+		return meta().isMasterDetail();
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
+		return meta().getMasterDetailDescription();
 	}
 
 	@Override
 	public boolean holdsHistory() {
 		return true;
 	}
+
 }

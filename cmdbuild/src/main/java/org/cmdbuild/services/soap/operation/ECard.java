@@ -24,6 +24,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.ClassSchema;
@@ -103,8 +104,8 @@ public class ECard {
 		protected final List<ICard> cards;
 
 		public AbstractCardListCommand(final String className, final Attribute[] attributeList, final Query query,
-			final Order[] order, final Integer limit, final Integer offset, final String fullText,
-			final CQLQuery cqlQuery) {
+				final Order[] order, final Integer limit, final Integer offset, final String fullText,
+				final CQLQuery cqlQuery) {
 			final CardQueryBuilder cqb = createCardQueryBuilder(className, query, cqlQuery);
 			cqb.setPage(limit, offset);
 			cqb.setFullText(fullText);
@@ -124,7 +125,7 @@ public class ECard {
 		return new CardQueryBuilder(userCtx, className, query, cqlQuery);
 	}
 
-	private Card prepareCard(final Attribute[] attributeList, final ICard card, boolean enableLongDateFormat)  {
+	private Card prepareCard(final Attribute[] attributeList, final ICard card, final boolean enableLongDateFormat) {
 		Card wfCard;
 		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
@@ -137,7 +138,7 @@ public class ECard {
 	}
 
 	// FIXME Refactoring with unit tests (it's a total mess!)
-	private CardExt prepareCardExt(final Attribute[] attributeList, final ICard card, boolean enableLongDateFormat) {
+	private CardExt prepareCardExt(final Attribute[] attributeList, final ICard card, final boolean enableLongDateFormat) {
 		CardExt wfCard;
 		final Card.ValueSerializer cardSerializer = Card.ValueSerializer.forLongDateFormat(enableLongDateFormat);
 		if (attributeList != null && attributeList.length > 0 && attributeList[0].getName() != null) {
@@ -173,15 +174,17 @@ public class ECard {
 	}
 
 
-	private void addExtras(final ICard card, Card wfCard) {
+	private void addExtras(final ICard card, final Card wfCard) {
 		if (card.getSchema().isActivity()) {
-			final ProcessDefinitionManager processDefinitionManager = TemporaryObjectsBeforeSpringDI.getProcessDefinitionManager();
+			final ProcessDefinitionManager processDefinitionManager = TemporaryObjectsBeforeSpringDI
+					.getProcessDefinitionManager();
 			final WorkflowLogicHelper santasLittleHelper = new WorkflowLogicHelper(userCtx);
-			final UserProcessInstance processInstance = new ProcessInstanceWrapper(userCtx, processDefinitionManager, card);
+			final UserProcessInstance processInstance = new ProcessInstanceWrapper(userCtx, processDefinitionManager,
+					card);
 			UserActivityInstance actInst = null;
 			try {
 				actInst = santasLittleHelper.selectActivityInstanceFor(processInstance);
-			} catch (CMWorkflowException e) {
+			} catch (final CMWorkflowException e) {
 				actInst = null;
 			}
 			addActivityExtras(actInst, wfCard);
@@ -196,14 +199,14 @@ public class ECard {
 		if (actInst != null) {
 			try {
 				activityDescription = actInst.getDefinition().getDescription();
-			} catch (CMWorkflowException e) {
+			} catch (final CMWorkflowException e) {
 				// keep the placeholder description
 			}
 		}
 		wfCard.getAttributeList().add(newAttribute(ACTIVITY_DESCRIPTION_ATTRIBUTE, activityDescription));
 	}
 
-	private Attribute newAttribute(String name, String value) {
+	private Attribute newAttribute(final String name, final String value) {
 		final Attribute attribute = new Attribute();
 		attribute.setName(name);
 		attribute.setValue(value);
@@ -250,9 +253,9 @@ public class ECard {
 		list.add(currentCard);
 		Log.SOAP.debug("Getting history for " + className + " card with id " + cardId);
 
-		final CardQuery cardList = table.cards().list().history(cardId).filter("User",
-				AttributeFilterType.DONTCONTAINS, "System").order(ICard.CardAttributes.BeginDate.toString(),
-				OrderFilterType.DESC);
+		final CardQuery cardList = table.cards().list().history(cardId)
+				.filter("User", AttributeFilterType.DONTCONTAINS, "System")
+				.order(ICard.CardAttributes.BeginDate.toString(), OrderFilterType.DESC);
 
 		if (offset == null)
 			offset = 0;
@@ -277,7 +280,7 @@ public class ECard {
 
 		ITable table;
 		Log.SOAP.debug("Creating card with classname " + card.getClassName());
-		table = userCtx.tables().get(card.getClassName());
+		table = UserOperations.from(userCtx).tables().get(card.getClassName());
 
 		final ICard icard = table.cards().create();
 		setCardAttributes(icard, card.getAttributeList());
@@ -291,7 +294,7 @@ public class ECard {
 		ITable table;
 		Log.SOAP.debug("Trying to update card " + card.getId());
 		Log.SOAP.debug("Updating card with classname " + card.getClassName());
-		table = userCtx.tables().get(card.getClassName());
+		table = UserOperations.from(userCtx).tables().get(card.getClassName());
 
 		final ICard icard = table.cards().get(card.getId());
 		setCardAttributes(icard, card.getAttributeList());
@@ -351,8 +354,8 @@ public class ECard {
 					try {
 						card.getAttributeValue(attrName).setValue(attrNewValue);
 					} catch (final ORMException e) {
-						Log.SOAP.debug("Error setting attribute " + attrName + " with value " + attrNewValue, e
-								.fillInStackTrace());
+						Log.SOAP.debug("Error setting attribute " + attrName + " with value " + attrNewValue,
+								e.fillInStackTrace());
 						Log.SOAP.warn("Exception while setting: " + attrName + " = " + attrNewValue, e);
 					}
 				}
@@ -362,20 +365,17 @@ public class ECard {
 
 	private static class CardQueryBuilder {
 
-		private final GuestFilter guestFilter;
-
 		private final ITable table;
 		private CardQuery cardQuery;
 
 		public CardQueryBuilder(final UserContext userCtx, final String className, final Query query,
 				final CQLQuery cqlQuery) {
-			this.guestFilter = new GuestFilter(userCtx);
 			if (cqlQuery != null) {
 				final HashMap<String, Object> cqlParameters = serializeCQLParameters(cqlQuery.getParameters());
 				cardQuery = CQLFacadeCompiler.naiveCmbuildCompileSystemUser(cqlQuery.getCqlQuery(), cqlParameters);
 				table = cardQuery.getTable();
 			} else {
-				table = userCtx.tables().get(className);
+				table = UserOperations.from(userCtx).tables().get(className);
 				cardQuery = table.cards().list();
 				if (query != null) {
 					cardQuery.filter(query.toAbstractFilter(table));
@@ -432,20 +432,53 @@ public class ECard {
 			if (orderType[0].getColumnName() != null) {
 				Log.SOAP.debug("Ordering result with following condition(s)");
 				for (int i = 0; i < orderType.length; i++) {
-					orderedCardQuery.order(orderType[i].getColumnName(), Enum.valueOf(OrderFilterType.class,
-							orderType[i].getType()));
+					orderedCardQuery.order(orderType[i].getColumnName(),
+							Enum.valueOf(OrderFilterType.class, orderType[i].getType()));
 				}
 			}
 			return orderedCardQuery;
 		}
 
 		private CardQuery applyFilters(final UserContext userCtx, final CardQuery cardQuery) {
-			CardQuery filteredCardQuery = guestFilter.apply(cardQuery);
+			CardQuery filteredCardQuery = guestFilter(cardQuery, userCtx);
 			if (filteredCardQuery == null) {
 				cardQuery.setPrevExecutorsFilter(userCtx);
 				filteredCardQuery = cardQuery;
 			}
 			return filteredCardQuery;
+		}
+
+		private CardQuery guestFilter(final CardQuery cardQuery, final UserContext userCtx) {
+			if (userCtx.isGuest()) {
+				for (final IAttribute attribute : cardQuery.getTable().getAttributes().values()) {
+					final TreeMap<String, Object> metadata = attribute.getMetadata();
+					String targetAttributeName = null;
+					if (metadata.get("org.cmdbuild.portlet.user.id") != null) {
+						final String metadataValue = metadata.get("org.cmdbuild.portlet.user.id").toString();
+						targetAttributeName = checkMetadataValue(targetAttributeName, metadataValue);
+					}
+					if (targetAttributeName != null) {
+						final CardQuery filteredCardQuery = (CardQuery) cardQuery.clone();
+						final ITable userTable = attribute.getReferenceTarget();
+						final CardQuery userQuery = userTable
+								.cards()
+								.list()
+								.filter(targetAttributeName, AttributeFilterType.EQUALS, userCtx.getRequestedUsername());
+						filteredCardQuery.cardInRelation(attribute.getReferenceDirectedDomain(), userQuery);
+						return filteredCardQuery;
+					}
+				}
+			}
+			return null;
+		}
+
+		private String checkMetadataValue(String targetAttributeName, final String metadataValue) {
+			if (metadataValue != null && !metadataValue.equals("") && metadataValue.contains(".")) {
+				targetAttributeName = metadataValue.split("\\.")[1];
+			} else {
+				targetAttributeName = null;
+			}
+			return targetAttributeName;
 		}
 
 	}
@@ -458,7 +491,7 @@ public class ECard {
 		classSchema.setName(table.getName());
 		classSchema.setDescription(table.getDescription());
 		classSchema.setSuperClass(table.isSuperClass());
-	
+
 		final List<AttributeSchema> attributes = new ArrayList<AttributeSchema>();
 		for (final IAttribute attribute : table.getAttributes().values()) {
 			if (keepAttribute(attribute)) {
@@ -473,7 +506,7 @@ public class ECard {
 
 	private ITable table(final String className) {
 		Log.SOAP.info(format("getting table for class '%s'", className));
-		return userCtx.tables().get(className);
+		return UserOperations.from(userCtx).tables().get(className);
 	}
 
 	private boolean keepAttribute(final IAttribute attribute) {

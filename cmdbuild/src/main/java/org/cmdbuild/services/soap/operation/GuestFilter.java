@@ -4,7 +4,6 @@ import static java.lang.String.format;
 import static java.util.regex.Pattern.quote;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import org.apache.log4j.Logger;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -12,10 +11,11 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.meta.MetadataMap;
+import org.slf4j.Logger;
 
 class GuestFilter {
 
-	private static final Logger logger = Log.OTHER;
+	private static final Logger logger = Log.CMDBUILD;
 
 	private static final String METADATA_PORTLET_USER = "org.cmdbuild.portlet.user.id";
 	private static final String CLASS_ATTRIBUTE_SEPARATOR = ".";

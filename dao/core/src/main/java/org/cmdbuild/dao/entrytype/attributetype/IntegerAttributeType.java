@@ -1,26 +1,24 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-
-
 public class IntegerAttributeType extends AbstractAttributeType<Integer> {
 
 	public IntegerAttributeType() {
 	}
 
 	@Override
-	public void accept(CMAttributeTypeVisitor visitor) {
+	public void accept(final CMAttributeTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
 	@Override
-	protected Integer convertNotNullValue(Object value) {
+	protected Integer convertNotNullValue(final Object value) {
 		Integer intValue;
 		if (value instanceof Integer) {
 			intValue = (Integer) value;
 		} else if (value instanceof Number) {
 			intValue = ((Number) value).intValue();
 		} else if (value instanceof String) {
-			String stringValue = (String) value;
+			final String stringValue = (String) value;
 			if (stringValue.isEmpty()) {
 				intValue = null;
 			} else {

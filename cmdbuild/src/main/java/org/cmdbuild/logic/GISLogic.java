@@ -23,6 +23,7 @@ import org.cmdbuild.model.domainTree.DomainTreeCardNode;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.services.gis.GeoFeatureLayer.GeoType;
 import org.cmdbuild.services.gis.GeoFeatureQuery;
@@ -33,7 +34,7 @@ import org.cmdbuild.utils.OrderingUtils;
 import org.cmdbuild.utils.OrderingUtils.PositionHandler;
 import org.json.JSONObject;
 
-public class GISLogic {
+public class GISLogic implements Logic {
 
 	private static final GeoServerService geoServerService = new GeoServerService();
 	private static final DBLayerMetadataStore layerMetadataStore = new DBLayerMetadataStore();
@@ -45,6 +46,12 @@ public class GISLogic {
 	private static final String GEOSERVER = "_Geoserver";
 	private static final String GEO_TABLESPACE = "gis";
 	private static final String GEO_TABLE_NAME_FORMAT = GEO_TABLESPACE + ".Detail_%s_%s";
+
+	private final UserOperations userOperations;
+
+	public GISLogic(final UserContext userContext) {
+		this.userOperations = UserOperations.from(userContext);
+	}
 
 	/* Geo attributes */
 
@@ -60,8 +67,8 @@ public class GISLogic {
 		return layerMetadataStore.createLayer(layerMetaData);
 	}
 
-	public LayerMetadata modifyGeoAttribute(ITable targetTable, String name, String description,
-			int minimumZoom, int maximumZoom, String style) throws Exception {
+	public LayerMetadata modifyGeoAttribute(ITable targetTable, String name, String description, int minimumZoom,
+			int maximumZoom, String style) throws Exception {
 		ensureGisIsEnabled();
 
 		return modifyLayerMetadata(targetTable.getName(), name, description, minimumZoom, maximumZoom, style, null);
@@ -71,7 +78,7 @@ public class GISLogic {
 		ensureGisIsEnabled();
 
 		String fullName = fullName(masterTableName, name);
-		ITable geoTable = UserContext.systemContext().tables().get(fullName);
+		ITable geoTable = userOperations.tables().get(fullName);
 		geoTable.delete();
 		layerMetadataStore.deleteLayer(fullName);
 	}
@@ -154,11 +161,13 @@ public class GISLogic {
 		layerMetadataStore.createLayer(layerMetaData);
 	}
 
-	public void modifyGeoServerLayer(String name, String description, int maximumZoom, int minimumZoom, FileItem file, Set<String> cardBinding) throws Exception {
+	public void modifyGeoServerLayer(String name, String description, int maximumZoom, int minimumZoom, FileItem file,
+			Set<String> cardBinding) throws Exception {
 		ensureGisIsEnabled();
 		ensureGeoServerIsEnabled();
 
-		LayerMetadata layerMetadata = modifyLayerMetadata(GEOSERVER, name, description, minimumZoom, maximumZoom, null, cardBinding);
+		LayerMetadata layerMetadata = modifyLayerMetadata(GEOSERVER, name, description, minimumZoom, maximumZoom, null,
+				cardBinding);
 
 		if (file != null && file.getSize() > 0) {
 			geoServerService.modifyStoreData(layerMetadata, file.getInputStream());
@@ -185,9 +194,10 @@ public class GISLogic {
 		final List<LayerMetadata> geoServerLayers = getGeoServerLayers();
 		final Map<String, ClassMapping> mapping = new HashMap<String, ClassMapping>();
 
-		for (LayerMetadata layer:geoServerLayers) {
-			for (String bindedCard:layer.getCardBinding()) {
-				String[] cardInfo = bindedCard.split("_"); // A cardInfo is ClassName_CardId
+		for (LayerMetadata layer : geoServerLayers) {
+			for (String bindedCard : layer.getCardBinding()) {
+				String[] cardInfo = bindedCard.split("_"); // A cardInfo is
+															// ClassName_CardId
 				String className = cardInfo[0];
 				String cardId = cardInfo[1];
 
@@ -269,9 +279,9 @@ public class GISLogic {
 
 			nodes.put(rootCardNode.getCardId(), rootCardNode);
 
-			final ITable table = UserContext.systemContext().tables().get(root.getTargetClassName());
+			final ITable table = userOperations.tables().get(root.getTargetClassName());
 
-			for (ICard card:table.cards().list()) {
+			for (ICard card : table.cards().list()) {
 				DomainTreeCardNode node = new DomainTreeCardNode();
 				node.setText(card.getDescription());
 				node.setClassName(card.getSchema().getName());
@@ -293,16 +303,17 @@ public class GISLogic {
 
 	// the default check is that:
 	// identify the base nodes, AKA the nodes created expanding the base domain
-	// this nodes represents the base level, and we want that only the first child
-	// of a siblings group was checked. Also all the ancestors of this node must be checked
+	// this nodes represents the base level, and we want that only the first
+	// child
+	// of a siblings group was checked. Also all the ancestors of this node must
+	// be checked
 	private void setDefaultCheck(Map<Long, DomainTreeCardNode> nodes) {
 		Map<Object, DomainTreeCardNode> visitedNodes = new HashMap<Object, DomainTreeCardNode>();
 
-		for (DomainTreeCardNode node:nodes.values()) {
+		for (DomainTreeCardNode node : nodes.values()) {
 			if (node.isBaseNode()) {
 				DomainTreeCardNode parent = node.parent();
-				if (parent != null 
-						&& !visitedNodes.containsKey(parent.getCardId())) {
+				if (parent != null && !visitedNodes.containsKey(parent.getCardId())) {
 
 					parent.getChildren().get(0).setChecked(true, true, true);
 					visitedNodes.put(parent.getCardId(), parent);
@@ -311,19 +322,17 @@ public class GISLogic {
 		}
 	}
 
-	private void fetchRelationsByDomain(
-			final DataAccessLogic dataAccesslogic,
-			final Map<String, Long> domainIds,
-			final DomainTreeNode root,
-			final Map<Long, DomainTreeCardNode> nodes) {
+	private void fetchRelationsByDomain(final DataAccessLogic dataAccesslogic, final Map<String, Long> domainIds,
+			final DomainTreeNode root, final Map<Long, DomainTreeCardNode> nodes) {
 
 		final Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain = new HashMap<Object, Map<Object, List<RelationInfo>>>();
 
-		for (DomainTreeNode domainTreeNode: root.getChildNodes()) {
+		for (DomainTreeNode domainTreeNode : root.getChildNodes()) {
 			Long domainId = domainIds.get(domainTreeNode.getDomainName());
 			String querySource = domainTreeNode.isDirect() ? "_1" : "_2";
 			DomainWithSource dom = DomainWithSource.create(domainId, querySource);
-			Map<Object, List<RelationInfo>> relations = dataAccesslogic.relationsBySource(root.getTargetClassName(), dom);
+			Map<Object, List<RelationInfo>> relations = dataAccesslogic.relationsBySource(root.getTargetClassName(),
+					dom);
 			relationsByDomain.put(domainId, relations);
 			boolean leaf = domainTreeNode.getChildNodes().size() == 0;
 			boolean baseNode = domainTreeNode.isBaseNode();
@@ -333,19 +342,17 @@ public class GISLogic {
 	}
 
 	private void fillNodes(Map<Long, DomainTreeCardNode> nodes,
-		Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain,
-		boolean leaf,
-		boolean baseNode) {
+			Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain, boolean leaf, boolean baseNode) {
 
-		for (Map<Object, List<RelationInfo>> relationsBySource: relationsByDomain.values()) {
-			for (Object sourceCardId:relationsBySource.keySet()) {
+		for (Map<Object, List<RelationInfo>> relationsBySource : relationsByDomain.values()) {
+			for (Object sourceCardId : relationsBySource.keySet()) {
 				DomainTreeCardNode parent = nodes.get(sourceCardId);
 
 				if (parent == null) {
 					continue;
 				}
 
-				for (RelationInfo ri:relationsBySource.get(sourceCardId)) {
+				for (RelationInfo ri : relationsBySource.get(sourceCardId)) {
 					DomainTreeCardNode child = new DomainTreeCardNode();
 					String text = ri.getTargetDescription();
 					if (text == null || text.equals("")) {
@@ -353,8 +360,8 @@ public class GISLogic {
 					}
 
 					child.setText(text);
-					child.setCardId((Long)ri.getTargetId());
-					child.setClassId((Long)ri.getTargetType().getId());
+					child.setCardId((Long) ri.getTargetId());
+					child.setClassId((Long) ri.getTargetType().getId());
 					child.setClassName(ri.getTargetType().getName());
 					child.setLeaf(leaf);
 					child.setBaseNode(baseNode);
@@ -368,29 +375,30 @@ public class GISLogic {
 
 	/* private methods */
 
-	private static ITable createGeoAttributeTable(ITable masterTable, LayerMetadata layerMetadata) {
-		ITable geoAttributeTable = UserContext.systemContext().tables().create();
+	private ITable createGeoAttributeTable(ITable masterTable, LayerMetadata layerMetadata) {
+		ITable geoAttributeTable = userOperations.tables().create();
 		geoAttributeTable.setTableType(CMTableType.SIMPLECLASS);
 		geoAttributeTable.setMode(Mode.RESERVED.toString());
 		geoAttributeTable.setName(String.format(GEO_TABLE_NAME_FORMAT, masterTable.getName(), layerMetadata.getName()));
 		geoAttributeTable.setDescription(layerMetadata.getDescription());
 		geoAttributeTable.save();
 
-		IAttribute masterAttribute = AttributeImpl.create(geoAttributeTable, MASTER_ATTRIBUTE, AttributeType.FOREIGNKEY);
+		IAttribute masterAttribute = AttributeImpl
+				.create(geoAttributeTable, MASTER_ATTRIBUTE, AttributeType.FOREIGNKEY);
 		masterAttribute.setFKTargetClass(masterTable.getName());
 		masterAttribute.setMode(Mode.RESERVED.toString());
 		masterAttribute.save();
 
-		IAttribute geometryAttribute = AttributeImpl.create(geoAttributeTable, GEOMETRY_ATTRIBUTE, 
-		GeoType.valueOf(layerMetadata.getType()).getAttributeType());
+		IAttribute geometryAttribute = AttributeImpl.create(geoAttributeTable, GEOMETRY_ATTRIBUTE,
+				GeoType.valueOf(layerMetadata.getType()).getAttributeType());
 		geometryAttribute.setMode(Mode.RESERVED.toString());
 		geometryAttribute.save();
 
 		return geoAttributeTable;
 	}
 
-	private LayerMetadata modifyLayerMetadata(String targetTableName, String name, String description,
-			int minimumZoom, int maximumZoom, String style, Set<String> cardBinding) {
+	private LayerMetadata modifyLayerMetadata(String targetTableName, String name, String description, int minimumZoom,
+			int maximumZoom, String style, Set<String> cardBinding) {
 
 		String fullName = fullName(targetTableName, name);
 		LayerMetadata changes = new LayerMetadata();
@@ -423,8 +431,8 @@ public class GISLogic {
 		geoCard.save();
 	}
 
-	private  ITable getFeatureTable(String tableName) {
-		return UserContext.systemContext().tables().get(tableName);
+	private ITable getFeatureTable(String tableName) {
+		return userOperations.tables().get(tableName);
 	}
 
 	private String fullName(String masterTableName, String name) {
@@ -435,7 +443,7 @@ public class GISLogic {
 	private Map<String, Long> getDomainIds(DataAccessLogic dataAccessLogic) {
 		final Map<String, Long> domainIds = new HashMap<String, Long>();
 
-		for(CMDomain d:dataAccessLogic.findAllDomains()) {
+		for (CMDomain d : dataAccessLogic.findAllDomains()) {
 			domainIds.put(d.getName(), new Long(d.getId()));
 		}
 

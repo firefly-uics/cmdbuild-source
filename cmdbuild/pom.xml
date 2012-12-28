@@ -58,7 +58,6 @@
 			<artifactId>shark-ejbandws-client</artifactId>
 			<version>${shark.version}</version>
 		</dependency>
-		<!-- -->
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -79,7 +78,6 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>dbcp</artifactId>
-			<version>${tomcat.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -333,10 +331,8 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<!--
-				We should use version 4 but before that the workflow service must be
-				rewritten
-			-->
+			<!-- We should use version 4 but before that the workflow service must 
+				be rewritten -->
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
@@ -364,13 +360,6 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.jstestdriver</groupId>
-			<artifactId>jstestdriver</artifactId>
-			<version>1.3.4-a</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -459,10 +448,7 @@
 						<configuration>
 							<merges>
 								<merge>
-									<!--
-										The plugin doesn't create unexisting directories
-										<targetFile>${project.build.directory}/generated-test-sources/translations/en.js</targetFile>
-									-->
+									<!-- The plugin doesn't create unexisting directories <targetFile>${project.build.directory}/generated-test-sources/translations/en.js</targetFile> -->
 									<targetFile>${project.build.directory}/en.js</targetFile>
 									<sourceDirs>
 										<sourceDir>src/main/webapp/translations</sourceDir>

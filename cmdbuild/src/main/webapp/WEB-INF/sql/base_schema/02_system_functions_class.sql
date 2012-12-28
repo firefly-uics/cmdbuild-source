@@ -186,8 +186,8 @@ BEGIN
 	IF ParentId IS NULL THEN
 		IF NOT IsSimpleClass THEN
 			PERFORM cm_create_attribute(TableId, 'IdClass', 'regclass', NULL, TRUE, FALSE, 'MODE: reserved');
-			PERFORM cm_create_attribute(TableId, 'Code', 'varchar(100)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true');
-			PERFORM cm_create_attribute(TableId, 'Description', 'varchar(250)', NULL, FALSE, FALSE, 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true');
+			PERFORM cm_create_attribute(TableId, 'Code', 'varchar(100)', NULL, FALSE, FALSE, 'MODE: write|DESCR: Code|INDEX: 1|BASEDSP: true');
+			PERFORM cm_create_attribute(TableId, 'Description', 'varchar(250)', NULL, FALSE, FALSE, 'MODE: write|DESCR: Description|INDEX: 2|BASEDSP: true');
 			-- Status is the only attribute needed
 			PERFORM cm_create_attribute(TableId, 'Status', 'character(1)', NULL, FALSE, FALSE, 'MODE: reserved');
 		END IF;
@@ -245,6 +245,22 @@ BEGIN
 
 	-- Cascade for the history table
 	EXECUTE 'DROP TABLE '|| TableId::regclass ||' CASCADE';
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
+CREATE OR REPLACE FUNCTION cm_delete_card(CardId integer, TableId oid) RETURNS void AS $$
+DECLARE
+	ClassComment text := _cm_comment_for_table_id(TableId);
+	IsSimpleClass boolean := _cm_is_simpleclass_comment(ClassComment);
+BEGIN
+	IF IsSimpleClass THEN
+		RAISE DEBUG 'deleting a card from a simple class';
+		EXECUTE 'DELETE FROM ' || TableId::regclass || ' WHERE "Id" = ' || CardId;
+	ELSE
+		RAISE DEBUG 'deleting a card from a standard class';
+		EXECUTE 'UPDATE ' || TableId::regclass || ' SET "Status" = ''N'' WHERE "Id" = ' || CardId;
+	END IF;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 

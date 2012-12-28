@@ -14,30 +14,37 @@ public class EmptyQuerySpecs implements QuerySpecs {
 	protected EmptyQuerySpecs() {
 	}
 
+	@Override
 	public CMEntryType getFromType() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Alias getFromAlias() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public List<JoinClause> getJoins() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public WhereClause getWhereClause() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Long getOffset() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Long getLimit() {
 		throw new UnsupportedOperationException();
 	}

@@ -38,25 +38,23 @@ public class DBReferenceTest extends DBDataFixture {
 
 	private static final String Reference = "Reference";
 
-	private DomainInfo D;
+	private final DomainInfo D;
 
-	public DBReferenceTest(DomainInfo domainInfo) {
+	public DBReferenceTest(final DomainInfo domainInfo) {
 		D = domainInfo;
 	}
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] {
-			{ new DomainInfo("D_N1", S1, S2, IDomain.CARDINALITY_N1) },
-			{ new DomainInfo("D_1N", S2, S1, IDomain.CARDINALITY_1N) }
-		});
+		return Arrays.asList(new Object[][] { { new DomainInfo("D_N1", S1, S2, IDomain.CARDINALITY_N1) },
+				{ new DomainInfo("D_1N", S2, S1, IDomain.CARDINALITY_1N) } });
 	}
 
-	private final String restrictTriggerName(String sourceClass, String referenceAttribute) {
+	private final String restrictTriggerName(final String sourceClass, final String referenceAttribute) {
 		return String.format("_Constr_%s_%s", sourceClass, referenceAttribute);
 	}
 
-	private final String referenceTriggerName(String sourceClass, String referenceAttribute) {
+	private final String referenceTriggerName(final String sourceClass, final String referenceAttribute) {
 		return String.format("_UpdRel_%s_%s", sourceClass, referenceAttribute);
 	}
 
@@ -96,9 +94,11 @@ public class DBReferenceTest extends DBDataFixture {
 	public void aNewCardHasNoHistory() throws SQLException {
 		createDBReference(C11, Reference, D);
 		final int refTargetId = insertCardRow(C21);
-		final int refSourceId = insertCardRow(C11, new HashMap<String, String>() {{
-			put(Reference, Integer.toString(refTargetId));
-		}});
+		final int refSourceId = insertCardRow(C11, new HashMap<String, String>() {
+			{
+				put(Reference, Integer.toString(refTargetId));
+			}
+		});
 		assertEquals(0, countHistoryItems(C11, refSourceId));
 	}
 
@@ -115,7 +115,7 @@ public class DBReferenceTest extends DBDataFixture {
 		try {
 			updateCardRow(C21, c21cardId, STATUS_INACTIVE);
 			fail();
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			assertThat(e, hasType(CMSqlException.CM_RESTRICT_VIOLATION));
 		}
 	}
@@ -126,29 +126,33 @@ public class DBReferenceTest extends DBDataFixture {
 		final int refSourceAId = insertCardRow(C11);
 		final int refSourceBId = insertCardRow(C11);
 		final int refTargetAId = insertCardRow(C21);
-//		final int refTargetBId = insertCardRow(C21);
+		// final int refTargetBId = insertCardRow(C21);
 
 		assertNull(getRowCardValues(C11, refSourceAId).get(Reference));
 		assertNull(getRowCardValues(C11, refSourceBId).get(Reference));
 
-//		final int relId = 
+		// final int relId =
 		insertReferenceRelation(D, C11, refSourceAId, C21, refTargetAId);
 
 		assertEquals(refTargetAId, getRowCardValues(C11, refSourceAId).get(Reference));
 		assertNull(getRowCardValues(C11, refSourceBId).get(Reference));
 
 		// FIXME It's a transaction problem... let's try with savepoints
-//		updateReferenceRelation(D, relId, C11, refSourceAId, C21, refTargetBId);
-//		assertEquals(refTargetBId, getRowCardValues(C11, refSourceAId).get(Reference));
-//		assertNull(getRowCardValues(C11, refSourceBId).get(Reference));
-//
-//		updateReferenceRelation(D, relId, C11, refSourceBId, C21, refTargetBId);
-//		assertNull(getRowCardValues(C11, refSourceAId).get(Reference));
-//		assertEquals(refTargetBId, getRowCardValues(C11, refSourceBId).get(Reference));
-//
-//		deleteRelation(D, relId);
-//		assertNull(getRowCardValues(C11, refSourceAId).get(Reference));
-//		assertNull(getRowCardValues(C11, refSourceBId).get(Reference));
+		// updateReferenceRelation(D, relId, C11, refSourceAId, C21,
+		// refTargetBId);
+		// assertEquals(refTargetBId, getRowCardValues(C11,
+		// refSourceAId).get(Reference));
+		// assertNull(getRowCardValues(C11, refSourceBId).get(Reference));
+		//
+		// updateReferenceRelation(D, relId, C11, refSourceBId, C21,
+		// refTargetBId);
+		// assertNull(getRowCardValues(C11, refSourceAId).get(Reference));
+		// assertEquals(refTargetBId, getRowCardValues(C11,
+		// refSourceBId).get(Reference));
+		//
+		// deleteRelation(D, relId);
+		// assertNull(getRowCardValues(C11, refSourceAId).get(Reference));
+		// assertNull(getRowCardValues(C11, refSourceBId).get(Reference));
 	}
 
 	@Ignore

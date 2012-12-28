@@ -201,18 +201,13 @@ public class ModReport extends JSONBase {
 
 	/**
 	 * Print report to output stream
+	 * 
+	 * @param noDelete
+	 *            this may be requested for wf server side processing
 	 */
 	@JSONExported
-	public DataHandler printReportFactory(@Parameter(value = "donotdelete", required = false) final boolean notDelete // this
-																														// may
-																														// be
-																														// requested
-																														// for
-																														// wf
-																														// server
-																														// side
-																														// processing
-	) throws Exception {
+	public DataHandler printReportFactory(@Parameter(value = "donotdelete", required = false) final boolean notDelete)
+			throws Exception {
 		final ReportFactory reportFactory = new SessionVars().getReportFactory();
 		// TODO: report filename should be always read from jasperPrint obj
 		// get report filename

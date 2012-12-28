@@ -20,9 +20,12 @@ import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
 import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.elements.report.ReportFactoryDB;
 import org.cmdbuild.elements.report.ReportParameter;
+import org.cmdbuild.elements.report.ReportFactory.ReportExtension;
+import org.cmdbuild.elements.report.ReportFactory.ReportType;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
@@ -38,7 +41,7 @@ public class EReport {
 	}
 
 	public Report[] getReportList(final String type, final int limit, final int offset) {
-		final ITableFactory tf = userCtx.tables();
+		final ITableFactory tf = UserOperations.from(userCtx).tables();
 		final List<Report> reportList = new ArrayList<Report>();
 		int numRecords = 0;
 		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
@@ -54,7 +57,7 @@ public class EReport {
 	}
 
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
-		final ITableFactory tf = userCtx.tables();
+		final ITableFactory tf = UserOperations.from(userCtx).tables();
 		ReportFactoryDB reportFactory;
 		try {
 			reportFactory = new ReportFactoryDB(id, ReportExtension.valueOf(extension.toUpperCase()));
@@ -67,14 +70,11 @@ public class EReport {
 			}
 			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
 		} catch (final SQLException e) {
-			Log.SOAP.error("SQL error in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("SQL error in report", e);
 		} catch (final IOException e) {
-			Log.SOAP.error("Error reading report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Error reading report", e);
 		} catch (final ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Cannot find class in report", e);
 		}
 		return null;
 	}
@@ -103,14 +103,11 @@ public class EReport {
 			reportFactory.sendReportToStream(outputStream);
 			return new DataHandler(dataSource);
 		} catch (final SQLException e) {
-			Log.SOAP.error("SQL error in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("SQL error in report", e);
 		} catch (final IOException e) {
-			Log.SOAP.error("Error reading report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Error reading report", e);
 		} catch (final ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report");
-			Log.SOAP.debug(e);
+			Log.SOAP.error("Cannot find class in report", e);
 		} catch (final Exception e) {
 			Log.SOAP.error("Error getting report", e);
 		}

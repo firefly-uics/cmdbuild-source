@@ -17,6 +17,7 @@ import org.cmdbuild.elements.interfaces.Process.ProcessAttributes;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -93,32 +94,41 @@ public abstract class LegacyWorkflowPersistence {
 		return editableProcessInstance.save();
 	}
 
-	protected final UserProcessInstanceDefinition modifyProcessInstance(final CMProcessInstance processInstance) {
-		return ProcessInstanceWrapper.readProcessInstance(userCtx, processDefinitionManager,
-				findProcessTypeById(processInstance.getType().getId()), processInstance);
+	protected final ProcessInstanceWrapper modifyProcessInstance(final CMProcessInstance processInstance) {
+		return ProcessInstanceWrapper //
+				.readProcessInstance( //
+						userCtx, //
+						processDefinitionManager, //
+						findProcessTypeById(processInstance.getType().getId()), //
+						processInstance);
 	}
 
 	protected final ProcessType findProcessTypeById(final Object idObject) {
 		final int id = ((Number) idObject).intValue();
-		return userCtx.processTypes().get(id);
+		return UserOperations.from(userCtx).processTypes().get(id);
 	}
 
 	protected final ProcessType findProcessTypeByName(final String name) {
-		return userCtx.processTypes().get(name);
+		return UserOperations.from(userCtx).processTypes().get(name);
 	}
 
-	protected final UserProcessInstance findProcessInstance(final WSProcessInstInfo procInstInfo) throws CMWorkflowException {
-		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo.getProcessDefinitionId());
+	protected final UserProcessInstance findProcessInstance(final WSProcessInstInfo procInstInfo)
+			throws CMWorkflowException {
+		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo
+				.getProcessDefinitionId());
 		final ProcessType processType = findProcessTypeByName(processClassName);
-		final ICard processCard = processType.cards().list().filter(
-				ProcessAttributes.ProcessInstanceId.dbColumnName(),
-				AttributeFilterType.EQUALS,
-				procInstInfo.getProcessInstanceId()).get(false);
+		final ICard processCard = processType
+				.cards()
+				.list()
+				.filter(ProcessAttributes.ProcessInstanceId.dbColumnName(), AttributeFilterType.EQUALS,
+						procInstInfo.getProcessInstanceId()).get(false);
 		return wrap(processCard);
 	}
 
-	protected final CMProcessInstance createProcessInstance(final WSProcessInstInfo procInstInfo) throws CMWorkflowException {
-		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo.getProcessDefinitionId());
+	protected final CMProcessInstance createProcessInstance(final WSProcessInstInfo procInstInfo)
+			throws CMWorkflowException {
+		final String processClassName = processDefinitionManager.getProcessClassName(procInstInfo
+				.getProcessDefinitionId());
 		final CMProcessClass processDefinition = findProcessClassByName(processClassName);
 		return newProcessInstance(processDefinition, procInstInfo).save();
 	}
@@ -159,14 +169,15 @@ public abstract class LegacyWorkflowPersistence {
 		return new ProcessInstanceWrapper(userCtx, processDefinitionManager, processCard);
 	}
 
-	protected final Map<String, Object> toWorkflowValues(final CMProcessClass processClass, final Map<String, Object> nativeValues) {
+	protected final Map<String, Object> toWorkflowValues(final CMProcessClass processClass,
+			final Map<String, Object> nativeValues) {
 		final Map<String, Object> workflowValues = new HashMap<String, Object>();
-		for (Map.Entry<String, Object> nv : nativeValues.entrySet()) {
+		for (final Map.Entry<String, Object> nv : nativeValues.entrySet()) {
 			final String attributeName = nv.getKey();
 			CMAttributeType<?> attributeType;
 			try {
 				attributeType = processClass.getAttribute(attributeName).getType();
-			} catch (IllegalArgumentException e) {
+			} catch (final IllegalArgumentException e) {
 				attributeType = null;
 			}
 			workflowValues.put(attributeName, workflowVariableConverter.toWorkflowType(attributeType, nv.getValue()));
@@ -181,9 +192,10 @@ public abstract class LegacyWorkflowPersistence {
 	/*
 	 * FIXME AWFUL pre-release hack
 	 */
-	public static final Map<String, Object> fromWorkflowValues(final Map<String, Object> workflowValues, final WorkflowTypesConverter workflowVariableConverter) {
+	public static final Map<String, Object> fromWorkflowValues(final Map<String, Object> workflowValues,
+			final WorkflowTypesConverter workflowVariableConverter) {
 		final Map<String, Object> nativeValues = new HashMap<String, Object>();
-		for (Map.Entry<String, Object> wv : workflowValues.entrySet()) {
+		for (final Map.Entry<String, Object> wv : workflowValues.entrySet()) {
 			nativeValues.put(wv.getKey(), workflowVariableConverter.fromWorkflowType(wv.getValue()));
 		}
 		return nativeValues;

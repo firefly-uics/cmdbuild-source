@@ -3,20 +3,26 @@ package org.cmdbuild.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cmdbuild.auth.CMAccessControlManager;
+import org.cmdbuild.auth.AuthenticationService;
+import org.cmdbuild.auth.DBGroupFetcher;
+import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.LegacyDBAuthenticator;
+import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.config.WorkflowProperties;
-import org.cmdbuild.dao.driver.CachingDriver;
+import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.logger.WorkflowLogger;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.services.DBService;
 import org.cmdbuild.services.DBTemplateService;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TemplateRepository;
-import org.cmdbuild.services.auth.AccessControlManagerWrapper;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
@@ -28,6 +34,7 @@ import org.cmdbuild.workflow.WorkflowEngineWrapper;
 import org.cmdbuild.workflow.WorkflowEventManagerImpl;
 import org.cmdbuild.workflow.WorkflowTypesConverter;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
+import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.RemoteSharkService;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
@@ -51,37 +58,52 @@ public class TemporaryObjectsBeforeSpringDI {
 	static XpdlManager.GroupQueryAdapter gca = new XpdlManager.GroupQueryAdapter() {
 		@Override
 		public String[] getAllGroupNames() {
-			List<String> names = new ArrayList<String>();
-			for (GroupCard groupCard : GroupCard.all()) {
+			final List<String> names = new ArrayList<String>();
+			for (final GroupCard groupCard : GroupCard.all()) {
 				names.add(groupCard.getName());
 			}
 			return names.toArray(new String[names.size()]);
 		}
 	};
 
-	private static final CachingDriver driver;
+	private static final PostgresDriver driver;
 	private static final DBDataView dbDataView;
-	private static final RemoteSharkService workflowService;
+	private static final DefaultPrivilegeContextFactory privilegeCtxFactory;
+	private static final AbstractSharkService workflowService;
 	private static final ProcessDefinitionManager processDefinitionManager;
 	private static final WorkflowLogger workflowLogger;
 	private static final WorkflowEventManager workflowEventManager;
 	private static final WorkflowTypesConverter workflowTypesConverter;
+	private static final AuthenticationLogic authLogic;
 
 	static {
 		final javax.sql.DataSource datasource = DBService.getInstance().getDataSource();
-		driver = new PostgresDriver(datasource);
+		driver = new PostgresDriver(datasource, new DefaultTypeObjectCache());
 		dbDataView = new DBDataView(driver);
-
+		privilegeCtxFactory = new DefaultPrivilegeContextFactory();
+		authLogic = instantiateAuthenticationLogic();
 		workflowLogger = new WorkflowLogger();
 		workflowService = new RemoteSharkService(WorkflowProperties.getInstance());
 		processDefinitionManager = new XpdlManager(workflowService, gca, newXpdlProcessDefinitionStore(workflowService));
 		workflowTypesConverter = new SharkTypesConverter(dbDataView);
-		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter, processDefinitionManager);
+		workflowEventManager = new WorkflowEventManagerImpl(workflowService, workflowTypesConverter,
+				processDefinitionManager);
 
 		workflowService.setUpdateOperationListener(new UpdateOperationListenerImpl(workflowEventManager));
 	}
 
-	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {		
+	private static AuthenticationLogic instantiateAuthenticationLogic() {
+		final AuthenticationService authService = new DefaultAuthenticationService();
+		authService.setUserStore(new SessionVars());
+		authService.setGroupFetcher(new DBGroupFetcher(dbDataView));
+		final LegacyDBAuthenticator authenticator = new LegacyDBAuthenticator(dbDataView);
+		authService.setPasswordAuthenticators(authenticator);
+		authService.setUserFetchers(authenticator);
+		final AuthenticationLogic authLogic = new AuthenticationLogic(authService);
+		return authLogic;
+	}
+
+	private static XpdlProcessDefinitionStore newXpdlProcessDefinitionStore(final CMWorkflowService workflowService) {
 		return new XpdlProcessDefinitionStore(workflowService, newXpdlVariableFactory(), newXpdlWidgetFactory());
 	}
 
@@ -104,41 +126,53 @@ public class TemporaryObjectsBeforeSpringDI {
 		return factory;
 	}
 
-	public static CachingDriver getDriver() {
+	public static PostgresDriver getDriver() {
 		return driver;
 	}
 
-	public static DashboardLogic getDashboardLogic(UserContext userCtx) {
-		return new DashboardLogic(getUserContextView(userCtx), new DBDashboardStore(), new SimplifiedUserContext(userCtx));
+	public static DefaultPrivilegeContextFactory getPrivilegeContextFactory() {
+		return privilegeCtxFactory;
+	}
+
+	public static AuthenticationLogic getAuthenticationLogic() {
+		return authLogic;
+	}
+
+	public static DashboardLogic getDashboardLogic(final UserContext userContext) {
+		return new DashboardLogic(getUserContextView(userContext), new DBDashboardStore(), new SimplifiedUserContext(
+				userContext));
 	}
 
 	public static GISLogic getGISLogic() {
-		return new GISLogic();
+		return new GISLogic(UserContext.systemContext());
 	}
 
-	public static CMDataView getUserContextView(UserContext userCtx) {
-		final CMAccessControlManager acm = new AccessControlManagerWrapper(userCtx.privileges());
-		return new UserDataView(dbDataView, acm);
+	public static CMDataView getUserContextView(final UserContext userContext) {
+		return new UserDataView(new DBDataView(driver), new SessionVars().getUser());
 	}
 
 	public static CMDataView getSystemView() {
 		return dbDataView;
 	}
 
-	public static DataAccessLogic getDataAccessLogic(UserContext userCtx) {
-		return new DataAccessLogic(getUserContextView(userCtx));
+	public static DataAccessLogic getDataAccessLogic(final UserContext userContext) {
+		return new DataAccessLogic(getUserContextView(userContext));
+	}
+
+	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userContext) {
+		return new DataDefinitionLogic(getUserContextView(userContext));
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
 		return new DataAccessLogic(getSystemView());
 	}
 
-	public static WorkflowLogic getWorkflowLogic(UserContext userCtx) {
-		return new WorkflowLogic(getWorkflowEngine(userCtx));
+	public static WorkflowLogic getWorkflowLogic(final UserContext userContext) {
+		return new WorkflowLogic(getWorkflowEngine(userContext));
 	}
 
-	public static ContaminatedWorkflowEngine getWorkflowEngine(UserContext userCtx) {
-		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userCtx, workflowService,
+	public static ContaminatedWorkflowEngine getWorkflowEngine(final UserContext userContext) {
+		final WorkflowEngineWrapper workflowEngine = new WorkflowEngineWrapper(userContext, workflowService,
 				workflowTypesConverter, processDefinitionManager);
 		workflowEngine.setEventListener(workflowLogger);
 		return workflowEngine;
@@ -161,15 +195,15 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static class SimplifiedUserContext {
-		private UserContext userContext;
+		private final UserContext userContext;
 
-		public SimplifiedUserContext(UserContext userContext) {
+		public SimplifiedUserContext(final UserContext userContext) {
 			this.userContext = userContext;
 		}
 
 		public List<String> getGroupNames() {
-			List<String> groupNames = new ArrayList<String>();
-			for (Group g : userContext.getGroups()) {
+			final List<String> groupNames = new ArrayList<String>();
+			for (final Group g : userContext.getGroups()) {
 				groupNames.add(g.getName());
 			}
 			return groupNames;
@@ -191,4 +225,5 @@ public class TemporaryObjectsBeforeSpringDI {
 	private static TemplateRepository getTemplateRepository() {
 		return new DBTemplateService();
 	}
+
 }

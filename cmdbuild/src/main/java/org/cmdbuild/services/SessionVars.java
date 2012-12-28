@@ -1,43 +1,54 @@
 package org.cmdbuild.services;
 
-import java.util.Map;
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.csv.CSVData;
-import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.report.ReportFactory;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.services.auth.OperationUserWrapper;
 import org.cmdbuild.services.auth.UserContext;
 
 /*
  * Should be merged with the RequestListener
  */
 
-public class SessionVars {
+public class SessionVars implements UserStore {
 
 	private static final String AUTH_KEY = "auth";
-	private static final String LANGUAGE_KEY = "language";	
-	private static final String FILTER_MAP_KEY = "filters";
+	private static final String LANGUAGE_KEY = "language";
 	private static final String REPORTFACTORY_KEY = "ReportFactorySessionObj";
 	private static final String NEWREPORT_KEY = "newReport";
 	private static final String CSVDATA_KEY = "csvdata";
 
+	@Deprecated
 	public UserContext getCurrentUserContext() {
-		return (UserContext) RequestListener.getCurrentSessionObject(AUTH_KEY);
+		final OperationUser operationUser = getUser();
+		if (operationUser.getAuthenticatedUser().isAnonymous()) {
+			return null; // check if it is better to return a not-null object
+		} else {
+			return new OperationUserWrapper(operationUser);
+		}
 	}
 
-	public void setCurrentUserContext(UserContext userCtx) {
-		RequestListener.setCurrentSessionObject(AUTH_KEY, userCtx);
+	@Override
+	public OperationUser getUser() {
+		OperationUser operationUser = (OperationUser) RequestListener.getCurrentSessionObject(AUTH_KEY);
+		if (operationUser == null) {
+			operationUser = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(), new NullGroup());
+			setUser(operationUser);
+		}
+		return operationUser;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Map<String, CardQuery> getFilterMap() {
-		return (Map<String, CardQuery>) RequestListener.getCurrentSessionObject(FILTER_MAP_KEY);
-	}
-
-	public void setFilterMap(Map<String, CardQuery> filterMap) {
-		RequestListener.setCurrentSessionObject(FILTER_MAP_KEY, filterMap);
+	@Override
+	public void setUser(final OperationUser user) {
+		RequestListener.setCurrentSessionObject(AUTH_KEY, user);
 	}
 
 	public String getLanguage() {
@@ -49,7 +60,7 @@ public class SessionVars {
 		return language;
 	}
 
-	public void setLanguage(String language) {
+	public void setLanguage(final String language) {
 		RequestListener.setCurrentSessionObject(LANGUAGE_KEY, language);
 	}
 
@@ -57,7 +68,7 @@ public class SessionVars {
 		return (ReportFactory) RequestListener.getCurrentSessionObject(REPORTFACTORY_KEY);
 	}
 
-	public void setReportFactory(ReportFactory value) {
+	public void setReportFactory(final ReportFactory value) {
 		RequestListener.setCurrentSessionObject(REPORTFACTORY_KEY, value);
 	}
 
@@ -69,7 +80,7 @@ public class SessionVars {
 		return (ReportCard) RequestListener.getCurrentSessionObject(NEWREPORT_KEY);
 	}
 
-	public void setNewReport(ReportCard newReport) {
+	public void setNewReport(final ReportCard newReport) {
 		RequestListener.setCurrentSessionObject(NEWREPORT_KEY, newReport);
 	}
 
@@ -81,7 +92,7 @@ public class SessionVars {
 		return (CSVData) RequestListener.getCurrentSessionObject(CSVDATA_KEY);
 	}
 
-	public void setCsvData(CSVData value) {
+	public void setCsvData(final CSVData value) {
 		RequestListener.setCurrentSessionObject(CSVDATA_KEY, value);
 	}
 }

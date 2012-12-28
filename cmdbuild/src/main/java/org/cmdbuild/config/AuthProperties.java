@@ -1,15 +1,18 @@
 package org.cmdbuild.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import org.cmdbuild.auth.CasAuthenticator;
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.services.Settings;
 
-public class AuthProperties extends DefaultProperties implements HeaderAuthenticator.Configuration, CasAuthenticator.Configuration {
+import com.google.common.collect.Sets;
+
+public class AuthProperties extends DefaultProperties implements HeaderAuthenticator.Configuration,
+		CasAuthenticator.Configuration, DefaultAuthenticationService.Configuration {
 
 	private static final long serialVersionUID = 1L;
 	private static final String MODULE_NAME = "auth";
@@ -69,12 +72,13 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return (AuthProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
-	public List<String> getServiceUsers() {
+	@Override
+	public Set<String> getServiceUsers() {
 		final String commaSeparatedUsers = getProperty(SERVICE_USERS);
-		if (commaSeparatedUsers.length() == 0) {
-			return Collections.emptyList();
+		if (commaSeparatedUsers.isEmpty()) {
+			return Collections.emptySet();
 		} else {
-			final List<String> serviceUsers = new ArrayList<String>();
+			final Set<String> serviceUsers = Sets.newHashSet();
 			final String[] simpleServiceUsers = commaSeparatedUsers.split(",");
 			serviceUsers.addAll(Arrays.asList(simpleServiceUsers));
 			serviceUsers.addAll(getPrivilegedServiceUsers());
@@ -82,13 +86,13 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		}
 	}
 
-	public List<String> getPrivilegedServiceUsers() {
-		String commaSeparatedUsers = getProperty(PRIVILEGED_SERVICE_USERS);
-		if (commaSeparatedUsers.length() == 0) {
-			return Collections.emptyList();
+	public Set<String> getPrivilegedServiceUsers() {
+		final String commaSeparatedUsers = getProperty(PRIVILEGED_SERVICE_USERS);
+		if (commaSeparatedUsers.isEmpty()) {
+			return Collections.emptySet();
 		} else {
 			final String[] privilegedServiceUsers = commaSeparatedUsers.split(",");
-			return Arrays.asList(privilegedServiceUsers);
+			return Sets.newHashSet(Arrays.asList(privilegedServiceUsers));
 		}
 	}
 
@@ -96,22 +100,27 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return Boolean.parseBoolean(getProperty(FORCE_WS_PASSWORD_DIGEST));
 	}
 
+	@Override
 	public String getHeaderAttributeName() {
 		return getProperty(HEADER_ATTRIBUTE_NAME);
 	}
 
+	@Override
 	public String getCasServerUrl() {
 		return getProperty(CAS_SERVER_URL);
 	}
 
+	@Override
 	public String getCasLoginPage() {
 		return getProperty(CAS_LOGIN_PAGE);
 	}
 
+	@Override
 	public String getCasTicketParam() {
 		return getProperty(CAS_TICKET_PARAM, "ticket");
 	}
 
+	@Override
 	public String getCasServiceParam() {
 		return getProperty(CAS_SERVICE_PARAM, "service");
 	}
@@ -160,9 +169,14 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		return getProperty(LDAP_AUTHENTICATION_PASSWORD);
 	}
 
-	public List<String> getAuthMethodNames() {
-		String csvNames = getProperty(AUTH_METHODS);
-		return Arrays.asList(csvNames.split(","));
+	@Override
+	public Set<String> getActiveAuthenticators() {
+		final String csMethods = getProperty(AUTH_METHODS);
+		if (csMethods.isEmpty()) {
+			return Collections.emptySet();
+		} else {
+			return Sets.newHashSet(csMethods.split(","));
+		}
 	}
 
 	public String getAutologin() {

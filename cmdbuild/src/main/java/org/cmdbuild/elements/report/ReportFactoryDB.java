@@ -161,7 +161,7 @@ public class ReportFactoryDB extends ReportFactory {
 				try {
 					zos.putNextEntry(new ZipEntry(filename));
 				} catch (ZipException e) {
-					Log.REPORT.warn(e);
+					Log.REPORT.warn("error while zipping elements", e);
 					continue;
 				}
 				

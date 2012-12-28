@@ -1,6 +1,5 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-
 public class CharAttributeType extends TextAttributeType {
 
 	public CharAttributeType() {

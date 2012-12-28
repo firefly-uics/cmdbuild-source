@@ -10,12 +10,13 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class ForeignKeyAttribute extends AttributeImpl {
 
 	ITable targetClass;
 
-	public ForeignKeyAttribute(BaseSchema schema, String name, Map<String, String> meta) {
+	public ForeignKeyAttribute(final BaseSchema schema, final String name, final Map<String, String> meta) {
 		super(schema, name, meta);
 	}
 
@@ -36,19 +37,19 @@ public class ForeignKeyAttribute extends AttributeImpl {
 				destCard = new LazyCard(getFKTargetClass(), intValue);
 			}
 			return destCard;
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 		}
 	}
 
 	@Override
-	protected String notNullValueToString(Object value) {
-		return ((ICard)value).getDescription();
+	protected String notNullValueToString(final Object value) {
+		return ((ICard) value).getDescription();
 	}
 
 	@Override
-	protected String notNullValueToDBFormat(Object value) {
-		return String.valueOf(((ICard)value).getId());
+	protected String notNullValueToDBFormat(final Object value) {
+		return String.valueOf(((ICard) value).getId());
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class ForeignKeyAttribute extends AttributeImpl {
 	}
 
 	@Override
-	public void setFKTargetClass(String value) {
-		targetClass = UserContext.systemContext().tables().get(value);
+	public void setFKTargetClass(final String value) {
+		targetClass = UserOperations.from(UserContext.systemContext()).tables().get(value);
 	}
 }

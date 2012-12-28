@@ -12,6 +12,7 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class DBLayerMetadataStore {
 	private enum Attributes {
@@ -38,7 +39,7 @@ public class DBLayerMetadataStore {
 		}
 	}
 
-	private static final ITable table = UserContext.systemContext().tables().get("_Layer");
+	private static final ITable table = UserOperations.from(UserContext.systemContext()).tables().get("_Layer");
 	private static final String TARGET_TABLE_FORMAT = LayerMetadata.TARGET_TABLE_FORMAT;
 
 	public LayerMetadata createLayer(LayerMetadata layer) {

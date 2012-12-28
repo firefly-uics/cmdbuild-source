@@ -8,7 +8,8 @@ public class CardReference extends AbstractReference {
 
 	private final String className;
 
-	@Legacy("We should think about how to solve this problem after the 2.0 is out...")
+	// TODO
+	@Legacy("We should think about how to solve this problem...")
 	private final String description;
 
 	public static CardReference newInstance(final String className, final Long cardId, final String description) {
@@ -40,7 +41,7 @@ public class CardReference extends AbstractReference {
 	}
 
 	@Override
-	public void accept(CMReferenceVisitor visitor) {
+	public void accept(final CMReferenceVisitor visitor) {
 		visitor.visit(this);
 	}
 }

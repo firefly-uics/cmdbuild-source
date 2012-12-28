@@ -9,8 +9,8 @@ public class UserAttribute implements CMAttribute {
 	private final UserDataView view;
 	private final DBAttribute inner;
 
-	static UserAttribute create(final UserDataView view, final DBAttribute inner) {
-		if (inner != null && inner.isActive() || view.getAccessControlManager().hasDatabaseDesignerPrivileges()) {
+	static UserAttribute newInstance(final UserDataView view, final DBAttribute inner) {
+		if (inner != null && view.getOperationUser().hasDatabaseDesignerPrivileges()) {
 			return new UserAttribute(view, inner);
 		} else {
 			return null;
@@ -20,11 +20,6 @@ public class UserAttribute implements CMAttribute {
 	private UserAttribute(final UserDataView view, final DBAttribute inner) {
 		this.view = view;
 		this.inner = inner;
-	}
-
-	@Override
-	public boolean isActive() {
-		return inner.isActive();
 	}
 
 	@Override
@@ -45,6 +40,61 @@ public class UserAttribute implements CMAttribute {
 	@Override
 	public String getDescription() {
 		return inner.getDescription();
+	}
+
+	@Override
+	public boolean isInherited() {
+		return inner.isInherited();
+	}
+
+	@Override
+	public boolean isActive() {
+		return inner.isActive();
+	}
+
+	@Override
+	public boolean isDisplayableInList() {
+		return inner.isDisplayableInList();
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return inner.isMandatory();
+	}
+
+	@Override
+	public boolean isUnique() {
+		return inner.isUnique();
+	}
+
+	@Override
+	public Mode getMode() {
+		return inner.getMode();
+	}
+
+	@Override
+	public int getIndex() {
+		return inner.getIndex();
+	}
+
+	@Override
+	public String getDefaultValue() {
+		return inner.getDefaultValue();
+	}
+
+	@Override
+	public String getGroup() {
+		return inner.getGroup();
+	}
+
+	@Override
+	public int getClassOrder() {
+		return inner.getClassOrder();
+	}
+
+	@Override
+	public String getEditorType() {
+		return inner.getEditorType();
 	}
 
 	/*

@@ -18,6 +18,7 @@ import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.MenuSchema;
@@ -36,19 +37,19 @@ public class EAdministration {
 	}
 
 	public MenuSchema getClassMenuSchema() {
-		final TableTree tree = userCtx.tables().fullTree().displayable();
+		final TableTree tree = UserOperations.from(userCtx).tables().fullTree().displayable();
 		return serializeDefaultTree(tree.exclude(ProcessType.BaseTable).getRootElement(), false, userCtx);
 	}
 
 	public MenuSchema getProcessMenuSchema() {
-		final TableTree tree = userCtx.processTypes().tree();
+		final TableTree tree = UserOperations.from(userCtx).processTypes().tree();
 		return serializeDefaultTree(tree.getRootElement(), true, userCtx);
 	}
 
 	public MenuSchema getMenuSchema() {
-		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getId());
+		CTree<MenuCard> tree = MenuCard.loadTreeForGroup(userCtx.getDefaultGroup().getName());
 		if (tree.getRootElement().getNumberOfChildren() == 0) {
-			tree = MenuCard.loadTreeForGroup(0);
+			tree = MenuCard.loadTreeForGroup(MenuCard.DEFAULT_GROUP);
 		}
 		return serializeTree(tree.getRootElement(), userCtx);
 	}
@@ -92,7 +93,8 @@ public class EAdministration {
 	}
 
 	private static void addAccessPrivileges(final MenuSchema menuSchema, final UserContext userCtx) {
-		final ITable menuEntryClass = UserContext.systemContext().tables().get(menuSchema.getClassname());
+		final ITable menuEntryClass = UserOperations.from(UserContext.systemContext()).tables()
+				.get(menuSchema.getClassname());
 		menuSchema.setClassname(menuEntryClass.getName());
 		final PrivilegeType privileges = userCtx.privileges().getPrivilege(menuEntryClass);
 		if (!PrivilegeType.NONE.equals(privileges)) {
@@ -189,7 +191,7 @@ public class EAdministration {
 				schema.setMenuType(MenuCodeType.FOLDER.getCodeType());
 			} else {
 				try {
-					final ITable menuEntryClass = userCtx.tables().get(menu.getElementClassId());
+					final ITable menuEntryClass = UserOperations.from(userCtx).tables().get(menu.getElementClassId());
 					final Boolean isDefault = checkIsDefault(menuEntryClass, userCtx);
 					schema.setDefaultToDisplay(isDefault);
 					schema.setClassname(menuEntryClass.getName());
@@ -213,7 +215,7 @@ public class EAdministration {
 			MenuSchema childMenuSchema = null;
 			if (MenuType.PROCESS.equals(child.getData().getTypeEnum())) {
 				final int cid = child.getData().getElementClassId();
-				final String cname = UserContext.systemContext().tables().get(cid).getName();
+				final String cname = UserOperations.from(UserContext.systemContext()).tables().get(cid).getName();
 				if (workflowLogic.isProcessUsable(cname)) {
 					childMenuSchema = serializeTree(child, userCtx);
 				}

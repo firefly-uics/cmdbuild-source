@@ -14,24 +14,34 @@ import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IPAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.GeometryAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.dao.reference.EntryTypeReference;
 
 /**
+ * Missing DAO types: Lookup, Reference, ForeignKey
  * 
+ * Missing SQL types: POINT, LINESTRING, POLYGON (use sqlToJavaValue)
  * 
- * Missing DAO types: Lookup, Reference, ForeignKey Missing SQL types: POINT,
- * LINESTRING, POLYGON (use sqlToJavaValue) Not used: regclass, bytea, _int4,
- * _varchar
+ * Not used: regclass, bytea, _int4, _varchar
  */
 public enum SqlType {
 
-	bool(BooleanAttributeType.class), bpchar(CharAttributeType.class), date(DateAttributeType.class) {
+	bool(BooleanAttributeType.class) {
+	// nothing to implement, just for keep ordered
+	}, //
+	bpchar(CharAttributeType.class) {
+	// nothing to implement, just for keep ordered
+	}, //
+	date(DateAttributeType.class) {
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
@@ -41,13 +51,36 @@ public enum SqlType {
 		public Object sqlToJavaValue(final Object value) {
 			return dateSqlToJavaValue(value);
 		}
-	},
-	float8(DoubleAttributeType.class), inet(IPAddressAttributeType.class), int4(IntegerAttributeType.class,
-			LookupAttributeType.class) {
+	}, //
+	float8(DoubleAttributeType.class) {
+	// nothing to implement, just for keep ordered
+	}, //
+	/**
+	 * POINT, LINESTRING, POLYGON
+	 */
+	geometry(GeometryAttributeType.class) {
+		@Override
+		public Object javaToSqlValue(final Object value) {
+			// TODO
+			throw new UnsupportedOperationException("Not implemented yet");
+		}
+
+		@Override
+		public Object sqlToJavaValue(final Object value) {
+			// TODO
+			throw new UnsupportedOperationException("Not implemented yet");
+		}
+	}, //
+	inet(IpAddressAttributeType.class) {
+	// nothing to implement, just for keep ordered
+	}, //
+	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class) {
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
 			if (meta.isLookup()) {
 				return LookupAttributeType.class;
+			} else if (meta.isReference()) {
+				return ReferenceAttributeType.class;
 			} else {
 				return IntegerAttributeType.class;
 			}
@@ -59,12 +92,19 @@ public enum SqlType {
 				final Object[] params = new Object[1];
 				params[0] = meta.getLookupType();
 				return params;
+			} else if (meta.isReference()) {
+				final Object[] params = new Object[1];
+				params[0] = meta.getDomain();
+				return params;
 			} else {
 				return super.getConstructorParams(stringParams, meta);
 			}
 		}
-	},
-	numeric(DecimalAttributeType.class) { // precision and scale
+	}, //
+	/**
+	 * precision and scale
+	 */
+	numeric(DecimalAttributeType.class) {
 		@Override
 		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (stringParams.length == 2) {
@@ -83,8 +123,27 @@ public enum SqlType {
 				return super.getSqlParams(type);
 			}
 		}
-	},
-	text(TextAttributeType.class), time(TimeAttributeType.class) {
+	}, //
+	/**
+	 * Used by some system tables
+	 */
+	regclass(EntryTypeAttributeType.class) {
+		@Override
+		public String sqlCast() {
+			return "oid";
+		}
+
+		@Override
+		public Object sqlToJavaValue(final Object value) {
+			final Long classId = (Long) value;
+			return EntryTypeReference.newInstance(classId);
+		}
+
+	}, //
+	text(TextAttributeType.class) {
+	// nothing to implement, just for keep ordered
+	}, //
+	time(TimeAttributeType.class) {
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
@@ -94,7 +153,7 @@ public enum SqlType {
 		public Object sqlToJavaValue(final Object value) {
 			return dateSqlToJavaValue(value);
 		}
-	},
+	}, //
 	timestamp(DateTimeAttributeType.class) {
 		@Override
 		public Object javaToSqlValue(final Object value) {
@@ -105,8 +164,13 @@ public enum SqlType {
 		public Object sqlToJavaValue(final Object value) {
 			return dateSqlToJavaValue(value);
 		}
-	},
-	unknown(UndefinedAttributeType.class), varchar(StringAttributeType.class) { // length
+	}, //
+	unknown(UndefinedAttributeType.class) {
+	}, //
+	/**
+	 * length
+	 */
+	varchar(StringAttributeType.class) {
 		@Override
 		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (stringParams.length == 1) {
@@ -125,9 +189,11 @@ public enum SqlType {
 				return super.getSqlParams(type);
 			}
 		}
-	};
+	}, //
+	;
 
 	private static final CMAttributeType.Meta NO_META = new Meta() {
+
 		@Override
 		public boolean isLookup() {
 			return false;
@@ -137,6 +203,17 @@ public enum SqlType {
 		public String getLookupType() {
 			return null;
 		}
+
+		@Override
+		public boolean isReference() {
+			return false;
+		}
+
+		@Override
+		public String getDomain() {
+			return null;
+		}
+
 	};
 
 	/**
@@ -160,6 +237,10 @@ public enum SqlType {
 
 	public Object sqlToJavaValue(final Object value) {
 		return value;
+	}
+
+	public String sqlCast() {
+		return null;
 	}
 
 	final CMAttributeType<?> createAttributeType(final String[] stringParams, final CMAttributeType.Meta meta)

@@ -24,7 +24,7 @@ import org.cmdbuild.workflow.user.UserProcessInstance;
 /**
  * Business Logic Layer for Workflow Operations.
  */
-public class WorkflowLogic {
+public class WorkflowLogic implements Logic {
 
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 	private static final CustomFilesStore customFileStore = new CustomFilesStore();

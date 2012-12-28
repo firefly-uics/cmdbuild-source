@@ -1,6 +1,5 @@
 package org.cmdbuild.dao.entrytype;
 
-
 public class DBLookupType implements CMLookupType {
 
 	final String name;

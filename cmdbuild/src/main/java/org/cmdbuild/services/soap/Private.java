@@ -190,7 +190,7 @@ public interface Private {
 	public String generateDigest(@WebParam(name = "plainText") String plainText,
 			@WebParam(name = "digestAlgorithm") String digestAlgorithm) throws NoSuchAlgorithmException;
 
-	CardExt getCardWithLongDateFormat(@WebParam(name = "className") String className, @WebParam(name = "cardId") Integer cardId,
+	public CardExt getCardWithLongDateFormat(@WebParam(name = "className") String className, @WebParam(name = "cardId") Integer cardId,
 			@WebParam(name = "attributeList") Attribute[] attributeList);
 	
 	/*

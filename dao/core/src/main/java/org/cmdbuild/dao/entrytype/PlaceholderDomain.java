@@ -1,11 +1,11 @@
 package org.cmdbuild.dao.entrytype;
 
-
 public abstract class PlaceholderDomain extends PlaceholderEntryType implements CMDomain {
 
-    public final void accept(CMEntryTypeVisitor visitor) {
-        visitor.visit(this);
-    }
+	@Override
+	public final void accept(final CMEntryTypeVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	@Override
 	public CMClass getClass1() {
@@ -24,6 +24,21 @@ public abstract class PlaceholderDomain extends PlaceholderEntryType implements 
 
 	@Override
 	public String getDescription2() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getCardinality() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isMasterDetail() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
 		throw new UnsupportedOperationException();
 	}
 

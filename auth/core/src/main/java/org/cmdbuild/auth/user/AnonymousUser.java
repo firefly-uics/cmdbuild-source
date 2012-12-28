@@ -1,14 +1,49 @@
 package org.cmdbuild.auth.user;
 
-public class AnonymousUser extends AuthenticatedUser {
+import java.util.Collections;
+import java.util.Set;
 
-	public static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();
+import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 
-	private AnonymousUser() {
+public class AnonymousUser implements AuthenticatedUser {
+
+	@Override
+	public Long getId() {
+		return null;
 	}
 
 	@Override
-	public void changePassword(String oldPassword, String newPassword) {
+	public String getName() {
+		return "anonymous";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Anonymous";
+	}
+
+	@Override
+	public Set<String> getGroupNames() {
+		return Collections.emptySet();
+	}
+
+	@Override
+	public String getDefaultGroupName() {
+		return null;
+	}
+
+	@Override
+	public boolean isAnonymous() {
+		return true;
+	}
+
+	@Override
+	public void setPasswordChanger(final PasswordChanger passwordChanger) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean changePassword(final String oldPassword, final String newPassword) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -16,4 +51,15 @@ public class AnonymousUser extends AuthenticatedUser {
 	public boolean canChangePassword() {
 		return false;
 	}
+
+	@Override
+	public String getEmail() {
+		return null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return false;
+	}
+
 }

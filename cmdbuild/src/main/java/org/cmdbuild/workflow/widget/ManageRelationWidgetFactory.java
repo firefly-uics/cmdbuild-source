@@ -11,6 +11,7 @@ import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
@@ -60,7 +61,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 	private void configureWidgetDestinationClassName(final ManageRelation widget, final String domainName, final String className) {
 		if (!StringUtils.isEmpty(domainName)) {
-			final IDomain domain = UserContext.systemContext().domains().get(domainName);
+			final IDomain domain = UserOperations.from(UserContext.systemContext()).domains().get(domainName);
 			final String class1 = domain.getClass1().getName();
 			final String class2 = domain.getClass2().getName();
 			

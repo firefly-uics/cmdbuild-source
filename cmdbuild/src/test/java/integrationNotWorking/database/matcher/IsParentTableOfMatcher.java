@@ -13,35 +13,36 @@ import org.hamcrest.TypeSafeMatcher;
 
 public class IsParentTableOfMatcher extends TypeSafeMatcher<String> {
 
-	private String childTable;
+	private final String childTable;
 
-	public IsParentTableOfMatcher(String childTable) {
+	public IsParentTableOfMatcher(final String childTable) {
 		this.childTable = childTable;
 	}
 
-	public boolean matchesSafely(String expectedParentTable) {
+	@Override
+	public boolean matchesSafely(final String expectedParentTable) {
 		boolean matches = false;
 		try {
-			Connection dbConnection = DBService.getConnection();
-			PreparedStatement ps = dbConnection.prepareStatement(
-					"SELECT _cm_cmtable(_cm_parent_id(_cm_table_id(?)))"
-				);
+			final Connection dbConnection = DBService.getConnection();
+			final PreparedStatement ps = dbConnection
+					.prepareStatement("SELECT _cm_cmtable(_cm_parent_id(_cm_table_id(?)))");
 			ps.setString(1, childTable);
-			ResultSet rs = ps.executeQuery();
+			final ResultSet rs = ps.executeQuery();
 			rs.next();
-			String realParent = rs.getString(1);
+			final String realParent = rs.getString(1);
 			matches = ((expectedParentTable != null && expectedParentTable.equals(realParent)) || realParent == null);
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 		}
 		return matches;
 	}
 
-	public void describeTo(Description description) {
+	@Override
+	public void describeTo(final Description description) {
 		description.appendText("superclass of ").appendValue(childTable);
 	}
 
 	@Factory
-	public static <T> Matcher<String> isParentTableOf(String childTable) {
+	public static <T> Matcher<String> isParentTableOf(final String childTable) {
 		return new IsParentTableOfMatcher(childTable);
 	}
 }

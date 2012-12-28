@@ -11,6 +11,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.proxy.LazyCard;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
 
@@ -25,7 +26,7 @@ public class JobCard extends LazyCard implements JobFactory {
 
 	private static final String START_PROCESS_TYPE = "StartProcess";
 
-	public JobCard(int id) {
+	public JobCard(final int id) {
 		super(JobCard.getJobClass(), id);
 		setType(START_PROCESS_TYPE);
 	}
@@ -35,16 +36,16 @@ public class JobCard extends LazyCard implements JobFactory {
 		setType(START_PROCESS_TYPE);
 	}
 
-	public JobCard(ICard card) {
+	public JobCard(final ICard card) {
 		super(card);
 		setType(START_PROCESS_TYPE);
 	}
 
 	private static ITable getJobClass() {
-		return UserContext.systemContext().tables().get(JOB_CLASS_NAME);
+		return UserOperations.from(UserContext.systemContext()).tables().get(JOB_CLASS_NAME);
 	}
 
-	private void setType(String jobType) {
+	private void setType(final String jobType) {
 		getAttributeValue(JOB_TYPE_ATTRIBUTE).setValue(jobType);
 	}
 
@@ -52,7 +53,7 @@ public class JobCard extends LazyCard implements JobFactory {
 		return getAttributeValue(JOB_DETAIL_ATTRIBUTE).getString();
 	}
 
-	public void setDetail(String detail) {
+	public void setDetail(final String detail) {
 		getAttributeValue(JOB_DETAIL_ATTRIBUTE).setValue(detail);
 	}
 
@@ -60,16 +61,16 @@ public class JobCard extends LazyCard implements JobFactory {
 		return getAttributeValue(JOB_CRON_EXPRESSION_ATTRIBUTE).getString();
 	}
 
-	public void setCronExpression(String cronExpression) {
+	public void setCronExpression(final String cronExpression) {
 		getAttributeValue(JOB_CRON_EXPRESSION_ATTRIBUTE).setValue(cronExpression);
 	}
 
 	public Map<String, String> getParams() {
-		Map<String, String> params = new HashMap<String, String>();
-		String paramBlock = getAttributeValue(JOB_PARAMS_ATTRIBUTE).getString();
+		final Map<String, String> params = new HashMap<String, String>();
+		final String paramBlock = getAttributeValue(JOB_PARAMS_ATTRIBUTE).getString();
 		if (paramBlock != null) {
-			for (String paramLine : paramBlock.split("\n")) {
-				String[] paramArray = paramLine.split("=", 2);
+			for (final String paramLine : paramBlock.split("\n")) {
+				final String[] paramArray = paramLine.split("=", 2);
 				if (paramArray.length == 2) {
 					params.put(paramArray[0], paramArray[1]);
 				}
@@ -78,11 +79,11 @@ public class JobCard extends LazyCard implements JobFactory {
 		return params;
 	}
 
-	public void setParams(Map<String, String> params) {
-		StringBuilder paramBlock = new StringBuilder();
+	public void setParams(final Map<String, String> params) {
+		final StringBuilder paramBlock = new StringBuilder();
 		if (params != null) {
-			for (String key : params.keySet()) {
-				String value = params.get(key);
+			for (final String key : params.keySet()) {
+				final String value = params.get(key);
 				if (value == null || value.contains("\n")) {
 					throw ORMExceptionType.ORM_TYPE_ERROR.createException();
 				}
@@ -92,17 +93,18 @@ public class JobCard extends LazyCard implements JobFactory {
 		getAttributeValue(JOB_PARAMS_ATTRIBUTE).setValue(paramBlock.toString());
 	}
 
-	public static Iterable<JobCard> allForDetail(String detail) {
-		return convertCardListToJobCardList(JobCard.getJobClass().cards().list().filter(JOB_DETAIL_ATTRIBUTE, AttributeFilterType.EQUALS, detail));
+	public static Iterable<JobCard> allForDetail(final String detail) {
+		return convertCardListToJobCardList(JobCard.getJobClass().cards().list()
+				.filter(JOB_DETAIL_ATTRIBUTE, AttributeFilterType.EQUALS, detail));
 	}
 
 	public static Iterable<JobCard> all() {
 		return convertCardListToJobCardList(JobCard.getJobClass().cards().list());
 	}
 
-	private static Iterable<JobCard> convertCardListToJobCardList(Iterable<ICard> cardList) {
-		List<JobCard> list = new ArrayList<JobCard>();
-		for(ICard card : cardList) {
+	private static Iterable<JobCard> convertCardListToJobCardList(final Iterable<ICard> cardList) {
+		final List<JobCard> list = new ArrayList<JobCard>();
+		for (final ICard card : cardList) {
 			list.add(new JobCard(card));
 		}
 		return list;
@@ -112,11 +114,12 @@ public class JobCard extends LazyCard implements JobFactory {
 		return START_PROCESS_TYPE;
 	}
 
+	@Override
 	public Job createJob() {
 		if (isNew()) {
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
-		AbstractJob job = new StartProcessJob(getId()); // TODO
+		final AbstractJob job = new StartProcessJob(getId()); // TODO
 		job.setDetail(getDetail());
 		job.setParams(getParams());
 		return job;

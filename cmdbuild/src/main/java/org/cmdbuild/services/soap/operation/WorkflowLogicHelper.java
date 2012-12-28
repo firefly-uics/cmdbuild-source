@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.elements.WorkflowWidgetDefinition;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -21,6 +20,7 @@ import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
@@ -33,6 +33,7 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
+import org.slf4j.Logger;
 
 import com.google.common.base.Predicate;
 
@@ -107,12 +108,13 @@ public class WorkflowLogicHelper {
 		}
 		return activity;
 	}
-	
+
 	private CMActivity selectActivityFor(final UserProcessInstance processInstance) throws CMWorkflowException {
 		return selectActivityInstanceFor(processInstance).getDefinition();
 	}
 
-	public UserActivityInstance selectActivityInstanceFor(final UserProcessInstance processInstance) throws CMWorkflowException {
+	public UserActivityInstance selectActivityInstanceFor(final UserProcessInstance processInstance)
+			throws CMWorkflowException {
 		UserActivityInstance selectedActivityInstance = null;
 		for (final UserActivityInstance activityInstance : processInstance.getActivities()) {
 			if (selectedActivityInstance == null) {
@@ -143,8 +145,8 @@ public class WorkflowLogicHelper {
 	}
 
 	private IAttribute legacyAttributeFor(final String className, final String attributeName) {
-		final IAttribute legacyAttribute = userContext_UseOnlyIfYouKnowWhatYouAreDoing.tables().get(className)
-				.getAttribute(attributeName);
+		final IAttribute legacyAttribute = UserOperations.from(userContext_UseOnlyIfYouKnowWhatYouAreDoing).tables()
+				.get(className).getAttribute(attributeName);
 		return legacyAttribute;
 	}
 
@@ -291,7 +293,7 @@ public class WorkflowLogicHelper {
 		throw new RuntimeException(message, e);
 	}
 
-	public void resumeProcess(Card card) throws CMWorkflowException {
+	public void resumeProcess(final Card card) throws CMWorkflowException {
 		try {
 			logic.resumeProcess(card.getClassName(), longIdFor(card));
 		} catch (final CMWorkflowException e) {

@@ -3,11 +3,17 @@ package org.cmdbuild.dao.view.user;
 import static org.cmdbuild.common.collect.Iterables.filterNotNull;
 import static org.cmdbuild.common.collect.Iterables.map;
 
-import org.cmdbuild.auth.CMAccessControlManager;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -16,31 +22,32 @@ import org.cmdbuild.dao.entrytype.DBEntryTypeVisitor;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
 public class UserDataView extends QueryExecutorDataView {
 
-	private final DBDataView view;
-	private final CMAccessControlManager acm;
+	private final DBDataView dbView;
+	private final OperationUser operationUser;
 
-	public UserDataView(final DBDataView view, final CMAccessControlManager acm) {
-		this.view = view;
-		this.acm = acm;
+	public UserDataView(final DBDataView view, final OperationUser user) {
+		this.dbView = view;
+		this.operationUser = user;
 	}
 
-	public CMAccessControlManager getAccessControlManager() {
-		return acm;
-	}
-
-	@Override
-	public UserClass findClassById(Long id) {
-		return UserClass.create(this, view.findClassById(id));
+	public OperationUser getOperationUser() {
+		return operationUser;
 	}
 
 	@Override
-	public UserClass findClassByName(String name) {
-		return UserClass.create(this, view.findClassByName(name));
+	public UserClass findClassById(final Long id) {
+		return UserClass.newInstance(this, dbView.findClassById(id));
+	}
+
+	@Override
+	public UserClass findClassByName(final String name) {
+		return UserClass.newInstance(this, dbView.findClassByName(name));
 	}
 
 	/**
@@ -50,7 +57,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserClass> findClasses() {
-		return proxyClasses(view.findClasses());
+		return proxyClasses(dbView.findClasses());
 	}
 
 	/**
@@ -61,17 +68,47 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserClass> findAllClasses() {
-		return proxyClasses(view.findAllClasses());
+		return proxyClasses(dbView.findAllClasses());
 	}
 
 	@Override
-	public UserDomain findDomainById(Long id) {
-		return UserDomain.create(this, view.findDomainById(id));
+	public UserClass createClass(final CMClassDefinition definition) {
+		return UserClass.newInstance(this, dbView.createClass(definition));
 	}
 
 	@Override
-	public UserDomain findDomainByName(String name) {
-		return UserDomain.create(this, view.findDomainByName(name));
+	public UserClass updateClass(final CMClassDefinition definition) {
+		return UserClass.newInstance(this, dbView.updateClass(definition));
+	}
+
+	@Override
+	public void deleteClass(final CMClass clazz) {
+		dbView.deleteClass(clazz);
+	}
+
+	@Override
+	public UserAttribute createAttribute(final CMAttributeDefinition definition) {
+		return UserAttribute.newInstance(this, dbView.createAttribute(definition));
+	}
+
+	@Override
+	public UserAttribute updateAttribute(final CMAttributeDefinition definition) {
+		return UserAttribute.newInstance(this, dbView.updateAttribute(definition));
+	}
+
+	@Override
+	public void deleteAttribute(final CMAttribute attribute) {
+		dbView.deleteAttribute(attribute);
+	}
+
+	@Override
+	public UserDomain findDomainById(final Long id) {
+		return UserDomain.newInstance(this, dbView.findDomainById(id));
+	}
+
+	@Override
+	public UserDomain findDomainByName(final String name) {
+		return UserDomain.newInstance(this, dbView.findDomainByName(name));
 	}
 
 	/**
@@ -81,7 +118,7 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findDomains() {
-		return proxyDomains(view.findDomains());
+		return proxyDomains(dbView.findDomains());
 	}
 
 	/**
@@ -94,8 +131,8 @@ public class UserDataView extends QueryExecutorDataView {
 	 * @return active domains for that class
 	 */
 	@Override
-	public Iterable<UserDomain> findDomainsFor(CMClass type) {
-		return proxyDomains(view.findDomainsFor(type));
+	public Iterable<UserDomain> findDomainsFor(final CMClass type) {
+		return proxyDomains(dbView.findDomainsFor(type));
 	}
 
 	/**
@@ -106,12 +143,27 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<UserDomain> findAllDomains() {
-		return proxyDomains(view.findAllDomains());
+		return proxyDomains(dbView.findAllDomains());
+	}
+
+	@Override
+	public UserDomain createDomain(final CMDomainDefinition definition) {
+		return UserDomain.newInstance(this, dbView.createDomain(definition));
+	}
+
+	@Override
+	public UserDomain updateDomain(final CMDomainDefinition definition) {
+		return UserDomain.newInstance(this, dbView.updateDomain(definition));
+	}
+
+	@Override
+	public void deleteDomain(final CMDomain domain) {
+		dbView.deleteDomain(domain);
 	}
 
 	@Override
 	public CMFunction findFunctionByName(final String name) {
-		return view.findFunctionByName(name);
+		return dbView.findFunctionByName(name);
 	}
 
 	/**
@@ -119,53 +171,54 @@ public class UserDataView extends QueryExecutorDataView {
 	 */
 	@Override
 	public Iterable<? extends CMFunction> findAllFunctions() {
-		return view.findAllFunctions();
+		return dbView.findAllFunctions();
 	}
 
 	@Override
-	public CMCardDefinition newCard(CMClass type) {
+	public CMCardDefinition newCard(final CMClass type) {
 		// TODO
-		return view.newCard(type);
+		return dbView.newCard(type);
 	}
 
 	@Override
-	public CMCardDefinition modifyCard(CMCard card) {
-		// TODO
-		return view.modifyCard(card);
+	public CMCardDefinition modifyCard(final CMCard card) {
+		// TODO: check privileges.....
+		// user.hasWriteAccess(card.getType());
+		return dbView.modifyCard(card);
 	}
 
 	@Override
 	public CMQueryResult executeNonEmptyQuery(final QuerySpecs querySpecs) {
-		return view.executeNonEmptyQuery(querySpecs);
+		return dbView.executeNonEmptyQuery(querySpecs);
 	}
 
 	/*
 	 * Proxy helpers
 	 */
 
-	Iterable<UserClass> proxyClasses(Iterable<DBClass> source) {
+	Iterable<UserClass> proxyClasses(final Iterable<DBClass> source) {
 		return filterNotNull(map(source, new Mapper<DBClass, UserClass>() {
 			@Override
-			public UserClass map(DBClass o) {
-				return UserClass.create(UserDataView.this, o);
+			public UserClass map(final DBClass o) {
+				return UserClass.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
 
-	Iterable<UserDomain> proxyDomains(Iterable<DBDomain> source) {
+	Iterable<UserDomain> proxyDomains(final Iterable<DBDomain> source) {
 		return filterNotNull(map(source, new Mapper<DBDomain, UserDomain>() {
 			@Override
-			public UserDomain map(DBDomain o) {
-				return UserDomain.create(UserDataView.this, o);
+			public UserDomain map(final DBDomain o) {
+				return UserDomain.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
 
-	Iterable<UserAttribute> proxyAttributes(Iterable<DBAttribute> source) {
+	Iterable<UserAttribute> proxyAttributes(final Iterable<DBAttribute> source) {
 		return filterNotNull(map(source, new Mapper<DBAttribute, UserAttribute>() {
 			@Override
-			public UserAttribute map(DBAttribute o) {
-				return UserAttribute.create(UserDataView.this, o);
+			public UserAttribute map(final DBAttribute o) {
+				return UserAttribute.newInstance(UserDataView.this, o);
 			}
 		}));
 	}
@@ -175,13 +228,13 @@ public class UserDataView extends QueryExecutorDataView {
 			UserEntryType proxy;
 
 			@Override
-			public void visit(DBClass type) {
-				proxy = UserClass.create(UserDataView.this, type);
+			public void visit(final DBClass type) {
+				proxy = UserClass.newInstance(UserDataView.this, type);
 			}
 
 			@Override
-			public void visit(DBDomain type) {
-				proxy = UserDomain.create(UserDataView.this, type);
+			public void visit(final DBDomain type) {
+				proxy = UserDomain.newInstance(UserDataView.this, type);
 			}
 
 			UserEntryType proxy() {
@@ -190,4 +243,22 @@ public class UserDataView extends QueryExecutorDataView {
 			}
 		}.proxy();
 	}
+
+	@Override
+	public CMRelationDefinition newRelation(final CMDomain domain) {
+		// TODO check privileges
+		return dbView.newRelation(domain);
+	}
+
+	@Override
+	public CMRelationDefinition modifyRelation(final CMRelation relation) {
+		// TODO check privileges
+		return dbView.modifyRelation(relation);
+	}
+
+	@Override
+	public void clear(final DBEntryType type) {
+		dbView.clear(type);
+	}
+
 }

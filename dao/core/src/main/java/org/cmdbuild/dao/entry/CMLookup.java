@@ -23,4 +23,5 @@ public interface CMLookup {
 	 * @return description
 	 */
 	String getDescription();
+
 }

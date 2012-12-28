@@ -1,4 +1,5 @@
 package unit.serializers.jackson;
+
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,10 +16,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.cmdbuild.model.dashboard.ChartDefinition;
-import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.model.dashboard.ChartDefinition.ChartInput;
+import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
+import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -34,14 +35,9 @@ public class DashboardDefinitionSeralizationTest {
 	 */
 	@Test
 	public void chartInputSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		final String	name = "the name",
-						type = "the type",
-						fieldType = "the field type",
-						defaultValue = "the default value",
-						lookupType = "the lookup type",
-						className = "the class name";
+		final String name = "the name", type = "the type", fieldType = "the field type", defaultValue = "the default value", lookupType = "the lookup type", className = "the class name";
 
-		ChartInput ci = new ChartInput();
+		final ChartInput ci = new ChartInput();
 
 		String jw = mapper.writeValueAsString(ci);
 
@@ -81,14 +77,9 @@ public class DashboardDefinitionSeralizationTest {
 		assertNull(ci.getClassName());
 		assertNull(ci.getType());
 
-		jci = 	"{" +
-			"\"name\": \"the name\"," +
-			"\"type\": \"the type\"," +
-			"\"fieldType\": \"the fieldType\"," +
-			"\"defaultValue\": \"the defaultValue\"," +
-			"\"lookupType\": \"the lookupType\"," +
-			"\"className\": \"the className\"" +
-		"}";
+		jci = "{" + "\"name\": \"the name\"," + "\"type\": \"the type\"," + "\"fieldType\": \"the fieldType\","
+				+ "\"defaultValue\": \"the defaultValue\"," + "\"lookupType\": \"the lookupType\","
+				+ "\"className\": \"the className\"" + "}";
 
 		ci = mapper.readValue(jci, ChartInput.class);
 
@@ -106,12 +97,12 @@ public class DashboardDefinitionSeralizationTest {
 	@Test
 	public void dashboardColumnSerialization() throws JsonGenerationException, JsonMappingException, IOException {
 		final int width = 100;
-		final ArrayList<String> charts= new ArrayList<String>();
+		final ArrayList<String> charts = new ArrayList<String>();
 
 		charts.add("a");
 		charts.add("b");
 
-		DashboardColumn dc = new DashboardColumn();
+		final DashboardColumn dc = new DashboardColumn();
 
 		String jDc = mapper.writeValueAsString(dc);
 
@@ -124,7 +115,7 @@ public class DashboardDefinitionSeralizationTest {
 		jDc = mapper.writeValueAsString(dc);
 
 		assertThat(jDc, containsPair("width", width));
-		assertThat(jDc, containsArrayWithKey("[\"a\",\"b\"]","charts"));
+		assertThat(jDc, containsArrayWithKey("[\"a\",\"b\"]", "charts"));
 	}
 
 	@Test
@@ -135,10 +126,7 @@ public class DashboardDefinitionSeralizationTest {
 		assertEquals(new Float(0), new Float(dc.getWidth()));
 		assertEquals(dc.getCharts().size(), 0);
 
-		jdc = 	"{" +
-					"\"width\": 0.6," +
-					"\"charts\": [\"asdf\", \"fdsa\"]" +
-				"}";
+		jdc = "{" + "\"width\": 0.6," + "\"charts\": [\"asdf\", \"fdsa\"]" + "}";
 
 		dc = mapper.readValue(jdc, DashboardColumn.class);
 		assertEquals(new Float(0.6), new Float(dc.getWidth()));
@@ -146,9 +134,10 @@ public class DashboardDefinitionSeralizationTest {
 
 		jdc = "[" + jdc + "]";
 
-		ArrayList<DashboardColumn> columns = 
-			mapper.readValue(jdc, new TypeReference<ArrayList<DashboardColumn>>(){});	// to say to the object matter that the
-																						// contains DashboardColumns
+		final ArrayList<DashboardColumn> columns = mapper.readValue(jdc,
+				new TypeReference<ArrayList<DashboardColumn>>() {
+				}); // to say to the object matter that the
+					// contains DashboardColumns
 
 		assertEquals(new Float(0.6), new Float(columns.get(0).getWidth()));
 		assertEquals(2, columns.get(0).getCharts().size());
@@ -159,20 +148,9 @@ public class DashboardDefinitionSeralizationTest {
 	 */
 	@Test
 	public void chartStringAttributesSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		final String	name = "theName",
-						description = "theDescription",
-						dataSourceName = "theDataSourceName",
-						type = "theType",
-						singleSeriesField = "theSingleSeriesField",
-						labelField = "theLabelField",
-						categoryAxisField = "theCategoryAxisField",
-						categoryAxisLabel = "theCategoryAxisLabel",
-						valueAxisLabel = "theValueAxisLabel",
-						fgcolor = "theFgColor",
-						bgcolor = "theBgColor",
-						chartOrientation = "theChartOrientation";
+		final String name = "theName", description = "theDescription", dataSourceName = "theDataSourceName", type = "theType", singleSeriesField = "theSingleSeriesField", labelField = "theLabelField", categoryAxisField = "theCategoryAxisField", categoryAxisLabel = "theCategoryAxisLabel", valueAxisLabel = "theValueAxisLabel", fgcolor = "theFgColor", bgcolor = "theBgColor", chartOrientation = "theChartOrientation";
 
-		ChartDefinition c = new ChartDefinition();
+		final ChartDefinition c = new ChartDefinition();
 		String jw = mapper.writeValueAsString(c);
 
 		assertThat(jw, not(containsKey("name")));
@@ -219,14 +197,14 @@ public class DashboardDefinitionSeralizationTest {
 
 	@Test
 	public void chartBoolaenAttributesSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		ChartDefinition c = new ChartDefinition();
+		final ChartDefinition c = new ChartDefinition();
 
 		String jw = mapper.writeValueAsString(c);
 
 		assertThat(jw, containsPair("active", false));
 		assertThat(jw, containsPair("autoLoad", false));
 		assertThat(jw, containsPair("legend", false));
-	
+
 		c.setLegend(true);
 		c.setActive(true);
 		c.setAutoLoad(true);
@@ -240,12 +218,9 @@ public class DashboardDefinitionSeralizationTest {
 
 	@Test
 	public void chartIntAttributesSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		final int	height = 10,
-					maximum = 100,
-					minimum = 1,
-					steps = 20;
+		final int height = 10, maximum = 100, minimum = 1, steps = 20;
 
-		ChartDefinition c = new ChartDefinition();
+		final ChartDefinition c = new ChartDefinition();
 
 		String jw = mapper.writeValueAsString(c);
 
@@ -268,15 +243,16 @@ public class DashboardDefinitionSeralizationTest {
 	}
 
 	@Test
-	public void chartArrayListAttributesSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		ChartDefinition cd = new ChartDefinition();
+	public void chartArrayListAttributesSerialization() throws JsonGenerationException, JsonMappingException,
+			IOException {
+		final ChartDefinition cd = new ChartDefinition();
 
 		String jdc = mapper.writeValueAsString(cd);
 
 		assertThat(jdc, not(containsKey("dataSourceParameters")));
 		assertThat(jdc, not(containsKey("valueAxisFields")));
 
-		ChartInput ci = new ChartInput();
+		final ChartInput ci = new ChartInput();
 		ci.setName("inputName");
 
 		cd.addValueAxisField("a field");
@@ -285,8 +261,8 @@ public class DashboardDefinitionSeralizationTest {
 
 		jdc = mapper.writeValueAsString(cd);
 
-		assertThat(jdc, containsArrayWithKey("[\"a field\",\"a second field\"]","valueAxisFields"));
-		assertThat(jdc, containsArrayWithKey("[{\"name\":\"inputName\",\"required\":false}]","dataSourceParameters"));
+		assertThat(jdc, containsArrayWithKey("[\"a field\",\"a second field\"]", "valueAxisFields"));
+		assertThat(jdc, containsArrayWithKey("[{\"name\":\"inputName\",\"required\":false}]", "dataSourceParameters"));
 	}
 
 	@Test
@@ -316,32 +292,19 @@ public class DashboardDefinitionSeralizationTest {
 		assertEquals(0, cd.getMinimum());
 		assertEquals(0, cd.getSteps());
 
-		assertEquals(0,cd.getDataSourceParameters().size());
-		assertEquals(0,cd.getValueAxisFields().size());
+		assertEquals(0, cd.getDataSourceParameters().size());
+		assertEquals(0, cd.getValueAxisFields().size());
 
-		jcd = 	"{" +
-					"\"name\": \"the name\"," +
-					"\"description\": \"the descr\"," +
-					"\"dataSourceName\": \"the dsName\"," +
-					"\"type\": \"the type\"," +
-					"\"singleSeriesField\": \"the single serie field\"," +
-					"\"labelField\": \"the label field\"," +
-					"\"categoryAxisField\": \"the category axis field\"," +
-					"\"categoryAxisLabel\": \"the category axis label\"," +
-					"\"valueAxisLabel\": \"the value axis label\"," +
-					"\"fgcolor\": \"the fgcolor\"," +
-					"\"bgcolor\": \"the bgcolor\"," +
-					"\"chartOrientation\": \"the chart orientation\"," +
-					"\"active\": \"true\"," +
-					"\"autoLoad\": \"true\"," +
-					"\"legend\": \"true\"," +
-					"\"height\": 100," +
-					"\"maximum\": \"100\"," +
-					"\"minimum\": \"100\"," +
-					"\"steps\": \"100\"," +
-					"\"valueAxisFields\": [\"Foo\",\"Bar\"]," +
-					"\"dataSourceParameters\": [{\"name\": \"Foo\"}]" +
-				"}";
+		jcd = "{" + "\"name\": \"the name\"," + "\"description\": \"the descr\","
+				+ "\"dataSourceName\": \"the dsName\"," + "\"type\": \"the type\","
+				+ "\"singleSeriesField\": \"the single serie field\"," + "\"labelField\": \"the label field\","
+				+ "\"categoryAxisField\": \"the category axis field\","
+				+ "\"categoryAxisLabel\": \"the category axis label\","
+				+ "\"valueAxisLabel\": \"the value axis label\"," + "\"fgcolor\": \"the fgcolor\","
+				+ "\"bgcolor\": \"the bgcolor\"," + "\"chartOrientation\": \"the chart orientation\","
+				+ "\"active\": \"true\"," + "\"autoLoad\": \"true\"," + "\"legend\": \"true\"," + "\"height\": 100,"
+				+ "\"maximum\": \"100\"," + "\"minimum\": \"100\"," + "\"steps\": \"100\","
+				+ "\"valueAxisFields\": [\"Foo\",\"Bar\"]," + "\"dataSourceParameters\": [{\"name\": \"Foo\"}]" + "}";
 
 		cd = mapper.readValue(jcd, ChartDefinition.class);
 
@@ -376,13 +339,13 @@ public class DashboardDefinitionSeralizationTest {
 		assertEquals(ChartInput.class, cd.getDataSourceParameters().get(0).getClass());
 		assertEquals("Foo", cd.getDataSourceParameters().get(0).getName());
 	}
-	
+
 	/*
 	 * DashboardDefinition
 	 */
 	@Test
 	public void dashboardDefinitionSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		DashboardDefinition dd = new DashboardDefinition();
+		final DashboardDefinition dd = new DashboardDefinition();
 
 		String jDd = mapper.writeValueAsString(dd);
 
@@ -402,17 +365,9 @@ public class DashboardDefinitionSeralizationTest {
 
 		assertThat(jDd, containsPair("name", "the name"));
 		assertThat(jDd, containsPair("description", "the description"));
-		assertThat(jDd, containsObjectWithKey("{" +
-				"\"key\":{" +
-					"\"active\":false," +
-					"\"autoLoad\":false," +
-					"\"legend\":false," +
-					"\"height\":0," +
-					"\"maximum\":0," +
-					"\"minimum\":0," +
-					"\"steps\":0" +
-				"}" +
-			"}", "charts"));
+		assertThat(jDd, containsObjectWithKey("{" + "\"key\":{" + "\"active\":false," + "\"autoLoad\":false,"
+				+ "\"legend\":false," + "\"height\":0," + "\"maximum\":0," + "\"minimum\":0," + "\"steps\":0" + "}"
+				+ "}", "charts"));
 
 		assertThat(jDd, containsArrayWithKey("[{\"width\":0.0}]", "columns"));
 		assertThat(jDd, containsArrayWithKey("[\"the group\"]", "groups"));
@@ -429,31 +384,27 @@ public class DashboardDefinitionSeralizationTest {
 		assertEquals(0, dd.getColumns().size());
 		assertEquals(0, dd.getCharts().size());
 
-		jdd = 	"{" +
-					"\"name\":\"the name\"," +
-					"\"description\":\"the description\"," +
-					"\"charts\":{\"key\":{\"name\":\"a chart\"}}," +
-					"\"groups\":[\"a group\", \"another group\"]," +
-					"\"columns\":[{\"width\":0.3,\"charts\":[\"key\"]}]" +
-				"}";
+		jdd = "{" + "\"name\":\"the name\"," + "\"description\":\"the description\","
+				+ "\"charts\":{\"key\":{\"name\":\"a chart\"}}," + "\"groups\":[\"a group\", \"another group\"],"
+				+ "\"columns\":[{\"width\":0.3,\"charts\":[\"key\"]}]" + "}";
 
 		dd = mapper.readValue(jdd, DashboardDefinition.class);
 		assertEquals("the name", dd.getName());
 		assertEquals("the description", dd.getDescription());
 
-		ArrayList<String> groups = dd.getGroups();
+		final ArrayList<String> groups = dd.getGroups();
 		assertEquals(2, groups.size());
 		assertEquals("a group", groups.get(0));
 		assertEquals("another group", groups.get(1));
 
-		ArrayList<DashboardColumn> columns = dd.getColumns();
+		final ArrayList<DashboardColumn> columns = dd.getColumns();
 		assertEquals(1, columns.size());
 		assertEquals(new Float(0.3), new Float(columns.get(0).getWidth()));
 
-		LinkedHashMap<String, ChartDefinition> charts = dd.getCharts();
+		final LinkedHashMap<String, ChartDefinition> charts = dd.getCharts();
 		assertEquals(1, charts.size());
 		assertEquals("a chart", charts.get("key").getName());
-		
+
 	}
 
 }

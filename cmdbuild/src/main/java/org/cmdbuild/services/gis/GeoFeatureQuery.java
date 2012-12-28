@@ -11,6 +11,7 @@ import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.auth.UserContext;
+import org.cmdbuild.services.auth.UserOperations;
 
 public class GeoFeatureQuery implements Iterable<GeoFeature> {
 
@@ -68,10 +69,12 @@ public class GeoFeatureQuery implements Iterable<GeoFeature> {
 
 	@Override
 	public Iterator<GeoFeature> iterator() {
-		ITable geoAttributeTable = UserContext.systemContext().tables().get(layerMetadata.getFullName());
+		ITable geoAttributeTable = UserOperations.from(UserContext.systemContext()).tables()
+				.get(layerMetadata.getFullName());
 		CardQuery geoCardQuery = geoAttributeTable.cards().list();
 		if (bbox != null) {
-			geoCardQuery.filter(new BBoxFilter(geoAttributeTable.getAttribute(GeoFeatureLayer.GEOMETRY_ATTRIBUTE), bbox));
+			geoCardQuery
+					.filter(new BBoxFilter(geoAttributeTable.getAttribute(GeoFeatureLayer.GEOMETRY_ATTRIBUTE), bbox));
 		}
 
 		if (masterId != null) {

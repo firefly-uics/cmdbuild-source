@@ -9,8 +9,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.elements.interfaces.BaseSchema.CMTableType;
 import org.cmdbuild.elements.interfaces.IAttribute;
+import org.cmdbuild.elements.interfaces.ICard.CardAttributes;
 import org.cmdbuild.elements.interfaces.ITable;
-import org.cmdbuild.exception.NotFoundException;
 
 public class ClassWrapper implements CMClass {
 
@@ -54,11 +54,7 @@ public class ClassWrapper implements CMClass {
 
 	@Override
 	public CMAttribute getAttribute(String name) {
-		try {
-			return new AttributeWrapper(table.getAttribute(name));
-		} catch (NotFoundException e) {
-			throw new IllegalArgumentException();
-		}
+		return new AttributeWrapper(table.getAttribute(name));
 	}
 
 	@Override
@@ -90,7 +86,7 @@ public class ClassWrapper implements CMClass {
 
 	@Override
 	public String getPrivilegeId() {
-		throw new UnsupportedOperationException();
+		return table.getPrivilegeId();
 	}
 
 	@Override
@@ -118,4 +114,18 @@ public class ClassWrapper implements CMClass {
 		return (table.getTableType() != CMTableType.SIMPLECLASS);
 	}
 
+	@Override
+	public String getKeyAttributeName() {
+		return CardAttributes.Id.toString();
+	}
+
+	@Override
+	public String getCodeAttributeName() {
+		return CardAttributes.Code.toString();
+	}
+
+	@Override
+	public String getDescriptionAttributeName() {
+		return CardAttributes.Description.toString();
+	}
 }
