@@ -2,7 +2,7 @@ package org.cmdbuild.workflow.widget;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;

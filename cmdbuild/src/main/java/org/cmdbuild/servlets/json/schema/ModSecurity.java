@@ -13,7 +13,6 @@ import org.cmdbuild.elements.wrappers.GroupCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
@@ -21,6 +20,7 @@ import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOBuilder;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic.PrivilegeInfo;
 import org.cmdbuild.model.profile.UIConfiguration;
@@ -279,24 +279,19 @@ public class ModSecurity extends JSONBase {
 			}
 		}
 	}
-	
+
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public JSONObject enableDisableGroup(
-			JSONObject serializer,
-			@Parameter("isActive") boolean isActive,
-			@Parameter("groupId") int groupId,
-			ITableFactory tf,
-			UserContext userCtx
-		) throws JSONException, AuthException {
+	public JSONObject enableDisableGroup(final JSONObject serializer, @Parameter("isActive") final boolean isActive,
+			@Parameter("groupId") final int groupId, final ITableFactory tf, final UserContext userCtx)
+			throws JSONException, AuthException {
 
-		ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
-		GroupCard group = new GroupCard(card);
+		final ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
+		final GroupCard group = new GroupCard(card);
 
 		// The CloudAdmin could not disable/enalbe groups with administrator
 		// privileges if not its own group
-		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()
-				&& group.isAdmin()
+		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin() && group.isAdmin()
 				&& groupId != userCtx.getDefaultGroup().getId()) {
 
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
@@ -308,12 +303,12 @@ public class ModSecurity extends JSONBase {
 		return serializer;
 	}
 
-	private void setGroupStatus(GroupCard group, boolean isActive) {
+	private void setGroupStatus(final GroupCard group, final boolean isActive) {
 		if (isActive) {
 			group.setStatus(ElementStatus.ACTIVE);
 		} else {
 			group.setStatus(ElementStatus.INACTIVE);
-		}	
+		}
 	}
 
 }

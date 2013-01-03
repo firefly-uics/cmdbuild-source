@@ -24,10 +24,10 @@ import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Class;
@@ -558,7 +558,7 @@ public class ModClass extends JSONBase {
 	 * Widget Definition
 	 */
 
-	//FIXME: why success false? fix it
+	// FIXME: why success false? fix it
 	@JSONExported
 	public JsonResponse getAllWidgets(@Parameter(value = "active", required = false) final boolean active,
 			final UserContext userCtx) {

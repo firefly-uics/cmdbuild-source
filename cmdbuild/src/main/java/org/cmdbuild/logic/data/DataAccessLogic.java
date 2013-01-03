@@ -1,4 +1,6 @@
-package org.cmdbuild.logic;
+package org.cmdbuild.logic.data;
+
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -8,8 +10,15 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.legacywrappers.CardWrapper;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.ICard;
+import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -17,6 +26,10 @@ import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.mappers.FilterMapper;
+import org.cmdbuild.logic.mappers.SorterMapper;
+import org.cmdbuild.logic.mappers.json.JSONFilterMapper;
+import org.cmdbuild.logic.mappers.json.JSONSorterMapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,25 +74,25 @@ public class DataAccessLogic implements Logic {
 	@Legacy("IMPORTANT! FIX THE NEW DAO AND FIX BECAUSE IT USES THE SYSTEM USER!")
 	public CMCard getCard(final String className, final Object cardId) {
 		try {
-			final int id = Integer.parseInt(cardId.toString()); // very expensive but almost never called
+			final int id = Integer.parseInt(cardId.toString()); // very
+			// expensive but
+			// almost never
+			// called
 			final ICard card = UserOperations.from(UserContext.systemContext()).tables().get(className).cards().get(id);
 			return new CardWrapper(card);
 		} catch (final Exception e) {
 			return null;
 		}
-		/* The new DAO layer does not query subclasses! ****************
-		final CMClass cardType = view.findClassByName(className);
-		final CMQueryResult result = view.select(
-				attribute(cardType, Constants.DESCRIPTION_ATTRIBUTE))
-			.from(cardType)
-			.where(attribute(cardType, Constants.ID_ATTRIBUTE), Operator.EQUALS, cardId)
-			.run();
-		if (result.isEmpty()) {
-			return null;
-		} else {
-			return result.iterator().next().getCard(cardType);
-		}
-		**************************************************************** */
+		/*
+		 * The new DAO layer does not query subclasses! **************** final
+		 * CMClass cardType = view.findClassByName(className); final
+		 * CMQueryResult result = view.select( attribute(cardType,
+		 * Constants.DESCRIPTION_ATTRIBUTE)) .from(cardType)
+		 * .where(attribute(cardType, Constants.ID_ATTRIBUTE), Operator.EQUALS,
+		 * cardId) .run(); if (result.isEmpty()) { return null; } else { return
+		 * result.iterator().next().getCard(cardType); }
+		 * ***************************************************************
+		 */
 	}
 
 	/**
@@ -96,6 +109,33 @@ public class DataAccessLogic implements Logic {
 			return Lists.newArrayList();
 		}
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
+	}
+
+	public List<CMCard> fetchCards(final String className, final QueryOptions queryOptions) {
+		final CMClass fetchedClass = view.findClassByName(className);
+		if (fetchedClass == null) {
+			return Lists.newArrayList();
+		}
+		final FilterMapper filterMapper = new JSONFilterMapper(fetchedClass, queryOptions.getFilter());
+		final WhereClause whereClause = filterMapper.deserialize();
+
+		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
+				.from(fetchedClass);
+		if (!(whereClause instanceof EmptyWhereClause)) {
+			queryBuilder.where(whereClause);
+		}
+		queryBuilder.limit(queryOptions.getLimit()) //
+				.offset(queryOptions.getOffset());
+		final SorterMapper mapper = new JSONSorterMapper(fetchedClass, queryOptions.getSorters());
+		for (final OrderByClause clause : mapper.deserialize()) {
+			queryBuilder.orderBy(clause.getAttribute(), clause.getDirection());
+		}
+		final CMQueryResult result = queryBuilder.run();
+		final List<CMCard> filteredCards = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			filteredCards.add(row.getCard(fetchedClass));
+		}
+		return filteredCards;
 	}
 
 }

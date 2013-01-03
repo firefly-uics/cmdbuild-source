@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.cmdbuild.dao.backend.CMBackend;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
@@ -39,14 +40,15 @@ import org.cmdbuild.elements.interfaces.RelationFactory;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.DataAccessLogic;
-import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.LogicDTO.Card;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
@@ -66,32 +68,39 @@ import org.json.JSONObject;
 public class ModCard extends JSONBase {
 
 	@JSONExported
-	public JSONObject getCardList(final JSONObject serializer, 
+	public JSONObject getCardList(final JSONObject serializer, //
 			@Parameter(value = "className") final String className, //
+			@Parameter(value = "filter") final JSONObject filter, //
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
-			@Parameter(value = "sort", required = false) final JSONArray sorters, //
-			@Parameter(value = "filter") final JSONObject filter) throws JSONException, CMDBException {
+			@Parameter(value = "sort", required = false) final JSONArray sorters //
+	) throws JSONException, CMDBException {
+		final DataAccessLogic dataLogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(new SessionVars()
+				.getCurrentUserContext());
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.build();
+		final List<CMCard> fetchedCards = dataLogic.fetchCards(className, queryOptions);
+		// TODO: serialize the response....
 
-		
-		//TODO: implement it!!!!!!!!!!!!!!!!!!!!
-		
-		
-//		temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
-//		final JSONArray rows = new JSONArray();
-//		if (writeonly) {
-//			removeReadOnlySubclasses(cardQuery, userContext);
-//		}
-//
-//		cardQuery.fullText(fullTextQuery);
-//
-//		applySortToCardQuery(sorters, cardQuery);
-//
-//		for (final ICard card : cardQuery.subset(offset, limit).count()) {
-//			rows.put(Serializer.serializeCardWithPrivileges(card, false));
-//		}
-//		serializer.put("rows", rows);
-//		serializer.put("results", cardQuery.getTotalRows());
+		// temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
+		// final JSONArray rows = new JSONArray();
+		// if (writeonly) {
+		// removeReadOnlySubclasses(cardQuery, userContext);
+		// }
+		//
+		// cardQuery.fullText(fullTextQuery);
+		//
+		// applySortToCardQuery(sorters, cardQuery);
+		//
+		// for (final ICard card : cardQuery.subset(offset, limit).count()) {
+		// rows.put(Serializer.serializeCardWithPrivileges(card, false));
+		// }
+		// serializer.put("rows", rows);
+		// serializer.put("results", cardQuery.getTotalRows());
 		return serializer;
 	}
 
@@ -409,16 +418,18 @@ public class ModCard extends JSONBase {
 
 	@JSONExported
 	public JSONObject updateCard(final ICard card, final Map<String, String> attributes, final UserContext userCtx,
-			final JSONObject serializer) throws Exception  {
+			final JSONObject serializer) throws Exception {
 		setCardAttributes(card, attributes, false);
 		final boolean created = card.isNew();
 		card.save();
 		fillReferenceAttributes(card, attributes, UserOperations.from(userCtx).relations());
 
-		final GISLogic gisLogic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		if (gisLogic.isGisEnabled()) {
-			gisLogic.updateFeatures(card, attributes);
-		}
+		// TODO: uncomment these lines after updating to new dao
+		// final GISLogic gisLogic =
+		// TemporaryObjectsBeforeSpringDI.getGISLogic();
+		// if (gisLogic.isGisEnabled()) {
+		// gisLogic.updateFeatures(card, attributes);
+		// }
 
 		if (created) {
 			serializer.put("id", card.getId());
@@ -454,9 +465,9 @@ public class ModCard extends JSONBase {
 
 		if (updateConfirmed) {
 			final ICard card = cardQuery.getTable().cards().create(); // Unprivileged
-																		// card
-																		// as a
-																		// template
+			// card
+			// as a
+			// template
 			setCardAttributes(card, attributes, true);
 			cardQuery.update(card);
 		} else {
@@ -470,8 +481,8 @@ public class ModCard extends JSONBase {
 	private List<ICard> buildCardListToBulkUpdate(final String[] cardsToUpdate, final ITableFactory tf) {
 		final List<ICard> cardsList = new LinkedList<ICard>();
 		if (cardsToUpdate != null && cardsToUpdate[0] != "") { // if the first
-																// element is an
-																// empty string
+			// element is an
+			// empty string
 			// the array is empty
 			for (final String cardIdAndClass : cardsToUpdate) {
 				final ICard cardToUpdate = stringToCard(tf, cardIdAndClass);
