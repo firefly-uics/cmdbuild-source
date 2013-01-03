@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class CreateModifyCard extends Widget {

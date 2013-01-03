@@ -1,31 +1,30 @@
 package org.cmdbuild.model.widget;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.reference.CardReference;
-import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 public class ManageRelation extends Widget {
-	
+
 	public static class Submission {
 		private List<Object> output;
-	
+
 		public List<Object> getOutput() {
 			return output;
 		}
-	
+
 		public void setOutput(final List<Object> output) {
 			this.output = output;
 		}
 	}
 
 	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
-	
+
 	/*
 	 * Domain to which show the relations
 	 */
@@ -35,7 +34,7 @@ public class ManageRelation extends Widget {
 	 * Class name of the card to use as reference
 	 */
 	private String className;
-	
+
 	/*
 	 * Class name of the card to use as reference
 	 */
@@ -103,15 +102,15 @@ public class ManageRelation extends Widget {
 	 * domain and the associated relation
 	 */
 	private boolean canDeleteALinkedCard;
-	
+
 	/*
 	 * The name of the variable where to put the selections of the widget during
 	 * the save operation
 	 */
 	private String outputName;
-	
+
 	private final DataAccessLogic dataAccessLogic;
-	
+
 	public ManageRelation(final DataAccessLogic dataAccessLogic) {
 		this.dataAccessLogic = dataAccessLogic;
 	}
@@ -224,15 +223,15 @@ public class ManageRelation extends Widget {
 	public void setCanRemoveALinkedCard(final boolean canDeleteALinkedCard) {
 		this.canDeleteALinkedCard = canDeleteALinkedCard;
 	}
-	
-	public void setDestinationClassName(String destinationClassName) {
+
+	public void setDestinationClassName(final String destinationClassName) {
 		this.destinationClassName = destinationClassName;
 	}
 
 	public String getDestinationClassName() {
 		return destinationClassName;
 	}
-	
+
 	public String getOutputName() {
 		return outputName;
 	}
@@ -240,9 +239,10 @@ public class ManageRelation extends Widget {
 	public void setOutputName(final String outputName) {
 		this.outputName = outputName;
 	}
-	
+
 	@Override
-	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output) throws Exception {
+	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
+			throws Exception {
 		if (outputName != null) {
 			final Submission submission = decodeInput(input);
 			output.put(outputName, outputValue(submission));

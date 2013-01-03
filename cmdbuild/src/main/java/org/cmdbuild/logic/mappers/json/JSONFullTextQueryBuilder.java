@@ -1,9 +1,9 @@
-package org.cmdbuild.logic;
+package org.cmdbuild.logic.mappers.json;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
+import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.dao.query.clause.where.OrWhereClause.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,8 +13,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.cmdbuild.logic.mappers.WhereClauseBuilder;
 
 import com.google.common.collect.Lists;
 
@@ -25,10 +24,10 @@ import com.google.common.collect.Lists;
  */
 public class JSONFullTextQueryBuilder implements WhereClauseBuilder {
 
-	private String fullTextQuery;
-	private CMEntryType entryType;
+	private final String fullTextQuery;
+	private final CMEntryType entryType;
 
-	public JSONFullTextQueryBuilder(String fullTextQuery, CMEntryType entryType) {
+	public JSONFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
 		Validate.notNull(fullTextQuery);
 		Validate.notNull(entryType);
 		this.fullTextQuery = fullTextQuery;
@@ -37,13 +36,13 @@ public class JSONFullTextQueryBuilder implements WhereClauseBuilder {
 
 	@Override
 	public WhereClause build() {
-		List<WhereClause> whereClauses = Lists.newArrayList();
-		for (CMAttribute attribute : entryType.getAttributes()) {
-			WhereClause simpleWhereClause = condition(attribute(entryType, attribute.getName()),
+		final List<WhereClause> whereClauses = Lists.newArrayList();
+		for (final CMAttribute attribute : entryType.getAttributes()) {
+			final WhereClause simpleWhereClause = condition(attribute(entryType, attribute.getName()),
 					contains(fullTextQuery));
 			whereClauses.add(simpleWhereClause);
 		}
-		WhereClause[] whereClausesArray = whereClauses.toArray(new WhereClause[whereClauses.size()]);
+		final WhereClause[] whereClausesArray = whereClauses.toArray(new WhereClause[whereClauses.size()]);
 		if (whereClauses.isEmpty()) {
 			return new EmptyWhereClause();
 		}

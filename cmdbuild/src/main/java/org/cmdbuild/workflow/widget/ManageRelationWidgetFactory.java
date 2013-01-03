@@ -6,7 +6,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.cxf.common.util.StringUtils;
 import org.cmdbuild.dao.reference.CardReference;
 import org.cmdbuild.elements.interfaces.IDomain;
-import org.cmdbuild.logic.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.TemplateRepository;
@@ -24,10 +24,11 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	public static final String OBJ_REF = "ObjRef";
 	public final static String REQUIRED = "Required";
 	public final static String IS_DIRECT = "IsDirect";
-	
+
 	private final DataAccessLogic dataAccessLogic;
 
-	public ManageRelationWidgetFactory(final TemplateRepository templateRespository, final DataAccessLogic dataAccessLogic) {
+	public ManageRelationWidgetFactory(final TemplateRepository templateRespository,
+			final DataAccessLogic dataAccessLogic) {
 		super(templateRespository);
 		this.dataAccessLogic = dataAccessLogic;
 	}
@@ -44,7 +45,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		widget.setDomainName(readString(valueMap.get(DOMAIN)));
-		
+
 		if (valueMap.containsKey(OBJ_REF)) {
 			className = configureWidgetFromReference(widget, valueMap);
 		} else {
@@ -55,16 +56,17 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		setEnabledFunctions(widget, readString(valueMap.get(FUNCTIONS)));
 
 		configureWidgetDestinationClassName(widget, readString(valueMap.get(DOMAIN)), className);
-		
+
 		return widget;
 	}
 
-	private void configureWidgetDestinationClassName(final ManageRelation widget, final String domainName, final String className) {
+	private void configureWidgetDestinationClassName(final ManageRelation widget, final String domainName,
+			final String className) {
 		if (!StringUtils.isEmpty(domainName)) {
 			final IDomain domain = UserOperations.from(UserContext.systemContext()).domains().get(domainName);
 			final String class1 = domain.getClass1().getName();
 			final String class2 = domain.getClass2().getName();
-			
+
 			final String destinationClassName = class1.equals(className) ? class2 : class1;
 			widget.setDestinationClassName(destinationClassName);
 		} else {
@@ -105,7 +107,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 		return enabled;
 	}
-	
+
 	private String configureWidgetFromClassName(final ManageRelation widget, final Map<String, Object> valueMap) {
 		final String className = readString(valueMap.get(CLASS_NAME));
 		final String cardIdOrCql = readString(valueMap.get(CARD_CQL_SELECTOR));
@@ -113,18 +115,18 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 		widget.setClassName(className);
 		widget.setObjId(cardIdOrCql);
-		
+
 		return className;
 	}
 
 	private String configureWidgetFromReference(final ManageRelation widget, final Map<String, Object> valueMap) {
 		final CardReference objRef = (CardReference) valueMap.get(OBJ_REF);
 		final String className = readString(objRef.getClassName());
-		final String cardId = readString(objRef.getId().toString()); 
-		
+		final String cardId = readString(objRef.getId().toString());
+
 		widget.setClassName(className);
 		widget.setObjId(cardId);
-		
+
 		return className;
 	}
 }

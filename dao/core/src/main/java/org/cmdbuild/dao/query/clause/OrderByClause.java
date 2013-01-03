@@ -2,14 +2,14 @@ package org.cmdbuild.dao.query.clause;
 
 public class OrderByClause {
 	public static enum Direction {
-		ASC,
-		DESC;
+		ASC, DESC;
+
 	}
 
 	private QueryAttribute attribute;
 	private Direction direction;
 
-	public OrderByClause(QueryAttribute attribute, Direction direction) {
+	public OrderByClause(final QueryAttribute attribute, final Direction direction) {
 		this.attribute = attribute;
 		this.direction = direction;
 	}
@@ -18,7 +18,7 @@ public class OrderByClause {
 		return attribute;
 	}
 
-	public void setAttribute(QueryAttribute attribute) {
+	public void setAttribute(final QueryAttribute attribute) {
 		this.attribute = attribute;
 	}
 
@@ -26,7 +26,7 @@ public class OrderByClause {
 		return direction;
 	}
 
-	public void setDirection(Direction direction) {
+	public void setDirection(final Direction direction) {
 		this.direction = direction;
 	}
 }

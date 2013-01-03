@@ -1,4 +1,4 @@
-package org.cmdbuild.logic;
+package org.cmdbuild.logic.mappers.json;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -19,6 +19,7 @@ import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.logic.mappers.WhereClauseBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +33,7 @@ import com.google.common.collect.Lists;
  */
 public class JSONFilterBuilder implements WhereClauseBuilder {
 
-	private JSONObject filterObject;
+	private final JSONObject filterObject;
 	protected CMEntryType entryType;
 	private static final String SIMPLE = "simple";
 	private static final String AND = "and";
@@ -48,7 +49,7 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 	 *            filter
 	 * @param entryType
 	 */
-	public JSONFilterBuilder(JSONObject filterObject, CMEntryType entryType) {
+	public JSONFilterBuilder(final JSONObject filterObject, final CMEntryType entryType) {
 		Validate.notNull(filterObject);
 		Validate.notNull(entryType);
 		this.entryType = entryType;
@@ -59,31 +60,31 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 	public WhereClause build() {
 		try {
 			return buildWhereClause(filterObject);
-		} catch (JSONException ex) {
+		} catch (final JSONException ex) {
 			throw new IllegalArgumentException("The filter is malformed");
 		}
 	}
 
-	protected WhereClause buildWhereClause(JSONObject filterObject) throws JSONException {
+	protected WhereClause buildWhereClause(final JSONObject filterObject) throws JSONException {
 		if (filterObject.has(SIMPLE)) {
-			JSONObject simpleCondition = filterObject.getJSONObject(SIMPLE);
-			String attributeName = simpleCondition.getString(ATTRIBUTE);
-			String operator = simpleCondition.getString(OPERATOR);
-			JSONArray values = simpleCondition.getJSONArray(VALUE);
+			final JSONObject simpleCondition = filterObject.getJSONObject(SIMPLE);
+			final String attributeName = simpleCondition.getString(ATTRIBUTE);
+			final String operator = simpleCondition.getString(OPERATOR);
+			final JSONArray values = simpleCondition.getJSONArray(VALUE);
 			return buildSimpleWhereClause(attribute(entryType, attributeName), operator, values);
 		} else if (filterObject.has(AND)) {
-			JSONArray andConditions = filterObject.getJSONArray(AND);
+			final JSONArray andConditions = filterObject.getJSONArray(AND);
 			Validate.isTrue(andConditions.length() >= 2);
-			JSONObject firstAnd = andConditions.getJSONObject(0);
-			JSONObject secondAnd = andConditions.getJSONObject(1);
+			final JSONObject firstAnd = andConditions.getJSONObject(0);
+			final JSONObject secondAnd = andConditions.getJSONObject(1);
 			return and(buildWhereClause(firstAnd), //
 					buildWhereClause(secondAnd), //
 					createOptionalWhereClauses(andConditions));
 		} else if (filterObject.has(OR)) {
-			JSONArray orConditions = filterObject.getJSONArray(OR);
+			final JSONArray orConditions = filterObject.getJSONArray(OR);
 			Validate.isTrue(orConditions.length() >= 2);
-			JSONObject firstOr = orConditions.getJSONObject(0);
-			JSONObject secondOr = orConditions.getJSONObject(1);
+			final JSONObject firstOr = orConditions.getJSONObject(0);
+			final JSONObject secondOr = orConditions.getJSONObject(1);
 			return or(buildWhereClause(firstOr), //
 					buildWhereClause(secondOr), //
 					createOptionalWhereClauses(orConditions));
@@ -91,8 +92,8 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 		throw new IllegalArgumentException("The filter is malformed");
 	}
 
-	private WhereClause buildSimpleWhereClause(QueryAliasAttribute attribute, String operator, JSONArray values)
-			throws JSONException {
+	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
+			final JSONArray values) throws JSONException {
 		if (operator.equals("equal")) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, eq(values.get(0)));
@@ -139,10 +140,10 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 		throw new IllegalArgumentException("The operator " + operator + " is not supported");
 	}
 
-	private WhereClause[] createOptionalWhereClauses(JSONArray conditions) throws JSONException {
-		List<WhereClause> optionalWhereClauses = Lists.newArrayList();
+	private WhereClause[] createOptionalWhereClauses(final JSONArray conditions) throws JSONException {
+		final List<WhereClause> optionalWhereClauses = Lists.newArrayList();
 		for (int i = 2; i < conditions.length(); i++) {
-			JSONObject andCond = conditions.getJSONObject(i);
+			final JSONObject andCond = conditions.getJSONObject(i);
 			optionalWhereClauses.add(buildWhereClause(andCond));
 		}
 		return optionalWhereClauses.toArray(new WhereClause[optionalWhereClauses.size()]);

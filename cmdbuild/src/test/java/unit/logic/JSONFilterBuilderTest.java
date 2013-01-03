@@ -9,10 +9,10 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.logic.FilterMapper;
-import org.cmdbuild.logic.JSONFilterBuilder;
-import org.cmdbuild.logic.JSONFilterMapper;
-import org.cmdbuild.logic.WhereClauseBuilder;
+import org.cmdbuild.logic.mappers.FilterMapper;
+import org.cmdbuild.logic.mappers.WhereClauseBuilder;
+import org.cmdbuild.logic.mappers.json.JSONFilterBuilder;
+import org.cmdbuild.logic.mappers.json.JSONFilterMapper;
 import org.json.JSONObject;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package unit.logic;
+package unit.logic.mappers;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -12,8 +12,9 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.logic.FilterMapper;
-import org.cmdbuild.logic.JSONFilterMapper;
+import org.cmdbuild.logic.mappers.FilterMapper;
+import org.cmdbuild.logic.mappers.json.JSONFilterMapper;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,30 +36,9 @@ public class JSONFilterMapperTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void emptyFilterShouldThrowException() throws Exception {
-		// given
-		String filter = "";
-		FilterMapper filterMapper = new JSONFilterMapper(filter, entryType);
-
-		// when
-		WhereClause whereClause = filterMapper.deserialize();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
 	public void nullFilterShouldThrowException() throws Exception {
 		// given
-		String filter = null;
-		FilterMapper filterMapper = new JSONFilterMapper(filter, entryType);
-
-		// when
-		WhereClause whereClause = filterMapper.deserialize();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void malformedJSONStringShouldThrowException() throws Exception {
-		// given
-		String filter = "{malformedJsonObject}";
-		FilterMapper filterMapper = new JSONFilterMapper(filter, entryType);
+		FilterMapper filterMapper = new JSONFilterMapper(entryType, null);
 
 		// when
 		WhereClause whereClause = filterMapper.deserialize();
@@ -68,7 +48,8 @@ public class JSONFilterMapperTest {
 	public void malformedFilterShouldThrowException() throws Exception {
 		// given
 		String filter = "{not_expected_key: value}";
-		FilterMapper filterMapper = new JSONFilterMapper(filter, entryType);
+		JSONObject filterObject = new JSONObject(filter);
+		FilterMapper filterMapper = new JSONFilterMapper(entryType, filterObject);
 
 		// when
 		WhereClause whereClause = filterMapper.deserialize();
@@ -79,9 +60,10 @@ public class JSONFilterMapperTest {
 		//given
 		String globalFilter = "{filter: {simple: {attribute: age, operator: greater, value: [5]}}, " +
 				"fullTextQuery: test}";
+		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
-		FilterMapper filterMapper = new JSONFilterMapper(globalFilter, entryType);
+		FilterMapper filterMapper = new JSONFilterMapper(entryType, globalFilterObject);
 		WhereClause whereClause = filterMapper.deserialize();
 
 		//then
@@ -92,9 +74,10 @@ public class JSONFilterMapperTest {
 	public void globalFilterContainingOnlyFullTextQueryMustReturnOrWhereClauseIfMoreThanOneAttribute() throws Exception {
 		//given
 		String globalFilter = "{fullTextQuery: test}";
+		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
-		FilterMapper filterMapper = new JSONFilterMapper(globalFilter, entryType);
+		FilterMapper filterMapper = new JSONFilterMapper(entryType, globalFilterObject);
 		WhereClause whereClause = filterMapper.deserialize();
 		
 		//then

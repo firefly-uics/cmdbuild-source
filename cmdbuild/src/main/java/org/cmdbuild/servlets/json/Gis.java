@@ -10,14 +10,13 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
-import org.cmdbuild.logic.DataAccessLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.GISLogic.ClassMapping;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.model.gis.LayerMetadata;
 import org.cmdbuild.services.auth.UserContext;
-import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
 import org.cmdbuild.servlets.json.serializers.GeoJSONSerializer;
@@ -31,18 +30,14 @@ public class Gis extends JSONBase {
 	@Transacted
 	@JSONExported
 	@Admin
-	public void addGeoAttribute(
-			ITable table,
-			@Parameter("name") String name,
-			@Parameter("description") String description,
-			@Parameter("type") String type,
-			@Parameter("minZoom") int minimumZoom,
-			@Parameter("maxZoom") int maximumzoom,
-			@Parameter("style") JSONObject mapStyle) throws Exception {
+	public void addGeoAttribute(final ITable table, @Parameter("name") final String name,
+			@Parameter("description") final String description, @Parameter("type") final String type,
+			@Parameter("minZoom") final int minimumZoom, @Parameter("maxZoom") final int maximumzoom,
+			@Parameter("style") final JSONObject mapStyle) throws Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		final LayerMetadata layerMetaData= new LayerMetadata(name, description, type, minimumZoom,
-				maximumzoom, 0, mapStyle.toString(), null);
+		final LayerMetadata layerMetaData = new LayerMetadata(name, description, type, minimumZoom, maximumzoom, 0,
+				mapStyle.toString(), null);
 		layerMetaData.addVisibility(table.getName());
 		logic.createGeoAttribute(table, layerMetaData);
 	}
@@ -50,13 +45,10 @@ public class Gis extends JSONBase {
 	@Transacted
 	@JSONExported
 	@Admin
-	public void modifyGeoAttribute(
-			ITable table,
-			@Parameter("name") String name,
-			@Parameter("description") String description,
-			@Parameter("minZoom") int minimumZoom,
-			@Parameter("maxZoom") int maximumzoom,
-			@Parameter("style") JSONObject jsonStyle) throws JSONException, Exception {
+	public void modifyGeoAttribute(final ITable table, @Parameter("name") final String name,
+			@Parameter("description") final String description, @Parameter("minZoom") final int minimumZoom,
+			@Parameter("maxZoom") final int maximumzoom, @Parameter("style") final JSONObject jsonStyle)
+			throws JSONException, Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		logic.modifyGeoAttribute(table, name, description, minimumZoom, maximumzoom, jsonStyle.toString());
@@ -65,9 +57,8 @@ public class Gis extends JSONBase {
 	@Transacted
 	@JSONExported
 	@Admin
-	public void deleteGeoAttribute(
-			@Parameter("masterTableName") String masterTableName,
-			@Parameter("name") String name) throws JSONException, Exception {
+	public void deleteGeoAttribute(@Parameter("masterTableName") final String masterTableName,
+			@Parameter("name") final String name) throws JSONException, Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		logic.deleteGeoAttribute(masterTableName, name);
@@ -75,15 +66,14 @@ public class Gis extends JSONBase {
 
 	@JSONExported
 	@SkipExtSuccess
-	public JSONObject getGeoCardList(
-			ITable masterClass,
-			@Parameter(value="bbox", required=true) String bbox,
-			@Parameter(value="attribute", required=true) String layerName) throws JSONException, Exception {
-		JSONArray features = new JSONArray();
-		GeoJSONSerializer geoSerializer = new GeoJSONSerializer();
+	public JSONObject getGeoCardList(final ITable masterClass,
+			@Parameter(value = "bbox", required = true) final String bbox,
+			@Parameter(value = "attribute", required = true) final String layerName) throws JSONException, Exception {
+		final JSONArray features = new JSONArray();
+		final GeoJSONSerializer geoSerializer = new GeoJSONSerializer();
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 
-		for (GeoFeature geoFeature: logic.getFeatures(masterClass, layerName, bbox)) {
+		for (final GeoFeature geoFeature : logic.getFeatures(masterClass, layerName, bbox)) {
 			features.put(geoSerializer.serialize(geoFeature));
 		}
 
@@ -95,15 +85,13 @@ public class Gis extends JSONBase {
 	 * 
 	 * @return the feature for the first geometry attribute
 	 */
-	@JSONExported 
-	public JSONObject getFeature(
-			ICard card,
-			ITableFactory tf) throws JSONException, Exception {
+	@JSONExported
+	public JSONObject getFeature(final ICard card, final ITableFactory tf) throws JSONException, Exception {
 
 		JSONObject jsonFeature = new JSONObject();
 		final GeoJSONSerializer geoSerializer = new GeoJSONSerializer();
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		GeoFeature feature = logic.getFeature(card);
+		final GeoFeature feature = logic.getFeature(card);
 		if (feature != null) {
 			jsonFeature = geoSerializer.serialize(feature);
 		}
@@ -113,20 +101,18 @@ public class Gis extends JSONBase {
 
 	@Admin
 	@JSONExported
-	public JSONObject getAllLayers(
-			JSONObject serializer) throws JSONException, Exception {
+	public JSONObject getAllLayers(final JSONObject serializer) throws JSONException, Exception {
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		List<LayerMetadata> layers = logic.list();
+		final List<LayerMetadata> layers = logic.list();
 		serializer.put("layers", GeoJSONSerializer.serializeGeoLayers(layers));
 		return serializer;
 	}
 
 	@Admin
 	@JSONExported
-	public void setLayerVisibility(
-			@Parameter("layerFullName") String layerFullName,
-			@Parameter("tableName") String visibleTableName,
-			@Parameter("visible") boolean visible) throws Exception  {
+	public void setLayerVisibility(@Parameter("layerFullName") final String layerFullName,
+			@Parameter("tableName") final String visibleTableName, @Parameter("visible") final boolean visible)
+			throws Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		logic.setLayerVisisbility(layerFullName, visibleTableName, visible);
@@ -135,20 +121,18 @@ public class Gis extends JSONBase {
 	@Transacted
 	@Admin
 	@JSONExported
-	public void setLayersOrder(
-			@Parameter(value="oldIndex", required=true) int oldIndex,
-			@Parameter(value="newIndex", required=true) int newIndex) throws Exception {
+	public void setLayersOrder(@Parameter(value = "oldIndex", required = true) final int oldIndex,
+			@Parameter(value = "newIndex", required = true) final int newIndex) throws Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		logic.reorderLayers(oldIndex, newIndex);
 	}
 
-	/* DomainTreeNavigation*/
+	/* DomainTreeNavigation */
 
 	@Admin
 	@JSONExported
-	public void saveGISTreeNavigation(
-		@Parameter("structure") String jsonConfiguraiton) throws JSONException {
+	public void saveGISTreeNavigation(@Parameter("structure") final String jsonConfiguraiton) throws JSONException {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		final JSONObject structure = new JSONObject(jsonConfiguraiton);
@@ -174,7 +158,7 @@ public class Gis extends JSONBase {
 			geoServerLayerMapping = logic.getGeoServerLayerMapping();
 		}
 
-		JSONObject response = new JSONObject();
+		final JSONObject response = new JSONObject();
 		if (root != null) {
 			response.put("root", DomainTreeNodeJSONMapper.serialize(root, true));
 		}
@@ -186,7 +170,7 @@ public class Gis extends JSONBase {
 	}
 
 	@JSONExported
-	public JSONObject expandDomainTree(UserContext userCtx) throws JSONException {
+	public JSONObject expandDomainTree(final UserContext userCtx) throws JSONException {
 		final JSONObject response = new JSONObject();
 		final DataAccessLogic dataAccesslogic = TemporaryObjectsBeforeSpringDI.getDataAccessLogic(userCtx);
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
@@ -196,23 +180,20 @@ public class Gis extends JSONBase {
 	}
 
 	/*
-	 * GEO SERVER 
+	 * GEO SERVER
 	 */
 
 	@JSONExported
 	@Admin
-	public void addGeoServerLayer(
-			@Parameter("name") String name,
-			@Parameter("description") String description,
-			@Parameter("cardBinding") JSONArray cardBindingString,
-			@Parameter("type") String type,
-			@Parameter("minZoom") int minimumZoom,
-			@Parameter("maxZoom") int maximumzoom,
-			@Parameter(value="file", required=true) FileItem file) throws IOException, Exception {
+	public void addGeoServerLayer(@Parameter("name") final String name,
+			@Parameter("description") final String description,
+			@Parameter("cardBinding") final JSONArray cardBindingString, @Parameter("type") final String type,
+			@Parameter("minZoom") final int minimumZoom, @Parameter("maxZoom") final int maximumzoom,
+			@Parameter(value = "file", required = true) final FileItem file) throws IOException, Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
-		final LayerMetadata layerMetaData = new LayerMetadata(name, description, type, minimumZoom, maximumzoom,
-				0, null, null);
+		final LayerMetadata layerMetaData = new LayerMetadata(name, description, type, minimumZoom, maximumzoom, 0,
+				null, null);
 		layerMetaData.setCardBinding(fromJsonToSet(cardBindingString));
 		logic.createGeoServerLayer(layerMetaData, file);
 	}
@@ -220,13 +201,11 @@ public class Gis extends JSONBase {
 	@Transacted
 	@JSONExported
 	@Admin
-	public void modifyGeoServerLayer(
-			@Parameter("name") String name,
-			@Parameter("description") String description,
-			@Parameter("cardBinding") JSONArray cardBindingString,
-			@Parameter("minZoom") int minimumZoom,
-			@Parameter("maxZoom") int maximumZoom,
-			@Parameter(required=false, value="file") FileItem file) throws Exception {
+	public void modifyGeoServerLayer(@Parameter("name") final String name,
+			@Parameter("description") final String description,
+			@Parameter("cardBinding") final JSONArray cardBindingString, @Parameter("minZoom") final int minimumZoom,
+			@Parameter("maxZoom") final int maximumZoom,
+			@Parameter(required = false, value = "file") final FileItem file) throws Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		logic.modifyGeoServerLayer(name, description, maximumZoom, minimumZoom, file, fromJsonToSet(cardBindingString));
@@ -235,8 +214,7 @@ public class Gis extends JSONBase {
 	@Transacted
 	@JSONExported
 	@Admin
-	public void deleteGeoServerLayer(
-			@Parameter("name") String name) throws Exception {
+	public void deleteGeoServerLayer(@Parameter("name") final String name) throws Exception {
 
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		logic.deleteGeoServerLayer(name);
@@ -245,16 +223,16 @@ public class Gis extends JSONBase {
 	@Transacted
 	@JSONExported
 	@Admin
-	public JSONObject getGeoserverLayers(JSONObject serializer) throws Exception {
+	public JSONObject getGeoserverLayers(final JSONObject serializer) throws Exception {
 		final GISLogic logic = TemporaryObjectsBeforeSpringDI.getGISLogic();
 		serializer.put("layers", GeoJSONSerializer.serializeGeoLayers(logic.getGeoServerLayers()));
 		return serializer;
 	}
 
-	private Set<String> fromJsonToSet(JSONArray json) throws JSONException {
-		HashSet<String> out = new HashSet<String>();
-		for (int i=0, l=json.length(); i<l; ++i) {
-			JSONObject jsonCardBinding = (JSONObject) json.get(i);
+	private Set<String> fromJsonToSet(final JSONArray json) throws JSONException {
+		final HashSet<String> out = new HashSet<String>();
+		for (int i = 0, l = json.length(); i < l; ++i) {
+			final JSONObject jsonCardBinding = (JSONObject) json.get(i);
 			out.add(jsonCardBinding.getString("className") + "_" + jsonCardBinding.getString("idCard"));
 		}
 		return out;

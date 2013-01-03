@@ -48,7 +48,7 @@ public abstract class IntegrationTestBase {
 	}
 
 	@After
-	public void rollback() {
+	public final void rollback() {
 		if (testDriver instanceof GenericRollbackDriver) {
 			GenericRollbackDriver.class.cast(testDriver).rollback();
 		}
