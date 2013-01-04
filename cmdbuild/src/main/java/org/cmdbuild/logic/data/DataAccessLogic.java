@@ -126,8 +126,8 @@ public class DataAccessLogic implements Logic {
 		}
 		queryBuilder.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
-		final SorterMapper mapper = new JSONSorterMapper(fetchedClass, queryOptions.getSorters());
-		for (final OrderByClause clause : mapper.deserialize()) {
+		final SorterMapper sorterMapper = new JSONSorterMapper(fetchedClass, queryOptions.getSorters());
+		for (final OrderByClause clause : sorterMapper.deserialize()) {
 			queryBuilder.orderBy(clause.getAttribute(), clause.getDirection());
 		}
 		final CMQueryResult result = queryBuilder.run();

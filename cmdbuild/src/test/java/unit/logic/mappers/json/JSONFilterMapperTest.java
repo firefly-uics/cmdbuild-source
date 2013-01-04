@@ -1,4 +1,4 @@
-package unit.logic.mappers;
+package unit.logic.mappers.json;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -58,8 +58,8 @@ public class JSONFilterMapperTest {
 	@Test
 	public void shouldSuccessfullyDeserializeGlobalFilter() throws Exception {
 		//given
-		String globalFilter = "{filter: {simple: {attribute: age, operator: greater, value: [5]}}, " +
-				"fullTextQuery: test}";
+		String globalFilter = "{filter: {attribute: {simple: {attribute: age, operator: greater, value: [5]}}, " +
+				"query: test}}";
 		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
@@ -73,7 +73,7 @@ public class JSONFilterMapperTest {
 	@Test
 	public void globalFilterContainingOnlyFullTextQueryMustReturnOrWhereClauseIfMoreThanOneAttribute() throws Exception {
 		//given
-		String globalFilter = "{fullTextQuery: test}";
+		String globalFilter = "{filter: {query: test}}";
 		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
