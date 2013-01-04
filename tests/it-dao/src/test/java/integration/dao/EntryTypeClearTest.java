@@ -34,7 +34,7 @@ public class EntryTypeClearTest extends DBFixture {
 	@Test
 	public void allCardsCleared() throws Exception {
 		// given
-		clazz = dbDataView().createClass(newClass("foo", null));
+		clazz = dbDataView().createClass(newClass("foo"));
 		dbDataView().newCard(clazz).setCode("this").save();
 		dbDataView().newCard(clazz).setCode("is").save();
 		dbDataView().newCard(clazz).setCode("a").save();
@@ -54,7 +54,7 @@ public class EntryTypeClearTest extends DBFixture {
 	@Test
 	public void allRelationsCleared() throws Exception {
 		// given
-		clazz = dbDataView().createClass(newClass("foo", null));
+		clazz = dbDataView().createClass(newClass("foo"));
 		domain = dbDataView().createDomain(newDomain("bar", clazz, clazz));
 		final CMCard card0 = dbDataView().newCard(clazz).setCode("baz").save();
 		final CMCard card1 = dbDataView().newCard(clazz).setCode("baz").save();

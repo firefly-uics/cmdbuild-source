@@ -4,16 +4,10 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.UUID;
-
-import org.cmdbuild.dao.entry.DBCard;
-import org.cmdbuild.dao.entry.DBEntry;
-import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
-import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
@@ -32,51 +26,7 @@ import com.google.common.collect.Iterables;
  */
 public abstract class DBFixture extends IntegrationTestBase {
 
-	protected static String uniqueUUID() {
-		return UUID.randomUUID().toString();
-	}
-
-	protected DBCard insertCardWithCode(final DBClass c, final Object value) {
-		return insertCard(c, c.getCodeAttributeName(), value);
-	}
-
-	protected DBCard insertCard(final DBClass c, final String key, final Object value) {
-		return dbDataView().newCard(c).set(key, value).save();
-	}
-
-	protected void insertCards(final DBClass c, final int quantity) {
-		for (long i = 0; i < quantity; ++i) {
-			insertCardWithCode(c, String.valueOf(i));
-		}
-	}
-
-	protected void insertCardsWithCodeAndDescription(final DBClass c, final int quantity) {
-		for (long i = 0; i < quantity; ++i) {
-			dbDataView().newCard(c) //
-					.setCode(String.valueOf(i)) //
-					.setDescription(String.valueOf(i)) //
-					.save();
-		}
-	}
-
-	protected DBRelation insertRelation(final DBDomain d, final DBCard c1, final DBCard c2) {
-		return (DBRelation) dbDataView().newRelation(d) //
-				.setCard1(c1) //
-				.setCard2(c2) //
-				.save();
-	}
-
-	protected void deleteCard(final DBCard c) {
-		deleteEntry(c);
-	}
-
-	protected void deleteRelation(final DBRelation r) {
-		deleteEntry(r);
-	}
-
-	protected void deleteEntry(final DBEntry e) {
-		dbDriver().delete(e);
-	}
+	private static final DBClass NO_PARENT = null;
 
 	protected Iterable<String> namesOf(final Iterable<? extends CMEntryType> entityTypes) {
 		return Iterables.transform(entityTypes, new Function<CMEntryType, String>() {
@@ -105,6 +55,16 @@ public abstract class DBFixture extends IntegrationTestBase {
 		return attribute(c, c.getDescriptionAttributeName());
 	}
 
+	protected DBClassDefinition newSimpleClass(final String name) {
+		final DBClassDefinition definition = newClass(name);
+		when(definition.isHoldingHistory()).thenReturn(false);
+		return definition;
+	}
+
+	protected DBClassDefinition newClass(final String name) {
+		return newClass(name, NO_PARENT);
+	}
+
 	protected DBClassDefinition newClass(final String name, final DBClass parent) {
 		final DBClassDefinition definition = mock(DBClassDefinition.class);
 		when(definition.getName()).thenReturn(name);
@@ -113,19 +73,13 @@ public abstract class DBFixture extends IntegrationTestBase {
 		return definition;
 	}
 
-	protected DBClassDefinition newSimpleClass(final String name) {
-		final DBClassDefinition definition = mock(DBClassDefinition.class);
-		when(definition.getName()).thenReturn(name);
-		when(definition.isHoldingHistory()).thenReturn(false);
-		return definition;
+	protected DBClassDefinition newSuperClass(final String name) {
+		return newSuperClass(name, NO_PARENT);
 	}
 
 	protected DBClassDefinition newSuperClass(final String name, final DBClass parent) {
-		final DBClassDefinition definition = mock(DBClassDefinition.class);
-		when(definition.getName()).thenReturn(name);
-		when(definition.getParent()).thenReturn(parent);
+		final DBClassDefinition definition = newClass(name, parent);
 		when(definition.isSuperClass()).thenReturn(true);
-		when(definition.isHoldingHistory()).thenReturn(true);
 		return definition;
 	}
 
@@ -138,12 +92,17 @@ public abstract class DBFixture extends IntegrationTestBase {
 	}
 
 	protected DBAttributeDefinition newTextAttribute(final String name, final DBEntryType owner) {
+		return newAttribute(name, new TextAttributeType(), owner);
+	}
+
+	protected DBAttributeDefinition newAttribute(final String name, final CMAttributeType<?> type,
+			final DBEntryType owner) {
 		final DBAttributeDefinition definition = mock(DBAttributeDefinition.class);
 		when(definition.getName()).thenReturn(name);
 		when(definition.getOwner()).thenReturn(owner);
 		when(definition.getMode()).thenReturn(CMAttribute.Mode.WRITE);
 		when(definition.isActive()).thenReturn(true);
-		when(definition.getType()).thenReturn((CMAttributeType) new TextAttributeType());
+		when(definition.getType()).thenReturn((CMAttributeType) type);
 		return definition;
 	}
 
