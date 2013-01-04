@@ -1,23 +1,18 @@
-package org.cmdbuild.logic.mappers.json;
+package org.cmdbuild.logic.validators;
 
+import static org.cmdbuild.logic.mappers.json.Constants.*;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.logic.mappers.FilterValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
-public class JSONFilterValidator implements FilterValidator {
+public class JSONFilterValidator implements Validator {
 
-	private static final String FILTER_KEY = "filter";
-	private static final String ATTRIBUTE_KEY = "attribute";
-	private static final String FULL_TEXT_QUERY_KEY = "query";
-	private static final String RELATION_KEY = "relation";
-	private static final String CQL_KEY = "CQL";
 	private static final String MALFORMED_MSG = "Malformed filter";
 	private JSONObject globalFilterObject;
 
@@ -60,13 +55,13 @@ public class JSONFilterValidator implements FilterValidator {
 	private void validateAttributeFilter(JSONObject filterObject) throws JSONException {
 		if (filterObject.has(ATTRIBUTE_KEY)) {
 			JSONObject attributeFilter = filterObject.getJSONObject(ATTRIBUTE_KEY);
-			List<String> possibleKeys = Lists.newArrayList("simple", "and", "or");
+			List<String> possibleKeys = Lists.newArrayList(SIMPLE_KEY, AND_KEY, OR_KEY);
 			if (!jsonObjectContainsAnyOf(attributeFilter, possibleKeys)) {
 				throw new IllegalArgumentException(MALFORMED_MSG);
 			}
-			if (attributeFilter.has("simple")) {
-				JSONObject simpleClauseObject = attributeFilter.getJSONObject("simple");
-				List<String> simpleClausePossibleKeys = Lists.newArrayList("attribute", "operator", "value");
+			if (attributeFilter.has(SIMPLE_KEY)) {
+				JSONObject simpleClauseObject = attributeFilter.getJSONObject(SIMPLE_KEY);
+				List<String> simpleClausePossibleKeys = Lists.newArrayList(ATTRIBUTE_KEY, OPERATOR_KEY, VALUE_KEY);
 				if (!jsonObjectContainsAll(simpleClauseObject, simpleClausePossibleKeys)) {
 					throw new IllegalArgumentException(MALFORMED_MSG);
 				}
@@ -98,7 +93,7 @@ public class JSONFilterValidator implements FilterValidator {
 	}
 	
 	private void validateSimpleClauseValues(JSONObject simpleClauseObject) throws JSONException {
-		JSONArray values = simpleClauseObject.getJSONArray("value");
+		JSONArray values = simpleClauseObject.getJSONArray(VALUE_KEY);
 	}
 
 	private void validateQueryFilter(JSONObject filterObject) throws JSONException {

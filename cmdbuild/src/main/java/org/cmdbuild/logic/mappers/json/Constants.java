@@ -1,13 +1,13 @@
-package org.cmdbuild.logic.mappers;
+package org.cmdbuild.logic.mappers.json;
 
-public final class FilterConstants {
+public final class Constants {
 
-	private FilterConstants(){
+	private Constants(){
 		//empty...created only to prevent instantiation
 	}
 	
 	/**
-	 * keys used in json filter
+	 * JSON filter keys
 	 */
 	public static final String FILTER_KEY = "filter";
 	public static final String ATTRIBUTE_KEY = "attribute";
@@ -20,6 +20,9 @@ public final class FilterConstants {
 	public static final String OPERATOR_KEY = "operator";
 	public static final String VALUE_KEY = "value";
 	
+	/**
+	 * Operators
+	 */
 	public static final String EQUAL_OPERATOR = "equal";
 	public static final String NOT_EQUAL_OPERATOR = "notequal";
 	public static final String NULL_OPERATOR = "null";
@@ -34,4 +37,11 @@ public final class FilterConstants {
 	public static final String NOT_BEGIN_OPERATOR = "notbegin";
 	public static final String END_OPERATOR = "end";
 	public static final String NOT_END_OPERATOR = "notend";
+	
+	/**
+	 * JSON sorters keys
+	 */
+	public static final String PROPERTY_KEY = "property";
+	public static final String DIRECTION_KEY = "direction";
+	
 }

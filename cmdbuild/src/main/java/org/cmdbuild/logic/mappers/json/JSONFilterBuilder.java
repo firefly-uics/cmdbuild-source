@@ -12,6 +12,7 @@ import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.logic.mappers.json.Constants.*;
 
 import java.util.List;
 
@@ -35,12 +36,6 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
 	protected CMEntryType entryType;
-	private static final String SIMPLE = "simple";
-	private static final String AND = "and";
-	private static final String OR = "or";
-	private static final String ATTRIBUTE = "attribute";
-	private static final String OPERATOR = "operator";
-	private static final String VALUE = "value";
 
 	/**
 	 * 
@@ -66,22 +61,22 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 	}
 
 	protected WhereClause buildWhereClause(final JSONObject filterObject) throws JSONException {
-		if (filterObject.has(SIMPLE)) {
-			final JSONObject simpleCondition = filterObject.getJSONObject(SIMPLE);
-			final String attributeName = simpleCondition.getString(ATTRIBUTE);
-			final String operator = simpleCondition.getString(OPERATOR);
-			final JSONArray values = simpleCondition.getJSONArray(VALUE);
+		if (filterObject.has(SIMPLE_KEY)) {
+			final JSONObject simpleCondition = filterObject.getJSONObject(SIMPLE_KEY);
+			final String attributeName = simpleCondition.getString(ATTRIBUTE_KEY);
+			final String operator = simpleCondition.getString(OPERATOR_KEY);
+			final JSONArray values = simpleCondition.getJSONArray(VALUE_KEY);
 			return buildSimpleWhereClause(attribute(entryType, attributeName), operator, values);
-		} else if (filterObject.has(AND)) {
-			final JSONArray andConditions = filterObject.getJSONArray(AND);
+		} else if (filterObject.has(AND_KEY)) {
+			final JSONArray andConditions = filterObject.getJSONArray(AND_KEY);
 			Validate.isTrue(andConditions.length() >= 2);
 			final JSONObject firstAnd = andConditions.getJSONObject(0);
 			final JSONObject secondAnd = andConditions.getJSONObject(1);
 			return and(buildWhereClause(firstAnd), //
 					buildWhereClause(secondAnd), //
 					createOptionalWhereClauses(andConditions));
-		} else if (filterObject.has(OR)) {
-			final JSONArray orConditions = filterObject.getJSONArray(OR);
+		} else if (filterObject.has(OR_KEY)) {
+			final JSONArray orConditions = filterObject.getJSONArray(OR_KEY);
 			Validate.isTrue(orConditions.length() >= 2);
 			final JSONObject firstOr = orConditions.getJSONObject(0);
 			final JSONObject secondOr = orConditions.getJSONObject(1);
@@ -94,46 +89,46 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final JSONArray values) throws JSONException {
-		if (operator.equals("equal")) {
+		if (operator.equals(EQUAL_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, eq(values.get(0)));
-		} else if (operator.equals("notequal")) {
+		} else if (operator.equals(NOT_EQUAL_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return not(condition(attribute, eq(values.get(0))));
-		} else if (operator.equals("null")) {
+		} else if (operator.equals(NULL_OPERATOR)) {
 			Validate.isTrue(values.length() == 0);
 			return condition(attribute, isNull());
-		} else if (operator.equals("notnull")) {
+		} else if (operator.equals(NOT_NULL_OPERATOR)) {
 			Validate.isTrue(values.length() == 0);
 			return not(condition(attribute, isNull()));
-		} else if (operator.equals("greater")) {
+		} else if (operator.equals(GREATER_THAN_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, gt(values.get(0)));
-		} else if (operator.equals("less")) {
+		} else if (operator.equals(LESS_THAN_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, lt(values.get(0)));
-		} else if (operator.equals("between")) {
+		} else if (operator.equals(BETWEEN_OPERATOR)) {
 			Validate.isTrue(values.length() == 2);
 			and(condition(attribute, gt(values.get(0))), condition(attribute, lt(values.get(1))));
-		} else if (operator.equals("like")) {
+		} else if (operator.equals(LIKE_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, contains(values.get(0)));
-		} else if (operator.equals("contain")) {
+		} else if (operator.equals(CONTAIN_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, contains(values.get(0)));
-		} else if (operator.equals("notcontain")) {
+		} else if (operator.equals(NOT_CONTAIN_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return not(condition(attribute, contains(values.get(0))));
-		} else if (operator.equals("begin")) {
+		} else if (operator.equals(BEGIN_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, beginsWith(values.get(0)));
-		} else if (operator.equals("notbegin")) {
+		} else if (operator.equals(NOT_BEGIN_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return not(condition(attribute, beginsWith(values.get(0))));
-		} else if (operator.equals("end")) {
+		} else if (operator.equals(END_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, endsWith(values.get(0)));
-		} else if (operator.equals("notend")) {
+		} else if (operator.equals(NOT_END_OPERATOR)) {
 			Validate.isTrue(values.length() == 1);
 			return not(condition(attribute, endsWith(values.get(0))));
 		}
