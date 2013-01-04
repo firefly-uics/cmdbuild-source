@@ -48,7 +48,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllCardsIfFilterIsNull() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //
@@ -74,7 +74,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllCardsIfFilterIsEmpty() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //
@@ -100,7 +100,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldSortSuccessfullyFetchedCards() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //
@@ -135,7 +135,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldFetchCardsWithFilterDefinedButFullTextQueryEmpty() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //
@@ -168,7 +168,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldFetchCardsWithFilterDefinedAndFullTextQuery() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //
@@ -201,7 +201,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldFetchCardsWithFullTextQueryFilterAndMultipleAttributeSorting() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //
@@ -240,7 +240,7 @@ public class DataAccessLogicTest extends DBFixture {
 	@Test
 	public void shouldPaginateSuccessfully() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
 		final CMCard card1 = dbDataView().newCard(newClass) //
 				.setCode("foo") //

@@ -17,7 +17,7 @@ public class QueryCreatorTest extends DBFixture {
 
 	@Before
 	public void createNewClass() {
-		newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		newClass = dbDataView().createClass(newClass("foo"));
 	}
 
 	@Test
@@ -35,7 +35,7 @@ public class QueryCreatorTest extends DBFixture {
 
 		// then
 		assertThat(generatedQuery, containsString("SELECT " + CLASS_ALIAS + ".\"" + codeAttributeName + "\""));
-		assertThat(generatedQuery, containsString("FROM " + "\"" + newClass.getName() + "\" " + "AS " + CLASS_ALIAS));
+		assertThat(generatedQuery, containsString("FROM " + newClass.getName() + " " + "AS " + CLASS_ALIAS));
 	}
 
 }

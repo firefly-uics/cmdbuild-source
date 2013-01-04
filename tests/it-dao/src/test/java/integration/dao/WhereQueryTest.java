@@ -35,7 +35,7 @@ public class WhereQueryTest extends DBFixture {
 
 	@Before
 	public void createData() throws Exception {
-		clazz = dbDriver().createClass(newClass(CLASS_NAME, null));
+		clazz = dbDataView().createClass(newClass(CLASS_NAME));
 	}
 
 	@Test
@@ -248,7 +248,7 @@ public class WhereQueryTest extends DBFixture {
 	 */
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionContainsAValue() {
-		// given		
+		// given
 		dbDataView().newCard(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //

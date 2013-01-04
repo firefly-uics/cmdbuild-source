@@ -26,7 +26,7 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleSubclassQuery() {
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
 
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
@@ -60,8 +60,12 @@ public class SimpleQueryTest extends DBFixture {
 	public void simpleSubclassQueryForAnyAttribute() {
 		final int TOTAL = 5;
 
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
-		insertCards(newClass, TOTAL);
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		for (int i = 0; i < TOTAL; i++) {
+			dbDataView().newCard(newClass) //
+					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
+					.save();
+		}
 
 		final Alias classAlias = as("foo");
 
@@ -83,26 +87,29 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleSuperclassQuery() {
-		final Alias rootAlias = as("root");
-
-		final DBClass root = dbDataView().createClass(newSuperClass(uniqueUUID(), null));
-		final DBClass superNotRoot = dbDataView().createClass(newSuperClass(uniqueUUID(), root));
-		final DBClass leafOfSuperNotRoot = dbDataView().createClass(newClass(uniqueUUID(), superNotRoot));
-		final DBClass leafOfRoot = dbDataView().createClass(newClass(uniqueUUID(), root));
-		final DBClass anotherLeafOfRoot = dbDataView().createClass(newClass(uniqueUUID(), root));
-		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
-		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
-		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
+		final DBClass root = dbDataView().createClass(newSuperClass("root"));
+		final DBClass superNotRoot = dbDataView().createClass(newSuperClass("superNotRoot", root));
+		final DBClass leafOfSuperNotRoot = dbDataView().createClass(newClass("leafOfSuperNotRoot", superNotRoot));
+		final DBClass leafOfRoot = dbDataView().createClass(newClass("leafOfRoot", root));
+		final DBClass anotherLeafOfRoot = dbDataView().createClass(newClass("anotherLeafOfRoot", root));
+		dbDataView().newCard(leafOfSuperNotRoot) //
+				.set(leafOfSuperNotRoot.getCodeAttributeName(), leafOfSuperNotRoot.getName()) //
+				.save();
+		dbDataView().newCard(leafOfRoot) //
+				.set(leafOfRoot.getCodeAttributeName(), leafOfRoot.getName()) //
+				.save();
+		dbDataView().newCard(anotherLeafOfRoot) //
+				.set(anotherLeafOfRoot.getCodeAttributeName(), anotherLeafOfRoot.getName()) //
+				.save();
 
 		final CMQueryResult result = dbDataView() //
 				.select(root.getCodeAttributeName()) //
-				.from(root, rootAlias) //
+				.from(root) //
 				.run();
 
 		assertThat(result.size(), equalTo(3));
 		for (final CMQueryRow row : result) {
-			final CMCard c = row.getCard(rootAlias);
-			// the value was intentionally set to the class name
+			final CMCard c = row.getCard(root);
 			final String expectedClassName = (String) c.getCode();
 			assertThat(c.getType().getName(), equalTo(expectedClassName));
 		}
@@ -110,26 +117,32 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleSuperclassQueryForAnyAttribute() {
-		final Alias rootAlias = as("root");
+		// given
+		final DBClass root = dbDataView().createClass(newSuperClass("root"));
+		final DBClass superNotRoot = dbDataView().createClass(newSuperClass("superNotRoot", root));
+		final DBClass leafOfSuperNotRoot = dbDataView().createClass(newClass("leafOfSuperNotRoot", superNotRoot));
+		final DBClass leafOfRoot = dbDataView().createClass(newClass("leafOfRoot", root));
+		final DBClass anotherLeafOfRoot = dbDataView().createClass(newClass("anotherLeafOfRoot", root));
+		dbDataView().newCard(leafOfSuperNotRoot) //
+				.set(leafOfSuperNotRoot.getCodeAttributeName(), leafOfSuperNotRoot.getName()) //
+				.save();
+		dbDataView().newCard(leafOfRoot) //
+				.set(leafOfRoot.getCodeAttributeName(), leafOfRoot.getName()) //
+				.save();
+		dbDataView().newCard(anotherLeafOfRoot) //
+				.set(anotherLeafOfRoot.getCodeAttributeName(), anotherLeafOfRoot.getName()) //
+				.save();
 
-		final DBClass root = dbDataView().createClass(newSuperClass(uniqueUUID(), null));
-		final DBClass superNotRoot = dbDataView().createClass(newSuperClass(uniqueUUID(), root));
-		final DBClass leafOfSuperNotRoot = dbDataView().createClass(newClass(uniqueUUID(), superNotRoot));
-		final DBClass leafOfRoot = dbDataView().createClass(newClass(uniqueUUID(), root));
-		final DBClass anotherLeafOfRoot = dbDataView().createClass(newClass(uniqueUUID(), root));
-		insertCardWithCode(leafOfSuperNotRoot, leafOfSuperNotRoot.getName());
-		insertCardWithCode(leafOfRoot, leafOfRoot.getName());
-		insertCardWithCode(anotherLeafOfRoot, anotherLeafOfRoot.getName());
-
+		// when
 		final CMQueryResult result = dbDataView() //
-				.select(anyAttribute(rootAlias)) //
-				.from(root, rootAlias) //
+				.select(anyAttribute(root)) //
+				.from(root) //
 				.run();
 
+		// then
 		assertThat(result.size(), equalTo(3));
 		for (final CMQueryRow row : result) {
-			final CMCard c = row.getCard(rootAlias);
-			// the value was intentionally set to the class name
+			final CMCard c = row.getCard(root);
 			final String expectedClassName = (String) c.getCode();
 			assertThat(c.getType().getName(), equalTo(expectedClassName));
 		}
@@ -141,9 +154,13 @@ public class SimpleQueryTest extends DBFixture {
 		final int OFFSET = 5;
 		final int LIMIT = 3;
 
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
 
-		insertCards(newClass, TOTAL_SIZE);
+		for (int i = 0; i < TOTAL_SIZE; i++) {
+			dbDataView().newCard(newClass) //
+					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
+					.save();
+		}
 
 		final CMQueryResult result = dbDataView() //
 				.select(newClass.getCodeAttributeName()) //
@@ -158,9 +175,13 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void singleWhereClause() {
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
 		final int NUMBER_OF_INSERTED_CARDS = 5;
-		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
+		for (int i = 0; i < NUMBER_OF_INSERTED_CARDS; i++) {
+			dbDataView().newCard(newClass) //
+					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
+					.save();
+		}
 		final Object codeValueToFind = "" + (NUMBER_OF_INSERTED_CARDS - 1);
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
@@ -175,10 +196,14 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test
 	public void simpleQueryWithoutWhereClause() {
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
 
 		final int NUMBER_OF_INSERTED_CARDS = 5;
-		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
+		for (int i = 0; i < NUMBER_OF_INSERTED_CARDS; i++) {
+			dbDataView().newCard(newClass) //
+					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
+					.save();
+		}
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		final CMQueryResult result = dbDataView() //
@@ -191,18 +216,28 @@ public class SimpleQueryTest extends DBFixture {
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() {
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
-		final int NUMBER_OF_INSERTED_CARDS = 5;
-		insertCards(newClass, NUMBER_OF_INSERTED_CARDS);
+		// given
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		dbDataView().newCard(newClass) //
+				.set(newClass.getCodeAttributeName(), newClass.getName()) //
+				.save();
+		dbDataView().newCard(newClass) //
+				.set(newClass.getCodeAttributeName(), newClass.getName()) //
+				.save();
+
+		// when
 		dbDataView() //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
 				.run().getOnlyRow();
+
+		// then
+		// ...
 	}
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
 		dbDataView() //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
@@ -213,7 +248,7 @@ public class SimpleQueryTest extends DBFixture {
 	@Test(expected = UnsupportedOperationException.class)
 	public void malformedQueryShouldThrowException() {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newClass("foo"));
 
 		// when
 		final String codeAttributeName = newClass.getCodeAttributeName();

@@ -71,7 +71,7 @@ public class SecurityLogicTest extends DBFixture {
 	@Test
 	public void shouldRetrieveAllPrivilegesForGroup() {
 		// given
-		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
+		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
 		final DBCard privilegeCard = fixture.insertPrivilege(groupA.getId(), createdClass, "w");
 
 		// when
@@ -89,7 +89,7 @@ public class SecurityLogicTest extends DBFixture {
 	@Test
 	public void shouldCreatePrivilegeForExistingClass() {
 		// given
-		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
+		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
 		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
 
 		// when
@@ -106,7 +106,7 @@ public class SecurityLogicTest extends DBFixture {
 	@Test
 	public void shoulUpdateExistentPrivilege() {
 		// given
-		final DBClass createdClass = dbDriver().createClass(newClass(uniqueUUID(), null));
+		final DBClass createdClass = dbDriver().createClass(newClass("foo"));
 		fixture.insertPrivilege(groupA.getId(), createdClass, "-");
 		final int numberOfExistentPrivileges = securityLogic.getPrivilegesForGroup(groupA.getId()).size();
 

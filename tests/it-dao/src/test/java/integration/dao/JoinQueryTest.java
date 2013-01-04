@@ -38,18 +38,24 @@ public class JoinQueryTest extends DBFixture {
 
 	@Before
 	public void createDomainStructure() {
-		SRC = dbDataView().createClass(newClass(uniqueUUID(), null));
-		DST = dbDataView().createClass(newSuperClass(uniqueUUID(), null));
-		DST1 = dbDataView().createClass(newClass(uniqueUUID(), DST));
-		DST2 = dbDataView().createClass(newClass(uniqueUUID(), DST));
-		DOM = dbDataView().createDomain(newDomain(uniqueUUID(), SRC, DST));
+		SRC = dbDataView().createClass(newClass("src"));
+		DST = dbDataView().createClass(newSuperClass("dst"));
+		DST1 = dbDataView().createClass(newClass("dst1", DST));
+		DST2 = dbDataView().createClass(newClass("dst2", DST));
+		DOM = dbDataView().createDomain(newDomain("dom", SRC, DST));
 	}
 
 	@Test
 	public void joinWithOneTargetClassOnly() {
-		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
-		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
-		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
+		final DBCard src1 = dbDataView().newCard(SRC) //
+				.set(SRC.getCodeAttributeName(), "SRC1") //
+				.save();
+		final DBCard dst1 = dbDataView().newCard(DST1) //
+				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
+				.save();
+		final DBCard dst2 = dbDataView().newCard(DST2) //
+				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
+				.save();
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
 
@@ -75,15 +81,22 @@ public class JoinQueryTest extends DBFixture {
 	@Test
 	public void joinDoesNotCountDeletedRelationsAndCards() {
 		// given
-		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
-
-		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
+		final DBCard src1 = dbDataView().newCard(SRC) //
+				.set(SRC.getCodeAttributeName(), "SRC1") //
+				.save();
+		final DBCard dst1 = dbDataView().newCard(SRC) //
+				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
+				.save();
 		final DBRelation rel1 = insertRelation(DOM, src1, dst1);
-		deleteRelation(rel1);
+		// TODO use the dataview
+		dbDriver().delete(rel1);
 
-		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
+		final DBCard dst2 = dbDataView().newCard(SRC) //
+				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
+				.save();
 		insertRelation(DOM, src1, dst2);
-		deleteCard(dst2);
+		// TODO use the dataview
+		dbDriver().delete(dst2);
 
 		// when
 		final CMQueryResult result = dbDataView() //
@@ -99,12 +112,18 @@ public class JoinQueryTest extends DBFixture {
 
 	@Test
 	public void joinWithAnyClassAndAnyDomain() {
-		final DBCard src1 = insertCardWithCode(SRC, "SRC1");
-		final DBCard dst1 = insertCardWithCode(DST1, DST1_ATTR1);
-		final DBCard dst2 = insertCardWithCode(DST2, DST2_ATTR1);
+		final DBCard src1 = dbDataView().newCard(SRC) //
+				.set(SRC.getCodeAttributeName(), "SRC1") //
+				.save();
+		final DBCard dst1 = dbDataView().newCard(DST1) //
+				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
+				.save();
+		final DBCard dst2 = dbDataView().newCard(DST2) //
+				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
+				.save();
 		insertRelation(DOM, src1, dst1);
 		insertRelation(DOM, src1, dst2);
-		final DBDomain DOM2 = dbDriver().createDomain(newDomain(uniqueUUID(), DST2, SRC));
+		final DBDomain DOM2 = dbDriver().createDomain(newDomain("foo", DST2, SRC));
 		insertRelation(DOM2, dst2, src1);
 
 		final Alias DOM_ALIAS = Alias.as("DOM");
@@ -118,6 +137,17 @@ public class JoinQueryTest extends DBFixture {
 				.run();
 
 		assertThat(result.size(), is(3));
+	}
+
+	/*
+	 * Utilities
+	 */
+
+	private DBRelation insertRelation(final DBDomain d, final DBCard c1, final DBCard c2) {
+		return (DBRelation) dbDataView().newRelation(d) //
+				.setCard1(c1) //
+				.setCard2(c2) //
+				.save();
 	}
 
 }

@@ -21,7 +21,7 @@ public class DataTest extends DBFixture {
 	@Test
 	public void cardsCanBeAdded() {
 		final DBClass parent = dbDataView().findClassByName(Constants.BASE_CLASS_NAME);
-		final DBClass newClass = dbDataView().createClass(newClass(uniqueUUID(), parent));
+		final DBClass newClass = dbDataView().createClass(newClass("foo", parent));
 		final CMCard newCard = dbDataView().newCard(newClass) //
 				.setCode(CODE_VALUE) //
 				.setDescription(DESCRIPTION_VALUE) //
@@ -34,7 +34,7 @@ public class DataTest extends DBFixture {
 
 	@Test(expected = Exception.class)
 	public void cardsCannotBeAddedInSuperclass() {
-		final DBClass newClass = dbDataView().createClass(newSuperClass(uniqueUUID(), null));
+		final DBClass newClass = dbDataView().createClass(newSuperClass("foo"));
 		DBCard.newInstance(dbDriver(), newClass) //
 				.setCode(CODE_VALUE) //
 				.setDescription(DESCRIPTION_VALUE) //
