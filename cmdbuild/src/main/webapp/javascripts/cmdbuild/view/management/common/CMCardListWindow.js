@@ -44,7 +44,7 @@ Ext.define("CMDBuild.Management.CardListWindow", {
 
 		this.grid = new CMDBuild.view.management.common.CMCardGrid(gridConfig);
 
-		this.filter = new CMDBuild.Management.Attributes({
+		this.filter = new CMDBuild.view.management.common.filter.CMFilterAttributes({
 			attributeList: {}, 
 			IdClass: this.getIdClass(),
 			windowSize: this.windowSize,

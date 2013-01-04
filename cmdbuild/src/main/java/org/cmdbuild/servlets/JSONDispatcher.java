@@ -254,16 +254,16 @@ public class JSONDispatcher extends HttpServlet {
 			final JSONObject jres = (JSONObject) methodResponse;
 			return addSuccessAndWarningsToJSONObject(jres);
 		} else if (methodResponse instanceof JsonResponse) {
-			return serializeJsonResponse();
+			return serializeJsonResponse(methodResponse);
 		} else {
 			return methodResponse;
 		}
 	}
 
-	private Object serializeJsonResponse() {
+	private Object serializeJsonResponse(Object methodResponse) {
 		final ObjectMapper mapper = new ObjectMapper();
 		try {
-			return mapper.writeValueAsString(this);
+			return mapper.writeValueAsString(methodResponse);
 		} catch (final Exception e) {
 			return "{\"success\":false}";
 		}

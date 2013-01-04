@@ -94,6 +94,10 @@
 			return this.get("name");
 		},
 
+		getDescription: function() {
+			return this.get("text");
+		},
+
 		// Attachment metadata management
 
 		/*

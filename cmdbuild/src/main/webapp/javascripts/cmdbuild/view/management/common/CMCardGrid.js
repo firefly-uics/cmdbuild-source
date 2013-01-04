@@ -2,6 +2,11 @@
 
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
+
+		mixins: {
+			cmFilterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate"
+		},
+
 		columns: [],
 
 		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',	// for the header configuration
@@ -100,7 +105,7 @@
 
 		reload: function(reselect) {
 			var cb = Ext.emptyFn;
-			
+
 			if (reselect) {
 				var s = this.getSelectionModel().getSelection();
 				cb = function() {
@@ -120,7 +125,7 @@
 				callback: cb
 			});
 		},
-		
+
 		getVisibleColumns: function() {
 			var columns = this.columns;
 			var visibleColumns = [];
@@ -279,10 +284,12 @@
 		//protected
 		getStoreExtraParams: function() {
 			var p = {
-				IdClass : this.currentClassId || -1,
-				FilterCategory: this.filterCategory || "",
-				FilterSubcategory: this.filterSubcategory || ""
+				className: ""
 			};
+
+			if (this.currentClassId) {
+				p.className = _CMCache.getEntryTypeNameById(this.currentClassId);
+			}
 
 			if (this.CQL) {
 				Ext.apply(p, this.CQL);
@@ -304,6 +311,24 @@
 				sortable: true,
 				dataIndex: this.CLASS_COLUMN_DATA_INDEX
 			};
+		},
+
+		applyFilterToStore: function(filter) {
+			try {
+				this.getStore().proxy.extraParams.filter = Ext.encode(filter);
+			} catch (e) {
+				_debug("I'm not able to set the filter to the store", this, filter);
+			}
+		},
+
+		// as cmFilterWindow
+
+		onCMFilterWindowApplyButtonClick: function(filterWindow) {
+			_debug(filterWindow.getFilter());
+			this.applyFilterToStore(filterWindow.getFilter());
+			this.reload();
+
+			filterWindow.destroy();
 		}
 	});
 
@@ -384,14 +409,12 @@
 	}
 
 	function onOpenFilterButtonClick() {
-		new CMDBuild.Management.SearchFilterWindow({
-			attributeList: this.classAttributes,
-			IdClass: this.currentClassId,
-			grid: this,
-
-			filterCategory: this.filterCategory,
-			filterSubcategory: this.filterSubcategory
-		}).show();
+		var filter = new CMDBuild.view.management.common.filter.CMFilterWindow({
+			attributes: this.classAttributes,
+			className: _CMCache.getEntryTypeNameById(this.currentClassId)
+		});
+		filter.addDelegate(this);
+		filter.show();
 	}
 
 	function clearFilter(cb, skipReload) {

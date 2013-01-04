@@ -33,10 +33,11 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildReadOnlyField = function(a
  * @override
  */
 CMDBuild.WidgetBuilders.ComboAttribute.prototype.getQueryOptions = function() {
+	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-		['equals',translation.equals],
-		['null',translation.nullo],
-		['notnull',translation.notnull],
-		['different',translation.different]
+		[operator.EQUAL, translation.equals],
+		[operator.NULL, translation.nullo],
+		[operator.NOT_NULL, translation.notnull],
+		[operator.NOT_EQUAL, translation.different]
 	];
 };

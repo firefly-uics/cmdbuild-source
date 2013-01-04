@@ -58,8 +58,8 @@ public class JSONFilterMapperTest {
 	@Test
 	public void shouldSuccessfullyDeserializeGlobalFilter() throws Exception {
 		//given
-		String globalFilter = "{filter: {attribute: {simple: {attribute: age, operator: greater, value: [5]}}, " +
-				"query: test}}";
+		String globalFilter = "{attribute: {simple: {attribute: age, operator: greater, value: [5]}}, " +
+				"query: test}";
 		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
@@ -73,7 +73,7 @@ public class JSONFilterMapperTest {
 	@Test
 	public void globalFilterContainingOnlyFullTextQueryMustReturnOrWhereClauseIfMoreThanOneAttribute() throws Exception {
 		//given
-		String globalFilter = "{filter: {query: test}}";
+		String globalFilter = "{query: test}";
 		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when

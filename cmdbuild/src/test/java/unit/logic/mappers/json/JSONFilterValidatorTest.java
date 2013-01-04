@@ -27,29 +27,9 @@ public class JSONFilterValidatorTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void shouldNotValidateIfFilterObjectDoesNotContainExpectedValue() throws Exception {
-		// given
-		JSONObject malformedFilter = new JSONObject("{filter: not_expected_value}");
-		Validator validator = new JSONFilterValidator(malformedFilter);
-
-		// when
-		validator.validate();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void shouldNotValidateIfFilterObjectIsEmpty() throws Exception {
-		// given
-		JSONObject malformedFilter = new JSONObject("{filter: {}}");
-		Validator validator = new JSONFilterValidator(malformedFilter);
-
-		// when
-		validator.validate();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotValidateIfFilterObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		JSONObject malformedFilter = new JSONObject("{filter: {not_expected_key: bla, not_expected_2: blabla}}");
+		JSONObject malformedFilter = new JSONObject("{not_expected_key: bla, not_expected_2: blabla}");
 		Validator validator = new JSONFilterValidator(malformedFilter);
 
 		// when
@@ -59,7 +39,7 @@ public class JSONFilterValidatorTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotValidateIfAttributeObjectIsEmpty() throws Exception {
 		// given
-		JSONObject malformedFilter = new JSONObject("{filter: {attribute: {}}}");
+		JSONObject malformedFilter = new JSONObject("{attribute: {}}");
 		Validator validator = new JSONFilterValidator(malformedFilter);
 
 		// when
@@ -69,7 +49,7 @@ public class JSONFilterValidatorTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotValidateIfAttributeObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		JSONObject malformedFilter = new JSONObject("{filter: {attribute: {not_expected: 1, not_exp: 2}}}");
+		JSONObject malformedFilter = new JSONObject("{attribute: {not_expected: 1, not_exp: 2}}");
 		Validator validator = new JSONFilterValidator(malformedFilter);
 
 		// when
@@ -79,7 +59,7 @@ public class JSONFilterValidatorTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotValidateIfSImpleObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		JSONObject malformedFilter = new JSONObject("{filter: {attribute: {simple: {}}}}");
+		JSONObject malformedFilter = new JSONObject("{attribute: {simple: {}}}");
 		Validator validator = new JSONFilterValidator(malformedFilter);
 
 		// when
@@ -90,7 +70,7 @@ public class JSONFilterValidatorTest {
 	public void shouldNotValidateIfSimpleObjectDoesNotContainAllCorrectKeys() throws Exception {
 		// given
 		JSONObject malformedFilter = new JSONObject(
-				"{filter: {attribute: {simple: {not_expected_key: 1, attribute: bla, operator: equal}}}}");
+				"{attribute: {simple: {not_expected_key: 1, attribute: bla, operator: equal}}}");
 		Validator validator = new JSONFilterValidator(malformedFilter);
 
 		// when
@@ -101,7 +81,7 @@ public class JSONFilterValidatorTest {
 	public void shouldNotValidateFilterWithNotValidValuesInSimpleConditions() throws Exception {
 		// given
 		JSONObject malformedFilter = new JSONObject(
-				"{filter: {attribute: {simple: {attribute: bla, operator: equal, value: bla}}}}");
+				"{attribute: {simple: {attribute: bla, operator: equal, value: bla}}}");
 		Validator validator = new JSONFilterValidator(malformedFilter);
 		
 		// when
@@ -112,7 +92,7 @@ public class JSONFilterValidatorTest {
 	public void shouldValidateFilterWithAttributeConditions() throws Exception {
 		// given
 		JSONObject correctFilter = new JSONObject(
-				"{filter: {attribute: {simple: {attribute: bla, operator: equal, value: [1]}}}}");
+				"{attribute: {simple: {attribute: bla, operator: equal, value: [1]}}}");
 		Validator validator = new JSONFilterValidator(correctFilter);
 		
 		// when
@@ -123,7 +103,7 @@ public class JSONFilterValidatorTest {
 	public void shouldValidateFilterWithAttributeConditionsAndQueryCondition() throws Exception {
 		// given
 		JSONObject correctFilter = new JSONObject(
-				"{filter: {attribute: {simple: {attribute: bla, operator: equal, value: [1]}}, query: full_text_query}}");
+				"{attribute: {simple: {attribute: bla, operator: equal, value: [1]}}, query: full_text_query}");
 		Validator validator = new JSONFilterValidator(correctFilter);
 		
 		// when

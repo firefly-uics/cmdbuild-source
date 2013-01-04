@@ -22,15 +22,15 @@ import com.google.common.collect.Lists;
 public class JSONFilterMapper implements FilterMapper {
 
 	private final CMEntryType entryType;
-	private final JSONObject globalFilterObject;
+	private final JSONObject filterObject;
 	private final Validator filterValidator;
 
-	public JSONFilterMapper(final CMEntryType entryType, final JSONObject globalFilterObject) {
+	public JSONFilterMapper(final CMEntryType entryType, final JSONObject filterObject) {
 		Validate.notNull(entryType);
-		Validate.notNull(globalFilterObject);
+		Validate.notNull(filterObject);
 		this.entryType = entryType;
-		this.globalFilterObject = globalFilterObject;
-		this.filterValidator = new JSONFilterValidator(globalFilterObject);
+		this.filterObject = filterObject;
+		this.filterValidator = new JSONFilterValidator(filterObject);
 	}
 
 	@Override
@@ -61,10 +61,6 @@ public class JSONFilterMapper implements FilterMapper {
 
 	private List<WhereClauseBuilder> getWhereClauseBuildersForFilter() throws JSONException {
 		final List<WhereClauseBuilder> whereClauseBuilders = Lists.newArrayList();
-		if (!globalFilterObject.has(FILTER_KEY)) {
-			return whereClauseBuilders;
-		}
-		JSONObject filterObject = globalFilterObject.getJSONObject(FILTER_KEY);
 		if (filterObject.has(ATTRIBUTE_KEY)) {
 			whereClauseBuilders.add(new JSONFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType));
 		}

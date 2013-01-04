@@ -14,31 +14,22 @@ import com.google.common.collect.Lists;
 public class JSONFilterValidator implements Validator {
 
 	private static final String MALFORMED_MSG = "Malformed filter";
-	private JSONObject globalFilterObject;
+	private JSONObject filterObject;
 
 	public JSONFilterValidator(JSONObject filter) {
 		Validate.notNull(filter);
-		this.globalFilterObject = filter;
+		this.filterObject = filter;
 	}
 
 	public void validate() throws IllegalArgumentException {
-		boolean isEmptyFilter = !globalFilterObject.keys().hasNext();
+		boolean isEmptyFilter = !filterObject.keys().hasNext();
 		if (!isEmptyFilter) {
-			validateGlobalFilterObject();
 			validateInnerFilterObjects();
-		}
-	}
-
-	private void validateGlobalFilterObject() {
-		Validate.notNull(globalFilterObject);
-		if (!globalFilterObject.has(FILTER_KEY)) {
-			throw new IllegalArgumentException(MALFORMED_MSG);
 		}
 	}
 
 	private void validateInnerFilterObjects() {
 		try {
-			JSONObject filterObject = globalFilterObject.getJSONObject(FILTER_KEY);
 			List<String> possibleKeys = Lists.newArrayList(ATTRIBUTE_KEY, FULL_TEXT_QUERY_KEY, RELATION_KEY, CQL_KEY);
 			if (!jsonObjectContainsAnyOf(filterObject, possibleKeys)) {
 				throw new IllegalArgumentException(MALFORMED_MSG);

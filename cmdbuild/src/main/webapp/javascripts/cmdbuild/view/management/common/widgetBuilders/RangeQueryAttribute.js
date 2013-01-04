@@ -11,51 +11,25 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.RangeQueryAttribute, CMDBuild.WidgetBuil
  * @override
  */
 CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.getQueryOptions = function() {
+	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-	    ['equals',translation.equals],
-		['null',translation.nullo],
-		['notnull',translation.notnull],
-		['different',translation.different],
-		['major',translation.major],
-		['minor',translation.minor],
-		['between',translation.between]
-    ];
+		[operator.EQUAL, translation.equals],
+		[operator.NULL, translation.nullo],
+		[operator.NOT_NULL, translation.notnull],
+		[operator.NOT_EQUAL, translation.different],
+		[operator.GREATER_THAN, translation.major],
+		[operator.LESS_THAN, translation.minor],
+		[operator.BETWEEN, translation.between]
+	];
 };
+
 /**
  * @override
  */
-CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = function(fieldId, field, query, originalFieldName) {
-	var field2 = field.cloneConfig(); 
-	field2.name += "_end";
+CMDBuild.WidgetBuilders.RangeQueryAttribute.prototype.buildFieldsetForFilter = function(field, query, originalFieldName) {
+	var field2 = field.cloneConfig();
 	field2.hideLabel = true;
 	field2.disable();
 
-	query.on('select', function(query, selection, id) {
-		selection = CMDBuild.Utils.getFirstSelection(selection);
-		if (selection.data.id === "between") {
-			field.enable();
-			field2.enable();
-		} else if (selection.data.id === 'null' || selection.data.id === 'notnull') {
-			field.disable();
-			field2.disable();
-		} else {
-			field.enable();
-			field2.disable();
-		}
-	});
-
-	function selectionNeedsNoValue(selection) {
-		selection = CMDBuild.Utils.getFirstSelection(selection);
-		return ['null','notnull'].indexOf(selection.data.id) >= 0;
-	}
-
-	query.on('select',function(query, selection, id) {
-		if (selectionNeedsNoValue(selection)) {
-			field.disable();
-		} else {
-			field.enable();
-		}
-	});
-
-	return this.genericBuildFieldsetForFilter(fieldId, [field, field2], query, originalFieldName);
+	return this.genericBuildFieldsetForFilter([field, field2], query, originalFieldName);
 };
