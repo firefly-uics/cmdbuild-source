@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.mappers.json;
 
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.logic.mappers.json.Constants.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,8 +11,9 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.logic.mappers.FilterMapper;
-import org.cmdbuild.logic.mappers.FilterValidator;
 import org.cmdbuild.logic.mappers.WhereClauseBuilder;
+import org.cmdbuild.logic.validators.JSONFilterValidator;
+import org.cmdbuild.logic.validators.Validator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,12 +21,9 @@ import com.google.common.collect.Lists;
 
 public class JSONFilterMapper implements FilterMapper {
 
-	private static final String FILTER = "filter";
-	private static final String ATTRIBUTE = "attribute";
-	private static final String FULL_TEXT_QUERY = "query";
 	private final CMEntryType entryType;
 	private final JSONObject globalFilterObject;
-	private final FilterValidator filterValidator;
+	private final Validator filterValidator;
 
 	public JSONFilterMapper(final CMEntryType entryType, final JSONObject globalFilterObject) {
 		Validate.notNull(entryType);
@@ -62,15 +61,15 @@ public class JSONFilterMapper implements FilterMapper {
 
 	private List<WhereClauseBuilder> getWhereClauseBuildersForFilter() throws JSONException {
 		final List<WhereClauseBuilder> whereClauseBuilders = Lists.newArrayList();
-		if (!globalFilterObject.has(FILTER)) {
+		if (!globalFilterObject.has(FILTER_KEY)) {
 			return whereClauseBuilders;
 		}
-		JSONObject filterObject = globalFilterObject.getJSONObject(FILTER);
-		if (filterObject.has(ATTRIBUTE)) {
-			whereClauseBuilders.add(new JSONFilterBuilder(filterObject.getJSONObject(ATTRIBUTE), entryType));
+		JSONObject filterObject = globalFilterObject.getJSONObject(FILTER_KEY);
+		if (filterObject.has(ATTRIBUTE_KEY)) {
+			whereClauseBuilders.add(new JSONFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType));
 		}
-		if (filterObject.has(FULL_TEXT_QUERY)) {
-			whereClauseBuilders.add(new JSONFullTextQueryBuilder(filterObject.getString(FULL_TEXT_QUERY), entryType));
+		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
+			whereClauseBuilders.add(new JSONFullTextQueryBuilder(filterObject.getString(FULL_TEXT_QUERY_KEY), entryType));
 		}
 		return whereClauseBuilders;
 	}
