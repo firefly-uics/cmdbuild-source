@@ -154,7 +154,7 @@ public class DataAccessLogicTest extends DBFixture {
 				.setDescription("description_baz") //
 				.save();
 		final JSONObject filterObject = new JSONObject(
-				"{filter: {attribute: {simple: {attribute: Code, operator: equal, value:[foo]}}}}");
+				"{attribute: {simple: {attribute: Code, operator: equal, value:[foo]}}}");
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
@@ -187,7 +187,7 @@ public class DataAccessLogicTest extends DBFixture {
 				.setDescription("description_baz") //
 				.save();
 		final JSONObject filterObject = new JSONObject(
-				"{filter: {query: dESc, attribute: {simple: {attribute: Code, operator: equal, value:['foo']}}}}");
+				"{query: dESc, attribute: {simple: {attribute: Code, operator: equal, value:['foo']}}}");
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
@@ -219,7 +219,7 @@ public class DataAccessLogicTest extends DBFixture {
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
-		final JSONObject filterObject = new JSONObject("{filter: {query: CRiptioN}}");
+		final JSONObject filterObject = new JSONObject("{query: CRiptioN}");
 		final JSONArray sortersArray = new JSONArray();
 		sortersArray.put(new JSONObject("{property: Code, direction: DESC}"));
 		sortersArray.put(new JSONObject("{property: Description, direction: ASC}"));

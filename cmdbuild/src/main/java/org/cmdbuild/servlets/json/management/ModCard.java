@@ -54,6 +54,7 @@ import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.store.DBClassWidgetStore;
 import org.cmdbuild.servlets.json.JSONBase;
+import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -70,7 +71,7 @@ public class ModCard extends JSONBase {
 	@JSONExported
 	public JSONObject getCardList(final JSONObject serializer, //
 			@Parameter(value = "className") final String className, //
-			@Parameter(value = "filter") final JSONObject filter, //
+			@Parameter(value = "filter", required = false) final JSONObject filter, //
 			@Parameter("limit") final int limit, //
 			@Parameter("start") final int offset, //
 			@Parameter(value = "sort", required = false) final JSONArray sorters //
@@ -84,6 +85,8 @@ public class ModCard extends JSONBase {
 				.filter(filter) //
 				.build();
 		final List<CMCard> fetchedCards = dataLogic.fetchCards(className, queryOptions);
+
+
 		// TODO: serialize the response....
 
 		// temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
@@ -101,7 +104,7 @@ public class ModCard extends JSONBase {
 		// }
 		// serializer.put("rows", rows);
 		// serializer.put("results", cardQuery.getTotalRows());
-		return serializer;
+		return CardSerializer.toClient(fetchedCards);
 	}
 
 	@JSONExported

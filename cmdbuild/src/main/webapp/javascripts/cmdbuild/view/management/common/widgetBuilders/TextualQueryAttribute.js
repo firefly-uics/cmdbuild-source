@@ -10,16 +10,17 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.TextualQueryAttribute, CMDBuild.WidgetBu
  * @override
  */
 CMDBuild.WidgetBuilders.TextualQueryAttribute.prototype.getQueryOptions = function() {
+	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-        ['like',translation.equals],
-		['different',translation.different],
-		['contains',translation.like],
-		['dontcontains',translation.dontlike],
-		['begin',translation.begin],
-		['dontbegin',translation.dontbegin],
-		['end',translation.end],
-		['dontend',translation.dontend],
-		['null',translation.nullo]
+		[operator.EQUAL, translation.equals],
+		[operator.NOT_EQUAL, translation.different],
+		[operator.CONTAIN, translation.like],
+		[operator.NOT_CONTAIN, translation.dontlike],
+		[operator.BEGIN, translation.begin],
+		[operator.NOT_BEGIN, translation.dontbegin],
+		[operator.END, translation.end],
+		[operator.NOT_END, translation.dontend],
+		[operator.NULL, translation.nullo]
 	];
 };
 /**

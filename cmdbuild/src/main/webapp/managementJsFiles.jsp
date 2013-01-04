@@ -31,10 +31,13 @@
 <!-- VIEWS -->
 
 	<!-- COMMON -->
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanelWithCardGridAndFilter.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterRelation.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
+	
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMEditablePanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMSideTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMMiniCardGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMMiniCardGridWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardWindow.js"></script>
@@ -45,12 +48,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardBrowserTree.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetManager.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardForm.js"></script>
-
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/SearchFilterWindow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/Attributes.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanelWithCardGridAndFilter.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMRelations.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/relations/CMDomainGrid.js"></script>
 
 		<!-- NON COMMON REQUIRED BY THE WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardNotesPanel.js"></script>

@@ -29,7 +29,7 @@
 				cmAddGraphColumn: false
 	 		});
 
-			this.filter = new CMDBuild.Management.Attributes({
+			this.filter = new CMDBuild.view.management.common.filter.CMFilterAttributes({
 				attributeList: {},
 				IdClass: this.idClass,
 				filterButton: this.filterButton,
