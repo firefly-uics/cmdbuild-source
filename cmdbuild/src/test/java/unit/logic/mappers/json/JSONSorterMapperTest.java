@@ -1,4 +1,4 @@
-package unit.logic.mappers;
+package unit.logic.mappers.json;
 
 import static org.junit.Assert.*;
 
