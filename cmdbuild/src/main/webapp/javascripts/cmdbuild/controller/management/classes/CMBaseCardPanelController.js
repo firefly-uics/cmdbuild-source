@@ -212,14 +212,9 @@
 
 		isEditable: function(card) {
 			var out = false;
-			if (card.get("Id") == -1) {
-				var classId = card.get("IdClass");
-				var priv = _CMUtils.getClassPrivileges(classId);
-				out = priv.create;
-			} else {
-				var data = card.raw || card.data;
-				out = data.priv_write;
-			}
+			var classId = card.get("IdClass");
+			var priv = _CMUtils.getClassPrivileges(classId);
+			out = priv.create;
 
 			return out;
 		},
