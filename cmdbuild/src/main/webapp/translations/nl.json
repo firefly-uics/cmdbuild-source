@@ -478,6 +478,7 @@
          "defaultgroup": "* Standaard *",
          "group": {
             "add_group": "Groep toevoegen",
+            "administrator": "<em>Administrator</em>",
             "availableusers": "Beschikbare gebruikers",
             "delete_group": "Blokkeer Groep",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Geselecteerde gebruikers",
             "is_active": "Aktief",
             "is_administrator": "Is administrateur",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "Groep aanpassen",
+            "normal": "<em>Normal</em>",
             "starting_class": "Start pagina bij",
             "title": "Groep beheer",
             "usermanagement": "Beheer geassocieerde gebruikers"

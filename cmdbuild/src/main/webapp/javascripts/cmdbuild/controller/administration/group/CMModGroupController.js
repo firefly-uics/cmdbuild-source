@@ -17,11 +17,25 @@
 					this.groupFormController.onGroupSelected(g);
 					this.groupUIConfigurationController.onGroupSelected(g);
 
-					this.view.privilegeGrid.setDisabled(g.get("isAdministrator"));
+					// Administrator groups have full privileges,
+					// so this panel could be disabled
+					this.view.privilegeGrid.setDisabled(g.isAdmin());
+
+					// The CloudAdministrator could not change the users of
+					// full administrator groups
+					var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
+					if (currentGroup.isCloudAdmin()
+						&& g.isAdmin()
+						&& !g.isCloudAdmin()) {
+
+						this.view.userPerGroup.disable();
+					} else {
+						this.view.enable();
+						this.view.userPerGroup.onGroupSelected(selection);
+					}
 				}
 
 				this.view.privilegeGrid.onGroupSelected(selection);
-				this.view.userPerGroup.onGroupSelected(selection);
 			}
 		}
 	});

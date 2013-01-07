@@ -478,6 +478,7 @@
          "defaultgroup": "* Default *",
          "group": {
             "add_group": "Aggiungi Gruppo",
+            "administrator": "Amministratore",
             "availableusers": "Utenti disponibili",
             "delete_group": "Disabilita Gruppo",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Utenti selezionati",
             "is_active": "Attivo",
             "is_administrator": "Amministratore",
+            "limited_admin": "Amministratore limitato",
             "modify_group": "Modifica Gruppo",
+            "normal": "Normale",
             "starting_class": "Pagina iniziale",
             "title": "Gestione gruppi",
             "usermanagement": "Gestione utenti associati"

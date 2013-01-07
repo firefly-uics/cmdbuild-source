@@ -478,6 +478,7 @@
          "defaultgroup": "* Podrazumevana grupa*",
          "group": {
             "add_group": "Dodaj grupu",
+            "administrator": "<em>Administrator</em>",
             "availableusers": "Dostupni korisnici",
             "delete_group": "Isključi grupu",
             "email": "Email",
@@ -487,7 +488,9 @@
             "groupchoice": "Korisnici u grupi",
             "is_active": "Aktivna",
             "is_administrator": "Administrator",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "Izmeni grupu",
+            "normal": "<em>Normal</em>",
             "starting_class": "Početna stranica",
             "title": "Upravljanje grupama",
             "usermanagement": "Upravljanje pripadajućim korisnicima"
