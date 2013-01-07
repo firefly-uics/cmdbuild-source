@@ -105,6 +105,22 @@
 			}).not.toThrow();
 
 		});
+
+		it("Remove a delegate", function() {
+			var delegate = new TestDelegableInterface();
+			var s = spyOn(delegate, "methodA");
+			var delegate2 = new TestDelegableInterface();
+
+			delegable.addDelegate(delegate);
+			delegable.addDelegate(delegate2);
+			expect(delegable.countDelegates()).toBe(2);
+
+			delegable.removeDelegate(delegate);
+			expect(delegable.countDelegates()).toBe(1);
+
+			delegable.callDelegates("methodA", [1, 2, 3]);
+			expect(s.callCount).toBe(0);
+		});
 	});
 
 
