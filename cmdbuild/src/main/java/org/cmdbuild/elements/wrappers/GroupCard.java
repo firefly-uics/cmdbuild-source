@@ -34,6 +34,7 @@ public class GroupCard extends LazyCard {
 
 	public static final String GROUP_ATTRIBUTE_EMAIL = "Email";
 	public static final String GROUP_ATTRIBUTE_ISADMIN = "Administrator";
+	public static final String GROUP_ATTRIBUTE_CLOUD_ADMIN = "CloudAdmin";
 	public static final String GROUP_ATTRIBUTE_STARTINGCLASS = "startingClass";
 
 	// UIConfiguration
@@ -45,7 +46,6 @@ public class GroupCard extends LazyCard {
 	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD = "SimpleHistoryModeForCard";
 	public static final String GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS = "SimpleHistoryModeForProcess";
 	public static final String GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED = "ProcessWidgetAlwaysEnabled";
-	public static final String GROUP_ATTRIBUTE_CLOUD_ADMIN = "CloudAdmin";
 
 	private static final ITable roleClass = UserContext.systemContext().tables().get(GROUP_CLASS_NAME);
 
@@ -60,7 +60,7 @@ public class GroupCard extends LazyCard {
 
 	public Group toGroup(final boolean defaultGroup) {
 		return new GroupImpl(this.getId(), this.getName(), this.getDescription(), this.isAdmin(),
-				this.getStartingClassOrDefault(), defaultGroup, this.getUIConfiguration());
+				this.isCloudAdmin(), this.getStartingClassOrDefault(), defaultGroup, this.getUIConfiguration());
 	}
 
 	public String getName() {
@@ -100,7 +100,7 @@ public class GroupCard extends LazyCard {
 		uiConfiguration.setSimpleHistoryModeForCard(getBooleanValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
 		uiConfiguration.setSimpleHistoryModeForProcess(getBooleanValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
 		uiConfiguration.setProcessWidgetAlwaysEnabled(getBooleanValue(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
-		uiConfiguration.setCloudAdmin(getBooleanValue(GROUP_ATTRIBUTE_CLOUD_ADMIN));
+		uiConfiguration.setCloudAdmin(this.isCloudAdmin());
 
 		return uiConfiguration;
 	}
@@ -136,11 +136,6 @@ public class GroupCard extends LazyCard {
 		setValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD, uiConfiguration.isSimpleHistoryModeForCard());
 		setValue(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS, uiConfiguration.isSimpleHistoryModeForProcess());
 		setValue(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED, uiConfiguration.isProcessWidgetAlwaysEnabled());
-		setValue(GROUP_ATTRIBUTE_CLOUD_ADMIN, uiConfiguration.isCloudAdmin());
-	}
-
-	public boolean isAdmin() {
-		return getAttributeValue(GROUP_ATTRIBUTE_ISADMIN).getBoolean();
 	}
 
 	/*
@@ -177,8 +172,20 @@ public class GroupCard extends LazyCard {
 		getAttributeValue(GROUP_ATTRIBUTE_STARTINGCLASS).setValue(startingClass);
 	}
 
+	public boolean isAdmin() {
+		return getAttributeValue(GROUP_ATTRIBUTE_ISADMIN).getBoolean();
+	}
+
 	public void setIsAdmin(final Boolean isAdmin) {
 		getAttributeValue(GROUP_ATTRIBUTE_ISADMIN).setValue(isAdmin);
+	}
+
+	public boolean isCloudAdmin() {
+		return getAttributeValue(GROUP_ATTRIBUTE_CLOUD_ADMIN).getBoolean();
+	}
+
+	public void setCloudAdmin(final Boolean isAdmin) {
+		getAttributeValue(GROUP_ATTRIBUTE_CLOUD_ADMIN).setValue(isAdmin);
 	}
 
 	public static Iterable<GroupCard> allActive() throws NotFoundException, ORMException {

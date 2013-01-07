@@ -478,6 +478,7 @@
          "defaultgroup": "* 既定 *",
          "group": {
             "add_group": "グループ追加",
+            "administrator": "<em>Administrator</em>",
             "availableusers": "利用可能なユーザ",
             "delete_group": "グループ無効化",
             "email": "電子メール",
@@ -487,7 +488,9 @@
             "groupchoice": "ルックアップユーザ",
             "is_active": "アクティブ",
             "is_administrator": "はadministrator",
+            "limited_admin": "<em>Limited administrator</em>",
             "modify_group": "グループ修正",
+            "normal": "<em>Normal</em>",
             "starting_class": "初期ページ",
             "title": "グループ管理",
             "usermanagement": "関連ユーザ管理"

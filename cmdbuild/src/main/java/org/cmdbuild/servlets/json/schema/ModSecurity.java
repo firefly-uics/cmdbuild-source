@@ -45,6 +45,22 @@ public class ModSecurity extends JSONBase {
 
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 
+	public enum GroupType {
+		NORMAL("normal"),
+		ADMIN("admin"),
+		CLOUD_ADMIN("cloudAdmin");
+
+		private String value;
+
+		GroupType (String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	};
+
 	@JSONExported
 	public String getGroupList(JSONObject serializer) throws JSONException,
 			AuthException, ORMException {
@@ -85,6 +101,15 @@ public class ModSecurity extends JSONBase {
 		) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
 
 		final GroupCard group = GroupCard.getOrDie(groupId);
+
+		// The CloudAdmin could not change the UIConfiguration of a Full Administrator group
+		if (userCtx.getDefaultGroup().isCloudAdmin()
+			&& group.isAdmin()
+			&& !group.isCloudAdmin()) {
+
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		}
+
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
 
 		group.setUIConfiguration(uiConfiguration);
@@ -269,43 +294,66 @@ public class ModSecurity extends JSONBase {
 	public JSONObject saveGroup(
 			JSONObject serializer,
 			@Parameter("id") int groupId,
-			@Parameter(value="name", required=false) String name,
 			@Parameter("description") String description,
 			@Parameter("email") String email,
 			@Parameter("startingClass") int startingClass,
 			@Parameter("isActive") boolean isActive,
-			@Parameter("isAdministrator") boolean isAdministrator,
+			@Parameter(value="name", required=false) String name,
+			@Parameter(value="type", required=false) String type,
 			@Parameter(value="users", required=false) String users,
 			UserContext userCtx
 		) throws JSONException, AuthException {
 
-		// The CloudAdmin could not modify or create groups with administrator
-		// privileges if not its own group
-		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()
-				&& isAdministrator
-				&& groupId != userCtx.getDefaultGroup().getId()) {
+		GroupCard groupToSave = GroupCard.getOrCreate(groupId);
 
-			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+		if (userCtx.getDefaultGroup().isCloudAdmin()) {
+			// The CloudAdmin could create a group but his type cold not be admin
+			if (groupToSave.isNew()) {
+				if (GroupType.ADMIN.getValue().equals(type)) {
+					throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+				}
+			}
+
+			// The CloudAdmin could modify only not full administrator groups
+			else if (groupToSave.isAdmin() && !groupToSave.isAdmin()) {
+				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+			}
 		}
 
-		GroupCard group = GroupCard.getOrCreate(groupId);
 		if (name != null) {
-			group.setName(name);
-		}
-		group.setDescription(description);
-		if (email != null) {
-			group.setEmail(email);
-		}
-		group.setIsAdmin(isAdministrator);
-		group.setStartingClass(startingClass);
-		if (isActive) {
-			group.setStatus(ElementStatus.ACTIVE);
-		} else {
-			group.setStatus(ElementStatus.INACTIVE);
+			groupToSave.setName(name);
 		}
 
-		group.save();
-		serializer.put("group", Serializer.serializeGroupCard(group));
+		if (description != null) {
+			groupToSave.setDescription(description);
+		}
+
+		if (email != null) {
+			groupToSave.setEmail(email);
+		}
+
+		// a group could not modify his own type
+		if (type != null 
+				&& userCtx.getDefaultGroup().getId() != groupToSave.getId()) {
+
+			boolean isCloudAdmin = GroupType.CLOUD_ADMIN.getValue().equals(type);
+			boolean isAdmin = GroupType.ADMIN.getValue().equals(type) ||
+					GroupType.CLOUD_ADMIN.getValue().equals(type);
+
+			groupToSave.setIsAdmin(isAdmin);
+			groupToSave.setCloudAdmin(isCloudAdmin);
+		}
+
+		if (isActive) {
+			groupToSave.setStatus(ElementStatus.ACTIVE);
+		} else {
+			groupToSave.setStatus(ElementStatus.INACTIVE);
+		}
+
+		groupToSave.setStartingClass(startingClass);
+		groupToSave.save();
+
+		serializer.put("group", Serializer.serializeGroupCard(groupToSave));
 		return serializer;
 	}
 
@@ -320,11 +368,12 @@ public class ModSecurity extends JSONBase {
 		final List<UserCard> oldUserList = AuthenticationFacade.getUserList(groupId);
 		final List<String> newUserIdList = new ArrayList<String>();
 
-		// The CloudAdmin could not change the users of other Admin groups
-		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()) {
-			if (group.isAdmin() && group.getId() != userCtx.getDefaultGroup().getId()) {
-				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-			}
+		// The CloudAdmin could not change the users of other full Administrator groups
+		if (userCtx.getDefaultGroup().isCloudAdmin() 
+			&& group.isAdmin()
+			&& !group.isCloudAdmin()) {
+
+			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		}
 
 		if (users != null && !users.equals("")) {
@@ -366,11 +415,10 @@ public class ModSecurity extends JSONBase {
 		ICard card = tf.get(GroupCard.GROUP_CLASS_NAME).cards().list().ignoreStatus().id(groupId).get();
 		GroupCard group = new GroupCard(card);
 
-		// The CloudAdmin could not disable/enalbe groups with administrator
-		// privileges if not its own group
-		if (userCtx.getDefaultGroup().getUIConfiguration().isCloudAdmin()
-				&& group.isAdmin()
-				&& groupId != userCtx.getDefaultGroup().getId()) {
+		// The CloudAdmin could not disable/enalbe full administrator groups
+		if (userCtx.getDefaultGroup().isCloudAdmin()
+			&& group.isAdmin()
+			&& !group.isCloudAdmin()) {
 
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		}

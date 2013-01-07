@@ -8,8 +8,9 @@ public interface Group {
 	int getId();
 	String getName();
 	String getDescription();
-	boolean isAdmin();
 	ITable getStartingClass(); 
+	boolean isAdmin();
+	boolean isCloudAdmin();
 	boolean isDefault();
 
 	/**

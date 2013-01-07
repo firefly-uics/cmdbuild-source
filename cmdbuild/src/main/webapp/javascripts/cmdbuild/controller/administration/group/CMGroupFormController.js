@@ -1,5 +1,5 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.controller.administration.group.CMGroupFormController", {
 		constructor: function(view) {
 			this.view = view;
@@ -18,7 +18,14 @@
 				this.view.disableModify(enableTBar = false);
 			} else {
 				this.view.loadGroup(g);
-				this.view.disableModify(enableTBar = true);
+				/*
+				 * Business rule
+				 * The cloud group could not edit a Full administrator Group
+				 */
+				var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
+				var enableTBar = !(currentGroup.isCloudAdmin() && g.isAdmin() && !g.isCloudAdmin());
+
+				this.view.disableModify(enableTBar);
 			}
 		},
 
@@ -26,15 +33,16 @@
 			this.currentGroup = null;
 			this.view.reset();
 			this.view.enableModify(all = true);
+			this.view.setDefaults();
 		}
 	});
-	
+
 	function onSaveButtonClick() {
 		var nonValid = this.view.getNonValidFields();
 		if (nonValid.length == 0) {
 			CMDBuild.ServiceProxy.group.save({
 				scope : this,
-				params : buildParamsForSave.call(this),
+				params : buildParamsForSave(this),
 				success : function(r) {
 					var g = Ext.JSON.decode(r.responseText).group;
 					_CMCache.onGroupSaved(g);
@@ -74,16 +82,28 @@
 
 	function onModifyButtonClick() {
 		this.view.enableModify();
+
+		/*
+		 * Business rule
+		 * The cloud group could not edit the type of a group
+		 */
+		var currentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
+		if (currentGroup.isCloudAdmin()) {
+			this.view.groupType.disable();
+		} else {
+			this.view.groupType.enable();
+		}
 	}
 
-	function buildParamsForSave() {
-		var params = this.view.getData();
-		if (this.currentGroup == null) {
+	function buildParamsForSave(me) {
+		var params = me.view.getData();
+
+		if (me.currentGroup == null) {
 			params.id = -1;
 		} else {
-			params.id = this.currentGroup.get("id");
+			params.id = me.currentGroup.get("id");
 		}
-	
+
 		return params;
 	}
 })();
