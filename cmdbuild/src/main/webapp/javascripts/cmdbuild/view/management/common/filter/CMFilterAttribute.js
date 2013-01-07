@@ -97,9 +97,7 @@
 			});
 
 			if (data.length == 1) {
-				out = {
-					simple: data[0]
-				};
+				out =  data[0];
 			} else if (data.length > 1) {
 				out = {
 					and: data

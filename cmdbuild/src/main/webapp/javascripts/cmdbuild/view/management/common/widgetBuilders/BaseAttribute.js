@@ -9,8 +9,8 @@
 	CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator = {
 		EQUAL: "equal",
 		NOT_EQUAL: "notequal",
-		NULL: "null",
-		NOT_NULL: "notnull",
+		NULL: "isnull",
+		NOT_NULL: "isnotnull",
 		GREATER_THAN: "greater",
 		LESS_THAN: "less",
 		BETWEEN: "between",
@@ -128,7 +128,7 @@
 		 * in the subclass is possible override buildFieldsetForFilter to build a different fieldset 
 		 */
 		getFieldSetForFilter: function(attribute) {
-			
+
 			var attributeCopy = Ext.apply({}, {
 				fieldmode: "write", //change the fieldmode because in the filter must write on this field
 				name: attribute.name
@@ -137,27 +137,28 @@
 			var field = this.buildField(attributeCopy, true);
 			var conditionCombo = this.getQueryCombo(attributeCopy); 
 
-			return this.buildFieldsetForFilter(field, conditionCombo, attributeCopy.description);
+			return this.buildFieldsetForFilter(field, conditionCombo, attributeCopy);
 		},
 
 		/**
 		 * 
 		 * @param field
 		 * @param query
-		 * @param originalFieldName
+		 * @param attribute
 		 * 
 		 * @return Ext.form.FieldSet
 		 * 
 		 * build a fieldSet with a combo-box and a field to edit a filtering criteria used in the
 		 * attribute section of the filter.
 		 */
-		buildFieldsetForFilter: function(field, query, originalFieldName) {
-			return this.genericBuildFieldsetForFilter([field], query, originalFieldName);
+		buildFieldsetForFilter: function(field, query, attribute) {
+			return this.genericBuildFieldsetForFilter([field], query, attribute);
 		},
 
-		genericBuildFieldsetForFilter: function(fields, query, originalFieldName) {
+		// protected
+		genericBuildFieldsetForFilter: function(fields, query, attribute) {
 			return new CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel({
-				attributeName: originalFieldName,
+				attributeName: attribute.name,
 				conditionCombo: query,
 				valueFields: fields
 			});
@@ -250,9 +251,11 @@
 			}
 
 			return {
-				attribute: this.attributeName,
-				operator: this.conditionCombo.getValue(),
-				value: value
+				simple: {
+					attribute: this.attributeName,
+					operator: this.conditionCombo.getValue(),
+					value: value
+				}
 			};
 		}
 	});

@@ -13,8 +13,6 @@
 													// the name is used for the server-side sorting
 
 		extraParams: undefined, // extra params for the store
-		filterCategory: undefined,
-		filterSubcategory: undefined,
 
 		forceSelectionOfFirst: false, // listen load event and select the first row
 		skipSelectFirst: false,
