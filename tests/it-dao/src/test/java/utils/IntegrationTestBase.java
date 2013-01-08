@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
  */
 public abstract class IntegrationTestBase {
 
-	private static final DBInitializer dbInitializer = new DBInitializer();
+	protected static final DBInitializer dbInitializer = new DBInitializer();
 
 	private final DBDriver testDriver;
 	private final DBDataView dbView;

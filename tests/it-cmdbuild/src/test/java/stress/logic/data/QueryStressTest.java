@@ -58,7 +58,7 @@ public class QueryStressTest extends DBFixture {
 		// given
 		JSONArray sortersArray = new JSONArray();
 		sortersArray.put(new JSONObject("{property: Code, direction: ASC}"));
-		JSONObject filter = new JSONObject("{filter: {simple: {attribute: Code, operator: equal, value: ['100']}}}");
+		JSONObject filter = new JSONObject("{attribute: {simple: {attribute: Code, operator: equal, value: ['100']}}}");
 		QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
 		
 		// when

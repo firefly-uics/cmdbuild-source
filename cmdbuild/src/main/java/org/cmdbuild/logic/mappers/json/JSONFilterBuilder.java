@@ -13,11 +13,13 @@ import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.logic.mappers.json.Constants.*;
+import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
 
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.logic.mappers.WhereClauseBuilder;
@@ -35,7 +37,7 @@ import com.google.common.collect.Lists;
 public class JSONFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
-	protected CMEntryType entryType;
+	private CMEntryType entryType;
 
 	/**
 	 * 
@@ -87,50 +89,54 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 		throw new IllegalArgumentException("The filter is malformed");
 	}
 
+	/**
+	 * NOTE: @parameter values is always an array of strings
+	 */
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final JSONArray values) throws JSONException {
-		if (operator.equals(EQUAL_OPERATOR)) {
+		CMAttributeType<?> type = entryType.getAttribute(attribute.getName()).getType();
+		if (operator.equals(FilterOperator.EQUAL.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, eq(values.get(0)));
-		} else if (operator.equals(NOT_EQUAL_OPERATOR)) {
+			return condition(attribute, eq(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.NOT_EQUAL.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, eq(values.get(0))));
-		} else if (operator.equals(NULL_OPERATOR)) {
+			return not(condition(attribute, eq(type.convertValue(values.getString(0)))));
+		} else if (operator.equals(FilterOperator.NULL.toString())) {
 			Validate.isTrue(values.length() == 0);
 			return condition(attribute, isNull());
-		} else if (operator.equals(NOT_NULL_OPERATOR)) {
+		} else if (operator.equals(FilterOperator.NOT_NULL.toString())) {
 			Validate.isTrue(values.length() == 0);
 			return not(condition(attribute, isNull()));
-		} else if (operator.equals(GREATER_THAN_OPERATOR)) {
+		} else if (operator.equals(FilterOperator.GREATER_THAN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, gt(values.get(0)));
-		} else if (operator.equals(LESS_THAN_OPERATOR)) {
+			return condition(attribute, gt(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.LESS_THAN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, lt(values.get(0)));
-		} else if (operator.equals(BETWEEN_OPERATOR)) {
+			return condition(attribute, lt(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.BETWEEN.toString())) {
 			Validate.isTrue(values.length() == 2);
-			and(condition(attribute, gt(values.get(0))), condition(attribute, lt(values.get(1))));
-		} else if (operator.equals(LIKE_OPERATOR)) {
+			return and(condition(attribute, gt(type.convertValue(values.getString(0)))), condition(attribute, lt(type.convertValue(values.getString(1)))));
+		} else if (operator.equals(FilterOperator.LIKE.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, contains(values.get(0)));
-		} else if (operator.equals(CONTAIN_OPERATOR)) {
+			return condition(attribute, contains(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.CONTAIN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, contains(values.get(0)));
-		} else if (operator.equals(NOT_CONTAIN_OPERATOR)) {
+			return condition(attribute, contains(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.NOT_CONTAIN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, contains(values.get(0))));
-		} else if (operator.equals(BEGIN_OPERATOR)) {
+			return not(condition(attribute, contains(type.convertValue(values.getString(0)))));
+		} else if (operator.equals(FilterOperator.BEGIN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, beginsWith(values.get(0)));
-		} else if (operator.equals(NOT_BEGIN_OPERATOR)) {
+			return condition(attribute, beginsWith(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.NOT_BEGIN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, beginsWith(values.get(0))));
-		} else if (operator.equals(END_OPERATOR)) {
+			return not(condition(attribute, beginsWith(type.convertValue(values.getString(0)))));
+		} else if (operator.equals(FilterOperator.END.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return condition(attribute, endsWith(values.get(0)));
-		} else if (operator.equals(NOT_END_OPERATOR)) {
+			return condition(attribute, endsWith(type.convertValue(values.getString(0))));
+		} else if (operator.equals(FilterOperator.NOT_END.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, endsWith(values.get(0))));
+			return not(condition(attribute, endsWith(type.convertValue(values.getString(0)))));
 		}
 		throw new IllegalArgumentException("The operator " + operator + " is not supported");
 	}
