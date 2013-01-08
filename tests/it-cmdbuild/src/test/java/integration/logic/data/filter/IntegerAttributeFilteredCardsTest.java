@@ -16,10 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import utils.GenericRollbackDriver;
 
 /**
  * In this class there are tests that filter cards for the attribute with type
@@ -38,6 +35,7 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 	 * 
 	 * @see utils.IntegrationTestBase#createTestDriver()
 	 */
+	@Override
 	protected DBDriver createTestDriver() {
 		return createBaseDriver();
 	}
@@ -78,75 +76,79 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 	@Test
 	public void fetchFilteredCardsWithEqualOperator() throws Exception {
 		// given
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.EQUAL, Integer.valueOf(2));
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.EQUAL, Integer.valueOf(2));
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
 
 		// then
 		assertEquals(1, fetchedCards.size());
 		assertEquals("bar", fetchedCards.get(0).getCode());
 	}
-	
+
 	@Test
 	public void fetchFilteredCardsWithNotEqualOperator() throws Exception {
 		// given
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.NOT_EQUAL, Integer.valueOf(2));
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
-		
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.NOT_EQUAL,
+				Integer.valueOf(2));
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
 		// then
 		assertEquals(3, fetchedCards.size());
 		assertEquals("foo", fetchedCards.get(0).getCode());
 		assertEquals("baz", fetchedCards.get(1).getCode());
 		assertEquals("zzz", fetchedCards.get(2).getCode());
 	}
-	
+
 	@Test
 	public void fetchFilteredCardsWithGreaterThanOperator() throws Exception {
 		// given
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.GREATER_THAN, Integer.valueOf(2));
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
-		
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.GREATER_THAN,
+				Integer.valueOf(2));
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
 		// then
 		assertEquals(2, fetchedCards.size());
 		assertEquals("baz", fetchedCards.get(0).getCode());
 		assertEquals("zzz", fetchedCards.get(1).getCode());
 	}
-	
+
 	@Test
 	public void fetchFilteredCardsWithLessThanOperator() throws Exception {
 		// given
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.LESS_THAN, Integer.valueOf(2));
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
-		
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.LESS_THAN,
+				Integer.valueOf(2));
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
 		// then
 		assertEquals(1, fetchedCards.size());
 		assertEquals("foo", fetchedCards.get(0).getCode());
 	}
-	
+
 	@Test
 	public void fetchFilteredCardsWithBetweenOperator() throws Exception {
 		// given
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.BETWEEN, Integer.valueOf(2), Integer.valueOf(4));
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
-		
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.BETWEEN,
+				Integer.valueOf(2), Integer.valueOf(4));
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
 		// then
 		assertEquals(1, fetchedCards.size());
 	}
-	
+
 	@Test
 	public void fetchFilteredCardsWithNullOperator() throws Exception {
 		// given
@@ -155,26 +157,26 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 				.setDescription("desc_of_null_card") //
 				.set(ATTRIBUTE_NAME, null) //
 				.save();
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.NULL);
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
-		
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.NULL);
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
 		// then
 		assertEquals(1, fetchedCards.size());
-		assertEquals("code_of_null_card",fetchedCards.get(0).getCode());
+		assertEquals("code_of_null_card", fetchedCards.get(0).getCode());
 	}
-	
+
 	@Test
 	public void fetchFilteredCardsWithNotNullOperator() throws Exception {
 		// given
-		JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.NOT_NULL);
-		QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
-		
+		final JSONObject filterObject = buildAttributeFilter(ATTRIBUTE_NAME, FilterOperator.NOT_NULL);
+		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
+
 		// when
-		List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
 		// then
 		assertEquals(4, fetchedCards.size());
 	}

@@ -3,6 +3,9 @@ package integration.dao.driver.postgres;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.newClass;
+import static utils.IntergrationTestUtils.newSimpleClass;
+import static utils.IntergrationTestUtils.newTextAttribute;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.driver.DBDriver;
@@ -13,9 +16,9 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class EntryTypeDeleteTest extends DBFixture {
+public class EntryTypeDeleteTest extends IntegrationTestBase {
 
 	private DBClass clazz;
 
