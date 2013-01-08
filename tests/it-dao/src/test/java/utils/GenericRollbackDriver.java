@@ -663,7 +663,8 @@ public class GenericRollbackDriver implements DBDriver {
 
 	@Override
 	public void update(final DBEntry entry) {
-		throw new UnsupportedOperationException();
+		// TODO maybe implement this, really needed?
+		innerDriver.update(entry);
 	}
 
 	@Override

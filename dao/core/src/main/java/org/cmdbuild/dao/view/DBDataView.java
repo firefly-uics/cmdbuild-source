@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
@@ -347,8 +348,13 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBCard modifyCard(final CMCard type) {
-		throw new UnsupportedOperationException();
+	public DBCard modifyCard(final CMCard card) {
+		final DBClass dbType = findClassByName(card.getType().getName());
+		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
+		for (final Entry<String, Object> entry : card.getValues()) {
+			dbCard.set(entry.getKey(), entry.getValue());
+		}
+		return dbCard;
 	}
 
 	@Override

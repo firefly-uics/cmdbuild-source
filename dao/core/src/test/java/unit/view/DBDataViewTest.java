@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Maps;
 
 // TODO complete tests checking data translation
 public class DBDataViewTest {
@@ -191,13 +192,57 @@ public class DBDataViewTest {
 		verifyNoMoreInteractions(driver);
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void cardModified() throws Exception {
-		final CMCard cmCard = mock(CMCard.class);
+	@Test
+	public void cardModifiedButNotSaved() throws Exception {
+		// given
+		when(driver.findClassByName(CLASS_NAME)) //
+				.thenReturn(anActiveClass(CLASS_NAME, ID));
 
-		view.modifyCard(cmCard);
+		final CMClass clazz = mock(CMClass.class);
+		when(clazz.getName()).thenReturn(CLASS_NAME);
 
+		final CMCard card = mock(CMCard.class);
+		when(card.getType()).thenReturn(clazz);
+		when(card.getValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
+
+		// when
+		view.modifyCard(card);
+
+		// then
+		verify(driver).findClassByName(CLASS_NAME);
 		verifyNoMoreInteractions(driver);
+
+		verify(card).getType();
+		verify(card).getId();
+		verify(card).getValues();
+		verifyNoMoreInteractions(card);
+	}
+
+	@Test
+	public void cardModifiedAndSaved() throws Exception {
+		// given
+		when(driver.findClassByName(CLASS_NAME)) //
+				.thenReturn(anActiveClass(CLASS_NAME, ID));
+
+		final CMClass clazz = mock(CMClass.class);
+		when(clazz.getName()).thenReturn(CLASS_NAME);
+
+		final CMCard card = mock(CMCard.class);
+		when(card.getType()).thenReturn(clazz);
+		when(card.getValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
+
+		// when
+		view.modifyCard(card).save();
+
+		// then
+		verify(driver).findClassByName(CLASS_NAME);
+		verify(driver).update(any(DBEntry.class));
+		verifyNoMoreInteractions(driver);
+
+		verify(card).getType();
+		verify(card).getId();
+		verify(card).getValues();
+		verifyNoMoreInteractions(card);
 	}
 
 	@Test

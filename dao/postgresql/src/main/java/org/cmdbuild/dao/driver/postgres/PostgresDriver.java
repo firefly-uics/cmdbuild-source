@@ -144,7 +144,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public void update(final DBEntry entry) {
 		logger.info("updating entry with id '{}' for type '{}'", entry.getId(), entry.getType().getName());
-		throw new UnsupportedOperationException("Not implemented");
+		new EntryUpdateCommand(jdbcTemplate, entry).execute();
 	}
 
 	@Override
