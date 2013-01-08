@@ -19,11 +19,7 @@ public class TextAttributeType extends AbstractAttributeType<String> {
 		if (stringLimitExceeded(stringValue)) {
 			throw new IllegalArgumentException();
 		}
-		if (stringValue.isEmpty()) {
-			return null;
-		} else {
-			return stringValue;
-		}
+		return stringValue;
 	}
 
 	protected boolean stringLimitExceeded(final String stringValue) {

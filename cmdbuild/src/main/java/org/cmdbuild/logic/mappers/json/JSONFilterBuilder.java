@@ -12,8 +12,12 @@ import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.mappers.json.Constants.*;
-import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
+import static org.cmdbuild.logic.mappers.json.Constants.AND_KEY;
+import static org.cmdbuild.logic.mappers.json.Constants.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mappers.json.Constants.OPERATOR_KEY;
+import static org.cmdbuild.logic.mappers.json.Constants.OR_KEY;
+import static org.cmdbuild.logic.mappers.json.Constants.SIMPLE_KEY;
+import static org.cmdbuild.logic.mappers.json.Constants.VALUE_KEY;
 
 import java.util.List;
 
@@ -23,6 +27,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.logic.mappers.WhereClauseBuilder;
+import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +42,7 @@ import com.google.common.collect.Lists;
 public class JSONFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
-	private CMEntryType entryType;
+	private final CMEntryType entryType;
 
 	/**
 	 * 
@@ -94,13 +99,14 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 	 */
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final JSONArray values) throws JSONException {
-		CMAttributeType<?> type = entryType.getAttribute(attribute.getName()).getType();
+		final CMAttributeType<?> type = entryType.getAttribute(attribute.getName()).getType();
 		if (operator.equals(FilterOperator.EQUAL.toString())) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, eq(type.convertValue(values.getString(0))));
 		} else if (operator.equals(FilterOperator.NOT_EQUAL.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, eq(type.convertValue(values.getString(0)))));
+			return or(not(condition(attribute, eq(type.convertValue(values.getString(0))))),
+					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.NULL.toString())) {
 			Validate.isTrue(values.length() == 0);
 			return condition(attribute, isNull());
@@ -115,7 +121,8 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 			return condition(attribute, lt(type.convertValue(values.getString(0))));
 		} else if (operator.equals(FilterOperator.BETWEEN.toString())) {
 			Validate.isTrue(values.length() == 2);
-			return and(condition(attribute, gt(type.convertValue(values.getString(0)))), condition(attribute, lt(type.convertValue(values.getString(1)))));
+			return and(condition(attribute, gt(type.convertValue(values.getString(0)))),
+					condition(attribute, lt(type.convertValue(values.getString(1)))));
 		} else if (operator.equals(FilterOperator.LIKE.toString())) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, contains(type.convertValue(values.getString(0))));
@@ -124,19 +131,22 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 			return condition(attribute, contains(type.convertValue(values.getString(0))));
 		} else if (operator.equals(FilterOperator.NOT_CONTAIN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, contains(type.convertValue(values.getString(0)))));
+			return or(not(condition(attribute, contains(type.convertValue(values.getString(0))))),
+					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.BEGIN.toString())) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, beginsWith(type.convertValue(values.getString(0))));
 		} else if (operator.equals(FilterOperator.NOT_BEGIN.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, beginsWith(type.convertValue(values.getString(0)))));
+			return or(not(condition(attribute, beginsWith(type.convertValue(values.getString(0))))),
+					condition(attribute, isNull()));
 		} else if (operator.equals(FilterOperator.END.toString())) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, endsWith(type.convertValue(values.getString(0))));
 		} else if (operator.equals(FilterOperator.NOT_END.toString())) {
 			Validate.isTrue(values.length() == 1);
-			return not(condition(attribute, endsWith(type.convertValue(values.getString(0)))));
+			return or(not(condition(attribute, endsWith(type.convertValue(values.getString(0))))),
+					condition(attribute, isNull()));
 		}
 		throw new IllegalArgumentException("The operator " + operator + " is not supported");
 	}
