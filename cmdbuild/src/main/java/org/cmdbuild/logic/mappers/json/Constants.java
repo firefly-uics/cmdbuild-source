@@ -7,6 +7,37 @@ public final class Constants {
 	}
 	
 	/**
+	 * Filter operators
+	 */
+	public enum FilterOperator {
+		EQUAL("equal"),
+		NOT_EQUAL("notequal"),
+		NULL("isnull"),
+		NOT_NULL("isnotnull"),
+		GREATER_THAN("greater"),
+		LESS_THAN("less"),
+		BETWEEN("between"),
+		LIKE("like"),
+		CONTAIN("contain"),
+		NOT_CONTAIN("notcontain"),
+		BEGIN("begin"),
+		NOT_BEGIN("notbegin"), 
+		END("end"),
+		NOT_END("notend");
+		
+		private String toString;
+		
+		private FilterOperator(String toString) {
+			this.toString = toString;
+		}
+		
+		@Override
+		public String toString() {
+			return toString;
+		}
+	}
+	
+	/**
 	 * JSON filter keys
 	 */
 	public static final String FILTER_KEY = "filter";
@@ -19,24 +50,6 @@ public final class Constants {
 	public static final String OR_KEY = "or";
 	public static final String OPERATOR_KEY = "operator";
 	public static final String VALUE_KEY = "value";
-	
-	/**
-	 * Operators
-	 */
-	public static final String EQUAL_OPERATOR = "equal";
-	public static final String NOT_EQUAL_OPERATOR = "notequal";
-	public static final String NULL_OPERATOR = "null";
-	public static final String NOT_NULL_OPERATOR = "notnull";
-	public static final String GREATER_THAN_OPERATOR = "greater";
-	public static final String LESS_THAN_OPERATOR = "less";
-	public static final String BETWEEN_OPERATOR = "between";
-	public static final String LIKE_OPERATOR = "like";
-	public static final String CONTAIN_OPERATOR = "contain";
-	public static final String NOT_CONTAIN_OPERATOR = "notcontain";
-	public static final String BEGIN_OPERATOR = "begin";
-	public static final String NOT_BEGIN_OPERATOR = "notbegin";
-	public static final String END_OPERATOR = "end";
-	public static final String NOT_END_OPERATOR = "notend";
 	
 	/**
 	 * JSON sorters keys

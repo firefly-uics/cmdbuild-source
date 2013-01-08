@@ -22,23 +22,24 @@ import com.google.common.collect.Lists;
 
 public class JSONFilterMapperTest {
 
-	private CMClass entryType;
+	private CMClass mockEntryType;
 	
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
 		DBAttribute attr1 = new DBAttribute("attr1", new IntegerAttributeType(), null);
 		DBAttribute attr2 = new DBAttribute("attr2", new IntegerAttributeType(), null);
-		Iterable<DBAttribute> attributes = new ArrayList<DBAttribute>();
-		entryType = mock(CMClass.class);
-		when((Iterable<DBAttribute>) entryType.getAttributes()).thenReturn(Lists.newArrayList(attr1, attr2));
-		when(entryType.getName()).thenReturn("Clazz");
+		mockEntryType = mock(CMClass.class);
+		when((Iterable<DBAttribute>) mockEntryType.getAttributes()).thenReturn(Lists.newArrayList(attr1, attr2));
+		when(mockEntryType.getAttribute(attr1.getName())).thenReturn(attr1);
+		when(mockEntryType.getAttribute(attr2.getName())).thenReturn(attr2);
+		when(mockEntryType.getName()).thenReturn("Clazz");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void nullFilterShouldThrowException() throws Exception {
 		// given
-		FilterMapper filterMapper = new JSONFilterMapper(entryType, null);
+		FilterMapper filterMapper = new JSONFilterMapper(mockEntryType, null);
 
 		// when
 		WhereClause whereClause = filterMapper.deserialize();
@@ -49,7 +50,7 @@ public class JSONFilterMapperTest {
 		// given
 		String filter = "{not_expected_key: value}";
 		JSONObject filterObject = new JSONObject(filter);
-		FilterMapper filterMapper = new JSONFilterMapper(entryType, filterObject);
+		FilterMapper filterMapper = new JSONFilterMapper(mockEntryType, filterObject);
 
 		// when
 		WhereClause whereClause = filterMapper.deserialize();
@@ -58,12 +59,12 @@ public class JSONFilterMapperTest {
 	@Test
 	public void shouldSuccessfullyDeserializeGlobalFilter() throws Exception {
 		//given
-		String globalFilter = "{attribute: {simple: {attribute: age, operator: greater, value: [5]}}, " +
+		String globalFilter = "{attribute: {simple: {attribute: attr1, operator: greater, value: [5]}}, " +
 				"query: test}";
 		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
-		FilterMapper filterMapper = new JSONFilterMapper(entryType, globalFilterObject);
+		FilterMapper filterMapper = new JSONFilterMapper(mockEntryType, globalFilterObject);
 		WhereClause whereClause = filterMapper.deserialize();
 
 		//then
@@ -77,7 +78,7 @@ public class JSONFilterMapperTest {
 		JSONObject globalFilterObject = new JSONObject(globalFilter);
 		
 		//when
-		FilterMapper filterMapper = new JSONFilterMapper(entryType, globalFilterObject);
+		FilterMapper filterMapper = new JSONFilterMapper(mockEntryType, globalFilterObject);
 		WhereClause whereClause = filterMapper.deserialize();
 		
 		//then

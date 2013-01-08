@@ -270,6 +270,40 @@ public class DataAccessLogicTest extends DBFixture {
 		assertEquals(secondPageOfCards.size(), 1);
 	}
 
+	@Test
+	public void shouldFetchCardsWithAndConditionsInFilter() throws Exception {
+		// given
+		final DBClass newClass = dbDataView().createClass(newClass("test"));
+
+		final CMCard card1 = dbDataView().newCard(newClass) //
+				.setCode("foo") //
+				.setDescription("desc_foo") //
+				.save();
+		final CMCard card2 = dbDataView().newCard(newClass) //
+				.setCode("bar") //
+				.setDescription("description_aaa") //
+				.save();
+		final CMCard card3 = dbDataView().newCard(newClass) //
+				.setCode("bar") //
+				.setDescription("description_bbb") //
+				.save();
+		final CMCard card4 = dbDataView().newCard(newClass) //
+				.setCode("baz") //
+				.setDescription("description_zzz") //
+				.save();
+		JSONObject filterObject = new JSONObject(
+				"{attribute: {and: [{simple: {attribute: Code, operator: notcontain, value:['bar']}}, " +
+				"{simple: {attribute: Description, operator: contain, value: ['sc_f']}}]}}");
+
+		// when
+		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(),
+				createQueryOptions(10, 0, null, filterObject));
+
+		// then
+		assertEquals(fetchedCards.size(), 1);
+		assertEquals(fetchedCards.get(0).getCode(), "foo");
+	}
+
 	private QueryOptions createQueryOptions(final int limit, final int offset, final JSONArray sorters,
 			final JSONObject filter) {
 		return QueryOptions.newQueryOption() //
