@@ -148,7 +148,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	/*
 	 * Utilities
 	 */
-	
+
 	private OperationUser operationUser(final long id) {
 		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
 		when(authenticatedUser.getId()) //

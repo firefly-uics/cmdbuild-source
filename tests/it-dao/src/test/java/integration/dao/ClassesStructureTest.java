@@ -9,13 +9,17 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.namesOf;
+import static utils.IntergrationTestUtils.newClass;
+import static utils.IntergrationTestUtils.newSimpleClass;
+import static utils.IntergrationTestUtils.newSuperClass;
 
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class ClassesStructureTest extends DBFixture {
+public class ClassesStructureTest extends IntegrationTestBase {
 
 	@Test
 	public void classesReturnedFromCreationMethodHaveAllData() {

@@ -1,7 +1,8 @@
 package stress.logic.data;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static utils.IntergrationTestUtils.newClass;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class QueryStressTest extends DBFixture {
+public class QueryStressTest extends IntegrationTestBase {
 
 	private DataAccessLogic dataAccessLogic;
 	private DBClass stressTestClass;
@@ -33,7 +34,7 @@ public class QueryStressTest extends DBFixture {
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
 		dataAccessLogic = new DataAccessLogic(dbDataView());
-		DBDriver pgDriver = dbDriver();
+		final DBDriver pgDriver = dbDriver();
 		stressTestClass = pgDriver.findClassByName(CLASS_NAME);
 		if (stressTestClass == null) {
 			stressTestClass = dbDataView().createClass(newClass(CLASS_NAME, null));
@@ -44,32 +45,33 @@ public class QueryStressTest extends DBFixture {
 	@Test(timeout = 200)
 	public void evaluatePaginationPerformanceInQueries() throws Exception {
 		// given
-		QueryOptions queryOptions = createQueryOptions(100, 0, null, null);
+		final QueryOptions queryOptions = createQueryOptions(100, 0, null, null);
 
 		// when
-		List<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
-		//then
+		final List<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
+		// then
 		assertEquals(cards.size(), 100);
 	}
-	
+
 	@Test(timeout = 200)
 	public void evaluatePaginationPerformanceWithSortingAndFilters() throws Exception {
 		// given
-		JSONArray sortersArray = new JSONArray();
+		final JSONArray sortersArray = new JSONArray();
 		sortersArray.put(new JSONObject("{property: Code, direction: ASC}"));
-		JSONObject filter = new JSONObject("{attribute: {simple: {attribute: Code, operator: equal, value: ['100']}}}");
-		QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
-		
+		final JSONObject filter = new JSONObject(
+				"{attribute: {simple: {attribute: Code, operator: equal, value: ['100']}}}");
+		final QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
+
 		// when
-		List<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
-		
-		//then
+		final List<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+
+		// then
 		assertEquals(cards.size(), 1);
 	}
 
 	private void storeBigAmountOfCardsIfNeeded() {
-		CMQueryResult result = dbDataView().select(anyAttribute(stressTestClass)).from(stressTestClass) //
+		final CMQueryResult result = dbDataView().select(anyAttribute(stressTestClass)).from(stressTestClass) //
 				.run();
 		if (result.totalSize() < NUMBER_OF_CARDS) {
 			for (int i = result.totalSize(); i < NUMBER_OF_CARDS; i++) {

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
+import static utils.IntergrationTestUtils.namesOf;
 
 import java.util.Collection;
 
@@ -18,12 +19,12 @@ import org.cmdbuild.dao.reference.CMReference;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
 /**
  * Tests specific to the legacy PostgreSQL driver
  */
-public class PostgresDriverTest extends DBFixture {
+public class PostgresDriverTest extends IntegrationTestBase {
 
 	private final static String CLASSNAME_CONTAINING_REGCLASS = "Menu";
 	private final static String TEXT_MANDATORY_ATTRIBUTE = "Type";

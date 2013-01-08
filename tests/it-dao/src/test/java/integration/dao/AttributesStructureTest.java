@@ -3,6 +3,7 @@ package integration.dao;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.newClass;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -10,9 +11,9 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class AttributesStructureTest extends DBFixture {
+public class AttributesStructureTest extends IntegrationTestBase {
 
 	@Test
 	public void nullValueIsReturnedWhenFetchingUnexistingAttribute() {
