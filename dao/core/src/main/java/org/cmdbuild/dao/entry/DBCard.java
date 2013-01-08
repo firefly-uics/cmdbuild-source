@@ -6,6 +6,8 @@ import org.cmdbuild.dao.entrytype.DBClass;
 
 public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 
+	private static final Long NOT_EXISTING_CARD_ID = null;
+
 	private DBCard(final DBDriver driver, final DBClass type, final Long id) {
 		super(driver, type, id);
 	}
@@ -43,12 +45,16 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 
 	@Override
 	public DBCard save() {
-		saveOnly();
+		if (getId() == NOT_EXISTING_CARD_ID) {
+			saveOnly();
+		} else {
+			updateOnly();
+		}
 		return this;
 	}
 
 	public static DBCard newInstance(final DBDriver driver, final DBClass type) {
-		return new DBCard(driver, type, null);
+		return new DBCard(driver, type, NOT_EXISTING_CARD_ID);
 	}
 
 	public static DBCard newInstance(final DBDriver driver, final DBClass type, final Long id) {

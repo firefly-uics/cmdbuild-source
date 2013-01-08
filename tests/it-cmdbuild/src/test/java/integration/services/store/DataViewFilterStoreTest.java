@@ -13,6 +13,7 @@ import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.services.store.DataViewFilterStore;
+import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +21,7 @@ import org.junit.Test;
 
 import utils.IntegrationTestBase;
 
-public class DBFilterStoreTest extends IntegrationTestBase {
+public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 	private static final long USER_ID = 123L;
 	private static final long ANOTHER_USER_ID = 456L;
@@ -39,50 +40,115 @@ public class DBFilterStoreTest extends IntegrationTestBase {
 
 	@Test
 	public void noFiltersDefinedAsDefault() throws Exception {
-		assertThat(size(filterStore.getAllFilters()), equalTo(0));
+		// given
+
+		// when
+		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+
+		// then
+		assertThat(size(filters), equalTo(0));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void filterNameCannotBeNull() throws Exception {
+		// given
+
+		// when
 		filterStore.save(filter(null, "bar"));
+
+		// then
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void filterNameCannotBeEmpty() throws Exception {
+		// given
+
+		// when
 		filterStore.save(filter("", "bar"));
+
+		// then
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void filterNameCannotBeBlank() throws Exception {
+		// given
+
+		// when
 		filterStore.save(filter(" \t", "bar"));
+
+		// then
 	}
 
 	@Test
 	public void filterSavedAndRead() throws Exception {
+		// given
 		filterStore.save(filter("foo", "bar"));
-		assertThat(size(filterStore.getAllFilters()), equalTo(1));
-		assertThat(filterStore.getAllFilters(), contains(filter("foo", "bar")));
+
+		// when
+		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+
+		// then
+		assertThat(size(filters), equalTo(1));
+		assertThat(filters, contains(filter("foo", "bar")));
+	}
+
+	@Test
+	public void filterModified() throws Exception {
+		// given
+		filterStore.save(filter("foo", "bar"));
+
+		// when
+		Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+
+		// then
+		assertThat(size(filters), equalTo(1));
+		assertThat(filters, contains(filter("foo", "bar")));
+
+		// but
+		filterStore.save(filter("foo", "baz"));
+
+		// when
+		filters = filterStore.getAllFilters();
+
+		// then
+		assertThat(size(filters), equalTo(1));
+		assertThat(filters, contains(filter("foo", "baz")));
 	}
 
 	@Test
 	public void filterSavedAndReadByUserId() throws Exception {
+		// given
+		filterStore.save(filter("bar", "baz"));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
 				dbDataView(), operationUser(ANOTHER_USER_ID));
 		anotherFilterStore.save(filter("foo", "baz"));
-		filterStore.save(filter("bar", "baz"));
-		assertThat(size(filterStore.getAllFilters()), equalTo(1));
-		assertThat(filterStore.getAllFilters(), contains(filter("bar", "baz")));
+
+		// when
+		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
+
+		// then
+		assertThat(size(filters), equalTo(1));
+		assertThat(filters, contains(filter("bar", "baz")));
 	}
 
 	@Test
 	public void filterDataFullyRead() throws Exception {
+		// given
 		filterStore.save(filter("foo", "bar", "baz"));
+
+		// when
 		final Filter filter = filterStore.getAllFilters().iterator().next();
+
+		// then
 		assertThat(filter.getName(), equalTo("foo"));
 		assertThat(filter.getDescription(), equalTo("bar"));
 		assertThat(filter.getValue(), equalTo("baz"));
 	}
 
+	/*
+	 * Utilities
+	 */
+	
 	private OperationUser operationUser(final long id) {
 		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
 		when(authenticatedUser.getId()) //
