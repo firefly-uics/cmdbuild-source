@@ -20,11 +20,11 @@ import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public class IntergrationTestUtils {
+public class IntegrationTestUtils {
 
 	public static final DBClass NO_PARENT = null;
 
-	private IntergrationTestUtils() {
+	private IntegrationTestUtils() {
 		// prevents instantiation
 	}
 

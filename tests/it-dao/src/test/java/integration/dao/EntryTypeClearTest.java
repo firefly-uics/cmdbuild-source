@@ -6,8 +6,8 @@ import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.newClass;
-import static utils.IntergrationTestUtils.newDomain;
+import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newDomain;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;

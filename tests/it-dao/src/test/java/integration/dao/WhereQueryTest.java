@@ -15,9 +15,9 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.codeAttribute;
-import static utils.IntergrationTestUtils.descriptionAttribute;
-import static utils.IntergrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.codeAttribute;
+import static utils.IntegrationTestUtils.descriptionAttribute;
+import static utils.IntegrationTestUtils.newClass;
 
 import java.util.Iterator;
 

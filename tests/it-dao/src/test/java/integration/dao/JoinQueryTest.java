@@ -9,12 +9,12 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.codeAttribute;
-import static utils.IntergrationTestUtils.descriptionAttribute;
-import static utils.IntergrationTestUtils.keyAttribute;
-import static utils.IntergrationTestUtils.newClass;
-import static utils.IntergrationTestUtils.newDomain;
-import static utils.IntergrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.codeAttribute;
+import static utils.IntegrationTestUtils.descriptionAttribute;
+import static utils.IntegrationTestUtils.keyAttribute;
+import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newDomain;
+import static utils.IntegrationTestUtils.newSuperClass;
 
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
