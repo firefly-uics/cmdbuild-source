@@ -4,10 +4,15 @@ import static org.cmdbuild.dao.driver.postgres.Utils.quoteIdent;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.CMTypeObject;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.reference.CMReference;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -32,6 +37,7 @@ abstract class EntryCommand {
 	}
 
 	protected Map<String, Object> userAttributesFor(final DBEntry entry) {
+		final CMEntryType entryType = entry.getType();
 		final Map<String, Object> values = Maps.newHashMap();
 		for (final Map.Entry<String, Object> v : entry.getValues()) {
 			final String name = v.getKey();
@@ -39,7 +45,8 @@ abstract class EntryCommand {
 			if (value instanceof CMReference) {
 				value = CMReference.class.cast(value).getId();
 			}
-			values.put(quoteIdent(name), value);
+			final CMAttributeType<?> attributeType = entryType.getAttribute(name).getType();
+			values.put(quoteIdent(name), SqlType.getSqlType(attributeType).javaToSqlValue(value));
 		}
 		// TODO ugly... a visitor is a better idea!
 		if (entry instanceof DBRelation) {

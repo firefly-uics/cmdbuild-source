@@ -3,6 +3,7 @@ package org.cmdbuild.dao.query;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
+import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import org.cmdbuild.dao.view.QueryExecutorDataView;
 @NotThreadSafe
 public class QuerySpecsBuilder {
 
-	private class AliasLibrary {
+	private static class AliasLibrary {
 
 		private final Set<Alias> aliasSet;
 		private CMEntryType fromType;
@@ -130,14 +131,14 @@ public class QuerySpecsBuilder {
 	}
 
 	public QuerySpecsBuilder from(final CMClass fromClass) {
-		return from(fromClass, as(fromClass.getName()));
+		return from(fromClass, canonicalAlias(fromClass));
 	}
 
 	/*
 	 * TODO: Consider more join levels (join with join tables)
 	 */
 	public QuerySpecsBuilder join(final CMClass joinClass, final Over overClause) {
-		return join(joinClass, as(joinClass.getName()), overClause);
+		return join(joinClass, canonicalAlias(joinClass), overClause);
 	}
 
 	public QuerySpecsBuilder join(final CMClass joinClass, final Alias joinClassAlias, final Over overClause) {

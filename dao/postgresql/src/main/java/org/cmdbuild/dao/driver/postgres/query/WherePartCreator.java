@@ -12,7 +12,11 @@ import java.util.List;
 
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.Utils;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
@@ -34,8 +38,11 @@ import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
 public class WherePartCreator extends PartCreator implements WhereClauseVisitor {
 
+	private final QuerySpecs query;
+
 	public WherePartCreator(final QuerySpecs query) {
 		super();
+		this.query = query;
 		query.getWhereClause().accept(this);
 		// FIXME: append the status IF NOT a history query
 		if (query.getFromType().holdsHistory()) {
@@ -158,8 +165,23 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String operator, final Object value) {
+		final Object sqlValue = sqlValueOf(attribute, value);
 		final String lhs = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-		return String.format("%s %s %s", lhs, operator, value != null ? param(value) : "");
+		return String.format("%s %s %s", lhs, operator, value != null ? param(sqlValue) : "");
+	}
+
+	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {
+		return sqlTypeOf(attribute).javaToSqlValue(value);
+	}
+
+	private SqlType sqlTypeOf(final QueryAliasAttribute attribute) {
+		return SqlType.getSqlType(typeOf(attribute));
+	}
+
+	private CMAttributeType<?> typeOf(final QueryAliasAttribute attribute) {
+		final String key = attribute.getName();
+		final CMAttribute _attribute = query.getFromType().getAttribute(key);
+		return (_attribute == null) ? new UndefinedAttributeType() : _attribute.getType();
 	}
 
 }
