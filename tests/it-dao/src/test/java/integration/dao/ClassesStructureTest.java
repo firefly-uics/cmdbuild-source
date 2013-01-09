@@ -9,10 +9,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.namesOf;
-import static utils.IntergrationTestUtils.newClass;
-import static utils.IntergrationTestUtils.newSimpleClass;
-import static utils.IntergrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.namesOf;
+import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newSimpleClass;
+import static utils.IntegrationTestUtils.newSuperClass;
 
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.junit.Test;

@@ -2,7 +2,7 @@ package stress.logic.data;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.junit.Assert.assertEquals;
-import static utils.IntergrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newClass;
 
 import java.util.List;
 

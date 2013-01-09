@@ -3,7 +3,7 @@ package integration.dao.driver.postgres.query;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newClass;
 
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.DBClass;
