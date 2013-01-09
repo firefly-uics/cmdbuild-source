@@ -1,18 +1,15 @@
 package integration.logic.data.filter;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static utils.IntergrationTestUtils.newAttribute;
+import static utils.IntergrationTestUtils.newClass;
 
 import java.util.Map;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.DBCard;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.view.CMAttributeDefinition;
-import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
@@ -46,7 +43,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
 		dataAccessLogic = new DataAccessLogic(dbDataView());
-		createdClass = createClass(CLASS_NAME, null);
+		createdClass = createClass(CLASS_NAME);
 		initializeDatabaseData();
 	}
 
@@ -72,21 +69,12 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				.build();
 	}
 
-	protected DBClass createClass(final String name, final DBClass parent) {
-		final DBClassDefinition definition = mock(DBClassDefinition.class);
-		when(definition.getName()).thenReturn(name);
-		when(definition.getParent()).thenReturn(parent);
-		when(definition.isHoldingHistory()).thenReturn(true);
-		return dbDataView().createClass(definition);
+	protected DBClass createClass(final String name) {
+		return dbDataView().createClass(newClass(name));
 	}
 
 	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType type, final DBClass klass) {
-		final CMAttributeDefinition attrDef = mock(CMAttributeDefinition.class);
-		when(attrDef.getName()).thenReturn(name);
-		when(attrDef.getOwner()).thenReturn(klass);
-		when((CMAttributeType) attrDef.getType()).thenReturn(type);
-		when(attrDef.getMode()).thenReturn(Mode.WRITE);
-		return dbDataView().createAttribute(attrDef);
+		return dbDataView().createAttribute(newAttribute(name, type, klass));
 	}
 
 	protected void insertCardWithValues(final DBClass klass, final Map<String, Object> attributeNameToValue) {
@@ -107,8 +95,8 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				valuesString = valuesString + ",";
 			}
 		}
-		String s = "{attribute: {simple: {attribute: " + attributeName + ", operator: "
-				+ operator.toString() + ", value:[" + valuesString + "]}}}";
+		final String s = "{attribute: {simple: {attribute: " + attributeName + ", operator: " + operator.toString()
+				+ ", value:[" + valuesString + "]}}}";
 		return new JSONObject(s);
 	}
 

@@ -15,6 +15,9 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.codeAttribute;
+import static utils.IntergrationTestUtils.descriptionAttribute;
+import static utils.IntergrationTestUtils.newClass;
 
 import java.util.Iterator;
 
@@ -25,9 +28,9 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class WhereQueryTest extends DBFixture {
+public class WhereQueryTest extends IntegrationTestBase {
 
 	private static final String CLASS_NAME = "foo";
 

@@ -9,6 +9,12 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.codeAttribute;
+import static utils.IntergrationTestUtils.descriptionAttribute;
+import static utils.IntergrationTestUtils.keyAttribute;
+import static utils.IntergrationTestUtils.newClass;
+import static utils.IntergrationTestUtils.newDomain;
+import static utils.IntergrationTestUtils.newSuperClass;
 
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entry.DBRelation;
@@ -21,9 +27,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class JoinQueryTest extends DBFixture {
+public class JoinQueryTest extends IntegrationTestBase {
 
 	private DBClass SRC;
 	private DBClass DST;

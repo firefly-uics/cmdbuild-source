@@ -8,6 +8,8 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static utils.IntergrationTestUtils.newClass;
+import static utils.IntergrationTestUtils.newSuperClass;
 
 import java.util.NoSuchElementException;
 
@@ -18,11 +20,11 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
 import com.google.common.collect.Iterables;
 
-public class SimpleQueryTest extends DBFixture {
+public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void simpleSubclassQuery() {

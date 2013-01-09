@@ -4,6 +4,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.newClass;
+import static utils.IntergrationTestUtils.newSuperClass;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
@@ -11,9 +13,9 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class DataTest extends DBFixture {
+public class DataTest extends IntegrationTestBase {
 
 	private static final Object CODE_VALUE = "foo";
 	private static final Object DESCRIPTION_VALUE = "bar";
