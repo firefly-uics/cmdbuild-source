@@ -175,4 +175,26 @@ public class JSONLibraryTest {
 		}
 	}
 
+	@Test
+	public void shouldQuoteSpecialCharacters() throws Exception {
+		// given
+		String date = "16/12/1998";
+
+		// when
+		String quotedDate = JSONObject.quote(date);
+
+		// then
+		assertEquals("\"" + "16/12/1998" + "\"", quotedDate);
+		JSONObject dateObjectCreatedSuccessfully = new JSONObject("{key: " + quotedDate + "}");
+	}
+
+	@Test(expected = Exception.class)
+	public void shouldThrowExceptionIfUnquotedSpecialChar() throws Exception {
+		// given
+		String date = "16/12/1998";
+
+		// when
+		new JSONObject("{key: " + date + "}");
+	}
+
 }

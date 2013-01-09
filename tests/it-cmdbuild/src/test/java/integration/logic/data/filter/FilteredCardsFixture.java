@@ -90,14 +90,22 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 		String valuesString = "";
 		final Object[] valuesArray = Lists.newArrayList(values).toArray();
 		for (int i = 0; i < valuesArray.length; i++) {
-			valuesString = valuesString + valuesArray[i].toString();
+			valuesString = valuesString + quoteIfNecessary(valuesArray[i].toString());
 			if (i < valuesArray.length - 1) {
 				valuesString = valuesString + ",";
 			}
 		}
+
 		final String s = "{attribute: {simple: {attribute: " + attributeName + ", operator: " + operator.toString()
 				+ ", value:[" + valuesString + "]}}}";
 		return new JSONObject(s);
+	}
+
+	private String quoteIfNecessary(final String notQuotedString) {
+		if (notQuotedString.contains("/")) {
+			return JSONObject.quote(notQuotedString);
+		}
+		return notQuotedString;
 	}
 
 }
