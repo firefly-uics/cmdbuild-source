@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
-import static utils.IntergrationTestUtils.namesOf;
+import static utils.IntegrationTestUtils.namesOf;
 
 import java.util.Collection;
 

@@ -3,9 +3,9 @@ package integration.dao.driver.postgres;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.newClass;
-import static utils.IntergrationTestUtils.newSimpleClass;
-import static utils.IntergrationTestUtils.newTextAttribute;
+import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newSimpleClass;
+import static utils.IntegrationTestUtils.newTextAttribute;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.driver.DBDriver;

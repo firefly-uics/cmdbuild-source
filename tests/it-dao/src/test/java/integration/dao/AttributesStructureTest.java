@@ -3,7 +3,7 @@ package integration.dao;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newClass;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.DBAttribute;
