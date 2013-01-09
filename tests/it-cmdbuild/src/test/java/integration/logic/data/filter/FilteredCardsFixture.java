@@ -107,8 +107,9 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				valuesString = valuesString + ",";
 			}
 		}
-		return new JSONObject("{attribute: {simple: {attribute: " + attributeName + ", operator: "
-				+ operator.toString() + ", value:[" + valuesString + "]}}}");
+		String s = "{attribute: {simple: {attribute: " + attributeName + ", operator: "
+				+ operator.toString() + ", value:[" + valuesString + "]}}}";
+		return new JSONObject(s);
 	}
 
 }
