@@ -6,6 +6,8 @@ import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.newClass;
+import static utils.IntergrationTestUtils.newDomain;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
@@ -16,9 +18,9 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.junit.After;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class EntryTypeClearTest extends DBFixture {
+public class EntryTypeClearTest extends IntegrationTestBase {
 
 	private DBClass clazz;
 	private DBDomain domain;

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static utils.IntergrationTestUtils.newClass;
 
 import java.util.List;
 
@@ -16,10 +17,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 import utils.UserRolePrivilegeFixture;
 
-public class SecurityLogicTest extends DBFixture {
+public class SecurityLogicTest extends IntegrationTestBase {
 
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_PASSWORD = "admin";
@@ -40,7 +41,7 @@ public class SecurityLogicTest extends DBFixture {
 	@Before
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
-		
+
 		securityLogic = new SecurityLogic(dbDataView());
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}

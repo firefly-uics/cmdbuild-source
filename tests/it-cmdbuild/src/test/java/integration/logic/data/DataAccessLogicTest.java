@@ -2,6 +2,7 @@ package integration.logic.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static utils.IntergrationTestUtils.newClass;
 
 import java.util.List;
 
@@ -14,9 +15,9 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.DBFixture;
+import utils.IntegrationTestBase;
 
-public class DataAccessLogicTest extends DBFixture {
+public class DataAccessLogicTest extends IntegrationTestBase {
 
 	private DataAccessLogic dataAccessLogic;
 
@@ -291,9 +292,9 @@ public class DataAccessLogicTest extends DBFixture {
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
-		JSONObject filterObject = new JSONObject(
-				"{attribute: {and: [{simple: {attribute: Code, operator: notcontain, value:['bar']}}, " +
-				"{simple: {attribute: Description, operator: contain, value: ['sc_f']}}]}}");
+		final JSONObject filterObject = new JSONObject(
+				"{attribute: {and: [{simple: {attribute: Code, operator: notcontain, value:['bar']}}, "
+						+ "{simple: {attribute: Description, operator: contain, value: ['sc_f']}}]}}");
 
 		// when
 		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(),
