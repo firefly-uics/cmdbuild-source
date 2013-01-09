@@ -8,8 +8,8 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static utils.IntergrationTestUtils.newClass;
-import static utils.IntergrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newSuperClass;
 
 import java.util.NoSuchElementException;
 

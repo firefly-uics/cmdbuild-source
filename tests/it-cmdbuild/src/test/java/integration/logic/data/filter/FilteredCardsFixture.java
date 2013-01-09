@@ -1,7 +1,7 @@
 package integration.logic.data.filter;
 
-import static utils.IntergrationTestUtils.newAttribute;
-import static utils.IntergrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newAttribute;
+import static utils.IntegrationTestUtils.newClass;
 
 import java.util.Map;
 

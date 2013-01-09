@@ -4,8 +4,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.newClass;
-import static utils.IntergrationTestUtils.newSuperClass;
+import static utils.IntegrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newSuperClass;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;

@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static utils.IntergrationTestUtils.newClass;
+import static utils.IntegrationTestUtils.newClass;
 
 import java.util.List;
 
