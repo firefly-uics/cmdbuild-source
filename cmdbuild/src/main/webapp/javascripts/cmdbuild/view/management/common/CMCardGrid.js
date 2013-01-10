@@ -3,10 +3,6 @@
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 
-		mixins: {
-			cmFilterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate"
-		},
-
 		columns: [],
 
 		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',	// for the header configuration
@@ -64,7 +60,6 @@
 		},
 
 		updateStoreForClassId: function(classId, o) {
-
 			function callCbOrLoadFirstPage() {
 				if (o && o.cb) {
 					o.cb.call(o.scope || this);
@@ -99,8 +94,6 @@
 			this.store.loadPage(Math.floor(pageNumber));
 		},
 
-		clearFilter: clearFilter,
-
 		reload: function(reselect) {
 			var cb = Ext.emptyFn;
 
@@ -127,7 +120,7 @@
 		getVisibleColumns: function() {
 			var columns = this.columns;
 			var visibleColumns = [];
-			
+
 			for (var i = 0, len = columns.length ; i<len ; i++) {
 				var col = columns[i];
 				if (!col.hidden && col.dataIndex != "Id") { // The graph column has dataIndex Id
@@ -317,16 +310,6 @@
 			} catch (e) {
 				_debug("I'm not able to set the filter to the store", this, filter);
 			}
-		},
-
-		// as cmFilterWindow
-
-		onCMFilterWindowApplyButtonClick: function(filterWindow) {
-			_debug(filterWindow.getFilter());
-			this.applyFilterToStore(filterWindow.getFilter());
-			this.reload();
-
-			filterWindow.destroy();
 		}
 	});
 
@@ -339,25 +322,16 @@
 		}
 
 		if (this.cmAdvancedFilter) {
-			this.openFilterButton = new Ext.button.Button({
-				scope: this,			
-				iconCls: 'find',
-				text: CMDBuild.Translation.management.findfilter.set_filter,
-				handler: onOpenFilterButtonClick,
-				disabled: true
-			});
-
-			this.clearFilterButton = new Ext.button.Button({
-				scope: this,
-				iconCls: 'clear_find',
-				text: CMDBuild.Translation.management.findfilter.clear_filter,
-				handler: function() {
-					this.clearFilter();
-				},
-				disabled: true
-			});
-
-			items.push(this.openFilterButton, this.clearFilterButton);
+			this.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
+			_CMUtils.forwardMethods(this, this.filterMenuButton, [
+				"enableClearFilterButton",
+				"disableClearFilterButton",
+				"enableSaveFilterButton",
+				"disableSaveFilterButton",
+				"setFilterButtonLabel",
+				"selectAppliedFilter"
+			]);
+			items.push(this.filterMenuButton);
 		}
 
 		if (this.cmAddPrintButton) {
@@ -404,42 +378,6 @@
 		return '<img style="cursor:pointer" title="'
 			+ CMDBuild.Translation.management.graph.icon_tooltip
 			+'" class="action-open-graph" src="images/icons/chart_organisation.png"/>';
-	}
-
-	function onOpenFilterButtonClick() {
-		var filter = new CMDBuild.view.management.common.filter.CMFilterWindow({
-			attributes: this.classAttributes,
-			className: _CMCache.getEntryTypeNameById(this.currentClassId)
-		});
-		filter.addDelegate(this);
-		filter.show();
-	}
-
-	function clearFilter(cb, skipReload) {
-		CMDBuild.Ajax.request({
-			url: 'services/json/management/modcard/resetcardfilter',
-			params: {
-				FilterCategory: this.filterCategory
-			},
-			scope: this,
-			success: function(response) {
-				if (this.clearFilterButton) {
-					this.clearFilterButton.disable();
-				}
-
-				if (!skipReload) {
-					if (this.pagingBar) {
-						this.store.loadPage(1);
-					} else {
-						this.reload();
-					}
-				}
-
-				if (typeof cb == "function") {
-					cb();
-				}
-			}
-		});
 	}
 
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {

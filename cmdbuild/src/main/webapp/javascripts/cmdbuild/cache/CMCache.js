@@ -13,7 +13,8 @@
 			reports: "CMDBUild.cache.CMCacheReportFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
-			gis: "CMDBUild.cache.CMCacheGisFunctions"
+			gis: "CMDBUild.cache.CMCacheGisFunctions",
+			filters: "CMDBuild.cache.CMChcheFilterFunctions"
 		},
 
 		constructor: function() {

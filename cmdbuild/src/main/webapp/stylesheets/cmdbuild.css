@@ -348,7 +348,11 @@ em {
 	background-image: url(../images/icons/search.gif) !important;	
 }
 
-.clear_find {
+.add_filter {
+	background-image: url(../images/icons/add_filter.png) !important;
+}
+
+.clear_filter {
 	background-image: url(../images/icons/clear_find.png) !important;
 }
 
@@ -422,6 +426,10 @@ em {
 
 .down-hover {
 	background-image: url(../images/icons/down-hover.gif) !important;
+}
+
+.save {
+	background-image: url(../images/icons/disk.png) !important;
 }
 
 .expand, 
@@ -970,4 +978,25 @@ em {
 
 .cmdbuild-nodisplay {
 	display: none !important;
+}
+
+/* filterMenuButtonGrid */
+
+.filterMenuButtonGrid .x-grid-cell-inner {
+	padding: 3px 6px;
+	height:  auto !important;
+	width:  auto !important;
+	overflow: hidden ! important;
+}
+
+.filterMenuButtonGrid img {
+	padding: 3px 2px;
+}
+
+.filterMenuButtonGrid-name {
+	font-size: 1.1em;
+}
+
+.filterMenuButtonGrid-description {
+	color: #666;
 }

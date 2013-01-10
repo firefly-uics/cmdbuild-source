@@ -8,6 +8,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
 <!--CHACHE -->
+<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheFilterFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
@@ -101,6 +102,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
 <!-- TODO: remove from management -->
+<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/filter/CMFilterAttribute.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
