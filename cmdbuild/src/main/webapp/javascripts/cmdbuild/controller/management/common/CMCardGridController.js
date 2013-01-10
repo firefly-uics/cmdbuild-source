@@ -2,7 +2,10 @@
 	Ext.define("CMDBuild.controller.management.common.CMCardGridController", {
 
 		mixins: {
-			observable: "Ext.util.Observable"
+			observable: "Ext.util.Observable",
+			filterMenuButton: "CMDBuild.view.management.common.filter.CMFilterMenuButtonDelegate",
+			filterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate",
+			saveFilterWindow: "CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate"
 		},
 
 		constructor: function(view, supercontroller) {
@@ -37,6 +40,9 @@
 			this.mon(this.view.printGridMenu, "click", this.onPrintGridMenuClick, this);
 
 			this.stateDelegate = this.buildStateDelegate();
+			if (this.view.filterMenuButton) {
+				this.view.filterMenuButton.addDelegate(this);
+			}
 		},
 
 		buildStateDelegate: function() {
@@ -114,8 +120,6 @@
 				cb: afterStoreUpdated
 			});
 
-			me.view.openFilterButton.enable();
-			me.view.clearFilterButton.disable();
 			me.view.gridSearchField.reset();
 		},
 
@@ -243,8 +247,212 @@
 
 		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
 			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+		},
+
+		// As filterMentuButtonDelegate
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the save icon on a row of the picker
+		 * 
+		 * @param {object} filter, the filter to save
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonSaveActionClick: function(button, filter) {
+			if (!filter.dirty) {
+				return;
+			}
+
+			showSaveFilterDialog(this, filter);
+		},
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to the clear button
+		 */
+		onFilterMenuButtonClearActionClick: function(button) {
+			unApplyFilter(this);
+			this.view.reload();
+		},
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the apply icon on a row of the picker
+		 * 
+		 * @param {object} filter, the filter to apply
+		 */
+		onFilterMenuButtonApplyActionClick: function(button, filter) {
+			applyFilter(this, filter);
+		},
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to the new button
+		 */
+		onFilterMenuButtonNewActionClick: function(button) {
+			var filter = new CMDBuild.model.CMFilterModel({
+				local: true,
+				name: "@@ New filter " + _CMUtils.nextId()
+			});
+
+			this.onFilterMenuButtonModifyActionClick(button, filter);
+		},
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the modify icon on a row of the picker
+		 * 
+		 * @param {object} filter, the filter to modify
+		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
+		 * the button that calls the delegate
+		 */
+		onFilterMenuButtonCloneActionClick: function(button, filter) {
+			filter.setLocal(true);
+			filter.setName("@@ Copy of " + filter.getName());
+			this.onFilterMenuButtonModifyActionClick(button, filter);
+		},
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the modify icon on a row of the picker
+		 * 
+		 * @param {object} filter, the filter to modify
+		 */
+		onFilterMenuButtonModifyActionClick: function(button, filter) {
+			var filterWindow = new CMDBuild.view.management.common.filter.CMFilterWindow({
+				filter: filter,
+				attributes: this.view.classAttributes,
+				className: _CMCache.getEntryTypeNameById(this.view.currentClassId)
+			});
+
+			filterWindow.addDelegate(this);
+			filterWindow.show();
+		},
+
+		/**
+		 * Called by the CMFilterMenuButton when click
+		 * to on the remove icon on a row of the picker
+		 * 
+		 * @param {object} filter, the filter to remove
+		 */
+		onFilterMenuButtonRemoveActionClick: function(button, filter) {
+			function makeRequest(btn) {
+				if (btn != 'yes') {
+					return;
+				}
+
+				button.setFilterButtonLabel();
+				// TODO Do the call
+				_CMCache.removeFilter(filter);
+			};
+
+			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);
+		},
+
+		// as cmFilterWindow
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowSaveAndApplyButtonClick: function(filterWindow, filter) {
+			showSaveFilterDialog(this, filter, filterWindow);
+		},
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowApplyButtonClick: function(filterWindow, filter) {
+			applyFilter(this, filter);
+			if (filterWindow) {
+				filterWindow.destroy();
+			}
+		},
+
+		/**
+		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
+		 * The filter window that call the delegate
+		 */
+		onCMFilterWindowAbortButtonClick: function(filterWindow) {
+			filterWindow.destroy();
+		},
+
+		// as saveFilterWindow
+
+		/**
+		 * @param {CMDBuild.view.management.common.filter.CMSaveFilterWindow} window
+		 * the window that calls the delegate
+		 * @param {CMDBuild.model.CMFilterModel} filter
+		 * the filter to save
+		 * @param {String} name
+		 * the name set in the form
+		 * @param {String} the description set in the form
+		 */
+		onSaveFilterWindowConfirm: function(saveFilterWindow, filter, name, description) {
+			_CMCache.removeFilter(filter);
+			filter.setName(name);
+			filter.setDescription(description);
+			filter.commit();
+
+			if (filter.isLocal()) {
+				// TODO proxy.save
+				_CMCache.addFilter(filter);
+			} else {
+				// TODO proxy.update
+				_CMCache.updateFilter(filter);
+			}
+
+			if (saveFilterWindow.referredFilterWindow) {
+				this.onCMFilterWindowApplyButtonClick(saveFilterWindow.referredFilterWindow, filter);
+			}
+
+			saveFilterWindow.destroy();
+			this.view.selectAppliedFilter();
 		}
 	});
+
+	function applyFilter(me, filter) {
+		unApplyFilter(me);
+
+		me.appliedFilter = filter;
+
+		if (filter.dirty) {
+			var atFirst = true;
+			_CMCache.addFilter(filter, atFirst);
+		}
+
+		me.view.setFilterButtonLabel(filter.getName());
+		me.view.applyFilterToStore(filter.getConfiguration());
+		me.view.enableClearFilterButton();
+		me.view.reload();
+
+		var applied = true;
+		_CMCache.setFilterApplied(filter, applied);
+	}
+
+	function unApplyFilter(me) {
+		if (me.appliedFilter) {
+			var applied = false;
+			_CMCache.setFilterApplied(me.appliedFilter, applied);
+
+			me.appliedFilter = undefined;
+		}
+		me.view.setFilterButtonLabel();
+		me.view.applyFilterToStore({});
+		me.view.disableClearFilterButton();
+	}
+
+	function showSaveFilterDialog(me, filter, referredFilterWindow) {
+		var saveFilterWindow = new CMDBuild.view.management.common.filter.CMSaveFilterWindow({
+			filter: filter,
+			referredFilterWindow: referredFilterWindow
+		});
+
+		saveFilterWindow.addDelegate(me);
+		saveFilterWindow.show();
+	}
 
 	function fillParams(params, p, me) {
 		Ext.apply(params, p, me.view.getStoreExtraParams());

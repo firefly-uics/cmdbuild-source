@@ -134,6 +134,30 @@ CMDBuild.Utils = (function() {
 			}
 		},
 
+		/**
+		 * 
+		 * @param {array} array an array in which search something
+		 * @param {function} fn a function that is called one time for each
+		 * element in the array. The function must return true if the
+		 * item is the searched
+		 * 
+		 * @returns an object of the array if the passed function return true, or null
+		 */
+		arraySearchByFunction: function(array, fn) {
+			if (!Ext.isArray(array) || !Ext.isFunction(fn)) {
+				return null;
+			}
+
+			for (var i=0, l=array.length; i<l; ++i) {
+				var el = array[i];
+				if (fn(el)) {
+					return el;
+				}
+			}
+
+			return null;
+		},
+
 		isSuperclass: function(idClass) {
 			var c =  _CMCache.getEntryTypeById(idClass);
 			if (c) {

@@ -107,14 +107,79 @@
 			return out;
 		},
 
+		/*
+		 * Data is an object with a single key [simple | and | or]
+		 * simple is the object that actually contains the configuration of
+		 * a filter chunk, and and or are array of other object with the
+		 * same configuration
+		 * 
+		 * example
+		 * 	{
+				and: [{
+					or: [{
+						simple: {
+							attribute: "Code",
+							operator: "contain",
+							value: ["01"]
+						}
+					},{
+						simple: {
+							attribute: "Code",
+							operator: "contain",
+							value: ["02"]
+						}
+					}]
+				}, {
+					simple: {
+						attribute: "Description",
+						operator: "contain",
+						value: ["The"]
+					}
+				}] 
+			}
+		 */
+		setData: function(data) {
+			addData(this, data);
+		},
+
 		// as attributeFieldsetDelegate
 
 		onAttributeFieldsetIsEmpty: function(fieldset) {
 			this.remove(fieldset);
 			delete this.fieldsetCategory[fieldset.attributeName];
 		}
-
 	});
+
+	function addData(me, data) {
+		if (data.simple) {
+			addSimpleData(me, data);
+		} else {
+			addCompositeData(me, data);
+		}
+	}
+
+	function addSimpleData(me, data) {
+		_debug("add simple data", data.simple);
+		if (!data || !data.simple) {
+			return;
+		}
+
+		var attributeName = data.simple.attribute || "";
+		var attribute = _CMUtils.arraySearchByFunction(me.attributes, function(currentAttribute) {
+			return currentAttribute.name == attributeName;
+		});
+
+		if (attribute) {
+			addFilterCondition(me, attribute, data.simple);
+		}
+	}
+
+	function addCompositeData(me, compositeData) {
+		var data = compositeData.or || compositeData.and || [];
+		for (var i=0, l=data.length; i<l; ++i) {
+			addData(me, data[i]);
+		}
+	}
 
 	function fillMenu(me) {
 		var submenues = buildSubMenues(me);
@@ -152,8 +217,7 @@
 		return submenues;
 	}
 
-	function addFilterCondition(me, attribute) {
-		var field = CMDBuild.Management.FieldManager.getFieldSetForFilter(attribute);
+	function addFilterCondition(me, attribute, data) {
 		var category = attribute.name;
 
 		Ext.suspendLayouts();
@@ -169,9 +233,12 @@
 			me.add(fieldset);
 		}
 
-		me.fieldsetCategory[category].addCondition(field);
+		var filterCondition = CMDBuild.Management.FieldManager.getFieldSetForFilter(attribute);
+		me.fieldsetCategory[category].addCondition(filterCondition);
+		filterCondition.setData(data);
 
 		Ext.resumeLayouts();
+		me.doLayout();
 	}
 
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset", {

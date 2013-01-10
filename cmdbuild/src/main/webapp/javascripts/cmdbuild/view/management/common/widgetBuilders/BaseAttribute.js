@@ -257,6 +257,23 @@
 					value: value
 				}
 			};
+		},
+
+		setData: function(data) {
+			if (!data) {
+				return;
+			}
+
+			this.conditionCombo.setValue(data.operator);
+			for (var i=0, l=this.valueFields.length; i<l; ++i) {
+				var field = this.valueFields[i];
+				try {
+					field.setValue(data.value[i]);
+				} catch (e) {
+					// the length of the value array on data is
+					// less than the number of fields
+				}
+			}
 		}
 	});
 
@@ -283,7 +300,7 @@
 		extend: "CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel.Strategy",
 
 		run: function(selection) {
-			var disableValueFields = selectionNeedsNoValue(selection);
+			var disableValueFields = needsFieldToSetAValue(selection);
 			for (var i=0, l=this.valueFields.length; i<l; ++i) {
 				var f = this.valueFields[i];
 				f.setDisabled(disableValueFields);
@@ -307,8 +324,13 @@
 		}
 	});
 
-	function selectionNeedsNoValue(s) {
-		var selection = CMDBuild.Utils.getFirstSelection(s);
-		return ['null','notnull'].indexOf(selection.data.id) >= 0;
+	function needsFieldToSetAValue(operatorComboSelection) {
+		var operatorSelected = CMDBuild.Utils.getFirstSelection(operatorComboSelection);
+		var operator = operatorSelected.data.id;
+
+		var needIt = (operator == CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator.NULL)
+			|| (operator == CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator.NOT_NULL);
+
+		return needIt;
 	}
 })();

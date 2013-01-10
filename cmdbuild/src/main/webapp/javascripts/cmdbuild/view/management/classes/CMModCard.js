@@ -210,7 +210,6 @@
 			this.updateTitleForEntry(entry);
 
 			this.cardGrid.openFilterButton.enable();
-			this.cardGrid.clearFilterButton.disable();
 			this.cardGrid.gridSearchField.reset();
 		},
 

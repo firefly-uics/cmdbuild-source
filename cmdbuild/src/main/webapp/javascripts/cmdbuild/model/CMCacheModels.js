@@ -254,4 +254,156 @@
 		]
 	});
 
+	Ext.define("CMDBuild.model.CMFilterModel", {
+		extend: "Ext.data.Model",
+		fields: [{
+			name: "name",
+			type: "string"
+		}, {
+			name: "description",
+			type: "string"
+		}, {
+			name: "configuration",
+			type: "auto"
+		}, {
+			name: "entryType",
+			type: "string"
+		}, {
+			name: "fromGroup",
+			type: "boolean"
+		},
+		/**
+		 * To know if this filter is currently applied
+		 */
+		{
+			name: "applied",
+			type: "boolean",
+			persist: false
+		},
+		/**
+		 * to know if the filter is created client side,
+		 * and is not sync with the server
+		 */
+		{
+			name: "local",
+			type: "boolean",
+			persist: false
+		}],
+
+		/**
+		 * Return a full copy of this filter
+		 * 
+		 * @override
+		 * @returns {CMDBuild.model.CMFilterModel}
+		 */
+		copy: function() {
+			var dolly = new CMDBuild.model.CMFilterModel();
+			dolly.setName(this.getName());
+			dolly.setDescription(this.getDescription());
+			dolly.setConfiguration(Ext.apply({}, this.getConfiguration()));
+			dolly.setEntryType(this.getEntryType());
+			dolly.setFromGroup(this.isFromGroup());
+			dolly.setApplied(this.isApplied());
+			dolly.setLocal(this.isLocal());
+
+			dolly.commit();
+
+			if (this.dirty) {
+				dolly.setDirty();
+			}
+
+			return dolly;
+		},
+
+		// Getter and setter
+
+		getName: function() {
+			var name = this.get("name") || "";
+			return name;
+		},
+
+		setName: function(name) {
+			this.set("name", name);
+		},
+
+		getDescription: function() {
+			var description = this.get("description") || "";
+			return description;
+		},
+
+		setDescription: function(description) {
+			this.set("description", description);
+		},
+
+		getConfiguration: function() {
+			var filter = this.get("configuration") || {};
+			return filter;
+		},
+
+		setConfiguration: function(configuration) {
+			this.set("configuration", configuration);
+		},
+
+		getAttributeConfiguration: function() {
+			var c = this.getConfiguration();
+			var attributeConf = c.attribute || {};
+
+			return attributeConf;
+		},
+
+		setAttributeConfiguration: function(conf) {
+			var configuration = this.getConfiguration();
+			delete configuration.attribute;
+			if (Ext.isObject(conf) && Ext.Object.getKeys(conf).length > 0) {
+				configuration.attribute = conf;
+				this.set("configuration", configuration);
+			}
+		},
+
+		setRelationConfiguration: function(conf) {
+			var configuration = this.getConfiguration();
+			delete configuration.relation;
+
+			if (Ext.isArray(conf) && conf.length > 0) {
+				configuration.relation = conf;
+				this.set("configuration", configuration);
+			}
+		},
+
+		getEntryType: function() {
+			var entryType = this.get("entryType") || "";
+			return entryType;
+		},
+
+		setEntryType: function(entryType) {
+			this.set("entryType", entryType);
+		},
+
+		isFromGroup: function() {
+			var fromGroup = this.get("fromGroup") || false;
+			return fromGroup;
+		},
+
+		setFromGroup: function(entryType) {
+			this.set("fromGroup", entryType);
+		},
+
+		isApplied: function() {
+			var applied = this.get("applied") || false;
+			return applied;
+		},
+
+		setApplied: function(applied) {
+			this.set("applied", applied);
+		},
+
+		isLocal: function() {
+			var local = this.get("local") || false;
+			return local;
+		},
+
+		setLocal: function(local) {
+			this.set("local", local);
+		},
+	});
 })();
