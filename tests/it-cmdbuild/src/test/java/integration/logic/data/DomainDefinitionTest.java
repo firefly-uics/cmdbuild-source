@@ -178,10 +178,8 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	 * Utilities
 	 */
 
-	@Override
 	protected DomainBuilder newDomain() {
-		return super.newDomain() //
-				.withName(DOMAIN_NAME) //
+		return super.newDomain(DOMAIN_NAME) //
 				.withIdClass1(class1.getId()) //
 				.withIdClass2(class2.getId());
 	}

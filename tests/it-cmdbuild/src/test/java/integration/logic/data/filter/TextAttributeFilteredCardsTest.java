@@ -1,8 +1,8 @@
 package integration.logic.data.filter;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
-
-import java.util.List;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -24,21 +24,21 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 	protected void initializeDatabaseData() {
 		final DBAttribute createdAttribute = addAttributeToClass(TEXT_ATTRIBUTE, new TextAttributeType(), createdClass);
 
-		final CMCard card1 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), "").save();
-		final CMCard card2 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), "TexTual_AttriBUte_Value") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), null) //
 				.save();
-		final CMCard card4 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), "TEst") //
@@ -55,13 +55,13 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards1 = dataAccessLogic.fetchCards(createdClass.getName(),
+		final Iterable<CMCard> fetchedCards1 = dataAccessLogic.fetchCards(createdClass.getName(),
 				queryOptionsForEmptyResult);
-		final List<CMCard> fetchedCards2 = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards2 = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(0, fetchedCards1.size());
-		assertEquals(1, fetchedCards2.size());
+		assertEquals(0, size(fetchedCards1));
+		assertEquals(1, size(fetchedCards2));
 	}
 
 	@Test
@@ -71,10 +71,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(4, fetchedCards.size());
+		assertEquals(4, size(fetchedCards));
 	}
 
 	@Test
@@ -84,10 +84,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
+		assertEquals(1, size(fetchedCards));
 	}
 
 	@Test
@@ -97,11 +97,11 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
-		assertEquals("bar", fetchedCards.get(0).getCode());
+		assertEquals(1, size(fetchedCards));
+		assertEquals("bar", get(fetchedCards, 0).getCode());
 	}
 
 	@Test
@@ -111,10 +111,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
+		assertEquals(3, size(fetchedCards));
 	}
 
 	@Test
@@ -127,13 +127,13 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions containQueryOptions = createQueryOptions(10, 0, null, containFilterObject);
 
 		// when
-		final List<CMCard> notContainFetchedCards = dataAccessLogic.fetchCards(createdClass.getName(),
+		final Iterable<CMCard> notContainFetchedCards = dataAccessLogic.fetchCards(createdClass.getName(),
 				notContainQueryOptions);
-		final List<CMCard> containFetchedCards = dataAccessLogic
-				.fetchCards(createdClass.getName(), containQueryOptions);
+		final Iterable<CMCard> containFetchedCards = dataAccessLogic.fetchCards(createdClass.getName(),
+				containQueryOptions);
 
 		// then
-		assertEquals(4, notContainFetchedCards.size() + containFetchedCards.size());
+		assertEquals(4, size(notContainFetchedCards) + size(containFetchedCards));
 	}
 
 	@Test
@@ -143,10 +143,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, fetchedCards.size());
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
@@ -156,10 +156,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, fetchedCards.size());
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
@@ -169,10 +169,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
+		assertEquals(1, size(fetchedCards));
 	}
 
 	@Test
@@ -182,10 +182,10 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
+		assertEquals(3, size(fetchedCards));
 	}
 
 }

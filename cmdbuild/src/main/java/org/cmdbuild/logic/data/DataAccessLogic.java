@@ -111,7 +111,7 @@ public class DataAccessLogic implements Logic {
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
 	}
 
-	public List<CMCard> fetchCards(final String className, final QueryOptions queryOptions) {
+	public Iterable<CMCard> fetchCards(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClassByName(className);
 		if (fetchedClass == null) {
 			return Lists.newArrayList();
@@ -120,12 +120,11 @@ public class DataAccessLogic implements Logic {
 		final WhereClause whereClause = filterMapper.deserialize();
 
 		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
-				.from(fetchedClass);
-		if (!(whereClause instanceof EmptyWhereClause)) {
-			queryBuilder.where(whereClause);
-		}
-		queryBuilder.limit(queryOptions.getLimit()) //
+				.from(fetchedClass) //
+				.where(whereClause) //
+				.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
+
 		final SorterMapper sorterMapper = new JSONSorterMapper(fetchedClass, queryOptions.getSorters());
 		for (final OrderByClause clause : sorterMapper.deserialize()) {
 			queryBuilder.orderBy(clause.getAttribute(), clause.getDirection());

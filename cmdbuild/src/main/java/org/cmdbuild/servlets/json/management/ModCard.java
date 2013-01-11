@@ -84,7 +84,7 @@ public class ModCard extends JSONBase {
 				.orderBy(sorters) //
 				.filter(filter) //
 				.build();
-		final List<CMCard> fetchedCards = dataLogic.fetchCards(className, queryOptions);
+		final Iterable<CMCard> fetchedCards = dataLogic.fetchCards(className, queryOptions);
 
 
 		// TODO: serialize the response....

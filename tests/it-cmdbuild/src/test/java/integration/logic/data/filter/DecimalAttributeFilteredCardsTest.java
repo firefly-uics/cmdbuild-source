@@ -1,8 +1,8 @@
 package integration.logic.data.filter;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
-
-import java.util.List;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -25,22 +25,22 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final DBAttribute createdAttribute = addAttributeToClass(DECIMAL_ATTRIBUTE, new DecimalAttributeType(5, 2),
 				createdClass);
 
-		final CMCard card1 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), Double.valueOf(1)) //
 				.save();
-		final CMCard card2 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), Double.valueOf(2.43)) //
 				.save();
-		final CMCard card3 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), Double.valueOf(-50.32)) //
 				.save();
-		final CMCard card4 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //
@@ -55,11 +55,11 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
-		assertEquals("bar", fetchedCards.get(0).getCode());
+		assertEquals(1, size(fetchedCards));
+		assertEquals("bar", get(fetchedCards, 0).getCode());
 	}
 
 	@Test
@@ -70,10 +70,10 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
+		assertEquals(3, size(fetchedCards));
 	}
 
 	@Test
@@ -84,10 +84,10 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
+		assertEquals(3, size(fetchedCards));
 	}
 
 	@Test
@@ -98,10 +98,10 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, fetchedCards.size());
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
@@ -112,10 +112,10 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, fetchedCards.size());
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
@@ -125,10 +125,10 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
+		assertEquals(1, size(fetchedCards));
 	}
 
 	@Test
@@ -138,10 +138,10 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
+		assertEquals(3, size(fetchedCards));
 	}
 
 }

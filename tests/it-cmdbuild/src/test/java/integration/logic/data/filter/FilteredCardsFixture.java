@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
 import org.json.JSONArray;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 
+import utils.GenericRollbackDriver;
 import utils.IntegrationTestBase;
 
 import com.google.common.collect.Lists;
@@ -26,14 +28,16 @@ import com.google.common.collect.Lists;
 public abstract class FilteredCardsFixture extends IntegrationTestBase {
 
 	private static final String CLASS_NAME = "test_class";
+
+	private DataDefinitionLogic dataDefinitionLogic;
 	protected DataAccessLogic dataAccessLogic;
 	protected DBClass createdClass;
 
-	/*
-	 * Here I'm using the postgres driver directly due to problems to rollback
-	 * on create attribute command
-	 * 
-	 * @see utils.IntegrationTestBase#createTestDriver()
+	/**
+	 * Actually, {@link GenericRollbackDriver} cannot clear attribute data
+	 * before trying to delete the attribute itself. So we must manually clean
+	 * all class data just to be sure to have rollback working well without
+	 * errors.
 	 */
 	@Override
 	protected DBDriver createTestDriver() {
@@ -41,7 +45,8 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	}
 
 	@Before
-	public void createDataDefinitionLogic() throws Exception {
+	public void createData() throws Exception {
+		dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
 		dataAccessLogic = new DataAccessLogic(dbDataView());
 		createdClass = createClass(CLASS_NAME);
 		initializeDatabaseData();
@@ -49,7 +54,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 
 	/**
 	 * It must be overridden by classes that extends this fixture in order to
-	 * initialize the database with known attributes and cards
+	 * initialize the database with known attributes and cards.
 	 */
 	protected abstract void initializeDatabaseData();
 
@@ -57,6 +62,10 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	public void tearDown() {
 		dbDriver().clear(createdClass);
 		dbDriver().deleteClass(createdClass);
+	}
+
+	protected DataDefinitionLogic dataDefinitionLogic() {
+		return dataDefinitionLogic;
 	}
 
 	protected QueryOptions createQueryOptions(final int limit, final int offset, final JSONArray sorters,

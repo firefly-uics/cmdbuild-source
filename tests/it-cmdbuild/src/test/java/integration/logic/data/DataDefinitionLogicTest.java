@@ -34,28 +34,29 @@ public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 	 * Utilities
 	 */
 
-	protected Class a(final ClassBuilder classBuilder) {
+	public static Class a(final ClassBuilder classBuilder) {
 		return classBuilder.build();
 	}
 
-	protected Domain a(final DomainBuilder domainBuilder) {
+	public static Domain a(final DomainBuilder domainBuilder) {
 		return domainBuilder.build();
 	}
 
-	protected ClassBuilder newClass(final String name) {
+	public static ClassBuilder newClass(final String name) {
 		return Class.newClass() //
 				.withName(name);
 	}
 
-	protected DomainBuilder newDomain() {
-		return Domain.newDomain();
+	public static DomainBuilder newDomain(final String name) {
+		return Domain.newDomain() //
+				.withName(name);
 	}
 
-	protected Attribute a(final AttributeBuilder attributeBuilder) {
+	public static Attribute a(final AttributeBuilder attributeBuilder) {
 		return attributeBuilder.build();
 	}
 
-	protected AttributeBuilder newAttribute(final String name) {
+	public static AttributeBuilder newAttribute(final String name) {
 		return Attribute.newAttribute() //
 				.withName(name);
 	}

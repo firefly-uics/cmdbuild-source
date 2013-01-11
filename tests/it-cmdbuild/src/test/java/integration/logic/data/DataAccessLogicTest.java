@@ -1,10 +1,11 @@
 package integration.logic.data;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static utils.IntegrationTestUtils.newClass;
-
-import java.util.List;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -30,20 +31,20 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	public void shouldNotRetrieveCardsIfNullClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(null, queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(null, queryOptions);
 
 		// then
-		assertTrue(fetchedCards.isEmpty());
+		assertTrue(isEmpty(fetchedCards));
 	}
 
 	@Test
 	public void shouldNotRetrieveCardsIfNotExistentClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards("not_existent_class_name", queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards("not_existent_class_name", queryOptions);
 
 		// then
-		assertTrue(fetchedCards.isEmpty());
+		assertTrue(isEmpty(fetchedCards));
 	}
 
 	@Test
@@ -51,25 +52,25 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), null);
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
 
 		// then
-		assertEquals(fetchedCards.size(), 3);
+		assertEquals(size(fetchedCards), 3);
 	}
 
 	@Test
@@ -77,25 +78,25 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
 
 		// then
-		assertEquals(fetchedCards.size(), 3);
+		assertEquals(size(fetchedCards), 3);
 	}
 
 	@Test
@@ -103,19 +104,19 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("zzz") //
 				.setDescription("description_baz") //
 				.save();
@@ -124,13 +125,13 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, null);
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
 
 		// then
-		assertEquals(fetchedCards.get(0).getCode(), "bar");
-		assertEquals(fetchedCards.get(1).getCode(), "baz");
-		assertEquals(fetchedCards.get(2).getCode(), "foo");
-		assertEquals(fetchedCards.get(3).getCode(), "zzz");
+		assertEquals(get(fetchedCards, 0).getCode(), "bar");
+		assertEquals(get(fetchedCards, 1).getCode(), "baz");
+		assertEquals(get(fetchedCards, 2).getCode(), "foo");
+		assertEquals(get(fetchedCards, 3).getCode(), "zzz");
 	}
 
 	@Test
@@ -138,19 +139,19 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("zzz") //
 				.setDescription("description_baz") //
 				.save();
@@ -159,11 +160,11 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
 
 		// then
-		assertEquals(fetchedCards.size(), 1);
-		assertEquals(fetchedCards.get(0).getCode(), "foo");
+		assertEquals(size(fetchedCards), 1);
+		assertEquals(get(fetchedCards, 0).getCode(), "foo");
 	}
 
 	@Test
@@ -171,19 +172,19 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("zzz") //
 				.setDescription("description_baz") //
 				.save();
@@ -192,11 +193,11 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
 
 		// then
-		assertEquals(fetchedCards.size(), 1);
-		assertEquals(fetchedCards.get(0).getCode(), "foo");
+		assertEquals(size(fetchedCards), 1);
+		assertEquals(get(fetchedCards, 0).getCode(), "foo");
 	}
 
 	@Test
@@ -204,19 +205,19 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_aaa") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bbb") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
@@ -227,15 +228,15 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, filterObject);
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(), queryOptions);
 
 		// then
-		assertEquals(fetchedCards.size(), 3);
-		assertEquals(fetchedCards.get(0).getCode(), "baz");
-		assertEquals(fetchedCards.get(1).getCode(), "bar");
-		assertEquals(fetchedCards.get(1).getDescription(), "description_aaa");
-		assertEquals(fetchedCards.get(2).getCode(), "bar");
-		assertEquals(fetchedCards.get(2).getDescription(), "description_bbb");
+		assertEquals(size(fetchedCards), 3);
+		assertEquals(get(fetchedCards, 0).getCode(), "baz");
+		assertEquals(get(fetchedCards, 1).getCode(), "bar");
+		assertEquals(get(fetchedCards, 1).getDescription(), "description_aaa");
+		assertEquals(get(fetchedCards, 2).getCode(), "bar");
+		assertEquals(get(fetchedCards, 2).getDescription(), "description_bbb");
 	}
 
 	@Test
@@ -243,32 +244,32 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_aaa") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bbb") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
 
 		// when
-		final List<CMCard> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getName(),
+		final Iterable<CMCard> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getName(),
 				createQueryOptions(3, 0, null, null));
-		final List<CMCard> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getName(),
+		final Iterable<CMCard> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getName(),
 				createQueryOptions(3, 3, null, null));
 
 		// then
-		assertEquals(firstPageOfCards.size(), 3);
-		assertEquals(secondPageOfCards.size(), 1);
+		assertEquals(size(firstPageOfCards), 3);
+		assertEquals(size(secondPageOfCards), 1);
 	}
 
 	@Test
@@ -276,19 +277,19 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// given
 		final DBClass newClass = dbDataView().createClass(newClass("test"));
 
-		final CMCard card1 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_aaa") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bbb") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(newClass) //
+		dbDataView().newCard(newClass) //
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
@@ -297,12 +298,12 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 						+ "{simple: {attribute: Description, operator: contain, value: ['sc_f']}}]}}");
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(),
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(newClass.getName(),
 				createQueryOptions(10, 0, null, filterObject));
 
 		// then
-		assertEquals(fetchedCards.size(), 1);
-		assertEquals(fetchedCards.get(0).getCode(), "foo");
+		assertEquals(size(fetchedCards), 1);
+		assertEquals(get(fetchedCards, 0).getCode(), "foo");
 	}
 
 	private QueryOptions createQueryOptions(final int limit, final int offset, final JSONArray sorters,
