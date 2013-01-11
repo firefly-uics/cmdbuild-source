@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.mappers.json;
+package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
@@ -13,7 +13,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.logic.mappers.WhereClauseBuilder;
+import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 
 import com.google.common.collect.Lists;
 
@@ -22,12 +22,12 @@ import com.google.common.collect.Lists;
  * it searches if the text is in almost one of all the attributes of the
  * specified class
  */
-public class JSONFullTextQueryBuilder implements WhereClauseBuilder {
+public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 
 	private final String fullTextQuery;
 	private final CMEntryType entryType;
 
-	public JSONFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
+	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
 		Validate.notNull(fullTextQuery);
 		Validate.notNull(entryType);
 		this.fullTextQuery = fullTextQuery;

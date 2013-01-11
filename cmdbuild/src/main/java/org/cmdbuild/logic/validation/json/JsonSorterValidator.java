@@ -1,28 +1,26 @@
-package org.cmdbuild.logic.validators;
+package org.cmdbuild.logic.validation.json;
 
-import static org.cmdbuild.logic.mappers.json.Constants.*;
+import static org.cmdbuild.logic.mapping.json.Constants.DIRECTION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.PROPERTY_KEY;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.logic.validation.Validator;
+import org.cmdbuild.logic.validation.Validator.ValidationError;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.collect.Lists;
-
-public class JSONSorterValidator implements Validator {
+public class JsonSorterValidator implements Validator {
 
 	private static final String MALFORMED_MSG = "Malformed sorters"; 
 	private final JSONArray sorters;
 
-	public JSONSorterValidator(final JSONArray sorters) {
+	public JsonSorterValidator(final JSONArray sorters) {
 		this.sorters = sorters;
 	}
-
-	public void validate() {
+	
+	@Override
+	public void validate() throws ValidationError {
 		try {
 			for (int i = 0; i < sorters.length(); i++) {
 				final JSONObject sorterObject = sorters.getJSONObject(i);
@@ -32,7 +30,7 @@ public class JSONSorterValidator implements Validator {
 				validateDirectionValue(sorterObject);
 			}
 		} catch (final Exception ex) {
-			throw new IllegalArgumentException(MALFORMED_MSG + ex.getMessage());
+			throw new ValidationError(MALFORMED_MSG + ex.getMessage());
 		}
 	}
 

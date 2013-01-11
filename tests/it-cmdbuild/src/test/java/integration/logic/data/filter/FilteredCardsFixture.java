@@ -1,19 +1,21 @@
 package integration.logic.data.filter;
 
+import static integration.logic.data.DataDefinitionLogicTest.a;
+import static integration.logic.data.DataDefinitionLogicTest.newClass;
 import static utils.IntegrationTestUtils.newAttribute;
-import static utils.IntegrationTestUtils.newClass;
 
 import java.util.Map;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.data.DataAccessLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
+import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +32,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 
 	private DataDefinitionLogic dataDefinitionLogic;
 	protected DataAccessLogic dataAccessLogic;
-	protected DBClass createdClass;
+	protected CMClass createdClass;
 
 	/**
 	 * Actually, {@link GenericRollbackDriver} cannot clear attribute data
@@ -44,11 +46,21 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	}
 
 	@Before
-	public void createData() throws Exception {
+	public void setUp() throws Exception {
 		dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
 		dataAccessLogic = new DataAccessLogic(dbDataView());
-		createdClass = createClass(CLASS_NAME);
+		createClassesAndDomains();
 		initializeDatabaseData();
+	}
+
+	/**
+	 * It can be overridden by classes that extends this fixture in order to
+	 * initialize the database with other classes and domains.
+	 */
+	protected void createClassesAndDomains() {
+		createdClass = dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME) //
+				.thatIsActive(true) //
+				.thatIsHoldingHistory(true)));
 	}
 
 	/**
@@ -59,8 +71,21 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 
 	@After
 	public void tearDown() {
-		dbDriver().clear(createdClass);
-		dbDriver().deleteClass(createdClass);
+		clearAndDeleteClassesAndDomains();
+	}
+
+	/**
+	 * It can be overridden by classes that extends this fixture in order to
+	 * clean the database from classes and domains created using
+	 * {@link #createClassesAndDomains()}.
+	 * 
+	 * Don't use business logic inside this method, we want to be sure that
+	 * classes and domains are really deleted or have an exception that show us
+	 * that something went wrong
+	 */
+	protected void clearAndDeleteClassesAndDomains() {
+		dbDataView().clear(createdClass);
+		dbDataView().deleteClass(createdClass);
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
@@ -76,9 +101,9 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				.filter(filter) //
 				.build();
 	}
-
-	protected DBClass createClass(final String name) {
-		return dbDataView().createClass(newClass(name));
+	
+	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType type, final CMClass klass) {
+		return dbDataView().createAttribute(newAttribute(name, type, dbDataView().findClassByName(klass.getName())));
 	}
 
 	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType type, final DBClass klass) {

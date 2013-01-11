@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.mappers.json;
+package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -12,12 +12,12 @@ import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.mappers.json.Constants.AND_KEY;
-import static org.cmdbuild.logic.mappers.json.Constants.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mappers.json.Constants.OPERATOR_KEY;
-import static org.cmdbuild.logic.mappers.json.Constants.OR_KEY;
-import static org.cmdbuild.logic.mappers.json.Constants.SIMPLE_KEY;
-import static org.cmdbuild.logic.mappers.json.Constants.VALUE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.AND_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.OR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.SIMPLE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.VALUE_KEY;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.logic.mappers.WhereClauseBuilder;
-import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
+import org.cmdbuild.logic.mapping.WhereClauseBuilder;
+import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ import com.google.common.collect.Lists;
  * clause will "retrieve" the cards of the specified entry type that pass the
  * filter.
  */
-public class JSONFilterBuilder implements WhereClauseBuilder {
+public class JsonFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
 	private final CMEntryType entryType;
@@ -51,7 +51,7 @@ public class JSONFilterBuilder implements WhereClauseBuilder {
 	 *            filter
 	 * @param entryType
 	 */
-	public JSONFilterBuilder(final JSONObject filterObject, final CMEntryType entryType) {
+	public JsonFilterBuilder(final JSONObject filterObject, final CMEntryType entryType) {
 		Validate.notNull(filterObject);
 		Validate.notNull(entryType);
 		this.entryType = entryType;

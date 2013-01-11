@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.mappers;
+package org.cmdbuild.logic.mapping;
 
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
@@ -9,6 +9,6 @@ public interface WhereClauseBuilder {
 	 * 
 	 * @return a general WhereClause object.
 	 */
-	public WhereClause build();
+	WhereClause build();
 
 }
