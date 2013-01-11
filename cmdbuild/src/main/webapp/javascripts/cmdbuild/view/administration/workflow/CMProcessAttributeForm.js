@@ -16,6 +16,15 @@
 				items : [
 					this.attributeName,
 					this.attributeDescription,
+					/*
+					 * Business roule 11/01/2013
+					 * The attributeGroup was removed because
+					 * considered useless for a process
+					 * 
+					 * Now it is considered useful, so it
+					 * is enabled again
+					 */
+					this.attributeGroup,
 					this.isBasedsp,
 					this.attributeUnique,
 					this.isActive,
