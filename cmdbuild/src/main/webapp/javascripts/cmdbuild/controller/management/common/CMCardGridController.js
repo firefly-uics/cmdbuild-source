@@ -92,6 +92,9 @@
 				return;
 			}
 
+			unApplyFilter(this); // before to filter the store, otherwise it is not founded in the store
+			_CMCache.filterStoreByEntryTypeName(entryType.getName());
+
 			var me = this,
 				afterStoreUpdated;
 
@@ -120,7 +123,6 @@
 				cb: afterStoreUpdated
 			});
 
-			me.view.gridSearchField.reset();
 		},
 
 		onAddCardButtonClick: function() {
@@ -292,8 +294,9 @@
 		 */
 		onFilterMenuButtonNewActionClick: function(button) {
 			var filter = new CMDBuild.model.CMFilterModel({
+				entryType: this.getEntryType(),
 				local: true,
-				name: "@@ New filter " + _CMUtils.nextId()
+				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
 			});
 
 			this.onFilterMenuButtonModifyActionClick(button, filter);
@@ -309,7 +312,7 @@
 		 */
 		onFilterMenuButtonCloneActionClick: function(button, filter) {
 			filter.setLocal(true);
-			filter.setName("@@ Copy of " + filter.getName());
+			filter.setName(CMDBuild.Translation.management.findfilter.copyof + " " + filter.getName());
 			this.onFilterMenuButtonModifyActionClick(button, filter);
 		},
 
@@ -337,14 +340,28 @@
 		 * @param {object} filter, the filter to remove
 		 */
 		onFilterMenuButtonRemoveActionClick: function(button, filter) {
+			var me = this;
+
+			function onSuccess() {
+				if (filter.isApplied()) {
+					me.onFilterMenuButtonClearActionClick(button);
+				}
+				_CMCache.removeFilter(filter);
+				button.setFilterButtonLabel();
+			}
+
 			function makeRequest(btn) {
 				if (btn != 'yes') {
 					return;
 				}
 
-				button.setFilterButtonLabel();
-				// TODO Do the call
-				_CMCache.removeFilter(filter);
+				if (filter.isLocal()) {
+					onSuccess();
+				} else {
+					CMDBuild.ServiceProxy.Filter.remove(filter, {
+						success: onSuccess
+					});
+				}
 			};
 
 			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);
@@ -391,25 +408,31 @@
 		 * @param {String} the description set in the form
 		 */
 		onSaveFilterWindowConfirm: function(saveFilterWindow, filter, name, description) {
+			var me = this;
+			function onSuccess() {
+				if (filter.isLocal()) {
+					_CMCache.addFilter(filter);
+				} else {
+					_CMCache.updateFilter(filter);
+				}
+
+				if (saveFilterWindow.referredFilterWindow) {
+					me.onCMFilterWindowApplyButtonClick(saveFilterWindow.referredFilterWindow, filter);
+				}
+
+				saveFilterWindow.destroy();
+				me.view.selectAppliedFilter();
+			}
+
 			_CMCache.removeFilter(filter);
 			filter.setName(name);
 			filter.setDescription(description);
 			filter.commit();
 
-			if (filter.isLocal()) {
-				// TODO proxy.save
-				_CMCache.addFilter(filter);
-			} else {
-				// TODO proxy.update
-				_CMCache.updateFilter(filter);
-			}
-
-			if (saveFilterWindow.referredFilterWindow) {
-				this.onCMFilterWindowApplyButtonClick(saveFilterWindow.referredFilterWindow, filter);
-			}
-
-			saveFilterWindow.destroy();
-			this.view.selectAppliedFilter();
+			var action = filter.isLocal() ? "create" : "update";
+			CMDBuild.ServiceProxy.Filter[action](filter, {
+				success: onSuccess
+			});
 		}
 	});
 
@@ -439,6 +462,7 @@
 
 			me.appliedFilter = undefined;
 		}
+
 		me.view.setFilterButtonLabel();
 		me.view.applyFilterToStore({});
 		me.view.disableClearFilterButton();

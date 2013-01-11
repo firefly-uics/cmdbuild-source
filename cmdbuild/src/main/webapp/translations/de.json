@@ -661,6 +661,7 @@
          "abort": "Abbrechen",
          "add": "Hinzufügen",
          "as": "als",
+         "clone": "<em>Clone</em>",
          "close": "Schließen",
          "load": "Load",
          "modify": "Bearbeiten",

@@ -269,8 +269,8 @@
 			name: "entryType",
 			type: "string"
 		}, {
-			name: "fromGroup",
-			type: "boolean"
+			name: "groupName",
+			type: "string"
 		},
 		/**
 		 * To know if this filter is currently applied
@@ -302,7 +302,7 @@
 			dolly.setDescription(this.getDescription());
 			dolly.setConfiguration(Ext.apply({}, this.getConfiguration()));
 			dolly.setEntryType(this.getEntryType());
-			dolly.setFromGroup(this.isFromGroup());
+			dolly.setGroupName(this.getGroupName());
 			dolly.setApplied(this.isApplied());
 			dolly.setLocal(this.isLocal());
 
@@ -379,13 +379,13 @@
 			this.set("entryType", entryType);
 		},
 
-		isFromGroup: function() {
-			var fromGroup = this.get("fromGroup") || false;
-			return fromGroup;
+		getGroupName: function() {
+			var groupName = this.get("groupName") || false;
+			return groupName;
 		},
 
-		setFromGroup: function(entryType) {
-			this.set("fromGroup", entryType);
+		setGroupName: function(groupName) {
+			this.set("groupName", groupName);
 		},
 
 		isApplied: function() {

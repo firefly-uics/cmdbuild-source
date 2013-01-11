@@ -2,8 +2,9 @@
 	var filterStore = new Ext.data.Store({
 		model: "CMDBuild.model.CMFilterModel",
 		data: [{
-			name: "Filtro A",
-			description: "Non filtra nulla",
+			name: "Filtro Classe 1",
+			description: "Bla bla classe 1",
+			entryType: "Classe1",
 			configuration: {
 				attribute: {
 					and: [{
@@ -29,12 +30,33 @@
 					}] 
 				}
 			}
+		}, {
+			name: "Filtro Classe 2",
+			description: "Bla bla bla classe 2",
+			entryType: "Classe2",
+			configuration: {
+				attribute: {
+					simple: {
+						attribute: "Code",
+						operator: "contain",
+						value: ["02"]
+					}
+				}
+			}
 		}]
 	});
 
 	Ext.define("CMDBuild.cache.CMChcheFilterFunctions", {
-		getAvailableFilterStore: function() {
+
+		getAvailableFilterStore: function(entryTypeName) {
 			return filterStore;
+		},
+
+		filterStoreByEntryTypeName: function(entryTypeName) {
+			var filterBy = entryTypeName || "";
+
+			filterStore.clearFilter();
+			filterStore.filter("entryType", filterBy);
 		},
 
 		/**
