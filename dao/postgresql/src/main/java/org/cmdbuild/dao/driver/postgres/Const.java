@@ -17,10 +17,19 @@ public interface Const {
 	 */
 
 	enum SystemAttributes {
-		Id("Id"), ClassId("IdClass", SqlType.regclass.sqlCast()), ClassId1("IdClass1", SqlType.regclass.sqlCast()), ClassId2(
-				"IdClass2", SqlType.regclass.sqlCast()), DomainId("IdDomain", SqlType.regclass.sqlCast()), DomainId1(
-				"IdObj1"), DomainId2("IdObj2"), Code("Code"), Description("Description"), BeginDate("BeginDate"), EndDate(
-				"EndDate"), User("User"), Status("Status"),
+		Id("Id"), //
+		ClassId("IdClass", SqlType.regclass.sqlCast()), //
+		ClassId1("IdClass1", SqlType.regclass.sqlCast()), //
+		ClassId2("IdClass2", SqlType.regclass.sqlCast()), //
+		DomainId("IdDomain", SqlType.regclass.sqlCast()), //
+		DomainId1("IdObj1"), //
+		DomainId2("IdObj2"), //
+		Code("Code"), //
+		Description("Description"), //
+		BeginDate("BeginDate"), //
+		EndDate("EndDate"), //
+		User("User"), //
+		Status("Status"),
 		// Fake attributes
 		DomainQuerySource("_Src"), DomainQueryTargetId("_DstId"), ;
 
@@ -29,7 +38,7 @@ public interface Const {
 
 		SystemAttributes(final String dbName, final String typeCast) {
 			this.dbName = dbName;
-			this.castSuffix = (typeCast != null) ? "::" + typeCast : "";
+			this.castSuffix = typeCast ;
 		}
 
 		SystemAttributes(final String dbName) {

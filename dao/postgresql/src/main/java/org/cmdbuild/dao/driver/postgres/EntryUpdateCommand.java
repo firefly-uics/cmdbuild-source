@@ -15,11 +15,11 @@ import com.google.common.collect.Lists;
 
 public class EntryUpdateCommand extends EntryCommand {
 
-	private final Map<String, Object> userAttributes;
+	private final List<AttributeValueType> attributesToBeUpdated;
 
 	public EntryUpdateCommand(final JdbcTemplate jdbcTemplate, final DBEntry entry) {
 		super(jdbcTemplate, entry);
-		this.userAttributes = userAttributesFor(entry);
+		this.attributesToBeUpdated = userAttributesFor(entry);
 	}
 
 	public void execute() {
@@ -32,15 +32,17 @@ public class EntryUpdateCommand extends EntryCommand {
 
 	private String columns() {
 		final List<String> columns = Lists.newArrayList();
-		for (final String key : userAttributes.keySet()) {
-			columns.add(format("%s = ?", key));
+		for (final AttributeValueType attributeValueType : attributesToBeUpdated) {
+			columns.add(format("%s = ?", quoteIdent(attributeValueType.getName())));
 		}
 		return join(columns, ", ");
 	}
 
 	private Object[] arguments() {
 		final List<Object> arguments = Lists.newArrayList();
-		arguments.addAll(userAttributes.values());
+		for (AttributeValueType avt : attributesToBeUpdated) {
+			arguments.add(avt.getValue());
+		}
 		arguments.add(entry().getId());
 		return arguments.toArray();
 	}

@@ -10,6 +10,7 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
@@ -167,7 +168,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String operator, final Object value) {
 		final Object sqlValue = sqlValueOf(attribute, value);
 		final String lhs = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-		return String.format("%s %s %s", lhs, operator, value != null ? param(sqlValue) : "");
+		return String.format("%s %s %s", lhs, operator, value != null ? param(sqlValue, sqlTypeOf(attribute).sqlCast()) : "");
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {

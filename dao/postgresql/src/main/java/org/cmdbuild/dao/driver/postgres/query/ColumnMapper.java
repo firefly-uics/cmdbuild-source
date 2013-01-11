@@ -308,10 +308,7 @@ public class ColumnMapper implements LoggingSupport {
 			final Alias attributeAlias) {
 		final StringBuffer sb = new StringBuffer(quoteAttribute(typeAlias, attributeName));
 		if (cast != null) {
-			if (cast.equalsIgnoreCase("oid")) {
-				sb.append("::");
-			}
-			sb.append(cast);
+			sb.append("::").append(cast);
 		}
 		if (attributeAlias != null) {
 			sb.append(" AS ").append(quoteAlias(attributeAlias));
