@@ -189,6 +189,7 @@ public class GenericRollbackDriver implements DBDriver {
 
 		@Override
 		public void undoCommand() {
+			// TODO should be cleared of all data (probably historic) before
 			innerDriver.deleteAttribute(createdAttribute);
 		}
 

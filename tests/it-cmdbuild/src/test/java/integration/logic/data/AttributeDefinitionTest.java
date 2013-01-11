@@ -306,8 +306,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	public void referenceAttributeCreatedAndReaded() throws Exception {
 		// given
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
-		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain() //
-				.withName("domain") //
+		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
 				.withCardinality("N:1") //
@@ -334,8 +333,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotCreateReferenceForDomainWithCardinality_1_1() throws Exception {
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
-		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain() //
-				.withName("domain") //
+		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
 				.withCardinality("1:1") //
@@ -350,8 +348,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotCreateReferenceForDomainWithCardinality_N_N() throws Exception {
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
-		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain() //
-				.withName("domain") //
+		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
 				.withCardinality("N:N") //

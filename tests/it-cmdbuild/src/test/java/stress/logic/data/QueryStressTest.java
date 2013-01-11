@@ -1,10 +1,9 @@
 package stress.logic.data;
 
+import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.junit.Assert.assertEquals;
 import static utils.IntegrationTestUtils.newClass;
-
-import java.util.List;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard;
@@ -48,10 +47,10 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(100, 0, null, null);
 
 		// when
-		final List<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
 
 		// then
-		assertEquals(cards.size(), 100);
+		assertEquals(size(cards), 100);
 	}
 
 	@Test(timeout = 200)
@@ -64,10 +63,10 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
 
 		// when
-		final List<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
 
 		// then
-		assertEquals(cards.size(), 1);
+		assertEquals(size(cards), 1);
 	}
 
 	private void storeBigAmountOfCardsIfNeeded() {

@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data;
 
+import org.cmdbuild.common.Builder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,7 +9,7 @@ import org.json.JSONObject;
  */
 public class QueryOptions {
 
-	public static class QueryOptionsBuilder {
+	public static class QueryOptionsBuilder implements Builder<QueryOptions> {
 
 		private int limit;
 		private int offset;

@@ -14,6 +14,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -257,7 +258,7 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public void clear(final DBEntryType type) {
+	public void clear(final CMEntryType type) {
 		dbView.clear(type);
 	}
 

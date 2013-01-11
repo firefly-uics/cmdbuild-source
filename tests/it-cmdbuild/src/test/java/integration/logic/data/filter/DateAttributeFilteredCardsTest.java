@@ -1,8 +1,8 @@
 package integration.logic.data.filter;
 
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
-
-import java.util.List;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
@@ -24,22 +24,22 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 	protected void initializeDatabaseData() {
 		final DBAttribute createdAttribute = addAttributeToClass(DATE_ATTRIBUTE, new DateAttributeType(), createdClass);
 
-		final CMCard card1 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), "06/08/2012") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), "11/12/1995") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), "10/09/1998") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(createdClass) //
+		dbDataView().newCard(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //
@@ -53,11 +53,11 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
-		assertEquals("bar", fetchedCards.get(0).getCode());
+		assertEquals(1, size(fetchedCards));
+		assertEquals("bar", get(fetchedCards, 0).getCode());
 	}
 
 	@Test
@@ -67,13 +67,13 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
-		assertEquals("foo", fetchedCards.get(0).getCode());
-		assertEquals("baz", fetchedCards.get(1).getCode());
-		assertEquals("zzz", fetchedCards.get(2).getCode());
+		assertEquals(3, size(fetchedCards));
+		assertEquals("foo", get(fetchedCards, 0).getCode());
+		assertEquals("baz", get(fetchedCards, 1).getCode());
+		assertEquals("zzz", get(fetchedCards, 2).getCode());
 	}
 
 	@Test
@@ -83,11 +83,11 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
-		assertEquals("foo", fetchedCards.get(0).getCode());
+		assertEquals(1, size(fetchedCards));
+		assertEquals("foo", get(fetchedCards, 0).getCode());
 	}
 
 	@Test
@@ -97,10 +97,10 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, fetchedCards.size());
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
@@ -111,10 +111,10 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, fetchedCards.size());
+		assertEquals(2, size(fetchedCards));
 	}
 
 	@Test
@@ -124,11 +124,11 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, fetchedCards.size());
-		assertEquals("zzz", fetchedCards.get(0).getCode());
+		assertEquals(1, size(fetchedCards));
+		assertEquals("zzz", get(fetchedCards, 0).getCode());
 	}
 
 	@Test
@@ -138,10 +138,10 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final List<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
+		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, fetchedCards.size());
+		assertEquals(3, size(fetchedCards));
 	}
 
 }

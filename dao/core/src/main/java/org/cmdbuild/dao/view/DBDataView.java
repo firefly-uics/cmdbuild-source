@@ -19,6 +19,8 @@ import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
@@ -376,13 +378,52 @@ public class DBDataView extends QueryExecutorDataView {
 		return dbAttribute;
 	}
 
-	private DBEntryType cmToDbEntryType(final CMEntryType entryType) {
-		if (entryType instanceof CMClass) {
-			return cmToDbClass(entryType);
-		} else if (entryType instanceof CMDomain) {
-			return cmToDbDomain(entryType);
+	@Override
+	public CMRelationDefinition newRelation(final CMDomain domain) {
+		final DBDomain dom = driver.findDomainById(domain.getId());
+		return DBRelation.newInstance(driver, dom);
+	}
+
+	@Override
+	public CMRelationDefinition modifyRelation(final CMRelation relation) {
+		if (relation instanceof DBRelation) {
+			final DBRelation dbRelation = (DBRelation) relation;
+			return DBRelation.newInstance(driver, dbRelation);
 		}
-		throw new IllegalArgumentException(format("unexpected type '%s'", entryType.getClass()));
+		throw new IllegalArgumentException();
+	}
+
+	@Override
+	public void clear(final CMEntryType type) {
+		driver.clear(cmToDbEntryType(type));
+	}
+
+	private DBEntryType cmToDbEntryType(final CMEntryType entryType) {
+		return new CMEntryTypeVisitor() {
+
+			private DBEntryType output;
+
+			public DBEntryType convert(CMEntryType entryType) {
+				entryType.accept(this);
+				return output;
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				throw new IllegalArgumentException(format("unexpected type '%s'", entryType.getClass()));
+			}
+
+			@Override
+			public void visit(CMDomain type) {
+				output = cmToDbDomain(type);
+			}
+
+			@Override
+			public void visit(CMClass type) {
+				output = cmToDbClass(type);
+			}
+
+		}.convert(entryType);
 	}
 
 	private DBClass cmToDbClass(final CMEntryType entryType) {
@@ -409,26 +450,6 @@ public class DBDataView extends QueryExecutorDataView {
 			assert dbDomain != null;
 		}
 		return dbDomain;
-	}
-
-	@Override
-	public CMRelationDefinition newRelation(final CMDomain domain) {
-		final DBDomain dom = driver.findDomainById(domain.getId());
-		return DBRelation.newInstance(driver, dom);
-	}
-
-	@Override
-	public CMRelationDefinition modifyRelation(final CMRelation relation) {
-		if (relation instanceof DBRelation) {
-			final DBRelation dbRelation = (DBRelation) relation;
-			return DBRelation.newInstance(driver, dbRelation);
-		}
-		throw new IllegalArgumentException();
-	}
-
-	@Override
-	public void clear(final DBEntryType type) {
-		driver.clear(type);
 	}
 
 }
