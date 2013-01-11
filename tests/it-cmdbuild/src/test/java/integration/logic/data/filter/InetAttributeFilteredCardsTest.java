@@ -9,7 +9,7 @@ import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
+import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONObject;
 import org.junit.Test;
 

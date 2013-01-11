@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.mappers;
+package org.cmdbuild.logic.mapping;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ public interface SorterMapper {
 
 	/**
 	 * Method that returns a list of OrderByClause starting from a given
-	 * "configuration" (e.g. JSON, XML ecc)
+	 * "configuration" (e.g. JSON, XML, etc).
 	 */
-	public List<OrderByClause> deserialize();
+	List<OrderByClause> deserialize();
 
 }

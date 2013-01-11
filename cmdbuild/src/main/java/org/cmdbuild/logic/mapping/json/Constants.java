@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.mappers.json;
+package org.cmdbuild.logic.mapping.json;
 
 public final class Constants {
 
@@ -50,6 +50,10 @@ public final class Constants {
 	public static final String OR_KEY = "or";
 	public static final String OPERATOR_KEY = "operator";
 	public static final String VALUE_KEY = "value";
+	public static final String DOMAIN_KEY = "domain";
+	public static final String SRC_KEY = "src";
+	public static final String TYPE_KEY = "type";
+	public static final String CARDS_KEY = "cards";
 	
 	/**
 	 * JSON sorters keys

@@ -1,7 +1,8 @@
 package org.cmdbuild.logic.data;
 
+import static org.cmdbuild.dao.query.clause.join.Over.*;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-
+import static org.cmdbuild.dao.query.clause.alias.Alias.*;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +27,10 @@ import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.logic.mappers.FilterMapper;
-import org.cmdbuild.logic.mappers.SorterMapper;
-import org.cmdbuild.logic.mappers.json.JSONFilterMapper;
-import org.cmdbuild.logic.mappers.json.JSONSorterMapper;
+import org.cmdbuild.logic.mapping.FilterMapper;
+import org.cmdbuild.logic.mapping.SorterMapper;
+import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
+import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,8 +117,10 @@ public class DataAccessLogic implements Logic {
 		if (fetchedClass == null) {
 			return Lists.newArrayList();
 		}
-		final FilterMapper filterMapper = new JSONFilterMapper(fetchedClass, queryOptions.getFilter());
-		final WhereClause whereClause = filterMapper.deserialize();
+
+		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter());
+		final WhereClause whereClause = filterMapper.whereClauses();
+		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 
 		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(fetchedClass)) //
 				.from(fetchedClass) //
@@ -125,7 +128,18 @@ public class DataAccessLogic implements Logic {
 				.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
 
-		final SorterMapper sorterMapper = new JSONSorterMapper(fetchedClass, queryOptions.getSorters());
+		for (final FilterMapper.JoinElement joinElement : joinElements) {
+			final CMDomain domain = view.findDomainByName(joinElement.domain);
+			final CMClass clazz;
+			if ("_1".equals(joinElement.source)) {
+				clazz = domain.getClass2();
+			} else {
+				clazz = domain.getClass1();
+			}
+			queryBuilder.join(clazz, canonicalAlias(clazz), over(domain));
+		}
+
+		final SorterMapper sorterMapper = new JsonSorterMapper(fetchedClass, queryOptions.getSorters());
 		for (final OrderByClause clause : sorterMapper.deserialize()) {
 			queryBuilder.orderBy(clause.getAttribute(), clause.getDirection());
 		}
