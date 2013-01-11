@@ -10,6 +10,8 @@ public interface FilterStore extends Store {
 
 		String getValue();
 
+		Long getEntryTypeId();
+
 	}
 
 	Iterable<Filter> getAllFilters();

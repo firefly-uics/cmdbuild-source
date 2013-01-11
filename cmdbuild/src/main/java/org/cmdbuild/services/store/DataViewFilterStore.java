@@ -27,7 +27,7 @@ public class DataViewFilterStore implements FilterStore {
 	private static final String NAME_ATTRIBUTE_NAME = "Code";
 	private static final String DESCRIPTION_ATTRIBUTE_NAME = "Description";
 	private static final String FILTER_ATTRIBUTE_NAME = "Filter";
-	private static final String ENTRYTYPE_ATTRIBUTE_NAME = "IdClass";
+	private static final String ENTRYTYPE_ATTRIBUTE_NAME = "TableId";
 
 	private static class FilterCard implements Filter {
 
@@ -50,6 +50,11 @@ public class DataViewFilterStore implements FilterStore {
 		@Override
 		public String getValue() {
 			return (String) card.get(FILTER_ATTRIBUTE_NAME);
+		}
+
+		@Override
+		public Long getEntryTypeId() {
+			return (Long) card.get(ENTRYTYPE_ATTRIBUTE_NAME);
 		}
 
 		@Override
@@ -102,11 +107,13 @@ public class DataViewFilterStore implements FilterStore {
 	@Override
 	public void save(final Filter filter) {
 		Validate.isTrue(isNotBlank(filter.getName()), "invalid filter name");
+		Validate.notNull(filter.getEntryTypeId());
 		createOrModifyCard(filter) //
 				.set(MASTER_ATTRIBUTE_NAME, operationUser.getAuthenticatedUser().getId()) //
 				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
 				.set(DESCRIPTION_ATTRIBUTE_NAME, filter.getDescription()) //
 				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
+				.set(ENTRYTYPE_ATTRIBUTE_NAME, filter.getEntryTypeId()) //
 				.save();
 	}
 
