@@ -159,7 +159,6 @@
 	}
 
 	function addSimpleData(me, data) {
-		_debug("add simple data", data.simple);
 		if (!data || !data.simple) {
 			return;
 		}

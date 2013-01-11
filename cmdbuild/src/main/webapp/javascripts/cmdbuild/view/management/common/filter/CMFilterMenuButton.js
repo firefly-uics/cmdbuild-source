@@ -10,6 +10,22 @@
 	};
 
 	var FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.set_filter;
+	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.set_filter;
+
+	var TOOLTIP = {
+		save: CMDBuild.Translation.common.buttons.save,
+		modify: CMDBuild.Translation.common.buttons.modify,
+		clone: CMDBuild.Translation.common.buttons.clone,
+		remove: CMDBuild.Translation.common.buttons.remove
+	};
+
+	var ICONS_PATH = {
+		save: "images/icons/disk.png",
+		save_disabled: "images/icons/disk_disabled.png",
+		modify: "images/icons/modify.png",
+		clone: "images/icons/clone.png",
+		remove: "images/icons/cross.png"
+	};
 
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterMenuButtonDelegate", {
 		/**
@@ -109,14 +125,8 @@
 				}
 			});
 
-			this.newFilterButton = new Ext.button.Button({
-				iconCls: "add_filter",
-				handler: function() {
-					me.callDelegates("onFilterMenuButtonNewActionClick", me);
-				}
-			});
-
 			this.clearButton = new Ext.button.Button({
+				text: CLEAR_FILTER_BUTTON_LABEL,
 				iconCls: "clear_filter",
 				disabled: true,
 				handler: function() {
@@ -124,7 +134,7 @@
 				}
 			});
 
-			this.items = [this.showListButton, this.newFilterButton, this.clearButton];
+			this.items = [this.showListButton, this.clearButton];
 
 			this.callParent(arguments);
 
@@ -185,6 +195,10 @@
 						} else {
 							me.callDelegates("onFilterMenuButtonApplyActionClick", [me, model.copy()]);
 						}
+					},
+
+					addFilter: function() {
+						me.callDelegates("onFilterMenuButtonNewActionClick", me);
 					}
 				}
 			});
@@ -227,6 +241,13 @@
 				autoScroll: true,
 				hideHeaders: true,
 				store: _CMCache.getAvailableFilterStore(),
+				tbar: [{
+					text: CMDBuild.Translation.management.findfilter.add,
+					iconCls: "add",
+					handler: function() {
+						me.fireEvent("addFilter");
+					}
+				}],
 				columns: [{
 					renderer: function(value, metadata, record, rowIndex, colIndex, store, view) {
 						var description = Ext.String.ellipsis(record.getDescription(), 50);
@@ -237,21 +258,22 @@
 
 						return Ext.String.format(me.rowTemplate, name, description);
 					},
-					flex: 1
+					flex: 1,
+					menuDisabled: true,
+					hideable: false
 				}, {
-					header: '&nbsp',
 					width: 100,
 					fixed: true, 
 					sortable: false, 
 					renderer: function(value, metadata, record, rowIndex, colIndex, store, view) {
-						var saveIcon = record.dirty ? "images/icons/disk.png" : "images/icons/disk_disabled.png";
-						return '<img style="cursor:pointer" title="@@ modify" class="' + ACTION_CSS_CLASS.saveFilter + '" src="' + saveIcon + '"/>' +
-							'<img style="cursor:pointer" title="@@ modify" class="' + ACTION_CSS_CLASS.modifyFilter + '" src="images/icons/modify.png"/>' +
-							'<img style="cursor:pointer" title="@@ clone" class="' + ACTION_CSS_CLASS.cloneFilter + '" src="images/icons/clone.png"/>' +
-							'<img style="cursor:pointer" title="@@ remove" class="' + ACTION_CSS_CLASS.removeFilter + '" src="images/icons/cross.png"/>';
+						var template = '<img style="cursor:pointer" title="{0}" class="{1}" src="{2}"/>';
+						var saveIcon = record.dirty ? ICONS_PATH.save : ICONS_PATH.save_disabled;
+						return Ext.String.format(template, TOOLTIP.save, ACTION_CSS_CLASS.saveFilter, saveIcon) +
+							Ext.String.format(template, TOOLTIP.modify, ACTION_CSS_CLASS.modifyFilter, ICONS_PATH.modify) +
+							Ext.String.format(template, TOOLTIP.clone, ACTION_CSS_CLASS.cloneFilter, ICONS_PATH.clone) +
+							Ext.String.format(template, TOOLTIP.remove, ACTION_CSS_CLASS.removeFilter, ICONS_PATH.remove);
 					},
 					align: 'center',
-					dataIndex: 'Fake',
 					menuDisabled: true,
 					hideable: false
 				}]

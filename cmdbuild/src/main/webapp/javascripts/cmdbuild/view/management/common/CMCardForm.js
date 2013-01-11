@@ -321,6 +321,9 @@
 	}
 
 	function fillForm(attributes, editMode) {
+
+		Ext.suspendLayouts();
+
 		this._lastCard = null;
 
 		// TODO: Now CMCardPanelController check if it is possible to load the fields.
@@ -401,6 +404,8 @@
 			this.editMode();
 			this.forceEditMode = false;
 		}
+
+		Ext.resumeLayouts();
 	};
 
 	function buildTBar() {

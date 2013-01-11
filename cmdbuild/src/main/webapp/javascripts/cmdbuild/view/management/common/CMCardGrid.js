@@ -60,27 +60,33 @@
 		},
 
 		updateStoreForClassId: function(classId, o) {
-			function callCbOrLoadFirstPage() {
+			if (this.gridSearchField) {
+				this.gridSearchField.setValue(""); // clear only the field without reload the grid
+			}
+
+			var me = this;
+
+			function callCbOrLoadFirstPage(me) {
 				if (o && o.cb) {
-					o.cb.call(o.scope || this);
+					o.cb.call(o.scope || me);
 				} else {
-					this.store.loadPage(1);
+					me.store.loadPage(1);
 				}
 			}
 
-			if (this.currentClassId == classId) {
-				callCbOrLoadFirstPage.call(this);
+			if (me.currentClassId == classId) {
+				callCbOrLoadFirstPage(me);
 			} else {
-				this.currentClassId = classId;
-				if (this.printGridMenu) {
-					this.printGridMenu.setDisabled(!classId);
+				me.currentClassId = classId;
+				if (me.printGridMenu) {
+					me.printGridMenu.setDisabled(!classId);
 				}
+
 				_CMCache.getAttributeList(classId, 
-					Ext.bind(function(attributes) {
-						this.setColumnsForClass(attributes);
-						callCbOrLoadFirstPage.call(this);
-					}, this)
-				);
+					function(attributes) {
+						me.setColumnsForClass(attributes);
+						callCbOrLoadFirstPage(me);
+					});
 			}
 		},
 

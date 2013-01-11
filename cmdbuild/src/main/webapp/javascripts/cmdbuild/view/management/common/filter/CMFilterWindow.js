@@ -68,17 +68,17 @@
 			var me = this;
 
 			this.buttons = [{
-				text: "@@ Apply", //CMDBuild.Translation.common.btns.confirm,
+				text: CMDBuild.Translation.management.findfilter.apply, //CMDBuild.Translation.common.btns.confirm,
 				handler: function() {
 					me.callDelegates("onCMFilterWindowApplyButtonClick", [me, me.getFilter()]);
 				}
 			},{
-				text: "@@ SaveAndApply",
+				text: CMDBuild.Translation.management.findfilter.saveandapply,
 				handler: function() {
 					me.callDelegates("onCMFilterWindowSaveAndApplyButtonClick", [me, me.getFilter()]);
 				}
 			},{
-				text: "@@ Abort", // CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort, // CMDBuild.Translation.common.btns.abort,
 				handler: function() {
 					me.callDelegates("onCMFilterWindowAbortButtonClick", [me]);
 				}
@@ -94,7 +94,7 @@
 		getFilter: function() {
 			// TODO check if is really dirty, if there are change in the filter
 			this.filter.setDirty();
-
+			this.filter.setLocal(true);
 			this.filter.setAttributeConfiguration(this.filterAttributesPanel.getData());
 			this.filter.setRelationConfiguration([]);
 
@@ -141,7 +141,7 @@
 			var canEditTheName = this.filter.isLocal();
 			this.nameField = new Ext.form.field.Text({
 				name: 'name',
-				fieldLabel: '@@ Name',
+				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
 				value: this.filter.getName(),
 				disabled: !canEditTheName,
 				width: CMDBuild.BIG_FIELD_WIDTH,
@@ -150,7 +150,7 @@
 
 			this.descriptionField = new Ext.form.field.TextArea({
 				name: 'description',
-				fieldLabel: '@@ Description',
+				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				value: this.filter.getDescription(),
 				width: CMDBuild.BIG_FIELD_WIDTH,
 				allowBlank: false //requires a non-empty value
@@ -161,7 +161,7 @@
 			var me = this;
 			this.buttonAlign = "center";
 			this.buttons = [{
-				text: "@@ Confirm",
+				text: CMDBuild.Translation.common.buttons.save,
 				handler: function() {
 					var name = me.nameField.getValue();
 					var description = me.descriptionField.getValue();
@@ -169,7 +169,7 @@
 					me.callDelegates("onSaveFilterWindowConfirm", [me, me.filter, name, description]);
 				}
 			}, {
-				text: "@@ Abort",
+				text: CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					me.destroy();
 				}
@@ -177,5 +177,5 @@
 
 			this.callParent(arguments);
 		}
-	})
+	});
 })();
