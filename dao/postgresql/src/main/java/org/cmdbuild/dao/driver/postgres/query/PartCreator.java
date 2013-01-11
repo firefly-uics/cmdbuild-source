@@ -20,8 +20,12 @@ public class PartCreator {
 		return sb.toString();
 	}
 
-	// TODO Handle CMDBuild and Geographic types conversion
 	protected final String param(final Object o) {
+		return param(o, null);
+	}
+
+	// TODO Handle CMDBuild and Geographic types conversion
+	protected final String param(final Object o, final String cast) {
 		if (o instanceof List) {
 			final List<Object> l = (List<Object>) o;
 			final StringBuilder sb = new StringBuilder("(");
@@ -38,7 +42,7 @@ public class PartCreator {
 			return sb.toString();
 		}
 		params.add(o);
-		return "?";
+		return "?" + (cast != null ? "::" + cast : "");
 	}
 
 	public final List<Object> getParams() {

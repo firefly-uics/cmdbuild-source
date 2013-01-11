@@ -27,6 +27,7 @@ public class DataViewFilterStore implements FilterStore {
 	private static final String NAME_ATTRIBUTE_NAME = "Code";
 	private static final String DESCRIPTION_ATTRIBUTE_NAME = "Description";
 	private static final String FILTER_ATTRIBUTE_NAME = "Filter";
+	private static final String ENTRYTYPE_ATTRIBUTE_NAME = "IdClass";
 
 	private static class FilterCard implements Filter {
 

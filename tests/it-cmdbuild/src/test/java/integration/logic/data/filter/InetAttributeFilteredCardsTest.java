@@ -1,45 +1,48 @@
 package integration.logic.data.filter;
 
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Iterables.size;
 import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mappers.json.Constants.FilterOperator;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import com.google.common.collect.Iterables;
+
 /**
  * In this class there are tests that filter cards for the attribute with type
  * date.
  */
-public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
+public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 
-	private static final String DATE_ATTRIBUTE = "Attr";
+	private static final String INET_ATTRIBUTE = "Attr";
 
 	@Override
 	protected void initializeDatabaseData() {
-		final DBAttribute createdAttribute = addAttributeToClass(DATE_ATTRIBUTE, new DateAttributeType(), createdClass);
+		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(), createdClass);
 
-		dbDataView().newCard(createdClass) //
+		final CMCard card1 = dbDataView().newCard(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
-				.set(createdAttribute.getName(), "06/08/2012") //
+				.set(createdAttribute.getName(), "192.168.0.1") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		final CMCard card2 = dbDataView().newCard(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
-				.set(createdAttribute.getName(), "11/12/1995") //
+				.set(createdAttribute.getName(), "192.168.0.10") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		final CMCard card3 = dbDataView().newCard(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
-				.set(createdAttribute.getName(), "10/09/1998") //
+				.set(createdAttribute.getName(), "192.168.1.120") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		final CMCard card4 = dbDataView().newCard(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //
@@ -49,99 +52,96 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 	@Test
 	public void fetchFilteredCardsWithEqualOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.EQUAL, "11/12/1995");
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.EQUAL, "192.168.0.1");
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, size(fetchedCards));
-		assertEquals("bar", get(fetchedCards, 0).getCode());
+		assertEquals(1, Iterables.size(fetchedCards));
+		CMCard card = Iterables.get(fetchedCards, 0);
+		assertEquals("foo", card.getCode());
 	}
 
 	@Test
 	public void fetchFilteredCardsWithNotEqualOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.NOT_EQUAL, "11/12/1995");
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.NOT_EQUAL, "192.168.0.1");
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, size(fetchedCards));
-		assertEquals("foo", get(fetchedCards, 0).getCode());
-		assertEquals("baz", get(fetchedCards, 1).getCode());
-		assertEquals("zzz", get(fetchedCards, 2).getCode());
+		assertEquals(3, Iterables.size(fetchedCards));
 	}
 
 	@Test
 	public void fetchFilteredCardsWithGreaterThanOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.GREATER_THAN, "10/09/1998");
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.GREATER_THAN, "192.168.0.1");
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, size(fetchedCards));
-		assertEquals("foo", get(fetchedCards, 0).getCode());
+		assertEquals(2, Iterables.size(fetchedCards));
 	}
 
 	@Test
 	public void fetchFilteredCardsWithLessThanOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.LESS_THAN, "11/09/1998");
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.LESS_THAN, "192.168.0.11");
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, size(fetchedCards));
+		assertEquals(2, Iterables.size(fetchedCards));
 	}
 
 	@Test
 	public void fetchFilteredCardsWithBetweenOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.BETWEEN, "19/01/1990",
-				"19/01/2000");
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.BETWEEN, "192.168.0.0",
+				"192.168.1.121");
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(2, size(fetchedCards));
+		assertEquals(3, Iterables.size(fetchedCards));
 	}
 
 	@Test
 	public void fetchFilteredCardsWithNullOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.NULL);
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.NULL);
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(1, size(fetchedCards));
-		assertEquals("zzz", get(fetchedCards, 0).getCode());
+		assertEquals(1, Iterables.size(fetchedCards));
+		assertEquals("zzz", Iterables.get(fetchedCards, 0).getCode());
 	}
 
 	@Test
 	public void fetchFilteredCardsWithNotNullOperator() throws Exception {
 		// given
-		final JSONObject filterObject = buildAttributeFilter(DATE_ATTRIBUTE, FilterOperator.NOT_NULL);
+		final JSONObject filterObject = buildAttributeFilter(INET_ATTRIBUTE, FilterOperator.NOT_NULL);
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
 		final Iterable<CMCard> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions);
 
 		// then
-		assertEquals(3, size(fetchedCards));
+		assertEquals(3, Iterables.size(fetchedCards));
 	}
 
 }

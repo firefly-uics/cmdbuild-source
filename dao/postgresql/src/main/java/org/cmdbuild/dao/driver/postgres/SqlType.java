@@ -1,6 +1,8 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +74,9 @@ public enum SqlType {
 		}
 	}, //
 	inet(IpAddressAttributeType.class) {
-	// nothing to implement, just for keep ordered
+		public String sqlCast() {
+			return "inet";
+		}
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class) {
 		@Override
@@ -358,13 +362,13 @@ public enum SqlType {
 
 	protected final Object dateJavaToSqlValue(Object value) {
 		if (value instanceof org.joda.time.DateTime) {
-			value = new java.util.Date(((org.joda.time.DateTime) value).getMillis());
+			value = new java.sql.Date(((org.joda.time.DateTime) value).getMillis());
 		}
 		return value;
 	}
 
 	protected final Object dateSqlToJavaValue(Object value) {
-		if (value instanceof java.util.Date) {
+		if (value instanceof java.sql.Date) {
 			value = new org.joda.time.DateTime(((java.util.Date) value).getTime());
 		}
 		return value;

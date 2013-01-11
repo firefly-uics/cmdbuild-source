@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 
-import utils.GenericRollbackDriver;
 import utils.IntegrationTestBase;
 
 import com.google.common.collect.Lists;
