@@ -18,6 +18,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.reference.EntryTypeReference;
 
 import com.google.common.base.Function;
 
@@ -54,7 +55,8 @@ public class DataViewFilterStore implements FilterStore {
 
 		@Override
 		public String getClassName() {
-			final CMClass clazz = dataView.findClassById((Long) card.get(FILTER_ATTRIBUTE_NAME));
+			EntryTypeReference etr = (EntryTypeReference) card.get(ENTRYTYPE_ATTRIBUTE_NAME);
+			final CMClass clazz = dataView.findClassById(etr.getId());
 			return clazz.getName();
 		}
 
