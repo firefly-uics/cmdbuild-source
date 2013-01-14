@@ -152,10 +152,13 @@
 
 		setFilterButtonLabel: function(label) {
 			var text = FILTER_BUTTON_LABEL;
+			var tooltip = FILTER_BUTTON_LABEL;
 			if (label) {
 				text = Ext.String.ellipsis(label, 20);
+				tooltip = label;
 			}
 
+			this.showListButton.setTooltip(tooltip);
 			this.showListButton.setText(text);
 		},
 
@@ -236,7 +239,6 @@
 
 			var me = this;
 			this.grid = new Ext.grid.Panel({
-				maxHeight: 150,
 				width: 300,
 				autoScroll: true,
 				hideHeaders: true,
@@ -297,5 +299,4 @@
 			}
 		}
 	});
-
 })();

@@ -376,6 +376,12 @@ public class Serializer {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
+				// Temporary solution to have single level lookup
+				String lookupTypeName = attributeType.getLookupTypeName();
+				JSONArray lookupChain = new JSONArray();
+				lookupChain.put(lookupTypeName);
+				attributes.put("lookupchain", lookupChain);
+				attributes.put("lookup", lookupTypeName);
 				// // NdPaolo: PLEASE, LET ME REFACTOR THE LOOKUPS
 				// LookupType lt = attribute.getLookupType();
 				// JSONArray lookupChain = new JSONArray();

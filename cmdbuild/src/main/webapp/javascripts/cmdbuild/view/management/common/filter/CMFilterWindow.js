@@ -1,5 +1,7 @@
 (function() {
 
+	var titleTemplate = "{0} - {1} - {2}";
+
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterWindowDelegate", {
 		/**
 		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
@@ -52,11 +54,10 @@
 //			className: this.className
 //		});
 
-			this.title = CMDBuild.Translation.management.findfilter.window_title;
+			var prefix = CMDBuild.Translation.management.findfilter.window_title;
+
 			var et = _CMCache.getEntryTypeByName(this.className);
-			if (et) {
-				this.title += " - " + et.getDescription();
-			}
+			this.title = Ext.String.format(titleTemplate, prefix, this.filter.getName(), et.getDescription());
 
 			this.items = [
 				this.filterAttributesPanel

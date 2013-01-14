@@ -35,7 +35,7 @@
 				fields: ['id','type'],
 				data: this.getQueryOptions()
 			});
-			
+
 			return new Ext.form.ComboBox({
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: attribute.description,
@@ -44,6 +44,7 @@
 				name: attribute.name + "_ftype",
 				queryMode: 'local',
 				store: store,
+				value: this.getDefaultValueForQueryCombo(),
 				valueField: 'id',
 				displayField: 'type',
 				triggerAction: 'all',
@@ -52,6 +53,10 @@
 				width: 130
 			});
 			
+		},
+
+		getDefaultValueForQueryCombo: function() {
+			return CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator.EQUAL;
 		},
 
 		/**
@@ -218,9 +223,13 @@
 			this.items = [this.removeFieldButton, this.conditionCombo].concat(this.valueFields);
 
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
-			this.conditionCombo.on('select', function(combo, selection, id) {
-				me.onConditionComboSelectStrategy.run(selection);
-			});
+
+			this.conditionCombo.setValue = Ext.Function.createSequence(this.conditionCombo.setValue, function(value) {
+				me.onConditionComboSelectStrategy.run(this.getValue());
+			}, this.conditionCombo);
+
+//			this.conditionCombo.on('select', function(combo, selection, id) {
+//			});
 
 			this.callParent(arguments);
 		},
@@ -299,8 +308,8 @@
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel.SingleStrategy", {
 		extend: "CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel.Strategy",
 
-		run: function(selection) {
-			var disableValueFields = needsFieldToSetAValue(selection);
+		run: function(operator) {
+			var disableValueFields = needsFieldToSetAValue(operator);
 			for (var i=0, l=this.valueFields.length; i<l; ++i) {
 				var f = this.valueFields[i];
 				f.setDisabled(disableValueFields);
@@ -315,19 +324,15 @@
 			this.callParent(arguments);
 		},
 
-		run: function(selection) {
+		run: function(operator) {
 			this.callParent(arguments);
 
 			// only the between needs two fields
-			var s = CMDBuild.Utils.getFirstSelection(selection);
-			this.valueFields[1].setDisabled(s.data.id !== "between");
+			this.valueFields[1].setDisabled(operator !== "between");
 		}
 	});
 
-	function needsFieldToSetAValue(operatorComboSelection) {
-		var operatorSelected = CMDBuild.Utils.getFirstSelection(operatorComboSelection);
-		var operator = operatorSelected.data.id;
-
+	function needsFieldToSetAValue(operator) {
 		var needIt = (operator == CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator.NULL)
 			|| (operator == CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator.NOT_NULL);
 
