@@ -1,49 +1,15 @@
 (function() {
 	var filterStore = new Ext.data.Store({
 		model: "CMDBuild.model.CMFilterModel",
-		data: [{
-			name: "Filtro Classe 1",
-			description: "Bla bla classe 1",
-			entryType: "Classe1",
-			configuration: {
-				attribute: {
-					and: [{
-						or: [{
-							simple: {
-								attribute: "Code",
-								operator: "contain",
-								value: ["01"]
-							}
-						},{
-							simple: {
-								attribute: "Code",
-								operator: "contain",
-								value: ["02"]
-							}
-						}]
-					}, {
-						simple: {
-							attribute: "Description",
-							operator: "contain",
-							value: ["The"]
-						}
-					}]
-				}
+		autoLoad: true,
+		proxy: {
+			type: "ajax",
+			url: "services/json/filter/read",
+			reader: {
+				type: 'json',
+				root: 'filters'
 			}
-		}, {
-			name: "Filtro Classe 2",
-			description: "Bla bla bla classe 2",
-			entryType: "Classe2",
-			configuration: {
-				attribute: {
-					simple: {
-						attribute: "Code",
-						operator: "contain",
-						value: ["02"]
-					}
-				}
-			}
-		}]
+		}
 	});
 
 	Ext.define("CMDBuild.cache.CMChcheFilterFunctions", {

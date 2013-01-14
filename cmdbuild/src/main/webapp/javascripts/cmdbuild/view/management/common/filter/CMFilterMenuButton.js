@@ -10,7 +10,7 @@
 	};
 
 	var FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.set_filter;
-	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.set_filter;
+	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.clear_filter;
 
 	var TOOLTIP = {
 		save: CMDBuild.Translation.common.buttons.save,
@@ -121,7 +121,7 @@
 				iconCls: 'find',
 				enableToggle: true,
 				toggleHandler: function(button, state) {
-					showPicker(me, button, state);
+					return showPicker(me, button, state);
 				}
 			});
 
@@ -209,8 +209,15 @@
 
 		if (state) {
 			me.updatePickerPosition();
-			me.selectAppliedFilter();
-			me.picker.show();
+			if (me.picker.filtersCount()) {
+				me.selectAppliedFilter();
+				me.picker.show();
+			} else {
+				// If has no filters the user
+				// can only add a new filter.
+				me.callDelegates("onFilterMenuButtonNewActionClick", me);
+				me.showListButton.toggle();
+			}
 		} else {
 			me.picker.hide();
 		}
@@ -230,8 +237,7 @@
 			this.closable = false;
 			this.draggable = false;
 			this.resizable = false;
-			this.expandOnShow = true;
-			this.frame = false;
+			this.frame = true;
 			this.border = false;
 			this.rowTemplate = '<p class="filterMenuButtonGrid-name">{0}</p><p class="filterMenuButtonGrid-description">{1}</p>';
 
@@ -285,6 +291,10 @@
 			this.items = [this.grid];
 
 			this.callParent(arguments);
+		},
+
+		filtersCount: function() {
+			return this.grid.getStore().count();
 		},
 
 		deselect: function() {
