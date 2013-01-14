@@ -22,6 +22,8 @@ import org.junit.Test;
 
 import utils.IntegrationTestBase;
 
+import com.google.common.collect.Iterables;
+
 public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 	private static final long USER_ID = 123L;
@@ -29,11 +31,13 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 	private DataViewFilterStore filterStore;
 	private CMClass roleClass;
+	private CMClass userClass;
 
 	@Before
 	public void createFilterStore() throws Exception {
 		filterStore = new DataViewFilterStore(dbDataView(), operationUser(USER_ID));
 		roleClass = dbDataView().findClassByName("Role");
+		userClass = dbDataView().findClassByName("User");
 	}
 
 	@After
@@ -57,7 +61,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.save(filter(null, "bar", roleClass.getId()));
+		filterStore.save(filter(null, "bar", roleClass.getName()));
 
 		// then
 	}
@@ -67,7 +71,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.save(filter("", "bar", roleClass.getId()));
+		filterStore.save(filter("", "bar", roleClass.getName()));
 
 		// then
 	}
@@ -77,7 +81,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		filterStore.save(filter(" \t", "bar", roleClass.getId()));
+		filterStore.save(filter(" \t", "bar", roleClass.getName()));
 
 		// then
 	}
@@ -85,59 +89,59 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void filterSavedAndRead() throws Exception {
 		// given
-		filterStore.save(filter("foo", "bar", roleClass.getId()));
+		filterStore.save(filter("foo", "bar", roleClass.getName()));
 
 		// when
 		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "bar", roleClass.getId())));
+		assertThat(filters, contains(filter("foo", "bar", roleClass.getName())));
 	}
 
 	@Test
 	public void filterModified() throws Exception {
 		// given
-		filterStore.save(filter("foo", "bar", roleClass.getId()));
+		filterStore.save(filter("foo", "bar", roleClass.getName()));
 
 		// when
 		Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "bar", roleClass.getId())));
+		assertThat(filters, contains(filter("foo", "bar", roleClass.getName())));
 
 		// but
-		filterStore.save(filter("foo", "baz", roleClass.getId()));
+		filterStore.save(filter("foo", "baz", roleClass.getName()));
 
 		// when
 		filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("foo", "baz", roleClass.getId())));
+		assertThat(filters, contains(filter("foo", "baz", roleClass.getName())));
 	}
 
 	@Test
 	public void filterSavedAndReadByUserId() throws Exception {
 		// given
-		filterStore.save(filter("bar", "baz", roleClass.getId()));
+		filterStore.save(filter("bar", "baz", roleClass.getName()));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
 				dbDataView(), operationUser(ANOTHER_USER_ID));
-		anotherFilterStore.save(filter("foo", "baz", roleClass.getId()));
+		anotherFilterStore.save(filter("foo", "baz", roleClass.getName()));
 
 		// when
 		final Iterable<FilterStore.Filter> filters = filterStore.getAllFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(filter("bar", "baz", roleClass.getId())));
+		assertThat(filters, contains(filter("bar", "baz", roleClass.getName())));
 	}
 
 	@Test
 	public void filterDataFullyRead() throws Exception {
 		// given
-		filterStore.save(filter("foo", "bar", "baz", roleClass.getId()));
+		filterStore.save(filter("foo", "bar", "baz", roleClass.getName()));
 
 		// when
 		final Filter filter = filterStore.getAllFilters().iterator().next();
@@ -146,6 +150,32 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		assertThat(filter.getName(), equalTo("foo"));
 		assertThat(filter.getDescription(), equalTo("bar"));
 		assertThat(filter.getValue(), equalTo("baz"));
+	}
+
+	@Test
+	public void userCanHaveMoreThanOneFilterWithSameNameButForDifferentEntryType() throws Exception {
+		// given
+		filterStore.save(filter("name", "description", "value", roleClass.getName()));
+		filterStore.save(filter("name", "desc", "value2", userClass.getName()));
+
+		// when
+		final Iterable<Filter> userFilters = filterStore.getAllFilters();
+
+		// then
+		assertThat(Iterables.size(userFilters), equalTo(2));
+	}
+
+	@Test
+	public void userCanHaveOnlyOneFilterWithSameNameAndEntryType() throws Exception {
+		// given
+		filterStore.save(filter("name", "description", "value", roleClass.getName()));
+		filterStore.save(filter("name", "desc", "value2", roleClass.getName()));
+
+		// when
+		final Iterable<Filter> userFilters = filterStore.getAllFilters();
+
+		// then
+		assertThat(Iterables.size(userFilters), equalTo(1));
 	}
 
 	/*
@@ -162,11 +192,11 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 				mock(CMGroup.class));
 	}
 
-	private Filter filter(final String name, final String value, final Long entryTypeId) {
-		return filter(name, name, value, entryTypeId);
+	private Filter filter(final String name, final String value, final String className) {
+		return filter(name, name, value, className);
 	}
 
-	private Filter filter(final String name, final String description, final String value, final Long entryTypeId) {
+	private Filter filter(final String name, final String description, final String value, final String className) {
 		return new Filter() {
 
 			@Override
@@ -185,8 +215,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 			}
 
 			@Override
-			public Long getEntryTypeId() {
-				return entryTypeId;
+			public String getClassName() {
+				return className;
 			}
 
 			@Override

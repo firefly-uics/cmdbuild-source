@@ -382,7 +382,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	@Override
 	public Attribute[] callFunction(final String functionName, final Attribute[] params) {
 		Log.SOAP.info(format("calling function '%s' with parameters: %s", functionName, params));
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserDataView();
 		final CMFunction function = view.findFunctionByName(functionName);
 		final Object[] actualParams = convertFunctionInput(function, params);
 
@@ -500,7 +500,7 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 	@Override
 	public List<FunctionSchema> getFunctionList() {
 		final List<FunctionSchema> functionSchemas = new ArrayList<FunctionSchema>();
-		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserContextView(getUserCtx());
+		final CMDataView view = TemporaryObjectsBeforeSpringDI.getUserDataView();
 		for (final CMFunction function : view.findAllFunctions()) {
 			functionSchemas.add(functionSchemaFor(function));
 		}
@@ -538,17 +538,19 @@ public class PrivateImpl implements Private, ApplicationContextAware {
 				+ (digester.isReversible() ? "reversible" : "irreversible") + ")");
 		return digester.encrypt(plainText);
 	}
-	
+
 	@Override
-	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId, final Attribute[] attributeList) {
+	public CardExt getCardWithLongDateFormat(final String className, final Integer cardId,
+			final Attribute[] attributeList) {
 		return getCard(className, cardId, attributeList, true);
 	}
-	
-	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList, final boolean enableLongDateFormat) {
+
+	public CardExt getCard(final String className, final Integer cardId, final Attribute[] attributeList,
+			final boolean enableLongDateFormat) {
 		final ECard ecard = new ECard(getUserCtx());
 		return ecard.getCardExt(className, cardId, attributeList, enableLongDateFormat);
 	}
-	
+
 	@Override
 	public DataHandler getBuiltInReport(final String reportId, final String extension, final ReportParams[] params) {
 		final EReport report = new EReport(getUserCtx());

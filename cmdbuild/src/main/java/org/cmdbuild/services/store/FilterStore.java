@@ -10,7 +10,7 @@ public interface FilterStore extends Store {
 
 		String getValue();
 
-		Long getEntryTypeId();
+		String getClassName();
 
 	}
 
