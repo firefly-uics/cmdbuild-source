@@ -9,8 +9,8 @@
 
 	CMDBuild.ServiceProxy.Filter = {
 
-		read: function(filter, config) {
-			
+		read: function(config) {
+			// read only the store, and do it directly
 		},
 
 		create: function(filter, config) {

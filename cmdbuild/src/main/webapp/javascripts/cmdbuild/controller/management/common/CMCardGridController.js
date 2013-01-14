@@ -364,7 +364,7 @@
 				}
 			};
 
-			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);
+			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.common.confirmpopup.areyousure, makeRequest, this);
 		},
 
 		// as cmFilterWindow
@@ -422,6 +422,10 @@
 
 				saveFilterWindow.destroy();
 				me.view.selectAppliedFilter();
+
+				if (filter.isApplied()) {
+					me.view.setFilterButtonLabel(filter.getName());
+				} 
 			}
 
 			_CMCache.removeFilter(filter);

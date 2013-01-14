@@ -27,7 +27,7 @@
 							operator: "contain",
 							value: ["The"]
 						}
-					}] 
+					}]
 				}
 			}
 		}, {

@@ -23,6 +23,11 @@ CMDBuild.WidgetBuilders.TextualQueryAttribute.prototype.getQueryOptions = functi
 		[operator.NULL, translation.nullo]
 	];
 };
+
+CMDBuild.WidgetBuilders.TextualQueryAttribute.prototype.getDefaultValueForQueryCombo = function() {
+	return CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator.CONTAIN;
+};
+
 /**
  * @override
  */

@@ -293,7 +293,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "idDomain",
-				valueField : "idDomain",
+				valueField : "name",
 				displayField : "description",
 				allowBlank : false,
 				cmImmutable : true,
