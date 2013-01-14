@@ -40,7 +40,7 @@ public class SimpleFunctionQueryCreatorTest {
 	public void withAttributeListAndNoParameters() {
 		setFunc.addOutputParameter("o1", new UndefinedAttributeType());
 		setFunc.addOutputParameter("o2", new UndefinedAttributeType());
-		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc), f);
+		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc), f, false);
 		querySpecs.addSelectAttribute(attribute(f, "o2"));
 		querySpecs.addSelectAttribute(attribute(f, "o1"));
 
@@ -54,7 +54,7 @@ public class SimpleFunctionQueryCreatorTest {
 		setFunc.addInputParameter("i2", new IdentityAttributeType());
 		setFunc.addInputParameter("i3", new IdentityAttributeType());
 		setFunc.addOutputParameter("o", new IdentityAttributeType());
-		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc, "12", 34, null), f);
+		final QuerySpecsImpl querySpecs = new QuerySpecsImpl(call(setFunc, "12", 34, null), f, false);
 		querySpecs.addSelectAttribute(attribute(f, "o"));
 
 		final QueryCreator queryCreator = new QueryCreator(querySpecs);

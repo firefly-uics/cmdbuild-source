@@ -38,7 +38,7 @@ public interface Const {
 
 		SystemAttributes(final String dbName, final String typeCast) {
 			this.dbName = dbName;
-			this.castSuffix = typeCast ;
+			this.castSuffix = typeCast;
 		}
 
 		SystemAttributes(final String dbName) {

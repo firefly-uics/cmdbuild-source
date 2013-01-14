@@ -403,7 +403,7 @@ public class DBDataView extends QueryExecutorDataView {
 
 			private DBEntryType output;
 
-			public DBEntryType convert(CMEntryType entryType) {
+			public DBEntryType convert(final CMEntryType entryType) {
 				entryType.accept(this);
 				return output;
 			}
@@ -414,12 +414,12 @@ public class DBDataView extends QueryExecutorDataView {
 			}
 
 			@Override
-			public void visit(CMDomain type) {
+			public void visit(final CMDomain type) {
 				output = cmToDbDomain(type);
 			}
 
 			@Override
-			public void visit(CMClass type) {
+			public void visit(final CMClass type) {
 				output = cmToDbClass(type);
 			}
 

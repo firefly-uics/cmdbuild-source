@@ -8,6 +8,7 @@ import org.cmdbuild.dao.driver.postgres.Utils.ParamAdder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public class PartCreator {
+
 	protected final StringBuilder sb;
 	private final List<Object> params;
 
@@ -51,10 +52,12 @@ public class PartCreator {
 
 	protected final String quoteType(final CMEntryType type) {
 		return Utils.quoteType(type, new ParamAdder() {
+
 			@Override
 			public void add(final Object value) {
 				params.add(value);
 			}
+
 		});
 	}
 }

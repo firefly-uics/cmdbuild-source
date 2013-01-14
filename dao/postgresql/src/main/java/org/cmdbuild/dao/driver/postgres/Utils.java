@@ -1,14 +1,11 @@
 package org.cmdbuild.dao.driver.postgres;
 
-import static java.lang.String.format;
-import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 import static com.google.common.base.CharMatcher.DIGIT;
 import static com.google.common.base.CharMatcher.inRange;
+import static java.lang.String.format;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -16,17 +13,9 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
-import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
-import org.cmdbuild.dao.entrytype.DBClass.ClassMetadata;
-import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
-import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 
 public class Utils {
 
@@ -51,7 +40,7 @@ public class Utils {
 		private ParamAdder paramAdder;
 		private String quotedTypeName;
 
-		public String quote(final CMEntryType type,  final ParamAdder paramAdder) {
+		public String quote(final CMEntryType type, final ParamAdder paramAdder) {
 			this.paramAdder = paramAdder;
 			type.accept(this);
 			return quotedTypeName;
@@ -97,13 +86,15 @@ public class Utils {
 			return sb.toString();
 		}
 	}
-	
+
 	// TODO should not use this trick for add parameters to the part creator
 	public static interface ParamAdder {
+
 		public void add(Object value);
 	}
 
-	// TODO: params adder is needed for functions... should be done in another way
+	// TODO: params adder is needed for functions... should be done in another
+	// way
 	public static String quoteType(final CMEntryType type, final ParamAdder paramAdder) {
 		return new TypeQuoter().quote(type, paramAdder);
 	}
@@ -114,6 +105,7 @@ public class Utils {
 	@Deprecated
 	public static String quoteType(final CMEntryType type) {
 		return new TypeQuoter().quote(type, new ParamAdder() {
+
 			@Override
 			public void add(final Object value) {
 				// nothing to do

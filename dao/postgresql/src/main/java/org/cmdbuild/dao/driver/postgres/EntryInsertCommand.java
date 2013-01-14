@@ -62,8 +62,8 @@ public class EntryInsertCommand extends EntryCommand {
 	}
 
 	private List<String> userAttributeNames() {
-		List<String> realUserAttributes = Lists.newArrayList();
-		for (AttributeValueType attributeValueType : attributesToBeInserted) {
+		final List<String> realUserAttributes = Lists.newArrayList();
+		for (final AttributeValueType attributeValueType : attributesToBeInserted) {
 			if (!isSystemDomainAttribute(attributeValueType.getName())) {
 				realUserAttributes.add(attributeValueType.getName());
 			}
@@ -71,8 +71,8 @@ public class EntryInsertCommand extends EntryCommand {
 		return realUserAttributes;
 	}
 
-	private boolean isSystemDomainAttribute(String attributeName) {
-		for (SystemAttributes sysAttr : systemDomainAttributes) {
+	private boolean isSystemDomainAttribute(final String attributeName) {
+		for (final SystemAttributes sysAttr : systemDomainAttributes) {
 			if (attributeName.equals(sysAttr.getDBName())) {
 				return true;
 			}
@@ -85,9 +85,11 @@ public class EntryInsertCommand extends EntryCommand {
 
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate().update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+
+			@Override
+			public PreparedStatement createPreparedStatement(final Connection connection) throws SQLException {
 				ps = connection.prepareStatement(insertStatement, new String[] { "Id" });
-				for (AttributeValueType avt : attributesToBeInserted) {
+				for (final AttributeValueType avt : attributesToBeInserted) {
 					avt.getType().accept(new AttributeTypeVisitor());
 				}
 				return ps;
@@ -105,11 +107,11 @@ public class EntryInsertCommand extends EntryCommand {
 	}
 
 	private String buildQuestionMarkValuesList() {
-		List<String> questionMarksWithSqlCast = Lists.newArrayList();
-		for (String attributeName : userAttributeNames()) {
-			CMEntryType entryType = entry().getType();
+		final List<String> questionMarksWithSqlCast = Lists.newArrayList();
+		for (final String attributeName : userAttributeNames()) {
+			final CMEntryType entryType = entry().getType();
 			String sqlCast;
-			CMAttributeType<?> userAttributeType = entryType.getAttribute(attributeName).getType();
+			final CMAttributeType<?> userAttributeType = entryType.getAttribute(attributeName).getType();
 			sqlCast = SqlType.getSqlType(userAttributeType).sqlCast();
 			if (sqlCast != null) {
 				sqlCast = "::" + sqlCast;
@@ -121,7 +123,7 @@ public class EntryInsertCommand extends EntryCommand {
 		String questionMarkList = join(questionMarksWithSqlCast, ", ");
 
 		if (entry().getType() instanceof CMDomain) {
-			for (SystemAttributes domSysAttribute : systemDomainAttributes) {
+			for (final SystemAttributes domSysAttribute : systemDomainAttributes) {
 				questionMarkList = (!questionMarkList.isEmpty()) ? questionMarkList + ", " : questionMarkList + "";
 				questionMarkList = questionMarkList + "?";
 				if (domSysAttribute.getCastSuffix() != null) {
@@ -133,13 +135,13 @@ public class EntryInsertCommand extends EntryCommand {
 	}
 
 	private String buildAttributeNamesList() {
-		List<String> userAttributeNames = Lists.newArrayList();
-		for (String attributeName : userAttributeNames()) {
+		final List<String> userAttributeNames = Lists.newArrayList();
+		for (final String attributeName : userAttributeNames()) {
 			userAttributeNames.add(quoteIdent(attributeName));
 		}
 		String namesList = join(userAttributeNames, ", ");
 		if (entry().getType() instanceof CMDomain) {
-			for (SystemAttributes domSysAttribute : systemDomainAttributes) {
+			for (final SystemAttributes domSysAttribute : systemDomainAttributes) {
 				namesList = (!namesList.isEmpty()) ? namesList + ", " : namesList + "";
 				namesList = namesList + quoteIdent(domSysAttribute.getDBName());
 			}
@@ -150,171 +152,171 @@ public class EntryInsertCommand extends EntryCommand {
 	private class AttributeTypeVisitor implements CMAttributeTypeVisitor {
 
 		@Override
-		public void visit(BooleanAttributeType attributeType) {
+		public void visit(final BooleanAttributeType attributeType) {
 			try {
-				Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
-					Boolean castValue = (Boolean) value;
+					final Boolean castValue = (Boolean) value;
 					ps.setBoolean(i, castValue);
 				} else {
 					ps.setObject(i, null);
 				}
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(EntryTypeAttributeType attributeType) {
+		public void visit(final EntryTypeAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(DateTimeAttributeType attributeType) {
+		public void visit(final DateTimeAttributeType attributeType) {
 			try {
-				Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
-					Date castValue = (Date) value;
+					final Date castValue = (Date) value;
 					ps.setDate(i, castValue);
 				} else {
 					ps.setObject(i, null);
 				}
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(DateAttributeType attributeType) {
+		public void visit(final DateAttributeType attributeType) {
 			try {
-				Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
-					Date castValue = (Date) value;
+					final Date castValue = (Date) value;
 					ps.setDate(i, castValue);
 				} else {
 					ps.setObject(i, null);
 				}
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(DecimalAttributeType attributeType) {
+		public void visit(final DecimalAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(DoubleAttributeType attributeType) {
+		public void visit(final DoubleAttributeType attributeType) {
 			try {
-				Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
-					Double castValue = (Double) value;
+					final Double castValue = (Double) value;
 					ps.setDouble(i, castValue);
 				} else {
 					ps.setObject(i, null);
 				}
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(ForeignKeyAttributeType attributeType) {
+		public void visit(final ForeignKeyAttributeType attributeType) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void visit(GeometryAttributeType attributeType) {
+		public void visit(final GeometryAttributeType attributeType) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void visit(IntegerAttributeType attributeType) {
+		public void visit(final IntegerAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(IpAddressAttributeType attributeType) {
+		public void visit(final IpAddressAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(LookupAttributeType attributeType) {
+		public void visit(final LookupAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(ReferenceAttributeType attributeType) {
+		public void visit(final ReferenceAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(StringAttributeType attributeType) {
+		public void visit(final StringAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(TextAttributeType attributeType) {
+		public void visit(final TextAttributeType attributeType) {
 			try {
 				ps.setObject(i, attributesToBeInserted.get(i - 1).getValue());
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
 		@Override
-		public void visit(TimeAttributeType attributeType) {
+		public void visit(final TimeAttributeType attributeType) {
 			try {
-				Object value = attributesToBeInserted.get(i - 1).getValue();
+				final Object value = attributesToBeInserted.get(i - 1).getValue();
 				if (value != null) {
-					Date castValue = (Date) value;
+					final Date castValue = (Date) value;
 					ps.setDate(i, castValue);
 				} else {
 					ps.setObject(i, null);
 				}
 				i++;
-			} catch (SQLException e) {
+			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 		}

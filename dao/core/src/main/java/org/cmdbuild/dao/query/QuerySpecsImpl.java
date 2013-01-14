@@ -24,8 +24,9 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private Long offset;
 	private Long limit;
 	private WhereClause whereClause;
+	private final boolean distinct;
 
-	public QuerySpecsImpl(final CMEntryType fromType, final Alias fromAlias) {
+	public QuerySpecsImpl(final CMEntryType fromType, final Alias fromAlias, final boolean distinct) {
 		this.fromType = fromType;
 		this.fromAlias = fromAlias;
 		joinClauses = new ArrayList<JoinClause>();
@@ -34,6 +35,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		offset = null;
 		limit = null;
 		whereClause = new EmptyWhereClause();
+		this.distinct = distinct;
 	}
 
 	@Override
@@ -60,10 +62,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 		return this.attributes;
 	}
 
-	public void addOrderByClause(OrderByClause orderByClause) {
+	public void addOrderByClause(final OrderByClause orderByClause) {
 		this.orderByClauses.add(orderByClause);
 	}
 
+	@Override
 	public List<OrderByClause> getOrderByClauses() {
 		return orderByClauses;
 	}
@@ -98,4 +101,10 @@ public class QuerySpecsImpl implements QuerySpecs {
 	public Long getLimit() {
 		return limit;
 	}
+
+	@Override
+	public boolean distinct() {
+		return distinct;
+	}
+
 }

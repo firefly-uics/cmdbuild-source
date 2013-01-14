@@ -10,7 +10,6 @@ import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMDomain.CMDomainDefinition;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 

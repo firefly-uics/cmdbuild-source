@@ -26,8 +26,9 @@ public class QueryCreatorTest {
 	private static class QuerySpecsDouble extends QuerySpecsImpl {
 
 		QuerySpecsDouble(final CMClass fromType, final ClassAlias fromAlias) {
-			super(fromType, fromAlias.getAlias());
+			super(fromType, fromAlias.getAlias(), false);
 		}
+
 	}
 
 	private QuerySpecsDouble qs;

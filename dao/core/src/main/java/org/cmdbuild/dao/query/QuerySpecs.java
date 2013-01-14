@@ -27,4 +27,6 @@ public interface QuerySpecs {
 
 	Long getLimit();
 
+	boolean distinct();
+
 }

@@ -12,7 +12,6 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
@@ -184,7 +183,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 			public String getValue() {
 				return value;
 			}
-			
+
 			@Override
 			public Long getEntryTypeId() {
 				return entryTypeId;

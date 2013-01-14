@@ -1,8 +1,6 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +42,7 @@ public enum SqlType {
 	// nothing to implement, just for keep ordered
 	}, //
 	date(DateAttributeType.class) {
+
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
@@ -61,6 +60,7 @@ public enum SqlType {
 	 * POINT, LINESTRING, POLYGON
 	 */
 	geometry(GeometryAttributeType.class) {
+
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			// TODO
@@ -74,11 +74,14 @@ public enum SqlType {
 		}
 	}, //
 	inet(IpAddressAttributeType.class) {
+
+		@Override
 		public String sqlCast() {
 			return "inet";
 		}
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class) {
+
 		@Override
 		protected Class<? extends CMAttributeType<?>> getJavaType(final CMAttributeType.Meta meta) {
 			if (meta.isLookup()) {
@@ -109,6 +112,7 @@ public enum SqlType {
 	 * precision and scale
 	 */
 	numeric(DecimalAttributeType.class) {
+
 		@Override
 		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (stringParams.length == 2) {
@@ -132,6 +136,7 @@ public enum SqlType {
 	 * Used by some system tables
 	 */
 	regclass(EntryTypeAttributeType.class) {
+
 		@Override
 		public String sqlCast() {
 			return "oid";
@@ -148,6 +153,7 @@ public enum SqlType {
 	// nothing to implement, just for keep ordered
 	}, //
 	time(TimeAttributeType.class) {
+
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
@@ -159,6 +165,7 @@ public enum SqlType {
 		}
 	}, //
 	timestamp(DateTimeAttributeType.class) {
+
 		@Override
 		public Object javaToSqlValue(final Object value) {
 			return dateJavaToSqlValue(value);
@@ -175,6 +182,7 @@ public enum SqlType {
 	 * length
 	 */
 	varchar(StringAttributeType.class) {
+
 		@Override
 		protected Object[] getConstructorParams(final String[] stringParams, final CMAttributeType.Meta meta) {
 			if (stringParams.length == 1) {

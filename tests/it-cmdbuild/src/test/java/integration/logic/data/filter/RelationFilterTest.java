@@ -1,6 +1,7 @@
 package integration.logic.data.filter;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Iterables.size;
 import static integration.logic.data.DataDefinitionLogicTest.a;
 import static integration.logic.data.DataDefinitionLogicTest.newClass;
 import static integration.logic.data.DataDefinitionLogicTest.newDomain;
@@ -72,7 +73,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 	}
 
 	@Test
-	public void lookingForCardsWithAnyRelationOverSingleDomainButNothingIsFound() throws Exception {
+	public void fetchingCardsWithAnyRelationOverSingleDomainButNothingIsFound() throws Exception {
 		// given
 		final CMCard foo_1 = dbDataView().newCard(foo).setCode("foo_1").save();
 		final CMCard bar_1 = dbDataView().newCard(bar).setCode("bar_1").save();
@@ -85,6 +86,24 @@ public class RelationFilterTest extends FilteredCardsFixture {
 
 		// then
 		assertThat(isEmpty(cards), equalTo(true));
+	}
+
+	@Test
+	public void fetchingCardsWithAnyRelationOverSingleDomainOneCardThatHaveTwoRelationsIsFound() throws Exception {
+		// given
+		final CMCard foo_1 = dbDataView().newCard(foo).setCode("foo_1").save();
+		final CMCard bar_1 = dbDataView().newCard(bar).setCode("bar_1").save();
+		final CMCard bar_2 = dbDataView().newCard(bar).setCode("bar_2").save();
+		dbDataView().newRelation(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
+		dbDataView().newRelation(foo_bar).setCard1(foo_1).setCard2(bar_2).save();
+
+		// when
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+				forClass(foo), //
+				filter(anyRelation(ofDomain(foo_bar), overClass(bar))));
+
+		// then
+		assertThat(size(cards), equalTo(1));
 	}
 
 	/*

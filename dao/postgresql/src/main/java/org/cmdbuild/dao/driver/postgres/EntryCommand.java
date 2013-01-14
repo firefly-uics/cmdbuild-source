@@ -45,7 +45,7 @@ abstract class EntryCommand {
 				value = CMReference.class.cast(value).getId();
 			}
 			final CMAttributeType<?> attributeType = entryType.getAttribute(attributeName).getType();
-			AttributeValueType attrValueType = new AttributeValueType(attributeName, //
+			final AttributeValueType attrValueType = new AttributeValueType(attributeName, //
 					SqlType.getSqlType(attributeType).javaToSqlValue(value), attributeType);
 			values.add(attrValueType);
 		}
@@ -54,10 +54,14 @@ abstract class EntryCommand {
 			final DBRelation dbRelation = DBRelation.class.cast(entry);
 			final CMCard card1 = dbRelation.getCard1();
 			final CMCard card2 = dbRelation.getCard2();
-			values.add(new AttributeValueType(SystemAttributes.DomainId1.getDBName(), card1.getId(), new IntegerAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.ClassId1.getDBName(), card1.getType().getId(), new EntryTypeAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.DomainId2.getDBName(), card2.getId(), new IntegerAttributeType()));
-			values.add(new AttributeValueType(SystemAttributes.ClassId2.getDBName(), card2.getType().getId(), new EntryTypeAttributeType()));
+			values.add(new AttributeValueType(SystemAttributes.DomainId1.getDBName(), card1.getId(),
+					new IntegerAttributeType()));
+			values.add(new AttributeValueType(SystemAttributes.ClassId1.getDBName(), card1.getType().getId(),
+					new EntryTypeAttributeType()));
+			values.add(new AttributeValueType(SystemAttributes.DomainId2.getDBName(), card2.getId(),
+					new IntegerAttributeType()));
+			values.add(new AttributeValueType(SystemAttributes.ClassId2.getDBName(), card2.getType().getId(),
+					new EntryTypeAttributeType()));
 		}
 		return values;
 	}

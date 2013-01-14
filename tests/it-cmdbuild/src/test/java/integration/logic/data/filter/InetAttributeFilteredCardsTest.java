@@ -2,11 +2,8 @@ package integration.logic.data.filter;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
@@ -25,7 +22,8 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 	@Override
 	protected void initializeDatabaseData() {
-		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(), createdClass);
+		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(),
+				createdClass);
 
 		final CMCard card1 = dbDataView().newCard(createdClass) //
 				.setCode("foo") //
@@ -60,7 +58,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 		// then
 		assertEquals(1, Iterables.size(fetchedCards));
-		CMCard card = Iterables.get(fetchedCards, 0);
+		final CMCard card = Iterables.get(fetchedCards, 0);
 		assertEquals("foo", card.getCode());
 	}
 

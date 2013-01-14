@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 
+import utils.GenericRollbackDriver;
 import utils.IntegrationTestBase;
 
 import com.google.common.collect.Lists;
@@ -101,7 +102,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				.filter(filter) //
 				.build();
 	}
-	
+
 	protected DBAttribute addAttributeToClass(final String name, final CMAttributeType type, final CMClass klass) {
 		return dbDataView().createAttribute(newAttribute(name, type, dbDataView().findClassByName(klass.getName())));
 	}
