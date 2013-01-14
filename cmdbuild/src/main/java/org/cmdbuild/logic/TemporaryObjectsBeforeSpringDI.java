@@ -28,6 +28,8 @@ import org.cmdbuild.services.TemplateRepository;
 import org.cmdbuild.services.auth.Group;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.store.DBDashboardStore;
+import org.cmdbuild.services.store.DataViewFilterStore;
+import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.workflow.ContaminatedWorkflowEngine;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter;
@@ -140,16 +142,20 @@ public class TemporaryObjectsBeforeSpringDI {
 		return authLogic;
 	}
 
+	public static FilterStore getFilterStore() {
+		return new DataViewFilterStore(getUserDataView(), new SessionVars().getUser());
+	}
+
 	public static DashboardLogic getDashboardLogic(final UserContext userContext) {
-		return new DashboardLogic(getUserContextView(userContext), new DBDashboardStore(), new SimplifiedUserContext(
-				userContext));
+		return new DashboardLogic(getUserDataView(), new DBDashboardStore(), new SimplifiedUserContext(userContext));
 	}
 
 	public static GISLogic getGISLogic() {
-		return new GISLogic(UserContext.systemContext());
+		return new GISLogic(UserContext.systemContext()); // FIXME: it does not
+															// work...
 	}
 
-	public static CMDataView getUserContextView(final UserContext userContext) {
+	public static CMDataView getUserDataView() {
 		return new UserDataView(new DBDataView(driver), new SessionVars().getUser());
 	}
 
@@ -158,11 +164,11 @@ public class TemporaryObjectsBeforeSpringDI {
 	}
 
 	public static DataAccessLogic getDataAccessLogic(final UserContext userContext) {
-		return new DataAccessLogic(getUserContextView(userContext));
+		return new DataAccessLogic(getUserDataView());
 	}
 
 	public static DataDefinitionLogic getDataDefinitionLogic(final UserContext userContext) {
-		return new DataDefinitionLogic(getUserContextView(userContext));
+		return new DataDefinitionLogic(getUserDataView());
 	}
 
 	public static DataAccessLogic getSystemDataAccessLogic() {
