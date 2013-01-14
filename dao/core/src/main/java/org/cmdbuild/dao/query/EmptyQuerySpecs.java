@@ -53,4 +53,10 @@ public class EmptyQuerySpecs implements QuerySpecs {
 	public List<OrderByClause> getOrderByClauses() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public boolean distinct() {
+		throw new UnsupportedOperationException();
+	}
+
 }

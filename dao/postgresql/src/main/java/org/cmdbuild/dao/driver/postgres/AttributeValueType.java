@@ -6,15 +6,15 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
  * A simple DTO that contains the value and type
  */
 class AttributeValueType {
-	
+
 	/**
 	 * unquoted attribute name
 	 */
-	private String name;
-	private Object value;
-	private CMAttributeType<?> type;
+	private final String name;
+	private final Object value;
+	private final CMAttributeType<?> type;
 
-	AttributeValueType(String name, Object value, CMAttributeType<?> type) {
+	AttributeValueType(final String name, final Object value, final CMAttributeType<?> type) {
 		this.name = name;
 		this.value = value;
 		this.type = type;
@@ -31,5 +31,5 @@ class AttributeValueType {
 	CMAttributeType<?> getType() {
 		return type;
 	}
-	
+
 }

@@ -1,5 +1,13 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.join;
+import static org.cmdbuild.dao.driver.postgres.Utils.aliasForSystemAttribute;
+import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
+import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,16 +15,19 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class QueryCreator {
 
 	private static final String SELECT = "SELECT ";
-	private static final String SELECT_ATTRIBUTES_SEPARATOR = ",";
+	private static final String DISTINCT_ON = "DISTINCT ON";
+	private static final String ATTRIBUTES_SEPARATOR = ",";
 	private static final String PARTS_SEPARATOR = " ";
+	private static final String ORDER_BY = "ORDER BY";
 
 	private final StringBuilder sb;
 	private final QuerySpecs querySpecs;
@@ -40,7 +51,17 @@ public class QueryCreator {
 	}
 
 	private void appendSelect() {
-		sb.append(SELECT).append(quoteAttributes(querySpecs.getAttributes()));
+		sb.append(SELECT) //
+				.append(distinct()) //
+				.append(quoteAttributes(querySpecs.getAttributes()));
+	}
+
+	private String distinct() {
+		return querySpecs.distinct() ? //
+		format("%s (%s) ", //
+				DISTINCT_ON, //
+				quoteAlias(aliasForSystemAttribute(querySpecs.getFromAlias(), SystemAttributes.Id))) //
+				: EMPTY;
 	}
 
 	private String quoteAttributes(final Iterable<QueryAliasAttribute> attributes) {
@@ -73,9 +94,8 @@ public class QueryCreator {
 			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.EndDate);
 		}
 
-		return StringUtils.join( //
-				Iterables.toArray(columnMapper.getAttributeExpressionsForSelect(), String.class), //
-				SELECT_ATTRIBUTES_SEPARATOR);
+		return StringUtils.join(columnMapper.getAttributeExpressionsForSelect().iterator(), //
+				ATTRIBUTES_SEPARATOR);
 	}
 
 	private void appendFrom() {
@@ -102,22 +122,26 @@ public class QueryCreator {
 	}
 
 	private void appendOrderBy() {
+		final List<OrderByClause> clauses = Lists.newArrayList(querySpecs.getOrderByClauses());
+
+		if (querySpecs.distinct()) {
+			clauses.add(0, new OrderByClause( //
+					attribute(querySpecs.getFromType(), SystemAttributes.Id.getDBName()), //
+					Direction.ASC));
+		}
+
 		if (querySpecs.getOrderByClauses().isEmpty()) {
 			return;
 		}
 
-		boolean first = true;
-		sb.append(" ").append("ORDER BY ");
-		for (final OrderByClause orderByClause : querySpecs.getOrderByClauses()) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(", ");
-			}
-
-			sb.append("\"" + orderByClause.getAttribute().getName() + "\"").append(" ")
-					.append(orderByClause.getDirection()).append(" ");
+		final List<String> orderings = Lists.newArrayList();
+		for (final OrderByClause clause : clauses) {
+			orderings.add(format("%s %s", //
+					quoteAttribute(clause.getAttribute()), //
+					clause.getDirection()));
 		}
+
+		sb.append(format(" %s %s", ORDER_BY, join(orderings, ATTRIBUTES_SEPARATOR)));
 	}
 
 	public String getQuery() {

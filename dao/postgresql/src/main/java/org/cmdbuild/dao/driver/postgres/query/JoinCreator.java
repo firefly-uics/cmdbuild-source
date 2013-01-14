@@ -24,6 +24,7 @@ public class JoinCreator extends PartCreator {
 	private enum DataQueryType {
 
 		HISTORIC {
+
 			@Override
 			String quoteTypeName(final CMEntryType type) {
 				return Utils.quoteTypeHistory(type);
@@ -33,8 +34,10 @@ public class JoinCreator extends PartCreator {
 			String quotedEndDateAttribute() {
 				return quoteIdent(SystemAttributes.EndDate);
 			}
+
 		},
 		CURRENT {
+
 			@Override
 			String quoteTypeName(final CMEntryType type) {
 				return Utils.quoteType(type);
@@ -44,6 +47,7 @@ public class JoinCreator extends PartCreator {
 			String quotedEndDateAttribute() {
 				return "NULL";
 			}
+
 		};
 
 		abstract String quoteTypeName(final CMEntryType type);
@@ -165,6 +169,7 @@ public class JoinCreator extends PartCreator {
 	private void appendDomainUnion(final JoinClause j) {
 		final boolean includeHistoryTable = j.isDomainHistory();
 		new UnionCreator<QueryDomain>(j.getQueryDomains(), j.getDomainAlias(), includeHistoryTable) {
+
 			@Override
 			void appendSystemAttributes(final QueryDomain queryDomain, final DataQueryType dataQueryType,
 					final boolean first) {
@@ -191,6 +196,7 @@ public class JoinCreator extends PartCreator {
 			protected CMEntryType getEntryType(final QueryDomain queryDomain) {
 				return queryDomain.getDomain();
 			}
+
 		}.append();
 	}
 
@@ -206,6 +212,7 @@ public class JoinCreator extends PartCreator {
 		final boolean includeStatusCheck = !j.isDomainHistory();
 		final boolean includeHistoryTable = false;
 		new UnionCreator<CMClass>(j.getTargets(), j.getTargetAlias(), includeHistoryTable) {
+
 			@Override
 			void appendSystemAttributes(final CMClass type, final DataQueryType dataQueryType, final boolean first) {
 				sb.append(quoteIdent(SystemAttributes.Id)).append(",").append(quoteIdent(SystemAttributes.ClassId))
@@ -225,6 +232,7 @@ public class JoinCreator extends PartCreator {
 					super.appendStatusWhere(dataQueryType);
 				}
 			}
+
 		}.append();
 	}
 }

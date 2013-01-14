@@ -327,10 +327,12 @@ public class ColumnMapper implements LoggingSupport {
 
 	private static Iterable<String> namesOf(final Iterable<? extends CMEntryType> aliasClasses) {
 		return Iterables.transform(aliasClasses, new Function<CMEntryType, String>() {
+
 			@Override
 			public String apply(final CMEntryType input) {
 				return input.getName();
 			}
+
 		});
 	}
 

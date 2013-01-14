@@ -13,6 +13,7 @@ abstract class EntryTypeCommentMapper extends CommentMapper {
 
 	{
 		define(STATUS, EntryTypeMetadata.ACTIVE, new CommentValueConverter() {
+
 			@Override
 			public String getMetaValueFromComment(final String commentValue) {
 				// Set to active by default for backward compatibility
@@ -23,8 +24,10 @@ abstract class EntryTypeCommentMapper extends CommentMapper {
 			public String getCommentValueFromMeta(final String metaValue) {
 				return Boolean.parseBoolean(metaValue) ? STATUS_ACTIVE : STATUS_NOACTIVE;
 			}
+
 		});
 		define(MODE, EntryTypeMetadata.MODE, new CommentValueConverter() {
+
 			@Override
 			public String getMetaValueFromComment(final String commentValue) {
 				return commentValue.toLowerCase().trim();
@@ -34,6 +37,7 @@ abstract class EntryTypeCommentMapper extends CommentMapper {
 			public String getCommentValueFromMeta(final String metaValue) {
 				return metaValue;
 			}
+
 		});
 	}
 

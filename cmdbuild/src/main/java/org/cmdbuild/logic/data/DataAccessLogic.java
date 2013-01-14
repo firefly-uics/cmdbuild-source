@@ -1,8 +1,10 @@
 package org.cmdbuild.logic.data;
 
-import static org.cmdbuild.dao.query.clause.join.Over.*;
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.alias.Alias.*;
+import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
+import static org.cmdbuild.dao.query.clause.join.Over.over;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +17,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -128,6 +129,9 @@ public class DataAccessLogic implements Logic {
 				.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
 
+		if (!isEmpty(joinElements)) {
+			queryBuilder.distinct();
+		}
 		for (final FilterMapper.JoinElement joinElement : joinElements) {
 			final CMDomain domain = view.findDomainByName(joinElement.domain);
 			final CMClass clazz;

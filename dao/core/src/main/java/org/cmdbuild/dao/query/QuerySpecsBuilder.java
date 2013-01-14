@@ -5,9 +5,9 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.as;
 import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -29,6 +29,10 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.QueryExecutorDataView;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 @NotThreadSafe
 public class QuerySpecsBuilder {
 
@@ -39,7 +43,7 @@ public class QuerySpecsBuilder {
 		private Alias fromAlias;
 
 		AliasLibrary() {
-			aliasSet = new HashSet<Alias>();
+			aliasSet = Sets.newHashSet();
 		}
 
 		public void addAlias(final Alias alias) {
@@ -92,10 +96,11 @@ public class QuerySpecsBuilder {
 
 	private List<QueryAttribute> attributes;
 	private final List<JoinClause> joinClauses;
-	private final List<OrderByClause> orderByClauses;
+	private final Map<QueryAttribute, OrderByClause.Direction> orderings;
 	private WhereClause whereClause;
 	private Long offset;
 	private Long limit;
+	private boolean distinct;
 
 	private final AliasLibrary aliases;
 
@@ -106,22 +111,21 @@ public class QuerySpecsBuilder {
 		aliases = new AliasLibrary();
 		select();
 		from(anyClass(), DEFAULT_ANYCLASS_ALIAS);
-		joinClauses = new ArrayList<JoinClause>();
-		orderByClauses = new ArrayList<OrderByClause>();
+		joinClauses = Lists.newArrayList();
+		orderings = Maps.newLinkedHashMap();
 		whereClause = new EmptyWhereClause();
 	}
 
 	public QuerySpecsBuilder select(final Object... attrDef) {
-		this.attributes = new ArrayList<QueryAttribute>(attrDef.length);
+		attributes = Lists.newArrayList();
 		for (final Object a : attrDef) {
-			if (a instanceof QueryAttribute) {
-				attributes.add((QueryAttribute) a);
-			} else if (a instanceof String) {
-				attributes.add(new NamedAttribute((String) a));
-			} else {
-				throw new IllegalArgumentException();
-			}
+			attributes.add(attributeFrom(a));
 		}
+		return this;
+	}
+
+	public QuerySpecsBuilder distinct() {
+		distinct = true;
 		return this;
 	}
 
@@ -169,22 +173,13 @@ public class QuerySpecsBuilder {
 		return this;
 	}
 
-	public QuerySpecsBuilder orderBy(Object attribute, Direction direction) {
-		QueryAttribute queryAttribute;
-		if (attribute instanceof QueryAttribute) {
-			queryAttribute = (QueryAttribute) attribute;
-		} else if (attribute instanceof String) {
-			queryAttribute = new NamedAttribute((String) attribute);
-		} else {
-			throw new IllegalArgumentException();
-		}
-
-		orderByClauses.add(new OrderByClause(queryAttribute, direction));
+	public QuerySpecsBuilder orderBy(final Object attribute, final Direction direction) {
+		orderings.put(attributeFrom(attribute), direction);
 		return this;
 	}
 
 	public QuerySpecs build() {
-		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias());
+		final QuerySpecsImpl qs = new QuerySpecsImpl(aliases.getFrom(), aliases.getFromAlias(), distinct);
 
 		for (final JoinClause jc : joinClauses) {
 			if (jc.getTargets().isEmpty()) {
@@ -193,26 +188,34 @@ public class QuerySpecsBuilder {
 			qs.addJoin(jc);
 		}
 		for (final QueryAttribute qa : attributes) {
-			QueryAliasAttribute attribute;
-			// FIXME: Implement it with a QueryAttribute visitor
-			if (qa instanceof NamedAttribute) {
-				final Alias alias = aliasForNamedAttribute((NamedAttribute) qa);
-				attribute = attribute(alias, qa.getName());
-			} else if (qa instanceof QueryAliasAttribute) {
-				attribute = (QueryAliasAttribute) qa;
-			} else {
-				throw new UnsupportedOperationException("Unsupported attribute class");
-			}
-			aliases.checkAlias(attribute.getEntryTypeAlias());
-			qs.addSelectAttribute(attribute);
+			qs.addSelectAttribute(aliasAttributeFrom(qa));
 		}
 		qs.setWhereClause(whereClause);
 		qs.setOffset(offset);
 		qs.setLimit(limit);
-		for (OrderByClause orderByClause:orderByClauses) {
-			qs.addOrderByClause(orderByClause);
+		for (final Entry<QueryAttribute, Direction> entry : orderings.entrySet()) {
+			qs.addOrderByClause(new OrderByClause(aliasAttributeFrom(entry.getKey()), entry.getValue()));
 		}
 		return qs;
+	}
+
+	/**
+	 * Returns a {@link QueryAliasAttribute} from a {@link QueryAttribute} and
+	 * checks if the alias of the {@link CMEntryType} is valid.
+	 */
+	private QueryAliasAttribute aliasAttributeFrom(final QueryAttribute queryAttribute) {
+		QueryAliasAttribute queryAliasAttribute;
+		// FIXME: Implement it with a QueryAttribute visitor
+		if (queryAttribute instanceof NamedAttribute) {
+			final Alias alias = aliasForNamedAttribute((NamedAttribute) queryAttribute);
+			queryAliasAttribute = attribute(alias, queryAttribute.getName());
+		} else if (queryAttribute instanceof QueryAliasAttribute) {
+			queryAliasAttribute = (QueryAliasAttribute) queryAttribute;
+		} else {
+			throw new UnsupportedOperationException("Unsupported attribute class");
+		}
+		aliases.checkAlias(queryAliasAttribute.getEntryTypeAlias());
+		return queryAliasAttribute;
 	}
 
 	private Alias aliasForNamedAttribute(final NamedAttribute na) {
@@ -226,6 +229,18 @@ public class QuerySpecsBuilder {
 
 	public CMQueryResult run() {
 		return view.executeQuery(build());
+	}
+
+	private QueryAttribute attributeFrom(final Object attribute) {
+		QueryAttribute queryAttribute;
+		if (attribute instanceof QueryAttribute) {
+			queryAttribute = (QueryAttribute) attribute;
+		} else if (attribute instanceof String) {
+			queryAttribute = new NamedAttribute((String) attribute);
+		} else {
+			throw new IllegalArgumentException("invalid attribute");
+		}
+		return queryAttribute;
 	}
 
 	/*
@@ -246,4 +261,5 @@ public class QuerySpecsBuilder {
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
+
 }
