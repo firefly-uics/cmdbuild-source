@@ -2,8 +2,10 @@ package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.logic.mapping.json.Constants.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.*;
+import static org.cmdbuild.logic.mapping.json.Constants.DOMAIN_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.FULL_TEXT_QUERY_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.RELATION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.SRC_KEY;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,6 +77,7 @@ public class JsonFilterMapper implements FilterMapper {
 			whereClauseBuilders
 					.add(new JsonFullTextQueryBuilder(filterObject.getString(FULL_TEXT_QUERY_KEY), entryType));
 		}
+		// add here relations filter builder
 		return whereClauseBuilders;
 	}
 

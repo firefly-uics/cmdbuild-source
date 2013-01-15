@@ -11,7 +11,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
-import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
@@ -67,20 +66,6 @@ public class JsonFilterMapperTest {
 
 		// then
 		assertTrue(whereClause instanceof AndWhereClause);
-	}
-
-	@Test
-	public void globalFilterContainingOnlyFullTextQueryMustReturnOrWhereClauseIfMoreThanOneAttribute() throws Exception {
-		// given
-		final String globalFilter = "{query: test}";
-		final JSONObject globalFilterObject = new JSONObject(globalFilter);
-
-		// when
-		final FilterMapper filterMapper = new JsonFilterMapper(mockEntryType, globalFilterObject);
-		final WhereClause whereClause = filterMapper.whereClauses();
-
-		// then
-		assertTrue(whereClause instanceof OrWhereClause);
 	}
 
 	@Test
