@@ -420,7 +420,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	private String commentFrom(final DBDomainDefinition definition) {
 		// TODO handle more that two classes
 		return format(
-				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: reserved|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
+				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: write|STATUS: active|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
 				definition.getDescription(), //
 				defaultIfBlank(definition.getDirectDescription(), EMPTY), //
 				defaultIfBlank(definition.getInverseDescription(), EMPTY), //
