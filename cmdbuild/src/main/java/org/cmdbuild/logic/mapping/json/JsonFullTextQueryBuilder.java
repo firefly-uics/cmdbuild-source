@@ -29,8 +29,10 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 
@@ -56,16 +58,11 @@ public class JsonFullTextQueryBuilder implements WhereClauseBuilder {
 	@Override
 	public WhereClause build() {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
-
 		for (final CMAttribute attribute : entryType.getAttributes()) {
-			final FullTextQueryOperatorVisitor visitor = new FullTextQueryOperatorVisitor(attribute.getType(),
-					fullTextQuery);
-			final OperatorAndValue opAndVal = visitor.getOperatorAndValue();
-			final boolean attributeSupportsFullTextSearch = opAndVal != null;
-			if (attributeSupportsFullTextSearch) {
-				final WhereClause simpleWhereClause = condition(attribute(entryType, attribute.getName()), opAndVal);
-				whereClauses.add(simpleWhereClause);
-			}
+			OperatorAndValue opAndVal = contains(fullTextQuery);
+			SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(attribute(entryType, attribute.getName()), opAndVal);
+			simpleWhereClause.setAttributeNameCast("varchar");
+			whereClauses.add(simpleWhereClause);
 		}
 
 		final WhereClause[] whereClausesArray = whereClauses.toArray(new WhereClause[whereClauses.size()]);

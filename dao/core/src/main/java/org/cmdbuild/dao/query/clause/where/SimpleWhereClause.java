@@ -6,6 +6,7 @@ public class SimpleWhereClause implements WhereClause {
 
 	private final QueryAliasAttribute attribute;
 	private final OperatorAndValue operator;
+	private  String attributeNameCast;
 
 	private SimpleWhereClause(final QueryAliasAttribute attribute, final OperatorAndValue operator) {
 		this.attribute = attribute;
@@ -19,6 +20,14 @@ public class SimpleWhereClause implements WhereClause {
 	public OperatorAndValue getOperator() {
 		return operator;
 	}
+	
+	public String getAttributeNameCast() {
+		return attributeNameCast;
+	}
+	
+	public void setAttributeNameCast(String cast) {
+		attributeNameCast = cast;
+	}
 
 	@Override
 	public void accept(final WhereClauseVisitor visitor) {
@@ -26,7 +35,9 @@ public class SimpleWhereClause implements WhereClause {
 	}
 
 	public static WhereClause condition(final QueryAliasAttribute attribute, final OperatorAndValue operator) {
-		return new SimpleWhereClause(attribute, operator);
+		SimpleWhereClause swc = new SimpleWhereClause(attribute, operator);
+		swc.setAttributeNameCast(null);
+		return swc;
 	}
 
 }
