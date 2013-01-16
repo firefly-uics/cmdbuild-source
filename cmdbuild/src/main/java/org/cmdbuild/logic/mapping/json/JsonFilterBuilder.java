@@ -7,25 +7,32 @@ import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.conta
 import static org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue.endsWith;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue.gt;
+import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.mapping.json.Constants.AND_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.OPERATOR_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.OR_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.SIMPLE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.VALUE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.mapping.WhereClauseBuilder;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
@@ -43,19 +50,22 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 
 	private final JSONObject filterObject;
 	private final CMEntryType entryType;
+	private final CMDataView dataView;
 
 	/**
-	 * 
-	 * @param filterObject
-	 *            the JSON object associated to the key "filter" of the global
-	 *            filter
+	 * @param filter
+	 *            the JSON object representing the filter.
 	 * @param entryType
+	 *            the entry type specified in the <code>from</code> clause.
+	 * @param dataView
 	 */
-	public JsonFilterBuilder(final JSONObject filterObject, final CMEntryType entryType) {
-		Validate.notNull(filterObject);
+	public JsonFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView) {
+		Validate.notNull(filter);
 		Validate.notNull(entryType);
+		Validate.notNull(dataView);
 		this.entryType = entryType;
-		this.filterObject = filterObject;
+		this.filterObject = filter;
+		this.dataView = dataView;
 	}
 
 	@Override
@@ -68,28 +78,32 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 	}
 
 	protected WhereClause buildWhereClause(final JSONObject filterObject) throws JSONException {
+		CMEntryType entryType = this.entryType;
 		if (filterObject.has(SIMPLE_KEY)) {
-			final JSONObject simpleCondition = filterObject.getJSONObject(SIMPLE_KEY);
-			final String attributeName = simpleCondition.getString(ATTRIBUTE_KEY);
-			final String operator = simpleCondition.getString(OPERATOR_KEY);
-			final JSONArray values = simpleCondition.getJSONArray(VALUE_KEY);
+			final JSONObject condition = filterObject.getJSONObject(SIMPLE_KEY);
+			final String attributeName = condition.getString(ATTRIBUTE_KEY);
+			final String operator = condition.getString(OPERATOR_KEY);
+			if (condition.has(CLASSNAME_KEY)) {
+				entryType = dataView.findClassByName(condition.getString(CLASSNAME_KEY));
+			}
+			final JSONArray values = condition.getJSONArray(VALUE_KEY);
 			return buildSimpleWhereClause(attribute(entryType, attributeName), operator, values);
 		} else if (filterObject.has(AND_KEY)) {
-			final JSONArray andConditions = filterObject.getJSONArray(AND_KEY);
-			Validate.isTrue(andConditions.length() >= 2);
-			final JSONObject firstAnd = andConditions.getJSONObject(0);
-			final JSONObject secondAnd = andConditions.getJSONObject(1);
-			return and(buildWhereClause(firstAnd), //
-					buildWhereClause(secondAnd), //
-					createOptionalWhereClauses(andConditions));
+			final JSONArray conditions = filterObject.getJSONArray(AND_KEY);
+			Validate.isTrue(conditions.length() >= 2);
+			final JSONObject first = conditions.getJSONObject(0);
+			final JSONObject second = conditions.getJSONObject(1);
+			return and(buildWhereClause(first), //
+					buildWhereClause(second), //
+					createOptionalWhereClauses(conditions));
 		} else if (filterObject.has(OR_KEY)) {
-			final JSONArray orConditions = filterObject.getJSONArray(OR_KEY);
-			Validate.isTrue(orConditions.length() >= 2);
-			final JSONObject firstOr = orConditions.getJSONObject(0);
-			final JSONObject secondOr = orConditions.getJSONObject(1);
-			return or(buildWhereClause(firstOr), //
-					buildWhereClause(secondOr), //
-					createOptionalWhereClauses(orConditions));
+			final JSONArray conditions = filterObject.getJSONArray(OR_KEY);
+			Validate.isTrue(conditions.length() >= 2);
+			final JSONObject first = conditions.getJSONObject(0);
+			final JSONObject second = conditions.getJSONObject(1);
+			return or(buildWhereClause(first), //
+					buildWhereClause(second), //
+					createOptionalWhereClauses(conditions));
 		}
 		throw new IllegalArgumentException("The filter is malformed");
 	}
@@ -99,7 +113,22 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 	 */
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final JSONArray values) throws JSONException {
-		final CMAttributeType<?> type = entryType.getAttribute(attribute.getName()).getType();
+		final CMAttributeType<?> type;
+		final CMAttribute a = entryType.getAttribute(attribute.getName());
+		if (a == null) {
+			type = new UndefinedAttributeType();
+		} else {
+			type = a.getType();
+		}
+		return buildSimpleWhereClause(attribute, operator, values, type);
+	}
+
+	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
+			final JSONArray values, CMAttributeType<?> type) throws JSONException {
+		if (attribute.getName() == SystemAttributes.Id.getDBName()) {
+			type = new IntegerAttributeType();
+		}
+
 		if (operator.equals(FilterOperator.EQUAL.toString())) {
 			Validate.isTrue(values.length() == 1);
 			return condition(attribute, eq(type.convertValue(values.getString(0))));
@@ -147,6 +176,13 @@ public class JsonFilterBuilder implements WhereClauseBuilder {
 			Validate.isTrue(values.length() == 1);
 			return or(not(condition(attribute, endsWith(type.convertValue(values.getString(0))))),
 					condition(attribute, isNull()));
+		} else if (operator.equals(FilterOperator.IN.toString())) {
+			Validate.isTrue(values.length() > 1);
+			final List<Object> _values = Lists.newArrayList();
+			for (int i = 0; i < values.length(); i++) {
+				_values.add(type.convertValue(values.get(i)));
+			}
+			return condition(attribute, in(_values.toArray()));
 		}
 		throw new IllegalArgumentException("The operator " + operator + " is not supported");
 	}

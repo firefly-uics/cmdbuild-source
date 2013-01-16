@@ -1,7 +1,8 @@
 package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.logic.mapping.json.Constants.*;
+import static org.cmdbuild.logic.mapping.json.Constants.DIRECTION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.PROPERTY_KEY;
 
 import java.util.List;
 

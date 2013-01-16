@@ -119,7 +119,7 @@ public class DataAccessLogic implements Logic {
 			return Lists.newArrayList();
 		}
 
-		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter());
+		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
 		final WhereClause whereClause = filterMapper.whereClauses();
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 
@@ -134,12 +134,7 @@ public class DataAccessLogic implements Logic {
 		}
 		for (final FilterMapper.JoinElement joinElement : joinElements) {
 			final CMDomain domain = view.findDomainByName(joinElement.domain);
-			final CMClass clazz;
-			if ("_1".equals(joinElement.source)) {
-				clazz = domain.getClass2();
-			} else {
-				clazz = domain.getClass1();
-			}
+			final CMClass clazz = view.findClassByName(joinElement.destination);
 			queryBuilder.join(clazz, canonicalAlias(clazz), over(domain));
 		}
 

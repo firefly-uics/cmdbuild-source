@@ -1,22 +1,34 @@
 package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.logic.mapping.json.Constants.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.DOMAIN_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.FULL_TEXT_QUERY_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.RELATION_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.SRC_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARDS_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_ID_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DESTINATION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_SOURCE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.WhereClauseBuilder;
+import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.cmdbuild.logic.validation.Validator;
 import org.cmdbuild.logic.validation.json.JsonFilterValidator;
 import org.json.JSONArray;
@@ -33,13 +45,15 @@ public class JsonFilterMapper implements FilterMapper {
 	private final CMEntryType entryType;
 	private final JSONObject filterObject;
 	private final Validator filterValidator;
+	private final CMDataView dataView;
 
-	public JsonFilterMapper(final CMEntryType entryType, final JSONObject filterObject) {
+	public JsonFilterMapper(final CMEntryType entryType, final JSONObject filterObject, final CMDataView dataView) {
 		Validate.notNull(entryType);
 		Validate.notNull(filterObject);
 		this.entryType = entryType;
 		this.filterObject = filterObject;
 		this.filterValidator = new JsonFilterValidator(filterObject);
+		this.dataView = dataView;
 	}
 
 	@Override
@@ -71,13 +85,38 @@ public class JsonFilterMapper implements FilterMapper {
 	private List<WhereClauseBuilder> getWhereClauseBuildersForFilter() throws JSONException {
 		final List<WhereClauseBuilder> whereClauseBuilders = Lists.newArrayList();
 		if (filterObject.has(ATTRIBUTE_KEY)) {
-			whereClauseBuilders.add(new JsonFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType));
+			whereClauseBuilders.add(new JsonFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY), entryType,
+					dataView));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
 			whereClauseBuilders
 					.add(new JsonFullTextQueryBuilder(filterObject.getString(FULL_TEXT_QUERY_KEY), entryType));
 		}
-		// add here relations filter builder
+		if (filterObject.has(RELATION_KEY)) {
+			final JSONArray conditions = filterObject.getJSONArray(RELATION_KEY);
+			for (int i = 0; i < conditions.length(); i++) {
+				final JSONObject condition = conditions.getJSONObject(i);
+				if (condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_ONEOF)) {
+					final JSONArray cards = condition.getJSONArray(RELATION_CARDS_KEY);
+
+					final JSONObject simple = new JSONObject();
+					simple.put(ATTRIBUTE_KEY, SystemAttributes.Id.getDBName());
+					simple.put(OPERATOR_KEY, FilterOperator.IN.toString());
+					simple.put(CLASSNAME_KEY, condition.getString(RELATION_DESTINATION_KEY));
+
+					final JSONObject filter = new JSONObject();
+					filter.put(SIMPLE_KEY, simple);
+
+					for (int j = 0; j < cards.length(); j++) {
+						final JSONObject card = cards.getJSONObject(j);
+						final Long id = card.getLong(RELATION_CARD_ID_KEY);
+						simple.append(VALUE_KEY, id);
+					}
+
+					whereClauseBuilders.add(new JsonFilterBuilder(filter, entryType, dataView));
+				}
+			}
+		}
 		return whereClauseBuilders;
 	}
 
@@ -90,9 +129,10 @@ public class JsonFilterMapper implements FilterMapper {
 				final JSONArray conditions = filterObject.getJSONArray(RELATION_KEY);
 				for (int i = 0; i < conditions.length(); i++) {
 					final JSONObject condition = conditions.getJSONObject(i);
-					final String domain = condition.getString(DOMAIN_KEY);
-					final String source = condition.getString(SRC_KEY);
-					joinElements.add(JoinElement.newInstance(domain, source));
+					final String domain = condition.getString(RELATION_DOMAIN_KEY);
+					final String source = condition.getString(RELATION_SOURCE_KEY);
+					final String destination = condition.getString(RELATION_DESTINATION_KEY);
+					joinElements.add(JoinElement.newInstance(domain, source, destination));
 				}
 			} catch (final Exception e) {
 				logger.error("error getting json element", e);

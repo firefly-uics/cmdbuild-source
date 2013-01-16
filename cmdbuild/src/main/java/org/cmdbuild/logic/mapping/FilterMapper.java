@@ -8,14 +8,16 @@ public interface FilterMapper {
 
 		public final String domain;
 		public final String source;
+		public final String destination;
 
-		private JoinElement(final String domain, final String source) {
+		private JoinElement(final String domain, final String source, final String destination) {
 			this.domain = domain;
 			this.source = source;
+			this.destination = destination;
 		}
 
-		public static JoinElement newInstance(final String domain, final String source) {
-			return new JoinElement(domain, source);
+		public static JoinElement newInstance(final String domain, final String source, final String destination) {
+			return new JoinElement(domain, source, destination);
 		}
 
 	}
