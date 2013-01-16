@@ -43,31 +43,26 @@
 		},
 
 		initComponent : function() {
+			var me = this;
 
 			this.filterAttributesPanel = new CMDBuild.view.management.common.filter.CMFilterAttributes({
 				attributes: this.attributes,
 				className: this.className
 			});
 
-//		this.relations = new CMDBuild.view.management.common.filter.CMRelations({
-//			attributes: this.attributes,
-//			className: this.className
-//		});
+			this.filterRelationsPanel = new CMDBuild.view.management.common.filter.CMRelations({
+				attributes: this.attributes,
+				className: this.className
+			});
 
+			// set the title of the window
 			var prefix = CMDBuild.Translation.management.findfilter.window_title;
-
 			var et = _CMCache.getEntryTypeByName(this.className);
 			this.title = Ext.String.format(titleTemplate, prefix, this.filter.getName(), et.getDescription());
 
-			this.items = [
-				this.filterAttributesPanel
-//			, this.relations
-			];
-
+			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
 			this.layout = "accordion";
 			this.buttonAlign = "center";
-			var me = this;
-
 			this.buttons = [{
 				text: CMDBuild.Translation.management.findfilter.apply, //CMDBuild.Translation.common.btns.confirm,
 				handler: function() {
@@ -87,21 +82,51 @@
 
 			this.callParent(arguments);
 
+
 			me.on("show", function() {
-				this.filterAttributesPanel.setData(me.filter.getAttributeConfiguration());
-			});
+				this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
+
+				// defer the setting of relations data
+				// to the moment in which the panel is expanded
+				// If never expanded take the data from the filter
+				this.filterRelationNeverExpansed = true
+				this.mon(this.filterRelationsPanel, "expand", function() {
+					this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
+					this.filterRelationNeverExpansed = false;
+				}, this, {single: true});
+			}, this, {single: true});
 		},
 
 		getFilter: function() {
-			// TODO check if is really dirty, if there are change in the filter
-			this.filter.setDirty();
-			this.filter.setLocal(true);
-			this.filter.setAttributeConfiguration(this.filterAttributesPanel.getData());
-			this.filter.setRelationConfiguration([]);
+			if (theFilterIsDirty(this)) {
+				this.filter.setDirty();
+				this.filter.setLocal(true);
+				this.filter.setAttributeConfiguration(this.filterAttributesPanel.getData());
+				if (!this.filterRelationNeverExpansed) { // the panel was expansed at least once
+					this.filter.setRelationConfiguration(this.filterRelationsPanel.getData());
+				}
+			}
 
 			return this.filter;
 		}
 	});
+
+	function theFilterIsDirty(me) {
+		var currentFilter = new CMDBuild.model.CMFilterModel();
+		currentFilter.setAttributeConfiguration(me.filterAttributesPanel.getData());
+
+		if (me.filterRelationNeverExpansed) {
+			currentFilter.setRelationConfiguration(me.filter.getRelationConfiguration());
+		} else {
+			currentFilter.setRelationConfiguration(me.filterRelationsPanel.getData());
+		}
+
+		// The string are not equals because serialize the fields of the object not in the same
+		// order TODO: impement a comparator of the configuration something like
+		// filter.isEquivalent(configuration);
+		// return Ext.encode(me.filter.getConfiguration()) != Ext.encode(currentFilter.getConfiguration());
+		return true;
+	}
 
 	Ext.define("CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate", {
 		/**

@@ -1,49 +1,74 @@
 (function() {
 
+	Ext.define("CMDBuild.view.management.common.CMCardGridDelegate", {
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 * @param {Ext.data.Model} record
+		 */
+		onCMCardGridSelect: function(grid, record) {},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 * @param {Ext.data.Model} record
+		 */
+		onCMCardGridDeselect: function(grid, record) {},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		onCMCardGridBeforeLoad: function(grid) {},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		onCMCardGridLoad: function(grid) {}
+	});
+
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 
-		columns: [],
+		mixins: {
+			delegable: "CMDBuild.core.CMDelegable"
+		},
 
 		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',	// for the header configuration
 													// the name is used for the server-side sorting
 
+		// configuration
+		columns: [],
 		extraParams: undefined, // extra params for the store
-
 		forceSelectionOfFirst: false, // listen load event and select the first row
 		skipSelectFirst: false,
-		shouldSelectFirst: function() {
-			var out = this.forceSelectionOfFirst && !this.skipSelectFirst;
-			this.skipSelectFirst = false;
-			return out;
-		},
-		skipNextSelectFirst: function() {
-			this.skipSelectFirst = true;
-		},
-
 		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar 
 		cmAdvancedFilter: true, // to add a button to set an advanced filter
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
 		cmAddPrintButton: true, // to add a button to set an chose the print format
+		// configuration
 
 		constructor: function(c) {
-			Ext.apply(this, c);
-			this.loadMask = false;
-			this.store = this.getStoreForFields.call(this, []);
-
-			if (this.cmPaginate) {
-				buildPagingBar.call(this);
-			}
+			this.mixins.delegable.constructor.call(this,
+				"CMDBuild.view.management.common.CMCardGridDelegate");
 
 			this.callParent(arguments);
 		},
 
 		initComponent: function() {
+			this.loadMask = false;
+			this.store = this.getStoreForFields([]);
+
+			if (this.cmPaginate) {
+				buildPagingBar(this);
+			}
+
 			this.viewConfig = {
 				stripeRows: true,
-				// Business role: voluntarily hide the horizontal scroll-bar
+				// Business rule: voluntarily hide the horizontal scroll-bar
 				// because probably no one want it
 				autoScroll: false,
 				overflowX: "hidden",
@@ -57,6 +82,25 @@
 
 			this.callParent(arguments);
 			this.on('beforeitemclick', cellclickHandler, this);
+
+			// register to events for delegates
+			this.on('select', function(grid, record) {
+				this.callDelegates("onCMCardGridSelect", [grid, record]);
+			}, this);
+
+			this.on('deselect', function(grid, record) {
+				this.callDelegates("onCMCardGridDeselect", [grid, record]);
+			}, this);
+		},
+
+		shouldSelectFirst: function() {
+			var out = this.forceSelectionOfFirst && !this.skipSelectFirst;
+			this.skipSelectFirst = false;
+			return out;
+		},
+
+		skipNextSelectFirst: function() {
+			this.skipSelectFirst = true;
 		},
 
 		updateStoreForClassId: function(classId, o) {
@@ -230,11 +274,13 @@
 			var s = this.buildStore(fields, pageSize);
 
 			this.mon(s, "beforeload", function() {
-				this.fireEvent("beforeload", arguments);
+				this.callDelegates("onCMCardGridBeforeLoad", this);
+				this.fireEvent("beforeload", arguments);  // TODO remove?
 			}, this);
 
 			this.mon(s, "load", function(store, records) {
-				this.fireEvent("load", arguments);
+				this.callDelegates("onCMCardGridLoad", this);
+				this.fireEvent("load", arguments); // TODO remove?
 
 				if (this.shouldSelectFirst() && !this.getSelectionModel().hasSelection()
 						&& records && records.length > 0) {
@@ -319,17 +365,17 @@
 		}
 	});
 
-	function buildPagingBar() {
+	function buildPagingBar(me) {
 		var items = [];
 
-		if (this.cmBasicFilter) {
-			this.gridSearchField = new CMDBuild.field.GridSearchField({grid: this});
-			items.push(this.gridSearchField);
+		if (me.cmBasicFilter) {
+			me.gridSearchField = new CMDBuild.field.GridSearchField({grid: me});
+			items.push(me.gridSearchField);
 		}
 
-		if (this.cmAdvancedFilter) {
-			this.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
-			_CMUtils.forwardMethods(this, this.filterMenuButton, [
+		if (me.cmAdvancedFilter) {
+			me.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
+			_CMUtils.forwardMethods(me, me.filterMenuButton, [
 				"enableClearFilterButton",
 				"disableClearFilterButton",
 				"enableSaveFilterButton",
@@ -337,27 +383,27 @@
 				"setFilterButtonLabel",
 				"selectAppliedFilter"
 			]);
-			items.push(this.filterMenuButton);
+			items.push(me.filterMenuButton);
 		}
 
-		if (this.cmAddPrintButton) {
-			this.printGridMenu = new CMDBuild.PrintMenuButton({
-				callback : function() { this.fireEvent("click"); },
+		if (me.cmAddPrintButton) {
+			me.printGridMenu = new CMDBuild.PrintMenuButton({
+				callback : function() { me.fireEvent("click"); },
 				formatList: ["pdf", "csv"],
 				disabled: true
 			});
-			items.push(this.printGridMenu);
+			items.push(me.printGridMenu);
 		}
 
-		this.pagingBar = new Ext.toolbar.Paging({
-			store: this.store,
+		me.pagingBar = new Ext.toolbar.Paging({
+			store: me.store,
 			displayInfo: true,
 			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
 			emptyMsg: CMDBuild.Translation.common.display_topic_none,
 			items: items
 		});
 
-		this.bbar = this.pagingBar;
+		me.bbar = me.pagingBar;
 	}
 
 	function buildGraphIconColumn(headers) {

@@ -1,136 +1,227 @@
 (function() {
+
 	Ext.define("CMDBuild.view.management.common.filter.CMRelations", {
-		extend: "Ext.Panel",
+		extend: "Ext.panel.Panel",
 		title: CMDBuild.Translation.management.findfilter.relations,
-		initComponent: function() {
-			this.domainGrid = new CMDBuild.view.management.common.filter.CMDomainGrid({
-				idClass: this.idClass,
-				region: "north",
-				split: true,
-				border: false,
-				height: "30%",
-				cls: "cmborderbottom"
-			});
 
-			this.relations = new CMDBuild.view.management.common.CMTabPanelWithCardGridAndFilter({
-				frame: false,
-				border: false,
-				region: "center",
-				selType: "checkboxmodel",
-				multiSelect: true,
-				filterType: "filterwindow",
-				height: "70%",
-				items: [this.grid, this.filter]
-			});
-
-			Ext.apply(this, {
-				layout: "border",
-				items: [this.domainGrid, this.relations]
-			});
-
-			this.callParent(arguments);
-
-			this.domainGrid.getSelectionModel().on("selectionchange", function(sm, s) {
-				if (s.length > 0) {
-					this.currentDomain = s[0]
-					this.relations.updateForClassId(this.currentDomain.get("DestClassId"));
-					this.relations.setDisabled(this.currentDomain.get("all") || this.currentDomain.get("notInRelation"));
-
-					if (typeof this.currentDomain.cards == "undefined") {
-						this.currentDomain.cards = {};
-					}
-				}
-			}, this);
-
-			this.domainGrid.on("cm-select-destination-subclass", function(s) {
-				this.relations.updateForClassId(s.get("DestClassId"));
-				this.currentDomain.cards = {};
-			}, this);
-
-			this.domainGrid.on("cm-check-all", function(recordIndex, checked) {
-				var r = this.domainGrid.store.getAt(recordIndex);
-				// the fields "all" and "notInRelation" are mutually exclusive
-				if (r.get("notInRelation") && checked) {
-					r.set("notInRelation", false);
-				}
-				r.commit();
-				if (this.currentDomain && this.currentDomain.get("DestClassId") == r.get("DestClassId")) {
-					this.relations.setDisabled(checked);
-				}
-			}, this);
-
-			this.domainGrid.on("cm-check-notInRelation", function(recordIndex, checked) {
-				var r = this.domainGrid.store.getAt(recordIndex);
-				// the fields "all" and "notInRelation" are mutually exclusive
-				if (r.get("all") && checked) {
-					r.set("all", false);
-				}
-				r.commit();
-				if (this.currentDomain && this.currentDomain.get("DestClassId") == r.get("DestClassId")) {
-					this.relations.setDisabled(checked);
-				}
-			}, this);
-
-			this.relations.grid.getSelectionModel().on("select", function(sm, record) {
-				this.currentDomain.cards[record.get("IdClass") + "_" + record.get("Id")] = true;
-			}, this);
-
-			this.relations.grid.getSelectionModel().on("deselect", function(sm, record) {
-				delete this.currentDomain.cards[record.get("IdClass") + "_" + record.get("Id")];
-			}, this);
-			
-			this.relations.grid.pagingBar.on("beforechange", function() {
-				this.currentDomain._cards = Ext.apply({}, this.currentDomain.cards);
-				this.relations.grid.store.on("load", function() {
-					this.currentDomain.cards = Ext.apply({}, this.currentDomain._cards);
-				}, this, {single: true});
-			}, this);
-
-			this.relations.grid.pagingBar.on('change', function() {
-				if (this.currentDomain) {
-					var grid = this.relations.grid,
-						domain = this.currentDomain;
-
-					this.relations.grid.store.each(function(r) {
-						var key = r.get("IdClass") + "_" + r.get("Id");
-						if (domain.cards[key]) {
-							grid.getSelectionModel().select(r);
-						}
-					});
-				}
-			}, this);
+		mixins: {
+			domainGridDelegate: "CMDBuild.view.management.common.filter.CMDomainGridDelegate",
+			cardGridDelegate: "CMDBuild.view.management.common.CMCardGridDelegate"
 		},
 
-		getDataToSend: function() {
-			var data = {};
-			this.domainGrid.store.each(function(r) {
-				var key = r.get("directedId"),
-					o = {};
+		// configuration
+		className: undefined,
+		// configuration
 
-				o["destinationClass"] = r.get("DestClassId");
+		initComponent: function() {
 
-				if (r.get("all")) {
-					o["type"] = "all";
-				} else if (r.get("notInRelation")) {
-					o["type"] = "notRel";
-				} else {
-					var cards = [];
-					for (var c in r.cards) {
-						cards.push(c);
+			/*
+			 * A flag needed because the ExtJs grid
+			 * fires the "deselect" event before to
+			 * load the store. We want capture only
+			 * the user generated events. I haven't
+			 * found a different solution
+			 */
+			this.ignoreDeselect = false;
+
+			this.domainGrid = new CMDBuild.view.management.common.filter.CMDomainGrid({
+				border: false,
+				className: this.className,
+				cls: "cmborderbottom",
+				region: "center"
+			});
+			this.domainGrid.addDelegate(this);
+
+			this.cardGrid = new CMDBuild.view.management.common.CMCardGrid({
+				border: false,
+				split: true,
+				height: "70%",
+				cls: "cmbordertop",
+				frame: false,
+				multiSelect: true,
+				selType: "checkboxmodel",
+				region: "south",
+				disabled: true
+			});
+			this.cardGrid.addDelegate(this);
+
+			this.layout = "border";
+			this.items = [this.domainGrid, this.cardGrid];
+
+			this.callParent(arguments);
+		},
+
+		getData: function() {
+			var data = [];
+
+			this.domainGrid.store.each(function(domain) {
+				var type = domain.getType();
+				if (type != null) {
+					var domainFilterConfiguration = {
+						domain: domain.getDomain().getName(),
+						type: type,
+						destination: domain.getDestination().getName(),
+						source: domain.getSource().getName(),
+					};
+
+					if (type == "oneof") {
+						domainFilterConfiguration.cards = domain.getCheckedCards();
 					}
 
-					if (cards.length > 0) {
-						o["type"] = "card";
-						o["cards"] = cards;
-					}
-				}
-
-				if (o.type) {
-					data[key] = o;
+					data.push(domainFilterConfiguration);
 				}
 			});
 
 			return data;
+		},
+
+		/**
+		 * 
+		 * @param {array of object} data
+		 * data -> [{
+		 * 	domain: {string} name of the domain
+		 *  source: {string} name of entryType source of the domain
+		 *  destination: {string} name of the entryType destinatin of the domain
+		 *  type: {string} any | noone | oneof,
+		 *  cards: {array} array of objects {Id: id of a card, ClassName: name of the card's class}
+		 * }]
+		 */
+		setData: function(data) {
+			var domains = data || [];
+			for (var i=0, l=domains.length; i<l; ++i) {
+				var domainRecord = null;
+				var domain = domains[i];
+				var recordIndex = this.domainGrid.store.findBy(function(record) {
+					return record.hasName(domain.domain);
+				});
+
+				if (recordIndex >= 0) {
+					domainRecord = this.domainGrid.store.getAt(recordIndex);
+				}
+
+				if (domainRecord) {
+					domainRecord.setType(domain.type);
+					domainRecord.setCheckedCards(domain.cards);
+				}
+			}
+		},
+
+		// as domainGridDelegate
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
+		 * @param {CMDBuild.model.CMDomainGridModel} record
+		 */
+		onCMDomainGridSelect: function(grid, record) {
+			this.currentDomain = record;
+			loadRelationGrid(this, this.currentDomain.getDestination().getId());
+		},
+
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
+		 * @param {Ext.ux.CheckColumn} column
+		 * @param {boolean} checked
+		 * @param {CMDBuild.model.CMDomainGridModel} record
+		 */
+		onCMDomainGridCheckedColumn: function(grid, column, checked, record) {
+			// the fields "any" and "noone" and "oneof" are mutual exclusive
+			if (checked) {
+				record.setType(column.dataIndex);
+			}
+
+			// the grid must be enabled only if
+			// the current domain has oneof as type
+			if (this.currentDomain) {
+				var currentDomain = this.currentDomain.getDomain();
+				var recordDomain = record.getDomain();
+				var theChangeHappensOnCurrentDomain = currentDomain.getName() == recordDomain.getName();
+				if (theChangeHappensOnCurrentDomain) {
+					var mustBeEnabled = column.dataIndex == "oneof" && checked;
+					this.cardGrid.setDisabled(!mustBeEnabled);
+				}
+			}
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
+		 * @param {string/int} entryTypeId the id of the destination subclass
+		 */
+		onCMDomainGridDestinationClassChange: function(grid, entryTypeId) {
+			loadRelationGrid(this, entryTypeId);
+		},
+
+		// as cardGridDelegate
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 * @param {Ext.data.Model} record
+		 */
+		onCMCardGridSelect: function(grid, record) {
+			this.currentDomain.addCheckedCard(getCardInfoFromRecord(record));
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 * @param {Ext.data.Model} record
+		 */
+		onCMCardGridDeselect: function(grid, record) {
+			if (this.ignoreDeselect) {
+				return;
+			} else {
+				this.currentDomain.removeCheckedCard(getCardInfoFromRecord(record));
+			}
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		onCMCardGridBeforeLoad: function(grid) {
+			this.ignoreDeselect = true;
+		},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		onCMCardGridLoad: function(grid) {
+			this.ignoreDeselect = false;
+			var keepExistingSelection = true;
+			var checkedCards = this.currentDomain.getCheckedCards();
+			for (var i=0, l=checkedCards.length; i<l; ++i) {
+				var cardInfo = checkedCards[i];
+				var recordIndex = grid.store.findBy(function(record) {
+					return cardInfo.className == _CMCache.getEntryTypeNameById(record.get("IdClass"))
+							&& cardInfo.id == record.get("Id");
+				});
+
+				if (recordIndex >= 0) {
+					grid.getSelectionModel().select(recordIndex, keepExistingSelection);
+				}
+			}
 		}
 	});
+
+	function loadRelationGrid(me, entryTypeId) {
+		me.cardGrid.updateStoreForClassId(entryTypeId);
+		var oneof = me.currentDomain.get("oneof");
+		me.cardGrid.setDisabled(!oneof);
+
+		if (typeof me.currentDomain.cards == "undefined") {
+			me.currentDomain.cards = {};
+		}
+	}
+
+	function getCardInfoFromRecord(record) {
+		return {
+			className: _CMCache.getEntryTypeNameById(record.get("IdClass")),
+			id: record.get("Id")
+		};
+	}
 })();
