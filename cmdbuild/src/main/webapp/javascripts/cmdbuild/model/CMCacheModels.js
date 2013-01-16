@@ -220,6 +220,14 @@
 			}
 
 			return null;
+		},
+
+		getName: function() {
+			return this.get("name");
+		},
+
+		getDescription: function() {
+			return this.get("description");
 		}
 	});
 
@@ -360,6 +368,13 @@
 			}
 		},
 
+		getRelationConfiguration: function() {
+			var configuration = this.getConfiguration();
+			var relationConfiguration = configuration.relation || [];
+
+			return relationConfiguration;
+		},
+
 		setRelationConfiguration: function(conf) {
 			var configuration = this.getConfiguration();
 			delete configuration.relation;
@@ -404,6 +419,6 @@
 
 		setLocal: function(local) {
 			this.set("local", local);
-		},
+		}
 	});
 })();

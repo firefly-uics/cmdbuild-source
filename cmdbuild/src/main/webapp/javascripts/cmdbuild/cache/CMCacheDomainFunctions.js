@@ -102,7 +102,7 @@
 
 			return attributeStore;
 		},
-		
+
 		getDirectedDomainsByEntryType: function(et) {
 			if (typeof et == "object") {
 				et = et.get("id");
@@ -113,8 +113,8 @@
 
 			for (var domain in domains) {
 				domain = domains[domain];
-				var cid1 = domain.get(ID_CLASS_1),
-					cid2 = domain.get(ID_CLASS_2);
+				var cid1 = domain.get(ID_CLASS_1);
+				var cid2 = domain.get(ID_CLASS_2);
 
 				if (Ext.Array.contains(anchestorsId, cid1)) {
 					var et2 = _CMCache.getEntryTypeById(cid2);
@@ -122,7 +122,8 @@
 						out.push({
 							dom_id: domain.get("id"),
 							description: domain.get("descr_1") + " (" + et2.get("text") + ")",
-							dst_cid: domain.get(ID_CLASS_2),
+							dst_cid: cid2,
+							src_cid: cid1,
 							src: "_1"
 						});
 					}
@@ -134,7 +135,8 @@
 						out.push({
 							dom_id: domain.get("id"),
 							description: domain.get("descr_2") + " (" + et1.get("text") + ")",
-							dst_cid: domain.get(ID_CLASS_1),
+							dst_cid: cid1,
+							src_cid: cid2,
 							src: "_2"
 						});
 					}

@@ -13,7 +13,6 @@
 			{name : 'md',type : "string"}
 		]
 	});
-    
 
 	Ext.define("CMDomainModelForCombo", {
 		extend: 'Ext.data.Model',
