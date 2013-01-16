@@ -1,20 +1,27 @@
 package integration.logic.data.filter;
 
+import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.size;
 import static integration.logic.data.DataDefinitionLogicTest.a;
 import static integration.logic.data.DataDefinitionLogicTest.newClass;
 import static integration.logic.data.DataDefinitionLogicTest.newDomain;
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.join;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
+import java.util.List;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.json.JSONObject;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 public class RelationFilterTest extends FilteredCardsFixture {
 
@@ -82,7 +89,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
-				filter(anyRelation(ofDomain(foo_baz), overClass(baz))));
+				query(anyRelation(ofDomain(foo_baz), withSourceClass(foo))));
 
 		// then
 		assertThat(isEmpty(cards), equalTo(true));
@@ -100,30 +107,81 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
-				filter(anyRelation(ofDomain(foo_bar), overClass(bar))));
+				query(anyRelation(ofDomain(foo_bar), withSourceClass(foo))));
 
 		// then
 		assertThat(size(cards), equalTo(1));
+	}
+
+	@Test
+	public void fetchingCardsWithRelationOverSingleDomainLookingForSpecificDestinationCards() throws Exception {
+		// given
+		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
+		final CMCard foo_2 = dbDataView().createCardFor(foo).setCode("foo_2").save();
+		final CMCard foo_3 = dbDataView().createCardFor(foo).setCode("foo_3").save();
+		final CMCard bar_1 = dbDataView().createCardFor(bar).setCode("bar_1").save();
+		final CMCard bar_2 = dbDataView().createCardFor(bar).setCode("bar_2").save();
+		final CMCard bar_3 = dbDataView().createCardFor(bar).setCode("bar_3").save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_2).setCard2(bar_2).save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_3).setCard2(bar_3).save();
+
+		// when
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+				forClass(foo), //
+				query(anyRelated(ofDomain(foo_bar), withSourceClass(foo), card(bar_1), card(bar_3))));
+
+		// then
+		assertThat(size(cards), equalTo(2));
+		assertThat((String) get(cards, 0).getCode(), equalTo("foo_1"));
+		assertThat((String) get(cards, 1).getCode(), equalTo("foo_3"));
 	}
 
 	/*
 	 * Utilities
 	 */
 
+	private CMCard card(final CMCard card) {
+		return card;
+	}
+
 	private String forClass(final CMClass clazz) {
 		return clazz.getName();
 	}
 
-	private QueryOptions filter(final QueryOptions queryOptions) {
-		return queryOptions;
+	private QueryOptions query(final QueryOptions... queryOptions) {
+		final QueryOptionsBuilder builder = QueryOptions.newQueryOption();
+		for (final QueryOptions qo : queryOptions) {
+			builder //
+			.filter(qo.getFilter()) //
+					.orderBy(qo.getSorters());
+		}
+		return builder.build();
 	}
 
 	private QueryOptions anyRelation(final CMDomain domain, final CMClass clazz) throws Exception {
-		final String source = (domain.getClass1().equals(clazz)) ? "_2" : "_1";
+		final CMClass destination = (domain.getClass1().equals(clazz)) ? domain.getClass2() : domain.getClass1();
 		return QueryOptions.newQueryOption() //
-				.filter(json(format("{relation:[{domain: %s, src: %s, type: any}]}", //
+				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, type: any}]}", //
 						domain.getName(), //
-						source))) //
+						clazz.getName(), //
+						destination.getName()))) //
+				.build();
+	}
+
+	private QueryOptions anyRelated(final CMDomain domain, final CMClass clazz, final CMCard... cards) throws Exception {
+		final CMClass destination = (domain.getClass1().equals(clazz)) ? domain.getClass2() : domain.getClass1();
+		final List<String> jsonCardObjects = Lists.newArrayList();
+		for (final CMCard card : cards) {
+			jsonCardObjects.add(format("{Id: %d, ClassName: %s}", card.getId(), card.getType().getName()));
+		}
+		final String jsonCards = join(jsonCardObjects, ",");
+		return QueryOptions.newQueryOption() //
+				.filter(json(format("{relation:[{domain: %s, source: %s, destination: %s, type: oneof, cards: [%s]}]}", //
+						domain.getName(), //
+						clazz.getName(), //
+						destination.getName(), //
+						jsonCards))) //
 				.build();
 	}
 
@@ -135,7 +193,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		return domain;
 	}
 
-	private final CMClass overClass(final CMClass clazz) {
+	private final CMClass withSourceClass(final CMClass clazz) {
 		return clazz;
 	}
 

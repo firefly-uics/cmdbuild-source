@@ -3,26 +3,31 @@ package org.cmdbuild.logic.validation.json;
 import static com.google.common.collect.Iterators.contains;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.cmdbuild.logic.mapping.json.Constants.AND_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.CARDS_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.CQL_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.DOMAIN_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.FULL_TEXT_QUERY_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.OPERATOR_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.OR_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.RELATION_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.SIMPLE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.SRC_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.TYPE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.VALUE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARDS_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_CLASSNAME_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_ID_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DESTINATION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_DOMAIN_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_SOURCE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ANY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_NOONE;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.logic.validation.Validator;
-import org.cmdbuild.logic.validation.Validator.ValidationError;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +59,7 @@ public class JsonFilterValidator implements Validator {
 	}
 
 	private void validateInnerFilterObjects() throws Exception {
-		Validate.isTrue(jsonHasOneOfKeys(filterObject, //
+		Validate.isTrue(hasOneOfKeys(filterObject, //
 				ATTRIBUTE_KEY, FULL_TEXT_QUERY_KEY, RELATION_KEY, CQL_KEY), MALFORMED_MSG);
 		validateAttributeFilter(filterObject);
 		validateQueryFilter(filterObject);
@@ -65,10 +70,10 @@ public class JsonFilterValidator implements Validator {
 	private void validateAttributeFilter(final JSONObject filterObject) throws JSONException {
 		if (filterObject.has(ATTRIBUTE_KEY)) {
 			final JSONObject attributeFilter = filterObject.getJSONObject(ATTRIBUTE_KEY);
-			Validate.isTrue(jsonHasOneOfKeys(attributeFilter, SIMPLE_KEY, AND_KEY, OR_KEY), MALFORMED_MSG);
+			Validate.isTrue(hasOneOfKeys(attributeFilter, SIMPLE_KEY, AND_KEY, OR_KEY), MALFORMED_MSG);
 			if (attributeFilter.has(SIMPLE_KEY)) {
 				final JSONObject simpleClauseObject = attributeFilter.getJSONObject(SIMPLE_KEY);
-				Validate.isTrue(jsonHasAllKeys(simpleClauseObject, //
+				Validate.isTrue(hasAllKeys(simpleClauseObject, //
 						ATTRIBUTE_KEY, OPERATOR_KEY, VALUE_KEY), MALFORMED_MSG);
 				validateSimpleClauseValues(simpleClauseObject);
 			}
@@ -90,19 +95,25 @@ public class JsonFilterValidator implements Validator {
 			final JSONArray conditions = filterObject.getJSONArray(RELATION_KEY);
 			for (int i = 0; i < conditions.length(); i++) {
 				final JSONObject condition = conditions.getJSONObject(i);
-				Validate.isTrue(jsonHasAllKeys(condition, DOMAIN_KEY, SRC_KEY, TYPE_KEY), MALFORMED_MSG);
-				Validate.isTrue(isNotBlank((String) condition.get(DOMAIN_KEY)), MALFORMED_MSG);
-				Validate.isTrue(asList("_1", "_2").contains(condition.get(SRC_KEY)), MALFORMED_MSG);
-				Validate.isTrue(asList("any", "noone", "oneof").contains(condition.get(TYPE_KEY)), MALFORMED_MSG);
-				if ("oneof".equals(condition.get(TYPE_KEY))) {
-					Validate.isTrue(condition.has(CARDS_KEY), MALFORMED_MSG);
-					final JSONArray cards = condition.getJSONArray(CARDS_KEY);
+				Validate.isTrue(hasAllKeys(condition, //
+						RELATION_DOMAIN_KEY, RELATION_SOURCE_KEY, RELATION_DESTINATION_KEY, RELATION_TYPE_KEY), //
+						MALFORMED_MSG);
+				Validate.isTrue(isNotBlank((String) condition.get(RELATION_DOMAIN_KEY)), MALFORMED_MSG);
+				Validate.isTrue(isNotBlank((String) condition.get(RELATION_SOURCE_KEY)), MALFORMED_MSG);
+				Validate.isTrue(isNotBlank((String) condition.get(RELATION_DESTINATION_KEY)), MALFORMED_MSG);
+				Validate.isTrue(asList(RELATION_TYPE_ANY, RELATION_TYPE_NOONE, RELATION_TYPE_ONEOF) //
+						.contains(condition.get(RELATION_TYPE_KEY)), MALFORMED_MSG);
+				if (RELATION_TYPE_ONEOF.equals(condition.get(RELATION_TYPE_KEY))) {
+					Validate.isTrue(condition.has(RELATION_CARDS_KEY), MALFORMED_MSG);
+					final JSONArray cards = condition.getJSONArray(RELATION_CARDS_KEY);
 					Validate.isTrue(cards.length() > 0);
 					for (int j = 0; j < cards.length(); j++) {
 						final JSONObject card = cards.getJSONObject(j);
-						Validate.isTrue(jsonHasAllKeys(card, "Id", "ClassName"), MALFORMED_MSG);
-						Validate.isTrue(card.getInt("Id") > 0, MALFORMED_MSG);
-						Validate.isTrue(isNotBlank((String) card.get("ClassName")), MALFORMED_MSG);
+						Validate.isTrue(hasAllKeys(card, //
+								RELATION_CARD_ID_KEY, RELATION_CARD_CLASSNAME_KEY), //
+								MALFORMED_MSG);
+						Validate.isTrue(card.getInt(RELATION_CARD_ID_KEY) > 0, MALFORMED_MSG);
+						Validate.isTrue(isNotBlank((String) card.get(RELATION_CARD_CLASSNAME_KEY)), MALFORMED_MSG);
 					}
 				}
 			}
@@ -114,11 +125,11 @@ public class JsonFilterValidator implements Validator {
 		// empty until CQL filter will be implemented
 	}
 
-	private boolean jsonHasOneOfKeys(final JSONObject jsonObject, final String... keys) {
-		return jsonHasOneOfKeys(jsonObject, asList(keys));
+	private boolean hasOneOfKeys(final JSONObject jsonObject, final String... keys) {
+		return hasOneOfKeys(jsonObject, asList(keys));
 	}
 
-	private boolean jsonHasOneOfKeys(final JSONObject jsonObject, final List<String> keys) {
+	private boolean hasOneOfKeys(final JSONObject jsonObject, final List<String> keys) {
 		final Iterator keysIterator = jsonObject.keys();
 		while (keysIterator.hasNext()) {
 			final String key = (String) keysIterator.next();
@@ -129,11 +140,11 @@ public class JsonFilterValidator implements Validator {
 		return false;
 	}
 
-	private boolean jsonHasAllKeys(final JSONObject jsonObject, final String... keys) {
-		return jsonHasAllKeys(jsonObject, asList(keys));
+	private boolean hasAllKeys(final JSONObject jsonObject, final String... keys) {
+		return hasAllKeys(jsonObject, asList(keys));
 	}
 
-	private boolean jsonHasAllKeys(final JSONObject jsonObject, final List<String> keys) {
+	private boolean hasAllKeys(final JSONObject jsonObject, final List<String> keys) {
 		for (final String key : keys) {
 			if (!contains(jsonObject.keys(), key)) {
 				return false;

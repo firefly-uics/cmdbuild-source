@@ -11,7 +11,9 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
+import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.validation.Validator.ValidationError;
@@ -23,24 +25,29 @@ import com.google.common.collect.Lists;
 
 public class JsonFilterMapperTest {
 
-	private CMClass mockEntryType;
+	private CMClass entryType;
+	private CMDataView dataView;
 
 	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
+		entryType = mock(CMClass.class);
+
 		final DBAttribute attr1 = new DBAttribute("attr1", new IntegerAttributeType(), null);
 		final DBAttribute attr2 = new DBAttribute("attr2", new IntegerAttributeType(), null);
-		mockEntryType = mock(CMClass.class);
-		when((Iterable<DBAttribute>) mockEntryType.getAttributes()).thenReturn(Lists.newArrayList(attr1, attr2));
-		when(mockEntryType.getAttribute(attr1.getName())).thenReturn(attr1);
-		when(mockEntryType.getAttribute(attr2.getName())).thenReturn(attr2);
-		when(mockEntryType.getName()).thenReturn("Clazz");
+
+		when((Iterable<DBAttribute>) entryType.getAttributes()).thenReturn(Lists.newArrayList(attr1, attr2));
+		when(entryType.getAttribute(attr1.getName())).thenReturn(attr1);
+		when(entryType.getAttribute(attr2.getName())).thenReturn(attr2);
+		when(entryType.getName()).thenReturn("Clazz");
+
+		dataView = mock(CMDataView.class);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void nullFilterShouldThrowException() throws Exception {
 		// given
-		final FilterMapper filterMapper = new JsonFilterMapper(mockEntryType, null);
+		final FilterMapper filterMapper = jsonFilterMapper(null);
 
 		// when
 		filterMapper.whereClauses();
@@ -49,7 +56,7 @@ public class JsonFilterMapperTest {
 	@Test(expected = ValidationError.class)
 	public void malformedFilterShouldThrowException() throws Exception {
 		// given
-		final FilterMapper filterMapper = new JsonFilterMapper(mockEntryType, filter("{not_expected_key: value}"));
+		final FilterMapper filterMapper = jsonFilterMapper(filter("{not_expected_key: value}"));
 
 		// when
 		filterMapper.whereClauses();
@@ -58,8 +65,8 @@ public class JsonFilterMapperTest {
 	@Test
 	public void shouldSuccessfullyDeserializeGlobalFilter() throws Exception {
 		// given
-		final FilterMapper filterMapper = new JsonFilterMapper(mockEntryType,
-				filter("{attribute: {simple: {attribute: attr1, operator: greater, value: [5]}}, " + "query: test}"));
+		final FilterMapper filterMapper = jsonFilterMapper(filter("{attribute: {simple: {attribute: attr1, operator: greater, value: [5]}}, "
+				+ "query: test}"));
 
 		// when
 		final WhereClause whereClause = filterMapper.whereClauses();
@@ -69,10 +76,23 @@ public class JsonFilterMapperTest {
 	}
 
 	@Test
+	public void globalFilterContainingOnlyFullTextQueryMustReturnOrWhereClauseIfMoreThanOneAttribute() throws Exception {
+		// given
+		final String globalFilter = "{query: test}";
+		final JSONObject globalFilterObject = new JSONObject(globalFilter);
+
+		// when
+		final FilterMapper filterMapper = jsonFilterMapper(globalFilterObject);
+		final WhereClause whereClause = filterMapper.whereClauses();
+
+		// then
+		assertTrue(whereClause instanceof OrWhereClause);
+	}
+
+	@Test
 	public void joinElementsSuccessfullyRead() throws Exception {
 		// given
-		final FilterMapper filterMapper = new JsonFilterMapper(mockEntryType,
-				filter("{relation: [{domain: foo, src: _1, type: any}, {domain: bar, src: _2, type: any}]}"));
+		final FilterMapper filterMapper = jsonFilterMapper(filter("{relation: [{domain: foo, source: bar_1, destination: baz_1, type: any}, {domain: bar, source: bar_2, destination: baz_2, type: any}]}"));
 
 		// when
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
@@ -84,6 +104,10 @@ public class JsonFilterMapperTest {
 	/*
 	 * Utilities
 	 */
+
+	private JsonFilterMapper jsonFilterMapper(final JSONObject filterObject) {
+		return new JsonFilterMapper(entryType, filterObject, dataView);
+	}
 
 	private JSONObject filter(final String filter) throws Exception {
 		return new JSONObject(filter);

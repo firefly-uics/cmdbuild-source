@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Utils.aliasForSystemAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
@@ -11,7 +12,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
@@ -94,7 +94,7 @@ public class QueryCreator {
 			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.EndDate);
 		}
 
-		return StringUtils.join(columnMapper.getAttributeExpressionsForSelect().iterator(), //
+		return join(columnMapper.getAttributeExpressionsForSelect().iterator(), //
 				ATTRIBUTES_SEPARATOR);
 	}
 
@@ -115,7 +115,7 @@ public class QueryCreator {
 
 	private void appendPart(final PartCreator partCreator) {
 		final String part = partCreator.getPart();
-		if (StringUtils.isNotEmpty(part)) {
+		if (isNotEmpty(part)) {
 			sb.append(PARTS_SEPARATOR).append(part);
 			params.addAll(partCreator.getParams());
 		}

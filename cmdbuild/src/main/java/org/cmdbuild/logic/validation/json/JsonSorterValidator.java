@@ -5,20 +5,19 @@ import static org.cmdbuild.logic.mapping.json.Constants.PROPERTY_KEY;
 
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.logic.validation.Validator;
-import org.cmdbuild.logic.validation.Validator.ValidationError;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JsonSorterValidator implements Validator {
 
-	private static final String MALFORMED_MSG = "Malformed sorters"; 
+	private static final String MALFORMED_MSG = "Malformed sorters";
 	private final JSONArray sorters;
 
 	public JsonSorterValidator(final JSONArray sorters) {
 		this.sorters = sorters;
 	}
-	
+
 	@Override
 	public void validate() throws ValidationError {
 		try {

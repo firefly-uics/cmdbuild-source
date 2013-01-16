@@ -11,7 +11,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfFilterIsNull() throws Exception {
 		// given
-		final Validator validator = new JsonFilterValidator(null);
+		final Validator validator = validatorFor(null);
 
 		// when
 		validator.validate();
@@ -20,8 +20,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfFilterKeyDoesNotExist() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{not_existent_key: value}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{not_existent_key: value}"));
 
 		// when
 		validator.validate();
@@ -30,8 +29,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfFilterObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{not_expected_key: blah, not_expected_2: blahhblahh}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{not_expected_key: blah, not_expected_2: blahhblahh}"));
 
 		// when
 		validator.validate();
@@ -40,8 +38,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfAttributeObjectIsEmpty() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{attribute: {}}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{attribute: {}}"));
 
 		// when
 		validator.validate();
@@ -50,8 +47,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfAttributeObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{attribute: {not_expected: 1, not_exp: 2}}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{attribute: {not_expected: 1, not_exp: 2}}"));
 
 		// when
 		validator.validate();
@@ -60,8 +56,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfSimpleObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{attribute: {simple: {}}}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{attribute: {simple: {}}}"));
 
 		// when
 		validator.validate();
@@ -70,9 +65,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfSimpleObjectDoesNotContainAllCorrectKeys() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{attribute: {simple: {not_expected_key: 1, attribute: blahh, operator: equal}}}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{attribute: {simple: {not_expected_key: 1, attribute: blahh, operator: equal}}}"));
 
 		// when
 		validator.validate();
@@ -81,9 +74,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateFilterWithNotValidValuesInSimpleConditions() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{attribute: {simple: {attribute: blahh, operator: equal, value: blah}}}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{attribute: {simple: {attribute: blahh, operator: equal, value: blah}}}"));
 
 		// when
 		validator.validate();
@@ -92,9 +83,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateFilterWithAttributeConditions() throws Exception {
 		// given
-		final JSONObject correctFilter = new JSONObject(
-				"{attribute: {simple: {attribute: blah, operator: equal, value: [1]}}}");
-		final Validator validator = new JsonFilterValidator(correctFilter);
+		final Validator validator = validatorFor(json("{attribute: {simple: {attribute: blah, operator: equal, value: [1]}}}"));
 
 		// when
 		validator.validate();
@@ -103,9 +92,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateFilterWithAttributeConditionsAndQueryCondition() throws Exception {
 		// given
-		final JSONObject correctFilter = new JSONObject(
-				"{attribute: {simple: {attribute: blah, operator: equal, value: [1]}}, query: full_text_query}");
-		final Validator validator = new JsonFilterValidator(correctFilter);
+		final Validator validator = validatorFor(json("{attribute: {simple: {attribute: blah, operator: equal, value: [1]}}, query: full_text_query}"));
 
 		// when
 		validator.validate();
@@ -114,8 +101,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateIfRelationObjectIsEmpty() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: []}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: []}"));
 
 		// when
 		validator.validate();
@@ -124,8 +110,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationObjectDoesNotContainCorrectKeys() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{foo: bar}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{foo: bar}]}"));
 
 		// when
 		validator.validate();
@@ -134,8 +119,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotContainDomain() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{src: _1, type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{source: foo, destination: bar, type: any}]}"));
 
 		// when
 		validator.validate();
@@ -144,8 +128,16 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotContainSource() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, destination: bar, type: any}]}"));
+
+		// when
+		validator.validate();
+	}
+
+	@Test(expected = ValidationError.class)
+	public void shouldNotValidateIfRelationRuleDoesNotContainDestination() throws Exception {
+		// given
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, type: any}]}"));
 
 		// when
 		validator.validate();
@@ -154,8 +146,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotContainType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz}]}"));
 
 		// when
 		validator.validate();
@@ -164,8 +155,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotHaveDomainValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: '', src: _2, type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: '', source: foo, destination: bar, type: any}]}"));
 
 		// when
 		validator.validate();
@@ -174,38 +164,43 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasBlankDomainValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: ' ', src: _2, type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: ' ', source: foo, destination: bar, type: any}]}"));
 
 		// when
 		validator.validate();
 	}
 
 	@Test(expected = ValidationError.class)
-	public void shouldNotValidateIfRelationRuleDoesNotHaveSrcValue() throws Exception {
+	public void shouldNotValidateIfRelationRuleDoesNotHaveSourceValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: '', type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: '', destination: bar, type: any}]}"));
 
 		// when
 		validator.validate();
 	}
 
 	@Test(expected = ValidationError.class)
-	public void shouldNotValidateIfRelationRuleHasBlankSrcValue() throws Exception {
+	public void shouldNotValidateIfRelationRuleHasBlankSourceValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: ' ', type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: ' ', destination: bar, type: any}]}"));
 
 		// when
 		validator.validate();
 	}
 
 	@Test(expected = ValidationError.class)
-	public void shouldNotValidateIfRelationRuleDoesNotHaveValidSrcValue() throws Exception {
+	public void shouldNotValidateIfRelationRuleDoesNotHaveDestinationValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: blah, type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: '', type: any}]}"));
+
+		// when
+		validator.validate();
+	}
+
+	@Test(expected = ValidationError.class)
+	public void shouldNotValidateIfRelationRuleHasBlankDestinationValue() throws Exception {
+		// given
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: ' ', type: any}]}"));
 
 		// when
 		validator.validate();
@@ -214,8 +209,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotHaveTypeValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: ''}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: ''}]}"));
 
 		// when
 		validator.validate();
@@ -224,8 +218,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesHasBlankTypeValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: ' '}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: ' '}]}"));
 
 		// when
 		validator.validate();
@@ -234,8 +227,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotHaveValidTypeValue() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: foo}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: blah}]}"));
 
 		// when
 		validator.validate();
@@ -244,8 +236,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleDoesNotHaveCardsWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: oneof}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof}]}"));
 
 		// when
 		validator.validate();
@@ -254,8 +245,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateIfRelationRuleHasAnyType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: any}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: any}]}"));
 
 		// when
 		validator.validate();
@@ -264,8 +254,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateIfRelationRuleHasNoOneType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: noone}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: noone}]}"));
 
 		// when
 		validator.validate();
@@ -274,8 +263,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasEmptyCardsWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject("{relation: [{domain: foo, src: _2, type: oneof, cards: []}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: []}]}"));
 
 		// when
 		validator.validate();
@@ -284,9 +272,7 @@ public class JsonFilterValidatorTest {
 	@Test
 	public void shouldValidateIfRelationRuleHasAtLeastOneValidCardsWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{relation: [{domain: foo, src: _2, type: oneof, cards: [{Id: 42, ClassName: bar}]}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: 42, ClassName: bar}]}]}"));
 
 		// when
 		validator.validate();
@@ -295,9 +281,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithNoIdWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{relation: [{domain: foo, src: _2, type: oneof, cards: [{Id: '', ClassName: bar}]}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: '', ClassName: bar}]}]}"));
 
 		// when
 		validator.validate();
@@ -306,9 +290,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithBlankIdWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{relation: [{domain: foo, src: _2, type: oneof, cards: [{Id: ' ', ClassName: bar}]}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: ' ', ClassName: bar}]}]}"));
 
 		// when
 		validator.validate();
@@ -317,9 +299,7 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithNoClassNameWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{relation: [{domain: foo, src: _2, type: oneof, cards: [{Id: 42, ClassName: ''}]}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: 42, ClassName: ''}]}]}"));
 
 		// when
 		validator.validate();
@@ -328,12 +308,22 @@ public class JsonFilterValidatorTest {
 	@Test(expected = ValidationError.class)
 	public void shouldNotValidateIfRelationRuleHasCardWithBlankClassNameWhenSpecifyingOneOfType() throws Exception {
 		// given
-		final JSONObject filter = new JSONObject(
-				"{relation: [{domain: foo, src: _2, type: oneof, cards: [{Id: 42, ClassName: ' '}]}]}");
-		final Validator validator = new JsonFilterValidator(filter);
+		final Validator validator = validatorFor(json("{relation: [{domain: foo, source: bar, destination: baz, type: oneof, cards: [{Id: 42, ClassName: ' '}]}]}"));
 
 		// when
 		validator.validate();
+	}
+
+	/*
+	 * Utilities
+	 */
+
+	private JsonFilterValidator validatorFor(final JSONObject json) {
+		return new JsonFilterValidator(json);
+	}
+
+	private JSONObject json(final String string) throws Exception {
+		return new JSONObject(string);
 	}
 
 }
