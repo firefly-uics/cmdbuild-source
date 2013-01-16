@@ -1,17 +1,18 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import org.cmdbuild.services.store.FilterDTO;
+import org.cmdbuild.services.store.FilterStore.Filter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.cmdbuild.services.store.FilterDTO;
-import org.cmdbuild.services.store.FilterStore.Filter;
 
 public class FilterSerializer {
-	public static JSONObject toClient(Iterable<Filter> filters) throws JSONException {
-		JSONObject out = new JSONObject();
-		JSONArray jsonFilters = new JSONArray();
 
-		for (Filter f: filters) {
+	public static JSONObject toClient(final Iterable<Filter> filters) throws JSONException {
+		final JSONObject out = new JSONObject();
+		final JSONArray jsonFilters = new JSONArray();
+
+		for (final Filter f : filters) {
 			jsonFilters.put(toClient(f));
 		}
 
@@ -19,8 +20,8 @@ public class FilterSerializer {
 		return out;
 	}
 
-	public static JSONObject toClient(Filter filter) throws JSONException {
-		JSONObject jsonFilter = new JSONObject();
+	public static JSONObject toClient(final Filter filter) throws JSONException {
+		final JSONObject jsonFilter = new JSONObject();
 		jsonFilter.put("name", filter.getName());
 		jsonFilter.put("description", filter.getDescription());
 		jsonFilter.put("entryType", filter.getClassName());
@@ -29,12 +30,11 @@ public class FilterSerializer {
 		return jsonFilter;
 	}
 
-	public static FilterDTO toServer( 
-			String  name, //
-			String className, //
-			String description, //
-			String groupName, //
-			JSONObject configuration) {
+	public static FilterDTO toServer(final String name, //
+			final String className, //
+			final String description, //
+			final String groupName, //
+			final JSONObject configuration) {
 
 		return FilterDTO.newFilter() //
 				.withName(name) //

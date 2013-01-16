@@ -75,10 +75,10 @@ public class DataDefinitionLogic implements Logic {
 		final CMClass createdOrUpdatedClass;
 		if (existingClass == null) {
 			logger.info("class not already created, creating a new one");
-			createdOrUpdatedClass = view.createClass(definitionForNew(clazz, parentClass));
+			createdOrUpdatedClass = view.create(definitionForNew(clazz, parentClass));
 		} else {
 			logger.info("class already created, updating existing one");
-			createdOrUpdatedClass = view.updateClass(definitionForExisting(clazz, existingClass));
+			createdOrUpdatedClass = view.update(definitionForExisting(clazz, existingClass));
 		}
 		return createdOrUpdatedClass;
 	}
@@ -92,12 +92,12 @@ public class DataDefinitionLogic implements Logic {
 		}
 		try {
 			logger.warn("deleting existing class '{}'", clazz.getName());
-			view.deleteClass(existingClass);
+			view.delete(existingClass);
 		} catch (final ORMException e) {
 			logger.error("error deleting class", e);
 			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
 				logger.warn("class contains data");
-				view.updateClass(unactive(existingClass));
+				view.update(unactive(existingClass));
 			}
 			throw e;
 		}
@@ -232,7 +232,7 @@ public class DataDefinitionLogic implements Logic {
 		}
 		try {
 			logger.warn("deleting existing attribute '{}'", attribute.getName());
-			view.deleteAttribute(existingAttribute);
+			view.delete(existingAttribute);
 		} catch (final ORMException e) {
 			logger.error("error deleting attribute", e);
 			if (e.getExceptionType() == ORMExceptionType.ORM_CONTAINS_DATA) {
@@ -290,10 +290,10 @@ public class DataDefinitionLogic implements Logic {
 			logger.info("domain not already created, creating a new one");
 			final CMClass class1 = view.findClassById(domain.getIdClass1());
 			final CMClass class2 = view.findClassById(domain.getIdClass2());
-			createdOrUpdated = view.createDomain(definitionForNew(domain, class1, class2));
+			createdOrUpdated = view.create(definitionForNew(domain, class1, class2));
 		} else {
 			logger.info("domain already created, updating existing one");
-			createdOrUpdated = view.updateDomain(definitionForExisting(domain, existing));
+			createdOrUpdated = view.update(definitionForExisting(domain, existing));
 		}
 		return createdOrUpdated;
 	}
@@ -320,7 +320,7 @@ public class DataDefinitionLogic implements Logic {
 			if (hasReference) {
 				throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
 			} else {
-				view.deleteDomain(domain);
+				view.delete(domain);
 			}
 		}
 	}

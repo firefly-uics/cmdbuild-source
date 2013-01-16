@@ -28,12 +28,12 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void simpleSubclassQuery() {
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 
 		final Object attr1Value = "Pizza";
 		final Object attr2Value = "Calzone";
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode(attr1Value) //
 				.setDescription(attr2Value) //
 				.save();
@@ -62,9 +62,9 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	public void simpleSubclassQueryForAnyAttribute() {
 		final int TOTAL = 5;
 
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 		for (int i = 0; i < TOTAL; i++) {
-			dbDataView().newCard(newClass) //
+			dbDataView().createCardFor(newClass) //
 					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
 					.save();
 		}
@@ -89,18 +89,18 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void simpleSuperclassQuery() {
-		final DBClass root = dbDataView().createClass(newSuperClass("root"));
-		final DBClass superNotRoot = dbDataView().createClass(newSuperClass("superNotRoot", root));
-		final DBClass leafOfSuperNotRoot = dbDataView().createClass(newClass("leafOfSuperNotRoot", superNotRoot));
-		final DBClass leafOfRoot = dbDataView().createClass(newClass("leafOfRoot", root));
-		final DBClass anotherLeafOfRoot = dbDataView().createClass(newClass("anotherLeafOfRoot", root));
-		dbDataView().newCard(leafOfSuperNotRoot) //
+		final DBClass root = dbDataView().create(newSuperClass("root"));
+		final DBClass superNotRoot = dbDataView().create(newSuperClass("superNotRoot", root));
+		final DBClass leafOfSuperNotRoot = dbDataView().create(newClass("leafOfSuperNotRoot", superNotRoot));
+		final DBClass leafOfRoot = dbDataView().create(newClass("leafOfRoot", root));
+		final DBClass anotherLeafOfRoot = dbDataView().create(newClass("anotherLeafOfRoot", root));
+		dbDataView().createCardFor(leafOfSuperNotRoot) //
 				.set(leafOfSuperNotRoot.getCodeAttributeName(), leafOfSuperNotRoot.getName()) //
 				.save();
-		dbDataView().newCard(leafOfRoot) //
+		dbDataView().createCardFor(leafOfRoot) //
 				.set(leafOfRoot.getCodeAttributeName(), leafOfRoot.getName()) //
 				.save();
-		dbDataView().newCard(anotherLeafOfRoot) //
+		dbDataView().createCardFor(anotherLeafOfRoot) //
 				.set(anotherLeafOfRoot.getCodeAttributeName(), anotherLeafOfRoot.getName()) //
 				.save();
 
@@ -120,18 +120,18 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	@Test
 	public void simpleSuperclassQueryForAnyAttribute() {
 		// given
-		final DBClass root = dbDataView().createClass(newSuperClass("root"));
-		final DBClass superNotRoot = dbDataView().createClass(newSuperClass("superNotRoot", root));
-		final DBClass leafOfSuperNotRoot = dbDataView().createClass(newClass("leafOfSuperNotRoot", superNotRoot));
-		final DBClass leafOfRoot = dbDataView().createClass(newClass("leafOfRoot", root));
-		final DBClass anotherLeafOfRoot = dbDataView().createClass(newClass("anotherLeafOfRoot", root));
-		dbDataView().newCard(leafOfSuperNotRoot) //
+		final DBClass root = dbDataView().create(newSuperClass("root"));
+		final DBClass superNotRoot = dbDataView().create(newSuperClass("superNotRoot", root));
+		final DBClass leafOfSuperNotRoot = dbDataView().create(newClass("leafOfSuperNotRoot", superNotRoot));
+		final DBClass leafOfRoot = dbDataView().create(newClass("leafOfRoot", root));
+		final DBClass anotherLeafOfRoot = dbDataView().create(newClass("anotherLeafOfRoot", root));
+		dbDataView().createCardFor(leafOfSuperNotRoot) //
 				.set(leafOfSuperNotRoot.getCodeAttributeName(), leafOfSuperNotRoot.getName()) //
 				.save();
-		dbDataView().newCard(leafOfRoot) //
+		dbDataView().createCardFor(leafOfRoot) //
 				.set(leafOfRoot.getCodeAttributeName(), leafOfRoot.getName()) //
 				.save();
-		dbDataView().newCard(anotherLeafOfRoot) //
+		dbDataView().createCardFor(anotherLeafOfRoot) //
 				.set(anotherLeafOfRoot.getCodeAttributeName(), anotherLeafOfRoot.getName()) //
 				.save();
 
@@ -156,10 +156,10 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final int OFFSET = 5;
 		final int LIMIT = 3;
 
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 
 		for (int i = 0; i < TOTAL_SIZE; i++) {
-			dbDataView().newCard(newClass) //
+			dbDataView().createCardFor(newClass) //
 					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
 					.save();
 		}
@@ -177,10 +177,10 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void singleWhereClause() {
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		for (int i = 0; i < NUMBER_OF_INSERTED_CARDS; i++) {
-			dbDataView().newCard(newClass) //
+			dbDataView().createCardFor(newClass) //
 					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
 					.save();
 		}
@@ -198,11 +198,11 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void simpleQueryWithoutWhereClause() {
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 
 		final int NUMBER_OF_INSERTED_CARDS = 5;
 		for (int i = 0; i < NUMBER_OF_INSERTED_CARDS; i++) {
-			dbDataView().newCard(newClass) //
+			dbDataView().createCardFor(newClass) //
 					.set(newClass.getCodeAttributeName(), String.valueOf(i)) //
 					.save();
 		}
@@ -219,11 +219,11 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
-		dbDataView().newCard(newClass) //
+		final DBClass newClass = dbDataView().create(newClass("foo"));
+		dbDataView().createCardFor(newClass) //
 				.set(newClass.getCodeAttributeName(), newClass.getName()) //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.set(newClass.getCodeAttributeName(), newClass.getName()) //
 				.save();
 
@@ -239,7 +239,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 	@Test(expected = NoSuchElementException.class)
 	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 		dbDataView() //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
@@ -250,7 +250,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	@Test(expected = UnsupportedOperationException.class)
 	public void malformedQueryShouldThrowException() {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("foo"));
+		final DBClass newClass = dbDataView().create(newClass("foo"));
 
 		// when
 		final String codeAttributeName = newClass.getCodeAttributeName();

@@ -23,8 +23,8 @@ public class DataTest extends IntegrationTestBase {
 	@Test
 	public void cardsCanBeAdded() {
 		final DBClass parent = dbDataView().findClassByName(Constants.BASE_CLASS_NAME);
-		final DBClass newClass = dbDataView().createClass(newClass("foo", parent));
-		final CMCard newCard = dbDataView().newCard(newClass) //
+		final DBClass newClass = dbDataView().create(newClass("foo", parent));
+		final CMCard newCard = dbDataView().createCardFor(newClass) //
 				.setCode(CODE_VALUE) //
 				.setDescription(DESCRIPTION_VALUE) //
 				.save();
@@ -36,7 +36,7 @@ public class DataTest extends IntegrationTestBase {
 
 	@Test(expected = Exception.class)
 	public void cardsCannotBeAddedInSuperclass() {
-		final DBClass newClass = dbDataView().createClass(newSuperClass("foo"));
+		final DBClass newClass = dbDataView().create(newSuperClass("foo"));
 		DBCard.newInstance(dbDriver(), newClass) //
 				.setCode(CODE_VALUE) //
 				.setDescription(DESCRIPTION_VALUE) //

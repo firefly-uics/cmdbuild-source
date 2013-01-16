@@ -24,21 +24,21 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 	protected void initializeDatabaseData() {
 		final DBAttribute createdAttribute = addAttributeToClass(TEXT_ATTRIBUTE, new TextAttributeType(), createdClass);
 
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), "").save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), "TexTual_AttriBUte_Value") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), null) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), "TEst") //

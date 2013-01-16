@@ -36,11 +36,11 @@ public class EntryTypeClearTest extends IntegrationTestBase {
 	@Test
 	public void allCardsCleared() throws Exception {
 		// given
-		clazz = dbDataView().createClass(newClass("foo"));
-		dbDataView().newCard(clazz).setCode("this").save();
-		dbDataView().newCard(clazz).setCode("is").save();
-		dbDataView().newCard(clazz).setCode("a").save();
-		dbDataView().newCard(clazz).setCode("test").save();
+		clazz = dbDataView().create(newClass("foo"));
+		dbDataView().createCardFor(clazz).setCode("this").save();
+		dbDataView().createCardFor(clazz).setCode("is").save();
+		dbDataView().createCardFor(clazz).setCode("a").save();
+		dbDataView().createCardFor(clazz).setCode("test").save();
 
 		// when
 		dbDataView().clear(clazz);
@@ -56,13 +56,13 @@ public class EntryTypeClearTest extends IntegrationTestBase {
 	@Test
 	public void allRelationsCleared() throws Exception {
 		// given
-		clazz = dbDataView().createClass(newClass("foo"));
-		domain = dbDataView().createDomain(newDomain("bar", clazz, clazz));
-		final CMCard card0 = dbDataView().newCard(clazz).setCode("baz").save();
-		final CMCard card1 = dbDataView().newCard(clazz).setCode("baz").save();
-		final CMCard card2 = dbDataView().newCard(clazz).setCode("baz").save();
-		dbDataView().newRelation(domain).setCard1(card0).setCard2(card1).save();
-		dbDataView().newRelation(domain).setCard1(card0).setCard2(card2).save();
+		clazz = dbDataView().create(newClass("foo"));
+		domain = dbDataView().create(newDomain("bar", clazz, clazz));
+		final CMCard card0 = dbDataView().createCardFor(clazz).setCode("baz").save();
+		final CMCard card1 = dbDataView().createCardFor(clazz).setCode("baz").save();
+		final CMCard card2 = dbDataView().createCardFor(clazz).setCode("baz").save();
+		dbDataView().createRelationFor(domain).setCard1(card0).setCard2(card1).save();
+		dbDataView().createRelationFor(domain).setCard1(card0).setCard2(card2).save();
 
 		// when
 		dbDataView().clear(domain);
@@ -81,11 +81,11 @@ public class EntryTypeClearTest extends IntegrationTestBase {
 	public void deleteEntryTypes() throws Exception {
 		if (domain != null) {
 			dbDataView().clear(domain);
-			dbDataView().deleteDomain(domain);
+			dbDataView().delete(domain);
 		}
 		if (clazz != null) {
 			dbDataView().clear(clazz);
-			dbDataView().deleteClass(clazz);
+			dbDataView().delete(clazz);
 		}
 	}
 

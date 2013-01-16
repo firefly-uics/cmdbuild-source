@@ -18,7 +18,7 @@ public class AttributesStructureTest extends IntegrationTestBase {
 	@Test
 	public void nullValueIsReturnedWhenFetchingUnexistingAttribute() {
 		// given
-		dbDataView().createClass(newClass("foo"));
+		dbDataView().create(newClass("foo"));
 
 		// when
 		final DBAttribute attribute = dbDataView().findClassByName("foo").getAttribute("unexisting");
@@ -43,7 +43,7 @@ public class AttributesStructureTest extends IntegrationTestBase {
 	@Test
 	public void defaultClassAttributesCanBeFetchedWithoutReloadingClass() {
 		// given
-		final DBClass clazz = dbDataView().createClass(newClass("foo"));
+		final DBClass clazz = dbDataView().create(newClass("foo"));
 
 		// when
 
@@ -56,7 +56,7 @@ public class AttributesStructureTest extends IntegrationTestBase {
 	@Test
 	public void defaultClassAttributesCanBeFetchedAfterReloadingClass() {
 		// given
-		dbDataView().createClass(newClass("foo"));
+		dbDataView().create(newClass("foo"));
 
 		// when
 		final DBClass clazz = dbDataView().findClassByName("foo");

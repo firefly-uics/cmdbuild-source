@@ -40,7 +40,7 @@ public class DataDefinitionLogicTest {
 		final CMClass createdClass = mockClass(CLASS_NAME);
 		when(dataView.findClassByName(CLASS_NAME)) //
 				.thenReturn(null, createdClass);
-		when(dataView.createClass(any(CMClassDefinition.class))) //
+		when(dataView.create(any(CMClassDefinition.class))) //
 				.thenReturn(createdClass);
 
 		// when
@@ -49,7 +49,7 @@ public class DataDefinitionLogicTest {
 		// then
 		assertThat(returnedClass.getName(), equalTo(createdClass.getName()));
 		verify(dataView).findClassByName(CLASS_NAME);
-		verify(dataView).createClass(any(CMClassDefinition.class));
+		verify(dataView).create(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
 	}
 
@@ -65,7 +65,7 @@ public class DataDefinitionLogicTest {
 
 		// then
 		verify(dataView).findClassByName(CLASS_NAME);
-		verify(dataView).updateClass(any(CMClassDefinition.class));
+		verify(dataView).update(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
 	}
 

@@ -44,22 +44,22 @@ public class JoinQueryTest extends IntegrationTestBase {
 
 	@Before
 	public void createDomainStructure() {
-		SRC = dbDataView().createClass(newClass("src"));
-		DST = dbDataView().createClass(newSuperClass("dst"));
-		DST1 = dbDataView().createClass(newClass("dst1", DST));
-		DST2 = dbDataView().createClass(newClass("dst2", DST));
-		DOM = dbDataView().createDomain(newDomain("dom", SRC, DST));
+		SRC = dbDataView().create(newClass("src"));
+		DST = dbDataView().create(newSuperClass("dst"));
+		DST1 = dbDataView().create(newClass("dst1", DST));
+		DST2 = dbDataView().create(newClass("dst2", DST));
+		DOM = dbDataView().create(newDomain("dom", SRC, DST));
 	}
 
 	@Test
 	public void joinWithOneTargetClassOnly() {
-		final DBCard src1 = dbDataView().newCard(SRC) //
+		final DBCard src1 = dbDataView().createCardFor(SRC) //
 				.set(SRC.getCodeAttributeName(), "SRC1") //
 				.save();
-		final DBCard dst1 = dbDataView().newCard(DST1) //
+		final DBCard dst1 = dbDataView().createCardFor(DST1) //
 				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
 				.save();
-		final DBCard dst2 = dbDataView().newCard(DST2) //
+		final DBCard dst2 = dbDataView().createCardFor(DST2) //
 				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
 				.save();
 		insertRelation(DOM, src1, dst1);
@@ -87,17 +87,17 @@ public class JoinQueryTest extends IntegrationTestBase {
 	@Test
 	public void joinDoesNotCountDeletedRelationsAndCards() {
 		// given
-		final DBCard src1 = dbDataView().newCard(SRC) //
+		final DBCard src1 = dbDataView().createCardFor(SRC) //
 				.set(SRC.getCodeAttributeName(), "SRC1") //
 				.save();
-		final DBCard dst1 = dbDataView().newCard(SRC) //
+		final DBCard dst1 = dbDataView().createCardFor(SRC) //
 				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
 				.save();
 		final DBRelation rel1 = insertRelation(DOM, src1, dst1);
 		// TODO use the dataview
 		dbDriver().delete(rel1);
 
-		final DBCard dst2 = dbDataView().newCard(SRC) //
+		final DBCard dst2 = dbDataView().createCardFor(SRC) //
 				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
 				.save();
 		insertRelation(DOM, src1, dst2);
@@ -118,13 +118,13 @@ public class JoinQueryTest extends IntegrationTestBase {
 
 	@Test
 	public void joinWithAnyClassAndAnyDomain() {
-		final DBCard src1 = dbDataView().newCard(SRC) //
+		final DBCard src1 = dbDataView().createCardFor(SRC) //
 				.set(SRC.getCodeAttributeName(), "SRC1") //
 				.save();
-		final DBCard dst1 = dbDataView().newCard(DST1) //
+		final DBCard dst1 = dbDataView().createCardFor(DST1) //
 				.set(DST1.getCodeAttributeName(), DST1_ATTR1) //
 				.save();
-		final DBCard dst2 = dbDataView().newCard(DST2) //
+		final DBCard dst2 = dbDataView().createCardFor(DST2) //
 				.set(DST2.getCodeAttributeName(), DST2_ATTR1) //
 				.save();
 		insertRelation(DOM, src1, dst1);
@@ -150,7 +150,7 @@ public class JoinQueryTest extends IntegrationTestBase {
 	 */
 
 	private DBRelation insertRelation(final DBDomain d, final DBCard c1, final DBCard c2) {
-		return (DBRelation) dbDataView().newRelation(d) //
+		return (DBRelation) dbDataView().createRelationFor(d) //
 				.setCard1(c1) //
 				.setCard2(c2) //
 				.save();

@@ -50,17 +50,17 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveAllCardsIfFilterIsNull() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
@@ -76,17 +76,17 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveAllCardsIfFilterIsEmpty() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
@@ -102,21 +102,21 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldSortSuccessfullyFetchedCards() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("zzz") //
 				.setDescription("description_baz") //
 				.save();
@@ -137,21 +137,21 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchCardsWithFilterDefinedButFullTextQueryEmpty() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("zzz") //
 				.setDescription("description_baz") //
 				.save();
@@ -170,21 +170,21 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchCardsWithFilterDefinedAndFullTextQuery() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bar") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_baz") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("zzz") //
 				.setDescription("description_baz") //
 				.save();
@@ -203,21 +203,21 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchCardsWithFullTextQueryFilterAndMultipleAttributeSorting() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_aaa") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bbb") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
@@ -242,21 +242,21 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldPaginateSuccessfully() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_aaa") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bbb") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();
@@ -275,21 +275,21 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchCardsWithAndConditionsInFilter() throws Exception {
 		// given
-		final DBClass newClass = dbDataView().createClass(newClass("test"));
+		final DBClass newClass = dbDataView().create(newClass("test"));
 
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_aaa") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("bar") //
 				.setDescription("description_bbb") //
 				.save();
-		dbDataView().newCard(newClass) //
+		dbDataView().createCardFor(newClass) //
 				.setCode("baz") //
 				.setDescription("description_zzz") //
 				.save();

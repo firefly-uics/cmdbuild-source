@@ -85,25 +85,6 @@ public class ModCard extends JSONBase {
 				.filter(filter) //
 				.build();
 		final Iterable<CMCard> fetchedCards = dataLogic.fetchCards(className, queryOptions);
-
-
-		// TODO: serialize the response....
-
-		// temporaryPatchToFakePrivilegeCheckOnCQL(cardQuery, userContext);
-		// final JSONArray rows = new JSONArray();
-		// if (writeonly) {
-		// removeReadOnlySubclasses(cardQuery, userContext);
-		// }
-		//
-		// cardQuery.fullText(fullTextQuery);
-		//
-		// applySortToCardQuery(sorters, cardQuery);
-		//
-		// for (final ICard card : cardQuery.subset(offset, limit).count()) {
-		// rows.put(Serializer.serializeCardWithPrivileges(card, false));
-		// }
-		// serializer.put("rows", rows);
-		// serializer.put("results", cardQuery.getTotalRows());
 		return CardSerializer.toClient(fetchedCards);
 	}
 

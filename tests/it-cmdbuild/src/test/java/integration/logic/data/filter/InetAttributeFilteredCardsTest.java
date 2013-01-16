@@ -25,22 +25,22 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(),
 				createdClass);
 
-		final CMCard card1 = dbDataView().newCard(createdClass) //
+		final CMCard card1 = dbDataView().createCardFor(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), "192.168.0.1") //
 				.save();
-		final CMCard card2 = dbDataView().newCard(createdClass) //
+		final CMCard card2 = dbDataView().createCardFor(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), "192.168.0.10") //
 				.save();
-		final CMCard card3 = dbDataView().newCard(createdClass) //
+		final CMCard card3 = dbDataView().createCardFor(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), "192.168.1.120") //
 				.save();
-		final CMCard card4 = dbDataView().newCard(createdClass) //
+		final CMCard card4 = dbDataView().createCardFor(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //

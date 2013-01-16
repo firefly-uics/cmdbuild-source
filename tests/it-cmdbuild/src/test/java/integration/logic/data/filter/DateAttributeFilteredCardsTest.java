@@ -24,22 +24,22 @@ public class DateAttributeFilteredCardsTest extends FilteredCardsFixture {
 	protected void initializeDatabaseData() {
 		final DBAttribute createdAttribute = addAttributeToClass(DATE_ATTRIBUTE, new DateAttributeType(), createdClass);
 
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), "06/08/2012") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), "11/12/1995") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), "10/09/1998") //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //

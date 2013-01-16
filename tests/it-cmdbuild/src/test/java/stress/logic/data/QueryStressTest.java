@@ -36,7 +36,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final DBDriver pgDriver = dbDriver();
 		stressTestClass = pgDriver.findClassByName(CLASS_NAME);
 		if (stressTestClass == null) {
-			stressTestClass = dbDataView().createClass(newClass(CLASS_NAME, null));
+			stressTestClass = dbDataView().create(newClass(CLASS_NAME, null));
 		}
 		storeBigAmountOfCardsIfNeeded();
 	}
@@ -74,7 +74,7 @@ public class QueryStressTest extends IntegrationTestBase {
 				.run();
 		if (result.totalSize() < NUMBER_OF_CARDS) {
 			for (int i = result.totalSize(); i < NUMBER_OF_CARDS; i++) {
-				dbDataView().newCard(stressTestClass) //
+				dbDataView().createCardFor(stressTestClass) //
 						.setCode("" + i) //
 						.setDescription("desc_" + i) //
 						.save();

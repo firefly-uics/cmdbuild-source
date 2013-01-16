@@ -86,7 +86,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	 */
 	protected void clearAndDeleteClassesAndDomains() {
 		dbDataView().clear(createdClass);
-		dbDataView().deleteClass(createdClass);
+		dbDataView().delete(createdClass);
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {
@@ -112,7 +112,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 	}
 
 	protected void insertCardWithValues(final DBClass klass, final Map<String, Object> attributeNameToValue) {
-		final DBCard cardToBeCreated = dbDataView().newCard(klass);
+		final DBCard cardToBeCreated = dbDataView().createCardFor(klass);
 		for (final String key : attributeNameToValue.keySet()) {
 			cardToBeCreated.set(key, attributeNameToValue.get(key));
 		}

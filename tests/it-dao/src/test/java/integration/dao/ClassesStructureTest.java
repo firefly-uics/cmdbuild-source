@@ -26,10 +26,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		// given
 
 		// when
-		final DBClass superClass = dbDataView().createClass(newSuperClass("super"));
-		final DBClass classWithNoSuperClass = dbDataView().createClass(newClass("foo"));
-		final DBClass classWithSuperClass = dbDataView().createClass(newClass("bar", superClass));
-		final DBClass simpleClass = dbDataView().createClass(newSimpleClass("baz"));
+		final DBClass superClass = dbDataView().create(newSuperClass("super"));
+		final DBClass classWithNoSuperClass = dbDataView().create(newClass("foo"));
+		final DBClass classWithSuperClass = dbDataView().create(newClass("bar", superClass));
+		final DBClass simpleClass = dbDataView().create(newSimpleClass("baz"));
 
 		// then
 		assertThat(superClass.getName(), equalTo("super"));
@@ -58,9 +58,9 @@ public class ClassesStructureTest extends IntegrationTestBase {
 		// given
 
 		// when
-		final DBClass superClass = dbDataView().createClass(newSuperClass("superClass"));
-		final DBClass subClassA = dbDataView().createClass(newClass("subClassA", superClass));
-		final DBClass subClassB = dbDataView().createClass(newClass("subClassB", superClass));
+		final DBClass superClass = dbDataView().create(newSuperClass("superClass"));
+		final DBClass subClassA = dbDataView().create(newClass("subClassA", superClass));
+		final DBClass subClassB = dbDataView().create(newClass("subClassB", superClass));
 
 		// then
 		assertThat(superClass.isSuperclass(), is(true));
@@ -75,10 +75,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void newlyCreatedClassesCanBeFoundBetweenAllClasses() {
 		// given
-		final DBClass superClass = dbDataView().createClass(newSuperClass("super"));
-		dbDataView().createClass(newClass("foo"));
-		dbDataView().createClass(newClass("bar", superClass));
-		dbDataView().createClass(newSimpleClass("baz"));
+		final DBClass superClass = dbDataView().create(newSuperClass("super"));
+		dbDataView().create(newClass("foo"));
+		dbDataView().create(newClass("bar", superClass));
+		dbDataView().create(newSimpleClass("baz"));
 
 		// when
 		final Iterable<String> classNames = namesOf(dbDataView().findAllClasses());
@@ -90,7 +90,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void classCreatedAndRead() {
 		// given
-		dbDataView().createClass(newClass("foo"));
+		dbDataView().create(newClass("foo"));
 
 		// when
 		final DBClass clazz = dbDataView().findClassByName("foo");
@@ -105,7 +105,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void superClassCreatedAndRead() {
 		// given
-		dbDataView().createClass(newSuperClass("foo"));
+		dbDataView().create(newSuperClass("foo"));
 
 		// when
 		final DBClass superClass = dbDataView().findClassByName("foo");
@@ -120,7 +120,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void simpleClassCreatedAndRead() {
 		// given
-		dbDataView().createClass(newSimpleClass("foo"));
+		dbDataView().create(newSimpleClass("foo"));
 
 		// when
 		final DBClass clazz = dbDataView().findClassByName("foo");
@@ -135,9 +135,9 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void classesHierarchyAfterReloadingClasses() {
 		// given
-		DBClass superClass = dbDataView().createClass(newSuperClass("superClass"));
-		DBClass subClassA = dbDataView().createClass(newClass("subClassA", superClass));
-		DBClass subClassB = dbDataView().createClass(newClass("subClassB", superClass));
+		DBClass superClass = dbDataView().create(newSuperClass("superClass"));
+		DBClass subClassA = dbDataView().create(newClass("subClassA", superClass));
+		DBClass subClassB = dbDataView().create(newClass("subClassB", superClass));
 
 		// when
 		superClass = dbDataView().findClassById(superClass.getId());
@@ -156,11 +156,11 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void classesHierarchyUpdatedAfterDeletingClassButWithoutReloadingClasses() {
 		// given
-		final DBClass root = dbDataView().createClass(newClass("root"));
-		final DBClass sub = dbDataView().createClass(newClass("sub", root));
+		final DBClass root = dbDataView().create(newClass("root"));
+		final DBClass sub = dbDataView().create(newClass("sub", root));
 
 		// when
-		dbDataView().deleteClass(sub);
+		dbDataView().delete(sub);
 
 		// then
 		assertThat(namesOf(root.getChildren()), not(hasItem(sub.getName())));
@@ -169,11 +169,11 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void classesHierarchyUpdatedAfterDeletingClassAndAfterReloadingClasses() {
 		// given
-		final DBClass _root = dbDataView().createClass(newSuperClass("root"));
-		final DBClass _sub = dbDataView().createClass(newClass("sub", _root));
+		final DBClass _root = dbDataView().create(newSuperClass("root"));
+		final DBClass _sub = dbDataView().create(newClass("sub", _root));
 
 		// when
-		dbDataView().deleteClass(_sub);
+		dbDataView().delete(_sub);
 		final DBClass root = dbDataView().findClassByName(_root.getName());
 
 		// then
@@ -183,10 +183,10 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test(expected = Exception.class)
 	public void cannotCreateTwoClassesWithSameName() {
 		// given
-		dbDataView().createClass(newClass("foo"));
+		dbDataView().create(newClass("foo"));
 
 		// when
-		dbDataView().createClass(newClass("foo"));
+		dbDataView().create(newClass("foo"));
 
 		// then
 		// ...
@@ -195,11 +195,11 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void leafClassesCanBeFetchedFromRootClass() {
 		// given
-		final DBClass root = dbDataView().createClass(newSuperClass("root"));
-		final DBClass subClassA = dbDataView().createClass(newSuperClass("subClassA", root));
-		final DBClass subClassB = dbDataView().createClass(newSuperClass("subClassB", root));
-		final DBClass leafA = dbDataView().createClass(newClass("leafA", subClassA));
-		final DBClass leafB = dbDataView().createClass(newClass("leafB", subClassA));
+		final DBClass root = dbDataView().create(newSuperClass("root"));
+		final DBClass subClassA = dbDataView().create(newSuperClass("subClassA", root));
+		final DBClass subClassB = dbDataView().create(newSuperClass("subClassB", root));
+		final DBClass leafA = dbDataView().create(newClass("leafA", subClassA));
+		final DBClass leafB = dbDataView().create(newClass("leafB", subClassA));
 
 		// when
 		final Iterable<DBClass> leaves = dbDataView().findClassByName(root.getName()).getLeaves();
@@ -212,11 +212,11 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void leafClassesCanBeFetchedFromAnyNonRootSuperClass() {
 		// given
-		final DBClass root = dbDataView().createClass(newSuperClass("root"));
-		final DBClass subClassA = dbDataView().createClass(newSuperClass("subClassA", root));
-		final DBClass subClassB = dbDataView().createClass(newSuperClass("subClassB", root));
-		final DBClass leafA = dbDataView().createClass(newClass("leafA", subClassA));
-		final DBClass leafB = dbDataView().createClass(newClass("leafB", subClassA));
+		final DBClass root = dbDataView().create(newSuperClass("root"));
+		final DBClass subClassA = dbDataView().create(newSuperClass("subClassA", root));
+		final DBClass subClassB = dbDataView().create(newSuperClass("subClassB", root));
+		final DBClass leafA = dbDataView().create(newClass("leafA", subClassA));
+		final DBClass leafB = dbDataView().create(newClass("leafB", subClassA));
 
 		// when
 		final Iterable<DBClass> leaves = dbDataView().findClassByName(subClassA.getName()).getLeaves();
@@ -229,7 +229,7 @@ public class ClassesStructureTest extends IntegrationTestBase {
 	@Test
 	public void superClassShouldNotBeALeaf() {
 		// given
-		dbDataView().createClass(newSuperClass("root"));
+		dbDataView().create(newSuperClass("root"));
 
 		// when
 		final Iterable<DBClass> items = dbDataView().findClassByName("root").getLeaves();

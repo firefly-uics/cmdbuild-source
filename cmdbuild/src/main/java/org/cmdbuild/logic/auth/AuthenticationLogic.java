@@ -324,7 +324,7 @@ public class AuthenticationLogic implements Logic {
 	public void addUserToGroup(final Long userId, final Long groupId) {
 		final CMDataView view = TemporaryObjectsBeforeSpringDI.getSystemView();
 		final CMDomain userRoleDomain = view.findDomainByName("UserRole");
-		final CMRelationDefinition relationDefinition = view.newRelation(userRoleDomain);
+		final CMRelationDefinition relationDefinition = view.createRelationFor(userRoleDomain);
 		relationDefinition.setCard1(fetchUserCardWithId(userId));
 		relationDefinition.setCard2(fetchRoleCardWithId(groupId));
 		relationDefinition.save();
@@ -364,7 +364,7 @@ public class AuthenticationLogic implements Logic {
 				.run().getOnlyRow();
 
 		final CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
-		final CMRelationDefinition relationDefinition = view.modifyRelation(relationToBeRemoved);
+		final CMRelationDefinition relationDefinition = view.update(relationToBeRemoved);
 		relationDefinition.delete();
 	}
 

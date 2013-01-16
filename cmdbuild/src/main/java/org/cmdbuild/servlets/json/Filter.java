@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.servlets.json.serializers.FilterSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -46,6 +47,7 @@ public class Filter extends JSONBase {
 			@Parameter(value = "className") final String className //
 	) throws JSONException, CMDBException {
 
-		// TODO delete
+		final FilterStore filterStore = TemporaryObjectsBeforeSpringDI.getFilterStore();
+		filterStore.delete(FilterDTO.newFilter().withName(name).forClass(className).build());
 	}
 }

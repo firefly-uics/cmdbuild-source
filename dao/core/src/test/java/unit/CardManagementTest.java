@@ -49,7 +49,7 @@ public class CardManagementTest {
 
 		// when
 		final CMClass type = view.findClassById(classKey);
-		final CMCard card = view.newCard(type).set(attrName, attrValue).save();
+		final CMCard card = view.createCardFor(type).set(attrName, attrValue).save();
 
 		// then
 		assertThat(card.getId(), is(cardKey));
