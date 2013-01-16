@@ -53,7 +53,7 @@ public class LegacyDBAuthenticator extends LegacyDBUserFetcher implements Passwo
 		try {
 			final CMCard userCard = fetchUserCard(login);
 			return userCard.get(userPasswordAttribute()).toString();
-		} catch (NoSuchElementException e) {
+		} catch (final NoSuchElementException e) {
 			return null;
 		}
 	}
@@ -69,16 +69,14 @@ public class LegacyDBAuthenticator extends LegacyDBUserFetcher implements Passwo
 		};
 	}
 
-	private boolean changePassword(final Login login, final String oldPassword, String newPassword) {
+	private boolean changePassword(final Login login, final String oldPassword, final String newPassword) {
 		if (checkPassword(login, oldPassword)) {
 			try {
 				final String newEncryptedPassword = digester.encrypt(newPassword);
 				final CMCard userCard = fetchUserCard(login);
-				view.modifyCard(userCard)
-						.set(userPasswordAttribute(), newEncryptedPassword)
-						.save();
+				view.update(userCard).set(userPasswordAttribute(), newEncryptedPassword).save();
 				return true;
-			} catch (NoSuchElementException e) {
+			} catch (final NoSuchElementException e) {
 				// let it return false
 			}
 		}

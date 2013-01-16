@@ -73,18 +73,18 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserClass createClass(final CMClassDefinition definition) {
-		return UserClass.newInstance(this, dbView.createClass(definition));
+	public UserClass create(final CMClassDefinition definition) {
+		return UserClass.newInstance(this, dbView.create(definition));
 	}
 
 	@Override
-	public UserClass updateClass(final CMClassDefinition definition) {
-		return UserClass.newInstance(this, dbView.updateClass(definition));
+	public UserClass update(final CMClassDefinition definition) {
+		return UserClass.newInstance(this, dbView.update(definition));
 	}
 
 	@Override
-	public void deleteClass(final CMClass clazz) {
-		dbView.deleteClass(clazz);
+	public void delete(final CMClass clazz) {
+		dbView.delete(clazz);
 	}
 
 	@Override
@@ -98,8 +98,8 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public void deleteAttribute(final CMAttribute attribute) {
-		dbView.deleteAttribute(attribute);
+	public void delete(final CMAttribute attribute) {
+		dbView.delete(attribute);
 	}
 
 	@Override
@@ -148,18 +148,18 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public UserDomain createDomain(final CMDomainDefinition definition) {
-		return UserDomain.newInstance(this, dbView.createDomain(definition));
+	public UserDomain create(final CMDomainDefinition definition) {
+		return UserDomain.newInstance(this, dbView.create(definition));
 	}
 
 	@Override
-	public UserDomain updateDomain(final CMDomainDefinition definition) {
-		return UserDomain.newInstance(this, dbView.updateDomain(definition));
+	public UserDomain update(final CMDomainDefinition definition) {
+		return UserDomain.newInstance(this, dbView.update(definition));
 	}
 
 	@Override
-	public void deleteDomain(final CMDomain domain) {
-		dbView.deleteDomain(domain);
+	public void delete(final CMDomain domain) {
+		dbView.delete(domain);
 	}
 
 	@Override
@@ -176,16 +176,16 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMCardDefinition newCard(final CMClass type) {
+	public CMCardDefinition createCardFor(final CMClass type) {
 		// TODO
-		return dbView.newCard(type);
+		return dbView.createCardFor(type);
 	}
 
 	@Override
-	public CMCardDefinition modifyCard(final CMCard card) {
+	public CMCardDefinition update(final CMCard card) {
 		// TODO: check privileges.....
 		// user.hasWriteAccess(card.getType());
-		return dbView.modifyCard(card);
+		return dbView.update(card);
 	}
 
 	@Override
@@ -246,20 +246,26 @@ public class UserDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMRelationDefinition newRelation(final CMDomain domain) {
+	public CMRelationDefinition createRelationFor(final CMDomain domain) {
 		// TODO check privileges
-		return dbView.newRelation(domain);
+		return dbView.createRelationFor(domain);
 	}
 
 	@Override
-	public CMRelationDefinition modifyRelation(final CMRelation relation) {
+	public CMRelationDefinition update(final CMRelation relation) {
 		// TODO check privileges
-		return dbView.modifyRelation(relation);
+		return dbView.update(relation);
 	}
 
 	@Override
 	public void clear(final CMEntryType type) {
 		dbView.clear(type);
+	}
+
+	@Override
+	public void delete(final CMCard card) {
+		// TODO: check privileges
+		dbView.delete(card);
 	}
 
 }

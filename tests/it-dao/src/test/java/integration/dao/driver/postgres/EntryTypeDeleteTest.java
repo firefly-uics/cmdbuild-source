@@ -34,8 +34,8 @@ public class EntryTypeDeleteTest extends IntegrationTestBase {
 	public void cardForStandarClassSuccessfullyDeleted() {
 		// given
 		final DBClass parent = dbDataView().findClassByName(Constants.BASE_CLASS_NAME);
-		clazz = dbDataView().createClass(newClass("foo", parent));
-		final DBCard card = (DBCard) dbDataView().newCard(clazz) //
+		clazz = dbDataView().create(newClass("foo", parent));
+		final DBCard card = (DBCard) dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.save();
 
@@ -55,9 +55,9 @@ public class EntryTypeDeleteTest extends IntegrationTestBase {
 	@Test
 	public void cardForSimpleClassSuccessfullyDeleted() {
 		// given
-		clazz = dbDataView().createClass(newSimpleClass("foo"));
+		clazz = dbDataView().create(newSimpleClass("foo"));
 		dbDataView().createAttribute(newTextAttribute("Code", clazz));
-		final DBCard card = (DBCard) dbDataView().newCard(clazz) //
+		final DBCard card = (DBCard) dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.save();
 
@@ -76,7 +76,7 @@ public class EntryTypeDeleteTest extends IntegrationTestBase {
 	@After
 	public void deleteEntryTypes() throws Exception {
 		dbDataView().clear(clazz);
-		dbDataView().deleteClass(clazz);
+		dbDataView().delete(clazz);
 	}
 
 }

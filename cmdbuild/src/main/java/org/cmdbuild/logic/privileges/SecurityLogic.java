@@ -138,12 +138,12 @@ public class SecurityLogic implements Logic {
 	}
 
 	private void updateModeForGrantCard(final CMCard grantCard, final String mode) {
-		final CMCardDefinition modifiableGrant = view.modifyCard(grantCard);
+		final CMCardDefinition modifiableGrant = view.update(grantCard);
 		modifiableGrant.set("Mode", mode).save();
 	}
 
 	private void createGrantCard(final PrivilegeInfo privilegeInfo) {
-		final CMCardDefinition grantCardToBeCreated = view.newCard(grantClass);
+		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
 		grantCardToBeCreated.set("IdRole", privilegeInfo.getGroupId()) //
 				.set("IdGrantedClass", privilegeInfo.getPrivilegeObjectId()) //
 				.set("Mode", privilegeInfo.getMode()) //

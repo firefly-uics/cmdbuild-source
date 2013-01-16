@@ -85,17 +85,17 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBClass createClass(final CMClassDefinition definition) {
+	public DBClass create(final CMClassDefinition definition) {
 		return driver.createClass(adaptDefinition(definition));
 	}
 
 	@Override
-	public DBClass updateClass(final CMClassDefinition definition) {
+	public DBClass update(final CMClassDefinition definition) {
 		return driver.updateClass(adaptDefinition(definition));
 	}
 
 	@Override
-	public void deleteClass(final CMClass cmClass) {
+	public void delete(final CMClass cmClass) {
 		driver.deleteClass(cmToDbClass(cmClass));
 	}
 
@@ -227,7 +227,7 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public void deleteAttribute(final CMAttribute attribute) {
+	public void delete(final CMAttribute attribute) {
 		driver.deleteAttribute(cmToDbAttribute(attribute));
 	}
 
@@ -263,17 +263,17 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBDomain createDomain(final CMDomainDefinition definition) {
+	public DBDomain create(final CMDomainDefinition definition) {
 		return driver.createDomain(adaptDefinition(definition));
 	}
 
 	@Override
-	public DBDomain updateDomain(final CMDomainDefinition definition) {
+	public DBDomain update(final CMDomainDefinition definition) {
 		return driver.updateDomain(adaptDefinition(definition));
 	}
 
 	@Override
-	public void deleteDomain(final CMDomain domain) {
+	public void delete(final CMDomain domain) {
 		driver.deleteDomain(cmToDbDomain(domain));
 	}
 
@@ -344,19 +344,26 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public DBCard newCard(final CMClass type) {
+	public DBCard createCardFor(final CMClass type) {
 		final DBClass dbType = findClassById(type.getId());
 		return DBCard.newInstance(driver, dbType);
 	}
 
 	@Override
-	public DBCard modifyCard(final CMCard card) {
+	public DBCard update(final CMCard card) {
 		final DBClass dbType = findClassByName(card.getType().getName());
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		for (final Entry<String, Object> entry : card.getValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
 		}
 		return dbCard;
+	}
+
+	@Override
+	public void delete(final CMCard card) {
+		final DBClass dbType = findClassByName(card.getType().getName());
+		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
+		driver.delete(dbCard);
 	}
 
 	@Override
@@ -379,13 +386,13 @@ public class DBDataView extends QueryExecutorDataView {
 	}
 
 	@Override
-	public CMRelationDefinition newRelation(final CMDomain domain) {
+	public CMRelationDefinition createRelationFor(final CMDomain domain) {
 		final DBDomain dom = driver.findDomainById(domain.getId());
 		return DBRelation.newInstance(driver, dom);
 	}
 
 	@Override
-	public CMRelationDefinition modifyRelation(final CMRelation relation) {
+	public CMRelationDefinition update(final CMRelation relation) {
 		if (relation instanceof DBRelation) {
 			final DBRelation dbRelation = (DBRelation) relation;
 			return DBRelation.newInstance(driver, dbRelation);

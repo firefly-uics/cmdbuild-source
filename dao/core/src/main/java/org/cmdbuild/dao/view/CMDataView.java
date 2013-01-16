@@ -36,17 +36,17 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMClass> findAllClasses();
 
-	CMClass createClass(CMClassDefinition definition);
+	CMClass create(CMClassDefinition definition);
 
-	CMClass updateClass(CMClassDefinition definition);
+	CMClass update(CMClassDefinition definition);
 
-	void deleteClass(CMClass cmClass);
+	void delete(CMClass cmClass);
 
 	CMAttribute createAttribute(CMAttributeDefinition definition);
 
 	CMAttribute updateAttribute(CMAttributeDefinition definition);
 
-	void deleteAttribute(CMAttribute attribute);
+	void delete(CMAttribute attribute);
 
 	CMDomain findDomainById(Long id);
 
@@ -77,11 +77,11 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMDomain> findAllDomains();
 
-	CMDomain createDomain(CMDomainDefinition definition);
+	CMDomain create(CMDomainDefinition definition);
 
-	CMDomain updateDomain(CMDomainDefinition definition);
+	CMDomain update(CMDomainDefinition definition);
 
-	void deleteDomain(CMDomain domain);
+	void delete(CMDomain domain);
 
 	CMFunction findFunctionByName(String name);
 
@@ -103,7 +103,7 @@ public interface CMDataView {
 	 * 
 	 * @return an empty modifiable card
 	 */
-	CMCardDefinition newCard(CMClass type);
+	CMCardDefinition createCardFor(CMClass type);
 
 	/**
 	 * Returns a modifiable card.
@@ -116,7 +116,14 @@ public interface CMDataView {
 	 * 
 	 * @return a modifiable card from the immutable card
 	 */
-	CMCardDefinition modifyCard(CMCard card);
+	CMCardDefinition update(CMCard card);
+
+	/**
+	 * Deletes the specified card
+	 * 
+	 * @param card
+	 */
+	void delete(final CMCard card);
 
 	/**
 	 * Method that returns a mutable relation object. This object is a new
@@ -126,7 +133,7 @@ public interface CMDataView {
 	 *            the domain which the relation will belong to
 	 * @return a mutable object
 	 */
-	CMRelationDefinition newRelation(CMDomain domain);
+	CMRelationDefinition createRelationFor(CMDomain domain);
 
 	/**
 	 * Method that returns a mutable relation object. This object is an object
@@ -136,7 +143,7 @@ public interface CMDataView {
 	 *            the domain which the relation belongs to
 	 * @return a mutable object
 	 */
-	CMRelationDefinition modifyRelation(CMRelation relation);
+	CMRelationDefinition update(CMRelation relation);
 
 	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.

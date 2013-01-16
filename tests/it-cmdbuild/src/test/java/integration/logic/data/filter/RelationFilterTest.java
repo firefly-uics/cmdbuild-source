@@ -57,27 +57,27 @@ public class RelationFilterTest extends FilteredCardsFixture {
 	@Override
 	protected void clearAndDeleteClassesAndDomains() {
 		dbDataView().clear(foo_baz);
-		dbDataView().deleteDomain(foo_baz);
+		dbDataView().delete(foo_baz);
 
 		dbDataView().clear(foo_bar);
-		dbDataView().deleteDomain(foo_bar);
+		dbDataView().delete(foo_bar);
 
 		dbDataView().clear(baz);
-		dbDataView().deleteClass(baz);
+		dbDataView().delete(baz);
 
 		dbDataView().clear(bar);
-		dbDataView().deleteClass(bar);
+		dbDataView().delete(bar);
 
 		dbDataView().clear(foo);
-		dbDataView().deleteClass(foo);
+		dbDataView().delete(foo);
 	}
 
 	@Test
 	public void fetchingCardsWithAnyRelationOverSingleDomainButNothingIsFound() throws Exception {
 		// given
-		final CMCard foo_1 = dbDataView().newCard(foo).setCode("foo_1").save();
-		final CMCard bar_1 = dbDataView().newCard(bar).setCode("bar_1").save();
-		dbDataView().newRelation(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
+		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
+		final CMCard bar_1 = dbDataView().createCardFor(bar).setCode("bar_1").save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
 
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
@@ -91,11 +91,11 @@ public class RelationFilterTest extends FilteredCardsFixture {
 	@Test
 	public void fetchingCardsWithAnyRelationOverSingleDomainOneCardThatHaveTwoRelationsIsFound() throws Exception {
 		// given
-		final CMCard foo_1 = dbDataView().newCard(foo).setCode("foo_1").save();
-		final CMCard bar_1 = dbDataView().newCard(bar).setCode("bar_1").save();
-		final CMCard bar_2 = dbDataView().newCard(bar).setCode("bar_2").save();
-		dbDataView().newRelation(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
-		dbDataView().newRelation(foo_bar).setCard1(foo_1).setCard2(bar_2).save();
+		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
+		final CMCard bar_1 = dbDataView().createCardFor(bar).setCode("bar_1").save();
+		final CMCard bar_2 = dbDataView().createCardFor(bar).setCode("bar_2").save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_2).save();
 
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //

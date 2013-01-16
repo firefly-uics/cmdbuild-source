@@ -337,7 +337,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMUser createUser(final UserDTO userDTO) {
 		final Digester digester = new Base64Digester();
-		final CMCardDefinition newUserCard = view.newCard(userClass());
+		final CMCardDefinition newUserCard = view.createCardFor(userClass());
 		newUserCard.set("Description", userDTO.getDescription());
 		newUserCard.set("Username", userDTO.getUsername());
 		newUserCard.set("Password", digester.encrypt(userDTO.getPassword()));
@@ -350,7 +350,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMUser updateUser(final UserDTO userDTO) {
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
-		final CMCardDefinition cardToBeUpdated = view.modifyCard(userCard);
+		final CMCardDefinition cardToBeUpdated = view.update(userCard);
 		if (userDTO.isActive() != null) {
 			cardToBeUpdated.set("Active", userDTO.isActive());
 		}
@@ -465,7 +465,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	@Override
 	public CMGroup createGroup(final GroupDTO groupDTO) {
-		final CMCardDefinition newGroupCard = view.newCard(roleClass());
+		final CMCardDefinition newGroupCard = view.createCardFor(roleClass());
 		newGroupCard.set("Code", groupDTO.getName());
 		newGroupCard.set("Description", groupDTO.getDescription());
 		newGroupCard.set("Email", groupDTO.getEmail());
@@ -479,7 +479,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	@Override
 	public CMGroup updateGroup(final GroupDTO groupDTO) {
 		final CMCard groupCard = fetchGroupCardWithId(groupDTO.getGroupId());
-		final CMCardDefinition cardToBeUpdated = view.modifyCard(groupCard);
+		final CMCardDefinition cardToBeUpdated = view.update(groupCard);
 		if (groupDTO.isActive() != null) {
 			cardToBeUpdated.set("Active", groupDTO.isActive());
 		}

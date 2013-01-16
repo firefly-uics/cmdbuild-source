@@ -18,7 +18,7 @@ public class QueryCreatorTest extends IntegrationTestBase {
 
 	@Before
 	public void createNewClass() {
-		newClass = dbDataView().createClass(newClass("foo"));
+		newClass = dbDataView().create(newClass("foo"));
 	}
 
 	@Test

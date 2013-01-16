@@ -171,7 +171,7 @@ public class DBDataViewTest {
 		final CMClass mockClass = mock(CMClass.class);
 		when(mockClass.getId()).thenReturn(ID);
 
-		view.newCard(mockClass);
+		view.createCardFor(mockClass);
 
 		verify(driver).findClassById(ID);
 		verifyNoMoreInteractions(driver);
@@ -185,7 +185,7 @@ public class DBDataViewTest {
 		final CMClass mockClass = mock(CMClass.class);
 		when(mockClass.getId()).thenReturn(ID);
 
-		view.newCard(mockClass).save();
+		view.createCardFor(mockClass).save();
 
 		verify(driver).findClassById(ID);
 		verify(driver).create(any(DBEntry.class));
@@ -206,7 +206,7 @@ public class DBDataViewTest {
 		when(card.getValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
 
 		// when
-		view.modifyCard(card);
+		view.update(card);
 
 		// then
 		verify(driver).findClassByName(CLASS_NAME);
@@ -232,7 +232,7 @@ public class DBDataViewTest {
 		when(card.getValues()).thenReturn(Maps.<String, Object> newHashMap().entrySet());
 
 		// when
-		view.modifyCard(card).save();
+		view.update(card).save();
 
 		// then
 		verify(driver).findClassByName(CLASS_NAME);

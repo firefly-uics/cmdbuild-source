@@ -25,22 +25,22 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final DBAttribute createdAttribute = addAttributeToClass(INTEGER_ATTRIBUTE, new IntegerAttributeType(),
 				createdClass);
 
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), Integer.valueOf(1)) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), Integer.valueOf(2)) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), Integer.valueOf(3)) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), Integer.valueOf(4)) //
@@ -127,7 +127,7 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 	@Test
 	public void fetchFilteredCardsWithNullOperator() throws Exception {
 		// given
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("code_of_null_card") //
 				.setDescription("desc_of_null_card") //
 				.set(INTEGER_ATTRIBUTE, null) //

@@ -38,16 +38,16 @@ public class WhereQueryTest extends IntegrationTestBase {
 
 	@Before
 	public void createData() throws Exception {
-		clazz = dbDataView().createClass(newClass(CLASS_NAME));
+		clazz = dbDataView().create(newClass(CLASS_NAME));
 	}
 
 	@Test
 	public void singleCardRespectingSimpleCondition() throws Exception {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("baz") //
 				.save();
 
@@ -67,11 +67,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void singleCardRespectingBothConditions() throws Exception {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("bar") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("baz") //
 				.save();
@@ -95,13 +95,13 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void moreCardsRespectingOrConditions() throws Exception {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("baz") //
 				.setDescription("baz") //
 				.save();
@@ -125,10 +125,10 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void singleCardRespectingNotCondition() throws Exception {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.save();
 
@@ -147,11 +147,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void noResultWithMoreThanTwoAndConditions() throws Exception {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -173,11 +173,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void singleResultWithCompositeConditions() throws Exception {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -200,11 +200,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void whereClausesWithGreatherThanOperatorWork() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -226,11 +226,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void whereClausesWithLessThanOperatorWork() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -252,11 +252,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionContainsAValue() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -278,11 +278,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionDoesNotContainAValue() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -304,11 +304,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionBeginsWithAValue() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -330,11 +330,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionDoesNotBeginWithAValue() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -356,11 +356,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionEndsWithAValue() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -382,11 +382,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseDescriptionDoesNotEndWithAValue() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("description_for_foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -408,11 +408,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseCodeIsNull() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode(null) //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -434,11 +434,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseCodeIsNotNull() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode(null) //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -460,11 +460,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseCodeIsContainedInASetOfValues() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();
@@ -486,11 +486,11 @@ public class WhereQueryTest extends IntegrationTestBase {
 	@Test
 	public void shouldRetrieveCardsWhoseCodeIsNotContainedInASetOfValues() {
 		// given
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("foo") //
 				.setDescription("foo") //
 				.save();
-		dbDataView().newCard(clazz) //
+		dbDataView().createCardFor(clazz) //
 				.setCode("bar") //
 				.setDescription("bar") //
 				.save();

@@ -25,22 +25,22 @@ public class DecimalAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final DBAttribute createdAttribute = addAttributeToClass(DECIMAL_ATTRIBUTE, new DecimalAttributeType(5, 2),
 				createdClass);
 
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), Double.valueOf(1)) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), Double.valueOf(2.43)) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), Double.valueOf(-50.32)) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //

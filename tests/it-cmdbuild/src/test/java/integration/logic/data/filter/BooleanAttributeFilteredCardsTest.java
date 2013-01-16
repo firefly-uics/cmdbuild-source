@@ -25,22 +25,22 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final DBAttribute createdAttribute = addAttributeToClass(BOOLEAN_ATTRIBUTE, new BooleanAttributeType(),
 				createdClass);
 
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("foo") //
 				.setDescription("desc_foo") //
 				.set(createdAttribute.getName(), Boolean.FALSE) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("bar") //
 				.setDescription("desc_bar") //
 				.set(createdAttribute.getName(), Boolean.TRUE) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("baz") //
 				.setDescription("desc_baz") //
 				.set(createdAttribute.getName(), Boolean.TRUE) //
 				.save();
-		dbDataView().newCard(createdClass) //
+		dbDataView().createCardFor(createdClass) //
 				.setCode("zzz") //
 				.setDescription("desc_zzz") //
 				.set(createdAttribute.getName(), null) //

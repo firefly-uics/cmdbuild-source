@@ -144,7 +144,7 @@ public class DBGroupFetcher implements GroupFetcher {
 	@Override
 	public CMGroup changeGroupStatusTo(final Long groupId, final boolean isActive) {
 		final CMCard groupCard = fetchGroupCardFromId(groupId);
-		final CMCardDefinition modifiableCard = view.modifyCard(groupCard);
+		final CMCardDefinition modifiableCard = view.update(groupCard);
 		if (isActive) {
 			modifiableCard.set("Active", CardStatus.ACTIVE.value());
 		} else {

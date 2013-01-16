@@ -17,8 +17,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.reference.EntryTypeReference;
+import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.base.Function;
 
@@ -55,7 +55,7 @@ public class DataViewFilterStore implements FilterStore {
 
 		@Override
 		public String getClassName() {
-			EntryTypeReference etr = (EntryTypeReference) card.get(ENTRYTYPE_ATTRIBUTE_NAME);
+			final EntryTypeReference etr = (EntryTypeReference) card.get(ENTRYTYPE_ATTRIBUTE_NAME);
 			final CMClass clazz = dataView.findClassById(etr.getId());
 			return clazz.getName();
 		}
@@ -125,15 +125,15 @@ public class DataViewFilterStore implements FilterStore {
 		final CMCard card = getFilterCard(filter);
 		final CMCard.CMCardDefinition def;
 		if (card == null) {
-			def = dataView.newCard(filterClass);
+			def = dataView.createCardFor(filterClass);
 		} else {
-			def = dataView.modifyCard(card);
+			def = dataView.update(card);
 		}
 		return def;
 	}
 
 	private CMCard getFilterCard(final Filter filter) {
-		final Iterator<CMCard> itr = getFilters(filter.getName(), filter.getClassName()).iterator();
+		final Iterator<CMCard> itr = getFilter(filter.getName(), filter.getClassName()).iterator();
 		return itr.hasNext() ? itr.next() : null;
 	}
 
@@ -141,7 +141,7 @@ public class DataViewFilterStore implements FilterStore {
 		logger.info("getting all filter cards");
 		final CMQueryResult result = dataView.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
-				.where(filtersAssociatedToCurrentlyLoggedUser()) //
+				.where(filtersAssociatedToCurrentlyLoggedUserCondition()) //
 				.run();
 		return transform(result, new Function<CMQueryRow, CMCard>() {
 			@Override
@@ -151,7 +151,7 @@ public class DataViewFilterStore implements FilterStore {
 		});
 	}
 
-	private WhereClause filtersAssociatedToCurrentlyLoggedUser() {
+	private WhereClause filtersAssociatedToCurrentlyLoggedUserCondition() {
 		return condition(attribute(filterClass, MASTER_ATTRIBUTE_NAME),
 				eq(operationUser.getAuthenticatedUser().getId()));
 	}
@@ -160,7 +160,7 @@ public class DataViewFilterStore implements FilterStore {
 	 * Note that now are returned only filters associated to the currently
 	 * logged user
 	 */
-	private Iterable<CMCard> getFilters(final String filterName, final String className) {
+	private Iterable<CMCard> getFilter(final String filterName, final String className) {
 		logger.info("getting all filter cards");
 		final CMClass clazz = dataView.findClassByName(className);
 		final CMQueryResult result = dataView.select(anyAttribute(filterClass)) //
@@ -176,7 +176,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause whereClauseFor(final String filterName, final Long entryTypeId) {
-		final WhereClause userWhereClause = filtersAssociatedToCurrentlyLoggedUser();
+		final WhereClause userWhereClause = filtersAssociatedToCurrentlyLoggedUserCondition();
 		final WhereClause entryTypeWhereClause = condition(attribute(filterClass, ENTRYTYPE_ATTRIBUTE_NAME),
 				eq(entryTypeId));
 		final WhereClause whereClause;
@@ -187,6 +187,12 @@ public class DataViewFilterStore implements FilterStore {
 			whereClause = userWhereClause;
 		}
 		return whereClause;
+	}
+
+	@Override
+	public void delete(final Filter filter) {
+		final CMCard filterCardToBeDeleted = getFilterCard(filter);
+		dataView.delete(filterCardToBeDeleted);
 	}
 
 }
