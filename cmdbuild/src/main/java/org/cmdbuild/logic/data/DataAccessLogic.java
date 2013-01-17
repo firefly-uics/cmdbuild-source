@@ -46,6 +46,24 @@ import com.google.common.collect.Lists;
 @Component
 public class DataAccessLogic implements Logic {
 
+	public static class FetchCardListResponse {
+		private final Iterable<CMCard> fetchedCards;
+		private final int totalSize; // for pagination
+
+		private FetchCardListResponse(final Iterable<CMCard> cards, final int totalSize) {
+			this.totalSize = totalSize;
+			this.fetchedCards = cards;
+		}
+
+		public Iterable<CMCard> getPaginatedCards() {
+			return fetchedCards;
+		}
+
+		public int getTotalNumberOfCards() {
+			return totalSize;
+		}
+	}
+
 	private final CMDataView view;
 
 	@Autowired
@@ -113,10 +131,11 @@ public class DataAccessLogic implements Logic {
 		return Lists.newArrayList(view.findDomainsFor(fetchedClass));
 	}
 
-	public Iterable<CMCard> fetchCards(final String className, final QueryOptions queryOptions) {
+	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = view.findClassByName(className);
 		if (fetchedClass == null) {
-			return Lists.newArrayList();
+			final List<CMCard> emptyCards = Lists.newArrayList();
+			return new FetchCardListResponse(emptyCards, 0);
 		}
 
 		final FilterMapper filterMapper = new JsonFilterMapper(fetchedClass, queryOptions.getFilter(), view);
@@ -147,7 +166,7 @@ public class DataAccessLogic implements Logic {
 		for (final CMQueryRow row : result) {
 			filteredCards.add(row.getCard(fetchedClass));
 		}
-		return filteredCards;
+		return new FetchCardListResponse(filteredCards, result.totalSize());
 	}
 
 }
