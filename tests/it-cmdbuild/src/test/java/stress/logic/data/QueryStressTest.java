@@ -47,7 +47,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(100, 0, null, null);
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(cards), 100);
@@ -63,7 +63,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
 
 		// when
-		final Iterable<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions);
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
 
 		// then
 		assertEquals(size(cards), 1);

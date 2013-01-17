@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.cmdbuild.dao.backend.CMBackend;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.DirectedDomain;
 import org.cmdbuild.elements.DirectedDomain.DomainDirection;
@@ -47,6 +46,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataAccessLogic;
+import org.cmdbuild.logic.data.DataAccessLogic.FetchCardListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.auth.UserContext;
@@ -84,8 +84,8 @@ public class ModCard extends JSONBase {
 				.orderBy(sorters) //
 				.filter(filter) //
 				.build();
-		final Iterable<CMCard> fetchedCards = dataLogic.fetchCards(className, queryOptions);
-		return CardSerializer.toClient(fetchedCards);
+		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
+		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
 	@JSONExported

@@ -89,7 +89,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
-				query(anyRelation(ofDomain(foo_baz), withSourceClass(foo))));
+				query(anyRelation(ofDomain(foo_baz), withSourceClass(foo)))).getPaginatedCards();
 
 		// then
 		assertThat(isEmpty(cards), equalTo(true));
@@ -107,7 +107,7 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
-				query(anyRelation(ofDomain(foo_bar), withSourceClass(foo))));
+				query(anyRelation(ofDomain(foo_bar), withSourceClass(foo)))).getPaginatedCards();
 
 		// then
 		assertThat(size(cards), equalTo(1));
@@ -129,7 +129,8 @@ public class RelationFilterTest extends FilteredCardsFixture {
 		// when
 		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
 				forClass(foo), //
-				query(anyRelated(ofDomain(foo_bar), withSourceClass(foo), card(bar_1), card(bar_3))));
+				query(anyRelated(ofDomain(foo_bar), withSourceClass(foo), card(bar_1), card(bar_3))))
+				.getPaginatedCards();
 
 		// then
 		assertThat(size(cards), equalTo(2));

@@ -27,13 +27,14 @@ public class CardSerializer {
 		return json;
 	}
 
-	public static JSONObject toClient(final Iterable<CMCard> cards) throws JSONException {
+	public static JSONObject toClient(final Iterable<CMCard> cards, final int totalSize) throws JSONException {
 		final JSONObject json = new JSONObject();
 		final JSONArray jsonRows = new JSONArray();
 		for (final CMCard card : cards) {
 			jsonRows.put(CardSerializer.toClient(card));
 		}
 		json.put("rows", jsonRows);
+		json.put("results", totalSize);
 		return json;
 	}
 
