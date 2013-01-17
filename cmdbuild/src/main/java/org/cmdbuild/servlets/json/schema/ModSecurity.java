@@ -192,6 +192,7 @@ public class ModSecurity extends JSONBase {
 		UserContext userCtx,
 		@Parameter("newpassword") String newPassword,
 		@Parameter("oldpassword") String oldPassword) {
+
 		userCtx.changePassword(oldPassword, newPassword);
 	}
 
@@ -214,21 +215,25 @@ public class ModSecurity extends JSONBase {
 
 		privilege.save();
 	}
-	
+
 	@Admin(AdminAccess.DEMOSAFE)
 	@Transacted
 	@JSONExported
 	public JSONObject saveUser(
 			JSONObject serializer,
+			ITableFactory tf,
+			UserContext userCtx,
 			@Parameter("userid") int userId,
 			@Parameter(value="description", required=false) String description,
 			@Parameter(value="username", required=false) String username,
 			@Parameter(value="password", required=false) String password,
 			@Parameter(value="email", required=false) String email,
 			@Parameter("isactive") boolean isActive,
-			@Parameter("defaultgroup") int defaultGroupId,
-			ITableFactory tf
+			@Parameter("defaultgroup") int defaultGroupId
 		) throws JSONException, AuthException {
+
+		denyForCloudAdmin(userCtx, userId);
+
 		ICard card = null;
 		if (userId==-1) {
 			CardQuery cardQuery = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().filter(ICard.CardAttributes.Status.name(), AttributeFilterType.DIFFERENT,ElementStatus.UPDATED.value()).filter("Username", AttributeFilterType.EQUALS,username);
@@ -265,18 +270,39 @@ public class ModSecurity extends JSONBase {
 
 		return serializer;
 	}
-	
+
+	private void denyForCloudAdmin(UserContext userCtx, int userId) {
+		if (userCtx.getDefaultGroup().isCloudAdmin()) {
+			// The Cloud admin could not update a user
+			// if this user belong to an administrator group
+			if (userId > -1) {
+				boolean isAdmin = false;
+				for(Group group: AuthenticationFacade.getGroupListForUser(userId)) {
+					if (group.isAdmin() && !group.isCloudAdmin()) {
+						isAdmin = true;
+						break;
+					}
+				}
+
+				if (isAdmin) {
+					throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+				}
+			}
+		}
+	}
+
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JSONObject disableUser(
 			JSONObject serializer,
+			ITableFactory tf,
+			UserContext userCtx,
 			@Parameter("userid") int userId,
-			@Parameter("disable") boolean disable,
-			ITableFactory tf
+			@Parameter("disable") boolean disable
 		) throws JSONException, AuthException {
-		
+
+		denyForCloudAdmin(userCtx, userId);
 		ICard card = tf.get(UserCard.USER_CLASS_NAME).cards().list().ignoreStatus().id(userId).get();
-		
 		UserCard user = new UserCard(card);
 		if (disable) {
 			user.setStatus(ElementStatus.INACTIVE_USER);
