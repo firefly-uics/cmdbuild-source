@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -26,6 +27,8 @@ import org.supercsv.prefs.CsvPreference;
 
 @SuppressWarnings("restriction")
 public class ExportCSV extends JSONBase{
+	
+	@OldDao
 	@JSONExported(contentType="text/csv")
 	public DataHandler export (
 			@Parameter("separator") String separatorString,

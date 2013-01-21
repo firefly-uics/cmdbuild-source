@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.elements.interfaces.CardQuery;
 import org.cmdbuild.elements.interfaces.IAttribute;
@@ -42,6 +43,7 @@ public class ModReport extends JSONBase {
 
 	private static ReportFacade reportFacade = new ReportFacade();
 
+	@OldDao
 	@JSONExported
 	public JSONArray getReportTypesTree(final Map<String, String> params) throws JSONException {
 		final JSONArray rows = new JSONArray();
@@ -58,6 +60,7 @@ public class ModReport extends JSONBase {
 		return rows;
 	}
 
+	@OldDao
 	@JSONExported
 	public String getReportTypes(final Map<String, String> params) throws JSONException {
 		final JSONObject serializer = new JSONObject();
@@ -70,6 +73,7 @@ public class ModReport extends JSONBase {
 		return serializer.toString();
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getReportsByType(final JSONObject serializer, final UserContext userCtx,
 			@Parameter("type") final String reportType, @Parameter("limit") final int limit,
@@ -88,6 +92,7 @@ public class ModReport extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getGroups(final Map<String, String> params) throws JSONException {
 		final JSONObject serializer = new JSONObject();
@@ -100,6 +105,7 @@ public class ModReport extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject createReportFactoryByTypeCode(final UserContext userCtx, final JSONObject serializer,
 			@Parameter("type") final String type, @Parameter("code") final String code, final ITableFactory tf)
@@ -138,6 +144,7 @@ public class ModReport extends JSONBase {
 	 * Create report factory obj
 	 */
 	@JSONExported
+	@OldDao
 	public JSONObject createReportFactory(final JSONObject serializer, @Parameter("type") final String type,
 			@Parameter("id") final int id, @Parameter("extension") final String extension, final ITableFactory tf)
 			throws Exception {
@@ -180,8 +187,7 @@ public class ModReport extends JSONBase {
 	 * @throws Exception
 	 */
 	@JSONExported
-	public JSONObject updateReportFactoryParams(final JSONObject serializer, final Map<String, String> formParameters,
-			final ITableFactory tf) throws Exception {
+	public JSONObject updateReportFactoryParams(final JSONObject serializer, final Map<String, String> formParameters) throws Exception {
 		final ReportFactoryDB reportFactory = (ReportFactoryDB) new SessionVars().getReportFactory();
 		if (formParameters.containsKey("reportExtension")) {
 			reportFactory.setReportExtension(ReportExtension.valueOf(formParameters.get("reportExtension")
@@ -205,6 +211,7 @@ public class ModReport extends JSONBase {
 	 * @param noDelete
 	 *            this may be requested for wf server side processing
 	 */
+	@OldDao
 	@JSONExported
 	public DataHandler printReportFactory(@Parameter(value = "donotdelete", required = false) final boolean notDelete)
 			throws Exception {
@@ -237,6 +244,7 @@ public class ModReport extends JSONBase {
 		return new DataHandler(dataSource);
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject deleteReport(final JSONObject serializer, @Parameter("id") final int id) throws JSONException {
 		final ReportCard report = ReportCard.findReportById(id);
@@ -280,6 +288,7 @@ public class ModReport extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject printCardDetails(@Parameter("format") final String format, final UserContext userCtx,
 			final JSONObject serializer, final ICard card) throws Exception {

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.entry.CMLookup;
 import org.cmdbuild.elements.DirectedDomain;
@@ -88,6 +89,7 @@ public class ModCard extends JSONBase {
 		return CardSerializer.toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getCardListShort( //
 			final JSONObject serializer, //
@@ -165,6 +167,7 @@ public class ModCard extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getDetailList(final JSONObject serializer, @Parameter("IdClass") final int masterIdClass,
 			@Parameter("Id") final int masterIdCard, @Parameter("limit") final int limit,
@@ -226,6 +229,7 @@ public class ModCard extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getCard(ICard card, final UserContext userCtx, @Parameter("IdClass") final int requestedIdClass,
 			final JSONObject serializer) throws JSONException {
@@ -317,6 +321,7 @@ public class ModCard extends JSONBase {
 		return reference;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getCardPosition(
 			@Parameter(value = "retryWithoutFilter", required = false) final boolean retryWithoutFilter,
@@ -400,6 +405,7 @@ public class ModCard extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject updateCard(final ICard card, final Map<String, String> attributes, final UserContext userCtx,
 			final JSONObject serializer) throws Exception {
@@ -422,6 +428,7 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject updateBulkCards(final Map<String, String> attributes,
 			@Parameter(value = "selections", required = false) final String[] cardsToUpdate,
@@ -539,11 +546,13 @@ public class ModCard extends JSONBase {
 		return changed;
 	}
 
+	@OldDao
 	@JSONExported
 	public void deleteCard(final ICard card) throws JSONException, CMDBException {
 		card.delete();
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject deleteDetailCard(final JSONObject serializer, final IRelation relation, @OverrideKeys(key = {
 			"Id", "IdClass" }, newKey = { "CardId", "ClassId" }) final ICard detailCard) {
@@ -553,6 +562,7 @@ public class ModCard extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getCardHistory(final ICard card, final ITableFactory tf, final RelationFactory rf,
 			final UserContext userCtx) throws JSONException, CMDBException {
@@ -585,6 +595,7 @@ public class ModCard extends JSONBase {
 	 * Relations
 	 */
 
+	@OldDao
 	@JSONExported
 	public JSONObject getRelationList(final ICard card, final UserContext userCtx,
 			@Parameter(value = "domainlimit", required = false) final int domainlimit,
@@ -597,6 +608,7 @@ public class ModCard extends JSONBase {
 		return new JsonGetRelationListResponse(out, domainlimit).toJson();
 	}
 
+	@OldDao
 	@JSONExported
 	@Transacted
 	public void createRelations(@Parameter("JSON") final JSONObject JSON, final UserContext userCtx)
@@ -694,6 +706,7 @@ public class ModCard extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	public void deleteRelation(final IRelation oldWayOfIdentifyingARelation,
 			@Parameter(required = false, value = "JSON") final JSONObject JSON, final UserContext userCtx)
@@ -708,6 +721,7 @@ public class ModCard extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	public JsonResponse callWidget(final ICard card, @Parameter("widgetId") final String widgetId,
 			@Parameter(required = false, value = "action") final String action,

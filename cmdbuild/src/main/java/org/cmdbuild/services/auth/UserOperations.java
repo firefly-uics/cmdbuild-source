@@ -1,6 +1,7 @@
 package org.cmdbuild.services.auth;
 
 import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.DomainFactoryImpl;
 import org.cmdbuild.elements.ProcessTypeFactoryImpl;
 import org.cmdbuild.elements.RelationFactoryImpl;
@@ -10,6 +11,7 @@ import org.cmdbuild.elements.interfaces.ITableFactory;
 import org.cmdbuild.elements.interfaces.ProcessTypeFactory;
 import org.cmdbuild.elements.interfaces.RelationFactory;
 
+@OldDao
 @Legacy("temporary, must be removed")
 public class UserOperations {
 

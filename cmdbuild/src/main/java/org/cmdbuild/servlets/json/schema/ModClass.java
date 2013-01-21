@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.Legacy;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -58,6 +60,7 @@ public class ModClass extends JSONBase {
 	private static final Long SIMPLE_TABLE_HAVE_NO_PARENT = null;
 
 	// NdPaolo: Is this still needed?
+	@OldDao
 	@JSONExported
 	public JSONArray tree(@Parameter(value = "active", required = false) final boolean active, final ITableFactory tf)
 			throws JSONException, AuthException {
@@ -71,6 +74,7 @@ public class ModClass extends JSONBase {
 		return JSONTree;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONArray getSimpleTablesTree(@Parameter(value = "active", required = false) final boolean active,
 			final ITableFactory tf) throws JSONException, AuthException {
@@ -87,6 +91,7 @@ public class ModClass extends JSONBase {
 		return tableList;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getSuperClasses(final JSONObject serializer, final ITableFactory tf) throws JSONException,
 			AuthException {
@@ -100,6 +105,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getProcessSuperClasses(final JSONObject serializer, final ITableFactory tf) throws JSONException,
 			AuthException {
@@ -113,6 +119,8 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
+	@Legacy("")
 	@JSONExported
 	public JSONObject getAllClasses(final JSONObject serializer,
 			@Parameter(value = "active", required = false) final boolean active, final UserContext userCtx)
@@ -163,6 +171,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject getAllDomains(final JSONObject serializer,
 			@Parameter(value = "active", required = false) final boolean activeOnly, final UserContext userCtx)
@@ -222,6 +231,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject saveOrderCriteria( //
 			final UserContext userContext, //
@@ -240,8 +250,9 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
-	public JSONObject getAttributeTypes(final ITable table, @Parameter("tableType") final String tableTypeStirng,
+	public JSONObject getAttributeTypes(@Parameter("tableType") final String tableTypeStirng,
 			final JSONObject serializer) throws JSONException, AuthException {
 
 		final CMTableType tableType = CMTableType.valueOf(tableTypeStirng);
@@ -301,6 +312,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject deleteTable( //
 			final UserContext userContext, //
@@ -373,9 +385,7 @@ public class ModClass extends JSONBase {
 			@Parameter(value = "group", required = false) final String group, //
 			@Parameter(value = "meta", required = false) final JSONObject meta, //
 			@Parameter(value = "editorType", required = false) final String editorType, //
-			@Parameter(value = "tableId") final Long tableId, //
-			final BaseSchema table //
-	) throws JSONException, CMDBException {
+			@Parameter(value = "tableId") final Long tableId) throws JSONException, CMDBException {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
 				.withOwner(tableId) //
@@ -432,6 +442,7 @@ public class ModClass extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject deleteAttribute( //
 			final UserContext userContext, //
@@ -447,6 +458,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject reorderAttribute( //
 			final UserContext userContext, //
@@ -501,6 +513,7 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public void deleteDomain( //
 			final UserContext userContext, //
@@ -523,8 +536,9 @@ public class ModClass extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
-	public JSONArray getFKTargetingClass(final ITableFactory tf, final ITable table) throws JSONException,
+	public JSONArray getFKTargetingClass(final ITable table) throws JSONException,
 			CMDBException {
 		final JSONArray fk = new JSONArray();
 		for (final IAttribute attribute : table.fkDetails()) {
@@ -535,6 +549,7 @@ public class ModClass extends JSONBase {
 		return fk;
 	}
 
+	@OldDao
 	@Admin
 	@JSONExported
 	public JSONObject getReferenceableDomainList(final JSONObject serializer, final ITable table,
@@ -559,6 +574,7 @@ public class ModClass extends JSONBase {
 	 */
 
 	// FIXME: why success false? fix it
+	@OldDao
 	@JSONExported
 	public JsonResponse getAllWidgets(@Parameter(value = "active", required = false) final boolean active,
 			final UserContext userCtx) {
@@ -580,6 +596,7 @@ public class ModClass extends JSONBase {
 		return JsonResponse.success(allWidgets);
 	}
 
+	@OldDao
 	@Admin
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(final ITable table, // className
@@ -595,6 +612,7 @@ public class ModClass extends JSONBase {
 		return JsonResponse.success(w);
 	}
 
+	@OldDao
 	@Admin
 	@JSONExported
 	public void removeWidgetDefinition(final ITable table, // className

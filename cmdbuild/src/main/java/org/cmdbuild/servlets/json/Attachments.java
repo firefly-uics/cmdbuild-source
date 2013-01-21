@@ -11,6 +11,7 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -52,6 +53,7 @@ public class Attachments extends JSONBase {
 		definitionsFactory = new DefaultDefinitionsFactory();
 	}
 
+	@OldDao
 	@JSONExported
 	public JsonResponse getAttachmentsContext(final UserContext userCtx) {
 		final DmsLogic dmsLogic = dmsLogicFor(userCtx);
@@ -70,6 +72,7 @@ public class Attachments extends JSONBase {
 	 * Legacy calls
 	 */
 
+	@OldDao
 	@JSONExported
 	public JSONObject getAttachmentList( //
 			final JSONObject serializer, //
@@ -85,6 +88,7 @@ public class Attachments extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public DataHandler downloadAttachment( //
 			final UserContext userCtx, //
@@ -94,6 +98,7 @@ public class Attachments extends JSONBase {
 		return dmsLogic.download(card.getSchema().getName(), card.getId(), filename);
 	}
 
+	@OldDao
 	@JSONExported
 	public void uploadAttachment( //
 			final UserContext userCtx, //
@@ -125,6 +130,7 @@ public class Attachments extends JSONBase {
 		return name.substring(fileNameIndex);
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject modifyAttachment( //
 			final JSONObject serializer, //
@@ -191,6 +197,7 @@ public class Attachments extends JSONBase {
 		return metadataGroups;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject deleteAttachment( //
 			final JSONObject serializer, //

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.SortedSet;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.csv.CSVCard;
 import org.cmdbuild.csv.CSVData;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -21,6 +22,7 @@ public class ImportCSV extends JSONBase {
 
 	private final static String DESCRIPTION_SUFFIX = "_description";
 
+	@OldDao
 	@JSONExported
 	public void uploadCSV(
 			@Parameter("filecsv") FileItem file,
@@ -44,6 +46,7 @@ public class ImportCSV extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public void updateCSVRecords(
 			@Parameter("data") JSONArray jsonCards) throws JSONException {

@@ -11,6 +11,7 @@ import javax.mail.Part;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.EmailProperties;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.Lookup;
@@ -28,6 +29,7 @@ import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.email.EmailService;
 
+@Deprecated
 public class EmailCard extends LazyCard {
 
 	private static final long serialVersionUID = 1L;
@@ -103,11 +105,13 @@ public class EmailCard extends LazyCard {
 	/*
 	 * Needed because the Email class is reserved
 	 */
+	@OldDao
 	public static CardQuery list(final ICard processCard) {
 		return UserOperations.from(UserContext.systemContext()).tables().get(EMAIL_CLASS_NAME).cards().list()
 				.filter(EmailCard.ActivityAttr, AttributeFilterType.EQUALS, String.valueOf(processCard.getId()));
 	}
 
+	@OldDao
 	public static EmailCard get(final ICard processCard, final int emailCardId) {
 		final ICard emailCard = EmailCard.list(processCard).id(emailCardId).get();
 		return new EmailCard(emailCard);
