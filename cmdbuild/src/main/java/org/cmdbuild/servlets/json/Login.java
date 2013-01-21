@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json;
 
 import java.util.Collection;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
@@ -62,6 +63,7 @@ public class Login extends JSONBase {
 	}
 
 	// Used by index.jsp
+	@OldDao
 	public static JSONArray serializeGroupForLogin(final Collection<Group> groups) throws JSONException {
 		final JSONArray jsonGroups = new JSONArray();
 		for (final Group group : groups) {

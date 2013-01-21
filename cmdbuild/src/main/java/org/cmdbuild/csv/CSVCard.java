@@ -3,6 +3,7 @@ package org.cmdbuild.csv;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.AttributeValue;
 import org.cmdbuild.elements.CardFactoryImpl;
 import org.cmdbuild.elements.Reference;
@@ -16,6 +17,7 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.services.auth.UserContext;
 
+@OldDao
 public class CSVCard extends CardForwarder implements Comparable<CSVCard> {
 
 	public static final String invalidXpName = "invalid";

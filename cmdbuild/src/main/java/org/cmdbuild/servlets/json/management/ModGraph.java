@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.management;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.IRelation;
 import org.cmdbuild.elements.interfaces.RelationFactory;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 public class ModGraph extends JSONBase {
 
+	@OldDao
 	@JSONExported
 	public JSONObject getRelationTree(
 			JSONObject serializer,

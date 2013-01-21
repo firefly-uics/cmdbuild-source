@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -24,6 +25,7 @@ public class DBClassWidgetStore {
 
 	private static final Object GLOBAL_WIDGET_LOCK = new Object();
 
+	@OldDao
 	private final ITable table;
 
 	public DBClassWidgetStore(final ITable table) {

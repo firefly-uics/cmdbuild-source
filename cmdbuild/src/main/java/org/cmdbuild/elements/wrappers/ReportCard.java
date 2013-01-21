@@ -11,6 +11,7 @@ import java.util.List;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.type.ByteArray;
 import org.cmdbuild.dao.type.IntArray;
 import org.cmdbuild.dao.type.StringArray;
@@ -27,6 +28,8 @@ import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.services.auth.UserContext;
 import org.cmdbuild.services.auth.UserOperations;
 
+@OldDao
+@Deprecated
 public class ReportCard extends CardForwarder {
 
 	public static final String REPORT_CLASS_NAME = "Report";

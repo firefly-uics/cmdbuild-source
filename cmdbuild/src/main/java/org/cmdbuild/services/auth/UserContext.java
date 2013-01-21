@@ -2,6 +2,10 @@ package org.cmdbuild.services.auth;
 
 import java.util.Collection;
 
+import org.cmdbuild.common.annotations.OldDao;
+
+@OldDao
+@Deprecated
 public abstract class UserContext {
 
 	public static UserContext systemContext = SystemContext.getInstance();

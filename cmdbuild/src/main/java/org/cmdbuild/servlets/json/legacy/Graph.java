@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.DomainFactory;
@@ -25,7 +26,7 @@ import org.dom4j.XPath;
  * the new persistence layer. Filter calls are not handled and it *
  * MUST be refactored ASAP... even more than the rest             *
  ******************************************************************/
-
+@OldDao
 @SuppressWarnings("unchecked")
 public class Graph extends JSONBase {
 

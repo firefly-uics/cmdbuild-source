@@ -11,6 +11,7 @@ import org.cmdbuild.auth.acl.CMPrivilegedObject;
 import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.wrappers.PrivilegeCard.PrivilegeType;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -112,6 +113,7 @@ public class OperationUserWrapper extends UserContext {
 		user.getAuthenticatedUser().changePassword(oldPassword, newPassword);
 	}
 
+	@OldDao
 	@Override
 	public Group getDefaultGroup() {
 		if (cachedGroup == null) {
@@ -120,6 +122,7 @@ public class OperationUserWrapper extends UserContext {
 		return cachedGroup;
 	}
 
+	@OldDao
 	@Override
 	public Collection<Group> getGroups() {
 		final Collection<String> groupNames = user.getAuthenticatedUser().getGroupNames();
@@ -167,6 +170,7 @@ public class OperationUserWrapper extends UserContext {
 		};
 	}
 
+	@OldDao
 	@Override
 	public UserType getUserType() {
 		throw new UnsupportedOperationException("Not implemented yet");
@@ -177,6 +181,7 @@ public class OperationUserWrapper extends UserContext {
 		return user.getAuthenticatedUser().getName();
 	}
 
+	@OldDao
 	@Override
 	public Group getWFStartGroup() {
 		return this.getDefaultGroup();
@@ -201,10 +206,12 @@ public class OperationUserWrapper extends UserContext {
 	 * Utils and conversion
 	 */
 
+	@OldDao
 	private Group getGroupByName(final String groupName) {
 		return groupFromCMGroup(getCMGroupByName(groupName));
 	}
 
+	@OldDao
 	private Group groupFromCMGroup(final CMGroup group) {
 		if (group == null) {
 			return null;

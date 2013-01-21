@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.elements.AttributeImpl;
@@ -35,6 +36,7 @@ import org.cmdbuild.utils.OrderingUtils;
 import org.cmdbuild.utils.OrderingUtils.PositionHandler;
 import org.json.JSONObject;
 
+@OldDao
 public class GISLogic implements Logic {
 
 	private static final GeoServerService geoServerService = new GeoServerService();

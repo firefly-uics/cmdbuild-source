@@ -23,6 +23,7 @@ import net.sf.jasperreports.engine.design.JRDesignImage;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.wrappers.ReportCard;
 import org.cmdbuild.logger.Log;
 
@@ -32,6 +33,7 @@ public class ReportFactoryDB extends ReportFactory {
 	private ReportExtension reportExtension; // pdf,csv ...	
 	private List<ReportParameter> reportParameters; // launch parameters
 		
+	@OldDao
 	public ReportFactoryDB(int reportId, ReportExtension reportExtension) throws SQLException, IOException, ClassNotFoundException  {
 		reportCard = ReportCard.findReportById(reportId);
 		this.reportExtension = reportExtension;

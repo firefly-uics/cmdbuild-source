@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.elements.interfaces.IDomain;
 import org.cmdbuild.elements.interfaces.IRelation;
@@ -297,6 +298,7 @@ public class DatabaseConfigurator {
 	 * NOTE: It MUST be called after the database has been configured, otherwise
 	 * it will fail
 	 */
+	@OldDao
 	public void createAdministratorIfNeeded(final String adminUser, final String adminPassword) {
 		if (EMPTY_DBTYPE.equals(configuration.getDatabaseType())) {
 			final UserCard user = new UserCard();

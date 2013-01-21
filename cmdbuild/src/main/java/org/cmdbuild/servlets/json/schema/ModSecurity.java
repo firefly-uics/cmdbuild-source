@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.interfaces.ICard;
@@ -64,6 +65,7 @@ public class ModSecurity extends JSONBase {
 		return JsonResponse.success(userCtx.getDefaultGroup().getUIConfiguration());
 	}
 
+	@OldDao
 	@Admin
 	@JSONExported
 	public JsonResponse getGroupUIConfiguration(@Parameter("id") final int groupId) throws JSONException,
@@ -73,6 +75,7 @@ public class ModSecurity extends JSONBase {
 		return JsonResponse.success(group.getUIConfiguration());
 	}
 
+	@OldDao
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public void saveGroupUIConfiguration(@Parameter("id") final int groupId,
@@ -280,6 +283,7 @@ public class ModSecurity extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JSONObject enableDisableGroup(final JSONObject serializer, @Parameter("isActive") final boolean isActive,

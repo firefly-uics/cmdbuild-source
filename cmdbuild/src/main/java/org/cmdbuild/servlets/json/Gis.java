@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.ITableFactory;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 public class Gis extends JSONBase {
 
+	@OldDao
 	@Transacted
 	@JSONExported
 	@Admin
@@ -42,6 +44,7 @@ public class Gis extends JSONBase {
 		logic.createGeoAttribute(table, layerMetaData);
 	}
 
+	@OldDao
 	@Transacted
 	@JSONExported
 	@Admin
@@ -54,6 +57,7 @@ public class Gis extends JSONBase {
 		logic.modifyGeoAttribute(table, name, description, minimumZoom, maximumzoom, jsonStyle.toString());
 	}
 
+	
 	@Transacted
 	@JSONExported
 	@Admin
@@ -64,6 +68,7 @@ public class Gis extends JSONBase {
 		logic.deleteGeoAttribute(masterTableName, name);
 	}
 
+	@OldDao
 	@JSONExported
 	@SkipExtSuccess
 	public JSONObject getGeoCardList(final ITable masterClass,
@@ -85,6 +90,7 @@ public class Gis extends JSONBase {
 	 * 
 	 * @return the feature for the first geometry attribute
 	 */
+	@OldDao
 	@JSONExported
 	public JSONObject getFeature(final ICard card, final ITableFactory tf) throws JSONException, Exception {
 

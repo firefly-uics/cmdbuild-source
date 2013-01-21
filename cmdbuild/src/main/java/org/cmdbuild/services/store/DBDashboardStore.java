@@ -3,6 +3,7 @@ package org.cmdbuild.services.store;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
@@ -20,6 +21,7 @@ public class DBDashboardStore implements DashboardStore {
 	private static final ObjectMapper mapper = new DashboardObjectMapper();
 	private static final ErrorMessageBuilder errors = new ErrorMessageBuilder();
 
+	@OldDao
 	@Override
 	public Long add(final DashboardDefinition dashboard) {
 		final String serializedDefinition = serializeDashboard(dashboard);
@@ -29,12 +31,14 @@ public class DBDashboardStore implements DashboardStore {
 		return Long.valueOf(c.getId());
 	}
 
+	@OldDao
 	@Override
 	public DashboardDefinition get(final Long dashboardId) {
 		final ICard c = dashboardsTable.cards().get(dashboardId.intValue());
 		return cardToDashboardDefinition(c);
 	}
 
+	@OldDao
 	@Override
 	public Map<Long, DashboardDefinition> list() {
 		final Map<Long, DashboardDefinition> out = new HashMap<Long, DashboardDefinition>();
@@ -44,6 +48,7 @@ public class DBDashboardStore implements DashboardStore {
 		return out;
 	}
 
+	@OldDao
 	@Override
 	public void modify(final Long dashboardId, final DashboardDefinition dashboard) {
 		final String serializedDefinition = serializeDashboard(dashboard);
@@ -52,6 +57,7 @@ public class DBDashboardStore implements DashboardStore {
 		c.save();
 	}
 
+	@OldDao
 	@Override
 	public void remove(final Long dashboardId) {
 		dashboardsTable.cards().get(dashboardId.intValue()).delete();

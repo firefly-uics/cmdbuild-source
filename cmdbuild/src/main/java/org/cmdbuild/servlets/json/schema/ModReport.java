@@ -17,6 +17,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ITable;
 import org.cmdbuild.elements.interfaces.IAbstractElement.ElementStatus;
 import org.cmdbuild.elements.report.ReportFacade;
@@ -46,7 +47,7 @@ public class ModReport extends JSONBase {
 	private static ReportFacade reportFacade = new ReportFacade();
 
 	@JSONExported
-	public String menuTree(Map<String, String> params) throws JSONException, AuthException {
+	public String menuTree() throws JSONException, AuthException {
 		JSONArray serializer = new JSONArray();
 		JSONObject item;
 
@@ -62,6 +63,7 @@ public class ModReport extends JSONBase {
 		return serializer.toString();
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject printSchema(
 			JSONObject serializer,
@@ -73,6 +75,7 @@ public class ModReport extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@JSONExported
 	public JSONObject printClassSchema(
 			JSONObject serializer,
@@ -85,11 +88,12 @@ public class ModReport extends JSONBase {
 		return serializer;
 	}
 
+	@OldDao
 	@Admin
 	@JSONExported
-	public JSONObject getGroups(Map<String, String> params) throws JSONException {
+	public JSONObject getGroups() throws JSONException {
 		JSONObject serializer = new JSONObject();
-       	for (GroupCard group : GroupCard.allActive()) {
+       	for (GroupCard group : GroupCard.allActive()) { //FIXME: replace GroupCard with CMGroup
 			JSONObject jsonGroup = new JSONObject();
 			jsonGroup.put("name", group.getName());
 			jsonGroup.put("description", group.getDescription());
@@ -239,6 +243,7 @@ public class ModReport extends JSONBase {
 	}
 
 
+	@OldDao
 	@Admin
 	@JSONExported
 	public JSONObject saveJasperReport(JSONObject serializer) {
