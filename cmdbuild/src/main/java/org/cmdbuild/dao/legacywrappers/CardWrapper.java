@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -27,6 +28,7 @@ import com.google.common.collect.Iterables;
 /**
  * Wrapper for {@link ICard}.
  */
+@OldDao
 public class CardWrapper implements CMCard, CMCardDefinition {
 
 	protected static final Set<String> cardSystemAttributes;

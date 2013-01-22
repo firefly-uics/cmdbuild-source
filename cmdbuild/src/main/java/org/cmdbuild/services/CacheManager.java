@@ -1,9 +1,11 @@
 package org.cmdbuild.services;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@OldDao
 public class CacheManager {
 
 	@Autowired
@@ -15,8 +17,9 @@ public class CacheManager {
 		JSONDispatcherService.getInstance().reload();
 	}
 
+	@Deprecated
 	public void clearDatabaseCache() {
-		backend.clearCache();
+		backend.clearCache(); //FIXME: delete this line
 		TemporaryObjectsBeforeSpringDI.getDriver().clearCache();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.filters.AttributeFilter.AttributeFilterType;
 import org.cmdbuild.elements.interfaces.ICard;
 import org.cmdbuild.elements.interfaces.ITable;
@@ -15,6 +16,8 @@ import org.cmdbuild.services.auth.UserOperations;
 import org.cmdbuild.services.scheduler.trigger.JobTrigger;
 import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
 
+@Deprecated
+@OldDao
 public class JobCard extends LazyCard implements JobFactory {
 	private static final long serialVersionUID = 1L;
 
