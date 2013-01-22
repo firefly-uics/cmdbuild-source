@@ -111,7 +111,7 @@ public class JoinCreator extends PartCreator {
 
 		void appendUserAttributes(final T type, final boolean first) {
 			final CMEntryType entryType = getEntryType(type);
-			for (final EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(typeAlias, entryType)) {
+			for (final EntryTypeAttribute eta : columnMapper.getAttributes(typeAlias, entryType)) {
 				final boolean nullValue = (eta.name == null);
 				sb.append(",");
 				if (nullValue) {

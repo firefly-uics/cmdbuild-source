@@ -18,6 +18,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -114,6 +115,27 @@ public class RelationFilterTest extends FilteredCardsFixture {
 	}
 
 	@Test
+	public void fetchingCardsWithAnyRelationOverSingleDomainTwoCardsAreFoundAndSorted() throws Exception {
+		// given
+		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
+		final CMCard foo_2 = dbDataView().createCardFor(foo).setCode("foo_2").save();
+		final CMCard bar_1 = dbDataView().createCardFor(bar).setCode("bar_1").save();
+		final CMCard bar_2 = dbDataView().createCardFor(bar).setCode("bar_2").save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_1).setCard2(bar_1).save();
+		dbDataView().createRelationFor(foo_bar).setCard1(foo_2).setCard2(bar_2).save();
+
+		// when
+		final Iterable<CMCard> cards = dataAccessLogic.fetchCards( //
+				forClass(foo), //
+				query(anyRelation(ofDomain(foo_bar), withSourceClass(foo)), sortBy("Code", "DESC")));
+
+		// then
+		assertThat(size(cards), equalTo(2));
+		assertThat((String) get(cards, 0).getCode(), equalTo("foo_2"));
+		assertThat((String) get(cards, 1).getCode(), equalTo("foo_1"));
+	}
+
+	@Test
 	public void fetchingCardsWithRelationOverSingleDomainLookingForSpecificDestinationCards() throws Exception {
 		// given
 		final CMCard foo_1 = dbDataView().createCardFor(foo).setCode("foo_1").save();
@@ -184,6 +206,15 @@ public class RelationFilterTest extends FilteredCardsFixture {
 						destination.getName(), //
 						jsonCards))) //
 				.build();
+	}
+
+	private QueryOptions sortBy(final String attributeName, final String direction) throws Exception {
+		return QueryOptions.newQueryOption() //
+				.orderBy(new JSONArray() {
+					{
+						put(json(format("{property: %s, direction: %s}", attributeName, direction)));
+					}
+				}).build();
 	}
 
 	private JSONObject json(final String source) throws Exception {

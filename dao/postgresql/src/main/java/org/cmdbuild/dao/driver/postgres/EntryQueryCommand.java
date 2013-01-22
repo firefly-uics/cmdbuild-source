@@ -85,7 +85,7 @@ class EntryQueryCommand implements LoggingSupport {
 			for (final Alias a : columnMapper.getFunctionCallAliases()) {
 				final DBFunctionCallOutput out = new DBFunctionCallOutput();
 				final CMEntryType hackSinceAFunctionCanAppearOnlyInTheFromClause = querySpecs.getFromType();
-				for (final EntryTypeAttribute eta : columnMapper.getEntryTypeAttributes(a,
+				for (final EntryTypeAttribute eta : columnMapper.getAttributes(a,
 						hackSinceAFunctionCanAppearOnlyInTheFromClause)) {
 					final Object sqlValue = rs.getObject(eta.index);
 					out.set(eta.name, eta.sqlType.sqlToJavaValue(sqlValue));
@@ -156,7 +156,7 @@ class EntryQueryCommand implements LoggingSupport {
 				throws SQLException {
 			logger.debug("adding user attributes for entry of type '{}' with alias '{}'", //
 					entry.getType().getName(), typeAlias);
-			for (final EntryTypeAttribute attribute : columnMapper.getEntryTypeAttributes(typeAlias, entry.getType())) {
+			for (final EntryTypeAttribute attribute : columnMapper.getAttributes(typeAlias, entry.getType())) {
 				if (attribute.name != null) {
 					final Object sqlValue = rs.getObject(attribute.index);
 					entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(sqlValue));

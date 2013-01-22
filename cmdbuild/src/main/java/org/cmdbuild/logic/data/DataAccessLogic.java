@@ -5,6 +5,7 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.alias.Alias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,13 +47,19 @@ import com.google.common.collect.Lists;
 @Component
 public class DataAccessLogic implements Logic {
 
-	public static class FetchCardListResponse {
+	public static class FetchCardListResponse implements Iterable<CMCard>{
+		
 		private final Iterable<CMCard> fetchedCards;
 		private final int totalSize; // for pagination
 
 		private FetchCardListResponse(final Iterable<CMCard> cards, final int totalSize) {
 			this.totalSize = totalSize;
 			this.fetchedCards = cards;
+		}
+		
+		@Override
+		public Iterator<CMCard> iterator() {
+			return fetchedCards.iterator();
 		}
 
 		public Iterable<CMCard> getPaginatedCards() {
@@ -62,6 +69,7 @@ public class DataAccessLogic implements Logic {
 		public int getTotalNumberOfCards() {
 			return totalSize;
 		}
+		
 	}
 
 	private final CMDataView view;
