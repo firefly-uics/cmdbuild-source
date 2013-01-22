@@ -1,22 +1,24 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
-import static org.cmdbuild.dao.driver.postgres.Utils.aliasForSystemAttribute;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.cmdbuild.dao.driver.postgres.Utils.aliasForUserAttribute;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.cmdbuild.dao.driver.postgres.Const;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.dao.driver.postgres.SqlType;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
@@ -30,8 +32,6 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Holds the information about which attribute to query for every alias and
@@ -48,7 +48,7 @@ public class ColumnMapper implements LoggingSupport {
 		public final SqlType sqlType;
 		public final String sqlTypeString;
 
-		private EntryTypeAttribute(final String name, final Alias alias, final Integer index, final SqlType sqlType,
+		public EntryTypeAttribute(final String name, final Alias alias, final Integer index, final SqlType sqlType,
 				final String sqlTypeString) {
 			this.name = name;
 			this.alias = alias;
@@ -59,9 +59,12 @@ public class ColumnMapper implements LoggingSupport {
 
 		@Override
 		public String toString() {
-			return String.format("[%s,%s,%s]", name, alias, sqlType);
+			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+					.append(name) //
+					.append(alias) //
+					.append(sqlType) //
+					.toString();
 		}
-
 	}
 
 	private static class AliasAttributes {
@@ -69,7 +72,7 @@ public class ColumnMapper implements LoggingSupport {
 		private final Map<CMEntryType, List<EntryTypeAttribute>> map;
 
 		public AliasAttributes(final Iterable<? extends CMEntryType> types) {
-			map = Maps.newHashMap();
+			map = newHashMap();
 			for (final CMEntryType type : types) {
 				map.put(type, Lists.<EntryTypeAttribute> newArrayList());
 			}
@@ -117,7 +120,7 @@ public class ColumnMapper implements LoggingSupport {
 
 		public Iterable<EntryTypeAttribute> getAttributes(final CMEntryType type) {
 			final Iterable<EntryTypeAttribute> entryTypeAttributes = map.get(type);
-			logger.debug("getting all attributes for type '{}':", //
+			logger.debug("getting all attributes for type '{}': {}", //
 					type.getName(), Iterables.toString(entryTypeAttributes));
 			return entryTypeAttributes;
 		}
@@ -138,7 +141,7 @@ public class ColumnMapper implements LoggingSupport {
 		private final Map<Alias, AliasAttributes> map;
 
 		public AliasStore() {
-			map = Maps.newHashMap();
+			map = newHashMap();
 		}
 
 		public void addAlias(final Alias alias, final Iterable<? extends CMEntryType> aliasClasses) {
@@ -165,112 +168,106 @@ public class ColumnMapper implements LoggingSupport {
 	private final AliasStore domainAliases = new AliasStore();
 
 	private Integer currentIndex;
-	private final Collection<String> attributesExpressionsForSelect;
 
-	ColumnMapper(final QuerySpecs query) {
+	private final SelectAttributesHolder selectAttributesHolder;
+
+	public ColumnMapper(final QuerySpecs query, final SelectAttributesHolder holder) {
+		selectAttributesHolder = holder;
 		currentIndex = 0;
-		attributesExpressionsForSelect = Lists.newArrayList();
 		fillAliases(query);
 	}
 
 	private void fillAliases(final QuerySpecs query) {
 		logger.debug("filling aliases");
-		final CMEntryType from = query.getFromType();
-		// FIXME: Use a visitor!
-		if (from instanceof CMClass) {
-			logger.debug("from is a '{}'", CMClass.class);
-			final CMClass fromClass = CMClass.class.cast(from);
-			addClassAlias(query.getFromAlias(), fromClass.getLeaves());
-			for (final JoinClause jc : query.getJoins()) {
-				addDomainAlias(jc.getDomainAlias(), jc.getQueryDomains());
-				addClassAlias(jc.getTargetAlias(), jc.getTargets());
+		query.getFromType().accept(new CMEntryTypeVisitor() {
+
+			@Override
+			public void visit(final CMClass type) {
+				addClasses(query.getFromAlias(), type.getLeaves());
+				for (final JoinClause joinClause : query.getJoins()) {
+					addDomainAlias(joinClause.getDomainAlias(), joinClause.getQueryDomains());
+					addClasses(joinClause.getTargetAlias(), joinClause.getTargets());
+				}
 			}
-		} else if (from instanceof CMFunctionCall) {
-			logger.debug("from is a '{}'", CMFunctionCall.class);
-			final CMFunctionCall fromFunctionCall = CMFunctionCall.class.cast(from);
-			addFunctionCallAlias(query.getFromAlias(), fromFunctionCall);
-		}
+
+			private void addClasses(final Alias alias, final Iterable<? extends CMClass> classes) {
+				add(cardSourceAliases, alias, classes);
+			}
+
+			private void addDomainAlias(final Alias alias, final Iterable<QueryDomain> queryDomains) {
+				add(domainAliases, alias, newHashSet(transform(queryDomains, //
+						new Function<QueryDomain, CMEntryType>() {
+							@Override
+							public CMEntryType apply(final QueryDomain input) {
+								return input.getDomain();
+							}
+						})));
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				throw new IllegalArgumentException("domain is an illegal 'from' type");
+			}
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				add(functionCallAliases, query.getFromAlias(), newArrayList(type));
+			}
+
+			private void add(final AliasStore store, final Alias alias, final Iterable<? extends CMEntryType> entryTypes) {
+				logger.debug("adding '{}' for alias '{}'", namesOfEntryTypes(entryTypes), alias);
+				store.addAlias(alias, entryTypes);
+			}
+
+		});
 	}
 
-	private void addClassAlias(final Alias alias, final Iterable<? extends CMClass> aliasClasses) {
-		logger.debug("adding classes '{}' for alias '{}'", namesOf(aliasClasses), alias);
-		cardSourceAliases.addAlias(alias, aliasClasses);
-	}
-
-	private void addDomainAlias(final Alias alias, final Set<QueryDomain> aliasQueryDomains) {
-		final Set<CMDomain> aliasDomains = Sets.newHashSet();
-		for (final QueryDomain qd : aliasQueryDomains) {
-			aliasDomains.add(qd.getDomain());
-		}
-		domainAliases.addAlias(alias, aliasDomains);
-	}
-
-	private void addFunctionCallAlias(final Alias alias, final CMFunctionCall functioncallAlias) {
-		final List<CMFunctionCall> i = Lists.newArrayListWithCapacity(1);
-		i.add(functioncallAlias);
-		functionCallAliases.addAlias(alias, i);
-	}
-
-	public Set<Alias> getClassAliases() {
+	public Iterable<Alias> getClassAliases() {
 		return cardSourceAliases.getAliases();
 	}
 
-	public Set<Alias> getDomainAliases() {
+	public Iterable<Alias> getDomainAliases() {
 		return domainAliases.getAliases();
 	}
 
-	public Set<Alias> getFunctionCallAliases() {
+	public Iterable<Alias> getFunctionCallAliases() {
 		return functionCallAliases.getAliases();
 	}
 
-	public Iterable<EntryTypeAttribute> getEntryTypeAttributes(final Alias alias, final CMEntryType type) {
+	public Iterable<EntryTypeAttribute> getAttributes(final Alias alias, final CMEntryType type) {
 		return aliasAttributesFor(alias).getAttributes(type);
 	}
 
-	Iterable<String> getAttributeExpressionsForSelect() {
-		return attributesExpressionsForSelect;
-	}
-
-	void addSystemAttributeForSelect(final Alias typeAlias, final Const.SystemAttributes systemAttribute) {
-		logger.debug("adding system attribute '{}' to alias '{}'", systemAttribute, typeAlias);
-		appendToSelectStatement( //
-				typeAlias, //
-				systemAttribute.getDBName(), //
-				systemAttribute.getCastSuffix(), //
-				aliasForSystemAttribute(typeAlias, systemAttribute));
-	}
-
-	void addAllUserAttributesForSelect(final Iterable<QueryAliasAttribute> attributes) {
+	public void addAllAttributes(final Iterable<QueryAliasAttribute> attributes) {
 		for (final QueryAliasAttribute a : attributes) {
-			addUserAttributeForSelect(a);
+			addAttribute(a);
 		}
 	}
 
-	void addUserAttributeForSelect(final QueryAliasAttribute qa) {
-		logger.debug("adding attribute '{}' to alias '{}'", qa.getName(), qa.getEntryTypeAlias());
+	public void addAttribute(final QueryAliasAttribute attribute) {
+		logger.debug("adding attribute '{}' to alias '{}'", attribute.getName(), attribute.getEntryTypeAlias());
 
-		final Alias typeAlias = qa.getEntryTypeAlias();
+		final Alias typeAlias = attribute.getEntryTypeAlias();
 		final AliasAttributes aliasAttributes = aliasAttributesFor(typeAlias);
-		if (qa instanceof AnyAttribute) {
+		if (attribute instanceof AnyAttribute) {
 			logger.debug("any attribute required");
 			for (final CMEntryType type : aliasAttributes.getEntryTypes()) {
 				logger.debug("adding attributes for type '{}'", type.getName());
-				for (final CMAttribute attribute : type.getAttributes()) {
-					logger.debug("adding attribute '{}'", attribute.getName());
-					final String attributeName = attribute.getName();
+				for (final CMAttribute _attribute : type.getAttributes()) {
+					logger.debug("adding attribute '{}'", _attribute.getName());
+					final String attributeName = _attribute.getName();
 					final Alias attributeAlias = aliasForUserAttribute(typeAlias, attributeName);
 					/*
 					 * TODO don't add attributes if already added
 					 * 
 					 * happens if querying for any attribute over a superclass
 					 */
-					final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName, sqlCastFor(attribute),
-							attributeAlias);
-					aliasAttributes.addAttribute(attributeName, attributeAlias, usedIndex, type);
+					selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(_attribute), attributeAlias);
+					aliasAttributes.addAttribute(attributeName, attributeAlias, ++currentIndex, type);
 				}
 			}
 		} else {
-			final String attributeName = qa.getName();
+			final String attributeName = attribute.getName();
 			/*
 			 * FIXME IT SHOULD NOT TAKE THE FIRST ONE IF MORE THAN ONE but it
 			 * does not work if we take them all
@@ -278,9 +275,8 @@ public class ColumnMapper implements LoggingSupport {
 			 * we trust it works
 			 */
 			final CMEntryType type = aliasAttributes.getEntryTypes().iterator().next();
-			final Integer usedIndex = appendToSelectStatement(typeAlias, attributeName,
-					sqlCastFor(type.getAttribute(attributeName)), null);
-			aliasAttributes.addAttribute(attributeName, null, usedIndex, type);
+			selectAttributesHolder.add(typeAlias, attributeName, sqlCastFor(type.getAttribute(attributeName)), null);
+			aliasAttributes.addAttribute(attributeName, null, ++currentIndex, type);
 		}
 	}
 
@@ -304,29 +300,17 @@ public class ColumnMapper implements LoggingSupport {
 		return out;
 	}
 
-	private Integer appendToSelectStatement(final Alias typeAlias, final String attributeName, final String cast,
-			final Alias attributeAlias) {
-		final StringBuffer sb = new StringBuffer(quoteAttribute(typeAlias, attributeName));
-		if (cast != null) {
-			sb.append("::").append(cast);
-		}
-		if (attributeAlias != null) {
-			sb.append(" AS ").append(quoteAlias(attributeAlias));
-		}
-		final String toBeAppended = sb.toString();
-		logger.debug("appends '{}' to select statement", toBeAppended);
-		attributesExpressionsForSelect.add(toBeAppended);
-		return ++currentIndex;
-	}
-
 	@Override
 	public String toString() {
-		return String.format("[Classes=%s,Domains=%s,Functions=%s]", cardSourceAliases, domainAliases,
-				functionCallAliases);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
+				.append("Classes", cardSourceAliases) //
+				.append("Domains", domainAliases) //
+				.append("Functions", functionCallAliases) //
+				.toString();
 	}
 
-	private static Iterable<String> namesOf(final Iterable<? extends CMEntryType> aliasClasses) {
-		return Iterables.transform(aliasClasses, new Function<CMEntryType, String>() {
+	private static Iterable<String> namesOfEntryTypes(final Iterable<? extends CMEntryType> aliasClasses) {
+		return transform(aliasClasses, new Function<CMEntryType, String>() {
 
 			@Override
 			public String apply(final CMEntryType input) {

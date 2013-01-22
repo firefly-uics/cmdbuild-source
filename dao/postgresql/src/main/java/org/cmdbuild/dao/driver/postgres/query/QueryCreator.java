@@ -1,25 +1,28 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.ClassId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainQuerySource;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.EndDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.aliasForSystemAttribute;
+import static org.cmdbuild.dao.driver.postgres.Utils.aliasForUserAttribute;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAlias;
-import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-
-import com.google.common.collect.Lists;
 
 public class QueryCreator {
 
@@ -28,21 +31,27 @@ public class QueryCreator {
 	private static final String ATTRIBUTES_SEPARATOR = ",";
 	private static final String PARTS_SEPARATOR = " ";
 	private static final String ORDER_BY = "ORDER BY";
+	private static final String ORDER_BY_CLAUSE = "%s %s";
 
 	private final StringBuilder sb;
 	private final QuerySpecs querySpecs;
 	private final List<Object> params;
-	private final ColumnMapper columnMapper;
+
+	private SelectAttributesExpressions selectAttributesExpressions;
+	private ColumnMapper columnMapper;
 
 	public QueryCreator(final QuerySpecs query) {
 		this.sb = new StringBuilder();
 		this.querySpecs = query;
-		this.columnMapper = new ColumnMapper(query);
-		this.params = new ArrayList<Object>();
+		this.params = newArrayList();
 		buildQuery();
 	}
 
 	private void buildQuery() {
+		selectAttributesExpressions = new SelectAttributesExpressions();
+		columnMapper = new ColumnMapper(querySpecs, selectAttributesExpressions);
+		columnMapper.addAllAttributes(querySpecs.getAttributes());
+
 		appendSelect();
 		appendFrom();
 		appendJoin();
@@ -51,22 +60,6 @@ public class QueryCreator {
 	}
 
 	private void appendSelect() {
-		sb.append(SELECT) //
-				.append(distinct()) //
-				.append(quoteAttributes(querySpecs.getAttributes()));
-	}
-
-	private String distinct() {
-		return querySpecs.distinct() ? //
-		format("%s (%s) ", //
-				DISTINCT_ON, //
-				quoteAlias(aliasForSystemAttribute(querySpecs.getFromAlias(), SystemAttributes.Id))) //
-				: EMPTY;
-	}
-
-	private String quoteAttributes(final Iterable<QueryAliasAttribute> attributes) {
-		columnMapper.addAllUserAttributesForSelect(attributes);
-
 		/*
 		 * FIXME
 		 * 
@@ -74,10 +67,10 @@ public class QueryCreator {
 		 * USE A SELECT FOR THE FROM ALSO (that fixes the EndDate problem also)
 		 */
 		for (final Alias alias : columnMapper.getClassAliases()) {
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.ClassId);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.Id);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.User);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.BeginDate);
+			addToSelect(alias, ClassId);
+			addToSelect(alias, Id);
+			addToSelect(alias, User);
+			addToSelect(alias, BeginDate);
 			/*
 			 * The from clause does not have an EndDate value
 			 * columnMapper.addSystemSelectAttribute(getSelectString(a,
@@ -86,16 +79,33 @@ public class QueryCreator {
 		}
 
 		for (final Alias alias : columnMapper.getDomainAliases()) {
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.DomainId);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.DomainQuerySource);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.Id);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.User);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.BeginDate);
-			columnMapper.addSystemAttributeForSelect(alias, SystemAttributes.EndDate);
+			addToSelect(alias, DomainId);
+			addToSelect(alias, DomainQuerySource);
+			addToSelect(alias, Id);
+			addToSelect(alias, User);
+			addToSelect(alias, BeginDate);
+			addToSelect(alias, EndDate);
 		}
 
-		return join(columnMapper.getAttributeExpressionsForSelect().iterator(), //
-				ATTRIBUTES_SEPARATOR);
+		sb.append(SELECT) //
+				.append(distinct()) //
+				.append(join(selectAttributesExpressions.getExpressions().iterator(), ATTRIBUTES_SEPARATOR));
+	}
+
+	private void addToSelect(final Alias typeAlias, final SystemAttributes systemAttribute) {
+		selectAttributesExpressions.add( //
+				typeAlias, //
+				systemAttribute.getDBName(), //
+				systemAttribute.getCastSuffix(), //
+				aliasForSystemAttribute(typeAlias, systemAttribute));
+	}
+
+	private String distinct() {
+		return querySpecs.distinct() ? //
+		format("%s (%s) ", //
+				DISTINCT_ON, //
+				quoteAlias(aliasForSystemAttribute(querySpecs.getFromAlias(), Id))) //
+				: EMPTY;
 	}
 
 	private void appendFrom() {
@@ -122,26 +132,21 @@ public class QueryCreator {
 	}
 
 	private void appendOrderBy() {
-		final List<OrderByClause> clauses = Lists.newArrayList(querySpecs.getOrderByClauses());
+		final List<String> expressions = newArrayList();
 
-		if (querySpecs.distinct()) {
-			clauses.add(0, new OrderByClause( //
-					attribute(querySpecs.getFromType(), SystemAttributes.Id.getDBName()), //
-					Direction.ASC));
-		}
-
-		if (querySpecs.getOrderByClauses().isEmpty()) {
-			return;
-		}
-
-		final List<String> orderings = Lists.newArrayList();
-		for (final OrderByClause clause : clauses) {
-			orderings.add(format("%s %s", //
-					quoteAttribute(clause.getAttribute()), //
+		for (final OrderByClause clause : querySpecs.getOrderByClauses()) {
+			final QueryAliasAttribute attribute = clause.getAttribute();
+			expressions.add(format(ORDER_BY_CLAUSE, //
+					quoteAlias(aliasForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName())), //
 					clause.getDirection()));
 		}
 
-		sb.append(format(" %s %s", ORDER_BY, join(orderings, ATTRIBUTES_SEPARATOR)));
+		if (!expressions.isEmpty()) {
+			final String actual = sb.toString();
+			sb.setLength(0);
+			sb.append(format("SELECT * FROM (%s) AS main %s %s", //
+					actual, ORDER_BY, join(expressions, ATTRIBUTES_SEPARATOR)));
+		}
 	}
 
 	public String getQuery() {

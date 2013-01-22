@@ -46,8 +46,8 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		query.getWhereClause().accept(this);
 		// FIXME: append the status IF NOT a history query
 		if (query.getFromType().holdsHistory()) {
-			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), null, OPERATOR_EQ,
-					CardStatus.ACTIVE.value()));
+			and(attributeFilter(attribute(query.getFromAlias(), SystemAttributes.Status.getDBName()), null,
+					OPERATOR_EQ, CardStatus.ACTIVE.value()));
 		}
 	}
 
@@ -79,44 +79,51 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 			@Override
 			public void visit(final EqualsOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_EQ, operatorAndValue.getValue()));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_EQ,
+						operatorAndValue.getValue()));
 			}
 
 			@Override
 			public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_GT, operatorAndValue.getValue()));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_GT,
+						operatorAndValue.getValue()));
 			}
 
 			@Override
 			public void visit(final LessThanOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LT, operatorAndValue.getValue()));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LT,
+						operatorAndValue.getValue()));
 			}
 
 			@Override
 			public void visit(final ContainsOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE, "%" + operatorAndValue.getValue()
-						+ "%"));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
+						"%" + operatorAndValue.getValue() + "%"));
 			}
 
 			@Override
 			public void visit(final BeginsWithOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE, operatorAndValue.getValue() + "%"));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
+						operatorAndValue.getValue() + "%"));
 			}
 
 			@Override
 			public void visit(final EndsWithOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE, "%" + operatorAndValue.getValue()));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LIKE,
+						"%" + operatorAndValue.getValue()));
 			}
 
 			@Override
 			public void visit(final NullOperatorAndValue operatorAndValue) {
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_NULL, operatorAndValue.getValue()));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_NULL,
+						operatorAndValue.getValue()));
 			}
 
 			@Override
 			public void visit(final InOperatorAndValue operatorAndValue) {
 				final List<Object> inValues = operatorAndValue.getValue();
-				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_IN, inValues));
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_IN,
+						inValues));
 			}
 
 		});
@@ -164,17 +171,17 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		}
 	}
 
-	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast, final String operator, final Object value) {
+	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
+			final String operator, final Object value) {
 		final Object sqlValue = sqlValueOf(attribute, value);
 		String attributeName = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-		boolean isAttributeNameCastSpecified = attributeNameCast != null;
+		final boolean isAttributeNameCastSpecified = attributeNameCast != null;
 		if (isAttributeNameCastSpecified) {
 			attributeName = attributeName + "::" + attributeNameCast;
-			return String.format("%s %s %s", attributeName, operator, value != null ? param(sqlValue, null)
-					: "");
+			return String.format("%s %s %s", attributeName, operator, value != null ? param(sqlValue, null) : "");
 		}
-		return String.format("%s %s %s", attributeName, operator, value != null ? param(sqlValue, sqlTypeOf(attribute).sqlCast())
-				: "");
+		return String.format("%s %s %s", attributeName, operator,
+				value != null ? param(sqlValue, sqlTypeOf(attribute).sqlCast()) : "");
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {
