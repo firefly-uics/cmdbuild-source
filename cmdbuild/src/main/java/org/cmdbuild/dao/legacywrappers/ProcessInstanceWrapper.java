@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.dao.backend.CMBackend;
 import org.cmdbuild.dao.entry.LazyValueSet;
 import org.cmdbuild.elements.Lookup;
@@ -42,6 +43,7 @@ import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance.UserProcessInstanceDefinition;
 import org.enhydra.shark.api.common.SharkConstants;
 
+@OldDao
 public class ProcessInstanceWrapper extends CardWrapper implements UserProcessInstance, UserProcessInstanceDefinition {
 
 	private static final String UNRESOLVABLE_PARTICIPANT_GROUP = StringUtils.EMPTY;

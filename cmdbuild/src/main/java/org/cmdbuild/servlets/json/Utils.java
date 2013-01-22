@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.services.CacheManager;
@@ -82,6 +83,7 @@ public class Utils extends JSONBase {
 		}
 	}
 
+	@OldDao
 	@JSONExported
 	@Admin
 	public void clearCache() {

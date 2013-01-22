@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.schema;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cmdbuild.common.annotations.OldDao;
 import org.cmdbuild.elements.interfaces.ProcessType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.meta.MetadataService;
@@ -19,18 +20,20 @@ import org.json.JSONObject;
 
 public class Scheduler extends JSONBase {
 
-	@Admin @JSONExported
-	public JSONObject listProcessJobs(
-			ProcessType processType) throws JSONException {
+	@OldDao
+	@Admin
+	@JSONExported
+	public JSONObject listProcessJobs(ProcessType processType) throws JSONException {
 		return serializeJobCardList(JobCard.allForDetail(MetadataService.getSchemaFullName(processType)));
 	}
 
-	@Admin @JSONExported @Transacted
-	public JSONObject addProcessJob(
-			ProcessType processType,
-			@Parameter("jobDescription") String jobDescription,
+	@OldDao
+	@Admin
+	@JSONExported
+	@Transacted
+	public JSONObject addProcessJob(ProcessType processType, @Parameter("jobDescription") String jobDescription,
 			@Parameter("cronExpression") String cronExpression,
-			@Parameter(value="jobParameters", required=false) JSONObject jsonParameters) throws JSONException {
+			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
 		SchedulerService scheduler = new QuartzScheduler(); // TODO
 		JobCard jobCard = new JobCard();
 		jobCard.setDetail(MetadataService.getSchemaFullName(processType));
@@ -42,12 +45,13 @@ public class Scheduler extends JSONBase {
 		return serializeJobCard(jobCard);
 	}
 
-	@Admin @JSONExported @Transacted
-	public JSONObject modifyJob(
-			@Parameter("jobId") int jobId,
-			@Parameter("jobDescription") String jobDescription,
+	@OldDao
+	@Admin
+	@JSONExported
+	@Transacted
+	public JSONObject modifyJob(@Parameter("jobId") int jobId, @Parameter("jobDescription") String jobDescription,
 			@Parameter("cronExpression") String cronExpression,
-			@Parameter(value="jobParameters", required=false) JSONObject jsonParameters) throws JSONException {
+			@Parameter(value = "jobParameters", required = false) JSONObject jsonParameters) throws JSONException {
 		SchedulerService scheduler = new QuartzScheduler(); // TODO
 		JobCard jobCard = new JobCard(jobId);
 
@@ -69,9 +73,11 @@ public class Scheduler extends JSONBase {
 		return serializeJobCard(jobCard);
 	}
 
-	@Admin @JSONExported @Transacted
-	public void deleteJob(
-			@Parameter("jobId") int jobId) throws JSONException {
+	@OldDao
+	@Admin
+	@JSONExported
+	@Transacted
+	public void deleteJob(@Parameter("jobId") int jobId) throws JSONException {
 		SchedulerService scheduler = new QuartzScheduler(); // TODO
 		JobCard jobCard = new JobCard(jobId);
 		jobCard.delete();
@@ -91,7 +97,7 @@ public class Scheduler extends JSONBase {
 	private JSONObject serializeJobCardList(Iterable<JobCard> jobCardList) throws JSONException {
 		JSONObject response = new JSONObject();
 		JSONArray jobList = new JSONArray();
-		for (JobCard job: jobCardList) {
+		for (JobCard job : jobCardList) {
 			jobList.put(serializeJobCard(job));
 		}
 		response.put("rows", jobList);
@@ -101,25 +107,25 @@ public class Scheduler extends JSONBase {
 	private JSONObject serializeJobCard(JobCard jobCard) throws JSONException {
 		JSONObject serializedJob = new JSONObject();
 		serializedJob.put("description", jobCard.getDescription());
-		Map<String,String> params = jobCard.getParams();
+		Map<String, String> params = jobCard.getParams();
 		JSONObject jsonParams = new JSONObject();
-		for (String key: params.keySet()) {
+		for (String key : params.keySet()) {
 			jsonParams.put(key, params.get(key));
 		}
-		serializedJob.put("params",jsonParams);
+		serializedJob.put("params", jsonParams);
 		serializedJob.put("cronExpression", removeSecondsField(jobCard.getCronExpression()));
 		serializedJob.put("id", jobCard.getId());
 		return serializedJob;
 	}
-	
+
 	/*
-	 * the js interface does not handle the seconds 
+	 * the js interface does not handle the seconds
 	 */
 	private String removeSecondsField(String cronExpression) {
 		return cronExpression.substring(2);
 	}
-	
+
 	private String addSecondsField(String cronExpression) {
-		return "0 "+cronExpression;
+		return "0 " + cronExpression;
 	}
 };
